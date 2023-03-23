@@ -1,5 +1,5 @@
 r"""
-Class file for computing sums over zeros of motivic L-functions.
+Class for computing sums over zeros of motivic `L`-functions
 
 All computations are done to double precision.
 
@@ -18,20 +18,21 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object cimport SageObject
-from sage.rings.integer_ring import ZZ
-from sage.rings.real_double import RDF
-from sage.rings.complex_double import CDF
-from sage.rings.infinity import PlusInfinity
-from sage.arith.all import prime_powers, next_prime
+from sage.arith.misc import next_prime, prime_powers
 from sage.functions.log import log, exp
 from sage.functions.other import real, imag
-from sage.symbolic.constants import pi, euler_gamma
+from sage.libs.flint.ulong_extras cimport n_is_prime
 from sage.libs.pari.all import pari
 from sage.misc.verbose import verbose
 from sage.parallel.decorate import parallel
 from sage.parallel.ncpus import ncpus as num_cpus
-from sage.libs.flint.ulong_extras cimport n_is_prime
+from sage.rings.complex_double import CDF
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_double import RDF
+from sage.structure.sage_object cimport SageObject
+from sage.symbolic.constants import euler_gamma, pi
+
 
 cdef extern from "<math.h>":
     double c_exp "exp"(double)

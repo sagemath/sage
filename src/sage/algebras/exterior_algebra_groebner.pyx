@@ -715,4 +715,3 @@ cdef class GroebnerStrategyDegLex(GroebnerStrategy):
 
         from sage.combinat.combination import from_rank
         return FrozenBitset(from_rank(n, self.rank, deg))
-

@@ -1566,7 +1566,9 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         Y  = SC.f_i_ZZ().base_extend(formal_d.parent())
 
         if (self.parent().is_modular()):
-            qexp = self._rat.subs(x=X, y=Y, d=formal_d)
+            # z does not appear in self._rat but we need to specialize it for
+            # the evaluation to land in the correct parent
+            qexp = self._rat.subs(x=X, y=Y, z=0, d=formal_d)
         else:
             Z = SC.E2_ZZ().base_extend(formal_d.parent())
             qexp = self._rat.subs(x=X, y=Y, z=Z, d=formal_d)
@@ -2167,12 +2169,10 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             pass
 
         # The general case
-        num_prec = max(\
-            ZZ(getattr(tau,'prec',lambda: num_prec)()),\
-            num_prec\
-        )
+        num_prec = max(ZZ(getattr(tau, 'prec', lambda: num_prec)()), num_prec)
+
         tau = tau.n(num_prec)
-        (x,y,z,d) = self.parent().rat_field().gens()
+        (x, y, z, d) = self.parent().rat_field().gens()
 
         if (self.is_homogeneous() and self.is_modular()):
             q_exp = self.q_expansion_fixed_d(prec=prec, d_num_prec=num_prec)

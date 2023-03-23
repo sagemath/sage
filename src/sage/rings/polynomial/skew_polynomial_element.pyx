@@ -1,5 +1,5 @@
 r"""
-Univariate Skew Polynomials
+Univariate skew polynomials
 
 This module provides the
 :class:`~sage.rings.polynomial.skew_polynomial_element.SkewPolynomial`.
@@ -22,7 +22,7 @@ for a Ore polynomial without twisting derivation.
         sage: a(t^2)
         doctest:...: FutureWarning: This class/method/function is marked as experimental.
         It, its functionality or its interface might change without a formal deprecation.
-        See http://trac.sagemath.org/13215 for details.
+        See https://github.com/sagemath/sage/issues/13215 for details.
         2*t^3 + 3*t^2 + 4*t + 2
         sage: a(t)
         2*t^2 + 3*t + 2
@@ -322,7 +322,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         """
         return self._call(eval_pt)
 
-    @experimental(trac_number=13215)
+    @experimental(issue_number=13215)
     def _call(self, eval_pt):
         r"""
         Helper function for the :meth:`__call__` method to accommodate
@@ -690,4 +690,3 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
             q.append(c)
         q.reverse()
         return (self._new_c(q, parent), self._new_c(a[:db], parent, 1))
-

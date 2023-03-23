@@ -16,7 +16,7 @@ different types.  The hierarchy is as follows:
   - :class:`ManinSymbolList_character`
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -30,8 +30,8 @@ different types.  The hierarchy is as follows:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.modular.modsym.p1list as p1list
 import sage.modular.modsym.g1list as g1list
@@ -949,8 +949,8 @@ class ManinSymbolList_character(ManinSymbolList):
         # The list returned from P1List is guaranteed to be sorted.
         # Thus each list constructed below is also sorted.  This is
         # important since the index function assumes the list is sorted.
-        L = [(i, u, v) for i in range(weight-2+1) \
-                            for u, v in self.__P1.list()]
+        L = [(i, u, v) for i in range(weight - 2 + 1)
+             for u, v in self.__P1.list()]
         self.__list = L
         ManinSymbolList.__init__(self, weight, L)
 

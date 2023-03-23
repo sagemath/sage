@@ -114,7 +114,6 @@ from sage.cpython.type cimport can_assign_class
 cimport sage.categories.morphism as morphism
 cimport sage.categories.map as map
 from sage.structure.debug_options cimport debug
-from sage.structure.richcmp cimport rich_to_bool
 from sage.structure.sage_object cimport SageObject
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -2651,7 +2650,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                     #
                     # TODO: this makes sense in a few cases that we want
                     # to support. But in general this should not be
-                    # allowed. See Trac #15709
+                    # allowed. See Issue #15709
                     S_is_int = True
             if S_is_int:
                 from sage.structure.coerce_actions import IntegerPowAction

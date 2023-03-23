@@ -1278,7 +1278,7 @@ def permute_decomposition(trials, algorithm, vertices, prob, verbose=False):
         t1p = relabel_tree(t1, random_perm)
         assert(equivalent_trees(t1p, t2))
         if verbose:
-            print("Passses!")
+            print("Passes!")
 
 
 def random_md_tree(max_depth, max_fan_out, leaf_probability):

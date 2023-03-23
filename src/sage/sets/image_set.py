@@ -79,7 +79,7 @@ class ImageSubobject(Parent):
             sage: f = H(lambda v: v[0]*x + v[1]*(x^2-y) + v[2]^2*(y+2) + v[3] - v[0]^2)
             sage: Im = f.image()
             sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',
-            ....:                         '_test_some_elements'])
+            ....:                         '_test_some_elements', '_test_elements'])
         """
         if not is_Parent(domain_subset):
             from sage.sets.set import Set

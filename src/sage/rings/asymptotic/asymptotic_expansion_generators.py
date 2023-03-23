@@ -173,7 +173,7 @@ class AsymptoticExpansionGenerators(SageObject):
 
             sage: set_series_precision(5)
             sage: asymptotic_expansions.Stirling('n')
-            sqrt(2)*sqrt(pi)*e^(n*log(n))*(e^n)^(-1)*n^(1/2) + 
+            sqrt(2)*sqrt(pi)*e^(n*log(n))*(e^n)^(-1)*n^(1/2) +
             ... + O(e^(n*log(n))*(e^n)^(-1)*n^(-5/2))
             sage: set_series_precision(20)  # restore series precision default
         """
@@ -363,7 +363,7 @@ class AsymptoticExpansionGenerators(SageObject):
             return A.zero()
         n = A.gen()
 
-        from sage.arith.all import bernoulli
+        from sage.arith.misc import bernoulli
         from sage.arith.srange import srange
 
         result = sum((bernoulli(k) / k / (k-1) / n**(k-1)
@@ -462,7 +462,7 @@ class AsymptoticExpansionGenerators(SageObject):
             result += 1 / (2 * n)
 
         from sage.arith.srange import srange
-        from sage.arith.all import bernoulli
+        from sage.arith.misc import bernoulli
         for k in srange(2, 2*precision - 4, 2):
             result += -bernoulli(k) / k / n**k
 
@@ -912,7 +912,7 @@ class AsymptoticExpansionGenerators(SageObject):
         from .asymptotic_ring import AsymptoticRing
         from .growth_group import ExponentialGrowthGroup, \
                 MonomialGrowthGroup, GenericNonGrowthGroup
-        from sage.arith.all import falling_factorial
+        from sage.arith.misc import falling_factorial
         from sage.categories.cartesian_product import cartesian_product
         from sage.functions.other import binomial
         from sage.functions.gamma import gamma
@@ -1095,7 +1095,7 @@ class AsymptoticExpansionGenerators(SageObject):
             doctest:warning
             ...
             FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20050 for details.
+            See https://github.com/sagemath/sage/issues/20050 for details.
             1 - sqrt(2)*Z^(-1/2) + 2/3*Z^(-1) - 11/36*sqrt(2)*Z^(-3/2) +
             43/135*Z^(-2) - 769/4320*sqrt(2)*Z^(-5/2) + 1768/8505*Z^(-3) + O(Z^(-7/2))
 
@@ -1277,7 +1277,7 @@ class AsymptoticExpansionGenerators(SageObject):
             doctest:warning
             ...
             FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20050 for details.
+            See https://github.com/sagemath/sage/issues/20050 for details.
             2 - 2*Z^(-1/2) + 2*Z^(-1) - 2*Z^(-3/2) + 2*Z^(-2) - 2*Z^(-5/2) + O(Z^(-3))
             sage: def g(z):
             ....:     return (1 - sqrt(1 - 4*z))/(2*z)

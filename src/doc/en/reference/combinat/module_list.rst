@@ -22,6 +22,7 @@ Comprehensive Module List
     sage/combinat/alternating_sign_matrix
     sage/combinat/backtrack
     sage/combinat/baxter_permutations
+    sage/combinat/bijectionist
     sage/combinat/binary_recurrence_sequences
     sage/combinat/binary_tree
     sage/combinat/blob_algebra
@@ -109,6 +110,7 @@ Comprehensive Module List
     sage/combinat/designs/steiner_quadruple_systems
     sage/combinat/designs/subhypergraph_search
     sage/combinat/designs/twographs
+    sage/combinat/diagram
     sage/combinat/diagram_algebras
     sage/combinat/dlx
     sage/combinat/dyck_word
@@ -144,6 +146,7 @@ Comprehensive Module List
     sage/combinat/k_regular_sequence
     sage/combinat/k_tableau
     sage/combinat/kazhdan_lusztig
+    sage/combinat/key_polynomial
     sage/combinat/knutson_tao_puzzles
     sage/combinat/matrices/all
     sage/combinat/matrices/dancing_links
@@ -283,7 +286,6 @@ Comprehensive Module List
     sage/combinat/root_system/weight_lattice_realizations
     sage/combinat/root_system/weight_space
     sage/combinat/root_system/weyl_characters
-    sage/combinat/root_system/fusion_ring
     sage/combinat/root_system/weyl_group
     sage/combinat/rooted_tree
     sage/combinat/rsk
@@ -353,12 +355,14 @@ Comprehensive Module List
     sage/combinat/superpartition
     sage/combinat/symmetric_group_algebra
     sage/combinat/symmetric_group_representations
+    sage/combinat/t_sequences
     sage/combinat/tableau
     sage/combinat/tableau_residues
     sage/combinat/tableau_tuple
     sage/combinat/tamari_lattices
     sage/combinat/tiling
     sage/combinat/tools
+    sage/combinat/triangles_FHM
     sage/combinat/tuple
     sage/combinat/tutorial
     sage/combinat/vector_partition

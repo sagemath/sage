@@ -85,7 +85,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
     `R`, where `n` is the rank of `M`.
     Accordingly, the class :class:`ExtPowerFreeModule` inherits from the
     class
-    :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`.
+    :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule_abstract`.
 
     This is a Sage *parent* class, whose *element* class is
     :class:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor`
@@ -266,7 +266,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
             sage: A.construction() is None
             True
         """
-        # No construction until https://trac.sagemath.org/ticket/30242
+        # No construction until https://github.com/sagemath/sage/issues/30242
         # makes this a quotient of TensorFreeModule
         return None
 
@@ -465,7 +465,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
     `R`, where `n` is the rank of `M`.
     Accordingly, the class :class:`ExtPowerDualFreeModule` inherits from
     the class
-    :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`.
+    :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule_abstract`.
 
     This is a Sage *parent* class, whose *element* class is
     :class:`~sage.tensor.modules.free_module_alt_form.FreeModuleAltForm`.
@@ -650,7 +650,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
             sage: A.construction() is None
             True
         """
-        # No construction until https://trac.sagemath.org/ticket/30242
+        # No construction until https://github.com/sagemath/sage/issues/30242
         # makes this a quotient of TensorFreeModule
         return None
 

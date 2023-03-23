@@ -152,10 +152,10 @@ def init_sage(controller=None):
     """
     try:
         # We need to ensure that the Matplotlib font cache is built to
-        # avoid spurious warnings (see Trac #20222).
+        # avoid spurious warnings (see Issue #20222).
         import matplotlib.font_manager
     except ImportError:
-        # Do not require matplotlib for running doctests (Trac #25106).
+        # Do not require matplotlib for running doctests (Issue #25106).
         pass
     else:
         # Make sure that the agg backend is selected during doctesting.
@@ -170,7 +170,7 @@ def init_sage(controller=None):
 
     # Set the Python PRNG class to the Python 2 implementation for consistency
     # of 'random' test results that use it; see
-    # https://trac.sagemath.org/ticket/24508
+    # https://github.com/sagemath/sage/issues/24508
     # We use the baked in copy of the random module for both Python 2 and 3
     # since, although the upstream copy is unlikely to change, this further
     # ensures consistency of test results
@@ -214,17 +214,17 @@ def init_sage(controller=None):
     debug.refine_category_hash_check = True
 
     # We import readline before forking, otherwise Pdb doesn't work
-    # on OS X: http://trac.sagemath.org/14289
+    # on OS X: https://github.com/sagemath/sage/issues/14289
     try:
         import readline
     except ModuleNotFoundError:
-        # Do not require readline for running doctests (Trac #31160).
+        # Do not require readline for running doctests (Issue #31160).
         pass
 
     try:
         import sympy
     except ImportError:
-        # Do not require sympy for running doctests (Trac #25106).
+        # Do not require sympy for running doctests (Issue #25106).
         pass
     else:
         # Disable SymPy terminal width detection
@@ -731,7 +731,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     # exceptions), whereas on Python 2 does not, so we
                     # normalize Python 3 exceptions to match tests written to
                     # Python 2
-                    # See https://trac.sagemath.org/ticket/24271
+                    # See https://github.com/sagemath/sage/issues/24271
                     exc_cls = exception[0]
                     exc_name = exc_cls.__name__
                     if exc_cls.__module__:
@@ -1316,8 +1316,6 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         If debugging is turned on this function starts an IPython
         prompt when a test returns an incorrect answer::
 
-            sage: import os
-            sage: os.environ['SAGE_PEXPECT_LOG'] = "1"
             sage: sage0.quit()
             sage: _ = sage0.eval("import doctest, sys, os, multiprocessing, subprocess")
             sage: _ = sage0.eval("from sage.doctest.parsing import SageOutputChecker")
@@ -1473,8 +1471,6 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
         EXAMPLES::
 
-            sage: import os
-            sage: os.environ['SAGE_PEXPECT_LOG'] = "1"
             sage: sage0.quit()
             sage: _ = sage0.eval("import doctest, sys, os, multiprocessing, subprocess")
             sage: _ = sage0.eval("from sage.doctest.parsing import SageOutputChecker")
@@ -2148,7 +2144,7 @@ class DocTestWorker(multiprocessing.Process):
             sys.stdin = os.fdopen(0, "r")
         except OSError:
             # We failed to open stdin for reading, this might happen
-            # for example when running under "nohup" (Trac #14307).
+            # for example when running under "nohup" (Issue #14307).
             # Simply redirect stdin from /dev/null and try again.
             with open(os.devnull) as f:
                 os.dup2(f.fileno(), 0)

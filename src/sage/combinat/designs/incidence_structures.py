@@ -182,8 +182,7 @@ class IncidenceStructure():
             assert blocks is None, "'blocks' cannot be defined when 'points' is a matrix"
             incidence_matrix = points
             points = blocks = None
-        elif (points is not None and
-              blocks is     None):
+        elif points is not None and blocks is None:
             blocks = points
             points = set().union(*blocks)
         if points:
@@ -1578,7 +1577,7 @@ class IncidenceStructure():
             sage: I.is_t_design(return_parameters=True)
             (False, (0, 0, 0, 0))
         """
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
 
         # Missing parameters ?
         if v is None:

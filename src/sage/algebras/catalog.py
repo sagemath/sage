@@ -6,7 +6,7 @@ currently implemented in Sage. Using tab-completion on this object is an
 easy way to discover and quickly create the algebras that are available
 (as listed here).
 
-Let ``<tab>`` indicate pressing the tab key.  So begin by typing
+Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 ``algebras.<tab>`` to the see the currently implemented named algebras.
 
 - :class:`algebras.AlternatingCentralExtensionQuantumOnsager
@@ -62,6 +62,8 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
 - :class:`algebras.PlanarPartition <sage.combinat.diagram_algebras.PlanarAlgebra>`
 - :class:`algebras.qCommutingPolynomials
   <sage.algebras.q_commuting_polynomials.qCommutingPolynomials>`
+- :class:`algebras.qCommutingLaurentPolynomials
+  <sage.algebras.q_commuting_polynomials.qCommutingLaurentPolynomials>`
 - :class:`algebras.QuantumGroup
   <sage.algebras.quantum_groups.quantum_group_gap.QuantumGroup>`
 - :func:`algebras.Quaternion
@@ -127,6 +129,7 @@ lazy_import('sage.algebras.quantum_matrix_coordinate_algebra',
             'QuantumMatrixCoordinateAlgebra', 'QuantumMatrixCoordinate')
 lazy_import('sage.algebras.quantum_matrix_coordinate_algebra', 'QuantumGL')
 lazy_import('sage.algebras.q_commuting_polynomials', 'qCommutingPolynomials')
+lazy_import('sage.algebras.q_commuting_polynomials', 'qCommutingLaurentPolynomials')
 lazy_import('sage.algebras.tensor_algebra', 'TensorAlgebra', 'Tensor')
 lazy_import('sage.algebras.quantum_groups.quantum_group_gap', 'QuantumGroup')
 lazy_import('sage.algebras.quantum_groups.ace_quantum_onsager',

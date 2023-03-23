@@ -200,18 +200,6 @@ class SuperPartition(ClonableArray,
         else:
             return richcmp(list(self), other, op)
 
-    def _hash_(self):
-        """
-        Return the hash of ``self``.
-
-        EXAMPLES::
-
-            sage: SP = SuperPartition([[1],[1]])
-            sage: hash(tuple(SP)) == hash(SP)
-            True
-        """
-        return hash(tuple(self))
-
     def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.

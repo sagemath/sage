@@ -1,6 +1,12 @@
 r"""
 Base class for multivariate polynomial rings
 """
+import itertools
+import warnings
+from collections.abc import Iterable
+from sage.matrix.constructor import matrix
+from sage.modules.free_module_element import vector
+
 import sage.misc.latex
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
@@ -15,7 +21,7 @@ from sage.categories.morphism import IdentityMorphism
 from sage.categories.commutative_rings import CommutativeRings
 _CommutativeRings = CommutativeRings()
 
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 
 from sage.combinat.integer_vector import IntegerVectors
 
@@ -340,6 +346,164 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             Ring in x, z over Rational Field
         """
         return self.remove_var(x)[str(x)]
+
+    def interpolation(self, bound, *args):
+        """
+        Create a polynomial with specified evaluations.
+
+        CALL FORMATS:
+
+        This function can be called in two ways:
+
+        1. interpolation(bound, points, values)
+
+        2. interpolation(bound, function)
+
+        INPUT:
+
+        * ``bound`` -- either an integer bounding the total degree or a
+          list/tuple of integers bounding the degree of the variables
+
+        * ``points`` -- list/tuple containing the evaluation points
+
+        * ``values`` -- list/tuple containing the desired values at ``points``
+
+        * ``function`` -- evaluable function in `n` variables, where `n` is the
+          number of variables of the polynomial ring
+
+        OUTPUT:
+
+        1. A polynomial respecting the bounds and having ``values`` as values
+           when evaluated at ``points``.
+
+        2. A polynomial respecting the bounds and having the same values as
+           ``function`` at exactly so many points so that the polynomial is
+           unique.
+
+        EXAMPLES::
+
+            sage: def F(a,b,c):
+            ....:     return a^3*b + b + c^2 + 25
+            ....:
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: R.interpolation(4, F)
+            x^3*y + z^2 + y + 25
+
+
+            sage: def F(a,b,c):
+            ....:     return a^3*b + b + c^2 + 25
+            ....:
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: R.interpolation([3,1,2], F)
+            x^3*y + z^2 + y + 25
+
+
+            sage: def F(a,b,c):
+            ....:     return a^3*b + b + c^2 + 25
+            ....:
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: points = [(5,1,1),(7,2,2),(8,5,-1),(2,5,3),(1,4,0),(5,9,0),
+            ....: (2,7,0),(1,10,13),(0,0,1),(-1,1,0),(2,5,3),(1,1,1),(7,4,11),
+            ....: (12,1,9),(1,1,3),(4,-1,2),(0,1,5),(5,1,3),(3,1,-2),(2,11,3),
+            ....: (4,12,19),(3,1,1),(5,2,-3),(12,1,1),(2,3,4)]
+            sage: R.interpolation([3,1,2], points, [F(*x) for x in points])
+            x^3*y + z^2 + y + 25
+
+        ALGORITHM:
+
+        Solves a linear system of equations with the linear algebra module. If
+        the points are not specified, it samples exactly as many points as
+        needed for a unique solution.
+
+        .. NOTE::
+
+            It will only run if the base ring is a field, even though it might
+            work otherwise as well. If your base ring is an integral domain,
+            let it run over the fraction field.
+
+            Also, if the solution is not unique, it spits out one solution,
+            without any notice that there are more.
+
+            Lastly, the interpolation function for univariate polynomial rings
+            is called ``lagrange_polynomial()``.
+
+        .. WARNING::
+
+            If you don't provide point/value pairs but just a function, it
+            will only use as many points as needed for a unique solution with
+            the given bounds. In particular it will *not* notice or check
+            whether the result yields the correct evaluation for other points
+            as well. So if you give wrong bounds, you will get a wrong answer
+            without any warning.
+
+            sage: def F(a,b,c):
+            ....:     return a^3*b + b + c^2 + 25
+            ....:
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: R.interpolation(3,F)
+            1/2*x^3 + x*y + z^2 - 1/2*x + y + 25
+
+        .. SEEALSO::
+
+            :meth:`lagrange_polynomial<sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial>`
+        """
+        # get ring and number of variables
+        R = self.base_ring()
+        n = self.ngens()
+
+        # we only run the algorithm over fields
+        if not R.is_field():
+            raise TypeError(f'The base ring {R} is not a field.')
+
+        # helper function to sample "num_samples" elements from R
+        def sample_points(num_samples):
+            try:
+                samples = list(itertools.islice(R, num_samples))
+                if len(samples) < num_samples:
+                    raise ValueError(f'Could not sample {num_samples} different elements of {R}.')
+            except NotImplementedError:
+                if R.characteristic() == 0 or R.characteristic() >= num_samples:
+                    samples = [R(k) for k in range(num_samples)]
+                else:
+                    raise NotImplementedError(f'Could not sample {num_samples} different elements of {R}.')
+
+            return samples
+
+        # set points and values
+        if len(args) == 2:
+            points, values = args
+        else:
+            F, = args
+
+            if isinstance(bound, Iterable):
+                R_points = sample_points(max(bound) + 1)
+                points = list(itertools.product(*[R_points[:bound[i] + 1] for i in range(n)]))
+            else:
+                points = list(itertools.combinations_with_replacement(sample_points(bound + 1), n))
+
+            values = [F(*x) for x in points]
+
+        # find all possibly appearing exponents
+        if isinstance(bound, Iterable):
+            exponents_space = list(itertools.product(*(range(bound[i] + 1) for i in range(n))))
+        else:
+            exponents_space = []
+            for entry in itertools.combinations_with_replacement(range(bound + 1), n):
+                exponents_space.append([entry[0]] + [entry[i] - entry[i - 1] for i in range(1, n)])
+
+        # build matrix
+        M = matrix.zero(R, 0, len(points))
+        for exponents in exponents_space:
+            M = M.stack(vector(R, [self.monomial(*exponents)(*x) for x in points]))
+
+        # solve for coefficients and construct polynomial
+        try:
+            coeff = M.solve_left(vector(R, values))
+        except ValueError:
+            raise ValueError('Could not find a solution.')
+        solution = sum(coeff[i] * self.monomial(*exponents_space[i]) for i in range(len(exponents_space)))
+
+        return solution
 
     def _coerce_map_from_base_ring(self):
         """
@@ -1135,6 +1299,27 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         return self(dict(zip(M, C)))
 
+    def some_elements(self):
+        r"""
+        Return a list of polynomials.
+
+        This is typically used for running generic tests.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: R.some_elements()
+            [x, y, x + y, x^2 + x*y, 0, 1]
+
+        """
+        R = self.base_ring()
+        L = list(self.gens())
+        if L:
+            L.append(L[0] + L[-1])
+            L.append(L[0] * L[-1])
+        L.extend([self.zero(), self.one()])
+        return L
+
     def change_ring(self, base_ring=None, names=None, order=None):
         """
         Return a new multivariate polynomial ring which isomorphic to
@@ -1183,6 +1368,39 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             True
         """
         return self({exponents: self.base_ring().one()})
+
+    def monomials_of_degree(self, degree):
+        r"""
+        Return a list of all monomials of the given total degree in this
+        multivariate polynomial ring.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = ZZ[]
+            sage: mons = R.monomials_of_degree(2)
+            sage: mons
+            [z^2, y*z, x*z, y^2, x*y, x^2]
+            sage: P = PolynomialRing(QQ, 3, 'x, y, z', order=TermOrder('wdeglex', [1, 2, 1]))
+            sage: P.monomials_of_degree(2)
+            [z^2, y, x*z, x^2]
+            sage: P = PolynomialRing(QQ, 3, 'x, y, z', order='lex')
+            sage: P.monomials_of_degree(3)
+            [z^3, y*z^2, y^2*z, y^3, x*z^2, x*y*z, x*y^2, x^2*z, x^2*y, x^3]
+            sage: P = PolynomialRing(QQ, 3, 'x, y, z', order='invlex')
+            sage: P.monomials_of_degree(3)
+            [x^3, x^2*y, x*y^2, y^3, x^2*z, x*y*z, y^2*z, x*z^2, y*z^2, z^3]
+
+        The number of such monomials equals `\binom{n+k-1}{k}`
+        where `n` is the number of variables and `k` the degree::
+
+            sage: len(mons) == binomial(3+2-1,2)
+            True
+        """
+        deg_of_gens = [x.degree() for x in self.gens()]
+        from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+        mons = [self.monomial(*a) for a in WeightedIntegerVectors(degree, deg_of_gens)]
+        mons.sort()  # This could be implemented in WeightedIntegerVectors instead
+        return mons
 
     def _macaulay_resultant_getS(self, mon_deg_tuple, dlist):
         r"""

@@ -184,6 +184,7 @@ List of Poset methods
     :meth:`~FinitePoset.flag_h_polynomial` | Return the flag h-polynomial of the poset.
     :meth:`~FinitePoset.order_polynomial` | Return the order polynomial of the poset.
     :meth:`~FinitePoset.zeta_polynomial` | Return the zeta polynomial of the poset.
+    :meth:`~FinitePoset.M_triangle` | Return the M-triangle of the poset.
     :meth:`~FinitePoset.kazhdan_lusztig_polynomial` | Return the Kazhdan-Lusztig polynomial of the poset.
     :meth:`~FinitePoset.coxeter_polynomial` | Return the characteristic polynomial of the Coxeter transformation.
     :meth:`~FinitePoset.degree_polynomial` | Return the generating polynomial of degrees of vertices in the Hasse diagram.
@@ -291,7 +292,7 @@ from typing import List
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.categories.category import Category
 from sage.categories.sets_cat import Sets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -3080,7 +3081,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: R = Poset([[0],[]])
             sage: R.list()
             [0]
-            sage: R.top() #Trac #10776
+            sage: R.top() #Issue #10776
             0
         """
         hasse_top = self._hasse_diagram.top()
@@ -5882,7 +5883,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: L = LatticePoset({}).with_bounds(); L
             Finite lattice containing 2 elements
-            sage: L.meet_irreducibles()  # Trac 21543
+            sage: L.meet_irreducibles()  # Issue 21543
             ['bottom']
 
             sage: Poset().with_bounds((None, 1))
@@ -7259,6 +7260,47 @@ class FinitePoset(UniqueRepresentation, Parent):
             f = g[n] + f / n
         return f
 
+    def M_triangle(self):
+        r"""
+        Return the M-triangle of the poset.
+
+        The poset is expected to be graded.
+
+        OUTPUT:
+
+        an :class:`~sage.combinat.triangles_FHM.M_triangle`
+
+        The M-triangle is the generating polynomial of the Möbius numbers
+
+        .. MATH::
+
+            M(x, y)=\sum_{a \leq b} \mu(a,b) x^{|a|}y^{|b|} .
+
+        EXAMPLES::
+
+            sage: P = posets.DiamondPoset(5)
+            sage: P.M_triangle()
+            M: x^2*y^2 - 3*x*y^2 + 3*x*y + 2*y^2 - 3*y + 1
+
+        TESTS::
+
+            sage: P = posets.PentagonPoset()
+            sage: P.M_triangle()
+            Traceback (most recent call last):
+            ...
+            ValueError: the poset is not graded
+        """
+        from sage.combinat.triangles_FHM import M_triangle
+        hasse = self._hasse_diagram
+        rk = hasse.rank_function()
+        if rk is None:
+            raise ValueError('the poset is not graded')
+        x, y = polygen(ZZ, 'x,y')
+        p = sum(hasse.moebius_function(a, b) * x**rk(a) * y**rk(b)
+                for a in hasse
+                for b in hasse.principal_order_filter(a))
+        return M_triangle(p)
+
     def f_polynomial(self):
         r"""
         Return the `f`-polynomial of the poset.
@@ -7296,12 +7338,17 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P = Poset({2: []})
             sage: P.f_polynomial()
             1
+
+            sage: P = Poset({2:[1,3]})
+            sage: P.f_polynomial()
+            Traceback (most recent call last):
+            ...
+            ValueError: the poset is not bounded
         """
         q = polygen(ZZ, 'q')
-        one = q.parent().one()
         hasse = self._hasse_diagram
         if len(hasse) == 1:
-            return one
+            return q.parent().one()
         maxi = hasse.top()
         mini = hasse.bottom()
         if mini is None or maxi is None:
@@ -8766,7 +8813,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: libgap(P)  # optional - gap_packages
             <A poset on 5 points>
             sage: A = libgap(GF(2)).PosetAlgebra(P); A  # optional - gap_packages
-            <GF(2)[<quiver with 5 vertices and 5 arrows>]/<two-sided ideal in <GF(2)[<quiver with 5 vertices and 5 arrows>]>, (1 generators)>>
+            <GF(2)[<quiver with 5 vertices and 5 arrows>]/<two-sided ideal in <GF(2)[<quiver with 5 vertices and 5 arrows>]>, (1 generator)>>
             sage: A.Dimension()  # optional - gap_packages
             13
         """

@@ -35,6 +35,9 @@ Pynac interface
 from cpython cimport *
 from libc cimport math
 
+from sage.arith.misc import bernoulli, factorial, GCD as gcd, is_prime
+from sage.arith.functions import lcm
+from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.all cimport *
 from sage.libs.gsl.types cimport *
@@ -42,15 +45,7 @@ from sage.libs.gsl.complex cimport *
 from sage.libs.gsl.gamma cimport gsl_sf_lngamma_complex_e
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.libs.pari.all import pari
-
-from sage.cpython.string cimport str_to_bytes, char_to_str
-
-from sage.arith.all import gcd, lcm, is_prime, factorial, bernoulli
-
-from sage.structure.coerce cimport coercion_model
-from sage.structure.element cimport Element, parent
 from sage.misc.persist import loads, dumps
-
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.rational cimport Rational
@@ -58,7 +53,8 @@ from sage.rings.real_mpfr import RR, RealField
 from sage.rings.rational cimport rational_power_parts
 from sage.rings.real_double cimport RealDoubleElement
 from sage.rings.cc import CC
-
+from sage.structure.coerce cimport coercion_model
+from sage.structure.element cimport Element, parent
 from sage.symbolic.function cimport Function
 
 
@@ -1018,7 +1014,7 @@ cdef py_real(x):
         sage: py_real(complex(2,2))
         2.0
     """
-    if isinstance(x, (float, int, long)):
+    if isinstance(x, (float, int)):
         return x
     elif isinstance(x, complex):
         return x.real
@@ -1118,7 +1114,7 @@ cdef py_conjugate(x):
 cdef bint py_is_rational(x):
     return (type(x) is Rational or
             type(x) is Integer or
-            isinstance(x, (int, long)))
+            isinstance(x, int))
 
 
 cdef bint py_is_equal(x, y):
@@ -1156,7 +1152,7 @@ cdef bint py_is_integer(x):
         sage: py_is_integer(3.0r)
         False
     """
-    if isinstance(x, (int, long, Integer)):
+    if isinstance(x, (int, Integer)):
         return True
     if not isinstance(x, Element):
         return False
@@ -1220,7 +1216,7 @@ def py_is_crational_for_doctest(x):
 
 
 cdef bint py_is_real(a):
-    if isinstance(a, (int, long, Integer, float)):
+    if isinstance(a, (int, Integer, float)):
         return True
     try:
         P = parent(a)
@@ -1246,7 +1242,7 @@ cdef bint py_is_prime(n):
 
 
 cdef bint py_is_exact(x):
-    if isinstance(x, (int, long, Integer)):
+    if isinstance(x, (int, Integer)):
         return True
     if not isinstance(x, Element):
         return False
@@ -1281,7 +1277,7 @@ cdef py_numer(n):
         sage: py_numer(no_numer())
         42
     """
-    if isinstance(n, (int, long, Integer)):
+    if isinstance(n, (int, Integer)):
         return n
     try:
         return n.numerator()
@@ -1319,7 +1315,7 @@ cdef py_denom(n):
         sage: py_denom(2/3*i)
         3
     """
-    if isinstance(n, (int, long, Integer)):
+    if isinstance(n, (int, Integer)):
         return 1
     try:
         return n.denominator()
@@ -1441,7 +1437,7 @@ cdef py_tgamma(x):
         sage: py_tgamma(1/2)
         1.77245385090552
     """
-    if isinstance(x, (int, long)):
+    if isinstance(x, int):
         x = float(x)
     if type(x) is float:
         return math.tgamma(PyFloat_AS_DOUBLE(x))
@@ -1489,7 +1485,7 @@ cdef py_factorial(x):
     # factorial(x) is only defined for non-negative integers x
     # so we first test if x can be coerced into ZZ and is non-negative.
     # If this is not the case then we return the symbolic expression gamma(x+1)
-    # This fixes Trac 9240
+    # This fixes Issue 9240
     try:
         x_in_ZZ = ZZ(x)
         coercion_success = True
@@ -1759,7 +1755,7 @@ cdef py_log(x):
     """
     cdef gsl_complex res
     cdef double real, imag
-    if isinstance(x, (int, long)):
+    if isinstance(x, int):
         x = float(x)
     if type(x) is float:
         real = PyFloat_AS_DOUBLE(x)
@@ -2391,7 +2387,7 @@ def register_symbol(obj, conversions, nargs=None):
       this can be deduced automatically.
 
     EXAMPLES::
-    
+
         sage: from sage.symbolic.expression import register_symbol as rs
         sage: rs(SR(5),{'maxima':'five'})
         sage: SR(maxima_calculus('five'))

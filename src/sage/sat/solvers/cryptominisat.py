@@ -94,10 +94,11 @@ class CryptoMiniSat(SatSolver):
 
     def nvars(self):
         r"""
-        Return the number of variables. Note that for compatibility with DIMACS
-        convention, the number of variables corresponds to the maximal index of
-        the variables used. 
-        
+        Return the number of variables.
+
+        Note that for compatibility with DIMACS convention, the number
+        of variables corresponds to the maximal index of the variables used.
+
         EXAMPLES::
 
             sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat

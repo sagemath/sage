@@ -6,7 +6,8 @@ imported by the doctest framework, so the simple test like above would
 not work. Instead, we test this by starting a new Python process::
 
     sage: from sage.tests.cmdline import test_executable
-    sage: cmd = "from sage.all import *\nprint('IPython' in sys.modules)\n"
+    sage: environment = "sage.all"
+    sage: cmd = f"from {environment} import *\nprint('IPython' in sys.modules)\n"
     sage: print(test_executable(["sage", "--python"], cmd)[0])  # long time
     False
 

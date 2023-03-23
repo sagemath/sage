@@ -232,7 +232,6 @@ class FinitePermutationGroups(CategoryWithAxiom):
             return parent.sum_of_terms([C.an_element().cycle_type(), base_ring(C.cardinality())]
                                        for C in self.conjugacy_classes()
                                       ) / self.cardinality()
-    
 
         @cached_method
         def profile_series(self, variable='z'):

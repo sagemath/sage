@@ -1,5 +1,5 @@
 """
-Tornaria Methods for Computing with Quadratic Forms
+Tornaria methods for computing with quadratic forms
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Gonzalo Tornaria
@@ -11,17 +11,19 @@ Tornaria Methods for Computing with Quadratic Forms
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.integer_ring import ZZ
-from sage.misc.functional import is_odd
-
+from sage.arith.misc import (CRT_vectors,
+                             factor,
+                             gcd,
+                             hilbert_symbol,
+                             kronecker as kronecker_symbol,
+                             prime_to_m_part)
 from sage.libs.pari.all import pari
+from sage.misc.functional import is_odd
 from sage.misc.misc_c import prod
-from sage.arith.all import (factor, gcd, prime_to_m_part, CRT_vectors,
-        hilbert_symbol, kronecker_symbol)
-
-from sage.quadratic_forms.quadratic_form import QuadraticForm__constructor as QuadraticForm
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
+from sage.quadratic_forms.quadratic_form import QuadraticForm__constructor as QuadraticForm
+from sage.rings.integer_ring import ZZ
 
 
 # TO DO -- Add second argument

@@ -271,6 +271,7 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
         [0, 11, 1, 0, 0]
         [0, 12, 0, 0, 0]
     """
+
     def __init__(self, weight):
         """
         TESTS::
@@ -281,7 +282,8 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
             sage: TestSuite(C).run()
         """
         self._weights = weight
-        from sage.sets.all import Family, NonNegativeIntegers
+        from sage.sets.family import Family
+        from sage.sets.non_negative_integers import NonNegativeIntegers
         # Use "partial" to make the basis function (with the weights
         # argument specified) pickleable.  Otherwise, it seems to
         # cause problems...

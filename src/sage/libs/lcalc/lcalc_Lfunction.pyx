@@ -272,7 +272,7 @@ cdef class Lfunction:
 
     def find_zeros(self, T1, T2, stepsize):
         """
-        Finds zeros on critical line between ``T1`` and ``T2`` using step size 
+        Finds zeros on critical line between ``T1`` and ``T2`` using step size
         of stepsize. This function might miss zeros if step size is too
         large. This function computes the zeros of the L-function by using
         change in signs of areal valued function whose zeros coincide with

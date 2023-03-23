@@ -574,7 +574,7 @@ cdef extern from "singular/Singular/libsingular.h":
 
     # gets a component out of a polynomial vector
 
-    poly *pTakeOutComp1(poly **, int)
+    poly *pTakeOutComp(poly **, int)
 
     # deep copy p
 

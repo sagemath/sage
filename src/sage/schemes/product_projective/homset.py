@@ -22,7 +22,7 @@ from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 from sage.misc.mrange import xmrange
 from sage.misc.misc_c import prod
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.rational_field import is_RationalField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.generic.homset import SchemeHomset_points
@@ -146,7 +146,7 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
             (1 : 0 : 0 , 0 : 1), (1 : 0 : 0 , 1 : 0), (1 : 0 : 0 , 1 : 1), (1 : 0 : 0 , 2 : 1),
             (1 : 0 : 1 , 0 : 1), (1 : 0 : 1 , 1 : 0), (1 : 0 : 1 , 1 : 1), (1 : 0 : 1 , 2 : 1),
             (1 : 1 : 0 , 0 : 1), (1 : 1 : 0 , 1 : 0), (1 : 1 : 0 , 1 : 1), (1 : 1 : 0 , 2 : 1),
-            (1 : 1 : 1 , 0 : 1), (1 : 1 : 1 , 1 : 0), (1 : 1 : 1 , 1 : 1), (1 : 1 : 1 , 2 : 1), 
+            (1 : 1 : 1 , 0 : 1), (1 : 1 : 1 , 1 : 0), (1 : 1 : 1 , 1 : 1), (1 : 1 : 1 , 2 : 1),
             (1 : 2 : 1 , 0 : 1), (1 : 2 : 1 , 1 : 0), (1 : 2 : 1 , 1 : 1), (1 : 2 : 1 , 2 : 1),
             (2 : 0 : 1 , 0 : 1), (2 : 0 : 1 , 1 : 0), (2 : 0 : 1 , 1 : 1), (2 : 0 : 1 , 2 : 1),
             (2 : 1 : 0 , 0 : 1), (2 : 1 : 0 , 1 : 0), (2 : 1 : 0 , 1 : 1), (2 : 1 : 0 , 2 : 1),
@@ -228,7 +228,7 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
                 raise TypeError("a positive bound B (= %s) must be specified"%B)
             from sage.schemes.product_projective.rational_point import enum_product_projective_number_field
             return enum_product_projective_number_field(self, bound=B)
-        elif is_FiniteField(R):
+        elif isinstance(R, FiniteField):
             from sage.schemes.product_projective.rational_point import enum_product_projective_finite_field
             return enum_product_projective_finite_field(self)
         else:

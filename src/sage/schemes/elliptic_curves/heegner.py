@@ -92,32 +92,37 @@ The above is consistent with the following analytic computation::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-from sage.misc.misc_c import prod
-from sage.misc.verbose import verbose
-from sage.misc.cachefunc import cached_method
-
-from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import (richcmp_method, richcmp,
-                                    richcmp_not_equal, rich_to_bool)
-
 import sage.rings.abc
 import sage.rings.number_field.number_field_element
 import sage.rings.number_field.number_field as number_field
 import sage.rings.all as rings
-from sage.rings.all import (ZZ, GF, QQ, CDF,
-                            Integers, RealField, ComplexField, QuadraticField)
-from sage.arith.all import (gcd, xgcd, lcm, prime_divisors, factorial,
-        binomial)
+
+from sage.arith.functions import lcm
+from sage.arith.misc import (binomial, factorial, prime_divisors,
+                             GCD as gcd, XGCD as xgcd)
+from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
+from sage.misc.verbose import verbose
+from sage.modular.modsym.p1list import P1List
+from sage.rings.complex_double import CDF
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.factorint import factor_trial_division
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import QuadraticField
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RealField
 from sage.quadratic_forms.all import (BinaryQF,
                                       BinaryQF_reduced_representatives)
-from sage.matrix.all import MatrixSpace, matrix
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
+from sage.structure.sage_object import SageObject
+from sage.structure.richcmp import (richcmp_method, richcmp,
+                                    richcmp_not_equal, rich_to_bool)
 
-from sage.modular.modsym.p1list import P1List
-
-
-##################################################################################
+###############################################################################
 #
 # The exported functions, which are in most cases enough to get the
 # user going working with Heegner points:
@@ -125,7 +130,7 @@ from sage.modular.modsym.p1list import P1List
 #    heegner_points -- all of them with given level, discriminant, conductor
 #    heegner_point -- a specific one
 #
-##################################################################################
+###############################################################################
 
 def heegner_points(N, D=None, c=None):
     """
@@ -135,11 +140,11 @@ def heegner_points(N, D=None, c=None):
 
     INPUT:
 
-        - `N` -- level (positive integer)
+    - `N` -- level (positive integer)
 
-        - `D` -- discriminant (negative integer)
+    - `D` -- discriminant (negative integer)
 
-        - `c` -- conductor (positive integer)
+    - `c` -- conductor (positive integer)
 
     EXAMPLES::
 
@@ -155,8 +160,9 @@ def heegner_points(N, D=None, c=None):
     if D is not None and c is None:
         return HeegnerPoints_level_disc(N, D)
     if D is not None and c is not None:
-        return HeegnerPoints_level_disc_cond(N,D,c)
+        return HeegnerPoints_level_disc_cond(N, D, c)
     raise TypeError
+
 
 def heegner_point(N, D=None, c=1):
     """
@@ -167,11 +173,11 @@ def heegner_point(N, D=None, c=1):
 
     INPUT:
 
-        - `N` -- level (positive integer)
+    - `N` -- level (positive integer)
 
-        - `D` -- discriminant (optional: default first valid `D`)
+    - `D` -- discriminant (optional: default first valid `D`)
 
-        - `c` -- conductor (positive integer, optional, default: 1)
+    - `c` -- conductor (positive integer, optional, default: 1)
 
     EXAMPLES::
 
@@ -185,20 +191,20 @@ def heegner_point(N, D=None, c=1):
         Heegner point 1/778*sqrt(-20) - 165/389 of discriminant -20 on X_0(389)
     """
     if D is not None:
-        return heegner_points(N,D,c)[0]
+        return heegner_points(N, D, c)[0]
     H = heegner_points(N)
     D = H.discriminants(1)[0]
-    return heegner_points(N,D,c)[0]
+    return heegner_points(N, D, c)[0]
 
 
-##################################################################################
+###############################################################################
 #
 # Ring class fields, represented as abstract objects.  These do not
 # derive from number fields, since we do not need to work with their
 # elements, and explicitly representing them as number fields would be
 # far too difficult.
 #
-##################################################################################
+###############################################################################
 
 class RingClassField(SageObject):
     """
@@ -352,9 +358,8 @@ class RingClassField(SageObject):
         """
         c = self.__c
         if c == 1:
-            return "Hilbert class field of QQ[sqrt(%s)]"%self.__D
-        else:
-            return "Ring class field extension of QQ[sqrt(%s)] of conductor %s"%(self.__D, self.__c)
+            return "Hilbert class field of QQ[sqrt(%s)]" % self.__D
+        return "Ring class field extension of QQ[sqrt(%s)] of conductor %s" % (self.__D, self.__c)
 
     @cached_method
     def degree_over_K(self):
@@ -1657,7 +1662,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
         (A,B,C) = f
         if A%c == 0:
             A, C = C, A
-        return K.maximal_order().ideal([A, (-B+c*sqrtD)/2])
+        return K.fractional_ideal([A, (-B+c*sqrtD)/2])
 
 ##     def __call__(self, z):
 ##         """
@@ -2679,7 +2684,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
                 elif isinstance(f, BinaryQF):
                     # convert from BinaryQF
                     f = tuple(f)
-                elif sage.rings.number_field.number_field_element.is_NumberFieldElement(f):
+                elif isinstance(f, NumberFieldElement_base):
                     # tau = number field element
                     g = f.minpoly()
                     if g.degree() != 2:
@@ -6533,7 +6538,8 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
         return IR(alpha-MIN_ERR,alpha+MIN_ERR) * IR(LE1-err_E,LE1+err_E) * IR(LF1-err_F,LF1+err_F)
 
 
-def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mwrank=False, check_rank=True):
+def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
+                  verbose_mwrank=False, check_rank=True):
     r"""
     Return an interval that contains the index of the Heegner
     point `y_K` in the group of `K`-rational points modulo torsion
@@ -6745,7 +6751,7 @@ def _adjust_heegner_index(self, a):
     return a.sqrt()
 
 
-def heegner_index_bound(self, D=0,  prec=5, max_height=None):
+def heegner_index_bound(self, D=0, prec=5, max_height=None):
     r"""
     Assume ``self`` has rank 0.
 
@@ -6821,7 +6827,7 @@ def heegner_index_bound(self, D=0,  prec=5, max_height=None):
     else:
         H = 4*h
     p = 3
-    from sage.all import next_prime
+    from sage.arith.misc import next_prime
     while True:
         c = H/(2*p**2) + B
         if c < max_height:

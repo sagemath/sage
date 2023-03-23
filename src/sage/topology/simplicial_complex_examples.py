@@ -49,7 +49,7 @@ All of these examples are accessible by typing
 - :func:`ZieglerBall`
 
 You can also get a list by typing ``simplicial_complexes.`` and hitting the
-TAB key.
+:kbd:`Tab` key.
 
 EXAMPLES::
 
@@ -70,7 +70,7 @@ TESTS::
     sage: H = PseudoQuaternionicProjectivePlane()
     doctest:warning...:
     DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated. Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
-    See https://trac.sagemath.org/34568 for details.
+    See https://github.com/sagemath/sage/issues/34568 for details.
 """
 
 from .simplicial_complex import SimplicialComplex

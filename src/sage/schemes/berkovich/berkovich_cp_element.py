@@ -83,7 +83,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
             Type I point centered at 4 + O(5^20)
         """
         from sage.rings.function_field.element import is_FunctionFieldElement
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.fraction_field_element import FractionFieldElement_1poly_field
         self._type = None
 
@@ -109,17 +109,17 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         # is_FunctionFieldElement calls .parent
         elif hasattr(center, "parent") and hasattr(radius, 'parent'):
-            from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
-            if is_MPolynomial(center):
+            from sage.rings.polynomial.multi_polynomial import MPolynomial
+            if isinstance(center, MPolynomial):
                 try:
                     center = center.univariate_polynomial()
                 except AttributeError:
                     raise TypeError('center was %s, a multivariable polynomial' % center)
 
             # check if the radius and the center are functions
-            center_func_check = is_FunctionFieldElement(center) or is_Polynomial(center) or\
+            center_func_check = is_FunctionFieldElement(center) or isinstance(center, Polynomial) or\
                 isinstance(center, FractionFieldElement_1poly_field) or isinstance(center, Expression)
-            radius_func_check = is_FunctionFieldElement(radius) or is_Polynomial(radius) or\
+            radius_func_check = is_FunctionFieldElement(radius) or isinstance(radius, Polynomial) or\
                 isinstance(radius, FractionFieldElement_1poly_field) or isinstance(radius, Expression)
 
             if center_func_check:
@@ -314,7 +314,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                             center = (self._base_space)(center)
                         except (TypeError, ValueError):
                             raise ValueError('could not convert %s to %s' % (center, self._base_space))
-                if not(center.scheme().ambient_space() is center.scheme()):
+                if center.scheme().ambient_space() is not center.scheme():
                     raise ValueError("the center of a point of projective Berkovich space cannot be " +
                                      "a point of %s" % (center.scheme()))
                 # since we are over a field, we normalize coordinates
@@ -334,7 +334,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                         raise ValueError("center in %s, should be in %s") % (center.parent(), self._base_space)
                 else:
                     # make sure the center is in the appropriate number field
-                    if not(center.parent() == self._base_space):
+                    if not (center.parent() == self._base_space):
                         try:
                             center = (self._base_space)(center)
                         except (TypeError, ValueError):

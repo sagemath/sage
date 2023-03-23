@@ -37,7 +37,10 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.data_structures.bitset_base cimport *
 from sage.matrix.matrix2 cimport Matrix
-from sage.rings.all import ZZ, FiniteField, GF, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.rational_field import QQ
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.libs.gmp.mpq cimport *
@@ -3682,4 +3685,3 @@ cdef class RationalMatrix(LeanMatrix):
         version = 0
         data = (self.nrows(), self.ncols(), entries)
         return unpickle_rational_matrix, (version, data)
-

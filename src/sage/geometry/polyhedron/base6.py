@@ -21,7 +21,7 @@ Base class for polyhedra: Methods for plotting and affine hull projection
 #       Copyright (C) 2019      Julian Ritter
 #       Copyright (C) 2019-2020 Laith Rastanawi
 #       Copyright (C) 2019-2020 Sophia Elia
-#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ class Polyhedron_base6(Polyhedron_base5):
         %% opacity = 0.8
         %% vertex_color = green
         %% axis = False
-        <BLANKLINE>
+        %%
         %% Coordinate of the vertices:
         %%
         \coordinate (1.00000, -1.00000, -1.00000) at (1.00000, -1.00000, -1.00000);

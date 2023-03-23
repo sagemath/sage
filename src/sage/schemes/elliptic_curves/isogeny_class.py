@@ -770,7 +770,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             True
         """
         from sage.schemes.elliptic_curves.ell_curve_isogeny import fill_isogeny_matrix
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         from sage.sets.set import Set
         self._maps = None
 
@@ -1055,7 +1055,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
             [0 2 0 0 0 0]
         """
         algorithm = self._algorithm
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         self._maps = None
         if algorithm == "database":
             try:
@@ -1183,8 +1183,8 @@ def isogeny_degrees_cm(E, verbose=False):
         print("CM case, discriminant = %s" % d)
 
     from sage.libs.pari.all import pari
-    from sage.sets.all import Set
-    from sage.arith.all import kronecker_symbol
+    from sage.sets.set import Set
+    from sage.arith.misc import kronecker as kronecker_symbol
 
     n = E.base_field().absolute_degree()
     if not E.has_rational_cm():
@@ -1207,7 +1207,7 @@ def isogeny_degrees_cm(E, verbose=False):
     # Collect possible primes.  First put in 2, and also 3 for
     # discriminant -3 (special case because of units):
 
-    L = Set([ZZ(2), ZZ(3)]) if d==-3 else  Set([ZZ(2)])
+    L = Set([ZZ(2), ZZ(3)]) if d==-3 else Set([ZZ(2)])
     if verbose:
         print("initial primes: %s" % L)
 

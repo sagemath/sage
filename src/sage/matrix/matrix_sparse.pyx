@@ -1005,7 +1005,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [ 0  1  2  3]
             [ 4  5  6  7]
 
-        TESTS::
+        TESTS:
 
         One can stack matrices over different rings (:trac:`16399`). ::
 

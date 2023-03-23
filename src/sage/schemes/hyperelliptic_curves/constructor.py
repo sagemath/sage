@@ -6,15 +6,13 @@ AUTHORS:
 - David Kohel (2006): initial version
 
 - Anna Somoza (2019-04): dynamic class creation
-
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #                2019 Anna Somoza <anna.somoza.henares@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.schemes.projective.projective_space import ProjectiveSpace
 
@@ -25,11 +23,12 @@ from .hyperelliptic_padic_field import HyperellipticCurve_padic_field
 from .hyperelliptic_g2 import HyperellipticCurve_g2
 
 import sage.rings.abc
-from sage.rings.rational_field import is_RationalField
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
-from sage.rings.polynomial.polynomial_element import is_Polynomial
 
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational_field import is_RationalField
 from sage.structure.dynamic_class import dynamic_class
+
 
 def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     r"""
@@ -198,7 +197,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     # F is the discriminant; use this for the type check
     # rather than f and h, one of which might be constant.
     F = h**2 + 4*f
-    if not is_Polynomial(F):
+    if not isinstance(F, Polynomial):
         raise TypeError("Arguments f (= %s) and h (= %s) must be polynomials" % (f, h))
     P = F.parent()
     f = P(f)
@@ -216,42 +215,45 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
         if P(2) == 0:
             # characteristic 2
             if h == 0:
-                raise ValueError("In characteristic 2, argument h (= %s) must be non-zero."%h)
+                raise ValueError("In characteristic 2, argument h (= %s) must be non-zero." % h)
             if h[g+1] == 0 and f[2*g+1]**2 == f[2*g+2]*h[g]**2:
-                raise ValueError("Not a hyperelliptic curve: " \
-                                  "highly singular at infinity.")
+                raise ValueError("Not a hyperelliptic curve: "
+                                 "highly singular at infinity.")
             should_be_coprime = [h, f*h.derivative()**2+f.derivative()**2]
         else:
             # characteristic not 2
             if not F.degree() in [2*g+1, 2*g+2]:
-                raise ValueError("Not a hyperelliptic curve: " \
-                                  "highly singular at infinity.")
+                raise ValueError("Not a hyperelliptic curve: "
+                                 "highly singular at infinity.")
             should_be_coprime = [F, F.derivative()]
         try:
-            smooth = should_be_coprime[0].gcd(should_be_coprime[1]).degree()==0
+            smooth = should_be_coprime[0].gcd(should_be_coprime[1]).degree() == 0
         except (AttributeError, NotImplementedError, TypeError):
             try:
-                smooth = should_be_coprime[0].resultant(should_be_coprime[1])!=0
+                smooth = should_be_coprime[0].resultant(should_be_coprime[1]) != 0
             except (AttributeError, NotImplementedError, TypeError):
-                raise NotImplementedError("Cannot determine whether " \
-                      "polynomials %s have a common root. Use " \
-                      "check_squarefree=False to skip this check." % \
+                raise NotImplementedError("Cannot determine whether "
+                      "polynomials %s have a common root. Use "
+                      "check_squarefree=False to skip this check." %
                       should_be_coprime)
         if not smooth:
-            raise ValueError("Not a hyperelliptic curve: " \
-                              "singularity in the provided affine patch.")
+            raise ValueError("Not a hyperelliptic curve: "
+                             "singularity in the provided affine patch.")
     R = P.base_ring()
     PP = ProjectiveSpace(2, R)
     if names is None:
-        names = ["x","y"]
+        names = ["x", "y"]
 
     superclass = []
     cls_name = ["HyperellipticCurve"]
 
-    genus_classes = {
-        2 :  HyperellipticCurve_g2}
+    genus_classes = {2: HyperellipticCurve_g2}
 
-    is_pAdicField = lambda x: isinstance(x, sage.rings.abc.pAdicField)
+    def is_FiniteField(x):
+        return isinstance(x, FiniteField)
+
+    def is_pAdicField(x):
+        return isinstance(x, sage.rings.abc.pAdicField)
 
     fields = [
         ("FiniteField", is_FiniteField, HyperellipticCurve_finite_field),

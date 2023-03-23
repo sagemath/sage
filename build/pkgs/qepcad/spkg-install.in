@@ -5,11 +5,11 @@ export saclib="$SAGE_LOCAL/lib/saclib"
 export qe=$(pwd -P)
 
 # * Override SHELL: use /bin/sh instead of /bin/csh, see
-#   https://trac.sagemath.org/ticket/10224
+#   https://github.com/sagemath/sage/issues/10224
 # * Add rpath to compiler flags, see
-#   https://trac.sagemath.org/ticket/22653
+#   https://github.com/sagemath/sage/issues/22653
 # * Use ARFLAGS that also work on macOS, avoiding the U option, see
-#   https://trac.sagemath.org/ticket/28388
+#   https://github.com/sagemath/sage/issues/28388
 LIBS=-lreadline
 if [ "$UNAME" = "Linux" ]; then
    LIBS="$LIBS -lrt"

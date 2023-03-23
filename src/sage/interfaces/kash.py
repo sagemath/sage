@@ -38,14 +38,13 @@ The KASH interface offers three pieces of functionality:
 Issues
 ------
 
-For some reason hitting Control-C to interrupt a calculation
-doesn't work correctly. (TODO)
+For some reason hitting :kbd:`Control` + :kbd:`C` to interrupt a calculation
+does not work correctly. (TODO)
 
 Tutorial
 --------
 
-The examples in this tutorial require that kash
-be installed.
+The examples in this tutorial require that kash be installed.
 
 Basics
 ~~~~~~
@@ -673,7 +672,7 @@ class Kash(Expect):
 
         EXAMPLES::
 
-            sage: kash._function_call_string('Expand', ['x', 'y'], ['Prec:=10'])
+            sage: Kash()._function_call_string('Expand', ['x', 'y'], ['Prec:=10'])
             'Expand(x,y,rec(Prec:=10))'
         """
         if not kwds:
@@ -785,6 +784,22 @@ class KashDocumentation(list):
 
 
 def is_KashElement(x):
+    """
+    Returns True if ``x`` is of type :class:`KashElement`.
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.kash import is_KashElement
+        sage: is_KashElement(2)
+        doctest:...: DeprecationWarning: the function is_KashElement is deprecated; use isinstance(x, sage.interfaces.abc.KashElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
+        False
+        sage: is_KashElement(kash(2))  # optional - kash
+        True
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_KashElement is deprecated; use isinstance(x, sage.interfaces.abc.KashElement) instead")
+
     return isinstance(x, KashElement)
 
 ######

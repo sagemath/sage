@@ -12,6 +12,7 @@ exclude sage/categories/basic.*
 exclude sage/categories/cartesian_product.*
 exclude sage/categories/category*.*
 exclude sage/categories/covariant_functorial_construction.*
+exclude sage/categories/facade_sets.*
 exclude sage/categories/functor.*
 exclude sage/categories/homset.*
 exclude sage/categories/homsets.*
@@ -34,7 +35,7 @@ exclude sage/categories/__init__.py
 include sage/rings/ideal.*
 include sage/rings/ring.*
 graft sage/typeset                     # dep of sage.categories.tensor
-# include sage/rings/integer*.*     # depends on cypari, flint - https://trac.sagemath.org/ticket/30022
+# include sage/rings/integer*.*     # depends on cypari, flint - https://github.com/sagemath/sage/issues/30022
 # include sage/rings/rational*.*
 # include sage/rings/infinity.*
 

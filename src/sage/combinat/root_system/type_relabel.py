@@ -15,6 +15,7 @@ from sage.combinat.root_system import cartan_type
 from sage.combinat.root_system import ambient_space
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 
+
 class CartanType(cartan_type.CartanType_decorator):
     r"""
     A class for relabelled Cartan types.
@@ -185,7 +186,7 @@ class CartanType(cartan_type.CartanType_decorator):
             # FIXME: Remove the is_crystallographic (and the short-circuiting
             #   super) check once the non-crystallographic finite types
             #   (i.e., H_3, H_4, I_2(p)) have an implementation of an
-            #   ambient space. See ticket #24892.
+            #   ambient space. See issue #24892.
             self.__class__ = CartanType_finite
         elif type.is_affine():
             self.__class__ = CartanType_affine
@@ -421,6 +422,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
 ###########################################################################
 
+
 class AmbientSpace(ambient_space.AmbientSpace):
     """
     Ambient space for a relabelled finite Cartan type.
@@ -542,6 +544,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         else:
             RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
 
+
 class CartanType_finite(CartanType, cartan_type.CartanType_finite):
     AmbientSpace = AmbientSpace
 
@@ -619,6 +622,8 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
         return self._type.affine().relabel(relabelling)
 
 ###########################################################################
+
+
 class CartanType_affine(CartanType, cartan_type.CartanType_affine):
     """
     TESTS::

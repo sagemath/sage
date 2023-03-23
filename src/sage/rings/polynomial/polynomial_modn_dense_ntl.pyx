@@ -4,7 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-"""
+r"""
 Dense univariate polynomials over  `\ZZ/n\ZZ`, implemented using NTL
 
 This implementation is generally slower than the FLINT implementation in
@@ -22,16 +22,15 @@ AUTHORS:
 - Robert Bradshaw: Split off from polynomial_element_generic.py (2007-09)
 - Robert Bradshaw: Major rewrite to use NTL directly (2007-09)
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -383,6 +382,41 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         self.parent()._singular_(singular, force=force).set_ring()  # this is expensive
         self.__singular = singular(str(self))
         return self.__singular
+
+    @coerce_binop
+    def minpoly_mod(self, other):
+        r"""
+        Compute the minimal polynomial of this polynomial modulo another
+        polynomial in the same ring.
+
+        ALGORITHM:
+
+        NTL's ``MinPolyMod()``, which uses Shoup's algorithm [Sho1999]_.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(GF(101), implementation='NTL')
+            sage: f = x^17 + x^2 - 1
+            sage: (x^2).minpoly_mod(f)
+            x^17 + 100*x^2 + 2*x + 100
+
+        TESTS:
+
+        Random testing::
+
+            sage: p = random_prime(2^99)
+            sage: R.<x> = PolynomialRing(GF(p), implementation='NTL')
+            sage: d = randrange(1,50)
+            sage: f = R.random_element(d)
+            sage: g = R.random_element((-1,5*d))
+            sage: poly = g.minpoly_mod(f)
+            sage: poly(R.quotient(f)(g))
+            0
+        """
+        mod = other.ntl_ZZ_pX()
+        elt = self.ntl_ZZ_pX() % mod
+        res = elt.minpoly_mod(mod)
+        return self.parent()(res, construct=True)
 
     def small_roots(self, *args, **kwds):
         r"""

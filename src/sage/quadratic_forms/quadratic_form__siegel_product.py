@@ -10,15 +10,15 @@ Siegel Products
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.arith.misc import (bernoulli,
+                             fundamental_discriminant,
+                             kronecker as kronecker_symbol,
+                             prime_divisors)
+from sage.misc.functional import sqrt
+from sage.misc.verbose import verbose
+from sage.quadratic_forms.special_values import QuadraticBernoulliNumber
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import kronecker_symbol, bernoulli, prime_divisors, fundamental_discriminant
-from sage.misc.functional import sqrt
-from sage.quadratic_forms.special_values import QuadraticBernoulliNumber
-
-
-from sage.misc.verbose import verbose
-
 
 
 #/*!  \brief Computes the product of all local densities for comparison with independently computed Eisenstein coefficients.

@@ -20,6 +20,7 @@ from .structure import GenericSpeciesStructure
 from .partition_species import PartitionSpecies
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class CompositionSpeciesStructure(GenericSpeciesStructure):
     def __init__(self, parent, labels, pi, f, gs):
         """
@@ -185,7 +186,6 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             NotImplementedError
         """
         raise NotImplementedError
-
 
     def _gs(self, series_ring, base_ring):
         """

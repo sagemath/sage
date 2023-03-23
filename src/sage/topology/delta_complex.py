@@ -59,7 +59,7 @@ from sage.matrix.constructor import matrix
 from .simplicial_complex import Simplex, lattice_paths, SimplicialComplex
 from sage.homology.chain_complex import ChainComplex
 from sage.graphs.graph import Graph
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.misc.cachefunc import cached_method
 
 
@@ -235,7 +235,7 @@ class DeltaComplex(GenericCellComplex):
         sage: delta_complexes.RealProjectivePlane()
         Delta complex with 2 vertices and 8 simplices
 
-    Type ``delta_complexes.`` and then hit the TAB key to get the
+    Type ``delta_complexes.`` and then hit the :kbd:`Tab` key to get the
     full list.
     """
     def __init__(self, data=None, check_validity=True):

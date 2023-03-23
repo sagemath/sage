@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Space of modular symbols (base class)
+Base class of the space of modular symbols
 
 All the spaces of modular symbols derive from this class. This class is an
 abstract base class.

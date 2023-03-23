@@ -9,7 +9,7 @@ TESTS::
 
     sage: R = ZpLC(2)
     doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See http://trac.sagemath.org/23505 for details.
+    See https://github.com/sagemath/sage/issues/23505 for details.
     sage: prec = R.precision()
     sage: prec
     Precision lattice on 0 objects
@@ -974,7 +974,7 @@ class DifferentialPrecisionGeneric(SageObject):
             [   0 2048]
 
         If the precision module does not project to a lattice,
-        an error is raised.
+        an error is raised. ::
 
             sage: R = ZpLF(2, label='precision_lattice')
             sage: prec = R.precision()
@@ -2689,7 +2689,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
             [   0 2048]
 
         If the precision module does not project to a lattice,
-        an error is raised.
+        an error is raised. ::
 
             sage: prec.precision_lattice([x, y, u, v])
             Traceback (most recent call last):

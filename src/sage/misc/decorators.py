@@ -32,7 +32,8 @@ from copy import copy
 
 from sage.misc.sageinspect import (sage_getsource, sage_getsourcelines,
                                    sage_getargspec)
-from inspect import ArgSpec
+
+from inspect import FullArgSpec
 
 
 def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
@@ -92,7 +93,8 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         5
         sage: from sage.misc.sageinspect import sage_getargspec
         sage: sage_getargspec(g)
-        ArgSpec(args=['x'], varargs=None, keywords=None, defaults=None)
+        FullArgSpec(args=['x'], varargs=None, varkw=None, defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     Demonstrate that it correctly gets the source lines and the source
     file, which is essential for interactive code edition; note that we
@@ -166,7 +168,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         wrapper.__wrapped__ = wrapped
         wrapper._sage_src_ = lambda: sage_getsource(wrapped)
         wrapper._sage_src_lines_ = lambda: sage_getsourcelines(wrapped)
-        #Getting the signature right in documentation by Sphinx (Trac 9976)
+        #Getting the signature right in documentation by Sphinx (Issue 9976)
         #The attribute _sage_argspec_() is read by Sphinx if present and used
         #as the argspec of the function instead of using reflection.
         wrapper._sage_argspec_ = lambda: sage_getargspec(wrapped)
@@ -387,11 +389,12 @@ class suboptions():
             [('arrow_options', {'size': 5})]
 
          Demonstrate that the introspected argument specification of the
-         wrapped function is updated (see :trac:`9976`).
+         wrapped function is updated (see :trac:`9976`)::
 
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: sage_getargspec(f)
-            ArgSpec(args=['arrow_size'], varargs='args', keywords='kwds', defaults=(2,))
+            FullArgSpec(args=['arrow_size'], varargs='args', varkw='kwds', defaults=(2,),
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
         """
         @sage_wraps(func)
         def wrapper(*args, **kwds):
@@ -410,7 +413,7 @@ class suboptions():
             return func(*args, **kwds)
 
         # Add the options specified by @options to the signature of the wrapped
-        # function in the Sphinx-generated documentation (Trac 9976), using the
+        # function in the Sphinx-generated documentation (Issue 9976), using the
         # special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
         def argspec():
             argspec = sage_getargspec(func)
@@ -422,7 +425,8 @@ class suboptions():
             defaults = (argspec.defaults if argspec.defaults is not None else ()) \
                         + tuple(self.options.values())
             # Note: argspec.defaults is not always a tuple for some reason
-            return ArgSpec(args, argspec.varargs, argspec.keywords, defaults)
+            return FullArgSpec(args, argspec.varargs, argspec.varkw, defaults,
+                               kwonlyargs=[], kwonlydefaults=None, annotations={})
         wrapper._sage_argspec_ = argspec
 
         return wrapper
@@ -458,7 +462,8 @@ class options():
             sage: f1 = o(f)
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: sage_getargspec(f1)
-            ArgSpec(args=['rgbcolor'], varargs='args', keywords='kwds', defaults=((0, 0, 1),))
+            FullArgSpec(args=['rgbcolor'], varargs='args', varkw='kwds', defaults=((0, 0, 1),),
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
         """
         self.options = options
         self.original_opts = options.pop('__original_opts', False)
@@ -491,7 +496,7 @@ class options():
             return func(*args, **options)
 
         #Add the options specified by @options to the signature of the wrapped
-        #function in the Sphinx-generated documentation (Trac 9976), using the
+        #function in the Sphinx-generated documentation (Issue 9976), using the
         #special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
         def argspec():
             argspec = sage_getargspec(func)
@@ -499,7 +504,8 @@ class options():
                     list(self.options))
             defaults = (argspec.defaults or ()) + tuple(self.options.values())
             # Note: argspec.defaults is not always a tuple for some reason
-            return ArgSpec(args, argspec.varargs, argspec.keywords, defaults)
+            return FullArgSpec(args, argspec.varargs, argspec.varkw, defaults,
+                               kwonlyargs=[], kwonlydefaults=None, annotations={})
 
         wrapper._sage_argspec_ = argspec
 
@@ -574,7 +580,7 @@ class rename_keyword():
 
         INPUT:
 
-        - ``deprecation`` -- integer. The trac ticket number where the
+        - ``deprecation`` -- integer. The github issue number where the
           deprecation was introduced.
 
         - the rest of the arguments is a list of keyword arguments in the
@@ -597,7 +603,7 @@ class rename_keyword():
 
             sage: r = rename_keyword(deprecation=13109, color='rgbcolor')
         """
-        assert deprecated is None, 'Use @rename_keyword(deprecation=<trac_number>, ...)'
+        assert deprecated is None, 'Use @rename_keyword(deprecation=<issue_number>, ...)'
         self.renames = renames
         self.deprecation = deprecation
 
@@ -635,7 +641,7 @@ class rename_keyword():
             () {'new_option': 1}
             sage: f(deprecated_option=1)
             doctest:...: DeprecationWarning: use the option 'new_option' instead of 'deprecated_option'
-            See http://trac.sagemath.org/13109 for details.
+            See https://github.com/sagemath/sage/issues/13109 for details.
             () {'new_option': 1}
         """
         @sage_wraps(func)

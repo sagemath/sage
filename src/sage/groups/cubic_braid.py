@@ -527,13 +527,13 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 
             min_pol_root_bur = min_pol_root_bur.change_ring(domain)
             if not min_pol_root_bur(root_bur).is_zero():
-                raise ValueError('root_bur must vanish on %s' %(min_pol_root_bur))
+                raise ValueError('root_bur must vanish on %s' % (min_pol_root_bur))
 
-        def conv2domain (laur_pol):
+        def conv2domain(laur_pol):
             l1, l2 = laur_pol.polynomial_construction()
             p1 = l1.change_ring(domain)
             p2 = root_bur**(l2)
-            res = p1(root_bur)*p2
+            res = p1(root_bur) * p2
             return res
 
         from sage.matrix.constructor import matrix
@@ -1543,10 +1543,10 @@ class CubicBraidGroup(FinitelyPresentedGroup):
                 self._classical_invariant_form = herm_form
 
         if unitary:
-            from sage.rings.finite_rings.finite_field_base import is_FiniteField
+            from sage.rings.finite_rings.finite_field_base import FiniteField
             from sage.groups.matrix_gps.unitary import GU
             d, d = herm_form.dimensions()
-            if is_FiniteField(domain):
+            if isinstance(domain, FiniteField):
                 base_group = GU(d, domain, var=domain.gen(), invariant_form=herm_form)
             else:
                 base_group = GU(d, domain, invariant_form=herm_form)

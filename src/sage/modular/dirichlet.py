@@ -912,7 +912,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         """
 
-        # this algorithm was written by Francis Clarke see ticket #9407
+        # this algorithm was written by Francis Clarke see issue #9407
 
         from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
         from sage.rings.integer_ring import IntegerRing
@@ -2339,6 +2339,7 @@ class DirichletGroupFactory(UniqueFactory):
         sage: parent(val)
         Gaussian Integers in Cyclotomic Field of order 4 and degree 2
         sage: r4.residue_field(r4.ideal(29).factor()[0][0])(val)
+        doctest:warning ... DeprecationWarning: ...
         17
         sage: r4.residue_field(r4.ideal(29).factor()[0][0])(val) * GF(29)(3)
         22

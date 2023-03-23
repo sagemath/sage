@@ -156,14 +156,17 @@ class Octave(Expect):
 
     EXAMPLES::
 
-        sage: octave.eval("a = [ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]")    # optional - octave
-        'a =\n\n 1 1 2\n 3 5 8\n 13 21 33\n'
-        sage: octave.eval("b = [ 1; 3; 13]")                         # optional - octave
-        'b =\n\n 1\n 3\n 13\n'
-        sage: octave.eval(r"c=a \ b") # solves linear equation: a*c = b  # optional - octave; random output
-        'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n'
-        sage: octave.eval("c")                                 # optional - octave; random output
-        'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n'
+        sage: octave.eval("a = [ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]").strip()    # optional - octave
+        'a =\n\n 1 1 2\n 3 5 8\n 13 21 33'
+        sage: octave.eval("b = [ 1; 3; 13]").strip()                         # optional - octave
+        'b =\n\n 1\n 3\n 13'
+
+    The following solves the linear equation: a*c = b::
+
+        sage: octave.eval(r"c=a \ b").strip()          # optional - octave  # abs tol 0.01
+        'c =\n\n 1\n -0\n 0'
+        sage: octave.eval("c").strip()                 # optional - octave  # abs tol 0.01
+        'c =\n\n 1\n -0\n 0'
 
     TESTS:
 
@@ -228,7 +231,7 @@ class Octave(Expect):
         """
         EXAMPLES::
 
-            sage: octave.__reduce__()
+            sage: Octave().__reduce__()
             (<function reduce_load_Octave at 0x...>, ())
         """
         return reduce_load_Octave, tuple([])
@@ -505,7 +508,7 @@ class Octave(Expect):
         m = A.nrows()
         if m != len(b):
             raise ValueError("dimensions of A and b must be compatible")
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         from sage.rings.rational_field import QQ
         MS = MatrixSpace(QQ,m,1)
         b  = MS(list(b)) # converted b to a "column vector"
@@ -662,8 +665,6 @@ class OctaveElement(ExpectElement):
         """
         return str(self) != ' [](0x0)' and any(x != '0' for x in str(self).split())
 
-    
-
     def _matrix_(self, R=None):
         r"""
         Return Sage matrix from this octave element.
@@ -706,7 +707,7 @@ class OctaveElement(ExpectElement):
         if self.iscomplex():
             w = [[to_complex(x,R) for x in row] for row in w]
 
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         return MatrixSpace(R, nrows, ncols)(w)
 
     def _vector_(self, R=None):

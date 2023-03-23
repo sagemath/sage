@@ -1,8 +1,7 @@
 """
 Polynomials
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,15 +13,15 @@ Polynomials
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_import import lazy_import
 
 # Quotient of polynomial ring
 from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
- 
+
 # Univariate Polynomial Rings
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
@@ -51,3 +50,7 @@ SkewPolynomialRing = OrePolynomialRing
 
 # Evaluation of cyclotomic polynomials
 from sage.rings.polynomial.cyclotomic import cyclotomic_value
+
+# Integer-valued Univariate Polynomial Ring
+lazy_import('sage.rings.polynomial.integer_valued_polynomials',
+            'IntegerValuedPolynomialRing')

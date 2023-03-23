@@ -62,7 +62,8 @@ AUTHORS:
 # ****************************************************************************
 
 import sys
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.interfaces.singular import singular
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
@@ -72,8 +73,7 @@ from sage.calculus.functions import jacobian
 import sage.rings.abc
 from sage.rings.integer import Integer
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
-from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
@@ -83,6 +83,7 @@ from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.modules.free_module_element import vector
+from sage.matrix.constructor import matrix
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.number_fields import NumberFields
@@ -273,7 +274,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         SchemeMorphism_polynomial.__init__(self, parent, polys, check)
 
-        self._is_prime_finite_field = is_PrimeFiniteField(polys[0].base_ring())
+        R = polys[0].base_ring()
+        self._is_prime_finite_field = isinstance(R, FiniteField) and R.is_prime_field()
 
     def __call__(self, x, check=True):
         r"""
@@ -726,7 +728,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         R = self.base_ring()
         if R not in _Fields:
             return DynamicalSystem_projective(list(self), self.domain())
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
             return DynamicalSystem_projective_finite_field(list(self), self.domain())
         return DynamicalSystem_projective_field(list(self), self.domain())
 
@@ -1005,7 +1007,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         # scales by 1/gcd of the coefficients.
         if R in _NumberFields:
             O = R.maximal_order()
-        elif is_FiniteField(R):
+        elif isinstance(R, FiniteField):
             O = R
         elif isinstance(R, QuotientRing_generic):
             O = R.ring()
@@ -1761,7 +1763,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                 return self
         elif self.base_ring() != QQbar and K_pre.is_isomorphic(self.base_ring()):
             return self
-        # Trac 23808: The field K_pre returned above does not have its embedding set to be phi
+        # Issue 23808: The field K_pre returned above does not have its embedding set to be phi
         # and phi is forgotten, so we redefine K_pre to be a field K with phi as the specified
         # embedding:
         if K_pre is QQ:
@@ -1871,7 +1873,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x^2, y^2, z^2])
             sage: f.indeterminacy_locus()
             ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
-            See https://trac.sagemath.org/29145 for details.
+            See https://github.com/sagemath/sage/issues/29145 for details.
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               z,
               y,
@@ -1928,7 +1930,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x*z-y*z, x^2-y^2, z^2])
             sage: f.indeterminacy_points()
             ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
-            See https://trac.sagemath.org/29145 for details.
+            See https://github.com/sagemath/sage/issues/29145 for details.
             [(-1 : 1 : 0), (1 : 1 : 0)]
 
         ::
@@ -2279,6 +2281,41 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             except ValueError:
                 pass
         raise ValueError('the morphism is not defined at this point')
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: C = Curve(7*x^2 + 2*y*z + z^2)  # conic
+            sage: f, g = C.parametrization()
+            sage: f*g == C.identity_morphism()
+            True
+
+            sage: C = Curve(x^2 + y^2 - z^2)
+            sage: P.<u, v> = ProjectiveSpace(QQ, 1)
+            sage: f = C.hom([x + z, y], P)
+            sage: g = C.hom([y, z - x], P)
+            sage: f == g
+            True
+            sage: h = C.hom([z, x - y], P)
+            sage: f == h
+            False
+        """
+        Y = self.codomain()
+
+        if not isinstance(other, SchemeMorphism_polynomial):
+            return False
+        if self.domain() != other.domain() or Y != other.codomain():
+            return False
+
+        if not Y.is_projective():  # codomain is affine
+            e = Y.projective_embedding(0)
+            return (e * self) == (e * other)
+
+        R = self.domain().coordinate_ring()
+        mat = matrix([self.defining_polynomials(), other.defining_polynomials()])
+        return all(R(minor).is_zero() for minor in mat.minors(2))
 
     @cached_method
     def representatives(self):
@@ -2669,7 +2706,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: k = GF(11)
             sage: E = EllipticCurve(k,[1,1])
             sage: Q = E(6,5)
-            sage: phi = E.multiplication_by_m_isogeny(2)
+            sage: phi = E.scalar_multiplication(2)
             sage: mor = phi.as_morphism()
             sage: mor.projective_degrees()
             (12, 3)
@@ -2711,7 +2748,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             sage: k = GF(11)
             sage: E = EllipticCurve(k,[1,1])
             sage: Q = E(6,5)
-            sage: phi = E.multiplication_by_m_isogeny(2)
+            sage: phi = E.scalar_multiplication(2)
             sage: mor = phi.as_morphism()
             sage: mor.degree()
             4

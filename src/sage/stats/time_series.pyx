@@ -128,7 +128,7 @@ cdef class TimeSeries:
         cdef cnumpy.ndarray np
         cdef double *np_data
         cdef unsigned int j
-        if isinstance(values, (int, long, Integer)):
+        if isinstance(values, (int, Integer)):
             self._length = values
             values = None
         elif isinstance(values, (Vector_real_double_dense, cnumpy.ndarray)):
@@ -1696,7 +1696,7 @@ cdef class TimeSeries:
             sage: import sage.finance.all as finance
             doctest:warning...
             DeprecationWarning: the package sage.finance is deprecated
-            See https://trac.sagemath.org/32427 for details.
+            See https://github.com/sagemath/sage/issues/32427 for details.
             sage: fbm = finance.fractional_brownian_motion_simulation(0.7,0.1,10^5,1)[0]
             sage: fbm.hurst_exponent()
             0.706511951...

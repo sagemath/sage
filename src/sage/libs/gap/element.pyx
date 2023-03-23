@@ -27,7 +27,9 @@ from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object cimport SageObject
 from sage.structure.parent import Parent
-from sage.rings.all import ZZ, QQ, RDF
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
 
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.combinat.permutation import Permutation
@@ -130,6 +132,7 @@ cdef char *capture_stdout(Obj func, Obj obj):
     """
     cdef Obj s, stream, output_text_string
     cdef UInt res
+    cdef TypOutputFile output
     # The only way to get a string representation of an object that is truly
     # consistent with how it would be represented at the GAP REPL is to call
     # ViewObj on it.  Unfortunately, ViewObj *prints* to the output stream,
@@ -145,12 +148,12 @@ cdef char *capture_stdout(Obj func, Obj obj):
         output_text_string = GAP_ValueGlobalVariable("OutputTextString")
         stream = CALL_2ARGS(output_text_string, s, GAP_True)
 
-        if not OpenOutputStream(stream):
+        if not OpenOutputStream(&output, stream):
             raise GAPError("failed to open output capture stream for "
                            "representing GAP object")
 
         CALL_1ARGS(func, obj)
-        CloseOutput()
+        CloseOutput(&output)
         return CSTR_STRING(s)
     finally:
         GAP_Leave()
@@ -264,7 +267,7 @@ cdef Obj make_gap_string(sage_string) except NULL:
     try:
         GAP_Enter()
         b = str_to_bytes(sage_string)
-        C_NEW_STRING(result, len(b), b)
+        result = MakeStringWithLen(b, len(b))
         return result
     finally:
         GAP_Leave()
@@ -1847,7 +1850,7 @@ cdef class GapElement_FiniteField(GapElement):
         if ring is None:
             from sage.rings.finite_rings.finite_field_constructor import GF
             ring = GF(char**deg, name=var)
-        elif not (ring.is_field() and ring.is_finite() and \
+        elif not (ring.is_field() and ring.is_finite() and
                   ring.characteristic() == char and ring.degree() % deg == 0):
             raise ValueError(('the given ring is incompatible (must be a '
                               'finite field of characteristic {} and degree '

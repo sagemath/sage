@@ -40,4 +40,3 @@ latex_documents = [
   ('index', name + '.tex', 'Numerical Computing with Sage',
    'The Sage Development Team', 'manual'),
 ]
-

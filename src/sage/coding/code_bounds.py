@@ -173,13 +173,17 @@ on k, given n, d, q, (b) seek bounds on R, delta, q (assuming n is
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import binomial, is_prime_power
 from sage.libs.gap.libgap import libgap
-from sage.rings.all import QQ, RR, ZZ, RDF
-from sage.arith.misc import is_prime_power
-from sage.arith.all import binomial
 from sage.misc.functional import sqrt, log
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfr import RR
+
 from .delsarte_bounds import (delsarte_bound_hamming_space,
                               delsarte_bound_additive_hamming_space)
+from sage.features.gap import GapPackage
 
 
 def _check_n_q_d(n, q, d, field_based=True):
@@ -277,6 +281,7 @@ def codesize_upper_bound(n, d, q, algorithm=None):
     """
     _check_n_q_d(n, q, d, field_based=False)
     if algorithm == "gap":
+        GapPackage("guava", spkg="gap_packages").require()
         libgap.load_package('guava')
         return int(libgap.UpperBound(n, d, q))
     if algorithm == "LP":
@@ -377,6 +382,7 @@ def plotkin_upper_bound(n,q,d, algorithm=None):
     """
     _check_n_q_d(n, q, d, field_based=False)
     if algorithm == "gap":
+        GapPackage("guava", spkg="gap_packages").require()
         libgap.load_package("guava")
         return QQ(libgap.UpperBoundPlotkin(n, d, q))
     else:
@@ -433,6 +439,7 @@ def griesmer_upper_bound(n,q,d,algorithm=None):
     """
     _check_n_q_d(n, q, d)
     if algorithm == "gap":
+        GapPackage("guava", spkg="gap_packages").require()
         libgap.load_package("guava")
         return QQ(libgap.UpperBoundGriesmer(n, d, q))
     else:
@@ -467,6 +474,7 @@ def elias_upper_bound(n,q,d,algorithm=None):
     _check_n_q_d(n, q, d, field_based=False)
     r = 1-1/q
     if algorithm == "gap":
+        GapPackage("guava", spkg="gap_packages").require()
         libgap.load_package("guava")
         return QQ(libgap.UpperBoundElias(n, d, q))
     else:

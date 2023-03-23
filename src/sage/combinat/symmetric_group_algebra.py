@@ -21,7 +21,7 @@ from sage.algebras.group_algebra import GroupAlgebra_class
 from sage.categories.weyl_groups import WeylGroups
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
@@ -101,7 +101,7 @@ def SymmetricGroupAlgebra(R, W, category=None):
         sage: SGA.group()
         Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space)
         sage: SGA.an_element()
-        s1*s2*s3 + 3*s3*s2 + 2*s3 + 1
+        s1*s2*s3 + 3*s2*s3*s1*s2 + 2*s3*s1 + 1
 
     The preferred way to construct the symmetric group algebra is to
     go through the usual ``algebra`` method::
@@ -215,7 +215,7 @@ def SymmetricGroupAlgebra(R, W, category=None):
         sage: SGg.group().conjugacy_classes_representatives()
         [(), (1,2), (1,2,3)]
     """
-    from sage.rings.semirings.all import NN
+    from sage.rings.semirings.non_negative_integer_semiring import NN
     if W in NN:
         W = Permutations(W)
     if category is None:

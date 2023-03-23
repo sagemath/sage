@@ -56,7 +56,8 @@ cdef class MemoryAllocator:
 
         TESTS::
 
-            sage: cython('''  # optional - sage.misc.cython
+            sage: cython(                                                   # optional - sage.misc.cython
+            ....: '''
             ....: from sage.ext.memory_allocator cimport MemoryAllocator
             ....: cdef MemoryAllocator mem = MemoryAllocator()
             ....: cdef void* ptr
@@ -64,8 +65,9 @@ cdef class MemoryAllocator:
             ....:     ptr = mem.aligned_malloc(2**i, 4048)
             ....:     assert <size_t> ptr == (<size_t> ptr) & ~(2**i-1)
             ....: ''')
-            doctest:...: DeprecationWarning: this class is deprecated; use the class from the python package `memory_allocator`
-            See https://trac.sagemath.org/31591 for details.
+            doctest:...: DeprecationWarning: this class is deprecated;
+            use the class from the python package `memory_allocator`
+            See https://github.com/sagemath/sage/issues/31591 for details.
         """
         cdef size_t extra = alignment - 1
         return align(self.malloc(size + extra), alignment)
@@ -85,7 +87,8 @@ cdef class MemoryAllocator:
 
         TESTS::
 
-            sage: cython('''  # optional - sage.misc.cython
+            sage: cython(                                                   # optional - sage.misc.cython
+            ....: '''
             ....: from sage.ext.memory_allocator cimport MemoryAllocator
             ....: def foo():
             ....:     cdef MemoryAllocator mem = MemoryAllocator()
@@ -94,9 +97,10 @@ cdef class MemoryAllocator:
             ....:         ptr = mem.aligned_calloc(2**i, i, 2**i)
             ....:         assert <size_t> ptr == (<size_t> ptr) & ~(2**i-1)
             ....: ''')
-            sage: foo()
-            doctest:...: DeprecationWarning: this class is deprecated; use the class from the python package `memory_allocator`
-            See https://trac.sagemath.org/31591 for details.
+            sage: foo()                                                     # optional - sage.misc.cython
+            doctest:...: DeprecationWarning: this class is deprecated;
+            use the class from the python package `memory_allocator`
+            See https://github.com/sagemath/sage/issues/31591 for details.
         """
         # Find extra such that (nmemb + extra) * size >= nmemb * size + alignment - 1
         # ⇔ extra * size >= alignment - 1
@@ -120,7 +124,8 @@ cdef class MemoryAllocator:
 
         TESTS::
 
-            sage: cython('''  # optional - sage.misc.cython
+            sage: cython(                                                   # optional - sage.misc.cython
+            ....: '''
             ....: from sage.ext.memory_allocator cimport MemoryAllocator
             ....: def foo():
             ....:     cdef MemoryAllocator mem = MemoryAllocator()
@@ -129,8 +134,8 @@ cdef class MemoryAllocator:
             ....:         ptr = mem.aligned_allocarray(2**i, i, 2**i)
             ....:         assert <size_t> ptr == (<size_t> ptr) & ~(2**i-1)
             ....: ''')
-            sage: foo()  # random  # might raise deprecation warning
-            sage: foo()
+            sage: foo()  # random  # might raise deprecation warning        # optional - sage.misc.cython
+            sage: foo()                                                     # optional - sage.misc.cython
         """
         # Find extra such that (nmemb + extra) * size >= nmemb * size + alignment - 1
         # ⇔ extra * size >= alignment - 1

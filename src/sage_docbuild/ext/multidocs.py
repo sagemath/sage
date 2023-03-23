@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 """
-    multi documentation in Sphinx
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sage multidocs extension
 
-    The goal of this extension is to manage a multi documentation in Sphinx.
-    To be able to compile Sage's huge documentation in parallel, the
-    documentation is cut into a bunch of independent documentations called
-    "subdocs", which are compiled separately. There is a master document which
-    points to all the subdocs. The intersphinx extension ensures that the
-    cross-link between the subdocs are correctly resolved. However some work
-    is needed to build a global index. This is the goal of multidocs.
+The goal of this extension is to manage a multi-documentation in Sphinx.  To be
+able to compile Sage's huge documentation in parallel, the documentation is cut
+into a bunch of independent documentations called "sub-docs", which are
+compiled separately. There is a master document which points to all the
+sub-docs. The intersphinx extension ensures that the cross-link between the
+sub-docs are correctly resolved. However some work is needed to build a global
+index. This is the goal of the ``multidocs`` extension.
 
-    More precisely this extension ensures the correct merging of
-    - the todo list if this extension is activated;
-    - the python indexes;
-    - the list of python modules;
-    - the javascript index;
-    - the citations.
+More precisely this extension ensures the correct merging of
+
+- the todo list if this extension is activated
+- the python indexes
+- the list of python modules
+- the javascript index
+- the citations
+
 """
-
 import os
 import pickle
 import shutil
@@ -35,15 +35,15 @@ CITE_FILENAME = 'citations.pickle'
 
 def merge_environment(app, env):
     """
-    Merges the following attributes of the sub-docs environment into the main
+    Merge the following attributes of the sub-docs environment into the main
     environment:
-    - titles                      # Titles
-    - todo_all_todos              # ToDo's
-    - indexentries                # global python index
-    - all_docs                    # needed by the js index
-    - citations                   # citations
 
-    - domaindata['py']['modules'] # list of python modules
+    - ``titles`` -- Titles
+    - ``todo_all_todos`` -- todo's
+    - ``indexentries`` -- global python index
+    - ``all_docs`` -- needed by the js index
+    - ``citations`` -- citations
+    - ``domaindata['py']['modules']`` -- list of python modules
     """
     logger.info(bold('Merging environment/index files...'))
     for curdoc in app.env.config.multidocs_subdoc_list:
@@ -81,7 +81,7 @@ def merge_environment(app, env):
             env.all_docs.update(newalldoc)
             # needed by env.check_consistency (sphinx.environment, line 1734)
             for ind in newalldoc:
-                # treat subdocument source as orphaned file and don't complain
+                # treat sub-document source as orphaned file and don't complain
                 md = env.metadata.get(ind, dict())
                 md['orphan'] = 1
                 env.metadata[ind] = md
@@ -146,6 +146,10 @@ def merge_js_index(app):
             titles = app.builder.indexer._titles
             for (res, title) in index._titles.items():
                 titles[fixpath(res)] = title
+            # merge the alltitles
+            alltitles = app.builder.indexer._all_titles
+            for (res, alltitle) in index._all_titles.items():
+                alltitles[fixpath(res)] = alltitle
             # merge the filenames
             filenames = app.builder.indexer._filenames
             for (res, filename) in index._filenames.items():
@@ -192,14 +196,14 @@ mustbefixed = ['search', 'genindex', 'genindex-all',
 
 def fix_path_html(app, pagename, templatename, ctx, event_arg):
     """
-    Fixes the context so that the files
-    - search.html
-    - genindex.html
-    - py-modindex.html
-    point to the right place, that is in
-        reference/
-    instead of
-        reference/subdocument
+    Fix the context so that the files
+
+    - :file:`search.html`
+    - :file:`genindex.html`
+    - :file:`py-modindex.html`
+
+    point to the right place, that is in :file:`reference/` instead of
+    :file:`reference/subdocument`.
     """
     # sphinx/builder/html.py line 702
     # def pathto(otheruri, resource=False,
@@ -265,7 +269,7 @@ def fetch_citation(app: Sphinx, env):
 
 def init_subdoc(app):
     """
-    Init the merger depending on if we are compiling a subdoc or the master
+    Init the merger depending on if we are compiling a sub-doc or the master
     doc itself.
     """
     if app.config.multidocs_is_master:

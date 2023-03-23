@@ -22,6 +22,7 @@ from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensio
 from sage.sets.family import Family
 from sage.matrix.constructor import Matrix
 
+
 class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
     r"""
     The invariant submodule under a semigroup action.
@@ -65,7 +66,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
         sage: [I.lift(b) for b in I.basis()]
         [M[1] + M[2] + M[3]]
-    
+
     The we could also have the action be a right-action, instead of the
     default left-action::
 

@@ -260,5 +260,3 @@ def rational_quaternions_from_integral_matrix_and_denom(A, Matrix_integer_dense 
         v.append(x)
     mpz_clear(tmp)
     return v
-
-

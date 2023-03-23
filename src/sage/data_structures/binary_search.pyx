@@ -63,4 +63,3 @@ cdef Py_ssize_t binary_search0(Py_ssize_t* v, Py_ssize_t n, Py_ssize_t x):
         else:   # only possibility is that v[k] == x
             return k
     return -1
-

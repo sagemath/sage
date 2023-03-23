@@ -1563,7 +1563,9 @@ class Crystals(Category_singleton):
             r"""
             Return the highest weight element `u` and a list `[i_1,...,i_k]`
             such that `self = f_{i_1} ... f_{i_k} u`, where `i_1,...,i_k` are
-            elements in `index_set`. By default the index set is assumed to be
+            elements in ``index_set``.
+
+            By default the index set is assumed to be
             the full index set of self.
 
             EXAMPLES::
@@ -1602,8 +1604,10 @@ class Crystals(Category_singleton):
             r"""
             Return the lowest weight element `u` and a list `[i_1,...,i_k]`
             such that `self = e_{i_1} ... e_{i_k} u`, where `i_1,...,i_k` are
-            elements in `index_set`. By default the index set is assumed to be
-            the full index set of self.
+            elements in ``index_set``.
+
+            By default the index set is assumed to be the full index
+            set of self.
 
             EXAMPLES::
 
@@ -1642,7 +1646,7 @@ class Crystals(Category_singleton):
         def all_paths_to_highest_weight(self, index_set=None):
             r"""
             Iterate over all paths to the highest weight from ``self``
-            with respect to `index_set`.
+            with respect to ``index_set``.
 
             INPUT:
 
@@ -2183,7 +2187,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
                 cur = cur.e_string(s)
         return cur
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return if ``self`` is a non-zero morphism.
 
@@ -2199,8 +2203,6 @@ class CrystalMorphismByGenerators(CrystalMorphism):
             False
         """
         return any(self._on_gens(mg) is not None for mg in self._gens)
-
-    
 
     # TODO: Does this belong in the element_class of the Crystals() category?
     def to_module_generator(self, x):

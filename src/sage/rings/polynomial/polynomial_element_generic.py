@@ -36,7 +36,7 @@ from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singu
 
 from sage.libs.pari.all import pari_gen
 from sage.structure.richcmp import richcmp, richcmp_item, rich_to_bool, rich_to_bool_sgn
-from sage.structure.element import coerce_binop
+from sage.structure.element import coerce_binop, parent
 
 from sage.rings.infinity import infinity, Infinity
 from sage.rings.integer_ring import ZZ
@@ -100,7 +100,7 @@ class Polynomial_generic_sparse(Polynomial):
                 w = {}
                 for n, c in x.dict().items():
                     w[n] = R(c)
-                # The following line has been added in trac ticket #9944.
+                # The following line has been added in github issue #9944.
                 # Apparently, the "else" case has never occurred before.
                 x = w
         elif isinstance(x, (list, tuple)):
@@ -440,7 +440,7 @@ class Polynomial_generic_sparse(Polynomial):
 
             sage: f[1:3]
             doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
+            See https://github.com/sagemath/sage/issues/18940 for details.
             73.500*x^2 - 42.000*x
             sage: f[1:3:2]
             Traceback (most recent call last):
@@ -542,6 +542,29 @@ class Polynomial_generic_sparse(Polynomial):
         if not self.__coeffs:
             return -1
         return max(self.__coeffs)
+
+    def __floordiv__(self, right):
+        """
+        Return the quotient upon division (no remainder).
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQbar, sparse=True)
+            sage: f = (1+2*x)^3 + 3*x; f
+            8*x^3 + 12*x^2 + 9*x + 1
+            sage: g = f // (1+2*x); g
+            4*x^2 + 4*x + 5/2
+            sage: f - g * (1+2*x)
+            -3/2
+            sage: f.quo_rem(1+2*x)
+            (4*x^2 + 4*x + 5/2, -3/2)
+
+        """
+        P = self.parent()
+        if P is parent(right):
+            return self._floordiv_(right)
+        d = P.base_ring()(right)
+        return self.map_coefficients(lambda c: c // d)
 
     def _add_(self, right):
         r"""
@@ -800,6 +823,16 @@ class Polynomial_generic_sparse(Polynomial):
             sage: g = x*y^5
             sage: f.quo_rem(g)
             (-y^5 + 2*y^2, y^3 - 2*x^2*y^2 - y)
+
+        Polynomials over noncommutative rings are also allowed::
+
+            sage: HH = QuaternionAlgebra(QQ, -1, -1)
+            sage: P.<x> = PolynomialRing(HH, sparse=True)
+            sage: f = P.random_element(5)
+            sage: g = P.random_element((0, 5))
+            sage: q, r = f.quo_rem(g)
+            sage: f == q*g + r
+            True
 
         TESTS::
 

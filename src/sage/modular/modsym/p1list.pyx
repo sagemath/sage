@@ -1,8 +1,8 @@
-# distutils: libraries = gmp zn_poly
+# distutils: libraries = gmp
 # distutils: extra_compile_args = -D_XPG6
 
 r"""
-Lists of Manin symbols (elements of `\mathbb{P}^1(\ZZ/N\ZZ)`) over `\QQ`
+Lists of Manin symbols over `\QQ`, elements of `\mathbb{P}^1(\ZZ/N\ZZ)`
 """
 
 from cysignals.memory cimport check_allocarray, sig_free
@@ -1407,7 +1407,7 @@ def _make_p1list(n):
         sage: from sage.modular.modsym.p1list import _make_p1list
         sage: _make_p1list(3)
         doctest:...: DeprecationWarning: _make_p1list() is deprecated
-        See https://trac.sagemath.org/25848 for details.
+        See https://github.com/sagemath/sage/issues/25848 for details.
         The projective line over the integers modulo 3
     """
     from sage.misc.superseded import deprecation_cython as deprecation

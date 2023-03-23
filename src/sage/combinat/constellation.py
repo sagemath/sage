@@ -183,6 +183,7 @@ class Constellation_class(Element):
     A constellation or a tuple of permutations `(g_0,g_1,...,g_k)`
     such that the product `g_0 g_1 ... g_k` is the identity.
     """
+
     def __init__(self, parent, g, connected, mutable, check):
         r"""
         TESTS::
@@ -1271,6 +1272,7 @@ class Constellations_p(UniqueRepresentation, Parent):
         sage: len(C.isomorphism_representatives())
         1
     """
+
     def __init__(self, profile, domain=None, connected=True):
         r"""
         OPTIONS:

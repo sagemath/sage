@@ -562,7 +562,7 @@ class QuiverRepHom(CallMorphism):
         # If all that holds just check the vectors
         return self._vector != other._vector
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return whether ``self`` is the zero morphism.
 
@@ -585,8 +585,6 @@ class QuiverRepHom(CallMorphism):
             False
         """
         return any(self._vector)
-
-    
 
     def __mul__(self, other):
         """
@@ -1110,7 +1108,7 @@ class QuiverRepHom(CallMorphism):
             Representation with dimension vector (5, 2, 1, 1, 4)
 
         The algebraic dual of an indecomposable projective is the indecomposable
-        projective of the same vertex in the opposite quiver.
+        projective of the same vertex in the opposite quiver. ::
 
             sage: Q.reverse().P(QQ, 4)
             Representation with dimension vector (5, 2, 1, 1, 4)

@@ -268,9 +268,9 @@ def numerical_inverse(C):
         ....: -0.091587 + 0.19276*I,
         ....: 3.9443e-31 + 0.38552*I])
         sage: from sage.schemes.riemann_surfaces.riemann_surface import numerical_inverse
-        sage: max(abs(c) for c in (C^(-1)*C-C^0).list()) < 1e-10
-        False
-        sage: max(abs(c) for c in (numerical_inverse(C)*C-C^0).list()) < 1e-10
+        sage: 3e-16 < (C^-1*C-C^0).norm() < 1e-15
+        True
+        sage: (numerical_inverse(C)*C-C^0).norm() < 3e-16
         True
     """
     R = C.parent()
@@ -2128,6 +2128,7 @@ class RiemannSurface():
         # CCzg is required to be known as we need to know the ring which the minpolys
         # lie in.
         CCzg, bounding_data_list = bounding_data
+        CCz = CCzg.univariate_ring(CCzg.gen(1)).base_ring()
 
         d_edge = tuple(u[0] for u in upstairs_edge)
         # Using a try-catch here allows us to retain a certain amount of back
@@ -2193,7 +2194,7 @@ class RiemannSurface():
                 z_1 = a0lc.abs() * prod((cz - r).abs() - rho_z for r in a0roots)
                 n = minpoly.degree(CCzg.gen(1))
                 ai_new = [
-                    (minpoly.coefficient({CCzg.gen(1): i}))(z=cz + self._CCz.gen(0))
+                    CCz(minpoly.coefficient({CCzg.gen(1): i}))(z=cz + self._CCz.gen(0))
                     for i in range(n)
                 ]
                 ai_pos = [self._RRz([c.abs() for c in h.list()]) for h in ai_new]
@@ -3082,7 +3083,7 @@ class RiemannSurface():
         # converge happens silently, thus allowing the user to get *an*
         # answer out of the integration, but numerical imprecision is to be
         # expected. As such, we set the maximum number of steps in the sequence
-        # of DE integrations to be lower in the latter case. 
+        # of DE integrations to be lower in the latter case.
         if raise_errors:
             n_steps = self._prec - 1
         else:
@@ -3240,9 +3241,9 @@ class RiemannSurface():
             Nh *= 2
         # Note that throughout this loop there is a return statement, intended
         # to be activated when the sequence of integral approximations is
-        # deemed to have converged by the heuristic error. If this has no 
+        # deemed to have converged by the heuristic error. If this has no
         # happened by the time we have gone through the process n_steps times,
-        # we have one final error handle. Again, this will throw an error if 
+        # we have one final error handle. Again, this will throw an error if
         # the raise_errors flag is true, but will just return the answer otherwise.
         if raise_errors:
             raise ConvergenceError("Newton iteration fails to converge")

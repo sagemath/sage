@@ -34,14 +34,16 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.interfaces.magma import magma
-from sage.rings.all import (Integer,
-                            QQ,
-                            ZZ,
-                            IntegerRing,
-                            is_fundamental_discriminant,
-                            PolynomialRing)
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.integer_ring import IntegerRing
+from sage.rings.number_field.number_field import is_fundamental_discriminant
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.misc.cachefunc import cached_function
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
+
 
 @cached_function
 def hilbert_class_polynomial(D, algorithm=None):
@@ -124,7 +126,8 @@ def hilbert_class_polynomial(D, algorithm=None):
         raise ValueError("%s is not a valid algorithm" % algorithm)
 
     from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
-    from sage.rings.all import RR, ComplexField
+    from sage.rings.real_mpfr import RR
+    from sage.rings.complex_mpfr import ComplexField
     from sage.functions.all import elliptic_j
 
     # get all primitive reduced quadratic forms, (necessary to exclude
@@ -623,8 +626,7 @@ def is_cm_j_invariant(j, method='new'):
         True
     """
     # First we check that j is an algebraic number:
-    from sage.rings.all import NumberFieldElement, NumberField
-    if not isinstance(j, NumberFieldElement) and j not in QQ:
+    if not isinstance(j, NumberFieldElement_base) and j not in QQ:
         raise NotImplementedError("is_cm_j_invariant() is only implemented for number field elements")
 
     # for j in ZZ we have a lookup-table:
@@ -670,6 +672,8 @@ def is_cm_j_invariant(j, method='new'):
 
     K = j.parent()
     if h < K.absolute_degree():
+        from sage.rings.number_field.number_field import NumberField
+
         K = NumberField(jpol, 'j')
         j = K.gen()
 

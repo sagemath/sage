@@ -1,5 +1,5 @@
 r"""
-Fraction fields of Ore polynomial rings.
+Fraction fields of Ore polynomial rings
 
 Sage provides support for building the fraction field of any Ore
 polynomial ring and performing basic operations in it.
@@ -35,7 +35,7 @@ with a different numerator and/or a different denominator::
     sage: g
     (d - 1/t)^(-1) * t
 
-The left numerator and right denominator are accessible as follows:
+The left numerator and right denominator are accessible as follows::
 
     sage: g.left_numerator()
     t

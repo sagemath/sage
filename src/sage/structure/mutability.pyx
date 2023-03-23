@@ -69,9 +69,9 @@ cdef class Mutability:
     cpdef _require_mutable(self):
         r"""
         Whenever mutability is required, this method can be called.
-    
+
         EXAMPLES::
-    
+
             sage: class A(SageObject, Mutability):
             ....:     def __init__(self, val):
             ....:         self._val = val
@@ -87,7 +87,7 @@ cdef class Mutability:
             Traceback (most recent call last):
             ...
             ValueError: object is immutable; please change a copy instead
-    
+
         """
         if self._is_immutable:
             raise ValueError("object is immutable; please change a copy instead")
@@ -95,9 +95,9 @@ cdef class Mutability:
     cpdef _require_immutable(self):
         r"""
         Whenever immutability is required, this method can be called.
-        
+
         EXAMPLES::
-        
+
             sage: class A(SageObject, Mutability):
             ....:     def __init__(self, val):
             ....:         self._val = val
@@ -112,7 +112,7 @@ cdef class Mutability:
             Traceback (most recent call last):
             ...
             ValueError: object is mutable; please make it immutable first
-        
+
         """
         if not self._is_immutable:
             raise ValueError("object is mutable; please make it immutable first")
@@ -160,11 +160,11 @@ cdef class Mutability:
         """
         Return ``True`` if this object is mutable (can be changed)
         and ``False`` if it is not.
-        
+
         To make this object immutable use ``self.set_immutable()``.
-        
+
         EXAMPLES::
-        
+
             sage: v = Sequence([1,2,3,4/5])
             sage: v[0] = 5
             sage: v
@@ -180,9 +180,9 @@ cdef class Mutability:
     def __getstate__(self):
         r"""
         Get the current state of ``self`` including the mutability status.
-        
+
         TESTS::
-        
+
             sage: class A(SageObject, Mutability):
             ....:     def __init__(self, val):
             ....:         self._val = val
@@ -203,7 +203,7 @@ cdef class Mutability:
               <class 'sage.structure.sage_object.SageObject'>,
               <sage.structure.sage_object.SageObject object at ...>),
              {'_is_immutable': False, '_val': 4})
-            
+
         """
         state = getattr(self, '__dict__', {})
         state['_is_immutable'] = self._is_immutable

@@ -120,6 +120,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
     - [Ram1991]_
     - [RR1997]_
     """
+
     def __init__(self, sym, q='q'):
         r"""
         Initialize ``self``.

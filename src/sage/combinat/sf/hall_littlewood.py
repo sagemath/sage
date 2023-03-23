@@ -39,6 +39,8 @@ QQt = QQ['t'].fraction_field()
 # TODO: optimize! which is the fastest way of computing HL's and kostka-polynomials?
 # Qp basis is computed using symmetrica, while P basis is computed using rigged
 # configurations
+
+
 class HallLittlewood(UniqueRepresentation):
     r"""
     The family of Hall-Littlewood symmetric function bases.
@@ -58,6 +60,7 @@ class HallLittlewood(UniqueRepresentation):
         sage: SymmetricFunctions(QQ['t'].fraction_field()).hall_littlewood()
         Hall-Littlewood polynomials over Fraction Field of Univariate Polynomial Ring in t over Rational Field
     """
+
     def __repr__(self):
         r"""
         A string representing the family of Hall-Littlewood symmetric function bases
@@ -343,6 +346,7 @@ class HallLittlewood(UniqueRepresentation):
             Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Hall-Littlewood Qp basis
         """
         return HallLittlewood_qp(self)
+
 
 class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
     def __init__(self, hall_littlewood):
@@ -887,7 +891,6 @@ class HallLittlewood_q(HallLittlewood_generic):
         return coeff
 
 
-
 ############
 # Qp basis #
 ############
@@ -921,7 +924,7 @@ class HallLittlewood_qp(HallLittlewood_generic):
             sage: s = Sym.schur(); p = Sym.power()
             sage: HLQp(HLP([2])) # indirect doctest
             -t*HLQp[1, 1] + (t^2+1)*HLQp[2]
-            sage: HLQp(s(HLQ([2]))) # work around bug reported in ticket #12969
+            sage: HLQp(s(HLQ([2]))) # work around bug reported in issue #12969
             (t^2-t)*HLQp[1, 1] + (-t^3+t^2-t+1)*HLQp[2]
             sage: HLQp(s([2]))
             HLQp[2]

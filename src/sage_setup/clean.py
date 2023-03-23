@@ -2,7 +2,10 @@
 Clean the Install Dir
 """
 #*****************************************************************************
-#       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2014      Volker Braun <vbraun.name@gmail.com>
+#                     2015      Jeroen Demeyer
+#                     2017      Erik M. Bray
+#                     2020-2022 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,8 +18,8 @@ Clean the Install Dir
 import os
 import importlib.util
 
-from sage_setup.find import installed_files_by_module, get_extensions, read_distribution
-
+from sage.misc.package_dir import SourceDistributionFilter
+from sage_setup.find import installed_files_by_module, get_extensions
 
 
 def _remove(file_set, module_base, to_remove):
@@ -83,8 +86,14 @@ def _find_stale_files(site_packages, python_packages, python_modules, ext_module
         sage: from sage_setup.find import find_python_sources, find_extra_files
         sage: python_packages, python_modules, cython_modules = find_python_sources(
         ....:     SAGE_SRC, ['sage', 'sage_setup'])
-        sage: extra_files = list(find_extra_files(SAGE_SRC,
-        ....:     ['sage', 'sage_setup'], cythonized_dir, []).items())
+        sage: extra_files = find_extra_files(SAGE_SRC,
+        ....:     ['sage', 'sage_setup'], cythonized_dir, [])
+        sage: from importlib.metadata import files
+        sage: for f in files('sagemath-standard'):
+        ....:     dir = os.path.dirname(str(f))
+        ....:     extra_files[dir] = extra_files.get(dir, [])
+        ....:     extra_files[dir].append(str(f))
+        sage: extra_files = list(extra_files.items())
         sage: from sage_setup.clean import _find_stale_files
 
     TODO: Also check extension modules::
@@ -141,7 +150,7 @@ def _find_stale_files(site_packages, python_packages, python_modules, ext_module
 
 
 def clean_install_dir(site_packages, python_packages, python_modules, ext_modules, data_files, nobase_data_files, *,
-                      distributions=None):
+                      distributions=None, exclude_distributions=None):
     """
     Delete all modules that are **not** being installed
 
@@ -178,10 +187,11 @@ def clean_install_dir(site_packages, python_packages, python_modules, ext_module
       ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
       directive in the file) is an element of ``distributions``.
     """
+    distribution_filter = SourceDistributionFilter(distributions, exclude_distributions)
     stale_file_iter = _find_stale_files(
         site_packages, python_packages, python_modules, ext_modules, data_files, nobase_data_files)
     for f in stale_file_iter:
         f = os.path.join(site_packages, f)
-        if distributions is None or read_distribution(f) in distributions:
+        if f in distribution_filter:
             print('Cleaning up stale file: {0}'.format(f))
             os.unlink(f)

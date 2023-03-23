@@ -52,6 +52,7 @@ from random import randrange
 
 import pexpect
 from pexpect import ExceptionPexpect
+import sage.interfaces.abc
 from sage.interfaces.sagespawn import SageSpawn
 from sage.interfaces.interface import (Interface, InterfaceElement,
             InterfaceFunction, InterfaceFunctionElement)
@@ -474,7 +475,7 @@ If this all works, you can then make calls like:
         # Unset some environment variables for the children to
         # reduce the chances they do something complicated breaking
         # the terminal interface.
-        # See Trac #12221 and #13859.
+        # See Issue #12221 and #13859.
         pexpect_env = dict(os.environ)
         pexpect_env.update(self._env)
         pexpect_del_vars = ['TERM', 'COLUMNS']
@@ -544,7 +545,7 @@ If this all works, you can then make calls like:
         does *not* mark the process as terminated.  The same exception results,
         then, from any attempt to close the pexpect process.
 
-        See https://trac.sagemath.org/ticket/28354
+        See https://github.com/sagemath/sage/issues/28354
         """
         try:
             return self._expect is not None and self._expect.isalive()
@@ -941,7 +942,6 @@ If this all works, you can then make calls like:
         The interface still works after this interrupt::
 
             sage: singular('2+3')
-            Singular crashed -- automatically restarting.
             5
 
         Last, we demonstrate that by default the execution of a command
@@ -984,7 +984,7 @@ If this all works, you can then make calls like:
                     if sys.platform.startswith('sunos'):
                         # On (Open)Solaris, we might need to wait a
                         # while because the process might not die
-                        # immediately. See Trac #14371.
+                        # immediately. See Issue #14371.
                         for t in [0.5, 1.0, 2.0]:
                             if self._isalive():
                                 time.sleep(t)
@@ -1181,15 +1181,13 @@ If this all works, you can then make calls like:
             sage: singular._sendstr('def abc = 10 + 15;\n')
 
         Then we tell singular to print 10, which is an arbitrary number
-        different from the expected result 35.
+        different from the expected result 35::
 
             sage: singular._sendstr('10;\n')
 
         Here an exception is raised because 25 hasn't appeared yet in the
         output stream. The key thing is that this doesn't lock, but instead
-        quickly raises an exception.
-
-        ::
+        quickly raises an exception::
 
             sage: t = walltime()
             sage: try:
@@ -1203,21 +1201,15 @@ If this all works, you can then make calls like:
             sage: w = walltime(t); 0.3 < w < 10
             True
 
-        We tell Singular to print abc, which equals 25.
-
-        ::
+        We tell Singular to print abc, which equals 25::
 
             sage: singular._sendstr('abc;\n')
 
-        Now 25 is in the output stream, so we can wait for it.
-
-        ::
+        Now 25 is in the output stream, so we can wait for it::
 
             sage: singular._expect_expr('25')
 
-        This gives us everything before the 25, including the 10 we printed earlier.
-
-        ::
+        This gives us everything before the 25, including the 10 we printed earlier::
 
             sage: singular._expect.before.decode('ascii')
             '...10\r\n> '
@@ -1466,11 +1458,28 @@ class FunctionElement(InterfaceFunctionElement):
 
 
 def is_ExpectElement(x):
+    """
+    Return True if ``x`` is of type :class:`ExpectElement`
+
+    This function is deprecated; use :func:`isinstance`
+    (of :class:`sage.interfaces.abc.ExpectElement`) instead.
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.expect import is_ExpectElement
+        sage: is_ExpectElement(2)
+        doctest:...: DeprecationWarning: the function is_ExpectElement is deprecated; use isinstance(x, sage.interfaces.abc.ExpectElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
+        False
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_ExpectElement is deprecated; use isinstance(x, sage.interfaces.abc.ExpectElement) instead")
+
     return isinstance(x, ExpectElement)
 
 
 @instancedoc
-class ExpectElement(InterfaceElement):
+class ExpectElement(InterfaceElement, sage.interfaces.abc.ExpectElement):
     """
     Expect element.
     """

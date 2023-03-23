@@ -117,7 +117,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
                 for m in range(len(splitpolys)):
                     d = dom._degree(splitpolys[m][0])
                     if not all(d == dom._degree(f) for f in splitpolys[m]):
-                        raise  TypeError("polys (=%s) must be multi-homogeneous of the same degrees (by component)"%polys)
+                        raise TypeError("polys (=%s) must be multi-homogeneous of the same degrees (by component)"%polys)
             else:
                 #we are mapping into some other kind of space
                 target._validate(polys)

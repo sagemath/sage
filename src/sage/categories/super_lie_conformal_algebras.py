@@ -47,7 +47,7 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
 
             sage: LieConformalAlgebras(QQ).Super().super_categories()
             [Category of super modules over Rational Field,
-             Category of Lambda bracket algebras over Rational Field]     
+             Category of Lambda bracket algebras over Rational Field]
         """
         return [LambdaBracketAlgebras(self.base_ring())]
 

@@ -838,7 +838,7 @@ def is_commutative(x):
         sage: R = PolynomialRing(QQ, 'x')
         sage: is_commutative(R)
         doctest:...DeprecationWarning: use X.is_commutative() or X in Rings().Commutative()
-        See https://trac.sagemath.org/32347 for details.
+        See https://github.com/sagemath/sage/issues/32347 for details.
         True
     """
     deprecation(32347, "use X.is_commutative() or X in Rings().Commutative()")
@@ -872,7 +872,7 @@ def is_integrally_closed(x):
 
         sage: is_integrally_closed(QQ)
         doctest:...DeprecationWarning: use X.is_integrally_closed()
-        See https://trac.sagemath.org/32347 for details.
+        See https://github.com/sagemath/sage/issues/32347 for details.
         True
         sage: K.<a> = NumberField(x^2 + 189*x + 394)
         sage: R = K.order(2*a)
@@ -895,7 +895,7 @@ def is_field(x, proof=True):
         sage: F = FractionField(R)
         sage: is_field(F)
         doctest:...DeprecationWarning: use X.is_field() or X in Fields()
-        See https://trac.sagemath.org/32347 for details.
+        See https://github.com/sagemath/sage/issues/32347 for details.
         True
     """
     deprecation(32347, "use X.is_field() or X in Fields()")
@@ -1822,7 +1822,7 @@ def squarefree_part(x):
         return x.squarefree_part()
     except AttributeError:
         pass
-    from sage.arith.all import factor
+    from sage.arith.misc import factor
     from sage.structure.all import parent
     F = factor(x)
     n = parent(x)(1)
@@ -1935,7 +1935,7 @@ def sqrt(x, *args, **kwds):
         sage: sqrt(2).n(prec=100)
         1.4142135623730950488016887242
 
-    Or one can input a numerical type.
+    Or one can input a numerical type::
 
         sage: sqrt(2.)
         1.41421356237310

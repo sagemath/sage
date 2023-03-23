@@ -4,8 +4,7 @@ Embeddings into ambient fields
 This module provides classes to handle embeddings of number fields into ambient
 fields (generally `\RR` or `\CC`).
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +16,8 @@ fields (generally `\RR` or `\CC`).
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.rings.complex_double
 
@@ -345,7 +344,7 @@ cpdef matching_root(poly, target, ambient_field=None, margin=1, max_prec=None):
     target best approximates as compared in ambient_field.
 
     If the parent of target is exact, the equality is required, otherwise
-    find closest root (with respect to the \code{abs} function) in the
+    find closest root (with respect to the ``abs`` function) in the
     ambient field to the target, and return the root of poly (if any) that
     approximates it best.
 
@@ -405,7 +404,7 @@ cpdef matching_root(poly, target, ambient_field=None, margin=1, max_prec=None):
 cpdef closest(target, values, margin=1):
     """
     This is a utility function that returns the item in values closest to
-    target (with respect to the \code{abs} function). If margin is greater
+    target (with respect to the ``abs`` function). If margin is greater
     than 1, and x and y are the first and second closest elements to target,
     then only return x if x is margin times closer to target than y, i.e.
     margin * abs(target-x) < abs(target-y).
@@ -696,7 +695,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
     def section(self):
         """
         Return the section of ``self``.
-        
+
         EXAMPLES::
 
             sage: from sage.rings.number_field.number_field_morphisms import CyclotomicFieldEmbedding
@@ -716,10 +715,10 @@ cdef class CyclotomicFieldConversion(Map):
     EXAMPLES::
 
         sage: from sage.rings.number_field.number_field_morphisms import CyclotomicFieldConversion
-        sage: K1.<z1> = CyclotomicField(12)           
+        sage: K1.<z1> = CyclotomicField(12)
         sage: K2.<z2> = CyclotomicField(18)
-        sage: f = CyclotomicFieldConversion(K1, K2)                                                   
-        sage: f(z1^2)                                                                                 
+        sage: f = CyclotomicFieldConversion(K1, K2)
+        sage: f(z1^2)
         z2^3
         sage: f(z1)
         Traceback (most recent call last):
@@ -741,7 +740,7 @@ cdef class CyclotomicFieldConversion(Map):
     def __init__(self, K, L):
         """
         Construct a conversion map between cyclotomic fields.
-        
+
         EXAMPLES::
 
             sage: from sage.rings.number_field.number_field_morphisms import CyclotomicFieldEmbedding
@@ -776,4 +775,3 @@ cdef class CyclotomicFieldConversion(Map):
             return self.phi.preimage(M(x))
         except ValueError:
             raise ValueError('Element {} has no image in the codomain'.format(x))
-

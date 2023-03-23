@@ -1,5 +1,5 @@
 """
-Binary Quadratic Forms with Integer Coefficients
+Binary quadratic forms with integer coefficients
 
 This module provides a specialized class for working with a binary quadratic
 form `a x^2 + b x y + c y^2`, stored as a triple of integers `(a, b, c)`.
@@ -52,8 +52,9 @@ AUTHORS:
 from functools import total_ordering
 
 from sage.libs.pari.all import pari_gen
-from sage.rings.all import ZZ, is_fundamental_discriminant
-from sage.arith.all import gcd
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import is_fundamental_discriminant
+from sage.arith.misc import gcd
 from sage.structure.sage_object import SageObject
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import Matrix
@@ -130,18 +131,18 @@ class BinaryQF(SageObject):
             sage: BinaryQF(0)
             0
         """
-        from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
         if b is None and c is None:
             if (isinstance(a, (list, tuple))
                 and len(a) == 3):
                 a, b, c = a
             elif a == 0:
                 a = b = c = 0
-            elif (is_MPolynomial(a) and a.is_homogeneous() and a.base_ring() == ZZ
+            elif (isinstance(a, MPolynomial) and a.is_homogeneous() and a.base_ring() == ZZ
                   and a.degree() == 2 and a.parent().ngens() == 2):
                 x, y = a.parent().gens()
                 a, b, c = [a.monomial_coefficient(mon) for mon in [x**2, x*y, y**2]]
-            elif isinstance(a, pari_gen) and a.type() in ('t_QFI', 't_QFR'):
+            elif isinstance(a, pari_gen) and a.type() in ('t_QFI', 't_QFR', 't_QFB'):
                 # a has 3 or 4 components
                 a, b, c = a[0], a[1], a[2]
         try:
@@ -494,6 +495,48 @@ class BinaryQF(SageObject):
         if self._poly is None:
             self._poly = self(ZZ['x, y'].gens())
         return self._poly
+
+    @staticmethod
+    def from_polynomial(poly):
+        r"""
+        Construct a :class:`BinaryQF` from a bivariate polynomial
+        with integer coefficients. Inverse of :meth:`polynomial`.
+
+        EXAMPLES::
+
+            sage: R.<u,v> = ZZ[]
+            sage: f = u^2 + 419*v^2
+            sage: Q = BinaryQF.from_polynomial(f); Q
+            x^2 + 419*y^2
+            sage: Q.polynomial()
+            x^2 + 419*y^2
+            sage: Q.polynomial()(R.gens()) == f
+            True
+
+        The method fails if the given polynomial is not a quadratic form::
+
+            sage: BinaryQF.from_polynomial(u^3 - 5*v)
+            Traceback (most recent call last):
+            ...
+            ValueError: polynomial has monomials of degree != 2
+
+        ...or if the coefficients aren't integers::
+
+            sage: BinaryQF.from_polynomial(u^2/7 + v^2)
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+        """
+        R = poly.parent()
+        from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+        if not isinstance(R, MPolynomialRing_base) or R.ngens() != 2:
+            raise TypeError(f'not a bivariate polynomial ring: {R}')
+        if not all(mon.degree() == 2 for mon in poly.monomials()):
+            raise ValueError(f'polynomial has monomials of degree != 2')
+        x,y = R.gens()
+        coeffs = (poly.monomial_coefficient(mon) for mon in (x**2, x*y, y**2))
+        a,b,c = map(ZZ, coeffs)
+        return BinaryQF(a, b, c)
 
     @cached_method
     def discriminant(self):
@@ -1486,7 +1529,7 @@ class BinaryQF(SageObject):
             sage: [Q.small_prime_value() for Q in BinaryQF_reduced_representatives(-47, primitive_only=True)]
             [47, 2, 2, 3, 3]
         """
-        from sage.sets.all import Set
+        from sage.sets.set import Set
         from sage.arith.srange import xsrange
         B = 10
         while True:

@@ -26,7 +26,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import RationalField
+from sage.rings.rational_field import RationalField
 import sage.groups.additive_abelian.additive_abelian_wrapper as groups
 from sage.structure.richcmp import richcmp_method, richcmp
 
@@ -150,7 +150,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
             sage: type(T)
             <class 'sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup_with_category'>
 
-            sage: T == loads(dumps(T))  # known bug, see http://trac.sagemath.org/sage_trac/ticket/11599#comment:7
+            sage: T == loads(dumps(T))  # known bug, see https://github.com/sagemath/sage/issues/11599#comment:7
             True
         """
         self.__E = E
@@ -376,7 +376,7 @@ def torsion_bound(E, number_of_places=20):
     p = ZZ(2)  # so we start with 3
 
     try:  # special case, useful for base-changes from QQ
-        ainvs = [ZZ(ai)  for ai in ainvs]
+        ainvs = [ZZ(ai) for ai in ainvs]
         while k < number_of_places:
             p = p.next_prime()
             if p.divides(disc_E) or p.divides(disc_f):

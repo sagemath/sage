@@ -222,23 +222,21 @@ class FormsRing_abstract(Parent):
             sage: MR4.has_coerce_map_from(MF2)
             True
         """
-
         from .space import FormsSpace_abstract
         from .functors import _common_subgroup
-        if (    isinstance(S, FormsRing_abstract)\
-            and self._group         == _common_subgroup(self._group, S._group)\
-            and self._analytic_type >= S._analytic_type\
-            and self.base_ring().has_coerce_map_from(S.base_ring()) ):
+        if (isinstance(S, FormsRing_abstract)
+            and self._group == _common_subgroup(self._group, S._group)
+            and self._analytic_type >= S._analytic_type
+            and self.base_ring().has_coerce_map_from(S.base_ring())):
                 return True
-        elif isinstance(S, FormsRing_abstract):
+        if isinstance(S, FormsRing_abstract):
             return False
-        elif isinstance(S, FormsSpace_abstract):
-            raise RuntimeError( "This case should not occur." )
+        if isinstance(S, FormsSpace_abstract):
+            raise RuntimeError("this case should not occur")
             # return self._coerce_map_from_(S.graded_ring())
-        elif (self.AT("holo") <= self._analytic_type) and (self.coeff_ring().has_coerce_map_from(S)):
+        if (self.AT("holo") <= self._analytic_type) and (self.coeff_ring().has_coerce_map_from(S)):
             return True
-        else:
-            return False
+        return False
 
     def _an_element_(self):
         r"""

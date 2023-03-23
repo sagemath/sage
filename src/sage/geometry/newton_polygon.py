@@ -272,7 +272,7 @@ class NewtonPolygon_element(Element):
 
         This Newton polygon scaled by a factor ``exp``.
 
-        NOTE::
+        .. NOTE::
 
             If ``self`` is the Newton polygon of a polynomial `f`, then
             ``self^exp`` is the Newton polygon of `f^{exp}`.
@@ -630,13 +630,15 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
         """
         Parent class for all Newton polygons.
 
+        EXAMPLES::
+
             sage: from sage.geometry.newton_polygon import ParentNewtonPolygon
             sage: ParentNewtonPolygon()
             Parent for Newton polygons
 
         TESTS:
 
-        This class is a singleton.
+        This class is a singleton::
 
             sage: ParentNewtonPolygon() is ParentNewtonPolygon()
             True
