@@ -2600,7 +2600,7 @@ def skew_hadamard_matrix_from_orthogonal_design(n, existence=False, check=True):
         sage: skew_hadamard_matrix_from_orthogonal_design(16)
         Traceback (most recent call last):
         ...
-        ValueError: Orthogonal designs for matrix of order 16 not yet implemented.
+        NotImplementedError: orthogonal designs for matrix of order 16 not yet implemented
     """
     # We use value i to represent entries where variable x_i should be, and -i for -x_i
     orthogonal_designs = {
@@ -2623,7 +2623,7 @@ def skew_hadamard_matrix_from_orthogonal_design(n, existence=False, check=True):
     if m2 is None or m1 is None:
         if existence:
             return False
-        raise ValueError(f'Orthogonal designs for matrix of order {n} not yet implemented.')
+        raise NotImplementedError(f'orthogonal designs for matrix of order {n} not yet implemented')
 
     if existence:
         return True
@@ -2694,7 +2694,7 @@ def skew_hadamard_matrix_from_complementary_difference_sets(n, existence=False, 
         sage: skew_hadamard_matrix_from_complementary_difference_sets(100)
         Traceback (most recent call last):
         ...
-        ValueError: Hadamard matrix of order 100 from complementary difference sets is not implemented yet.
+        NotImplementedError: hadamard matrix of order 100 from complementary difference sets is not implemented yet
         sage: skew_hadamard_matrix_from_complementary_difference_sets(100, existence=True)
         False
     """
@@ -2708,7 +2708,7 @@ def skew_hadamard_matrix_from_complementary_difference_sets(n, existence=False, 
         return complementary_difference_sets(2*m+1, existence=True)
 
     if not complementary_difference_sets(2*m+1, existence=True):
-        raise ValueError(f'Hadamard matrix of order {n} from complementary difference sets is not implemented yet.')
+        raise NotImplementedError(f'hadamard matrix of order {n} from complementary difference sets is not implemented yet')
 
     G, A, B = complementary_difference_sets(2*m+1, check=False)
 
@@ -3464,7 +3464,7 @@ def amicable_hadamard_matrices_wallis(n, check=True):
 
     - ``n`` -- integer; the order of the matrices to be constructed
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the
-      resulting matrices are amicable Hadamard before returing them
+      resulting matrices are amicable Hadamard before returning them
 
     OUTPUT:
 
@@ -3586,14 +3586,15 @@ def amicable_hadamard_matrices(n, existence=False, check=True):
         sage: amicable_hadamard_matrices(16)
         Traceback (most recent call last):
         ...
-        ValueError: Construction for amicable Hadamard matrices of order 16 not yet implemented.
+        NotImplementedError: construction for amicable Hadamard matrices of order 16 not yet implemented
     """
     if not ((n % 4 == 0 and n > 2) or n in [1, 2]):
         if existence:
             return False
         raise ValueError(f"Hadamard matrices of order {n} do not exist")
 
-    M, N = None, None
+    M = None
+    N = None
     if n == 1:
         if existence:
             return True
@@ -3613,7 +3614,7 @@ def amicable_hadamard_matrices(n, existence=False, check=True):
         return False
 
     if M is None:
-        raise ValueError(f'Construction for amicable Hadamard matrices of order {n} not yet implemented.')
+        raise NotImplementedError(f'construction for amicable Hadamard matrices of order {n} not yet implemented')
 
     if check:
         assert are_amicable_hadamard_matrices(M, N)
