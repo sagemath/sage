@@ -616,7 +616,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             False
 
         Finite fields better illustrate the difference between
-        ``__contains__`` for objects and their underlying sets.
+        ``__contains__`` for objects and their underlying sets::
 
             sage: X = Set(GF(7))
             sage: X

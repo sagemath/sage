@@ -61,27 +61,33 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.padics.factory import Qp
-from sage.rings.infinity import infinity
-from sage.rings.all import LaurentSeriesRing, PowerSeriesRing, PolynomialRing, Integers
-
-from sage.rings.integer import Integer
-from sage.arith.all import valuation, binomial, kronecker_symbol, gcd, prime_divisors, LCM
-
-from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import richcmp_method, richcmp
-
-from sage.misc.functional import denominator
-from sage.misc.verbose import verbose, get_verbose
-
-from sage.modules.free_module_element import vector
 import sage.matrix.all as matrix
 import sage.schemes.hyperelliptic_curves.monsky_washnitzer
+
+from sage.arith.functions import lcm as LCM
+from sage.arith.misc import (binomial,
+                             GCD as gcd,
+                             prime_divisors,
+                             kronecker as kronecker_symbol,
+                             valuation)
 from sage.functions.log import log
 from sage.functions.other import floor
 from sage.misc.cachefunc import cached_method
+from sage.misc.functional import denominator
+from sage.misc.verbose import get_verbose, verbose
+from sage.modules.free_module_element import vector
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.padics.factory import Qp
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.structure.richcmp import richcmp_method, richcmp
+from sage.structure.sage_object import SageObject
+
 
 @richcmp_method
 class pAdicLseries(SageObject):

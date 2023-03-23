@@ -155,7 +155,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
             sage: _.category()
             Category of Cartesian products of finite enumerated sets
 
-        Check that the empty product is handled correctly:
+        Check that the empty product is handled correctly::
 
             sage: C = cartesian_product([])
             sage: C

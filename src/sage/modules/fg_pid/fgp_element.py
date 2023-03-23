@@ -156,7 +156,7 @@ class FGP_Element(ModuleElement):
             sage: 0 + x
             (1, 0)
 
-        We test canonical coercion from V and W.
+        We test canonical coercion from V and W::
 
             sage: Q.0 + V.0
             (1, 8)

@@ -1897,7 +1897,7 @@ def unpickle_MPolynomialRing_libsingular(base_ring, names, term_order):
     return _multi_variate(base_ring, tuple(names), None, term_order, None)
 
 
-cdef class MPolynomial_libsingular(MPolynomial):
+cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
     """
     A multivariate polynomial implemented using libSINGULAR.
     """
@@ -2057,7 +2057,18 @@ cdef class MPolynomial_libsingular(MPolynomial):
             9
             sage: a.parent() is QQ
             True
+
+        See :trac:`33373`::
+
+            sage: k.<a> = GF(2^4)
+            sage: R.<x> = PolynomialRing(k, 1)
+            sage: f = R(1)
+            sage: S.<y> = PolynomialRing(k, 1)
+            sage: f(y).parent()
+            Multivariate Polynomial Ring in y over Finite Field in a of size 2^4
         """
+        cdef Element sage_res
+
         if len(kwds) > 0:
             f = self.subs(**kwds)
             if len(x) > 0:
@@ -2076,29 +2087,28 @@ cdef class MPolynomial_libsingular(MPolynomial):
         if l != parent._ring.N:
             raise TypeError("number of arguments does not match number of variables in parent")
 
+        res_parent = coercion_model.common_parent(parent._base, *x)
+        cdef poly *res    # ownership will be transferred to us in the else block
         try:
             # Attempt evaluation via singular.
             coerced_x = [parent.coerce(e) for e in x]
         except TypeError:
             # give up, evaluate functional
-            y = parent.base_ring().zero()
+            sage_res = parent.base_ring().zero()
             for (m,c) in self.dict().iteritems():
-                y += c*mul([ x[i]**m[i] for i in m.nonzero_positions()])
-            return y
-
-        cdef poly *res    # ownership will be transferred to us in the next line
-        singular_polynomial_call(&res, self._poly, _ring, coerced_x, MPolynomial_libsingular_get_element)
-        res_parent = coercion_model.common_parent(parent._base, *x)
-
-        if res == NULL:
-            return res_parent(0)
-        if p_LmIsConstant(res, _ring):
-            sage_res = si2sa( p_GetCoeff(res, _ring), _ring, parent._base )
-            p_Delete(&res, _ring)            # sage_res contains copy
+                sage_res += c * mul([x[i] ** m[i] for i in m.nonzero_positions()])
         else:
-            sage_res = new_MP(parent, res)   # pass on ownership of res to sage_res
+            singular_polynomial_call(&res, self._poly, _ring, coerced_x, MPolynomial_libsingular_get_element)
 
-        if parent(sage_res) is not res_parent:
+            if res == NULL:
+                return res_parent(0)
+            if p_LmIsConstant(res, _ring):
+                sage_res = si2sa( p_GetCoeff(res, _ring), _ring, parent._base )
+                p_Delete(&res, _ring)            # sage_res contains copy
+            else:
+                sage_res = new_MP(parent, res)   # pass on ownership of res to sage_res
+
+        if sage_res._parent is not res_parent:
             sage_res = res_parent(sage_res)
         return sage_res
 

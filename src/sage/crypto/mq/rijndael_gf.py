@@ -424,7 +424,8 @@ Since ``expand_key_poly`` is not actually a
 
 from sage.matrix.constructor import matrix
 from sage.matrix.constructor import column_matrix
-from sage.structure.element import Matrix
+from sage.structure.element import Element, Matrix
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_base
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.structure.sage_object import SageObject
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -757,10 +758,9 @@ class RijndaelGF(SageObject):
             sage: rgf._GF_to_hex(output)
             'e142cd5fcd9d6d94a3340793034391b5'
         """
-        from sage.rings.finite_rings.element_base import is_FiniteFieldElement
         if not isinstance(GF, Matrix) and \
            not isinstance(GF, list) and \
-           not is_FiniteFieldElement(GF):
+           not (isinstance(GF, Element) and isinstance(GF.parent(), FiniteField_base)):
             msg = ("keyword 'GF' must be a matrix over {0}, a list of "
                    "elements from {0}, or a single element from {0}")
             raise TypeError(msg.format(self._F))
@@ -883,10 +883,9 @@ class RijndaelGF(SageObject):
             sage: rgf._GF_to_bin(output)
             '11011000000111111111100000011011110110000001111111111000000110111101100000011111111110000001101111011000000111111111100000011011'
         """
-        from sage.rings.finite_rings.element_base import is_FiniteFieldElement
         if not isinstance(GF, Matrix) and \
            not isinstance(GF, list) and \
-           not is_FiniteFieldElement(GF):
+           not (isinstance(GF, Element) and isinstance(GF.parent(), FiniteField_base)):
             msg = ("keyword 'GF' must be a matrix over {0}, a list of "
                    "elements from {0}, or a single element from {0}")
             raise TypeError(msg.format(self))
@@ -1549,9 +1548,9 @@ class RijndaelGF(SageObject):
         if not isinstance(f, RijndaelGF.Round_Component_Poly_Constr):
             msg = "keyword 'f' must be a Round_Component_Poly_Constr"
             raise TypeError(msg)
-        from sage.rings.polynomial.multi_polynomial import is_MPolynomial
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
         if not isinstance(g, RijndaelGF.Round_Component_Poly_Constr) and \
-           not is_MPolynomial(g):
+           not isinstance(g, MPolynomial):
             msg = ("keyword 'g' must be a Round_Component_Poly_Constr or a "
                    "polynomial over {0}")
             raise TypeError(msg.format(self._F))

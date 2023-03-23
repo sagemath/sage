@@ -20,7 +20,8 @@ As always, elements are immutable once constructed.
 
 from sage.structure.element import MultiplicativeGroupElement
 from sage.misc.cachefunc import cached_method
-from sage.arith.all import GCD, LCM
+from sage.arith.misc import GCD
+from sage.arith.functions import lcm as LCM
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
