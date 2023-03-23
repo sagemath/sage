@@ -52,8 +52,7 @@ First, consider the following embedding of `\mathbb{P}^1` into
     Scheme morphism:
       From: 1-d CPR-Fano toric variety covered by 2 affine patches
       To:   2-d CPR-Fano toric variety covered by 3 affine patches
-      Defn: Defined on coordinates by sending [u : v] to
-            [0 : u^2 + v^2 : u*v]
+      Defn: Defined on coordinates by sending [u : v] to [0 : u^2 + v^2 : u*v]
 
 This is a well-defined morphism of algebraic varieties because
 homogeneously rescaled coordinates of a point of `\mathbb{P}^1` map to the same
@@ -78,8 +77,7 @@ difficulty. For example, consider ::
     Scheme morphism:
       From: 1-d CPR-Fano toric variety covered by 2 affine patches
       To:   2-d CPR-Fano toric variety covered by 3 affine patches
-      Defn: Defined on coordinates by sending [u : v] to
-            [0 : u : v]
+      Defn: Defined on coordinates by sending [u : v] to [0 : u : v]
 
 This map is actually the embedding of the
 :meth:`~sage.schemes.toric.variety.ToricVariety_field.orbit_closure`
@@ -114,8 +112,7 @@ The fan morphism map is equivalent to the following polynomial map::
     Scheme morphism:
       From: 1-d CPR-Fano toric variety covered by 2 affine patches
       To:   2-d CPR-Fano toric variety covered by 3 affine patches
-      Defn: Defined on coordinates by sending [u : v] to
-            [u : v : v]
+      Defn: Defined on coordinates by sending [u : v] to [u : v : v]
 
 Finally, here is an example of a fan morphism that cannot be written
 using homogeneous polynomials. Consider the blowup `O_{\mathbb{P}^1}(2)
@@ -174,8 +171,7 @@ coordinate charts of `O_{\mathbb{P}^1}(2)` ::
     Scheme morphism:
       From: 0-d affine toric variety
       To:   2-d affine toric variety
-      Defn: Defined on coordinates by sending [] to
-            [1 : 1]
+      Defn: Defined on coordinates by sending [] to [1 : 1]
 
 The fibers are labeled by torus orbits in the base, that is, cones of
 the codomain fan. In this case, the fibers over lower-dimensional
@@ -226,8 +222,7 @@ blow-up in this single coordinate chart. Lets investigate further::
     Scheme morphism:
       From: 1-d affine toric variety
       To:   2-d affine toric variety
-      Defn: Defined on coordinates by sending [z0] to
-            [z0 : 0]
+      Defn: Defined on coordinates by sending [z0] to [z0 : 0]
 
 So we see that the fiber over this point is an affine line. Together
 with another affine line in the other coordinate patch, this covers
@@ -711,8 +706,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 1-d toric variety covered by 2 affine patches
               To:   2-d CPR-Fano toric variety covered by 3 affine patches
-              Defn: Defined on coordinates by sending [z0 : z1] to
-                    [0 : z1 : z0]
+              Defn: Defined on coordinates by sending [z0 : z1] to [0 : z1 : z0]
 
         If the toric variety is singular, then some orbit closure
         embeddings cannot be written with homogeneous polynomials::
@@ -840,7 +834,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
           From: 2-d CPR-Fano toric variety covered by 4 affine patches
           To:   1-d CPR-Fano toric variety covered by 2 affine patches
           Defn: Defined by sending Rational polyhedral fan in 2-d lattice N
-               to Rational polyhedral fan in 1-d lattice N.
+                to Rational polyhedral fan in 1-d lattice N.
 
         sage: P1xP1.hom(fm, P1)
         Scheme morphism:
@@ -1035,8 +1029,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d affine toric variety
-              Defn: Defined on coordinates by sending [x : y] to
-                    [x^2 : y]
+              Defn: Defined on coordinates by sending [x : y] to [x^2 : y]
 
         Blowup chart (birational)::
 
@@ -1044,8 +1037,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d toric variety covered by 3 affine patches
-              Defn: Defined on coordinates by sending [z0 : z1] to
-                    [1 : z1 : z0*z1]
+              Defn: Defined on coordinates by sending [z0 : z1] to [1 : z1 : z0*z1]
 
         Coordinate plane inclusion (injective)::
 
@@ -1102,8 +1094,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             sage: square = A1.hom(matrix([[2]]), A1)
             sage: square.as_polynomial_map()
             Scheme endomorphism of 1-d affine toric variety
-              Defn: Defined on coordinates by sending [z] to
-                    [z^2]
+              Defn: Defined on coordinates by sending [z] to [z^2]
 
             sage: P1 = toric_varieties.P1()
             sage: patch = A1.hom(matrix([[1]]), P1)
@@ -1111,8 +1102,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 1-d affine toric variety
               To:   1-d CPR-Fano toric variety covered by 2 affine patches
-              Defn: Defined on coordinates by sending [z] to
-                    [z : 1]
+              Defn: Defined on coordinates by sending [z] to [z : 1]
         """
         R = self.domain().coordinate_ring()
         phi = self.fan_morphism()
@@ -1420,8 +1410,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
             Scheme morphism:
               From: 1-d toric variety covered by 2 affine patches
               To:   2-d CPR-Fano toric variety covered by 4 affine patches
-              Defn: Defined on coordinates by sending [z0 : z1] to
-                    [1 : 1 : z0 : z1]
+              Defn: Defined on coordinates by sending [z0 : z1] to [1 : 1 : z0 : z1]
 
             sage: A1 = toric_varieties.A1()
             sage: fan = Fan([(0,1,2)], [(1,1,0), (1,0,1), (1,-1,-1)])

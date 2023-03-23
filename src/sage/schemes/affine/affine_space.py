@@ -716,8 +716,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             Scheme morphism:
               From: Affine Space of dimension 2 over Rational Field
               To:   Projective Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    (1 : x0 : x1)
+              Defn: Defined on coordinates by sending (x0, x1) to (1 : x0 : x1)
             sage: z = AA(3, 4)
             sage: pi(z)
             (1/4 : 3/4 : 1)
@@ -727,8 +726,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             Scheme morphism:
               From: Affine Space of dimension 2 over Rational Field
               To:   Projective Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    (x0 : 1 : x1)
+              Defn: Defined on coordinates by sending (x0, x1) to (x0 : 1 : x1)
             sage: pi(z)
             (3/4 : 1/4 : 1)
             sage: pi = AA.projective_embedding(2)
@@ -886,16 +884,14 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: A.chebyshev_polynomial(5, 'first')
             Dynamical System of Affine Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x) to
-            (16*x^5 - 20*x^3 + 5*x)
+            Defn: Defined on coordinates by sending (x) to (16*x^5 - 20*x^3 + 5*x)
 
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: A.chebyshev_polynomial(3, 'second')
             Dynamical System of Affine Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x) to
-            (8*x^3 - 4*x)
+            Defn: Defined on coordinates by sending (x) to (8*x^3 - 4*x)
 
         ::
 
@@ -926,8 +922,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: A.chebyshev_polynomial(7, monic=True)
             Dynamical System of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (x^7 - 7*x^5 + 14*x^3 - 7*x)
+              Defn: Defined on coordinates by sending (x) to (x^7 - 7*x^5 + 14*x^3 - 7*x)
 
         ::
 
@@ -936,8 +931,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A.chebyshev_polynomial(4, monic=True)
             Dynamical System of Affine Space of dimension 1
             over Rational function field in t over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (x^4 + (-4)*x^2 + 2)
+              Defn: Defined on coordinates by sending (x) to (x^4 + (-4)*x^2 + 2)
         """
         if self.dimension_relative() != 1:
             raise TypeError("affine space must be of dimension 1")

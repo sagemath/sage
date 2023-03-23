@@ -9,8 +9,7 @@ EXAMPLES::
     sage: H = End(P1xP1)
     sage: H([x^2*u, y^2*v, x*v^2, y*u^2])
     Scheme endomorphism of Product of projective spaces P^1 x P^1 over Rational Field
-      Defn: Defined by sending (x : y , u : v) to
-            (x^2*u : y^2*v , x*v^2 : y*u^2).
+      Defn: Defined by sending (x : y , u : v) to (x^2*u : y^2*v , x*v^2 : y*u^2).
 """
 # ****************************************************************************
 # Copyright (C) 2014 Ben Hutz <bn4941@gmail.com>
@@ -41,8 +40,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         sage: H = T.Hom(T)
         sage: H([x^2, y^2, z^2, w^2, u^2])
         Scheme endomorphism of Product of projective spaces P^2 x P^1 over Rational Field
-          Defn: Defined by sending (x : y : z , w : u) to
-                (x^2 : y^2 : z^2 , w^2 : u^2).
+          Defn: Defined by sending (x : y : z , w : u) to (x^2 : y^2 : z^2 , w^2 : u^2).
     """
 
     def __init__(self, parent, polys, check=True):
@@ -402,11 +400,11 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
     def as_dynamical_system(self):
         """
-        Return this endomorphism as a :class:`DynamicalSystem_producte_projective`.
+        Return this endomorphism as a :class:`~sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective`.
 
         OUTPUT:
 
-        - :class:`DynamicalSystem_produce_projective`
+        - :class:`~sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective`
 
         EXAMPLES::
 

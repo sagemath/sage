@@ -1376,8 +1376,7 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
                From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                      defined by: 0
                To:   Affine Space of dimension 2 over Rational Field
-               Defn: Defined on coordinates by sending (x, y) to
-                     (x, x/y)]
+               Defn: Defined on coordinates by sending (x, y) to (x, x/y)]
 
         ::
 
@@ -1390,8 +1389,8 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
                From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                      defined by: x^2 - y^2 - y
                To:   Affine Space of dimension 1 over Rational Field
-               Defn: Defined on coordinates by sending (x, y) to
-                     (x/y), Scheme morphism:
+               Defn: Defined on coordinates by sending (x, y) to (x/y),
+             Scheme morphism:
                From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                      defined by: x^2 - y^2 - y
                To:   Affine Space of dimension 1 over Rational Field

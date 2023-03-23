@@ -77,25 +77,17 @@ Let us look at one affine patch, for example the one where `x_0=1` ::
 
     sage: patch = twisted_cubic.affine_patch(0)
     sage: patch
-    Closed subscheme of Affine Space of dimension 3
-    over Rational Field defined by:
+    Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
       -x1^2 + x2,
       -x1*x2 + x3,
       -x2^2 + x1*x3
     sage: patch.embedding_morphism()
     Scheme morphism:
-      From: Closed subscheme of Affine Space of dimension 3
-      over Rational Field defined by:
-      -x1^2 + x2,
-      -x1*x2 + x3,
-      -x2^2 + x1*x3
-      To:   Closed subscheme of Projective Space of dimension 3
-      over Rational Field defined by:
-      x1^2 - x0*x2,
-      x1*x2 - x0*x3,
-      x2^2 - x1*x3
-      Defn: Defined on coordinates by sending (x1, x2, x3) to
-            (1 : x1 : x2 : x3)
+      From: Closed subscheme of Affine Space of dimension 3 over Rational Field
+            defined by: -x1^2 + x2, -x1*x2 + x3, -x2^2 + x1*x3
+      To:   Closed subscheme of Projective Space of dimension 3 over Rational Field
+            defined by: x1^2 - x0*x2, x1*x2 - x0*x3, x2^2 - x1*x3
+      Defn: Defined on coordinates by sending (x1, x2, x3) to (1 : x1 : x2 : x3)
 
 
 AUTHORS:
@@ -193,7 +185,7 @@ def is_AlgebraicScheme(x):
         sage: A,x = AffineSpace(10, QQ).objgens()
         sage: X = A.subscheme([sum(x)]); X
         Closed subscheme of Affine Space of dimension 10 over Rational Field defined by:
-        x0 + x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9
+          x0 + x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9
         sage: is_AlgebraicScheme(X)
         True
 
@@ -312,7 +304,8 @@ class AlgebraicScheme(scheme.Scheme):
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: S = P.subscheme([x - y, x - z])
             sage: S.coordinate_ring()
-            Quotient of Multivariate Polynomial Ring in x, y, z over Integer Ring by the ideal (x - y, x - z)
+            Quotient of Multivariate Polynomial Ring in x, y, z over Integer Ring
+            by the ideal (x - y, x - z)
         """
         try:
             return self._coordinate_ring
@@ -393,21 +386,18 @@ class AlgebraicScheme(scheme.Scheme):
             sage: C = A2.subscheme(x^2 + y^2 - 1)
             sage: C.embedding_morphism()
               Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x^2 + y^2 - 1
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: x^2 + y^2 - 1
               To:   Affine Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x, y) to
-                    (x, y)
+              Defn: Defined on coordinates by sending (x, y) to (x, y)
             sage: P1xP1.<x,y,u,v> = toric_varieties.P1xP1()
             sage: P1 = P1xP1.subscheme(x - y)
             sage: P1.embedding_morphism()
             Scheme morphism:
-            From: Closed subscheme of 2-d CPR-Fano toric variety covered
-                  by 4 affine patches defined by:
-            x - y
-            To:   2-d CPR-Fano toric variety covered by 4 affine patches
-            Defn: Defined on coordinates by sending [x : y : u : v] to
-                  [y : y : u : v]
+              From: Closed subscheme of 2-d CPR-Fano toric variety covered
+                    by 4 affine patches defined by: x - y
+              To:   2-d CPR-Fano toric variety covered by 4 affine patches
+              Defn: Defined on coordinates by sending [x : y : u : v] to [y : y : u : v]
 
         So far, the embedding was just in the own ambient space. Now a
         bit more interesting examples::
@@ -434,12 +424,11 @@ class AlgebraicScheme(scheme.Scheme):
 
             sage: nbhd.embedding_morphism()
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              -y^2*z - 2*y*z
-              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-              x^2*z - y^2*z
-              Defn: Defined on coordinates by sending (y, z) to
-                    (1 : y + 1 : z)
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: -y^2*z - 2*y*z
+              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field
+                    defined by: x^2*z - y^2*z
+              Defn: Defined on coordinates by sending (y, z) to (1 : y + 1 : z)
 
         A couple more examples::
 
@@ -447,7 +436,7 @@ class AlgebraicScheme(scheme.Scheme):
             sage: patch1
             2-d affine toric variety
             sage: patch1.embedding_morphism()
-              Scheme morphism:
+            Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d CPR-Fano toric variety covered by 4 affine patches
               Defn: Defined on coordinates by sending [y : u] to
@@ -458,13 +447,10 @@ class AlgebraicScheme(scheme.Scheme):
               -y + 1
             sage: subpatch.embedding_morphism()
             Scheme morphism:
-              From: Closed subscheme of 2-d affine toric variety defined by:
-              -y + 1
+              From: Closed subscheme of 2-d affine toric variety defined by: -y + 1
               To:   Closed subscheme of 2-d CPR-Fano toric variety covered
-                    by 4 affine patches defined by:
-              x - y
-              Defn: Defined on coordinates by sending [y : u] to
-                    [1 : y : u : 1]
+                    by 4 affine patches defined by: x - y
+              Defn: Defined on coordinates by sending [y : u] to [1 : y : u : 1]
         """
         if '_embedding_morphism' in self.__dict__:
             hom = self._embedding_morphism
@@ -505,11 +491,11 @@ class AlgebraicScheme(scheme.Scheme):
             (1/4 : -1/4 : 3/4 : 1)
             sage: nbhd.embedding_morphism()
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
-              w^2*y^2 - x^2*y^2 + 6*w^2*y - 6*x^2*y + 2*w*y^2 +
-              2*x*y^2 - 7*w^2 + 7*x^2 + 12*w*y + 12*x*y - 14*w - 14*x
-              To:   Closed subscheme of Projective Space of dimension 3 over Rational Field defined by:
-              w^2*y^2 - x^2*y^2 - w^2*z^2 + x^2*z^2
+              From: Closed subscheme of Affine Space of dimension 3 over Rational Field
+                    defined by: w^2*y^2 - x^2*y^2 + 6*w^2*y - 6*x^2*y + 2*w*y^2 + 2*x*y^2
+                                - 7*w^2 + 7*x^2 + 12*w*y + 12*x*y - 14*w - 14*x
+              To:   Closed subscheme of Projective Space of dimension 3 over Rational Field
+                    defined by: w^2*y^2 - x^2*y^2 - w^2*z^2 + x^2*z^2
               Defn: Defined on coordinates by sending (w, x, y) to
                     (w + 1 : x - 1 : y + 3 : 4)
         """
@@ -1014,8 +1000,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: P.<x, y, z> = ProjectiveSpace(2, GF(11))                              # optional - sage.rings.finite_rings
             sage: S = P.subscheme([x^2 - y*z])                                          # optional - sage.rings.finite_rings
             sage: S.base_extend(GF(11^2, 'b'))                                          # optional - sage.rings.finite_rings
-            Closed subscheme of Projective Space of dimension 2 over Finite Field in b of size 11^2 defined by:
-              x^2 - y*z
+            Closed subscheme of Projective Space of dimension 2 over Finite Field in b
+            of size 11^2 defined by: x^2 - y*z
             sage: S.base_extend(ZZ)                                                     # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -1859,10 +1845,10 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: X = P.subscheme([3*x^2 - y^2])
-            sage: H = Hom(X,X)
+            sage: H = Hom(X, X)
             sage: X.change_ring(GF(3))
-            Closed subscheme of Projective Space of dimension 1 over Finite Field of size 3 defined by:
-            -y^2
+            Closed subscheme of Projective Space of dimension 1 over Finite Field of size 3
+            defined by: -y^2
 
         ::
 
