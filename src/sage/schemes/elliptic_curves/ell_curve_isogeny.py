@@ -2595,8 +2595,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: a = F.gen()                                                                                                   # optional - sage.rings.finite_rings
             sage: E = EllipticCurve([1,0,0,0,(a**6+a**4+a**2+a)])                                                               # optional - sage.rings.finite_rings
             sage: x = polygen(F)                                                                                                # optional - sage.rings.finite_rings
-            sage: ker = x^6 + (a^6 + a^5 + a^4 + a^3 + a^2 + a)*x^5 + (a^6 + a^5 + a^2 + 1)*x^4
-            ....:       + (a^6 + a^5 + a^4 + a^3 + a^2 + 1)*x^3 + (a^6 + a^3 + a)*x^2 + (a^4 + a^3 + 1)*x + a^5 + a^4 + a       # optional - sage.rings.finite_rings
+            sage: ker = (x^6 + (a^6 + a^5 + a^4 + a^3 + a^2 + a)*x^5 + (a^6 + a^5 + a^2 + 1)*x^4                                # optional - sage.rings.finite_rings
+            ....:        + (a^6 + a^5 + a^4 + a^3 + a^2 + 1)*x^3 + (a^6 + a^3 + a)*x^2 + (a^4 + a^3 + 1)*x + a^5 + a^4 + a)
             sage: E.isogeny(ker)                                                                                                # optional - sage.rings.finite_rings
             Isogeny of degree 13
              from Elliptic Curve defined by y^2 + x*y = x^3 + (a^6+a^4+a^2+a) over Finite Field in a of size 2^7
