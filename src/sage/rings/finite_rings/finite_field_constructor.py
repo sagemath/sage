@@ -726,12 +726,12 @@ class FiniteFieldFactory(UniqueFactory):
                 names = normalize_names(1, names)
 
             # determine a modulus
-            from sage.rings.polynomial.polynomial_element import is_Polynomial
+            from sage.rings.polynomial.polynomial_element import Polynomial
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             if seed is False:
                 seed = None if modulus == "random" else 0
             if absolute_degree == 1 and base is None and (
-                modulus is None or is_Polynomial(modulus) and modulus.coefficients(sparse=False) == [-1, 1]):
+                modulus is None or isinstance(modulus, Polynomial) and modulus.coefficients(sparse=False) == [-1, 1]):
                 # Ignore the default modulus for a prime field (we cannot
                 # write down the modulus x-1 over Fp[x] here since we would
                 # recursively need Fp for that first.

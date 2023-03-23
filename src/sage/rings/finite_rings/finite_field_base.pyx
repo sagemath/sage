@@ -1442,7 +1442,7 @@ cdef class FiniteField(Field):
         """
         from .finite_field_constructor import GF
         from sage.rings.all import PolynomialRing
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.integer import Integer
         from sage.misc.superseded import deprecation
 
@@ -1484,7 +1484,7 @@ cdef class FiniteField(Field):
                 #     deprecation(28485, "the absolute keyword is deprecated. There is no need to specify it explicitly to create a relative extension.")
                 absolute = True
             implementation = "GF"
-        elif is_Polynomial(modulus):
+        elif isinstance(modulus, Polynomial):
             relative_degree = modulus.degree()
             modulus = modulus.change_ring(self)
             is_field = modulus.is_irreducible()
