@@ -2954,8 +2954,9 @@ class FunctionField_simple(FunctionField_polymod):
         k = self.constant_base_field()
         R = k[name]
         min_poly = R([k(c) for c in _min_poly.list()])
+        kwds = {'absolute':False} if k.is_finite() else {}
 
-        k_ext = k.extension(min_poly, name)
+        k_ext = k.extension(min_poly, name, **kwds)
 
         if k_ext.is_prime_field():
             # The cover of the quotient ring k_ext is the integer ring
@@ -4067,7 +4068,7 @@ class RationalFunctionField(FunctionField):
 
             sage: k.<a> = GF(4)
             sage: R.<b> = k[]
-            sage: l.<b> = k.extension(b^2 + b + a)
+            sage: l.<b> = k.extension(b^2 + b + a, absolute=False)
             sage: K.<x> = FunctionField(l)
             sage: R.<t> = K[]
             sage: F = t*x

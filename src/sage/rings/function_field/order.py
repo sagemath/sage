@@ -1097,7 +1097,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         # extend the base field to a field of degree r*s over the
         # prime field
         s = q.degree()
-        K,sigma = k.extension(s, map=True, name=name)
+        K,sigma = k.extension(s, map=True, name=name, absolute=True)
 
         # find a root beta in K satisfying the irreducible q
         S = K['X']

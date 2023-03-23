@@ -55,4 +55,4 @@ class RingExtensionHomset(RingHomset_generic):
               To:   Field in b with defining polynomial x^2 + (3 - a)*x + a over its base
               Defn: a |--> a
         """
-        return RingExtensionHomomorphism(self, *args, **kwargs)
+        return self.__make_element_class__(RingExtensionHomomorphism)(self, *args, **kwargs)
