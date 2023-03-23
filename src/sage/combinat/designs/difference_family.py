@@ -1856,10 +1856,10 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
 
     from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
     G = AdditiveAbelianGroup([q-1])
-    K1 = list(map(lambda x: G[x], psi1.exponents()))
-    K2 = list(map(lambda x: G[x], psi2.exponents()))
-    K3 = list(map(lambda x: G[x], psi3.exponents()))
-    K4 = list(map(lambda x: G[x], psi4.exponents()))
+    K1 = [G[x] for x in psi1.exponents()]
+    K2 = [G[x] for x in psi2.exponents()]
+    K3 = [G[x] for x in psi3.exponents()]
+    K4 = [G[x] for x in psi4.exponents()]
 
     if check:
         assert is_supplementary_difference_set([K1, K2, K3, K4], lmbda=q-1, G=G)
@@ -2073,10 +2073,7 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
         cosets.append([-F.gen()**i * el for el in H])
 
     def generate_set(index_set, cosets):
-        S = []
-        for idx in index_set:
-            S += cosets[idx]
-        return S
+        return sum((cosets[idx] for idx in index_set), [])
 
     S1 = generate_set(ind1, cosets)
     S2 = generate_set(ind2, cosets)
