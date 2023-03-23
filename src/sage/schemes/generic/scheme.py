@@ -506,7 +506,8 @@ class Scheme(Parent):
             sage: I = (x^2 - y^2)*R
             sage: X = Spec(R.quotient(I))
             sage: X.coordinate_ring()
-            Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 - y^2)
+            Quotient of Multivariate Polynomial Ring in x, y over Rational Field
+            by the ideal (x^2 - y^2)
         """
         try:
             return self._coordinate_ring

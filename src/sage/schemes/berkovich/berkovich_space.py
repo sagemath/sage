@@ -129,7 +129,7 @@ class Berkovich_Cp(Berkovich):
             sage: B.is_padic_base()                                                     # optional - sage.rings.padics
             True
 
-       ::
+        ::
 
             sage: B = Berkovich_Cp_Affine(QQ, 3)
             sage: B.is_padic_base()
@@ -365,8 +365,8 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
         sage: A.<a> = NumberField(x^3 + 20)                                             # optional - sage.rings.number_field
         sage: ideal = A.prime_above(3)                                                  # optional - sage.rings.number_field
         sage: B = Berkovich_Cp_Affine(A, ideal); B                                      # optional - sage.rings.number_field
-        Affine Berkovich line over Cp(3), with base Number
-        Field in a with defining polynomial x^3 + 20
+        Affine Berkovich line over Cp(3), with base
+        Number Field in a with defining polynomial x^3 + 20
 
     Number fields have a major advantage of exact computation.
 

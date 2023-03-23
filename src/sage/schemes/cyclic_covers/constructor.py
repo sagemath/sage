@@ -28,7 +28,7 @@ def CyclicCover(r, f, names=None, check_smooth=True):
     - ``f`` - univariate polynomial if not given, then it defaults to 0.
 
     - ``names``  (default: ``["x","y"]``) - names for the
-       coordinate functions
+      coordinate functions
 
     - ``check_squarefree`` (default: ``True``) - test if
       the input defines a unramified cover of the projective line.
@@ -66,12 +66,13 @@ def CyclicCover(r, f, names=None, check_smooth=True):
 
         sage: k.<a> = GF(9); R.<x> = k[]                                                # optional - sage.rings.finite_rings
         sage: CyclicCover(5, x^9 + x + 1)                                               # optional - sage.rings.finite_rings
-        Cyclic Cover of P^1 over Finite Field in a of size 3^2                          # optional - sage.rings.finite_rings
+        Cyclic Cover of P^1 over Finite Field in a of size 3^2
         defined by y^5 = x^9 + x + 1
         sage: CyclicCover(15, x^9 + x + 1)                                              # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
-        ValueError: As the characteristic divides the order of the cover, this model is not smooth.
+        ValueError: As the characteristic divides the order of the cover,
+        this model is not smooth.
 
     We can change the names of the variables in the output::
 
@@ -97,12 +98,11 @@ def CyclicCover(r, f, names=None, check_smooth=True):
     Input with integer coefficients creates objects with the integers
     as base ring, but only checks smoothness over `\QQ`, not over Spec(`\ZZ`).
     In other words, it is checked that the discriminant is non-zero, but it is
-    not checked whether the discriminant is a unit in `\ZZ^*`.::
+    not checked whether the discriminant is a unit in `\ZZ^*`::
 
         sage: R.<x> = ZZ[]
         sage: CyclicCover(5, (x^3-x+2)*(x^6-1))
-        Cyclic Cover of P^1 over Integer Ring
-        defined by y^5 = x^9 - x^7 + 2*x^6 - x^3 + x - 2
+        Cyclic Cover of P^1 over Integer Ring defined by y^5 = x^9 - x^7 + 2*x^6 - x^3 + x - 2
 
 
     """

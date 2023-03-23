@@ -146,13 +146,15 @@ class AffineHypersurface(AlgebraicScheme_subscheme_affine):
 
         sage: A.<x, y, z> = AffineSpace(ZZ, 3)
         sage: AffineHypersurface(x*y - z^3, A)
-        Affine hypersurface defined by -z^3 + x*y in Affine Space of dimension 3 over Integer Ring
+        Affine hypersurface defined by -z^3 + x*y in Affine Space of dimension 3
+        over Integer Ring
 
     ::
 
         sage: A.<x, y, z> = QQ[]
         sage: AffineHypersurface(x*y - z^3)
-        Affine hypersurface defined by -z^3 + x*y in Affine Space of dimension 3 over Rational Field
+        Affine hypersurface defined by -z^3 + x*y in Affine Space of dimension 3
+        over Rational Field
     """
     def __init__(self, poly, ambient=None):
         """
