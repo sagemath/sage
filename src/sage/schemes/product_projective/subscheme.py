@@ -81,8 +81,8 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: X.<x,y,z,w,u,v> = ProductProjectiveSpaces([2, 2], QQ)
             sage: P = ProjectiveSpace(QQ, 8, 't')
             sage: L = (-w - v)*x + (-w*y - u*z)
-            sage: Q = (-u*w - v^2)*x^2 + ((-w^2 - u*w + (-u*v - u^2))*y + (-w^2 - u*v)*z)*x + \
-            ((-w^2 - u*w - u^2)*y^2 + (-u*w - v^2)*z*y + (-w^2 + (-v - u)*w)*z^2)
+            sage: Q = ((-u*w - v^2)*x^2 + ((-w^2 - u*w + (-u*v - u^2))*y + (-w^2 - u*v)*z)*x
+            ....:      + ((-w^2 - u*w - u^2)*y^2 + (-u*w - v^2)*z*y + (-w^2 + (-v - u)*w)*z^2))
             sage: W = X.subscheme([L,Q])
             sage: phi = W.segre_embedding(P)
             sage: phi.codomain().ambient_space() == P
@@ -213,8 +213,8 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
             sage: X.<x,y,z,w,u,v> = ProductProjectiveSpaces([2, 2], QQ)
             sage: L = (-w - v)*x + (-w*y - u*z)
-            sage: Q = (-u*w - v^2)*x^2 + ((-w^2 - u*w + (-u*v - u^2))*y + (-w^2 - u*v)*z)*x + \
-            ((-w^2 - u*w - u^2)*y^2 + (-u*w - v^2)*z*y + (-w^2 + (-v - u)*w)*z^2)
+            sage: Q = ((-u*w - v^2)*x^2 + ((-w^2 - u*w + (-u*v - u^2))*y + (-w^2 - u*v)*z)*x
+            ....:      + ((-w^2 - u*w - u^2)*y^2 + (-u*w - v^2)*z*y + (-w^2 + (-v - u)*w)*z^2))
             sage: W = X.subscheme([L, Q])
             sage: W.dimension()
             2
@@ -272,8 +272,8 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
             sage: X.<x,y,z,w,u,v> = ProductProjectiveSpaces([2, 2],QQ)
             sage: L = (-w - v)*x + (-w*y - u*z)
-            sage: Q = (-u*w - v^2)*x^2 + ((-w^2 - u*w + (-u*v - u^2))*y + (-w^2 - u*v)*z)*x + \
-            ((-w^2 - u*w - u^2)*y^2 + (-u*w - v^2)*z*y + (-w^2 + (-v - u)*w)*z^2)
+            sage: Q = ((-u*w - v^2)*x^2 + ((-w^2 - u*w + (-u*v - u^2))*y + (-w^2 - u*v)*z)*x
+            ....:      + ((-w^2 - u*w - u^2)*y^2 + (-u*w - v^2)*z*y + (-w^2 + (-v - u)*w)*z^2))
             sage: W = X.subscheme([L, Q])
             sage: W.is_smooth()
             Traceback (most recent call last):

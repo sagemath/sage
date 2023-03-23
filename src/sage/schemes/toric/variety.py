@@ -117,12 +117,10 @@ must be homogeneous in each of these pairs::
     sage: P1xP1.inject_variables()
     Defining x, s, y, t
     sage: P1xP1.subscheme(x)
-    Closed subscheme of 2-d toric variety
-    covered by 4 affine patches defined by:
+    Closed subscheme of 2-d toric variety covered by 4 affine patches defined by:
       x
     sage: P1xP1.subscheme(x^2 + y^2)
-    Closed subscheme of 2-d toric variety
-    covered by 4 affine patches defined by:
+    Closed subscheme of 2-d toric variety covered by 4 affine patches defined by:
       x^2 + y^2
     sage: P1xP1.subscheme(x^2 + s^2)
     Traceback (most recent call last):
@@ -130,8 +128,7 @@ must be homogeneous in each of these pairs::
     ValueError: x^2 + s^2 is not homogeneous
     on 2-d toric variety covered by 4 affine patches
     sage: P1xP1.subscheme([x^2*s^2 + x*y*t^2 + y^2*t^2, s^3 + t^3])
-    Closed subscheme of 2-d toric variety
-    covered by 4 affine patches defined by:
+    Closed subscheme of 2-d toric variety covered by 4 affine patches defined by:
       x^2*s^2 + x*y*t^2 + y^2*t^2,
       s^3 + t^3
 
@@ -149,8 +146,7 @@ access the "building pieces"::
     Scheme morphism:
       From: 2-d affine toric variety
       To:   2-d toric variety covered by 4 affine patches
-      Defn: Defined on coordinates by sending [x : s] to
-            [x : s : 1 : 1]
+      Defn: Defined on coordinates by sending [x : s] to [x : s : 1 : 1]
 
 The patch above was specifically chosen to coincide with our representation of
 the affine plane before, but you can get the other three patches as well.
@@ -439,8 +435,7 @@ def ToricVariety(fan,
         sage: P1xP1(0,1,0,1)
         Traceback (most recent call last):
         ...
-        TypeError: coordinates (0, 1, 0, 1)
-        are in the exceptional set
+        TypeError: coordinates (0, 1, 0, 1) are in the exceptional set
 
     We cannot set to zero both coordinates of the same projective line!
 
@@ -456,8 +451,7 @@ def ToricVariety(fan,
         sage: P1xP1.inject_variables()
         Defining x, s, y, t
         sage: P1xP1.subscheme(x*s - y*t)
-        Closed subscheme of 2-d toric variety
-        covered by 4 affine patches defined by:
+        Closed subscheme of 2-d toric variety covered by 4 affine patches defined by:
           x*s - y*t
 
     Here is a shorthand for defining the toric variety and homogeneous
@@ -1010,15 +1004,13 @@ class ToricVariety_field(AmbientSpace):
             Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d toric variety covered by 4 affine patches
-              Defn: Defined on coordinates by sending [y : t] to
-                    [1 : 1 : y : t]
+              Defn: Defined on coordinates by sending [y : t] to [1 : 1 : y : t]
             sage: patch1 = P1xP1.affine_patch(1)
             sage: patch1.embedding_morphism()
             Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d toric variety covered by 4 affine patches
-              Defn: Defined on coordinates by sending [s : y] to
-                    [1 : s : y : 1]
+              Defn: Defined on coordinates by sending [s : y] to [1 : s : y : 1]
             sage: patch1 is P1xP1.affine_patch(1)
             True
         """
@@ -1080,8 +1072,7 @@ class ToricVariety_field(AmbientSpace):
             Traceback (most recent call last):
             ...
             ValueError: no natural map from the base ring
-            (=Real Field with 53 bits of precision)
-            to R (=Rational Field)!
+            (=Real Field with 53 bits of precision) to R (=Rational Field)!
             sage: R = PolynomialRing(QQ, 2, 'a')
             sage: P1xA1.change_ring(R)
             Traceback (most recent call last):
@@ -1113,8 +1104,7 @@ class ToricVariety_field(AmbientSpace):
 
             sage: P1xP1 = toric_varieties.P1xP1()
             sage: P1xP1.coordinate_ring()
-            Multivariate Polynomial Ring in s, t, x, y
-            over Rational Field
+            Multivariate Polynomial Ring in s, t, x, y over Rational Field
 
         TESTS::
 
@@ -1149,8 +1139,7 @@ class ToricVariety_field(AmbientSpace):
             sage: P1xP1.embedding_morphism()
             Traceback (most recent call last):
             ...
-            ValueError: no default embedding was
-            defined for this toric variety
+            ValueError: no default embedding was defined for this toric variety
             sage: patch = P1xP1.affine_patch(0)
             sage: patch
             2-d affine toric variety
@@ -1158,8 +1147,7 @@ class ToricVariety_field(AmbientSpace):
             Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d toric variety covered by 4 affine patches
-              Defn: Defined on coordinates by sending [y : t] to
-                    [1 : 1 : y : t]
+              Defn: Defined on coordinates by sending [y : t] to [1 : 1 : y : t]
         """
         try:
             return self._embedding_morphism
@@ -1376,8 +1364,7 @@ class ToricVariety_field(AmbientSpace):
             sage: TV1.is_isomorphic(TV2)
             Traceback (most recent call last):
             ...
-            NotImplementedError:
-            isomorphism check is not yet implemented
+            NotImplementedError: isomorphism check is not yet implemented
         """
         if self is another:
             return True
@@ -1558,8 +1545,7 @@ class ToricVariety_field(AmbientSpace):
             sage: P4_11169.Mori_cone().rays()
             (3, 2, 0, 0, 0,  1, -6),
             (0, 0, 1, 1, 1, -3,  0)
-            in Ambient free module of rank 7
-            over the principal ideal domain Integer Ring
+            in Ambient free module of rank 7 over the principal ideal domain Integer Ring
         """
         # Ideally, self.Kaehler_cone().dual() should be it, but
         # so far this is not the case.
@@ -1883,8 +1869,7 @@ class ToricVariety_field(AmbientSpace):
             sage: X.defining_polynomials()
             (x*s + y*t, x^3 + y^3)
             sage: X.defining_ideal()
-            Ideal (x*s + y*t, x^3 + y^3)
-            of Multivariate Polynomial Ring in x, y, s, t
+            Ideal (x*s + y*t, x^3 + y^3) of Multivariate Polynomial Ring in x, y, s, t
             over Rational Field
             sage: X.base_ring()
             Rational Field
@@ -1893,9 +1878,7 @@ class ToricVariety_field(AmbientSpace):
             sage: X.structure_morphism()
             Scheme morphism:
               From: Closed subscheme of 2-d CPR-Fano toric variety
-                    covered by 4 affine patches defined by:
-              x*s + y*t,
-              x^3 + y^3
+                    covered by 4 affine patches defined by: x*s + y*t, x^3 + y^3
               To:   Spectrum of Rational Field
               Defn: Structure map
         """
@@ -1984,8 +1967,8 @@ class ToricVariety_field(AmbientSpace):
             sage: X.cohomology_ring()
             Rational cohomology ring of a 2-d CPR-Fano toric variety covered by 6 affine patches
             sage: X.cohomology_ring().defining_ideal()
-            Ideal (-u - y + z + w, x - y - v + w, x*y, x*v, x*z, u*v, u*z, u*w, y*z, y*w, v*w) of
-             Multivariate Polynomial Ring in x, u, y, v, z, w over Rational Field
+            Ideal (-u - y + z + w, x - y - v + w, x*y, x*v, x*z, u*v, u*z, u*w, y*z, y*w, v*w)
+            of Multivariate Polynomial Ring in x, u, y, v, z, w over Rational Field
             sage: X.cohomology_ring().defining_ideal().ring()
             Multivariate Polynomial Ring in x, u, y, v, z, w over Rational Field
             sage: X.variable_names()
@@ -2412,8 +2395,7 @@ class ToricVariety_field(AmbientSpace):
 
             sage: dP6 = toric_varieties.dP6()
             sage: dP6.coordinate_ring()
-            Multivariate Polynomial Ring in x, u, y, v, z, w
-            over Rational Field
+            Multivariate Polynomial Ring in x, u, y, v, z, w over Rational Field
             sage: dP6.divisor(list(range(6)))
             V(u) + 2*V(y) + 3*V(v) + 4*V(z) + 5*V(w)
             sage: dP6.inject_variables()
@@ -2481,8 +2463,7 @@ class ToricVariety_field(AmbientSpace):
 
             sage: dP6 = toric_varieties.dP6()
             sage: Div = dP6.divisor_group(); Div
-            Group of ZZ-Divisors on 2-d CPR-Fano toric variety
-            covered by 6 affine patches
+            Group of ZZ-Divisors on 2-d CPR-Fano toric variety covered by 6 affine patches
             sage: Div(x)
             V(x)
         """
@@ -2773,8 +2754,7 @@ class ToricVariety_field(AmbientSpace):
             Scheme morphism:
               From: 1-d toric variety covered by 2 affine patches
               To:   2-d CPR-Fano toric variety covered by 4 affine patches
-              Defn: Defined on coordinates by sending [z0 : z1] to
-                    [0 : 1 : z1 : z0]
+              Defn: Defined on coordinates by sending [z0 : z1] to [0 : 1 : z1 : z0]
 
         TESTS::
 
@@ -2848,7 +2828,8 @@ class ToricVariety_field(AmbientSpace):
             sage: Hs.Demazure_roots()
             (M(-1, 0), M(1, 0), M(0, 1), M(1, 1), M(2, 1), M(3, 1))
 
-            sage: P11s = ToricVariety(Fan(rays=[(1,0), (0,-1), (-1,s)], cones=[(0,1), (1,2), (2,0)]))
+            sage: P11s = ToricVariety(Fan(rays=[(1,0), (0,-1), (-1,s)],
+            ....:                         cones=[(0,1), (1,2), (2,0)]))
             sage: P11s.Demazure_roots()
             (M(-1, 0), M(1, 0), M(0, 1), M(1, 1), M(2, 1), M(3, 1))
             sage: P11s.Demazure_roots() == Hs.Demazure_roots()

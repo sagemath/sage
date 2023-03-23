@@ -57,10 +57,8 @@ manifold::
     ....:       monomial_points="all")
     Closed subscheme of 2-d CPR-Fano toric variety
     covered by 3 affine patches defined by:
-      a0*z0^3 + a9*z0^2*z1 + a7*z0*z1^2
-    + a1*z1^3 + a8*z0^2*z2 + a6*z0*z1*z2
-    + a4*z1^2*z2 + a5*z0*z2^2
-    + a3*z1*z2^2 + a2*z2^3
+      a0*z0^3 + a9*z0^2*z1 + a7*z0*z1^2 + a1*z1^3 + a8*z0^2*z2 + a6*z0*z1*z2
+      + a4*z1^2*z2 + a5*z0*z2^2 + a3*z1*z2^2 + a2*z2^3
 
 In many cases it is sufficient to work with the "simplified polynomial
 moduli space" of anticanonical hypersurfaces::
@@ -80,10 +78,8 @@ variety obtained using ``simplex`` as ``Delta`` instead of ``Delta_polar``::
     ....:       monomial_points="simplified")
     Closed subscheme of 2-d CPR-Fano toric variety
     covered by 9 affine patches defined by:
-      a2*z2^3*z3^2*z4*z5^2*z8
-    + a1*z1^3*z3*z4^2*z7^2*z9
-    + a3*z0*z1*z2*z3*z4*z5*z7*z8*z9
-    + a0*z0^3*z5*z7*z8^2*z9^2
+      a2*z2^3*z3^2*z4*z5^2*z8 + a1*z1^3*z3*z4^2*z7^2*z9
+      + a3*z0*z1*z2*z3*z4*z5*z7*z8*z9 + a0*z0^3*z5*z7*z8^2*z9^2
 
 Here we have taken the resolved version of the ambient space for the
 mirror family, but in fact we don't have to resolve singularities
@@ -110,8 +106,7 @@ studied by Adrian Clingher and Charles F. Doran in [CD2007]_::
     sage: FTV.anticanonical_hypersurface()
     Closed subscheme of 3-d CPR-Fano toric variety
     covered by 4 affine patches defined by:
-      a0*z2^12 + a4*z2^6*z3^6 + a3*z3^12
-    + a8*z0*z1*z2*z3 + a2*z1^3 + a1*z0^2
+      a0*z2^12 + a4*z2^6*z3^6 + a3*z3^12 + a8*z0*z1*z2*z3 + a2*z1^3 + a1*z0^2
 
 Below you will find detailed descriptions of available functions. Current
 functionality of this module is very basic, but it is under active
@@ -181,8 +176,7 @@ def is_CPRFanoToricVariety(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.toric.fano_variety import (
-        ....:   is_CPRFanoToricVariety)
+        sage: from sage.schemes.toric.fano_variety import is_CPRFanoToricVariety
         sage: is_CPRFanoToricVariety(1)
         False
         sage: FTV = toric_varieties.P2()
@@ -461,8 +455,7 @@ def CPRFanoToricVariety(Delta=None,
         Traceback (most recent call last):
         ...
         ValueError: you have provided 5 cones, but only 4 of them are maximal!
-        Use discard_faces=True if you indeed need to construct a fan from
-        these cones.
+        Use discard_faces=True if you indeed need to construct a fan from these cones.
 
     These charts are technically correct, they just happened to list one of
     them twice, but it is assumed that such a situation will not happen. It is
@@ -504,24 +497,21 @@ def CPRFanoToricVariety(Delta=None,
         ....:       coordinate_points=[1,2,3,4])
         Traceback (most recent call last):
         ...
-        ValueError: all 4 vertices of Delta_polar
-        must be used for coordinates!
+        ValueError: all 4 vertices of Delta_polar must be used for coordinates!
         Got: [1, 2, 3, 4]
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
         ....:       coordinate_points=[0,0,1,2,3,4])
         Traceback (most recent call last):
         ...
-        ValueError: no repetitions are
-        allowed for coordinate points!
+        ValueError: no repetitions are allowed for coordinate points!
         Got: [0, 0, 1, 2, 3, 4]
 
         sage: FTV = CPRFanoToricVariety(Delta_polar=square,
         ....:       coordinate_points=[0,1,2,3,6])
         Traceback (most recent call last):
         ...
-        ValueError: the origin (point #6)
-        cannot be used for a coordinate!
+        ValueError: the origin (point #6) cannot be used for a coordinate!
         Got: [0, 1, 2, 3, 6]
 
     Here is a shorthand for defining the toric variety and homogeneous
@@ -804,20 +794,16 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         Its anticanonical "hypersurface" is a one-dimensional Calabi-Yau
         manifold::
 
-            sage: P2.anticanonical_hypersurface(
-            ....:       monomial_points="all")
+            sage: P2.anticanonical_hypersurface(monomial_points="all")
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
-              a0*z0^3 + a9*z0^2*z1 + a7*z0*z1^2
-            + a1*z1^3 + a8*z0^2*z2 + a6*z0*z1*z2
-            + a4*z1^2*z2 + a5*z0*z2^2
-            + a3*z1*z2^2 + a2*z2^3
+              a0*z0^3 + a9*z0^2*z1 + a7*z0*z1^2 + a1*z1^3 + a8*z0^2*z2 + a6*z0*z1*z2
+              + a4*z1^2*z2 + a5*z0*z2^2 + a3*z1*z2^2 + a2*z2^3
 
         In many cases it is sufficient to work with the "simplified polynomial
         moduli space" of anticanonical hypersurfaces::
 
-            sage: P2.anticanonical_hypersurface(
-            ....:       monomial_points="simplified")
+            sage: P2.anticanonical_hypersurface(monomial_points="simplified")
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
               a0*z0^3 + a1*z1^3 + a6*z0*z1*z2 + a2*z2^3
@@ -827,15 +813,12 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         ``Delta_polar``::
 
             sage: FTV = CPRFanoToricVariety(Delta=simplex,
-            ....:       coordinate_points="all")
-            sage: FTV.anticanonical_hypersurface(
-            ....:       monomial_points="simplified")
+            ....:                           coordinate_points="all")
+            sage: FTV.anticanonical_hypersurface(monomial_points="simplified")
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 9 affine patches defined by:
-              a2*z2^3*z3^2*z4*z5^2*z8
-            + a1*z1^3*z3*z4^2*z7^2*z9
-            + a3*z0*z1*z2*z3*z4*z5*z7*z8*z9
-            + a0*z0^3*z5*z7*z8^2*z9^2
+              a2*z2^3*z3^2*z4*z5^2*z8 + a1*z1^3*z3*z4^2*z7^2*z9
+              + a3*z0*z1*z2*z3*z4*z5*z7*z8*z9 + a0*z0^3*z5*z7*z8^2*z9^2
 
         Here we have taken the resolved version of the ambient space for the
         mirror family, but in fact we don't have to resolve singularities
@@ -843,9 +826,8 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         points which do not lie on a generic anticanonical hypersurface::
 
             sage: FTV = CPRFanoToricVariety(Delta=simplex,
-            ....:       coordinate_points="all but facets")
-            sage: FTV.anticanonical_hypersurface(
-            ....:       monomial_points="simplified")
+            ....:                           coordinate_points="all but facets")
+            sage: FTV.anticanonical_hypersurface(monomial_points="simplified")
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
               a0*z0^3 + a1*z1^3 + a3*z0*z1*z2 + a2*z2^3
@@ -858,16 +840,14 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         automatically generated coefficients. If you want, you can specify your
         own names ::
 
-            sage: FTV.anticanonical_hypersurface(
-            ....:       coefficient_names="a b c d")
+            sage: FTV.anticanonical_hypersurface(coefficient_names="a b c d")
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
               a*z0^3 + b*z1^3 + d*z0*z1*z2 + c*z2^3
 
         or give concrete coefficients ::
 
-            sage: FTV.anticanonical_hypersurface(
-            ....:       coefficients=[1, 2, 3, 4])
+            sage: FTV.anticanonical_hypersurface(coefficients=[1, 2, 3, 4])
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
               z0^3 + 2*z1^3 + 4*z0*z1*z2 + 3*z2^3
@@ -883,8 +863,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             sage: R = H.ambient_space().base_ring()
             sage: R
             Fraction Field of
-            Multivariate Polynomial Ring in phi, psi, t
-            over Rational Field
+            Multivariate Polynomial Ring in phi, psi, t over Rational Field
         """
         # The example above is also copied to the tutorial section in the
         # main documentation of the module.
@@ -925,8 +904,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             Traceback (most recent call last):
             ...
             ValueError: no natural map from the base ring
-            (=Real Field with 53 bits of precision)
-            to R (=Rational Field)!
+            (=Real Field with 53 bits of precision) to R (=Rational Field)!
             sage: R = PolynomialRing(QQ, 2, 'a')
             sage: P1xP1.change_ring(R)
             Traceback (most recent call last):
@@ -985,14 +963,14 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             sage: diamond = lattice_polytope.cross_polytope(2)
             sage: square = diamond.polar()
             sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-            ....:       coordinate_points=[0,1,2,3,8])
+            ....:                           coordinate_points=[0,1,2,3,8])
             sage: FTV.coordinate_points()
             (0, 1, 2, 3, 8)
             sage: FTV.gens()
             (z0, z1, z2, z3, z8)
 
             sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-            ....:       coordinate_points="all")
+            ....:                           coordinate_points="all")
             sage: FTV.coordinate_points()
             (0, 1, 2, 3, 4, 5, 7, 8)
             sage: FTV.gens()
@@ -1387,7 +1365,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 4 affine patches defined by:
               s^2*x^2 + s*t*x^2 + t^2*x^2 + s^2*x*y + s*t*x*y
-            + t^2*x*y + s^2*y^2 + s*t*y^2 + t^2*y^2
+              + t^2*x*y + s^2*y^2 + s*t*y^2 + t^2*y^2
         """
         if not is_CPRFanoToricVariety(P_Delta):
             raise TypeError("anticanonical hypersurfaces can only be "
@@ -1667,11 +1645,9 @@ def add_variables(field, variables):
         sage: F = add_variables(QQ, []); F      # No extension
         Rational Field
         sage: F = add_variables(QQ, ["a"]); F
-        Fraction Field of Univariate Polynomial Ring
-        in a over Rational Field
+        Fraction Field of Univariate Polynomial Ring in a over Rational Field
         sage: F = add_variables(F, ["a"]); F
-        Fraction Field of Univariate Polynomial Ring
-        in a over Rational Field
+        Fraction Field of Univariate Polynomial Ring in a over Rational Field
         sage: F = add_variables(F, ["b", "c"]); F
         Fraction Field of Multivariate Polynomial Ring
         in a, b, c over Rational Field

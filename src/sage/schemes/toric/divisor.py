@@ -45,7 +45,7 @@ Now we create a more complicated variety to demonstrate divisors of different
 types::
 
     sage: F = Fan(cones=[(0,1,2,3), (0,1,4)],
-    ....:     rays=[(1,1,1), (1,-1,1), (1,-1,-1), (1,1,-1), (0,0,1)])
+    ....:         rays=[(1,1,1), (1,-1,1), (1,-1,-1), (1,1,-1), (0,0,1)])
     sage: X = ToricVariety(F)
     sage: QQ_Cartier = X.divisor([2,2,1,1,1])
     sage: Cartier = 2 * QQ_Cartier
@@ -959,8 +959,7 @@ class ToricDivisor_generic(Divisor_generic):
             [(1, 1), (1, 2), (2, 1), (2, 2)]
             sage: [ (a,b) for a,b in product(range(-3,3), repeat=2)
             ....:         if D(a,b).is_nef() ]
-            [(0, 0), (0, 1), (0, 2), (1, 0),
-             (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
+            [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
 
         A (worse than orbifold) singular Fano threefold::
 
@@ -1037,8 +1036,7 @@ class ToricDivisor_generic(Divisor_generic):
             [(1, 1), (1, 2), (2, 1), (2, 2)]
             sage: [ (a,b) for a,b in product(range(-3,3), repeat=2)
             ....:         if D(a,b).is_nef() ]
-            [(0, 0), (0, 1), (0, 2), (1, 0),
-             (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
+            [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
         """
         try:
             return self._is_nef
@@ -1278,10 +1276,8 @@ class ToricDivisor_generic(Divisor_generic):
             Scheme morphism:
               From: 1-d CPR-Fano toric variety covered by 2 affine patches
               To:   Closed subscheme of Projective Space of dimension 2
-                    over Rational Field defined by:
-              -z1^2 + z0*z2
-              Defn: Defined on coordinates by sending [u : v] to
-                    (v^2 : u*v : u^2)
+                    over Rational Field defined by: -z1^2 + z0*z2
+              Defn: Defined on coordinates by sending [u : v] to (v^2 : u*v : u^2)
 
             sage: dP6 = toric_varieties.dP6()
             sage: D = -dP6.K()
@@ -1290,17 +1286,17 @@ class ToricDivisor_generic(Divisor_generic):
               From: 2-d CPR-Fano toric variety covered by 6 affine patches
               To:   Closed subscheme of Projective Space of dimension 6
                     over Rational Field defined by:
-              -x1*x5 + x0*x6,
-              -x2*x3 + x0*x5,
-              -x1*x3 + x0*x4,
-              x4*x5 - x3*x6,
-              -x1*x2 + x0*x3,
-              x3*x5 - x2*x6,
-              x3*x4 - x1*x6,
-              x3^2 - x1*x5,
-              x2*x4 - x1*x5,
-              -x1*x5^2 + x2*x3*x6,
-              -x1*x5^3 + x2^2*x6^2
+                      -x1*x5 + x0*x6,
+                      -x2*x3 + x0*x5,
+                      -x1*x3 + x0*x4,
+                      x4*x5 - x3*x6,
+                      -x1*x2 + x0*x3,
+                      x3*x5 - x2*x6,
+                      x3*x4 - x1*x6,
+                      x3^2 - x1*x5,
+                      x2*x4 - x1*x5,
+                      -x1*x5^2 + x2*x3*x6,
+                      -x1*x5^3 + x2^2*x6^2
               Defn: Defined on coordinates by sending [x : u : y : v : z : w] to
                     (x*u^2*y^2*v : x^2*u^2*y*w : u*y^2*v^2*z : x*u*y*v*z*w :
                      x^2*u*z*w^2 : y*v^2*z^2*w : x*v*z^2*w^2)

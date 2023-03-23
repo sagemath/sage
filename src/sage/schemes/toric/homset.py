@@ -48,8 +48,7 @@ the projection matrix alone::
     Scheme morphism:
       From: 2-d CPR-Fano toric variety covered by 4 affine patches
       To:   1-d CPR-Fano toric variety covered by 2 affine patches
-      Defn: Defined on coordinates by sending [s : t : x : y] to
-            [s : t]
+      Defn: Defined on coordinates by sending [s : t : x : y] to [s : t]
 
 In the case of toric algebraic schemes (defined by polynomials in
 toric varieties), this module defines the underlying morphism of the
@@ -76,8 +75,7 @@ coordinates where the codomain is not implemented as a toric variety::
     Scheme morphism:
       From: 2-d CPR-Fano toric variety covered by 3 affine patches
       To:   Projective Space of dimension 2 over Rational Field
-      Defn: Defined on coordinates by sending [x : y : z] to
-            (x^2 : y^2 : z^2)
+      Defn: Defined on coordinates by sending [x : y : z] to (x^2 : y^2 : z^2)
 
     sage: native_to_toric = P2_native.Hom(P2_toric);  native_to_toric
     Set of morphisms
@@ -89,8 +87,7 @@ coordinates where the codomain is not implemented as a toric variety::
     Scheme morphism:
       From: Projective Space of dimension 2 over Rational Field
       To:   2-d CPR-Fano toric variety covered by 3 affine patches
-      Defn: Defined on coordinates by sending (u : v : w) to
-            [u^2 : v^2 : w^2]
+      Defn: Defined on coordinates by sending (u : v : w) to [u^2 : v^2 : w^2]
 """
 
 # ****************************************************************************

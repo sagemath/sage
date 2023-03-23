@@ -236,8 +236,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
                     defined by: Y^3*Z + Z^3 + Y
               To:   Closed subscheme of Projective Space of dimension 2 over Rational Field
                     defined by: X^3*Y + Y^3*Z + X*Z^3
-              Defn: Defined on coordinates by sending (Y, Z) to
-                    (1 : Y : Z)
+              Defn: Defined on coordinates by sending (Y, Z) to (1 : Y : Z)
             sage: U.projective_embedding() is U.embedding_morphism()
             True
 
@@ -370,8 +369,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
                     defined by: x + 3*z
               To:   Closed subscheme of Projective Space of dimension 2 over Rational Field
                     defined by: x + 2*y + 3*z
-              Defn: Defined on coordinates by sending (x, z) to
-                    (x : -3/2 : z + 1)
+              Defn: Defined on coordinates by sending (x, z) to (x : -3/2 : z + 1)
             sage: patch.embedding_center()
             (0, 0)
             sage: patch.embedding_morphism()([0,0])
@@ -960,7 +958,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: X.dual()                                                              # optional - sage.rings.finite_rings
             Closed subscheme of Projective Space of dimension 2 over
             Finite Field of size 61 defined by:
-            y0^2 - 30*y1^2 - 20*y2^2
+              y0^2 - 30*y1^2 - 20*y2^2
 
         TESTS::
 
