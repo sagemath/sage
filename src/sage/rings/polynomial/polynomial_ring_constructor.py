@@ -747,7 +747,7 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
             specialized = polynomial_ring.PolynomialRing_dense_mod_p
         elif n > 1:  # Specialized code breaks for n == 1
             specialized = polynomial_ring.PolynomialRing_dense_mod_n
-    elif is_FiniteField(base_ring):
+    elif isinstance(base_ring, FiniteField):
         # We need to exclude the relative case: the NTL implementation assumes absolute for example
         specialized = polynomial_ring.PolynomialRing_dense_finite_field
     elif isinstance(base_ring, padic_base_leaves.pAdicFieldCappedRelative):

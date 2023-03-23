@@ -196,6 +196,8 @@ AUTHORS:
 #*****************************************************************************
 
 from collections import defaultdict
+from sage.misc.randstate import randstate
+
 from sage.structure.category_object import normalize_names
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
@@ -700,9 +702,7 @@ class FiniteFieldFactory(UniqueFactory):
                 elif p == 2:
                     impl = 'ntl'
                 else:
-                    if isinstance(modulus, Polynomial):
-                        modulus = modulus.change_variable_name('x')
-                    modulus = R(modulus).monic()
+                    impl = 'pari_ffelt'
 
             # determine generator names and prefix
             if names is None:
