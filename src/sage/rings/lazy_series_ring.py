@@ -293,7 +293,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.has_coerce_map_from(R)
             True
             sage: L(R(lambda n: n))
-            z + z^3 + z^5 + O(z^7)
+            z + z^3 + z^5 + z^7 + O(z^8)
             sage: L(R([2,4,6])) == L.zero()
             True
             sage: L(R([2,4,6], valuation=2, constant=4)) == L.zero()
