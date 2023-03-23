@@ -232,7 +232,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         INPUT:
 
-        - ``D`` (must be nonzero) -- the twisting parameter..
+        - ``D`` (must be nonzero) -- the twisting parameter
 
         .. NOTE::
 
@@ -271,11 +271,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
     def sextic_twist(self, D):
         r"""
-        Return the quartic twist of this curve by `D`.
+        Return the sextic twist of this curve by `D`.
 
         INPUT:
 
-        - ``D`` (must be nonzero) -- the twisting parameter..
+        - ``D`` (must be nonzero) -- the twisting parameter
 
         .. NOTE::
 
@@ -910,6 +910,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: K.<v> = E.division_field(7); K
             Finite Field in v of size 433^16
 
+        .. SEEALSO::
+
+            To compute a basis of the `\ell`-torsion once the base field
+            has been extended, you may use
+            :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
+            or
+            :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_basis`.
+
         TESTS:
 
         Some random testing::
@@ -988,7 +996,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         verbose("Adjoining Y-coordinates of %s-torsion points" % l)
 
-        # THEOREM (Cremona, http://trac.sagemath.org/ticket/11905#comment:21).
+        # THEOREM (Cremona, https://github.com/sagemath/sage/issues/11905#comment:21).
         # Let K be a field, E an elliptic curve over K and p an odd
         # prime number. Assume that K contains all roots of the
         # p-division polynomial of E. Then either K contains all
@@ -1426,7 +1434,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise NotImplementedError("This code could be implemented for QQbar, but has not been yet.")
 
         if l is None:
-            from sage.rings.all import prime_range
+            from sage.rings.fast_arith import prime_range
             L = prime_range(max_l + 1)
         else:
             try:

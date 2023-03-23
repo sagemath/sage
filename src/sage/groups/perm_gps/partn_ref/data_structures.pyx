@@ -1411,7 +1411,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         if SC_is_giant(n, len(L), perm, 0.9, giant_support):
             giant = True
             m = bitset_len(giant_support)
-            from sage.arith.all import factorial
+            from sage.arith.misc import factorial
             if not (order == factorial(m) or order == factorial(m)/2):
                 print("SC_is_giant failed: %s %s"%(str(L), order))
                 raise AssertionError
@@ -1530,7 +1530,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
                     perm[n*j + i] = Lperm[i]
                 j += 1
             if SC_is_giant(n, len(L), perm, 0.9, giant_support):
-                from sage.arith.all import factorial
+                from sage.arith.misc import factorial
                 m = bitset_len(giant_support)
                 if order != factorial(m) and order != factorial(m)/2:
                     print("SC_is_giant failed: %s %s"%(str(L), order))

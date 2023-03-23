@@ -169,6 +169,8 @@ class FDerivativeOperator():
         Return a new function derivative operator with the same
         parameter set but for a new function.
 
+        EXAMPLES::
+
             sage: from sage.symbolic.operators import FDerivativeOperator
             sage: f = function('foo')
             sage: b = function('bar')

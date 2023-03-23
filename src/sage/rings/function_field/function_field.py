@@ -225,7 +225,7 @@ from sage.misc.cachefunc import cached_method
 
 from sage.interfaces.singular import singular
 
-from sage.arith.all import lcm
+from sage.arith.functions import lcm
 
 from sage.rings.integer import Integer
 from sage.rings.ring import Field
@@ -1197,7 +1197,7 @@ class FunctionField(Field):
             sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: E = F.extension_constant_field(GF(2^4))
             sage: E
-            Function field in y defined by y^2 + y + (x^2 + 1)/x noncanonically over its base
+            Function field in y defined by y^2 + y + (x^2 + 1)/x over its base
             sage: E.constant_base_field()
             Finite Field in z4 of size 2^4
         """
@@ -1307,8 +1307,8 @@ class FunctionField_polymod(FunctionField):
             TypeError: unable to evaluate 'x' in Fraction Field of Univariate
             Polynomial Ring in t over Rational Field
         """
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        if polynomial.parent().ngens()>1 or not is_Polynomial(polynomial):
+        from sage.rings.polynomial.polynomial_element import Polynomial
+        if polynomial.parent().ngens()>1 or not isinstance(polynomial, Polynomial):
             raise TypeError("polynomial must be univariate a polynomial")
         if names is None:
             names = (polynomial.variable_name(), )

@@ -35,8 +35,8 @@ Check that unpicking old group algebra classes works::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import IntegerRing
-from sage.categories.all import Rings
+from sage.rings.integer_ring import IntegerRing
+from sage.categories.rings import Rings
 from sage.categories.magmas import Magmas
 from sage.categories.additive_magmas import AdditiveMagmas
 from sage.categories.sets_cat import Sets

@@ -28,7 +28,9 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.superseded import deprecation
 from sage.typeset.ascii_art import AsciiArt, empty_ascii_art, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art, unicode_art
-from sage.categories.all import Category, Sets, ModulesWithBasis
+from sage.categories.category import Category
+from sage.categories.sets_cat import Sets
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.data_structures.blas_dict cimport add, negate, scal, axpy
 
 
@@ -100,7 +102,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: 'a' in f
             doctest:warning...
             DeprecationWarning: using 'index in vector' is deprecated; use 'index in vector.support()' instead
-            See https://trac.sagemath.org/34509 for details.
+            See https://github.com/sagemath/sage/issues/34509 for details.
             True
             sage: 'b' in f
             False

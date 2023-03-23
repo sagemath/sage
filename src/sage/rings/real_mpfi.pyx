@@ -2586,7 +2586,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) + RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2610,7 +2610,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(2) - RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2634,7 +2634,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) * RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2658,7 +2658,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) / RR(1/2)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -5356,7 +5356,8 @@ def __create__RealIntervalField_version0(prec, sci_not):
     """
     return RealIntervalField(prec, sci_not)
 
-## Keep all old versions!!!
+
+# Keep all old versions!!!
 def __create__RealIntervalFieldElement_version0(parent, x, base=10):
     """
     For pickling.
@@ -5367,6 +5368,7 @@ def __create__RealIntervalFieldElement_version0(parent, x, base=10):
         2.2000000000000002?
     """
     return RealIntervalFieldElement(parent, x, base=base)
+
 
 def __create__RealIntervalFieldElement_version1(parent, lower, upper):
     """

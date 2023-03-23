@@ -160,7 +160,7 @@ class BoundClass(functools.partial):
         sage: c = x.Inner; c
         <bound class 'sage.misc.bindable_class.Outer.Inner' of <sage.misc.bindable_class.Outer object at ...>>
 
-    Introspection works, at least partially:
+    Introspection works, at least partially::
 
         sage: sage_getdoc(c).strip()
         'Some documentation for Outer.Inner'

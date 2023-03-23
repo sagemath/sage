@@ -32,7 +32,9 @@ import os
 
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
-from sage.arith.all import is_square, is_prime_power, divisors
+from sage.arith.misc import is_square
+from sage.arith.misc import is_prime_power
+from sage.arith.misc import divisors
 from sage.misc.cachefunc import cached_function
 from sage.combinat.designs.orthogonal_arrays import orthogonal_array
 from sage.combinat.designs.bibd import balanced_incomplete_block_design

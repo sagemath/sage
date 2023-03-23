@@ -927,7 +927,7 @@ to an infinite recursion.
 
     Supporting similar deduction rules will be an important feature in
     the future, with quite a few occurrences already implemented in
-    upcoming tickets. For the time being though there is a single
+    upcoming issues. For the time being though there is a single
     occurrence of this idiom outside of the tests. So this would be an
     easy thing to refactor after :trac:`10963` if a better idiom is
     found.

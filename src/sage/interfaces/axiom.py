@@ -836,7 +836,8 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             return self._sage_domain()
 
         if type == "Float":
-            from sage.rings.all import RealField, ZZ
+            from sage.rings.real_mpfr import RealField
+            from sage.rings.integer_ring import ZZ
             prec = max(self.mantissa().length()._sage_(), 53)
             R = RealField(prec)
             x,e,b = self.unparsed_input_form().lstrip('float(').rstrip(')').split(',')
@@ -953,7 +954,7 @@ def is_AxiomElement(x):
         sage: from sage.interfaces.axiom import is_AxiomElement
         sage: is_AxiomElement(2)
         doctest:...: DeprecationWarning: the function is_AxiomElement is deprecated; use isinstance(x, sage.interfaces.abc.AxiomElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_AxiomElement(axiom(2))  # optional - axiom
         True

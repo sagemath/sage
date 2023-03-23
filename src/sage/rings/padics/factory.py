@@ -10,9 +10,8 @@ AUTHORS:
 TESTS::
 
     sage: R = ZpLC(2)
-    doctest:...
-    FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See http://trac.sagemath.org/23505 for details.
+    doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
+    See https://github.com/sagemath/sage/issues/23505 for details.
     sage: R = ZpLF(2)
     sage: R = QpLC(2)
     sage: R = QpLF(2)
@@ -36,7 +35,7 @@ from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
 from sage.structure.factorization import Factorization
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import is_Element
 from .padic_base_leaves import (pAdicRingCappedRelative,
                                 pAdicRingCappedAbsolute,
@@ -2552,7 +2551,7 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
         if isinstance(names, (list, tuple)):
             names = names[0]
         from sage.structure.element import Expression
-        if not (modulus is None or is_Polynomial(modulus) or isinstance(modulus, Expression)):
+        if not (modulus is None or isinstance(modulus, Polynomial) or isinstance(modulus, Expression)):
             raise TypeError("modulus must be a polynomial")
         if names is not None and not isinstance(names, str):
             names = str(names)
@@ -3045,7 +3044,7 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
         40
 
     However, both the default precision and the halting precision can be
-    customized at the creation of the parent as follows:
+    customized at the creation of the parent as follows::
 
         sage: S = ZpER(5, prec=10, halt=100)
         sage: S.default_prec()
@@ -3299,17 +3298,36 @@ class pAdicExtension_class(UniqueFactory):
         show_prec = _canonicalize_show_prec(base._prec_type(), print_mode, show_prec)
 
         from sage.structure.element import Expression
-
-        if isinstance(modulus, Expression):
-            if len(modulus.variables()) != 1:
-                raise ValueError("symbolic expression must be in only one variable")
-            exact_modulus = modulus.polynomial(base.exact_field())
-            approx_modulus = modulus.polynomial(base)
-        elif is_Polynomial(modulus):
-            if modulus.parent().ngens() != 1:
-                raise ValueError("must use univariate polynomial")
-
-            exact_modulus = modulus.change_ring(base.exact_field())
+        if check:
+            if isinstance(modulus, Expression):
+                if len(modulus.variables()) != 1:
+                    raise ValueError("symbolic expression must be in only one variable")
+                exact_modulus = modulus.polynomial(base.exact_field())
+                approx_modulus = modulus.polynomial(base)
+            elif isinstance(modulus, Polynomial):
+                if modulus.parent().ngens() != 1:
+                    raise ValueError("must use univariate polynomial")
+                exact_modulus = modulus.change_ring(base.exact_field())
+                approx_modulus = modulus.change_ring(base)
+            else:
+                raise ValueError("modulus must be a polynomial")
+            if exact_modulus.degree() <= 1:
+                raise NotImplementedError("degree of modulus must be at least 2")
+            # need to add more checking here.
+            if not unram and not exact_modulus.is_monic():
+                exact_modulus = exact_modulus / exact_modulus.leading_coefficient()
+                approx_modulus = approx_modulus / approx_modulus.leading_coefficient()
+            if names is None:
+                if var_name is not None:
+                    names = var_name
+                else:
+                    raise ValueError("must specify name of generator of extension")
+            if isinstance(names, tuple):
+                names = names[0]
+            if not isinstance(names, str):
+                names = str(names)
+        else:
+            exact_modulus = modulus
             approx_modulus = modulus.change_ring(base)
         else:
             raise ValueError("modulus must be a polynomial")
@@ -3412,7 +3430,7 @@ class pAdicExtension_class(UniqueFactory):
             from sage.structure.element import Expression
             if isinstance(premodulus, Expression):
                 exact_modulus = premodulus.polynomial(base.exact_field())
-            elif is_Polynomial(premodulus):
+            elif isinstance(premodulus, Polynomial):
                 exact_modulus = premodulus.change_ring(base.exact_field())
             show_prec = None
         else:

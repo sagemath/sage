@@ -193,7 +193,7 @@ from sage.libs.singular.decl cimport (
     p_IsUnit, p_IsOne, p_Series, p_Head, idInit, fast_map_common_subexp, id_Delete,
     p_IsHomogeneous, p_Homogen, p_Totaldegree,pLDeg1_Totaldegree, singclap_pdivide, singclap_factorize,
     idLift, IDELEMS, On, Off, SW_USE_CHINREM_GCD, SW_USE_EZGCD,
-    p_LmIsConstant, pTakeOutComp1, singclap_gcd, pp_Mult_qq, p_GetMaxExp,
+    p_LmIsConstant, pTakeOutComp, singclap_gcd, pp_Mult_qq, p_GetMaxExp,
     pLength, kNF, p_Neg, p_Minus_mm_Mult_qq, p_Plus_mm_Mult_qq,
     pDiff, singclap_resultant, p_Normalize,
     prCopyR, prCopyR_NoSort)
@@ -247,7 +247,7 @@ from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
 
 from sage.rings.fraction_field import FractionField
-from sage.rings.all import RealField
+from sage.rings.real_mpfr import RealField
 
 import sage.interfaces.abc
 
@@ -489,7 +489,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             # Because this parent class is a Cython class, the method
             # UnitalAlgebras.ParentMethods.__init_extra__(), which normally
             # registers the coercion map from the base ring, is called only
-            # when inheriting from this class in Python (cf. Trac #26958).
+            # when inheriting from this class in Python (cf. Issue #26958).
             return self._coerce_map_from_base_ring()
         f = self._coerce_map_via([base_ring], other)
         if f is not None:
@@ -1590,7 +1590,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             9/4
 
             sage: P.monomial_quotient(x,y) # Note the wrong result
-            x*y^65535*z^65535
+            x*y^65535*z^65535      # 32-bit
+            x*y^1048575*z^1048575  # 64-bit
 
             sage: P.monomial_quotient(x,P(1))
             x
@@ -1896,7 +1897,7 @@ def unpickle_MPolynomialRing_libsingular(base_ring, names, term_order):
     return _multi_variate(base_ring, tuple(names), None, term_order, None)
 
 
-cdef class MPolynomial_libsingular(MPolynomial):
+cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
     """
     A multivariate polynomial implemented using libSINGULAR.
     """
@@ -2066,6 +2067,8 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: f(y).parent()
             Multivariate Polynomial Ring in y over Finite Field in a of size 2^4
         """
+        cdef Element sage_res
+
         if len(kwds) > 0:
             f = self.subs(**kwds)
             if len(x) > 0:
@@ -2093,7 +2096,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             # give up, evaluate functional
             sage_res = parent.base_ring().zero()
             for (m,c) in self.dict().iteritems():
-                sage_res += c*mul([ x[i]**m[i] for i in m.nonzero_positions()])
+                sage_res += c * mul([x[i] ** m[i] for i in m.nonzero_positions()])
         else:
             singular_polynomial_call(&res, self._poly, _ring, coerced_x, MPolynomial_libsingular_get_element)
 
@@ -2105,7 +2108,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             else:
                 sage_res = new_MP(parent, res)   # pass on ownership of res to sage_res
 
-        if sage_res.parent() is not res_parent:
+        if sage_res._parent is not res_parent:
             sage_res = res_parent(sage_res)
         return sage_res
 
@@ -2258,10 +2261,11 @@ cdef class MPolynomial_libsingular(MPolynomial):
             9/4*x^2 - 1/4*y^2 - y - 1
 
             sage: P.<x,y> = PolynomialRing(QQ,order='lex')
-            sage: (x^2^15) * x^2^15
+            sage: (x^2^32) * x^2^32
             Traceback (most recent call last):
             ...
-            OverflowError: exponent overflow (...)
+            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
+            OverflowError: exponent overflow (...)  # 64-bit
         """
         # all currently implemented rings are commutative
         cdef poly *_p
@@ -2382,10 +2386,11 @@ cdef class MPolynomial_libsingular(MPolynomial):
             ValueError: not a 2nd power
 
             sage: P.<x,y> = PolynomialRing(QQ,order='lex')
-            sage: (x+y^2^15)^10
+            sage: (x+y^2^32)^10
             Traceback (most recent call last):
             ....
-            OverflowError: exponent overflow (...)
+            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
+            OverflowError: exponent overflow (...)  # 64-bit
 
         Test fractional powers (:trac:`22329`)::
 
@@ -3472,7 +3477,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             x^10000
             no overflow
 
-            sage: n = 1000
+            sage: n = 100000
             sage: try:
             ....:     f = x^n
             ....:     f.subs(x = x^n)
@@ -4234,7 +4239,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: k.factor()
             ((s^2 + 2/3)) * (x + s*y)^2 * (x + (-s)*y)^5 * (x^2 + s*x*y + (s^2)*y^2)^5
 
-        This shows that ticket :trac:`2780` is fixed, i.e. that the unit
+        This shows that issue :trac:`2780` is fixed, i.e. that the unit
         part of the factorization is set correctly::
 
             sage: x = var('x')
@@ -4578,7 +4583,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         l = []
         for i from 0 <= i < IDELEMS(res):
             for j from 1 <= j <= IDELEMS(_I):
-                l.append( new_MP(parent, pTakeOutComp1(&res.m[i], j)) )
+                l.append( new_MP(parent, pTakeOutComp(&res.m[i], 1)) )
 
         id_Delete(&fI, r)
         id_Delete(&_I, r)
@@ -4646,7 +4651,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
 
             sage: f = 3*x
             sage: f.reduce([2*x,y])
-            3*x
+            x
 
         The reduction is not canonical when ``I`` is not a Groebner
         basis::
@@ -5767,7 +5772,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             #where the numerator of a polynomial over RationalField
             #is a polynomial over IntegerRing
             #
-            # Trac ticket #11780: Create the polynomial ring over
+            # Github issue #11780: Create the polynomial ring over
             # the integers using the (cached) polynomial ring constructor:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             integer_polynomial_ring = PolynomialRing(ZZ,\

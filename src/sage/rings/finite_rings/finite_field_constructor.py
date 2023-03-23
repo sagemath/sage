@@ -196,9 +196,10 @@ AUTHORS:
 #*****************************************************************************
 
 from collections import defaultdict
-from sage.structure.category_object import normalize_names
 from sage.misc.randstate import randstate
 
+from sage.structure.category_object import normalize_names
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
 
 # the import below is just a redirection
@@ -803,7 +804,7 @@ class FiniteFieldFactory(UniqueFactory):
             return obj
 
         key = obj._factory_data[2]
-        order, names, modulus, base, impl, p, absolute_degree, proof, prefix, repr, elem_cache, backend = key
+        order, names, modulus, base, impl, p, absolute_degree, proof, prefix, repr, elem_cache, check_prime, check_irreducible, backend = key
 
         order = kwds.pop("order", order)
 
@@ -819,7 +820,9 @@ class FiniteFieldFactory(UniqueFactory):
 
         proof = kwds.pop("proof", proof)
 
-        check_irreducible = kwds.pop("check_irreducible", True)
+        check_prime = kwds.pop("check_prime", check_prime)
+
+        check_irreducible = kwds.pop("check_irreducible", check_irreducible)
 
         prefix = kwds.pop("prefix", prefix)
 
@@ -834,7 +837,7 @@ class FiniteFieldFactory(UniqueFactory):
         if kwds:
             raise ValueError("can only change arguments that GF understands when changing a finite field")
 
-        return GF(order=order, names=names, modulus=modulus, impl=impl, proof=proof, check_irreducible=check_irreducible, prefix=prefix, repr=repr, elem_cache=elem_cache, base=base, backend=backend)
+        return GF(order=order, names=names, modulus=modulus, impl=impl, proof=proof, check_prime=check_prime, check_irreducible=check_irreducible, prefix=prefix, repr=repr, elem_cache=elem_cache, base=base, backend=backend)
 
     def create_object(self, version, key, **kwds):
         """
@@ -923,7 +926,7 @@ class FiniteFieldFactory(UniqueFactory):
         with WithProof('arithmetic', proof):
             if check_prime and not p.is_prime():
                 raise ValueError("the order of a finite field must be a prime power")
-            if check_irreducible and not modulus.is_irreducible():
+            if check_irreducible and modulus is not None and not modulus.is_irreducible():
                 raise ValueError("finite field modulus must be irreducible but it is not")
             if modulus is not None and base:
                 from .finite_field_relative import FiniteField_relative
@@ -955,24 +958,32 @@ GF = FiniteField = FiniteFieldFactory("FiniteField")
 
 def is_PrimeFiniteField(x):
     """
-    Returns True if x is a prime finite field.
+    Returns True if ``x`` is a prime finite field.
+
+    This function is deprecated.
 
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
         sage: is_PrimeFiniteField(QQ)
+        doctest:...: DeprecationWarning: the function is_PrimeFiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) and x.is_prime_field() instead
+        See https://github.com/sagemath/sage/issues/32664 for details.
         False
         sage: is_PrimeFiniteField(GF(7))
         True
-        sage: is_PrimeFiniteField(GF(7^2,'a'))
+        sage: is_PrimeFiniteField(GF(7^2, 'a'))
         False
-        sage: is_PrimeFiniteField(GF(next_prime(10^90,proof=False)))
+        sage: is_PrimeFiniteField(GF(next_prime(10^90, proof=False)))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32664, "the function is_PrimeFiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) and x.is_prime_field() instead")
+
     from .finite_field_prime_modn import FiniteField_prime_modn
     from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 
     return isinstance(x, FiniteField_prime_modn) or \
            (isinstance(x, FiniteField_generic) and x.base() is x)
+
 
 zech_log_bound = 2**16

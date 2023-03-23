@@ -109,8 +109,6 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
         with seed(0): # We want the isomorphism with the backend to be deterministic
             defining_embedding = self.base_ring()._any_embedding(backend)
-            # any_root is slower than factor here since the degree of the polynomial is small compared
-            # to the degree of the field where we're looking for roots
             gen = modulus.map_coefficients(defining_embedding).roots(multiplicities=False)[0]
         from .hom_finite_field import FiniteFieldHomomorphism_generic
         RingExtensionWithGen.__init__(self, defining_morphism=defining_embedding, gen=gen, names=names, import_methods=False, category=category)

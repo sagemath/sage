@@ -31,7 +31,7 @@ Constant field extension of a function field over a finite field::
     sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
     sage: E = F.extension_constant_field(GF(2^3))
     sage: E
-    Function field in y defined by y^3 + x^6 + x^4 + x^2 noncanonically over its base
+    Function field in y defined by y^3 + x^6 + x^4 + x^2 over its base
     sage: p = F.get_place(3)
     sage: E.conorm_place(p)  # random
     Place (x + z3, y + z3^2 + z3)

@@ -110,7 +110,7 @@ class ReflexiveModule_abstract(Parent):
         return self.base_module().tensor_module(l, k)
 
     def tensor(self, *args, **kwds):
-        # Until https://trac.sagemath.org/ticket/30373 is done,
+        # Until https://github.com/sagemath/sage/issues/30373 is done,
         # TensorProductFunctor._functor_name is "tensor", so here we delegate.
         r"""
         Return the tensor product of ``self`` and ``others``.
@@ -343,7 +343,7 @@ class ReflexiveModule_dual(ReflexiveModule_abstract):
             sage: A.construction() is None
             True
         """
-        # Until https://trac.sagemath.org/ticket/34605 is done
+        # Until https://github.com/sagemath/sage/issues/34605 is done
         return None
 
 
