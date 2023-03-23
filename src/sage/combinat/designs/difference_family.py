@@ -1660,7 +1660,7 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
         sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=16)
         Traceback (most recent call last):
         ...
-        ValueError: One of G or v must be specified.
+        ValueError: one of G or v must be specified
 
     .. SEEALSO::
 
@@ -1668,7 +1668,7 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
     """
 
     if G is None and v is None:
-        raise ValueError('One of G or v must be specified.')
+        raise ValueError('one of G or v must be specified')
 
     if G is None:
         from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
@@ -2038,7 +2038,7 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
         sage: skew_supplementary_difference_set_over_polynomial_ring(7)
         Traceback (most recent call last):
         ...
-        ValueError: Skew SDS of order 7 not yet implemented.
+        NotImplementedError: skew SDS of order 7 not yet implemented
     """
     from sage.symbolic.ring import SymbolicRing
     from sage.rings.finite_rings.integer_mod_ring import Zmod
@@ -2056,7 +2056,7 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
         return n in data
 
     if n not in data:
-        raise ValueError(f'Skew SDS of order {n} not yet implemented.')
+        raise NotImplementedError(f'skew SDS of order {n} not yet implemented')
 
     mod, poly, exp, order, ind1, ind2, ind3, ind4 = data[n]
 
@@ -2137,7 +2137,7 @@ def skew_supplementary_difference_set_with_paley_todd(n, existence=False, check=
         sage: skew_supplementary_difference_set_with_paley_todd(7)
         Traceback (most recent call last):
         ...
-        ValueError: Data for skew SDS of order 7 not yet implemented.
+        NotImplementedError: data for skew SDS of order 7 not yet implemented
     """
     H_db = {
         239: [1, 10, 24, 44, 98, 100, 201],
@@ -2153,7 +2153,7 @@ def skew_supplementary_difference_set_with_paley_todd(n, existence=False, check=
         return n in H_db
 
     if n not in H_db:
-        raise ValueError(f'Data for skew SDS of order {n} not yet implemented.')
+        raise NotImplementedError(f'data for skew SDS of order {n} not yet implemented')
 
     G = Zmod(n)
     H = {G(el) for el in H_db[n]}
@@ -2823,11 +2823,11 @@ def complementary_difference_setsI(n, check=True):
         sage: complementary_difference_setsI(17)
         Traceback (most recent call last):
         ...
-        ValueError: The parameter 17 is not valid
+        ValueError: the parameter 17 is not valid
         sage: complementary_difference_setsI(15)
         Traceback (most recent call last):
         ...
-        ValueError: The parameter 15 is not valid
+        ValueError: the parameter 15 is not valid
 
     .. SEEALSO::
 
@@ -2835,7 +2835,7 @@ def complementary_difference_setsI(n, check=True):
         :func:`complementary_difference_sets`
     """
     if not (n % 4 == 3 and is_prime_power(n)):
-        raise ValueError(f'The parameter {n} is not valid')
+        raise ValueError(f'the parameter {n} is not valid')
 
     from sage.rings.finite_rings.finite_field_constructor import GF
 
@@ -2896,11 +2896,11 @@ def complementary_difference_setsII(n, check=True):
         sage: complementary_difference_setsII(49)
         Traceback (most recent call last):
         ...
-        ValueError: The parameter 49 is not valid
+        ValueError: the parameter 49 is not valid
         sage: complementary_difference_setsII(15)
         Traceback (most recent call last):
         ...
-        ValueError: The parameter 15 is not valid
+        ValueError: the parameter 15 is not valid
 
     .. SEEALSO::
 
@@ -2909,7 +2909,7 @@ def complementary_difference_setsII(n, check=True):
     """
     p, t = is_prime_power(n, get_data=True)
     if not (p % 8 == 5 and t > 0 and t % 4 in [1, 2, 3]):
-        raise ValueError(f'The parameter {n} is not valid')
+        raise ValueError(f'the parameter {n} is not valid')
 
     from sage.rings.finite_rings.finite_field_constructor import GF
     G = GF(n, 'a')
@@ -2975,11 +2975,11 @@ def complementary_difference_setsIII(n, check=True):
         sage: complementary_difference_setsIII(10)
         Traceback (most recent call last):
         ...
-        ValueError: The parameter 10 is not valid
+        ValueError: the parameter 10 is not valid
         sage: complementary_difference_setsIII(17)
         Traceback (most recent call last):
         ...
-        ValueError: The parameter 17 is not valid
+        ValueError: the parameter 17 is not valid
 
     .. SEEALSO::
 
@@ -2989,7 +2989,7 @@ def complementary_difference_setsIII(n, check=True):
     m = (n - 1) // 2
     q = 4*m + 3
     if n % 2 != 1 or not is_prime_power(q):
-        raise ValueError(f'The parameter {n} is not valid')
+        raise ValueError(f'the parameter {n} is not valid')
 
     from sage.rings.finite_rings.finite_field_constructor import GF
     G = Zmod(n)
@@ -3062,11 +3062,11 @@ def complementary_difference_sets(n, existence=False, check=True):
         sage: complementary_difference_sets(10)
         Traceback (most recent call last):
         ...
-        ValueError: The parameter n must be odd.
+        ValueError: the parameter n must be odd
         sage: complementary_difference_sets(17)
         Traceback (most recent call last):
         ...
-        ValueError: Complementary difference sets of order 17 are not implemented yet.
+        NotImplementedError: complementary difference sets of order 17 are not implemented yet
 
     .. SEEALSO::
 
@@ -3075,7 +3075,7 @@ def complementary_difference_sets(n, existence=False, check=True):
     if n % 2 == 0:
         if existence:
             return False
-        raise ValueError('The parameter n must be odd.')
+        raise ValueError('the parameter n must be odd')
 
     p, t = is_prime_power(n, get_data=True)
     G, A, B = None, None, None
@@ -3097,7 +3097,7 @@ def complementary_difference_sets(n, existence=False, check=True):
         return False
 
     if G is None:
-        raise ValueError(f'Complementary difference sets of order {n} are not implemented yet.')
+        raise NotImplementedError(f'complementary difference sets of order {n} are not implemented yet')
 
     if check:
         assert are_complementary_difference_sets(G, A, B)
