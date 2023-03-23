@@ -287,7 +287,7 @@ cdef class ParentWithGens(ParentWithBase):
             sage: R.<a> = k[]
             sage: l.<a> = k.extension(a^3 + a^2 + 1)
             sage: R.<b> = l[]
-            sage: m.<b> = l.extension(b^2 + b + a)
+            sage: m.<b> = l.extension(b^2 + b + a, implementation="PQR")
             sage: n.<z> = GF(2^6)
             sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))
             Ring morphism:

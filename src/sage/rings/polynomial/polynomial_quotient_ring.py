@@ -1248,7 +1248,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
             sage: F1.<a> = GF(2^7)
             sage: P1.<x> = F1[]
-            sage: F2 = F1.extension(x^2+x+1, 'u')
+            sage: F2 = F1.extension(x^2+x+1, 'u', implementation="PQR")
             sage: F2.random_element().parent() is F2
             True
         """
