@@ -18,7 +18,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.functions.all import floor
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import GCD
+from sage.arith.misc import GCD
 
 
 def cholesky_decomposition(self, bit_prec = 53):

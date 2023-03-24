@@ -29,6 +29,7 @@ import sage.rings.finite_rings.integer_mod
 from cypari2.types cimport *
 from cypari2.gen cimport Gen as pari_gen
 from sage.libs.pari.convert_gmp cimport INT_to_mpz
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.padics.common_conversion cimport get_ordp, get_preccap
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import infinity
@@ -37,6 +38,7 @@ from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.padics.misc import trim_zeros
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import canonical_coercion
+
 import itertools
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
@@ -145,7 +147,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         elif sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
             if not Integer(self.prime_pow.prime).divides(x.parent().order()):
                 raise TypeError("p does not divide modulus %s"%x.parent().order())
-        elif sage.rings.finite_rings.element_base.is_FiniteFieldElement(x):
+        elif isinstance(x, Element) and isinstance(x.parent(), FiniteField):
             k = self.parent().residue_field()
             if not k.has_coerce_map_from(x.parent()):
                 raise NotImplementedError("conversion from finite fields which do not embed into the residue field not implemented")

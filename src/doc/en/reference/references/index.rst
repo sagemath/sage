@@ -1184,6 +1184,9 @@ REFERENCES:
              moduli spaces to Feynman integrals*, in Contemporary Mathematics
              vol 539, pages 27-52, 2011.
 
+.. [Bro2013] Francis Brown, *Single-valued motivic periods and multiple zeta
+             values*, Forum Math. Sigma 2 (2014), :doi:`10.1017/fms.2014.18`.
+
 .. [Bro2016] \A.E. Brouwer,
              Personal communication, 2016.
 

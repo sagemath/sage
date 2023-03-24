@@ -4,7 +4,7 @@ Local Density Interfaces
 # // This is needed in the filter for primitivity...
 # #include "../max-min.h"
 
-from sage.arith.all import valuation
+from sage.arith.misc import valuation
 from sage.rings.rational_field import QQ
 
 

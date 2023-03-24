@@ -73,7 +73,8 @@ We can also check the properties listed in :wikipedia:`Schubert_polynomial`::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.categories.all import GradedAlgebrasWithBasis
+
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.key_polynomial import KeyPolynomial
 from sage.combinat.permutation import Permutations, Permutation
