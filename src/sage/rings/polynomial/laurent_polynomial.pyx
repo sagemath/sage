@@ -12,9 +12,10 @@ Elements of Laurent polynomial rings
 
 from sage.rings.integer cimport Integer
 from sage.categories.map cimport Map
-from sage.structure.element import is_Element, coerce_binop
+from sage.structure.element import is_Element, coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
+from sage.rings.polynomial.polydict cimport monomial_exponent
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.structure.richcmp cimport richcmp, rich_to_bool
@@ -2254,12 +2255,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         cdef dict D = <dict> self._poly.dict()
         cdef dict DD
         if self._mon.is_constant():
-            self._prod = PolyDict(D, force_etuples=False)
+            self._prod = PolyDict(D)
             return
         DD = {}
         for k in D:
             DD[k.eadd(self._mon)] = D[k]
-        self._prod = PolyDict(DD, force_etuples=False)
+        self._prod = PolyDict(DD)
 
     def is_unit(self):
         """
@@ -2556,19 +2557,18 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f.monomial_coefficient(x + y)
             Traceback (most recent call last):
             ...
-            ValueError: input must be a monomial
+            ValueError: not a monomial
         """
-        if mon.parent() != self._parent:
+        if parent(mon) != self._parent:
             raise TypeError("input must have the same parent")
         cdef LaurentPolynomial_mpair m = <LaurentPolynomial_mpair> mon
         if m._prod is None:
             m._compute_polydict()
-        if len(m._prod) != 1:
-            raise ValueError("input must be a monomial")
         if self._prod is None:
             self._compute_polydict()
-        c = self._prod.monomial_coefficient(m._prod.dict())
-        return self._parent.base_ring()(c)
+        exp = monomial_exponent(m._prod)
+        zero = self._parent.base_ring().zero()
+        return self._prod.get(exp, zero)
 
     def constant_coefficient(self):
         """
