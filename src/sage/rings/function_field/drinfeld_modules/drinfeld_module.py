@@ -964,7 +964,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def _compute_coefficient_exp(self, k):
         r"""
-        Return the `k`-th coefficient of the logarithm of ``self``.
+        Return the `k`-th coefficient of the exponential of ``self``.
 
         INPUT:
 
