@@ -39,7 +39,6 @@ jobs:
         run: |
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
-          # We also need to replace the symlinks because netlify is not following them
           mkdir -p ./docs
           cp -r -L /sage/local/share/doc/sage/pdf/en/* ./docs
           # Zip everything for increased performance
