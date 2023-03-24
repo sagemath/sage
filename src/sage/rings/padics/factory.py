@@ -3314,7 +3314,7 @@ class pAdicExtension_class(UniqueFactory):
             if exact_modulus.degree() <= 1:
                 raise NotImplementedError("degree of modulus must be at least 2")
             # need to add more checking here.
-            if not unram and not exact_modulus.is_monic():
+            if not exact_modulus.is_monic():
                 exact_modulus = exact_modulus / exact_modulus.leading_coefficient()
                 approx_modulus = approx_modulus / approx_modulus.leading_coefficient()
             if names is None:
