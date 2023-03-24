@@ -160,6 +160,8 @@ cdef class PrimePi(BuiltinFunction):
         from sage.functions.other import floor
         try:
             z = Integer(x)
+            if z < 0:
+                raise ValueError("Arguement to 'prime_pi' function must be positive real number")
         except TypeError:
             try:
                 z = Integer(floor(x))
