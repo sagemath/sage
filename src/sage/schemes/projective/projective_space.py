@@ -914,7 +914,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: PQ = P.change_ring(QQ); PQ
             Projective Space of dimension 2 over Rational Field
-            sage: PQ.change_ring(GF(5))
+            sage: PQ.change_ring(GF(5))                                                 # optional - sage.rings.finite_rings
             Projective Space of dimension 2 over Finite Field of size 5
 
         ::

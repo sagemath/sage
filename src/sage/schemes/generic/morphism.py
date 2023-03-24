@@ -1767,8 +1767,8 @@ class SchemeMorphism_polynomial_id(SchemeMorphism_id, SchemeMorphism_polynomial)
 
         TESTS::
 
-            sage: A = AffineSpace(2, GF(3))
-            sage: A.identity_morphism().defining_polynomials()
+            sage: A = AffineSpace(2, GF(3))                                             # optional - sage.rings.finite_rings
+            sage: A.identity_morphism().defining_polynomials()                          # optional - sage.rings.finite_rings
             (x0, x1)
         """
         super().__init__(X)

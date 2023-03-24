@@ -460,8 +460,8 @@ class EllipticCurveFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve.create_object(0, (GF(3), (1, 2, 0, 1, 2)))
-            sage: type(E)
+            sage: E = EllipticCurve.create_object(0, (GF(3), (1, 2, 0, 1, 2)))          # optional - sage.rings.finite_rings
+            sage: type(E)                                                               # optional - sage.rings.finite_rings
             <class 'sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field_with_category'>
 
         .. NOTE::
@@ -1370,8 +1370,8 @@ def projective_point(p):
         sage: from sage.schemes.elliptic_curves.constructor import projective_point
         sage: projective_point([4/5, 6/5, 8/5])
         [2, 3, 4]
-        sage: F = GF(11)
-        sage: projective_point([F(4), F(8), F(2)])
+        sage: F = GF(11)                                                                # optional - sage.rings.finite_rings
+        sage: projective_point([F(4), F(8), F(2)])                                      # optional - sage.rings.finite_rings
         [4, 8, 2]
     """
     from sage.rings.integer import GCD_list

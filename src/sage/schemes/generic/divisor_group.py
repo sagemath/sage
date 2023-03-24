@@ -224,7 +224,7 @@ class DivisorGroup_generic(FormalSums):
             sage: from sage.schemes.generic.divisor_group import DivisorGroup
             sage: DivisorGroup(Spec(ZZ), ZZ).base_extend(QQ)
             Group of QQ-Divisors on Spectrum of Integer Ring
-            sage: DivisorGroup(Spec(ZZ), ZZ).base_extend(GF(7))
+            sage: DivisorGroup(Spec(ZZ), ZZ).base_extend(GF(7))                         # optional - sage.rings.finite_rings
             Group of (Finite Field of size 7)-Divisors on Spectrum of Integer Ring
 
         Divisor groups are unique::

@@ -1851,7 +1851,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: X = P.subscheme([3*x^2 - y^2])
             sage: H = Hom(X, X)
-            sage: X.change_ring(GF(3))
+            sage: X.change_ring(GF(3))                                                  # optional - sage.rings.finite_rings
             Closed subscheme of Projective Space of dimension 1 over Finite Field of size 3
             defined by: -y^2
 
