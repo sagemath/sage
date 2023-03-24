@@ -50,7 +50,7 @@ The following family of toric ideals is from Example 4.4 of
 quadric and `d` binomials of degree `d`::
 
     sage: def I(d):
-    ....:     return ToricIdeal(matrix([[1,1,1,1,1],[0,1,1,0,0],[0,0,1,1,d]]))
+    ....:     return ToricIdeal(matrix([[1,1,1,1,1], [0,1,1,0,0], [0,0,1,1,d]]))
     sage: I(2)
     Ideal (-z3^2 + z0*z4,
            z0*z2 - z1*z3,

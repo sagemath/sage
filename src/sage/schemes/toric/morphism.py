@@ -1045,8 +1045,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 2-d toric variety covered by 3 affine patches
               To:   3-d CPR-Fano toric variety covered by 4 affine patches
-              Defn: Defined on coordinates by sending [z0 : z1 : z2] to
-                    [z2 : z1 : z0 : z0]
+              Defn: Defined on coordinates by sending [z0 : z1 : z2] to [z2 : z1 : z0 : z0]
         """
         phi_i, phi_b, phi_s = self.fan_morphism().factor()
         from sage.schemes.toric.all import ToricVariety

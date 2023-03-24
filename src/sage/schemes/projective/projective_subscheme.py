@@ -1319,22 +1319,14 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
             sage: Y = P.subscheme_from_Chow_form(Ch, 1); Y
             Closed subscheme of Projective Space of dimension 3 over Rational Field
             defined by:
-              x2^2*x3 - x1*x3^2,
-              -x2^3 + x0*x3^2,
-              -x2^2*x3 + x1*x3^2,
-              x1*x2*x3 - x0*x3^2,
-              3*x1*x2^2 - 3*x0*x2*x3,
-              -2*x1^2*x3 + 2*x0*x2*x3,
-              -3*x1^2*x2 + 3*x0*x1*x3,
-              x1^3 - x0^2*x3,
-              x2^3 - x1*x2*x3,
-              -3*x1*x2^2 + 2*x1^2*x3 + x0*x2*x3,
-              2*x0*x2^2 - 2*x0*x1*x3,
-              3*x1^2*x2 - 2*x0*x2^2 - x0*x1*x3,
-              -x0*x1*x2 + x0^2*x3,
-              -x0*x1^2 + x0^2*x2,
-              -x1^3 + x0*x1*x2,
-              x0*x1^2 - x0^2*x2
+              x2^2*x3 - x1*x3^2,                    -x2^3 + x0*x3^2,
+              -x2^2*x3 + x1*x3^2,                   x1*x2*x3 - x0*x3^2,
+              3*x1*x2^2 - 3*x0*x2*x3,               -2*x1^2*x3 + 2*x0*x2*x3,
+              -3*x1^2*x2 + 3*x0*x1*x3,              x1^3 - x0^2*x3,
+              x2^3 - x1*x2*x3,                      -3*x1*x2^2 + 2*x1^2*x3 + x0*x2*x3,
+              2*x0*x2^2 - 2*x0*x1*x3,               3*x1^2*x2 - 2*x0*x2^2 - x0*x1*x3,
+              -x0*x1*x2 + x0^2*x3,                  -x0*x1^2 + x0^2*x2,
+              -x1^3 + x0*x1*x2,                     x0*x1^2 - x0^2*x2
             sage: I = Y.defining_ideal()
             sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]
             Ideal (x2^2 - x1*x3, x1*x2 - x0*x3, x1^2 - x0*x2) of Multivariate

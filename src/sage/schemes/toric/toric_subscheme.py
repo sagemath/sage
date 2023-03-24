@@ -462,8 +462,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
               From: Closed subscheme of 2-d affine toric variety defined by: 3*x0
               To:   Closed subscheme of 2-d CPR-Fano toric variety
                     covered by 6 affine patches defined by: x0*x3
-              Defn: Defined on coordinates by sending [x0 : x1] to
-                    [0 : x1 : 2 : 3 : 4 : 5]
+              Defn: Defined on coordinates by sending [x0 : x1] to [0 : x1 : 2 : 3 : 4 : 5]
             sage: patch.embedding_center()
             [0 : 1]
             sage: patch.embedding_morphism()(patch.embedding_center())
@@ -709,7 +708,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         r"""
         Check if ``self`` is schon (nondegenerate).
 
-        See `is_nondegenerate` for further documentation.
+        See :meth:`is_nondegenerate` for further documentation.
 
         EXAMPLES::
 
