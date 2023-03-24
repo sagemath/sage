@@ -100,4 +100,8 @@ cdef extern from "ntlwrap.h":
 
 
 cdef extern from "ntlwrap_impl.h":
+    void ZZ_pEX_factor_canzass(ZZ_pEX_c*** v, long** e, long* n, ZZ_pEX_c x, long verbose)
+    void ZZ_pEX_square_free_decomp(ZZ_pEX_c*** v, long** e, long* n, ZZ_pEX_c x)
+
+    # The following are all used for padics.
     void ZZ_pEX_conv_modulus(ZZ_pEX_c fout, ZZ_pEX_c fin, ZZ_pContext_c c)

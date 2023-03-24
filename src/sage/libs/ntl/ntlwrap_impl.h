@@ -424,11 +424,39 @@ static char* ZZ_pX_trace_list(struct ZZ_pX* x)
     return buf;
 }
 
-static void ZZ_pX_factor(struct ZZ_pX*** v, long** e, long* n, struct ZZ_pX* x, long verbose)
+static void ZZ_pX_factor_berlekamp(struct ZZ_pX*** v, long** e, long* n, struct ZZ_pX* x, long verbose)
 {
     long i;
     vec_pair_ZZ_pX_long factors;
     berlekamp(factors, *x, verbose);
+    *n = factors.length();
+    *v = (ZZ_pX**) malloc(sizeof(ZZ_pX*) * (*n));
+    *e = (long*) malloc(sizeof(long)*(*n));
+    for (i=0; i<(*n); i++) {
+        (*v)[i] = new ZZ_pX(factors[i].a);
+        (*e)[i] = factors[i].b;
+    }
+}
+
+static void ZZ_pX_factor_canzass(struct ZZ_pX*** v, long** e, long* n, struct ZZ_pX* x, long verbose)
+{
+    long i;
+    vec_pair_ZZ_pX_long factors;
+    CanZass(factors, *x, verbose);
+    *n = factors.length();
+    *v = (ZZ_pX**) malloc(sizeof(ZZ_pX*) * (*n));
+    *e = (long*) malloc(sizeof(long)*(*n));
+    for (i=0; i<(*n); i++) {
+        (*v)[i] = new ZZ_pX(factors[i].a);
+        (*e)[i] = factors[i].b;
+    }
+}
+
+static void ZZ_pX_square_free_decomp(struct ZZ_pX*** v, long** e, long* n, const struct ZZ_pX* x)
+{
+    long i;
+    vec_pair_ZZ_pX_long factors;
+    SquareFreeDecomp(factors, *x);
     *n = factors.length();
     *v = (ZZ_pX**) malloc(sizeof(ZZ_pX*) * (*n));
     *e = (long*) malloc(sizeof(long)*(*n));
@@ -447,6 +475,66 @@ static void ZZ_pX_linear_roots(struct ZZ_p*** v, long* n, struct ZZ_pX* f)
     (*v) = (ZZ_p**) malloc(sizeof(ZZ_p*)*(*n));
     for (i=0; i<(*n); i++) {
         (*v)[i] = new ZZ_p(w[i]);
+    }
+}
+
+/////////// ZZ_pEX //////////////
+
+static void ZZ_pEX_factor_canzass(struct ZZ_pEX*** v, long** e, long* n, const struct ZZ_pEX &x, long verbose)
+{
+    long i;
+    vec_pair_ZZ_pEX_long factors;
+    CanZass(factors, x, verbose);
+    *n = factors.length();
+    *v = (ZZ_pEX**) malloc(sizeof(ZZ_pEX*) * (*n));
+    *e = (long*) malloc(sizeof(long)*(*n));
+    for (i=0; i<(*n); i++) {
+        (*v)[i] = new ZZ_pEX(factors[i].a);
+        (*e)[i] = factors[i].b;
+    }
+}
+
+static void ZZ_pEX_square_free_decomp(struct ZZ_pEX*** v, long** e, long* n, const struct ZZ_pEX &x)
+{
+    long i;
+    vec_pair_ZZ_pEX_long factors;
+    SquareFreeDecomp(factors, x);
+    *n = factors.length();
+    *v = (ZZ_pEX**) malloc(sizeof(ZZ_pEX*) * (*n));
+    *e = (long*) malloc(sizeof(long)*(*n));
+    for (i=0; i<(*n); i++) {
+        (*v)[i] = new ZZ_pEX(factors[i].a);
+        (*e)[i] = factors[i].b;
+    }
+}
+
+/////////// GF2X //////////////
+
+static void GF2X_factor_canzass(struct GF2X*** v, long** e, long* n, const struct GF2X &x, long verbose)
+{
+    long i;
+    vec_pair_GF2X_long factors;
+    CanZass(factors, x, verbose);
+    *n = factors.length();
+    *v = (GF2X**) malloc(sizeof(GF2X*) * (*n));
+    *e = (long*) malloc(sizeof(long)*(*n));
+    for (i=0; i<(*n); i++) {
+        (*v)[i] = new GF2X(factors[i].a);
+        (*e)[i] = factors[i].b;
+    }
+}
+
+static void GF2X_square_free_decomp(struct GF2X*** v, long** e, long* n, const struct GF2X &x)
+{
+    long i;
+    vec_pair_GF2X_long factors;
+    SquareFreeDecomp(factors, x);
+    *n = factors.length();
+    *v = (GF2X**) malloc(sizeof(GF2X*) * (*n));
+    *e = (long*) malloc(sizeof(long)*(*n));
+    for (i=0; i<(*n); i++) {
+        (*v)[i] = new GF2X(factors[i].a);
+        (*e)[i] = factors[i].b;
     }
 }
 

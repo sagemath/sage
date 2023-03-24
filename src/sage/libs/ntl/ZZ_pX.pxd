@@ -108,7 +108,9 @@ cdef extern from "ntlwrap.h":
 
 cdef extern from "ntlwrap_impl.h":
     char* ZZ_pX_trace_list(ZZ_pX_c* x)
-    void ZZ_pX_factor(ZZ_pX_c*** v, long** e, long* n, ZZ_pX_c* x, long verbose)
+    void ZZ_pX_factor_berlekamp(ZZ_pX_c*** v, long** e, long* n, ZZ_pX_c* x, long verbose)
+    void ZZ_pX_factor_canzass(ZZ_pX_c*** v, long** e, long* n, ZZ_pX_c* x, long verbose)
+    void ZZ_pX_square_free_decomp(ZZ_pX_c*** v, long** e, long* n, ZZ_pX_c* x)
     void ZZ_pX_linear_roots(ZZ_p_c*** v, long* n, ZZ_pX_c* x)
 
     # The following are all used for padics.

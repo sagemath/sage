@@ -80,3 +80,8 @@ cdef extern from "ntlwrap.h":
 
     # xi = gi(h) mod f (i=1,2,3), deg(h) < n.
     void GF2X_CompMod3 "Comp2Mod"(GF2X_c x1, GF2X_c x2, GF2X_c x3, GF2X_c g1, GF2X_c g2, GF2X_c g3, GF2X_c h, GF2XModulus_c F)
+
+cdef extern from "ntlwrap_impl.h":
+    #### GF2XFactoring
+    void GF2X_factor_canzass(GF2X_c*** v, long** e, long* n, GF2X_c x, long verbose)
+    void GF2X_square_free_decomp(GF2X_c*** v, long** e, long* n, GF2X_c x)
