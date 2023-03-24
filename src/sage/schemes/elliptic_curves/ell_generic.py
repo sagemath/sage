@@ -685,9 +685,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         ::
 
-            sage: F = GF(32,'a')                                                        # optional - sage.rings.finite_rings
-            sage: E = EllipticCurve(F,[1,0,0,0,1])                                      # optional - sage.rings.finite_rings
-            sage: set(P[0] for P in E.points() if P!=E(0)) == set(x for x in F if E.is_x_coord(x))
+            sage: F = GF(32,'a')                                                                    # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve(F,[1,0,0,0,1])                                                  # optional - sage.rings.finite_rings
+            sage: set(P[0] for P in E.points() if P!=E(0)) == set(x for x in F if E.is_x_coord(x))  # optional - sage.rings.finite_rings
             True
         """
         K = self.base_ring()
@@ -999,7 +999,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E._EllipticCurve_generic__is_over_RationalField()
             True
             sage: E = EllipticCurve(GF(5),[1,1])                                            # optional - sage.rings.finite_rings
-            sage: E._EllipticCurve_generic__is_over_RationalField()
+            sage: E._EllipticCurve_generic__is_over_RationalField()                         # optional - sage.rings.finite_rings
             False
         """
         return isinstance(self.base_ring(), rings.RationalField)
@@ -2489,7 +2489,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                      over Finite Field in z3 of size 13^3
               To:   Elliptic Curve defined by y^2 = x^3 + (5*z3^2+7*z3+11)*x + (5*z3^2+12*z3+1)
                      over Finite Field in z3 of size 13^3
-            sage: E.frobenius_isogeny(3)
+            sage: E.frobenius_isogeny(3)                                                # optional - sage.rings.finite_rings
             Frobenius endomorphism of degree 2197 = 13^3:
               From: Elliptic Curve defined by y^2 = x^3 + z3*x + z3^2
                      over Finite Field in z3 of size 13^3

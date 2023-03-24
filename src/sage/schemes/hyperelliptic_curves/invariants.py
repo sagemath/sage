@@ -26,7 +26,7 @@ def diffxy(f, x, xtimes, y, ytimes):
 
         sage: from sage.schemes.hyperelliptic_curves.invariants import diffxy
         sage: R.<u, v> = QQ[]
-        sage: .diffxy(u^2*v^3, u, 0, v, 0)
+        sage: diffxy(u^2*v^3, u, 0, v, 0)
         u^2*v^3
         sage: diffxy(u^2*v^3, u, 2, v, 1)
         6*v^2

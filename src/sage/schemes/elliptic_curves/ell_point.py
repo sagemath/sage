@@ -1203,9 +1203,9 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         ::
 
             sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12           # optional - sage.rings.finite_rings
-            sage: G = E(5, 0)
-            sage: G.set_order(2)
-            sage: 2*G
+            sage: G = E(5, 0)                                                           # optional - sage.rings.finite_rings
+            sage: G.set_order(2)                                                        # optional - sage.rings.finite_rings
+            sage: 2*G                                                                   # optional - sage.rings.finite_rings
             (0 : 1 : 0)
 
         We now give a more interesting case, the NIST-P521 curve. Its
@@ -1743,10 +1743,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P.tate_pairing(P, n, k)                                               # optional - sage.rings.finite_rings
             1
             sage: Q = E(87, 51)                                                         # optional - sage.rings.finite_rings
-            sage: P.tate_pairing(Q, n, k)
+            sage: P.tate_pairing(Q, n, k)                                               # optional - sage.rings.finite_rings
             1
             sage: set_random_seed(35)
-            sage: P.tate_pairing(P,n,k)
+            sage: P.tate_pairing(P, n, k)                                               # optional - sage.rings.finite_rings
             1
 
         We now let Q be a point on the same curve as above, but defined over

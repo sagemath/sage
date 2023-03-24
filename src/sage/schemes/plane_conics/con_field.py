@@ -586,7 +586,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: e = Conic((x+y+z)*(x-y+2*z)); e                                       # optional - sage.rings.finite_rings
             Projective Conic Curve over Finite Field of size 7
             defined by x^2 - y^2 + 3*x*z + y*z + 2*z^2
-            sage: e.has_singular_point(point = True)
+            sage: e.has_singular_point(point = True)                                    # optional - sage.rings.finite_rings
             (True, (2 : 4 : 1))
 
             sage: Conic([1, 1, -1]).has_singular_point()

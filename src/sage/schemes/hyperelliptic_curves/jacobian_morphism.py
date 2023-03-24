@@ -690,7 +690,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         ::
 
-            sage: H2 = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x, x)
+            sage: H2 = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x, x)     # optional - sage.rings.finite_rings
             sage: J2 = H2.jacobian()(GF(37))                                            # optional - sage.rings.finite_rings
             sage: P2 = J2(H2.lift_x(2)); P2                                             # optional - sage.rings.finite_rings
             (x + 35, y + 15)

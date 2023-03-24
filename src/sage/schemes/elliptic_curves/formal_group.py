@@ -506,7 +506,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         Let's ensure caching with changed precision is working::
 
-            sage: e.formal_group().group_law(4)
+            sage: e.formal_group().group_law(4)                                         # optional - sage.rings.finite_rings
             t1 + t2 + O(t1, t2)^4
 
         Test for :trac:`9646`::
