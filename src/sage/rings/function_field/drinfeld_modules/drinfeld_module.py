@@ -1309,7 +1309,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [a, 1, 1])
             sage: psi = DrinfeldModule(A, [Frac(A).gen(), 1, 1])
             sage: phi.is_isomorphic(psi)
-            False
+            Traceback (most recent call last):
+            ...
+            ValueError: categories of the two Drinfeld modules must be the same
             sage: phi.is_isomorphic(A)
             Traceback (most recent call last):
             ...
@@ -1319,7 +1321,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise TypeError("input must be a Drinfeld module")
         # Trivial checks:
         if self.category() != psi.category():
-            return False
+            raise ValueError("categories of the two Drinfeld modules "
+                             "must be the same")
         if self._gen == psi._gen:
             return True
         if self._gen.degree() != psi._gen.degree():
