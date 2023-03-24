@@ -1604,7 +1604,6 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
         # The set of size x
         OA.extend([N-xx-1 for xx in B] for B in orthogonal_array(k,x))
 
-
     # iv)
     elif (x == q**2+1 and
           orthogonal_array( k  ,  x  ,existence=True) and # d0
