@@ -29,7 +29,7 @@ jobs:
           ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-download-from-upstream-url
 
       - name: Build
-        run: make doc-pdf
+        run: make build V=0 && make doc-pdf
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
