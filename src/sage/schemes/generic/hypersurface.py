@@ -18,7 +18,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 
@@ -92,7 +92,7 @@ class ProjectiveHypersurface(AlgebraicScheme_subscheme_projective):
             sage: H == loads(dumps(H))
             True
         """
-        if not is_MPolynomial(poly):
+        if not isinstance(poly, MPolynomial):
             raise TypeError("Defining polynomial (=%s) must be a multivariate polynomial."%poly)
         if not poly.is_homogeneous():
             raise TypeError("Defining polynomial (=%s) must be homogeneous."%poly)
@@ -177,7 +177,7 @@ class AffineHypersurface(AlgebraicScheme_subscheme_affine):
             sage: H == loads(dumps(H))
             True
         """
-        if not is_MPolynomial(poly):
+        if not isinstance(poly, MPolynomial):
             raise TypeError("Defining polynomial (= %s) must be a multivariate polynomial"%poly)
         if ambient is None:
             R = poly.parent()

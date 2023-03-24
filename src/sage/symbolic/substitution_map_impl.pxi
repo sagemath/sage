@@ -29,13 +29,13 @@ cdef class SubstitutionMap(SageObject):
         Apply the substitution to a symbolic expression
 
         EXAMPLES::
-        
+
             sage: from sage.symbolic.expression import make_map
             sage: subs = make_map({x:x+1})
             sage: subs.apply_to(x^2, 0)
             (x + 1)^2
         """
-        return new_Expression_from_GEx(expr._parent, 
+        return new_Expression_from_GEx(expr._parent,
                                        expr._gobj.subs_map(self._gmapobj, options))
 
     def _repr_(self):
@@ -43,7 +43,7 @@ cdef class SubstitutionMap(SageObject):
         Return the string representation
 
         EXAMPLES::
-        
+
             sage: from sage.symbolic.expression import make_map
             sage: make_map({x:x+1})
             SubsMap
@@ -94,4 +94,4 @@ cpdef SubstitutionMap make_map(subs_dict):
         smap.insert(make_pair((<Expression>k)._gobj,
                               (<Expression>v)._gobj))
     return new_SubstitutionMap_from_GExMap(smap)
-            
+
