@@ -338,7 +338,9 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: Conic(GF(2), [1,1,1,1,1,0]).diagonalization()                         # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            ValueError: The conic self (= Projective Conic Curve over Finite Field of size 2 defined by x^2 + x*y + y^2 + x*z + y*z) has no symmetric matrix because the base field has characteristic 2
+            ValueError: The conic self (= Projective Conic Curve over Finite Field
+            of size 2 defined by x^2 + x*y + y^2 + x*z + y*z) has no symmetric matrix
+            because the base field has characteristic 2
 
         An example over a global function field:
 
@@ -677,8 +679,10 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             Traceback (most recent call last):
             ...
             ValueError: The matrix x (= [  0   0 1/2]
-            [  0   1   0]
-            [  1   0   0]) does not define a map from self (= Projective Conic Curve over Rational Field defined by -x^2 + y^2 + z^2) to Y (= Projective Conic Curve over Rational Field defined by -x^2 + y^2 + z^2)
+                                        [  0   1   0]
+                                        [  1   0   0]) does not define a map
+            from self (= Projective Conic Curve over Rational Field defined by -x^2 + y^2 + z^2)
+            to Y (= Projective Conic Curve over Rational Field defined by -x^2 + y^2 + z^2)
 
         The identity map between two representations of the same conic:
 
@@ -701,13 +705,15 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: P.<t> = QQ[]
             sage: C = Conic([1,0,0,t,0,1/t])
             sage: D = Conic([1/t^2, 0, -2/t^2, t, 0, (t + 1)/t^2])
-            sage: T = Matrix([[t,0,1],[0,1,0],[0,0,1]])
+            sage: T = Matrix([[t,0,1], [0,1,0], [0,0,1]])
             sage: C.hom(T, D)
             Scheme morphism:
-              From: Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Rational Field defined by x^2 + t*y^2 + 1/t*z^2
-              To:   Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Rational Field defined by 1/(t^2)*x^2 + t*y^2 - 2/(t^2)*x*z + (t + 1)/(t^2)*z^2
-              Defn: Defined on coordinates by sending (x : y : z) to
-                    (t*x + z : y : z)
+              From: Projective Conic Curve over Fraction Field of Univariate
+                    Polynomial Ring in t over Rational Field defined by x^2 + t*y^2 + 1/t*z^2
+              To:   Projective Conic Curve over Fraction Field of Univariate
+                    Polynomial Ring in t over Rational Field defined by
+                    1/(t^2)*x^2 + t*y^2 - 2/(t^2)*x*z + (t + 1)/(t^2)*z^2
+              Defn: Defined on coordinates by sending (x : y : z) to (t*x + z : y : z)
 
         """
         if is_Matrix(x):
@@ -915,7 +921,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: C.parametrization()
             Traceback (most recent call last):
             ...
-            ValueError: Conic Projective Conic Curve over Rational Field defined by x^2 + y^2 + 7*z^2 has no rational points over Rational Field!
+            ValueError: Conic Projective Conic Curve over Rational Field defined by
+            x^2 + y^2 + 7*z^2 has no rational points over Rational Field!
 
         A ``ValueError`` is raised if ``self`` is not smooth ::
 
@@ -923,7 +930,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: C.parametrization()
             Traceback (most recent call last):
             ...
-            ValueError: The conic self (=Projective Conic Curve over Rational Field defined by x^2 + y^2) is not smooth, hence does not have a parametrization.
+            ValueError: The conic self (=Projective Conic Curve over Rational Field
+            defined by x^2 + y^2) is not smooth, hence does not have a parametrization.
         """
         if (self._parametrization is not None) and not point:
             par = self._parametrization
@@ -1020,7 +1028,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: Conic(QQ, [1, 1, 1]).random_rational_point()
             Traceback (most recent call last):
             ...
-            ValueError: Conic Projective Conic Curve over Rational Field defined by x^2 + y^2 + z^2 has no rational points over Rational Field!
+            ValueError: Conic Projective Conic Curve over Rational Field defined by
+            x^2 + y^2 + z^2 has no rational points over Rational Field!
 
         """
         if not self.is_smooth():
@@ -1057,13 +1066,15 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: C.rational_point()
             Traceback (most recent call last):
             ...
-            ValueError: Conic Projective Conic Curve over Rational Field defined by x^2 + 2*y^2 + z^2 has no rational points over Rational Field!
+            ValueError: Conic Projective Conic Curve over Rational Field defined by
+            x^2 + 2*y^2 + z^2 has no rational points over Rational Field!
 
             sage: C = Conic(x^2 + y^2 + 7*z^2)
             sage: C.rational_point(algorithm = 'rnfisnorm')
             Traceback (most recent call last):
             ...
-            ValueError: Conic Projective Conic Curve over Rational Field defined by x^2 + y^2 + 7*z^2 has no rational points over Rational Field!
+            ValueError: Conic Projective Conic Curve over Rational Field defined by
+            x^2 + y^2 + 7*z^2 has no rational points over Rational Field!
 
         Examples over number fields ::
 
@@ -1127,12 +1138,18 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: G.rational_point(algorithm='magma')               # optional - magma  # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
-            ValueError: Conic Projective Conic Curve over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095? defined by s*x^2 + 30*y^2 - 21*z^2 has no rational points over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095?!
+            ValueError: Conic Projective Conic Curve over Number Field in s
+            with defining polynomial x^2 - 2 with s = 1.414213562373095?
+            defined by s*x^2 + 30*y^2 - 21*z^2 has no rational points over
+            Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095?!
             sage: G.rational_point(algorithm='magma',               # optional - magma  # optional - sage.rings.number_field
             ....:                  read_cache=False)
             Traceback (most recent call last):
             ...
-            ValueError: Conic Projective Conic Curve over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095? defined by s*x^2 + 30*y^2 - 21*z^2 has no rational points over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095?!
+            ValueError: Conic Projective Conic Curve over Number Field in s
+            with defining polynomial x^2 - 2 with s = 1.414213562373095?
+            defined by s*x^2 + 30*y^2 - 21*z^2 has no rational points over
+            Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095?!
 
         Examples over finite fields ::
 
@@ -1155,7 +1172,9 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: Conic(RR, [1, 1, 1]).rational_point()                                 # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            ValueError: Conic Projective Conic Curve over Real Field with 53 bits of precision defined by x^2 + y^2 + z^2 has no rational points over Real Field with 53 bits of precision!
+            ValueError: Conic Projective Conic Curve over Real Field
+            with 53 bits of precision defined by x^2 + y^2 + z^2 has
+            no rational points over Real Field with 53 bits of precision!
         """
         bl, pt = self.has_rational_point(point=True, algorithm=algorithm,
                                          read_cache=read_cache)
@@ -1182,7 +1201,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: Conic(QQ, [1,1,1,1,1,1]).singular_point()
             Traceback (most recent call last):
             ...
-            ValueError: The conic self (= Projective Conic Curve over Rational Field defined by x^2 + x*y + y^2 + x*z + y*z + z^2) has no rational singular point
+            ValueError: The conic self (= Projective Conic Curve over Rational Field
+            defined by x^2 + x*y + y^2 + x*z + y*z + z^2) has no rational singular point
         """
         b = self.has_singular_point(point=True)
         if not b[0]:
@@ -1247,8 +1267,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def variable_names(self):
         r"""
-        Returns the variable names of the defining polynomial
-        of ``self``.
+        Returns the variable names of the defining polynomial of ``self``.
 
         EXAMPLES:
 

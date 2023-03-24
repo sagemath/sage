@@ -24,7 +24,7 @@ Create a conic::
 Points can be found using :meth:`has_rational_point`::
 
     sage: K.<t> = FractionField(QQ['t'])
-    sage: C = Conic([1,-t,t])
+    sage: C = Conic([1, -t, t])
     sage: C.has_rational_point(point=True)
     (True, (0 : 1 : 1))
 """
@@ -205,14 +205,25 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             Traceback (most recent call last):
             ...
             TypeError: self (=Scheme morphism:
-              From: Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by (-2*t^2 - 3)*x^2 + (-t^3 + 3*t^2 - 2*t - 2)/(t + 3)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z^2
-              To:   Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by (-2*t^2 - 3)*x^2 + (t^2 + 3*t + 3)*x*y + (-2*t^2 - 2)*y^2 + (-t^2 + 3*t + 2)*x*z + (-3*t + 3)*y*z + (-3*t^2 + t - 2)*z^2
+              From: Projective Conic Curve over Fraction Field of Univariate
+                    Polynomial Ring in t over Finite Field of size 7 defined by
+                    (-2*t^2 - 3)*x^2 + (-t^3 + 3*t^2 - 2*t - 2)/(t + 3)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z^2
+              To:   Projective Conic Curve over Fraction Field of Univariate
+                    Polynomial Ring in t over Finite Field of size 7 defined by
+                    (-2*t^2 - 3)*x^2 + (t^2 + 3*t + 3)*x*y + (-2*t^2 - 2)*y^2 + (-t^2 + 3*t + 2)*x*z + (-3*t + 3)*y*z + (-3*t^2 + t - 2)*z^2
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (x + (2*t - 2)/(t + 3)*y + (3*t^4 + 2*t^3 - 2*t^2 - 2*t + 3)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z : y + (-t^3 - t^2 + 3*t - 1)/(t^3 - 3*t^2 + 2*t + 2)*z : z)) domain must equal right (=Scheme morphism:
-              From: Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by (-2*t^3 - t^2 + 3*t + 3)*x^2 + (t - 3)*y^2 + (-t^7 + 2*t^5 + t^4 + 2*t^3 + 3*t^2 - t - 1)*z^2
-              To:   Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by -2/(t^3 - 3*t^2 + 2*t + 2)*x^2 + 1/(t^3 + 3*t^2 - 2*t + 1)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^9 - 2*t^8 + t^7 - t^6 + 3*t^5 - 3*t^3 + t^2 - 2*t + 3)*z^2
+                    (x + (2*t - 2)/(t + 3)*y + (3*t^4 + 2*t^3 - 2*t^2 - 2*t + 3)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z
+                     : y + (-t^3 - t^2 + 3*t - 1)/(t^3 - 3*t^2 + 2*t + 2)*z : z))
+            domain must equal right (=Scheme morphism:
+              From: Projective Conic Curve over Fraction Field of Univariate
+                    Polynomial Ring in t over Finite Field of size 7 defined by
+                    (-2*t^3 - t^2 + 3*t + 3)*x^2 + (t - 3)*y^2 + (-t^7 + 2*t^5 + t^4 + 2*t^3 + 3*t^2 - t - 1)*z^2
+              To:   Projective Conic Curve over Fraction Field of Univariate
+                    Polynomial Ring in t over Finite Field of size 7 defined by
+                    -2/(t^3 - 3*t^2 + 2*t + 2)*x^2 + 1/(t^3 + 3*t^2 - 2*t + 1)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^9 - 2*t^8 + t^7 - t^6 + 3*t^5 - 3*t^3 + t^2 - 2*t + 3)*z^2
               Defn: Defined on coordinates by sending (x : y : z) to
-                    ((t^3 - 3*t^2 + 2*t + 2)*x : (t^2 - 2)*y : (t^5 - 3*t^4 + t^2 + 3*t + 3)*z)) codomain
+                    ((t^3 - 3*t^2 + 2*t + 2)*x : (t^2 - 2)*y : (t^5 - 3*t^4 + t^2 + 3*t + 3)*z))
+            codomain
 
 
 

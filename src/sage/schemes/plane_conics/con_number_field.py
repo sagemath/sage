@@ -113,7 +113,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         An example over `\QQ` ::
 
             sage: C = Conic(QQ, [1, 113922743, -310146482690273725409])
-            sage: C.has_rational_point(point = True)
+            sage: C.has_rational_point(point=True)
             (True, (-76842858034579/5424 : -5316144401/5424 : 1))
             sage: C.has_rational_point(algorithm='local', read_cache=False)
             True
@@ -130,10 +130,11 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             ....:                      read_cache=False)
             Traceback (most recent call last):
             ...
-            ValueError: Algorithm rnfisnorm cannot be combined with obstruction = True in has_rational_point
+            ValueError: Algorithm rnfisnorm cannot be combined with
+            obstruction = True in has_rational_point
 
             sage: P.<x> = QQ[]
-            sage: L.<b> = NumberField(x^3-5)
+            sage: L.<b> = NumberField(x^3 - 5)
             sage: C = Conic(L, [1, 2, -3])
             sage: C.has_rational_point(point=True, algorithm='rnfisnorm')
             (True, (5/3 : -1/3 : 1))
