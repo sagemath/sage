@@ -329,7 +329,7 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
             sage: P2 = toric_varieties.P2()
             sage: P2.point_set().is_finite()
             False
-            sage: P2.change_ring(GF(7)).point_set().is_finite()
+            sage: P2.change_ring(GF(7)).point_set().is_finite()                         # optional - sage.rings.finite_rings
             True
         """
         variety = self.codomain()
@@ -508,11 +508,11 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
 
             sage: o = lattice_polytope.cross_polytope(3)
             sage: V = ToricVariety(FaceFan(o))
-            sage: V.change_ring(GF(2)).point_set().cardinality()
+            sage: V.change_ring(GF(2)).point_set().cardinality()                        # optional - sage.rings.finite_rings
             27
-            sage: V.change_ring(GF(8, "a")).point_set().cardinality()
+            sage: V.change_ring(GF(8, "a")).point_set().cardinality()                   # optional - sage.rings.finite_rings
             729
-            sage: V.change_ring(GF(101)).point_set().cardinality()
+            sage: V.change_ring(GF(101)).point_set().cardinality()                      # optional - sage.rings.finite_rings
             1061208
 
         For non-smooth varieties over finite fields, the homogeneous

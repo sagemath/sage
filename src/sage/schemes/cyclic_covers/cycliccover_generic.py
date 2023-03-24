@@ -12,7 +12,7 @@ EXAMPLES::
     Projective Plane Curve over Integer Ring defined by x0^5 + x0^4*x1 + x1^5 - x2^5
     sage: D.change_ring(QQ).genus()
     6
-    sage: C.change_ring(GF(5))
+    sage: C.change_ring(GF(5))                                                          # optional - sage.rings.finite_rings
     Traceback (most recent call last):
     ...
     ValueError: As the characteristic divides the order of the cover, this model is not smooth.
@@ -117,7 +117,7 @@ class CyclicCover_generic(AffinePlaneCurve):
 
             sage: ZZx.<x> = ZZ[]
             sage: C = CyclicCover(5, x^5 + x + 1)
-            sage: C.change_ring(GF(5))
+            sage: C.change_ring(GF(5))                                                  # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: As the characteristic divides the order of the cover,

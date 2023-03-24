@@ -1476,7 +1476,7 @@ class ToricVarietyFactory(SageObject):
             in 3-d lattice N
             sage: T3.gens()
             (z0, z1, z2)
-            sage: sorted(T3.change_ring(GF(3)).point_set().list())
+            sage: sorted(T3.change_ring(GF(3)).point_set().list())                      # optional - sage.rings.finite_rings
             [[1 : 1 : 1], [1 : 1 : 2], [1 : 2 : 1], [1 : 2 : 2],
              [2 : 1 : 1], [2 : 1 : 2], [2 : 2 : 1], [2 : 2 : 2]]
         """

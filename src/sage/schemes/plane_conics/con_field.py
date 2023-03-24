@@ -231,13 +231,15 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         Determinants are only defined in characteristic different from `2`::
 
-            sage: C = Conic(GF(2), [1, 1, 1, 1, 1, 0])
-            sage: C.is_smooth()
+            sage: C = Conic(GF(2), [1, 1, 1, 1, 1, 0])                                  # optional - sage.rings.finite_rings
+            sage: C.is_smooth()                                                         # optional - sage.rings.finite_rings
             True
-            sage: C.determinant()
+            sage: C.determinant()                                                       # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            ValueError: The conic self (= Projective Conic Curve over Finite Field of size 2 defined by x^2 + x*y + y^2 + x*z + y*z) has no symmetric matrix because the base field has characteristic 2
+            ValueError: The conic self (= Projective Conic Curve over Finite Field
+            of size 2 defined by x^2 + x*y + y^2 + x*z + y*z) has no symmetric matrix
+            because the base field has characteristic 2
         """
         return self.symmetric_matrix().determinant()
 
@@ -268,13 +270,15 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         ::
 
-            sage: c = Conic(GF(4, 'a'), [0, 1, 1, 1, 1, 1])
-            sage: c.is_smooth()
+            sage: c = Conic(GF(4, 'a'), [0, 1, 1, 1, 1, 1])                             # optional - sage.rings.finite_rings
+            sage: c.is_smooth()                                                         # optional - sage.rings.finite_rings
             True
-            sage: c.diagonal_matrix()
+            sage: c.diagonal_matrix()                                                   # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            ValueError: The conic self (= Projective Conic Curve over Finite Field in a of size 2^2 defined by x*y + y^2 + x*z + y*z + z^2) has no symmetric matrix because the base field has characteristic 2
+            ValueError: The conic self (= Projective Conic Curve over Finite Field
+            in a of size 2^2 defined by x*y + y^2 + x*z + y*z + z^2) has
+            no symmetric matrix because the base field has characteristic 2
         """
         A = self.symmetric_matrix()
         B = self.base_ring()
@@ -384,7 +388,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         ::
 
             sage: P.<x,y,z> = QQ[]
-            sage: c = Conic(x^2+y^2+z^2)
+            sage: c = Conic(x^2 + y^2 + z^2)
             sage: c.gens()
             (xbar, ybar, zbar)
             sage: c.defining_polynomial()(c.gens())
@@ -394,8 +398,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         ::
 
-            sage: C.<a,b,c> = Conic(GF(3), [1, 1, 1])
-            sage: C
+            sage: C.<a,b,c> = Conic(GF(3), [1, 1, 1])                                   # optional - sage.rings.finite_rings
+            sage: C                                                                     # optional - sage.rings.finite_rings
             Projective Conic Curve over Finite Field of size 3 defined by a^2 + b^2 + c^2
 
         """
@@ -578,15 +582,16 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: c.has_singular_point(point = True)
             (True, (0 : 1 : 0))
 
-            sage: P.<x,y,z> = GF(7)[]
-            sage: e = Conic((x+y+z)*(x-y+2*z)); e
-            Projective Conic Curve over Finite Field of size 7 defined by x^2 - y^2 + 3*x*z + y*z + 2*z^2
+            sage: P.<x,y,z> = GF(7)[]                                                   # optional - sage.rings.finite_rings
+            sage: e = Conic((x+y+z)*(x-y+2*z)); e                                       # optional - sage.rings.finite_rings
+            Projective Conic Curve over Finite Field of size 7
+            defined by x^2 - y^2 + 3*x*z + y*z + 2*z^2
             sage: e.has_singular_point(point = True)
             (True, (2 : 4 : 1))
 
             sage: Conic([1, 1, -1]).has_singular_point()
             False
-            sage: Conic([1, 1, -1]).has_singular_point(point = True)
+            sage: Conic([1, 1, -1]).has_singular_point(point=True)
             (False, None)
 
         ``has_singular_point`` is not implemented over all fields
@@ -594,17 +599,19 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         ::
 
-            sage: F.<a> = FiniteField(8)
-            sage: Conic([a, a+1, 1]).has_singular_point(point = True)
+            sage: F.<a> = FiniteField(8)                                                # optional - sage.rings.finite_rings
+            sage: Conic([a, a + 1, 1]).has_singular_point(point=True)                   # optional - sage.rings.finite_rings
             (True, (a + 1 : 0 : 1))
 
-            sage: P.<t> = GF(2)[]
-            sage: C = Conic(P, [t,t,1]); C
-            Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X) defined by t*x^2 + t*y^2 + z^2
-            sage: C.has_singular_point(point = False)
+            sage: P.<t> = GF(2)[]                                                       # optional - sage.rings.finite_rings
+            sage: C = Conic(P, [t,t,1]); C                                              # optional - sage.rings.finite_rings
+            Projective Conic Curve over Fraction Field of Univariate Polynomial Ring
+            in t over Finite Field of size 2 (using GF2X) defined by t*x^2 + t*y^2 + z^2
+            sage: C.has_singular_point(point = False)                                   # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            NotImplementedError: Sorry, find singular point on conics not implemented over all fields of characteristic 2.
+            NotImplementedError: Sorry, find singular point on conics not implemented
+            over all fields of characteristic 2.
         """
         if not point:
             ret = self.has_singular_point(point=True)
@@ -747,7 +754,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
             sage: Conic([1,-1,0]).is_smooth()
             False
-            sage: Conic(GF(2),[1,1,1,1,1,0]).is_smooth()
+            sage: Conic(GF(2),[1,1,1,1,1,0]).is_smooth()                                # optional - sage.rings.finite_rings
             True
         """
         if self.base_ring().characteristic() == 2:
