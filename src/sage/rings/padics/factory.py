@@ -3329,8 +3329,6 @@ class pAdicExtension_class(UniqueFactory):
         else:
             exact_modulus = modulus
             approx_modulus = modulus.change_ring(base)
-        else:
-            raise ValueError("modulus must be a polynomial")
         # need to add more checking here.
         if not exact_modulus.is_monic():
             exact_modulus = exact_modulus / exact_modulus.leading_coefficient()
