@@ -113,7 +113,8 @@ class DensityPlot(GraphicPrimitive):
                        a list of colors or an instance of a
                        matplotlib Colormap. Type: import matplotlib.cm; matplotlib.cm.datad.keys()
                        for available colormap names.""",
-                'interpolation': 'What interpolation method to use'}
+                'interpolation': 'What interpolation method to use',
+                'norm': "one of matplotlib.scale.get_scale_names() or matplotlib.colors.Normalize instance"}
 
     def _repr_(self):
         """
@@ -146,10 +147,11 @@ class DensityPlot(GraphicPrimitive):
 
         subplot.imshow(self.xy_data_array, origin='lower',
                        cmap=cmap, extent=(x0,x1,y0,y1),
-                       interpolation=options['interpolation'])
+                       interpolation=options['interpolation'],
+                       norm=options['norm'])
 
 
-@options(plot_points=25, cmap='gray', interpolation='catrom')
+@options(plot_points=25, cmap='gray', interpolation='catrom', norm=None)
 def density_plot(f, xrange, yrange, **options):
     r"""
     ``density_plot`` takes a function of two variables, `f(x,y)`
@@ -183,6 +185,9 @@ def density_plot(f, xrange, yrange, **options):
       ``'spline36'``, ``'quadric'``, ``'gaussian'``, ``'sinc'``,
       ``'bessel'``, ``'mitchell'``, ``'lanczos'``, ``'catrom'``,
       ``'hermite'``, ``'hanning'``, ``'hamming'``, ``'kaiser'``
+
+    - ``norm`` -- string, one of ``matplotlib.scale.get_scale_names()``, or
+      an instance of ``matplotlib.colors.Normalize`` (default: None)
 
 
     EXAMPLES:
@@ -239,6 +244,14 @@ def density_plot(f, xrange, yrange, **options):
         x,y = var('x,y')
         g = density_plot(1/(x**10 + y**10), (x,-10,10), (y,-10,10))
         sphinx_plot(g)
+
+    Here we normalize colors only to the interval [-1, 1] and let other values be mapped to the closer one
+    of the two boundaries::
+
+        x, y = var('x,y')
+        from matplotlib.colors import Normalize
+        norm = Normalize(-1, 1)
+        density_plot(x**2+y**2, (-1, 1), (-1, 1), norm=norm)
 
     Some elliptic curves, but with symbolic endpoints.  In the first
     example, the plot is rotated 90 degrees because we switch the
