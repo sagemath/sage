@@ -1,4 +1,4 @@
-<a href="https://sagemath.org"><img src="src/doc/common/themes/sage/static/logo_sagemath_black.svg" height="60" align="right" /></a>
+<a href="https://sagemath.org"><img src="src/doc/common/static/logo_sagemath_black.svg" height="60" align="right" /></a>
 
 # Sage: Open Source Mathematical Software
 
