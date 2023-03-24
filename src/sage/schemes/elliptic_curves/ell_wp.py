@@ -230,7 +230,7 @@ def compute_wp_quadratic(k, A, B, prec):
         + 11*z^14 + 17*z^16 + 50*z^18 + O(z^20)
 
         sage: from sage.schemes.elliptic_curves.ell_wp import compute_wp_quadratic
-        sage: compute_wp_quadratic(E.base_ring(), E.a4(), E.a6(), prec=10)
+        sage: compute_wp_quadratic(E.base_ring(), E.a4(), E.a6(), prec=10)              # optional - sage.rings.finite_rings
         z^-2 + 41*z^2 + 88*z^4 + 11*z^6 + 57*z^8 + O(z^10)
     """
     m = (prec + 1)//2
