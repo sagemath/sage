@@ -876,11 +876,11 @@ class SR_generic(MPolynomialSystemGenerator):
         if not inversion_only:
             with AllowZeroInversionsContext(self):
                 S = [self.sub_byte(elem) for elem in sorted(k)]
-            return  SBox(S)
+            return SBox(S)
         else:
             e = self.e
             S = [elem ** (2**e - 2) for elem in sorted(k)]
-            return  SBox(S)
+            return SBox(S)
 
     def shift_rows(self, d):
         r"""

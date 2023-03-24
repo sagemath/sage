@@ -799,8 +799,8 @@ class VectorField(MultivectorField):
             list_xx = []
 
             while ind != ind_max:
-                for i in  range(ncp):
-                    xx[ind_coord[i]] = xmin[i] + ind[i]*step_tab[i]
+                for i in range(ncp):
+                    xx[ind_coord[i]] = xmin[i] + ind[i] * step_tab[i]
 
                 if chart_domain.valid_coordinates(*xx, tolerance=1e-13,
                                                   parameters=parameters):
