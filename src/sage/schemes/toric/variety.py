@@ -85,20 +85,16 @@ realized as the toric variety associated to the
 
     sage: diamond = lattice_polytope.cross_polytope(2)
     sage: diamond.vertices()
-    M( 1,  0),
-    M( 0,  1),
-    M(-1,  0),
-    M( 0, -1)
+    M( 1,  0),        M( 0,  1),
+    M(-1,  0),        M( 0, -1)
     in 2-d lattice M
     sage: fan = FaceFan(diamond)
     sage: P1xP1 = ToricVariety(fan)
     sage: P1xP1
     2-d toric variety covered by 4 affine patches
     sage: P1xP1.fan().rays()
-    M( 1,  0),
-    M( 0,  1),
-    M(-1,  0),
-    M( 0, -1)
+    M( 1,  0),        M( 0,  1),
+    M(-1,  0),        M( 0, -1)
     in 2-d lattice M
     sage: P1xP1.gens()
     (z0, z1, z2, z3)
@@ -166,10 +162,8 @@ quotient singularities::
     True
     sage: TV = ToricVariety(NormalFan(diamond))
     sage: TV.fan().rays()
-    N( 1,  1),
-    N( 1, -1),
-    N(-1, -1),
-    N(-1,  1)
+    N( 1,  1),        N( 1, -1),
+    N(-1, -1),        N(-1,  1)
     in 2-d lattice N
     sage: TV.is_orbifold()
     True
@@ -180,14 +174,8 @@ In higher dimensions worse things can happen::
 
     sage: TV3 = ToricVariety(NormalFan(lattice_polytope.cross_polytope(3)))
     sage: TV3.fan().rays()
-    N( 1, -1, -1),
-    N( 1,  1, -1),
-    N( 1,  1,  1),
-    N( 1, -1,  1),
-    N(-1, -1,  1),
-    N(-1, -1, -1),
-    N(-1,  1, -1),
-    N(-1,  1,  1)
+    N( 1, -1, -1),    N( 1,  1, -1),    N( 1,  1,  1),    N( 1, -1,  1),
+    N(-1, -1,  1),    N(-1, -1, -1),    N(-1,  1, -1),    N(-1,  1,  1)
     in 3-d lattice N
     sage: TV3.is_orbifold()
     False
@@ -417,10 +405,8 @@ def ToricVariety(fan,
 
         sage: fan = FaceFan(lattice_polytope.cross_polytope(2))
         sage: fan.rays()
-        M( 1,  0),
-        M( 0,  1),
-        M(-1,  0),
-        M( 0, -1)
+        M( 1,  0),    M( 0,  1),
+        M(-1,  0),    M( 0, -1)
         in 2-d lattice M
         sage: P1xP1 = ToricVariety(fan)
         sage: P1xP1.gens()
@@ -1675,10 +1661,8 @@ class ToricVariety_field(AmbientSpace):
             sage: P1xP1 = P1.cartesian_product(P1); P1xP1
             2-d toric variety covered by 4 affine patches
             sage: P1xP1.fan().rays()
-            N+N(-1,  0),
-            N+N( 1,  0),
-            N+N( 0, -1),
-            N+N( 0,  1)
+            N+N(-1,  0),      N+N( 1,  0),
+            N+N( 0, -1),      N+N( 0,  1)
             in 2-d lattice N+N
         """
         return ToricVariety(self.fan().cartesian_product(other.fan()),
@@ -2597,7 +2581,7 @@ class ToricVariety_field(AmbientSpace):
           formats. If not given, indexed variable names will be
           created automatically.
 
-        Output:
+        OUTPUT:
 
         The spectrum of the semigroup ring `\CC[\sigma^\vee \cap M]`.
 
@@ -2792,10 +2776,10 @@ class ToricVariety_field(AmbientSpace):
 
             sage: o = lattice_polytope.cross_polytope(3)
             sage: V = ToricVariety(FaceFan(o))
-            sage: V2 = V.change_ring(GF(2))                                                         # optional - sage.rings.finite_rings
-            sage: V2.point_set().cardinality()                                                      # optional - sage.rings.finite_rings
+            sage: V2 = V.change_ring(GF(2))                                             # optional - sage.rings.finite_rings
+            sage: V2.point_set().cardinality()                                          # optional - sage.rings.finite_rings
             27
-            sage: V2.count_points()                                                                 # optional - sage.rings.finite_rings
+            sage: V2.count_points()                                                     # optional - sage.rings.finite_rings
             27
         """
         return self.point_set().cardinality()

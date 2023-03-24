@@ -28,7 +28,7 @@ base rings.
     Projective Space of dimension 5 over Complex Field with 53 bits of precision
 
 The third argument specifies the printing names of the generators of the
-homogeneous coordinate ring. Using the method `.objgens()` you can obtain both
+homogeneous coordinate ring. Using the method :meth:`objgens` you can obtain both
 the space and the generators as ready to use variables. ::
 
     sage: P2, vars = ProjectiveSpace(10, QQ, 't').objgens()
@@ -1334,14 +1334,14 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-            - ``points_source`` -- points in source projective space.
+        - ``points_source`` -- points in source projective space.
 
-            - ``points_target`` -- points in target projective space.
+        - ``points_target`` -- points in target projective space.
 
-            - ``normalize`` -- (default: `True`) If the returned matrix should be normalized.
-              Only works over exact rings. If the base ring is a field, the matrix is normalized so
-              that the last nonzero entry in the last row is 1. If the base ring is a ring, then
-              the matrix is normalized so that the entries are elements of the base ring.
+        - ``normalize`` -- (default: ``True``) If the returned matrix should be normalized.
+          Only works over exact rings. If the base ring is a field, the matrix is normalized so
+          that the last nonzero entry in the last row is 1. If the base ring is a ring, then
+          the matrix is normalized so that the entries are elements of the base ring.
 
         OUTPUT: Transformation matrix - element of PGL.
 
@@ -1387,8 +1387,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: points_source = [P([-6*t, 7]), P([1, 4]), P([3, 2])]
             sage: points_target = [P([-1, 2*t]), P([0, 2]), P([-1, 6])]
             sage: P.point_transformation_matrix(points_source, points_target)
-            [             (1/3*t + 7/12)/(t^2 - 53/24*t)            (-1/12*t - 7/48)/(t^2 - 53/24*t)]
-            [(-2/3*t^2 - 7/36*t - 35/12)/(t^2 - 53/24*t)                                           1]
+            [             (1/3*t + 7/12)/(t^2 - 53/24*t)       (-1/12*t - 7/48)/(t^2 - 53/24*t)]
+            [(-2/3*t^2 - 7/36*t - 35/12)/(t^2 - 53/24*t)                                      1]
 
         ::
 

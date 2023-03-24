@@ -1286,17 +1286,10 @@ class ToricDivisor_generic(Divisor_generic):
               From: 2-d CPR-Fano toric variety covered by 6 affine patches
               To:   Closed subscheme of Projective Space of dimension 6
                     over Rational Field defined by:
-                      -x1*x5 + x0*x6,
-                      -x2*x3 + x0*x5,
-                      -x1*x3 + x0*x4,
-                      x4*x5 - x3*x6,
-                      -x1*x2 + x0*x3,
-                      x3*x5 - x2*x6,
-                      x3*x4 - x1*x6,
-                      x3^2 - x1*x5,
-                      x2*x4 - x1*x5,
-                      -x1*x5^2 + x2*x3*x6,
-                      -x1*x5^3 + x2^2*x6^2
+                      -x1*x5 + x0*x6,       -x2*x3 + x0*x5,       -x1*x3 + x0*x4,
+                      x4*x5 - x3*x6,        -x1*x2 + x0*x3,       x3*x5 - x2*x6,
+                      x3*x4 - x1*x6,        x3^2 - x1*x5,         x2*x4 - x1*x5,
+                      -x1*x5^2 + x2*x3*x6, -x1*x5^3 + x2^2*x6^2
               Defn: Defined on coordinates by sending [x : u : y : v : z : w] to
                     (x*u^2*y^2*v : x^2*u^2*y*w : u*y^2*v^2*z : x*u*y*v*z*w :
                      x^2*u*z*w^2 : y*v^2*z^2*w : x*v*z^2*w^2)

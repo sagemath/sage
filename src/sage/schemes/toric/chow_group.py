@@ -274,8 +274,7 @@ class ChowCycle(FGP_Element):
         EXAMPLES::
 
             sage: A = toric_varieties.P2().Chow_group()
-            sage: cycle = 10*A.gen(0) + 11*A.gen(1) + 12*A.gen(2)
-            sage: cycle
+            sage: cycle = 10*A.gen(0) + 11*A.gen(1) + 12*A.gen(2); cycle
             ( 12 | 11 | 10 )
             sage: cycle.project_to_degree(2)
             ( 0 | 0 | 10 )
@@ -873,8 +872,8 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
         Third, an example with `A_2(X)=\ZZ^5`::
 
-            sage: cube = [[ 1,0,0],[0, 1,0],[0,0, 1],[-1, 1, 1],
-            ....:         [-1,0,0],[0,-1,0],[0,0,-1],[ 1,-1,-1]]
+            sage: cube = [[ 1,0,0], [0, 1,0], [0,0, 1], [-1, 1, 1],
+            ....:         [-1,0,0], [0,-1,0], [0,0,-1], [ 1,-1,-1]]
             sage: lat_cube = LatticePolytope(cube)
             sage: X = ToricVariety(FaceFan((LatticePolytope(lat_cube))))
             sage: X.Chow_group().degree(2)
@@ -887,23 +886,25 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         cube, so the variety is "more singular". Its Chow group has
         torsion, `A_2(X)=\ZZ^5 \oplus \ZZ/2`::
 
-            sage: rays = [[ 1, 2, 3],[ 1,-1, 1],[-1, 1, 1],[-1,-1, 1],
-            ....:         [-1,-1,-1],[-1, 1,-1],[ 1,-1,-1],[ 1, 1,-1]]
-            sage: cones = [[0,1,2,3],[4,5,6,7],[0,1,7,6],
-            ....:          [4,5,3,2],[0,2,5,7],[4,6,1,3]]
+            sage: rays = [[ 1, 2, 3], [ 1,-1, 1], [-1, 1, 1], [-1,-1, 1],
+            ....:         [-1,-1,-1], [-1, 1,-1], [ 1,-1,-1], [ 1, 1,-1]]
+            sage: cones = [[0,1,2,3], [4,5,6,7], [0,1,7,6],
+            ....:          [4,5,3,2], [0,2,5,7], [4,6,1,3]]
             sage: X = ToricVariety(Fan(cones, rays))
             sage: X.Chow_group().degree(2)  # long time (2s on sage.math, 2011)
             C2 x Z^5
 
         Finally, Example 1.3 of [FS1994]_::
 
-            sage: points_mod = lambda k: matrix([[ 1, 1, 2*k+1],[ 1,-1, 1],
-            ....:                            [-1, 1, 1],[-1,-1, 1],[-1,-1,-1],
-            ....:                            [-1, 1,-1],[ 1,-1,-1],[ 1, 1,-1]])
-            sage: rays = lambda k: matrix([[1,1,1],[1,-1,1],[-1,1,1]]
-            ....:                            ).solve_left(points_mod(k)).rows()
-            sage: cones = [[0,1,2,3],[4,5,6,7],[0,1,7,6],
-            ....:          [4,5,3,2],[0,2,5,7],[4,6,1,3]]
+            sage: def points_mod(k):
+            ....:     return matrix([[ 1, 1, 2*k+1], [ 1,-1, 1],
+            ....:                    [-1, 1, 1], [-1,-1, 1], [-1,-1,-1],
+            ....:                    [-1, 1,-1], [ 1,-1,-1], [ 1, 1,-1]])
+            sage: def rays(k):
+            ....:     return matrix([[ 1,  1,  1],
+            ....:                    [ 1, -1,  1],
+            ....:                    [-1,  1,  1]]).solve_left(points_mod(k)).rows()
+            sage: cones = [[0,1,2,3], [4,5,6,7], [0,1,7,6], [4,5,3,2], [0,2,5,7], [4,6,1,3]]
             sage: X_Delta = lambda k: ToricVariety(Fan(cones=cones, rays=rays(k)))
             sage: X_Delta(0).Chow_group().degree()  # long time (3s on sage.math, 2011)
             (Z, Z, Z^5, Z)
@@ -1027,8 +1028,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
             sage: P2 = toric_varieties.P2()
             sage: A = P2.Chow_group()
-            sage: first = A.relation_gens()[0]
-            sage: first
+            sage: first = A.relation_gens()[0]; first
             ( 0 | 0 | 0 )
             sage: first.is_zero()
             True
@@ -1051,8 +1051,7 @@ class ChowGroup_degree_class(SageObject):
     EXAMPLES::
 
         sage: P2 = toric_varieties.P2()
-        sage: A = P2.Chow_group()
-        sage: A
+        sage: A = P2.Chow_group(); A
         Chow group of 2-d CPR-Fano toric variety covered by 3 affine patches
         sage: A.degree()
         (Z, Z, Z)

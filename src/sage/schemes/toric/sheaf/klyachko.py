@@ -331,8 +331,7 @@ class KlyachkoBundle_class(SageObject):
             sage: TX = toric_varieties.dP6().sheaves.tangent_bundle()
             sage: TX.get_degree(0, 1)
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1]
+            Basis matrix: [0 1]
         """
         return self.get_filtration(ray).get_degree(i)
 
@@ -363,12 +362,10 @@ class KlyachkoBundle_class(SageObject):
             sage: V = X.sheaves.tangent_bundle()
             sage: V.filtration_intersection(fan(1)[0], 1)
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+            Basis matrix: [1 0]
             sage: V.filtration_intersection(fan(2)[0], 1)
             Vector space of degree 2 and dimension 0 over Rational Field
-            Basis matrix:
-            []
+            Basis matrix: []
         """
         sigma = self._variety.fan().embed(sigma)
         V = self.fiber()
@@ -401,16 +398,13 @@ class KlyachkoBundle_class(SageObject):
             sage: V = X.sheaves.tangent_bundle()
             sage: V.E_degree(X.fan().ray(0), (1,0))
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+            Basis matrix: [1 0]
             sage: V.E_degree(X.fan(1)[0], (1,0))
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+            Basis matrix: [1 0]
             sage: V.E_degree(0, (1,0))
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+            Basis matrix: [1 0]
         """
         fan = self.variety().fan()
         N = fan.lattice()
@@ -452,12 +446,10 @@ class KlyachkoBundle_class(SageObject):
             sage: V = X.sheaves.tangent_bundle()
             sage: V.E_intersection(fan(1)[0], (1,0))
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+            Basis matrix: [1 0]
             sage: V.E_intersection(fan(2)[0], (-1,1))
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1]
+            Basis matrix: [0 1]
 
         For the empty cone, this is always the whole vector space::
 
@@ -499,17 +491,16 @@ class KlyachkoBundle_class(SageObject):
             sage: m.set_immutable()
             sage: V.E_quotient(cone, m)
             Vector space quotient V/W of dimension 1 over Rational Field where
-            V: Vector space of dimension 2 over Rational Field
-            W: Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+             V: Vector space of dimension 2 over Rational Field
+             W: Vector space of degree 2 and dimension 1 over Rational Field
+                Basis matrix: [1 0]
             sage: V.E_quotient(fan(2)[0], (-1,1))
             Vector space quotient V/W of dimension 0 over Rational Field where
-            V: Vector space of dimension 2 over Rational Field
-            W: Vector space of degree 2 and dimension 2 over Rational Field
-            Basis matrix:
-            [1 0]
-            [0 1]
+             V: Vector space of dimension 2 over Rational Field
+             W: Vector space of degree 2 and dimension 2 over Rational Field
+                Basis matrix:
+                [1 0]
+                [0 1]
         """
         sigma = self._variety.fan().embed(sigma)
         V = self.fiber()
@@ -556,30 +547,26 @@ class KlyachkoBundle_class(SageObject):
             sage: m.set_immutable()
             sage: V.E_quotient(sigma, m)
             Vector space quotient V/W of dimension 2 over Rational Field where
-            V: Vector space of dimension 3 over Rational Field
-            W: Vector space of degree 3 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1 0]
+             V: Vector space of dimension 3 over Rational Field
+             W: Vector space of degree 3 and dimension 1 over Rational Field
+                Basis matrix: [0 1 0]
             sage: V.E_quotient(tau, m)
             Vector space quotient V/W of dimension 2 over Rational Field where
-            V: Vector space of dimension 3 over Rational Field
-            W: Vector space of degree 3 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1 0]
+             V: Vector space of dimension 3 over Rational Field
+             W: Vector space of degree 3 and dimension 1 over Rational Field
+                Basis matrix: [0 1 0]
             sage: V.E_quotient_projection(sigma, tau, m)
             Vector space morphism represented by the matrix:
-            [1 0]
-            [0 1]
-            Domain: Vector space quotient V/W of dimension 2 over Rational Field where
-            V: Vector space of dimension 3 over Rational Field
-            W: Vector space of degree 3 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1 0]
-            Codomain: Vector space quotient V/W of dimension 2 over Rational Field where
-            V: Vector space of dimension 3 over Rational Field
-            W: Vector space of degree 3 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1 0]
+             [1 0]
+             [0 1]
+             Domain:   Vector space quotient V/W of dimension 2 over Rational Field where
+                       V: Vector space of dimension 3 over Rational Field
+                       W: Vector space of degree 3 and dimension 1 over Rational Field
+                          Basis matrix: [0 1 0]
+             Codomain: Vector space quotient V/W of dimension 2 over Rational Field where
+                       V: Vector space of dimension 3 over Rational Field
+                       W: Vector space of degree 3 and dimension 1 over Rational Field
+                          Basis matrix: [0 1 0]
         """
         if not sigma.is_face_of(tau):
             raise ValueError('the cone sigma is not a face of the cone tau')

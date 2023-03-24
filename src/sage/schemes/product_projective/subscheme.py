@@ -47,8 +47,8 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         sage: P.<x, y, u, v> = ProductProjectiveSpaces([1, 1], QQ)
         sage: P.subscheme([u*x^2 - v*y*x])
-        Closed subscheme of Product of projective spaces P^1 x P^1 over Rational
-        Field defined by:
+        Closed subscheme of Product of projective spaces P^1 x P^1 over Rational Field
+        defined by:
           x^2*u - x*y*v
 
     TESTS::
@@ -98,15 +98,9 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
                       (no polynomials)
               To:   Closed subscheme of Projective Space of dimension 7
                     over Complex Field with 53 bits of precision defined by:
-                      -u5*u6 + u4*u7,
-                      -u3*u6 + u2*u7,
-                      -u3*u4 + u2*u5,
-                      -u3*u5 + u1*u7,
-                      -u3*u4 + u1*u6,
-                      -u3*u4 + u0*u7,
-                      -u2*u4 + u0*u6,
-                      -u1*u4 + u0*u5,
-                      -u1*u2 + u0*u3
+                      -u5*u6 + u4*u7,       -u3*u6 + u2*u7,       -u3*u4 + u2*u5,
+                      -u3*u5 + u1*u7,       -u3*u4 + u1*u6,       -u3*u4 + u0*u7,
+                      -u2*u4 + u0*u6,       -u1*u4 + u0*u5,       -u1*u2 + u0*u3
               Defn: Defined by sending (x : y , u : v , s : t) to
                     (x*u*s : x*u*t : x*v*s : x*v*t : y*u*s : y*u*t : y*v*s : y*v*t).
 
@@ -117,28 +111,15 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             Scheme morphism:
               From: Closed subscheme of Product of projective spaces P^2 x P^1 x P^1
                     over Integer Ring defined by:
-                      x^3,
-                      u - v,
-                      s^2 - t^2
+                      x^3,                  u - v,                s^2 - t^2
               To:   Closed subscheme of Projective Space of dimension 11
                     over Integer Ring defined by:
-                      u10^2 - u11^2,
-                      u9 - u11,
-                      u8 - u10,
-                      -u7*u10 + u6*u11,
-                      u6*u10 - u7*u11,
-                      u6^2 - u7^2,
-                      u5 - u7,
-                      u4 - u6,
-                      u3^3,
-                      -u3*u10 + u2*u11,
-                      u2*u10 - u3*u11,
-                      -u3*u6 + u2*u7,
-                      u2*u6 - u3*u7,
-                      u2*u3^2,
-                      u2^2 - u3^2,
-                      u1 - u3,
-                      u0 - u2
+                      u10^2 - u11^2,        u9 - u11,             u8 - u10,
+                      -u7*u10 + u6*u11,     u6*u10 - u7*u11,      u6^2 - u7^2,
+                      u5 - u7,              u4 - u6,              u3^3,
+                      -u3*u10 + u2*u11,     u2*u10 - u3*u11,      -u3*u6 + u2*u7,
+                      u2*u6 - u3*u7,        u2*u3^2,              u2^2 - u3^2,
+                      u1 - u3,              u0 - u2
               Defn: Defined by sending (x : y : z , u : v , s : t) to
                     (x*u*s : x*u*t : x*v*s : x*v*t : y*u*s : y*u*t : y*v*s : y*v*t
                      : z*u*s : z*u*t : z*v*s : z*v*t).

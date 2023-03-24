@@ -248,7 +248,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
             Warning: computations in the numerical fields are inexact;points
             may be computed partially or incorrectly.
             [(-1.00000000000000, 0.000000000000000),
-            (0.000000000000000, 0.000000000000000)]
+             (0.000000000000000, 0.000000000000000)]
 
         ::
 
