@@ -659,7 +659,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         the elliptic curve database.
 
         If there is no elliptic curve isomorphic to ``self`` in the
-        database, a ``LookupError`` is raised.
+        database, a :class:`LookupError` is raised.
 
         EXAMPLES::
 
@@ -678,7 +678,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.database_attributes()
             Traceback (most recent call last):
             ...
-            LookupError: Cremona database does not contain entry for Elliptic Curve defined by y^2 + 8*x*y + 21*y = x^3 + 13*x^2 + 34*x + 55 over Rational Field
+            LookupError: Cremona database does not contain entry for Elliptic Curve
+            defined by y^2 + 8*x*y + 21*y = x^3 + 13*x^2 + 34*x + 55 over Rational Field
         """
         from sage.databases.cremona import CremonaDatabase
         ainvs = self.minimal_model().ainvs()
@@ -776,7 +777,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             <class 'sage.libs.eclib.interface.mwrank_EllipticCurve'>
             sage: EE.isogeny_class()
             ([[0, -1, 1, -10, -20], [0, -1, 1, -7820, -263580], [0, -1, 1, 0, 0]],
-            [[0, 5, 5], [5, 0, 0], [5, 0, 0]])
+             [[0, 5, 5], [5, 0, 0], [5, 0, 0]])
         """
         try:
             return self.__mwrank_curve
@@ -1031,11 +1032,14 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: f = EllipticCurve('37b')
             sage: f.modular_symbol_space()
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(37) of weight 2 with sign 1 over Rational Field
+            Modular Symbols subspace of dimension 1 of Modular Symbols space
+            of dimension 3 for Gamma_0(37) of weight 2 with sign 1 over Rational Field
             sage: f.modular_symbol_space(-1)
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 2 for Gamma_0(37) of weight 2 with sign -1 over Rational Field
+            Modular Symbols subspace of dimension 1 of Modular Symbols space
+            of dimension 2 for Gamma_0(37) of weight 2 with sign -1 over Rational Field
             sage: f.modular_symbol_space(0, bound=3)
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 5 for Gamma_0(37) of weight 2 with sign 0 over Rational Field
+            Modular Symbols subspace of dimension 2 of Modular Symbols space
+            of dimension 5 for Gamma_0(37) of weight 2 with sign 0 over Rational Field
 
         .. NOTE::
 
@@ -1179,7 +1183,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: E = EllipticCurve('37a1')
             sage: M = E.modular_symbol(); M
-            Modular symbol with sign 1 over Rational Field attached to Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+            Modular symbol with sign 1 over Rational Field attached to
+            Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
             sage: M(1/2)
             0
             sage: M(1/5)
@@ -1189,7 +1194,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: E = EllipticCurve('121b1')
             sage: M = E.modular_symbol(implementation="sage")
-            Warning : Could not normalize the modular symbols, maybe all further results will be multiplied by -1 and a power of 2
+            Warning : Could not normalize the modular symbols, maybe all further results
+            will be multiplied by -1 and a power of 2
             sage: M(1/7)
             -1/2
 
@@ -1255,11 +1261,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: E = EllipticCurve('11a1')
             sage: Mplus = E.modular_symbol(+1); Mplus
-            Modular symbol with sign 1 over Rational Field attached to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+            Modular symbol with sign 1 over Rational Field attached to
+            Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
             sage: [Mplus(1/i) for i in [1..11]]
             [1/5, -4/5, -3/10, 7/10, 6/5, 6/5, 7/10, -3/10, -4/5, 1/5, 0]
             sage: Mminus = E.modular_symbol(-1); Mminus
-            Modular symbol with sign -1 over Rational Field attached to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+            Modular symbol with sign -1 over Rational Field attached to
+            Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
             sage: [Mminus(1/i) for i in [1..11]]
             [0, 0, 1/2, 1/2, 0, 0, -1/2, -1/2, 0, 0, 0]
 
@@ -1439,7 +1447,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           - ``'rubinstein'`` -- use Rubinstein's L-function C++ program lcalc.
           - ``'magma'`` -- use MAGMA
           - ``'zero_sum'`` -- Use the rank bounding zero sum method implemented
-            in self.analytic_rank_upper_bound()
+            in :meth:`analytic_rank_upper_bound`
           - ``'all'`` -- compute with PARI, sympow and lcalc, check that
             the answers agree, and return the common answer.
 
@@ -2228,7 +2236,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: E = EllipticCurve('389a1')
             sage: E1 = E.change_weierstrass_model([1/20,0,0,0]); E1
-            Elliptic Curve defined by y^2 + 8000*y = x^3 + 400*x^2 - 320000*x over Rational Field
+            Elliptic Curve defined by y^2 + 8000*y = x^3 + 400*x^2 - 320000*x
+            over Rational Field
             sage: E1.gens() # random (if database not used)
             [(-400 : 8000 : 1), (0 : -8000 : 1)]
         """
@@ -3256,15 +3265,16 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         OUTPUT:
 
-        (period lattice) The PeriodLattice_ell object associated to
-        this elliptic curve (with respect to the natural embedding of
+        (period lattice) The :class:`~sage.schemes.elliptic_curves.period_lattice.PeriodLattice_ell`
+        object associated to this elliptic curve (with respect to the natural embedding of
         `\QQ` into `\RR`).
 
         EXAMPLES::
 
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice()
-            Period lattice associated to Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+            Period lattice associated to
+            Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
         """
         try:
             return self._period_lattice
@@ -3789,7 +3799,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         We can also get a series expansion of this modular parameterization::
 
             sage: E = EllipticCurve('389a1')
-            sage: X,Y=E.modular_parametrization().power_series()
+            sage: X, Y = E.modular_parametrization().power_series()
             sage: X
             q^-2 + 2*q^-1 + 4 + 7*q + 13*q^2 + 18*q^3 + 31*q^4 + 49*q^5 + 74*q^6 + 111*q^7 + 173*q^8 + 251*q^9 + 379*q^10 + 560*q^11 + 824*q^12 + 1199*q^13 + 1773*q^14 + 2548*q^15 + 3722*q^16 + 5374*q^17 + O(q^18)
             sage: Y
@@ -4251,7 +4261,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         Return the associated quadratic discriminant if this elliptic
         curve has Complex Multiplication over the algebraic closure.
 
-        A ValueError is raised if the curve does not have CM (see the
+        A :class:`ValueError` is raised if the curve does not have CM (see the
         function :meth:`has_cm()`).
 
         EXAMPLES::
@@ -5052,9 +5062,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         that in each class there is at least one, more precisely the so-called
         strong Weil curve or `X_0(N)`-optimal curve, that has Manin constant `1`.
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: An integer.
 
         This function only works if the curve is in the installed
         Cremona database.  Sage includes by default a small database;
@@ -5745,7 +5753,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         - point on the curve: the rational point which is the
           image of `z` under the Weierstrass parametrization, if it
           exists and can be determined from `z` and the given value
-          of max_denominator (if any); otherwise a ``ValueError`` exception
+          of max_denominator (if any); otherwise a :class:`ValueError` exception
           is raised.
 
         EXAMPLES::
@@ -5848,8 +5856,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         .. NOTE::
 
             The complexity increases exponentially in the rank of curve
-            E. The computation time (but not the output!) depends on
-            the Mordell-Weil basis. If mw_base is given but is not a
+            `E`. The computation time (but not the output!) depends on
+            the Mordell-Weil basis. If ``mw_base`` is given but is not a
             basis for the Mordell-Weil group (modulo torsion), integral
             points which are not in the subgroup generated by the given
             points will almost certainly not be listed.
@@ -5879,7 +5887,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             [2, 3, 4, 8, 11, 14, 21, 37, 52, 93, 342, 406, 816]
             Total number of integral points: 18
 
-        It is not necessary to specify mw_base; if it is not provided,
+        It is not necessary to specify ``mw_base``; if it is not provided,
         then the Mordell-Weil basis must be computed, which may take
         much longer.
 

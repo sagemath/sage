@@ -291,16 +291,13 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
 
 class SchemeHomset_points_toric_base(SchemeHomset_points):
     """
-    Base class for homsets with toric ambient spaces
+    Base class for homsets with toric ambient spaces.
 
     INPUT:
 
     - same as for :class:`SchemeHomset_points`.
 
-    OUTPUT:
-
-    A scheme morphism of type
-    :class:`SchemeHomset_points_toric_base`.
+    OUTPUT: A scheme morphism of type :class:`SchemeHomset_points_toric_base`.
 
     EXAMPLES::
 
@@ -320,9 +317,7 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
         """
         Return whether there are finitely many points.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -436,10 +431,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
 
     - same as for :class:`~sage.schemes.generic.homset.SchemeHomset_points`.
 
-    OUTPUT:
-
-    A scheme morphism of type
-    :class:`SchemeHomset_points_toric_field`.
+    OUTPUT: A scheme morphism of type :class:`SchemeHomset_points_toric_field`.
 
     EXAMPLES::
 
@@ -575,9 +567,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
         """
         Iterate over the points of the variety.
 
-        OUTPUT:
-
-        Iterator over points.
+        OUTPUT: Iterator over points.
 
         EXAMPLES::
 

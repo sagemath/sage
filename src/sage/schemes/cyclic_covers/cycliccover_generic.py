@@ -17,7 +17,6 @@ EXAMPLES::
     ...
     ValueError: As the characteristic divides the order of the cover, this model is not smooth.
 
-
     sage: GF7x.<x> = GF(7)[]                                                            # optional - sage.rings.finite_rings
     sage: C = CyclicCover(3, x^9 + x + 1)                                               # optional - sage.rings.finite_rings
     sage: C                                                                             # optional - sage.rings.finite_rings

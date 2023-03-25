@@ -23,7 +23,7 @@ import sage.schemes.curves.projective_curve as projective_curve
 
 def is_QuarticCurve(C):
     """
-    Checks whether C is a Quartic Curve
+    Check whether ``C`` is a Quartic Curve.
 
     EXAMPLES::
 
@@ -41,7 +41,7 @@ class QuarticCurve_generic(projective_curve.ProjectivePlaneCurve):
 
     def _repr_type(self):
         """
-        Return the representation of self
+        Return the representation of ``self``.
 
         EXAMPLES::
 
@@ -54,7 +54,7 @@ class QuarticCurve_generic(projective_curve.ProjectivePlaneCurve):
 
     def genus(self):
         """
-        Returns the genus of self
+        Return the genus of ``self``.
 
         EXAMPLES::
 

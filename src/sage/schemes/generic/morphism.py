@@ -9,9 +9,9 @@ Scheme morphism
     all schemes.
 
 If you want to extend the Sage library with some new kind of scheme,
-your new class (say, ``myscheme``) should provide a method
+your new class (say, ``MyScheme``) should provide a method
 
-* ``myscheme._morphism(*args, **kwds)`` returning a morphism
+* ``MyScheme._morphism(*args, **kwds)`` returning a morphism
   between two schemes in your category, usually defined via
   polynomials. Your morphism class should derive from
   :class:`SchemeMorphism_polynomial`. These morphisms will usually be
@@ -22,17 +22,17 @@ Optionally, you can also provide a special Hom-set class for your
 subcategory of schemes. If you want to do this, you should also
 provide a method
 
-* ``myscheme._homset(*args, **kwds)`` returning a
+* ``MyScheme._homset(*args, **kwds)`` returning a
   Hom-set, which must be an element of a derived class of
   :class:`~sage.schemes.generic.homset.SchemeHomset_generic`. If your
-  new Hom-set class does not use ``myscheme._morphism`` then you
+  new Hom-set class does not use ``MyScheme._morphism`` then you
   do not have to provide it.
 
 Note that points on schemes are morphisms `Spec(K)\to X`, too. But we
 typically use a different notation, so they are implemented in a
 different derived class. For this, you should implement a method
 
-* ``myscheme._point(*args, **kwds)`` returning a point, that is,
+* ``MyScheme._point(*args, **kwds)`` returning a point, that is,
   a morphism `Spec(K)\to X`. Your point class should derive from
   :class:`SchemeMorphism_point`.
 
@@ -40,10 +40,10 @@ Optionally, you can also provide a special Hom-set for the points, for
 example the point Hom-set can provide a method to enumerate all
 points. If you want to do this, you should also provide a method
 
-* ``myscheme._point_homset(*args, **kwds)`` returning
+* ``MyScheme._point_homset(*args, **kwds)`` returning
   the :mod:`~sage.schemes.generic.homset` of points. The Hom-sets of
   points are implemented in classes named ``SchemeHomset_points_...``.
-  If your new Hom-set class does not use ``myscheme._point`` then
+  If your new Hom-set class does not use ``MyScheme._point`` then
   you do not have to provide it.
 
 AUTHORS:
@@ -1956,15 +1956,13 @@ class SchemeMorphism_point(SchemeMorphism):
 
     def change_ring(self, R, check=True):
         r"""
-        Returns a new :class:`SchemeMorphism_point` which is this point coerced to``R``.
+        Returns a new :class:`SchemeMorphism_point` which is this point coerced to ``R``.
 
         If ``check`` is true, then the initialization checks are performed.
 
         INPUT:
 
         - ``R`` -- ring or morphism.
-
-        kwds:
 
         - ``check`` -- Boolean
 

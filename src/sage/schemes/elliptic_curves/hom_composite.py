@@ -23,10 +23,11 @@ decomposing into prime steps is exponentially faster::
     2^143
     sage: EllipticCurveHom_composite(E, P)
     Composite morphism of degree 11150372599265311570767859136324180752990208 = 2^143:
-      From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
+      From: Elliptic Curve defined by y^2 = x^3 + x
+            over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
       To:   Elliptic Curve defined by y^2 = x^3 + (18676616716352953484576727486205473216172067*z2+32690199585974925193292786311814241821808308)*x
-    + (3369702436351367403910078877591946300201903*z2+15227558615699041241851978605002704626689722)
-    over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
+            + (3369702436351367403910078877591946300201903*z2+15227558615699041241851978605002704626689722)
+            over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
 
 Yet, the interface provided by :class:`EllipticCurveHom_composite`
 is identical to :class:`EllipticCurveIsogeny` and other instantiations
@@ -68,8 +69,12 @@ factorizations of the same isogeny are compared::
 We can easily obtain the individual factors of the composite map::
 
     sage: psi.factors()
-    (Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 419 to Elliptic Curve defined by y^2 = x^3 + 140*x + 214 over Finite Field of size 419,
-     Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 140*x + 214 over Finite Field of size 419 to Elliptic Curve defined by y^2 = x^3 + 101*x + 285 over Finite Field of size 419)
+    (Isogeny of degree 5
+      from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 419
+      to Elliptic Curve defined by y^2 = x^3 + 140*x + 214 over Finite Field of size 419,
+     Isogeny of degree 7
+      from Elliptic Curve defined by y^2 = x^3 + 140*x + 214 over Finite Field of size 419
+      to Elliptic Curve defined by y^2 = x^3 + 101*x + 285 over Finite Field of size 419)
 
 AUTHORS:
 
@@ -228,7 +233,9 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: K.<a> = NumberField(x^2 - x - 5)
             sage: E = EllipticCurve('210.b6').change_ring(K)
             sage: E.torsion_subgroup()
-            Torsion Subgroup isomorphic to Z/12 + Z/2 associated to the Elliptic Curve defined by y^2 + x*y + y = x^3 + (-578)*x + 2756 over Number Field in a with defining polynomial x^2 - x - 5
+            Torsion Subgroup isomorphic to Z/12 + Z/2 associated to the Elliptic Curve
+            defined by y^2 + x*y + y = x^3 + (-578)*x + 2756 over Number Field in a
+            with defining polynomial x^2 - x - 5
             sage: EllipticCurveHom_composite(E, E.torsion_points())
             Composite morphism of degree 24 = 2^3*3:
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + (-578)*x + 2756 over Number Field in a with defining polynomial x^2 - x - 5
@@ -484,9 +491,15 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: P, = E.gens()
             sage: phi = EllipticCurveHom_composite(E, P)
             sage: phi.factors()
-            (Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 43 to Elliptic Curve defined by y^2 = x^3 + 39*x over Finite Field of size 43,
-             Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + 39*x over Finite Field of size 43 to Elliptic Curve defined by y^2 = x^3 + 42*x + 26 over Finite Field of size 43,
-             Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + 42*x + 26 over Finite Field of size 43 to Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 43)
+            (Isogeny of degree 2
+              from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 43
+               to Elliptic Curve defined by y^2 = x^3 + 39*x over Finite Field of size 43,
+             Isogeny of degree 2
+              from Elliptic Curve defined by y^2 = x^3 + 39*x over Finite Field of size 43
+              to Elliptic Curve defined by y^2 = x^3 + 42*x + 26 over Finite Field of size 43,
+             Isogeny of degree 11
+              from Elliptic Curve defined by y^2 = x^3 + 42*x + 26 over Finite Field of size 43
+              to Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 43)
         """
         return self._phis
 

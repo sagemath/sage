@@ -271,13 +271,13 @@ computations with the rational Chow group::
 
 The real advantage of the Chow group is that
 
-  * it works just as well over `\ZZ`, so torsion information is also
-    easily available, and
+* it works just as well over `\ZZ`, so torsion information is also
+  easily available, and
 
-  * its combinatorial description also works over worse-than-orbifold
-    singularities. By contrast, the cohomology groups can become very
-    complicated to compute in this case, and one usually only has a
-    spectral sequence but no toric algorithm.
+* its combinatorial description also works over worse-than-orbifold
+  singularities. By contrast, the cohomology groups can become very
+  complicated to compute in this case, and one usually only has a
+  spectral sequence but no toric algorithm.
 
 Below you will find detailed descriptions of available functions. If you are
 familiar with toric geometry, you will likely see that many important objects
@@ -395,9 +395,7 @@ def ToricVariety(fan,
     - ``base_field`` -- alias for ``base_ring``. Takes precedence if
       both are specified.
 
-    OUTPUT:
-
-    - :class:`toric variety <ToricVariety_field>`.
+    OUTPUT: A :class:`toric variety <ToricVariety_field>`.
 
     EXAMPLES:
 
@@ -473,9 +471,7 @@ def AffineToricVariety(cone, *args, **kwds):
     <sage.geometry.fan.RationalPolyhedralFan>`, which will be passed to
     :func:`ToricVariety` with the rest of positional and keyword arguments.
 
-    OUTPUT:
-
-    - :class:`toric variety <ToricVariety_field>`.
+    OUTPUT: A :class:`toric variety <ToricVariety_field>`.
 
     .. NOTE::
 
@@ -532,9 +528,7 @@ class ToricVariety_field(AmbientSpace):
 
     - ``base_field`` -- base field of the toric variety.
 
-    OUTPUT:
-
-    - :class:`toric variety <ToricVariety_field>`.
+    OUTPUT: A :class:`toric variety <ToricVariety_field>`.
 
     TESTS::
 
@@ -569,9 +563,7 @@ class ToricVariety_field(AmbientSpace):
 
         - ``right`` -- anything
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: A boolean.
 
         ``True`` if and only if ``right`` is of the same type as ``self``,
         their fans are the same, names of variables are the same and
@@ -607,9 +599,7 @@ class ToricVariety_field(AmbientSpace):
 
         - ``other`` -- anything
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: A boolean.
 
         ``True`` if and only if ``other`` is of the same type as ``self``,
         their fans are the same, names of variables are the same and
@@ -1033,9 +1023,7 @@ class ToricVariety_field(AmbientSpace):
 
         - ``F`` -- field.
 
-        OUTPUT:
-
-        - :class:`toric variety <ToricVariety_field>` over ``F``.
+        OUTPUT: :class:`toric variety <ToricVariety_field>` over ``F``.
 
         .. NOTE::
 
@@ -1082,9 +1070,7 @@ class ToricVariety_field(AmbientSpace):
         For toric varieties this is the homogeneous coordinate ring (a.k.a.
         Cox's ring and total ring).
 
-        OUTPUT:
-
-        - polynomial ring.
+        OUTPUT: A polynomial ring.
 
         EXAMPLES::
 
@@ -1186,9 +1172,7 @@ class ToricVariety_field(AmbientSpace):
         - ``verbose`` -- if ``True`` (default), names of injected generators
           will be printed.
 
-        OUTPUT:
-
-        - none.
+        OUTPUT: None.
 
         EXAMPLES::
 
@@ -1368,9 +1352,7 @@ class ToricVariety_field(AmbientSpace):
         face lattice of a single cone. See also
         :func:`AffineToricVariety`.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1452,9 +1434,7 @@ class ToricVariety_field(AmbientSpace):
         r"""
         Return the closure of the Kähler cone of ``self``.
 
-        OUTPUT:
-
-        - :class:`cone <sage.geometry.cone.ConvexRationalPolyhedralCone>`.
+        OUTPUT: :class:`cone <sage.geometry.cone.ConvexRationalPolyhedralCone>`.
 
         .. NOTE::
 
@@ -1499,9 +1479,7 @@ class ToricVariety_field(AmbientSpace):
         r"""
         Returns the Mori cone of ``self``.
 
-        OUTPUT:
-
-        - :class:`cone <sage.geometry.cone.ConvexRationalPolyhedralCone>`.
+        OUTPUT: :class:`cone <sage.geometry.cone.ConvexRationalPolyhedralCone>`.
 
         .. NOTE::
 
@@ -1548,9 +1526,7 @@ class ToricVariety_field(AmbientSpace):
         - any options for toric plots (see :func:`toric_plotter.options
           <sage.geometry.toric_plotter.options>`), none are mandatory.
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: A plot.
 
         .. NOTE::
 
@@ -1589,9 +1565,7 @@ class ToricVariety_field(AmbientSpace):
         we write as addition) is the tensor product of the line bundles. The
         Picard group of a toric variety is always torsion-free.
 
-        OUTPUT:
-
-        - :class:`rational divisor class group
+        OUTPUT: :class:`rational divisor class group
           <sage.schemes.toric.divisor.ToricRationalDivisorClassGroup>`.
 
         .. NOTE::
@@ -1620,9 +1594,7 @@ class ToricVariety_field(AmbientSpace):
         - ``base_ring`` -- either ``ZZ`` (default) or ``QQ``. The
           coefficient ring of the Chow group.
 
-        OUTPUT:
-
-        A :class:`sage.schemes.toric.chow_group.ChowGroup_class`
+        OUTPUT: A :class:`sage.schemes.toric.chow_group.ChowGroup_class`.
 
         EXAMPLES::
 
@@ -1651,9 +1623,7 @@ class ToricVariety_field(AmbientSpace):
           variables. If not given, the index of each variable will coincide
           with the index of the corresponding ray of the fan.
 
-        OUTPUT:
-
-        -- a :class:`toric variety <ToricVariety_field>`.
+        OUTPUT: A :class:`toric variety <ToricVariety_field>`.
 
         EXAMPLES::
 
@@ -1696,9 +1666,7 @@ class ToricVariety_field(AmbientSpace):
           <sage.geometry.fan.RationalPolyhedralFan>`, see its documentation
           for the available options.
 
-        OUTPUT:
-
-        - :class:`toric variety <ToricVariety_field>`.
+        OUTPUT: A :class:`toric variety <ToricVariety_field>`.
 
         EXAMPLES:
 
@@ -1800,9 +1768,7 @@ class ToricVariety_field(AmbientSpace):
         - this function accepts only keyword arguments. See :meth:`resolve`
           for documentation.
 
-        OUTPUT:
-
-        - :class:`toric variety <ToricVariety_field>`.
+        OUTPUT: A :class:`toric variety <ToricVariety_field>`.
 
         EXAMPLES::
 
@@ -1833,9 +1799,7 @@ class ToricVariety_field(AmbientSpace):
         - ``polynomials`` -- list of polynomials in the coordinate ring of
           ``self``.
 
-        OUTPUT:
-
-        - :class:`subscheme of a toric variety
+        OUTPUT: A :class:`subscheme of a toric variety
           <sage.schemes.toric.toric_subscheme.AlgebraicScheme_subscheme_toric>`.
 
         EXAMPLES:

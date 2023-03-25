@@ -44,9 +44,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
     - ``polynomials`` -- single polynomial, list, or ideal of defining
       polynomials in the coordinate ring of ``toric_variety``.
 
-    OUTPUT:
-
-    - :class:`algebraic subscheme of a toric variety
+    OUTPUT: An :class:`algebraic subscheme of a toric variety
       <AlgebraicScheme_subscheme_toric>`.
 
     TESTS::
@@ -106,9 +104,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         - same as for
           :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
 
-        OUTPUT:
-
-        - :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
+        OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
 
         TESTS::
 
@@ -148,9 +144,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         - same as for
           :class:`~sage.schemes.toric.homset.SchemeHomset_points_toric_field`.
 
-        OUTPUT:
-
-        :class:`~sage.schemes.toric.homset.SchemeHomset_points_subscheme_toric_field`.
+        OUTPUT: A :class:`~sage.schemes.toric.homset.SchemeHomset_points_subscheme_toric_field`.
 
         TESTS::
 
@@ -170,9 +164,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         """
         Return the fan of the ambient space.
 
-        OUTPUT:
-
-        A fan.
+        OUTPUT: A fan.
 
         EXAMPLES::
 
@@ -499,9 +491,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         """
         Return the dimension of ``self``.
 
-        OUTPUT:
-
-        Integer. If ``self`` is empty, `-1` is returned.
+        OUTPUT: An integer. If ``self`` is empty, `-1` is returned.
 
         EXAMPLES::
 
@@ -796,9 +786,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
         """
         Return the dimension of ``self``.
 
-        OUTPUT:
-
-        - integer.
+        OUTPUT: An integer.
 
         EXAMPLES::
 

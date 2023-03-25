@@ -31,9 +31,7 @@ class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
     r"""
     Set of rational points of a product of projective spaces.
 
-    INPUT:
-
-    See :class:`~sage.schemes.generic.homset.SchemeHomset_generic`.
+    INPUT: See :class:`~sage.schemes.generic.homset.SchemeHomset_generic`.
 
     EXAMPLES::
 
@@ -93,16 +91,14 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
 
         - ``bound`` - a real number
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` - a rational number in (0,1] used in Doyle-Krumm algorithm 4
 
         - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
 
-        - ``algorithm`` - either 'sieve' or 'enumerate' algorithms can be used over `QQ`. If
-          not specified, enumerate is used only for small height bounds.
+        - ``algorithm`` - either ``'sieve'`` or ``'enumerate'`` algorithms can be used over `\QQ`. If
+          not specified, ``'enumerate'`` is used only for small height bounds.
 
-        OUTPUT:
-
-        - a list of rational points of a projective scheme
+        OUTPUT: A list of rational points of the projective scheme.
 
         EXAMPLES::
 

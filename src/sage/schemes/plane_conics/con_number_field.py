@@ -66,7 +66,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
     def has_rational_point(self, point=False, obstruction=False,
                            algorithm='default', read_cache=True):
         r"""
-        Returns ``True`` if and only if ``self`` has a point
+        Return ``True`` if and only if ``self`` has a point
         defined over its base field `B`.
 
         If ``point`` and ``obstruction`` are both False (default),
@@ -76,12 +76,12 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         If ``point`` or ``obstruction`` is True, then the output is
         a pair ``(out, S)``, where ``out`` is as above and:
 
-         - if ``point`` is True and ``self`` has a rational point,
-           then ``S`` is a rational point,
+        - if ``point`` is True and ``self`` has a rational point,
+          then ``S`` is a rational point,
 
-         - if ``obstruction`` is True, ``self`` has no rational point,
-           then ``S`` is a prime or infinite place of `B` such that no
-           rational point exists over the completion at ``S``.
+        - if ``obstruction`` is True, ``self`` has no rational point,
+          then ``S`` is a prime or infinite place of `B` such that no
+          rational point exists over the completion at ``S``.
 
         Points and obstructions are cached whenever they are found.
         Cached information is used for the output if available, but only
@@ -92,20 +92,20 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         The parameter ``algorithm``
         specifies the algorithm to be used:
 
-         - ``'rnfisnorm'`` -- Use PARI's rnfisnorm
-           (cannot be combined with ``obstruction = True``)
+        - ``'rnfisnorm'`` -- Use PARI's ``rnfisnorm``
+          (cannot be combined with ``obstruction = True``)
 
-         - ``'local'`` -- Check if a local solution exists for all primes
-           and infinite places of `B` and apply the Hasse principle.
-           (Cannot be combined with ``point = True``.)
+        - ``'local'`` -- Check if a local solution exists for all primes
+          and infinite places of `B` and apply the Hasse principle.
+          (Cannot be combined with ``point = True``.)
 
-         - ``'default'`` -- Use algorithm ``'rnfisnorm'`` first.
-           Then, if no point exists and obstructions are requested, use
-           algorithm ``'local'`` to find an obstruction.
+        - ``'default'`` -- Use algorithm ``'rnfisnorm'`` first.
+          Then, if no point exists and obstructions are requested, use
+          algorithm ``'local'`` to find an obstruction.
 
-         - ``'magma'`` (requires Magma to be installed) --
-           delegates the task to the Magma computer algebra
-           system.
+        - ``'magma'`` (requires Magma to be installed) --
+          delegates the task to the Magma computer algebra
+          system.
 
 
         EXAMPLES:
@@ -339,7 +339,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
 
     def is_locally_solvable(self, p):
         r"""
-        Returns ``True`` if and only if ``self`` has a solution over the
+        Return ``True`` if and only if ``self`` has a solution over the
         completion of the base field `B` of ``self`` at ``p``. Here ``p``
         is a finite prime or infinite place of `B`.
 
@@ -388,7 +388,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
 
     def local_obstructions(self, finite=True, infinite=True, read_cache=True):
         r"""
-        Returns the sequence of finite primes and/or infinite places
+        Return the sequence of finite primes and/or infinite places
         such that ``self`` is locally solvable at those primes and places.
 
         If the base field is `\QQ`, then the infinite place is denoted `-1`.
@@ -413,7 +413,8 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
                From: Number Field in a with defining polynomial x^2 - 5
                      with a = 2.236067977499790?
                To:   Algebraic Real Field
-               Defn: a |--> -2.236067977499790?, Ring morphism:
+               Defn: a |--> -2.236067977499790?,
+             Ring morphism:
                From: Number Field in a with defining polynomial x^2 - 5
                      with a = 2.236067977499790?
                To:   Algebraic Real Field

@@ -379,7 +379,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
     - ``E`` -- an ``EllipticCurve``, or ``None`` (see below).
 
     - ``urst`` -- a 4-tuple `(u,r,s,t)`, a :class:`baseWI` object,
-                  or ``None`` (see below).
+      or ``None`` (see below).
 
     - ``F`` -- an ``EllipticCurve``, or ``None`` (see below).
 

@@ -23,7 +23,6 @@ EXAMPLES::
     sage: C.frobenius_polynomial().reverse()(t)/((1-t)*(1-p*t)) + O(t^5)
     1 + 8*t + 102*t^2 + 1384*t^3 + 18089*t^4 + O(t^5)
 
-
     sage: p = 49999
     sage: x = PolynomialRing(GF(p),"x").gen()
     sage: CyclicCover(5, x^5 + x).frobenius_polynomial()  # long time

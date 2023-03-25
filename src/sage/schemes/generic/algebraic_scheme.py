@@ -4,14 +4,14 @@ Algebraic schemes
 An algebraic scheme is defined by a set of polynomials in some
 suitable affine or projective coordinates. Possible ambient spaces are
 
-  * Affine spaces (:class:`AffineSpace
-    <sage.schemes.affine.affine_space.AffineSpace_generic>`),
+* Affine spaces (:class:`AffineSpace
+  <sage.schemes.affine.affine_space.AffineSpace_generic>`),
 
-  * Projective spaces (:class:`ProjectiveSpace
-    <sage.schemes.projective.projective_space.ProjectiveSpace_ring>`), or
+* Projective spaces (:class:`ProjectiveSpace
+  <sage.schemes.projective.projective_space.ProjectiveSpace_ring>`), or
 
-  * Toric varieties (:class:`ToricVariety
-    <sage.schemes.toric.variety.ToricVariety_field>`).
+* Toric varieties (:class:`ToricVariety
+  <sage.schemes.toric.variety.ToricVariety_field>`).
 
 Note that while projective spaces are of course toric varieties themselves,
 they are implemented differently in Sage due to efficiency considerations.
@@ -58,10 +58,8 @@ Here is a more complicated example in a projective space::
     Defining x0, x1, x2, x3
     sage: Q = matrix([[x0, x1, x2], [x1, x2, x3]]).minors(2); Q
     [-x1^2 + x0*x2, -x1*x2 + x0*x3, -x2^2 + x1*x3]
-    sage: twisted_cubic = P3.subscheme(Q)
-    sage: twisted_cubic
-    Closed subscheme of Projective Space of dimension 3
-    over Rational Field defined by:
+    sage: twisted_cubic = P3.subscheme(Q); twisted_cubic
+    Closed subscheme of Projective Space of dimension 3 over Rational Field defined by:
       -x1^2 + x0*x2,
       -x1*x2 + x0*x3,
       -x2^2 + x1*x3
@@ -900,9 +898,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
     -  ``A`` - ambient space (e.g. affine or projective `n`-space)
 
     -  ``polynomials`` - single polynomial, ideal or iterable of defining
-        polynomials; in any case polynomials must belong to the coordinate
-        ring of the ambient space and define valid polynomial functions (e.g.
-        they should be homogeneous in the case of a projective space)
+       polynomials; in any case polynomials must belong to the coordinate
+       ring of the ambient space and define valid polynomial functions (e.g.
+       they should be homogeneous in the case of a projective space)
 
     OUTPUT:
 
@@ -1360,8 +1358,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: twisted_cubic = P3.subscheme(matrix([[w, x, y], [x, y, z]]).minors(2))
             sage: twisted_cubic.Jacobian()
             Ideal (-x^2 + w*y, -x*y + w*z, -y^2 + x*z, x*z, -2*w*z, w*y, 3*w*y, -2*w*x,
-            w^2, y*z, -2*x*z, w*z, 3*w*z, -2*w*y, w*x, z^2, -2*y*z, x*z, 3*x*z, -2*w*z,
-            w*y) of Multivariate Polynomial Ring in w, x, y, z over Rational Field
+            w^2, y*z, -2*x*z, w*z, 3*w*z, -2*w*y, w*x, z^2, -2*y*z, x*z, 3*x*z, -2*w*z, w*y)
+            of Multivariate Polynomial Ring in w, x, y, z over Rational Field
             sage: twisted_cubic.defining_ideal()
             Ideal (-x^2 + w*y, -x*y + w*z, -y^2 + x*z) of Multivariate Polynomial Ring
             in w, x, y, z over Rational Field

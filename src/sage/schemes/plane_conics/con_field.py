@@ -80,7 +80,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def _repr_type(self):
         r"""
-        Returns ``'Projective Conic'``, which is the first part of the
+        Return ``'Projective Conic'``, which is the first part of the
         plain text representation of this object as output by
         the function ``_repr_`` of the class ``Curve_generic``.
 
@@ -97,7 +97,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def base_extend(self, S):
         r"""
-        Returns the conic over ``S`` given by the same equation as ``self``.
+        Return the conic over ``S`` given by the same equation as ``self``.
 
         EXAMPLES::
 
@@ -133,7 +133,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
     def cache_point(self, p):
         r"""
         Replace the point in the cache of ``self`` by ``p`` for use
-        by ``self.rational_point()`` and ``self.parametrization()``.
+        by :meth:`rational_point` and :meth:`parametrization`.
 
         EXAMPLES::
 
@@ -213,7 +213,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def determinant(self):
         r"""
-        Returns the determinant of the symmetric matrix that defines
+        Return the determinant of the symmetric matrix that defines
         the conic ``self``.
 
         This is defined only if the base field has characteristic
@@ -245,7 +245,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def diagonal_matrix(self):
         r"""
-        Returns a diagonal matrix `D` and a matrix `T` such that `T^t A T = D`
+        Return a diagonal matrix `D` and a matrix `T` such that `T^t A T = D`
         holds, where `(x, y, z) A (x, y, z)^t` is the defining polynomial
         of the conic ``self``.
 
@@ -307,7 +307,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def diagonalization(self, names=None):
         r"""
-        Returns a diagonal conic `C`, an isomorphism of schemes `M: C` -> ``self``
+        Return a diagonal conic `C`, an isomorphism of schemes `M: C` -> ``self``
         and the inverse `N` of `M`.
 
         EXAMPLES::
@@ -320,15 +320,13 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
                     defined by x^2 + y^2 + 2*z^2
               To:   Projective Conic Curve over Finite Field of size 5
                     defined by x^2 + y^2 + x*z + z^2
-              Defn: Defined on coordinates by sending (x : y : z) to
-                    (x + 2*z : y : z),
+              Defn: Defined on coordinates by sending (x : y : z) to (x + 2*z : y : z),
              Scheme morphism:
               From: Projective Conic Curve over Finite Field of size 5
                     defined by x^2 + y^2 + x*z + z^2
-              To:   Projective Conic Curve over Finite Field of size 5 d
-                    efined by x^2 + y^2 + 2*z^2
-              Defn: Defined on coordinates by sending (x : y : z) to
-                    (x - 2*z : y : z))
+              To:   Projective Conic Curve over Finite Field of size 5
+                    defined by x^2 + y^2 + 2*z^2
+              Defn: Defined on coordinates by sending (x : y : z) to (x - 2*z : y : z))
 
         The diagonalization is only defined in characteristic different
         from 2:
@@ -360,8 +358,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
                To:   Projective Conic Curve over Fraction Field of Univariate
                      Polynomial Ring in t over Finite Field of size 7
                      defined by (-3*t)*x^2 + 2*y^2 + x*z + 3*z^2
-               Defn: Defined on coordinates by sending (x : y : z) to
-                     (x - 1/t*z : y : z),
+               Defn: Defined on coordinates by sending (x : y : z) to (x - 1/t*z : y : z),
              Scheme morphism:
                From: Projective Conic Curve over Fraction Field of Univariate
                      Polynomial Ring in t over Finite Field of size 7
@@ -369,10 +366,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
                To:   Projective Conic Curve over Fraction Field of Univariate
                      Polynomial Ring in t over Finite Field of size 7
                      defined by (-3*t)*x^2 + 2*y^2 + (3*t + 3)/t*z^2
-               Defn: Defined on coordinates by sending (x : y : z) to
-                     (x + 1/t*z : y : z))
-
-
+               Defn: Defined on coordinates by sending (x : y : z) to (x + 1/t*z : y : z))
         """
         if names is None:
             names = self.defining_polynomial().parent().variable_names()
@@ -383,7 +377,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def gens(self):
         r"""
-        Returns the generators of the coordinate ring of ``self``.
+        Return the generators of the coordinate ring of ``self``.
 
         EXAMPLES:
 
@@ -410,7 +404,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
     def has_rational_point(self, point=False,
                            algorithm='default', read_cache=True):
         r"""
-        Returns True if and only if the conic ``self``
+        Return True if and only if the conic ``self``
         has a point over its base field `B`.
 
         If ``point`` is True, then returns a second output, which is
@@ -424,12 +418,12 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         The parameter ``algorithm`` specifies the algorithm
         to be used:
 
-         - ``'default'`` -- If the base field is real or complex,
-           use an elementary native Sage implementation.
+        - ``'default'`` -- If the base field is real or complex,
+          use an elementary native Sage implementation.
 
-         - ``'magma'`` (requires Magma to be installed) --
-           delegates the task to the Magma computer algebra
-           system.
+        - ``'magma'`` (requires Magma to be installed) --
+          delegates the task to the Magma computer algebra
+          system.
 
         EXAMPLES::
 
@@ -648,7 +642,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         EXAMPLES:
 
-        Here are a few Morphisms given by matrices. In the first
+        Here are a few morphisms given by matrices. In the first
         example, ``Y`` is omitted, in the second example, ``Y`` is specified.
 
         ::
@@ -734,13 +728,13 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
     def is_diagonal(self):
         r"""
         Return True if and only if the conic has the form
-        `a*x^2 + b*y^2 + c*z^2`.
+        `a x^2 + b y^2 + c z^2`.
 
         EXAMPLES:
 
         ::
 
-            sage: c=Conic([1,1,0,1,0,1]); c
+            sage: c = Conic([1,1,0,1,0,1]); c
             Projective Conic Curve over Rational Field defined by x^2 + x*y + y^2 + z^2
             sage: d,t = c.diagonal_matrix()
             sage: c.is_diagonal()
@@ -752,7 +746,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def is_smooth(self):
         r"""
-        Returns True if and only if ``self`` is smooth.
+        Return True if and only if ``self`` is smooth.
 
         EXAMPLES:
 
@@ -811,7 +805,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def matrix(self):
         r"""
-        Returns a matrix `M` such that `(x, y, z) M (x, y, z)^t`
+        Return a matrix `M` such that `(x, y, z) M (x, y, z)^t`
         is the defining equation of ``self``.
 
         The matrix `M` is upper triangular if the base field has
@@ -845,7 +839,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         inverse of `f`.
 
         If ``point`` is specified, then that point is used
-        for the parametrization. Otherwise, use ``self.rational_point()``
+        for the parametrization. Otherwise, use :meth:`rational_point()`
         to find a point.
 
         If ``morphism`` is True, then `f` is returned in the form
@@ -974,7 +968,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         point on ``self``.
 
         If no rational point on ``self`` is known yet, then also caches the point
-        for use by ``self.rational_point()`` and ``self.parametrization()``.
+        for use by :meth:`rational_point` and :meth:`parametrization`.
 
         EXAMPLES::
 
@@ -1000,13 +994,11 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         ALGORITHM:
 
-            1. Compute a parametrization `f` of ``self`` using
-               ``self.parametrization()``.
-            2. Computes a random point `(x:y)` on the projective
-               line.
-            3. Output `f(x:y)`.
+        1. Compute a parametrization `f` of ``self`` using :meth:`parametrization`.
+        2. Computes a random point `(x:y)` on the projective line.
+        3. Output `f(x:y)`.
 
-        The coordinates x and y are computed using
+        The coordinates `x` and `y` are computed using
         ``B.random_element``, where ``B`` is the base field of
         ``self`` and additional arguments to ``random_rational_point``
         are passed to ``random_element``.
@@ -1185,7 +1177,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def singular_point(self):
         r"""
-        Returns a singular rational point of ``self``
+        Return a singular rational point of ``self``.
 
         EXAMPLES:
 
@@ -1267,13 +1259,13 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def variable_names(self):
         r"""
-        Returns the variable names of the defining polynomial of ``self``.
+        Return the variable names of the defining polynomial of ``self``.
 
         EXAMPLES:
 
         ::
 
-            sage: c=Conic([1,1,0,1,0,1], 'x,y,z')
+            sage: c = Conic([1,1,0,1,0,1], 'x,y,z')
             sage: c.variable_names()
             ('x', 'y', 'z')
             sage: c.variable_name()

@@ -262,9 +262,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` -- a prime number
 
-        OUTPUT:
-
-        - a boolean
+        OUTPUT: A boolean.
 
         The answer is cached.
 
@@ -315,9 +313,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` -- a prime number
 
-        OUTPUT:
-
-        - a boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -715,9 +711,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p``  a prime number
 
-        OUTPUT:
-
-        - a string.
+        OUTPUT: A string.
 
         EXAMPLES::
 
@@ -1254,9 +1248,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` another prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1289,9 +1281,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` a different prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1328,9 +1318,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` a different prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1360,9 +1348,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1390,9 +1376,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1417,9 +1401,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1444,9 +1426,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1472,9 +1452,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 

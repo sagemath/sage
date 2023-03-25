@@ -205,10 +205,10 @@ def compute_wp_quadratic(k, A, B, prec):
 
     INPUT:
 
-     - ``k`` -- the field of definition of the curve
-     - ``A`` -- and
-     - ``B`` -- the coefficients of the elliptic curve
-     - ``prec`` -- the precision to which we compute the series.
+    - ``k`` -- the field of definition of the curve
+    - ``A`` -- and
+    - ``B`` -- the coefficients of the elliptic curve
+    - ``prec`` -- the precision to which we compute the series.
 
     OUTPUT:
 
@@ -261,10 +261,10 @@ def compute_wp_fast(k, A, B, m):
 
     INPUT:
 
-     - ``k`` -- the base field of the curve
-     - ``A`` -- and
-     - ``B`` -- as the coefficients of the short Weierstrass model `y^2 = x^3 +Ax +B`, and
-     - ``m`` -- the precision to which the function is computed to.
+    - ``k`` -- the base field of the curve
+    - ``A`` -- and
+    - ``B`` -- as the coefficients of the short Weierstrass model `y^2 = x^3 +Ax +B`, and
+    - ``m`` -- the precision to which the function is computed to.
 
     OUTPUT:
 

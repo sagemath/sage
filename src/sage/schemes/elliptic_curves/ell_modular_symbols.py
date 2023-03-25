@@ -48,7 +48,8 @@ EXAMPLES::
 
     sage: V = E.modular_symbol_space()
     sage: V
-    Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 2 for Gamma_0(19) of weight 2 with sign 1 over Rational Field
+    Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 2
+    for Gamma_0(19) of weight 2 with sign 1 over Rational Field
     sage: V.q_eigenform(30)
     q - 2*q^3 - 2*q^4 + 3*q^5 - q^7 + q^9 + 3*q^11 + 4*q^12 - 4*q^13 - 6*q^15 + 4*q^16 - 3*q^17 + q^19 - 6*q^20 + 2*q^21 + 4*q^25 + 4*q^27 + 2*q^28 + 6*q^29 + O(q^30)
 

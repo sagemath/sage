@@ -231,7 +231,7 @@ class SchemeHomset_generic(HomsetWithBase):
     - ``category`` -- a category (optional). The category of the
       Hom-set.
 
-    - ``check`` -- boolean (optional, default=``True``). Whether to
+    - ``check`` -- boolean (optional, default: ``True``). Whether to
       check the defining data for consistency.
 
     EXAMPLES::

@@ -782,8 +782,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         sage: ker_poly = phi_v.kernel_polynomial()                                      # optional - sage.rings.number_field
         sage: ker_poly                                                                  # optional - sage.rings.number_field
         x^2 - 21*x + 80
-        sage: phi_k = EllipticCurveIsogeny(EK, ker_poly)                                # optional - sage.rings.number_field
-        sage: phi_k                                                                     # optional - sage.rings.number_field
+        sage: phi_k = EllipticCurveIsogeny(EK, ker_poly); phi_k                         # optional - sage.rings.number_field
         Isogeny of degree 5
          from Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
           over Number Field in alpha with defining polynomial x^3 - 2*x^2 - 40*x - 158
@@ -808,8 +807,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         sage: f = x^2 - 21*x + 80
         sage: phi = E.isogeny(f)
         sage: E2 = phi.codomain()
-        sage: phi_s = EllipticCurveIsogeny(E, None, E2, 5)
-        sage: phi_s
+        sage: phi_s = EllipticCurveIsogeny(E, None, E2, 5); phi_s
         Isogeny of degree 5
          from Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
          to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 7820*x - 263580 over Rational Field
@@ -3680,18 +3678,16 @@ def compute_sequence_of_maps(E1, E2, ell):
           To:   Elliptic Curve defined by y^2 + y = x^3 - x^2 - 7820*x - 263580
                 over Rational Field
           Via:  (u,r,s,t) = (1, -1/3, 0, 1/2),
-         Elliptic Curve defined by y^2 = x^3 - 31/3*x - 2501/108
-          over Rational Field,
-         Elliptic Curve defined by y^2 = x^3 - 23461/3*x - 28748141/108
-          over Rational Field,
+         Elliptic Curve defined by y^2 = x^3 - 31/3*x - 2501/108 over Rational Field,
+         Elliptic Curve defined by y^2 = x^3 - 23461/3*x - 28748141/108 over Rational Field,
          x^2 - 61/3*x + 658/9)
 
-        sage: K.<i> = NumberField(x^2 + 1)
+        sage: K.<i> = NumberField(x^2 + 1)                                              # optional - sage.rings.number_field
         sage: E = EllipticCurve(K, [0,0,0,1,0])                                         # optional - sage.rings.number_field
         sage: E2 = EllipticCurve(K, [0,0,0,16,0])                                       # optional - sage.rings.number_field
         sage: compute_sequence_of_maps(E, E2, 4)                                        # optional - sage.rings.number_field
         (Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + x
-         over Number Field in i with defining polynomial x^2 + 1
+          over Number Field in i with defining polynomial x^2 + 1
           Via:  (u,r,s,t) = (1, 0, 0, 0),
          Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + 16*x
           over Number Field in i with defining polynomial x^2 + 1

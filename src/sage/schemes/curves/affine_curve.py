@@ -229,9 +229,7 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
         - ``PP`` -- (default: None) ambient projective space to compute the projective closure in. This is
           constructed if it is not given.
 
-        OUTPUT:
-
-        - a curve in projective space.
+        OUTPUT: A curve in projective space.
 
         EXAMPLES::
 
@@ -483,7 +481,7 @@ class AffinePlaneCurve(AffineCurve):
 
         - ``P`` -- a point in the intersection of both curves.
 
-        OUTPUT: Boolean.
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -538,9 +536,7 @@ class AffinePlaneCurve(AffineCurve):
 
         - ``P`` -- a point in the ambient space of this curve.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: An integer.
 
         EXAMPLES::
 
@@ -606,7 +602,7 @@ class AffinePlaneCurve(AffineCurve):
           curve, or to just return the polynomial corresponding to the union of
           the tangent lines (which requires fewer computations)
 
-        OUTPUT: a list of polynomials in the coordinate ring of the ambient space
+        OUTPUT: A list of polynomials in the coordinate ring of the ambient space.
 
         EXAMPLES::
 
@@ -874,7 +870,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
           this curve, and must have dimension equal to the length of ``indices``.
           This space is constructed if not specified.
 
-        OUTPUT: a tuple of
+        OUTPUT: A tuple of
 
         - a scheme morphism from this curve to affine space of dimension equal
           to the number of coordinates specified in ``indices``
@@ -1035,7 +1031,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
           curve, and must have dimension two. This space will be constructed if
           not specified.
 
-        OUTPUT: a tuple of
+        OUTPUT: A tuple of
 
         - a scheme morphism from this curve into an affine plane
 
@@ -1099,7 +1095,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         - ``P`` -- (default: None) a point on this curve at which to blow up;
           if ``None``, then ``P`` is taken to be the origin.
 
-        OUTPUT: a tuple of
+        OUTPUT: A tuple of
 
         - a tuple of curves in affine space of the same dimension as the
           ambient space of this curve, which define the blow up in each affine
@@ -1408,7 +1404,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
           resolved. However, setting ``extend`` to ``True`` will slow down
           computations.
 
-        OUTPUT: a tuple of
+        OUTPUT: A tuple of
 
         - a tuple of curves in affine space of the same dimension as the
           ambient space of this curve, which represent affine patches of the
@@ -1817,9 +1813,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         r"""
         Return the complex Riemann surface determined by this curve
 
-        OUTPUT:
-
-        - RiemannSurface object
+        OUTPUT: A :class:`~sage.schemes.riemann_surfaces.riemann_surface.RiemannSurface` object.
 
         EXAMPLES::
 
@@ -1860,7 +1854,7 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
           divisor `Div = d_1P_1 + \dots + d_nP_n`, where `X(F) = \{P_1, \dots,
           P_n\}`.  The ordering is that dictated by ``places_on_curve``.
 
-        OUTPUT: a basis of `L(Div)`
+        OUTPUT: A basis of `L(Div)`.
 
         EXAMPLES::
 
@@ -2461,7 +2455,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         - ``point`` -- a closed point of the curve
 
-        OUTPUT: a list of the places of the function field of the curve
+        OUTPUT: A list of the places of the function field of the curve.
 
         EXAMPLES::
 

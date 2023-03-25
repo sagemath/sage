@@ -62,9 +62,7 @@ def is_KlyachkoBundle(X):
 
     - ``X`` -- anything.
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: A boolean.
 
     EXAMPLES::
 
@@ -183,9 +181,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the base toric variety.
 
-        OUTPUT:
-
-        A toric variety.
+        OUTPUT: A toric variety.
 
         EXAMPLES::
 
@@ -201,9 +197,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the base field.
 
-        OUTPUT:
-
-        A field.
+        OUTPUT: A field.
 
         EXAMPLES::
 
@@ -217,9 +211,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the generic fiber of the vector bundle.
 
-        OUTPUT:
-
-        A vector space over :meth:`base_ring`.
+        OUTPUT: A vector space over :meth:`base_ring`.
 
         EXAMPLES::
 
@@ -234,9 +226,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the rank of the vector bundle.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: An integer.
 
         EXAMPLES::
 
@@ -250,9 +240,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: A string.
 
         EXAMPLES::
 
@@ -424,7 +412,7 @@ class KlyachkoBundle_class(SageObject):
     @cached_method
     def E_intersection(self, sigma, m):
         r"""
-        Return the vector subspace ``E^\sigma(m)``.
+        Return the vector subspace `E^\sigma(m)`.
 
         See [Kly1990]_, equation 4.1.
 
@@ -435,9 +423,7 @@ class KlyachkoBundle_class(SageObject):
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
 
-        OUTPUT:
-
-        The subspace `E^\sigma(m)`
+        OUTPUT: The subspace `E^\sigma(m)`.
 
         EXAMPLES::
 
@@ -476,9 +462,7 @@ class KlyachkoBundle_class(SageObject):
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
 
-        OUTPUT:
-
-        The subspace `E_\sigma(m)`
+        OUTPUT: The subspace `E_\sigma(m)`.
 
         EXAMPLES::
 
@@ -724,9 +708,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- anything.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -761,9 +743,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- anything.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -787,9 +767,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- a Klyachko bundle over the same base.
 
-        OUTPUT:
-
-        The direct sum as a new Klyachko bundle.
+        OUTPUT: The direct sum as a new Klyachko bundle.
 
         EXAMPLES::
 
@@ -819,9 +797,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- a Klyachko bundle over the same base.
 
-        OUTPUT:
-
-        The tensor product as a new Klyachko bundle.
+        OUTPUT: The tensor product as a new Klyachko bundle.
 
         EXAMPLES::
 
@@ -875,9 +851,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``n`` -- integer.
 
-        OUTPUT:
-
-        The `n`-th symmetric power as a new Klyachko bundle.
+        OUTPUT: The `n`-th symmetric power as a new Klyachko bundle.
 
         EXAMPLES::
 
@@ -896,9 +870,7 @@ class KlyachkoBundle_class(SageObject):
         """
         Return the dual bundle.
 
-        OUTPUT:
-
-        The dual bundle as a new Klyachko bundle.
+        OUTPUT: The dual bundle as a new Klyachko bundle.
 
         EXAMPLES::
 
