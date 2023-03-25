@@ -194,10 +194,10 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         INPUT:
 
         - ``names`` -- (optional) variable or list/tuple of variables
-          (given either as elements of the polynomial ring or as strings)
-          the default is all variables of ``self``.
+          (given either as elements of the polynomial ring or as strings);
+          the default is all variables of ``self``
         - ``prec`` -- default precision of resulting power series ring,
-         possibly infinite
+          possibly infinite
         - ``extras`` -- passed as keywords to :class:`PowerSeriesRing`
           or :class:`LazyPowerSeriesRing`; can also be keyword arguments
 
