@@ -722,7 +722,7 @@ class Stream_exact(Stream):
         if n >= self._degree:
             return self._constant
         i = n - self._approximate_order
-        if i < 0 or i >= len(self._initial_coefficients): # TODO: i < 0 should not happen
+        if i < 0 or i >= len(self._initial_coefficients):
             return ZZ.zero()
         return self._initial_coefficients[i]
 
@@ -2123,10 +2123,9 @@ class Stream_plethysm(Stream_binary):
             lf = []
             for i, m, d in zip(wgt, exp, k):
                 f = self.stretched_power_restrict_degree(i, m, rao * m + d)
-                if f:
-                    lf.append(f)
-                else:
+                if not f:
                     break
+                lf.append(f)
             else:
                 ret += prod(lf)
 
