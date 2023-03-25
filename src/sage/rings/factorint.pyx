@@ -17,8 +17,12 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from cysignals.signals cimport sig_check, sig_on, sig_off
+
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *
+from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_set_mpz, fmpz_get_mpz
+from sage.libs.flint.fmpz_factor cimport *
 
 from sage.rings.integer cimport Integer
 from sage.rings.fast_arith import prime_range
@@ -350,3 +354,91 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
     finally:
         if prev != debug_level:
             pari.set_debug_level(prev)
+
+
+def factor_using_flint(n):
+    r"""
+    Factor the nonzero integer ``n`` using FLINT.
+
+    This function returns a list of (factor, exponent) pairs. The
+    factors will be of type ``Integer``, and the exponents will be of
+    type ``int``.
+
+    INPUT:
+
+    - ``n`` -- a nonzero sage Integer; the number to factor.
+
+    OUTPUT:
+
+    A list of ``(Integer, int)`` pairs representing the factors and
+    their exponents.
+
+    EXAMPLES::
+
+        sage: from sage.rings.factorint import factor_using_flint
+        sage: n = ZZ(9962572652930382)
+        sage: factors = factor_using_flint(n)
+        sage: factors
+        [(2, 1), (3, 1), (1660428775488397, 1)]
+        sage: prod( f^e for (f,e) in factors ) == n
+        True
+
+     Negative numbers will have a leading factor of ``(-1)^1``::
+
+        sage: n = ZZ(-1 * 2 * 3)
+        sage: factor_using_flint(n)
+        [(-1, 1), (2, 1), (3, 1)]
+
+    The factorization of unity is empty::
+
+        sage: factor_using_flint(ZZ.one())
+        []
+
+    While zero has a single factor, of... zero::
+
+        sage: factor_using_flint(ZZ.zero())
+        [(0, 1)]
+
+    TESTS:
+
+    Check that the integers [-10,000, 10,000] are factored correctly::
+
+        sage: all(
+        ....:   prod( f^e for (f,e) in factor_using_flint(ZZ(c*k)) ) == c*k
+        ....:   for k in range(10000)
+        ....:   for c in [-1, 1]
+        ....: )
+        True
+    """
+    if n.is_zero():
+        return [(n, int(1))]
+
+    sig_on()
+    cdef fmpz_t p
+    fmpz_init(p)
+    fmpz_set_mpz(p, (<Integer>n).value)
+
+    cdef fmpz_factor_t factors
+    fmpz_factor_init(factors)
+    fmpz_factor(factors,p)
+    sig_off()
+
+    pairs = []
+    if factors.sign < 0:
+        # FLINT doesn't return the plus/minus one factor.
+        pairs.append( (Integer(-1), int(1)) )
+
+    cdef mpz_t mpz_factor;
+    for i in range(factors.num):
+        mpz_init(mpz_factor)
+        fmpz_get_mpz(mpz_factor, &factors.p[i])
+        f = Integer()
+        mpz_set(f.value, mpz_factor)
+        mpz_clear(mpz_factor)
+        e = int(factors.exp[i])
+        pairs.append( (f,e) )
+        sig_check()
+
+    fmpz_factor_clear(factors)
+    return pairs
+
