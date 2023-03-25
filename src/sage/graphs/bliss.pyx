@@ -55,7 +55,7 @@ cdef extern from "bliss/digraph.hh" namespace "bliss":
     cdef cppclass Digraph(AbstractGraph):
         Digraph(const unsigned int)
         void add_edge(const unsigned int, const unsigned int)
-        void change_color(const unsigned int, const unsigned int);
+        void change_color(const unsigned int, const unsigned int)
         const unsigned int* canonical_form(Stats&)
         unsigned int get_hash()
 
