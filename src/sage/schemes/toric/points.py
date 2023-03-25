@@ -1,4 +1,3 @@
-y# -*- coding: utf-8 -*-
 """
 Enumerate points of a toric variety
 
