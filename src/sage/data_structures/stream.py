@@ -2480,7 +2480,8 @@ class Stream_cauchy_invert(Stream_unary):
     - ``approximate_order`` -- ``None``, or a lower bound on the
       order of the resulting stream
 
-    Instances of this class are always dense.
+    Instances of this class are always dense, because of mathematical
+    necessities.
 
     EXAMPLES::
 
@@ -2551,46 +2552,6 @@ class Stream_cauchy_invert(Stream_unary):
             return ~self._series[v]
         except TypeError:
             return self._series[v].inverse_of_unit()
-
-    def get_coefficient(self, n):
-        """
-        Return the ``n``-th coefficient of ``self``.
-
-        INPUT:
-
-        - ``n`` -- integer; the degree for the coefficient
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import (Stream_cauchy_invert, Stream_function)
-            sage: f = Stream_function(lambda n: n, True, 1)
-            sage: g = Stream_cauchy_invert(f)
-            sage: g.get_coefficient(5)
-            0
-            sage: [g.get_coefficient(i) for i in range(10)]
-            [-2, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-        """
-        if not self._series._true_order:
-            self._ainv  # this computes the true order of ``self``
-        v = self._approximate_order
-        if n < v:
-            return ZZ.zero()
-        if n == v:
-            return self._ainv
-
-        # if self._series is exact with self._series._constant == 0
-        # then self._series[n - v - k] == 0 unless
-        # k > n - v - self._series._degree
-        # in general, we have self._series[n - v - k] == 0 unless
-        # n - v - self._series._approximate_order < k
-        if isinstance(self._series, Stream_exact) and not self._series._constant:
-            a = max(v, n - v - self._series._degree + 1)
-        else:
-            a = v
-        b = min(n, n - v - self._series._approximate_order)
-        c = sum(l * self._series[n - v - k] for k in range(a, b)
-                if (l := self[k]))
-        return -c * self._ainv
 
     def iterate_coefficients(self):
         """
