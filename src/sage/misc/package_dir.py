@@ -155,7 +155,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
     :mod:`sage.cpython` is an ordinary package::
 
         sage: from sage.misc.package_dir import is_package_or_sage_namespace_package_dir
-        sage: directory = os.path.dirname(sage.cpython.__file__); directory
+        sage: directory = sage.cpython.__path__[0]; directory
         '.../sage/cpython'
         sage: is_package_or_sage_namespace_package_dir(directory)
         True
@@ -163,14 +163,14 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
     :mod:`sage.libs.mpfr` only has an ``__init__.pxd`` file, but we consider
     it a package directory for consistency with Cython::
 
-        sage: directory = os.path.join(os.path.dirname(sage.libs.all.__file__), 'mpfr'); directory
+        sage: directory = os.path.join(sage.libs.__path__[0], 'mpfr'); directory
         '.../sage/libs/mpfr'
         sage: is_package_or_sage_namespace_package_dir(directory)
         True
 
     :mod:`sage` is designated to become an implicit namespace package::
 
-        sage: directory = os.path.dirname(sage.env.__file__); directory
+        sage: directory = sage.__path__[0]; directory
         '.../sage'
         sage: is_package_or_sage_namespace_package_dir(directory)
         True
