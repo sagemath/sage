@@ -335,6 +335,10 @@ def is_NumberFieldOrder(R):
         sage: is_NumberFieldOrder(45)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(35288, 'In the future, IntegerRing_class will be'
+                'subclass of NumberFieldOrder_base. So no special'
+                'implementation is required for zz in is_NumberFieldOrder')
     return isinstance(R, Order) or R == ZZ
 
 
