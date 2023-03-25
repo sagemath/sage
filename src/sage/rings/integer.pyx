@@ -4014,9 +4014,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             from warnings import warn
             warn(message, RuntimeWarning, stacklevel=5)
             from sage.interfaces.qsieve import qsieve
-            res = [(p, 1) for p in qsieve(n)[0]]
-            F = IntegerFactorization(res, unit)
-            return F
+            F = qsieve(n)
+            F.sort()
+            return IntegerFactorization(F, unit=unit, unsafe=True,
+                                           sort=False, simplify=False)
         else:
             from sage.interfaces.ecm import ecm
             res = [(p, 1) for p in ecm.factor(n, proof=proof)]
