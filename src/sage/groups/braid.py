@@ -787,7 +787,7 @@ class Braid(FiniteTypeArtinGroupElement):
     def links_gould_matrix(self, symbolics=False):
         r"""
         Return the representation matrix of ``self`` according to the R-matrix
-        representation being attached to the quantum superalgebra `sl_q(2|1)`.
+        representation being attached to the quantum superalgebra `\mathfrak{sl}_q(2|1)`.
         See [MW2012]_, section 3 and references given there.
 
         INPUT:
@@ -1044,7 +1044,7 @@ class Braid(FiniteTypeArtinGroupElement):
         agrees with the conventions of [Lic1997]_ (which in particular differs
         slightly from the conventions used otherwise in this class), had
         one used the conventional Kauffman bracket variable notation directly.
-
++
         If ``variab`` is ``None`` return a polynomial in the variable `A`
         or `t`, depending on the value ``skein_normalization``. In
         particular, if ``skein_normalization`` is ``False``, return the
@@ -1054,7 +1054,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         - ``variab`` -- variable (default: ``None``); the variable in the
           resulting polynomial; if unspecified, use either a default variable
-          in `ZZ[A,A^{-1}]` or the variable `t` in the symbolic ring
+          in `\ZZ[A,A^{-1}]` or the variable `t` in the symbolic ring
 
         - ``skein_normalization`` -- boolean (default: ``False``); determines
           the variable of the resulting polynomial
@@ -2069,7 +2069,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         OUTPUT:
 
-        A matrix with elements in the free algebra `self._algebra`.
+        A matrix with elements in the free algebra ``self._algebra``.
 
         EXAMPLES::
 
