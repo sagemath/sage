@@ -17,6 +17,7 @@ from sage.sets.set import Set
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ideal import Ideal
+from sage.matrix.constructor import matrix
 
 class FusionDouble(CombinatorialFreeModule):
     r"""
@@ -70,6 +71,48 @@ class FusionDouble(CombinatorialFreeModule):
         sage: s8.ribbon()
         zeta5^3
     """
+    @staticmethod
+    def __classcall__(cls, G, prefix="s", inject_variables=False):
+        """
+        Normalize input to ensure a unique representation.
+
+        TESTS::
+
+            sage: F1 = FusionRing('B3', 2)
+            sage: F2 = FusionRing(CartanType('B3'), QQ(2), ZZ)
+            sage: F3 = FusionRing(CartanType('B3'), int(2), style="coroots")
+            sage: F1 is F2 and F2 is F3
+            True
+
+            sage: A23 = FusionRing('A2', 3)
+            sage: TestSuite(A23).run()
+
+            sage: B22 = FusionRing('B2', 2)
+            sage: TestSuite(B22).run()
+
+            sage: C31 = FusionRing('C3', 1)
+            sage: TestSuite(C31).run()
+
+            sage: D41 = FusionRing('D4', 1)
+            sage: TestSuite(D41).run()
+
+            sage: G22 = FusionRing('G2', 2)
+            sage: TestSuite(G22).run()
+
+            sage: F41 = FusionRing('F4', 1)
+            sage: TestSuite(F41).run()
+
+            sage: E61 = FusionRing('E6', 1)
+            sage: TestSuite(E61).run()
+
+            sage: E71 = FusionRing('E7', 1)
+            sage: TestSuite(E71).run()
+
+            sage: E81 = FusionRing('E8', 1)
+            sage: TestSuite(E81).run()
+        """
+        return super().__classcall__(cls, G, prefix=prefix, inject_variables=inject_variables)
+
     def __init__(self, G, prefix="s",inject_variables=False):
         self._G = G
         self._prefix = prefix
@@ -85,6 +128,9 @@ class FusionDouble(CombinatorialFreeModule):
                 count += 1
         self._rank = count
         self._cyclotomic_order = G.exponent()
+        self._basecoer = None
+        self._fusion_labels = None
+        self._field = None
         cat = AlgebrasWithBasis(ZZ).Subobjects()
         CombinatorialFreeModule.__init__(self, ZZ, [k for k in self._names], category=cat)
         if inject_variables:
@@ -105,8 +151,20 @@ class FusionDouble(CombinatorialFreeModule):
         for i in range(self._rank):
             inject_variable(self._names[i],self.monomial(i))
 
+    def get_order(self):
+        r"""
+        Return the weights of the basis vectors in a fixed order.
+        """
+        if self._order is None:
+            self.set_order(self.basis().keys().list())
+        return self._order
+
     @cached_method
-    def s_ij(self, i, j, unitary=False):
+    def s_ij(self, i, j, unitary=False, base_coercion=True):
+        r"""
+        Return the element of the S-matrix of this fusion ring
+        corresponding to the given elements.
+        """
         sum = 0
         G = self._G
         [i, j] = [x.support_of_term() for x in [i,j]]
@@ -119,10 +177,57 @@ class FusionDouble(CombinatorialFreeModule):
             coef = 1 / (G.centralizer(a).order() * G.centralizer(b).order())
         else:
             coef = G.order() / (G.centralizer(a).order() * G.centralizer(b).order())
-        return coef * sum
+        ret = coef * sum
+        if (not base_coercion) or (self._basecoer is None):
+            return ret
+        return self._basecoer(ret)
 
-    def s_ijconj(self, i, j, unitary=False):
-        return self.s_ij(i, j, unitary=unitary).conjugate()
+    def s_ijconj(self, i, j, unitary=False, base_coercion=True):
+        """
+        Return the conjugate of the element of the S-matrix given by
+        ``self.s_ij(elt_i, elt_j, base_coercion=base_coercion)``.
+
+        See :meth:`s_ij`.
+        """
+        return self.s_ij(i, j, unitary=unitary, base_coercion=base_coercion).conjugate()
+
+    def s_matrix(self, unitary=False, base_coercion=True):
+        r"""
+        Return the S-matrix of this fusion ring.
+
+        OPTIONAL:
+
+        - ``unitary`` -- (default: ``False``) set to ``True`` to obtain
+          the unitary S-matrix
+
+        Without the ``unitary`` parameter, this is the matrix denoted
+        `\widetilde{s}` in [BaKi2001]_.
+
+        EXAMPLES::
+
+            sage: D91 = FusionRing("D9", 1)
+            sage: D91.s_matrix()
+            [          1           1           1           1]
+            [          1           1          -1          -1]
+            [          1          -1 -zeta136^34  zeta136^34]
+            [          1          -1  zeta136^34 -zeta136^34]
+            sage: S = D91.s_matrix(unitary=True); S
+            [            1/2             1/2             1/2             1/2]
+            [            1/2             1/2            -1/2            -1/2]
+            [            1/2            -1/2 -1/2*zeta136^34  1/2*zeta136^34]
+            [            1/2            -1/2  1/2*zeta136^34 -1/2*zeta136^34]
+            sage: S*S.conjugate()
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 1 0]
+            [0 0 0 1]
+        """
+        b = self.basis()
+        S = matrix([[self.s_ij(b[x], b[y], unitary=unitary, base_coercion=base_coercion)
+                     for x in self.get_order()] for y in self.get_order()])
+        if unitary:
+            return S / self.total_q_order()
+        return S
 
     @cached_method
     def N_ijk(self, i, j, k):
@@ -139,6 +244,7 @@ class FusionDouble(CombinatorialFreeModule):
         sz = self.one()
         return ZZ(sum(self.s_ij(i, r, unitary=True) * self.s_ij(j, r, unitary=True) * self.s_ij(k, r, unitary=True)/self.s_ij(sz, r, unitary=True) for r in self.basis()))
 
+    @cached_method
     def Nk_ij(self, i, j, k):
         r"""
         Returns the fusion coefficient `N^k_{ij}`, computed using the Verlinde formula:
@@ -201,8 +307,64 @@ class FusionDouble(CombinatorialFreeModule):
                 res += i.chi()(i_twist * x * i_twist.inverse()) * j.chi()(j_twist * x * j_twist.inverse()) * k.chi()(x).conjugate()
         return c * res
 
+    @cached_method
     def field(self):
         return CyclotomicField(4 * self._cyclotomic_order)
+
+    def fvars_field(self):
+        r"""
+        Return a field containing the ``CyclotomicField`` computed by
+        :meth:`field` as well as all the F-symbols of the associated
+        ``FMatrix`` factory object.
+
+        This method is only available if ``self`` is multiplicity-free.
+
+        OUTPUT:
+
+        Depending on the ``CartanType`` associated to ``self`` and whether
+        a call to an F-matrix solver has been made, this method
+        will return the same field as :meth:`field`, a :func:`NumberField`,
+        or the :class:`QQbar<AlgebraicField>`.
+        See :meth:`FMatrix.attempt_number_field_computation` for more details.
+
+        Before running an F-matrix solver, the output of this method matches
+        that of :meth:`field`. However, the output may change upon successfully
+        computing F-symbols. Requesting braid generators triggers a call to
+        :meth:`FMatrix.find_orthogonal_solution`, so the output of this method
+        may change after such a computation.
+
+        By default, the output of methods like :meth:`r_matrix`,
+        :meth:`s_matrix`, :meth:`twists_matrix`, etc. will lie in the
+        ``fvars_field``, unless the ``base_coercion`` option is set to
+        ``False``.
+
+        This method does not trigger a solver run.
+
+        EXAMPLES::
+
+            sage: A13 = FusionRing("A1", 3, fusion_labels="a", inject_variables=True)
+            sage: A13.fvars_field()
+            Cyclotomic Field of order 40 and degree 16
+            sage: A13.field()
+            Cyclotomic Field of order 40 and degree 16
+            sage: a2**4
+            2*a0 + 3*a2
+            sage: comp_basis, sig = A13.get_braid_generators(a2, a2, 3, verbose=False)    # long time (<3s)
+            sage: A13.fvars_field()                                                    # long time
+            Number Field in a with defining polynomial y^32 - ... - 500*y^2 + 25
+            sage: a2.q_dimension().parent()                                            # long time
+            Number Field in a with defining polynomial y^32 - ... - 500*y^2 + 25
+            sage: A13.field()
+            Cyclotomic Field of order 40 and degree 16
+
+        In some cases, the :meth:`NumberField.optimized_representation()
+        <sage.rings.number_field.number_field.NumberField_absolute.optimized_representation>`
+        may be used to obtain a better defining polynomial for the
+        computed :func:`NumberField`.
+        """
+        if self.is_multiplicity_free():
+            return self.field() # Is this correct for the Fusion Double?
+        raise NotImplementedError("method is only available for multiplicity free fusion rings")
 
     def root_of_unity(self, r, base_coercion=True):
         r"""
@@ -234,10 +396,13 @@ class FusionDouble(CombinatorialFreeModule):
         n = 2 * r * self._cyclotomic_order
         if n not in ZZ:
             raise ValueError("not a root of unity in the field")
-        return  self.field().gen() ** n
+        ret = self.field().gen() ** n
+        if (not base_coercion) or (self._basecoer is None):
+            return ret
+        return self._basecoer(ret)
 
     @cached_method
-    def r_matrix(self, i, j, k):
+    def r_matrix(self, i, j, k, base_coercion=True):
         r"""
         Return the R-matrix entry corresponding to the subobject ``k``
         in the tensor product of ``i`` with ``j``. This method is only
@@ -246,7 +411,7 @@ class FusionDouble(CombinatorialFreeModule):
         the reason for this caveat, and the algorithm.
         """
         if self.Nk_ij(i, j, k) == 0:
-            return self.field().zero()
+            return self.field().zero() if (not base_coercion) or (self._basecoer is None) else self.fvars_field().zero()
         if i != j:
             ret = self.root_of_unity((k.twist() - i.twist() - j.twist()) / 2)
         else:
@@ -255,11 +420,33 @@ class FusionDouble(CombinatorialFreeModule):
             ret = sum(y.ribbon()**2 / (i.ribbon() * x.ribbon()**2)
                    * self.s_ij(i0, y) * self.s_ij(i, z) * self.s_ijconj(x, z)
                    * self.s_ijconj(k, x) * self.s_ijconj(y, z) / self.s_ij(i0, z)
-                   for x in B for y in B for z in B) / (self.total_q_order(base_coercion=False)**4)
+                   for x in B for y in B for z in B) / (self.total_q_order()**4)
+        if (not base_coercion) or (self._basecoer is None):
+            return ret
+        return self._basecoer(ret)
 
-        return ret
+    def global_q_dimension(self, base_coercion=True):
+        r"""
+        Return the global quantum dimension, which is the sum of the squares of the
+        quantum dimensions of the simple objects.
+        For the Drinfeld double, it is the square of the order of the underlying quantum group.
 
-    def total_q_order(self):
+        EXAMPLE ::
+
+            sage: G = SymmetricGroup(4)
+            sage: H = FusionDouble(G)
+            sage: H.global_q_dimension()
+            576
+            sage: sum(x.q_dimension()^2 for x in H.basis())
+            576
+        """
+        ret = self._G.order()**2
+        if (not base_coercion) or (self._basecoer is None):
+            return ret
+        return self._basecoer(ret)
+
+
+    def total_q_order(self, base_coercion=True):
         r"""
         Return the positive square root of :meth:`self.global_q_dimension()
         <global_q_dimension>` as an element of :meth:`self.field() <field>`.
@@ -267,12 +454,53 @@ class FusionDouble(CombinatorialFreeModule):
         For the Drinfeld double of a finite group `G`, this equals the
         cardinality of `G`.
         """
-        return self._G.order()
+        ret = self._G.order()
+        if (not base_coercion) or (self._basecoer is None):
+            return ret
+        return self._basecoer(ret)
+
+    def D_plus(self, base_coercion=True):
+        r"""
+        Return `\sum d_i^2\theta_i` where `i` runs through the simple objects,
+        `d_i` is the quantum dimension and `\theta_i` is the twist.
+
+        This is denoted `p_+` in [BaKi2001]_ Chapter 3. For the Drinfeld
+        double, it equals the order of the group.
+        """
+        ret = self._G.order()
+        if (not base_coercion) or (self._basecoer is None):
+            return ret
+        return self._basecoer(ret)
+
+    def D_minus(self, base_coercion=True):
+        r"""
+        Return `\sum d_i^2\theta_i^{-1}` where `i` runs through the simple
+        objects, `d_i` is the quantum dimension and `\theta_i` is the twist.
+
+        This is denoted `p_-` in [BaKi2001]_ Chapter 3.For the Drinfeld
+        double, it equals the order of the group.
+
+        EXAMPLES::
+
+            sage: E83 = FusionRing("E8", 3, conjugate=True)
+            sage: [Dp, Dm] = [E83.D_plus(), E83.D_minus()]
+            sage: Dp*Dm == E83.global_q_dimension()
+            True
+            sage: c = E83.virasoro_central_charge(); c
+            -248/11
+            sage: Dp*Dm == E83.global_q_dimension()
+            True
+        """
+        ret = self._G.order()
+        if (not base_coercion) or (self._basecoer is None):
+            return ret
+        return self._basecoer(ret)
 
     def is_multiplicity_free(self, verbose=False):
         """
         Returns True if all fusion coefficients are at most 1.
         """
+        print ("Checking multiplicity free-ness")
         for i in self.basis():
             for j in self.basis():
                 for k in self.basis():
@@ -349,12 +577,12 @@ class FusionDouble(CombinatorialFreeModule):
 
         def chi(self):
            """
-           Returns the character of the centralizer of a conjugacy class 
+           Returns the character of the centralizer of a conjugacy class
            representative of the underlying group corresponding to a simple object.
            """
            return self.parent()._chi[self.support_of_term()]
 
-        def ribbon(self):
+        def ribbon(self, base_coercion=True):
             """
             The twist or ribbon of the simple object.
 
@@ -363,7 +591,10 @@ class FusionDouble(CombinatorialFreeModule):
                 sage: [i.ribbon() for i in H.basis()]
                 [1, 1, 1, 1, zeta3, -zeta3 - 1, 1, -zeta3 - 1, zeta3]
             """
-            return self.chi()(self.g()) / self.chi()(self.parent()._G.one())
+            ret = self.chi()(self.g()) / self.chi()(self.parent()._G.one())
+            if (not base_coercion) or (self.parent()._basecoer is None):
+                return ret
+            return self.parent()._basecoer(ret)
 
         def twist(self, reduced=True):
             r"""
@@ -397,7 +628,7 @@ class FusionDouble(CombinatorialFreeModule):
             return
 
         @cached_method
-        def q_dimension(self):
+        def q_dimension(self, base_coercion=True):
             """
             Return the q-dimension of self.
 
@@ -412,3 +643,5 @@ class FusionDouble(CombinatorialFreeModule):
             if not self.is_simple_object():
                 raise ValueError("quantum dimension is only available for simple objects of a FusionRing")
             return self.parent().s_ij(self,self.parent().one())
+
+
