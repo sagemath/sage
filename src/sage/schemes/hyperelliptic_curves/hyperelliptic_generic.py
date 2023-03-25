@@ -122,7 +122,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def change_ring(self, R):
         """
-        Returns this HyperellipticCurve over a new base ring R.
+        Returns this HyperellipticCurve over a new base ring ``R``.
 
         EXAMPLES::
 
@@ -458,7 +458,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         AUTHOR:
 
-            - Jennifer Balakrishnan (2007-12)
+        - Jennifer Balakrishnan (2007-12)
         """
         d = P[1]
         if d == 0:
@@ -509,7 +509,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             t + O(t^5)
 
         AUTHOR:
-            - Jennifer Balakrishnan (2007-12)
+          - Jennifer Balakrishnan (2007-12)
 
             - Francis Clarke (2012-08-26)
         """
@@ -610,7 +610,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
              t^-5 + 46*t^-1 - 36*t - 609*t^3 + 1656*t^5 + O(t^6))
 
         AUTHOR:
-            - Jennifer Balakrishnan (2007-12)
+
+        - Jennifer Balakrishnan (2007-12)
         """
         if P[1] == 0:
             return self.local_coordinates_at_weierstrass(P, prec, name)
@@ -628,7 +629,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES:
 
-        For the LMFDB genus 2 curve `932.a.3728.1 <https://www.lmfdb.org/Genus2Curve/Q/932/a/3728/1>`::
+        For the LMFDB genus 2 curve `932.a.3728.1 <https://www.lmfdb.org/Genus2Curve/Q/932/a/3728/1>`_::
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: C = HyperellipticCurve(R([0, -1, 1, 0, 1, -2, 1]), R([1]))
@@ -644,7 +645,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             (1 : 0 : 1)]
 
         Check that :trac:`29509` is fixed for the LMFDB genus 2 curve
-        `169.a.169.1 <https://www.lmfdb.org/Genus2Curve/Q/169/a/169/1>`::
+        `169.a.169.1 <https://www.lmfdb.org/Genus2Curve/Q/169/a/169/1>`_::
 
             sage: C = HyperellipticCurve(R([0, 0, 0, 0, 1, 1]), R([1, 1, 0, 1]))
             sage: C.rational_points(bound=10)

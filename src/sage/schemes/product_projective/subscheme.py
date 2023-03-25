@@ -186,9 +186,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         r"""
         Return the dimension of the algebraic subscheme.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: An integer.
 
         EXAMPLES::
 
@@ -266,7 +264,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
     def affine_patch(self, I, return_embedding=False):
         r"""
         Return the `I^{th}` affine patch of this projective scheme
-        where 'I' is a multi-index.
+        where `I` is a multi-index.
 
         INPUT:
 
@@ -419,7 +417,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         - ``P`` -- a point on this subscheme.
 
-        OUTPUT: an integer.
+        OUTPUT: An integer.
 
         EXAMPLES::
 

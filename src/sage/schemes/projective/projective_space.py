@@ -345,7 +345,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         Return the number of generators of this projective space.
 
-        This is the number of variables in the coordinate ring of self.
+        This is the number of variables in the coordinate ring of ``self``.
 
         EXAMPLES::
 
@@ -604,7 +604,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         -  ``d`` -- a nonnegative integer.
 
-        -  ``pt`` -- a point of self (possibly represented by a list with at \
+        -  ``pt`` -- a point of ``self`` (possibly represented by a list with at \
                      least one component equal to 1).
 
         -  ``m`` -- a nonnegative integer.
@@ -612,8 +612,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         OUTPUT:
 
         A matrix of size `\binom{m-1+n}{n}` x `\binom{d+n}{n}` where n is the
-        relative dimension of self. The base ring of the matrix is a ring that
-        contains the base ring of self and the coefficients of the given point.
+        relative dimension of ``self``. The base ring of the matrix is a ring that
+        contains the base ring of ``self`` and the coefficients of the given point.
 
         EXAMPLES:
 
@@ -998,15 +998,15 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         Return the `i^{th}` affine patch of this projective space.
 
         This is an ambient affine space `\mathbb{A}^n_R,` where
-        `R` is the base ring of self, whose "projective embedding"
+        `R` is the base ring of ``self``, whose "projective embedding"
         map is `1` in the `i^{th}` factor.
 
         INPUT:
 
-        - ``i`` -- integer between 0 and dimension of self, inclusive.
+        - ``i`` -- integer between 0 and dimension of ``self``, inclusive.
 
         - ``AA`` -- (default: None) ambient affine space, this is constructed
-                if it is not given.
+          if it is not given.
 
         OUTPUT:
 
@@ -2331,7 +2331,7 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
 
         INPUT:
 
-         -  ``bound`` - integer.
+        -  ``bound`` - integer.
 
         EXAMPLES::
 

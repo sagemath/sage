@@ -404,9 +404,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         - ``embedding`` -- field embedding from the base ring of this point to ``R``.
 
-        OUTPUT:
-
-        :class:`ProductProjectiveSpaces_point`.
+        OUTPUT: :class:`ProductProjectiveSpaces_point`.
 
         EXAMPLES::
 
@@ -433,9 +431,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: A real number.
 
         EXAMPLES::
 
@@ -489,9 +485,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: A real number.
 
         EXAMPLES::
 

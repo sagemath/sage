@@ -24,8 +24,8 @@ from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subsche
 
 def is_Hypersurface(self):
     """
-    Return True if self is a hypersurface, i.e. an object of the type
-    ProjectiveHypersurface or AffineHypersurface.
+    Return True if ``self`` is a hypersurface, i.e. an object of the type
+    :class:`ProjectiveHypersurface` or :class:`AffineHypersurface`.
 
     EXAMPLES::
 

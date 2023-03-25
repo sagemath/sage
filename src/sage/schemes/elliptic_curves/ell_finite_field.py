@@ -940,7 +940,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: E = EllipticCurve(GF(11),[2,5])
             sage: E.abelian_group()
-            Additive abelian group isomorphic to Z/10 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 2*x + 5 over Finite Field of size 11
+            Additive abelian group isomorphic to Z/10 embedded in
+            Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 2*x + 5
+            over Finite Field of size 11
 
         ::
 
@@ -966,7 +968,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: E = EllipticCurve(GF(2),[0,0,1,1,1])
             sage: E.abelian_group()
-            Trivial group embedded in Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 + x + 1 over Finite Field of size 2
+            Trivial group embedded in Abelian group of points on
+            Elliptic Curve defined by y^2 + y = x^3 + x + 1 over Finite Field of size 2
 
         Of course, there are plenty of points if we extend the field::
 
@@ -991,7 +994,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: OKmodP = OK.residue_field(P)
             sage: E = EllipticCurve([0,0,0,i,i+3])
             sage: Emod = E.change_ring(OKmodP); Emod
-            Elliptic Curve defined by y^2  = x^3 + ibar*x + (ibar+3) over Residue field in ibar of Fractional ideal (10007)
+            Elliptic Curve defined by y^2  = x^3 + ibar*x + (ibar+3)
+            over Residue field in ibar of Fractional ideal (10007)
             sage: Emod.abelian_group() #random generators
             (Multiplicative Abelian group isomorphic to C50067594 x C2,
             ((3152*ibar + 7679 : 7330*ibar + 7913 : 1), (8466*ibar + 1770 : 0 : 1)))
@@ -1037,7 +1041,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: E = EllipticCurve(GF(62207^2), [1,0])
             sage: E.abelian_group()
-            Additive abelian group isomorphic to Z/62208 + Z/62208 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 62207^2
+            Additive abelian group isomorphic to Z/62208 + Z/62208 embedded in
+            Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+            over Finite Field in z2 of size 62207^2
             sage: PA,QA = E.torsion_basis(2^8)
             sage: PA.weil_pairing(QA, 2^8).multiplicative_order()
             256
@@ -1268,7 +1274,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
     def set_order(self, value, *, check=True, num_checks=8):
         r"""
-        Set the value of self._order to value.
+        Set the value of ``self._order`` to ``value``.
 
         Use this when you know a priori the order of the curve to
         avoid a potentially expensive order calculation.
@@ -1341,7 +1347,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         It is also very likely an error to pass a value which is not
         the actual order of this curve. How unlikely is determined by
-        num_checks, the factorization of the actual order, and the
+        ``num_checks``, the factorization of the actual order, and the
         actual group structure::
 
             sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
@@ -1359,7 +1365,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E.order()
             12
 
-        Or, the order can be set incorrectly along with num_checks set
+        Or, the order can be set incorrectly along with ``num_checks`` set
         too small::
 
             sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
@@ -1367,7 +1373,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E.order()
             4
 
-        The value of num_checks must be an integer. Negative values
+        The value of ``num_checks`` must be an integer. Negative values
         are interpreted as zero, which means don't do any checking::
 
             sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
@@ -1843,9 +1849,9 @@ def curves_with_j_1728(K):
             ``curves_with_j_0_char3``.  Otherwise there are either 2 or 4 curves, parametrised by
             `K^*/(K^*)^4`.
 
-    Examples:
+    EXAMPLES:
 
-    For `K=\GF{q}` where `q\equiv1\mod{4} there are four curves, the quartic twists of `y^2=x^3+x`::
+    For `K=\GF{q}` where `q\equiv1\mod{4}`, there are four curves, the quartic twists of `y^2=x^3+x`::
 
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_1728
         sage: sorted(curves_with_j_1728(GF(5)), key = lambda E: E.a_invariants())
@@ -1859,7 +1865,7 @@ def curves_with_j_1728(K):
         Elliptic Curve defined by y^2 = x^3 + (z2+4)*x over Finite Field in z2 of size 7^2,
         Elliptic Curve defined by y^2 = x^3 + (5*z2+4)*x over Finite Field in z2 of size 7^2]
 
-    For `K=\GF{q}` where `q\equiv3\mod{4} there are two curves,
+    For `K=\GF{q}` where `q\equiv3\mod{4}`, there are two curves,
     quadratic twists of each other by `-1`: `y^2=x^3+x` and
     `y^2=x^3-x`::
 
@@ -2144,7 +2150,7 @@ def supersingular_j_polynomial(p, use_cache=True):
 
     - `p` (integer) -- a prime number.
 
-    - `use_cache` (boolean, default ``True``) -- use cached coefficients if they exist
+    - ``use_cache`` (boolean, default ``True``) -- use cached coefficients if they exist
 
     ALGORITHM:
 

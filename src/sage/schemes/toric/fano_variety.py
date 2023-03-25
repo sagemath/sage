@@ -264,9 +264,7 @@ def CPRFanoToricVariety(Delta=None,
       ``Delta``). If you know for sure that the input is valid, you may
       significantly decrease construction time using ``check=False`` option.
 
-    OUTPUT:
-
-    - :class:`CPR-Fano toric variety <CPRFanoToricVariety_field>`.
+    OUTPUT: :class:`CPR-Fano toric variety <CPRFanoToricVariety_field>`.
 
     EXAMPLES:
 
@@ -626,9 +624,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
 
     - ``base_field`` -- base field of the CPR-Fano toric variety.
 
-    OUTPUT:
-
-    - :class:`CPR-Fano toric variety <CPRFanoToricVariety_field>`.
+    OUTPUT: :class:`CPR-Fano toric variety <CPRFanoToricVariety_field>`.
 
     TESTS::
 
@@ -838,10 +834,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
 
         - ``F`` -- field.
 
-        OUTPUT:
-
-        - :class:`CPR-Fano toric variety <CPRFanoToricVariety_field>` over
-          ``F``.
+        OUTPUT: :class:`CPR-Fano toric variety <CPRFanoToricVariety_field>` over ``F``.
 
         .. NOTE::
 
@@ -913,9 +906,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         r"""
         Return indices of points of :meth:`Delta_polar` used for coordinates.
 
-        OUTPUT:
-
-        - :class:`tuple` of integers.
+        OUTPUT: :class:`tuple` of integers.
 
         EXAMPLES::
 
@@ -1511,10 +1502,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
         r"""
         Return the class of ``self`` in the ambient space cohomology ring.
 
-        OUTPUT:
-
-        - a :class:`cohomology class
-          <sage.schemes.generic.toric_variety.CohomologyClass>`.
+        OUTPUT: A :class:`cohomology class <sage.schemes.generic.toric_variety.CohomologyClass>`.
 
         EXAMPLES::
 
@@ -1540,10 +1528,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
         r"""
         Return the nef-partition associated to ``self``.
 
-        OUTPUT:
-
-        - a :class:`nef-partition
-          <sage.geometry.lattice_polytope.NefPartition>`.
+        OUTPUT: A :class:`nef-partition <sage.geometry.lattice_polytope.NefPartition>`.
 
         EXAMPLES::
 

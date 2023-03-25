@@ -132,8 +132,8 @@ class Jacobian_generic(Scheme):
 
     def __richcmp__(self, J, op):
         """
-        Compare the Jacobian self to `J`.  If `J` is a Jacobian, then
-        self and `J` are equal if and only if their curves are equal.
+        Compare the Jacobian ``self`` to `J`.  If `J` is a Jacobian, then
+        ``self`` and `J` are equal if and only if their curves are equal.
 
         EXAMPLES::
 
@@ -194,7 +194,7 @@ class Jacobian_generic(Scheme):
 
     def curve(self):
         """
-        Return the curve of which self is the Jacobian.
+        Return the curve of which ``self`` is the Jacobian.
 
         EXAMPLES::
 
@@ -214,9 +214,7 @@ class Jacobian_generic(Scheme):
 
         - ``R`` -- a field. The new base ring.
 
-        OUTPUT:
-
-        The Jacobian over the ring `R`.
+        OUTPUT: The Jacobian over the ring `R`.
 
         EXAMPLES::
 
@@ -233,15 +231,13 @@ class Jacobian_generic(Scheme):
 
     def base_extend(self, R):
         r"""
-        Return the natural extension of ``self`` over `R`
+        Return the natural extension of ``self`` over `R`.
 
         INPUT:
 
         - ``R`` -- a field. The new base field.
 
-        OUTPUT:
-
-        The Jacobian over the ring `R`.
+        OUTPUT: The Jacobian over the ring `R`.
 
         EXAMPLES::
 

@@ -249,9 +249,9 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     - ``verbosity`` -- int, how much information about the proof to print.
 
-        - 0: print nothing
-        - 1: print sketch of proof
-        - 2: print information about remaining primes
+      - 0: print nothing
+      - 1: print sketch of proof
+      - 2: print information about remaining primes
 
     - ``two_desc`` -- string (default ``'mwrank'``), what to use for the
       two-descent. Options are ``'mwrank', 'simon', 'sage'``
@@ -353,7 +353,9 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         sage: E.prove_BSD()
         Traceback (most recent call last):
         ...
-        RuntimeError: It seems that the rank conjecture does not hold for this curve (Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field)! This may be a counterexample to BSD, but is more likely a bug.
+        RuntimeError: It seems that the rank conjecture does not hold for this curve
+        (Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field)!
+        This may be a counterexample to BSD, but is more likely a bug.
 
     We test the consistency check for the 2-part of Sha::
 

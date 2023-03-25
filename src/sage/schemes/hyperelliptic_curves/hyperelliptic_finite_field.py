@@ -337,7 +337,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: H.frobenius_polynomial_cardinalities()
             x^4 + 8*x^3 + 70*x^2 + 392*x + 2401
 
-        This method may actually be useful when `hypellfrob` does not work::
+        This method may actually be useful when ``hypellfrob`` does not work::
 
             sage: K = GF(7)
             sage: R.<t> = PolynomialRing(K)
@@ -1841,7 +1841,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         - ``a`` : a-number
 
 
-         EXAMPLES::
+        EXAMPLES::
 
             sage: K.<x> = GF(49, 'x')[]
             sage: C = HyperellipticCurve(x^5 + 1, 0)

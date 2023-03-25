@@ -656,9 +656,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         r"""
         Return the underlying toric variety.
 
-        OUTPUT:
-
-        A :class:`ToricVariety
+        OUTPUT: A :class:`ToricVariety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -1101,9 +1099,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: A string.
 
         EXAMPLES::
 
@@ -1140,9 +1136,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return the submodule of the toric Chow group generated.
 
-        OUTPUT:
-
-        A :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`
+        OUTPUT: A :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`.
 
         EXAMPLES::
 
@@ -1157,9 +1151,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return the number of generators.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: An integer.
 
         EXAMPLES::
 
@@ -1172,17 +1164,13 @@ class ChowGroup_degree_class(SageObject):
 
     def gen(self, i):
         """
-        Return the ``i``-th generator of the Chow group of fixed
-        degree.
+        Return the ``i``-th generator of the Chow group of fixed degree.
 
         INPUT:
 
         - ``i`` -- integer. The index of the generator to be returned.
 
-        OUTPUT:
-
-        A tuple of Chow cycles of fixed degree generating
-        :meth:`module`.
+        OUTPUT: A Chow cycle.
 
         EXAMPLES::
 
@@ -1197,9 +1185,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return the generators of the Chow group of fixed degree.
 
-        OUTPUT:
-
-        A tuple of Chow cycles of fixed degree generating
+        OUTPUT: A tuple of Chow cycles of fixed degree generating
         :meth:`module`.
 
         EXAMPLES::
@@ -1214,15 +1200,13 @@ class ChowGroup_degree_class(SageObject):
 
 def is_ChowGroup(x) -> bool:
     r"""
-    Return whether ``x`` is a :class:`ChowGroup_class`
+    Return whether ``x`` is a :class:`ChowGroup_class`.
 
     INPUT:
 
     - ``x`` -- anything.
 
-    OUTPUT:
-
-    ``True`` or ``False``.
+    OUTPUT: ``True`` or ``False``.
 
     EXAMPLES::
 
@@ -1239,15 +1223,13 @@ def is_ChowGroup(x) -> bool:
 
 def is_ChowCycle(x) -> bool:
     r"""
-    Return whether ``x`` is a :class:`ChowGroup_class`
+    Return whether ``x`` is a :class:`ChowCycle`.
 
     INPUT:
 
     - ``x`` -- anything.
 
-    OUTPUT:
-
-    ``True`` or ``False``.
+    OUTPUT: ``True`` or ``False``.
 
     EXAMPLES::
 

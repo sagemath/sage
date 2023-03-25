@@ -80,7 +80,8 @@ accessible, too)::
     35261176
     sage: M = E.modular_symbol(implementation="num", sign=-1)
     sage: M
-    Numerical modular symbol attached to Elliptic Curve defined by y^2 = x^3 + 101*x + 103 over Rational Field
+    Numerical modular symbol attached to
+    Elliptic Curve defined by y^2 = x^3 + 101*x + 103 over Rational Field
 
 We can then compute the value `[13/17]^{-}` and `[1/17]^{+}` by calling
 the function ``M``. The value of `[0]^{+}=0` tells us that the rank of

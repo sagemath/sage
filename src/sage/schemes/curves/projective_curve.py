@@ -241,7 +241,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         - ``AA`` -- (default: None) ambient affine space, this is constructed
           if it is not given
 
-        OUTPUT: a curve in affine space
+        OUTPUT: A curve in affine space.
 
         EXAMPLES::
 
@@ -289,7 +289,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
           ambient space of this curve. This space will be constructed if not
           specified.
 
-        OUTPUT: a tuple of
+        OUTPUT: A tuple of
 
         - a scheme morphism from this curve into a projective space of
           dimension one less than that of the ambient space of this curve
@@ -503,7 +503,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
           as this curve, and must have dimension two. This space is constructed
           if not specified.
 
-        OUTPUT: a tuple of
+        OUTPUT: A tuple of
 
         - a scheme morphism from this curve into a projective plane
 
@@ -635,13 +635,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         """
         Return the divisor of a function on a curve.
 
-        INPUT: r is a rational function on X
+        INPUT: ``r`` is a rational function on X
 
-        OUTPUT:
-
-        - ``list`` -- The divisor of r represented as a list of coefficients and
-          points. (TODO: This will change to a more structural output in the
-          future.)
+        OUTPUT: A list. The divisor of r represented as a list of coefficients and
+        points. (TODO: This will change to a more structural output in the
+        future.)
 
         EXAMPLES::
 
@@ -895,7 +893,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         For a plane curve, this is just the degree of its defining polynomial.
 
-        OUTPUT: integer.
+        OUTPUT: An integer.
 
         EXAMPLES::
 
@@ -924,7 +922,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         OUTPUT:
 
-        a list of polynomials in the coordinate ring of the ambient space of
+        A list of polynomials in the coordinate ring of the ambient space of
         this curve.
 
         EXAMPLES::
@@ -1520,7 +1518,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         - ``P`` -- a point in the intersection of both curves.
 
-        OUTPUT: Boolean.
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1828,9 +1826,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         r"""
         Return the complex Riemann surface determined by this curve
 
-        OUTPUT:
-
-        - RiemannSurface object
+        OUTPUT: A :class:`~sage.schemes.riemann_surfaces.riemann_surface.RiemannSurface` object.
 
         EXAMPLES::
 
@@ -2039,8 +2035,8 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         -  ``D`` - a divisor
 
-        OUTPUT: a list of function field elements that form a basis of the
-        Riemann-Roch space
+        OUTPUT: A list of function field elements that form a basis of the
+        Riemann-Roch space.
 
         EXAMPLES::
 
@@ -2124,7 +2120,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
           points should be sorted.  If False, the order of the output
           is non-deterministic.
 
-        OUTPUT: a list of all the rational points on the curve, possibly sorted.
+        OUTPUT: A list of all the rational points on the curve, possibly sorted.
 
         .. NOTE::
 
@@ -2826,9 +2822,7 @@ def Hasse_bounds(q, genus=1):
 
     - ``genus`` (int, default 1) -- a non-negative integer,
 
-    OUTPUT:
-
-    (tuple)  The Hasse bounds (lb,ub) for the cardinality of a curve of
+    OUTPUT: A tuple. The Hasse bounds (lb,ub) for the cardinality of a curve of
     genus ``genus`` defined over `\GF{q}`.
 
     EXAMPLES::

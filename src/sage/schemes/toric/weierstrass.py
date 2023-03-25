@@ -25,9 +25,9 @@ equation of any one of the above 16 toric surfaces is a specialization
 (that is, set one or more of the coefficients to zero) of the
 following three cases. In inhomogeneous coordinates, they are
 
-  * Cubic in `\mathbb{P}^2`:
+* Cubic in `\mathbb{P}^2`:
 
-    .. MATH::
+  .. MATH::
 
         \begin{split}
           p(x,y) =&\;
@@ -38,9 +38,9 @@ following three cases. In inhomogeneous coordinates, they are
           a_{02} y^{2} + a_{10} x + a_{01} y + a_{00}
         \end{split}
 
-  * Biquadric in `\mathbb{P}^1\times \mathbb{P}^1`:
+* Biquadric in `\mathbb{P}^1\times \mathbb{P}^1`:
 
-    .. MATH::
+  .. MATH::
 
         \begin{split}
           p(x,y) =&\;
@@ -51,10 +51,9 @@ following three cases. In inhomogeneous coordinates, they are
           y^2 a_{02} + y a_{01} + a_{00}
         \end{split}
 
-  * Anticanonical hypersurface in weighted projective space
-    `\mathbb{P}^2[1,1,2]`:
+* Anticanonical hypersurface in weighted projective space `\mathbb{P}^2[1,1,2]`:
 
-    .. MATH::
+  .. MATH::
 
         \begin{split}
           p(x,y) =&\;
@@ -160,9 +159,7 @@ def Discriminant(polynomial, variables=None):
     See :func:`WeierstrassForm` for how to specify the input
     polynomial(s) and variables.
 
-    OUTPUT:
-
-    The discriminant of the elliptic curve.
+    OUTPUT: The discriminant of the elliptic curve.
 
     EXAMPLES::
 
@@ -196,12 +193,12 @@ def j_invariant(polynomial, variables=None):
 
     The j-invariant of the (irreducible) cubic. Notable special values:
 
-      * The Fermat cubic: `j(x^3+y^3+z^3) = 0`
+    * The Fermat cubic: `j(x^3+y^3+z^3) = 0`
 
-      * A nodal cubic: `j(-y^2 + x^2 + x^3) = \infty`
+    * A nodal cubic: `j(-y^2 + x^2 + x^3) = \infty`
 
-      * A cuspidal cubic `y^2=x^3` has undefined `j`-invariant. In this
-        case, a ``ValueError`` is returned.
+    * A cuspidal cubic `y^2=x^3` has undefined `j`-invariant. In this
+      case, a ``ValueError`` is raised.
 
     EXAMPLES::
 

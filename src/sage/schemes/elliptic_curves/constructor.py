@@ -146,7 +146,8 @@ class EllipticCurveFactory(UniqueFactory):
 
         sage: E = EllipticCurve(CC, [0,0,1,-1,0])
         sage: E
-        Elliptic Curve defined by y^2 + 1.00000000000000*y = x^3 + (-1.00000000000000)*x over Complex Field with 53 bits of precision
+        Elliptic Curve defined by y^2 + 1.00000000000000*y = x^3 + (-1.00000000000000)*x
+        over Complex Field with 53 bits of precision
         sage: E.j_invariant()
         2988.97297297297
 
@@ -310,9 +311,7 @@ class EllipticCurveFactory(UniqueFactory):
         """
         Return a ``UniqueFactory`` key and possibly extra parameters.
 
-        INPUT:
-
-        See the documentation for :class:`EllipticCurveFactory`.
+        INPUT: See the documentation for :class:`EllipticCurveFactory`.
 
         OUTPUT:
 
@@ -504,9 +503,7 @@ def EllipticCurve_from_Weierstrass_polynomial(f):
     - ``f`` -- a inhomogeneous cubic polynomial in long Weierstrass
       form.
 
-    OUTPUT:
-
-    The elliptic curve defined by it.
+    OUTPUT: The elliptic curve defined by it.
 
     EXAMPLES::
 
@@ -671,9 +668,7 @@ def coefficients_from_j(j, minimal_twist=True):
     Return Weierstrass coefficients `(a_1, a_2, a_3, a_4, a_6)` for an
     elliptic curve with given `j`-invariant.
 
-    INPUT:
-
-    See :func:`EllipticCurve_from_j`.
+    INPUT: See :func:`EllipticCurve_from_j`.
 
     EXAMPLES::
 
@@ -1395,9 +1390,7 @@ def are_projectively_equivalent(P, Q, base_ring):
 
     - ``base_ring`` -- the base ring.
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: A boolean.
 
     EXAMPLES::
 

@@ -280,7 +280,7 @@ def WeierstrassMap(polynomial, variables=None):
 
 def WeierstrassMap_P2(polynomial, variables=None):
     r"""
-    Map a cubic to its Weierstrass form
+    Map a cubic to its Weierstrass form.
 
     Input/output is the same as :func:`WeierstrassMap`, except that
     the input polynomial must be a cubic in `\mathbb{P}^2`,

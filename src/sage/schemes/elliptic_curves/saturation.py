@@ -24,7 +24,7 @@ coefficients `a_i` of any nontrivial relation.  When the points are
 already `p`-saturated this sieving technique can prove their
 saturation quickly.
 
-The method :meth:`saturation` of the class EllipticCurve_number_field
+The method :meth:`saturation` of the class :class:`EllipticCurve_number_field`
 applies full `p`-saturation at any given set of primes, or can compute
 a bound on the primes `p` at which the given points may not be
 `p`-saturated.  This involves computing a lower bound for the
@@ -64,7 +64,7 @@ def reduce_mod_q(x, amodq):
 
     - ``amodq`` -- an element of `GF(q)` which is a root mod `q` of
       the defining polynomial of `K`.  This defines a degree 1 prime
-      ideal `Q=(q,\alpha-a)` of `K=\QQ(\alpha)`, where `a \mod q = `
+      ideal `Q=(q,\alpha-a)` of `K=\QQ(\alpha)`, where `a \bmod q` =
       ``amodq``.
 
     OUTPUT:
@@ -144,7 +144,7 @@ class EllipticCurveSaturator(SageObject):
         INPUT:
 
         - ``q`` -- a prime number not dividing the defining polynomial
-          of self.__field.
+          of ``self.__field``.
 
         OUTPUT:
 

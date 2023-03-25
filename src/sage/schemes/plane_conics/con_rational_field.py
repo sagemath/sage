@@ -84,12 +84,12 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         a pair ``(out, S)``, where ``out`` is as above and the following
         holds:
 
-         - if ``point`` is ``True`` and ``self`` has a rational point,
-           then ``S`` is a rational point,
+        - if ``point`` is ``True`` and ``self`` has a rational point,
+          then ``S`` is a rational point,
 
-         - if ``obstruction`` is ``True`` and ``self`` has no rational point,
-           then ``S`` is a prime such that no rational point exists
-           over the completion at ``S`` or `-1` if no point exists over `\RR`.
+        - if ``obstruction`` is ``True`` and ``self`` has no rational point,
+          then ``S`` is a prime such that no rational point exists
+          over the completion at ``S`` or `-1` if no point exists over `\RR`.
 
         Points and obstructions are cached, whenever they are found.
         Cached information is used if and only if ``read_cache`` is ``True``.
@@ -99,19 +99,19 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         The parameter ``algorithm``
         specifies the algorithm to be used:
 
-         - ``'qfsolve'`` -- Use PARI/GP function :pari:`qfsolve`
+        - ``'qfsolve'`` -- Use PARI/GP function :pari:`qfsolve`
 
-         - ``'rnfisnorm'`` -- Use PARI's function :pari:`rnfisnorm`
-           (cannot be combined with ``obstruction = True``)
+        - ``'rnfisnorm'`` -- Use PARI's function :pari:`rnfisnorm`
+          (cannot be combined with ``obstruction = True``)
 
-         - ``'local'`` -- Check if a local solution exists for all primes
-           and infinite places of `\QQ` and apply the Hasse principle
-           (cannot be combined with ``point = True``)
+        - ``'local'`` -- Check if a local solution exists for all primes
+          and infinite places of `\QQ` and apply the Hasse principle
+          (cannot be combined with ``point = True``)
 
-         - ``'default'`` -- Use ``'qfsolve'``
+        - ``'default'`` -- Use ``'qfsolve'``
 
-         - ``'magma'`` (requires Magma to be installed) --
-           delegates the task to the Magma computer algebra system.
+        - ``'magma'`` (requires Magma to be installed) --
+          delegates the task to the Magma computer algebra system.
 
         EXAMPLES::
 

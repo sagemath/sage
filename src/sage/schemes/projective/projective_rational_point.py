@@ -313,10 +313,10 @@ def sieve(X, bound):
     Returns the list of all projective, rational points on scheme ``X`` of
     height up to ``bound``.
 
-    Height of a projective point X = (x_1, x_2,..., x_n) is given by
-    H_X = max(y_1, y_2,..., y_n), where H_X is height of point X and y_i's
-    are the normalized coordinates such that all y_i are integers and
-    gcd(y_1, y_2,..., y_n) = 1.
+    Height of a projective point `X = (x_1, x_2,\dots, x_n)` is given by
+    `H_X = \max(y_1, y_2,\dots, y_n)`, where the values `y_i`
+    are the normalized coordinates such that all `y_i` are integers and
+    `\gcd(y_1, y_2,\dots, y_n) = 1`.
 
     ALGORITHM:
 

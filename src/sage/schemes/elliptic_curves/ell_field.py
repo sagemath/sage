@@ -1,8 +1,8 @@
 r"""
 Elliptic curves over a general field
 
-This module defines the class ``EllipticCurve_field``, based on
-``EllipticCurve_generic``, for elliptic curves over general fields.
+This module defines the class :class:`EllipticCurve_field`, based on
+:class:`EllipticCurve_generic`, for elliptic curves over general fields.
 """
 #*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -1114,12 +1114,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         - ``degree`` -- an integer (default: ``None``).
 
-              - If ``kernel`` is ``None``, then this is the degree of the isogeny
-                from this curve to ``codomain``.
+          - If ``kernel`` is ``None``, then this is the degree of the isogeny
+            from this curve to ``codomain``.
 
-              - If ``kernel`` is not ``None``, then this is used to determine
-                whether or not to skip a `\gcd` of the given kernel polynomial
-                with the two-torsion polynomial of this curve.
+          - If ``kernel`` is not ``None``, then this is used to determine
+            whether or not to skip a `\gcd` of the given kernel polynomial
+            with the two-torsion polynomial of this curve.
 
         - ``model`` -- a string (default: ``None``).  Supported values
           (cf. :func:`~sage.schemes.elliptic_curves.ell_field.compute_model`):
@@ -1261,8 +1261,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         INPUT:
 
         - ``kernel`` -- Either a list of points in the kernel of the isogeny,
-                        or a kernel polynomial (specified as either a
-                        univariate polynomial or a coefficient list.)
+          or a kernel polynomial (specified as either a univariate polynomial or a coefficient list.)
 
         OUTPUT:
 
@@ -1597,7 +1596,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - ``field`` (default None) -- Currently not implemented. A
           field containing the base fields of the two elliptic curves
           onto which the two curves may be extended to test if they
-          are isogenous over this field. By default is_isogenous will
+          are isogenous over this field. By default ``is_isogenous`` will
           not try to find this field unless one of the curves can be
           be extended into the base field of the other, in which case
           it will test over the larger base field.
@@ -1659,7 +1658,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         OUTPUT:
 
-        a Laurent series in one variable `z` with coefficients in the
+        A Laurent series in one variable `z` with coefficients in the
         base field `k` of `E`.
 
         EXAMPLES::
@@ -1699,7 +1698,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         characteristic, and is an element of the field which is zero
         if and only if the curve is supersingular.  Over a field of
         characteristic zero, where the Hasse invariant is undefined,
-        a ``ValueError`` is returned.
+        a ``ValueError`` is raised.
 
         EXAMPLES::
 
@@ -1783,9 +1782,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           class, append ``*`` to it to indicate a twist.  Otherwise, if
           ``False`` label vertices by the equation of a representative curve.
 
-        OUTPUT:
-
-        A ``Graph`` or ``Digraph``
+        OUTPUT: A :class:`Graph` or :class:`DiGraph`.
 
         EXAMPLES:
 
@@ -1878,11 +1875,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              'y^2 + x*y + y = x^3 + 4*x + (-6)']
             sage: G2.edges(sort=True)                                                   # optional - sage.graphs sage.rings.number_field
             [('y^2 + x*y + y = x^3 + (-130*e-356)*x + (-2000*e-2038)',
-             'y^2 + x*y + y = x^3 + (-36)*x + (-70)', None),
+              'y^2 + x*y + y = x^3 + (-36)*x + (-70)', None),
              ('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
-             'y^2 + x*y + y = x^3 + (130*e-356)*x + (2000*e-2038)', None),
+              'y^2 + x*y + y = x^3 + (130*e-356)*x + (2000*e-2038)', None),
              ('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
-             'y^2 + x*y + y = x^3 + 4*x + (-6)', None)]
+              'y^2 + x*y + y = x^3 + 4*x + (-6)', None)]
             sage: G3 = E.isogeny_ell_graph(3, directed=False)                           # optional - sage.graphs sage.rings.number_field
             sage: G3.vertices(sort=True)                                                # optional - sage.graphs sage.rings.number_field
             ['y^2 + x*y + y = x^3 + (-1)*x',
@@ -1890,9 +1887,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              'y^2 + x*y + y = x^3 + 4*x + (-6)']
             sage: G3.edges(sort=True)                                                   # optional - sage.graphs sage.rings.number_field
             [('y^2 + x*y + y = x^3 + (-1)*x',
-             'y^2 + x*y + y = x^3 + 4*x + (-6)', None),
+              'y^2 + x*y + y = x^3 + 4*x + (-6)', None),
              ('y^2 + x*y + y = x^3 + (-171)*x + (-874)',
-             'y^2 + x*y + y = x^3 + 4*x + (-6)', None)]
+              'y^2 + x*y + y = x^3 + 4*x + (-6)', None)]
 
         TESTS::
 

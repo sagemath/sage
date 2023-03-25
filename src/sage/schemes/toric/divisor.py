@@ -257,9 +257,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         ``reduce=False`` it is your responsibility to pass valid input
         data ``arg``.
 
-    OUTPUT:
-
-    - A :class:`sage.schemes.toric.divisor.ToricDivisor_generic`
+    OUTPUT: A :class:`sage.schemes.toric.divisor.ToricDivisor_generic`.
 
     EXAMPLES::
 
@@ -384,10 +382,10 @@ class ToricDivisor_generic(Divisor_generic):
     - ``parent`` -- :class:`ToricDivisorGroup`. The parent divisor group.
 
     - ``check`` -- boolean. Type-check the entries of ``v``, see
-      :meth:`sage.schemes.generic.divisor_group.DivisorGroup_generic.__init__`.
+      :class:`~sage.schemes.generic.divisor_group.DivisorGroup_generic`.
 
     - ``reduce`` -- boolean. Combine coefficients in ``v``, see
-      :meth:`sage.schemes.generic.divisor_group.DivisorGroup_generic.__init__`.
+      :class:`~sage.schemes.generic.divisor_group.DivisorGroup_generic`.
 
     .. WARNING::
 
@@ -518,9 +516,7 @@ class ToricDivisor_generic(Divisor_generic):
         - ``point`` -- either an integer, interpreted as the index of a ray of
           `\Sigma`, or a point of the lattice `N`.
 
-        OUTPUT:
-
-        - an integer or a rational number.
+        OUTPUT: An integer or a rational number.
 
         EXAMPLES::
 
@@ -812,7 +808,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         OUTPUT:
 
-        Returns the corresponding cohomology class as an instance of
+        The corresponding cohomology class as an instance of
         :class:`~sage.schemes.toric.variety.CohomologyClass`.
         The cohomology class is the first Chern class of the
         associated line bundle `\mathcal{O}(D)`.
@@ -859,7 +855,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         OUTPUT:
 
-        Returns the class of the divisor in `\mathop{Cl}(X)
+        The class of the divisor in `\mathop{Cl}(X)
         \otimes_\ZZ \QQ` as an instance of
         :class:`ToricRationalDivisorClassGroup`.
 
@@ -915,7 +911,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         .. NOTE::
 
-            * For a QQ-Cartier divisor, some positive integral
+            * For a `\QQ`-Cartier divisor, some positive integral
               multiple is Cartier. We return whether this associated
               divisor is ample, i.e. corresponds to an ample line bundle.
 
@@ -1138,9 +1134,7 @@ class ToricDivisor_generic(Divisor_generic):
         the line bundle (or reflexive sheaf) associated to the
         divisor.
 
-        OUTPUT:
-
-        - :class:`tuple` of points of lattice `M`.
+        OUTPUT: A :class:`tuple` of points of lattice `M`.
 
         EXAMPLES::
 
@@ -1318,9 +1312,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         - `m` -- a point in ``self.scheme().fan().dual_lattice()``.
 
-        OUTPUT:
-
-        - :class:`simplicial complex <sage.topology.simplicial_complex.SimplicialComplex>`.
+        OUTPUT: A :class:`simplicial complex <sage.topology.simplicial_complex.SimplicialComplex>`.
 
         EXAMPLES::
 
@@ -1356,9 +1348,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         - ``cplx`` -- simplicial complex.
 
-        OUTPUT:
-
-        - integer vector.
+        OUTPUT: An integer vector.
 
         EXAMPLES::
 
@@ -1703,9 +1693,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: A string.
 
         TESTS::
 

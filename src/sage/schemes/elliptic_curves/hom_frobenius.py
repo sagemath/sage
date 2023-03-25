@@ -55,7 +55,9 @@ Computing the dual of Frobenius is supported as well::
     sage: E = EllipticCurve([GF(17^6).gen(), 0])
     sage: pi = EllipticCurveHom_frobenius(E)
     sage: pihat = pi.dual(); pihat
-    Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + (15*z6^5+5*z6^4+8*z6^3+12*z6^2+11*z6+7)*x over Finite Field in z6 of size 17^6 to Elliptic Curve defined by y^2 = x^3 + z6*x over Finite Field in z6 of size 17^6
+    Isogeny of degree 17
+     from Elliptic Curve defined by y^2 = x^3 + (15*z6^5+5*z6^4+8*z6^3+12*z6^2+11*z6+7)*x over Finite Field in z6 of size 17^6
+     to Elliptic Curve defined by y^2 = x^3 + z6*x over Finite Field in z6 of size 17^6
     sage: pihat.is_separable()
     True
     sage: pihat * pi == EllipticCurveHom_scalar(E,17)   # known bug -- #6413

@@ -48,7 +48,7 @@ from sage.rings.infinity import Infinity
 
 class Berkovich_Element(Element):
     """
-    The parent class for any element of a Berkovich space
+    The parent class for any element of a Berkovich space.
     """
     pass
 
@@ -687,7 +687,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         INPUT:
 
-         - ``other`` -- A point of the same Berkovich space as this point.
+        - ``other`` -- A point of the same Berkovich space as this point.
 
         OUTPUT: A finite or infinite real number.
 
@@ -1181,7 +1181,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         Type IV point of precision 100 with centers given by
         ((t^2 + 2*t + 1) + O(3^20))*x and radii given by (y + 1.00000000000000)/y
 
-    For increased performance, error_check can be set to ``False``. WARNING: with error check set
+    For increased performance, ``error_check`` can be set to ``False``. WARNING: with error check set
     to ``False``, any error in the input will lead to incorrect results::
 
         sage: B(f, g, prec=100, error_check=False)                                      # optional - sage.rings.padics

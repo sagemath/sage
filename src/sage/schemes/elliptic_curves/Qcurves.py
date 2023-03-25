@@ -53,19 +53,19 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
 
     - when the flag is ``True``, so `E` is a `\QQ`-curve:
 
-        - either {'CM':`D`} where `D` is a negative discriminant, when
-          `E` has potential CM with discriminant `D`;
+      - either {'CM':`D`} where `D` is a negative discriminant, when
+        `E` has potential CM with discriminant `D`;
 
-        - otherwise {'CM': `0`, 'core_poly': `f`, 'rho': `\rho`, 'r':
-          `r`, 'N': `N`}, when `E` is a non-CM `\QQ`-curve, where the
-          core polynomial `f` is an irreducible monic polynomial over
-          `QQ` of degree `2^\rho`, all of whose roots are
-          `j`-invariants of curves isogenous to `E`, the core level
-          `N` is a square-free integer with `r` prime factors which is
-          the LCM of the degrees of the isogenies between these
-          conjugates.  For example, if there exists a curve `E'`
-          isogenous to `E` with `j(E')=j\in\QQ`, then the certificate
-          is {'CM':0, 'r':0, 'rho':0, 'core_poly': x-j, 'N':1}.
+      - otherwise {'CM': `0`, 'core_poly': `f`, 'rho': `\rho`, 'r':
+        `r`, 'N': `N`}, when `E` is a non-CM `\QQ`-curve, where the
+        core polynomial `f` is an irreducible monic polynomial over
+        `QQ` of degree `2^\rho`, all of whose roots are
+        `j`-invariants of curves isogenous to `E`, the core level
+        `N` is a square-free integer with `r` prime factors which is
+        the LCM of the degrees of the isogenies between these
+        conjugates.  For example, if there exists a curve `E'`
+        isogenous to `E` with `j(E')=j\in\QQ`, then the certificate
+        is {'CM':0, 'r':0, 'rho':0, 'core_poly': x-j, 'N':1}.
 
     - when the flag is ``False``, so `E` is not a `\QQ`-curve, the
       certificate is a prime `p` such that the reductions of `E` at
@@ -405,9 +405,9 @@ def Step4Test(E, B, oldB=0, verbose=False):
 
     - `B` (integer): upper bound on primes to test
 
-    - `oldB` (integer, default 0): lower bound on primes to test
+    - ``oldB`` (integer, default 0): lower bound on primes to test
 
-    - `verbose` (boolean, default ``False``): verbosity flag
+    - ``verbose`` (boolean, default ``False``): verbosity flag
 
     OUTPUT:
 
@@ -495,9 +495,9 @@ def conjugacy_test(jlist, verbose=False):
 
     INPUT:
 
-    - `jlist` (list): a list of algebraic numbers in the same field
+    - ``jlist`` (list): a list of algebraic numbers in the same field
 
-    - `verbose` (boolean, default ``False``): verbosity flag
+    - ``verbose`` (boolean, default ``False``): verbosity flag
 
     OUTPUT:
 

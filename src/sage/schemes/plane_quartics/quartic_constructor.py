@@ -15,15 +15,15 @@ from .quartic_generic import QuarticCurve_generic
 
 def QuarticCurve(F, PP=None, check=False):
     """
-    Returns the quartic curve defined by the polynomial F.
+    Return the quartic curve defined by the polynomial ``F``.
 
     INPUT:
 
-    - F -- a polynomial in three variables, homogeneous of degree 4
+    - ``F`` -- a polynomial in three variables, homogeneous of degree 4
 
-    - PP -- a projective plane (default:None)
+    - ``PP`` -- a projective plane (default: None)
 
-    - check -- whether to check for smoothness or not (default:False)
+    - ``check`` -- whether to check for smoothness or not (default: False)
 
     EXAMPLES::
 

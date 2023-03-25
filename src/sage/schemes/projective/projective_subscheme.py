@@ -254,8 +254,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: S = P.subscheme([u^2 - v*w])
             sage: A.<x, y> = AffineSpace(2, ZZ)
             sage: S.affine_patch(1, A)
-            Closed subscheme of Affine Space of dimension 2 over Integer Ring
-            defined by:
+            Closed subscheme of Affine Space of dimension 2 over Integer Ring defined by:
               x^2 - y
         """
         i = int(i)   # implicit type checking

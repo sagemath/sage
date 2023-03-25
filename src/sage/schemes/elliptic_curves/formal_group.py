@@ -396,7 +396,7 @@ class EllipticCurveFormalGroup(SageObject):
 
     def inverse(self, prec=20):
         r"""
-        Return the formal group inverse law i(t), which satisfies F(t, i(t)) = 0.
+        Return the formal group inverse law `i(t)`, which satisfies `F(t, i(t)) = 0`.
 
         INPUT:
 
@@ -455,8 +455,8 @@ class EllipticCurveFormalGroup(SageObject):
 
         - ``prec`` -- integer (default: 10)
 
-        OUTPUT: a power series with given precision in R[['t1','t2']], where
-        the curve is defined over R.
+        OUTPUT: a power series with given precision in `R[[t_1,t_2]]`, where
+        the curve is defined over `R`.
 
         Return the formal power series
 
@@ -464,7 +464,7 @@ class EllipticCurveFormalGroup(SageObject):
 
             F(t_1, t_2) = t_1 + t_2 - a_1 t_1 t_2 - \cdots
 
-        to precision `O(t1,t2)^{prec}` of page 115 of [Sil2009]_.
+        to precision `O(t_1,t_2)^{prec}` of page 115 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if possible.
 

@@ -403,9 +403,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
     - ``check`` -- if ``True`` (default), the input will be checked for
       correctness.
 
-    OUTPUT:
-
-    A :class:`SchemeMorphism_point_toric_field`.
+    OUTPUT: A :class:`SchemeMorphism_point_toric_field`.
 
     TESTS::
 
@@ -466,9 +464,7 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
     Same as for
     :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial`.
 
-    OUTPUT:
-
-    A :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
+    OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
 
     TESTS::
 
@@ -521,10 +517,9 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
         """
         Express the morphism as a map defined by a fan morphism.
 
-        OUTPUT:
+        OUTPUT: A :class:`SchemeMorphism_polynomial_toric_variety`.
 
-        A :class:`SchemeMorphism_polynomial_toric_variety`. Raises a
-        ``TypeError`` if the morphism cannot be written in such a way.
+        Raises a ``TypeError`` if the morphism cannot be written in such a way.
 
         EXAMPLES::
 
@@ -607,9 +602,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         r"""
         Return the cone corresponding to the torus orbit.
 
-        OUTPUT:
-
-        A cone of the fan of the ambient toric variety.
+        OUTPUT: A cone of the fan of the ambient toric variety.
 
         EXAMPLES::
 
@@ -630,8 +623,8 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
 
         OUTPUT:
 
-        Return a dictionary `{orbit ray generator : preimage ray
-        index}`. Note that the orbit ray generator need not be
+        A dictionary ``{orbit ray generator: preimage ray
+        index}``. Note that the orbit ray generator need not be
         primitive. Also, the preimage ray is not necessarily unique.
 
         EXAMPLES::
@@ -739,7 +732,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
 
         INPUT:
 
-        - ``divisor`` -- a torus-invariant QQ-Cartier divisor on the
+        - ``divisor`` -- a torus-invariant `\QQ`-Cartier divisor on the
           codomain of the embedding map.
 
         OUTPUT:
@@ -806,9 +799,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         :class:`SchemeMorphism_fan_toric_variety_dominant` for
         additional functionality for fibrations.
 
-    OUTPUT:
-
-    A :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety`.
+    OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety`.
 
     EXAMPLES::
 
@@ -877,9 +868,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 
         - ``right`` -- another toric morphism
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: A boolean.
 
         Comparison is done first by domain, then by codomain, then by
         fan morphism.
@@ -920,9 +909,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 
         - ``right`` -- a toric morphism defined by a fan morphism.
 
-        OUTPUT:
-
-        - a toric morphism.
+        OUTPUT: A toric morphism.
 
         EXAMPLES::
 
@@ -1059,9 +1046,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         Return the defining fan morphism.
 
-        OUTPUT:
-
-        A :class:`~sage.geometry.fan_morphism.FanMorphism`.
+        OUTPUT: A :class:`~sage.geometry.fan_morphism.FanMorphism`.
 
         EXAMPLES::
 
@@ -1081,10 +1066,9 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         Express the morphism via homogeneous polynomials.
 
-        OUTPUT:
+        OUTPUT: A :class:`SchemeMorphism_polynomial_toric_variety`.
 
-        A :class:`SchemeMorphism_polynomial_toric_variety`. Raises a
-        ``TypeError`` if the morphism cannot be written in terms of
+        Raises a ``TypeError`` if the morphism cannot be written in terms of
         homogeneous polynomials.
 
         EXAMPLES::
@@ -1290,7 +1274,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 
         INPUT:
 
-        - ``divisor`` -- a torus-invariant QQ-Cartier divisor on the
+        - ``divisor`` -- a torus-invariant `\QQ`-Cartier divisor on the
           codomain of ``self``.
 
         OUTPUT:
@@ -1347,9 +1331,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
     morphism :meth:`must be dominant
     <sage.geometry.fan_morphism.FanMorphism.is_dominant>`.
 
-    OUTPUT:
-
-    A :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety_dominant`.
+    OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety_dominant`.
 
     EXAMPLES::
 
@@ -1968,7 +1950,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
 
         INPUT:
 
-        - ``divisor`` -- a torus-invariant QQ-Cartier divisor on the
+        - ``divisor`` -- a torus-invariant `\QQ`-Cartier divisor on the
           codomain of the embedding map.
 
         OUTPUT:

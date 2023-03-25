@@ -935,7 +935,8 @@ class Lseries_ell(SageObject):
 
             sage: E = EllipticCurve("5077a")
             sage: E.lseries().zero_sums()
-            Zero sum estimator for L-function attached to Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
+            Zero sum estimator for L-function attached to
+            Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
         """
         from sage.lfunctions.zero_sums import LFunctionZeroSum
         return LFunctionZeroSum(self.__E, N=N)

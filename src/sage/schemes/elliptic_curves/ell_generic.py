@@ -1477,7 +1477,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         OUTPUT:
 
-        The elliptic curve obtained from self by the standard
+        The elliptic curve obtained from ``self`` by the standard
         Weierstrass transformation `(u,r,s,t)` with `u=1`.
 
         .. NOTE::
@@ -1507,7 +1507,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         OUTPUT:
 
-        The elliptic curve obtained from self by the standard
+        The elliptic curve obtained from ``self`` by the standard
         Weierstrass transformation `(u,r,s,t)` with `r=s=t=0`.
 
         .. NOTE::
@@ -2354,8 +2354,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         multiplication-by-`m` map on this elliptic curve.
 
         The resulting isogeny will
-        have the associated rational maps (i.e. those returned by
-        `self.multiplication_by_m()`) already computed.
+        have the associated rational maps (i.e., those returned by
+        :meth:`multiplication_by_m`) already computed.
 
         NOTE: This function is currently *much* slower than the
         result of ``self.multiplication_by_m()``, because
@@ -2504,8 +2504,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def isomorphism_to(self, other):
         """
-        Given another weierstrass model ``other`` of self, return an
-        isomorphism from self to ``other``.
+        Given another weierstrass model ``other`` of ``self``, return an
+        isomorphism from ``self`` to ``other``.
 
         INPUT:
 
@@ -2513,7 +2513,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         OUTPUT:
 
-        (Weierstrassmorphism) An isomorphism from self to other.
+        (Weierstrassmorphism) An isomorphism from ``self`` to ``other``.
 
         .. NOTE::
 
@@ -2553,7 +2553,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def automorphisms(self, field=None):
         """
-        Return the set of isomorphisms from self to itself (as a list).
+        Return the set of isomorphisms from ``self`` to itself (as a list).
 
         The identity and negation morphisms are guaranteed to appear
         as the first and second entry of the returned list.
@@ -2637,7 +2637,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def isomorphisms(self, other, field=None):
         """
-        Return the set of isomorphisms from self to other (as a list).
+        Return the set of isomorphisms from ``self`` to ``other`` (as a list).
 
         INPUT:
 
@@ -2693,7 +2693,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def is_isomorphic(self, other, field=None):
         """
-        Return whether or not self is isomorphic to other.
+        Return whether or not ``self`` is isomorphic to ``other``.
 
         INPUT:
 
@@ -2737,7 +2737,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def change_weierstrass_model(self, *urst):
         r"""
-        Return a new Weierstrass model of self under the standard transformation `(u,r,s,t)`
+        Return a new Weierstrass model of ``self`` under the standard transformation `(u,r,s,t)`
 
         .. MATH::
 
