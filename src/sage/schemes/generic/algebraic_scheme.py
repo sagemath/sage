@@ -1207,17 +1207,17 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         `\P^4_{\QQ}` then find the irreducible components::
 
             sage: PP.<x,y,z,w,v> = ProjectiveSpace(4, QQ)
-            sage: V = PP.subscheme( (x^2 - y^2 - z^2)*(w^5 -  2*v^2*z^3)* w * (v^3 - x^2*z) )
+            sage: V = PP.subscheme((x^2 - y^2 - z^2) * (w^5 -  2*v^2*z^3) * w * (v^3 - x^2*z))
             sage: V.irreducible_components()
             [
             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-            w,
+              w,
             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-            x^2 - y^2 - z^2,
+              x^2 - y^2 - z^2,
             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-            x^2*z - v^3,
+              x^2*z - v^3,
             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-            w^5 - 2*z^3*v^2
+              w^5 - 2*z^3*v^2
             ]
 
         We verify that the irrelevant ideal is not accidentally returned
@@ -1454,7 +1454,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
             sage: A.subscheme([x]) + A.subscheme([y^2 - (x^3+1)])
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-            x^4 - x*y^2 + x
+              x^4 - x*y^2 + x
 
         Saving and loading::
 
@@ -2037,7 +2037,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         - ``D`` -- dictionary (optional)
 
-        - ``phi`` -- SpecializationMorphism (optional)
+        - ``phi`` -- :class:`SpecializationMorphism` (optional)
 
         OUTPUT: :class:`SchemeMorphism_polynomial`
 
@@ -2057,9 +2057,10 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: P.<x,y,z> = AffineSpace(S, 3)
             sage: X = P.subscheme([x^2 + a*c*y^2 - b*z^2])
             sage: from sage.rings.polynomial.flatten import SpecializationMorphism
-            sage: phi = SpecializationMorphism(P.coordinate_ring(),dict({c:2,a:1}))
+            sage: phi = SpecializationMorphism(P.coordinate_ring(), dict({c: 2, a: 1}))
             sage: X.specialization(phi=phi)
-            Closed subscheme of Affine Space of dimension 3 over Univariate Polynomial Ring in b over Rational Field defined by:
+            Closed subscheme of Affine Space of dimension 3
+            over Univariate Polynomial Ring in b over Rational Field defined by:
               x^2 + 2*y^2 + (-b)*z^2
         """
         if D is None:

@@ -1300,12 +1300,9 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
     def coordinate_ring(self):
         r"""
-        Returns the coordinate ring of the ambient projective space
-        the multivariable polynomial ring over the base ring
+        Return the coordinate ring of the ambient projective space.
 
-        OUTPUT:
-
-        - ring
+        OUTPUT: A multivariable polynomial ring over the base ring.
 
         EXAMPLES::
 
@@ -2079,7 +2076,7 @@ class SchemeMorphism_point(SchemeMorphism):
             sage: Q.specialization({c: 1})
             (1 : 1)
 
-            ::
+        ::
 
             sage: R.<a,b> = PolynomialRing(QQ)
             sage: P.<x,y> = ProjectiveSpace(R, 1)
@@ -2106,7 +2103,7 @@ class SchemeMorphism_point(SchemeMorphism):
             (2 : 1)
             sage: Q2.codomain()
             Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
-                  x - 2*y
+              x - 2*y
 
         ::
 
