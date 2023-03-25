@@ -45,7 +45,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
       polynomials in the coordinate ring of ``toric_variety``.
 
     OUTPUT: An :class:`algebraic subscheme of a toric variety
-      <AlgebraicScheme_subscheme_toric>`.
+    <AlgebraicScheme_subscheme_toric>`.
 
     TESTS::
 

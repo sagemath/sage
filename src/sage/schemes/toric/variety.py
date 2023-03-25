@@ -1566,7 +1566,7 @@ class ToricVariety_field(AmbientSpace):
         Picard group of a toric variety is always torsion-free.
 
         OUTPUT: :class:`rational divisor class group
-          <sage.schemes.toric.divisor.ToricRationalDivisorClassGroup>`.
+        <sage.schemes.toric.divisor.ToricRationalDivisorClassGroup>`.
 
         .. NOTE::
 
@@ -1800,7 +1800,7 @@ class ToricVariety_field(AmbientSpace):
           ``self``.
 
         OUTPUT: A :class:`subscheme of a toric variety
-          <sage.schemes.toric.toric_subscheme.AlgebraicScheme_subscheme_toric>`.
+        <sage.schemes.toric.toric_subscheme.AlgebraicScheme_subscheme_toric>`.
 
         EXAMPLES:
 
