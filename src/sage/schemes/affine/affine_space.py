@@ -619,13 +619,11 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         - ``R`` -- commutative ring or morphism.
 
-        OUTPUT:
-
-        - affine space over ``R``.
+        OUTPUT: An affine space over ``R``.
 
         .. NOTE::
 
-            There is no need to have any relation between `R` and the base ring
+            There is no need to have any relation between ``R`` and the base ring
             of  this space, if you want to have such a relation, use
             ``self.base_extend(R)`` instead.
 
@@ -840,7 +838,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
     def _an_element_(self):
         r"""
-        Return an element of this affine space,used both for illustration and
+        Return an element of this affine space, used both for illustration and
         testing purposes.
 
         OUTPUT: a point in the affine space
@@ -859,7 +857,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
     def chebyshev_polynomial(self, n, kind='first', monic=False):
         """
-        Generates an endomorphism of this affine line by a Chebyshev polynomial.
+        Generate an endomorphism of this affine line by a Chebyshev polynomial.
 
         Chebyshev polynomials are a sequence of recursively defined orthogonal
         polynomials. Chebyshev of the first kind are defined as `T_0(x) = 1`,
@@ -1101,7 +1099,7 @@ class AffineSpace_field(AffineSpace_generic):
         the Weil restriction to the prime subfield.
 
         OUTPUT: Affine space of dimension ``d * self.dimension_relative()``
-                over the base field of ``self.base_ring()``.
+        over the base field of ``self.base_ring()``.
 
         EXAMPLES::
 
