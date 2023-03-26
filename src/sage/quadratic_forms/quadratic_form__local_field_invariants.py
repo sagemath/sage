@@ -342,7 +342,6 @@ def signature_vector(self):
     return (p, n, z)
 
 
-
 def signature(self):
     """
     Returns the signature of the quadratic form, defined as:

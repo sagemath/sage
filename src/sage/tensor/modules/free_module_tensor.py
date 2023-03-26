@@ -196,15 +196,20 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Dict, Optional, Union
 
-from sage.rings.integer import Integer
-from sage.structure.element import ModuleElementWithMutability
-from sage.tensor.modules.comp import (Components, CompWithSym, CompFullySym,
-                                      CompFullyAntiSym)
-from sage.tensor.modules.tensor_with_indices import TensorWithIndices
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
+from sage.rings.integer import Integer
+from sage.structure.element import ModuleElementWithMutability
+from sage.tensor.modules.comp import (
+    CompFullyAntiSym,
+    CompFullySym,
+    Components,
+    CompWithSym,
+)
+from sage.tensor.modules.tensor_with_indices import TensorWithIndices
 
 if TYPE_CHECKING:
+    from sage.symbolic.expression import Expression
     from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
     from sage.tensor.modules.free_module_basis import FreeModuleBasis
     from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
@@ -267,8 +272,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
         self,
         fmodule: FiniteRankFreeModule,
         tensor_type,
-        name=None,
-        latex_name=None,
+        name: Optional[str] = None,
+        latex_name: Optional[str] = None,
         sym=None,
         antisym=None,
         parent=None,
@@ -894,7 +899,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
                                         only_nonzero=only_nonzero,
                                         only_nonredundant=only_nonredundant)
 
-    def set_name(self, name=None, latex_name=None):
+    def set_name(self, name: Optional[str] = None, latex_name: Optional[str] = None):
         r"""
         Set (or change) the text name and LaTeX name of ``self``.
 
@@ -2265,7 +2270,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             result._components[basis] = self._components[basis] / other
         return result
 
-    def __call__(self, *args):
+    def __call__(self, *args) -> Expression:
         r"""
         The tensor acting on linear forms and module elements as a multilinear
         map.
