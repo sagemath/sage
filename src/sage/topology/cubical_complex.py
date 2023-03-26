@@ -74,8 +74,6 @@ from sage.sets.set import Set
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
-from sage.homology.chain_complex import ChainComplex
-from sage.graphs.graph import Graph
 from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
 from functools import total_ordering
@@ -1192,6 +1190,8 @@ class CubicalComplex(GenericCellComplex):
             sage: Square.homology(subcomplex=EdgesLTR)[2] == Square.homology(subcomplex=EdgesLBR)[2]
             True
         """
+        from sage.homology.chain_complex import ChainComplex
+
         # initialize subcomplex
         if subcomplex is None:
             subcomplex = CubicalComplex()
@@ -1333,6 +1333,8 @@ class CubicalComplex(GenericCellComplex):
             sage: cubical_complexes.Sphere(2).graph()
             Graph on 8 vertices
         """
+        from sage.graphs.graph import Graph
+
         data = {}
         vertex_dict = {}
         i = 0
