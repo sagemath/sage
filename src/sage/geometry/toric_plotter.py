@@ -731,7 +731,7 @@ class ToricPlotter(SageObject):
             rays = generators
         elif self.mode == "round":
             r = self.radius
-            rays = [r  * gen / gen.norm() for gen in generators]
+            rays = [r * gen / gen.norm() for gen in generators]
         self.rays = rays
 
 

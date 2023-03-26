@@ -619,8 +619,8 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             134.1200000... + 0.2200000000...*I
         """
         ID = self.I()
-        T  = self.T()
-        S  = self.S()
+        T = self.T()
+        S = self.S()
         TI = self.T(-1)
 
         A = ID
@@ -960,9 +960,9 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         if not hasattr(self, "_max_block_length"):
             self._max_block_length = ZZ(0)
-            self._conj_block       = {}
-            self._conj_nonprim     = {}
-            self._conj_prim        = {}
+            self._conj_block = {}
+            self._conj_nonprim = {}
+            self._conj_prim = {}
 
             # It is not clear how to define the class number for D=0:
             # Conjugacy classes are V(n-1)^(+-k) for arbitrary k

@@ -603,7 +603,7 @@ class ErrorErasureChannel(Channel):
         zero = V.base_ring().zero()
 
         errors = sample(range(n), number_errors + number_erasures)
-        error_positions   = errors[:number_errors]
+        error_positions = errors[:number_errors]
         erasure_positions = errors[number_errors:]
 
         error_vector = random_error_vector(n, V.base_ring(), error_positions)

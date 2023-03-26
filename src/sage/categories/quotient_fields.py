@@ -315,7 +315,7 @@ class QuotientFields(Category_singleton):
                 return (P(g)/P(lcmD), P(s*selfD)/P(lcmD),P(t*otherD)/P(lcmD))
             except (AttributeError, NotImplementedError, TypeError, ValueError):
                 zero = self.parent().zero()
-                one  = self.parent().one()
+                one = self.parent().one()
                 if self != zero:
                     return (one, ~self, zero)
                 elif other != zero:
@@ -681,11 +681,11 @@ class QuotientFields(Category_singleton):
                 try:
                     numder = num._derivative(var)
                     dender = den._derivative(var)
-                    d      = den.gcd(dender)
-                    den    = den // d
+                    d = den.gcd(dender)
+                    den = den // d
                     dender = dender // d
-                    tnum   = numder * den - num * dender
-                    tden   = self.denominator() * den
+                    tnum = numder * den - num * dender
+                    tden = self.denominator() * den
                     if not tden.is_one() and tden.is_unit():
                         try:
                             tnum = tnum * tden.inverse_of_unit()

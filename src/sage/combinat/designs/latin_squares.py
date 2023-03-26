@@ -513,8 +513,8 @@ def MOLS_table(start,stop=None,compare=False,width=None):
         start,stop = 0,start
     # make start and stop be congruent to 0 mod 20
     start = start - (start%20)
-    stop  = stop-1
-    stop  = stop  + (20-(stop%20))
+    stop = stop-1
+    stop = stop + (20-(stop%20))
     assert start%20 == 0 and stop%20 == 0
     if stop <= start:
         return

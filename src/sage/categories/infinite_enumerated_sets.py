@@ -88,7 +88,7 @@ class InfiniteEnumeratedSets(CategoryWithAxiom):
                 NotImplementedError: cannot list an infinite set
             """
             raise NotImplementedError("cannot list an infinite set")
-        _list_default  = list # needed by the check system.
+        _list_default = list # needed by the check system.
 
         def _test_enumerated_set_iter_cardinality(self, **options):
             """

@@ -18762,8 +18762,8 @@ class GenericGraph(GenericGraph_pyx):
             raise TypeError('both arguments must be of the same class')
 
         multiedges = self.allows_multiple_edges() or other.allows_multiple_edges()
-        loops      = self.allows_loops()          or other.allows_loops()
-        weighted   = self.weighted()              and other.weighted()
+        loops = self.allows_loops()          or other.allows_loops()
+        weighted = self.weighted()              and other.weighted()
 
         if self._directed:
             from sage.graphs.digraph import DiGraph
@@ -21015,7 +21015,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         from . import graph_plot
         layout_options = {key: kwds[key] for key in kwds.keys() if key in graph_plot.layout_options}
-        kwds           = {key: kwds[key] for key in kwds.keys() if key not in graph_plot.layout_options}
+        kwds = {key: kwds[key] for key in kwds.keys() if key not in graph_plot.layout_options}
         if pos3d is None:
             pos3d = self.layout(dim=3, **layout_options)
 

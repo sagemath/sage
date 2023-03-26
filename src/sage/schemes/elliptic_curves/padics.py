@@ -1096,7 +1096,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
 
     Rt = x.parent()
 
-    A  = (x + c) * f
+    A = (x + c) * f
     # do integral over QQ, to avoid divisions by p
     A = Rt(QQt(A).integral())
     A = (-X.a1()/2 - A) * f
@@ -1284,7 +1284,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
 
     Rt = x.parent()
 
-    A  = (x + c) * f
+    A = (x + c) * f
     # do integral over QQ, to avoid divisions by p
     A = Rt(QQt(A).integral())
     A = (-X.a1()/2 - A) * f

@@ -89,17 +89,17 @@ class FormsRing_abstract(Parent):
 
         if (base_ring.characteristic() > 0):
             raise NotImplementedError("only characteristic 0 is supported")
-        self._group               = group
-        self._red_hom             = red_hom
-        self._base_ring           = base_ring
-        self._coeff_ring          = FractionField(PolynomialRing(base_ring,'d'))
-        self._pol_ring            = PolynomialRing(base_ring,'x,y,z,d')
-        self._rat_field           = FractionField(self._pol_ring)
+        self._group = group
+        self._red_hom = red_hom
+        self._base_ring = base_ring
+        self._coeff_ring = FractionField(PolynomialRing(base_ring,'d'))
+        self._pol_ring = PolynomialRing(base_ring,'x,y,z,d')
+        self._rat_field = FractionField(self._pol_ring)
 
         # default values
-        self._weight              = None
-        self._ep                  = None
-        self._analytic_type       = self.AT(["quasi", "mero"])
+        self._weight = None
+        self._ep = None
+        self._analytic_type = self.AT(["quasi", "mero"])
 
         self.default_prec(10)
         self.disp_prec(5)
@@ -1947,12 +1947,12 @@ class FormsRing_abstract(Parent):
         reduced_self = extended_self.reduce_type(["holo"], degree = (QQ(k), ep))
 
         if (n == infinity):
-            l2  = ZZ(0)
-            l1  = ZZ((k-(1-ep)) / ZZ(4))
+            l2 = ZZ(0)
+            l1 = ZZ((k-(1-ep)) / ZZ(4))
         else:
             num = ZZ((k-(1-ep)*n/(n-2)) * (n-2) / ZZ(4))
-            l2  = num % n
-            l1  = ((num-l2)/n).numerator()
+            l2 = num % n
+            l1 = ((num-l2)/n).numerator()
 
         # If the space is one dimensional we return the normalized generator
         if l1 == 0:

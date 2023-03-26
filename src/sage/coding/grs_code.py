@@ -1009,7 +1009,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
         C = self.code()
         if p.degree() >= C.dimension():
             raise ValueError("The polynomial to encode must have degree at most %s" % (C.dimension() - 1))
-        alphas    = C.evaluation_points()
+        alphas = C.evaluation_points()
         col_mults = C.column_multipliers()
         c = vector(C.base_ring(), [col_mults[i]*p(alphas[i]) for i in range(C.length())])
         return c
@@ -1057,7 +1057,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
 
         """
         C = self.code()
-        alphas    = C.evaluation_points()
+        alphas = C.evaluation_points()
         col_mults = C.column_multipliers()
 
         c = [c[i]/col_mults[i] for i in range(C.length())]
@@ -1229,14 +1229,14 @@ class GRSBerlekampWelchDecoder(Decoder):
         r_list = copy(r)
         r_list = [r[i]/col_mults[i] for i in range(0, C.length())]
 
-        t  = (C.minimum_distance()-1) // 2
+        t = (C.minimum_distance()-1) // 2
         l0 = n-1-t
         l1 = n-1-t-(k-1)
-        S  = matrix(C.base_field(), n, l0+l1+2,
+        S = matrix(C.base_field(), n, l0+l1+2,
                     lambda i, j: (C.evaluation_points()[i])**j if j<(l0+1)
                     else r_list[i]*(C.evaluation_points()[i])**(j-(l0+1)))
-        S  = S.right_kernel()
-        S  = S.basis_matrix().row(0)
+        S = S.right_kernel()
+        S = S.basis_matrix().row(0)
         R = C.base_field()['x']
 
         Q0 = R(S.list_from_positions(range(l0 + 1)))

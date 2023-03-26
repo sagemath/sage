@@ -204,7 +204,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
         from warnings import catch_warnings, simplefilter
 
         vertices, rays, lines = (tuple(x) for x in Vrep)
-        ieqs, eqns            = (tuple(x) for x in Hrep)
+        ieqs, eqns = (tuple(x) for x in Hrep)
 
         if not (vertices or rays or lines):
             # cdd refuses to handle empty polyhedra.
@@ -214,7 +214,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
         # We prefer the shorter representation.
         # Note that for the empty polyhedron we prefer Hrepresentation.
         prim = "Hrep" if len(ieqs) <= len(vertices) + len(rays) else "Vrep"
-        sec  = "Vrep" if len(ieqs) <= len(vertices) + len(rays) else "Hrep"
+        sec = "Vrep" if len(ieqs) <= len(vertices) + len(rays) else "Hrep"
 
         with catch_warnings():
             # Raise an error and try the other representation in case of

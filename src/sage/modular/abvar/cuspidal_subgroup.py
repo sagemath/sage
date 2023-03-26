@@ -158,8 +158,8 @@ class CuspidalSubgroup_generic(FiniteSubgroup):
         """
         A = self.abelian_variety()
         Cusp = A.modular_symbols()
-        Amb  = Cusp.ambient_module()
-        Eis  = Amb.eisenstein_submodule()
+        Amb = Cusp.ambient_module()
+        Eis = Amb.eisenstein_submodule()
 
         C = Amb.cusps()
         N = Amb.level()

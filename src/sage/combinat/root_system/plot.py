@@ -1393,8 +1393,8 @@ class PlotOptions():
         if self.level:
             old_rays = rays
             vertices = [self.intersection_at_level_1(ray) for ray in old_rays if ray.level() > 0]
-            rays     = [ray for ray in old_rays if ray.level() == 0]
-            rays    += [vertex - self.intersection_at_level_1(ray) for ray in old_rays if ray.level() < 0 for vertex in vertices]
+            rays = [ray for ray in old_rays if ray.level() == 0]
+            rays += [vertex - self.intersection_at_level_1(ray) for ray in old_rays if ray.level() < 0 for vertex in vertices]
         else:
             vertices = []
 

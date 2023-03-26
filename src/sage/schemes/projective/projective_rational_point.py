@@ -445,7 +445,7 @@ def sieve(X, bound):
         best_size = 2
         best_time = (N**2)*M[2][-1]**(N) + (N**5 * RR(prod(M[2])**dim_scheme / M[2][-1]) )
         for i in range(2, max_length + 1):
-            current_time = (N**2)*M[i][-1]**(N) + (N**5 * RR(prod(M[i])**dim_scheme  / M[i][-1]) )
+            current_time = (N**2)*M[i][-1]**(N) + (N**5 * RR(prod(M[i])**dim_scheme / M[i][-1]) )
             if current_time < best_time:
                 best_size = i
                 best_time = current_time
