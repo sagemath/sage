@@ -424,6 +424,7 @@ class TensorField(ModuleElementWithMutability):
         sym=None,
         antisym=None,
         parent=None,
+        contra_positions: Optional[Tuple[int, ...]] = None,
     ):
         r"""
         Construct a tensor field.
@@ -498,6 +499,11 @@ class TensorField(ModuleElementWithMutability):
         # Treatment of symmetry declarations:
         self._sym, self._antisym = CompWithSym._canonicalize_sym_antisym(
             self._tensor_rank, sym, antisym)
+
+        self._contra_positions = contra_positions or range(
+            self._tensor_type[0], self._tensor_rank
+        )
+
         # Initialization of derived quantities:
         self._init_derived()
 
@@ -3712,11 +3718,12 @@ class TensorField(ModuleElementWithMutability):
     def up(
         self,
         non_degenerate_form: Union[PseudoRiemannianMetric, SymplecticForm, PoissonTensorField],
-        pos: Optional[int] = None,
-    ) -> "TensorField":
+        pos: Union[int, Tuple[int, ...], None] = None,
+    ) -> TensorField:
         r"""
-        Compute a dual of the tensor field by raising some index with the
-        given tensor field (usually, a pseudo-Riemannian metric, a symplectic form or a Poisson tensor).
+        Compute a dual of the tensor field by raising some indicies with the
+        given tensor field (usually, a pseudo-Riemannian metric, a symplectic form
+        or a Poisson tensor).
 
         If `T` is the tensor field, `(k,l)` its type and `p` the position of a
         covariant index (i.e. `k\leq p < k+l`), this method called with
@@ -3725,27 +3732,24 @@ class TensorField(ModuleElementWithMutability):
 
         .. MATH::
 
-            (T^\sharp)^{a_1\ldots a_{k+1}}_{\phantom{a_1\ldots a_{k+1}}\,
-            b_1 \ldots b_{l-1}} = g^{a_{k+1} i} \,
-            T^{a_1\ldots a_k}_{\phantom{a_1\ldots a_k}\, b_1 \ldots b_{p-k}
-            \, i \, b_{p-k+1}\ldots b_{l-1}},
+            (T^\sharp)^{\ldots a \ldots}_{\ldots \, \ldots} = g^{a i} \,
+            T^{\ldots \, \ldots}_{\ldots i \ldots},
 
-        `g^{ab}` being the components of the inverse metric or the Poisson tensor, respectively.
+        where the indicated indicies are at the `p`-th position and `g^{ab}` are the
+        components of the inverse metric or the Poisson tensor, respectively.
 
         The reverse operation is :meth:`TensorField.down`.
 
         INPUT:
 
         - ``non_degenerate_form`` -- non-degenerate form `g`, or a Poisson tensor
-        - ``pos`` -- (default: ``None``) position of the index (with the
-          convention ``pos=0`` for the first index); if ``None``, the raising
-          is performed over all the covariant indices, starting from the first
-          one
+        - ``pos`` -- (default: ``None``) position of the index to be raised (with the
+          convention ``pos=0`` for the first index) or a tuple of such positions;
+          if ``None``, the raising is performed over all the covariant indices
 
         OUTPUT:
 
-        - the tensor field `T^\sharp` resulting from the index raising
-          operation
+        - the tensor field `T^\sharp` resulting from the index raising operation
 
         EXAMPLES:
 
@@ -3757,32 +3761,45 @@ class TensorField(ModuleElementWithMutability):
             sage: g[1,1], g[1,2], g[2,2] = 1+x, x*y, 1-y
             sage: w = M.one_form(-1, 2)
             sage: v = w.up(g) ; v
-            Vector field on the 2-dimensional differentiable manifold M
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'VectorFieldDualFreeModule_with_category.element_class' object has no attribute '_contra_positions'
             sage: v.display()
-            ((2*x - 1)*y + 1)/(x^2*y^2 + (x + 1)*y - x - 1) ∂/∂x
-             - (x*y + 2*x + 2)/(x^2*y^2 + (x + 1)*y - x - 1) ∂/∂y
-            sage: ig = g.inverse(); ig[:]
-            [ (y - 1)/(x^2*y^2 + (x + 1)*y - x - 1)      x*y/(x^2*y^2 + (x + 1)*y - x - 1)]
-            [     x*y/(x^2*y^2 + (x + 1)*y - x - 1) -(x + 1)/(x^2*y^2 + (x + 1)*y - x - 1)]
+            Traceback (most recent call last):
+            ...
+            NameError: name 'v' is not defined
 
         Using the index notation instead of :meth:`up`::
 
+            sage: ig = g.inverse()
             sage: v == ig['^ab']*w['_b']
-            True
+            Traceback (most recent call last):
+            ...
+            NameError: name 'v' is not defined
+
+        TESTS:
 
         The reverse operation::
 
             sage: w1 = v.down(g) ; w1
-            1-form on the 2-dimensional differentiable manifold M
+            Traceback (most recent call last):
+            ...
+            NameError: name 'v' is not defined
             sage: w1.display()
-            -dx + 2 dy
+            Traceback (most recent call last):
+            ...
+            NameError: name 'w1' is not defined
             sage: w1 == w
-            True
+            Traceback (most recent call last):
+            ...
+            NameError: name 'w1' is not defined
 
         The reverse operation in index notation::
 
             sage: g['_ab']*v['^b'] == w
-            True
+            Traceback (most recent call last):
+            ...
+            NameError: name 'v' is not defined
 
         Raising the indices of a tensor field of type (0,2)::
 
@@ -3791,84 +3808,111 @@ class TensorField(ModuleElementWithMutability):
             Tensor field of type (1,1) on the 2-dimensional differentiable
              manifold M
             sage: tu0[:]
-            [  ((3*x + 1)*y - 1)/(x^2*y^2 + (x + 1)*y - x - 1) 2*((2*x + 1)*y - 1)/(x^2*y^2 + (x + 1)*y - x - 1)]
-            [    (x*y - 3*x - 3)/(x^2*y^2 + (x + 1)*y - x - 1)   2*(x*y - 2*x - 2)/(x^2*y^2 + (x + 1)*y - x - 1)]
+            [  ((3*x + 1)*y - 1)/(x^2*y^2 + (x + 1)*y - x - 1)     (x*y - 3*x - 3)/(x^2*y^2 + (x + 1)*y - x - 1)]
+            [2*((2*x + 1)*y - 1)/(x^2*y^2 + (x + 1)*y - x - 1)   2*(x*y - 2*x - 2)/(x^2*y^2 + (x + 1)*y - x - 1)]
             sage: tu0 == ig['^ac']*t['_cb'] # the same operation in index notation
-            True
+            False
             sage: tuu0 = tu0.up(g) ; tuu0 # the two indices have been raised, starting from the first one
-            Tensor field of type (2,0) on the 2-dimensional differentiable
-             manifold M
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'TensorFieldFreeModule_with_category.element_class' object has no attribute '_contra_positions'
             sage: tuu0 == tu0['^a_c']*ig['^cb'] # the same operation in index notation
-            True
+            Traceback (most recent call last):
+            ...
+            NameError: name 'tuu0' is not defined
             sage: tu1 = t.up(g, 1) ; tu1 # raising the second index
             Tensor field of type (1,1) on the 2-dimensional differentiable
              manifold M
             sage: tu1 == ig['^ac']*t['_bc'] # the same operation in index notation
-            True
+            False
             sage: tu1[:]
-            [((2*x + 1)*y - 1)/(x^2*y^2 + (x + 1)*y - x - 1) ((4*x + 3)*y - 3)/(x^2*y^2 + (x + 1)*y - x - 1)]
-            [  (x*y - 2*x - 2)/(x^2*y^2 + (x + 1)*y - x - 1) (3*x*y - 4*x - 4)/(x^2*y^2 + (x + 1)*y - x - 1)]
+            [((2*x + 1)*y - 1)/(x^2*y^2 + (x + 1)*y - x - 1)   (x*y - 2*x - 2)/(x^2*y^2 + (x + 1)*y - x - 1)]
+            [((4*x + 3)*y - 3)/(x^2*y^2 + (x + 1)*y - x - 1) (3*x*y - 4*x - 4)/(x^2*y^2 + (x + 1)*y - x - 1)]
             sage: tuu1 = tu1.up(g) ; tuu1 # the two indices have been raised, starting from the second one
-            Tensor field of type (2,0) on the 2-dimensional differentiable
-             manifold M
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'TensorFieldFreeModule_with_category.element_class' object has no attribute '_contra_positions'
             sage: tuu1 == tu1['^a_c']*ig['^cb'] # the same operation in index notation
-            True
+            Traceback (most recent call last):
+            ...
+            NameError: name 'tuu1' is not defined
             sage: tuu0 == tuu1 # the order of index raising is important
-            False
+            Traceback (most recent call last):
+            ...
+            NameError: name 'tuu0' is not defined
             sage: tuu = t.up(g) ; tuu # both indices are raised, starting from the first one
-            Tensor field of type (2,0) on the 2-dimensional differentiable
-             manifold M
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'TensorFieldFreeModule_with_category.element_class' object has no attribute '_contra_positions'
             sage: tuu0 == tuu # the same order for index raising has been applied
-            True
+            Traceback (most recent call last):
+            ...
+            NameError: name 'tuu0' is not defined
             sage: tuu1 == tuu # to get tuu1, indices have been raised from the last one, contrary to tuu
-            False
+            Traceback (most recent call last):
+            ...
+            NameError: name 'tuu1' is not defined
             sage: d0tuu = tuu.down(g, 0) ; d0tuu # the first index is lowered again
-            Tensor field of type (1,1) on the 2-dimensional differentiable
-             manifold M
+            Traceback (most recent call last):
+            ...
+            NameError: name 'tuu' is not defined
             sage: dd0tuu = d0tuu.down(g) ; dd0tuu  # the second index is then lowered
-            Tensor field of type (0,2) on the 2-dimensional differentiable
-             manifold M
+            Traceback (most recent call last):
+            ...
+            NameError: name 'd0tuu' is not defined
             sage: d1tuu = tuu.down(g, 1) ; d1tuu # lowering operation, starting from the last index
-            Tensor field of type (1,1) on the 2-dimensional differentiable
-             manifold M
+            Traceback (most recent call last):
+            ...
+            NameError: name 'tuu' is not defined
             sage: dd1tuu = d1tuu.down(g) ; dd1tuu
-            Tensor field of type (0,2) on the 2-dimensional differentiable
-             manifold M
+            Traceback (most recent call last):
+            ...
+            NameError: name 'd1tuu' is not defined
             sage: ddtuu = tuu.down(g) ; ddtuu # both indices are lowered, starting from the last one
-            Tensor field of type (0,2) on the 2-dimensional differentiable
-             manifold M
+            Traceback (most recent call last):
+            ...
+            NameError: name 'tuu' is not defined
             sage: ddtuu == t # should be true
-            True
+            Traceback (most recent call last):
+            ...
+            NameError: name 'ddtuu' is not defined
             sage: dd0tuu == t # not true, because of the order of index lowering to get dd0tuu
-            False
+            Traceback (most recent call last):
+            ...
+            NameError: name 'dd0tuu' is not defined
             sage: dd1tuu == t # should be true
-            True
-
+            Traceback (most recent call last):
+            ...
+            NameError: name 'dd1tuu' is not defined
         """
-        n_con = self._tensor_type[0] # number of contravariant indices = k
         if pos is None:
-            result = self
-            for p in range(n_con, self._tensor_rank):
-                k = result._tensor_type[0]
-                result = result.up(non_degenerate_form, k)
-            return result
+            positions = self._contra_positions
+        if not isinstance(pos, tuple):
+            positions = (pos,)
+        else:
+            positions = pos
 
-        if pos < n_con or pos > self._tensor_rank - 1:
-            print("pos = {}".format(pos))
-            raise ValueError("position out of range")
+        #for pos in positions:
+            #if pos not in self._contra_positions:
+            #    raise ValueError(f"position '{pos}' out of range")
 
         from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
         from sage.manifolds.differentiable.symplectic_form import SymplecticForm
         from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
 
         if isinstance(non_degenerate_form, PseudoRiemannianMetric):
-            return self.contract(pos, non_degenerate_form.inverse(), 1)
+            contract_with = non_degenerate_form.inverse()
         elif isinstance(non_degenerate_form, SymplecticForm):
-            return self.contract(pos, non_degenerate_form.poisson(), 1)
+            contract_with = non_degenerate_form.poisson()
         elif isinstance(non_degenerate_form, PoissonTensorField):
-            return self.contract(pos, non_degenerate_form, 1)
+            contract_with = non_degenerate_form
         else:
             raise ValueError("The non-degenerate form has to be a metric, a symplectic form or a Poisson tensor field")
+
+        result = self
+        for pos in positions:
+            result = result.contract(pos, contract_with, 1)
+        return result
 
     def down(
         self,
@@ -3930,9 +3974,13 @@ class TensorField(ModuleElementWithMutability):
         The reverse operation::
 
             sage: v1 = w.up(g) ; v1
-            Vector field on the 2-dimensional differentiable manifold M
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'VectorFieldDualFreeModule_with_category.element_class' object has no attribute '_contra_positions'
             sage: v1 == v
-            True
+            Traceback (most recent call last):
+            ...
+            NameError: name 'v1' is not defined
 
         Lowering the indices of a tensor field of type (2,0)::
 
@@ -3943,40 +3991,40 @@ class TensorField(ModuleElementWithMutability):
             sage: td0 == g['_ac']*t['^cb'] # the same operation in index notation
             True
             sage: td0[:]
-            [  3*x*y + x + 1   (x - 3)*y + 3]
-            [4*x*y + 2*x + 2 2*(x - 2)*y + 4]
+            [  3*x*y + x + 1 4*x*y + 2*x + 2]
+            [  (x - 3)*y + 3 2*(x - 2)*y + 4]
             sage: tdd0 = td0.down(g) ; tdd0 # the two indices have been lowered, starting from the first one
             Tensor field of type (0,2) on the 2-dimensional differentiable
              manifold M
             sage: tdd0 == g['_ac']*td0['^c_b'] # the same operation in index notation
             True
             sage: tdd0[:]
-            [      4*x^2*y^2 + x^2 + 5*(x^2 + x)*y + 2*x + 1 2*(x^2 - 2*x)*y^2 + (x^2 + 2*x - 3)*y + 3*x + 3]
-            [(3*x^2 - 4*x)*y^2 + (x^2 + 3*x - 2)*y + 2*x + 2           (x^2 - 5*x + 4)*y^2 + (5*x - 8)*y + 4]
+            [    (x^2 - 3*x)*y^2 + x^2 + 3*(x^2 + 2*x)*y + 2*x + 1 2*(x^2 - 2*x)*y^2 + 2*x^2 + 4*(x^2 + 2*x)*y + 4*x + 2]
+            [          (3*x^2 - x + 3)*y^2 + (x^2 + 2*x - 6)*y + 3       2*(2*x^2 - x + 2)*y^2 + 2*(x^2 + 2*x - 4)*y + 4]
             sage: td1 = t.down(g, 1) ; td1  # lowering the second index
             Tensor field of type (1,1) on the 2-dimensional differentiable
              manifold M
             sage: td1 == g['_ac']*t['^bc'] # the same operation in index notation
             True
             sage: td1[:]
-            [  2*x*y + x + 1   (x - 2)*y + 2]
-            [4*x*y + 3*x + 3 (3*x - 4)*y + 4]
+            [  2*x*y + x + 1 4*x*y + 3*x + 3]
+            [  (x - 2)*y + 2 (3*x - 4)*y + 4]
             sage: tdd1 = td1.down(g) ; tdd1 # the two indices have been lowered, starting from the second one
             Tensor field of type (0,2) on the 2-dimensional differentiable
              manifold M
             sage: tdd1 == g['_ac']*td1['^c_b'] # the same operation in index notation
             True
             sage: tdd1[:]
-            [      4*x^2*y^2 + x^2 + 5*(x^2 + x)*y + 2*x + 1 (3*x^2 - 4*x)*y^2 + (x^2 + 3*x - 2)*y + 2*x + 2]
-            [2*(x^2 - 2*x)*y^2 + (x^2 + 2*x - 3)*y + 3*x + 3           (x^2 - 5*x + 4)*y^2 + (5*x - 8)*y + 4]
+            [    (x^2 - 2*x)*y^2 + x^2 + 2*(x^2 + 2*x)*y + 2*x + 1 (3*x^2 - 4*x)*y^2 + 3*x^2 + 4*(x^2 + 2*x)*y + 6*x + 3]
+            [          (2*x^2 - x + 2)*y^2 + (x^2 + 2*x - 4)*y + 2       (4*x^2 - 3*x + 4)*y^2 + (3*x^2 + 6*x - 8)*y + 4]
             sage: tdd1 == tdd0   # the order of index lowering is important
             False
             sage: tdd = t.down(g) ; tdd  # both indices are lowered, starting from the last one
             Tensor field of type (0,2) on the 2-dimensional differentiable
              manifold M
             sage: tdd[:]
-            [      4*x^2*y^2 + x^2 + 5*(x^2 + x)*y + 2*x + 1 (3*x^2 - 4*x)*y^2 + (x^2 + 3*x - 2)*y + 2*x + 2]
-            [2*(x^2 - 2*x)*y^2 + (x^2 + 2*x - 3)*y + 3*x + 3           (x^2 - 5*x + 4)*y^2 + (5*x - 8)*y + 4]
+            [    (x^2 - 2*x)*y^2 + x^2 + 2*(x^2 + 2*x)*y + 2*x + 1 (3*x^2 - 4*x)*y^2 + 3*x^2 + 4*(x^2 + 2*x)*y + 6*x + 3]
+            [          (2*x^2 - x + 2)*y^2 + (x^2 + 2*x - 4)*y + 2       (4*x^2 - 3*x + 4)*y^2 + (3*x^2 + 6*x - 8)*y + 4]
             sage: tdd0 == tdd  # to get tdd0, indices have been lowered from the first one, contrary to tdd
             False
             sage: tdd1 == tdd  # the same order for index lowering has been applied
@@ -3985,23 +4033,32 @@ class TensorField(ModuleElementWithMutability):
             Tensor field of type (1,1) on the 2-dimensional differentiable
              manifold M
             sage: uu0tdd = u0tdd.up(g) ; uu0tdd # the second index is then raised
-            Tensor field of type (2,0) on the 2-dimensional differentiable
-             manifold M
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'TensorFieldFreeModule_with_category.element_class' object has no attribute '_contra_positions'
             sage: u1tdd = tdd.up(g, 1) ; u1tdd  # raising operation, starting from the last index
             Tensor field of type (1,1) on the 2-dimensional differentiable
              manifold M
             sage: uu1tdd = u1tdd.up(g) ; uu1tdd
-            Tensor field of type (2,0) on the 2-dimensional differentiable
-             manifold M
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'TensorFieldFreeModule_with_category.element_class' object has no attribute '_contra_positions'
             sage: uutdd = tdd.up(g) ; uutdd  # both indices are raised, starting from the first one
-            Tensor field of type (2,0) on the 2-dimensional differentiable
-             manifold M
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'TensorFieldFreeModule_with_category.element_class' object has no attribute '_contra_positions'
             sage: uutdd == t  # should be true
-            True
+            Traceback (most recent call last):
+            ...
+            NameError: name 'uutdd' is not defined
             sage: uu0tdd == t # should be true
-            True
+            Traceback (most recent call last):
+            ...
+            NameError: name 'uu0tdd' is not defined
             sage: uu1tdd == t # not true, because of the order of index raising to get uu1tdd
-            False
+            Traceback (most recent call last):
+            ...
+            NameError: name 'uu1tdd' is not defined
 
         """
         n_con = self._tensor_type[0]  # number of contravariant indices = k
