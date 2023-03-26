@@ -223,7 +223,6 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
     if len(self_jordan) != len(other_jordan):
         return False
 
-
     # Deal with odd primes:  Check that the Jordan component scales, dimensions, and discriminants are the same
     if p != 2:
         for i in range(len(self_jordan)):
@@ -235,13 +234,11 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
         # All tests passed for an odd prime.
         return True
 
-
     # For p = 2:  Check that all Jordan Invariants are the same.
     elif p == 2:
 
         # Useful definition
         t = len(self_jordan)          # Define t = Number of Jordan components
-
 
         # Check that all Jordan Invariants are the same (scale, dim, and norm)
         for i in range(t):

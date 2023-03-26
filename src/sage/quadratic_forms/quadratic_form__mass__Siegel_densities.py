@@ -155,7 +155,6 @@ def Pall_mass_density_at_odd_prime(self, p):
             generic_factor *= (1 + legendre_symbol(((-1)**m) * d, p) * p**(-m))
         jordan_mass_list = jordan_mass_list + [generic_factor]
 
-
     # Step 3: Compute the local mass $\al_p$ at p.
         MJL = modified_jordan_list
     s = len(modified_jordan_list)

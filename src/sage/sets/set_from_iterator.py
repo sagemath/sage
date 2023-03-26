@@ -162,7 +162,6 @@ class EnumeratedSetFromIterator(Parent):
         else:
             Parent.__init__(self, facade = True, category = EnumeratedSets())
 
-
         if name is not None:
             self.rename(name)
 
