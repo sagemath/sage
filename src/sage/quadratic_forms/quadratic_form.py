@@ -428,6 +428,7 @@ class QuadraticForm(SageObject):
             reduced_binary_form, \
             minkowski_reduction, \
             minkowski_reduction_for_4vars__SP
+
     # Wrappers for Conway-Sloane genus routines (in ./genera/)
     lazy_import("sage.quadratic_forms.quadratic_form__genus", [
             "global_genus_symbol",
@@ -696,7 +697,6 @@ class QuadraticForm(SageObject):
         """
         return deepcopy(self._external_initialization_list)
 
-
     def __pari__(self):
         """
         Return a PARI-formatted Hessian matrix for Q.
@@ -747,7 +747,6 @@ class QuadraticForm(SageObject):
                     out_str += str(self[i,j]) + " "
             out_str += "]"
         return out_str
-
 
     def _latex_(self):
         """
@@ -978,8 +977,6 @@ class QuadraticForm(SageObject):
 #        return QuadraticForm(self.base_ring(), self.dim(), [c * self.__coeffs[i]  for i in range(len(self.__coeffs))])
 # =========================================================================================================================
 
-
-
     def __call__(self, v):
         """
         Evaluate this quadratic form Q on a vector or matrix of elements
@@ -1090,8 +1087,6 @@ class QuadraticForm(SageObject):
 
         else:
             raise TypeError
-
-
 
 
 # =====================================================================================================
@@ -1408,8 +1403,6 @@ class QuadraticForm(SageObject):
                 coeffs.append(poly.monomial_coefficient(v*w))
         return QuadraticForm(base, len(vs), coeffs)
 
-
-
     def is_primitive(self):
         """
         Determines if the given integer-valued form is primitive
@@ -1501,7 +1494,6 @@ class QuadraticForm(SageObject):
         """
         return self.__base_ring
 
-
     def coefficients(self):
         """
         Gives the matrix of upper triangular coefficients,
@@ -1515,7 +1507,6 @@ class QuadraticForm(SageObject):
 
         """
         return self.__coeffs
-
 
     def det(self):
         """
@@ -1544,7 +1535,6 @@ class QuadraticForm(SageObject):
             # Cache and return the determinant
             self.__det = new_det
             return new_det
-
 
     def Gram_det(self):
         """
@@ -1645,7 +1635,6 @@ class QuadraticForm(SageObject):
             if self.base_ring().is_field():
                 warn("Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?")
                 #raise RuntimeError, "Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?"
-
 
             # Check invertibility and find the inverse
             try:
