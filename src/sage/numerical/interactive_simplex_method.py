@@ -789,7 +789,7 @@ class InteractiveLPProblem(SageObject):
                                 latex(xj), r"\geq" if vt == ">=" else r"\leq")
                             for xj, vt in zip(x, self._variable_types) if vt))
         lines.append(r"\end{array}")
-        return  "\n".join(lines)
+        return "\n".join(lines)
 
     def _repr_(self):
         r"""

@@ -113,7 +113,6 @@ def parity(self, allow_rescaling_flag=True):
         return "even"
 
 
-
 def is_even(self, allow_rescaling_flag=True):
     """
     Returns true iff after rescaling by some appropriate factor, the
@@ -152,7 +151,6 @@ def is_odd(self, allow_rescaling_flag=True):
 
     """
     return self.parity(allow_rescaling_flag) == "odd"
-
 
 
 def conway_species_list_at_odd_prime(self, p):
@@ -223,7 +221,6 @@ def conway_species_list_at_odd_prime(self, p):
 
     # Return the species list
     return species_list
-
 
 
 def conway_species_list_at_2(self):
@@ -304,14 +301,11 @@ def conway_species_list_at_2(self):
         # Append the species to the list
         species_list.append(species)
 
-
     if jordan_list[-1].is_odd():        # Add an entry for the unlisted "s_max + 1" Jordan component as well.
         species_list.append(1)
 
     # Return the species list
     return species_list
-
-
 
 
 def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
@@ -358,7 +352,6 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
     tmp_diag_vec = [None  for i in range(n)]
     tmp_diag_vec[0] = u       # This should be an odd integer!
     ind = 1                  # The next index to diagonalize
-
 
     # Use u to diagonalize the form -- WHAT ARE THE POSSIBLE LOCAL NORMAL FORMS?
     while ind < n:
