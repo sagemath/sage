@@ -135,19 +135,12 @@ class TestCoherenceOfFormulas:
         self, M: DifferentiableManifold, omega: SymplecticForm
     ):
         assert omega.volume_form().hodge_dual(omega) == M.one_scalar_field()
-    )
 
-    def test_hodge_star_is_given_using_omega_on_forms(
+    def test_trace_of_two_form_is_given_using_contraction_with_omega(
         self, M: DifferentiableManifold, omega: SymplecticForm
     ):
-        a = M.one_form(1,2)
-        b = M.one_form(3,4)
-        assert a.wedge(b.hodge_dual(omega)) == omega.on_forms(a, b) * omega.volume_form()
-
-    def test_trace_of_form_is_given_using_contraction_with_omega(
-        self, M: DifferentiableManifold, omega: SymplecticForm
-    ):
-        a = M.one_form(1,2)
+        a = M.diff_form(2)
+        a[1,2] = 3
         assert a.trace(using=omega) == a.up(omega, 1).trace()
 
     def test_omega_on_forms_is_determinant_for_decomposables(
@@ -218,3 +211,11 @@ class TestR2VectorSpace:
         assert e.wedge(f) == omega
 
         assert omega.on_forms(e, f) == 1
+
+    def test_hodge_star_is_given_using_omega_on_forms(
+        self, M: StandardSymplecticSpace, omega: SymplecticForm
+    ):
+        a = M.one_form(1,2)
+        b = M.one_form(3,4)
+        assert a.wedge(b.hodge_dual(omega)) == omega.on_forms(a, b) * omega.volume_form()
+

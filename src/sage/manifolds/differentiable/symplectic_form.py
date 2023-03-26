@@ -631,12 +631,9 @@ class SymplecticForm(DiffForm):
         if first.degree() != second.degree():
             raise ValueError("the two forms must have the same degree")
 
-        second_all_up = second
         all_positions = range(first.degree())
-        for k in all_positions:
-            second_all_up = second_all_up.up(self, k)
         return first.contract(
-            *all_positions, second_all_up, *all_positions
+            *all_positions, second.up(self), *all_positions
         ) / factorial(first.degree())
 
 
