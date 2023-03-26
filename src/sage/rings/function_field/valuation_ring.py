@@ -1,3 +1,5 @@
+# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: optional - sage.rings.function_field
 r"""
 Valuation rings of function fields
 
@@ -54,7 +56,7 @@ AUTHORS:
 
 """
 # ****************************************************************************
-#       Copyright (C) 2016 Kwankyu Lee <ekwankyu@gmail.com>
+#       Copyright (C) 2016-2019 Kwankyu Lee <ekwankyu@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of

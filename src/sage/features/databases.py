@@ -1,7 +1,20 @@
-# -*- coding: utf-8 -*-
 r"""
 Features for testing the presence of various databases
 """
+
+# *****************************************************************************
+#       Copyright (C) 2016      Julian Rüth
+#                     2018-2019 Jeroen Demeyer
+#                     2018      Timo Kaufmann
+#                     2020-2022 Matthias Koeppe
+#                     2020-2022 Sebastian Oehms
+#                     2021      Kwankyu Lee
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 
 from . import StaticFile, PythonModule
