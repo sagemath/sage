@@ -2513,8 +2513,6 @@ def _plot(funcs, xrange, parametric=False,
     return G
 
 
-
-
 ########## misc functions ###################
 
 @options(aspect_ratio=1.0)

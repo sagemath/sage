@@ -773,4 +773,3 @@ def make_FvarsHandler(n, field, idx_map, init_data):
         sage: f.shutdown_worker_pool()
     """
     return FvarsHandler(n, field, idx_map, init_data=init_data)
-
