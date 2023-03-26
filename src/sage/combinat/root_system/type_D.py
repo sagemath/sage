@@ -116,7 +116,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
             return self.sum(self.monomial(j) for j in range(i))
 
 
-
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_A', 'ambient_space',  AmbientSpace)
 

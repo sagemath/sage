@@ -2442,7 +2442,6 @@ syms_cur = symbol_table.get('functions', {})
 syms_default = dict(syms_cur)
 
 
-
 def _find_var(name, interface=None):
     """
     Function to pass to Parser for constructing

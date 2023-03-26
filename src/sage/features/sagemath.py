@@ -122,6 +122,28 @@ class sage__groups(JoinFeature):
                              [PythonModule('sage.groups.perm_gps.permgroup')])
 
 
+class sage__libs__pari(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.pari`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__libs__pari
+        sage: sage__libs__pari().is_present()                       # optional - sage.libs.pari
+        FeatureTestResult('sage.libs.pari', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__pari
+            sage: isinstance(sage__libs__pari(), sage__libs__pari)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.pari',
+                             [PythonModule('sage.libs.pari.convert_sage')])
+
+
 class sage__plot(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.plot`.
@@ -209,6 +231,27 @@ class sage__rings__real_double(PythonModule):
         PythonModule.__init__(self, 'sage.rings.real_double')
 
 
+class sage__rings__real_mpfr(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_mpfr`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__rings__real_mpfr
+        sage: sage__rings__real_mpfr().is_present()  # optional - sage.rings.real_mpfr
+        FeatureTestResult('sage.rings.real_mpfr', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__rings__real_mpfr
+            sage: isinstance(sage__rings__real_mpfr(), sage__rings__real_mpfr)
+            True
+        """
+        PythonModule.__init__(self, 'sage.rings.real_mpfr')
+
+
 class sage__symbolic(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.symbolic`.
@@ -259,8 +302,10 @@ def all_features():
             sage__geometry__polyhedron(),
             sage__graphs(),
             sage__groups(),
+            sage__libs__pari(),
             sage__plot(),
             sage__rings__number_field(),
             sage__rings__padics(),
             sage__rings__real_double(),
+            sage__rings__real_mpfr(),
             sage__symbolic()]
