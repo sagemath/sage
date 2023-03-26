@@ -1128,33 +1128,28 @@ cdef class Polynomial(CommutativePolynomial):
             sage: pol[:6]
             5*x^5 + 4*x^4 + 3*x^3 + 2*x^2 + x
 
-        Any other kind of slicing is deprecated or an error, see
-        :trac:`18940`::
+        Any other kind of slicing is an error, see :trac:`18940`::
 
             sage: f[1:3]
-            doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See https://github.com/sagemath/sage/issues/18940 for details.
-            x
+            Traceback (most recent call last):
+            ...
+            IndexError: polynomial slicing with a start is not defined
+
             sage: f[1:3:2]
             Traceback (most recent call last):
             ...
-            NotImplementedError: polynomial slicing with a step is not defined
+            IndexError: polynomial slicing with a step is not defined
         """
         cdef Py_ssize_t d = self.degree() + 1
         if isinstance(n, slice):
             start, stop, step = n.start, n.stop, n.step
             if step is not None:
-                raise NotImplementedError("polynomial slicing with a step is not defined")
-            if start is None:
-                start = 0
-            else:
-                if start < 0:
-                    start = 0
-                deprecation(18940, "polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead")
+                raise IndexError("polynomial slicing with a step is not defined")
+            if start is not None:
+                raise IndexError("polynomial slicing with a start is not defined")
             if stop is None or stop > d:
                 stop = d
-            values = ([self.base_ring().zero()] * start
-                      + [self.get_unsafe(i) for i in xrange(start, stop)])
+            values = [self.get_unsafe(i) for i in range(stop)]
             return self._new_generic(values)
 
         return self.get_coeff_c(pyobject_to_long(n))
@@ -4477,7 +4472,7 @@ cdef class Polynomial(CommutativePolynomial):
         if not (ch == 0 or is_prime(ch)):
             raise NotImplementedError("factorization of polynomials over rings with composite characteristic is not implemented")
 
-        from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+        from sage.rings.finite_rings.finite_field_base import FiniteField
 
         n = None
 
@@ -4487,7 +4482,7 @@ cdef class Polynomial(CommutativePolynomial):
             except PariError:
                 raise NotImplementedError
 
-        elif is_FiniteField(R):
+        elif isinstance(R, FiniteField):
             v = [x.__pari__("a") for x in self.list()]
             f = pari(v).Polrev()
             G = list(f.factor())
@@ -4755,7 +4750,7 @@ cdef class Polynomial(CommutativePolynomial):
         name = normalize_names(1, names)[0]
 
         from sage.rings.number_field.number_field_base import is_NumberField
-        from sage.rings.finite_rings.finite_field_base import is_FiniteField
+        from sage.rings.finite_rings.finite_field_base import FiniteField
 
         f = self.monic()            # Given polynomial, made monic
         F = f.parent().base_ring()  # Base field
@@ -4766,7 +4761,7 @@ cdef class Polynomial(CommutativePolynomial):
         if is_NumberField(F):
             from sage.rings.number_field.splitting_field import splitting_field
             return splitting_field(f, name, map, **kwds)
-        elif is_FiniteField(F):
+        elif isinstance(F, FiniteField):
             degree = lcm([f.degree() for f, _ in self.factor()])
             return F.extension(degree, name, map=map, **kwds)
 

@@ -1510,7 +1510,6 @@ class MiniAES(SageObject):
                    [block[1][1], block[1][0]] ] )
         return mat
 
-
     ### conversion functions to convert between different data formats
 
     def GF_to_binary(self, G):
