@@ -1233,7 +1233,7 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
                 return CFiniteSequence(num / den)
         else:
             from sage.matrix.constructor import matrix
-            from sage.functions.other import ceil
+            from sage.arith.misc import integer_ceil as ceil
             from numpy import trim_zeros
             seq = sequence[:]
             while seq and sequence[-1] == 0:

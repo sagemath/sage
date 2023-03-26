@@ -106,6 +106,7 @@ Check that :trac:`23459` is fixed::
 # ****************************************************************************
 from __future__ import annotations
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.superseded import (deprecation,
                                   deprecated_function_alias)
 
@@ -165,6 +166,8 @@ _NumberFields = NumberFields()
 
 
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
+
+lazy_import('sage.arith.misc', "is_fundamental_discriminant", deprecation=35305)
 
 
 def is_NumberFieldHomsetCodomain(codomain):
@@ -12174,30 +12177,6 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         if d == -3:
             return 6
         return 2
-
-
-def is_fundamental_discriminant(D):
-    r"""
-    Return True if the integer `D` is a fundamental
-    discriminant, i.e., if `D \cong 0,1\pmod{4}`, and
-    `D\neq 0, 1` and either (1) `D` is square free or
-    (2) we have `D\cong 0\pmod{4}` with
-    `D/4 \cong 2,3\pmod{4}` and `D/4` square free. These
-    are exactly the discriminants of quadratic fields.
-
-    EXAMPLES::
-
-        sage: [D for D in range(-15,15) if is_fundamental_discriminant(D)]
-        [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
-        sage: [D for D in range(-15,15) if not is_square(D) and QuadraticField(D,'a').disc() == D]
-        [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
-    """
-    d = D % 4
-    if d not in [0, 1]:
-        return False
-    return D != 1 and D != 0 and \
-        (arith.is_squarefree(D) or
-            (d == 0 and (D // 4) % 4 in [2, 3] and arith.is_squarefree(D // 4)))
 
 
 ###################

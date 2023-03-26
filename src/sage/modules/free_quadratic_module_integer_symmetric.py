@@ -59,9 +59,7 @@ from sage.modules.free_quadratic_module import FreeQuadraticModule_submodule_wit
 from sage.matrix.constructor import matrix
 from sage.structure.element import is_Matrix
 from sage.arith.misc import gcd
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
 from sage.misc.cachefunc import cached_method
-from sage.quadratic_forms.all import QuadraticForm
 
 ###############################################################################
 #
@@ -240,6 +238,7 @@ def IntegralLattice(data, basis=None):
     elif data == "U" or data == "H":
         inner_product_matrix = matrix([[0,1],[1,0]])
     else:
+        from sage.combinat.root_system.cartan_matrix import CartanMatrix
         inner_product_matrix = CartanMatrix(data)
     if basis is None:
         basis = matrix.identity(ZZ, inner_product_matrix.ncols())
@@ -1390,6 +1389,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             [ 2 -2 ]
             [ * 2 ]
         """
+        from sage.quadratic_forms.quadratic_form import QuadraticForm
         return QuadraticForm(2 * self.gram_matrix())
 
     @cached_method
@@ -1512,6 +1512,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         e = 2
         if m != 0:
             e = -2
+        from sage.quadratic_forms.quadratic_form import QuadraticForm
         q = QuadraticForm(e * self.gram_matrix())
         short = q.short_vector_list_up_to_length(n, *kwargs)
         return [[self(v * self.basis_matrix()) for v in L] for L in short]
