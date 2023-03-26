@@ -7,12 +7,10 @@
 name: Synchronize selection list lables
 
 on:
-  pull_request_review:
-    types: [submitted]
   issues:
     types: [opened, reopened, closed, labeled, unlabeled]
-  pull_request:
-    types: [opened, reopened, closed, ready_for_review, converted_to_draft, synchronize, labeled, unlabeled]
+  pull_request_review:
+    types: [submitted]
   pull_request_target:
     types: [opened, reopened, closed, ready_for_review, converted_to_draft, synchronize, labeled, unlabeled]
 

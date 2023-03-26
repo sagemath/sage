@@ -18,9 +18,14 @@ For more information see https://github.com/sagemath/sage/pull/35172
 
 import os
 import sys
-from logging import info, warning, getLogger, INFO
+from logging import info, warning, debug, getLogger, INFO, DEBUG
 from json import loads
 from enum import Enum
+from datetime import datetime, timedelta
+from subprocess import check_output, CalledProcessError
+
+datetime_format = '%Y-%m-%dT%H:%M:%SZ'
+
 
 class Action(Enum):
     r"""
@@ -102,6 +107,7 @@ class GhLabelSynchronizer:
         """
         self._url = url
         self._actor = actor
+        self._warning_prefix = 'Label Sync Warning:'
         self._labels = None
         self._author = None
         self._draft = None
@@ -118,6 +124,7 @@ class GhLabelSynchronizer:
             self._issue = 'issue #%s' % number
             self._pr = False
         info('Create label handler for %s and actor %s' % (self._issue, self._actor))
+        self.clean_warnings()
 
     # -------------------------------------------------------------------------
     # methods to obtain properties of the issue
@@ -141,6 +148,21 @@ class GhLabelSynchronizer:
         self._commits = None
         self._commit_date = None
 
+    def rest_api(self, path_args, method=None, query=''):
+        r"""
+        Return data obtained from ``gh`` command ``api``.
+        """
+        s = self._url.split('/')
+        owner = s[3]
+        repo = s[4]
+        meth = '-X GET'
+        if method:
+            meth='-X %s' % method
+        cmd = 'gh api %s -H \"Accept: application/vnd.github+json\" /repos/%s/%s/%s %s' % (meth, owner, repo, path_args, query)
+        if method:
+            return check_output(cmd, shell=True)
+        return loads(check_output(cmd, shell=True))
+
     def view(self, key):
         r"""
         Return data obtained from ``gh`` command ``view``.
@@ -149,7 +171,6 @@ class GhLabelSynchronizer:
         if self._pr:
             issue = 'pr'
         cmd = 'gh %s view %s --json %s' % (issue, self._url, key)
-        from subprocess import check_output
         return loads(check_output(cmd, shell=True))[key]
 
     def is_open(self):
@@ -177,6 +198,49 @@ class GhLabelSynchronizer:
             self._draft = False
         info('Issue %s is draft %s' % (self._issue, self._draft))
         return self._draft
+
+    def clean_warnings(self):
+        r"""
+        Remove all warnings that have been posted by ``GhLabelSynchronizer``
+        more than ``warning_lifetime`` ago.
+        """
+        warning_lifetime = timedelta(minutes=5)
+        time_frame = timedelta(hours=12) # timedelta to search for comments
+        per_page = 100
+        today = datetime.today()
+        since = today - time_frame
+        query = '-F per_page=%s -F page={} -f since=%s' % (per_page, since.strftime(datetime_format))
+        path = 'issues/comments'
+        page = 1
+        comments = []
+        while True:
+            comments_page = self.rest_api(path, query=query.format(page))
+            comments += comments_page
+            if len(comments_page) < per_page:
+                break
+            page += 1
+
+        info('Cleaning warning comments since %s (total found %s)' % (since, len(comments)))
+
+        for c in comments:
+            login = c['user']['login']
+            body = c['body']
+            comment_id = c['id']
+            issue = c['issue_url'].split('/').pop()
+            created_at = c['created_at']
+            if login.startswith('github-actions'):
+                debug('github-actions comment %s created at %s on issue %s found' % (comment_id, created_at, issue))
+                if body.startswith(self._warning_prefix):
+                    created = datetime.strptime(created_at, datetime_format)
+                    lifetime = today - created
+                    debug('github-actions %s %s is %s old' % (self._warning_prefix, comment_id, lifetime))
+                    if lifetime > warning_lifetime:
+                        try:
+                            self.rest_api('%s/%s' % (path, comment_id), method='DELETE')
+                            info('Comment %s on issue %s deleted' % (comment_id, issue))
+                        except CalledProcessError:
+                            # the comment may have been deleted by a bot running in parallel
+                            info('Comment %s on issue %s has been deleted already' % (comment_id, issue))
 
     def get_labels(self):
         r"""
@@ -244,7 +308,7 @@ class GhLabelSynchronizer:
 
         if self._reviews is None:
             self._reviews = self.view('reviews')
-            info('Reviews for %s: %s' % (self._issue, self._reviews))
+            debug('Reviews for %s: %s' % (self._issue, self._reviews))
 
         if complete or not self._reviews:
             return self._reviews
@@ -418,7 +482,7 @@ class GhLabelSynchronizer:
         if self._pr:
             issue = 'pr'
         cmd_str = 'gh %s %s %s %s "%s"' % (issue, cmd, self._url, option, arg)
-        info('Execute command: %s' % cmd_str)
+        debug('Execute command: %s' % cmd_str)
         ex_code = os.system(cmd_str)
         if ex_code:
             warning('Execution of %s failed with exit code: %s' % (cmd_str, ex_code))
@@ -466,9 +530,14 @@ class GhLabelSynchronizer:
         r"""
         Perform a system call to ``gh`` to add a comment to an issue or PR.
         """
-
         self.gh_cmd('comment', text, '-b')
         info('Add comment to %s: %s' % (self._issue, text))
+
+    def add_warning(self, text):
+        r"""
+        Perform a system call to ``gh`` to add a warning to an issue or PR.
+        """
+        self.add_comment('%s %s' % (self._warning_prefix, text))
 
     def add_label(self, label):
         r"""
@@ -508,10 +577,12 @@ class GhLabelSynchronizer:
         Post a comment that the given label can not be added and select
         a corresponding other one.
         """
-        if self.is_pull_request():
-            self.add_comment('Label *%s* can not be added. Please use the corresponding functionality of GitHub' % item.value)
+        if not self.is_pull_request():
+            self.add_warning('Label *%s* can not be added to an issue. Please use it on the corresponding PR' % item.value)
+        elif item is State.needs_review:
+            self.add_warning('Label *%s* can not be added, since there are unresolved reviews' % item.value)
         else:
-            self.add_comment('Label *%s* can not be added to an issue. Please use it on the corresponding PR' % item.value)
+            self.add_warning('Label *%s* can not be added. Please use the GitHub review functionality' % item.value)
         self.remove_label(item.value)
         return
 
@@ -524,7 +595,7 @@ class GhLabelSynchronizer:
             sel_list = 'state'
         else:
             sel_list = 'priority'
-        self.add_comment('Label *%s* can not be removed. Please add the %s-label which should replace it' % (item.value, sel_list))
+        self.add_warning('Label *%s* can not be removed. Please add the %s-label which should replace it' % (item.value, sel_list))
         self.add_label(item.value)
         return
 
@@ -549,7 +620,7 @@ class GhLabelSynchronizer:
             # on the `on_label_add` of the first of the two labels
             partn = self.active_partners(item)
             if partn:
-                self.add_comment('Label *%s* can not be added due to *%s*!' % (label, partn[0].value))
+                self.add_warning('Label *%s* can not be added due to *%s*!' % (label, partn[0].value))
             else:
                 warning('Label %s of %s not found!' % (label, self._issue))
             return
@@ -731,7 +802,9 @@ class GhLabelSynchronizer:
 cmdline_args = sys.argv[1:]
 num_args = len(cmdline_args)
 
-getLogger().setLevel(INFO)
+# getLogger().setLevel(INFO)
+getLogger().setLevel(DEBUG)
+
 info('cmdline_args (%s) %s' % (num_args, cmdline_args))
 
 if num_args == 5:
@@ -756,6 +829,14 @@ elif num_args == 2:
     gh = GhLabelSynchronizer(url, actor)
     gh.run_tests()
 
+elif num_args == 1:
+    url, = cmdline_args
+
+    info('url: %s' % url)
+
+    gh = GhLabelSynchronizer(url, 'sagetrac-github-bot')
+
 else:
     print('Need 5 arguments: action, url, actor, label, rev_state' )
     print('Running tests is possible with 2 arguments: url, actor' )
+    print('Cleaning warning comments is possible with 1 argument: url' )
