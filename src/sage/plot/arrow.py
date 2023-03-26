@@ -413,7 +413,10 @@ class Arrow(GraphicPrimitive):
                     return paths
 
                 def __call__(self, renderer, gc, tpath, affine, rgbFace):
-                    path = self.get_paths(renderer)[self._n]
+                    paths = self.get_paths(renderer)
+                    if self._n >= len(paths):
+                        return False
+                    path = paths[self._n]
                     vert1, code1 = path.vertices, path.codes
                     import numpy as np
 
@@ -469,6 +472,13 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
     .. PLOT::
 
         sphinx_plot(arrow((0,0,1), (1,1,1)))
+
+    TESTS:
+
+    Check that :trac:`35031` is fixed::
+
+        sage: arrow((0,0), (0,0), linestyle='dashed')
+        Graphics object consisting of 1 graphics primitive
 
     """
     try:

@@ -102,7 +102,6 @@ def IntegerVectorsIterator(vect, min = None):
                     yield [j] + vec
 
 
-
 class VectorPartition(CombinatorialElement):
     r"""
     A vector partition is a multiset of integer vectors.

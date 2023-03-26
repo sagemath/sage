@@ -333,7 +333,7 @@ def clifford_invariant(self, p):
         1
     """
     n = self.dim() % 8
-    if  n == 1 or n == 2:
+    if n == 1 or n == 2:
         s = 1
     elif n == 3 or n == 4:
         s = hilbert_symbol(-1, -self.disc(), p)
@@ -588,12 +588,11 @@ def is_zero(self, v, p=0) -> bool:
         True
         sage: Q1.is_zero([1,1,0], 2)
         False
-
     """
     norm = self(v)
     if p != 0:
         norm = norm % p
-    return  norm == 0
+    return norm == 0
 
 
 def is_zero_nonsingular(self, v, p=0) -> bool:

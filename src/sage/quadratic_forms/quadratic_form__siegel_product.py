@@ -20,7 +20,6 @@ from sage.quadratic_forms.special_values import QuadraticBernoulliNumber
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
-
 #/*!  \brief Computes the product of all local densities for comparison with independently computed Eisenstein coefficients.
 # *
 # *  \todo We fixed the generic factors to compensate for using the matrix of 2Q, but we need to document this better! =)
@@ -95,7 +94,6 @@ def siegel_product(self, u):
     verbose("siegel_product Break 1. \n")
     verbose(" u = " + str(u) + "\n")
 
-
     # Make the odd generic factors
     if ((n % 2) == 1):
         m = (n-1) // 2
@@ -115,11 +113,8 @@ def siegel_product(self, u):
             * QQ(sqrt((2 ** n) *  f) / (u * d)) \
             * abs(QuadraticBernoulliNumber(m, d1) / bernoulli(2*m))
 
-
-
     # DIAGNOSTIC
     verbose("siegel_product Break 2. \n")
-
 
     # Make the even generic factor
     if ((n % 2) == 0):
@@ -131,15 +126,12 @@ def siegel_product(self, u):
         #cout << " mpz_class(-1)^m = " << (mpz_class(-1)^m) << " and d = " << d << endl;
         #cout << " f = " << f << " and d1 = " << d1 << endl;
 
-
         genericfactor = m / QQ(sqrt(f*d)) \
             * ((u/2) ** (m-1)) * (f ** m) \
             / abs(QuadraticBernoulliNumber(m, d1)) \
             * (2 ** m)                                               # This last factor compensates for using the matrix of 2*Q
 
-
     ##return genericfactor
-
 
     # Omit the generic factors in S and compute them separately
     omit = 1
@@ -155,12 +147,10 @@ def siegel_product(self, u):
     for p in S_divisors:
         Q_normal = self.local_normal_form(p)
 
-
         # DIAGNOSTIC
         verbose(" p = " + str(p) + " and its Kronecker symbol (d1/p) = (" + str(d1) + "/" + str(p) + ") is " + str(kronecker_symbol(d1, p)) + "\n")
 
         omit *= 1 / (1 - (kronecker_symbol(d1, p) / (p**m)))
-
 
         # DIAGNOSTIC
         verbose(" omit = " + str(omit) + "\n")

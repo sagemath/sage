@@ -39,6 +39,8 @@ dnl From build/pkgs/sagelib/dependencies
         cysignals      \
         cython         \
         gmpy2          \
+        importlib_metadata \
+        importlib_resources \
         jinja2         \
         jupyter_core   \
         lrcalc_python  \
@@ -48,6 +50,7 @@ dnl From build/pkgs/sagelib/dependencies
         pplpy          \
         primecountpy   \
         requests       \
+        typing_extensions \
         | sed "2,\$s/^/    /;"')dnl'
 dnl From Makefile.in: SAGERUNTIME
     esyscmd(`sage-get-system-packages install-requires \
