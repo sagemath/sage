@@ -31,7 +31,7 @@ AUTHORS:
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.all import GradedHopfAlgebras
+from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.combinat.partition import Partition, Partitions, Partitions_all_bounded, PartitionsGreatestLE
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.realizations import Realizations, Category_realization_of_parent

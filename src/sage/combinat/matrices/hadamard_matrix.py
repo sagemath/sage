@@ -54,21 +54,27 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from urllib.request import urlopen
-from sage.combinat.designs.difference_family import get_fixed_relative_difference_set, relative_difference_set_from_homomorphism, skew_supplementary_difference_set
-
-from sage.rings.integer_ring import ZZ
-from sage.matrix.constructor import matrix, block_matrix, block_diagonal_matrix, diagonal_matrix
-from sage.arith.all import is_square, is_prime_power, divisors
 from math import sqrt
-from sage.matrix.constructor import identity_matrix as I
-from sage.matrix.constructor import ones_matrix as J
-from sage.matrix.constructor import zero_matrix, matrix_method
-from sage.misc.unknown import Unknown
-from sage.cpython.string import bytes_to_str
-from sage.modules.free_module_element import vector
+from urllib.request import urlopen
+
+from sage.arith.misc import divisors, is_prime_power, is_square
+from sage.combinat.designs.difference_family import (get_fixed_relative_difference_set,
+                                                     relative_difference_set_from_homomorphism,
+                                                     skew_supplementary_difference_set)
 from sage.combinat.t_sequences import T_sequences_smallcases
+from sage.cpython.string import bytes_to_str
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.matrix.constructor import (block_matrix,
+                                     block_diagonal_matrix,
+                                     diagonal_matrix,
+                                     identity_matrix as I,
+                                     ones_matrix as J,
+                                     matrix,
+                                     matrix_method,
+                                     zero_matrix)
+from sage.misc.unknown import Unknown
+from sage.modules.free_module_element import vector
 
 
 def normalise_hadamard(H, skew=False):
@@ -598,7 +604,7 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
     """
     assert n % 4 == 0
 
-    if not williamson_type_quadruples_smallcases(n//4, existence=True):
+    if not williamson_type_quadruples_smallcases(n // 4, existence=True):
         if existence:
             return False
         raise ValueError("The Williamson type Hadamard matrix of order %s is not yet implemented." % n)

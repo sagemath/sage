@@ -26,20 +26,27 @@ from sage.misc.superseded import deprecated_function_alias
 
 def is_FiniteFieldElement(x):
     """
-    Returns if x is a finite field element.
+    Return True if ``x`` is a finite field element.
+
+    This function is deprecated.
 
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.element_base import is_FiniteFieldElement
         sage: is_FiniteFieldElement(1)
+        doctest:...: DeprecationWarning: the function is_FiniteFieldElement is deprecated; use isinstance(x, sage.structure.element.FieldElement) and x.parent().is_finite() instead
+        See https://github.com/sagemath/sage/issues/32664 for details.
         False
         sage: is_FiniteFieldElement(IntegerRing())
         False
         sage: is_FiniteFieldElement(GF(5)(2))
         True
     """
-    from sage.rings.finite_rings.finite_field_base import is_FiniteField
-    return isinstance(x, Element) and is_FiniteField(x.parent())
+    from sage.misc.superseded import deprecation
+    deprecation(32664, "the function is_FiniteFieldElement is deprecated; use isinstance(x, sage.structure.element.FieldElement) and x.parent().is_finite() instead")
+
+    from sage.rings.finite_rings.finite_field_base import FiniteField
+    return isinstance(x, Element) and isinstance(x.parent(), FiniteField)
 
 
 cdef class FiniteRingElement(CommutativeRingElement):

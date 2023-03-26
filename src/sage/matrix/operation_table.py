@@ -14,12 +14,10 @@ This module implements general operation tables, which are very matrix-like.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from matplotlib.cm import gist_rainbow, Greys
-from sage.plot.matrix_plot import matrix_plot
-from sage.matrix.constructor import Matrix
-from sage.plot.text import text
 from copy import copy
+
+from sage.structure.sage_object import SageObject
+from sage.matrix.constructor import Matrix
 
 
 class OperationTable(SageObject):
@@ -950,41 +948,36 @@ class OperationTable(SageObject):
                    for i in range(self._n) for j in range(self._n)]
         return MS(entries)
 
-    # documentation hack
-    # makes the cmap default argument look nice in the docs
-    # by copying the gist_rainbow object and overriding __repr__
-    gist_rainbow_copy=copy(gist_rainbow)
-    class ReprOverrideLinearSegmentedColormap(gist_rainbow_copy.__class__):
-        def __repr__(self):
-            return "gist_rainbow"
-    gist_rainbow_copy.__class__=ReprOverrideLinearSegmentedColormap
-    
-
-    def color_table(self, element_names=True, cmap=gist_rainbow_copy, **options):
+    def color_table(self, element_names=True, cmap=None, **options):
         r"""
-        Returns a graphic image as a square grid where entries are color coded.
+        Return a graphic image as a square grid where entries are color coded.
 
         INPUT:
 
         - ``element_names`` - (default : ``True``) Whether to display text with element names on the image
 
-        - ``cmap`` - (default : ``gist_rainbow``) colour map for plot, see matplotlib.cm
+        - ``cmap`` -- (default: :obj:`matplotlib.cm.gist_rainbow`) color map for plot, see :mod:`matplotlib.cm`
 
-        - ``**options`` - passed on to matrix_plot call
+        - ``**options`` -- passed on to :func:`~sage.plot.matrix_plot.matrix_plot`
 
         EXAMPLES::
 
             sage: from sage.matrix.operation_table import OperationTable
-            sage: OTa = OperationTable(SymmetricGroup(3), operation=operator.mul)
-            sage: OTa.color_table()
+            sage: OTa = OperationTable(SymmetricGroup(3), operation=operator.mul)       # optional - sage.plot, sage.groups
+            sage: OTa.color_table()                                                     # optional - sage.plot, sage.groups
             Graphics object consisting of 37 graphics primitives
 
         .. PLOT::
 
             from sage.matrix.operation_table import OperationTable
             OTa = OperationTable(SymmetricGroup(3), operation=operator.mul)
-            sphinx_plot(OTa.color_table(), figsize=(3.0,3.0))
+            sphinx_plot(OTa.color_table(), figsize=(3.0, 3.0))
         """
+        from sage.plot.matrix_plot import matrix_plot
+        from sage.plot.text import text
+
+        if cmap is None:
+            from matplotlib.cm import gist_rainbow as cmap
 
         # Base matrix plot object, without text
         plot = matrix_plot(Matrix(self._table), cmap=cmap,
@@ -1018,6 +1011,29 @@ class OperationTable(SageObject):
         return plot
 
     def gray_table(self, **options):
+        r"""
+        Return a graphic image as a square grid where entries are displayed in grayscale.
+
+        INPUT:
+
+        - ``element_names`` -- (default: ``True``) whether to display text with element names on the image
+
+        - ``**options`` -- passed on to :func:`~sage.plot.matrix_plot.matrix_plot`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.operation_table import OperationTable
+            sage: OTa = OperationTable(SymmetricGroup(3), operation=operator.mul)       # optional - sage.plot, sage.groups
+            sage: OTa.gray_table()                                                      # optional - sage.plot, sage.groups
+            Graphics object consisting of 37 graphics primitives
+
+        .. PLOT::
+
+            from sage.matrix.operation_table import OperationTable
+            OTa = OperationTable(SymmetricGroup(3), operation=operator.mul)
+            sphinx_plot(OTa.gray_table(), figsize=(3.0, 3.0))
+        """
+        from matplotlib.cm import Greys
         return self.color_table(cmap=Greys, **options)
 
     def _ascii_table(self):

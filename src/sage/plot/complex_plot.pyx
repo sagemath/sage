@@ -563,7 +563,7 @@ def complex_to_cmap_rgb(z_values, cmap='turbo', contoured=False, tiled=False,
     import matplotlib as mpl
 
     if isinstance(cmap, str):
-        cmap = mpl.cm.get_cmap(cmap)
+        cmap = mpl.colormaps[cmap]
 
     if contour_base is None:
         if contour_type == "linear":
@@ -1206,11 +1206,11 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
                 domain = np.linspace(0, 1, 256)
                 shifted_domain = np.roll(domain, 128)
                 default_cmap = mpl.colors.LinearSegmentedColormap.from_list(
-                    "sage_default", mpl.cm.get_cmap('hsv')(shifted_domain)
+                    "sage_default", mpl.colormaps['hsv'](shifted_domain)
                 )
                 cmap = default_cmap
             else:
-                cmap = mpl.cm.get_cmap(cmap)
+                cmap = mpl.colormaps[cmap]
         rgbs = complex_to_cmap_rgb(
             z_values, cmap=cmap, contoured=contoured, tiled=tiled,
             contour_type=contour_type, contour_base=contour_base,

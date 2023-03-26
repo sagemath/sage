@@ -183,7 +183,6 @@ import sage.matrix.matrix_space
 import sage.misc.latex as latex
 
 from sage.modules.module import Module
-import sage.rings.finite_rings.finite_field_constructor as finite_field
 import sage.rings.ring as ring
 import sage.rings.abc
 import sage.rings.integer_ring
@@ -195,6 +194,7 @@ from sage.categories.integral_domains import IntegralDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.randstate import current_randstate
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.structure.factory import UniqueFactory
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import (richcmp_method, rich_to_bool, richcmp,
@@ -6360,7 +6360,7 @@ class FreeModule_ambient_field(FreeModule_generic_field, FreeModule_ambient_pid)
         """
         try:
             k = e.parent()
-            if finite_field.is_FiniteField(k) and k.base_ring() == self.base_ring() and k.degree() == self.degree():
+            if isinstance(k, FiniteField) and k.base_ring() == self.base_ring() and k.degree() == self.degree():
                 return self(e._vector_())
         except AttributeError:
             pass

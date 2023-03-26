@@ -91,23 +91,25 @@ REFERENCES:
 - [CGW2013]_
 """
 
+from sage.arith.misc import euler_phi, next_prime
 from sage.functions.log import log
 from sage.functions.other import floor, ceil
-from sage.misc.functional import sqrt
 from sage.misc.functional import cyclotomic_polynomial, round
-from sage.misc.randstate import set_random_seed
+from sage.misc.functional import sqrt
 from sage.misc.prandom import randint
+from sage.misc.randstate import set_random_seed
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import random_vector, vector
 from sage.numerical.optimize import find_root
-from sage.rings.all import ZZ, IntegerModRing, RR
-from sage.arith.all import next_prime, euler_phi
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
+from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
 from sage.structure.element import parent
 from sage.structure.sage_object import SageObject
 from sage.symbolic.constants import pi
 from sage.symbolic.ring import SR
-from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
-from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
 
 
 class UniformSampler(SageObject):
@@ -345,7 +347,6 @@ class LWE(SageObject):
         else:
             return "LWE(%d, %d, %s, %s, %s)"%(self.n,self.K.order(),self.D,self.secret_dist, self.m)
 
-
     def __call__(self):
         """
         EXAMPLES::
@@ -580,7 +581,6 @@ class RingLWE(SageObject):
             return "RingLWE(%d, %d, %s, %s, '%s', %s)"%(self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
         else:
             return "RingLWE(%d, %d, %s, %s, %s, %s)"%(self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
-
 
     def __call__(self):
         """

@@ -2037,8 +2037,8 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         """
         D = self.domain()
         ig = self._im_gens
-        s = '\n'.join(['%s |--> %s'%(D.gen(i), ig[i]) for\
-                       i in range(D.ngens())])
+        s = '\n'.join('{} |--> {}'.format(D.gen(i), ig[i])
+                       for i in range(D.ngens()))
         if s and self._base_map is not None:
             s += '\nwith map of base ring'
         return s
@@ -2873,21 +2873,22 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
         """
         return hash(self.phi)
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         Used internally for printing this function.
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2,y^2]); f = S.hom([yy,xx])
+            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2,y^2])
+            sage: f = S.hom([yy,xx])
             sage: print(f._repr_defn())
             xx |--> yy
             yy |--> xx
         """
         D = self.domain()
         ig = self.phi.im_gens()
-        return '\n'.join(['%s |--> %s'%(D.gen(i), ig[i]) for\
-                          i in range(D.ngens())])
+        return '\n'.join('{} |--> {}'.format(D.gen(i), ig[i])
+                         for i in range(D.ngens()))
 
     cpdef Element _call_(self, x):
         """
@@ -3167,7 +3168,7 @@ def _tensor_product_ring(B, A):
         ...
         ValueError: term ordering must be global
     """
-    from .finite_rings.finite_field_base import is_FiniteField
+    from .finite_rings.finite_field_base import FiniteField
     from .number_field.number_field_base import is_NumberField
     from .polynomial.multi_polynomial_ring import is_MPolynomialRing
     from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
@@ -3185,7 +3186,7 @@ def _tensor_product_ring(B, A):
     def term_order(A):
         # univariate rings do not have a term order
         if (is_PolynomialRing(A) or is_PolynomialQuotientRing(A)
-            or ((is_NumberField(A) or is_FiniteField(A))
+            or ((is_NumberField(A) or isinstance(A, FiniteField))
                 and not A.is_prime_field())):
             return TermOrder('lex', 1)
         try:
@@ -3208,7 +3209,7 @@ def _tensor_product_ring(B, A):
         elif is_QuotientRing(A):
             to_R = A.ambient().hom(R_gens_A, R, check=False)
             return list(to_R(A.defining_ideal()).gens())
-        elif ((is_NumberField(A) or is_FiniteField(A))
+        elif ((is_NumberField(A) or isinstance(A, FiniteField))
               and not A.is_prime_field()):
             to_R = A.polynomial_ring().hom(R_gens_A, R, check=False)
             return [to_R(A.polynomial())]
