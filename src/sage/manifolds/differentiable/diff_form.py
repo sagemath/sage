@@ -630,8 +630,8 @@ class DiffForm(TensorField):
 
         .. MATH::
 
-            *A_{i_1\ldots i_{n-p}} = \frac{1}{p!} A_{k_1\ldots k_p}
-                \epsilon^{k_1\ldots k_p}_{\qquad\ i_1\ldots i_{n-p}}
+            *A_{i_1\ldots i_{n-p}} = \frac{1}{p!} A^{k_1\ldots k_p}
+                \epsilon_{k_1\ldots k_p\, i_1\ldots i_{n-p}}
 
         where `n` is the manifold's dimension, `\epsilon` is the volume
         `n`-form associated with `g` (see
@@ -772,12 +772,12 @@ class DiffForm(TensorField):
             nondegenerate_tensor = self._vmodule._ambient_domain.metric()
 
         p = self.tensor_type()[1]
-        eps = nondegenerate_tensor.volume_form(p)
+        eps = nondegenerate_tensor.volume_form()
         if p == 0:
             common_domain = nondegenerate_tensor.domain().intersection(self.domain())
             result = self.restrict(common_domain) * eps.restrict(common_domain)
         else:
-            result = self.contract(*range(p), eps, *range(p))
+            result = self.up(nondegenerate_tensor).contract(*range(p), eps, *range(p))
             if p > 1:
                 result = result / factorial(p)
         result.set_name(

@@ -194,7 +194,7 @@ tensor ``t`` acts on pairs formed by a linear form and a module element::
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, Optional, Union
 
 from sage.rings.integer import Integer
 from sage.structure.element import ModuleElementWithMutability
@@ -207,6 +207,9 @@ from sage.parallel.parallelism import Parallelism
 if TYPE_CHECKING:
     from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
     from sage.tensor.modules.free_module_basis import FreeModuleBasis
+    from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+    from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+    from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 
 
 class FreeModuleTensor(ModuleElementWithMutability):
@@ -2442,9 +2445,19 @@ class FreeModuleTensor(ModuleElementWithMutability):
             res._latex_name = res_latex
         return res
 
-    def trace(self, pos1=0, pos2=1):
+    def trace(
+        self,
+        pos1: int = 0,
+        pos2: int = 1,
+        using: Optional[
+            Union[PseudoRiemannianMetric, SymplecticForm, PoissonTensorField]
+        ] = None,
+    ):
         r"""
         Trace (contraction) on two slots of the tensor.
+
+        If a non-degenerate form is provided, the trace of a `(0,2)` tensor field
+        is computed by first raising the last index.
 
         INPUT:
 
@@ -2454,6 +2467,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
         - ``pos2`` -- (default: 1) position of the second index for the
           contraction, with the same convention as for ``pos1``; the variance
           type of ``pos2`` must be opposite to that of ``pos1``
+
+        - ``using`` -- (default: ``None``) a non-degenerate form
 
         OUTPUT:
 
@@ -2565,6 +2580,13 @@ class FreeModuleTensor(ModuleElementWithMutability):
             True
 
         """
+        if using is not None:
+            if self.tensor_type() != (0, 2):
+                raise ValueError(
+                    "trace with respect to a non-degenerate form is only defined for type-(0,2) tensor fields"
+                )
+            return self.up(using, 1).trace()
+
         # The indices at pos1 and pos2 must be of different types:
         k_con = self._tensor_type[0]
         l_cov = self._tensor_type[1]
@@ -2822,25 +2844,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if self._tensor_rank + other._tensor_rank - 2*ncontr == 0:
             # Case of scalar output:
             return cmp_res
-        #
-        # Reordering of the indices to have all contravariant indices first:
-        #
-        nb_cov_s = 0  # Number of covariant indices of self not involved in the
-                      # contraction
-        for pos in range(k1,k1+l1):
-            if pos not in pos1:
-                nb_cov_s += 1
-        nb_con_o = 0  # Number of contravariant indices of other not involved
-                      # in the contraction
-        for pos in range(0,k2):
-            if pos not in pos2:
-                nb_con_o += 1
-        if nb_cov_s != 0 and nb_con_o != 0:
-            # some reordering is necessary:
-            p2 = k1 + l1 - ncontr
-            p1 = p2 - nb_cov_s
-            p3 = p2 + nb_con_o
-            cmp_res = cmp_res.swap_adjacent_indices(p1, p2, p3)
         type_res = (k1+k2-ncontr, l1+l2-ncontr)
         return self._fmodule.tensor_from_comp(type_res, cmp_res)
 

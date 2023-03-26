@@ -588,6 +588,59 @@ class SymplecticForm(DiffForm):
         """
         return pform.hodge_dual(self)
 
+    def on_forms(self, first: DiffForm, second: DiffForm) -> DiffScalarField:
+        r"""
+        Return the contraction of the two forms with respect to the symplectic form.
+
+        The symplectic form `\omega` gives rise to a bilinear form, 
+        also denoted by `\omega` on the space of `1`-forms by
+
+        .. MATH::
+            \omega(\alpha, \beta) = \omega(\alpha^\sharp, \beta^\sharp),
+
+        where `\alpha^\sharp` is the dual of `\alpha` with respect to `\omega`, see
+        :meth:`~sage.manifolds.differentiable.tensor_field.TensorField.up`.
+        This bilinear form induces a bilinear form on the space of all forms determined
+        by its value on decomposable elements as:
+
+        .. MATH::
+            \omega(\alpha_1 \wedge \ldots \wedge\alpha_p, \beta_1 \wedge \ldots \wedge\beta_p)
+            = det(\omega(\alpha_i, \beta_j)).
+
+        INPUT:
+
+        - ``first`` -- a `p`-form `\alpha`
+        - ``second`` -- a `p`-form `\beta`
+
+        OUTPUT:
+
+        - the scalar field `\omega(\alpha, \beta)`
+
+        EXAMPLES:
+
+        Contraction of two forms on the symplectic vector space `R^2`::
+
+            sage: M = manifolds.StandardSymplecticSpace(2)
+            sage: omega = M.symplectic_form()
+            sage: a = M.one_form(1, 0, name='a')
+            sage: b = M.one_form(0, 1, name='b')
+            sage: omega.on_forms(a, b).display()
+            omega(a, b): R2 → ℝ
+                (q, p) ↦ -1
+        """
+        from sage.arith.misc import factorial
+
+        if first.degree() != second.degree():
+            raise ValueError("the two forms must have the same degree")
+
+        second_all_up = second
+        all_positions = range(first.degree())
+        for k in all_positions:
+            second_all_up = second_all_up.up(self, k)
+        return first.contract(
+            *all_positions, second_all_up, *all_positions
+        ) / factorial(first.degree())
+
 
 class SymplecticFormParal(SymplecticForm, DiffFormParal):
     r"""
