@@ -2067,7 +2067,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Some multivariate polynomial rings have no gcd implementation::
 
-            sage: R.<x,y> =GaussianIntegers()[]
+            sage: R.<x,y> = GaussianIntegers()[]
             sage: x.gcd(x)
             Traceback (most recent call last):
             ...
@@ -2078,6 +2078,14 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: Pol = QQ['x']['x','y']
             sage: Pol.one().gcd(1)
             1
+
+        Polynomial ring in no variables::
+
+            sage: R = PolynomialRing(ZZ, [])
+            sage: R(0).gcd(R(0))
+            0
+            sage: R(6).gcd(R(15))
+            3
         """
         flatten = self._parent.flattening_morphism()
         tgt = flatten.codomain()
@@ -2092,7 +2100,10 @@ cdef class MPolynomial(CommutativePolynomial):
         except (TypeError, AttributeError):
             pass
 
-        x = self._parent.gens()[-1]
+        gens = self._parent.gens()
+        if not gens:
+            return self.constant_coefficient().gcd(other.constant_coefficient())
+        x = gens[-1]
         uniself = self.polynomial(x)
         unibase = uniself.base_ring()
         try:
