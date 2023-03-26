@@ -575,10 +575,10 @@ class SymplecticForm(DiffForm):
             sage: omega = M.symplectic_form()
             sage: a = M.one_form(1, 0, name='a')
             sage: omega.hodge_star(a).display()
-            *a = -dq
+            *a = dq
             sage: b = M.one_form(0, 1, name='b')
             sage: omega.hodge_star(b).display()
-            *b = -dp
+            *b = dp
             sage: f = M.scalar_field(1, name='f')
             sage: omega.hodge_star(f).display()
             *f = -dq∧dp
@@ -618,15 +618,13 @@ class SymplecticForm(DiffForm):
 
         EXAMPLES:
 
-        Contraction of two forms on the symplectic vector space `R^2`::
-
             sage: M = manifolds.StandardSymplecticSpace(2)
             sage: omega = M.symplectic_form()
             sage: a = M.one_form(1, 0, name='a')
             sage: b = M.one_form(0, 1, name='b')
             sage: omega.on_forms(a, b).display()
-            omega(a, b): R2 → ℝ
-                (q, p) ↦ -1
+            R2 → ℝ
+            (q, p) ↦ -1
         """
         from sage.arith.misc import factorial
 

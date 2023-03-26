@@ -3086,10 +3086,12 @@ class TensorField(ModuleElementWithMutability):
 
         The trace of a type-`(0,2)` tensor field using a metric::
 
-            sage: M = Manifold(2, 'M', start_index=1)
             sage: g = M.metric('g')
-            sage: g[1,1], g[1,2], g[2,2] = 1, 0, 1
+            sage: g[0,0], g[0,1], g[1,1] = 1, 0, 1
             sage: g.trace(using=g).display()
+            M → ℝ
+            on U: (x, y) ↦ 2
+            on W: (u, v) ↦ 2
 
         Instead of the explicit call to the method :meth:`trace`, one
         may use the index notation with Einstein convention (summation over
