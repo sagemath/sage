@@ -191,7 +191,6 @@ def vectors_by_length(self, bound):
     # Initialize Q with zeros and Copy the Cholesky array into Q
     Q = self.cholesky_decomposition()
 
-
     # 1. Initialize
     T = n * [RDF(0)]    # Note: We index the entries as 0 --> n-1
     U = n * [RDF(0)]
@@ -354,7 +353,6 @@ def complementary_subform_to_vector(self, v):
 
     if not done_flag:
         raise RuntimeError("There is a problem cancelling out the matrix entries! =O")
-
 
     # Return the complementary matrix
     return Q1.extract_variables(range(1,n))

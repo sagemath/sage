@@ -96,7 +96,7 @@ def setup_for_eval_on_grid(funcs,
         ValueError: At least one variable range has more than 3 entries: each should either have 2 or 3 entries, with one of the forms (xmin, xmax) or (x, xmin, xmax)
 
         sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(y,1,-1),(x,-1,1)], plot_points=5)
-        (<sage...>, [(1.0, -1.0, 0.5), (-1.0, 1.0, 0.5)])
+        (<sage...>, [(-1.0, 1.0, 0.5), (-1.0, 1.0, 0.5)])
         sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(x,1,-1),(x,-1,1)], plot_points=5)
         Traceback (most recent call last):
         ...
@@ -106,9 +106,9 @@ def setup_for_eval_on_grid(funcs,
         ...
         ValueError: plot start point and end point must be different
         sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(x,1,-1),(y,-1,1)], return_vars=True)
-        (<sage...>, [(1.0, -1.0, 2.0), (-1.0, 1.0, 2.0)], [x, y])
+        (<sage...>, [(-1.0, 1.0, 2.0), (-1.0, 1.0, 2.0)], [x, y])
         sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(y,1,-1),(x,-1,1)], return_vars=True)
-        (<sage...>, [(1.0, -1.0, 2.0), (-1.0, 1.0, 2.0)], [y, x])
+        (<sage...>, [(-1.0, 1.0, 2.0), (-1.0, 1.0, 2.0)], [y, x])
 
     TESTS:
 
@@ -138,6 +138,14 @@ def setup_for_eval_on_grid(funcs,
             raise ValueError("range variables should be distinct, but there are duplicates")
     else:
         vars, free_vars = unify_arguments(funcs)
+
+    # check for invalid range (xmin > xmax or ymin > ymax) and swap
+    if len(ranges) > 1:
+        for i in range(len(ranges)):
+            if ranges[i][-2] > ranges[i][-1]:
+                ranges[i] = list(ranges[i])
+                ranges[i][-1], ranges[i][-2] = ranges[i][-2], ranges[i][-1]
+                ranges[i] = tuple(ranges[i])
 
     # pad the variables if we don't have enough
     nargs = len(ranges)

@@ -119,11 +119,11 @@ class Polyhedron_number_field(Polyhedron_field, Polyhedron_base_number_field):
 
         Check that the coordinates of a vertex get simplified in the Symbolic Ring::
 
-            sage: p = Polyhedron(ambient_dim=2, base_ring=SR, backend='number_field')
+            sage: p = Polyhedron(ambient_dim=2, base_ring=SR, backend='number_field')                               # optional - sage.symbolic
             sage: from sage.geometry.polyhedron.backend_number_field import Polyhedron_number_field
-            sage: Polyhedron_number_field._init_from_Vrepresentation(p, [(0,1/2),(sqrt(2),0),(4,5/6)], [], []); p
+            sage: Polyhedron_number_field._init_from_Vrepresentation(p, [(0,1/2),(sqrt(2),0),(4,5/6)], [], []); p   # optional - sage.symbolic
             A 2-dimensional polyhedron in (Symbolic Ring)^2 defined as the convex hull of 3 vertices
-            sage: p.vertices()[0][0]
+            sage: p.vertices()[0][0]                                                                                # optional - sage.symbolic
             0
         """
         (vertices, rays, lines), internal_base_ring \

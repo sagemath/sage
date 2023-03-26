@@ -428,6 +428,7 @@ class QuadraticForm(SageObject):
             reduced_binary_form, \
             minkowski_reduction, \
             minkowski_reduction_for_4vars__SP
+
     # Wrappers for Conway-Sloane genus routines (in ./genera/)
     lazy_import("sage.quadratic_forms.quadratic_form__genus", [
             "global_genus_symbol",
@@ -502,6 +503,7 @@ class QuadraticForm(SageObject):
             is_rationally_isometric
 
     # Routines for solving equations of the form Q(x) = c.
+<<<<<<< HEAD
     lazy_import("sage.quadratic_forms.qfsolve", [
             "solve"
         ])
@@ -510,6 +512,9 @@ class QuadraticForm(SageObject):
     lazy_import("sage.quadratic_forms.genera.genus", [
             "genera"
         ])
+=======
+    from sage.quadratic_forms.qfsolve import solve
+>>>>>>> 10.0.beta6
 
     def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None):
         """
@@ -696,7 +701,6 @@ class QuadraticForm(SageObject):
         """
         return deepcopy(self._external_initialization_list)
 
-
     def __pari__(self):
         """
         Return a PARI-formatted Hessian matrix for Q.
@@ -747,7 +751,6 @@ class QuadraticForm(SageObject):
                     out_str += str(self[i,j]) + " "
             out_str += "]"
         return out_str
-
 
     def _latex_(self):
         """
@@ -978,8 +981,6 @@ class QuadraticForm(SageObject):
 #        return QuadraticForm(self.base_ring(), self.dim(), [c * self.__coeffs[i]  for i in range(len(self.__coeffs))])
 # =========================================================================================================================
 
-
-
     def __call__(self, v):
         """
         Evaluate this quadratic form Q on a vector or matrix of elements
@@ -1090,8 +1091,6 @@ class QuadraticForm(SageObject):
 
         else:
             raise TypeError
-
-
 
 
 # =====================================================================================================
@@ -1408,8 +1407,6 @@ class QuadraticForm(SageObject):
                 coeffs.append(poly.monomial_coefficient(v*w))
         return QuadraticForm(base, len(vs), coeffs)
 
-
-
     def is_primitive(self):
         """
         Determines if the given integer-valued form is primitive
@@ -1501,7 +1498,6 @@ class QuadraticForm(SageObject):
         """
         return self.__base_ring
 
-
     def coefficients(self):
         """
         Gives the matrix of upper triangular coefficients,
@@ -1515,7 +1511,6 @@ class QuadraticForm(SageObject):
 
         """
         return self.__coeffs
-
 
     def det(self):
         """
@@ -1545,7 +1540,6 @@ class QuadraticForm(SageObject):
             self.__det = new_det
             return new_det
 
-
     def Gram_det(self):
         """
         Gives the determinant of the Gram matrix of Q.
@@ -1563,7 +1557,11 @@ class QuadraticForm(SageObject):
         """
         return self.det() / ZZ(2**self.dim())
 
+<<<<<<< HEAD
     def change_ring(self, R):
+=======
+    def base_change_to(self, R):
+>>>>>>> 10.0.beta6
         """
         Alters the quadratic form to have all coefficients
         defined over the new base_ring R.  Here R must be
@@ -1645,7 +1643,6 @@ class QuadraticForm(SageObject):
             if self.base_ring().is_field():
                 warn("Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?")
                 #raise RuntimeError, "Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?"
-
 
             # Check invertibility and find the inverse
             try:

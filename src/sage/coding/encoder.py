@@ -194,7 +194,6 @@ class Encoder(SageObject):
         """
         return self.encode(m)
 
-
     def unencode(self, c, nocheck=False):
         r"""
         Return the message corresponding to the codeword ``c``.

@@ -1,0 +1,51 @@
+name: Build documentation (PDF)
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+    # Allow to run manually
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    # Use "maximal" so that texlive is installed
+    # Use "fedora-31" for build diversity
+    container: ghcr.io/sagemath/sage/sage-docker-fedora-31-maximal-with-targets:dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Prepare
+        run: |
+          apt-get update && apt-get install -y zip
+          # Reuse built SAGE_LOCAL contained in the Docker image
+          ./bootstrap
+          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-download-from-upstream-url
+
+      - name: Build
+        run: make build V=0 && make doc-pdf
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+          TEXMFHOME: /sage/texmf
+
+      - name: Copy docs
+        run: |
+          # For some reason the deploy step below cannot find /sage/...
+          # So copy everything from there to local folder
+          mkdir -p ./docs
+          cp -r -L /sage/local/share/doc/sage/pdf/en/* ./docs
+          # Zip everything for increased performance
+          zip -r docs-pdf.zip docs
+
+      - name: Upload docs
+        uses: actions/upload-artifact@v3
+        with:
+          name: docs-pdf
+          path: docs-pdf.zip
