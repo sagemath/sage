@@ -1035,7 +1035,7 @@ class Braid(FiniteTypeArtinGroupElement):
         return (-1)**(num_comp-1) * A**(2*exp_sum) * trace // D
 
     def jones_polynomial(self, variab=None, skein_normalization=False):
-        """
+        r"""
         Return the Jones polynomial of the trace closure of the braid.
 
         The normalization is so that the unknot has Jones polynomial `1`. If
@@ -1044,7 +1044,7 @@ class Braid(FiniteTypeArtinGroupElement):
         agrees with the conventions of [Lic1997]_ (which in particular differs
         slightly from the conventions used otherwise in this class), had
         one used the conventional Kauffman bracket variable notation directly.
-+
+
         If ``variab`` is ``None`` return a polynomial in the variable `A`
         or `t`, depending on the value ``skein_normalization``. In
         particular, if ``skein_normalization`` is ``False``, return the
