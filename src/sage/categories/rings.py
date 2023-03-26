@@ -12,6 +12,7 @@ Rings
 # *****************************************************************************
 from functools import reduce
 
+from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom
@@ -316,6 +317,19 @@ class Rings(CategoryWithAxiom):
                 True
             """
             return True
+
+        @abstract_method(optional=True)
+        def is_noetherian(self):
+            """
+            Return ``True`` if this ring is Noetherian.
+
+            EXAMPLES::
+
+                sage: QQ.is_noetherian()
+                True
+                sage: ZZ.is_noetherian()
+                True
+            """
 
         def is_zero(self) -> bool:
             """

@@ -839,19 +839,6 @@ cdef class Ring(ParentWithGens):
         else:
             return False
 
-    def is_noetherian(self):
-        """
-        Return ``True`` if this ring is Noetherian.
-
-        EXAMPLES::
-
-            sage: QQ.is_noetherian()
-            True
-            sage: ZZ.is_noetherian()
-            True
-        """
-        raise NotImplementedError
-
     def order(self):
         """
         The number of elements of ``self``.
