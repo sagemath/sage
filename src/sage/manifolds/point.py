@@ -250,7 +250,7 @@ class ManifoldPoint(Element):
             sage: X.<x,y> = M.chart()
             sage: p = M((2,-3))
             sage: p._latex_()
-            '\\mbox{Point on the 2-dimensional topological manifold M}'
+            '\\text{Point on the 2-dimensional topological manifold M}'
             sage: p = M((2,-3), name='p')
             sage: p._latex_()
             'p'
@@ -262,7 +262,7 @@ class ManifoldPoint(Element):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         return self._latex_name
 
     def coordinates(self, chart=None, old_chart=None):

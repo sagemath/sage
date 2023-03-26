@@ -186,7 +186,7 @@ class DifferentiableCurve(DiffMap):
 
         sage: c = M.curve([sin(t), sin(2*t)/2], (t, 0, 2*pi))
         sage: latex(c)
-        \mbox{Curve in the 2-dimensional differentiable manifold M}
+        \text{Curve in the 2-dimensional differentiable manifold M}
         sage: c = M.curve([sin(t), sin(2*t)/2], (t, 0, 2*pi), name='c')
         sage: latex(c)
         c
