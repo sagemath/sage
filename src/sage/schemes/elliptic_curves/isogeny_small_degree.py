@@ -268,12 +268,18 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
 
         sage: E = EllipticCurve('1450c1')
         sage: isogenies_prime_degree_genus_0(E)
-        [Isogeny of degree 3 from Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 300*x - 1000 over Rational Field to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 5950*x - 182250 over Rational Field]
+        [Isogeny of degree 3
+          from Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 300*x - 1000 over Rational Field
+          to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 5950*x - 182250 over Rational Field]
 
         sage: E = EllipticCurve('50a1')
         sage: isogenies_prime_degree_genus_0(E)
-        [Isogeny of degree 3 from Elliptic Curve defined by y^2 + x*y + y = x^3 - x - 2 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 - 126*x - 552 over Rational Field,
-        Isogeny of degree 5 from Elliptic Curve defined by y^2 + x*y + y = x^3 - x - 2 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 - 76*x + 298 over Rational Field]
+        [Isogeny of degree 3
+          from Elliptic Curve defined by y^2 + x*y + y = x^3 - x - 2 over Rational Field
+          to Elliptic Curve defined by y^2 + x*y + y = x^3 - 126*x - 552 over Rational Field,
+         Isogeny of degree 5
+          from Elliptic Curve defined by y^2 + x*y + y = x^3 - x - 2 over Rational Field
+          to Elliptic Curve defined by y^2 + x*y + y = x^3 - 76*x + 298 over Rational Field]
     """
     if l not in [2, 3, 5, 7, 13, None]:
         raise ValueError("%s is not a genus 0 prime."%l)
@@ -588,19 +594,27 @@ def isogenies_sporadic_Q(E, l=None, minimal_models=True):
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_sporadic_Q
         sage: E = EllipticCurve('121a1')
         sage: isogenies_sporadic_Q(E, 11)
-        [Isogeny of degree 11 from Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 30*x - 76 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 305*x + 7888 over Rational Field]
+        [Isogeny of degree 11
+          from Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 30*x - 76 over Rational Field
+          to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 305*x + 7888 over Rational Field]
         sage: isogenies_sporadic_Q(E, 13)
         []
         sage: isogenies_sporadic_Q(E, 17)
         []
         sage: isogenies_sporadic_Q(E)
-        [Isogeny of degree 11 from Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 30*x - 76 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 305*x + 7888 over Rational Field]
+        [Isogeny of degree 11
+          from Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 30*x - 76 over Rational Field
+          to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 305*x + 7888 over Rational Field]
 
         sage: E = EllipticCurve([1, 1, 0, -660, -7600])
         sage: isogenies_sporadic_Q(E, 17)
-        [Isogeny of degree 17 from Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 660*x - 7600 over Rational Field to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 878710*x + 316677750 over Rational Field]
+        [Isogeny of degree 17
+          from Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 660*x - 7600 over Rational Field
+          to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 878710*x + 316677750 over Rational Field]
         sage: isogenies_sporadic_Q(E)
-        [Isogeny of degree 17 from Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 660*x - 7600 over Rational Field to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 878710*x + 316677750 over Rational Field]
+        [Isogeny of degree 17
+          from Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 660*x - 7600 over Rational Field
+          to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 878710*x + 316677750 over Rational Field]
         sage: isogenies_sporadic_Q(E, 11)
         []
 
@@ -608,39 +622,53 @@ def isogenies_sporadic_Q(E, l=None, minimal_models=True):
         sage: isogenies_sporadic_Q(E, 11)
         []
         sage: isogenies_sporadic_Q(E, 19)
-        [Isogeny of degree 19 from Elliptic Curve defined by y^2 + y = x^3 - 1862*x - 30956 over Rational Field to Elliptic Curve defined by y^2 + y = x^3 - 672182*x + 212325489 over Rational Field]
+        [Isogeny of degree 19
+          from Elliptic Curve defined by y^2 + y = x^3 - 1862*x - 30956 over Rational Field
+          to Elliptic Curve defined by y^2 + y = x^3 - 672182*x + 212325489 over Rational Field]
         sage: isogenies_sporadic_Q(E)
-        [Isogeny of degree 19 from Elliptic Curve defined by y^2 + y = x^3 - 1862*x - 30956 over Rational Field to Elliptic Curve defined by y^2 + y = x^3 - 672182*x + 212325489 over Rational Field]
+        [Isogeny of degree 19
+          from Elliptic Curve defined by y^2 + y = x^3 - 1862*x - 30956 over Rational Field
+          to Elliptic Curve defined by y^2 + y = x^3 - 672182*x + 212325489 over Rational Field]
 
         sage: E = EllipticCurve([0, -1, 0, -6288, 211072])
         sage: E.conductor()
         19600
         sage: isogenies_sporadic_Q(E,37)
-        [Isogeny of degree 37 from Elliptic Curve defined by y^2 = x^3 - x^2 - 6288*x + 211072 over Rational Field to Elliptic Curve defined by y^2 = x^3 - x^2 - 163137088*x - 801950801728 over Rational Field]
+        [Isogeny of degree 37
+          from Elliptic Curve defined by y^2 = x^3 - x^2 - 6288*x + 211072 over Rational Field
+          to Elliptic Curve defined by y^2 = x^3 - x^2 - 163137088*x - 801950801728 over Rational Field]
 
         sage: E = EllipticCurve([1, 1, 0, -25178045, 48616918750])
         sage: E.conductor()
         148225
         sage: isogenies_sporadic_Q(E,37)
-        [Isogeny of degree 37 from Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 25178045*x + 48616918750 over Rational Field to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 970*x - 13075 over Rational Field]
+        [Isogeny of degree 37
+          from Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 25178045*x + 48616918750 over Rational Field
+          to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 970*x - 13075 over Rational Field]
 
         sage: E = EllipticCurve([-3440, 77658])
         sage: E.conductor()
         118336
         sage: isogenies_sporadic_Q(E,43)
-        [Isogeny of degree 43 from Elliptic Curve defined by y^2 = x^3 - 3440*x + 77658 over Rational Field to Elliptic Curve defined by y^2 = x^3 - 6360560*x - 6174354606 over Rational Field]
+        [Isogeny of degree 43
+          from Elliptic Curve defined by y^2 = x^3 - 3440*x + 77658 over Rational Field
+          to Elliptic Curve defined by y^2 = x^3 - 6360560*x - 6174354606 over Rational Field]
 
         sage: E = EllipticCurve([-29480, -1948226])
         sage: E.conductor()
         287296
         sage: isogenies_sporadic_Q(E,67)
-        [Isogeny of degree 67 from Elliptic Curve defined by y^2 = x^3 - 29480*x - 1948226 over Rational Field to Elliptic Curve defined by y^2 = x^3 - 132335720*x + 585954296438 over Rational Field]
+        [Isogeny of degree 67
+         from Elliptic Curve defined by y^2 = x^3 - 29480*x - 1948226 over Rational Field
+         to Elliptic Curve defined by y^2 = x^3 - 132335720*x + 585954296438 over Rational Field]
 
         sage: E = EllipticCurve([-34790720, -78984748304])
         sage: E.conductor()
         425104
         sage: isogenies_sporadic_Q(E,163)
-        [Isogeny of degree 163 from Elliptic Curve defined by y^2 = x^3 - 34790720*x - 78984748304 over Rational Field to Elliptic Curve defined by y^2 = x^3 - 924354639680*x + 342062961763303088 over Rational Field]
+        [Isogeny of degree 163
+          from Elliptic Curve defined by y^2 = x^3 - 34790720*x - 78984748304 over Rational Field
+          to Elliptic Curve defined by y^2 = x^3 - 924354639680*x + 342062961763303088 over Rational Field]
     """
     j = E.j_invariant()
     j = QQ(j)
@@ -796,13 +824,18 @@ def isogenies_5_0(E, minimal_models=True):
 
         sage: E = EllipticCurve(GF(13^2,'a'),[0,-3])
         sage: isogenies_5_0(E)
-        [Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (4*a+6)*x + (2*a+10) over Finite Field in a of size 13^2, Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (12*a+5)*x + (2*a+10) over Finite Field in a of size 13^2, Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (10*a+2)*x + (2*a+10) over Finite Field in a of size 13^2, Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (3*a+12)*x + (11*a+12) over Finite Field in a of size 13^2, Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (a+4)*x + (11*a+12) over Finite Field in a of size 13^2, Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (9*a+10)*x + (11*a+12) over Finite Field in a of size 13^2]
+        [Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (4*a+6)*x + (2*a+10) over Finite Field in a of size 13^2,
+         Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (12*a+5)*x + (2*a+10) over Finite Field in a of size 13^2,
+         Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (10*a+2)*x + (2*a+10) over Finite Field in a of size 13^2,
+         Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (3*a+12)*x + (11*a+12) over Finite Field in a of size 13^2,
+         Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (a+4)*x + (11*a+12) over Finite Field in a of size 13^2,
+         Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 10 over Finite Field in a of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (9*a+10)*x + (11*a+12) over Finite Field in a of size 13^2]
 
         sage: K.<a> = NumberField(x**6-320*x**3-320)
         sage: E = EllipticCurve(K,[0,0,1,0,0])
         sage: isogenies_5_0(E)
         [Isogeny of degree 5 from Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^6 - 320*x^3 - 320 to Elliptic Curve defined by y^2 + y = x^3 + (241565/32*a^5-362149/48*a^4+180281/24*a^3-9693307/4*a^2+14524871/6*a-7254985/3)*x + (1660391123/192*a^5-829315373/96*a^4+77680504/9*a^3-66622345345/24*a^2+33276655441/12*a-24931615912/9) over Number Field in a with defining polynomial x^6 - 320*x^3 - 320,
-        Isogeny of degree 5 from Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^6 - 320*x^3 - 320 to Elliptic Curve defined by y^2 + y = x^3 + (47519/32*a^5-72103/48*a^4+32939/24*a^3-1909753/4*a^2+2861549/6*a-1429675/3)*x + (-131678717/192*a^5+65520419/96*a^4-12594215/18*a^3+5280985135/24*a^2-2637787519/12*a+1976130088/9) over Number Field in a with defining polynomial x^6 - 320*x^3 - 320]
+         Isogeny of degree 5 from Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^6 - 320*x^3 - 320 to Elliptic Curve defined by y^2 + y = x^3 + (47519/32*a^5-72103/48*a^4+32939/24*a^3-1909753/4*a^2+2861549/6*a-1429675/3)*x + (-131678717/192*a^5+65520419/96*a^4-12594215/18*a^3+5280985135/24*a^2-2637787519/12*a+1976130088/9) over Number Field in a with defining polynomial x^6 - 320*x^3 - 320]
     """
     F = E.base_field()
     if E.j_invariant() != 0:
@@ -866,7 +899,7 @@ def isogenies_5_1728(E, minimal_models=True):
         sage: E = EllipticCurve(GF(13),[11,0])
         sage: isogenies_5_1728(E)
         [Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 11*x over Finite Field of size 13 to Elliptic Curve defined by y^2 = x^3 + 11*x over Finite Field of size 13,
-        Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 11*x over Finite Field of size 13 to Elliptic Curve defined by y^2 = x^3 + 11*x over Finite Field of size 13]
+         Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 11*x over Finite Field of size 13 to Elliptic Curve defined by y^2 = x^3 + 11*x over Finite Field of size 13]
 
     An example of endomorphisms of degree 5::
 
@@ -887,7 +920,7 @@ def isogenies_5_1728(E, minimal_models=True):
         sage: E = EllipticCurve(K,[0,0,0,1,0])
         sage: isogenies_5_1728(E)
         [Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x over Number Field in a with defining polynomial x^4 + 20*x^2 - 80 to Elliptic Curve defined by y^2 = x^3 + (-753/4*a^2-4399)*x + (2779*a^3+65072*a) over Number Field in a with defining polynomial x^4 + 20*x^2 - 80,
-        Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x over Number Field in a with defining polynomial x^4 + 20*x^2 - 80 to Elliptic Curve defined by y^2 = x^3 + (-753/4*a^2-4399)*x + (-2779*a^3-65072*a) over Number Field in a with defining polynomial x^4 + 20*x^2 - 80]
+         Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x over Number Field in a with defining polynomial x^4 + 20*x^2 - 80 to Elliptic Curve defined by y^2 = x^3 + (-753/4*a^2-4399)*x + (-2779*a^3-65072*a) over Number Field in a with defining polynomial x^4 + 20*x^2 - 80]
 
     See :trac:`19840`::
 
@@ -1179,7 +1212,7 @@ def isogenies_13_0(E, minimal_models=True):
         Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 19^2
         sage: isogenies_13_0(E)
         [Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 19^2 to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 19^2,
-        Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 19^2 to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 19^2]
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 19^2 to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 19^2]
         sage: isogenies_13_0(E)[0].rational_maps()
         ((6*x^13 - 6*x^10 - 3*x^7 + 6*x^4 + x)/(x^12 - 5*x^9 - 9*x^6 - 7*x^3 + 5), (-8*x^18*y - 9*x^15*y + 9*x^12*y - 5*x^9*y + 5*x^6*y - 7*x^3*y + 7*y)/(x^18 + 2*x^15 + 3*x^12 - x^9 + 8*x^6 - 9*x^3 + 7))
 
@@ -1188,7 +1221,8 @@ def isogenies_13_0(E, minimal_models=True):
         sage: K = GF(29)
         sage: E = EllipticCurve(j=K(0))
         sage: isogenies_13_0(E)
-        [Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 29 to Elliptic Curve defined by y^2 = x^3 + 26*x + 12 over Finite Field of size 29, Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 29 to Elliptic Curve defined by y^2 = x^3 + 16*x + 28 over Finite Field of size 29]
+        [Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 29 to Elliptic Curve defined by y^2 = x^3 + 26*x + 12 over Finite Field of size 29,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 29 to Elliptic Curve defined by y^2 = x^3 + 16*x + 28 over Finite Field of size 29]
 
     ::
 
@@ -1299,14 +1333,15 @@ def isogenies_13_1728(E, minimal_models=True):
         (0, 0, 0, 5, 0)
         sage: isogenies_13_1728(E)
         [Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + 5*x over Finite Field of size 89 to Elliptic Curve defined by y^2 = x^3 + 5*x over Finite Field of size 89,
-        Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + 5*x over Finite Field of size 89 to Elliptic Curve defined by y^2 = x^3 + 5*x over Finite Field of size 89]
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + 5*x over Finite Field of size 89 to Elliptic Curve defined by y^2 = x^3 + 5*x over Finite Field of size 89]
 
     ::
 
         sage: K = GF(23)
         sage: E = EllipticCurve(K, [1,0])
         sage: isogenies_13_1728(E)
-        [Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 23 to Elliptic Curve defined by y^2 = x^3 + 16 over Finite Field of size 23, Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 23 to Elliptic Curve defined by y^2 = x^3 + 7 over Finite Field of size 23]
+        [Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 23 to Elliptic Curve defined by y^2 = x^3 + 16 over Finite Field of size 23,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 23 to Elliptic Curve defined by y^2 = x^3 + 7 over Finite Field of size 23]
 
     ::
 
@@ -1652,7 +1687,8 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
 
         sage: E = EllipticCurve_from_j(GF(5)(1))
         sage: isogenies_prime_degree_genus_plus_0(E, 41)
-        [Isogeny of degree 41 from Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 5 to Elliptic Curve defined by y^2 = x^3 + x + 3 over Finite Field of size 5, Isogeny of degree 41 from Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 5 to Elliptic Curve defined by y^2 = x^3 + x + 3 over Finite Field of size 5]
+        [Isogeny of degree 41 from Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 5 to Elliptic Curve defined by y^2 = x^3 + x + 3 over Finite Field of size 5,
+         Isogeny of degree 41 from Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 5 to Elliptic Curve defined by y^2 = x^3 + x + 3 over Finite Field of size 5]
 
         sage: K = QuadraticField(5,'a')
         sage: a = K.gen()
@@ -1668,7 +1704,8 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
 
         sage: E = EllipticCurve_from_j(GF(13)(5))
         sage: isogenies_prime_degree_genus_plus_0(E, 71)
-        [Isogeny of degree 71 from Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field of size 13 to Elliptic Curve defined by y^2 = x^3 + 10*x + 7 over Finite Field of size 13, Isogeny of degree 71 from Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field of size 13 to Elliptic Curve defined by y^2 = x^3 + 10*x + 7 over Finite Field of size 13]
+        [Isogeny of degree 71 from Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field of size 13 to Elliptic Curve defined by y^2 = x^3 + 10*x + 7 over Finite Field of size 13,
+         Isogeny of degree 71 from Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field of size 13 to Elliptic Curve defined by y^2 = x^3 + 10*x + 7 over Finite Field of size 13]
 
         sage: E = EllipticCurve(GF(13),[0,1,1,1,0])
         sage: isogenies_prime_degree_genus_plus_0(E)
@@ -1767,7 +1804,8 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
         sage: K.<a> = NumberField(u^4+228*u^3+486*u^2-540*u+225)
         sage: E = EllipticCurve(K,[0,-121/5*a^3-20691/5*a^2-29403/5*a+3267])
         sage: isogenies_prime_degree_genus_plus_0_j0(E,11)
-        [Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + (-121/5*a^3-20691/5*a^2-29403/5*a+3267) over Number Field in a with defining polynomial x^4 + 228*x^3 + 486*x^2 - 540*x + 225 to Elliptic Curve defined by y^2 = x^3 + (-44286*a^2+178596*a-32670)*x + (-17863351/5*a^3+125072739/5*a^2-74353653/5*a-682803) over Number Field in a with defining polynomial x^4 + 228*x^3 + 486*x^2 - 540*x + 225, Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + (-121/5*a^3-20691/5*a^2-29403/5*a+3267) over Number Field in a with defining polynomial x^4 + 228*x^3 + 486*x^2 - 540*x + 225 to Elliptic Curve defined by y^2 = x^3 + (-3267*a^3-740157*a^2+600039*a-277695)*x + (-17863351/5*a^3-4171554981/5*a^2+3769467867/5*a-272366523) over Number Field in a with defining polynomial x^4 + 228*x^3 + 486*x^2 - 540*x + 225]
+        [Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + (-121/5*a^3-20691/5*a^2-29403/5*a+3267) over Number Field in a with defining polynomial x^4 + 228*x^3 + 486*x^2 - 540*x + 225 to Elliptic Curve defined by y^2 = x^3 + (-44286*a^2+178596*a-32670)*x + (-17863351/5*a^3+125072739/5*a^2-74353653/5*a-682803) over Number Field in a with defining polynomial x^4 + 228*x^3 + 486*x^2 - 540*x + 225,
+         Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + (-121/5*a^3-20691/5*a^2-29403/5*a+3267) over Number Field in a with defining polynomial x^4 + 228*x^3 + 486*x^2 - 540*x + 225 to Elliptic Curve defined by y^2 = x^3 + (-3267*a^3-740157*a^2+600039*a-277695)*x + (-17863351/5*a^3-4171554981/5*a^2+3769467867/5*a-272366523) over Number Field in a with defining polynomial x^4 + 228*x^3 + 486*x^2 - 540*x + 225]
 
         sage: E = EllipticCurve(GF(5^6,'a'),[0,1])
         sage: isogenies_prime_degree_genus_plus_0_j0(E,17)
@@ -1854,7 +1892,8 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
         sage: K.<a> = NumberField(u^6 - 522*u^5 - 10017*u^4 + 2484*u^3 - 5265*u^2 + 12150*u - 5103)
         sage: E = EllipticCurve(K,[-75295/1335852*a^5+13066735/445284*a^4+44903485/74214*a^3+17086861/24738*a^2+11373021/16492*a-1246245/2356,0])
         sage: isogenies_prime_degree_genus_plus_0_j1728(E,11)
-        [Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + (-75295/1335852*a^5+13066735/445284*a^4+44903485/74214*a^3+17086861/24738*a^2+11373021/16492*a-1246245/2356)*x over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103 to Elliptic Curve defined by y^2 = x^3 + (9110695/1335852*a^5-1581074935/445284*a^4-5433321685/74214*a^3-3163057249/24738*a^2+1569269691/16492*a+73825125/2356)*x + (-3540460*a^3+30522492*a^2-7043652*a-5031180) over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103, Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + (-75295/1335852*a^5+13066735/445284*a^4+44903485/74214*a^3+17086861/24738*a^2+11373021/16492*a-1246245/2356)*x over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103 to Elliptic Curve defined by y^2 = x^3 + (9110695/1335852*a^5-1581074935/445284*a^4-5433321685/74214*a^3-3163057249/24738*a^2+1569269691/16492*a+73825125/2356)*x + (3540460*a^3-30522492*a^2+7043652*a+5031180) over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103]
+        [Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + (-75295/1335852*a^5+13066735/445284*a^4+44903485/74214*a^3+17086861/24738*a^2+11373021/16492*a-1246245/2356)*x over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103 to Elliptic Curve defined by y^2 = x^3 + (9110695/1335852*a^5-1581074935/445284*a^4-5433321685/74214*a^3-3163057249/24738*a^2+1569269691/16492*a+73825125/2356)*x + (-3540460*a^3+30522492*a^2-7043652*a-5031180) over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103,
+         Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + (-75295/1335852*a^5+13066735/445284*a^4+44903485/74214*a^3+17086861/24738*a^2+11373021/16492*a-1246245/2356)*x over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103 to Elliptic Curve defined by y^2 = x^3 + (9110695/1335852*a^5-1581074935/445284*a^4-5433321685/74214*a^3-3163057249/24738*a^2+1569269691/16492*a+73825125/2356)*x + (3540460*a^3-30522492*a^2+7043652*a+5031180) over Number Field in a with defining polynomial x^6 - 522*x^5 - 10017*x^4 + 2484*x^3 - 5265*x^2 + 12150*x - 5103]
         sage: i = QuadraticField(-1,'i').gen()
         sage: E = EllipticCurve([-1-2*i,0])
         sage: isogenies_prime_degree_genus_plus_0_j1728(E,17)
@@ -2018,7 +2057,7 @@ def is_kernel_polynomial(E, m, f):
 
     See :trac:`22232`::
 
-        sage: K =GF(47^2)
+        sage: K = GF(47^2)
         sage: E = EllipticCurve([0, K.gen()])
         sage: psi7 = E.division_polynomial(7)
         sage: f = psi7.factor()[4][0]
@@ -2097,7 +2136,8 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
         [Isogeny of degree 7 from Elliptic Curve defined by y^2 + x*y = x^3 + 1 over Finite Field in a of size 2^6 to Elliptic Curve defined by y^2 + x*y = x^3 + x over Finite Field in a of size 2^6]
         sage: E = EllipticCurve_from_j(GF(3^12,'a')(2))
         sage: isogenies_prime_degree_general(E, 17)
-        [Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2 over Finite Field in a of size 3^12 to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2*x over Finite Field in a of size 3^12, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2 over Finite Field in a of size 3^12 to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + x + 2 over Finite Field in a of size 3^12]
+        [Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2 over Finite Field in a of size 3^12 to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2*x over Finite Field in a of size 3^12,
+         Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2 over Finite Field in a of size 3^12 to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + x + 2 over Finite Field in a of size 3^12]
         sage: E = EllipticCurve('50a1')
         sage: isogenies_prime_degree_general(E, 3)
         [Isogeny of degree 3 from Elliptic Curve defined by y^2 + x*y + y = x^3 - x - 2 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 - 126*x - 552 over Rational Field]
@@ -2271,7 +2311,8 @@ def isogenies_prime_degree(E, l, minimal_models=True):
         [Isogeny of degree 7 from Elliptic Curve defined by y^2 + x*y = x^3 + 1 over Finite Field in a of size 2^6 to Elliptic Curve defined by y^2 + x*y = x^3 + x over Finite Field in a of size 2^6]
         sage: E = EllipticCurve_from_j(GF(3^12,'a')(2))
         sage: isogenies_prime_degree(E, 17)
-        [Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2 over Finite Field in a of size 3^12 to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2*x over Finite Field in a of size 3^12, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2 over Finite Field in a of size 3^12 to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + x + 2 over Finite Field in a of size 3^12]
+        [Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2 over Finite Field in a of size 3^12 to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2*x over Finite Field in a of size 3^12,
+         Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2 over Finite Field in a of size 3^12 to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + x + 2 over Finite Field in a of size 3^12]
         sage: E = EllipticCurve('50a1')
         sage: isogenies_prime_degree(E, 3)
         [Isogeny of degree 3 from Elliptic Curve defined by y^2 + x*y + y = x^3 - x - 2 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 - 126*x - 552 over Rational Field]

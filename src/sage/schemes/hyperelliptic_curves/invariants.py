@@ -24,14 +24,15 @@ def diffxy(f, x, xtimes, y, ytimes):
 
     EXAMPLES::
 
+        sage: from sage.schemes.hyperelliptic_curves.invariants import diffxy
         sage: R.<u, v> = QQ[]
-        sage: sage.schemes.hyperelliptic_curves.invariants.diffxy(u^2*v^3, u, 0, v, 0)
+        sage: diffxy(u^2*v^3, u, 0, v, 0)
         u^2*v^3
-        sage: sage.schemes.hyperelliptic_curves.invariants.diffxy(u^2*v^3, u, 2, v, 1)
+        sage: diffxy(u^2*v^3, u, 2, v, 1)
         6*v^2
-        sage: sage.schemes.hyperelliptic_curves.invariants.diffxy(u^2*v^3, u, 2, v, 2)
+        sage: diffxy(u^2*v^3, u, 2, v, 2)
         12*v
-        sage: sage.schemes.hyperelliptic_curves.invariants.diffxy(u^2*v^3 + u^4*v^4, u, 2, v, 2)
+        sage: diffxy(u^2*v^3 + u^4*v^4, u, 2, v, 2)
         144*u^2*v^2 + 12*v
     """
     h = f
@@ -67,7 +68,8 @@ def differential_operator(f, g, k):
         sage: differential_operator(x^2*y, x*y^2, 2)
         1/36*dfdy^2*dgdx^2 - 1/18*dfdx*dfdy*dgdx*dgdy + 1/36*dfdx^2*dgdy^2
         sage: differential_operator(x^2*y, x*y^2, 4)
-        1/576*dfdy^4*dgdx^4 - 1/144*dfdx*dfdy^3*dgdx^3*dgdy + 1/96*dfdx^2*dfdy^2*dgdx^2*dgdy^2 - 1/144*dfdx^3*dfdy*dgdx*dgdy^3 + 1/576*dfdx^4*dgdy^4
+        1/576*dfdy^4*dgdx^4 - 1/144*dfdx*dfdy^3*dgdx^3*dgdy + 1/96*dfdx^2*dfdy^2*dgdx^2*dgdy^2
+        - 1/144*dfdx^3*dfdy*dgdx*dgdy^3 + 1/576*dfdx^4*dgdy^4
     """
     (x, y) = f.parent().gens()
     n = max(ZZ(f.degree()), ZZ(k))
@@ -173,8 +175,8 @@ def ubs(f):
          'y2': 0,
          'y3': 0}
 
-        sage: R.<t> = GF(31)[]
-        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)
+        sage: R.<t> = GF(31)[]                                                          # optional - sage.rings.finite_rings
+        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)                                          # optional - sage.rings.finite_rings
         {'A': 0,
          'B': -12,
          'C': -15,
@@ -217,11 +219,11 @@ def clebsch_to_igusa(A, B, C, D):
         sage: igusa_to_clebsch(*clebsch_to_igusa(2, 3, 4, 5))
         (2, 3, 4, 5)
 
-        sage: Cs = tuple(map(GF(31), (2, 3, 4, 5))); Cs
+        sage: Cs = tuple(map(GF(31), (2, 3, 4, 5))); Cs                                 # optional - sage.rings.finite_rings
         (2, 3, 4, 5)
-        sage: clebsch_to_igusa(*Cs)
+        sage: clebsch_to_igusa(*Cs)                                                     # optional - sage.rings.finite_rings
         (8, 10, 15, 26)
-        sage: igusa_to_clebsch(*clebsch_to_igusa(*Cs))
+        sage: igusa_to_clebsch(*clebsch_to_igusa(*Cs))                                  # optional - sage.rings.finite_rings
         (2, 3, 4, 5)
     """
     I2 = -120*A
@@ -243,11 +245,11 @@ def igusa_to_clebsch(I2, I4, I6, I10):
         sage: clebsch_to_igusa(*igusa_to_clebsch(-2400, 173700, 23112000, -10309890600))
         (-2400, 173700, 23112000, -10309890600)
 
-        sage: Is = tuple(map(GF(31), (-2400, 173700, 23112000, -10309890600))); Is
+        sage: Is = tuple(map(GF(31), (-2400, 173700, 23112000, -10309890600))); Is      # optional - sage.rings.finite_rings
         (18, 7, 12, 27)
-        sage: igusa_to_clebsch(*Is)
+        sage: igusa_to_clebsch(*Is)                                                     # optional - sage.rings.finite_rings
         (20, 25, 25, 12)
-        sage: clebsch_to_igusa(*igusa_to_clebsch(*Is))
+        sage: clebsch_to_igusa(*igusa_to_clebsch(*Is))                                  # optional - sage.rings.finite_rings
         (18, 7, 12, 27)
     """
     A = -(+ I2) / 120
@@ -274,9 +276,9 @@ def clebsch_invariants(f):
         sage: clebsch_invariants(x^6 + x^5 + x^4 + x^2 + 2)
         (62/15, 15434/5625, -236951/140625, 229930748/791015625)
 
-        sage: magma(x^6 + 1).ClebschInvariants() # optional - magma
+        sage: magma(x^6 + 1).ClebschInvariants()                    # optional - magma
         [ 2, 2/3, -2/9, 0 ]
-        sage: magma(x^6 + x^5 + x^4 + x^2 + 2).ClebschInvariants() # optional - magma
+        sage: magma(x^6 + x^5 + x^4 + x^2 + 2).ClebschInvariants()  # optional - magma
         [ 62/15, 15434/5625, -236951/140625, 229930748/791015625 ]
     """
     R = f.parent().base_ring()
@@ -307,9 +309,9 @@ def igusa_clebsch_invariants(f):
         sage: igusa_clebsch_invariants(x^6 + x^5 + x^4 + x^2 + 2)
         (-496, 6220, -955932, -1111784)
 
-        sage: magma(x^6 + 1).IgusaClebschInvariants() # optional - magma
+        sage: magma(x^6 + 1).IgusaClebschInvariants()                    # optional - magma
         [ -240, 1620, -119880, -46656 ]
-        sage: magma(x^6 + x^5 + x^4 + x^2 + 2).IgusaClebschInvariants() # optional - magma
+        sage: magma(x^6 + x^5 + x^4 + x^2 + 2).IgusaClebschInvariants()  # optional - magma
         [ -496, 6220, -955932, -1111784 ]
 
     TESTS:
@@ -321,10 +323,11 @@ def igusa_clebsch_invariants(f):
         sage: igusa_clebsch_invariants(x^5 + a*x^4 + b*x^3 + c*x^2 + d*x + e)[0]
         6*b^2 - 16*a*c + 40*d
 
-        sage: absolute_igusa_invariants_wamelen(GF(5)['x'](x^6 - 2*x))
+        sage: absolute_igusa_invariants_wamelen(GF(5)['x'](x^6 - 2*x))                  # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
-        NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves not implemented in characteristics 2, 3, and 5
+        NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves
+        not implemented in characteristics 2, 3, and 5
     """
     return clebsch_to_igusa(*clebsch_invariants(f))
 
@@ -348,16 +351,18 @@ def absolute_igusa_invariants_wamelen(f):
 
     The following example can be checked against van Wamelen's paper::
 
-        sage: i1, i2, i3 = absolute_igusa_invariants_wamelen(-x^5 + 3*x^4 + 2*x^3 - 6*x^2 - 3*x + 1)
+        sage: h = -x^5 + 3*x^4 + 2*x^3 - 6*x^2 - 3*x + 1
+        sage: i1, i2, i3 = absolute_igusa_invariants_wamelen(h)
         sage: list(map(factor, (i1, i2, i3)))
         [2^7 * 3^15, 2^5 * 3^11 * 5, 2^4 * 3^9 * 31]
 
     TESTS::
 
-        sage: absolute_igusa_invariants_wamelen(GF(3)['x'](x^5 - 2*x))
+        sage: absolute_igusa_invariants_wamelen(GF(3)['x'](x^5 - 2*x))                  # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
-        NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves not implemented in characteristics 2, 3, and 5
+        NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves
+        not implemented in characteristics 2, 3, and 5
     """
     I2, I4, I6, I10 = igusa_clebsch_invariants(f)
     i1 = I2**5/I10
@@ -383,7 +388,8 @@ def absolute_igusa_invariants_kohel(f):
 
     The following example can be checked against Kohel's database [KohECHIDNA]_ ::
 
-        sage: i1, i2, i3 = absolute_igusa_invariants_kohel(-x^5 + 3*x^4 + 2*x^3 - 6*x^2 - 3*x + 1)
+        sage: h = -x^5 + 3*x^4 + 2*x^3 - 6*x^2 - 3*x + 1
+        sage: i1, i2, i3 = absolute_igusa_invariants_kohel(h)
         sage: list(map(factor, (i1, i2, i3)))
         [2^2 * 3^5 * 5 * 31, 2^5 * 3^11 * 5, 2^4 * 3^9 * 31]
         sage: list(map(factor, (150660, 28343520, 9762768)))
@@ -391,10 +397,11 @@ def absolute_igusa_invariants_kohel(f):
 
     TESTS::
 
-        sage: absolute_igusa_invariants_kohel(GF(2)['x'](x^5 - x))
+        sage: absolute_igusa_invariants_kohel(GF(2)['x'](x^5 - x))                      # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
-        NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves not implemented in characteristics 2, 3, and 5
+        NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves
+        not implemented in characteristics 2, 3, and 5
     """
     I2, I4, I6, I10 = igusa_clebsch_invariants(f)
     i1 = I4*I6/I10
