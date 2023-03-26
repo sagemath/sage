@@ -3335,8 +3335,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                     ccf = cf
                     # Now let us find out where the end of the
                     # next symmetry block is:
-                    if  h < c+1:
-                        h = S[h-1]
+                    if h < c + 1:
+                        h = S[h - 1]
                     s = n_p
                     # Check through this block for each possible permutation
                     while s > 0:
@@ -3783,7 +3783,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 0,  0, 0)
             in 3-d lattice M
 
-        Only two of the above points:
+        Only two of the above points::
 
             sage: p.points(1, 3)                                                # optional - palp
             M(0,  1, 0),

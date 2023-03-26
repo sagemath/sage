@@ -159,7 +159,8 @@ class Sage(ExtraTabCompletion, Expect):
         if python:
             command = 'python -u'
             prompt = re.compile(b'>>> ')
-            init_code.append('from sage.all import *')
+            environment = 'sage.all'
+            init_code.append(f'from {environment} import *')
         else:
             command = ' '.join([
                 'sage-ipython',

@@ -15,7 +15,9 @@ Generic numerical approximation function
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport parent
 cdef Parent CDF
-from sage.rings.all import RealField, ComplexField, CDF
+from sage.rings.real_mpfr import RealField
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.complex_double import CDF
 
 
 def numerical_approx_generic(x, prec):

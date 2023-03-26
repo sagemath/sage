@@ -483,18 +483,17 @@ cdef class pAdicPrinter_class(SageObject):
             sage: P._sep()
             '&'
         """
-
-        return pAdicPrinter, (self.ring, \
-                              {'mode': self._print_mode(), \
-                               'pos': self.pos, \
-                               'ram_name': self.ram_name, \
-                               'unram_name': self.unram_name, \
-                               'var_name': self.var_name, \
-                               'max_ram_terms': self.max_ram_terms, \
-                               'max_unram_terms': self.max_unram_terms, \
-                               'max_terse_terms': self.max_terse_terms, \
-                               'sep':self.sep, \
-                               'alphabet': self.alphabet, \
+        return pAdicPrinter, (self.ring,
+                              {'mode': self._print_mode(),
+                               'pos': self.pos,
+                               'ram_name': self.ram_name,
+                               'unram_name': self.unram_name,
+                               'var_name': self.var_name,
+                               'max_ram_terms': self.max_ram_terms,
+                               'max_unram_terms': self.max_unram_terms,
+                               'max_terse_terms': self.max_terse_terms,
+                               'sep':self.sep,
+                               'alphabet': self.alphabet,
                                'show_prec': self.show_prec})
 
     def __richcmp__(self, other, op):

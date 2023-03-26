@@ -23,7 +23,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.misc.rest_index_of_methods import gen_rest_table_index
 from sage.combinat.posets.hasse_cython import (moebius_matrix_fast,
                                                coxeter_matrix_fast,
@@ -419,6 +419,7 @@ class HasseDiagram(DiGraph):
         """
         return self.sinks()
 
+    @cached_method
     def bottom(self):
         """
         Return the bottom element of the poset, if it exists.
@@ -967,6 +968,64 @@ class HasseDiagram(DiGraph):
                 else:
                     self._moebius_function_values[(i, j)] = -sum(self.moebius_function(i, k) for k in ci[:-1])
         return self._moebius_function_values[(i, j)]
+
+    def bottom_moebius_function(self, j):
+        r"""
+        Return the value of the Möbius function of the poset
+        on the elements ``zero`` and ``j``, where ``zero`` is
+        ``self.bottom()``, the unique minimal element of the poset.
+
+        EXAMPLES::
+
+            sage: P = Poset({0: [1,2]})
+            sage: hasse = P._hasse_diagram
+            sage: hasse.bottom_moebius_function(1)
+            -1
+            sage: hasse.bottom_moebius_function(2)
+            -1
+            sage: P = Poset({0: [1,3], 1:[2], 2:[4], 3:[4]})
+            sage: hasse = P._hasse_diagram
+            sage: for i in range(5):
+            ....:   print(hasse.bottom_moebius_function(i))
+            1
+            -1
+            0
+            -1
+            1
+
+        TESTS::
+
+            sage: P = Poset({0:[2], 1:[2]})
+            sage: hasse = P._hasse_diagram
+            sage: hasse.bottom_moebius_function(1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the poset does not have a bottom element
+        """
+        zero = self.bottom()
+        if zero is None:
+            raise ValueError("the poset does not have a bottom element")
+        # if the value has already been computed, either by self.moebius_function
+        # or by self.bottom_moebius_function, then just use the cached value.
+        try:
+            return self._moebius_function_values[(zero, j)]
+        # if the dict has not been initialized, do that and try again
+        except AttributeError:
+            self._moebius_function_values = {}
+            return self.bottom_moebius_function(j)
+        # if mu(zero, j) has not already been computed, we'll get a key error.
+        except KeyError:
+            if zero == j:
+                self._moebius_function_values[(zero, j)] = 1
+            # since zero is the minimal element, we can ignore the case that zero > j,
+            # and move on to computing the interval, which is exactly the order ideal.
+            else:
+                # do the depth_first_search over order_ideal, because we don't care
+                # about sorting the elements of the order ideal.
+                ci = self._backend.depth_first_search(j, reverse=True)
+                next(ci)  # throw out the first element, which is j
+                self._moebius_function_values[(zero, j)] = -sum(self.bottom_moebius_function(k) for k in ci)
+        return self._moebius_function_values[(zero, j)]
 
     def moebius_function_matrix(self, algorithm='cython'):
         r"""
@@ -1994,7 +2053,7 @@ class HasseDiagram(DiGraph):
             []
 
         Unique orthocomplementations; second is not uniquely complemented,
-        but has only one orthocomplementation.
+        but has only one orthocomplementation::
 
             sage: H = posets.BooleanLattice(4)._hasse_diagram  # Uniquely complemented
             sage: len(list(H.orthocomplementations_iterator()))

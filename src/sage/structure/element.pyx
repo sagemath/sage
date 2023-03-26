@@ -3361,6 +3361,19 @@ cdef class Expression(CommutativeRingElement):
 
     r"""
     Abstract base class for :class:`~sage.symbolic.expression.Expression`.
+
+    This class is defined for the purpose of :func:`isinstance` tests.  It should not be
+    instantiated.
+
+    EXAMPLES::
+
+        sage: isinstance(SR.var('y'), sage.structure.element.Expression)  # optional - sage.symbolic
+        True
+
+    By design, there is a unique direct subclass::
+
+        sage: len(sage.structure.element.Expression.__subclasses__()) <= 1
+        True
     """
 
     pass
@@ -4273,6 +4286,7 @@ cdef class FieldElement(CommutativeRingElement):
             other = self.parent()(other)
         return bool(self) or other.is_zero()
 
+
 def is_AlgebraElement(x):
     """
     Return ``True`` if x is of type AlgebraElement.
@@ -4300,6 +4314,8 @@ def is_CommutativeAlgebraElement(x):
 
 cdef class CommutativeAlgebraElement(CommutativeRingElement):
     pass
+
+    ##############################################
 
 def is_InfinityElement(x):
     """

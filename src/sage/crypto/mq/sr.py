@@ -876,11 +876,11 @@ class SR_generic(MPolynomialSystemGenerator):
         if not inversion_only:
             with AllowZeroInversionsContext(self):
                 S = [self.sub_byte(elem) for elem in sorted(k)]
-            return  SBox(S)
+            return SBox(S)
         else:
             e = self.e
             S = [elem ** (2**e - 2) for elem in sorted(k)]
-            return  SBox(S)
+            return SBox(S)
 
     def shift_rows(self, d):
         r"""
@@ -962,7 +962,6 @@ class SR_generic(MPolynomialSystemGenerator):
             ret.append(M * column)
         # AES uses the column major ordering
         return Matrix(k, d.ncols(), d.nrows(), ret).transpose()
-
 
     def add_round_key(self, d, key):
         r"""
@@ -1509,7 +1508,6 @@ class SR_generic(MPolynomialSystemGenerator):
                 dst[row+i, col+j] = src[i, j]
         return dst
 
-
     def varformatstr(self, name, n=None, rc=None, e=None):
         r"""
         Return a format string which is understood by print et al.
@@ -1799,7 +1797,6 @@ class SR_generic(MPolynomialSystemGenerator):
         else:
             names = self.varstrs("k", 0, r*c, e)
 
-
         for _n in process(list(range(n))):
             names += self.varstrs("k", _n+1, r*c, e)
             names += self.varstrs("x", _n+1, r*c, e)
@@ -1879,7 +1876,6 @@ class SR_generic(MPolynomialSystemGenerator):
                 wj = ciphertext
 
             lin = (wj + ki + M * xj + rcon).list()
-
 
             wi = Matrix(R, r*c*e, 1, _vars("w", i, r*c, e))
             xi = Matrix(R, r*c*e, 1, _vars("x", i, r*c, e))
@@ -2713,8 +2709,6 @@ class SR_gf2(SR_generic):
         k = self.k
         a = k.gen()
 
-
-
         if r == 1:
             M = Matrix(k, r, r, 1)
 
@@ -2776,7 +2770,6 @@ class SR_gf2(SR_generic):
                                   0, 1, 1, 1, \
                                   1, 0, 1, 1, \
                                   1, 1, 0, 1])
-
 
         Z = Z.transpose() # account for endianess mismatch
 

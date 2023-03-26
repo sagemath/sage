@@ -430,7 +430,6 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
     if B < 1:
         return
     embeddings = K.places(prec=precision)
-    O_K = K.ring_of_integers()
     r1, r2 = K.signature()
     r = r1 + r2 - 1
     RF = RealField(precision)
@@ -486,7 +485,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
         Return a lambda approximation h_K(alpha/beta)
         """
         delta = Lambda / (r + 2)
-        norm_log = delta_approximation(RR(O_K.ideal(alpha, beta).norm()).log(), delta)
+        norm_log = delta_approximation(RR(K.ideal(alpha, beta).norm()).log(), delta)
         log_ga = vector_delta_approximation(log_map(alpha), delta)
         log_gb = vector_delta_approximation(log_map(beta), delta)
         arch_sum = sum([max(log_ga[k], log_gb[k]) for k in range(r + 1)])
