@@ -389,7 +389,7 @@ class LinearTensorParent_class(Parent):
             sage: type(_)
             <class 'sage.numerical.linear_tensor_element.LinearTensor'>
 
-        Construct from scalar:
+        Construct from scalar::
 
             sage: LT(123)    # indirect doctest
             (123.0, 123.0)

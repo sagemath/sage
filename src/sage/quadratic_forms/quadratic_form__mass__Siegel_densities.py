@@ -12,17 +12,17 @@ Local Masses and Siegel Densities
 
 from copy import deepcopy
 
+from sage.arith.misc import kronecker, legendre_symbol, prime_divisors
+from sage.functions.all import sgn
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.functional import squarefree_part
 from sage.misc.misc_c import prod
 from sage.misc.mrange import mrange
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.rational_field import QQ
-from sage.arith.all import legendre_symbol, kronecker, prime_divisors
-from sage.functions.all import sgn
 from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
-from sage.misc.functional import squarefree_part
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.symbolic.constants import pi
-from sage.matrix.matrix_space import MatrixSpace
 
 
 def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson"):
@@ -154,7 +154,6 @@ def Pall_mass_density_at_odd_prime(self, p):
             m = n/2
             generic_factor *= (1 + legendre_symbol(((-1)**m) * d, p) * p**(-m))
         jordan_mass_list = jordan_mass_list + [generic_factor]
-
 
     # Step 3: Compute the local mass $\al_p$ at p.
         MJL = modified_jordan_list

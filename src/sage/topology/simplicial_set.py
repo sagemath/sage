@@ -173,7 +173,7 @@ any simplicial set::
     sage: Sigma3 = groups.permutation.Symmetric(3)
     sage: BSigma3 = Sigma3.nerve()
     sage: pi = BSigma3.fundamental_group(); pi
-    Finitely presented group < e0, e1 | e0^2, e1^3, (e0*e1^-1)^2 >
+    Finitely presented group < e1, e2 | e2^2, e1^3, (e2*e1)^2 >
     sage: pi.order()
     6
     sage: pi.is_abelian()
@@ -1686,26 +1686,12 @@ class SimplicialSet_arbitrary(Parent):
             sage: Sigma3.nerve().is_connected()
             True
         """
-        skel = self.n_skeleton(1)
-        edges = skel.n_cells(1)
-        vertices = skel.n_cells(0)
-        used_vertices = set()  # vertices which are in an edge
-        d = {}
-        for e in edges:
-            v = skel.face(e, 0)
-            w = skel.face(e, 1)
-            if v in d:
-                if w in d[v]:
-                    d[v][w] = d[v][w] + [e]
-                else:
-                    d[v][w] = [e]
-            else:
-                d[v] = {w: [e]}
-            used_vertices.update([v, w])
-        for v in vertices:
-            if v not in used_vertices:
-                d[v] = {}
-        return Graph(d, format='dict_of_dicts')
+        G = Graph(loops=True, multiedges=True)
+        for e in self.n_cells(1):
+            G.add_edge(self.face(e,0), self.face(e,1), e)
+        for v in self.n_cells(0):
+            G.add_vertex(v)
+        return G
 
     def is_connected(self):
         """

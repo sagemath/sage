@@ -274,7 +274,6 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             # version of module morphism, this would not take
             # advantage of the block structure
 
-
     class TensorProducts(TensorProductsCategory):
         """
         The category of algebras with basis constructed by tensor product of algebras with basis
