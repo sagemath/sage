@@ -56,14 +56,14 @@ from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
 from sage.misc.misc_c import prod
 from sage.parallel.decorate import parallel
-from sage.rings.all import NumberField
+from sage.rings.number_field.number_field import NumberField
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
-from sage.matrix.all import matrix
-from sage.rings.all import PolynomialRing
+from sage.matrix.constructor import matrix
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 roots_interval_cache = {}
 
