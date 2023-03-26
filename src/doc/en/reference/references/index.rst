@@ -2664,6 +2664,9 @@ REFERENCES:
 .. [GJ2007] \A. Glen, J. Justin, Episturmian words: a survey, Preprint,
             2007, :arxiv:`0801.1655`.
 
+.. [Goff1999] Christopher Goff, Isomorphic fusion algebras of twisted quantum doubles 
+            of finite groups. PhD Thesis, University of California, Santa Cruz. 1999.
+
 .. [GJ2016] Muddappa Seetharama Gowda and Juyoung Jeong.
             Spectral cones in Euclidean Jordan algebras.
             Linear Algebra and its Applications, 509:286-305, 2016.

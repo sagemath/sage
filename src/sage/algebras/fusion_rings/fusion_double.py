@@ -21,10 +21,10 @@ from sage.matrix.constructor import matrix
 
 class FusionDouble(CombinatorialFreeModule):
     r"""
-    This constructs the Fusion Ring of the modular
-    tensor category of modules over the Drinfeld
-    Double of a finite group. Usage is similar
-    to :class:`FusionRing`::.
+    This constructs the Fusion Ring of the modular tensor category of modules over the Drinfeld
+    Double of a finite group. Usage is similar to :class:`FusionRing`::.
+    Since many of the methods are similar, we assume the reader is familiar with that
+    class.
 
     INPUT:
 
@@ -36,6 +36,8 @@ class FusionDouble(CombinatorialFreeModule):
 
     - [BaKi2001]_ Chapter 3
     - [Mas1995]_
+    - [CHW2015]_
+    - [Goff1999]_
 
     EXAMPLES ::
 
@@ -70,6 +72,43 @@ class FusionDouble(CombinatorialFreeModule):
         -1
         sage: s8.ribbon()
         zeta5^3
+
+    If the Fusion Double is multiplicity-free, meaning that the fusion coefficients
+    `N_k^{ij}` are bounded by `1`, then the F-matrix may be computed, just as
+    for :class:`FusionRing`. There is a caveat here, since even if the fusion
+    rules are multiplicity-free, if there are many simple objects, the computation
+    may be too large to be practical. At least, this code can compute the F-matrix
+    for the Fusion Double of the symmetric group `S_3`, duplicating the result
+    of [CHW2015]_ . 
+
+    EXAMPLES ::
+
+        sage: G1 = SymmetricGroup(3)
+        sage: H1 = FusionDouble(G1,prefix="u",inject_variables=True)
+        sage: F = H1.get_fmatrix()
+        Checking multiplicity free-ness
+
+    The above commands create the F-matrix factory. You can compute the F-matrices
+    with the command ::
+
+        sage: H1.find_orthogonal_solution()  # not tested (10-15 minutes)
+
+    Individual F-matrices may be computed thus ::
+
+        sage: F.fmatrix(u3,u3,u3,u4) # not tested
+
+    see :class:`FMatrix` for more information.
+
+    Unfortunately beyond `S_3` the number of simple objects is larger.
+    Although the :class:`FusionDouble` class and its methods work well
+    for groups of moderate size, the FMatrix may not be available.
+    For the dihedral group of order 8, there are already 22
+    simple objects, and the F-matrix seems out of reach.
+
+    It is an open problem to classify the finite groups whose fusion doubles are
+    multiplicity-free. Abelian groups, dihedral groups, dicyclic groups, and all
+    groups of order 16 are multiplicity-free.  On the other hand, for groups of order 32,
+    some are multiplicity-free and others are not.
     """
     @staticmethod
     def __classcall__(cls, G, prefix="s", inject_variables=False):
@@ -260,8 +299,8 @@ class FusionDouble(CombinatorialFreeModule):
         Use character theoretic method to compute the fusion coefficient `N_{ij}^k`.
         Each simple object, for example `i` corresponds to a conjugacy class `\mathcal{C}_i`
         of the underlying group `G`, and an irreducible character `\chi_i` of the
-        centralizer `C(g_i)` of a representative `g_i` of `\mathcal{C}_i`. In addition
-        to a fixed representative `g_i` and `g_j` of the classes `\mathcal{C}_i`
+        centralizer `C(g_i)` of a fixed representative `g_i` of `\mathcal{C}_i`. In addition
+        to the fixed representative `g_k` of the class `\mathcal{C}_i`
         and `\mathcal{C}_j`, the formula will make use of variable elements `h_i` and
         `h_j` that are subject to the condition `h_ih_j=g_k`.
 
@@ -275,8 +314,9 @@ class FusionDouble(CombinatorialFreeModule):
         More exactly, there exists `r_i` such that `r_i g_i r_i^{-1}=h_i`, and then
         `\chi_i^{(h_i)}(x)=\chi_i(r_i^{-1}xr_i)`, and this definition does not
         depend on the choice of `r_i`.
-        This formula is due to Christopher Goff when the centralizers are normal, and
-        to Wenqi Li in the general case.
+
+        This formula is due to Christopher Goff [Goff1999]_ when the centralizers are normal, 
+        and to Wenqi Li in the general case.
         """
         G = self._G
         I = G.conjugacy_class(i.g())
@@ -318,52 +358,9 @@ class FusionDouble(CombinatorialFreeModule):
         ``FMatrix`` factory object.
 
         This method is only available if ``self`` is multiplicity-free.
-
-        OUTPUT:
-
-        Depending on the ``CartanType`` associated to ``self`` and whether
-        a call to an F-matrix solver has been made, this method
-        will return the same field as :meth:`field`, a :func:`NumberField`,
-        or the :class:`QQbar<AlgebraicField>`.
-        See :meth:`FMatrix.attempt_number_field_computation` for more details.
-
-        Before running an F-matrix solver, the output of this method matches
-        that of :meth:`field`. However, the output may change upon successfully
-        computing F-symbols. Requesting braid generators triggers a call to
-        :meth:`FMatrix.find_orthogonal_solution`, so the output of this method
-        may change after such a computation.
-
-        By default, the output of methods like :meth:`r_matrix`,
-        :meth:`s_matrix`, :meth:`twists_matrix`, etc. will lie in the
-        ``fvars_field``, unless the ``base_coercion`` option is set to
-        ``False``.
-
-        This method does not trigger a solver run.
-
-        EXAMPLES::
-
-            sage: A13 = FusionRing("A1", 3, fusion_labels="a", inject_variables=True)
-            sage: A13.fvars_field()
-            Cyclotomic Field of order 40 and degree 16
-            sage: A13.field()
-            Cyclotomic Field of order 40 and degree 16
-            sage: a2**4
-            2*a0 + 3*a2
-            sage: comp_basis, sig = A13.get_braid_generators(a2, a2, 3, verbose=False)    # long time (<3s)
-            sage: A13.fvars_field()                                                    # long time
-            Number Field in a with defining polynomial y^32 - ... - 500*y^2 + 25
-            sage: a2.q_dimension().parent()                                            # long time
-            Number Field in a with defining polynomial y^32 - ... - 500*y^2 + 25
-            sage: A13.field()
-            Cyclotomic Field of order 40 and degree 16
-
-        In some cases, the :meth:`NumberField.optimized_representation()
-        <sage.rings.number_field.number_field.NumberField_absolute.optimized_representation>`
-        may be used to obtain a better defining polynomial for the
-        computed :func:`NumberField`.
         """
         if self.is_multiplicity_free():
-            return self.field() # Is this correct for the Fusion Double?
+            return self.get_fmatrix().field()
         raise NotImplementedError("method is only available for multiplicity free fusion rings")
 
     def root_of_unity(self, r, base_coercion=True):
@@ -477,7 +474,7 @@ class FusionDouble(CombinatorialFreeModule):
         Return `\sum d_i^2\theta_i^{-1}` where `i` runs through the simple
         objects, `d_i` is the quantum dimension and `\theta_i` is the twist.
 
-        This is denoted `p_-` in [BaKi2001]_ Chapter 3.For the Drinfeld
+        This is denoted `p_-` in [BaKi2001]_ Chapter 3. For the Drinfeld
         double, it equals the order of the group.
 
         EXAMPLES::
@@ -516,7 +513,11 @@ class FusionDouble(CombinatorialFreeModule):
         """
         return self.basis()[0]
 
+    @cached_method
     def dual(self,i):
+        r"""
+        Return the dual object ``i^\ast`` to ``i``.
+        """
         sz = self.one()
         for j in self.basis():
             if self.N_ijk(i,j,sz) > 0:
@@ -541,9 +542,12 @@ class FusionDouble(CombinatorialFreeModule):
 
     def IdGroup(self):
         """
-        returns the Gap Group ID
+        Returns the GAP Small Group identifier. This is a pair ``[n,k]`` where ``n`` is
+        the order of the group, and ``k`` is an integer characterizing the
+        isomorphism class of the group, available for very many groups.
 
         EXAMPLE::
+
             sage: FusionDouble(DiCyclicGroup(4)).IdGroup()
             [ 16, 9 ]
 
@@ -552,7 +556,7 @@ class FusionDouble(CombinatorialFreeModule):
 
     def get_fmatrix(self, *args, **kwargs):
         """
-        Construct an :class:`FMatrix` factory to solve the pentagon relations
+        Construct an :class:`FMatrix` factory to solve the pentagon and hexagon relations
         and organize the resulting F-symbols.
         """
         if not hasattr(self, 'fmats') or kwargs.get('new', False):
@@ -587,6 +591,7 @@ class FusionDouble(CombinatorialFreeModule):
             The twist or ribbon of the simple object.
 
             EXAMPLE::
+
                 sage: H = FusionDouble(CyclicPermutationGroup(3))
                 sage: [i.ribbon() for i in H.basis()]
                 [1, 1, 1, 1, zeta3, -zeta3 - 1, 1, -zeta3 - 1, zeta3]
@@ -617,6 +622,7 @@ class FusionDouble(CombinatorialFreeModule):
             Return the dual of self.
 
             EXAMPLE::
+
                 sage: G = CyclicPermutationGroup(4)
                 sage: H = FusionDouble(G, prefix="b")
                 sage: [x for x in H.basis() if x==x.dual()]
@@ -633,6 +639,7 @@ class FusionDouble(CombinatorialFreeModule):
             Return the q-dimension of self.
 
             EXAMPLE::
+
                 sage: G = AlternatingGroup(4)
                 sage: H = FusionDouble(G)
                 sage: [x.q_dimension() for x in H.basis()]
