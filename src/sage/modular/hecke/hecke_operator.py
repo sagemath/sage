@@ -1,8 +1,7 @@
 """
 Hecke operators
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,15 +13,13 @@ Hecke operators
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.element import AlgebraElement
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.categories.homset import End
 import sage.arith.all as arith
-from   sage.rings.integer import Integer
+from sage.rings.integer import Integer
 
 from . import algebra
 from . import morphism

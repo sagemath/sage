@@ -1,8 +1,7 @@
 """
 Subspace of ambient spaces of modular symbols
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -16,16 +15,12 @@ Subspace of ambient spaces of modular symbols
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.modular.hecke.all as hecke
-
 import sage.structure.factorization
-
 import sage.modular.modsym.space
-
 
 
 class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, hecke.HeckeSubmodule):
@@ -175,10 +170,11 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
             self.__cuspidal_submodule = S.intersection(self)
             return self.__cuspidal_submodule
 
-
     def dual_star_involution_matrix(self):
         """
-        Return the matrix of the dual star involution, which is induced by
+        Return the matrix of the dual star involution.
+
+        This involution is induced by
         complex conjugation on the linear dual of modular symbols.
 
         EXAMPLES::
@@ -363,20 +359,17 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
             self.__is_eisenstein = self.is_submodule(C)
             return self.__is_eisenstein
 
-
     def _compute_sign_subspace(self, sign, compute_dual=True):
         """
-        Return the subspace of self that is fixed under the star
+        Return the subspace of ``self`` that is fixed under the star
         involution.
 
         INPUT:
-
 
         -  ``sign`` - int (either -1 or +1)
 
         -  ``compute_dual`` - bool (default: True) also
            compute dual subspace. This are useful for many algorithms.
-
 
         OUTPUT: subspace of modular symbols
 
