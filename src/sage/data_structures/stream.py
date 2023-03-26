@@ -2113,9 +2113,6 @@ class Stream_plethysm(Stream_binary):
         wgt.reverse()
         exp.reverse()
         for k in wt_int_vec_iter(n - ret_approx_order, wgt):
-            # TODO: it may make a big difference here if the
-            #   approximate order would be updated.
-
             # prod does not short-cut zero, therefore
             # ret += prod(self.stretched_power_restrict_degree(i, m, rao * m + d)
             #             for i, m, d in zip(wgt, exp, k))
@@ -2136,6 +2133,11 @@ class Stream_plethysm(Stream_binary):
         r"""
         Return the degree ``d*i`` part of ``p([i]*m)(g)`` in
         terms of ``self._basis``.
+
+        INPUT:
+
+        - ``i``,  ``m`` -- positive integers;
+        - ``d``  -- integer;
 
         EXAMPLES::
 
@@ -2170,13 +2172,16 @@ class Stream_plethysm(Stream_binary):
         # we have to check power_d for zero because it might be an
         # integer and not a symmetric function
         if power_d:
+            # _raise_variables(c, i, self._degree_one) cannot vanish
+            # because i is positive and c is non-zero
             if self._tensor_power is None:
-                terms = {mon.stretch(i): raised_c for mon, c in power_d
-                         if (raised_c := _raise_variables(c, i, self._degree_one))}  # TODO: could this ever be 0?
+                terms = {mon.stretch(i):
+                         _raise_variables(c, i, self._degree_one)
+                         for mon, c in power_d}
             else:
-                terms = {tuple((mu.stretch(i) for mu in mon)): raised_c
-                         for mon, c in power_d
-                         if (raised_c := _raise_variables(c, i, self._degree_one))}  # TODO: could this ever be 0?
+                terms = {tuple((mu.stretch(i) for mu in mon)):
+                         _raise_variables(c, i, self._degree_one)
+                         for mon, c in power_d}
             return self._basis(self._p.element_class(self._p, terms))
 
         return self._basis.zero()
