@@ -637,6 +637,9 @@ class DiffForm(TensorField):
         `n`-form associated with `g` (see
         :meth:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric.volume_form`)
         and the indices `k_1,\ldots, k_p` are raised with `g`.
+        If `g` is a pseudo-Riemannian metric, an additional multiplicative factor of 
+        `(-1)^s` is introduced on the right-hand side, 
+        where `s` is the number of negative eigenvalues of `g`.
 
         INPUT:
 
@@ -780,6 +783,10 @@ class DiffForm(TensorField):
             result = self.up(nondegenerate_tensor).contract(*range(p), eps, *range(p))
             if p > 1:
                 result = result / factorial(p)
+            from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+            if isinstance(nondegenerate_tensor, PseudoRiemannianMetric):
+                result = result * nondegenerate_tensor._indic_signat
+
         result.set_name(
             name=format_unop_txt("*", self._name),
             latex_name=format_unop_latex(r"\star ", self._latex_name),
