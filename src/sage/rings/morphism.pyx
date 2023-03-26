@@ -3162,7 +3162,7 @@ def _tensor_product_ring(B, A):
         ValueError: term ordering must be global
     """
     from .finite_rings.finite_field_base import FiniteField
-    from .number_field.number_field_base import is_NumberField
+    from .number_field.number_field_base import NumberField
     from .polynomial.multi_polynomial_ring import is_MPolynomialRing
     from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
     from .polynomial.polynomial_ring import is_PolynomialRing
@@ -3179,7 +3179,7 @@ def _tensor_product_ring(B, A):
     def term_order(A):
         # univariate rings do not have a term order
         if (is_PolynomialRing(A) or is_PolynomialQuotientRing(A)
-            or ((is_NumberField(A) or isinstance(A, FiniteField))
+            or (isinstance(A, (NumberField, FiniteField))
                 and not A.is_prime_field())):
             return TermOrder('lex', 1)
         try:
@@ -3202,7 +3202,7 @@ def _tensor_product_ring(B, A):
         elif is_QuotientRing(A):
             to_R = A.ambient().hom(R_gens_A, R, check=False)
             return list(to_R(A.defining_ideal()).gens())
-        elif ((is_NumberField(A) or isinstance(A, FiniteField))
+        elif (isinstance(A, (NumberField, FiniteField))
               and not A.is_prime_field()):
             to_R = A.polynomial_ring().hom(R_gens_A, R, check=False)
             return [to_R(A.polynomial())]
