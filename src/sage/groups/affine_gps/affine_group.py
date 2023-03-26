@@ -129,11 +129,11 @@ class AffineGroup(UniqueRepresentation, Group):
 
     Some additional ways to create affine groups::
 
-        sage: A = AffineSpace(2, GF(4,'a'));  A
+        sage: A = AffineSpace(2, GF(4,'a'));  A                                         # optional - sage.libs.pari
         Affine Space of dimension 2 over Finite Field in a of size 2^2
-        sage: G = AffineGroup(A); G
+        sage: G = AffineGroup(A); G                                                     # optional - sage.libs.pari
         Affine Group of degree 2 over Finite Field in a of size 2^2
-        sage: G is AffineGroup(2,4) # shorthand
+        sage: G is AffineGroup(2,4) # shorthand                                         # optional - sage.libs.pari
         True
 
         sage: V = ZZ^3;  V
@@ -152,10 +152,10 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: A = AffineSpace(2, GF(4,'a'))
-            sage: AffineGroup(A) is AffineGroup(2,4)
+            sage: A = AffineSpace(2, GF(4,'a'))                                         # optional - sage.libs.pari
+            sage: AffineGroup(A) is AffineGroup(2,4)                                    # optional - sage.libs.pari
             True
-            sage: AffineGroup(A) is AffineGroup(2, GF(4,'a'))
+            sage: AffineGroup(A) is AffineGroup(2, GF(4,'a'))                           # optional - sage.libs.pari
             True
             sage: A = AffineGroup(2, QQ)
             sage: V = QQ^2
@@ -202,10 +202,10 @@ class AffineGroup(UniqueRepresentation, Group):
 
         TESTS::
 
-            sage: G = AffineGroup(2, GF(5)); G
+            sage: G = AffineGroup(2, GF(5)); G                                          # optional - sage.libs.pari
             Affine Group of degree 2 over Finite Field of size 5
-            sage: TestSuite(G).run()
-            sage: G.category()
+            sage: TestSuite(G).run()                                                    # optional - sage.libs.pari
+            sage: G.category()                                                          # optional - sage.libs.pari
             Category of finite groups
 
             sage: Aff6 = AffineGroup(6, QQ)
@@ -264,8 +264,8 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(6, GF(5))
-            sage: latex(G)
+            sage: G = AffineGroup(6, GF(5))                                             # optional - sage.libs.pari
+            sage: latex(G)                                                              # optional - sage.libs.pari
             \mathrm{Aff}_{6}(\Bold{F}_{5})
         """
         return "\\mathrm{Aff}_{%s}(%s)" % (self.degree(),
@@ -277,7 +277,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: AffineGroup(6, GF(5))
+            sage: AffineGroup(6, GF(5))                                                 # optional - sage.libs.pari
             Affine Group of degree 6 over Finite Field of size 5
         """
         return "Affine Group of degree %s over %s" % (self.degree(),
@@ -289,7 +289,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: AffineGroup(6, GF(5)).cardinality()
+            sage: AffineGroup(6, GF(5)).cardinality()                                   # optional - sage.libs.pari
             172882428468750000000000000000
             sage: AffineGroup(6, ZZ).cardinality()
             +Infinity
@@ -307,11 +307,11 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(6, GF(5))
-            sage: g = G.an_element()
-            sage: G.degree()
+            sage: G = AffineGroup(6, GF(5))                                             # optional - sage.libs.pari
+            sage: g = G.an_element()                                                    # optional - sage.libs.pari
+            sage: G.degree()                                                            # optional - sage.libs.pari
             6
-            sage: G.degree() == g.A().nrows() == g.A().ncols() == g.b().degree()
+            sage: G.degree() == g.A().nrows() == g.A().ncols() == g.b().degree()        # optional - sage.libs.pari
             True
         """
         return self._degree
@@ -329,8 +329,8 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(3, GF(5))
-            sage: G.matrix_space()
+            sage: G = AffineGroup(3, GF(5))                                             # optional - sage.libs.pari
+            sage: G.matrix_space()                                                      # optional - sage.libs.pari
             Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 5
         """
         d = self.degree()
@@ -343,8 +343,8 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(3, GF(5))
-            sage: G.vector_space()
+            sage: G = AffineGroup(3, GF(5))                                             # optional - sage.libs.pari
+            sage: G.vector_space()                                                      # optional - sage.libs.pari
             Vector space of dimension 3 over Finite Field of size 5
         """
         return FreeModule(self.base_ring(), self.degree())
@@ -373,8 +373,8 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(3, GF(5))
-            sage: G.linear_space()
+            sage: G = AffineGroup(3, GF(5))                                             # optional - sage.libs.pari
+            sage: G.linear_space()                                                      # optional - sage.libs.pari
             Full MatrixSpace of 4 by 4 dense matrices over Finite Field of size 5
         """
         dp = self.degree() + 1
@@ -394,8 +394,8 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(3, GF(5))
-            sage: G.linear([1,2,3,4,5,6,7,8,0])
+            sage: G = AffineGroup(3, GF(5))                                             # optional - sage.libs.pari
+            sage: G.linear([1,2,3,4,5,6,7,8,0])                                         # optional - sage.libs.pari
                   [1 2 3]     [0]
             x |-> [4 0 1] x + [0]
                   [2 3 0]     [0]
@@ -417,8 +417,8 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(3, GF(5))
-            sage: G.translation([1,4,8])
+            sage: G = AffineGroup(3, GF(5))                                             # optional - sage.libs.pari
+            sage: G.translation([1,4,8])                                                # optional - sage.libs.pari
                   [1 0 0]     [1]
             x |-> [0 1 0] x + [4]
                   [0 0 1]     [3]
@@ -446,12 +446,12 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(3, QQ)
-            sage: G.reflection([1,0,0])
+            sage: G = AffineGroup(3, QQ)                                                # optional - sage.libs.pari
+            sage: G.reflection([1,0,0])                                                 # optional - sage.libs.pari
                   [-1  0  0]     [0]
             x |-> [ 0  1  0] x + [0]
                   [ 0  0  1]     [0]
-            sage: G.reflection([3,4,-5])
+            sage: G.reflection([3,4,-5])                                                # optional - sage.libs.pari
                   [ 16/25 -12/25    3/5]     [0]
             x |-> [-12/25   9/25    4/5] x + [0]
                   [   3/5    4/5      0]     [0]
@@ -470,13 +470,13 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(4, GF(3))
-            sage: G.random_element()  # random
+            sage: G = AffineGroup(4, GF(3))                                             # optional - sage.libs.pari
+            sage: G.random_element()  # random                                          # optional - sage.libs.pari
                   [2 0 1 2]     [1]
                   [2 1 1 2]     [2]
             x |-> [1 0 2 2] x + [2]
                   [1 1 1 1]     [2]
-            sage: G.random_element() in G
+            sage: G.random_element() in G                                               # optional - sage.libs.pari
             True
         """
         A = self._GL.random_element()
@@ -490,8 +490,8 @@ class AffineGroup(UniqueRepresentation, Group):
 
         TESTS::
 
-            sage: G = AffineGroup(4,5)
-            sage: G.an_element() in G
+            sage: G = AffineGroup(4,5)                                                  # optional - sage.libs.pari
+            sage: G.an_element() in G                                                   # optional - sage.libs.pari
             True
         """
         A = self._GL.an_element()
@@ -504,8 +504,8 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(4,5)
-            sage: G.some_elements()
+            sage: G = AffineGroup(4,5)                                                  # optional - sage.libs.pari
+            sage: G.some_elements()                                                     # optional - sage.libs.pari
             [      [2 0 0 0]     [1]
                    [0 1 0 0]     [0]
              x |-> [0 0 1 0] x + [0]
@@ -518,7 +518,7 @@ class AffineGroup(UniqueRepresentation, Group):
                    [0 1 0 0]     [...]
              x |-> [0 0 1 0] x + [...]
                    [0 0 0 1]     [...]]
-            sage: all(v.parent() is G for v in G.some_elements())
+            sage: all(v.parent() is G for v in G.some_elements())                       # optional - sage.libs.pari
             True
 
             sage: G = AffineGroup(2,QQ)
