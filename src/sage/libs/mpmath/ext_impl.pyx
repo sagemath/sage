@@ -1847,8 +1847,8 @@ cdef MPF_complex_pow_int(MPF *zre, MPF *zim, MPF *xre, MPF *xim, mpz_t n, MPopts
     xret = MPF_to_tuple(xre)
     ximt = MPF_to_tuple(xim)
     from mpmath.libmp import mpc_pow_int
-    vr, vi = mpc_pow_int((xret, ximt), mpzi(n), \
-        opts.prec, rndmode_to_python(opts.rounding))
+    vr, vi = mpc_pow_int((xret, ximt), mpzi(n),
+                         opts.prec, rndmode_to_python(opts.rounding))
     MPF_set_tuple(zre, vr)
     MPF_set_tuple(zim, vi)
 
@@ -1892,8 +1892,8 @@ cdef MPF_complex_pow_re(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *y, MPopts o
     ximt = MPF_to_tuple(xim)
     yret = MPF_to_tuple(y)
     from mpmath.libmp import mpc_pow_mpf, fzero
-    vr, vi = mpc_pow_mpf((xret, ximt), yret, \
-        opts.prec, rndmode_to_python(opts.rounding))
+    vr, vi = mpc_pow_mpf((xret, ximt), yret,
+                         opts.prec, rndmode_to_python(opts.rounding))
     MPF_set_tuple(zre, vr)
     MPF_set_tuple(zim, vi)
 
@@ -1910,8 +1910,8 @@ cdef MPF_complex_pow(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *yre, MPF *yim,
     yret = MPF_to_tuple(yre)
     yimt = MPF_to_tuple(yim)
     from mpmath.libmp import mpc_pow
-    vr, vi = mpc_pow((xret,ximt), (yret,yimt), \
-        opts.prec, rndmode_to_python(opts.rounding))
+    vr, vi = mpc_pow((xret, ximt), (yret, yimt),
+                     opts.prec, rndmode_to_python(opts.rounding))
     MPF_set_tuple(zre, vr)
     MPF_set_tuple(zim, vi)
 
