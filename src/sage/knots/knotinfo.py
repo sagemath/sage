@@ -1939,7 +1939,7 @@ class KnotInfoBase(Enum):
         else:
             from sage.knots.link import Link
 
-        if   use_item == self.items.pd_notation:
+        if use_item == self.items.pd_notation:
             pd_code = [[a[0], a[3], a[2], a[1]] for a in self.pd_notation()] # take mirror version, see note above
             return Link(pd_code)
         elif use_item == self.items.braid_notation:
@@ -2441,12 +2441,12 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             [<KnotInfo.K6_1: '6_1'>, <KnotInfo.K6_2: '6_2'>, <KnotInfo.K6_3: '6_3'>]
         """
         from sage.rings.integer import Integer
-        if  not type(item) in (int, Integer):
+        if not type(item) in (int, Integer):
             raise ValueError('Item must be an integer')
         l = self.list()
         max_item = len(l)
-        if item < 0 or item  > max_item:
-            raise ValueError('Item must be non negative and smaller than %s' %(max_item))
+        if item < 0 or item > max_item:
+            raise ValueError('Item must be non negative and smaller than %s' % (max_item))
 
         return l[item]
 
@@ -2484,12 +2484,12 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             return self[item]
 
         from sage.rings.integer import Integer
-        if  not type(item) in (int, Integer):
+        if not type(item) in (int, Integer):
             raise ValueError('Item must be an integer')
-        l =self.list()
-        max_item = len(l)+1
-        if item < 1 or item  > max_item:
-            raise ValueError('Item must be positive and smaller than %s' %(max_item))
+        l = self.list()
+        max_item = len(l) + 1
+        if item < 1 or item > max_item:
+            raise ValueError('Item must be positive and smaller than %s' % (max_item))
 
         return l[item-1]
 

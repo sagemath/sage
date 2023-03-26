@@ -905,28 +905,24 @@ class ParametrizedSurface3D(SageObject):
             0
             sage: sphere.first_fundamental_form(frame_int[2], frame_int[2])
             1
-
         """
-
-
         from sage.symbolic.constants import pi
 
         if coordinates not in ['ext', 'int']:
             raise ValueError("Coordinate system must be exterior ('ext') "
                              "or interior ('int').")
 
-        c  = self.first_fundamental_form_coefficient([1,1])
+        c = self.first_fundamental_form_coefficient([1, 1])
         if coordinates == 'ext':
             f1 = self.natural_frame()[1]
 
-            E1 = _simplify_full_rad(f1/sqrt(c))
+            E1 = _simplify_full_rad(f1 / sqrt(c))
             E2 = _simplify_full_rad(
                 self.normal_vector(normalized=True).cross_product(E1))
         else:
-            E1 =  vector([_simplify_full_rad(1/sqrt(c)), 0])
-            E2 = (self.rotation(pi/2)*E1).simplify_full()
-        return  {1:E1, 2:E2}
-
+            E1 = vector([_simplify_full_rad(1 / sqrt(c)), 0])
+            E2 = (self.rotation(pi / 2) * E1).simplify_full()
+        return {1: E1, 2: E2}
 
     def orthonormal_frame_vector(self, index, coordinates='ext'):
         r"""

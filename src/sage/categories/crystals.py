@@ -388,7 +388,6 @@ class Crystals(Category_singleton):
             R = RecursivelyEnumeratedSet(self.module_generators, succ, structure=None)
             return R.breadth_first_search_iterator(max_depth)
 
-
         def subcrystal(self, index_set=None, generators=None, max_depth=float("inf"),
                        direction="both", contained=None,
                        virtualization=None, scaling_factors=None,

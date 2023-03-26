@@ -850,7 +850,6 @@ class Animation(WithEqualityById, SageObject):
         dm = get_display_manager()
         dm.display_immediately(self, **kwds)
 
-
     def ffmpeg(self, savefile=None, show_path=False, output_format=None,
                ffmpeg_options='', delay=None, iterations=0, pix_fmt='rgb24'):
         r"""
