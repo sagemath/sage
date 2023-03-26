@@ -1,1 +1,1 @@
-sphinx
+sphinx<6,>=5.2
