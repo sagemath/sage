@@ -22,7 +22,10 @@ jobs:
     name: Conda
     runs-on: ${{ matrix.os }}
     
-    if: github.event.label.name == 'c: packages: optional' || github.event.label.name == 'c: packages: standard' || github.event.label.name == 's: run conda ci'
+    if: |
+      github.event.label.name == 'c: packages: optional' || 
+      github.event.label.name == 'c: packages: standard' || 
+      github.event.label.name == 's: run conda ci'
 
     strategy:
       fail-fast: false
