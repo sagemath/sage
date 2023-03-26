@@ -12,9 +12,10 @@ Elements of Laurent polynomial rings
 
 from sage.rings.integer cimport Integer
 from sage.categories.map cimport Map
-from sage.structure.element import is_Element, coerce_binop
+from sage.structure.element import is_Element, coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
+from sage.rings.polynomial.polydict cimport monomial_exponent
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.structure.richcmp cimport richcmp, rich_to_bool
@@ -729,26 +730,30 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: f = -5/t^(10) + 1/3 + t + t^2 - 10/3*t^3; f
             -5*t^-10 + 1/3 + t + t^2 - 10/3*t^3
 
-        Slicing is deprecated::
+        Slicing can be used to truncate Laurent polynomials::
 
-            sage: f[-10:2]
-            doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See https://github.com/sagemath/sage/issues/18940 for details.
-            -5*t^-10 + 1/3 + t
-            sage: f[0:]
-            1/3 + t + t^2 - 10/3*t^3
             sage: f[:3]
             -5*t^-10 + 1/3 + t + t^2
+
+        Any other kind of slicing is an error, see :trac:`18940`::
+
+            sage: f[-10:2]
+            Traceback (most recent call last):
+            ...
+            IndexError: polynomial slicing with a start is not defined
+
             sage: f[-14:5:2]
             Traceback (most recent call last):
             ...
-            NotImplementedError: polynomial slicing with a step is not defined
+            IndexError: polynomial slicing with a step is not defined
         """
         cdef LaurentPolynomial_univariate ret
         if isinstance(i, slice):
-            start = i.start - self.__n if i.start is not None else 0
-            stop = i.stop - self.__n if i.stop is not None else self.__u.degree() + 1
-            f = self.__u[start:stop:i.step]  # deprecation(18940)
+            start, stop, step = i.start, i.stop, i.step
+            if start is not None or step is not None:
+                self.__u[start:stop:step]  # error out, see issue #18940
+            stop = stop - self.__n if stop is not None else self.__u.degree() + 1
+            f = self.__u[:stop]
             ret = <LaurentPolynomial_univariate> self._new_c()
             ret.__u = f
             ret.__n = self.__n
@@ -2254,12 +2259,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         cdef dict D = <dict> self._poly.dict()
         cdef dict DD
         if self._mon.is_constant():
-            self._prod = PolyDict(D, force_etuples=False)
+            self._prod = PolyDict(D)
             return
         DD = {}
         for k in D:
             DD[k.eadd(self._mon)] = D[k]
-        self._prod = PolyDict(DD, force_etuples=False)
+        self._prod = PolyDict(DD)
 
     def is_unit(self):
         """
@@ -2556,19 +2561,18 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f.monomial_coefficient(x + y)
             Traceback (most recent call last):
             ...
-            ValueError: input must be a monomial
+            ValueError: not a monomial
         """
-        if mon.parent() != self._parent:
+        if parent(mon) != self._parent:
             raise TypeError("input must have the same parent")
         cdef LaurentPolynomial_mpair m = <LaurentPolynomial_mpair> mon
         if m._prod is None:
             m._compute_polydict()
-        if len(m._prod) != 1:
-            raise ValueError("input must be a monomial")
         if self._prod is None:
             self._compute_polydict()
-        c = self._prod.monomial_coefficient(m._prod.dict())
-        return self._parent.base_ring()(c)
+        exp = monomial_exponent(m._prod)
+        zero = self._parent.base_ring().zero()
+        return self._prod.get(exp, zero)
 
     def constant_coefficient(self):
         """

@@ -1188,9 +1188,9 @@ def benchmark_hnf(nrange, bits=4):
     EXAMPLES::
 
         sage: import sage.matrix.matrix_integer_dense_hnf as hnf
-        sage: hnf.benchmark_hnf([50,100],32)
-        ('sage', 50, 32, ...),
-        ('sage', 100, 32, ...),
+        sage: hnf.benchmark_hnf([10,25],32)
+        ('sage', 10, 32, ...),
+        ('sage', 25, 32, ...),
     """
     b = 2**bits
     for n in nrange:

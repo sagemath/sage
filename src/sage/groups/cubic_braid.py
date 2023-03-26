@@ -461,7 +461,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 
         if domain is not None:
             if isinstance(domain, UniversalCyclotomicField):
-                if  root_bur is None:
+                if root_bur is None:
                     if unitary:
                         root_bur = domain.gen(12)
                     else:
@@ -501,7 +501,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
                 except ValueError:
                     raise ValueError('characteristic must be in integer')
 
-                if  not characteristic.is_zero()  and not characteristic.is_prime():
+                if not characteristic.is_zero()  and not characteristic.is_prime():
                     raise ValueError('characteristic must be a prime')
                 if characteristic.is_zero():
                     if unitary:
@@ -1001,7 +1001,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             sage: CBG2 = CubicBraidGroup(2)
             sage: CBG2._test_reflection_group()
         """
-        if self._cbg_type == CubicBraidGroup.type.Coxeter and self.is_finite() and  self.strands() > 2:
+        if self._cbg_type == CubicBraidGroup.type.Coxeter and self.is_finite() and self.strands() > 2:
             from sage.combinat.root_system.reflection_group_real import is_chevie_available
             if is_chevie_available():
                 tester = self._tester(**options)
@@ -1251,9 +1251,9 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             for j in range(mthird):
                 pos = 3*(j+1)-1
                 transvections.append(xbas[pos-1])                             # t_{3i}   = x_{3i-1}
-                if  pos +1  < m:
+                if pos +1  < m:
                     transvections.append(xbas[pos-1]+xbas[pos]+xbas[pos+1])   # t_{3i+1} = x_{3i-1} + x_{3i} + x_{3i+1}
-                if  pos +3  < m:
+                if pos +3  < m:
                     transvections.append(xbas[pos+1]+xbas[pos+2]+xbas[pos+3]) # t_{3i+2} = x_{3i+1} + x_{3i+2} + x_{3i+3}
 
             # -----------------------------------------------------------
@@ -1534,10 +1534,10 @@ class CubicBraidGroup(FinitelyPresentedGroup):
                 self._classical_invariant_form = herm_form
 
         if unitary:
-            from sage.rings.finite_rings.finite_field_base import is_FiniteField
+            from sage.rings.finite_rings.finite_field_base import FiniteField
             from sage.groups.matrix_gps.unitary import GU
             d, d = herm_form.dimensions()
-            if is_FiniteField(domain):
+            if isinstance(domain, FiniteField):
                 base_group = GU(d, domain, var=domain.gen(), invariant_form=herm_form)
             else:
                 base_group = GU(d, domain, invariant_form=herm_form)
@@ -1786,8 +1786,8 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         from sage.combinat.root_system.reflection_group_real import ReflectionGroup
 
-        if   self.strands() == 2:
-            reflection_group = ReflectionGroup([2 ,1 ,1])
+        if self.strands() == 2:
+            reflection_group = ReflectionGroup([2, 1, 1])
         elif self.strands() == 3:
             reflection_group = ReflectionGroup(4)
         elif self.strands() == 4:

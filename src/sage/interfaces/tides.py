@@ -37,9 +37,7 @@ REFERENCES:
 
 - [TIDES]_
 """
-
-
-from  sage.rings.real_mpfr import RealField
+from sage.rings.real_mpfr import RealField
 from sage.calculus.all import symbolic_expression
 from sage.misc.flatten import flatten
 from sage.ext.fast_callable import fast_callable
@@ -349,6 +347,8 @@ def remove_constants(l1,l2):
     """
     Given two lists, remove the entries in the first that are real constants,
     and also the corresponding elements in the second one.
+
+    EXAMPLES::
 
         sage: from sage.interfaces.tides import subexpressions_list, remove_constants
         sage: f(a)=[1+cos(7)*a]

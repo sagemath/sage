@@ -848,9 +848,7 @@ def contour_plot(f, xrange, yrange, **options):
 
         sage: contour_plot(lambda x,y: 0, (-1,1), (-1,1),
         ....:              contours=[0], fill=False, cmap=['blue'])
-        ...
-        UserWarning: No contour levels were found within the data range.
-        Graphics object consisting of 1 graphics primitive
+        ...Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
@@ -874,8 +872,7 @@ def contour_plot(f, xrange, yrange, **options):
     Check that :trac:`18074` is fixed::
 
         sage: contour_plot(0, (0,1), (0,1))
-        ... UserWarning: No contour levels were found within the data range.
-        Graphics object consisting of 1 graphics primitive
+        ...Graphics object consisting of 1 graphics primitive
 
     Domain points in :trac:`11648` with complex output are now skipped::
 

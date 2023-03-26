@@ -587,10 +587,10 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         for col in cols:
             val_list = []
 
-            if  col.column_type() != col.types.OnlyLinks:
-                for i in range(1 , len_knots):
+            if col.column_type() != col.types.OnlyLinks:
+                for i in range(1, len_knots):
                     if col.name == self._names_column:
-                        row_dict[self._knot_prefix + knot_list[i][col.name]] = [i - 1 , 1]
+                        row_dict[self._knot_prefix + knot_list[i][col.name]] = [i - 1, 1]
 
                     val_list.append(knot_list[i][col.name])
 

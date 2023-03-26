@@ -947,17 +947,17 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         eqs = "["
         for i in range(len(eqns)):
-            if i<len(eqns)-1:
-                eqs = eqs + eqns[i]+","
-            if  i==len(eqns)-1:
-                eqs = eqs + eqns[i]+"]"
+            if i < len(eqns) - 1:
+                eqs = eqs + eqns[i] + ","
+            if i == len(eqns) - 1:
+                eqs = eqs + eqns[i] + "]"
         vrs = "["
         for i in range(len(vars)):
-            if i<len(vars)-1:
-                vrs = vrs + vars[i]+","
-            if  i==len(vars)-1:
-                vrs = vrs + vars[i]+"]"
-        return self('linsolve(%s, %s)'%(eqs, vrs))
+            if i < len(vars) - 1:
+                vrs = vrs + vars[i] + ","
+            if i == len(vars) - 1:
+                vrs = vrs + vars[i] + "]"
+        return self('linsolve(%s, %s)' % (eqs, vrs))
 
     def unit_quadratic_integer(self, n):
         r"""
@@ -1845,7 +1845,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             [  3 3/2   1 3/4]
             [  4   2 4/3   1]
         """
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         self._check_valid()
         P = self.parent()
         nrows = int(P.eval('length(%s)'%self.name()))
