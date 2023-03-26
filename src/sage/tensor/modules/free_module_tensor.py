@@ -2844,6 +2844,25 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if self._tensor_rank + other._tensor_rank - 2*ncontr == 0:
             # Case of scalar output:
             return cmp_res
+        #
+        # Reordering of the indices to have all contravariant indices first:
+        #
+        nb_cov_s = 0  # Number of covariant indices of self not involved in the
+                      # contraction
+        for pos in range(k1,k1+l1):
+            if pos not in pos1:
+                nb_cov_s += 1
+        nb_con_o = 0  # Number of contravariant indices of other not involved
+                      # in the contraction
+        for pos in range(0,k2):
+            if pos not in pos2:
+                nb_con_o += 1
+        if nb_cov_s != 0 and nb_con_o != 0:
+            # some reordering is necessary:
+            p2 = k1 + l1 - ncontr
+            p1 = p2 - nb_cov_s
+            p3 = p2 + nb_con_o
+            cmp_res = cmp_res.swap_adjacent_indices(p1, p2, p3)
         type_res = (k1+k2-ncontr, l1+l2-ncontr)
         return self._fmodule.tensor_from_comp(type_res, cmp_res)
 
