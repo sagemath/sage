@@ -534,8 +534,6 @@ class GRSGuruswamiSudanDecoder(Decoder):
         n,k = n_k_params(C, n_k)
         return l > 0 and s > 0 and n * s * (s+1) < (l+1) * (2*s*(n-tau) - (k-1) * l)
 
-
-
     ####################### decoder itself ###############################
     def __init__(self, code, tau = None, parameters = None, interpolation_alg = None, root_finder = None):
         r"""
@@ -711,7 +709,6 @@ class GRSGuruswamiSudanDecoder(Decoder):
             (1, 2)
         """
         return (self._s, self._ell)
-
 
     def multiplicity(self):
         r"""

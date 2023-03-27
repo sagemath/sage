@@ -915,7 +915,6 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
         elif existence:
             return True
 
-
     if check and not is_difference_family(K, D, v, k, l):
         raise RuntimeError("radical_difference_family produced a wrong "
                            "difference family with parameters v={}, "
