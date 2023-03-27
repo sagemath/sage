@@ -140,6 +140,16 @@ include sage/rings/big_oh.p*
 include sage/combinat/integer_vector.p*
 graft sage/combinat/integer_lists
 
+# see src/sage/schemes/generic/notes/imports.txt
+include sage/schemes/generic/point.py
+include sage/schemes/generic/scheme.py
+include sage/schemes/generic/ambient_space.py
+include sage/schemes/generic/morphism.py
+include sage/schemes/generic/homset.py
+include sage/schemes/generic/spec.py
+include sage/schemes/generic/algebraic_scheme.py
+graft sage/schemes/affine
+
 include sage/sets/cartesian_product.py
 include sage/sets/condition_set.py
 include sage/sets/disjoint_union_enumerated_sets.py
