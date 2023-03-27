@@ -33,6 +33,18 @@ The module below implements constructions of Hadamard and skew Hadamard matrices
 for all known orders `\le 1000`, plus some more greater than `1000`. It also
 allows you to pull a Hadamard matrix from the database at [SloaHada]_.
 
+    sage: unknown_hadamard = [668, 716, 892]
+    sage: unknown_skew_hadamard = [356, 404, 428, 476, 596, 612, 668, 708, 712, 716,
+    ....:                         764, 772, 804, 808, 820, 836, 856, 892, 900, 916,
+    ....:                         932, 940, 952, 980, 996]
+    sage: for n in range(1, 251): # not tested
+    ....:   if 4*n not in unknown_hadamard:
+    ....:       H = hadamard_matrix(4*n, check=False)
+    ....:       assert is_hadamard_matrix(H)
+    ....:   if 4*n not in unknown_skew_hadamard:
+    ....:       H = skew_hadamard_matrix(4*n, check=False)
+    ....:       assert is_skew_hadamard_matrix(H)
+
 AUTHORS:
 
 - David Joyner (2009-05-17): initial version
@@ -1613,37 +1625,6 @@ def is_skew_hadamard_matrix(M, normalized=False, verbose=False):
         True
     """
     return is_hadamard_matrix(M, skew=True, normalized=normalized, verbose=verbose)
-
-
-def _get_all_hadamard_matrices(skew=False):
-    r"""
-    Compute all known Hadamard matrices of order `4n`, with `1 \le n \le 250`.
-
-    The Hadamard matrices are computed using :func:`hadamard_matrix` and skew
-    Hadamard matrices are computed by :func:`skew_hadamard_matrix`.
-
-    Note that all skew and non-skew Hadamard matrices of order `\le 1000` for
-    which a construction is known are implemented in SageMath.
-
-    INPUT:
-
-    - ``skew`` -- boolean (default: ``False``); whether the matrices should be skew
-
-    OUTPUT:
-
-    The output is a list which at index `n` contain the (skew) Hadamard matrix
-    of order `4(n+1)`, or ``None`` if a construction for such matrix is not yet
-    known.
-    """
-    unknown_hadamard = [668, 716, 892]
-    unknown_skew_hadamard = [356, 404, 428, 476, 596, 612, 668, 708, 712, 716,
-                             764, 772, 804, 808, 820, 836, 856, 892, 900, 916,
-                             932, 940, 952, 980, 996]
-
-    if skew:
-        return [None if 4*n in unknown_skew_hadamard else skew_hadamard_matrix(4*n) for n in range(1, 251)]
-    else:
-        return [None if 4*n in unknown_hadamard else hadamard_matrix(4*n) for n in range(1, 251)]
 
 
 @matrix_method
