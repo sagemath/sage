@@ -396,5 +396,3 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         f = self._x(y).map_coefficients(lambda c: c.nth_root(char))
         return self._parent(f)
-
-
