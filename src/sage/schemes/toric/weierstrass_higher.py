@@ -11,7 +11,7 @@ The simplest codimension-two case is the complete intersection of two
 quadratic equations in `\mathbb{P}^3` ::
 
     sage: R.<w,x,y,z> = QQ[]
-    sage: quadratic1 = w^2+x^2+y^2
+    sage: quadratic1 = w^2 + x^2 + y^2
     sage: quadratic2 = z^2 + w*x
     sage: WeierstrassForm([quadratic1, quadratic2])
     (-1/4, 0)
@@ -50,7 +50,7 @@ def WeierstrassForm2(polynomial, variables=None, transformation=False):
 
         sage: from sage.schemes.toric.weierstrass_higher import WeierstrassForm2
         sage: R.<w,x,y,z> = QQ[]
-        sage: quadratic1 = w^2+x^2+y^2
+        sage: quadratic1 = w^2 + x^2 + y^2
         sage: quadratic2 = z^2 + w*x
         sage: WeierstrassForm2([quadratic1, quadratic2])
         (-1/4, 0)
@@ -87,7 +87,7 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
 
         sage: from sage.schemes.toric.weierstrass_higher import _check_polynomials_P3
         sage: R.<w,x,y,z> = QQ[]
-        sage: quadratic = w^2+x^2+y^2+z^2
+        sage: quadratic = w^2 + x^2 + y^2 + z^2
         sage: _check_polynomials_P3(w^2, quadratic, [w,x,y,z])
         (w, x, y, z)
         sage: _check_polynomials_P3(w^2, quadratic, None)
@@ -95,7 +95,7 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
         sage: _check_polynomials_P3(z^2, quadratic.subs(w=0), None)
         (x, y, z, None)
         sage: R.<w,x,y,z,t> = QQ[]
-        sage: quadratic = w^2+x^2+y^2+z^2 + t*(x*y+y*z+z*w+w*x)
+        sage: quadratic = w^2 + x^2 + y^2 + z^2 + t*(x*y+y*z+z*w+w*x)
         sage: _check_polynomials_P3(w^2, quadratic, [w,x,y,z])
         (w, x, y, z)
         sage: _check_polynomials_P3(w^2, quadratic, [w,x,y,t])
@@ -157,7 +157,7 @@ def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
 
         sage: from sage.schemes.toric.weierstrass_higher import _biquadratic_syzygy_quartic
         sage: R.<w,x,y,z> = QQ[]
-        sage: _biquadratic_syzygy_quartic(w^2+x^2+y^2, z^2)
+        sage: _biquadratic_syzygy_quartic(w^2 + x^2 + y^2, z^2)
         (Joint quaternary quadratic with coefficients (1, 1, 1, 0, 0, 0, 0, 0, 0, 0)
          and quaternary quadratic with coefficients (0, 0, 0, 1, 0, 0, 0, 0, 0, 0),
          Binary quartic with coefficients (0, 0, 0, -1, 0), {aux...})
@@ -203,7 +203,7 @@ def WeierstrassForm_P3(quadratic1, quadratic2, variables=None):
 
         sage: from sage.schemes.toric.weierstrass_higher import WeierstrassForm_P3
         sage: R.<w,x,y,z> = QQ[]
-        sage: quadratic1 = w^2+x^2+y^2
+        sage: quadratic1 = w^2 + x^2 + y^2
         sage: quadratic2 = z^2 + w*x
         sage: WeierstrassForm_P3(quadratic1, quadratic2)
         (-1/4, 0)
@@ -242,7 +242,7 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
         sage: from sage.schemes.toric.weierstrass_higher import \
         ....:     WeierstrassMap_P3, WeierstrassForm_P3
         sage: R.<w,x,y,z> = QQ[]
-        sage: quadratic1 = w^2+x^2+y^2
+        sage: quadratic1 = w^2 + x^2 + y^2
         sage: quadratic2 = z^2 + w*x
         sage: X, Y, Z = WeierstrassMap_P3(quadratic1, quadratic2)
         sage: X
@@ -262,17 +262,17 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
 
     TESTS::
 
-        sage: R.<w,x,y,z,a0,a1,a2,a3> = GF(101)[]
-        sage: p1 = w^2 + x^2 + y^2 + z^2
-        sage: p2 = a0*w^2 + a1*x^2 + a2*y^2 + a3*z^2
-        sage: X, Y, Z = WeierstrassMap_P3(p1, p2, [w,x,y,z])
-        sage: X.total_degree(), len(X.coefficients())
+        sage: R.<w,x,y,z,a0,a1,a2,a3> = GF(101)[]                                       # optional - sage.rings.finite_rings
+        sage: p1 = w^2 + x^2 + y^2 + z^2                                                # optional - sage.rings.finite_rings
+        sage: p2 = a0*w^2 + a1*x^2 + a2*y^2 + a3*z^2                                    # optional - sage.rings.finite_rings
+        sage: X, Y, Z = WeierstrassMap_P3(p1, p2, [w,x,y,z])                            # optional - sage.rings.finite_rings
+        sage: X.total_degree(), len(X.coefficients())                                   # optional - sage.rings.finite_rings
         (22, 4164)
-        sage: Y.total_degree(), len(Y.coefficients())
+        sage: Y.total_degree(), len(Y.coefficients())                                   # optional - sage.rings.finite_rings
         (33, 26912)
-        sage: Z.total_degree(), len(Z.coefficients())
+        sage: Z.total_degree(), len(Z.coefficients())                                   # optional - sage.rings.finite_rings
         (10, 24)
-        sage: Z
+        sage: Z                                                                         # optional - sage.rings.finite_rings
         w*x*y*z*a0^3*a1^2*a2 - w*x*y*z*a0^2*a1^3*a2 - w*x*y*z*a0^3*a1*a2^2
         + w*x*y*z*a0*a1^3*a2^2 + w*x*y*z*a0^2*a1*a2^3 - w*x*y*z*a0*a1^2*a2^3
         - w*x*y*z*a0^3*a1^2*a3 + w*x*y*z*a0^2*a1^3*a3 + w*x*y*z*a0^3*a2^2*a3

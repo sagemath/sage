@@ -120,20 +120,19 @@ class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
 
     def point_on_affine(self):
         """
-        Return the scheme point on the affine open U.
+        Return the scheme point on the affine open `U`.
         """
         return self.__x
 
     def affine_open(self):
         """
-        Return the affine open subset U.
+        Return the affine open subset `U`.
         """
         return self.__u.domain()
 
     def embedding_of_affine_open(self):
         """
-        Return the embedding from the affine open subset U into this
-        scheme.
+        Return the embedding from the affine open subset `U` into this scheme.
         """
         return self.__u
 

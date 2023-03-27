@@ -310,12 +310,11 @@ class Test:
         M = self._modular_symbols_space()
         V1 = M.cuspidal_submodule().new_submodule()
         V2 = M.new_submodule().cuspidal_submodule()
-        assert V1 == V2, "Test failed for M=\"%s\", where the new cuspidal and cuspidal new spaces are computed differently."%M
+        assert V1 == V2, "Test failed for M=\"%s\", where the new cuspidal and cuspidal new spaces are computed differently." % M
         d = M._cuspidal_new_submodule_dimension_formula()
         assert d == V1.dimension(), \
-            "Test failed for M=\"%s\", where computed dimension is %s but formula dimension is %s."%(
-                     M, V1.dimension(), d)
-
+            "Test failed for M=\"%s\", where computed dimension is %s but formula dimension is %s." % (
+                M, V1.dimension(), d)
 
     def test_decomposition(self):
         """

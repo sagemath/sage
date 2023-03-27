@@ -2215,7 +2215,6 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
             S3 = FiniteEnumeratedSets().example()
             return cartesian_product([S1, S2, S3])
 
-
         class ParentMethods:
             def __iter__(self):
                 r"""

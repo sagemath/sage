@@ -115,7 +115,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         try:
             i = Integer(elt)
-            return  i >= Integer(0) and i == elt
+            return i >= Integer(0) and i == elt
         except (TypeError, ValueError):
             return False
 

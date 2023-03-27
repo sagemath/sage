@@ -2340,11 +2340,11 @@ cdef class MPolynomial(CommutativePolynomial):
         An example where precision needs to be increased::
 
             sage: R.<x,y> = PolynomialRing(QQ)
-            sage: F=-16*x^7 - 114*x^6*y - 345*x^5*y^2 - 599*x^4*y^3 - 666*x^3*y^4 - 481*x^2*y^5 - 207*x*y^6 - 40*y^7
+            sage: F = -16*x^7 - 114*x^6*y - 345*x^5*y^2 - 599*x^4*y^3 - 666*x^3*y^4 - 481*x^2*y^5 - 207*x*y^6 - 40*y^7
             sage: F.reduced_form(prec=50, smallest_coeffs=False)                                                        # optional - sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: accuracy of Newton's root not within tolerance(0.0000124... > 1e-06), increase precision
+            ValueError: accuracy of Newton's root not within tolerance(0.000012... > 1e-06), increase precision
             sage: F.reduced_form(prec=100, smallest_coeffs=False)                                                       # optional - sage.modules
             (
                                                                   [-1 -1]

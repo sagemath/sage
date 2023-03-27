@@ -619,13 +619,11 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         - ``R`` -- commutative ring or morphism.
 
-        OUTPUT:
-
-        - affine space over ``R``.
+        OUTPUT: An affine space over ``R``.
 
         .. NOTE::
 
-            There is no need to have any relation between `R` and the base ring
+            There is no need to have any relation between ``R`` and the base ring
             of  this space, if you want to have such a relation, use
             ``self.base_extend(R)`` instead.
 
@@ -716,8 +714,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             Scheme morphism:
               From: Affine Space of dimension 2 over Rational Field
               To:   Projective Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    (1 : x0 : x1)
+              Defn: Defined on coordinates by sending (x0, x1) to (1 : x0 : x1)
             sage: z = AA(3, 4)
             sage: pi(z)
             (1/4 : 3/4 : 1)
@@ -727,8 +724,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             Scheme morphism:
               From: Affine Space of dimension 2 over Rational Field
               To:   Projective Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    (x0 : 1 : x1)
+              Defn: Defined on coordinates by sending (x0, x1) to (x0 : 1 : x1)
             sage: pi(z)
             (3/4 : 1/4 : 1)
             sage: pi = AA.projective_embedding(2)
@@ -825,10 +821,8 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             Spectrum of Rational Field
             sage: X.structure_morphism()
             Scheme morphism:
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x,
-              y^2,
-              x*y^2
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: x, y^2, x*y^2
               To:   Spectrum of Rational Field
               Defn: Structure map
             sage: X.dimension()
@@ -844,7 +838,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
     def _an_element_(self):
         r"""
-        Return an element of this affine space,used both for illustration and
+        Return an element of this affine space, used both for illustration and
         testing purposes.
 
         OUTPUT: a point in the affine space
@@ -863,7 +857,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
     def chebyshev_polynomial(self, n, kind='first', monic=False):
         """
-        Generates an endomorphism of this affine line by a Chebyshev polynomial.
+        Generate an endomorphism of this affine line by a Chebyshev polynomial.
 
         Chebyshev polynomials are a sequence of recursively defined orthogonal
         polynomials. Chebyshev of the first kind are defined as `T_0(x) = 1`,
@@ -888,16 +882,14 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: A.chebyshev_polynomial(5, 'first')
             Dynamical System of Affine Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x) to
-            (16*x^5 - 20*x^3 + 5*x)
+            Defn: Defined on coordinates by sending (x) to (16*x^5 - 20*x^3 + 5*x)
 
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: A.chebyshev_polynomial(3, 'second')
             Dynamical System of Affine Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x) to
-            (8*x^3 - 4*x)
+            Defn: Defined on coordinates by sending (x) to (8*x^3 - 4*x)
 
         ::
 
@@ -928,17 +920,16 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: A.chebyshev_polynomial(7, monic=True)
             Dynamical System of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (x^7 - 7*x^5 + 14*x^3 - 7*x)
+              Defn: Defined on coordinates by sending (x) to (x^7 - 7*x^5 + 14*x^3 - 7*x)
 
         ::
 
             sage: F.<t> = FunctionField(QQ)
             sage: A.<x> = AffineSpace(F,1)
             sage: A.chebyshev_polynomial(4, monic=True)
-            Dynamical System of Affine Space of dimension 1 over Rational function field in t over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (x^4 + (-4)*x^2 + 2)
+            Dynamical System of Affine Space of dimension 1
+            over Rational function field in t over Rational Field
+              Defn: Defined on coordinates by sending (x) to (x^4 + (-4)*x^2 + 2)
         """
         if self.dimension_relative() != 1:
             raise TypeError("affine space must be of dimension 1")
@@ -1052,8 +1043,8 @@ class AffineSpace_field(AffineSpace_generic):
             (-1, -1), (1/2, -1), (-1/2, -1), (2, -1), (-2, -1), (0, 1/2), (1, 1/2),
             (-1, 1/2), (1/2, 1/2), (-1/2, 1/2), (2, 1/2), (-2, 1/2), (0, -1/2), (1, -1/2),
             (-1, -1/2), (1/2, -1/2), (-1/2, -1/2), (2, -1/2), (-2, -1/2), (0, 2), (1, 2),
-            (-1, 2), (1/2, 2), (-1/2, 2), (2, 2), (-2, 2), (0, -2), (1, -2), (-1, -2), (1/2, -2),
-            (-1/2, -2), (2, -2), (-2, -2)]
+            (-1, 2), (1/2, 2), (-1/2, 2), (2, 2), (-2, 2), (0, -2), (1, -2), (-1, -2),
+            (1/2, -2), (-1/2, -2), (2, -2), (-2, -2)]
 
         ::
 
@@ -1108,7 +1099,7 @@ class AffineSpace_field(AffineSpace_generic):
         the Weil restriction to the prime subfield.
 
         OUTPUT: Affine space of dimension ``d * self.dimension_relative()``
-                over the base field of ``self.base_ring()``.
+        over the base field of ``self.base_ring()``.
 
         EXAMPLES::
 
@@ -1121,8 +1112,8 @@ class AffineSpace_field(AffineSpace_generic):
             sage: L.<v> = K.extension(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: AL.<x,y> = AffineSpace(L, 2)                                          # optional - sage.rings.number_field
             sage: AL.weil_restriction()                                                 # optional - sage.rings.number_field
-            Affine Space of dimension 4 over Number Field in w with defining
-            polynomial x^5 - 2
+            Affine Space of dimension 4 over Number Field in w
+            with defining polynomial x^5 - 2
         """
         try:
             X = self.__weil_restriction

@@ -30,39 +30,39 @@ is called an infinite order. Thus a function field has one maximal finite order
 `O` and one maximal infinite order `O_\infty`. There are other non-maximal
 orders such as equation orders::
 
-    sage: K.<x> = FunctionField(GF(3)); R.<y> = K[]                                                 # optional - sage.libs.pari
-    sage: L.<y> = K.extension(y^3 - y - x)                                                          # optional - sage.libs.pari sage.rings.function_field
-    sage: O = L.equation_order()                                                                    # optional - sage.libs.pari sage.rings.function_field
-    sage: 1/y in O                                                                                  # optional - sage.libs.pari sage.rings.function_field
+    sage: K.<x> = FunctionField(GF(3)); R.<y> = K[]                                                 # optional - sage.rings.finite_rings
+    sage: L.<y> = K.extension(y^3 - y - x)                                                          # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: O = L.equation_order()                                                                    # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: 1/y in O                                                                                  # optional - sage.rings.finite_rings sage.rings.function_field
     False
-    sage: x/y in O                                                                                  # optional - sage.libs.pari sage.rings.function_field
+    sage: x/y in O                                                                                  # optional - sage.rings.finite_rings sage.rings.function_field
     True
 
 Sage provides an extensive functionality for computations in maximal orders of
 function fields. For example, you can decompose a prime ideal of a rational
 function field in an extension::
 
-    sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]                                                 # optional - sage.libs.pari
-    sage: o = K.maximal_order()                                                                     # optional - sage.libs.pari
-    sage: p = o.ideal(x + 1)                                                                        # optional - sage.libs.pari
-    sage: p.is_prime()                                                                              # optional - sage.libs.pari
+    sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]                                                 # optional - sage.rings.finite_rings
+    sage: o = K.maximal_order()                                                                     # optional - sage.rings.finite_rings
+    sage: p = o.ideal(x + 1)                                                                        # optional - sage.rings.finite_rings
+    sage: p.is_prime()                                                                              # optional - sage.rings.finite_rings
     True
 
-    sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)                                            # optional - sage.libs.pari sage.rings.function_field
-    sage: O = F.maximal_order()                                                                     # optional - sage.libs.pari sage.rings.function_field
-    sage: O.decomposition(p)                                                                        # optional - sage.libs.pari sage.rings.function_field
+    sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)                                            # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: O = F.maximal_order()                                                                     # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: O.decomposition(p)                                                                        # optional - sage.rings.finite_rings sage.rings.function_field
     [(Ideal (x + 1, y + 1) of Maximal order
      of Function field in y defined by y^3 + x^6 + x^4 + x^2, 1, 1),
      (Ideal (x + 1, (1/(x^3 + x^2 + x))*y^2 + y + 1) of Maximal order
      of Function field in y defined by y^3 + x^6 + x^4 + x^2, 2, 1)]
 
-    sage: p1, relative_degree,ramification_index = O.decomposition(p)[1]                            # optional - sage.libs.pari sage.rings.function_field
-    sage: p1.parent()                                                                               # optional - sage.libs.pari sage.rings.function_field
+    sage: p1, relative_degree,ramification_index = O.decomposition(p)[1]                            # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: p1.parent()                                                                               # optional - sage.rings.finite_rings sage.rings.function_field
     Monoid of ideals of Maximal order of Function field in y
     defined by y^3 + x^6 + x^4 + x^2
-    sage: relative_degree                                                                           # optional - sage.libs.pari sage.rings.function_field
+    sage: relative_degree                                                                           # optional - sage.rings.finite_rings sage.rings.function_field
     2
-    sage: ramification_index                                                                        # optional - sage.libs.pari sage.rings.function_field
+    sage: ramification_index                                                                        # optional - sage.rings.finite_rings sage.rings.function_field
     1
 
 When the base constant field is the algebraic field `\QQbar`, the only prime ideals
@@ -96,9 +96,11 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2010 William Stein <wstein@gmail.com>
-#       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
-#       Copyright (C) 2011 Julian Rueth <julian.rueth@gmail.com>
+#       Copyright (C) 2010      William Stein <wstein@gmail.com>
+#                     2011      Maarten Derickx <m.derickx.student@gmail.com>
+#                     2011      Julian Rueth <julian.rueth@gmail.com>
+#                     2017-2020 Kwankyu Lee
+#                     2019      Brent Baccala
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -107,20 +109,10 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.categories.integral_domains import IntegralDomains
-from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
 
 from .ideal import IdealMonoid, FunctionFieldIdeal
-
-lazy_import('sage.rings.function_field.order_basis',
-            ['FunctionFieldOrder_basis', 'FunctionFieldOrderInfinite_basis'])
-lazy_import('sage.rings.function_field.order_rational',
-            ['FunctionFieldMaximalOrder_rational', 'FunctionFieldMaximalOrderInfinite_rational'])
-lazy_import('sage.rings.function_field.order_polymod',
-            ['FunctionFieldMaximalOrder_polymod', 'FunctionFieldMaximalOrderInfinite_polymod'])
-lazy_import('sage.rings.function_field.order_global',
-            ['FunctionFieldMaximalOrder_global'])
 
 
 class FunctionFieldOrder_base(CachedRepresentation, Parent):
@@ -277,9 +269,9 @@ class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionField
             sage: FunctionField(QQ,'y').maximal_order_infinite()
             Maximal infinite order of Rational function field in y over Rational Field
 
-            sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)                           # optional - sage.libs.pari
-            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                        # optional - sage.libs.pari sage.rings.function_field
-            sage: F.maximal_order_infinite()                                                        # optional - sage.libs.pari sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)                           # optional - sage.rings.finite_rings
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                                        # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: F.maximal_order_infinite()                                                        # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
             Maximal infinite order of Function field in y defined by y^3 + x^6 + x^4 + x^2
         """
         return "Maximal infinite order of %s"%(self.function_field(),)

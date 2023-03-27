@@ -6651,7 +6651,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 msg = 'all cones are solid when max_ambient_dim is zero.'
                 raise ValueError(msg)
             if (max_ambient_dim is not None and
-                    min_rays > 2*(max_ambient_dim - 1)):
+                    min_rays > 2 * (max_ambient_dim - 1)):
                 msg = 'every cone is solid when '
                 msg += 'min_rays > 2*(max_ambient_dim - 1).'
                 raise ValueError(msg)
@@ -6659,11 +6659,10 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             if lattice.dimension() == 0:
                 msg = 'all cones in the given lattice are solid.'
                 raise ValueError(msg)
-            if  min_rays > 2*(lattice.dimension() - 1):
+            if min_rays > 2 * (lattice.dimension() - 1):
                 msg = 'every cone is solid when min_rays > 2*(d - 1) '
                 msg += 'where d is the dimension of the given lattice.'
                 raise ValueError(msg)
-
 
     # Now that we've sanity-checked our parameters, we can massage the
     # min/maxes for (non-)solid cones. It doesn't violate the user's

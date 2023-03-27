@@ -25,9 +25,11 @@ AUTHORS:
 
 """
 #*****************************************************************************
-#       Copyright (C) 2010 William Stein <wstein@gmail.com>
-#       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
-#       Copyright (C) 2011 Julian Rueth <julian.rueth@gmail.com>
+#       Copyright (C) 2010      William Stein <wstein@gmail.com>
+#                     2011      Maarten Derickx <m.derickx.student@gmail.com>
+#                     2011-2014 Julian Rueth <julian.rueth@gmail.com>
+#                     2012      Travis Scrimshaw
+#                     2017-2019 Kwankyu Lee
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -54,10 +56,10 @@ class FunctionFieldFactory(UniqueFactory):
 
         sage: K.<x> = FunctionField(QQ); K
         Rational function field in x over Rational Field
-        sage: L.<y> = FunctionField(GF(7)); L                                           # optional - sage.libs.pari
+        sage: L.<y> = FunctionField(GF(7)); L                                           # optional - sage.rings.finite_rings
         Rational function field in y over Finite Field of size 7
-        sage: R.<z> = L[]                                                               # optional - sage.libs.pari
-        sage: M.<z> = L.extension(z^7 - z - y); M                                       # optional - sage.libs.pari sage.rings.function_field
+        sage: R.<z> = L[]                                                               # optional - sage.rings.finite_rings
+        sage: M.<z> = L.extension(z^7 - z - y); M                                       # optional - sage.rings.finite_rings sage.rings.function_field
         Function field in z defined by z^7 + 6*z + 6*y
 
     TESTS::
@@ -66,8 +68,8 @@ class FunctionFieldFactory(UniqueFactory):
         sage: L.<x> = FunctionField(QQ)
         sage: K is L
         True
-        sage: M.<x> = FunctionField(GF(7))                                              # optional - sage.libs.pari
-        sage: K is M                                                                    # optional - sage.libs.pari
+        sage: M.<x> = FunctionField(GF(7))                                              # optional - sage.rings.finite_rings
+        sage: K is M                                                                    # optional - sage.rings.finite_rings
         False
         sage: N.<y> = FunctionField(QQ)
         sage: K is N

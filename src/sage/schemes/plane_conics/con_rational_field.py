@@ -84,12 +84,12 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         a pair ``(out, S)``, where ``out`` is as above and the following
         holds:
 
-         - if ``point`` is ``True`` and ``self`` has a rational point,
-           then ``S`` is a rational point,
+        - if ``point`` is ``True`` and ``self`` has a rational point,
+          then ``S`` is a rational point,
 
-         - if ``obstruction`` is ``True`` and ``self`` has no rational point,
-           then ``S`` is a prime such that no rational point exists
-           over the completion at ``S`` or `-1` if no point exists over `\RR`.
+        - if ``obstruction`` is ``True`` and ``self`` has no rational point,
+          then ``S`` is a prime such that no rational point exists
+          over the completion at ``S`` or `-1` if no point exists over `\RR`.
 
         Points and obstructions are cached, whenever they are found.
         Cached information is used if and only if ``read_cache`` is ``True``.
@@ -99,43 +99,44 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         The parameter ``algorithm``
         specifies the algorithm to be used:
 
-         - ``'qfsolve'`` -- Use PARI/GP function :pari:`qfsolve`
+        - ``'qfsolve'`` -- Use PARI/GP function :pari:`qfsolve`
 
-         - ``'rnfisnorm'`` -- Use PARI's function :pari:`rnfisnorm`
-           (cannot be combined with ``obstruction = True``)
+        - ``'rnfisnorm'`` -- Use PARI's function :pari:`rnfisnorm`
+          (cannot be combined with ``obstruction = True``)
 
-         - ``'local'`` -- Check if a local solution exists for all primes
-           and infinite places of `\QQ` and apply the Hasse principle
-           (cannot be combined with ``point = True``)
+        - ``'local'`` -- Check if a local solution exists for all primes
+          and infinite places of `\QQ` and apply the Hasse principle
+          (cannot be combined with ``point = True``)
 
-         - ``'default'`` -- Use ``'qfsolve'``
+        - ``'default'`` -- Use ``'qfsolve'``
 
-         - ``'magma'`` (requires Magma to be installed) --
-           delegates the task to the Magma computer algebra system.
+        - ``'magma'`` (requires Magma to be installed) --
+          delegates the task to the Magma computer algebra system.
 
         EXAMPLES::
 
             sage: C = Conic(QQ, [1, 2, -3])
-            sage: C.has_rational_point(point = True)
+            sage: C.has_rational_point(point=True)
             (True, (1 : 1 : 1))
             sage: D = Conic(QQ, [1, 3, -5])
-            sage: D.has_rational_point(point = True)
+            sage: D.has_rational_point(point=True)
             (False, 3)
             sage: P.<X,Y,Z> = QQ[]
             sage: E = Curve(X^2 + Y^2 + Z^2); E
             Projective Conic Curve over Rational Field defined by X^2 + Y^2 + Z^2
-            sage: E.has_rational_point(obstruction = True)
+            sage: E.has_rational_point(obstruction=True)
             (False, -1)
 
         The following would not terminate quickly with
         ``algorithm = 'rnfisnorm'`` ::
 
             sage: C = Conic(QQ, [1, 113922743, -310146482690273725409])
-            sage: C.has_rational_point(point = True)
+            sage: C.has_rational_point(point=True)
             (True, (-76842858034579/5424 : -5316144401/5424 : 1))
-            sage: C.has_rational_point(algorithm = 'local', read_cache = False)
+            sage: C.has_rational_point(algorithm='local', read_cache=False)
             True
-            sage: C.has_rational_point(point=True, algorithm='magma', read_cache=False) # optional - magma
+            sage: C.has_rational_point(point=True, algorithm='magma',       # optional - magma
+            ....:                      read_cache=False)
             (True, (30106379962113/7913 : 12747947692/7913 : 1))
 
         TESTS:
@@ -146,7 +147,11 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             sage: l = Sequence(cartesian_product_iterator([[-1, 0, 1] for i in range(6)]))
             sage: c = [Conic(QQ, a) for a in l if a != [0,0,0] and a != (0,0,0,0,0,0)]
             sage: d = []
-            sage: d = [[C]+[C.has_rational_point(algorithm = algorithm, read_cache = False, obstruction = (algorithm != 'rnfisnorm'), point = (algorithm != 'local')) for algorithm in ['local', 'qfsolve', 'rnfisnorm']] for C in c[::10]] # long time: 7 seconds
+            sage: d = [[C] + [C.has_rational_point(algorithm=algorithm, read_cache=False,            # long time: 7 seconds
+            ....:                                  obstruction=(algorithm != 'rnfisnorm'),
+            ....:                                  point=(algorithm != 'local'))
+            ....:             for algorithm in ['local', 'qfsolve', 'rnfisnorm']]
+            ....:      for C in c[::10]]
             sage: assert all(e[1][0] == e[2][0] and e[1][0] == e[3][0] for e in d)
             sage: assert all(e[0].defining_polynomial()(Sequence(e[i][1])) == 0 for e in d for i in [2,3] if e[1][0])
         """
@@ -342,7 +347,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
 
             sage: R.<x,y,z> = QQ[]
             sage: C = Curve(7*x^2 + 2*y*z + z^2)
-            sage: (p, i) = C.parametrization(morphism = False); (p, i)
+            sage: (p, i) = C.parametrization(morphism=False); (p, i)
             ([-2*x*y, x^2 + 7*y^2, -2*x^2], [-1/2*x, 1/7*y + 1/14*z])
             sage: C.defining_polynomial()(p)
             0
@@ -355,7 +360,8 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             sage: C.parametrization()
             Traceback (most recent call last):
             ...
-            ValueError: Conic Projective Conic Curve over Rational Field defined by x^2 + 2*y^2 + z^2 has no rational points over Rational Field!
+            ValueError: Conic Projective Conic Curve over Rational Field defined
+            by x^2 + 2*y^2 + z^2 has no rational points over Rational Field!
 
         A ``ValueError`` is raised if ``self`` is not smooth ::
 
@@ -363,7 +369,8 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             sage: C.parametrization()
             Traceback (most recent call last):
             ...
-            ValueError: The conic self (=Projective Conic Curve over Rational Field defined by x^2 + y^2) is not smooth, hence does not have a parametrization.
+            ValueError: The conic self (=Projective Conic Curve over Rational Field defined
+            by x^2 + y^2) is not smooth, hence does not have a parametrization.
         """
         if (self._parametrization is not None) and not point:
             par = self._parametrization

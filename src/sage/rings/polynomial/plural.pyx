@@ -1780,7 +1780,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         _I = idInit(len(I),1)
         for f in I:
-            if not (isinstance(f, NCPolynomial_plural) \
+            if not (isinstance(f, NCPolynomial_plural)
                    and <NCPolynomialRing_plural>(<NCPolynomial_plural>f)._parent is parent):
                 try:
                     f = parent.coerce(f)

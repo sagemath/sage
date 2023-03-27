@@ -784,7 +784,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             na = a_red.multiplicative_order()
             nb = b_red.multiplicative_order()
             if not na.divides(nb):  # cannot be a power
-                raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}" \
+                raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}"
                               + (f" (no solution modulo {q})" if q != self.modulus() else ""))
 
             if p == 2 and e >= 3:   # (ZZ/2^e)* is not cyclic; must not give unsolvable DLPs to Pari
@@ -792,7 +792,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     from sage.groups.generic import discrete_log
                     v = discrete_log(a_red, b_red, nb)
                 except ValueError:
-                    raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}" \
+                    raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}"
                                   + (f" (no solution modulo {q})" if q != self.modulus() else ""))
             else:
                 try:

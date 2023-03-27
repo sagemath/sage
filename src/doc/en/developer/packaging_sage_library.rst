@@ -567,6 +567,15 @@ doctests that depend on :class:`sage.symbolic.ring.SymbolicRing` for integration
 testing. Hence, these doctests are marked ``# optional -
 sage.symbolic``.
 
+When defining new features for the purpose of doctest annotations, it may be a good
+idea to hide implementation details from feature names. For example, all doctests that
+use finite fields have to depend on PARI. However, we have defined a feature
+:mod:`sage.rings.finite_rings` (which implies the presence of :mod:`sage.libs.pari`).
+Annotating the doctests ``# optional - sage.rings.finite_rings`` expresses the
+dependency in a clearer way than using ``# optional - sage.libs.pari``, and it
+will be a smaller maintenance burden when implementation details change.
+
+
 Testing the distribution in virtual environments with tox
 ---------------------------------------------------------
 

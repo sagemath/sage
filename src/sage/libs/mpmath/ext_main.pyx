@@ -2602,13 +2602,15 @@ def hypsum_internal(int p, int q, param_types, str ztype, coeffs, z,
         sage: print(mp.hyp1f1(1,2,3))
         6.36184564106256
 
-    TODO: convert mpf/mpc parameters to fixed-point numbers here
-    instead of converting to tuples within MPF_hypsum.
+    .. TODO::
+
+        convert mpf/mpc parameters to fixed-point numbers here
+        instead of converting to tuples within MPF_hypsum.
     """
     cdef mpf f
     cdef mpc c
     c = mpc.__new__(mpc)
-    have_complex, magn = MPF_hypsum(&c.re, &c.im, p, q, param_types, \
+    have_complex, magn = MPF_hypsum(&c.re, &c.im, p, q, param_types,
         ztype, coeffs, z, prec, wp, epsshift, magnitude_check, kwargs)
     if have_complex:
         v = c

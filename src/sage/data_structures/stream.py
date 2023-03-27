@@ -2090,8 +2090,8 @@ class Stream_plethysm(Stream_binary):
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_function(lambda n: s[n], True, 0)
             sage: h = Stream_plethysm(f, g, True, p)
-            sage: B = p[2, 2, 1](sum(s[i] for i in range(7)))
-            sage: all(h.compute_product(k, Partition([2, 2, 1])) == B.restrict_degree(k) for k in range(7))
+            sage: B = p[2, 2, 1](sum(p(s[i]) for i in range(7)))  # long time
+            sage: all(h.compute_product(k, Partition([2, 2, 1])) == B.restrict_degree(k) for k in range(7))  # long time
             True
         """
         # This is the approximate order of the result

@@ -65,7 +65,6 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
             R = self.base_category().base_ring()
             return [HopfAlgebras(R).Filtered()]
 
-
     class Connected(CategoryWithAxiom_over_base_ring):
         class ParentMethods:
             @cached_method

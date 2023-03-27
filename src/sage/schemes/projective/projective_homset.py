@@ -83,17 +83,17 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         kwds:
 
-        - ``bound`` - real number (optional, default=0). The bound for the coordinates for
+        - ``bound`` - real number (optional, default: 0). The bound for the coordinates for
           subschemes with dimension at least 1.
 
-        - ``precision`` - integer (optional, default=53). The precision to use to
+        - ``precision`` - integer (optional, default: 53). The precision to use to
           compute the elements of bounded height for number fields.
 
-        - ``point_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``point_tolerance`` - positive real number (optional, default: `10^{-10}`).
           For numerically inexact fields, two points are considered the same
           if their coordinates are within tolerance.
 
-        - ``zero_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``zero_tolerance`` - positive real number (optional, default: `10^{-10}`).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
@@ -115,9 +115,9 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P(QQ).points(bound=4)
             [(-4 : 1), (-3 : 1), (-2 : 1), (-3/2 : 1), (-4/3 : 1), (-1 : 1),
-            (-3/4 : 1), (-2/3 : 1), (-1/2 : 1), (-1/3 : 1), (-1/4 : 1), (0 : 1),
-            (1/4 : 1), (1/3 : 1), (1/2 : 1), (2/3 : 1), (3/4 : 1), (1 : 0), (1 : 1),
-            (4/3 : 1), (3/2 : 1), (2 : 1), (3 : 1), (4 : 1)]
+             (-3/4 : 1), (-2/3 : 1), (-1/2 : 1), (-1/3 : 1), (-1/4 : 1), (0 : 1),
+             (1/4 : 1), (1/3 : 1), (1/2 : 1), (2/3 : 1), (3/4 : 1), (1 : 0), (1 : 1),
+             (4/3 : 1), (3/2 : 1), (2 : 1), (3 : 1), (4 : 1)]
 
         ::
 
@@ -139,21 +139,22 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: E = P.subscheme([(y^3-y*z^2) - (x^3-x*z^2), (y^3-y*z^2) + (x^3-x*z^2)])
             sage: E(P.base_ring()).points()
-            [(-1 : -1 : 1), (-1 : 0 : 1), (-1 : 1 : 1), (0 : -1 : 1), (0 : 0 : 1), (0 : 1 : 1),
-            (1 : -1 : 1), (1 : 0 : 1), (1 : 1 : 1)]
+            [(-1 : -1 : 1), (-1 : 0 : 1), (-1 : 1 : 1), (0 : -1 : 1), (0 : 0 : 1),
+             (0 : 1 : 1), (1 : -1 : 1), (1 : 0 : 1), (1 : 1 : 1)]
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(CC, 2)
             sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
             sage: L = E(P.base_ring()).points(); sorted(L, key=str)
-            verbose 0 (...: projective_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            verbose 0 (...: projective_homset.py, points) Warning: computations in
+            the numerical fields are inexact;points may be computed partially or incorrectly.
             [(-0.500000000000000 + 0.866025403784439*I : 1.00000000000000 : 0.000000000000000),
-            (-0.500000000000000 - 0.866025403784439*I : 1.00000000000000 : 0.000000000000000),
-            (-1.00000000000000*I : 0.000000000000000 : 1.00000000000000),
-            (0.000000000000000 : 0.000000000000000 : 1.00000000000000),
-            (1.00000000000000 : 1.00000000000000 : 0.000000000000000),
-            (1.00000000000000*I : 0.000000000000000 : 1.00000000000000)]
+             (-0.500000000000000 - 0.866025403784439*I : 1.00000000000000 : 0.000000000000000),
+             (-1.00000000000000*I : 0.000000000000000 : 1.00000000000000),
+             (0.000000000000000 : 0.000000000000000 : 1.00000000000000),
+             (1.00000000000000 : 1.00000000000000 : 0.000000000000000),
+             (1.00000000000000*I : 0.000000000000000 : 1.00000000000000)]
             sage: L[0].codomain()
             Projective Space of dimension 2 over Complex Field with 53 bits of precision
 
@@ -162,7 +163,8 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             sage: P.<x,y,z> = ProjectiveSpace(CDF, 2)
             sage: E = P.subscheme([y^2 + x^2 + z^2, x*y*z])
             sage: len(E(P.base_ring()).points())
-            verbose 0 (...: projective_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            verbose 0 (...: projective_homset.py, points) Warning: computations in
+            the numerical fields are inexact;points may be computed partially or incorrectly.
             6
         """
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
@@ -305,11 +307,11 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         kwds:
 
-        - ``point_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``point_tolerance`` - positive real number (optional, default: `10^{-10}`).
           For numerically inexact fields, two points are considered the same
           if their coordinates are within tolerance.
 
-        - ``zero_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``zero_tolerance`` - positive real number (optional, default: `10^{-10}`).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
@@ -490,34 +492,33 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
             sage: from sage.schemes.projective.projective_homset import SchemeHomset_points_projective_ring
             sage: H = SchemeHomset_points_projective_ring(Spec(ZZ), ProjectiveSpace(ZZ, 2))
             sage: H.points(3)
-            [(0 : 0 : 1), (0 : 1 : -3), (0 : 1 : -2), (0 : 1 : -1), (0 : 1 : 0), (0
-            : 1 : 1), (0 : 1 : 2), (0 : 1 : 3), (0 : 2 : -3), (0 : 2 : -1), (0 : 2 :
-            1), (0 : 2 : 3), (0 : 3 : -2), (0 : 3 : -1), (0 : 3 : 1), (0 : 3 : 2),
-            (1 : -3 : -3), (1 : -3 : -2), (1 : -3 : -1), (1 : -3 : 0), (1 : -3 : 1),
-            (1 : -3 : 2), (1 : -3 : 3), (1 : -2 : -3), (1 : -2 : -2), (1 : -2 : -1),
-            (1 : -2 : 0), (1 : -2 : 1), (1 : -2 : 2), (1 : -2 : 3), (1 : -1 : -3),
-            (1 : -1 : -2), (1 : -1 : -1), (1 : -1 : 0), (1 : -1 : 1), (1 : -1 : 2),
-            (1 : -1 : 3), (1 : 0 : -3), (1 : 0 : -2), (1 : 0 : -1), (1 : 0 : 0), (1
-            : 0 : 1), (1 : 0 : 2), (1 : 0 : 3), (1 : 1 : -3), (1 : 1 : -2), (1 : 1 :
-            -1), (1 : 1 : 0), (1 : 1 : 1), (1 : 1 : 2), (1 : 1 : 3), (1 : 2 : -3),
-            (1 : 2 : -2), (1 : 2 : -1), (1 : 2 : 0), (1 : 2 : 1), (1 : 2 : 2), (1 :
-            2 : 3), (1 : 3 : -3), (1 : 3 : -2), (1 : 3 : -1), (1 : 3 : 0), (1 : 3 :
-            1), (1 : 3 : 2), (1 : 3 : 3), (2 : -3 : -3), (2 : -3 : -2), (2 : -3 :
-            -1), (2 : -3 : 0), (2 : -3 : 1), (2 : -3 : 2), (2 : -3 : 3), (2 : -2 :
-            -3), (2 : -2 : -1), (2 : -2 : 1), (2 : -2 : 3), (2 : -1 : -3), (2 : -1 :
-            -2), (2 : -1 : -1), (2 : -1 : 0), (2 : -1 : 1), (2 : -1 : 2), (2 : -1 :
-            3), (2 : 0 : -3), (2 : 0 : -1), (2 : 0 : 1), (2 : 0 : 3), (2 : 1 : -3),
-            (2 : 1 : -2), (2 : 1 : -1), (2 : 1 : 0), (2 : 1 : 1), (2 : 1 : 2), (2 :
-            1 : 3), (2 : 2 : -3), (2 : 2 : -1), (2 : 2 : 1), (2 : 2 : 3), (2 : 3 :
-            -3), (2 : 3 : -2), (2 : 3 : -1), (2 : 3 : 0), (2 : 3 : 1), (2 : 3 : 2),
-            (2 : 3 : 3), (3 : -3 : -2), (3 : -3 : -1), (3 : -3 : 1), (3 : -3 : 2),
-            (3 : -2 : -3), (3 : -2 : -2), (3 : -2 : -1), (3 : -2 : 0), (3 : -2 : 1),
-            (3 : -2 : 2), (3 : -2 : 3), (3 : -1 : -3), (3 : -1 : -2), (3 : -1 : -1),
-            (3 : -1 : 0), (3 : -1 : 1), (3 : -1 : 2), (3 : -1 : 3), (3 : 0 : -2), (3
-            : 0 : -1), (3 : 0 : 1), (3 : 0 : 2), (3 : 1 : -3), (3 : 1 : -2), (3 : 1
-            : -1), (3 : 1 : 0), (3 : 1 : 1), (3 : 1 : 2), (3 : 1 : 3), (3 : 2 : -3),
-            (3 : 2 : -2), (3 : 2 : -1), (3 : 2 : 0), (3 : 2 : 1), (3 : 2 : 2), (3 :
-            2 : 3), (3 : 3 : -2), (3 : 3 : -1), (3 : 3 : 1), (3 : 3 : 2)]
+            [(0 : 0 : 1), (0 : 1 : -3), (0 : 1 : -2), (0 : 1 : -1), (0 : 1 : 0), (0 : 1 : 1),
+             (0 : 1 : 2), (0 : 1 : 3), (0 : 2 : -3), (0 : 2 : -1), (0 : 2 : 1), (0 : 2 : 3),
+             (0 : 3 : -2), (0 : 3 : -1), (0 : 3 : 1), (0 : 3 : 2), (1 : -3 : -3),
+             (1 : -3 : -2), (1 : -3 : -1), (1 : -3 : 0), (1 : -3 : 1), (1 : -3 : 2),
+             (1 : -3 : 3), (1 : -2 : -3), (1 : -2 : -2), (1 : -2 : -1), (1 : -2 : 0),
+             (1 : -2 : 1), (1 : -2 : 2), (1 : -2 : 3), (1 : -1 : -3), (1 : -1 : -2),
+             (1 : -1 : -1), (1 : -1 : 0), (1 : -1 : 1), (1 : -1 : 2), (1 : -1 : 3),
+             (1 : 0 : -3), (1 : 0 : -2), (1 : 0 : -1), (1 : 0 : 0), (1 : 0 : 1), (1 : 0 : 2),
+             (1 : 0 : 3), (1 : 1 : -3), (1 : 1 : -2), (1 : 1 : -1), (1 : 1 : 0), (1 : 1 : 1),
+             (1 : 1 : 2), (1 : 1 : 3), (1 : 2 : -3), (1 : 2 : -2), (1 : 2 : -1), (1 : 2 : 0),
+             (1 : 2 : 1), (1 : 2 : 2), (1 : 2 : 3), (1 : 3 : -3), (1 : 3 : -2), (1 : 3 : -1),
+             (1 : 3 : 0), (1 : 3 : 1), (1 : 3 : 2), (1 : 3 : 3), (2 : -3 : -3),
+             (2 : -3 : -2), (2 : -3 : -1), (2 : -3 : 0), (2 : -3 : 1), (2 : -3 : 2),
+             (2 : -3 : 3), (2 : -2 : -3), (2 : -2 : -1), (2 : -2 : 1), (2 : -2 : 3),
+             (2 : -1 : -3), (2 : -1 : -2), (2 : -1 : -1), (2 : -1 : 0), (2 : -1 : 1),
+             (2 : -1 : 2), (2 : -1 : 3), (2 : 0 : -3), (2 : 0 : -1), (2 : 0 : 1),
+             (2 : 0 : 3), (2 : 1 : -3), (2 : 1 : -2), (2 : 1 : -1), (2 : 1 : 0), (2 : 1 : 1),
+             (2 : 1 : 2), (2 : 1 : 3), (2 : 2 : -3), (2 : 2 : -1), (2 : 2 : 1), (2 : 2 : 3),
+             (2 : 3 : -3), (2 : 3 : -2), (2 : 3 : -1), (2 : 3 : 0), (2 : 3 : 1), (2 : 3 : 2),
+             (2 : 3 : 3), (3 : -3 : -2), (3 : -3 : -1), (3 : -3 : 1), (3 : -3 : 2),
+             (3 : -2 : -3), (3 : -2 : -2), (3 : -2 : -1), (3 : -2 : 0), (3 : -2 : 1),
+             (3 : -2 : 2), (3 : -2 : 3), (3 : -1 : -3), (3 : -1 : -2), (3 : -1 : -1),
+             (3 : -1 : 0), (3 : -1 : 1), (3 : -1 : 2), (3 : -1 : 3), (3 : 0 : -2),
+             (3 : 0 : -1), (3 : 0 : 1), (3 : 0 : 2), (3 : 1 : -3), (3 : 1 : -2),
+             (3 : 1 : -1), (3 : 1 : 0), (3 : 1 : 1), (3 : 1 : 2), (3 : 1 : 3), (3 : 2 : -3),
+             (3 : 2 : -2), (3 : 2 : -1), (3 : 2 : 0), (3 : 2 : 1), (3 : 2 : 2), (3 : 2 : 3),
+             (3 : 3 : -2), (3 : 3 : -1), (3 : 3 : 1), (3 : 3 : 2)]
         """
         R = self.value_ring()
         if R == ZZ:

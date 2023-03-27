@@ -28,7 +28,7 @@ base rings.
     Projective Space of dimension 5 over Complex Field with 53 bits of precision
 
 The third argument specifies the printing names of the generators of the
-homogeneous coordinate ring. Using the method `.objgens()` you can obtain both
+homogeneous coordinate ring. Using the method :meth:`objgens` you can obtain both
 the space and the generators as ready to use variables. ::
 
     sage: P2, vars = ProjectiveSpace(10, QQ, 't').objgens()
@@ -345,7 +345,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         Return the number of generators of this projective space.
 
-        This is the number of variables in the coordinate ring of self.
+        This is the number of variables in the coordinate ring of ``self``.
 
         EXAMPLES::
 
@@ -604,7 +604,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         -  ``d`` -- a nonnegative integer.
 
-        -  ``pt`` -- a point of self (possibly represented by a list with at \
+        -  ``pt`` -- a point of ``self`` (possibly represented by a list with at \
                      least one component equal to 1).
 
         -  ``m`` -- a nonnegative integer.
@@ -612,8 +612,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         OUTPUT:
 
         A matrix of size `\binom{m-1+n}{n}` x `\binom{d+n}{n}` where n is the
-        relative dimension of self. The base ring of the matrix is a ring that
-        contains the base ring of self and the coefficients of the given point.
+        relative dimension of ``self``. The base ring of the matrix is a ring that
+        contains the base ring of ``self`` and the coefficients of the given point.
 
         EXAMPLES:
 
@@ -914,7 +914,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: PQ = P.change_ring(QQ); PQ
             Projective Space of dimension 2 over Rational Field
-            sage: PQ.change_ring(GF(5))
+            sage: PQ.change_ring(GF(5))                                                 # optional - sage.rings.finite_rings
             Projective Space of dimension 2 over Finite Field of size 5
 
         ::
@@ -961,7 +961,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: X.defining_polynomials ()
             (x*z^2, y^2*z, x*y^2)
             sage: I = X.defining_ideal(); I
-            Ideal (x*z^2, y^2*z, x*y^2) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            Ideal (x*z^2, y^2*z, x*y^2) of Multivariate Polynomial Ring in x, y, z
+            over Rational Field
             sage: I.groebner_basis()
             [x*y^2, y^2*z,  x*z^2]
             sage: X.dimension()
@@ -972,12 +973,12 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             Spectrum of Rational Field
             sage: X.structure_morphism()
             Scheme morphism:
-              From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-              x*z^2,
-              y^2*z,
-              x*y^2
+              From: Closed subscheme of Projective Space of dimension 2
+                    over Rational Field defined by: x*z^2, y^2*z, x*y^2
               To:   Spectrum of Rational Field
               Defn: Structure map
+
+        TESTS::
 
             sage: TestSuite(X).run(skip=["_test_an_element", "_test_elements",\
             "_test_elements_eq", "_test_some_elements", "_test_elements_eq_reflexive",\
@@ -997,15 +998,15 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         Return the `i^{th}` affine patch of this projective space.
 
         This is an ambient affine space `\mathbb{A}^n_R,` where
-        `R` is the base ring of self, whose "projective embedding"
+        `R` is the base ring of ``self``, whose "projective embedding"
         map is `1` in the `i^{th}` factor.
 
         INPUT:
 
-        - ``i`` -- integer between 0 and dimension of self, inclusive.
+        - ``i`` -- integer between 0 and dimension of ``self``, inclusive.
 
         - ``AA`` -- (default: None) ambient affine space, this is constructed
-                if it is not given.
+          if it is not given.
 
         OUTPUT:
 
@@ -1183,16 +1184,16 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P.chebyshev_polynomial(5, 'first')
             Dynamical System of Projective Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x : y) to
-            (16*x^5 - 20*x^3*y^2 + 5*x*y^4 : y^5)
+              Defn: Defined on coordinates by sending (x : y) to
+                    (16*x^5 - 20*x^3*y^2 + 5*x*y^4 : y^5)
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P.chebyshev_polynomial(3, 'second')
             Dynamical System of Projective Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x : y) to
-            (8*x^3 - 4*x*y^2 : y^3)
+              Defn: Defined on coordinates by sending (x : y) to
+                    (8*x^3 - 4*x*y^2 : y^3)
 
         ::
 
@@ -1231,7 +1232,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: F.<t> = FunctionField(QQ)
             sage: P.<y,z> = ProjectiveSpace(F, 1)
             sage: P.chebyshev_polynomial(4, monic=True)
-            Dynamical System of Projective Space of dimension 1 over Rational function field in t over Rational Field
+            Dynamical System of Projective Space of dimension 1
+            over Rational function field in t over Rational Field
               Defn: Defined on coordinates by sending (y : z) to
                     (y^4 + (-4)*y^2*z^2 + 2*z^4 : z^4)
         """
@@ -1332,14 +1334,14 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-            - ``points_source`` -- points in source projective space.
+        - ``points_source`` -- points in source projective space.
 
-            - ``points_target`` -- points in target projective space.
+        - ``points_target`` -- points in target projective space.
 
-            - ``normalize`` -- (default: `True`) If the returned matrix should be normalized.
-              Only works over exact rings. If the base ring is a field, the matrix is normalized so
-              that the last nonzero entry in the last row is 1. If the base ring is a ring, then
-              the matrix is normalized so that the entries are elements of the base ring.
+        - ``normalize`` -- (default: ``True``) If the returned matrix should be normalized.
+          Only works over exact rings. If the base ring is a field, the matrix is normalized so
+          that the last nonzero entry in the last row is 1. If the base ring is a ring, then
+          the matrix is normalized so that the entries are elements of the base ring.
 
         OUTPUT: Transformation matrix - element of PGL.
 
@@ -1385,8 +1387,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: points_source = [P([-6*t, 7]), P([1, 4]), P([3, 2])]
             sage: points_target = [P([-1, 2*t]), P([0, 2]), P([-1, 6])]
             sage: P.point_transformation_matrix(points_source, points_target)
-            [             (1/3*t + 7/12)/(t^2 - 53/24*t)            (-1/12*t - 7/48)/(t^2 - 53/24*t)]
-            [(-2/3*t^2 - 7/36*t - 35/12)/(t^2 - 53/24*t)                                           1]
+            [             (1/3*t + 7/12)/(t^2 - 53/24*t)       (-1/12*t - 7/48)/(t^2 - 53/24*t)]
+            [(-2/3*t^2 - 7/36*t - 35/12)/(t^2 - 53/24*t)                                      1]
 
         ::
 
@@ -2054,8 +2056,8 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
               x0^2 - 2*x0*x2 + x2^2
             sage: I = Y.defining_ideal()                                                # optional - sage.rings.finite_rings
             sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]                # optional - sage.rings.finite_rings
-            Ideal (x0 - x2, x1*x2 + x3^2) of Multivariate Polynomial Ring in x0, x1,
-            x2, x3 over Finite Field of size 7
+            Ideal (x0 - x2, x1*x2 + x3^2) of Multivariate Polynomial Ring
+            in x0, x1, x2, x3 over Finite Field of size 7
         """
         if not Ch.is_homogeneous():
             raise ValueError("Chow form must be a homogeneous polynomial")
@@ -2250,7 +2252,8 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
             sage: P.rational_points()                                                   # optional - sage.rings.finite_rings
             [(0 : 1), (1 : 1), (2 : 1), (1 : 0)]
             sage: P.rational_points(GF(3^2, 'b'))                                       # optional - sage.rings.finite_rings
-            [(0 : 1), (b : 1), (b + 1 : 1), (2*b + 1 : 1), (2 : 1), (2*b : 1), (2*b + 2 : 1), (b + 2 : 1), (1 : 1), (1 : 0)]
+            [(0 : 1), (b : 1), (b + 1 : 1), (2*b + 1 : 1), (2 : 1), (2*b : 1),
+             (2*b + 2 : 1), (b + 2 : 1), (1 : 1), (1 : 0)]
         """
         if F is None:
             return [P for P in self]
@@ -2315,16 +2318,16 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
         Returns the projective points `(x_0:\cdots:x_n)` over
         `\QQ` with `|x_i| \leq` bound.
 
-       ALGORITHM:
+        ALGORITHM:
 
-       The very simple algorithm works as follows: every point
-       `(x_0:\cdots:x_n)` in projective space has a unique
-       largest index `i` for which `x_i` is not
-       zero. The algorithm then iterates downward on this
-       index. We normalize by choosing `x_i` positive. Then,
-       the points `x_0,\ldots,x_{i-1}` are the points of
-       affine `i`-space that are relatively prime to
-       `x_i`. We access these by using the Tuples method.
+        The very simple algorithm works as follows: every point
+        `(x_0:\cdots:x_n)` in projective space has a unique
+        largest index `i` for which `x_i` is not
+        zero. The algorithm then iterates downward on this
+        index. We normalize by choosing `x_i` positive. Then,
+        the points `x_0,\ldots,x_{i-1}` are the points of
+        affine `i`-space that are relatively prime to
+        `x_i`. We access these by using the Tuples method.
 
         INPUT:
 
@@ -2341,16 +2344,15 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
             sage: PP = ProjectiveSpace(2, QQ)
             sage: PP.rational_points(2)
             [(-2 : -2 : 1), (-1 : -2 : 1), (0 : -2 : 1), (1 : -2 : 1), (2 : -2 : 1),
-            (-2 : -1 : 1), (-1 : -1 : 1), (0 : -1 : 1), (1 : -1 : 1), (2 : -1 : 1),
-            (-2 : 0 : 1), (-1 : 0 : 1), (0 : 0 : 1), (1 : 0 : 1), (2 : 0 : 1), (-2 :
-            1 : 1), (-1 : 1 : 1), (0 : 1 : 1), (1 : 1 : 1), (2 : 1 : 1), (-2 : 2 :
-            1), (-1 : 2 : 1), (0 : 2 : 1), (1 : 2 : 1), (2 : 2 : 1), (-1/2 : -1 :
-            1), (1/2 : -1 : 1), (-1 : -1/2 : 1), (-1/2 : -1/2 : 1), (0 : -1/2 : 1),
-            (1/2 : -1/2 : 1), (1 : -1/2 : 1), (-1/2 : 0 : 1), (1/2 : 0 : 1), (-1 :
-            1/2 : 1), (-1/2 : 1/2 : 1), (0 : 1/2 : 1), (1/2 : 1/2 : 1), (1 : 1/2 :
-            1), (-1/2 : 1 : 1), (1/2 : 1 : 1), (-2 : 1 : 0), (-1 : 1 : 0), (0 : 1 :
-            0), (1 : 1 : 0), (2 : 1 : 0), (-1/2 : 1 : 0), (1/2 : 1 : 0), (1 : 0 :
-            0)]
+             (-2 : -1 : 1), (-1 : -1 : 1), (0 : -1 : 1), (1 : -1 : 1), (2 : -1 : 1),
+             (-2 : 0 : 1), (-1 : 0 : 1), (0 : 0 : 1), (1 : 0 : 1), (2 : 0 : 1), (-2 : 1 : 1),
+             (-1 : 1 : 1), (0 : 1 : 1), (1 : 1 : 1), (2 : 1 : 1), (-2 : 2 : 1),
+             (-1 : 2 : 1), (0 : 2 : 1), (1 : 2 : 1), (2 : 2 : 1), (-1/2 : -1 : 1),
+             (1/2 : -1 : 1), (-1 : -1/2 : 1), (-1/2 : -1/2 : 1), (0 : -1/2 : 1),
+             (1/2 : -1/2 : 1), (1 : -1/2 : 1), (-1/2 : 0 : 1), (1/2 : 0 : 1), (-1 : 1/2 : 1),
+             (-1/2 : 1/2 : 1), (0 : 1/2 : 1), (1/2 : 1/2 : 1), (1 : 1/2 : 1), (-1/2 : 1 : 1),
+             (1/2 : 1 : 1), (-2 : 1 : 0), (-1 : 1 : 0), (0 : 1 : 0), (1 : 1 : 0),
+             (2 : 1 : 0), (-1/2 : 1 : 0), (1/2 : 1 : 0), (1 : 0 : 0)]
 
         AUTHORS:
 
