@@ -274,10 +274,10 @@ class MPolynomial_element(MPolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQbar[]
-            sage: -x
+            sage: R.<x,y> = QQbar[]                                             # optional - sage.rings.number_field
+            sage: -x                                                            # optional - sage.rings.number_field
             -x
-            sage: -(y-1)
+            sage: -(y-1)                                                        # optional - sage.rings.number_field
             -y + 1
         """
         return self.__class__(self.parent(), -self.__element)
@@ -480,21 +480,6 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         return MPolynomial_polydict(P, {P._zero_tuple:x})
 
-<<<<<<< HEAD
-    def __neg__(self):
-        """
-        EXAMPLES::
-
-            sage: R.<x,y>=QQbar[]                                               # optional - sage.rings.number_field
-            sage: -x                                                            # optional - sage.rings.number_field
-            -x
-            sage: -(y-1)                                                        # optional - sage.rings.number_field
-            -y + 1
-        """
-        return self*(-1)
-
-=======
->>>>>>> 10.0.beta6-merged
     def _repr_(self):
         """
         EXAMPLES::

@@ -503,7 +503,6 @@ class QuadraticForm(SageObject):
             is_rationally_isometric
 
     # Routines for solving equations of the form Q(x) = c.
-<<<<<<< HEAD
     lazy_import("sage.quadratic_forms.qfsolve", [
             "solve"
         ])
@@ -512,9 +511,6 @@ class QuadraticForm(SageObject):
     lazy_import("sage.quadratic_forms.genera.genus", [
             "genera"
         ])
-=======
-    from sage.quadratic_forms.qfsolve import solve
->>>>>>> 10.0.beta6
 
     def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None):
         """
@@ -1557,11 +1553,7 @@ class QuadraticForm(SageObject):
         """
         return self.det() / ZZ(2**self.dim())
 
-<<<<<<< HEAD
     def change_ring(self, R):
-=======
-    def base_change_to(self, R):
->>>>>>> 10.0.beta6
         """
         Alters the quadratic form to have all coefficients
         defined over the new base_ring R.  Here R must be
