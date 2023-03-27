@@ -33,11 +33,19 @@ The module below implements constructions of Hadamard and skew Hadamard matrices
 for all known orders `\le 1000`, plus some more greater than `1000`. It also
 allows you to pull a Hadamard matrix from the database at [SloaHada]_.
 
+The following code will test that a construction for all known orders `\le 4k`
+is implemented. The assertion above can be verified by setting ``k=250``
+(note that it will take a long time to run)::
+
+    sage: from sage.combinat.matrices.hadamard_matrix import (hadamard_matrix,
+    ....:                               skew_hadamard_matrix, is_hadamard_matrix,
+    ....:                               is_skew_hadamard_matrix)
+    sage: k = 20
     sage: unknown_hadamard = [668, 716, 892]
     sage: unknown_skew_hadamard = [356, 404, 428, 476, 596, 612, 668, 708, 712, 716,
     ....:                         764, 772, 804, 808, 820, 836, 856, 892, 900, 916,
     ....:                         932, 940, 952, 980, 996]
-    sage: for n in range(1, 251): # not tested
+    sage: for n in range(1, k+1):
     ....:   if 4*n not in unknown_hadamard:
     ....:       H = hadamard_matrix(4*n, check=False)
     ....:       assert is_hadamard_matrix(H)
