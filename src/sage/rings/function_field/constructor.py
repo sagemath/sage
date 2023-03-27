@@ -25,9 +25,11 @@ AUTHORS:
 
 """
 #*****************************************************************************
-#       Copyright (C) 2010 William Stein <wstein@gmail.com>
-#       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
-#       Copyright (C) 2011 Julian Rueth <julian.rueth@gmail.com>
+#       Copyright (C) 2010      William Stein <wstein@gmail.com>
+#                     2011      Maarten Derickx <m.derickx.student@gmail.com>
+#                     2011-2014 Julian Rueth <julian.rueth@gmail.com>
+#                     2012      Travis Scrimshaw
+#                     2017-2019 Kwankyu Lee
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -54,10 +56,10 @@ class FunctionFieldFactory(UniqueFactory):
 
         sage: K.<x> = FunctionField(QQ); K
         Rational function field in x over Rational Field
-        sage: L.<y> = FunctionField(GF(7)); L
+        sage: L.<y> = FunctionField(GF(7)); L                                           # optional - sage.rings.finite_rings
         Rational function field in y over Finite Field of size 7
-        sage: R.<z> = L[]
-        sage: M.<z> = L.extension(z^7-z-y); M
+        sage: R.<z> = L[]                                                               # optional - sage.rings.finite_rings
+        sage: M.<z> = L.extension(z^7 - z - y); M                                       # optional - sage.rings.finite_rings sage.rings.function_field
         Function field in z defined by z^7 + 6*z + 6*y
 
     TESTS::
@@ -66,8 +68,8 @@ class FunctionFieldFactory(UniqueFactory):
         sage: L.<x> = FunctionField(QQ)
         sage: K is L
         True
-        sage: M.<x> = FunctionField(GF(7))
-        sage: K is M
+        sage: M.<x> = FunctionField(GF(7))                                              # optional - sage.rings.finite_rings
+        sage: K is M                                                                    # optional - sage.rings.finite_rings
         False
         sage: N.<y> = FunctionField(QQ)
         sage: K is N
@@ -99,13 +101,13 @@ class FunctionFieldFactory(UniqueFactory):
             True
         """
         if key[0].is_finite():
-            from .function_field import RationalFunctionField_global
+            from .function_field_rational import RationalFunctionField_global
             return RationalFunctionField_global(key[0], names=key[1])
         elif key[0].characteristic() == 0:
-            from .function_field import RationalFunctionField_char_zero
+            from .function_field_rational import RationalFunctionField_char_zero
             return RationalFunctionField_char_zero(key[0], names=key[1])
         else:
-            from .function_field import RationalFunctionField
+            from .function_field_rational import RationalFunctionField
             return RationalFunctionField(key[0], names=key[1])
 
 FunctionField=FunctionFieldFactory("sage.rings.function_field.constructor.FunctionField")
@@ -133,9 +135,9 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         sage: y2 = y*1
         sage: y2 is y
         False
-        sage: L.<w>=K.extension(x - y^2)
-        sage: M.<w>=K.extension(x - y2^2)
-        sage: L is M
+        sage: L.<w> = K.extension(x - y^2)                                              # optional - sage.rings.function_field
+        sage: M.<w> = K.extension(x - y2^2)                                             # optional - sage.rings.function_field
+        sage: L is M                                                                    # optional - sage.rings.function_field
         True
     """
     def create_key(self,polynomial,names):
@@ -147,7 +149,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<w> = K.extension(x - y^2) # indirect doctest
+            sage: L.<w> = K.extension(x - y^2) # indirect doctest                       # optional - sage.rings.function_field
 
         TESTS:
 
@@ -155,12 +157,12 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)
-            sage: R.<z> = L[]
-            sage: M.<z> = L.extension(z - 1)
+            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.function_field
+            sage: R.<z> = L[]                                                           # optional - sage.rings.function_field
+            sage: M.<z> = L.extension(z - 1)                                            # optional - sage.rings.function_field
             sage: R.<z> = K[]
-            sage: N.<z> = K.extension(z - 1)
-            sage: M is N
+            sage: N.<z> = K.extension(z - 1)                                            # optional - sage.rings.function_field
+            sage: M is N                                                                # optional - sage.rings.function_field
             False
 
         """
@@ -179,32 +181,33 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<w> = K.extension(x - y^2) # indirect doctest
-            sage: y2 = y*1
-            sage: M.<w> = K.extension(x - y2^2) # indirect doctest
-            sage: L is M
+            sage: L.<w> = K.extension(x - y^2) # indirect doctest                       # optional - sage.rings.function_field
+            sage: y2 = y*1                                                              # optional - sage.rings.function_field
+            sage: M.<w> = K.extension(x - y2^2) # indirect doctest                      # optional - sage.rings.function_field
+            sage: L is M                                                                # optional - sage.rings.function_field
             True
         """
-        from . import function_field
+        from . import function_field_polymod, function_field_rational
+
         f = key[0]
         names = key[1]
         base_field = f.base_ring()
-        if isinstance(base_field, function_field.RationalFunctionField):
+        if isinstance(base_field, function_field_rational.RationalFunctionField):
             k = base_field.constant_field()
             if k.is_finite(): # then we are in positive characteristic
                 # irreducible and separable
                 if f.is_irreducible() and not all(e % k.characteristic() == 0 for e in f.exponents()):
                     # monic and integral
                     if f.is_monic() and all(e in base_field.maximal_order() for e in f.coefficients()):
-                        return function_field.FunctionField_global_integral(f, names)
+                        return function_field_polymod.FunctionField_global_integral(f, names)
                     else:
-                        return function_field.FunctionField_global(f, names)
+                        return function_field_polymod.FunctionField_global(f, names)
             elif k.characteristic() == 0:
                 if f.is_irreducible() and f.is_monic() and all(e in base_field.maximal_order() for e in f.coefficients()):
-                    return function_field.FunctionField_char_zero_integral(f, names)
+                    return function_field_polymod.FunctionField_char_zero_integral(f, names)
                 else:
-                    return function_field.FunctionField_char_zero(f, names)
-        return function_field.FunctionField_polymod(f, names)
+                    return function_field_polymod.FunctionField_char_zero(f, names)
+        return function_field_polymod.FunctionField_polymod(f, names)
 
-FunctionFieldExtension=FunctionFieldExtensionFactory(
+FunctionFieldExtension = FunctionFieldExtensionFactory(
     "sage.rings.function_field.constructor.FunctionFieldExtension")

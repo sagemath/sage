@@ -1470,7 +1470,6 @@ class Category(UniqueRepresentation, SageObject):
 
     _cmp_key = _cmp_key
 
-
     ##########################################################################
     # Construction of the associated abstract classes for parents, elements, ...
     ##########################################################################
@@ -2816,7 +2815,6 @@ class CategoryWithParameters(Category):
                                             cache=cache, **options)
         self._make_named_class_cache[key] = result
         return result
-
 
     @abstract_method
     def _make_named_class_key(self, name):

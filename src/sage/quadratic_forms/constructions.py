@@ -11,7 +11,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 
 
-
 def BezoutianQuadraticForm(f, g):
     r"""
     Compute the Bezoutian of two polynomials defined over a common base ring.  This is defined by
@@ -35,7 +34,7 @@ def BezoutianQuadraticForm(f, g):
         sage: R = PolynomialRing(ZZ, 'x')
         sage: f = R([1,2,3])
         sage: g = R([2,5])
-        sage: Q = BezoutianQuadraticForm(f, g) ; Q
+        sage: Q = BezoutianQuadraticForm(f, g); Q                                       # optional - sage.libs.singular
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 1 -12 ]
         [ * -15 ]

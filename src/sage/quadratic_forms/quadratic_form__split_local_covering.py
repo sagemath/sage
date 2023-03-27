@@ -9,10 +9,8 @@ Split Local Covering
 from copy import deepcopy
 
 from sage.quadratic_forms.extras import extend_to_primitive
-from sage.quadratic_forms.quadratic_form import QuadraticForm__constructor, is_QuadraticForm
 
 import sage.rings.abc
-from sage.rings.real_mpfr import RealField
 from sage.rings.real_double import RDF
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
@@ -88,6 +86,8 @@ def cholesky_decomposition(self, bit_prec = 53):
     if isinstance(self.base_ring(), sage.rings.abc.RealField) and (self.base_ring().prec() < bit_prec):
         raise RuntimeError("the precision requested is greater than that of the given quadratic form")
 
+    from sage.rings.real_mpfr import RealField
+
     # 1. Initialization
     n = self.dim()
     R = RealField(bit_prec)
@@ -145,7 +145,7 @@ def vectors_by_length(self, bound):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
-        sage: Q.vectors_by_length(5)
+        sage: Q.vectors_by_length(5)                                                    # optional - sage.symbolic
         [[[0, 0]],
          [[0, -1], [-1, 0]],
          [[-1, -1], [1, -1]],
@@ -156,7 +156,7 @@ def vectors_by_length(self, bound):
     ::
 
         sage: Q1 = DiagonalQuadraticForm(ZZ, [1,3,5,7])
-        sage: Q1.vectors_by_length(5)
+        sage: Q1.vectors_by_length(5)                                                   # optional - sage.symbolic
         [[[0, 0, 0, 0]],
          [[-1, 0, 0, 0]],
          [],
@@ -167,13 +167,13 @@ def vectors_by_length(self, bound):
     ::
 
         sage: Q = QuadraticForm(ZZ, 4, [1,1,1,1, 1,0,0, 1,0, 1])
-        sage: list(map(len, Q.vectors_by_length(2)))
+        sage: list(map(len, Q.vectors_by_length(2)))                                    # optional - sage.symbolic
         [1, 12, 12]
 
     ::
 
         sage: Q = QuadraticForm(ZZ, 4, [1,-1,-1,-1, 1,0,0, 4,-3, 4])
-        sage: list(map(len, Q.vectors_by_length(3)))
+        sage: list(map(len, Q.vectors_by_length(3)))                                    # optional - sage.symbolic
         [1, 3, 0, 3]
     """
     # pari uses eps = 1e-6 ; nothing bad should happen if eps is too big
@@ -190,7 +190,6 @@ def vectors_by_length(self, bound):
 
     # Initialize Q with zeros and Copy the Cholesky array into Q
     Q = self.cholesky_decomposition()
-
 
     # 1. Initialize
     T = n * [RDF(0)]    # Note: We index the entries as 0 --> n-1
@@ -355,7 +354,6 @@ def complementary_subform_to_vector(self, v):
     if not done_flag:
         raise RuntimeError("There is a problem cancelling out the matrix entries! =O")
 
-
     # Return the complementary matrix
     return Q1.extract_variables(range(1,n))
 
@@ -386,16 +384,18 @@ def split_local_cover(self):
     EXAMPLES::
 
         sage: Q1 = DiagonalQuadraticForm(ZZ, [7,5,3])
-        sage: Q1.split_local_cover()
+        sage: Q1.split_local_cover()                                                    # optional - sage.symbolic
         Quadratic form in 3 variables over Integer Ring with coefficients:
         [ 3 0 0 ]
         [ * 5 0 ]
         [ * * 7 ]
 
     """
+    from sage.quadratic_forms.quadratic_form import QuadraticForm
+
     # 0. If a split local cover already exists, then return it.
     if hasattr(self, "__split_local_cover"):
-        if is_QuadraticForm(self.__split_local_cover):  # Here the computation has been done.
+        if isinstance(self.__split_local_cover, QuadraticForm):  # Here the computation has been done.
             return self.__split_local_cover
         elif self.__split_local_cover in ZZ:    # Here it indexes the values already tried!
             current_length = self.__split_local_cover + 1
@@ -413,7 +413,7 @@ def split_local_cover(self):
 
         # 2. Check if any of the primitive ones produce a split local cover
         for v in current_vectors:
-            Q = QuadraticForm__constructor(ZZ, 1, [current_length]) + self.complementary_subform_to_vector(v)
+            Q = QuadraticForm(ZZ, 1, [current_length]) + self.complementary_subform_to_vector(v)
             if Q.local_representation_conditions() == self.local_representation_conditions():
                 self.__split_local_cover = Q
                 return Q

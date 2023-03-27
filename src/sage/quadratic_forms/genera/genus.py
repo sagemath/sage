@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 r"""
 Genus
 
@@ -29,9 +30,6 @@ from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import IntegerRing, ZZ
 from sage.rings.rational_field import RationalField, QQ
 from sage.rings.integer import Integer
-from sage.interfaces.gp import gp
-from sage.libs.pari import pari
-from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from copy import copy, deepcopy
 from sage.misc.verbose import verbose
 from sage.quadratic_forms.special_values import quadratic_L_function__exact
@@ -121,6 +119,9 @@ def genera(sig_pair, determinant, max_scale=None, even=False):
     # render the output deterministic for testing
     genera.sort(key=lambda x: [s.symbol_tuple_list() for s in x.local_symbols()])
     return genera
+
+
+genera = staticmethod(genera)
 
 
 def _local_genera(p, rank, det_val, max_scale, even):
@@ -407,7 +408,6 @@ def LocalGenusSymbol(A, p):
     return Genus_Symbol_p_adic_ring(p, symbol)
 
 
-
 def is_GlobalGenus(G):
     r"""
     Return if `G` represents the genus of a global quadratic form or lattice.
@@ -460,7 +460,6 @@ def is_GlobalGenus(G):
         verbose(mesg="False in oddity", level=2)
         return False
     return True
-
 
 
 def is_2_adic_genus(genus_symbol_quintuple_list):
@@ -522,7 +521,6 @@ def is_2_adic_genus(genus_symbol_quintuple_list):
         if s[3] == 0 and s[4] != 0:
             return False
     return True
-
 
 
 def canonical_2_adic_compartments(genus_symbol_quintuple_list):
@@ -673,10 +671,10 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
 
         trains = []
         new_train = [0]
-        for i in range(1,len(symbol)-1):
+        for i in range(1, len(symbol) - 1):
             # start a new train if there are two adjacent even symbols
             prev, cur = symbol[i-1:i+1]
-            if  cur[0] - prev[0] > 2:
+            if cur[0] - prev[0] > 2:
                 trains.append(new_train)
                 new_train = [i]    # create a new train starting at
             elif (cur[0] - prev[0] == 2) and cur[3]*prev[3] == 0:
@@ -919,6 +917,9 @@ def p_adic_symbol(A, p, val):
     """
     if p % 2 == 0:
         return two_adic_symbol(A, val)
+
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+
     m0 = min([ c.valuation(p) for c in A.list() ])
     q = p**m0
     n = A.nrows()
@@ -953,7 +954,6 @@ def p_adic_symbol(A, p, val):
     return [ [s[0]+m0] + s[1:] for s in sym + p_adic_symbol(A, p, val) ]
 
 
-
 def is_even_matrix(A):
     r"""
     Determines if the integral symmetric matrix `A` is even
@@ -985,7 +985,6 @@ def is_even_matrix(A):
         if A[i,i] % 2 == 1:
             return False, i
     return True, -1
-
 
 
 def split_odd(A):
@@ -1077,7 +1076,6 @@ def split_odd(A):
     return u, B
 
 
-
 def trace_diag_mod_8(A):
     r"""
     Return the trace of the diagonalised form of `A` of an integral
@@ -1153,6 +1151,8 @@ def two_adic_symbol(A, val):
         [[0, 2, 3, 1, 4], [1, 1, 1, 1, 1], [2, 1, 1, 1, 1]]
 
     """
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+
     n = A.nrows()
     # deal with the empty matrix
     if n == 0:
@@ -1484,7 +1484,6 @@ class Genus_Symbol_p_adic_ring():
             return False
         return self.canonical_symbol() == other.canonical_symbol()
 
-
     def __ne__(self, other):
         r"""
         Determines if two genus symbols are unequal (not just inequivalent!).
@@ -1519,7 +1518,6 @@ class Genus_Symbol_p_adic_ring():
 
         """
         return not self == other
-
 
     # Added these two methods to make this class iterable...
     #def  __getitem__(self, i):
@@ -1761,7 +1759,6 @@ class Genus_Symbol_p_adic_ring():
             return self._canonical_symbol
         else:
             return self._symbol
-
 
     def gram_matrix(self, check=True):
         r"""
@@ -2040,7 +2037,6 @@ class Genus_Symbol_p_adic_ring():
             2
         """
         return len(self._symbol)
-
 
     def determinant(self):
         r"""
@@ -2336,7 +2332,6 @@ class Genus_Symbol_p_adic_ring():
         symbol = self._symbol
         return canonical_2_adic_trains(symbol)
 
-
     def compartments(self):
         r"""
         Compute the indices for each of the compartments in this local genus
@@ -2439,7 +2434,6 @@ class GenusSymbol_global_ring():
         self._signature = signature_pair
         self._local_symbols = local_symbols
 
-
     def __repr__(self):
         r"""
         Return a string representing the global genus symbol.
@@ -2506,7 +2500,6 @@ class GenusSymbol_global_ring():
             rep += r"\\ " + s._latex_()
         return rep
 
-
     def __eq__(self, other):
         r"""
         Determines if two global genus symbols are equal (not just equivalent!).
@@ -2558,8 +2551,6 @@ class GenusSymbol_global_ring():
             if self._local_symbols[i] != other._local_symbols[i]:
                 return False
         return True
-
-
 
     def __ne__(self, other):
         r"""
@@ -2713,7 +2704,6 @@ class GenusSymbol_global_ring():
             K = A.subgroup(K.gens() + (j,))
             return A, K
 
-
     def spinor_generators(self, proper):
         r"""
         Return the spinor generators.
@@ -2803,7 +2793,6 @@ class GenusSymbol_global_ring():
         A, K = self._proper_spinor_kernel()
         j = A.delta(r) # diagonal embedding of r
         return j in K, j
-
 
     def signature(self):
         r"""
@@ -3007,9 +2996,13 @@ class GenusSymbol_global_ring():
             L = local_modification(L, sym.gram_matrix(), p)
         L = L.gram_matrix().change_ring(ZZ)
         if LLL:
+            from sage.libs.pari import pari
+
             sig = self.signature_pair_of_matrix()
             if sig[0] * sig[1] != 0:
                 from sage.env import SAGE_EXTCODE
+                from sage.interfaces.gp import gp
+
                 m = pari(L)
                 gp.read(SAGE_EXTCODE + "/pari/simon/qfsolve.gp")
                 m = gp.eval('qflllgram_indefgoon(%s)'%m)

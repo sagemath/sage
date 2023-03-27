@@ -23,7 +23,7 @@ from sage.symbolic.ring import SR
 from sage.structure.element import Expression
 from sage.functions.all import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
-from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 
 
@@ -441,9 +441,10 @@ class InterfaceInit(Converter):
             sage: ii.pyobject(pi, pi.pyobject())
             'Pi'
         """
-        if (self.interface.name() in ['pari', 'gp'] and
-            isinstance(obj, NumberFieldElement_gaussian)):
-            return repr(obj)
+        if (self.interface.name() in ['pari', 'gp'] and isinstance(obj, NumberFieldElement_base)):
+            from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
+            if isinstance(obj, NumberFieldElement_gaussian):
+                return repr(obj)
         try:
             return getattr(obj, self.name_init)()
         except AttributeError:
@@ -1019,10 +1020,13 @@ class FriCASConverter(InterfaceInit):
         """
         try:
             result = getattr(obj, self.name_init)()
-            if isinstance(obj, NumberFieldElement_gaussian):
-                return "((%s)::EXPR COMPLEX INT)" % result
         except AttributeError:
             result = repr(obj)
+        else:
+            if isinstance(obj, NumberFieldElement_base):
+                from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
+                if isinstance(obj, NumberFieldElement_gaussian):
+                    return "((%s)::EXPR COMPLEX INT)" % result
         return "((%s)::EXPR INT)" % result
 
     def symbol(self, ex):

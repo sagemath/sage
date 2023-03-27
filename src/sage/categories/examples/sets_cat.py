@@ -150,9 +150,6 @@ class PrimeNumbers(UniqueRepresentation, Parent):
     element_class = Integer
 
 
-
-
-
 from sage.misc.abstract_method import abstract_method
 class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
     """
@@ -555,9 +552,6 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
                 47
             """
             return IntRing(self.value)
-
-
-
 
 
 #*************************************************************************#

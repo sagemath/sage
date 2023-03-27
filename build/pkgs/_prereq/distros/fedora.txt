@@ -30,7 +30,6 @@ gcc-c++
 # The need for which comes [...] from MPIR's configure script
 findutils
 which
-# Needed for pcre configure, see https://github.com/sagemath/sage/issues/29129:
 diffutils
 # Needed for openssl 3.0
 perl-IPC-Cmd

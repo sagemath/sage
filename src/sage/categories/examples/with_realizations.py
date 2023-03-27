@@ -304,7 +304,6 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             return [A.Realizations(),
                     category.Realizations().WithBasis()]
 
-
         class ParentMethods:
 
             def from_set(self, *args):

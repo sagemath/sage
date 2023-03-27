@@ -243,7 +243,6 @@ class MatrixPlot(GraphicPrimitive):
         subplot.xaxis.set_ticks_position('both') #only tick marks, not tick labels
 
 
-
 @suboptions('colorbar', orientation='vertical', format=None)
 @suboptions('subdivision',boundaries=None, style=None)
 @options(aspect_ratio=1, axes=False, cmap='Greys', colorbar=False,
@@ -584,7 +583,6 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         sparse = True
     else:
         sparse = False
-
 
     try:
         if sparse:

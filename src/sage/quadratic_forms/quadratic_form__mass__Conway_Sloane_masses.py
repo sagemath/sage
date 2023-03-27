@@ -7,10 +7,8 @@ from sage.arith.misc import (fundamental_discriminant,
                              legendre_symbol,
                              prime_divisors)
 from sage.misc.misc_c import prod
-from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.symbolic.constants import pi
 
 
 def parity(self, allow_rescaling_flag=True):
@@ -113,7 +111,6 @@ def parity(self, allow_rescaling_flag=True):
         return "even"
 
 
-
 def is_even(self, allow_rescaling_flag=True):
     """
     Returns true iff after rescaling by some appropriate factor, the
@@ -152,7 +149,6 @@ def is_odd(self, allow_rescaling_flag=True):
 
     """
     return self.parity(allow_rescaling_flag) == "odd"
-
 
 
 def conway_species_list_at_odd_prime(self, p):
@@ -223,7 +219,6 @@ def conway_species_list_at_odd_prime(self, p):
 
     # Return the species list
     return species_list
-
 
 
 def conway_species_list_at_2(self):
@@ -304,14 +299,11 @@ def conway_species_list_at_2(self):
         # Append the species to the list
         species_list.append(species)
 
-
     if jordan_list[-1].is_odd():        # Add an entry for the unlisted "s_max + 1" Jordan component as well.
         species_list.append(1)
 
     # Return the species list
     return species_list
-
-
 
 
 def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
@@ -358,7 +350,6 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
     tmp_diag_vec = [None  for i in range(n)]
     tmp_diag_vec[0] = u       # This should be an odd integer!
     ind = 1                  # The next index to diagonalize
-
 
     # Use u to diagonalize the form -- WHAT ARE THE POSSIBLE LOCAL NORMAL FORMS?
     while ind < n:
@@ -597,16 +588,19 @@ def conway_standard_mass(self):
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 3, [2, -2, 0, 3, -5, 4])
-        sage: Q.conway_standard_mass()
+        sage: Q.conway_standard_mass()                                                  # optional - sage.symbolic
         1/6
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.conway_standard_mass()
+        sage: Q.conway_standard_mass()                                                  # optional - sage.symbolic
         1/6
 
     """
+    from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
+    from sage.symbolic.constants import pi
+
     n = self.dim()
     if n % 2 == 0:
         s = n // 2
@@ -635,19 +629,19 @@ def conway_mass(self):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.conway_mass()
+        sage: Q.conway_mass()                                                           # optional - sage.symbolic
         1/48
 
         sage: Q = DiagonalQuadraticForm(ZZ, [7,1,1])
-        sage: Q.conway_mass()
+        sage: Q.conway_mass()                                                           # optional - sage.symbolic
         3/16
 
         sage: Q = QuadraticForm(ZZ, 3, [7, 2, 2, 2, 0, 2]) + DiagonalQuadraticForm(ZZ, [1])
-        sage: Q.conway_mass()
+        sage: Q.conway_mass()                                                           # optional - sage.symbolic
         3/32
 
         sage: Q = QuadraticForm(Matrix(ZZ,2,[2,1,1,2]))
-        sage: Q.conway_mass()
+        sage: Q.conway_mass()                                                           # optional - sage.symbolic
         1/12
     """
     # Try to use the cached result

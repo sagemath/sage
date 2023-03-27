@@ -758,12 +758,14 @@ class EllipticCurveCanonicalHeight:
         sage: from sage.schemes.elliptic_curves.height import EllipticCurveCanonicalHeight
         sage: E = EllipticCurve([0,0,0,0,1])
         sage: EllipticCurveCanonicalHeight(E)
-        EllipticCurveCanonicalHeight object associated to Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
+        EllipticCurveCanonicalHeight object associated to
+        Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
 
     Normally this object would be created like this::
 
         sage: E.height_function()
-        EllipticCurveCanonicalHeight object associated to Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
+        EllipticCurveCanonicalHeight object associated to
+        Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
     """
 
     def __init__(self, E):
@@ -779,14 +781,17 @@ class EllipticCurveCanonicalHeight:
             sage: from sage.schemes.elliptic_curves.height import EllipticCurveCanonicalHeight
             sage: E = EllipticCurve([0,0,0,0,1])
             sage: EllipticCurveCanonicalHeight(E)
-            EllipticCurveCanonicalHeight object associated to Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
+            EllipticCurveCanonicalHeight object associated to
+            Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
 
         An example over a number field::
 
-            sage: K.<i>=QuadraticField(-1)
+            sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([0,i,0,i,i])
             sage: EllipticCurveCanonicalHeight(E)
-            EllipticCurveCanonicalHeight object associated to Elliptic Curve defined by y^2 = x^3 + i*x^2 + i*x + i over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
+            EllipticCurveCanonicalHeight object associated to
+            Elliptic Curve defined by y^2 = x^3 + i*x^2 + i*x + i
+            over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         TESTS:
 
@@ -797,14 +802,15 @@ class EllipticCurveCanonicalHeight:
             sage: EllipticCurveCanonicalHeight(E)
             Traceback (most recent call last):
             ...
-            ValueError: EllipticCurveCanonicalHeight class can only be created from an elliptic curve defined over a number field
+            ValueError: EllipticCurveCanonicalHeight class can only be created
+            from an elliptic curve defined over a number field
         """
         from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
         if is_EllipticCurve(E):
             self.E = E
-            from sage.rings.number_field.number_field_base import is_NumberField
+            from sage.rings.number_field.number_field_base import NumberField
             K = E.base_ring()
-            if is_NumberField(K):
+            if isinstance(K, NumberField):
                 self.K = K
             else:
                 raise ValueError("EllipticCurveCanonicalHeight class can only be created from an elliptic curve defined over a number field")
@@ -819,7 +825,8 @@ class EllipticCurveCanonicalHeight:
 
             sage: E = EllipticCurve([0,0,0,0,1])
             sage: E.height_function()
-            EllipticCurveCanonicalHeight object associated to Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
+            EllipticCurveCanonicalHeight object associated to
+            Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
         """
         return "EllipticCurveCanonicalHeight object associated to %s" % self.E
 
@@ -906,7 +913,7 @@ class EllipticCurveCanonicalHeight:
 
         Example 1 from [CPS2006]_::
 
-            sage: K.<i>=QuadraticField(-1)
+            sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([0,0,0,1+5*i,3+i])
             sage: H = E.height_function()
             sage: alpha = H.alpha(K.places()[0])
@@ -977,7 +984,7 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
-            sage: K.<i>=QuadraticField(-1)
+            sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([0,0,0,1+5*i,3+i])
             sage: H = E.height_function()
             sage: H.e_p(K.prime_above(2))
@@ -1029,8 +1036,8 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
-            sage: K.<i>=QuadraticField(-1)
-            sage: E = EllipticCurve([0,0,0,1+5*i,3+i])
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 0, 0, 1+5*i, 3+i])
             sage: H = E.height_function()
             sage: [H.DE(n) for n in srange(1,6)]
             [0, 2*log(5) + 2*log(2), 0, 2*log(13) + 2*log(5) + 4*log(2), 0]
@@ -1057,8 +1064,8 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
-            sage: K.<i>=QuadraticField(-1)
-            sage: E = EllipticCurve([0,0,0,1+5*i,3+i])
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 0, 0, 1+5*i, 3+i])
             sage: H = E.height_function()
             sage: H.ME()
             1
@@ -1096,8 +1103,8 @@ class EllipticCurveCanonicalHeight:
 
         Example 10.2 from [Tho2010]_::
 
-            sage: K.<i>=QuadraticField(-1)
-            sage: E = EllipticCurve([0,1-i,i,-i,0])
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 1-i, i, -i, 0])
             sage: H = E.height_function()
 
         In [Tho2010]_ the value is given as 0.772::
@@ -1155,7 +1162,7 @@ class EllipticCurveCanonicalHeight:
 
         An example over a number field::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: P = E.lift_x(1/3*a^2 + a + 5/3)
             sage: v = K.real_places()[0]
@@ -1261,13 +1268,13 @@ class EllipticCurveCanonicalHeight:
 
         An example over a number field::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: v = K.real_places()[0]
             sage: H = E.height_function()
-            sage: H.S(2,3,v) , H.Sn(2,3,1,v)
+            sage: H.S(2,3,v), H.Sn(2,3,1,v)
             (([0.142172065860075, 0.172845716928584] U [0.827154283071416, 0.857827934139925]),
-            ([0.142172065860075, 0.172845716928584] U [0.827154283071416, 0.857827934139925]))
+             ([0.142172065860075, 0.172845716928584] U [0.827154283071416, 0.857827934139925]))
             sage: H.Sn(2,3,6,v)
             ([0.0236953443100124, 0.0288076194880974] U [0.137859047178569, 0.142971322356654] U [0.190362010976679, 0.195474286154764] U [0.304525713845236, 0.309637989023321] U [0.357028677643346, 0.362140952821431] U [0.471192380511903, 0.476304655689988] U [0.523695344310012, 0.528807619488097] U [0.637859047178569, 0.642971322356654] U [0.690362010976679, 0.695474286154764] U [0.804525713845236, 0.809637989023321] U [0.857028677643346, 0.862140952821431] U [0.971192380511903, 0.976304655689988])
         """
@@ -1307,14 +1314,14 @@ class EllipticCurveCanonicalHeight:
         height strictly greater than 0.2, but fail to prove the same
         for 0.3::
 
-            sage: H.real_intersection_is_empty([H.B(n,0.2) for n in srange(1,10)],v)
+            sage: H.real_intersection_is_empty([H.B(n,0.2) for n in srange(1,10)], v)
             True
-            sage: H.real_intersection_is_empty([H.B(n,0.3) for n in srange(1,10)],v)
+            sage: H.real_intersection_is_empty([H.B(n,0.3) for n in srange(1,10)], v)
             False
 
         An example over a number field::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: v = K.real_places()[0]
             sage: H = E.height_function()
@@ -1664,7 +1671,7 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: v = K.complex_embeddings()[0]
             sage: H = E.height_function()
@@ -1675,18 +1682,18 @@ class EllipticCurveCanonicalHeight:
         for 0.03.  For the first proof, using only `n=1,2,3` is not
         sufficient::
 
-            sage: H.complex_intersection_is_empty([H.B(n,0.02) for n in [1,2,3]],v) # long time (~6s)
+            sage: H.complex_intersection_is_empty([H.B(n,0.02) for n in [1,2,3]], v) # long time (~6s)
             False
-            sage: H.complex_intersection_is_empty([H.B(n,0.02) for n in [1,2,3,4]],v)
+            sage: H.complex_intersection_is_empty([H.B(n,0.02) for n in [1,2,3,4]], v)
             True
-            sage: H.complex_intersection_is_empty([H.B(n,0.03) for n in [1,2,3,4]],v) # long time (4s)
+            sage: H.complex_intersection_is_empty([H.B(n,0.03) for n in [1,2,3,4]], v) # long time (4s)
             False
 
         Using `n\le6` enables us to prove the lower bound 0.03.  Note
         that it takes longer when the result is ``False`` than when it
         is ``True``::
 
-            sage: H.complex_intersection_is_empty([H.B(n,0.03) for n in [1..6]],v)
+            sage: H.complex_intersection_is_empty([H.B(n,0.03) for n in [1..6]], v)
             True
         """
         from sage.schemes.elliptic_curves.period_lattice_region import PeriodicRegion
@@ -1782,7 +1789,7 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: H = E.height_function()
 
@@ -1891,15 +1898,15 @@ class EllipticCurveCanonicalHeight:
         given)::
 
             sage: K.<i> = QuadraticField(-1)
-            sage: E = EllipticCurve([0,0,0,91-26*i,-144-323*i])
+            sage: E = EllipticCurve([0, 0, 0, 91-26*i, -144-323*i])
             sage: H = E.height_function()
-            sage: H.min_gr(0.1,4) # long time (8.1s)
+            sage: H.min_gr(0.1, 4) # long time (8.1s)
             0.1621049443313762
 
         Example 10.2 from [Tho2010]_::
 
             sage: K.<i> = QuadraticField(-1)
-            sage: E = EllipticCurve([0,1-i,i,-i,0])
+            sage: E = EllipticCurve([0, 1-i, i, -i, 0])
             sage: H = E.height_function()
             sage: H.min_gr(0.01, 5)  # long time
             0.020153685521979152
@@ -1916,17 +1923,17 @@ class EllipticCurveCanonicalHeight:
         Example 10.3 from [Tho2010]_ (where the same bound of 0.25 is
         given)::
 
-            sage: K.<a> = NumberField(x^3-2)
-            sage: E = EllipticCurve([0,0,0,-3*a-a^2,a^2])
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: E = EllipticCurve([0, 0, 0, -3*a-a^2, a^2])
             sage: H = E.height_function()
-            sage: H.min_gr(0.1,5) # long time (7.2s)
+            sage: H.min_gr(0.1, 5) # long time (7.2s)
             0.25
 
         TESTS:
 
         This example from the LMFDB gave problems before the fix in :trac:`8829`::
 
-            sage: K.<phi> = NumberField(x^2-x-1)
+            sage: K.<phi> = NumberField(x^2 - x - 1)
             sage: E = EllipticCurve([phi + 1, -phi + 1, 1, 20*phi - 39, 196*phi + 237])
             sage: H = E.height_function()
             sage: H.min_gr(.1, 5, verbose=True)  # long time (~22s)
@@ -2012,17 +2019,17 @@ class EllipticCurveCanonicalHeight:
         given)::
 
             sage: K.<i> = QuadraticField(-1)
-            sage: E = EllipticCurve([0,0,0,91-26*i,-144-323*i])
+            sage: E = EllipticCurve([0, 0, 0, 91-26*i, -144-323*i])
             sage: H = E.height_function()
-            sage: H.min(0.1,4) # long time (8.1s)
+            sage: H.min(0.1, 4) # long time (8.1s)
             0.1621049443313762
 
         Example 10.2 from [Tho2010]_::
 
             sage: K.<i> = QuadraticField(-1)
-            sage: E = EllipticCurve([0,1-i,i,-i,0])
+            sage: E = EllipticCurve([0, 1-i, i, -i, 0])
             sage: H = E.height_function()
-            sage: H.min(0.01,5) # long time (4s)
+            sage: H.min(0.01, 5) # long time (4s)
             0.020153685521979152
 
         In this example the point `P=(0,0)` has height 0.023 so our
@@ -2035,10 +2042,10 @@ class EllipticCurveCanonicalHeight:
         Example 10.3 from [Tho2010]_ (where the same bound of 0.0625 is
         given)::
 
-            sage: K.<a> = NumberField(x^3-2)
-            sage: E = EllipticCurve([0,0,0,-3*a-a^2,a^2])
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: E = EllipticCurve([0, 0, 0, -3*a-a^2, a^2])
             sage: H = E.height_function()
-            sage: H.min(0.1,5) # long time (7s)
+            sage: H.min(0.1, 5) # long time (7s)
             0.0625
 
         More examples over `\QQ`::

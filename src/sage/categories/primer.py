@@ -522,14 +522,14 @@ Hence, following the OOP fundamental principle, parents should also be
 modelled by instances of some (hierarchy of) classes. For example, our
 group `G` is an instance of the following class::
 
-    sage: G = GL(2, ZZ)                                                         # optional - sage.modules
-    sage: type(G)                                                               # optional - sage.modules
-    <class 'sage.groups.matrix_gps.linear.LinearMatrixGroup_gap_with_category'>
+    sage: G = GL(2, ZZ)                                                                 # optional - sage.modules
+    sage: type(G)                                                                       # optional - sage.modules
+    <class 'sage.groups.matrix_gps.linear_gap.LinearMatrixGroup_gap_with_category'>
 
 Here is a piece of the hierarchy of classes above it::
 
-    sage: for cls in G.__class__.mro(): print(cls)                              # optional - sage.modules
-    <class 'sage.groups.matrix_gps.linear.LinearMatrixGroup_gap_with_category'>
+    sage: for cls in G.__class__.mro(): print(cls)                                      # optional - sage.modules
+    <class 'sage.groups.matrix_gps.linear_gap.LinearMatrixGroup_gap_with_category'>
     ...
     <class 'sage.categories.groups.Groups.parent_class'>
     <class 'sage.categories.monoids.Monoids.parent_class'>
@@ -540,10 +540,10 @@ Note that the hierarchy of abstract classes is again attached to
 categories and parallel to that we had seen for the elements. This is
 best viewed graphically::
 
-    sage: g = class_graph(m.__class__)                                          # optional - sage.modules sage.graphs
-    sage: g.relabel(lambda x: x.replace("_",r"\_"))                             # optional - sage.modules sage.graphs
-    sage: g.set_latex_options(format="dot2tex")                                 # optional - sage.modules sage.graphs
-    sage: view(g)                 # not tested                                  # optional - sage.modules sage.graphs sage.plot
+    sage: g = class_graph(m.__class__)                                                  # optional - sage.modules sage.graphs
+    sage: g.relabel(lambda x: x.replace("_",r"\_"))                                     # optional - sage.modules sage.graphs
+    sage: g.set_latex_options(format="dot2tex")                                         # optional - sage.modules sage.graphs
+    sage: view(g)                 # not tested                                          # optional - sage.modules sage.graphs sage.plot
 
 .. NOTE::
 

@@ -842,7 +842,6 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             """
             return not self.is_irreducible()
 
-
     class ElementMethods:
         def apply_simple_reflection_left(self, i):
             r"""
