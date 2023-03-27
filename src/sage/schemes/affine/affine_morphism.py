@@ -48,6 +48,8 @@ AUTHORS:
 
 import sys
 
+import sage.rings.abc
+
 from sage.calculus.functions import jacobian
 
 from sage.categories.homset import Hom, End
@@ -68,10 +70,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 
-from sage.ext.fast_callable import fast_callable
-
 from sage.categories.number_fields import NumberFields
-from sage.rings.number_field.order import is_NumberFieldOrder
 
 _NumberFields = NumberFields()
 _Fields = Fields()
@@ -357,6 +356,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             1), ('load_arg', ...), ('ipow', 1), 'mul', 'add', ('load_const', 1),
             'add', 'return']]
         """
+        from sage.ext.fast_callable import fast_callable
+
         polys = self._polys
 
         R = self.domain().ambient_space().coordinate_ring()
@@ -787,7 +788,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             1.09861228866811
         """
         K = FractionField(self.domain().base_ring())
-        if K not in _NumberFields or is_NumberFieldOrder(K):
+        if not (K not in _NumberFields or K == ZZ or isinstance(K, sage.rings.abc.Order)):
             raise TypeError("must be over a number field or a number field order")
         return max([K(c).local_height(v, prec=prec) for f in self for c in f.coefficients()])
 
@@ -834,7 +835,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             0.6931471805599453094172321214582
         """
         K = FractionField(self.domain().base_ring())
-        if K not in _NumberFields or is_NumberFieldOrder(K):
+        if not (K not in _NumberFields or K == ZZ or isinstance(K, sage.rings.abc.Order)):
             raise TypeError("must be over a number field or a number field order")
 
         if K == QQ:

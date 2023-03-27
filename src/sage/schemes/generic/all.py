@@ -1,4 +1,5 @@
 # code exports
 
-from .spec import Spec
+from .all__sagemath_categories import *
+
 from .hypersurface import ProjectiveHypersurface, AffineHypersurface

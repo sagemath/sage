@@ -120,18 +120,14 @@ from sage.categories.number_fields import NumberFields
 
 from sage.rings.ideal import is_Ideal
 from sage.rings.integer_ring import ZZ
-from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import is_RationalField
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.rings.number_field.order import is_NumberFieldOrder
 
 from sage.misc.latex import latex
 from sage.misc.misc import is_iterator
 
 from sage.structure.all import Sequence
 from sage.structure.richcmp import richcmp, richcmp_method
-
-from sage.calculus.functions import jacobian
 
 from sage.arith.functions import lcm
 from sage.arith.misc import gcd
@@ -1125,7 +1121,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         """
         BR = self.base_ring()
-        if BR == QQbar or BR in NumberFields() or is_NumberFieldOrder(BR):
+        if (BR == ZZ
+                or isinstance(BR, (sage.rings.abc.AlgebraicField, sage.rings.abc.Order))
+                or BR in NumberFields()):
             normalized_polys = []
             initial_polys = list(self.__polys)
 
@@ -1332,6 +1330,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         l = self.defining_polynomials()
         if len(l) == 0:
             return sage.matrix.constructor.Matrix(R, 0)
+
+        from sage.calculus.functions import jacobian
+
         return jacobian(l, R.gens())
 
     def Jacobian(self):

@@ -10,7 +10,6 @@ Affine `n` space over a ring
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -24,7 +23,6 @@ from sage.categories.homset import Hom
 from sage.categories.number_fields import NumberFields
 from sage.misc.latex import latex
 from sage.misc.mrange import cartesian_product_iterator
-from sage.matrix.constructor import matrix
 from sage.structure.category_object import normalize_names
 from sage.schemes.generic.scheme import AffineScheme
 from sage.schemes.generic.ambient_space import AmbientSpace
@@ -882,14 +880,14 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: A.chebyshev_polynomial(5, 'first')
             Dynamical System of Affine Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x) to (16*x^5 - 20*x^3 + 5*x)
+              Defn: Defined on coordinates by sending (x) to (16*x^5 - 20*x^3 + 5*x)
 
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: A.chebyshev_polynomial(3, 'second')
             Dynamical System of Affine Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x) to (8*x^3 - 4*x)
+              Defn: Defined on coordinates by sending (x) to (8*x^3 - 4*x)
 
         ::
 
@@ -925,7 +923,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         ::
 
             sage: F.<t> = FunctionField(QQ)
-            sage: A.<x> = AffineSpace(F,1)
+            sage: A.<x> = AffineSpace(F, 1)
             sage: A.chebyshev_polynomial(4, monic=True)
             Dynamical System of Affine Space of dimension 1
             over Rational function field in t over Rational Field
@@ -934,9 +932,13 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         if self.dimension_relative() != 1:
             raise TypeError("affine space must be of dimension 1")
         n = ZZ(n)
-        if (n < 0):
+        if n < 0:
             raise ValueError("first parameter 'n' must be a non-negative integer")
+
         from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
+        from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U
+        from sage.matrix.constructor import matrix
+
         if kind == 'first':
             if monic and self.base().characteristic() != 2:
                 f = DynamicalSystem_affine([chebyshev_T(n, self.gen(0))], domain=self)
