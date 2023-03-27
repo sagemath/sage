@@ -22,15 +22,15 @@ The algorithm used in this file comes from
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.combinat.composition import Composition
+from sage.arith.misc import divisors, euler_phi, factorial, gcd
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.combinat.composition import Composition
+from sage.combinat.misc import DoublyLinkedList
+from sage.misc.misc_c import prod
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.arith.all import euler_phi, factorial, divisors, gcd
-from sage.rings.integer_ring import ZZ
-from sage.rings.integer import Integer
-from sage.misc.misc_c import prod
-from sage.combinat.misc import DoublyLinkedList
 
 
 def Necklaces(content):

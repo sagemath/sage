@@ -85,35 +85,35 @@ For display options, see :meth:`Tableaux.options`.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from itertools import repeat
+
+import sage.libs.symmetrica.all as symmetrica
+import sage.misc.prandom as random
+
+from sage.arith.misc import binomial, factorial, multinomial
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.sets_cat import Sets
+from sage.combinat import permutation
+from sage.combinat.combinatorial_map import combinatorial_map
+from sage.combinat.composition import Composition, Compositions
+from sage.combinat.integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
+from sage.combinat.posets.posets import Poset
+from sage.groups.perm_gps.permgroup import PermutationGroup
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.misc import powerset
+from sage.misc.misc_c import prod
+from sage.misc.persist import register_unpickle_override
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.global_options import GlobalOptions
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.list_clone import ClonableList
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, richcmp_method
-from sage.misc.persist import register_unpickle_override
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.infinity import PlusInfinity
-from sage.arith.all import factorial, binomial
-from sage.arith.misc import multinomial
-from sage.rings.integer import Integer
-from sage.combinat.composition import Composition, Compositions
-from sage.combinat.integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
-import sage.libs.symmetrica.all as symmetrica
-import sage.misc.prandom as random
-from sage.combinat import permutation
-from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.misc.misc_c import prod
-from sage.misc.misc import powerset
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.sets_cat import Sets
-
-from sage.combinat.combinatorial_map import combinatorial_map
-from sage.combinat.posets.posets import Poset
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 @richcmp_method
@@ -233,7 +233,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         A tableau is shallowly immutable. See :trac:`15862`. The entries
         themselves may be mutable objects, though in that case the
-        resulting Tableau should be unhashable.
+        resulting Tableau should be unhashable. ::
 
             sage: T = Tableau([[1,2],[2]])
             sage: t0 = T[0]
@@ -860,6 +860,27 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         r"""
         Return a plot ``self``.
 
+        If English notation is set then the first row of the tableau is on the
+        top:
+
+        .. PLOT::
+            :width: 200 px
+
+            t = Tableau([[1,2,3,4],[2,3],[5]])
+            Tableaux.options.convention="english"
+            sphinx_plot(t.plot())
+
+        Whereas if French notation is set, the first row of the tableau is on
+        the bottom:
+
+        .. PLOT::
+            :width: 200 px
+
+            t = Tableau([[1,2,3,4],[2,3],[5]])
+            Tableaux.options.convention="french"
+            sphinx_plot(t.plot())
+            Tableaux.options.convention="english"
+
         INPUT:
 
         - ``descents`` -- boolean (default: ``False``); if ``True``,
@@ -889,25 +910,31 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if descents and not self.is_standard():
             raise ValueError("the tableau must be standard for 'descents=True'")
 
+        # For English we build up to down for French, down to up
+        if self.parent().options('convention') == "English":
+            m = 1
+        else:
+            m = -1
+
         p = self.shape()
 
         G = line([(0,0),(p[0],0)], axes=False, figsize=1.5)
         for i in range(len(p)):
-            G += line([(0,-i-1), (p[i],-i-1)])
+            G += line([(0,m*(-i-1)), (p[i],m*(-i-1))])
 
         r = p.conjugate()
-        G += line([(0,0),(0,-r[0])])
+        G += line([(0,0),(0,m*-r[0])])
         for i in range(len(r)):
-            G += line([(i+1,0),(i+1,-r[i])])
+            G += line([(i+1,0),(i+1,m*-r[i])])
 
         if descents:
             t = StandardTableau(self)
             for i in t.standard_descents():
                 c = t.cells_containing(i)[0]
-                G += polygon([(c[1],-c[0]), (c[1]+1,-c[0]), (c[1]+1,-c[0]-1), (c[1],-c[0]-1)], rgbcolor=(1,0,1))
+                G += polygon([(c[1],m*c[0]), (c[1]+1,m*c[0]), (c[1]+1,m*(-c[0]-1)), (c[1],m*(-c[0]-1))], rgbcolor=(1,0,1))
 
         for c in self.cells():
-            G += text(str(self.entry(c)), (c[1]+0.5,-c[0]-0.5))
+            G += text(str(self.entry(c)), (c[1]+0.5,m*(-c[0]-0.5)))
 
         return G
 

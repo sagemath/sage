@@ -59,15 +59,14 @@ from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 
 from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
 from sage.rings.fraction_field import FractionField
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 
@@ -158,7 +157,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
               Defn: Defined on coordinates by sending (x, y) to
                     ((5*x^3 + 3*x*y^2 - y^3)/(x^3 - 1), (x^2*y + 3)/(x^3 - 1))
 
-            If you pass in quotient ring elements, they are reduced::
+        If you pass in quotient ring elements, they are reduced::
 
             sage: A.<x,y,z> = AffineSpace(QQ, 3)
             sage: X = A.subscheme([x-y])
@@ -171,7 +170,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
               Defn: Defined on coordinates by sending (x, y, z) to
                     (y, y, 2*y)
 
-            You must use the ambient space variables to create rational functions::
+        You must use the ambient space variables to create rational functions::
 
             sage: A.<x,y,z> = AffineSpace(QQ, 3)
             sage: X = A.subscheme([x^2-y^2])
@@ -229,7 +228,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         SchemeMorphism_polynomial.__init__(self, parent, polys, check)
 
         # used in _fast_eval and _fastpolys
-        self._is_prime_finite_field = is_PrimeFiniteField(polys[0].base_ring())
+        R = polys[0].base_ring()
+        self._is_prime_finite_field = isinstance(R, FiniteField) and R.is_prime_field()
 
     def __call__(self, x, check=True):
         """
@@ -683,7 +683,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         R = self.base_ring()
         if R not in _Fields:
             return DynamicalSystem_affine(list(self), self.domain())
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
                 return DynamicalSystem_affine_finite_field(list(self), self.domain())
         return DynamicalSystem_affine_field(list(self), self.domain())
 

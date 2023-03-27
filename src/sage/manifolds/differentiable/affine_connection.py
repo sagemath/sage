@@ -2210,7 +2210,7 @@ class AffineConnection(SageObject):
                         comega[k] = coef_frame[[i1,j1,k]]
                     forms[(i1,j1)] = omega
             self._connection_forms[frame] = forms
-        return  self._connection_forms[frame][(i,j)]
+        return self._connection_forms[frame][(i,j)]
 
     def torsion_form(self, i, frame=None):
         r"""
@@ -2312,7 +2312,7 @@ class AffineConnection(SageObject):
                         ctheta[k,l] = torsion_comp[[i1,k,l]]
                 forms[i1] = theta
             self._torsion_forms[frame] = forms
-        return  self._torsion_forms[frame][i]
+        return self._torsion_forms[frame][i]
 
     def curvature_form(self, i, j, frame=None):
         r"""
@@ -2422,7 +2422,7 @@ class AffineConnection(SageObject):
                             comega[k,l] = riemann_comp[[i1,j1,k,l]]
                     forms[(i1,j1)] = omega
             self._curvature_forms[frame] = forms
-        return  self._curvature_forms[frame][(i,j)]
+        return self._curvature_forms[frame][(i, j)]
 
     def set_calc_order(self, symbol, order, truncate=False):
         r"""

@@ -44,7 +44,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.padics.factory import Qp
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp, richcmp_method
-from sage.arith.all import LCM
+from sage.arith.functions import lcm as LCM
 from sage.modular.modform.constructor import EisensteinForms, CuspForms
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.functions.log import log

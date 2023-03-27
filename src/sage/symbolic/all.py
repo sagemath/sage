@@ -18,3 +18,5 @@ from sage.symbolic.assumptions import assume, forget, assumptions, assuming
 from .units import units
 
 π = pi
+
+from .operators import D

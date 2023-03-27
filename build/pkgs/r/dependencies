@@ -1,4 +1,0 @@
-$(BLAS) gfortran iconv readline bzip2 liblzma pcre curl | pkgconf
-
-----------
-All lines of this file are ignored except the first.

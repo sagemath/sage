@@ -27,11 +27,11 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic as SFA_generic
-from sage.misc.cachefunc import cached_method
+from sage.arith.misc import binomial, divisors, moebius
 from sage.categories.homset import Hom
 from sage.categories.morphism import SetMorphism
-from sage.arith.all import divisors, moebius, binomial
+from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic as SFA_generic
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 
 
