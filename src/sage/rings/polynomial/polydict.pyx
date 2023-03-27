@@ -1003,9 +1003,9 @@ cdef class PolyDict:
             sage: f + g
             PolyDict with representation {(1, 1): 3, (1, 2): 3, (1, 5): -3, (2, 1): 4, (2, 3): 0}
 
-            sage: K = GF(2)
-            sage: f = PolyDict({(1, 1): K(1)})
-            sage: f + f
+            sage: K = GF(2)                                                             # optional - sage.rings.finite_rings
+            sage: f = PolyDict({(1, 1): K(1)})                                          # optional - sage.rings.finite_rings
+            sage: f + f                                                                 # optional - sage.rings.finite_rings
             PolyDict with representation {(1, 1): 0}
         """
         cdef dict D = self.__repn
