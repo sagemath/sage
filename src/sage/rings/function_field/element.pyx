@@ -718,4 +718,3 @@ cdef class FunctionFieldElement(FieldElement):
             y
         """
         raise NotImplementedError("nth_root() not implemented for generic elements")
-
