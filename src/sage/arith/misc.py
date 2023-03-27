@@ -3006,7 +3006,7 @@ def is_fundamental_discriminant(D):
 
     EXAMPLES::
 
-        sage: [D for D in range(-15, 15) if is_fundamental_discriminant(D)]
+        sage: [D for D in range(-15, 15) if is_fundamental_discriminant(D)]                                             # optional - sage.libs.pari
         [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
         sage: [D for D in range(-15, 15)                                                # optional - sage.rings.number_field
         ....:  if not is_square(D) and QuadraticField(D,'a').disc() == D]
