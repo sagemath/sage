@@ -64,6 +64,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.matrix.constructor import matrix
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.libs.braiding import rightnormalform
 
 roots_interval_cache = {}
 
@@ -183,7 +184,7 @@ def discrim(pols):
         sage: from sage.schemes.curves.zariski_vankampen import discrim
         sage: R.<x, y> = QQ[]
         sage: flist = (y^3 + x^3 - 1, 2 * x + y)
-        sage: discrim(flist) # optional - sirocco
+        sage: discrim(flist)
         [1,
         -0.500000000000000? - 0.866025403784439?*I,
         -0.500000000000000? + 0.866025403784439?*I,
@@ -282,7 +283,7 @@ def voronoi_cells(V):
 
     OUTPUT:
 
-    The graph of the 1-skeleton of ``G``, the subgraph ``E`` of the boundary, a vertex `p` in ``E``,
+    The graph of the 1-skeleton of ``G``, the subgraph ``E`` of the boundary, a vertex ``p`` in ``E``,
     a counterclockwise orientation ``EC`` of ``E`` (as an ordered list of vertices with identical
     first and last elements), and the dual graph ``DG`` of ``V``, where the vertices are labelled
     by the compact regions of ``V`` and the edges by their dual edges.
@@ -351,8 +352,8 @@ def voronoi_cells(V):
 """
     V0 = [_ for _ in V.regions().values() if _.is_compact()]
     Vnc = [_ for _ in V.regions().values() if not _.is_compact()]
-    G = G=Graph([u.vertices() for v in V0 for u in v.faces(1)], format = 'list_of_edges')
-    E=Graph([u.vertices() for v in Vnc for u in v.faces(1) if u.is_compact()], format = 'list_of_edges')
+    G = Graph([u.vertices() for v in V0 for u in v.faces(1)], format = 'list_of_edges')
+    E = Graph([u.vertices() for v in Vnc for u in v.faces(1) if u.is_compact()], format = 'list_of_edges')
     p = next(E.vertex_iterator())
     EC0 = orient_circuit(E.eulerian_circuit())
     EC = [EC0[0][0]] + [e[1] for e in EC0]
@@ -378,57 +379,6 @@ def voronoi_cells(V):
         DG.add_edge(crd[e] + (e,))
     return (G, E, p, EC, DG)
 
-
-def segments(points):
-    """
-    Return the bounded segments of the Voronoi diagram of the given points.
-
-    INPUT:
-
-    - ``points`` -- a list of complex points
-
-    OUTPUT:
-
-    A list of pairs ``(p1, p2)``, where ``p1`` and ``p2`` are the
-    endpoints of the segments in the Voronoi diagram.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.curves.zariski_vankampen import discrim, segments
-        sage: R.<x, y> = QQ[]
-        sage: f = y^3 + x^3 - 1
-        sage: disc = discrim([f])
-        sage: sorted(segments(disc))
-        [(-192951821525958031/67764026159052316*I - 192951821525958031/67764026159052316,
-          -192951821525958031/90044183378780414),
-         (-192951821525958031/67764026159052316*I - 192951821525958031/67764026159052316,
-          -144713866144468523/66040650000519163*I + 167101179147960739/132081300001038326),
-         (192951821525958031/67764026159052316*I - 192951821525958031/67764026159052316,
-          144713866144468523/66040650000519163*I + 167101179147960739/132081300001038326),
-         (-192951821525958031/90044183378780414,
-          192951821525958031/67764026159052316*I - 192951821525958031/67764026159052316),
-         (-192951821525958031/90044183378780414, 1/38590364305191606),
-         (1/38590364305191606,
-          -144713866144468523/66040650000519163*I + 167101179147960739/132081300001038326),
-         (1/38590364305191606,
-          144713866144468523/66040650000519163*I + 167101179147960739/132081300001038326),
-         (-5/2*I + 5/2,
-          -144713866144468523/66040650000519163*I + 167101179147960739/132081300001038326),
-         (-5/2*I + 5/2, 5/2*I + 5/2),
-         (5/2*I + 5/2,
-          144713866144468523/66040650000519163*I + 167101179147960739/132081300001038326)]
-    """
-    V = corrected_voronoi_diagram(tuple(points))
-    res = set()
-    for region in V.regions().values():
-        if region.rays():
-            continue
-        for s in region.facets():
-            t = tuple((tuple(v.vector()) for v in s.vertices()))
-            if t not in res and not tuple(reversed(t)) in res:
-                res.add(t)
-    return [(r[0] + QQbar.gen() * r[1],
-             s[0] + QQbar.gen() * s[1]) for r, s in res]
 
 
 def followstrand(f, factors, x0, x1, y0a, prec=53):
@@ -948,6 +898,7 @@ def orient_circuit(circuit, convex=False):
             return circuit
         prec *= 2
 
+
 def geometric_basis(G, E, EC, p, dual_graph):
     r"""
     Return a geometric basis, based on a vertex.
@@ -1023,7 +974,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
         if E.is_cycle():
             return [EC]
     InternalEdges = [_ for _ in G.edges(sort=True) if _ not in E.edges(sort=True)]
-    InternalVertices=[v for e in InternalEdges for v in e[:2]]
+    InternalVertices = [v for e in InternalEdges for v in e[:2]]
     Internal = G.subgraph(vertices=InternalVertices, edges=InternalEdges)
     if not Internal: # Creo que se puede quitar
         for v in E:
@@ -1031,7 +982,7 @@ def geometric_basis(G, E, EC, p, dual_graph):
                 Internal.add_vertex(v)
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
         if ECi in Internal:
-            q = EC[i]
+            q = ECi
             connecting_path = EC[:i]
             break
         if EC[-i] in Internal: # creo que sobra
@@ -1066,7 +1017,6 @@ def geometric_basis(G, E, EC, p, dual_graph):
     if EC[qi + 1] in E2:
         E1, E2 = E2, E1
 
-
     for i in range(len(cutpath) - 1):
         E1.add_edge(cutpath[i], cutpath[i + 1], None)
         E2.add_edge(cutpath[i], cutpath[i + 1], None)
@@ -1083,8 +1033,6 @@ def geometric_basis(G, E, EC, p, dual_graph):
     else:
         EC1 = EC[qi : ] + EC[1 : ri] + [_ for _ in reversed(cutpath)]
         EC2 = cutpath + EC[ri + 1 : qi + 1]
-
-
 
     gb1 = geometric_basis(G1, E1, EC1, q, Gd1)
     gb2 = geometric_basis(G2, E2, EC2, q, Gd2)
@@ -1158,7 +1106,7 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
         True
         sage: bm1[1]  # optional - sirocco
         {1: 1, 2: 2, 3: 1, 4: 1}
-        sage: braid_monodromy(f, arrangement=flist, computebm=False)==bm1[1]  # optional - sirocco
+        sage: braid_monodromy(f, arrangement=flist, computebm=False) == bm1[1]  # optional - sirocco
         True
         sage: bm2 = braid_monodromy(f, arrangement=flist, holdstrand=True)  # optional - sirocco
         sage: bm2[0] == bm  # optional - sirocco
@@ -1279,16 +1227,16 @@ def braid2rels(L, d):
     while low:
         L2 = copy(L1)
         j = 0
-        l = L[j]
         other = False
         while j < len(L2) - 1 and not other:
             try:
-                k = L2.index(-l)
+                l = L2[j]
+                k = L2[j:].index(-l)+j
                 A = L2[j + 1: k]
-                Bn = next((_ for _ in A if 0 < (_^2 - l^2)^2 < 2), None)
-                if B is None:
+                Bn = next((_ for _ in A if (abs(_) - abs(l)) ** 2 == 1), None)
+                if Bn is None:
                     other = True
-                    L2 = L2[:j] + B + L2[k + 1:]
+                    L2 = L2[:j] + A + L2[k + 1:]
                 else:
                     j += 1
             except ValueError:
@@ -1305,15 +1253,16 @@ def braid2rels(L, d):
     res = None
     for tau in A:
         sg = B(c0) * B(b0).conjugating_braid(tau)
-        A1 = sg.right_normal_form()
-        if len(A1)==1:
+        A1 = rightnormalform(sg)
+        par = A1[-1][0] % 2
+        A1 = [B(a) for a in A1[:-1]]
+        if len(A1) == 0:
             b = B.one()
         else:
-            b = prod(A1[:-1])
-        b1 = len(b.Tietze()) / len(A1)
-        par = (A1[-1].exponent_sum() / d / (d - 1) * 2) % 2
+            b = prod(A1)
+        b1 = len(b.Tietze()) / (len(A1) + 1)
         if res is None or b1 < res[3]:
-            res = [tau, A1[:-1], par, b1]
+            res = [tau, A1, par, b1]
     if res[2] == 1:
         r0 = res[0].Tietze()
         res[0] = B([i.sign() * (d - abs(i)) for i in r0])
@@ -1323,7 +1272,7 @@ def braid2rels(L, d):
     U = [_.Tietze() for _ in U]
     pasos = [B.one()] + [_ for _ in reversed(res[1])]
     for C in pasos:
-        U = [(F(a) * C**(-1)).Tietze() for a in U]
+        U = [(F(a) * C ** (-1)).Tietze() for a in U]
         ga = F / U
         P = ga.gap().PresentationFpGroup()
         dic = P.TzOptions().sage()
