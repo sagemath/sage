@@ -1439,7 +1439,6 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
             newM += -s
         return newM, eisenloss, q, aq
 
-
     def p_stabilize_and_lift(self, p, M, alpha=None, ap=None,
                              new_base_ring=None,
                              ordinary=True, algorithm='greenberg', eigensymbol=False,
@@ -1531,7 +1530,7 @@ class PSModularSymbolElement_dist(PSModularSymbolElement):
 
     def precision_relative(self):
         r"""
-        Return the number of moments of each value of self
+        Return the number of moments of each value of ``self``.
 
         EXAMPLES::
 
@@ -1541,14 +1540,14 @@ class PSModularSymbolElement_dist(PSModularSymbolElement):
             sage: f.precision_relative()
             1
         """
-        return min([len(a._moments) for a in self._map])
-
+        return min(len(a._moments) for a in self._map)
 
     def specialize(self, new_base_ring=None):
         r"""
-        Return the underlying classical symbol of weight `k` - i.e.,
-        applies the canonical map `D_k \to Sym^k` to all values of
-        self.
+        Return the underlying classical symbol of weight `k`.
+
+        Namely, this applies the canonical map `D_k \to Sym^k` to all
+        values of ``self``.
 
         EXAMPLES::
 

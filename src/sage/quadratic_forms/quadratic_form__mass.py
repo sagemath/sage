@@ -50,7 +50,6 @@ def shimura_mass__maximal(self):
     pass
 
 
-
 def GHY_mass__maximal(self):
     """
     Use the GHY formula to compute the mass of a (maximal?) quadratic
