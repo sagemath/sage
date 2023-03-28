@@ -1,4 +1,3 @@
-
 r"""
 Zariski-Van Kampen method implementation
 
