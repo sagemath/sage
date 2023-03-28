@@ -396,8 +396,6 @@ class GolayCode(AbstractLinearCode):
         return H
 
 
-
-
 ####################### registration ###############################
 
 GolayCode._registered_encoders["GeneratorMatrix"] = LinearCodeGeneratorMatrixEncoder

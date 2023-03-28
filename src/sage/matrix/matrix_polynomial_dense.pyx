@@ -3974,7 +3974,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             P = self.minimal_approximant_basis(orders,shifts,True,normal_form)
             row_indices = []
             for i in range(m):
-                if P[i,i].degree() + shifts[i] <= degree_bound:
+                if P[i, i].degree() + shifts[i] <= degree_bound:
                     row_indices.append(i)
             return P[row_indices,:]
 
@@ -4000,6 +4000,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             P = self.minimal_approximant_basis(orders,shifts,False,normal_form)
             column_indices = []
             for j in range(n):
-                if P[j,j].degree() + shifts[j] <= degree_bound:
+                if P[j, j].degree() + shifts[j] <= degree_bound:
                     column_indices.append(j)
             return P[:,column_indices]

@@ -4103,7 +4103,7 @@ cdef class BinaryCodeClassifier:
                     m = BinaryCode(matrix(ZZ, rs))
 
                     m_aut_gp_gens, m_labeling, m_size, m_base = self._aut_gp_and_can_label(m)
-                    from sage.arith.all import factorial
+                    from sage.arith.misc import factorial
                     if True:  # size*factorial(n-B.ncols) == m_size:
 
                         if len(m_aut_gp_gens) == 0:
