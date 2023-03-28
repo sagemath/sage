@@ -772,7 +772,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
         if category is None:
             category = Manifolds(RR).Smooth().Connected() & MetricSpaces().Complete()
             # NB: RR is a proxy for the field of real numbers, until
-            #     Trac #24456 is ready
+            #     Issue #24456 is ready
         PseudoRiemannianManifold.__init__(self, n, name, metric_name=metric_name,
                                           signature=n, base_manifold=base_manifold,
                                           latex_name=latex_name,

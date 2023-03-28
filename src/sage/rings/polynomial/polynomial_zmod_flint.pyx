@@ -727,7 +727,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             ...
             ValueError: leading coefficient must be invertible
         """
-        if self.base_ring().characteristic().gcd(\
+        if self.base_ring().characteristic().gcd(
                 self.leading_coefficient().lift()) != 1:
             raise ValueError("leading coefficient must be invertible")
         cdef Polynomial_zmod_flint res = self._new()
@@ -850,3 +850,23 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         sig_off()
 
         return res
+
+    @coerce_binop
+    def minpoly_mod(self, other):
+        r"""
+        Thin wrapper for
+        :meth:`sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_n.minpoly_mod`.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(127)[]
+            sage: type(x)
+            <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
+            sage: (x^5-3).minpoly_mod(x^3+5*x-1)
+            x^3 + 34*x^2 + 125*x + 95
+        """
+        parent = self.parent()
+        name, = parent.variable_names()
+        from sage.rings.polynomial.polynomial_ring_constructor import _single_variate
+        R = _single_variate(parent.base_ring(), name=name, implementation='NTL')
+        return parent(R(self % other).minpoly_mod(R(other)))

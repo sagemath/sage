@@ -5,14 +5,14 @@
 # The script assumes that it is run from SAGE_ROOT.
 #
 # If "config.log" or "logs" are symlinks (for example, created by 'tox -e local-...',
-# or after https://trac.sagemath.org/ticket/33262), they might point outside of
+# or after https://github.com/sagemath/sage/issues/33262), they might point outside of
 # the dev container, so remove them. Likewise for upstream.
 for f in config.log logs upstream; do
     if [ -L $f ]; then
         rm -f $f
     fi
 done
-# If possible (ensured after https://trac.sagemath.org/ticket/33262), keep the
+# If possible (ensured after https://github.com/sagemath/sage/issues/33262), keep the
 # logs in the container.
 if [ ! -d logs ]; then
     ln -s /sage/logs logs

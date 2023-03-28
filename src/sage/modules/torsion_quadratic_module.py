@@ -852,7 +852,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             [1 0 0]
             [0 0 1]
 
-        We compute the kernel of the action of the orthogonal group of `L` on the discriminant group.
+        We compute the kernel of the action of the orthogonal group of `L` on the discriminant group::
 
             sage: L = IntegralLattice('A4')
             sage: O = L.orthogonal_group()

@@ -405,12 +405,13 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         Return the ``n``-th coefficient of ``self``.
 
-        If ``n`` is a slice object, this will return a power series of the
-        same precision, whose coefficients are the same as ``self`` for
-        those indices in the slice, and 0 otherwise.
-
         This returns 0 for negative coefficients and raises an
         ``IndexError`` if trying to access beyond known coefficients.
+
+        If ``n`` is a slice object ``[:k]``, this will return a power
+        series of the same precision, whose coefficients are the same
+        as ``self`` for those indices in the slice, and 0 otherwise.
+        Other kinds of slicing are not allowed.
 
         EXAMPLES::
 
@@ -426,10 +427,8 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             IndexError: coefficient not known
-            sage: f[1:4]
-            doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
-            -17/5*t^3 + O(t^5)
+
+        Using slices::
 
             sage: R.<t> = ZZ[[]]
             sage: f = (2-t)^5; f
@@ -440,6 +439,13 @@ cdef class PowerSeries_poly(PowerSeries):
             1 + t^3 - 4*t^4 + O(t^7)
             sage: f[:4]
             1 + t^3 + O(t^7)
+
+        TESTS::
+
+            sage: f[1:4]
+            Traceback (most recent call last):
+            ...
+            IndexError: polynomial slicing with a start is not defined
         """
         if isinstance(n, slice):
             return PowerSeries_poly(self._parent, self.polynomial()[n],
@@ -1025,6 +1031,13 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: Series must have valuation one for reversion.
+
+            sage: Series = PowerSeriesRing(SR, 'x')
+            sage: ser = Series([0, pi])
+            sage: ser
+            pi*x
+            sage: ser.reverse()
+            1/pi*x + O(x^20)
         """
         if self.valuation() != 1:
             raise ValueError("Series must have valuation one for reversion.")

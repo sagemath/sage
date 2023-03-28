@@ -2341,7 +2341,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: subplot = Figure().add_subplot(111)
             sage: p._objects[0]._render_on_subplot(subplot)
             sage: p._matplotlib_tick_formatter(subplot, **d)
-            (<AxesSubplot:...>,
+            (<Axes...>,
             <matplotlib.ticker.MaxNLocator object at ...>,
             <matplotlib.ticker.MaxNLocator object at ...>,
             <matplotlib.ticker.ScalarFormatter object at ...>,
@@ -3519,7 +3519,7 @@ def GraphicsArray(*args, **kwargs):
         sage: c = circle((0,0), 1)
         sage: G = GraphicsArray([c, c])
         doctest:...: DeprecationWarning: GraphicsArray must be imported from sage.plot.multigraphics and no longer from sage.plot.graphics.
-        See https://trac.sagemath.org/28675 for details.
+        See https://github.com/sagemath/sage/issues/28675 for details.
         sage: G
         Graphics Array of size 1 x 2
 

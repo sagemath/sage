@@ -624,7 +624,7 @@ REFERENCES:
                and variants*.
                :arxiv:`1810.00789`
 
-.. [BDKR2013] \D. Best, D.Z. Dokovic, H. Kharaghani and H. Ramp.
+.. [BDKR2013] \D. Best, D.Ž. Đoković, H. Kharaghani and H. Ramp.
               *Turyn-Type Sequences: Classification, Enumeration, and Construction*,
               Journal of Combinatorial Designs 21(1) (2013): 24-35.
               :doi:`10.1002/jcd.21318`
@@ -802,6 +802,10 @@ REFERENCES:
 .. [BHS2008] Robert Bradshaw, David Harvey and William
              Stein. strassen_window_multiply_c. strassen.pyx, Sage
              3.0, 2008. http://www.sagemath.org
+
+.. [BrHu2019] Petter Brändén, June Huh. *Lorentzian polynomials*.
+              Ann. Math. (2) 192, No. 3, 821-891 (2020).
+              :arxiv:`1902.03719`, :doi:`10.4007/annals.2020.192.3.4`.
 
 .. [BHNR2004] \S. Brlek, S. Hamel, M. Nivat, C. Reutenauer, On the
               Palindromic Complexity of Infinite Words,
@@ -1180,6 +1184,9 @@ REFERENCES:
              moduli spaces to Feynman integrals*, in Contemporary Mathematics
              vol 539, pages 27-52, 2011.
 
+.. [Bro2013] Francis Brown, *Single-valued motivic periods and multiple zeta
+             values*, Forum Math. Sigma 2 (2014), :doi:`10.1017/fms.2014.18`.
+
 .. [Bro2016] \A.E. Brouwer,
              Personal communication, 2016.
 
@@ -1215,6 +1222,11 @@ REFERENCES:
              for Hecke algebras of type* `A`.
              Proc. London Math. Soc. (3) **77** (1998), 551–581.
              :mathscinet:`MR1643413`
+
+.. [BS1969] \D. Blatt, G. Szekeres.
+            *A Skew Hadamard Matrix of Order 52*,
+            Canadian Journal of Mathematics 21 (1969): 1319-1322.
+            :doi:`10.4153/CJM-1969-144-2`
 
 .. [BS1996] Eric Bach, Jeffrey Shallit. *Algorithmic Number Theory,
             Vol. 1: Efficient Algorithms*. MIT Press, 1996. ISBN
@@ -1794,6 +1806,11 @@ REFERENCES:
             *Tracking p-adic precision*,
             LMS J. Comput. Math. **17** (2014), 274-294.
 
+.. [Connell1999] Ian Connell.
+                 *Elliptic Curve Handbook*.
+                 Online lecture notes, available at
+                 https://git.hackade.org/ben/tinycrypt/raw/branch/master/docs/Elliptic%20Curve%20Handbook.pdf
+
 .. [CS1986] \J. Conway and N. Sloane. *Lexicographic codes:
             error-correcting codes from game theory*, IEEE
             Trans. Infor. Theory **32** (1986) 337-348.
@@ -2041,14 +2058,49 @@ REFERENCES:
              and some constructions of de Luca and Rauzy*,
              Theoret. Comput. Sci.  255 (2001) 539--553.
 
-.. [Djo1992] \D. Đoković.
+.. [Djo1992a] \D. Đoković.
              *Construction of some new Hadamard matrices*,
              Bulletin of the Australian Mathematical Society 45(2) (1992): 327-332.
              :doi:`10.1017/S0004972700030185`
 
-.. [Djo1994] \D. Đoković.
+.. [Djo1992b] \D. Đoković.
+             *Skew Hadamard matrices of order 4 x 37 and 4 x 43*,
+             Journal of Combinatorial Theory, Series A 61(2) (1992): 319-321.
+             :doi:`10.1016/0097-3165(92)90029-T`
+
+.. [Djo1992c] \D. Đoković.
+             *Ten New Orders for Hadamard Matrices of Skew Type*,
+             Publikacije Elektrotehničkog fakulteta. Serija Matematika 2 (1992): 47-59.
+
+.. [Djo1994a] \D. Đoković.
              *Five New Orders for Hadamard Matrices of Skew Type*,
              Australasian Journal of Combinatorics  10 (1994): 259-264.
+
+.. [Djo1994b] \D. Đoković.
+             *Two Hadamard matrices of order 956 of Goethals-Seidel type*,
+             Combinatorica  14(3) (1994): 375-377.
+             :doi:`10.1007/BF01212983`
+
+.. [Djo2008a] \D. Đoković.
+            *Skew-Hadamard matrices of orders 188 and 388 exist*,
+            International Mathematical Forum 3 no.22 (2008): 1063-1068.
+            :arxiv:`0704.0640`
+
+.. [Djo2008b] \D. Đoković.
+            *Skew-Hadamard matrices of orders 436, 580 and 988 exist*,
+            Journal of Combinatorial Designs 16 (2008): 493-498.
+            :arxiv:`0706.1973`
+
+.. [Djo2008c] \D. Đoković.
+            *Hadamard matrices of order 764 exist*,
+            Combinatorica 28(4) (2008): 487-489.
+            :doi:`10.1007/s00493-008-2384-z`
+
+.. [Djo2023a]  \D. Đoković.
+            *Skew-Hadamard matrices of order 276*.
+            :arxiv:`10.48550/ARXIV.2301.02751`
+
+.. [Djo2023b] \D. Đoković, Email Communication. 26 January 2023.
 
 .. [DK2013] John R. Doyle and David Krumm, *Computing algebraic
             numbers of bounded height*, :arxiv:`1111.4963v4` (2013).
@@ -2182,6 +2234,11 @@ REFERENCES:
 
 .. [Duv1983] J.-P. Duval, Factorizing words over an ordered alphabet,
             J. Algorithms 4 (1983) 363--381.
+
+.. [Duv1988] \A. Duval.
+            *A directed graph version of strongly regular graphs*,
+            Journal of Combinatorial Theory, Series A 47(1) (1988): 71-100.
+            :doi:`10.1016/0097-3165(88)90043-X`
 
 .. [DW1995] Andreas W.M. Dress and Walter Wenzel, *A Simple Proof of
             an Identity Concerning Pfaffians of Skew Symmetric
@@ -2392,6 +2449,11 @@ REFERENCES:
             code, by I.A.Faradjev (with contributions by A.E.Brouwer,
             D.V.Pasechnik). https://github.com/dimpase/coco
 
+.. [FKS2004] \R. J. Fletcher, C. Koukouvinos and J. Seberry.
+            *New skew-Hadamard matrices of order 4·59 and new D-optimal designs of order 2·59*,
+            Discrete Mathematics 286(3) (2004): 251-253.
+            :doi:`10.1016/j.disc.2004.05.009`
+
 .. [FL2001] David Forge and Michel Las Vergnas.
             *Orlik-Solomon type algebras*. European J. Combin.
             **22** (5), (2001). pp. 699-704.
@@ -2559,6 +2621,9 @@ REFERENCES:
             TR-737-05, (2005).
             ftp://ftp.cs.princeton.edu/reports/2005/737.pdf
 
+.. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
+             algebra, 1(141):187–203, 1991.
+
 .. [GG2012] Jim Geelen and Bert Gerards, Characterizing graphic
             matroids by a system of linear equations,
             submitted, 2012. Preprint:
@@ -2721,6 +2786,9 @@ REFERENCES:
 
 .. [Gos1972] Bill Gosper, "Continued Fraction Arithmetic"
              https://perl.plover.com/classes/cftalk/INFO/gosper.txt
+
+.. [Gos1998] \D. Goss. Basic structures of function field arithmetic. Springer,
+             1998.
 
 .. [Gor1980] Daniel Gorenstein, Finite Groups (New York: Chelsea
              Publishing, 1980)
@@ -3201,6 +3269,11 @@ REFERENCES:
             *Spreads in strongly regular graphs*,
             Designs, Codes and Cryptography 8 (1996) 145-157.
             :doi:`10.1023/A:1018037025910`.
+
+.. [HMMS2019] June Huh, Jacob P. Matherne, Karola Mészáros, Avery St. Dizier.
+              *Logarithmic concavity of Schur and related polynomials*.
+              Trans. Am. Math. Soc. 375, No. 6, 4411-4427 (2022).
+              :arxiv:`1906.09633`, :doi:`10.1090/tran/8606`.
 
 .. [Hutz2007] \B. Hutz. Arithmetic Dynamics on Varieties of dimension greater
               than one. PhD Thesis, Brown University 2007
@@ -3821,6 +3894,11 @@ REFERENCES:
              *Bethe ansatz and inverse scattering transform in a periodic
              box-ball system*, Nuclear Phys. B **747**, no. 3 (2006), 354--397.
 
+.. [KTZ1987] Kierstead, H.A., Trotter, W.T. & Zhou, B. Representing an ordered
+             set as the intersection of super greedy linear extensions. Order 4,
+             293-311 (1987).
+             :doi:`10.1007/BF00337892`
+             
 .. [Kuh1987] \W. Kühnel, "Minimal triangulations of Kummer varieties",
              Abh. Math. Sem. Univ. Hamburg 57 (1987), 7-20.
 
@@ -4082,6 +4160,11 @@ REFERENCES:
 .. [Lom2019] Davide Lombardo, *Computing the geometric endomorphism ring
              of a genus 2 Jacobian*, Mathematics of Computation 88 (2019),
              889-929. :doi:`10.1090/mcom/3358`.
+
+.. [Lon2013] \S. London,
+            *Constructing New Turyn Type Sequences, T-Sequences and Hadamard Matrices*. 
+            PhD Thesis, University of Illinois at Chicago, 2013.
+            https://hdl.handle.net/10027/9916
 
 .. [LOS2012] \C. Lecouvey, M. Okado, M. Shimozono.
              "Affine crystals, one-dimensional sums and parabolic Lusztig
@@ -4458,6 +4541,11 @@ REFERENCES:
 .. [Mit2008] \A. Mitra. *On the construction of M-sequences via primitive polynomials with a fast identification method*,
              International Journal of Electronics and Communication Engineering 2(9) (2008): 1991-1996.
 
+.. [Miy1991] \M. Miyamoto.
+            *A construction of Hadamard matrices*,
+            Journal of Combinatorial Theory, Series A 57(1) (1991): 86-108.
+            :doi:`10.1016/0097-3165(91)90008-5`
+
 .. [MKO1998] Hans Munthe--Kaas and Brynjulf Owren.
              *Computations in a free Lie algebra*. (1998).
              `Downloadable from Munthe-Kaas's website
@@ -4582,6 +4670,11 @@ REFERENCES:
             *Crystal approach to affine Schubert calculus*.
             Int. Math. Res. Not. (2015).
             :doi:`10.1093/imrn/rnv194`, :arxiv:`1408.0320`.
+
+.. [MS2019] \Y. Musleh and \'E. Schost. Computing the characteristic polynomial
+            of a finite rank two Drinfeld module. In Proceedings of the 2019
+            ACM on International Symposium on Symbolic and Algebraic
+            Computation, pages 307–314. ACM, 2019.
 
 .. [MSSY2001] Mateescu, A., Salomaa, A., Salomaa, K. and Yu, S., *A
               sharpening of the Parikh mapping*. Theoret. Informatics Appl. 35
@@ -5163,6 +5256,8 @@ REFERENCES:
 .. [Ros2002] Rosenfeld, Vladimir Raphael, 2002: Enumerating De Bruijn
              Sequences. *Communications in Math. and in Computer Chem.*
 
+.. [Rosen2002] \M. Rosen. Number theory in function fields. Springer, 2022.
+
 .. [Rot2001] Gunter Rote, *Division-Free Algorithms for the
              Determinant and the Pfaffian: Algebraic and Combinatorial
              Approaches*, H. Alt (Ed.): Computational Discrete
@@ -5483,6 +5578,11 @@ REFERENCES:
              Springer-Verlag New York, 1966.
              :doi:`10.1007/978-1-4684-9322-1`,
              ISBN 978-1-4684-9322-1.
+
+.. [Spe1977] \E. Spence.
+            *Skew-Hadamard matrices of order 2(q + 1)*,
+            Discrete Mathematics 18(1) (1977): 79-85.
+            :doi:`10.1016/0012-365X(77)90009-7`
 
 .. [Spe2013] \D. Speyer, *An infinitely generated upper cluster algebra*,
              :arxiv:`1305.6867`.
@@ -5833,6 +5933,10 @@ REFERENCES:
             Hall-Littlewood vertex operators and generalized Kostka polynomials.
             Adv. Math. 158 (2001), no. 1, 66-85.
 
+.. [Sze1988] \G. Szekeres.
+            *A note on skew type orthogonal ±1 matrices*,
+            Combinatorics, Colloquia Mathematica Societatis, Janos Bolyai, 52 (1988): 489-498.
+
 .. _ref-T:
 
 **T**
@@ -6025,6 +6129,9 @@ REFERENCES:
 .. [Voi2012] \J. Voight. Identifying the matrix ring: algorithms for
              quaternion algebras and quadratic forms, to appear.
 
+.. [VS06]   \G.D. Villa Salvador. Topics in the Theory of Algebraic Function
+            Fields. Birkh\"auser, 2006.
+
 .. [VW1994] Leonard Van Wyk. *Graph groups are biautomatic*. J. Pure
             Appl. Alg. **94** (1994). no. 3, 341-352.
 
@@ -6112,6 +6219,11 @@ REFERENCES:
              American Journal of Mathematics,
              pages 150--168, 1932,
              `available on JSTOR <http://www.jstor.org/stable/2371086>`_
+
+.. [Whi1971] \A. Whiteman.
+            *An infinite family of skew Hadamard matrices*,
+            Pacific Journal of Mathematics 38(3) (1971): 817-822.
+            :doi:`10.2140/pjm.1971.38.817`
 
 .. [White2015] Noah White.
                *The monodromy of real Bethe vectors for the Gaudin model*.

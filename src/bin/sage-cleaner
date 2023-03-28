@@ -99,6 +99,15 @@ def cleanup():
 
     return len(pid_list)
 
+def cleanup_cruft():
+    """ remove directories leftover from improper shutdown """
+    tmp_dirs = os.listdir(SAGE_TMP_ROOT)
+    for dir_entry in tmp_dirs:
+        baddir = os.path.join(SAGE_TMP_ROOT, dir_entry)
+        if os.path.isdir(baddir):
+            logger.warning('Removing old directory %s from SAGE_TMP_ROOT', baddir)
+            rm_rf(baddir)
+
 def kill_spawned_jobs(jobfile, parent_pid):
     logger.info("Killing %s's spawned jobs", parent_pid)
     killed_them_all = True
@@ -169,7 +178,7 @@ def fix_old_mistakes():
     """
     Experience is simply the name we give our mistakes.
     """
-    # inconsistently escaped hyphens with underscores (http://trac.sagemath.org/14055)
+    # inconsistently escaped hyphens with underscores (https://github.com/sagemath/sage/issues/14055)
     wrong_hostname = HOSTNAME.replace('-','_').replace('/','_').replace('\\','_')
     wrong_sage_tmp_root = os.path.join(DOT_SAGE, 'temp', wrong_hostname)
     if wrong_sage_tmp_root != SAGE_TMP_ROOT and os.path.exists(wrong_sage_tmp_root):
@@ -193,6 +202,7 @@ if __name__ == '__main__':
     setup_daemon()
     fix_old_mistakes()
     logger.info("Starting sage-cleaner with PID %s", os.getpid())
+    cleanup_cruft()
 
     if len(sys.argv) > 1:
         wait = int(sys.argv[1])

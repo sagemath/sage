@@ -43,7 +43,7 @@ import sage.structure.coerce
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 import sage.rings.integer as integer
-import sage.rings.finite_rings.finite_field_constructor
+from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.misc.latex as latex
 import sage.modules.free_module
 
@@ -223,7 +223,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                     else:
                         return matrix_complex_double_dense.Matrix_complex_double_dense
 
-            elif sage.rings.finite_rings.finite_field_constructor.is_FiniteField(R):
+            elif isinstance(R, FiniteField):
                 if R.order() == 2:
                     try:
                         from . import matrix_mod2_dense
@@ -397,7 +397,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         else:
             return matrix_integer_sparse.Matrix_integer_sparse
 
-    if R is sage.rings.real_double.RDF or R is sage.rings.complex_double.CDF:
+    if isinstance(R, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
         from . import matrix_double_sparse
         return matrix_double_sparse.Matrix_double_sparse
 
@@ -679,7 +679,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         self.__ncols = ncols
         self.__is_sparse = sparse
 
-        from sage.categories.all import Modules, Algebras
+        from sage.categories.modules import Modules
+        from sage.categories.algebras import Algebras
         if nrows == ncols:
             category = Algebras(base_ring.category())
         else:
@@ -1208,7 +1209,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             if B is not T:
                 # Matrix spaces over different base rings.
                 # TODO: make this an actual map induced by the map
-                # on the bases, see Trac #25540
+                # on the bases, see Issue #25540
                 return B.has_coerce_map_from(T)
 
             # Base ring and dimensions are the same. So the only

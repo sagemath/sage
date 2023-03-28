@@ -51,7 +51,7 @@ class AmbientSpace(CombinatorialFreeModule):
         \delta,\delta\rangle=0` and similarly for the null coroot.
 
         In the current implementation, `\Lambda_0` and the null coroot
-        are identified:
+        are identified::
 
             sage: L = RootSystem(["A",3,1]).ambient_space()
             sage: Lambda = L.fundamental_weights()

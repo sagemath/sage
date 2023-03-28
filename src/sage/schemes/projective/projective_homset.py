@@ -47,7 +47,7 @@ from sage.misc.verbose import verbose
 from sage.rings.rational_field import is_RationalField
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from copy import copy
@@ -284,7 +284,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
                 raise TypeError("a positive bound B (= %s) must be specified"%B)
             from sage.schemes.projective.projective_rational_point import enum_projective_number_field
             return enum_projective_number_field(self, bound=B, tolerance=tol, precision=prec)
-        elif is_FiniteField(R):
+        elif isinstance(R, FiniteField):
             from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
             return enum_projective_finite_field(self.extended_codomain())
         else:

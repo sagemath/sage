@@ -52,7 +52,7 @@ elif [ "$UNAME" = SunOS ]; then
     # Enable some C99 features on Solaris. This in particular enables
     # the isinf() and isfinite() functions. It works both for C and
     # C++ code (which is not true for -std=c99).  See
-    # http://trac.sagemath.org/sage_trac/ticket/14265
+    # https://github.com/sagemath/sage/issues/14265
     export CFLAGS="-D__C99FEATURES__ $CFLAGS"
 fi
 
@@ -69,14 +69,14 @@ rm -f "$SAGE_LOCAL/lib/python"
 # Remove old libraries. We really need to do this before building Python
 # since Python tries to import some modules (e.g. ctypes) at build-time.
 # We need to make sure that the old installed libraries in local/lib are
-# not used for that. See https://trac.sagemath.org/ticket/24605
+# not used for that. See https://github.com/sagemath/sage/issues/24605
 rm -f "$SAGE_LOCAL"/lib/lib"$PKG_BASE"*
 
 
     # Note: --without-ensurepip ensures that setuptools+pip are *not* installed
     # automatically when installing python3. They will be installed instead by
     # the separate setuptools and pip packages; see
-    # https://trac.sagemath.org/ticket/23398
+    # https://github.com/sagemath/sage/issues/23398
     PYTHON_CONFIGURE="$PYTHON_CONFIGURE --without-ensurepip"
 
 sdh_configure --enable-shared $PYTHON_CONFIGURE

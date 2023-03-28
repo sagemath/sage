@@ -13,7 +13,7 @@ from sage.sets.family import Family
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
-from sage.categories.all import Monoids
+from sage.categories.monoids import Monoids
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 

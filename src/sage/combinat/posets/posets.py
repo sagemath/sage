@@ -292,7 +292,7 @@ from typing import List
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.categories.category import Category
 from sage.categories.sets_cat import Sets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -3081,7 +3081,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: R = Poset([[0],[]])
             sage: R.list()
             [0]
-            sage: R.top() #Trac #10776
+            sage: R.top() #Issue #10776
             0
         """
         hasse_top = self._hasse_diagram.top()
@@ -5883,7 +5883,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: L = LatticePoset({}).with_bounds(); L
             Finite lattice containing 2 elements
-            sage: L.meet_irreducibles()  # Trac 21543
+            sage: L.meet_irreducibles()  # Issue 21543
             ['bottom']
 
             sage: Poset().with_bounds((None, 1))
@@ -7612,11 +7612,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         if not self.is_graded():
             raise ValueError("the poset is not graded")
         if not self.has_bottom():
-            raise ValueError("the poset has not a bottom element")
+            raise ValueError("the poset does not have a bottom element")
         n = rk(hasse.maximal_elements()[0])
-        x0 = hasse.minimal_elements()[0]
         q = polygen(ZZ, 'q')
-        return sum(hasse.moebius_function(x0, x) * q**(n - rk(x)) for x in hasse)
+        return sum(hasse.bottom_moebius_function(x) * q**(n - rk(x)) for x in hasse)
 
     def chain_polynomial(self):
         """
@@ -8813,7 +8812,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: libgap(P)  # optional - gap_packages
             <A poset on 5 points>
             sage: A = libgap(GF(2)).PosetAlgebra(P); A  # optional - gap_packages
-            <GF(2)[<quiver with 5 vertices and 5 arrows>]/<two-sided ideal in <GF(2)[<quiver with 5 vertices and 5 arrows>]>, (1 generators)>>
+            <GF(2)[<quiver with 5 vertices and 5 arrows>]/<two-sided ideal in <GF(2)[<quiver with 5 vertices and 5 arrows>]>, (1 generator)>>
             sage: A.Dimension()  # optional - gap_packages
             13
         """

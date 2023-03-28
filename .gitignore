@@ -19,6 +19,7 @@
 /config.status
 /configure
 /conftest*
+/confdefs.h
 
 /m4/sage_spkg_configures.m4
 
@@ -187,7 +188,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-repl/requirements.txt
 /pkgs/sagemath-categories/MANIFEST.in
 
-# same for old locations - before Trac #31577
+# same for old locations - before Issue #31577
 /build/pkgs/*/src/build
 /build/pkgs/*/src/dist
 /build/pkgs/*/src/MANIFEST
@@ -220,9 +221,6 @@ src/venv/
 src/ENV/
 src/env.bak/
 src/venv.bak/
-
-# devcontainer
-/.devcontainer/devcontainer.json
 
 # mypy
 **/.mypy_cache/

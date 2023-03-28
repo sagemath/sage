@@ -96,17 +96,22 @@ AUTHORS:
 
 """
 
-from sage.modules.free_module import FreeModule_generic_pid
-from sage.rings.all import ZZ, QQ, RealField, ComplexField, QQbar, AA
 import sage.rings.abc
-from sage.rings.complex_mpfr import ComplexNumber
-from sage.rings.real_mpfr import RealNumber as RealNumber
-from sage.rings.number_field.number_field import refine_embedding
-from sage.rings.infinity import Infinity
-from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.misc.cachefunc import cached_method
-from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
+
 from sage.libs.pari.all import pari
+from sage.misc.cachefunc import cached_method
+from sage.modules.free_module import FreeModule_generic_pid
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.complex_mpfr import ComplexNumber
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import refine_embedding
+from sage.rings.qqbar import AA, QQbar
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RealField
+from sage.rings.real_mpfr import RealNumber as RealNumber
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
+from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
 
 
 class PeriodLattice(FreeModule_generic_pid):

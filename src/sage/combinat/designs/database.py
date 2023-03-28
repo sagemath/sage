@@ -543,7 +543,6 @@ def OA_8_69():
         for BB in OA_8_7:
             OA.append([B[i] for i in BB])
 
-
     # Adding the  missing 0..0,1..1,... rows
     done = sum(O1,[])+sum(O2,[])
     missing = [x for x in range(73) if x not in done and x not in oval]

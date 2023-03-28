@@ -522,8 +522,14 @@ def so(R, n, representation='bracket'):
 
     The Lie algebra `\mathfrak{so}_n` is the type `B_k` Lie algebra
     if `n = 2k - 1` or the type `D_k` Lie algebra if `n = 2k`, and in
-    either case is finite dimensional. As a matrix Lie algebra, it
-    is given by the set of all real anti-symmetric `n \times n` matrices.
+    either case is finite dimensional.
+
+    A classical description of this as a matrix Lie algebra is
+    the set of all anti-symmetric `n \times n` matrices. However,
+    the implementation here uses a different bilinear form for the Lie
+    group and follows the description in Chapter 8 of [HK2002]_.
+    See :class:`sage.algebras.lie_algebras.classical_lie_algebra.so`
+    for a precise description.
 
     INPUT:
 
