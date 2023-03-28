@@ -29,7 +29,7 @@ Modules with basis
 .. toctree::
    :maxdepth: 1
 
-   sage/modules/with_basis/__init__
+   sage/modules/with_basis/all
    sage/modules/with_basis/cell_module
    sage/modules/with_basis/indexed_element
    sage/modules/with_basis/invariant
