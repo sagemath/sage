@@ -187,7 +187,7 @@ class Braid(FiniteTypeArtinGroupElement):
         return self.strands() - sum(len(c) - 1 for c in cycles)
 
     def burau_matrix(self, var='t', reduced=False):
-        r"""+
+        r"""
         Return the Burau matrix of the braid.
 
         INPUT:
@@ -573,7 +573,7 @@ class Braid(FiniteTypeArtinGroupElement):
                                        color=col[j], **kwds)
                     col[j], col[j - 1] = col[j - 1], col[j]
                 elif -m == j + 1:
-                    a += bezier_path([[(nx * j + orx * i, ny * j + ory * i), 
+                    a += bezier_path([[(nx * j + orx * i, ny * j + ory * i),
                                        (nx * j + orx * (i + 0.25), ny * j + ory * (i + 0.25)),
                                        (nx * (j + 0.5 - 4 * op) + orx * (i + 0.5 -2 * op),
                                         ny * (j + 0.5 - 4 * op) + ory * (i + 0.5 -2 * op)),
@@ -596,7 +596,7 @@ class Braid(FiniteTypeArtinGroupElement):
                                       color=col[j], **kwds)
                     col[j], col[j - 1] = col[j - 1], col[j]
                 else:
-                    a += line([(nx * j + orx * i, ny * j + ory * i), 
+                    a += line([(nx * j + orx * i, ny * j + ory * i),
                                (nx * j + orx * (i + 1), ny * j + ory * (i + 1))],
                               color=col[j], **kwds)
         a.set_aspect_ratio(aspect_ratio)
