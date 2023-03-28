@@ -122,13 +122,13 @@ class Stream():
         If an approximate order or even the true order is known, it
         must be set after calling ``super().__init__``.
 
-        Otherwise, a lazy attribute `_approximate_order` has to be
+        Otherwise, a lazy attribute ``_approximate_order`` has to be
         defined.  Any initialization code depending on the
         approximate orders of input streams can be put into this
         definition.
 
         However, keep in mind that (trivially) this initialization
-        code is not executed if `_approximate_order` is set to a
+        code is not executed if ``_approximate_order`` is set to a
         value before it is accessed.
 
     """
