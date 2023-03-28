@@ -1452,6 +1452,11 @@ def braid_monodromy_arrangement(flist):
          s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
          s1*s0*s2*s0^-1*s2*s1^-1],
         {1: 1, 2: 2, 3: 1, 4: 1})
+
+        .. TODO::
+
+            Create a class ``arrangements_of_curves`` with a ``braid_monodromy`` method
+            it can be also a method for affine line arrangements.
     """
     f = prod(flist)
     if len(flist) == 1:
@@ -1515,6 +1520,13 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2, x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1, x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1, 1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >, {(-4, -3, -2, -1): 3, 1: 1, 2: 2, 3: 1, 4: 1})
         sage: fundamental_group_arrangement(flist, projective=True, braidmonodromy=BM) # optional - sirocco
         (Finitely presented group < x |  >, {(-1, -1, -1): 2, 1: 1})
+
+        .. TODO::
+
+            Create a class ``arrangements_of_curves`` with a ``fundamental_group`` method
+            it can be also a method for affine or projective line arrangements, even for
+            hyperplane arrangements defined over a number subfield of ``QQbar`` after
+            applying a generic line section.
     """
     f = prod(flist)
     if braidmonodromy is None:
