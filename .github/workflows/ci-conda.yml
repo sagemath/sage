@@ -22,6 +22,7 @@ jobs:
     name: Conda
     runs-on: ${{ matrix.os }}
     
+    # Run on push, workflow dispatch and when certain labels are added 
     if: |
       github.event.action != 'labeled' ||
       github.event.label.name == 'c: packages: optional' || 
