@@ -3938,6 +3938,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [  6*x 6*x^2]
             [    1     0]
             [    0     1]
+
+        The bug in GitHub issue #35258 has been fixed::
+
+            sage: Matrix(pR, 2, 1).minimal_kernel_basis()
+            [1 0]
+            [0 1]
         """
         m = self.nrows()
         n = self.ncols()
@@ -3953,7 +3959,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         # compute kernel basis
         if row_wise:
-            if d is -1: # matrix is zero
+            if d == -1: # matrix is zero
                 from sage.matrix.constructor import matrix
                 return matrix.identity(self.base_ring(), m, m)
 
@@ -3979,7 +3985,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             return P[row_indices,:]
 
         else:
-            if d is -1: # matrix is zero
+            if d == -1: # matrix is zero
                 from sage.matrix.constructor import matrix
                 return matrix.identity(self.base_ring(), n, n)
 
