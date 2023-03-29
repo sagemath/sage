@@ -190,7 +190,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         sage: P.<x,y,z,w,u> = ProjectiveSpace(GF(7), 4)                                 # optional - sage.rings.finite_rings
         sage: C = Curve([y*u^2 - x^3, z*u^2 - x^3, w*u^2 - x^3, y^3 - x^3], P); C       # optional - sage.rings.finite_rings
         Projective Curve over Finite Field of size 7 defined
-        by -x^3 + y*u^2, -x^3 + z*u^2, -x^3 + w*u^2, -x^3 + y^3
+         by -x^3 + y*u^2, -x^3 + z*u^2, -x^3 + w*u^2, -x^3 + y^3
 
     ::
 
@@ -198,7 +198,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)                                       # optional - sage.rings.number_field
         sage: C = Curve([y*w - u*z^2 - x^2, x*w - 3*u^2*z*w], P); C                     # optional - sage.rings.number_field
         Projective Curve over Cyclotomic Field of order 11 and degree 10 defined
-        by -x^2 + (-u)*z^2 + y*w, x*w + (-3*u^2)*z*w
+         by -x^2 + (-u)*z^2 + y*w, x*w + (-3*u^2)*z*w
     """
     def __init__(self, A, X):
         """
@@ -248,8 +248,8 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             sage: P.<x,y,z,w> = ProjectiveSpace(CC, 3)
             sage: C = Curve([y*z - x^2, w^2 - x*y], P)
             sage: C.affine_patch(0)
-            Affine Curve over Complex Field with 53 bits of precision defined by
-            y*z - 1.00000000000000, w^2 - y
+            Affine Curve over Complex Field with 53 bits of precision defined
+             by y*z - 1.00000000000000, w^2 - y
 
         ::
 
@@ -363,8 +363,8 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             sage: C.projection(PS=Q)                                                    # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            TypeError: (=Projective Space of dimension 2 over Finite Field of size
-            7) must have dimension (=3)
+            TypeError: (=Projective Space of dimension 2 over Finite Field of
+            size 7) must have dimension (=3)
 
 
         ::
@@ -942,9 +942,10 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: C = P.curve([x^2*y^3*z^4 - y^6*z^3 - 4*x^2*y^4*z^3 - 4*x^4*y^2*z^3 + 3*y^7*z^2 +\
-            10*x^2*y^5*z^2 + 9*x^4*y^3*z^2 + 5*x^6*y*z^2 - 3*y^8*z - 9*x^2*y^6*z - 11*x^4*y^4*z -\
-            7*x^6*y^2*z - 2*x^8*z + y^9 + 2*x^2*y^7 + 3*x^4*y^5 + 4*x^6*y^3 + 2*x^8*y])
+            sage: C = P.curve([x^2*y^3*z^4 - y^6*z^3 - 4*x^2*y^4*z^3 - 4*x^4*y^2*z^3
+            ....:              + 3*y^7*z^2 + 10*x^2*y^5*z^2 + 9*x^4*y^3*z^2 + 5*x^6*y*z^2
+            ....:              - 3*y^8*z - 9*x^2*y^6*z - 11*x^4*y^4*z - 7*x^6*y^2*z
+            ....:              - 2*x^8*z + y^9 + 2*x^2*y^7 + 3*x^4*y^5 + 4*x^6*y^3 + 2*x^8*y])
             sage: Q = P([0,1,1])
             sage: C.tangents(Q)
             [-y + z, 3*x^2 - y^2 + 2*y*z - z^2]
@@ -2133,7 +2134,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
             sage: f = y^2*z^7 - x^9 - x*z^8                                             # optional - sage.rings.finite_rings
             sage: C = Curve(f); C                                                       # optional - sage.rings.finite_rings
             Projective Plane Curve over Finite Field of size 5
-            defined by -x^9 + y^2*z^7 - x*z^8
+             defined by -x^9 + y^2*z^7 - x*z^8
             sage: C.rational_points()                                                   # optional - sage.rings.finite_rings
             [(0 : 0 : 1), (0 : 1 : 0), (2 : 2 : 1), (2 : 3 : 1),
              (3 : 1 : 1), (3 : 4 : 1)]
@@ -2283,8 +2284,8 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             (y/(y^5 + 1))*z^4 + (y^2/(y^5 + 1))*z^2
             sage: C(GF(4^2))                                                            # optional - sage.rings.finite_rings
             Set of rational points of Closed subscheme of Projective Space of
-            dimension 2 over Finite Field in z4 of size 2^4 defined by: x^5 +
-            y^5 + x*y*z^3 + z^5
+             dimension 2 over Finite Field in z4 of size 2^4 defined by:
+              x^5 + y^5 + x*y*z^3 + z^5
         """
         try:
             return super().__call__(*args)
