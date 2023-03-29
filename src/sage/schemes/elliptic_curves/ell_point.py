@@ -180,7 +180,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         sage: E = EllipticCurve([0,0,1,-1,0])
         sage: S = E(QQ); S
         Abelian group of points on
-        Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+         Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
 
         sage: K.<i> = NumberField(x^2 + 1)                                              # optional - sage.rings.number_field
         sage: E = EllipticCurve(K, [0,1,0,-160,308])                                    # optional - sage.rings.number_field
@@ -229,7 +229,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         sage: P.domain()                                                                # optional - sage.rings.number_field
         Spectrum of Number Field in a with defining polynomial x^2 - 3
         sage: P.codomain()                                                              # optional - sage.rings.number_field
-        Elliptic Curve defined by y^2 = x^3 + x + 1 over Number Field in a with defining polynomial x^2 - 3
+        Elliptic Curve defined by y^2 = x^3 + x + 1
+         over Number Field in a with defining polynomial x^2 - 3
         sage: P.codomain() == P.curve()                                                 # optional - sage.rings.number_field
         True
     """
@@ -736,8 +737,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
             sage: [type(c) for c in -EllipticCurve('37a1').gen(0)]
             [<... 'sage.rings.rational.Rational'>,
-            <... 'sage.rings.rational.Rational'>,
-            <... 'sage.rings.rational.Rational'>]
+             <... 'sage.rings.rational.Rational'>,
+             <... 'sage.rings.rational.Rational'>]
         """
         if self.is_zero():
             return self
@@ -1011,17 +1012,17 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
           sage: E = EllipticCurve([1, 0, 1, -19, 26])
           sage: [(Q,Q._order) for Q in E(0).division_points(12)]
           [((-5 : 2 : 1), 2),
-          ((-2 : -7 : 1), 6),
-          ((-2 : 8 : 1), 6),
-          ((0 : 1 : 0), 1),
-          ((1 : -4 : 1), 6),
-          ((1 : 2 : 1), 6),
-          ((7/4 : -11/8 : 1), 2),
-          ((3 : -2 : 1), 2),
-          ((4 : -7 : 1), 3),
-          ((4 : 2 : 1), 3),
-          ((13 : -52 : 1), 6),
-          ((13 : 38 : 1), 6)]
+           ((-2 : -7 : 1), 6),
+           ((-2 : 8 : 1), 6),
+           ((0 : 1 : 0), 1),
+           ((1 : -4 : 1), 6),
+           ((1 : 2 : 1), 6),
+           ((7/4 : -11/8 : 1), 2),
+           ((3 : -2 : 1), 2),
+           ((4 : -7 : 1), 3),
+           ((4 : 2 : 1), 3),
+           ((13 : -52 : 1), 6),
+           ((13 : 38 : 1), 6)]
           sage: P = E(4,-7)
           sage: P.order()
           3
@@ -2588,7 +2589,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve([a, 4]); E                                          # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 = x^3 + a*x + 4
-            over Number Field in a with defining polynomial x^3 - 2
+             over Number Field in a with defining polynomial x^3 - 2
             sage: P = E((0,2))                                                          # optional - sage.rings.number_field
             sage: P.height()                                                            # optional - sage.rings.number_field
             0.810463096585925
@@ -2782,7 +2783,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: K.<a> = QuadraticField(-2)                                            # optional - sage.rings.number_field
             sage: E = EllipticCurve(K, [0,-1,1,0,0]); E                                 # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 over Number Field
-            in a with defining polynomial x^2 + 2 with a = 1.414213562373095?*I
+             in a with defining polynomial x^2 + 2 with a = 1.414213562373095?*I
             sage: P = E.lift_x(2 + a); P                                                # optional - sage.rings.number_field
             (a + 2 : 2*a + 1 : 1)
             sage: P.archimedean_local_height(K.places(prec=170)[0]) / 2                 # optional - sage.rings.number_field
@@ -2791,7 +2792,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E                                # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x
-            over Number Field in i with defining polynomial x^2 + 1
+             over Number Field in i with defining polynomial x^2 + 1
             sage: P = E((0,0))                                                          # optional - sage.rings.number_field
             sage: P.archimedean_local_height(K.places()[0]) / 2                         # optional - sage.rings.number_field
             0.510184995162373
@@ -3010,7 +3011,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve(K, [0,0,4,6*i,0]); E                                # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 + 4*y = x^3 + 6*i*x
-            over Number Field in i with defining polynomial x^2 + 1
+             over Number Field in i with defining polynomial x^2 + 1
             sage: P = E((0,0))                                                          # optional - sage.rings.number_field
             sage: P.non_archimedean_local_height(K.ideal(i+1))                          # optional - sage.rings.number_field
             -1/2*log(2)
