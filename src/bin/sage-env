@@ -305,11 +305,11 @@ if [ -n "$SAGE_LOCAL" ]; then
 fi
 
 if [ -z "$SAGE_REPO_ANONYMOUS" ]; then
-    SAGE_REPO_ANONYMOUS="https://github.com/sagemath/sagetrac-mirror.git"
+    SAGE_REPO_ANONYMOUS="https://github.com/sagemath/sage.git"
     export SAGE_REPO_ANONYMOUS
 fi
 if [ -z "$SAGE_REPO_AUTHENTICATED" ]; then
-        SAGE_REPO_AUTHENTICATED="ssh://git@trac.sagemath.org:2222/sage.git"
+        SAGE_REPO_AUTHENTICATED="https://github.com/sagemath/sage.git"
         export SAGE_REPO_AUTHENTICATED
 fi
 
