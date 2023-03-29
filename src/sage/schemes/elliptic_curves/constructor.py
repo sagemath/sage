@@ -147,7 +147,7 @@ class EllipticCurveFactory(UniqueFactory):
         sage: E = EllipticCurve(CC, [0,0,1,-1,0])
         sage: E
         Elliptic Curve defined by y^2 + 1.00000000000000*y = x^3 + (-1.00000000000000)*x
-        over Complex Field with 53 bits of precision
+         over Complex Field with 53 bits of precision
         sage: E.j_invariant()
         2988.97297297297
 
@@ -656,7 +656,7 @@ def EllipticCurve_from_j(j, minimal_twist=True):
     `j-1728` the following example would take a long time without
     setting ``minimal_twist`` to False::
 
-       sage: E = EllipticCurve_from_j(2^256+1,minimal_twist=False)
+       sage: E = EllipticCurve_from_j(2^256+1, minimal_twist=False)
        sage: E.j_invariant() == 2^256+1
        True
     """

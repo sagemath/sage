@@ -550,7 +550,7 @@ def _cardinality_subfield(self, jpol):
         sage: k.<a> = GF(7^5)
         sage: E = EllipticCurve(k, [1,2,3,4,5]); E
         Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5
-        over Finite Field in a of size 7^5
+         over Finite Field in a of size 7^5
         sage: _cardinality_subfield(E, E.j_invariant().minimal_polynomial())
         17019
 

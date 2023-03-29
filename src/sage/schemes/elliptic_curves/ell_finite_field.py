@@ -941,8 +941,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E = EllipticCurve(GF(11),[2,5])
             sage: E.abelian_group()
             Additive abelian group isomorphic to Z/10 embedded in
-            Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 2*x + 5
-            over Finite Field of size 11
+             Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 2*x + 5
+              over Finite Field of size 11
 
         ::
 
@@ -966,10 +966,10 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         The group can be trivial::
 
-            sage: E = EllipticCurve(GF(2),[0,0,1,1,1])
+            sage: E = EllipticCurve(GF(2), [0,0,1,1,1])
             sage: E.abelian_group()
             Trivial group embedded in Abelian group of points on
-            Elliptic Curve defined by y^2 + y = x^3 + x + 1 over Finite Field of size 2
+             Elliptic Curve defined by y^2 + y = x^3 + x + 1 over Finite Field of size 2
 
         Of course, there are plenty of points if we extend the field::
 
@@ -990,15 +990,15 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: K.<i> = QuadraticField(-1)
             sage: OK = K.ring_of_integers()
-            sage: P=K.factor(10007)[0][0]
+            sage: P = K.factor(10007)[0][0]
             sage: OKmodP = OK.residue_field(P)
-            sage: E = EllipticCurve([0,0,0,i,i+3])
+            sage: E = EllipticCurve([0, 0, 0, i, i + 3])
             sage: Emod = E.change_ring(OKmodP); Emod
-            Elliptic Curve defined by y^2  = x^3 + ibar*x + (ibar+3)
-            over Residue field in ibar of Fractional ideal (10007)
+            Elliptic Curve defined by y^2 = x^3 + ibar*x + (ibar+3)
+             over Residue field in ibar of Fractional ideal (10007)
             sage: Emod.abelian_group() #random generators
             (Multiplicative Abelian group isomorphic to C50067594 x C2,
-            ((3152*ibar + 7679 : 7330*ibar + 7913 : 1), (8466*ibar + 1770 : 0 : 1)))
+             ((3152*ibar + 7679 : 7330*ibar + 7913 : 1), (8466*ibar + 1770 : 0 : 1)))
         """
 
         gens = self.gens()
@@ -1042,8 +1042,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E = EllipticCurve(GF(62207^2), [1,0])
             sage: E.abelian_group()
             Additive abelian group isomorphic to Z/62208 + Z/62208 embedded in
-            Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
-            over Finite Field in z2 of size 62207^2
+             Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+              over Finite Field in z2 of size 62207^2
             sage: PA,QA = E.torsion_basis(2^8)
             sage: PA.weil_pairing(QA, 2^8).multiplicative_order()
             256
@@ -1672,9 +1672,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: K = GF(3**5)
             sage: [E.ainvs() for E in EllipticCurve(j=K(0)).twists()] # random
             [(0, 0, 0, 1, 0),
-            (0, 0, 0, 2, 0),
-            (0, 0, 0, 2, z5^4 + z5^3 + z5^2),
-            (0, 0, 0, 2, 2*z5^4 + 2*z5^3 + 2*z5^2)]
+             (0, 0, 0, 2, 0),
+             (0, 0, 0, 2, z5^4 + z5^3 + z5^2),
+             (0, 0, 0, 2, 2*z5^4 + 2*z5^3 + 2*z5^2)]
 
             sage: K = GF(3**4)
             sage: [E.ainvs() for E in EllipticCurve(j=K(1)).twists()]
@@ -1683,11 +1683,11 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: K = GF(3**4)
             sage: [E.ainvs() for E in EllipticCurve(j=K(0)).twists()] # random
             [(0, 0, 0, 1, 0),
-            (0, 0, 0, 2, 2*z4^3 + 2*z4^2 + 2*z4 + 2),
-            (0, 0, 0, 1, 0),
-            (0, 0, 0, 1, 2*z4^3 + 2*z4^2 + 2*z4 + 2),
-            (0, 0, 0, z4, 0),
-            (0, 0, 0, z4^3, 0)]
+             (0, 0, 0, 2, 2*z4^3 + 2*z4^2 + 2*z4 + 2),
+             (0, 0, 0, 1, 0),
+             (0, 0, 0, 1, 2*z4^3 + 2*z4^2 + 2*z4 + 2),
+             (0, 0, 0, z4, 0),
+             (0, 0, 0, z4^3, 0)]
 
         In characteristic 2, the number of twists is 2 except for
         `j=0=1728`, when there are either 3 or 7 depending on whether the
@@ -1708,12 +1708,12 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: K = GF(2**8)
             sage: [E.ainvs() for E in EllipticCurve(j=K(0)).twists()] # random
             [(0, 0, 1, 0, 0),
-            (0, 0, 1, 0, z8^5 + z8^4 + z8^3),
-            (0, 0, 1, z8^6 + z8^5 + z8^2 + 1, 0),
-            (0, 0, z8^4 + z8^3 + z8^2 + 1, 0, 0),
-            (0, 0, z8^4 + z8^3 + z8^2 + 1, 0, z8^3 + z8^2 + 1),
-            (0, 0, z8^6 + z8^3 + z8^2, 0, 0),
-            (0, 0, z8^6 + z8^3 + z8^2, 0, z8^3 + z8^2)]
+             (0, 0, 1, 0, z8^5 + z8^4 + z8^3),
+             (0, 0, 1, z8^6 + z8^5 + z8^2 + 1, 0),
+             (0, 0, z8^4 + z8^3 + z8^2 + 1, 0, 0),
+             (0, 0, z8^4 + z8^3 + z8^2 + 1, 0, z8^3 + z8^2 + 1),
+             (0, 0, z8^6 + z8^3 + z8^2, 0, 0),
+             (0, 0, z8^6 + z8^3 + z8^2, 0, z8^3 + z8^2)]
 
         TESTS:
 
@@ -1795,18 +1795,18 @@ def curves_with_j_0(K):
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_0
         sage: sorted(curves_with_j_0(GF(7)), key = lambda E: E.a_invariants())
         [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7,
-        Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field of size 7,
-        Elliptic Curve defined by y^2 = x^3 + 3 over Finite Field of size 7,
-        Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 7,
-        Elliptic Curve defined by y^2 = x^3 + 5 over Finite Field of size 7,
-        Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 7]
+         Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field of size 7,
+         Elliptic Curve defined by y^2 = x^3 + 3 over Finite Field of size 7,
+         Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 7,
+         Elliptic Curve defined by y^2 = x^3 + 5 over Finite Field of size 7,
+         Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 7]
         sage: curves_with_j_0(GF(25))
         [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 5^2,
-        Elliptic Curve defined by y^2 = x^3 + z2 over Finite Field in z2 of size 5^2,
-        Elliptic Curve defined by y^2 = x^3 + (z2+3) over Finite Field in z2 of size 5^2,
-        Elliptic Curve defined by y^2 = x^3 + (4*z2+3) over Finite Field in z2 of size 5^2,
-        Elliptic Curve defined by y^2 = x^3 + (2*z2+2) over Finite Field in z2 of size 5^2,
-        Elliptic Curve defined by y^2 = x^3 + (4*z2+1) over Finite Field in z2 of size 5^2]
+         Elliptic Curve defined by y^2 = x^3 + z2 over Finite Field in z2 of size 5^2,
+         Elliptic Curve defined by y^2 = x^3 + (z2+3) over Finite Field in z2 of size 5^2,
+         Elliptic Curve defined by y^2 = x^3 + (4*z2+3) over Finite Field in z2 of size 5^2,
+         Elliptic Curve defined by y^2 = x^3 + (2*z2+2) over Finite Field in z2 of size 5^2,
+         Elliptic Curve defined by y^2 = x^3 + (4*z2+1) over Finite Field in z2 of size 5^2]
 
     For `K=\GF{q}` where `q\equiv5\mod{6}` there are two curves,
     quadratic twists of each other by `-3`: `y^2=x^3+1` and
@@ -1815,10 +1815,10 @@ def curves_with_j_0(K):
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_0
         sage: curves_with_j_0(GF(5))
         [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 5,
-        Elliptic Curve defined by y^2 = x^3 + 3 over Finite Field of size 5]
+         Elliptic Curve defined by y^2 = x^3 + 3 over Finite Field of size 5]
         sage: curves_with_j_0(GF(11))
         [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 11,
-        Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 11]
+         Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 11]
     """
     if not K.is_finite():
         raise ValueError("field must be finite")
@@ -1856,14 +1856,14 @@ def curves_with_j_1728(K):
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_1728
         sage: sorted(curves_with_j_1728(GF(5)), key = lambda E: E.a_invariants())
         [Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 5,
-        Elliptic Curve defined by y^2 = x^3 + 2*x over Finite Field of size 5,
-        Elliptic Curve defined by y^2 = x^3 + 3*x over Finite Field of size 5,
-        Elliptic Curve defined by y^2 = x^3 + 4*x over Finite Field of size 5]
+         Elliptic Curve defined by y^2 = x^3 + 2*x over Finite Field of size 5,
+         Elliptic Curve defined by y^2 = x^3 + 3*x over Finite Field of size 5,
+         Elliptic Curve defined by y^2 = x^3 + 4*x over Finite Field of size 5]
         sage: curves_with_j_1728(GF(49))
         [Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 7^2,
-        Elliptic Curve defined by y^2 = x^3 + z2*x over Finite Field in z2 of size 7^2,
-        Elliptic Curve defined by y^2 = x^3 + (z2+4)*x over Finite Field in z2 of size 7^2,
-        Elliptic Curve defined by y^2 = x^3 + (5*z2+4)*x over Finite Field in z2 of size 7^2]
+         Elliptic Curve defined by y^2 = x^3 + z2*x over Finite Field in z2 of size 7^2,
+         Elliptic Curve defined by y^2 = x^3 + (z2+4)*x over Finite Field in z2 of size 7^2,
+         Elliptic Curve defined by y^2 = x^3 + (5*z2+4)*x over Finite Field in z2 of size 7^2]
 
     For `K=\GF{q}` where `q\equiv3\mod{4}`, there are two curves,
     quadratic twists of each other by `-1`: `y^2=x^3+x` and
@@ -1872,10 +1872,10 @@ def curves_with_j_1728(K):
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_1728
         sage: curves_with_j_1728(GF(7))
         [Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7,
-        Elliptic Curve defined by y^2 = x^3 + 6*x over Finite Field of size 7]
+         Elliptic Curve defined by y^2 = x^3 + 6*x over Finite Field of size 7]
         sage: curves_with_j_1728(GF(11))
         [Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 11,
-        Elliptic Curve defined by y^2 = x^3 + 10*x over Finite Field of size 11]
+         Elliptic Curve defined by y^2 = x^3 + 10*x over Finite Field of size 11]
     """
     if not K.is_finite():
         raise ValueError("field must be finite")
@@ -1935,12 +1935,12 @@ def curves_with_j_0_char2(K):
         7
         sage: [E.ainvs() for E in curves] # random
         [(0, 0, 1, 0, 0),
-        (0, 0, 1, 0, z8^5 + z8^4 + z8^3),
-        (0, 0, 1, z8^6 + z8^5 + z8^2 + 1, 0),
-        (0, 0, z8^4 + z8^3 + z8^2 + 1, 0, 0),
-        (0, 0, z8^4 + z8^3 + z8^2 + 1, 0, z8^3 + z8^2 + 1),
-        (0, 0, z8^6 + z8^3 + z8^2, 0, 0),
-        (0, 0, z8^6 + z8^3 + z8^2, 0, z8^3 + z8^2)]
+         (0, 0, 1, 0, z8^5 + z8^4 + z8^3),
+         (0, 0, 1, z8^6 + z8^5 + z8^2 + 1, 0),
+         (0, 0, z8^4 + z8^3 + z8^2 + 1, 0, 0),
+         (0, 0, z8^4 + z8^3 + z8^2 + 1, 0, z8^3 + z8^2 + 1),
+         (0, 0, z8^6 + z8^3 + z8^2, 0, 0),
+         (0, 0, z8^6 + z8^3 + z8^2, 0, z8^3 + z8^2)]
 
     Check that the twists are mutually non-isomorphic::
 
@@ -2002,9 +2002,9 @@ def curves_with_j_0_char3(K):
         4
         sage: [E.ainvs() for E in curves] # random
         [(0, 0, 0, 1, 0),
-        (0, 0, 0, 2, 0),
-        (0, 0, 0, 2, z5^4 + z5^3 + z5^2),
-        (0, 0, 0, 2, 2*z5^4 + 2*z5^3 + 2*z5^2)]
+         (0, 0, 0, 2, 0),
+         (0, 0, 0, 2, z5^4 + z5^3 + z5^2),
+         (0, 0, 0, 2, 2*z5^4 + 2*z5^3 + 2*z5^2)]
 
     Check that the twists are mutually non-isomorphic::
 
@@ -2025,11 +2025,11 @@ def curves_with_j_0_char3(K):
         6
         sage: [E.ainvs() for E in curves] # random
         [(0, 0, 0, 1, 0),
-        (0, 0, 0, 2, 2*z4^3 + 2*z4^2 + 2*z4 + 2),
-        (0, 0, 0, 1, 0),
-        (0, 0, 0, 1, 2*z4^3 + 2*z4^2 + 2*z4 + 2),
-        (0, 0, 0, z4, 0),
-        (0, 0, 0, z4^3, 0)]
+         (0, 0, 0, 2, 2*z4^3 + 2*z4^2 + 2*z4 + 2),
+         (0, 0, 0, 1, 0),
+         (0, 0, 0, 1, 2*z4^3 + 2*z4^2 + 2*z4 + 2),
+         (0, 0, 0, z4, 0),
+         (0, 0, 0, z4^3, 0)]
 
     Check that the twists are mutually non-isomorphic::
 

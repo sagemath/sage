@@ -22,7 +22,7 @@ class BSD_data:
         sage: D.update()
         sage: D.Sha
         Tate-Shafarevich group for the Elliptic Curve
-        defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+         defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
     """
     def __init__(self):
         self.curve = None
@@ -54,7 +54,7 @@ class BSD_data:
             sage: D.update()
             sage: D.Sha
             Tate-Shafarevich group for the Elliptic Curve
-            defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+             defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
         """
         self.two_tor_rk = self.curve.two_torsion_rank()
         self.Sha = self.curve.sha()
@@ -361,7 +361,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
         sage: E = EllipticCurve('37a')
         sage: S = E.sha(); S
-        Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+        Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x
+         over Rational Field
         sage: def foo(use_database):
         ....:  return 4
         sage: S.an = foo
