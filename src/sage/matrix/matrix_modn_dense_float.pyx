@@ -52,7 +52,7 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
     ``Matrix_modn_dense_double`` class is used for larger moduli.
 
     Routines here are for the most basic access, see the
-    `matrix_modn_dense_template.pxi` file for higher-level routines.
+    ``matrix_modn_dense_template.pxi`` file for higher-level routines.
     """
     def __cinit__(self):
         """
