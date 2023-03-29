@@ -167,7 +167,7 @@ class Scheme(Parent):
             sage: S = Spec(ZZ)
             sage: f = S.identity_morphism()
             sage: from sage.schemes.generic.glue import GluedScheme
-            sage: T = GluedScheme(f,f)
+            sage: T = GluedScheme(f, f)
             sage: S.hom([1],T)
             Traceback (most recent call last):
             ...
@@ -217,15 +217,15 @@ class Scheme(Parent):
             sage: A(QQ)
             Set of rational points of Affine Space of dimension 2 over Rational Field
             sage: A(RR)
-            Set of rational points of Affine Space of dimension 2 over Real Field
-            with 53 bits of precision
+            Set of rational points of Affine Space of dimension 2
+             over Real Field with 53 bits of precision
 
         Space of dimension 2 over Rational Field::
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: A(NumberField(x^2 + 1, 'a'))                                          # optional - sage.rings.number_field
-            Set of rational points of Affine Space of dimension 2 over Number Field
-            in a with defining polynomial x^2 + 1
+            Set of rational points of Affine Space of dimension 2
+             over Number Field in a with defining polynomial x^2 + 1
             sage: A(GF(7))                                                              # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -287,7 +287,7 @@ class Scheme(Parent):
             Set of rational points of Projective Space of dimension 3 over Rational Field
             sage: P.point_homset(GF(11))                                                # optional - sage.rings.finite_rings
             Set of rational points of Projective Space of dimension 3 over
-            Finite Field of size 11
+             Finite Field of size 11
 
         TESTS::
 
@@ -507,7 +507,7 @@ class Scheme(Parent):
             sage: X = Spec(R.quotient(I))
             sage: X.coordinate_ring()
             Quotient of Multivariate Polynomial Ring in x, y over Rational Field
-            by the ideal (x^2 - y^2)
+             by the ideal (x^2 - y^2)
         """
         try:
             return self._coordinate_ring
@@ -960,8 +960,8 @@ class AffineScheme(UniqueRepresentation, Scheme):
             sage: S = Spec(R)
             sage: P = S(R.ideal(x, y, z)); P
             Point on Spectrum of Multivariate Polynomial Ring
-            in x, y, z over Rational Field defined by the Ideal (x, y, z)
-            of Multivariate Polynomial Ring in x, y, z over Rational Field
+             in x, y, z over Rational Field defined by the Ideal (x, y, z)
+              of Multivariate Polynomial Ring in x, y, z over Rational Field
 
         This indicates the fix of :trac:`12734`::
 
@@ -991,7 +991,8 @@ class AffineScheme(UniqueRepresentation, Scheme):
 
             sage: R = S.coordinate_ring()
             sage: S(R.ideal(0))
-            Point on Affine Space of dimension 1 over Integer Ring defined by the Ideal (0) of Multivariate Polynomial Ring in x over Integer Ring
+            Point on Affine Space of dimension 1 over Integer Ring
+             defined by the Ideal (0) of Multivariate Polynomial Ring in x over Integer Ring
 
         This explains why the following example raises an error rather
         than constructing the topological point defined by the prime
@@ -1208,8 +1209,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
             Scheme morphism:
               From: Affine Space of dimension 1 over Rational Field
               To:   Affine Plane Curve over Rational Field defined by p - 2
-              Defn: Defined on coordinates by sending (r) to
-                    (2, r)
+              Defn: Defined on coordinates by sending (r) to (2, r)
         """
         from sage.categories.map import Map
         from sage.categories.rings import Rings

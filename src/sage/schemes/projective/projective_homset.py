@@ -583,9 +583,9 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
         sage: E = EllipticCurve('37a')                                                              # optional - sage.rings.number_field
         sage: X = E(K)                                                                              # optional - sage.rings.number_field
         sage: X                                                                                     # optional - sage.rings.number_field
-        Abelian group of points on Elliptic Curve defined by
-        y^2 + y = x^3 + (-1)*x over Number Field in a with
-        defining polynomial x^2 + x - 24
+        Abelian group of points on
+         Elliptic Curve defined by y^2 + y = x^3 + (-1)*x
+          over Number Field in a with defining polynomial x^2 + x - 24
         sage: P = X([3,a])                                                                          # optional - sage.rings.number_field
         sage: P                                                                                     # optional - sage.rings.number_field
         (3 : a : 1)
@@ -678,7 +678,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
             sage: E = EllipticCurve('37a')
             sage: Hom = E.point_homset();  Hom
             Abelian group of points on Elliptic Curve defined
-            by y^2 + y = x^3 - x over Rational Field
+             by y^2 + y = x^3 - x over Rational Field
             sage: Hom.base_ring()
             Rational Field
             sage: Hom.base_extend(QQ)

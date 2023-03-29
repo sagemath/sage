@@ -18,8 +18,9 @@ the following example::
     sage: Q = E(6,5)                                                                    # optional - sage.rings.finite_rings
     sage: phi = E.isogeny(Q)                                                            # optional - sage.rings.finite_rings
     sage: phi                                                                           # optional - sage.rings.finite_rings
-    Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + x + 1 over
-    Finite Field of size 11 to Elliptic Curve defined by y^2 = x^3 + 7*x + 8
+    Isogeny of degree 7
+     from Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
+       to Elliptic Curve defined by y^2 = x^3 + 7*x + 8
     over Finite Field of size 11
     sage: P = E(4,5)                                                                    # optional - sage.rings.finite_rings
     sage: phi(P)                                                                        # optional - sage.rings.finite_rings
@@ -27,9 +28,10 @@ the following example::
     sage: phi.codomain()                                                                # optional - sage.rings.finite_rings
     Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 11
     sage: phi.rational_maps()                                                           # optional - sage.rings.finite_rings
-    ((x^7 + 4*x^6 - 3*x^5 - 2*x^4 - 3*x^3 + 3*x^2 + x - 2)/(x^6 + 4*x^5 - 4*x^4
-     - 5*x^3 + 5*x^2), (x^9*y - 5*x^8*y - x^7*y + x^5*y - x^4*y - 5*x^3*y -
-     5*x^2*y - 2*x*y - 5*y)/(x^9 - 5*x^8 + 4*x^6 - 3*x^4 + 2*x^3))
+    ((x^7 + 4*x^6 - 3*x^5 - 2*x^4
+       - 3*x^3 + 3*x^2 + x - 2)/(x^6 + 4*x^5 - 4*x^4 - 5*x^3 + 5*x^2),
+     (x^9*y - 5*x^8*y - x^7*y + x^5*y - x^4*y
+       - 5*x^3*y - 5*x^2*y - 2*x*y - 5*y)/(x^9 - 5*x^8 + 4*x^6 - 3*x^4 + 2*x^3))
 
 The methods directly accessible from an elliptic curve ``E`` over a
 field are
@@ -1048,7 +1050,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: EllipticCurveIsogeny(E, X^3 - 13*X^2 - 58*X + 503, check=False)
             Isogeny of degree 7
              from Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 107*x + 552
-                 over Rational Field
+                  over Rational Field
                to Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 5252*x - 178837
                   over Rational Field
         """

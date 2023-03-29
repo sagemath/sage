@@ -77,17 +77,17 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
         sage: k.<a> = GF(9); R.<x> = k[]                                                # optional - sage.rings.finite_rings
         sage: HyperellipticCurve(x^3 + x - 1, x+a)                                      # optional - sage.rings.finite_rings
         Hyperelliptic Curve over Finite Field in a of size 3^2
-        defined by y^2 + (x + a)*y = x^3 + x + 2
+         defined by y^2 + (x + a)*y = x^3 + x + 2
 
     Characteristic two::
 
         sage: P.<x> = GF(8, 'a')[]                                                      # optional - sage.rings.finite_rings
         sage: HyperellipticCurve(x^7 + 1, x)                                            # optional - sage.rings.finite_rings
         Hyperelliptic Curve over Finite Field in a of size 2^3
-        defined by y^2 + x*y = x^7 + 1
+         defined by y^2 + x*y = x^7 + 1
         sage: HyperellipticCurve(x^8 + x^7 + 1, x^4 + 1)                                # optional - sage.rings.finite_rings
         Hyperelliptic Curve over Finite Field in a of size 2^3
-        defined by y^2 + (x^4 + 1)*y = x^8 + x^7 + 1
+         defined by y^2 + (x^4 + 1)*y = x^8 + x^7 + 1
 
         sage: HyperellipticCurve(x^8 + 1, x)                                            # optional - sage.rings.finite_rings
         Traceback (most recent call last):
@@ -103,14 +103,14 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
         sage: P.<x> = PolynomialRing(FractionField(F))                                  # optional - sage.rings.finite_rings
         sage: HyperellipticCurve(x^5 + t, x)                                            # optional - sage.rings.finite_rings
         Hyperelliptic Curve over Laurent Series Ring in t over Finite Field of size 2
-        defined by y^2 + x*y = x^5 + t
+         defined by y^2 + x*y = x^5 + t
 
     We can change the names of the variables in the output::
 
         sage: k.<a> = GF(9); R.<x> = k[]                                                # optional - sage.rings.finite_rings
         sage: HyperellipticCurve(x^3 + x - 1, x + a, names=['X','Y'])                   # optional - sage.rings.finite_rings
         Hyperelliptic Curve over Finite Field in a of size 3^2
-        defined by Y^2 + (X + a)*Y = X^3 + X + 2
+         defined by Y^2 + (X + a)*Y = X^3 + X + 2
 
     This class also allows curves of genus zero or one, which are strictly
     speaking not hyperelliptic::
@@ -133,7 +133,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
         sage: HyperellipticCurve((x^3-x+2)^2*(x^6-1), check_squarefree=False)           # optional - sage.rings.finite_rings
         Hyperelliptic Curve over Finite Field of size 7 defined by
-        y^2 = x^12 + 5*x^10 + 4*x^9 + x^8 + 3*x^7 + 3*x^6 + 2*x^4 + 3*x^3 + 6*x^2 + 4*x + 3
+         y^2 = x^12 + 5*x^10 + 4*x^9 + x^8 + 3*x^7 + 3*x^6 + 2*x^4 + 3*x^3 + 6*x^2 + 4*x + 3
 
     The input for a (smooth) hyperelliptic curve of genus `g` should not
     contain polynomials of degree greater than `2g+2`. In the following

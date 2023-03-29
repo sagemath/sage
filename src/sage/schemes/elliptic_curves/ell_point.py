@@ -1481,14 +1481,14 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         the curve is negative, so it should exercise the `n<0` case in the
         code::
 
-            sage: p = 2017; A = 1; B = 30; r = 29; t = -70; k = 7;
+            sage: p = 2017; A = 1; B = 30; r = 29; t = -70; k = 7
             sage: F = GF(p); R.<x> = F[]                                                    # optional - sage.rings.finite_rings
             sage: E = EllipticCurve([F(A), F(B)]); P = E(369, 716)                          # optional - sage.rings.finite_rings
             sage: K.<a> = GF(p^k, modulus=x^k+2); EK = E.base_extend(K)                     # optional - sage.rings.finite_rings
             sage: Qx = 1226*a^6 + 1778*a^5 + 660*a^4 + 1791*a^3 + 1750*a^2 + 867*a + 770    # optional - sage.rings.finite_rings
             sage: Qy = 1764*a^6 + 198*a^5 + 1206*a^4 + 406*a^3 + 1200*a^2 + 273*a + 1712    # optional - sage.rings.finite_rings
             sage: Q = EK(Qx, Qy)                                                            # optional - sage.rings.finite_rings
-            sage: Q._miller_(P, t-1)                                                        # optional - sage.rings.finite_rings
+            sage: Q._miller_(P, t - 1)                                                      # optional - sage.rings.finite_rings
             1311*a^6 + 1362*a^5 + 1177*a^4 + 807*a^3 + 1331*a^2 + 1530*a + 1931
 
         ALGORITHM:

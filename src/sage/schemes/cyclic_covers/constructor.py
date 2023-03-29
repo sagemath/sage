@@ -79,7 +79,7 @@ def CyclicCover(r, f, names=None, check_smooth=True):
         sage: k.<a> = GF(9); R.<x> = k[]                                                # optional - sage.rings.finite_rings
         sage: CyclicCover(5, x^9 + x + 1, names=["A","B"])                              # optional - sage.rings.finite_rings
         Cyclic Cover of P^1 over Finite Field in a of size 3^2
-        defined by B^5 = A^9 + A + 1
+         defined by B^5 = A^9 + A + 1
 
     Double roots::
 

@@ -787,7 +787,7 @@ class GaloisGroup(SageObject):
             6
             sage: G.base_field()
             Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
-            with sqrt_minus_7 = 2.645751311064591?*I
+             with sqrt_minus_7 = 2.645751311064591?*I
             sage: G = Kc.galois_group(Kc); G
             Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
              over Ring class field extension of QQ[sqrt(-7)] of conductor 5
@@ -1849,7 +1849,7 @@ class HeegnerPoint(SageObject):
             5
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67,7); P
             Kolyvagin point of discriminant -67 and conductor 7
-            on elliptic curve of conductor 37
+             on elliptic curve of conductor 37
             sage: P.conductor()
             7
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P.conductor()
@@ -1868,7 +1868,7 @@ class HeegnerPoint(SageObject):
             -7
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67,7); P
             Kolyvagin point of discriminant -67 and conductor 7
-            on elliptic curve of conductor 37
+             on elliptic curve of conductor 37
             sage: P.discriminant()
             -67
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P.discriminant()
@@ -2136,7 +2136,7 @@ class HeegnerPoints_level_disc(HeegnerPoints):
         -7
         sage: H.quadratic_field()
         Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
-        with sqrt_minus_7 = 2.645751311064591?*I
+         with sqrt_minus_7 = 2.645751311064591?*I
         sage: H.kolyvagin_conductors()
         [1, 3, 5, 13, 15, 17, 19, 31, 39, 41]
 
@@ -2943,7 +2943,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
             sage: x = heegner_point(389, -7, 3); x
             Heegner point 3/778*sqrt(-7) - 223/778 of discriminant -7
-            and conductor 3 on X_0(389)
+             and conductor 3 on X_0(389)
             sage: x.galois_orbit_over_K()
             [Heegner point 3/778*sqrt(-7) - 223/778 of discriminant -7 and conductor 3 on X_0(389),
              Heegner point 3/1556*sqrt(-7) - 223/1556 of discriminant -7 and conductor 3 on X_0(389),

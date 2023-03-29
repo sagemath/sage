@@ -897,7 +897,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             Elliptic-curve morphism:
               From: Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55 over Rational Field
               To:   Elliptic Curve defined by y^2 + 17/6*x*y + 49/13068*y = x^3 - 769/396*x^2 - 3397/862488*x + 44863/7513995456
-                     over Rational Field
+                    over Rational Field
               Via:  (u,r,s,t) = (-66, 77, -99, -979)
             sage: -(-w) == w
             True
