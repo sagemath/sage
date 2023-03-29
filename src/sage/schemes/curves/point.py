@@ -8,7 +8,7 @@ We can create points on projective curves::
     sage: Q = C([1,1,0,0])
     sage: Q.parent()
     Set of rational points of Projective Curve over Rational Field
-    defined by x^3 - y^3 - 2*x*z^2, -x*y*z + z^3 - w^3
+     defined by x^3 - y^3 - 2*x*z^2, -x*y*z + z^3 - w^3
 
 or on affine curves::
 
@@ -17,7 +17,7 @@ or on affine curves::
     sage: Q = C([22,21])                                                                # optional - sage.rings.finite_rings
     sage: Q.parent()                                                                    # optional - sage.rings.finite_rings
     Set of rational points of Affine Plane Curve over Finite Field of size 23
-    defined by -y^4 - 6*x^2 - 2*x + y - 1
+     defined by -y^4 - 6*x^2 - 2*x + y - 1
 
 AUTHORS:
 
