@@ -696,14 +696,14 @@ class SageCrashHandler(IPAppCrashHandler):
             <sage.repl.interpreter.SageCrashHandler object at 0x...>
             sage: sorted(sch.info.items())
             [('app_name', 'Sage'),
-             ('bug_tracker', 'http://trac.sagemath.org'),
+             ('bug_tracker', 'https://github.com/sagemath/sage/issues'),
              ('contact_email', 'sage-support@googlegroups.com'),
              ('contact_name', 'sage-support'),
              ('crash_report_fname', 'Crash_report_Sage.txt')]
         """
         contact_name = 'sage-support'
         contact_email = 'sage-support@googlegroups.com'
-        bug_tracker = 'http://trac.sagemath.org'
+        bug_tracker = 'https://github.com/sagemath/sage/issues'
         CrashHandler.__init__(self,
             app, contact_name, contact_email, bug_tracker, show_crash_traceback=True)
         self.crash_report_fname = 'Sage_crash_report.txt'
