@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.rings.number_field
 r"""
 Elliptic curves over number fields
 
@@ -29,7 +29,7 @@ EXAMPLES::
 
 ::
 
-    sage: E.has_good_reduction(2+i)
+    sage: E.has_good_reduction(2 + i)
     True
     sage: E.local_data(4+i)
     Local data at Fractional ideal (i + 4):
@@ -109,7 +109,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
     EXAMPLES::
 
-        sage: K.<i> = NumberField(x^2+1)
+        sage: K.<i> = NumberField(x^2 + 1)
         sage: EllipticCurve([i, i - 1, i + 1, 24*i + 15, 14*i + 35])
         Elliptic Curve defined by
          y^2 + i*x*y + (i+1)*y = x^3 + (i-1)*x^2 + (24*i+15)*x + (14*i+35)
@@ -121,7 +121,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         A curve from the database of curves over `\QQ`, but over a larger field:
 
-            sage: K.<i> = NumberField(x^2+1)
+            sage: K.<i> = NumberField(x^2 + 1)
             sage: EllipticCurve(K,'389a1')
             Elliptic Curve defined by y^2 + y = x^3 + x^2 + (-2)*x
              over Number Field in i with defining polynomial x^2 + 1
