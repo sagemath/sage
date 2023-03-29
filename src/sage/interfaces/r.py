@@ -1274,7 +1274,7 @@ class R(ExtraTabCompletion, Interface):
         persistent in your own code::
 
             sage: from tempfile import TemporaryDirectory
-            sage: with TemporaryDirectory() as d: # optional - rpy2, rgraphics
+            sage: with TemporaryDirectory() as d:  # optional - rpy2 rgraphics
             ....:     _ = r.setwd(d)
             ....:     r.plot("1:10")
             null device
