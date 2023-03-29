@@ -37,14 +37,13 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial, _dict_to_list
 
-from sage.libs.pari.all import pari, pari_gen
+from sage.libs.pari.all import pari_gen
 
 from sage.rings.integer cimport smallInteger
 
-from sage.libs.ntl.all import ZZ as ntl_ZZ, ZZX, zero_ZZX, ZZ_p, ZZ_pX
+from sage.libs.ntl.all import ZZ as ntl_ZZ, ZZX, ZZ_p, ZZ_pX
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 
 from sage.rings.fraction_field_element import FractionFieldElement
 import sage.rings.polynomial.polynomial_ring
@@ -56,11 +55,33 @@ from sage.interfaces.singular import singular as singular_default
 
 from sage.structure.element import coerce_binop
 
+from sage.libs.ntl.convert cimport ZZ_to_mpz
 from sage.libs.ntl.types cimport NTL_SP_BOUND
 from sage.libs.ntl.ZZ_p cimport *
 from sage.libs.ntl.lzz_p cimport *
 from sage.libs.ntl.lzz_pX cimport *
 from sage.libs.ntl.ZZ_pX cimport *
+
+# We need to define this stuff before including the templating stuff
+# to make sure the function get_cparent is found since it is used in
+# 'polynomial_template.pxi'.
+
+cdef cparent get_cparent(parent) except? NULL:
+    if parent is None:
+        return NULL
+    # Retrieve precomputing modulus from parent ring.
+    cdef ntl_ZZ_pContext_class c
+    try:
+        c = parent._modulus
+    except AttributeError:
+        return NULL
+    return &(c.x)
+
+# first we include the definitions
+include "sage/libs/ntl/ntl_ZZ_pX_linkage.pxi"
+
+# and then the interface
+include "polynomial_template.pxi"
 
 def make_element(parent, args):
     return parent(*args)
@@ -98,8 +119,8 @@ cdef class Polynomial_dense_mod_n(Polynomial):
     TESTS::
 
         sage: f = Integers(5*2^100)['x'].random_element()
-        sage: from sage.rings.polynomial.polynomial_modn_dense_ntl import Polynomial_dense_mod_n
-        sage: isinstance(f, Polynomial_dense_mod_n)
+        sage: from sage.rings.polynomial.polynomial_modn_dense_ntl import Polynomial_ZZ_pX
+        sage: isinstance(f, Polynomial_ZZ_pX)
         True
 
     """
@@ -161,167 +182,6 @@ cdef class Polynomial_dense_mod_n(Polynomial):
 
         self.__poly = ZZ_pX(x, parent.modulus())
 
-
-    def __reduce__(self):
-        return make_element, (self.parent(), (self.list(), False, self.is_gen()))
-
-    def int_list(self):
-        return eval(str(self.__poly).replace(' ',','))
-
-    def __pari__(self, variable=None):
-        """
-        EXAMPLES::
-
-            sage: t = PolynomialRing(IntegerModRing(17),"t", implementation='NTL').gen()
-            sage: f = t^3 + 3*t - 17
-            sage: pari(f)
-            Mod(1, 17)*t^3 + Mod(3, 17)*t
-        """
-        if variable is None:
-            variable = self.parent().variable_name()
-        return pari(self.int_list()).Polrev(variable) * \
-               pari(1).Mod(self.parent().base_ring().order())
-
-    def ntl_ZZ_pX(self):
-        r"""
-        Return underlying NTL representation of this polynomial.  Additional
-        ''bonus'' functionality is available through this function.
-
-        .. warning::
-
-            You must call ``ntl.set_modulus(ntl.ZZ(n))`` before doing
-            arithmetic with this object!
-        """
-        return self.__poly
-
-    cdef get_unsafe(self, Py_ssize_t n):
-        """
-        Return the `n`-th coefficient of ``self``.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
-            sage: from sage.rings.polynomial.polynomial_modn_dense_ntl import Polynomial_dense_mod_n
-            sage: f = Polynomial_dense_mod_n(R,[5,10,13,1,4]); f
-            4*x^4 + x^3 + 13*x^2 + 10*x + 5
-            sage: f[2]
-            13
-            sage: f[:3]
-            13*x^2 + 10*x + 5
-        """
-        return self._parent._base(self.__poly[n]._sage_())
-
-    def _unsafe_mutate(self, n, value):
-        n = int(n)
-        if n < 0:
-            raise IndexError("n must be >= 0")
-        self.__poly[n] = int(value)
-
-    def _pow(self, n):
-        n = int(n)
-
-        if self.degree() <= 0:
-            return self.parent()(self[0]**n)
-        if n < 0:
-            return (~self)**(-n)
-        return self.parent()(self.__poly**n, construct=True)
-
-    cpdef _add_(self, right):
-        return self.parent()(self.__poly + (<Polynomial_dense_mod_n>right).__poly, construct=True)
-
-    cpdef _mul_(self, right):
-        """
-        EXAMPLES::
-
-            sage: x = PolynomialRing(Integers(100), 'x', implementation='NTL').0
-            sage: (x - 2)*(x^2 - 8*x + 16)
-            x^3 + 90*x^2 + 32*x + 68
-        """
-        return self.parent()(self.__poly * (<Polynomial_dense_mod_n>right).__poly, construct=True)
-
-    cpdef _lmul_(self, Element c):
-        try:
-            return self.parent()(ZZ_pX([c], self.parent().modulus()) * self.__poly, construct=True)
-        except RuntimeError as msg: # should this really be a TypeError
-            raise TypeError(msg)
-
-    @coerce_binop
-    def quo_rem(self, right):
-        """
-        Returns a tuple (quotient, remainder) where self = quotient*other +
-        remainder.
-        """
-        v = self.__poly.quo_rem((<Polynomial_dense_mod_n>right).__poly)
-        P = self.parent()
-        return (P(v[0], construct=True), P(v[1], construct=True) )
-
-    def shift(self, n):
-        r"""
-        Returns this polynomial multiplied by the power `x^n`. If `n` is negative,
-        terms below `x^n` will be discarded. Does not change this polynomial.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(Integers(12345678901234567890), implementation='NTL')
-            sage: p = x^2 + 2*x + 4
-            sage: p.shift(0)
-             x^2 + 2*x + 4
-            sage: p.shift(-1)
-             x + 2
-            sage: p.shift(-5)
-             0
-            sage: p.shift(2)
-             x^4 + 2*x^3 + 4*x^2
-
-        TESTS::
-
-            sage: p = R(0)
-            sage: p.shift(3).is_zero()
-            True
-            sage: p.shift(-3).is_zero()
-            True
-
-        AUTHOR:
-
-        - David Harvey (2006-08-06)
-        """
-        if n == 0 or self.degree() < 0:
-            return self
-        return self.parent()(self.__poly.left_shift(n),
-                             construct=True)
-
-    cpdef _sub_(self, right):
-        return self.parent()(self.__poly - (<Polynomial_dense_mod_n>right).__poly, construct=True)
-
-    def __floordiv__(self, right):
-        q, _ = self.quo_rem(right)
-        return q
-
-
-    def degree(self, gen=None):
-        """
-        Return the degree of this polynomial.
-
-        The zero polynomial has degree -1.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
-            sage: (x^3 + 3*x - 17).degree()
-            3
-            sage: R.zero().degree()
-            -1
-
-        TESTS:
-
-        Check output type (see :trac:`25182`)::
-
-            sage: R.<x> = PolynomialRing(Integers(3), implementation='NTL')
-            sage: isinstance(x.degree(), Integer)
-            True
-        """
-        return smallInteger(max(self.__poly.degree(), -1))
-
     cpdef list list(self, bint copy=True):
         """
         Return a new copy of the list of the underlying
@@ -335,36 +195,6 @@ cdef class Polynomial_dense_mod_n(Polynomial):
             [83, 3, 0, 1]
         """
         return [self.get_unsafe(n) for n from 0 <= n <= self.degree()]
-
-    def ntl_set_directly(self, v):
-        r"""
-        Set the value of this polynomial directly from a vector or string.
-
-        Polynomials over the integers modulo n are stored internally using
-        NTL's ``ZZ_pX`` class.  Use this function to set the value of this
-        polynomial using the NTL constructor, which is potentially *very* fast.
-        The input v is either a vector of ints or a string of the form ``[ n1
-        n2 n3 ... ]`` where the ni are integers and there are no commas between
-        them. The optimal input format is the string format, since that's what
-        NTL uses by default.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
-            sage: from sage.rings.polynomial.polynomial_modn_dense_ntl import Polynomial_dense_mod_n as poly_modn_dense
-            sage: poly_modn_dense(R, ([1,-2,3]))
-            3*x^2 + 98*x + 1
-            sage: f = poly_modn_dense(R, 0)
-            sage: f.ntl_set_directly([1,-2,3])
-            sage: f
-            3*x^2 + 98*x + 1
-            sage: f.ntl_set_directly('[1 -2 3 4]')
-            sage: f
-            4*x^3 + 3*x^2 + 98*x + 1
-        """
-        if self.is_gen():
-            raise TypeError("Cannot change the value of the generator.")
-        self.__poly = ZZ_pX(v, self.parent().modulus())
 
     # Polynomial_singular_repr stuff, copied due to lack of multiple inheritance
     def _singular_(self, singular=singular_default, force=False):
@@ -382,57 +212,6 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         self.parent()._singular_(singular, force=force).set_ring()  # this is expensive
         self.__singular = singular(str(self))
         return self.__singular
-
-    @coerce_binop
-    def minpoly_mod(self, other):
-        r"""
-        Compute the minimal polynomial of this polynomial modulo another
-        polynomial in the same ring.
-
-        ALGORITHM:
-
-        NTL's ``MinPolyMod()``, which uses Shoup's algorithm [Sho1999]_.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(GF(101), implementation='NTL')
-            sage: f = x^17 + x^2 - 1
-            sage: (x^2).minpoly_mod(f)
-            x^17 + 100*x^2 + 2*x + 100
-
-        TESTS:
-
-        Random testing::
-
-            sage: p = random_prime(2^99)
-            sage: R.<x> = PolynomialRing(GF(p), implementation='NTL')
-            sage: d = randrange(1,50)
-            sage: f = R.random_element(d)
-            sage: g = R.random_element((-1,5*d))
-            sage: poly = g.minpoly_mod(f)
-            sage: poly(R.quotient(f)(g))
-            0
-        """
-        mod = other.ntl_ZZ_pX()
-        elt = self.ntl_ZZ_pX() % mod
-        res = elt.minpoly_mod(mod)
-        return self.parent()(res, construct=True)
-
-    def small_roots(self, *args, **kwds):
-        r"""
-        See :func:`sage.rings.polynomial.polynomial_modn_dense_ntl.small_roots`
-        for the documentation of this function.
-
-        EXAMPLES::
-
-            sage: N = 10001
-            sage: K = Zmod(10001)
-            sage: P.<x> = PolynomialRing(K, implementation='NTL')
-            sage: f = x^3 + 10*x^2 + 5000*x - 222
-            sage: f.small_roots()
-            [4]
-        """
-        return small_roots(self, *args, **kwds)
 
 def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
     r"""
@@ -670,21 +449,22 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         if <object>self.c is not None:
             self.c.restore_c()
 
-    def ntl_set_directly(self, v):
-        # TODO: Get rid of this
-        Polynomial_dense_mod_n.ntl_set_directly(self, v)
-        # verbatim from __init__
-        v = [int(a) for a in self.__poly.list()]
-        self.__poly = None # this will eventually go away
-        cdef ntl_zz_pX ntl = ntl_zz_pX(v, self._parent.modulus()) # let it handle the hard work
-        self.x = ntl.x
-        self.c = ntl.c
-
     cdef Polynomial_dense_modn_ntl_zz _new(self):
         cdef Polynomial_dense_modn_ntl_zz y = <Polynomial_dense_modn_ntl_zz>Polynomial_dense_modn_ntl_zz.__new__(Polynomial_dense_modn_ntl_zz)
         y.c = self.c
         y._parent = self._parent
         return y
+
+    def __reduce__(self):
+        r"""
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(Integers(16), implementation='NTL')
+            sage: f = x^3 - x + 17
+            sage: loads(f.dumps()) == f
+            True
+        """
+        return make_element, (self.parent(), (self.list(), False, self.is_gen()))
 
     def int_list(self):
         """
@@ -694,7 +474,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
-            sage: from sage.rings.polynomial.polynomial_modn_dense_ntl import Polynomial_dense_mod_n as poly_modn_dense
+            sage: from sage.rings.polynomial.polynomial_modn_dense_ntl import Polynomial_dense_modn_ntl_zz as poly_modn_dense
             sage: f = poly_modn_dense(R,[5,0,0,1])
             sage: f.int_list()
             [5, 0, 0, 1]
@@ -765,6 +545,8 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         TESTS::
 
             sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
+            sage: (x - 2)*(x^2 - 8*x + 16)
+            x^3 + 90*x^2 + 32*x + 68
             sage: (x+5) * (x^2 - 1)
             x^3 + 5*x^2 + 99*x + 95
         """
@@ -836,11 +618,6 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
 
     cpdef _lmul_(self, Element c):
         """
-        TESTS::
-
-            sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
-            sage: 3 * (x+5)
-            3*x + 15
         """
         cdef Polynomial_dense_modn_ntl_zz r = self._new()
         cdef bint do_sig = zz_pX_deg(self.x) > 100000
@@ -1234,47 +1011,90 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             zz_pX_eval(fx.x, self.x, x.x)
             return self._parent(int(fx))
 
+    def small_roots(self, *args, **kwds):
+        r"""
+        See :func:`sage.rings.polynomial.polynomial_modn_dense_ntl.small_roots`
+        for the documentation of this function.
 
+        EXAMPLES::
 
-cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
-
-    def __init__(self, parent, v=None, check=True, is_gen=False, construct=False):
-        if isinstance(v, Polynomial):
-            if (<Element>v)._parent == parent:
-                Polynomial.__init__(self, parent, is_gen=is_gen)
-                self.x = (<Polynomial_dense_modn_ntl_ZZ>v).x
-                self.c = (<Polynomial_dense_modn_ntl_ZZ>v).c
-                return
-
-        Polynomial_dense_mod_n.__init__(self, parent, v, check=check, is_gen=is_gen, construct=construct)
-        cdef ntl_ZZ_pX ntl = self.__poly
-        self.__poly = None # this will eventually go away
-        self.x = ntl.x
-        self.c = ntl.c
-
-    def __dealloc__(self):
-        if <object>self.c is not None:
-            self.c.restore_c()
-
-    cdef Polynomial_dense_modn_ntl_ZZ _new(self):
-        cdef Polynomial_dense_modn_ntl_ZZ y = <Polynomial_dense_modn_ntl_ZZ>Polynomial_dense_modn_ntl_ZZ.__new__(Polynomial_dense_modn_ntl_ZZ)
-        y.c = self.c
-        y._parent = self._parent
-        return y
-
-
-    cpdef list list(self, bint copy=True):
-        return [self.get_unsafe(n) for n from 0 <= n <= self.degree()]
-
-    cdef get_unsafe(self, Py_ssize_t n):
+            sage: N = 10001
+            sage: K = Zmod(10001)
+            sage: P.<x> = PolynomialRing(K, implementation='NTL')
+            sage: f = x^3 + 10*x^2 + 5000*x - 222
+            sage: from sage.misc.verbose import set_verbose
+            sage: set_verbose(0)
+            sage: f.small_roots()
+            [4]
         """
-        Return the `n`-th coefficient of ``self``.
+        return small_roots(self, *args, **kwds)
+
+cdef class Polynomial_ZZ_pX(Polynomial_template):
+    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
+        """
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(Zmod(2**80+1))
+            sage: R(10**20)
+            100000000000000000000
+            sage: 1 * x
+            x
+            sage: x * 1
+            x
+            sage: R([10**20])
+            100000000000000000000
+        """
+        cdef ntl_ZZ_p _a
+
+        try:
+            if (x.parent() is parent.base_ring()) or (x.parent() == parent.base_ring()):
+                Polynomial.__init__(self, parent, is_gen=is_gen)
+                _a = ntl_ZZ_p(x, parent._modulus)
+                celement_construct(&self.x, get_cparent(parent))
+                ZZ_pX_SetCoeff(self.x, 0, _a.x)
+                return
+        except AttributeError:
+            pass
+
+        # Lists are not generically handled by Polynomial_template
+        if isinstance(x, Polynomial):
+            x = x.list()
+
+        if isinstance(x, (list, tuple)):
+            Polynomial.__init__(self, parent, is_gen=is_gen)
+            celement_construct(&self.x, get_cparent(parent))
+            K = parent.base_ring()
+            for i, e in enumerate(x):
+                # self(x) is supposed to be a conversion,
+                # not necessarily a coercion. So, we must
+                # not do K.coerce(e) but K(e).
+                e = K(e)
+                _a = ntl_ZZ_p(e, parent._modulus)
+                ZZ_pX_SetCoeff(self.x, i, _a.x)
+            return
+
+        Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
+
+    cdef inline Polynomial_ZZ_pX _new(self):
+        """
+        Creates a new object with the same parent.
+        """
+        cls = type(self)
+        cdef Polynomial_ZZ_pX r = cls.__new__(cls)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+        return r
+
+    cdef get_unsafe(self, Py_ssize_t i):
+        """
+        Return the `i`-th coefficient of ``self``.
 
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: from sage.rings.polynomial.polynomial_modn_dense_ntl import Polynomial_dense_modn_ntl_ZZ
-            sage: f = Polynomial_dense_modn_ntl_ZZ(R,[2,1])^7
+            sage: from sage.rings.polynomial.polynomial_modn_dense_ntl import Polynomial_ZZ_pX
+            sage: f = Polynomial_ZZ_pX(R,[2,1])^7
             sage: f[3]
             560
             sage: f[:6]
@@ -1282,75 +1102,72 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             sage: f[:50] == f
             True
         """
-        self.c.restore_c()
-        # TODO, make this faster
-        cdef ntl_ZZ_p ntl = ntl_ZZ_p(0, self.c)
-        ntl.x = ZZ_pX_coeff(self.x, n)
-        return self._parent._base(ntl._integer_())
+        (<ntl_ZZ_pContext_class> self._parent._modulus).restore_c()
+        cdef ZZ_p_c c = ZZ_pX_coeff(self.x, i)
+        cdef ZZ_c c_ZZ = ZZ_p_rep(c)
+        cdef Integer ans = Integer.__new__(Integer)
+        ZZ_to_mpz(ans.value, &c_ZZ)
+        return self._parent._base(ans)
 
-    def _unsafe_mutate(self, n, value):
-        self.c.restore_c()
-        cdef Integer a
-        if isinstance(value, Integer):
-            a = <Integer>value
-        else:
-            a = ZZ(value)
-        cdef ntl_ZZ_p val = ntl_ZZ_p(a, self.c)
-        ZZ_pX_SetCoeff(self.x, n, val.x)
+    def is_gen(self):
+        return ZZ_pX_IsX(self.x)
 
-    cpdef _add_(self, _right):
+    def valuation(self, p=None):
+        """
+        Returns the valuation of self, that is, the power of ``x``
+        (or polynomial ``p`` if specified) in self.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(Integers(10^50), implementation='NTL')
+            sage: x.valuation()
+            1
+            sage: f = x-3; f.valuation()
+            0
+            sage: f = x-3; f.valuation(x-3)
+            1
+            sage: f = x^99; f.valuation()
+            99
+            sage: f = x-x; f.valuation()
+            +Infinity
+        """
+        if p is not None:
+            return Polynomial.valuation(self, p=p)
+        cdef long n
+        cdef ZZ_p_c coeff
+        for n from 0 <= n <= ZZ_pX_deg(self.x):
+            coeff = ZZ_pX_coeff(self.x, n)
+            if not ZZ_p_IsZero(coeff):
+                return n
+        return infinity
+
+    cpdef _richcmp_(self, other, int op):
+        # Not implemented in linkage template
+        return Polynomial._richcmp_(self, other, op)
+
+    cpdef _rmul_(self, Element c):
         """
         TESTS::
 
             sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: (x+5) + (x^2 - 6)
-            x^2 + x + 999999999999999999999999999999
+            sage: (x+5) * 3
+            3*x + 15
         """
-        cdef Polynomial_dense_modn_ntl_ZZ right = <Polynomial_dense_modn_ntl_ZZ>_right
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
-        cdef bint do_sig = (ZZ_pX_deg(self.x) + ZZ_pX_deg(right.x)) * self.c.p_bits > 1e7
-        if do_sig: sig_on()
-        self.c.restore_c()
-        ZZ_pX_add(r.x, self.x, right.x)
-        if do_sig: sig_off()
+        # Polynomial_template only handles small integers.
+        cdef Polynomial_ZZ_pX r = self._new()
+        cdef ntl_ZZ_p cc = ntl_ZZ_p(c, self._parent._modulus)
+        ZZ_pX_rmul(r.x, self.x, cc.x)
         return r
 
-    cpdef _sub_(self, _right):
-        """
+    cpdef _lmul_(self, Element c):
+        r"""
         TESTS::
 
             sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: (x+5) - (x^2 - 6)
-            999999999999999999999999999999*x^2 + x + 11
+            sage: 3 * (x+5)
+            3*x + 15
         """
-        cdef Polynomial_dense_modn_ntl_ZZ right = <Polynomial_dense_modn_ntl_ZZ>_right
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
-        cdef bint do_sig = (ZZ_pX_deg(self.x) + ZZ_pX_deg(right.x)) * self.c.p_bits > 1e7
-        if do_sig: sig_on()
-        self.c.restore_c()
-        ZZ_pX_sub(r.x, self.x, right.x)
-        if do_sig: sig_off()
-        return r
-
-    cpdef _mul_(self, _right):
-        """
-        TESTS::
-
-            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: (x+5) * (x^2 - 1)
-            x^3 + 5*x^2 + 999999999999999999999999999999*x + 999999999999999999999999999995
-        """
-        cdef Polynomial_dense_modn_ntl_ZZ right = <Polynomial_dense_modn_ntl_ZZ>_right
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
-        cdef bint do_sig = (ZZ_pX_deg(self.x) + ZZ_pX_deg(right.x)) * self.c.p_bits > 1e5
-        if do_sig: sig_on()
-        self.c.restore_c()
-        if self is right:
-            ZZ_pX_sqr(r.x, self.x)
-        else:
-            ZZ_pX_mul(r.x, self.x, right.x)
-        if do_sig: sig_off()
-        return r
+        return self._rmul_(c)
 
     cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         """
@@ -1378,171 +1195,16 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             sage: f._mul_trunc_(f, 2)
             999999999999999999999999999744*x + 256
         """
-        cdef Polynomial_dense_modn_ntl_ZZ op2 = <Polynomial_dense_modn_ntl_ZZ> right
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
-        cdef bint do_sig = (ZZ_pX_deg(self.x) + ZZ_pX_deg(op2.x)) * self.c.p_bits > 1e5
-        if do_sig: sig_on()
-        self.c.restore_c()
+        cdef Polynomial_ZZ_pX op1 = <Polynomial_ZZ_pX>self
+        cdef Polynomial_ZZ_pX op2 = <Polynomial_ZZ_pX>right
+        cdef Polynomial_ZZ_pX r = self._new()
         if self is op2:
-            ZZ_pX_SqrTrunc(r.x, self.x, n)
+            op1 = op1.truncate(n)
+            ZZ_pX_SqrTrunc(r.x, op1.x, n)
         else:
-            ZZ_pX_MulTrunc(r.x, self.x, op2.x, n)
-        if do_sig: sig_off()
-        return r
-
-    cpdef _rmul_(self, Element c):
-        """
-        TESTS::
-
-            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: (x+5) * 3
-            3*x + 15
-        """
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
-        cdef bint do_sig = ZZ_pX_deg(self.x) * self.c.p_bits > 1e7
-        if do_sig: sig_on()
-        self.c.restore_c()
-        cdef ntl_ZZ_p value = ntl_ZZ_p(c, self.c)
-        ZZ_pX_rmul(r.x, self.x, value.x)
-        if do_sig: sig_off()
-        return r
-
-    cpdef _lmul_(self, Element c):
-        """
-        TESTS::
-
-            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: 3 * (x+5)
-            3*x + 15
-        """
-        return self._rmul_(c)
-
-    def __pow__(Polynomial_dense_modn_ntl_ZZ self, ee, modulus):
-        """
-        TESTS::
-
-            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: (x+1)^5
-            x^5 + 5*x^4 + 10*x^3 + 10*x^2 + 5*x + 1
-
-        We define ``0^0`` to be unity, :trac:`13895`::
-
-            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: R(0)^0
-            1
-
-        The value returned from ``0^0`` should belong to our ring::
-
-            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: type(R(0)^0) == type(R(0))
-            True
-
-        """
-        cdef bint recip = 0, do_sig
-        cdef long e = ee
-        if e != ee:
-            raise TypeError("Only integral powers defined.")
-        elif e < 0:
-            recip = 1 # delay because powering frac field elements is slow
-            e = -e
-        if self == 0 and e == 0:
-            return self.parent(1)
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
-        cdef ZZ_pX_Modulus_c mod
-
-        self.c.restore_c()
-
-        if modulus is None:
-            if ZZ_pX_IsX(self.x):
-                ZZ_pX_LeftShift(r.x, self.x, e - 1)
-            else:
-                do_sig = ZZ_pX_deg(self.x) * e * self.c.p_bits > 1e5
-                if do_sig: sig_on()
-                ZZ_pX_power(r.x, self.x, e)
-                if do_sig: sig_off()
-        else:
-            if not isinstance(modulus, Polynomial_dense_modn_ntl_ZZ):
-                modulus = self.parent().coerce(modulus)
-            ZZ_pX_Modulus_build(mod, (<Polynomial_dense_modn_ntl_ZZ>modulus).x)
-
-            do_sig = ZZ_pX_deg(self.x) * e * self.c.p_bits > 1e5
-            if do_sig: sig_on()
-            ZZ_pX_PowerMod_long_pre(r.x, self.x, e, mod)
-            if do_sig: sig_off()
-        if recip:
-            return ~r
-        else:
-            return r
-
-    @coerce_binop
-    def quo_rem(self, right):
-        """
-        Returns `q` and `r`, with the degree of `r` less than the degree of `right`,
-        such that `q * right + r = self`.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: f = x^5+1; g = (x+1)^2
-            sage: q, r = f.quo_rem(g)
-            sage: q
-            x^3 + 999999999999999999999999999998*x^2 + 3*x + 999999999999999999999999999996
-            sage: r
-            5*x + 5
-            sage: q*g + r
-            x^5 + 1
-        """
-        cdef Polynomial_dense_modn_ntl_ZZ q = self._new()
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
-        cdef Polynomial_dense_modn_ntl_ZZ denom = <Polynomial_dense_modn_ntl_ZZ>right
-        sig_on()
-        self.c.restore_c()
-        ZZ_pX_DivRem(q.x, r.x, self.x, denom.x)
-        sig_off()
-        return q, r
-
-    cpdef _floordiv_(self, right):
-        """
-        Returns the whole part of self/right, without remainder.
-
-        For q = n // d, we have deg(n - q*d) < deg(d)
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: f = x^7 + 1; g = x^2 - 1
-            sage: q = f // g; q
-            x^5 + x^3 + x
-            sage: f - q*g
-            x + 1
-        """
-        cdef Polynomial_dense_modn_ntl_ZZ numer = <Polynomial_dense_modn_ntl_ZZ>self
-        cdef Polynomial_dense_modn_ntl_ZZ denom = <Polynomial_dense_modn_ntl_ZZ>right
-        cdef Polynomial_dense_modn_ntl_ZZ q = numer._new()
-        sig_on()
-        numer.c.restore_c()
-        ZZ_pX_div(q.x, numer.x, denom.x)
-        sig_off()
-        return q
-
-    cpdef _mod_(self, right):
-        """
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(Integers(9^30), implementation='NTL')
-            sage: f = x^7 + x + 1; g = x^3 - 1
-            sage: r = f % g; r
-            2*x + 1
-            sage: g * (x^4 + x) + r
-            x^7 + x + 1
-        """
-        cdef Polynomial_dense_modn_ntl_ZZ numer = <Polynomial_dense_modn_ntl_ZZ>self
-        cdef Polynomial_dense_modn_ntl_ZZ denom = <Polynomial_dense_modn_ntl_ZZ>right
-        cdef Polynomial_dense_modn_ntl_ZZ r = numer._new()
-        sig_on()
-        numer.c.restore_c()
-        ZZ_pX_rem(r.x, numer.x, denom.x)
-        sig_off()
+            op1 = op1.truncate(n)
+            op2 = op2.truncate(n)
+            ZZ_pX_MulTrunc(r.x, op1.x, op2.x, n)
         return r
 
     def shift(self, n):
@@ -1572,7 +1234,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         """
         return self << n
 
-    def __lshift__(Polynomial_dense_modn_ntl_ZZ self, long n):
+    def __lshift__(Polynomial_ZZ_pX self, long n):
         """
         TESTS::
 
@@ -1581,11 +1243,11 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             sage: f << 3
             x^8 + 2*x^4 + x^3
         """
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
+        cdef Polynomial_ZZ_pX r = self._new()
         ZZ_pX_LeftShift(r.x, self.x, n)
         return r
 
-    def __rshift__(Polynomial_dense_modn_ntl_ZZ self, long n):
+    def __rshift__(Polynomial_ZZ_pX self, long n):
         """
         TESTS::
 
@@ -1594,10 +1256,56 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             sage: f >> 3
             x^2
         """
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
+        cdef Polynomial_ZZ_pX r = self._new()
         ZZ_pX_RightShift(r.x, self.x, n)
         return r
 
+    def __call__(self, *args, **kwds):
+        """
+        Evaluate self at x. If x is a single argument coercible into
+        the base ring of self, this is done directly in NTL, otherwise
+        the generic Polynomial call code is used.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
+            sage: f = x^3+7
+            sage: f(5)
+            132
+            sage: f(5r)
+            132
+            sage: f(mod(5, 10^50))
+            132
+            sage: f(x)
+            x^3 + 7
+            sage: S.<y> = PolynomialRing(Integers(5), implementation='NTL')
+            sage: f(y)
+            y^3 + 2
+        """
+        if len(args) != 1 or len(kwds) != 0:
+            return Polynomial.__call__(self, *args, **kwds)
+        arg = args[0]
+        x = None
+        if isinstance(arg, int) or isinstance(arg, Integer):
+            x = Integer(arg)
+            ntl_ZZ_p(arg, self._parent._modulus)
+        elif isinstance(arg, Element):
+            if self._parent._base is (<Element>arg)._parent:
+                x = Integer(arg)
+            else:
+                map = self._parent._base.coerce_map_from((<Element>arg)._parent)
+                if map is not None:
+                    x = Integer(map(arg))
+        if x is None:
+            return Polynomial.__call__(self, *args, **kwds)
+
+        xp = ntl_ZZ_p(x, self._parent._modulus)
+        cdef ZZ_p_c fx
+        ZZ_pX_eval(fx, self.x, xp.x)
+        cdef ZZ_c fx_ZZ = ZZ_p_rep(fx)
+        cdef Integer ans = Integer.__new__(Integer)
+        ZZ_to_mpz(ans.value, &fx_ZZ)
+        return self._parent._base(ans)
 
     def _derivative(self, var=None):
         r"""
@@ -1634,10 +1342,9 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         if var is not None and var != self._parent.gen():
             raise ValueError("cannot differentiate with respect to {}".format(var))
 
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
+        cdef Polynomial_ZZ_pX r = self._new()
         ZZ_pX_diff(r.x, self.x)
         return r
-
 
     def reverse(self, degree=None):
         """
@@ -1673,187 +1380,60 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             ....:     for d in [None, 0, 1, 2, 3, 4, 5])
             True
         """
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
 
+        cdef Polynomial_ZZ_pX r = self._new()
         if degree is None:
             ZZ_pX_reverse(r.x, self.x)
         else:
             ZZ_pX_reverse_hi(r.x, self.x, degree)
         return r
 
-    def is_gen(self):
-        return ZZ_pX_IsX(self.x)
-
-    def valuation(self):
-        """
-        Returns the valuation of self, that is, the power of the
-        lowest non-zero monomial of self.
+    def small_roots(self, *args, **kwds):
+        r"""
+        See :func:`sage.rings.polynomial.polynomial_modn_dense_ntl.small_roots`
+        for the documentation of this function.
 
         EXAMPLES::
 
-            sage: R.<x> = PolynomialRing(Integers(10^50), implementation='NTL')
-            sage: x.valuation()
-            1
-            sage: f = x-3; f.valuation()
-            0
-            sage: f = x^99; f.valuation()
-            99
-            sage: f = x-x; f.valuation()
-            +Infinity
+            sage: N = 10001
+            sage: K = Zmod(10001)
+            sage: P.<x> = PolynomialRing(K, implementation='NTL')
+            sage: f = x^3 + 10*x^2 + 5000*x - 222
+            sage: from sage.misc.verbose import set_verbose
+            sage: set_verbose(0)
+            sage: f.small_roots()
+            [4]
         """
-        cdef long n
-        cdef ZZ_p_c coeff
-        for n from 0 <= n <= ZZ_pX_deg(self.x):
-            coeff = ZZ_pX_coeff(self.x, n)
-            if not ZZ_p_IsZero(coeff):
-                return n
-        return infinity
+        return small_roots(self, *args, **kwds)
 
-    def __bool__(self):
-        """
-        TESTS::
+cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_ZZ_pX):
+    """
+    A dense polynomial over the integers modulo a composite integer.
 
-            sage: R.<x> = PolynomialRing(Integers(12^29), implementation='NTL')
-            sage: f = x^4 + 1
-            sage: not f
-            False
-            sage: not (x-x)
-            True
-        """
-        return not ZZ_pX_IsZero(self.x)
+    TESTS::
 
-    def degree(self):
-        """
-        EXAMPLES::
+    Some NTL methods require a prime modulus, generic implementations are used::
 
-            sage: R.<x> = PolynomialRing(Integers(14^34), implementation='NTL')
-            sage: f = x^4 - x - 1
-            sage: f.degree()
-            4
-            sage: f = 14^43*x + 1
-            sage: f.degree()
-            0
-        """
-        return ZZ_pX_deg(self.x)
+        sage: R.<x> = PolynomialRing(Integers(10001))
+        sage: (x^2+1).resultant(x^2+4)
+        9
+        sage: (x^2 + x + 1).discriminant()
+        9998
+    """
 
-    cpdef Polynomial truncate(self, long n):
-        """
-        Returns this polynomial mod `x^n`.
+    def gcd(self, other):
+        return Polynomial.gcd(self, other)
 
-        EXAMPLES::
+    def xgcd(self, other):
+        return Polynomial.xgcd(self, other)
 
-            sage: R.<x> = PolynomialRing(Integers(15^30), implementation='NTL')
-            sage: f = sum(x^n for n in range(10)); f
-            x^9 + x^8 + x^7 + x^6 + x^5 + x^4 + x^3 + x^2 + x + 1
-            sage: f.truncate(6)
-            x^5 + x^4 + x^3 + x^2 + x + 1
-        """
-        cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
-        ZZ_pX_trunc(r.x, self.x, n)
-        return r
-
-    def __call__(self, *args, **kwds):
-        """
-        Evaluate self at x. If x is a single argument coercible into
-        the base ring of self, this is done directly in NTL, otherwise
-        the generic Polynomial call code is used.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
-            sage: f = x^3+7
-            sage: f(5)
-            132
-            sage: f(5r)
-            132
-            sage: f(mod(5, 10^50))
-            132
-            sage: f(x)
-            x^3 + 7
-            sage: S.<y> = PolynomialRing(Integers(5), implementation='NTL')
-            sage: f(y)
-            y^3 + 2
-        """
-        if len(args) != 1 or len(kwds) != 0:
-            return Polynomial.__call__(self, *args, **kwds)
-        arg = args[0]
-        cdef ntl_ZZ_p fx = ntl_ZZ_p(0, self.c), x = None
-        if isinstance(arg, int) or isinstance(arg, Integer):
-            x = ntl_ZZ_p(arg, self.c)
-        elif isinstance(arg, Element):
-            if <void *>self._parent._base == <void *>(<Element>arg)._parent: # c++ pointer hack
-                x = ntl_ZZ_p(arg, self.c)
-            else:
-                map = self._parent._base.coerce_map_from((<Element>arg)._parent)
-                if map is not None:
-                    x = ntl_ZZ_p(map(arg), self.c)
-        if x is None:
-            return Polynomial.__call__(self, *args, **kwds)
-        else:
-            ZZ_pX_eval(fx.x, self.x, x.x)
-            return self._parent(fx._integer_())
-
-
-cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
+cdef class Polynomial_dense_mod_p(Polynomial_ZZ_pX):
     """
     A dense polynomial over the integers modulo p, where p is prime.
     """
 
     @coerce_binop
-    def gcd(self, right):
-        """
-        Return the greatest common divisor of this polynomial and ``other``, as
-        a monic polynomial.
-
-        INPUT:
-
-        - ``other`` -- a polynomial defined over the same ring as ``self``
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(GF(3),implementation="NTL")
-            sage: f,g = x + 2, x^2 - 1
-            sage: f.gcd(g)
-            x + 2
-
-        """
-        g = self.ntl_ZZ_pX().gcd(right.ntl_ZZ_pX())
-        return self.parent()(g, construct=True)
-
-    @coerce_binop
-    def xgcd(self, other):
-        r"""
-        Compute the extended gcd of this element and ``other``.
-
-        INPUT:
-
-        - ``other`` -- an element in the same polynomial ring
-
-        OUTPUT:
-
-        A tuple ``(r,s,t)`` of elements in the polynomial ring such
-        that ``r = s*self + t*other``.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(GF(3),implementation='NTL')
-            sage: x.xgcd(x)
-            (x, 0, 1)
-            sage: (x^2 - 1).xgcd(x - 1)
-            (x + 2, 0, 1)
-            sage: R.zero().xgcd(R.one())
-            (1, 0, 1)
-            sage: (x^3 - 1).xgcd((x - 1)^2)
-            (x^2 + x + 1, 0, 1)
-            sage: ((x - 1)*(x + 1)).xgcd(x*(x - 1))
-            (x + 2, 1, 2)
-
-        """
-        r, s, t = self.ntl_ZZ_pX().xgcd(other.ntl_ZZ_pX())
-        return self.parent()(r, construct=True), self.parent()(s, construct=True), self.parent()(t, construct=True)
-
-    @coerce_binop
-    def resultant(self, other):
+    def resultant(self, Polynomial_ZZ_pX other):
         """
         Returns the resultant of self and other, which must lie in the same
         polynomial ring.
@@ -1873,8 +1453,13 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
             sage: r.parent() is GF(19)
             True
         """
-        other = self.parent().coerce(other)
-        return self.base_ring()(str(self.ntl_ZZ_pX().resultant(other.ntl_ZZ_pX())))
+        cdef ZZ_p_c r
+        (<ntl_ZZ_pContext_class> self._parent._modulus).restore_c()
+        ZZ_pX_resultant(r, self.x, other.x)
+        cdef ZZ_c r_ZZ = ZZ_p_rep(r)
+        cdef Integer ans = Integer.__new__(Integer)
+        ZZ_to_mpz(ans.value, &r_ZZ)
+        return self._parent._base(ans)
 
     def discriminant(self):
         """
@@ -1885,4 +1470,45 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
             sage: f.discriminant()
             12
         """
-        return self.base_ring()(str(self.ntl_ZZ_pX().discriminant()))
+        c = ~self.leading_coefficient()
+        m = self.degree()
+        if (m*(m-1) // 2) % 2:
+            c = -c
+        return c*self.resultant(self.derivative())
+
+    @coerce_binop
+    def minpoly_mod(self, Polynomial_ZZ_pX modulus):
+        r"""
+        Compute the minimal polynomial of this polynomial modulo another
+        polynomial in the same ring.
+
+        ALGORITHM:
+
+        NTL's ``MinPolyMod()``, which uses Shoup's algorithm [Sho1999]_.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(GF(101), implementation='NTL')
+            sage: f = x^17 + x^2 - 1
+            sage: (x^2).minpoly_mod(f)
+            x^17 + 100*x^2 + 2*x + 100
+
+        TESTS:
+
+        Random testing::
+
+            sage: p = random_prime(2^99)
+            sage: R.<x> = PolynomialRing(GF(p), implementation='NTL')
+            sage: d = randrange(1,50)
+            sage: f = R.random_element(d)
+            sage: g = R.random_element((-1,5*d))
+            sage: poly = g.minpoly_mod(f)
+            sage: poly(R.quotient(f)(g))
+            0
+        """
+        self = self % modulus
+        cdef Polynomial_ZZ_pX r = self._new()
+        sig_on()
+        ZZ_pX_MinPolyMod(r.x, self.x, modulus.x)
+        sig_off()
+        return r
