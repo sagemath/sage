@@ -36,7 +36,7 @@ git clone --origin upstream "$SRC" "$DST"
 cd "$DST"
 git remote set-url upstream "$SAGE_REPO_ANONYMOUS"
 git remote set-url --push upstream "do not push to upstream"
-git remote add trac trac https://github.com/sagemath/sagetrac-mirror.git
+git remote add trac https://github.com/sagemath/sagetrac-mirror.git
 git remote set-url --push trac "do not push to trac"
 
 # Save space
