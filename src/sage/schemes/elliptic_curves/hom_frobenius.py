@@ -56,8 +56,10 @@ Computing the dual of Frobenius is supported as well::
     sage: pi = EllipticCurveHom_frobenius(E)
     sage: pihat = pi.dual(); pihat
     Isogeny of degree 17
-     from Elliptic Curve defined by y^2 = x^3 + (15*z6^5+5*z6^4+8*z6^3+12*z6^2+11*z6+7)*x over Finite Field in z6 of size 17^6
-     to Elliptic Curve defined by y^2 = x^3 + z6*x over Finite Field in z6 of size 17^6
+     from Elliptic Curve defined by y^2 = x^3 + (15*z6^5+5*z6^4+8*z6^3+12*z6^2+11*z6+7)*x
+          over Finite Field in z6 of size 17^6
+       to Elliptic Curve defined by y^2 = x^3 + z6*x
+          over Finite Field in z6 of size 17^6
     sage: pihat.is_separable()
     True
     sage: pihat * pi == EllipticCurveHom_scalar(E,17)   # known bug -- #6413
@@ -71,18 +73,25 @@ A supersingular example (with purely inseparable dual)::
     sage: pi1 = EllipticCurveHom_frobenius(E)
     sage: pi1hat = pi1.dual(); pi1hat
     Composite morphism of degree 17 = 17*1:
-      From: Elliptic Curve defined by y^2 = x^3 + (15*z6^5+5*z6^4+8*z6^3+12*z6^2+11*z6+7) over Finite Field in z6 of size 17^6
-      To:   Elliptic Curve defined by y^2 = x^3 + z6 over Finite Field in z6 of size 17^6
+      From: Elliptic Curve defined by y^2 = x^3 + (15*z6^5+5*z6^4+8*z6^3+12*z6^2+11*z6+7)
+            over Finite Field in z6 of size 17^6
+      To:   Elliptic Curve defined by y^2 = x^3 + z6
+            over Finite Field in z6 of size 17^6
     sage: pi6 = EllipticCurveHom_frobenius(E,6)
     sage: pi6hat = pi6.dual(); pi6hat
     Composite morphism of degree 24137569 = 24137569*1:
-      From: Elliptic Curve defined by y^2 = x^3 + z6 over Finite Field in z6 of size 17^6
-      To:   Elliptic Curve defined by y^2 = x^3 + z6 over Finite Field in z6 of size 17^6
+      From: Elliptic Curve defined by y^2 = x^3 + z6
+            over Finite Field in z6 of size 17^6
+      To:   Elliptic Curve defined by y^2 = x^3 + z6
+            over Finite Field in z6 of size 17^6
     sage: pi6hat.factors()
     (Frobenius endomorphism of degree 24137569 = 17^6:
-       From: Elliptic Curve defined by y^2 = x^3 + z6 over Finite Field in z6 of size 17^6
-       To:   Elliptic Curve defined by y^2 = x^3 + z6 over Finite Field in z6 of size 17^6,
-     Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + z6 over Finite Field in z6 of size 17^6
+       From: Elliptic Curve defined by y^2 = x^3 + z6
+             over Finite Field in z6 of size 17^6
+       To:   Elliptic Curve defined by y^2 = x^3 + z6
+             over Finite Field in z6 of size 17^6,
+     Elliptic-curve endomorphism of
+      Elliptic Curve defined by y^2 = x^3 + z6 over Finite Field in z6 of size 17^6
        Via:  (u,r,s,t) = (2*z6^5 + 10*z6^3 + z6^2 + 8, 0, 0, 0))
 
 

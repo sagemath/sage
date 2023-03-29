@@ -25,11 +25,11 @@ First we try a real embedding::
     sage: emb = K.embeddings(RealField())[0]
     sage: L = E.period_lattice(emb); L
     Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x^2 + a*x + a
-    over Number Field in a with defining polynomial x^3 - 2 with respect to the embedding
-    Ring morphism:
-      From: Number Field in a with defining polynomial x^3 - 2
-      To:   Algebraic Real Field
-      Defn: a |--> 1.259921049894873?
+     over Number Field in a with defining polynomial x^3 - 2
+     with respect to the embedding Ring morphism:
+       From: Number Field in a with defining polynomial x^3 - 2
+       To:   Algebraic Real Field
+       Defn: a |--> 1.259921049894873?
 
 The first basis period is real::
 
@@ -50,11 +50,11 @@ Next a complex embedding::
     sage: emb = K.embeddings(ComplexField())[0]
     sage: L = E.period_lattice(emb); L
     Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x^2 + a*x + a
-    over Number Field in a with defining polynomial x^3 - 2 with respect to the embedding
-    Ring morphism:
-      From: Number Field in a with defining polynomial x^3 - 2
-      To:   Algebraic Field
-      Defn: a |--> -0.6299605249474365? - 1.091123635971722?*I
+     over Number Field in a with defining polynomial x^3 - 2
+     with respect to the embedding Ring morphism:
+       From: Number Field in a with defining polynomial x^3 - 2
+       To:   Algebraic Field
+       Defn: a |--> -0.6299605249474365? - 1.091123635971722?*I
 
 In this case, the basis `\omega_1`, `\omega_2` is always normalised so
 that `\tau = \omega_1/\omega_2` is in the fundamental region in the
@@ -76,11 +76,13 @@ We test that bug :trac:`8415` (caused by a PARI bug fixed in v2.3.5) is OK::
     sage: EK = E.change_ring(K)
     sage: EK.period_lattice(K.complex_embeddings()[0])
     Period lattice associated to Elliptic Curve defined by y^2 + y = x^3 + (-1)*x
-    over Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
-    with respect to the embedding Ring morphism:
-      From: Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
-      To:   Algebraic Field
-      Defn: a |--> -2.645751311064591?*I
+     over Number Field in a with defining polynomial x^2 + 7
+      with a = 2.645751311064591?*I
+     with respect to the embedding Ring morphism:
+       From: Number Field in a with defining polynomial x^2 + 7
+             with a = 2.645751311064591?*I
+       To:   Algebraic Field
+       Defn: a |--> -2.645751311064591?*I
 
 REFERENCES:
 
@@ -183,20 +185,20 @@ class PeriodLattice_ell(PeriodLattice):
             sage: E = EllipticCurve([0,1,0,a,a])
             sage: L = PeriodLattice_ell(E,emb); L
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x^2 + a*x + a
-            over Number Field in a with defining polynomial x^3 - 2 with respect to
-            the embedding Ring morphism:
-              From: Number Field in a with defining polynomial x^3 - 2
-              To:   Algebraic Real Field
-              Defn: a |--> 1.259921049894873?
+             over Number Field in a with defining polynomial x^3 - 2
+             with respect to the embedding Ring morphism:
+               From: Number Field in a with defining polynomial x^3 - 2
+               To:   Algebraic Real Field
+               Defn: a |--> 1.259921049894873?
 
             sage: emb = K.embeddings(ComplexField())[0]
             sage: L = PeriodLattice_ell(E,emb); L
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x^2 + a*x + a
-            over Number Field in a with defining polynomial x^3 - 2 with respect to
-            the embedding Ring morphism:
-              From: Number Field in a with defining polynomial x^3 - 2
-              To:   Algebraic Field
-              Defn: a |--> -0.6299605249474365? - 1.091123635971722?*I
+             over Number Field in a with defining polynomial x^3 - 2
+             with respect to the embedding Ring morphism:
+               From: Number Field in a with defining polynomial x^3 - 2
+               To:   Algebraic Field
+               Defn: a |--> -0.6299605249474365? - 1.091123635971722?*I
 
         TESTS::
 
@@ -278,7 +280,7 @@ class PeriodLattice_ell(PeriodLattice):
         TESTS::
 
             sage: from sage.schemes.elliptic_curves.period_lattice import PeriodLattice_ell
-            sage: K.<a> = NumberField(x^3-2)
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: E = EllipticCurve([0,1,0,a,a])
             sage: embs = K.embeddings(ComplexField())
             sage: L1,L2,L3 = [PeriodLattice_ell(E,e) for e in embs]
@@ -312,10 +314,11 @@ class PeriodLattice_ell(PeriodLattice):
             sage: emb = K.embeddings(RealField())[0]
             sage: E = EllipticCurve([0,1,0,a,a])
             sage: L = E.period_lattice(emb); L
-            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x^2 + a*x + a over Number Field in a with defining polynomial x^3 - 2 with respect to the embedding Ring morphism:
-            From: Number Field in a with defining polynomial x^3 - 2
-            To:   Algebraic Real Field
-            Defn: a |--> 1.259921049894873?
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x^2 + a*x + a over Number Field in a
+             with defining polynomial x^3 - 2 with respect to the embedding Ring morphism:
+               From: Number Field in a with defining polynomial x^3 - 2
+               To:   Algebraic Real Field
+               Defn: a |--> 1.259921049894873?
         """
         if self.E.base_field() is QQ:
             return "Period lattice associated to %s"%(self.E)
@@ -355,7 +358,7 @@ class PeriodLattice_ell(PeriodLattice):
             False
             sage: L(P, prec=96)
             0.4793482501902193161295330101 + 0.985868850775824102211203849...*I
-            sage: Q=E([3,5])
+            sage: Q = E([3,5])
             sage: Q.is_on_identity_component()
             True
             sage: L(Q, prec=96)
@@ -711,7 +714,8 @@ class PeriodLattice_ell(PeriodLattice):
             [False, False, True]
             sage: L = Ls[0]
             sage: w1,w2 = L._compute_periods_complex(100); w1,w2
-            (-1.3758860416607626645495991458 - 2.5856094662444337042877901304*I, -2.1033990784735587243397865076 + 0.42837877646062187766760569686*I)
+            (-1.3758860416607626645495991458 - 2.5856094662444337042877901304*I,
+             -2.1033990784735587243397865076 + 0.42837877646062187766760569686*I)
             sage: tau = w1/w2; tau
             0.38769450503287609349437509561 + 1.3082108821440725664008561928*I
             sage: tau.real()
