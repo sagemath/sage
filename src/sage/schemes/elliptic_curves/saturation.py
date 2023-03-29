@@ -627,8 +627,8 @@ def p_projections(Eq, Plist, p, debug=False):
         sage: G = EF.abelian_group()
         sage: G
         Additive abelian group isomorphic to Z/147 + Z/3
-        embedded in Abelian group of points on Elliptic Curve
-        defined by y^2 + y = x^3 + 402*x + 6 over Finite Field of size 409
+         embedded in Abelian group of points on Elliptic Curve
+          defined by y^2 + y = x^3 + 402*x + 6 over Finite Field of size 409
         sage: G.order().factor()
         3^2 * 7^2
 

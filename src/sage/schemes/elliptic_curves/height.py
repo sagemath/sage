@@ -758,13 +758,13 @@ class EllipticCurveCanonicalHeight:
         sage: E = EllipticCurve([0,0,0,0,1])
         sage: EllipticCurveCanonicalHeight(E)
         EllipticCurveCanonicalHeight object associated to
-        Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
+         Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
 
     Normally this object would be created like this::
 
         sage: E.height_function()
         EllipticCurveCanonicalHeight object associated to
-        Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
+         Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
     """
 
     def __init__(self, E):
@@ -781,7 +781,7 @@ class EllipticCurveCanonicalHeight:
             sage: E = EllipticCurve([0,0,0,0,1])
             sage: EllipticCurveCanonicalHeight(E)
             EllipticCurveCanonicalHeight object associated to
-            Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
+             Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
 
         An example over a number field::
 
@@ -789,15 +789,15 @@ class EllipticCurveCanonicalHeight:
             sage: E = EllipticCurve([0,i,0,i,i])
             sage: EllipticCurveCanonicalHeight(E)
             EllipticCurveCanonicalHeight object associated to
-            Elliptic Curve defined by y^2 = x^3 + i*x^2 + i*x + i
-            over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
+             Elliptic Curve defined by y^2 = x^3 + i*x^2 + i*x + i
+              over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         TESTS:
 
         The base field must be a number field (or `\QQ`)::
 
             sage: from sage.schemes.elliptic_curves.height import EllipticCurveCanonicalHeight
-            sage: E = EllipticCurve(GF(7),[0,0,0,0,1])
+            sage: E = EllipticCurve(GF(7), [0,0,0,0,1])
             sage: EllipticCurveCanonicalHeight(E)
             Traceback (most recent call last):
             ...
@@ -825,7 +825,7 @@ class EllipticCurveCanonicalHeight:
             sage: E = EllipticCurve([0,0,0,0,1])
             sage: E.height_function()
             EllipticCurveCanonicalHeight object associated to
-            Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
+             Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
         """
         return "EllipticCurveCanonicalHeight object associated to %s" % self.E
 
@@ -913,7 +913,7 @@ class EllipticCurveCanonicalHeight:
         Example 1 from [CPS2006]_::
 
             sage: K.<i> = QuadraticField(-1)
-            sage: E = EllipticCurve([0,0,0,1+5*i,3+i])
+            sage: E = EllipticCurve([0, 0, 0, 1 + 5*i, 3 + i])
             sage: H = E.height_function()
             sage: alpha = H.alpha(K.places()[0])
             sage: alpha
@@ -984,7 +984,7 @@ class EllipticCurveCanonicalHeight:
         EXAMPLES::
 
             sage: K.<i> = QuadraticField(-1)
-            sage: E = EllipticCurve([0,0,0,1+5*i,3+i])
+            sage: E = EllipticCurve([0, 0, 0, 1 + 5*i, 3 + i])
             sage: H = E.height_function()
             sage: H.e_p(K.prime_above(2))
             2
@@ -1156,7 +1156,7 @@ class EllipticCurveCanonicalHeight:
             sage: L(P) / L.real_period()
             0.615014189772115
             sage: H = E.height_function()
-            sage: H.psi(10/9,v)
+            sage: H.psi(10/9, v)
             0.615014189772115
 
         An example over a number field::
@@ -1172,9 +1172,9 @@ class EllipticCurveCanonicalHeight:
             0.867385122699931
             sage: xP = v(P.xy()[0])
             sage: H = E.height_function()
-            sage: H.psi(xP,v)
+            sage: H.psi(xP, v)
             0.867385122699931
-            sage: H.psi(1.23,v)
+            sage: H.psi(1.23, v)
             0.785854718241495
         """
         if xi > 1e9:
@@ -1211,16 +1211,16 @@ class EllipticCurveCanonicalHeight:
             sage: E = EllipticCurve('389a')
             sage: v = QQ.places()[0]
             sage: H = E.height_function()
-            sage: H.S(2,3,v)
+            sage: H.S(2, 3, v)
             ([0.224512677391895, 0.274544821597130] U [0.725455178402870, 0.775487322608105])
 
         An example over a number field::
 
-            sage: K.<a> = NumberField(x^3-2)
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: v = K.real_places()[0]
             sage: H = E.height_function()
-            sage: H.S(9,10,v)
+            sage: H.S(9, 10, v)
             ([0.0781194447253472, 0.0823423732016403] U [0.917657626798360, 0.921880555274653])
         """
         L = self.E.period_lattice(v)
@@ -1259,10 +1259,10 @@ class EllipticCurveCanonicalHeight:
             sage: E = EllipticCurve('389a')
             sage: v = QQ.places()[0]
             sage: H = E.height_function()
-            sage: H.S(2,3,v) , H.Sn(2,3,1,v)
+            sage: H.S(2, 3, v), H.Sn(2, 3, 1, v)
             (([0.224512677391895, 0.274544821597130] U [0.725455178402870, 0.775487322608105]),
             ([0.224512677391895, 0.274544821597130] U [0.725455178402870, 0.775487322608105]))
-            sage: H.Sn(2,3,6,v)
+            sage: H.Sn(2, 3, 6, v)
             ([0.0374187795653158, 0.0457574702661884] U [0.120909196400478, 0.129247887101351] U [0.204085446231982, 0.212424136932855] U [0.287575863067145, 0.295914553768017] U [0.370752112898649, 0.379090803599522] U [0.454242529733812, 0.462581220434684] U [0.537418779565316, 0.545757470266188] U [0.620909196400478, 0.629247887101351] U [0.704085446231982, 0.712424136932855] U [0.787575863067145, 0.795914553768017] U [0.870752112898649, 0.879090803599522] U [0.954242529733812, 0.962581220434684])
 
         An example over a number field::
@@ -1271,10 +1271,10 @@ class EllipticCurveCanonicalHeight:
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: v = K.real_places()[0]
             sage: H = E.height_function()
-            sage: H.S(2,3,v), H.Sn(2,3,1,v)
+            sage: H.S(2, 3, v), H.Sn(2, 3, 1, v)
             (([0.142172065860075, 0.172845716928584] U [0.827154283071416, 0.857827934139925]),
              ([0.142172065860075, 0.172845716928584] U [0.827154283071416, 0.857827934139925]))
-            sage: H.Sn(2,3,6,v)
+            sage: H.Sn(2, 3, 6, v)
             ([0.0236953443100124, 0.0288076194880974] U [0.137859047178569, 0.142971322356654] U [0.190362010976679, 0.195474286154764] U [0.304525713845236, 0.309637989023321] U [0.357028677643346, 0.362140952821431] U [0.471192380511903, 0.476304655689988] U [0.523695344310012, 0.528807619488097] U [0.637859047178569, 0.642971322356654] U [0.690362010976679, 0.695474286154764] U [0.804525713845236, 0.809637989023321] U [0.857028677643346, 0.862140952821431] U [0.971192380511903, 0.976304655689988])
         """
         SS = 1/ZZ(n) * self.S(xi1, xi2, v)
@@ -1391,8 +1391,8 @@ class EllipticCurveCanonicalHeight:
             sage: H.wp_c(QQ.places()[0])
             2.68744508779950
 
-            sage: K.<i>=QuadraticField(-1)
-            sage: E = EllipticCurve([0,0,0,1+5*i,3+i])
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve([0, 0, 0, 1 + 5*i, 3 + i])
             sage: H = E.height_function()
             sage: H.wp_c(K.places()[0])
             2.66213425640096

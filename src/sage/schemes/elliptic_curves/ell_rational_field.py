@@ -1033,13 +1033,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: f = EllipticCurve('37b')
             sage: f.modular_symbol_space()
             Modular Symbols subspace of dimension 1 of Modular Symbols space
-            of dimension 3 for Gamma_0(37) of weight 2 with sign 1 over Rational Field
+             of dimension 3 for Gamma_0(37) of weight 2 with sign 1 over Rational Field
             sage: f.modular_symbol_space(-1)
             Modular Symbols subspace of dimension 1 of Modular Symbols space
-            of dimension 2 for Gamma_0(37) of weight 2 with sign -1 over Rational Field
+             of dimension 2 for Gamma_0(37) of weight 2 with sign -1 over Rational Field
             sage: f.modular_symbol_space(0, bound=3)
             Modular Symbols subspace of dimension 2 of Modular Symbols space
-            of dimension 5 for Gamma_0(37) of weight 2 with sign 0 over Rational Field
+             of dimension 5 for Gamma_0(37) of weight 2 with sign 0 over Rational Field
 
         .. NOTE::
 
@@ -1184,7 +1184,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve('37a1')
             sage: M = E.modular_symbol(); M
             Modular symbol with sign 1 over Rational Field attached to
-            Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
             sage: M(1/2)
             0
             sage: M(1/5)
@@ -1262,12 +1262,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve('11a1')
             sage: Mplus = E.modular_symbol(+1); Mplus
             Modular symbol with sign 1 over Rational Field attached to
-            Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
             sage: [Mplus(1/i) for i in [1..11]]
             [1/5, -4/5, -3/10, 7/10, 6/5, 6/5, 7/10, -3/10, -4/5, 1/5, 0]
             sage: Mminus = E.modular_symbol(-1); Mminus
             Modular symbol with sign -1 over Rational Field attached to
-            Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
             sage: [Mminus(1/i) for i in [1..11]]
             [0, 0, 1/2, 1/2, 0, 0, -1/2, -1/2, 0, 0, 0]
 
@@ -1674,12 +1674,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve("11a")
             sage: E.rank()
             0
-            sage: E.analytic_rank_upper_bound(max_Delta=1,adaptive=False)
+            sage: E.analytic_rank_upper_bound(max_Delta=1, adaptive=False)
             0
             sage: E = EllipticCurve([-39,123])
             sage: E.rank()
             1
-            sage: E.analytic_rank_upper_bound(max_Delta=1,adaptive=True)
+            sage: E.analytic_rank_upper_bound(max_Delta=1, adaptive=True)
             1
 
         This is especially true for elliptic curves with large rank.
@@ -1689,7 +1689,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: for r in range(9):
             ....:     E = elliptic_curves.rank(r)[0]
             ....:     print((r, E.analytic_rank_upper_bound(max_Delta=1,
-            ....:     adaptive=False,root_number="ignore")))
+            ....:                                           adaptive=False,
+            ....:                                           root_number="ignore")))
             (0, 0)
             (1, 1)
             (2, 2)
@@ -1708,9 +1709,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve("974b1")
             sage: r = E.rank(); r
             0
-            sage: E.analytic_rank_upper_bound(max_Delta=1,root_number="ignore")
+            sage: E.analytic_rank_upper_bound(max_Delta=1, root_number="ignore")
             1
-            sage: E.analytic_rank_upper_bound(max_Delta=1.3,root_number="ignore")
+            sage: E.analytic_rank_upper_bound(max_Delta=1.3, root_number="ignore")
             0
 
         Knowing the root number of `E` allows us to use smaller Delta values
@@ -1718,7 +1719,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         ::
 
-            sage: E.analytic_rank_upper_bound(max_Delta=0.6,root_number="compute")
+            sage: E.analytic_rank_upper_bound(max_Delta=0.6, root_number="compute")
             0
 
         There are a small number of curves which have pathologically low-lying
@@ -1731,11 +1732,11 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         ::
 
             sage: E = EllipticCurve([0, -1, 0, -7460362000712, -7842981500851012704])
-            sage: N,r = E.conductor(),E.analytic_rank(); N, r
+            sage: N, r = E.conductor(), E.analytic_rank(); N, r
             (256944, 0)
-            sage: E.analytic_rank_upper_bound(max_Delta=1,adaptive=False)
+            sage: E.analytic_rank_upper_bound(max_Delta=1, adaptive=False)
             2
-            sage: E.analytic_rank_upper_bound(max_Delta=2,adaptive=False)
+            sage: E.analytic_rank_upper_bound(max_Delta=2, adaptive=False)
             2
 
         This method is can be called on curves with large conductor.
@@ -1756,11 +1757,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: a4 = -20067762415575526585033208209338542750930230312178956502
             sage: a6 = 34481611795030556467032985690390720374855944359319180361266008296291939448732243429
-            sage: E = EllipticCurve([1,-1,1,a4,a6])
-            sage: bad_primes = [2,3,5,7,11,13,17,19,48463]
+            sage: E = EllipticCurve([1, -1, 1, a4, a6])
+            sage: bad_primes = [2, 3, 5, 7, 11, 13, 17, 19, 48463]
             sage: N = 3455601108357547341532253864901605231198511505793733138900595189472144724781456635380154149870961231592352897621963802238155192936274322687070
-            sage: E.analytic_rank_upper_bound(max_Delta=2.37,adaptive=False, # long time
-            ....: N=N,root_number=1,bad_primes=bad_primes,ncpus=2)
+            sage: E.analytic_rank_upper_bound(max_Delta=2.37, adaptive=False,  # long time
+            ....:                             N=N, root_number=1,
+            ....:                             bad_primes=bad_primes, ncpus=2)
             32
         """
         Z = LFunctionZeroSum_EllipticCurve(self, N)
@@ -2237,7 +2239,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve('389a1')
             sage: E1 = E.change_weierstrass_model([1/20,0,0,0]); E1
             Elliptic Curve defined by y^2 + 8000*y = x^3 + 400*x^2 - 320000*x
-            over Rational Field
+             over Rational Field
             sage: E1.gens() # random (if database not used)
             [(-400 : 8000 : 1), (0 : -8000 : 1)]
         """
@@ -3274,7 +3276,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice()
             Period lattice associated to
-            Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
         """
         try:
             return self._period_lattice
@@ -3338,13 +3340,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: E.division_polynomial(3).roots(CC,multiplicities=False)
             [-2.88288879135...,
-            1.39292799513...,
-            0.078313731444316... - 0.492840991709...*I,
-            0.078313731444316... + 0.492840991709...*I]
+             1.39292799513...,
+             0.078313731444316... - 0.492840991709...*I,
+             0.078313731444316... + 0.492840991709...*I]
             sage: [E.elliptic_exponential((a*w1+b*w2)/3)[0] for a,b in [(0,1),(1,0),(1,1),(2,1)]]
             [-2.8828887913533..., 1.39292799513138,
-            0.0783137314443... - 0.492840991709...*I,
-            0.0783137314443... + 0.492840991709...*I]
+             0.0783137314443... - 0.492840991709...*I,
+             0.0783137314443... + 0.492840991709...*I]
 
         Observe that this is a group homomorphism (modulo rounding error)::
 
@@ -3406,7 +3408,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: A = K.class_group().gen(0); A
             Fractional ideal class (2, 1/2*a)
             sage: L = E.lseries_gross_zagier(A)  ; L
-            Gross Zagier L-series attached to Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field with ideal class Fractional ideal class (2, 1/2*a)
+            Gross Zagier L-series attached to
+             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+             with ideal class Fractional ideal class (2, 1/2*a)
             sage: L(1)
             0.000000000000000
             sage: L.taylor_series(1, 5)
@@ -3444,7 +3448,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         EXAMPLES::
 
             sage: E = EllipticCurve('389a')
-            sage: E.Lambda(1.4+0.5*I, 50)
+            sage: E.Lambda(1.4 + 0.5*I, 50)
             -0.354172680517... + 0.874518681720...*I
         """
         from sage.symbolic.constants import pi
@@ -3467,7 +3471,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve([1/2,1/5,1/5,1/5,1/5])
+            sage: E = EllipticCurve([1/2, 1/5, 1/5, 1/5, 1/5])
             sage: [E.is_local_integral_model(p) for p in (2,3,5)]
             [False, True, False]
             sage: E.is_local_integral_model(2,3,5)
@@ -3508,7 +3512,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve([1/2,1/5,1/5,1/5,1/5])
+            sage: E = EllipticCurve([1/2, 1/5, 1/5, 1/5, 1/5])
             sage: E.is_global_integral_model()
             False
             sage: Emin=E.global_integral_model()
@@ -3597,8 +3601,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a')
-            sage: for M in range(2,8):  # long time (22s on 2009 MBP)
-            ....:     print((M, E.modular_degree(M=M),E.congruence_number(M=M)))
+            sage: for M in range(2, 8):  # long time (22s on 2009 MBP)
+            ....:     print((M, E.modular_degree(M=M), E.congruence_number(M=M)))
             (2, 5, 20)
             (3, 7, 28)
             (4, 50, 400)
@@ -3785,7 +3789,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: E = EllipticCurve('15a')
             sage: phi = E.modular_parametrization(); phi
-            Modular parameterization from the upper half plane to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 10*x - 10 over Rational Field
+            Modular parameterization
+             from the upper half plane
+               to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 10*x - 10
+                  over Rational Field
             sage: z = 0.1 + 0.2j
             sage: phi(z)
             (8.20822465478531 - 13.1562816054682*I : -8.79855099049364 + 69.4006129342200*I : 1.00000000000000)
@@ -3938,7 +3945,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.cremona_label()
             Traceback (most recent call last):
             ...
-            LookupError: Cremona database does not contain entry for Elliptic Curve defined by y^2 + y = x^3 - 79*x + 342 over Rational Field
+            LookupError: Cremona database does not contain entry for
+            Elliptic Curve defined by y^2 + y = x^3 - 79*x + 342 over Rational Field
         """
         try:
             label = self.__cremona_label
@@ -4072,10 +4080,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: EllipticCurve('11a').torsion_subgroup()
             Torsion Subgroup isomorphic to Z/5 associated to the
-            Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
             sage: EllipticCurve('37b').torsion_subgroup()
             Torsion Subgroup isomorphic to Z/3 associated to the
-            Elliptic Curve defined by y^2 + y = x^3 + x^2 - 23*x - 50 over Rational Field
+             Elliptic Curve defined by y^2 + y = x^3 + x^2 - 23*x - 50 over Rational Field
 
         ::
 
@@ -4686,25 +4694,25 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.isogenies_prime_degree()
             [Isogeny of degree 163
               from Elliptic Curve defined by y^2 + y = x^3 - 2174420*x + 1234136692 over Rational Field
-              to   Elliptic Curve defined by y^2 + y = x^3 - 57772164980*x - 5344733777551611 over Rational Field]
+                to Elliptic Curve defined by y^2 + y = x^3 - 57772164980*x - 5344733777551611 over Rational Field]
             sage: E1 = E.quadratic_twist(6584935282)
             sage: E1.isogenies_prime_degree()
             [Isogeny of degree 163
               from Elliptic Curve defined by y^2 = x^3 - 94285835957031797981376080*x + 352385311612420041387338054224547830898 over Rational Field
-              to   Elliptic Curve defined by y^2 = x^3 - 2505080375542377840567181069520*x - 1526091631109553256978090116318797845018020806 over Rational Field]
+                to Elliptic Curve defined by y^2 = x^3 - 2505080375542377840567181069520*x - 1526091631109553256978090116318797845018020806 over Rational Field]
 
             sage: E = EllipticCurve('14a1')
             sage: E.isogenies_prime_degree(2)
             [Isogeny of degree 2
               from Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
-              to   Elliptic Curve defined by y^2 + x*y + y = x^3 - 36*x - 70 over Rational Field]
+                to Elliptic Curve defined by y^2 + x*y + y = x^3 - 36*x - 70 over Rational Field]
             sage: E.isogenies_prime_degree(3)
             [Isogeny of degree 3
               from Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
-              to   Elliptic Curve defined by y^2 + x*y + y = x^3 - x over Rational Field,
+                to Elliptic Curve defined by y^2 + x*y + y = x^3 - x over Rational Field,
              Isogeny of degree 3
               from Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
-              to   Elliptic Curve defined by y^2 + x*y + y = x^3 - 171*x - 874 over Rational Field]
+                to Elliptic Curve defined by y^2 + x*y + y = x^3 - 171*x - 874 over Rational Field]
             sage: E.isogenies_prime_degree(5)
             []
             sage: E.isogenies_prime_degree(11)
@@ -5220,8 +5228,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: rho = EllipticCurve('11a1').galois_representation()
             sage: rho
-            Compatible family of Galois representations associated to
-            the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+            Compatible family of Galois representations associated to the
+             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
             sage: rho.is_irreducible(7)
             True
             sage: rho.is_irreducible(5)
@@ -5477,7 +5485,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: S = E.sha()
             sage: S
             Tate-Shafarevich group for the Elliptic Curve
-            defined by y^2 + y = x^3 - x over Rational Field
+             defined by y^2 + y = x^3 - x over Rational Field
             sage: S.bound_kolyvagin()
             ([2], 1)
         """
@@ -5536,7 +5544,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: E = EllipticCurve('32a1')
             sage: E.mod5family()
-            Elliptic Curve defined by y^2  = x^3 + 4*x over Fraction Field of Univariate Polynomial Ring in t over Rational Field
+            Elliptic Curve defined by y^2 = x^3 + 4*x
+             over Fraction Field of Univariate Polynomial Ring in t over Rational Field
         """
         E = self.short_weierstrass_model()
         a = E.a4()
@@ -5565,7 +5574,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: e = EllipticCurve('130a1')
             sage: e.tate_curve(2)
             2-adic Tate curve associated to the Elliptic Curve
-            defined by y^2 + x*y + y = x^3 - 33*x + 68 over Rational Field
+             defined by y^2 + x*y + y = x^3 - 33*x + 68 over Rational Field
 
         The input curve must have multiplicative reduction at the prime.
 
@@ -5580,7 +5589,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: T = e.tate_curve(5); T
             5-adic Tate curve associated to the Elliptic Curve
-            defined by y^2 + x*y + y = x^3 - 33*x + 68 over Rational Field
+             defined by y^2 + x*y + y = x^3 - 33*x + 68 over Rational Field
 
         We find the Tate parameter `q`::
 
@@ -5938,7 +5947,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         See :trac:`22063`::
 
             sage: for n in [67,71,74,91]:
-            ....:     assert 4*n^6+4*n^2 in [P[0] for P in EllipticCurve([0,0,0,2,n^2]).integral_points()]
+            ....:     assert 4*n^6 + 4*n^2 in [P[0] for P in EllipticCurve([0,0,0,2,n^2]).integral_points()]
 
         ALGORITHM:
 
@@ -6970,11 +6979,11 @@ def integral_points_with_bounded_mw_coeffs(E, mw_base, N, x_bound):
 
     We check that some large integral points in a paper of Zagier are found::
 
-        sage: def t(a,b,x): # indirect doctest
-        ....:       E = EllipticCurve([0,0,0,a,b])
-        ....:       xs = [P[0] for P in E.integral_points()]
-        ....:       return x in xs
-        sage: all(t(a,b,x) for a,b,x in [ (-2,5, 1318), (4,-1, 4321),
+        sage: def t(a, b, x): # indirect doctest
+        ....:     E = EllipticCurve([0,0,0,a,b])
+        ....:     xs = [P[0] for P in E.integral_points()]
+        ....:     return x in xs
+        sage: all(t(a,b,x) for a,b,x in [(-2,5, 1318), (4,-1, 4321),
         ....: (0,17, 5234), (11,4, 16833), (-13,37, 60721), (-12,-10, 80327),
         ....: (-7,22, 484961), (-9,28, 764396), (-13,4, 1056517), (-19,-51,
         ....: 2955980), (-24,124, 4435710), (-30,133, 5143326), (-37,60,

@@ -51,7 +51,7 @@ EXAMPLES::
     sage: E = EllipticCurve('389a')
     sage: S = E.sha(); S
     Tate-Shafarevich group for the
-    Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
+     Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
     sage: S.an_numerical()
     1.00000000000000
     sage: S.p_primary_bound(5)
@@ -126,7 +126,7 @@ class Sha(SageObject):
         sage: E = EllipticCurve('389a')
         sage: S = E.sha(); S
         Tate-Shafarevich group for the
-        Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
+         Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
         sage: S.an_numerical()
         1.00000000000000
         sage: S.p_primary_bound(5)  # long time
@@ -150,7 +150,7 @@ class Sha(SageObject):
             sage: S = E.sha()
             sage: S
             Tate-Shafarevich group for the
-            Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
 
             sage: S == loads(dumps(S))
             True
@@ -1105,15 +1105,15 @@ class Sha(SageObject):
         order of `Sha` (by [GJPST2009]_)::
 
             sage: E = EllipticCurve([1, -1, 0, -332311, -73733731])   # 1058D1
-            sage: E.sha().bound_kato()                 # long time (about 1 second)
+            sage: E.sha().bound_kato()                        # long time (about 1 second)
             [2, 5, 23]
-            sage: E.galois_representation().non_surjective()                # long time (about 1 second)
+            sage: E.galois_representation().non_surjective()  # long time (about 1 second)
             []
 
         For this one, `Sha` is divisible by 7::
 
             sage: E = EllipticCurve([0, 0, 0, -4062871, -3152083138])   # 3364C1
-            sage: E.sha().bound_kato()                 # long time (< 10 seconds)
+            sage: E.sha().bound_kato()                        # long time (< 10 seconds)
             [2, 7, 29]
 
         No information about curves of rank > 0::

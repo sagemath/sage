@@ -30,7 +30,7 @@ class EllipticCurveFormalGroup(SageObject):
             sage: E = EllipticCurve('11a')
             sage: F = E.formal_group(); F
             Formal Group associated to the Elliptic Curve
-            defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+             defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
             sage: F == loads(dumps(F))
             True
         """

@@ -227,7 +227,7 @@ def compute_wp_quadratic(k, A, B, prec):
         sage: E = EllipticCurve(GF(103), [1,2])                                         # optional - sage.rings.finite_rings
         sage: E.weierstrass_p(algorithm='quadratic')                                    # optional - sage.rings.finite_rings
         z^-2 + 41*z^2 + 88*z^4 + 11*z^6 + 57*z^8 + 55*z^10 + 73*z^12
-        + 11*z^14 + 17*z^16 + 50*z^18 + O(z^20)
+         + 11*z^14 + 17*z^16 + 50*z^18 + O(z^20)
 
         sage: from sage.schemes.elliptic_curves.ell_wp import compute_wp_quadratic
         sage: compute_wp_quadratic(E.base_ring(), E.a4(), E.a6(), prec=10)              # optional - sage.rings.finite_rings
@@ -255,7 +255,9 @@ def compute_wp_quadratic(k, A, B, prec):
 
 def compute_wp_fast(k, A, B, m):
     r"""
-    Computes the Weierstrass function of an elliptic curve defined by short Weierstrass model: `y^2 = x^3 + Ax + B`. It does this with as fast as polynomial of degree `m` can be multiplied together in the base ring, i.e. `O(M(n))` in the notation of [BMSS2006]_.
+    Computes the Weierstrass function of an elliptic curve defined by short Weierstrass model:
+    `y^2 = x^3 + Ax + B`. It does this with as fast as polynomial of degree `m` can be multiplied
+    together in the base ring, i.e. `O(M(n))` in the notation of [BMSS2006]_.
 
     Let `p` be the characteristic of the underlying field: Then we must have either `p=0`, or `p > m + 3`.
 

@@ -660,8 +660,8 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             sage: E = EllipticCurve([1+i, -i, i, 1, 0])
             sage: C = E.isogeny_class(); C
             Isogeny class of Elliptic Curve defined
-            by y^2 + (i+1)*x*y + i*y = x^3 + (-i)*x^2 + x
-            over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
+             by y^2 + (i+1)*x*y + i*y = x^3 + (-i)*x^2 + x
+             over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
             sage: len(C)
             6
             sage: C.matrix()
