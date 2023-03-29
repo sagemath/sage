@@ -48,7 +48,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         sage: P.<x, y, u, v> = ProductProjectiveSpaces([1, 1], QQ)
         sage: P.subscheme([u*x^2 - v*y*x])
         Closed subscheme of Product of projective spaces P^1 x P^1 over Rational Field
-        defined by:
+         defined by:
           x^2*u - x*y*v
 
     TESTS::
@@ -56,8 +56,8 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         sage: from sage.schemes.product_projective.subscheme \
               import AlgebraicScheme_subscheme_product_projective
         sage: AlgebraicScheme_subscheme_product_projective(P, [u*x^2 - v*y*x])
-        Closed subscheme of Product of projective spaces P^1 x P^1 over Rational
-        Field defined by:
+        Closed subscheme of Product of projective spaces P^1 x P^1
+         over Rational Field defined by:
           x^2*u - x*y*v
     """
 

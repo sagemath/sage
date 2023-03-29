@@ -398,8 +398,8 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
             sage: P1 = ProductProjectiveSpaces([2, 1], QQ, 'x')
             sage: P1^3
-            Product of projective spaces P^2 x P^1 x P^2 x P^1 x P^2 x P^1 over
-            Rational Field
+            Product of projective spaces P^2 x P^1 x P^2 x P^1 x P^2 x P^1
+             over Rational Field
 
         As you see, custom variable names are not preserved by power operator,
         since there is no natural way to make new ones in general.
@@ -840,14 +840,14 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             sage: P.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(5))                  # optional - sage.rings.finite_rings
             sage: X = P.subscheme([x - y, z - w]); X                                    # optional - sage.rings.finite_rings
             Closed subscheme of Product of projective spaces P^1 x P^1
-            over Finite Field of size 5 defined by:
-                  x - y,
-                  z - w
+             over Finite Field of size 5 defined by:
+              x - y,
+              z - w
             sage: X.defining_polynomials()                                              # optional - sage.rings.finite_rings
             [x - y, z - w]
             sage: I = X.defining_ideal(); I                                             # optional - sage.rings.finite_rings
-            Ideal (x - y, z - w) of Multivariate Polynomial Ring in x, y, z, w over
-            Finite Field of size 5
+            Ideal (x - y, z - w) of Multivariate Polynomial Ring in x, y, z, w
+             over Finite Field of size 5
             sage: X.dimension()                                                         # optional - sage.rings.finite_rings
             0
             sage: X.base_ring()                                                         # optional - sage.rings.finite_rings
@@ -1106,7 +1106,7 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
             sage: P.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(5))                  # optional - sage.rings.finite_rings
             sage: P._point_homset(Spec(GF(5)), P)                                       # optional - sage.rings.finite_rings
             Set of rational points of Product of projective spaces P^1 x P^1
-            over Finite Field of size 5
+             over Finite Field of size 5
         """
         return SchemeHomset_points_product_projective_spaces_field(*args, **kwds)
 
@@ -1240,12 +1240,12 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
             sage: P = ProductProjectiveSpaces([2, 1], GF(3))                            # optional - sage.rings.finite_rings
             sage: [x for x in P]                                                        # optional - sage.rings.finite_rings
             [(0 : 0 : 1 , 0 : 1),
-            (0 : 1 : 1 , 0 : 1),
-            (0 : 2 : 1 , 0 : 1),
-            ...
-            (1 : 1 : 0 , 1 : 0),
-            (2 : 1 : 0 , 1 : 0),
-            (1 : 0 : 0 , 1 : 0)]
+             (0 : 1 : 1 , 0 : 1),
+             (0 : 2 : 1 , 0 : 1),
+             ...
+             (1 : 1 : 0 , 1 : 0),
+             (2 : 1 : 0 , 1 : 0),
+             (1 : 0 : 0 , 1 : 0)]
         """
         iters = [iter(T) for T in self._components]
         L = []

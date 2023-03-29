@@ -221,11 +221,11 @@ class Jacobian_generic(Scheme):
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurve(x^3 - 10*x + 9)
             sage: Jac = H.jacobian();   Jac
-            Jacobian of Hyperelliptic Curve over Rational
-            Field defined by y^2 = x^3 - 10*x + 9
+            Jacobian of Hyperelliptic Curve over Rational Field
+             defined by y^2 = x^3 - 10*x + 9
             sage: Jac.change_ring(RDF)
-            Jacobian of Hyperelliptic Curve over Real Double
-            Field defined by y^2 = x^3 - 10.0*x + 9.0
+            Jacobian of Hyperelliptic Curve over Real Double Field
+             defined by y^2 = x^3 - 10.0*x + 9.0
         """
         return self.curve().change_ring(R).jacobian()
 
@@ -245,11 +245,11 @@ class Jacobian_generic(Scheme):
             sage: H = HyperellipticCurve(x^3 - 10*x + 9)
             sage: Jac = H.jacobian();   Jac
             Jacobian of Hyperelliptic Curve over Rational Field
-            defined by y^2 = x^3 - 10*x + 9
+             defined by y^2 = x^3 - 10*x + 9
             sage: F.<a> = QQ.extension(x^2 + 1)                                         # optional - sage.rings.number_field
             sage: Jac.base_extend(F)                                                    # optional - sage.rings.number_field
             Jacobian of Hyperelliptic Curve over Number Field in a with defining
-            polynomial x^2 + 1 defined by y^2 = x^3 - 10*x + 9
+             polynomial x^2 + 1 defined by y^2 = x^3 - 10*x + 9
         """
         if R not in _Fields:
             raise ValueError('Not a field: ' + str(R))
