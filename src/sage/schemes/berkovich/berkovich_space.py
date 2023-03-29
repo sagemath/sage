@@ -366,7 +366,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
         sage: ideal = A.prime_above(3)                                                  # optional - sage.rings.number_field
         sage: B = Berkovich_Cp_Affine(A, ideal); B                                      # optional - sage.rings.number_field
         Affine Berkovich line over Cp(3), with base
-        Number Field in a with defining polynomial x^3 + 20
+         Number Field in a with defining polynomial x^3 + 20
 
     Number fields have a major advantage of exact computation.
 
@@ -468,8 +468,8 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
             sage: A.<a> = NumberField(z^2 + 1)                                          # optional - sage.rings.number_field
             sage: ideal = A.prime_above(3)                                              # optional - sage.rings.number_field
             sage: Berkovich_Cp_Affine(A, ideal)                                         # optional - sage.rings.number_field
-            Affine Berkovich line over Cp(3), with base Number Field
-            in a with defining polynomial z^2 + 1
+            Affine Berkovich line over Cp(3), with base
+             Number Field in a with defining polynomial z^2 + 1
         """
         if self._base_type == 'padic field':
             return "Affine Berkovich line over Cp(%s) of precision %s" %(self.prime(),\
@@ -565,7 +565,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
         sage: ideal = A.prime_above(2)                                                  # optional - sage.rings.number_field
         sage: B = Berkovich_Cp_Projective(A, ideal); B                                  # optional - sage.rings.number_field
         Projective Berkovich line over Cp(2), with base
-        Number Field in a with defining polynomial x^2 + 1
+         Number Field in a with defining polynomial x^2 + 1
 
     Number fields have the benefit that computation is exact,
     but lack support for all of `\CC_p`.
@@ -701,7 +701,8 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
             sage: A.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
             sage: v = A.ideal(a + 1)                                                    # optional - sage.rings.number_field
             sage: Berkovich_Cp_Projective(A, v)                                         # optional - sage.rings.number_field
-            Projective Berkovich line over Cp(2), with base Number Field in a with defining polynomial x^2 + 1
+            Projective Berkovich line over Cp(2),
+             with base Number Field in a with defining polynomial x^2 + 1
         """
         if self._base_type == 'padic field':
             return "Projective Berkovich line over Cp(%s) of precision %s" %(self.prime(),\

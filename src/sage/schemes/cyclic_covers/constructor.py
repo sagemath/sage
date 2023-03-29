@@ -67,7 +67,7 @@ def CyclicCover(r, f, names=None, check_smooth=True):
         sage: k.<a> = GF(9); R.<x> = k[]                                                # optional - sage.rings.finite_rings
         sage: CyclicCover(5, x^9 + x + 1)                                               # optional - sage.rings.finite_rings
         Cyclic Cover of P^1 over Finite Field in a of size 3^2
-        defined by y^5 = x^9 + x + 1
+         defined by y^5 = x^9 + x + 1
         sage: CyclicCover(15, x^9 + x + 1)                                              # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
@@ -91,8 +91,8 @@ def CyclicCover(r, f, names=None, check_smooth=True):
 
         sage: CyclicCover(2, (x^3-x+2)^2*(x^6-1), check_smooth=False)                   # optional - sage.rings.finite_rings
         Cyclic Cover of P^1 over Finite Field of size 7
-        defined by y^2 = x^12 - 2*x^10 - 3*x^9 + x^8 + 3*x^7 + 3*x^6
-                         + 2*x^4 + 3*x^3 - x^2 - 3*x + 3
+         defined by y^2 = x^12 - 2*x^10 - 3*x^9 + x^8 + 3*x^7 + 3*x^6
+                          + 2*x^4 + 3*x^3 - x^2 - 3*x + 3
 
 
     Input with integer coefficients creates objects with the integers
