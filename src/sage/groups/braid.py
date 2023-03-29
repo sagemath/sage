@@ -1700,6 +1700,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         More precisely, if the output is `d`, `o` equals ``other``, and `s` equals ``self``
         then `o = d^{-1} \cdot s \cdot d`.
+
         EXAMPLES::
 
             sage: B = BraidGroup(3)
