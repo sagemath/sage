@@ -119,7 +119,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         r"""
         EXAMPLES:
 
-        A curve from the database of curves over `\QQ`, but over a larger field:
+        A curve from the database of curves over `\QQ`, but over a larger field::
 
             sage: K.<i> = NumberField(x^2 + 1)
             sage: EllipticCurve(K,'389a1')
