@@ -706,8 +706,10 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: rlr, t = r.__reduce__()  # optional - rpy2
-            sage: rlr(*t)  # optional - rpy2
+            sage: r                 # resolve lazy import   # optional - rpy2
+            R Interpreter
+            sage: rlr, t = r.__reduce__()                   # optional - rpy2
+            sage: rlr(*t)                                   # optional - rpy2
             R Interpreter
         """
         return reduce_load_R, tuple([])
