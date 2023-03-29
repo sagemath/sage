@@ -1,0 +1,63 @@
+name: CI Linux incremental
+
+## This GitHub Actions workflow runs SAGE_ROOT/tox.ini with select environments,
+## whenever a GitHub pull request is opened or synchronized in a repository
+## where GitHub Actions are enabled.
+##
+## It builds and checks some sage spkgs as defined in TARGETS.
+##
+## A job succeeds if there is no error.
+##
+## The build is run with "make V=0", so the build logs of individual packages are suppressed.
+##
+## At the end, all package build logs that contain an error are printed out.
+##
+## After all jobs have finished (or are canceled) and a short delay,
+## tar files of all logs are made available as "build artifacts".
+
+on:
+  pull_request:
+    types:
+      # Defaults
+      - opened
+      - synchronize
+      - reopened
+      # When a CI label is added
+      - labeled
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  minimal:
+    if: |
+      (github.event.action != 'labeled' &&
+        (contains(github.event.pull_request.labels.*.name, 'c: packages: standard') ||
+         contains(github.event.pull_request.labels.*.name, 'c: packages: optional'))) ||
+      (github.event.action == 'labeled' &&
+        (github.event.label.name == 'c: packages: optional' ||
+         github.event.label.name == 'c: packages: standard'))
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from published Docker image
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/sagemath/sage/
+      from_docker_target: "with-targets"
+      from_docker_tag: "dev"
+      docker_targets: "with-targets"
+      targets: build doc-html ptest
+      tox_system_factors: >-
+        ["ubuntu-bionic-gcc_8-python3.8",
+         "debian-bookworm",
+         "ubuntu-lunar",
+         "fedora-31",
+         "fedora-37",
+         "gentoo-python3.9",
+         "debian-buster-i386"]
+      tox_packages_factors: >-
+          ["minimal"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
