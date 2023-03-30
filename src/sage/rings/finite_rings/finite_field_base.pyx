@@ -617,6 +617,7 @@ cdef class FiniteField(Field):
               From: Finite Field in z6 of size 3^6 over its base
               To:   Finite Field in z12 of size 3^12
               Defn: z6 |--> 2*z12^10 + 2*z12^9 + z12^7 + z12^5 + 2*z12^4 + z12^3 + 1
+                    with map of base ring
             sage: c.minpoly().change_ring(f)(f(c))
             0
 

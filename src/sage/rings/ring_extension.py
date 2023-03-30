@@ -546,7 +546,7 @@ class RingExtension_generic(CommutativeAlgebra):
           parent class (resp. element class)
 
         - ``canonical_backend`` -- a boolean (default: ``False``)
-          Whether the association between this ring extension is canonical,
+          Whether the association between this ring extension and its backend is canonical,
           or if there are choices involved (such as choosing a root of some defining polynomial).
           This affects the existence of a coercion from the backend and coercions between ring extensions.
 
