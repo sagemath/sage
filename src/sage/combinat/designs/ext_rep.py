@@ -660,7 +660,6 @@ class XTree():
              ('block', {}, [[6, 8, 10]])]
         """
 
-
         if isinstance(node, str):
             node = (node, {}, [])
         name, attributes, children = node

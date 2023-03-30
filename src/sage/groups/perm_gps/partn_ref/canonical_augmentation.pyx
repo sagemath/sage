@@ -380,11 +380,13 @@ cdef void deallocate_cgd(canonical_generator_data *cgd):
     sig_free(cgd.parent_stack)
     sig_free(cgd)
 
+
 cdef iterator *setup_canonical_generator(int degree,
     bint (*all_children_are_equivalent)(PartitionStack *PS, void *S),
-    int (*refine_and_return_invariant)\
-         (PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len),
-    int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree),
+    int (*refine_and_return_invariant)(PartitionStack *PS, void *S,
+                                       int *cells_to_refine_by, int ctrb_len),
+    int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2,
+                              int degree),
     int (*generate_children)(void *, aut_gp_and_can_lab *, iterator *),
     void *(*apply_augmentation)(void *, void *, void *, int *, bint *),
     void (*free_object)(void *),

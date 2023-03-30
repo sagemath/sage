@@ -345,8 +345,6 @@ class InformationSetAlgorithm(SageObject):
         return "\\textnormal{{ISD Algorithm ({}) for }}{} \\textnormal{{decoding {} errors}}".format(self._algorithm_name, self.code()._latex_(), _format_decoding_interval(self.decoding_interval()))
 
 
-
-
 class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
     r"""
     The Lee-Brickell algorithm for information-set decoding.
@@ -479,16 +477,16 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
                 # I was not an information set
                 continue
             Gt = Gi_inv * G
-            #step 2.
+            # step 2.
             y = r - vector([r[i] for i in I]) * Gt
             g = Gt.rows()
-            #step 3.
-            for pi in range(p+1):
+            # step 3.
+            for pi in range(p + 1):
                 for A in itertools.combinations(range(k), pi):
                     for m in itertools.product(Fstar, repeat=pi):
-                        e = y - sum(m[i]*g[A[i]] for i in range(pi))
+                        e = y - sum(m[i] * g[A[i]] for i in range(pi))
                         errs = e.hamming_weight()
-                        if  errs >= tau[0] and errs <= tau[1]:
+                        if tau[0] <= errs <= tau[1]:
                             return r - e
 
     def calibrate(self):
@@ -627,8 +625,6 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
                 search_size = p
         self._parameters = { 'search_size': search_size }
         self._time_estimate = estimates[search_size]
-
-
 
 
 class LinearCodeInformationSetDecoder(Decoder):
