@@ -10,12 +10,10 @@ The F-Matrix of a Fusion Ring
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
 from copy import deepcopy
 from ctypes import cast, py_object
 from itertools import product, zip_longest
-from multiprocessing import  Pool, cpu_count, set_start_method, shared_memory
+from multiprocessing import Pool, cpu_count, set_start_method, shared_memory
 import numpy as np
 from os import getpid, remove
 import pickle

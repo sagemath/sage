@@ -14,7 +14,6 @@ from sage.categories.weyl_groups import WeylGroups
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
 
-
 class AffineWeylGroups(Category_singleton):
     """
     The category of affine Weyl groups

@@ -333,7 +333,6 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
                 else:
                     return BIBD(B.ground_set(), B.blocks(), k=k, lambd=1, copy=False)
 
-
     if ( (k+lambd)*(k+lambd-1) == lambd*(v+k+lambd-1) and
          balanced_incomplete_block_design(v+k+lambd, k+lambd, lambd, existence=True) is True):
         # By removing a block and all points of that block from the
@@ -659,7 +658,6 @@ def BIBD_from_TD(v,k,existence=False):
             raise NotImplementedError("I do not know how to build a ({},{},1)-BIBD!".format(v,k))
 
     return BIBD
-
 
 
 def BIBD_from_difference_family(G, D, lambd=None, check=True):
