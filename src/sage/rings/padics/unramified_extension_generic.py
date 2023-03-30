@@ -71,7 +71,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
             1
 
         """
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
         return ZZ(1)
 
     def residue_class_field(self):
