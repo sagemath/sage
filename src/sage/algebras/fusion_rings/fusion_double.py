@@ -109,46 +109,31 @@ class FusionDouble(CombinatorialFreeModule):
     multiplicity-free. Abelian groups, dihedral groups, dicyclic groups, and all
     groups of order 16 are multiplicity-free.  On the other hand, for groups of order 32,
     some are multiplicity-free and others are not.
+    
+    Some groups, as currently implemented in Sage, may be missing methods such as
+    centralizers which are needed by this code. To circumvent this, you may
+    try to implement them as GAP Permutation groups. Thus ::
+
+        sage: G1 = GL(2,3)
+        sage: G2 = G1.as_permutation_group()
+        sage: H2 = FusionDouble(G2,prefix="b",inject_variables=True)
+        sage: b13^2         # long time (43s)
+        b0 + b1 + b5 + b6 + b13 + b26 + b30 + b31 + b32 + b33 + b38 + b39
+        sage: b13.ribbon()
+        zeta3
+
+    In this example, implementing the simple group of order 168 as
+    the matrix group ``G1`` will not work with the ``FusionDouble``, so we
+    recreate it as the permutation group ``G2``. Although the test of
+    squaring `b2` takes a long time, the fusion coefficients are cached
+    and this FusionRing is not too slow to work with. (Of course the
+    F-matrix factory is not available for this group.)
     """
     @staticmethod
     def __classcall__(cls, G, prefix="s", inject_variables=False):
         """
         Normalize input to ensure a unique representation.
 
-        TESTS::
-
-            sage: F1 = FusionRing('B3', 2)
-            sage: F2 = FusionRing(CartanType('B3'), QQ(2), ZZ)
-            sage: F3 = FusionRing(CartanType('B3'), int(2), style="coroots")
-            sage: F1 is F2 and F2 is F3
-            True
-
-            sage: A23 = FusionRing('A2', 3)
-            sage: TestSuite(A23).run()
-
-            sage: B22 = FusionRing('B2', 2)
-            sage: TestSuite(B22).run()
-
-            sage: C31 = FusionRing('C3', 1)
-            sage: TestSuite(C31).run()
-
-            sage: D41 = FusionRing('D4', 1)
-            sage: TestSuite(D41).run()
-
-            sage: G22 = FusionRing('G2', 2)
-            sage: TestSuite(G22).run()
-
-            sage: F41 = FusionRing('F4', 1)
-            sage: TestSuite(F41).run()
-
-            sage: E61 = FusionRing('E6', 1)
-            sage: TestSuite(E61).run()
-
-            sage: E71 = FusionRing('E7', 1)
-            sage: TestSuite(E71).run()
-
-            sage: E81 = FusionRing('E8', 1)
-            sage: TestSuite(E81).run()
         """
         return super().__classcall__(cls, G, prefix=prefix, inject_variables=inject_variables)
 
@@ -181,7 +166,7 @@ class FusionDouble(CombinatorialFreeModule):
     def __call__(self, *args):
         if len(args) > 1:
             args = (args,)
-        return super(GAlg, self).__call__(*args)
+        return super().__call__(*args)
 
     def _element_constructor(self, k):
         return self.monomial(k)
@@ -192,7 +177,7 @@ class FusionDouble(CombinatorialFreeModule):
 
     def get_order(self):
         r"""
-        Return the weights of the basis vectors in a fixed order.
+        Return the keys of the basis vectors in a fixed order.
         """
         if self._order is None:
             self.set_order(self.basis().keys().list())
@@ -202,7 +187,23 @@ class FusionDouble(CombinatorialFreeModule):
     def s_ij(self, i, j, unitary=False, base_coercion=True):
         r"""
         Return the element of the S-matrix of this fusion ring
-        corresponding to the given elements.
+        corresponding to the given elements. Without the unitary option
+        set true, this is the unnormalized S-matrix entry, denoted `\tilde{s}_{ij}`,
+        in [BaKi2001]_ Chapter 3. The normalized S-matrix entries are
+        denoted `s_{ij}`.
+
+        INPUT:
+
+        - ``i``, ``j``, -- a pair of basis elements
+        - ``unitary`` (optional): set true for the unitary normalized S-matrix.
+
+        EXAMPLE ::
+
+            sage: D = FusionDouble(SymmetricGroup(3),prefix="c",inject_variables=True)
+            sage: [D.s_ij(c2,x) for x in D.basis()]
+            [2, 2, 4, 0, 0, -2, -2, -2]
+            sage: [D.s_ij(c2,x,unitary=True) for x in D.basis()]
+            [1/3, 1/3, 2/3, 0, 0, -1/3, -1/3, -1/3]
         """
         sum = 0
         G = self._G
@@ -244,22 +245,25 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: D91 = FusionRing("D9", 1)
-            sage: D91.s_matrix()
-            [          1           1           1           1]
-            [          1           1          -1          -1]
-            [          1          -1 -zeta136^34  zeta136^34]
-            [          1          -1  zeta136^34 -zeta136^34]
-            sage: S = D91.s_matrix(unitary=True); S
-            [            1/2             1/2             1/2             1/2]
-            [            1/2             1/2            -1/2            -1/2]
-            [            1/2            -1/2 -1/2*zeta136^34  1/2*zeta136^34]
-            [            1/2            -1/2  1/2*zeta136^34 -1/2*zeta136^34]
-            sage: S*S.conjugate()
-            [1 0 0 0]
-            [0 1 0 0]
-            [0 0 1 0]
-            [0 0 0 1]
+            sage: FusionDouble(SymmetricGroup(3)).s_matrix()
+            [ 1  1  2  3  3  2  2  2]
+            [ 1  1  2 -3 -3  2  2  2]
+            [ 2  2  4  0  0 -2 -2 -2]
+            [ 3 -3  0  3 -3  0  0  0]
+            [ 3 -3  0 -3  3  0  0  0]
+            [ 2  2 -2  0  0  4 -2 -2]
+            [ 2  2 -2  0  0 -2 -2  4]
+            [ 2  2 -2  0  0 -2  4 -2]
+            sage: FusionDouble(SymmetricGroup(3)).s_matrix(unitary=True)
+            [ 1/36  1/36  1/18  1/12  1/12  1/18  1/18  1/18]
+            [ 1/36  1/36  1/18 -1/12 -1/12  1/18  1/18  1/18]
+            [ 1/18  1/18   1/9     0     0 -1/18 -1/18 -1/18]
+            [ 1/12 -1/12     0  1/12 -1/12     0     0     0]
+            [ 1/12 -1/12     0 -1/12  1/12     0     0     0]
+            [ 1/18  1/18 -1/18     0     0   1/9 -1/18 -1/18]
+            [ 1/18  1/18 -1/18     0     0 -1/18 -1/18   1/9]
+            [ 1/18  1/18 -1/18     0     0 -1/18   1/9 -1/18]
+
         """
         b = self.basis()
         S = matrix([[self.s_ij(b[x], b[y], unitary=unitary, base_coercion=base_coercion)
