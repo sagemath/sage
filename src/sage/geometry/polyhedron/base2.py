@@ -21,7 +21,7 @@ Base class for polyhedra: Methods related to lattice points
 #       Copyright (C) 2019      Julian Ritter
 #       Copyright (C) 2019-2020 Laith Rastanawi
 #       Copyright (C) 2019-2020 Sophia Elia
-#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -262,21 +262,21 @@ class Polyhedron_base2(Polyhedron_base1):
         volume = `\frac{1}{dim(S)!}`) is always 1. Here we test this on
         simplices up to dimension 3::
 
-            sage: s1 = polytopes.simplex(1,backend='normaliz')              # optional - pynormaliz
-            sage: s2 = polytopes.simplex(2,backend='normaliz')              # optional - pynormaliz
-            sage: s3 = polytopes.simplex(3,backend='normaliz')              # optional - pynormaliz
-            sage: [s1.h_star_vector(),s2.h_star_vector(),s3.h_star_vector()]  # optional - pynormaliz
+            sage: s1 = polytopes.simplex(1,backend='normaliz')                      # optional - pynormaliz
+            sage: s2 = polytopes.simplex(2,backend='normaliz')                      # optional - pynormaliz
+            sage: s3 = polytopes.simplex(3,backend='normaliz')                      # optional - pynormaliz
+            sage: [s1.h_star_vector(), s2.h_star_vector(), s3.h_star_vector()]      # optional - pynormaliz
             [[1], [1], [1]]
 
         For a less trivial example, we compute the `h^*`-vector of the
         `0/1`-cube, which has the Eulerian numbers `(3,i)` for `i \in [0,2]`
         as an `h^*`-vector::
 
-            sage: cube = polytopes.cube(intervals='zero_one', backend='normaliz') # optional - pynormaliz
-            sage: cube.h_star_vector()   # optional - pynormaliz
+            sage: cube = polytopes.cube(intervals='zero_one', backend='normaliz')   # optional - pynormaliz
+            sage: cube.h_star_vector()                                              # optional - pynormaliz
             [1, 4, 1]
-            sage: from sage.combinat.combinat import eulerian_number
-            sage: [eulerian_number(3,i) for i in range(3)]
+            sage: from sage.combinat.combinat import eulerian_number                                                        # optional - sage.combinat
+            sage: [eulerian_number(3,i) for i in range(3)]                                                                  # optional - sage.combinat
             [1, 4, 1]
 
         TESTS::
@@ -293,8 +293,8 @@ class Polyhedron_base2(Polyhedron_base1):
             ...
             TypeError: The h_star vector is only defined for lattice polytopes
 
-            sage: t2 = Polyhedron(vertices=[[AA(sqrt(2))],[1/2]])
-            sage: t2.h_star_vector()
+            sage: t2 = Polyhedron(vertices=[[AA(sqrt(2))], [1/2]])                  # optional - sage.rings.number_field
+            sage: t2.h_star_vector()                                                # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: The h_star vector is only defined for lattice polytopes
@@ -767,15 +767,15 @@ class Polyhedron_base2(Polyhedron_base1):
             sage: P2 = (
             ....:   Polyhedron(ieqs=[(0, 0, 0, 1), (0, 0, 1, 0), (0, 1, 0, -1)]),
             ....:   Polyhedron(ieqs=[(0, -1, 0, 1), (0, 1, 0, 0), (0, 0, 1, 0)]))
-            sage: P2[0].generating_function_of_integral_points(sort_factors=True)
+            sage: P2[0].generating_function_of_integral_points(sort_factors=True)               # optional - sage.combinat
             1 * (-y0 + 1)^-1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
-            sage: P2[1].generating_function_of_integral_points(sort_factors=True)
+            sage: P2[1].generating_function_of_integral_points(sort_factors=True)               # optional - sage.combinat
             1 * (-y1 + 1)^-1 * (-y2 + 1)^-1 * (-y0*y2 + 1)^-1
             sage: (P2[0] & P2[1]).Hrepresentation()
             (An equation (1, 0, -1) x + 0 == 0,
              An inequality (1, 0, 0) x + 0 >= 0,
              An inequality (0, 1, 0) x + 0 >= 0)
-            sage: (P2[0] & P2[1]).generating_function_of_integral_points(sort_factors=True)
+            sage: (P2[0] & P2[1]).generating_function_of_integral_points(sort_factors=True)     # optional - sage.combinat
             1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
 
         The number of integer partitions
@@ -784,17 +784,17 @@ class Polyhedron_base2(Polyhedron_base1):
             sage: P = Polyhedron(ieqs=[(-1, 1, 0, 0, 0, 0), (0, -1, 1, 0, 0, 0),
             ....:                      (0, 0, -1, 1, 0, 0), (0, 0, 0, -1, 1, 0),
             ....:                      (0, 0, 0, 0, -1, 1)])
-            sage: f = P.generating_function_of_integral_points(sort_factors=True); f
+            sage: f = P.generating_function_of_integral_points(sort_factors=True); f            # optional - sage.combinat
             y0*y1*y2*y3*y4 * (-y4 + 1)^-1 * (-y3*y4 + 1)^-1 * (-y2*y3*y4 + 1)^-1 *
             (-y1*y2*y3*y4 + 1)^-1 * (-y0*y1*y2*y3*y4 + 1)^-1
-            sage: f = f.value()
-            sage: P.<z> = PowerSeriesRing(ZZ)
-            sage: c = f.subs({y: z for y in f.parent().gens()}); c
+            sage: f = f.value()                                                                 # optional - sage.combinat
+            sage: P.<z> = PowerSeriesRing(ZZ)                                                   # optional - sage.combinat
+            sage: c = f.subs({y: z for y in f.parent().gens()}); c                              # optional - sage.combinat
             z^5 + z^6 + 2*z^7 + 3*z^8 + 5*z^9 + 7*z^10 + 10*z^11 + 13*z^12 + 18*z^13 +
             23*z^14 + 30*z^15 + 37*z^16 + 47*z^17 + 57*z^18 + 70*z^19 + 84*z^20 +
             101*z^21 + 119*z^22 + 141*z^23 + 164*z^24 + O(z^25)
-            sage: [Partitions(k, length=5).cardinality() for k in range(5,20)] == \
-            ....:     c.truncate().coefficients(sparse=False)[5:20]
+            sage: ([Partitions(k, length=5).cardinality() for k in range(5,20)] ==              # optional - sage.combinat
+            ....:     c.truncate().coefficients(sparse=False)[5:20])
             True
 
         .. SEEALSO::

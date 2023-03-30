@@ -21,7 +21,9 @@ import copy
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import IntegerRing, ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import GCD, valuation, is_prime
+from sage.arith.misc import GCD
+from sage.arith.misc import valuation
+from sage.arith.misc import is_prime
 
 
 def find_entry_with_minimal_scale_at_prime(self, p):
@@ -303,15 +305,12 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
         if not hasattr(self, '__jordan_blocks_by_scale_and_unimodular_dict'):
             self.__jordan_blocks_by_scale_and_unimodular_dict = {}
 
-
     # Deal with zero dim'l forms
     if self.dim() == 0:
         return []
 
-
     # Find the Local Normal form of Q at p
     Q1 = self.local_normal_form(p)
-
 
     # Parse this into Jordan Blocks
     n = Q1.dim()
@@ -348,7 +347,6 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
 
     # Add the last block
     tmp_Jordan_list += [(start_scale, Q1.extract_variables(range(start_ind, n)).scale_by_factor(ZZ(1) / QQ(p)**(start_scale)))]
-
 
     # Cache the result
     self.__jordan_blocks_by_scale_and_unimodular_dict[p] = tmp_Jordan_list

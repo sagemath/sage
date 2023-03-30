@@ -1963,7 +1963,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: el == constructed_el
             True
 
-            If a q_basis is available the construction uses a different algorithm which we also check::
+        If a q_basis is available the construction uses a different algorithm which we also check::
 
             sage: basis = QF.q_basis(min_exp=-1)
             sage: QF(qexp) == constructed_el
@@ -2069,7 +2069,6 @@ class FormsSpace_abstract(FormsRing_abstract):
                 raise ValueError("The Laurent series {} does not correspond to a form of {}".format(laurent_series, self.reduce_type(["quasi", "weak"])))
 
         return el
-
 
     @cached_method
     def q_basis(self, m=None, min_exp=0, order_1=ZZ(0)):
@@ -2362,7 +2361,6 @@ class FormsSpace_abstract(FormsRing_abstract):
         laurent_series = sum([rationalize_coefficient(laurent_series[m], m) * q**m for m in range(first_exp, laurent_series.exponents()[-1] + 1)]).add_bigoh(series_prec)
 
         return laurent_series
-
 
     # DEFAULT METHODS (should be overwritten in concrete classes)
 

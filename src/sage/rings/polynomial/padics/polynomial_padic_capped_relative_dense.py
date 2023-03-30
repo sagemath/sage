@@ -354,10 +354,11 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
     def __getitem__(self, n):
         """
-        Returns the coefficient of x^n if `n` is an integer,
-        returns the monomials of self of degree in slice `n` if `n` is a slice.
-
         Return the `n`-th coefficient of ``self``.
+
+        This returns the coefficient of `x^n` if `n` is an integer,
+        and returns the monomials of ``self`` of degree
+        in slice `n` if `n` is a slice ``[:k]``.
 
         EXAMPLES::
 
@@ -372,35 +373,28 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: a[:2]
             (13^2 + O(13^4))*t + 12*13^4 + 12*13^5 + 12*13^6 + 12*13^7 + 12*13^8 + 12*13^9 + 12*13^10 + O(13^11)
 
-        Any other kind of slicing is deprecated or an error, see
-        :trac:`18940`::
+        Any other kind of slicing is an error, see :trac:`18940`::
 
             sage: a[1:3]
-            doctest:warning...:
-            DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See https://github.com/sagemath/sage/issues/18940 for details.
-            0*t^2 + (13^2 + O(13^4))*t
+            Traceback (most recent call last):
+            ...
+            IndexError: polynomial slicing with a start is not defined
+
             sage: a[1:3:2]
             Traceback (most recent call last):
             ...
-            NotImplementedError: polynomial slicing with a step is not defined
+            IndexError: polynomial slicing with a step is not defined
         """
         d = len(self._relprecs)  # = degree + 1
         if isinstance(n, slice):
             start, stop, step = n.start, n.stop, n.step
             if step is not None:
-                raise NotImplementedError("polynomial slicing with a step is not defined")
-            if start is None:
-                start = 0
-            else:
-                if start < 0:
-                    start = 0
-                from sage.misc.superseded import deprecation
-                deprecation(18940, "polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead")
+                raise IndexError("polynomial slicing with a step is not defined")
+            if start is not None:
+                raise IndexError("polynomial slicing with a start is not defined")
             if stop is None or stop > d:
                 stop = d
-            values = ([self.base_ring().zero()] * start
-                      + [self[i] for i in range(start, stop)])
+            values = [self[i] for i in range(stop)]
             return self.parent()(values)
 
         try:
@@ -661,7 +655,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             return Polynomial_padic_capped_relative_dense(self.parent(), (self._poly // fdiv, 0, [0 if a <= shift else a - shift for a in self._relprecs], False, None, None), construct=True)
 
     # def __floordiv__(self, right):
-    #     if is_Polynomial(right) and right.is_constant() and right[0] in self.base_ring():
+    #     if isinstance(right, Polynomial) and right.is_constant() and right[0] in self.base_ring():
     #         d = self.base_ring()(right[0])
     #     elif (right in self.base_ring()):
     #         d = self.base_ring()(right)

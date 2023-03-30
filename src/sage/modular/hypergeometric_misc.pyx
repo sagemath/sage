@@ -5,6 +5,7 @@ significantly from Cythonization.
 from cpython cimport array
 from cysignals.signals cimport sig_check
 
+
 cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
                  gtable, int gtable_prec, bint use_longs):
     r"""
@@ -24,9 +25,9 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
         sage: D = 1
         sage: hgm_coeffs(7, 1, 2, gamma, [0]*6, D, gtable, prec, False)
         [7, 2*7, 6*7, 7, 6, 4*7]
-        
+
     Check issue from :trac:`28404`::
-    
+
         sage: H = Hyp(cyclotomic=[[10,2],[1,1,1,1,1]])
         sage: u = H.euler_factor(2,79) # indirect doctest
         sage: u.reverse().is_weil_polynomial()
@@ -116,7 +117,7 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
                 if flip:
                     gv = -gv
                 if use_longs:
-                    w2 = gtab2[r1] # cast to long long to avoid overflow
+                    w2 = gtab2[r1]  # cast to long long to avoid overflow
                     if gv > 0: 
                         for j in range(gv):
                             w = w * w2 % q2
