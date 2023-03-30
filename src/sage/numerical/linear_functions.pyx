@@ -1064,7 +1064,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             sage: f._coeff_formatter(sqrt5)
             'sqrt5*'
 
-            sage: from sage.rings.all import AA
+            sage: from sage.rings.qqbar import AA
             sage: sqrt5 = AA(5).sqrt()
             sage: p = MixedIntegerLinearProgram(solver='interactivelp', base_ring=AA)
             sage: LF = p.linear_functions_parent()

@@ -3003,7 +3003,7 @@ class WordMorphism(SageObject):
 
         # 1D plots
         if dim_fractal == 1:
-            from sage.all import plot
+            from sage.plot.plot import plot
             for a in col_dict:
                 # We plot only the points with a color in col_dict and with positive opacity
                 if (a in col_dict) and (opacity[a] > 0):

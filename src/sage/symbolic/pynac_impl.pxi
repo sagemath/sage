@@ -35,6 +35,9 @@ Pynac interface
 from cpython cimport *
 from libc cimport math
 
+from sage.arith.misc import bernoulli, factorial, GCD as gcd, is_prime
+from sage.arith.functions import lcm
+from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.all cimport *
 from sage.libs.gsl.types cimport *
@@ -42,15 +45,7 @@ from sage.libs.gsl.complex cimport *
 from sage.libs.gsl.gamma cimport gsl_sf_lngamma_complex_e
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.libs.pari.all import pari
-
-from sage.cpython.string cimport str_to_bytes, char_to_str
-
-from sage.arith.all import gcd, lcm, is_prime, factorial, bernoulli
-
-from sage.structure.coerce cimport coercion_model
-from sage.structure.element cimport Element, parent
 from sage.misc.persist import loads, dumps
-
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.rational cimport Rational
@@ -58,7 +53,8 @@ from sage.rings.real_mpfr import RR, RealField
 from sage.rings.rational cimport rational_power_parts
 from sage.rings.real_double cimport RealDoubleElement
 from sage.rings.cc import CC
-
+from sage.structure.coerce cimport coercion_model
+from sage.structure.element cimport Element, parent
 from sage.symbolic.function cimport Function
 
 
@@ -2391,7 +2387,7 @@ def register_symbol(obj, conversions, nargs=None):
       this can be deduced automatically.
 
     EXAMPLES::
-    
+
         sage: from sage.symbolic.expression import register_symbol as rs
         sage: rs(SR(5),{'maxima':'five'})
         sage: SR(maxima_calculus('five'))
