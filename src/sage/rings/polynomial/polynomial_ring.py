@@ -3040,10 +3040,13 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
             elif implementation == "NTL":
                 modulus = base_ring.order()
                 from . import polynomial_modn_dense_ntl as modn_dense_ntl
+                from sage.libs.ntl.ntl_ZZ import ntl_ZZ
+                from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext_class
                 if modulus < ZZ(modn_dense_ntl.zz_p_max):
                     element_class = modn_dense_ntl.Polynomial_dense_modn_ntl_zz
                 else:
                     element_class = modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ
+                    self._modulus = ntl_ZZ_pContext_class(ntl_ZZ(modulus))
                 self._implementation_repr = ' (using NTL)'
         PolynomialRing_commutative.__init__(self, base_ring, name=name,
                 element_class=element_class, category=category)
@@ -3201,6 +3204,10 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
         elif implementation == "NTL":
             from .polynomial_modn_dense_ntl import \
                     Polynomial_dense_mod_p as element_class
+            from sage.libs.ntl.ntl_ZZ import ntl_ZZ
+            from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext_class
+            modulus = base_ring.order()
+            self._modulus = ntl_ZZ_pContext_class(ntl_ZZ(modulus))
             self._implementation_repr = ' (using NTL)'
         elif implementation == "GF2X":
             from .polynomial_gf2x import \

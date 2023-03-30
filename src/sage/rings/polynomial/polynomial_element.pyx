@@ -6395,6 +6395,13 @@ cdef class Polynomial(CommutativePolynomial):
             sage: pari(pol)
             Mod(1, y^2 + y + 1)*x^3 + Mod(3*y, y^2 + y + 1)*x^2 + Mod(-3*y - 3, y^2 + y + 1)*x + Mod(1, y^2 + y + 1)
 
+        Polynomials over a finite ring work::
+
+            sage: t = PolynomialRing(IntegerModRing(17),"t", implementation='NTL').gen()
+            sage: f = t^3 + 3*t - 17
+            sage: pari(f)
+            Mod(1, 17)*t^3 + Mod(3, 17)*t
+
         TESTS:
 
         Unfortunately, variable names matter::
