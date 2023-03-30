@@ -1215,7 +1215,6 @@ class WeakTableau_core(WeakTableau_abstract):
         return max(v[0] for v in L + R)
 
 
-
 class WeakTableaux_core(WeakTableaux_abstract):
     r"""
     The class of (skew) weak `k`-tableaux in the core representation of shape ``shape``

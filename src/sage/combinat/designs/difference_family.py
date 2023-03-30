@@ -923,7 +923,6 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
         elif existence:
             return True
 
-
     if check and not is_difference_family(K, D, v, k, l):
         raise RuntimeError("radical_difference_family produced a wrong "
                            "difference family with parameters v={}, "
@@ -1804,7 +1803,6 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
 
     psi1 = ((1 + P.monomial((q-1)//2)) * theta1).mod(P.monomial(q-1) - 1)
     psi2 = (1 + (1 + P.monomial((q-1)//2)) * theta2).mod(P.monomial(q-1) - 1)
-
 
     K1 = list(map(Integer, psi1.exponents()))
     K2 = list(map(Integer, psi2.exponents()))

@@ -228,7 +228,7 @@ from sage.misc.flatten import flatten
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.misc.prandom import randint
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.semirings.non_negative_integer_semiring import NN
