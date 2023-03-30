@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.rings.number_field
 r"""
 Isogeny class of elliptic curves over number fields
 
@@ -400,7 +400,9 @@ class IsogenyClass_EC(SageObject):
             sage: isocls = EllipticCurve('15a3').isogeny_class()
             sage: G = isocls.graph()
             sage: sorted(G._pos.items())
-            [(1, [-0.8660254, 0.5]), (2, [-0.8660254, 1.5]), (3, [-1.7320508, 0]), (4, [0, 0]), (5, [0, -1]), (6, [0.8660254, 0.5]), (7, [0.8660254, 1.5]), (8, [1.7320508, 0])]
+            [(1, [-0.8660254, 0.5]), (2, [-0.8660254, 1.5]), (3, [-1.7320508, 0]),
+             (4, [0, 0]), (5, [0, -1]), (6, [0.8660254, 0.5]),
+             (7, [0.8660254, 1.5]), (8, [1.7320508, 0])]
         """
         from sage.graphs.graph import Graph
 
@@ -774,7 +776,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
 
         Check that :trac:`19030` is fixed (codomains of reverse isogenies were wrong)::
 
-            sage: K.<i> = NumberField(x^2+1)
+            sage: K.<i> = NumberField(x^2 + 1)
             sage: E = EllipticCurve([1, i + 1, 1, -72*i + 8, 95*i + 146])
             sage: C = E.isogeny_class()
             sage: curves = C.curves
