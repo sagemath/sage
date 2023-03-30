@@ -105,7 +105,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P(0,0,0,0)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 0, 0, 0] does not define a point in Projective Space of dimension 3 over Integer Ring since all entries are zero
+            ValueError: [0, 0, 0, 0] does not define a point in Projective Space of dimension 3
+            over Integer Ring since all entries are zero
 
         ::
 
@@ -119,7 +120,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P(0,5,10,15)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 5, 10, 0] does not define a point in Projective Space of dimension 3 over Ring of integers modulo 15 since it is a multiple of a zero divisor
+            ValueError: [0, 5, 10, 0] does not define a point in Projective Space of dimension 3
+            over Ring of integers modulo 15 since it is a multiple of a zero divisor
 
         It is possible to avoid the possibly time-consuming checks, but be careful!! ::
 
@@ -859,7 +861,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         EXAMPLES::
 
-            sage: P.<x,y,z,w> = ProjectiveSpace(QQ,3)
+            sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
             sage: f = DynamicalSystem_projective([x^2, y^2, 4*w^2, 4*z^2], domain=P)
             sage: Q = P.point([4, 4, 1, 1], False)
             sage: Q.multiplier(f, 1)
@@ -1075,7 +1077,8 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: P(0, 0, 0, 0)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 0, 0, 0] does not define a point in Projective Space of dimension 3 over Rational Field since all entries are zero
+            ValueError: [0, 0, 0, 0] does not define a point in Projective Space of dimension 3
+            over Rational Field since all entries are zero
 
         ::
 
