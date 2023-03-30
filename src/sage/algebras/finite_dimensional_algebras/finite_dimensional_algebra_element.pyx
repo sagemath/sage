@@ -14,10 +14,8 @@ Elements of Finite Algebras
 # ****************************************************************************
 import re
 
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.matrix.matrix_space import MatrixSpace
 from sage.structure.element import is_Matrix
-from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 
 from cpython.object cimport PyObject_RichCompare as richcmp
@@ -36,7 +34,7 @@ cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A
     """
     cdef FiniteDimensionalAlgebraElement x = A.element_class.__new__(A.element_class)
     AlgebraElement.__init__(x, A)
-    x._vector  = vec
+    x._vector = vec
     x.__matrix = mat
     return x
 
@@ -90,13 +88,13 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         k = A.base_ring()
         n = A.degree()
         if elt is None:
-            self._vector = MatrixSpace(k,1,n)()
+            self._vector = MatrixSpace(k, 1, n)()
             self.__matrix = MatrixSpace(k, n)()
         else:
             if isinstance(elt, int):
                 elt = Integer(elt)
             elif isinstance(elt, list):
-                elt = MatrixSpace(k,1,n)(elt)
+                elt = MatrixSpace(k, 1, n)(elt)
             if A == elt.parent():
                 mat = (<FiniteDimensionalAlgebraElement> elt).__matrix
                 if mat is None:
@@ -115,7 +113,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
                 else:
                     raise TypeError("algebra is not unitary")
             elif isinstance(elt, Vector):
-                self._vector = MatrixSpace(k,1,n)(list(elt))
+                self._vector = MatrixSpace(k, 1, n)(list(elt))
             elif is_Matrix(elt):
                 if elt.ncols() != n:
                     raise ValueError("matrix does not define an element of the algebra")
@@ -171,7 +169,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         self._parent, D = state
         v = D.pop('_vector')
         if isinstance(v, Vector):
-            self._vector = MatrixSpace(self._parent.base_ring(), 1,len(v))(list(v))
+            self._vector = MatrixSpace(self._parent.base_ring(), 1, len(v))(list(v))
         else:
             self._vector = v
         self.__matrix = D.pop('_matrix', None)
@@ -197,7 +195,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         if self.__matrix is None:
             A = self.parent()
             table = <tuple> A.table()
-            ret = sum(self._vector[0,i] * table[i] for i in xrange(A.degree()))
+            ret = sum(self._vector[0, i] * table[i] for i in range(A.degree()))
             self.__matrix = MatrixSpace(A.base_ring(), A.degree())(ret)
         return self.__matrix
 
@@ -211,9 +209,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B(5).vector()
             (5, 0, 5)
         """
-        #By :trac:`23707`, ``self._vector`` now is a single row matrix,
-        #not a vector, which results in a speed-up. For backwards compatibility,
-        #this method still returns a vector.
+        # By :trac:`23707`, ``self._vector`` now is a single row matrix,
+        # not a vector, which results in a speed-up.
+        # For backwards compatibility, this method still returns a vector.
         return self._vector[0]
 
     def matrix(self):
@@ -248,7 +246,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             {0: 1, 1: 1}
         """
         cdef Py_ssize_t i
-        return {i:self._vector[0,i] for i in range(self._vector.ncols())}
+        return {i: self._vector[0, i] for i in range(self._vector.ncols())}
 
     def left_matrix(self):
         """
@@ -261,12 +259,11 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             [1 0 0]
             [0 1 0]
             [0 2 0]
-
         """
         A = self.parent()
         if A.is_commutative():
             return self._matrix
-        return sum([self._vector[0,i] * A.left_table()[i] for
+        return sum([self._vector[0, i] * A.left_table()[i] for
                     i in range(A.degree())])
 
     def _repr_(self):
@@ -299,8 +296,8 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
                 var = "*{}".format(A._names[n])
                 s += "{}{}".format(x, var)
         s = s.replace(" + -", " - ")
-        s = re.sub(r' 1(\.0+)?\*',' ', s)
-        s = re.sub(r' -1(\.0+)?\*',' -', s)
+        s = re.sub(r' 1(\.0+)?\*', ' ', s)
+        s = re.sub(r' -1(\.0+)?\*', ' -', s)
         if s == " ":
             return "0"
         return s[1:]
@@ -330,9 +327,8 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: A([2,1/4,3])[2]
             3
-
         """
-        return self._vector[0,m]
+        return self._vector[0, m]
 
     def __len__(self):
         """
@@ -341,11 +337,10 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]), Matrix([[0,1,0], [0,0,0], [0,0,0]]), Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: len(A([2,1/4,3]))
             3
-
         """
         return self._vector.ncols()
 
-    ## (Rich) comparison
+    # (Rich) comparison
     cpdef _richcmp_(self, right, int op):
         """
         EXAMPLES::
@@ -375,7 +370,6 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             True
             sage: A(1) <= 0
             False
-
         """
         return richcmp(self._vector, <FiniteDimensionalAlgebraElement>right._vector, op)
 
@@ -435,7 +429,8 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         if not self._parent.base_ring().has_coerce_map_from(other.parent()):
             raise TypeError("unsupported operand parent(s) for *: '{}' and '{}'"
                             .format(self.parent(), other.parent()))
-        return self._parent.element_class(self._parent, other * self._vector) # Note the different order
+        # Note the different order below
+        return self._parent.element_class(self._parent, other * self._vector)
 
     def __pow__(self, n, m):
         """

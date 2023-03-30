@@ -21,8 +21,8 @@ AUTHORS:
 # ****************************************************************************
 
 from cysignals.signals cimport sig_check
-from sage.libs.gmp.mpz cimport mpz_sizeinbase, mpz_setbit, mpz_tstbit, mpz_cmp_si, mpz_sgn
-from sage.data_structures.bitset_base cimport (bitset_t, bitset_init, bitset_first,
+from sage.libs.gmp.mpz cimport mpz_sizeinbase, mpz_setbit, mpz_tstbit, mpz_sgn
+from sage.data_structures.bitset_base cimport (bitset_init, bitset_first,
                                                bitset_next, bitset_set_to, bitset_len)
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp, rich_to_bool
@@ -175,8 +175,8 @@ cdef class GroebnerStrategy:
         Convert ``f`` into a ``GBElement``.
         """
         cdef dict mc = <dict> f._monomial_coefficients
-        #if not mc:
-        #    return GBElement(f, FrozenBitset(), -1)
+        # if not mc:
+        #     return GBElement(f, FrozenBitset(), -1)
         cdef Integer r = <Integer> max(self.bitset_to_int(k) for k in mc)
         return GBElement(f, self.int_to_bitset(r), r)
 
@@ -232,7 +232,7 @@ cdef class GroebnerStrategy:
                 if self.build_S_poly(f0, f1):
                     L.add(self.partial_S_poly_right(f0, f1))
                     L.add(self.partial_S_poly_right(f1, f0))
-        else: # We compute a left Gröbner basis for two-sided ideals
+        else:  # We compute a left Gröbner basis for two-sided ideals
             for f0, f1 in P:
                 if self.build_S_poly(f0, f1):
                     L.add(self.partial_S_poly_left(f0, f1))
@@ -272,14 +272,14 @@ cdef class GroebnerStrategy:
         cdef set L = self.preprocessing(P, G)
         cdef Py_ssize_t i
         from sage.matrix.constructor import matrix
-        cdef Integer r = Integer(2) ** self.rank - Integer(1) # r for "rank" or "reverso"
+        cdef Integer r = Integer(2) ** self.rank - Integer(1)  # r for "rank" or "reverso"
         M = matrix({(i, r - self.bitset_to_int(<FrozenBitset> m)): c
-                    for i,f in enumerate(L)
-                    for m,c in (<GBElement> f).elt._monomial_coefficients.items()},
+                    for i, f in enumerate(L)
+                    for m, c in (<GBElement> f).elt._monomial_coefficients.items()},
                    sparse=True)
         M.echelonize()  # Do this in place
         lead_supports = set((<GBElement> f).lsi for f in L)
-        return [GBElement(self.E.element_class(self.E, {self.int_to_bitset(r - Integer(j)): c for j,c in M[i].iteritems()}),
+        return [GBElement(self.E.element_class(self.E, {self.int_to_bitset(r - Integer(j)): c for j, c in M[i].iteritems()}),
                           self.int_to_bitset(Integer(r - p)),
                           Integer(r - p))
                 for i, p in enumerate(M.pivots())
@@ -309,8 +309,7 @@ cdef class GroebnerStrategy:
         """
         cdef FrozenBitset p0, p1
         cdef long deg
-        cdef Py_ssize_t i, j, k
-        cdef set additions
+        cdef Py_ssize_t i, j
         cdef GBElement f0, f1
         cdef list G = [], Gp
         cdef dict constructed = {}
@@ -321,7 +320,7 @@ cdef class GroebnerStrategy:
                 continue
             f0 = self.build_elt(f)
             if f0.lsi in constructed:
-                if f0 in constructed[f0.lsi]: # Already there
+                if f0 in constructed[f0.lsi]:  # Already there
                     continue
                 constructed[f0.lsi].add(f0)
             else:
@@ -338,7 +337,7 @@ cdef class GroebnerStrategy:
                         continue
                     f1 = self.build_elt(f)
                     if f1.lsi in constructed:
-                        if f1 in constructed[f1.lsi]: # Already there
+                        if f1 in constructed[f1.lsi]:  # Already there
                             continue
                         constructed[f1.lsi].add(f1)
                     else:
@@ -367,7 +366,7 @@ cdef class GroebnerStrategy:
             # Add the elements Gp to G when a new element is found
             for f0 in Gp:
                 if f0.lsi in constructed:
-                    if f0 in constructed[f0.lsi]: # Already there
+                    if f0 in constructed[f0.lsi]:  # Already there
                         continue
                     constructed[f0.lsi].add(f0)
                 else:
@@ -402,20 +401,16 @@ cdef class GroebnerStrategy:
         cdef GBElement f0, f1
 
         # Now that we have a Gröbner basis, we make this into a reduced Gröbner basis
-        cdef tuple supp
-        cdef bint did_reduction
-        cdef FrozenBitset lm, s
-        cdef Integer r
         cdef Py_ssize_t num_zeros = 0
         cdef Py_ssize_t n = len(G)
         cdef set pairs = set((i, j) for i in range(n) for j in range(n) if i != j)
 
         while pairs:
             sig_check()
-            i,j = pairs.pop()
+            i, j = pairs.pop()
             f0 = <GBElement> G[i]
             f1 = <GBElement> G[j]
-            assert f0.elt._monomial_coefficients is not f1.elt._monomial_coefficients, (i,j)
+            assert f0.elt._monomial_coefficients is not f1.elt._monomial_coefficients, (i, j)
             # We perform the classical reduction algorithm here on each pair
             # TODO: Make this faster by using the previous technique?
             if self.reduce_single(f0.elt, f1.elt):
@@ -500,7 +495,6 @@ cdef class GroebnerStrategy:
         """
         cdef FrozenBitset lm = self.leading_support(g), s, t
         cdef bint did_reduction = True, was_reduced=False
-        cdef tuple supp
         cdef CliffordAlgebraElement gp
 
         one = self.E._base.one()
@@ -520,7 +514,6 @@ cdef class GroebnerStrategy:
                 coeff = f[t] / gp._monomial_coefficients[t]
                 iaxpy(-coeff, gp._monomial_coefficients, f._monomial_coefficients)
         return was_reduced
-
 
     cdef Integer bitset_to_int(self, FrozenBitset X):
         raise NotImplementedError
@@ -658,8 +651,6 @@ cdef class GroebnerStrategyDegRevLex(GroebnerStrategy):
         """
         Convert a nonnegative integer ``n`` to a :class:`FrozenBitset`.
         """
-        cdef size_t i
-
         if mpz_sgn(n.value) == 0:
             return FrozenBitset()
 
@@ -701,8 +692,6 @@ cdef class GroebnerStrategyDegLex(GroebnerStrategy):
         """
         Convert a nonnegative integer ``n`` to a :class:`FrozenBitset`.
         """
-        cdef size_t i
-
         if mpz_sgn(n.value) == 0:
             return FrozenBitset()
 
