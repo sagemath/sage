@@ -840,7 +840,7 @@ cdef class _mw:
         - ``sat_bnd`` (int, default -1) -- upper bound on primes at
           which to saturate.  If -1 (default), compute a bound for the
           primes which may not be saturated, and use that.  Otherwise,
-          the bound used is the minumum of the value of ``sat_bnd``
+          the bound used is the minimum of the value of ``sat_bnd``
           and the computed bound.
 
         - ``sat_low_bd`` (int, default 2) -- only do saturation at
