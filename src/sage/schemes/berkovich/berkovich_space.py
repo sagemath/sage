@@ -355,8 +355,8 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
     extensions of `\QQ_p`::
 
         sage: B = Berkovich_Cp_Affine(3)                                                # optional - sage.rings.padics
-        sage: A.<a> = Qp(3).extension(x^3 - 3)                                          # optional - sage.rings.number_field
-        sage: B(a)                                                                      # optional - sage.rings.number_field sage.rings.padics
+        sage: A.<a> = Qp(3).extension(x^3 - 3)                                          # optional - sage.rings.padics
+        sage: B(a)                                                                      # optional - sage.rings.padics
         Type I point centered at a + O(a^61)
 
     For exact computation, a number field can be used::
