@@ -2914,14 +2914,14 @@ class Link(SageObject):
         - http://mathworld.wolfram.com/HOMFLYPolynomial.html
         """
         if not var1:
-            if   normalization == 'az':
+            if normalization == 'az':
                 var1 = 'a'
             elif normalization == 'vz':
                 var1 = 'v'
             else:
                 var1 = 'L'
         if not var2:
-            if  normalization == 'lm':
+            if normalization == 'lm':
                 var2 = 'M'
             else:
                 var2 = 'z'
@@ -4016,7 +4016,7 @@ class Link(SageObject):
             if ach is None and achp is None:
                 if unique:
                     raise NotImplementedError('this link cannot be uniquely determined (unknown chirality)%s' %non_unique_hint)
-            elif  L.is_amphicheiral() or L.is_amphicheiral(positive=True):
+            elif L.is_amphicheiral() or L.is_amphicheiral(positive=True):
                 chiral = False
 
             if not chiral:
@@ -4192,13 +4192,13 @@ class Link(SageObject):
 
         try:
             ki, m = self.get_knotinfo()
-            verbose('KnotInfo self: %s mirrored %s' %(ki, m))
+            verbose('KnotInfo self: %s mirrored %s' % (ki, m))
             try:
                 if ki.is_unique():
                     try:
                         kio = other.get_knotinfo()
-                        verbose('KnotInfo other: %s mirrored %s' %kio)
-                        return  (ki, m) == kio
+                        verbose('KnotInfo other: %s mirrored %s' % kio)
+                        return (ki, m) == kio
                     except NotImplementedError:
                         pass
             except AttributeError:

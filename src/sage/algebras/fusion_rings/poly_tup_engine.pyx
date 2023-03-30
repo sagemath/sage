@@ -576,4 +576,3 @@ cpdef tuple poly_tup_sortkey(tuple eq_tup):
             key.append(-exp._data[2*i])
             key.append(exp._data[2*i+1])
     return tuple(key)
-

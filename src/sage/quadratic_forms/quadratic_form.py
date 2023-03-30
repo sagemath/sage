@@ -27,13 +27,15 @@ from sage.structure.element import is_Matrix
 from sage.rings.integer_ring import IntegerRing, ZZ
 from sage.rings.ring import Ring
 from sage.misc.functional import denominator, is_even
-from sage.arith.all import GCD, LCM
-from sage.rings.all import Ideal, QQ
+from sage.arith.misc import GCD
+from sage.arith.functions import lcm as LCM
+from sage.rings.ideal import Ideal
+from sage.rings.rational_field import QQ
 from sage.rings.ring import is_Ring, PrincipalIdealDomain
 from sage.structure.element import is_Vector
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_element import is_Polynomial
-from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.genera.genus import genera
 from sage.quadratic_forms.quadratic_form__evaluate import QFEvaluateVector, QFEvaluateMatrix
@@ -440,7 +442,6 @@ class QuadraticForm(SageObject):
             local_genus_symbol, \
             CS_genus_symbol_list
 
-
     # Routines to compute local masses for ZZ.
     from sage.quadratic_forms.quadratic_form__mass import \
             shimura_mass__maximal, \
@@ -504,8 +505,6 @@ class QuadraticForm(SageObject):
 
     # Routines for solving equations of the form Q(x) = c.
     from sage.quadratic_forms.qfsolve import solve
-
-
 
     def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None):
         """
@@ -576,9 +575,9 @@ class QuadraticForm(SageObject):
             M_ring = M.base_ring()
             matrix_init_flag = True
 
-        elif is_Polynomial(R) or is_MPolynomial(R):
+        elif isinstance(R, (Polynomial, MPolynomial)):
             p = R
-            
+
             if not p.is_zero() and not (p.is_homogeneous() and p.degree() == 2):
                 raise ValueError("polynomial is neither zero nor homogeneous of degree 2")
 
@@ -687,7 +686,6 @@ class QuadraticForm(SageObject):
         """
         return deepcopy(self._external_initialization_list)
 
-
     def __pari__(self):
         """
         Return a PARI-formatted Hessian matrix for Q.
@@ -738,7 +736,6 @@ class QuadraticForm(SageObject):
                     out_str += str(self[i,j]) + " "
             out_str += "]"
         return out_str
-
 
     def _latex_(self):
         """
@@ -969,8 +966,6 @@ class QuadraticForm(SageObject):
 #        return QuadraticForm(self.base_ring(), self.dim(), [c * self.__coeffs[i]  for i in range(len(self.__coeffs))])
 # =========================================================================================================================
 
-
-
     def __call__(self, v):
         """
         Evaluate this quadratic form Q on a vector or matrix of elements
@@ -1081,8 +1076,6 @@ class QuadraticForm(SageObject):
 
         else:
             raise TypeError
-
-
 
 
 # =====================================================================================================
@@ -1399,8 +1392,6 @@ class QuadraticForm(SageObject):
                 coeffs.append(poly.monomial_coefficient(v*w))
         return QuadraticForm(base, len(vs), coeffs)
 
-
-
     def is_primitive(self):
         """
         Determines if the given integer-valued form is primitive
@@ -1492,7 +1483,6 @@ class QuadraticForm(SageObject):
         """
         return self.__base_ring
 
-
     def coefficients(self):
         """
         Gives the matrix of upper triangular coefficients,
@@ -1506,7 +1496,6 @@ class QuadraticForm(SageObject):
 
         """
         return self.__coeffs
-
 
     def det(self):
         """
@@ -1536,7 +1525,6 @@ class QuadraticForm(SageObject):
             self.__det = new_det
             return new_det
 
-
     def Gram_det(self):
         """
         Gives the determinant of the Gram matrix of Q.
@@ -1553,7 +1541,6 @@ class QuadraticForm(SageObject):
 
         """
         return self.det() / ZZ(2**self.dim())
-
 
     def base_change_to(self, R):
         """
@@ -1638,7 +1625,6 @@ class QuadraticForm(SageObject):
             if self.base_ring().is_field():
                 warn("Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?")
                 #raise RuntimeError, "Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?"
-
 
             # Check invertibility and find the inverse
             try:

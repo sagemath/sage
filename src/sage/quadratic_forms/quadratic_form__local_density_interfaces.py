@@ -4,7 +4,7 @@ Local Density Interfaces
 # // This is needed in the filter for primitivity...
 # #include "../max-min.h"
 
-from sage.arith.all import valuation
+from sage.arith.misc import valuation
 from sage.rings.rational_field import QQ
 
 
@@ -56,7 +56,6 @@ def local_density(self, p, m):
     # If m is less p-divisible than the matrix, return zero
     if ((m != 0) and (valuation(m,p) < p_valuation)):   # Note: The (m != 0) condition protects taking the valuation of zero.
         return QQ(0)
-
 
     # If the form is imprimitive, rescale it and call the local density routine
     p_adjustment = QQ(1) / p**p_valuation
@@ -132,7 +131,6 @@ def local_primitive_density(self, p, m):
     # If m is less p-divisible than the matrix, return zero
     if ((m != 0) and (valuation(m,p) < p_valuation)):   # Note: The (m != 0) condition protects taking the valuation of zero.
         return QQ(0)
-
 
     # If the form is imprimitive, rescale it and call the local density routine
     p_adjustment = QQ(1) / p**p_valuation

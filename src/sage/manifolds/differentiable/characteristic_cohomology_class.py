@@ -290,7 +290,7 @@ from .affine_connection import AffineConnection
 from .bundle_connection import BundleConnection
 from .levi_civita_connection import LeviCivitaConnection
 from sage.symbolic.expression import Expression
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
@@ -795,7 +795,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
             Characteristic cohomology class pontr(TM) of the Tangent bundle
              TM over the 8-dimensional differentiable manifold M
         """
-        if isinstance(x, (str, Expression)) or is_Polynomial(x):
+        if isinstance(x, (str, Expression)) or isinstance(x, Polynomial):
             return self._build_element(x, **kwargs)
 
         R = self.base_ring()
@@ -983,7 +983,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
             val = P(val.taylor(x, 0, pow_range))
 
         # turn polynomial into a characteristic cohomology class via sequences
-        if is_Polynomial(val):
+        if isinstance(val, Polynomial):
             if class_type is None:
                 raise TypeError(f'class_type must be stated if {val} '
                                 f'is a polynomial')
