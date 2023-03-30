@@ -31,5 +31,6 @@ def all_features():
             PythonModule('primecountpy', spkg='primecountpy'),
             PythonModule('ptyprocess', spkg='ptyprocess'),
             PythonModule('requests', spkg='requests'),
+            PythonModule('rpy2', spkg='rpy2'),
             PythonModule('scipy', spkg='scipy'),
             PythonModule('sympy', spkg='sympy')]
