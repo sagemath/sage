@@ -1223,6 +1223,64 @@ class Standalone(SageObject):
 
         return filename
 
+    def save(self, filename, **kwds):
+        r"""
+        Save the graphics to an image file.
+
+        INPUT:
+
+        - ``filename`` -- string. The filename and the image format
+          given by the extension, which can be one of the following:
+
+            * ``.pdf``,
+            * ``.png``,
+            * ``.svg``,
+            * ``.eps``,
+            * ``.dvi``,
+            * ``.sobj`` (for a Sage object you can load later),
+            * empty extension will be treated as ``.sobj``.
+
+        All other keyword arguments will be passed to the plotter.
+
+        OUTPUT:
+
+        - ``None``
+
+        .. NOTE::
+
+            This method follows the signature of the method
+            :meth:`sage.plot.Graphics.save` in order to be compatible with
+            with sagetex. In particular so that ``\sageplot{t}`` written
+            in a ``tex`` file works when ``t`` is an instance of
+            :class:`Standalone` or :class:`TikzPicture`.
+
+        EXAMPLES::
+
+            sage: from sage.misc.temporary_file import tmp_filename
+            sage: from sage.misc.latex_standalone import Standalone
+            sage: t = Standalone('Hello World')
+            sage: filename = tmp_filename('temp','.pdf')
+            sage: t.save(filename)                # long time (1s)   # optional latex
+            sage: filename = tmp_filename('temp','.eps')
+            sage: t.save(filename)                # long time (1s)   # optional latex dvips
+
+        """
+        ext = os.path.splitext(filename)[1].lower()
+        if ext == '' or ext == '.sobj':
+            raise NotImplementedError()
+        elif ext == '.pdf':
+            self.pdf(filename, **kwds)
+        elif ext == '.png':
+            self.png(filename, **kwds)
+        elif ext == '.svg':
+            self.svg(filename, **kwds)
+        elif ext == '.eps':
+            self.eps(filename, **kwds)
+        elif ext == '.dvi':
+            self.dvi(filename, **kwds)
+        else:
+            raise ValueError("allowed file extensions for images are "
+                             ".pdf, .png, .svg, .eps, .dvi!")
 
 class TikzPicture(Standalone):
     r"""
