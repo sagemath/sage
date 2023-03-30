@@ -186,6 +186,26 @@ class lualatex(LaTeX):
         super().__init__("lualatex")
 
 
+class dvips(Executable):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of ``dvips``
+
+    EXAMPLES::
+
+        sage: from sage.features.latex import dvips
+        sage: dvips().is_present()             # optional - dvips
+        FeatureTestResult('dvips', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.latex import dvips
+            sage: isinstance(dvips(), dvips)
+            True
+        """
+        Executable.__init__(self, "dvips", executable="dvips",
+                            url="https://tug.org/texinfohtml/dvips.html")
 class TeXFile(StaticFile):
     r"""
     A :class:`sage.features.Feature` describing the presence of a TeX file
@@ -275,4 +295,5 @@ def all_features():
             pdflatex(),
             xelatex(),
             lualatex(),
+            dvips(),
             LaTeXPackage("tkz-graph")]
