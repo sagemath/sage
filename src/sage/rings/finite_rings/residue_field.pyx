@@ -143,16 +143,25 @@ And now over a large prime field::
     [Z^2 + 4398046511117*X, Y + Z]
 """
 
-#*****************************************************************************
-#       Copyright (C) 2007 David Roe <roed@math.harvard.edu>
-#                          William Stein <wstein@gmail.com>
+# *****************************************************************************
+#       Copyright (C) 2007-2019 David Roe <roed@math.harvard.edu>
+#                     2007      William Stein <wstein@gmail.com>
+#                     2008      John Cremona
+#                     2008      Robert Bradshaw
+#                     2009      Nick Alexander
+#                     2010      Robert L. Miller
+#                     2010-2013 Simon King
+#                     2010-2017 Jeroen Demeyer
+#                     2012      Travis Scrimshaw
+#                     2016-2021 Frédéric Chapoton
+#                     2021-2022 Antonio Rojas
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 
 from sage.rings.ring cimport Field
