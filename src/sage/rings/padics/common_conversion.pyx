@@ -437,15 +437,12 @@ cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer
             mpz_mul(out, out, temp.value)
         mpz_mod(out, out, prime_pow.pow_mpz_t_tmp(prec))
     elif isinstance(x, list):
-        if valshift == 0:
-            if len(x) == 0:
-                cconv_shared(out, Integer(0), prec, valshift, prime_pow)
-            elif len(x) == 1:
-                cconv_shared(out, x[0], prec, valshift, prime_pow)
-            else:
-                raise NotImplementedError("conversion not implemented from non-prime residue field")
+        if len(x) == 0:
+            cconv_shared(out, Integer(0), prec, valshift, prime_pow)
+        elif len(x) == 1:
+            cconv_shared(out, x[0], prec, valshift, prime_pow)
         else:
-            raise NotImplementedError
+            raise NotImplementedError("conversion not implemented from non-prime residue field")
     else:
         raise NotImplementedError("No conversion defined for %s which is a %s in %s"%(x,type(x),x.parent() if hasattr(x,"parent") else "no parent"))
 

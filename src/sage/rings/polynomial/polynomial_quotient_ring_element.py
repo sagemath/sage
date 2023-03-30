@@ -76,12 +76,13 @@ AUTHORS:
 
 #*****************************************************************************
 #       Copyright (C) 2005, 2007 William Stein <wstein@gmail.com>
+#                           2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.structure.element import CommutativeRingElement
@@ -151,6 +152,12 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
                     R = R - S*B
                 polynomial = R
         self._polynomial = polynomial
+
+    def polynomial(self, var=None):
+        polynomial = self._polynomial()
+        if var is not None:
+            polynomial = polynomial.change_variable_name(var)
+        return polynomial
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """

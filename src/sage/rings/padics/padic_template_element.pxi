@@ -518,8 +518,8 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         Check to see that :trac:`10292` is resolved::
 
             sage: E = EllipticCurve('37a')
-            sage: R = E.padic_regulator(7)
-            sage: len(R.expansion())
+            sage: R = E.padic_regulator(7)  # long time, 1s in early 2022
+            sage: len(R.expansion())  # long time
             19
         """
         if isinstance(n, slice):

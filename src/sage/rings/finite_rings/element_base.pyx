@@ -382,6 +382,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: e._vector_(reverse=True)
             (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1)
         """
+        # TODO: Obsolete, use .parent().vector_space()[1?2](self) instead.
         #vector(foo) might pass in ZZ
         if isinstance(reverse, Parent):
             raise TypeError("Base field is fixed to prime subfield.")

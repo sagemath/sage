@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Valuations which are implemented through a map to another valuation
 
@@ -24,7 +23,7 @@ AUTHORS:
 
 """
 # ****************************************************************************
-#       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C) 2016-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -346,6 +345,45 @@ class MappedValuation_base(DiscretePseudoValuation):
         """
         return self._from_base_domain(self._base_valuation.element_with_valuation(s))
 
+    def F(self):
+        r"""
+        Return the degree of the residue field of this
+        valuation over the residue field of its base
+        valuation.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+
+            sage: v = K.valuation(0)
+            sage: w = v.extensions(L)[0]
+            sage: w.F()
+            1
+
+        """
+        return self._base_valuation.F()
+
+    def E(self):
+        r"""
+        Return the ramification index of this valuation over
+        its base valuation.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+
+            sage: v = K.valuation(0)
+            sage: w = v.extensions(L)[0]
+            sage: w.E()
+            2
+
+        """
+        return self._base_valuation.E()
+
     def _test_to_from_base_domain(self, **options):
         r"""
         Check the correctness of :meth:`to_base_domain` and
@@ -643,6 +681,35 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
         from .limit_valuation import LimitValuation
         limit = LimitValuation(approximant, G)
         FiniteExtensionFromInfiniteValuation.__init__(self, parent, limit)
+
+    def F(self):
+        r"""
+        Return the degree of the residue field of this
+        valuation over the residue field of its base
+        valuation.
+
+        EXAMPLES::
+
+            sage: v = valuations.pAdicValuation(GaussianIntegers().fraction_field(), 2)
+            sage: v.F()
+            1
+
+        """
+        return self._base_valuation._initial_approximation.F()
+
+    def E(self):
+        r"""
+        Return the ramification index of this valuation over
+        its base valuation.
+
+        EXAMPLES::
+
+            sage: v = valuations.pAdicValuation(GaussianIntegers().fraction_field(), 2)
+            sage: v.E()
+            2
+
+        """
+        return self._base_valuation._initial_approximation.E()
 
     def _repr_(self):
         """

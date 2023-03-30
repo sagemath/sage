@@ -894,7 +894,7 @@ cdef class pAdicPrinter_class(SageObject):
                 pprint = latex_variable_name(pprint)
         return self._repr_gen(elt, do_latex, _pos, _mode, pprint)
 
-    cdef _repr_gen(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, ram_name):
+    cdef _repr_gen(self, elt, bint do_latex, bint pos, int mode, ram_name):
         r"""
         Prints a string representation of the element.  See __init__ for more details on print modes.
 
@@ -1055,7 +1055,7 @@ cdef class pAdicPrinter_class(SageObject):
         if s == "": s = "0"
         return s
 
-    cdef _repr_spec(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, bint paren, ram_name):
+    cdef _repr_spec(self, elt, bint do_latex, bint pos, int mode, bint paren, ram_name):
         """
         A function used by repr_gen for terse and series printing.
 
@@ -1073,11 +1073,11 @@ cdef class pAdicPrinter_class(SageObject):
             if mode == terse:
                 v = elt.valuation()
                 if v >= 0:
-                    lift_z = <Integer> elt.lift()
-                    pprec = self.prime_pow.pow_Integer(mpz_get_ui((<Integer>elt.precision_absolute()).value))
+                    lift_z = <Integer?> elt.lift()
+                    pprec = self.prime_pow.pow_Integer(mpz_get_ui((<Integer?>elt.precision_absolute()).value))
                 else:
-                    lift_z = <Integer> elt.unit_part().lift()
-                    pprec = self.prime_pow.pow_Integer(mpz_get_ui((<Integer>elt.precision_relative()).value))
+                    lift_z = <Integer?> elt.unit_part().lift()
+                    pprec = self.prime_pow.pow_Integer(mpz_get_ui((<Integer?>elt.precision_relative()).value))
                 mpz_mod(lift_z.value, lift_z.value, pprec.value)
                 if not pos:
                     if lift_z > pprec / 2:
@@ -1113,12 +1113,18 @@ cdef class pAdicPrinter_class(SageObject):
                 if ellipsis:
                     s += self._plus_ellipsis(do_latex)
         else: # not self.base
-            if mode == terse:
-                if elt.parent()._implementation == 'FLINT':
+            imp = elt.parent()._implementation
+            if imp == 'proxy':
+                from sage.rings.ring_extension_element import RingExtensionWithBasisElement
+                R = elt.parent().base_ring()
+                with pAdicPrinter(R, {'mode': 'terse', 'show_prec': 'none'}):
+                    s = RingExtensionWithBasisElement._repr_extension(elt)
+            elif mode == terse:
+                if imp == 'FLINT':
                     poly, k = elt._flint_rep_abs()
                     L = [repr(a) for a in poly.coefficients(sparse=False)]
                     ZZ_pEX = 1
-                elif elt.parent()._implementation == 'Polynomial':
+                elif imp == 'Polynomial':
                     poly = elt._poly_rep()
                     if do_latex:
                         L = [a._latex_() for a in poly.coefficients(sparse=False)]
@@ -1173,9 +1179,9 @@ cdef class pAdicPrinter_class(SageObject):
                     L = [("" if b == "0" else b) for b in L]
                     L, ellipsis = self._truncate_list(L, self.max_terse_terms, "")
                     s = ""
-                    pn = self.prime_pow.pow_Integer(mpz_get_ui((<Integer>(elt.precision_absolute()-k)).value))
+                    pn = self.prime_pow.pow_Integer(mpz_get_ui((<Integer?>(elt.precision_absolute()-k)).value))
                     if elt.parent().is_capped_relative():
-                        pk = self.prime_pow.pow_Integer(mpz_get_ui((<Integer>-k).value))
+                        pk = self.prime_pow.pow_Integer(mpz_get_ui((<Integer?>-k).value))
                         if k >= 0:
                             integral = True
                         else:
@@ -1220,7 +1226,7 @@ cdef class pAdicPrinter_class(SageObject):
             else: # series
                 s = ""
                 L = elt._ext_p_list(pos)
-                val = elt.valuation_c()
+                val = elt.valuation()
                 # since elt was not supposed to be zero, this should give a non-empty list.
                 if len(L) == 0:
                     raise RuntimeError("repr_spec called on zero")

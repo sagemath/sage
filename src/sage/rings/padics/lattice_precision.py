@@ -1506,7 +1506,7 @@ class DifferentialPrecisionGeneric(SageObject):
             sage: prec = R.precision()
             sage: prec.history_enable()
             sage: M = random_matrix(R, 5, 5)
-            sage: N = M^10
+            sage: N = M^10  # long time, 2s in early 2022
             sage: prec.timings()    # somewhat random
             {'add': 1.0530245304107666,
              'del': 0.24358701705932617,

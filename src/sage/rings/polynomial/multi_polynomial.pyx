@@ -1454,8 +1454,14 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: K(3).sylvester_matrix(K(4))
             []
 
-        """
+        A resultant over a field with unhashable elements::
 
+            sage: F.<a> = Qq(5^3)
+            sage: S.<x,y> = F[]
+            sage: x.resultant(y)
+            y
+
+        """
         # This code is almost exactly the same as that of
         # sylvester_matrix() in polynomial_element.pyx.
 
@@ -1481,20 +1487,25 @@ cdef class MPolynomial(CommutativePolynomial):
         m = self.degree(variable)
         n = right.degree(variable)
 
+        variable = self.parent().gens().index(variable)
+
+        def restriction(degree):
+            return [degree if variable == i else None for i in range(self.parent().ngens())]
+
         M = matrix(self.parent(), m + n, m + n)
 
         r = 0
         offset = 0
         for _ in range(n):
             for c in range(m, -1, -1):
-                M[r, m - c + offset] = self.coefficient({variable:c})
+                M[r, m - c + offset] = self.coefficient(restriction(c))
             offset += 1
             r += 1
 
         offset = 0
         for _ in range(m):
             for c in range(n, -1, -1):
-                M[r, n - c + offset] = right.coefficient({variable:c})
+                M[r, n - c + offset] = right.coefficient(restriction(c))
             offset += 1
             r += 1
 

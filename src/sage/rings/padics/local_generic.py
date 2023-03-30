@@ -11,6 +11,7 @@ AUTHORS:
 # *****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
+#                          2022 Julian Rüth <julian.rueth@fsfe.org.
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -22,7 +23,6 @@ AUTHORS:
 from copy import copy
 from sage.rings.ring import CommutativeRing
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings, CompleteDiscreteValuationFields
-from sage.structure.category_object import check_default_category
 from sage.structure.parent import Parent
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -64,15 +64,26 @@ class LocalGeneric(CommutativeRing):
         """
         self._prec = prec
         self.Element = element_class
-        default_category = getattr(self, '_default_category', None)
-        if self.is_field():
-            category = CompleteDiscreteValuationFields()
-        else:
-            category = CompleteDiscreteValuationRings()
-        category = category.Metric().Complete().Infinite()
-        if default_category is not None:
-            category = check_default_category(default_category, category)
-        Parent.__init__(self, base, names=(names,), normalize=False, category=category)
+        if category is None:
+            if self.is_field():
+                category = CompleteDiscreteValuationFields()
+            else:
+                category = CompleteDiscreteValuationRings()
+            category = category.Metric().Complete().Infinite()
+        CommutativeRing.__init__(self, base, names=(names,), normalize=False, category=category)
+
+    def is_zero(self):
+        r"""
+        Return whether this is the zero ring, i.e., `False`.
+
+        EXAMPLES::
+
+            sage: R = ZpCA(5, 15)
+            sage: R.is_zero()
+            False
+
+        """
+        return False
 
     def is_capped_relative(self):
         r"""
@@ -97,7 +108,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7 + O(5^22)
         """
-        return False
+        return self._prec_type() == 'capped-rel'
 
     def is_capped_absolute(self):
         r"""
@@ -122,7 +133,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7 + O(5^22)
         """
-        return False
+        return self._prec_type() == 'capped-abs'
 
     def is_fixed_mod(self):
         r"""
@@ -149,7 +160,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7,absprec=9)
             5^7 + O(5^9)
         """
-        return False
+        return self._prec_type() == 'fixed-mod'
 
     def is_floating_point(self):
         r"""
@@ -174,7 +185,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7
         """
-        return False
+        return self._prec_type() == 'floating-point'
 
     def is_lattice_prec(self):
         r"""
@@ -203,7 +214,7 @@ class LocalGeneric(CommutativeRing):
             sage: x - x
             O(5^30)
         """
-        return False
+        return self._prec_type().startswith('lattice-')
 
     def is_relaxed(self):
         r"""
@@ -375,6 +386,13 @@ class LocalGeneric(CommutativeRing):
             37-adic Ring with lattice-cap precision (label: change)
             sage: S.change(label = "new")
             37-adic Ring with lattice-cap precision (label: new)
+
+        Changing from a base field to an unramified extension::
+
+            sage: K = Qp(2)
+            sage: L.<a> = K.change(q=4); L
+            2-adic Unramified Extension Field in a defined by x^2 + x + 1
+
         """
         # We support both print_* and * for *=mode, pos, sep, alphabet
         for atr in ('print_mode', 'print_pos', 'print_sep', 'print_alphabet'):
@@ -389,9 +407,12 @@ class LocalGeneric(CommutativeRing):
         from .padic_base_generic import pAdicBaseGeneric
         if 'q' in kwds and isinstance(self.base_ring(), pAdicBaseGeneric):
             q = kwds.pop('q')
-            if not isinstance(q, Integer):
-                raise TypeError("q must be an integer")
-            p, n = q.is_prime_power(get_data=True)
+            if isinstance(q, (tuple, list)):
+                p, n = q
+            else:
+                if not isinstance(q, (Integer, int)):
+                    raise TypeError("q must be an integer or a tuple (p, n)")
+                p, n = ZZ(q).is_prime_power(get_data=True)
             if n == 0:
                 raise ValueError("q must be a prime power")
             if 'p' in kwds and kwds['p'] != p:
@@ -449,6 +470,8 @@ class LocalGeneric(CommutativeRing):
                     names = kwds.pop('unram_name')
                 else:
                     raise TypeError("You must specify the name of the generator")
+                if isinstance(names, (tuple, list)):
+                    names = names[0]
                 res_name = kwds.pop('res_name', names + '0')
                 modulus = kwds.pop('modulus', get_unramified_modulus(q, res_name))
                 implementation = kwds.pop('implementation', 'FLINT')
@@ -479,7 +502,7 @@ class LocalGeneric(CommutativeRing):
                 base = functor(ring)
                 from .factory import ExtensionFactory
                 modulus = modulus.change_ring(base)
-                return ExtensionFactory(base=base, premodulus=modulus, names=names, res_name=res_name, unram=True, implementation=implementation)
+                return ExtensionFactory(base=base, modulus=modulus, names=names, res_name=res_name, implementation=implementation)
         else:
             functor.kwds = copy(functor.kwds)
             functor.kwds['print_mode'] = copy(functor.kwds['print_mode'])
@@ -583,15 +606,7 @@ class LocalGeneric(CommutativeRing):
 
     def residue_characteristic(self):
         r"""
-        Return the characteristic of ``self``'s residue field.
-
-        INPUT:
-
-        - ``self`` -- a p-adic ring.
-
-        OUTPUT:
-
-        The characteristic of the residue field.
+        Return the characteristic of the :meth:`residue_field`.
 
         EXAMPLES::
 
@@ -602,7 +617,7 @@ class LocalGeneric(CommutativeRing):
 
     def defining_polynomial(self, var='x', exact=False):
         r"""
-        Return the defining polynomial of this local ring
+        Return the defining polynomial of this local ring.
 
         INPUT:
 
@@ -637,17 +652,9 @@ class LocalGeneric(CommutativeRing):
 
     def ground_ring(self):
         r"""
-        Return ``self``.
+        Return the ring that this is an extension of.
 
-        Will be overridden by extensions.
-
-        INPUT:
-
-        - ``self`` -- a local ring
-
-        OUTPUT:
-
-        The ground ring of ``self``, i.e., itself.
+        If this is already the :meth:`ground_ring_of_tower`, then return the ring itself.
 
         EXAMPLES::
 
@@ -657,35 +664,37 @@ class LocalGeneric(CommutativeRing):
             True
             sage: S.ground_ring() is R
             False
+
         """
-        return self
+        return self.base_ring()
 
     def ground_ring_of_tower(self):
         r"""
-        Return ``self``.
-
-        Will be overridden by extensions.
-
-        INPUT:
-
-        - ``self`` -- a `p`-adic ring
-
-        OUTPUT:
-
-        The ground ring of the tower for ``self``, i.e., itself.
+        Return the ground ring of the tower of ring extensions this ring lives in.
 
         EXAMPLES::
 
             sage: R = Zp(5)
             sage: R.ground_ring_of_tower()
             5-adic Ring with capped relative precision 20
-        """
-        return self
 
+        ::
+
+            sage: R = Zp(5,5)
+            sage: S.<x> = R[]
+            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: W.<w> = R.ext(f)
+            sage: W.ground_ring()
+            5-adic Ring with capped relative precision 5
+
+        """
+        if self.ground_ring() is self:
+            return self
+        return self.ground_ring().ground_ring_of_tower()
 
     def absolute_degree(self):
         r"""
-        Return the degree of this extension over the prime p-adic field/ring.
+        Return the degree of this ring over the :meth:`ground_ring_of_tower`.
 
         EXAMPLES::
 
@@ -701,7 +710,7 @@ class LocalGeneric(CommutativeRing):
 
     def relative_degree(self):
         r"""
-        Return the degree of this extension over its base field/ring.
+        Return the degree of this extension over its :meth:`ground_ring`.
 
         EXAMPLES::
 
@@ -712,14 +721,21 @@ class LocalGeneric(CommutativeRing):
             sage: L.<pi> = Qp(3).extension(x^2 - 3)
             sage: L.relative_degree()
             2
+
+            sage: Qp(3).relative_degree()
+            1
+
         """
-        return self.absolute_degree() // self.base_ring().absolute_degree()
+        if self.base_ring() is self:
+            return ZZ(1)
+        raise NotImplementedError(f"{self} does not implement relative degree yet")
 
     def degree(self):
         r"""
-        Return the degree of this extension.
+        Return the degree of this ring.
 
-        Raise an error if the base ring/field is itself an extension.
+        Only supported if the :meth:`ground_ring` is not an extension itself.
+        Use :meth:`relative_degree` and :meth:`absolute_degree` instead.
 
         EXAMPLES::
 
@@ -730,16 +746,16 @@ class LocalGeneric(CommutativeRing):
             sage: L.<pi> = Qp(3).extension(x^2 - 3)
             sage: L.degree()
             2
-        """
-        if self.base_ring().absolute_degree() == 1:
-            return self.absolute_degree()
-        else:
-            raise NotImplementedError("For a relative p-adic ring or field you must use relative_degree or absolute_degree as appropriate")
 
+        """
+        if self.base_ring() is self.ground_ring_of_tower():
+            return self.absolute_degree()
+        raise NotImplementedError("For a relative extension you must use relative_degree or absolute_degree instead")
 
     def absolute_e(self):
         r"""
-        Return the absolute ramification index of this ring/field.
+        Return the absolute ramification index of this ring over
+        :meth:`ground_ring_of_tower`.
 
         EXAMPLES::
 
@@ -751,15 +767,14 @@ class LocalGeneric(CommutativeRing):
             sage: L.absolute_e()
             2
         """
-        # Override this in subclasses (if appropriate)
         if self is self.base_ring():
             return ZZ(1)
-        else:
-            return self.base_ring().absolute_e()
+        return self.relative_e() * self.base_ring().absolute_e()
 
     def absolute_ramification_index(self):
         r"""
-        Return the absolute ramification index of this ring/field.
+        Return the absolute ramification index of this ring over
+        :meth:`ground_ring_of_tower`.
 
         EXAMPLES::
 
@@ -775,7 +790,7 @@ class LocalGeneric(CommutativeRing):
 
     def relative_e(self):
         r"""
-        Return the ramification index of this extension over its base ring/field.
+        Return the ramification index of this ring over :meth:`ground_ring`.
 
         EXAMPLES::
 
@@ -787,11 +802,13 @@ class LocalGeneric(CommutativeRing):
             sage: L.relative_e()
             2
         """
-        return self.absolute_e() // self.base_ring().absolute_e()
+        if self.base_ring() is self:
+            return ZZ(1)
+        raise NotImplementedError(f"{self} does not implement relative_e yet")
 
     def relative_ramification_index(self):
         r"""
-        Return the ramification index of this extension over its base ring/field.
+        Return the ramification index of this ring over its :meth:`ground_ring`.
 
         EXAMPLES::
 
@@ -807,9 +824,10 @@ class LocalGeneric(CommutativeRing):
 
     def e(self):
         r"""
-        Return the ramification index of this extension.
+        Return the ramification index of this ring.
 
-        Raise an error if the base ring/field is itself an extension.
+        Only supported if the :meth:`ground_ring` is not an extension itself.
+        Use :meth:`relative_e` and :meth:`absolute_e` instead.
 
         EXAMPLES::
 
@@ -821,16 +839,16 @@ class LocalGeneric(CommutativeRing):
             sage: L.e()
             2
         """
-        if self.base_ring().absolute_degree() == 1:
+        if self.base_ring() is self.ground_ring_of_tower():
             return self.absolute_e()
-        else:
-            raise NotImplementedError("For a relative p-adic ring or field you must use relative_e or absolute_e as appropriate")
+        raise NotImplementedError("For a relative extension you must use relative_e or absolute_e instead")
 
     def ramification_index(self):
         r"""
-        Return the ramification index of this extension.
+        Return the ramification index of this ring.
 
-        Raise an error if the base ring/field is itself an extension.
+        Only supported if the :meth:`ground_ring` is not an extension itself.
+        Use :meth:`relative_e` and :meth:`absolute_e` instead.
 
         EXAMPLES::
 
@@ -842,13 +860,14 @@ class LocalGeneric(CommutativeRing):
             sage: L.ramification_index()
             2
         """
+        if self.base_ring() is self.ground_ring_of_tower():
+            return self.absolute_ramification_index()
+        raise NotImplementedError("For a relative extension you must use relative_ramification_index or absolute_ramification_index instead")
         return self.e()
-
 
     def absolute_f(self):
         r"""
-        Return the degree of the residue field of this ring/field
-        over its prime subfield.
+        Return the degree of the :meth:`residue_field` over its prime subfield.
 
         EXAMPLES::
 
@@ -860,16 +879,13 @@ class LocalGeneric(CommutativeRing):
             sage: L.absolute_f()
             1
         """
-        # Override this in subclasses (if appropriate)
         if self is self.base_ring():
             return ZZ(1)
-        else:
-            return self.base_ring().absolute_f()
+        return self.relative_f() * self.base_ring().absolute_f()
 
     def absolute_inertia_degree(self):
         r"""
-        Return the degree of the residue field of this ring/field
-        over its prime subfield.
+        Return the degree of the :meth:`residue_field` over its prime subfield.
 
         EXAMPLES::
 
@@ -885,23 +901,40 @@ class LocalGeneric(CommutativeRing):
 
     def relative_f(self):
         r"""
-        Return the degree of the residual extension over its base ring/field.
+        Return the degree of the residual extension over its base ring.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        An unramified extension::
 
             sage: K.<a> = Qq(3^5)
             sage: K.relative_f()
             5
 
+        ::
+
+            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+            sage: L.relative_f()
+            2
+
+        A totally ramified extension::
+
             sage: L.<pi> = Qp(3).extension(x^2 - 3)
             sage: L.relative_f()
             1
+
+        A trivial extension::
+
+            sage: L.<a> = Qp(2).extension(x - 2)
+            sage: L.relative_f()
+            1
+
         """
-        return self.absolute_f() // self.base_ring().absolute_f()
+        return self.relative_degree() // self.relative_e()
 
     def relative_inertia_degree(self):
         r"""
-        Return the degree of the residual extension over its base ring/field.
+        Return the degree of the residual extension over its base ring ring.
 
         EXAMPLES::
 
@@ -919,7 +952,8 @@ class LocalGeneric(CommutativeRing):
         r"""
         Return the degree of the residual extension.
 
-        Raise an error if the base ring/field is itself an extension.
+        Only supported if the :meth:`ground_ring` is not an extension itself.
+        Use :meth:`relative_e` and :meth:`absolute_e` instead.
 
         EXAMPLES::
 
@@ -931,16 +965,16 @@ class LocalGeneric(CommutativeRing):
             sage: L.f()
             1
         """
-        if self.base_ring().absolute_degree() == 1:
+        if self.base_ring() is self.ground_ring_of_tower():
             return self.absolute_f()
-        else:
-            raise NotImplementedError("For a relative p-adic ring or field you must use relative_f or absolute_f as appropriate")
+        raise NotImplementedError("For a relative extension you must use relative_f or absolute_f instead")
 
     def inertia_degree(self):
         r"""
         Return the degree of the residual extension.
 
-        Raise an error if the base ring/field is itself an extension.
+        Only supported if the :meth:`ground_ring` is not an extension itself.
+        Use :meth:`relative_e` and :meth:`absolute_e` instead.
 
         EXAMPLES::
 
@@ -952,53 +986,54 @@ class LocalGeneric(CommutativeRing):
             sage: L.inertia_degree()
             1
         """
-        return self.f()
+        if self.base_ring() is self.ground_ring_of_tower():
+            return self.absolute_inertia_degree()
+        raise NotImplementedError("For a relative extension you must use relative_inertia_degree or absolute_inertia_degree instead")
 
     def inertia_subring(self):
         r"""
-        Return the inertia subring, i.e. ``self``.
-
-        INPUT:
-
-        - ``self`` -- a local ring
-
-        OUTPUT:
-
-        - the inertia subring of self, i.e., itself
+        Return the relative inertia subring.
 
         EXAMPLES::
 
             sage: R = Zp(5)
             sage: R.inertia_subring()
             5-adic Ring with capped relative precision 20
+
+        ::
+
+            sage: A = Zp(7,10)
+            sage: S.<x> = A[]
+            sage: B.<t> = A.ext(x^2+7)
+            sage: B.inertia_subring()
+            7-adic Ring with capped relative precision 10
+
+        ::
+
+            sage: R.<a> = Zq(25)
+            sage: R.inertia_subring()
+            5-adic Unramified Extension Ring in a defined by x^2 + 4*x + 2
+
         """
-        return self
+        if self.relative_ramification_index() == 1:
+            return self
+        if self.relative_inertia_degree() == 1:
+            return self.base_ring()
+
+        raise NotImplementedError(f"inertia subring not implemented for {self}")
 
     def maximal_unramified_subextension(self):
         r"""
         Return the maximal unramified subextension.
-
-        INPUT:
-
-        - ``self`` -- a local ring
-
-        OUTPUT:
-
-        - the maximal unramified subextension of ``self``
 
         EXAMPLES::
 
             sage: R = Zp(5)
             sage: R.maximal_unramified_subextension()
             5-adic Ring with capped relative precision 20
+
         """
         return self.inertia_subring()
-
-#    def get_extension(self):
-#        r"""
-#        Return the trivial extension of self.
-#        """
-#        raise NotImplementedError
 
     def uniformiser(self):
         r"""

@@ -166,6 +166,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 import sage.rings.abc
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.finite_rings.element_base import FiniteRingElement
+from sage.rings.finite_rings.finite_field_base import FiniteFieldAbsolute
 
 from .polynomial_element import PolynomialBaseringInjection
 from .polynomial_real_mpfr_dense import PolynomialRealDense
@@ -2455,7 +2456,10 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
         """
         if sparse:
             return NotImplemented
-        defaults = ["NTL", None]
+        if isinstance(base_ring, FiniteFieldAbsolute):
+            defaults = ["NTL", None]
+        else:
+            defaults = ["generic", None]
         if implementation in defaults:
             return defaults
         elif implementation == "generic":

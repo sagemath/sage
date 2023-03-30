@@ -1180,6 +1180,10 @@ REFERENCES:
              Journal on Discrete Mathematics, 22 (4): 1277–1296,
              :doi:`10.1137/060664690`.
 
+.. [Bro1978] \W. Brown,
+             *The Subresultant PRS Algorithm*,
+             ACM Trans. of Math. Software **4** (1978), 237-249
+
 .. [Bro2011] Francis Brown, *Multiple zeta values and periods: From
              moduli spaces to Feynman integrals*, in Contemporary Mathematics
              vol 539, pages 27-52, 2011.
@@ -1326,6 +1330,10 @@ REFERENCES:
 
 .. [Cal2005] \D. Callan. *On Conjugates for Set Partitions and Integer
              Compositions*. Preprint, :arxiv:`math/0508052`.
+
+.. [Car2017] \X. Caruso,
+             *Numerical stability of Euclidean algorithm over ultrametric fields*,
+             J. Number Theor. Bordeaux **29** (2017), 503-534
 
 .. [dCa2007] \C. de Canniere: *Analysis and Design of Symmetric Encryption
              Algorithms*, PhD Thesis, 2007.

@@ -14,7 +14,7 @@ AUTHORS:
 # ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
-#                               Julian Rueth <julian.rueth@fsfe.org>
+#                     2012-2022 Julian Rueth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -27,9 +27,7 @@ from sage.misc.misc import some_tuples
 from copy import copy
 
 from sage.structure.richcmp import richcmp
-from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.morphism import Morphism
-from sage.categories.fields import Fields
 from sage.rings.infinity import infinity
 from .local_generic import LocalGeneric
 from sage.rings.ring import PrincipalIdealDomain
@@ -58,13 +56,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
             sage: R = Zp(17)  # indirect doctest
         """
-        if category is None:
-            if self.is_field():
-                category = Fields()
-            else:
-                category = PrincipalIdealDomains()
-            category = category.Metric().Complete()
-        LocalGeneric.__init__(self, base, prec, names, element_class, category)
+        LocalGeneric.__init__(self, base, prec, names, element_class, category=category)
         self._printer = pAdicPrinter(self, print_mode)
         self._qth_roots_of_unity = [ (1, Infinity) ]
 
@@ -83,14 +75,13 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         a = self.gen()
         one = self.one()
         L = [self.zero(), one, p, (one+p+p).inverse_of_unit(), p-p**2]
-        if a != p:
+        if a != p and a != 0:
             L.extend([a, (one + a + p).inverse_of_unit()])
-        if self.is_field():
+        if self.is_field() and a != 0:
             L.extend([~(p-p-a),p**(-20)])
         return L
 
     def _modified_print_mode(self, print_mode):
-
         r"""
         Return a dictionary of print options, starting with ``self``'s
         print options but modified by the options in the dictionary
@@ -130,7 +121,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
     def ngens(self):
         r"""
-        Return the number of generators of ``self``.
+        Return the number of generators of this ring.
 
         We conventionally define this as 1: for base rings, we take a
         uniformizer as the generator; for extension rings, we take a
@@ -140,25 +131,43 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
             sage: Zp(5).ngens()
             1
-            sage: Zq(25,names='a').ngens()
+            sage: Zq(25, names='a').ngens()
             1
+
         """
         return 1
 
-    def gens(self):
+    def gens(self, base=None):
         r"""
-        Return a list of generators.
+        Return the generators of this ring over ``base``.
+
+        INPUT::
+
+            - ``base`` -- a ring this ring is an extension of or ``None``
+              (default: ``None``)
 
         EXAMPLES::
 
-            sage: R = Zp(5); R.gens()
-            [5 + O(5^21)]
+            sage: R = Zp(5)
+            sage: R.gens()
+            (5 + O(5^21),)
             sage: Zq(25,names='a').gens()
-            [a + O(5^20)]
+            (a + O(5^20),)
             sage: S.<x> = ZZ[]; f = x^5 + 25*x -5; W.<w> = R.ext(f); W.gens()
-            [w + O(w^101)]
+            (w + O(w^101),)
         """
-        return [self.gen()]
+        if base is self:
+            return tuple()
+
+        if base is None:
+            base = self.base_ring()
+
+        gens = (self.gen(),)
+
+        if base is self:
+            return gens
+
+        return gens + tuple(self(x) for x in self.base_ring().gens(base=base))
 
     def __richcmp__(self, other, op):
         r"""
@@ -194,14 +203,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             return richcmp_not_equal(lx, rx, op)
 
         return self._printer.richcmp_modes(other._printer, op)
-
-    # def ngens(self):
-    #     return 1
-
-    # def gen(self, n = 0):
-    #     if n != 0:
-    #         raise IndexError, "only one generator"
-    #     return self(self.prime())
 
     def print_mode(self):
         r"""
@@ -287,6 +288,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         """
         return self.prime()
 
+    @cached_method
     def residue_class_field(self):
         r"""
         Return the residue class field.
@@ -659,7 +661,32 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                         print_mode[option] = kwds[option]
                     else:
                         print_mode[option] = self._printer.dict()[option]
-        return ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check = True, implementation=implementation, **print_mode)
+        extension = ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check = True, implementation=implementation, **print_mode)
+
+        # TODO (see Merge Request 32 - extension)
+        #assert extension.defining_polynomial()(extension.gen()) == 0
+
+        return extension
+
+    def absolute_ring(self, map=False):
+        r"""
+        Return an absolute extension of the absolute base isomorphic to this
+        field, i.e., this field.
+
+        TESTS::
+
+            sage: K.<u> = Qq(4)
+            sage: K.absolute_ring() is K
+            True
+
+        """
+        if self.base() is not self.base_ring():
+            raise NotImplementedError("this relative extension does not implement absolute_ring() yet")
+
+        if map:
+            return self, self.hom(self), self.hom(self)
+        else:
+            return self
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         r"""
@@ -1077,6 +1104,89 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             z = self(y)
             tester.assertEqual(z.residue(), y)
 
+    def _test_distributivity(self, **options):
+        r"""
+        Test the distributivity of `*` on `+` on (not necessarily
+        all) elements of this set.
+
+        p-adic floating point rings only satisfy distributivity
+        up to a precision that depends on the elements.
+
+        INPUT:
+
+        - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+
+        EXAMPLES:
+
+        By default, this method runs the tests only on the
+        elements returned by ``self.some_elements()``::
+
+            sage: R = ZpFP(5,3)
+            sage: R.some_elements()
+            [0, 1, 5, 1 + 3*5 + 3*5^2, 5 + 4*5^2 + 4*5^3]
+            sage: R._test_distributivity()
+
+        However, the elements tested can be customized with the
+        ``elements`` keyword argument::
+
+            sage: R._test_distributivity(elements=[R(0),~R(0),R(42)])
+
+        See the documentation for :class:`TestSuite` for more information.
+        """
+        if self.is_floating_point():
+            tester = self._tester(**options)
+            S = tester.some_elements()
+            from sage.misc.misc import some_tuples
+            for x,y,z in some_tuples(S, 3, tester._max_runs):
+                yz_prec = min(y.precision_absolute(), z.precision_absolute())
+                yz_val = (y + z).valuation()
+                from sage.rings.infinity import SignError
+                try:
+                    prec = min(x.valuation() + yz_val + min(x.precision_relative(), yz_prec - yz_val),
+                               x.valuation() + y.valuation() + (x * y).precision_relative(),
+                               x.valuation() + z.valuation() + (x * z).precision_relative())
+                except SignError:
+                    pass
+                else:
+                    if prec > -infinity:
+                        # only check left distributivity, since multiplication commutative
+                        tester.assertTrue((x * (y + z)).is_equal_to((x * y) + (x * z),prec))
+        else:
+            super(pAdicGeneric, self)._test_distributivity(**options)
+
+    def _test_additive_associativity(self, **options):
+        r"""
+        Test associativity for (not necessarily all) elements of this
+        additive semigroup.
+
+        INPUT:
+
+        - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+
+        EXAMPLES:
+
+        By default, this method tests only the elements returned by
+        ``self.some_elements()``::
+
+            sage: R = QpFP(7,3)
+            sage: R._test_additive_associativity()
+
+        However, the elements tested can be customized with the
+        ``elements`` keyword argument::
+
+            sage: R._test_additive_associativity(elements = [R(0), ~R(0), R(42)])
+
+        See the documentation for :class:`TestSuite` for more information.
+        """
+        if self.is_floating_point():
+            tester = self._tester(**options)
+            S = tester.some_elements()
+            from sage.misc.misc import some_tuples
+            for x,y,z in some_tuples(S, 3, tester._max_runs):
+                tester.assertTrue(((x + y) + z).is_equal_to(x + (y + z), min(x.precision_absolute(), y.precision_absolute(), z.precision_absolute())))
+        else:
+            super(pAdicGeneric, self)._test_additive_associativity(**options)
+
     @cached_method
     def _log_unit_part_p(self):
         r"""
@@ -1143,8 +1253,8 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: K.frobenius_endomorphism(6) == Frob
             True
         """
-        from .morphism import FrobeniusEndomorphism_padics
-        return FrobeniusEndomorphism_padics(self, n)
+        from sage.rings.padics.frobenius import Frobenius
+        return Frobenius(self, n)
 
     def _test_elements_eq_transitive(self, **options):
         r"""
@@ -1202,6 +1312,27 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         """
         from sage.rings.padics.padic_valuation import pAdicValuation
         return pAdicValuation(self)
+
+    @cached_method
+    def exact_valuation(self):
+        r"""
+        Return a valuation on :meth:`exact_field` such that
+        :meth:`fraction_field` is the completion of :meth:`exact_field` with
+        respect to this valuation.
+
+        EXAMPLES::
+
+            sage: Zp(3).exact_valuation()
+            3-adic valuation
+
+        ::
+
+            sage: K.<u> = Qq(9)
+            sage: K.exact_valuation()
+            3-adic valuation
+
+        """
+        return self.exact_field().valuation(self.prime())
 
     def _primitive_qth_root_of_unity(self, exponent):
         r"""
@@ -1598,6 +1729,19 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             else:
                 return [ ring(root) for (root, m) in roots ]
 
+    def krull_dimension(self):
+        r"""
+        Returns the Krull dimension of this ring: 0 if a field or 1 if a ring
+
+        EXAMPLES::
+
+            sage: Zp(5).krull_dimension()
+            1
+            sage: Qp(5).krull_dimension()
+            0
+        """
+        return 0 if self.is_field() else 1
+
 
 class ResidueReductionMap(Morphism):
     r"""
@@ -1759,14 +1903,14 @@ class ResidueLiftingMap(Morphism):
           To:   5-adic Unramified Extension Ring in a defined by x^3 + 3*x + 3
     """
     @staticmethod
-    def _create_(k, R):
+    def _create_(residue_ring, R):
         r"""
         Initialization.  We have to implement this as a static method
         in order to call ``__make_element_class__``.
 
         INPUT:
 
-        - ``k`` -- the residue field of ``R``, or a residue ring of ``R``.
+        - ``residue_rirng`` -- the residue field of ``R``, or a residue ring of ``R``.
         - ``R`` -- a `p`-adic ring or field.
 
         EXAMPLES::
@@ -1776,16 +1920,19 @@ class ResidueLiftingMap(Morphism):
         """
         from sage.categories.sets_cat import Sets
         from sage.categories.homset import Hom
-        kfield = R.residue_field()
-        N = k.cardinality()
-        q = kfield.cardinality()
-        n = N.exact_log(q)
-        if N != q**n:
-            raise RuntimeError("N must be a power of q")
-        H = Hom(k, R, Sets())
-        f = H.__make_element_class__(ResidueLiftingMap)(H)
-        f._n = n
-        return f
+
+        residue_field = R.residue_field()
+        N = residue_ring.cardinality()
+        q = residue_field.cardinality()
+
+        residue_ring_degree = N.exact_log(q)
+        assert(N == q**residue_ring_degree)
+
+        H = Hom(residue_ring, R, Sets())
+        lift = H.__make_element_class__(ResidueLiftingMap)(H)
+
+        lift._residue_ring_degree = residue_ring_degree
+        return lift
 
     def _call_(self, x):
         r"""
@@ -1793,29 +1940,21 @@ class ResidueLiftingMap(Morphism):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(27); k = R.residue_field(); a0 = k.gen()
-            sage: f = R.convert_map_from(k); f
+            sage: R.<a> = Zq(27)
+            sage: k = R.residue_field()
+            sage: u = k.gen()
+
+            sage: lift = R.convert_map_from(k); lift
             Lifting morphism:
               From: Finite Field in a0 of size 3^3
               To:   3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
-            sage: f(a0 + 1)
+            sage: lift(u + 1)
             (a + 1) + O(3)
 
             sage: Zp(3)(Zmod(81)(0))
             O(3^4)
         """
-        R = self.codomain()
-        K = R.maximal_unramified_subextension()
-        if self._n == 1 or K is R:
-            unram_n = self._n
-            if K.absolute_degree() == 1:
-                lift = K._element_constructor_(x, unram_n)
-            else:
-                lift = K(x.polynomial().list(), unram_n)
-            return R(lift, self._n)
-        else:
-            #unram_n = (self._n - 1) // R.absolute_e() + 1
-            raise NotImplementedError
+        return self._call_with_args(x)
 
     def _call_with_args(self, x, args=(), kwds={}):
         r"""
@@ -1824,25 +1963,28 @@ class ResidueLiftingMap(Morphism):
         EXAMPLES::
 
             sage: f = Zp(2).convert_map_from(Zmod(128))
-            sage: f(7, 5) # indirect doctest
+            sage: f(7, 5)
             1 + 2 + 2^2 + O(2^5)
+
         """
-        R = self.codomain()
-        kwds = dict(kwds) # we're changing it
+        codomain = self.codomain()
+
+        absprec = self._residue_ring_degree
+        absprec = min(kwds.pop("absprec", absprec), absprec)
         if args:
-            args = (min(args[0], self._n),) + args[1:]
-            absprec = args[0]
-        else:
-            absprec = kwds['absprec'] = min(kwds.get('absprec', self._n), self._n)
-        K = R.maximal_unramified_subextension()
-        if absprec == 1 or K is R:
-            if K.absolute_degree() == 1:
-                lift = K._element_constructor_(x, *args, **kwds)
-            else:
-                lift = K(x.polynomial().list(), *args, **kwds)
-            return R(lift, *args, **kwds)
-        else:
-            raise NotImplementedError
+            absprec = min(args[0], absprec)
+            args = args[1:]
+
+        # Lift to the unramified subfield with a precision such that
+        # the embedding into the codomain has at least precision
+        # absprec, i.e., unramified_absprec >= absprec * e.
+        unramified_absprec = (absprec / codomain.absolute_e()).ceil()
+
+        K = codomain.maximal_unramified_subextension()
+
+        lift = K._element_constructor_(x, *((unramified_absprec,) + args), **kwds)
+
+        return codomain(lift, *((absprec,) + args), **kwds)
 
     def _repr_type(self):
         r"""

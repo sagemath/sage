@@ -11,20 +11,20 @@ AUTHORS:
 
 - David Harvey: doctests
 
-- Julian Rueth: fixes for exp() and log(), implemented gcd, xgcd
+- Julian Rüth: fixes for exp() and log(), implemented gcd, xgcd, residue
 
 """
 
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed@math.harvard.edu>
 #                     2007      William Stein <wstein@gmail.com>
-#                     2013-2014 Julian Rueth <julian.rueth@gmail.com>
+#                     2013-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.ext.stdsage cimport PY_NEW
@@ -1368,9 +1368,9 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
             sage: p = next_prime(200)
             sage: F = Qp(p)
-            sage: l1 = [F(a/(p-1)).gamma(algorithm='pari') for a in range(p-1)]
-            sage: l2 = [F(a/(p-1)).gamma(algorithm='sage') for a in range(p-1)]
-            sage: all(l1[i] == l2[i] for i in range(p-1))
+            sage: l1 = [F(a/(p-1)).gamma(algorithm='pari') for a in range(p-1)]  # long time, 2s in early 2022
+            sage: l2 = [F(a/(p-1)).gamma(algorithm='sage') for a in range(p-1)]  # long time, 5s in early 2022
+            sage: all(l1[i] == l2[i] for i in range(p-1))  # long time
             True
 
         The `p`-adic Gamma function has anomalous behavior for the prime 2::
@@ -2108,7 +2108,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         raise NotImplementedError
 
-    cpdef val_unit(self):
+    cpdef val_unit(self, p=None):
         """
         Return ``(self.valuation(), self.unit_part())``. To be overridden in
         derived classes.
@@ -2120,7 +2120,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         raise NotImplementedError
 
-    def ordp(self, p = None):
+    def ordp(self, p=None):
         r"""
         Returns the valuation of self, normalized so that the valuation of `p` is 1
 
@@ -2242,30 +2242,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
         except ArithmeticError:
             p = self.parent().prime()
             return Rational(p**self.valuation() * self.unit_part().lift())
-
-    def _number_field_(self, K):
-        r"""
-        Return an element of K approximating this p-adic number.
-
-        INPUT:
-
-        - ``K`` -- a number field
-
-        EXAMPLES::
-
-            sage: R.<a> = Zq(125)
-            sage: K = R.exact_field()
-            sage: a._number_field_(K)
-            a
-        """
-        Kbase = K.base_ring()
-        if K.defining_polynomial() != self.parent().defining_polynomial(exact=True):
-            # Might convert to K's base ring.
-            return Kbase(self)
-        L = [Kbase(c) for c in self.polynomial().list()]
-        if len(L) < K.relative_degree():
-            L += [Kbase(0)] * (K.relative_degree() - len(L))
-        return K(L)
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
@@ -4053,6 +4029,53 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         raise NotImplementedError
 
+    def teichmuller_expansion(self, n=None):
+        r"""
+        Returns an iterator over coefficients `a_0, a_1, \dots, a_n` such that
+
+        - `a_i^q = a_i`, where `q` is the cardinality of the residue field,
+
+        - this element can be expressed as
+
+        .. MATH::
+
+            \pi^v \cdot \sum_{i=0}^\infty a_i \pi^i
+
+        where `v` is the valuation of this element when the parent is
+        a field, and `v = 0` otherwise.
+
+        - if `a_i \ne 0`, the precision of `a_i` is `i` less
+          than the precision of this element (relative in the case that
+          the parent is a field, absolute otherwise)
+
+        .. NOTE::
+
+            The coefficients will lie in the ring of integers of the
+            maximal unramified subextension.
+
+        INPUT:
+
+        - ``n`` -- integer (default ``None``).  If given, returns the
+          coefficient of `\pi^n` in the expansion.
+
+        EXAMPLES:
+
+        For fields, the expansion starts at the valuation::
+
+            sage: R = Qp(5,5); list(R(70).teichmuller_expansion())
+            [4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5),
+            3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4),
+            2 + 5 + 2*5^2 + O(5^3),
+            1 + O(5^2),
+            4 + O(5)]
+
+        But if you specify ``n``, you get the coefficient of `\pi^n`::
+
+            sage: R(70).teichmuller_expansion(2)
+            3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4)
+        """
+        return self.expansion(n, lift_mode='teichmuller')
+
     def _polylog_res_1(self, n, p_branch = 0):
         """
         Return `Li_n(`self`)` , the `n`th `p`-adic polylogarithm of ``self``, assuming that self is congruent to 1 mod p.
@@ -4160,7 +4183,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         We can check some identities, for example those mentioned in [DCW2016]_::
 
             sage: x = Qp(7, prec=30)(1/3)
-            sage: (x^2).polylog(4) - 8*x.polylog(4) - 8*(-x).polylog(4) == 0
+            sage: (x^2).polylog(4) - 8*x.polylog(4) - 8*(-x).polylog(4) == 0  # long time, 1s in early 2022
             True
 
         ::
@@ -4297,6 +4320,379 @@ cdef class pAdicGenericElement(LocalGenericElement):
             F[i+1] = Li_i_zeta[i+1] + (F[i]/(zeta + t)).integral()
 
         return (F[n](z - zeta)).add_bigoh(N)
+
+    def residue(self, absprec=1, field=None, check_prec=None):
+        r"""
+        Return the reduction of this element modulo `\pi^\mathrm{absprec}`.
+
+        INPUT:
+
+        - ``absprec`` -- ``0`` or ``1``.
+
+        - ``field`` -- boolean (default ``None``).  For precision 1, whether to return
+          an element of the residue field or a residue ring.
+
+        - ``check_prec`` -- boolean (default ``True``).  Whether to raise an error if this
+          element has insufficient precision to determine the reduction.  Errors are never
+          raised for fixed-mod or floating-point types.
+
+        OUTPUT:
+
+        This element reduced modulo `\pi^\mathrm{absprec}`.
+
+        If ``absprec`` is zero, then as an element of `\ZZ/(1)`.
+
+        If ``absprec`` is one, then as an element of the residue field.
+
+        .. NOTE::
+
+            For unramified extensions, only implemented for ``absprec`` less
+            than or equal to one.
+
+        EXAMPLES:
+
+            sage: R = Zp(7,10,'capped-abs')
+            sage: a = R(8)
+            sage: a.residue(1)
+            1
+
+        This is different from applying ``% p^n`` which returns an element in
+        the same ring::
+
+            sage: b = a.residue(2); b
+            8
+            sage: b.parent()
+            Ring of integers modulo 49
+            sage: c = a % 7^2; c
+            1 + 7 + O(7^10)
+            sage: c.parent()
+            7-adic Ring with capped absolute precision 10
+
+        Note that reduction of ``c`` dropped to the precision of the unit part
+        of ``7^2``, see :meth:`_mod_`::
+
+            sage: R(7^2).unit_part()
+            1 + O(7^8)
+
+        TESTS:
+
+        These tests were copied from individual implementations of ``residue``
+        that used to exist on each of the element classes. They should probably
+        better be turned into a ``_test_residue`` method eventually.
+
+        In capped-relative precision::
+
+            sage: K = Qp(7,4)
+            sage: a = K(8)
+            sage: a.residue(2)
+            8
+            sage: a % 7^2
+            1 + 7 + O(7^4)
+
+        ::
+
+            sage: b = K(1/7)
+            sage: b.residue()
+            Traceback (most recent call last):
+            ...
+            ValueError: element must have non-negative valuation in order to compute residue
+
+        In fixed-mod precision::
+
+            sage: R = Zp(7,4,'fixed-mod')
+            sage: a = R(8)
+            sage: a.residue(1)
+            1
+            sage: b = a.residue(2); b
+            8
+            sage: b.parent()
+            Ring of integers modulo 49
+            sage: c = a % 7^2; c
+            1 + 7
+            sage: c.parent()
+            7-adic Ring of fixed modulus 7^4
+
+        In floating point precision::
+
+            sage: R = ZpFP(7,4)
+            sage: a = R(8)
+            sage: a.residue(1)
+            1
+            sage: a.residue(2)
+            8
+
+            sage: K = QpFP(7,4)
+            sage: a = K(8)
+            sage: a.residue(1)
+            1
+            sage: a.residue(2)
+            8
+            sage: b = K(1/7)
+            sage: b.residue()
+            Traceback (most recent call last):
+            ...
+            ValueError: element must have non-negative valuation in order to compute residue
+
+        In lattice precision::
+
+            sage: R = ZpLC(7,4)
+            doctest:warning
+            ...
+            FutureWarning: ...
+            sage: a = R(8)
+            sage: a.residue(1)
+            1
+
+        In relaxed precision::
+
+            sage: R = ZpER(7, 10)
+            sage: a = R(1/2021); a
+            3 + 6*7 + 4*7^2 + 3*7^3 + 6*7^4 + 7^5 + 6*7^6 + 3*7^7 + 6*7^8 + 5*7^9 + ...
+            sage: a.residue()
+            3
+            sage: a.residue(2)
+            45
+
+        In an extension ring::
+
+            sage: R.<a> = Zq(27, 4)
+            sage: (3 + 3*a).residue()
+            0
+            sage: (a + 1).residue()
+            a0 + 1
+
+        Another unramified case::
+
+            sage: R = ZpCA(3,5)
+            sage: S.<a> = R[]
+            sage: W.<a> = R.extension(a^2 + 9*a + 1)
+            sage: (a + 1).residue(1)
+            a0 + 1
+            sage: a.residue(2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute reduction modulo π^n with n>1 for extensions yet
+
+        Eisenstein case::
+
+            sage: R = ZpCA(3, 5)
+            sage: S.<a> = R[]
+            sage: W.<a> = R.extension(a^2 + 9*a + 3)
+            sage: (a + 1).residue(1)
+            1
+            sage: a.residue(2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute reduction modulo π^n with n>1 for extensions yet
+
+        ::
+
+            sage: a.residue(0)
+            0
+            sage: a.residue(11)
+            Traceback (most recent call last):
+            ...
+            PrecisionError: insufficient precision to reduce modulo π^11
+            sage: a.residue(11, check_prec=False)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute reduction modulo π^n with n>1 for extensions yet
+
+        ::
+
+            sage: R.<a> = ZqCA(27, 4)
+            sage: (3 + 3*a).residue()
+            0
+            sage: (a + 1).residue()
+            a0 + 1
+
+        ::
+
+            sage: R.<a> = Qq(27, 4)
+            sage: (3 + 3*a).residue()
+            0
+            sage: (a + 1).residue()
+            a0 + 1
+            sage: (a/3).residue()
+            Traceback (most recent call last):
+            ...
+            ValueError: element must have non-negative valuation in order to compute residue
+
+        ::
+
+            sage: K = Qp(3, 5)
+            sage: S.<a> = K[]
+            sage: W.<a> = K.extension(a^2 + 9*a + 1)
+            sage: (a/3).residue(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: element must have non-negative valuation in order to compute residue
+
+        ::
+
+            sage: R = ZpFM(3,5)
+            sage: S.<a> = R[]
+            sage: W.<a> = R.extension(a^2 + 3)
+            sage: W.one().residue(0)
+            0
+            sage: a.residue(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot reduce modulo a negative power of the uniformizer
+            sage: a.residue(16)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute reduction modulo π^n with n>1 for extensions yet
+
+        ::
+
+            sage: R = Zp(7,10,'capped-abs')
+            sage: a = R(8)
+            sage: a.residue(0)
+            0
+            sage: a.residue(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot reduce modulo a negative power of the uniformizer
+            sage: a.residue(11)
+            Traceback (most recent call last):
+            ...
+            PrecisionError: insufficient precision to reduce modulo π^11
+            sage: a.residue(5, check_prec=False)
+            8
+
+            sage: a.residue(field=True).parent()
+            Finite Field of size 7
+
+        ::
+
+            sage: R = Zp(7,4)
+            sage: a = R(8)
+            sage: a.residue(0)
+            0
+            sage: a.residue(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot reduce modulo a negative power of the uniformizer
+            sage: a.residue(5)
+            Traceback (most recent call last):
+            ...
+            PrecisionError: insufficient precision to reduce modulo π^5
+            sage: a.residue(5, check_prec=False)
+            8
+
+            sage: a.residue(field=True).parent()
+            Finite Field of size 7
+
+        ::
+
+            sage: R = Zp(7,4,'fixed-mod')
+            sage: a = R(8)
+            sage: a.residue(0)
+            0
+            sage: a.residue(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot reduce modulo a negative power of the uniformizer
+            sage: a.residue(5)
+            8
+
+            sage: a.residue(field=True).parent()
+            Finite Field of size 7
+
+        ::
+
+            sage: R = ZpFP(7,4)
+            sage: a = R(8)
+            sage: a.residue(0)
+            0
+            sage: a.residue(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot reduce modulo a negative power of the uniformizer
+            sage: a.residue(5)
+            8
+
+            sage: a.residue(field=True).parent()
+            Finite Field of size 7
+
+        ::
+
+            sage: R = ZpLC(7,4)
+            sage: a = R(8)
+            sage: a.residue(0)
+            0
+            sage: a.residue(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot reduce modulo a negative power of the uniformizer
+            sage: a.residue(5)
+            Traceback (most recent call last):
+            ...
+            PrecisionError: insufficient precision to reduce modulo π^5
+            sage: a.residue(5, check_prec=False)
+            8
+
+            sage: a.residue(field=True).parent()
+            Finite Field of size 7
+
+        ::
+
+            sage: R = ZpER(7, 10)
+            sage: K = R.fraction_field()
+            sage: b = K(20/21)
+            sage: b.residue()
+            Traceback (most recent call last):
+            ...
+            ValueError: element must have non-negative valuation in order to compute residue
+
+        .. SEEALSO::
+
+            :meth:`_mod_`
+
+        """
+        from sage.rings.all import IntegerModRing
+
+        parent = self.parent()
+
+        # Determine parameter defaults.
+        if check_prec is None:
+            check_prec = not (parent.is_fixed_mod() or parent.is_floating_point())
+        if field is None:
+            field = absprec == 1
+
+        # Validate parameters.
+        if absprec < 0:
+            raise ValueError("cannot reduce modulo a negative power of the uniformizer")
+        if self.valuation() < 0:
+            raise ValueError("element must have non-negative valuation in order to compute residue")
+        if check_prec and absprec > self.precision_absolute():
+            raise PrecisionError("insufficient precision to reduce modulo π^%s"%absprec)
+        if field and absprec != 1:
+            raise ValueError("field keyword may only be set at precision 1")
+        if parent.base_ring() is not parent:
+            if absprec > 1:
+                raise NotImplementedError("cannot compute reduction modulo π^n with n>1 for extensions yet")
+            if absprec == 1 and not field:
+                raise NotImplementedError("field keyword cannot be set to False for extensions yet")
+
+        # Compute reduction
+        if absprec == 0:
+            return IntegerModRing(1).zero()
+        elif absprec == 1:
+            if self.valuation() > 0:
+                residue = parent.residue_field().zero()
+            else:
+                residue = self.expansion(0, lift_mode="simple")
+
+            if not field:
+                residue = IntegerModRing(self.characteristic())(residue)
+            else:
+                residue = parent.residue_field()(residue)
+
+            return residue
+        else:
+            return IntegerModRing(parent.prime_pow(absprec))(self.add_bigoh(absprec).lift())
 
 
 # Artin-Hasse exponential

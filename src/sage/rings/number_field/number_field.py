@@ -1778,6 +1778,20 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<a> = NumberField(x)
             sage: K([1]).parent()
             Number Field in a with defining polynomial x
+
+        Check that elements can be created from only some of the relative coefficients::
+
+            sage: K.<a> = NumberField(x^5 - 2)
+            sage: K([])
+            0
+            sage: K([0])
+            0
+            sage: K([0, 1, 2])
+            2*a^2 + a
+            sage: K([0, 1, 2, 3, 4, 5])
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot create element in number field of relative degree 5 from list of coefficients of length 6
         """
         if isinstance(x, number_field_element.NumberFieldElement):
             K = x.parent()
@@ -1830,8 +1844,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             return self._convert_from_str(x)
         elif (isinstance(x, (tuple, list)) or
               isinstance(x, sage.modules.free_module_element.FreeModuleElement)):
-            if len(x) != self.relative_degree():
-                raise ValueError("Length must be equal to the degree of this number field")
+            if isinstance(x, sage.modules.free_module_element.FreeModuleElement):
+                if len(x) != self.relative_degree():
+                    raise ValueError(f"cannot create element in number field of relative degee {self.relative_degree()} from element in dimension {len(x)}")
+            elif len(x) > self.relative_degree():
+                raise ValueError(f"cannot create element in number field of relative degree {self.relative_degree()} from list of coefficients of length {len(x)}")
             base = self.base_ring()
             return sum(base(c) * g for c, g in zip(x, self.gen(0).powers(len(x))))
         return self._convert_non_number_field_element(x)

@@ -40,6 +40,5 @@
    sage/rings/padics/misc
 
    sage/rings/padics/common_conversion
-   sage/rings/padics/morphism
 
 .. include:: ../footer.txt
