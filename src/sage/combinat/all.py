@@ -112,9 +112,6 @@ lazy_import("sage.combinat.hillman_grassl", ["WeakReversePlanePartition", "WeakR
 # PerfectMatchings
 from .perfect_matching import PerfectMatching, PerfectMatchings
 
-# Integer lists
-from .integer_lists import IntegerListsLex
-
 # Compositions
 from .composition import Composition, Compositions
 from .composition_signed import SignedCompositions
