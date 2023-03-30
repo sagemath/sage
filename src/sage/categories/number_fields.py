@@ -89,8 +89,8 @@ class NumberFields(Category_singleton):
             sage: ZZ in NumberFields()
             False
         """
-        import sage.rings.number_field.number_field_base
-        return sage.rings.number_field.number_field_base.is_NumberField(x)
+        from sage.rings.number_field.number_field_base import NumberField
+        return isinstance(x, NumberField)
 
     def _call_(self, x):
         r"""

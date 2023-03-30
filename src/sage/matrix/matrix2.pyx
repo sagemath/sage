@@ -89,7 +89,7 @@ from sage.misc.verbose import verbose, get_verbose
 from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
 from sage.rings.ring import is_Ring
-from sage.rings.number_field.number_field_base import is_NumberField
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ, is_RationalField
@@ -4457,7 +4457,7 @@ cdef class Matrix(Matrix1):
             raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
         elif algorithm == 'flint' and not (is_IntegerRing(R) or is_RationalField(R)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
-        elif algorithm == 'pari' and not (is_IntegerRing(R) or (is_NumberField(R) and not is_RationalField(R))):
+        elif algorithm == 'pari' and not (is_IntegerRing(R) or (isinstance(R, NumberField) and not is_RationalField(R))):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
         elif algorithm == 'generic' and R not in _Fields:
             raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
@@ -4514,7 +4514,7 @@ cdef class Matrix(Matrix1):
             except AttributeError:
                 pass
 
-        if M is None and is_NumberField(R):
+        if M is None and isinstance(R, NumberField):
             format, M = self._right_kernel_matrix_over_number_field()
 
         if M is None and R in _Fields:
