@@ -4013,7 +4013,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             message = "the factorization returned by qsieve may be incomplete (the factors may not be prime) or even wrong; see qsieve? for details"
             from warnings import warn
             warn(message, RuntimeWarning, stacklevel=5)
-            from sage.interfaces.qsieve import qsieve
+            from sage.libs.flint.qsieve import qsieve
             F = qsieve(n)
             F.sort()
             return IntegerFactorization(F, unit=unit, unsafe=True,
