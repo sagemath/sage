@@ -28,7 +28,7 @@ jobs:
       # Once https://github.com/actions/download-artifact/issues/172 and/or https://github.com/actions/download-artifact/issues/60 is implemented, we can use the official download-artifact action
       # For now use the solution from https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#using-data-from-the-triggering-workflow
       - name: Download docs
-        uses: actions/github-script@v3.1.0
+        uses: actions/github-script@v6.4.0
         with:
           script: |
             var artifacts = await github.actions.listWorkflowRunArtifacts({
