@@ -1,14 +1,14 @@
 r"""
 LpaSeed
 
-This class implements seed and their mutations for Lam and Pylyavskyy's Laurent 
+This class implements seed and their mutations for Lam and Pylyavskyy's Laurent
 phenomenon algebras (LP algebras). It is designed to have similar functionality
 to the previous SageMath cluster seed packages.
 
-Fixing a unique factorization domain `A`, a pair `(\mathbf{x}, \mathbf{f})` is 
+Fixing a unique factorization domain `A`, a pair `(\mathbf{x}, \mathbf{f})` is
 said to be an *LP seed* if `\mathbf{x}=\{x_1, \dots, x_n\}` is a transcendence
 basis for the field of rational functions in `n` independent variables over
-`\text{Frac}(A)`, and `\mathbf{f} = \{f_1, \dots, f_n\}` is a collection of 
+`\text{Frac}(A)`, and `\mathbf{f} = \{f_1, \dots, f_n\}` is a collection of
 irreducible polynomials over `A` encoding the exchange relations.
 
 One can view LP seeds and their corresponding LP algebras as a vast
@@ -58,27 +58,27 @@ class LpaSeed(SageObject):
 
         - ``data`` -- Can be one of the following:
 
-            * ``dict`` - dictionary of initial variable names to their 
-              corresponding exchange polynomials. The exchange polynomials must 
+            * ``dict`` - dictionary of initial variable names to their
+              corresponding exchange polynomials. The exchange polynomials must
               be irreducible, not depend on the key, and not be divisible by any
-              variable. The correctness of the input data is checked 
+              variable. The correctness of the input data is checked
               automatically.
             * ``LpaSeed`` object.
 
-        - ``coefficients`` -- tuple of symbolic variables (default: ``()``); the 
-          labels of, if any, the coefficients of the exchange polynomials. If no 
+        - ``coefficients`` -- tuple of symbolic variables (default: ``()``); the
+          labels of, if any, the coefficients of the exchange polynomials. If no
           coefficients are provided, the module attempts to detect them from the
           input data.
 
-        - ``base_ring`` -- Unique factorisation domain (default: ``ZZ``); 
-          the ring which we take the exchange polynomials over. Currently 
+        - ``base_ring`` -- Unique factorisation domain (default: ``ZZ``);
+          the ring which we take the exchange polynomials over. Currently
           supports ``ZZ`` or ``QQ``.
 
         OUTPUT: an ``LpaSeed`` object
 
         EXAMPLES:
 
-        This example initialises a linear Laurent phenomenon algebra in two 
+        This example initialises a linear Laurent phenomenon algebra in two
         variables: ::
 
             sage: var('x1,x2')
@@ -87,7 +87,7 @@ class LpaSeed(SageObject):
             sage: print(S)
             A seed with cluster variables [x1, x2] and exchange polynomials [x2 + 1, x1 + 1]
 
-        We add some coefficients to get the generic linear LP algebra in three 
+        We add some coefficients to get the generic linear LP algebra in three
         variables: ::
 
             sage: var('x1,x2,x3,a0,a2,a3,b0,b1,b3,c0,c1,c2')
@@ -162,7 +162,7 @@ class LpaSeed(SageObject):
                     # variables present in this polynomial
                     try:
                         name_poly_vars = set(SR(data[name]).variables())
-                    except:
+                    except BaseException:
                         raise TypeError('Values of dictionary are not polynomials')
                     # add the variables that are not already names
                     coefficients += tuple(name_poly_vars.difference(set(names)))
@@ -186,7 +186,7 @@ class LpaSeed(SageObject):
             try:
                 self._polynomial_ring = PolynomialRing(self._base_ring,
                                                        names=variables)
-            except:
+            except BaseException:
                 raise TypeError('Supplied variables / coefficients are not correct')
 
             self._ambient_field = FractionField(self._polynomial_ring)
@@ -204,7 +204,7 @@ class LpaSeed(SageObject):
                 for i in range(self._rank):
                     self._exchange_polys.append(
                         self._polynomial_ring(exchange_polys[i]))
-            except:
+            except BaseException:
                 raise TypeError(("The supplied exchange polynomials are not"
                                  " polynomials in the cluster variables over %s"
                                  % (base_ring)))
@@ -225,11 +225,6 @@ class LpaSeed(SageObject):
     # a private method to do some mathematical checks on our seed
 
     def _check_seed(self):
-
-        # we shouldn't get this error as we restrict coefficient rings in
-        # constructor
-        if self._base_ring not in UniqueFactorizationDomains:
-            raise TypeError('%s is not a UFD.' % (self._base_ring))
 
         # (LP1) check polynomials do not depend on their cluster variable
 
@@ -261,8 +256,8 @@ class LpaSeed(SageObject):
     def _compute_laurent(self):
 
         # work with copies as we perform substitutions
-        exchange_polys = self._exchange_polys.copy()
-        laurent_polys = self._exchange_polys.copy()
+        exchange_polys = copy(self._exchange_polys)
+        laurent_polys = copy(self._exchange_polys)
 
         for i in range(0, self._rank):
 
@@ -286,13 +281,13 @@ class LpaSeed(SageObject):
                     counter = 0
                     while True:
                         (q, r) = sub_poly.quo_rem(
-                            exchange_polys[j] ** (counter+1))
+                            exchange_polys[j] ** (counter + 1))
                         if r != 0:
                             break
-                        counter = counter+1
+                        counter = counter + 1
 
                     # divide exchange polynomial by this maximal power
-                    laurent_polys[i] = laurent_polys[i]/(
+                    laurent_polys[i] = laurent_polys[i] / (
                         self._polynomial_ring(self._names[j]) ** counter)
 
         # after performing all substitutions, set internal laurent polynomials
@@ -306,7 +301,7 @@ class LpaSeed(SageObject):
 
         INPUT:
 
-        - ``i`` -- integer or iterable of integers; the index/indices to mutate 
+        - ``i`` -- integer or iterable of integers; the index/indices to mutate
           ``self`` at, where we index from 0.
 
         - ``inplace`` -- boolean (default: ``True``); whether to mutate the
@@ -388,7 +383,7 @@ class LpaSeed(SageObject):
                 H = 1  # this will be G with all common factors with h removed
                 for factor in G_factors:
                     if (gcd(h.numerator(), factor[0]) == 1):
-                        H = H*(factor[0]) ** (factor[1])
+                        H = H * (factor[0]) ** (factor[1])
 
                 # NORMALISATION:
                 self._exchange_polys[j] = H.numerator()
@@ -447,7 +442,7 @@ class LpaSeed(SageObject):
         - ``depth`` -- Integer (default: ``infinity``); only return seeds at
           most ``depth`` mutations away from the initial seed.
 
-        - ``show_depth`` -- Boolean (default: ``False``); if ``True``, the 
+        - ``show_depth`` -- Boolean (default: ``False``); if ``True``, the
           current depth of recursion for the chosen algorithm is shown while
           computing.
 
@@ -519,7 +514,7 @@ class LpaSeed(SageObject):
 
         try:
             algorithm = str(algorithm)
-        except:
+        except BaseException:
             raise TypeError('Expected string for algorithm: got %s'
                             % (type(algorithm)))
 
@@ -535,10 +530,10 @@ class LpaSeed(SageObject):
         if show_depth:
             timer2 = time.time()
             dc = str(current_depth)
-            dc += ' ' * (5-len(dc))
+            dc += ' ' * (5 - len(dc))
             nr = str(len(seeds_found))
-            nr += ' ' * (10-len(nr))
-            print("Depth: %s found: %s Time: %.2f s" % (dc, nr, timer2-timer))
+            nr += ' ' * (10 - len(nr))
+            print("Depth: %s found: %s Time: %.2f s" % (dc, nr, timer2 - timer))
 
         if return_paths:
             yield (self, [])
@@ -562,7 +557,9 @@ class LpaSeed(SageObject):
                     else:
                         last_index = seed._mutation_sequence[-1]
 
-                    for i in [index for index in range(n) if index != last_index]:
+                    for i in ([index for index in range(n)
+                               if index != last_index]):
+
                         seed2 = seed.mutate(i, inplace=False)
                         if seed2 not in seeds_found:
                             new_seeds += [seed2]
@@ -578,11 +575,11 @@ class LpaSeed(SageObject):
                 if new_seeds_found and show_depth:
                     timer2 = time.time()
                     dc = str(current_depth)
-                    dc += ' ' * (5-len(dc))
+                    dc += ' ' * (5 - len(dc))
                     nr = str(len(seeds_found))
-                    nr += ' ' * (10-len(nr))
+                    nr += ' ' * (10 - len(nr))
                     print("Depth: %s found: %s Time: %.2f s"
-                          % (dc, nr, timer2-timer))
+                          % (dc, nr, timer2 - timer))
 
         elif algorithm == 'DFS':
 
@@ -602,7 +599,8 @@ class LpaSeed(SageObject):
                     else:
                         last_index = seed._mutation_sequence[-1]
 
-                    for i in [index for index in range(n) if index != last_index]:
+                    for i in ([index for index in range(n)
+                               if index != last_index]):
 
                         seed2 = seed.mutate(i, inplace=False)
 
@@ -624,11 +622,11 @@ class LpaSeed(SageObject):
                 elif show_depth:
                     timer2 = time.time()
                     dc = str(current_depth)
-                    dc += ' ' * (5-len(dc))
+                    dc += ' ' * (5 - len(dc))
                     nr = str(len(seeds_found))
-                    nr += ' ' * (10-len(nr))
+                    nr += ' ' * (10 - len(nr))
                     print("Depth: %s found: %s Time: %.2f s"
-                          % (dc, nr, timer2-timer))
+                          % (dc, nr, timer2 - timer))
 
         # if the user did not supply a valid algorithm, complain
         else:
@@ -651,7 +649,7 @@ class LpaSeed(SageObject):
           distance at most ``depth`` from ``self`` are returned
         - ``show_depth`` -- (default: ``False``) if ``True``, the actual depth
           of the mutation is shown
-        - ``return_paths`` -- (default: ``False``) if ``True``, a path of 
+        - ``return_paths`` -- (default: ``False``) if ``True``, a path of
           mutation sequences from ``self`` to the given seed is returned as well
         - ``algorithm`` -- String (default: ``'BFS'``); the search algorithm to
           find new seeds. Currently supported options: ::
@@ -706,7 +704,7 @@ class LpaSeed(SageObject):
           distance at most ``depth`` from ``self`` are returned
         - ``show_depth`` -- (default: ``False``) if ``True``, the actual depth
           of the mutation is shown
-        - ``return_paths`` -- (default: ``False``) if ``True``, a path of 
+        - ``return_paths`` -- (default: ``False``) if ``True``, a path of
           mutation sequences from ``self`` to the given seed is returned as well
         - ``algorithm`` -- String (default: ``'BFS'``); the search algorithm to
           find new seeds. Currently supported options: ::
@@ -753,7 +751,7 @@ class LpaSeed(SageObject):
           distance at most ``depth`` from ``self`` are returned
         - ``show_depth`` -- (default: ``False``) if ``True``, the actual depth
           of the mutation is shown
-        - ``return_paths`` -- (default: ``False``) if ``True``, a path of 
+        - ``return_paths`` -- (default: ``False``) if ``True``, a path of
           mutation sequences from ``self`` to the given seed is returned as well
         - ``algorithm`` -- String (default: ``'BFS'``); the search algorithm to
           find new seeds. Currently supported options: ::
@@ -773,12 +771,12 @@ class LpaSeed(SageObject):
 
     def variable_class_iter(self, depth=infinity, algorithm='BFS'):
         r"""
-        Returns an iterator for all cluster variables in the mutation class of 
+        Returns an iterator for all cluster variables in the mutation class of
         ``self`` in seeds at most ``depth`` away from ``self``.
 
         INPUT:
 
-        - ``depth`` -- (default:``infinity``) integer, only seeds with 
+        - ``depth`` -- (default:``infinity``) integer, only seeds with
           distance at most ``depth`` from ``self`` are returned.
         - ``algorithm`` -- String (default: ``BFS``); the search algorithm
           to find new seeds. Currently supported options: ::
@@ -850,7 +848,7 @@ class LpaSeed(SageObject):
 
     def is_equivalent(self, other):
         r"""
-        Returns whether ``self`` and ``other`` are equivalent as LP seeds. 
+        Returns whether ``self`` and ``other`` are equivalent as LP seeds.
         Two seeds are equivalent if and only if there is a permutation of the
         cluster variables of one seed to get the cluster variables of the other
         seed, up to unit multipliers. Note we also overload equality to
@@ -883,7 +881,7 @@ class LpaSeed(SageObject):
             for j in range(n):
                 x = other._cluster_vars[j]
                 y = self._cluster_vars[i]
-                t = x/y
+                t = x / y
                 if t.numerator().is_unit() and t.denominator().is_unit():
                     L.append(j)
         return len(L) == n
@@ -997,7 +995,7 @@ class LpaSeed(SageObject):
 
     def rank(self):
         r"""
-        Returns the rank of ``self``. This is the number of 
+        Returns the rank of ``self``. This is the number of
         cluster variables in ``self``.
 
         EXAMPLES:
@@ -1034,7 +1032,7 @@ class LpaSeed(SageObject):
 
         """
 
-        indices = [random.randint(0, self._rank-1) for _ in range(depth)]
+        indices = [random.randint(0, self._rank - 1) for _ in range(depth)]
 
         self = self.mutate(indices, inplace)
 
@@ -1129,19 +1127,19 @@ class LpaSeed(SageObject):
     # are the same
 
     @staticmethod
-    def _remove_repeat_indices(L: list[int]) -> list[int]:
+    def _remove_repeat_indices(L):
         G = []
         flag = False
         index = 0
         while index < len(L):
-            if index == len(L) - 1 or L[index] != L[index+1]:
+            if index == len(L) - 1 or L[index] != L[index + 1]:
                 G.append(L[index])
                 index += 1
             else:
                 flag = True
                 index += 2  # skip over next element
 
-        if flag == True:
+        if flag:
             print(G)
             return LpaSeed._remove_repeat_indices(G)
         else:
