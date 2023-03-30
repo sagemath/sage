@@ -50,6 +50,23 @@ class LaTeX(Executable):
             sage: from sage.features.latex import latex
             sage: latex().is_functional()             # optional - latex
             FeatureTestResult('latex', True)
+
+        When the feature is not functional, more information on the reason
+        can be obtained as follows::
+
+            sage: result = latex().is_functional()    # not tested
+            sage: print(result.reason)                # not tested
+            Running latex on a sample file
+            (with command='latex -interaction=nonstopmode tmp_wmpos8ak.tex')
+            returned non-zero exit status='1' with stderr=''
+            and stdout='This is pdfTeX,
+            ...
+            Runaway argument?
+            {document
+            ! File ended while scanning use of \end.
+            ...
+            No pages of output.
+            Transcript written on tmp_wmpos8ak.log.'
         """
         lines = []
         lines.append(r"\documentclass{article}")
@@ -77,8 +94,12 @@ class LaTeX(Executable):
             return FeatureTestResult(self, True)
         else:
             return FeatureTestResult(self, False, reason="Running latex on "
-                                     "a sample file returned non-zero "
-                                     "exit status {}".format(result.returncode))
+                                     "a sample file (with command='{}') returned non-zero "
+                                     "exit status='{}' with stderr='{}' "
+                                     "and stdout='{}'".format(result.args,
+                                                              result.returncode,
+                                                              result.stderr.strip(),
+                                                              result.stdout.strip()))
 
 
 class latex(LaTeX):
