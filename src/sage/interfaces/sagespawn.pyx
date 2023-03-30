@@ -10,15 +10,15 @@ AUTHOR:
   see :trac:`10295`.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from pexpect import *
 from ptyprocess import PtyProcess
@@ -26,7 +26,7 @@ from ptyprocess import PtyProcess
 from cpython.ref cimport Py_INCREF
 from libc.signal cimport *
 from posix.signal cimport killpg
-from posix.unistd cimport getpid, getpgid, close, fork
+from posix.unistd cimport getpid, getpgid, fork
 
 from time import sleep
 

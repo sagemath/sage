@@ -83,8 +83,9 @@ cdef class PrimePi(BuiltinFunction):
 
         """
         super(PrimePi, self).__init__('prime_pi', latex_name=r"\pi",
-                conversions={'mathematica':'PrimePi', 'pari':'primepi',
-                    'sympy':'primepi'})
+                                      conversions={'mathematica': 'PrimePi',
+                                                   'pari': 'primepi',
+                                                   'sympy': 'primepi'})
 
     def __call__(self, *args, coerce=True, hold=False):
         r"""
@@ -104,8 +105,8 @@ cdef class PrimePi(BuiltinFunction):
             TypeError: Symbolic function prime_pi takes 1 or 2 arguments (3 given)
         """
         if len(args) > 2:
-            raise TypeError("Symbolic function %s takes 1 or 2"%self._name
-                    + " arguments (%s given)"%len(args))
+            raise TypeError(f"Symbolic function {self._name} takes 1 or 2"
+                            f" arguments ({len(args)} given)")
         return super(PrimePi, self).__call__(args[0], coerce=coerce, hold=hold)
 
     def _eval_(self, x):
@@ -189,14 +190,14 @@ cdef class PrimePi(BuiltinFunction):
         if xmax < xmin:
             return plot_step_function([], **kwds)
         if xmax < 2:
-            return plot_step_function([(xmin,0),(xmax,0)], **kwds)
+            return plot_step_function([(xmin, 0), (xmax, 0)], **kwds)
         y = self(xmin)
         v = [(xmin, y)]
         from sage.rings.fast_arith import prime_range
         for p in prime_range(xmin+1, xmax+1, py_ints=True):
             y += 1
-            v.append((p,y))
-        v.append((xmax,y))
+            v.append((p, y))
+        v.append((xmax, y))
         return plot_step_function(v, vertical_lines=vertical_lines, **kwds)
 
 ########
@@ -235,19 +236,22 @@ cpdef Integer legendre_phi(x, a):
     if not isinstance(a, Integer):
         a = Integer(a)
     if a < Integer(0):
-        raise ValueError("a (=%s) must be non-negative"%a)
+        raise ValueError("a (=%s) must be non-negative" % a)
     y = Integer(x)
 
     # legendre_phi(x, a) = 0 when x <= 0
-    if not y: return Integer(0)
+    if not y:
+        return Integer(0)
 
     # legendre_phi(x, 0) = x
-    if a == Integer(0): return Integer(y)
+    if a == Integer(0):
+        return Integer(y)
 
     # If a > prime_pi(2^32), we compute phi(x,a) = max(pi(x)-a+1,1)
     if a > Integer(203280221):
         ret = prime_pi(x)-a+Integer(1)
-        if ret < Integer(1): return Integer(1)
+        if ret < Integer(1):
+            return Integer(1)
         return ret
 
     # Deal with the general case
