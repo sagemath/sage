@@ -2542,6 +2542,9 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
         EXAMPLES::
 
             sage: R = InfiniteAbstractCombinatorialClass()
+            doctest:warning...
+            DeprecationWarning: this class is deprecated, do not use
+            See https://github.com/sagemath/sage/issues/31545 for details.
             sage: R.list()
             Traceback (most recent call last):
             ...
@@ -2557,6 +2560,9 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
         EXAMPLES::
 
             sage: R = InfiniteAbstractCombinatorialClass()
+            doctest:warning...
+            DeprecationWarning: this class is deprecated, do not use
+            See https://github.com/sagemath/sage/issues/31545 for details.
             sage: next(iter(R))
             Traceback (most recent call last):
             ...
