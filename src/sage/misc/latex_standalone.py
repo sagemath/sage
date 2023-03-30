@@ -746,6 +746,125 @@ class Standalone(SageObject):
 
         return temp_filename_pdf
 
+    def dvi(self, filename=None, view=True, program='latex'):
+        r"""
+        Compiles the latex code with latex and create a dvi file.
+
+        INPUT:
+
+        - ``filename`` -- string (default: ``None``), the output filename.
+          If ``None``, it saves the file in a temporary directory.
+
+        - ``view`` -- bool (default:``True``), whether to open the file in a
+          dvi viewer. This option is ignored and automatically set to
+          ``False`` if ``filename`` is not ``None``.
+
+        - ``program`` -- string (default:``'latex'``), ``'latex'``
+
+        OUTPUT:
+
+            string, path to dvi file
+
+        EXAMPLES::
+
+            sage: from sage.misc.latex_standalone import Standalone
+            sage: t = Standalone('Hello World')
+            sage: _ = t.dvi(view=False)     # long time (1s)   # optional latex
+
+        Same for instances of :class:`TikzPicture`::
+
+            sage: from sage.misc.latex_standalone import TikzPicture
+            sage: s = "\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}"
+            sage: t = TikzPicture(s)
+            sage: _ = t.dvi(view=False)     # not tested
+
+        A filename may be provided where to save the file, in which case
+        the viewer does not open the file::
+
+            sage: from sage.misc.temporary_file import tmp_filename
+            sage: filename = tmp_filename('temp','.dvi')
+            sage: path_to_file = t.dvi(filename)   # long time (1s)   # optional latex
+            sage: path_to_file[-4:]                # long time (fast) # optional latex
+            '.dvi'
+
+        The filename may contain spaces::
+
+            sage: filename = tmp_filename('filename with spaces','.dvi')
+            sage: path_to_file = t.dvi(filename)   # long time (1s)   # optional latex
+
+        TESTS:
+
+        We test the behavior when a wrong tex string is provided::
+
+            sage: s = "\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}"
+            sage: s_missing_last_character = s[:-1]
+            sage: t = TikzPicture(s_missing_last_character)
+            sage: _ = t.dvi()                 # optional latex
+            Traceback (most recent call last):
+            ...
+            CalledProcessError: Command '['latex', '-interaction=nonstopmode',
+            'tikz_...tex']' returned non-zero exit status 1.
+
+        """
+        from sage.features.latex import latex
+
+        # Set default program
+        if program is None:
+            program = 'latex'
+
+        # Check availability of programs
+        if program == 'latex':
+            latex().require()
+        else:
+            raise ValueError("program(={}) should be latex".format(program))
+
+        # set up filenames
+        from sage.misc.temporary_file import tmp_filename
+        temp_filename_tex = tmp_filename('tikz_', '.tex')
+        with open(temp_filename_tex, 'w') as f:
+            f.write(str(self))
+        base, temp_filename_tex = os.path.split(temp_filename_tex)
+        temp_filename, ext = os.path.splitext(temp_filename_tex)
+
+        # running pdflatex or lualatex
+        cmd = [program, '-interaction=nonstopmode', temp_filename_tex]
+        result = run(cmd, cwd=base, capture_output=True, text=True)
+
+        # If a problem with the tex source occurs, provide the log
+        if result.returncode != 0:
+            print("Command \n"
+                  "   '{}'\n"
+                  "returned non-zero exit status {}.\n"
+                  "Here is the content of the stderr:{}\n"
+                  "Here is the content of the stdout:"
+                  "{}\n".format(' '.join(result.args),
+                                result.returncode,
+                                result.stderr.strip(),
+                                result.stdout.strip()))
+        result.check_returncode()
+        temp_filename_dvi = os.path.join(base, temp_filename + '.dvi')
+
+        # move the pdf into the good location
+        if filename:
+            filename = os.path.abspath(filename)
+            import shutil
+            shutil.move(temp_filename_dvi, filename)
+            return filename
+
+        # open the tmp dvi
+        elif view:
+            from sage.misc.viewer import dvi_viewer
+            cmd = dvi_viewer().split()
+            cmd.append(temp_filename_dvi)
+            # we use check_call as opposed to run, because
+            # it gives the sage prompt back to the user
+            # see https://stackoverflow.com/a/71342967
+            # run(cmd, cwd=base, capture_output=True, check=True)
+            from subprocess import check_call, PIPE
+            check_call(cmd, cwd=base, stdout=PIPE, stderr=PIPE)
+
+        return temp_filename_dvi
+
     def png(self, filename=None, density=150, view=True):
         r"""
         Compiles the latex code with pdflatex and converts to a png file.
@@ -934,6 +1053,111 @@ class Standalone(SageObject):
             check_call(cmd, stdout=PIPE, stderr=PIPE)
 
         return temp_filename_svg
+
+    def eps(self, filename=None, view=True, program='dvips'):
+        r"""
+        Compiles the latex code with pdflatex and converts to a eps file.
+
+        INPUT:
+
+        - ``filename`` -- string (default:``None``), the output filename.
+          If ``None``, it saves the file in a temporary directory.
+
+        - ``view`` -- bool (default:``True``), whether to open the file in
+          a browser. This option is ignored and automatically set to
+          ``False`` if ``filename`` is not ``None``.
+
+        - ``program`` -- string (default:``'dvips'``),
+          ``'pdftocairo'`` or ``'dvips'``
+
+        OUTPUT:
+
+            string, path to eps file
+
+        EXAMPLES::
+
+            sage: from sage.misc.latex_standalone import Standalone
+            sage: t = Standalone('Hello World')
+            sage: _ = t.eps(view=False)     # not tested
+
+        Same for instances of :class:`TikzPicture`::
+
+            sage: from sage.misc.latex_standalone import TikzPicture
+            sage: s = "\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}"
+            sage: t = TikzPicture(s)
+            sage: _ = t.eps(view=False)     # not tested
+
+        We test the creation of the files::
+
+            sage: from sage.misc.temporary_file import tmp_filename
+            sage: filename = tmp_filename('temp', '.eps')
+            sage: path_to_file = t.eps(filename, program='dvips')     # long time (1s)   # optional latex dvips
+            sage: path_to_file[-4:]                                   # long time (fast) # optional latex dvips
+            '.eps'
+            sage: path_to_file = t.eps(filename, program='pdftocairo') # long time (1s)   # optional latex pdftocairo
+            sage: path_to_file[-4:]                                    # long time (fast) # optional latex pdftocairo
+            '.eps'
+
+        """
+
+        if program == 'pdftocairo':
+            from sage.features.poppler import pdftocairo
+            pdftocairo().require()
+            # set the temporary filenames
+            temp_filename_pdf = self.pdf(filename=None, view=False)
+            temp_filename, ext = os.path.splitext(temp_filename_pdf)
+            temp_filename_eps = temp_filename + '.eps'
+            # set the command
+            cmd = ['pdftocairo', '-eps', temp_filename_pdf, temp_filename_eps]
+        elif program == 'dvips':
+            from sage.features.latex import dvips
+            dvips().require()
+            # set the temporary filenames
+            temp_filename_dvi = self.dvi(filename=None, view=False)
+            temp_filename, ext = os.path.splitext(temp_filename_dvi)
+            temp_filename_eps = temp_filename + '.eps'
+            # set the command
+            cmd = ['dvips', '-E', '-o', temp_filename_eps, temp_filename_dvi]
+        else:
+            raise ValueError("program(={}) should be 'pdftocairo' or"
+                    " 'dvips'".format(program))
+
+        # convert to eps
+        result = run(cmd, capture_output=True, text=True)
+
+        # If a problem occurs, provide the log
+        if result.returncode != 0:
+            print("Command \n"
+                  "   '{}'\n"
+                  "returned non-zero exit status {}.\n"
+                  "Here is the content of the stderr:{}\n"
+                  "Here is the content of the stdout:"
+                  "{}\n".format(' '.join(result.args),
+                                result.returncode,
+                                result.stderr.strip(),
+                                result.stdout.strip()))
+        result.check_returncode()
+
+        # move the eps into the good location
+        if filename:
+            filename = os.path.abspath(filename)
+            import shutil
+            shutil.move(temp_filename_eps, filename)
+            return filename
+
+        # open the tmp eps
+        elif view:
+            from sage.misc.viewer import viewer
+            cmd = viewer().split()
+            cmd.append(temp_filename_eps)
+            # we use check_call as opposed to run, because
+            # it gives the sage prompt back to the user
+            # see https://stackoverflow.com/a/71342967
+            # run(cmd, capture_output=True, check=True)
+            from subprocess import check_call, PIPE
+            check_call(cmd, stdout=PIPE, stderr=PIPE)
+
+        return temp_filename_eps
 
     def tex(self, filename=None, content_only=False, include_header=None):
         r"""
