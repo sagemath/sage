@@ -53,7 +53,7 @@ Functions
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
 from .design_catalog import transversal_design  # type:ignore
-from sage.arith.all import binomial, is_prime_power
+from sage.arith.misc import binomial, is_prime_power
 from .group_divisible_designs import GroupDivisibleDesign
 from .designs_pyx import is_pairwise_balanced_design
 
@@ -332,7 +332,6 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
                     return True
                 else:
                     return BIBD(B.ground_set(), B.blocks(), k=k, lambd=1, copy=False)
-
 
     if ( (k+lambd)*(k+lambd-1) == lambd*(v+k+lambd-1) and
          balanced_incomplete_block_design(v+k+lambd, k+lambd, lambd, existence=True) is True):
@@ -659,7 +658,6 @@ def BIBD_from_TD(v,k,existence=False):
             raise NotImplementedError("I do not know how to build a ({},{},1)-BIBD!".format(v,k))
 
     return BIBD
-
 
 
 def BIBD_from_difference_family(G, D, lambd=None, check=True):

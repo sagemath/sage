@@ -1089,7 +1089,9 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f.laplace(t,s)
                 (s + 1)*e^(-s)/s^2 + 2*e^(-s)/s - 1/s^2
             """
-            from sage.all import assume, exp, forget
+            from sage.symbolic.assumptions import assume, forget
+            from sage.functions.log import exp
+
             x = SR.var(x)
             s = SR.var(s)
             assume(s>0)
@@ -1180,7 +1182,8 @@ class PiecewiseFunction(BuiltinFunction):
                 -3/5/pi
 
             """
-            from sage.all import cos, pi
+            from sage.functions.trig import cos
+            from sage.symbolic.constants import pi
             L0 = (self.domain().sup() - self.domain().inf()) / 2
             if not L:
                 L = L0
@@ -1270,7 +1273,8 @@ class PiecewiseFunction(BuiltinFunction):
                 4/3/pi
 
             """
-            from sage.all import sin, pi
+            from sage.functions.trig import sin
+            from sage.symbolic.constants import pi
             L0 = (self.domain().sup() - self.domain().inf()) / 2
             if not L:
                 L = L0
@@ -1358,7 +1362,10 @@ class PiecewiseFunction(BuiltinFunction):
                  - 4/9*sin(3*pi*x)/pi^2 + 4*sin(pi*x)/pi^2 + 1/4
 
             """
-            from sage.all import pi, sin, cos, srange
+            from sage.symbolic.constants import pi
+            from sage.functions.trig import cos, sin
+            from sage.arith.srange import srange
+
             if not L:
                 L = (self.domain().sup() - self.domain().inf()) / 2
             x = self.default_variable()

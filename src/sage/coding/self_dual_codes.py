@@ -606,7 +606,6 @@ def self_dual_binary_codes(n):
                   "6":self_dual_codes_18_6,"7":self_dual_codes_18_7,"8":self_dual_codes_18_8}
         return self_dual_codes
 
-
     if n == 20:
     # all of these of these are Type I; 2 of these codes
     # are formally equivalent but with different automorphism groups;

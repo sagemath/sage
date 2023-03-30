@@ -1,4 +1,9 @@
-<a href="https://sagemath.org"><img src="src/doc/common/themes/sage/static/logo_sagemath_black.svg" height="60" align="right" /></a>
+<a href="https://sagemath.org">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="src/doc/common/static/logo_sagemath_white.svg">
+    <img src="src/doc/common/static/logo_sagemath_black.svg" height="60" align="left">
+  </picture>
+</a>
 
 # Sage: Open Source Mathematical Software
 
@@ -394,6 +399,20 @@ in the Installation Guide.
     or JupyterLab installation, as described in [section
     "Launching SageMath"](https://doc.sagemath.org/html/en/installation/launching.html)
     in the installation manual.
+    
+Alternative Installation using PyPI
+---------------
+
+For installation of `sage` in python using `pip` you need to install `sagemath-standard`. First, activate your python virtual environment and follow these steps:
+
+            $ python3 -m pip install sage_conf
+            $ ls $(sage-config SAGE_SPKG_WHEELS)
+            $ python3 -m pip install $(sage-config SAGE_SPKG_WHEELS)/*.whl 
+            $ python3 -m pip install sagemath-standard
+
+You need to install `sage_conf`, a wheelhouse of various python packages. You can list the wheels using `ls $(sage-config SAGE_SPKG_WHEELS)`. After manual installation of these wheels, you can install the sage library, `sagemath-standard`. 
+
+**NOTE:** You can find `sage` and `sagemath` pip packages but with these packages, you will encounter `ModuleNotFoundError`.
 
 Troubleshooting
 ---------------

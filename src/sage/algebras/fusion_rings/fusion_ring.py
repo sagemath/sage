@@ -401,7 +401,7 @@ class FusionRing(WeylCharacterRing):
             sage: A21 = FusionRing("A2", 1)
             sage: A21.test_braid_representation(max_strands=4)
             True
-            sage: F41 = FusionRing("F4", 1)             # long time
+            sage: F41 = FusionRing("F4", 1)            # long time
             sage: F41.test_braid_representation()      # long time
             True
         """

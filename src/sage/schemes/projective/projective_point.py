@@ -36,7 +36,7 @@ from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
 _NumberFields = NumberFields()
 from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import is_NumberFieldOrder
+from sage.rings.number_field.order import is_NumberFieldOrder, Order as NumberFieldOrder
 from sage.rings.qqbar import number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
@@ -751,6 +751,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
                 raise TypeError("must be defined over an algebraic field")
             else:
                 K = P.codomain().base_ring()
+        if isinstance(K, NumberFieldOrder):
+            K = K.number_field()
         # first get rid of the denominators
         denom = lcm([xi.denominator() for xi in P])
         x = [xi * denom for xi in P]

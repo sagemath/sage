@@ -538,7 +538,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             [1 2 0 1]
             [0 0 1 2]
 
-        Specific systematic positions can also be requested:
+        Specific systematic positions can also be requested::
 
             sage: C.systematic_generator_matrix(systematic_positions=[3,2])
             [1 2 0 1]
@@ -1147,7 +1147,6 @@ class LinearCodeSystematicEncoder(Encoder):
                 raise ValueError("systematic positions must be a tuple of distinct integers in the range 0 to n-1 where n is the length of the code")
             # Test that the systematic positions are an information set
             self.generator_matrix()
-
 
     def __eq__(self, other):
         r"""
