@@ -165,10 +165,7 @@ from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import zech_log_bound, FiniteField as GF
-from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
-from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
-from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
 from sage.rings.ideal import is_Ideal
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.element cimport Element
@@ -368,10 +365,13 @@ class ResidueFieldFactory(UniqueFactory):
             else:
                 q = characteristic**(f.degree())
                 if q < zech_log_bound and (impl is None or impl == 'givaro'):
+                    from .residue_field_givaro import ResidueFiniteField_givaro
                     return ResidueFiniteField_givaro(p, q, names, f, None, None, None)
                 elif (q % 2 == 0) and (impl is None or impl == 'ntl'):
+                    from .residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
                     return ResidueFiniteField_ntl_gf2e(q, names, f, "poly", p, None, None, None)
                 elif impl is None or impl == 'pari':
+                    from .residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
                     return ResidueFiniteField_pari_ffelt(p, characteristic, names, f, None, None, None)
                 else:
                     raise ValueError("unrecognized finite field type")
@@ -427,10 +427,13 @@ class ResidueFieldFactory(UniqueFactory):
         else:
             q = characteristic**(f.degree())
             if q < zech_log_bound and (impl is None or impl == 'givaro'):
+                from .residue_field_givaro import ResidueFiniteField_givaro
                 return ResidueFiniteField_givaro(p, q, names, f, to_vs, to_order, PB)
             elif (q % 2 == 0) and (impl is None or impl == 'ntl'):
+                from .residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
                 return ResidueFiniteField_ntl_gf2e(q, names, f, "poly", p, to_vs, to_order, PB)
             elif impl is None or impl == 'pari':
+                from .residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
                 return ResidueFiniteField_pari_ffelt(p, characteristic, names, f, to_vs, to_order, PB)
             else:
                 raise ValueError("unrecognized finite field type")
@@ -1662,305 +1665,5 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
             x = x[0]
         try:
             return FiniteField_prime_modn._element_constructor_(self, x)
-        except TypeError:
-            return ResidueField_generic._element_constructor_(self, x)
-
-class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt):
-    """
-    The class representing residue fields of number fields that have non-prime
-    order at least `2^16`.
-
-    EXAMPLES::
-
-        sage: K.<a> = NumberField(x^3 - 7)                                              # optional - sage.rings.number_field
-        sage: P = K.ideal(923478923).factor()[0][0]                                     # optional - sage.rings.number_field
-        sage: k = K.residue_field(P)                                                    # optional - sage.rings.number_field
-        sage: k.degree()                                                                # optional - sage.rings.number_field
-        2
-        sage: OK = K.maximal_order()                                                    # optional - sage.rings.number_field
-        sage: c = OK(a)                                                                 # optional - sage.rings.number_field
-        sage: b = k(c)                                                                  # optional - sage.rings.number_field
-        sage: b + c                                                                     # optional - sage.rings.number_field
-        2*abar
-        sage: b*c                                                                       # optional - sage.rings.number_field
-        664346875*abar + 535606347
-        sage: k.base_ring()                                                             # optional - sage.rings.number_field
-        Finite Field of size 923478923
-
-        sage: R.<t> = GF(5)[]
-        sage: P = R.ideal(4*t^12 + 3*t^11 + 4*t^10 + t^9 + t^8
-        ....:             + 3*t^7 + 2*t^6 + 3*t^4 + t^3 + 3*t^2 + 2)
-        sage: k.<a> = P.residue_field()
-        sage: type(k)
-        <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_pari_ffelt_with_category'>
-        sage: k(1/t)
-        3*a^11 + a^10 + 3*a^9 + 2*a^8 + 2*a^7 + a^6 + 4*a^5 + a^3 + 2*a^2 + a
-    """
-
-    def __init__(self, p, characteristic, name, modulus, to_vs, to_order, PB):
-        """
-        Initialize ``self``.
-
-        EXAMPLES:
-
-        We create a residue field with implementation ``pari_ffelt``::
-
-            sage: K.<a> = NumberField(x^3-7)
-            sage: P = K.ideal(923478923).factor()[0][0]
-            sage: type(P.residue_field())
-            <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_pari_ffelt_with_category'>
-        """
-        ResidueField_generic.__init__(self, p)
-        FiniteField_pari_ffelt.__init__(self, characteristic, modulus, name)
-        K = OK = p.ring()
-        if OK.is_field():
-            OK = OK.ring_of_integers()
-        else:
-            K = K.fraction_field()
-        if PB is None:
-            PBinv = None
-        else:
-            PBinv = PB**(-1)
-        self._populate_coercion_lists_(coerce_list=[self.base_ring(), ResidueFieldHomomorphism_global(OK, self, to_vs, to_order, PB, PBinv)], convert_list = [ReductionMap(K, self, to_vs, to_order, PB, PBinv)])
-
-    def _element_constructor_(self, x):
-        """
-        Coerce ``x`` into ``self``.
-
-        EXAMPLES::
-
-            sage: K.<aa> = NumberField(x^3 - 2)                                         # optional - sage.rings.number_field
-            sage: P = K.factor(10007)[0][0]                                             # optional - sage.rings.number_field
-            sage: P.residue_class_degree()                                              # optional - sage.rings.number_field
-            2
-            sage: ff.<alpha> = P.residue_field(); ff                                    # optional - sage.rings.number_field
-            Residue field in alpha of Fractional ideal (-12*aa^2 + 189*aa - 475)
-            sage: type(ff)                                                              # optional - sage.rings.number_field
-            <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_pari_ffelt_with_category'>
-            sage: ff(alpha^2 + 1)                                                       # optional - sage.rings.number_field
-            7521*alpha + 4131
-            sage: ff(17/3)                                                              # optional - sage.rings.number_field
-            6677
-            sage: V = ff.vector_space(map=False); v = V([3,-2])                         # optional - sage.rings.number_field
-            sage: type(ff.convert_map_from(V))                                          # optional - sage.rings.number_field
-            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
-            sage: ff(v) # indirect doctest                                              # optional - sage.rings.number_field
-            10005*alpha + 3
-
-            sage: R.<t> = GF(5)[]; P = R.ideal(4*t^12 + 3*t^11 + 4*t^10 + t^9 + t^8 + 3*t^7 + 2*t^6 + 3*t^4 + t^3 + 3*t^2 + 2)
-            sage: k.<a> = P.residue_field()
-            sage: V = k.vector_space(map=False); v = V([1,2,3,4,5,6,7,8,9,0,1,2]); k(v) # indirect doctest
-            2*a^11 + a^10 + 4*a^8 + 3*a^7 + 2*a^6 + a^5 + 4*a^3 + 3*a^2 + 2*a + 1
-        """
-        try:
-            return self.element_class(self, x)
-        except TypeError:
-            return ResidueField_generic._element_constructor_(self, x)
-
-
-class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
-    """
-    The class representing residue fields of number fields that have non-prime
-    order strictly less than `2^16`.
-
-    EXAMPLES::
-
-        sage: R.<x> = QQ[]
-        sage: K.<a> = NumberField(x^3 - 7)                                              # optional - sage.rings.number_field
-        sage: P = K.ideal(29).factor()[0][0]                                            # optional - sage.rings.number_field
-        sage: k = K.residue_field(P)                                                    # optional - sage.rings.number_field
-        sage: k.degree()                                                                # optional - sage.rings.number_field
-        2
-        sage: OK = K.maximal_order()                                                    # optional - sage.rings.number_field
-        sage: c = OK(a)                                                                 # optional - sage.rings.number_field
-        sage: b = k(c)                                                                  # optional - sage.rings.number_field
-        sage: b*c^2                                                                     # optional - sage.rings.number_field
-        7
-        sage: b*c                                                                       # optional - sage.rings.number_field
-        13*abar + 5
-
-        sage: R.<t> = GF(7)[]; P = R.ideal(t^2 + 4)
-        sage: k.<a> = R.residue_field(P); type(k)
-        <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_givaro_with_category'>
-        sage: k(1/t)
-        5*a
-    """
-    def __init__(self, p, q, name, modulus, to_vs, to_order, PB):
-        r"""
-        INPUT:
-
-        - ``p`` -- the prime ideal defining this residue field
-
-        - ``q`` -- the order of this residue field (a power of intp)
-
-        - ``name`` -- the name of the generator of this extension
-
-        - ``modulus`` -- the polynomial modulus for this extension
-
-        - ``to_vs`` -- the map from the number field (or function field) to
-          the appropriate vector space (over `\QQ` or `F_p(t)`)
-
-        - ``to_order`` -- the map from a lattice in that vector space to the maximal order
-
-        - ``PB`` -- a matrix used in defining the reduction and lifting maps.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                 # optional - sage.rings.number_field
-            sage: P = K.ideal(61).factor()[0][0]                                        # optional - sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
-
-            sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field(); type(k)
-            <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_givaro_with_category'>
-            sage: a^5
-            a^3 + 2*a^2 + a + 2
-        """
-        ResidueField_generic.__init__(self, p)
-        FiniteField_givaro.__init__(self, q, name, modulus)
-        K = OK = p.ring()
-        if OK.is_field():
-            OK = OK.ring_of_integers()
-        else:
-            K = K.fraction_field()
-        if PB is None:
-            PBinv = None
-        else:
-            PBinv = PB**(-1)
-        self._populate_coercion_lists_(coerce_list=[self.base_ring(), ResidueFieldHomomorphism_global(OK, self, to_vs, to_order, PB, PBinv)], convert_list = [ReductionMap(K, self, to_vs, to_order, PB, PBinv)])
-
-    def _element_constructor_(self, x):
-        """
-        INPUT:
-
-            - ``x`` -- Something to cast into ``self``.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                 # optional - sage.rings.number_field
-            sage: P = K.ideal(61).factor()[0][0]                                        # optional - sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
-            sage: k(77*a^7 + 4)                                                         # optional - sage.rings.number_field
-            2*abar + 4
-            sage: V = k.vector_space(map=False); v = V([3,-2])                          # optional - sage.rings.number_field
-            sage: type(k.convert_map_from(V))
-            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
-            sage: k(v) # indirect doctest
-            59*abar + 3
-
-            sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field()
-            sage: V = k.vector_space(map=False); v = V([0,1,2,3])
-            sage: k(v) # indirect doctest
-            2*a^2 + a
-        """
-        try:
-            return FiniteField_givaro._element_constructor_(self, x)
-        except TypeError:
-            return ResidueField_generic._element_constructor_(self, x)
-
-class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
-    """
-    The class representing residue fields with order a power of 2.
-
-    When the order is less than `2^16`, givaro is used by default instead.
-
-    EXAMPLES::
-
-        sage: R.<x> = QQ[]
-        sage: K.<a> = NumberField(x^3 - 7)                                              # optional - sage.rings.number_field
-        sage: P = K.ideal(29).factor()[0][0]                                            # optional - sage.rings.number_field
-        sage: k = K.residue_field(P)                                                    # optional - sage.rings.number_field
-        sage: k.degree()                                                                # optional - sage.rings.number_field
-        2
-        sage: OK = K.maximal_order()                                                    # optional - sage.rings.number_field
-        sage: c = OK(a)                                                                 # optional - sage.rings.number_field
-        sage: b = k(c)                                                                  # optional - sage.rings.number_field
-        sage: b*c^2                                                                     # optional - sage.rings.number_field
-        7
-        sage: b*c                                                                       # optional - sage.rings.number_field
-        13*abar + 5
-
-        sage: R.<t> = GF(2)[]; P = R.ideal(t^19 + t^5 + t^2 + t + 1)
-        sage: k.<a> = R.residue_field(P); type(k)
-        <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_ntl_gf2e_with_category'>
-        sage: k(1/t)
-        a^18 + a^4 + a + 1
-        sage: k(1/t)*t
-        1
-    """
-    # we change the order for consistency with FiniteField_ntl_gf2e's __cinit__
-    def __init__(self, q, name, modulus, repr, p, to_vs, to_order, PB):
-        r"""
-        INPUT:
-
-        - ``p`` -- the prime ideal defining this residue field
-
-        - ``q`` -- the order of this residue field
-
-        - ``name`` -- the name of the generator of this extension
-
-        - ``modulus`` -- the polynomial modulus for this extension
-
-        - ``to_vs`` -- the map from the number field (or function field) to
-          the appropriate vector space (over `\QQ` or `F_p(t)`)
-
-        - ``to_order`` -- the map from a lattice in that vector space to the
-          maximal order
-
-        - ``PB`` -- a matrix used in defining the reduction and lifting maps
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                 # optional - sage.rings.number_field
-            sage: P = K.ideal(61).factor()[0][0]                                        # optional - sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
-
-            sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field(); type(k)
-            <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_givaro_with_category'>
-            sage: a^5
-            a^3 + 2*a^2 + a + 2
-        """
-        ResidueField_generic.__init__(self, p)
-        FiniteField_ntl_gf2e.__init__(self, q, name, modulus, repr)
-        K = OK = p.ring()
-        if OK.is_field():
-            OK = OK.ring_of_integers()
-        else:
-            K = K.fraction_field()
-        if PB is None:
-            PBinv = None
-        else:
-            PBinv = PB**(-1)
-        self._populate_coercion_lists_(coerce_list=[self.base_ring(), ResidueFieldHomomorphism_global(OK, self, to_vs, to_order, PB, PBinv)], convert_list = [ReductionMap(K, self, to_vs, to_order, PB, PBinv)])
-
-    def _element_constructor_(self, x):
-        """
-        INPUT:
-
-        - ``x`` -- Something to cast into ``self``.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                 # optional - sage.rings.number_field
-            sage: P = K.ideal(61).factor()[0][0]                                        # optional - sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
-            sage: k(77*a^7 + 4)                                                         # optional - sage.rings.number_field
-            2*abar + 4
-            sage: V = k.vector_space(map=False); v = V([3,-2])                          # optional - sage.rings.number_field
-            sage: type(k.convert_map_from(V))                                           # optional - sage.rings.number_field
-            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
-            sage: k(v) # indirect doctest                                               # optional - sage.rings.number_field
-            59*abar + 3
-
-            sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field()
-            sage: V = k.vector_space(map=False); v = V([0,1,2,3])
-            sage: k(v) # indirect doctest
-            2*a^2 + a
-        """
-        try:
-            return FiniteField_ntl_gf2e._element_constructor_(self, x)
         except TypeError:
             return ResidueField_generic._element_constructor_(self, x)
