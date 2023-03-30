@@ -169,7 +169,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         sage: X = P.subscheme(y-z)
         sage: f(f(f(X)))
         Closed subscheme of Projective Space of dimension 2 over Rational Field
-        defined by:
+         defined by:
           y - z
 
     ::
@@ -179,7 +179,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         sage: f = H([(x-2*y)^2, (x-2*z)^2, (x-2*w)^2, x^2])
         sage: f(P.subscheme([x,y,z]))
         Closed subscheme of Projective Space of dimension 3 over Rational Field
-        defined by:
+         defined by:
           w,
           y,
           x
@@ -204,9 +204,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: X = P.subscheme([x])
             sage: H = End(X)
             sage: H([x^2, t*y^2, x*z])
-            Scheme endomorphism of Closed subscheme of Projective Space of dimension
-            2 over Univariate Polynomial Ring in t over Rational Field defined by:
-              x
+            Scheme endomorphism of Closed subscheme of Projective Space of dimension 2
+             over Univariate Polynomial Ring in t over Rational Field defined by: x
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x^2 : t*y^2 : x*z)
 
@@ -217,9 +216,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: u,v,w = X.coordinate_ring().gens()
             sage: H = End(X)
             sage: H([u^2, v^2, w*u])
-            Scheme endomorphism of Closed subscheme of Projective Space of dimension
-            2 over Complex Field with 53 bits of precision defined by:
-              x - y
+            Scheme endomorphism of Closed subscheme of Projective Space of dimension 2
+             over Complex Field with 53 bits of precision defined by: x - y
               Defn: Defined on coordinates by sending (x : y : z) to
                     (y^2 : y^2 : y*z)
         """
@@ -1118,7 +1116,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f = H([x^2 + t*y^2, t*y^2 - z^2, t*z^2])
             sage: f.dehomogenize(2)
             Scheme endomorphism of Affine Space of dimension 2 over Fraction Field
-            of Univariate Polynomial Ring in t over Rational Field
+             of Univariate Polynomial Ring in t over Rational Field
               Defn: Defined on coordinates by sending (x, y) to
                     (1/t*x^2 + y^2, y^2 - 1/t)
 
@@ -1130,7 +1128,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f = H([x^2, y^2, x*z])
             sage: f.dehomogenize(2)
             Scheme endomorphism of Closed subscheme of Affine Space of dimension 2
-            over Integer Ring defined by: x^2 - y^2
+             over Integer Ring defined by: x^2 - y^2
               Defn: Defined on coordinates by sending (x, y) to (x, y^2/x)
 
         ::

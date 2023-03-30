@@ -882,14 +882,14 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: A.chebyshev_polynomial(5, 'first')
             Dynamical System of Affine Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x) to (16*x^5 - 20*x^3 + 5*x)
+              Defn: Defined on coordinates by sending (x) to (16*x^5 - 20*x^3 + 5*x)
 
         ::
 
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: A.chebyshev_polynomial(3, 'second')
             Dynamical System of Affine Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x) to (8*x^3 - 4*x)
+              Defn: Defined on coordinates by sending (x) to (8*x^3 - 4*x)
 
         ::
 
@@ -1039,12 +1039,12 @@ class AffineSpace_field(AffineSpace_generic):
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: list(A.points_of_bounded_height(bound=3))
             [(0, 0), (1, 0), (-1, 0), (1/2, 0), (-1/2, 0), (2, 0), (-2, 0), (0, 1),
-            (1, 1), (-1, 1), (1/2, 1), (-1/2, 1), (2, 1), (-2, 1), (0, -1), (1, -1),
-            (-1, -1), (1/2, -1), (-1/2, -1), (2, -1), (-2, -1), (0, 1/2), (1, 1/2),
-            (-1, 1/2), (1/2, 1/2), (-1/2, 1/2), (2, 1/2), (-2, 1/2), (0, -1/2), (1, -1/2),
-            (-1, -1/2), (1/2, -1/2), (-1/2, -1/2), (2, -1/2), (-2, -1/2), (0, 2), (1, 2),
-            (-1, 2), (1/2, 2), (-1/2, 2), (2, 2), (-2, 2), (0, -2), (1, -2), (-1, -2),
-            (1/2, -2), (-1/2, -2), (2, -2), (-2, -2)]
+             (1, 1), (-1, 1), (1/2, 1), (-1/2, 1), (2, 1), (-2, 1), (0, -1), (1, -1),
+             (-1, -1), (1/2, -1), (-1/2, -1), (2, -1), (-2, -1), (0, 1/2), (1, 1/2),
+             (-1, 1/2), (1/2, 1/2), (-1/2, 1/2), (2, 1/2), (-2, 1/2), (0, -1/2), (1, -1/2),
+             (-1, -1/2), (1/2, -1/2), (-1/2, -1/2), (2, -1/2), (-2, -1/2), (0, 2), (1, 2),
+             (-1, 2), (1/2, 2), (-1/2, 2), (2, 2), (-2, 2), (0, -2), (1, -2), (-1, -2),
+             (1/2, -2), (-1/2, -2), (2, -2), (-2, -2)]
 
         ::
 
@@ -1113,7 +1113,7 @@ class AffineSpace_field(AffineSpace_generic):
             sage: AL.<x,y> = AffineSpace(L, 2)                                          # optional - sage.rings.number_field
             sage: AL.weil_restriction()                                                 # optional - sage.rings.number_field
             Affine Space of dimension 4 over Number Field in w
-            with defining polynomial x^5 - 2
+             with defining polynomial x^5 - 2
         """
         try:
             X = self.__weil_restriction
@@ -1166,7 +1166,7 @@ class AffineSpace_field(AffineSpace_generic):
             sage: p2 = A3(4, 5, 6)
             sage: A3.line_through(p1, p2)
             Affine Curve over Rational Field defined by -1/6*x + 1/6*y - 1/6,
-            -1/6*x + 1/6*z - 1/3, -1/6*y + 1/6*z - 1/6, -1/6*x + 1/3*y - 1/6*z
+              -1/6*x + 1/6*z - 1/3, -1/6*y + 1/6*z - 1/6, -1/6*x + 1/3*y - 1/6*z
             sage: L = _
             sage: L(p1)
             (1, 2, 3)
