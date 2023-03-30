@@ -79,7 +79,7 @@ class FusionDouble(CombinatorialFreeModule):
     rules are multiplicity-free, if there are many simple objects, the computation
     may be too large to be practical. At least, this code can compute the F-matrix
     for the Fusion Double of the symmetric group `S_3`, duplicating the result
-    of [CHW2015]_ . 
+    of [CHW2015]_ .
 
     EXAMPLES ::
 
@@ -109,7 +109,7 @@ class FusionDouble(CombinatorialFreeModule):
     multiplicity-free. Abelian groups, dihedral groups, dicyclic groups, and all
     groups of order 16 are multiplicity-free.  On the other hand, for groups of order 32,
     some are multiplicity-free and others are not.
-    
+
     Some groups, as currently implemented in Sage, may be missing methods such as
     centralizers which are needed by this code. To circumvent this, you may
     try to implement them as GAP Permutation groups. Thus ::
@@ -319,7 +319,7 @@ class FusionDouble(CombinatorialFreeModule):
         `\chi_i^{(h_i)}(x)=\chi_i(r_i^{-1}xr_i)`, and this definition does not
         depend on the choice of `r_i`.
 
-        This formula is due to Christopher Goff [Goff1999]_ when the centralizers are normal, 
+        This formula is due to Christopher Goff [Goff1999]_ when the centralizers are normal,
         and to Wenqi Li in the general case.
         """
         G = self._G
@@ -385,7 +385,7 @@ class FusionDouble(CombinatorialFreeModule):
             ....:         print (n,H.root_of_unity(2/n))
             ....:     except ValueError as err:
             ....:         print (n,err)
-            ....: 
+            ....:
             1 1
             2 -1
             3 zeta24^4 - 1
@@ -501,13 +501,13 @@ class FusionDouble(CombinatorialFreeModule):
         """
         Returns True if all fusion coefficients are at most 1.
         """
-        print ("Checking multiplicity free-ness")
+        print("Checking multiplicity free-ness")
         for i in self.basis():
             for j in self.basis():
                 for k in self.basis():
                     if self.N_ijk(i,j,k) > 1:
                         if verbose:
-                            print ("N(%s,%s,%s)=%s"%(i,j,k,self.N_ijk(i,j,k)))
+                            print("N(%s,%s,%s)=%s"%(i,j,k,self.N_ijk(i,j,k)))
                         return False
         return True
 
@@ -577,18 +577,18 @@ class FusionDouble(CombinatorialFreeModule):
             return self in self.parent().basis()
 
         def g(self):
-           """
-           Returns the conjugacy class representative of the underlying
-           group corresponding to a simple object.
-           """
-           return self.parent()._elt[self.support_of_term()]
+            """
+            Returns the conjugacy class representative of the underlying
+            group corresponding to a simple object.
+            """
+            return self.parent()._elt[self.support_of_term()]
 
         def chi(self):
-           """
-           Returns the character of the centralizer of a conjugacy class
-           representative of the underlying group corresponding to a simple object.
-           """
-           return self.parent()._chi[self.support_of_term()]
+            """
+            Returns the character of the centralizer of a conjugacy class
+            representative of the underlying group corresponding to a simple object.
+            """
+            return self.parent()._chi[self.support_of_term()]
 
         def ribbon(self, base_coercion=True):
             """
@@ -654,5 +654,4 @@ class FusionDouble(CombinatorialFreeModule):
             if not self.is_simple_object():
                 raise ValueError("quantum dimension is only available for simple objects of a FusionRing")
             return self.parent().s_ij(self,self.parent().one())
-
 
