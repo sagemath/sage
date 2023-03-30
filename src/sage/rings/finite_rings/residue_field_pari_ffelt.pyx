@@ -23,7 +23,7 @@ Finite residue fields (PARI implementation)
 # *****************************************************************************
 
 from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
-from sage.rings.finite_rings.residue_field import ResidueField_generic
+from sage.rings.finite_rings.residue_field import ResidueField_generic, ResidueFieldHomomorphism_global, ReductionMap
 
 
 class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt):
@@ -53,7 +53,7 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
         ....:             + 3*t^7 + 2*t^6 + 3*t^4 + t^3 + 3*t^2 + 2)
         sage: k.<a> = P.residue_field()
         sage: type(k)
-        <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_pari_ffelt_with_category'>
+        <class 'sage.rings.finite_rings.residue_field_pari_ffelt.ResidueFiniteField_pari_ffelt_with_category'>
         sage: k(1/t)
         3*a^11 + a^10 + 3*a^9 + 2*a^8 + 2*a^7 + a^6 + 4*a^5 + a^3 + 2*a^2 + a
     """
@@ -69,7 +69,7 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
             sage: K.<a> = NumberField(x^3-7)
             sage: P = K.ideal(923478923).factor()[0][0]
             sage: type(P.residue_field())
-            <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_pari_ffelt_with_category'>
+            <class 'sage.rings.finite_rings.residue_field_pari_ffelt.ResidueFiniteField_pari_ffelt_with_category'>
         """
         ResidueField_generic.__init__(self, p)
         FiniteField_pari_ffelt.__init__(self, characteristic, modulus, name)
@@ -99,7 +99,7 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
             sage: ff.<alpha> = P.residue_field(); ff                                    # optional - sage.rings.number_field
             Residue field in alpha of Fractional ideal (-12*aa^2 + 189*aa - 475)
             sage: type(ff)                                                              # optional - sage.rings.number_field
-            <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_pari_ffelt_with_category'>
+            <class 'sage.rings.finite_rings.residue_field_pari_ffelt.ResidueFiniteField_pari_ffelt_with_category'>
             sage: ff(alpha^2 + 1)                                                       # optional - sage.rings.number_field
             7521*alpha + 4131
             sage: ff(17/3)                                                              # optional - sage.rings.number_field

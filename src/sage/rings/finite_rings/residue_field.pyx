@@ -110,7 +110,7 @@ First over a small non-prime field::
     sage: reduct_id = F1.factor(47)[0][0]                                               # optional - sage.rings.number_field
     sage: Rf = F1.residue_field(reduct_id)                                              # optional - sage.rings.number_field
     sage: type(Rf)                                                                      # optional - sage.rings.number_field
-    <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_pari_ffelt_with_category'>
+    <class 'sage.rings.finite_rings.residue_field_pari_ffelt.ResidueFiniteField_pari_ffelt_with_category'>
     sage: Rf.cardinality().factor()                                                     # optional - sage.rings.number_field
     47^3
     sage: R.<X, Y> = PolynomialRing(Rf)                                                 # optional - sage.rings.number_field
@@ -466,7 +466,7 @@ class ResidueField_generic(Field):
         Residue field in a of Principal ideal (t^2 + 2) of
          Univariate Polynomial Ring in t over Finite Field of size 29
         sage: type(k)
-        <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_givaro_with_category'>
+        <class 'sage.rings.finite_rings.residue_field_givaro.ResidueFiniteField_givaro_with_category'>
     """
     def __init__(self, p):
         """
@@ -901,7 +901,7 @@ cdef class ReductionMap(Map):
               To:   Residue field in tbar of Principal ideal (t^7 + t^6 + t^5 + t^4 + 1) of
                     Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
             sage: type(k)
-            <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_givaro_with_category'>
+            <class 'sage.rings.finite_rings.residue_field_givaro.ResidueFiniteField_givaro_with_category'>
         """
         self._K = K
         self._F = F   # finite field
@@ -1631,10 +1631,14 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
             else:
                 # polynomial ring case.
                 coerce_list = [ResidueFieldHomomorphism_global(OK, self, None, None, None, None), OK.base_ring()]
-            self._populate_coercion_lists_(coerce_list=coerce_list, convert_list=[ReductionMap(K, self, None, None, None, None)]) # could be special-cased a bit more.
+            self._populate_coercion_lists_(coerce_list=coerce_list,
+                                           convert_list=[ReductionMap(K, self, None, None, None, None)])  # could be special-cased a bit more.
         else:
             PBinv = PB**(-1)
-            self._populate_coercion_lists_(coerce_list=[IntegerMod_to_IntegerMod(GF(intp), self), Integer_to_IntegerMod(self), Int_to_IntegerMod(self), ResidueFieldHomomorphism_global(OK, self, to_vs, to_order, PB, PBinv)],
+            self._populate_coercion_lists_(coerce_list=[IntegerMod_to_IntegerMod(GF(intp), self),
+                                                        Integer_to_IntegerMod(self),
+                                                        Int_to_IntegerMod(self),
+                                                        ResidueFieldHomomorphism_global(OK, self, to_vs, to_order, PB, PBinv)],
                                            convert_list=[ReductionMap(K, self, to_vs, to_order, PB, PBinv)])
 
     def _element_constructor_(self, x):

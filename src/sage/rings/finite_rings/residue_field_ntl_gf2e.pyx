@@ -23,7 +23,7 @@ Finite residue fields (NTL implementation)
 # *****************************************************************************
 
 from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
-from sage.rings.finite_rings.residue_field import ResidueField_generic
+from sage.rings.finite_rings.residue_field import ResidueField_generic, ResidueFieldHomomorphism_global, ReductionMap
 
 
 class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
@@ -50,7 +50,7 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
 
         sage: R.<t> = GF(2)[]; P = R.ideal(t^19 + t^5 + t^2 + t + 1)
         sage: k.<a> = R.residue_field(P); type(k)
-        <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_ntl_gf2e_with_category'>
+        <class 'sage.rings.finite_rings.residue_field_ntl_gf2e.ResidueFiniteField_ntl_gf2e_with_category'>
         sage: k(1/t)
         a^18 + a^4 + a + 1
         sage: k(1/t)*t
@@ -85,7 +85,7 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
             sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
 
             sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field(); type(k)
-            <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_givaro_with_category'>
+            <class 'sage.rings.finite_rings.residue_field_givaro.ResidueFiniteField_givaro_with_category'>
             sage: a^5
             a^3 + 2*a^2 + a + 2
         """

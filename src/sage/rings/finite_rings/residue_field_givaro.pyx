@@ -49,7 +49,7 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
 
         sage: R.<t> = GF(7)[]; P = R.ideal(t^2 + 4)
         sage: k.<a> = R.residue_field(P); type(k)
-        <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_givaro_with_category'>
+        <class 'sage.rings.finite_rings.residue_field_givaro.ResidueFiniteField_givaro_with_category'>
         sage: k(1/t)
         5*a
     """
@@ -80,7 +80,7 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
             sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
 
             sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field(); type(k)
-            <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_givaro_with_category'>
+            <class 'sage.rings.finite_rings.residue_field_givaro.ResidueFiniteField_givaro_with_category'>
             sage: a^5
             a^3 + 2*a^2 + a + 2
         """
