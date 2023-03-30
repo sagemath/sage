@@ -57,19 +57,19 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         -x0^5 + x0*x1*x2^3 + x1^2*x2^3 + x0*x2^4 - x2^5
         sage: C(QQ)
         Set of rational points of Hyperelliptic Curve over Rational Field
-        defined by v^2 + u*v = u^5 - u + 1
+         defined by v^2 + u*v = u^5 - u + 1
         sage: K.<t> = NumberField(x^2 - 2)                                              # optional - sage.rings.number_field
         sage: C(K)                                                                      # optional - sage.rings.number_field
         Set of rational points of Hyperelliptic Curve
-        over Number Field in t with defining polynomial x^2 - 2
-        defined by v^2 + u*v = u^5 - u + 1
+         over Number Field in t with defining polynomial x^2 - 2
+         defined by v^2 + u*v = u^5 - u + 1
         sage: P = C(QQ)(0,1,1); P
         (0 : 1 : 1)
         sage: P == C(0,1,1)
         True
         sage: C(0,1,1).parent()
         Set of rational points of Hyperelliptic Curve over Rational Field
-        defined by v^2 + u*v = u^5 - u + 1
+         defined by v^2 + u*v = u^5 - u + 1
         sage: P1 = C(K)(P)                                                              # optional - sage.rings.number_field
         sage: P2 = C(K)([2, 4*t - 1, 1])                                                # optional - sage.rings.number_field
         sage: P3 = C(K)([-1/2, 1/8*(7*t+2), 1])                                         # optional - sage.rings.number_field

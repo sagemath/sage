@@ -1442,12 +1442,12 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: emb = K.embeddings(QQbar)                                             # optional - sage.rings.number_field
             sage: f.change_ring(emb[0])                                                 # optional - sage.rings.number_field
             Scheme endomorphism of Projective Space of dimension 1
-            over Algebraic Field
+             over Algebraic Field
                Defn: Defined on coordinates by sending (x : y) to
                      (x^2 + (-1.324717957244746?)*x*y + 1.754877666246693?*y^2 : y^2)
             sage: f.change_ring(emb[1])                                                 # optional - sage.rings.number_field
             Scheme endomorphism of Projective Space of dimension 1
-            over Algebraic Field
+             over Algebraic Field
                Defn: Defined on coordinates by sending (x : y) to
                      (x^2 + (0.6623589786223730? - 0.5622795120623013?*I)*x*y
                       + (0.1225611668766537? - 0.744861766619745?*I)*y^2 : y^2)
@@ -1460,7 +1460,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: f = H([x^2 + v*y^2, y^2])                                             # optional - sage.rings.number_field sage.symbolic
             sage: f.change_ring(QQbar)                                                  # optional - sage.rings.number_field sage.symbolic
             Scheme endomorphism of Projective Space of dimension 1
-            over Algebraic Field
+             over Algebraic Field
               Defn: Defined on coordinates by sending (x : y) to
                     (x^2 + 1.414213562373095?*y^2 : y^2)
 
@@ -1475,7 +1475,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: f = H([6*x^2 + 2*x*y + 16*y^2, -w*x^2 - 4*x*y - 4*y^2])               # optional - sage.rings.number_field sage.symbolic
             sage: f.change_ring(QQbar)                                                  # optional - sage.rings.number_field sage.symbolic
             Scheme endomorphism of Closed subscheme of Projective Space of dimension 1
-            over Algebraic Field defined by: x - y
+             over Algebraic Field defined by: x - y
               Defn: Defined on coordinates by sending (x : y) to
                     (6*x^2 + 2*x*y + 16*y^2 : 1.414213562373095?*x^2 + (-4)*x*y + (-4)*y^2)
 
@@ -1602,7 +1602,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: f = H([x^2, c*y^2])
             sage: f.specialization({c: 2})
             Scheme endomorphism of Closed subscheme of Projective Space of dimension 1
-            over Rational Field defined by: x - 2*y
+             over Rational Field defined by: x - 2*y
                   Defn: Defined on coordinates by sending (x : y) to (x^2 : 2*y^2)
 
         ::
@@ -1727,9 +1727,9 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: g*f1                                                                  # optional - sage.rings.number_field
             Composite map:
               From: Affine Space of dimension 2 over Number Field in a
-                     with defining polynomial x^2 - 2
+                    with defining polynomial x^2 - 2
               To:   Affine Space of dimension 2 over Number Field in a
-                     with defining polynomial x^2 - 2
+                    with defining polynomial x^2 - 2
               Defn:   Generic endomorphism of Affine Space of dimension 2
                        over Number Field in a with defining polynomial x^2 - 2
                     then
@@ -1992,7 +1992,8 @@ class SchemeMorphism_point(SchemeMorphism):
             sage: H = End(P)                                                            # optional - sage.rings.number_field
             sage: F = H([x^2 + O(v)*y^2, y^2])                                          # optional - sage.rings.number_field
             sage: F.change_ring(K).change_ring(K.embeddings(QQbar)[0])                  # optional - sage.rings.number_field
-            Scheme endomorphism of Projective Space of dimension 1 over Algebraic Field
+            Scheme endomorphism of Projective Space of dimension 1
+             over Algebraic Field
               Defn: Defined on coordinates by sending (x : y) to
                     (x^2 + (-2.645751311064591?*I)*y^2 : y^2)
 
@@ -2102,8 +2103,8 @@ class SchemeMorphism_point(SchemeMorphism):
             sage: Q2 = Q.specialization({c:2}); Q2
             (2 : 1)
             sage: Q2.codomain()
-            Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
-              x - 2*y
+            Closed subscheme of Projective Space of dimension 1 over Rational Field
+             defined by: x - 2*y
 
         ::
 

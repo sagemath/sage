@@ -39,17 +39,17 @@ Jacobian has complex multiplication.
     sage: x = GF(37)['x'].gen()                                                         # optional - sage.rings.finite_rings
     sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x); H              # optional - sage.rings.finite_rings
     Hyperelliptic Curve over Finite Field of size 37 defined
-    by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
+     by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
 
 At this time, Jacobians of hyperelliptic curves are handled
 differently than elliptic curves::
 
     sage: J = H.jacobian(); J                                                           # optional - sage.rings.finite_rings
     Jacobian of Hyperelliptic Curve over Finite Field of size 37 defined
-    by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
+     by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
     sage: J = J(J.base_ring()); J                                                       # optional - sage.rings.finite_rings
     Set of rational points of Jacobian of Hyperelliptic Curve over Finite Field
-    of size 37 defined by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
+     of size 37 defined by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
 
 Points on the Jacobian are represented by Mumford's polynomials.
 First we find a couple of points on the curve::
@@ -136,7 +136,7 @@ def cantor_reduction_simple(a, b, f, genus):
         Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - x
         sage: J = H.jacobian()(QQ); J
         Set of rational points of Jacobian of Hyperelliptic Curve over Rational Field
-        defined by y^2 = x^5 - x
+         defined by y^2 = x^5 - x
 
     The following point is 2-torsion::
 
@@ -175,7 +175,7 @@ def cantor_reduction(a, b, f, h, genus):
         Hyperelliptic Curve over Rational Field defined by y^2 + x*y = x^5 - x
         sage: J = H.jacobian()(QQ); J
         Set of rational points of Jacobian of Hyperelliptic Curve over
-        Rational Field defined by y^2 + x*y = x^5 - x
+         Rational Field defined by y^2 + x*y = x^5 - x
 
     The following point is 2-torsion::
 
@@ -233,8 +233,7 @@ def cantor_composition_simple(D1,D2,f,genus):
         sage: F.<a> = NumberField(x^2 - 2, 'a')                                         # optional - sage.rings.number_field
         sage: J = H.jacobian()(F); J                                                    # optional - sage.rings.number_field
         Set of rational points of Jacobian of Hyperelliptic Curve over
-        Number Field in a with defining polynomial x^2 - 2 defined
-        by y^2 = x^5 + x
+         Number Field in a with defining polynomial x^2 - 2 defined by y^2 = x^5 + x
 
     ::
 
@@ -277,10 +276,10 @@ def cantor_composition(D1,D2,f,h,genus):
         sage: f = x^7 + x^2 + a                                                         # optional - sage.rings.finite_rings
         sage: H = HyperellipticCurve(f, 2*x); H                                         # optional - sage.rings.finite_rings
         Hyperelliptic Curve over Finite Field in a of size 7^2
-        defined by y^2 + 2*x*y = x^7 + x^2 + a
+         defined by y^2 + 2*x*y = x^7 + x^2 + a
         sage: J = H.jacobian()(F); J                                                    # optional - sage.rings.finite_rings
         Set of rational points of Jacobian of Hyperelliptic Curve over
-        Finite Field in a of size 7^2 defined by y^2 + 2*x*y = x^7 + x^2 + a
+         Finite Field in a of size 7^2 defined by y^2 + 2*x*y = x^7 + x^2 + a
 
     ::
 
@@ -306,11 +305,11 @@ def cantor_composition(D1,D2,f,h,genus):
         sage: f = x^7 + x^2 + 1                                                         # optional - sage.rings.finite_rings
         sage: H = HyperellipticCurve(f, 2*x); H                                         # optional - sage.rings.finite_rings
         Hyperelliptic Curve over Finite Field of size 1000000000000000000000000000057
-        defined by y^2 + 2*x*y = x^7 + x^2 + 1
+         defined by y^2 + 2*x*y = x^7 + x^2 + 1
         sage: J = H.jacobian()(F); J                                                    # optional - sage.rings.finite_rings
-        Set of rational points of Jacobian of Hyperelliptic Curve over
-        Finite Field of size 1000000000000000000000000000057 defined
-        by y^2 + 2*x*y = x^7 + x^2 + 1
+        Set of rational points of Jacobian of Hyperelliptic Curve
+         over Finite Field of size 1000000000000000000000000000057
+         defined by y^2 + 2*x*y = x^7 + x^2 + 1
         sage: Q = J(H.lift_x(F(1))); Q                                                  # optional - sage.rings.finite_rings
         (x + 1000000000000000000000000000056, y + 1000000000000000000000000000056)
         sage: 10*Q  # indirect doctest                                                  # optional - sage.rings.finite_rings
@@ -376,7 +375,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)         # optional - sage.rings.finite_rings
             sage: J = H.jacobian()(GF(37));  J                                          # optional - sage.rings.finite_rings
             Set of rational points of Jacobian of Hyperelliptic Curve over
-            Finite Field of size 37 defined by
+             Finite Field of size 37 defined by
             y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
 
         ::
@@ -385,7 +384,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             (x + 35, y + 26)
             sage: P1.parent()                                                           # optional - sage.rings.finite_rings
             Set of rational points of Jacobian of Hyperelliptic Curve over
-            Finite Field of size 37 defined by
+             Finite Field of size 37 defined by
             y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
             sage: type(P1)                                                              # optional - sage.rings.finite_rings
             <class 'sage.schemes.hyperelliptic_curves.jacobian_morphism.JacobianMorphism_divisor_class_field'>
@@ -500,9 +499,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: H = HyperellipticCurve(f)
             sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # optional - sage.rings.number_field
             sage: J = H.jacobian()(F); J                                                # optional - sage.rings.number_field
-            Set of rational points of Jacobian of Hyperelliptic Curve over
-            Number Field in a with defining polynomial x^2 - 2 defined
-            by y^2 = x^5 + x
+            Set of rational points of Jacobian of Hyperelliptic Curve
+             over Number Field in a with defining polynomial x^2 - 2
+             defined by y^2 = x^5 + x
 
         ::
 
@@ -525,9 +524,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: H = HyperellipticCurve(f)
             sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # optional - sage.rings.number_field
             sage: J = H.jacobian()(F); J                                                # optional - sage.rings.number_field
-            Set of rational points of Jacobian of Hyperelliptic Curve over
-            Number Field in a with defining polynomial x^2 - 2 defined
-            by y^2 = x^5 + x
+            Set of rational points of Jacobian of Hyperelliptic Curve
+             over Number Field in a with defining polynomial x^2 - 2
+             defined by y^2 = x^5 + x
 
         ::
 
@@ -549,9 +548,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: H = HyperellipticCurve(f)
             sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # optional - sage.rings.number_field
             sage: J = H.jacobian()(F); J                                                # optional - sage.rings.number_field
-            Set of rational points of Jacobian of Hyperelliptic Curve over
-            Number Field in a with defining polynomial x^2 - 2 defined
-            by y^2 = x^5 + x
+            Set of rational points of Jacobian of Hyperelliptic Curve
+             over Number Field in a with defining polynomial x^2 - 2
+             defined by y^2 = x^5 + x
 
         ::
 
@@ -573,9 +572,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: H = HyperellipticCurve(f)
             sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # optional - sage.rings.number_field
             sage: J = H.jacobian()(F); J                                                # optional - sage.rings.number_field
-            Set of rational points of Jacobian of Hyperelliptic Curve over
-            Number Field in a with defining polynomial x^2 - 2 defined
-            by y^2 = x^5 + x
+            Set of rational points of Jacobian of Hyperelliptic Curve
+             over Number Field in a with defining polynomial x^2 - 2
+             defined by y^2 = x^5 + x
 
         ::
 

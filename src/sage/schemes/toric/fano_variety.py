@@ -752,7 +752,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
 
             sage: P2.anticanonical_hypersurface(monomial_points="all")
             Closed subscheme of 2-d CPR-Fano toric variety
-            covered by 3 affine patches defined by:
+             covered by 3 affine patches defined by:
               a0*z0^3 + a9*z0^2*z1 + a7*z0*z1^2 + a1*z1^3 + a8*z0^2*z2 + a6*z0*z1*z2
               + a4*z1^2*z2 + a5*z0*z2^2 + a3*z1*z2^2 + a2*z2^3
 
@@ -761,7 +761,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
 
             sage: P2.anticanonical_hypersurface(monomial_points="simplified")
             Closed subscheme of 2-d CPR-Fano toric variety
-            covered by 3 affine patches defined by:
+             covered by 3 affine patches defined by:
               a0*z0^3 + a1*z1^3 + a6*z0*z1*z2 + a2*z2^3
 
         The mirror family to these hypersurfaces lives inside the Fano toric
@@ -772,7 +772,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             ....:                           coordinate_points="all")
             sage: FTV.anticanonical_hypersurface(monomial_points="simplified")
             Closed subscheme of 2-d CPR-Fano toric variety
-            covered by 9 affine patches defined by:
+             covered by 9 affine patches defined by:
               a2*z2^3*z3^2*z4*z5^2*z8 + a1*z1^3*z3*z4^2*z7^2*z9
               + a3*z0*z1*z2*z3*z4*z5*z7*z8*z9 + a0*z0^3*z5*z7*z8^2*z9^2
 
@@ -785,7 +785,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             ....:                           coordinate_points="all but facets")
             sage: FTV.anticanonical_hypersurface(monomial_points="simplified")
             Closed subscheme of 2-d CPR-Fano toric variety
-            covered by 3 affine patches defined by:
+             covered by 3 affine patches defined by:
               a0*z0^3 + a1*z1^3 + a3*z0*z1*z2 + a2*z2^3
 
         This looks very similar to our second anticanonical
@@ -798,14 +798,14 @@ class CPRFanoToricVariety_field(ToricVariety_field):
 
             sage: FTV.anticanonical_hypersurface(coefficient_names="a b c d")
             Closed subscheme of 2-d CPR-Fano toric variety
-            covered by 3 affine patches defined by:
+             covered by 3 affine patches defined by:
               a*z0^3 + b*z1^3 + d*z0*z1*z2 + c*z2^3
 
         or give concrete coefficients ::
 
             sage: FTV.anticanonical_hypersurface(coefficients=[1, 2, 3, 4])
             Closed subscheme of 2-d CPR-Fano toric variety
-            covered by 3 affine patches defined by:
+             covered by 3 affine patches defined by:
               z0^3 + 2*z1^3 + 4*z0*z1*z2 + 3*z2^3
 
         or even mix numerical coefficients with some expressions ::
@@ -814,12 +814,12 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             ....:   coefficients=[0, "t", "1/t", "psi/(psi^2 + phi)"])
             sage: H
             Closed subscheme of 2-d CPR-Fano toric variety
-            covered by 3 affine patches defined by:
+             covered by 3 affine patches defined by:
               t*z1^3 + psi/(phi + psi^2)*z0*z1*z2 + 1/t*z2^3
             sage: R = H.ambient_space().base_ring()
             sage: R
             Fraction Field of
-            Multivariate Polynomial Ring in phi, psi, t over Rational Field
+             Multivariate Polynomial Ring in phi, psi, t over Rational Field
         """
         # The example above is also copied to the tutorial section in the
         # main documentation of the module.
@@ -863,7 +863,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             Traceback (most recent call last):
             ...
             TypeError: need a field to construct a Fano toric variety!
-             Got Multivariate Polynomial Ring in a0, a1 over Rational Field
+            Got Multivariate Polynomial Ring in a0, a1 over Rational Field
         """
         if self.base_ring() == F:
             return self
@@ -1052,7 +1052,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             sage: X = CPRFanoToricVariety(Delta_polar=p)
             sage: X.nef_complete_intersection(np)
             Closed subscheme of 3-d CPR-Fano toric variety
-            covered by 10 affine patches defined by:
+             covered by 10 affine patches defined by:
               a0*z1*z4^2*z5^2*z7^3 + a2*z2*z4*z5*z6*z7^2*z8^2
               + a3*z2*z3*z4*z7*z8 + a1*z0*z2,
               b3*z1*z4*z5^2*z6^2*z7^2*z8^2 + b0*z2*z5*z6^3*z7*z8^4
@@ -1063,7 +1063,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
 
             sage: X.nef_complete_intersection(np, monomial_points="vertices")
             Closed subscheme of 3-d CPR-Fano toric variety
-            covered by 10 affine patches defined by:
+             covered by 10 affine patches defined by:
               a0*z1*z4^2*z5^2*z7^3 + a2*z2*z4*z5*z6*z7^2*z8^2
               + a3*z2*z3*z4*z7*z8 + a1*z0*z2,
               b3*z1*z4*z5^2*z6^2*z7^2*z8^2 + b0*z2*z5*z6^3*z7*z8^4
@@ -1076,7 +1076,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             ....:       monomial_points="vertices",
             ....:       coefficients=[("a", "a^2", "a/e", "c_i"), list(range(1,6))])
             Closed subscheme of 3-d CPR-Fano toric variety
-            covered by 10 affine patches defined by:
+             covered by 10 affine patches defined by:
               a*z1*z4^2*z5^2*z7^3 + a/e*z2*z4*z5*z6*z7^2*z8^2
               + (c_i)*z2*z3*z4*z7*z8 + (a^2)*z0*z2,
               4*z1*z4*z5^2*z6^2*z7^2*z8^2 + z2*z5*z6^3*z7*z8^4
@@ -1089,7 +1089,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             ....:                         coordinate_points="all")
             sage: X.nef_complete_intersection(np)
             Closed subscheme of 3-d CPR-Fano toric variety
-            covered by 22 affine patches defined by:
+             covered by 22 affine patches defined by:
               a2*z2*z4*z5*z6*z7^2*z8^2*z9^2*z10^2*z11*z12*z13
               + a0*z1*z4^2*z5^2*z7^3*z9*z10^2*z12*z13
               + a3*z2*z3*z4*z7*z8*z9*z10*z11*z12 + a1*z0*z2,
@@ -1279,7 +1279,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
         sage: import sage.schemes.toric.fano_variety as ftv
         sage: ftv.AnticanonicalHypersurface(P1xP1)
         Closed subscheme of 2-d CPR-Fano toric variety
-        covered by 4 affine patches defined by:
+         covered by 4 affine patches defined by:
           a0*s^2*x^2 + a3*t^2*x^2 + a6*s*t*x*y + a1*s^2*y^2 + a2*t^2*y^2
 
     See :meth:`~CPRFanoToricVariety_field.anticanonical_hypersurface()` for a
@@ -1297,7 +1297,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
             sage: import sage.schemes.toric.fano_variety as ftv
             sage: ftv.AnticanonicalHypersurface(P1xP1)
             Closed subscheme of 2-d CPR-Fano toric variety
-            covered by 4 affine patches defined by:
+             covered by 4 affine patches defined by:
               a0*s^2*x^2 + a3*t^2*x^2 + a6*s*t*x*y + a1*s^2*y^2 + a2*t^2*y^2
 
         Check that finite fields are handled correctly :trac:`14899`::
@@ -1307,7 +1307,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
             sage: X.anticanonical_hypersurface(monomial_points="all",                   # optional - sage.rings.finite_rings
             ....:                   coefficients=[1]*X.Delta().npoints())
             Closed subscheme of 2-d CPR-Fano toric variety
-            covered by 4 affine patches defined by:
+             covered by 4 affine patches defined by:
               s^2*x^2 + s*t*x^2 + t^2*x^2 + s^2*x*y + s*t*x*y
               + t^2*x*y + s^2*y^2 + s*t*y^2 + t^2*y^2
         """
@@ -1395,7 +1395,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
         sage: X = CPRFanoToricVariety(Delta_polar=o)
         sage: X.nef_complete_intersection(np)
         Closed subscheme of 3-d CPR-Fano toric variety
-        covered by 8 affine patches defined by:
+         covered by 8 affine patches defined by:
           a2*z0^2*z1 + a5*z0*z1*z3 + a1*z1*z3^2 + a3*z0^2*z4 + a4*z0*z3*z4 + a0*z3^2*z4,
           b1*z1*z2^2 + b2*z2^2*z4 + b5*z1*z2*z5 + b4*z2*z4*z5 + b3*z1*z5^2 + b0*z4*z5^2
 
@@ -1419,7 +1419,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
             sage: from sage.schemes.toric.fano_variety import *
             sage: NefCompleteIntersection(X, np)
             Closed subscheme of 3-d CPR-Fano toric variety
-            covered by 8 affine patches defined by:
+             covered by 8 affine patches defined by:
               a2*z0^2*z1 + a5*z0*z1*z3 + a1*z1*z3^2
               + a3*z0^2*z4 + a4*z0*z3*z4 + a0*z3^2*z4,
               b1*z1*z2^2 + b2*z2^2*z4 + b5*z1*z2*z5
@@ -1512,7 +1512,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
             sage: X = CPRFanoToricVariety(Delta_polar=o)
             sage: CI = X.nef_complete_intersection(np); CI
             Closed subscheme of 3-d CPR-Fano toric variety
-            covered by 8 affine patches defined by:
+             covered by 8 affine patches defined by:
               a2*z0^2*z1 + a5*z0*z1*z3 + a1*z1*z3^2 + a3*z0^2*z4 + a4*z0*z3*z4 + a0*z3^2*z4,
               b1*z1*z2^2 + b2*z2^2*z4 + b5*z1*z2*z5 + b4*z2*z4*z5 + b3*z1*z5^2 + b0*z4*z5^2
             sage: CI.cohomology_class()
@@ -1538,7 +1538,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
             sage: X = CPRFanoToricVariety(Delta_polar=o)
             sage: CI = X.nef_complete_intersection(np); CI
             Closed subscheme of 3-d CPR-Fano toric variety
-            covered by 8 affine patches defined by:
+             covered by 8 affine patches defined by:
               a2*z0^2*z1 + a5*z0*z1*z3 + a1*z1*z3^2 + a3*z0^2*z4 + a4*z0*z3*z4 + a0*z3^2*z4,
               b1*z1*z2^2 + b2*z2^2*z4 + b5*z1*z2*z5 + b4*z2*z4*z5 + b3*z1*z5^2 + b0*z4*z5^2
             sage: CI.nef_partition()
