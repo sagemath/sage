@@ -8,7 +8,7 @@ The Fusion Ring of the Drinfeld Double of a Finite Group
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.categories.all import Algebras, AlgebrasWithBasis
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.rings.integer_ring import ZZ
 from sage.misc.misc import inject_variable
@@ -538,7 +538,7 @@ class FusionDouble(CombinatorialFreeModule):
         """
         Returns the name of the underlying group.
 
-        EXAMPLE::
+        EXAMPLES::
             sage: FusionDouble(DiCyclicGroup(4)).group()
             Diyclic group of order 16 as a permutation group
         """
@@ -550,7 +550,7 @@ class FusionDouble(CombinatorialFreeModule):
         the order of the group, and ``k`` is an integer characterizing the
         isomorphism class of the group, available for very many groups.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: FusionDouble(DiCyclicGroup(4)).IdGroup()
             [ 16, 9 ]
@@ -594,7 +594,7 @@ class FusionDouble(CombinatorialFreeModule):
             """
             The twist or ribbon of the simple object.
 
-            EXAMPLE::
+            EXAMPLES::
 
                 sage: H = FusionDouble(CyclicPermutationGroup(3))
                 sage: [i.ribbon() for i in H.basis()]
@@ -625,7 +625,7 @@ class FusionDouble(CombinatorialFreeModule):
             """
             Return the dual of self.
 
-            EXAMPLE::
+            EXAMPLES::
 
                 sage: G = CyclicPermutationGroup(4)
                 sage: H = FusionDouble(G, prefix="b")
@@ -642,7 +642,7 @@ class FusionDouble(CombinatorialFreeModule):
             """
             Return the q-dimension of self.
 
-            EXAMPLE::
+            EXAMPLES::
 
                 sage: G = AlternatingGroup(4)
                 sage: H = FusionDouble(G)
