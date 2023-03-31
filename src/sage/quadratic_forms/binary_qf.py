@@ -52,7 +52,6 @@ AUTHORS:
 from functools import total_ordering
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import is_fundamental_discriminant
 from sage.arith.misc import gcd
 from sage.structure.sage_object import SageObject
 from sage.matrix.matrix_space import MatrixSpace
