@@ -39,7 +39,7 @@ class FusionDouble(CombinatorialFreeModule):
     - [CHW2015]_
     - [Goff1999]_
 
-    EXAMPLES ::
+    EXAMPLES::
 
         sage: G = DihedralGroup(5)
         sage: H = FusionDouble(G, inject_variables=True)
@@ -81,7 +81,7 @@ class FusionDouble(CombinatorialFreeModule):
     for the Fusion Double of the symmetric group `S_3`, duplicating the result
     of [CHW2015]_ .
 
-    EXAMPLES ::
+    EXAMPLES::
 
         sage: G1 = SymmetricGroup(3)
         sage: H1 = FusionDouble(G1,prefix="u",inject_variables=True)
@@ -172,6 +172,16 @@ class FusionDouble(CombinatorialFreeModule):
         return self.monomial(k)
 
     def inject_variables(self):
+        """
+        Create variables for the simple objects in the global name space.
+
+        EXAMPLES::
+
+            sage: F = FusionDouble(DiCyclicGroup(3), prefix="d")
+            sage: F.inject_variables()
+            sage: d4^2
+            d0 + d1 + d5
+        """
         for i in range(self._rank):
             inject_variable(self._names[i],self.monomial(i))
 
@@ -197,7 +207,7 @@ class FusionDouble(CombinatorialFreeModule):
         - ``i``, ``j``, -- a pair of basis elements
         - ``unitary`` (optional): set true for the unitary normalized S-matrix.
 
-        EXAMPLE ::
+        EXAMPLES::
 
             sage: D = FusionDouble(SymmetricGroup(3),prefix="c",inject_variables=True)
             sage: [D.s_ij(c2,x) for x in D.basis()]
