@@ -1760,9 +1760,10 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             Multivariate Laurent Polynomial Ring in s, t over Rational Field
 
         """
-        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing, is_LaurentPolynomialRing
-        if self.multi_variate and is_LaurentPolynomialRing(R):
-            return LaurentPolynomialRing(R.base_ring(), (list(R.variable_names()) + [self.var]))
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+        from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
+        if self.multi_variate and isinstance(R, LaurentPolynomialRing_generic):
+            return LaurentPolynomialRing(R.base_ring(), list(R.variable_names()) + [self.var])
         else:
             return LaurentPolynomialRing(R, self.var)
 

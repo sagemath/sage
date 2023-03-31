@@ -669,8 +669,9 @@ class Localization(IntegralDomain, UniqueRepresentation):
         if not type(extra_units) is list:
             extra_units = [extra_units]
 
-        from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
-        if is_LaurentPolynomialRing(base_ring):
+        from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
+
+        if isinstance(base_ring, LaurentPolynomialRing_generic):
             extra_units += list(base_ring.gens())
             base_ring = base_ring.polynomial_ring()
 

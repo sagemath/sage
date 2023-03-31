@@ -325,7 +325,7 @@ class FractionField_generic(ring.Field):
         """
         from sage.rings.rational_field import QQ
         from sage.rings.number_field.number_field_base import NumberField
-        from sage.rings.polynomial.laurent_polynomial_ring import \
+        from sage.rings.polynomial.laurent_polynomial_ring_base import \
             LaurentPolynomialRing_generic
 
         if S is self._R:
