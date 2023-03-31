@@ -12188,16 +12188,15 @@ def is_fundamental_discriminant(D):
     EXAMPLES::
 
         sage: [D for D in range(-15,15) if is_fundamental_discriminant(D)]
+        ...
+        DeprecationWarning: is_fundamental_discriminant(D) is deprecated; please use D.is_fundamental_discriminant()
+        ...
         [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
         sage: [D for D in range(-15,15) if not is_square(D) and QuadraticField(D,'a').disc() == D]
         [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
     """
-    d = D % 4
-    if d not in [0, 1]:
-        return False
-    return D != 1 and D != 0 and \
-        (arith.is_squarefree(D) or
-            (d == 0 and (D // 4) % 4 in [2, 3] and arith.is_squarefree(D // 4)))
+    deprecation(35147, "is_fundamental_discriminant(D) is deprecated; please use D.is_fundamental_discriminant()")
+    return Integer(D).is_fundamental_discriminant()
 
 
 ###################

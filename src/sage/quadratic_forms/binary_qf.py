@@ -607,7 +607,7 @@ class BinaryQF(SageObject):
             sage: Q.has_fundamental_discriminant()
             False
         """
-        return is_fundamental_discriminant(self.discriminant())
+        return self.discriminant().is_fundamental_discriminant()
 
     def is_primitive(self):
         r"""
@@ -1774,7 +1774,7 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
 
     # For a fundamental discriminant all forms are primitive so we need not check:
     if primitive_only:
-        primitive_only = not is_fundamental_discriminant(D)
+        primitive_only = not D.is_fundamental_discriminant()
 
     form_list = []
 
