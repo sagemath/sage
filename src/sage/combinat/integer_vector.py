@@ -289,8 +289,8 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         ....:        print(s1, s2)
 
         sage: for algorithm in ["gale", "ryser"]:             # long time
-        ....:    for i in range(50):                          # long time
-        ....:       test_algorithm(algorithm, 3, 10)          # long time
+        ....:    for i in range(50):
+        ....:       test_algorithm(algorithm, 3, 10)
 
     Null matrix::
 

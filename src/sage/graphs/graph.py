@@ -6713,9 +6713,9 @@ class Graph(GenericGraph):
             sage: g.clique_number(algorithm="MILP")
             2
             sage: for i in range(10):                                            # optional - mcqd
-            ....:     g = graphs.RandomGNP(15,.5)                                # optional - mcqd
-            ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"): # optional - mcqd
-            ....:         print("This is dead wrong !")                          # optional - mcqd
+            ....:     g = graphs.RandomGNP(15,.5)
+            ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"):
+            ....:         print("This is dead wrong !")
         """
         self._scream_if_not_simple(allow_loops=False)
         if algorithm == "Cliquer":

@@ -21181,9 +21181,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: A5 = AlternatingGroup(5); A5
             Alternating group of order 5!/2 as a permutation group
             sage: G = A5.cayley_graph()
-            sage: G.show3d(vertex_size=0.03, edge_size=0.01, edge_size2=0.02,
+            sage: G.show3d(vertex_size=0.03, edge_size=0.01, edge_size2=0.02,  # long time
             ....:          vertex_colors={(1,1,1): list(G)}, bgcolor=(0,0,0),
-            ....:          color_by_label=True, iterations=200)  # long time
+            ....:          color_by_label=True, iterations=200)
 
         Some :class:`~sage.plot.plot3d.tachyon.Tachyon` examples::
 

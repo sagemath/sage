@@ -1024,44 +1024,44 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino([[0, 1], [1, 0]])
             sage: pp = ParallelogramPolyomino([[1], [1]])
 
-            sage: pp = ParallelogramPolyomino(
+            sage: pp = ParallelogramPolyomino(                # indirect doctest
             ....:     [[1, 0], [0, 1]]
-            ....: ) # indirect doctest
+            ....: )
             Traceback (most recent call last):
             ...
             ValueError: the lower and upper paths are crossing
 
-            sage: pp = ParallelogramPolyomino([[1], [0, 1]]) # indirect doctest
+            sage: pp = ParallelogramPolyomino([[1], [0, 1]])  # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the lower and upper paths have different sizes (2 != 1)
 
-            sage: pp = ParallelogramPolyomino([[1], [0]]) # indirect doctest
+            sage: pp = ParallelogramPolyomino([[1], [0]])     # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the two paths have distinct ends
 
-            sage: pp = ParallelogramPolyomino([[0], [1]]) # indirect doctest
+            sage: pp = ParallelogramPolyomino([[0], [1]])     # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the two paths have distinct ends
 
-            sage: pp = ParallelogramPolyomino([[0], [0]]) # indirect doctest
+            sage: pp = ParallelogramPolyomino([[0], [0]])     # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the lower or the upper path can...t be equal to [0]
 
-            sage: pp = ParallelogramPolyomino([[], [0]])  # indirect doctest
+            sage: pp = ParallelogramPolyomino([[], [0]])      # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the lower or the upper path can...t be equal to []
 
-            sage: pp = ParallelogramPolyomino([[0], []])  # indirect doctest
+            sage: pp = ParallelogramPolyomino([[0], []])      # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the lower or the upper path can...t be equal to []
 
-            sage: pp = ParallelogramPolyomino([[], []])  # indirect doctest
+            sage: pp = ParallelogramPolyomino([[], []])       # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the lower or the upper path can...t be equal to []
@@ -4149,9 +4149,9 @@ class ParallelogramPolyominoes_size(
         EXAMPLES::
 
             sage: PPS = ParallelogramPolyominoes(3)
-            sage: ParallelogramPolyomino(
+            sage: ParallelogramPolyomino(                     # indirect doctest
             ....:     [[0, 1, 1], [1, 1, 0]]
-            ....: ) in PPS # indirect doctest
+            ....: ) in PPS
             True
         """
         if el.size() != self.size():
@@ -4322,9 +4322,9 @@ class ParallelogramPolyominoes_all(
         EXAMPLES::
 
             sage: PPS = ParallelogramPolyominoes()
-            sage: ParallelogramPolyomino(
+            sage: ParallelogramPolyomino(                     # indirect doctest
             ....:     [[0, 1, 1], [1, 1, 0]]
-            ....: ) in PPS # indirect doctest
+            ....: ) in PPS
             True
         """
         pass

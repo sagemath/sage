@@ -5679,7 +5679,7 @@ cdef class Expression(Expression_abc):
 
             sage: cmd = 'subs({}={}, {})'              # optional - maple
             sage: for s1,s2 in subs:                   # optional - maple
-            ....:     maple.eval(cmd.format(s1,s2, E)) # optional - maple
+            ....:     maple.eval(cmd.format(s1,s2, E))
             'y^4+y^2+y'
             'x^4+x+y'
             'x^4+x^2+x'
@@ -5689,7 +5689,7 @@ cdef class Expression(Expression_abc):
 
             sage: cmd = '{} /. {} -> {}'                    # optional - mathematica
             sage: for s1,s2 in subs:                        # optional - mathematica
-            ....:     mathematica.eval(cmd.format(E,s1,s2)) # optional - mathematica
+            ....:     mathematica.eval(cmd.format(E,s1,s2))
                  2    4
             y + y  + y
                  4
@@ -5701,7 +5701,7 @@ cdef class Expression(Expression_abc):
         The same, with formatting more suitable for cut and paste::
 
             sage: for s1,s2 in subs:                        # optional - mathematica
-            ....:     mathematica(cmd.format(E,s1,s2))      # optional - mathematica
+            ....:     mathematica(cmd.format(E,s1,s2))
             y + y^2 + y^4
             x + x^4 + y
             x^4 + y
