@@ -1,9 +1,12 @@
-# -*- coding: utf-8 -*-
 r"""
 Features for testing the presence of ``latex`` and equivalent programs
 """
+
 # ****************************************************************************
 #       Copyright (C) 2021 Sebastien Labbe <slabqc@gmail.com>
+#                     2021 Matthias Koeppe
+#                     2022 Kwankyu Lee
+#                     2022 Sebastian Oehms
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
