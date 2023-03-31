@@ -1871,8 +1871,8 @@ def compute_model(E, name):
         raise TypeError('not an elliptic curve')
 
     if name == 'minimal':
-        from sage.rings.number_field.number_field_base import is_NumberField
-        if not is_NumberField(E.base_field()):
+        from sage.rings.number_field.number_field_base import NumberField
+        if not isinstance(E.base_field(), NumberField):
             raise ValueError('can only compute minimal model for curves over number fields')
         return E.global_minimal_model(semi_global=True)
 
