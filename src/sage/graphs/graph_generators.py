@@ -965,7 +965,7 @@ class GraphGenerators():
             ...
             ValueError: wrong format of parameter option
             sage: list(graphs.nauty_geng("-c3", debug=True))
-            ['>E Usage: ...geng [-cCmtfbd#D#] [-uygsnh] [-lvq] ...
+            ['>E Usage: ...geng ...\n']
             sage: list(graphs.nauty_geng("-c 3", debug=True))
             ['>A ...geng -cd1D2 n=3 e=2-3\n', Graph on 3 vertices, Graph on 3 vertices]
         """
