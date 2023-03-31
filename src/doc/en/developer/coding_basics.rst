@@ -97,8 +97,8 @@ Numpy's time window-based support policy
 `NEP 29 <https://numpy.org/neps/nep-0029-deprecation_policy.html>`_ for Python versions. 
 Accordingly, minor versions of Python that are older than 42 months 
 at the next planned release date are no longer supported.
-In December 2021 support for Python 3.7 (initially released in June 2018) is dropped and
-in April 2023 support for Python 3.8 is dropped (initially released in October 2019).
+Support for Python 3.9 (initially released in October 2020) is dropped in April 2024 and
+support for Python 3.10 (initially released in October 2021) is dropped in April 2025.
 
 .. _chapter-directory-structure:
 
