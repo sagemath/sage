@@ -209,10 +209,10 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: D = FusionDouble(SymmetricGroup(3),prefix="c",inject_variables=True)
-            sage: [D.s_ij(c2,x) for x in D.basis()]
+            sage: D = FusionDouble(SymmetricGroup(3),prefix="d",inject_variables=True)
+            sage: [D.s_ij(d2,x) for x in D.basis()]
             [2, 2, 4, 0, 0, -2, -2, -2]
-            sage: [D.s_ij(c2,x,unitary=True) for x in D.basis()]
+            sage: [D.s_ij(d2,x,unitary=True) for x in D.basis()]
             [1/3, 1/3, 2/3, 0, 0, -1/3, -1/3, -1/3]
         """
         sum = 0
@@ -292,7 +292,14 @@ class FusionDouble(CombinatorialFreeModule):
            Hom(i \\otimes j\\otimes k, s_0)
 
         where `s_0` is the unit element (assuming prefix='s').
-        Method of computation is through the Verlinde formula.
+        Method of computation is through the Verlinde formula,
+        deducing the values from the known values of the S-matrix.
+
+        EXAMPLES::
+
+            sage: A = FusionDouble(AlternatingGroup(4),prefix="a",inject_variables=True)
+            sage: [A.N_ijk(a10,a11,x) for x in A.basis()]
+            [0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
         """
         sz = self.one()
         return ZZ(sum(self.s_ij(i, r, unitary=True) * self.s_ij(j, r, unitary=True) * self.s_ij(k, r, unitary=True)/self.s_ij(sz, r, unitary=True) for r in self.basis()))
@@ -305,12 +312,20 @@ class FusionDouble(CombinatorialFreeModule):
         .. MATH::
             N^k_{ij} = \sum_l \frac{s(i, \ell)\, s(j, \ell)\, \overline{s(k, \ell)}}{s(I, \ell)},
 
+        EXAMPLES::
+
+            sage: A = FusionDouble(AlternatingGroup(4),prefix="aa",inject_variables=True)
+            sage: [A.Nk_ij(aa8,aa10,x) for x in A.basis()]
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1]
         """
         return self.N_ijk(i, j, self.dual(k))
 
     def char_Nk_ij(self, i, j, k):
         r"""
-        Use character theoretic method to compute the fusion coefficient `N_{ij}^k`.
+        Use the character theoretic method to compute the fusion coefficient `N_{ij}^k`.
+        This should be functionally equivalent to :meth:`Nk_ij`, and testing shows
+        that it is, but it is slower.
+
         Each simple object, for example `i` corresponds to a conjugacy class `\mathcal{C}_i`
         of the underlying group `G`, and an irreducible character `\chi_i` of the
         centralizer `C(g_i)` of a fixed representative `g_i` of `\mathcal{C}_i`. In addition
@@ -331,6 +346,12 @@ class FusionDouble(CombinatorialFreeModule):
 
         This formula is due to Christopher Goff [Goff1999]_ when the centralizers are normal,
         and to Wenqi Li in the general case.
+
+        EXAMPLES::
+
+            sage: B = FusionDouble(CyclicPermutationGroup(2))
+            sage: all(B.char_Nk_ij(x,y,z)==B.Nk_ij(x,y,z) for x in B.basis() for y in B.basis() for z in B.basis())
+            True
         """
         G = self._G
         I = G.conjugacy_class(i.g())
@@ -420,6 +441,18 @@ class FusionDouble(CombinatorialFreeModule):
         correct if the fusion coefficient ``N_{ij}^k\leq 1``. See the
         :class:`FusionRing` method for more information, including
         the reason for this caveat, and the algorithm.
+
+        EXAMPLES::
+
+            sage: C = FusionDouble(SymmetricGroup(3),prefix="c",inject_variables=True)
+            sage: c4*c5
+            c3 + c4
+            sage: [C.r_matrix(c4,c5,k) for k in [c3,c4]]
+            [-zeta24^6, 1]
+            sage: c6^2
+            c0 + c1 + c6
+            sage: [C.r_matrix(c6,c6,k) for k in [c0,c1,c6]]
+            [zeta3, -zeta3, -zeta3 - 1]
         """
         if self.Nk_ij(i, j, k) == 0:
             return self.field().zero() if (not base_coercion) or (self._basecoer is None) else self.fvars_field().zero()
@@ -549,6 +582,7 @@ class FusionDouble(CombinatorialFreeModule):
         Returns the name of the underlying group.
 
         EXAMPLES::
+
             sage: FusionDouble(DiCyclicGroup(4)).group()
             Diyclic group of order 16 as a permutation group
         """
