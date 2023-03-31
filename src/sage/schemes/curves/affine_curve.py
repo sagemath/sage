@@ -1691,7 +1691,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
     _point = AffinePlaneCurvePoint_field
 
-    def fundamental_group(self, puiseux = False, braidmonodromy = None):
+    def fundamental_group(self, puiseux=False, braid_mon=None):
         r"""
         Return a presentation of the fundamental group of the complement
         of ``self``.
@@ -1702,7 +1702,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
           presentation is constructed in the classical way or using Puiseux
           shortcut.
 
-        - ``braidmonodromy`` -- (default: ``False``) If the value is ``False``
+        - ``braid_mon`` -- (default: ``False``) If the value is ``False``
           it apply first the ``braid_monodromy`` method. If it has been already
           computed it can be passed as a parameter.
 
@@ -1730,14 +1730,14 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             sage: C.fundamental_group() # optional - sirocco
             Finitely presented group < x0 |  >
             sage: bm = C.braid_monodromy() # optional - sirocco
-            sage: C.fundamental_group(braidmonodromy=bm) # optional - sirocco
+            sage: C.fundamental_group(braid_mon=bm) # optional - sirocco
             Finitely presented group < x0 |  >
             sage: g = C.fundamental_group(puiseux=True) # optional - sirocco
             sage: g # optional - sirocco
             Finitely presented group < x0, x1 | x1*x0^-1, x1*x0*x1^-1*x0^-1 >
             sage: g.simplified() # optional - sirocco
             Finitely presented group < x0 |  >
-            sage: g == C.fundamental_group(puiseux=True, braidmonodromy=bm) # optional - sirocco
+            sage: g == C.fundamental_group(puiseux=True, braid_mon=bm) # optional - sirocco
             True
 
         In the case of number fields, they need to have an embedding
@@ -1763,7 +1763,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             raise NotImplementedError("the base field must have an embedding"
                                       " to the algebraic field")
         f = self.defining_polynomial()
-        return fundamental_group(f, projective=False, puiseux = puiseux, braidmonodromy = braidmonodromy)
+        return fundamental_group(f, projective=False, puiseux = puiseux, braid_mon = braid_mon)
 
     def braid_monodromy(self):
         r"""

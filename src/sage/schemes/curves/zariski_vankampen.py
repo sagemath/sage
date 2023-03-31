@@ -51,19 +51,19 @@ from sage.groups.braid import BraidGroup
 from sage.groups.finitely_presented import wrap_FpGroup
 from sage.groups.free_group import FreeGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+from sage.libs.braiding import rightnormalform
+from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
 from sage.misc.misc_c import prod
 from sage.parallel.decorate import parallel
-from sage.rings.number_field.number_field import NumberField
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.complex_mpfr import ComplexField
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
-from sage.matrix.constructor import matrix
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.libs.braiding import rightnormalform
 
 roots_interval_cache = {}
 
@@ -1284,7 +1284,7 @@ def braid2rels(L, d):
         U = [_.Tietze() for _ in gb.relations()]
     return U
 
-def fundamental_group(f, simplified=True, projective=False, puiseux=False, braidmonodromy=None):
+def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid_mon=None):
     r"""
     Return a presentation of the fundamental group of the complement of
     the algebraic set defined by the polynomial ``f``.
@@ -1308,7 +1308,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
 
-    - ``braidmonodromy`` -- (default: ``None``); if it is set to a list of braids
+    - ``braid_mon`` -- (default: ``None``); if it is set to a list of braids
       braid monodromy is not computed ad this list is used instead.
 
     If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is ``True``, a Zariski-VanKampen presentation
@@ -1332,7 +1332,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         Finitely presented group < x0 | x0^3 >
         sage: bm = braid_monodromy(f); bm # optional - sirocco
         [(s1*s0)^2]
-        sage: fundamental_group(f, braidmonodromy=bm) # optional - sirocco
+        sage: fundamental_group(f, braid_mon=bm) # optional - sirocco
         Finitely presented group < x1, x2 | x1*x2*x1^-1*x2^-1*x1^-1*x2 >
 
     ::
@@ -1377,7 +1377,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
         sage: bm = braid_monodromy(f); print(bm) # optional - sirocco
         [s1*s2*s0*s1*s0^-1*s1^-1*s0^-1, s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1, (s0*s1)^2]
-        sage: g = fundamental_group(f, projective=True, braidmonodromy=bm); print (g) # optional - sirocco
+        sage: g = fundamental_group(f, projective=True, braid_mon=bm); print (g) # optional - sirocco
         Finitely presented group < x0, x1 | x1*x0^2*x1, x0^-1*x1^-1*x0^-1*x1*x0^-1*x1^-1 >
         sage: print (g.order(), g.abelian_invariants()) # optional - sirocco
         12 (4,)
@@ -1387,10 +1387,10 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         x, y = g.parent().gens()
         while g.degree(y) < g.degree():
             g = g.subs({x: x + y})
-    if braidmonodromy is None:
+    if braid_mon is None:
         bm = braid_monodromy(g)
     else:
-        bm =braidmonodromy
+        bm =braid_mon
     d = bm[0].parent().strands()
     F = FreeGroup(d)
 
@@ -1464,7 +1464,7 @@ def braid_monodromy_arrangement(flist):
         return (braid_monodromy(f), dic)
     return braid_monodromy(f, arrangement=flist, holdstrand=False)
 
-def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False, braidmonodromy=None):
+def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False, braid_mon=None):
     r"""
     Compute the fundamental group of the complement of a curve
     defined by a list of polynomials with the extra information about the correspondence of the generators
@@ -1489,7 +1489,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
 
-    - ``braidmonodromy`` -- (default: ``None``); it can be set to the output
+    - ``braid_mon`` -- (default: ``None``); it can be set to the output
       of ``braid_monodromy_arrangement`` to avoid an extra computation.
 
     OUTPUT:
@@ -1513,11 +1513,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         sage: dic # optional - sirocco
         {(-1, -3, -2, -1): 3, 1: 1, 2: 2, 3: 1}
         sage: BM = braid_monodromy_arrangement(flist) # optional - sirocco
-        sage: (g, dic) == fundamental_group_arrangement(flist, braidmonodromy=BM) # optional - sirocco
+        sage: (g, dic) == fundamental_group_arrangement(flist, braid_mon=BM) # optional - sirocco
         True
-        sage: fundamental_group_arrangement(flist, simplified=False, braidmonodromy=BM) # optional - sirocco
+        sage: fundamental_group_arrangement(flist, simplified=False, braid_mon=BM) # optional - sirocco
         (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2, x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1, x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1, 1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >, {(-4, -3, -2, -1): 3, 1: 1, 2: 2, 3: 1, 4: 1})
-        sage: fundamental_group_arrangement(flist, projective=True, braidmonodromy=BM) # optional - sirocco
+        sage: fundamental_group_arrangement(flist, projective=True, braid_mon=BM) # optional - sirocco
         (Finitely presented group < x |  >, {(-1, -1, -1): 2, 1: 1})
 
         .. TODO::
@@ -1528,11 +1528,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
             applying a generic line section.
     """
     f = prod(flist)
-    if braidmonodromy is None:
+    if braid_mon is None:
         bm, dic = braid_monodromy_arrangement(flist)
     else:
-        bm, dic = braidmonodromy
-    g = fundamental_group(f, simplified=False, projective=projective, puiseux=puiseux, braidmonodromy=bm)
+        bm, dic = braid_mon
+    g = fundamental_group(f, simplified=False, projective=projective, puiseux=puiseux, braid_mon=bm)
     if not simplified and projective:
         return (g, dic)
     elif not simplified:
