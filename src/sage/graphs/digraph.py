@@ -427,17 +427,17 @@ class DiGraph(GenericGraph):
 
     #. A NetworkX MultiDiGraph::
 
-            sage: import networkx
-            sage: g = networkx.MultiDiGraph({0: [1, 2, 3], 2: [4]})
-            sage: DiGraph(g)
+            sage: import networkx                                                       # optional - networkx
+            sage: g = networkx.MultiDiGraph({0: [1, 2, 3], 2: [4]})                     # optional - networkx
+            sage: DiGraph(g)                                                            # optional - networkx
             Multi-digraph on 5 vertices
 
 
     #. A NetworkX digraph::
 
-            sage: import networkx
-            sage: g = networkx.DiGraph({0: [1, 2, 3], 2: [4]})
-            sage: DiGraph(g)
+            sage: import networkx                                                       # optional - networkx
+            sage: g = networkx.DiGraph({0: [1, 2, 3], 2: [4]})                          # optional - networkx
+            sage: DiGraph(g)                                                            # optional - networkx
             Digraph on 5 vertices
 
     #. An igraph directed Graph (see also
@@ -477,18 +477,18 @@ class DiGraph(GenericGraph):
     Demonstrate that digraphs using the static backend are equal to mutable
     graphs but can be used as dictionary keys::
 
-        sage: import networkx
-        sage: g = networkx.DiGraph({0:[1,2,3], 2:[4]})
-        sage: G = DiGraph(g)
-        sage: G_imm = DiGraph(G, data_structure="static_sparse")
-        sage: H_imm = DiGraph(G, data_structure="static_sparse")
-        sage: H_imm is G_imm
+        sage: import networkx                                                           # optional - networkx
+        sage: g = networkx.DiGraph({0:[1,2,3], 2:[4]})                                  # optional - networkx
+        sage: G = DiGraph(g)                                                            # optional - networkx
+        sage: G_imm = DiGraph(G, data_structure="static_sparse")                        # optional - networkx
+        sage: H_imm = DiGraph(G, data_structure="static_sparse")                        # optional - networkx
+        sage: H_imm is G_imm                                                            # optional - networkx
         False
-        sage: H_imm == G_imm == G
+        sage: H_imm == G_imm == G                                                       # optional - networkx
         True
-        sage: {G_imm:1}[H_imm]
+        sage: {G_imm:1}[H_imm]                                                          # optional - networkx
         1
-        sage: {G_imm:1}[G]
+        sage: {G_imm:1}[G]                                                              # optional - networkx
         Traceback (most recent call last):
         ...
         TypeError: This graph is mutable, and thus not hashable. Create an
@@ -498,10 +498,10 @@ class DiGraph(GenericGraph):
     specifying the ``immutable`` optional argument (not only by
     ``data_structure='static_sparse'`` as above)::
 
-        sage: J_imm = DiGraph(G, immutable=True)
-        sage: J_imm == G_imm
+        sage: J_imm = DiGraph(G, immutable=True)                                        # optional - networkx
+        sage: J_imm == G_imm                                                            # optional - networkx
         True
-        sage: type(J_imm._backend) == type(G_imm._backend)
+        sage: type(J_imm._backend) == type(G_imm._backend)                              # optional - networkx
         True
 
     From a list of vertices and a list of edges::
@@ -513,7 +513,7 @@ class DiGraph(GenericGraph):
 
     Check that :trac:`27505` is fixed::
 
-        sage: DiGraph(DiGraph().networkx_graph(), weighted=None, format='NX')
+        sage: DiGraph(DiGraph().networkx_graph(), weighted=None, format='NX')           # optional - networkx
         Digraph on 0 vertices
     """
     _directed = True

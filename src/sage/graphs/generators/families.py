@@ -1076,11 +1076,11 @@ def CirculantGraph(n, adjacency):
     EXAMPLES: Compare plotting using the predefined layout and
     networkx::
 
-        sage: import networkx
-        sage: n = networkx.cycle_graph(23)
-        sage: spring23 = Graph(n)
+        sage: import networkx                                                           # optional - networkx
+        sage: n = networkx.cycle_graph(23)                                              # optional - networkx
+        sage: spring23 = Graph(n)                                                       # optional - networkx
         sage: posdict23 = graphs.CirculantGraph(23,2)
-        sage: spring23.show() # long time
+        sage: spring23.show() # long time                                               # optional - networkx
         sage: posdict23.show() # long time
 
     We next view many cycle graphs as a Sage graphics array. First we
@@ -3409,29 +3409,29 @@ def WheelGraph(n):
 
     Next, using the spring-layout algorithm::
 
-        sage: import networkx
+        sage: import networkx                                                           # optional - networkx
         sage: g = []
         sage: j = []
-        sage: for i in range(9):
+        sage: for i in range(9):                                                        # optional - networkx
         ....:  spr = networkx.wheel_graph(i+3)
         ....:  k = Graph(spr)
         ....:  g.append(k)
         ...
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - networkx
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
         ...
-        sage: G = graphics_array(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)                                                     # optional - networkx
+        sage: G.show() # long time                                                      # optional - networkx
 
     Compare the plotting::
 
-        sage: n = networkx.wheel_graph(23)
-        sage: spring23 = Graph(n)
+        sage: n = networkx.wheel_graph(23)                                              # optional - networkx
+        sage: spring23 = Graph(n)                                                       # optional - networkx
         sage: posdict23 = graphs.WheelGraph(23)
-        sage: spring23.show() # long time
+        sage: spring23.show() # long time                                               # optional - networkx
         sage: posdict23.show() # long time
     """
     from sage.graphs.generators.basic import CycleGraph
