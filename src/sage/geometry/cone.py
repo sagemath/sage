@@ -6779,7 +6779,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             K = Cone(rays, lattice=L)
             rays = list(K.rays()) # Avoid re-normalizing next time around
 
-
         if strictly_convex is not None:
             if strictly_convex:
                 if not K.is_strictly_convex():

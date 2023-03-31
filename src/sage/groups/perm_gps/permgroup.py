@@ -2937,7 +2937,6 @@ class PermutationGroup_generic(FiniteGroup):
         gens = [gen.sage() for gen in libgap_group.GeneratorsOfGroup()]
         return self.subgroup(gens=gens, gap_group=libgap_group)
 
-
     def as_finitely_presented_group(self, reduced=False):
         """
         Return a finitely presented group isomorphic to ``self``.
@@ -4529,7 +4528,6 @@ class PermutationGroup_generic(FiniteGroup):
             return False
         return bool(self._libgap_().IsRegular(domain))
 
-
     def normalizes(self, other):
         r"""
         Return ``True`` if the group ``other`` is normalized by ``self``.
@@ -4764,7 +4762,6 @@ class PermutationGroup_generic(FiniteGroup):
         return (R(str(nn).replace('x_1', 'x')) /
                 R(str(dd).replace('x_1', 'x')))
 
-
     def sylow_subgroup(self, p):
         """
         Return a Sylow `p`-subgroup of the finite group `G`, where `p` is a
@@ -4834,7 +4831,6 @@ class PermutationGroup_generic(FiniteGroup):
             base_ring = ZZ
         from sage.modules.with_basis.representation import SignRepresentationPermgroup
         return SignRepresentationPermgroup(self, base_ring)
-
 
 
 class PermutationGroup_subgroup(PermutationGroup_generic):
@@ -5069,7 +5065,6 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
             True
         """
         return self._ambient_group
-
 
     def is_normal(self, other=None):
         """

@@ -277,7 +277,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
         # The space before the \n is also important.
         return ')read %s \n'%filename
 
-
     def _quit_string(self):
         """
         Returns the string used to quit Axiom.
@@ -320,7 +319,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
         j = s.find(end)
         s = s[i+len(start):j].split()
         return s
-
 
     def _tab_completion(self, verbose=True, use_disk_cache=True):
         """
@@ -391,7 +389,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
 
         if out.find("error") != -1:
             raise TypeError("Error executing code in Axiom\nCODE:\n\t%s\nAxiom ERROR:\n\t%s"%(cmd, out))
-
 
     def get(self, var):
         r"""
@@ -768,7 +765,6 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         else:
             return s
 
-
     def _sage_(self):
         """
         Convert self to a Sage object.
@@ -867,7 +863,6 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
                 return sage.misc.sage_eval.sage_eval(self.unparsed_input_form(), locals={str(vars):vars})
         except Exception:
             raise NotImplementedError
-
 
     def _sage_domain(self):
         """

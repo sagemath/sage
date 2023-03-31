@@ -518,7 +518,6 @@ class Gap_generic(ExtraTabCompletion, Expect):
             result = result.replace("\\\n","")
         return result.rstrip()
 
-
     def _execute_line(self, line, wait_for_prompt=True, expect_eof=False):
         if self._expect is None: # interface is down
             self._start()
@@ -1218,7 +1217,6 @@ class Gap(Gap_generic):
             <class 'sage.interfaces.gap.GapFunction'>
         """
         return GapFunction
-
 
     def cputime(self, t=None):
         r"""

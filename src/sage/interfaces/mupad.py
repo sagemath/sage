@@ -524,7 +524,6 @@ class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
         res = P.completions(self._name+"::", strip=True)
         return res if res != [] else P._tab_completion()
 
-
     def __call__(self, *args):
         """
         EXAMPLES::
