@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Frobenius isogenies of elliptic curves
 
@@ -17,18 +18,22 @@ Constructing a Frobenius isogeny is straightforward::
     sage: E = EllipticCurve([z5,1])
     sage: pi = EllipticCurveHom_frobenius(E); pi
     Frobenius isogeny of degree 17:
-      From: Elliptic Curve defined by y^2 = x^3 + z5*x + 1 over Finite Field in z5 of size 17^5
-      To:   Elliptic Curve defined by y^2 = x^3 + (9*z5^4+7*z5^3+10*z5^2+z5+14)*x + 1 over Finite Field in z5 of size 17^5
+      From: Elliptic Curve defined by y^2 = x^3 + z5*x + 1
+            over Finite Field in z5 of size 17^5
+      To:   Elliptic Curve defined by y^2 = x^3 + (9*z5^4+7*z5^3+10*z5^2+z5+14)*x + 1
+            over Finite Field in z5 of size 17^5
 
 By passing `n`, we can also construct higher-power Frobenius maps,
 such as the Frobenius *endo*\morphism::
 
     sage: z5, = GF(7^5).gens()
     sage: E = EllipticCurve([z5,1])
-    sage: pi = EllipticCurveHom_frobenius(E,5); pi
+    sage: pi = EllipticCurveHom_frobenius(E, 5); pi
     Frobenius endomorphism of degree 16807 = 7^5:
-      From: Elliptic Curve defined by y^2 = x^3 + z5*x + 1 over Finite Field in z5 of size 7^5
-      To:   Elliptic Curve defined by y^2 = x^3 + z5*x + 1 over Finite Field in z5 of size 7^5
+      From: Elliptic Curve defined by y^2 = x^3 + z5*x + 1
+            over Finite Field in z5 of size 7^5
+      To:   Elliptic Curve defined by y^2 = x^3 + z5*x + 1
+            over Finite Field in z5 of size 7^5
 
 The usual :class:`EllipticCurveHom` methods are supported::
 

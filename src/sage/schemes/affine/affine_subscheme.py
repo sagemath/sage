@@ -264,7 +264,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: X = A.subscheme([x^2 - y, x*y - z, y^2 - w, x*z - w, y*z - x*w, z^2 - y*w])
             sage: X.projective_closure()
             Closed subscheme of Projective Space of dimension 4 over Rational Field
-            defined by:
+             defined by:
               x0^2 - x1*x4,
               x0*x1 - x2*x4,
               x1^2 - x3*x4,
@@ -545,11 +545,11 @@ class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
             sage: X = A3.subscheme(z - x*y)
             sage: X.tangent_space(A3.origin())
             Closed subscheme of Affine Space of dimension 3 over Rational Field
-            defined by:
+             defined by:
               z
             sage: X.tangent_space(X(1,1,1))
             Closed subscheme of Affine Space of dimension 3 over Rational Field
-            defined by:
+             defined by:
               -x - y + z
 
         Tangent space at a point may have higher dimension than the dimension
@@ -561,14 +561,14 @@ class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
             sage: p = C(0,0,0)
             sage: C.tangent_space(p)
             Closed subscheme of Affine Space of dimension 3 over Rational Field
-            defined by:
+             defined by:
               x + y + z
             sage: _.dimension()
             2
             sage: q = C(1,0,-1)
             sage: C.tangent_space(q)
             Closed subscheme of Affine Space of dimension 3 over Rational Field
-            defined by:
+             defined by:
               x + y + z,
               2*x + 3*z
             sage: _.dimension()

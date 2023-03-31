@@ -32,6 +32,5 @@ def all_features():
             PythonModule('ptyprocess', spkg='ptyprocess'),
             PythonModule('pyparsing', spkg='pyparsing'),
             PythonModule('requests', spkg='requests'),
-            PythonModule('rpy2', spkg='rpy2'),
             PythonModule('scipy', spkg='scipy'),
             PythonModule('sympy', spkg='sympy')]

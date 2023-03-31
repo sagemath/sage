@@ -57,8 +57,8 @@ two lines.
 
     sage: V = P2.subscheme([x + y + z, x + y - z]); V
     Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-     x + y + z,
-     x + y - z
+      x + y + z,
+      x + y - z
     sage: V.dimension()
     0
 
@@ -660,8 +660,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P._linear_system_as_kernel(3, pt, 2)                                  # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            TypeError: at least one component of pt=[3, 3, 0] must be equal
-                          to 1
+            TypeError: at least one component of pt=[3, 3, 0] must be equal to 1
 
         The components of the list do not have to be elements of the base ring
         of the projective space. It suffices if there exists a common parent.
@@ -962,7 +961,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             (x*z^2, y^2*z, x*y^2)
             sage: I = X.defining_ideal(); I
             Ideal (x*z^2, y^2*z, x*y^2) of Multivariate Polynomial Ring in x, y, z
-            over Rational Field
+             over Rational Field
             sage: I.groebner_basis()
             [x*y^2, y^2*z,  x*z^2]
             sage: X.dimension()
@@ -1233,7 +1232,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<y,z> = ProjectiveSpace(F, 1)
             sage: P.chebyshev_polynomial(4, monic=True)
             Dynamical System of Projective Space of dimension 1
-            over Rational function field in t over Rational Field
+             over Rational function field in t over Rational Field
               Defn: Defined on coordinates by sending (y : z) to
                     (y^4 + (-4)*y^2*z^2 + 2*z^4 : z^4)
         """
@@ -1293,7 +1292,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                     (x^2 : x*y : x*z : y^2 : y*z : z^2)
             sage: vd(P.subscheme([]))
             Closed subscheme of Projective Space of dimension 5 over Rational Field
-            defined by:
+             defined by:
               -u^2 + t*v,
               -s*u + r*v,
               -s*t + r*u,
