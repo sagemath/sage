@@ -18,11 +18,10 @@ basic functionality for investigating their properties.
 AUTHORS:
 
 - Oliver Daisey (2023-03-20): initial version
-
 """
 
 # ****************************************************************************
-#       Copyright (C) 2022 Oliver Daisey <oliver.j.daisey at durham.ac.uk>
+#       Copyright (C) 2023 Oliver Daisey <oliver.j.daisey at durham.ac.uk>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,39 +30,36 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import time
-from copy import copy
 import random
-from sage.arith.all import factor, gcd
-from sage.categories.unique_factorization_domains import \
-    UniqueFactorizationDomains
+import time
+
+from copy import copy
+from sage.arith.all import factor
+from sage.arith.all import gcd
 from sage.graphs.graph import Graph
 from sage.rings.fraction_field import FractionField
 from sage.rings.infinity import infinity
-from sage.rings.integer_ring import ZZ, IntegerRing_class
+from sage.rings.integer_ring import IntegerRing_class
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import QQ, RationalField
+from sage.rings.rational_field import RationalField
 from sage.structure.sage_object import SageObject
 from sage.symbolic.ring import SR
 
 
 class LpaSeed(SageObject):
 
-    def __init__(self, data, coefficients=(),
-                 base_ring=ZZ):
+    def __init__(self, data, coefficients=(), base_ring=ZZ):
         r"""
-        Initialises a Laurent phenomenon algebra seed.
+        Initialise a Laurent phenomenon algebra seed.
 
         INPUT:
 
-        - ``data`` -- Can be one of the following:
+        - ``data`` -- Can be one of the following::
 
-            * ``dict`` - dictionary of initial variable names to their
-              corresponding exchange polynomials. The exchange polynomials must
-              be irreducible, not depend on the key, and not be divisible by any
-              variable. The correctness of the input data is checked
-              automatically.
-            * ``LpaSeed`` object.
+            * dict - dictionary of initial variable names to their
+              corresponding exchange polynomials.
+            * LpaSeed object.
 
         - ``coefficients`` -- tuple of symbolic variables (default: ``()``); the
           labels of, if any, the coefficients of the exchange polynomials. If no
@@ -79,25 +75,25 @@ class LpaSeed(SageObject):
         EXAMPLES:
 
         This example initialises a linear Laurent phenomenon algebra in two
-        variables: ::
+        variables::
 
             sage: var('x1,x2')
             (x1, x2)
-            sage: S = LpaSeed({x1: 1 + x2,x2: 1 + x1})
+            sage: S = LpaSeed({x1: 1 + x2, x2: 1 + x1})
             sage: print(S)
             A seed with cluster variables [x1, x2] and exchange polynomials [x2 + 1, x1 + 1]
 
         We add some coefficients to get the generic linear LP algebra in three
-        variables: ::
+        variables::
 
             sage: var('x1,x2,x3,a0,a2,a3,b0,b1,b3,c0,c1,c2')
             (x1, x2, x3, a0, a2, a3, b0, b1, b3, c0, c1, c2)
-            sage: S = LpaSeed({x1: a0 + a2*x2 + a3*x3, x2: b0 + b1*x1 + b3*x3, x3: c0 + c1*x1 + c2*x2})
+            sage: S = LpaSeed({x1: a0 + a2*x2 + a3*x3, x2: b0 + b1*x1 + b3*x3, x3: c0 + c1*x1 + c2*x2}, coefficients=[a0,a2,a3,b0,b1,b3,c0,c1,c2],base_ring=ZZ)
             sage: print(S)
-            A seed with cluster variables [x1, x2, x3] and exchange polynomials [x3*a3 + x2*a2 + a0, x3*b3 + x1*b1 + b0, x2*c2 + x1*c1 + c0]
+            A seed with cluster variables [x1, x2, x3] and exchange polynomials [x2*a2 + x3*a3 + a0, x1*b1 + x3*b3 + b0, x1*c1 + x2*c2 + c0]
 
         More complicated polynomials are allowed, as long as they are
-        irreducible:  ::
+        irreducible::
 
             sage: var('x1,x2,x3')
             (x1, x2, x3)
@@ -105,7 +101,7 @@ class LpaSeed(SageObject):
             sage: print(S)
             A seed with cluster variables [x1, x2, x3] and exchange polynomials [x2*x3^2 + 4*x3^3 + 1, -x1^2 + 2, x1^3*x2^2 - 3*x1 + 4]
 
-        Nonirreducible polynomials will raise an exception: ::
+        Nonirreducible polynomials will raise an exception::
 
             sage: var('x1, x2')
             (x1, x2)
@@ -114,14 +110,13 @@ class LpaSeed(SageObject):
             ...
             ValueError: (LP2) fail: -x2^2 + 4 is not irreducible over Integer Ring
 
-        Different base rings are allowed: ::
+        Different base rings are allowed::
 
             sage: var('x1,x2')
             (x1, x2)
             sage: S = LpaSeed({x1: 1 + x2, x2: 1 + x1}, base_ring=QQ)
             sage: print(S)
             A seed with cluster variables [x1, x2] and exchange polynomials [x2 + 1, x1 + 1]
-
         """
 
         self._names = None  # the symbolic variables we use for our polynomials
@@ -225,7 +220,27 @@ class LpaSeed(SageObject):
     # a private method to do some mathematical checks on our seed
 
     def _check_seed(self):
+        r"""
+        Perform some mathematical checks on this seed. This includes
+        checking that each exchange polynomial does not depend on its
+        corresponding cluster variable, that each exchange polynomial is
+        irreducible, and finally that no cluster variable divides any exchange
+        polynomial.
 
+        TESTS::
+
+            sage: var('x1')
+            x1
+            sage: LpaSeed({x1: 1})
+            Traceback (most recent call last):
+            ...
+            ValueError: (LP2) fail: 1 is not irreducible over Integer Ring
+
+            sage: LpaSeed({x1: 0})
+            Traceback (most recent call last):
+            ...
+            ValueError: (LP2) fail: exchange polynomial is zero
+        """
         # (LP1) check polynomials do not depend on their cluster variable
 
         for i in range(0, self._rank):
@@ -240,6 +255,8 @@ class LpaSeed(SageObject):
 
         for f in self._exchange_polys:
             # check irreducibility
+            if f == 0:
+                raise ValueError("(LP2) fail: exchange polynomial is zero")
             L = list(factor(f))
             if (len(L) > 1) or f.is_unit():
                 raise ValueError("(LP2) fail: %s is not irreducible over %s"
@@ -254,6 +271,20 @@ class LpaSeed(SageObject):
     # a private method to compute the exchange Laurent polynomials of `self`
 
     def _compute_laurent(self):
+        r"""
+        Compute the exchange Laurent polynomials of ``self``.
+
+        TESTS:
+
+        This should leave the seed invariant::
+
+            sage: var('x1, x2, a')
+            (x1, x2, a)
+            sage: S = LpaSeed({x1: a, x2: a}, coefficients=[a])
+            sage: S._compute_laurent()
+            sage: S.laurent_polys()
+            [a/x2, a/x1]
+        """
 
         # work with copies as we perform substitutions
         exchange_polys = copy(self._exchange_polys)
@@ -297,7 +328,7 @@ class LpaSeed(SageObject):
 
     def mutate(self, i, inplace=True):
         r"""
-        Mutates this seed at the ``i`` th index.
+        Mutate this seed at the ``i`` th index.
 
         INPUT:
 
@@ -309,17 +340,17 @@ class LpaSeed(SageObject):
 
         EXAMPLES:
 
-        We mutate a rank-two Laurent phenomenon algebra at the first index. ::
+        We mutate a rank-two Laurent phenomenon algebra at the first index::
 
             sage: var('x1,x2,a0,a2,b0,b1')
             (x1, x2, a0, a2, b0, b1)
-            sage: S = LpaSeed({x1: a0 + a2*x2, x2: b0 + b1*x1})
+            sage: S = LpaSeed({x1: a0 + a2*x2, x2: b0 + b1*x1}, coefficients=[a0,a2,b0,b1])
             sage: print(S)
             A seed with cluster variables [x1, x2] and exchange polynomials [x2*a2 + a0, x1*b1 + b0]
             sage: S.mutate(0); print(S)
-            A seed with cluster variables [(x2*a2 + a0)/x1, x2] and exchange polynomials [x2*a2 + a0, a0*b1 + x1*b0]
+            A seed with cluster variables [(x2*a2 + a0)/x1, x2] and exchange polynomials [x2*a2 + a0, x1*b0 + a0*b1]
 
-        Mutating at the same index is an involution: ::
+        Mutating at the same index is an involution::
 
             sage: var('x1,x2,x3')
             (x1, x2, x3)
@@ -399,7 +430,7 @@ class LpaSeed(SageObject):
 
     def is_mutation_equivalent(self, other_seed):
         r"""
-        Returns whether this seed and ``other_seed`` are mutation equivalent.
+        Return whether this seed and ``other_seed`` are mutation equivalent.
 
         INPUT:
 
@@ -412,7 +443,7 @@ class LpaSeed(SageObject):
 
         EXAMPLES:
 
-        A seed is mutation equivalent to any of its mutations: ::
+        A seed is mutation equivalent to any of its mutations::
 
             sage: var('x1,x2,x3')
             (x1, x2, x3)
@@ -435,7 +466,7 @@ class LpaSeed(SageObject):
     def mutation_class_iter(self, depth=infinity, show_depth=False,
                             return_paths=False, algorithm='BFS'):
         r"""
-        Returns an iterator for the mutation class of this seed.
+        Return an iterator for the mutation class of this seed.
 
         INPUT:
 
@@ -450,14 +481,14 @@ class LpaSeed(SageObject):
           path of mutations from ``self`` to the given seed is returned as well.
 
         - ``algorithm`` -- String (default: ``'BFS'``); the search algorithm to
-          find new seeds. Currently supported options: ::
+          find new seeds. Currently supported options::
 
              * 'BFS' - breadth-first search
              * 'DFS' - depth-first search
 
         EXAMPLES:
 
-        We iterate over the mutation class for a rank two seed: ::
+        We iterate over the mutation class for a rank two seed::
 
             sage: var('x1,x2')
             (x1, x2)
@@ -471,13 +502,13 @@ class LpaSeed(SageObject):
             ((x1 + x2 + 1)/(x1*x2), (x1 + 1)/x2)
 
         Non finite-type works if we specify a fixed depth, but seeds can get big
-        rather quickly: ::
+        rather quickly::
 
             sage: var('x1,x2')
             (x1, x2)
             sage: S = LpaSeed({x1: 1 + x2 + x2^2, x2: 1 + x1 + x1^2})
             sage: t = S.mutation_class_iter(depth=15,algorithm='DFS')
-            sage: for seed in t: print(seed.cluster()[0].denominator())
+            sage: for seed in t: print(seed.cluster()[0].denominator()) # long time
             1
             x1
             1
@@ -495,19 +526,17 @@ class LpaSeed(SageObject):
             x1^11*x2^12
             x1^13*x2^14
 
-        We can print computational statistics when computing large examples: ::
+        We can print computational statistics when computing examples::
 
-            sage: var('x1,x2,x3,x4,a0,a2,a3,a4,b0,b1,b3,b4,c0,c1,c2,c4,d0,d1,d2,d3')
-            (x1, x2, x3, x4, a0, a2, a3, a4, b0, b1, b3, b4, c0, c1, c2, c4, d0, d1, d2, d3)
-            sage: S = LpaSeed({x1: a0 + a2*x2 + a3*x3 + a4*x4, x2: b0 + b1*x1 + b3*x3 + b4*x4, x3: c0 + c1*x1 + c2*x2 + c4*x4, x4: d0 + d1*x1 + d2*x2 + d3*x3})
+            sage: var('x1,x2,x3,a0,a2,a3,b0,b1,b3,c0,c1,c2')
+            (x1, x2, x3, a0, a2, a3, b0, b1, b3, c0, c1, c2)
+            sage: S = LpaSeed({x1: a0 + a2*x2 + a3*x3, x2: b0 + b1*x1 + b3*x3, x3: c0 + c1*x1 + c2*x2})
             sage: t = S.mutation_class_iter(show_depth=True);
-            sage: for seed in t: 0  # random long time (10 seconds)
+            sage: for seed in t: None # random long time
             Depth: 0     found: 1          Time: 0.00 s
-            Depth: 1     found: 5          Time: 0.03 s
-            Depth: 2     found: 17         Time: 0.16 s
-            Depth: 3     found: 41         Time: 0.93 s
-            Depth: 4     found: 65         Time: 4.41 s
-
+            Depth: 1     found: 4          Time: 0.01 s
+            Depth: 2     found: 10         Time: 0.04 s
+            Depth: 3     found: 16         Time: 0.10 s
         """
 
         # preprocess
@@ -652,7 +681,7 @@ class LpaSeed(SageObject):
         - ``return_paths`` -- (default: ``False``) if ``True``, a path of
           mutation sequences from ``self`` to the given seed is returned as well
         - ``algorithm`` -- String (default: ``'BFS'``); the search algorithm to
-          find new seeds. Currently supported options: ::
+          find new seeds. Currently supported options::
 
              * 'BFS' - breadth-first search
              * 'DFS' - depth-first search
@@ -661,7 +690,7 @@ class LpaSeed(SageObject):
 
         - for further examples see :meth:`mutation_class_iter`.
 
-        We validate the possible sizes of mutation classes in rank two: ::
+        We validate the possible sizes of mutation classes in rank two::
 
             sage: var('x1,x2,A,B,C,D,E,F');
             (x1, x2, A, B, C, D, E, F)
@@ -680,7 +709,6 @@ class LpaSeed(SageObject):
             sage: S = LpaSeed({x1: A + B*x2 + C*x2^2 + D*x2^3, x2: E + F*x1}, coefficients=[A,B,C,D,E,F]);
             sage: print(len(S.mutation_class()))
             8
-
         """
 
         return list(S for S in self.mutation_class_iter(depth=depth,
@@ -707,14 +735,14 @@ class LpaSeed(SageObject):
         - ``return_paths`` -- (default: ``False``) if ``True``, a path of
           mutation sequences from ``self`` to the given seed is returned as well
         - ``algorithm`` -- String (default: ``'BFS'``); the search algorithm to
-          find new seeds. Currently supported options: ::
+          find new seeds. Currently supported options::
 
              * 'BFS' - breadth-first search
              * 'DFS' - depth-first search
 
         EXAMPLES:
 
-        We check an example in LP: ::
+        We check a classic example::
 
             sage: var('a,f,C')
             (a, f, C)
@@ -728,7 +756,6 @@ class LpaSeed(SageObject):
             ((a + f + C)/(a*f), (a + C)/f)
 
         - for further examples see :meth:`mutation_class_iter`.
-
         """
         mc_iter = self.mutation_class_iter(depth=depth, show_depth=show_depth,
                                            algorithm=algorithm)
@@ -754,15 +781,21 @@ class LpaSeed(SageObject):
         - ``return_paths`` -- (default: ``False``) if ``True``, a path of
           mutation sequences from ``self`` to the given seed is returned as well
         - ``algorithm`` -- String (default: ``'BFS'``); the search algorithm to
-          find new seeds. Currently supported options: ::
+          find new seeds. Currently supported options::
 
              * 'BFS' - breadth-first search
              * 'DFS' - depth-first search
 
         EXAMPLES:
 
-        - for examples see :meth:`cluster_class_iter`
+        - for more examples see :meth:`cluster_class_iter`
 
+        TESTS::
+
+            sage: var('x1, x2, x3')
+            (x1, x2, x3)
+            sage: LpaSeed({x1: 2},base_ring=ZZ).cluster_class()
+            [(x1,), (2/x1,)]
         """
 
         return [c for c in self.cluster_class_iter(depth=depth,
@@ -771,7 +804,7 @@ class LpaSeed(SageObject):
 
     def variable_class_iter(self, depth=infinity, algorithm='BFS'):
         r"""
-        Returns an iterator for all cluster variables in the mutation class of
+        Return an iterator for all cluster variables in the mutation class of
         ``self`` in seeds at most ``depth`` away from ``self``.
 
         INPUT:
@@ -779,7 +812,7 @@ class LpaSeed(SageObject):
         - ``depth`` -- (default:``infinity``) integer, only seeds with
           distance at most ``depth`` from ``self`` are returned.
         - ``algorithm`` -- String (default: ``BFS``); the search algorithm
-          to find new seeds. Currently supported options: ::
+          to find new seeds. Currently supported options::
 
              * 'BFS' - breadth-first search
              * 'DFS' - depth-first search
@@ -787,13 +820,13 @@ class LpaSeed(SageObject):
         EXAMPLES:
 
         We define a simple iterator for the denominators of seeds in the
-        mutation class: ::
+        mutation class::
 
             sage: var('x1, x2, x3, a0, a2, a3, b0, b1, b3, c0, c1, c2')
             (x1, x2, x3, a0, a2, a3, b0, b1, b3, c0, c1, c2)
             sage: S = LpaSeed({x1: a0 + a2*x2 + a3*x3, x2: b0 + b1*x1 + b3*x3, x3: c0 + c1*x1 + c2*x2})
             sage: t = S.variable_class_iter()
-            sage: for variable in t: print(variable.denominator())
+            sage: for variable in t: print(variable.denominator()) # long time
             1
             1
             1
@@ -817,7 +850,7 @@ class LpaSeed(SageObject):
 
     def variable_class(self, depth=infinity):
         r"""
-        Returns all cluster variables in the mutation class of ``self``. These
+        Return all cluster variables in the mutation class of ``self``. These
         are exactly the generators for the LP algebra generated by this seed.
 
         INPUT:
@@ -829,7 +862,7 @@ class LpaSeed(SageObject):
 
         - for more examples see :meth:`variable_class_iter`.
 
-        We find the generators for various LP algebras: ::
+        We find the generators for various LP algebras::
 
             sage: var('x1,x2,x3')
             (x1, x2, x3)
@@ -839,8 +872,6 @@ class LpaSeed(SageObject):
             sage: S = LpaSeed({x1: 1 + x2 + x3, x2: 1 + x1 + x3, x3: 1 + x1 + x2})
             sage: print(S.variable_class())
             [(x1 + x2 + x3 + 1)/(x1*x2*x3), (x2 + x3 + 1)/x1, (x1 + x3 + 1)/x2, (x1 + x2 + 1)/x3, x3, x2, x1]
-
-
         """
 
         var_iter = self.variable_class_iter(depth=depth)
@@ -848,7 +879,7 @@ class LpaSeed(SageObject):
 
     def is_equivalent(self, other):
         r"""
-        Returns whether ``self`` and ``other`` are equivalent as LP seeds.
+        Return whether ``self`` and ``other`` are equivalent as LP seeds.
         Two seeds are equivalent if and only if there is a permutation of the
         cluster variables of one seed to get the cluster variables of the other
         seed, up to unit multipliers. Note we also overload equality to
@@ -860,14 +891,13 @@ class LpaSeed(SageObject):
 
         EXAMPLES:
 
-        Mutating this rank two example five times yields an equivalent seed: ::
+        Mutating this rank two example five times yields an equivalent seed::
 
             sage: var('x1,x2')
             (x1, x2)
             sage: S = LpaSeed({x1: 1 + x2, x2: 1 + x1})
-            sage: print(S==S.mutate([0,1,0,1,0], inplace=False))
+            sage: print(S.is_equivalent(S.mutate([0,1,0,1,0], inplace=False)))
             True
-
         """
         if not isinstance(other, LpaSeed):
             raise ValueError('%s is not a seed!' % (other))
@@ -888,11 +918,11 @@ class LpaSeed(SageObject):
 
     def exchange_graph(self):
         r"""
-        Returns the exchange graph of ``self``.
+        Return the exchange graph of ``self``.
 
         EXAMPLES:
 
-        We work out the exchange graph for a rank-two example: ::
+        We work out the exchange graph for a rank-two example::
 
             sage: var('x1, x2')
             (x1, x2)
@@ -905,7 +935,7 @@ class LpaSeed(SageObject):
             G = LpaSeed({x1: 1 + x2, x2: 1 + x1}).exchange_graph()
             sphinx_plot(G)
 
-        A rank three example: ::
+        A rank three example::
 
             sage: var('x1, x2, x3')
             (x1, x2, x3)
@@ -917,7 +947,6 @@ class LpaSeed(SageObject):
             var('x1, x2, x3')
             G = LpaSeed({x1: 1 + x2 + x3, x2: 1 + x1 + x3, x3: 1 + x1 + x2}).exchange_graph()
             sphinx_plot(G)
-
         """
 
         # initialise
@@ -943,11 +972,11 @@ class LpaSeed(SageObject):
 
     def cluster(self):
         r"""
-        Returns the cluster variables of ``self``.
+        Return the cluster variables of ``self``.
 
         EXAMPLES:
 
-        Get the cluster variables after performing a mutation: ::
+        Get the cluster variables after performing a mutation::
 
             sage: var('x1, x2')
             (x1, x2)
@@ -960,11 +989,11 @@ class LpaSeed(SageObject):
 
     def exchange_polys(self):
         r"""
-        Returns the exchange polynomials of ``self``.
+        Return the exchange polynomials of ``self``.
 
         EXAMPLES:
 
-        Get the exchange polynomials after performing a mutation: ::
+        Get the exchange polynomials after performing a mutation::
 
             sage: var('x1, x2')
             (x1, x2)
@@ -978,11 +1007,11 @@ class LpaSeed(SageObject):
 
     def laurent_polys(self):
         r"""
-        Returns the exchange Laurent polynomials of ``self``.
+        Return the exchange Laurent polynomials of ``self``.
 
         EXAMPLES:
 
-        This seed has non-trivial exchange Laurent polynomials: ::
+        This seed has non-trivial exchange Laurent polynomials::
 
             sage: var('x1, x2, x3')
             (x1, x2, x3)
@@ -995,12 +1024,12 @@ class LpaSeed(SageObject):
 
     def rank(self):
         r"""
-        Returns the rank of ``self``. This is the number of
+        Return the rank of ``self``. This is the number of
         cluster variables in ``self``.
 
         EXAMPLES:
 
-        The rank is the number of cluster variables in the seed: ::
+        The rank is the number of cluster variables in the seed::
 
             sage: var('x1,x2,x3,x4')
             (x1, x2, x3, x4)
@@ -1022,14 +1051,13 @@ class LpaSeed(SageObject):
         EXAMPLES:
 
         We suspect this seed is infinite type, so we perform some random
-        mutations: ::
+        mutations::
 
             sage: var('x1,x2,x3')
             (x1, x2, x3)
             sage: S = LpaSeed({x1: 1 + x2*x3, x2: 1 + x1, x3: 1 + x2})
-            sage: S.randomly_mutate(7)  # random
+            sage: S.randomly_mutate(7)
             sage: print(S)  # random
-
         """
 
         indices = [random.randint(0, self._rank - 1) for _ in range(depth)]
@@ -1041,12 +1069,12 @@ class LpaSeed(SageObject):
 
     def mutation_sequence(self):
         r"""
-        Returns the list of indices we have mutated ``self`` at.
+        Return the list of indices we have mutated ``self`` at.
 
         EXAMPLES:
 
         We look at the mutation sequences computed by the mutation class
-        iterator: ::
+        iterator::
 
             sage: var('x1, x2, x3')
             (x1, x2, x3)
@@ -1082,6 +1110,19 @@ class LpaSeed(SageObject):
     # equality is currently defined as equivalence (might change later)
 
     def __eq__(self, other):
+        r"""
+        Check if ``self`` and ``other`` are equal. This means checking that they
+        are equivalent.
+
+        TESTS::
+
+            sage: var('x1')
+            x1
+            sage: S = LpaSeed({x1:2},base_ring=ZZ)
+            sage: T = S.mutate(0, inplace=False)
+            sage: print(T==S)
+            False
+        """
 
         # we check if cluster variables are is_equivalent of each other,
         # up to unit multiple. Since clusters determine the seed,
@@ -1090,11 +1131,32 @@ class LpaSeed(SageObject):
 
     def _copy_(self):
         r"""
-        Returns a copy of `self`.
+        Returns a copy of ``self``.
+
+        TESTS::
+
+            sage: var('x1,x2')
+            (x1, x2)
+            sage: S = LpaSeed({x1: 1 + x2, x2: 1 + x1})
+            sage: T1 = S._copy_()
+            sage: T1.mutate(0, inplace=True)
+            sage: T2 = S.mutate(0, inplace=False)
+            sage: print(T1==T2)
+            True
         """
         return LpaSeed(self)
 
     def _repr_(self):
+        r"""
+        Represents ``self`` in string format.
+
+        TESTS::
+
+            sage: var('x1, x2')
+            (x1, x2)
+            sage: print(LpaSeed({x1: 1 + x2, x2: 1 + x1}))
+            A seed with cluster variables [x1, x2] and exchange polynomials [x2 + 1, x1 + 1]
+        """
         return ("A seed with cluster variables {0}"
                 " and exchange polynomials {1}").format(self._cluster_vars,
                                                         self._exchange_polys)
@@ -1105,7 +1167,7 @@ class LpaSeed(SageObject):
 
         EXAMPLES:
 
-        We check that two seeds with the same hash are equal: ::
+        We check that two seeds with the same hash are equal::
 
             sage: var('x1,x2')
             (x1, x2)
@@ -1117,7 +1179,6 @@ class LpaSeed(SageObject):
             True
             sage: print(S == T)
             True
-
         """
 
         return hash(frozenset(self.cluster()))
@@ -1128,6 +1189,19 @@ class LpaSeed(SageObject):
 
     @staticmethod
     def _remove_repeat_indices(L):
+        r"""
+        Remove mutations twice at the same index from the list of indices ``L``.
+        This will result in a list with no consecutive entries equal.
+
+        TESTS::
+
+            sage: var('x1, x2, x3, x4, x5')
+            (x1, x2, x3, x4, x5)
+            sage: S = LpaSeed({x1:x2+x3,x2:x1+x4,x3:x1+x2,x4:x1+x3,x5:x1+x4})
+            sage: S.mutate([0,1,1,3,2,4,4,2,3])
+            sage: LpaSeed._remove_repeat_indices(S._mutation_sequence)
+            [0]
+            """
         G = []
         flag = False
         index = 0
@@ -1140,7 +1214,6 @@ class LpaSeed(SageObject):
                 index += 2  # skip over next element
 
         if flag:
-            print(G)
             return LpaSeed._remove_repeat_indices(G)
         else:
             return G
