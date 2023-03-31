@@ -269,8 +269,9 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.global_options import GlobalOptions
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
+from sage.structure.element import Element, get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
-
+import operator
 
 class Permutation(CombinatorialElement):
     r"""
@@ -1242,7 +1243,23 @@ class Permutation(CombinatorialElement):
         from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix
         return AlternatingSignMatrix(self.to_matrix().rows())
 
-    def __mul__(self, rp) -> Permutation:
+    def __mul__(self, rp):
+        """
+        TESTS::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+            sage: SM = SGA.specht_module([2,1])
+            sage: p213 = Permutations(3)([2,1,3])
+            sage: p213 * SGA.an_element()
+            3*[1, 2, 3] + [1, 3, 2] + [2, 1, 3] + 2*[3, 1, 2]
+            sage: p213 * SM.an_element()
+            2*B[0] - 4*B[1]
+        """
+        if not isinstance(rp, Permutation) and isinstance(rp, Element):
+            return get_coercion_model().bin_op(self, rp, operator.mul)
+        return Permutation._mul_(self, rp)
+
+    def _mul_(self, rp) -> Permutation:
         """
         TESTS::
 
@@ -1261,8 +1278,6 @@ class Permutation(CombinatorialElement):
         else:
             return self._left_to_right_multiply_on_left(rp)
 
-    _mul_ = __mul__ # For ``prod()``
-
     def __rmul__(self, lp) -> Permutation:
         """
         TESTS::
@@ -1276,7 +1291,13 @@ class Permutation(CombinatorialElement):
             sage: p213*p312
             [3, 2, 1]
             sage: Permutations.options.mult='l2r'
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+            sage: SGA.an_element() * Permutations(3)(p213)
+            3*[1, 2, 3] + [2, 1, 3] + 2*[2, 3, 1] + [3, 2, 1]
         """
+        if not isinstance(lp, Permutation) and isinstance(lp, Element):
+            return get_coercion_model().bin_op(lp, self, operator.mul)
         if self.parent().options.mult == 'l2r':
             return self._left_to_right_multiply_on_left(lp)
         else:
@@ -7328,9 +7349,10 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             """
             if not isinstance(other, StandardPermutations_n.Element):
                 return Permutation.__mul__(self, other)
-            if other.parent() is not self.parent():
+            P = self.parent()
+            if other.parent() is not P:
                 # They have different parents (but both are (like) Permutations of n)
-                mul_order = self.parent().options.mult
+                mul_order = P.options.mult
                 if mul_order == 'l2r':
                     p = right_action_product(self._list, other._list)
                 elif mul_order == 'r2l':
