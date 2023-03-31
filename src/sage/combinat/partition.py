@@ -6059,7 +6059,7 @@ class Partitions(UniqueRepresentation, Parent):
             [[1, 1, 1, 1], [2, 1, 1], [2, 2], [3, 1], [4]]
         """
         if not self.is_finite():
-            raise NotImplementedError("The set is infinite. This needs a custom reverse iterator")
+            raise NotImplementedError("the set is infinite, so this needs a custom reverse iterator")
 
         for i in reversed(range(self.cardinality())):
             yield self[i]

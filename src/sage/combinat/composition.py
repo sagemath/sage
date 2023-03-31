@@ -1677,7 +1677,7 @@ class Compositions(UniqueRepresentation, Parent):
         """
         if n is None:
             if kwargs:
-                raise ValueError("Incorrect number of arguments")
+                raise ValueError("incorrect number of arguments")
             return Compositions_all()
         else:
             if not kwargs:

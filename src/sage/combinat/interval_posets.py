@@ -3539,7 +3539,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         The comparison is first by size, then using the
         cubical coordinates.
 
-        .. SEEALSO:: :meth:`cubical_coordinates`
+        .. SEEALSO:: :meth:`~TamariIntervalPoset.cubical_coordinates`
 
         INPUT:
 
