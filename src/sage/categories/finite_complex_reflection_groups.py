@@ -16,7 +16,6 @@ from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 
 
 class FiniteComplexReflectionGroups(CategoryWithAxiom):
@@ -758,6 +757,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     [1] 1
                     [] 0
                 """
+                from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+
                 if gens is None:
                     seeds = [(self.coxeter_element(), self.rank())]
                 else:
