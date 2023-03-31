@@ -55,6 +55,18 @@ TESTS::
     sage: F = FractionField(PolynomialRing(RationalField(),2,'x'))
     sage: F == loads(dumps(F))
     True
+
+Test that :trac:`15971` is fixed::
+
+    sage: for B in [QQ['t'], QQ['s, t'], ZZ['t'], ZZ['s, t']]:
+    ....:     F = B.fraction_field()
+    ....:     R = F['x, y']
+    ....:     x = R.gen(0)
+    ....:     print(x / x)
+    1
+    1
+    1
+    1
 """
 # ****************************************************************************
 #
