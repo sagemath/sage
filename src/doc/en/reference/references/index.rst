@@ -5889,6 +5889,11 @@ REFERENCES:
              isogenies of prime degree. Journal de Théorie des Nombres de Bordeaux,
              2012.
 
+.. [Suth2007] Andrew V. Sutherland, *Order Computations in Generic Groups*.
+              PhD Thesis, Massachusetts Institute of Technology,
+              June 2007.
+              https://math.mit.edu/~drew/sutherland-phd.pdf
+
 .. [Suth2008] Andrew V. Sutherland, *Structure computation and discrete
               logarithms in finite abelian p-groups*.
               Mathematics of Computation **80** (2011), pp. 477-500.

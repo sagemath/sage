@@ -932,6 +932,10 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         - John Cremona: original implementation
         - Lorenz Panny (2021): current implementation
 
+        .. SEEALSO::
+
+            :meth:`AdditiveAbelianGroupWrapper.from_generators()<sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper.from_generators>`
+
         EXAMPLES::
 
             sage: E = EllipticCurve(GF(11),[2,5])
