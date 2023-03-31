@@ -170,8 +170,8 @@ def Curve(F, A=None):
 
         sage: X = C.intersection(D); X
         Closed subscheme of Projective Space of dimension 2 over Rational Field
-        defined by: x^3 + y^3 + z^3,
-                    x^4 + y^4 + z^4
+         defined by: x^3 + y^3 + z^3,
+                     x^4 + y^4 + z^4
 
     Note that the intersection has dimension 0.  ::
 

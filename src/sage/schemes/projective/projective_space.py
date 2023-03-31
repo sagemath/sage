@@ -57,8 +57,8 @@ two lines.
 
     sage: V = P2.subscheme([x + y + z, x + y - z]); V
     Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-     x + y + z,
-     x + y - z
+      x + y + z,
+      x + y - z
     sage: V.dimension()
     0
 
@@ -660,8 +660,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P._linear_system_as_kernel(3, pt, 2)                                  # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            TypeError: at least one component of pt=[3, 3, 0] must be equal
-                          to 1
+            TypeError: at least one component of pt=[3, 3, 0] must be equal to 1
 
         The components of the list do not have to be elements of the base ring
         of the projective space. It suffices if there exists a common parent.
@@ -962,7 +961,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             (x*z^2, y^2*z, x*y^2)
             sage: I = X.defining_ideal(); I
             Ideal (x*z^2, y^2*z, x*y^2) of Multivariate Polynomial Ring in x, y, z
-            over Rational Field
+             over Rational Field
             sage: I.groebner_basis()
             [x*y^2, y^2*z,  x*z^2]
             sage: X.dimension()
@@ -1233,7 +1232,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<y,z> = ProjectiveSpace(F, 1)
             sage: P.chebyshev_polynomial(4, monic=True)
             Dynamical System of Projective Space of dimension 1
-            over Rational function field in t over Rational Field
+             over Rational function field in t over Rational Field
               Defn: Defined on coordinates by sending (y : z) to
                     (y^4 + (-4)*y^2*z^2 + 2*z^4 : z^4)
         """
@@ -1293,7 +1292,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                     (x^2 : x*y : x*z : y^2 : y*z : z^2)
             sage: vd(P.subscheme([]))
             Closed subscheme of Projective Space of dimension 5 over Rational Field
-            defined by:
+             defined by:
               -u^2 + t*v,
               -s*u + r*v,
               -s*t + r*u,
@@ -2044,8 +2043,8 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: Ch = X.Chow_form(); Ch                                                # optional - sage.rings.finite_rings
             t0^2 - 2*t0*t3 + t3^2 - t2*t4 - t4*t5
             sage: Y = P.subscheme_from_Chow_form(Ch, 1); Y                              # optional - sage.rings.finite_rings
-            Closed subscheme of Projective Space of dimension 3 over Finite Field of
-            size 7 defined by:
+            Closed subscheme of Projective Space of dimension 3
+             over Finite Field of size 7 defined by:
               x1*x2 + x3^2,
               -x0*x2 + x2^2,
               -x0*x1 - x1*x2 - 2*x3^2,
@@ -2057,7 +2056,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: I = Y.defining_ideal()                                                # optional - sage.rings.finite_rings
             sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]                # optional - sage.rings.finite_rings
             Ideal (x0 - x2, x1*x2 + x3^2) of Multivariate Polynomial Ring
-            in x0, x1, x2, x3 over Finite Field of size 7
+             in x0, x1, x2, x3 over Finite Field of size 7
         """
         if not Ch.is_homogeneous():
             raise ValueError("Chow form must be a homogeneous polynomial")
@@ -2135,8 +2134,9 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: p1 = P3(1, 2, 3, 4)
             sage: p2 = P3(4, 3, 2, 1)
             sage: P3.line_through(p1, p2)
-            Projective Curve over Rational Field defined by -5/4*x0 + 5/2*x1 - 5/4*x2,
-            -5/2*x0 + 15/4*x1 - 5/4*x3, -5/4*x0 + 15/4*x2 - 5/2*x3, -5/4*x1 + 5/2*x2 - 5/4*x3
+            Projective Curve over Rational Field defined by
+              -5/4*x0 + 5/2*x1 - 5/4*x2,        -5/2*x0 + 15/4*x1 - 5/4*x3,
+              -5/4*x0 + 15/4*x2 - 5/2*x3,       -5/4*x1 + 5/2*x2 - 5/4*x3
             sage: p3 = P3(2,4,6,8)
             sage: P3.line_through(p1, p3)
             Traceback (most recent call last):
@@ -2207,18 +2207,18 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
             sage: PP = ProjectiveSpace(2, FF)                                           # optional - sage.rings.finite_rings
             sage: [ x for x in PP ]                                                     # optional - sage.rings.finite_rings
             [(0 : 0 : 1),
-            (0 : 1 : 1),
-            (0 : 2 : 1),
-            (1 : 0 : 1),
-            (1 : 1 : 1),
-            (1 : 2 : 1),
-            (2 : 0 : 1),
-            (2 : 1 : 1),
-            (2 : 2 : 1),
-            (0 : 1 : 0),
-            (1 : 1 : 0),
-            (2 : 1 : 0),
-            (1 : 0 : 0)]
+             (0 : 1 : 1),
+             (0 : 2 : 1),
+             (1 : 0 : 1),
+             (1 : 1 : 1),
+             (1 : 2 : 1),
+             (2 : 0 : 1),
+             (2 : 1 : 1),
+             (2 : 2 : 1),
+             (0 : 1 : 0),
+             (1 : 1 : 0),
+             (2 : 1 : 0),
+             (1 : 0 : 0)]
 
         AUTHORS:
 

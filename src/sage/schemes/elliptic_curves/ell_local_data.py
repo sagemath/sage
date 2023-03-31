@@ -30,7 +30,7 @@ EXAMPLES::
     4
     sage: da.minimal_model()
     Elliptic Curve defined by y^2 = x^3 + (4*i+3)*x + (-29*i-278)
-    over Number Field in i with defining polynomial x^2 + 1
+     over Number Field in i with defining polynomial x^2 + 1
 
 An example to show how the Neron model can change as one extends the field::
 
@@ -64,7 +64,7 @@ Or how the minimal equation changes::
     sage: da = EK.local_data(1+i)
     sage: da.minimal_model()
     Elliptic Curve defined by y^2 = x^3 + (-i)
-    over Number Field in i with defining polynomial x^2 + 1
+     over Number Field in i with defining polynomial x^2 + 1
 
 AUTHORS:
 
@@ -335,10 +335,10 @@ class EllipticCurveLocalData(SageObject):
             sage: E = EllipticCurve(K, [0, 0, a, 0, 1])
             sage: E.local_data(K.ideal(a-1)).minimal_model()
             Elliptic Curve defined by y^2 + a*y = x^3 + 1
-            over Number Field in a with defining polynomial x^3 + x + 1
+             over Number Field in a with defining polynomial x^3 + x + 1
             sage: E.local_data(K.ideal(a-1)).minimal_model(reduce=False)
             Elliptic Curve defined by y^2 + (a+2)*y = x^3 + 3*x^2 + 3*x + (-a+1)
-            over Number Field in a with defining polynomial x^3 + x + 1
+             over Number Field in a with defining polynomial x^3 + x + 1
 
             sage: E = EllipticCurve([2, 1, 0, -2, -1])
             sage: E.local_data(ZZ.ideal(2), algorithm="generic").minimal_model(reduce=False)
@@ -362,9 +362,9 @@ class EllipticCurveLocalData(SageObject):
             sage: vv = K.fractional_ideal(g^2 - g - 2)
             sage: E.local_data(vv).minimal_model()
             Elliptic Curve defined by
-            y^2 + (-2*g^3+10/3*g^2+3*g-2/3)*x*y + (-11/9*g^3+34/9*g^2-7/3*g+4/9)*y
-             = x^3 + (-11/9*g^3+34/9*g^2-7/3*g+4/9)*x^2
-            over Number Field in g with defining polynomial t^4 - t^3 - 3*t^2 - t + 1
+             y^2 + (-2*g^3+10/3*g^2+3*g-2/3)*x*y + (-11/9*g^3+34/9*g^2-7/3*g+4/9)*y
+              = x^3 + (-11/9*g^3+34/9*g^2-7/3*g+4/9)*x^2
+             over Number Field in g with defining polynomial t^4 - t^3 - 3*t^2 - t + 1
         """
         if reduce:
             try:
@@ -640,7 +640,7 @@ class EllipticCurveLocalData(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('27a1')
-            sage: [(p,E.local_data(p).has_additive_reduction()) for p in prime_range(15)]
+            sage: [(p, E.local_data(p).has_additive_reduction()) for p in prime_range(15)]
             [(2, False), (3, True), (5, False), (7, False), (11, False), (13, False)]
 
         ::

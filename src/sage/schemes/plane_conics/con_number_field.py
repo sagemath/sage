@@ -38,7 +38,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         sage: P.<X, Y, Z> = K[]
         sage: Conic(X^2 + Y^2 - a*Z^2)
         Projective Conic Curve over Number Field in a with defining polynomial x^3 - 2
-        defined by X^2 + Y^2 + (-a)*Z^2
+         defined by X^2 + Y^2 + (-a)*Z^2
 
     TESTS::
 

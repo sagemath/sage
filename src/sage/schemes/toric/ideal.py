@@ -223,7 +223,7 @@ class ToricIdeal(MPolynomialIdeal):
             sage: ToricIdeal(A, names='x', base_ring=FractionField(QQ['t']))
             Ideal (-x1^2 + x0*x2) of
             Multivariate Polynomial Ring in x0, x1, x2 over
-            Fraction Field of Univariate Polynomial Ring in t over Rational Field
+             Fraction Field of Univariate Polynomial Ring in t over Rational Field
         """
         self._A = matrix(ZZ, A)
         if polynomial_ring:
@@ -273,8 +273,7 @@ class ToricIdeal(MPolynomialIdeal):
             sage: IA = ToricIdeal(A)
             sage: IA.ker()
             Free module of degree 3 and rank 1 over Integer Ring
-            User basis matrix:
-            [-1  2 -1]
+             User basis matrix: [-1  2 -1]
         """
 
         if '_ker' in self.__dict__:
@@ -352,8 +351,7 @@ class ToricIdeal(MPolynomialIdeal):
             sage: IA = ToricIdeal(A)
             sage: IA.ker()
             Free module of degree 3 and rank 1 over Integer Ring
-            User basis matrix:
-            [-1  2 -1]
+             User basis matrix: [-1  2 -1]
             sage: IA._naive_ideal(IA.ring())
             Ideal (z1^2 - z0*z2) of Multivariate Polynomial Ring in z0, z1, z2 over Rational Field
         """
@@ -394,7 +392,7 @@ class ToricIdeal(MPolynomialIdeal):
             sage: IA._ideal_quotient_by_variable(R, J0, 0)
             Ideal (z2*z3^2 - z0*z1*z4, z1*z3 - z0*z2,
                    z2^2*z3 - z1^2*z4, z1^3*z4 - z0*z2^3)
-            of Multivariate Polynomial Ring in z0, z1, z2, z3, z4 over Rational Field
+             of Multivariate Polynomial Ring in z0, z1, z2, z3, z4 over Rational Field
         """
         N = self.nvariables()
         y = list(ring.gens())
@@ -438,7 +436,7 @@ class ToricIdeal(MPolynomialIdeal):
             sage: A = matrix([[3,2,1,0], [0,1,2,3]])
             sage: IA = ToricIdeal(A);  IA
             Ideal (-z1*z2 + z0*z3, -z1^2 + z0*z2, z2^2 - z1*z3)
-            of Multivariate Polynomial Ring in z0, z1, z2, z3 over Rational Field
+             of Multivariate Polynomial Ring in z0, z1, z2, z3 over Rational Field
             sage: R = IA.ring()
             sage: IA == IA._ideal_HostenSturmfels()
             True
