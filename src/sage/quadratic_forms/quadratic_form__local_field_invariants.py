@@ -223,7 +223,7 @@ def _rational_diagonal_form_and_transformation(self):
     """
     n = self.dim()
     K = self.base_ring().fraction_field()
-    Q = self.base_change_to(K)
+    Q = self.change_ring(K)
     MS = MatrixSpace(K, n, n)
 
     try:

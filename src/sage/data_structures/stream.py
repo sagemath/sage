@@ -122,13 +122,13 @@ class Stream():
         If an approximate order or even the true order is known, it
         must be set after calling ``super().__init__``.
 
-        Otherwise, a lazy attribute `_approximate_order` has to be
+        Otherwise, a lazy attribute ``_approximate_order`` has to be
         defined.  Any initialization code depending on the
         approximate orders of input streams can be put into this
         definition.
 
         However, keep in mind that (trivially) this initialization
-        code is not executed if `_approximate_order` is set to a
+        code is not executed if ``_approximate_order`` is set to a
         value before it is accessed.
 
     """
@@ -2017,7 +2017,6 @@ class Stream_plethysm(Stream_binary):
 #                             " support")
         return self._left._approximate_order * self._right._approximate_order
 
-
     def get_coefficient(self, n):
         r"""
         Return the ``n``-th coefficient of ``self``.
@@ -2094,8 +2093,8 @@ class Stream_plethysm(Stream_binary):
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_function(lambda n: s[n], True, 0)
             sage: h = Stream_plethysm(f, g, True, p)
-            sage: B = p[2, 2, 1](sum(p(s[i]) for i in range(7)))  # long time
-            sage: all(h.compute_product(k, Partition([2, 2, 1])) == B.restrict_degree(k) for k in range(7))  # long time
+            sage: B = p[2, 2, 1](sum(p(s[i]) for i in range(7)))
+            sage: all(h.compute_product(k, Partition([2, 2, 1])) == B.restrict_degree(k) for k in range(7))
             True
         """
         # This is the approximate order of the result

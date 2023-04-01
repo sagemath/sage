@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-
 r"""
 Features for testing the presence of ``graphviz``
 """
+
 # ****************************************************************************
 #       Copyright (C) 2018 Sebastien Labbe <slabqc@gmail.com>
+#                     2021 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,6 +12,7 @@ Features for testing the presence of ``graphviz``
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 from . import Executable
 from .join_feature import JoinFeature
 

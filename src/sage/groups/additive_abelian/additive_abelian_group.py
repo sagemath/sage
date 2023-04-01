@@ -143,7 +143,6 @@ def cover_and_relations_from_invariants(invs):
     return (A, B)
 
 
-
 class AdditiveAbelianGroupElement(FGP_Element):
     """
     An element of an :class:`AdditiveAbelianGroup_class`.

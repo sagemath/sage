@@ -45,6 +45,7 @@ Laurent Polynomials
 .. toctree::
    :maxdepth: 1
 
+   sage/rings/polynomial/laurent_polynomial_ring_base
    sage/rings/polynomial/laurent_polynomial_ring
    sage/rings/polynomial/laurent_polynomial
    sage/rings/polynomial/omega

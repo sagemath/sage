@@ -132,8 +132,8 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Fano(),
-            ....:                  contractions=set(), deletions=set(['g']))  # indirect doctest
+            sage: M = MinorMatroid(matroids.named_matroids.Fano(),            # indirect doctest
+            ....:                  contractions=set(), deletions=set(['g']))
             sage: M.is_isomorphic(matroids.Wheel(3))
             True
         """

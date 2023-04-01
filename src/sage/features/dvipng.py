@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Feature for testing the presence of ``dvipng``
 """
