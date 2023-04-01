@@ -619,6 +619,7 @@ class DiffForm(TensorField):
         nondegenerate_tensor: Union[
             PseudoRiemannianMetric, SymplecticForm, None
         ] = None,
+        minus_eigenvalues_convention: bool = False,
     ) -> DiffForm:
         r"""
         Compute the Hodge dual of the differential form with respect to some non-degenerate
@@ -637,8 +638,8 @@ class DiffForm(TensorField):
         `n`-form associated with `g` (see
         :meth:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric.volume_form`)
         and the indices `k_1,\ldots, k_p` are raised with `g`.
-        If `g` is a pseudo-Riemannian metric, an additional multiplicative factor of 
-        `(-1)^s` is introduced on the right-hand side, 
+        If `g` is a pseudo-Riemannian metric, sometimes an additional multiplicative
+        factor of `(-1)^s` is introduced on the right-hand side,
         where `s` is the number of negative eigenvalues of `g`.
 
         INPUT:
@@ -649,6 +650,9 @@ class DiffForm(TensorField):
           :class:`~sage.manifolds.differentiable.symplectic_form.SymplecticForm`.
           If none is provided, the ambient domain of ``self`` is supposed to be endowed
           with a default metric and this metric is then used.
+        - ``minus_eigenvalues_convention`` -- if `true`, a factor of `(-1)^s` is
+            introduced with `s` being the number of negative eigenvalues of the
+            ``nondegenerate_tensor``.
 
         OUTPUT:
 
@@ -783,9 +787,10 @@ class DiffForm(TensorField):
             result = self.up(nondegenerate_tensor).contract(*range(p), eps, *range(p))
             if p > 1:
                 result = result / factorial(p)
-            from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
-            if isinstance(nondegenerate_tensor, PseudoRiemannianMetric):
-                result = result * nondegenerate_tensor._indic_signat
+            if minus_eigenvalues_convention:
+                from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+                if isinstance(nondegenerate_tensor, PseudoRiemannianMetric):
+                    result = result * nondegenerate_tensor._indic_signat
 
         result.set_name(
             name=format_unop_txt("*", self._name),
