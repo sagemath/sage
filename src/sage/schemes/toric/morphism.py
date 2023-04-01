@@ -1056,7 +1056,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
                     [z2 : z1 : z0 : z0]
         """
         phi_i, phi_b, phi_s = self.fan_morphism().factor()
-        from sage.schemes.toric.all import ToricVariety
+        from sage.schemes.toric.variety import ToricVariety
         X = self.domain()
         X_s = ToricVariety(phi_s.codomain_fan())
         X_i = ToricVariety(phi_i.domain_fan())

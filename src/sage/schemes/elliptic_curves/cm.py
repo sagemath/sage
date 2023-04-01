@@ -43,7 +43,6 @@ from sage.rings.integer_ring import IntegerRing
 from sage.rings.number_field.number_field import is_fundamental_discriminant
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-from sage.schemes.elliptic_curves.all import EllipticCurve
 from sage.misc.cachefunc import cached_function
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 
@@ -997,6 +996,7 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
     # Construct an elliptic curve with j-invariant j, with
     # integral model:
 
+    from sage.schemes.elliptic_curves.constructor import EllipticCurve
     E = EllipticCurve(j=j).integral_model()
     D = E.discriminant()
     prime_bound = 1000 # test primes of degree 1 up to this norm

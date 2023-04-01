@@ -657,7 +657,7 @@ cdef class NCPolynomialRing_plural(Ring):
             Ambient free module of rank 3 over Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {y*x: -x*y}
 
         """
-        from sage.modules.all import FreeModule
+        from sage.modules.free_module import FreeModule
         return FreeModule(self, n)
 
     def term_order(self):

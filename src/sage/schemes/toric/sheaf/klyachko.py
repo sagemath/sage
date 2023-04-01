@@ -227,7 +227,7 @@ class KlyachkoBundle_class(SageObject):
             sage: T_P2.fiber()
             Vector space of dimension 2 over Rational Field
         """
-        from sage.modules.all import VectorSpace
+        from sage.modules.free_module import VectorSpace
         return VectorSpace(self.base_ring(), self.rank())
 
     def rank(self):
@@ -702,7 +702,7 @@ class KlyachkoBundle_class(SageObject):
             H^*i(P^2, TP^2)_M(1, -1) = (1, 0, 0)
             H^*i(P^2, TP^2)_M(1, 0) = (1, 0, 0)
         """
-        from sage.modules.all import FreeModule
+        from sage.modules.free_module import FreeModule
         if weight is None:
             raise NotImplementedError('sum over weights is not implemented')
         else:

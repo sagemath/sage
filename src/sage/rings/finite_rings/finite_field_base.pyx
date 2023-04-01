@@ -1230,7 +1230,7 @@ cdef class FiniteField(Field):
             sage: all(to_V(h(c) * e) == c * to_V(e) for e in E for c in F)
             True
         """
-        from sage.modules.all import VectorSpace
+        from sage.modules.free_module import VectorSpace
         from sage.categories.morphism import is_Morphism
         if subfield is not None:
             if base is not None:

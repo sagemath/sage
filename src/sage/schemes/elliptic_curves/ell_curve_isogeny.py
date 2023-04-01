@@ -89,7 +89,7 @@ from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.fraction_field import FractionField
 
-from sage.schemes.elliptic_curves.all import EllipticCurve
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
 
 from sage.schemes.elliptic_curves.weierstrass_morphism \
