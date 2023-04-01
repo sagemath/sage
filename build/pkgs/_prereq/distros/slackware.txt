@@ -14,6 +14,5 @@ python3          # on slackware-current
 flex
 # for https upstream_url downloads
 ca-certificates
-pkg-config
 libxml2
 cyrus-sasl
