@@ -3476,7 +3476,8 @@ class SmallPermutationGroup(PermutationGroup_generic):
         [ 1  1 -1  1 -1 -1]
         [ 2  0 -2 -1  0  1]
         [ 2  0  2 -1  0 -1]
-        sage: all(SmallPermutationGroup(n,k).id()==[n,k] for n in [1..64] for k in [1..oeis(1)[n]])
+        sage: def numgps(n) : return ZZ(libgap.NumberSmallGroups(n))
+        sage: all(SmallPermutationGroup(n,k).id()==[n,k] for n in [1..64] for k in [1..numgps(n)])
         True
         sage: H = SmallPermutationGroup(6,1)
         sage: H.is_abelian()
