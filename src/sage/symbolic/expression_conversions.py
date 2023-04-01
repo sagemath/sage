@@ -1245,6 +1245,16 @@ class AlgebraicConverter(Converter):
             sage: a.composition(sin(pi/7), sin)
             0.4338837391175581? + 0.?e-18*I
 
+            sage: x = SR.var('x')
+            sage: a.composition(complex_root_of(x^3 - x^2 - x - 1, 0), complex_root_of)
+            1.839286755214161?
+            sage: a.composition(complex_root_of(x^5 - 1, 3), complex_root_of)
+            0.3090169943749474? - 0.9510565162951536?*I
+            sage: a.composition(complex_root_of(x^2 + 1, 0), complex_root_of)
+            1.?e-684 - 0.9999999999999999?*I
+            sage: a.composition(complex_root_of(x^2 + 1, 1), complex_root_of)
+            1.?e-684 + 0.9999999999999999?*I
+
         TESTS::
 
             sage: QQbar(zeta(7))
@@ -1287,7 +1297,8 @@ class AlgebraicConverter(Converter):
             ValueError: unable to represent as an algebraic number
         """
         func = operator
-        operand, = ex.operands()
+        operands = ex.operands()
+        operand = operands[0]
 
         if isinstance(self.field, UniversalCyclotomicField):
             QQbar = self.field
@@ -1295,6 +1306,7 @@ class AlgebraicConverter(Converter):
         else:
             QQbar = self.field.algebraic_closure()
             hold = False
+
         zeta = QQbar.zeta
         # Note that comparing functions themselves goes via maxima, and is SLOW
         func_name = repr(func)
@@ -1330,6 +1342,11 @@ class AlgebraicConverter(Converter):
                 res = (exp_a - ~exp_a) / (exp_a + ~exp_a)
         elif func_name in self.reciprocal_trig_functions:
             res = ~self.reciprocal_trig_functions[func_name](operand)._algebraic_(QQbar)
+        elif func_name == 'complex_root_of':
+            cr = ex._sympy_()
+            poly = cr.poly._sage_()
+            interval = cr._get_interval()._sage_()
+            return self.field.polynomial_root(poly, interval)
         else:
             res = func(operand._algebraic_(self.field))
             # We have to handle the case where we get the same symbolic
