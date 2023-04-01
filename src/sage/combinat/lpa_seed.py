@@ -34,8 +34,8 @@ import random
 import time
 
 from copy import copy
-from sage.arith.all import factor
-from sage.arith.all import gcd
+from sage.arith.misc import factor
+from sage.arith.misc import gcd
 from sage.graphs.graph import Graph
 from sage.rings.fraction_field import FractionField
 from sage.rings.infinity import infinity
