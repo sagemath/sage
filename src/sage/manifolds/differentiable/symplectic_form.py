@@ -592,7 +592,7 @@ class SymplecticForm(DiffForm):
         r"""
         Return the contraction of the two forms with respect to the symplectic form.
 
-        The symplectic form `\omega` gives rise to a bilinear form, 
+        The symplectic form `\omega` gives rise to a bilinear form,
         also denoted by `\omega` on the space of `1`-forms by
 
         .. MATH::

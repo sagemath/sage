@@ -2,8 +2,6 @@
 from _pytest.fixtures import FixtureRequest
 import pytest
 
-# TODO: Remove sage.all import as soon as it's no longer necessary to load everything upfront
-import sage.all
 from sage.manifolds.manifold import Manifold
 from sage.manifolds.differentiable.manifold import DifferentiableManifold
 from sage.manifolds.differentiable.examples.sphere import Sphere
@@ -218,4 +216,3 @@ class TestR2VectorSpace:
         a = M.one_form(1,2)
         b = M.one_form(3,4)
         assert a.wedge(b.hodge_dual(omega)) == omega.on_forms(a, b) * omega.volume_form()
-
