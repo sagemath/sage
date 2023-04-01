@@ -315,6 +315,11 @@ class DiGraph(GenericGraph):
       immutable digraph. Note that ``immutable=True`` is actually a shortcut for
       ``data_structure='static_sparse'``.
 
+    - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
+      labels during hashing. This parameter defaults to ``True`` if the digraph
+      is weighted. This parameter is ignored if the digraph is mutable.
+      Beware that trying to hash unhashable labels will raise an error.
+
     - ``vertex_labels`` -- boolean (default: ``True``); whether to allow any
       object as a vertex (slower), or only the integers `0,...,n-1`, where `n`
       is the number of vertices.
@@ -422,17 +427,17 @@ class DiGraph(GenericGraph):
 
     #. A NetworkX MultiDiGraph::
 
-            sage: import networkx
-            sage: g = networkx.MultiDiGraph({0: [1, 2, 3], 2: [4]})
-            sage: DiGraph(g)
+            sage: import networkx                                                       # optional - networkx
+            sage: g = networkx.MultiDiGraph({0: [1, 2, 3], 2: [4]})                     # optional - networkx
+            sage: DiGraph(g)                                                            # optional - networkx
             Multi-digraph on 5 vertices
 
 
     #. A NetworkX digraph::
 
-            sage: import networkx
-            sage: g = networkx.DiGraph({0: [1, 2, 3], 2: [4]})
-            sage: DiGraph(g)
+            sage: import networkx                                                       # optional - networkx
+            sage: g = networkx.DiGraph({0: [1, 2, 3], 2: [4]})                          # optional - networkx
+            sage: DiGraph(g)                                                            # optional - networkx
             Digraph on 5 vertices
 
     #. An igraph directed Graph (see also
@@ -472,18 +477,18 @@ class DiGraph(GenericGraph):
     Demonstrate that digraphs using the static backend are equal to mutable
     graphs but can be used as dictionary keys::
 
-        sage: import networkx
-        sage: g = networkx.DiGraph({0:[1,2,3], 2:[4]})
-        sage: G = DiGraph(g)
-        sage: G_imm = DiGraph(G, data_structure="static_sparse")
-        sage: H_imm = DiGraph(G, data_structure="static_sparse")
-        sage: H_imm is G_imm
+        sage: import networkx                                                           # optional - networkx
+        sage: g = networkx.DiGraph({0:[1,2,3], 2:[4]})                                  # optional - networkx
+        sage: G = DiGraph(g)                                                            # optional - networkx
+        sage: G_imm = DiGraph(G, data_structure="static_sparse")                        # optional - networkx
+        sage: H_imm = DiGraph(G, data_structure="static_sparse")                        # optional - networkx
+        sage: H_imm is G_imm                                                            # optional - networkx
         False
-        sage: H_imm == G_imm == G
+        sage: H_imm == G_imm == G                                                       # optional - networkx
         True
-        sage: {G_imm:1}[H_imm]
+        sage: {G_imm:1}[H_imm]                                                          # optional - networkx
         1
-        sage: {G_imm:1}[G]
+        sage: {G_imm:1}[G]                                                              # optional - networkx
         Traceback (most recent call last):
         ...
         TypeError: This graph is mutable, and thus not hashable. Create an
@@ -493,10 +498,10 @@ class DiGraph(GenericGraph):
     specifying the ``immutable`` optional argument (not only by
     ``data_structure='static_sparse'`` as above)::
 
-        sage: J_imm = DiGraph(G, immutable=True)
-        sage: J_imm == G_imm
+        sage: J_imm = DiGraph(G, immutable=True)                                        # optional - networkx
+        sage: J_imm == G_imm                                                            # optional - networkx
         True
-        sage: type(J_imm._backend) == type(G_imm._backend)
+        sage: type(J_imm._backend) == type(G_imm._backend)                              # optional - networkx
         True
 
     From a list of vertices and a list of edges::
@@ -508,7 +513,7 @@ class DiGraph(GenericGraph):
 
     Check that :trac:`27505` is fixed::
 
-        sage: DiGraph(DiGraph().networkx_graph(), weighted=None, format='NX')
+        sage: DiGraph(DiGraph().networkx_graph(), weighted=None, format='NX')           # optional - networkx
         Digraph on 0 vertices
     """
     _directed = True
@@ -517,7 +522,7 @@ class DiGraph(GenericGraph):
                  weighted=None, data_structure="sparse",
                  vertex_labels=True, name=None,
                  multiedges=None, convert_empty_dict_labels_to_None=None,
-                 sparse=True, immutable=False):
+                 sparse=True, immutable=False, hash_labels=None):
         """
         TESTS::
 
@@ -842,6 +847,10 @@ class DiGraph(GenericGraph):
         # weighted, multiedges, loops, verts and num_verts should now be set
         self._weighted = weighted
 
+        if hash_labels is None and hasattr(data, '_hash_labels'):
+            hash_labels = data._hash_labels
+        self._hash_labels = hash_labels
+
         self._pos = copy(pos)
 
         if format != 'DiGraph' or name is not None:
@@ -856,6 +865,7 @@ class DiGraph(GenericGraph):
             self._immutable = True
 
     # Formats
+
     def dig6_string(self):
         r"""
         Return the ``dig6`` representation of the digraph as an ASCII string.
@@ -977,7 +987,7 @@ class DiGraph(GenericGraph):
             ....:  return h
             ...
             sage: all(random_acyclic(100, .2).is_directed_acyclic()    # long time
-            ....:      for i in range(50))                             # long time
+            ....:      for i in range(50))
             True
 
         TESTS:
@@ -2249,7 +2259,7 @@ class DiGraph(GenericGraph):
                 if with_labels:
                     return dict(zip(v, eccentricity(self, algorithm=algo, vertex_list=v)))
                 else:
-                    return eccentricity(self, algorithm=algo)
+                    return eccentricity(self, algorithm=algo, vertex_list=v)
 
             if algorithm in ['Floyd-Warshall-Python', 'Floyd-Warshall-Cython', 'Johnson_Boost']:
                 dist_dict = self.shortest_path_all_pairs(by_weight=by_weight, algorithm=algorithm,
@@ -2343,11 +2353,17 @@ class DiGraph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: radius is not defined for the empty DiGraph
+
+        Check that :trac:`35300` is fixed::
+
+            sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
+            sage: H.radius()
+            1
         """
         if not self.order():
             raise ValueError("radius is not defined for the empty DiGraph")
 
-        return min(self.eccentricity(v=None, by_weight=by_weight,
+        return min(self.eccentricity(v=list(self), by_weight=by_weight,
                                      weight_function=weight_function,
                                      check_weight=check_weight,
                                      algorithm=algorithm))
@@ -2476,6 +2492,15 @@ class DiGraph(GenericGraph):
             3
             sage: G.diameter(algorithm='DiFUB', by_weight=True)
             3.0
+
+        Check that :trac:`35300` is fixed::
+
+            sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
+            sage: H.diameter()
+            +Infinity
+            sage: H.add_edge('John', 42)
+            sage: H.diameter()
+            1
         """
         if not self.order():
             raise ValueError("diameter is not defined for the empty DiGraph")
@@ -2507,7 +2532,7 @@ class DiGraph(GenericGraph):
             from sage.graphs.distances_all_pairs import diameter
             return diameter(self, algorithm='standard')
 
-        return max(self.eccentricity(v=None, by_weight=by_weight,
+        return max(self.eccentricity(v=list(self), by_weight=by_weight,
                                      weight_function=weight_function,
                                      check_weight=False,
                                      algorithm=algorithm))

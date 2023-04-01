@@ -397,7 +397,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         else:
             return matrix_integer_sparse.Matrix_integer_sparse
 
-    if R is sage.rings.real_double.RDF or R is sage.rings.complex_double.CDF:
+    if isinstance(R, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
         from . import matrix_double_sparse
         return matrix_double_sparse.Matrix_double_sparse
 

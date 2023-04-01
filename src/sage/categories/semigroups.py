@@ -510,7 +510,6 @@ class Semigroups(CategoryWithAxiom):
                 raise ArithmeticError("only positive powers are supported in a semigroup")
             return generic_power(self, n)
 
-
     class SubcategoryMethods:
 
         @cached_method

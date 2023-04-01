@@ -214,7 +214,6 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
     return OrthogonalMatrixGroup_generic(degree, ring, False, name, ltx, invariant_form=invariant_form)
 
 
-
 ########################################################################
 # General Orthogonal Group
 ########################################################################
@@ -326,7 +325,6 @@ def GO(n, R, e=0, var='a', invariant_form=None):
     return _OG(n, R, False, e=e, var=var, invariant_form=invariant_form)
 
 
-
 ########################################################################
 # Special Orthogonal Group
 ########################################################################
@@ -435,7 +433,6 @@ def SO(n, R, e=None, var='a', invariant_form=None):
         Special Orthogonal Group of degree 2 and form parameter 1 over Finite Field of size 3
     """
     return _OG(n, R, True, e=e, var=var, invariant_form=invariant_form)
-
 
 
 ########################################################################

@@ -1030,7 +1030,7 @@ cdef class dancing_linksWrapper:
             sage: d = dlx_solver(rows)
             sage: p,x = d.to_milp()
             sage: p
-            Boolean Program (no objective, 4 variables, 4 constraints)
+            Boolean Program (no objective, 4 variables, ... constraints)
             sage: x
             MIPVariable with 4 binary components
 
@@ -1041,7 +1041,7 @@ cdef class dancing_linksWrapper:
             Maximization:
             <BLANKLINE>
             <BLANKLINE>
-            Constraints:
+            Constraints:...
               one 1 in 0-th column: 1.0 <= x_0 + x_1 <= 1.0
               one 1 in 1-th column: 1.0 <= x_0 + x_2 <= 1.0
               one 1 in 2-th column: 1.0 <= x_0 + x_1 <= 1.0

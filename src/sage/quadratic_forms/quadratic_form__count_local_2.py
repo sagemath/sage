@@ -68,10 +68,6 @@ def count_congruence_solutions_as_vector(self, p, k, m, zvec, nzvec):
     return CountAllLocalTypesNaive(self, p, k, m, zvec, nzvec)
 
 
-
-
-
-
 ##///////////////////////////////////////////
 ##/// Front-ends for our counting routines //
 ##///////////////////////////////////////////
@@ -100,7 +96,6 @@ def count_congruence_solutions(self, p, k, m, zvec, nzvec):
 
     """
     return CountAllLocalTypesNaive(self, p, k, m, zvec, nzvec)[0]
-
 
 
 def count_congruence_solutions__good_type(self, p, k, m, zvec, nzvec):

@@ -173,7 +173,6 @@ def Sp(n, R, var='a', invariant_form=None):
     return SymplecticMatrixGroup_generic(degree, ring, True, name, ltx, invariant_form=invariant_form)
 
 
-
 class SymplecticMatrixGroup_generic(NamedMatrixGroup_generic):
     r"""
     Symplectic Group over arbitrary rings.

@@ -1216,11 +1216,10 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             Looped multi-digraph on 2 vertices
         """
         from sage.graphs.digraph import DiGraph
-        res = DiGraph(multiedges=True,loops=True)
+        res = DiGraph(multiedges=True, loops=True)
         res.add_vertices(list(range(self.index())))
 
-
-        if right_cosets: # invert the permutations
+        if right_cosets:  # invert the permutations
             S2 = [None]*self.index()
             S3 = [None]*self.index()
             L = [None]*self.index()

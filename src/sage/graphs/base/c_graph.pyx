@@ -4586,7 +4586,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             ....:  return h
             ...
             sage: all( random_acyclic(100, .2).is_directed_acyclic()    # long time
-            ....:      for i in range(50))                              # long time
+            ....:      for i in range(50))
             True
 
         TESTS::

@@ -3836,9 +3836,9 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: S.<x> = W[]
             sage: R.<pi> = W.extension(x^8 + 15*a*x - 5)
             sage: y = R.random_element()
-            sage: for n in [5, 10, 15]:
+            sage: for n in [5, 10, 15]:                                                       # indirect doctest
             ....:     z = y**n
-            ....:     assert z.nth_root(n)**n == z  # indirect doctest
+            ....:     assert z.nth_root(n)**n == z
 
         """
         ring = self.parent()

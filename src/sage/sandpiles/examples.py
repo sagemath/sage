@@ -139,8 +139,7 @@ class SandpileExamples():
             sage: s.invariant_factors()
             [1, 1, 8]
         """
-        return Sandpile(graphs.DiamondGraph(),0)
-
+        return Sandpile(graphs.DiamondGraph(), 0)
 
     def Fan(self, n, deg_three_verts=False):
         """

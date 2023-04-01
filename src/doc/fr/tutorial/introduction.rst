@@ -105,7 +105,7 @@ Les différentes manières d'utiliser Sage
 
 Il y a plusieurs façons d'utiliser Sage.
 
--  **Interface graphique (« notebook ») :** démarrer `sage -n jupyter`; lire 
+-  **Interface graphique (« notebook ») :** démarrer ``sage -n jupyter``; lire 
    `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_ ;
 
 -  **Ligne de commande :** voir :ref:`chapter-interactive_shell` ;

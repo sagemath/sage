@@ -69,6 +69,7 @@ if TYPE_CHECKING:
     from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
     from sage.manifolds.differentiable.symplectic_form import SymplecticForm
     from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
+    from sage.manifolds.point import ManifoldPoint
     from sage.tensor.modules.comp import Components
 
 
@@ -3634,7 +3635,7 @@ class TensorField(ModuleElementWithMutability):
 
     lie_der = lie_derivative
 
-    def at(self, point):
+    def at(self, point: ManifoldPoint) -> FreeModuleTensor:
         r"""
         Value of ``self`` at a point of its domain.
 
