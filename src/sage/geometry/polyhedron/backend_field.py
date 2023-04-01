@@ -248,7 +248,8 @@ class Polyhedron_field(Polyhedron_base):
             sage: Vrep = [[[0], [1]], [], []]
             sage: Hrep = [[[0, 1], [1, -1]], []]
             sage: p = Polyhedron_field(parent, Vrep, Hrep,  # indirect doctest  # optional - sage.rings.number_field
-            ....:                      Vrep_minimal=True, Hrep_minimal=True)
+            ....:                      Vrep_minimal=True,
+            ....:                      Hrep_minimal=True)
             sage: p.vertices_list()                                             # optional - sage.rings.number_field
             [[0], [1]]
         """
@@ -268,8 +269,10 @@ class Polyhedron_field(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices=[(0,1/sqrt(2)),(sqrt(2),0),(4,sqrt(5)/6)],   # optional - sage.rings.number_field
-            ....:                base_ring=AA, backend='field')  # indirect doctest
+            sage: p = Polyhedron(vertices=[(0, 1/sqrt(2)),  # indirect doctest  # optional - sage.rings.number_field
+            ....:                          (sqrt(2), 0),
+            ....:                          (4, sqrt(5)/6)],
+            ....:                base_ring=AA, backend='field')
             sage: p.Hrepresentation()                                           # optional - sage.rings.number_field
             (An inequality (-0.1582178750233332?, 1.097777812326429?) x + 0.2237538646678492? >= 0,
              An inequality (-0.1419794359520263?, -1.698172434277148?) x + 1.200789243901438? >= 0,
@@ -311,8 +314,10 @@ class Polyhedron_field(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices=[(0,1/sqrt(2)),(sqrt(2),0),(4,sqrt(5)/6)],   # optional - sage.rings.number_field
-            ....:                base_ring=AA, backend='field')  # indirect doctest
+            sage: p = Polyhedron(vertices=[(0, 1/sqrt(2)),  # indirect doctest  # optional - sage.rings.number_field
+            ....:                          (sqrt(2), 0),
+            ....:                          (4, sqrt(5)/6)],
+            ....:                base_ring=AA, backend='field')
             sage: p.Hrepresentation()                                           # optional - sage.rings.number_field
             (An inequality (-0.1582178750233332?, 1.097777812326429?) x + 0.2237538646678492? >= 0,
              An inequality (-0.1419794359520263?, -1.698172434277148?) x + 1.200789243901438? >= 0,

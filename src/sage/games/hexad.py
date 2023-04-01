@@ -107,7 +107,6 @@ def view_list(L):
     return matrix(GF(2), 3, 3, lambda x, y: 1 if (x,y) in L else 0)
 
 
-
 def picture_set(A, L):
     """
     This is needed in the :meth:`Minimog.find_hexad` function below.

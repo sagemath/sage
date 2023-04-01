@@ -1,4 +1,4 @@
-$(PYTHON) $(MP_LIBRARY) gmpy2 cysignals mpfr mpc ppl | $(PYTHON_TOOLCHAIN)
+$(PYTHON) $(MP_LIBRARY) gmpy2 cysignals mpfr mpc ppl | $(PYTHON_TOOLCHAIN) sphinx
 
 ----------
 All lines of this file are ignored except the first.

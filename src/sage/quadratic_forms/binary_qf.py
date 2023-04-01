@@ -51,7 +51,7 @@ AUTHORS:
 # ****************************************************************************
 from functools import total_ordering
 
-from sage.libs.pari.all import pari_gen
+from sage.libs.pari.all import pari_gen, pari
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import is_fundamental_discriminant
 from sage.arith.misc import gcd
@@ -607,7 +607,7 @@ class BinaryQF(SageObject):
             sage: Q.has_fundamental_discriminant()
             False
         """
-        return is_fundamental_discriminant(self.discriminant())
+        return self.discriminant().is_fundamental_discriminant()
 
     def is_primitive(self):
         r"""
@@ -1541,7 +1541,7 @@ class BinaryQF(SageObject):
                 raise ValueError("Unable to find a prime value of %s" % self)
             B += 10
 
-    def solve_integer(self, n):
+    def solve_integer(self, n, *, algorithm="general"):
         r"""
         Solve `Q(x, y) = n` in integers `x` and `y` where `Q` is this
         quadratic form.
@@ -1550,18 +1550,39 @@ class BinaryQF(SageObject):
 
         - ``n`` -- a positive integer
 
+        - ``algorithm`` -- ``"general"`` (default) or ``"cornacchia"``
+
+        To use the Cornacchia algorithm, the quadratic form must have
+        `a=1` and `b=0` and `c>0`, and ``n`` must be a prime or four
+        times a prime (but this is not checked).
+
         OUTPUT:
 
         A tuple `(x, y)` of integers satisfying `Q(x, y) = n`, or ``None``
         if no solution exists.
 
-        ALGORITHM: :pari:`qfbsolve`
+        ALGORITHM: :pari:`qfbsolve` or :pari:`qfbcornacchia`
 
         EXAMPLES::
 
             sage: Q = BinaryQF([1, 0, 419])
             sage: Q.solve_integer(773187972)
             (4919, 1337)
+
+        If `Q` is of the form `[1,0,c]` as above and `n` is a prime or
+        four times a prime, Cornacchia's algorithm can be used, which is
+        typically much faster than the general method::
+
+            sage: Q = BinaryQF([1, 0, 12345])
+            sage: n = 2^99 + 5273
+            sage: Q.solve_integer(n)
+            (-67446480057659, 7139620553488)
+            sage: Q.solve_integer(n, algorithm='cornacchia')
+            (67446480057659, 7139620553488)
+            sage: timeit('Q.solve_integer(n)')                          # not tested
+            125 loops, best of 3: 3.13 ms per loop
+            sage: timeit('Q.solve_integer(n, algorithm="cornacchia")')  # not tested
+            625 loops, best of 3: 18.6 μs per loop
 
         ::
 
@@ -1583,6 +1604,20 @@ class BinaryQF(SageObject):
             sage: n = randrange(-10^9, 10^9)
             sage: xy = Q.solve_integer(n)
             sage: xy is None or Q(*xy) == n
+            True
+
+        Also when using the ``"cornacchia"`` algorithm::
+
+            sage: abc = [1,0,randrange(1,10^3)]
+            sage: Q = BinaryQF(abc)
+            sage: n = random_prime(10^9)
+            sage: if randrange(2):
+            ....:     n *= 4
+            sage: xy1 = Q.solve_integer(n, algorithm='cornacchia')
+            sage: xy1 is None or Q(*xy1) == n
+            True
+            sage: xy2 = Q.solve_integer(n)
+            sage: (xy1 is None) == (xy2 is None)
             True
 
         Test for square discriminants specifically (:trac:`33026`)::
@@ -1626,6 +1661,13 @@ class BinaryQF(SageObject):
             Q = self.matrix_action_right(M)
             assert not Q._c
 
+            if not Q._b:
+                # at this point, Q = a*x^2
+                if Q._a.divides(n) and (n // Q._a).is_square():
+                    x = (n // Q._a).isqrt()
+                    return tuple(row[0] * x for row in M.rows())
+                return None
+
             # at this point, Q = a*x^2 + b*x*y
             if not n:
                 return tuple(M.columns()[1])
@@ -1633,9 +1675,18 @@ class BinaryQF(SageObject):
                 y_num = n // x - Q._a * x
                 if Q._b.divides(y_num):
                     y = y_num // Q._b
-                    return tuple(row[0]*x + row[1]*y for row in M.rows())
+                    return tuple([row[0]*x + row[1]*y for row in M.rows()])
 
             return None
+
+        if algorithm == 'cornacchia':
+            if not (self._a.is_one() and self._b.is_zero() and self._c > 0):
+                raise ValueError("Cornacchia's algorithm requires a=1 and b=0 and c>0")
+            sol = pari.qfbcornacchia(self._c, n)
+            return tuple(map(ZZ, sol)) if sol else None
+
+        if algorithm != 'general':
+            raise ValueError(f'algorithm {algorithm!r} is not a valid algorithm')
 
         flag = 2  # single solution, possibly imprimitive
         sol = self.__pari__().qfbsolve(n, flag)
@@ -1774,7 +1825,7 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
 
     # For a fundamental discriminant all forms are primitive so we need not check:
     if primitive_only:
-        primitive_only = not is_fundamental_discriminant(D)
+        primitive_only = not D.is_fundamental_discriminant()
 
     form_list = []
 

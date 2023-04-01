@@ -617,7 +617,7 @@ class Gp(ExtraTabCompletion, Expect):
 
             sage: g = Gp(stacksize=10^4,init_list_length=12000)  # long time
             sage: for n in [1..13000]:  # long time
-            ....:     a = g(n)          # long time
+            ....:     a = g(n)
             sage: g('length(sage)')     # long time
             24000
         """
