@@ -48,7 +48,7 @@ only differ by a lattice automorphism::
     sage: square = LatticePolytope_PPL((-1,-1),(-1,1),(1,-1),(1,1))
     sage: fibers = [ f.vertices() for f in square.fibration_generator(1) ];  fibers
     [((1, 0), (-1, 0)), ((0, 1), (0, -1)), ((-1, -1), (1, 1)), ((-1, 1), (1, -1))]
-    sage: square.pointsets_mod_automorphism(fibers)
+    sage: square.pointsets_mod_automorphism(fibers)                                     # optional - sage.groups
     (frozenset({(-1, -1), (1, 1)}), frozenset({(-1, 0), (1, 0)}))
 
 AUTHORS:
@@ -177,7 +177,6 @@ def LatticePolytope_PPL(*args):
         dim = next(iter(gs)).space_dimension()
         polytope_class = _class_for_LatticePolytope(dim)
     return polytope_class(gs)
-
 
 
 ########################################################################

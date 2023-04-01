@@ -84,7 +84,6 @@ class HeckeModules(Category_module):
         R = self.base_ring()
         return [ModulesWithBasis(R)]
 
-
     def _repr_object_names(self):
         """
         Return the names of the objects of this category.

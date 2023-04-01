@@ -668,8 +668,8 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
         ....:    [10, 13, 78, 9, 9, 13, 1],
         ....:    [10, 13, 79, 9, 9, 13, 1]]
         sage: for k,n,m,a,b,c,d in l:                                       # not tested -- too long
-        ....:     OA = thwart_lemma_3_5(k,n,m,a,b,c,d,complement=True)      # not tested -- too long
-        ....:     assert is_orthogonal_array(OA,k,n*m+a+b+c+d,verbose=True) # not tested -- too long
+        ....:     OA = thwart_lemma_3_5(k,n,m,a,b,c,d,complement=True)
+        ....:     assert is_orthogonal_array(OA,k,n*m+a+b+c+d,verbose=True)
 
         sage: print(designs.orthogonal_arrays.explain_construction(10,1046))
         Lemma 3.5 with n=13,m=79,a=9,b=1,c=0,d=9 from:
@@ -1603,7 +1603,6 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
 
         # The set of size x
         OA.extend([N-xx-1 for xx in B] for B in orthogonal_array(k,x))
-
 
     # iv)
     elif (x == q**2+1 and
