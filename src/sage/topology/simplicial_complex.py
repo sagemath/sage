@@ -4802,7 +4802,77 @@ class SimplicialComplex(Parent, GenericCellComplex):
             F = F + [s for s in self.faces()[k] if s in other.faces()[k]]
         return SimplicialComplex(F)
 
+    def bigraded_betti_numbers(self):
+        r"""
+        Calculates the Bigraded betti numbers of a simplical complex.
 
+        EXAMPLES:: 
+            TODO
+        """
+        from sage.misc.functional import gens 
+        L = set(self.vertices())
+        n = len(L)
+        D = {0:0}
+        B = {0:0}
+
+        for i in range(n+1):
+            D[i] = list(combinations(L,i))
+
+        for i in range(n+1):
+            for j in range (n+1):
+                B[(-i, 2*j)] = 0
+
+        B[(0,0)] = 1
+
+        for j in range(n+1):
+            for x in D[j]:
+                S = self.generated_subcomplex(x)
+                H = S.homology()
+                for k in range(j):
+                    if H.get(j-k-1) != H.get(0) and H.get(j-k-1) != None:
+                        B[(-k, 2*j)] = B[(-k, 2*j)] + len(gens(H.get(j-k-1)))
+
+        B = {key:val for key,val in B.items() if val != 0}
+	    
+        return B
+
+    def bigraded_betti_number(self, a, b):
+        r"""
+        Returns the bigraded betti number indexed in the form (-i, 2j).
+
+        EXAMPLES::
+            TODO
+        """
+        import sys
+        from sage.misc.functional import gens
+        if b % 2 == 1:
+            #TODO
+            return 'Error: Second argument must be even. Run help(bigraded_betti_number) for more information.'
+        if a == 0 and b == 0:
+            return 1;
+
+        a = -a
+        b = b / 2
+        L = set(self.vertices())
+        n = len(L)
+        D = {0 : 0}
+
+        for i in range(n + 1):
+            D[i] = list(combinations(L, i))
+
+        B = 0
+
+        for x in D[b]:
+            S = self.generated_subcomplex(x)
+            H = S.homology()
+            for k in range(b):
+                if H.get(b-k-1) != H.get(0) and H.get(b-k-1) != None:
+                    B = B + len(gens(H.get(b-k-1)))
+
+        return B
+
+
+            
 # Miscellaneous utility functions.
 
 # The following two functions can be used to generate the facets for
@@ -4872,3 +4942,4 @@ def facets_for_K3():
                          [(1,11,16),(2,10,14),(3,12,13),(4,9,15),(5,7,8)]])
     return ([tuple([g(i) for i in (1,2,3,8,12)]) for g in G]
             + [tuple([g(i) for i in (1,2,5,8,14)]) for g in G])
+
