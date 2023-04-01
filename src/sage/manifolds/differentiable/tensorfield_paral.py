@@ -657,7 +657,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         # Initialization of derived quantities:
         self._init_derived()
 
-
     def _repr_(self):
         r"""
         String representation of ``self``.
@@ -768,7 +767,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
                 format_spec = basis
             basis = basis.frame()
         return (basis, format_spec)
-
 
     def _set_comp_unsafe(self, basis=None):
         r"""
@@ -1510,7 +1508,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
                             rsum += tc[[indk]].coord_function(chart) * \
                                     vc[[i]].coord_function(chart).diff(ind[k])
                     resc[[ind]] = rsum.scalar_field()
-
 
             #
             # 3/ Final result (the tensor)

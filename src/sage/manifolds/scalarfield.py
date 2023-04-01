@@ -2652,7 +2652,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             result._latex_name = '-' + self._latex_name
         return result
 
-
     #########  CommutativeAlgebraElement arithmetic operators ########
 
     def _add_(self, other):
