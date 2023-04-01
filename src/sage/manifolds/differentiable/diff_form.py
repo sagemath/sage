@@ -641,6 +641,8 @@ class DiffForm(TensorField):
         If `g` is a pseudo-Riemannian metric, sometimes an additional multiplicative
         factor of `(-1)^s` is introduced on the right-hand side,
         where `s` is the number of negative eigenvalues of `g`.
+        This convention can be enforced by setting the option
+        ``minus_eigenvalues_convention``.
 
         INPUT:
 
