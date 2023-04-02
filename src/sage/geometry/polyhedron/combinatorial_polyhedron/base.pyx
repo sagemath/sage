@@ -355,8 +355,8 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         TESTS::
 
-            sage: C = CombinatorialPolyhedron([[0,1,2],[0,1,3],
-            ....: [0,2,3],[1,2,3]])    # indirect doctest
+            sage: C = CombinatorialPolyhedron([[0,1,2], [0,1,3],   # indirect doctest
+            ....:                              [0,2,3], [1,2,3]])
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron).run()
         """

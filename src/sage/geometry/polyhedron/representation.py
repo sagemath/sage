@@ -1037,7 +1037,6 @@ class Equation(Hrepresentation):
         """
         return self.EQUATION
 
-
     def is_equation(self):
         """
         Tests if this object is an equation.  By construction, it must be.

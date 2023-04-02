@@ -123,7 +123,7 @@ class AlternatingSignMatrix(Element,
         """
         asm = matrix(ZZ, asm)
         if not asm.is_square():
-            raise ValueError("The alternating sign matrices must be square")
+            raise ValueError("the alternating sign matrices must be square")
         return AlternatingSignMatrices(asm.nrows())(asm, check=check)
 
     def __init__(self, parent, asm):
@@ -922,10 +922,10 @@ class AlternatingSignMatrix(Element,
             sage: asm.to_permutation()
             Traceback (most recent call last):
             ...
-            ValueError: Not a permutation matrix
+            ValueError: not a permutation matrix
         """
         if not self.is_permutation():
-            raise ValueError('Not a permutation matrix')
+            raise ValueError('not a permutation matrix')
         asm_matrix = self.to_matrix()
         return Permutation([j + 1 for (i, j) in asm_matrix.nonzero_positions()])
 
@@ -1282,7 +1282,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         """
         n = len(triangle)
         if n != self._n:
-            raise ValueError("Incorrect size")
+            raise ValueError("incorrect size")
 
         asm = self._matrix_space()
         for i in range(n - 1):
