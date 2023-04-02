@@ -54,7 +54,7 @@ def qsieve(n):
         # FLINT doesn't return the plus/minus one factor.
         pairs.append( (Integer(-1), int(1)) )
 
-    cdef mpz_t mpz_factor;
+    cdef mpz_t mpz_factor
     for i in range(factors.num):
         mpz_init(mpz_factor)
         fmpz_get_mpz(mpz_factor, &factors.p[i])
