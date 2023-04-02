@@ -241,7 +241,7 @@ from .posets.all import *
 # Cluster Algebras and Quivers
 from .cluster_algebra_quiver.all import *
 
-from .lpa_seed import LpaSeed
+from .lp_algebra_seed import LpaSeed
 
 from . import ranker
 
