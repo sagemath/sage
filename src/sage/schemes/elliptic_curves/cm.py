@@ -248,7 +248,7 @@ def is_HCP(f, check_monic_irreducible=True):
     # Guarantees 4*p > |D| for fundamental D under GRH
     p = pmin-1
     n = 0
-    from sage.arith.all import next_prime
+    from sage.arith.misc import next_prime
     while True:
         p = next_prime(p)
         n += 1
@@ -315,7 +315,7 @@ def OrderClassNumber(D0,h0,f):
         return h0
     ps = f.prime_divisors()
     from sage.misc.misc_c import prod
-    from sage.arith.all import kronecker_symbol
+    from sage.arith.misc import kronecker as kronecker_symbol
     n = (f // prod(ps)) * prod(p-kronecker_symbol(D0,p) for p in ps)
     if D0 == -3:
         #assert h0 == 1 and n%3==0
