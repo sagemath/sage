@@ -148,7 +148,7 @@ Comprehensive Module List
     sage/combinat/kazhdan_lusztig
     sage/combinat/key_polynomial
     sage/combinat/knutson_tao_puzzles
-    sage/combinat/lpa_seed
+    sage/combinat/lp_algebra_seed
     sage/combinat/matrices/all
     sage/combinat/matrices/dancing_links
     sage/combinat/matrices/dlxcpp
