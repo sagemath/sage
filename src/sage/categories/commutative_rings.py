@@ -110,92 +110,98 @@ class CommutativeRings(CategoryWithAxiom):
 
             We construct an extension of finite fields::
 
-                sage: F = GF(5^2)                                                                                       # optional - sage.libs.pari
-                sage: k = GF(5^4)                                                                                       # optional - sage.libs.pari
-                sage: z4 = k.gen()                                                                                      # optional - sage.libs.pari
+                sage: F = GF(5^2)                                                       # optional - sage.rings.finite_rings
+                sage: k = GF(5^4)                                                       # optional - sage.rings.finite_rings
+                sage: z4 = k.gen()                                                      # optional - sage.rings.finite_rings
 
-                sage: K = k.over(F)                                                                                     # optional - sage.libs.pari
-                sage: K                                                                                                 # optional - sage.libs.pari
-                Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
+                sage: K = k.over(F)                                                     # optional - sage.rings.finite_rings
+                sage: K                                                                 # optional - sage.rings.finite_rings
+                Field in z4 with defining polynomial
+                 x^2 + (4*z2 + 3)*x + z2 over its base
 
             If not explicitly given, the default generator of the top ring
             (here k) is used and the same name is kept::
 
-                sage: K.gen()                                                                                           # optional - sage.libs.pari
+                sage: K.gen()                                                           # optional - sage.rings.finite_rings
                 z4
-                sage: K(z4)                                                                                             # optional - sage.libs.pari
+                sage: K(z4)                                                             # optional - sage.rings.finite_rings
                 z4
 
             However, it is possible to specify another generator and/or
             another name. For example::
 
-                sage: Ka = k.over(F, name='a')                                                                          # optional - sage.libs.pari
-                sage: Ka                                                                                                # optional - sage.libs.pari
-                Field in a with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
-                sage: Ka.gen()                                                                                          # optional - sage.libs.pari
+                sage: Ka = k.over(F, name='a')                                          # optional - sage.rings.finite_rings
+                sage: Ka                                                                # optional - sage.rings.finite_rings
+                Field in a with defining polynomial
+                 x^2 + (4*z2 + 3)*x + z2 over its base
+                sage: Ka.gen()                                                          # optional - sage.rings.finite_rings
                 a
-                sage: Ka(z4)                                                                                            # optional - sage.libs.pari
+                sage: Ka(z4)                                                            # optional - sage.rings.finite_rings
                 a
 
-                sage: Kb = k.over(F, gen=-z4+1, name='b')                                                               # optional - sage.libs.pari
-                sage: Kb                                                                                                # optional - sage.libs.pari
+                sage: Kb = k.over(F, gen=-z4+1, name='b')                               # optional - sage.rings.finite_rings
+                sage: Kb                                                                # optional - sage.rings.finite_rings
                 Field in b with defining polynomial x^2 + z2*x + 4 over its base
-                sage: Kb.gen()                                                                                          # optional - sage.libs.pari
+                sage: Kb.gen()                                                          # optional - sage.rings.finite_rings
                 b
-                sage: Kb(-z4+1)                                                                                         # optional - sage.libs.pari
+                sage: Kb(-z4+1)                                                         # optional - sage.rings.finite_rings
                 b
 
             Note that the shortcut ``K.<a>`` is also available::
 
-                sage: KKa.<a> = k.over(F)                                                                               # optional - sage.libs.pari
-                sage: KKa is Ka                                                                                         # optional - sage.libs.pari
+                sage: KKa.<a> = k.over(F)                                               # optional - sage.rings.finite_rings
+                sage: KKa is Ka                                                         # optional - sage.rings.finite_rings
                 True
 
             Building an extension on top of another extension is allowed::
 
-                sage: L = GF(5^12).over(K)                                                                              # optional - sage.libs.pari
-                sage: L                                                                                                 # optional - sage.libs.pari
-                Field in z12 with defining polynomial x^3 + (1 + (4*z2 + 2)*z4)*x^2 + (2 + 2*z4)*x - z4 over its base
-                sage: L.base_ring()                                                                                     # optional - sage.libs.pari
-                Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
+                sage: L = GF(5^12).over(K)                                              # optional - sage.rings.finite_rings
+                sage: L                                                                 # optional - sage.rings.finite_rings
+                Field in z12 with defining polynomial
+                 x^3 + (1 + (4*z2 + 2)*z4)*x^2 + (2 + 2*z4)*x - z4 over its base
+                sage: L.base_ring()                                                     # optional - sage.rings.finite_rings
+                Field in z4 with defining polynomial
+                 x^2 + (4*z2 + 3)*x + z2 over its base
 
             The successive bases of an extension are accessible via the
             method :meth:`sage.rings.ring_extension.RingExtension_generic.bases`::
 
-                sage: L.bases()                                                                                         # optional - sage.libs.pari
-                [Field in z12 with defining polynomial x^3 + (1 + (4*z2 + 2)*z4)*x^2 + (2 + 2*z4)*x - z4 over its base,
-                 Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base,
+                sage: L.bases()                                                         # optional - sage.rings.finite_rings
+                [Field in z12 with defining polynomial
+                  x^3 + (1 + (4*z2 + 2)*z4)*x^2 + (2 + 2*z4)*x - z4 over its base,
+                 Field in z4 with defining polynomial
+                  x^2 + (4*z2 + 3)*x + z2 over its base,
                  Finite Field in z2 of size 5^2]
 
             When ``base`` is omitted, the canonical base of the ring is used::
 
                 sage: S.<x> = QQ[]
-                sage: E = S.over()                                                                                      # optional - sage.modules
-                sage: E                                                                                                 # optional - sage.modules
+                sage: E = S.over()                                                      # optional - sage.modules
+                sage: E                                                                 # optional - sage.modules
                 Univariate Polynomial Ring in x over Rational Field over its base
-                sage: E.base_ring()                                                                                     # optional - sage.modules
+                sage: E.base_ring()                                                     # optional - sage.modules
                 Rational Field
 
             Here is an example where ``base`` is a defining morphism::
 
-                sage: k.<a> = QQ.extension(x^2 - 2)                                                                     # optional - sage.rings.number_field
-                sage: l.<b> = QQ.extension(x^4 - 2)                                                                     # optional - sage.rings.number_field
-                sage: f = k.hom([b^2])                                                                                  # optional - sage.rings.number_field
-                sage: L = l.over(f)                                                                                     # optional - sage.rings.number_field
-                sage: L                                                                                                 # optional - sage.rings.number_field
+                sage: k.<a> = QQ.extension(x^2 - 2)                                     # optional - sage.rings.number_field
+                sage: l.<b> = QQ.extension(x^4 - 2)                                     # optional - sage.rings.number_field
+                sage: f = k.hom([b^2])                                                  # optional - sage.rings.number_field
+                sage: L = l.over(f)                                                     # optional - sage.rings.number_field
+                sage: L                                                                 # optional - sage.rings.number_field
                 Field in b with defining polynomial x^2 - a over its base
-                sage: L.base_ring()                                                                                     # optional - sage.rings.number_field
+                sage: L.base_ring()                                                     # optional - sage.rings.number_field
                 Number Field in a with defining polynomial x^2 - 2
 
             Similarly, one can create a tower of extensions::
 
-                sage: K = k.over()                                                                                      # optional - sage.rings.number_field
-                sage: L = l.over(Hom(K, l)(f))                                                                          # optional - sage.rings.number_field
-                sage: L                                                                                                 # optional - sage.rings.number_field
+                sage: K = k.over()                                                      # optional - sage.rings.number_field
+                sage: L = l.over(Hom(K, l)(f))                                          # optional - sage.rings.number_field
+                sage: L                                                                 # optional - sage.rings.number_field
                 Field in b with defining polynomial x^2 - a over its base
-                sage: L.base_ring()                                                                                     # optional - sage.rings.number_field
+                sage: L.base_ring()                                                     # optional - sage.rings.number_field
                 Field in a with defining polynomial x^2 - 2 over its base
-                sage: L.bases()                                                                                         # optional - sage.rings.number_field
+                sage: L.bases()                                                         # optional - sage.rings.number_field
                 [Field in b with defining polynomial x^2 - a over its base,
                  Field in a with defining polynomial x^2 - 2 over its base,
                  Rational Field]
@@ -221,7 +227,8 @@ class CommutativeRings(CategoryWithAxiom):
 
         EXAMPLES::
 
-            sage: cartesian_product([Zmod(34), GF(5)]) in Rings().Commutative().Finite()                                # optional - sage.libs.pari
+            sage: cartesian_product([Zmod(34),                                          # optional - sage.rings.finite_rings
+            ....:                    GF(5)]) in Rings().Commutative().Finite()
             True
         """
         class ParentMethods:
@@ -278,34 +285,34 @@ class CommutativeRings(CategoryWithAxiom):
                 cyclic, the set of squares is a particular case of cyclotomic
                 coset::
 
-                    sage: K = GF(25, 'z')                                                                               # optional - sage.libs.pari
-                    sage: a = K.multiplicative_generator()                                                              # optional - sage.libs.pari
-                    sage: K.cyclotomic_cosets(a**2, cosets=[1])                                                         # optional - sage.libs.pari
+                    sage: K = GF(25, 'z')                                               # optional - sage.rings.finite_rings
+                    sage: a = K.multiplicative_generator()                              # optional - sage.rings.finite_rings
+                    sage: K.cyclotomic_cosets(a**2, cosets=[1])                         # optional - sage.rings.finite_rings
                     [[1, 2, 3, 4, z + 1, z + 3,
                       2*z + 1, 2*z + 2, 3*z + 3,
                       3*z + 4, 4*z + 2, 4*z + 4]]
-                    sage: sorted(b for b in K if not b.is_zero() and b.is_square())                                     # optional - sage.libs.pari
+                    sage: sorted(b for b in K if not b.is_zero() and b.is_square())     # optional - sage.rings.finite_rings
                     [1, 2, 3, 4, z + 1, z + 3,
                      2*z + 1, 2*z + 2, 3*z + 3,
                      3*z + 4, 4*z + 2, 4*z + 4]
 
                 We compute some examples of minimal polynomials::
 
-                    sage: K = GF(27, 'z')                                                                               # optional - sage.libs.pari
-                    sage: a = K.multiplicative_generator()                                                              # optional - sage.libs.pari
-                    sage: R.<X> = PolynomialRing(K, 'X')                                                                # optional - sage.libs.pari
-                    sage: a.minimal_polynomial('X')                                                                     # optional - sage.libs.pari
+                    sage: K = GF(27, 'z')                                               # optional - sage.rings.finite_rings
+                    sage: a = K.multiplicative_generator()                              # optional - sage.rings.finite_rings
+                    sage: R.<X> = PolynomialRing(K, 'X')                                # optional - sage.rings.finite_rings
+                    sage: a.minimal_polynomial('X')                                     # optional - sage.rings.finite_rings
                     X^3 + 2*X + 1
-                    sage: cyc3 = Zmod(26).cyclotomic_cosets(3, cosets=[1]); cyc3                                        # optional - sage.libs.pari
+                    sage: cyc3 = Zmod(26).cyclotomic_cosets(3, cosets=[1]); cyc3        # optional - sage.rings.finite_rings
                     [[1, 3, 9]]
-                    sage: prod(X - a**i for i in cyc3[0])                                                               # optional - sage.libs.pari
+                    sage: prod(X - a**i for i in cyc3[0])                               # optional - sage.rings.finite_rings
                     X^3 + 2*X + 1
 
-                    sage: (a**7).minimal_polynomial('X')                                                                # optional - sage.libs.pari
+                    sage: (a**7).minimal_polynomial('X')                                # optional - sage.rings.finite_rings
                     X^3 + X^2 + 2*X + 1
-                    sage: cyc7 = Zmod(26).cyclotomic_cosets(3, cosets=[7]); cyc7                                        # optional - sage.libs.pari
+                    sage: cyc7 = Zmod(26).cyclotomic_cosets(3, cosets=[7]); cyc7        # optional - sage.rings.finite_rings
                     [[7, 11, 21]]
-                    sage: prod(X - a**i for i in cyc7[0])                                                               # optional - sage.libs.pari
+                    sage: prod(X - a**i for i in cyc7[0])                               # optional - sage.rings.finite_rings
                     X^3 + X^2 + 2*X + 1
 
                 Cyclotomic cosets of fields are useful in combinatorial design
@@ -314,26 +321,26 @@ class CommutativeRings(CategoryWithAxiom):
                 :mod:`~sage.combinat.designs.difference_family`). This is
                 illustrated on the following examples::
 
-                    sage: K = GF(5)                                                                                     # optional - sage.libs.pari
-                    sage: a = K.multiplicative_generator()                                                              # optional - sage.libs.pari
-                    sage: H = K.cyclotomic_cosets(a**2, cosets=[1, 2]); H                                               # optional - sage.libs.pari
+                    sage: K = GF(5)                                                     # optional - sage.rings.finite_rings
+                    sage: a = K.multiplicative_generator()                              # optional - sage.rings.finite_rings
+                    sage: H = K.cyclotomic_cosets(a**2, cosets=[1, 2]); H               # optional - sage.rings.finite_rings
                     [[1, 4], [2, 3]]
-                    sage: sorted(x - y for D in H for x in D for y in D if x != y)                                      # optional - sage.libs.pari
+                    sage: sorted(x - y for D in H for x in D for y in D if x != y)      # optional - sage.rings.finite_rings
                     [1, 2, 3, 4]
 
-                    sage: K = GF(37)                                                                                    # optional - sage.libs.pari
-                    sage: a = K.multiplicative_generator()                                                              # optional - sage.libs.pari
-                    sage: H = K.cyclotomic_cosets(a**4, cosets=[1]); H                                                  # optional - sage.libs.pari
+                    sage: K = GF(37)                                                    # optional - sage.rings.finite_rings
+                    sage: a = K.multiplicative_generator()                              # optional - sage.rings.finite_rings
+                    sage: H = K.cyclotomic_cosets(a**4, cosets=[1]); H                  # optional - sage.rings.finite_rings
                     [[1, 7, 9, 10, 12, 16, 26, 33, 34]]
-                    sage: sorted(x - y for D in H for x in D for y in D if x != y)                                      # optional - sage.libs.pari
+                    sage: sorted(x - y for D in H for x in D for y in D if x != y)      # optional - sage.rings.finite_rings
                     [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, ..., 33, 34, 34, 35, 35, 36, 36]
 
                 The method ``cyclotomic_cosets`` works on any finite commutative
                 ring::
 
-                    sage: R = cartesian_product([GF(7), Zmod(14)])                                                      # optional - sage.libs.pari
-                    sage: a = R((3,5))                                                                                  # optional - sage.libs.pari
-                    sage: R.cyclotomic_cosets((3,5), [(1,1)])                                                           # optional - sage.libs.pari
+                    sage: R = cartesian_product([GF(7), Zmod(14)])                      # optional - sage.rings.finite_rings
+                    sage: a = R((3,5))                                                  # optional - sage.rings.finite_rings
+                    sage: R.cyclotomic_cosets((3,5), [(1,1)])                           # optional - sage.rings.finite_rings
                     [[(1, 1), (2, 11), (3, 5), (4, 9), (5, 3), (6, 13)]]
                 """
                 q = self(q)
@@ -373,7 +380,8 @@ class CommutativeRings(CategoryWithAxiom):
 
                 sage: CommutativeRings().Commutative().CartesianProducts().extra_super_categories()
                 [Category of commutative rings]
-                sage: cartesian_product([ZZ, Zmod(34), QQ, GF(5)]) in CommutativeRings()                                # optional - sage.libs.pari
+                sage: cartesian_product([ZZ, Zmod(34),                                  # optional - sage.rings.finite_rings
+                ....:                    QQ, GF(5)]) in CommutativeRings()
                 True
             """
             return [CommutativeRings()]
