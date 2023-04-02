@@ -20,8 +20,7 @@ from sage.categories.crystals import Crystals
 from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.tensor import TensorProductsCategory
 from sage.categories.map import Map
-from sage.graphs.dot2tex_utils import have_dot2tex
-from sage.functions.other import ceil
+
 
 class LoopCrystals(Category_singleton):
     r"""
@@ -118,6 +117,8 @@ class LoopCrystals(Category_singleton):
                 {...'edge_options': <function ... at ...>...}
                 sage: view(G, tightpage=True)  # optional - dot2tex graphviz, not tested (opens external window)
             """
+            from sage.graphs.dot2tex_utils import have_dot2tex
+
             G = Crystals().parent_class.digraph(self, subset, index_set)
             if have_dot2tex():
                 def eopt(u_v_label):
@@ -960,6 +961,8 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     ....:     for b in hw)
                     True
                 """
+                from sage.functions.other import ceil
+
                 C = self.parent().crystals[0]
                 ell = ceil(C.s()/C.cartan_type().c()[C.r()])
                 is_perfect = all(ell == K.s()/K.cartan_type().c()[K.r()]
@@ -1091,6 +1094,8 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     ....:     for elt in hw)
                     True
                 """
+                from sage.functions.other import ceil
+
                 ell = max(ceil(K.s()/K.cartan_type().c()[K.r()])
                           for K in self.parent().crystals)
                 if self.cartan_type().dual().type() == 'BC':

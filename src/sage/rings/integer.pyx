@@ -5589,7 +5589,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         - ``proof`` (boolean, default ``True``) -- if ``False`` then
           for negative discriminants a faster algorithm is used by
           the PARI library which is known to give incorrect results
-          when the class group has many cyclic factors.
+          when the class group has many cyclic factors.  However the
+          results are correct for discriminants `D` with `|D|\le 2\cdot10^{10}`.
 
         OUTPUT:
 
@@ -5598,7 +5599,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         .. NOTE::
 
-           This is not always equal to the number of classes of
+           For positive `D`, this is not always equal to the number of classes of
            primitive binary quadratic forms of discriminant `D`, which
            is equal to the narrow class number. The two notions are
            the same when `D<0`, or `D>0` and the fundamental unit of
@@ -6033,6 +6034,73 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             False
         """
         return self.__pari__().issquarefree()
+
+    def is_discriminant(self):
+        """
+        Returns True if this integer is a discriminant.
+
+        .. NOTE::
+
+            A discriminant is an integer congruent to 0 or 1 modulo 4.
+
+        EXAMPLES::
+
+            sage: (-1).is_discriminant()
+            False
+            sage: (-4).is_discriminant()
+            True
+            sage: 100.is_discriminant()
+            True
+            sage: 101.is_discriminant()
+            True
+
+        TESTS::
+
+            sage: 0.is_discriminant()
+            True
+            sage: 1.is_discriminant()
+            True
+            sage: len([D for D in srange(-100,100) if D.is_discriminant()])
+            100
+        """
+        return self%4 in [0,1]
+
+    def is_fundamental_discriminant(self):
+        """
+        Returns True if this integer is a fundamental_discriminant.
+
+        .. NOTE::
+
+            A fundamental discriminant is a discrimimant, not 0 or 1 and not a square multiple of a smaller discriminant.
+
+        EXAMPLES::
+
+            sage: (-4).is_fundamental_discriminant()
+            True
+            sage: (-12).is_fundamental_discriminant()
+            False
+            sage: 101.is_fundamental_discriminant()
+            True
+
+        TESTS::
+
+            sage: 0.is_fundamental_discriminant()
+            False
+            sage: 1.is_fundamental_discriminant()
+            False
+            sage: len([D for D in srange(-100,100) if D.is_fundamental_discriminant()])
+            61
+
+        """
+        if self in [0,1]:
+            return False
+        Dmod4 = self%4
+        if Dmod4 in [2,3]:
+            return False
+        if Dmod4 == 1:
+            return self.is_squarefree()
+        d = self//4
+        return d%4 in [2,3] and d.is_squarefree()
 
     cpdef __pari__(self):
         """

@@ -102,15 +102,13 @@ EXAMPLES::
 #
 # ****************************************************************************
 
-from .simplicial_complex import Simplex, SimplicialComplex
+from sage.categories.homset import Hom
+from sage.categories.morphism import Morphism
+from sage.categories.simplicial_complexes import SimplicialComplexes
 from sage.matrix.constructor import matrix, zero_matrix
 from sage.rings.integer_ring import ZZ
-from sage.homology.chain_complex_morphism import ChainComplexMorphism
-from sage.combinat.permutation import Permutation
-from sage.algebras.steenrod.steenrod_algebra_misc import convert_perm
-from sage.categories.morphism import Morphism
-from sage.categories.homset import Hom
-from sage.categories.simplicial_complexes import SimplicialComplexes
+
+from .simplicial_complex import Simplex, SimplicialComplex
 
 
 def is_SimplicialComplexMorphism(x):
@@ -252,6 +250,9 @@ class SimplicialComplexMorphism(Morphism):
         for j in tup:
             fx.append(self._vertex_dictionary[j])
         if orientation:
+            from sage.algebras.steenrod.steenrod_algebra_misc import convert_perm
+            from sage.combinat.permutation import Permutation
+
             if len(set(fx)) == len(tup):
                 oriented = Permutation(convert_perm(fx)).signature()
             else:
@@ -371,6 +372,8 @@ class SimplicialComplexMorphism(Morphism):
             {0: [0 1]
              [1 0], 1: [-1]}
         """
+        from sage.homology.chain_complex_morphism import ChainComplexMorphism
+
         max_dim = max(self.domain().dimension(),self.codomain().dimension())
         min_dim = min(self.domain().dimension(),self.codomain().dimension())
         matrices = {}

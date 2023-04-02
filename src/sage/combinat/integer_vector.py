@@ -289,8 +289,8 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         ....:        print(s1, s2)
 
         sage: for algorithm in ["gale", "ryser"]:             # long time               # optional - sage.combinat
-        ....:    for i in range(50):                          # long time
-        ....:       test_algorithm(algorithm, 3, 10)          # long time
+        ....:    for i in range(50):
+        ....:       test_algorithm(algorithm, 3, 10)
 
     Null matrix::
 
@@ -511,6 +511,45 @@ class IntegerVector(ClonableArray):
             v = v[:-1]
         return P.element_class(P, v, check=False)
 
+    def specht_module(self, base_ring=None):
+        r"""
+        Return the Specht module corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: SM = IntegerVectors()([2,0,1,0,2]).specht_module(QQ)
+            sage: SM
+            Specht module of [(0, 0), (0, 1), (2, 0), (4, 0), (4, 1)] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
+            s[2, 2, 1]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
+        return SpechtModule(R, self)
+
+    def specht_module_dimension(self, base_ring=None):
+        r"""
+        Return the dimension of the Specht module corresponding to ``self``.
+
+        INPUT:
+
+        - ``BR`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension()
+            5
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension(GF(2))
+            5
+        """
+        from sage.combinat.specht_module import specht_module_rank
+        return specht_module_rank(self, base_ring)
+
 
 class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
     """
@@ -635,7 +674,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
     .. SEEALSO::
 
-        :class: `sage.combinat.integer_lists.invlex.IntegerListsLex`.
+        :class:`sage.combinat.integer_lists.invlex.IntegerListsLex`
     """
     @staticmethod
     def __classcall_private__(cls, n=None, k=None, **kwargs):

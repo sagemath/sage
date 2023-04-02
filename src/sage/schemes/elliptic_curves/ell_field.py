@@ -157,9 +157,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 else:
                     # We could take a multiplicative generator but
                     # that might be expensive to compute; otherwise
-                    # half the elements will do
+                    # half the elements will do, and testing squares
+                    # is very fast.
                     D = K.random_element()
-                    while (x**2 - D).roots():
+                    while D.is_square():
                         D = K.random_element()
             else:
                 raise ValueError("twisting parameter D must be specified over infinite fields.")
@@ -1871,8 +1872,8 @@ def compute_model(E, name):
         raise TypeError('not an elliptic curve')
 
     if name == 'minimal':
-        from sage.rings.number_field.number_field_base import is_NumberField
-        if not is_NumberField(E.base_field()):
+        from sage.rings.number_field.number_field_base import NumberField
+        if not isinstance(E.base_field(), NumberField):
             raise ValueError('can only compute minimal model for curves over number fields')
         return E.global_minimal_model(semi_global=True)
 

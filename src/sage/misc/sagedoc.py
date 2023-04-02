@@ -885,8 +885,9 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
     results to stdout::
 
         sage: from sage.misc.sagedoc import _search_src_or_doc
-        sage: _search_src_or_doc('src', r'def _search_src_or_doc\(',
-        ....:                    interact=True)  # long time
+        sage: _search_src_or_doc('src',                        # long time
+        ....:                    r'def _search_src_or_doc\(',
+        ....:                    interact=True)
         misc/sagedoc.py:...:        def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
     """
 

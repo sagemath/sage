@@ -450,8 +450,9 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
 
     Some more aggressive tests::
 
-        sage: for C in [QQ, ZZ[I], ZZ[I, sqrt(2)], GF(49, 'a'), MatrixSpace(GF(17), 3)]:
-        ....:     sage.rings.tests.test_karatsuba_multiplication(C, 10, 10) # long time
+        sage: testrings = [QQ, ZZ[I], ZZ[I, sqrt(2)], GF(49, 'a'), MatrixSpace(GF(17), 3)]
+        sage: for C in testrings:                                           # long time
+        ....:     sage.rings.tests.test_karatsuba_multiplication(C, 10, 10)
         sage: sage.rings.tests.test_karatsuba_multiplication(ZZ, 10000, 10000, ref_mul=lambda f,g: f*g, base_ring_random_elt_args=[100000])
 
     """

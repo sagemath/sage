@@ -283,9 +283,6 @@ def plot(hyperplane_arrangement, **kwds):
             return p
 
 
-
-
-
 def plot_hyperplane(hyperplane, **kwds):
     r"""
     Return the plot of a single hyperplane.

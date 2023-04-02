@@ -1018,7 +1018,7 @@ def eratosthenes(n):
     return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
 
-def primes(start, stop=None, proof=None):
+def primes(start=2, stop=None, proof=None):
     r"""
     Return an iterator over all primes between start and stop-1,
     inclusive. This is much slower than ``prime_range``, but
@@ -1035,10 +1035,11 @@ def primes(start, stop=None, proof=None):
 
     INPUT:
 
-    - ``start`` - an integer - lower bound for the primes
+    - ``start`` - an integer (default: 2) optional argument -
+      giving lower bound for the primes
 
-    - ``stop`` - an integer (or infinity) optional argument -
-      giving upper (open) bound for the primes
+    - ``stop`` - an integer (or infinity) - giving upper (open) bound for the
+      primes
 
     - ``proof`` - bool or None (default: None)  If True, the function
       yields only proven primes.  If False, the function uses a

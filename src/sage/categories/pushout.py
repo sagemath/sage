@@ -1769,9 +1769,10 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             Multivariate Laurent Polynomial Ring in s, t over Rational Field
 
         """
-        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing, is_LaurentPolynomialRing
-        if self.multi_variate and is_LaurentPolynomialRing(R):
-            return LaurentPolynomialRing(R.base_ring(), (list(R.variable_names()) + [self.var]))
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+        from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
+        if self.multi_variate and isinstance(R, LaurentPolynomialRing_generic):
+            return LaurentPolynomialRing(R.base_ring(), list(R.variable_names()) + [self.var])
         else:
             return LaurentPolynomialRing(R, self.var)
 
@@ -3482,8 +3483,8 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             # nothing else helps, hence, we move to the pushout of the codomains of the embeddings
             try:
                 P = pushout(self.embeddings[0].parent(), other.embeddings[0].parent())
-                from sage.rings.number_field.number_field import is_NumberField
-                if is_NumberField(P):
+                from sage.rings.number_field.number_field_base import NumberField
+                if isinstance(P, NumberField):
                     return P.construction()[0]
             except CoercionException:
                 return None

@@ -10,8 +10,10 @@ Algebra ideals
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from .category_types import Category_ideal
 from .algebra_modules import AlgebraModules
+from .algebras import Algebras
+from .rings import Rings
+from .category_types import Category_ideal
 
 
 class AlgebraIdeals(Category_ideal):
@@ -48,9 +50,14 @@ class AlgebraIdeals(Category_ideal):
 
             sage: TestSuite(AlgebraIdeals(QQ['a'])).run()
         """
-        from sage.algebras.algebra import is_Algebra
-        if not is_Algebra(A): # A not in Algebras() ?
-            raise TypeError("A (=%s) must be an algebra"%A)
+        try:
+            base_ring = A.base_ring()
+        except AttributeError:
+            raise TypeError(f"A (={A}) must be an algebra")
+        else:
+            if base_ring not in Rings() or A not in Algebras(base_ring.category()):
+                raise TypeError(f"A (={A}) must be an algebra")
+
         Category_ideal.__init__(self, A)
 
     def algebra(self):
@@ -82,6 +89,6 @@ class AlgebraIdeals(Category_ideal):
         try:
             if R.is_commutative():
                 return [AlgebraModules(R)]
-        except (AttributeError,NotImplementedError):
+        except (AttributeError, NotImplementedError):
             pass
         return []

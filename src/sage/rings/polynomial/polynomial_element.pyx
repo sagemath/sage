@@ -65,6 +65,7 @@ from cpython.number cimport PyNumber_TrueDivide, PyNumber_Check
 import operator
 import copy
 import re
+from io import StringIO
 
 from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
 import sage.rings.rational
@@ -134,9 +135,6 @@ from sage.categories.morphism cimport Morphism
 
 from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 from sage.misc.cachefunc import cached_method
-
-from sage.rings.number_field.order import is_NumberFieldOrder, Order as NumberFieldOrder
-from sage.categories.number_fields import NumberFields
 
 
 cpdef is_Polynomial(f):
@@ -2646,7 +2644,8 @@ cdef class Polynomial(CommutativePolynomial):
         # want their coefficient printed with its O() term
         if self._is_gen and not isinstance(self._parent._base, pAdicGeneric):
             return name
-        s = " "
+        sbuf = StringIO()
+        sbuf.write(" ")
         m = self.degree() + 1
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         coeffs = self.list(copy=False)
@@ -2662,7 +2661,7 @@ cdef class Polynomial(CommutativePolynomial):
                 is_nonzero = True
             if is_nonzero:
                 if n != m-1:
-                    s += " + "
+                    sbuf.write(" + ")
                 x = y = repr(x)
                 if y.find("-") == 0:
                     y = y[1:]
@@ -2674,7 +2673,9 @@ cdef class Polynomial(CommutativePolynomial):
                     var = "*%s"%name
                 else:
                     var = ""
-                s += "%s%s"%(x,var)
+                sbuf.write(x)
+                sbuf.write(var)
+        s = sbuf.getvalue()
         s = s.replace(" + -", " - ")
         s = re.sub(r' 1(\.0+)?\*',' ', s)
         s = re.sub(r' -1(\.0+)?\*',' -', s)
@@ -4751,7 +4752,7 @@ cdef class Polynomial(CommutativePolynomial):
             raise TypeError("You must specify the name of the generator.")
         name = normalize_names(1, names)[0]
 
-        from sage.rings.number_field.number_field_base import is_NumberField
+        from sage.rings.number_field.number_field_base import NumberField
         from sage.rings.finite_rings.finite_field_base import FiniteField
 
         f = self.monic()            # Given polynomial, made monic
@@ -4760,7 +4761,7 @@ cdef class Polynomial(CommutativePolynomial):
             F = F.fraction_field()
             f = self.change_ring(F)
 
-        if is_NumberField(F):
+        if isinstance(F, NumberField):
             from sage.rings.number_field.splitting_field import splitting_field
             return splitting_field(f, name, map, **kwds)
         elif isinstance(F, FiniteField):
@@ -5109,7 +5110,7 @@ cdef class Polynomial(CommutativePolynomial):
             y = self._parent.quo(self).gen()
             from sage.groups.generic import order_from_multiple
             return n == order_from_multiple(y, n, n_prime_divs, operation="*")
-        elif isinstance(R, NumberFieldOrder):
+        elif isinstance(R, sage.rings.abc.Order):
             K = R.number_field()
             return K.fractional_ideal(self.coefficients()) == K.fractional_ideal(1)
         else:
@@ -5261,8 +5262,6 @@ cdef class Polynomial(CommutativePolynomial):
             sage: (PolynomialRing(Integers(31),name='x').0+5).root_field('a')
             Ring of integers modulo 31
         """
-        from sage.rings.number_field.number_field import is_NumberField, NumberField
-
         R = self.base_ring()
         if not R.is_integral_domain():
             raise ValueError("the base ring must be a domain")
@@ -5274,9 +5273,13 @@ cdef class Polynomial(CommutativePolynomial):
             return R.fraction_field()
 
         if is_IntegerRing(R):
+            from sage.rings.number_field.number_field import NumberField
             return NumberField(self, names)
 
-        if sage.rings.rational_field.is_RationalField(R) or is_NumberField(R):
+        from sage.rings.number_field.number_field_base import NumberField as NumberField_base
+
+        if sage.rings.rational_field.is_RationalField(R) or isinstance(R, NumberField_base):
+            from sage.rings.number_field.number_field import NumberField
             return NumberField(self, names)
 
         return R.fraction_field()[self._parent.variable_name()].quotient(self, names)
@@ -5829,6 +5832,8 @@ cdef class Polynomial(CommutativePolynomial):
         if self.is_zero():
             return RealField(prec).zero()
 
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
         from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 
         K = self.base_ring()
@@ -5884,6 +5889,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.local_height(2, prec=2)
             0.75
         """
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
+
         if prec is None:
             prec = 53
 
@@ -5932,6 +5940,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.local_height_arch(0, prec=2)
             1.0
         """
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
+
         if prec is None:
             prec = 53
 

@@ -694,7 +694,7 @@ class SetPartition(AbstractSetPartition,
 
         for key in kwargs:
             if key not in valid_args:
-                raise ValueError("unknown keyword argument: %s"%key)
+                raise ValueError("unknown keyword argument: %s" % key)
             if key == 'plot':
                 if not (kwargs['plot'] == 'cyclic'
                         or kwargs['plot'] == 'linear'
@@ -1009,7 +1009,7 @@ class SetPartition(AbstractSetPartition,
         elif bijection == "intertwining":
             return self.to_restricted_growth_word_intertwining()
         else:
-            raise ValueError("The given bijection is not valid.")
+            raise ValueError("the given bijection is not valid")
 
     def to_restricted_growth_word_blocks(self):
         r"""
@@ -1150,7 +1150,7 @@ class SetPartition(AbstractSetPartition,
         elif bijection == "psi":
             return self.to_rook_placement_psi()
         else:
-            raise ValueError("The given map is not valid.")
+            raise ValueError("the given map is not valid")
 
     def to_rook_placement_gamma(self):
         """
@@ -2066,7 +2066,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         else:
             try:
                 if s.cardinality() == infinity:
-                    raise ValueError("The set must be finite")
+                    raise ValueError("the set must be finite")
             except AttributeError:
                 pass
             s = frozenset(s)
@@ -2186,7 +2186,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         elif bijection == "intertwining":
             return self.from_restricted_growth_word_intertwining(w)
         else:
-            raise ValueError("The given bijection is not valid.")
+            raise ValueError("the given bijection is not valid")
 
     def from_restricted_growth_word_blocks(self, w):
         r"""
@@ -2346,7 +2346,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         elif bijection == "psi":
             return self.from_rook_placement_psi(rooks, n)
         else:
-            raise ValueError("The given bijection is not valid.")
+            raise ValueError("the given bijection is not valid")
 
     def from_arcs(self, arcs, n):
         r"""
