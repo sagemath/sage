@@ -50,15 +50,16 @@ class GroupAlgebras(AlgebrasCategory):
 
     Here is how to create the group algebra of a group `G`::
 
-        sage: G = DihedralGroup(5)                                                                                      # optional - sage.groups
-        sage: QG = G.algebra(QQ); QG                                                                                    # optional - sage.groups sage.modules
-        Algebra of Dihedral group of order 10 as a permutation group over Rational Field
+        sage: G = DihedralGroup(5)                                                      # optional - sage.groups
+        sage: QG = G.algebra(QQ); QG                                                    # optional - sage.groups sage.modules
+        Algebra of
+         Dihedral group of order 10 as a permutation group over Rational Field
 
     and an example of computation::
 
-        sage: g = G.an_element(); g                                                                                     # optional - sage.groups sage.modules
+        sage: g = G.an_element(); g                                                     # optional - sage.groups sage.modules
         (1,4)(2,3)
-        sage: (QG.term(g) + 1)**3                                                                                       # optional - sage.groups sage.modules
+        sage: (QG.term(g) + 1)**3                                                       # optional - sage.groups sage.modules
         4*() + 4*(1,4)(2,3)
 
     .. TODO::
@@ -68,14 +69,14 @@ class GroupAlgebras(AlgebrasCategory):
 
     TESTS::
 
-        sage: A = GroupAlgebras(QQ).example(GL(3, GF(11)))                                                              # optional - sage.groups sage.modules sage.libs.pari
-        sage: A.one_basis()                                                                                             # optional - sage.groups sage.modules sage.libs.pari
+        sage: A = GroupAlgebras(QQ).example(GL(3, GF(11)))                              # optional - sage.groups sage.modules sage.rings.finite_rings
+        sage: A.one_basis()                                                             # optional - sage.groups sage.modules sage.rings.finite_rings
         [1 0 0]
         [0 1 0]
         [0 0 1]
-        sage: A = SymmetricGroupAlgebra(QQ, 4)                                                                          # optional - sage.groups sage.modules sage.combinat
-        sage: x = Permutation([4,3,2,1])                                                                                # optional - sage.groups sage.modules sage.combinat
-        sage: A.product_on_basis(x, x)                                                                                  # optional - sage.groups sage.modules sage.combinat
+        sage: A = SymmetricGroupAlgebra(QQ, 4)                                          # optional - sage.groups sage.modules sage.combinat
+        sage: x = Permutation([4,3,2,1])                                                # optional - sage.groups sage.modules sage.combinat
+        sage: A.product_on_basis(x, x)                                                  # optional - sage.groups sage.modules sage.combinat
         [1, 2, 3, 4]
 
         sage: C = GroupAlgebras(ZZ)
@@ -104,14 +105,15 @@ class GroupAlgebras(AlgebrasCategory):
 
         EXAMPLES::
 
-            sage: GroupAlgebras(QQ['x']).example()                                                                      # optional - sage.groups sage.modules
+            sage: GroupAlgebras(QQ['x']).example()                                      # optional - sage.groups sage.modules
             Algebra of Dihedral group of order 8 as a permutation group
              over Univariate Polynomial Ring in x over Rational Field
 
         An other group can be specified as optional argument::
 
-            sage: GroupAlgebras(QQ).example(AlternatingGroup(4))                                                        # optional - sage.groups sage.modules
-            Algebra of Alternating group of order 4!/2 as a permutation group over Rational Field
+            sage: GroupAlgebras(QQ).example(AlternatingGroup(4))                        # optional - sage.groups sage.modules
+            Algebra of
+             Alternating group of order 4!/2 as a permutation group over Rational Field
         """
         from sage.groups.perm_gps.permgroup_named import DihedralGroup
         if G is None:
@@ -125,19 +127,19 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: A = GroupAlgebra(SymmetricGroup(4), QQ)                                                           # optional - sage.groups sage.modules
-                sage: B = GroupAlgebra(SymmetricGroup(3), ZZ)                                                           # optional - sage.groups sage.modules
-                sage: A.has_coerce_map_from(B)                                                                          # optional - sage.groups sage.modules
+                sage: A = GroupAlgebra(SymmetricGroup(4), QQ)                           # optional - sage.groups sage.modules
+                sage: B = GroupAlgebra(SymmetricGroup(3), ZZ)                           # optional - sage.groups sage.modules
+                sage: A.has_coerce_map_from(B)                                          # optional - sage.groups sage.modules
                 True
-                sage: B.has_coerce_map_from(A)                                                                          # optional - sage.groups sage.modules
+                sage: B.has_coerce_map_from(A)                                          # optional - sage.groups sage.modules
                 False
-                sage: A.has_coerce_map_from(ZZ)                                                                         # optional - sage.groups sage.modules
+                sage: A.has_coerce_map_from(ZZ)                                         # optional - sage.groups sage.modules
                 True
-                sage: A.has_coerce_map_from(CC)                                                                         # optional - sage.groups sage.modules
+                sage: A.has_coerce_map_from(CC)                                         # optional - sage.groups sage.modules
                 False
-                sage: A.has_coerce_map_from(SymmetricGroup(5))                                                          # optional - sage.groups sage.modules
+                sage: A.has_coerce_map_from(SymmetricGroup(5))                          # optional - sage.groups sage.modules
                 False
-                sage: A.has_coerce_map_from(SymmetricGroup(2))                                                          # optional - sage.groups sage.modules
+                sage: A.has_coerce_map_from(SymmetricGroup(2))                          # optional - sage.groups sage.modules
                 True
             """
             if not self.base_ring().has_coerce_map_from(self.group()):
@@ -153,8 +155,8 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: A = GroupAlgebra(KleinFourGroup(), ZZ)                                                            # optional - sage.groups sage.modules
-                sage: latex(A)  # indirect doctest                                                                      # optional - sage.groups sage.modules
+                sage: A = GroupAlgebra(KleinFourGroup(), ZZ)                            # optional - sage.groups sage.modules
+                sage: latex(A)  # indirect doctest                                      # optional - sage.groups sage.modules
                 \Bold{Z}[\langle (3,4), (1,2) \rangle]
             """
             from sage.misc.latex import latex
@@ -166,9 +168,9 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: GroupAlgebras(QQ).example(GL(3, GF(11))).group()                                                  # optional - sage.groups sage.modules sage.libs.pari
+                sage: GroupAlgebras(QQ).example(GL(3, GF(11))).group()                  # optional - sage.groups sage.modules sage.rings.finite_rings
                 General Linear Group of degree 3 over Finite Field of size 11
-                sage: SymmetricGroup(10).algebra(QQ).group()                                                            # optional - sage.groups sage.modules
+                sage: SymmetricGroup(10).algebra(QQ).group()                            # optional - sage.groups sage.modules
                 Symmetric group of order 10! as a permutation group
             """
             return self.basis().keys()
@@ -196,7 +198,7 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: SymmetricGroup(3).algebra(QQ).center_basis()                                                      # optional - sage.groups sage.modules
+                sage: SymmetricGroup(3).algebra(QQ).center_basis()                      # optional - sage.groups sage.modules
                 ((), (2,3) + (1,2) + (1,3), (1,2,3) + (1,3,2))
 
             .. SEEALSO::
@@ -218,15 +220,16 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: A = CyclicPermutationGroup(6).algebra(ZZ); A                                                      # optional - sage.groups sage.modules
-                Algebra of Cyclic group of order 6 as a permutation group over Integer Ring
-                sage: g = CyclicPermutationGroup(6).an_element(); g                                                     # optional - sage.groups sage.modules
+                sage: A = CyclicPermutationGroup(6).algebra(ZZ); A                      # optional - sage.groups sage.modules
+                Algebra of
+                 Cyclic group of order 6 as a permutation group over Integer Ring
+                sage: g = CyclicPermutationGroup(6).an_element(); g                     # optional - sage.groups sage.modules
                 (1,2,3,4,5,6)
-                sage: A.coproduct_on_basis(g)                                                                           # optional - sage.groups sage.modules
+                sage: A.coproduct_on_basis(g)                                           # optional - sage.groups sage.modules
                 (1,2,3,4,5,6) # (1,2,3,4,5,6)
-                sage: a = A.an_element(); a                                                                             # optional - sage.groups sage.modules
+                sage: a = A.an_element(); a                                             # optional - sage.groups sage.modules
                 () + 3*(1,2,3,4,5,6) + 3*(1,3,5)(2,4,6)
-                sage: a.coproduct()                                                                                     # optional - sage.groups sage.modules
+                sage: a.coproduct()                                                     # optional - sage.groups sage.modules
                 () # () + 3*(1,2,3,4,5,6) # (1,2,3,4,5,6) + 3*(1,3,5)(2,4,6) # (1,3,5)(2,4,6)
             """
             from sage.categories.tensor import tensor
@@ -243,15 +246,16 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: A = CyclicPermutationGroup(6).algebra(ZZ); A                                                      # optional - sage.groups sage.modules
-                Algebra of Cyclic group of order 6 as a permutation group over Integer Ring
-                sage: g = CyclicPermutationGroup(6).an_element(); g                                                     # optional - sage.groups sage.modules
+                sage: A = CyclicPermutationGroup(6).algebra(ZZ); A                      # optional - sage.groups sage.modules
+                Algebra of
+                 Cyclic group of order 6 as a permutation group over Integer Ring
+                sage: g = CyclicPermutationGroup(6).an_element(); g                     # optional - sage.groups sage.modules
                 (1,2,3,4,5,6)
-                sage: A.antipode_on_basis(g)                                                                            # optional - sage.groups sage.modules
+                sage: A.antipode_on_basis(g)                                            # optional - sage.groups sage.modules
                 (1,6,5,4,3,2)
-                sage: a = A.an_element(); a                                                                             # optional - sage.groups sage.modules
+                sage: a = A.an_element(); a                                             # optional - sage.groups sage.modules
                 () + 3*(1,2,3,4,5,6) + 3*(1,3,5)(2,4,6)
-                sage: a.antipode()                                                                                      # optional - sage.groups sage.modules
+                sage: a.antipode()                                                      # optional - sage.groups sage.modules
                 () + 3*(1,5,3)(2,6,4) + 3*(1,6,5,4,3,2)
             """
             return self.term(~g)
@@ -266,11 +270,12 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: A = CyclicPermutationGroup(6).algebra(ZZ); A                                                      # optional - sage.groups sage.modules
-                Algebra of Cyclic group of order 6 as a permutation group over Integer Ring
-                sage: g = CyclicPermutationGroup(6).an_element(); g                                                     # optional - sage.groups sage.modules
+                sage: A = CyclicPermutationGroup(6).algebra(ZZ); A                      # optional - sage.groups sage.modules
+                Algebra of
+                 Cyclic group of order 6 as a permutation group over Integer Ring
+                sage: g = CyclicPermutationGroup(6).an_element(); g                     # optional - sage.groups sage.modules
                 (1,2,3,4,5,6)
-                sage: A.counit_on_basis(g)                                                                              # optional - sage.groups sage.modules
+                sage: A.counit_on_basis(g)                                              # optional - sage.groups sage.modules
                 1
             """
             return self.base_ring().one()
@@ -285,11 +290,12 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: A = CyclicPermutationGroup(6).algebra(ZZ); A                                                      # optional - sage.groups sage.modules
-                Algebra of Cyclic group of order 6 as a permutation group over Integer Ring
-                sage: a = A.an_element(); a                                                                             # optional - sage.groups sage.modules
+                sage: A = CyclicPermutationGroup(6).algebra(ZZ); A                      # optional - sage.groups sage.modules
+                Algebra of
+                 Cyclic group of order 6 as a permutation group over Integer Ring
+                sage: a = A.an_element(); a                                             # optional - sage.groups sage.modules
                 () + 3*(1,2,3,4,5,6) + 3*(1,3,5)(2,4,6)
-                sage: a.counit()                                                                                        # optional - sage.groups sage.modules
+                sage: a.counit()                                                        # optional - sage.groups sage.modules
                 7
             """
             return self.base_ring().sum(x.coefficients())
@@ -306,17 +312,19 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: GroupAlgebra(SymmetricGroup(2)).is_integral_domain()                                              # optional - sage.groups sage.modules
+                sage: S2 = SymmetricGroup(2)
+                sage: GroupAlgebra(S2).is_integral_domain()                             # optional - sage.groups sage.modules
                 False
-                sage: GroupAlgebra(SymmetricGroup(1)).is_integral_domain()                                              # optional - sage.groups sage.modules
+                sage: S1 = SymmetricGroup(1)
+                sage: GroupAlgebra(S1).is_integral_domain()                             # optional - sage.groups sage.modules
                 True
-                sage: GroupAlgebra(SymmetricGroup(1), IntegerModRing(4)).is_integral_domain()                           # optional - sage.groups sage.modules
+                sage: GroupAlgebra(S1), IntegerModRing(4)).is_integral_domain()         # optional - sage.groups sage.modules
                 False
-                sage: GroupAlgebra(AbelianGroup(1)).is_integral_domain()                                                # optional - sage.groups sage.modules
+                sage: GroupAlgebra(AbelianGroup(1)).is_integral_domain()                # optional - sage.groups sage.modules
                 True
-                sage: GroupAlgebra(AbelianGroup(2, [0,2])).is_integral_domain()                                         # optional - sage.groups sage.modules
+                sage: GroupAlgebra(AbelianGroup(2, [0,2])).is_integral_domain()         # optional - sage.groups sage.modules
                 False
-                sage: GroupAlgebra(GL(2, ZZ)).is_integral_domain() # not implemented                                    # optional - sage.groups sage.modules
+                sage: GroupAlgebra(GL(2, ZZ)).is_integral_domain() # not implemented    # optional - sage.groups sage.modules
                 False
             """
             from sage.sets.set import Set
@@ -386,22 +394,24 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: QS3 = SymmetricGroup(3).algebra(QQ)                                                               # optional - sage.groups sage.modules
-                sage: A = QS3([2,3,1]) + QS3([3,1,2])                                                                   # optional - sage.groups sage.modules
-                sage: A.central_form()                                                                                  # optional - sage.groups sage.modules
+                sage: QS3 = SymmetricGroup(3).algebra(QQ)                               # optional - sage.groups sage.modules
+                sage: A = QS3([2,3,1]) + QS3([3,1,2])                                   # optional - sage.groups sage.modules
+                sage: A.central_form()                                                  # optional - sage.groups sage.modules
                 B[(1,2,3)]
-                sage: QS4 = SymmetricGroup(4).algebra(QQ)                                                               # optional - sage.groups sage.modules
-                sage: B = sum(len(s.cycle_type()) * QS4(s) for s in Permutations(4))                                    # optional - sage.groups sage.modules
-                sage: B.central_form()                                                                                  # optional - sage.groups sage.modules
+                sage: QS4 = SymmetricGroup(4).algebra(QQ)                               # optional - sage.groups sage.modules
+                sage: B = sum(len(s.cycle_type()) * QS4(s) for s in Permutations(4))    # optional - sage.groups sage.modules
+                sage: B.central_form()                                                  # optional - sage.groups sage.modules
                 4*B[()] + 3*B[(1,2)] + 2*B[(1,2)(3,4)] + 2*B[(1,2,3)] + B[(1,2,3,4)]
 
             The following test fails due to a bug involving combinatorial free modules and
             the coercion system (see :trac:`28544`)::
 
-                sage: QG = GroupAlgebras(QQ).example(PermutationGroup([[(1,2,3),(4,5)], [(3,4)]]))                      # optional - sage.groups sage.modules
-                sage: s = sum(i for i in QG.basis())                                                                    # optional - sage.groups sage.modules
-                sage: s.central_form()   # not tested                                                                   # optional - sage.groups sage.modules
-                B[()] + B[(4,5)] + B[(3,4,5)] + B[(2,3)(4,5)] + B[(2,3,4,5)] + B[(1,2)(3,4,5)] + B[(1,2,3,4,5)]
+                sage: G = PermutationGroup([[(1,2,3),(4,5)], [(3,4)]])                  # optional - sage.groups sage.modules
+                sage: QG = GroupAlgebras(QQ).example(G)                                 # optional - sage.groups sage.modules
+                sage: s = sum(i for i in QG.basis())                                    # optional - sage.groups sage.modules
+                sage: s.central_form()   # not tested                                   # optional - sage.groups sage.modules
+                B[()] + B[(4,5)] + B[(3,4,5)] + B[(2,3)(4,5)]
+                + B[(2,3,4,5)] + B[(1,2)(3,4,5)] + B[(1,2,3,4,5)]
 
             .. SEEALSO::
 

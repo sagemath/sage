@@ -129,7 +129,8 @@ class HighestWeightCrystals(Category_singleton):
             ::
 
                 sage: C = crystals.Letters(['A',2])
-                sage: T = crystals.TensorProduct(C,C,C,generators=[[C(2),C(1),C(1)],[C(1),C(2),C(1)]])
+                sage: T = crystals.TensorProduct(C, C, C, generators=[[C(2),C(1),C(1)],
+                ....:                                                 [C(1),C(2),C(1)]])
                 sage: T.highest_weight_vectors()
                 ([2, 1, 1], [1, 2, 1])
             """
@@ -175,7 +176,8 @@ class HighestWeightCrystals(Category_singleton):
             ::
 
                 sage: C = crystals.Letters(['A',2])
-                sage: T = crystals.TensorProduct(C,C,C,generators=[[C(2),C(1),C(1)],[C(1),C(2),C(1)]])
+                sage: T = crystals.TensorProduct(C, C, C,generators=[[C(2),C(1),C(1)],
+                ....:                                                [C(1),C(2),C(1)]])
                 sage: T.lowest_weight_vectors()
                 ([3, 2, 3], [3, 3, 2])
             """

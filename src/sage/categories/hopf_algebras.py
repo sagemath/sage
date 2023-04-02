@@ -136,9 +136,9 @@ class HopfAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: A = SteenrodAlgebra(3)                                                                        # optional - sage.combinat sage.modules
-                    sage: a = A.an_element()                                                                            # optional - sage.combinat sage.modules
-                    sage: a, a.antipode()                                                                               # optional - sage.combinat sage.modules
+                    sage: A = SteenrodAlgebra(3)                                        # optional - sage.combinat sage.modules
+                    sage: a = A.an_element()                                            # optional - sage.combinat sage.modules
+                    sage: a, a.antipode()                                               # optional - sage.combinat sage.modules
                     (2 Q_1 Q_3 P(2,1), Q_1 Q_3 P(2,1))
                 """
                 return self.parent().antipode(self)
@@ -205,11 +205,11 @@ class HopfAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: N = NonCommutativeSymmetricFunctions(QQ)              # optional - sage.combinat
-                    sage: R = N.ribbon()                                        # optional - sage.combinat
-                    sage: R.antipode_by_coercion.__module__                     # optional - sage.combinat
+                    sage: N = NonCommutativeSymmetricFunctions(QQ)                      # optional - sage.combinat
+                    sage: R = N.ribbon()                                                # optional - sage.combinat
+                    sage: R.antipode_by_coercion.__module__                             # optional - sage.combinat
                     'sage.categories.hopf_algebras'
-                    sage: R.antipode_by_coercion(R[1,3,1])                      # optional - sage.combinat
+                    sage: R.antipode_by_coercion(R[1,3,1])                              # optional - sage.combinat
                     -R[2, 1, 2]
                 """
                 R = self.realization_of().a_realization()
