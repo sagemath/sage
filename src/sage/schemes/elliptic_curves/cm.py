@@ -248,6 +248,8 @@ def is_HCP(f, check_monic_irreducible=True):
     p = pmin-1
     n = 0
     from sage.arith.misc import next_prime
+    from sage.schemes.elliptic_curves.constructor import EllipticCurve
+
     while True:
         p = next_prime(p)
         n += 1
