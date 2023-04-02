@@ -25,7 +25,7 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
     EXAMPLES::
 
-        sage: LieConformalAlgebras(QQbar).WithBasis()
+        sage: LieConformalAlgebras(QQbar).WithBasis()                                   # optional - sage.rings.number_field
         Category of Lie conformal algebras with basis over Algebraic Field
     """
     class ElementMethods:
@@ -36,14 +36,14 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)
-                sage: V.inject_variables()
+                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)                       # optional - sage.combinat sage.modules
+                sage: V.inject_variables()                                              # optional - sage.combinat sage.modules
                 Defining L, G, C
-                sage: G.T(3).index()
+                sage: G.T(3).index()                                                    # optional - sage.combinat sage.modules
                 ('G', 3)
-                sage: v = V.an_element(); v
+                sage: v = V.an_element(); v                                             # optional - sage.combinat sage.modules
                 L + G + C
-                sage: v.index()
+                sage: v.index()                                                         # optional - sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 ValueError: index can only be computed for monomials, got L + G + C
@@ -63,10 +63,11 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         EXAMPLES::
 
-            sage: C = LieConformalAlgebras(QQbar)
-            sage: C.WithBasis().FinitelyGenerated()
-            Category of finitely generated Lie conformal algebras with basis over Algebraic Field
-            sage: C.WithBasis().FinitelyGenerated() is C.FinitelyGenerated().WithBasis()
+            sage: C = LieConformalAlgebras(QQbar)                                           # optional - sage.rings.number_field
+            sage: C.WithBasis().FinitelyGenerated()                                         # optional - sage.rings.number_field
+            Category of finitely generated Lie conformal algebras with basis
+             over Algebraic Field
+            sage: C.WithBasis().FinitelyGenerated() is C.FinitelyGenerated().WithBasis()    # optional - sage.rings.number_field
             True
         """
         class Graded(GradedModulesCategory):
@@ -76,8 +77,9 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: LieConformalAlgebras(QQbar).WithBasis().FinitelyGenerated().Graded()
-                Category of H-graded finitely generated Lie conformal algebras with basis over Algebraic Field
+                sage: LieConformalAlgebras(QQbar).WithBasis().FinitelyGenerated().Graded()  # optional - sage.rings.number_field
+                Category of H-graded finitely generated Lie conformal algebras with basis
+                 over Algebraic Field
             """
             class ParentMethods:
 
@@ -88,8 +90,8 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                     EXAMPLES::
 
-                        sage: V = lie_conformal_algebras.Virasoro(QQ)
-                        sage: V.degree_on_basis(('L',2))
+                        sage: V = lie_conformal_algebras.Virasoro(QQ)                   # optional - sage.combinat sage.modules
+                        sage: V.degree_on_basis(('L', 2))                               # optional - sage.combinat sage.modules
                         4
                     """
                     if m[0] in self._central_elements:
