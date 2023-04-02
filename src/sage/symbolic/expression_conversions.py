@@ -1298,7 +1298,10 @@ class AlgebraicConverter(Converter):
         """
         func = operator
         operands = ex.operands()
-        operand = operands[0]
+        if len(operands) == 1:
+            operand = operands[0]
+        else:
+            operand = None
 
         if isinstance(self.field, UniversalCyclotomicField):
             QQbar = self.field
@@ -1322,6 +1325,7 @@ class AlgebraicConverter(Converter):
             except TypeError:
                 raise TypeError("unable to convert %r to %s" % (ex, self.field))
             res = zeta(rat_arg.denom())**rat_arg.numer()
+            return self.field(res)
         elif func_name in ['sin', 'cos', 'tan']:
             exp_ia = exp(SR(-1).sqrt() * operand, hold=hold)._algebraic_(QQbar)
             if func_name == 'sin':
@@ -1330,6 +1334,7 @@ class AlgebraicConverter(Converter):
                 res = (exp_ia + ~exp_ia) / 2
             else:
                 res = -zeta(4) * (exp_ia - ~exp_ia) / (exp_ia + ~exp_ia)
+            return self.field(res)
         elif func_name in ['sinh', 'cosh', 'tanh']:
             if not (SR(-1).sqrt()*operand).is_real():
                 raise ValueError("unable to represent as an algebraic number")
@@ -1340,21 +1345,25 @@ class AlgebraicConverter(Converter):
                 res = (exp_a + ~exp_a) / 2
             else:
                 res = (exp_a - ~exp_a) / (exp_a + ~exp_a)
+            return self.field(res)
         elif func_name in self.reciprocal_trig_functions:
             res = ~self.reciprocal_trig_functions[func_name](operand)._algebraic_(QQbar)
+            return self.field(res)
         elif func_name == 'complex_root_of':
             cr = ex._sympy_()
             poly = cr.poly._sage_()
             interval = cr._get_interval()._sage_()
             return self.field.polynomial_root(poly, interval)
-        else:
+        elif operand is not None:
             res = func(operand._algebraic_(self.field))
             # We have to handle the case where we get the same symbolic
             # expression back.  For example, QQbar(zeta(7)).  See
             # issue #12665.
             if (res - ex).is_trivial_zero():
                 raise TypeError("unable to convert %r to %s" % (ex, self.field))
-        return self.field(res)
+            return self.field(res)
+
+        raise ValueError("unable to represent as an algebraic number")
 
 
 def algebraic(ex, field):
