@@ -2,7 +2,7 @@
 comment: false
 # https://docs.codecov.com/docs/codecovyml-reference#codecov
 codecov:
-  require_ci_to_pass: true
+  require_ci_to_pass: false
 # https://docs.codecov.com/docs/commit-status
 coverage:
   status:
