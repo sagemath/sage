@@ -2347,7 +2347,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: F.reduced_form(prec=50, smallest_coeffs=False)
             Traceback (most recent call last):
             ...
-            ValueError: accuracy of Newton's root not within tolerance(0.0000124... > 1e-06), increase precision
+            ValueError: accuracy of Newton's root not within tolerance(0.000012... > 1e-06), increase precision
             sage: F.reduced_form(prec=100, smallest_coeffs=False)
             (
                                                                   [-1 -1]

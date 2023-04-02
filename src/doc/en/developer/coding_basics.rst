@@ -1092,9 +1092,9 @@ framework. Here is a comprehensive list:
 
       sage: print("The sum of 1 and 1 equals 5")  # abs tol 1
       The sum of 2 and 2 equals 4
-      sage: e^(i*pi/4).n() # rel tol 1e-1
+      sage: e^(i*pi/4).n()  # rel tol 1e-1
       0.7 + 0.7*I
-      sage: ((x+1.001)^4).expand() # rel tol 2
+      sage: ((x+1.001)^4).expand()  # rel tol 2
       x^4 + 4*x^3 + 6*x^2 + 4*x + 1
       sage: M = matrix.identity(3) + random_matrix(RR,3,3)/10^3
       sage: M^2 # abs tol 1e-2
@@ -1218,6 +1218,22 @@ framework. Here is a comprehensive list:
       sage: hash(2^31 + 2^13)
       8193                      # 32-bit
       2147491840                # 64-bit
+
+Per coding style (:ref:`section-coding-python`), the magic comment
+should be separated by at least 2 spaces.
+
+For multiline doctests, the comment should appear on the first
+`physical line <https://docs.python.org/3/reference/lexical_analysis.html#physical-lines>`_
+of the doctest (the line with the prompt ``sage:``), not on the
+continuation lines (the lines with the prompt ``....:``)::
+
+    sage: print(ZZ.random_element())        # random
+    42
+    sage: for _ in range(3):                # random
+    ....:     print(QQ.random_element())
+    1
+    1/77
+    -1/2
 
 Using ``search_src`` from the Sage prompt (or ``grep``), one can
 easily find the aforementioned keywords. In the case of ``todo: not

@@ -46,6 +46,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.extlinks',
     'sphinx.ext.mathjax',
+    'sphinx_copybutton',
     'IPython.sphinxext.ipython_directive',
     'matplotlib.sphinxext.plot_directive',
     'jupyter_sphinx',
@@ -254,6 +255,12 @@ def set_intersphinx_mappings(app, config):
 
 # By default document are not master.
 multidocs_is_master = True
+
+# https://sphinx-copybutton.readthedocs.io/en/latest/use.html
+copybutton_prompt_text = r"sage: |[.][.][.][.]: |\$ "
+copybutton_prompt_is_regexp = True
+copybutton_exclude = '.linenos, .c1'  # exclude single comments (in particular, # optional!)
+copybutton_only_copy_prompt_lines = True
 
 # Options for HTML output
 # -----------------------

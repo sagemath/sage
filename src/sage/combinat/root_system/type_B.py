@@ -340,7 +340,6 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
                                 [[i] for i in range(1, n)] + [[n, n + 1]])
 
 
-
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_B',

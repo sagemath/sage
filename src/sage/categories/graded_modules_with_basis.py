@@ -67,7 +67,6 @@ class GradedModulesWithBasis(GradedModulesCategory):
                                       for key, value in
                                       element.monomial_coefficients(copy=False).items()])
 
-
         def submodule(self, gens, check=True, already_echelonized=False,
                       unitriangular=False, support_order=None, category=None,
                       *args, **opts):

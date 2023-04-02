@@ -79,7 +79,6 @@ class Coalgebras(Category_over_base_ring):
             and Hopf algebras using the counit.
             """
 
-
         @abstract_method
         def coproduct(self, x):
             """

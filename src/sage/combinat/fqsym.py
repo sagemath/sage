@@ -1089,11 +1089,11 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 sage: M = FQSym.M()
                 sage: F(M[3, 2, 1] - 4 * F[4, 2, 1, 3])
                 F[3, 2, 1] - 4*F[4, 2, 1, 3]
-                sage: all(F(M._M_to_F_on_basis(w)) == M[w] for i in range(5)
+                sage: all(F(M._M_to_F_on_basis(w)) == M[w] for i in range(5)  # indirect doctest
                 ....:     for w in Permutations(i))
                 True
                 sage: all(M(F(M[w])) == M[w] for i in range(5)
-                ....:     for w in Permutations(i)) # indirect doctest
+                ....:     for w in Permutations(i))
                 True
                 sage: M[3, 2, 1] == F[3, 2, 1]
                 True
