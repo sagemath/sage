@@ -33,11 +33,21 @@ def qsieve(n):
         sage: qsieve(n)
         [(10000000000000000051, 1), (100000000000000000039, 1)]
 
-    """
-    if n.is_zero():
-        return [n]
+    TESTS:
 
+    The factorization of zero is undefined, to match the behavior of
+    ``ZZ.zero().factor()``::
+
+        sage: qsieve(ZZ.zero())
+        Traceback (most recent call last):
+        ...
+        ArithmeticError: factorization of 0 is not defined
+
+    """
     n = Integer(n)
+
+    if n.is_zero():
+        raise ArithmeticError("factorization of 0 is not defined")
 
     sig_on()
     cdef fmpz_t p
