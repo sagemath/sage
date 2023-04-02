@@ -1073,14 +1073,11 @@ class LazyModuleElement(Element):
                 return False
             if isinstance(self._coeff_stream._target, Stream_exact):
                 return True
-        if self._coeff_stream._is_sparse:
-            cache = self._coeff_stream._cache
-            if any(cache[a] for a in cache):
-                return True
-        else:
-            if any(a for a in self._coeff_stream._cache):
-                return True
+        if self._coeff_stream.is_nonzero():
+            return True
 
+        # Martin thinks that the following might not be allowed,
+        # because it may step the iterator
         v = self._coeff_stream._approximate_order
         if self[v]:
             return True
@@ -1110,7 +1107,7 @@ class LazyModuleElement(Element):
             sage: binomial(2000, 1000) / C[1000]
             1001
 
-        The Catalan numbers but with a valuation 1::
+        The Catalan numbers but with valuation `1`::
 
             sage: B = L.undefined(valuation=1)
             sage: B.define(z + B^2)

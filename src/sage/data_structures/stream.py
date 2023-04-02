@@ -196,6 +196,39 @@ class Stream():
         """
         return False
 
+    def order(self):
+        r"""
+        Return the order of ``self``, which is the minimum index ``n`` such
+        that ``self[n]`` is nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function
+            sage: f = Stream_function(lambda n: n, True, 0)
+            sage: f.order()
+            1
+
+        TESTS::
+
+            sage: f = Stream_function(lambda n: n*(n+1), False, -1)
+            sage: f.order()
+            1
+            sage: f._true_order
+            True
+
+            sage: f = Stream_function(lambda n: n*(n+1), True, -1)
+            sage: f.order()
+            1
+            sage: f._true_order
+            True
+        """
+        if self._true_order:
+            return self._approximate_order
+        n = self._approximate_order
+        while not self[n]:
+            n += 1
+        return n
+
 
 class Stream_inexact(Stream):
     """
@@ -420,39 +453,6 @@ class Stream_inexact(Stream):
         while True:
             yield self.get_coefficient(n)
             n += 1
-
-    def order(self):
-        r"""
-        Return the order of ``self``, which is the minimum index ``n`` such
-        that ``self[n]`` is nonzero.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_function
-            sage: f = Stream_function(lambda n: n, True, 0)
-            sage: f.order()
-            1
-
-        TESTS::
-
-            sage: f = Stream_function(lambda n: n*(n+1), False, -1)
-            sage: f.order()
-            1
-            sage: f._true_order
-            True
-
-            sage: f = Stream_function(lambda n: n*(n+1), True, -1)
-            sage: f.order()
-            1
-            sage: f._true_order
-            True
-        """
-        if self._true_order:
-            return self._approximate_order
-        n = self._approximate_order
-        while not self[n]:
-            n += 1
-        return n
 
     def __ne__(self, other):
         """
@@ -974,7 +974,7 @@ class Stream_function(Stream_inexact):
         self._approximate_order = approximate_order
 
 
-class Stream_uninitialized(Stream_inexact):
+class Stream_uninitialized(Stream):
     r"""
     Coefficient stream for an uninitialized series.
 
@@ -983,12 +983,7 @@ class Stream_uninitialized(Stream_inexact):
     - ``approximate_order`` -- integer; a lower bound for the order
       of the stream
 
-    Instances of this class are always dense.
-
-    .. TODO::
-
-        shouldn't instances of this class share the cache with its
-        ``_target``?
+    Instances of this class do not have their own cache.
 
     EXAMPLES::
 
@@ -1015,8 +1010,13 @@ class Stream_uninitialized(Stream_inexact):
         self._target = None
         if approximate_order is None:
             raise ValueError("the valuation must be specified for undefined series")
-        super().__init__(False, true_order)
+        super().__init__(true_order)
         self._approximate_order = approximate_order
+
+    def __getitem__(self, n):
+        if n < self._approximate_order:
+            return ZZ.zero()
+        return self._target[n]
 
     def iterate_coefficients(self):
         """
