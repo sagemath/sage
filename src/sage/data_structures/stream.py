@@ -1007,10 +1007,10 @@ class Stream_uninitialized(Stream):
             sage: C = Stream_uninitialized(0)
             sage: TestSuite(C).run(skip="_test_pickling")
         """
-        self._target = None
         if approximate_order is None:
             raise ValueError("the valuation must be specified for undefined series")
         super().__init__(true_order)
+        self._target = None
         self._approximate_order = approximate_order
 
     def __getitem__(self, n):
