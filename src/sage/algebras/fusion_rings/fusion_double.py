@@ -86,7 +86,6 @@ class FusionDouble(CombinatorialFreeModule):
         sage: G1 = SymmetricGroup(3)
         sage: H1 = FusionDouble(G1,prefix="u",inject_variables=True)
         sage: F = H1.get_fmatrix()
-        Checking multiplicity free-ness
 
     The above commands create the F-matrix factory. You can compute the F-matrices
     with the command ::
@@ -185,14 +184,6 @@ class FusionDouble(CombinatorialFreeModule):
         for i in range(self._rank):
             inject_variable(self._names[i],self.monomial(i))
 
-    def get_order(self):
-        r"""
-        Return the keys of the basis vectors in a fixed order.
-        """
-        if self._order is None:
-            self.set_order(self.basis().keys().list())
-        return self._order
-
     @cached_method
     def s_ij(self, i, j, unitary=False, base_coercion=True):
         r"""
@@ -209,10 +200,10 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: D = FusionDouble(SymmetricGroup(3),prefix="d",inject_variables=True)
-            sage: [D.s_ij(d2,x) for x in D.basis()]
+            sage: D = FusionDouble(SymmetricGroup(3),prefix="t",inject_variables=True)
+            sage: [D.s_ij(t2,x) for x in D.basis()]
             [2, 2, 4, 0, 0, -2, -2, -2]
-            sage: [D.s_ij(d2,x,unitary=True) for x in D.basis()]
+            sage: [D.s_ij(t2,x,unitary=True) for x in D.basis()]
             [1/3, 1/3, 2/3, 0, 0, -1/3, -1/3, -1/3]
         """
         sum = 0
@@ -379,11 +370,20 @@ class FusionDouble(CombinatorialFreeModule):
             B = Set(j_twist.inverse() * zj * j_twist for zj in CJ)
             inner_summands = A.intersection(B).intersection(Set(CK))
             for x in inner_summands:
-                res += i.chi()(i_twist * x * i_twist.inverse()) * j.chi()(j_twist * x * j_twist.inverse()) * k.chi()(x).conjugate()
+                res += i.char()(i_twist * x * i_twist.inverse()) * j.char()(j_twist * x * j_twist.inverse()) * k.char()(x).conjugate()
         return c * res
 
     @cached_method
     def field(self):
+        """
+        Returns a cyclotomic field large enough to contain the values
+        of R-matrices and twists that can arise for this fusion ring.
+
+        EXAMPLES::
+
+            sage: FusionDouble(SymmetricGroup(3)).field()
+            Cyclotomic Field of order 24 and degree 8
+        """
         return CyclotomicField(4 * self._cyclotomic_order)
 
     def fvars_field(self):
@@ -393,8 +393,13 @@ class FusionDouble(CombinatorialFreeModule):
         ``FMatrix`` factory object.
 
         This method is only available if ``self`` is multiplicity-free.
+
+        EXAMPLES::
+
+            sage: FusionDouble(SymmetricGroup(3)).fvars_field()
+            Cyclotomic Field of order 24 and degree 8
         """
-        if self.is_multiplicity_free():
+        if self.is_multiplicity_free(verbose=False):
             return self.get_fmatrix().field()
         raise NotImplementedError("method is only available for multiplicity free fusion rings")
 
@@ -543,8 +548,16 @@ class FusionDouble(CombinatorialFreeModule):
     def is_multiplicity_free(self, verbose=False):
         """
         Returns True if all fusion coefficients are at most 1.
+
+        EXAMPLES::
+
+            sage: FusionDouble(SymmetricGroup(3)).is_multiplicity_free()
+            True
+            sage: FusionDouble(SymmetricGroup(4)).is_multiplicity_free()
+            False
         """
-        print("Checking multiplicity free-ness")
+        if verbose:
+            print("Checking multiplicity free-ness")
         for i in self.basis():
             for j in self.basis():
                 for k in self.basis():
@@ -556,14 +569,34 @@ class FusionDouble(CombinatorialFreeModule):
 
     def one(self):
         """
-        The unit element of the ring.
+        The unit element of the ring, which is the first basis element.
+
+        EXAMPLES::
+
+            sage: FusionDouble(CyclicPermutationGroup(2),prefix="h").one()
+            h0
         """
         return self.basis()[0]
 
     @cached_method
     def dual(self,i):
         r"""
-        Return the dual object ``i^\ast`` to ``i``.
+        Return the dual object ``i^\ast`` to ``i``. The dual is also
+        available as an element method of ``i``.
+
+            sage: K = FusionDouble(CyclicPermutationGroup(3),prefix="k")
+            sage: [(x,K.dual(x)) for x in K.basis()]
+            [(k0, k0),
+            (k1, k2),
+            (k2, k1),
+            (k3, k6),
+            (k4, k8),
+            (k5, k7),
+            (k6, k3),
+            (k7, k5),
+            (k8, k4)]
+            sage: all(K.dual(x)==x.dual() for x in K.basis())
+            True
         """
         sz = self.one()
         for j in self.basis():
@@ -606,6 +639,11 @@ class FusionDouble(CombinatorialFreeModule):
         """
         Construct an :class:`FMatrix` factory to solve the pentagon and hexagon relations
         and organize the resulting F-symbols.
+
+        EXAMPLES::
+
+            sage: f = FusionDouble(SymmetricGroup(3)).get_fmatrix(); f
+            F-Matrix factory for The Fusion Ring of the Drinfeld Double of Symmetric group of order 3! as a permutation group
         """
         if not hasattr(self, 'fmats') or kwargs.get('new', False):
             kwargs.pop('new', None)
@@ -613,24 +651,71 @@ class FusionDouble(CombinatorialFreeModule):
             self.fmats = FMatrix(self, *args, **kwargs)
         return self.fmats
 
+    def get_order(self):
+        r"""
+        Return the keys of the basis vectors in a fixed order, needed
+        for the F-matrix code.
+
+        EXAMPLES::
+
+            sage: FusionDouble(SymmetricGroup(4)).get_order()
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
+        """
+        if self._order is None:
+            self.set_order(self.basis().keys().list())
+        return self._order
+
     class Element(CombinatorialFreeModule.Element):
         def is_simple_object(self):
             r"""
-            Determine whether ``self`` is a simple object of the fusion ring.
+            Determine whether ``self`` is a simple object (basis element) of the fusion ring.
+
+            EXAMPLES::
+
+                sage: H=FusionDouble(CyclicPermutationGroup(2),prefix="g",inject_variables=True)
+                sage: [x.is_simple_object() for x in [g0,g1,g0+g1]]
+                [True, True, False]
             """
             return self in self.parent().basis()
 
         def g(self):
-            """
+            r"""
+            The data determining a simple object consists of a conjugacy
+            class representative `g` and an irreducible character `\chi` of 
+            the centralizer of `g`.
+
             Returns the conjugacy class representative of the underlying
-            group corresponding to a simple object.
+            group corresponding to a simple object. See also :meth:`char`.
+
+            EXAMPLES::
+
+                sage: G = QuaternionGroup()
+                sage: H = FusionDouble(G,prefix="e",inject_variables=True)
+                sage: e10.g()
+                (1,3)(2,4)(5,7)(6,8)
+                sage: e10.char()
+                Character of Subgroup generated by [(1,2,3,4)(5,6,7,8), (1,5,3,7)(2,8,4,6)] of 
+                (Quaternion group of order 8 as a permutation group)
             """
             return self.parent()._elt[self.support_of_term()]
 
-        def chi(self):
-            """
-            Returns the character of the centralizer of a conjugacy class
-            representative of the underlying group corresponding to a simple object.
+        def char(self):
+            r"""
+            The data determining a simple object consists of a conjugacy
+            class representative `g` and an irreducible character `\chi` of 
+            the centralizer of `g`.
+
+            Returns the character `chi`. See also :meth:`g`.
+
+            EXAMPLES::
+
+                sage: G = DihedralGroup(5)
+                sage: H = FusionDouble(G,prefix="f",inject_variables=True)
+                sage: f10.g()
+                (1,2,3,4,5)
+                sage: f10.char()
+                Character of Subgroup generated by [(1,2,3,4,5)] of (Dihedral group of order 10 as a permutation group)
             """
             return self.parent()._chi[self.support_of_term()]
 
@@ -644,7 +729,7 @@ class FusionDouble(CombinatorialFreeModule):
                 sage: [i.ribbon() for i in H.basis()]
                 [1, 1, 1, 1, zeta3, -zeta3 - 1, 1, -zeta3 - 1, zeta3]
             """
-            ret = self.chi()(self.g()) / self.chi()(self.parent()._G.one())
+            ret = self.char()(self.g()) / self.char()(self.parent()._G.one())
             if (not base_coercion) or (self.parent()._basecoer is None):
                 return ret
             return self.parent()._basecoer(ret)
@@ -698,4 +783,3 @@ class FusionDouble(CombinatorialFreeModule):
             if not self.is_simple_object():
                 raise ValueError("quantum dimension is only available for simple objects of a FusionRing")
             return self.parent().s_ij(self,self.parent().one())
-
