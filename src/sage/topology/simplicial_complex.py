@@ -4783,7 +4783,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         r"""
         Calculate the intersection of two simplicial complexes.
 
-        EXAMPLES::
+        EXAMPLES:
 
             sage: X = SimplicialComplex([[1,2,3],[1,2,4]])
             sage: Y = SimplicialComplex([[1,2,3],[1,4,5]])
@@ -4804,16 +4804,21 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def bigraded_betti_numbers(self):
         r"""
-        Calculates the Bigraded betti numbers of a simplical complex.
+        Returns a dictionary of the bigraded Betti numbers of ''self''.
 
-        EXAMPLES:: 
-            TODO
+        EXAMPLES: 
+            sage: X = SimplicialComplex([[0,1],[1,2],[1,3],[2,3]])
+            sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
+            sage: X.bigraded_betti_numbers()
+            {(0, 0): 1, (-1, 6): 1, (-2, 8): 1}
+            sage: Y.bigraded_betti_numbers()
+            {(0, 0): 1, (-2, 8): 2, (-3, 10): 1}
         """
         from sage.misc.functional import gens 
         L = set(self.vertices())
         n = len(L)
-        D = {0:0}
-        B = {0:0}
+        D = {}
+        B = {}
 
         for i in range(n+1):
             D[i] = list(combinations(L,i))
@@ -4838,16 +4843,18 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def bigraded_betti_number(self, a, b):
         r"""
-        Returns the bigraded betti number indexed in the form (-i, 2j).
+        Returns the bigraded Betti number indexed in the form (-i, 2j).
 
         EXAMPLES::
-            TODO
+            sage: X = SimplicialComplex([[0,1],[1,2],[2,0],[1,2,3]])
+            sage: X.bigraded_betti_numbers()
+            {(0, 0): 1, (-1, 6): 1, (-2, 8): 1}
+            sage: X.bigraded_betti_number(-1, 6)
+            1
         """
-        import sys
         from sage.misc.functional import gens
         if b % 2 == 1:
-            #TODO
-            return 'Error: Second argument must be even. Run help(bigraded_betti_number) for more information.'
+            return 'Error: Second argument must be even.'
         if a == 0 and b == 0:
             return 1;
 
@@ -4855,7 +4862,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         b = b / 2
         L = set(self.vertices())
         n = len(L)
-        D = {0 : 0}
+        D = {}
 
         for i in range(n + 1):
             D[i] = list(combinations(L, i))
@@ -4865,9 +4872,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         for x in D[b]:
             S = self.generated_subcomplex(x)
             H = S.homology()
-            for k in range(b):
-                if H.get(b-k-1) != H.get(0) and H.get(b-k-1) != None:
-                    B = B + len(gens(H.get(b-k-1)))
+            if H.get(b-a-1) != H.get(0) and H.get(b-a-1) != None:
+                B = B + len(gens(H.get(b-a-1)))
 
         return B
 
