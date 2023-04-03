@@ -318,13 +318,13 @@ class GroupAlgebras(AlgebrasCategory):
                 sage: S1 = SymmetricGroup(1)
                 sage: GroupAlgebra(S1).is_integral_domain()                             # optional - sage.groups sage.modules
                 True
-                sage: GroupAlgebra(S1), IntegerModRing(4)).is_integral_domain()         # optional - sage.groups sage.modules
+                sage: GroupAlgebra(S1, IntegerModRing(4)).is_integral_domain()          # optional - sage.groups sage.modules
                 False
                 sage: GroupAlgebra(AbelianGroup(1)).is_integral_domain()                # optional - sage.groups sage.modules
                 True
                 sage: GroupAlgebra(AbelianGroup(2, [0,2])).is_integral_domain()         # optional - sage.groups sage.modules
                 False
-                sage: GroupAlgebra(GL(2, ZZ)).is_integral_domain() # not implemented    # optional - sage.groups sage.modules
+                sage: GroupAlgebra(GL(2, ZZ)).is_integral_domain()  # not implemented   # optional - sage.groups sage.modules
                 False
             """
             from sage.sets.set import Set

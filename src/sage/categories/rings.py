@@ -367,7 +367,7 @@ class Rings(CategoryWithAxiom):
             in particular, it satisfies Jacobi's identity::
 
                 sage: (F.bracket(F.bracket(a,b), c) + F.bracket(F.bracket(b,c), a)      # optional - sage.combinat sage.modules
-                ....:  + F.bracket(F.bracket(c,a), b)
+                ....:  + F.bracket(F.bracket(c,a), b))
                 0
             """
             return x * y - y * x
