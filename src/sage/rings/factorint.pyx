@@ -356,7 +356,7 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
             pari.set_debug_level(prev)
 
 
-def factor_using_flint(n):
+def factor_using_flint(Integer n):
     r"""
     Factor the nonzero integer ``n`` using FLINT.
 
