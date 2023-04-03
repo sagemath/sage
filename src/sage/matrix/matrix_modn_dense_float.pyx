@@ -31,7 +31,7 @@ from sage.libs.linbox.linbox cimport \
 
 from sage.libs.linbox.fflas cimport \
     fgemm, pfgemm, fgemv, Det, pDet, Rank, pRank, ReducedRowEchelonForm, pReducedRowEchelonForm, applyP, \
-    MinPoly, CharPoly, MinPoly, \
+    MinPoly, CharPoly, \
     ModFloatDensePolynomial as ModDensePoly
 
 ctypedef Poly1Dom[ModField, Dense] ModDensePolyRing
