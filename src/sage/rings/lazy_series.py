@@ -1064,23 +1064,11 @@ class LazyModuleElement(Element):
         """
         if isinstance(self._coeff_stream, Stream_zero):
             return False
-        if isinstance(self._coeff_stream, Stream_exact):
+        if self._coeff_stream.is_nonzero():
             return True
-        if isinstance(self._coeff_stream, Stream_uninitialized):
-            if self._coeff_stream._target is None:
-                return True
-            if isinstance(self._coeff_stream._target, Stream_zero):
-                return False
-            if isinstance(self._coeff_stream._target, Stream_exact):
-                return True
-        if self._coeff_stream._is_sparse:
-            cache = self._coeff_stream._cache
-            if any(cache[a] for a in cache):
-                return True
-        else:
-            if any(a for a in self._coeff_stream._cache):
-                return True
 
+        # TODO: the following might not be allowed, because it may
+        # step the iterator
         v = self._coeff_stream._approximate_order
         if self[v]:
             return True
@@ -1110,7 +1098,7 @@ class LazyModuleElement(Element):
             sage: binomial(2000, 1000) / C[1000]
             1001
 
-        The Catalan numbers but with a valuation 1::
+        The Catalan numbers but with a valuation `1`::
 
             sage: B = L.undefined(valuation=1)
             sage: B.define(z + B^2)
@@ -4662,6 +4650,14 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: g.define((z - (f - z)(g)))
             sage: g
             z - z^2 + 2*z^3 - 6*z^4 + 20*z^5 - 70*z^6 + 256*z^7 + O(z^8)
+
+        Check that issue :trac:`35071` is fixed::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = z^2
+            sage: g = L.undefined(valuation=1)
+            sage: g.define(z*f(f(g)))
+
         """
         fP = parent(self)
         if len(g) != fP._arity:

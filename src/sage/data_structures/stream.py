@@ -1039,6 +1039,21 @@ class Stream_uninitialized(Stream_inexact):
             yield self._target[n]
             n += 1
 
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        Uninitialized streams are considered to be non-zero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized
+            sage: C = Stream_uninitialized(0)
+            sage: C.is_nonzero()
+            True
+        """
+        return True
 
 class Stream_unary(Stream_inexact):
     r"""
