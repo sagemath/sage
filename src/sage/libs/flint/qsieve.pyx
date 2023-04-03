@@ -10,6 +10,7 @@ from sage.libs.flint.fmpz_factor cimport *
 from sage.libs.flint.qsieve cimport *
 from sage.rings.integer cimport Integer
 
+
 def qsieve(n):
     r"""
     Factor ``n`` using the quadratic sieve.
@@ -54,7 +55,7 @@ def qsieve(n):
     cdef fmpz_factor_t factors
     fmpz_factor_init(factors)
     sig_on()
-    qsieve_factor(factors,p)
+    qsieve_factor(factors, p)
     sig_off()
 
     pairs = fmpz_factor_to_pairlist(factors)

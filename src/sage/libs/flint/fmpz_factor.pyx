@@ -17,7 +17,7 @@ cdef fmpz_factor_to_pairlist(const fmpz_factor_t factors):
 
     if factors.sign < 0:
         # FLINT doesn't return the plus/minus one factor.
-        pairs.append( (Integer(-1), int(1)) )
+        pairs.append((Integer(-1), int(1)))
 
     cdef mpz_t mpz_factor
     for i in range(factors.num):
@@ -27,7 +27,7 @@ cdef fmpz_factor_to_pairlist(const fmpz_factor_t factors):
         mpz_set(f.value, mpz_factor)
         mpz_clear(mpz_factor)
         e = int(factors.exp[i])
-        pairs.append( (f,e) )
+        pairs.append((f, e))
         sig_check()
 
     return pairs

@@ -421,7 +421,7 @@ def factor_using_flint(Integer n):
     fmpz_factor_init(factors)
 
     sig_on()
-    fmpz_factor(factors,p)
+    fmpz_factor(factors, p)
     sig_off()
 
     pairs = fmpz_factor_to_pairlist(factors)
