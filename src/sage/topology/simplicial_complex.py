@@ -4948,4 +4948,3 @@ def facets_for_K3():
                          [(1,11,16),(2,10,14),(3,12,13),(4,9,15),(5,7,8)]])
     return ([tuple([g(i) for i in (1,2,3,8,12)]) for g in G]
             + [tuple([g(i) for i in (1,2,5,8,14)]) for g in G])
-
