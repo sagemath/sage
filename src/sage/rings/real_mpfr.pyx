@@ -2990,8 +2990,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def round(self):
         """
-         Rounds ``self`` to the nearest integer. The rounding mode of the
-         parent field has no effect on this function.
+         Rounds ``self`` to the nearest representable integer, rounding halfway
+         cases away from zero. 
+         Note : the rounding mode of the parent field has no effect on this
+         function.
 
          EXAMPLES::
 
