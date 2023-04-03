@@ -23,10 +23,12 @@ from sage.categories.category_types import Category_over_base_ring
 from sage.categories.homsets import Homsets
 from sage.misc.functional import log
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-from sage.rings.ring_extension import RingExtension_generic
+
+lazy_import('sage.rings.polynomial.ore_polynomial_ring', 'OrePolynomialRing')
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
+lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
 
 
 class DrinfeldModules(Category_over_base_ring):

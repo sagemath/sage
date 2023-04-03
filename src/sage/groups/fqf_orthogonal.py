@@ -512,9 +512,9 @@ def _isom_fqf(A, B=None):
     TESTS::
 
         sage: for p in primes_first_n(7)[1:]: # long time
-        ....:     q = matrix.diagonal(QQ, 3 * [2/p]) # long time
-        ....:     q = TorsionQuadraticForm(q) # long time
-        ....:     assert q.orthogonal_group().order()==GO(3, p).order() # long time
+        ....:     q = matrix.diagonal(QQ, 3 * [2/p])
+        ....:     q = TorsionQuadraticForm(q)
+        ....:     assert q.orthogonal_group().order()==GO(3, p).order()
     """
     def orbits(G, L):
         r"""

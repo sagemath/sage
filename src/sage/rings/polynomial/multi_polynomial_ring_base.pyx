@@ -1750,6 +1750,28 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         return DifferentialWeylAlgebra(self)
 
 
+cdef class BooleanPolynomialRing_base(MPolynomialRing_base):
+    r"""
+    Abstract base class for :class:`~sage.rings.polynomial.pbori.pbori.BooleanPolynomialRing`.
+
+    This class is defined for the purpose of ``isinstance`` tests.  It should not be
+    instantiated.
+
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
+        sage: R.<x, y, z> = BooleanPolynomialRing()
+        sage: isinstance(R, BooleanPolynomialRing_base)
+        True
+
+    By design, there is only one direct implementation subclass::
+
+        sage: len(BooleanPolynomialRing_base.__subclasses__()) <= 1
+        True
+    """
+    pass
+
+
 ####################
 # Leave *all* old versions!
 

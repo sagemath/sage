@@ -196,7 +196,8 @@ from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
 from sage.rings.padics.padic_generic import pAdicGeneric
-from sage.rings.function_field.function_field import FunctionField, RationalFunctionField
+from sage.rings.function_field.function_field import FunctionField
+from sage.rings.function_field.function_field_rational import RationalFunctionField
 from sage.categories.number_fields import NumberFields
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.modules import Modules
@@ -391,13 +392,13 @@ class RingDerivationModule(Module, UniqueRepresentation):
             constants, sharp = self._base_derivation._constants
             self._constants = (constants, False)  # can we do better?
         elif isinstance(domain, RationalFunctionField):
-            from sage.rings.function_field.maps import FunctionFieldDerivation_rational
+            from sage.rings.function_field.derivations_rational import FunctionFieldDerivation_rational
             self.Element = FunctionFieldDerivation_rational
             self._gens = self._basis = [ None ]
             self._dual_basis = [ domain.gen() ]
         elif isinstance(domain, FunctionField):
             if domain.is_separable():
-                from sage.rings.function_field.maps import FunctionFieldDerivation_separable
+                from sage.rings.function_field.derivations_polymod import FunctionFieldDerivation_separable
                 self._base_derivation = RingDerivationModule(domain.base_ring(), defining_morphism)
                 self.Element = FunctionFieldDerivation_separable
                 try:
@@ -410,7 +411,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
                 except NotImplementedError:
                     pass
             else:
-                from sage.rings.function_field.maps import FunctionFieldDerivation_inseparable
+                from sage.rings.function_field.derivations_polymod import FunctionFieldDerivation_inseparable
                 M, f, self._t = domain.separable_model()
                 self._base_derivation = RingDerivationModule(M, defining_morphism * f)
                 self._d = self._base_derivation(None)
