@@ -413,13 +413,14 @@ def factor_using_flint(Integer n):
     if n.is_zero():
         return [(n, int(1))]
 
-    sig_on()
     cdef fmpz_t p
     fmpz_init(p)
     fmpz_set_mpz(p, (<Integer>n).value)
 
     cdef fmpz_factor_t factors
     fmpz_factor_init(factors)
+
+    sig_on()
     fmpz_factor(factors,p)
     sig_off()
 
