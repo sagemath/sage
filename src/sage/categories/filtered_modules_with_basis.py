@@ -457,7 +457,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                 ....:         return lam.remove_horizontal_border_strip(k)
                 ....:     return A.sum_of_monomials([Partition(mu).conjugate()
                 ....:                                for k in range(sum(lam) + 1)
-                ....:                                for mu in mus])
+                ....:                                for mu in mus(k)])
                 sage: f = A.module_morphism(on_basis=map_on_basis,                      # optional - sage.combinat
                 ....:                       codomain=A)
                 sage: f(p1)                                                             # optional - sage.combinat

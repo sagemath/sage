@@ -365,7 +365,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             ::
 
                 sage: (s[3,2].counit().parent()                                         # optional - sage.combinat
-                ....:   == s[3,2].convolution_product().parent()
+                ....:   == s[3,2].convolution_product().parent())
                 False
             """
             # Be flexible on how the maps are entered: accept a list/tuple of
