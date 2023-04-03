@@ -926,7 +926,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         else:
             it = (args(i) for i in index_set)
         from sage.data_structures.stream import Stream_infinite_product
-        coeff_stream = Stream_infinite_product(it, self)
+        coeff_stream = Stream_infinite_product(it, self.one())
         return self.element_class(self, coeff_stream)
 
     def _test_invert(self, **options):

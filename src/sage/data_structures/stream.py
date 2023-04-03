@@ -3269,8 +3269,9 @@ class Stream_infinite_product(Stream):
     fixed valuation. In particular, this assumes the product is nonzero.
 
     For the ``_approximate_order``, this assumes the ring is a
-    lazy series.    """
-    def __init__(self, iterator, ring):
+    lazy series.
+    """
+    def __init__(self, iterator, one):
         """
         Initialize ``self``.
 
@@ -3282,7 +3283,7 @@ class Stream_infinite_product(Stream):
         self._prod_iter = iterator
         self._cur = None
         self._cur_order = -infinity
-        self._ring = ring
+        self._one = one
         super().__init__(False)
 
     @lazy_attribute
@@ -3307,20 +3308,24 @@ class Stream_infinite_product(Stream):
         """
         if self._cur is None:
             temp = next(self._prod_iter)
-            self._cur = self._ring.one() + temp
+            self._cur = self._one + temp
             self._cur_order = temp._coeff_stream._approximate_order
         order = self._cur_order
         while order == self._cur_order:
-            next_factor = next(self._prod_iter)
+            try:
+                next_factor = next(self._prod_iter)
+            except StopIteration:
+                self._cur_order = infinity
+                break
             coeff_stream = next_factor._coeff_stream
             while coeff_stream._approximate_order < order:
-                print(coeff_stream._approximate_order, coeff_stream[coeff_stream._approximate_order])
                 # This check also updates the next_factor._approximate_order
                 if coeff_stream[coeff_stream._approximate_order]:
                     order = coeff_stream._approximate_order
                     raise ValueError(f"invalid product computation with invalid order {order} < {self._cur_order}")
-            self._cur *= self._ring.one() + next_factor
-            order = coeff_stream._approximate_order
+            self._cur *= self._one + next_factor
+            if not coeff_stream[coeff_stream._approximate_order]:
+                order += 1
         self._cur_order = order
 
     def __getitem__(self, n):
