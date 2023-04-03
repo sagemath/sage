@@ -17,11 +17,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cysignals.signals cimport sig_check, sig_on, sig_off
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *
-from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_set_mpz, fmpz_get_mpz
+from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_set_mpz
 from sage.libs.flint.fmpz_factor cimport *
 
 from sage.rings.integer cimport Integer
@@ -424,21 +424,7 @@ def factor_using_flint(Integer n):
     fmpz_factor(factors,p)
     sig_off()
 
-    pairs = []
-    if factors.sign < 0:
-        # FLINT doesn't return the plus/minus one factor.
-        pairs.append( (Integer(-1), int(1)) )
-
-    cdef mpz_t mpz_factor
-    for i in range(factors.num):
-        mpz_init(mpz_factor)
-        fmpz_get_mpz(mpz_factor, &factors.p[i])
-        f = Integer()
-        mpz_set(f.value, mpz_factor)
-        mpz_clear(mpz_factor)
-        e = int(factors.exp[i])
-        pairs.append( (f,e) )
-        sig_check()
+    pairs = fmpz_factor_to_pairlist(factors)
 
     fmpz_factor_clear(factors)
     return pairs
