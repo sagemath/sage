@@ -910,7 +910,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
 
-                    sage: chains = W.generalized_noncrossing_partitions(2)
+                    sage: chains = W.generalized_noncrossing_partitions(2)      # optional - gap3
                     sage: sorted([w.reduced_word() for w in chain]              # optional - gap3
                     ....:        for chain in chains)
                     [[[], [], [1, 2]],
@@ -926,7 +926,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                      [[2], [], [1, 2, 1]],
                      [[2], [1, 2, 1], []]]
 
-                    sage: chains = W.generalized_noncrossing_partitions(2, positive=True)
+                    sage: chains = W.generalized_noncrossing_partitions(2,      # optional - gap3
+                    ....:              positive=True)
                     sage: sorted([w.reduced_word() for w in chain]              # optional - gap3
                     ....:        for chain in chains)
                     [[[], [1, 2], []],

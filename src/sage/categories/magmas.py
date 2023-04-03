@@ -366,7 +366,8 @@ class Magmas(Category_singleton):
             In particular, commutative monoid algebras are
             commutative algebras::
 
-                sage: MCA.is_subcategory(Algebras(QQ).Commutative())
+                sage: MoCA = Monoids().Commutative().Algebras(QQ)
+                sage: MoCA.is_subcategory(Algebras(QQ).Commutative())
                 True
             """
             from sage.categories.magmatic_algebras import MagmaticAlgebras
@@ -427,7 +428,8 @@ class Magmas(Category_singleton):
                 In particular, commutative monoid algebras are
                 commutative algebras::
 
-                    sage: MCA.is_subcategory(Algebras(QQ).Commutative())
+                    sage: MoCA = Monoids().Commutative().Algebras(QQ)
+                    sage: MoCA.is_subcategory(Algebras(QQ).Commutative())
                     True
                 """
                 return [Magmas().Commutative()]
@@ -705,7 +707,8 @@ class Magmas(Category_singleton):
                 In particular, commutative monoid algebras are
                 commutative algebras::
 
-                    sage: MCA.is_subcategory(Algebras(QQ).Commutative())
+                    sage: MoCA = Monoids().Commutative().Algebras(QQ)
+                    sage: MoCA.is_subcategory(Algebras(QQ).Commutative())
                     True
                 """
                 return [Magmas().Unital()]

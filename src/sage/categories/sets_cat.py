@@ -2597,7 +2597,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")         # optional - sage.modules
                     sage: S = cartesian_product([F, G])                                 # optional - sage.modules
                     sage: x = (S.monomial((0,4)) + 2 * S.monomial((0,5))                # optional - sage.modules
-                    ....:      + 3 * S.monomial((1,6))
+                    ....:      + 3 * S.monomial((1,6)))
                     sage: x.cartesian_projection(0)                                     # optional - sage.modules
                     B[4] + 2*B[5]
                     sage: x.cartesian_projection(1)                                     # optional - sage.modules
@@ -2617,7 +2617,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: S = cartesian_product([F, G, H])                              # optional - sage.modules
                     sage: x = (S.monomial((0,4)) + 2 * S.monomial((0,5))                # optional - sage.modules
                     ....:      + 3 * S.monomial((1,6)) + 4 * S.monomial((2,4))
-                    ....:      + 5 * S.monomial((2,7))
+                    ....:      + 5 * S.monomial((2,7)))
                     sage: x.cartesian_factors()                                         # optional - sage.modules
                     (B[4] + 2*B[5], 3*B[6], 4*B[4] + 5*B[7])
                     sage: [s.parent() for s in x.cartesian_factors()]                   # optional - sage.modules
