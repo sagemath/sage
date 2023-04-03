@@ -3263,27 +3263,33 @@ class Stream_infinite_product(Stream):
     r"""
     Stream defined by an infinite product.
 
-    The ``iterator`` returns elements `p_i` to compute the product
-    `\prod_{i \in I} (1 + p_i)`. The valuation of `p_i` is weakly increasing
-    as we iterate over `I` and there are only finitely many terms with any
-    fixed valuation. In particular, this assumes the product is nonzero.
+    The ``iterator`` returns elements either `1 + p_i` to compute the
+    product `\prod_{i \in I} (1 + p_i)`. The valuation of `p_i` is weakly
+    increasing as we iterate over `I` and there are only finitely many
+    terms with any fixed valuation. In particular, this *assumes* the
+    product is nonzero.
 
-    For the ``_approximate_order``, this assumes the ring is a
-    lazy series.
+    .. WARNING::
+
+        This does not check that the input is valid.
+
+    INPUT:
+
+    - ``iterator`` -- the iterator for the factors
+    - ``constant_order`` -- the order corresponding to the constant term
     """
-    def __init__(self, iterator, one):
+    def __init__(self, iterator, constant_order):
         """
         Initialize ``self``.
 
         EXAMPLES::
 
             sage: from sage.data_structures.stream import Stream_infinite_product
-            sage: TestSuite(f2).run()
         """
         self._prod_iter = iterator
         self._cur = None
         self._cur_order = -infinity
-        self._one = one
+        self._constant_order = constant_order
         super().__init__(False)
 
     @lazy_attribute
@@ -3304,11 +3310,16 @@ class Stream_infinite_product(Stream):
 
     def _advance(self):
         """
-        Advance the iterator so that the approximate order increases by one.
+        Advance the iterator so that the approximate order increases
+        by at least one.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
         """
         if self._cur is None:
             temp = next(self._prod_iter)
-            self._cur = self._one + temp
+            self._cur = temp
             self._cur_order = temp._coeff_stream._approximate_order
         order = self._cur_order
         while order == self._cur_order:
@@ -3316,15 +3327,13 @@ class Stream_infinite_product(Stream):
                 next_factor = next(self._prod_iter)
             except StopIteration:
                 self._cur_order = infinity
+                return
+            self._cur *= next_factor
+            # nonzero checks are safer than equality checks (i.e. in lazy series)
+            if order == self._constant_order and not (next_factor._coeff_stream[order] - 1):
+                order += 1
                 break
-            coeff_stream = next_factor._coeff_stream
-            while coeff_stream._approximate_order < order:
-                # This check also updates the next_factor._approximate_order
-                if coeff_stream[coeff_stream._approximate_order]:
-                    order = coeff_stream._approximate_order
-                    raise ValueError(f"invalid product computation with invalid order {order} < {self._cur_order}")
-            self._cur *= self._one + next_factor
-            if not coeff_stream[coeff_stream._approximate_order]:
+            while not next_factor._coeff_stream[order]:
                 order += 1
         self._cur_order = order
 

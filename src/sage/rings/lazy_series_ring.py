@@ -896,28 +896,44 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``args`` -- a list (or iterable) of elements of ``self``
+        - ``args`` -- a list (or iterable) of elements of ``self`` or when
+          ``index_set`` is given, a function that returns elements of ``self``
         - ``index_set`` -- (optional) an indexing set for the product or
-          or a boolean
+          or ``True``
 
         If ``index_set`` is an iterable, then ``args`` should be a function
-        that takes in an index and returns an element `p_i` of ``self`` to
+        that takes in an index and returns an element `1 + p_i` of ``self`` to
         compute the product `\prod_{i \in I} (1 + p_i)`. The valuation of `p_i`
         is weakly increasing as we iterate over `I` and there are only
-        finitely many terms with any fixed valuation. If ``index=True``,
-        then this will treat ``args`` as an infinite product indexed by
-        `0, 1, \ldots`. In particular, this assumes the product is nonzero.
+        finitely many terms with any fixed valuation. If ``index_set=True``,
+        then this will treat ``args`` as an iterator for a potentially
+        infinite product. In particular, this assumes the product is nonzero.
+
+        .. WARNING::
+
+            If invalid input is given, this may loop forever.
 
         EXAMPLES::
 
             sage: L.<t> = LazyLaurentSeriesRing(QQ)
-            sage: euler = L.prod(lambda n: -t^n, PositiveIntegers())
+            sage: euler = L.prod(lambda n: 1 - t^n, PositiveIntegers())
             sage: euler
             1 - t - t^2 + t^5 + O(t^7)
             sage: 1 / euler
             1 + t + 2*t^2 + 3*t^3 + 5*t^4 + 7*t^5 + 11*t^6 + O(t^7)
             sage: euler - L.euler()
             O(t^7)
+
+            sage: L.prod((1 - t^n for n in PositiveIntegers()), index_set=True)
+            1 - t - t^2 + t^5 + O(t^7)
+
+            sage: L.prod((1 + t^(n-3) for n in PositiveIntegers()), index_set=True)
+            2*t^-3 + 4*t^-2 + 4*t^-1 + 4 + 6*t + 10*t^2 + 16*t^3 + O(t^4)
+
+            sage: D = LazyDirichletSeriesRing(QQ, "s")
+            sage: ret = D.prod(lambda p: (1+D(1, valuation=p)).inverse(), index_set=Primes())
+            sage: ret
+            1 - 1/(2^s) - 1/(3^s) + 1/(4^s) - 1/(5^s) + 1/(6^s) - 1/(7^s) + O(1/(8^s))
         """
         if index_set is None:
             return super().prod(args)
@@ -926,7 +942,11 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         else:
             it = (args(i) for i in index_set)
         from sage.data_structures.stream import Stream_infinite_product
-        coeff_stream = Stream_infinite_product(it, self.one())
+        if self._minimal_valuation is not None and self._minimal_valuation > 0:
+            # Only for Dirichlet series (currently)
+            coeff_stream = Stream_infinite_product(it, self._minimal_valuation)
+        else:
+            coeff_stream = Stream_infinite_product(it, 0)
         return self.element_class(self, coeff_stream)
 
     def _test_invert(self, **options):
