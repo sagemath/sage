@@ -4657,6 +4657,8 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: f = z^2
             sage: g = L.undefined(valuation=1)
             sage: g.define(z*f(f(g)))
+            sage: g
+            O(z^8)
 
         """
         fP = parent(self)
