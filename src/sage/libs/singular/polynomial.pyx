@@ -35,6 +35,7 @@ from sage.libs.singular.decl cimport omAlloc0, omStrDup, omFree
 from sage.libs.singular.decl cimport p_GetComp, p_SetComp
 from sage.libs.singular.decl cimport pSubst
 from sage.libs.singular.decl cimport p_Normalize
+from sage.libs.singular.decl cimport ndCopyMap, maMapPoly
 
 from sage.libs.singular.singular cimport sa2si, si2sa, overflow_check
 
@@ -200,25 +201,33 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly 
     """
     cdef long l = len(args)
     cdef ideal *to_id = idInit(l,1)
+    cdef bint constant_args = 1
     for i from 0 <= i < l:
         to_id.m[i]= p_Copy( get_element(args[i]), r)
+        if not p_IsConstant(to_id.m[i], r):
+            constant_args = 0
 
-    cdef ideal *from_id=idInit(1,1)
-    from_id.m[0] = p
-
+    cdef ideal *from_id
     rChangeCurrRing(r)
-    cdef ideal *res_id = fast_map_common_subexp(from_id, r, to_id, r)
-    ret[0] = res_id.m[0]
+    cdef ideal *res_id
+    if not constant_args:
+        from_id = idInit(1,1)
+        from_id.m[0] = p
+
+        res_id = fast_map_common_subexp(from_id, r, to_id, r)
+        ret[0] = res_id.m[0]
+
+        from_id.m[0] = NULL
+        res_id.m[0] = NULL
+        id_Delete(&from_id, r)
+        id_Delete(&res_id, r)
+    else:
+        ret[0] = maMapPoly(p, r, to_id, r, ndCopyMap)
 
     # Unsure why we have to normalize here. See #16958
     p_Normalize(ret[0], r)
 
-    from_id.m[0] = NULL
-    res_id.m[0] = NULL
-
     id_Delete(&to_id, r)
-    id_Delete(&from_id, r)
-    id_Delete(&res_id, r)
 
     return 0
 
