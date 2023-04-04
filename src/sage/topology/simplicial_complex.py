@@ -4783,7 +4783,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         r"""
         Calculate the intersection of two simplicial complexes.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: X = SimplicialComplex([[1,2,3],[1,2,4]])
             sage: Y = SimplicialComplex([[1,2,3],[1,4,5]])
