@@ -62,7 +62,7 @@ The most likely usage for the code is through the functions
 ``modular_symbol_numerical``::
 
     sage: E = EllipticCurve("5077a1")
-    sage: M = E.modular_symbol(implementation = "num")
+    sage: M = E.modular_symbol(implementation="num")
     sage: M(0)
     0
     sage: M(1/123)
@@ -80,7 +80,8 @@ accessible, too)::
     35261176
     sage: M = E.modular_symbol(implementation="num", sign=-1)
     sage: M
-    Numerical modular symbol attached to Elliptic Curve defined by y^2 = x^3 + 101*x + 103 over Rational Field
+    Numerical modular symbol attached to
+     Elliptic Curve defined by y^2 = x^3 + 101*x + 103 over Rational Field
 
 We can then compute the value `[13/17]^{-}` and `[1/17]^{+}` by calling
 the function ``M``. The value of `[0]^{+}=0` tells us that the rank of
