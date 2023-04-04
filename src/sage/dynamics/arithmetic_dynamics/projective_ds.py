@@ -2336,7 +2336,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # is always nonnegative, so if this value is within -err of 0, return 0.
             if h < 0:
                 assert h > -err, "A negative height less than -error_bound was computed. " + \
-                 "This should be impossible, please report bug on trac.sagemath.org."
+                 "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
                     # This should be impossible. The error bound for Wells' is rigorous
                     # and the actual height is always >= 0. If we see something less than -err,
                     # something has g one very wrong.
