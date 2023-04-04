@@ -12153,7 +12153,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         if D > 0:
             raise NotImplementedError("Hilbert class polynomial is not implemented for real quadratic fields.")
 
-        from sage.schemes.elliptic_curves.all import hilbert_class_polynomial as HCP
+        from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial as HCP
         return QQ[name](HCP(D))
 
     def number_of_roots_of_unity(self):

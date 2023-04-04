@@ -43,7 +43,6 @@ from sage.rings.integer_ring import IntegerRing
 from sage.rings.number_field.number_field import is_fundamental_discriminant
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-from sage.schemes.elliptic_curves.all import EllipticCurve
 from sage.misc.cachefunc import cached_function
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 
@@ -248,7 +247,9 @@ def is_HCP(f, check_monic_irreducible=True):
     # Guarantees 4*p > |D| for fundamental D under GRH
     p = pmin-1
     n = 0
-    from sage.arith.all import next_prime
+    from sage.arith.misc import next_prime
+    from sage.schemes.elliptic_curves.constructor import EllipticCurve
+
     while True:
         p = next_prime(p)
         n += 1
@@ -315,7 +316,7 @@ def OrderClassNumber(D0,h0,f):
         return h0
     ps = f.prime_divisors()
     from sage.misc.misc_c import prod
-    from sage.arith.all import kronecker_symbol
+    from sage.arith.misc import kronecker as kronecker_symbol
     n = (f // prod(ps)) * prod(p-kronecker_symbol(D0,p) for p in ps)
     if D0 == -3:
         #assert h0 == 1 and n%3==0
@@ -1016,6 +1017,7 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
     # Construct an elliptic curve with j-invariant j, with
     # integral model:
 
+    from sage.schemes.elliptic_curves.constructor import EllipticCurve
     E = EllipticCurve(j=j).integral_model()
     D = E.discriminant()
     prime_bound = 1000 # test primes of degree 1 up to this norm

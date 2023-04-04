@@ -2940,7 +2940,8 @@ class GenusSymbol_global_ring():
             [0 0 0 0 0 0 1 0]
             [0 0 0 0 0 0 0 2]
         """
-        from sage.quadratic_forms.all import QuadraticForm, quadratic_form_from_invariants
+        from sage.quadratic_forms.quadratic_form import QuadraticForm
+        from sage.quadratic_forms.quadratic_form import quadratic_form_from_invariants
         sminus = self.signature_pair_of_matrix()[1]
         det = self.determinant()
         m = self.rank()

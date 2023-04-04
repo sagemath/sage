@@ -1261,7 +1261,7 @@ cdef class FiniteField(Field):
             # A very common case: return as early as possible.
             return self.__vector_space
 
-        from sage.modules.all import VectorSpace
+        from sage.modules.free_module import VectorSpace
         from sage.categories.morphism import is_Morphism
 
         if base is None:

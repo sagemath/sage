@@ -217,7 +217,7 @@ from sage.coding.linear_code_no_metric import AbstractLinearCodeNoMetric
 from sage.combinat.subset import Subsets
 from sage.cpython.string import bytes_to_str
 from sage.features.gap import GapPackage
-from sage.groups.all import SymmetricGroup
+from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.interfaces.gap import gap
 from sage.matrix.matrix_space import MatrixSpace

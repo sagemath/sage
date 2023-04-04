@@ -1726,7 +1726,7 @@ class HyperplaneArrangementElement(Element):
             ((0, 0), (0, 8), (8, 0), (8, 8))
         """
         import itertools
-        from sage.matroids.all import Matroid
+        from sage.matroids.constructor import Matroid
         R = self.parent().base_ring()
         parallels = self._parallel_hyperplanes()
         A_list = [parallel[0][1] for parallel in parallels]

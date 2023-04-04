@@ -118,8 +118,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import QuadraticField
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
-from sage.quadratic_forms.all import (BinaryQF,
-                                      BinaryQF_reduced_representatives)
+from sage.quadratic_forms.binary_qf import BinaryQF
+from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
@@ -7277,7 +7277,7 @@ def _heegner_forms_list(self, D, beta=None, expected_count=None):
         beta = Integers(4*N)(D).sqrt(extend=False)
     else:
         assert beta**2 == Integers(4*N)(D)
-    from sage.quadratic_forms.all import BinaryQF
+    from sage.quadratic_forms.binary_qf import BinaryQF
     b = ZZ(beta) % (2*N)
     all = []
     seen = []
