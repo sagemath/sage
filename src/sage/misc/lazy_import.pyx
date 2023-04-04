@@ -350,7 +350,7 @@ cdef class LazyImport():
 
             sage: from sage.misc.lazy_import import LazyImport
             sage: rm = LazyImport('sage.matrix.special', 'random_matrix')
-            sage: rm._sage_argspec_()                                                                                   # optional - sage.modules
+            sage: rm._sage_argspec_()                                                   # optional - sage.modules
             FullArgSpec(args=['ring', 'nrows', 'ncols', 'algorithm', 'implementation'],
                         varargs='args', varkw='kwds', defaults=(None, 'randomize', None),
                         kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -526,12 +526,12 @@ cdef class LazyImport():
 
            We access the ``plot`` method::
 
-               sage: Bar.plot                                                                       # optional - sage.plot
+               sage: Bar.plot                                                           # optional - sage.plot
                <function plot at 0x...>
 
            Now ``plot`` has been replaced in the dictionary of ``Foo``::
 
-               sage: type(Foo.__dict__['plot'])                                                     # optional - sage.plot
+               sage: type(Foo.__dict__['plot'])                                         # optional - sage.plot
                <... 'function'>
         """
         # Don't use the namespace of the class definition
@@ -1059,7 +1059,7 @@ def lazy_import(module, names, as_=None, *,
         ....:     pass
         sage: type(Foo.__dict__['plot'])
         <class 'sage.misc.lazy_import.LazyImport'>
-        sage: 'EXAMPLES' in Bar.plot.__doc__                                                        # optional - sage.plot
+        sage: 'EXAMPLES' in Bar.plot.__doc__                                            # optional - sage.plot
         True
         sage: type(Foo.__dict__['plot'])
         <... 'function'>
@@ -1068,7 +1068,7 @@ def lazy_import(module, names, as_=None, *,
 
         sage: lazy_import('sage.rings.padics.factory', 'Qp', 'my_Qp',
         ....:             deprecation=14275)
-        sage: my_Qp(5)                                                                              # optional - sage.rings.padics
+        sage: my_Qp(5)                                                                  # optional - sage.rings.padics
         doctest:...: DeprecationWarning:
         Importing my_Qp from here is deprecated;
         please use "from sage.rings.padics.factory import Qp as my_Qp" instead.
@@ -1079,7 +1079,7 @@ def lazy_import(module, names, as_=None, *,
 
         sage: lazy_import('sage.rings.padics.factory', 'Qp', 'my_Qp_msg',
         ....:             deprecation=(14275, "This is an example."))
-        sage: my_Qp_msg(5)                                                                          # optional - sage.rings.padics
+        sage: my_Qp_msg(5)                                                              # optional - sage.rings.padics
         doctest:...: DeprecationWarning: This is an example.
         See https://github.com/sagemath/sage/issues/14275 for details.
         5-adic Field with capped relative precision 20
@@ -1089,11 +1089,11 @@ def lazy_import(module, names, as_=None, *,
         sage: from sage.features import PythonModule
         sage: lazy_import('ppl', 'equation',
         ....:             feature=PythonModule('ppl', spkg='pplpy'))
-        sage: equation                                                                              # optional - pplpy
+        sage: equation                                                                  # optional - pplpy
         <built-in function equation>
         sage: lazy_import('PyNormaliz', 'NmzListConeProperties',
         ....:             feature=PythonModule('PyNormaliz', spkg='pynormaliz'))
-        sage: NmzListConeProperties                                                                 # optional - pynormaliz
+        sage: NmzListConeProperties                            # optional - pynormaliz
         <built-in function NmzListConeProperties>
         sage: lazy_import('foo', 'not_there',
         ....:             feature=PythonModule('foo', spkg='non-existing-package'))
@@ -1249,15 +1249,15 @@ def clean_namespace(namespace=None):
     EXAMPLES::
 
         sage: from sage.misc.lazy_import import attributes, clean_namespace
-        sage: from sage.calculus.calculus import maxima as C                                        # optional - sage.symbolic
-        sage: attributes(C)['_as_name']                                                             # optional - sage.symbolic
+        sage: from sage.calculus.calculus import maxima as C                            # optional - sage.symbolic
+        sage: attributes(C)['_as_name']                                                 # optional - sage.symbolic
         'maxima'
-        sage: attributes(C)['_namespace'] is sage.calculus.calculus.__dict__                        # optional - sage.symbolic
+        sage: attributes(C)['_namespace'] is sage.calculus.calculus.__dict__            # optional - sage.symbolic
         True
-        sage: clean_namespace(globals())                                                            # optional - sage.symbolic
-        sage: attributes(C)['_as_name']                                                             # optional - sage.symbolic
+        sage: clean_namespace(globals())                                                # optional - sage.symbolic
+        sage: attributes(C)['_as_name']                                                 # optional - sage.symbolic
         'C'
-        sage: attributes(C)['_namespace'] is globals()                                              # optional - sage.symbolic
+        sage: attributes(C)['_namespace'] is globals()                                  # optional - sage.symbolic
         True
     """
     cdef LazyImport w

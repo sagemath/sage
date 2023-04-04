@@ -106,7 +106,7 @@ class table(SageObject):
     information.  The same goes for ``header_column``. Passing lists
     for both arguments simultaneously is not supported. ::
 
-        sage: table([(x,n(sin(x), digits=2)) for x in [0..3]],                  # optional - sage.symbolic
+        sage: table([(x,n(sin(x), digits=2)) for x in [0..3]],                          # optional - sage.symbolic
         ....:       header_row=["$x$", r"$\sin(x)$"], frame=True)
         +-----+-----------+
         | $x$ | $\sin(x)$ |
@@ -123,7 +123,7 @@ class table(SageObject):
     You can create the transpose of this table in several ways, for
     example, "by hand," that is, changing the data defining the table::
 
-        sage: table(rows=[[x for x in [0..3]],                                  # optional - sage.symbolic
+        sage: table(rows=[[x for x in [0..3]],                                          # optional - sage.symbolic
         ....:             [n(sin(x), digits=2) for x in [0..3]]],
         ....:       header_column=['$x$', r'$\sin(x)$'], frame=True)
         +-----------++------+------+------+------+
@@ -135,7 +135,7 @@ class table(SageObject):
     or by passing the original data as the ``columns`` of the table
     and using ``header_column`` instead of ``header_row``::
 
-        sage: table(columns=[(x, n(sin(x), digits=2)) for x in [0..3]],         # optional - sage.symbolic
+        sage: table(columns=[(x, n(sin(x), digits=2)) for x in [0..3]],                 # optional - sage.symbolic
         ....:       header_column=['$x$', r'$\sin(x)$'], frame=True)
         +-----------++------+------+------+------+
         | $x$       || 0    | 1    | 2    | 3    |
@@ -145,7 +145,7 @@ class table(SageObject):
 
     or by taking the :meth:`transpose` of the original table::
 
-        sage: table(rows=[(x, n(sin(x), digits=2)) for x in [0..3]],            # optional - sage.symbolic
+        sage: table(rows=[(x, n(sin(x), digits=2)) for x in [0..3]],                    # optional - sage.symbolic
         ....:       header_row=['$x$', r'$\sin(x)$'], frame=True).transpose()
         +-----------++------+------+------+------+
         | $x$       || 0    | 1    | 2    | 3    |
@@ -175,11 +175,12 @@ class table(SageObject):
 
     To generate HTML you should use ``html(table(...))``::
 
-        sage: data = [["$x$", r"$\sin(x)$"]] + [(x, n(sin(x), digits=2)) for x in [0..3]]           # optional - sage.symbolic
-        sage: output = html(table(data, header_row=True, frame=True))                               # optional - sage.symbolic
-        sage: type(output)                                                                          # optional - sage.symbolic
+        sage: data = [["$x$", r"$\sin(x)$"]] + [(x, n(sin(x), digits=2))                # optional - sage.symbolic
+        ....:                                   for x in [0..3]]
+        sage: output = html(table(data, header_row=True, frame=True))                   # optional - sage.symbolic
+        sage: type(output)                                                              # optional - sage.symbolic
         <class 'sage.misc.html.HtmlFragment'>
-        sage: print(output)                                                                         # optional - sage.symbolic
+        sage: print(output)                                                             # optional - sage.symbolic
         <div class="notruncate">
         <table border="1" class="table_form">
         <tbody>
@@ -566,8 +567,9 @@ class table(SageObject):
         EXAMPLES::
 
             sage: from sage.misc.table import table
-            sage: a = [[r'$\sin(x)$', '$x$', 'text'], [1,34342,3], [identity_matrix(2),5,6]]                            # optional - sage.matrix
-            sage: latex(table(a)) # indirect doctest                                                                    # optional - sage.matrix
+            sage: a = [[r'$\sin(x)$', '$x$', 'text'],                                   # optional - sage.matrix
+            ....:      [1, 34342, 3], [identity_matrix(2), 5, 6]]
+            sage: latex(table(a)) # indirect doctest                                    # optional - sage.matrix
             \begin{tabular}{lll}
             $\sin(x)$ & $x$ & text \\
             $1$ & $34342$ & $3$ \\
@@ -576,7 +578,7 @@ class table(SageObject):
             0 & 1
             \end{array}\right)$ & $5$ & $6$ \\
             \end{tabular}
-            sage: latex(table(a, frame=True, align='center'))                                                           # optional - sage.matrix
+            sage: latex(table(a, frame=True, align='center'))                           # optional - sage.matrix
             \begin{tabular}{|c|c|c|} \hline
             $\sin(x)$ & $x$ & text \\ \hline
             $1$ & $34342$ & $3$ \\ \hline
@@ -645,10 +647,11 @@ class table(SageObject):
 
         EXAMPLES::
 
-            sage: T = table([[r'$\sin(x)$', '$x$', 'text'], [1,34342,3], [identity_matrix(2),5,6]])                     # optional - sage.matrix
-            sage: T._html_()                                                                                            # optional - sage.matrix
+            sage: T = table([[r'$\sin(x)$', '$x$', 'text'],                             # optional - sage.matrix
+            ....:            [1, 34342, 3], [identity_matrix(2), 5, 6]])
+            sage: T._html_()                                                            # optional - sage.matrix
             '<div.../div>'
-            sage: print(T._html_())                                                                                     # optional - sage.matrix
+            sage: print(T._html_())                                                     # optional - sage.matrix
             <div class="notruncate">
             <table  class="table_form">
             <tbody>
@@ -677,8 +680,10 @@ class table(SageObject):
         Note that calling ``html(table(...))`` has the same effect as
         calling ``table(...)._html_()``::
 
-            sage: T = table([["$x$", r"$\sin(x)$"]] + [(x,n(sin(x), digits=2)) for x in [0..3]], header_row=True, frame=True)   # optional - sage.symbolic
-            sage: T                                                                                                             # optional - sage.symbolic
+            sage: T = table([["$x$", r"$\sin(x)$"]]                                     # optional - sage.symbolic
+            ....:            + [(x,n(sin(x), digits=2)) for x in [0..3]],
+            ....:           header_row=True, frame=True)
+            sage: T                                                                     # optional - sage.symbolic
             +-----+-----------+
             | $x$ | $\sin(x)$ |
             +=====+===========+
@@ -690,7 +695,7 @@ class table(SageObject):
             +-----+-----------+
             | 3   | 0.14      |
             +-----+-----------+
-            sage: print(html(T))                                                                                                # optional - sage.symbolic
+            sage: print(html(T))                                                        # optional - sage.symbolic
             <div class="notruncate">
             <table border="1" class="table_form">
             <tbody>

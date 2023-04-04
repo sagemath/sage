@@ -286,8 +286,8 @@ def gen_thematic_rest_table_index(root,additional_categories=None,only_local_fun
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import gen_thematic_rest_table_index, list_of_subfunctions
-        sage: l = list_of_subfunctions(Graph)[0]                                # optional - sage.graphs
-        sage: Graph.bipartite_color in l                                        # optional - sage.graphs
+        sage: l = list_of_subfunctions(Graph)[0]                                        # optional - sage.graphs
+        sage: Graph.bipartite_color in l                                                # optional - sage.graphs
         True
     """
     from collections import defaultdict
