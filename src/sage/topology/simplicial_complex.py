@@ -4806,7 +4806,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         r"""
         Returns a dictionary of the bigraded Betti numbers of ''self''.
 
-        EXAMPLES: 
+        EXAMPLES::
             sage: X = SimplicialComplex([[0,1],[1,2],[1,3],[2,3]])
             sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
             sage: X.bigraded_betti_numbers()
@@ -4819,6 +4819,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         n = len(L)
         D = {}
         B = {}
+        Point = SimplicialComplex([[0]])
+        H0 = Point.homology().get(0)
 
         for i in range(n+1):
             D[i] = list(combinations(L,i))
@@ -4829,12 +4831,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         B[(0,0)] = 1
 
+
         for j in range(n+1):
             for x in D[j]:
                 S = self.generated_subcomplex(x)
                 H = S.homology()
                 for k in range(j):
-                    if H.get(j-k-1) != H.get(0) and H.get(j-k-1) != None:
+                    if H.get(j-k-1) != H0 and H.get(j-k-1) != None:
                         B[(-k, 2*j)] = B[(-k, 2*j)] + len(gens(H.get(j-k-1)))
 
         B = {key:val for key,val in B.items() if val != 0}
@@ -4863,6 +4866,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         L = set(self.vertices())
         n = len(L)
         D = {}
+        Point = SimplicialComplex([[0]])
+        H0 = Point.homology().get(0)
 
         for i in range(n + 1):
             D[i] = list(combinations(L, i))
@@ -4872,7 +4877,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         for x in D[b]:
             S = self.generated_subcomplex(x)
             H = S.homology()
-            if H.get(b-a-1) != H.get(0) and H.get(b-a-1) != None:
+            if H.get(b-a-1) != H0 and H.get(b-a-1) != None:
                 B = B + len(gens(H.get(b-a-1)))
 
         return B
