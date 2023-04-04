@@ -976,8 +976,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         except TypeError:
             raise TypeError("unable to coerce to a ComplexNumber: %s" % type(real))
 
-
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         TESTS:
 

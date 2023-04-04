@@ -2134,11 +2134,10 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p.remove_constraint(2)
             sage: p.solve()
             6.0
-
         """
         from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
         from sage.numerical.linear_tensor import is_LinearTensor
-        from sage.numerical.linear_tensor_constraints import  is_LinearTensorConstraint
+        from sage.numerical.linear_tensor_constraints import is_LinearTensorConstraint
         if is_LinearFunction(linear_function) or is_LinearTensor(linear_function):
             # Find the parent for the coefficients
             if is_LinearFunction(linear_function):
