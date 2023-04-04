@@ -615,7 +615,6 @@ class GenericGraph(GenericGraph_pyx):
 
         return self._backend.is_subgraph(other._backend, self, ignore_labels=not self.weighted())
 
-
     def _use_labels_for_hash(self):
         r"""
         Helper method for method ``__hash__``.
@@ -647,7 +646,6 @@ class GenericGraph(GenericGraph_pyx):
         if not hasattr(self, "_hash_labels") or self._hash_labels is None:
             self._hash_labels = self.weighted()
         return self._hash_labels
-
 
     @cached_method
     def __hash__(self):

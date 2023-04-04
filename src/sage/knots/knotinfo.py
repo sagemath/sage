@@ -239,7 +239,6 @@ Thanks to Chuck Livingston and Allison Moore for their support. For further ackn
 ##############################################################################
 
 
-
 from enum import Enum
 from sage.misc.cachefunc import cached_method
 from sage.misc.sage_eval import sage_eval
@@ -249,8 +248,6 @@ from sage.rings.integer_ring import ZZ
 from sage.groups.braid import BraidGroup
 from sage.knots.knot import Knots
 from sage.databases.knotinfo_db import KnotInfoColumns, db
-
-
 
 
 def eval_knotinfo(string, locals={}, to_tuple=True):
@@ -299,7 +296,6 @@ def knotinfo_bool(string):
     elif string == 'N':
         return False
     raise ValueError('%s is not a KnotInfo boolean')
-
 
 
 # ---------------------------------------------------------------------------------
@@ -446,7 +442,6 @@ class KnotInfoBase(Enum):
             return BraidGroup(2)
         else:
             return BraidGroup(n)
-
 
     @cached_method
     def _homfly_pol_ring(self, var1, var2):
@@ -1159,7 +1154,6 @@ class KnotInfoBase(Enum):
         """
         return not knotinfo_bool(self[self.items.unoriented])
 
-
     @cached_method
     def homfly_polynomial(self, var1='v', var2='z', original=False):
         r"""
@@ -1344,7 +1338,6 @@ class KnotInfoBase(Enum):
         a, z = R.gens()
         lc = {'a':  a, 'z': z}
         return R(eval_knotinfo(kauffman_polynomial, locals=lc))
-
 
     @cached_method
     def jones_polynomial(self, variab=None, skein_normalization=False, puiseux=False, original=False, use_sqrt=False):
@@ -1534,9 +1527,7 @@ class KnotInfoBase(Enum):
             else:
                 lc = {'x':  t}
 
-
         return R(eval_knotinfo(jones_polynomial, locals=lc))
-
 
     @cached_method
     def alexander_polynomial(self, var='t', original=False, laurent_poly=False):
@@ -1958,7 +1949,6 @@ class KnotInfoBase(Enum):
 
         raise ValueError('Link construction using %s not possible' %use_item)
 
-
     @cached_method
     def is_unique(self):
         r"""
@@ -2170,7 +2160,6 @@ class KnotInfoBase(Enum):
         else:
             return webbrowser.open(filename.diagram_url(self[self.items.name]), new=new, autoraise=autoraise)
 
-
     def knot_atlas_webpage(self, new=0, autoraise=True):
         r"""
         Launch the Knot Atlas web-page for ``self``.
@@ -2210,7 +2199,6 @@ class KnotInfoBase(Enum):
         """
         import webbrowser
         return webbrowser.open(self[self.items.knotilus_page_anon], new=new, autoraise=autoraise)
-
 
 
 # --------------------------------------------------------------------------------------------
@@ -2255,7 +2243,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         sage: L6a2(0) == L6a2('0')
         True
     """
-
 
     def __init__(self, crossing_number, is_knot, is_alternating, name_unoriented=None):
         r"""
@@ -2363,7 +2350,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             res.append(KnotInfoSeries(cross_nr, is_knot, is_alt, curr_n_unori))
         return res
 
-
     @cached_method
     def lower_list(self, oriented=False, comp=None, det=None, homfly=None):
         r"""
@@ -2408,7 +2394,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             l = LS.lower_list(oriented=oriented, comp=comp, det=det, homfly=homfly)
         return l + self.list(oriented=oriented, comp=comp, det=det, homfly=homfly)
 
-
     def __repr__(self):
         r"""
         Return the representation string of ``self``.
@@ -2425,7 +2410,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             return 'Series of knots %s' %(self._name())
         else:
             return 'Series of links %s' %(self._name())
-
 
     def __getitem__(self, item):
         r"""
@@ -2585,7 +2569,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             tester.assertTrue(self.is_recoverable(unique=False, max_samples=max_samples))
         else:
             tester.assertTrue(self.is_recoverable(unique=False))
-
 
     def inject(self, verbose=True):
         r"""
