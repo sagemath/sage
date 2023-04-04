@@ -59,7 +59,10 @@ available::
         pycodestyle-minimal    -- check against Sage's minimal style conventions
         relint                 -- check whether some forbidden patterns appear
                                   (includes all patchbot pattern-exclusion plugins)
+        rst                    -- validate Python docstrings markup as reStructuredText
         codespell              -- check for misspelled words in source code
+        cython-lint            -- Check Cython files for code style
+        pyright                -- run the static typing checker pyright
         pycodestyle            -- check against the Python style conventions of PEP8
      -p auto          -- run test environments in parallel
      --help           -- show tox help
@@ -207,6 +210,14 @@ or a few related issues::
 
 *Documentation:* https://pycodestyle.pycqa.org/en/latest/index.html
 
+
+.. _section-tools-cython-lint:
+
+Cython-lint
+===========
+
+`Cython-lint <https://pypi.org/project/cython-lint/>`_ checks Cython source files
+for coding style.
 
 .. _section-tools-relint:
 
