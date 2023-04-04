@@ -1206,7 +1206,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         return PseudoRiemannianMetric(self, name, signature=signature[0]-signature[1],
                                       latex_name=latex_name)
 
-
     def symplectic_form(
         self, name: Optional[str] = None, latex_name: Optional[str] = None
     ):

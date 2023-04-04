@@ -2317,7 +2317,6 @@ class RealChart(Chart):
         self._restrictions = new_restrictions
         self._fast_valid_coordinates = None
 
-
     def restrict(self, subset, restrictions=None):
         r"""
         Return the restriction of the chart to some open subset of its domain.

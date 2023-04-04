@@ -662,7 +662,6 @@ class PseudoRiemannianMetric(TensorField):
                 rst = self.restrict(dom)
                 rst.set(symbiform_rst)
 
-
     def inverse(self, expansion_symbol=None, order=1):
         r"""
         Return the inverse metric.
@@ -879,7 +878,6 @@ class PseudoRiemannianMetric(TensorField):
             frame = chart._frame
         return self.connection().coef(frame)
 
-
     def christoffel_symbols_display(self, chart=None, symbol=None,
                 latex_symbol=None, index_labels=None, index_latex_labels=None,
                 coordinate_labels=True, only_nonzero=True,
@@ -1068,7 +1066,6 @@ class PseudoRiemannianMetric(TensorField):
 
         """
         return self.connection().riemann(name, latex_name)
-
 
     def ricci(self, name=None, latex_name=None):
         r"""
@@ -2270,7 +2267,6 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
             # The restriction is ready:
             self._restrictions[subdomain] = resu
         return self._restrictions[subdomain]
-
 
     def set(self, symbiform):
         r"""
