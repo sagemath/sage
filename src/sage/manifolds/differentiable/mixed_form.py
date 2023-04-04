@@ -346,7 +346,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
 
         """
         if self._name is None:
-            return r'\mbox{' + repr(self) + r'}'
+            return r'\text{' + repr(self) + r'}'
         else:
             return self._latex_name
 
@@ -548,7 +548,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         else:
             resu_txt += self[0]._name
         if self[0]._latex_name is None:
-            resu_latex += r"\mbox{(unnamed scalar field)}"
+            resu_latex += r"\text{(unnamed scalar field)}"
         else:
             resu_latex += latex(self[0])
         # Differential forms:
@@ -558,7 +558,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             else:
                 resu_txt += " + " + self[j]._name
             if self[j]._latex_name is None:
-                resu_latex += r"+\mbox{(unnamed " + str(j) + r"-form)}"
+                resu_latex += r"+\text{(unnamed " + str(j) + r"-form)}"
             else:
                 resu_latex += r"+" + latex(self[j])
         return FormattedExpansion(resu_txt, resu_latex)
