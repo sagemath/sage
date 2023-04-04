@@ -6833,7 +6833,7 @@ cdef class Matrix(Matrix1):
             [3 4 5]
             [6 7 8]
             sage: es = A.eigenvectors_left(); es                                        # optional - sage.rings.number_field
-            [(0, [(1, -2, 1)], 1),
+            [(0, [ (1, -2, 1) ], 1),
              (-1.348469228349535?, [(1, 0.3101020514433644?, -0.3797958971132713?)], 1),
              (13.34846922834954?, [(1, 1.289897948556636?, 1.579795897113272?)], 1)]
             sage: eval, [evec], mult = es[0]                                            # optional - sage.rings.number_field
@@ -6847,9 +6847,9 @@ cdef class Matrix(Matrix1):
 
             sage: M = matrix(QQ, [[0,-1,0], [1,0,0], [0,0,2]])
             sage: M.eigenvectors_left()                                                 # optional - sage.rings.number_field
-            [(2, [(0, 0, 1)], 1),
+            [(2,    [ (0, 0, 1) ],  1),
              (-1*I, [(1, -1*I, 0)], 1),
-             (1*I, [(1, 1*I, 0)], 1)]
+             (1*I,  [(1, 1*I, 0)],  1)]
             sage: M.eigenvectors_left(extend=False)                                     # optional - sage.rings.number_field
             [(2, [
             (0, 0, 1)
@@ -6965,7 +6965,7 @@ cdef class Matrix(Matrix1):
             [3 4 5]
             [6 7 8]
             sage: es = A.eigenvectors_right(); es                                       # optional - sage.rings.number_field
-            [(0, [(1, -2, 1)], 1),
+            [(0, [ (1, -2, 1) ], 1),
              (-1.348469228349535?, [(1, 0.1303061543300932?, -0.7393876913398137?)], 1),
              (13.34846922834954?, [(1, 3.069693845669907?, 5.139387691339814?)], 1)]
             sage: A.eigenvectors_right(extend=False)                                    # optional - sage.rings.number_field
@@ -15726,7 +15726,7 @@ cdef class Matrix(Matrix1):
             True
             sage: m = matrix(OE, [[-5*w - 1, -2*w - 2, 4*w - 10],                       # optional - sage.rings.number_field
             ....:                 [ 8*w,       -w,       w - 1],
-            ....:                 [      -1,        1,     -8])
+            ....:                 [      -1,        1,      -8]])
             sage: d, u, v = m.smith_form(); u * m * v == d                              # optional - sage.rings.number_field
             True
 
