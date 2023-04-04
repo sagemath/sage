@@ -622,7 +622,7 @@ class Standalone(SageObject):
 
     def pdf(self, filename=None, view=True, program=None):
         r"""
-        Compiles the latex code with pdflatex and create a pdf file.
+        Compile the latex code with pdflatex and create a pdf file.
 
         INPUT:
 
@@ -639,7 +639,7 @@ class Standalone(SageObject):
 
         OUTPUT:
 
-            string, path to pdf file
+        string, path to pdf file
 
         EXAMPLES::
 
@@ -748,7 +748,7 @@ class Standalone(SageObject):
 
     def dvi(self, filename=None, view=True, program='latex'):
         r"""
-        Compiles the latex code with latex and create a dvi file.
+        Compile the latex code with latex and create a dvi file.
 
         INPUT:
 
@@ -763,7 +763,7 @@ class Standalone(SageObject):
 
         OUTPUT:
 
-            string, path to dvi file
+        string, path to dvi file
 
         EXAMPLES::
 
@@ -867,7 +867,7 @@ class Standalone(SageObject):
 
     def png(self, filename=None, density=150, view=True):
         r"""
-        Compiles the latex code with pdflatex and converts to a png file.
+        Compile the latex code with pdflatex and converts to a png file.
 
         INPUT:
 
@@ -883,7 +883,7 @@ class Standalone(SageObject):
 
         OUTPUT:
 
-            string, path to png file
+        string, path to png file
 
         EXAMPLES::
 
@@ -956,7 +956,7 @@ class Standalone(SageObject):
 
     def svg(self, filename=None, view=True, program='pdftocairo'):
         r"""
-        Compiles the latex code with pdflatex and converts to a svg file.
+        Compile the latex code with pdflatex and converts to a svg file.
 
         INPUT:
 
@@ -972,7 +972,7 @@ class Standalone(SageObject):
 
         OUTPUT:
 
-            string, path to svg file
+        string, path to svg file
 
         EXAMPLES::
 
@@ -1056,7 +1056,7 @@ class Standalone(SageObject):
 
     def eps(self, filename=None, view=True, program='dvips'):
         r"""
-        Compiles the latex code with pdflatex and converts to a eps file.
+        Compile the latex code with pdflatex and converts to a eps file.
 
         INPUT:
 
@@ -1072,7 +1072,7 @@ class Standalone(SageObject):
 
         OUTPUT:
 
-            string, path to eps file
+        string, path to eps file
 
         EXAMPLES::
 
@@ -1173,7 +1173,7 @@ class Standalone(SageObject):
 
         OUTPUT:
 
-            string, path to tex file
+        string, path to tex file
 
         EXAMPLES::
 
