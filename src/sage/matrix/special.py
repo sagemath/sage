@@ -7,7 +7,7 @@ interesting matrices. These can be reached through ``matrix.<tab>``.
 
 For example, here is a circulant matrix of order five::
 
-    sage: matrix.circulant(SR.var('a b c d e'))                                     # optional - sage.symbolic
+    sage: matrix.circulant(SR.var('a b c d e'))                                         # optional - sage.symbolic
     [a b c d e]
     [e a b c d]
     [d e a b c]
@@ -3472,7 +3472,7 @@ def vandermonde(v, ring=None):
 
     A Vandermonde matrix of order three over the symbolic ring::
 
-        sage: matrix.vandermonde(SR.var(['x0', 'x1', 'x2']))                        # optional - sage.symbolic
+        sage: matrix.vandermonde(SR.var(['x0', 'x1', 'x2']))                            # optional - sage.symbolic
         [   1   x0 x0^2]
         [   1   x1 x1^2]
         [   1   x2 x2^2]
@@ -3559,7 +3559,7 @@ def hankel(c, r=None, ring=None):
 
     A Hankel matrix with symbolic entries::
 
-        sage: matrix.hankel(SR.var('a, b, c, d, e'))                                # optional - sage.symbolic
+        sage: matrix.hankel(SR.var('a, b, c, d, e'))                                    # optional - sage.symbolic
         [a b c d e]
         [b c d e 0]
         [c d e 0 0]
@@ -3568,7 +3568,7 @@ def hankel(c, r=None, ring=None):
 
     We can also pass the elements of the last row, starting at the second column::
 
-        sage: matrix.hankel(SR.var('a, b, c, d, e'), SR.var('f, g, h, i'))          # optional - sage.symbolic
+        sage: matrix.hankel(SR.var('a, b, c, d, e'), SR.var('f, g, h, i'))              # optional - sage.symbolic
         [a b c d e]
         [b c d e f]
         [c d e f g]

@@ -43,7 +43,7 @@ field.
 ::
 
     sage: K = ZZ^5
-    sage: M = GF(7)^5                                                           # optional - sage.libs.pari
+    sage: M = GF(7)^5                                                                   # optional - sage.rings.finite_rings
 
 Arithmetic between the `\QQ` and
 `\ZZ` modules is defined, and the result is always
@@ -60,7 +60,7 @@ to `\QQ`.
 Since there is no canonical coercion map to the finite field from
 `\QQ` the following arithmetic is not defined::
 
-    sage: V.0 + M.0                                                             # optional - sage.libs.pari
+    sage: V.0 + M.0                                                                     # optional - sage.rings.finite_rings
     Traceback (most recent call last):
     ...
     TypeError: unsupported operand parent(s) for +:
@@ -73,16 +73,16 @@ field.
 
 ::
 
-    sage: w = K.0 + M.0; w                                                      # optional - sage.libs.pari
+    sage: w = K.0 + M.0; w                                                              # optional - sage.rings.finite_rings
     (2, 0, 0, 0, 0)
-    sage: parent(w)                                                             # optional - sage.libs.pari
+    sage: parent(w)                                                                     # optional - sage.rings.finite_rings
     Vector space of dimension 5 over Finite Field of size 7
-    sage: parent(M.0 + K.0)                                                     # optional - sage.libs.pari
+    sage: parent(M.0 + K.0)                                                             # optional - sage.rings.finite_rings
     Vector space of dimension 5 over Finite Field of size 7
 
 Matrix vector multiply::
 
-    sage: MS = MatrixSpace(QQ,3)
+    sage: MS = MatrixSpace(QQ, 3)
     sage: A = MS([0,1,0,1,0,0,0,0,1])
     sage: V = QQ^3
     sage: v = V([1,2,3])
@@ -216,20 +216,20 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
 
     All entries must *canonically* coerce to some common ring::
 
-        sage: v = vector([17, GF(11)(5), 19/3]); v                              # optional - sage.libs.pari
+        sage: v = vector([17, GF(11)(5), 19/3]); v                                      # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: unable to find a common ring for all elements
 
     ::
 
-        sage: v = vector([17, GF(11)(5), 19]); v                                # optional - sage.libs.pari
+        sage: v = vector([17, GF(11)(5), 19]); v                                        # optional - sage.rings.finite_rings
         (6, 5, 8)
-        sage: v.parent()                                                        # optional - sage.libs.pari
+        sage: v.parent()                                                                # optional - sage.rings.finite_rings
         Vector space of dimension 3 over Finite Field of size 11
-        sage: v = vector([17, GF(11)(5), 19], QQ); v                            # optional - sage.libs.pari
+        sage: v = vector([17, GF(11)(5), 19], QQ); v                                    # optional - sage.rings.finite_rings
         (17, 5, 19)
-        sage: v.parent()                                                        # optional - sage.libs.pari
+        sage: v.parent()                                                                # optional - sage.rings.finite_rings
         Vector space of dimension 3 over Rational Field
         sage: v = vector((1,2,3), QQ); v
         (1, 2, 3)
@@ -252,7 +252,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
 
     We make a vector mod 3 out of a vector over `\ZZ`. ::
 
-        sage: vector(vector([1,2,3]), GF(3))                                    # optional - sage.libs.pari
+        sage: vector(vector([1,2,3]), GF(3))                                            # optional - sage.rings.finite_rings
         (1, 2, 0)
 
     The degree of a vector may be specified::
@@ -272,9 +272,9 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     you must specify the degree since it is not implied.  Here we use a
     finite field as the base ring. ::
 
-        sage: w = vector(FiniteField(7), 4); w                                  # optional - sage.libs.pari
+        sage: w = vector(FiniteField(7), 4); w                                          # optional - sage.rings.finite_rings
         (0, 0, 0, 0)
-        sage: w.parent()                                                        # optional - sage.libs.pari
+        sage: w.parent()                                                                # optional - sage.rings.finite_rings
         Vector space of dimension 4 over Finite Field of size 7
 
     The fastest method to construct a zero vector is to call the
@@ -393,21 +393,21 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     If the argument is a vector, it doesn't change the base ring. This
     fixes :trac:`6643`::
 
-        sage: K.<sqrt3> = QuadraticField(3)                                                         # optional - sage.rings.number_field
-        sage: u = vector(K, (1/2, sqrt3/2))                                                         # optional - sage.rings.number_field
-        sage: vector(u).base_ring()                                                                 # optional - sage.rings.number_field
+        sage: K.<sqrt3> = QuadraticField(3)                                             # optional - sage.rings.number_field
+        sage: u = vector(K, (1/2, sqrt3/2))                                             # optional - sage.rings.number_field
+        sage: vector(u).base_ring()                                                     # optional - sage.rings.number_field
         Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
-        sage: v = vector(K, (0, 1))                                                                 # optional - sage.rings.number_field
-        sage: vector(v).base_ring()                                                                 # optional - sage.rings.number_field
+        sage: v = vector(K, (0, 1))                                                     # optional - sage.rings.number_field
+        sage: vector(v).base_ring()                                                     # optional - sage.rings.number_field
         Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
 
     Constructing a vector from a numpy array behaves as expected::
 
-        sage: import numpy                                                                          # optional - numpy
-        sage: a = numpy.array([1,2,3])                                                              # optional - numpy
-        sage: v = vector(a); v                                                                      # optional - numpy
+        sage: import numpy                                                              # optional - numpy
+        sage: a = numpy.array([1,2,3])                                                  # optional - numpy
+        sage: v = vector(a); v                                                          # optional - numpy
         (1, 2, 3)
-        sage: parent(v)                                                                             # optional - numpy
+        sage: parent(v)                                                                 # optional - numpy
         Ambient free module of rank 3 over the principal ideal domain Integer Ring
 
     Complex numbers can be converted naturally to a sequence of length 2.  And
@@ -453,23 +453,23 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: v = vector(QQ, w, immutable=True)
         sage: v.is_immutable()
         True
-        sage: import numpy as np                                                                    # optional - numpy
-        sage: w = np.array([1, 2, pi], float)                                                       # optional - numpy
-        sage: v = vector(w, immutable=True)                                                         # optional - numpy
-        sage: v.is_immutable()                                                                      # optional - numpy
+        sage: import numpy as np                                                        # optional - numpy
+        sage: w = np.array([1, 2, pi], float)                                           # optional - numpy
+        sage: v = vector(w, immutable=True)                                             # optional - numpy
+        sage: v.is_immutable()                                                          # optional - numpy
         True
-        sage: w = np.array([i, 2, 3], complex)                                                      # optional - numpy
-        sage: v = vector(w, immutable=True)                                                         # optional - numpy
-        sage: v.is_immutable()                                                                      # optional - numpy
+        sage: w = np.array([i, 2, 3], complex)                                          # optional - numpy
+        sage: v = vector(w, immutable=True)                                             # optional - numpy
+        sage: v.is_immutable()                                                          # optional - numpy
         True
 
     TESTS:
 
     We check that :trac:`31470` is fixed::
 
-        sage: k.<a> = GF(5^3)                                                   # optional - sage.libs.pari
-        sage: S.<x> = k['x', k.frobenius_endomorphism()]                        # optional - sage.libs.pari
-        sage: vector(S, 3)                                                      # optional - sage.libs.pari
+        sage: k.<a> = GF(5^3)                                                           # optional - sage.rings.finite_rings
+        sage: S.<x> = k['x', k.frobenius_endomorphism()]                                # optional - sage.rings.finite_rings
+        sage: vector(S, 3)                                                              # optional - sage.rings.finite_rings
         ...
         (0, 0, 0)
     """
@@ -846,11 +846,11 @@ def random_vector(ring, degree=None, *args, **kwds):
 
     Any ring with a ``random_element()`` method may be used. ::
 
-        sage: F = FiniteField(23)                                               # optional - sage.libs.pari
-        sage: hasattr(F, 'random_element')                                      # optional - sage.libs.pari
+        sage: F = FiniteField(23)                                                       # optional - sage.rings.finite_rings
+        sage: hasattr(F, 'random_element')                                              # optional - sage.rings.finite_rings
         True
-        sage: v = random_vector(F, 10)                                          # optional - sage.libs.pari
-        sage: v.parent()                                                        # optional - sage.libs.pari
+        sage: v = random_vector(F, 10)                                                  # optional - sage.rings.finite_rings
+        sage: v.parent()                                                                # optional - sage.rings.finite_rings
         Vector space of dimension 10 over Finite Field of size 23
 
     The default implementation is a dense representation, equivalent to
@@ -872,7 +872,7 @@ def random_vector(ring, degree=None, *args, **kwds):
         sage: v1 = random_vector(ZZ, 20, distribution="1/n")
         sage: v2 = random_vector(ZZ, 15, x=-1000, y=1000)
         sage: v3 = random_vector(QQ, 10)
-        sage: v4 = random_vector(FiniteField(17), 10)                           # optional - sage.libs.pari
+        sage: v4 = random_vector(FiniteField(17), 10)                                   # optional - sage.rings.finite_rings
         sage: v5 = random_vector(RR, 10)
         sage: set_random_seed(seed)
         sage: w1 = vector(ZZ.random_element(distribution="1/n") for _ in range(20))
@@ -880,8 +880,8 @@ def random_vector(ring, degree=None, *args, **kwds):
         sage: w3 = vector(QQ.random_element() for _ in range(10))
         sage: [v1, v2, v3] == [w1, w2, w3]
         True
-        sage: w4 = vector(FiniteField(17).random_element() for _ in range(10))  # optional - sage.libs.pari
-        sage: v4 == w4                                                          # optional - sage.libs.pari
+        sage: w4 = vector(FiniteField(17).random_element() for _ in range(10))          # optional - sage.rings.finite_rings
+        sage: v4 == w4                                                                  # optional - sage.rings.finite_rings
         True
         sage: w5 = vector(RR.random_element() for _ in range(10))
         sage: v5 == w5
@@ -974,15 +974,15 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         EXAMPLES::
 
             sage: v = vector(range(4))
-            sage: v.__pari__()                                                  # optional - sage.libs.pari
+            sage: v.__pari__()                                                          # optional - sage.libs.pari
             [0, 1, 2, 3]
-            sage: v.__pari__().type()                                           # optional - sage.libs.pari
+            sage: v.__pari__().type()                                                   # optional - sage.libs.pari
             't_VEC'
 
         A list of vectors::
 
             sage: L = [vector(i^n for i in range(4)) for n in [1,3,5]]
-            sage: pari(L)                                                       # optional - sage.libs.pari
+            sage: pari(L)                                                               # optional - sage.libs.pari
             [[0, 1, 2, 3], [0, 1, 8, 27], [0, 1, 32, 243]]
         """
         from sage.libs.pari.all import pari
@@ -1000,16 +1000,16 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         EXAMPLES::
 
             sage: v = vector(range(4))
-            sage: v._pari_init_()                                               # optional - sage.libs.pari
+            sage: v._pari_init_()                                                       # optional - sage.libs.pari
             '[0,1,2,3]'
 
         Create the multiplication table of `GF(4)` using GP::
 
-            sage: k.<a> = GF(4, impl="pari_ffelt")                              # optional - sage.libs.pari
-            sage: v = gp(vector(list(k)))                                       # optional - sage.libs.pari
-            sage: v                                                             # optional - sage.libs.pari
+            sage: k.<a> = GF(4, impl="pari_ffelt")                                      # optional - sage.libs.pari
+            sage: v = gp(vector(list(k)))                                               # optional - sage.libs.pari
+            sage: v                                                                     # optional - sage.libs.pari
             [0, 1, a, a + 1]
-            sage: v.mattranspose() * v                                          # optional - sage.libs.pari
+            sage: v.mattranspose() * v                                                  # optional - sage.libs.pari
             [0, 0, 0, 0; 0, 1, a, a + 1; 0, a, a + 1, 1; 0, a + 1, 1, a]
         """
         # Elements in vectors are always Sage Elements, so they should
@@ -1025,36 +1025,36 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: F = FreeModule(ZZ, 2, inner_product_matrix=matrix(ZZ, 2, 2, [1, 0, 0, -1]))
             sage: v = F([1, 2])
-            sage: M = magma(v); M # optional - magma
+            sage: M = magma(v); M                       # optional - magma
             (1 2)
-            sage: M.Type() # optional - magma
+            sage: M.Type()                              # optional - magma
             ModTupRngElt
-            sage: M.Parent() # optional - magma
+            sage: M.Parent()                            # optional - magma
             Full RSpace of degree 2 over Integer Ring
             Inner Product Matrix:
             [ 1  0]
             [ 0 -1]
-            sage: M.sage() # optional - magma
+            sage: M.sage()                              # optional - magma
             (1, 2)
-            sage: M.sage() == v # optional - magma
+            sage: M.sage() == v                         # optional - magma
             True
-            sage: M.sage().parent() is v.parent() # optional - magma
+            sage: M.sage().parent() is v.parent()       # optional - magma
             True
 
         ::
 
             sage: v = vector(QQ, [1, 2, 5/6])
-            sage: M = magma(v); M # optional - magma
+            sage: M = magma(v); M                       # optional - magma
             (  1   2 5/6)
-            sage: M.Type() # optional - magma
+            sage: M.Type()                              # optional - magma
             ModTupFldElt
-            sage: M.Parent() # optional - magma
+            sage: M.Parent()                            # optional - magma
             Full Vector space of degree 3 over Rational Field
-            sage: M.sage() # optional - magma
+            sage: M.sage()                              # optional - magma
             (1, 2, 5/6)
-            sage: M.sage() == v # optional - magma
+            sage: M.sage() == v                         # optional - magma
             True
-            sage: M.sage().parent() is v.parent() # optional - magma
+            sage: M.sage().parent() is v.parent()       # optional - magma
             True
         """
         # Get a reference to Magma version of parent.
@@ -1155,14 +1155,14 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v = vector(ZZ, [2, 12, 22])
             sage: vector(v)
             (2, 12, 22)
-            sage: vector(GF(7), v)                                              # optional - sage.libs.pari
+            sage: vector(GF(7), v)                                                      # optional - sage.rings.finite_rings
             (2, 5, 1)
             sage: vector(v, ZZ['x', 'y'])
             (2, 12, 22)
 
             sage: vector(vector((1, 6.8)))
             (1.00000000000000, 6.80000000000000)
-            sage: vector(vector(SR, (1, sqrt(2)) ) )
+            sage: vector(vector(SR, (1, sqrt(2)) ) )                                    # optional - sage.symbolic
             (1, sqrt(2))
         """
         if R is None:
@@ -1175,10 +1175,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         EXAMPLES::
 
-            sage: sage_input(vector(RR, [pi, e, 0.5]), verify=True)
+            sage: sage_input(vector(RR, [pi, e, 0.5]), verify=True)                     # optional - sage.symbolic
             # Verified
             vector(RR, [3.1415926535897931, 2.7182818284590451, 0.5])
-            sage: sage_input(vector(GF(5), [1, 2, 3, 4, 5]), verify=True)               # optional - sage.libs.pari
+            sage: sage_input(vector(GF(5), [1, 2, 3, 4, 5]), verify=True)               # optional - sage.rings.finite_rings
             # Verified
             vector(GF(5), [1, 2, 3, 4, 0])
             sage: sage_input(vector([0, 0, 0, 1, 0, 0, 0], sparse=True), verify=True)
@@ -1329,14 +1329,14 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         ::
 
-            sage: v = vector(GF(2), [1,2,3])                                                        # optional - sage.libs.pari
-            sage: v.n()                                                                             # optional - sage.libs.pari
+            sage: v = vector(GF(2), [1,2,3])                                            # optional - sage.rings.finite_rings
+            sage: v.n()                                                                 # optional - sage.rings.finite_rings
             (1.00000000000000, 0.000000000000000, 1.00000000000000)
-            sage: _.parent()                                                                        # optional - sage.libs.pari
+            sage: _.parent()                                                            # optional - sage.rings.finite_rings
             Vector space of dimension 3 over Real Field with 53 bits of precision
-            sage: v.n(prec=75)                                                                      # optional - sage.libs.pari
+            sage: v.n(prec=75)                                                          # optional - sage.rings.finite_rings
             (1.000000000000000000000, 0.0000000000000000000000, 1.000000000000000000000)
-            sage: _.parent()                                                                        # optional - sage.libs.pari
+            sage: _.parent()                                                            # optional - sage.rings.finite_rings
             Vector space of dimension 3 over Real Field with 75 bits of precision
 
         TESTS:
@@ -1373,8 +1373,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: w.parent()
             Full MatrixSpace of 1 by 3 dense matrices over Integer Ring
 
-            sage: x = vector(FiniteField(13), [2,4,8,16])                       # optional - sage.libs.pari
-            sage: x.row()                                                       # optional - sage.libs.pari
+            sage: x = vector(FiniteField(13), [2,4,8,16])                               # optional - sage.rings.finite_rings
+            sage: x.row()                                                               # optional - sage.rings.finite_rings
             [2 4 8 3]
 
         There is more than one way to get one-row matrix from a vector,
@@ -1442,8 +1442,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: w.parent()
             Full MatrixSpace of 3 by 1 dense matrices over Integer Ring
 
-            sage: x = vector(FiniteField(13), [2,4,8,16])                       # optional - sage.libs.pari
-            sage: x.column()                                                    # optional - sage.libs.pari
+            sage: x = vector(FiniteField(13), [2,4,8,16])                               # optional - sage.rings.finite_rings
+            sage: x.column()                                                            # optional - sage.rings.finite_rings
             [2]
             [4]
             [8]
@@ -1454,16 +1454,16 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         then taking a transpose.  Notice that supplying a vector to the
         matrix constructor demonstrates Sage's preference for rows. ::
 
-            sage: x = vector(RDF, [sin(i*pi/20) for i in range(10)])                    # optional - sage.libs.pari
-            sage: x.column() == matrix(x).transpose()                                   # optional - sage.libs.pari
+            sage: x = vector(RDF, [sin(i*pi/20) for i in range(10)])
+            sage: x.column() == matrix(x).transpose()
             True
-            sage: x.column() == x.row().transpose()                                     # optional - sage.libs.pari
+            sage: x.column() == x.row().transpose()
             True
 
         Sparse or dense implementations are preserved. ::
 
             sage: d = vector(RR, [1.0, 2.0, 3.0])
-            sage: s = vector(CDF, {2:5.0+6.0*I})
+            sage: s = vector(CDF, {2: 5.0+6.0*I})
             sage: dm = d.column()
             sage: sm = s.column()
             sage: all([d.is_dense(), dm.is_dense(), s.is_sparse(), sm.is_sparse()])
@@ -1540,7 +1540,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         EXAMPLES::
 
-            sage: v = vector(QQ['x,y'], [1..5]); v.change_ring(GF(3))           # optional - sage.libs.pari
+            sage: v = vector(QQ['x,y'], [1..5]); v.change_ring(GF(3))                   # optional - sage.rings.finite_rings
             (1, 2, 0, 1, 2)
 
         TESTS:
@@ -1548,7 +1548,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Check for :trac:`29630`::
 
             sage: v = vector(QQ, 4, {0:1}, sparse=True)
-            sage: v.change_ring(AA).is_sparse()                                 # optional - sage.rings.number_field
+            sage: v.change_ring(AA).is_sparse()                                         # optional - sage.rings.number_field
             True
         """
         if self.base_ring() is R:
@@ -1997,7 +1997,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         EXAMPLES::
 
-            sage: v = vector([1,2/3,pi])                                                # optional - sage.symbolic
+            sage: v = vector([1, 2/3, pi])                                              # optional - sage.symbolic
             sage: v.list_from_positions([0,0,0,2,1])                                    # optional - sage.symbolic
             [1, 1, 1, pi, 2/3]
         """
@@ -2197,9 +2197,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         The following was fixed in :trac:`8800`::
 
-            sage: M = GF(5)^3                                                   # optional - sage.libs.pari
-            sage: v = M((4,0,2))                                                # optional - sage.libs.pari
-            sage: v.denominator()                                               # optional - sage.libs.pari
+            sage: M = GF(5)^3                                                           # optional - sage.rings.finite_rings
+            sage: v = M((4,0,2))                                                        # optional - sage.rings.finite_rings
+            sage: v.denominator()                                                       # optional - sage.rings.finite_rings
             1
         """
         # It may be that the coordinates do not have a denominator
@@ -2355,13 +2355,13 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         TESTS::
 
-            sage: u = vector([1,1]); v = vector([2,2,2]); z=(3,3,3)                                 # optional - sage.plot
-            sage: plot(u) #test when start=None                                                     # optional - sage.plot
+            sage: u = vector([1,1]); v = vector([2,2,2]); z=(3,3,3)                     # optional - sage.plot
+            sage: plot(u) #test when start=None                                         # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
-            sage: plot(u, start=v) #test when coordinate dimension mismatch exists                  # optional - sage.plot
+            sage: plot(u, start=v) #test when coordinate dimension mismatch exists      # optional - sage.plot
             Traceback (most recent call last):
             ...
             ValueError: vector coordinates are not of the same dimension
@@ -2438,8 +2438,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         EXAMPLES::
 
             sage: eps = 0.1
-            sage: v = vector(RDF, [sin(n*eps) for n in range(100)])                                 # optional - sage.plot
-            sage: v.plot_step(eps=eps, xmax=5, hue=0)                                               # optional - sage.plot
+            sage: v = vector(RDF, [sin(n*eps) for n in range(100)])                     # optional - sage.plot
+            sage: v.plot_step(eps=eps, xmax=5, hue=0)                                   # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         import math
@@ -2551,15 +2551,15 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         arguments is reversed.::
 
             sage: v = vector(ZZ, [1,2,3])
-            sage: w = vector(FiniteField(3), [0,1,2])                           # optional - sage.libs.pari
-            sage: ip = w.dot_product(v); ip                                     # optional - sage.libs.pari
+            sage: w = vector(FiniteField(3), [0,1,2])                                   # optional - sage.rings.finite_rings
+            sage: ip = w.dot_product(v); ip                                             # optional - sage.rings.finite_rings
             2
-            sage: ip.parent()                                                   # optional - sage.libs.pari
+            sage: ip.parent()                                                           # optional - sage.rings.finite_rings
             Finite Field of size 3
 
-            sage: ip = v.dot_product(w); ip                                     # optional - sage.libs.pari
+            sage: ip = v.dot_product(w); ip                                             # optional - sage.rings.finite_rings
             2
-            sage: ip.parent()                                                   # optional - sage.libs.pari
+            sage: ip.parent()                                                           # optional - sage.rings.finite_rings
             Finite Field of size 3
 
         The dot product of a vector with itself is the 2-norm, squared. ::
@@ -2761,26 +2761,26 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         TESTS::
 
-            sage: F = GF(previous_prime(2^32))                                  # optional - sage.libs.pari
-            sage: v = random_vector(F, 3)                                       # optional - sage.libs.pari
-            sage: w = random_vector(F, 3)                                       # optional - sage.libs.pari
-            sage: vh = v.cross_product_matrix()                                 # optional - sage.libs.pari
-            sage: vh*w == v.cross_product(w)                                    # optional - sage.libs.pari
+            sage: F = GF(previous_prime(2^32))                                          # optional - sage.rings.finite_rings
+            sage: v = random_vector(F, 3)                                               # optional - sage.rings.finite_rings
+            sage: w = random_vector(F, 3)                                               # optional - sage.rings.finite_rings
+            sage: vh = v.cross_product_matrix()                                         # optional - sage.rings.finite_rings
+            sage: vh*w == v.cross_product(w)                                            # optional - sage.rings.finite_rings
             True
-            sage: w*vh == w.cross_product(v)                                    # optional - sage.libs.pari
+            sage: w*vh == w.cross_product(v)                                            # optional - sage.rings.finite_rings
             True
-            sage: vh.is_alternating()                                           # optional - sage.libs.pari
+            sage: vh.is_alternating()                                                   # optional - sage.rings.finite_rings
             True
-            sage: v = random_vector(F, 7)                                       # optional - sage.libs.pari
-            sage: w = random_vector(F, 7)                                       # optional - sage.libs.pari
-            sage: vh = v.cross_product_matrix()                                 # optional - sage.libs.pari
-            sage: vh*w == v.cross_product(w)                                    # optional - sage.libs.pari
+            sage: v = random_vector(F, 7)                                               # optional - sage.rings.finite_rings
+            sage: w = random_vector(F, 7)                                               # optional - sage.rings.finite_rings
+            sage: vh = v.cross_product_matrix()                                         # optional - sage.rings.finite_rings
+            sage: vh*w == v.cross_product(w)                                            # optional - sage.rings.finite_rings
             True
-            sage: w*vh == w.cross_product(v)                                    # optional - sage.libs.pari
+            sage: w*vh == w.cross_product(v)                                            # optional - sage.rings.finite_rings
             True
-            sage: vh.is_alternating()                                           # optional - sage.libs.pari
+            sage: vh.is_alternating()                                                   # optional - sage.rings.finite_rings
             True
-            sage: random_vector(F, 5).cross_product_matrix()                    # optional - sage.libs.pari
+            sage: random_vector(F, 5).cross_product_matrix()                            # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: Cross product only defined for vectors of length three or seven, not 5
@@ -2835,11 +2835,11 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         ::
 
-            sage: W = VectorSpace(GF(3), 3)                                     # optional - sage.libs.pari
-            sage: w = W([0,1,2])                                                # optional - sage.libs.pari
-            sage: w.pairwise_product(v)                                         # optional - sage.libs.pari
+            sage: W = VectorSpace(GF(3), 3)                                             # optional - sage.rings.finite_rings
+            sage: w = W([0,1,2])                                                        # optional - sage.rings.finite_rings
+            sage: w.pairwise_product(v)                                                 # optional - sage.rings.finite_rings
             (0, 2, 0)
-            sage: w.pairwise_product(v).parent()                                # optional - sage.libs.pari
+            sage: w.pairwise_product(v).parent()                                        # optional - sage.rings.finite_rings
             Vector space of dimension 3 over Finite Field of size 3
 
         Implicit coercion is well defined (regardless of order), so we
@@ -2847,7 +2847,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         ::
 
-            sage: v.pairwise_product(w).parent()                                # optional - sage.libs.pari
+            sage: v.pairwise_product(w).parent()                                        # optional - sage.rings.finite_rings
             Vector space of dimension 3 over Finite Field of size 3
 
         TESTS::
@@ -3406,9 +3406,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         But some inputs are not compatible, even if vectors. ::
 
-            sage: w = vector(GF(5), [1,2])                                      # optional - sage.libs.pari
-            sage: v = vector(GF(7), [1,2,3,4])                                  # optional - sage.libs.pari
-            sage: z = w.outer_product(v)                                        # optional - sage.libs.pari
+            sage: w = vector(GF(5), [1,2])                                              # optional - sage.rings.finite_rings
+            sage: v = vector(GF(7), [1,2,3,4])                                          # optional - sage.rings.finite_rings
+            sage: z = w.outer_product(v)                                                # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 2 by 1 dense matrices over Finite Field of size 5' and 'Full MatrixSpace of 1 by 4 dense matrices over Finite Field of size 7'
@@ -3583,7 +3583,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         ::
 
             sage: R.<x,y> = QQ[]
-            sage: macaulay2(vector(R, [1, x+y]))  # optional - macaulay2
+            sage: macaulay2(vector(R, [1, x + y]))     # optional - macaulay2
             |  1  |
             | x+y |
 
@@ -3830,19 +3830,19 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         ::
 
             sage: m = vector(ZZ, 9, range(9))
-            sage: k.<a> = GF(9)                                                 # optional - sage.libs.pari
-            sage: m.apply_map(k)                                                # optional - sage.libs.pari
+            sage: k.<a> = GF(9)                                                         # optional - sage.rings.finite_rings
+            sage: m.apply_map(k)                                                        # optional - sage.rings.finite_rings
             (0, 1, 2, 0, 1, 2, 0, 1, 2)
 
         In this example, we explicitly specify the codomain.
 
         ::
 
-            sage: s = GF(3)                                                     # optional - sage.libs.pari
-            sage: f = lambda x: s(x)                                            # optional - sage.libs.pari
-            sage: n = m.apply_map(f, k); n                                      # optional - sage.libs.pari
+            sage: s = GF(3)                                                             # optional - sage.rings.finite_rings
+            sage: f = lambda x: s(x)                                                    # optional - sage.rings.finite_rings
+            sage: n = m.apply_map(f, k); n                                              # optional - sage.rings.finite_rings
             (0, 1, 2, 0, 1, 2, 0, 1, 2)
-            sage: n.parent()                                                    # optional - sage.libs.pari
+            sage: n.parent()                                                            # optional - sage.rings.finite_rings
             Vector space of dimension 9 over Finite Field in a of size 3^2
 
         If your map sends 0 to a non-zero value, then your resulting
@@ -3898,10 +3898,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         Check that the bug in :trac:`14558` has been fixed::
 
-            sage: F.<a> = GF(9)                                                 # optional - sage.libs.pari
-            sage: v = vector([a, 0, 0, 0], sparse=True)                         # optional - sage.libs.pari
-            sage: f = F.hom([a**3])                                             # optional - sage.libs.pari
-            sage: v.apply_map(f)                                                # optional - sage.libs.pari
+            sage: F.<a> = GF(9)                                                         # optional - sage.rings.finite_rings
+            sage: v = vector([a, 0, 0, 0], sparse=True)                                 # optional - sage.rings.finite_rings
+            sage: f = F.hom([a**3])                                                     # optional - sage.rings.finite_rings
+            sage: v.apply_map(f)                                                        # optional - sage.rings.finite_rings
             (2*a + 1, 0, 0, 0)
         """
         if sparse is None:
@@ -4414,8 +4414,8 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         """
         EXAMPLES::
 
-            sage: v = vector(RR, [-1,0,2/3,pi])                                                     # optional - sage.symbolic
-            sage: v.get(3)                                                                          # optional - sage.symbolic
+            sage: v = vector(RR, [-1,0,2/3,pi])                                         # optional - sage.symbolic
+            sage: v.get(3)                                                              # optional - sage.symbolic
             3.14159265358979
 
         ::
@@ -4494,20 +4494,20 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
         EXAMPLES::
 
-            sage: x, y = var('x,y')                                                                 # optional - sage.symbolic
-            sage: f = x^2 + y^2                                                                     # optional - sage.symbolic
-            sage: g = f.gradient()                                                                  # optional - sage.symbolic
-            sage: g                                                                                 # optional - sage.symbolic
+            sage: x, y = var('x,y')                                                     # optional - sage.symbolic
+            sage: f = x^2 + y^2                                                         # optional - sage.symbolic
+            sage: g = f.gradient()                                                      # optional - sage.symbolic
+            sage: g                                                                     # optional - sage.symbolic
             (2*x, 2*y)
-            sage: type(g)                                                                           # optional - sage.symbolic
+            sage: type(g)                                                               # optional - sage.symbolic
             <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
-            sage: g(y=2, x=3)                                                                       # optional - sage.symbolic
+            sage: g(y=2, x=3)                                                           # optional - sage.symbolic
             (6, 4)
-            sage: f(x,y) = x^2 + y^2                                                                # optional - sage.symbolic
-            sage: g = f.gradient()                                                                  # optional - sage.symbolic
-            sage: g(3,2)                                                                            # optional - sage.symbolic
+            sage: f(x,y) = x^2 + y^2                                                    # optional - sage.symbolic
+            sage: g = f.gradient()                                                      # optional - sage.symbolic
+            sage: g(3,2)                                                                # optional - sage.symbolic
             (6, 4)
-            sage: g(x=3, y=2)                                                                       # optional - sage.symbolic
+            sage: g(x=3, y=2)                                                           # optional - sage.symbolic
             (6, 4)
         """
         return vector([e(*args, **kwargs) for e in self])
@@ -4518,28 +4518,28 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
         EXAMPLES::
 
-            sage: x, y = var('x,y')                                                                 # optional - sage.symbolic
-            sage: v = vector([x,y,x*sin(y)])                                                        # optional - sage.symbolic
-            sage: w = v.function([x,y]); w                                                          # optional - sage.symbolic
+            sage: x, y = var('x,y')                                                     # optional - sage.symbolic
+            sage: v = vector([x, y, x*sin(y)])                                          # optional - sage.symbolic
+            sage: w = v.function([x,y]); w                                              # optional - sage.symbolic
             (x, y) |--> (x, y, x*sin(y))
-            sage: w.coordinate_ring()                                                               # optional - sage.symbolic
+            sage: w.coordinate_ring()                                                   # optional - sage.symbolic
             Callable function ring with arguments (x, y)
-            sage: w(1,2)                                                                            # optional - sage.symbolic
+            sage: w(1,2)                                                                # optional - sage.symbolic
             (1, 2, sin(2))
-            sage: w(2,1)                                                                            # optional - sage.symbolic
+            sage: w(2,1)                                                                # optional - sage.symbolic
             (2, 1, 2*sin(1))
-            sage: w(y=1,x=2)                                                                        # optional - sage.symbolic
+            sage: w(y=1,x=2)                                                            # optional - sage.symbolic
             (2, 1, 2*sin(1))
 
         ::
 
-            sage: x,y = var('x,y')                                                                  # optional - sage.symbolic
-            sage: v = vector([x,y,x*sin(y)])                                                        # optional - sage.symbolic
-            sage: w = v.function([x]); w                                                            # optional - sage.symbolic
+            sage: x,y = var('x,y')                                                      # optional - sage.symbolic
+            sage: v = vector([x, y, x*sin(y)])                                          # optional - sage.symbolic
+            sage: w = v.function([x]); w                                                # optional - sage.symbolic
             x |--> (x, y, x*sin(y))
-            sage: w.coordinate_ring()                                                               # optional - sage.symbolic
+            sage: w.coordinate_ring()                                                   # optional - sage.symbolic
             Callable function ring with argument x
-            sage: w(4)                                                                              # optional - sage.symbolic
+            sage: w(4)                                                                  # optional - sage.symbolic
             (4, y, 4*sin(y))
         """
         from sage.symbolic.callable import CallableSymbolicExpressionRing
@@ -4591,9 +4591,9 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
     TESTS::
 
-        sage: v = vector([1,2/3,pi], sparse=True)                                                   # optional - sage.symbolic
-        sage: v.set_immutable()                                                                     # optional - sage.symbolic
-        sage: isinstance(hash(v), int)                                                              # optional - sage.symbolic
+        sage: v = vector([1,2/3,pi], sparse=True)                                       # optional - sage.symbolic
+        sage: v.set_immutable()                                                         # optional - sage.symbolic
+        sage: isinstance(hash(v), int)                                                  # optional - sage.symbolic
         True
 
     Pickling works::
@@ -4643,8 +4643,8 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         EXAMPLES::
 
-            sage: v = vector([1,2/3,pi], sparse=True)                                               # optional - sage.symbolic
-            sage: v.__copy__()                                                                      # optional - sage.symbolic
+            sage: v = vector([1,2/3,pi], sparse=True)                                   # optional - sage.symbolic
+            sage: v.__copy__()                                                          # optional - sage.symbolic
             (1, 2/3, pi)
         """
         return self._new_c(dict(self._entries))
@@ -4714,8 +4714,8 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
         We correctly initialize values which become 0 only after coercion::
 
-            sage: v = FreeModuleElement_generic_sparse(S(GF(3), 6), [1,2,3,4,5,6])      # optional - sage.libs.pari
-            sage: v.nonzero_positions()                                                 # optional - sage.libs.pari
+            sage: v = FreeModuleElement_generic_sparse(S(GF(3), 6), [1,2,3,4,5,6])      # optional - sage.rings.finite_rings
+            sage: v.nonzero_positions()                                                 # optional - sage.rings.finite_rings
             [0, 1, 3, 4]
         """
         #WARNING: In creation, we do not check that the indices i satisfy
@@ -4923,10 +4923,10 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
         Check that the bug in :trac:`13929` has been fixed::
 
-            sage: V = FreeModule(GF(3), 2, sparse=True)                         # optional - sage.libs.pari
-            sage: a = V([0,1])                                                  # optional - sage.libs.pari
-            sage: b = V([1,0])                                                  # optional - sage.libs.pari
-            sage: a < b                                                         # optional - sage.libs.pari
+            sage: V = FreeModule(GF(3), 2, sparse=True)                                 # optional - sage.rings.finite_rings
+            sage: a = V([0,1])                                                          # optional - sage.rings.finite_rings
+            sage: b = V([1,0])                                                          # optional - sage.rings.finite_rings
+            sage: a < b                                                                 # optional - sage.rings.finite_rings
             True
         """
         a = sorted((<FreeModuleElement_generic_sparse>left)._entries.iteritems())
@@ -5060,16 +5060,16 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         EXAMPLES::
 
-            sage: V = VectorSpace(GF(17), 10000000, sparse=True)                # optional - sage.libs.pari
-            sage: w = V(0)                                                      # optional - sage.libs.pari
-            sage: w[39893] = 20                                                 # optional - sage.libs.pari
-            sage: w[39893]                                                      # optional - sage.libs.pari
+            sage: V = VectorSpace(GF(17), 10000000, sparse=True)                        # optional - sage.rings.finite_rings
+            sage: w = V(0)                                                              # optional - sage.rings.finite_rings
+            sage: w[39893] = 20                                                         # optional - sage.rings.finite_rings
+            sage: w[39893]                                                              # optional - sage.rings.finite_rings
             3
-            sage: w[39000:39003] = [4, 5, 6]; w[39000:39003]                    # optional - sage.libs.pari
+            sage: w[39000:39003] = [4, 5, 6]; w[39000:39003]                            # optional - sage.rings.finite_rings
             (4, 5, 6)
-            sage: parent(w[39893])                                              # optional - sage.libs.pari
+            sage: parent(w[39893])                                                      # optional - sage.rings.finite_rings
             Finite Field of size 17
-            sage: w[39893] = sqrt(2)                                            # optional - sage.libs.pari sage.symbolic
+            sage: w[39893] = sqrt(2)                                                    # optional - sage.rings.finite_rings sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: self must be a numeric expression
@@ -5091,7 +5091,8 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         This lack of bounds checking causes trouble later::
 
             sage: v                                                                     # optional - sage.symbolic
-            <repr(<sage.modules.free_module_element.FreeModuleElement_generic_sparse at 0x...>) failed: IndexError: list assignment index out of range>
+            <repr(<sage.modules.free_module_element.FreeModuleElement_generic_sparse at 0x...>)
+             failed: IndexError: list assignment index out of range>
         """
         if value:
             self._entries[i] = value

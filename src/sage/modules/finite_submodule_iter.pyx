@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Iterators over finite submodules of a `\ZZ`-module
 

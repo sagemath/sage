@@ -38,9 +38,9 @@ Homspaces have a few useful properties.  A basis is provided by
 a list of matrix representations, where these matrix representatives
 are relative to the bases of the domain and codomain.  ::
 
-    sage: K = Hom(GF(3)^2, GF(3)^2)                                                     # optional - sage.libs.pari
-    sage: B = K.basis()                                                                 # optional - sage.libs.pari
-    sage: for f in B:                                                                   # optional - sage.libs.pari
+    sage: K = Hom(GF(3)^2, GF(3)^2)                                                     # optional - sage.rings.finite_rings
+    sage: B = K.basis()                                                                 # optional - sage.rings.finite_rings
+    sage: for f in B:                                                                   # optional - sage.rings.finite_rings
     ....:     print(f)
     ....:     print("\n")
     Vector space morphism represented by the matrix:
@@ -359,10 +359,10 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
 
         TESTS::
 
-            sage: V = GF(3)^0                                                           # optional - sage.libs.pari
-            sage: W = GF(3)^1                                                           # optional - sage.libs.pari
-            sage: H = V.Hom(W)                                                          # optional - sage.libs.pari
-            sage: H.zero().is_zero()                                                    # optional - sage.libs.pari
+            sage: V = GF(3)^0                                                           # optional - sage.rings.finite_rings
+            sage: W = GF(3)^1                                                           # optional - sage.rings.finite_rings
+            sage: H = V.Hom(W)                                                          # optional - sage.rings.finite_rings
+            sage: H.zero().is_zero()                                                    # optional - sage.rings.finite_rings
             True
 
         Previously the above code resulted in a TypeError because the
