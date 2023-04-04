@@ -901,61 +901,45 @@ cdef class CVXPYBackend:
         else:
             return self.col_upper_bound[index]
 
-    cpdef variable_lower_bound(self, int index, value = False):
-        """
-        Return or define the lower bound on a variable
+cpdef remove_constraint(self, index):
+    """
+    Remove a linear constraint by index.
 
-        INPUT:
+    INPUT:
 
-        - ``index`` (integer) -- the variable's id
+    - ``index`` -- integer. The index of the constraint to remove.
 
-        - ``value`` -- real value, or ``None`` to mean that the
-          variable has not lower bound. When set to ``None``
-          (default), the method returns the current value.
+    EXAMPLES::
 
-        EXAMPLES::
+        sage: from sage.numerical.backends.generic_backend import get_solver
+        sage: p = get_solver(solver="CVXPY")
+        sage: p.add_variables(5)
+        4
+        sage: p.add_linear_constraint( zip(range(5), range(5)), 2, 2)
+        sage: p.add_linear_constraint( zip(range(5), range(5)), 1, 1, name='foo')
+        sage: p.remove_constraint(0)
+        sage: p.nrows()
+        1
+    """
+    del self.Matrix[index]
+    del self.row_lower_bound[index]
+    del self.row_upper_bound[index]
+    del self.constraint_names[index]
 
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.add_variable()
-            0
-            sage: p.col_bounds(0)
-            (0.0, None)
-            sage: p.variable_lower_bound(0, 5)
-            sage: p.col_bounds(0)
-            (5, None)
-            sage: p.variable_lower_bound(0, None)
-            sage: p.col_bounds(0)
-            (None, None)
-        """
-        if value is not False:
-            self.col_lower_bound[index] = value
+    constraints = []
+    for i, row in enumerate(self.Matrix):
+        terms = [v * self.variables[j] for j, v in enumerate(row)]
+        if terms:
+            expr = AddExpression(terms)
         else:
-            return self.col_lower_bound[index]
+            expr = Constant(0)
+        lower_bound = self.row_lower_bound[i]
+        upper_bound = self.row_upper_bound[i]
+        if lower_bound is not None and lower_bound == upper_bound:
+            constraints.append(expr == upper_bound)
+        elif lower_bound is not None:
+            constraints.append(lower_bound <= expr)
+        elif upper_bound is not None:
+            constraints.append(expr <= upper_bound)
 
-    cpdef remove_constraint(self, index):
-        """
-        Remove a linear constraint by index.
-
-        INPUT:
-
-        - ``index`` - index of the constraint to remove
-
-        EXAMPLES:
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "CVXOPT")                 # optional - cvxopt
-            sage: p.add_variables(5)                                # optional - cvxopt
-            4
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2.0, 2.0)                # optional - cvxopt
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 1.0, 1.0, name='foo')    # optional - cvxopt
-            sage: p.remove_constraint(1)                             # optional - cvxopt
-            sage: p.num_constraints()                                 # optional - cvxopt
-            1
-        """
-        self.G_matrix.pop(index)
-        self.row_lower_bound.pop(index)
-        self.row_upper_bound.pop(index)
-        self.row_name_var.pop(index)
-        for i in range(len(self.G_matrix)):
-            self.G_matrix[i].pop(-1)
+    self.problem = cvxpy.Problem(self.problem.objective, constraints)
