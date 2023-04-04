@@ -185,21 +185,39 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         else:
             return LaurentPolynomialFunctor(vars[-1], True), LaurentPolynomialRing(self.base_ring(), vars[:-1])
 
-    def completion(self, p, prec=20, extras=None):
-        """
+
+    def completion(self, p=None, prec=20, extras=None):
+        r"""
+        Return the completion of ``self``.
+
+        Currently only implemented for the ring of formal Laurent series.
+        The ``prec`` variable controls the precision used in the
+        Laurent series ring. If ``prec`` is `\infty`, then this
+        returns a :class:`LazyLaurentSeriesRing`.
+
         EXAMPLES::
 
-            sage: P.<x>=LaurentPolynomialRing(QQ)
+            sage: P.<x> = LaurentPolynomialRing(QQ)
             sage: P
             Univariate Laurent Polynomial Ring in x over Rational Field
-            sage: PP=P.completion(x)
+            sage: PP = P.completion(x)
             sage: PP
             Laurent Series Ring in x over Rational Field
-            sage: f=1-1/x
+            sage: f = 1 - 1/x
             sage: PP(f)
             -x^-1 + 1
-            sage: 1/PP(f)
-            -x - x^2 - x^3 - x^4 - x^5 - x^6 - x^7 - x^8 - x^9 - x^10 - x^11 - x^12 - x^13 - x^14 - x^15 - x^16 - x^17 - x^18 - x^19 - x^20 + O(x^21)
+            sage: g = 1 / PP(f); g
+            -x - x^2 - x^3 - x^4 - x^5 - x^6 - x^7 - x^8 - x^9 - x^10 - x^11
+             - x^12 - x^13 - x^14 - x^15 - x^16 - x^17 - x^18 - x^19 - x^20 + O(x^21)
+            sage: 1 / g
+            -x^-1 + 1 + O(x^19)
+
+            sage: PP = P.completion(x, prec=oo); PP
+            Lazy Laurent Series Ring in x over Rational Field
+            sage: g = 1 / PP(f); g
+            -x - x^2 - x^3 + O(x^4)
+            sage: 1 / g == f
+            True
 
         TESTS:
 
@@ -211,12 +229,16 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: L.completion('x', 20).default_prec()
             20
         """
-        if str(p) == self._names[0] and self._n == 1:
+        if p is None or str(p) == self._names[0] and self._n == 1:
+            if prec == float('inf'):
+                from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
+                sparse = self.polynomial_ring().is_sparse()
+                return LazyLaurentSeriesRing(self.base_ring(), names=(self._names[0],), sparse=sparse)
             from sage.rings.laurent_series_ring import LaurentSeriesRing
             R = self.polynomial_ring().completion(self._names[0], prec)
             return LaurentSeriesRing(R)
-        else:
-            raise TypeError("Cannot complete %s with respect to %s" % (self, p))
+
+        raise TypeError("cannot complete %s with respect to %s" % (self, p))
 
     def remove_var(self, var):
         """
