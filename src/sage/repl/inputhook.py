@@ -17,6 +17,8 @@ prompt. We use it to reload attached files if they have changed.
 
 import select
 import errno
+import contextlib
+import io
 
 from IPython import get_ipython
 from IPython.terminal.pt_inputhooks import register
@@ -65,7 +67,9 @@ def install():
     if not ip:
         return   # Not running in ipython, e.g. doctests
     if ip._inputhook != sage_inputhook:
-        ip.enable_gui('sage')
+        # silence `ip.enable_gui()` useless output
+        with contextlib.redirect_stdout(io.StringIO()):
+            ip.enable_gui('sage')
 
 
 def uninstall():
@@ -81,4 +85,6 @@ def uninstall():
     if not ip:
         return
     if ip._inputhook == sage_inputhook:
-        ip.enable_gui(None)
+        # silence `ip.enable_gui()` useless output
+        with contextlib.redirect_stdout(io.StringIO()):
+            ip.enable_gui(None)
