@@ -1,0 +1,40 @@
+diff --git a/src/basemath/ifactor1.c b/src/basemath/ifactor1.c
+index 526ac5c1b3..5fb4454353 100644
+--- a/src/basemath/ifactor1.c
++++ b/src/basemath/ifactor1.c
+@@ -3595,7 +3595,7 @@ ifactor_sign(GEN n, ulong all, long hint, long sn, GEN *pU)
+ {
+   GEN M, N;
+   pari_sp av;
+-  long nb = 0, nb0 = 0, i;
++  long nb = 0, nb0 = -1, i;
+   ulong lim;
+   forprime_t T;
+ 
+@@ -3666,7 +3666,7 @@ ifactor_sign(GEN n, ulong all, long hint, long sn, GEN *pU)
+         affii(n, N); n = N; set_avma(av3);
+         STOREu(&nb, p, k);
+       }
+-      if (p == 16381 && bit_accuracy(lgefint(n)) < 2048)
++      if (!stop && p == 16381 && bit_accuracy(lgefint(n)) < 2048)
+       { stop = ifac_isprime(n); nb0 = nb; }
+       if (stop)
+       {
+@@ -3706,15 +3706,14 @@ ifactor_sign(GEN n, ulong all, long hint, long sn, GEN *pU)
+     long k;
+     av = avma;
+     k = isanypower_nosmalldiv(n, &x);
+-    if (k > 1) affii(x, n);
++    if (k > 1) { affii(x, n); nb0 = -1; }
+     if (pU)
+     {
+       GEN F;
+       if (abscmpiu(n, lim) <= 0
+           || cmpii(n, sqru(lim)) <= 0
+           || (all >= (1<<14)
+-              && (nb > nb0 || k > 1)
+-              && bit_accuracy(lgefint(n)) < 2048 && ifac_isprime(n)))
++              && nb > nb0 && bit_accuracy(lgefint(n)) < 2048 && ifac_isprime(n)))
+       { set_avma(av); STOREi(&nb, n, k); return aux_end(M,n, nb); }
+       set_avma(av); F = aux_end(M, NULL, nb); /* don't destroy n */
+       *pU = mkvec2(icopy(n), utoipos(k)); /* composite cofactor */
