@@ -288,16 +288,16 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         We check that the category is properly straightened::
 
             sage: F  = CombinatorialFreeModule(QQ, ['a','b'])
-            sage: F1 = CombinatorialFreeModule(QQ, ['a','b'], category = ModulesWithBasis(QQ))
-            sage: F2 = CombinatorialFreeModule(QQ, ['a','b'], category = [ModulesWithBasis(QQ)])
-            sage: F3 = CombinatorialFreeModule(QQ, ['a','b'], category = (ModulesWithBasis(QQ),))
-            sage: F4 = CombinatorialFreeModule(QQ, ['a','b'], category = (ModulesWithBasis(QQ),CommutativeAdditiveSemigroups()))
-            sage: F5 = CombinatorialFreeModule(QQ, ['a','b'], category = (ModulesWithBasis(QQ),Category.join((LeftModules(QQ), RightModules(QQ)))))
+            sage: F1 = CombinatorialFreeModule(QQ, ['a','b'], category=ModulesWithBasis(QQ))
+            sage: F2 = CombinatorialFreeModule(QQ, ['a','b'], category=[ModulesWithBasis(QQ)])
+            sage: F3 = CombinatorialFreeModule(QQ, ['a','b'], category=(ModulesWithBasis(QQ),))
+            sage: F4 = CombinatorialFreeModule(QQ, ['a','b'], category=(ModulesWithBasis(QQ),CommutativeAdditiveSemigroups()))
+            sage: F5 = CombinatorialFreeModule(QQ, ['a','b'], category=(ModulesWithBasis(QQ),Category.join((LeftModules(QQ), RightModules(QQ)))))
             sage: F6 = CombinatorialFreeModule(QQ, ['a','b'], category=ModulesWithBasis(QQ).FiniteDimensional())
             sage: F1 is F, F2 is F, F3 is F, F4 is F, F5 is F, F6 is F
             (True, True, True, True, True, True)
 
-            sage: G  = CombinatorialFreeModule(QQ, ['a','b'], category = AlgebrasWithBasis(QQ))
+            sage: G  = CombinatorialFreeModule(QQ, ['a','b'], category=AlgebrasWithBasis(QQ))
             sage: F is G
             False
         """
@@ -385,10 +385,11 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F.category()
             Category of finite dimensional algebras with basis over Rational Field
 
-            sage: F = CombinatorialFreeModule(GF(3), ['a','b','c'],                     # optional - sage.libs.pari
+            sage: F = CombinatorialFreeModule(GF(3), ['a','b','c'],                     # optional - sage.rings.finite_rings
             ....:         category=(Modules(GF(3)).WithBasis(), Semigroups()))
-            sage: F.category()                                                          # optional - sage.libs.pari
-            Join of Category of finite semigroups and Category of finite dimensional vector spaces with basis over Finite Field of size 3
+            sage: F.category()                                                          # optional - sage.rings.finite_rings
+            Join of Category of finite semigroups
+                and Category of finite dimensional vector spaces with basis over Finite Field of size 3
 
             sage: F = CombinatorialFreeModule(QQ, ['a','b','c'], category=FiniteDimensionalModulesWithBasis(QQ))
             sage: F.basis()
@@ -620,7 +621,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(QQ,["a", "b"])
+            sage: F = CombinatorialFreeModule(QQ, ["a", "b"])
             sage: F(F.monomial("a"))   # indirect doctest
             B['a']
 
@@ -834,13 +835,13 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: C.has_coerce_map_from(CQ)
             False
 
-            sage: CF2 = CombinatorialFreeModule(GF(2), Set([1,2]))
-            sage: CF2.has_coerce_map_from(C)
+            sage: CF2 = CombinatorialFreeModule(GF(2), Set([1,2]))                      # optional - sage.rings.finite_rings
+            sage: CF2.has_coerce_map_from(C)                                            # optional - sage.rings.finite_rings
             True
-            sage: c = C.monomial(1)
-            sage: CF2(2*c)
+            sage: c = C.monomial(1)                                                     # optional - sage.rings.finite_rings
+            sage: CF2(2*c)                                                              # optional - sage.rings.finite_rings
             0
-            sage: CF2(3*c)
+            sage: CF2(3*c)                                                              # optional - sage.rings.finite_rings
             B[1]
         """
         if isinstance(R, CombinatorialFreeModule):
@@ -892,9 +893,9 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: GroupAlgebra(GL(3, GF(7))).is_exact()                                                                 # optional - sage.groups sage.libs.pari
+            sage: GroupAlgebra(GL(3, GF(7))).is_exact()                                 # optional - sage.groups sage.rings.finite_rings
             True
-            sage: GroupAlgebra(GL(3, GF(7)), RR).is_exact()                                                             # optional - sage.groups sage.libs.pari
+            sage: GroupAlgebra(GL(3, GF(7)), RR).is_exact()                             # optional - sage.groups sage.rings.finite_rings
             False
             sage: GroupAlgebra(GL(3, pAdicRing(7))).is_exact()  # not implemented correctly (not my fault)!             # optional - sage.groups sage.rings.padics
             False
@@ -1057,7 +1058,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(QQ,[1,2])
+            sage: F = CombinatorialFreeModule(QQ, [1,2])
             sage: f = F.an_element(); f
             2*B[1] + 2*B[2]
             sage: F.linear_combination( (f,i) for i in range(5) )
@@ -1132,8 +1133,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
             sage: F._sum_of_monomials(['a', 'b', 'b'])
             B['a'] + 2*B['b']
-            sage: F = CombinatorialFreeModule(GF(3), ['a', 'b', 'c'])                   # optional - sage.libs.pari
-            sage: F._sum_of_monomials(['a', 'b', 'b', 'b'])
+            sage: F = CombinatorialFreeModule(GF(3), ['a', 'b', 'c'])                   # optional - sage.rings.finite_rings
+            sage: F._sum_of_monomials(['a', 'b', 'b', 'b'])                             # optional - sage.rings.finite_rings
             B['a']
         """
         R = self.base_ring()
@@ -1219,7 +1220,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         coefficients are coerced into the base ring of ``self``::
 
             sage: part = Partition([2,1])                                               # optional - sage.combinat
-            sage: d = {part:1}                                                          # optional - sage.combinat
+            sage: d = {part: 1}                                                         # optional - sage.combinat
             sage: a = s._from_dict(d, coerce=True); a                                   # optional - sage.combinat
             s[2, 1]
             sage: a.coefficient(part).parent()                                          # optional - sage.combinat
@@ -1262,7 +1263,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             F # G
 
             sage: T.category()
-            Category of tensor products of finite dimensional modules with basis over Integer Ring
+            Category of tensor products of
+             finite dimensional modules with basis over Integer Ring
 
             sage: T.construction() # todo: not implemented
             [tensor, ]
@@ -1275,7 +1277,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         The basis of T is indexed by tuples of basis indices of F and G::
 
             sage: T.basis().keys()
-            Image of Cartesian product of {1, 2}, {3, 4} by The map <class 'tuple'> from Cartesian product of {1, 2}, {3, 4}
+            Image of Cartesian product of {1, 2}, {3, 4}
+                  by The map <class 'tuple'> from Cartesian product of {1, 2}, {3, 4}
             sage: T.basis().keys().list()
             [(1, 3), (1, 4), (2, 3), (2, 4)]
 
@@ -1548,22 +1551,26 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename("G")
                 sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename("H")
 
-                sage: f =   F.monomial(1) + 2 * F.monomial(2)
-                sage: g = 2*G.monomial(3) +     G.monomial(4)
-                sage: h =   H.monomial(5) +     H.monomial(6)
-                sage: FG  = tensor([F, G   ])
+                sage: f =   F.monomial(1) + 2*F.monomial(2)
+                sage: g = 2*G.monomial(3) +   G.monomial(4)
+                sage: h =   H.monomial(5) +   H.monomial(6)
+                sage: FG = tensor([F, G])
                 sage: phi_fg = FG.tensor_constructor((F, G))
-                sage: phi_fg(f,g)
+                sage: phi_fg(f, g)
                 2*B[1] # B[3] + B[1] # B[4] + 4*B[2] # B[3] + 2*B[2] # B[4]
 
                 sage: FGH = tensor([F, G, H])
                 sage: phi_fgh = FGH.tensor_constructor((F, G, H))
                 sage: phi_fgh(f, g, h)
-                2*B[1] # B[3] # B[5] + 2*B[1] # B[3] # B[6] + B[1] # B[4] # B[5] + B[1] # B[4] # B[6] + 4*B[2] # B[3] # B[5] + 4*B[2] # B[3] # B[6] + 2*B[2] # B[4] # B[5] + 2*B[2] # B[4] # B[6]
+                2*B[1] # B[3] # B[5] + 2*B[1] # B[3] # B[6] + B[1] # B[4] # B[5]
+                + B[1] # B[4] # B[6] + 4*B[2] # B[3] # B[5] + 4*B[2] # B[3] # B[6]
+                + 2*B[2] # B[4] # B[5] + 2*B[2] # B[4] # B[6]
 
                 sage: phi_fg_h = FGH.tensor_constructor((FG, H))
                 sage: phi_fg_h(phi_fg(f, g), h)
-                2*B[1] # B[3] # B[5] + 2*B[1] # B[3] # B[6] + B[1] # B[4] # B[5] + B[1] # B[4] # B[6] + 4*B[2] # B[3] # B[5] + 4*B[2] # B[3] # B[6] + 2*B[2] # B[4] # B[5] + 2*B[2] # B[4] # B[6]
+                2*B[1] # B[3] # B[5] + 2*B[1] # B[3] # B[6] + B[1] # B[4] # B[5]
+                + B[1] # B[4] # B[6] + 4*B[2] # B[3] # B[5] + 4*B[2] # B[3] # B[6]
+                + 2*B[2] # B[4] # B[5] + 2*B[2] # B[4] # B[6]
             """
             assert(module in ModulesWithBasis(self.base_ring()) for module in modules)
             assert(tensor(modules) == self)
@@ -1727,7 +1734,9 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
         sage: S
         F (+) G
         sage: S.basis()
-        Lazy family (Term map from Disjoint union of Family ({4, 5}, {4, 6}) to F (+) G(i))_{i in Disjoint union of Family ({4, 5}, {4, 6})}
+        Lazy family (Term map
+         from Disjoint union of Family ({4, 5}, {4, 6})
+           to F (+) G(i))_{i in Disjoint union of Family ({4, 5}, {4, 6})}
 
     Note that the indices of the basis elements of F and G intersect non
     trivially. This is handled by forcing the union to be disjoint::
@@ -1737,19 +1746,19 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
     We now compute the Cartesian product of elements of free modules::
 
-        sage: f =   F.monomial(4) + 2 * F.monomial(5)
-        sage: g = 2*G.monomial(4) +     G.monomial(6)
-        sage: h =   H.monomial(4) +     H.monomial(7)
-        sage: cartesian_product([f,g])
+        sage: f =   F.monomial(4) + 2*F.monomial(5)
+        sage: g = 2*G.monomial(4) +   G.monomial(6)
+        sage: h =   H.monomial(4) +   H.monomial(7)
+        sage: cartesian_product([f, g])
         B[(0, 4)] + 2*B[(0, 5)] + 2*B[(1, 4)] + B[(1, 6)]
-        sage: cartesian_product([f,g,h])
+        sage: cartesian_product([f, g, h])
         B[(0, 4)] + 2*B[(0, 5)] + 2*B[(1, 4)] + B[(1, 6)] + B[(2, 4)] + B[(2, 7)]
-        sage: cartesian_product([f,g,h]).parent()
+        sage: cartesian_product([f, g, h]).parent()
         F (+) G (+) H
 
     TODO: choose an appropriate semantic for Cartesian products of Cartesian products (associativity?)::
 
-        sage: S = cartesian_product([cartesian_product([F, G]), H]) # todo: not implemented
+        sage: S = cartesian_product([cartesian_product([F, G]), H])  # todo: not implemented
         F (+) G (+) H
     """
 
@@ -1881,8 +1890,8 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
             sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
             sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
             sage: S = cartesian_product([F, G])
-            sage: f =   F.monomial(4) + 2 * F.monomial(5)
-            sage: g = 2*G.monomial(4) +     G.monomial(6)
+            sage: f =   F.monomial(4) + 2*F.monomial(5)
+            sage: g = 2*G.monomial(4) +   G.monomial(6)
             sage: S._cartesian_product_of_elements([f, g])
             B[(0, 4)] + 2*B[(0, 5)] + 2*B[(1, 4)] + B[(1, 6)]
             sage: S._cartesian_product_of_elements([f, g]).parent() == S
