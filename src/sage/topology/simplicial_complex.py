@@ -4804,15 +4804,19 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def bigraded_betti_numbers(self):
         r"""
-        Returns a dictionary of the bigraded Betti numbers of ''self''.
+        Returns a dictionary of the bigraded Betti numbers of ''self'', 
+        with keys '(-i, 2j)'.
+
+        See bigraded_betti_number(self, a, b) for more information.
 
         EXAMPLES::
+
             sage: X = SimplicialComplex([[0,1],[1,2],[1,3],[2,3]])
             sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
             sage: X.bigraded_betti_numbers()
-            {(0, 0): 1, (-1, 6): 1, (-2, 8): 1}
+            {(0, 0): 1, (-1,4 ): 2, (-1, 6): 1, (-2, 6): 1, (-2, 8): 1}
             sage: Y.bigraded_betti_numbers()
-            {(0, 0): 1, (-2, 8): 2, (-3, 10): 1}
+            {(0, 0): 1, (-1,4 ): 3, (-2, 6): 1, (-2, 8): 2, (-3, 10): 1}
         """
         from sage.misc.functional import gens 
         L = set(self.vertices())
@@ -4848,10 +4852,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         r"""
         Returns the bigraded Betti number indexed in the form (-i, 2j).
 
+        Bigraded Betti number with indices '(-i, 2j)' is defined as a sum of ranks
+        of '(i-j-1)'-th (co)homologies of full subcomplexes with exactly 'j' vertices. 
+
         EXAMPLES::
+
             sage: X = SimplicialComplex([[0,1],[1,2],[2,0],[1,2,3]])
             sage: X.bigraded_betti_numbers()
-            {(0, 0): 1, (-1, 6): 1, (-2, 8): 1}
+            {(0, 0): 1, ,(-1,4): 1, (-1, 6): 1, (-2, 8): 1}
             sage: X.bigraded_betti_number(-1, 6)
             1
         """
