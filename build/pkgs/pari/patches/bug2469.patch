@@ -31,10 +31,9 @@ index 526ac5c1b3..5fb4454353 100644
        GEN F;
        if (abscmpiu(n, lim) <= 0
            || cmpii(n, sqru(lim)) <= 0
-           || (all >= (1<<14)
--              && (nb > nb0 || k > 1)
+-          || ((nb > nb0 || k > 1)
 -              && bit_accuracy(lgefint(n)) < 2048 && ifac_isprime(n)))
-+              && nb > nb0 && bit_accuracy(lgefint(n)) < 2048 && ifac_isprime(n)))
++          || (nb > nb0 && bit_accuracy(lgefint(n)) < 2048 && ifac_isprime(n)))
        { set_avma(av); STOREi(&nb, n, k); return aux_end(M,n, nb); }
        set_avma(av); F = aux_end(M, NULL, nb); /* don't destroy n */
        *pU = mkvec2(icopy(n), utoipos(k)); /* composite cofactor */
