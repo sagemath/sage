@@ -731,7 +731,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
 
         """
         index_set = sorted(self.W.index_set())
-        support   = sorted(support)
+        support = sorted(support)
         if not set(support).issubset(set(index_set)) or support == index_set:
             raise ValueError("the support must be a proper subset of the index set")
         if not support:

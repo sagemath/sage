@@ -2344,7 +2344,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 for a in ai:
                     if not a.is_integral():
                         for p, _ in a.denom().factor():
-                            e  = min((ai[i].valuation(p)/[1,2,3,4,6][i])
+                            e = min((ai[i].valuation(p)/[1,2,3,4,6][i])
                                      for i in range(5)).floor()
                             ai = [ai[i]/p**(e*[1,2,3,4,6][i]) for i in range(5)]
                             xterm *= p**(2*e)
@@ -2758,9 +2758,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             0.16397076103046915
         """
         if algorithm == 'default':
-            Delta   = self.discriminant()
-            j       = self.j_invariant()
-            b2      = self.b2()
+            Delta = self.discriminant()
+            j = self.j_invariant()
+            b2 = self.b2()
             twostar = 2 if b2 else 1
             from math import log
 
@@ -2769,7 +2769,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             def h_oo(x):
                 return log(max(abs(x), 1))
-            mu    = h(Delta)/12 + h_oo(j)/12 + h_oo(b2/12)/2 + log(twostar)/2
+            mu = h(Delta)/12 + h_oo(j)/12 + h_oo(b2/12)/2 + log(twostar)/2
             lower = 2*(-h(j)/24 - mu - 0.961)
             upper = 2*(mu + 1.07)
             return max(abs(lower), abs(upper))
@@ -3503,7 +3503,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         """
         assert p.is_prime(), "p must be prime in local_integral_model()"
         ai = self.a_invariants()
-        e  = min([(ai[i].valuation(p)/[1,2,3,4,6][i]) for i in range(5)]).floor()
+        e = min([(ai[i].valuation(p)/[1,2,3,4,6][i]) for i in range(5)]).floor()
         return constructor.EllipticCurve([ai[i]/p**(e*[1,2,3,4,6][i]) for i in range(5)])
 
     def is_global_integral_model(self):
@@ -3537,7 +3537,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         for a in ai:
             if not a.is_integral():
                 for p, _ in a.denom().factor():
-                    e  = min((ai[i].valuation(p)/[1,2,3,4,6][i])
+                    e = min((ai[i].valuation(p)/[1,2,3,4,6][i])
                              for i in range(5)).floor()
                     ai = [ai[i]/p**(e*[1,2,3,4,6][i]) for i in range(5)]
         for z in ai:
@@ -3634,7 +3634,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         if invariant in ["moddeg", "both"]:
             V = A.integral_structure()
             W = B.integral_structure()
-            moddeg  = (V + W).index_in(S.integral_structure())
+            moddeg = (V + W).index_in(S.integral_structure())
             L["moddeg"] = moddeg
             self.__generalized_modular_degree[M] = moddeg
 

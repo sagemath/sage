@@ -667,7 +667,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
             'Defined by embedding the torus closure associated to the 1-d cone of
              Rational polyhedral fan in 2-d lattice N.'
         """
-        s  = 'Defined by embedding the torus closure associated to the '
+        s = 'Defined by embedding the torus closure associated to the '
         s += str(self._defining_cone)
         s += '.'
         return s
@@ -946,7 +946,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             sage: f._repr_defn()
             'Defined by sending Rational polyhedral fan in 2-d lattice N to Rational polyhedral fan in 1-d lattice N.'
         """
-        s  = 'Defined by sending '
+        s = 'Defined by sending '
         s += str(self.domain().fan())
         s += ' to '
         s += str(self.codomain().fan())

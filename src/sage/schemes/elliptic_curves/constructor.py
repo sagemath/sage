@@ -730,7 +730,7 @@ def coefficients_from_j(j, minimal_twist=True):
         for p in Set(n.prime_divisors()+m.prime_divisors()):
             e = min(a4.valuation(p)//2,a6.valuation(p)//3)
             if e>0:
-                p  = p**e
+                p = p**e
                 a4 /= p**2
                 a6 /= p**3
 

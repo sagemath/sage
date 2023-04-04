@@ -104,7 +104,7 @@ class NumericalEigenforms(SageObject):
         """
         if isinstance(group, (int, Integer)):
             group = Gamma0(Integer(group))
-        self._group  = group
+        self._group = group
         self._weight = Integer(weight)
         self._tp = tp
         if self._weight < 2:

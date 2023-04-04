@@ -158,7 +158,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             sage: f._repr_defn()
             'Defined by sending (x : y , z : w) to \n(x^2 : y^2 , z : w).'
         """
-        s  = 'Defined by sending '
+        s = 'Defined by sending '
         s += self.domain().ambient_space()._repr_generic_point()
         s += ' to \n'
         s += self.codomain().ambient_space()._repr_generic_point(self._polys)

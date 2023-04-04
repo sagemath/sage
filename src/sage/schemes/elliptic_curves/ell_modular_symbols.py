@@ -461,7 +461,7 @@ class ModularSymbolSage(ModularSymbol):
             if self._failed_to_scale:
                 self._find_scaling_period()  # will reset _e and _scaling
             else:
-                self._e  *= self._scaling
+                self._e *= self._scaling
         elif normalize == "period" :
             self._find_scaling_period()      # this will set _e and _scaling
         elif normalize == "none":
