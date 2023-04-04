@@ -932,3 +932,30 @@ cdef class CVXPYBackend:
             self.col_lower_bound[index] = value
         else:
             return self.col_lower_bound[index]
+
+    cpdef remove_constraint(self, index):
+        """
+        Remove a linear constraint by index.
+
+        INPUT:
+
+        - ``index`` - index of the constraint to remove
+
+        EXAMPLES:
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver = "CVXOPT")                 # optional - cvxopt
+            sage: p.add_variables(5)                                # optional - cvxopt
+            4
+            sage: p.add_linear_constraint(zip(range(5), range(5)), 2.0, 2.0)                # optional - cvxopt
+            sage: p.add_linear_constraint(zip(range(5), range(5)), 1.0, 1.0, name='foo')    # optional - cvxopt
+            sage: p.remove_constraint(1)                             # optional - cvxopt
+            sage: p.num_constraints()                                 # optional - cvxopt
+            1
+        """
+        self.G_matrix.pop(index)
+        self.row_lower_bound.pop(index)
+        self.row_upper_bound.pop(index)
+        self.row_name_var.pop(index)
+        for i in range(len(self.G_matrix)):
+            self.G_matrix[i].pop(-1)
