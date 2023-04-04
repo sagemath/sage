@@ -1230,8 +1230,6 @@ cdef class FiniteField(Field):
             sage: all(to_V(h(c) * e) == c * to_V(e) for e in E for c in F)
             True
         """
-        from sage.modules.free_module import VectorSpace
-        from sage.categories.morphism import is_Morphism
         if subfield is not None:
             if base is not None:
                 raise ValueError
@@ -1240,6 +1238,13 @@ cdef class FiniteField(Field):
         if map is None:
             deprecation(28481, "The default value for map will be changing to True.  To keep the current behavior, explicitly pass map=False.")
             map = False
+
+        if base is None and self.__vector_space is not None and not map:
+            # A very common case: return as early as possible.
+            return self.__vector_space
+
+        from sage.modules.free_module import VectorSpace
+        from sage.categories.morphism import is_Morphism
 
         if base is None:
             base = self.prime_subfield()
