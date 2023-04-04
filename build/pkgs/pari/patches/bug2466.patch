@@ -1,0 +1,25 @@
+From 7ca0c2eae87def89fa7253c60e4791a8ef26629d Mon Sep 17 00:00:00 2001
+From: Bill Allombert <Bill.Allombert@math.u-bordeaux.fr>
+Date: Mon, 3 Apr 2023 15:30:26 +0200
+Subject: [PATCH] quadunitindex(8461,2)->1 instead of 3 [#2466]
+
+---
+ src/basemath/quad.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/basemath/quad.c b/src/basemath/quad.c
+index 021a404b00..7ed554c2f3 100644
+--- a/src/basemath/quad.c
++++ b/src/basemath/quad.c
+@@ -359,7 +359,7 @@ quadunit_mod(GEN D, GEN N)
+     GEN M = shifti(mulii(q, N), 1);
+     quadunit_uvmod(D, d, M, &u, &v);
+     u = diviiexact(u, q);
+-    v = diviiexact(v, q); u = shifti(u,-1);
++    v = modii(diviiexact(v, q), N); u = shifti(u,-1);
+   }
+   return deg1pol_shallow(v, u, 0);
+ }
+-- 
+2.40.0
+
