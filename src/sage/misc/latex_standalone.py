@@ -805,6 +805,14 @@ class Standalone(SageObject):
             CalledProcessError: Command '['latex', '-interaction=nonstopmode',
             'tikz_...tex']' returned non-zero exit status 1.
 
+        We test the behavior when a wrong value is provided::
+
+            sage: t = Standalone('Hello World')
+            sage: _ = t.dvi(program='lates')
+            Traceback (most recent call last):
+            ...
+            ValueError: program(=lates) should be latex
+
         """
         from sage.features.latex import latex
 
@@ -1097,6 +1105,16 @@ class Standalone(SageObject):
             sage: path_to_file = t.eps(filename, program='pdftocairo') # long time (1s)   # optional latex pdftocairo
             sage: path_to_file[-4:]                                    # long time (fast) # optional latex pdftocairo
             '.eps'
+
+        TESTS:
+
+        We test the behavior when a wrong value is provided::
+
+            sage: t = Standalone('Hello World')
+            sage: _ = t.eps(program='convert')
+            Traceback (most recent call last):
+            ...
+            ValueError: program(=convert) should be 'pdftocairo' or 'dvips'
 
         """
 
