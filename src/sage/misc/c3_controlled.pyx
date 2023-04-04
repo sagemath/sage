@@ -197,7 +197,7 @@ We consider the smallest poset describing a class hierarchy admitting
 no MRO whatsoever::
 
     sage: P = Poset({10: [9,8,7], 9: [6,1], 8: [5,2], 7: [4,3],                         # optional - sage.combinat sage.graphs
-....:                6: [3,2], 5: [3,1], 4: [2,1]},
+    ....:            6: [3,2], 5: [3,1], 4: [2,1]},
     ....:           linear_extension=True, facade=True)
 
 And build a :class:`HierarchyElement` from it::
