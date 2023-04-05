@@ -11,8 +11,9 @@ the ring of motivic multiple zeta values.
 Here we provide a basic direct implementation, endowed with the
 motivic coproduct.
 
-The similar algebra on generators `f_1`, `f_3`, `f_5`, ... and `f_2`
-is now also available.
+The similar algebra where the shuffle algebra has generators
+`f_1, f_3, f_5, \ldots` is now also available. The implementation is even more
+general, allowing any positive odd integer as start index.
 
 AUTHORS:
 
@@ -44,10 +45,13 @@ from sage.rings.infinity import Infinity
 from sage.modules.free_module_element import vector
 
 
-# the indexing set: (integer power of f_2, word in (1,) 3, 5, 7,...)
 def W_Odds(start=3):
-    """
+    r"""
     Indexing set for the odd generators.
+
+    This is the set of pairs
+    (integer power of `f_2`, word in `s, s+2, s+4, \ldots`)
+    where `s` is the chosen odd start index.
 
     INPUT:
 
@@ -63,11 +67,11 @@ def W_Odds(start=3):
 
 
 def str_to_index(x: str) -> tuple:
-    """
+    r"""
     Convert a string to an index.
 
     Every letter ``"2"`` contributes to the power of `f_2`. Other letters
-    define a word in (`f_1`,) `f_3`, `f_5`, ...
+    are odd and define a word in `f_1, f_3, f_5, \ldots`
 
     Usually the letters ``"2"`` form a prefix of the input.
 
@@ -86,11 +90,11 @@ def str_to_index(x: str) -> tuple:
 
 
 def basis_f_odd_iterator(n, start=3) -> Iterator[tuple]:
-    """
+    r"""
     Return an iterator over compositions of ``n`` with odd parts.
 
-    The parts are odd integers at least equal to the odd integer ``start``.
-    The odd integers allowed are therefore ``3,5,7,9,...`` by default.
+    Let `s` be the chosen odd start index. The allowed parts are the
+    odd integers at least equal to `s`, in the set `s,s+2,s+4,s+6,\ldots`.
 
     This set of compositions is used to index a basis.
 
@@ -127,14 +131,14 @@ def basis_f_odd_iterator(n, start=3) -> Iterator[tuple]:
 
 
 def basis_f_iterator(n, start=3) -> Iterator[tuple]:
-    """
+    r"""
     Return an iterator for decompositions of ``n`` using ``2`` and odd integers.
 
-    The odd integers are taken at least equal to the odd integer ``start``.
-    The odd integers allowed are therefore ``3,5,7,9,...`` by default.
+    Let `s` be the chosen odd start index. The allowed odd parts are the
+    odd integers at least equal to `s`, in the set `s,s+2,s+4,s+6,\ldots`.
 
     The means that each term is made of a power of 2 and a composition
-    of the remaining integer with parts in ``(3,5,7,...)``
+    of the remaining integer with parts in `(s,s+2,s+4,\ldots)`.
 
     This set is indexing a basis of the homogeneous component of weight ``n``.
 
@@ -186,14 +190,14 @@ def morphism_constructor(data: dict, start=3):
     r"""
     Build a morphism from the F-algebra to some codomain.
 
+    Let `s` be the chosen odd start index.
+
     INPUT:
 
     - ``data`` -- a dictionary with integer keys containing the images of
-      `f_2, f_3, f_5, f_7, \ldots`
+      `f_2, f_s, f_{s+2}, f_{s+4}, \ldots`
 
     - ``start`` -- (default: 3) start index for odd generators
-
-    If ``start`` is ``1``, the dictionary must also provide the image of `f_1`.
 
     OUTPUT:
 
@@ -273,7 +277,7 @@ class F_algebra(CombinatorialFreeModule):
 
         - ``R`` -- base ring
 
-    - ``start`` -- (default: ``3``) odd start index for odd generators
+        - ``start`` -- (default: ``3``) odd start index for odd generators
 
         EXAMPLES::
 
@@ -290,8 +294,8 @@ class F_algebra(CombinatorialFreeModule):
         """
         if R not in Rings():
             raise TypeError("argument R must be a ring")
-        if start not in [1, 3]:
-            raise ValueError("argument start must be 1 or 3")
+        if not start % 2 and start > 0:
+            raise ValueError("argument start must be odd and positive")
         self._start = start
         Indices = NonNegativeIntegers().cartesian_product(W_Odds(start))
         cat = BialgebrasWithBasis(R).Commutative().Graded()
@@ -300,11 +304,11 @@ class F_algebra(CombinatorialFreeModule):
                                          category=cat)
 
     def _repr_term(self, pw) -> str:
-        """
+        r"""
         Return the custom representation of terms.
 
         Each monomial is written as a power of `f_2` times a word
-        in (`f_1`,) `f_3`, `f_5`, ...
+        in `f_1, f_3, f_5, \ldots`.
 
         EXAMPLES::
 
@@ -450,7 +454,7 @@ class F_algebra(CombinatorialFreeModule):
         f2 = self.monomial(self._indices((1, [])))
         if i == 2:
             return f2
-        # now i odd >= 3
+        # now i odd >= start
         if i % 2:
             return self.monomial(self._indices((0, [i])))
         # now powers of f2
