@@ -1,2 +1,5 @@
 from .constructor import FunctionField
-from .drinfeld_modules.drinfeld_module import DrinfeldModule
+
+from sage.misc.lazy_import import lazy_import
+
+lazy_import("sage.rings.function_field.drinfeld_modules.drinfeld_module", "DrinfeldModule")
