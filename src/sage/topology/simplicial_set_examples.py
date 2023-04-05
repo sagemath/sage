@@ -34,7 +34,6 @@ import os
 from pyparsing import OneOrMore, nestedExpr
 
 from sage.env import SAGE_ENV
-from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.latex import latex
 from sage.rings.infinity import Infinity
@@ -363,6 +362,8 @@ def RealProjectiveSpace(n):
         RP^{\infty}
     """
     if n == Infinity:
+        from sage.groups.abelian_gps.abelian_group import AbelianGroup
+
         X = AbelianGroup([2]).nerve()
         X.rename('RP^oo')
         X.rename_latex('RP^{\\infty}')

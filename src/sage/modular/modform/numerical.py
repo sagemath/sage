@@ -287,8 +287,6 @@ class NumericalEigenforms(SageObject):
         if E.nrows() == 0:
             return x
 
-
-
         def best_row(M):
             """
             Find the best row among rows of M, i.e. the row

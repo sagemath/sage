@@ -6458,9 +6458,9 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     we will loop with an absurd, unattainable, number of rays::
 
         sage: K = random_cone(min_ambient_dim=3, # long time
-        ....:                 max_ambient_dim=3, # long time
-        ....:                 min_rays=7,        # long time
-        ....:                 max_rays=9)        # long time
+        ....:                 max_ambient_dim=3,
+        ....:                 min_rays=7,
+        ....:                 max_rays=9)
         sage: K.nrays() >= 7                     # long time
         True
         sage: K.lattice_dim()                    # long time
@@ -6640,7 +6640,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 msg = 'all cones are solid when max_ambient_dim is zero.'
                 raise ValueError(msg)
             if (max_ambient_dim is not None and
-                    min_rays > 2*(max_ambient_dim - 1)):
+                    min_rays > 2 * (max_ambient_dim - 1)):
                 msg = 'every cone is solid when '
                 msg += 'min_rays > 2*(max_ambient_dim - 1).'
                 raise ValueError(msg)
@@ -6648,11 +6648,10 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             if lattice.dimension() == 0:
                 msg = 'all cones in the given lattice are solid.'
                 raise ValueError(msg)
-            if  min_rays > 2*(lattice.dimension() - 1):
+            if min_rays > 2 * (lattice.dimension() - 1):
                 msg = 'every cone is solid when min_rays > 2*(d - 1) '
                 msg += 'where d is the dimension of the given lattice.'
                 raise ValueError(msg)
-
 
     # Now that we've sanity-checked our parameters, we can massage the
     # min/maxes for (non-)solid cones. It doesn't violate the user's
@@ -6779,7 +6778,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             rays.append(L.random_element())
             K = Cone(rays, lattice=L)
             rays = list(K.rays()) # Avoid re-normalizing next time around
-
 
         if strictly_convex is not None:
             if strictly_convex:

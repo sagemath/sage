@@ -320,7 +320,6 @@ class DikSolver:
                       46, 47, 48,                                \
             ]
 
-
     # to compensate for different face naming
     rot_map = dict(zip("BLURDF", "ULFRBD"))
 

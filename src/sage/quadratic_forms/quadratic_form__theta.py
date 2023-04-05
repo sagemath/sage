@@ -126,7 +126,6 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
         return PowerSeriesRing(ZZ, var_str)(theta_vec, Max)
 
 
-
 # -------------  Compute the theta function by using an explicit Cholesky decomposition ------------
 
 
@@ -223,8 +222,6 @@ def theta_by_cholesky(self, q_prec):
                 Z = sqrt(T[i] / Q[i,i])
                 L[i] = floor(Z - U[i])
                 x[i] = ceil(-Z - U[i]) - 1
-
-
 
             # 3a. Main loop
             x[i] += 1

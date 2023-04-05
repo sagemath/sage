@@ -1148,7 +1148,6 @@ class LinearCodeSystematicEncoder(Encoder):
             # Test that the systematic positions are an information set
             self.generator_matrix()
 
-
     def __eq__(self, other):
         r"""
         Tests equality between LinearCodeSystematicEncoder objects.

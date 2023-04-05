@@ -50,5 +50,14 @@
     Hint: or use 'sage --fiximports' to fix automatically in the source file.
   # Keep in sync with SAGE_ROOT/src/sage/misc/replace_dot_all.py
   pattern: 'from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings(|[.]finite_rings)|sets))[.]all\s+import'
-  filePattern: '.*[.](py|pyx|pxi)$'
-  error: false # Make this a warning instead of an error for now
+  # imports from .all are allowed in all.py; also allow in some modules that need sage.all
+  filePattern: '(.*/|)(?!(all|benchmark|dev_tools|parsing|sage_eval))[^/.]*[.](py|pyx|pxi)$'
+
+# Magic doctest comments
+
+- name: 'multiline_doctest_comment: magic comment on a continuation line'
+  hint: |
+    magic doctest comments should appear on the "sage:" line, not "....:" lines
+  # see optional_regex in src/sage/doctest/parsing.py
+  # "indirect doctest" is from src/bin/sage-coverage
+  pattern: '^[ 	]*[.][.][.][.]:.*#.*(arb216|arb218|py2|py3|long time|not implemented|not tested|known bug|optional|indirect doctest)'

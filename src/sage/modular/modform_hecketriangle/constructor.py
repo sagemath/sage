@@ -159,7 +159,6 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
         #       elem,  homo,  k,    ep,   analytic_type
         return (False, False, None, None, None)
 
-
     # Determine whether f is homogeneous
     if (len(ep_num) == 1 and dhom(hom_num).is_homogeneous()):
         homo   = True

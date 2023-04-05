@@ -628,7 +628,6 @@ class TensorWithIndices(SageObject):
             True
             sage: s[:]
             [3, -6, 9]
-
         """
         if not isinstance(other, TensorWithIndices):
             raise TypeError("the second item of * must be a tensor with " +
@@ -636,12 +635,12 @@ class TensorWithIndices(SageObject):
         contraction_pairs = []
         for ind in self._con:
             if ind != '.':
-                if  ind in other._cov:
+                if ind in other._cov:
                     pos1 = self._con.index(ind)
                     pos2 = other._tensor._tensor_type[0] + other._cov.index(ind)
                     contraction_pairs.append((pos1, pos2))
                 if ind in other._con:
-                    raise IndexError("the index {} appears twice ".format(ind)
+                    raise IndexError(f"the index {ind} appears twice "
                                      + "in a contravariant position")
         for ind in self._cov:
             if ind != '.':
@@ -650,7 +649,7 @@ class TensorWithIndices(SageObject):
                     pos2 = other._con.index(ind)
                     contraction_pairs.append((pos1, pos2))
                 if ind in other._cov:
-                    raise IndexError("the index {} appears twice ".format(ind)
+                    raise IndexError(f"the index {ind} appears twice "
                                      + "in a covariant position")
         if not contraction_pairs:
             # No contraction is performed: the tensor product is returned

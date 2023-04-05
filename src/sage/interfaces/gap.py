@@ -518,7 +518,6 @@ class Gap_generic(ExtraTabCompletion, Expect):
             result = result.replace("\\\n","")
         return result.rstrip()
 
-
     def _execute_line(self, line, wait_for_prompt=True, expect_eof=False):
         if self._expect is None: # interface is down
             self._start()
@@ -1219,7 +1218,6 @@ class Gap(Gap_generic):
         """
         return GapFunction
 
-
     def cputime(self, t=None):
         r"""
         Returns the amount of CPU time that the GAP session has used. If
@@ -1255,10 +1253,10 @@ class Gap(Gap_generic):
 
             sage: ORIGINAL_WORKSPACE = sage.interfaces.gap.WORKSPACE
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(prefix="0"*80) as f:
+            sage: with tempfile.NamedTemporaryFile(prefix="0"*80) as f:    # long time (4s on sage.math, 2013)
             ....:     sage.interfaces.gap.WORKSPACE = f.name
             ....:     gap = Gap()
-            ....:     gap('3+2')  # long time (4s on sage.math, 2013)
+            ....:     gap('3+2')
             5
             sage: sage.interfaces.gap.WORKSPACE = ORIGINAL_WORKSPACE
         """

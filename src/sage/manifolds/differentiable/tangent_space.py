@@ -24,10 +24,16 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+from sage.manifolds.differentiable.tangent_vector import TangentVector
 from sage.symbolic.ring import SR
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
-from sage.manifolds.differentiable.tangent_vector import TangentVector
+
+if TYPE_CHECKING:
+    from sage.manifolds.point import ManifoldPoint
 
 class TangentSpace(FiniteRankFreeModule):
     r"""
@@ -222,7 +228,7 @@ class TangentSpace(FiniteRankFreeModule):
     """
     Element = TangentVector
 
-    def __init__(self, point, base_ring=None):
+    def __init__(self, point: ManifoldPoint, base_ring=None):
         r"""
         Construct the tangent space at a given point.
 

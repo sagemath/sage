@@ -16,7 +16,6 @@ from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 
 
 class FiniteComplexReflectionGroups(CategoryWithAxiom):
@@ -758,6 +757,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     [1] 1
                     [] 0
                 """
+                from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+
                 if gens is None:
                     seeds = [(self.coxeter_element(), self.rank())]
                 else:
@@ -898,7 +899,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
 
                     sage: sorted([w.reduced_word() for w in chain]              # optional - gap3
-                    ....:        for chain in W.generalized_noncrossing_partitions(2))  # optional - gap3
+                    ....:        for chain in W.generalized_noncrossing_partitions(2))
                     [[[], [], [1, 2]],
                      [[], [1], [2]],
                      [[], [1, 2], []],
@@ -913,7 +914,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                      [[2], [1, 2, 1], []]]
 
                     sage: sorted([w.reduced_word() for w in chain]              # optional - gap3
-                    ....:        for chain in W.generalized_noncrossing_partitions(2, positive=True))   # optional - gap3
+                    ....:        for chain in W.generalized_noncrossing_partitions(2, positive=True))
                     [[[], [1, 2], []],
                      [[], [1, 2, 1], [1]],
                      [[1], [2], []],

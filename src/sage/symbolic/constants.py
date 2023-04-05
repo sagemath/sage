@@ -347,7 +347,6 @@ class Constant():
                                     self._conversions, self._latex,
                                     self._mathml, self._domain))
 
-
     def domain(self):
         """
         Returns the domain of this constant.  This is either positive,
@@ -815,7 +814,6 @@ class GoldenRatio(Constant):
         """
         return R('1.61803398874989484820458')
 
-
     def _mpfr_(self,R):
         """
         EXAMPLES::
@@ -916,7 +914,6 @@ class Log2(Constant):
             0.6931471805599453
         """
         return R.log2()
-
 
     def _mpfr_(self,R):
         """
@@ -1032,7 +1029,6 @@ class Catalan(Constant):
         Constant.__init__(self, name, conversions=conversions,
                           domain='positive')
 
-
     def _mpfr_(self, R):
         """
         EXAMPLES::
@@ -1052,7 +1048,6 @@ class Catalan(Constant):
             0.915965594177219
         """
         return R('0.91596559417721901505460351493252')
-
 
     def __float__(self):
         """

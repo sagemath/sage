@@ -2070,7 +2070,6 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         return el
 
-
     @cached_method
     def q_basis(self, m=None, min_exp=0, order_1=ZZ(0)):
         r"""
@@ -2362,7 +2361,6 @@ class FormsSpace_abstract(FormsRing_abstract):
         laurent_series = sum([rationalize_coefficient(laurent_series[m], m) * q**m for m in range(first_exp, laurent_series.exponents()[-1] + 1)]).add_bigoh(series_prec)
 
         return laurent_series
-
 
     # DEFAULT METHODS (should be overwritten in concrete classes)
 

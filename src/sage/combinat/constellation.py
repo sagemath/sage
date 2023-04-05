@@ -776,7 +776,7 @@ class Constellation_class(Element):
 
         # compute canonical labels
         if not self.is_connected():
-            raise ValueError("No canonical labels implemented for"
+            raise ValueError("no canonical labels implemented for"
                              " non connected constellation")
 
         # get the permutations on {0, 1, ..., d-1}

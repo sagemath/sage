@@ -321,8 +321,8 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
         kernels = [ker.monic() for ker in kernels]
         E1 = EllipticCurve([-27*c4,-54*c6])
         w = E.isomorphism_to(E1)
-        from sage.rings.number_field.number_field_base import is_NumberField
-        model = "minimal" if minimal_models and is_NumberField(F) else None
+        from sage.rings.number_field.number_field_base import NumberField
+        model = "minimal" if minimal_models and isinstance(F, NumberField) else None
         isogs = [E1.isogeny(kernel=ker, model=model) for ker in kernels]
         isogs = [isog * w for isog in isogs]
         return isogs
@@ -657,8 +657,8 @@ def isogenies_sporadic_Q(E, l=None, minimal_models=True):
     R = PolynomialRing(F, 'X')
     n = len(f)
     ker = R([d**(n-i-1) * f[i] for i in range(n)])
-    from sage.rings.number_field.number_field_base import is_NumberField
-    model = "minimal" if minimal_models and is_NumberField(F) else None
+    from sage.rings.number_field.number_field_base import NumberField
+    model = "minimal" if minimal_models and isinstance(F, NumberField) else None
     isog = Ew.isogeny(kernel=ker, degree=l, model=model, check=False)
     isog = isog * E_to_Ew
     return [isog]
@@ -703,8 +703,8 @@ def isogenies_2(E, minimal_models=True):
     x2 = sorted(f2.roots(multiplicities=False))
     x = f2.parent().gen()
     ff = [x-x2i for x2i in x2]
-    from sage.rings.number_field.number_field_base import is_NumberField
-    model = "minimal" if minimal_models and is_NumberField(E.base_field()) else None
+    from sage.rings.number_field.number_field_base import NumberField
+    model = "minimal" if minimal_models and isinstance(E.base_field(), NumberField) else None
     isogs = [E.isogeny(f, model=model) for f in ff]
     return isogs
 
@@ -751,8 +751,8 @@ def isogenies_3(E, minimal_models=True):
     x3 = sorted(f3.roots(multiplicities=False))
     x = f3.parent().gen()
     ff = [x - x3i for x3i in x3]
-    from sage.rings.number_field.number_field_base import is_NumberField
-    model = "minimal" if minimal_models and is_NumberField(E.base_field()) else None
+    from sage.rings.number_field.number_field_base import NumberField
+    model = "minimal" if minimal_models and isinstance(E.base_field(), NumberField) else None
     isogs = [E.isogeny(f, model=model) for f in ff]
     return isogs
 
@@ -818,8 +818,8 @@ def isogenies_5_0(E, minimal_models=True):
     if not betas:
         return []
     gammas = [(beta**2 *(beta**3-140*a))/(120*a) for beta in betas]
-    from sage.rings.number_field.number_field_base import is_NumberField
-    model = "minimal" if minimal_models and is_NumberField(F) else None
+    from sage.rings.number_field.number_field_base import NumberField
+    model = "minimal" if minimal_models and isinstance(F, NumberField) else None
     isogs = [Ew.isogeny(x**2+beta*x+gamma, model=model) for beta,gamma in zip(betas,gammas)]
     iso = E.isomorphism_to(Ew)
     isogs = [isog * iso for isog in isogs]
@@ -904,8 +904,8 @@ def isogenies_5_1728(E, minimal_models=True):
         raise ValueError("j-invariant must be 1728.")
     if F.characteristic() in [2,3,5]:
         raise NotImplementedError("Not implemented in characteristic 2, 3 or 5.")
-    from sage.rings.number_field.number_field_base import is_NumberField
-    model = "minimal" if minimal_models and is_NumberField(F) else None
+    from sage.rings.number_field.number_field_base import NumberField
+    model = "minimal" if minimal_models and isinstance(F, NumberField) else None
     # quick test for a negative answer (from Fricke module)
     square5 = F(5).is_square()
     square1 = F(-1).is_square()
@@ -1017,8 +1017,8 @@ def isogenies_7_0(E, minimal_models=True):
     Ew = E.short_weierstrass_model()
     iso = E.isomorphism_to(Ew)
     a = Ew.a6()
-    from sage.rings.number_field.number_field_base import is_NumberField
-    model = "minimal" if minimal_models and is_NumberField(F) else None
+    from sage.rings.number_field.number_field_base import NumberField
+    model = "minimal" if minimal_models and isinstance(F, NumberField) else None
 
     # there will be 2 endomorphisms if -3 is a square:
 
@@ -1115,8 +1115,8 @@ def isogenies_7_1728(E, minimal_models=True):
         return []
     ts.sort()
     isogs = []
-    from sage.rings.number_field.number_field_base import is_NumberField
-    model = "minimal" if minimal_models and is_NumberField(F) else None
+    from sage.rings.number_field.number_field_base import NumberField
+    model = "minimal" if minimal_models and isinstance(F, NumberField) else None
     x = polygen(F)
     for t0 in ts:
         s2 = a/t0
@@ -1216,8 +1216,8 @@ def isogenies_13_0(E, minimal_models=True):
     Ew = E.short_weierstrass_model()
     iso = E.isomorphism_to(Ew)
     a = Ew.a6()
-    from sage.rings.number_field.number_field_base import is_NumberField
-    model = "minimal" if minimal_models and is_NumberField(F) else None
+    from sage.rings.number_field.number_field_base import NumberField
+    model = "minimal" if minimal_models and isinstance(F, NumberField) else None
     x = polygen(F)
 
     # there will be 2 endomorphisms if -3 is a square:
@@ -1334,8 +1334,8 @@ def isogenies_13_1728(E, minimal_models=True):
     Ew = E.short_weierstrass_model()
     iso = E.isomorphism_to(Ew)
     a = Ew.a4()
-    from sage.rings.number_field.number_field_base import is_NumberField
-    model = "minimal" if minimal_models and is_NumberField(F) else None
+    from sage.rings.number_field.number_field_base import NumberField
+    model = "minimal" if minimal_models and isinstance(F, NumberField) else None
     x = polygen(F)
 
     # we will have two endomorphisms if -1 is a square:
