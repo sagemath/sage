@@ -1057,6 +1057,22 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         v = ','.join(a._magma_init_(magma) for a in self.list())
         return '%s![%s]' % (R.name(), v)
 
+    def round(self, round_type='nearest'):
+        """
+        Description of the function (TO DO)
+        """
+
+        # Should there be a check for whether the input type is rational, float or double?
+
+        if (round_type == 'nearest'):
+            return self.apply_map(lambda x : x.round())
+        elif (round_type == 'up'):
+            return self.apply_map(lambda x : x.ceil())
+        elif (round_type == 'down'):
+            return self.apply_map(lambda x : x.floor())
+        else:
+            raise AttributeError("round_type needs to be \'up\', \'down\' or \'nearest\'")
+
     def numpy(self, dtype=object):
         """
         Convert self to a numpy array.
