@@ -1763,7 +1763,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             raise NotImplementedError("the base field must have an embedding"
                                       " to the algebraic field")
         f = self.defining_polynomial()
-        return fundamental_group(f, projective=False, puiseux = puiseux, braid_mon = braid_mon)
+        return fundamental_group(f, projective=False, puiseux=puiseux, braid_mon=braid_mon)
 
     def braid_monodromy(self):
         r"""
