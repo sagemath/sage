@@ -8,6 +8,7 @@ import types
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.sets.pythonclass cimport Set_PythonType
+from sage.structure.richcmp cimport rich_to_bool
 
 cdef object BuiltinMethodType = type(repr)
 
@@ -137,6 +138,23 @@ cdef class DefaultConvertMap(Map):
                 print(type(C._element_constructor), C._element_constructor)
             raise
 
+    cpdef _richcmp_(left, right, int op):
+        """
+        Comparison of default conversions is just by parent
+
+        TESTS::
+
+            sage: R.<x> = QQ[]
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: f = K.coerce_map_from(QQ)
+            sage: type(f)
+            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
+            sage: loads(dumps(f)) == f
+            True
+        """
+        if isinstance(right, DefaultConvertMap) and left.parent() is right.parent():
+            return rich_to_bool(op, 0)
+        return NotImplemented
 
 cdef class DefaultConvertMap_unique(DefaultConvertMap):
     """

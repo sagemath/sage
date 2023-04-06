@@ -24,7 +24,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************`
 
-from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
+from sage.rings.finite_rings.finite_field_base import FiniteFieldAbsolute
 from sage.categories.finite_fields import FiniteFields
 _FiniteFields = FiniteFields()
 
@@ -38,7 +38,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
 from sage.misc.persist import register_unpickle_override
 
 
-class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRing_generic):
+class FiniteField_prime_modn(FiniteFieldAbsolute, integer_mod_ring.IntegerModRing_generic):
     r"""
     Finite field of order `p` where `p` is prime.
 
@@ -70,7 +70,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
         if check and not p.is_prime():
             raise ArithmeticError("p must be prime")
         self.__char = p
-        # FiniteField_generic does nothing more than IntegerModRing_generic, and
+        # FiniteFieldAbsolute does nothing more than IntegerModRing_generic, and
         # it saves a non trivial overhead
         integer_mod_ring.IntegerModRing_generic.__init__(self, p, category=_FiniteFields)
 
@@ -206,29 +206,6 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             False
         """
         return True
-
-    def polynomial(self, name=None):
-        """
-        Returns the polynomial ``name``.
-
-        EXAMPLES::
-
-            sage: k.<a> = GF(3)
-            sage: k.polynomial()
-            x
-        """
-        if name is None:
-            name = self.variable_name()
-        try:
-            return self.__polynomial[name]
-        except AttributeError:
-            f = self[name]([0, 1])
-            try:
-                self.__polynomial[name] = f
-            except (KeyError, AttributeError):
-                self.__polynomial = {}
-                self.__polynomial[name] = f
-            return f
 
     def order(self):
         """

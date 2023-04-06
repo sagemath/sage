@@ -810,7 +810,7 @@ cdef class RingHomomorphism(RingMap):
 
             sage: R.<x> = ZZ[]
             sage: K.<a> = GF(7^2)
-            sage: L.<u> = K.extension(x^3 - 3)
+            sage: L.<u> = K.extension(x^3 - 3, implementation='PQR')
             sage: phi = L.hom([u^7], base_map=K.frobenius_endomorphism())
             sage: phi
             Ring endomorphism of Univariate Quotient Polynomial Ring in u over Finite Field in a of size 7^2 with modulus u^3 + 4

@@ -19,14 +19,14 @@ used as minimal polynomial.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteFieldAbsolute
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.element_givaro import Cache_givaro
 from sage.libs.pari.all import pari
 from sage.misc.superseded import deprecated_function_alias
 
 
-class FiniteField_givaro(FiniteField):
+class FiniteField_givaro(FiniteFieldAbsolute):
     """
     Finite field implemented using Zech logs and the cardinality must be
     less than `2^{16}`. By default, Conway polynomials are used as minimal
@@ -135,7 +135,7 @@ class FiniteField_givaro(FiniteField):
             raise ValueError("q must be < 2^16")
 
         from .finite_field_constructor import GF
-        FiniteField.__init__(self, GF(p), name, normalize=False)
+        FiniteFieldAbsolute.__init__(self, GF(p), name, normalize=False)
 
         from sage.rings.polynomial.polynomial_element import Polynomial
         if not isinstance(modulus, Polynomial):

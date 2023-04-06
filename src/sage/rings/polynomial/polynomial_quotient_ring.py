@@ -843,7 +843,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: R.<x> = GF(9,'a')[]
             sage: R.quo(2*x^3+x+1).cardinality()
             729
-            sage: GF(9,'a').extension(2*x^3+x+1).cardinality()
+            sage: GF(9,'a').extension(2*x^3+x+1, implementation="PQR").cardinality()
             729
             sage: R.quo(2).cardinality()
             1
@@ -1248,7 +1248,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
             sage: F1.<a> = GF(2^7)
             sage: P1.<x> = F1[]
-            sage: F2 = F1.extension(x^2+x+1, 'u')
+            sage: F2 = F1.extension(x^2+x+1, 'u', implementation="PQR")
             sage: F2.random_element().parent() is F2
             True
         """
@@ -2081,6 +2081,34 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             y = to_isomorphic_ring(x)
             tester.assertIn(y, ring)
             tester.assertEqual(from_isomorphic_ring(y), x)
+
+    def extension(self, poly, name=None, names=None, **kwds):
+        r"""
+        Algebraically extends self by taking the quotient ``self[x] / (f(x))``.
+
+        .. NOTE::
+
+            This is a simple wrapper of the generic
+            :meth:`CommutativeRing.extension` that silently discards some
+            arguments such as ``implementation`` and ``absolute`` that other
+            base rings, such as finite fields, understand.
+
+        EXAMPLES::
+
+            sage: k = GF(2)
+            sage: R.<x> = k[]
+            sage: l = k.extension(x^2 + x + 1, absolute=False, implementation="PQR")
+            sage: m = l.extension(x^3+ 1, absolute=False, implementation="PQR")
+
+        """
+        absolute = kwds.pop('absolute', None)
+        if absolute:
+            raise NotImplementedError("cannot create an absolute quotient of a polynomial ring yet")
+
+        implementation = kwds.pop('implementation', None)
+
+        return super().extension(poly, name=name, names=names, **kwds)
+
 
 from sage.structure.coerce_maps import DefaultConvertMap_unique
 class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):

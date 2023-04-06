@@ -147,7 +147,7 @@ class RingHomset_generic(HomsetWithBase):
 
             sage: R.<x> = ZZ[]
             sage: K.<a> = GF(7^2)
-            sage: L.<u> = K.extension(x^3 - 3)
+            sage: L.<u> = K.extension(x^3 - 3, absolute=False)
             sage: phi = L.hom([u^7], base_map=K.frobenius_endomorphism())
             sage: phi(u) == u^7
             True
