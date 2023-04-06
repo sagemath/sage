@@ -1736,7 +1736,7 @@ class CartanType_crystallographic(CartanType_abstract):
         n = m.nrows()
         M = matrix(ZZ, n, n*n, sparse = True)
         for (i,j) in m.nonzero_positions():
-            M[i, n * i + j]  = m[i,j]
+            M[i, n * i + j] = m[i,j]
             M[j, n * i + j] -= m[j,i]
         kern = M.integer_kernel()
         c = len(self.dynkin_diagram().connected_components())

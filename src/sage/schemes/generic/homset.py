@@ -80,8 +80,8 @@ class SchemeHomsetFactory(UniqueFactory):
 
     EXAMPLES::
 
-        sage: A2 = AffineSpace(QQ,2)
-        sage: A3 = AffineSpace(QQ,3)
+        sage: A2 = AffineSpace(QQ, 2)
+        sage: A3 = AffineSpace(QQ, 3)
         sage: Hom = A3.Hom(A2)
 
     The Hom-sets are uniquely determined by domain and codomain::
@@ -96,7 +96,7 @@ class SchemeHomsetFactory(UniqueFactory):
 
         sage: loads(Hom.dumps()) is Hom
         True
-        sage: A3_iso = AffineSpace(QQ,3)
+        sage: A3_iso = AffineSpace(QQ, 3)
         sage: A3_iso is A3
         True
         sage: Hom_iso = A3_iso.Hom(A2)
@@ -133,15 +133,15 @@ class SchemeHomsetFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: A2 = AffineSpace(QQ,2)
-            sage: A3 = AffineSpace(QQ,3)
+            sage: A2 = AffineSpace(QQ, 2)
+            sage: A3 = AffineSpace(QQ, 3)
             sage: A3.Hom(A2)    # indirect doctest
             Set of morphisms
               From: Affine Space of dimension 3 over Rational Field
               To:   Affine Space of dimension 2 over Rational Field
             sage: from sage.schemes.generic.homset import SchemeHomsetFactory
             sage: SHOMfactory = SchemeHomsetFactory('test')
-            sage: key, extra = SHOMfactory.create_key_and_extra_args(A3,A2,check=False)
+            sage: key, extra = SHOMfactory.create_key_and_extra_args(A3, A2, check=False)
             sage: key
             (..., ..., Category of schemes over Rational Field, False)
             sage: extra
@@ -187,8 +187,8 @@ class SchemeHomsetFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: A2 = AffineSpace(QQ,2)
-            sage: A3 = AffineSpace(QQ,3)
+            sage: A2 = AffineSpace(QQ, 2)
+            sage: A3 = AffineSpace(QQ, 3)
             sage: A3.Hom(A2) is A3.Hom(A2)   # indirect doctest
             True
             sage: from sage.schemes.generic.homset import SchemeHomsetFactory
@@ -231,7 +231,7 @@ class SchemeHomset_generic(HomsetWithBase):
     - ``category`` -- a category (optional). The category of the
       Hom-set.
 
-    - ``check`` -- boolean (optional, default=``True``). Whether to
+    - ``check`` -- boolean (optional, default: ``True``). Whether to
       check the defining data for consistency.
 
     EXAMPLES::
@@ -253,8 +253,8 @@ class SchemeHomset_generic(HomsetWithBase):
 
         EXAMPLES::
 
-            sage: A2 = AffineSpace(QQ,2)
-            sage: A3 = AffineSpace(QQ,3)
+            sage: A2 = AffineSpace(QQ, 2)
+            sage: A3 = AffineSpace(QQ, 3)
             sage: Hom = A3.Hom(A2)
             sage: loads(Hom.dumps()) == Hom
             True
@@ -271,7 +271,7 @@ class SchemeHomset_generic(HomsetWithBase):
 
         EXAMPLES::
 
-            sage: A2 = AffineSpace(QQ,2)
+            sage: A2 = AffineSpace(QQ, 2)
             sage: A2(4,5)
             (4, 5)
         """
@@ -372,13 +372,13 @@ class SchemeHomset_generic(HomsetWithBase):
 
             sage: R.<x,y> = QQ[]
             sage: A.<x,y> = AffineSpace(R)
-            sage: C = A.subscheme(x*y-1)
+            sage: C = A.subscheme(x*y - 1)
             sage: H = C.Hom(C); H
             Set of morphisms
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x*y - 1
-              To:   Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x*y - 1
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: x*y - 1
+              To:   Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: x*y - 1
             sage: H(1)
             Traceback (most recent call last):
             ...
@@ -448,7 +448,7 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: A2 = AffineSpace(QQ,2)
+            sage: A2 = AffineSpace(QQ, 2)
             sage: Hom = A2(QQ)
             sage: loads(Hom.dumps()) == Hom
             True
@@ -481,7 +481,7 @@ class SchemeHomset_points(SchemeHomset_generic):
 
             sage: A.<x,y,z> = AffineSpace(QQ, 3)
             sage: H = A.subscheme(z)
-            sage: L = A.subscheme([z, y+z])
+            sage: L = A.subscheme([z, y + z])
             sage: A(QQ)._coerce_map_from_(H(QQ))
             True
             sage: H(QQ)._coerce_map_from_(L(QQ))
@@ -516,10 +516,10 @@ class SchemeHomset_points(SchemeHomset_generic):
         ::
 
             sage: PS = ProjectiveSpace(ZZ, 1, 'x')
-            sage: PS2 = ProjectiveSpace(Zp(7), 1, 'x')
-            sage: PS(ZZ).has_coerce_map_from(PS2(Zp(7)))
+            sage: PS2 = ProjectiveSpace(Zp(7), 1, 'x')                                  # optional - sage.rings.padics
+            sage: PS(ZZ).has_coerce_map_from(PS2(Zp(7)))                                # optional - sage.rings.padics
             False
-            sage: PS2(Zp(7)).has_coerce_map_from(PS(ZZ))
+            sage: PS2(Zp(7)).has_coerce_map_from(PS(ZZ))                                # optional - sage.rings.padics
             True
 
         ::
@@ -536,16 +536,16 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         ::
 
-            sage: K.<w> = QuadraticField(2)
-            sage: A.<x,y,z> = AffineSpace(QQ, 3)
-            sage: H = A.subscheme(z)
-            sage: A(K).has_coerce_map_from(H(QQ))
+            sage: K.<w> = QuadraticField(2)                                             # optional - sage.rings.number_field
+            sage: A.<x,y,z> = AffineSpace(QQ, 3)                                        # optional - sage.rings.number_field
+            sage: H = A.subscheme(z)                                                    # optional - sage.rings.number_field
+            sage: A(K).has_coerce_map_from(H(QQ))                                       # optional - sage.rings.number_field
             True
 
         TESTS::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: X = P. subscheme ([x-y])
+            sage: X = P.subscheme([x - y])
             sage: P(1,1) == X(1,1)
             True
 
@@ -631,24 +631,24 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: A2 = AffineSpace(ZZ,2)
-            sage: F = GF(3)
-            sage: F_points = A2(F);  type(F_points)
+            sage: A2 = AffineSpace(ZZ, 2)
+            sage: F = GF(3)                                                             # optional - sage.rings.finite_rings
+            sage: F_points = A2(F);  type(F_points)                                     # optional - sage.rings.finite_rings
             <class 'sage.schemes.affine.affine_homset.SchemeHomset_points_affine_with_category'>
-            sage: F_points([2,5])
+            sage: F_points([2,5])                                                       # optional - sage.rings.finite_rings
             (2, 2)
 
-            sage: P2 = ProjectiveSpace(GF(3),2)
-            sage: F.<a> = GF(9,'a')
-            sage: F_points = P2(F)
-            sage: type(F_points)
+            sage: P2 = ProjectiveSpace(GF(3), 2)                                        # optional - sage.rings.finite_rings
+            sage: F.<a> = GF(9, 'a')                                                    # optional - sage.rings.finite_rings
+            sage: F_points = P2(F)                                                      # optional - sage.rings.finite_rings
+            sage: type(F_points)                                                        # optional - sage.rings.finite_rings
             <class 'sage.schemes.projective.projective_homset.SchemeHomset_points_projective_field_with_category'>
-            sage: F_points([4,2*a])
+            sage: F_points([4,2*a])                                                     # optional - sage.rings.finite_rings
             (1 : 2*a : 1)
 
         TESTS::
 
-            sage: F_points._element_constructor_([4,2*a])
+            sage: F_points._element_constructor_([4,2*a])                               # optional - sage.rings.finite_rings
             (1 : 2*a : 1)
         """
         if len(v) == 1:
@@ -667,18 +667,18 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: P2 = ProjectiveSpace(QQ,2)
-            sage: K.<a> = NumberField(x^2 + x - (3^3-3))
-            sage: K_points = P2(K);  K_points
+            sage: P2 = ProjectiveSpace(QQ, 2)
+            sage: K.<a> = NumberField(x^2 + x - (3^3-3))                                # optional - sage.rings.number_field
+            sage: K_points = P2(K);  K_points                                           # optional - sage.rings.number_field
             Set of rational points of Projective Space of dimension 2
-            over Number Field in a with defining polynomial x^2 + x - 24
+             over Number Field in a with defining polynomial x^2 + x - 24
 
-            sage: K_points.codomain()
+            sage: K_points.codomain()                                                   # optional - sage.rings.number_field
             Projective Space of dimension 2 over Rational Field
 
-            sage: K_points.extended_codomain()
-            Projective Space of dimension 2 over Number Field in a with
-            defining polynomial x^2 + x - 24
+            sage: K_points.extended_codomain()                                          # optional - sage.rings.number_field
+            Projective Space of dimension 2
+             over Number Field in a with defining polynomial x^2 + x - 24
         """
         if '_extended_codomain' in self.__dict__:
             return self._extended_codomain
@@ -700,7 +700,7 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: P2 = ProjectiveSpace(ZZ,2)
+            sage: P2 = ProjectiveSpace(ZZ, 2)
             sage: P2(QQ)._repr_()
             'Set of rational points of Projective Space of dimension 2 over Rational Field'
         """
@@ -716,7 +716,7 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: P2 = ProjectiveSpace(ZZ,2)
+            sage: P2 = ProjectiveSpace(ZZ, 2)
             sage: P2(QQ).value_ring()
             Rational Field
         """
@@ -738,8 +738,8 @@ class SchemeHomset_points(SchemeHomset_generic):
             sage: toric_varieties.P2().point_set().cardinality()
             +Infinity
 
-            sage: P2 = toric_varieties.P2(base_ring=GF(3))
-            sage: P2.point_set().cardinality()
+            sage: P2 = toric_varieties.P2(base_ring=GF(3))                              # optional - sage.rings.finite_rings
+            sage: P2.point_set().cardinality()                                          # optional - sage.rings.finite_rings
             13
         """
         if hasattr(self, 'is_finite') and not self.is_finite():
@@ -759,8 +759,8 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: P1 = toric_varieties.P1(base_ring=GF(3))
-            sage: P1.point_set().list()
+            sage: P1 = toric_varieties.P1(base_ring=GF(3))                              # optional - sage.rings.finite_rings
+            sage: P1.point_set().list()                                                 # optional - sage.rings.finite_rings
             ([0 : 1], [1 : 0], [1 : 1], [1 : 2])
         """
         return tuple(self)

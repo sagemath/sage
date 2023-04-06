@@ -26,7 +26,7 @@ Thematic indexes
 - :ref:`sage.combinat.species.all`
 - :ref:`sage.combinat.designs.all`
 - :ref:`sage.combinat.posets.all`
-- :ref:`sage.combinat.words`
+- :ref:`sage.combinat.words.all`
 - :ref:`sage.combinat.bijectionist`
 
 Utilities

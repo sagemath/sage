@@ -5594,6 +5594,10 @@ REFERENCES:
              Journal of Cryptology. 12. 193-196. 1999.
              :doi:`10.1007/s001459900052`.
 
+.. [Smi2023] \D. Smith, J. S. Myers, C. S. Kaplan and C. Goodman-Strauss, 
+             *An aperiodic monotile*,
+             :arxiv:`2303.10798`
+
 .. [SP2010] Fernando Solano and Michal Pioro, *Lightpath Reconfiguration in WDM
             networks*, IEEE/OSA Journal of Optical Communication and Networking
             2(12):1010-1021, 2010. :doi:`10.1364/JOCN.2.001010`.

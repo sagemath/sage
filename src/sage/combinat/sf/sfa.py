@@ -2245,12 +2245,12 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         #Decide whether we know how to go from self to other or
         #from other to self
         if to_other_function is not None:
-            known_cache    = self_to_other_cache  #the known direction
-            unknown_cache  = other_to_self_cache  #the unknown direction
+            known_cache = self_to_other_cache  #the known direction
+            unknown_cache = other_to_self_cache  #the unknown direction
             known_function = to_other_function
         else:
-            unknown_cache  = self_to_other_cache  #the known direction
-            known_cache    = other_to_self_cache  #the unknown direction
+            unknown_cache = self_to_other_cache  #the known direction
+            known_cache = other_to_self_cache  #the unknown direction
             known_function = to_self_function
 
         #Do nothing if we've already computed the inverse
@@ -2264,7 +2264,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         #should use that.
         #Zt = ZZ['t']
         #t = Zt.gen()
-        one  = base_ring.one()
+        one = base_ring.one()
         zero = base_ring.zero()
 
         #Get and store the list of partitions we'll need
