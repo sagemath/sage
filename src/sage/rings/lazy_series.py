@@ -228,6 +228,7 @@ from sage.categories.tensor import tensor
 from sage.data_structures.stream import (
     Stream_add,
     Stream_cauchy_mul,
+    Stream_cauchy_mul_commutative,
     Stream_sub,
     Stream_cauchy_compose,
     Stream_lmul,
@@ -897,12 +898,12 @@ class LazyModuleElement(Element):
         Compare ``self`` with ``other`` with respect to the comparison
         operator ``op``.
 
-        Equality is verified if the corresponding coefficients of both series
-        can be checked for equality without computing coefficients
-        indefinitely.  Otherwise an exception is raised to declare that
-        equality is not decidable.
-
-        Inequality is not defined for lazy Laurent series.
+        Equality is verified if the corresponding coefficients of
+        both series can be checked for equality without computing
+        coefficients indefinitely.  This is the case if ``self`` and
+        ``other`` are trivially equal, either by construction, or
+        because they are known to have only finitely many
+        coefficients.
 
         INPUT:
 
@@ -923,13 +924,9 @@ class LazyModuleElement(Element):
 
             sage: fz = L(lambda n: 0, valuation=0)
             sage: L.zero() == fz
-            Traceback (most recent call last):
-            ...
-            ValueError: undecidable
+            False
             sage: fz == L.zero()
-            Traceback (most recent call last):
-            ...
-            ValueError: undecidable
+            False
 
         TESTS::
 
@@ -941,43 +938,20 @@ class LazyModuleElement(Element):
 
         """
         if op is op_EQ:
-            if isinstance(self._coeff_stream, Stream_zero):
-                if isinstance(other._coeff_stream, Stream_zero):
-                    return True
-                if other._coeff_stream.is_nonzero():
-                    return False
-            elif isinstance(other._coeff_stream, Stream_zero):
-                if self._coeff_stream.is_nonzero():
-                    return False
-            elif isinstance(self._coeff_stream, Stream_exact):
-                if isinstance(other._coeff_stream, Stream_exact):
-                    return self._coeff_stream == other._coeff_stream
-                if self._coeff_stream != other._coeff_stream:
-                    return False
-            elif isinstance(other._coeff_stream, Stream_exact):
-                if other._coeff_stream != self._coeff_stream:
-                    return False
-            else:
-                # both streams are inexact, perhaps they are equal by
-                # construction
-                if self._coeff_stream == other._coeff_stream:
-                    return True
-                # perhaps their caches are different
-                if self._coeff_stream != other._coeff_stream:
-                    return False
-
-            # undecidable otherwise
             prec = self.parent().options['halting_precision']
             if prec is None:
-                raise ValueError("undecidable")
-            # at least one of the approximate orders is not infinity
+                return self._coeff_stream == other._coeff_stream
+
+            # they may be trivially equal
+            if self._coeff_stream == other._coeff_stream:
+                return True
+            # otherwise we check the first prec coefficients
             m = min(self._coeff_stream._approximate_order,
                     other._coeff_stream._approximate_order)
             return all(self[i] == other[i] for i in range(m, m + prec))
 
         if op is op_NE:
             return not (self == other)
-
         return False
 
     def __hash__(self):
@@ -998,11 +972,7 @@ class LazyModuleElement(Element):
 
     def __bool__(self):
         """
-        Test whether ``self`` is not zero.
-
-        An uninitialized series returns ``True`` as it is considered
-        as a formal variable, such as a generator of a polynomial
-        ring.
+        Return ``True`` if ``self`` is not known to be zero.
 
         TESTS::
 
@@ -1019,9 +989,7 @@ class LazyModuleElement(Element):
             sage: M = L(lambda n: 2*n if n < 10 else 1, valuation=0); M
             O(z^7)
             sage: bool(M)
-            Traceback (most recent call last):
-            ...
-            ValueError: undecidable as lazy Laurent series
+            True
             sage: M[15]
             1
             sage: bool(M)
@@ -1031,9 +999,7 @@ class LazyModuleElement(Element):
             sage: M = L(lambda n: 2*n if n < 10 else 1, valuation=0); M
             O(z^7)
             sage: bool(M)
-            Traceback (most recent call last):
-            ...
-            ValueError: undecidable as lazy Laurent series
+            True
             sage: M[15]
             1
             sage: bool(M)
@@ -1062,21 +1028,7 @@ class LazyModuleElement(Element):
             sage: bool(g)
             True
         """
-        if isinstance(self._coeff_stream, Stream_zero):
-            return False
-        if self._coeff_stream.is_nonzero():
-            return True
-
-        # TODO: the following might not be allowed, because it may
-        # step the iterator
-        v = self._coeff_stream._approximate_order
-        if self[v]:
-            return True
-
-        prec = self.parent().options['halting_precision']
-        if prec is None:
-            raise ValueError("undecidable as lazy Laurent series")
-        return any(self[i] for i in range(v, v + prec))
+        return bool(self._coeff_stream)
 
     def define(self, s):
         r"""
@@ -1750,9 +1702,7 @@ class LazyModuleElement(Element):
         Different scalars potentially give different series::
 
             sage: 2 * M == 3 * M
-            Traceback (most recent call last):
-            ...
-            ValueError: undecidable
+            False
 
         Sparse series can be multiplied with a scalar::
 
@@ -2855,7 +2805,11 @@ class LazyCauchyProductSeries(LazyModuleElement):
                                         constant=c)
             return P.element_class(P, coeff_stream)
 
-        return P.element_class(P, Stream_cauchy_mul(left, right, P.is_sparse()))
+        if self.base_ring().is_commutative():
+            coeff_stream = Stream_cauchy_mul_commutative(left, right, P.is_sparse())
+        else:
+            coeff_stream = Stream_cauchy_mul(left, right, P.is_sparse())
+        return P.element_class(P, coeff_stream)
 
     def __pow__(self, n):
         r"""
@@ -3226,7 +3180,11 @@ class LazyCauchyProductSeries(LazyModuleElement):
         # P._minimal_valuation is zero, because we allow division by
         # series of positive valuation
         right_inverse = Stream_cauchy_invert(right)
-        return P.element_class(P, Stream_cauchy_mul(left, right_inverse, P.is_sparse()))
+        if self.base_ring().is_commutative():
+            coeff_stream = Stream_cauchy_mul_commutative(left, right_inverse, P.is_sparse())
+        else:
+            coeff_stream = Stream_cauchy_mul(left, right_inverse, P.is_sparse())
+        return P.element_class(P, coeff_stream)
 
 
     def _floordiv_(self, other):
@@ -3318,7 +3276,10 @@ class LazyCauchyProductSeries(LazyModuleElement):
         d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
                                  False, 0)
         f = P.undefined(valuation=0)
-        d_self_f = Stream_cauchy_mul(d_self, f._coeff_stream, False)
+        if self.base_ring().is_commutative():
+            d_self_f = Stream_cauchy_mul_commutative(d_self, f._coeff_stream, False)
+        else:
+            d_self_f = Stream_cauchy_mul(d_self, f._coeff_stream, False)
         int_d_self_f = Stream_function(lambda n: d_self_f[n-1] / R(n) if n else R.one(),
                                        False, 0)
         f._coeff_stream._target = int_d_self_f
@@ -3367,9 +3328,15 @@ class LazyCauchyProductSeries(LazyModuleElement):
         # multivariate power series
         d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
                                  P.is_sparse(), 0)
-        d_self_quo_self = Stream_cauchy_mul(d_self,
-                                            Stream_cauchy_invert(coeff_stream),
-                                            P.is_sparse())
+        coeff_stream_inverse = Stream_cauchy_invert(coeff_stream)
+        if self.base_ring().is_commutative():
+            d_self_quo_self = Stream_cauchy_mul_commutative(d_self,
+                                                            coeff_stream_inverse,
+                                                            P.is_sparse())
+        else:
+            d_self_quo_self = Stream_cauchy_mul(d_self,
+                                                coeff_stream_inverse,
+                                                P.is_sparse())
         int_d_self_quo_self = Stream_function(lambda n: d_self_quo_self[n-1] / R(n),
                                               P.is_sparse(), 1)
         return P.element_class(P, int_d_self_quo_self)

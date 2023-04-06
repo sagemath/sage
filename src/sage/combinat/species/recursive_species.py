@@ -409,7 +409,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
             sage: B = species.CombinatorialSpecies(min=1)
             sage: B.define(X*E(B))
             sage: B.generating_series()
-
+            z + z^2 + 3/2*z^3 + 5/2*z^4 + 9/2*z^5 + 17/2*z^6 + 133/8*z^7 + O(z^8)
         """
         if not isinstance(x, GenericCombinatorialSpecies):
             raise TypeError("x must be a combinatorial species")

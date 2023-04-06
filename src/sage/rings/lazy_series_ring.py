@@ -1117,9 +1117,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         sage: f2 = f * 2  # currently no coefficients computed
         sage: f3 = f * 3  # currently no coefficients computed
         sage: f2 == f3
-        Traceback (most recent call last):
-        ...
-        ValueError: undecidable
+        False
         sage: f2  # computes some of the coefficients of f2
         2*z^-1 - 2 + 2*z - 2*z^2 + 2*z^3 - 2*z^4 + 2*z^5 + O(z^6)
         sage: f3  # computes some of the coefficients of f3
