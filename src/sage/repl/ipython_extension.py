@@ -350,13 +350,13 @@ class SageMagics(Magics):
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell(                                                                   # optional - sage.misc.cython
+            sage: shell.run_cell(                                                       # optional - sage.misc.cython
             ....: '''
             ....: %%cython
             ....: def f():
             ....:     print('test')
             ....: ''')
-            sage: f()                                                                               # optional - sage.misc.cython
+            sage: f()                                                                   # optional - sage.misc.cython
             test
         """
         from sage.misc.cython import cython_compile

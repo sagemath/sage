@@ -708,14 +708,14 @@ class DisplayManager(SageObject):
 
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
-            sage: plt = plot(sin)                                               # optional - sage.symbolic sage.plot
-            sage: out = dm.graphics_from_save(plt.save, dict(), '.png',         # optional - sage.symbolic sage.plot
+            sage: plt = plot(sin)                                                       # optional - sage.symbolic sage.plot
+            sage: out = dm.graphics_from_save(plt.save, dict(), '.png',                 # optional - sage.symbolic sage.plot
             ....:                             dm.types.OutputImagePng)
-            sage: out                                                           # optional - sage.symbolic sage.plot
+            sage: out                                                                   # optional - sage.symbolic sage.plot
             OutputImagePng container
-            sage: out.png.get().startswith(b'\x89PNG')                          # optional - sage.symbolic sage.plot
+            sage: out.png.get().startswith(b'\x89PNG')                                  # optional - sage.symbolic sage.plot
             True
-            sage: out.png.filename()   # random                                 # optional - sage.symbolic sage.plot
+            sage: out.png.filename()   # random                                         # optional - sage.symbolic sage.plot
             '/home/user/.sage/temp/localhost.localdomain/23903/tmp_pu5woK.png'
         """
         import os
