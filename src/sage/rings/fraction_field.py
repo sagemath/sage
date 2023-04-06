@@ -1232,19 +1232,19 @@ class FractionFieldEmbeddingSection(Section):
         Over inexact rings, we have to take the precision of the denominators
         into account::
 
-            sage: R=ZpCR(2)
-            sage: S.<x> = R[]
-            sage: f = x/S(R(3,absprec=2))
-            sage: S(f)
+            sage: R = ZpCR(2)                                                   # optional - sage.rings.padics
+            sage: S.<x> = R[]                                                   # optional - sage.rings.padics
+            sage: f = x/S(R(3, absprec=2))                                      # optional - sage.rings.padics
+            sage: S(f)                                                          # optional - sage.rings.padics
             (1 + 2 + O(2^2))*x
 
         Test for Localization::
 
             sage: R.<x> = ZZ[]
-            sage: L = Localization(R, x**2+2*x+ 1)
-            sage: 1/(x+1) in L               # indirect doctest
+            sage: L = Localization(R, x**2 + 2*x + 1)                           # optional - sage.libs.pari
+            sage: 1/(x + 1) in L                        # indirect doctest      # optional - sage.libs.pari
             True
-            sage: 1/(x+2) in L               # indirect doctest
+            sage: 1/(x + 2) in L                        # indirect doctest      # optional - sage.libs.pari
             False
         """
         codom = self.codomain()

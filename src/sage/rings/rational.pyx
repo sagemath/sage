@@ -422,9 +422,9 @@ cdef class Rational(sage.structure.element.FieldElement):
         1/2
         sage: Rational(("2", "10"), 16)
         1/8
-        sage: Rational(QQbar(125/8).nth_root(3))
+        sage: Rational(QQbar(125/8).nth_root(3))                                                    # optional - sage.rings.number_field
         5/2
-        sage: Rational(AA(209735/343 - 17910/49*golden_ratio).nth_root(3) + 3*AA(golden_ratio))
+        sage: Rational(AA(209735/343 - 17910/49*golden_ratio).nth_root(3) + 3*AA(golden_ratio))     # optional - sage.rings.number_field
         53/7
         sage: QQ(float(1.5))
         3/2
@@ -440,9 +440,9 @@ cdef class Rational(sage.structure.element.FieldElement):
 
     Conversion from PARI::
 
-        sage: Rational(pari('-939082/3992923'))
+        sage: Rational(pari('-939082/3992923'))                                                     # optional - sage.libs.pari
         -939082/3992923
-        sage: Rational(pari('Pol([-1/2])'))  #9595
+        sage: Rational(pari('Pol([-1/2])'))  #9595                                                  # optional - sage.libs.pari
         -1/2
 
     Conversions from numpy::
@@ -512,7 +512,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             7
             sage: a.__init__('70', base=8); a
             56
-            sage: a.__init__(pari('2/3')); a
+            sage: a.__init__(pari('2/3')); a                                            # optional - sage.libs.pari
             2/3
             sage: a.__init__('-h/3ki', 32); a
             -17/3730
@@ -1422,42 +1422,43 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: K = NumberField(x^2 - 2, 'beta')
-            sage: (1/7).is_norm(K)
+            sage: K = NumberField(x^2 - 2, 'beta')                                                  # optional - sage.rings.number_field
+            sage: (1/7).is_norm(K)                                                                  # optional - sage.rings.number_field
             True
-            sage: (1/10).is_norm(K)
+            sage: (1/10).is_norm(K)                                                                 # optional - sage.rings.number_field
             False
-            sage: 0.is_norm(K)
+            sage: 0.is_norm(K)                                                                      # optional - sage.rings.number_field
             True
-            sage: (1/7).is_norm(K, element=True)
+            sage: (1/7).is_norm(K, element=True)                                                    # optional - sage.rings.number_field
             (True, 1/7*beta + 3/7)
-            sage: (1/10).is_norm(K, element=True)
+            sage: (1/10).is_norm(K, element=True)                                                   # optional - sage.rings.number_field
             (False, None)
-            sage: (1/691).is_norm(QQ, element=True)
+            sage: (1/691).is_norm(QQ, element=True)                                                 # optional - sage.rings.number_field
             (True, 1/691)
 
         The number field doesn't have to be defined by an
         integral polynomial::
 
-            sage: B, e = (1/5).is_norm(QuadraticField(5/4, 'a'), element=True)
-            sage: B
+            sage: B, e = (1/5).is_norm(QuadraticField(5/4, 'a'), element=True)                      # optional - sage.rings.number_field
+            sage: B                                                                                 # optional - sage.rings.number_field
             True
-            sage: e.norm()
+            sage: e.norm()                                                                          # optional - sage.rings.number_field
             1/5
 
         A non-Galois number field::
 
-            sage: K.<a> = NumberField(x^3-2)
-            sage: B, e = (3/5).is_norm(K, element=True); B
+            sage: K.<a> = NumberField(x^3 - 2)                                                      # optional - sage.rings.number_field
+            sage: B, e = (3/5).is_norm(K, element=True); B                                          # optional - sage.rings.number_field
             True
-            sage: e.norm()
+            sage: e.norm()                                                                          # optional - sage.rings.number_field
             3/5
 
-            sage: 7.is_norm(K)
+            sage: 7.is_norm(K)                                                                      # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
-            NotImplementedError: is_norm is not implemented unconditionally for norms from non-Galois number fields
-            sage: 7.is_norm(K, proof=False)
+            NotImplementedError: is_norm is not implemented unconditionally
+             for norms from non-Galois number fields
+            sage: 7.is_norm(K, proof=False)                                                         # optional - sage.rings.number_field
             False
 
         AUTHORS:
@@ -1540,9 +1541,9 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: QQ(2)._bnfisnorm(QuadraticField(-1, 'i'))
+            sage: QQ(2)._bnfisnorm(QuadraticField(-1, 'i'))                                         # optional - sage.rings.number_field
             (i + 1, 1)
-            sage: 7._bnfisnorm(NumberField(x^3-2, 'b'))
+            sage: 7._bnfisnorm(NumberField(x^3 - 2, 'b'))                                           # optional - sage.rings.number_field
             (1, 7)
 
         AUTHORS:
@@ -1990,20 +1991,20 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: (1/7).period()
+            sage: (1/7).period()                                                                    # optional - sage.libs.pari
             6
             sage: RR(1/7)
             0.142857142857143
-            sage: (1/8).period()
+            sage: (1/8).period()                                                                    # optional - sage.libs.pari
             1
             sage: RR(1/8)
             0.125000000000000
             sage: RR(1/6)
             0.166666666666667
-            sage: (1/6).period()
+            sage: (1/6).period()                                                                    # optional - sage.libs.pari
             1
             sage: x = 333/106
-            sage: x.period()
+            sage: x.period()                                                                        # optional - sage.libs.pari
             13
             sage: RealField(200)(x)
             3.1415094339622641509433962264150943396226415094339622641509
@@ -2574,7 +2575,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             ...
             OverflowError: exponent must be at most 2147483647           # 32-bit
             OverflowError: exponent must be at most 9223372036854775807  # 64-bit
-            sage: QQ(-1)^(2^100)
+            sage: QQ(-1)^(2^100)                                                        # optional - sage.symbolic
             1
         """
         n = <Rational?>other
@@ -3768,11 +3769,11 @@ cdef class Rational(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: n = 9390823/17
-            sage: m = n.__pari__(); m
+            sage: m = n.__pari__(); m                                                               # optional - sage.libs.pari
             9390823/17
-            sage: type(m)
+            sage: type(m)                                                                           # optional - sage.libs.pari
             <class 'cypari2.gen.Gen'>
-            sage: m.type()
+            sage: m.type()                                                                          # optional - sage.libs.pari
             't_FRAC'
         """
         global new_gen_from_rational

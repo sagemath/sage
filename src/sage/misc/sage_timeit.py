@@ -37,7 +37,7 @@ class SageTimeitResult():
     EXAMPLES::
 
         sage: from sage.misc.sage_timeit import SageTimeitResult
-        sage: SageTimeitResult( (3, 5, int(8), pi, 'ms') )
+        sage: SageTimeitResult( (3, 5, int(8), pi, 'ms') )                              # optional - sage.symbolic
         3 loops, best of 5: 3.1415927 ms per loop
 
     ::
@@ -47,10 +47,10 @@ class SageTimeitResult():
         sage: number = 7
         sage: repeat = 13
         sage: precision = int(5)
-        sage: best = pi / 10 ^ 9
+        sage: best = pi / 10 ^ 9                                                        # optional - sage.symbolic
         sage: order = 3
-        sage: stats = (number, repeat, precision, best * scaling[order], units[order])
-        sage: SageTimeitResult(stats)
+        sage: stats = (number, repeat, precision, best * scaling[order], units[order])  # optional - sage.symbolic
+        sage: SageTimeitResult(stats)                                                   # optional - sage.symbolic
         7 loops, best of 13: 3.1416 ns per loop
 
     If the third argument is not a Python integer, a ``TypeError`` is raised::
@@ -69,10 +69,10 @@ class SageTimeitResult():
         EXAMPLES::
 
             sage: from sage.misc.sage_timeit import SageTimeitResult
-            sage: SageTimeitResult( (3, 5, int(8), pi, 'ms') )
+            sage: SageTimeitResult( (3, 5, int(8), pi, 'ms') )                          # optional - sage.symbolic
             3 loops, best of 5: 3.1415927 ms per loop
-            sage: s = SageTimeitResult( (3, 5, int(8), pi, 'ms'), [1.0,1.1,0.5])
-            sage: s.series
+            sage: s = SageTimeitResult( (3, 5, int(8), pi, 'ms'), [1.0,1.1,0.5])        # optional - sage.symbolic
+            sage: s.series                                                              # optional - sage.symbolic
             [1.00000000000000, 1.10000000000000, 0.500000000000000]
         """
         self.stats = stats
@@ -85,8 +85,8 @@ class SageTimeitResult():
         EXAMPLES::
 
             sage: from sage.misc.sage_timeit import SageTimeitResult
-            sage: stats = (1, 2, int(3), pi, 'ns')
-            sage: SageTimeitResult(stats)           #indirect doctest
+            sage: stats = (1, 2, int(3), pi, 'ns')                                      # optional - sage.symbolic
+            sage: SageTimeitResult(stats)           #indirect doctest                   # optional - sage.symbolic
             1 loop, best of 2: 3.14 ns per loop
         """
         if self.stats[0] > 1:

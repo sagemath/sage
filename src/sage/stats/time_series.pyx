@@ -102,22 +102,22 @@ cdef class TimeSeries:
         Conversion from a NumPy 1-D array, which is very fast::
 
             sage: v = stats.TimeSeries([1..5])
-            sage: w = v.numpy()
-            sage: stats.TimeSeries(w)
+            sage: w = v.numpy()                                                         # optional - numpy
+            sage: stats.TimeSeries(w)                                                   # optional - numpy
             [1.0000, 2.0000, 3.0000, 4.0000, 5.0000]
 
         Conversion from an n-dimensional NumPy array also works::
 
-            sage: import numpy
-            sage: v = numpy.array([[1,2], [3,4]], dtype=float); v
+            sage: import numpy                                                          # optional - numpy
+            sage: v = numpy.array([[1,2], [3,4]], dtype=float); v                       # optional - numpy
             array([[1., 2.],
                    [3., 4.]])
-            sage: stats.TimeSeries(v)
+            sage: stats.TimeSeries(v)                                                   # optional - numpy
             [1.0000, 2.0000, 3.0000, 4.0000]
-            sage: stats.TimeSeries(v[:,0])
+            sage: stats.TimeSeries(v[:,0])                                              # optional - numpy
             [1.0000, 3.0000]
-            sage: u = numpy.array([[1,2],[3,4]])
-            sage: stats.TimeSeries(u)
+            sage: u = numpy.array([[1,2],[3,4]])                                        # optional - numpy
+            sage: stats.TimeSeries(u)                                                   # optional - numpy
             [1.0000, 2.0000, 3.0000, 4.0000]
 
         For speed purposes we don't initialize (so value is garbage)::

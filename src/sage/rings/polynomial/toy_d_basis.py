@@ -24,8 +24,8 @@ First, consider an example from arithmetic geometry::
     sage: f = -y^2 - y + x^3 + 7*x + 1
     sage: fx = f.derivative(x)
     sage: fy = f.derivative(y)
-    sage: I = B.ideal([B(f),B(fx),B(fy)])
-    sage: I.groebner_basis()
+    sage: I = B.ideal([B(f), B(fx), B(fy)])
+    sage: I.groebner_basis()                                                            # optional - sage.libs.singular
     [1]
 
 Since the output is 1, we know that there are no generic

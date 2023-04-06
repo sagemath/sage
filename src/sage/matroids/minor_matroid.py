@@ -13,23 +13,23 @@ from `E` and keeping all remaining independent sets. This is denoted ``M \ D``
 
 EXAMPLES::
 
-    sage: M = matroids.named_matroids.Fano()
-    sage: M \ ['a', 'c' ] == M.delete(['a', 'c'])
+    sage: M = matroids.named_matroids.Fano()                                            # optional - sage.libs.pari
+    sage: M \ ['a', 'c' ] == M.delete(['a', 'c'])                                       # optional - sage.libs.pari
     True
-    sage: M / 'a' == M.contract('a')
+    sage: M / 'a' == M.contract('a')                                                    # optional - sage.libs.pari
     True
-    sage: M / 'c' \ 'ab' == M.minor(contractions='c', deletions='ab')
+    sage: M / 'c' \ 'ab' == M.minor(contractions='c', deletions='ab')                   # optional - sage.libs.pari
     True
 
 If a contraction set is not independent (or a deletion set not coindependent),
 this is taken care of::
 
-    sage: M = matroids.named_matroids.Fano()
-    sage: M.rank('abf')
+    sage: M = matroids.named_matroids.Fano()                                            # optional - sage.libs.pari
+    sage: M.rank('abf')                                                                 # optional - sage.libs.pari
     2
-    sage: M / 'abf' == M / 'ab' \ 'f'
+    sage: M / 'abf' == M / 'ab' \ 'f'                                                   # optional - sage.libs.pari
     True
-    sage: M / 'abf' == M / 'af' \ 'b'
+    sage: M / 'abf' == M / 'af' \ 'b'                                                   # optional - sage.libs.pari
     True
 
 .. SEEALSO::
@@ -132,9 +132,9 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Fano(),            # indirect doctest
+            sage: M = MinorMatroid(matroids.named_matroids.Fano(),  # indirect doctest  # optional - sage.libs.pari
             ....:                  contractions=set(), deletions=set(['g']))
-            sage: M.is_isomorphic(matroids.Wheel(3))
+            sage: M.is_isomorphic(matroids.Wheel(3))                                    # optional - sage.libs.pari
             True
         """
         if not isinstance(matroid, Matroid):
@@ -423,15 +423,15 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano()
-            sage: M1 = MinorMatroid(M, set('ab'), set('f'))
-            sage: M2 = MinorMatroid(M, set('af'), set('b'))
-            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())
-            sage: M1 == M2  # indirect doctest
+            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.libs.pari
+            sage: M1 = MinorMatroid(M, set('ab'), set('f'))                             # optional - sage.libs.pari
+            sage: M2 = MinorMatroid(M, set('af'), set('b'))                             # optional - sage.libs.pari
+            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())      # optional - sage.libs.pari
+            sage: M1 == M2  # indirect doctest                                          # optional - sage.libs.pari
             False
-            sage: M1.equals(M2)
+            sage: M1.equals(M2)                                                         # optional - sage.libs.pari
             True
-            sage: M1 == M3
+            sage: M1 == M3                                                              # optional - sage.libs.pari
             True
         """
         if not isinstance(other, MinorMatroid):
@@ -455,15 +455,15 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano()
-            sage: M1 = MinorMatroid(M, set('ab'), set('f'))
-            sage: M2 = MinorMatroid(M, set('af'), set('b'))
-            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())
-            sage: M1 != M2  # indirect doctest
+            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.libs.pari
+            sage: M1 = MinorMatroid(M, set('ab'), set('f'))                             # optional - sage.libs.pari
+            sage: M2 = MinorMatroid(M, set('af'), set('b'))                             # optional - sage.libs.pari
+            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())      # optional - sage.libs.pari
+            sage: M1 != M2  # indirect doctest                                          # optional - sage.libs.pari
             True
-            sage: M1.equals(M2)
+            sage: M1.equals(M2)                                                         # optional - sage.libs.pari
             True
-            sage: M1 != M3
+            sage: M1 != M3                                                              # optional - sage.libs.pari
             False
         """
         return not self == other

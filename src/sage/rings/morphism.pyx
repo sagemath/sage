@@ -182,14 +182,14 @@ We next compose the inclusion with reduction from the integers to
 
 Inclusion from `\QQ` to the 3-adic field::
 
-    sage: phi = QQ.hom(Qp(3, print_mode = 'series'))
-    sage: phi
+    sage: phi = QQ.hom(Qp(3, print_mode='series'))                                                                      # optional - sage.rings.padics
+    sage: phi                                                                                                           # optional - sage.rings.padics
     Ring morphism:
       From: Rational Field
       To:   3-adic Field with capped relative precision 20
-    sage: phi.codomain()
+    sage: phi.codomain()                                                                                                # optional - sage.rings.padics
     3-adic Field with capped relative precision 20
-    sage: phi(394)
+    sage: phi(394)                                                                                                      # optional - sage.rings.padics
     1 + 2*3 + 3^2 + 2*3^3 + 3^4 + 3^5 + O(3^20)
 
 An automorphism of a quotient of a univariate polynomial ring::
@@ -496,9 +496,9 @@ cdef class RingMap_lift(RingMap):
 
         An invalid example::
 
-            sage: GF9.<one, a> = GaussianIntegers().quotient(3)
-            sage: from sage.rings.morphism import RingMap_lift
-            sage: RingMap_lift(GF9, ZZ)
+            sage: GF9.<one, a> = GaussianIntegers().quotient(3)                                                         # optional - sage.rings.number_field
+            sage: from sage.rings.morphism import RingMap_lift                                                          # optional - sage.rings.number_field
+            sage: RingMap_lift(GF9, ZZ)                                                                                 # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Number Field in I with defining polynomial x^2 + 1 with I = 1*I to Integer Ring
@@ -640,14 +640,14 @@ cdef class RingHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: f = ZZ.hom(Zp(3)); f
+            sage: f = ZZ.hom(Zp(3)); f                                                                                  # optional - sage.rings.padics
             Ring morphism:
               From: Integer Ring
               To:   3-adic Ring with capped relative precision 20
 
         TESTS::
 
-            sage: isinstance(f, sage.rings.morphism.RingHomomorphism)
+            sage: isinstance(f, sage.rings.morphism.RingHomomorphism)                                                   # optional - sage.rings.padics
             True
 
         """
@@ -662,7 +662,7 @@ cdef class RingHomomorphism(RingMap):
 
         TESTS::
 
-            sage: ZZ.hom(Zp(3))._repr_type()
+            sage: ZZ.hom(Zp(3))._repr_type()                                                                            # optional - sage.rings.padics
             'Ring'
 
         """
@@ -775,18 +775,19 @@ cdef class RingHomomorphism(RingMap):
         result has the type of a homomorphism between its domain and
         codomain::
 
-            sage: C = CyclotomicField(24)
-            sage: f = End(C)[1]
-            sage: type(f*f) == type(f)
+            sage: C = CyclotomicField(24)                                                           # optional - sage.rings.number_field
+            sage: f = End(C)[1]                                                                     # optional - sage.rings.number_field
+            sage: type(f*f) == type(f)                                                              # optional - sage.rings.number_field
             True
 
         An example where the domain of ``right`` is a relative number field::
 
             sage: PQ.<X> = QQ[]
-            sage: K.<a, b> = NumberField([X^2 - 2, X^2 - 3])
-            sage: e, u, v, w = End(K)
-            sage: u*v
-            Relative number field endomorphism of Number Field in a with defining polynomial X^2 - 2 over its base field
+            sage: K.<a, b> = NumberField([X^2 - 2, X^2 - 3])                                        # optional - sage.rings.number_field
+            sage: e, u, v, w = End(K)                                                               # optional - sage.rings.number_field
+            sage: u*v                                                                               # optional - sage.rings.number_field
+            Relative number field endomorphism of
+             Number Field in a with defining polynomial X^2 - 2 over its base field
               Defn: a |--> -a
                     b |--> b
 
@@ -973,7 +974,7 @@ cdef class RingHomomorphism(RingMap):
 
         TESTS::
 
-            sage: ZZ.hom(Zp(2)).inverse_image(ZZ.ideal(2))
+            sage: ZZ.hom(Zp(2)).inverse_image(ZZ.ideal(2))                                                              # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             ValueError: not an ideal or element in codomain 2-adic Ring
@@ -981,7 +982,7 @@ cdef class RingHomomorphism(RingMap):
 
         ::
 
-            sage: ZZ.hom(Zp(2)).inverse_image(Zp(2).ideal(2))
+            sage: ZZ.hom(Zp(2)).inverse_image(Zp(2).ideal(2))                                                           # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             NotImplementedError: base rings must be equal
@@ -1001,13 +1002,13 @@ cdef class RingHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQbar[]
-            sage: f = R.hom([x, QQbar(i) * x + y^2], R)
-            sage: I = R.ideal(y^3)
-            sage: J = f._inverse_image_ideal(I); J
+            sage: R.<x,y> = QQbar[]                                             # optional - sage.rings.number_field
+            sage: f = R.hom([x, QQbar(i) * x + y^2], R)                         # optional - sage.rings.number_field
+            sage: I = R.ideal(y^3)                                              # optional - sage.rings.number_field
+            sage: J = f._inverse_image_ideal(I); J                              # optional - sage.rings.number_field
             Ideal (x^2 + 2*I*x*y - y^2)
             of Multivariate Polynomial Ring in x, y over Algebraic Field
-            sage: f(J) <= I
+            sage: f(J) <= I                                                     # optional - sage.rings.number_field
             True
 
         TESTS:
@@ -1242,24 +1243,24 @@ cdef class RingHomomorphism(RingMap):
         Ideals in quotient rings over ``QQbar`` do not support reduction yet,
         so the graph is constructed in the ambient ring instead::
 
-            sage: A.<z,w> = QQbar['z,w'].quotient('z*w - 1')
-            sage: B.<x,y> = QQbar['x,y'].quotient('2*x^2 + y^2 - 1')
-            sage: f = A.hom([QQbar(2).sqrt()*x + QQbar(I)*y,
+            sage: A.<z,w> = QQbar['z,w'].quotient('z*w - 1')                            # optional - sage.rings.number_field
+            sage: B.<x,y> = QQbar['x,y'].quotient('2*x^2 + y^2 - 1')                    # optional - sage.rings.number_field
+            sage: f = A.hom([QQbar(2).sqrt()*x + QQbar(I)*y,                            # optional - sage.rings.number_field
             ....:            QQbar(2).sqrt()*x - QQbar(I)*y], B)
-            sage: f._graph_ideal()[0]
+            sage: f._graph_ideal()[0]                                                   # optional - sage.rings.number_field
             Ideal (z*w - 1, 2*x^2 + y^2 - 1,
             1.414213562373095?*x + I*y - z,
             1.414213562373095?*x + (-I)*y - w)
             of Multivariate Polynomial Ring in x, y, z, w over Algebraic Field
-            sage: f.inverse()(f(z)), f.inverse()(f(w))
+            sage: f.inverse()(f(z)), f.inverse()(f(w))                                  # optional - sage.rings.number_field
             (z, w)
 
         Non-trivial base maps are not supported::
 
-            sage: K.<a> = QuadraticField(2)
-            sage: R.<x,y> = K[]
-            sage: f = R.hom([x, a*x + y], R, base_map=K.hom([-a], K))
-            sage: f._graph_ideal()
+            sage: K.<a> = QuadraticField(2)                                             # optional - sage.rings.number_field
+            sage: R.<x,y> = K[]                                                         # optional - sage.rings.number_field
+            sage: f = R.hom([x, a*x + y], R, base_map=K.hom([-a], K))                   # optional - sage.rings.number_field
+            sage: f._graph_ideal()                                                      # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError: base map must be trivial
@@ -1869,19 +1870,20 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)
-            sage: cc = K.hom([-i])
-            sage: S.<y> = K[]
-            sage: phi = S.hom([y^2], base_map=cc)
-            sage: phi
-            Ring endomorphism of Univariate Polynomial Ring in y over Number Field in i with defining polynomial x^2 + 1
+            sage: K.<i> = NumberField(x^2 + 1)                                  # optional - sage.rings.number_field
+            sage: cc = K.hom([-i])                                              # optional - sage.rings.number_field
+            sage: S.<y> = K[]                                                   # optional - sage.rings.number_field
+            sage: phi = S.hom([y^2], base_map=cc)                               # optional - sage.rings.number_field
+            sage: phi                                                           # optional - sage.rings.number_field
+            Ring endomorphism of Univariate Polynomial Ring in y
+             over Number Field in i with defining polynomial x^2 + 1
               Defn: y |--> y^2
                     with map of base ring
-            sage: phi(y)
+            sage: phi(y)                                                        # optional - sage.rings.number_field
             y^2
-            sage: phi(i*y)
+            sage: phi(i*y)                                                      # optional - sage.rings.number_field
             -i*y^2
-            sage: phi.base_map()
+            sage: phi.base_map()                                                # optional - sage.rings.number_field
             Composite map:
               From: Number Field in i with defining polynomial x^2 + 1
               To:   Univariate Polynomial Ring in y over Number Field in i with defining polynomial x^2 + 1
@@ -2093,11 +2095,11 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
     Similarly, we can construct the induced homomorphism on a matrix ring over
     our polynomial rings::
 
-        sage: MR = MatrixSpace(R,2,2)
-        sage: MS = MatrixSpace(S,2,2)
-        sage: M = MR([x^2 + 1/7*x*y - y^2, - 1/2*y^2 + 2*y + 1/6, 4*x^2 - 14*x, 1/2*y^2 + 13/4*x - 2/11*y])
-        sage: Mf = MR.hom(f,MS)
-        sage: Mf
+        sage: MR = MatrixSpace(R, 2, 2)                                                                                 # optional - sage.modules
+        sage: MS = MatrixSpace(S, 2, 2)                                                                                 # optional - sage.modules
+        sage: M = MR([x^2 + 1/7*x*y - y^2, - 1/2*y^2 + 2*y + 1/6, 4*x^2 - 14*x, 1/2*y^2 + 13/4*x - 2/11*y])             # optional - sage.modules
+        sage: Mf = MR.hom(f, MS)                                                                                        # optional - sage.modules
+        sage: Mf                                                                                                        # optional - sage.modules
         Ring morphism:
           From: Full MatrixSpace of 2 by 2 dense matrices over Multivariate Polynomial Ring in x, y over Rational Field
           To:   Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in z over Rational Field
@@ -2107,19 +2109,22 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
                   To:   Univariate Polynomial Ring in z over Rational Field
                   Defn: x |--> 2*z
                         y |--> 3*z
-        sage: Mf(M)
+        sage: Mf(M)                                                                                                     # optional - sage.modules
         [           -29/7*z^2 -9/2*z^2 + 6*z + 1/6]
         [       16*z^2 - 28*z   9/2*z^2 + 131/22*z]
 
     The construction of induced homomorphisms is recursive, and so we have::
 
-        sage: MPR = MatrixSpace(PR, 2)
-        sage: MPS = MatrixSpace(PS, 2)
-        sage: M = MPR([(- x + y)*t^2 + 58*t - 3*x^2 + x*y, (- 1/7*x*y - 1/40*x)*t^2 + (5*x^2 + y^2)*t + 2*y, (- 1/3*y + 1)*t^2 + 1/3*x*y + y^2 + 5/2*y + 1/4, (x + 6*y + 1)*t^2])
-        sage: MPf = MPR.hom(f,MPS); MPf
+        sage: MPR = MatrixSpace(PR, 2)                                                                                  # optional - sage.modules
+        sage: MPS = MatrixSpace(PS, 2)                                                                                  # optional - sage.modules
+        sage: M = MPR([(- x + y)*t^2 + 58*t - 3*x^2 + x*y, (- 1/7*x*y - 1/40*x)*t^2 + (5*x^2 + y^2)*t + 2*y,
+        ....:          (- 1/3*y + 1)*t^2 + 1/3*x*y + y^2 + 5/2*y + 1/4, (x + 6*y + 1)*t^2])
+        sage: MPf = MPR.hom(f, MPS); MPf                                                                                # optional - sage.modules
         Ring morphism:
-          From: Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in t over Multivariate Polynomial Ring in x, y over Rational Field
-          To:   Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in t over Univariate Polynomial Ring in z over Rational Field
+          From: Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in t
+                 over Multivariate Polynomial Ring in x, y over Rational Field
+          To:   Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in t
+                 over Univariate Polynomial Ring in z over Rational Field
           Defn: Induced from base ring by
                 Ring morphism:
                   From: Univariate Polynomial Ring in t over Multivariate Polynomial Ring in x, y over Rational Field
@@ -2130,7 +2135,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
                           To:   Univariate Polynomial Ring in z over Rational Field
                           Defn: x |--> 2*z
                                 y |--> 3*z
-        sage: MPf(M)
+        sage: MPf(M)                                                                                                    # optional - sage.modules
         [                    z*t^2 + 58*t - 6*z^2 (-6/7*z^2 - 1/20*z)*t^2 + 29*z^2*t + 6*z]
         [    (-z + 1)*t^2 + 11*z^2 + 15/2*z + 1/4                           (20*z + 1)*t^2]
     """
@@ -2314,11 +2319,12 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         over a multivariate polynomial ring::
 
             sage: R1.<x,y> = ZZ[]
-            sage: f = R1.hom([x+y,x-y])
-            sage: R2 = MatrixSpace(FractionField(R1)['t'],2)
-            sage: g = R2.hom(f,R2)
-            sage: g         #indirect doctest
-            Ring endomorphism of Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in t over Fraction Field of Multivariate Polynomial Ring in x, y over Integer Ring
+            sage: f = R1.hom([x+y, x-y])
+            sage: R2 = MatrixSpace(FractionField(R1)['t'], 2)                                                           # optional - sage.modules
+            sage: g = R2.hom(f, R2)                                                                                     # optional - sage.modules
+            sage: g         #indirect doctest                                                                           # optional - sage.modules
+            Ring endomorphism of Full MatrixSpace of 2 by 2 dense matrices
+             over Univariate Polynomial Ring in t over Fraction Field of Multivariate Polynomial Ring in x, y over Integer Ring
               Defn: Induced from base ring by
                     Ring endomorphism of Univariate Polynomial Ring in t over Fraction Field of Multivariate Polynomial Ring in x, y over Integer Ring
                       Defn: Induced from base ring by
@@ -2404,10 +2410,11 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
 
         TESTS::
 
-            sage: A.<a> = ZZ.extension(x^2 - 2)
-            sage: f = A.coerce_map_from(ZZ)
-            sage: g = f.extend_to_fraction_field()   # indirect doctest
-            sage: g
+            sage: x = polygen(ZZ, 'x')
+            sage: A.<a> = ZZ.extension(x^2 - 2)                                         # optional - sage.rings.number_field
+            sage: f = A.coerce_map_from(ZZ)                                             # optional - sage.rings.number_field
+            sage: g = f.extend_to_fraction_field()   # indirect doctest                 # optional - sage.rings.number_field
+            sage: g                                                                     # optional - sage.rings.number_field
             Ring morphism:
               From: Rational Field
               To:   Number Field in a with defining polynomial x^2 - 2

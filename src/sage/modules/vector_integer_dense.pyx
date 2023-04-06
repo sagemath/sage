@@ -7,7 +7,7 @@ AUTHOR:
 
 EXAMPLES::
 
-    sage: v = vector(ZZ,[1,2,3,4,5])
+    sage: v = vector(ZZ, [1,2,3,4,5])
     sage: v
     (1, 2, 3, 4, 5)
     sage: 3*v
@@ -316,10 +316,10 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
             sage: A = random_matrix(ZZ,1,3)
             sage: v = A.row(0)
-            sage: vs = singular(v)
-            sage: vs._repr_() == '{},\n{},\n{}'.format(*v)
+            sage: vs = singular(v)                                                      # optional - sage.libs.singular
+            sage: vs._repr_() == '{},\n{},\n{}'.format(*v)                              # optional - sage.libs.singular
             True
-            sage: vs.type()
+            sage: vs.type()                                                             # optional - sage.libs.singular
             'intvec'
         """
         if singular is None:

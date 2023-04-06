@@ -9,19 +9,19 @@ def map_threaded(function, sequence):
 
     EXAMPLES::
 
-        sage: map_threaded(log, [[1,2], [3,e]])
+        sage: map_threaded(log, [[1,2], [3,e]])                                         # optional - sage.symbolic
         [[0, log(2)], [log(3), 1]]
-        sage: map_threaded(log, [(1,2), (3,e)])
+        sage: map_threaded(log, [(1,2), (3,e)])                                         # optional - sage.symbolic
         [[0, log(2)], [log(3), 1]]
-        sage: map_threaded(N, [[1,2], [3,e]])
+        sage: map_threaded(N, [[1,2], [3,e]])                                           # optional - sage.symbolic
         [[1.00000000000000, 2.00000000000000], [3.00000000000000, 2.71828182845905]]
-        sage: map_threaded((x^2).function(x), [[1,2,3,5], [2,10]])
+        sage: map_threaded((x^2).function(x), [[1,2,3,5], [2,10]])                      # optional - sage.symbolic
         [[1, 4, 9, 25], [4, 100]]
 
     map_threaded also works on any object with an apply_map method, e.g.,
     on matrices::
 
-        sage: map_threaded(lambda x: x^2, matrix([[1,2], [3,4]]))
+        sage: map_threaded(lambda x: x^2, matrix([[1,2], [3,4]]))                       # optional - sage.modules
         [ 1  4]
         [ 9 16]
 
