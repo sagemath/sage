@@ -312,7 +312,7 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: S2 = SymmetricGroup(2)
+                sage: S2 = SymmetricGroup(2)                                            # optional - sage.groups
                 sage: GroupAlgebra(S2).is_integral_domain()                             # optional - sage.groups sage.modules
                 False
                 sage: S1 = SymmetricGroup(1)

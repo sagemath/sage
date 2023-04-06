@@ -3835,7 +3835,7 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         [0 0], [1 0], [0 1]
         ]
         sage: ASym01 = M.parent().invariant_module(GASym01, action=GASym01_action)      # optional - sage.groups sage.modules
-        sage: ASym01
+        sage: ASym01                                                                    # optional - sage.groups sage.modules
         (Permutation Group with generators [(0,1)(2,3)])-invariant submodule
          of Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
         sage: list(ASym01.basis())                                                      # optional - sage.groups sage.modules

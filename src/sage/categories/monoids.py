@@ -559,7 +559,7 @@ class Monoids(CategoryWithAxiom):
                     Family (B[0], B[1], B[2], B[3], B[4], B[5], B[6], B[7], B[8], B[9], B[10], B[11])
 
 
-                    sage: A10 = AlternatingGroup(10)
+                    sage: A10 = AlternatingGroup(10)                                    # optional - sage.groups
                     sage: GroupAlgebras(QQ).example(A10).algebra_generators()           # optional - sage.groups sage.modules
                     Family ((8,9,10), (1,2,3,4,5,6,7,8,9))
 

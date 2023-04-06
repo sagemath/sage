@@ -856,12 +856,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     ....:        for w in W.noncrossing_partition_lattice())
                     [[], [1], [1, 2], [1, 2, 1], [2]]
 
-                    sage: c21 = W.from_reduced_word([2,1])
+                    sage: c21 = W.from_reduced_word([2,1]) # optional - gap3
                     sage: sorted(w.reduced_word()          # optional - gap3
                     ....:        for w in W.noncrossing_partition_lattice(c21))
                     [[], [1], [1, 2, 1], [2], [2, 1]]
 
-                    sage: c2 = W.from_reduced_word([2])
+                    sage: c2 = W.from_reduced_word([2])    # optional - gap3
                     sage: sorted(w.reduced_word()          # optional - gap3
                     ....:        for w in W.noncrossing_partition_lattice(c2))
                     [[], [2]]

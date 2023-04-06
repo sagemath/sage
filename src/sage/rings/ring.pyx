@@ -864,12 +864,12 @@ cdef class Ring(ParentWithGens):
         This illustrates the use of the ``proof`` parameter::
 
             sage: R.<a,b> = ZZ[]
-            sage: S.<x,y> = R.quo((b^3))
-            sage: S.is_integral_domain(proof=True)
+            sage: S.<x,y> = R.quo((b^3))                                                # optional - sage.libs.singular
+            sage: S.is_integral_domain(proof=True)                                      # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: S.is_integral_domain(proof=False)
+            sage: S.is_integral_domain(proof=False)                                     # optional - sage.libs.singular
             False
 
         TESTS:
@@ -877,7 +877,7 @@ cdef class Ring(ParentWithGens):
         Make sure :trac:`10481` is fixed::
 
             sage: x = polygen(ZZ, 'x')
-            sage: R.<a> = ZZ['x'].quo(x^2)
+            sage: R.<a> = ZZ['x'].quo(x^2)                                              # optional - sage.libs.pari
             sage: R.fraction_field()
             Traceback (most recent call last):
             ...

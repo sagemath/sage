@@ -1692,9 +1692,9 @@ cdef class MPolynomial(CommutativePolynomial):
 
         an example when the coefficients live in a finite field::
 
-            sage: F = FiniteField(11)
-            sage: R.<x,y,z,w> = PolynomialRing(F,4)
-            sage: z.macaulay_resultant([x^3, 5*y, w])                                                                   # optional - sage.modules
+            sage: F = FiniteField(11)                                                                                   # optional - sage.libs.pari
+            sage: R.<x,y,z,w> = PolynomialRing(F, 4)                                                                    # optional - sage.libs.pari
+            sage: z.macaulay_resultant([x^3, 5*y, w])                                                                   # optional - sage.libs.pari sage.modules
             4
 
         example when the denominator in the algorithm vanishes(in this case
@@ -2340,7 +2340,7 @@ cdef class MPolynomial(CommutativePolynomial):
         An example where precision needs to be increased::
 
             sage: R.<x,y> = PolynomialRing(QQ)
-            sage: F=-16*x^7 - 114*x^6*y - 345*x^5*y^2 - 599*x^4*y^3 - 666*x^3*y^4 - 481*x^2*y^5 - 207*x*y^6 - 40*y^7
+            sage: F = -16*x^7 - 114*x^6*y - 345*x^5*y^2 - 599*x^4*y^3 - 666*x^3*y^4 - 481*x^2*y^5 - 207*x*y^6 - 40*y^7
             sage: F.reduced_form(prec=50, smallest_coeffs=False)                                                        # optional - sage.modules
             Traceback (most recent call last):
             ...

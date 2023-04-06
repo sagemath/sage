@@ -826,14 +826,14 @@ class Rings(CategoryWithAxiom):
                 sage: S.gens()
                 (a,)
 
-                sage: R.<x,y> = PolynomialRing(QQ,2)
-                sage: S.<a,b> = R.quotient((x^2, y))
-                sage: S
+                sage: R.<x,y> = PolynomialRing(QQ, 2)
+                sage: S.<a,b> = R.quotient((x^2, y))                                    # optional - sage.libs.singular
+                sage: S                                                                 # optional - sage.libs.singular
                 Quotient of Multivariate Polynomial Ring in x, y over Rational Field
                  by the ideal (x^2, y)
-                sage: S.gens()
+                sage: S.gens()                                                          # optional - sage.libs.singular
                 (a, 0)
-                sage: a == b                                                                                            # optional - sage.libs.singular
+                sage: a == b                                                            # optional - sage.libs.singular
                 False
             """
             from sage.rings.quotient_ring import QuotientRing
@@ -881,14 +881,14 @@ class Rings(CategoryWithAxiom):
 
             A test with a subclass of :class:`~sage.rings.ring.Ring`::
 
-                sage: R.<x,y> = PolynomialRing(QQ,2)
-                sage: S.<a,b> = R.quo((x^2, y))
-                sage: S
+                sage: R.<x,y> = PolynomialRing(QQ, 2)                                   # optional - sage.libs.singular
+                sage: S.<a,b> = R.quo((x^2, y))                                         # optional - sage.libs.singular
+                sage: S                                                                 # optional - sage.libs.singular
                 Quotient of Multivariate Polynomial Ring in x, y over Rational Field
                  by the ideal (x^2, y)
-                sage: S.gens()
+                sage: S.gens()                                                          # optional - sage.libs.singular
                 (a, 0)
-                sage: a == b                                                                                            # optional - sage.libs.singular
+                sage: a == b                                                            # optional - sage.libs.singular
                 False
             """
             return self.quotient(I, names=names, **kwds)
@@ -954,14 +954,14 @@ class Rings(CategoryWithAxiom):
                 sage: S.gens()
                 (a,)
 
-                sage: R.<x,y> = PolynomialRing(QQ,2)
-                sage: S.<a,b> = R.quotient_ring((x^2, y))
-                sage: S
+                sage: R.<x,y> = PolynomialRing(QQ,2)                                    # optional - sage.libs.singular
+                sage: S.<a,b> = R.quotient_ring((x^2, y))                               # optional - sage.libs.singular
+                sage: S                                                                 # optional - sage.libs.singular
                 Quotient of Multivariate Polynomial Ring in x, y over Rational Field
                  by the ideal (x^2, y)
-                sage: S.gens()
+                sage: S.gens()                                                          # optional - sage.libs.singular
                 (a, 0)
-                sage: a == b                                                                                            # optional - sage.libs.singular
+                sage: a == b                                                            # optional - sage.libs.singular
                 False
             """
             return self.quotient(I, names=names, **kwds)

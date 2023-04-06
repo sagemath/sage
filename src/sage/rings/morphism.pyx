@@ -2134,7 +2134,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
 
         sage: MPR = MatrixSpace(PR, 2)                                                                                  # optional - sage.modules
         sage: MPS = MatrixSpace(PS, 2)                                                                                  # optional - sage.modules
-        sage: M = MPR([(- x + y)*t^2 + 58*t - 3*x^2 + x*y, (- 1/7*x*y - 1/40*x)*t^2 + (5*x^2 + y^2)*t + 2*y,
+        sage: M = MPR([(-x + y)*t^2 + 58*t - 3*x^2 + x*y, (- 1/7*x*y - 1/40*x)*t^2 + (5*x^2 + y^2)*t + 2*y,             # optional - sage.modules
         ....:          (- 1/3*y + 1)*t^2 + 1/3*x*y + y^2 + 5/2*y + 1/4, (x + 6*y + 1)*t^2])
         sage: MPf = MPR.hom(f, MPS); MPf                                                                                # optional - sage.modules
         Ring morphism:

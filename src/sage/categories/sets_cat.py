@@ -3137,7 +3137,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: from sage.categories.realizations import Realizations
                     sage: class Blah(Parent):
                     ....:     pass
-                    sage: C = Sets.WithRealizations.ParentMethods.Realizations(A)
+                    sage: C = Sets.WithRealizations.ParentMethods.Realizations(A)       # optional - sage.combinat sage.modules
                     sage: P = Blah(category=C)                                          # optional - sage.combinat sage.modules
                     sage: P     # indirect doctest                                      # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field in the realization Blah
