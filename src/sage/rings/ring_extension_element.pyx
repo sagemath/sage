@@ -27,6 +27,8 @@ from sage.misc.latex import latex
 from sage.structure.category_object import normalize_names
 from sage.structure.element cimport CommutativeAlgebraElement
 from sage.structure.element cimport Element, parent
+from sage.rings.integer import Integer
+from sage.rings.rational import Rational
 from sage.rings.integer_ring import ZZ
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -67,6 +69,9 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         if not isinstance(extension, RingExtension_generic):
             raise TypeError(f"{extension} is not a ring extension")
 
+        # Special case ints and Integers since there's no ambiguity
+        if isinstance(x, (int, Integer, Rational)):
+            x = extension._backend(x)
         if x.parent() is not extension._backend:
             # We are strict here since the base could be the same as the backend so we can't rely on coercion
             raise ValueError("x must be an element of the backend")
