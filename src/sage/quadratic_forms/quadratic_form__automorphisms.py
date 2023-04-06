@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Automorphisms of Quadratic Forms
 """
@@ -8,7 +9,6 @@ Automorphisms of Quadratic Forms
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.cachefunc import cached_method
-from sage.libs.pari.all import pari
 from sage.matrix.constructor import Matrix
 from sage.rings.integer_ring import ZZ
 
@@ -185,6 +185,8 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     if not self.is_positive_definite():
         raise ValueError("Quadratic form must be positive definite "
                          "in order to enumerate short vectors")
+
+    from sage.libs.pari.all import pari
 
     if len_bound <= 0:
         return []
