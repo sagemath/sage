@@ -247,12 +247,20 @@ In case of symmetries, only non-redundant components are stored::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import annotations
 
+from typing import Optional, Union, TYPE_CHECKING
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
 from operator import itemgetter
+
+if TYPE_CHECKING:
+    from sage.tensor.modules.free_module_tensor import (
+        IndexCharacter,
+        IndexConfiguration,
+    )
 
 
 class Components(SageObject):
@@ -1090,9 +1098,17 @@ class Components(SageObject):
             if not zero_value:
                 yield ind, val
 
-    def display(self, symbol, latex_symbol=None, index_positions=None,
-                index_labels=None, index_latex_labels=None,
-                format_spec=None, only_nonzero=True, only_nonredundant=False):
+    def display(
+        self,
+        symbol,
+        latex_symbol=None,
+        index_positions: Optional[Union[IndexConfiguration, str]] = None,
+        index_labels=None,
+        index_latex_labels=None,
+        format_spec=None,
+        only_nonzero=True,
+        only_nonredundant=False,
+    ):
         r"""
         Display all the components, one per line.
 
@@ -1248,10 +1264,14 @@ class Components(SageObject):
         if latex_symbol is None:
             latex_symbol = symbol
         if index_positions is None:
-            index_positions = self._nid * 'd'
+            index_positions = tuple("DOWN" for _ in range(self._nid))
         elif len(index_positions) != self._nid:
             raise ValueError("the argument 'index_positions' must contain " +
                              "{} characters".format(self._nid))
+        elif isinstance(index_positions, str):
+            index_positions = tuple(
+                "DOWN" if c == "d" else "UP" for c in index_positions.lower()
+            )
         if index_labels is None:
             index_labels = [str(i) for i in range(si, nsi)]
         elif len(index_labels) != self._dim:
@@ -1292,29 +1312,37 @@ class Components(SageObject):
                 indices = ''  # text indices
                 d_indices = '' # LaTeX down indices
                 u_indices = '' # LaTeX up indices
-                previous = None  # position of previous index
+                previous: Optional[IndexCharacter] = None  # position of previous index
                 for k in range(self._nid):
                     i = ind[k] - si
-                    if index_positions[k] == 'd':
-                        if previous == 'd':
+                    if index_positions[k] == "DOWN":
+                        if previous == "DOWN":
                             indices += sep + index_labels[i]
                         else:
-                            indices += '_' + index_labels[i]
-                        d_indices += r'\,' + index_latex_labels[i]
-                        u_indices += r'\phantom{{\, {}}}'.format(index_latex_labels[i])
-                        previous = 'd'
+                            indices += "_" + index_labels[i]
+                        d_indices += r"\," + index_latex_labels[i]
+                        u_indices += r"\phantom{{\, {}}}".format(index_latex_labels[i])
+                        previous = "DOWN"
                     else:
-                        if previous == 'u':
+                        if previous == "UP":
                             indices += sep + index_labels[i]
                         else:
-                            indices += '^' + index_labels[i]
-                        d_indices += r'\phantom{{\, {}}}'.format(index_latex_labels[i])
-                        u_indices += r'\,' + index_latex_labels[i]
-                        previous = 'u'
-                rtxt += symbol + indices + ' = {} \n'.format(val)
-                rlatex += (latex_symbol + r'_{' + d_indices + r'}^{'
-                           + u_indices + r'} & = & ' + latex(val) + r'\\')
-        if rtxt == '':
+                            indices += "^" + index_labels[i]
+                        d_indices += r"\phantom{{\, {}}}".format(index_latex_labels[i])
+                        u_indices += r"\," + index_latex_labels[i]
+                        previous = "UP"
+                rtxt += symbol + indices + " = {} \n".format(val)
+                rlatex += (
+                    latex_symbol
+                    + r"_{"
+                    + d_indices
+                    + r"}^{"
+                    + u_indices
+                    + r"} & = & "
+                    + latex(val)
+                    + r"\\"
+                )
+        if rtxt == "":
             # no component has been displayed
             rlatex = ''
         else:

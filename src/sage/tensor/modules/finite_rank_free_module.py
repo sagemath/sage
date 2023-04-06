@@ -2026,8 +2026,15 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         TestSuite(b).run(verbose=tester._verbose, prefix=tester._prefix + "  ",
                          raise_on_failure=is_sub_testsuite)
 
-    def _tensor(self, tensor_type, name=None, latex_name=None, sym=None,
-               antisym=None):
+    def _tensor(
+        self,
+        tensor_type,
+        name=None,
+        latex_name=None,
+        sym=None,
+        antisym=None,
+        config=None,
+    ):
         r"""
         Construct a tensor on the free module ``self``.
 
@@ -2087,9 +2094,15 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
                 return self.alternating_contravariant_tensor(tensor_type[0],
                                            name=name, latex_name=latex_name)
         # Generic case:
-        return self.tensor_module(*tensor_type).element_class(self,
-                                 tensor_type, name=name, latex_name=latex_name,
-                                 sym=sym, antisym=antisym)
+        return self.tensor_module(*tensor_type).element_class(
+            self,
+            tensor_type,
+            name=name,
+            latex_name=latex_name,
+            sym=sym,
+            antisym=antisym,
+            config=config,
+        )
 
     def tensor(self, *args, **kwds):
         r"""
@@ -2171,7 +2184,9 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             return self.tensor_product(*args, **kwds)
         return self._tensor(*args, **kwds)
 
-    def tensor_from_comp(self, tensor_type, comp, name=None, latex_name=None):
+    def tensor_from_comp(
+        self, tensor_type, comp, name=None, latex_name=None, config=None
+    ):
         r"""
         Construct a tensor on ``self`` from a set of components.
 
@@ -2264,8 +2279,9 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
                                          name=name,
                                          latex_name=latex_name)
         else:
-            resu = self.tensor_module(*tensor_type).element_class(self,
-                                 tensor_type, name=name, latex_name=latex_name)
+            resu = self.tensor_module(*tensor_type).element_class(
+                self, tensor_type, name=name, latex_name=latex_name, config=config
+            )
             # Tensor symmetries deduced from those of comp:
             if isinstance(comp, CompWithSym):
                 resu._sym = comp._sym

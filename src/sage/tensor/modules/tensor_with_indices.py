@@ -17,11 +17,16 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import annotations
 
+from typing import Optional, TYPE_CHECKING
 from sage.structure.sage_object import SageObject
 from sage.groups.perm_gps.permgroup import PermutationGroup
 import re
 from itertools import combinations
+
+if TYPE_CHECKING:
+    from sage.tensor.modules.free_module_tensor import IndexConfiguration
 
 # Regular expression for the allowed characters in index notation.
 # This includes Unicode word constituents but excludes digits and underscores.
@@ -252,8 +257,12 @@ class TensorWithIndices(SageObject):
     """
 
     @staticmethod
-    def _parse_indices(indices, tensor_type=None, allow_contraction=True,
-                       allow_symmetries=True):
+    def _parse_indices(
+        indices: str,
+        tensor_type: Optional[IndexConfiguration] = None,
+        allow_contraction: bool = True,
+        allow_symmetries: bool = True,
+    ):
         r"""
         Parse index notation for tensors, enforces conventions and return
         indices.
@@ -337,24 +346,23 @@ class TensorWithIndices(SageObject):
         indices = indices.replace('{','').replace('}','')
 
         # Check index notation conventions and parse indices
-        allowed_pattern = r"(\(" + _alph_or_dot_pattern + r"{2,}\)|\[" + _alph_or_dot_pattern + r"{2,}\]|" + _alph_or_dot_pattern + r"+)*"
-        con_then_cov = r"^(\^|)" + allowed_pattern + r"(\_" + allowed_pattern + r"|)$"
-        cov_then_con = r"^\_" + allowed_pattern + r"(\^" + allowed_pattern + r"|)$"
-        if (re.match(con_then_cov,indices) is None
-            and re.match(cov_then_con,indices) is None):
+        allowed_index = (
+            r"(\("
+            + _alph_or_dot_pattern
+            + r"{2,}\)|\["
+            + _alph_or_dot_pattern
+            + r"{2,}\]|"
+            + _alph_or_dot_pattern
+            + r"+)*"
+        )
+        allowed_pattern = r"^((\^|\_|)" + allowed_index + r")*$"
+        if re.match(allowed_pattern, indices) is None:
             raise ValueError("index conventions not satisfied")
-        elif re.match(con_then_cov,indices):
-            try:
-                con,cov = indices.replace("^","").split("_")
-            except ValueError:
-                con = indices.replace("^","")
-                cov = ""
-        else:
-            try:
-                cov,con = indices.replace("_","").split("^")
-            except ValueError:
-                cov = indices.replace("_","")
-                con = ""
+        try:
+            cov, con = indices.replace("_", "").split("^")
+        except ValueError:
+            cov = indices.replace("_", "")
+            con = ""
         if not allow_contraction:
             for ind in con:
                 if ind != '.' and ind in cov:
