@@ -1,6 +1,5 @@
 from cysignals.signals cimport sig_check
 from sage.libs.flint.fmpz cimport fmpz_get_mpz
-from sage.libs.gmp.mpz cimport mpz_t, mpz_init, mpz_set, mpz_clear
 from sage.rings.integer cimport Integer
 
 cdef fmpz_factor_to_pairlist(const fmpz_factor_t factors):
@@ -19,13 +18,9 @@ cdef fmpz_factor_to_pairlist(const fmpz_factor_t factors):
         # FLINT doesn't return the plus/minus one factor.
         pairs.append((Integer(-1), int(1)))
 
-    cdef mpz_t mpz_factor
     for i in range(factors.num):
-        mpz_init(mpz_factor)
-        fmpz_get_mpz(mpz_factor, &factors.p[i])
         f = Integer()
-        mpz_set(f.value, mpz_factor)
-        mpz_clear(mpz_factor)
+        fmpz_get_mpz(f.value, &factors.p[i])
         e = int(factors.exp[i])
         pairs.append((f, e))
         sig_check()
