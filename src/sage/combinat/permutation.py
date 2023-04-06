@@ -470,7 +470,7 @@ class Permutation(CombinatorialElement):
         elif isinstance(l, tuple) or \
              (isinstance(l, list) and l and
              all(isinstance(x, tuple) for x in l)):
-            if l and (isinstance(l[0], (int,Integer)) or len(l[0]) > 0):
+            if l and (isinstance(l[0], (int, Integer)) or len(l[0]) > 0):
                 if isinstance(l[0], tuple):
                     n = max(max(x) for x in l)
                     return from_cycles(n, [list(x) for x in l])
@@ -974,7 +974,7 @@ class Permutation(CombinatorialElement):
             cycle = [cycleFirst]
             l[i], next = False, l[i]
             while next != cycleFirst:
-                cycle.append( next )
+                cycle.append(next)
                 l[next - 1], next  = False, l[next - 1]
             # Add the cycle to the list of cycles
             if singletons or len(cycle) > 1:
@@ -1030,8 +1030,8 @@ class Permutation(CombinatorialElement):
             if next == cycleFirst:
                 toConsider = -1
             else:
-                cycle.append( next )
-                l.remove( next )
+                cycle.append(next)
+                l.remove(next)
                 toConsider = next
 
         # When we're finished, add the last cycle
@@ -1065,7 +1065,7 @@ class Permutation(CombinatorialElement):
 
         if not singletons:
             #remove the fixed points
-            L = set( i+1 for i,pi in enumerate(p) if pi != i+1 )
+            L = set(i+1 for i,pi in enumerate(p) if pi != i+1)
         else:
             L = set(range(1,len(p)+1))
 
@@ -1400,10 +1400,9 @@ class Permutation(CombinatorialElement):
             ...
             TypeError: i (= 10) must be between 1 and 7
         """
-        if isinstance(i,(int,Integer)) and 1 <= i <= len(self):
-            return self[i-1]
-        else:
-            raise TypeError("i (= %s) must be between %s and %s" % (i,1,len(self)))
+        if isinstance(i, (int, Integer)) and 1 <= i <= len(self):
+            return self[i - 1]
+        raise TypeError("i (= %s) must be between 1 and %s" % (i, len(self)))
 
     ########
     # Rank #
@@ -1471,26 +1470,25 @@ class Permutation(CombinatorialElement):
         l = len(p)
         # lightning fast if the length is less than 3
         # (is it really useful?)
-        if l<4:
-            if l==0:
+        if l < 4:
+            if l == 0:
                 return []
-            if l==1:
+            if l == 1:
                 return [0]
-            if l==2:
-                return [p[0]-1,0]
-            if l==3:
-                if p[0]==1:
-                    return [0,p[1]-2,0]
-                if p[0]==2:
-                    if p[1]==1:
-                        return [1,0,0]
-                    return [2,0,0]
-                return [p[1],1,0]
+            if l == 2:
+                return [p[0] - 1, 0]
+            if l == 3:
+                if p[0] == 1:
+                    return [0, p[1] - 2, 0]
+                if p[0] == 2:
+                    if p[1] == 1:
+                        return [1, 0, 0]
+                    return [2, 0, 0]
+                return [p[1], 1, 0]
         # choose the best one
-        if l<411:
+        if l < 411:
             return self._to_inversion_vector_small()
-        else:
-            return self._to_inversion_vector_divide_and_conquer()
+        return self._to_inversion_vector_divide_and_conquer()
 
     def _to_inversion_vector_orig(self):
         r"""
@@ -1594,21 +1592,21 @@ class Permutation(CombinatorialElement):
 
         def base_case(L):
             s = sorted(L)
-            d = dict((j,i) for (i,j) in enumerate(s))
+            d = dict((j, i) for i, j in enumerate(s))
             iv = [0]*len(L)
             checked = [1]*len(L)
             for pi in reversed(L):
                 dpi = d[pi]
                 checked[dpi] = 0
                 iv[dpi] = sum(checked[dpi:])
-            return iv,s
+            return iv, s
 
         def sort_and_countv(L):
-            if len(L)<250:
+            if len(L) < 250:
                 return base_case(L)
-            l = len(L)//2
-            return merge_and_countv( sort_and_countv(L[:l]),
-                                     sort_and_countv(L[l:]) )
+            l = len(L) // 2
+            return merge_and_countv(sort_and_countv(L[:l]),
+                                    sort_and_countv(L[l:]))
 
         return sort_and_countv(self._list)[0]
 
@@ -1754,10 +1752,10 @@ class Permutation(CombinatorialElement):
 
             p = self[:]
 
-            L = line([r(1,1)])
+            L = line([r(1, 1)])
             for i in range(len(p)):
-                L += line([r(i,1.0), r(p[i]-1,0)])
-                L += text(str(i), r(i,1.05)) + text(str(i), r(p[i]-1,-.05))
+                L += line([r(i, 1.0), r(p[i]-1, 0)])
+                L += text(str(i), r(i, 1.05)) + text(str(i), r(p[i]-1, -.05))
 
             return L.show(axes = False, **args)
 
@@ -1926,8 +1924,8 @@ class Permutation(CombinatorialElement):
             [3, 1, 5, 2, 4]
         """
         w = list(range(len(self)))
-        for i,j in enumerate(self):
-            w[j-1] = i+1
+        for i, j in enumerate(self):
+            w[j - 1] = i + 1
         return Permutations()(w)
 
     __invert__ = inverse
@@ -3006,7 +3004,7 @@ class Permutation(CombinatorialElement):
 
         rw = []
         for i in range(len(cocode)):
-            piece = [j+1 for j in range(i-cocode[i],i)]
+            piece = [j + 1 for j in range(i-cocode[i], i)]
             piece.reverse()
             rw += piece
 
@@ -3093,6 +3091,35 @@ class Permutation(CombinatorialElement):
             True
         """
         return not self.fixed_points()
+
+    def is_simple(pi) -> bool:
+        """
+        Return if ``self`` is simple.
+
+        A permutation is simple if it does not send any proper sub-interval
+        to a sub-interval.
+
+        See :oeis:`A111111`
+
+        EXAMPLES::
+
+            sage: g = Permutation([4,2,3,1])
+            sage: g.is_simple()
+            False
+
+            sage: [len([pi for pi in Permutations(n) if pi.is_simple()])
+            ....:  for n in range(5)]
+            [1, 1, 2, 0, 2]
+        """
+        n = len(pi)
+        if n <= 2:
+            return True
+        for k in range(1, n - 1):
+            for start in range(n - k):
+                slic = pi[start:start + k + 1]
+                if max(slic) == min(slic) + k:
+                    return False
+        return True
 
     ############
     # Recoils  #
@@ -3753,16 +3780,16 @@ class Permutation(CombinatorialElement):
         p = self
         n = len(p)
 
-        for i in range(n-1):
-            for j in range(i+1,n):
+        for i in range(n - 1):
+            for j in range(i + 1, n):
                 if p[i] > p[j]:
                     ok = True
-                    for k in range(i+1, j):
+                    for k in range(i + 1, j):
                         if p[i] > p[k] and p[k] > p[j]:
                             ok = False
                             break
                     if ok:
-                        yield [i,j]
+                        yield [i, j]
 
     def bruhat_succ(self) -> list:
         r"""
@@ -7213,7 +7240,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             ['A', 0]
         """
         from sage.combinat.root_system.cartan_type import CartanType
-        return CartanType(['A', max(self.n - 1,0)])
+        return CartanType(['A', max(self.n - 1, 0)])
 
     def simple_reflection(self, i):
         r"""
@@ -7401,8 +7428,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 [4, 2, 1, 3]
             """
             w = list(range(len(self)))
-            for i,j in enumerate(self):
-                w[j-1] = i+1
+            for i, j in enumerate(self):
+                w[j - 1] = i + 1
             return self.__class__(self.parent(), w)
 
         __invert__ = inverse
@@ -7546,8 +7573,8 @@ def from_inversion_vector(iv, parent=None):
     """
     p = iv[:]
     open_spots = list(range(len(iv)))
-    for i,ivi in enumerate(iv):
-        p[open_spots.pop(ivi)] = i+1
+    for i, ivi in enumerate(iv):
+        p[open_spots.pop(ivi)] = i + 1
 
     if parent is None:
         parent = Permutations()
