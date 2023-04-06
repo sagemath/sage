@@ -2260,10 +2260,10 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             if basis not in GradedAlgebrasWithBasis:
                 raise ValueError("basis should be in GradedAlgebrasWithBasis")
             self._arity = 1
-        category = Algebras(base_ring.category())
-        if base_ring in IntegralDomains():
+        category = Algebras(basis.category())
+        if basis in IntegralDomains():
             category &= IntegralDomains()
-        elif base_ring in Rings().Commutative():
+        elif basis in Rings().Commutative():
             category = category.Commutative()
 
         if base_ring.is_zero():

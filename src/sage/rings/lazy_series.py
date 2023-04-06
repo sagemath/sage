@@ -219,6 +219,7 @@ from sage.arith.misc import divisors, moebius
 from sage.combinat.partition import Partition, Partitions
 from sage.misc.derivative import derivative_parse
 from sage.categories.integral_domains import IntegralDomains
+from sage.categories.rings import Rings
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1802,7 +1803,7 @@ class LazyModuleElement(Element):
                                                    order=v,
                                                    constant=c,
                                                    degree=coeff_stream._degree))
-        if self_on_left or R.is_commutative():
+        if self_on_left or R in Rings().Commutative():
             return P.element_class(P, Stream_lmul(coeff_stream, scalar,
                                                   P.is_sparse()))
         return P.element_class(P, Stream_rmul(coeff_stream, scalar,
@@ -2805,7 +2806,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
                                         constant=c)
             return P.element_class(P, coeff_stream)
 
-        if P.is_commutative():
+        if P in Rings().Commutative():
             coeff_stream = Stream_cauchy_mul_commutative(left, right, P.is_sparse())
         else:
             coeff_stream = Stream_cauchy_mul(left, right, P.is_sparse())
@@ -3180,7 +3181,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
         # P._minimal_valuation is zero, because we allow division by
         # series of positive valuation
         right_inverse = Stream_cauchy_invert(right)
-        if P.is_commutative():
+        if P in Rings().Commutative():
             coeff_stream = Stream_cauchy_mul_commutative(left, right_inverse, P.is_sparse())
         else:
             coeff_stream = Stream_cauchy_mul(left, right_inverse, P.is_sparse())
@@ -3276,7 +3277,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
         d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
                                  False, 0)
         f = P.undefined(valuation=0)
-        if P.is_commutative():
+        if P in Rings().Commutative():
             d_self_f = Stream_cauchy_mul_commutative(d_self, f._coeff_stream, False)
         else:
             d_self_f = Stream_cauchy_mul(d_self, f._coeff_stream, False)
@@ -3329,7 +3330,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
         d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
                                  P.is_sparse(), 0)
         coeff_stream_inverse = Stream_cauchy_invert(coeff_stream)
-        if P.is_commutative():
+        if P in Rings().Commutative():
             d_self_quo_self = Stream_cauchy_mul_commutative(d_self,
                                                             coeff_stream_inverse,
                                                             P.is_sparse())
