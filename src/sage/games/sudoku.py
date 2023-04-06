@@ -410,7 +410,6 @@ class Sudoku(SageObject):
         from sage.matrix.constructor import matrix
         return matrix(ZZ, self.n*self.n, self.puzzle)
 
-
     def to_ascii(self):
         r"""
         Construct an ASCII-art version of a Sudoku puzzle.

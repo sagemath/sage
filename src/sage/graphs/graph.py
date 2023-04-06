@@ -112,10 +112,10 @@ covered here.
 
    ::
 
-       sage: import networkx
-       sage: K = networkx.complete_bipartite_graph(12,7)
-       sage: G = Graph(K)
-       sage: G.degree()
+       sage: import networkx                                                            # optional - networkx
+       sage: K = networkx.complete_bipartite_graph(12,7)                                # optional - networkx
+       sage: G = Graph(K)                                                               # optional - networkx
+       sage: G.degree()                                                                 # optional - networkx
        [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 12, 12, 12, 12, 12, 12, 12]
 
 - graph6 or sparse6 format:
@@ -800,16 +800,16 @@ class Graph(GenericGraph):
 
     #. A NetworkX MultiGraph::
 
-          sage: import networkx
-          sage: g = networkx.MultiGraph({0:[1,2,3], 2:[4]})
-          sage: Graph(g)
+          sage: import networkx                                                         # optional - networkx
+          sage: g = networkx.MultiGraph({0:[1,2,3], 2:[4]})                             # optional - networkx
+          sage: Graph(g)                                                                # optional - networkx
           Multi-graph on 5 vertices
 
     #. A NetworkX graph::
 
-           sage: import networkx
-           sage: g = networkx.Graph({0:[1,2,3], 2:[4]})
-           sage: DiGraph(g)
+           sage: import networkx                                                        # optional - networkx
+           sage: g = networkx.Graph({0:[1,2,3], 2:[4]})                                 # optional - networkx
+           sage: DiGraph(g)                                                             # optional - networkx
            Digraph on 5 vertices
 
     #. An igraph Graph (see also
@@ -2678,7 +2678,6 @@ class Graph(GenericGraph):
 
         return self_complement.is_odd_hole_free(certificate=certificate)
 
-
     @doc_index("Graph properties")
     def is_edge_transitive(self):
         r"""
@@ -2896,7 +2895,6 @@ class Graph(GenericGraph):
             elif deg != 2:
                 return False
         return deg_one_counter == 2 and seen_counter == order
-
 
     @doc_index("Connectivity, orientations, trees")
     def degree_constrained_subgraph(self, bounds, solver=None, verbose=0,
@@ -6713,9 +6711,9 @@ class Graph(GenericGraph):
             sage: g.clique_number(algorithm="MILP")
             2
             sage: for i in range(10):                                            # optional - mcqd
-            ....:     g = graphs.RandomGNP(15,.5)                                # optional - mcqd
-            ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"): # optional - mcqd
-            ....:         print("This is dead wrong !")                          # optional - mcqd
+            ....:     g = graphs.RandomGNP(15,.5)
+            ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"):
+            ....:         print("This is dead wrong !")
         """
         self._scream_if_not_simple(allow_loops=False)
         if algorithm == "Cliquer":

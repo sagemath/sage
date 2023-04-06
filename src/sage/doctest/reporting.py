@@ -556,7 +556,6 @@ class DocTestReporter(SageObject):
             import traceback
             log(traceback.format_exc(), end="")
 
-
     def finalize(self):
         """
         Print out the postscript that summarizes the doctests that were run.

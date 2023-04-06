@@ -3089,7 +3089,7 @@ cdef class GapElement_Permutation(GapElement):
         lst = libgap.ListPerm(self)
 
         if parent is None:
-            return Permutation(lst.sage(), check_input=False)
+            return Permutation(lst.sage(), check=False)
         else:
             return parent.one()._generate_new_GAP(lst)
 

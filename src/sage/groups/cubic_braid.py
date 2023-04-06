@@ -155,7 +155,6 @@ def _reduce_tietze(tietze_list):
     return tietze_list
 
 
-
 ##############################################################################
 #
 #   Functions to create Instances of the CubicBraidGroup
@@ -484,7 +483,6 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
                         break
                 return root_bur
 
-
             if domain is None:
                 if characteristic is None:
                     # --------------------------------------------------------------------
@@ -547,7 +545,6 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             return burau_mat, burau_mat_adj, herm_form
 
         return burau_mat
-
 
 
 ##############################################################################
@@ -674,7 +671,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         AssionS = 'S'
         AssionU = 'U'
 
-
     ###########################################################################################
     # private methods
     ###########################################################################################
@@ -792,7 +788,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         self._centralizing_matrix         = None   # for Assion groups: element in classical base group commuting with self
         self._centralizing_element        = None   # image under nat. map of the former one in the proj. classical group
         return
-
 
     def _repr_(self):
         r"""
@@ -1398,7 +1393,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         """
         return self._nstrands
 
-
     # ----------------------------------------------------------------------------------
     # braid_group
     # ----------------------------------------------------------------------------------
@@ -1442,7 +1436,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             True
         """
         return self._braid_group
-
 
     # ----------------------------------------------------------------------------------
     # as_matrix_group
@@ -1565,7 +1558,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             raise ValueError("Burau representation does not factor through the relations")
         matrix_group.register_conversion(hom_to_mat)
         return matrix_group
-
 
     # ----------------------------------------------------------------------------------
     # Although this method is available for finitely presented group
@@ -1714,7 +1706,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             return self._classical_group
 
         raise ValueError("no classical embedding defined")
-
 
     # ----------------------------------------------------------------------------------
     # as_refection_group
@@ -1872,7 +1863,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         return self._classical_invariant_form
 
-
     # ----------------------------------------------------------------------------------
     # centralizing element in the classical symplectic resp. unitary group
     # ----------------------------------------------------------------------------------
@@ -1941,7 +1931,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
                 return self._centralizing_matrix
             else:
                 return self._centralizing_element
-
 
     # ----------------------------------------------------------------------------------
     # calculating the order by formula
