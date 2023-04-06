@@ -106,6 +106,8 @@ Vectors
    sage/modules/vector_callable_symbolic_dense
    sage/modules/vector_double_dense
    sage/modules/vector_real_double_dense
+   sage/modules/vector_numpy_dense
+   sage/modules/vector_numpy_integer_dense
    sage/modules/vector_complex_double_dense
    sage/modules/complex_double_vector
    sage/modules/real_double_vector
