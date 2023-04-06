@@ -1062,7 +1062,24 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Description of the function (TO DO)
         """
 
-        # Should there be a check for whether the input type is rational, float or double?
+        from sage.rings.rational_field import RationalField
+
+        type_flag = True
+        try:
+            field_name = self.base_ring().name()
+            if (len(field_name) > 9 and field_name[0:8] != 'RealField' and field_name != 'RealDoubleField'):
+                # assert field is neither RealField or RealDoubleField
+                type_flag = False
+        except:
+            # assert flag == True
+            # assert not RealField_class and not RealDoubleField_class
+            if (self.base_ring() != RationalField()):
+                type_flag = False
+
+        if (not type_flag):
+            raise TypeError("the underlying ring/field must be RealField, RealDoubleField, RationalField")
+
+        # assert self.base_ring() is either RealField, RealDoubleField or RationalField
 
         if (round_type == 'nearest'):
             return self.apply_map(lambda x : x.round())
