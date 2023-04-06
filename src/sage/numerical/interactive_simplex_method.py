@@ -1533,13 +1533,13 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot()                                                                      # optional - sage.plot
-            sage: p.show()                                                                          # optional - sage.plot
+            sage: p = P.plot()                                                          # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot(0, 1000, 0, 1500)                                                      # optional - sage.plot
-            sage: p.show()                                                                          # optional - sage.plot
+            sage: p = P.plot(0, 1000, 0, 1500)                                          # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         TESTS:
 
@@ -1610,13 +1610,13 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot_feasible_set()                                                         # optional - sage.plot
-            sage: p.show()                                                                          # optional - sage.plot
+            sage: p = P.plot_feasible_set()                                             # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)                                         # optional - sage.plot
-            sage: p.show()                                                                          # optional - sage.plot
+            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)                             # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
         """
         if self.n() != 2:
             raise ValueError("only problems with 2 variables can be plotted")

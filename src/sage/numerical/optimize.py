@@ -370,9 +370,9 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
 
         sage: def rosen(x): # The Rosenbrock function
         ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
-        sage: import numpy                                                                          # optional - numpy
-        sage: from numpy import zeros                                                               # optional - numpy
-        sage: def rosen_der(x):                                                                     # optional - numpy
+        sage: import numpy                                                              # optional - numpy
+        sage: from numpy import zeros                                                   # optional - numpy
+        sage: def rosen_der(x):                                                         # optional - numpy
         ....:    xm = x[1r:-1r]
         ....:    xm_m1 = x[:-2r]
         ....:    xm_p1 = x[2r:]
@@ -381,7 +381,8 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
         ....:    der[0] = -400r*x[0r]*(x[1r]-x[0r]**2r) - 2r*(1r-x[0])
         ....:    der[-1] = 200r*(x[-1r]-x[-2r]**2r)
         ....:    return der
-        sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der, algorithm="bfgs") # abs tol 1e-6      # optional - numpy
+        sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der,  # abs tol 1e-6           # optional - numpy
+        ....:          algorithm="bfgs")
         (1.0, 1.0, 1.0)
     """
     from sage.structure.element import Expression
