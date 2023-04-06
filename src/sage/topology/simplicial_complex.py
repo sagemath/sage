@@ -4802,6 +4802,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             F = F + [s for s in self.faces()[k] if s in other.faces()[k]]
         return SimplicialComplex(F)
 
+    #@cached_method    tried this, but does not make much sense to cache this
     def bigraded_betti_numbers(self):
         r"""
         Returns a dictionary of the bigraded Betti numbers of ''self'', 
@@ -4831,23 +4832,23 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         for i in range(n+1):
             for j in range (n+1):
-                B[(-i, 2*j)] = 0
+                B[(-i, 2*j)] = self.bigraded_betti_number(-i, 2*j) 
 
-        B[(0,0)] = 1
+        #B[(0,0)] = 1
 
-
-        for j in range(n+1):
-            for x in D[j]:
-                S = self.generated_subcomplex(x)
-                H = S.homology()
-                for k in range(j):
-                    if H.get(j-k-1) != H0 and H.get(j-k-1) != None:
-                        B[(-k, 2*j)] = B[(-k, 2*j)] + len(gens(H.get(j-k-1)))
+        #for j in range(n+1):
+            #for x in D[j]:
+                #S = self.generated_subcomplex(x)
+                #H = S.homology()
+                #for k in range(j):
+                    #if H.get(j-k-1) != H0 and H.get(j-k-1) != None:
+                        #B[(-k, 2*j)] = B[(-k, 2*j)] + len(gens(H.get(j-k-1)))
 
         B = {key:val for key,val in B.items() if val != 0}
 	    
         return B
 
+    @cached_method
     def bigraded_betti_number(self, a, b):
         r"""
         Returns the bigraded Betti number indexed in the form (-i, 2j).
@@ -4889,8 +4890,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 B = B + len(gens(H.get(b-a-1)))
 
         return B
-
-
             
 # Miscellaneous utility functions.
 
