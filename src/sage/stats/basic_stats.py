@@ -216,9 +216,9 @@ def std(v, bias=False):
         + (5*sqrt(2) - 10*I + 3)^2 + (5*sqrt(2) + 5*I - 6)^2)
         sage: std([RIF(1.0103, 1.0103), RIF(2)])
         0.6998235813403261?
-        sage: import numpy                                                                          # optional - numpy
-        sage: x = numpy.array([1,2,3,4,5])                                                          # optional - numpy
-        sage: std(x, bias=False)                                                                    # optional - numpy
+        sage: import numpy                                                              # optional - numpy
+        sage: x = numpy.array([1,2,3,4,5])                                              # optional - numpy
+        sage: std(x, bias=False)                                                        # optional - numpy
         1.5811388300841898
         sage: x = stats.TimeSeries([1..100])
         sage: std(x)
@@ -295,9 +295,9 @@ def variance(v, bias=False):
         + 1/450*(5*sqrt(2) + 5*I - 6)^2
         sage: variance([RIF(1.0103, 1.0103), RIF(2)])
         0.4897530450000000?
-        sage: import numpy                                                                          # optional - numpy
-        sage: x = numpy.array([1,2,3,4,5])                                                          # optional - numpy
-        sage: variance(x, bias=False)                                                               # optional - numpy
+        sage: import numpy                                                              # optional - numpy
+        sage: x = numpy.array([1,2,3,4,5])                                              # optional - numpy
+        sage: variance(x, bias=False)                                                   # optional - numpy
         2.5
         sage: x = stats.TimeSeries([1..100])
         sage: variance(x)
