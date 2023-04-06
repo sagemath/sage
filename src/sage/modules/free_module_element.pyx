@@ -1059,7 +1059,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def round(self, round_type='nearest'):
         """
-        Description of the function (TO DO)
+        Returns a list 
         """
 
         from sage.rings.rational_field import RationalField
@@ -1067,7 +1067,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         type_flag = True
         try:
             field_name = self.base_ring().name()
-            if (len(field_name) > 9 and field_name[0:8] != 'RealField' and field_name != 'RealDoubleField'):
+            if (len(field_name) >= 9 and field_name[0:9] != 'RealField' and field_name != 'RealDoubleField'):
                 # assert field is neither RealField or RealDoubleField
                 type_flag = False
         except:
