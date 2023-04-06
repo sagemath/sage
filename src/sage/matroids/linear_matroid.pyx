@@ -267,8 +267,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: LinearMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],                  # optional - sage.libs.pari
-            ....:                       [0, 1, 1, 2, 3]]))  # indirect doctest
+            sage: LinearMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],        # indirect doctest
+            ....:                                     [0, 1, 1, 2, 3]]))
             Linear matroid of rank 2 on 5 elements represented over the Finite
             Field of size 5
         """
@@ -290,9 +290,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = LinearMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],              # optional - sage.libs.pari
-            ....:                       [0, 1, 1, 2, 3]]))  # indirect doctest
-            sage: M = None                                                              # optional - sage.libs.pari
+            sage: M = LinearMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],    # indirect doctest
+            ....:                                         [0, 1, 1, 2, 3]]))
+            sage: M = None
         """
         if self._prow is not NULL:
             sig_free(self._prow)
@@ -3069,8 +3069,8 @@ cdef class BinaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: BinaryMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],                  # optional - sage.libs.pari
-            ....:                       [0, 1, 1, 2, 3]]))  # indirect doctest
+            sage: BinaryMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],        # indirect doctest
+            ....:                                     [0, 1, 1, 2, 3]]))
             Binary matroid of rank 2 on 5 elements, type (1, 7)
         """
         cdef BinaryMatrix A
@@ -4134,8 +4134,8 @@ cdef class TernaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: TernaryMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],                                                 # optional - sage.libs.pari
-            ....:                       [0, 1, 1, 2, 3]]))  # indirect doctest
+            sage: TernaryMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],       # indirect doctest
+            ....:                                      [0, 1, 1, 2, 3]]))
             Ternary matroid of rank 2 on 5 elements, type 1+
         """
         cdef TernaryMatrix A
@@ -5039,8 +5039,9 @@ cdef class QuaternaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: QuaternaryMatroid(matrix=Matrix(GF(4, 'x'),
-            ....:     [[1, 0, 1, 1, 1], [0, 1, 1, 1, 1]]))  # indirect doctest
+            sage: QuaternaryMatroid(matrix=Matrix(GF(4, 'x'),                 # indirect doctest
+            ....:                                 [[1, 0, 1, 1, 1],
+            ....:                                  [0, 1, 1, 1, 1]]))
             Quaternary matroid of rank 2 on 5 elements
         """
         cdef QuaternaryMatrix A
@@ -5758,8 +5759,8 @@ cdef class RegularMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: RegularMatroid(matrix=Matrix(ZZ, [[1, 0, 1, 1, 1],
-            ....:                       [0, 1, 1, 1, 1]]))  # indirect doctest
+            sage: RegularMatroid(matrix=Matrix(ZZ, [[1, 0, 1, 1, 1],          # indirect doctest
+            ....:                                   [0, 1, 1, 1, 1]]))
             Regular matroid of rank 2 on 5 elements with 7 bases
         """
         LinearMatroid.__init__(self, matrix, groundset, reduced_matrix, ring=ZZ, keep_initial_representation=keep_initial_representation)

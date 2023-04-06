@@ -36,7 +36,7 @@ EXAMPLES::
 For a Cython ``cdef class``, a decorator cannot be used. Instead, call
 :func:`instancedoc` as a function after defining the class::
 
-    sage: cython(                                                               # optional - sage.misc.cython
+    sage: cython(                                                                       # optional - sage.misc.cython
     ....: '''
     ....: from sage.misc.instancedoc import instancedoc
     ....: cdef class Y:
@@ -45,9 +45,9 @@ For a Cython ``cdef class``, a decorator cannot be used. Instead, call
     ....:         return "Instance docstring"
     ....: instancedoc(Y)
     ....: ''')
-    sage: Y.__doc__                                                             # optional - sage.misc.cython
+    sage: Y.__doc__                                                                     # optional - sage.misc.cython
     'File:...\nClass docstring'
-    sage: Y().__doc__                                                           # optional - sage.misc.cython
+    sage: Y().__doc__                                                                   # optional - sage.misc.cython
     'Instance docstring'
 
 One can still add a custom ``__doc__`` attribute on a particular
@@ -60,7 +60,7 @@ instance::
 
 This normally does not work on extension types::
 
-    sage: Y().__doc__ = "Very special doc"                                      # optional - sage.misc.cython
+    sage: Y().__doc__ = "Very special doc"                                              # optional - sage.misc.cython
     Traceback (most recent call last):
     ...
     AttributeError: attribute '__doc__' of 'Y' objects is not writable

@@ -50,9 +50,9 @@ from sage.schemes.generic.ambient_space import is_AmbientSpace
 from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
 from sage.schemes.projective.projective_space import is_ProjectiveSpace
 
-from sage.schemes.affine.all import AffineSpace
+from sage.schemes.affine.affine_space import AffineSpace
 
-from sage.schemes.projective.all import ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace
 
 
 from .projective_curve import (ProjectiveCurve,

@@ -1640,9 +1640,9 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         An example when the coefficients live in a finite field::
 
-            sage: F = FiniteField(11)                                                               # optional - sage.libs.pari
-            sage: R.<x,y,z,w> = PolynomialRing(F, 4)                                                # optional - sage.libs.pari
-            sage: R.macaulay_resultant([z,x^3,5*y,w])                                               # optional - sage.libs.pari sage.modules
+            sage: F = FiniteField(11)
+            sage: R.<x,y,z,w> = PolynomialRing(F,4)
+            sage: R.macaulay_resultant([z,x^3,5*y,w])                                               # optional - sage.modules
             4
 
         Example when the denominator in the algorithm vanishes(in this case
@@ -1761,8 +1761,8 @@ cdef class BooleanPolynomialRing_base(MPolynomialRing_base):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
-        sage: R.<x, y, z> = BooleanPolynomialRing()                                                 # optional - sage.rings.polynomial.pbori
-        sage: isinstance(R, BooleanPolynomialRing_base)                                             # optional - sage.rings.polynomial.pbori
+        sage: R.<x, y, z> = BooleanPolynomialRing()
+        sage: isinstance(R, BooleanPolynomialRing_base)
         True
 
     By design, there is only one direct implementation subclass::

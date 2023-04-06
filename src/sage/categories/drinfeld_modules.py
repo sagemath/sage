@@ -27,9 +27,9 @@ from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 
-lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
 lazy_import('sage.rings.polynomial.ore_polynomial_ring', 'OrePolynomialRing')
 lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
+lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
 
 
 class DrinfeldModules(Category_over_base_ring):

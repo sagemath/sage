@@ -1566,10 +1566,12 @@ class QuadraticForm(SageObject):
         arithmetic evaluations.
 
         INPUT:
-            R -- a ring
+        
+        - R -- a ring
 
         OUTPUT:
-            quadratic form
+        
+        quadratic form
 
         EXAMPLES::
 

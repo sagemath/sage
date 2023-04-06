@@ -638,12 +638,12 @@ cdef class Matrix_sparse(matrix.Matrix):
         EXAMPLES::
 
             sage: m = matrix(ZZ, 3, range(9), sparse=True)
-            sage: phi = ZZ.hom(GF(5))                                           # optional - sage.libs.pari
-            sage: m.apply_morphism(phi)                                         # optional - sage.libs.pari
+            sage: phi = ZZ.hom(GF(5))                                                   # optional - sage.rings.finite_rings
+            sage: m.apply_morphism(phi)                                                 # optional - sage.rings.finite_rings
             [0 1 2]
             [3 4 0]
             [1 2 3]
-            sage: m.apply_morphism(phi).parent()                                # optional - sage.libs.pari
+            sage: m.apply_morphism(phi).parent()                                        # optional - sage.rings.finite_rings
             Full MatrixSpace of 3 by 3 sparse matrices
              over Finite Field of size 5
         """
@@ -674,30 +674,30 @@ cdef class Matrix_sparse(matrix.Matrix):
         EXAMPLES::
 
             sage: m = matrix(ZZ, 10000, {(1,2): 17}, sparse=True)
-            sage: k.<a> = GF(9)                                                 # optional - sage.libs.pari
-            sage: f = lambda x: k(x)                                            # optional - sage.libs.pari
-            sage: n = m.apply_map(f)                                            # optional - sage.libs.pari
-            sage: n.parent()                                                    # optional - sage.libs.pari
+            sage: k.<a> = GF(9)                                                         # optional - sage.rings.finite_rings
+            sage: f = lambda x: k(x)                                                    # optional - sage.rings.finite_rings
+            sage: n = m.apply_map(f)                                                    # optional - sage.rings.finite_rings
+            sage: n.parent()                                                            # optional - sage.rings.finite_rings
             Full MatrixSpace of 10000 by 10000 sparse matrices
              over Finite Field in a of size 3^2
-            sage: n[1, 2]                                                       # optional - sage.libs.pari
+            sage: n[1, 2]                                                               # optional - sage.rings.finite_rings
             2
 
         An example where the codomain is explicitly specified.
 
         ::
 
-            sage: n = m.apply_map(lambda x:x%3, GF(3))                          # optional - sage.libs.pari
-            sage: n.parent()                                                    # optional - sage.libs.pari
+            sage: n = m.apply_map(lambda x: x%3, GF(3))                                 # optional - sage.rings.finite_rings
+            sage: n.parent()                                                            # optional - sage.rings.finite_rings
             Full MatrixSpace of 10000 by 10000 sparse matrices
              over Finite Field of size 3
-            sage: n[1, 2]                                                       # optional - sage.libs.pari
+            sage: n[1, 2]                                                               # optional - sage.rings.finite_rings
             2
 
         If we did not specify the codomain, the resulting matrix in the
         above case ends up over `\ZZ` again::
 
-            sage: n = m.apply_map(lambda x:x%3)
+            sage: n = m.apply_map(lambda x: x%3)
             sage: n.parent()
             Full MatrixSpace of 10000 by 10000 sparse matrices over Integer Ring
             sage: n[1, 2]

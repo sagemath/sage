@@ -451,9 +451,8 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: I = X * (x[1] + x[2], x[1]*x[2])
-            sage: I.interreduction()                                                                # optional - sage.combinat
-            Symmetric Ideal (-x_1^2, x_2 + x_1) of
-             Infinite polynomial ring in x over Rational Field
+            sage: I.interreduction()
+            Symmetric Ideal (-x_1^2, x_2 + x_1) of Infinite polynomial ring in x over Rational Field
 
         Here, we show the ``report`` option::
 
@@ -487,7 +486,7 @@ class SymmetricIdeal(Ideal_generic):
                 x_1^2,
                 x_2 + x_1
             sage: R = SymmetricReductionStrategy(X, [x[1]^2])
-            sage: I.interreduction(RStrat=R)                                                        # optional - sage.combinat
+            sage: I.interreduction(RStrat=R)
             Symmetric Ideal (x_2 + x_1) of Infinite polynomial ring in x over Rational Field
 
         """

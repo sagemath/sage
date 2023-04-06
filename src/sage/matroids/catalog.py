@@ -38,8 +38,8 @@ Functions
 from sage.matrix.constructor import Matrix
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
-lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
-lazy_import('sage.schemes.all', 'ProjectiveSpace')
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.schemes.projective.projective_space import ProjectiveSpace
 
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid

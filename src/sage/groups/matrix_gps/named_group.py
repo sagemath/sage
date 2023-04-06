@@ -8,17 +8,17 @@ EXAMPLES::
 
     sage: SL(2, ZZ)
     Special Linear Group of degree 2 over Integer Ring
-    sage: G = SL(2, GF(3)); G                                                           # optional - sage.libs.pari
+    sage: G = SL(2, GF(3)); G                                                           # optional - sage.rings.finite_rings
     Special Linear Group of degree 2 over Finite Field of size 3
-    sage: G.is_finite()                                                                 # optional - sage.libs.pari
+    sage: G.is_finite()                                                                 # optional - sage.rings.finite_rings
     True
-    sage: G.conjugacy_classes_representatives()                                         # optional - sage.libs.pari
+    sage: G.conjugacy_classes_representatives()                                         # optional - sage.rings.finite_rings
     (
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
     )
-    sage: G = SL(6, GF(5))                                                              # optional - sage.libs.pari
-    sage: G.gens()                                                                      # optional - sage.libs.pari
+    sage: G = SL(6, GF(5))                                                              # optional - sage.rings.finite_rings
+    sage: G.gens()                                                                      # optional - sage.rings.finite_rings
     (
     [2 0 0 0 0 0]  [4 0 0 0 0 1]
     [0 3 0 0 0 0]  [4 0 0 0 0 0]
@@ -80,12 +80,12 @@ def normalize_args_vectorspace(*args, **kwds):
     TESTS::
 
         sage: from sage.groups.matrix_gps.named_group import normalize_args_vectorspace
-        sage: A = AffineSpace(2, GF(4,'a'));  A                                                     # optional - sage.libs.pari
+        sage: A = AffineSpace(2, GF(4,'a'));  A                                                     # optional - sage.rings.finite_rings
         Affine Space of dimension 2 over Finite Field in a of size 2^2
-        sage: normalize_args_vectorspace(A)                                                         # optional - sage.libs.pari
+        sage: normalize_args_vectorspace(A)                                                         # optional - sage.rings.finite_rings
         (2, Finite Field in a of size 2^2)
 
-        sage: normalize_args_vectorspace(2,4)   # shorthand                                         # optional - sage.libs.pari
+        sage: normalize_args_vectorspace(2,4)   # shorthand                                         # optional - sage.rings.finite_rings
         (2, Finite Field in a of size 2^2)
 
         sage: V = ZZ^3;  V
@@ -285,15 +285,15 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: G = GL(2,3)                                                                       # optional - sage.libs.pari
-            sage: G == MatrixGroup(G.gens())                                                        # optional - sage.libs.pari
+            sage: G = GL(2,3)                                                                       # optional - sage.rings.finite_rings
+            sage: G == MatrixGroup(G.gens())                                                        # optional - sage.rings.finite_rings
             True
 
-            sage: G = groups.matrix.GL(4,2)                                                         # optional - sage.libs.pari
-            sage: H = MatrixGroup(G.gens())                                                         # optional - sage.libs.pari
-            sage: G == H                                                                            # optional - sage.libs.pari
+            sage: G = groups.matrix.GL(4,2)                                                         # optional - sage.rings.finite_rings
+            sage: H = MatrixGroup(G.gens())                                                         # optional - sage.rings.finite_rings
+            sage: G == H                                                                            # optional - sage.rings.finite_rings
             True
-            sage: G != H                                                                            # optional - sage.libs.pari
+            sage: G != H                                                                            # optional - sage.rings.finite_rings
             False
         """
         return MatrixGroup_generic.__richcmp__(self, other, op)

@@ -252,16 +252,16 @@ def _extract_embedded_position(docstring):
 
        sage: from sage.misc.sageinspect import _extract_embedded_position
        sage: import inspect
-       sage: _extract_embedded_position(inspect.getdoc(var))[1][-21:]                                                   # optional - sage.symbolic
+       sage: _extract_embedded_position(inspect.getdoc(var))[1][-21:]                   # optional - sage.symbolic
        'sage/calculus/var.pyx'
 
     TESTS:
 
     The following has been fixed in :trac:`13916`::
 
-        sage: cython('''cpdef test_funct(x,y): return''')                           # optional - sage.misc.cython
-        sage: func_doc = inspect.getdoc(test_funct)                                 # optional - sage.misc.cython
-        sage: with open(_extract_embedded_position(func_doc)[1]) as f:              # optional - sage.misc.cython
+        sage: cython('''cpdef test_funct(x,y): return''')                               # optional - sage.misc.cython
+        sage: func_doc = inspect.getdoc(test_funct)                                     # optional - sage.misc.cython
+        sage: with open(_extract_embedded_position(func_doc)[1]) as f:                  # optional - sage.misc.cython
         ....:     print(f.read())
         cpdef test_funct(x,y): return
 
@@ -272,10 +272,10 @@ def _extract_embedded_position(docstring):
 
         sage: from sage.env import DOT_SAGE
         sage: from sage.misc.sage_ostools import restore_cwd
-        sage: with restore_cwd(DOT_SAGE):                                           # optional - sage.misc.cython
+        sage: with restore_cwd(DOT_SAGE):                                               # optional - sage.misc.cython
         ....:     cython('''cpdef test_funct(x,y): return''')
-        sage: func_doc = inspect.getdoc(test_funct)                                 # optional - sage.misc.cython
-        sage: with open(_extract_embedded_position(func_doc)[1]) as f:              # optional - sage.misc.cython
+        sage: func_doc = inspect.getdoc(test_funct)                                     # optional - sage.misc.cython
+        sage: with open(_extract_embedded_position(func_doc)[1]) as f:                  # optional - sage.misc.cython
         ....:     print(f.read())
         cpdef test_funct(x,y): return
 
@@ -1118,7 +1118,7 @@ def _sage_getargspec_from_ast(source):
         FullArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, varkw=None, defaults=(2, {'a': [4, 5.5, False]}, (None, True)), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: from_ast(s) == inspect.getfullargspec(context['f'])
         True
-        sage: set(from_ast(sms.sage_getsource(x)) == inspect.getfullargspec(x) for x in [factor, identity_matrix, Graph.__init__])  # optional - sage.modules sage.graphs
+        sage: set(from_ast(sms.sage_getsource(x)) == inspect.getfullargspec(x) for x in [factor, identity_matrix, Graph.__init__])          # optional - sage.modules sage.graphs
         {True}
     """
     ast_args = ast.parse(source.lstrip()).body[0].args
@@ -1376,14 +1376,14 @@ def sage_getfile(obj):
 
     A problem fixed in :trac:`16309`::
 
-        sage: cython(                           # optional - sage.misc.cython
+        sage: cython(                                                                   # optional - sage.misc.cython
         ....: '''
         ....: class Bar: pass
         ....: cdef class Foo: pass
         ....: ''')
-        sage: sage_getfile(Bar)                 # optional - sage.misc.cython
+        sage: sage_getfile(Bar)                                                         # optional - sage.misc.cython
         '...pyx'
-        sage: sage_getfile(Foo)                 # optional - sage.misc.cython
+        sage: sage_getfile(Foo)                                                         # optional - sage.misc.cython
         '...pyx'
 
     By :trac:`18249`, we return an empty string for Python builtins. In that
@@ -1508,7 +1508,7 @@ def sage_getargspec(obj):
 
     We now run sage_getargspec on some functions from the Sage library::
 
-        sage: sage_getargspec(identity_matrix)                                                                          # optional - sage.modules
+        sage: sage_getargspec(identity_matrix)                                          # optional - sage.modules
         FullArgSpec(args=['ring', 'n', 'sparse'], varargs=None, varkw=None, defaults=(0, False),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(factor)
@@ -1550,10 +1550,10 @@ def sage_getargspec(obj):
     If a ``functools.partial`` instance is involved, we see no other meaningful solution
     than to return the argspec of the underlying function::
 
-        sage: def f(a,b,c,d=1):
-        ....:     return a+b+c+d
+        sage: def f(a, b, c, d=1):
+        ....:     return a + b + c + d
         sage: import functools
-        sage: f1 = functools.partial(f, 1,c=2)
+        sage: f1 = functools.partial(f, 1, c=2)
         sage: sage_getargspec(f1)
         FullArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, varkw=None, defaults=(1,),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -1622,23 +1622,28 @@ def sage_getargspec(obj):
         ....:     cpdef meet(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
         ....: ''')
         sage: sage_getargspec(Foo.join)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(Bar.join)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(Bar.meet)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     Test that :trac:`17009` is fixed::
 
         sage: sage_getargspec(gap)
-        FullArgSpec(args=['self', 'x', 'name'], varargs=None, varkw=None, defaults=(None,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'x', 'name'], varargs=None, varkw=None,
+                    defaults=(None,), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     By :trac:`17814`, the following gives the correct answer (previously, the
     defaults would have been found ``None``)::
 
         sage: from sage.misc.nested_class import MainClass
         sage: sage_getargspec(MainClass.NestedClass.NestedSubClass.dummy)
-        FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds', defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds',
+                    defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     In :trac:`18249` was decided to return a generic signature for Python
     builtin functions, rather than to raise an error (which is what Python's
@@ -2344,8 +2349,8 @@ def sage_getsourcelines(obj):
 
     TESTS::
 
-        sage: cython('''cpdef test_funct(x,y): return''')                           # optional - sage.misc.cython
-        sage: sage_getsourcelines(test_funct)                                       # optional - sage.misc.cython
+        sage: cython('''cpdef test_funct(x,y): return''')                               # optional - sage.misc.cython
+        sage: sage_getsourcelines(test_funct)                                           # optional - sage.misc.cython
         (['cpdef test_funct(x,y): return\n'], 1)
 
     The following tests that an instance of ``functools.partial`` is correctly

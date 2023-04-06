@@ -123,7 +123,7 @@ class EllipticCurveSaturator(SageObject):
         self._field = K = E.base_field()
         if K.absolute_degree() == 1:
             from sage.rings.rational_field import QQ
-            from sage.rings.polynomial.all import polygen
+            from sage.rings.polynomial.polynomial_ring import polygen
             self._Kpol = polygen(QQ)
         else:
             self._Kpol = K.defining_polynomial()
@@ -201,7 +201,7 @@ class EllipticCurveSaturator(SageObject):
         self._reductions[q] = redmodq = dict()
         if q.divides(self._N) or q.divides(self._D):
             return
-        from sage.schemes.elliptic_curves.all import EllipticCurve
+        from sage.schemes.elliptic_curves.constructor import EllipticCurve
         for amodq in sorted(self._Kpol.roots(GF(q), multiplicities=False)):
             Eq = EllipticCurve([reduce_mod_q(ai, amodq) for ai in self._curve.ainvs()])
             nq = Eq.cardinality()

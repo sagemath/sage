@@ -21,7 +21,8 @@ A group action `G \times S \rightarrow S` is a functor from `G` to Sets.
         sage: import gc
         sage: _ = gc.collect()
         sage: A
-        <repr(<sage.categories.action.Action at 0x...>) failed: RuntimeError: This action acted on a set that became garbage collected>
+        <repr(<sage.categories.action.Action at 0x...>) failed:
+         RuntimeError: This action acted on a set that became garbage collected>
 
     To avoid garbage collection of the underlying set, it is sufficient to
     create a strong reference to it before the action is created.
@@ -267,15 +268,17 @@ cdef class Action(Functor):
             sage: R = (ZZ['x'])['y']
             sage: A = R.get_action(P,operator.mul,True)
             sage: A                 # indirect doctest
-            Right scalar multiplication by Univariate Polynomial Ring in x over
-            Rational Field on Univariate Polynomial Ring in y over Univariate
-            Polynomial Ring in x over Integer Ring
+            Right scalar multiplication
+             by Univariate Polynomial Ring in x over Rational Field
+             on Univariate Polynomial Ring in y over
+                 Univariate Polynomial Ring in x over Integer Ring
 
         In this example, the underlying set is the ring ``R``. This is the same
         as the left domain, which is different from the codomain of the action::
 
             sage: A.codomain()
-            Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            Univariate Polynomial Ring in y
+             over Univariate Polynomial Ring in x over Rational Field
             sage: A.codomain() == R
             False
             sage: A.left_domain() is R
@@ -296,7 +299,8 @@ cdef class Action(Functor):
             sage: import gc
             sage: _ = gc.collect()
             sage: A
-            <repr(<sage.categories.action.Action at 0x...>) failed: RuntimeError: This action acted on a set that became garbage collected>
+            <repr(<sage.categories.action.Action at 0x...>) failed:
+             RuntimeError: This action acted on a set that became garbage collected>
         """
         S = self.US()
         if S is None:
@@ -331,24 +335,28 @@ cdef class InverseAction(Action):
 
     EXAMPLES::
 
-        sage: V = QQ^3                                                                                                  # optional - sage.modules
-        sage: v = V((1, 2, 3))                                                                                          # optional - sage.modules
+        sage: V = QQ^3                                                                  # optional - sage.modules
+        sage: v = V((1, 2, 3))                                                          # optional - sage.modules
         sage: cm = get_coercion_model()
 
-        sage: a = cm.get_action(V, QQ, operator.mul)                                                                    # optional - sage.modules
-        sage: a                                                                                                         # optional - sage.modules
-        Right scalar multiplication by Rational Field on Vector space of dimension 3 over Rational Field
-        sage: ~a                                                                                                        # optional - sage.modules
-        Right inverse action by Rational Field on Vector space of dimension 3 over Rational Field
-        sage: (~a)(v, 1/3)                                                                                              # optional - sage.modules
+        sage: a = cm.get_action(V, QQ, operator.mul)                                    # optional - sage.modules
+        sage: a                                                                         # optional - sage.modules
+        Right scalar multiplication by Rational Field
+         on Vector space of dimension 3 over Rational Field
+        sage: ~a                                                                        # optional - sage.modules
+        Right inverse action by Rational Field
+         on Vector space of dimension 3 over Rational Field
+        sage: (~a)(v, 1/3)                                                              # optional - sage.modules
         (3, 6, 9)
 
-        sage: b = cm.get_action(QQ, V, operator.mul)                                                                    # optional - sage.modules
-        sage: b                                                                                                         # optional - sage.modules
-        Left scalar multiplication by Rational Field on Vector space of dimension 3 over Rational Field
-        sage: ~b                                                                                                        # optional - sage.modules
-        Left inverse action by Rational Field on Vector space of dimension 3 over Rational Field
-        sage: (~b)(1/3, v)                                                                                              # optional - sage.modules
+        sage: b = cm.get_action(QQ, V, operator.mul)                                    # optional - sage.modules
+        sage: b                                                                         # optional - sage.modules
+        Left scalar multiplication by Rational Field
+         on Vector space of dimension 3 over Rational Field
+        sage: ~b                                                                        # optional - sage.modules
+        Left inverse action by Rational Field
+         on Vector space of dimension 3 over Rational Field
+        sage: (~b)(1/3, v)                                                              # optional - sage.modules
         (3, 6, 9)
 
         sage: c = cm.get_action(ZZ, list, operator.mul)
@@ -392,11 +400,11 @@ cdef class InverseAction(Action):
 
         Check that this action can be pickled (:trac:`29031`)::
 
-            sage: V = QQ^3                                                                                              # optional - sage.modules
-            sage: v = V((1, 2, 3))                                                                                      # optional - sage.modules
-            sage: cm = get_coercion_model()                                                                             # optional - sage.modules
-            sage: a = cm.get_action(V, QQ, operator.mul)                                                                # optional - sage.modules
-            sage: loads(dumps(~a)) is not None                                                                          # optional - sage.modules
+            sage: V = QQ^3                                                              # optional - sage.modules
+            sage: v = V((1, 2, 3))                                                      # optional - sage.modules
+            sage: cm = get_coercion_model()                                             # optional - sage.modules
+            sage: a = cm.get_action(V, QQ, operator.mul)                                # optional - sage.modules
+            sage: loads(dumps(~a)) is not None                                          # optional - sage.modules
             True
         """
         return (type(self), (self._action,))
@@ -436,8 +444,9 @@ cdef class PrecomposedAction(Action):
         sage: c,x = v[0]
         sage: y = x.modular_symbol_rep()
         sage: coercion_model.get_action(QQ, parent(y), op=operator.mul)
-        Left scalar multiplication by Rational Field on Abelian Group of all Formal Finite Sums over Rational Field
-        with precomposition on right by Coercion map:
+        Left scalar multiplication by Rational Field
+         on Abelian Group of all Formal Finite Sums over Rational Field
+         with precomposition on right by Coercion map:
           From: Abelian Group of all Formal Finite Sums over Integer Ring
           To:   Abelian Group of all Formal Finite Sums over Rational Field
     """
@@ -544,8 +553,8 @@ cdef class ActionEndomorphism(Morphism):
 
         sage: A = ZZ['x'].get_action(QQ, self_on_left=False, op=operator.mul)
         sage: A
-        Left scalar multiplication by Rational Field on Univariate Polynomial
-        Ring in x over Integer Ring
+        Left scalar multiplication by Rational Field
+         on Univariate Polynomial Ring in x over Integer Ring
         sage: A(1/2)
         Action of 1/2 on Univariate Polynomial Ring in x over Integer Ring
         under Left scalar multiplication by Rational Field on Univariate

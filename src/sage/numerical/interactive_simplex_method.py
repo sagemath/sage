@@ -191,8 +191,9 @@ from sage.misc.latex import LatexExpr, latex
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.prandom import randint, random
 from sage.misc.html import HtmlFragment
-from sage.misc.globals import get_main_globals
-from sage.modules.all import random_vector, vector
+from sage.misc.misc import get_main_globals
+from sage.modules.free_module_element import random_vector
+from sage.modules.free_module_element import free_module_element as vector
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.all", ["Graphics", "arrow", "line", "point", "rainbow", "text"])
 from sage.rings.infinity import Infinity
@@ -1535,13 +1536,13 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot()                                                                      # optional - sage.plot
-            sage: p.show()                                                                          # optional - sage.plot
+            sage: p = P.plot()                                                          # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot(0, 1000, 0, 1500)                                                      # optional - sage.plot
-            sage: p.show()                                                                          # optional - sage.plot
+            sage: p = P.plot(0, 1000, 0, 1500)                                          # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         TESTS:
 
@@ -1612,13 +1613,13 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot_feasible_set()                                                         # optional - sage.plot
-            sage: p.show()                                                                          # optional - sage.plot
+            sage: p = P.plot_feasible_set()                                             # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)                                         # optional - sage.plot
-            sage: p.show()                                                                          # optional - sage.plot
+            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)                             # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
         """
         if self.n() != 2:
             raise ValueError("only problems with 2 variables can be plotted")

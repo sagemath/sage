@@ -70,22 +70,22 @@ class PrincipalIdealDomains(Category_singleton):
                 sage: ZZ._test_gcd_vs_xgcd()
                 sage: QQ._test_gcd_vs_xgcd()
                 sage: QQ['x']._test_gcd_vs_xgcd()
-                sage: QQbar['x']._test_gcd_vs_xgcd()                                                                    # optional - sage.rings.number_field
+                sage: QQbar['x']._test_gcd_vs_xgcd()                                    # optional - sage.rings.number_field
                 sage: RR._test_gcd_vs_xgcd()
                 sage: RR['x']._test_gcd_vs_xgcd()
 
             A slightly more involved example of polynomial ring with a non UFD
             base ring::
 
-                sage: K = QuadraticField(5)                                                                             # optional - sage.rings.number_field
-                sage: O = K.maximal_order()                                                                             # optional - sage.rings.number_field
-                sage: O in UniqueFactorizationDomains()                                                                 # optional - sage.rings.number_field
+                sage: K = QuadraticField(5)                                             # optional - sage.rings.number_field
+                sage: O = K.maximal_order()                                             # optional - sage.rings.number_field
+                sage: O in UniqueFactorizationDomains()                                 # optional - sage.rings.number_field
                 False
-                sage: R = PolynomialRing(O, 'x')                                                                        # optional - sage.rings.number_field
-                sage: F = R.fraction_field()                                                                            # optional - sage.rings.number_field
-                sage: F in PrincipalIdealDomains()                                                                      # optional - sage.rings.number_field
+                sage: R = PolynomialRing(O, 'x')                                        # optional - sage.rings.number_field
+                sage: F = R.fraction_field()                                            # optional - sage.rings.number_field
+                sage: F in PrincipalIdealDomains()                                      # optional - sage.rings.number_field
                 True
-                sage: F._test_gcd_vs_xgcd()                                                                             # optional - sage.rings.number_field
+                sage: F._test_gcd_vs_xgcd()                                             # optional - sage.rings.number_field
             """
             tester = self._tester(**options)
             elts = list(tester.some_elements())

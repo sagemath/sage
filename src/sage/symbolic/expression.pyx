@@ -5679,7 +5679,7 @@ cdef class Expression(Expression_abc):
 
             sage: cmd = 'subs({}={}, {})'              # optional - maple
             sage: for s1,s2 in subs:                   # optional - maple
-            ....:     maple.eval(cmd.format(s1,s2, E)) # optional - maple
+            ....:     maple.eval(cmd.format(s1,s2, E))
             'y^4+y^2+y'
             'x^4+x+y'
             'x^4+x^2+x'
@@ -5689,7 +5689,7 @@ cdef class Expression(Expression_abc):
 
             sage: cmd = '{} /. {} -> {}'                    # optional - mathematica
             sage: for s1,s2 in subs:                        # optional - mathematica
-            ....:     mathematica.eval(cmd.format(E,s1,s2)) # optional - mathematica
+            ....:     mathematica.eval(cmd.format(E,s1,s2))
                  2    4
             y + y  + y
                  4
@@ -5701,7 +5701,7 @@ cdef class Expression(Expression_abc):
         The same, with formatting more suitable for cut and paste::
 
             sage: for s1,s2 in subs:                        # optional - mathematica
-            ....:     mathematica(cmd.format(E,s1,s2))      # optional - mathematica
+            ....:     mathematica(cmd.format(E,s1,s2))
             y + y^2 + y^4
             x + x^4 + y
             x^4 + y
@@ -10599,14 +10599,22 @@ cdef class Expression(Expression_abc):
         else:
             return self
 
-    def simplify(self):
+    def simplify(self, algorithm='maxima'):
         """
         Return a simplified version of this symbolic expression.
 
         .. NOTE::
 
-           Currently, this just sends the expression to Maxima
-           and converts it back to Sage.
+           When using ``algorithm='maxima'``, this just sends the expression to Maxima
+           and converts it back to Sage. When ``algorithm='sympy'``,
+           sympy's simplify method is used.
+
+        INPUT:
+
+        - ``self`` -- an expression with held operations
+        - ``algorithm`` - (default: ``'maxima'``)  one of
+            - ``'maxima'`` - use Maxima (the default)
+            - ``'sympy'`` - use SymPy
 
         .. SEEALSO::
 
@@ -10623,6 +10631,12 @@ cdef class Expression(Expression_abc):
             sage: f.simplify()
             x^(-a + 1)*sin(2)
 
+        ::
+
+            sage: expr = (-1/5*(2*sqrt(6)*(sqrt(5) - 5) + 11*sqrt(5) - 11)/(2*sqrt(6)*sqrt(5) - 11))
+            sage: expr.simplify(algorithm='sympy')
+            1/5*sqrt(5) - 1/5
+
         TESTS:
 
         Check that :trac:`14637` is fixed::
@@ -10631,8 +10645,23 @@ cdef class Expression(Expression_abc):
             sage: acos(cos(x)).simplify()
             x
             sage: forget()
+
+        Check that simplifying with sympy works correctly::
+
+            sage: expr = (-1/5*(2*sqrt(6)*(sqrt(5) - 5) + 11*sqrt(5) - 11)/(2*sqrt(6)*sqrt(5) - 11))
+            sage: expr.simplify(algorithm='sympy')
+            1/5*sqrt(5) - 1/5
+
+
         """
-        return self._parent(self._maxima_())
+        if algorithm == 'maxima':
+            return self._parent(self._maxima_())
+        elif algorithm == 'sympy':
+            return self._sympy_().simplify()._sage_()
+        else:
+            raise NotImplementedError(
+                    "unknown algorithm: '{}'".format(algorithm))
+
 
     def simplify_full(self):
         """

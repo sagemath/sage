@@ -20,7 +20,7 @@ class DiscreteValuationRings(Category_singleton):
 
     EXAMPLES::
 
-        sage: GF(7)[['x']] in DiscreteValuationRings()                          # optional - sage.libs.pari
+        sage: GF(7)[['x']] in DiscreteValuationRings()                                  # optional - sage.rings.finite_rings
         True
         sage: TestSuite(DiscreteValuationRings()).run()
     """
@@ -41,7 +41,7 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: Zp(5).uniformizer()                                                                               # optional - sage.rings.padics
+                sage: Zp(5).uniformizer()                                               # optional - sage.rings.padics
                 5 + O(5^21)
 
                 sage: K.<u> = QQ[[]]
@@ -56,7 +56,7 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: Zp(5).residue_field()                                                                             # optional - sage.rings.padics
+                sage: Zp(5).residue_field()                                             # optional - sage.rings.padics
                 Finite Field of size 5
 
                 sage: K.<u> = QQ[[]]
@@ -70,38 +70,38 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: R.<t> = PowerSeriesRing(GF(5))                                    # optional - sage.libs.pari
-                sage: M = matrix(4, 4, [(t^(i+j)).add_bigoh(10)                         # optional - sage.libs.pari
+                sage: R.<t> = PowerSeriesRing(GF(5))                                    # optional - sage.rings.finite_rings
+                sage: M = matrix(4, 4, [(t^(i+j)).add_bigoh(10)                         # optional - sage.rings.finite_rings
                 ....:                   for i in range(4) for j in range(4)])
-                sage: M                                                                 # optional - sage.libs.pari
+                sage: M                                                                 # optional - sage.rings.finite_rings
                 [  1 + O(t^10)   t + O(t^10) t^2 + O(t^10) t^3 + O(t^10)]
                 [  t + O(t^10) t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10)]
                 [t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10)]
                 [t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10) t^6 + O(t^10)]
-                sage: M.charpoly()   # indirect doctest                                 # optional - sage.libs.pari
+                sage: M.charpoly()   # indirect doctest                                 # optional - sage.rings.finite_rings
                 x^4 + (4 + 4*t^2 + 4*t^4 + 4*t^6 + O(t^10))*x^3
 
             Note that this function uses a Hessenberg-like algorithm
             that performs divisions. Hence, truncations may show up
             even if the input matrix is exact::
 
-                sage: M = matrix(3, 3, [ 1, t, t^2, 1+t, t^2, t^3, t^2, t^3, t^4 ])     # optional - sage.libs.pari
-                sage: M                                                                 # optional - sage.libs.pari
+                sage: M = matrix(3, 3, [ 1, t, t^2, 1+t, t^2, t^3, t^2, t^3, t^4 ])     # optional - sage.rings.finite_rings
+                sage: M                                                                 # optional - sage.rings.finite_rings
                 [    1     t   t^2]
                 [1 + t   t^2   t^3]
                 [  t^2   t^3   t^4]
-                sage: M.charpoly()                                                      # optional - sage.libs.pari
+                sage: M.charpoly()                                                      # optional - sage.rings.finite_rings
                 x^3 + (4 + 4*t^2 + 4*t^4 + O(t^25))*x^2 + (4*t + O(t^24))*x
 
             Another example over the p-adics::
 
-                sage: R = Zp(5, print_mode="digits", prec=5)                                                            # optional - sage.rings.padics
-                sage: M = matrix(R, 3, 3, range(9))                                                                     # optional - sage.rings.padics
-                sage: M                                                                                                 # optional - sage.rings.padics
+                sage: R = Zp(5, print_mode="digits", prec=5)                            # optional - sage.rings.padics
+                sage: M = matrix(R, 3, 3, range(9))                                     # optional - sage.rings.padics
+                sage: M                                                                 # optional - sage.rings.padics
                 [        0  ...00001  ...00002]
                 [ ...00003  ...00004 ...000010]
                 [ ...00011  ...00012  ...00013]
-                sage: M.charpoly()                                                                                      # optional - sage.rings.padics
+                sage: M.charpoly()                                                      # optional - sage.rings.padics
                 ...00001*x^3 + ...44423*x^2 + ...44412*x + ...00000
             """
             return M._charpoly_hessenberg(var)
@@ -114,8 +114,8 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: x = Zp(5)(50)                                                                                     # optional - sage.rings.padics
-                sage: x.valuation()                                                                                     # optional - sage.rings.padics
+                sage: x = Zp(5)(50)                                                     # optional - sage.rings.padics
+                sage: x.valuation()                                                     # optional - sage.rings.padics
                 2
             """
 
@@ -125,10 +125,10 @@ class DiscreteValuationRings(Category_singleton):
 
             TESTS::
 
-                sage: R.<q> = GF(5)[[]]                                                 # optional - sage.libs.pari
-                sage: (q^3).euclidean_degree()                                          # optional - sage.libs.pari
+                sage: R.<q> = GF(5)[[]]                                                 # optional - sage.rings.finite_rings
+                sage: (q^3).euclidean_degree()                                          # optional - sage.rings.finite_rings
                 3
-                sage: R(0).euclidean_degree()                                           # optional - sage.libs.pari
+                sage: R(0).euclidean_degree()                                           # optional - sage.rings.finite_rings
                 Traceback (most recent call last):
                 ...
                 ValueError: Euclidean degree of the zero element not defined
@@ -145,12 +145,12 @@ class DiscreteValuationRings(Category_singleton):
 
             TESTS::
 
-                sage: R.<q> = GF(5)[[]]                                                 # optional - sage.libs.pari
-                sage: (q^2 + q).quo_rem(q)                                              # optional - sage.libs.pari
+                sage: R.<q> = GF(5)[[]]                                                 # optional - sage.rings.finite_rings
+                sage: (q^2 + q).quo_rem(q)                                              # optional - sage.rings.finite_rings
                 (1 + q, 0)
-                sage: (q + 1).quo_rem(q^2)                                              # optional - sage.libs.pari
+                sage: (q + 1).quo_rem(q^2)                                              # optional - sage.rings.finite_rings
                 (0, 1 + q)
-                sage: q.quo_rem(0)                                                      # optional - sage.libs.pari
+                sage: q.quo_rem(0)                                                      # optional - sage.rings.finite_rings
                 Traceback (most recent call last):
                 ...
                 ZeroDivisionError: Euclidean division by the zero element not defined
@@ -170,12 +170,12 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: x = Zp(5)(50)                                                                                     # optional - sage.rings.padics
-                sage: x.is_unit()                                                                                       # optional - sage.rings.padics
+                sage: x = Zp(5)(50)                                                     # optional - sage.rings.padics
+                sage: x.is_unit()                                                       # optional - sage.rings.padics
                 False
 
-                sage: x = Zp(7)(50)                                                                                     # optional - sage.rings.padics
-                sage: x.is_unit()                                                                                       # optional - sage.rings.padics
+                sage: x = Zp(7)(50)                                                     # optional - sage.rings.padics
+                sage: x.is_unit()                                                       # optional - sage.rings.padics
                 True
             """
             return self.valuation() == 0
@@ -213,7 +213,7 @@ class DiscreteValuationFields(Category_singleton):
 
     EXAMPLES::
 
-        sage: Qp(7) in DiscreteValuationFields()                                                                        # optional - sage.rings.padics
+        sage: Qp(7) in DiscreteValuationFields()                                        # optional - sage.rings.padics
         True
         sage: TestSuite(DiscreteValuationFields()).run()
     """
@@ -235,7 +235,7 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: Qp(5).uniformizer()                                                                               # optional - sage.rings.padics
+                sage: Qp(5).uniformizer()                                               # optional - sage.rings.padics
                 5 + O(5^21)
             """
 
@@ -247,7 +247,7 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: Qp(5).residue_field()                                                                             # optional - sage.rings.padics
+                sage: Qp(5).residue_field()                                             # optional - sage.rings.padics
                 Finite Field of size 5
 
                 sage: K.<u> = LaurentSeriesRing(QQ)
@@ -261,17 +261,17 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: R.<t> = PowerSeriesRing(GF(5))                                    # optional - sage.libs.pari
-                sage: K = R.fraction_field()                                            # optional - sage.libs.pari
-                sage: H = matrix(K, 4, 4, [(t^(i+j)).add_bigoh(10)                      # optional - sage.libs.pari
+                sage: R.<t> = PowerSeriesRing(GF(5))                                    # optional - sage.rings.finite_rings
+                sage: K = R.fraction_field()                                            # optional - sage.rings.finite_rings
+                sage: H = matrix(K, 4, 4, [(t^(i+j)).add_bigoh(10)                      # optional - sage.rings.finite_rings
                 ....:                      for i in range(4) for j in range(4)])
-                sage: H                                                                 # optional - sage.libs.pari
+                sage: H                                                                 # optional - sage.rings.finite_rings
                 [  1 + O(t^10)   t + O(t^10) t^2 + O(t^10) t^3 + O(t^10)]
                 [  t + O(t^10) t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10)]
                 [t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10)]
                 [t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10) t^6 + O(t^10)]
-                sage: H.hessenbergize()                                                 # optional - sage.libs.pari
-                sage: H                                                                 # optional - sage.libs.pari
+                sage: H.hessenbergize()                                                 # optional - sage.rings.finite_rings
+                sage: H                                                                 # optional - sage.rings.finite_rings
                 [              1 + O(t^10)   t + t^3 + t^5 + O(t^10)             t^2 + O(t^10)             t^3 + O(t^10)]
                 [              t + O(t^10) t^2 + t^4 + t^6 + O(t^10)             t^3 + O(t^10)             t^4 + O(t^10)]
                 [                  O(t^10)                   O(t^10)                   O(t^10)                   O(t^10)]
@@ -279,14 +279,14 @@ class DiscreteValuationFields(Category_singleton):
 
             Another example over the p-adics::
 
-                sage: K = Qp(5, print_mode="digits", prec=5)                                                            # optional - sage.rings.padics
-                sage: H = matrix(K, 3, 3, range(9))                                                                     # optional - sage.rings.padics
-                sage: H                                                                                                 # optional - sage.rings.padics
+                sage: K = Qp(5, print_mode="digits", prec=5)                            # optional - sage.rings.padics
+                sage: H = matrix(K, 3, 3, range(9))                                     # optional - sage.rings.padics
+                sage: H                                                                 # optional - sage.rings.padics
                 [        0  ...00001  ...00002]
                 [ ...00003  ...00004 ...000010]
                 [ ...00011  ...00012  ...00013]
-                sage: H.hessenbergize()                                                                                 # optional - sage.rings.padics
-                sage: H                                                                                                 # optional - sage.rings.padics
+                sage: H.hessenbergize()                                                 # optional - sage.rings.padics
+                sage: H                                                                 # optional - sage.rings.padics
                 [        0  ...00010  ...00002]
                 [ ...00003  ...00024 ...000010]
                 [ ...00000  ...44440  ...44443]
@@ -302,7 +302,7 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: x = Qp(5)(50)                                                                                     # optional - sage.rings.padics
-                sage: x.valuation()                                                                                     # optional - sage.rings.padics
+                sage: x = Qp(5)(50)                                                     # optional - sage.rings.padics
+                sage: x.valuation()                                                     # optional - sage.rings.padics
                 2
             """

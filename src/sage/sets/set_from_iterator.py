@@ -947,8 +947,8 @@ class EnumeratedSetFromIterator_method_decorator():
         TESTS::
 
             sage: from sage.sets.set_from_iterator import set_from_method
-            sage: class A:
-            ....:  @set_from_method()    # indirect doctest
+            sage: class A:                # indirect doctest
+            ....:  @set_from_method()
             ....:  def f(self):
             ....:      return xsrange(3)
             sage: a = A()

@@ -41,35 +41,35 @@ three elements::
 
 Define the representation matrices (of one of the three dimensional irreducible representations)::
 
-    sage: m1 = matrix(L, [[u1, 0, 0], [0, u0, 0], [0, 0, u0]])                                      # optional - sage.libs.pari sage.modules
-    sage: m2 = matrix(L, [[(u0*q - u0)/(u0 - u1), (u0*q - u1)/(u0 - u1), 0],                        # optional - sage.libs.pari sage.modules
+    sage: m1 = matrix(L, [[u1, 0, 0], [0, u0, 0], [0, 0, u0]])                                      # optional - sage.modules
+    sage: m2 = matrix(L, [[(u0*q - u0)/(u0 - u1), (u0*q - u1)/(u0 - u1), 0],                        # optional - sage.modules
     ....:                 [(-u1*q + u0)/(u0 - u1), (-u1*q + u1)/(u0 - u1), 0],
     ....:                 [0, 0, -1]])
-    sage: m3 = matrix(L, [[-1, 0, 0],                                                               # optional - sage.libs.pari sage.modules
+    sage: m3 = matrix(L, [[-1, 0, 0],                                                               # optional - sage.modules
     ....:                 [0, u0*(1 - q)/(u1*q - u0), q*(u1 - u0)/(u1*q - u0)],
     ....:                 [0, (u1*q^2 - u0)/(u1*q - u0), (u1*q^ 2 - u1*q)/(u1*q - u0)]])
-    sage: m1.base_ring() == L                                                                       # optional - sage.libs.pari sage.modules
+    sage: m1.base_ring() == L                                                                       # optional - sage.modules
     True
 
 Check relations of the Ariki-Koike algebra::
 
-    sage: m1*m2*m1*m2 == m2*m1*m2*m1                                                                # optional - sage.libs.pari sage.modules
+    sage: m1*m2*m1*m2 == m2*m1*m2*m1                                                                # optional - sage.modules
     True
-    sage: m2*m3*m2 == m3*m2*m3                                                                      # optional - sage.libs.pari sage.modules
+    sage: m2*m3*m2 == m3*m2*m3                                                                      # optional - sage.modules
     True
-    sage: m1*m3 == m3*m1                                                                            # optional - sage.libs.pari sage.modules
+    sage: m1*m3 == m3*m1                                                                            # optional - sage.modules
     True
-    sage: m1**3 -(u0+u1+u2)*m1**2 +(u0*u1+u0*u2+u1*u2)*m1 - u0*u1*u2 == 0                           # optional - sage.libs.pari sage.modules
+    sage: m1**3 -(u0+u1+u2)*m1**2 +(u0*u1+u0*u2+u1*u2)*m1 - u0*u1*u2 == 0                           # optional - sage.modules
     True
-    sage: m2**2 -(q-1)*m2 - q == 0                                                                  # optional - sage.libs.pari sage.modules
+    sage: m2**2 -(q-1)*m2 - q == 0                                                                  # optional - sage.modules
     True
-    sage: m3**2 -(q-1)*m3 - q == 0                                                                  # optional - sage.libs.pari sage.modules
+    sage: m3**2 -(q-1)*m3 - q == 0                                                                  # optional - sage.modules
     True
-    sage: ~m1 in m1.parent()                                                                        # optional - sage.libs.pari sage.modules
+    sage: ~m1 in m1.parent()                                                                        # optional - sage.modules
     True
-    sage: ~m2 in m2.parent()                                                                        # optional - sage.libs.pari sage.modules
+    sage: ~m2 in m2.parent()                                                                        # optional - sage.modules
     True
-    sage: ~m3 in m3.parent()                                                                        # optional - sage.libs.pari sage.modules
+    sage: ~m3 in m3.parent()                                                                        # optional - sage.modules
     True
 
 Obtain specializations in positive characteristic::
@@ -141,11 +141,11 @@ Obtain specializations in characteristic 0::
             u1 |--> ybar
             u2 |--> zbar
             q |--> tbar
-    sage: mF1 = matrix({k:fF(v) for k, v in m1.dict().items()}); mF1                                # optional - sage.libs.singular sage.modules
+    sage: mF1 = matrix({k:fF(v) for k, v in m1.dict().items()}); mF1                                # optional - sage.modules
     [        ybar            0            0]
     [           0 -ybar - zbar            0]
     [           0            0 -ybar - zbar]
-    sage: mF1.base_ring() == F                                                                      # optional - sage.libs.singular sage.modules
+    sage: mF1.base_ring() == F                                                                      # optional - sage.modules
     True
 
 TESTS::
@@ -210,10 +210,10 @@ def normalize_extra_units(base_ring, add_units, warning=True):
         sage: p = b**2 - 5                                                                                              # optional - sage.libs.singular
         sage: p == (b-a)*(b+a)                                                                                          # optional - sage.libs.singular
         True
-        sage: normalize_extra_units(Q, [p])                                                                             # optional - sage.libs.pari sage.libs.singular
+        sage: normalize_extra_units(Q, [p])                                                                             # optional - sage.libs.pari
         doctest:...: UserWarning: Localization may not be represented uniquely
         [b^2 - 5]
-        sage: normalize_extra_units(Q, [p], warning=False)                                                              # optional - sage.libs.pari sage.libs.singular
+        sage: normalize_extra_units(Q, [p], warning=False)                                                              # optional - sage.libs.pari
         [b^2 - 5]
     """
     # convert to base ring

@@ -170,7 +170,8 @@ from sage.misc.lazy_attribute import lazy_attribute
 import sage.rings.abc
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.finite_rings.element_base import FiniteRingElement
-from sage.rings.power_series_ring_element import PowerSeries
+from .polynomial_real_mpfr_dense import PolynomialRealDense
+from .polynomial_integer_dense_flint import Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
@@ -1826,7 +1827,7 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
                     if implementation == 'NTL':
                         try:
                             from sage.rings.polynomial.polynomial_integer_dense_ntl \
-                              import Polynomial_integer_dense_ntl as element_class
+                                import Polynomial_integer_dense_ntl as element_class
                         except ImportError:
                             if given_implementation:
                                 raise
@@ -1835,7 +1836,7 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
                     elif implementation == 'FLINT':
                         try:
                             from .polynomial_integer_dense_flint \
-                              import Polynomial_integer_dense_flint as element_class
+                                import Polynomial_integer_dense_flint as element_class
                         except ImportError:
                             if given_implementation:
                                 raise
@@ -2051,8 +2052,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             if element_class:
                 return element_class
             if sparse:
-                from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse_field
-                return Polynomial_generic_sparse_field
+                return polynomial_element_generic.Polynomial_generic_sparse_field
             if isinstance(base_ring, rational_field.RationalField):
                 try:
                     from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
@@ -2890,7 +2890,7 @@ class PolynomialRing_cdvr(PolynomialRing_integral_domain):
             False
 
             sage: S.<x> = Zp(5)[]                                                                                       # optional - sage.rings.padics
-            sage: isinstance(S, PolynomialRing_cdvr)                                                                    # optional - sage.rings.padics
+            sage: isinstance(S, PolynomialRing_cdvr)
             True
         """
         if element_class is None:

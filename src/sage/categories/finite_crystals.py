@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs, sage.combinat
+# sage.doctest: optional - sage.combinat sage.graphs
 r"""
 Finite Crystals
 """

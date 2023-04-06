@@ -196,32 +196,37 @@ class Semigroups(CategoryWithAxiom):
 
             We start with the (right) Cayley graphs of some classical groups::
 
-                sage: D4 = DihedralGroup(4); D4                                                                         # optional - sage.groups
+                sage: D4 = DihedralGroup(4); D4                                         # optional - sage.groups
                 Dihedral group of order 8 as a permutation group
-                sage: G = D4.cayley_graph()                                                                             # optional - sage.groups sage.graphs
-                sage: show(G, color_by_label=True, edge_labels=True)                                                    # optional - sage.groups sage.graphs sage.plot
-                sage: A5 = AlternatingGroup(5); A5                                                                      # optional - sage.groups
+                sage: G = D4.cayley_graph()                                             # optional - sage.groups sage.graphs
+                sage: show(G, color_by_label=True, edge_labels=True)                    # optional - sage.groups sage.graphs sage.plot
+                sage: A5 = AlternatingGroup(5); A5                                      # optional - sage.groups
                 Alternating group of order 5!/2 as a permutation group
-                sage: G = A5.cayley_graph()                                                                             # optional - sage.groups sage.graphs
-                sage: G.show3d(color_by_label=True, edge_size=0.01, edge_size2=0.02, vertex_size=0.03)                  # optional - sage.groups sage.graphs sage.plot
-                sage: G.show3d(vertex_size=0.03, edge_size=0.01, edge_size2=0.02,                                       # optional - sage.groups sage.graphs sage.plot
-                ....:          vertex_colors={(1,1,1):G.vertices(sort=True)}, bgcolor=(0,0,0), color_by_label=True,
-                ....:          xres=700, yres=700, iterations=200) # long time (less than a minute)
-                sage: G.num_edges()                                                                                     # optional - sage.groups sage.graphs
+                sage: G = A5.cayley_graph()                                             # optional - sage.groups sage.graphs
+                sage: G.show3d(color_by_label=True, edge_size=0.01,                     # optional - sage.groups sage.graphs sage.plot
+                ....:          edge_size2=0.02, vertex_size=0.03)
+                sage: G.show3d(vertex_size=0.03,  # long time (less than a minute)      # optional - sage.groups sage.graphs sage.plot
+                ....:          edge_size=0.01, edge_size2=0.02,
+                ....:          vertex_colors={(1,1,1): G.vertices(sort=True)},
+                ....:          bgcolor=(0,0,0), color_by_label=True,
+                ....:          xres=700, yres=700, iterations=200)
+                sage: G.num_edges()                                                     # optional - sage.groups sage.graphs
                 120
 
-                sage: w = WeylGroup(['A', 3])                                                                           # optional - sage.combinat sage.groups
-                sage: d = w.cayley_graph(); d                                                                           # optional - sage.combinat sage.groups sage.graphs
+                sage: w = WeylGroup(['A', 3])                                           # optional - sage.combinat sage.groups
+                sage: d = w.cayley_graph(); d                                           # optional - sage.combinat sage.groups sage.graphs
                 Digraph on 24 vertices
-                sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)                                   # optional - sage.combinat sage.groups sage.graphs sage.plot
+                sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)   # optional - sage.combinat sage.groups sage.graphs sage.plot
 
             Alternative generators may be specified::
 
-                sage: G = A5.cayley_graph(generators=[A5.gens()[0]])                                                    # optional - sage.groups sage.graphs
-                sage: G.num_edges()                                                                                     # optional - sage.groups sage.graphs
+                sage: G = A5.cayley_graph(generators=[A5.gens()[0]])                    # optional - sage.groups sage.graphs
+                sage: G.num_edges()                                                     # optional - sage.groups sage.graphs
                 60
-                sage: g = PermutationGroup([(i+1, j+1) for i in range(5) for j in range(5) if j != i])                  # optional - sage.groups sage.graphs
-                sage: g.cayley_graph(generators=[(1,2), (2,3)])                                                         # optional - sage.groups sage.graphs
+                sage: g = PermutationGroup([(i + 1, j + 1)                              # optional - sage.groups sage.graphs
+                ....:                       for i in range(5)
+                ....:                       for j in range(5) if j != i])
+                sage: g.cayley_graph(generators=[(1,2), (2,3)])                         # optional - sage.groups sage.graphs
                 Digraph on 120 vertices
 
             If ``elements`` is specified, then only the subgraph
@@ -230,48 +235,50 @@ class Semigroups(CategoryWithAxiom):
             the elements of length at most 3::
 
                 sage: M = Monoids().example(); M
-                An example of a monoid: the free monoid generated by ('a', 'b', 'c', 'd')
-                sage: elements = [M.prod(w)                                                                             # optional - sage.combinat
-                ....:             for w in sum((list(Words(M.semigroup_generators(), k)) for k in range(4)), [])]
-                sage: G = M.cayley_graph(elements=elements)                                                             # optional - sage.combinat sage.graphs
-                sage: G.num_verts(), G.num_edges()                                                                      # optional - sage.combinat sage.graphs
+                An example of a monoid:
+                 the free monoid generated by ('a', 'b', 'c', 'd')
+                sage: elements = [M.prod(w)                                             # optional - sage.combinat
+                ....:             for w in sum((list(Words(M.semigroup_generators(), k))
+                ....:                           for k in range(4)), [])]
+                sage: G = M.cayley_graph(elements=elements)                             # optional - sage.combinat sage.graphs
+                sage: G.num_verts(), G.num_edges()                                      # optional - sage.combinat sage.graphs
                 (85, 84)
-                sage: G.show3d(color_by_label=True, edge_size=0.001, vertex_size=0.01)                                  # optional - sage.combinat sage.graphs sage.plot
+                sage: G.show3d(color_by_label=True, edge_size=0.001, vertex_size=0.01)  # optional - sage.combinat sage.graphs sage.plot
 
             We now illustrate the ``side`` and ``simple`` options on
             a semigroup::
 
                 sage: S = FiniteSemigroups().example(alphabet=('a', 'b'))
-                sage: g = S.cayley_graph(simple=True)                                                                   # optional - sage.graphs
-                sage: g.vertices(sort=True)                                                                             # optional - sage.graphs
+                sage: g = S.cayley_graph(simple=True)                                   # optional - sage.graphs
+                sage: g.vertices(sort=True)                                             # optional - sage.graphs
                 ['a', 'ab', 'b', 'ba']
-                sage: g.edges(sort=True)                                                                                # optional - sage.graphs
+                sage: g.edges(sort=True)                                                # optional - sage.graphs
                 [('a', 'ab', None), ('b', 'ba', None)]
 
             ::
 
-                sage: g = S.cayley_graph(side="left", simple=True)                                                      # optional - sage.graphs
-                sage: g.vertices(sort=True)                                                                             # optional - sage.graphs
+                sage: g = S.cayley_graph(side="left", simple=True)                      # optional - sage.graphs
+                sage: g.vertices(sort=True)                                             # optional - sage.graphs
                 ['a', 'ab', 'b', 'ba']
-                sage: g.edges(sort=True)                                                                                # optional - sage.graphs
+                sage: g.edges(sort=True)                                                # optional - sage.graphs
                 [('a', 'ba', None), ('ab', 'ba', None), ('b', 'ab', None),
                 ('ba', 'ab', None)]
 
             ::
 
-                sage: g = S.cayley_graph(side="twosided", simple=True)                                                  # optional - sage.graphs
-                sage: g.vertices(sort=True)                                                                             # optional - sage.graphs
+                sage: g = S.cayley_graph(side="twosided", simple=True)                  # optional - sage.graphs
+                sage: g.vertices(sort=True)                                             # optional - sage.graphs
                 ['a', 'ab', 'b', 'ba']
-                sage: g.edges(sort=True)                                                                                # optional - sage.graphs
+                sage: g.edges(sort=True)                                                # optional - sage.graphs
                 [('a', 'ab', None), ('a', 'ba', None), ('ab', 'ba', None),
                 ('b', 'ab', None), ('b', 'ba', None), ('ba', 'ab', None)]
 
             ::
 
-                sage: g = S.cayley_graph(side="twosided")                                                               # optional - sage.graphs
-                sage: g.vertices(sort=True)                                                                             # optional - sage.graphs
+                sage: g = S.cayley_graph(side="twosided")                               # optional - sage.graphs
+                sage: g.vertices(sort=True)                                             # optional - sage.graphs
                 ['a', 'ab', 'b', 'ba']
-                sage: g.edges(sort=True)                                                                                # optional - sage.graphs
+                sage: g.edges(sort=True)                                                # optional - sage.graphs
                 [('a', 'a', (0, 'left')), ('a', 'a', (0, 'right')), ('a', 'ab', (1, 'right')), ('a', 'ba', (1, 'left')), ('ab', 'ab', (0, 'left')), ('ab', 'ab', (0, 'right')), ('ab', 'ab', (1, 'right')), ('ab', 'ba', (1, 'left')), ('b', 'ab', (0, 'left')), ('b', 'b', (1, 'left')), ('b', 'b', (1, 'right')), ('b', 'ba', (0, 'right')), ('ba', 'ab', (0, 'left')), ('ba', 'ba', (0, 'right')), ('ba', 'ba', (1, 'left')), ('ba', 'ba', (1, 'right'))]
 
             ::
@@ -378,51 +385,52 @@ class Semigroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: R = IntegerModRing(15)
-                sage: M = R.subsemigroup([R(3), R(5)]); M                                                               # optional - sage.groups
+                sage: M = R.subsemigroup([R(3), R(5)]); M                               # optional - sage.groups
                 A subsemigroup of (Ring of integers modulo 15) with 2 generators
-                sage: M.list()                                                                                          # optional - sage.groups
+                sage: M.list()                                                          # optional - sage.groups
                 [3, 5, 9, 0, 10, 12, 6]
 
             By default, `M` is just in the category of subsemigroups::
 
-                sage: M in Semigroups().Subobjects()                                                                    # optional - sage.groups
+                sage: M in Semigroups().Subobjects()                                    # optional - sage.groups
                 True
 
             In the following example, we specify that `M` is a
             submonoid of the finite monoid `R` (it shares the same
             unit), and a group by itself::
 
-                sage: M = R.subsemigroup([R(-1)],                                                                       # optional - sage.groups
+                sage: M = R.subsemigroup([R(-1)],                                       # optional - sage.groups
                 ....:     category=Monoids().Finite().Subobjects() & Groups()); M
                 A submonoid of (Ring of integers modulo 15) with 1 generators
-                sage: M.list()                                                                                          # optional - sage.groups
+                sage: M.list()                                                          # optional - sage.groups
                 [1, 14]
-                sage: M.one()                                                                                           # optional - sage.groups
+                sage: M.one()                                                           # optional - sage.groups
                 1
 
-            In the following example `M` is a group; however its unit
+            In the following example, `M` is a group; however, its unit
             does not coincide with that of `R`, so `M` is only a
             subsemigroup, and we need to specify its unit explicitly::
 
-                sage: M = R.subsemigroup([R(5)],                                                                        # optional - sage.groups
+                sage: M = R.subsemigroup([R(5)],                                        # optional - sage.groups
                 ....:     category=Semigroups().Finite().Subobjects() & Groups()); M
                 Traceback (most recent call last):
                 ...
-                ValueError: For a monoid which is just a subsemigroup, the unit should be specified
+                ValueError: For a monoid which is just a subsemigroup,
+                the unit should be specified
 
-                sage: M = R.subsemigroup([R(5)], one=R(10),                                                             # optional - sage.groups
+                sage: M = R.subsemigroup([R(5)], one=R(10),                             # optional - sage.groups
                 ....:     category=Semigroups().Finite().Subobjects() & Groups()); M
                 A subsemigroup of (Ring of integers modulo 15) with 1 generators
-                sage: M in Groups()                                                                                     # optional - sage.groups
+                sage: M in Groups()                                                     # optional - sage.groups
                 True
-                sage: M.list()                                                                                          # optional - sage.groups
+                sage: M.list()                                                          # optional - sage.groups
                 [10, 5]
-                sage: M.one()                                                                                           # optional - sage.groups
+                sage: M.one()                                                           # optional - sage.groups
                 10
 
             TESTS::
 
-                sage: TestSuite(M).run()                                                                                # optional - sage.groups
+                sage: TestSuite(M).run()                                                # optional - sage.groups
                 Failure in _test_inverse:
                 Traceback (most recent call last):
                 ...
@@ -452,8 +460,8 @@ class Semigroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = groups.permutation.Dihedral(4)                                                                # optional - sage.groups
-                sage: G.trivial_representation()                                                                        # optional - sage.groups
+                sage: G = groups.permutation.Dihedral(4)                                # optional - sage.groups
+                sage: G.trivial_representation()                                        # optional - sage.groups
                 Trivial representation of Dihedral group of order 8
                  as a permutation group over Integer Ring
             """
@@ -472,8 +480,8 @@ class Semigroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = groups.permutation.Dihedral(4)                                                                # optional - sage.groups
-                sage: G.regular_representation()                                                                        # optional - sage.groups
+                sage: G = groups.permutation.Dihedral(4)                                # optional - sage.groups
+                sage: G.regular_representation()                                        # optional - sage.groups
                 Left Regular Representation of Dihedral group of order 8
                  as a permutation group over Integer Ring
             """
@@ -883,7 +891,7 @@ class Semigroups(CategoryWithAxiom):
                     the left regular band generated by ('a', 'b', 'c', 'd')
                     sage: M.semigroup_generators()
                     Family ('a', 'b', 'c', 'd')
-                    sage: M.algebra(ZZ).algebra_generators()                                                            # optional - sage.modules
+                    sage: M.algebra(ZZ).algebra_generators()                            # optional - sage.modules
                     Family (B['a'], B['b'], B['c'], B['d'])
                 """
                 return self.basis().keys().semigroup_generators().map(self.monomial)
@@ -898,12 +906,12 @@ class Semigroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: a, b = SL2Z.algebra(ZZ).gens(); a, b                                                          # optional - sage.groups sage.modules
+                    sage: a, b = SL2Z.algebra(ZZ).gens(); a, b                          # optional - sage.groups sage.modules
                     ([ 0 -1]
                      [ 1  0],
                      [1 1]
                      [0 1])
-                    sage: 2*a + b                                                                                       # optional - sage.groups sage.modules
+                    sage: 2*a + b                                                       # optional - sage.groups sage.modules
                     2*[ 0 -1]
                       [ 1  0]
                     +
@@ -918,9 +926,9 @@ class Semigroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: SL2Z.algebra(ZZ).ngens()                                                                      # optional - sage.groups sage.modules
+                    sage: SL2Z.algebra(ZZ).ngens()                                      # optional - sage.groups sage.modules
                     2
-                    sage: DihedralGroup(4).algebra(RR).ngens()                                                          # optional - sage.groups sage.modules
+                    sage: DihedralGroup(4).algebra(RR).ngens()                          # optional - sage.groups sage.modules
                     2
                 """
                 return self.basis().keys().ngens()
@@ -931,8 +939,8 @@ class Semigroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: A = GL(3, GF(7)).algebra(ZZ)                                                                  # optional - sage.groups sage.libs.pari sage.modules
-                    sage: A.gen(0)                                                                                      # optional - sage.groups sage.libs.pari sage.modules
+                    sage: A = GL(3, GF(7)).algebra(ZZ)                                  # optional - sage.groups sage.libs.pari sage.modules
+                    sage: A.gen(0)                                                      # optional - sage.groups sage.libs.pari sage.modules
                     [3 0 0]
                     [0 1 0]
                     [0 0 1]
@@ -951,10 +959,11 @@ class Semigroups(CategoryWithAxiom):
                 EXAMPLES::
 
                     sage: S = FiniteSemigroups().example(); S
-                    An example of a finite semigroup: the left regular band generated by ('a', 'b', 'c', 'd')
-                    sage: A = S.algebra(QQ)                                                                             # optional - sage.modules
-                    sage: a, b, c, d = A.algebra_generators()                                                           # optional - sage.modules
-                    sage: a * b + b * d * c * d                                                                         # optional - sage.modules
+                    An example of a finite semigroup:
+                     the left regular band generated by ('a', 'b', 'c', 'd')
+                    sage: A = S.algebra(QQ)                                             # optional - sage.modules
+                    sage: a, b, c, d = A.algebra_generators()                           # optional - sage.modules
+                    sage: a * b + b * d * c * d                                         # optional - sage.modules
                     B['ab'] + B['bdc']
                 """
                 return self.monomial(g1 * g2)
@@ -969,10 +978,10 @@ class Semigroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: G = groups.permutation.Dihedral(4)                                                            # optional - sage.groups
-                    sage: A = G.algebra(QQ)                                                                             # optional - sage.groups sage.modules
-                    sage: V = A.trivial_representation()                                                                # optional - sage.groups sage.modules
-                    sage: V == G.trivial_representation(QQ)                                                             # optional - sage.groups sage.modules
+                    sage: G = groups.permutation.Dihedral(4)                            # optional - sage.groups
+                    sage: A = G.algebra(QQ)                                             # optional - sage.groups sage.modules
+                    sage: V = A.trivial_representation()                                # optional - sage.groups sage.modules
+                    sage: V == G.trivial_representation(QQ)                             # optional - sage.groups sage.modules
                     True
                 """
                 S = self.basis().keys()
@@ -989,10 +998,10 @@ class Semigroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: G = groups.permutation.Dihedral(4)                                                            # optional - sage.groups
-                    sage: A = G.algebra(QQ)                                                                             # optional - sage.groups sage.modules
-                    sage: V = A.regular_representation()                                                                # optional - sage.groups sage.modules
-                    sage: V == G.regular_representation(QQ)                                                             # optional - sage.groups sage.modules
+                    sage: G = groups.permutation.Dihedral(4)                            # optional - sage.groups
+                    sage: A = G.algebra(QQ)                                             # optional - sage.groups sage.modules
+                    sage: V = A.regular_representation()                                # optional - sage.groups sage.modules
+                    sage: V == G.regular_representation(QQ)                             # optional - sage.groups sage.modules
                     True
                 """
                 S = self.basis().keys()

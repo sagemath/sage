@@ -196,40 +196,44 @@ cdef class Map(Element):
 
         EXAMPLES::
 
-            sage: Q = QuadraticField(-5)                                                                                # optional - sage.rings.number_field
-            sage: phi = CDF._internal_convert_map_from(Q)                                                               # optional - sage.rings.number_field
-            sage: print(phi.parent())                                                                                   # optional - sage.rings.number_field
+            sage: Q = QuadraticField(-5)                                                # optional - sage.rings.number_field
+            sage: phi = CDF._internal_convert_map_from(Q)                               # optional - sage.rings.number_field
+            sage: print(phi.parent())                                                   # optional - sage.rings.number_field
             Set of field embeddings
-             from Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
-             to Complex Double Field
+             from Number Field in a with defining polynomial x^2 + 5
+                  with a = 2.236067977499790?*I
+               to Complex Double Field
 
         We now demonstrate that the reference to the coercion map `\phi` does
         not prevent `Q` from being garbage collected::
 
             sage: import gc
-            sage: del Q                                                                                                 # optional - sage.rings.number_field
+            sage: del Q                                                                 # optional - sage.rings.number_field
             sage: _ = gc.collect()
-            sage: phi.parent()                                                                                          # optional - sage.rings.number_field
+            sage: phi.parent()                                                          # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
-            ValueError: This map is in an invalid state, the domain has been garbage collected
+            ValueError: This map is in an invalid state,
+            the domain has been garbage collected
 
         You can still obtain copies of the maps used by the coercion system with
         strong references::
 
-            sage: Q = QuadraticField(-5)                                                                                # optional - sage.rings.number_field
-            sage: phi = CDF.convert_map_from(Q)                                                                         # optional - sage.rings.number_field
-            sage: print(phi.parent())                                                                                   # optional - sage.rings.number_field
+            sage: Q = QuadraticField(-5)                                                # optional - sage.rings.number_field
+            sage: phi = CDF.convert_map_from(Q)                                         # optional - sage.rings.number_field
+            sage: print(phi.parent())                                                   # optional - sage.rings.number_field
             Set of field embeddings
-             from Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
-             to Complex Double Field
+             from Number Field in a with defining polynomial x^2 + 5
+                  with a = 2.236067977499790?*I
+               to Complex Double Field
             sage: import gc
-            sage: del Q                                                                                                 # optional - sage.rings.number_field
+            sage: del Q                                                                 # optional - sage.rings.number_field
             sage: _ = gc.collect()
-            sage: phi.parent()                                                                                          # optional - sage.rings.number_field
+            sage: phi.parent()                                                          # optional - sage.rings.number_field
             Set of field embeddings
-             from Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
-             to Complex Double Field
+             from Number Field in a with defining polynomial x^2 + 5
+                  with a = 2.236067977499790?*I
+               to Complex Double Field
         """
         if self._parent is None:
             D = self.domain()
@@ -752,11 +756,11 @@ cdef class Map(Element):
         ``pushforward`` fails, ``_call_`` is tried after conversion::
 
             sage: g = FOO(QQ, ZZ)
-            sage: g(SR(3))                                                      # optional - sage.symbolic
+            sage: g(SR(3))                                                              # optional - sage.symbolic
             pushforward Symbolic Ring
             _call_ Rational Field
             3
-            sage: g(SR(3), exponent=2)                                          # optional - sage.symbolic
+            sage: g(SR(3), exponent=2)                                                  # optional - sage.symbolic
             pushforward Symbolic Ring
             _call_with_args Rational Field
             9
@@ -1128,7 +1132,8 @@ cdef class Map(Element):
             sage: mor.extend_domain(ZZ['x'])
             Traceback (most recent call last):
             ...
-            TypeError: No coercion from Univariate Polynomial Ring in x over Integer Ring to Real Double Field
+            TypeError: No coercion from Univariate Polynomial Ring in x over Integer Ring
+            to Real Double Field
         """
         D = self.domain()
         if D is None:
@@ -1168,7 +1173,7 @@ cdef class Map(Element):
                       Native morphism:
                       From: Rational Field
                       To:   Real Double Field
-            sage: mor.extend_codomain(GF(7))                                                                            # optional - sage.libs.pari
+            sage: mor.extend_codomain(GF(7))                                            # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: No coercion from Rational Field to Finite Field of size 7
@@ -1223,14 +1228,14 @@ cdef class Map(Element):
             ...
             TypeError: self must be an endomorphism
 
-            sage: K.<a> = NumberField(x^4 - 5*x + 5)                                                                    # optional - sage.rings.number_field
-            sage: C5.<z> = CyclotomicField(5)                                                                           # optional - sage.rings.number_field
-            sage: tau = K.hom([z - z^2]); tau                                                                           # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^4 - 5*x + 5)                                    # optional - sage.rings.number_field
+            sage: C5.<z> = CyclotomicField(5)                                           # optional - sage.rings.number_field
+            sage: tau = K.hom([z - z^2]); tau                                           # optional - sage.rings.number_field
             Ring morphism:
               From: Number Field in a with defining polynomial x^4 - 5*x + 5
               To:   Cyclotomic Field of order 5 and degree 4
               Defn: a |--> -z^2 + z
-            sage: tau^-1                                                                                                # optional - sage.rings.number_field
+            sage: tau^-1                                                                # optional - sage.rings.number_field
             Ring morphism:
               From: Cyclotomic Field of order 5 and degree 4
               To:   Number Field in a with defining polynomial x^4 - 5*x + 5
@@ -1857,24 +1862,26 @@ cdef class FormalCompositeMap(Map):
 
         EXAMPLES::
 
-            sage: V1 = QQ^2                                                                                             # optional - sage.modules
-            sage: V2 = QQ^3                                                                                             # optional - sage.modules
-            sage: phi1 = (QQ^1).hom(Matrix([[1, 1]]), V1)                                                               # optional - sage.modules
-            sage: phi2 = V1.hom(Matrix([[1, 2, 3], [4, 5, 6]]), V2)                                                     # optional - sage.modules
+            sage: V1 = QQ^2                                                             # optional - sage.modules
+            sage: V2 = QQ^3                                                             # optional - sage.modules
+            sage: phi1 = (QQ^1).hom(Matrix([[1, 1]]), V1)                               # optional - sage.modules
+            sage: phi2 = V1.hom(Matrix([[1, 2, 3], [4, 5, 6]]), V2)                     # optional - sage.modules
 
         If both constituents are injective, the composition is injective::
 
             sage: from sage.categories.map import FormalCompositeMap
-            sage: c1 = FormalCompositeMap(Hom(QQ^1, V2, phi1.category_for()), phi1, phi2)                               # optional - sage.modules
-            sage: c1.is_injective()                                                                                     # optional - sage.modules
+            sage: c1 = FormalCompositeMap(Hom(QQ^1, V2, phi1.category_for()),           # optional - sage.modules
+            ....:                         phi1, phi2)
+            sage: c1.is_injective()                                                     # optional - sage.modules
             True
 
         If it cannot be determined whether the composition is injective,
         an error is raised::
 
-            sage: psi1 = V2.hom(Matrix([[1, 2], [3, 4], [5, 6]]), V1)                                                   # optional - sage.modules
-            sage: c2 = FormalCompositeMap(Hom(V1, V1, phi2.category_for()), phi2, psi1)                                 # optional - sage.modules
-            sage: c2.is_injective()                                                                                     # optional - sage.modules
+            sage: psi1 = V2.hom(Matrix([[1, 2], [3, 4], [5, 6]]), V1)                   # optional - sage.modules
+            sage: c2 = FormalCompositeMap(Hom(V1, V1, phi2.category_for()),             # optional - sage.modules
+            ....:                         phi2, psi1)
+            sage: c2.is_injective()                                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: not enough information to deduce injectivity
@@ -1882,17 +1889,18 @@ cdef class FormalCompositeMap(Map):
         If the first map is surjective and the second map is not injective,
         then the composition is not injective::
 
-            sage: psi2 = V1.hom([[1], [1]], QQ^1)                                                                       # optional - sage.modules
-            sage: c3 = FormalCompositeMap(Hom(V2, QQ^1, phi2.category_for()), psi2, psi1)                               # optional - sage.modules
-            sage: c3.is_injective()                                                                                     # optional - sage.modules
+            sage: psi2 = V1.hom([[1], [1]], QQ^1)                                       # optional - sage.modules
+            sage: c3 = FormalCompositeMap(Hom(V2, QQ^1, phi2.category_for()),           # optional - sage.modules
+            ....:                         psi2, psi1)
+            sage: c3.is_injective()                                                     # optional - sage.modules
             False
 
         TESTS:
 
         Check that :trac:`23205` has been resolved::
 
-            sage: f = QQ.hom(QQbar) * ZZ.hom(QQ)                                                                        # optional - sage.rings.number_field
-            sage: f.is_injective()                                                                                      # optional - sage.rings.number_field
+            sage: f = QQ.hom(QQbar) * ZZ.hom(QQ)                                        # optional - sage.rings.number_field
+            sage: f.is_injective()                                                      # optional - sage.rings.number_field
             True
 
         """
@@ -1929,35 +1937,38 @@ cdef class FormalCompositeMap(Map):
         EXAMPLES::
 
             sage: from sage.categories.map import FormalCompositeMap
-            sage: V3 = QQ^3                                                                                             # optional - sage.modules
-            sage: V2 = QQ^2                                                                                             # optional - sage.modules
-            sage: V1 = QQ^1                                                                                             # optional - sage.modules
+            sage: V3 = QQ^3                                                             # optional - sage.modules
+            sage: V2 = QQ^2                                                             # optional - sage.modules
+            sage: V1 = QQ^1                                                             # optional - sage.modules
 
         If both maps are surjective, the composition is surjective::
 
-            sage: phi32 = V3.hom(Matrix([[1, 2], [3, 4], [5, 6]]), V2)                                                  # optional - sage.modules
-            sage: phi21 = V2.hom(Matrix([[1], [1]]), V1)                                                                # optional - sage.modules
-            sage: c_phi = FormalCompositeMap(Hom(V3, V1, phi32.category_for()), phi32, phi21)                           # optional - sage.modules
-            sage: c_phi.is_surjective()                                                                                 # optional - sage.modules
+            sage: phi32 = V3.hom(Matrix([[1, 2], [3, 4], [5, 6]]), V2)                  # optional - sage.modules
+            sage: phi21 = V2.hom(Matrix([[1], [1]]), V1)                                # optional - sage.modules
+            sage: c_phi = FormalCompositeMap(Hom(V3, V1, phi32.category_for()),         # optional - sage.modules
+            ....:                            phi32, phi21)
+            sage: c_phi.is_surjective()                                                 # optional - sage.modules
             True
 
         If the second map is not surjective, the composition is not
         surjective::
 
-            sage: FormalCompositeMap(Hom(V3, V1, phi32.category_for()),                                                 # optional - sage.modules
-            ....:                    phi32, V2.hom(Matrix([[0], [0]]), V1)).is_surjective()
+            sage: FormalCompositeMap(Hom(V3, V1, phi32.category_for()),                 # optional - sage.modules
+            ....:                    phi32,
+            ....:                    V2.hom(Matrix([[0], [0]]), V1)).is_surjective()
             False
 
         If the second map is an isomorphism and the first map is not
         surjective, then the composition is not surjective::
 
-            sage: FormalCompositeMap(Hom(V2, V1, phi32.category_for()),                                                 # optional - sage.modules
-            ....:                    V2.hom(Matrix([[0], [0]]), V1), V1.hom(Matrix([[1]]), V1)).is_surjective()
+            sage: FormalCompositeMap(Hom(V2, V1, phi32.category_for()),                 # optional - sage.modules
+            ....:                    V2.hom(Matrix([[0], [0]]), V1),
+            ....:                    V1.hom(Matrix([[1]]), V1)).is_surjective()
             False
 
         Otherwise, surjectivity of the composition cannot be determined::
 
-            sage: FormalCompositeMap(Hom(V2, V1, phi32.category_for()),                                                 # optional - sage.modules
+            sage: FormalCompositeMap(Hom(V2, V1, phi32.category_for()),                 # optional - sage.modules
             ....:     V2.hom(Matrix([[1, 1], [1, 1]]), V2),
             ....:     V2.hom(Matrix([[1], [1]]), V1)).is_surjective()
             Traceback (most recent call last):
@@ -1999,8 +2010,8 @@ cdef class FormalCompositeMap(Map):
         EXAMPLES::
 
             sage: f = QQ.coerce_map_from(ZZ)
-            sage: g = MatrixSpace(QQ, 2, 2).coerce_map_from(QQ)                                                         # optional - sage.modules
-            sage: list((g * f).domains())                                                                               # optional - sage.modules
+            sage: g = MatrixSpace(QQ, 2, 2).coerce_map_from(QQ)                         # optional - sage.modules
+            sage: list((g * f).domains())                                               # optional - sage.modules
             [Integer Ring, Rational Field]
         """
         for f in self.__list:
@@ -2034,9 +2045,9 @@ cdef class FormalCompositeMap(Map):
         of :class:`sage.rings.polynomial.polynomial_element.Polynomial`
         before (see comment there)::
 
-            sage: k = GF(47)                                                                                            # optional - sage.libs.pari
-            sage: R.<x> = PolynomialRing(k)                                                                             # optional - sage.libs.pari
-            sage: R.coerce_map_from(ZZ).section()                                                                       # optional - sage.libs.pari
+            sage: k = GF(47)                                                            # optional - sage.rings.finite_rings
+            sage: R.<x> = PolynomialRing(k)                                             # optional - sage.rings.finite_rings
+            sage: R.coerce_map_from(ZZ).section()                                       # optional - sage.rings.finite_rings
             Composite map:
               From: Univariate Polynomial Ring in x over Finite Field of size 47
               To:   Integer Ring
@@ -2047,9 +2058,9 @@ cdef class FormalCompositeMap(Map):
                       Lifting map:
                       From: Finite Field of size 47
                       To:   Integer Ring
-            sage: ZZ(R(45))                 # indirect doctest                                                          # optional - sage.libs.pari
+            sage: ZZ(R(45))                 # indirect doctest                          # optional - sage.rings.finite_rings
             45
-            sage: ZZ(3*x + 45)              # indirect doctest                                                          # optional - sage.libs.pari
+            sage: ZZ(3*x + 45)              # indirect doctest                          # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: not a constant polynomial

@@ -184,7 +184,8 @@ def list_function(x):
         '\\left[1, 2, 3\\right]'
         sage: latex([1,2,3])  # indirect doctest
         \left[1, 2, 3\right]
-        sage: latex([Matrix(ZZ, 3, range(9)), Matrix(ZZ, 3, range(9))]) # indirect doctest          # optional - sage.modules
+        sage: latex([Matrix(ZZ, 3, range(9)),   # indirect doctest                      # optional - sage.modules
+        ....:        Matrix(ZZ, 3, range(9))])
         \left[\left(\begin{array}{rrr}
         0 & 1 & 2 \\
         3 & 4 & 5 \\
@@ -367,11 +368,11 @@ def dict_function(x):
     EXAMPLES::
 
         sage: from sage.misc.latex import dict_function
-        sage: x,y,z = var('x,y,z')                                                                  # optional - sage.symbolic
-        sage: print(dict_function({x/2: y^2}))                                                      # optional - sage.symbolic
+        sage: x,y,z = var('x,y,z')                                                      # optional - sage.symbolic
+        sage: print(dict_function({x/2: y^2}))                                          # optional - sage.symbolic
         \left\{\frac{1}{2} \, x : y^{2}\right\}
-        sage: d = {(1,2,x^2): [sin(z^2), y/2]}                                                      # optional - sage.symbolic
-        sage: latex(d)                                                                              # optional - sage.symbolic
+        sage: d = {(1,2,x^2): [sin(z^2), y/2]}                                          # optional - sage.symbolic
+        sage: latex(d)                                                                  # optional - sage.symbolic
         \left\{\left(1, 2, x^{2}\right) :
                \left[\sin\left(z^{2}\right), \frac{1}{2} \, y\right]\right\}
     """
@@ -450,9 +451,9 @@ class LatexExpr(str):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)                                                                       # optional - sage.symbolic
+        sage: latex(x^20 + 1)                                                           # optional - sage.symbolic
         x^{20} + 1
-        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")                                                   # optional - sage.symbolic
+        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")                                       # optional - sage.symbolic
         \frac{x^2 + 1}{x - 2}
 
     ``LatexExpr`` simply converts to string without doing anything
@@ -465,15 +466,15 @@ class LatexExpr(str):
 
     The result of :func:`latex` is of type ``LatexExpr``::
 
-        sage: L = latex(x^20 + 1)                                                                   # optional - sage.symbolic
-        sage: L                                                                                     # optional - sage.symbolic
+        sage: L = latex(x^20 + 1)                                                       # optional - sage.symbolic
+        sage: L                                                                         # optional - sage.symbolic
         x^{20} + 1
-        sage: type(L)                                                                               # optional - sage.symbolic
+        sage: type(L)                                                                   # optional - sage.symbolic
         <class 'sage.misc.latex.LatexExpr'>
 
     A ``LatexExpr`` can be converted to a plain string::
 
-        sage: str(latex(x^20 + 1))                                                                  # optional - sage.symbolic
+        sage: str(latex(x^20 + 1))                                                      # optional - sage.symbolic
         'x^{20} + 1'
     """
     def __add__(self, other):
@@ -558,7 +559,7 @@ def has_latex_attr(x) -> bool:
     EXAMPLES::
 
         sage: from sage.misc.latex import has_latex_attr
-        sage: has_latex_attr(identity_matrix(3))                                                    # optional - sage.modules
+        sage: has_latex_attr(identity_matrix(3))                                        # optional - sage.modules
         True
         sage: has_latex_attr("abc")  # strings have no _latex_ method
         False
@@ -566,15 +567,15 @@ def has_latex_attr(x) -> bool:
     Types inherit the ``_latex_`` method of the class to which they refer,
     but calling it is broken::
 
-        sage: T = type(identity_matrix(3)); T                                                       # optional - sage.modules
+        sage: T = type(identity_matrix(3)); T                                           # optional - sage.modules
         <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
-        sage: hasattr(T, '_latex_')                                                                 # optional - sage.modules
+        sage: hasattr(T, '_latex_')                                                     # optional - sage.modules
         True
-        sage: T._latex_()                                                                           # optional - sage.modules
+        sage: T._latex_()                                                               # optional - sage.modules
         Traceback (most recent call last):
         ...
         TypeError: ..._latex_... needs an argument
-        sage: has_latex_attr(T)                                                                     # optional - sage.modules
+        sage: has_latex_attr(T)                                                         # optional - sage.modules
         False
     """
     return hasattr(x, '_latex_') and not isinstance(x, type)
@@ -917,12 +918,12 @@ class LatexCall:
             3
             sage: latex(1==0)
             \mathrm{False}
-            sage: print(latex([x,2]))                                                               # optional - sage.symbolic
+            sage: print(latex([x, 2]))                                                  # optional - sage.symbolic
             \left[x, 2\right]
 
         Check that :trac:`11775` is fixed::
 
-            sage: latex((x,2), combine_all=True)                                                    # optional - sage.symbolic
+            sage: latex((x,2), combine_all=True)                                        # optional - sage.symbolic
             x 2
         """
         if has_latex_attr(x):
@@ -961,9 +962,9 @@ class Latex(LatexCall):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)                                                                       # optional - sage.symbolic
+        sage: latex(x^20 + 1)                                                           # optional - sage.symbolic
         x^{20} + 1
-        sage: latex(FiniteField(25,'a'))                                                            # optional - sage.libs.pari
+        sage: latex(FiniteField(25,'a'))                                                # optional - sage.libs.pari
         \Bold{F}_{5^{2}}
         sage: latex("hello")
         \text{\texttt{hello}}
@@ -973,7 +974,7 @@ class Latex(LatexCall):
     LaTeX expressions can be added; note that a space is automatically
     inserted::
 
-        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)                                                # optional - sage.symbolic
+        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)                                    # optional - sage.symbolic
         y \neq x^{20} + 1
     """
     def __init__(self, debug=False, slide=False, density=150, pdflatex=None, engine=None):

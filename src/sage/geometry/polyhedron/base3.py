@@ -629,7 +629,6 @@ class Polyhedron_base3(Polyhedron_base2):
             if 'dual' in kwds and dual is None:
                 dual = kwds['dual']
 
-
         from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator import FaceIterator_geom
         return FaceIterator_geom(self, output_dimension=face_dimension, dual=dual)
 

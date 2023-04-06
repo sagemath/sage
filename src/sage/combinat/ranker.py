@@ -207,7 +207,7 @@ def unrank(L, i):
 
     Enumerated sets::
 
-        sage: unrank(GF(7), 2)                                                  # optional - sage.libs.pari
+        sage: unrank(GF(7), 2)                                                          # optional - sage.rings.finite_rings
         2
         sage: unrank(IntegerModRing(29), 10)
         10
@@ -267,4 +267,4 @@ def unrank(L, i):
             return next(it)
         except StopIteration:
             raise IndexError("index out of range")
-    raise ValueError("Don't know how to unrank on {}".format(L))
+    raise ValueError("do not know how to unrank on {}".format(L))

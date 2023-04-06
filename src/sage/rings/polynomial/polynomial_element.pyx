@@ -65,6 +65,7 @@ from cpython.number cimport PyNumber_TrueDivide, PyNumber_Check
 import operator
 import copy
 import re
+from io import StringIO
 
 from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
 import sage.rings.rational
@@ -2656,7 +2657,8 @@ cdef class Polynomial(CommutativePolynomial):
         # want their coefficient printed with its O() term
         if self._is_gen and not isinstance(self._parent._base, pAdicGeneric):
             return name
-        s = " "
+        sbuf = StringIO()
+        sbuf.write(" ")
         m = self.degree() + 1
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         coeffs = self.list(copy=False)
@@ -2672,7 +2674,7 @@ cdef class Polynomial(CommutativePolynomial):
                 is_nonzero = True
             if is_nonzero:
                 if n != m-1:
-                    s += " + "
+                    sbuf.write(" + ")
                 x = y = repr(x)
                 if y.find("-") == 0:
                     y = y[1:]
@@ -2684,7 +2686,9 @@ cdef class Polynomial(CommutativePolynomial):
                     var = "*%s"%name
                 else:
                     var = ""
-                s += "%s%s"%(x,var)
+                sbuf.write(x)
+                sbuf.write(var)
+        s = sbuf.getvalue()
         s = s.replace(" + -", " - ")
         s = re.sub(r' 1(\.0+)?\*',' ', s)
         s = re.sub(r' -1(\.0+)?\*',' -', s)
@@ -4105,10 +4109,9 @@ cdef class Polynomial(CommutativePolynomial):
              sage: (x^2).factor()                                                                       # optional - sage.libs.ntl
              Traceback (most recent call last):
              ...
-             NotImplementedError: factorization of polynomials over rings
-              with composite characteristic is not implemented
-             sage: R.base_ring()._factor_univariate_polynomial = lambda f: f.change_ring(ZZ).factor()   # optional - sage.libs.ntl
-             sage: (x^2).factor()                                                                       # optional - sage.libs.ntl sage.libs.pari
+             NotImplementedError: factorization of polynomials over rings with composite characteristic is not implemented
+             sage: R.base_ring()._factor_univariate_polynomial = lambda f: f.change_ring(ZZ).factor()
+             sage: (x^2).factor()                                                       # optional - sage.libs.pari
              x^2
              sage: del R.base_ring()._factor_univariate_polynomial # clean up                           # optional - sage.libs.ntl
 
@@ -7134,7 +7137,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = polygen(QQ)
             sage: f = x^2 - 2*x + 2
-            sage: f2 = f.compose_power(2); f2                                           # optional - sage.libs.singular sage.modules
+            sage: f2 = f.compose_power(2); f2
             x^4 - 4*x^3 + 8*x^2 - 16*x + 16
             sage: f2 == f.composed_op(f, operator.mul)                                  # optional - sage.libs.singular sage.modules
             True
@@ -7403,8 +7406,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         This was fixed by :trac:`15422`::
 
-            sage: R.<s> = PolynomialRing(Qp(2))                                         # optional - sage.rings.padics
-            sage: (s^2).discriminant()                                                  # optional - sage.rings.padics
+            sage: R.<s> = PolynomialRing(Qp(2))                                                                         # optional - sage.rings.padics
+            sage: (s^2).discriminant()                                                                                  # optional - sage.rings.padics
             0
 
         This was fixed by :trac:`16014`::

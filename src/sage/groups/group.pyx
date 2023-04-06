@@ -143,7 +143,7 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: SL(2, 7).is_commutative()                                             # optional - sage.libs.pari
+            sage: SL(2, 7).is_commutative()                                             # optional - sage.rings.finite_rings
             False
         """
         return self.is_abelian()

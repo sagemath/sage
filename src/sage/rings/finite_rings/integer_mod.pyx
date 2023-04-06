@@ -1384,13 +1384,13 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         EXAMPLES::
 
 
-            sage: K = GF(31)                                                                        # optional - sage.libs.pari
-            sage: a = K(22)                                                                         # optional - sage.libs.pari
-            sage: K(22).nth_root(7)                                                                 # optional - sage.libs.pari
+            sage: K = GF(31)                                                    # optional - sage.libs.pari
+            sage: a = K(22)                                                     # optional - sage.libs.pari
+            sage: K(22).nth_root(7)                                             # optional - sage.libs.pari
             13
-            sage: K(25).nth_root(5)                                                                 # optional - sage.libs.pari
+            sage: K(25).nth_root(5)                                             # optional - sage.libs.pari
             5
-            sage: K(23).nth_root(3)                                                                 # optional - sage.libs.pari
+            sage: K(23).nth_root(3)                                             # optional - sage.libs.pari
             29
             sage: mod(225, 2^5*3^2).nth_root(4, all=True)                                           # optional - sage.rings.padics
             [225, 129, 33, 63, 255, 159, 9, 201, 105, 279, 183, 87, 81,
@@ -1530,7 +1530,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     return [K(a.lift()*p**(pval // n) + p**(k - (pval - pval//n)) * b) for a in mod(upart, p**(k-pval)).nth_root(n, all=True, algorithm=algorithm) for b in range(p**(pval - pval//n))]
                 else:
                     return K(p**(pval // n) * mod(upart, p**(k-pval)).nth_root(n, algorithm=algorithm).lift())
-            from sage.rings.padics.all import ZpFM
+            from sage.rings.padics.factory import ZpFM
             R = ZpFM(p,k)
             self_orig = self
             if p == 2:
@@ -2915,8 +2915,8 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             86
             sage: mod(7, 18).sqrt()
             5
-            sage: a = mod(14, 5^60).sqrt()                                              # optional - sage.libs.pari
-            sage: a*a                                                                   # optional - sage.libs.pari
+            sage: a = mod(14, 5^60).sqrt()                                      # optional - sage.libs.pari
+            sage: a*a                                                           # optional - sage.libs.pari
             14
             sage: mod(15, 389).sqrt(extend=False)
             Traceback (most recent call last):

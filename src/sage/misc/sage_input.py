@@ -13,7 +13,7 @@ that are readable and idiomatic.::
 
     sage: sage_input(3)
     3
-    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)                     # optional - sage.symbolic
+    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)                             # optional - sage.symbolic
     # Verified
     R.<x> = RR[]
     x^2 + 6.2831853071795862*x + 9.869604401089358
@@ -22,7 +22,7 @@ With ``verify=True``, :func:`sage_input` also verifies the results, by
 calling :func:`~sage.misc.sage_eval.sage_eval` on the result and
 verifying that it is equal to the input.::
 
-    sage: sage_input(GF(2)(1), verify=True)                                     # optional - sage.libs.pari
+    sage: sage_input(GF(2)(1), verify=True)                                             # optional - sage.libs.pari
     # Verified
     GF(2)(1)
 
@@ -202,21 +202,21 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
 
     EXAMPLES::
 
-        sage: sage_input(GF(2)(1))                                              # optional - sage.libs.pari
+        sage: sage_input(GF(2)(1))                                                      # optional - sage.rings.finite_rings
         GF(2)(1)
-        sage: sage_input((GF(2)(0), GF(2)(1)), verify=True)                     # optional - sage.libs.pari
+        sage: sage_input((GF(2)(0), GF(2)(1)), verify=True)                             # optional - sage.rings.finite_rings
         # Verified
         GF_2 = GF(2)
         (GF_2(0), GF_2(1))
 
     When the preparser is enabled, we use the \sage generator syntax.::
 
-        sage: K.<x> = GF(5)[]                                                   # optional - sage.libs.pari
-        sage: sage_input(x^3 + 2*x, verify=True)                                # optional - sage.libs.pari
+        sage: K.<x> = GF(5)[]                                                           # optional - sage.rings.finite_rings
+        sage: sage_input(x^3 + 2*x, verify=True)                                        # optional - sage.rings.finite_rings
         # Verified
         R.<x> = GF(5)[]
         x^3 + 2*x
-        sage: sage_input(x^3 + 2*x, preparse=False)                             # optional - sage.libs.pari
+        sage: sage_input(x^3 + 2*x, preparse=False)                                     # optional - sage.rings.finite_rings
         R = GF(5)['x']
         x = R.gen()
         x**3 + 2*x
@@ -364,14 +364,14 @@ class SageInputBuilder:
             3
 
             sage: sib = SageInputBuilder()
-            sage: sib.result(sib(GF(17)(5)))                                    # optional - sage.libs.pari
+            sage: sib.result(sib(GF(17)(5)))                                            # optional - sage.rings.finite_rings
             GF(17)(5)
 
         The argument ``coerced=True`` or ``coerced=2`` will get
         passed to the \method{_sage_input_} method of the argument.::
 
             sage: sib = SageInputBuilder()
-            sage: sib.result(sib(GF(17)(5), True))                              # optional - sage.libs.pari
+            sage: sib.result(sib(GF(17)(5), True))                                      # optional - sage.rings.finite_rings
             5
             sage: sib.result(sib(RealField(200)(1.5), True))
             1.5000000000000000000000000000000000000000000000000000000000000
@@ -626,9 +626,9 @@ class SageInputBuilder:
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sie42 = sib(GF(101)(42))                                      # optional - sage.libs.pari
-            sage: sib.cache(GF(101)(42), sie42, 'the_ultimate_answer')          # optional - sage.libs.pari
-            sage: sib.result(sib(GF(101)(42)) + sib(GF(101)(42)))               # optional - sage.libs.pari
+            sage: sie42 = sib(GF(101)(42))                                              # optional - sage.rings.finite_rings
+            sage: sib.cache(GF(101)(42), sie42, 'the_ultimate_answer')                  # optional - sage.rings.finite_rings
+            sage: sib.result(sib(GF(101)(42)) + sib(GF(101)(42)))                       # optional - sage.rings.finite_rings
             the_ultimate_answer = GF(101)(42)
             the_ultimate_answer + the_ultimate_answer
 
@@ -636,9 +636,9 @@ class SageInputBuilder:
         is only used once.::
 
             sage: sib = SageInputBuilder()
-            sage: sie42 = sib(GF(101)(42))                                      # optional - sage.libs.pari
-            sage: sib.cache(GF(101)(42), sie42, 'the_ultimate_answer')          # optional - sage.libs.pari
-            sage: sib.result(sib(GF(101)(42)) + sib(GF(101)(43)))               # optional - sage.libs.pari
+            sage: sie42 = sib(GF(101)(42))                                              # optional - sage.rings.finite_rings
+            sage: sib.cache(GF(101)(42), sie42, 'the_ultimate_answer')                  # optional - sage.rings.finite_rings
+            sage: sib.result(sib(GF(101)(42)) + sib(GF(101)(43)))                       # optional - sage.rings.finite_rings
             GF_101 = GF(101)
             GF_101(42) + GF_101(43)
         """
@@ -1262,7 +1262,7 @@ class SageInputExpression():
             sage: sib = SageInputBuilder()
             sage: sib.name('QQ')._sie_is_simple()
             True
-            sage: sib(GF(2))._sie_is_simple()                                   # optional - sage.libs.pari
+            sage: sib(GF(2))._sie_is_simple()                                           # optional - sage.rings.finite_rings
             False
         """
         return False
@@ -1276,7 +1276,7 @@ class SageInputExpression():
 
             sage: from sage.misc.sage_input import SageInputBuilder
             sage: sib = SageInputBuilder()
-            sage: len(sib(GF(2))._sie_referenced())                             # optional - sage.libs.pari
+            sage: len(sib(GF(2))._sie_referenced())                                     # optional - sage.rings.finite_rings
             2
             sage: sib(5)._sie_referenced()
             []
@@ -1295,16 +1295,16 @@ class SageInputExpression():
             sage: from sage.misc.sage_input import SageInputBuilder, SageInputFormatter
             sage: sib = SageInputBuilder()
             sage: sif = SageInputFormatter()
-            sage: pair = sib((GF(2), GF(2)))                                    # optional - sage.libs.pari
-            sage: single = sib(GF(2))                                           # optional - sage.libs.pari
-            sage: single._sie_refcount                                          # optional - sage.libs.pari
+            sage: pair = sib((GF(2), GF(2)))                                            # optional - sage.rings.finite_rings
+            sage: single = sib(GF(2))                                                   # optional - sage.rings.finite_rings
+            sage: single._sie_refcount                                                  # optional - sage.rings.finite_rings
             0
-            sage: single._sie_use_var                                           # optional - sage.libs.pari
+            sage: single._sie_use_var                                                   # optional - sage.rings.finite_rings
             False
-            sage: sib((GF(2), GF(2)))._sie_prepare(sif)                         # optional - sage.libs.pari
-            sage: single._sie_refcount                                          # optional - sage.libs.pari
+            sage: sib((GF(2), GF(2)))._sie_prepare(sif)                                 # optional - sage.rings.finite_rings
+            sage: single._sie_refcount                                                  # optional - sage.rings.finite_rings
             2
-            sage: single._sie_use_var                                           # optional - sage.libs.pari
+            sage: single._sie_use_var                                                   # optional - sage.rings.finite_rings
             True
         """
         if self._sie_context is not sif:
@@ -1827,8 +1827,8 @@ class SIE_call(SageInputExpression):
         sage: from sage.misc.sage_input import SageInputBuilder
 
         sage: sib = SageInputBuilder()
-        sage: sie = sib.name('GF')                                              # optional - sage.libs.pari
-        sage: sie(49)                                                           # optional - sage.libs.pari
+        sage: sie = sib.name('GF')                                                      # optional - sage.rings.finite_rings
+        sage: sie(49)                                                                   # optional - sage.rings.finite_rings
         {call: {atomic:GF}({atomic:49})}
     """
 
@@ -1996,8 +1996,8 @@ class SIE_subscript(SageInputExpression):
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sie = sib.name('GF')(5)['x,y']                                # optional - sage.libs.pari
-            sage: sie._sie_referenced()                                         # optional - sage.libs.pari
+            sage: sie = sib.name('GF')(5)['x,y']                                        # optional - sage.rings.finite_rings
+            sage: sie._sie_referenced()                                                 # optional - sage.rings.finite_rings
             [{call: {atomic:GF}({atomic:5})}, {atomic:'x,y'}]
         """
         refs = [self._sie_coll]
@@ -2190,8 +2190,8 @@ class SIE_tuple(SageInputExpression):
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sie = sib((ZZ, GF(5)))                                        # optional - sage.libs.pari
-            sage: sie._sie_referenced()                                         # optional - sage.libs.pari
+            sage: sie = sib((ZZ, GF(5)))                                                # optional - sage.rings.finite_rings
+            sage: sie._sie_referenced()                                                 # optional - sage.rings.finite_rings
             [{atomic:ZZ}, {call: {atomic:GF}({atomic:5})}]
         """
         return self._sie_values
@@ -2812,14 +2812,14 @@ class SIE_gens_constructor(SageInputExpression):
         We also can't use the preparser syntax if there is a conflict
         between generator names.  For example, this works::
 
-            sage: sage_input((polygen(ZZ), polygen(GF(17), 'y')))               # optional - sage.libs.pari
+            sage: sage_input((polygen(ZZ), polygen(GF(17), 'y')))                       # optional - sage.rings.finite_rings
             R1.<x> = ZZ[]
             R2.<y> = GF(17)[]
             (x, y)
 
         but this can't use the preparser syntax.::
 
-            sage: sage_input((polygen(ZZ), polygen(GF(17))))                    # optional - sage.libs.pari
+            sage: sage_input((polygen(ZZ), polygen(GF(17))))                            # optional - sage.rings.finite_rings
             R1 = ZZ['x']
             x1 = R1.gen()
             R2 = GF(17)['x']
@@ -2829,7 +2829,7 @@ class SIE_gens_constructor(SageInputExpression):
         If we never use the generators, then we don't bother with the
         preparser syntax.::
 
-            sage: sage_input((ZZ['x'], ZZ['x'], GF(17)['y']))                   # optional - sage.libs.pari
+            sage: sage_input((ZZ['x'], ZZ['x'], GF(17)['y']))                           # optional - sage.rings.finite_rings
             R = ZZ['x']
             (R, R, GF(17)['y'])
         """
@@ -2958,11 +2958,11 @@ class SIE_gen(SageInputExpression):
 
             sage: sib = SageInputBuilder()
             sage: sif = SageInputFormatter()
-            sage: sie = sib.gen(GF(13)['z'])                                    # optional - sage.libs.pari
-            sage: sie._sie_parent._sie_assign_gens                              # optional - sage.libs.pari
+            sage: sie = sib.gen(GF(13)['z'])                                            # optional - sage.rings.finite_rings
+            sage: sie._sie_parent._sie_assign_gens                                      # optional - sage.rings.finite_rings
             False
-            sage: sie._sie_prepare(sif)                                         # optional - sage.libs.pari
-            sage: sie._sie_parent._sie_assign_gens                              # optional - sage.libs.pari
+            sage: sie._sie_prepare(sif)                                                 # optional - sage.rings.finite_rings
+            sage: sie._sie_parent._sie_assign_gens                                      # optional - sage.rings.finite_rings
             True
         """
         super()._sie_prepare(sif)
@@ -2982,11 +2982,11 @@ class SIE_gen(SageInputExpression):
 
             sage: sib = SageInputBuilder()
             sage: sif = SageInputFormatter()
-            sage: sie = sib.gen(GF(41)['x'])                                    # optional - sage.libs.pari
-            sage: sie._sie_prepare(sif)                                         # optional - sage.libs.pari
-            sage: sie._sie_format(sif)                                          # optional - sage.libs.pari
+            sage: sie = sib.gen(GF(41)['x'])                                            # optional - sage.rings.finite_rings
+            sage: sie._sie_prepare(sif)                                                 # optional - sage.rings.finite_rings
+            sage: sie._sie_format(sif)                                                  # optional - sage.rings.finite_rings
             ('x', 42)
-            sage: sif._commands                                                 # optional - sage.libs.pari
+            sage: sif._commands                                                         # optional - sage.rings.finite_rings
             'R.<x> = GF(41)[]\n'
         """
         self._sie_parent._sie_add_command(sif)
@@ -3007,11 +3007,11 @@ class SIE_gen(SageInputExpression):
 
             sage: sib = SageInputBuilder()
             sage: sif = SageInputFormatter()
-            sage: v = sib.gen(GF(2)['x']); w = sib.gen(GF(3)['y'])              # optional - sage.libs.pari
-            sage: v._sie_prepare(sif); w._sie_prepare(sif)                      # optional - sage.libs.pari
-            sage: v._sie_got_preferred(sif)                                     # optional - sage.libs.pari
+            sage: v = sib.gen(GF(2)['x']); w = sib.gen(GF(3)['y'])                      # optional - sage.rings.finite_rings
+            sage: v._sie_prepare(sif); w._sie_prepare(sif)                              # optional - sage.rings.finite_rings
+            sage: v._sie_got_preferred(sif)                                             # optional - sage.rings.finite_rings
             True
-            sage: w._sie_got_preferred(sif)                                     # optional - sage.libs.pari
+            sage: w._sie_got_preferred(sif)                                             # optional - sage.rings.finite_rings
             True
 
         Now, we repeat the experiment, except that the generators now
@@ -3021,11 +3021,11 @@ class SIE_gen(SageInputExpression):
 
             sage: sib = SageInputBuilder()
             sage: sif = SageInputFormatter()
-            sage: v = sib.gen(GF(2)['x']); w = sib.gen(GF(3)['x'])              # optional - sage.libs.pari
-            sage: v._sie_prepare(sif); w._sie_prepare(sif)                      # optional - sage.libs.pari
-            sage: v._sie_got_preferred(sif)                                     # optional - sage.libs.pari
+            sage: v = sib.gen(GF(2)['x']); w = sib.gen(GF(3)['x'])                      # optional - sage.rings.finite_rings
+            sage: v._sie_prepare(sif); w._sie_prepare(sif)                              # optional - sage.rings.finite_rings
+            sage: v._sie_got_preferred(sif)                                             # optional - sage.rings.finite_rings
             False
-            sage: w._sie_got_preferred(sif)                                     # optional - sage.libs.pari
+            sage: w._sie_got_preferred(sif)                                             # optional - sage.rings.finite_rings
             False
         """
         return self._sie_get_varname(sif) == self._sie_preferred_varname
@@ -3313,18 +3313,18 @@ class SageInputFormatter:
 
             sage: sib = SageInputBuilder()
             sage: sif = SageInputFormatter()
-            sage: sie = sib(GF(5))                                              # optional - sage.libs.pari
+            sage: sie = sib(GF(5))                                                      # optional - sage.rings.finite_rings
 
         Here we ``cheat`` by calling \method{_sie_prepare} twice, to make it
         use a variable.::
 
-            sage: sie._sie_prepare(sif)                                         # optional - sage.libs.pari
-            sage: sie._sie_prepare(sif)                                         # optional - sage.libs.pari
-            sage: sif._commands                                                 # optional - sage.libs.pari
+            sage: sie._sie_prepare(sif)                                                 # optional - sage.rings.finite_rings
+            sage: sie._sie_prepare(sif)                                                 # optional - sage.rings.finite_rings
+            sage: sif._commands                                                         # optional - sage.rings.finite_rings
             ''
-            sage: sif.format(sie, 0)                                            # optional - sage.libs.pari
+            sage: sif.format(sie, 0)                                                    # optional - sage.rings.finite_rings
             'GF_5'
-            sage: sif._commands                                                 # optional - sage.libs.pari
+            sage: sif._commands                                                         # optional - sage.rings.finite_rings
             'GF_5 = GF(5)\n'
 
         We demonstrate the use of commands, by showing how to construct
@@ -3459,7 +3459,7 @@ def verify_same(a, b):
         ...
             assert(type(a) == type(b))
         AssertionError
-        sage: verify_same(5, GF(7)(5))                                          # optional - sage.libs.pari
+        sage: verify_same(5, GF(7)(5))                                                  # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
             assert(a.parent() == b.parent())

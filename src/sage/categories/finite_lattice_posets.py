@@ -191,35 +191,36 @@ class FiniteLatticePosets(CategoryWithAxiom):
             lattice of divisors of `60`, and check that the map
             `b \mapsto 5 \prod_{x\in b} x` is a morphism of lattices::
 
-                sage: D = LatticePoset((divisors(60), attrcall("divides")))                         # optional - sage.combinat sage.graphs
-                sage: B = LatticePoset((Subsets([2,2,3]), attrcall("issubset")))                    # optional - sage.combinat sage.graphs
-                sage: def f(b): return D(5*prod(b))                                                 # optional - sage.combinat sage.graphs
-                sage: B.is_lattice_morphism(f, D)                                                   # optional - sage.combinat sage.graphs
+                sage: D = LatticePoset((divisors(60), attrcall("divides")))             # optional - sage.combinat sage.graphs
+                sage: B = LatticePoset((Subsets([2,2,3]), attrcall("issubset")))        # optional - sage.combinat sage.graphs
+                sage: def f(b): return D(5*prod(b))                                     # optional - sage.combinat sage.graphs
+                sage: B.is_lattice_morphism(f, D)                                       # optional - sage.combinat sage.graphs
                 True
 
             We construct the boolean lattice `B_2`::
 
-                sage: B = posets.BooleanLattice(2)                                                  # optional - sage.combinat sage.graphs
-                sage: B.cover_relations()                                                           # optional - sage.combinat sage.graphs
+                sage: B = posets.BooleanLattice(2)                                      # optional - sage.combinat sage.graphs
+                sage: B.cover_relations()                                               # optional - sage.combinat sage.graphs
                 [[0, 1], [0, 2], [1, 3], [2, 3]]
 
             And the same lattice with new top and bottom elements
             numbered respectively `-1` and `3`::
 
-                sage: L = LatticePoset(DiGraph({-1:[0], 0:[1,2], 1:[3], 2:[3], 3:[4]}))             # optional - sage.combinat sage.graphs
-                sage: L.cover_relations()                                                           # optional - sage.combinat sage.graphs
+                sage: G = DiGraph({-1:[0], 0:[1,2], 1:[3], 2:[3], 3:[4]})               # optional - sage.graphs
+                sage: L = LatticePoset(G)                                               # optional - sage.combinat sage.graphs
+                sage: L.cover_relations()                                               # optional - sage.combinat sage.graphs
                 [[-1, 0], [0, 1], [0, 2], [1, 3], [2, 3], [3, 4]]
 
-                sage: f = { B(0): L(0), B(1): L(1), B(2): L(2), B(3): L(3) }.__getitem__            # optional - sage.combinat sage.graphs
-                sage: B.is_lattice_morphism(f, L)                                                   # optional - sage.combinat sage.graphs
+                sage: f = {B(0): L(0), B(1): L(1), B(2): L(2), B(3): L(3)}.__getitem__  # optional - sage.combinat sage.graphs
+                sage: B.is_lattice_morphism(f, L)                                       # optional - sage.combinat sage.graphs
                 True
 
-                sage: f = { B(0): L(-1),B(1): L(1), B(2): L(2), B(3): L(3) }.__getitem__            # optional - sage.combinat sage.graphs
-                sage: B.is_lattice_morphism(f, L)                                                   # optional - sage.combinat sage.graphs
+                sage: f = {B(0): L(-1),B(1): L(1), B(2): L(2), B(3): L(3)}.__getitem__  # optional - sage.combinat sage.graphs
+                sage: B.is_lattice_morphism(f, L)                                       # optional - sage.combinat sage.graphs
                 False
 
-                sage: f = { B(0): L(0), B(1): L(1), B(2): L(2), B(3): L(4) }.__getitem__            # optional - sage.combinat sage.graphs
-                sage: B.is_lattice_morphism(f, L)                                                   # optional - sage.combinat sage.graphs
+                sage: f = {B(0): L(0), B(1): L(1), B(2): L(2), B(3): L(4)}.__getitem__  # optional - sage.combinat sage.graphs
+                sage: B.is_lattice_morphism(f, L)                                       # optional - sage.combinat sage.graphs
                 False
 
             .. SEEALSO::

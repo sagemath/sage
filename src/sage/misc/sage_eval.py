@@ -222,7 +222,7 @@ def sageobj(x, vars=None):
 
     EXAMPLES::
 
-        sage: type(sageobj(gp('34/56')))                                                            # optional - sage.libs.pari
+        sage: type(sageobj(gp('34/56')))                                                # optional - sage.libs.pari
         <class 'sage.rings.rational.Rational'>
         sage: n = 5/2
         sage: sageobj(n) is n
@@ -234,12 +234,12 @@ def sageobj(x, vars=None):
 
     This illustrates interfaces::
 
-        sage: f = gp('2/3')                                                                         # optional - sage.libs.pari
-        sage: type(f)                                                                               # optional - sage.libs.pari
+        sage: f = gp('2/3')                                                             # optional - sage.libs.pari
+        sage: type(f)                                                                   # optional - sage.libs.pari
         <class 'sage.interfaces.gp.GpElement'>
-        sage: f._sage_()                                                                            # optional - sage.libs.pari
+        sage: f._sage_()                                                                # optional - sage.libs.pari
         2/3
-        sage: type(f._sage_())                                                                      # optional - sage.libs.pari
+        sage: type(f._sage_())                                                          # optional - sage.libs.pari
         <class 'sage.rings.rational.Rational'>
         sage: a = gap(939393/2433)                                                                  # optional - sage.libs.gap
         sage: a._sage_()                                                                            # optional - sage.libs.gap

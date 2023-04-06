@@ -543,12 +543,13 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
 
     The gluing takes place in the direct sum of the respective ambient spaces::
 
-        sage: L1 = IntegralLattice("D4", [[1, 1, 0, 0], [0, 1, 1, 0]])                              # optional - sage.combinat
-        sage: L2 = IntegralLattice("E6", [[0, 2, 0, 0, 0, 0], [0, 0, 0, 0, 1, 1]])                  # optional - sage.combinat
-        sage: [f1, f2] = L1.discriminant_group().gens()                                             # optional - sage.combinat
-        sage: [g1, g2] = L2.discriminant_group().gens()                                             # optional - sage.combinat
-        sage: [L, phi] = IntegralLatticeGluing([L1, L2], [[f1, g1], [f2, 2 * g2]], True)            # optional - sage.combinat
-        sage: phi[0]                                                                                # optional - sage.combinat
+        sage: L1 = IntegralLattice("D4", [[1, 1, 0, 0], [0, 1, 1, 0]])                  # optional - sage.combinat
+        sage: L2 = IntegralLattice("E6", [[0, 2, 0, 0, 0, 0], [0, 0, 0, 0, 1, 1]])      # optional - sage.combinat
+        sage: [f1, f2] = L1.discriminant_group().gens()                                 # optional - sage.combinat
+        sage: [g1, g2] = L2.discriminant_group().gens()                                 # optional - sage.combinat
+        sage: [L, phi] = IntegralLatticeGluing([L1, L2],                                # optional - sage.combinat
+        ....:                                  [[f1, g1], [f2, 2 * g2]], True)
+        sage: phi[0]                                                                    # optional - sage.combinat
         Free module morphism defined by the matrix
         [ 2  2 -2 -1]
         [ 0  2 -1  0]
@@ -578,8 +579,8 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         [ 0  0  0  0  0 -1 -1  2 -1  0]
         [ 0  0  0  0  0  0  0 -1  2 -1]
         [ 0  0  0  0  0  0  0  0 -1  2]
-        sage: B = phi[0].matrix()                                                                   # optional - sage.combinat
-        sage: B * L.gram_matrix() * B.transpose() == L1.gram_matrix()                               # optional - sage.combinat
+        sage: B = phi[0].matrix()                                                       # optional - sage.combinat
+        sage: B * L.gram_matrix() * B.transpose() == L1.gram_matrix()                   # optional - sage.combinat
         True
     """
     [direct_sum, phi] = IntegralLatticeDirectSum(Lattices, return_embeddings=True)
@@ -623,7 +624,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
     EXAMPLES::
 
-        sage: IntegralLattice("U",basis=[vector([1,1])])
+        sage: IntegralLattice("U", basis=[vector([1,1])])
         Lattice of degree 2 and rank 1 over Integer Ring
         Basis matrix:
         [1 1]
@@ -727,7 +728,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         EXAMPLES::
 
-            sage: G = Matrix(ZZ,2,2,[-1,1,1,2])
+            sage: G = Matrix(ZZ, 2,2, [-1,1, 1,2])
             sage: L = IntegralLattice(G)
             sage: L.is_even()
             False
@@ -780,7 +781,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         EXAMPLES::
 
-            sage: L = IntegralLattice(Matrix(ZZ,2,2,[2,1,1,-2])*2)
+            sage: L = IntegralLattice(Matrix(ZZ, 2,2, [2,1, 1,-2])*2)
             sage: L.discriminant_group()
             Finite quadratic module over Integer Ring with invariants (2, 10)
             Gram matrix of the quadratic form with values in Q/2Z:

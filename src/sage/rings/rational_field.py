@@ -772,11 +772,11 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ.hilbert_symbol_negative_at_S([-1,5,3,2,7,11,13,23], -10/7)                     # optional - sage.libs.pari sage.modules sage.rings.padics
+            sage: QQ.hilbert_symbol_negative_at_S([-1,5,3,2,7,11,13,23], -10/7)                     # optional - sage.rings.padics
             -9867
-            sage: QQ.hilbert_symbol_negative_at_S([3, 5, QQ.places()[0], 11], -15)                  # optional - sage.libs.pari sage.modules sage.rings.padics
+            sage: QQ.hilbert_symbol_negative_at_S([3, 5, QQ.places()[0], 11], -15)                  # optional - sage.rings.padics
             -33
-            sage: QQ.hilbert_symbol_negative_at_S([3, 5], 2)                                        # optional - sage.libs.pari sage.modules sage.rings.padics
+            sage: QQ.hilbert_symbol_negative_at_S([3, 5], 2)                                        # optional - sage.rings.padics
             15
 
         TESTS::

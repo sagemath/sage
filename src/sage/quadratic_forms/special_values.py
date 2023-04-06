@@ -166,7 +166,7 @@ def QuadraticBernoulliNumber(k, d):
 
     Let us create a list of some odd negative fundamental discriminants::
 
-        sage: test_set = [d for d in range(-163, -3, 4) if is_fundamental_discriminant(d)]          # optional - sage.libs.pari
+        sage: test_set = [d for d in srange(-163, -3, 4) if d.is_fundamental_discriminant()]        # optional - sage.libs.pari
 
     In general, we have `B_{1, \chi_d} = -2 h/w` for odd negative fundamental
     discriminants::

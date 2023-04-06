@@ -1758,7 +1758,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: a4 = -20067762415575526585033208209338542750930230312178956502
             sage: a6 = 34481611795030556467032985690390720374855944359319180361266008296291939448732243429
             sage: E = EllipticCurve([1, -1, 1, a4, a6])
-            sage: bad_primes = [2,3,5,7,11,13,17,19,48463]
+            sage: bad_primes = [2, 3, 5, 7, 11, 13, 17, 19, 48463]
             sage: N = 3455601108357547341532253864901605231198511505793733138900595189472144724781456635380154149870961231592352897621963802238155192936274322687070
             sage: E.analytic_rank_upper_bound(max_Delta=2.37, adaptive=False,  # long time
             ....:                             N=N, root_number=1,

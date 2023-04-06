@@ -3182,10 +3182,11 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
              ((2,3), (2,3)),
              ((1,2), (1,2)),
              ((1,3), (1,3))]
-            sage: PMs = [i._palp_PM_max(check=True)
-            ....:        for i in ReflexivePolytopes(2)] # long time
-            sage: all(len(i) == len(j.automorphisms_of_rows_and_columns())
-            ....:     for j, i in PMs) # long time
+            sage: PMs = ( i._palp_PM_max(check=True)
+            ....:         for i in ReflexivePolytopes(2) )
+            sage: results = ( len(i) == len(j.automorphisms_of_rows_and_columns())
+            ....:             for j, i in PMs )
+            sage: all(results)  # long time
             True
         """
         def PGE(S, u, v):

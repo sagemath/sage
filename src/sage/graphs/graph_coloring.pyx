@@ -1643,7 +1643,7 @@ def _vizing_edge_coloring(g):
         e_colors[frozenset((fan_center, fan[-1]))] = d
 
     matchings = dict()
-    for edge, c in e_colors.items(): 
+    for edge, c in e_colors.items():
         matchings[c] = matchings.get(c, []) + [tuple(edge)]
     classes = list(matchings.values())
 

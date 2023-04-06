@@ -595,13 +595,13 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         TESTS::
 
-            sage: U = DisjointUnionEnumeratedSets(                                                  # optional - sage.combinat
+            sage: U = DisjointUnionEnumeratedSets(                                      # optional - sage.combinat
             ....:          Family([1,2,3], Partitions), facade=False)
-            sage: U.Element                                                                         # optional - sage.combinat
+            sage: U.Element                                                             # optional - sage.combinat
             <... 'sage.structure.element_wrapper.ElementWrapper'>
-            sage: U = DisjointUnionEnumeratedSets(                                                  # optional - sage.combinat
+            sage: U = DisjointUnionEnumeratedSets(                                      # optional - sage.combinat
             ....:          Family([1,2,3], Partitions), facade=True)
-            sage: U.Element                                                                         # optional - sage.combinat
+            sage: U.Element                                                             # optional - sage.combinat
             Traceback (most recent call last):
             ...
             AttributeError: 'DisjointUnionEnumeratedSets_with_category' object has no attribute 'Element'

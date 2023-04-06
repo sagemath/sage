@@ -205,8 +205,8 @@ AUTHORS:
 
 import sage.misc.latex as latex
 
-from sage.rings.infinity import infinity
-from sage.rings.multi_power_series_ring_element import MPowerSeries
+from sage.rings.ring import CommutativeRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing

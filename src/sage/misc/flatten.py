@@ -23,7 +23,7 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
        [1, 1, 1, 2]
        sage: flatten([[1,2,3], (4,5), [[[1],[2]]]])
        [1, 2, 3, 4, 5, 1, 2]
-       sage: flatten([[1,2,3], (4,5), [[[1],[2]]]],max_level=1)
+       sage: flatten([[1,2,3], (4,5), [[[1],[2]]]], max_level=1)
        [1, 2, 3, 4, 5, [[1], [2]]]
        sage: flatten([[[3],[]]],max_level=0)
        [[[3], []]]
@@ -35,24 +35,24 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
     In the following example, the vector is not flattened because
     it is not given in the ``ltypes`` input. ::
 
-       sage: flatten((['Hi', 2, vector(QQ, [1,2,3])], (4,5,6)))                                                         # optional - sage.modules
+       sage: flatten((['Hi', 2, vector(QQ, [1,2,3])], (4,5,6)))                         # optional - sage.modules
        ['Hi', 2, (1, 2, 3), 4, 5, 6]
 
     We give the vector type and then even the vector gets flattened::
 
-       sage: tV = sage.modules.vector_rational_dense.Vector_rational_dense                                              # optional - sage.modules
-       sage: flatten((['Hi', 2, vector(QQ, [1,2,3])], (4,5,6)),                                                         # optional - sage.modules
+       sage: tV = sage.modules.vector_rational_dense.Vector_rational_dense              # optional - sage.modules
+       sage: flatten((['Hi', 2, vector(QQ, [1,2,3])], (4,5,6)),                         # optional - sage.modules
        ....:         ltypes=(list, tuple, tV))
        ['Hi', 2, 1, 2, 3, 4, 5, 6]
 
     We flatten a finite field. ::
 
-       sage: flatten(GF(5))                                                                                             # optional - sage.libs.pari
+       sage: flatten(GF(5))                                                             # optional - sage.libs.pari
        [0, 1, 2, 3, 4]
-       sage: flatten([GF(5)])                                                                                           # optional - sage.libs.pari
+       sage: flatten([GF(5)])                                                           # optional - sage.libs.pari
        [Finite Field of size 5]
-       sage: tGF = type(GF(5))                                                                                          # optional - sage.libs.pari
-       sage: flatten([GF(5)], ltypes=(list, tuple, tGF))                                                                # optional - sage.libs.pari
+       sage: tGF = type(GF(5))                                                          # optional - sage.libs.pari
+       sage: flatten([GF(5)], ltypes=(list, tuple, tGF))                                # optional - sage.libs.pari
        [0, 1, 2, 3, 4]
 
     Degenerate cases::
