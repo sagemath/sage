@@ -1058,8 +1058,78 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         return '%s![%s]' % (R.name(), v)
 
     def round(self, round_type='nearest'):
-        """
-        Returns a list 
+        r"""
+        Returns a vector (or module element) with rounded entries.
+
+        INPUT:
+
+        - ``round_type` -- default: ``nearest`` - rounds to nearest integer, ``up`` - rounds upwards, ``down`` - rounds downwards.
+
+        OUTPUT:
+
+        A vector, or free module element, with all elements
+        rounded according to ``round_type``
+
+        .. NOTE::
+
+            Only works if the underlying field is ``RealField``, ``RealDoubleField``, or ``RationalField``.
+
+        EXAMPLES:
+
+        If the underlying field is ``RationalField``. ::
+
+            sage: v = vector(QQ, [1.2, 2.4])
+            sage: v.round()
+            (1, 2)
+            sage: v.round(round_type="up")
+            (2, 3)
+            sage: v.round(round_type="down")
+            (1, 2)
+
+        If the underlying field is ``RealField`` (arbitrary precision). ::
+
+            sage: v = vector(RealField(), [1.2, 2.4])
+            sage: v.round()
+            (1, 2)
+            sage: v.round(round_type="up")
+            (2, 3)
+            sage: v.round(round_type="down")
+            (1, 2)
+            sage: v = vector(RealField(23), [1.2, 2.4])
+            sage: v.round()
+            (1, 2)
+            sage: v.round(round_type="up")
+            (2, 3)
+            sage: v.round(round_type="down")
+            (1, 2)
+
+        If the underlying field is ``RealDoubleField``. ::
+
+            sage: v = vector(RDF, [1.2, 2.4])
+            sage: v.round()
+            (1, 2)
+            sage: v.round(round_type="up")
+            (2, 3)
+            sage: v.round(round_type="down")
+            (1, 2)
+
+        If the underlying field is none of the above. ::
+
+            sage: v = vector(ZZ, [1, 2])
+            sage: v.round()
+            Traceback (most recent call last):
+            ...
+            TypeError: the underlying ring/field must be RealField, RealDoubleField, RationalField
+            sage: v = vector(CC, [1, 2.3])
+            sage: v.round()
+            Traceback (most recent call last):
+            ...
+            TypeError: the underlying ring/field must be RealField, RealDoubleField, RationalField
+        
+        .. NOTE::
+
+            Look at ``round()``, ``ceil()`` and ``floor()`` methods of ``RealField``, ``RealDoubleField``, and ``RationalField``.
+        
         """
 
         from sage.rings.rational_field import RationalField
