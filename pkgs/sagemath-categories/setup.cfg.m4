@@ -33,7 +33,7 @@ install_requires =
         | sed "2,\$s/^/    /;"')dnl
 
 [options.extras_require]
-test = sagemath-repl
+test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
 
 [options.package_data]
 sage.rings.finite_rings = integer_mod_limits.h

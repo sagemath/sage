@@ -37,6 +37,6 @@ install_requires =
         | sed "2,\$s/^/    /;"')dnl
 
 [options.extras_require]
-test = sagemath-repl
+test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
 normaliz = esyscmd(`sage-get-system-packages install-requires pynormaliz')
 polymake = esyscmd(`sage-get-system-packages install-requires jupymake')
