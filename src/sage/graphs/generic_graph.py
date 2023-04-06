@@ -1371,14 +1371,14 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = graphs.PetersenGraph()
             sage: filename = tmp_filename(ext=".pajek")
             sage: g.export_to_file(filename)
-            sage: import networkx
-            sage: G_networkx = networkx.read_pajek(filename)
-            sage: Graph(G_networkx).is_isomorphic(g)
+            sage: import networkx                                                       # optional - networkx
+            sage: G_networkx = networkx.read_pajek(filename)                            # optional - networkx
+            sage: Graph(G_networkx).is_isomorphic(g)                                    # optional - networkx
             True
             sage: filename = tmp_filename(ext=".edgelist")
             sage: g.export_to_file(filename, data=False)
-            sage: h = Graph(networkx.read_edgelist(filename))
-            sage: g.is_isomorphic(h)
+            sage: h = Graph(networkx.read_edgelist(filename))                           # optional - networkx
+            sage: g.is_isomorphic(h)                                                    # optional - networkx
             True
 
         TESTS::
@@ -21181,9 +21181,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: A5 = AlternatingGroup(5); A5
             Alternating group of order 5!/2 as a permutation group
             sage: G = A5.cayley_graph()
-            sage: G.show3d(vertex_size=0.03, edge_size=0.01, edge_size2=0.02,
+            sage: G.show3d(vertex_size=0.03, edge_size=0.01, edge_size2=0.02,  # long time
             ....:          vertex_colors={(1,1,1): list(G)}, bgcolor=(0,0,0),
-            ....:          color_by_label=True, iterations=200)  # long time
+            ....:          color_by_label=True, iterations=200)
 
         Some :class:`~sage.plot.plot3d.tachyon.Tachyon` examples::
 

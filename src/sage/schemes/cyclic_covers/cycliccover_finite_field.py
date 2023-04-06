@@ -1110,8 +1110,9 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             sage: p = 1117
             sage: x = PolynomialRing(GF(p),"x").gen()
             sage: f = x^9 + 4*x^2 + 10*x + 4
-            sage: CyclicCover(2, f).frobenius_polynomial() == \
-            ....: HyperellipticCurve(f).frobenius_polynomial() # long time
+            sage: P1 = CyclicCover(2, f).frobenius_polynomial()
+            sage: P2 = HyperellipticCurve(f).frobenius_polynomial()
+            sage: P1 == P2  # long time
             True
             sage: f = 2*x^5 + 4*x^3 + x^2 + 2*x + 1
             sage: CyclicCover(2, f).frobenius_polynomial() == \

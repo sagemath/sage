@@ -1161,8 +1161,9 @@ def implicit_plot(f, xrange, yrange, **options):
 
     The same circle with different line and fill colors::
 
-        sage: implicit_plot(f, (-3,3), (-3,3), color='red', fill=True, fillcolor='green',
-        ....:                                  plot_points=500) # long time
+        sage: implicit_plot(f, (-3,3), (-3,3), color='red',  # long time
+        ....:               fill=True, fillcolor='green',
+        ....:               plot_points=500)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -1307,8 +1308,8 @@ def implicit_plot(f, xrange, yrange, **options):
     symbolic expression the user should increase the number of plot points to
     avoid artifacts::
 
-        sage: implicit_plot(lambda x, y: x^2 + y^2 - 2, (x,-3,3), (y,-3,3),
-        ....:               fill=True, plot_points=500) # long time
+        sage: implicit_plot(lambda x, y: x^2 + y^2 - 2, (x,-3,3),  # long time
+        ....:               (y,-3,3), fill=True, plot_points=500)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
