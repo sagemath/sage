@@ -556,22 +556,22 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
             sage: L = IntegralLattice("D4").direct_sum(IntegralLattice("A2"))           # optional - sage.combinat
             sage: D = L.discriminant_group()                                            # optional - sage.combinat
-            sage: genus = D.genus(L.signature_pair())                                   # optional - sage.combinat
-            sage: genus                                                                 # optional - sage.combinat
+            sage: genus = D.genus(L.signature_pair())                                   # optional - sage.combinat sage.libs.pari
+            sage: genus                                                                 # optional - sage.combinat sage.libs.pari
             Genus of
             None
             Signature:  (6, 0)
             Genus symbol at 2:    1^4:2^-2
             Genus symbol at 3:     1^-5 3^-1
-            sage: genus == L.genus()                                                    # optional - sage.combinat
+            sage: genus == L.genus()                                                    # optional - sage.combinat sage.libs.pari
             True
 
         Let `H` be an even unimodular lattice of signature `(9, 1)`.
         Then `L = D_4 + A_2` is primitively embedded in `H`. We compute the discriminant
         form of the orthogonal complement of `L` in `H`::
 
-            sage: DK = D.twist(-1)                                                      # optional - sage.combinat
-            sage: DK                                                                    # optional - sage.combinat
+            sage: DK = D.twist(-1)                                                      # optional - sage.combinat sage.libs.pari
+            sage: DK                                                                    # optional - sage.combinat sage.libs.pari
             Finite quadratic module over Integer Ring with invariants (2, 6)
             Gram matrix of the quadratic form with values in Q/2Z:
             [  1 1/2]
@@ -580,7 +580,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         We know that  `K` has signature `(5, 1)` and thus we can compute
         the genus of `K` as::
 
-            sage: DK.genus((3,1))                                                       # optional - sage.combinat
+            sage: DK.genus((3,1))                                                       # optional - sage.combinat sage.libs.pari
             Genus of
             None
             Signature:  (3, 1)
@@ -592,7 +592,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
             sage: L = IntegralLattice(matrix.diagonal(range(1, 5)))
             sage: D = L.discriminant_group()
-            sage: D.genus((4,0))
+            sage: D.genus((4,0))                                                        # optional - sage.libs.pari
             Genus of
             None
             Signature:  (4, 0)
@@ -601,20 +601,20 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         TESTS::
 
-            sage: L.genus() == D.genus((4,0))
+            sage: L.genus() == D.genus((4,0))                                           # optional - sage.libs.pari
             True
-            sage: D.genus((1,0))
+            sage: D.genus((1,0))                                                        # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: this discriminant form and signature do not define a genus
 
         A systematic test of lattices of small ranks and determinants::
 
-            sage: from sage.quadratic_forms.genera.genus import genera
-            sage: signatures = [(1,0),(1,1),(1,2),(3,0),(0,4)]
-            sage: dets = range(1,33)
-            sage: genera = flatten([genera(s, d, even=False) for d in dets for s in signatures])    # long time
-            sage: all(g == g.discriminant_form().genus(g.signature_pair()) for g in genera)  # long time
+            sage: from sage.quadratic_forms.genera.genus import genera                                          # optional - sage.libs.pari
+            sage: signatures = [(1,0), (1,1), (1,2), (3,0), (0,4)]                                              # optional - sage.libs.pari
+            sage: dets = range(1, 33)                                                                           # optional - sage.libs.pari
+            sage: genera = flatten([genera(s, d, even=False) for d in dets for s in signatures])  # long time   # optional - sage.libs.pari
+            sage: all(g == g.discriminant_form().genus(g.signature_pair()) for g in genera)       # long time   # optional - sage.libs.pari
             True
             """
         from sage.quadratic_forms.genera.genus import (Genus_Symbol_p_adic_ring,
@@ -838,36 +838,36 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
             sage: D = TorsionQuadraticForm(matrix.identity(2)/2)
             sage: f = matrix(2, [0,1, 1,0])
-            sage: D.orthogonal_group(gens=[f]).order()
+            sage: D.orthogonal_group(gens=[f]).order()                                                  # optional - sage.groups
             2
 
         If no generators are given a slow brute force approach is used to calculate the full orthogonal group::
 
             sage: D = TorsionQuadraticForm(matrix.identity(3)/2)
-            sage: OD = D.orthogonal_group()
-            sage: OD.order()
+            sage: OD = D.orthogonal_group()                                                             # optional - sage.groups
+            sage: OD.order()                                                                            # optional - sage.groups
             6
             sage: fd = D.hom([D.1,D.0,D.2])
-            sage: OD(fd)
+            sage: OD(fd)                                                                                # optional - sage.groups
             [0 1 0]
             [1 0 0]
             [0 0 1]
 
         We compute the kernel of the action of the orthogonal group of `L` on the discriminant group::
 
-            sage: L = IntegralLattice('A4')
-            sage: O = L.orthogonal_group()
-            sage: D = L.discriminant_group()
-            sage: Obar = D.orthogonal_group(O.gens())
-            sage: O.order()
+            sage: L = IntegralLattice('A4')                                                             # optional - sage.combinat
+            sage: O = L.orthogonal_group()                                                              # optional - sage.combinat sage.groups
+            sage: D = L.discriminant_group()                                                            # optional - sage.combinat sage.groups
+            sage: Obar = D.orthogonal_group(O.gens())                                                   # optional - sage.combinat sage.groups
+            sage: O.order()                                                                             # optional - sage.combinat sage.groups
             240
-            sage: Obar.order()
+            sage: Obar.order()                                                                          # optional - sage.combinat sage.groups
             2
-            sage: phi = O.hom(Obar.gens())
-            sage: phi.kernel().order()
+            sage: phi = O.hom(Obar.gens())                                                              # optional - sage.combinat sage.groups
+            sage: phi.kernel().order()                                                                  # optional - sage.combinat sage.groups
             120
         """
-        from sage.groups.fqf_orthogonal import FqfOrthogonalGroup,_isom_fqf
+        from sage.groups.fqf_orthogonal import FqfOrthogonalGroup, _isom_fqf
         from sage.groups.abelian_gps.abelian_group_gap import AbelianGroupGap
 
         ambient = AbelianGroupGap(self.invariants()).aut()

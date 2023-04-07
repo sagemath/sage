@@ -13,13 +13,11 @@ from sage.arith.misc import (bernoulli,
                              factorial,
                              fundamental_discriminant,
                              kronecker as kronecker_symbol)
-from sage.combinat.combinat import bernoulli_polynomial
 from sage.misc.functional import denominator
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.symbolic.constants import pi, I
 
 
 # ---------------- The Gamma Function  ------------------
@@ -40,22 +38,22 @@ def gamma__exact(n):
         sage: gamma__exact(1)
         1
 
-        sage: gamma__exact(1/2)
+        sage: gamma__exact(1/2)                                                         # optional - sage.symbolic
         sqrt(pi)
-        sage: gamma__exact(3/2)
+        sage: gamma__exact(3/2)                                                         # optional - sage.symbolic
         1/2*sqrt(pi)
-        sage: gamma__exact(5/2)
+        sage: gamma__exact(5/2)                                                         # optional - sage.symbolic
         3/4*sqrt(pi)
-        sage: gamma__exact(7/2)
+        sage: gamma__exact(7/2)                                                         # optional - sage.symbolic
         15/8*sqrt(pi)
 
-        sage: gamma__exact(-1/2)
+        sage: gamma__exact(-1/2)                                                        # optional - sage.symbolic
         -2*sqrt(pi)
-        sage: gamma__exact(-3/2)
+        sage: gamma__exact(-3/2)                                                        # optional - sage.symbolic
         4/3*sqrt(pi)
-        sage: gamma__exact(-5/2)
+        sage: gamma__exact(-5/2)                                                        # optional - sage.symbolic
         -8/15*sqrt(pi)
-        sage: gamma__exact(-7/2)
+        sage: gamma__exact(-7/2)                                                        # optional - sage.symbolic
         16/105*sqrt(pi)
 
     TESTS::
@@ -65,15 +63,18 @@ def gamma__exact(n):
         ...
         TypeError: you must give an integer or half-integer argument
     """
-    from sage.misc.functional import sqrt
     n = QQ(n)
 
     if denominator(n) == 1:
         if n <= 0:
             return infinity
         return factorial(n - 1)
-    elif denominator(n) == 2:
+
+    if denominator(n) == 2:
         # now n = 1/2 + an integer
+        from sage.misc.functional import sqrt
+        from sage.symbolic.constants import pi
+
         ans = QQ.one()
         while n != QQ((1, 2)):
             if n < 0:
@@ -85,8 +86,8 @@ def gamma__exact(n):
 
         ans *= sqrt(pi)
         return ans
-    else:
-        raise TypeError("you must give an integer or half-integer argument")
+
+    raise TypeError("you must give an integer or half-integer argument")
 
 # ------------- The Riemann Zeta Function  --------------
 
@@ -123,7 +124,7 @@ def zeta__exact(n):
 
     TESTS::
 
-        sage: zeta__exact(4)
+        sage: zeta__exact(4)                                                            # optional - sage.symbolic
         1/90*pi^4
         sage: zeta__exact(-3)
         1/120
@@ -144,6 +145,8 @@ def zeta__exact(n):
         return bernoulli(1-n)/(n-1)
     elif n > 1:
         if (n % 2 == 0):
+            from sage.symbolic.constants import pi
+
             return ZZ(-1)**(n//2 + 1) * ZZ(2)**(n-1) * pi**n * bernoulli(n) / factorial(n)
         else:
             raise TypeError("n must be a critical value (i.e. even > 0 or odd < 0)")
@@ -163,18 +166,21 @@ def QuadraticBernoulliNumber(k, d):
 
     Let us create a list of some odd negative fundamental discriminants::
 
-        sage: test_set = [d for d in srange(-163, -3, 4) if d.is_fundamental_discriminant()]
+        sage: test_set = [d for d in srange(-163, -3, 4) if d.is_fundamental_discriminant()]        # optional - sage.libs.pari
 
     In general, we have `B_{1, \chi_d} = -2 h/w` for odd negative fundamental
     discriminants::
 
-        sage: all(QuadraticBernoulliNumber(1, d) == -len(BinaryQF_reduced_representatives(d)) for d in test_set)
+        sage: all(QuadraticBernoulliNumber(1, d) == -len(BinaryQF_reduced_representatives(d))       # optional - sage.libs.pari
+        ....:     for d in test_set)
         True
 
     REFERENCES:
 
     - [Iwa1972]_, pp 7-16.
     """
+    from sage.combinat.combinat import bernoulli_polynomial
+
     # Ensure the character is primitive
     d1 = fundamental_discriminant(d)
     f = abs(d1)
@@ -189,6 +195,7 @@ def QuadraticBernoulliNumber(k, d):
 
     return total
 
+
 def quadratic_L_function__exact(n, d):
     r"""
     Returns the exact value of a quadratic twist of the Riemann Zeta function
@@ -198,16 +205,16 @@ def quadratic_L_function__exact(n, d):
 
     EXAMPLES::
 
-        sage: quadratic_L_function__exact(1, -4)
+        sage: quadratic_L_function__exact(1, -4)                                        # optional - sage.libs.pari sage.symbolic
         1/4*pi
-        sage: quadratic_L_function__exact(-4, -4)
+        sage: quadratic_L_function__exact(-4, -4)                                       # optional - sage.libs.pari
         5/2
-        sage: quadratic_L_function__exact(2, 1)
+        sage: quadratic_L_function__exact(2, 1)                                         # optional - sage.libs.pari sage.symbolic
         1/6*pi^2
 
     TESTS::
 
-        sage: quadratic_L_function__exact(2, -4)
+        sage: quadratic_L_function__exact(2, -4)                                        # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         TypeError: n must be a critical value (i.e. odd > 0 or even <= 0)
@@ -218,8 +225,6 @@ def quadratic_L_function__exact(n, d):
     - [IR1990]_
     - [Was1997]_
     """
-    from sage.symbolic.ring import SR
-    from sage.misc.functional import sqrt
     if n <= 0:
         return QuadraticBernoulliNumber(1-n,d)/(n-1)
     elif n >= 1:
@@ -231,6 +236,10 @@ def quadratic_L_function__exact(n, d):
 
         # Compute the positive special values (p17)
         if ((n - delta) % 2 == 0):
+            from sage.misc.functional import sqrt
+            from sage.symbolic.constants import I, pi
+            from sage.symbolic.ring import SR
+
             f = abs(fundamental_discriminant(d))
             if delta == 0:
                 GS = sqrt(f)
