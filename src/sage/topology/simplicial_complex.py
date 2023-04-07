@@ -4836,15 +4836,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         #B[(0,0)] = 1
 
-        #for j in range(n+1):
-            #for x in D[j]:
-                #S = self.generated_subcomplex(x)
-                #H = S.homology()
-                #for k in range(j):
-                    #if H.get(j-k-1) != H0 and H.get(j-k-1) != None:
-                        #B[(-k, 2*j)] = B[(-k, 2*j)] + len(gens(H.get(j-k-1)))
-
-        B = {key:val for key,val in B.items() if val != 0}
+        for j in range(n+1):
+            for x in combinations(L, j):
+                S = self.generated_subcomplex(x)
+                H = S.homology()
+                for k in range(j):
+                    if H.get(j-k-1) != H0 and H.get(j-k-1) is not None:
+                        B[(-k, 2*j)] += len(H.get(j-k-1).gens())
 	    
         return B
 
