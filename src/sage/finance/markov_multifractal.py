@@ -200,15 +200,15 @@ class MarkovSwitchingMultifractal:
         except AttributeError:
             pass
 
-        b          = self.__b
+        b = self.__b
         gamma_kbar = self.__gamma_kbar
-        kbar       = self.__kbar
+        kbar = self.__kbar
 
         # We compute gamma1 from gamma_kbar by inverting the relation
         # that defines the gamma_k given on page 54 of Calvet-Fisher:
         gamma1 = 1 - math.exp(math.log(1-gamma_kbar)/(b**(kbar-1)))
 
-        gamma  = tuple([1 - (1 - gamma1)**(b**k) for k in range(kbar)])
+        gamma = tuple([1 - (1 - gamma1)**(b**k) for k in range(kbar)])
         self.__gamma = gamma
         return gamma
 
@@ -259,7 +259,6 @@ class MarkovSwitchingMultifractal:
         return markov_multifractal_cython.simulations(n, k,
                    self.__m0, self.__sigma,
                    self.__kbar, self.gamma())
-
 
 
 ## def ml_estimation(v, kbar, M):

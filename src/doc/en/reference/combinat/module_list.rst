@@ -346,6 +346,7 @@ Comprehensive Module List
     sage/combinat/species/structure
     sage/combinat/species/subset_species
     sage/combinat/species/sum_species
+    sage/combinat/specht_module
     sage/combinat/subset
     sage/combinat/subsets_hereditary
     sage/combinat/subsets_pairwise
@@ -367,7 +368,7 @@ Comprehensive Module List
     sage/combinat/tutorial
     sage/combinat/vector_partition
     sage/combinat/words/abstract_word
-    sage/combinat/words
+    sage/combinat/words/all
     sage/combinat/words/alphabet
     sage/combinat/words/finite_word
     sage/combinat/words/infinite_word

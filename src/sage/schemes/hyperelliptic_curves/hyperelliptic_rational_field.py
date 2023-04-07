@@ -9,7 +9,7 @@ Hyperelliptic curves over the rationals
 
 import sage.rings.abc
 
-from sage.rings.padics.all import pAdicField
+from sage.rings.padics.factory import Qp as pAdicField
 
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 

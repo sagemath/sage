@@ -66,7 +66,7 @@ matrices and Latin squares. See:
 from sage.rings.ring import is_Ring
 import sage.matrix.matrix_space as matrix_space
 from sage.modules.free_module_element import vector
-from sage.structure.element import is_Matrix
+from sage.structure.element import is_Matrix, parent
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1905,6 +1905,12 @@ def block_matrix(*args, **kwds):
         sage: block_matrix(A)
         [ 3  5]
         [ 8 13]
+        sage: block_matrix([[A, 0r], [1r, A]])
+        [ 3  5| 0  0]
+        [ 8 13| 0  0]
+        [-----+-----]
+        [ 1  0| 3  5]
+        [ 0  1| 8 13]
     """
     args = list(args)
     sparse = kwds.get('sparse', None)
@@ -2020,7 +2026,7 @@ def block_matrix(*args, **kwds):
         ring = ZZ
         for row in sub_matrices:
             for M in row:
-                R = M.base_ring() if is_Matrix(M) else M.parent()
+                R = M.base_ring() if is_Matrix(M) else parent(M)
                 if R is not ZZ:
                     ring = sage.categories.pushout.pushout(ring, R)
 

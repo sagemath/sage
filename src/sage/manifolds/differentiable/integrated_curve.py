@@ -579,7 +579,6 @@ class IntegratedCurve(DifferentiableCurve):
                                for f in transf]
                 self._fast_changes_of_chart[CoC] = fast_transf
 
-
         self._velocities = list(velocities) # converts to list
         # since might not already be a list (which is later required)
         self._curve_parameter = curve_parameter
@@ -1376,12 +1375,10 @@ class IntegratedCurve(DifferentiableCurve):
         # 'tangent_vector_eval_at', and in 'plot' when plotting the
         # tangent vectors.)
 
-
         if isinstance(sol, list):
             coords_sol = [point[0:dim + 1] for point in sol]
         else:
             coords_sol = sol[:, 0:dim + 1].tolist() # far faster in numpy
-
 
         if verbose:
             print("Numerical integration completed.\n\n" +
@@ -1778,7 +1775,6 @@ class IntegratedCurve(DifferentiableCurve):
 
                             new_vel = self._fast_changes_of_frame[(new_chart.frame().restrict(inter),
                                chart.frame().restrict(inter))](last_pts, last_vel)
-
 
                             ics = new_pts + new_vel
                             chart = new_chart
@@ -2433,7 +2429,6 @@ class IntegratedCurve(DifferentiableCurve):
         #
         thickness = kwds.pop('thickness')
         aspect_ratio = kwds.pop('aspect_ratio')
-
 
         #
         # The mapping, if present, and the chart with respect to which the curve
@@ -3425,7 +3420,6 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
 
         velocities = chart.symbolic_velocities()
 
-
         dim = parent.codomain().dim()
         i0 = parent.codomain().start_index()
 
@@ -3470,7 +3464,6 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
                     equations_rhs_chart += [rhs.simplify_full()]
                 equations_rhs[chart] = equations_rhs_chart
 
-
         IntegratedCurve.__init__(self, parent, equations_rhs,
                                  velocities, curve_parameter,
                                  initial_tangent_vector, chart=chart,
@@ -3478,7 +3471,6 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
                                  verbose=verbose, across_charts=across_charts)
 
         self._affine_connection = affine_connection
-
 
     def _repr_(self):
         r"""
@@ -3825,7 +3817,6 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
     def __init__(self, parent, metric, curve_parameter,
                  initial_tangent_vector, chart=None, name=None,
                  latex_name=None, verbose=False, across_charts=False):
-
         r"""
         Construct a geodesic curve with respect to the given metric with the
         given initial tangent vector.
