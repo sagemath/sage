@@ -273,7 +273,6 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         return Components(fmodule._ring, basis, 1, start_index=fmodule._sindex,
                           output_formatter=fmodule._output_formatter)
 
-
     def _new_instance(self):
         r"""
         Create an instance of the same class as ``self``.

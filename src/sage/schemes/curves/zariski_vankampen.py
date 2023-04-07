@@ -24,7 +24,7 @@ EXAMPLES::
 
     sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
     sage: R.<x,y> = QQ[]
-    sage: f = y^3 + x^3 -1
+    sage: f = y^3 + x^3 - 1
     sage: fundamental_group(f) # optional - sirocco
     Finitely presented group < x0 |  >
 """

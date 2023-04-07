@@ -311,7 +311,6 @@ class AlternatingContrTensor(FreeModuleTensor):
         """
         return self._tensor_rank
 
-
     def display(self, basis=None, format_spec=None):
         r"""
         Display the alternating contravariant tensor ``self`` in terms
@@ -469,7 +468,6 @@ class AlternatingContrTensor(FreeModuleTensor):
         return FormattedExpansion(resu_txt, resu_latex)
 
     disp = display
-
 
     def wedge(self, other):
         r"""

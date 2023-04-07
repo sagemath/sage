@@ -47,7 +47,6 @@ libc = None
 libprofiler = None
 
 
-
 class Profiler(SageObject):
 
     def __init__(self, filename=None):

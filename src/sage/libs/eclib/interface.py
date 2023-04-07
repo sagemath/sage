@@ -194,7 +194,6 @@ class mwrank_EllipticCurve(SageObject):
         """
         self.__verbose = verbose
 
-
     def _curve_data(self):
         r"""
         Returns the underlying :class:`_Curvedata` class for this mwrank elliptic curve.

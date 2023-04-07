@@ -132,8 +132,8 @@ class Jacobian_generic(Scheme):
 
     def __richcmp__(self, J, op):
         """
-        Compare the Jacobian self to `J`.  If `J` is a Jacobian, then
-        self and `J` are equal if and only if their curves are equal.
+        Compare the Jacobian ``self`` to `J`.  If `J` is a Jacobian, then
+        ``self`` and `J` are equal if and only if their curves are equal.
 
         EXAMPLES::
 
@@ -194,7 +194,7 @@ class Jacobian_generic(Scheme):
 
     def curve(self):
         """
-        Return the curve of which self is the Jacobian.
+        Return the curve of which ``self`` is the Jacobian.
 
         EXAMPLES::
 
@@ -214,45 +214,42 @@ class Jacobian_generic(Scheme):
 
         - ``R`` -- a field. The new base ring.
 
-        OUTPUT:
-
-        The Jacobian over the ring `R`.
+        OUTPUT: The Jacobian over the ring `R`.
 
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: H = HyperellipticCurve(x^3-10*x+9)
+            sage: H = HyperellipticCurve(x^3 - 10*x + 9)
             sage: Jac = H.jacobian();   Jac
-            Jacobian of Hyperelliptic Curve over Rational
-            Field defined by y^2 = x^3 - 10*x + 9
+            Jacobian of Hyperelliptic Curve over Rational Field
+             defined by y^2 = x^3 - 10*x + 9
             sage: Jac.change_ring(RDF)
-            Jacobian of Hyperelliptic Curve over Real Double
-            Field defined by y^2 = x^3 - 10.0*x + 9.0
+            Jacobian of Hyperelliptic Curve over Real Double Field
+             defined by y^2 = x^3 - 10.0*x + 9.0
         """
         return self.curve().change_ring(R).jacobian()
 
     def base_extend(self, R):
         r"""
-        Return the natural extension of ``self`` over `R`
+        Return the natural extension of ``self`` over `R`.
 
         INPUT:
 
         - ``R`` -- a field. The new base field.
 
-        OUTPUT:
-
-        The Jacobian over the ring `R`.
+        OUTPUT: The Jacobian over the ring `R`.
 
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: H = HyperellipticCurve(x^3-10*x+9)
+            sage: H = HyperellipticCurve(x^3 - 10*x + 9)
             sage: Jac = H.jacobian();   Jac
-            Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^3 - 10*x + 9
-            sage: F.<a> = QQ.extension(x^2+1)
-            sage: Jac.base_extend(F)
+            Jacobian of Hyperelliptic Curve over Rational Field
+             defined by y^2 = x^3 - 10*x + 9
+            sage: F.<a> = QQ.extension(x^2 + 1)                                         # optional - sage.rings.number_field
+            sage: Jac.base_extend(F)                                                    # optional - sage.rings.number_field
             Jacobian of Hyperelliptic Curve over Number Field in a with defining
-            polynomial x^2 + 1 defined by y^2 = x^3 - 10*x + 9
+             polynomial x^2 + 1 defined by y^2 = x^3 - 10*x + 9
         """
         if R not in _Fields:
             raise ValueError('Not a field: ' + str(R))
