@@ -2925,7 +2925,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: e == S.e(), h == S.h(), m == S.m(), p == SQ.p(), s == SQ.s()  # optional - sage.combinat
                     (True, True, True, True, True)
                 """
-                from sage.misc.globals import inject_variable
+                from sage.misc.misc import inject_variable
                 if shorthands == 'all':
                     shorthands = getattr(self, '_shorthands_all', None)
                 if shorthands is None:
