@@ -1268,6 +1268,8 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         sage: solve([x==3], [x], solution_dict=True, algorithm='sympy')
         [{x: 3}]
     """
+    from sage.structure.element import Expression
+
     if f.is_relational():
         if f.operator() is not operator.eq:
             if algorithm == 'sympy':
