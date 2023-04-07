@@ -2068,7 +2068,7 @@ cdef class mpf(mpf_base):
         """
         MPF_init(&self.value)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         MPF_clear(&self.value)
 
     def __neg__(s):
@@ -2359,7 +2359,7 @@ cdef class mpc(mpnumber):
         MPF_init(&self.re)
         MPF_init(&self.im)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         MPF_clear(&self.re)
         MPF_clear(&self.im)
 

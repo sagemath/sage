@@ -387,7 +387,6 @@ class LeviCivitaConnection(AffineConnection):
                               start_index=self._domain._sindex,
                               output_formatter=DiffScalarField.coord_function)
 
-
     def coef(self, frame=None):
         r"""
         Return the connection coefficients relative to the given frame.
