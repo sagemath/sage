@@ -1064,7 +1064,7 @@ class LazyFamily(AbstractFamily):
 
             Check that using a class as the function is correctly handled::
 
-                sage: Family(NonNegativeIntegers(), PerfectMatchings)
+                sage: Family(NonNegativeIntegers(), PerfectMatchings)                   # optional - sage.combinat
                 Lazy family (<class 'sage.combinat.perfect_matching.PerfectMatchings'>(i))_{i in Non negative integers}
         """
         if self.function_name is not None:

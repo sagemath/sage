@@ -353,18 +353,18 @@ def cython_aliases(required_modules=None,
     EXAMPLES::
 
         sage: from sage.env import cython_aliases
-        sage: cython_aliases()
+        sage: cython_aliases()                                                                                          # optional - sage.misc.cython
         {...}
-        sage: sorted(cython_aliases().keys())
+        sage: sorted(cython_aliases().keys())                                                                           # optional - sage.misc.cython
         ['ARB_LIBRARY',
          'CBLAS_CFLAGS',
          ...,
          'ZLIB_LIBRARIES']
-        sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))
+        sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))                                  # optional - sage.misc.cython
         Traceback (most recent call last):
         ...
         PackageNotFoundError: ...
-        sage: cython_aliases(required_modules=(), optional_modules=('module-that-is-assumed-to-not-exist'))
+        sage: cython_aliases(required_modules=(), optional_modules=('module-that-is-assumed-to-not-exist'))             # optional - sage.misc.cython
         {...}
 
     TESTS:
@@ -372,7 +372,7 @@ def cython_aliases(required_modules=None,
     We can use ``cython.parallel`` regardless of whether OpenMP is supported.
     This will run in parallel, if OpenMP is supported::
 
-        sage: cython(                                               # optional - sage.misc.cython
+        sage: cython(                                                                                                   # optional - sage.misc.cython
         ....: '''
         ....: #distutils: extra_compile_args = OPENMP_CFLAGS
         ....: #distutils: extra_link_args = OPENMP_CFLAGS

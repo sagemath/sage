@@ -486,7 +486,7 @@ class HyperplaneArrangementLibrary():
 
         EXAMPLES::
 
-            sage: hyperplane_arrangements.semiorder(4)
+            sage: hyperplane_arrangements.semiorder(4)                              # optional - sage.combinat
             Arrangement of 12 hyperplanes of dimension 4 and rank 3
 
         TESTS::
@@ -547,29 +547,29 @@ class HyperplaneArrangementLibrary():
 
         EXAMPLES::
 
-            sage: hyperplane_arrangements.Shi(4)
+            sage: hyperplane_arrangements.Shi(4)                                        # optional - sage.combinat
             Arrangement of 12 hyperplanes of dimension 4 and rank 3
-            sage: hyperplane_arrangements.Shi("A3")
+            sage: hyperplane_arrangements.Shi("A3")                                     # optional - sage.combinat
             Arrangement of 12 hyperplanes of dimension 4 and rank 3
-            sage: hyperplane_arrangements.Shi("A3",m=2)
+            sage: hyperplane_arrangements.Shi("A3", m=2)                                # optional - sage.combinat
             Arrangement of 24 hyperplanes of dimension 4 and rank 3
-            sage: hyperplane_arrangements.Shi("B4")
+            sage: hyperplane_arrangements.Shi("B4")                                     # optional - sage.combinat
             Arrangement of 32 hyperplanes of dimension 4 and rank 4
-            sage: hyperplane_arrangements.Shi("B4",m=3)
+            sage: hyperplane_arrangements.Shi("B4", m=3)                                # optional - sage.combinat
             Arrangement of 96 hyperplanes of dimension 4 and rank 4
-            sage: hyperplane_arrangements.Shi("C3")
+            sage: hyperplane_arrangements.Shi("C3")                                     # optional - sage.combinat
             Arrangement of 18 hyperplanes of dimension 3 and rank 3
-            sage: hyperplane_arrangements.Shi("D4",m=3)
+            sage: hyperplane_arrangements.Shi("D4", m=3)                                # optional - sage.combinat
             Arrangement of 72 hyperplanes of dimension 4 and rank 4
-            sage: hyperplane_arrangements.Shi("E6")
+            sage: hyperplane_arrangements.Shi("E6")                                     # optional - sage.combinat
             Arrangement of 72 hyperplanes of dimension 8 and rank 6
-            sage: hyperplane_arrangements.Shi("E6",m=2)
+            sage: hyperplane_arrangements.Shi("E6", m=2)                                # optional - sage.combinat
             Arrangement of 144 hyperplanes of dimension 8 and rank 6
 
         If the Cartan type is not crystallographic, the Shi arrangement
         is not defined::
 
-            sage: hyperplane_arrangements.Shi("H4")
+            sage: hyperplane_arrangements.Shi("H4")                                     # optional - sage.combinat
             Traceback (most recent call last):
             ...
             NotImplementedError: Shi arrangements are not defined for non crystallographic Cartan types
@@ -577,36 +577,36 @@ class HyperplaneArrangementLibrary():
         The characteristic polynomial is pre-computed using the results
         of [Ath1996]_::
 
-            sage: hyperplane_arrangements.Shi("A3").characteristic_polynomial()
+            sage: hyperplane_arrangements.Shi("A3").characteristic_polynomial()         # optional - sage.combinat
             x^4 - 12*x^3 + 48*x^2 - 64*x
-            sage: hyperplane_arrangements.Shi("A3",m=2).characteristic_polynomial()
+            sage: hyperplane_arrangements.Shi("A3", m=2).characteristic_polynomial()    # optional - sage.combinat
             x^4 - 24*x^3 + 192*x^2 - 512*x
-            sage: hyperplane_arrangements.Shi("C3").characteristic_polynomial()
+            sage: hyperplane_arrangements.Shi("C3").characteristic_polynomial()         # optional - sage.combinat
             x^3 - 18*x^2 + 108*x - 216
-            sage: hyperplane_arrangements.Shi("E6").characteristic_polynomial()
+            sage: hyperplane_arrangements.Shi("E6").characteristic_polynomial()         # optional - sage.combinat
             x^8 - 72*x^7 + 2160*x^6 - 34560*x^5 + 311040*x^4 - 1492992*x^3 + 2985984*x^2
-            sage: hyperplane_arrangements.Shi("B4",m=3).characteristic_polynomial()
+            sage: hyperplane_arrangements.Shi("B4", m=3).characteristic_polynomial()    # optional - sage.combinat
             x^4 - 96*x^3 + 3456*x^2 - 55296*x + 331776
 
         TESTS::
 
-            sage: h = hyperplane_arrangements.Shi(4)
-            sage: h.characteristic_polynomial()
+            sage: h = hyperplane_arrangements.Shi(4)                                    # optional - sage.combinat
+            sage: h.characteristic_polynomial()                                         # optional - sage.combinat
             x^4 - 12*x^3 + 48*x^2 - 64*x
-            sage: h.characteristic_polynomial.clear_cache()  # long time
-            sage: h.characteristic_polynomial()              # long time
+            sage: h.characteristic_polynomial.clear_cache()  # long time                # optional - sage.combinat
+            sage: h.characteristic_polynomial()              # long time                # optional - sage.combinat
             x^4 - 12*x^3 + 48*x^2 - 64*x
-            sage: h = hyperplane_arrangements.Shi("A3",m=2)
-            sage: h.characteristic_polynomial()
+            sage: h = hyperplane_arrangements.Shi("A3", m=2)                            # optional - sage.combinat
+            sage: h.characteristic_polynomial()                                         # optional - sage.combinat
             x^4 - 24*x^3 + 192*x^2 - 512*x
-            sage: h.characteristic_polynomial.clear_cache()
-            sage: h.characteristic_polynomial()
+            sage: h.characteristic_polynomial.clear_cache()                             # optional - sage.combinat
+            sage: h.characteristic_polynomial()                                         # optional - sage.combinat
             x^4 - 24*x^3 + 192*x^2 - 512*x
-            sage: h = hyperplane_arrangements.Shi("B3",m=3)
-            sage: h.characteristic_polynomial()
+            sage: h = hyperplane_arrangements.Shi("B3", m=3)                            # optional - sage.combinat
+            sage: h.characteristic_polynomial()                                         # optional - sage.combinat
             x^3 - 54*x^2 + 972*x - 5832
-            sage: h.characteristic_polynomial.clear_cache()
-            sage: h.characteristic_polynomial()
+            sage: h.characteristic_polynomial.clear_cache()                             # optional - sage.combinat
+            sage: h.characteristic_polynomial()                                         # optional - sage.combinat
             x^3 - 54*x^2 + 972*x - 5832
         """
         if data in NN:

@@ -38,8 +38,8 @@ cdef class SetSystem:
     contents. One is most likely to encounter these as output from some
     Matroid methods::
 
-        sage: M = matroids.named_matroids.Fano()
-        sage: M.circuits()
+        sage: M = matroids.named_matroids.Fano()                                        # optional - sage.libs.pari
+        sage: M.circuits()                                                              # optional - sage.libs.pari
         Iterator over a system of subsets
 
     To access the sets in this structure, simply iterate over them. The
@@ -730,11 +730,11 @@ cdef class SetSystem:
 
         Check that :trac:`15189` is fixed::
 
-            sage: M = Matroid(ring=GF(5), reduced_matrix=[[1,0,3],[0,1,1],[1,1,0]])
-            sage: N = Matroid(ring=GF(5), reduced_matrix=[[1,0,1],[0,1,1],[1,1,0]])
-            sage: M.is_field_isomorphic(N)
+            sage: M = Matroid(ring=GF(5), reduced_matrix=[[1,0,3],[0,1,1],[1,1,0]])     # optional - sage.libs.pari
+            sage: N = Matroid(ring=GF(5), reduced_matrix=[[1,0,1],[0,1,1],[1,1,0]])     # optional - sage.libs.pari
+            sage: M.is_field_isomorphic(N)                                              # optional - sage.libs.pari
             False
-            sage: any(M.is_field_isomorphism(N, p) for p in Permutations(range(6)))
+            sage: any(M.is_field_isomorphism(N, p) for p in Permutations(range(6)))     # optional - sage.combinat sage.libs.pari
             False
         """
         cdef long v

@@ -45,7 +45,7 @@ class IntegralDomains(CategoryWithAxiom):
         """
         EXAMPLES::
 
-            sage: GF(4, "a") in IntegralDomains()
+            sage: GF(4, "a") in IntegralDomains()                                       # optional - sage.libs.pari
             True
             sage: QQ in IntegralDomains()
             True

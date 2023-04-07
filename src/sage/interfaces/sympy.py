@@ -1,3 +1,4 @@
+# sage.doctest: optional - sympy
 """
 SymPy --> Sage conversion
 

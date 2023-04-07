@@ -49,7 +49,7 @@ ones.
     sage: p = PseudolineArrangement(permutations)
     sage: p
     Arrangement of pseudolines of size 4
-    sage: p.show()
+    sage: p.show()                                                              # optional - sage.plot
 
 **Sequence of transpositions**
 
@@ -67,7 +67,7 @@ from left to right (see the :meth:`show
     sage: p = PseudolineArrangement(transpositions)
     sage: p
     Arrangement of pseudolines of size 4
-    sage: p.show()
+    sage: p.show()                                                              # optional - sage.plot
 
 
 Note that this ordering is not necessarily unique.
@@ -129,8 +129,8 @@ them are parallel by making sure all of the `a` chosen are different, and we
 avoid a common crossing of three lines by adding a random noise to `b`::
 
     sage: n = 20
-    sage: l = sorted(zip(Subsets(20*n,n).random_element(), [randint(0,20*n)+random() for i in range(n)]))
-    sage: print(l[:5])                            # not tested
+    sage: l = sorted(zip(Subsets(20*n,n).random_element(), [randint(0,20*n)+random() for i in range(n)]))   # optional - sage.combinat
+    sage: print(l[:5])                            # not tested                                              # optional - sage.combinat
     [(96, 278.0130613051349), (74, 332.92512282478714), (13, 155.65820951249867), (209, 34.753946221755307), (147, 193.51376457741441)]
 
 We can now compute for each `i` the order in which line `i` meets the other lines::
@@ -138,16 +138,16 @@ We can now compute for each `i` the order in which line `i` meets the other line
     sage: permutations = [[0..i-1]+[i+1..n-1] for i in range(n)]
     sage: a = lambda x : l[x][0]
     sage: b = lambda x : l[x][1]
-    sage: for i, perm in enumerate(permutations):
+    sage: for i, perm in enumerate(permutations):                                                           # optional - sage.combinat
     ....:     perm.sort(key = lambda j : (b(j)-b(i))/(a(i)-a(j)))
 
 And finally build the line arrangement::
 
     sage: from sage.geometry.pseudolines import PseudolineArrangement
-    sage: p = PseudolineArrangement(permutations)
-    sage: print(p)
+    sage: p = PseudolineArrangement(permutations)                                                           # optional - sage.combinat
+    sage: print(p)                                                                                          # optional - sage.combinat
     Arrangement of pseudolines of size 20
-    sage: p.show(figsize=[20,8])
+    sage: p.show(figsize=[20,8])                                                                            # optional - sage.combinat sage.plot
 
 Author
 ^^^^^^
@@ -417,14 +417,14 @@ class PseudolineArrangement:
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
             sage: p = PseudolineArrangement(permutations)
-            sage: p.show(figsize=[7,5])
+            sage: p.show(figsize=[7,5])                                         # optional - sage.plot
 
         TESTS::
 
             sage: from sage.geometry.pseudolines import PseudolineArrangement
             sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 0, 1], [2, 0, 1]]
             sage: p = PseudolineArrangement(permutations)
-            sage: p.show()
+            sage: p.show()                                                      # optional - sage.plot
             Traceback (most recent call last):
             ...
             ValueError: There has been a problem while plotting the figure...

@@ -19,11 +19,15 @@ Actions used by the coercion model for matrix and vector multiplications
         sage: MSZ = MatrixSpace(ZZ['x'], 2)
         sage: A = MSQ.get_action(MSZ)
         sage: A
-        Left action by Full MatrixSpace of 2 by 2 dense matrices over Rational Field on Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring
+        Left action by Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+         on Full MatrixSpace of 2 by 2 dense matrices
+          over Univariate Polynomial Ring in x over Integer Ring
         sage: import gc
         sage: _ = gc.collect()
         sage: A
-        Left action by Full MatrixSpace of 2 by 2 dense matrices over Rational Field on Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring
+        Left action by Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+         on Full MatrixSpace of 2 by 2 dense matrices
+          over Univariate Polynomial Ring in x over Integer Ring
 
 .. NOTE::
 
@@ -83,13 +87,17 @@ cdef class MatrixMulAction(Action):
         sage: MSQ = MatrixSpace(QQ, 2)
         sage: MSZ = MatrixSpace(ZZ['x'], 2)
         sage: A = MSQ.get_action(MSZ); A
-        Left action by Full MatrixSpace of 2 by 2 dense matrices over Rational Field on Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring
+        Left action by Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+         on Full MatrixSpace of 2 by 2 dense matrices
+            over Univariate Polynomial Ring in x over Integer Ring
         sage: A.actor()
         Full MatrixSpace of 2 by 2 dense matrices over Rational Field
         sage: A.domain()
-        Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring
+        Full MatrixSpace of 2 by 2 dense matrices
+         over Univariate Polynomial Ring in x over Integer Ring
         sage: A.codomain()
-        Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field
+        Full MatrixSpace of 2 by 2 dense matrices
+         over Univariate Polynomial Ring in x over Rational Field
     """
     def __init__(self, G, S, is_left):
         if not is_MatrixSpace(G):
@@ -130,9 +138,13 @@ cdef class MatrixMatrixAction(MatrixMulAction):
         sage: MSQ = MatrixSpace(QQ, 3, 2)
         sage: from sage.matrix.action import MatrixMatrixAction
         sage: A = MatrixMatrixAction(MSR, MSQ); A
-        Left action by Full MatrixSpace of 3 by 3 dense matrices over Univariate Polynomial Ring in x over Integer Ring on Full MatrixSpace of 3 by 2 dense matrices over Rational Field
+        Left action
+         by Full MatrixSpace of 3 by 3 dense matrices
+            over Univariate Polynomial Ring in x over Integer Ring
+         on Full MatrixSpace of 3 by 2 dense matrices over Rational Field
         sage: A.codomain()
-        Full MatrixSpace of 3 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field
+        Full MatrixSpace of 3 by 2 dense matrices
+         over Univariate Polynomial Ring in x over Rational Field
         sage: A(matrix(R, 3, 3, x), matrix(QQ, 3, 2, range(6)))
         [  0   x]
         [2*x 3*x]
@@ -183,7 +195,8 @@ cdef class MatrixMatrixAction(MatrixMulAction):
             sage: MSR = MatrixSpace(R, 3, 3)
             sage: MSQ = MatrixSpace(QQ, 3, 2)
             sage: A = MatrixMatrixAction(MSR, MSQ); A
-            Left action by Full MatrixSpace of 3 by 3 dense matrices over Univariate Polynomial Ring in x over Integer Ring on Full MatrixSpace of 3 by 2 dense matrices over Rational Field
+            Left action by Full MatrixSpace of 3 by 3 dense matrices over Univariate Polynomial Ring in x over Integer Ring
+            on Full MatrixSpace of 3 by 2 dense matrices over Rational Field
             sage: A.codomain()
             Full MatrixSpace of 3 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field
 
@@ -209,23 +222,23 @@ cdef class MatrixMatrixAction(MatrixMulAction):
 
         Respects compatible subdivisions::
 
-            sage: M = matrix(5, 5, prime_range(100))
-            sage: M.subdivide(2,3); M
+            sage: M = matrix(5, 5, prime_range(100))                                    # optional - sage.libs.pari
+            sage: M.subdivide(2, 3); M                                                  # optional - sage.libs.pari
             [ 2  3  5| 7 11]
             [13 17 19|23 29]
             [--------+-----]
             [31 37 41|43 47]
             [53 59 61|67 71]
             [73 79 83|89 97]
-            sage: N = matrix(5,2,[n^2 for n in range(10)])
-            sage: N.subdivide(3,1); N
+            sage: N = matrix(5, 2, [n^2 for n in range(10)])
+            sage: N.subdivide(3, 1); N
             [ 0| 1]
             [ 4| 9]
             [16|25]
             [--+--]
             [36|49]
             [64|81]
-            sage: M*N
+            sage: M*N                                                                   # optional - sage.libs.pari
             [ 1048| 1388]
             [ 3056| 4117]
             [-----+-----]
@@ -235,7 +248,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
 
         Note that this is just like block matrix multiplication::
 
-            sage: M.subdivision(0,0) * N.subdivision(0,0) + M.subdivision(0,1) * N.subdivision(1,0)
+            sage: M.subdivision(0,0) * N.subdivision(0,0) + M.subdivision(0,1) * N.subdivision(1,0)     # optional - sage.libs.pari
             [1048]
             [3056]
 
@@ -249,7 +262,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
             [16|25]
             [36|49]
             [64|81]
-            sage: M*N
+            sage: M*N                                                                   # optional - sage.libs.pari
             [ 1048  1388]
             [ 3056  4117]
             [ 5360  7303]
@@ -304,7 +317,8 @@ cdef class MatrixVectorAction(MatrixMulAction):
             sage: M = MatrixSpace(QQ, 5, 3)
             sage: V = VectorSpace(CDF, 3)    # strong reference prevents garbage collection
             sage: A = MatrixVectorAction(M, V); A
-            Left action by Full MatrixSpace of 5 by 3 dense matrices over Rational Field on Vector space of dimension 3 over Complex Double Field
+            Left action by Full MatrixSpace of 5 by 3 dense matrices over Rational Field
+             on Vector space of dimension 3 over Complex Double Field
             sage: A.codomain()
             Vector space of dimension 5 over Complex Double Field
         """
@@ -355,7 +369,8 @@ cdef class VectorMatrixAction(MatrixMulAction):
             sage: V = VectorSpace(CDF, 3)
             sage: A = VectorMatrixAction(M, V)
             sage: A
-            Right action by Full MatrixSpace of 3 by 5 dense matrices over Rational Field on Vector space of dimension 3 over Complex Double Field
+            Right action by Full MatrixSpace of 3 by 5 dense matrices over Rational Field
+             on Vector space of dimension 3 over Complex Double Field
             sage: A.codomain()
             Vector space of dimension 5 over Complex Double Field
         """

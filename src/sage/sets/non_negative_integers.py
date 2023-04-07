@@ -100,15 +100,15 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             True
             sage: -1 in NN
             False
-            sage: x in NN
+            sage: x in NN                                                               # optional - sage.symbolic
             False
             sage: None in NN
             False
-            sage: QQbar(sqrt(2)) in NN
+            sage: QQbar(sqrt(2)) in NN                                                  # optional - sage.symbolic sage.rings.number_field
             False
             sage: RIF(1,2) in NN
             False
-            sage: QQbar(2) in NN
+            sage: QQbar(2) in NN                                                        # optional - sage.rings.number_field
             True
             sage: RIF(2) in NN
             True
@@ -133,7 +133,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             ValueError: Value -5 in not in Non negative integers.
-            sage: NN._element_constructor_(x)
+            sage: NN._element_constructor_(x)                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: Value x in not in Non negative integers.
@@ -230,7 +230,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: NN = NonNegativeIntegers()
-            sage: NN._sympy_()
+            sage: NN._sympy_()                                                          # optional - sympy
             Naturals0
         """
         from sympy import Naturals0
