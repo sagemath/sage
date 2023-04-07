@@ -755,7 +755,7 @@ class F_algebra(CombinatorialFreeModule):
             a, b = next(iter(self))[0]
             N = 2 * a + sum(int(x) for x in b)
             return vector(BR, [self.coefficient(b)
-                               for b in basis_f_iterator(N, self.parent()._start)])
+                               for b in basis_f_iterator(N, F._start)])
 
         def without_f2(self):
             """
