@@ -116,7 +116,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
             return self.sum(self.monomial(j) for j in range(i))
 
 
-
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_A', 'ambient_space',  AmbientSpace)
 
@@ -342,8 +341,8 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
         if n == 2:
             ret = "{}   {}\n".format(node(label(1)), node(label(2)))
             return ret + "{!s:4}{!s:4}".format(label(1), label(2))
-        ret  =  (4*(n-3))*" "+"{} {}\n".format(node(label(n)), label(n))
-        ret += ((4*(n-3))*" "                 +"|\n")*2
+        ret =  (4*(n-3))*" "+"{} {}\n".format(node(label(n)), label(n))
+        ret += ((4*(n-3))*" " +"|\n")*2
         ret += "---".join(node(label(i)) for i in range(1, n)) +"\n"
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n))
         return ret

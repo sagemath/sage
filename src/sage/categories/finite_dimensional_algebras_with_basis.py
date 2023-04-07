@@ -313,7 +313,6 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             result.rename("Semisimple quotient of {}".format(self))
             return result
 
-
         @cached_method
         def center_basis(self):
             r"""
@@ -818,7 +817,6 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             return self.submodule([self.from_vector(v) for v in ideal.basis()],
                                   already_echelonized=True)
-
 
         def peirce_decomposition(self, idempotents=None, check=True):
             r"""

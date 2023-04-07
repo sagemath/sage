@@ -533,7 +533,7 @@ cdef class NCPolynomialRing_plural(Ring):
 
         elif isinstance(element, CommutativeRingElement):
             # base ring elements
-            if  <Parent>element.parent() is base_ring:
+            if <Parent>element.parent() is base_ring:
                 # shortcut for GF(p)
                 if isinstance(base_ring, FiniteField_prime_modn):
                     _p = p_ISet(int(element) % _ring.cf.ch, _ring)
@@ -657,7 +657,7 @@ cdef class NCPolynomialRing_plural(Ring):
             Ambient free module of rank 3 over Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field, nc-relations: {y*x: -x*y}
 
         """
-        from sage.modules.all import FreeModule
+        from sage.modules.free_module import FreeModule
         return FreeModule(self, n)
 
     def term_order(self):
@@ -815,7 +815,7 @@ cdef class NCPolynomialRing_plural(Ring):
         n = self.ngens()
         for r in range(0, n-1, 1):
             for c in range(r+1, n, 1):
-                if  (self.gen(c) * self.gen(r) != self.gen(r) * self.gen(c)):
+                if (self.gen(c) * self.gen(r) != self.gen(r) * self.gen(c)):
                     res[ A.gen(c) * A.gen(r) ] = self.gen(c) * self.gen(r) # C[r, c] * P.gen(r) * P.gen(c) + D[r, c]
 
         self._relations = res
@@ -1780,7 +1780,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         _I = idInit(len(I),1)
         for f in I:
-            if not (isinstance(f, NCPolynomial_plural) \
+            if not (isinstance(f, NCPolynomial_plural)
                    and <NCPolynomialRing_plural>(<NCPolynomial_plural>f)._parent is parent):
                 try:
                     f = parent.coerce(f)
@@ -1871,7 +1871,7 @@ cdef class NCPolynomial_plural(RingElement):
             sage: print(f._repr_with_changed_varnames(['FOO', 'BAR', 'FOOBAR']))
             -FOO^2*FOOBAR - BAR^2 - 25/27*FOOBAR^3
         """
-        return  singular_polynomial_str_with_changed_varnames(self._poly, (<NCPolynomialRing_plural>self._parent)._ring, varnames)
+        return singular_polynomial_str_with_changed_varnames(self._poly, (<NCPolynomialRing_plural>self._parent)._ring, varnames)
 
     def degree(self, NCPolynomial_plural x=None):
         """
@@ -1881,7 +1881,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         INPUT:
 
-        - ``x`` - multivariate polynomial (a generator of the parent of
+        - ``x`` -- multivariate polynomial (a generator of the parent of
           self) If x is not specified (or is ``None``), return the total
           degree, which is the maximum degree of any monomial.
 

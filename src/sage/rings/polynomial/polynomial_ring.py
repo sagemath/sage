@@ -155,7 +155,7 @@ import sage.rings.rational_field as rational_field
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.rings.number_field.number_field_base import is_NumberField
+from sage.rings.number_field.number_field_base import NumberField
 from sage.libs.pari.all import pari_gen
 from sage.rings.polynomial.polynomial_ring_constructor import polynomial_default_category
 
@@ -167,8 +167,6 @@ from sage.misc.lazy_attribute import lazy_attribute
 import sage.rings.abc
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.finite_rings.element_base import FiniteRingElement
-
-from .polynomial_element import PolynomialBaseringInjection
 from .polynomial_real_mpfr_dense import PolynomialRealDense
 from .polynomial_integer_dense_flint import Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
@@ -230,7 +228,8 @@ class PolynomialRing_general(ring.Algebra):
     Univariate polynomial ring over a ring.
     """
 
-    def __init__(self, base_ring, name=None, sparse=False, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, sparse=False, implementation=None,
+                 element_class=None, category=None):
         """
         EXAMPLES::
 
@@ -625,36 +624,53 @@ class PolynomialRing_general(ring.Algebra):
         """
         return categories.pushout.PolynomialFunctor(self.variable_name(), sparse=self.__is_sparse), self.base_ring()
 
-    def completion(self, p, prec=20, extras=None):
-        """
-        Return the completion of self with respect to the irreducible
-        polynomial p. Currently only implemented for p=self.gen(), i.e. you
-        can only complete R[x] with respect to x, the result being a ring
-        of power series in x. The prec variable controls the precision used
-        in the power series ring.
+    def completion(self, p=None, prec=20, extras=None):
+        r"""
+        Return the completion of ``self`` with respect to the irreducible
+        polynomial ``p``.
+
+        Currently only implemented for ``p=self.gen()`` (the default), i.e. you
+        can only complete `R[x]` with respect to `x`, the result being a ring
+        of power series in `x`. The ``prec`` variable controls the precision
+        used in the power series ring. If ``prec`` is `\infty`, then this
+        returns a :class:`LazyPowerSeriesRing`.
 
         EXAMPLES::
 
-            sage: P.<x>=PolynomialRing(QQ)
+            sage: P.<x> = PolynomialRing(QQ)
             sage: P
             Univariate Polynomial Ring in x over Rational Field
-            sage: PP=P.completion(x)
+            sage: PP = P.completion(x)
             sage: PP
             Power Series Ring in x over Rational Field
-            sage: f=1-x
+            sage: f = 1 - x
             sage: PP(f)
             1 - x
-            sage: 1/f
+            sage: 1 / f
             -1/(x - 1)
-            sage: 1/PP(f)
-            1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10 + x^11 + x^12 + x^13 + x^14 + x^15 + x^16 + x^17 + x^18 + x^19 + O(x^20)
+            sage: g = 1 / PP(f); g
+            1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10 + x^11
+             + x^12 + x^13 + x^14 + x^15 + x^16 + x^17 + x^18 + x^19 + O(x^20)
+            sage: 1 / g
+            1 - x + O(x^20)
+
+            sage: PP = P.completion(x, prec=oo); PP
+            Lazy Taylor Series Ring in x over Rational Field
+            sage: g = 1 / PP(f); g
+            1 + x + x^2 + O(x^3)
+            sage: 1 / g == f
+            True
         """
-        if str(p) == self._names[0]:
+        if p is None or str(p) == self._names[0]:
+            if prec == float('inf'):
+                from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+                return LazyPowerSeriesRing(self.base_ring(), names=(self._names[0],),
+                                           sparse=self.is_sparse())
             from sage.rings.power_series_ring import PowerSeriesRing
             return PowerSeriesRing(self.base_ring(), name=self._names[0],
                                    default_prec=prec, sparse=self.is_sparse())
-        else:
-            raise TypeError("Cannot complete %s with respect to %s" % (self, p))
+
+        raise NotImplementedError("cannot complete %s with respect to %s" % (self, p))
 
     def _coerce_map_from_base_ring(self):
         """
@@ -680,6 +696,8 @@ class PolynomialRing_general(ring.Algebra):
                       To:   Univariate Polynomial Ring in x over Rational Field
             sage: R.coerce_map_from(GF(7))
         """
+        from .polynomial_element import PolynomialBaseringInjection
+
         return PolynomialBaseringInjection(self.base_ring(), self)
 
     def _coerce_map_from_(self, P):
@@ -1668,7 +1686,8 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
     """
     Univariate polynomial ring over a commutative ring.
     """
-    def __init__(self, base_ring, name=None, sparse=False, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, sparse=False, implementation=None,
+                 element_class=None, category=None):
         if base_ring not in _CommutativeRings:
             raise TypeError("Base ring %s must be a commutative ring."%repr(base_ring))
         # We trust that, if a category is given, that it is useful.
@@ -1678,7 +1697,8 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
             else:
                 category = polynomial_default_category(base_ring.category(), 1)
         PolynomialRing_general.__init__(self, base_ring, name=name,
-                sparse=sparse, element_class=element_class, category=category)
+                                        sparse=sparse, implementation=implementation,
+                                        element_class=element_class, category=category)
 
     def quotient_by_principal_ideal(self, f, names=None, **kwds):
         """
@@ -1805,16 +1825,30 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         """
         self._implementation_repr = ''
         if element_class is None:
-            implementation = self._implementation_names(implementation, base_ring, sparse)[0]
-            if base_ring is ZZ:
-                if implementation == 'NTL':
-                    from sage.rings.polynomial.polynomial_integer_dense_ntl \
-                        import Polynomial_integer_dense_ntl as element_class
-                    self._implementation_repr = ' (using NTL)'
-                elif implementation == 'FLINT':
-                    element_class = Polynomial_integer_dense_flint
+            given_implementation = implementation
+            for implementation in self._implementation_names(implementation, base_ring, sparse):
+                if base_ring is ZZ:
+                    if implementation == 'NTL':
+                        try:
+                            from sage.rings.polynomial.polynomial_integer_dense_ntl \
+                                import Polynomial_integer_dense_ntl as element_class
+                        except ImportError:
+                            if given_implementation:
+                                raise
+                            continue
+                        self._implementation_repr = ' (using NTL)'
+                    elif implementation == 'FLINT':
+                        try:
+                            from .polynomial_integer_dense_flint \
+                                import Polynomial_integer_dense_flint as element_class
+                        except ImportError:
+                            if given_implementation:
+                                raise
+                            continue
+                break
         PolynomialRing_commutative.__init__(self, base_ring, name=name,
-                sparse=sparse, element_class=element_class, category=category)
+                                            sparse=sparse, implementation=implementation,
+                                            element_class=element_class, category=category)
         self._has_singular = can_convert_to_singular(self)
 
     @cached_method(key=lambda self, d, q, sign, lead: (d, q, sign, tuple([x if isinstance(x, (tuple, list)) else (x, 0) for x in lead]) if isinstance(lead, (tuple, list)) else ((lead, 0))))
@@ -1993,7 +2027,8 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
 
     _default_category = PrincipalIdealDomains()
 
-    def __init__(self, base_ring, name="x", sparse=False, element_class=None, category=None):
+    def __init__(self, base_ring, name="x", sparse=False, implementation=None,
+                 element_class=None, category=None):
         """
         TESTS::
 
@@ -2017,30 +2052,42 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
             sage: x^(10^20) # this should be fast
             x^100000000000000000000
         """
-        import sage.rings.complex_arb
-
-        if not element_class:
+        def _element_class():
+            if element_class:
+                return element_class
             if sparse:
-                element_class = polynomial_element_generic.Polynomial_generic_sparse_field
-            elif isinstance(base_ring, rational_field.RationalField):
-                from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
-                element_class = Polynomial_rational_flint
-            elif is_NumberField(base_ring):
+                return polynomial_element_generic.Polynomial_generic_sparse_field
+            if isinstance(base_ring, rational_field.RationalField):
+                try:
+                    from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
+                    return Polynomial_rational_flint
+                except ImportError:
+                    pass
+            elif isinstance(base_ring, NumberField):
                 if base_ring.is_absolute():
                     from sage.rings.polynomial.polynomial_number_field import Polynomial_absolute_number_field_dense
-                    element_class = Polynomial_absolute_number_field_dense
+                    return Polynomial_absolute_number_field_dense
                 else:
                     from sage.rings.polynomial.polynomial_number_field import Polynomial_relative_number_field_dense
-                    element_class = Polynomial_relative_number_field_dense
+                    return Polynomial_relative_number_field_dense
             elif isinstance(base_ring, sage.rings.abc.RealField):
-                element_class = PolynomialRealDense
+                try:
+                    from .polynomial_real_mpfr_dense import PolynomialRealDense
+                    return PolynomialRealDense
+                except ImportError:
+                    pass
             elif isinstance(base_ring, sage.rings.abc.ComplexBallField):
-                from sage.rings.polynomial.polynomial_complex_arb import Polynomial_complex_arb
-                element_class = Polynomial_complex_arb
-            else:
-                element_class = polynomial_element_generic.Polynomial_generic_dense_field
+                try:
+                    from sage.rings.polynomial.polynomial_complex_arb import Polynomial_complex_arb
+                    return Polynomial_complex_arb
+                except ImportError:
+                    pass
+            from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_dense_field
+            return Polynomial_generic_dense_field
 
-        PolynomialRing_integral_domain.__init__(self, base_ring, name=name, sparse=sparse, element_class=element_class, category=category)
+        PolynomialRing_integral_domain.__init__(self, base_ring, name=name,
+                                                sparse=sparse, implementation=implementation,
+                                                element_class=_element_class(), category=category)
 
     def _ideal_class_(self, n=0):
         """
@@ -2441,17 +2488,24 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             ...
             ValueError: unknown implementation 'superfast' for dense polynomial rings over Finite Field in z6 of size 2^6
         """
-        implementation = self._implementation_names(implementation, base_ring)[0]
-        if implementation == "NTL":
-            from sage.libs.ntl.ntl_ZZ_pEContext import ntl_ZZ_pEContext
-            from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX
-            from sage.rings.polynomial.polynomial_zz_pex import Polynomial_ZZ_pEX
-
-            p = base_ring.characteristic()
-            self._modulus = ntl_ZZ_pEContext(ntl_ZZ_pX(list(base_ring.modulus()), p))
-            element_class = Polynomial_ZZ_pEX
+        if element_class is None:
+            given_implementation = implementation
+            for implementation in self._implementation_names(implementation, base_ring):
+                if implementation == "NTL":
+                    try:
+                        from sage.libs.ntl.ntl_ZZ_pEContext import ntl_ZZ_pEContext
+                        from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX
+                        from sage.rings.polynomial.polynomial_zz_pex import Polynomial_ZZ_pEX
+                    except ImportError:
+                        if given_implementation:
+                            raise
+                        continue
+                    p = base_ring.characteristic()
+                    self._modulus = ntl_ZZ_pEContext(ntl_ZZ_pX(list(base_ring.modulus()), p))
+                    element_class = Polynomial_ZZ_pEX
+                break
         PolynomialRing_field.__init__(self, base_ring, sparse=False, name=name,
-                                      element_class=element_class)
+                                      implementation=implementation, element_class=element_class)
 
     @staticmethod
     def _implementation_names_impl(implementation, base_ring, sparse):
@@ -2831,7 +2885,8 @@ class PolynomialRing_cdvr(PolynomialRing_integral_domain):
     r"""
     A class for polynomial ring over complete discrete valuation rings
     """
-    def __init__(self, base_ring, name=None, sparse=False, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, sparse=False, implementation=None,
+                 element_class=None, category=None):
         r"""
         TESTS::
 
@@ -2852,14 +2907,17 @@ class PolynomialRing_cdvr(PolynomialRing_integral_domain):
             else:
                 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_dense_cdvr
                 element_class = Polynomial_generic_dense_cdvr
-        PolynomialRing_integral_domain.__init__(self, base_ring, name, sparse, element_class=element_class, category=category)
+        PolynomialRing_integral_domain.__init__(self, base_ring, name, sparse,
+                                                implementation=implementation,
+                                                element_class=element_class, category=category)
 
 
 class PolynomialRing_cdvf(PolynomialRing_cdvr, PolynomialRing_field):
     """
     A class for polynomial ring over complete discrete valuation fields
     """
-    def __init__(self, base_ring, name=None, sparse=False, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, sparse=False, implementation=None,
+                 element_class=None, category=None):
         r"""
         TESTS::
 
@@ -2880,15 +2938,19 @@ class PolynomialRing_cdvf(PolynomialRing_cdvr, PolynomialRing_field):
             else:
                 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_dense_cdvf
                 element_class = Polynomial_generic_dense_cdvf
-        PolynomialRing_field.__init__(self, base_ring, name, sparse, element_class=element_class, category=category)
+        PolynomialRing_field.__init__(self, base_ring, name, sparse,
+                                      implementation=implementation, element_class=element_class,
+                                      category=category)
 
 
 class PolynomialRing_dense_padic_ring_generic(PolynomialRing_cdvr):
     r"""
     A class for dense polynomial ring over padic rings
     """
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
-        PolynomialRing_cdvr.__init__(self, base_ring, sparse=False, name=name, element_class=element_class, category=category)
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
+        PolynomialRing_cdvr.__init__(self, base_ring, sparse=False, name=name,
+                                     implementation=implementation, element_class=element_class,
+                                     category=category)
 
     @staticmethod
     def _implementation_names_impl(implementation, base_ring, sparse):
@@ -2914,8 +2976,10 @@ class PolynomialRing_dense_padic_field_generic(PolynomialRing_cdvf):
     r"""
     A class for dense polynomial ring over padic fields
     """
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
-        PolynomialRing_cdvf.__init__(self, base_ring, sparse=False, name=name, element_class=element_class, category=category)
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
+        PolynomialRing_cdvf.__init__(self, base_ring, sparse=False, name=name,
+                                     implementation=implementation, element_class=element_class,
+                                     category=category)
 
     @staticmethod
     def _implementation_names_impl(implementation, base_ring, sparse):
@@ -2938,7 +3002,7 @@ class PolynomialRing_dense_padic_field_generic(PolynomialRing_cdvf):
 
 
 class PolynomialRing_dense_padic_ring_capped_relative(PolynomialRing_dense_padic_ring_generic):
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         """
         TESTS::
 
@@ -2953,12 +3017,13 @@ class PolynomialRing_dense_padic_ring_capped_relative(PolynomialRing_dense_padic
                     polynomial_padic_capped_relative_dense import \
                     Polynomial_padic_capped_relative_dense
             element_class = Polynomial_padic_capped_relative_dense
-        PolynomialRing_dense_padic_ring_generic.__init__(self, base_ring,
-                name=name, element_class=element_class, category=category)
+        PolynomialRing_dense_padic_ring_generic.__init__(self, base_ring, name=name,
+                                                         implementation=implementation,
+                                                         element_class=element_class, category=category)
 
 
 class PolynomialRing_dense_padic_ring_capped_absolute(PolynomialRing_dense_padic_ring_generic):
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         """
         TESTS::
 
@@ -2972,12 +3037,13 @@ class PolynomialRing_dense_padic_ring_capped_absolute(PolynomialRing_dense_padic
             from sage.rings.polynomial.padics.polynomial_padic_flat import \
                     Polynomial_padic_flat
             element_class = Polynomial_padic_flat
-        PolynomialRing_dense_padic_ring_generic.__init__(self, base_ring,
-                name=name, element_class=element_class, category=category)
+        PolynomialRing_dense_padic_ring_generic.__init__(self, base_ring, name=name,
+                                                         implementation=implementation,
+                                                         element_class=element_class, category=category)
 
 
 class PolynomialRing_dense_padic_ring_fixed_mod(PolynomialRing_dense_padic_ring_generic):
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         """
         TESTS::
 
@@ -2992,12 +3058,13 @@ class PolynomialRing_dense_padic_ring_fixed_mod(PolynomialRing_dense_padic_ring_
             from sage.rings.polynomial.padics.polynomial_padic_flat import \
                     Polynomial_padic_flat
             element_class = Polynomial_padic_flat
-        PolynomialRing_dense_padic_ring_generic.__init__(self, base_ring,
-                name=name, element_class=element_class, category=category)
+        PolynomialRing_dense_padic_ring_generic.__init__(self, base_ring, name=name,
+                                                         implementation=implementation,
+                                                         element_class=element_class, category=category)
 
 
 class PolynomialRing_dense_padic_field_capped_relative(PolynomialRing_dense_padic_field_generic):
-    def __init__(self, base_ring, name=None, element_class=None, category=None):
+    def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         """
         TESTS::
 
@@ -3012,8 +3079,9 @@ class PolynomialRing_dense_padic_field_capped_relative(PolynomialRing_dense_padi
                     polynomial_padic_capped_relative_dense import \
                     Polynomial_padic_capped_relative_dense
             element_class = Polynomial_padic_capped_relative_dense
-        PolynomialRing_dense_padic_field_generic.__init__(self, base_ring,
-                name=name, element_class=element_class, category=category)
+        PolynomialRing_dense_padic_field_generic.__init__(self, base_ring, name=name,
+                                                          implementation=implementation,
+                                                          element_class=element_class, category=category)
 
 
 class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
@@ -3049,21 +3117,34 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
         """
         if element_class is None:
-            implementation = self._implementation_names(implementation, base_ring)[0]
-            if implementation == "FLINT":
-                from .polynomial_zmod_flint import \
-                        Polynomial_zmod_flint as element_class
-                self._implementation_repr = ''
-            elif implementation == "NTL":
-                modulus = base_ring.order()
-                from . import polynomial_modn_dense_ntl as modn_dense_ntl
-                if modulus < ZZ(modn_dense_ntl.zz_p_max):
-                    element_class = modn_dense_ntl.Polynomial_dense_modn_ntl_zz
-                else:
-                    element_class = modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ
-                self._implementation_repr = ' (using NTL)'
-        PolynomialRing_commutative.__init__(self, base_ring, name=name,
-                element_class=element_class, category=category)
+            self._implementation_repr = ''
+            given_implementation = implementation
+            for implementation in self._implementation_names(implementation, base_ring):
+                if implementation == "FLINT":
+                    try:
+                        from .polynomial_zmod_flint import Polynomial_zmod_flint as element_class
+                    except ImportError:
+                        if given_implementation:
+                            raise
+                        continue
+                    self._implementation_repr = ''
+                elif implementation == "NTL":
+                    modulus = base_ring.order()
+                    try:
+                        from . import polynomial_modn_dense_ntl as modn_dense_ntl
+                    except ImportError:
+                        if given_implementation:
+                            raise
+                        continue
+                    if modulus < ZZ(modn_dense_ntl.zz_p_max):
+                        element_class = modn_dense_ntl.Polynomial_dense_modn_ntl_zz
+                    else:
+                        element_class = modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ
+                    self._implementation_repr = ' (using NTL)'
+                break
+
+        PolynomialRing_commutative.__init__(self, base_ring, name=name, implementation=implementation,
+                                            element_class=element_class, category=category)
 
     @staticmethod
     def _implementation_names_impl(implementation, base_ring, sparse):
@@ -3174,7 +3255,7 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
 class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
                                  PolynomialRing_dense_mod_n,
                                  PolynomialRing_singular_repr):
-    def __init__(self, base_ring, name="x", implementation=None, category=None):
+    def __init__(self, base_ring, name="x", implementation=None, element_class=None, category=None):
         """
         TESTS::
 
@@ -3210,21 +3291,37 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             sage: R is S
             True
         """
-        implementation = self._implementation_names(implementation, base_ring)[0]
-        if implementation == "FLINT":
-            from .polynomial_zmod_flint import \
-                    Polynomial_zmod_flint as element_class
-            self._implementation_repr = ''
-        elif implementation == "NTL":
-            from .polynomial_modn_dense_ntl import \
-                    Polynomial_dense_mod_p as element_class
-            self._implementation_repr = ' (using NTL)'
-        elif implementation == "GF2X":
-            from .polynomial_gf2x import \
-                    Polynomial_GF2X as element_class
-            self._implementation_repr = ' (using GF2X)'
-        PolynomialRing_dense_mod_n.__init__(self, base_ring, name=name,
-                element_class=element_class, category=category)
+        if element_class is None:
+            given_implementation = implementation
+            for implementation in self._implementation_names(implementation, base_ring):
+                if implementation == "FLINT":
+                    try:
+                        from .polynomial_zmod_flint import Polynomial_zmod_flint as element_class
+                    except ImportError:
+                        if given_implementation:
+                            raise
+                        continue
+                    self._implementation_repr = ''
+                elif implementation == "NTL":
+                    try:
+                        from .polynomial_modn_dense_ntl import Polynomial_dense_mod_p as element_class
+                    except ImportError:
+                        if given_implementation:
+                            raise
+                        continue
+                    self._implementation_repr = ' (using NTL)'
+                elif implementation == "GF2X":
+                    try:
+                        from .polynomial_gf2x import Polynomial_GF2X as element_class
+                    except ImportError:
+                        if given_implementation:
+                            raise
+                        continue
+                    self._implementation_repr = ' (using GF2X)'
+                break
+
+        PolynomialRing_dense_mod_n.__init__(self, base_ring, name=name, implementation=implementation,
+                                            element_class=element_class, category=category)
 
         self._has_singular = can_convert_to_singular(self)
 

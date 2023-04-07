@@ -408,7 +408,7 @@ class Polynomial_generic_sparse(Polynomial):
         for n in D:
             del x[n]
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         """
         Return the `n`-th coefficient of this polynomial.
 
@@ -436,37 +436,36 @@ class Polynomial_generic_sparse(Polynomial):
             sage: f[:2]
             -42.000*x + 8.0000
 
-        Any other kind of slicing is deprecated or an error::
+        Any other kind of slicing is an error, see :trac:`18940`::
 
             sage: f[1:3]
-            doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See https://github.com/sagemath/sage/issues/18940 for details.
-            73.500*x^2 - 42.000*x
+            Traceback (most recent call last):
+            ...
+            IndexError: polynomial slicing with a start is not defined
+
             sage: f[1:3:2]
             Traceback (most recent call last):
             ...
-            NotImplementedError: polynomial slicing with a step is not defined
+            IndexError: polynomial slicing with a step is not defined
+
+        TESTS::
+
             sage: f["hello"]
             Traceback (most recent call last):
             ...
             TypeError: list indices must be integers, not str
         """
         if isinstance(n, slice):
-            d = self.degree() + 1
             start, stop, step = n.start, n.stop, n.step
             if step is not None:
-                raise NotImplementedError("polynomial slicing with a step is not defined")
-            if start is None:
-                start = 0
-            else:
-                if start < 0:
-                    start = 0
-                from sage.misc.superseded import deprecation
-                deprecation(18940, "polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead")
+                raise IndexError("polynomial slicing with a step is not defined")
+            if start is not None:
+                raise IndexError("polynomial slicing with a start is not defined")
+            d = self.degree() + 1
             if stop is None or stop > d:
                 stop = d
-            x = self.__coeffs
-            v = {k: x[k] for k in x.keys() if start <= k < stop}
+            v = {key: val for key, val in self.__coeffs.items()
+                 if key < stop}
             return self.parent()(v)
 
         try:

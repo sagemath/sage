@@ -13,8 +13,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 from sage.arith.misc import (binomial, factorial)
+from sage.categories.algebras import Algebras
 from sage.categories.rings import Rings
-from sage.categories.all import Algebras
 from sage.categories.realizations import Category_realization_of_parent
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.constructor import matrix

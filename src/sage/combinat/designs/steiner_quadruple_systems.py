@@ -190,14 +190,12 @@ def three_n_minus_eight(B):
         for i in range(3):
             Y.append([r(i,x) if x<= n-5 else x+2*(n-4) for x in s])
 
-
     # Line 3.
     for a in range(4):
         for aa in range(n-4):
             for aaa in range(n-4):
                 aaaa = -(a+aa+aaa)%(n-4)
                 Y.append([r(0,aa),r(1,aaa), r(2,aaaa),3*(n-4)+a])
-
 
     # Line 4.
     k = (n-14) // 12
@@ -335,8 +333,6 @@ def four_n_minus_six(B):
                         Y.append([r(h,0,2*c+eps)  , r(h,1,2*cc-eps), r(h+1,0,rc), r(h+1,0,sc)])
                         Y.append([r(h,0,2*c-1+eps), r(h,1,2*cc-eps), r(h+1,1,rc), r(h+1,1,sc)])
 
-
-
     # Line 8/9
     for h in range(2):
         for eps in range(2):
@@ -346,7 +342,6 @@ def four_n_minus_six(B):
                         cc = -(c+ccc)%k
                         Y.append([r(h,0,2*c+eps)  , r(h,1,2*cc-eps), r(h+1,1,rc), r(h+1,1,sc)])
                         Y.append([r(h,0,2*c-1+eps), r(h,1,2*cc-eps), r(h+1,0,rc), r(h+1,0,sc)])
-
 
     # Line 10
     for h in range(2):
@@ -516,7 +511,7 @@ def P(alpha, m):
                 return [(2*a, (2*a - 2*b - 1)%(2*m)) for a in range(m)]
         else:
             y = alpha - m
-            pairs  = [(b,(2*y-b)%(2*m)) for b in range(y)]
+            pairs = [(b,(2*y-b)%(2*m)) for b in range(y)]
             pairs += [(c,(2*m+2*y-c-2)%(2*m)) for c in range(2*y+1,m+y-1)]
             pairs += [(2*m+int(-1.5-.5*(-1)**y),y),(2*m+int(-1.5+.5*(-1)**y),m+y-1)]
             return pairs
@@ -530,7 +525,7 @@ def P(alpha, m):
                 return [(2*a,(2*a-2*b-1)%(2*m)) for a in range(m)]
         else:
             y = alpha-m+1
-            pairs  = [(b,2*y-b) for b in range(y)]
+            pairs = [(b,2*y-b) for b in range(y)]
             pairs += [(c,2*m+2*y-c) for c in range(2*y+1,m+y)]
             pairs += [(y,m+y)]
             return pairs
@@ -710,8 +705,8 @@ def steiner_quadruple_system(n, check = False):
     TESTS::
 
         sage: for n in range(4, 100):                                      # long time
-        ....:     if (n%6) in [2,4]:                                        # long time
-        ....:         sqs = designs.steiner_quadruple_system(n, check=True) # long time
+        ....:     if (n%6) in [2,4]:
+        ....:         sqs = designs.steiner_quadruple_system(n, check=True)
     """
     n = int(n)
     if not ((n%6) in [2, 4]):

@@ -223,7 +223,7 @@ def _rational_diagonal_form_and_transformation(self):
     """
     n = self.dim()
     K = self.base_ring().fraction_field()
-    Q = self.base_change_to(K)
+    Q = self.change_ring(K)
     MS = MatrixSpace(K, n, n)
 
     try:
@@ -340,7 +340,6 @@ def signature_vector(self):
             z += 1
 
     return (p, n, z)
-
 
 
 def signature(self):

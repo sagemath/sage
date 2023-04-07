@@ -1301,9 +1301,9 @@ class Algorithm_generic(SageObject):
             sage: g = M.metric()
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select standard frame
-            sage: cmat = [ [nab.curvature_form(i, j, e) # long time
-            ....:           for j in TM.irange()]       # long time
-            ....:         for i in TM.irange()]         # long time
+            sage: cmat = [ [nab.curvature_form(i, j, e)  # long time
+            ....:           for j in TM.irange()]
+            ....:         for i in TM.irange()]
 
         Import the algorithm::
 
@@ -1500,8 +1500,8 @@ class PontryaginAlgorithm(Singleton, Algorithm_generic):
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select standard frame
             sage: cmat = [ [nab.curvature_form(i, j, e) # long time
-            ....:           for j in TM.irange()]       # long time
-            ....:         for i in TM.irange()]         # long time
+            ....:           for j in TM.irange()]
+            ....:         for i in TM.irange()]
 
         Import the algorithm::
 
@@ -1797,9 +1797,9 @@ class PontryaginEulerAlgorithm(Singleton, Algorithm_generic):
             sage: g = M.metric()
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select the standard frame
-            sage: cmat = [ [nab.curvature_form(i, j, e) # long time
-            ....:           for j in TM.irange()]       # long time
-            ....:         for i in TM.irange()]         # long time
+            sage: cmat = [ [nab.curvature_form(i, j, e)  # long time
+            ....:           for j in TM.irange()]
+            ....:         for i in TM.irange() ]
 
         Import the algorithm::
 

@@ -243,7 +243,6 @@ def __find_eisen_chars(character, k):
                         V.insert(0, (chi, chi_inv, t))
         return V
 
-
     eps = character
     if eps(-1) != (-1)**k:
         return []

@@ -541,7 +541,7 @@ cpdef find_thwart_lemma_3_5(int k,int N):
         12 3994 (12, 19, 207, 16, 13, 13, 19, True)
 
         sage: for k,n in kn:                                                     # not tested -- too long
-        ....:     assert designs.orthogonal_array(k,n,existence=True) is True    # not tested -- too long
+        ....:     assert designs.orthogonal_array(k,n,existence=True) is True
     """
     from .orthogonal_arrays_build_recursive import thwart_lemma_3_5
     cdef int n,m,a,b,c,d,NN,na,nb,nc
