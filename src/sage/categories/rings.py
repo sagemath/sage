@@ -222,16 +222,16 @@ class Rings(CategoryWithAxiom):
                 Ring endomorphism of Fraction Field of Univariate Polynomial Ring in x
                  over Rational Field
                     Defn: x |--> x + 1
-                sage: g(x)                                                                                  # optional - sage.libs.singular
+                sage: g(x)                                                              # optional - sage.libs.singular
                 x + 1
-                sage: g(1/x)                                                                                # optional - sage.libs.singular
+                sage: g(1/x)                                                            # optional - sage.libs.singular
                 1/(x + 1)
 
             If this morphism is not injective, it does not extend to the fraction
             field and an error is raised::
 
-                sage: f = GF(5).coerce_map_from(ZZ)                                                         # optional - sage.libs.pari
-                sage: f.extend_to_fraction_field()                                                          # optional - sage.libs.pari
+                sage: f = GF(5).coerce_map_from(ZZ)                                     # optional - sage.rings.finite_rings
+                sage: f.extend_to_fraction_field()                                      # optional - sage.rings.finite_rings
                 Traceback (most recent call last):
                 ...
                 ValueError: the morphism is not injective
@@ -1358,8 +1358,8 @@ class Rings(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: R.<x> = ZZ[]
-                sage: S = R.quo(x^2 + x + 1)                                                                            # optional - sage.libs.pari
-                sage: S(1).inverse_of_unit()                                                                            # optional - sage.libs.pari
+                sage: S = R.quo(x^2 + x + 1)                                            # optional - sage.libs.pari
+                sage: S(1).inverse_of_unit()                                            # optional - sage.libs.pari
                 1
 
             This method fails when the element is not a unit::
