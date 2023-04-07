@@ -298,17 +298,17 @@ def Hom(X, Y, category=None, check=True):
     Checks that the domain and codomain are in the specified
     category. Case of a non parent::
 
-        sage: S = SimplicialComplex([[1,2], [1,4]]); S.rename("S")
-        sage: Hom(S, S, SimplicialComplexes())
+        sage: S = SimplicialComplex([[1,2], [1,4]]); S.rename("S")                                                      # optional - sage.graphs
+        sage: Hom(S, S, SimplicialComplexes())                                                                          # optional - sage.graphs
         Set of Morphisms from S to S in Category of finite simplicial complexes
 
-        sage: Hom(Set(), S, Sets())
+        sage: Hom(Set(), S, Sets())                                                                                     # optional - sage.graphs
         Set of Morphisms from {} to S in Category of sets
 
-        sage: Hom(S, Set(), Sets())
+        sage: Hom(S, Set(), Sets())                                                                                     # optional - sage.graphs
         Set of Morphisms from S to {} in Category of sets
 
-        sage: H = Hom(S, S, ChainComplexes(QQ))
+        sage: H = Hom(S, S, ChainComplexes(QQ))                                                                         # optional - sage.graphs
         Traceback (most recent call last):
         ...
         ValueError: S is not in Category of chain complexes over Rational Field
@@ -321,11 +321,11 @@ def Hom(X, Y, category=None, check=True):
         ....:     def super_categories(self): return [Objects()]
         ....:     def __contains__(self, X): return True
         sage: C = PermissiveCategory(); C.rename("Permissive category")
-        sage: S.category().is_subcategory(C)
+        sage: S.category().is_subcategory(C)                                                                            # optional - sage.graphs
         False
-        sage: S in C
+        sage: S in C                                                                                                    # optional - sage.graphs
         True
-        sage: Hom(S, S, C)
+        sage: Hom(S, S, C)                                                                                              # optional - sage.graphs
         Set of Morphisms from S to S in Permissive category
 
     With ``check=False``, uninitialized parents, as can appear upon
@@ -349,16 +349,16 @@ def Hom(X, Y, category=None, check=True):
     uninitialized parent::
 
         sage: P.<x,y> = QQ['x,y']
-        sage: Q = P.quotient([x^2-1,y^2-1])
-        sage: q = Q.an_element()
-        sage: explain_pickle(dumps(Q))
+        sage: Q = P.quotient([x^2-1, y^2-1])                                                                            # optional - sage.libs.singular
+        sage: q = Q.an_element()                                                                                        # optional - sage.libs.singular
+        sage: explain_pickle(dumps(Q))                                                                                  # optional - sage.libs.singular
         pg_...
         ... = pg_dynamic_class('QuotientRing_generic_with_category', (pg_QuotientRing_generic, pg_getattr(..., 'parent_class')), None, None, pg_QuotientRing_generic)
         si... = unpickle_newobj(..., ())
         ...
         si... = pg_unpickle_MPolynomialRing_libsingular(..., ('x', 'y'), ...)
         si... = ... pg_Hom(si..., si..., ...) ...
-        sage: Q == loads(dumps(Q))
+        sage: Q == loads(dumps(Q))                                                                                      # optional - sage.libs.singular
         True
 
     Check that the ``_Hom_`` method of the ``category`` input is used::

@@ -67,16 +67,16 @@ class Rings(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: R.<x,y> = QQ[]
-                sage: R.hom([x, y^2], R).is_injective()
+                sage: R.hom([x, y^2], R).is_injective()                                 # optional - sage.libs.singular
                 True
-                sage: R.hom([x, x^2], R).is_injective()
+                sage: R.hom([x, x^2], R).is_injective()                                 # optional - sage.libs.singular
                 False
-                sage: S.<u,v> = R.quotient(x^3*y)
-                sage: R.hom([v, u], S).is_injective()
+                sage: S.<u,v> = R.quotient(x^3*y)                                       # optional - sage.libs.singular
+                sage: R.hom([v, u], S).is_injective()                                   # optional - sage.libs.singular
                 False
-                sage: S.hom([-u, v], S).is_injective()
+                sage: S.hom([-u, v], S).is_injective()                                  # optional - sage.libs.singular
                 True
-                sage: S.cover().is_injective()
+                sage: S.cover().is_injective()                                          # optional - sage.libs.singular
                 False
 
             If the domain is a field, the homomorphism is injective::
@@ -132,8 +132,8 @@ class Rings(CategoryWithAxiom):
 
             A coercion to the fraction field is injective::
 
-                sage: R = ZpFM(3)
-                sage: R.fraction_field().coerce_map_from(R).is_injective()
+                sage: R = ZpFM(3)                                                       # optional - sage.rings.padics
+                sage: R.fraction_field().coerce_map_from(R).is_injective()              # optional - sage.rings.padics
                 True
 
             """
@@ -214,7 +214,7 @@ class Rings(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: S.<x> = QQ[]
-                sage: f = S.hom([x+1]); f
+                sage: f = S.hom([x + 1]); f
                 Ring endomorphism of Univariate Polynomial Ring in x over Rational Field
                     Defn: x |--> x + 1
 
@@ -222,16 +222,16 @@ class Rings(CategoryWithAxiom):
                 Ring endomorphism of Fraction Field of Univariate Polynomial Ring in x
                  over Rational Field
                     Defn: x |--> x + 1
-                sage: g(x)
+                sage: g(x)                                                                                  # optional - sage.libs.singular
                 x + 1
-                sage: g(1/x)
+                sage: g(1/x)                                                                                # optional - sage.libs.singular
                 1/(x + 1)
 
             If this morphism is not injective, it does not extend to the fraction
             field and an error is raised::
 
-                sage: f = GF(5).coerce_map_from(ZZ)
-                sage: f.extend_to_fraction_field()
+                sage: f = GF(5).coerce_map_from(ZZ)                                                         # optional - sage.libs.pari
+                sage: f.extend_to_fraction_field()                                                          # optional - sage.libs.pari
                 Traceback (most recent call last):
                 ...
                 ValueError: the morphism is not injective
@@ -239,7 +239,7 @@ class Rings(CategoryWithAxiom):
             TESTS::
 
                 sage: A.<x> = RR[]
-                sage: phi = A.hom([x+1])
+                sage: phi = A.hom([x + 1])
                 sage: phi.extend_to_fraction_field()
                 Ring endomorphism of Fraction Field of
                  Univariate Polynomial Ring in x over Real Field with 53 bits of precision
@@ -826,14 +826,14 @@ class Rings(CategoryWithAxiom):
                 sage: S.gens()
                 (a,)
 
-                sage: R.<x,y> = PolynomialRing(QQ,2)
-                sage: S.<a,b> = R.quotient((x^2, y))
-                sage: S
+                sage: R.<x,y> = PolynomialRing(QQ, 2)
+                sage: S.<a,b> = R.quotient((x^2, y))                                    # optional - sage.libs.singular
+                sage: S                                                                 # optional - sage.libs.singular
                 Quotient of Multivariate Polynomial Ring in x, y over Rational Field
                  by the ideal (x^2, y)
-                sage: S.gens()
+                sage: S.gens()                                                          # optional - sage.libs.singular
                 (a, 0)
-                sage: a == b
+                sage: a == b                                                            # optional - sage.libs.singular
                 False
             """
             from sage.rings.quotient_ring import QuotientRing
@@ -881,14 +881,14 @@ class Rings(CategoryWithAxiom):
 
             A test with a subclass of :class:`~sage.rings.ring.Ring`::
 
-                sage: R.<x,y> = PolynomialRing(QQ,2)
-                sage: S.<a,b> = R.quo((x^2, y))
-                sage: S
+                sage: R.<x,y> = PolynomialRing(QQ, 2)                                   # optional - sage.libs.singular
+                sage: S.<a,b> = R.quo((x^2, y))                                         # optional - sage.libs.singular
+                sage: S                                                                 # optional - sage.libs.singular
                 Quotient of Multivariate Polynomial Ring in x, y over Rational Field
                  by the ideal (x^2, y)
-                sage: S.gens()
+                sage: S.gens()                                                          # optional - sage.libs.singular
                 (a, 0)
-                sage: a == b
+                sage: a == b                                                            # optional - sage.libs.singular
                 False
             """
             return self.quotient(I, names=names, **kwds)
@@ -954,14 +954,14 @@ class Rings(CategoryWithAxiom):
                 sage: S.gens()
                 (a,)
 
-                sage: R.<x,y> = PolynomialRing(QQ,2)
-                sage: S.<a,b> = R.quotient_ring((x^2, y))
-                sage: S
+                sage: R.<x,y> = PolynomialRing(QQ,2)                                    # optional - sage.libs.singular
+                sage: S.<a,b> = R.quotient_ring((x^2, y))                               # optional - sage.libs.singular
+                sage: S                                                                 # optional - sage.libs.singular
                 Quotient of Multivariate Polynomial Ring in x, y over Rational Field
                  by the ideal (x^2, y)
-                sage: S.gens()
+                sage: S.gens()                                                          # optional - sage.libs.singular
                 (a, 0)
-                sage: a == b
+                sage: a == b                                                            # optional - sage.libs.singular
                 False
             """
             return self.quotient(I, names=names, **kwds)
@@ -1358,8 +1358,8 @@ class Rings(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: R.<x> = ZZ[]
-                sage: S = R.quo(x^2 + x + 1)
-                sage: S(1).inverse_of_unit()
+                sage: S = R.quo(x^2 + x + 1)                                                                            # optional - sage.libs.pari
+                sage: S(1).inverse_of_unit()                                                                            # optional - sage.libs.pari
                 1
 
             This method fails when the element is not a unit::
