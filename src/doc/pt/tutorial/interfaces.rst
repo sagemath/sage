@@ -233,8 +233,8 @@ cálculos). Não digite ``...``:
 
     sage: x, y = QQ['x, y'].gens()
     sage: f = 9*y^8 - 9*x^2*y^7 - 18*x^3*y^6 - 18*x^5*y^6 + 9*x^6*y^4 \
-    ....:  + 18*x^7*y^5 + 36*x^8*y^4 + 9*x^10*y^4 - 18*x^11*y^2 - 9*x^12*y^3 \
-    ....:  - 18*x^13*y^2 + 9*x^16
+    ....:     + 18*x^7*y^5 + 36*x^8*y^4 + 9*x^10*y^4 - 18*x^11*y^2 - 9*x^12*y^3 \
+    ....:     - 18*x^13*y^2 + 9*x^16
     sage: factor(f)
     (9) * (-x^5 + y^2)^2 * (x^6 - 2*x^3*y^2 - x^2*y^3 + y^4)
 
@@ -305,38 +305,38 @@ Um gráfico em duas dimensões de diversas funções (não digite ``...``):
 
 ::
 
-    sage: maxima.plot2d('[cos(7*x),cos(23*x)^4,sin(13*x)^3]','[x,0,1]',  # not tested
-    ....: '[plot_format,openmath]') # not tested
+    sage: maxima.plot2d('[cos(7*x),cos(23*x)^4,sin(13*x)^3]', '[x,0,1]',  # not tested
+    ....:               '[plot_format,openmath]')
 
 Um gráfico em 3D que você pode mover com o seu mouse:
 
 ::
 
     sage: maxima.plot3d("2^(-u^2 + v^2)", "[u, -3, 3]", "[v, -2, 2]",  # not tested
-    ....: '[plot_format, openmath]') # not tested
+    ....:               '[plot_format, openmath]')
 
-    sage: maxima.plot3d("atan(-x^2 + y^3/4)", "[x, -4, 4]", "[y, -4, 4]", # not tested
-    ....: "[grid, 50, 50]",'[plot_format, openmath]') # not tested
+    sage: maxima.plot3d("atan(-x^2 + y^3/4)", "[x, -4, 4]", "[y, -4, 4]",  # not tested
+    ....:               "[grid, 50, 50]",'[plot_format, openmath]')
 
 O próximo gráfico é a famosa faixa de Möbious:
 
 ::
 
-    sage: maxima.plot3d("[cos(x)*(3 + y*cos(x/2)), sin(x)*(3 + y*cos(x/2))," \ # not tested
-    ....: "y*sin(x/2)]", "[x, -4, 4]", "[y, -4, 4]", # not tested
-    ....: '[plot_format, openmath]') # not tested
+    sage: maxima.plot3d("[cos(x)*(3 + y*cos(x/2)), sin(x)*(3 + y*cos(x/2)),"  # not tested
+    ....:               "y*sin(x/2)]", "[x, -4, 4]", "[y, -4, 4]",
+    ....:               '[plot_format, openmath]')
 
 E agora a famosa garrafa de Klein:
 
 ::
 
-    sage: maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)"\
-    ....: "- 10.0")
+    sage: maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)"
+    ....:        "- 10.0")
     5*cos(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)-10.0
     sage: maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
     -5*sin(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)
     sage: maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
     5*(cos(x/2)*sin(2*y)-sin(x/2)*cos(y))
     sage: maxima.plot3d("[expr_1, expr_2, expr_3]", "[x, -%pi, %pi]", # not tested
-    ....: "[y, -%pi, %pi]", "['grid, 40, 40]", # not tested
-    ....: '[plot_format, openmath]') # not tested
+    ....:               "[y, -%pi, %pi]", "['grid, 40, 40]",
+    ....:               '[plot_format, openmath]')

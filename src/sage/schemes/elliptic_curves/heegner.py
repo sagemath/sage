@@ -5704,9 +5704,9 @@ def kolyvagin_reduction_data(E, q, first_only=True):
     def best_heegner_D(ell_1, ell_2):
         # return the first Heegner D satisfy all hypothesis such that
         # both ell_1 and ell_2 are inert
-        D = -5
+        D = ZZ(-5)
         while True:
-            if number_field.is_fundamental_discriminant(D) and \
+            if D.is_fundamental_discriminant() and \
                D % ell_1 and D % ell_2 and \
                E.satisfies_heegner_hypothesis(D) and \
                is_inert(D, ell_1) and is_inert(D, ell_2) and \
@@ -6075,10 +6075,9 @@ def class_number(D):
         ...
         ValueError: D (=-5) must be a fundamental discriminant
     """
-    if not number_field.is_fundamental_discriminant(D):
+    if not D.is_fundamental_discriminant():
         raise ValueError("D (=%s) must be a fundamental discriminant" % D)
-    return QuadraticField(D, 'a').class_number()
-
+    return D.class_number()
 
 def is_inert(D, p):
     r"""
@@ -6226,7 +6225,7 @@ def satisfies_weak_heegner_hypothesis(N, D):
         sage: EllipticCurve('37a').heegner_discriminants_list(10)
         [-7, -11, -40, -47, -67, -71, -83, -84, -95, -104]
     """
-    if not number_field.is_fundamental_discriminant(D):
+    if not D.is_fundamental_discriminant():
         return False
     if D >= 0:
         return False
@@ -6422,7 +6421,7 @@ def ell_heegner_discriminants(self, bound):
         sage: E.heegner_discriminants(30)                     # indirect doctest
         [-7, -8, -19, -24]
     """
-    return [-D for D in range(1, bound)
+    return [ZZ(-D) for D in range(1, bound)
             if self.satisfies_heegner_hypothesis(-D)]
 
 
@@ -6445,7 +6444,7 @@ def ell_heegner_discriminants_list(self, n):
         [-7, -8, -19, -24]
     """
     v = []
-    D = -5
+    D = ZZ(-5)
     while len(v) < n:
         while not self.satisfies_heegner_hypothesis(D):
             D -= 1
@@ -7174,7 +7173,7 @@ def _heegner_forms_list(self, D, beta=None, expected_count=None):
         [389*x^2 + 313*x*y + 63*y^2, 1167*x^2 + 313*x*y + 21*y^2, 3501*x^2 + 313*x*y + 7*y^2]
     """
     if expected_count is None:
-        expected_count = number_field.QuadraticField(D, 'a').class_number()
+        expected_count = D.class_number()
     N = self.conductor()
     if beta is None:
         beta = Integers(4*N)(D).sqrt(extend=False)
@@ -7234,10 +7233,10 @@ def satisfies_heegner_hypothesis(self, D):
         sage: E.satisfies_heegner_hypothesis(-11)
         False
     """
-    if not number_field.is_fundamental_discriminant(D):
-        return False
     D = ZZ(D)
     if D >= 0:
+        return False
+    if not D.is_fundamental_discriminant():
         return False
     if D.gcd(self.conductor()) != 1:
         return False

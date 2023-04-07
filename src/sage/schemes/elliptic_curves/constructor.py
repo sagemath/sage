@@ -27,8 +27,8 @@ import sage.rings.all as rings
 
 import sage.rings.abc
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.rings.number_field.number_field import is_NumberField
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.ring import is_Ring
 
@@ -471,7 +471,7 @@ class EllipticCurveFactory(UniqueFactory):
         if R is rings.QQ:
             from .ell_rational_field import EllipticCurve_rational_field
             return EllipticCurve_rational_field(x, **kwds)
-        elif is_NumberField(R):
+        elif isinstance(R, NumberField):
             from .ell_number_field import EllipticCurve_number_field
             return EllipticCurve_number_field(R, x)
         elif isinstance(R, sage.rings.abc.pAdicField):
