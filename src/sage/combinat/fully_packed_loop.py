@@ -468,7 +468,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: fpl = FullyPackedLoop((1, 2, 3))
         Traceback (most recent call last):
         ...
-        ValueError: The alternating sign matrices must be square
+        ValueError: the alternating sign matrices must be square
 
         sage: SVM = SixVertexModel(3)[0]
         sage: FullyPackedLoop(SVM)

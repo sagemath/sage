@@ -74,7 +74,6 @@ AUTHORS:
 
 import itertools
 
-from sage.graphs.graph import Graph
 from sage.misc.latex import latex
 from sage.sets.set import Set
 from sage.structure.parent import Parent
@@ -1417,6 +1416,8 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
             sage: PushoutOfSimplicialSets_finite([T.base_point_map(), S2.base_point_map()], vertex_name='v').n_cells(0)[0]
             v
         """
+        from sage.graphs.graph import Graph
+
         # Import this here to prevent circular imports.
         from sage.topology.simplicial_set_morphism import SimplicialSetMorphism
         if maps and any(not isinstance(f, SimplicialSetMorphism) for f in maps):

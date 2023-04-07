@@ -147,7 +147,6 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
         """
         return CuspidalSubmodule_R(self)
 
-
     def change_ring(self, R):
         r"""
         Return this modular forms space with the base ring changed to the ring R.

@@ -123,18 +123,18 @@ def half_integral_weight_modform_basis(chi, k, prec):
     psi = chi.parent()(DirichletGroup(4, chi.base_ring()).gen())
     eps = chi*psi**((k+1) // 2)
     eps = eps.minimize_base_ring()
-    M   = constructor.ModularForms(eps, (k+1)//2)
-    C   = M.cuspidal_subspace()
-    B   = C.basis()
+    M = constructor.ModularForms(eps, (k+1)//2)
+    C = M.cuspidal_subspace()
+    B = C.basis()
 
     # This computation of S below -- of course --dominates the whole function.
     S = [f.q_expansion(prec) for f in B]
 
-    T2  = theta2_qexp(prec)
-    T3  = theta_qexp(prec)
-    n   = len(S)
-    MS  = MatrixSpace(M.base_ring(), 2*n, prec)
-    A   = copy(MS.zero_matrix())
+    T2 = theta2_qexp(prec)
+    T3 = theta_qexp(prec)
+    n = len(S)
+    MS = MatrixSpace(M.base_ring(), 2*n, prec)
+    A = copy(MS.zero_matrix())
 
     for i in range(n):
         T2f = T2*S[i]

@@ -544,7 +544,7 @@ class GenericCellComplex(SageObject):
         """
         from sage.topology.cubical_complex import CubicalComplex
         from sage.topology.simplicial_complex import SimplicialComplex
-        from sage.modules.all import VectorSpace
+        from sage.modules.free_module import VectorSpace
         from sage.homology.homology_group import HomologyGroup
 
         if dim is not None:

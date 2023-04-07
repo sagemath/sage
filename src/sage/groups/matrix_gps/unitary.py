@@ -141,7 +141,6 @@ def _UG(n, R, special, var='a', invariant_form=None):
         return UnitaryMatrixGroup_generic(degree, ring, special, name, ltx, invariant_form=invariant_form)
 
 
-
 ###############################################################################
 # General Unitary Group
 ###############################################################################
@@ -257,7 +256,6 @@ def GU(n, R, var='a', invariant_form=None):
     return _UG(n, R, False, var=var, invariant_form=invariant_form)
 
 
-
 ###############################################################################
 # Special Unitary Group
 ###############################################################################
@@ -351,7 +349,6 @@ def SU(n, R, var='a', invariant_form=None):
     return _UG(n, R, True, var=var, invariant_form=invariant_form)
 
 
-
 ########################################################################
 # Unitary Group class
 ########################################################################
@@ -409,7 +406,6 @@ class UnitaryMatrixGroup_generic(NamedMatrixGroup_generic):
         m = identity_matrix(self.base_ring(), self.degree())
         m.set_immutable()
         return m
-
 
     def _check_matrix(self, x, *args):
         """

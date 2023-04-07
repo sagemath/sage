@@ -105,7 +105,6 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
             return tuple([x.lift()
                           for x in self.center().central_orthogonal_idempotents()])
 
-
     class Commutative(CategoryWithAxiom_over_base_ring):
 
         class ParentMethods:
