@@ -4866,7 +4866,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         from sage.misc.functional import gens
         if b % 2 == 1:
-            return 'Error: Second argument must be even.'
+            raise ValueError("second argument must be even")
         if a == 0 and b == 0:
             return 1;
 
