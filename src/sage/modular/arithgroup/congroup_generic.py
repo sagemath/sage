@@ -22,7 +22,7 @@ AUTHORS:
 ################################################################################
 
 from sage.arith.misc import gcd
-from sage.groups.matrix_gps.all import MatrixGroup
+from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.misc_c import prod
 from sage.rings.finite_rings.integer_mod_ring import Zmod

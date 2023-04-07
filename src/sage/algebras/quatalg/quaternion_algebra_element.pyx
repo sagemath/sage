@@ -896,7 +896,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpz_init(self.b)
         mpz_init(self.d)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         mpz_clear(self.x)
         mpz_clear(self.y)
         mpz_clear(self.z)

@@ -89,7 +89,7 @@ from sage.misc.verbose import verbose, get_verbose
 from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
 from sage.rings.ring import is_Ring
-from sage.rings.number_field.number_field_base import is_NumberField
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ, is_RationalField
@@ -4457,7 +4457,7 @@ cdef class Matrix(Matrix1):
             raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
         elif algorithm == 'flint' and not (is_IntegerRing(R) or is_RationalField(R)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
-        elif algorithm == 'pari' and not (is_IntegerRing(R) or (is_NumberField(R) and not is_RationalField(R))):
+        elif algorithm == 'pari' and not (is_IntegerRing(R) or (isinstance(R, NumberField) and not is_RationalField(R))):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
         elif algorithm == 'generic' and R not in _Fields:
             raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
@@ -4514,7 +4514,7 @@ cdef class Matrix(Matrix1):
             except AttributeError:
                 pass
 
-        if M is None and is_NumberField(R):
+        if M is None and isinstance(R, NumberField):
             format, M = self._right_kernel_matrix_over_number_field()
 
         if M is None and R in _Fields:
@@ -17062,8 +17062,9 @@ cdef class Matrix(Matrix1):
 
             sage: K1 = random_cone(max_ambient_dim=5)
             sage: K2 = random_cone(max_ambient_dim=5)
-            sage: all(L.change_ring(SR).is_positive_operator_on(K1, K2)
-            ....:     for L in K1.positive_operators_gens(K2))  # long time
+            sage: results = ( L.change_ring(SR).is_positive_operator_on(K1, K2)
+            ....:             for L in K1.positive_operators_gens(K2) )
+            sage: all(results)  # long time
             True
 
         Technically we could test this, but for now only closed convex cones
@@ -17210,8 +17211,9 @@ cdef class Matrix(Matrix1):
         ``cross_positive_operators_gens`` method)::
 
             sage: K = random_cone(max_ambient_dim=5)
-            sage: all(L.change_ring(SR).is_cross_positive_on(K)
-            ....:     for L in K.cross_positive_operators_gens())  # long time
+            sage: results = ( L.change_ring(SR).is_cross_positive_on(K)
+            ....:             for L in K.cross_positive_operators_gens() )
+            sage: all(results)  # long time
             True
 
         Technically we could test this, but for now only closed convex cones
@@ -17346,8 +17348,8 @@ cdef class Matrix(Matrix1):
         case is tested by the ``Z_operators_gens`` method)::
 
             sage: K = random_cone(max_ambient_dim=5)
-            sage: all(L.change_ring(SR).is_Z_operator_on(K)
-            ....:     for L in K.Z_operators_gens())  # long time
+            sage: all(L.change_ring(SR).is_Z_operator_on(K)  # long time
+            ....:     for L in K.Z_operators_gens())
             True
 
         Technically we could test this, but for now only closed convex cones
@@ -17464,8 +17466,8 @@ cdef class Matrix(Matrix1):
         ``lyapunov_like_basis`` method)::
 
             sage: K = random_cone(max_ambient_dim=5)
-            sage: all(L.change_ring(SR).is_lyapunov_like_on(K)
-            ....:     for L in K.lyapunov_like_basis())  # long time
+            sage: all(L.change_ring(SR).is_lyapunov_like_on(K)  # long time
+            ....:     for L in K.lyapunov_like_basis())
             True
 
         Technically we could test this, but for now only closed convex cones
@@ -17504,8 +17506,8 @@ cdef class Matrix(Matrix1):
             sage: R = K.lattice().vector_space().base_ring()
             sage: L = random_matrix(R, K.lattice_dim())
             sage: actual = L.is_lyapunov_like_on(K)          # long time
-            sage: expected = (L.is_cross_positive_on(K) and
-            ....:             (-L).is_cross_positive_on(K))  # long time
+            sage: expected = (L.is_cross_positive_on(K) and  # long time
+            ....:             (-L).is_cross_positive_on(K))
             sage: actual == expected                         # long time
             True
         """

@@ -69,6 +69,7 @@ if TYPE_CHECKING:
     from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
     from sage.manifolds.differentiable.symplectic_form import SymplecticForm
     from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
+    from sage.manifolds.point import ManifoldPoint
     from sage.tensor.modules.comp import Components
 
 
@@ -108,8 +109,8 @@ class TensorField(ModuleElementWithMutability):
 
     .. MATH::
 
-        t(p):\ \underbrace{T_q^*M\times\cdots\times T_q^*M}_{k\ \; \mbox{times}}
-        \times \underbrace{T_q M\times\cdots\times T_q M}_{l\ \; \mbox{times}}
+        t(p):\ \underbrace{T_q^*M\times\cdots\times T_q^*M}_{k\ \; \text{times}}
+        \times \underbrace{T_q M\times\cdots\times T_q M}_{l\ \; \text{times}}
         \longrightarrow K,
 
     where `T_q^* M` is the dual vector space to `T_q M` and `K` is the
@@ -589,7 +590,7 @@ class TensorField(ModuleElementWithMutability):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         else:
             return self._latex_name
 
@@ -3634,7 +3635,7 @@ class TensorField(ModuleElementWithMutability):
 
     lie_der = lie_derivative
 
-    def at(self, point):
+    def at(self, point: ManifoldPoint) -> FreeModuleTensor:
         r"""
         Value of ``self`` at a point of its domain.
 

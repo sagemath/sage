@@ -133,9 +133,8 @@ cdef list quotient_by_var(list L, size_t index):
     cdef list result = L[:len(L)] # creates a copy
     cdef size_t i
     for i in range(len(L)):
-        m_j = (<ETuple>PyList_GET_ITEM(L,i)).divide_by_var(index)
-        if m_j is not None:
-            result.append(m_j)
+        if (<ETuple> PyList_GET_ITEM(L, i)).get_exp(index):
+            result.append((<ETuple> PyList_GET_ITEM(L, i)).divide_by_var(index))
     return interred(result)
 
 cdef ETuple sum_from_list(list L, size_t s, size_t l):

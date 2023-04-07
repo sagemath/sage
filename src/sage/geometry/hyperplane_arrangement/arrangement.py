@@ -60,30 +60,30 @@ example a coefficient vector and constant term::
 The default base field is `\QQ`, the rational numbers.  Finite fields are also
 supported::
 
-    sage: H.<x,y,z> = HyperplaneArrangements(GF(5))
-    sage: a = H([(1,2,3), 4], [(5,6,7), 8]);  a
+    sage: H.<x,y,z> = HyperplaneArrangements(GF(5))                             # optional - sage.libs.pari
+    sage: a = H([(1,2,3), 4], [(5,6,7), 8]);  a                                 # optional - sage.libs.pari
     Arrangement <y + 2*z + 3 | x + 2*y + 3*z + 4>
 
 Number fields are also possible::
 
     sage: x = var('x')
-    sage: NF.<a> = NumberField(x**4 - 5*x**2 + 5,embedding=1.90)
-    sage: H.<y,z> = HyperplaneArrangements(NF)
-    sage: A = H([[(-a**3 + 3*a, -a**2 + 4), 1], [(a**3 - 4*a, -1), 1],
+    sage: NF.<a> = NumberField(x**4 - 5*x**2 + 5, embedding=1.90)                                           # optional - sage.rings.number_field
+    sage: H.<y,z> = HyperplaneArrangements(NF)                                                              # optional - sage.rings.number_field
+    sage: A = H([[(-a**3 + 3*a, -a**2 + 4), 1], [(a**3 - 4*a, -1), 1],                                      # optional - sage.rings.number_field
     ....:        [(0, 2*a**2 - 6), 1], [(-a**3 + 4*a, -1), 1],
     ....:        [(a**3 - 3*a, -a**2 + 4), 1]])
-    sage: A
+    sage: A                                                                                                 # optional - sage.rings.number_field
     Arrangement of 5 hyperplanes of dimension 2 and rank 2
-    sage: A.base_ring()
+    sage: A.base_ring()                                                                                     # optional - sage.rings.number_field
     Number Field in a with defining polynomial x^4 - 5*x^2 + 5 with a = 1.902113032590308?
 
 Notation (iii): a list or tuple of hyperplanes::
 
-    sage: H.<x,y,z> = HyperplaneArrangements(GF(5))
-    sage: k = [x+i for i in range(4)];  k
+    sage: H.<x,y,z> = HyperplaneArrangements(GF(5))                             # optional - sage.libs.pari
+    sage: k = [x+i for i in range(4)];  k                                       # optional - sage.libs.pari
     [Hyperplane x + 0*y + 0*z + 0, Hyperplane x + 0*y + 0*z + 1,
      Hyperplane x + 0*y + 0*z + 2, Hyperplane x + 0*y + 0*z + 3]
-    sage: H(k)
+    sage: H(k)                                                                  # optional - sage.libs.pari
     Arrangement <x | x + 1 | x + 2 | x + 3>
 
 Notation (iv): using the library of arrangements::
@@ -264,10 +264,10 @@ Miscellaneous methods (see documentation for an explanation)::
     sage: a = hyperplane_arrangements.semiorder(3)
     sage: a.has_good_reduction(5)
     True
-    sage: b = a.change_ring(GF(5))
+    sage: b = a.change_ring(GF(5))                                              # optional - sage.libs.pari
     sage: pa = a.intersection_poset()
-    sage: pb = b.intersection_poset()
-    sage: pa.is_isomorphic(pb)
+    sage: pb = b.intersection_poset()                                           # optional - sage.libs.pari
+    sage: pa.is_isomorphic(pb)                                                  # optional - sage.libs.pari
     True
     sage: a.face_vector()
     (0, 12, 30, 19)
@@ -356,7 +356,6 @@ from sage.modules.free_module import VectorSpace
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.geometry.hyperplane_arrangement.hyperplane import AmbientVectorSpace, Hyperplane
-from sage.combinat.posets.posets import Poset
 
 
 class HyperplaneArrangementElement(Element):
@@ -1129,7 +1128,7 @@ class HyperplaneArrangementElement(Element):
 
             sage: H.<x,y> = HyperplaneArrangements(QQ)
             sage: A = H([(1,1), 0], [(2,3), -1])
-            sage: A.change_ring(FiniteField(2))
+            sage: A.change_ring(FiniteField(2))                                     # optional - sage.libs.pari
             Arrangement <y + 1 | x + y>
 
         TESTS:
@@ -1165,8 +1164,8 @@ class HyperplaneArrangementElement(Element):
 
             sage: H.<x,y> = HyperplaneArrangements(QQ)
             sage: A = H([(1,1), 0], [(2,3), -1], [(4,5), 3])
-            sage: B = A.change_ring(FiniteField(7))
-            sage: B.n_regions()
+            sage: B = A.change_ring(FiniteField(7))                                 # optional - sage.libs.pari
+            sage: B.n_regions()                                                     # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: base field must have characteristic zero
@@ -1174,16 +1173,21 @@ class HyperplaneArrangementElement(Element):
         Check that :trac:`30749` is fixed::
 
             sage: R.<y> = QQ[]
-            sage: v1 = AA.polynomial_root(AA.common_polynomial(y^2 - 3), RIF(RR(1.7320508075688772), RR(1.7320508075688774)))
-            sage: v2 = QQbar.polynomial_root(AA.common_polynomial(y^4 - y^2 + 1), CIF(RIF(RR(0.8660254037844386), RR(0.86602540378443871)), RIF(-RR(0.50000000000000011), -RR(0.49999999999999994))))
-            sage: my_vectors = (vector(AA, [-v1, -1, 1]), vector(AA, [0, 2, 1]), vector(AA,[v1, -1, 1]), vector(AA, [1, 0, 0]), vector(AA, [1/2, AA(-1/2*v2^3 + v2),0]), vector(AA, [-1/2, AA(-1/2*v2^3 + v2), 0]))
-            sage: H = HyperplaneArrangements(AA, names='xyz')
-            sage: x,y,z = H.gens()
-            sage: A = H(backend="normaliz")  # optional - pynormaliz
-            sage: for v in my_vectors:        # optional - pynormaliz
+            sage: v1 = AA.polynomial_root(AA.common_polynomial(y^2 - 3),                                    # optional - sage.rings.number_field
+            ....:                         RIF(RR(1.7320508075688772), RR(1.7320508075688774)))
+            sage: v2 = QQbar.polynomial_root(AA.common_polynomial(y^4 - y^2 + 1),                           # optional - sage.rings.number_field
+            ....:                            CIF(RIF(RR(0.8660254037844386), RR(0.86602540378443871)),
+            ....:                                RIF(-RR(0.50000000000000011), -RR(0.49999999999999994))))
+            sage: my_vectors = (vector(AA, [-v1, -1, 1]), vector(AA, [0, 2, 1]), vector(AA, [v1, -1, 1]),   # optional - sage.rings.number_field
+            ....:               vector(AA, [1, 0, 0]), vector(AA, [1/2, AA(-1/2*v2^3 + v2),0]),
+            ....:               vector(AA, [-1/2, AA(-1/2*v2^3 + v2), 0]))
+            sage: H = HyperplaneArrangements(AA, names='xyz')                                               # optional - sage.rings.number_field
+            sage: x,y,z = H.gens()                                                                          # optional - sage.rings.number_field
+            sage: A = H(backend="normaliz")                                     # optional - pynormaliz     # optional - sage.rings.number_field
+            sage: for v in my_vectors:                                          # optional - pynormaliz     # optional - sage.rings.number_field
             ....:     a, b, c = v
             ....:     A = A.add_hyperplane(a*x + b*y + c*z)
-            sage: A.n_regions()              # optional - pynormaliz
+            sage: A.n_regions()                                                 # optional - pynormaliz     # optional - sage.rings.number_field
             24
         """
         if self.base_ring().characteristic() != 0:
@@ -1211,8 +1215,8 @@ class HyperplaneArrangementElement(Element):
 
             sage: H.<x,y> = HyperplaneArrangements(QQ)
             sage: A = H([(1,1),0], [(2,3),-1], [(4,5),3])
-            sage: B = A.change_ring(FiniteField(7))
-            sage: B.n_bounded_regions()
+            sage: B = A.change_ring(FiniteField(7))                             # optional - sage.libs.pari
+            sage: B.n_bounded_regions()                                         # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: base field must have characteristic zero
@@ -1243,14 +1247,14 @@ class HyperplaneArrangementElement(Element):
         EXAMPLES::
 
             sage: a = hyperplane_arrangements.semiorder(3)
-            sage: a.has_good_reduction(5)
+            sage: a.has_good_reduction(5)                                       # optional - sage.libs.pari
             True
-            sage: a.has_good_reduction(3)
+            sage: a.has_good_reduction(3)                                       # optional - sage.libs.pari
             False
-            sage: b = a.change_ring(GF(3))
+            sage: b = a.change_ring(GF(3))                                      # optional - sage.libs.pari
             sage: a.characteristic_polynomial()
             x^3 - 6*x^2 + 12*x
-            sage: b.characteristic_polynomial()  # not equal to that for a
+            sage: b.characteristic_polynomial()  # not equal to that for a      # optional - sage.libs.pari
             x^3 - 6*x^2 + 10*x
         """
         if self.base_ring() != QQ:
@@ -1495,9 +1499,9 @@ class HyperplaneArrangementElement(Element):
             Hyperplane arrangements in 1-dimensional linear space over
             Rational Field with coordinate x
 
-            sage: H.<x,y> = HyperplaneArrangements(GF(2))
-            sage: C = H([(1,1),1], [(1,1),0])
-            sage: C.essentialization()
+            sage: H.<x,y> = HyperplaneArrangements(GF(2))                       # optional - sage.libs.pari
+            sage: C = H([(1,1),1], [(1,1),0])                                   # optional - sage.libs.pari
+            sage: C.essentialization()                                          # optional - sage.libs.pari
             Arrangement <y | y + 1>
 
             sage: h = hyperplane_arrangements.semiorder(4)
@@ -1587,9 +1591,9 @@ class HyperplaneArrangementElement(Element):
 
         TESTS::
 
-            sage: H.<x,y> = HyperplaneArrangements(GF(3))
-            sage: A = H(x, y)
-            sage: A.sign_vector([1, 2])
+            sage: H.<x,y> = HyperplaneArrangements(GF(3))                   # optional - sage.libs.pari
+            sage: A = H(x, y)                                               # optional - sage.libs.pari
+            sage: A.sign_vector([1, 2])                                     # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: characteristic must be zero
@@ -1722,7 +1726,7 @@ class HyperplaneArrangementElement(Element):
             ((0, 0), (0, 8), (8, 0), (8, 8))
         """
         import itertools
-        from sage.matroids.all import Matroid
+        from sage.matroids.constructor import Matroid
         R = self.parent().base_ring()
         parallels = self._parallel_hyperplanes()
         A_list = [parallel[0][1] for parallel in parallels]
@@ -1930,7 +1934,7 @@ class HyperplaneArrangementElement(Element):
                         # In this case, at least one of the vertices is not on the hyperplane.
                         # So we check if any ray or line pokes the hyperplane.
                         if (    any(ieq[1:]*r[:]*direction < 0 for r in region.rays()) or
-                                any(ieq[1:]*l[:]          != 0 for l in region_lines)):
+                                any(ieq[1:]*l[:] != 0 for l in region_lines)):
                             splits = True
 
                 if splits:
@@ -1992,6 +1996,8 @@ class HyperplaneArrangementElement(Element):
             sage: A.poset_of_regions(B=base_region)
             Finite poset containing 14 elements
         """
+        from sage.combinat.posets.posets import Poset
+
         # We use RX to keep track of indexes and R to keep track of which regions
         # we've already hit. This poset is graded, so we can go one set at a time
         RX = self.regions()
@@ -2480,7 +2486,7 @@ class HyperplaneArrangementElement(Element):
             sage: (e3 + 2*e4) * (e1 - e7)
             e4 - e6
 
-            sage: U3 = a.face_semigroup_algebra(field=GF(3)); U3
+            sage: U3 = a.face_semigroup_algebra(field=GF(3)); U3                        # optional - sage.libs.pari
             Finite-dimensional algebra of degree 13 over Finite Field of size 3
 
         TESTS:
@@ -2550,8 +2556,8 @@ class HyperplaneArrangementElement(Element):
         TESTS::
 
             sage: A = H([(1,1),0], [(2,3),-1], [(4,5),3])
-            sage: B = A.change_ring(FiniteField(7))
-            sage: B.region_containing_point((1,2))
+            sage: B = A.change_ring(FiniteField(7))                         # optional - sage.libs.pari
+            sage: B.region_containing_point((1,2))                          # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: base field must have characteristic zero
@@ -2991,8 +2997,8 @@ class HyperplaneArrangementElement(Element):
         intersection lattice::
 
             sage: f = sum([list(M.flats(i)) for i in range(M.rank()+1)], [])
-            sage: PF = Poset([f, lambda x,y: x < y])
-            sage: PF.is_isomorphic(A.intersection_poset())
+            sage: PF = Poset([f, lambda x, y: x < y])                                   # optional - sage.combinat
+            sage: PF.is_isomorphic(A.intersection_poset())                              # optional - sage.combinat
             True
         """
         if not self.is_central():

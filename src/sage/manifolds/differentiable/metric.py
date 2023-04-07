@@ -447,7 +447,7 @@ class PseudoRiemannianMetric(TensorField):
         """
         return type(self)(self._vmodule, 'unnamed metric',
                           signature=self._signature,
-                          latex_name=r'\mbox{unnamed metric}')
+                          latex_name=r'\text{unnamed metric}')
 
     def _init_derived(self):
         r"""
@@ -661,7 +661,6 @@ class PseudoRiemannianMetric(TensorField):
             for dom, symbiform_rst in symbiform._restrictions.items():
                 rst = self.restrict(dom)
                 rst.set(symbiform_rst)
-
 
     def inverse(self, expansion_symbol=None, order=1):
         r"""
@@ -879,7 +878,6 @@ class PseudoRiemannianMetric(TensorField):
             frame = chart._frame
         return self.connection().coef(frame)
 
-
     def christoffel_symbols_display(self, chart=None, symbol=None,
                 latex_symbol=None, index_labels=None, index_latex_labels=None,
                 coordinate_labels=True, only_nonzero=True,
@@ -1068,7 +1066,6 @@ class PseudoRiemannianMetric(TensorField):
 
         """
         return self.connection().riemann(name, latex_name)
-
 
     def ricci(self, name=None, latex_name=None):
         r"""
@@ -2271,7 +2268,6 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
             self._restrictions[subdomain] = resu
         return self._restrictions[subdomain]
 
-
     def set(self, symbiform):
         r"""
         Define the metric from a field of symmetric bilinear forms.
@@ -2706,7 +2702,7 @@ class DegenerateMetric(TensorField):
         """
         return type(self)(self._vmodule, 'unnamed metric',
                           signature=self._signature,
-                          latex_name=r'\mbox{unnamed metric}')
+                          latex_name=r'\text{unnamed metric}')
 
     def signature(self):
         r"""

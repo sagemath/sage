@@ -45,8 +45,8 @@ from urllib.request import urlopen
 from sage.misc.temporary_file import tmp_filename
 
 
-XML_NAMESPACE   = 'http://designtheory.org/xml-namespace'
-DTRS_PROTOCOL   = '2.0'
+XML_NAMESPACE = 'http://designtheory.org/xml-namespace'
+DTRS_PROTOCOL = '2.0'
 
 # The following string is the file
 # http://designtheory.org/database/v-b-k/v2-b2-k2.icgsa.txt.bz2
@@ -659,7 +659,6 @@ class XTree():
              ('block', {}, [[6, 7, 11]]),
              ('block', {}, [[6, 8, 10]])]
         """
-
 
         if isinstance(node, str):
             node = (node, {}, [])

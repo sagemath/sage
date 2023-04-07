@@ -107,7 +107,6 @@ class ClassicalCrystals(Category_singleton):
         """
         return None
 
-
     class ParentMethods:
 
         def demazure_character(self, w, f=None):

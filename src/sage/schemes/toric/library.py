@@ -203,9 +203,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`toric variety
+        OUTPUT: A :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -244,9 +242,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -290,23 +286,16 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: dP6 = toric_varieties.dP6()
-            sage: dP6
+            sage: dP6 = toric_varieties.dP6(); dP6
             2-d CPR-Fano toric variety covered by 6 affine patches
             sage: dP6.fan().rays()
-            N( 0,  1),
-            N(-1,  0),
-            N(-1, -1),
-            N( 0, -1),
-            N( 1,  0),
-            N( 1,  1)
+            N( 0,  1),        N(-1,  0),        N(-1, -1),
+            N( 0, -1),        N( 1,  0),        N( 1,  1)
             in 2-d lattice N
             sage: dP6.gens()
             (x, u, y, v, z, w)
@@ -328,22 +317,16 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: dP7 = toric_varieties.dP7()
-            sage: dP7
+            sage: dP7 = toric_varieties.dP7(); dP7
             2-d CPR-Fano toric variety covered by 5 affine patches
             sage: dP7.fan().rays()
-            N( 0,  1),
-            N(-1,  0),
-            N(-1, -1),
-            N( 0, -1),
-            N( 1,  0)
+            N( 0,  1),        N(-1,  0),        N(-1, -1),
+            N( 0, -1),        N( 1,  0)
             in 2-d lattice N
             sage: dP7.gens()
             (x, u, y, v, z)
@@ -365,21 +348,16 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: dP8 = toric_varieties.dP8()
-            sage: dP8
+            sage: dP8 = toric_varieties.dP8(); dP8
             2-d CPR-Fano toric variety covered by 4 affine patches
             sage: dP8.fan().rays()
-            N( 1,  1),
-            N( 0,  1),
-            N(-1, -1),
-            N( 1,  0)
+            N( 1,  1),        N( 0,  1),
+            N(-1, -1),        N( 1,  0)
             in 2-d lattice N
             sage: dP8.gens()
             (t, x, y, z)
@@ -401,21 +379,16 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: P1xP1 = toric_varieties.P1xP1()
-            sage: P1xP1
+            sage: P1xP1 = toric_varieties.P1xP1(); P1xP1
             2-d CPR-Fano toric variety covered by 4 affine patches
             sage: P1xP1.fan().rays()
-            N( 1,  0),
-            N(-1,  0),
-            N( 0,  1),
-            N( 0, -1)
+            N( 1,  0),        N(-1,  0),
+            N( 0,  1),        N( 0, -1)
             in 2-d lattice N
             sage: P1xP1.gens()
             (s, t, x, y)
@@ -437,21 +410,16 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: P1xP1_Z2 = toric_varieties.P1xP1_Z2()
-            sage: P1xP1_Z2
+            sage: P1xP1_Z2 = toric_varieties.P1xP1_Z2(); P1xP1_Z2
             2-d CPR-Fano toric variety covered by 4 affine patches
             sage: P1xP1_Z2.fan().rays()
-            N( 1,  1),
-            N(-1, -1),
-            N(-1,  1),
-            N( 1, -1)
+            N( 1,  1),        N(-1, -1),
+            N(-1,  1),        N( 1, -1)
             in 2-d lattice N
             sage: P1xP1_Z2.gens()
             (s, t, x, y)
@@ -475,15 +443,12 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: P1 = toric_varieties.P1()
-            sage: P1
+            sage: P1 = toric_varieties.P1(); P1
             1-d CPR-Fano toric variety covered by 2 affine patches
             sage: P1.fan().rays()
             N( 1),
@@ -509,15 +474,12 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: P2 = toric_varieties.P2()
-            sage: P2
+            sage: P2 = toric_varieties.P2(); P2
             2-d CPR-Fano toric variety covered by 3 affine patches
             sage: P2.fan().rays()
             N( 1,  0),
@@ -545,15 +507,12 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: P3 = toric_varieties.P(3)
-            sage: P3
+            sage: P3 = toric_varieties.P(3); P3
             3-d CPR-Fano toric variety covered by 4 affine patches
             sage: P3.fan().rays()
             N( 1,  0,  0),
@@ -596,15 +555,12 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`toric variety
+        OUTPUT: A :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: A1 = toric_varieties.A1()
-            sage: A1
+            sage: A1 = toric_varieties.A1(); A1
             1-d affine toric variety
             sage: A1.fan().rays()
             N(1)
@@ -628,15 +584,12 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`toric variety
+        OUTPUT: A :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: A2 = toric_varieties.A2()
-            sage: A2
+            sage: A2 = toric_varieties.A2(); A2
             2-d affine toric variety
             sage: A2.fan().rays()
             N(1, 0),
@@ -663,15 +616,12 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`toric variety
+        OUTPUT: A :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: A3 = toric_varieties.A(3)
-            sage: A3
+            sage: A3 = toric_varieties.A(3); A3
             3-d affine toric variety
             sage: A3.fan().rays()
             N(1, 0, 0),
@@ -711,15 +661,12 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`toric variety
+        OUTPUT: A :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: A2_Z2 = toric_varieties.A2_Z2()
-            sage: A2_Z2
+            sage: A2_Z2 = toric_varieties.A2_Z2(); A2_Z2
             2-d affine toric variety
             sage: A2_Z2.fan().rays()
             N(1, 0),
@@ -745,15 +692,12 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`toric variety
+        OUTPUT: A :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: P1xA1 = toric_varieties.P1xA1()
-            sage: P1xA1
+            sage: P1xA1 = toric_varieties.P1xA1(); P1xA1
             2-d toric variety covered by 2 affine patches
             sage: P1xA1.fan().rays()
             N( 1, 0),
@@ -779,21 +723,16 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`toric variety
+        OUTPUT: A :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: Conifold = toric_varieties.Conifold()
-            sage: Conifold
+            sage: Conifold = toric_varieties.Conifold(); Conifold
             3-d affine toric variety
             sage: Conifold.fan().rays()
-            N(0, 0, 1),
-            N(0, 1, 1),
-            N(1, 0, 1),
-            N(1, 1, 1)
+            N(0, 0, 1),       N(0, 1, 1),
+            N(1, 0, 1),       N(1, 1, 1)
             in 3-d lattice N
             sage: Conifold.gens()
             (u, x, y, v)
@@ -815,29 +754,18 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: dP6xdP6 = toric_varieties.dP6xdP6()
-            sage: dP6xdP6
+            sage: dP6xdP6 = toric_varieties.dP6xdP6(); dP6xdP6
             4-d CPR-Fano toric variety covered by 36 affine patches
             sage: dP6xdP6.fan().rays()
-            N( 0,  1,  0,  0),
-            N(-1,  0,  0,  0),
-            N(-1, -1,  0,  0),
-            N( 0, -1,  0,  0),
-            N( 1,  0,  0,  0),
-            N( 1,  1,  0,  0),
-            N( 0,  0,  0,  1),
-            N( 0,  0, -1,  0),
-            N( 0,  0, -1, -1),
-            N( 0,  0,  0, -1),
-            N( 0,  0,  1,  0),
-            N( 0,  0,  1,  1)
+            N( 0,  1,  0,  0),      N(-1,  0,  0,  0),      N(-1, -1,  0,  0),
+            N( 0, -1,  0,  0),      N( 1,  0,  0,  0),      N( 1,  1,  0,  0),
+            N( 0,  0,  0,  1),      N( 0,  0, -1,  0),      N( 0,  0, -1, -1),
+            N( 0,  0,  0, -1),      N( 0,  0,  1,  0),      N( 0,  0,  1,  1)
             in 4-d lattice N
             sage: dP6xdP6.gens()
             (x0, x1, x2, x3, x4, x5, y0, y1, y2, y3, y4, y5)
@@ -862,25 +790,16 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: Cube_face_fan = toric_varieties.Cube_face_fan()
-            sage: Cube_face_fan
+            sage: Cube_face_fan = toric_varieties.Cube_face_fan(); Cube_face_fan
             3-d CPR-Fano toric variety covered by 6 affine patches
             sage: Cube_face_fan.fan().rays()
-            N( 1,  1,  1),
-            N( 1, -1,  1),
-            N(-1,  1,  1),
-            N(-1, -1,  1),
-            N(-1, -1, -1),
-            N(-1,  1, -1),
-            N( 1, -1, -1),
-            N( 1,  1, -1)
+            N( 1,  1,  1),    N( 1, -1,  1),    N(-1,  1,  1),    N(-1, -1,  1),
+            N(-1, -1, -1),    N(-1,  1, -1),    N( 1, -1, -1),    N( 1,  1, -1)
             in 3-d lattice N
             sage: Cube_face_fan.gens()
             (z0, z1, z2, z3, z4, z5, z6, z7)
@@ -906,25 +825,16 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: Cube_sublattice = toric_varieties.Cube_sublattice()
-            sage: Cube_sublattice
+            sage: Cube_sublattice = toric_varieties.Cube_sublattice(); Cube_sublattice
             3-d CPR-Fano toric variety covered by 6 affine patches
             sage: Cube_sublattice.fan().rays()
-            N( 1,  0,  0),
-            N( 0,  1,  0),
-            N( 0,  0,  1),
-            N(-1,  1,  1),
-            N(-1,  0,  0),
-            N( 0, -1,  0),
-            N( 0,  0, -1),
-            N( 1, -1, -1)
+            N( 1,  0,  0),    N( 0,  1,  0),    N( 0,  0,  1),    N(-1,  1,  1),
+            N(-1,  0,  0),    N( 0, -1,  0),    N( 0,  0, -1),    N( 1, -1, -1)
             in 3-d lattice N
             sage: Cube_sublattice.gens()
             (z0, z1, z2, z3, z4, z5, z6, z7)
@@ -950,9 +860,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`toric variety
+        OUTPUT: A :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         .. NOTE::
@@ -967,14 +875,8 @@ class ToricVarietyFactory(SageObject):
             sage: Cube_nonpolyhedral
             3-d toric variety covered by 6 affine patches
             sage: Cube_nonpolyhedral.fan().rays()
-            N( 1,  2,  3),
-            N( 1, -1,  1),
-            N(-1,  1,  1),
-            N(-1, -1,  1),
-            N(-1, -1, -1),
-            N(-1,  1, -1),
-            N( 1, -1, -1),
-            N( 1,  1, -1)
+            N( 1,  2,  3),    N( 1, -1,  1),    N(-1,  1,  1),    N(-1, -1,  1),
+            N(-1, -1, -1),    N(-1,  1, -1),    N( 1, -1, -1),    N( 1,  1, -1)
             in 3-d lattice N
             sage: Cube_nonpolyhedral.gens()
             (z0, z1, z2, z3, z4, z5, z6, z7)
@@ -1012,18 +914,11 @@ class ToricVarietyFactory(SageObject):
 
         EXAMPLES::
 
-            sage: X_2 = toric_varieties.Cube_deformation(2)
-            sage: X_2
+            sage: X_2 = toric_varieties.Cube_deformation(2); X_2
             3-d toric variety covered by 6 affine patches
             sage: X_2.fan().rays()
-            N( 1,  1,  5),
-            N( 1, -1,  1),
-            N(-1,  1,  1),
-            N(-1, -1,  1),
-            N(-1, -1, -1),
-            N(-1,  1, -1),
-            N( 1, -1, -1),
-            N( 1,  1, -1)
+            N( 1,  1,  5),    N( 1, -1,  1),    N(-1,  1,  1),    N(-1, -1,  1),
+            N(-1, -1, -1),    N(-1,  1, -1),    N( 1, -1, -1),    N( 1,  1, -1)
             in 3-d lattice N
             sage: X_2.gens()
             (z0, z1, z2, z3, z4, z5, z6, z7)
@@ -1059,29 +954,20 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: X = toric_varieties.BCdlOG()
-            sage: X
+            sage: X = toric_varieties.BCdlOG(); X
             5-d CPR-Fano toric variety covered by 54 affine patches
             sage: X.fan().rays()
-            N(-1,  0,  0,  2,  3),
-            N( 0, -1,  0,  2,  3),
-            N( 0,  0, -1,  2,  3),
-            N( 0,  0, -1,  1,  2),
-            N( 0,  0,  0, -1,  0),
-            N( 0,  0,  0,  0, -1),
-            N( 0,  0,  0,  2,  3),
-            N( 0,  0,  1,  2,  3),
-            N( 0,  0,  2,  2,  3),
-            N( 0,  0,  1,  1,  1),
-            N( 0,  1,  2,  2,  3),
-            N( 0,  1,  3,  2,  3),
+            N(-1,  0,  0,  2,  3),          N( 0, -1,  0,  2,  3),
+            N( 0,  0, -1,  2,  3),          N( 0,  0, -1,  1,  2),
+            N( 0,  0,  0, -1,  0),          N( 0,  0,  0,  0, -1),
+            N( 0,  0,  0,  2,  3),          N( 0,  0,  1,  2,  3),
+            N( 0,  0,  2,  2,  3),          N( 0,  0,  1,  1,  1),
+            N( 0,  1,  2,  2,  3),          N( 0,  1,  3,  2,  3),
             N( 1,  0,  4,  2,  3)
             in 5-d lattice N
             sage: X.gens()
@@ -1104,24 +990,16 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`toric variety
+        OUTPUT: A :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: base = toric_varieties.BCdlOG_base()
-            sage: base
+            sage: base = toric_varieties.BCdlOG_base(); base
             3-d toric variety covered by 10 affine patches
             sage: base.fan().rays()
-            N(-1,  0,  0),
-            N( 0, -1,  0),
-            N( 0,  0, -1),
-            N( 0,  0,  1),
-            N( 0,  1,  2),
-            N( 0,  1,  3),
-            N( 1,  0,  4)
+            N(-1,  0,  0),    N( 0, -1,  0),    N( 0,  0, -1),    N( 0,  0,  1),
+            N( 0,  1,  2),    N( 0,  1,  3),    N( 1,  0,  4)
             in 3-d lattice N
             sage: base.gens()
             (d4, d3, r2, r1, d2, u, d1)
@@ -1143,15 +1021,12 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: P2_112 = toric_varieties.P2_112()
-            sage: P2_112
+            sage: P2_112 = toric_varieties.P2_112(); P2_112
             2-d CPR-Fano toric variety covered by 3 affine patches
             sage: P2_112.fan().rays()
             N( 1,  0),
@@ -1178,15 +1053,12 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: P2_123 = toric_varieties.P2_123()
-            sage: P2_123
+            sage: P2_123 = toric_varieties.P2_123(); P2_123
             2-d CPR-Fano toric variety covered by 3 affine patches
             sage: P2_123.fan().rays()
             N( 1,  0),
@@ -1213,22 +1085,16 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: P4_11169 = toric_varieties.P4_11169()
-            sage: P4_11169
+            sage: P4_11169 = toric_varieties.P4_11169(); P4_11169
             4-d CPR-Fano toric variety covered by 5 affine patches
             sage: P4_11169.fan().rays()
-            N( 1,  0,  0,  0),
-            N( 0,  1,  0,  0),
-            N( 0,  0,  1,  0),
-            N( 0,  0,  0,  1),
-            N(-9, -6, -1, -1)
+            N( 1,  0,  0,  0),      N( 0,  1,  0,  0),      N( 0,  0,  1,  0),
+            N( 0,  0,  0,  1),      N(-9, -6, -1, -1)
             in 4-d lattice N
             sage: P4_11169.gens()
             (z0, z1, z2, z3, z4)
@@ -1251,9 +1117,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -1262,12 +1126,8 @@ class ToricVarietyFactory(SageObject):
             sage: P4_11169_resolved
             4-d CPR-Fano toric variety covered by 9 affine patches
             sage: P4_11169_resolved.fan().rays()
-            N( 1,  0,  0,  0),
-            N( 0,  1,  0,  0),
-            N( 0,  0,  1,  0),
-            N( 0,  0,  0,  1),
-            N(-9, -6, -1, -1),
-            N(-3, -2,  0,  0)
+            N( 1,  0,  0,  0),      N( 0,  1,  0,  0),      N( 0,  0,  1,  0),
+            N( 0,  0,  0,  1),      N(-9, -6, -1, -1),      N(-3, -2,  0,  0)
             in 4-d lattice N
             sage: P4_11169_resolved.gens()
             (z0, z1, z2, z3, z4, z5)
@@ -1289,22 +1149,16 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
 
-            sage: P4_11133 = toric_varieties.P4_11133()
-            sage: P4_11133
+            sage: P4_11133 = toric_varieties.P4_11133(); P4_11133
             4-d CPR-Fano toric variety covered by 5 affine patches
             sage: P4_11133.fan().rays()
-            N( 1,  0,  0,  0),
-            N( 0,  1,  0,  0),
-            N( 0,  0,  1,  0),
-            N( 0,  0,  0,  1),
-            N(-3, -3, -1, -1)
+            N( 1,  0,  0,  0),      N( 0,  1,  0,  0),      N( 0,  0,  1,  0),
+            N( 0,  0,  0,  1),      N(-3, -3, -1, -1)
             in 4-d lattice N
             sage: P4_11133.gens()
             (z0, z1, z2, z3, z4)
@@ -1326,9 +1180,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`CPR-Fano toric variety
+        OUTPUT: A :class:`CPR-Fano toric variety
         <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
         EXAMPLES::
@@ -1337,12 +1189,8 @@ class ToricVarietyFactory(SageObject):
             sage: P4_11133_resolved
             4-d CPR-Fano toric variety covered by 9 affine patches
             sage: P4_11133_resolved.fan().rays()
-            N( 1,  0,  0,  0),
-            N( 0,  1,  0,  0),
-            N( 0,  0,  1,  0),
-            N( 0,  0,  0,  1),
-            N(-3, -3, -1, -1),
-            N(-1, -1,  0,  0)
+            N( 1,  0,  0,  0),      N( 0,  1,  0,  0),      N( 0,  0,  1,  0),
+            N( 0,  0,  0,  1),      N(-3, -3, -1, -1),      N(-1, -1,  0,  0)
             in 4-d lattice N
             sage: P4_11133_resolved.gens()
             (z0, z1, z2, z3, z4, z5)
@@ -1387,7 +1235,7 @@ class ToricVarietyFactory(SageObject):
             sage: X = toric_varieties.WP([1,3,1], names='x y z')
             sage: X.inject_variables()
             Defining x, y, z
-            sage: g = y^2-(x^6-z^6)
+            sage: g = y^2 - (x^6-z^6)
             sage: C = X.subscheme([g]); C
             Closed subscheme of 2-d toric variety covered by 3 affine patches defined by:
               -x^6 + z^6 + y^2
@@ -1457,9 +1305,7 @@ class ToricVarietyFactory(SageObject):
         - ``base_ring`` -- a ring (default: `\QQ`). The base ring for
           the toric variety.
 
-        OUTPUT:
-
-        A :class:`toric variety
+        OUTPUT: A :class:`toric variety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -1476,7 +1322,7 @@ class ToricVarietyFactory(SageObject):
             in 3-d lattice N
             sage: T3.gens()
             (z0, z1, z2)
-            sage: sorted(T3.change_ring(GF(3)).point_set().list())
+            sage: sorted(T3.change_ring(GF(3)).point_set().list())                      # optional - sage.rings.finite_rings
             [[1 : 1 : 1], [1 : 1 : 2], [1 : 2 : 1], [1 : 2 : 2],
              [2 : 1 : 1], [2 : 1 : 2], [2 : 2 : 1], [2 : 2 : 2]]
         """

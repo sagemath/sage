@@ -11,6 +11,8 @@ Algebra modules
 #******************************************************************************
 
 from .category_types import Category_module
+from .commutative_algebras import CommutativeAlgebras
+from .commutative_rings import CommutativeRings
 from .modules import Modules
 
 class AlgebraModules(Category_module):
@@ -50,9 +52,14 @@ class AlgebraModules(Category_module):
 
             sage: TestSuite(AlgebraModules(QQ['a'])).run()
         """
-        from sage.categories.commutative_algebras import CommutativeAlgebras
-        if not hasattr(A, "base_ring") or A not in CommutativeAlgebras(A.base_ring()):
-            raise TypeError("A (=%s) must be a commutative algebra" % A)
+        try:
+            base_ring = A.base_ring()
+        except AttributeError:
+            raise TypeError(f"A (={A}) must be a commutative algebra")
+        else:
+            if base_ring not in CommutativeRings() or A not in CommutativeAlgebras(base_ring.category()):
+                raise TypeError(f"A (={A}) must be a commutative algebra")
+
         Category_module.__init__(self, A)
 
     @classmethod

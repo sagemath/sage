@@ -233,8 +233,8 @@ class Animation(WithEqualityById, SageObject):
         EXAMPLES::
 
             sage: x = SR.var("x")
-            sage: a = animate([sin(x + float(k)) for k in srange(0,2*pi,0.3)],
-            ....:                xmin=0, xmax=2*pi, figsize=[2,1]) # indirect doctest
+            sage: a = animate([sin(x + float(k)) for k in srange(0,2*pi,0.3)],  # indirect doctest
+            ....:                xmin=0, xmax=2*pi, figsize=[2,1])
             sage: a           # optional -- ImageMagick   # long time
             Animation with 21 frames
         """
@@ -849,7 +849,6 @@ class Animation(WithEqualityById, SageObject):
         from sage.repl.rich_output import get_display_manager
         dm = get_display_manager()
         dm.display_immediately(self, **kwds)
-
 
     def ffmpeg(self, savefile=None, show_path=False, output_format=None,
                ffmpeg_options='', delay=None, iterations=0, pix_fmt='rgb24'):

@@ -918,10 +918,10 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
 
     ::
 
-        sage: from sage.rings.number_field.number_field import is_NumberField
+        sage: from sage.rings.number_field.number_field_base import NumberField
         sage: type(K)
         <class 'sage.rings.number_field.number_field.NumberField_quadratic_with_category'>
-        sage: is_NumberField(K)
+        sage: isinstance(K, NumberField)
         True
 
     Quadratic number fields are cached::
@@ -8308,7 +8308,7 @@ class NumberField_absolute(NumberField_generic):
         if is_NumberFieldOrder(R) and self.has_coerce_map_from(R.number_field()):
             return self._generic_coerce_map(R)
         # R is not QQ by the above tests
-        if is_NumberField(R) and R.coerce_embedding() is not None:
+        if isinstance(R, number_field_base.NumberField) and R.coerce_embedding() is not None:
             if self.coerce_embedding() is not None:
                 try:
                     return number_field_morphisms.EmbeddedNumberFieldMorphism(R, self)
@@ -12153,7 +12153,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         if D > 0:
             raise NotImplementedError("Hilbert class polynomial is not implemented for real quadratic fields.")
 
-        from sage.schemes.elliptic_curves.all import hilbert_class_polynomial as HCP
+        from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial as HCP
         return QQ[name](HCP(D))
 
     def number_of_roots_of_unity(self):
@@ -12188,16 +12188,15 @@ def is_fundamental_discriminant(D):
     EXAMPLES::
 
         sage: [D for D in range(-15,15) if is_fundamental_discriminant(D)]
+        ...
+        DeprecationWarning: is_fundamental_discriminant(D) is deprecated; please use D.is_fundamental_discriminant()
+        ...
         [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
         sage: [D for D in range(-15,15) if not is_square(D) and QuadraticField(D,'a').disc() == D]
         [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
     """
-    d = D % 4
-    if d not in [0, 1]:
-        return False
-    return D != 1 and D != 0 and \
-        (arith.is_squarefree(D) or
-            (d == 0 and (D // 4) % 4 in [2, 3] and arith.is_squarefree(D // 4)))
+    deprecation(35147, "is_fundamental_discriminant(D) is deprecated; please use D.is_fundamental_discriminant()")
+    return Integer(D).is_fundamental_discriminant()
 
 
 ###################
