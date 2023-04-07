@@ -764,7 +764,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             sage: W.discriminant()                           # optional - gap3
             x0^6*x1^2 - 6*x0^5*x1^3 + 13*x0^4*x1^4 - 12*x0^3*x1^5 + 4*x0^2*x1^6
         """
-        from sage.rings.polynomial.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         n = self.rank()
         P = PolynomialRing(QQ, 'x', n)
         x = P.gens()
@@ -1416,7 +1416,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             (x0^3 + x1^3, x0^3*x1^3)
         """
         import re
-        from sage.rings.polynomial.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
         if not self.is_irreducible():
             return sum([W.fundamental_invariants() for W in self.irreducible_components() ],tuple())

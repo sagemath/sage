@@ -284,7 +284,7 @@ def cut_edge_by_bisection(pointa, pointb, condition, eps=1.0e-6, N=100):
 
     point_c_middle(&midp, b, a, half)
 
-    return  midp.x, midp.y, midp.z
+    return midp.x, midp.y, midp.z
 
 
 cdef class IndexFaceSet(PrimitiveObject):
