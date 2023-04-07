@@ -831,16 +831,19 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
     def molien_series(self, chi=None, return_series=True, prec=20, variable='t'):
         r"""
         Compute the Molien series of this finite group with respect to the
-        character ``chi``. It can be returned either as a rational function
-        in one variable or a power series in one variable. The base field
-        must be a finite field, the rationals, or a cyclotomic field.
+        character ``chi``.
+
+        It can be returned either as a rational function in one variable
+        or a power series in one variable. The base field must be a
+        finite field, the rationals, or a cyclotomic field.
 
         Note that the base field characteristic cannot divide the group
         order (i.e., the non-modular case).
 
         ALGORITHM:
 
-        For a finite group `G` in characteristic zero we construct the Molien series as
+        For a finite group `G` in characteristic zero we construct
+        the Molien series as
 
         .. MATH::
 
@@ -848,29 +851,29 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         where `I` is the identity matrix and `t` an indeterminate.
 
-        For characteristic `p` not dividing the order of `G`, let `k` be the base field
-        and `N` the order of `G`. Define `\lambda` as a primitive `N`-th root of unity over `k`
-        and `\omega` as a primitive `N`-th root of unity over `\QQ`. For each `g \in G`
+        For characteristic `p` not dividing the order of `G`, let `k` be
+        the base field and `N` the order of `G`. Define `\lambda` as a
+        primitive `N`-th root of unity over `k` and `\omega` as a
+        primitive `N`-th root of unity over `\QQ`. For each `g \in G`
         define `k_i(g)` to be the positive integer such that
-        `e_i = \lambda^{k_i(g)}` for each eigenvalue `e_i` of `g`. Then the Molien series
-        is computed as
+        `e_i = \lambda^{k_i(g)}` for each eigenvalue `e_i` of `g`.
+        Then the Molien series is computed as
 
         .. MATH::
 
-            \frac{1}{|G|}\sum_{g \in G} \frac{\chi(g)}{\prod_{i=1}^n(1 - t\omega^{k_i(g)})},
+            \frac{1}{|G|}\sum_{g \in G} \frac{\chi(g)}{\prod_{i=1}^n
+                (1 - t\omega^{k_i(g)})},
 
         where `t` is an indeterminant. [Dec1998]_
 
         INPUT:
 
         - ``chi`` -- (default: trivial character) a linear group character of this group
-
         - ``return_series`` -- boolean (default: ``True``) if ``True``, then returns
           the Molien series as a power series, ``False`` as a rational function
-
         - ``prec`` -- integer (default: 20); power series default precision
-
-        - ``variable`` -- string (default: ``'t'``); Variable name for the Molien series
+          (possibly infinite, in which case it is computed lazily)
+        - ``variable`` -- string (default: ``'t'``); variable name for the Molien series
 
         OUTPUT: single variable rational function or power series with integer coefficients
 
@@ -909,6 +912,11 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             1 + t + 2*t^2 + 3*t^3 + 4*t^4 + 5*t^5 + 7*t^6 + 8*t^7 + 10*t^8 + 12*t^9 + O(t^10)
             sage: mol.parent()
             Power Series Ring in t over Integer Ring
+
+            sage: mol = S3.molien_series(prec=oo); mol
+            1 + t + 2*t^2 + 3*t^3 + 4*t^4 + 5*t^5 + 7*t^6 + O(t^7)
+            sage: mol.parent()
+            Lazy Taylor Series Ring in t over Integer Ring
 
         Octahedral Group::
 
@@ -1004,7 +1012,11 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         # divide by group order
         mol /= N
         if return_series:
-            PS = PowerSeriesRing(ZZ, variable, default_prec=prec)
+            if prec == float('inf'):
+                from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+                PS = LazyPowerSeriesRing(ZZ, names=(variable,), sparse=P.is_sparse())
+            else:
+                PS = PowerSeriesRing(ZZ, variable, default_prec=prec)
             return PS(mol)
         return mol
 

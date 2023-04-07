@@ -763,7 +763,7 @@ def _connected_mutation_type(dg):
     elif len( exc_labels ) == 1:
         label = exc_labels[0]
         v_out = label[0]
-        v_in  = label[1]
+        v_in = label[1]
         label = label[2]
         if label == (1,-2):
             if dict_in_out[ v_in ][0] == 1 and dict_in_out[ v_in ][1] == 0:

@@ -9179,7 +9179,7 @@ cdef class Polynomial(CommutativePolynomial):
             l = lcm([n.denominator(), d.denominator()])
             n *= l
             d *= l
-            return  P(n), P(d)
+            return P(n), P(d)
 
         # n and d are unique if m.degree() > (n.degree() + d.degree())
         if n_deg is None:

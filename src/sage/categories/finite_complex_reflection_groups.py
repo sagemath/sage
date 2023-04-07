@@ -866,7 +866,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     ....:        for w in W.noncrossing_partition_lattice(c2))
                     [[], [2]]
                 """
-                from sage.combinat.posets.all import Poset, LatticePoset
+                from sage.combinat.posets.posets import Poset
+                from sage.combinat.posets.lattices import LatticePoset
 
                 R = self.reflections()
                 if L is None:

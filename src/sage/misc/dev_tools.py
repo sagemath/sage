@@ -169,7 +169,7 @@ def load_submodules(module=None, exclude_pattern=None):
         load sage.geometry.polyhedron.palp_database... succeeded
         load sage.geometry.polyhedron.ppl_lattice_polygon... succeeded
     """
-    import pkgutil
+    from .package_dir import walk_packages
 
     if module is None:
         import sage
@@ -181,7 +181,7 @@ def load_submodules(module=None, exclude_pattern=None):
     else:
         exclude = None
 
-    for importer, module_name, ispkg in pkgutil.walk_packages(module.__path__, module.__name__ + '.'):
+    for importer, module_name, ispkg in walk_packages(module.__path__, module.__name__ + '.'):
         if ispkg or module_name in sys.modules:
             continue
 

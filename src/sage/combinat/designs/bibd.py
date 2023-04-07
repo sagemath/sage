@@ -1372,15 +1372,15 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
     from sage.libs.gap.libgap import libgap
     from sage.matrix.constructor import Matrix
 
-    K   = GF(q,'a')
+    K = GF(q,'a')
     one = K.one()
 
     # An irreducible quadratic form over K[X,Y]
     GO = libgap.GeneralOrthogonalGroup(-1,2,q)
-    M  = libgap.InvariantQuadraticForm(GO)['matrix']
-    M  = Matrix(M)
-    M  = M.change_ring(K)
-    Q  = lambda xx,yy : M[0,0]*xx**2+(M[0,1]+M[1,0])*xx*yy+M[1,1]*yy**2
+    M = libgap.InvariantQuadraticForm(GO)['matrix']
+    M = Matrix(M)
+    M = M.change_ring(K)
+    Q = lambda xx,yy : M[0,0]*xx**2+(M[0,1]+M[1,0])*xx*yy+M[1,1]*yy**2
 
     # Here, the additive subgroup H (of order n) of K mentioned in
     # [Denniston69] is the set of all elements of K of degree < log_n

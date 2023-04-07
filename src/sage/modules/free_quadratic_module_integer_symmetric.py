@@ -61,7 +61,7 @@ from sage.structure.element import is_Matrix
 from sage.arith.misc import gcd
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
 from sage.misc.cachefunc import cached_method
-from sage.quadratic_forms.all import QuadraticForm
+from sage.quadratic_forms.quadratic_form import QuadraticForm
 
 ###############################################################################
 #

@@ -297,9 +297,8 @@ cdef class Functor(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: x (=Integer Ring) is not in Category of fields
-
         """
-        if not (x in  self.__domain):
+        if x not in self.__domain:
             raise TypeError("x (=%s) is not in %s" % (x, self.__domain))
         return x
 

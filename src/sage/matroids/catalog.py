@@ -40,7 +40,7 @@ from sage.graphs.graph_generators import graphs
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.schemes.all import ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace
 
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid

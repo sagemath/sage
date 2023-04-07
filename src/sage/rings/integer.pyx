@@ -972,7 +972,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return [ self ]
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         mpz_clear(self.value)
 
     def __repr__(self):
@@ -3812,11 +3812,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             else:
                 limit = bound
             while m <= limit:
-                if  mpz_divisible_ui_p(self.value, m):
+                if mpz_divisible_ui_p(self.value, m):
                     mpz_set_ui(x.value, m)
                     sig_off()
                     return x
-                m += dif[i%8]
+                m += dif[i % 8]
                 i += 1
             mpz_abs(x.value, self.value)
             sig_off()

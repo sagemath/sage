@@ -12,21 +12,20 @@ of such.
 AUTHORS:
 
 - Michael Jung (2019) : initial version
-
 """
-
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2019 Michael Jung <micjung@uni-potsdam.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#******************************************************************************
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import AlgebraElement, ModuleElementWithMutability
 from sage.rings.integer import Integer
+
 
 class MixedForm(AlgebraElement, ModuleElementWithMutability):
     r"""
@@ -253,9 +252,9 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         self._domain = vmodule._domain
         self._ambient_domain = vmodule._ambient_domain
         self._max_deg = vmodule._ambient_domain.dim()
-        self._is_zero = False # a priori, may be changed below or via
-                              # method __bool__()
-        self._comp = None # initialized on demand; see _init_comp
+        self._is_zero = False  # a priori, may be changed below or via
+        # method __bool__()
+        self._comp = None  # initialized on demand; see _init_comp
         # Set names:
         self._name = name
         if latex_name is None:
@@ -289,7 +288,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
                 comp_latex_name = '{' + self._latex_name + '}_{' + str(i) + '}'
             diff_form = self._domain.diff_form
             self._comp.append(diff_form(i, name=comp_name,
-                                           latex_name=comp_latex_name))
+                                        latex_name=comp_latex_name))
 
     def _repr_(self):
         r"""
@@ -347,7 +346,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
 
         """
         if self._name is None:
-            return r'\mbox{' + repr(self) + r'}'
+            return r'\text{' + repr(self) + r'}'
         else:
             return self._latex_name
 
@@ -487,7 +486,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
                         if is_atomic(coef_latex):
                             terms_latex.append(coef_latex + basis_term_latex)
                         else:
-                            terms_latex.append(r"\left(" + coef_latex + \
+                            terms_latex.append(r"\left(" + coef_latex +
                                                r"\right)" + basis_term_latex)
         if not terms_txt:
             resu_txt += "0"
@@ -549,7 +548,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         else:
             resu_txt += self[0]._name
         if self[0]._latex_name is None:
-            resu_latex += r"\mbox{(unnamed scalar field)}"
+            resu_latex += r"\text{(unnamed scalar field)}"
         else:
             resu_latex += latex(self[0])
         # Differential forms:
@@ -559,7 +558,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             else:
                 resu_txt += " + " + self[j]._name
             if self[j]._latex_name is None:
-                resu_latex += r"+\mbox{(unnamed " + str(j) + r"-form)}"
+                resu_latex += r"+\text{(unnamed " + str(j) + r"-form)}"
             else:
                 resu_latex += r"+" + latex(self[j])
         return FormattedExpansion(resu_txt, resu_latex)
@@ -614,11 +613,10 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
 
             sage: F[0].set_name(name='g'); F.display()
             eta = g + F_1 + F_2 + F_3 + F_4
-
         """
         if self.is_immutable():
             raise ValueError("the name of an immutable element "
-                                 "cannot be changed")
+                             "cannot be changed")
         if name is not None:
             self._name = name
             if latex_name is None:
@@ -991,7 +989,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             return self
         # Generic case:
         resu = self._new_instance()
-        resu._comp = [sum(self[k].wedge(other[j-k]) for k in range(j+1))
+        resu._comp = [sum(self[k].wedge(other[j - k]) for k in range(j + 1))
                       for j in self.irange()]
         # Compose name:
         from sage.typeset.unicode_characters import unicode_wedge
