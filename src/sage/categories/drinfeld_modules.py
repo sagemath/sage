@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari       (because all doctests use finite fields)
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Drinfeld modules over a base
 

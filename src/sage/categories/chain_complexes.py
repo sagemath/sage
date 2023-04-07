@@ -124,10 +124,10 @@ class ChainComplexes(Category_module):
 
             EXAMPLES::
 
-                sage: E3 = EuclideanSpace(3)                    # optional - sage.symbolic
-                sage: C = E3.de_rham_complex()                  # optional - sage.symbolic
-                sage: one = C.homology().one()                  # optional - sage.symbolic
-                sage: C.lift_from_homology(one)                 # optional - sage.symbolic
+                sage: E3 = EuclideanSpace(3)                                            # optional - sage.symbolic
+                sage: C = E3.de_rham_complex()                                          # optional - sage.symbolic
+                sage: one = C.homology().one()                                          # optional - sage.symbolic
+                sage: C.lift_from_homology(one)                                         # optional - sage.symbolic
                 Mixed differential form one on the Euclidean space E^3
             """
 
@@ -144,10 +144,10 @@ class ChainComplexes(Category_module):
 
             EXAMPLES::
 
-                sage: E3 = EuclideanSpace(3)                    # optional - sage.symbolic
-                sage: C = E3.de_rham_complex()                  # optional - sage.symbolic
-                sage: one = C.one()                             # optional - sage.symbolic
-                sage: C.reduce_to_homology(one)                 # optional - sage.symbolic
+                sage: E3 = EuclideanSpace(3)                                            # optional - sage.symbolic
+                sage: C = E3.de_rham_complex()                                          # optional - sage.symbolic
+                sage: one = C.one()                                                     # optional - sage.symbolic
+                sage: C.reduce_to_homology(one)                                         # optional - sage.symbolic
                 [one]
             """
             try:
@@ -240,15 +240,15 @@ class HomologyFunctor(Functor):
 
         TESTS::
 
-            sage: E3 = EuclideanSpace(3)                        # optional - sage.symbolic
-            sage: C = E3.de_rham_complex()                      # optional - sage.symbolic
-            sage: id = Hom(C, C).identity()                     # optional - sage.symbolic
-            sage: H = HomologyFunctor(ChainComplexes(SR))       # optional - sage.symbolic
-            sage: id_star = H(id); id_star                      # optional - sage.symbolic
+            sage: E3 = EuclideanSpace(3)                                                # optional - sage.symbolic
+            sage: C = E3.de_rham_complex()                                              # optional - sage.symbolic
+            sage: id = Hom(C, C).identity()                                             # optional - sage.symbolic
+            sage: H = HomologyFunctor(ChainComplexes(SR))                               # optional - sage.symbolic
+            sage: id_star = H(id); id_star                                              # optional - sage.symbolic
             Generic endomorphism of De Rham cohomology ring on the
              Euclidean space E^3
-            sage: one = H(C).one()                              # optional - sage.symbolic
-            sage: id_star(one)                                  # optional - sage.symbolic
+            sage: one = H(C).one()                                                      # optional - sage.symbolic
+            sage: id_star(one)                                                          # optional - sage.symbolic
             [one]
         """
         from .morphism import SetMorphism

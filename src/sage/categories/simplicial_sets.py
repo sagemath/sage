@@ -71,10 +71,10 @@ class SimplicialSets(Category_singleton):
 
             EXAMPLES::
 
-                sage: simplicial_sets.Torus().is_finite()                                           # optional - sage.graphs
+                sage: simplicial_sets.Torus().is_finite()                               # optional - sage.graphs
                 True
-                sage: C5 = groups.misc.MultiplicativeAbelian([5])                                   # optional - sage.graphs sage.groups
-                sage: simplicial_sets.ClassifyingSpace(C5).is_finite()                              # optional - sage.graphs sage.groups
+                sage: C5 = groups.misc.MultiplicativeAbelian([5])                       # optional - sage.graphs sage.groups
+                sage: simplicial_sets.ClassifyingSpace(C5).is_finite()                  # optional - sage.graphs sage.groups
                 False
             """
             return SimplicialSets.Finite() in self.categories()
@@ -87,14 +87,14 @@ class SimplicialSets(Category_singleton):
             EXAMPLES::
 
                 sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet       # optional - sage.graphs
-                sage: v = AbstractSimplex(0)                                                        # optional - sage.graphs
-                sage: w = AbstractSimplex(0)                                                        # optional - sage.graphs
-                sage: e = AbstractSimplex(1)                                                        # optional - sage.graphs
-                sage: X = SimplicialSet({e: (v, w)})                                                # optional - sage.graphs
-                sage: Y = SimplicialSet({e: (v, w)}, base_point=w)                                  # optional - sage.graphs
-                sage: X.is_pointed()                                                                # optional - sage.graphs
+                sage: v = AbstractSimplex(0)                                            # optional - sage.graphs
+                sage: w = AbstractSimplex(0)                                            # optional - sage.graphs
+                sage: e = AbstractSimplex(1)                                            # optional - sage.graphs
+                sage: X = SimplicialSet({e: (v, w)})                                    # optional - sage.graphs
+                sage: Y = SimplicialSet({e: (v, w)}, base_point=w)                      # optional - sage.graphs
+                sage: X.is_pointed()                                                    # optional - sage.graphs
                 False
-                sage: Y.is_pointed()                                                                # optional - sage.graphs
+                sage: Y.is_pointed()                                                    # optional - sage.graphs
                 True
             """
             return SimplicialSets.Pointed() in self.categories()
@@ -111,28 +111,28 @@ class SimplicialSets(Category_singleton):
             EXAMPLES::
 
                 sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet       # optional - sage.graphs
-                sage: v = AbstractSimplex(0, name='v_0')                                            # optional - sage.graphs
-                sage: w = AbstractSimplex(0, name='w_0')                                            # optional - sage.graphs
-                sage: e = AbstractSimplex(1)                                                        # optional - sage.graphs
-                sage: X = SimplicialSet({e: (v, w)})                                                # optional - sage.graphs
-                sage: Y = SimplicialSet({e: (v, w)}, base_point=w)                                  # optional - sage.graphs
-                sage: Y.base_point()                                                                # optional - sage.graphs
+                sage: v = AbstractSimplex(0, name='v_0')                                # optional - sage.graphs
+                sage: w = AbstractSimplex(0, name='w_0')                                # optional - sage.graphs
+                sage: e = AbstractSimplex(1)                                            # optional - sage.graphs
+                sage: X = SimplicialSet({e: (v, w)})                                    # optional - sage.graphs
+                sage: Y = SimplicialSet({e: (v, w)}, base_point=w)                      # optional - sage.graphs
+                sage: Y.base_point()                                                    # optional - sage.graphs
                 w_0
-                sage: X_star = X.set_base_point(w)                                                  # optional - sage.graphs
-                sage: X_star.base_point()                                                           # optional - sage.graphs
+                sage: X_star = X.set_base_point(w)                                      # optional - sage.graphs
+                sage: X_star.base_point()                                               # optional - sage.graphs
                 w_0
-                sage: Y_star = Y.set_base_point(v)                                                  # optional - sage.graphs
-                sage: Y_star.base_point()                                                           # optional - sage.graphs
+                sage: Y_star = Y.set_base_point(v)                                      # optional - sage.graphs
+                sage: Y_star.base_point()                                               # optional - sage.graphs
                 v_0
 
             TESTS::
 
-                sage: X.set_base_point(e)                                                           # optional - sage.graphs
+                sage: X.set_base_point(e)                                               # optional - sage.graphs
                 Traceback (most recent call last):
                 ...
                 ValueError: the "point" is not a zero-simplex
-                sage: pt = AbstractSimplex(0)                                                       # optional - sage.graphs
-                sage: X.set_base_point(pt)                                                          # optional - sage.graphs
+                sage: pt = AbstractSimplex(0)                                           # optional - sage.graphs
+                sage: X.set_base_point(pt)                                              # optional - sage.graphs
                 Traceback (most recent call last):
                 ...
                 ValueError: the point is not a simplex in this simplicial set
@@ -154,8 +154,8 @@ class SimplicialSets(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: T = simplicial_sets.Torus()                                           # optional - sage.graphs
-                        sage: Hom(T, T).identity()                                                  # optional - sage.graphs
+                        sage: T = simplicial_sets.Torus()                               # optional - sage.graphs
+                        sage: Hom(T, T).identity()                                      # optional - sage.graphs
                         Simplicial set endomorphism of Torus
                           Defn: Identity map
                     """
@@ -198,12 +198,12 @@ class SimplicialSets(Category_singleton):
                 EXAMPLES::
 
                     sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet   # optional - sage.graphs
-                    sage: v = AbstractSimplex(0, name='*')                                          # optional - sage.graphs
-                    sage: e = AbstractSimplex(1)                                                    # optional - sage.graphs
-                    sage: S1 = SimplicialSet({e: (v, v)}, base_point=v)                             # optional - sage.graphs
-                    sage: S1.is_pointed()                                                           # optional - sage.graphs
+                    sage: v = AbstractSimplex(0, name='*')                              # optional - sage.graphs
+                    sage: e = AbstractSimplex(1)                                        # optional - sage.graphs
+                    sage: S1 = SimplicialSet({e: (v, v)}, base_point=v)                 # optional - sage.graphs
+                    sage: S1.is_pointed()                                               # optional - sage.graphs
                     True
-                    sage: S1.base_point()                                                           # optional - sage.graphs
+                    sage: S1.base_point()                                               # optional - sage.graphs
                     *
                 """
                 return self._basepoint
@@ -226,26 +226,26 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: T = simplicial_sets.Torus()                                               # optional - sage.graphs
-                    sage: f = T.base_point_map(); f                                                 # optional - sage.graphs
+                    sage: T = simplicial_sets.Torus()                                   # optional - sage.graphs
+                    sage: f = T.base_point_map(); f                                     # optional - sage.graphs
                     Simplicial set morphism:
                       From: Point
                       To:   Torus
                       Defn: Constant map at (v_0, v_0)
-                    sage: S3 = simplicial_sets.Sphere(3)                                            # optional - sage.graphs
-                    sage: g = S3.base_point_map()                                                   # optional - sage.graphs
-                    sage: f.domain() == g.domain()                                                  # optional - sage.graphs
+                    sage: S3 = simplicial_sets.Sphere(3)                                # optional - sage.graphs
+                    sage: g = S3.base_point_map()                                       # optional - sage.graphs
+                    sage: f.domain() == g.domain()                                      # optional - sage.graphs
                     True
-                    sage: RP3 = simplicial_sets.RealProjectiveSpace(3)                              # optional - sage.graphs
-                    sage: temp = simplicial_sets.Simplex(0)                                         # optional - sage.graphs
-                    sage: pt = temp.set_base_point(temp.n_cells(0)[0])                              # optional - sage.graphs
-                    sage: h = RP3.base_point_map(domain=pt)                                         # optional - sage.graphs
-                    sage: f.domain() == h.domain()                                                  # optional - sage.graphs
+                    sage: RP3 = simplicial_sets.RealProjectiveSpace(3)                  # optional - sage.graphs
+                    sage: temp = simplicial_sets.Simplex(0)                             # optional - sage.graphs
+                    sage: pt = temp.set_base_point(temp.n_cells(0)[0])                  # optional - sage.graphs
+                    sage: h = RP3.base_point_map(domain=pt)                             # optional - sage.graphs
+                    sage: f.domain() == h.domain()                                      # optional - sage.graphs
                     False
 
-                    sage: C5 = groups.misc.MultiplicativeAbelian([5])                               # optional - sage.graphs sage.groups
-                    sage: BC5 = simplicial_sets.ClassifyingSpace(C5)                                # optional - sage.graphs sage.groups
-                    sage: BC5.base_point_map()                                                      # optional - sage.graphs sage.groups
+                    sage: C5 = groups.misc.MultiplicativeAbelian([5])                   # optional - sage.graphs sage.groups
+                    sage: BC5 = simplicial_sets.ClassifyingSpace(C5)                    # optional - sage.graphs sage.groups
+                    sage: BC5.base_point_map()                                          # optional - sage.graphs sage.groups
                     Simplicial set morphism:
                       From: Point
                       To:   Classifying space of Multiplicative Abelian group isomorphic to C5
@@ -285,49 +285,49 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: S1 = simplicial_sets.Sphere(1)                                            # optional - sage.graphs
-                    sage: eight = S1.wedge(S1)                                                      # optional - sage.graphs
-                    sage: eight.fundamental_group() # free group on 2 generators                    # optional - sage.graphs sage.groups
+                    sage: S1 = simplicial_sets.Sphere(1)                                # optional - sage.graphs
+                    sage: eight = S1.wedge(S1)                                          # optional - sage.graphs
+                    sage: eight.fundamental_group() # free group on 2 generators        # optional - sage.graphs sage.groups
                     Finitely presented group < e0, e1 |  >
 
                 The fundamental group of a disjoint union of course depends on
                 the choice of base point::
 
-                    sage: T = simplicial_sets.Torus()                                               # optional - sage.graphs
-                    sage: K = simplicial_sets.KleinBottle()                                         # optional - sage.graphs
-                    sage: X = T.disjoint_union(K)                                                   # optional - sage.graphs
+                    sage: T = simplicial_sets.Torus()                                   # optional - sage.graphs
+                    sage: K = simplicial_sets.KleinBottle()                             # optional - sage.graphs
+                    sage: X = T.disjoint_union(K)                                       # optional - sage.graphs
 
-                    sage: X_0 = X.set_base_point(X.n_cells(0)[0])                                   # optional - sage.graphs
-                    sage: X_0.fundamental_group().is_abelian()                                      # optional - sage.graphs sage.groups
+                    sage: X_0 = X.set_base_point(X.n_cells(0)[0])                       # optional - sage.graphs
+                    sage: X_0.fundamental_group().is_abelian()                          # optional - sage.graphs sage.groups
                     True
-                    sage: X_1 = X.set_base_point(X.n_cells(0)[1])                                   # optional - sage.graphs
-                    sage: X_1.fundamental_group().is_abelian()                                      # optional - sage.graphs sage.groups
+                    sage: X_1 = X.set_base_point(X.n_cells(0)[1])                       # optional - sage.graphs
+                    sage: X_1.fundamental_group().is_abelian()                          # optional - sage.graphs sage.groups
                     False
 
-                    sage: RP3 = simplicial_sets.RealProjectiveSpace(3)                              # optional - sage.graphs
-                    sage: RP3.fundamental_group()                                                   # optional - sage.graphs sage.groups
+                    sage: RP3 = simplicial_sets.RealProjectiveSpace(3)                  # optional - sage.graphs
+                    sage: RP3.fundamental_group()                                       # optional - sage.graphs sage.groups
                     Finitely presented group < e | e^2 >
 
                 Compute the fundamental group of some classifying spaces::
 
-                    sage: C5 = groups.misc.MultiplicativeAbelian([5])                               # optional - sage.graphs sage.groups
-                    sage: BC5 = C5.nerve()                                                          # optional - sage.graphs sage.groups
-                    sage: BC5.fundamental_group()                                                   # optional - sage.graphs sage.groups
+                    sage: C5 = groups.misc.MultiplicativeAbelian([5])                   # optional - sage.graphs sage.groups
+                    sage: BC5 = C5.nerve()                                              # optional - sage.graphs sage.groups
+                    sage: BC5.fundamental_group()                                       # optional - sage.graphs sage.groups
                     Finitely presented group < e0 | e0^5 >
 
-                    sage: Sigma3 = groups.permutation.Symmetric(3)                                  # optional - sage.graphs sage.groups
-                    sage: BSigma3 = Sigma3.nerve()                                                  # optional - sage.graphs sage.groups
-                    sage: pi = BSigma3.fundamental_group(); pi                                      # optional - sage.graphs sage.groups
+                    sage: Sigma3 = groups.permutation.Symmetric(3)                      # optional - sage.graphs sage.groups
+                    sage: BSigma3 = Sigma3.nerve()                                      # optional - sage.graphs sage.groups
+                    sage: pi = BSigma3.fundamental_group(); pi                          # optional - sage.graphs sage.groups
                     Finitely presented group < e1, e2 | e2^2, e1^3, (e2*e1)^2 >
-                    sage: pi.order()                                                                # optional - sage.graphs sage.groups
+                    sage: pi.order()                                                    # optional - sage.graphs sage.groups
                     6
-                    sage: pi.is_abelian()                                                           # optional - sage.graphs sage.groups
+                    sage: pi.is_abelian()                                               # optional - sage.graphs sage.groups
                     False
 
                 The sphere has a trivial fundamental group::
 
-                    sage: S2 = simplicial_sets.Sphere(2)                                            # optional - sage.graphs
-                    sage: S2.fundamental_group()                                                    # optional - sage.graphs sage.groups
+                    sage: S2 = simplicial_sets.Sphere(2)                                # optional - sage.graphs
+                    sage: S2.fundamental_group()                                        # optional - sage.graphs sage.groups
                     Finitely presented group <  |  >
                 """
                 # Import this here to prevent importing libgap upon startup.
@@ -578,26 +578,26 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: T = simplicial_sets.Torus()                                               # optional - sage.graphs
-                    sage: T.is_simply_connected()                                                   # optional - sage.graphs
+                    sage: T = simplicial_sets.Torus()                                   # optional - sage.graphs
+                    sage: T.is_simply_connected()                                       # optional - sage.graphs
                     False
-                    sage: T.suspension().is_simply_connected()                                      # optional - sage.graphs
+                    sage: T.suspension().is_simply_connected()                          # optional - sage.graphs
                     True
-                    sage: simplicial_sets.KleinBottle().is_simply_connected()                       # optional - sage.graphs
+                    sage: simplicial_sets.KleinBottle().is_simply_connected()           # optional - sage.graphs
                     False
 
-                    sage: S2 = simplicial_sets.Sphere(2)                                            # optional - sage.graphs
-                    sage: S3 = simplicial_sets.Sphere(3)                                            # optional - sage.graphs
-                    sage: (S2.wedge(S3)).is_simply_connected()                                      # optional - sage.graphs
+                    sage: S2 = simplicial_sets.Sphere(2)                                # optional - sage.graphs
+                    sage: S3 = simplicial_sets.Sphere(3)                                # optional - sage.graphs
+                    sage: (S2.wedge(S3)).is_simply_connected()                          # optional - sage.graphs
                     True
-                    sage: X = S2.disjoint_union(S3)                                                 # optional - sage.graphs
-                    sage: X = X.set_base_point(X.n_cells(0)[0])                                     # optional - sage.graphs
-                    sage: X.is_simply_connected()                                                   # optional - sage.graphs
+                    sage: X = S2.disjoint_union(S3)                                     # optional - sage.graphs
+                    sage: X = X.set_base_point(X.n_cells(0)[0])                         # optional - sage.graphs
+                    sage: X.is_simply_connected()                                       # optional - sage.graphs
                     False
 
-                    sage: C3 = groups.misc.MultiplicativeAbelian([3])                               # optional - sage.graphs sage.groups
-                    sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                                # optional - sage.graphs sage.groups
-                    sage: BC3.is_simply_connected()                                                 # optional - sage.graphs sage.groups
+                    sage: C3 = groups.misc.MultiplicativeAbelian([3])                   # optional - sage.graphs sage.groups
+                    sage: BC3 = simplicial_sets.ClassifyingSpace(C3)                    # optional - sage.graphs sage.groups
+                    sage: BC3.is_simply_connected()                                     # optional - sage.graphs sage.groups
                     False
                 """
                 if not self.is_connected():
@@ -641,21 +641,21 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: simplicial_sets.Sphere(3).connectivity()                                  # optional - sage.graphs
+                    sage: simplicial_sets.Sphere(3).connectivity()                      # optional - sage.graphs
                     2
-                    sage: simplicial_sets.Sphere(0).connectivity()                                  # optional - sage.graphs
+                    sage: simplicial_sets.Sphere(0).connectivity()                      # optional - sage.graphs
                     -1
-                    sage: K = simplicial_sets.Simplex(4)                                            # optional - sage.graphs
-                    sage: K = K.set_base_point(K.n_cells(0)[0])                                     # optional - sage.graphs
-                    sage: K.connectivity()                                                          # optional - sage.graphs
+                    sage: K = simplicial_sets.Simplex(4)                                # optional - sage.graphs
+                    sage: K = K.set_base_point(K.n_cells(0)[0])                         # optional - sage.graphs
+                    sage: K.connectivity()                                              # optional - sage.graphs
                     +Infinity
-                    sage: X = simplicial_sets.Torus().suspension(2)                                 # optional - sage.graphs
-                    sage: X.connectivity()                                                          # optional - sage.graphs
+                    sage: X = simplicial_sets.Torus().suspension(2)                     # optional - sage.graphs
+                    sage: X.connectivity()                                              # optional - sage.graphs
                     2
 
-                    sage: C2 = groups.misc.MultiplicativeAbelian([2])                               # optional - sage.graphs sage.groups
-                    sage: BC2 = simplicial_sets.ClassifyingSpace(C2)                                # optional - sage.graphs sage.groups
-                    sage: BC2.connectivity()                                                        # optional - sage.graphs sage.groups
+                    sage: C2 = groups.misc.MultiplicativeAbelian([2])                   # optional - sage.graphs sage.groups
+                    sage: BC2 = simplicial_sets.ClassifyingSpace(C2)                    # optional - sage.graphs sage.groups
+                    sage: BC2.connectivity()                                            # optional - sage.graphs sage.groups
                     0
                 """
                 if not self.is_connected():
@@ -689,17 +689,17 @@ class SimplicialSets(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet   # optional - sage.graphs
-                        sage: v = AbstractSimplex(0, name='v_0')                                        # optional - sage.graphs
-                        sage: w = AbstractSimplex(0, name='w_0')                                        # optional - sage.graphs
-                        sage: e = AbstractSimplex(1)                                                    # optional - sage.graphs
-                        sage: Y = SimplicialSet({e: (v, w)}, base_point=w)                              # optional - sage.graphs
-                        sage: Y.is_pointed()                                                            # optional - sage.graphs
+                        sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet                   # optional - sage.graphs
+                        sage: v = AbstractSimplex(0, name='v_0')                        # optional - sage.graphs
+                        sage: w = AbstractSimplex(0, name='w_0')                        # optional - sage.graphs
+                        sage: e = AbstractSimplex(1)                                    # optional - sage.graphs
+                        sage: Y = SimplicialSet({e: (v, w)}, base_point=w)              # optional - sage.graphs
+                        sage: Y.is_pointed()                                            # optional - sage.graphs
                         True
-                        sage: Y.base_point()                                                            # optional - sage.graphs
+                        sage: Y.base_point()                                            # optional - sage.graphs
                         w_0
-                        sage: Z = Y.unset_base_point()                                                  # optional - sage.graphs
-                        sage: Z.is_pointed()                                                            # optional - sage.graphs
+                        sage: Z = Y.unset_base_point()                                  # optional - sage.graphs
+                        sage: Z.is_pointed()                                            # optional - sage.graphs
                         False
                     """
                     from sage.topology.simplicial_set import SimplicialSet
@@ -718,14 +718,14 @@ class SimplicialSets(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: S1 = simplicial_sets.Sphere(1)                                            # optional - sage.graphs
-                        sage: S1.fat_wedge(0)                                                           # optional - sage.graphs
+                        sage: S1 = simplicial_sets.Sphere(1)                            # optional - sage.graphs
+                        sage: S1.fat_wedge(0)                                           # optional - sage.graphs
                         Point
-                        sage: S1.fat_wedge(1)                                                           # optional - sage.graphs
+                        sage: S1.fat_wedge(1)                                           # optional - sage.graphs
                         S^1
-                        sage: S1.fat_wedge(2).fundamental_group()                                       # optional - sage.graphs sage.groups
+                        sage: S1.fat_wedge(2).fundamental_group()                       # optional - sage.graphs sage.groups
                         Finitely presented group < e0, e1 |  >
-                        sage: S1.fat_wedge(4).homology()                                                # optional - sage.graphs sage.modules
+                        sage: S1.fat_wedge(4).homology()                                # optional - sage.graphs sage.modules
                         {0: 0, 1: Z x Z x Z x Z, 2: Z^6, 3: Z x Z x Z x Z}
                     """
                     from sage.topology.simplicial_set_examples import Point
@@ -745,18 +745,18 @@ class SimplicialSets(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: S1 = simplicial_sets.Sphere(1)                                            # optional - sage.graphs
-                        sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                              # optional - sage.graphs
-                        sage: X = S1.smash_product(RP2)                                                 # optional - sage.graphs
-                        sage: X.homology(base_ring=GF(2))                                               # optional - sage.graphs sage.modules
+                        sage: S1 = simplicial_sets.Sphere(1)                            # optional - sage.graphs
+                        sage: RP2 = simplicial_sets.RealProjectiveSpace(2)              # optional - sage.graphs
+                        sage: X = S1.smash_product(RP2)                                 # optional - sage.graphs
+                        sage: X.homology(base_ring=GF(2))                               # optional - sage.graphs sage.modules
                         {0: Vector space of dimension 0 over Finite Field of size 2,
                          1: Vector space of dimension 0 over Finite Field of size 2,
                          2: Vector space of dimension 1 over Finite Field of size 2,
                          3: Vector space of dimension 1 over Finite Field of size 2}
 
-                        sage: T = S1.product(S1)                                                        # optional - sage.graphs
-                        sage: X = T.smash_product(S1)                                                   # optional - sage.graphs
-                        sage: X.homology(reduced=False)                                                 # optional - sage.graphs sage.modules
+                        sage: T = S1.product(S1)                                        # optional - sage.graphs
+                        sage: X = T.smash_product(S1)                                   # optional - sage.graphs
+                        sage: X.homology(reduced=False)                                 # optional - sage.graphs sage.modules
                         {0: Z, 1: 0, 2: Z x Z, 3: Z}
                     """
                     from sage.topology.simplicial_set_constructions import SmashProductOfSimplicialSets_finite
