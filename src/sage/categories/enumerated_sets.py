@@ -230,7 +230,7 @@ class EnumeratedSets(CategoryWithAxiom):
             """
             # Check if .first() and .next(x) are overridden in the subclass
             if ( self.first != self._first_from_iterator and
-                 self.next  != self._next_from_iterator ):
+                 self.next != self._next_from_iterator ):
                 return self._iterator_from_next()
             #Check to see if .unrank() is overridden in the subclass
             elif self.unrank != self._unrank_from_iterator:
@@ -592,7 +592,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 [1, 2, 3]
             """
             return list(self.tuple())
-        _list_default  = list # needed by the check system.
+        _list_default = list # needed by the check system.
 
         def _list_from_iterator(self):
             r"""
@@ -1108,7 +1108,7 @@ class EnumeratedSets(CategoryWithAxiom):
             """
             return self.parent().rank(self)
 
-    Finite   = LazyImport('sage.categories.finite_enumerated_sets', 'FiniteEnumeratedSets', at_startup=True)
+    Finite = LazyImport('sage.categories.finite_enumerated_sets', 'FiniteEnumeratedSets', at_startup=True)
     Infinite = LazyImport('sage.categories.infinite_enumerated_sets', 'InfiniteEnumeratedSets', at_startup=True)
 
     class CartesianProducts(CartesianProductsCategory):

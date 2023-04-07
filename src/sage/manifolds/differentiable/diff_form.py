@@ -1556,7 +1556,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
         other_r = other.restrict(dom_resu)
         return FreeModuleAltForm.wedge(self_r, other_r)
 
-
     def interior_product(self, qvect):
         r"""
         Interior product with a multivector field.
