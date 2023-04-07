@@ -77,9 +77,9 @@ import os
 
 from sage.interfaces.maxima import Maxima
 from sage.misc.lazy_import import lazy_import
-from sage.symbolic.ring import SR
 from sage.misc.functional import N
 from sage.rings.real_mpfr import RealField
+from sage.structure.element import Expression
 
 from .functional import diff
 
@@ -1720,6 +1720,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
         if len(ivars)==1:
             return desolve_odeint_inner(next(iter(ivars)))
         elif not ivars:
+            from sage.symbolic.ring import SR
             with SR.temp_var() as ivar:
                 return desolve_odeint_inner(ivar)
         else:
