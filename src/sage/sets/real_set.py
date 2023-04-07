@@ -48,24 +48,24 @@ The lower and upper endpoints will be sorted if necessary::
 
 Relations containing symbols and numeric values or constants::
 
-    sage: RealSet(x != 0)                                                       # optional - sage.symbolic
+    sage: RealSet(x != 0)                                                               # optional - sage.symbolic
     (-oo, 0) ∪ (0, +oo)
-    sage: RealSet(x == pi)                                                      # optional - sage.symbolic
+    sage: RealSet(x == pi)                                                              # optional - sage.symbolic
     {pi}
-    sage: RealSet(x < 1/2)                                                      # optional - sage.symbolic
+    sage: RealSet(x < 1/2)                                                              # optional - sage.symbolic
     (-oo, 1/2)
-    sage: RealSet(1/2 < x)                                                      # optional - sage.symbolic
+    sage: RealSet(1/2 < x)                                                              # optional - sage.symbolic
     (1/2, +oo)
-    sage: RealSet(1.5 <= x)                                                     # optional - sage.symbolic
+    sage: RealSet(1.5 <= x)                                                             # optional - sage.symbolic
     [1.50000000000000, +oo)
 
 Note that multiple arguments are combined as union::
 
-    sage: RealSet(x >= 0, x < 1)                                                # optional - sage.symbolic
+    sage: RealSet(x >= 0, x < 1)                                                        # optional - sage.symbolic
     (-oo, +oo)
-    sage: RealSet(x >= 0, x > 1)                                                # optional - sage.symbolic
+    sage: RealSet(x >= 0, x > 1)                                                        # optional - sage.symbolic
     [0, +oo)
-    sage: RealSet(x >= 0, x > -1)                                               # optional - sage.symbolic
+    sage: RealSet(x >= 0, x > -1)                                                       # optional - sage.symbolic
     (-1, +oo)
 
 AUTHORS:
@@ -406,9 +406,9 @@ class InternalRealInterval(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: RealSet.open_closed(1/2, pi)._latex_()                        # optional - sage.symbolic
+            sage: RealSet.open_closed(1/2, pi)._latex_()                                # optional - sage.symbolic
             '(\\frac{1}{2}, \\pi]'
-            sage: (RealSet.point(sqrt(2)))._latex_()                            # optional - sage.symbolic
+            sage: (RealSet.point(sqrt(2)))._latex_()                                    # optional - sage.symbolic
             '\\{\\sqrt{2}\\}'
         """
         from sage.misc.latex import latex
@@ -435,7 +435,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: RealSet(0, 4)._sympy_condition_(x)                            # optional - sage.symbolic
+            sage: RealSet(0, 4)._sympy_condition_(x)                                    # optional - sage.symbolic
             (0 < x) & (x < 4)
         """
         x = variable
@@ -494,7 +494,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: RealSet(0, 4)._giac_condition_(x)                             # optional - sage.symbolic
+            sage: RealSet(0, 4)._giac_condition_(x)                                     # optional - sage.symbolic
             '((0 < sageVARx) and (sageVARx < 4))'
         """
         x = variable
@@ -985,30 +985,32 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         sage: i1, i2 = s1[0], s2[0]
         sage: RealSet(i2, i1)            # union of intervals
         (1, 2) ∪ [3, 4]
-        sage: RealSet((-oo, 0), x > 6, i1, RealSet.point(5), RealSet.closed_open(4, 3))             # optional - sage.symbolic
+        sage: RealSet((-oo, 0), x > 6, i1, RealSet.point(5),                            # optional - sage.symbolic
+        ....:         RealSet.closed_open(4, 3))
         (-oo, 0) ∪ (1, 2) ∪ [3, 4) ∪ {5} ∪ (6, +oo)
 
     Initialization from manifold objects::
 
-        sage: R = manifolds.RealLine(); R                                                           # optional - sage.symbolic
+        sage: R = manifolds.RealLine(); R                                               # optional - sage.symbolic
         Real number line ℝ
-        sage: RealSet(R)                                                                            # optional - sage.symbolic
+        sage: RealSet(R)                                                                # optional - sage.symbolic
         (-oo, +oo)
-        sage: I02 = manifolds.OpenInterval(0, 2); I                                                 # optional - sage.symbolic
+        sage: I02 = manifolds.OpenInterval(0, 2); I                                     # optional - sage.symbolic
         I
-        sage: RealSet(I02)                                                                          # optional - sage.symbolic
+        sage: RealSet(I02)                                                              # optional - sage.symbolic
         (0, 2)
-        sage: I01_of_R = manifolds.OpenInterval(0, 1, ambient_interval=R); I01_of_R                 # optional - sage.symbolic
+        sage: I01_of_R = manifolds.OpenInterval(0, 1, ambient_interval=R); I01_of_R     # optional - sage.symbolic
         Real interval (0, 1)
-        sage: RealSet(I01_of_R)                                                                     # optional - sage.symbolic
+        sage: RealSet(I01_of_R)                                                         # optional - sage.symbolic
         (0, 1)
-        sage: RealSet(I01_of_R.closure())                                                           # optional - sage.symbolic
+        sage: RealSet(I01_of_R.closure())                                               # optional - sage.symbolic
         [0, 1]
-        sage: I01_of_I02 = manifolds.OpenInterval(0, 1, ambient_interval=I02); I01_of_I02           # optional - sage.symbolic
+        sage: I01_of_I02 = manifolds.OpenInterval(0, 1,                                 # optional - sage.symbolic
+        ....:                                     ambient_interval=I02); I01_of_I02
         Real interval (0, 1)
-        sage: RealSet(I01_of_I02)                                                                   # optional - sage.symbolic
+        sage: RealSet(I01_of_I02)                                                       # optional - sage.symbolic
         (0, 1)
-        sage: RealSet(I01_of_I02.closure())                                                         # optional - sage.symbolic
+        sage: RealSet(I01_of_I02.closure())                                             # optional - sage.symbolic
         (0, 1]
 
     Real sets belong to a subcategory of topological spaces::
@@ -1038,23 +1040,23 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
     Constructing real sets as manifolds or manifold subsets by passing
     ``structure='differentiable'``::
 
-        sage: RealSet(-oo, oo, structure='differentiable')                                          # optional - sage.symbolic
+        sage: RealSet(-oo, oo, structure='differentiable')                              # optional - sage.symbolic
         Real number line ℝ
 
-        sage: RealSet([0, 1], structure='differentiable')                                           # optional - sage.symbolic
+        sage: RealSet([0, 1], structure='differentiable')                               # optional - sage.symbolic
         Subset [0, 1] of the Real number line ℝ
-        sage: _.category()                                                                          # optional - sage.symbolic
+        sage: _.category()                                                              # optional - sage.symbolic
         Category of subobjects of sets
 
-        sage: RealSet.open_closed(0, 5, structure='differentiable')                                 # optional - sage.symbolic
+        sage: RealSet.open_closed(0, 5, structure='differentiable')                     # optional - sage.symbolic
         Subset (0, 5] of the Real number line ℝ
 
     This is implied when a coordinate name is given using the keywords ``coordinate``
     or ``names``::
 
-        sage: RealSet(0, 1, coordinate='λ')                                                         # optional - sage.symbolic
+        sage: RealSet(0, 1, coordinate='λ')                                             # optional - sage.symbolic
         Open subset (0, 1) of the Real number line ℝ
-        sage: _.category()                                                                          # optional - sage.symbolic
+        sage: _.category()                                                              # optional - sage.symbolic
         Join of
          Category of smooth manifolds over Real Field with 53 bits of precision and
          Category of connected manifolds over Real Field with 53 bits of precision and
@@ -1062,44 +1064,44 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
     It is also implied by assigning a coordinate name using generator notation::
 
-        sage: R_xi.<ξ> = RealSet.real_line(); R_xi                                                  # optional - sage.symbolic
+        sage: R_xi.<ξ> = RealSet.real_line(); R_xi                                      # optional - sage.symbolic
         Real number line ℝ
-        sage: R_xi.canonical_chart()                                                                # optional - sage.symbolic
+        sage: R_xi.canonical_chart()                                                    # optional - sage.symbolic
         Chart (ℝ, (ξ,))
 
     With the keyword ``ambient``, we can construct a subset of a previously
     constructed manifold::
 
-        sage: P_xi = RealSet(0, oo, ambient=R_xi); P_xi                                             # optional - sage.symbolic
+        sage: P_xi = RealSet(0, oo, ambient=R_xi); P_xi                                 # optional - sage.symbolic
         Open subset (0, +oo) of the Real number line ℝ
-        sage: P_xi.default_chart()                                                                  # optional - sage.symbolic
+        sage: P_xi.default_chart()                                                      # optional - sage.symbolic
         Chart ((0, +oo), (ξ,))
-        sage: B_xi = RealSet(0, 1, ambient=P_xi); B_xi                                              # optional - sage.symbolic
+        sage: B_xi = RealSet(0, 1, ambient=P_xi); B_xi                                  # optional - sage.symbolic
         Open subset (0, 1) of the Real number line ℝ
-        sage: B_xi.default_chart()                                                                  # optional - sage.symbolic
+        sage: B_xi.default_chart()                                                      # optional - sage.symbolic
         Chart ((0, 1), (ξ,))
-        sage: R_xi.subset_family()                                                                  # optional - sage.symbolic
+        sage: R_xi.subset_family()                                                      # optional - sage.symbolic
         Set {(0, +oo), (0, 1), ℝ} of open subsets of the Real number line ℝ
 
-        sage: F = RealSet.point(0).union(RealSet.point(1)).union(RealSet.point(2)); F               # optional - sage.symbolic
+        sage: F = RealSet.point(0).union(RealSet.point(1)).union(RealSet.point(2)); F   # optional - sage.symbolic
         {0} ∪ {1} ∪ {2}
-        sage: F_tau = RealSet(F, names="τ"); F_tau                                                  # optional - sage.symbolic
+        sage: F_tau = RealSet(F, names="τ"); F_tau                                      # optional - sage.symbolic
         Subset {0} ∪ {1} ∪ {2} of the Real number line ℝ
-        sage: F_tau.manifold().canonical_chart()                                                    # optional - sage.symbolic
+        sage: F_tau.manifold().canonical_chart()                                        # optional - sage.symbolic
         Chart (ℝ, (τ,))
 
     TESTS::
 
-        sage: TestSuite(R_xi).run()                                                                 # optional - sage.symbolic
-        sage: TestSuite(P_xi).run()                                                                 # optional - sage.symbolic
-        sage: R_xi.point((1,)) in P_xi                                                              # optional - sage.symbolic
+        sage: TestSuite(R_xi).run()                                                     # optional - sage.symbolic
+        sage: TestSuite(P_xi).run()                                                     # optional - sage.symbolic
+        sage: R_xi.point((1,)) in P_xi                                                  # optional - sage.symbolic
         True
-        sage: R_xi.point((-1,)) in P_xi                                                             # optional - sage.symbolic
+        sage: R_xi.point((-1,)) in P_xi                                                 # optional - sage.symbolic
         False
-        sage: TestSuite(B_xi).run()                                                                 # optional - sage.symbolic
-        sage: p = B_xi.an_element(); p                                                              # optional - sage.symbolic
+        sage: TestSuite(B_xi).run()                                                     # optional - sage.symbolic
+        sage: p = B_xi.an_element(); p                                                  # optional - sage.symbolic
         Point on the Real number line ℝ
-        sage: p.coordinates()                                                                       # optional - sage.symbolic
+        sage: p.coordinates()                                                           # optional - sage.symbolic
         (1/2,)
     """
 
@@ -1123,48 +1125,48 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         TESTS::
 
-            sage: RealSet(x != 0)                                                                   # optional - sage.symbolic
+            sage: RealSet(x != 0)                                                       # optional - sage.symbolic
             (-oo, 0) ∪ (0, +oo)
-            sage: RealSet(x == pi)                                                                  # optional - sage.symbolic
+            sage: RealSet(x == pi)                                                      # optional - sage.symbolic
             {pi}
-            sage: RealSet(x < 1/2)                                                                  # optional - sage.symbolic
+            sage: RealSet(x < 1/2)                                                      # optional - sage.symbolic
             (-oo, 1/2)
-            sage: RealSet(1/2 < x)                                                                  # optional - sage.symbolic
+            sage: RealSet(1/2 < x)                                                      # optional - sage.symbolic
             (1/2, +oo)
-            sage: RealSet(1.5 <= x)                                                                 # optional - sage.symbolic
+            sage: RealSet(1.5 <= x)                                                     # optional - sage.symbolic
             [1.50000000000000, +oo)
-            sage: RealSet(x >= -1)                                                                  # optional - sage.symbolic
+            sage: RealSet(x >= -1)                                                      # optional - sage.symbolic
             [-1, +oo)
-            sage: RealSet(x > oo)                                                                   # optional - sage.symbolic
+            sage: RealSet(x > oo)                                                       # optional - sage.symbolic
             {}
-            sage: RealSet(x >= oo)                                                                  # optional - sage.symbolic
+            sage: RealSet(x >= oo)                                                      # optional - sage.symbolic
             {}
-            sage: RealSet(x <= -oo)                                                                 # optional - sage.symbolic
+            sage: RealSet(x <= -oo)                                                     # optional - sage.symbolic
             {}
-            sage: RealSet(x < oo)                                                                   # optional - sage.symbolic
+            sage: RealSet(x < oo)                                                       # optional - sage.symbolic
             (-oo, +oo)
-            sage: RealSet(x > -oo)                                                                  # optional - sage.symbolic
+            sage: RealSet(x > -oo)                                                      # optional - sage.symbolic
             (-oo, +oo)
-            sage: RealSet(x != oo)                                                                  # optional - sage.symbolic
+            sage: RealSet(x != oo)                                                      # optional - sage.symbolic
             (-oo, +oo)
-            sage: RealSet(x <= oo)                                                                  # optional - sage.symbolic
+            sage: RealSet(x <= oo)                                                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: interval cannot be closed at +oo
-            sage: RealSet(x == oo)                                                                  # optional - sage.symbolic
+            sage: RealSet(x == oo)                                                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: interval cannot be closed at +oo
-            sage: RealSet(x >= -oo)                                                                 # optional - sage.symbolic
+            sage: RealSet(x >= -oo)                                                     # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: interval cannot be closed at -oo
-            sage: r = RealSet(2,10)                                                                 # optional - sage.symbolic
-            sage: RealSet((2, 6), (4, 10)) is r                                                     # optional - sage.symbolic
+            sage: r = RealSet(2,10)                                                     # optional - sage.symbolic
+            sage: RealSet((2, 6), (4, 10)) is r                                         # optional - sage.symbolic
             True
             sage: RealSet(x > 2).intersection(RealSet(x < 10)) is RealSet(r[0], normalized=True)    # optional - sage.symbolic
             True
-            sage: RealSet(x > 0, normalized=True)                                                   # optional - sage.symbolic
+            sage: RealSet(x > 0, normalized=True)                                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             AttributeError: ...
@@ -1628,20 +1630,20 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         EXAMPLES::
 
-            sage: RealSet(0, 1)._sympy_condition_(x)                            # optional - sage.symbolic
+            sage: RealSet(0, 1)._sympy_condition_(x)                                    # optional - sage.symbolic
             (0 < x) & (x < 1)
-            sage: RealSet((0,1), [2,3])._sympy_condition_(x)                    # optional - sage.symbolic
+            sage: RealSet((0,1), [2,3])._sympy_condition_(x)                            # optional - sage.symbolic
             ((2 <= x) & (x <= 3)) | ((0 < x) & (x < 1))
-            sage: RealSet.unbounded_below_open(0)._sympy_condition_(x)          # optional - sage.symbolic
+            sage: RealSet.unbounded_below_open(0)._sympy_condition_(x)                  # optional - sage.symbolic
             x < 0
-            sage: RealSet.unbounded_above_closed(2)._sympy_condition_(x)        # optional - sage.symbolic
+            sage: RealSet.unbounded_above_closed(2)._sympy_condition_(x)                # optional - sage.symbolic
             2 <= x
 
         TESTS::
 
-            sage: RealSet(6,6)._sympy_condition_(x)                             # optional - sage.symbolic
+            sage: RealSet(6,6)._sympy_condition_(x)                                     # optional - sage.symbolic
             False
-            sage: RealSet([6,6])._sympy_condition_(x)                           # optional - sage.symbolic
+            sage: RealSet([6,6])._sympy_condition_(x)                                   # optional - sage.symbolic
             Eq(x, 6)
         """
         x = variable
@@ -1664,20 +1666,20 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         EXAMPLES::
 
-            sage: RealSet(0, 1)._giac_condition_(x)                                                 # optional - sage.symbolic
+            sage: RealSet(0, 1)._giac_condition_(x)                                     # optional - sage.symbolic
             '((0 < sageVARx) and (sageVARx < 1))'
-            sage: RealSet((0,1), [2,3])._giac_condition_(x)                                         # optional - sage.symbolic
+            sage: RealSet((0,1), [2,3])._giac_condition_(x)                             # optional - sage.symbolic
             '((0 < sageVARx) and (sageVARx < 1)) or ((2 <= sageVARx) and (sageVARx <= 3))'
-            sage: RealSet.unbounded_below_open(0)._giac_condition_(x)                               # optional - sage.symbolic
+            sage: RealSet.unbounded_below_open(0)._giac_condition_(x)                   # optional - sage.symbolic
             '((true) and (sageVARx < 0))'
-            sage: RealSet.unbounded_above_closed(2)._giac_condition_(x)                             # optional - sage.symbolic
+            sage: RealSet.unbounded_above_closed(2)._giac_condition_(x)                 # optional - sage.symbolic
             '((2 <= sageVARx) and (true))'
 
         TESTS::
 
-            sage: RealSet(6,6)._giac_condition_(x)                                                  # optional - sage.symbolic
+            sage: RealSet(6,6)._giac_condition_(x)                                      # optional - sage.symbolic
             'false'
-            sage: RealSet([6,6])._giac_condition_(x)                                                # optional - sage.symbolic
+            sage: RealSet([6,6])._giac_condition_(x)                                    # optional - sage.symbolic
             'sageVARx == 6'
         """
         x = variable
@@ -2806,21 +2808,21 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         EXAMPLES::
 
-            sage: RealSet()._sympy_()                                                               # optional - sympy
+            sage: RealSet()._sympy_()                                                   # optional - sympy
             EmptySet
-            sage: RealSet.point(5)._sympy_()  # random - this output format is sympy >= 1.9         # optional - sympy
+            sage: RealSet.point(5)._sympy_()  # random - this format is sympy >= 1.9    # optional - sympy
             {5}
-            sage: (RealSet.point(1).union(RealSet.point(2)))._sympy_()  # random                    # optional - sympy
+            sage: (RealSet.point(1).union(RealSet.point(2)))._sympy_()  # random        # optional - sympy
             {1, 2}
-            sage: (RealSet(1, 2).union(RealSet.closed(3, 4)))._sympy_()                             # optional - sympy
+            sage: (RealSet(1, 2).union(RealSet.closed(3, 4)))._sympy_()                 # optional - sympy
             Union(Interval.open(1, 2), Interval(3, 4))
-            sage: RealSet(-oo, oo)._sympy_()                                                        # optional - sympy
+            sage: RealSet(-oo, oo)._sympy_()                                            # optional - sympy
             Reals
 
         Infinities are not elements::
 
-            sage: import sympy                                                                      # optional - sympy
-            sage: RealSet(-oo, oo)._sympy_().contains(sympy.oo)                                     # optional - sympy
+            sage: import sympy                                                          # optional - sympy
+            sage: RealSet(-oo, oo)._sympy_().contains(sympy.oo)                         # optional - sympy
             False
         """
         from sympy import Reals, Union

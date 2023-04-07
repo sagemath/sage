@@ -13,7 +13,7 @@ TESTS:
 
 This came up in some subtle bug once::
 
-    sage: gp(2) + gap(3)                                                        # optional - sage.libs.pari
+    sage: gp(2) + gap(3)                                                                # optional - sage.libs.pari
     5
 """
 
@@ -48,19 +48,19 @@ cdef class Parent(parent.Parent):
 
     TESTS::
 
-        sage: V = VectorSpace(GF(2,'a'), 2)                                     # optional - sage.libs.pari
-        sage: V.list()                                                          # optional - sage.libs.pari
+        sage: V = VectorSpace(GF(2,'a'), 2)                                             # optional - sage.rings.finite_rings
+        sage: V.list()                                                                  # optional - sage.rings.finite_rings
         [(0, 0), (1, 0), (0, 1), (1, 1)]
-        sage: MatrixSpace(GF(3), 1, 1).list()                                   # optional - sage.libs.pari
+        sage: MatrixSpace(GF(3), 1, 1).list()                                           # optional - sage.rings.finite_rings
         [[0], [1], [2]]
-        sage: DirichletGroup(3).list()                                                                                  # optional - sage.groups
+        sage: DirichletGroup(3).list()                                                  # optional - sage.groups
         [Dirichlet character modulo 3 of conductor 1 mapping 2 |--> 1,
         Dirichlet character modulo 3 of conductor 3 mapping 2 |--> -1]
-        sage: K = GF(7^6,'a')                                                   # optional - sage.libs.pari
-        sage: K.list()[:10]  # long time                                        # optional - sage.libs.pari
+        sage: K = GF(7^6,'a')                                                           # optional - sage.rings.finite_rings
+        sage: K.list()[:10]  # long time                                                # optional - sage.rings.finite_rings
         [0, 1, 2, 3, 4, 5, 6, a, a + 1, a + 2]
-        sage: K.<a> = GF(4)                                                     # optional - sage.libs.pari
-        sage: K.list()                                                          # optional - sage.libs.pari
+        sage: K.<a> = GF(4)                                                             # optional - sage.rings.finite_rings
+        sage: K.list()                                                                  # optional - sage.rings.finite_rings
         [0, a, a + 1, 1]
     """
 

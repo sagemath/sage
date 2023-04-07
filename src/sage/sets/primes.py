@@ -123,7 +123,7 @@ class Primes(Set_generic, UniqueRepresentation):
             False
             sage: 1.5 in P
             False
-            sage: e in P                                                        # optional - sage.symbolic
+            sage: e in P                                                                # optional - sage.symbolic
             False
         """
         try:

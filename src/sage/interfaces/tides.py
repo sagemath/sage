@@ -294,7 +294,6 @@ def subexpressions_list(f, pars=None):
             stackcomp.append(sqrt(a))
             stack.append(sqrt(a))
 
-
         elif i == 'neg':
             a = stack.pop(-1)
             detail.append(('mul', -1, a))
@@ -302,7 +301,6 @@ def subexpressions_list(f, pars=None):
             stackcomp.append(-a)
 
     return stackcomp,detail
-
 
 
 def remove_repeated(l1, l2):
@@ -347,7 +345,6 @@ def remove_repeated(l1, l2):
                 j+=1
 
 
-
 def remove_constants(l1,l2):
     """
     Given two lists, remove the entries in the first that are real constants,
@@ -373,7 +370,6 @@ def remove_constants(l1,l2):
             l2.pop(i)
         else:
             i+=1
-
 
 
 def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
@@ -518,7 +514,6 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
                 oper += '_c'
             l3.append((oper, aa, bb))
 
-
     n = len(var)
     res = []
     for i in range(len(l3)):
@@ -546,7 +541,6 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
             string += "sin_mc("+el[1]+",XX[{}], i);".format(i+n+1)
         elif el[0] == 'cos':
             string += "cos_mc("+el[1]+",XX[{}], i);".format(i+n-1)
-
 
         res.append(string)
 
@@ -901,7 +895,6 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     outfile.write(auxstring)
     outfile.close()
 
-
     npar = len(parameter_values)
     outfile = open(driver, 'a')
 
@@ -944,7 +937,6 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     outfile.write('\tmpfr_t tini, dt; \n')
     outfile.write('\tmpfr_init2(tini, TIDES_PREC); \n')
     outfile.write('\tmpfr_init2(dt, TIDES_PREC); \n')
-
 
     outfile.write('\tmpfr_set_str(tini, "{}", 10, TIDES_RND);;\n'.format(RR(initial).str()))
     outfile.write('\tmpfr_set_str(dt, "{}", 10, TIDES_RND);\n'.format(RR(delta).str()))

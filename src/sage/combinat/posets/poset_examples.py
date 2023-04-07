@@ -786,13 +786,13 @@ class Posets(metaclass=ClasscallMetaclass):
 
         try:
             n = Integer(n)
-        except TypeError:
+        except (TypeError, ValueError):
             raise TypeError("number of elements must be an integer, not {0}".format(n))
         if n < 0:
             raise ValueError("number of elements must be non-negative, not {0}".format(n))
         try:
             p = float(p)
-        except Exception:
+        except (TypeError, ValueError):
             raise TypeError("probability must be a real number, not {0}".format(p))
         if p < 0 or p > 1:
             raise ValueError("probability must be between 0 and 1, not {0}".format(p))
@@ -800,7 +800,7 @@ class Posets(metaclass=ClasscallMetaclass):
         D = DiGraph(loops=False, multiedges=False)
         D.add_vertices(range(n))
         for i in range(n):
-            for j in range(i+1, n):
+            for j in range(i + 1, n):
                 if random() < p:
                     D.add_edge(i, j)
         D.relabel(list(Permutations(n).random_element()))

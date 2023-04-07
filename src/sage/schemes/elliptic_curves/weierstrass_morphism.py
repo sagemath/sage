@@ -590,13 +590,13 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
             sage: E = EllipticCurve([i, 0]); E                                                      # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 = x^3 + I*x
-            over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+             over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
             sage: iso = WeierstrassIsomorphism(E, (i,1,2,3))                                        # optional - sage.rings.number_field
             sage: P = E.change_ring(QQbar).lift_x(QQbar.random_element())                           # optional - sage.rings.number_field
             sage: Q = iso._eval(P)                                                                  # optional - sage.rings.number_field
             sage: Q.curve()                                                                         # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 + (-4*I)*x*y + 6*I*y = x^3 + x^2 + (I-9)*x + (-I+8)
-            over Algebraic Field
+             over Algebraic Field
             sage: y = next(filter(bool, iter(QQbar.random_element, None)))  # sample until nonzero  # optional - sage.rings.number_field
             sage: iso._eval((0, y, 0)) == 0                                                         # optional - sage.rings.number_field
             True
@@ -733,9 +733,9 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: E2 = E1.change_weierstrass_model([2,3,4,5])
             sage: E1.isomorphism_to(E2)
             Elliptic-curve morphism:
-            From: Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
-            To:   Elliptic Curve defined by y^2 + 4*x*y + 11/8*y = x^3 - 7/4*x^2 - 3/2*x - 9/32 over Rational Field
-            Via:  (u,r,s,t) = (2, 3, 4, 5)
+              From: Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
+              To:   Elliptic Curve defined by y^2 + 4*x*y + 11/8*y = x^3 - 7/4*x^2 - 3/2*x - 9/32 over Rational Field
+              Via:  (u,r,s,t) = (2, 3, 4, 5)
         """
         return EllipticCurveHom.__repr__(self) + "\n  Via:  (u,r,s,t) = " + baseWI.__repr__(self)
 
@@ -752,9 +752,9 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: iso = E1.isomorphism_to(E2); iso
             Elliptic-curve morphism:
               From: Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55
-                     over Rational Field
+                    over Rational Field
               To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 684*x + 6681
-                     over Rational Field
+                    over Rational Field
               Via:  (u,r,s,t) = (1, -17, -5, 77)
             sage: iso.rational_maps()
             (x + 17, 5*x + y + 8)
@@ -795,9 +795,9 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: iso = E1.isomorphism_to(E2); iso
             Elliptic-curve morphism:
               From: Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55
-                     over Rational Field
+                    over Rational Field
               To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 684*x + 6681
-                     over Rational Field
+                    over Rational Field
               Via:  (u,r,s,t) = (1, -17, -5, 77)
             sage: iso.x_rational_map()
             x + 17
@@ -831,9 +831,9 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: psi = E1.isogeny(iso.kernel_polynomial(), codomain=E2); psi
             Isogeny of degree 1
              from Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55
-                   over Rational Field
-             to   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 684*x + 6681
-                   over Rational Field
+                  over Rational Field
+               to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 684*x + 6681
+                  over Rational Field
             sage: psi in {iso, -iso}
             True
 
@@ -897,7 +897,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             Elliptic-curve morphism:
               From: Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55 over Rational Field
               To:   Elliptic Curve defined by y^2 + 17/6*x*y + 49/13068*y = x^3 - 769/396*x^2 - 3397/862488*x + 44863/7513995456
-                     over Rational Field
+                    over Rational Field
               Via:  (u,r,s,t) = (-66, 77, -99, -979)
             sage: -(-w) == w
             True

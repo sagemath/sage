@@ -868,7 +868,6 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             if homspace.domain().dimension() != A.ncols():
                 raise TypeError('codomain dimension is incompatible with matrix size')
 
-
         A = homspace._matrix_space(side)(A)
         free_module_morphism.FreeModuleMorphism.__init__(self, homspace, A, side)
 
@@ -905,15 +904,15 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
         A non-invertible linear transformation, an endomorphism of
         a vector space over a finite field.  ::
 
-            sage: F.<a> = GF(11^2)                                                      # optional - sage.libs.pari
-            sage: A = matrix(F, [[6*a + 3,   8*a +  2, 10*a + 3],                       # optional - sage.libs.pari
+            sage: F.<a> = GF(11^2)                                                      # optional - sage.rings.finite_rings
+            sage: A = matrix(F, [[6*a + 3,   8*a +  2, 10*a + 3],                       # optional - sage.rings.finite_rings
             ....:                [2*a + 7,   4*a +  3,  2*a + 3],
             ....:                [9*a + 2,  10*a + 10,  3*a + 3]])
-            sage: A.nullity()                                                           # optional - sage.libs.pari
+            sage: A.nullity()                                                           # optional - sage.rings.finite_rings
             1
-            sage: E = End(F^3)                                                          # optional - sage.libs.pari
-            sage: zeta = E(A)                                                           # optional - sage.libs.pari
-            sage: zeta.is_invertible()                                                  # optional - sage.libs.pari
+            sage: E = End(F^3)                                                          # optional - sage.rings.finite_rings
+            sage: zeta = E(A)                                                           # optional - sage.rings.finite_rings
+            sage: zeta.is_invertible()                                                  # optional - sage.rings.finite_rings
             False
         """
         # endomorphism or not, this is equivalent to invertibility of

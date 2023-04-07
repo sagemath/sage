@@ -68,7 +68,7 @@ class TateCurve(SageObject):
         sage: e = EllipticCurve('130a1')
         sage: eq = e.tate_curve(5); eq
         5-adic Tate curve associated to the Elliptic Curve
-        defined by y^2 + x*y + y = x^3 - 33*x + 68 over Rational Field
+         defined by y^2 + x*y + y = x^3 - 33*x + 68 over Rational Field
         sage: eq == loads(dumps(eq))
         True
 
@@ -88,7 +88,7 @@ class TateCurve(SageObject):
             sage: e = EllipticCurve('130a1')
             sage: eq = e.tate_curve(2); eq
             2-adic Tate curve associated to the Elliptic Curve
-            defined by y^2 + x*y + y = x^3 - 33*x + 68 over Rational Field
+             defined by y^2 + x*y + y = x^3 - 33*x + 68 over Rational Field
         """
         if not p.is_prime():
             raise ValueError("p (=%s) must be a prime" % p)
@@ -139,7 +139,7 @@ class TateCurve(SageObject):
             sage: eq = EllipticCurve('130a1').tate_curve(5)
             sage: eq.original_curve()
             Elliptic Curve defined by y^2 + x*y + y = x^3 - 33*x + 68
-            over Rational Field
+             over Rational Field
         """
         return self._E
 
@@ -152,7 +152,7 @@ class TateCurve(SageObject):
             sage: eq = EllipticCurve('130a1').tate_curve(5)
             sage: eq.original_curve()
             Elliptic Curve defined by y^2 + x*y + y = x^3 - 33*x + 68
-            over Rational Field
+             over Rational Field
             sage: eq.prime()
             5
        """
@@ -215,8 +215,8 @@ class TateCurve(SageObject):
             sage: eq = EllipticCurve('130a1').tate_curve(5)
             sage: eq.curve(prec=5)
             Elliptic Curve defined by y^2 + (1+O(5^5))*x*y =
-            x^3 + (2*5^4+5^5+2*5^6+5^7+3*5^8+O(5^9))*x + (2*5^3+5^4+2*5^5+5^7+O(5^8))
-            over 5-adic Field with capped relative precision 5
+             x^3 + (2*5^4+5^5+2*5^6+5^7+3*5^8+O(5^9))*x + (2*5^3+5^4+2*5^5+5^7+O(5^8))
+             over 5-adic Field with capped relative precision 5
         """
         Eq = getattr(self, "__curve", None)
         if Eq and Eq.a6().precision_relative() >= prec:

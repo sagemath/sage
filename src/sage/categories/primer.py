@@ -75,15 +75,15 @@ Some challenges
 
   Similar objects should behave similarly::
 
-      sage: Permutations(5).cardinality()                                       # optional - sage.combinat
+      sage: Permutations(5).cardinality()                                               # optional - sage.combinat
       120
 
-      sage: GL(2,2).cardinality()                                               # optional - sage.groups
+      sage: GL(2,2).cardinality()                                                       # optional - sage.groups
       6
 
-      sage: A = random_matrix(ZZ, 6, 3, x=7)                                    # optional - sage.modules
-      sage: L = LatticePolytope(A.rows())                                       # optional - sage.geometry.polyhedron
-      sage: L.npoints()                # oops!   # random                       # optional - sage.geometry.polyhedron
+      sage: A = random_matrix(ZZ, 6, 3, x=7)                                            # optional - sage.modules
+      sage: L = LatticePolytope(A.rows())                                               # optional - sage.geometry.polyhedron
+      sage: L.npoints()                # oops!   # random                               # optional - sage.geometry.polyhedron
       37
 
 - How to ensure robustness?
@@ -98,8 +98,9 @@ Some challenges
 
   ::
 
-      sage: m = random_matrix(QQ, 4, algorithm='echelonizable', rank=3, upper_bound=60)     # optional - sage.modules
-      sage: m^8 == m*m*m*m*m*m*m*m == ((m^2)^2)^2                                           # optional - sage.modules
+      sage: m = random_matrix(QQ, 4, algorithm='echelonizable',                         # optional - sage.modules
+      ....:                   rank=3, upper_bound=60)
+      sage: m^8 == m*m*m*m*m*m*m*m == ((m^2)^2)^2                                       # optional - sage.modules
       True
 
   We want to implement binary powering only once, as *generic* code
@@ -130,7 +131,7 @@ and sure enough, binary powering is defined there::
 
 That's our bookshelf! And it's used in many places::
 
-    sage: GL(2, ZZ) in Monoids()                                                # optional - sage.modules
+    sage: GL(2, ZZ) in Monoids()                                                        # optional - sage.modules
     True
     sage: NN in Monoids()
     True
@@ -168,20 +169,20 @@ which is associative and admits a unit and inverses.
 Each set in Sage knows which bookshelf of generic algorithms it can
 use, that is to which category it belongs::
 
-    sage: G = GL(2, ZZ)                                                         # optional - sage.modules
-    sage: G.category()                                                          # optional - sage.modules
+    sage: G = GL(2, ZZ)                                                                 # optional - sage.modules
+    sage: G.category()                                                                  # optional - sage.modules
     Category of infinite groups
 
 In fact a group is a semigroup, and Sage knows about this::
 
     sage: Groups().is_subcategory(Semigroups())
     True
-    sage: G in Semigroups()                                                     # optional - sage.modules
+    sage: G in Semigroups()                                                             # optional - sage.modules
     True
 
 Altogether, our group gets algorithms from a bunch of bookshelves::
 
-    sage: G.categories()                                                        # optional - sage.modules
+    sage: G.categories()                                                                # optional - sage.modules
     [Category of infinite groups, Category of groups, Category of monoids,
      ...,
      Category of magmas,
@@ -189,19 +190,19 @@ Altogether, our group gets algorithms from a bunch of bookshelves::
 
 Those can be viewed graphically::
 
-    sage: g = Groups().category_graph()                                         # optional - sage.modules sage.graphs
-    sage: g.set_latex_options(format="dot2tex")                                 # optional - sage.modules sage.graphs
-    sage: view(g)                 # not tested                                  # optional - sage.modules sage.graphs sage.plot
+    sage: g = Groups().category_graph()                                                 # optional - sage.modules sage.graphs
+    sage: g.set_latex_options(format="dot2tex")                                         # optional - sage.modules sage.graphs
+    sage: view(g)                 # not tested                                          # optional - sage.modules sage.graphs sage.plot
 
 In case ``dot2tex`` is not available, you can use instead::
 
-    sage: g.show(vertex_shape=None, figsize=20)                                 # optional - sage.modules sage.graphs sage.plot
+    sage: g.show(vertex_shape=None, figsize=20)                                         # optional - sage.modules sage.graphs sage.plot
 
 Here is an overview of all categories in Sage::
 
-    sage: g = sage.categories.category.category_graph()                         # optional - sage.modules sage.graphs
-    sage: g.set_latex_options(format="dot2tex")                                 # optional - sage.modules sage.graphs
-    sage: view(g)                 # not tested                                  # optional - sage.modules sage.graphs sage.plot
+    sage: g = sage.categories.category.category_graph()                                 # optional - sage.modules sage.graphs
+    sage: g.set_latex_options(format="dot2tex")                                         # optional - sage.modules sage.graphs
+    sage: view(g)                 # not tested                                          # optional - sage.modules sage.graphs sage.plot
 
 Wrap-up: generic algorithms in Sage are organized in a hierarchy of
 bookshelves modelled upon the usual hierarchy of categories provided
@@ -370,9 +371,9 @@ categories and their super categories::
      Category of sets with partial maps,
      Category of objects]
 
-    sage: g = EuclideanDomains().category_graph()                               # optional - sage.graphs
-    sage: g.set_latex_options(format="dot2tex")                                 # optional - sage.graphs
-    sage: view(g)                 # not tested                                  # optional - sage.graphs sage.plot
+    sage: g = EuclideanDomains().category_graph()                                       # optional - sage.graphs
+    sage: g.set_latex_options(format="dot2tex")                                         # optional - sage.graphs
+    sage: view(g)                 # not tested                                          # optional - sage.graphs sage.plot
 
 A bit of help from computer science
 ===================================
@@ -406,11 +407,11 @@ Applying an operation is generally done by *calling a method*::
     sage: i.factor()
     2^2 * 3
 
-    sage: x = var('x')                                      # optional - sage.symbolic
-    sage: p = 6*x^2 + 12*x + 6                              # optional - sage.symbolic
-    sage: type(p)                                           # optional - sage.symbolic
+    sage: x = var('x')                                                                  # optional - sage.symbolic
+    sage: p = 6*x^2 + 12*x + 6                                                          # optional - sage.symbolic
+    sage: type(p)                                                                       # optional - sage.symbolic
     <class 'sage.symbolic.expression.Expression'>
-    sage: p.factor()                                        # optional - sage.symbolic
+    sage: p.factor()                                                                    # optional - sage.symbolic
     6*(x + 1)^2
 
     sage: R.<x> = PolynomialRing(QQ, sparse=True)
@@ -466,9 +467,9 @@ of the class hierarchy is easy since it can be modelled upon the
 hierarchy of categories (bookshelves). Here is for example a piece of
 the hierarchy of classes for an element of a group of permutations::
 
-    sage: P = Permutations(4)                                                   # optional - sage.combinat
-    sage: m = P.an_element()                                                    # optional - sage.combinat
-    sage: for cls in m.__class__.mro(): print(cls)                              # optional - sage.combinat
+    sage: P = Permutations(4)                                                           # optional - sage.combinat
+    sage: m = P.an_element()                                                            # optional - sage.combinat
+    sage: for cls in m.__class__.mro(): print(cls)                                      # optional - sage.combinat
     <class 'sage.combinat.permutation.StandardPermutations_n_with_category.element_class'>
     <class 'sage.combinat.permutation.StandardPermutations_n.Element'>
     <class 'sage.combinat.permutation.Permutation'>
@@ -486,9 +487,9 @@ hierarchy of categories and provide generic algorithms.
 
 The full hierarchy is best viewed graphically::
 
-    sage: g = class_graph(m.__class__)                                          # optional - sage.combinat sage.graphs
-    sage: g.set_latex_options(format="dot2tex")                                 # optional - sage.combinat sage.graphs
-    sage: view(g)                 # not tested                                  # optional - sage.combinat sage.graphs sage.plot
+    sage: g = class_graph(m.__class__)                                                  # optional - sage.combinat sage.graphs
+    sage: g.set_latex_options(format="dot2tex")                                         # optional - sage.combinat sage.graphs
+    sage: view(g)                 # not tested                                          # optional - sage.combinat sage.graphs sage.plot
 
 Parallel hierarchy of classes for parents
 -----------------------------------------
@@ -724,7 +725,7 @@ Categories are instances and have operations
 Note that categories themselves are naturally modelled by instances
 because they can have operations of their own. An important one is::
 
-    sage: Groups().example()                                                    # optional - sage.modules
+    sage: Groups().example()                                                            # optional - sage.modules
     General Linear Group of degree 4 over Rational Field
 
 which gives an example of object of the category. Besides illustrating
@@ -1370,13 +1371,14 @@ for a category with two operations `+` and `*`::
     sage: C = (Magmas() & AdditiveMagmas()).Distributive(); C
     Category of distributive magmas and additive magmas
 
-    sage: C.Associative().AdditiveAssociative().AdditiveCommutative().AdditiveUnital().AdditiveInverse()
+    sage: CAA = C.Associative().AdditiveAssociative()
+    sage: CAA.AdditiveCommutative().AdditiveUnital().AdditiveInverse()
     Category of rngs
 
-    sage: C.Associative().AdditiveAssociative().AdditiveCommutative().AdditiveUnital().Unital()
+    sage: CAA.AdditiveCommutative().AdditiveUnital().Unital()
     Category of semirings
 
-    sage: C.Associative().AdditiveAssociative().AdditiveCommutative().AdditiveUnital().AdditiveInverse().Unital()
+    sage: CAA.AdditiveCommutative().AdditiveUnital().AdditiveInverse().Unital()
     Category of rings
 
     sage: Rings().Division()
@@ -1414,7 +1416,7 @@ Let also ``Ds`` be a subcategory of ``Cs``, say::
 
 A finite dimensional algebra is also a finite dimensional module::
 
-    sage: Algebras(QQ).FiniteDimensional().is_subcategory( Modules(QQ).FiniteDimensional() )
+    sage: Algebras(QQ).FiniteDimensional().is_subcategory(Modules(QQ).FiniteDimensional())
     True
 
 Similarly a graded algebra is also a graded module::

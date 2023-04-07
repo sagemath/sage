@@ -3,16 +3,15 @@ Matrix Group Elements
 
 EXAMPLES::
 
-    sage: F = GF(3); MS = MatrixSpace(F, 2, 2)                                          # optional - sage.libs.pari
-    sage: gens = [MS([[1,0],[0,1]]), MS([[1,1],[0,1]])]                                 # optional - sage.libs.pari
-    sage: G = MatrixGroup(gens); G                                                      # optional - sage.libs.pari
+    sage: F = GF(3); MS = MatrixSpace(F, 2, 2)                                          # optional - sage.rings.finite_rings
+    sage: gens = [MS([[1,0], [0,1]]), MS([[1,1], [0,1]])]                               # optional - sage.rings.finite_rings
+    sage: G = MatrixGroup(gens); G                                                      # optional - sage.rings.finite_rings
     Matrix group over Finite Field of size 3 with 2 generators (
     [1 0]  [1 1]
-    [0 1], [0 1]
-    )
-    sage: g = G([[1,1],[0,1]])                                                          # optional - sage.libs.pari
-    sage: h = G([[1,2],[0,1]])                                                          # optional - sage.libs.pari
-    sage: g*h                                                                           # optional - sage.libs.pari
+    [0 1], [0 1] )
+    sage: g = G([[1,1], [0,1]])                                                         # optional - sage.rings.finite_rings
+    sage: h = G([[1,2], [0,1]])                                                         # optional - sage.rings.finite_rings
+    sage: g*h                                                                           # optional - sage.rings.finite_rings
     [1 0]
     [0 1]
 
@@ -20,7 +19,7 @@ You cannot add two matrices, since this is not a group operation.
 You can coerce matrices back to the matrix space and add them
 there::
 
-    sage: g + h                                                                         # optional - sage.libs.pari
+    sage: g + h                                                                         # optional - sage.rings.finite_rings
     Traceback (most recent call last):
     ...
     TypeError: unsupported operand parent(s) for +:
@@ -33,20 +32,20 @@ there::
     [0 1], [0 1]
     )'
 
-    sage: g.matrix() + h.matrix()                                                       # optional - sage.libs.pari
+    sage: g.matrix() + h.matrix()                                                       # optional - sage.rings.finite_rings
     [2 0]
     [0 2]
 
 Similarly, you cannot multiply group elements by scalars but you can
 do it with the underlying matrices::
 
-    sage: 2*g                                                                           # optional - sage.libs.pari
+    sage: 2*g                                                                           # optional - sage.rings.finite_rings
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for *: 'Integer Ring' and 'Matrix group over Finite Field of size 3 with 2 generators (
+    TypeError: unsupported operand parent(s) for *: 'Integer Ring'
+    and 'Matrix group over Finite Field of size 3 with 2 generators (
     [1 0]  [1 1]
-    [0 1], [0 1]
-    )'
+    [0 1], [0 1] )'
 
 AUTHORS:
 
@@ -107,8 +106,8 @@ cpdef is_MatrixGroupElement(x):
         sage: is_MatrixGroupElement('helloooo')
         False
 
-        sage: G = GL(2,3)                                                               # optional - sage.libs.pari
-        sage: is_MatrixGroupElement(G.an_element())                                     # optional - sage.libs.pari
+        sage: G = GL(2,3)                                                               # optional - sage.rings.finite_rings
+        sage: is_MatrixGroupElement(G.an_element())                                     # optional - sage.rings.finite_rings
         True
     """
     return isinstance(x, (MatrixGroupElement_generic, MatrixGroupElement_gap))
@@ -418,8 +417,8 @@ def _unpickle_generic_element(G, mat):
 
     EXAMPLES::
 
-        sage: m1 = matrix(SR, [[1,2],[3,4]])                                                # optional - sage.symbolic
-        sage: m2 = matrix(SR, [[1,3],[-1,0]])                                               # optional - sage.symbolic
+        sage: m1 = matrix(SR, [[1,2], [3,4]])                                               # optional - sage.symbolic
+        sage: m2 = matrix(SR, [[1,3], [-1,0]])                                              # optional - sage.symbolic
         sage: G = MatrixGroup(m1, m2)                                                       # optional - sage.symbolic
         sage: m = G.an_element()                                                            # optional - sage.symbolic
         sage: from sage.groups.matrix_gps.group_element import _unpickle_generic_element    # optional - sage.symbolic

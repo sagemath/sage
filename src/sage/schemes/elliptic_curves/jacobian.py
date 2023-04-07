@@ -13,17 +13,17 @@ take as the origin.
 EXAMPLES::
 
     sage: R.<u,v,w> = QQ[]
-    sage: Jacobian(u^3+v^3+w^3)
+    sage: Jacobian(u^3 + v^3 + w^3)
     Elliptic Curve defined by y^2 = x^3 - 27/4 over Rational Field
-    sage: Jacobian(u^4+v^4+w^2)
+    sage: Jacobian(u^4 + v^4 + w^2)
     Elliptic Curve defined by y^2 = x^3 - 4*x over Rational Field
 
-    sage: C = Curve(u^3+v^3+w^3)
+    sage: C = Curve(u^3 + v^3 + w^3)
     sage: Jacobian(C)
     Elliptic Curve defined by y^2 = x^3 - 27/4 over Rational Field
 
     sage: P2.<u,v,w> = ProjectiveSpace(2, QQ)
-    sage: C = P2.subscheme(u^3+v^3+w^3)
+    sage: C = P2.subscheme(u^3 + v^3 + w^3)
     sage: Jacobian(C)
     Elliptic Curve defined by y^2 = x^3 - 27/4 over Rational Field
 
@@ -36,7 +36,7 @@ relevant functionality::
     sage: C = HyperellipticCurve(f)
     sage: Jacobian(C)
     Jacobian of Hyperelliptic Curve over Rational Field defined
-    by y^2 = x^5 + 1184*x^3 + 1846*x^2 + 956*x + 560
+     by y^2 = x^5 + 1184*x^3 + 1846*x^2 + 956*x + 560
 
 REFERENCES:
 
@@ -95,8 +95,8 @@ def Jacobian(X, **kwds):
           To:   Elliptic Curve defined by y^2 = x^3 - 27/4 over Rational Field
           Defn: Defined on coordinates by sending (u : v : w) to
                 (-u^4*v^4*w - u^4*v*w^4 - u*v^4*w^4 :
-                1/2*u^6*v^3 - 1/2*u^3*v^6 - 1/2*u^6*w^3 + 1/2*v^6*w^3 + 1/2*u^3*w^6 - 1/2*v^3*w^6 :
-                u^3*v^3*w^3)
+                 1/2*u^6*v^3 - 1/2*u^3*v^6 - 1/2*u^6*w^3 + 1/2*v^6*w^3 + 1/2*u^3*w^6 - 1/2*v^3*w^6 :
+                 u^3*v^3*w^3)
     """
     try:
         return X.jacobian(**kwds)
@@ -213,7 +213,7 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
         sage: R.<u,v,t> = QQ[]
         sage: Jacobian(u^3 + v^3 + t, variables=[u,v])
         Elliptic Curve defined by y^2 = x^3 + (-27/4*t^2) over
-        Multivariate Polynomial Ring in u, v, t over Rational Field
+         Multivariate Polynomial Ring in u, v, t over Rational Field
 
     TESTS::
 

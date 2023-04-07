@@ -517,17 +517,17 @@ class TensorOperation(VectorCollection):
             sage: from sage.modules.tensor_operations import \
             ....:      VectorCollection, TensorOperation
             sage: R = VectorCollection([(1,0), (0,1), (-2,-3)], QQ, 2)
-            sage: detR = TensorOperation([R]*2, 'antisymmetric')                                    # optional - sage.groups
-            sage: detR.index_map(1, 0)                                                              # optional - sage.groups
+            sage: detR = TensorOperation([R]*2, 'antisymmetric')                        # optional - sage.groups
+            sage: detR.index_map(1, 0)                                                  # optional - sage.groups
             0
-            sage: detR.index_map(0, 1)                                                              # optional - sage.groups
+            sage: detR.index_map(0, 1)                                                  # optional - sage.groups
             0
 
         TESTS::
 
-            sage: sorted(detR._index_map.items())                                                   # optional - sage.groups
+            sage: sorted(detR._index_map.items())                                       # optional - sage.groups
             [((0, 1), 0), ((0, 2), 1), ((1, 2), 2)]
-            sage: detR.vectors()                                                                    # optional - sage.groups
+            sage: detR.vectors()                                                        # optional - sage.groups
             ((1), (-3), (2))
         """
         if len(i) == 1 and isinstance(i[0], (list, tuple)):
@@ -553,10 +553,10 @@ class TensorOperation(VectorCollection):
             sage: from sage.modules.tensor_operations import \
             ....:      VectorCollection, TensorOperation
             sage: R = VectorCollection([(1,0), (0,1), (-2,-3)], QQ, 2)
-            sage: detR = TensorOperation([R]*2, 'antisymmetric')                                    # optional - sage.groups
-            sage: sorted(detR.preimage())                                                           # optional - sage.groups
+            sage: detR = TensorOperation([R]*2, 'antisymmetric')                        # optional - sage.groups
+            sage: sorted(detR.preimage())                                               # optional - sage.groups
             [(0, 1), (0, 2), (1, 2)]
-            sage: sorted(detR.codomain())                                                           # optional - sage.groups
+            sage: sorted(detR.codomain())                                               # optional - sage.groups
             [0, 1, 2]
         """
         return self._index_map.keys()
@@ -574,10 +574,10 @@ class TensorOperation(VectorCollection):
             sage: from sage.modules.tensor_operations import \
             ....:      VectorCollection, TensorOperation
             sage: R = VectorCollection([(1,0), (0,1), (-2,-3)], QQ, 2)
-            sage: detR = TensorOperation([R]*2, 'antisymmetric')                                    # optional - sage.groups
-            sage: sorted(detR.preimage())                                                           # optional - sage.groups
+            sage: detR = TensorOperation([R]*2, 'antisymmetric')                        # optional - sage.groups
+            sage: sorted(detR.preimage())                                               # optional - sage.groups
             [(0, 1), (0, 2), (1, 2)]
-            sage: sorted(detR.codomain())                                                           # optional - sage.groups
+            sage: sorted(detR.codomain())                                               # optional - sage.groups
             [0, 1, 2]
         """
         return self._index_map.values()

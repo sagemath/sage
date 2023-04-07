@@ -934,10 +934,11 @@ cdef class Parser:
             a + 1
             sage: p.p_atom(Tokenizer("sin(1+a)"))                                       # optional - sage.symbolic
             sin(a + 1)
-            sage: p = Parser(make_var=var, make_function={'foo': sage.misc.parser.foo})     # optional - sage.symbolic
-            sage: p.p_atom(Tokenizer("foo(a, b, key=value)"))                               # optional - sage.symbolic
+            sage: p = Parser(make_var=var,                                              # optional - sage.symbolic
+            ....:            make_function={'foo': sage.misc.parser.foo})
+            sage: p.p_atom(Tokenizer("foo(a, b, key=value)"))                           # optional - sage.symbolic
             ((a, b), {'key': value})
-            sage: p.p_atom(Tokenizer("foo()"))                                              # optional - sage.symbolic
+            sage: p.p_atom(Tokenizer("foo()"))                                          # optional - sage.symbolic
             ((), {})
         """
         cdef int token = tokens.next()
@@ -1008,22 +1009,22 @@ cdef class Parser:
         Parsing a normal expression::
 
             sage: from sage.misc.parser import Parser, Tokenizer
-            sage: p = Parser(make_var=var)                                                  # optional - sage.symbolic
-            sage: p.p_arg(Tokenizer("a+b"))                                                 # optional - sage.symbolic
+            sage: p = Parser(make_var=var)                                              # optional - sage.symbolic
+            sage: p.p_arg(Tokenizer("a+b"))                                             # optional - sage.symbolic
             a + b
 
        A keyword expression argument::
 
             sage: from sage.misc.parser import Parser, Tokenizer
-            sage: p = Parser(make_var=var)                                                  # optional - sage.symbolic
-            sage: p.p_arg(Tokenizer("val=a+b"))                                             # optional - sage.symbolic
+            sage: p = Parser(make_var=var)                                              # optional - sage.symbolic
+            sage: p.p_arg(Tokenizer("val=a+b"))                                         # optional - sage.symbolic
             ('val', a + b)
 
         A lone list::
 
             sage: from sage.misc.parser import Parser, Tokenizer
-            sage: p = Parser(make_var=var)                                                  # optional - sage.symbolic
-            sage: p.p_arg(Tokenizer("[x]"))                                                 # optional - sage.symbolic
+            sage: p = Parser(make_var=var)                                              # optional - sage.symbolic
+            sage: p.p_arg(Tokenizer("[x]"))                                             # optional - sage.symbolic
             [x]
 
         """
@@ -1055,12 +1056,12 @@ cdef class LookupNameMaker:
         EXAMPLES::
 
             sage: from sage.misc.parser import LookupNameMaker
-            sage: maker = LookupNameMaker({'pi': pi}, var)                                  # optional - sage.symbolic
-            sage: maker('pi')                                                               # optional - sage.symbolic
+            sage: maker = LookupNameMaker({'pi': pi}, var)                              # optional - sage.symbolic
+            sage: maker('pi')                                                           # optional - sage.symbolic
             pi
-            sage: maker('pi') is pi                                                         # optional - sage.symbolic
+            sage: maker('pi') is pi                                                     # optional - sage.symbolic
             True
-            sage: maker('a')                                                                # optional - sage.symbolic
+            sage: maker('a')                                                            # optional - sage.symbolic
             a
         """
         self.names = names
@@ -1072,8 +1073,8 @@ cdef class LookupNameMaker:
 
             sage: from sage.misc.parser import LookupNameMaker
             sage: maker = LookupNameMaker({}, str)
-            sage: maker.set_names({'a': x})                                                 # optional - sage.symbolic
-            sage: maker('a') is x                                                           # optional - sage.symbolic
+            sage: maker.set_names({'a': x})                                             # optional - sage.symbolic
+            sage: maker('a') is x                                                       # optional - sage.symbolic
             True
         """
         self.names = new_names
@@ -1083,12 +1084,12 @@ cdef class LookupNameMaker:
         TESTS::
 
             sage: from sage.misc.parser import LookupNameMaker
-            sage: maker = LookupNameMaker({'a': x}, str)                                    # optional - sage.symbolic
-            sage: maker('a')                                                                # optional - sage.symbolic
+            sage: maker = LookupNameMaker({'a': x}, str)                                # optional - sage.symbolic
+            sage: maker('a')                                                            # optional - sage.symbolic
             x
-            sage: maker('a') is x                                                           # optional - sage.symbolic
+            sage: maker('a') is x                                                       # optional - sage.symbolic
             True
-            sage: maker('b')                                                                # optional - sage.symbolic
+            sage: maker('b')                                                            # optional - sage.symbolic
             'b'
         """
         try:

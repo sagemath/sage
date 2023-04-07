@@ -1437,7 +1437,7 @@ def riemann_sum(
         sage: interacts.calculus.riemann_sum()
         Manual interactive function <function riemann_sum at ...> with 9 widgets
           title: HTMLText(value='<h2>Riemann integral with random sampling</h2>')
-          f: EvalText(value='x^2+1', description='$f(x)=$', layout=Layout(max_width='41em'))
+          f: EvalText(value='x^2+1',... description='$f(x)=$', layout=Layout(max_width='41em'))
           n: IntSlider(value=5, description='# divisions', max=30, min=1)
           hr1: HTMLText(value='<hr>')
           interval_input: ToggleButtons(description='Integration interval', options=('from slider', 'from keyboard'), value='from slider')

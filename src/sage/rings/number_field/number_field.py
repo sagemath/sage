@@ -12156,7 +12156,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         if D > 0:
             raise NotImplementedError("Hilbert class polynomial is not implemented for real quadratic fields.")
 
-        from sage.schemes.elliptic_curves.all import hilbert_class_polynomial as HCP
+        from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial as HCP
         return QQ[name](HCP(D))
 
     def number_of_roots_of_unity(self):
@@ -12177,6 +12177,29 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         if d == -3:
             return 6
         return 2
+
+
+def is_fundamental_discriminant(D):
+    r"""
+    Return True if the integer `D` is a fundamental
+    discriminant, i.e., if `D \cong 0,1\pmod{4}`, and
+    `D\neq 0, 1` and either (1) `D` is square free or
+    (2) we have `D\cong 0\pmod{4}` with
+    `D/4 \cong 2,3\pmod{4}` and `D/4` square free. These
+    are exactly the discriminants of quadratic fields.
+
+    EXAMPLES::
+
+        sage: [D for D in range(-15,15) if is_fundamental_discriminant(D)]
+        ...
+        DeprecationWarning: is_fundamental_discriminant(D) is deprecated; please use D.is_fundamental_discriminant()
+        ...
+        [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
+        sage: [D for D in range(-15,15) if not is_square(D) and QuadraticField(D,'a').disc() == D]
+        [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
+    """
+    deprecation(35147, "is_fundamental_discriminant(D) is deprecated; please use D.is_fundamental_discriminant()")
+    return Integer(D).is_fundamental_discriminant()
 
 
 ###################

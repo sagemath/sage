@@ -217,7 +217,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         ::
 
             sage: A.<x,y> = ZZ[]
-            sage: I = A.ideal(x^2 - y^2-1)
+            sage: I = A.ideal(x^2 - y^2 - 1)
             sage: V = AffineSpace(ZZ, 2)
             sage: X = V.subscheme(I)
             sage: M = X(ZZ)

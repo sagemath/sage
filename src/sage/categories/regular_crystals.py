@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs, sage.combinat
+# sage.doctest: optional - sage.combinat sage.graphs
 r"""
 Regular Crystals
 """
@@ -134,21 +134,21 @@ class RegularCrystals(Category_singleton):
 
             EXAMPLES::
 
-                sage: La = RootSystem(['A',2,1]).weight_space(extended=True).fundamental_weights()
+                sage: A21 = RootSystem(['A',2,1])
+                sage: La = A21.weight_space(extended=True).fundamental_weights()
                 sage: B = crystals.LSPaths(La[0])
-                sage: La = RootSystem(['A',2,1]).weight_lattice(extended=True).fundamental_weights()
+                sage: La = A21.weight_lattice(extended=True).fundamental_weights()
                 sage: C = crystals.GeneralizedYoungWalls(2, La[0])
                 sage: H = Hom(B, C)
                 sage: from sage.categories.highest_weight_crystals import HighestWeightCrystalMorphism
                 sage: class Psi(HighestWeightCrystalMorphism):
                 ....:     def is_strict(self):
                 ....:         return True
-                sage: psi = Psi(H, C.module_generators)
-                sage: psi
+                sage: psi = Psi(H, C.module_generators); psi
                 ['A', 2, 1] Crystal morphism:
                   From: The crystal of LS paths of type ['A', 2, 1] and weight Lambda[0]
-                  To:   Highest weight crystal of generalized Young walls of Cartan type ['A', 2, 1]
-                         and highest weight Lambda[0]
+                  To:   Highest weight crystal of generalized Young walls
+                        of Cartan type ['A', 2, 1] and highest weight Lambda[0]
                   Defn: (Lambda[0],) |--> []
                 sage: psi.is_isomorphism()
                 True
@@ -185,25 +185,28 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: C = CombinatorialFreeModule(QQ,T)
+                sage: C = CombinatorialFreeModule(QQ, T)
                 sage: t = T.highest_weight_vector()
                 sage: b = 2*C(t)
                 sage: T.demazure_operator(b,[1,2,1])
-                2*B[[[1, 1], [2]]] + 2*B[[[1, 2], [2]]] + 2*B[[[1, 3], [2]]] + 2*B[[[1, 1], [3]]]
-                + 2*B[[[1, 2], [3]]] + 2*B[[[1, 3], [3]]] + 2*B[[[2, 2], [3]]] + 2*B[[[2, 3], [3]]]
+                2*B[[[1, 1], [2]]] + 2*B[[[1, 2], [2]]] + 2*B[[[1, 3], [2]]]
+                + 2*B[[[1, 1], [3]]] + 2*B[[[1, 2], [3]]] + 2*B[[[1, 3], [3]]]
+                + 2*B[[[2, 2], [3]]] + 2*B[[[2, 3], [3]]]
 
             The Demazure operator is idempotent::
 
-                sage: T = crystals.Tableaux("A1",shape=[4])
-                sage: C = CombinatorialFreeModule(QQ,T)
+                sage: T = crystals.Tableaux("A1", shape=[4])
+                sage: C = CombinatorialFreeModule(QQ, T)
                 sage: b = C(T.module_generators[0]); b
                 B[[[1, 1, 1, 1]]]
                 sage: e = T.demazure_operator(b,[1]); e
-                B[[[1, 1, 1, 1]]] + B[[[1, 1, 1, 2]]] + B[[[1, 1, 2, 2]]] + B[[[1, 2, 2, 2]]] + B[[[2, 2, 2, 2]]]
+                B[[[1, 1, 1, 1]]] + B[[[1, 1, 1, 2]]] + B[[[1, 1, 2, 2]]]
+                + B[[[1, 2, 2, 2]]] + B[[[2, 2, 2, 2]]]
                 sage: e == T.demazure_operator(e,[1])
                 True
 
-                sage: all(T.demazure_operator(T.demazure_operator(C(t),[1]),[1]) == T.demazure_operator(C(t),[1]) for t in T)
+                sage: all(T.demazure_operator(T.demazure_operator(C(t),[1]),[1])
+                ....:      == T.demazure_operator(C(t),[1]) for t in T)
                 True
             """
             M = element.parent()

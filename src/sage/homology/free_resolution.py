@@ -134,10 +134,10 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
             sage: R.<x,y> = QQ[]
             sage: I = R.ideal([x^2, y^3])
             sage: Q = R.quo(I)
-            sage: Q.is_integral_domain()
+            sage: Q.is_integral_domain()                                                # optional - sage.libs.singular
             False
-            sage: xb, yb = Q.gens()
-            sage: FreeResolution(Q.ideal([xb]))  # has torsion
+            sage: xb, yb = Q.gens()                                                     # optional - sage.libs.singular
+            sage: FreeResolution(Q.ideal([xb]))  # has torsion                          # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError: the ring must be a polynomial ring using Singular

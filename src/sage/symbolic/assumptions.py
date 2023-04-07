@@ -726,7 +726,7 @@ def forget(*args):
             try:
                 x.forget()
             except KeyError:
-                raise TypeError("forget not defined for objects of type '%s'"%type(x))
+                raise TypeError("forget not defined for objects of type '%s'" % type(x))
 
 
 def assumptions(*args):
@@ -783,11 +783,11 @@ def assumptions(*args):
     result = []
     if len(args) == 1:
         result.extend([statement for statement in _assumptions
-            if statement.has(args[0])])
+                       if statement.has(args[0])])
     else:
         for v in args:
-            result += [ statement for statement in list(_assumptions) \
-                            if str(v) in str(statement) ]
+            result += [statement for statement in list(_assumptions)
+                       if str(v) in str(statement)]
     return result
 
 

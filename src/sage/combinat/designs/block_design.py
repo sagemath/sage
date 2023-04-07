@@ -343,11 +343,11 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
     # we relabel the points with the integers from 0 to n^2 + n as follows:
     # - the affine plane is the set of points [x:y:1] (i.e. the third coordinate
     #   is non-zero) and gets relabeled from 0 to n^2-1
-    affine_plane   = lambda x,y: relabel[x] + n * relabel[y]
+    affine_plane = lambda x,y: relabel[x] + n * relabel[y]
 
     # - the affine line is the set of points [x:1:0] (i.e. the third coordinate is
     #   zero but not the second one) and gets relabeled from n^2 to n^2 + n - 1
-    line_infinity  = lambda x: n2 + relabel[x]
+    line_infinity = lambda x: n2 + relabel[x]
 
     # - the point is [1:0:0] and gets relabeled n^2 + n
     point_infinity = n2 + n
@@ -380,7 +380,7 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
 
     if point_coordinates:
         zero = K.zero()
-        one  = K.one()
+        one = K.one()
         d = {affine_plane(x,y): (x,y,one)
              for x in Kiter
              for y in Kiter}
@@ -401,19 +401,19 @@ def q3_minus_one_matrix(K):
 
         sage: from sage.combinat.designs.block_design import q3_minus_one_matrix
         sage: m = q3_minus_one_matrix(GF(3))
-        sage: m.multiplicative_order() == 3**3 - 1                                  # optional - sage.symbolic
+        sage: m.multiplicative_order() == 3**3 - 1                                      # optional - sage.symbolic
         True
 
         sage: m = q3_minus_one_matrix(GF(4, 'a'))
-        sage: m.multiplicative_order() == 4**3 - 1                                  # optional - sage.symbolic
+        sage: m.multiplicative_order() == 4**3 - 1                                      # optional - sage.symbolic
         True
 
         sage: m = q3_minus_one_matrix(GF(5))
-        sage: m.multiplicative_order() == 5**3 - 1                                  # optional - sage.symbolic
+        sage: m.multiplicative_order() == 5**3 - 1                                      # optional - sage.symbolic
         True
 
         sage: m = q3_minus_one_matrix(GF(9, 'a'))
-        sage: m.multiplicative_order() == 9**3 - 1                                  # optional - sage.symbolic
+        sage: m.multiplicative_order() == 9**3 - 1                                      # optional - sage.symbolic
         True
     """
     q = K.cardinality()

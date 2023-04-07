@@ -375,10 +375,10 @@ class SchemeHomset_generic(HomsetWithBase):
             sage: C = A.subscheme(x*y - 1)
             sage: H = C.Hom(C); H
             Set of morphisms
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x*y - 1
-              To:   Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x*y - 1
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: x*y - 1
+              To:   Closed subscheme of Affine Space of dimension 2 over Rational Field
+                    defined by: x*y - 1
             sage: H(1)
             Traceback (most recent call last):
             ...
@@ -671,14 +671,14 @@ class SchemeHomset_points(SchemeHomset_generic):
             sage: K.<a> = NumberField(x^2 + x - (3^3-3))                                # optional - sage.rings.number_field
             sage: K_points = P2(K);  K_points                                           # optional - sage.rings.number_field
             Set of rational points of Projective Space of dimension 2
-            over Number Field in a with defining polynomial x^2 + x - 24
+             over Number Field in a with defining polynomial x^2 + x - 24
 
             sage: K_points.codomain()                                                   # optional - sage.rings.number_field
             Projective Space of dimension 2 over Rational Field
 
             sage: K_points.extended_codomain()                                          # optional - sage.rings.number_field
-            Projective Space of dimension 2 over Number Field in a with
-            defining polynomial x^2 + x - 24
+            Projective Space of dimension 2
+             over Number Field in a with defining polynomial x^2 + x - 24
         """
         if '_extended_codomain' in self.__dict__:
             return self._extended_codomain

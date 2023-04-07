@@ -278,7 +278,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C = Curve([y^4 - 2*x^5 - x^2*y], A)
             sage: C.singular_subscheme()
             Closed subscheme of Affine Space of dimension 2 over Complex Field
-            with 53 bits of precision defined by:
+             with 53 bits of precision defined by:
               (-2.00000000000000)*x^5 + y^4 - x^2*y,
               (-10.0000000000000)*x^4 + (-2.00000000000000)*x*y,
               4.00000000000000*y^3 - x^2
@@ -289,7 +289,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C = Curve([y^8 - x^2*z*w^5, w^2 - 2*y^2 - x*z], P)
             sage: C.singular_subscheme()
             Closed subscheme of Projective Space of dimension 3
-            over Rational Field defined by:
+             over Rational Field defined by:
               y^8 - x^2*z*w^5,
               -2*y^2 - x*z + w^2,
               -x^3*y*z^4 + 3*x^2*y*z^3*w^2 - 3*x*y*z^2*w^4 + 8*x*y*z*w^5 + y*z*w^6,
@@ -507,7 +507,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C = Curve([x^2 - y^2, z*y - 4/5*w^2], P)
             sage: C.change_ring(QuadraticField(-1))                                     # optional - sage.rings.number_field
             Projective Curve over Number Field in a with defining polynomial x^2 + 1
-            with a = 1*I defined by x^2 - y^2, y*z - 4/5*w^2
+             with a = 1*I defined by x^2 - y^2, y*z - 4/5*w^2
 
         ::
 
@@ -518,8 +518,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: L = K.embeddings(QQbar)                                               # optional - sage.rings.number_field
             sage: set_verbose(-1)  # suppress warnings for slow computation
             sage: C.change_ring(L[0])                                                   # optional - sage.rings.number_field
-            Affine Plane Curve over Algebraic Field
-            defined by y^3 + (-0.8774388331233464? - 0.744861766619745?*I)*x^2 - x - 11
+            Affine Plane Curve over Algebraic Field defined
+             by y^3 + (-0.8774388331233464? - 0.744861766619745?*I)*x^2 - x - 11
 
         ::
 

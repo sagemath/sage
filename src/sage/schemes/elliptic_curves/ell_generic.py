@@ -1391,7 +1391,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: F2 = GF(5^2,'a'); a = F2.gen()                                        # optional - sage.rings.finite_rings
             sage: F4 = GF(5^4,'b'); b = F4.gen()                                        # optional - sage.rings.finite_rings
             sage: roots = a.charpoly().roots(ring=F4, multiplicities=False)             # optional - sage.rings.finite_rings
-            sage: h = F2.hom([a[0]], F4)                                                # optional - sage.rings.finite_rings
+            sage: h = F2.hom([roots[0]], F4)                                            # optional - sage.rings.finite_rings
             sage: E = EllipticCurve(F2, [1,a]); E                                       # optional - sage.rings.finite_rings
             Elliptic Curve defined by y^2 = x^3 + x + a
             over Finite Field in a of size 5^2

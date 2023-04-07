@@ -371,7 +371,7 @@ cpdef dict sum_of_monomials(monomials, scalar):
         {'a': 2, 'b': 3}
         sage: blas.sum_of_monomials(['a', 'a', 'b', 'b', 'b'], 2)
         {'a': 4, 'b': 6}
-        sage: blas.sum_of_monomials(['a', 'a', 'b', 'b', 'b'], GF(3).one())             # optional - sage.libs.pari
+        sage: blas.sum_of_monomials(['a', 'a', 'b', 'b', 'b'], GF(3).one())             # optional - sage.rings.finite_rings
         {'a': 2}
     """
     cdef dict result = {}
@@ -398,7 +398,7 @@ cpdef dict sum_of_terms(index_coeff_pairs):
         {'a': 1, 'b': 3}
         sage: blas.sum_of_terms([('a', 5), ('b', 3), ('a', -5)])
         {'b': 3}
-        sage: blas.sum_of_terms([('a', 5), ('b', GF(2).one()),                          # optional - sage.libs.pari
+        sage: blas.sum_of_terms([('a', 5), ('b', GF(2).one()),                          # optional - sage.rings.finite_rings
         ....:                    ('a', -5), ('b', GF(2).one())])
         {}
     """
@@ -435,7 +435,7 @@ cpdef dict convert_remove_zeroes(dict D, R):
 
         sage: from sage.data_structures.blas_dict import convert_remove_zeroes
         sage: d = {1: -2, 2: -4, 3: -3}
-        sage: convert_remove_zeroes(d, GF(2))                                           # optional - sage.libs.pari
+        sage: convert_remove_zeroes(d, GF(2))                                           # optional - sage.rings.finite_rings
         {3: 1}
     """
     cdef list for_removal = []

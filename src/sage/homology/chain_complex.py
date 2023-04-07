@@ -1079,7 +1079,7 @@ class ChainComplex_class(Parent):
             sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),                 # optional - sage.libs.pari
             ....:                   1: matrix(ZZ, 0, 2),
             ....:                   3: matrix(ZZ, 0, 0)})  # base_ring determined from the matrices
-            sage: C == D
+            sage: C == D                                                                        # optional - sage.libs.pari
             True
         """
         if not isinstance(other, ChainComplex_class) or self.base_ring() != other.base_ring():
@@ -1107,10 +1107,10 @@ class ChainComplex_class(Parent):
             sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),                 # optional - sage.libs.pari
             ....:                   1: matrix(ZZ, 0, 2),
             ....:                   3: matrix(ZZ, 0, 0)})  # base_ring determined from the matrices
-            sage: C != D
+            sage: C != D                                                                        # optional - sage.libs.pari
             False
             sage: E = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=ZZ)
-            sage: C != E
+            sage: C != E                                                                        # optional - sage.libs.pari
             True
         """
         return not self == other

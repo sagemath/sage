@@ -150,8 +150,8 @@ class SuperModulesWithBasis(SuperModulesCategory):
 
             Check that this really return ``A.zero()`` and not a plain ``0``::
 
-                sage: a = x + y
-                sage: a.even_component().parent() is C
+                sage: a = x + y                                                         # optional - sage.combinat sage.modules
+                sage: a.even_component().parent() is C                                  # optional - sage.combinat sage.modules
                 True
             """
             even_odd = self.parent()._even_odd_on_basis

@@ -158,7 +158,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         return Matrix_rational_dense.__new__(Matrix_rational_dense, parent, None, None, None)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         fmpq_mat_clear(self._matrix)
 
     def __init__(self, parent, entries=None, copy=None, bint coerce=True):

@@ -274,10 +274,10 @@ class MPolynomial_element(MPolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQbar[]                                             # optional - sage.rings.number_field
-            sage: -x                                                            # optional - sage.rings.number_field
+            sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
+            sage: -x                                                                    # optional - sage.rings.number_field
             -x
-            sage: -(y-1)                                                        # optional - sage.rings.number_field
+            sage: -(y-1)                                                                # optional - sage.rings.number_field
             -y + 1
         """
         return self.__class__(self.parent(), -self.__element)

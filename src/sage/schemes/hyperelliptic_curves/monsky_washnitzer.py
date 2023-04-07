@@ -63,7 +63,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
-from sage.rings.padics.all import pAdicField
+from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.ring import CommutativeAlgebra
 from sage.rings.ring import IntegralDomain
@@ -1522,7 +1522,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
         sage: M = monsky_washnitzer.adjusted_prec(p, prec)
         sage: R.<x> = PolynomialRing(Integers(p**M))
         sage: A = monsky_washnitzer.matrix_of_frobenius(            # long time
-        ....:                           x^3 - x + R(1/4), p, M)     # long time
+        ....:                           x^3 - x + R(1/4), p, M)
         sage: B = A.change_ring(Integers(p**prec)); B               # long time
         [74311982 57996908]
         [95877067 25828133]
@@ -1540,7 +1540,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
         sage: M = monsky_washnitzer.adjusted_prec(p, prec)
         sage: R.<x> = PolynomialRing(Integers(p**M))
         sage: A = monsky_washnitzer.matrix_of_frobenius(            # long time
-        ....:                           x^3 - x + R(1/4), p, M)     # long time
+        ....:                           x^3 - x + R(1/4), p, M)
         sage: B = A.change_ring(Integers(p**prec))                  # long time
         sage: B.det()                                               # long time
         5
@@ -1559,13 +1559,13 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
         sage: A = A.change_ring(Integers(p**max_prec))              # long time
         sage: result = []                                           # long time
         sage: for prec in range(1, max_prec):                       # long time
-        ....:     M = monsky_washnitzer.adjusted_prec(p, prec)      # long time
-        ....:     R.<x> = PolynomialRing(Integers(p^M),'x')         # long time
-        ....:     B = monsky_washnitzer.matrix_of_frobenius(        # long time
-        ....:                       x^3 - x + R(1/4), p, M)         # long time
-        ....:     B = B.change_ring(Integers(p**prec))              # long time
-        ....:     result.append(B == A.change_ring(                 # long time
-        ....:                              Integers(p**prec)))      # long time
+        ....:     M = monsky_washnitzer.adjusted_prec(p, prec)
+        ....:     R.<x> = PolynomialRing(Integers(p^M),'x')
+        ....:     B = monsky_washnitzer.matrix_of_frobenius(
+        ....:                       x^3 - x + R(1/4), p, M)
+        ....:     B = B.change_ring(Integers(p**prec))
+        ....:     result.append(B == A.change_ring(
+        ....:                              Integers(p**prec)))
         sage: result == [True] * (max_prec - 1)                     # long time
         True
 

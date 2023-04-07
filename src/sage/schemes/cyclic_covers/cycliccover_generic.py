@@ -38,7 +38,7 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.rings.polynomial.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import normalize_names
 from sage.arith.misc import GCD
 from sage.schemes.curves.affine_curve import AffinePlaneCurve

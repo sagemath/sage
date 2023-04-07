@@ -321,7 +321,6 @@ class ParametrizedSurface3D(SageObject):
 
     """
 
-
     def __init__(self, equation, variables, name=None):
         r"""
         See ``ParametrizedSurface3D`` for full documentation.
@@ -371,7 +370,6 @@ class ParametrizedSurface3D(SageObject):
         from sage.misc.latex import latex
         return latex(self.equation)
 
-
     def _repr_(self):
         r"""
         Returns the string representation of this parametrized surface.
@@ -393,7 +391,6 @@ class ParametrizedSurface3D(SageObject):
         s ='%(designation)s with equation %(eq)s' % \
             {'designation': name, 'eq': str(self.equation)}
         return s
-
 
     def point(self, coords):
         r"""
@@ -422,7 +419,6 @@ class ParametrizedSurface3D(SageObject):
 
         d = dict(zip(self.variables_list, coords))
         return vector([f.subs(d) for f in self.equation])
-
 
     def tangent_vector(self, coords, components):
         r"""
@@ -470,7 +466,6 @@ class ParametrizedSurface3D(SageObject):
                            for f in self.equation])
         return jacobian * components
 
-
     def plot(self, urange=None, vrange=None, **kwds):
         r"""
         Enable easy plotting directly from the surface class.
@@ -515,7 +510,6 @@ class ParametrizedSurface3D(SageObject):
 
         return P
 
-
     @cached_method
     def natural_frame(self):
         """
@@ -543,7 +537,6 @@ class ParametrizedSurface3D(SageObject):
                     for f in self.equation])
 
         return {1:dr1, 2:dr2}
-
 
     @cached_method
     def normal_vector(self, normalized=False):
@@ -576,7 +569,6 @@ class ParametrizedSurface3D(SageObject):
             normal /= normal.norm()
         return _simplify_full_rad(normal)
 
-
     @cached_method
     def _compute_first_fundamental_form_coefficient(self, index):
         """
@@ -596,7 +588,6 @@ class ParametrizedSurface3D(SageObject):
         """
         dr = self.natural_frame()
         return _simplify_full_rad(dr[index[0]]*dr[index[1]])
-
 
     def first_fundamental_form_coefficient(self, index):
         r"""
@@ -695,7 +686,6 @@ class ParametrizedSurface3D(SageObject):
         return sum(gamma[(i,j)] * vector1[i - 1] * vector2[j - 1]
                    for i, j in product((1, 2), repeat=2))
 
-
     def area_form_squared(self):
         """
         Returns the square of the coefficient of the area form on the surface.
@@ -721,7 +711,6 @@ class ParametrizedSurface3D(SageObject):
         sq = gamma[(1,1)] * gamma[(2,2)] - gamma[(1,2)]**2
         return _simplify_full_rad(sq)
 
-
     def area_form(self):
         r"""
         Returns the coefficient of the area form on the surface.  In terms of
@@ -745,7 +734,6 @@ class ParametrizedSurface3D(SageObject):
         """
         f = abs(sqrt(self.area_form_squared()))
         return _simplify_full_rad(f)
-
 
     def first_fundamental_form_inverse_coefficients(self):
         r"""
@@ -777,7 +765,6 @@ class ParametrizedSurface3D(SageObject):
 
         return {(1,1): gi11, (1,2): gi12, (2,1): gi21, (2,2): gi22}
 
-
     def first_fundamental_form_inverse_coefficient(self, index):
         r"""
         Returns a specific component `g^{ij}` of the inverse of the fundamental
@@ -807,8 +794,6 @@ class ParametrizedSurface3D(SageObject):
             return self.first_fundamental_form_inverse_coefficients()[index]
         else:
             raise ValueError("Index %s out of bounds." % str(index))
-
-
 
     @cached_method
     def rotation(self,theta):
@@ -859,7 +844,6 @@ class ParametrizedSurface3D(SageObject):
         R21 = (sin(theta)*gi[2,2]*w12).simplify_full()
         R22 = (cos(theta) - sin(theta)*gi[2,1]*w12).simplify_full()
         return matrix([[R11,R12],[R21,R22]])
-
 
     @cached_method
     def orthonormal_frame(self, coordinates='ext'):
@@ -963,7 +947,6 @@ class ParametrizedSurface3D(SageObject):
 
         return self.orthonormal_frame(coordinates)[index]
 
-
     def lie_bracket(self, v, w):
         r"""
         Returns the Lie bracket of two vector fields that are tangent
@@ -1001,7 +984,6 @@ class ParametrizedSurface3D(SageObject):
         Dw = matrix([[_simplify_full_rad(diff(component, u))
                       for u in variables] for component in w])
         return vector(Dv*w - Dw*v).simplify_full()
-
 
     def frame_structure_functions(self, e1, e2):
         r"""
@@ -1064,7 +1046,6 @@ class ParametrizedSurface3D(SageObject):
         return {(1,1,1): 0, (1,1,2): 0, (1,2,1): w[0], (1,2,2): w[1],
                 (2,1,1): -w[0], (2,1,2): -w[1], (2,2,1): 0, (2,2,2): 0}
 
-
     @cached_method
     def _compute_second_order_frame_element(self, index):
         """
@@ -1089,7 +1070,6 @@ class ParametrizedSurface3D(SageObject):
                               for f in self.equation])
 
         return ddr_element
-
 
     def second_order_natural_frame(self):
         r"""
@@ -1122,7 +1102,6 @@ class ParametrizedSurface3D(SageObject):
             vectors[index] = \
                 self._compute_second_order_frame_element(sorted_index)
         return vectors
-
 
     def second_order_natural_frame_element(self, index):
         r"""
@@ -1175,7 +1154,6 @@ class ParametrizedSurface3D(SageObject):
         v = self.second_order_natural_frame_element(index)
         return _simplify_full_rad(v*N)
 
-
     def second_fundamental_form_coefficient(self, index):
         r"""
         Returns the coefficient `h_{ij}` of the second fundamental form
@@ -1208,7 +1186,6 @@ class ParametrizedSurface3D(SageObject):
         else:
             raise ValueError("Index %s out of bounds." % str(index))
 
-
     def second_fundamental_form_coefficients(self):
         """
         Returns the coefficients `h_{ij}` of the second fundamental form as
@@ -1237,7 +1214,6 @@ class ParametrizedSurface3D(SageObject):
             coefficients[index] = \
                 self._compute_second_fundamental_form_coefficient(index)
         return coefficients
-
 
     def second_fundamental_form(self,vector1,vector2):
         r"""
@@ -1278,7 +1254,6 @@ class ParametrizedSurface3D(SageObject):
         return sum(hh[(i, j)] * vector1[i - 1] * vector2[j - 1]
                    for (i, j) in product((1, 2), repeat=2))
 
-
     def gauss_curvature(self):
         r"""
         Finds the gaussian curvature of the surface, given by
@@ -1304,7 +1279,6 @@ class ParametrizedSurface3D(SageObject):
         hh = self.second_fundamental_form_coefficients()
         return _simplify_full_rad(
             (hh[(1,1)] * hh[(2,2)] - hh[(1,2)]**2)/self.area_form_squared())
-
 
     def mean_curvature(self):
         r"""
@@ -1334,7 +1308,6 @@ class ParametrizedSurface3D(SageObject):
         numer = (gg[(2,2)]*hh[(1,1)] - 2*gg[(1,2)]*hh[(1,2)] +
                  gg[(1,1)]*hh[(2,2)]).simplify_full()
         return _simplify_full_rad(numer/denom)
-
 
     @cached_method
     def shape_operator_coefficients(self):
@@ -1367,7 +1340,6 @@ class ParametrizedSurface3D(SageObject):
         sh_op22 = _simplify_full_rad(gi[(2,1)]*hh[(2,1)] + gi[(2,2)]*hh[(2,2)])
 
         return {(1,1): sh_op11, (1,2): sh_op12, (2,1): sh_op21, (2,2): sh_op22}
-
 
     def shape_operator(self):
         r"""
@@ -1409,7 +1381,6 @@ class ParametrizedSurface3D(SageObject):
                             [shop[(2,1)],shop[(2,2)]]])
         return shop_matrix
 
-
     def principal_directions(self):
         r"""
         Finds the principal curvatures and principal directions of the surface
@@ -1443,7 +1414,6 @@ class ParametrizedSurface3D(SageObject):
 
         """
         return self.shape_operator().eigenvectors_right()
-
 
     @cached_method
     def connection_coefficients(self):
@@ -1497,7 +1467,6 @@ class ParametrizedSurface3D(SageObject):
             structfun[(i,j,k)] = _simplify_full_rad(structfun[(i,j,k)])
         return structfun
 
-
     @cached_method
     def _create_geodesic_ode_system(self):
         r"""
@@ -1533,7 +1502,6 @@ class ParametrizedSurface3D(SageObject):
                     lambda t, u1_u2_v1_v2:
                     [u1_u2_v1_v2[2], u1_u2_v1_v2[3], fun1(*u1_u2_v1_v2), fun2(*u1_u2_v1_v2)])
                 return geodesic_ode
-
 
     def geodesics_numerical(self, p0, v0, tinterval):
         r"""
@@ -1600,7 +1568,6 @@ class ParametrizedSurface3D(SageObject):
 
         return parsed_solution
 
-
     @cached_method
     def _create_pt_ode_system(self, curve, t):
         """
@@ -1648,7 +1615,6 @@ class ParametrizedSurface3D(SageObject):
                 pt_ode = ode_solver()
                 pt_ode.function = lambda t, v1_v2: [fun1(t, v1_v2[0], v1_v2[1]), fun2(t, v1_v2[0], v1_v2[1])]
                 return pt_ode
-
 
     def parallel_translation_numerical(self,curve,t,v0,tinterval):
         r"""

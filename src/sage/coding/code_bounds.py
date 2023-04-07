@@ -656,7 +656,7 @@ def entropy_inverse(x, q=2):
     if q < 2:   # Here we check that q is actually at least 2
         raise ValueError("The value q must be an integer greater than 1")
 
-    eps  = 4.5e-16 # find_root has about this as the default xtol
+    eps = 4.5e-16 # find_root has about this as the default xtol
     ymax = 1 - 1/q
     if x <= eps:
         return 0

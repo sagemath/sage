@@ -108,7 +108,7 @@ def Conic(base_field, F=None, names=None, unique=True):
         sage: x,y = GF(7)['x,y'].gens()                                                 # optional - sage.rings.finite_rings
         sage: Conic(x^2 - x + 2*y^2 - 3, 'U,V,W')                                       # optional - sage.rings.finite_rings
         Projective Conic Curve over Finite Field of size 7
-        defined by U^2 + 2*V^2 - U*W - 3*W^2
+         defined by U^2 + 2*V^2 - U*W - 3*W^2
 
     Conic curves given by matrices ::
 
@@ -133,7 +133,7 @@ def Conic(base_field, F=None, names=None, unique=True):
 
         sage: C = Conic(QQ, [[10,2],[3,4],[-7,6],[7,8],[9,10]]); C
         Projective Conic Curve over Rational Field
-        defined by x^2 + 13/4*x*y - 17/4*y^2 - 35/2*x*z + 91/4*y*z - 37/2*z^2
+         defined by x^2 + 13/4*x*y - 17/4*y^2 - 35/2*x*z + 91/4*y*z - 37/2*z^2
         sage: C.rational_point()
         (10 : 2 : 1)
         sage: C.point([3,4])

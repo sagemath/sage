@@ -1766,7 +1766,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     .. MATH::
 
-                      F(s) = \frac{1}{2\pi i} \int_{\gamma-i\infty}^{\gamma + i\infty} e^{st} F(s) dt,
+                      f(t) = \frac{1}{2\pi i} \int_{\gamma-i\infty}^{\gamma + i\infty} e^{st} F(s) ds,
 
     where `\gamma` is chosen so that the contour path of
     integration is in the region of convergence of `F(s)`.

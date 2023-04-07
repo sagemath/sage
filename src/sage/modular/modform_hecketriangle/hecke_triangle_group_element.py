@@ -202,10 +202,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             (((1, 1), (0, 1)), 1)
         """
         res = []
-        ID  = self.parent().I()._matrix
-        T   = self.parent().T()._matrix
-        S   = self.parent().S()._matrix
-        M   = self._matrix
+        ID = self.parent().I()._matrix
+        T = self.parent().T()._matrix
+        S = self.parent().S()._matrix
+        M = self._matrix
         lam = self.parent().lam()
         zero = ZZ.zero()
         one = ZZ.one()
@@ -602,18 +602,18 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             # emb = self.root_extension_embedding(QQbar)
             raise NotImplementedError
 
-        emb      = self.root_extension_embedding(AA)
-        G        = self.parent()
-        S        = G.S()
-        TI       = G.T().inverse()
-        lam      = G.lam()
+        emb = self.root_extension_embedding(AA)
+        G = self.parent()
+        S = G.S()
+        TI = G.T().inverse()
+        lam = G.lam()
 
-        p        = self.fixed_points()[0]
+        p = self.fixed_points()[0]
 
-        cf_dict  = {}
-        L        = []
+        cf_dict = {}
+        L = []
         cf_index = ZZ.zero()
-        one      = ZZ.one()
+        one = ZZ.one()
 
         while(p not in cf_dict):
             cf_dict[p] = cf_index
@@ -765,22 +765,22 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         G = self.parent()
         zero = ZZ.zero()
-        one  = ZZ.one()
+        one = ZZ.one()
 
         # The elliptic case (for this case we use a special notation):
         if self.is_elliptic():
             if self.parent().n() == infinity:
                 raise NotImplementedError
 
-            emb    = self.root_extension_embedding(QQbar)
-            p      = self.fixed_points()[0]
-            embp   = emb(p)
+            emb = self.root_extension_embedding(QQbar)
+            p = self.fixed_points()[0]
+            embp = emb(p)
             embp.simplify()
             embp.exactify()
             (R, embw) = G.get_FD(embp)
-            w      = R.inverse().acton(p)
+            w = R.inverse().acton(p)
             # we should have: embw == emb(w)
-            embw   = emb(w)
+            embw = emb(w)
             embw.simplify()
             embw.exactify()
 
@@ -807,7 +807,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         (preperiod, period) = self.continued_fraction()
 
         number_of_ones = []
-        list_larger  = []
+        list_larger = []
         ones = 0
         for l in period:
             if l > 1:
@@ -820,11 +820,11 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         initial_ones = number_of_ones.pop(0)
         if len(list_larger) == 0:
-            list_v1           = [-ZZ(1)]
-            list_vlarger      = [ initial_ones + 2 ]
+            list_v1 = [-ZZ(1)]
+            list_vlarger = [ initial_ones + 2 ]
         else:
-            list_v1           = [ v-2 for v in list_larger ]
-            list_vlarger      = [ v+2 for v in number_of_ones ]
+            list_v1 = [ v-2 for v in list_larger ]
+            list_vlarger = [ v+2 for v in number_of_ones ]
             list_vlarger[-1] += initial_ones
 
         L = []
@@ -1331,8 +1331,8 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             warn("The case n=infinity here is not verified at all and probably wrong!")
 
         zero = ZZ.zero()
-        one  = ZZ.one()
-        two  = ZZ(2)
+        one = ZZ.one()
+        two = ZZ(2)
 
         if self.is_identity():
             return zero
@@ -1352,7 +1352,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                 Uj = G.I()
                 for j in range(1, G.n()):
                     Uj *= U
-                    if U_power  == Uj:
+                    if U_power == Uj:
                         #L = [one, ZZ(j)]
                         break
                     elif U_power == -Uj:

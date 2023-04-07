@@ -100,28 +100,29 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
 
             We define the Heisenberg group::
 
-                sage: L = lie_algebras.Heisenberg(QQ, 1)                                                                # optional - sage.combinat sage.modules
-                sage: G = L.lie_group('G'); G                                       # optional - sage.symbolic          # optional - sage.combinat sage.modules
+                sage: L = lie_algebras.Heisenberg(QQ, 1)                                # optional - sage.combinat sage.modules
+                sage: G = L.lie_group('G'); G                                           # optional - sage.combinat sage.modules sage.symbolic
                 Lie group G of Heisenberg algebra of rank 1 over Rational Field
 
             We test multiplying elements of the group::
 
-                sage: p, q, z = L.basis()                                           # optional - sage.symbolic          # optional - sage.combinat sage.modules
-                sage: g = G.exp(p); g                                               # optional - sage.symbolic          # optional - sage.combinat sage.modules
+                sage: p, q, z = L.basis()                                               # optional - sage.combinat sage.modules sage.symbolic
+                sage: g = G.exp(p); g                                                   # optional - sage.combinat sage.modules sage.symbolic
                 exp(p1)
-                sage: h = G.exp(q); h                                               # optional - sage.symbolic          # optional - sage.combinat sage.modules
+                sage: h = G.exp(q); h                                                   # optional - sage.combinat sage.modules sage.symbolic
                 exp(q1)
-                sage: g * h                                                         # optional - sage.symbolic          # optional - sage.combinat sage.modules
+                sage: g * h                                                             # optional - sage.combinat sage.modules sage.symbolic
                 exp(p1 + q1 + 1/2*z)
 
             We extend an element of the Lie algebra to a left-invariant
             vector field::
 
-                sage: X = G.left_invariant_extension(2*p + 3*q, name='X'); X        # optional - sage.symbolic          # optional - sage.combinat sage.modules
-                Vector field X on the Lie group G of Heisenberg algebra of rank 1 over Rational Field
-                sage: X.at(G.one()).display()                                       # optional - sage.symbolic          # optional - sage.combinat sage.modules
+                sage: X = G.left_invariant_extension(2*p + 3*q, name='X'); X            # optional - sage.combinat sage.modules sage.symbolic
+                Vector field X on the Lie group G of
+                 Heisenberg algebra of rank 1 over Rational Field
+                sage: X.at(G.one()).display()                                           # optional - sage.combinat sage.modules sage.symbolic
                 X = 2 ∂/∂x_0 + 3 ∂/∂x_1
-                sage: X.display()                                                   # optional - sage.symbolic          # optional - sage.combinat sage.modules
+                sage: X.display()                                                       # optional - sage.combinat sage.modules sage.symbolic
                 X = 2 ∂/∂x_0 + 3 ∂/∂x_1 + (3/2*x_0 - x_1) ∂/∂x_2
 
             .. SEEALSO::
@@ -137,11 +138,11 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
 
             EXAMPLES::
 
-                sage: L = LieAlgebra(QQ, {('X','Y'): {'Z': 1}}, nilpotent=True)                                         # optional - sage.combinat sage.modules
-                sage: L.step()                                                                                          # optional - sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, {('X','Y'): {'Z': 1}}, nilpotent=True)         # optional - sage.combinat sage.modules
+                sage: L.step()                                                          # optional - sage.combinat sage.modules
                 2
-                sage: sc = {('X','Y'): {'Z': 1}, ('X','Z'): {'W': 1}}                                                   # optional - sage.combinat sage.modules
-                sage: LieAlgebra(QQ, sc, nilpotent=True).step()                                                         # optional - sage.combinat sage.modules
+                sage: sc = {('X','Y'): {'Z': 1}, ('X','Z'): {'W': 1}}                   # optional - sage.combinat sage.modules
+                sage: LieAlgebra(QQ, sc, nilpotent=True).step()                         # optional - sage.combinat sage.modules
                 3
             """
             if not hasattr(self, '_step'):
@@ -154,8 +155,8 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
 
             EXAMPLES::
 
-                sage: L = LieAlgebra(QQ, {('x','y'): {'z': 1}}, nilpotent=True)                                         # optional - sage.combinat sage.modules
-                sage: L.is_nilpotent()                                                                                  # optional - sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, {('x','y'): {'z': 1}}, nilpotent=True)         # optional - sage.combinat sage.modules
+                sage: L.is_nilpotent()                                                  # optional - sage.combinat sage.modules
                 True
             """
             return True

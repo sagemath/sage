@@ -52,7 +52,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         sage: P.<X, Y, Z> = K[]
         sage: Conic(X^2 + Y^2 - Z^2)
         Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t
-        over Rational Field defined by X^2 + Y^2 - Z^2
+         over Rational Field defined by X^2 + Y^2 - Z^2
 
     TESTS::
 
@@ -107,7 +107,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             False
             sage: d = c.base_extend(QuadraticField(-1, 'i')); d                         # optional - sage.rings.number_field
             Projective Conic Curve over Number Field in i
-            with defining polynomial x^2 + 1 with i = 1*I defined by x^2 + y^2 + z^2
+             with defining polynomial x^2 + 1 with i = 1*I defined by x^2 + y^2 + z^2
             sage: d.rational_point(algorithm='rnfisnorm')                               # optional - sage.rings.number_field
             (i : 1 : 0)
         """
@@ -196,9 +196,9 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
             sage: P.<t> = GF(2)[]                                                       # optional - sage.rings.finite_rings
             sage: c = Conic([t, 1, t^2, 1, 1, 0]); c                                    # optional - sage.rings.finite_rings
-            Projective Conic Curve over Fraction Field of Univariate Polynomial
-            Ring in t over Finite Field of size 2 (using GF2X)
-            defined by t*x^2 + x*y + y^2 + (t^2)*x*z + y*z
+            Projective Conic Curve over Fraction Field of Univariate
+             Polynomial Ring in t over Finite Field of size 2 (using GF2X)
+             defined by t*x^2 + x*y + y^2 + (t^2)*x*z + y*z
             sage: c.is_smooth()                                                         # optional - sage.rings.finite_rings
             True
             sage: c.derivative_matrix()                                                 # optional - sage.rings.finite_rings
@@ -396,7 +396,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
             sage: C.<a,b,c> = Conic(GF(3), [1, 1, 1])                                   # optional - sage.rings.finite_rings
             sage: C                                                                     # optional - sage.rings.finite_rings
-            Projective Conic Curve over Finite Field of size 3 defined by a^2 + b^2 + c^2
+            Projective Conic Curve over
+             Finite Field of size 3 defined by a^2 + b^2 + c^2
 
         """
         return self.coordinate_ring().gens()
@@ -581,7 +582,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: P.<x,y,z> = GF(7)[]                                                   # optional - sage.rings.finite_rings
             sage: e = Conic((x+y+z)*(x-y+2*z)); e                                       # optional - sage.rings.finite_rings
             Projective Conic Curve over Finite Field of size 7
-            defined by x^2 - y^2 + 3*x*z + y*z + 2*z^2
+             defined by x^2 - y^2 + 3*x*z + y*z + 2*z^2
             sage: e.has_singular_point(point = True)                                    # optional - sage.rings.finite_rings
             (True, (2 : 4 : 1))
 
@@ -602,7 +603,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: P.<t> = GF(2)[]                                                       # optional - sage.rings.finite_rings
             sage: C = Conic(P, [t,t,1]); C                                              # optional - sage.rings.finite_rings
             Projective Conic Curve over Fraction Field of Univariate Polynomial Ring
-            in t over Finite Field of size 2 (using GF2X) defined by t*x^2 + t*y^2 + z^2
+             in t over Finite Field of size 2 (using GF2X) defined by t*x^2 + t*y^2 + z^2
             sage: C.has_singular_point(point = False)                                   # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -736,7 +737,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
             sage: c = Conic([1,1,0,1,0,1]); c
             Projective Conic Curve over Rational Field defined by x^2 + x*y + y^2 + z^2
-            sage: d,t = c.diagonal_matrix()
+            sage: d, t = c.diagonal_matrix()
             sage: c.is_diagonal()
             False
             sage: c.diagonalization()[0].is_diagonal()
@@ -869,7 +870,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
             sage: h = g*f; h                                                            # optional - sage.rings.finite_rings
             Scheme endomorphism of Projective Space of dimension 1
-            over Finite Field of size 2
+             over Finite Field of size 2
               Defn: Defined on coordinates by sending (x : y) to ...
             sage: h[0]/h[1]                                                             # optional - sage.rings.finite_rings
             x/y
@@ -878,7 +879,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: (x,y,z) = c.gens()                                                    # optional - sage.rings.finite_rings
             sage: x.parent()                                                            # optional - sage.rings.finite_rings
             Quotient of Multivariate Polynomial Ring in x, y, z
-            over Finite Field of size 2 by the ideal (x^2 + x*y + y^2 + x*z + y*z)
+             over Finite Field of size 2 by the ideal (x^2 + x*y + y^2 + x*z + y*z)
             sage: k = f*g                                                               # optional - sage.rings.finite_rings
             sage: k[0]*z-k[2]*x                                                         # optional - sage.rings.finite_rings
             0

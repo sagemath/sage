@@ -117,9 +117,9 @@ Point sets
   ::
 
         sage: R.<x> = ZZ[]
-        sage: S.<t> = R.quo(x^2 + 5)                                                    # optional - sage.rings.number_field
-        sage: P.<X,Y,Z> = ProjectiveSpace(2, S)                                         # optional - sage.rings.number_field
-        sage: P(S)                                                                      # optional - sage.rings.number_field
+        sage: S.<t> = R.quo(x^2 + 5)
+        sage: P.<X,Y,Z> = ProjectiveSpace(2, S)
+        sage: P(S)
         Set of rational points of Projective Space of dimension 2 over
         Univariate Quotient Polynomial Ring in t over Integer Ring with
         modulus x^2 + 5

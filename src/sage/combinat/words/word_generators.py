@@ -1497,7 +1497,7 @@ class WordGenerator():
 
         [BmBGL09]_
         """
-        from sage.combinat.words.all import WordMorphism
+        from sage.combinat.words.morphism import WordMorphism
         W = FiniteWords([0,1,2,3])
         bar = WordMorphism({0:0,1:3,3:1,2:2},codomain=W)
         if n==0:

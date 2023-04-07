@@ -65,6 +65,7 @@ from cpython.number cimport PyNumber_TrueDivide, PyNumber_Check
 import operator
 import copy
 import re
+from io import StringIO
 
 from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
 import sage.rings.rational
@@ -2643,7 +2644,8 @@ cdef class Polynomial(CommutativePolynomial):
         # want their coefficient printed with its O() term
         if self._is_gen and not isinstance(self._parent._base, pAdicGeneric):
             return name
-        s = " "
+        sbuf = StringIO()
+        sbuf.write(" ")
         m = self.degree() + 1
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         coeffs = self.list(copy=False)
@@ -2659,7 +2661,7 @@ cdef class Polynomial(CommutativePolynomial):
                 is_nonzero = True
             if is_nonzero:
                 if n != m-1:
-                    s += " + "
+                    sbuf.write(" + ")
                 x = y = repr(x)
                 if y.find("-") == 0:
                     y = y[1:]
@@ -2671,7 +2673,9 @@ cdef class Polynomial(CommutativePolynomial):
                     var = "*%s"%name
                 else:
                     var = ""
-                s += "%s%s"%(x,var)
+                sbuf.write(x)
+                sbuf.write(var)
+        s = sbuf.getvalue()
         s = s.replace(" + -", " - ")
         s = re.sub(r' 1(\.0+)?\*',' ', s)
         s = re.sub(r' -1(\.0+)?\*',' -', s)
@@ -9175,7 +9179,7 @@ cdef class Polynomial(CommutativePolynomial):
             l = lcm([n.denominator(), d.denominator()])
             n *= l
             d *= l
-            return  P(n), P(d)
+            return P(n), P(d)
 
         # n and d are unique if m.degree() > (n.degree() + d.degree())
         if n_deg is None:

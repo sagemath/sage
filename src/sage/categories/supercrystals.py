@@ -43,11 +43,13 @@ class SuperCrystals(Category_singleton):
                 sage: B = crystals.Letters(['A',[1,2]])
                 sage: C = crystals.Tableaux(['A',[1,2]], shape = [2,1])
                 sage: T = C.tensor(B); T
-                Full tensor product of the crystals [Crystal of BKK tableaux of shape [2, 1] of gl(2|3),
-                The crystal of letters for type ['A', [1, 2]]]
+                Full tensor product of the crystals
+                 [Crystal of BKK tableaux of shape [2, 1] of gl(2|3),
+                  The crystal of letters for type ['A', [1, 2]]]
                 sage: S = B.tensor(C); S
-                Full tensor product of the crystals [The crystal of letters for type ['A', [1, 2]],
-                Crystal of BKK tableaux of shape [2, 1] of gl(2|3)]
+                Full tensor product of the crystals
+                 [The crystal of letters for type ['A', [1, 2]],
+                  Crystal of BKK tableaux of shape [2, 1] of gl(2|3)]
                 sage: G = T.digraph()
                 sage: H = S.digraph()
                 sage: G.is_isomorphic(H, edge_labels= True)

@@ -132,12 +132,12 @@ cpdef inline bint have_same_parent(left, right):
     These have different types but the same parent::
 
         sage: a = RLF(2)
-        sage: b = exp(a)                                                        # optional - sage.symbolic
-        sage: type(a)                                                           # optional - sage.symbolic
+        sage: b = exp(a)                                                                # optional - sage.symbolic
+        sage: type(a)                                                                   # optional - sage.symbolic
         <... 'sage.rings.real_lazy.LazyWrapper'>
-        sage: type(b)                                                           # optional - sage.symbolic
+        sage: type(b)                                                                   # optional - sage.symbolic
         <... 'sage.rings.real_lazy.LazyNamedUnop'>
-        sage: have_same_parent(a, b)                                            # optional - sage.symbolic
+        sage: have_same_parent(a, b)                                                    # optional - sage.symbolic
         True
     """
     return HAVE_SAME_PARENT(classify_elements(left, right))

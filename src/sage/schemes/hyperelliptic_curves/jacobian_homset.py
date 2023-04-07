@@ -9,7 +9,7 @@ EXAMPLES::
     Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
     sage: C(QQ)
     Set of rational points of Hyperelliptic Curve over Rational Field
-    defined by y^2 = x^5 + x + 1
+     defined by y^2 = x^5 + x + 1
     sage: P = C([0,1,1])
     sage: J = C.jacobian(); J
     Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1

@@ -72,7 +72,7 @@ __import__("sage.all", globals(), locals(), ["*"])
 # Keep in sync with SAGE_ROOT/src/.relint.yml (namespace_pkg_all_import)
 
 default_package_regex = (r"sage("
-                         r"|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets)"
+                         r"|[.](arith|categories|combinat|crypto|databases|data_structures|dynamics|ext|game_theory|games|graphs|groups|interfaces|manifolds|matrix|matroids|misc|modules|monoids|numerical|probability|quadratic_forms|quivers|rings|sat|schemes|sets|stats|tensor)[a-z0-9_.]*|[.]libs"
                          r")[.]all")
 
 
@@ -438,7 +438,9 @@ if __name__ == "__main__":
     package_regex = None
     # Execute the main function based on the specified location and verbosity
     if not args.location:
-        args.location = [os.path.join(sage.env.SAGE_SRC, 'sage')]
+        from sage.env import SAGE_SRC
+
+        args.location = [os.path.join(SAGE_SRC, 'sage')]
     try:
         for location in args.location:
             if not (location.endswith('.py') or location.endswith('.pxi')):

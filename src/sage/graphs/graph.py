@@ -2678,7 +2678,6 @@ class Graph(GenericGraph):
 
         return self_complement.is_odd_hole_free(certificate=certificate)
 
-
     @doc_index("Graph properties")
     def is_edge_transitive(self):
         r"""
@@ -2896,7 +2895,6 @@ class Graph(GenericGraph):
             elif deg != 2:
                 return False
         return deg_one_counter == 2 and seen_counter == order
-
 
     @doc_index("Connectivity, orientations, trees")
     def degree_constrained_subgraph(self, bounds, solver=None, verbose=0,
@@ -6713,9 +6711,9 @@ class Graph(GenericGraph):
             sage: g.clique_number(algorithm="MILP")
             2
             sage: for i in range(10):                                            # optional - mcqd
-            ....:     g = graphs.RandomGNP(15,.5)                                # optional - mcqd
-            ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"): # optional - mcqd
-            ....:         print("This is dead wrong !")                          # optional - mcqd
+            ....:     g = graphs.RandomGNP(15,.5)
+            ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"):
+            ....:         print("This is dead wrong !")
         """
         self._scream_if_not_simple(allow_loops=False)
         if algorithm == "Cliquer":

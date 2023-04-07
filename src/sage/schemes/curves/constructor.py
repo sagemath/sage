@@ -50,9 +50,9 @@ from sage.schemes.generic.ambient_space import is_AmbientSpace
 from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
 from sage.schemes.projective.projective_space import is_ProjectiveSpace
 
-from sage.schemes.affine.all import AffineSpace
+from sage.schemes.affine.affine_space import AffineSpace
 
-from sage.schemes.projective.all import ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace
 
 
 from .projective_curve import (ProjectiveCurve,
@@ -170,8 +170,8 @@ def Curve(F, A=None):
 
         sage: X = C.intersection(D); X
         Closed subscheme of Projective Space of dimension 2 over Rational Field
-        defined by: x^3 + y^3 + z^3,
-                    x^4 + y^4 + z^4
+         defined by: x^3 + y^3 + z^3,
+                     x^4 + y^4 + z^4
 
     Note that the intersection has dimension 0.  ::
 

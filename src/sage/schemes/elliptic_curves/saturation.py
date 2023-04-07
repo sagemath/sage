@@ -123,7 +123,7 @@ class EllipticCurveSaturator(SageObject):
         self._field = K = E.base_field()
         if K.absolute_degree() == 1:
             from sage.rings.rational_field import QQ
-            from sage.rings.polynomial.all import polygen
+            from sage.rings.polynomial.polynomial_ring import polygen
             self._Kpol = polygen(QQ)
         else:
             self._Kpol = K.defining_polynomial()
@@ -201,7 +201,7 @@ class EllipticCurveSaturator(SageObject):
         self._reductions[q] = redmodq = dict()
         if q.divides(self._N) or q.divides(self._D):
             return
-        from sage.schemes.elliptic_curves.all import EllipticCurve
+        from sage.schemes.elliptic_curves.constructor import EllipticCurve
         for amodq in sorted(self._Kpol.roots(GF(q), multiplicities=False)):
             Eq = EllipticCurve([reduce_mod_q(ai, amodq) for ai in self._curve.ainvs()])
             nq = Eq.cardinality()
@@ -268,7 +268,7 @@ class EllipticCurveSaturator(SageObject):
 
         verbose = self._verbose
         if verbose:
-            print(" --starting full %s-saturation"  % p)
+            print(" --starting full %s-saturation" % p)
 
         n = len(Plist)  # number of points supplied & to be returned
         Plist = Plist + [T for T in self._torsion_gens if p.divides(T.order())]
@@ -627,8 +627,8 @@ def p_projections(Eq, Plist, p, debug=False):
         sage: G = EF.abelian_group()
         sage: G
         Additive abelian group isomorphic to Z/147 + Z/3
-        embedded in Abelian group of points on Elliptic Curve
-        defined by y^2 + y = x^3 + 402*x + 6 over Finite Field of size 409
+         embedded in Abelian group of points on Elliptic Curve
+          defined by y^2 + y = x^3 + 402*x + 6 over Finite Field of size 409
         sage: G.order().factor()
         3^2 * 7^2
 
@@ -658,7 +658,7 @@ def p_projections(Eq, Plist, p, debug=False):
 
     # project onto p-primary part
 
-    pts  = [m*pt for pt in Plist]
+    pts = [m*pt for pt in Plist]
     gens = [m*g.element() for g in G.gens()]
     gens = [g for g in gens if g]
     if debug:

@@ -147,7 +147,7 @@ class EllipticCurveFactory(UniqueFactory):
         sage: E = EllipticCurve(CC, [0,0,1,-1,0])
         sage: E
         Elliptic Curve defined by y^2 + 1.00000000000000*y = x^3 + (-1.00000000000000)*x
-        over Complex Field with 53 bits of precision
+         over Complex Field with 53 bits of precision
         sage: E.j_invariant()
         2988.97297297297
 
@@ -287,12 +287,12 @@ class EllipticCurveFactory(UniqueFactory):
         sage: t = F.gen()
         sage: E = EllipticCurve([t,0]); E
         Elliptic Curve defined by y^2 = x^3 + t*x
-        over Fraction Field of Univariate Polynomial Ring in t over Rational Field
+         over Fraction Field of Univariate Polynomial Ring in t over Rational Field
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
         sage: E.category()
-        Category of schemes over Fraction Field of Univariate Polynomial Ring in t
-        over Rational Field
+        Category of schemes over
+         Fraction Field of Univariate Polynomial Ring in t over Rational Field
 
     See :trac:`12517`::
 
@@ -656,7 +656,7 @@ def EllipticCurve_from_j(j, minimal_twist=True):
     `j-1728` the following example would take a long time without
     setting ``minimal_twist`` to False::
 
-       sage: E = EllipticCurve_from_j(2^256+1,minimal_twist=False)
+       sage: E = EllipticCurve_from_j(2^256+1, minimal_twist=False)
        sage: E.j_invariant() == 2^256+1
        True
     """
@@ -730,7 +730,7 @@ def coefficients_from_j(j, minimal_twist=True):
         for p in Set(n.prime_divisors()+m.prime_divisors()):
             e = min(a4.valuation(p)//2,a6.valuation(p)//3)
             if e>0:
-                p  = p**e
+                p = p**e
                 a4 /= p**2
                 a6 /= p**3
 
@@ -1057,7 +1057,9 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
                 over Number Field in a with defining polynomial x^2 + 3
                 with a = 1.732050807568878?*I
           Defn: Defined on coordinates by sending (x : y : z) to
-                (-16424/127575*x^2 - 231989/680400*x*y - 14371/64800*y^2 - 26689/81648*x*z - 10265/27216*y*z - 2053/163296*z^2 : 24496/315*x^2 + 119243/840*x*y + 4837/80*y^2 + 67259/504*x*z + 25507/168*y*z + 5135/1008*z^2 : 8653002877/2099914709760000*x^2 + 8653002877/699971569920000*x*y + 8653002877/933295426560000*y^2 + 8653002877/419982941952000*x*z + 8653002877/279988627968000*y*z + 8653002877/335986353561600*z^2)
+                (-16424/127575*x^2 - 231989/680400*x*y - 14371/64800*y^2 - 26689/81648*x*z - 10265/27216*y*z - 2053/163296*z^2
+                 : 24496/315*x^2 + 119243/840*x*y + 4837/80*y^2 + 67259/504*x*z + 25507/168*y*z + 5135/1008*z^2
+                 : 8653002877/2099914709760000*x^2 + 8653002877/699971569920000*x*y + 8653002877/933295426560000*y^2 + 8653002877/419982941952000*x*z + 8653002877/279988627968000*y*z + 8653002877/335986353561600*z^2)
 
     An example over a function field, using a non-flex::
 
@@ -1065,7 +1067,8 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         sage: R.<x,y,z> = K[]
         sage: cubic = x^3 + t*y^3 + (1+t)*z^3
         sage: EllipticCurve_from_cubic(cubic, [1,1,-1], morphism=False)
-        Elliptic Curve defined by y^2 + ((162*t^6+486*t^5+810*t^4+810*t^3+486*t^2+162*t)/(t^6+12*t^5-3*t^4-20*t^3-3*t^2+12*t+1))*x*y + ((314928*t^14+4094064*t^13+23462136*t^12+78102144*t^11+167561379*t^10+243026001*t^9+243026001*t^8+167561379*t^7+78102144*t^6+23462136*t^5+4094064*t^4+314928*t^3)/(t^14+40*t^13+577*t^12+3524*t^11+8075*t^10+5288*t^9-8661*t^8-17688*t^7-8661*t^6+5288*t^5+8075*t^4+3524*t^3+577*t^2+40*t+1))*y = x^3 + ((2187*t^12+13122*t^11-17496*t^10-207765*t^9-516132*t^8-673596*t^7-516132*t^6-207765*t^5-17496*t^4+13122*t^3+2187*t^2)/(t^12+24*t^11+138*t^10-112*t^9-477*t^8+72*t^7+708*t^6+72*t^5-477*t^4-112*t^3+138*t^2+24*t+1))*x^2 over Rational function field in t over Rational Field
+        Elliptic Curve defined by y^2 + ((162*t^6+486*t^5+810*t^4+810*t^3+486*t^2+162*t)/(t^6+12*t^5-3*t^4-20*t^3-3*t^2+12*t+1))*x*y + ((314928*t^14+4094064*t^13+23462136*t^12+78102144*t^11+167561379*t^10+243026001*t^9+243026001*t^8+167561379*t^7+78102144*t^6+23462136*t^5+4094064*t^4+314928*t^3)/(t^14+40*t^13+577*t^12+3524*t^11+8075*t^10+5288*t^9-8661*t^8-17688*t^7-8661*t^6+5288*t^5+8075*t^4+3524*t^3+577*t^2+40*t+1))*y = x^3 + ((2187*t^12+13122*t^11-17496*t^10-207765*t^9-516132*t^8-673596*t^7-516132*t^6-207765*t^5-17496*t^4+13122*t^3+2187*t^2)/(t^12+24*t^11+138*t^10-112*t^9-477*t^8+72*t^7+708*t^6+72*t^5-477*t^4-112*t^3+138*t^2+24*t+1))*x^2
+         over Rational function field in t over Rational Field
 
     TESTS:
 

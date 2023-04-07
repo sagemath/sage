@@ -72,7 +72,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
         sage: HyperellipticCurve_from_invariants([3840,414720,491028480,2437709561856],
         ....:                                    reduced=False)
         Hyperelliptic Curve over Rational Field defined by
-        y^2 = -46656*x^6 + 46656*x^5 - 19440*x^4 + 4320*x^3 - 540*x^2 + 4410*x - 1
+         y^2 = -46656*x^6 + 46656*x^5 - 19440*x^4 + 4320*x^3 - 540*x^2 + 4410*x - 1
         sage: HyperellipticCurve_from_invariants([21, 225/64, 22941/512, 1])
         Traceback (most recent call last):
         ...
@@ -249,11 +249,11 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
         sage: k = NumberField(x^2 - 41, 'a')                                            # optional - sage.rings.number_field
         sage: a = k.an_element()                                                        # optional - sage.rings.number_field
-        sage: Mestre_conic([1, 2+a, a, 4+a])                                            # optional - sage.rings.number_field
+        sage: Mestre_conic([1, 2 + a, a, 4 + a])                                        # optional - sage.rings.number_field
         Projective Conic Curve over Number Field in a with defining polynomial x^2 - 41
-        defined by (-801900000*a + 343845000)*u^2 + (855360000*a + 15795864000)*u*v
-        + (312292800000*a + 1284808579200)*v^2 + (624585600000*a + 2569617158400)*u*w
-        + (15799910400*a + 234573143040)*v*w + (2034199306240*a + 16429854656512)*w^2
+         defined by (-801900000*a + 343845000)*u^2 + (855360000*a + 15795864000)*u*v
+          + (312292800000*a + 1284808579200)*v^2 + (624585600000*a + 2569617158400)*u*w
+          + (15799910400*a + 234573143040)*v*w + (2034199306240*a + 16429854656512)*w^2
 
     And over finite fields::
 
@@ -261,7 +261,7 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
         Projective Conic Curve over Finite Field of size 7
         defined by -2*u*v - v^2 - 2*u*w + 2*v*w - 3*w^2
 
-    An example with xyz::
+    An example with ``xyz``::
 
         sage: Mestre_conic([5,6,7,8], xyz=True)
         (Projective Conic Curve over Rational Field

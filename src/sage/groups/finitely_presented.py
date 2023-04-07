@@ -178,11 +178,9 @@ class GroupMorphismWithGensImages(SetMorphism):
             sage: f = GroupMorphismWithGensImages(HS, lambda a: H.one())
             sage: f._repr_defn()
             'x0 |--> ()\nx1 |--> ()\nx2 |--> ()'
-
         """
-        D = self.domain()
-        return '\n'.join(['%s |--> %s'%(i, self(i)) for\
-                       i in D.gens()])
+        return '\n'.join(f'{i} |--> {self(i)}' for i in self.domain().gens())
+
 
 class FinitelyPresentedGroupElement(FreeGroupElement):
     """

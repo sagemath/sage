@@ -821,15 +821,15 @@ class BackslashOperator:
         """
         EXAMPLES::
 
-            sage: A = random_matrix(ZZ, 4)                                                          # optional - sage.modules
-            sage: while A.rank() != 4:                                                              # optional - sage.modules
+            sage: A = random_matrix(ZZ, 4)                                              # optional - sage.modules
+            sage: while A.rank() != 4:                                                  # optional - sage.modules
             ....:     A = random_matrix(ZZ, 4)
-            sage: B = random_matrix(ZZ, 4)                                                          # optional - sage.modules
-            sage: temp = A * BackslashOperator()                                                    # optional - sage.modules
-            sage: temp.left is A                                                                    # optional - sage.modules
+            sage: B = random_matrix(ZZ, 4)                                              # optional - sage.modules
+            sage: temp = A * BackslashOperator()                                        # optional - sage.modules
+            sage: temp.left is A                                                        # optional - sage.modules
             True
-            sage: X = temp * B                                                                      # optional - sage.modules
-            sage: A * X == B                                                                        # optional - sage.modules
+            sage: X = temp * B                                                          # optional - sage.modules
+            sage: A * X == B                                                            # optional - sage.modules
             True
         """
         self.left = left
@@ -839,16 +839,16 @@ class BackslashOperator:
         r"""
         EXAMPLES::
 
-            sage: A = matrix(RDF, 5, 5, 2)                                                          # optional - sage.modules
-            sage: b = vector(RDF, 5, range(5))                                                      # optional - sage.modules
-            sage: v = A \ b                                                                         # optional - sage.modules
-            sage: v.zero_at(1e-19)  # On at least one platform, we get a "negative zero"            # optional - sage.modules
+            sage: A = matrix(RDF, 5, 5, 2)                                              # optional - sage.modules
+            sage: b = vector(RDF, 5, range(5))                                          # optional - sage.modules
+            sage: v = A \ b                                                             # optional - sage.modules
+            sage: v.zero_at(1e-19)  # On at least one platform, we get a "negative zero"   # optional - sage.modules
             (0.0, 0.5, 1.0, 1.5, 2.0)
-            sage: v = A._backslash_(b)                                                              # optional - sage.modules
-            sage: v.zero_at(1e-19)                                                                  # optional - sage.modules
+            sage: v = A._backslash_(b)                                                  # optional - sage.modules
+            sage: v.zero_at(1e-19)                                                      # optional - sage.modules
             (0.0, 0.5, 1.0, 1.5, 2.0)
-            sage: v = A * BackslashOperator() * b                                                   # optional - sage.modules
-            sage: v.zero_at(1e-19)                                                                  # optional - sage.modules
+            sage: v = A * BackslashOperator() * b                                       # optional - sage.modules
+            sage: v.zero_at(1e-19)                                                      # optional - sage.modules
             (0.0, 0.5, 1.0, 1.5, 2.0)
         """
         return self.left._backslash_(right)
@@ -893,10 +893,10 @@ def is_iterator(it) -> bool:
         sage: list(x)
         [4, 3, 2, 1]
 
-        sage: P = Partitions(3)                                                                     # optional - sage.combinat
-        sage: is_iterator(P)                                                                        # optional - sage.combinat
+        sage: P = Partitions(3)                                                         # optional - sage.combinat
+        sage: is_iterator(P)                                                            # optional - sage.combinat
         False
-        sage: is_iterator(iter(P))                                                                  # optional - sage.combinat
+        sage: is_iterator(iter(P))                                                      # optional - sage.combinat
         True
     """
     # see trac #7398 for a discussion

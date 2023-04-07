@@ -1818,8 +1818,8 @@ class ToricVariety_field(AmbientSpace):
             sage: X.defining_polynomials()
             (x*s + y*t, x^3 + y^3)
             sage: X.defining_ideal()
-            Ideal (x*s + y*t, x^3 + y^3) of Multivariate Polynomial Ring in x, y, s, t
-            over Rational Field
+            Ideal (x*s + y*t, x^3 + y^3) of
+             Multivariate Polynomial Ring in x, y, s, t over Rational Field
             sage: X.base_ring()
             Rational Field
             sage: X.base_scheme()
@@ -1917,7 +1917,7 @@ class ToricVariety_field(AmbientSpace):
             Rational cohomology ring of a 2-d CPR-Fano toric variety covered by 6 affine patches
             sage: X.cohomology_ring().defining_ideal()
             Ideal (-u - y + z + w, x - y - v + w, x*y, x*v, x*z, u*v, u*z, u*w, y*z, y*w, v*w)
-            of Multivariate Polynomial Ring in x, u, y, v, z, w over Rational Field
+             of Multivariate Polynomial Ring in x, u, y, v, z, w over Rational Field
             sage: X.cohomology_ring().defining_ideal().ring()
             Multivariate Polynomial Ring in x, u, y, v, z, w over Rational Field
             sage: X.variable_names()

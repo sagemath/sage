@@ -101,7 +101,7 @@ def getattr_debug(obj, name, default=_no_default):
           found '__doc__' in dict of <class 'list'>
           got ... 'str'>)
           returning ... 'str'>)
-        sage: _ = getattr_debug(gp(1), "log")                                                                           # optional - sage.libs.pari
+        sage: _ = getattr_debug(gp(1), "log")                                           # optional - sage.libs.pari
         getattr_debug(obj=1, name='log'):
           type(obj) = <class 'sage.interfaces.gp.GpElement'>
           object has __dict__ slot (<class 'dict'>)

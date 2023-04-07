@@ -663,13 +663,13 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='ppl')
             sage: p.base_ring()
             Rational Field
-            sage: from sage.rings.qqbar import AA                                      # optional - sage.rings.number_field
-            sage: p = MixedIntegerLinearProgram(solver='InteractiveLP', base_ring=AA)  # optional - sage.rings.number_field
-            sage: p.base_ring()                                                        # optional - sage.rings.number_field
+            sage: from sage.rings.qqbar import AA                                       # optional - sage.rings.number_field
+            sage: p = MixedIntegerLinearProgram(solver='InteractiveLP', base_ring=AA)   # optional - sage.rings.number_field
+            sage: p.base_ring()                                                         # optional - sage.rings.number_field
             Algebraic Real Field
-            sage: d = polytopes.dodecahedron()                                         # optional - sage.rings.number_field
-            sage: p = MixedIntegerLinearProgram(base_ring=d.base_ring())               # optional - sage.rings.number_field
-            sage: p.base_ring()                                                        # optional - sage.rings.number_field
+            sage: d = polytopes.dodecahedron()                                          # optional - sage.rings.number_field
+            sage: p = MixedIntegerLinearProgram(base_ring=d.base_ring())                # optional - sage.rings.number_field
+            sage: p.base_ring()                                                         # optional - sage.rings.number_field
             Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
         """
         return self._backend.base_ring()
@@ -2134,11 +2134,10 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p.remove_constraint(2)
             sage: p.solve()
             6.0
-
         """
         from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
         from sage.numerical.linear_tensor import is_LinearTensor
-        from sage.numerical.linear_tensor_constraints import  is_LinearTensorConstraint
+        from sage.numerical.linear_tensor_constraints import is_LinearTensorConstraint
         if is_LinearFunction(linear_function) or is_LinearTensor(linear_function):
             # Find the parent for the coefficients
             if is_LinearFunction(linear_function):
@@ -2852,7 +2851,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
               The command ::
 
-                  sage: p = MixedIntegerLinearProgram(solver="CPLEX") # optional - CPLEX
+                  sage: p = MixedIntegerLinearProgram(solver="CPLEX")   # optional - CPLEX
                   sage: p.solver_parameter("CPX_PARAM_TILIM", 60)       # optional - CPLEX
 
               works as intended.

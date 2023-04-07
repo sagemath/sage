@@ -39,8 +39,8 @@ class GradedAlgebras(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: m = SymmetricFunctions(QQ).m()                                                                    # optional - sage.combinat
-                sage: m.graded_algebra() is m                                                                           # optional - sage.combinat
+                sage: m = SymmetricFunctions(QQ).m()                                    # optional - sage.combinat
+                sage: m.graded_algebra() is m                                           # optional - sage.combinat
                 True
             """
             return self

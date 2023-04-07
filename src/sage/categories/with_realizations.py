@@ -69,45 +69,46 @@ def WithRealizations(self):
     represented. Consider for example an algebra `A` which admits
     several natural bases::
 
-        sage: A = Sets().WithRealizations().example(); A                                                                # optional - sage.combinat sage.modules
+        sage: A = Sets().WithRealizations().example(); A                                # optional - sage.combinat sage.modules
         The subset algebra of {1, 2, 3} over Rational Field
 
     For each such basis `B` one implements a parent `P_B` which
     realizes `A` with its elements represented by expanding them on
     the basis `B`::
 
-        sage: A.F()                                                                                                     # optional - sage.combinat sage.modules
+        sage: A.F()                                                                     # optional - sage.combinat sage.modules
         The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
-        sage: A.Out()                                                                                                   # optional - sage.combinat sage.modules
+        sage: A.Out()                                                                   # optional - sage.combinat sage.modules
         The subset algebra of {1, 2, 3} over Rational Field in the Out basis
-        sage: A.In()                                                                                                    # optional - sage.combinat sage.modules
+        sage: A.In()                                                                    # optional - sage.combinat sage.modules
         The subset algebra of {1, 2, 3} over Rational Field in the In basis
 
-        sage: A.an_element()                                                                                            # optional - sage.combinat sage.modules
+        sage: A.an_element()                                                            # optional - sage.combinat sage.modules
         F[{}] + 2*F[{1}] + 3*F[{2}] + F[{1, 2}]
 
     If `B` and `B'` are two bases, then the change of basis from `B`
     to `B'` is implemented by a canonical coercion between `P_B` and
     `P_{B'}`::
 
-        sage: F = A.F(); In = A.In(); Out = A.Out()                                                                     # optional - sage.combinat sage.modules
-        sage: i = In.an_element(); i                                                                                    # optional - sage.combinat sage.modules
+        sage: F = A.F(); In = A.In(); Out = A.Out()                                     # optional - sage.combinat sage.modules
+        sage: i = In.an_element(); i                                                    # optional - sage.combinat sage.modules
         In[{}] + 2*In[{1}] + 3*In[{2}] + In[{1, 2}]
-        sage: F(i)                                                                                                      # optional - sage.combinat sage.modules
+        sage: F(i)                                                                      # optional - sage.combinat sage.modules
         7*F[{}] + 3*F[{1}] + 4*F[{2}] + F[{1, 2}]
-        sage: F.coerce_map_from(Out)                                                                                    # optional - sage.combinat sage.modules
+        sage: F.coerce_map_from(Out)                                                    # optional - sage.combinat sage.modules
         Generic morphism:
           From: The subset algebra of {1, 2, 3} over Rational Field in the Out basis
           To:   The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
 
     allowing for mixed arithmetic::
 
-        sage: (1 + Out.from_set(1)) * In.from_set(2,3)                                                                  # optional - sage.combinat sage.modules
-        Out[{}] + 2*Out[{1}] + 2*Out[{2}] + 2*Out[{3}] + 2*Out[{1, 2}] + 2*Out[{1, 3}] + 4*Out[{2, 3}] + 4*Out[{1, 2, 3}]
+        sage: (1 + Out.from_set(1)) * In.from_set(2,3)                                  # optional - sage.combinat sage.modules
+        Out[{}] + 2*Out[{1}] + 2*Out[{2}] + 2*Out[{3}] + 2*Out[{1, 2}]
+        + 2*Out[{1, 3}] + 4*Out[{2, 3}] + 4*Out[{1, 2, 3}]
 
     In our example, there are three realizations::
 
-        sage: A.realizations()                                                                                          # optional - sage.combinat sage.modules
+        sage: A.realizations()                                                          # optional - sage.combinat sage.modules
         [The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis,
          The subset algebra of {1, 2, 3} over Rational Field in the In basis,
          The subset algebra of {1, 2, 3} over Rational Field in the Out basis]
@@ -115,10 +116,13 @@ def WithRealizations(self):
     Instead of manually defining the shorthands ``F``, ``In``, and
     ``Out``, as above one can just do::
 
-        sage: A.inject_shorthands()                                                                                     # optional - sage.combinat sage.modules
-        Defining F as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
-        Defining In as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the In basis
-        Defining Out as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Out basis
+        sage: A.inject_shorthands()                                                     # optional - sage.combinat sage.modules
+        Defining F as shorthand for
+         The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
+        Defining In as shorthand for
+         The subset algebra of {1, 2, 3} over Rational Field in the In basis
+        Defining Out as shorthand for
+         The subset algebra of {1, 2, 3} over Rational Field in the Out basis
 
     .. RUBRIC:: Rationale
 
@@ -138,26 +142,28 @@ def WithRealizations(self):
     We now illustrate this second point by defining the polynomial
     ring with coefficients in `A`::
 
-        sage: P = A['x']; P                                                                                             # optional - sage.combinat sage.modules
-        Univariate Polynomial Ring in x over The subset algebra of {1, 2, 3} over Rational Field
-        sage: x = P.gen()                                                                                               # optional - sage.combinat sage.modules
+        sage: P = A['x']; P                                                             # optional - sage.combinat sage.modules
+        Univariate Polynomial Ring in x over
+         The subset algebra of {1, 2, 3} over Rational Field
+        sage: x = P.gen()                                                               # optional - sage.combinat sage.modules
 
     In the following examples, the coefficients turn out to be all
     represented in the `F` basis::
 
-        sage: P.one()                                                                                                   # optional - sage.combinat sage.modules
+        sage: P.one()                                                                   # optional - sage.combinat sage.modules
         F[{}]
-        sage: (P.an_element() + 1)^2                                                                                    # optional - sage.combinat sage.modules
+        sage: (P.an_element() + 1)^2                                                    # optional - sage.combinat sage.modules
         F[{}]*x^2 + 2*F[{}]*x + F[{}]
 
     However we can create a polynomial with mixed coefficients, and
     compute with it::
 
-        sage: p = P([1, In[{1}], Out[{2}] ]); p                                                                         # optional - sage.combinat sage.modules
+        sage: p = P([1, In[{1}], Out[{2}] ]); p                                         # optional - sage.combinat sage.modules
         Out[{2}]*x^2 + In[{1}]*x + F[{}]
-        sage: p^2                                                                                                       # optional - sage.combinat sage.modules
+        sage: p^2                                                                       # optional - sage.combinat sage.modules
         Out[{2}]*x^4
-        + (-8*In[{}] + 4*In[{1}] + 8*In[{2}] + 4*In[{3}] - 4*In[{1, 2}] - 2*In[{1, 3}] - 4*In[{2, 3}] + 2*In[{1, 2, 3}])*x^3
+        + (-8*In[{}] + 4*In[{1}] + 8*In[{2}] + 4*In[{3}]
+           - 4*In[{1, 2}] - 2*In[{1, 3}] - 4*In[{2, 3}] + 2*In[{1, 2, 3}])*x^3
         + (F[{}] + 3*F[{1}] + 2*F[{2}] - 2*F[{1, 2}] - 2*F[{2, 3}] + 2*F[{1, 2, 3}])*x^2
         + (2*F[{}] + 2*F[{1}])*x
         + F[{}]
@@ -169,16 +175,21 @@ def WithRealizations(self):
 
     One can easily coerce all coefficient to a given basis with::
 
-        sage: p.map_coefficients(In)                                                                                    # optional - sage.combinat sage.modules
-        (-4*In[{}] + 2*In[{1}] + 4*In[{2}] + 2*In[{3}] - 2*In[{1, 2}] - In[{1, 3}] - 2*In[{2, 3}] + In[{1, 2, 3}])*x^2 + In[{1}]*x + In[{}]
+        sage: p.map_coefficients(In)                                                    # optional - sage.combinat sage.modules
+        (-4*In[{}] + 2*In[{1}] + 4*In[{2}] + 2*In[{3}]
+         - 2*In[{1, 2}] - In[{1, 3}] - 2*In[{2, 3}] + In[{1, 2, 3}])*x^2
+        + In[{1}]*x + In[{}]
 
     Alas, the natural notation for constructing such polynomials does
     not yet work::
 
-        sage: In[{1}] * x                                                                                               # optional - sage.combinat sage.modules
+        sage: In[{1}] * x                                                               # optional - sage.combinat sage.modules
         Traceback (most recent call last):
         ...
-        TypeError: unsupported operand parent(s) for *: 'The subset algebra of {1, 2, 3} over Rational Field in the In basis' and 'Univariate Polynomial Ring in x over The subset algebra of {1, 2, 3} over Rational Field'
+        TypeError: unsupported operand parent(s) for *:
+        'The subset algebra of {1, 2, 3} over Rational Field in the In basis'
+        and 'Univariate Polynomial Ring in x over
+        The subset algebra of {1, 2, 3} over Rational Field'
 
     .. RUBRIC:: The category of realizations of `A`
 
@@ -186,17 +197,18 @@ def WithRealizations(self):
     is a category (whose class inherits from
     :class:`~sage.categories.realizations.Category_realization_of_parent`)::
 
-        sage: A.Realizations()                                                                                          # optional - sage.combinat sage.modules
-        Category of realizations of The subset algebra of {1, 2, 3} over Rational Field
+        sage: A.Realizations()                                                          # optional - sage.combinat sage.modules
+        Category of realizations of
+         The subset algebra of {1, 2, 3} over Rational Field
 
     The various parent realizing `A` belong to this category::
 
-        sage: A.F() in A.Realizations()                                                                                 # optional - sage.combinat sage.modules
+        sage: A.F() in A.Realizations()                                                 # optional - sage.combinat sage.modules
         True
 
     `A` itself is in the category of algebras with realizations::
 
-        sage: A in Algebras(QQ).WithRealizations()                                                                      # optional - sage.combinat sage.modules
+        sage: A in Algebras(QQ).WithRealizations()                                      # optional - sage.combinat sage.modules
         True
 
     The (mostly technical) ``WithRealizations`` categories are the
@@ -216,12 +228,12 @@ def WithRealizations(self):
     On our example, this simply means that `A` is automatically in the
     category of rings with realizations (covariance)::
 
-        sage: A in Rings().WithRealizations()                                                                           # optional - sage.combinat sage.modules
+        sage: A in Rings().WithRealizations()                                           # optional - sage.combinat sage.modules
         True
 
     and in the category of algebras (regressiveness)::
 
-        sage: A in Algebras(QQ)                                                                                         # optional - sage.combinat sage.modules
+        sage: A in Algebras(QQ)                                                         # optional - sage.combinat sage.modules
         True
 
     .. NOTE::

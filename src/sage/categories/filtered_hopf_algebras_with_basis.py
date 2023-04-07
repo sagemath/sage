@@ -88,14 +88,14 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
 
                 TESTS::
 
-                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()                                     # optional - sage.combinat
-                    sage: H.monomial(0).antipode()  # indirect doctest                                                  # optional - sage.combinat
+                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()     # optional - sage.combinat
+                    sage: H.monomial(0).antipode()  # indirect doctest                  # optional - sage.combinat
                     P0
-                    sage: H.monomial(1).antipode()  # indirect doctest                                                  # optional - sage.combinat
+                    sage: H.monomial(1).antipode()  # indirect doctest                  # optional - sage.combinat
                     -P1
-                    sage: H.monomial(2).antipode()  # indirect doctest                                                  # optional - sage.combinat
+                    sage: H.monomial(2).antipode()  # indirect doctest                  # optional - sage.combinat
                     P2
-                    sage: H.monomial(3).antipode()  # indirect doctest                                                  # optional - sage.combinat
+                    sage: H.monomial(3).antipode()  # indirect doctest                  # optional - sage.combinat
                     -P3
                 """
                 if self.monomial(index) == self.one():
@@ -116,15 +116,15 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
 
                 TESTS::
 
-                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()                                     # optional - sage.combinat
-                    sage: H.antipode(H.monomial(14))                                                                    # optional - sage.combinat
+                    sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()     # optional - sage.combinat
+                    sage: H.antipode(H.monomial(14))                                    # optional - sage.combinat
                     P14
 
-                    sage: H.monomial(0).antipode()                                                                      # optional - sage.combinat
+                    sage: H.monomial(0).antipode()                                      # optional - sage.combinat
                     P0
-                    sage: H.monomial(2).antipode()                                                                      # optional - sage.combinat
+                    sage: H.monomial(2).antipode()                                      # optional - sage.combinat
                     P2
-                    sage: (2*H.monomial(1) + 3*H.monomial(4)).antipode()                                                # optional - sage.combinat
+                    sage: (2*H.monomial(1) + 3*H.monomial(4)).antipode()                # optional - sage.combinat
                     -2*P1 + 3*P4
                 """
                 return self.linear_combination(

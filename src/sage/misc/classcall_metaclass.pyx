@@ -79,7 +79,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
     TESTS::
 
-        sage: PerfectMatchings(2).list()                                        # optional - sage.combinat
+        sage: PerfectMatchings(2).list()                                                # optional - sage.combinat
         [[(1, 2)]]
 
     .. NOTE::
@@ -271,12 +271,12 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         The benefit, compared with using a wrapper function, is that the
         user interface has a single handle for the class::
 
-            sage: x = Partition([3,2,2])                                        # optional - sage.combinat
-            sage: isinstance(x, Partition)          # todo: not implemented     # optional - sage.combinat
+            sage: x = Partition([3,2,2])                                                # optional - sage.combinat
+            sage: isinstance(x, Partition)          # todo: not implemented             # optional - sage.combinat
 
         instead of::
 
-            sage: isinstance(x, sage.combinat.partition.Partition)              # optional - sage.combinat
+            sage: isinstance(x, sage.combinat.partition.Partition)                      # optional - sage.combinat
             True
 
         Another difference is that ``__classcall__`` is inherited by

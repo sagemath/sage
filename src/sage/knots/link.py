@@ -3613,7 +3613,6 @@ class Link(SageObject):
             ims += sum(line(a[0], **kwargs) for a in im)
         return image
 
-
     def _markov_move_cmp(self, braid):
         r"""
         Return whether ``self`` can be transformed to the closure of ``braid``
@@ -4084,7 +4083,6 @@ class Link(SageObject):
 
             raise NotImplementedError('this link cannot be uniquely determined%s' %non_unique_hint)
 
-
         self_m = self.mirror_image()
         ls, proved_s = self._knotinfo_matching_list()
         lm, proved_m = self_m._knotinfo_matching_list()
@@ -4130,7 +4128,6 @@ class Link(SageObject):
             return l
 
         return answer_list(l)
-
 
     def is_isotopic(self, other):
         r"""
