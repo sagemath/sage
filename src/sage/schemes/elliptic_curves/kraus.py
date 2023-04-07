@@ -52,7 +52,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.schemes.elliptic_curves.all import EllipticCurve
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
 
 def c4c6_nonsingular(c4, c6):

@@ -1900,7 +1900,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: L.classical().highest_root()
                 2*alpha[1] + 2*alpha[2] + alpha[3]
             """
-            cartan_type  = self.cartan_type()
+            cartan_type = self.cartan_type()
             special_node = cartan_type.special_node()
             a = self.cartan_type().col_annihilator()
             classical = self.classical()

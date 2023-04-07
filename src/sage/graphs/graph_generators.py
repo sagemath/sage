@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Common graphs
 
@@ -682,7 +681,7 @@ class GraphGenerators():
 
         sage: L = list(graphs(5,augment='vertices',loops=True))               # long time
         sage: for i in [0..5]:  # long time
-        ....:     print((i, len([g for g in L if g.order() == i]))) # long time
+        ....:     print((i, len([g for g in L if g.order() == i])))
         (0, 1)
         (1, 2)
         (2, 6)
@@ -966,7 +965,7 @@ class GraphGenerators():
             ...
             ValueError: wrong format of parameter option
             sage: list(graphs.nauty_geng("-c3", debug=True))
-            ['>E Usage: ...geng [-cCmtfbd#D#] [-uygsnh] [-lvq] ...
+            ['>E Usage: ...geng ...\n']
             sage: list(graphs.nauty_geng("-c 3", debug=True))
             ['>A ...geng -cd1D2 n=3 e=2-3\n', Graph on 3 vertices, Graph on 3 vertices]
         """
@@ -1752,10 +1751,10 @@ class GraphGenerators():
         An overview of the number of quadrangulations on up to 12 vertices. This
         agrees with :oeis:`A113201`::
 
-            sage: for i in range(4,13):                        # optional plantri
-            ....:     cmd = '-qm2c2 {}'.format(i)              # optional plantri
-            ....:     L =  len(list(graphs.plantri_gen(cmd)))  # optional plantri
-            ....:     print("{:2d}   {:3d}".format(i, L))      # optional plantri
+            sage: for i in range(4, 13):                        # optional plantri
+            ....:     cmd = '-qm2c2 {}'.format(i)
+            ....:     L = len(list(graphs.plantri_gen(cmd)))
+            ....:     print("{:2d}   {:3d}".format(i, L))
              4     1
              5     1
              6     2
@@ -2115,8 +2114,8 @@ class GraphGenerators():
         agrees with :oeis:`A081621`::
 
             sage: for i in range(12, 23):                                             # optional plantri
-            ....:     L = len(list(graphs.triangulations(i, minimum_connectivity=5))) # optional plantri
-            ....:     print("{}   {:3d}".format(i,L))                                 # optional plantri
+            ....:     L = len(list(graphs.triangulations(i, minimum_connectivity=5)))
+            ....:     print("{}   {:3d}".format(i,L))
             12     1
             13     0
             14     1
@@ -2273,8 +2272,8 @@ class GraphGenerators():
         agrees with :oeis:`A113201`::
 
             sage: for i in range(4,13):                          # optional plantri
-            ....:     L =  len(list(graphs.quadrangulations(i))) # optional plantri
-            ....:     print("{:2d}   {:3d}".format(i,L))         # optional plantri
+            ....:     L =  len(list(graphs.quadrangulations(i)))
+            ....:     print("{:2d}   {:3d}".format(i,L))
              4     1
              5     1
              6     2

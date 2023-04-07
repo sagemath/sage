@@ -23,8 +23,15 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from sage.rings.integer import Integer
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sage.categories.morphism import Morphism
+from sage.rings.integer import Integer
+
+if TYPE_CHECKING:
+    from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
 
 class FiniteRankFreeModuleMorphism(Morphism):
@@ -681,7 +688,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             resu._matrices[bases] = scalar * mat
         return resu
 
-
     #
     #  Other module methods
     #
@@ -764,7 +770,9 @@ class FiniteRankFreeModuleMorphism(Morphism):
     # Map methods
     #
 
-    def _call_(self, element):
+    def _call_(
+        self, element: FiniteRankFreeModuleElement
+    ) -> FiniteRankFreeModuleElement:
         r"""
         Action of the homomorphism ``self`` on some free module element
 

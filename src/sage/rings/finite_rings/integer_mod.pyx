@@ -779,14 +779,14 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             na = a_red.multiplicative_order()
             nb = b_red.multiplicative_order()
             if not na.divides(nb):  # cannot be a power
-                raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}" \
+                raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}"
                               + (f" (no solution modulo {q})" if q != self.modulus() else ""))
 
             if p == 2 and e >= 3:   # (ZZ/2^e)* is not cyclic; must not give unsolvable DLPs to Pari
                 try:
                     v = discrete_log(a_red, b_red, nb)
                 except ValueError:
-                    raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}" \
+                    raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}"
                                   + (f" (no solution modulo {q})" if q != self.modulus() else ""))
             else:
                 try:
@@ -1523,7 +1523,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     return [K(a.lift()*p**(pval // n) + p**(k - (pval - pval//n)) * b) for a in mod(upart, p**(k-pval)).nth_root(n, all=True, algorithm=algorithm) for b in range(p**(pval - pval//n))]
                 else:
                     return K(p**(pval // n) * mod(upart, p**(k-pval)).nth_root(n, algorithm=algorithm).lift())
-            from sage.rings.padics.all import ZpFM
+            from sage.rings.padics.factory import ZpFM
             R = ZpFM(p,k)
             self_orig = self
             if p == 2:

@@ -46,6 +46,7 @@ from .generic_graph import GenericGraph
 from .graph import Graph
 from sage.rings.integer import Integer
 from sage.misc.decorators import rename_keyword
+from sage.misc.cachefunc import cached_method
 
 
 class BipartiteGraph(Graph):
@@ -94,6 +95,11 @@ class BipartiteGraph(Graph):
 
     - ``weighted`` -- boolean (default: ``None``); whether graph thinks of
       itself as weighted or not. See ``self.weighted()``
+
+    - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
+      labels during hashing. This parameter defaults to ``True`` if the graph is
+      weighted. This parameter is ignored if the graph is mutable.
+      Beware that trying to hash unhashable labels will raise an error.
 
     .. NOTE::
 
@@ -302,10 +308,10 @@ class BipartiteGraph(Graph):
 
     #. From a NetworkX bipartite graph::
 
-        sage: import networkx
-        sage: G = graphs.OctahedralGraph()
-        sage: N = networkx.make_clique_bipartite(G.networkx_graph())
-        sage: B = BipartiteGraph(N)
+        sage: import networkx                                                                       # optional - networkx
+        sage: G = graphs.OctahedralGraph()                                                          # optional - networkx
+        sage: N = networkx.make_clique_bipartite(G.networkx_graph())                                # optional - networkx
+        sage: B = BipartiteGraph(N)                                                                 # optional - networkx
 
     TESTS:
 
@@ -346,7 +352,7 @@ class BipartiteGraph(Graph):
 
     """
 
-    def __init__(self, data=None, partition=None, check=True, *args, **kwds):
+    def __init__(self, data=None, partition=None, check=True, hash_labels=None, *args, **kwds):
         """
         Create a bipartite graph.
 
@@ -396,6 +402,7 @@ class BipartiteGraph(Graph):
             Graph.__init__(self, **kwds)
             self.left = set()
             self.right = set()
+            self._hash_labels = hash_labels
             return
 
         # need to turn off partition checking for Graph.__init__() adding
@@ -543,7 +550,56 @@ class BipartiteGraph(Graph):
             if alist_file:
                 self.load_afile(data)
 
+        if hash_labels is None and hasattr(data, '_hash_labels'):
+            hash_labels = data._hash_labels
+        self._hash_labels = hash_labels
+
         return
+
+    @cached_method
+    def __hash__(self):
+        """
+        Compute a hash for ``self``, if ``self`` is immutable.
+
+        EXAMPLES::
+
+            sage: A = BipartiteGraph([(1, 2, 1)], immutable=True)
+            sage: B = BipartiteGraph([(1, 2, 33)], immutable=True)
+            sage: A.__hash__() == B.__hash__()
+            True
+            sage: A = BipartiteGraph([(1, 2, 1)], immutable=True, hash_labels=True)
+            sage: B = BipartiteGraph([(1, 2, 33)], immutable=True, hash_labels=True)
+            sage: A.__hash__() == B.__hash__()
+            False
+            sage: A = BipartiteGraph([(1, 2, 1)], immutable=True, weighted=True)
+            sage: B = BipartiteGraph([(1, 2, 33)], immutable=True, weighted=True)
+            sage: A.__hash__() == B.__hash__()
+            False
+
+        TESTS::
+
+            sage: A = BipartiteGraph([(1, 2, 1)], immutable=False)
+            sage: A.__hash__()
+            Traceback (most recent call last):
+            ...
+            TypeError: This graph is mutable, and thus not hashable. Create an immutable copy by `g.copy(immutable=True)`
+            sage: B = BipartiteGraph([(1, 2, {'length': 3})], immutable=True, hash_labels=True)
+            sage: B.__hash__()
+            Traceback (most recent call last):
+            ...
+            TypeError: unhashable type: 'dict'
+        """
+        if self.is_immutable():
+            # Determine whether to hash edge labels
+            use_labels = self._use_labels_for_hash()
+            edge_items = self.edge_iterator(labels=use_labels)
+            if self.allows_multiple_edges():
+                from collections import Counter
+                edge_items = Counter(edge_items).items()
+            return hash((frozenset(self.left), frozenset(self.right), frozenset(edge_items)))
+
+        raise TypeError("This graph is mutable, and thus not hashable. "
+                        "Create an immutable copy by `g.copy(immutable=True)`")
 
     def _upgrade_from_graph(self):
         """

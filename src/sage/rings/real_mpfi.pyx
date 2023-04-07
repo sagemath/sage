@@ -1284,7 +1284,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         return (__create__RealIntervalFieldElement_version1, (self._parent, self.upper(), self.lower()))
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Deallocate ``self``.
 

@@ -188,7 +188,6 @@ from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
 from sage.misc.cachefunc import cached_method
 
 
-
 @richcmp_method
 class Factorization(SageObject):
     """
@@ -963,7 +962,6 @@ class Factorization(SageObject):
             6
         """
         return self.value() + left
-
 
     def __rsub__(self, left):
         """

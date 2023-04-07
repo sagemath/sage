@@ -6458,9 +6458,9 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     we will loop with an absurd, unattainable, number of rays::
 
         sage: K = random_cone(min_ambient_dim=3, # long time
-        ....:                 max_ambient_dim=3, # long time
-        ....:                 min_rays=7,        # long time
-        ....:                 max_rays=9)        # long time
+        ....:                 max_ambient_dim=3,
+        ....:                 min_rays=7,
+        ....:                 max_rays=9)
         sage: K.nrays() >= 7                     # long time
         True
         sage: K.lattice_dim()                    # long time
@@ -6566,19 +6566,19 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         # The next three checks prevent an infinite loop (a futile
         # search for more rays) in zero, one, or two dimensions.
         if min_rays > 4 and max_ambient_dim < 3:
-            msg  = 'all cones in zero/one/two dimensions have four or fewer '
+            msg = 'all cones in zero/one/two dimensions have four or fewer '
             msg += 'generators. Please increase max_ambient_dim to at least '
             msg += '3, or decrease min_rays.'
             raise ValueError(msg)
 
         if min_rays > 2 and max_ambient_dim < 2:
-            msg  = 'all cones in zero/one dimensions have two or fewer '
+            msg = 'all cones in zero/one dimensions have two or fewer '
             msg += 'generators. Please increase max_ambient_dim to at least '
             msg += '2, or decrease min_rays.'
             raise ValueError(msg)
 
         if min_rays > 0 and max_ambient_dim == 0:
-            msg  = 'all cones in zero dimensions have no generators. '
+            msg = 'all cones in zero dimensions have no generators. '
             msg += 'Please increase max_ambient_dim to at least 1, or '
             msg += 'decrease min_rays.'
             raise ValueError(msg)
@@ -6593,17 +6593,17 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     # using its dimension rather than max_ambient_dim as the indicator.
     if lattice is not None:
         if min_rays > 4 and lattice.dimension() < 3:
-            msg  = 'all cones in the given lattice have four or fewer '
+            msg = 'all cones in the given lattice have four or fewer '
             msg += 'generators. Please decrease min_rays.'
             raise ValueError(msg)
 
         if min_rays > 2 and lattice.dimension() < 2:
-            msg  = 'all cones in the given lattice have two or fewer '
+            msg = 'all cones in the given lattice have two or fewer '
             msg += 'generators. Please decrease min_rays.'
             raise ValueError(msg)
 
         if min_rays > 0 and lattice.dimension() == 0:
-            msg  = 'all cones in the given lattice have no generators. '
+            msg = 'all cones in the given lattice have no generators. '
             msg += 'Please decrease min_rays.'
             raise ValueError(msg)
 
@@ -6613,7 +6613,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             msg = 'all cones in this lattice are strictly convex (trivial).'
             raise ValueError(msg)
         if max_rays is not None and max_rays < 2:
-            msg  = 'all cones are strictly convex when ``max_rays`` is '
+            msg = 'all cones are strictly convex when ``max_rays`` is '
             msg += 'less than two.'
             raise ValueError(msg)
 
@@ -6640,7 +6640,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 msg = 'all cones are solid when max_ambient_dim is zero.'
                 raise ValueError(msg)
             if (max_ambient_dim is not None and
-                    min_rays > 2*(max_ambient_dim - 1)):
+                    min_rays > 2 * (max_ambient_dim - 1)):
                 msg = 'every cone is solid when '
                 msg += 'min_rays > 2*(max_ambient_dim - 1).'
                 raise ValueError(msg)
@@ -6648,11 +6648,10 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             if lattice.dimension() == 0:
                 msg = 'all cones in the given lattice are solid.'
                 raise ValueError(msg)
-            if  min_rays > 2*(lattice.dimension() - 1):
+            if min_rays > 2 * (lattice.dimension() - 1):
                 msg = 'every cone is solid when min_rays > 2*(d - 1) '
                 msg += 'where d is the dimension of the given lattice.'
                 raise ValueError(msg)
-
 
     # Now that we've sanity-checked our parameters, we can massage the
     # min/maxes for (non-)solid cones. It doesn't violate the user's
@@ -6779,7 +6778,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             rays.append(L.random_element())
             K = Cone(rays, lattice=L)
             rays = list(K.rays()) # Avoid re-normalizing next time around
-
 
         if strictly_convex is not None:
             if strictly_convex:

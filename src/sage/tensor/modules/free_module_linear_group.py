@@ -407,7 +407,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             resu.set_comp(basis)[:] = comp
         return resu
 
-
     def _an_element_(self):
         r"""
         Construct some specific free module automorphism.
@@ -549,7 +548,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
         """
         from sage.misc.latex import latex
         return r"\mathrm{GL}\left("+ latex(self._fmodule)+ r"\right)"
-
 
     def base_module(self):
         r"""

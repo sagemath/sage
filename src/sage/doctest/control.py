@@ -243,7 +243,8 @@ def skipfile(filename, tested_optional_tags=False):
         sage: skipfile(filename)
         True
         sage: with open(filename, "w") as f:
-        ....:     _ = f.write("# sage.doctest: optional - xyz")
+        ....:     _ = f.write("# sage.doctest: "    # broken in two source lines to avoid the pattern
+        ....:                 "optional - xyz")     # of relint (multiline_doctest_comment)
         sage: skipfile(filename, False)
         'optional - xyz'
         sage: bool(skipfile(filename, False))

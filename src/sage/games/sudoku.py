@@ -410,7 +410,6 @@ class Sudoku(SageObject):
         from sage.matrix.constructor import matrix
         return matrix(ZZ, self.n*self.n, self.puzzle)
 
-
     def to_ascii(self):
         r"""
         Construct an ASCII-art version of a Sudoku puzzle.
@@ -829,16 +828,16 @@ class Sudoku(SageObject):
 
         # Boxes of the grid are numbered in row-major order
         # ``rcbox`` simply maps a row-column index pair to the box number it lives in
-        rcbox   = [ [i//n + n*(j//n) for i in range(nsquare)] for j in range(nsquare)]
+        rcbox = [ [i//n + n*(j//n) for i in range(nsquare)] for j in range(nsquare)]
 
         # Every entry in a Sudoku puzzle satisfies four constraints
         # Every location has a single entry, and each row, column and box has each symbol once
         # These arrays can be thought of as assigning ID numbers to these constraints,
         # and correspond to column numbers of the `0-1` matrix describing the exact cover
-        rows    = [[i+j for i in range(nsquare)] for j in range(0, nfour, nsquare)]
-        cols    = [[i+j for i in range(nsquare)] for j in range(nfour, 2*nfour, nsquare)]
-        boxes   = [[i+j for i in range(nsquare)] for j in range(2*nfour, 3*nfour, nsquare)]
-        rowcol  = [[i+j for i in range(nsquare)] for j in range(3*nfour, 4*nfour, nsquare)]
+        rows = [[i+j for i in range(nsquare)] for j in range(0, nfour, nsquare)]
+        cols = [[i+j for i in range(nsquare)] for j in range(nfour, 2*nfour, nsquare)]
+        boxes = [[i+j for i in range(nsquare)] for j in range(2*nfour, 3*nfour, nsquare)]
+        rowcol = [[i+j for i in range(nsquare)] for j in range(3*nfour, 4*nfour, nsquare)]
 
         def make_row(row, col, entry):
             r"""
