@@ -4883,7 +4883,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         B = 0
 
-        for x in D[b]:
+        for x in combinations(L, b):
             S = self.generated_subcomplex(x)
             H = S.homology()
             if H.get(b-a-1) != H0 and H.get(b-a-1) is not None:
