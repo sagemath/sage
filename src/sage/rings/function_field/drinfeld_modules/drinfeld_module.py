@@ -1033,7 +1033,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         try:
             if self.characteristic().is_zero():
-                raise ValueError('height is defined for prime ' \
+                raise ValueError('height is defined for prime '
                                  'function field characteristic')
             else:
                 p = self.characteristic()
@@ -1041,7 +1041,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         except NotImplementedError:
             raise NotImplementedError('height not implemented in this case')
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return ``True`` if this Drinfeld module is finite,
         ``False`` otherwise.

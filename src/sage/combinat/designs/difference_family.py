@@ -267,7 +267,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
 
     # Check that every x \in G-{0},occurs exactly l times as a difference
     counter = {g: 0 for g in Glist}
-    where   = {g: set() for g in Glist}
+    where = {g: set() for g in Glist}
     del counter[identity]
 
     for i,d in enumerate(D):
@@ -293,7 +293,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
             counter[gg] += tmp_counter[gg]//stabi
 
     # Check the counter and report any error
-    too_few  = []
+    too_few = []
     too_much = []
     for g in Glist:
         if g == identity:

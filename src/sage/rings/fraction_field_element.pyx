@@ -310,10 +310,10 @@ cdef class FractionFieldElement(FieldElement):
         a = self.numerator()
         b = self.denominator()
         if not root:
-            return  (a*b).is_square( root = False )
-        is_sqr, sq_rt = (a*b).is_square( root = True )
+            return (a * b).is_square(root=False)
+        is_sqr, sq_rt = (a * b).is_square(root=True)
         if is_sqr:
-            return True, self._parent( sq_rt/b )
+            return True, self._parent(sq_rt / b)
         return False, None
 
     def nth_root(self, n):

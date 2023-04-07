@@ -2340,7 +2340,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             (x^7 + 5*x^6 + 2*x^5 + 6*x^4 + 3*x^3 + 5*x^2 + 6*x + 3, x^9*y - 3*x^8*y + 2*x^7*y - 3*x^3*y + 2*x^2*y + x*y - y, 1, 6, 3, 4)
         """
         # check if the polynomial really divides the two_torsion_polynomial
-        if self.__check and E.division_polynomial(2, x=self.__poly_ring.gen()) % psi_G  != 0 :
+        if self.__check and E.division_polynomial(2, x=self.__poly_ring.gen()) % psi_G != 0 :
             raise ValueError(f"the polynomial {psi_G} does not define a finite subgroup of {E}")
 
         n = psi_G.degree() # 1 or 3

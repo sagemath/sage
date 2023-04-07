@@ -268,7 +268,7 @@ class EllipticCurveSaturator(SageObject):
 
         verbose = self._verbose
         if verbose:
-            print(" --starting full %s-saturation"  % p)
+            print(" --starting full %s-saturation" % p)
 
         n = len(Plist)  # number of points supplied & to be returned
         Plist = Plist + [T for T in self._torsion_gens if p.divides(T.order())]
@@ -658,7 +658,7 @@ def p_projections(Eq, Plist, p, debug=False):
 
     # project onto p-primary part
 
-    pts  = [m*pt for pt in Plist]
+    pts = [m*pt for pt in Plist]
     gens = [m*g.element() for g in G.gens()]
     gens = [g for g in gens if g]
     if debug:

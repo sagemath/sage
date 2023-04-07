@@ -147,7 +147,7 @@ class DoubleDescriptionPair:
         self.problem = problem
         self.A = list(A_rows)
         self.R = list(R_cols)
-        self.one  = problem._field.one()
+        self.one = problem._field.one()
         self.zero = problem._field.zero()
 
         # a cache for scalar products (see the method zero_set)

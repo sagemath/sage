@@ -1,12 +1,12 @@
 """
 Simplicial Sets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2015 John H. Palmieri <palmieri at math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
@@ -15,6 +15,7 @@ from sage.categories.sets_cat import Sets
 from sage.categories.homsets import HomsetsCategory
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
+
 
 class SimplicialSets(Category_singleton):
     r"""
@@ -383,7 +384,6 @@ class SimplicialSets(Category_singleton):
                     if e not in gens:
                         char[e] = G.one()
                 return (G, char)
-
 
             def universal_cover_map(self):
                 r"""

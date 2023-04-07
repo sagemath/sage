@@ -520,7 +520,7 @@ class RingClassField(SageObject):
             Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
              with sqrt_minus_7 = 2.645751311064591?*I
         """
-        D   = self.__D
+        D = self.__D
         var = 'sqrt_minus_%s'%(-D)
         return number_field.QuadraticField(D,var)
 
@@ -2228,7 +2228,7 @@ class HeegnerPoints_level_disc(HeegnerPoints):
             Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
              with sqrt_minus_7 = 2.645751311064591?*I
         """
-        D   = self.__D
+        D = self.__D
         var = 'sqrt_minus_%s'%(-D)
         return number_field.QuadraticField(D,var)
 
@@ -3939,7 +3939,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: P._qf_from_tau(tau)
             (57, 26, 3)
         """
-        g  = tau.minpoly()
+        g = tau.minpoly()
         g *= g.denominator()
         return (ZZ(g[2]), ZZ(g[1]), ZZ(g[0]))
 
@@ -4888,7 +4888,7 @@ class HeegnerQuatAlg(SageObject):
              Embedding sending 2*sqrt(-7) to -2*i + 2*j + 2*k]
         """
         Q, G = R.ternary_quadratic_form(include_basis=True)
-        n    = -D*c*c
+        n = -D*c*c
         reps = Q.representation_vector_list(n+1)[-1]
 
         # The representatives give elements in terms of the
@@ -6771,7 +6771,7 @@ def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
     else:
         F = self
     # Now rank(F) > 0
-    h  = ht.upper()
+    h = ht.upper()
     verbose("Heegner height bound = %s"%h)
     B = F.CPS_height_bound()
     verbose("CPS bound = %s"%B)
@@ -6917,7 +6917,7 @@ def heegner_index_bound(self, D=0, prec=5, max_height=None):
     if 0 in ht:
         return 0, D, False
     F = self.quadratic_twist(D)
-    h  = ht.upper()
+    h = ht.upper()
     verbose("Heegner height bound = %s"%h)
     B = F.CPS_height_bound()
     verbose("CPS bound = %s"%B)
@@ -7046,25 +7046,25 @@ def _heegner_index_in_EK(self, D):
     # so we may assume t is of 2-power order.
     #####################################################################
 
-    E     = self  # nice shortcut
-    F     = E.quadratic_twist(D).minimal_model()
-    K     = rings.QuadraticField(D, 'a')
+    E = self  # nice shortcut
+    F = E.quadratic_twist(D).minimal_model()
+    K = rings.QuadraticField(D, 'a')
 
     # Define a map phi that we'll use to put the points of E^D(QQ)
     # into E(K):
-    G     = E.change_ring(K)
-    G2    = F.change_ring(K)
-    phi   = G2.isomorphism_to(G)
+    G = E.change_ring(K)
+    G2 = F.change_ring(K)
+    phi = G2.isomorphism_to(G)
 
     # Basis for E(Q)/tor oplus E^D(QQ)/tor in E(K):
     basis = [G(z) for z in E.gens()] + [G(phi(z)) for z in F.gens()]
     # Make a list of the 2-power order torsion points in E(K), including 0.
-    T     = [G(z) for z in G.torsion_subgroup().list() if z.order() == 1 or
+    T = [G(z) for z in G.torsion_subgroup().list() if z.order() == 1 or
             ((z.order() % 2 == 0 and len(z.order().factor()) == 1))]
 
-    r     = len(basis)   # rank
-    V     = rings.QQ**r
-    B     = []
+    r = len(basis)   # rank
+    V = rings.QQ**r
+    B = []
 
     # Iterate through reps for A/(2*A) creating vectors in (1/2)*ZZ^r
     for v in rings.GF(2)**r:
@@ -7077,7 +7077,7 @@ def _heegner_index_in_EK(self, D):
 
     A = rings.ZZ**r
     # Take span of our vectors in (1/2)*ZZ^r, along with ZZ^r.  This is E(K)/tor.
-    W     = V.span(B, rings.ZZ) + A
+    W = V.span(B, rings.ZZ) + A
 
     # Compute the index in E(K)/tor of A = E(Q)/tor + E^D(Q)/tor, cache, and return.
     index = A.index_in(W)
@@ -7174,13 +7174,13 @@ def heegner_sha_an(self, D, prec=53):
 
     # Use the BSD conjecture over the quadratic imaginary K --
     # see page 311 of [GZ1986]_ for the formula.
-    E   = self  # notational convenience
-    F   = E.quadratic_twist(D).minimal_model()
-    K   = rings.QuadraticField(D, 'a')
+    E = self  # notational convenience
+    F = E.quadratic_twist(D).minimal_model()
+    K = rings.QuadraticField(D, 'a')
 
     # Compute each of the quantities in BSD
     #  - The torsion subgroup over K.
-    T   = E.change_ring(K).torsion_order()
+    T = E.change_ring(K).torsion_order()
 
     #  - The product of the Tamagawa numbers, which because D is
     #    coprime to N is just the square of the product of the
@@ -7190,7 +7190,7 @@ def heegner_sha_an(self, D, prec=53):
 
     #  - The leading term of the L-series, as a product of two
     #  other L-series.
-    rE  = E.rank()
+    rE = E.rank()
     rF = F.rank()
     L_E = E.lseries().dokchitser(prec).derivative(1, rE)
     L_F = F.lseries().dokchitser(prec).derivative(1, rF)

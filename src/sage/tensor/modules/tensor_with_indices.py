@@ -384,7 +384,6 @@ class TensorWithIndices(SageObject):
                                  "with the tensor type")
         return con,cov
 
-
     def __init__(self, tensor, indices):
         r"""
         TESTS::
@@ -738,7 +737,6 @@ class TensorWithIndices(SageObject):
         result = self.__pos__()
         result._tensor = result._tensor + other.permute_indices(permutation)._tensor
         return result
-
 
     def __sub__(self, other):
         r"""

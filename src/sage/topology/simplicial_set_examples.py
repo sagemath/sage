@@ -49,8 +49,7 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('sage.categories.simplicial_sets', 'SimplicialSets')
 
 
-
-########################################################################
+# ######################################################################
 # The nerve of a finite monoid, used in sage.categories.finite_monoid.
 
 class Nerve(SimplicialSet_arbitrary):

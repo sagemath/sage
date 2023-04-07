@@ -207,7 +207,6 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         return eval(source, toplevel.__dict__, locals)
 
 
-
 def sageobj(x, vars=None):
     """
     Return a native Sage object associated to ``x``, if possible and

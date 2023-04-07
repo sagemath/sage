@@ -836,7 +836,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         You can provide generators to obtain a subgroup of the full orthogonal group::
 
             sage: D = TorsionQuadraticForm(matrix.identity(2)/2)
-            sage: f = matrix(2, [0,1,1,0])
+            sage: f = matrix(2, [0,1, 1,0])
             sage: D.orthogonal_group(gens=[f]).order()                                                  # optional - sage.groups
             2
 

@@ -983,7 +983,7 @@ class GaloisRepresentation(SageObject):
             could_be_split = 1
             could_be_non_split = 1
             # loops over primes as long as we still have two options left
-            while ell < 10000 and (could_be_exc + could_be_split + could_be_non_split  > 1):
+            while ell < 10000 and (could_be_exc + could_be_split + could_be_non_split > 1):
                 ell = arith.next_prime(ell)
                 if Np % ell != 0:
                     a_ell = self._E.ap(ell)
@@ -1001,7 +1001,7 @@ class GaloisRepresentation(SageObject):
                         verbose("the image cannot be split, found u=%s"%u, level=2)
                         could_be_split = 0
 
-            assert could_be_exc + could_be_split + could_be_non_split  > 0, "bug in image_type."
+            assert could_be_exc + could_be_split + could_be_non_split > 0, "bug in image_type."
 
             if could_be_exc + could_be_split + could_be_non_split == 1:
                 # it is only one of the three cases:
@@ -1023,7 +1023,7 @@ class GaloisRepresentation(SageObject):
                     f = R([1,-3,1]) #(X**2 - 3*X+1)
                     el5 = f.roots()
                     # loops over primes as long as we still have two options left
-                    while ell < 10000 and (could_be_s4 + could_be_a4 + could_be_a5  > 1):
+                    while ell < 10000 and (could_be_s4 + could_be_a4 + could_be_a5 > 1):
                         ell = arith.next_prime(ell)
                         if Np % ell != 0:
                             a_ell = self._E.ap(ell)
@@ -1037,7 +1037,7 @@ class GaloisRepresentation(SageObject):
                                 could_be_a4 = 0
                                 could_be_s4 = 0
 
-                    assert (could_be_s4 + could_be_a4 + could_be_a5  > 0), "bug in image_type."
+                    assert (could_be_s4 + could_be_a4 + could_be_a5 > 0), "bug in image_type."
 
                     if could_be_s4 + could_be_a4 + could_be_a5 == 1:
                         if could_be_s4 == 1:

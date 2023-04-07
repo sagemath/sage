@@ -144,6 +144,8 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
             from sage.rings.lazy_series_ring import LazyCompletionGradedAlgebra
             return LazyCompletionGradedAlgebra(self)
 
+        completion = formal_series_ring
+
     class ElementMethods:
         pass
 

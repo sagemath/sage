@@ -1841,7 +1841,6 @@ class Module_free_ambient(Module):
         raise NotImplementedError("the module must be a free module or "
                                   "have the base ring be a polynomial ring using Singular")
 
-
     def graded_free_resolution(self, *args, **kwds):
         r"""
         Return a graded free resolution of ``self``.

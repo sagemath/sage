@@ -631,7 +631,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
             2*() + 2*(2,3) + (1,2,3) + 4*(1,3,2)
         """
         from sage.categories.rings import Rings
-        domain   = self(f.domain())
+        domain = self(f.domain())
         codomain = self(f.codomain())
         # we would want to use something like:
         # domain.module_morphism(on_coefficients=h, codomain=codomain, category=Rings())

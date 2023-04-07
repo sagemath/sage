@@ -1470,9 +1470,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             m = matrix([ U[i] for i in support ]).transpose()
             ker = m.right_kernel().basis()[0]
             assert len(ker)==len(support)
-            Cplus  = [ support[i] for i in range(len(support)) if ker[i]>0 ]
+            Cplus = [ support[i] for i in range(len(support)) if ker[i]>0 ]
             Cminus = [ support[i] for i in range(len(support)) if ker[i]<0 ]
-            Czero  = set( range(n) ).difference(support)
+            Czero = set( range(n) ).difference(support)
             Circuits += ( (tuple(Cplus), tuple(Czero), tuple(Cminus)), )
         self._circuits = Circuits
         return Circuits

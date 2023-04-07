@@ -389,80 +389,79 @@ def minkowski_reduction_for_4vars__SP(self):
                         if (r == i) or (r == j):
                             M_new[r,r] = 0
                         else:
-                            M_new[r,r] = 1
+                            M_new[r, r] = 1
                     M = M * M_new
 
-                elif (i_sum == j_sum):
-                    for k in [2,1,0]:   # TO DO: These steps are a little redundant...
+                elif i_sum == j_sum:
+                    for k in [2, 1, 0]:  # TO DO: These steps are a little redundant...
                         Q1 = Q.matrix()
 
-                        c_flag = True
-                        for l in range(k+1,4):
-                            c_flag = c_flag and (abs(Q1[i,l]) == abs(Q1[j,l]))
+                        c_flag = all(abs(Q1[i, l]) == abs(Q1[j, l])
+                                     for l in range(k + 1, 4))
 
                         # Condition (c)
-                        if c_flag and (abs(Q1[i,k]) > abs(Q1[j,k])):
-                            Q.swap_variables(i,j,in_place=True)
-                            M_new = matrix(R,n,n)
-                            M_new[i,j] = -1
-                            M_new[j,i] = 1
+                        if c_flag and abs(Q1[i, k]) > abs(Q1[j, k]):
+                            Q.swap_variables(i, j, in_place=True)
+                            M_new = matrix(R, n, n)
+                            M_new[i, j] = -1
+                            M_new[j, i] = 1
                             for r in range(4):
                                 if (r == i) or (r == j):
-                                    M_new[r,r] = 0
+                                    M_new[r, r] = 0
                                 else:
-                                    M_new[r,r] = 1
+                                    M_new[r, r] = 1
                             M = M * M_new
 
     # Step 3: Order the signs
     for i in range(4):
-        if Q[i,3] < 0:
+        if Q[i, 3] < 0:
             Q.multiply_variable(-1, i, in_place=True)
-            M_new = matrix(R,n,n)
+            M_new = matrix(R, n, n)
             for r in range(4):
                 if r == i:
-                    M_new[r,r] = -1
+                    M_new[r, r] = -1
                 else:
-                    M_new[r,r] = 1
+                    M_new[r, r] = 1
             M = M * M_new
 
     for i in range(4):
         j = 3
-        while (Q[i,j] == 0):
+        while Q[i, j] == 0:
             j += -1
-        if (Q[i,j] < 0):
+        if Q[i, j] < 0:
             Q.multiply_variable(-1, i, in_place=True)
-            M_new = matrix(R,n,n)
+            M_new = matrix(R, n, n)
             for r in range(4):
                 if r == i:
-                    M_new[r,r] = -1
+                    M_new[r, r] = -1
                 else:
-                    M_new[r,r] = 1
+                    M_new[r, r] = 1
             M = M * M_new
 
-    if Q[1,2] < 0:
+    if Q[1, 2] < 0:
         # Test a row 1 sign change
-        if (Q[1,3] <= 0 and \
-            ((Q[1,3] < 0) or (Q[1,3] == 0 and Q[1,2] < 0)  \
-                or (Q[1,3] == 0 and Q[1,2] == 0 and Q[1,1] < 0))):
+        if (Q[1, 3] <= 0 and (Q[1, 3] < 0
+                              or Q[1, 2] < 0
+                              or (Q[1, 2] == 0 and Q[1, 1] < 0))):
             Q.multiply_variable(-1, i, in_place=True)
-            M_new = matrix(R,n,n)
+            M_new = matrix(R, n, n)
             for r in range(4):
                 if r == i:
-                    M_new[r,r] = -1
+                    M_new[r, r] = -1
                 else:
-                    M_new[r,r] = 1
+                    M_new[r, r] = 1
             M = M * M_new
 
-        elif (Q[2,3] <= 0 and \
-            ((Q[2,3] < 0) or (Q[2,3] == 0 and Q[2,2] < 0)  \
-                or (Q[2,3] == 0 and Q[2,2] == 0 and Q[2,1] < 0))):
+        elif (Q[2, 3] <= 0 and ((Q[2, 3] < 0)
+                                or Q[2, 2] < 0
+                                or (Q[2, 2] == 0 and Q[2, 1] < 0))):
             Q.multiply_variable(-1, i, in_place=True)
-            M_new = matrix(R,n,n)
+            M_new = matrix(R, n, n)
             for r in range(4):
                 if r == i:
-                    M_new[r,r] = -1
+                    M_new[r, r] = -1
                 else:
-                    M_new[r,r] = 1
+                    M_new[r, r] = 1
             M = M * M_new
 
     # Return the results

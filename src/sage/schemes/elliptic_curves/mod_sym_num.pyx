@@ -201,7 +201,7 @@ cdef llong llgcd(llong a, llong b) except -1:
     return fa.gcd_longlong(a,b)
 
 cdef llong llinvmod(llong a, llong m):
-    return  fa.inverse_mod_longlong(a,m)
+    return fa.inverse_mod_longlong(a, m)
 
 DEF TWOPI = 6.28318530717958647
 
@@ -3357,21 +3357,21 @@ cdef class ModularSymbolNumerical:
         #        level=4)
         # make the cusp -x/y unitary if possible.
         B = y.gcd(N)
-        if B.gcd(N//B) != 1:
+        if B.gcd(N // B) != 1:
             if y > 0:
                 y -= m
                 x += a
             else:
                 y += m
                 x -= a
-        r2 = - x/y
+        r2 = - x / y
         B = y.gcd(N)
         Q = N // B
-        if Q.gcd(N//Q) != 1: # r2 is not unitary
-            return  self._symbol_non_unitary_approx(r, eps)
+        if Q.gcd(N // Q) != 1: # r2 is not unitary
+            return self._symbol_non_unitary_approx(r, eps)
 
-        r2 = - x/y
-        verbose("Next piece: integrate to the cusp %s "%r2, level=2)
+        r2 = - x / y
+        verbose("Next piece: integrate to the cusp %s " % r2, level=2)
         res = self._from_r_to_rr_approx(r, r2, eps,
                                         use_partials=2)
         res += self._evaluate_approx(r2, eps)

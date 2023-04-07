@@ -1220,7 +1220,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         EXAMPLES::
 
             sage: def f(a):
-        ....:     return [a - 1, a + 1]
+            ....:     return [a - 1, a + 1]
             sage: C = RecursivelyEnumeratedSet([10, 15], f, structure='symmetric')
             sage: for i in range(5): sorted(C.graded_component(i))
             [10, 15]

@@ -1570,7 +1570,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         s = self.str(32, no_sci=False, e='@')
         return (__create__RealNumber_version0, (self._parent, s, 32))
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         if self._parent is not None:
             mpfr_clear(self.value)
 

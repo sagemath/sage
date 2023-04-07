@@ -382,7 +382,6 @@ class MPolynomialPower(Benchmark):
 ##         f = z**self.exp
 ##         return float(gp.eval('gettime/1000.0'))
 
-
     def magma(self):
         """
         Time the computation in Magma.
@@ -402,7 +401,6 @@ class MPolynomialPower(Benchmark):
         t = magma.cputime()
         w = z**magma(self.exp)
         return magma.cputime(t)
-
 
 
 class MPolynomialMult(Benchmark):
@@ -747,7 +745,6 @@ class MPolynomialMult2(Benchmark):
         return magma.cputime(t)
 
 
-
 class CharPolyTp(Benchmark):
     def __init__(self, N=37,k=2,p=2,sign=1):
         self.N = N
@@ -832,8 +829,6 @@ class CharPolyTp(Benchmark):
         return magma.cputime(t)
 
 
-
-
 class PolyFactor(Benchmark):
     def __init__(self, n, R):
         self.__n = n
@@ -901,7 +896,6 @@ class PolyFactor(Benchmark):
         gp.eval('gettime')
         f.factor()
         return float(gp.eval('gettime/1000.0'))
-
 
 
 class SquareInts(Benchmark):
@@ -1284,7 +1278,6 @@ class Fibonacci(Benchmark):
         gp.eval('gettime')
         n = gp('fibonacci(%s)'%self.__n)
         return float(gp.eval('gettime/1000.0'))
-
 
 
 class SEA(Benchmark):
@@ -1838,8 +1831,6 @@ class FiniteExtFieldAdd(Benchmark):
    * multivariate poly factor
 
 """
-
-
 
 
 def suite1():

@@ -113,7 +113,7 @@ from sage.libs.gmp.binop cimport mpq_add_z, mpq_mul_z, mpq_div_zz
 from cpython.int cimport PyInt_AS_LONG
 
 cimport sage.rings.fast_arith
-import  sage.rings.fast_arith
+import sage.rings.fast_arith
 
 
 try:
@@ -941,7 +941,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         # immutable
         return self
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Free memory occupied by this rational number.
 
