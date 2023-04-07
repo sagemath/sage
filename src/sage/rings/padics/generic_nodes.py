@@ -1211,7 +1211,6 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
         """
         return False
 
-
     def krull_dimension(self):
         r"""
         Return the Krull dimension of self, i.e. 1

@@ -260,7 +260,6 @@ class Polynomial_generic_sparse(Polynomial):
             except AttributeError:
                 raise ValueError('cannot differentiate with respect to {}'.format(var))
 
-
         # compute formal derivative with respect to generator
         d = {}
         for n, c in self.__coeffs.items():
@@ -1551,7 +1550,6 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             shift = K(rbar).lift_to_precision() << slope  # probably we should choose a better lift
             roots += [(r+shift, m) for (r, m) in F(x+shift)._roots(secure, slope, [r-rbar for r in rootsbar])]  # recursive call
         return roots
-
 
 
 class Polynomial_generic_dense_cdv(Polynomial_generic_dense_inexact, Polynomial_generic_cdv):

@@ -682,7 +682,6 @@ class LocalGeneric(CommutativeRing):
         """
         return self
 
-
     def absolute_degree(self):
         r"""
         Return the degree of this extension over the prime p-adic field/ring.
@@ -735,7 +734,6 @@ class LocalGeneric(CommutativeRing):
             return self.absolute_degree()
         else:
             raise NotImplementedError("For a relative p-adic ring or field you must use relative_degree or absolute_degree as appropriate")
-
 
     def absolute_e(self):
         r"""
@@ -843,7 +841,6 @@ class LocalGeneric(CommutativeRing):
             2
         """
         return self.e()
-
 
     def absolute_f(self):
         r"""
@@ -1171,7 +1168,6 @@ class LocalGeneric(CommutativeRing):
             for i in range(n):
                 M[i,j] <<= s
         return shift_rows, shift_cols
-
 
     def _matrix_smith_form(self, M, transformation, integral, exact):
         r"""
