@@ -195,6 +195,19 @@ components are in the correct ring::
     sage: s = SymmetricFunctions(GF(2)).s()
     sage: L = LazySymmetricFunctions(s)
     sage: check(L, lambda n: sum(k*s(la) for k, la in enumerate(Partitions(n))), valuation=0)
+
+Check that we can invert matrices::
+
+    sage: L.<z> = LazyLaurentSeriesRing(QQ)
+    sage: a11 = 1 + L(lambda n: 1 if not n else 0, valuation=0)
+    sage: a12 = 1 + L(lambda n: 1 if n == 1 else 0, valuation=0)
+    sage: a21 = 1 + L(lambda n: 1 if n == 2 else 0, valuation=0)
+    sage: a22 = 1 + L(lambda n: 1 if n == 3 else 0, valuation=0)
+    sage: m = matrix([[a11, a12], [a21, a22]])
+    sage: m.inverse()
+    [   1 + z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7) -1 - 2*z - 3*z^2 - 4*z^3 - 5*z^4 - 6*z^5 - 7*z^6 + O(z^7)]
+    [  -1 - z - 3*z^2 - 3*z^3 - 5*z^4 - 5*z^5 - 7*z^6 + O(z^7)  2 + 2*z + 4*z^2 + 4*z^3 + 6*z^4 + 6*z^5 + 8*z^6 + O(z^7)]
+
 """
 
 # ****************************************************************************
@@ -2761,6 +2774,9 @@ class LazyCauchyProductSeries(LazyModuleElement):
             and right.order() == 0
             and not right._constant):
             return self  # right == 1
+        if ((isinstance(left, Stream_cauchy_invert) and left._series == right)
+            or (isinstance(right, Stream_cauchy_invert) and right._series == left)):
+            return P.one()
         # The product is exact if and only if both factors are exact
         # and one of the factors has eventually 0 coefficients:
         # (p + a x^d/(1-x))(q + b x^e/(1-x))
@@ -3106,7 +3122,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             return self
 
         # self is right
-        if left is right:
+        if left == right:
             return P.one()
 
         if (P._minimal_valuation is not None
