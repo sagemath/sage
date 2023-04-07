@@ -52,6 +52,19 @@ can use the ``require`` method::
 As can be seen above, features try to produce helpful error messages.
 """
 
+# *****************************************************************************
+#       Copyright (C) 2016      Julian Rüth
+#                     2018      Jeroen Demeyer
+#                     2018      Timo Kaufmann
+#                     2019-2022 Matthias Koeppe
+#                     2021      Kwankyu Lee
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+
 from __future__ import annotations
 
 import os
@@ -250,7 +263,6 @@ class Feature(TrivialUniqueRepresentation):
             lines.append("Further installation instructions might be available at {url}.".format(url=self.url))
         self._cache_resolution = "\n".join(lines)
         return self._cache_resolution
-
 
 
 class FeatureNotPresentError(RuntimeError):

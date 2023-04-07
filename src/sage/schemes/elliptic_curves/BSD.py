@@ -21,7 +21,8 @@ class BSD_data:
         sage: D.curve=EllipticCurve('11a')
         sage: D.update()
         sage: D.Sha
-        Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+        Tate-Shafarevich group for the Elliptic Curve
+         defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
     """
     def __init__(self):
         self.curve = None
@@ -52,7 +53,8 @@ class BSD_data:
             sage: D.curve = EllipticCurve('11a')
             sage: D.update()
             sage: D.Sha
-            Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+            Tate-Shafarevich group for the Elliptic Curve
+             defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
         """
         self.two_tor_rk = self.curve.two_torsion_rank()
         self.Sha = self.curve.sha()
@@ -247,9 +249,9 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     - ``verbosity`` -- int, how much information about the proof to print.
 
-        - 0: print nothing
-        - 1: print sketch of proof
-        - 2: print information about remaining primes
+      - 0: print nothing
+      - 1: print sketch of proof
+      - 2: print information about remaining primes
 
     - ``two_desc`` -- string (default ``'mwrank'``), what to use for the
       two-descent. Options are ``'mwrank', 'simon', 'sage'``
@@ -351,13 +353,16 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         sage: E.prove_BSD()
         Traceback (most recent call last):
         ...
-        RuntimeError: It seems that the rank conjecture does not hold for this curve (Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field)! This may be a counterexample to BSD, but is more likely a bug.
+        RuntimeError: It seems that the rank conjecture does not hold for this curve
+        (Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field)!
+        This may be a counterexample to BSD, but is more likely a bug.
 
     We test the consistency check for the 2-part of Sha::
 
         sage: E = EllipticCurve('37a')
         sage: S = E.sha(); S
-        Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+        Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x
+         over Rational Field
         sage: def foo(use_database):
         ....:  return 4
         sage: S.an = foo

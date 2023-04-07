@@ -769,7 +769,7 @@ cdef class GapElement(RingElement):
             sage: libgap(0).__str__()
             '0'
         """
-        if  self.value == NULL:
+        if self.value == NULL:
             return 'NULL'
 
         s = char_to_str(gap_element_str(self.value))
@@ -791,7 +791,7 @@ cdef class GapElement(RingElement):
             sage: libgap(0)._repr_()
             '0'
         """
-        if  self.value == NULL:
+        if self.value == NULL:
             return 'NULL'
 
         s = char_to_str(gap_element_repr(self.value))
@@ -3089,7 +3089,7 @@ cdef class GapElement_Permutation(GapElement):
         lst = libgap.ListPerm(self)
 
         if parent is None:
-            return Permutation(lst.sage(), check_input=False)
+            return Permutation(lst.sage(), check=False)
         else:
             return parent.one()._generate_new_GAP(lst)
 

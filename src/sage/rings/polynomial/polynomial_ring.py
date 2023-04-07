@@ -166,8 +166,6 @@ from sage.misc.lazy_attribute import lazy_attribute
 import sage.rings.abc
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.finite_rings.element_base import FiniteRingElement
-
-from .polynomial_element import PolynomialBaseringInjection
 from .polynomial_real_mpfr_dense import PolynomialRealDense
 from .polynomial_integer_dense_flint import Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
@@ -625,36 +623,53 @@ class PolynomialRing_general(ring.Algebra):
         """
         return categories.pushout.PolynomialFunctor(self.variable_name(), sparse=self.__is_sparse), self.base_ring()
 
-    def completion(self, p, prec=20, extras=None):
-        """
-        Return the completion of self with respect to the irreducible
-        polynomial p. Currently only implemented for p=self.gen(), i.e. you
-        can only complete R[x] with respect to x, the result being a ring
-        of power series in x. The prec variable controls the precision used
-        in the power series ring.
+    def completion(self, p=None, prec=20, extras=None):
+        r"""
+        Return the completion of ``self`` with respect to the irreducible
+        polynomial ``p``.
+
+        Currently only implemented for ``p=self.gen()`` (the default), i.e. you
+        can only complete `R[x]` with respect to `x`, the result being a ring
+        of power series in `x`. The ``prec`` variable controls the precision
+        used in the power series ring. If ``prec`` is `\infty`, then this
+        returns a :class:`LazyPowerSeriesRing`.
 
         EXAMPLES::
 
-            sage: P.<x>=PolynomialRing(QQ)
+            sage: P.<x> = PolynomialRing(QQ)
             sage: P
             Univariate Polynomial Ring in x over Rational Field
-            sage: PP=P.completion(x)
+            sage: PP = P.completion(x)
             sage: PP
             Power Series Ring in x over Rational Field
-            sage: f=1-x
+            sage: f = 1 - x
             sage: PP(f)
             1 - x
-            sage: 1/f
+            sage: 1 / f
             -1/(x - 1)
-            sage: 1/PP(f)
-            1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10 + x^11 + x^12 + x^13 + x^14 + x^15 + x^16 + x^17 + x^18 + x^19 + O(x^20)
+            sage: g = 1 / PP(f); g
+            1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10 + x^11
+             + x^12 + x^13 + x^14 + x^15 + x^16 + x^17 + x^18 + x^19 + O(x^20)
+            sage: 1 / g
+            1 - x + O(x^20)
+
+            sage: PP = P.completion(x, prec=oo); PP
+            Lazy Taylor Series Ring in x over Rational Field
+            sage: g = 1 / PP(f); g
+            1 + x + x^2 + O(x^3)
+            sage: 1 / g == f
+            True
         """
-        if str(p) == self._names[0]:
+        if p is None or str(p) == self._names[0]:
+            if prec == float('inf'):
+                from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+                return LazyPowerSeriesRing(self.base_ring(), names=(self._names[0],),
+                                           sparse=self.is_sparse())
             from sage.rings.power_series_ring import PowerSeriesRing
             return PowerSeriesRing(self.base_ring(), name=self._names[0],
                                    default_prec=prec, sparse=self.is_sparse())
-        else:
-            raise TypeError("Cannot complete %s with respect to %s" % (self, p))
+
+        raise NotImplementedError("cannot complete %s with respect to %s" % (self, p))
 
     def _coerce_map_from_base_ring(self):
         """
@@ -680,6 +695,8 @@ class PolynomialRing_general(ring.Algebra):
                       To:   Univariate Polynomial Ring in x over Rational Field
             sage: R.coerce_map_from(GF(7))
         """
+        from .polynomial_element import PolynomialBaseringInjection
+
         return PolynomialBaseringInjection(self.base_ring(), self)
 
     def _coerce_map_from_(self, P):

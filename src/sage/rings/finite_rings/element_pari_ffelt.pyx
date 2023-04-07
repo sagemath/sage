@@ -270,13 +270,19 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sage: k = FiniteField(3^11, 't', impl='pari_ffelt')
         sage: k([ 0, 1/2 ])
         2*t
+        sage: k([ 0, 1/2, 0, 0, 0, 0, 0, 0, 0, -1, 0 ])
+        2*t^9 + 2*t
         sage: k([ k(0), k(1) ])
         t
         sage: k([ GF(3)(2), GF(3^5,'u')(1) ])
         t + 2
         sage: R.<x> = PolynomialRing(k)
+        sage: k([ x/x ])
+        1
         sage: k([ R(-1), x/x ])
         t + 2
+        sage: k([ R(-1), R(0), 0 ])
+        2
 
     Check that zeros are created correctly (:trac:`11685`)::
 
@@ -496,7 +502,13 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             self.construct_from(x.constant_coefficient())
 
         elif isinstance(x, list):
-            if len(x) == self._parent.degree():
+            n = len(x)
+            if n == 0:
+                self.construct_from(None)
+            elif n == 1:
+                Fp = self._parent.base_ring()
+                self.construct_from(Fp(x[0]))
+            elif n == self._parent.degree():
                 self.construct_from(self._parent.vector_space(map=False)(x))
             else:
                 Fp = self._parent.base_ring()
@@ -849,6 +861,61 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sig_on()
         x.construct(FF_pow(self.val, (<pari_gen>exp).g))
         return x
+
+    def pth_power(FiniteFieldElement_pari_ffelt self, int k=1):
+        r"""
+        Return the `(p^k)^{th}` power of ``self``, where `p` is the
+        characteristic of the field.
+
+        INPUT:
+
+        - ``k`` -- integer (default: 1); must fit in a C ``int``
+
+        Note that if `k` is negative, then this computes the appropriate root.
+
+        TESTS::
+
+            sage: F.<a> = GF(13^64, impl='pari_ffelt'); F
+            Finite Field in a of size 13^64
+            sage: x = F.random_element()
+            sage: x.pth_power(0) == x
+            True
+            sage: x.pth_power(1) == x**13
+            True
+            sage: x.pth_power(2) == x**(13**2)
+            True
+            sage: x.pth_power(-1)**13 == x
+            True
+
+            sage: F.<a> = GF(127^16, impl='pari_ffelt'); F
+            Finite Field in a of size 127^16
+            sage: x = F.random_element()
+            sage: x.pth_power(0) == x
+            True
+            sage: x.pth_power(1) == x**127
+            True
+            sage: x.pth_power(2) == x**(127**2)
+            True
+            sage: x.pth_power(-1)**127 == x
+            True
+        """
+        cdef int n = int(self._parent.degree())
+        if k % n == 0:
+            return self
+        cdef Integer p = self._parent.characteristic()
+        if k == 1 and (p < 100 or p.bit_length()**2 < n):
+            # For extremely small primes or very large extension degrees,
+            # exponentiation is faster.
+            return self**p
+        # Otherwise use PARI field morphism (evaluation of a Fp polynomial
+        # at the image of the generator).
+        f = self._parent._pari_frobenius(k)
+        cdef FiniteFieldElement_pari_ffelt x = self._new()
+        sig_on()
+        x.construct(ffmap((<pari_gen>f).g, self.val))
+        return x
+
+    frobenius = pth_power
 
     def polynomial(self, name=None):
         """

@@ -688,7 +688,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             resu._matrices[bases] = scalar * mat
         return resu
 
-
     #
     #  Other module methods
     #

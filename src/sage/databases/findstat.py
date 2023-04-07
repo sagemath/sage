@@ -2919,7 +2919,6 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         """
         webbrowser.open(FINDSTAT_URL_STATISTICS + self.id_str())
 
-
     def info(self):
         """
         Print a detailed description of the compound statistic.

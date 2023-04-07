@@ -50,7 +50,8 @@ EXAMPLES::
 
     sage: E = EllipticCurve('389a')
     sage: S = E.sha(); S
-    Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
+    Tate-Shafarevich group for the
+     Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
     sage: S.an_numerical()
     1.00000000000000
     sage: S.p_primary_bound(5)
@@ -124,7 +125,8 @@ class Sha(SageObject):
 
         sage: E = EllipticCurve('389a')
         sage: S = E.sha(); S
-        Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
+        Tate-Shafarevich group for the
+         Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
         sage: S.an_numerical()
         1.00000000000000
         sage: S.p_primary_bound(5)  # long time
@@ -147,7 +149,8 @@ class Sha(SageObject):
             sage: E = EllipticCurve('11a1')
             sage: S = E.sha()
             sage: S
-            Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+            Tate-Shafarevich group for the
+             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
 
             sage: S == loads(dumps(S))
             True
@@ -260,11 +263,11 @@ class Sha(SageObject):
             sage: sha = EllipticCurve('37a1').sha()
             sage: [sha.an_numerical(prec) for prec in range(40,100,10)]  # long time (3s on sage.math, 2013)
             [1.0000000000,
-            1.0000000000000,
-            1.0000000000000000,
-            1.0000000000000000000,
-            1.0000000000000000000000,
-            1.0000000000000000000000000]
+             1.0000000000000,
+             1.0000000000000000,
+             1.0000000000000000000,
+             1.0000000000000000000000,
+             1.0000000000000000000000000]
         """
         if prec is None:
             prec = RealField().precision()
@@ -324,8 +327,9 @@ class Sha(SageObject):
             sage: E.sha().an()
             Traceback (most recent call last):
             ...
-            RuntimeError: Unable to compute the rank, hence generators, with certainty (lower bound=0, generators found=[]).  This could be because Sha(E/Q)[2] is nontrivial.
-            Try increasing descent_second_limit then trying this command again.
+            RuntimeError: Unable to compute the rank, hence generators, with certainty
+            (lower bound=0, generators found=[]).  This could be because Sha(E/Q)[2] is
+            nontrivial. Try increasing descent_second_limit then trying this command again.
 
         You can increase the ``descent_second_limit`` (in the above example,
         set to the default, 12) option to try again::
@@ -388,14 +392,14 @@ class Sha(SageObject):
         In this case the input curve is not minimal, and if this function did
         not transform it to be minimal, it would give nonsense::
 
-            sage: E = EllipticCurve([0,-432*6^2])
+            sage: E = EllipticCurve([0, -432*6^2])
             sage: E.sha().an()
             1
 
         See :trac:`10096`: this used to give the wrong result 6.0000
         before since the minimal model was not used::
 
-            sage: E = EllipticCurve([1215*1216,0]) # non-minimal model
+            sage: E = EllipticCurve([1215*1216, 0]) # non-minimal model
             sage: E.sha().an()  # long time (2s on sage.math, 2011)
             1.00000000000000
             sage: E.minimal_model().sha().an()  # long time (1s on sage.math, 2011)
@@ -523,7 +527,7 @@ class Sha(SageObject):
             1 + O(5)
             sage: EllipticCurve('240d3').sha().an_padic(5)  # sha has 4 elements here
             4 + O(5)
-            sage: EllipticCurve('448c5').sha().an_padic(7,prec=4, use_twists=False)  # long time (2s on sage.math, 2011)
+            sage: EllipticCurve('448c5').sha().an_padic(7, prec=4, use_twists=False)  # long time (2s on sage.math, 2011)
             2 + 7 + O(7^6)
             sage: EllipticCurve([-19,34]).sha().an_padic(5)  # see trac #6455, long time (4s on sage.math, 2011)
             1 + O(5)
@@ -841,7 +845,9 @@ class Sha(SageObject):
             sage: E.sha().p_primary_bound(5)
             Traceback (most recent call last):
             ...
-            ValueError: The p-adic Galois representation is not surjective or reducible. Current knowledge about Euler systems does not provide an upper bound in this case. Try an_padic for a conjectural bound.
+            ValueError: The p-adic Galois representation is not surjective or reducible.
+            Current knowledge about Euler systems does not provide an upper bound
+            in this case. Try an_padic for a conjectural bound.
 
             sage: E.sha().an_padic(5)           # long time
             1 + O(5^22)
@@ -1075,9 +1081,9 @@ class Sha(SageObject):
         THEOREM: Suppose `L(E,1) \neq 0` and `p \neq 2` is a prime such
         that
 
-            - `E` does not have additive reduction at `p`,
-            - either the `p`-adic representation is surjective or has its
-              image contained in a Borel subgroup.
+        - `E` does not have additive reduction at `p`,
+        - either the `p`-adic representation is surjective or has its
+          image contained in a Borel subgroup.
 
         Then `{ord}_p(\#Sha(E))` is bounded from above by the `p`-adic valuation of  `L(E,1)\cdot\#E(\QQ)_{tor}^2 / (\Omega_E \cdot \prod c_v)`.
 
@@ -1099,15 +1105,15 @@ class Sha(SageObject):
         order of `Sha` (by [GJPST2009]_)::
 
             sage: E = EllipticCurve([1, -1, 0, -332311, -73733731])   # 1058D1
-            sage: E.sha().bound_kato()                 # long time (about 1 second)
+            sage: E.sha().bound_kato()                        # long time (about 1 second)
             [2, 5, 23]
-            sage: E.galois_representation().non_surjective()                # long time (about 1 second)
+            sage: E.galois_representation().non_surjective()  # long time (about 1 second)
             []
 
         For this one, `Sha` is divisible by 7::
 
             sage: E = EllipticCurve([0, 0, 0, -4062871, -3152083138])   # 3364C1
-            sage: E.sha().bound_kato()                 # long time (< 10 seconds)
+            sage: E.sha().bound_kato()                        # long time (< 10 seconds)
             [2, 7, 29]
 
         No information about curves of rank > 0::

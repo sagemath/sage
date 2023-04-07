@@ -562,7 +562,6 @@ s := Cputime(t);
         raise ValueError('unknown system "%s"'%system)
 
 
-
 #######################################################################
 # Dense Benchmarks over GF(p), for small p.
 #######################################################################
@@ -719,7 +718,6 @@ s := Cputime(t);
         return magma.eval('s')
     else:
         raise ValueError('unknown system "%s"'%system)
-
 
 
 # Matrix multiplication over GF(p)
