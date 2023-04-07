@@ -1311,7 +1311,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             that depends on which packages are loaded, so we must re-seed GAP
             to ensure a consistent result for this example::
 
-                sage: libgap.set_seed(0)
+                sage: libgap.set_seed(0)                                                                                # optional - sage.libs.gap
                 0
                 sage: m = SU(2, 13).algebra(QQ).random_element(1)                       # optional - sage.groups sage.modules
                 sage: m.parent() is SU(2, 13).algebra(QQ)                               # optional - sage.groups sage.modules
@@ -2355,9 +2355,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 examples, with two modules `A` and `B`::
 
                     sage: A = CombinatorialFreeModule(ZZ, [1,2], prefix="A")            # optional - sage.modules
-                    sage: A.rename("A")
+                    sage: A.rename("A")                                                 # optional - sage.modules
                     sage: B = CombinatorialFreeModule(ZZ, [3,4], prefix="B")            # optional - sage.modules
-                    sage: B.rename("B")
+                    sage: B.rename("B")                                                 # optional - sage.modules
 
                 and `f` the bilinear morphism `(a,b) \mapsto b \otimes a`
                 from `A \times B` to `B \otimes A`::
