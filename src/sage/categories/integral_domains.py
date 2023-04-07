@@ -129,7 +129,7 @@ class IntegralDomains(CategoryWithAxiom):
             tester = self._tester(**options)
             try:
                 fraction_field = self.fraction_field()
-            except AttributeError:
+            except (AttributeError, ImportError):
                 # some integral domains do not implement fraction_field() yet
                 if self in Fields():
                     raise

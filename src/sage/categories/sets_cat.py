@@ -2925,7 +2925,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: e == S.e(), h == S.h(), m == S.m(), p == SQ.p(), s == SQ.s()  # optional - sage.combinat
                     (True, True, True, True, True)
                 """
-                from sage.misc.misc import inject_variable
+                from sage.misc.globals import inject_variable
                 if shorthands == 'all':
                     shorthands = getattr(self, '_shorthands_all', None)
                 if shorthands is None:
@@ -3137,7 +3137,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: from sage.categories.realizations import Realizations
                     sage: class Blah(Parent):
                     ....:     pass
-                    sage: C = Sets.WithRealizations.ParentMethods.Realizations(A)
+                    sage: C = Sets.WithRealizations.ParentMethods.Realizations(A)       # optional - sage.combinat sage.modules
                     sage: P = Blah(category=C)                                          # optional - sage.combinat sage.modules
                     sage: P     # indirect doctest                                      # optional - sage.combinat sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field in the realization Blah
