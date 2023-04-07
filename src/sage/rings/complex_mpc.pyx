@@ -206,7 +206,7 @@ cpdef inline split_complex_string(string, int base=10):
         else:
             return None
 
-        if  z.group(prefix + '_re_abs') is not None:
+        if z.group(prefix + '_re_abs') is not None:
             x = z.expand(r'\g<' + prefix + '_re_abs>')
             if z.group(prefix + '_re_sign') is not None:
                 x = z.expand(r'\g<' + prefix + '_re_sign>') + x

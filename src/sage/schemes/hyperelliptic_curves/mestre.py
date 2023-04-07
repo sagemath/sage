@@ -67,26 +67,31 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
         sage: HyperellipticCurve_from_invariants([3840,414720,491028480,2437709561856])
         Traceback (most recent call last):
         ...
-        NotImplementedError: Reduction of hyperelliptic curves not yet implemented. See trac #14755 and #14756.
-        sage: HyperellipticCurve_from_invariants([3840,414720,491028480,2437709561856],reduced = False)
-        Hyperelliptic Curve over Rational Field defined by y^2 = -46656*x^6 + 46656*x^5 - 19440*x^4 + 4320*x^3 - 540*x^2 + 4410*x - 1
+        NotImplementedError: Reduction of hyperelliptic curves not yet implemented.
+        See trac #14755 and #14756.
+        sage: HyperellipticCurve_from_invariants([3840,414720,491028480,2437709561856],
+        ....:                                    reduced=False)
+        Hyperelliptic Curve over Rational Field defined by
+         y^2 = -46656*x^6 + 46656*x^5 - 19440*x^4 + 4320*x^3 - 540*x^2 + 4410*x - 1
         sage: HyperellipticCurve_from_invariants([21, 225/64, 22941/512, 1])
         Traceback (most recent call last):
         ...
-        NotImplementedError: Reduction of hyperelliptic curves not yet implemented. See trac #14755 and #14756.
+        NotImplementedError: Reduction of hyperelliptic curves not yet implemented.
+        See trac #14755 and #14756.
 
     An example over a finite field::
 
-        sage: H = HyperellipticCurve_from_invariants([GF(13)(1),3,7,5]); H
+        sage: H = HyperellipticCurve_from_invariants([GF(13)(1), 3, 7, 5]); H           # optional - sage.rings.finite_rings
         Hyperelliptic Curve over Finite Field of size 13 defined by ...
-        sage: H.igusa_clebsch_invariants()
+        sage: H.igusa_clebsch_invariants()                                              # optional - sage.rings.finite_rings
         (4, 9, 6, 11)
 
     An example over a number field::
 
-        sage: K = QuadraticField(353, 'a')
-        sage: H = HyperellipticCurve_from_invariants([21, 225/64, 22941/512, 1], reduced = false)
-        sage: f = K['x'](H.hyperelliptic_polynomials()[0])
+        sage: K = QuadraticField(353, 'a')                                              # optional - sage.rings.number_field
+        sage: H = HyperellipticCurve_from_invariants([21, 225/64, 22941/512, 1],        # optional - sage.rings.number_field
+        ....:                                        reduced=false)
+        sage: f = K['x'](H.hyperelliptic_polynomials()[0])                              # optional - sage.rings.number_field
 
     If the Mestre Conic defined by the Igusa-Clebsch invariants has no rational
     points, then there exists no hyperelliptic curve over the base field with
@@ -95,14 +100,17 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
         sage: HyperellipticCurve_from_invariants([1,2,3,4])
         Traceback (most recent call last):
         ...
-        ValueError: No such curve exists over Rational Field as there are no rational points on Projective Conic Curve over Rational Field defined by -2572155000*u^2 - 317736000*u*v + 1250755459200*v^2 + 2501510918400*u*w + 39276887040*v*w + 2736219686912*w^2
+        ValueError: No such curve exists over Rational Field as there are
+        no rational points on Projective Conic Curve over Rational Field defined by
+        -2572155000*u^2 - 317736000*u*v + 1250755459200*v^2 + 2501510918400*u*w
+        + 39276887040*v*w + 2736219686912*w^2
 
     Mestre's algorithm only works for generic curves of genus two, so another
     algorithm is needed for those curves with extra automorphism. See also
     :trac:`12199`::
 
         sage: P.<x> = QQ[]
-        sage: C = HyperellipticCurve(x^6+1)
+        sage: C = HyperellipticCurve(x^6 + 1)
         sage: i = C.igusa_clebsch_invariants()
         sage: HyperellipticCurve_from_invariants(i)
         Traceback (most recent call last):
@@ -114,12 +122,13 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     different from 2, 3, and 5, so another algorithm will be needed for fields
     of those characteristics. See also :trac:`12200`::
 
-        sage: P.<x> = GF(3)[]
-        sage: HyperellipticCurve(x^6+x+1).igusa_clebsch_invariants()
+        sage: P.<x> = GF(3)[]                                                           # optional - sage.rings.finite_rings
+        sage: HyperellipticCurve(x^6 + x + 1).igusa_clebsch_invariants()                # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
-        NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves not implemented in characteristics 2, 3, and 5
-        sage: HyperellipticCurve_from_invariants([GF(5)(1),1,0,1])
+        NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves
+        not implemented in characteristics 2, 3, and 5
+        sage: HyperellipticCurve_from_invariants([GF(5)(1), 1, 0, 1])                   # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ZeroDivisionError: inverse of Mod(0, 5) does not exist
@@ -221,7 +230,7 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
       invariants: I2, I4, I6, I10
     - ``xyz`` - Boolean (default: False) if True, the algorithm also
       returns three invariants x,y,z used in Mestre's algorithm
-    - ``names`` (default: 'u,v,w') - the variable names for the Conic
+    - ``names`` (default: 'u,v,w') - the variable names for the conic
 
     OUTPUT:
 
@@ -232,24 +241,33 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
     A standard example::
 
         sage: Mestre_conic([1,2,3,4])
-        Projective Conic Curve over Rational Field defined by -2572155000*u^2 - 317736000*u*v + 1250755459200*v^2 + 2501510918400*u*w + 39276887040*v*w + 2736219686912*w^2
+        Projective Conic Curve over Rational Field defined by
+        -2572155000*u^2 - 317736000*u*v + 1250755459200*v^2 + 2501510918400*u*w
+        + 39276887040*v*w + 2736219686912*w^2
 
     Note that the algorithm works over number fields as well::
 
-        sage: k = NumberField(x^2-41,'a')
-        sage: a = k.an_element()
-        sage: Mestre_conic([1,2+a,a,4+a])
-        Projective Conic Curve over Number Field in a with defining polynomial x^2 - 41 defined by (-801900000*a + 343845000)*u^2 + (855360000*a + 15795864000)*u*v + (312292800000*a + 1284808579200)*v^2 + (624585600000*a + 2569617158400)*u*w + (15799910400*a + 234573143040)*v*w + (2034199306240*a + 16429854656512)*w^2
+        sage: k = NumberField(x^2 - 41, 'a')                                            # optional - sage.rings.number_field
+        sage: a = k.an_element()                                                        # optional - sage.rings.number_field
+        sage: Mestre_conic([1, 2 + a, a, 4 + a])                                        # optional - sage.rings.number_field
+        Projective Conic Curve over Number Field in a with defining polynomial x^2 - 41
+         defined by (-801900000*a + 343845000)*u^2 + (855360000*a + 15795864000)*u*v
+          + (312292800000*a + 1284808579200)*v^2 + (624585600000*a + 2569617158400)*u*w
+          + (15799910400*a + 234573143040)*v*w + (2034199306240*a + 16429854656512)*w^2
 
     And over finite fields::
 
-        sage: Mestre_conic([GF(7)(10),GF(7)(1),GF(7)(2),GF(7)(3)])
-        Projective Conic Curve over Finite Field of size 7 defined by -2*u*v - v^2 - 2*u*w + 2*v*w - 3*w^2
+        sage: Mestre_conic([GF(7)(10), GF(7)(1), GF(7)(2), GF(7)(3)])                   # optional - sage.rings.finite_rings
+        Projective Conic Curve over Finite Field of size 7
+        defined by -2*u*v - v^2 - 2*u*w + 2*v*w - 3*w^2
 
-    An example with xyz::
+    An example with ``xyz``::
 
         sage: Mestre_conic([5,6,7,8], xyz=True)
-        (Projective Conic Curve over Rational Field defined by -415125000*u^2 + 608040000*u*v + 33065136000*v^2 + 66130272000*u*w + 240829440*v*w + 10208835584*w^2, 232/1125, -1072/16875, 14695616/2109375)
+        (Projective Conic Curve over Rational Field
+          defined by -415125000*u^2 + 608040000*u*v + 33065136000*v^2
+                     + 66130272000*u*w + 240829440*v*w + 10208835584*w^2,
+         232/1125, -1072/16875, 14695616/2109375)
 
     ALGORITHM:
 
