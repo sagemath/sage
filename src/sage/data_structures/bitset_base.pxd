@@ -174,15 +174,15 @@ cdef inline bint bitset_init(fused_bitset_t bits, mp_bitcnt_t size) except -1:
 
     bits.size = size
     if fused_bitset_t is bitset_t:
-        bits.limbs = (size - 1) / (8 * LIMB_SIZE) + 1
+        bits.limbs = (size - 1) // (8 * LIMB_SIZE) + 1
         bits.bits = <mp_limb_t*>check_calloc(bits.limbs, LIMB_SIZE)
     else:
-        bits.limbs = ((size - 1) / (8*ALIGNMENT) + 1) * (ALIGNMENT/LIMB_SIZE)
+        bits.limbs = ((size - 1) // (8*ALIGNMENT) + 1) * (ALIGNMENT//LIMB_SIZE)
         extra = (ALIGNMENT + LIMB_SIZE - 2) // LIMB_SIZE
         bits.mem = check_calloc(bits.limbs + extra, LIMB_SIZE)
         bits.bits = <mp_limb_t*> align(bits.mem, ALIGNMENT)
         bits.non_zero_chunks_are_initialized = False
-        bits.non_zero_chunks = <mp_bitcnt_t*> check_allocarray((bits.limbs*LIMB_SIZE) / ALIGNMENT, sizeof(mp_bitcnt_t))
+        bits.non_zero_chunks = <mp_bitcnt_t*> check_allocarray((bits.limbs*LIMB_SIZE) // ALIGNMENT, sizeof(mp_bitcnt_t))
 
 cdef inline bint bitset_check_alignment(fused_bitset_t bits):
     """
@@ -203,7 +203,7 @@ cdef inline int bitset_realloc(bitset_t bits, mp_bitcnt_t size) except -1:
     if size <= 0:
         raise ValueError("bitset capacity must be greater than 0")
 
-    cdef mp_size_t limbs_new = (size - 1) / (8 * LIMB_SIZE) + 1
+    cdef mp_size_t limbs_new = (size - 1) // (8 * LIMB_SIZE) + 1
     bits.bits = <mp_limb_t*>check_reallocarray(bits.bits, limbs_new, LIMB_SIZE)
     bits.size = size
     bits.limbs = limbs_new

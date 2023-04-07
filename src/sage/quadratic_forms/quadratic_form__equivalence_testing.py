@@ -5,7 +5,6 @@ AUTHORS:
 
 - Anna Haensch (2014-12-01): added test for rational isometry
 """
-
 from sage.arith.misc import (hilbert_symbol,
                              GCD,
                              is_prime,
@@ -209,14 +208,14 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
 
     """
     # Sanity Checks
-    #if not isinstance(other, QuadraticForm):
+    # if not isinstance(other, QuadraticForm):
     if not isinstance(other, type(self)):
         raise TypeError("the first argument must be of type QuadraticForm")
     if not is_prime(p):
         raise TypeError("the second argument must be a prime number")
 
     # Get the relevant local normal forms quickly
-    self_jordan = self.jordan_blocks_by_scale_and_unimodular(p, safe_flag= False)
+    self_jordan = self.jordan_blocks_by_scale_and_unimodular(p, safe_flag=False)
     other_jordan = other.jordan_blocks_by_scale_and_unimodular(p, safe_flag=False)
 
     # Check for the same number of Jordan components
@@ -251,27 +250,27 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
         # ------------------------------------------
 
         # List of norms, scales, and dimensions for each i
-        scale_list = [ZZ(2)**self_jordan[i][0]  for i in range(t)]
-        norm_list = [ZZ(2)**(self_jordan[i][0] + valuation(GCD(self_jordan[i][1].coefficients()), 2))  for i in range(t)]
-        dim_list = [(self_jordan[i][1].dim())  for i in range(t)]
+        scale_list = [ZZ(2)**self_jordan[i][0] for i in range(t)]
+        norm_list = [ZZ(2)**(self_jordan[i][0] + valuation(GCD(self_jordan[i][1].coefficients()), 2)) for i in range(t)]
+        dim_list = [(self_jordan[i][1].dim()) for i in range(t)]
 
         # List of Hessian determinants and Hasse invariants for each Jordan (sub)chain
         # (Note: This is not the same as O'Meara's Gram determinants, but ratios are the same!)  -- NOT SO GOOD...
         # But it matters in condition (ii), so we multiply all by 2 (instead of dividing by 2 since only square-factors matter, and it's easier.)
         j = 0
-        self_chain_det_list = [ self_jordan[j][1].Gram_det() * (scale_list[j]**dim_list[j])]
-        other_chain_det_list = [ other_jordan[j][1].Gram_det() * (scale_list[j]**dim_list[j])]
-        self_hasse_chain_list = [ self_jordan[j][1].scale_by_factor(ZZ(2)**self_jordan[j][0]).hasse_invariant__OMeara(2) ]
-        other_hasse_chain_list = [ other_jordan[j][1].scale_by_factor(ZZ(2)**other_jordan[j][0]).hasse_invariant__OMeara(2) ]
+        self_chain_det_list = [self_jordan[j][1].Gram_det() * (scale_list[j]**dim_list[j])]
+        other_chain_det_list = [other_jordan[j][1].Gram_det() * (scale_list[j]**dim_list[j])]
+        self_hasse_chain_list = [self_jordan[j][1].scale_by_factor(ZZ(2)**self_jordan[j][0]).hasse_invariant__OMeara(2)]
+        other_hasse_chain_list = [other_jordan[j][1].scale_by_factor(ZZ(2)**other_jordan[j][0]).hasse_invariant__OMeara(2)]
 
         for j in range(1, t):
             self_chain_det_list.append(self_chain_det_list[j-1] * self_jordan[j][1].Gram_det() * (scale_list[j]**dim_list[j]))
             other_chain_det_list.append(other_chain_det_list[j-1] * other_jordan[j][1].Gram_det() * (scale_list[j]**dim_list[j]))
-            self_hasse_chain_list.append(self_hasse_chain_list[j-1] \
-                                         * hilbert_symbol(self_chain_det_list[j-1], self_jordan[j][1].Gram_det(), 2) \
+            self_hasse_chain_list.append(self_hasse_chain_list[j-1]
+                                         * hilbert_symbol(self_chain_det_list[j-1], self_jordan[j][1].Gram_det(), 2)
                                          * self_jordan[j][1].hasse_invariant__OMeara(2))
-            other_hasse_chain_list.append(other_hasse_chain_list[j-1] \
-                                          * hilbert_symbol(other_chain_det_list[j-1], other_jordan[j][1].Gram_det(), 2) \
+            other_hasse_chain_list.append(other_hasse_chain_list[j-1]
+                                          * hilbert_symbol(other_chain_det_list[j-1], other_jordan[j][1].Gram_det(), 2)
                                           * other_jordan[j][1].hasse_invariant__OMeara(2))
 
         # SANITY CHECK -- check that the scale powers are strictly increasing
@@ -290,7 +289,7 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
                 return False
 
             # Check O'Meara's condition (ii) when appropriate
-            if norm_list[i+1] % (4 * norm_list[i]) == 0:
+            if norm_list[i + 1] % (4 * norm_list[i]) == 0:
                 if self_hasse_chain_list[i] * hilbert_symbol(norm_list[i] * other_chain_det_list[i], -self_chain_det_list[i], 2) \
                        != other_hasse_chain_list[i] * hilbert_symbol(norm_list[i], -other_chain_det_list[i], 2):      # Nipp conditions
                     return False
@@ -489,13 +488,13 @@ def is_rationally_isometric(self, other, return_matrix=False):
     if self.dim() != other.dim():
         return False
 
-    if not (self.Gram_det()*other.Gram_det()).is_square():
+    if not (self.Gram_det() * other.Gram_det()).is_square():
         return False
 
-    L1=self.Gram_det().support()
-    L2=other.Gram_det().support()
+    L1 = self.Gram_det().support()
+    L2 = other.Gram_det().support()
 
-    for p in set().union(L1,L2):
+    for p in set().union(L1, L2):
         if self.hasse_invariant(p) != other.hasse_invariant(p):
             return False
 
@@ -513,13 +512,13 @@ def is_rationally_isometric(self, other, return_matrix=False):
 
         for emb in K.real_embeddings():
 
-            Mpos=0
+            Mpos = 0
             for x in Mentries:
-                Mpos+= emb(x) >= 0
+                Mpos += emb(x) >= 0
 
-            Npos=0
+            Npos = 0
             for x in Nentries:
-                Npos+= emb(x) >= 0
+                Npos += emb(x) >= 0
 
             if Npos != Mpos:
                 return False
@@ -603,7 +602,7 @@ def _diagonal_isometry(V, W):
         if Q.Gram_matrix()[0][0] != F.Gram_matrix()[0][0]:
             # Find a vector w in F such that F(w) equals the first term of Q.
             w = F.solve(Q.Gram_matrix()[0][0])
-            w = vector(QQ, i*[0] + w.list())
+            w = vector(QQ, i * [0] + w.list())
 
             # We want to extend the basis of W to include the vector w.
             # Find a non-fixed vector in the current basis to replace by w.
@@ -611,10 +610,10 @@ def _diagonal_isometry(V, W):
             # The new set of vectors must still be linearly independent (i.e. the matrix is non-singular).
             while True:
                 temp_matrix = Matrix(change_of_basis_matrix)
-                temp_matrix.set_column(j, change_of_basis_matrix*w)
+                temp_matrix.set_column(j, change_of_basis_matrix * w)
                 if not temp_matrix.is_singular():
                     break
-                j = j + 1
+                j += 1
 
             change_of_basis_matrix = temp_matrix
 
@@ -687,12 +686,10 @@ def _gram_schmidt(m, fixed_vector_index, inner_product):
     from sage.matrix.constructor import column_matrix
 
     n = m.dimensions()[0]
-    vectors = [0] * n
+    vectors = [m.column(i) for i in range(n)]
 
-    for i in range(n):
-        vectors[i] = m.column(i)
     for i in range(fixed_vector_index, n):
-        for j in range(i+1, n):
+        for j in range(i + 1, n):
             vectors[j] = vectors[j] - (inner_product(vectors[j], vectors[i]) / inner_product(vectors[i], vectors[i])) * vectors[i]
 
     return column_matrix(vectors)

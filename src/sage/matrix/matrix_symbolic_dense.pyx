@@ -154,7 +154,7 @@ Check that :trac:`12778` is fixed::
     Full MatrixSpace of 3 by 4 dense matrices over Symbolic Ring
 """
 
-from sage.rings.polynomial.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element cimport ModuleElement, RingElement, Element
 from sage.structure.factorization import Factorization
 
