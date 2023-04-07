@@ -4802,7 +4802,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             F = F + [s for s in self.faces()[k] if s in other.faces()[k]]
         return SimplicialComplex(F)
 
-    #@cached_method    tried this, but does not make much sense to cache this
+    @cached_method
     def bigraded_betti_numbers(self):
         r"""
         Returns a dictionary of the bigraded Betti numbers of ''self'', 
@@ -4820,21 +4820,17 @@ class SimplicialComplex(Parent, GenericCellComplex):
             {(0, 0): 1, (-1,4 ): 3, (-2, 6): 1, (-2, 8): 2, (-3, 10): 1}
         """
         from sage.misc.functional import gens 
+        from sage.homology.homology_group import HomologyGroup
         L = set(self.vertices())
         n = len(L)
-        D = {}
         B = {}
-        Point = SimplicialComplex([[0]])
-        H0 = Point.homology().get(0)
-
-        for i in range(n+1):
-            D[i] = list(combinations(L,i))
+        H0 = HomologyGroup(0, ZZ)
 
         for i in range(n+1):
             for j in range (n+1):
-                B[(-i, 2*j)] = self.bigraded_betti_number(-i, 2*j) 
+                B[(-i, 2*j)] = 0
 
-        #B[(0,0)] = 1
+        B[(0,0)] = 1
 
         for j in range(n+1):
             for x in combinations(L, j):
@@ -4863,6 +4859,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             1
         """
         from sage.misc.functional import gens
+        from sage.homology.homology_group import HomologyGroup
         if b % 2 == 1:
             raise ValueError("second argument must be even")
         if a == 0 and b == 0:
@@ -4872,12 +4869,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         b = b / 2
         L = set(self.vertices())
         n = len(L)
-        D = {}
-        Point = SimplicialComplex([[0]])
-        H0 = Point.homology().get(0)
-
-        for i in range(n + 1):
-            D[i] = list(combinations(L, i))
+        H0 = HomologyGroup(0, ZZ)
 
         B = 0
 
