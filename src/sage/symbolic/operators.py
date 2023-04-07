@@ -2,6 +2,8 @@
 
 import operator
 
+from sage.structure.element import Expression
+
 
 def add_vararg(first, *rest):
     r"""
@@ -130,6 +132,8 @@ class FDerivativeOperator():
             # temporary variable e.g. `t0` and then evaluate the
             # derivative f'(t0) symbolically at t0=1. See trac
             # #12796.
+            from sage.symbolic.ring import SR
+
             temp_args = SR.temp_var(n=len(args))
             vars = [temp_args[i] for i in self._parameter_set]
             return self._f(*temp_args).diff(*vars).function(*temp_args)(*args)
