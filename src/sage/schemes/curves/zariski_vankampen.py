@@ -1452,10 +1452,10 @@ def braid_monodromy_arrangement(flist):
          s1*s0*s2*s0^-1*s2*s1^-1],
         {1: 1, 2: 2, 3: 1, 4: 1})
 
-        .. TODO::
+    .. TODO::
 
-            Create a class ``arrangements_of_curves`` with a ``braid_monodromy`` method
-            it can be also a method for affine line arrangements.
+        Create a class ``arrangements_of_curves`` with a ``braid_monodromy`` method
+        it can be also a method for affine line arrangements.
     """
     f = prod(flist)
     if len(flist) == 1:
@@ -1520,12 +1520,12 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         sage: fundamental_group_arrangement(flist, projective=True, braid_mon=BM) # optional - sirocco
         (Finitely presented group < x |  >, {(-1, -1, -1): 2, 1: 1})
 
-        .. TODO::
+    .. TODO::
 
-            Create a class ``arrangements_of_curves`` with a ``fundamental_group`` method
-            it can be also a method for affine or projective line arrangements, even for
-            hyperplane arrangements defined over a number subfield of ``QQbar`` after
-            applying a generic line section.
+        Create a class ``arrangements_of_curves`` with a ``fundamental_group`` method
+        it can be also a method for affine or projective line arrangements, even for
+        hyperplane arrangements defined over a number subfield of ``QQbar`` after
+        applying a generic line section.
     """
     f = prod(flist)
     if braid_mon is None:
