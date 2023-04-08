@@ -4805,10 +4805,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
     @cached_method
     def bigraded_betti_numbers(self):
         r"""
-        Returns a dictionary of the bigraded Betti numbers of ''self'', 
-        with keys '(-i, 2j)'.
+        Return a dictionary of the bigraded Betti numbers of ``self``, 
+        with keys `(-i, 2j)`.
 
-        See bigraded_betti_number(self, a, b) for more information.
+        .. SEEALSO::
+
+            See :meth:`bigraded_betti_number` for more information.
 
         EXAMPLES::
 
