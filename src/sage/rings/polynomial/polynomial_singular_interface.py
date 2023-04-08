@@ -61,7 +61,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
     TESTS::
 
         sage: from sage.rings.polynomial.polynomial_singular_interface import _do_singular_init_
-        sage: _do_singular_init_(singular, ZZ, 0, 'X', 'dp')
+        sage: _do_singular_init_(singular, ZZ, 0, 'X', 'dp')                                        # optional - sage.libs.singular
         (polynomial ring, over a domain, global ordering
          // coefficients: ZZ
          // number of vars : 1

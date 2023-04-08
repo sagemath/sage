@@ -264,7 +264,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
 
     Power series ring with many variables::
 
-        sage: R = PowerSeriesRing(ZZ, ['x%s'%p for p in primes(100)]); R
+        sage: R = PowerSeriesRing(ZZ, ['x%s'%p for p in primes(100)]); R                # optional - sage.libs.pari
         Multivariate Power Series Ring in x2, x3, x5, x7, x11, x13, x17, x19,
         x23, x29, x31, x37, x41, x43, x47, x53, x59, x61, x67, x71, x73, x79,
         x83, x89, x97 over Integer Ring
@@ -274,12 +274,12 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
 
       ::
 
-        sage: R.inject_variables()
+        sage: R.inject_variables()                                                      # optional - sage.libs.pari
         Defining x2, x3, x5, x7, x11, x13, x17, x19, x23, x29, x31, x37,
         x41, x43, x47, x53, x59, x61, x67, x71, x73, x79, x83, x89, x97
 
-        sage: f = x47 + 3*x11*x29 - x19 + R.O(3)
-        sage: f in R
+        sage: f = x47 + 3*x11*x29 - x19 + R.O(3)                                        # optional - sage.libs.pari
+        sage: f in R                                                                    # optional - sage.libs.pari
         True
 
 

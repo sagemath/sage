@@ -65,13 +65,14 @@ class Polynomial_generic_sparse(Polynomial):
 
     A more extensive example::
 
-        sage: A.<T> = PolynomialRing(Integers(5),sparse=True) ; f = T^2+1 ; B = A.quo(f)
-        sage: C.<s> = PolynomialRing(B)
-        sage: C
-        Univariate Polynomial Ring in s over Univariate Quotient Polynomial Ring in Tbar over Ring of integers modulo 5 with modulus T^2 + 1
-        sage: s + T
+        sage: A.<T> = PolynomialRing(Integers(5), sparse=True); f = T^2 + 1; B = A.quo(f)                               # optional - sage.libs.pari
+        sage: C.<s> = PolynomialRing(B)                                                                                 # optional - sage.libs.pari
+        sage: C                                                                                                         # optional - sage.libs.pari
+        Univariate Polynomial Ring in s over Univariate Quotient Polynomial Ring in Tbar
+         over Ring of integers modulo 5 with modulus T^2 + 1
+        sage: s + T                                                                                                     # optional - sage.libs.pari
         s + Tbar
-        sage: (s + T)**2
+        sage: (s + T)**2                                                                                                # optional - sage.libs.pari
         s^2 + 2*Tbar*s + 4
 
     """
@@ -243,10 +244,10 @@ class Polynomial_generic_sparse(Polynomial):
         Check that :trac:`28187` is fixed::
 
             sage: R = PolynomialRing(ZZ, 't', sparse=True)
-            sage: t, u = var('t, u')
-            sage: R.gen()._derivative(t)
+            sage: t, u = var('t, u')                                            # optional - sage.symbolic
+            sage: R.gen()._derivative(t)                                        # optional - sage.symbolic
             1
-            sage: R.gen()._derivative(u)
+            sage: R.gen()._derivative(u)                                        # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to u
@@ -418,14 +419,14 @@ class Polynomial_generic_sparse(Polynomial):
         EXAMPLES::
 
             sage: R.<w> = PolynomialRing(RDF, sparse=True)
-            sage: e = RDF(e)
-            sage: f = sum(e^n*w^n for n in range(4)); f   # abs tol 1.1e-14
+            sage: e = RDF(e)                                                            # optional - sage.symbolic
+            sage: f = sum(e^n*w^n for n in range(4)); f   # abs tol 1.1e-14             # optional - sage.symbolic
             20.085536923187664*w^3 + 7.3890560989306495*w^2 + 2.718281828459045*w + 1.0
-            sage: f[1]  # abs tol 5e-16
+            sage: f[1]  # abs tol 5e-16                                                 # optional - sage.symbolic
             2.718281828459045
-            sage: f[5]
+            sage: f[5]                                                                  # optional - sage.symbolic
             0.0
-            sage: f[-1]
+            sage: f[-1]                                                                 # optional - sage.symbolic
             0.0
             sage: R.<x> = PolynomialRing(RealField(19), sparse=True)
             sage: f = (2-3.5*x)^3; f
@@ -825,12 +826,12 @@ class Polynomial_generic_sparse(Polynomial):
 
         Polynomials over noncommutative rings are also allowed::
 
-            sage: HH = QuaternionAlgebra(QQ, -1, -1)
-            sage: P.<x> = PolynomialRing(HH, sparse=True)
-            sage: f = P.random_element(5)
-            sage: g = P.random_element((0, 5))
-            sage: q, r = f.quo_rem(g)
-            sage: f == q*g + r
+            sage: HH = QuaternionAlgebra(QQ, -1, -1)                            # optional - sage.combinat sage.modules
+            sage: P.<x> = PolynomialRing(HH, sparse=True)                       # optional - sage.combinat sage.modules
+            sage: f = P.random_element(5)                                       # optional - sage.combinat sage.modules
+            sage: g = P.random_element((0, 5))                                  # optional - sage.combinat sage.modules
+            sage: q, r = f.quo_rem(g)                                           # optional - sage.combinat sage.modules
+            sage: f == q*g + r                                                  # optional - sage.combinat sage.modules
             True
 
         TESTS::

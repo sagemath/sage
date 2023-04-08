@@ -6,19 +6,19 @@ TESTS:
 Check that operations with numpy elements work well (see :trac:`18076` and
 :trac:`8426`)::
 
-    sage: import numpy
+    sage: import numpy                                                                  # optional - numpy
     sage: x = polygen(RR)
-    sage: x * numpy.int32('1')
+    sage: x * numpy.int32('1')                                                          # optional - numpy
     x
-    sage: numpy.int32('1') * x
+    sage: numpy.int32('1') * x                                                          # optional - numpy
     x
-    sage: x * numpy.int64('1')
+    sage: x * numpy.int64('1')                                                          # optional - numpy
     x
-    sage: numpy.int64('1') * x
+    sage: numpy.int64('1') * x                                                          # optional - numpy
     x
-    sage: x * numpy.float32('1.5')
+    sage: x * numpy.float32('1.5')                                                      # optional - numpy
     1.50000000000000*x
-    sage: numpy.float32('1.5') * x
+    sage: numpy.float32('1.5') * x                                                      # optional - numpy
     1.50000000000000*x
 """
 
