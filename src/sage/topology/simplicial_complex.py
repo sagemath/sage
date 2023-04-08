@@ -4866,7 +4866,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if b % 2 == 1:
             raise ValueError("second argument must be even")
         if a == 0 and b == 0:
-            return 1;
+            return 1
 
         a = -a
         b = b / 2
