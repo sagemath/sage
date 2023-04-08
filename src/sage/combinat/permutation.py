@@ -76,6 +76,8 @@ Below are listed all methods and classes defined in this file.
     :meth:`~sage.combinat.permutation.Permutation.reduced_words_iterator` | An iterator for the reduced words of the permutation ``self``.
     :meth:`~sage.combinat.permutation.Permutation.reduced_word_lexmin` | Returns a lexicographically minimal reduced word of a permutation ``self``.
     :meth:`~sage.combinat.permutation.Permutation.fixed_points` | Returns a list of the fixed points of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.is_derangement` | Returns ``True`` if the permutation ``self`` is a derangement, and ``False`` otherwise.
+    :meth:`~sage.combinat.permutation.Permutation.is_simple` | Returns ``True`` if the permutation ``self`` is simple, and ``False`` otherwise.
     :meth:`~sage.combinat.permutation.Permutation.number_of_fixed_points` | Returns the number of fixed points of the permutation ``self``.
     :meth:`~sage.combinat.permutation.Permutation.recoils` | Returns the list of the positions of the recoils of the permutation ``self``.
     :meth:`~sage.combinat.permutation.Permutation.number_of_recoils` | Returns the number of recoils of the permutation ``self``.
@@ -3092,7 +3094,7 @@ class Permutation(CombinatorialElement):
         """
         return not self.fixed_points()
 
-    def is_simple(pi) -> bool:
+    def is_simple(self) -> bool:
         """
         Return if ``self`` is simple.
 
@@ -3125,12 +3127,12 @@ class Permutation(CombinatorialElement):
             ....:  for n in range(5)]
             [1, 1, 2, 0, 2]
         """
-        n = len(pi)
+        n = len(self)
         if n <= 2:
             return True
         for k in range(1, n - 1):
             for start in range(n - k):
-                slic = pi[start:start + k + 1]
+                slic = self[start:start + k + 1]
                 if max(slic) == min(slic) + k:
                     return False
         return True
