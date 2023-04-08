@@ -16,7 +16,10 @@ Miscellaneous Functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.groups.all import PermutationGroup, PermutationGroup_generic, PermutationGroupElement, SymmetricGroup
+from sage.groups.perm_gps.permgroup import PermutationGroup
+from sage.groups.perm_gps.permgroup import PermutationGroup_generic
+from sage.groups.perm_gps.constructor import PermutationGroupElement
+from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.misc.misc_c import prod
 from functools import wraps
 

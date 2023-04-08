@@ -286,7 +286,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         module_name = cls.__module__.replace(cls._functor_category.lower() + "_","")
         import sys
-        name   = cls.__name__.replace(cls._functor_category, "")
+        name = cls.__name__.replace(cls._functor_category, "")
         __import__(module_name)
         module = sys.modules[module_name]
         return (module.__dict__[name],)

@@ -425,7 +425,7 @@ class DrinfeldModules(Category_over_base_ring):
             0
         """
         if self._characteristic is None:
-            raise NotImplementedError('function ring characteristic not ' \
+            raise NotImplementedError('function ring characteristic not '
                                       'implemented in this case')
         return self._characteristic
 
@@ -498,7 +498,7 @@ class DrinfeldModules(Category_over_base_ring):
         gen = self._ore_polring(gen)
         T = self._function_ring.gen()
         if gen[0] != self._base_morphism(T):
-            raise ValueError('constant coefficient must equal that of the ' \
+            raise ValueError('constant coefficient must equal that of the '
                              'category')
         return DrinfeldModule(self._function_ring, gen)
 

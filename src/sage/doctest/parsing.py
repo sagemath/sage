@@ -63,7 +63,7 @@ def RIFtol(*args):
     if _RIFtol is None:
         try:
             # We need to import from sage.all to avoid circular imports.
-            from sage.all import RealIntervalField
+            from sage.rings.real_mpfi import RealIntervalField
         except ImportError:
             from warnings import warn
             warn("RealIntervalField not available, ignoring all tolerance specifications in doctests")
