@@ -1680,7 +1680,7 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: RDF(1.5).__pari__()                                                                                   # optional - sage.libs.pari
+            sage: RDF(1.5).__pari__()                                                   # optional - sage.libs.pari
             1.50000000000000
         """
         global new_gen_from_real_double_element
