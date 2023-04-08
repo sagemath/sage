@@ -248,7 +248,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         17
         sage: Z(Mod(19,23))
         19
-        sage: Z(2 + 3*5 + O(5^3))
+        sage: Z(2 + 3*5 + O(5^3))                                                       # optional - sage.rings.padics
         17
 
     Arbitrary numeric bases are supported; strings or list of integers
@@ -554,14 +554,14 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         Coercions are available from numpy integer types::
 
-            sage: import numpy
-            sage: ZZ.coerce(numpy.int8('1'))
+            sage: import numpy                                                          # optional - numpy
+            sage: ZZ.coerce(numpy.int8('1'))                                            # optional - numpy
             1
-            sage: ZZ.coerce(numpy.int32('32'))
+            sage: ZZ.coerce(numpy.int32('32'))                                          # optional - numpy
             32
-            sage: ZZ.coerce(numpy.int64('-12'))
+            sage: ZZ.coerce(numpy.int64('-12'))                                         # optional - numpy
             -12
-            sage: ZZ.coerce(numpy.uint64('11'))
+            sage: ZZ.coerce(numpy.uint64('11'))                                         # optional - numpy
             11
 
         TESTS::
@@ -1275,41 +1275,41 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: p = (x + 1)^23 * (x - 1)^23 * (x - 100) * (x + 5445)^5
-            sage: ZZ._roots_univariate_polynomial(p)
+            sage: ZZ._roots_univariate_polynomial(p)                                                                    # optional - sage.libs.pari
             [(100, 1), (-5445, 5), (1, 23), (-1, 23)]
             sage: p *= (1 + x^3458645 - 76*x^3435423343 + x^45346567867756556)
-            sage: ZZ._roots_univariate_polynomial(p)
+            sage: ZZ._roots_univariate_polynomial(p)                                                                    # optional - sage.libs.pari
             [(1, 23), (-1, 23), (100, 1), (-5445, 5)]
             sage: p *= x^156468451540687043504386074354036574634735074
-            sage: ZZ._roots_univariate_polynomial(p)
+            sage: ZZ._roots_univariate_polynomial(p)                                                                    # optional - sage.libs.pari
             [(0, 156468451540687043504386074354036574634735074),
              (1, 23),
              (-1, 23),
              (100, 1),
              (-5445, 5)]
-            sage: ZZ._roots_univariate_polynomial(p, multiplicities=False)
+            sage: ZZ._roots_univariate_polynomial(p, multiplicities=False)                                              # optional - sage.libs.pari
             [0, 1, -1, 100, -5445]
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=False)
             sage: p = (x + 1)^23 * (x - 1)^23 * (x - 100) * (x + 5445)^5
-            sage: ZZ._roots_univariate_polynomial(p)
+            sage: ZZ._roots_univariate_polynomial(p)                                                                    # optional - sage.libs.pari
             [(100, 1), (-5445, 5), (1, 23), (-1, 23)]
-            sage: ZZ._roots_univariate_polynomial(p, multiplicities=False)
+            sage: ZZ._roots_univariate_polynomial(p, multiplicities=False)                                              # optional - sage.libs.pari
             [100, -5445, 1, -1]
 
-            sage: ZZ._roots_univariate_polynomial(p, algorithm="sparse")
+            sage: ZZ._roots_univariate_polynomial(p, algorithm="sparse")                                                # optional - sage.libs.pari
             [(100, 1), (-5445, 5), (1, 23), (-1, 23)]
-            sage: ZZ._roots_univariate_polynomial(p, algorithm="dense")
+            sage: ZZ._roots_univariate_polynomial(p, algorithm="dense")                                                 # optional - sage.libs.pari
             [(100, 1), (-5445, 5), (1, 23), (-1, 23)]
-            sage: ZZ._roots_univariate_polynomial(p, algorithm="foobar")
+            sage: ZZ._roots_univariate_polynomial(p, algorithm="foobar")                                                # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm 'foobar'
 
             sage: p = x^20 * p
-            sage: ZZ._roots_univariate_polynomial(p, algorithm="sparse")
+            sage: ZZ._roots_univariate_polynomial(p, algorithm="sparse")                                                # optional - sage.libs.pari
             [(0, 20), (100, 1), (-5445, 5), (1, 23), (-1, 23)]
-            sage: ZZ._roots_univariate_polynomial(p, algorithm="dense")
+            sage: ZZ._roots_univariate_polynomial(p, algorithm="dense")                                                 # optional - sage.libs.pari
             [(100, 1), (-5445, 5), (0, 20), (1, 23), (-1, 23)]
         """
         deg = p.degree()
@@ -1462,7 +1462,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: gap(ZZ) # indirect doctest
+            sage: gap(ZZ) # indirect doctest                                            # optional - sage.libs.gap
             Integers
         """
         return 'Integers'
@@ -1518,7 +1518,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: ZZ._sympy_()
+            sage: ZZ._sympy_()                                                          # optional - sympy
             Integers
         """
         from sympy import Integers

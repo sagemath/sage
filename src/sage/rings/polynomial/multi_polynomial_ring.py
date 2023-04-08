@@ -203,7 +203,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
             sage: R.<x,y> = QQ[]
             sage: S.<x,y> = ZZ[]
-            sage: T.<x,y> = GF(7)[]
+            sage: T.<x,y> = GF(7)[]                                                                 # optional - sage.libs.pari
 
         We convert from integer polynomials to rational polynomials,
         and back::
@@ -219,9 +219,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         ::
 
-            sage: f = R(T.0^2 - 4*T.1^3); f
+            sage: f = R(T.0^2 - 4*T.1^3); f                                                         # optional - sage.libs.pari
             3*y^3 + x^2
-            sage: parent(f)
+            sage: parent(f)                                                                         # optional - sage.libs.pari
             Multivariate Polynomial Ring in x, y over Rational Field
 
         We dump and load the polynomial ring S::
@@ -241,9 +241,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         variable names::
 
             sage: R.<x,y> = PolynomialRing(QQ,2)
-            sage: S.<a,b> = PolynomialRing(GF(7),2)
+            sage: S.<a,b> = PolynomialRing(GF(7),2)                                                 # optional - sage.libs.pari
             sage: f = x^2 + 2/3*y^3
-            sage: S(f)
+            sage: S(f)                                                                              # optional - sage.libs.pari
             3*b^3 + a^2
 
         Conversion from symbolic variables::
@@ -279,12 +279,12 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         ::
 
-            sage: R = GF(5)['x,y,z']
+            sage: R = GF(5)['x,y,z']                                                                # optional - sage.libs.pari
             sage: S = ZZ['y']
-            sage: R(7*S.0)
+            sage: R(7*S.0)                                                                          # optional - sage.libs.pari
             2*y
             sage: T = ZZ['x,z']
-            sage: R(2*T.0 + 6*T.1 + T.0*T.1^2)
+            sage: R(2*T.0 + 6*T.1 + T.0*T.1^2)                                                      # optional - sage.libs.pari
             x*z^2 + 2*x + z
 
         ::

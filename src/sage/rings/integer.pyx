@@ -479,10 +479,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             '3b'
             sage: ZZ( ZZ(5).digits(3) , 3)
             5
-            sage: import numpy
-            sage: ZZ(numpy.int64(7^7))
+            sage: import numpy                                                  # optional - numpy
+            sage: ZZ(numpy.int64(7^7))                                          # optional - numpy
             823543
-            sage: ZZ(numpy.ubyte(-7))
+            sage: ZZ(numpy.ubyte(-7))                                           # optional - numpy
             249
             sage: ZZ(True)
             1
@@ -584,23 +584,23 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         Test comparisons with numpy types (see :trac:`13386` and :trac:`18076`)::
 
-            sage: import numpy
-            sage: numpy.int8('12') == 12
+            sage: import numpy                                                          # optional - numpy
+            sage: numpy.int8('12') == 12                                                # optional - numpy
             True
-            sage: 12 == numpy.int8('12')
+            sage: 12 == numpy.int8('12')                                                # optional - numpy
             True
 
-            sage: float('15') == 15
+            sage: float('15') == 15                                                     # optional - numpy
             True
-            sage: 15 == float('15')
+            sage: 15 == float('15')                                                     # optional - numpy
             True
 
         Test underscores as digit separators (PEP 515,
         https://www.python.org/dev/peps/pep-0515/)::
 
-            sage: Integer('1_3')
+            sage: Integer('1_3')                                                        # optional - numpy
             13
-            sage: Integer(b'1_3')
+            sage: Integer(b'1_3')                                                       # optional - numpy
             13
         """
         # TODO: All the code below should somehow be in an external
@@ -1007,9 +1007,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: ex = SR(ZZ(7)); ex
+            sage: ex = SR(ZZ(7)); ex                                                    # optional - sage.symbolic
             7
-            sage: parent(ex)
+            sage: parent(ex)                                                            # optional - sage.symbolic
             Symbolic Ring
         """
         return sring._force_pyobject(self, force=True)
@@ -1020,9 +1020,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: n = 5; n._sympy_()
+            sage: n = 5; n._sympy_()                                                    # optional - sympy
             5
-            sage: n = -5; n._sympy_()
+            sage: n = -5; n._sympy_()                                                   # optional - sympy
             -5
         """
         import sympy
@@ -2980,12 +2980,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         Setting the optional ``limit`` argument works as expected::
 
             sage: a = 10^100 + 1
-            sage: a.prime_divisors()
+            sage: a.prime_divisors()                                                    # optional - sage.libs.pari
             [73, 137, 401, 1201, 1601, 1676321, 5964848081,
              129694419029057750551385771184564274499075700947656757821537291527196801]
-            sage: a.prime_divisors(limit=10^3)
+            sage: a.prime_divisors(limit=10^3)                                          # optional - sage.libs.pari
             [73, 137, 401]
-            sage: a.prime_divisors(limit=10^7)
+            sage: a.prime_divisors(limit=10^7)                                          # optional - sage.libs.pari
             [73, 137, 401, 1201, 1601, 1676321]
         """
         res = [r[0] for r in self.factor(*args, **kwds)]
@@ -3027,12 +3027,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             [1, 2, 3, 4, 6, 8, 9, 12, 17, 18, 24, 34, 36, 51, 68, 72,
             102, 136, 153, 204, 306, 408, 612, 1224]
             sage: a = odd_part(factorial(31))
-            sage: v = a.divisors()
-            sage: len(v)
+            sage: v = a.divisors()                                                      # optional - sage.libs.pari
+            sage: len(v)                                                                # optional - sage.libs.pari
             172800
-            sage: prod(e + 1 for p, e in factor(a))
+            sage: prod(e + 1 for p, e in factor(a))                                     # optional - sage.libs.pari
             172800
-            sage: all(t.divides(a) for t in v)
+            sage: all(t.divides(a) for t in v)                                          # optional - sage.libs.pari
             True
 
         ::
@@ -3443,10 +3443,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: divmod(1, sys.maxsize+1r)  # should not raise OverflowError: Python int too large to convert to C long
             (0, 1)
-            sage: import mpmath
-            sage: mpmath.mp.prec = 1000
-            sage: root = mpmath.findroot(lambda x: x^2 - 3, 2)
-            sage: len(str(root))
+            sage: import mpmath                                                         # optional - mpmath
+            sage: mpmath.mp.prec = 1000                                                 # optional - mpmath
+            sage: root = mpmath.findroot(lambda x: x^2 - 3, 2)                          # optional - mpmath
+            sage: len(str(root))                                                        # optional - mpmath
             301
         """
         cdef Integer q = PY_NEW(Integer)
@@ -4603,13 +4603,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: gamma(5)
+            sage: gamma(5)                                                          # optional - sage.symbolic
             24
-            sage: gamma(0)
+            sage: gamma(0)                                                          # optional - sage.symbolic
             Infinity
-            sage: gamma(-1)
+            sage: gamma(-1)                                                         # optional - sage.symbolic
             Infinity
-            sage: gamma(-2^150)
+            sage: gamma(-2^150)                                                     # optional - sage.symbolic
             Infinity
         """
         if mpz_sgn(self.value) > 0:
@@ -6148,19 +6148,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: numpy.array([1, 2, 3])
+            sage: import numpy                                                          # optional - numpy
+            sage: numpy.array([1, 2, 3])                                                # optional - numpy
             array([1, 2, 3])
-            sage: numpy.array([1, 2, 3]).dtype
+            sage: numpy.array([1, 2, 3]).dtype                                          # optional - numpy
             dtype('int32')                         # 32-bit
             dtype('int64')                         # 64-bit
 
-            sage: numpy.array(2**40).dtype
+            sage: numpy.array(2**40).dtype                                              # optional - numpy
             dtype('int64')
-            sage: numpy.array(2**400).dtype
+            sage: numpy.array(2**400).dtype                                             # optional - numpy
             dtype('O')
 
-            sage: numpy.array([1,2,3,0.1]).dtype
+            sage: numpy.array([1,2,3,0.1]).dtype                                        # optional - numpy
             dtype('float64')
         """
         if mpz_fits_slong_p(self.value):

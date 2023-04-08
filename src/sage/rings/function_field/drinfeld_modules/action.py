@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari       (because all doctests use finite fields)
 r"""
 The module action induced by a Drinfeld module
 

@@ -102,8 +102,8 @@ cdef class FractionFieldElement(FieldElement):
             sage: f.numerator()
             'hi'
 
-            sage: x = var('x')
-            sage: K((x + 1)/(x^2 + x + 1))
+            sage: x = var('x')                                                          # optional - sage.symbolic
+            sage: K((x + 1)/(x^2 + x + 1))                                              # optional - sage.symbolic
             (x + 1)/(x^2 + x + 1)
             sage: K(355/113)
             355/113
@@ -130,31 +130,31 @@ cdef class FractionFieldElement(FieldElement):
 
             sage: F = ZZ['x,y'].fraction_field()
             sage: x,y = F.gens()
-            sage: K = GF(7)['a,b'].fraction_field()
-            sage: a,b = K.gens()
+            sage: K = GF(7)['a,b'].fraction_field()                             # optional - sage.libs.pari
+            sage: a,b = K.gens()                                                # optional - sage.libs.pari
 
         ::
 
-            sage: phi = F.hom([a+b, a*b], K)
-            sage: phi(x+y) # indirect doctest
+            sage: phi = F.hom([a+b, a*b], K)                                    # optional - sage.libs.pari
+            sage: phi(x+y) # indirect doctest                                   # optional - sage.libs.pari
             a*b + a + b
 
         ::
 
-            sage: (x^2/y)._im_gens_(K, [a+b, a*b])
+            sage: (x^2/y)._im_gens_(K, [a+b, a*b])                              # optional - sage.libs.pari
             (a^2 + 2*a*b + b^2)/(a*b)
-            sage: (x^2/y)._im_gens_(K, [a, a*b])
+            sage: (x^2/y)._im_gens_(K, [a, a*b])                                # optional - sage.libs.pari
             a/b
 
         ::
 
             sage: Zx.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)
-            sage: cc = K.hom([-i])
-            sage: R.<a,b> = K[]
-            sage: F = R.fraction_field()
-            sage: phi = F.hom([F(b),F(a)], base_map=cc)
-            sage: phi(i/a)
+            sage: K.<i> = NumberField(x^2 + 1)                                  # optional - sage.rings.number_field
+            sage: cc = K.hom([-i])                                              # optional - sage.rings.number_field
+            sage: R.<a,b> = K[]                                                 # optional - sage.rings.number_field
+            sage: F = R.fraction_field()                                        # optional - sage.rings.number_field
+            sage: phi = F.hom([F(b), F(a)], base_map=cc)                        # optional - sage.rings.number_field
+            sage: phi(i/a)                                                      # optional - sage.rings.number_field
             ((-i))/b
         """
         nnum = codomain.coerce(self.__numerator._im_gens_(codomain, im_gens, base_map=base_map))
@@ -576,8 +576,8 @@ cdef class FractionFieldElement(FieldElement):
 
         Subtraction is implemented by adding the negative::
 
-            sage: K.<t> = Frac(GF(7)['t'])
-            sage: t - 1/t # indirect doctest
+            sage: K.<t> = Frac(GF(7)['t'])                                      # optional - sage.libs.pari
+            sage: t - 1/t # indirect doctest                                    # optional - sage.libs.pari
             (t^2 + 6)/t
         """
         rnum = self.__numerator
@@ -649,10 +649,10 @@ cdef class FractionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<t> = Frac(GF(7)['t'])
-            sage: a = t/(1+t)
-            sage: b = 3/t
-            sage: a*b # indirect doctest
+            sage: K.<t> = Frac(GF(7)['t'])                                      # optional - sage.libs.pari
+            sage: a = t/(1+t)                                                   # optional - sage.libs.pari
+            sage: b = 3/t                                                       # optional - sage.libs.pari
+            sage: a * b # indirect doctest                                      # optional - sage.libs.pari
             3/(t + 1)
         """
         rnum = self.__numerator
@@ -778,7 +778,7 @@ cdef class FractionFieldElement(FieldElement):
         TESTS::
 
             sage: K = Frac(ZZ['x'])
-            sage: QQ(K(x) / K(2*x))
+            sage: QQ(K(x) / K(2*x))                                             # optional - sage.symbolic
             1/2
         """
         return self._conversion(QQ)
@@ -814,15 +814,15 @@ cdef class FractionFieldElement(FieldElement):
             3/2
 
             sage: x = polygen(QQ)
-            sage: A.<u> = NumberField(x^3 - 2)
-            sage: A((x+3) / (2*x - 1))
+            sage: A.<u> = NumberField(x^3 - 2)                                  # optional - sage.rings.number_field
+            sage: A((x+3) / (2*x - 1))                                          # optional - sage.rings.number_field
             14/15*u^2 + 7/15*u + 11/15
 
-            sage: B = A['y'].fraction_field()
-            sage: A(B(u))
+            sage: B = A['y'].fraction_field()                                   # optional - sage.rings.number_field
+            sage: A(B(u))                                                       # optional - sage.rings.number_field
             u
-            sage: C = A['x,y'].fraction_field()
-            sage: A(C(u))
+            sage: C = A['x,y'].fraction_field()                                 # optional - sage.rings.number_field
+            sage: A(C(u))                                                       # optional - sage.rings.number_field
             u
         """
         if self.__denominator.is_one():
@@ -900,10 +900,10 @@ cdef class FractionFieldElement(FieldElement):
         """
         EXAMPLES::
 
-            sage: K.<t> = Frac(GF(5)['t'])
-            sage: f = (t^2+t)/(t+2); f
+            sage: K.<t> = Frac(GF(5)['t'])                                      # optional - sage.libs.pari
+            sage: f = (t^2+t)/(t+2); f                                          # optional - sage.libs.pari
             (t^2 + t)/(t + 2)
-            sage: -f
+            sage: -f                                                            # optional - sage.libs.pari
             (4*t^2 + 4*t)/(t + 2)
         """
         return self.__class__(self._parent,
@@ -924,9 +924,9 @@ cdef class FractionFieldElement(FieldElement):
         """
         EXAMPLES::
 
-            sage: K.<t> = Frac(GF(7)['t'])
-            sage: f = (t^2+5)/(t-1)
-            sage: ~f
+            sage: K.<t> = Frac(GF(7)['t'])                                      # optional - sage.libs.pari
+            sage: f = (t^2+5)/(t-1)                                             # optional - sage.libs.pari
+            sage: ~f                                                            # optional - sage.libs.pari
             (t + 6)/(t^2 + 5)
         """
         if self.is_zero():
@@ -938,12 +938,12 @@ cdef class FractionFieldElement(FieldElement):
         """
         EXAMPLES::
 
-            sage: K.<t> = Frac(GF(7)['t'])
-            sage: t/t == 1
+            sage: K.<t> = Frac(GF(7)['t'])                                      # optional - sage.libs.pari
+            sage: t/t == 1                                                      # optional - sage.libs.pari
             True
-            sage: t+1/t == (t^2+1)/t
+            sage: t+1/t == (t^2+1)/t                                            # optional - sage.libs.pari
             True
-            sage: t == t/5
+            sage: t == t/5                                                      # optional - sage.libs.pari
             False
 
         ::
@@ -1042,9 +1042,9 @@ cdef class FractionFieldElement(FieldElement):
             sage: x,y = F.gens()
             sage: elt = (2*x + 2*y) / (3*x - 3*y); elt
             (2*x + 2*y)/(3*x - 3*y)
-            sage: elt._symbolic_(SR)
+            sage: elt._symbolic_(SR)                                            # optional - sage.symbolic
             2/3*(x + y)/(x - y)
-            sage: symbolic_expression(elt)
+            sage: symbolic_expression(elt)                                      # optional - sage.symbolic
             2/3*(x + y)/(x - y)
         """
         return ring(self.__numerator)/ring(self.__denominator)
@@ -1101,9 +1101,9 @@ cdef class FractionFieldElement(FieldElement):
 
         Check that :trac:`25440` has been resolved::
 
-            sage: R.<x> = GF(2)[]
-            sage: S.<y> = R.fraction_field()[]
-            sage: (y+1)(R.one())
+            sage: R.<x> = GF(2)[]                                               # optional - sage.libs.pari
+            sage: S.<y> = R.fraction_field()[]                                  # optional - sage.libs.pari
+            sage: (y+1)(R.one())                                                # optional - sage.libs.pari
             0
 
         Check that inexact elements are treated correctly::

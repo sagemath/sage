@@ -85,10 +85,10 @@ Of course, we provide the usual polynomial arithmetic::
 There is a permutation action on the variables, by permuting positive
 variable indices::
 
-    sage: P = Permutation(((10,1)))
-    sage: p^P
+    sage: P = Permutation(((10,1)))                                                     # optional - sage.combinat
+    sage: p^P                                                                           # optional - sage.combinat
     x_5*x_1^2 + 3*x_1^2*y_10 + 2*x_1^2
-    sage: p2^P
+    sage: p2^P                                                                          # optional - sage.combinat
     alpha_5*alpha_1^2 + 3*alpha_1^2*beta_10 + 2*alpha_1^2
 
 Note that `x_0^P = x_0`, since the permutations only change *positive*

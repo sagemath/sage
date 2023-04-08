@@ -2797,31 +2797,31 @@ class MPolynomialIdeal_singular_repr(
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
-            sage: I.hilbert_polynomial()
+            sage: I.hilbert_polynomial()                                                                                # optional - sage.libs.flint
             5*t - 5
 
         Of course, the Hilbert polynomial of a zero-dimensional ideal
         is zero::
 
-            sage: J0 = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5, y^3-2*x*z^2+x*y,x^4+x*y-y*z^2])
+            sage: J0 = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5, y^3 - 2*x*z^2 + x*y, x^4 + x*y - y*z^2])
             sage: J = P*[m.lm() for m in J0.groebner_basis()]
             sage: J.dimension()
             0
-            sage: J.hilbert_polynomial()
+            sage: J.hilbert_polynomial()                                                                                # optional - sage.libs.flint
             0
 
         It is possible to request a computation using the Singular library::
 
-            sage: I.hilbert_polynomial(algorithm = 'singular') == I.hilbert_polynomial()
+            sage: I.hilbert_polynomial(algorithm='singular') == I.hilbert_polynomial()                                  # optional - sage.libs.flint sage.libs.singular
             True
-            sage: J.hilbert_polynomial(algorithm = 'singular') == J.hilbert_polynomial()
+            sage: J.hilbert_polynomial(algorithm='singular') == J.hilbert_polynomial()                                  # optional - sage.libs.flint sage.libs.singular
             True
 
         Here is a bigger examples::
 
             sage: n = 4; m = 11; P = PolynomialRing(QQ, n * m, "x"); x = P.gens(); M = Matrix(n, x)
             sage: Minors = P.ideal(M.minors(2))
-            sage: hp = Minors.hilbert_polynomial(); hp
+            sage: hp = Minors.hilbert_polynomial(); hp                                                                  # optional - sage.libs.flint
             1/21772800*t^13 + 61/21772800*t^12 + 1661/21772800*t^11
              + 26681/21772800*t^10 + 93841/7257600*t^9 + 685421/7257600*t^8
              + 1524809/3110400*t^7 + 39780323/21772800*t^6 + 6638071/1360800*t^5
@@ -2832,7 +2832,7 @@ class MPolynomialIdeal_singular_repr(
         with Singular. We don't test it here, as it has a side-effect on
         other tests that is not understood yet (see :trac:`26300`)::
 
-            sage: Minors.hilbert_polynomial(algorithm = 'singular')    # not tested
+            sage: Minors.hilbert_polynomial(algorithm='singular')    # not tested                                       # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             RuntimeError: error in Singular function call 'hilbPoly':
@@ -2843,8 +2843,8 @@ class MPolynomialIdeal_singular_repr(
         Note that in this example, the Hilbert polynomial gives the
         coefficients of the Hilbert-Poincaré series in all degrees::
 
-            sage: P = PowerSeriesRing(QQ, 't', default_prec = 50)
-            sage: hs = Minors.hilbert_series()
+            sage: P = PowerSeriesRing(QQ, 't', default_prec=50)
+            sage: hs = Minors.hilbert_series()                                                                          # optional - sage.libs.flint
             sage: list(P(hs.numerator()) / P(hs.denominator())) == [hp(t = k) for k in range(50)]
             True
 
@@ -2854,9 +2854,9 @@ class MPolynomialIdeal_singular_repr(
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3, x*y^2, y^4, x^2*y*z, y^3*z, x^2*z^2, x*y*z^2, x*z^3])
-            sage: I.hilbert_polynomial(algorithm='singular')
+            sage: I.hilbert_polynomial(algorithm='singular')                                                            # optional - sage.libs.singular
             3
-            sage: I.hilbert_polynomial()
+            sage: I.hilbert_polynomial()                                                                                # optional - sage.libs.flint
             3
 
         Check that this method works over QQbar (:trac:`25351`)::
@@ -2870,7 +2870,7 @@ class MPolynomialIdeal_singular_repr(
 
             sage: R.<X, Y, Z> = QQ[]
             sage: I = R.ideal([X^2*Y^3, X*Z])
-            sage: I.hilbert_polynomial()
+            sage: I.hilbert_polynomial()                                                                                # optional - sage.libs.flint
             t + 5
         """
         if not self.is_homogeneous():
@@ -2933,39 +2933,39 @@ class MPolynomialIdeal_singular_repr(
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
-            sage: I.hilbert_series()
+            sage: I.hilbert_series()                                                                                    # optional - sage.libs.flint
             (t^4 + t^3 + t^2 + t + 1)/(t^2 - 2*t + 1)
             sage: R.<a,b> = PolynomialRing(QQ)
-            sage: J = R.ideal([a^2*b,a*b^2])
-            sage: J.hilbert_series()
+            sage: J = R.ideal([a^2*b, a*b^2])
+            sage: J.hilbert_series()                                                                                    # optional - sage.libs.flint
             (t^3 - t^2 - t - 1)/(t - 1)
-            sage: J.hilbert_series(grading=(10,3))
+            sage: J.hilbert_series(grading=(10,3))                                                                      # optional - sage.libs.flint
             (t^25 + t^24 + t^23 - t^15 - t^14 - t^13 - t^12 - t^11
              - t^10 - t^9 - t^8 - t^7 - t^6 - t^5 - t^4 - t^3 - t^2
              - t - 1)/(t^12 + t^11 + t^10 - t^2 - t - 1)
 
             sage: K = R.ideal([a^2*b^3, a*b^4 + a^3*b^2])
-            sage: K.hilbert_series(grading=[1,2])
+            sage: K.hilbert_series(grading=[1,2])                                                                       # optional - sage.libs.flint
             (t^11 + t^8 - t^6 - t^5 - t^4 - t^3 - t^2 - t - 1)/(t^2 - 1)
-            sage: K.hilbert_series(grading=[2,1])
+            sage: K.hilbert_series(grading=[2,1])                                                                       # optional - sage.libs.flint
             (2*t^7 - t^6 - t^4 - t^2 - 1)/(t - 1)
 
         TESTS::
 
-            sage: I.hilbert_series() == I.hilbert_series(algorithm = 'singular')
+            sage: I.hilbert_series() == I.hilbert_series(algorithm='singular')                                          # optional - sage.libs.flint sage.libs.singular
             True
-            sage: J.hilbert_series() == J.hilbert_series(algorithm = 'singular')
+            sage: J.hilbert_series() == J.hilbert_series(algorithm='singular')                                          # optional - sage.libs.flint sage.libs.singular
             True
-            sage: J.hilbert_series(grading = (10,3)) == J.hilbert_series(grading = (10,3), algorithm = 'singular')
+            sage: J.hilbert_series(grading=(10,3)) == J.hilbert_series(grading=(10,3), algorithm='singular')            # optional - sage.libs.flint sage.libs.singular
             True
-            sage: K.hilbert_series(grading = (1,2)) == K.hilbert_series(grading = (1,2), algorithm = 'singular')
+            sage: K.hilbert_series(grading=(1,2)) == K.hilbert_series(grading=(1,2), algorithm='singular')              # optional - sage.libs.flint sage.libs.singular
             True
-            sage: K.hilbert_series(grading = (2,1)) == K.hilbert_series(grading = (2,1), algorithm = 'singular')
+            sage: K.hilbert_series(grading=(2,1)) == K.hilbert_series(grading=(2,1), algorithm='singular')              # optional - sage.libs.flint sage.libs.singular
             True
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
-            sage: I.hilbert_series(grading=5)
+            sage: I.hilbert_series(grading=5)                                                                           # optional - sage.libs.flint
             Traceback (most recent call last):
             ...
             TypeError: grading must be a list or a tuple of integers
@@ -3032,22 +3032,22 @@ class MPolynomialIdeal_singular_repr(
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
-            sage: I.hilbert_numerator()
+            sage: I.hilbert_numerator()                                                                                 # optional - sage.libs.flint
             -t^5 + 1
             sage: R.<a,b> = PolynomialRing(QQ)
-            sage: J = R.ideal([a^2*b,a*b^2])
-            sage: J.hilbert_numerator()
+            sage: J = R.ideal([a^2*b, a*b^2])
+            sage: J.hilbert_numerator()                                                                                 # optional - sage.libs.flint
             t^4 - 2*t^3 + 1
-            sage: J.hilbert_numerator(grading=(10,3))
+            sage: J.hilbert_numerator(grading=(10,3))                                                                   # optional - sage.libs.flint
             t^26 - t^23 - t^16 + 1
 
         TESTS::
 
-            sage: I.hilbert_numerator() == I.hilbert_numerator(algorithm = 'singular')
+            sage: I.hilbert_numerator() == I.hilbert_numerator(algorithm='singular')                                    # optional - sage.libs.flint sage.libs.singular
             True
-            sage: J.hilbert_numerator() == J.hilbert_numerator(algorithm = 'singular')
+            sage: J.hilbert_numerator() == J.hilbert_numerator(algorithm='singular')                                    # optional - sage.libs.flint sage.libs.singular
             True
-            sage: J.hilbert_numerator(grading=(10,3)) == J.hilbert_numerator(grading=(10,3), algorithm = 'singular')
+            sage: J.hilbert_numerator(grading=(10,3)) == J.hilbert_numerator(grading=(10,3), algorithm='singular')      # optional - sage.libs.flint sage.libs.singular
             True
 
         Check that this method works over QQbar (:trac:`25351`)::

@@ -471,7 +471,7 @@ class AnInfinity():
             Traceback (most recent call last):
             ...
             ValueError: unsigned oo times smaller number not defined
-            sage: SR(infinity) / unsigned_infinity
+            sage: SR(infinity) / unsigned_infinity                                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             RuntimeError: indeterminate expression: 0 * infinity encountered.
@@ -567,8 +567,8 @@ class UnsignedInfinityRing_class(Singleton, Ring):
 
         Sage can understand SymPy's complex infinity (:trac:`17493`)::
 
-            sage: import sympy
-            sage: SR(sympy.zoo)
+            sage: import sympy                                                          # optional - sympy
+            sage: SR(sympy.zoo)                                                         # optional - sympy
             Infinity
 
         Some equality checks::
@@ -942,12 +942,12 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: SR(unsigned_infinity)._sympy_()
+            sage: import sympy                                                          # optional - sympy
+            sage: SR(unsigned_infinity)._sympy_()                                       # optional - sympy
             zoo
-            sage: gamma(-3)._sympy_() is sympy.factorial(-2)
+            sage: gamma(-3)._sympy_() is sympy.factorial(-2)                            # optional - sympy
             True
-            sage: gamma(-3) is sympy.factorial(-2)._sage_()
+            sage: gamma(-3) is sympy.factorial(-2)._sage_()                             # optional - sympy
             True
         """
         import sympy
@@ -1226,7 +1226,7 @@ class InfinityRing_class(Singleton, Ring):
 
             sage: InfinityRing.has_coerce_map_from(int) # indirect doctest
             True
-            sage: InfinityRing.has_coerce_map_from(AA)
+            sage: InfinityRing.has_coerce_map_from(AA)                          # optional - sage.rings.number_field
             True
             sage: InfinityRing.has_coerce_map_from(RDF)
             True
@@ -1237,7 +1237,7 @@ class InfinityRing_class(Singleton, Ring):
         infinity ring::
 
             sage: cm = get_coercion_model()
-            sage: cm.explain(AA(3), oo, operator.lt)
+            sage: cm.explain(AA(3), oo, operator.lt)                            # optional - sage.rings.number_field
             Coercion on left operand via
                 Coercion map:
                   From: Algebraic Real Field
@@ -1278,7 +1278,7 @@ class InfinityRing_class(Singleton, Ring):
         r"""
         EXAMPLES::
 
-            sage: QQbar(-2*i)*infinity
+            sage: QQbar(-2*i)*infinity                                          # optional - sage.rings.number_field
             (-I)*Infinity
         """
         from sage.symbolic.ring import SR
@@ -1479,9 +1479,9 @@ class FiniteNumber(RingElement):
 
         TESTS::
 
-            sage: a = InfinityRing(pi); a
+            sage: a = InfinityRing(pi); a                                       # optional - sage.symbolic
             A positive finite number
-            sage: a._latex_()
+            sage: a._latex_()                                                   # optional - sage.symbolic
             'A positive finite number'
             sage: [latex(InfinityRing(a)) for a in [-2..2]]
             [A negative finite number, A negative finite number, Zero, A positive finite number, A positive finite number]
@@ -1622,12 +1622,12 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: bool(-oo == -sympy.oo)
+            sage: import sympy                                                          # optional - sympy
+            sage: bool(-oo == -sympy.oo)                                                # optional - sympy
             True
-            sage: bool(SR(-oo) == -sympy.oo)
+            sage: bool(SR(-oo) == -sympy.oo)                                            # optional - sympy
             True
-            sage: bool((-oo)._sympy_() == -sympy.oo)
+            sage: bool((-oo)._sympy_() == -sympy.oo)                                    # optional - sympy
             True
 
         """
@@ -1640,9 +1640,9 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: gap(-Infinity)
+            sage: gap(-Infinity)                                                        # optional - sage.libs.gap
             -infinity
-            sage: libgap(-Infinity)
+            sage: libgap(-Infinity)                                                     # optional - sage.libs.gap
             -infinity
         """
         return '-infinity'
@@ -1723,10 +1723,10 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: bool(oo == sympy.oo) # indirect doctest
+            sage: import sympy                                                          # optional - sympy
+            sage: bool(oo == sympy.oo) # indirect doctest                               # optional - sympy
             True
-            sage: bool(SR(oo) == sympy.oo)
+            sage: bool(SR(oo) == sympy.oo)                                              # optional - sympy
             True
         """
         import sympy
@@ -1738,9 +1738,9 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: gap(+Infinity)
+            sage: gap(+Infinity)                                                        # optional - sage.libs.gap
             infinity
-            sage: libgap(+Infinity)
+            sage: libgap(+Infinity)                                                     # optional - sage.libs.gap
             infinity
         """
         return 'infinity'

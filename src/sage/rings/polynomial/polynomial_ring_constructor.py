@@ -179,32 +179,32 @@ def PolynomialRing(base_ring, *args, **kwds):
     like 2^1000000 * x^1000000 in FLINT may be unwise.
     ::
 
-        sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); ZxNTL
+        sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); ZxNTL                                              # optional - sage.libs.ntl
         Univariate Polynomial Ring in x over Integer Ring (using NTL)
-        sage: ZxFLINT = PolynomialRing(ZZ, 'x', implementation='FLINT'); ZxFLINT
+        sage: ZxFLINT = PolynomialRing(ZZ, 'x', implementation='FLINT'); ZxFLINT                                        # optional - sage.libs.flint
         Univariate Polynomial Ring in x over Integer Ring
-        sage: ZxFLINT is ZZ['x']
+        sage: ZxFLINT is ZZ['x']                                                                                        # optional - sage.libs.flint
         True
-        sage: ZxFLINT is PolynomialRing(ZZ, 'x')
+        sage: ZxFLINT is PolynomialRing(ZZ, 'x')                                                                        # optional - sage.libs.flint
         True
-        sage: xNTL = ZxNTL.gen()
-        sage: xFLINT = ZxFLINT.gen()
-        sage: xNTL.parent()
+        sage: xNTL = ZxNTL.gen()                                                                                        # optional - sage.libs.ntl
+        sage: xFLINT = ZxFLINT.gen()                                                                                    # optional - sage.libs.flint
+        sage: xNTL.parent()                                                                                             # optional - sage.libs.ntl
         Univariate Polynomial Ring in x over Integer Ring (using NTL)
-        sage: xFLINT.parent()
+        sage: xFLINT.parent()                                                                                           # optional - sage.libs.flint
         Univariate Polynomial Ring in x over Integer Ring
 
     There is a coercion from the non-default to the default
     implementation, so the values can be mixed in a single
     expression::
 
-        sage: (xNTL + xFLINT^2)
+        sage: (xNTL + xFLINT^2)                                                                                         # optional - sage.libs.flint sage.libs.ntl
         x^2 + x
 
     The result of such an expression will use the default, i.e.,
     the FLINT implementation::
 
-        sage: (xNTL + xFLINT^2).parent()
+        sage: (xNTL + xFLINT^2).parent()                                                                                # optional - sage.libs.flint sage.libs.ntl
         Univariate Polynomial Ring in x over Integer Ring
 
     The generic implementation uses neither NTL nor FLINT::
@@ -298,16 +298,16 @@ def PolynomialRing(base_ring, *args, **kwds):
     example, here is a ring with generators labeled by the primes less
     than 100::
 
-        sage: R = PolynomialRing(ZZ, ['x%s'%p for p in primes(100)]); R
+        sage: R = PolynomialRing(ZZ, ['x%s'%p for p in primes(100)]); R                                                 # optional - sage.libs.pari
         Multivariate Polynomial Ring in x2, x3, x5, x7, x11, x13, x17, x19, x23, x29, x31, x37, x41, x43, x47, x53, x59, x61, x67, x71, x73, x79, x83, x89, x97 over Integer Ring
 
     By calling the
     :meth:`~sage.structure.category_object.CategoryObject.inject_variables`
     method, all those variable names are available for interactive use::
 
-        sage: R.inject_variables()
+        sage: R.inject_variables()                                                                                      # optional - sage.libs.pari
         Defining x2, x3, x5, x7, x11, x13, x17, x19, x23, x29, x31, x37, x41, x43, x47, x53, x59, x61, x67, x71, x73, x79, x83, x89, x97
-        sage: (x2 + x41 + x71)^2
+        sage: (x2 + x41 + x71)^2                                                                                        # optional - sage.libs.pari
         x2^2 + 2*x2*x41 + x41^2 + 2*x2*x71 + 2*x41*x71 + x71^2
 
     **4. PolynomialRing(base_ring, n, ..., var_array=var_array, ...)**

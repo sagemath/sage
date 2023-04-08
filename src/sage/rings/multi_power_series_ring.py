@@ -75,21 +75,21 @@ Construct multivariate power series rings over various base rings.
 
 - Use angle-bracket notation::
 
-    sage: S.<x,y> = PowerSeriesRing(GF(65537)); S
+    sage: S.<x,y> = PowerSeriesRing(GF(65537)); S                                       # optional - sage.libs.pari
     Multivariate Power Series Ring in x, y over Finite Field of size 65537
-    sage: s = -30077*x + 9485*x*y - 6260*y^3 + 12870*x^2*y^2 - 20289*y^4 + S.O(5); s
+    sage: s = -30077*x + 9485*x*y - 6260*y^3 + 12870*x^2*y^2 - 20289*y^4 + S.O(5); s    # optional - sage.libs.pari
     -30077*x + 9485*x*y - 6260*y^3 + 12870*x^2*y^2 - 20289*y^4 + O(x, y)^5
-    sage: s in S
+    sage: s in S                                                                        # optional - sage.libs.pari
     True
-    sage: TestSuite(S).run()
-    sage: loads(dumps(S)) is S
+    sage: TestSuite(S).run()                                                            # optional - sage.libs.pari
+    sage: loads(dumps(S)) is S                                                          # optional - sage.libs.pari
     True
 
 - Use double square bracket notation::
 
     sage: ZZ[['s,t,u']]
     Multivariate Power Series Ring in s, t, u over Integer Ring
-    sage: GF(127931)[['x,y']]
+    sage: GF(127931)[['x,y']]                                                           # optional - sage.libs.pari
     Multivariate Power Series Ring in x, y over Finite Field of size 127931
 
 Variable ordering determines how series are displayed.
@@ -124,9 +124,9 @@ Change from one base ring to another::
     Multivariate Power Series Ring in t, u, v over Ring of integers
     modulo 10
 
-    sage: S = PowerSeriesRing(GF(65537),2,'x,y'); S
+    sage: S = PowerSeriesRing(GF(65537),2,'x,y'); S                                     # optional - sage.libs.pari
     Multivariate Power Series Ring in x, y over Finite Field of size 65537
-    sage: S.change_ring(GF(5))
+    sage: S.change_ring(GF(5))                                                          # optional - sage.libs.pari
     Multivariate Power Series Ring in x, y over Finite Field of size 5
 
 Coercion from polynomial ring::
@@ -159,19 +159,19 @@ Coercion from polynomial ring in subset of variables::
 
 Coercion from symbolic ring::
 
-    sage: x,y = var('x,y')
-    sage: S = PowerSeriesRing(GF(11),2,'x,y'); S
+    sage: x,y = var('x,y')                                                              # optional - sage.symbolic
+    sage: S = PowerSeriesRing(GF(11),2,'x,y'); S                                        # optional - sage.libs.pari
     Multivariate Power Series Ring in x, y over Finite Field of size 11
-    sage: type(x)
+    sage: type(x)                                                                       # optional - sage.symbolic
     <class 'sage.symbolic.expression.Expression'>
-    sage: type(S(x))
+    sage: type(S(x))                                                                    # optional - sage.libs.pari sage.symbolic
     <class 'sage.rings.multi_power_series_ring.MPowerSeriesRing_generic_with_category.element_class'>
 
-    sage: f = S(2/7 -100*x^2 + 1/3*x*y + y^2).O(3); f
+    sage: f = S(2/7 -100*x^2 + 1/3*x*y + y^2).O(3); f                                   # optional - sage.libs.pari sage.symbolic
     5 - x^2 + 4*x*y + y^2 + O(x, y)^3
-    sage: f.parent()
+    sage: f.parent()                                                                    # optional - sage.libs.pari sage.symbolic
     Multivariate Power Series Ring in x, y over Finite Field of size 11
-    sage: f.parent() == S
+    sage: f.parent() == S                                                               # optional - sage.libs.pari sage.symbolic
     True
 
 The implementation of the multivariate power series ring uses a combination
@@ -390,11 +390,11 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         EXAMPLES::
 
-            sage: R.<x,y> = PowerSeriesRing(GF(17))
-            sage: R  #indirect doctest
+            sage: R.<x,y> = PowerSeriesRing(GF(17))                                     # optional - sage.libs.pari
+            sage: R  #indirect doctest                                                  # optional - sage.libs.pari
             Multivariate Power Series Ring in x, y over Finite Field of size 17
-            sage: R.rename('my multivariate power series ring')
-            sage: R
+            sage: R.rename('my multivariate power series ring')                         # optional - sage.libs.pari
+            sage: R                                                                     # optional - sage.libs.pari
             my multivariate power series ring
         """
         if self.ngens() == 0:
@@ -479,10 +479,10 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         EXAMPLES::
 
-            sage: H = PowerSeriesRing(GF(65537),4,'f'); H
+            sage: H = PowerSeriesRing(GF(65537),4,'f'); H                               # optional - sage.libs.pari
             Multivariate Power Series Ring in f0, f1, f2, f3 over
             Finite Field of size 65537
-            sage: H.characteristic()
+            sage: H.characteristic()                                                    # optional - sage.libs.pari
             65537
         """
         return self.base_ring().characteristic()
@@ -555,10 +555,10 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             TypeError: no base extension defined
 
 
-            sage: S = PowerSeriesRing(GF(65537),2,'x,y'); S
+            sage: S = PowerSeriesRing(GF(65537),2,'x,y'); S                             # optional - sage.libs.pari
             Multivariate Power Series Ring in x, y over Finite Field of size
             65537
-            sage: S.change_ring(GF(5))
+            sage: S.change_ring(GF(5))                                                  # optional - sage.libs.pari
             Multivariate Power Series Ring in x, y over Finite Field of size 5
         """
         return PowerSeriesRing(R, names = self.variable_names(), default_prec = self.default_prec())
@@ -578,16 +578,16 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             Power Series Ring in u over Integer Ring
 
 
-            sage: M = PowerSeriesRing(GF(5),5,'t'); M
+            sage: M = PowerSeriesRing(GF(5),5,'t'); M                                   # optional - sage.libs.pari
             Multivariate Power Series Ring in t0, t1, t2, t3, t4 over
             Finite Field of size 5
-            sage: M.remove_var(M.gens()[3])
+            sage: M.remove_var(M.gens()[3])                                             # optional - sage.libs.pari
             Multivariate Power Series Ring in t0, t1, t2, t4 over Finite
             Field of size 5
 
         Removing all variables results in the base ring::
 
-            sage: M.remove_var(*M.gens())
+            sage: M.remove_var(*M.gens())                                               # optional - sage.libs.pari
             Finite Field of size 5
 
         """
@@ -636,10 +636,10 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: R(f2)
             -2*v^2 + 5*u*v^2 + O(t, u, v)^6
 
-            sage: R2 = R.change_ring(GF(2))
-            sage: R2(f1)
+            sage: R2 = R.change_ring(GF(2))                                             # optional - sage.libs.pari
+            sage: R2(f1)                                                                # optional - sage.libs.pari
             v + t*v
-            sage: R2(f2)
+            sage: R2(f2)                                                                # optional - sage.libs.pari
             u*v^2 + O(t, u, v)^6
 
         TESTS::
@@ -759,22 +759,22 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         EXAMPLES::
 
-            sage: A = GF(17)[['x','y']]
-            sage: A.has_coerce_map_from(ZZ)
+            sage: A = GF(17)[['x','y']]                                                 # optional - sage.libs.pari
+            sage: A.has_coerce_map_from(ZZ)                                             # optional - sage.libs.pari
             True
-            sage: A.has_coerce_map_from(ZZ['x'])
+            sage: A.has_coerce_map_from(ZZ['x'])                                        # optional - sage.libs.pari
             True
-            sage: A.has_coerce_map_from(ZZ['y','x'])
+            sage: A.has_coerce_map_from(ZZ['y','x'])                                    # optional - sage.libs.pari
             True
-            sage: A.has_coerce_map_from(ZZ[['x']])
+            sage: A.has_coerce_map_from(ZZ[['x']])                                      # optional - sage.libs.pari
             True
-            sage: A.has_coerce_map_from(ZZ[['y','x']])
+            sage: A.has_coerce_map_from(ZZ[['y','x']])                                  # optional - sage.libs.pari
             True
-            sage: A.has_coerce_map_from(ZZ['x','z'])
+            sage: A.has_coerce_map_from(ZZ['x','z'])                                    # optional - sage.libs.pari
             False
-            sage: A.has_coerce_map_from(GF(3)['x','y'])
+            sage: A.has_coerce_map_from(GF(3)['x','y'])                                 # optional - sage.libs.pari
             False
-            sage: A.has_coerce_map_from(Frac(ZZ['y','x']))
+            sage: A.has_coerce_map_from(Frac(ZZ['y','x']))                              # optional - sage.libs.pari
             False
 
         TESTS::
@@ -782,9 +782,9 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: M = PowerSeriesRing(ZZ,3,'x,y,z')
             sage: M._coerce_map_from_(M)
             True
-            sage: M._coerce_map_from_(M.remove_var(x))
+            sage: M._coerce_map_from_(M.remove_var(x))                                  # optional - sage.symbolic
             True
-            sage: M._coerce_map_from_(PowerSeriesRing(ZZ,x))
+            sage: M._coerce_map_from_(PowerSeriesRing(ZZ,x))                            # optional - sage.symbolic
             True
             sage: M._coerce_map_from_(PolynomialRing(ZZ,'x,z'))
             True
@@ -802,7 +802,8 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
             sage: P = PolynomialRing(ZZ,3,'z')
             sage: H = PowerSeriesRing(P,4,'f'); H
-            Multivariate Power Series Ring in f0, f1, f2, f3 over Multivariate Polynomial Ring in z0, z1, z2 over Integer Ring
+            Multivariate Power Series Ring in f0, f1, f2, f3 over
+             Multivariate Polynomial Ring in z0, z1, z2 over Integer Ring
             sage: H._coerce_map_from_(P)
             True
             sage: H._coerce_map_from_(P.remove_var(P.gen(1)))

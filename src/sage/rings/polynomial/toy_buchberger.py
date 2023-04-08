@@ -24,39 +24,39 @@ EXAMPLES:
 Consider Katsura-6 with respect to a ``degrevlex`` ordering. ::
 
     sage: from sage.rings.polynomial.toy_buchberger import *
-    sage: P.<a,b,c,e,f,g,h,i,j,k> = PolynomialRing(GF(32003))
-    sage: I = sage.rings.ideal.Katsura(P, 6)
+    sage: P.<a,b,c,e,f,g,h,i,j,k> = PolynomialRing(GF(32003))                                       # optional - sage.libs.pari
+    sage: I = sage.rings.ideal.Katsura(P, 6)                                                        # optional - sage.libs.pari
 
-    sage: g1 = buchberger(I)
-    sage: g2 = buchberger_improved(I)
-    sage: g3 = I.groebner_basis()
+    sage: g1 = buchberger(I)                                                                        # optional - sage.libs.pari
+    sage: g2 = buchberger_improved(I)                                                               # optional - sage.libs.pari
+    sage: g3 = I.groebner_basis()                                                                   # optional - sage.libs.pari
 
 All algorithms actually compute a Groebner basis::
 
-    sage: Ideal(g1).basis_is_groebner()
+    sage: Ideal(g1).basis_is_groebner()                                                             # optional - sage.libs.pari
     True
-    sage: Ideal(g2).basis_is_groebner()
+    sage: Ideal(g2).basis_is_groebner()                                                             # optional - sage.libs.pari
     True
-    sage: Ideal(g3).basis_is_groebner()
+    sage: Ideal(g3).basis_is_groebner()                                                             # optional - sage.libs.pari
     True
 
 The results are correct::
 
-    sage: Ideal(g1) == Ideal(g2) == Ideal(g3)
+    sage: Ideal(g1) == Ideal(g2) == Ideal(g3)                                                       # optional - sage.libs.pari
     True
 
 If ``get_verbose()`` is `\ge 1`, a protocol is provided::
 
     sage: from sage.misc.verbose import set_verbose
     sage: set_verbose(1)
-    sage: P.<a,b,c> = PolynomialRing(GF(127))
-    sage: I = sage.rings.ideal.Katsura(P)
+    sage: P.<a,b,c> = PolynomialRing(GF(127))                                                       # optional - sage.libs.pari
+    sage: I = sage.rings.ideal.Katsura(P)                                                           # optional - sage.libs.pari
     // sage... ideal
 
-    sage: I
+    sage: I                                                                                         # optional - sage.libs.pari
     Ideal (a + 2*b + 2*c - 1, a^2 + 2*b^2 + 2*c^2 - a, 2*a*b + 2*b*c - b) of Multivariate Polynomial Ring in a, b, c over Finite Field of size 127
 
-    sage: buchberger(I)  # random
+    sage: buchberger(I)  # random                                                                   # optional - sage.libs.pari
     (a + 2*b + 2*c - 1, a^2 + 2*b^2 + 2*c^2 - a) => -2*b^2 - 6*b*c - 6*c^2 + b + 2*c
     G: set([a + 2*b + 2*c - 1, 2*a*b + 2*b*c - b, a^2 + 2*b^2 + 2*c^2 - a, -2*b^2 - 6*b*c - 6*c^2 + b + 2*c])
     <BLANKLINE>
@@ -117,14 +117,14 @@ If ``get_verbose()`` is `\ge 1`, a protocol is provided::
 The original Buchberger algorithm performs 15 useless reductions to
 zero for this example::
 
-    sage: gb = buchberger(I)
+    sage: gb = buchberger(I)                                                                        # optional - sage.libs.pari
     ...
     15 reductions to zero.
 
 The 'improved' Buchberger algorithm in contrast only performs 1 reduction to
 zero::
 
-    sage: gb = buchberger_improved(I)
+    sage: gb = buchberger_improved(I)                                                               # optional - sage.libs.pari
     ...
     1 reductions to zero.
     sage: sorted(gb)

@@ -100,7 +100,7 @@ def coefficient_matrix(polys):
 
         sage: from sage.rings.polynomial.toy_variety import coefficient_matrix
         sage: R.<x,y> = PolynomialRing(QQ)
-        sage: coefficient_matrix([x^2 + 1, y^2 + 1, x*y + 1])
+        sage: coefficient_matrix([x^2 + 1, y^2 + 1, x*y + 1])                           # optional - sage.modules
         [1 0 0 1]
         [0 0 1 1]
         [0 1 0 1]
@@ -159,12 +159,12 @@ def is_linearly_dependent(polys) -> bool:
         sage: R.<x,y> = PolynomialRing(QQ)
         sage: B = [x^2 + 1, y^2 + 1, x*y + 1]
         sage: p = 3*B[0] - 2*B[1] + B[2]
-        sage: is_linearly_dependent(B + [p])
+        sage: is_linearly_dependent(B + [p])                                            # optional - sage.modules
         True
-        sage: p = x*B[0]
-        sage: is_linearly_dependent(B + [p])
+        sage: p = x*B[0]                                                                # optional - sage.modules
+        sage: is_linearly_dependent(B + [p])                                            # optional - sage.modules
         False
-        sage: is_linearly_dependent([])
+        sage: is_linearly_dependent([])                                                 # optional - sage.modules
         False
     """
     if not polys:

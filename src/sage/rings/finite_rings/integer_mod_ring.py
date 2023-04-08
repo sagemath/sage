@@ -1172,21 +1172,21 @@ In the latter case, please inform the developers.""".format(self.order()))
         The following test refers to :trac:`8970`::
 
             sage: R = Zmod(13); a = R(2)
-            sage: a == R(gap(a))
+            sage: a == R(gap(a))                                                # optional - sage.libs.gap
             True
 
         libgap interface (:trac:`23714`)::
 
-            sage: a = libgap.eval("Z(13)^2")
-            sage: a.sage()
+            sage: a = libgap.eval("Z(13)^2")                                    # optional - sage.libs.gap
+            sage: a.sage()                                                      # optional - sage.libs.gap
             4
-            sage: libgap(a.sage()) == a
+            sage: libgap(a.sage()) == a                                         # optional - sage.libs.gap
             True
 
         better syntax for libgap interface::
 
-            sage: a = libgap.Z(13)^2
-            sage: libgap(a.sage()) == a
+            sage: a = libgap.Z(13)^2                                            # optional - sage.libs.gap
+            sage: libgap(a.sage()) == a                                         # optional - sage.libs.gap
             True
         """
         try:

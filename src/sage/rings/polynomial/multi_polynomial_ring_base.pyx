@@ -238,7 +238,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: P.<x,y> = PolynomialRing(ZZ)
             sage: P.completion([]) is P
             True
-            sage: P.completion(SR.var('x'))
+            sage: P.completion(SR.var('x'))                                             # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: x is not an element of Multivariate Polynomial Ring
@@ -399,7 +399,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             ....:     return a^3*b + b + c^2 + 25
             ....:
             sage: R.<x,y,z> = PolynomialRing(QQ)
-            sage: R.interpolation(4, F)
+            sage: R.interpolation(4, F)                                                             # optional - sage.modules
             x^3*y + z^2 + y + 25
 
 
@@ -407,7 +407,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             ....:     return a^3*b + b + c^2 + 25
             ....:
             sage: R.<x,y,z> = PolynomialRing(QQ)
-            sage: R.interpolation([3,1,2], F)
+            sage: R.interpolation([3,1,2], F)                                                       # optional - sage.modules
             x^3*y + z^2 + y + 25
 
 
@@ -419,7 +419,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             ....: (2,7,0),(1,10,13),(0,0,1),(-1,1,0),(2,5,3),(1,1,1),(7,4,11),
             ....: (12,1,9),(1,1,3),(4,-1,2),(0,1,5),(5,1,3),(3,1,-2),(2,11,3),
             ....: (4,12,19),(3,1,1),(5,2,-3),(12,1,1),(2,3,4)]
-            sage: R.interpolation([3,1,2], points, [F(*x) for x in points])
+            sage: R.interpolation([3,1,2], points, [F(*x) for x in points])                         # optional - sage.modules
             x^3*y + z^2 + y + 25
 
         ALGORITHM:
@@ -453,7 +453,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             ....:     return a^3*b + b + c^2 + 25
             ....:
             sage: R.<x,y,z> = PolynomialRing(QQ)
-            sage: R.interpolation(3,F)
+            sage: R.interpolation(3, F)                                                             # optional - sage.modules
             1/2*x^3 + x*y + z^2 - 1/2*x + y + 25
 
         .. SEEALSO::
@@ -1653,9 +1653,9 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         An example when the coefficients live in a finite field::
 
-            sage: F = FiniteField(11)
-            sage: R.<x,y,z,w> = PolynomialRing(F,4)
-            sage: R.macaulay_resultant([z,x^3,5*y,w])
+            sage: F = FiniteField(11)                                                   # optional - sage.rings.finite_rings
+            sage: R.<x,y,z,w> = PolynomialRing(F, 4)                                    # optional - sage.rings.finite_rings
+            sage: R.macaulay_resultant([z,x^3,5*y,w])                                   # optional - sage.modules sage.rings.finite_rings
             4
 
         Example when the denominator in the algorithm vanishes(in this case
@@ -1670,7 +1670,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         to the traditional resultant::
 
             sage: R.<x> = PolynomialRing(QQ,1)
-            sage: f =  x^2+1; g = x^5+1
+            sage: f =  x^2 + 1; g = x^5 + 1
             sage: fh = f.homogenize()
             sage: gh = g.homogenize()
             sage: RH = fh.parent()
@@ -1773,8 +1773,8 @@ cdef class BooleanPolynomialRing_base(MPolynomialRing_base):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
-        sage: R.<x, y, z> = BooleanPolynomialRing()
-        sage: isinstance(R, BooleanPolynomialRing_base)
+        sage: R.<x, y, z> = BooleanPolynomialRing()                                     # optional - sage.rings.polynomial.pbori
+        sage: isinstance(R, BooleanPolynomialRing_base)                                 # optional - sage.rings.polynomial.pbori
         True
 
     By design, there is only one direct implementation subclass::

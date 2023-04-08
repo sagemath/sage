@@ -185,13 +185,13 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,y> = QQ[]
             sage: f = x^3 + y
-            sage: g = f._symbolic_(SR); g
+            sage: g = f._symbolic_(SR); g                                               # optional - sage.symbolic
             x^3 + y
-            sage: g(x=2,y=2)
+            sage: g(x=2, y=2)                                                           # optional - sage.symbolic
             10
 
-            sage: g = SR(f)
-            sage: g(x=2,y=2)
+            sage: g = SR(f)                                                             # optional - sage.symbolic
+            sage: g(x=2, y=2)                                                           # optional - sage.symbolic
             10
         """
         d = dict([(repr(g), R.var(g)) for g in self.parent().gens()])
@@ -348,12 +348,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Polynomials over the symbolic ring (just for fun....)::
 
-            sage: x = var("x")
-            sage: S.<u, v> = PolynomialRing(SR)
-            sage: f = u*v*x
-            sage: f.derivative(x) == u*v
+            sage: x = var("x")                                                                      # optional - sage.symbolic
+            sage: S.<u, v> = PolynomialRing(SR)                                                     # optional - sage.symbolic
+            sage: f = u*v*x                                                                         # optional - sage.symbolic
+            sage: f.derivative(x) == u*v                                                            # optional - sage.symbolic
             True
-            sage: f.derivative(u) == v*x
+            sage: f.derivative(u) == v*x                                                            # optional - sage.symbolic
             True
         """
         return multi_derivative(self, args)
@@ -869,7 +869,7 @@ cdef class MPolynomial(CommutativePolynomial):
         Check that :trac:`25022` is fixed::
 
             sage: K.<x,y> = ZZ[]
-            sage: (x*y).change_ring(SR).monomials()
+            sage: (x*y).change_ring(SR).monomials()                                                 # optional - sage.rings.number_field
             [x*y]
         """
         if isinstance(R, Map):
@@ -976,39 +976,39 @@ cdef class MPolynomial(CommutativePolynomial):
         Multivariate polynomial over integers::
 
             sage: R.<x,y,z> = ZZ[]
-            sage: gap(-x*y + 3*z)   # indirect doctest
+            sage: gap(-x*y + 3*z)   # indirect doctest                                              # optional - sage.libs.gap
             -x*y+3*z
-            sage: gap(R.zero())     # indirect doctest
+            sage: gap(R.zero())     # indirect doctest                                              # optional - sage.libs.gap
             0
-            sage: (x+y+z)._gap_(libgap)
+            sage: (x+y+z)._gap_(libgap)                                                             # optional - sage.libs.gap
             x+y+z
 
-            sage: g = gap(x - y + 3*x*y*z)
-            sage: R(g)
+            sage: g = gap(x - y + 3*x*y*z)                                                          # optional - sage.libs.gap
+            sage: R(g)                                                                              # optional - sage.libs.gap
             3*x*y*z + x - y
 
-            sage: g = libgap(5*x - y*z)
-            sage: R(g)
+            sage: g = libgap(5*x - y*z)                                                             # optional - sage.libs.gap
+            sage: R(g)                                                                              # optional - sage.libs.gap
             -y*z + 5*x
 
         Multivariate polynomial over a cyclotomic field::
 
-            sage: F.<zeta> = CyclotomicField(8)
-            sage: P.<x,y> = F[]
-            sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y
-            sage: gap(p)     # indirect doctest
+            sage: F.<zeta> = CyclotomicField(8)                                                     # optional - sage.rings.number_field
+            sage: P.<x,y> = F[]                                                                     # optional - sage.rings.number_field
+            sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y                                     # optional - sage.rings.number_field
+            sage: gap(p)     # indirect doctest                                                     # optional - sage.libs.gap sage.rings.number_field
             (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
-            sage: libgap(p)  # indirect doctest
+            sage: libgap(p)  # indirect doctest                                                     # optional - sage.libs.gap sage.rings.number_field
             (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
 
         Multivariate polynomial over a polynomial ring over a cyclotomic field::
 
-            sage: S.<z> = F[]
-            sage: P.<x,y> = S[]
-            sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z
-            sage: gap(p)     # indirect doctest
+            sage: S.<z> = F[]                                                                       # optional - sage.rings.number_field
+            sage: P.<x,y> = S[]                                                                     # optional - sage.rings.number_field
+            sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z                             # optional - sage.rings.number_field
+            sage: gap(p)     # indirect doctest                                                     # optional - sage.libs.gap sage.rings.number_field
             ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
-            sage: libgap(p)  # indirect doctest
+            sage: libgap(p)  # indirect doctest                                                     # optional - sage.libs.gap sage.rings.number_field
             ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
         """
         R = gap(self.parent())
@@ -1020,9 +1020,9 @@ cdef class MPolynomial(CommutativePolynomial):
         TESTS::
 
             sage: R.<x,y,z> = ZZ[]
-            sage: libgap(-x*y + 3*z)   # indirect doctest
+            sage: libgap(-x*y + 3*z)   # indirect doctest                                           # optional - sage.libs.gap
             -x*y+3*z
-            sage: libgap(R.zero())     # indirect doctest
+            sage: libgap(R.zero())     # indirect doctest                                           # optional - sage.libs.gap
             0
         """
         from sage.libs.gap.libgap import libgap
@@ -1695,9 +1695,9 @@ cdef class MPolynomial(CommutativePolynomial):
 
         an example when the coefficients live in a finite field::
 
-            sage: F = FiniteField(11)
-            sage: R.<x,y,z,w> = PolynomialRing(F,4)
-            sage: z.macaulay_resultant([x^3,5*y,w])
+            sage: F = FiniteField(11)                                                                                   # optional - sage.libs.pari
+            sage: R.<x,y,z,w> = PolynomialRing(F, 4)                                                                    # optional - sage.libs.pari
+            sage: z.macaulay_resultant([x^3, 5*y, w])                                                                   # optional - sage.libs.pari sage.modules
             4
 
         example when the denominator in the algorithm vanishes(in this case
@@ -1903,9 +1903,9 @@ cdef class MPolynomial(CommutativePolynomial):
 
            sage: R.<x1,x2> = QQ[]
            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
-           sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g
+           sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g                                           # optional - sage.libs.singular
            1/16*x1 + 3/16
-           sage: (f*g).reduce(I)
+           sage: (f*g).reduce(I)                                                                    # optional - sage.libs.singular
            1
 
         Test a non-invertible element::
@@ -1913,7 +1913,7 @@ cdef class MPolynomial(CommutativePolynomial):
            sage: R.<x1,x2> = QQ[]
            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
            sage: f = x1 + x2
-           sage: f.inverse_mod(I)
+           sage: f.inverse_mod(I)                                                                   # optional - sage.libs.singular
            Traceback (most recent call last):
            ...
            ArithmeticError: element is non-invertible
@@ -2343,8 +2343,8 @@ cdef class MPolynomial(CommutativePolynomial):
         An example where precision needs to be increased::
 
             sage: R.<x,y> = PolynomialRing(QQ)
-            sage: F=-16*x^7 - 114*x^6*y - 345*x^5*y^2 - 599*x^4*y^3 - 666*x^3*y^4 - 481*x^2*y^5 - 207*x*y^6 - 40*y^7
-            sage: F.reduced_form(prec=50, smallest_coeffs=False)
+            sage: F = -16*x^7 - 114*x^6*y - 345*x^5*y^2 - 599*x^4*y^3 - 666*x^3*y^4 - 481*x^2*y^5 - 207*x*y^6 - 40*y^7
+            sage: F.reduced_form(prec=50, smallest_coeffs=False)                                                        # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: accuracy of Newton's root not within tolerance(0.000012... > 1e-06), increase precision
