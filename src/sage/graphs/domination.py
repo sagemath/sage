@@ -808,7 +808,7 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
     vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
 
     if to_dominate is None:
-        vertices_to_dominate = set(G)
+        vertices_to_dominate = set(range(G.order()))
     else:
         for u in to_dominate:
             if u not in G:
