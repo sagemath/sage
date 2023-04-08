@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari       (because all doctests use finite fields)
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Univariate dense skew polynomials over a field with a finite order automorphism
 

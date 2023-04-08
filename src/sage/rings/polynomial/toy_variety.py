@@ -100,7 +100,7 @@ def coefficient_matrix(polys):
 
         sage: from sage.rings.polynomial.toy_variety import coefficient_matrix
         sage: R.<x,y> = PolynomialRing(QQ)
-        sage: coefficient_matrix([x^2 + 1, y^2 + 1, x*y + 1])
+        sage: coefficient_matrix([x^2 + 1, y^2 + 1, x*y + 1])                           # optional - sage.modules
         [1 0 0 1]
         [0 0 1 1]
         [0 1 0 1]
@@ -159,12 +159,12 @@ def is_linearly_dependent(polys) -> bool:
         sage: R.<x,y> = PolynomialRing(QQ)
         sage: B = [x^2 + 1, y^2 + 1, x*y + 1]
         sage: p = 3*B[0] - 2*B[1] + B[2]
-        sage: is_linearly_dependent(B + [p])
+        sage: is_linearly_dependent(B + [p])                                            # optional - sage.modules
         True
-        sage: p = x*B[0]
-        sage: is_linearly_dependent(B + [p])
+        sage: p = x*B[0]                                                                # optional - sage.modules
+        sage: is_linearly_dependent(B + [p])                                            # optional - sage.modules
         False
-        sage: is_linearly_dependent([])
+        sage: is_linearly_dependent([])                                                 # optional - sage.modules
         False
     """
     if not polys:
@@ -204,10 +204,10 @@ def linear_representation(p, polys):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.toy_variety import linear_representation
-        sage: R.<x,y> = PolynomialRing(GF(32003))                                       # optional - sage.libs.pari
-        sage: B = [x^2 + 1, y^2 + 1, x*y + 1]                                           # optional - sage.libs.pari
-        sage: p = 3*B[0] - 2*B[1] + B[2]                                                # optional - sage.libs.pari
-        sage: linear_representation(p, B)                                               # optional - sage.libs.pari
+        sage: R.<x,y> = PolynomialRing(GF(32003))                                       # optional - sage.rings.finite_rings
+        sage: B = [x^2 + 1, y^2 + 1, x*y + 1]                                           # optional - sage.rings.finite_rings
+        sage: p = 3*B[0] - 2*B[1] + B[2]                                                # optional - sage.rings.finite_rings
+        sage: linear_representation(p, B)                                               # optional - sage.rings.finite_rings
         [3, 32001, 1]
     """
     from sage.matrix.constructor import diagonal_matrix
@@ -243,12 +243,12 @@ def triangular_factorization(B, n=-1):
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(0)
         sage: from sage.rings.polynomial.toy_variety import triangular_factorization
-        sage: R.<x,y,z> = PolynomialRing(GF(32003))                                     # optional - sage.libs.pari
-        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3                                              # optional - sage.libs.pari
-        sage: p2 = z^2 - z                                                              # optional - sage.libs.pari
-        sage: p3 = (x-2)^2*(y-1)^3                                                      # optional - sage.libs.pari
-        sage: I = R.ideal(p1,p2,p3)                                                     # optional - sage.libs.pari
-        sage: triangular_factorization(I.groebner_basis())                              # optional - sage.libs.pari
+        sage: R.<x,y,z> = PolynomialRing(GF(32003))                                     # optional - sage.rings.finite_rings
+        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3                                              # optional - sage.rings.finite_rings
+        sage: p2 = z^2 - z                                                              # optional - sage.rings.finite_rings
+        sage: p3 = (x-2)^2*(y-1)^3                                                      # optional - sage.rings.finite_rings
+        sage: I = R.ideal(p1,p2,p3)                                                     # optional - sage.rings.finite_rings
+        sage: triangular_factorization(I.groebner_basis())                              # optional - sage.rings.finite_rings
         [[x^2 - 4*x + 4, y, z],
          [x^5 - 3*x^4 + 3*x^3 - x^2, y - 1, z],
          [x^2 - 4*x + 4, y, z - 1],
@@ -317,12 +317,12 @@ def elim_pol(B, n=-1):
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(0)
         sage: from sage.rings.polynomial.toy_variety import elim_pol
-        sage: R.<x,y,z> = PolynomialRing(GF(32003))                                     # optional - sage.libs.pari
-        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3                                              # optional - sage.libs.pari
-        sage: p2 = z^2 - z                                                              # optional - sage.libs.pari
-        sage: p3 = (x-2)^2*(y-1)^3                                                      # optional - sage.libs.pari
-        sage: I = R.ideal(p1,p2,p3)                                                     # optional - sage.libs.pari
-        sage: elim_pol(I.groebner_basis())                                              # optional - sage.libs.pari
+        sage: R.<x,y,z> = PolynomialRing(GF(32003))                                     # optional - sage.rings.finite_rings
+        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3                                              # optional - sage.rings.finite_rings
+        sage: p2 = z^2 - z                                                              # optional - sage.rings.finite_rings
+        sage: p3 = (x-2)^2*(y-1)^3                                                      # optional - sage.rings.finite_rings
+        sage: I = R.ideal(p1,p2,p3)                                                     # optional - sage.rings.finite_rings
+        sage: elim_pol(I.groebner_basis())                                              # optional - sage.rings.finite_rings
         z^2 - z
     """
     # type checking in a probably vain attempt to avoid stupid errors
