@@ -25,7 +25,7 @@ Add an integer and a rational number::
 Add an integer and a complex number::
 
     sage: b = ComplexField().0 + 1.5
-    sage: loads((a+b).dumps()) == a+b
+    sage: loads((a + b).dumps()) == a + b
     True
 
     sage: z = 32
@@ -354,7 +354,7 @@ cdef class IntegerWrapper(Integer):
     ``Integers`` (with initialized ``parent`` and ``mpz_t`` fields)
     into a pool on "deallocation" and then pull them out whenever a
     new one is needed. Because ``Integers`` are so common, this is
-    actually a significant savings. However , this does cause issues
+    actually a significant savings. However, this does cause issues
     with subclassing a Python class directly from ``Integer`` (but
     that's ok for a Cython class).
 
@@ -762,7 +762,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
-        Return the image of self under the map that sends the generators of
+        Return the image of ``self`` under the map that sends the generators of
         the parent to im_gens. Since ZZ maps canonically in the category
         of rings, this is just the natural coercion.
 
@@ -1077,7 +1077,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         ::
 
-            sage: two=Integer(2)
+            sage: two = Integer(2)
             sage: two.str(1)
             Traceback (most recent call last):
             ...
@@ -1364,7 +1364,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         Return a list of digits for ``self`` in the given base in little
         endian order.
 
-        The returned value is unspecified if self is a negative number
+        The returned value is unspecified if ``self`` is a negative number
         and the digits are given.
 
         INPUT:
@@ -1695,7 +1695,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def ndigits(self, base=10):
         """
-        Return the number of digits of self expressed in the given base.
+        Return the number of digits of ``self`` expressed in the given base.
 
         INPUT:
 
@@ -2316,25 +2316,25 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def nth_root(self, int n, bint truncate_mode=0):
         r"""
-        Returns the (possibly truncated) n'th root of self.
+        Returns the (possibly truncated) ``n``-th root of ``self``.
 
         INPUT:
 
-        -  ``n`` - integer >= 1 (must fit in C int type).
+        -  ``n`` - integer >= 1 (must fit in the C ``int`` type).
 
         -  ``truncate_mode`` - boolean, whether to allow truncation if
-           self is not an n'th power.
+           ``self`` is not an n'th power.
 
         OUTPUT:
 
-        If truncate_mode is 0 (default), then returns the exact n'th root
-        if self is an n'th power, or raises a ValueError if it is not.
+        If ``truncate_mode`` is 0 (default), then returns the exact n'th root
+        if ``self`` is an n'th power, or raises a ValueError if it is not.
 
-        If truncate_mode is 1, then if either n is odd or self is
-        positive, returns a pair (root, exact_flag) where root is the
-        truncated nth root (rounded towards zero) and exact_flag is a
+        If ``truncate_mode`` is 1, then if either n is odd or ``self`` is
+        positive, returns a pair ``(root, exact_flag)`` where ``root`` is the
+        truncated ``n``-th root (rounded towards zero) and ``exact_flag`` is a
         boolean indicating whether the root extraction was exact;
-        otherwise raises a ValueError.
+        otherwise raises a :class:`ValueError`.
 
         AUTHORS:
 
@@ -2643,11 +2643,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: # The following are very very fast.
             sage: # Note that for base m a perfect power of 2, we get the exact log by counting bits.
-            sage: n=2983579823750185701375109835; m=32
+            sage: n = 2983579823750185701375109835; m = 32
             sage: n.exact_log(m)
             18
             sage: # The next is a favorite of mine.  The log2 approximate is exact and immediately provable.
-            sage: n=90153710570912709517902579010793251709257901270941709247901209742124;m=213509721309572
+            sage: n = 90153710570912709517902579010793251709257901270941709247901209742124
+            sage: m = 213509721309572
             sage: n.exact_log(m)
             4
 
@@ -2663,9 +2664,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: x.exact_log(3)
             100000
-            sage: (x+1).exact_log(3)
+            sage: (x + 1).exact_log(3)
             100000
-            sage: (x-1).exact_log(3)
+            sage: (x - 1).exact_log(3)
             99999
 
         ::
@@ -2751,19 +2752,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
     def log(self, m=None, prec=None):
         r"""
         Returns symbolic log by default, unless the logarithm is exact (for
-        an integer argument). When precision is given, the RealField
+        an integer argument). When ``prec`` is given, the :class:`RealField`
         approximation to that bit precision is used.
 
         This function is provided primarily so that Sage integers may be
         treated in the same manner as real numbers when convenient. Direct
-        use of exact_log is probably best for arithmetic log computation.
+        use of :meth:`exact_log` is probably best for arithmetic log computation.
 
         INPUT:
 
         -  ``m`` - default: natural log base e
 
-        -  ``prec`` - integer (default: None): if None, returns
-           symbolic, else to given bits of precision as in RealField
+        -  ``prec`` - integer (default: ``None``): if ``None``, returns
+           symbolic, else to given bits of precision as in :class:`RealField`
 
         EXAMPLES::
 
@@ -2784,8 +2785,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: log(x, 3)
             100000
 
-        With the new Pynac symbolic backend, log(x) also
-        works in a reasonable amount of time for this x::
+        Also ``log(x)``, giving a symbolic output,
+        works in a reasonable amount of time for this ``x``::
 
             sage: x = 3^100000
             sage: log(x)
@@ -2794,20 +2795,20 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         But approximations are probably more useful in this
         case, and work to as high a precision as we desire::
 
-            sage: x.log(3,53) # default precision for RealField
+            sage: x.log(3, 53)  # default precision for RealField
             100000.000000000
-            sage: (x+1).log(3,53)
+            sage: (x +1 ).log(3, 53)
             100000.000000000
-            sage: (x+1).log(3,1000)
+            sage: (x + 1).log(3, 1000)
             100000.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
         We can use non-integer bases, with default e::
 
-            sage: x.log(2.5,prec=53)
+            sage: x.log(2.5, prec=53)
             119897.784671579
 
         We also get logarithms of negative integers, via the
-        symbolic ring, using the branch from `-pi` to `pi`::
+        symbolic ring, using the branch from `-\pi` to `\pi`::
 
             sage: log(-1)
             I*pi
@@ -2872,7 +2873,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def exp(self, prec=None):
         r"""
-        Returns the exponential function of self as a real number.
+        Returns the exponential function of ``self`` as a real number.
 
         This function is provided only so that Sage integers may be treated
         in the same manner as real numbers when convenient.
@@ -2911,7 +2912,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def prime_to_m_part(self, m):
         """
-        Returns the prime-to-m part of self, i.e., the largest divisor of
+        Returns the prime-to-m part of ``self``, i.e., the largest divisor of
         ``self`` that is coprime to ``m``.
 
         INPUT:
@@ -3394,7 +3395,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def quo_rem(Integer self, other):
         """
-        Returns the quotient and the remainder of self divided by other.
+        Returns the quotient and the remainder of ``self`` divided by other.
         Note that the remainder returned is always either zero or of the
         same sign as other.
 
@@ -3484,7 +3485,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def powermod(self, exp, mod):
         r"""
-        Compute self\*\*exp modulo mod.
+        Compute ``self**exp`` modulo ``mod``.
 
         EXAMPLES::
 
@@ -3518,10 +3519,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def rational_reconstruction(self, Integer m):
         """
-        Return the rational reconstruction of this integer modulo m, i.e.,
-        the unique (if it exists) rational number that reduces to self
+        Return the rational reconstruction of this integer modulo `m`, i.e.,
+        the unique (if it exists) rational number that reduces to ``self``
         modulo m and whose numerator and denominator is bounded by
-        sqrt(m/2).
+        `\sqrt{m/2}`.
 
         INPUT:
 
@@ -3687,17 +3688,15 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def trial_division(self, long bound=LONG_MAX, long start=2):
         """
-        Return smallest prime divisor of self up to bound, beginning
-        checking at start, or abs(self) if no such divisor is found.
+        Return smallest prime divisor of ``self`` up to bound, beginning
+        checking at ``start``, or ``abs(self)`` if no such divisor is found.
 
         INPUT:
 
-            - ``bound`` -- a positive integer that fits in a C signed long
-            - ``start`` -- a positive integer that fits in a C signed long
+        - ``bound`` -- a positive integer that fits in a C ``signed long``
+        - ``start`` -- a positive integer that fits in a C ``signed long``
 
-        OUTPUT:
-
-            - a positive integer
+        OUTPUT: A positive integer
 
         EXAMPLES::
 
@@ -3885,7 +3884,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: dict(f)[3]
             6
 
-        We use proof=False, which doesn't prove correctness of the primes
+        We use ``proof=False``, which doesn't prove correctness of the primes
         that appear in the factorization::
 
             sage: n = 920384092842390423848290348203948092384082349082
@@ -4154,7 +4153,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     cpdef RingElement _valuation(Integer self, Integer p):
         r"""
-        Return the p-adic valuation of self.
+        Return the p-adic valuation of ``self``.
 
         We do not require that p be prime, but it must be at least 2. For
         more documentation see ``valuation``
@@ -4179,8 +4178,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     cdef object _val_unit(Integer self, Integer p):
         r"""
-        Returns a pair: the p-adic valuation of self, and the p-adic unit
-        of self.
+        Returns a pair: the p-adic valuation of ``self``, and the p-adic unit
+        of ``self``.
 
         We do not require the p be prime, but it must be at least 2. For
         more documentation see ``val_unit``
@@ -4204,7 +4203,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def valuation(self, p):
         """
-        Return the p-adic valuation of self.
+        Return the p-adic valuation of ``self``.
 
         INPUT:
 
@@ -4265,8 +4264,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def val_unit(self, p):
         r"""
-        Returns a pair: the p-adic valuation of self, and the p-adic unit
-        of self.
+        Returns a pair: the p-adic valuation of ``self``, and the p-adic unit
+        of ``self``.
 
         INPUT:
 
@@ -4301,10 +4300,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         IMPLEMENTATION:
 
-        Currently returns 0 when self is 0.  This behaviour is fairly arbitrary,
+        Currently returns 0 when ``self`` is 0.  This behaviour is fairly arbitrary,
         and in Sage 4.6 this special case was not handled at all, eventually
         propagating a TypeError.  The caller should not rely on the behaviour
-        in case self is 0.
+        in case ``self`` is 0.
 
         EXAMPLES::
 
@@ -4328,10 +4327,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     cdef Integer _divide_knowing_divisible_by(Integer self, Integer right):
         r"""
-        Returns the integer self / right when self is divisible by right.
+        Returns the integer ``self`` / ``right`` when ``self`` is divisible by right.
 
-        If self is not divisible by right, the return value is undefined,
-        and may not even be close to self/right. For more documentation see
+        If ``self`` is not divisible by right, the return value is undefined,
+        and may not even be close to ``self`` / ``right``. For more documentation see
         ``divide_knowing_divisible_by``
 
         AUTHORS:
@@ -4354,10 +4353,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def divide_knowing_divisible_by(self, right):
         r"""
-        Returns the integer self / right when self is divisible by right.
+        Returns the integer ``self`` / ``right`` when ``self`` is divisible by ``right``.
 
-        If self is not divisible by right, the return value is undefined,
-        and may not even be close to self/right for multi-word integers.
+        If ``self`` is not divisible by right, the return value is undefined,
+        and may not even be close to ``self`` / ``right`` for multi-word integers.
 
         EXAMPLES::
 
@@ -4384,7 +4383,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def _lcm(self, Integer n):
         """
-        Returns the least common multiple of self and `n`.
+        Returns the least common multiple of ``self`` and `n`.
 
         EXAMPLES::
 
@@ -4400,7 +4399,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def _gcd(self, Integer n):
         """
-        Return the greatest common divisor of self and `n`.
+        Return the greatest common divisor of ``self`` and `n`.
 
         EXAMPLES::
 
@@ -4517,7 +4516,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def multifactorial(self, long k):
         r"""
-        Compute the k-th factorial `n!^{(k)}` of self.
+        Compute the k-th factorial `n!^{(k)}` of ``self``.
 
         The multifactorial number `n!^{(k)}` is defined for non-negative
         integers `n` as follows. For `k=1` this is the standard factorial,
@@ -4619,7 +4618,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def floor(self):
         """
-        Return the floor of self, which is just self since self is an
+        Return the floor of ``self``, which is just self since ``self`` is an
         integer.
 
         EXAMPLES::
@@ -4632,7 +4631,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def ceil(self):
         """
-        Return the ceiling of self, which is self since self is an
+        Return the ceiling of ``self``, which is ``self`` since ``self`` is an
         integer.
 
         EXAMPLES::
@@ -4645,8 +4644,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def trunc(self):
         """
-        Round this number to the nearest integer, which is self since
-        self is an integer.
+        Round this number to the nearest integer, which is ``self`` since
+        ``self`` is an integer.
 
         EXAMPLES::
 
@@ -4658,8 +4657,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def round(Integer self, mode="away"):
         """
-        Returns the nearest integer to ``self``, which is self since
-        self is an integer.
+        Returns the nearest integer to ``self``, which is ``self`` since
+        ``self`` is an integer.
 
         EXAMPLES:
 
@@ -4673,7 +4672,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def real(self):
         """
-        Returns the real part of self, which is self.
+        Returns the real part of ``self``, which is ``self``.
 
         EXAMPLES::
 
@@ -4684,7 +4683,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def imag(self):
         """
-        Returns the imaginary part of self, which is zero.
+        Returns the imaginary part of ``self``, which is zero.
 
         EXAMPLES::
 
@@ -4771,7 +4770,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def is_square(self):
         r"""
-        Returns ``True`` if self is a perfect square.
+        Returns ``True`` if ``self`` is a perfect square.
 
         EXAMPLES::
 
@@ -5022,8 +5021,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         .. NOTE::
 
-           For large integers self, is_power_of() is faster than
-           is_perfect_power(). The following examples gives some indication of
+           For large integers ``self``, :meth:`is_power_of` is faster than
+           :meth:`is_perfect_power`. The following examples give some indication of
            how much faster.
 
         ::
@@ -5031,15 +5030,15 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: b = lcm(range(1,10000))
             sage: b.exact_log(2)
             14446
-            sage: t=cputime()
+            sage: t = cputime()
             sage: for a in range(2, 1000): k = b.is_perfect_power()
             sage: cputime(t)      # random
             0.53203299999999976
-            sage: t=cputime()
+            sage: t = cputime()
             sage: for a in range(2, 1000): k = b.is_power_of(2)
             sage: cputime(t)      # random
             0.0
-            sage: t=cputime()
+            sage: t = cputime()
             sage: for a in range(2, 1000): k = b.is_power_of(3)
             sage: cputime(t)      # random
             0.032002000000000308
@@ -5049,19 +5048,20 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: b = lcm(range(1, 1000))
             sage: b.exact_log(2)
             1437
-            sage: t=cputime()
-            sage: for a in range(2, 10000): k = b.is_perfect_power() # note that we change the range from the example above
+            sage: t = cputime()
+            sage: for a in range(2, 10000):  # note that we change the range from the example above
+            ....:     k = b.is_perfect_power()
             sage: cputime(t)      # random
             0.17201100000000036
-            sage: t=cputime(); TWO=int(2)
+            sage: t = cputime(); TWO = int(2)
             sage: for a in range(2, 10000): k = b.is_power_of(TWO)
             sage: cputime(t)      # random
             0.0040000000000000036
-            sage: t=cputime()
+            sage: t = cputime()
             sage: for a in range(2, 10000): k = b.is_power_of(3)
             sage: cputime(t)      # random
             0.040003000000000011
-            sage: t=cputime()
+            sage: t = cputime()
             sage: for a in range(2, 10000): k = b.is_power_of(a)
             sage: cputime(t)      # random
             0.02800199999999986
@@ -5140,7 +5140,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: (p*q).is_prime_power(get_data=True)                                   # optional - sage.libs.pari
             (10000000000000000016800000000000000005031, 0)
 
-        The method works for large entries when `proof=False`::
+        The method works for large entries when ``proof=False``::
 
             sage: proof.arithmetic(False)
             sage: ((10^500 + 961)^4).is_prime_power()                                   # optional - sage.libs.pari
@@ -5262,7 +5262,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         ALGORITHM:
 
-        Calls the PARI ``isprime`` function.
+        Calls the PARI function :pari:`isprime`.
 
         TESTS:
 
@@ -5331,7 +5331,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def is_irreducible(self):
         r"""
-        Returns ``True`` if self is irreducible, i.e. +/-
+        Returns ``True`` if ``self`` is irreducible, i.e. +/-
         prime
 
         EXAMPLES::
@@ -5358,7 +5358,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         This uses PARI's Baillie-PSW probabilistic primality
         test. Currently, there are no known pseudoprimes for
-        Baillie-PSW that are not actually prime. However it is
+        Baillie-PSW that are not actually prime. However, it is
         conjectured that there are infinitely many.
 
         See :wikipedia:`Baillie-PSW_primality_test`
@@ -5423,7 +5423,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             - :meth:`perfect_power`: Finds the minimal base for which this
               integer is a perfect power.
-            - :meth:`is_power_of`: If you know the base already this method is
+            - :meth:`is_power_of`: If you know the base already, this method is
               the fastest option.
             - :meth:`is_prime_power`: Checks whether the base is prime.
 
@@ -5515,7 +5515,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def jacobi(self, b):
         r"""
-        Calculate the Jacobi symbol `\left(\frac{self}{b}\right)`.
+        Calculate the Jacobi symbol `\left(\frac{\text{self}}{b}\right)`.
 
         EXAMPLES::
 
@@ -5552,9 +5552,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def kronecker(self, b):
         r"""
-        Calculate the Kronecker symbol `\left(\frac{self}{b}\right)`
-        with the Kronecker extension `(self/2)=(2/self)` when `self` is odd,
-        or `(self/2)=0` when `self` is even.
+        Calculate the Kronecker symbol `\left(\frac{\text{self}}{b}\right)`
+        with the Kronecker extension `(\text{self}/2)=(2/\text{self})` when ``self`` is odd,
+        or `(\text{self}/2)=0` when ``self`` is even.
 
         EXAMPLES::
 
@@ -5589,7 +5589,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         - ``proof`` (boolean, default ``True``) -- if ``False`` then
           for negative discriminants a faster algorithm is used by
           the PARI library which is known to give incorrect results
-          when the class group has many cyclic factors.  However the
+          when the class group has many cyclic factors.  However, the
           results are correct for discriminants `D` with `|D|\le 2\cdot10^{10}`.
 
         OUTPUT:
@@ -5662,7 +5662,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         Use ``self.radical()`` for the product of the primes that divide self.
 
-        If self is 0, just returns 0.
+        If ``self`` is 0, just returns 0.
 
         EXAMPLES::
 
@@ -5738,7 +5738,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def next_probable_prime(self):
         """
-        Return the next probable prime after self, as determined by PARI.
+        Return the next probable prime after ``self``, as determined by PARI.
 
         EXAMPLES::
 
@@ -5759,9 +5759,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def next_prime(self, proof=None):
         r"""
-        Return the next prime after self.
+        Return the next prime after ``self``.
 
-        This method calls the PARI ``nextprime`` function.
+        This method calls the PARI function :pari:`nextprime`.
 
         INPUT:
 
@@ -5798,9 +5798,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def previous_prime(self, proof=None):
         r"""
-        Returns the previous prime before self.
+        Returns the previous prime before ``self``.
 
-        This method calls the PARI ``precprime`` function.
+        This method calls the PARI function :pari:`precprime`.
 
         INPUT:
 
@@ -5846,7 +5846,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def next_prime_power(self, proof=None):
         r"""
-        Return the next prime power after self.
+        Return the next prime power after ``self``.
 
         INPUT:
 
@@ -5858,7 +5858,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         ALGORITHM:
 
-        The algorithm is naive. It computes the next power of 2 and go through
+        The algorithm is naive. It computes the next power of 2 and goes through
         the odd numbers calling :meth:`is_prime_power`.
 
         .. SEEALSO::
@@ -5912,7 +5912,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def previous_prime_power(self, proof=None):
         r"""
-        Return the previous prime power before self.
+        Return the previous prime power before ``self``.
 
         INPUT:
 
@@ -5924,7 +5924,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         ALGORITHM:
 
-        The algorithm is naive. It computes the previous power of 2 and go
+        The algorithm is naive. It computes the previous power of 2 and goes
         through the odd numbers calling the method :meth:`is_prime_power`.
 
         .. SEEALSO::
@@ -5983,7 +5983,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def additive_order(self):
         """
-        Return the additive order of self.
+        Return the additive order of ``self``.
 
         EXAMPLES::
 
@@ -5999,7 +5999,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def multiplicative_order(self):
         r"""
-        Return the multiplicative order of self.
+        Return the multiplicative order of ``self``.
 
         EXAMPLES::
 
@@ -6242,9 +6242,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def sqrtrem(self):
         r"""
-        Return (s, r) where s is the integer square root of self and
+        Return (s, r) where s is the integer square root of ``self`` and
         r is the remainder such that `\text{self} = s^2 + r`.
-        Raises ``ValueError`` if self is negative.
+        Raises ``ValueError`` if ``self`` is negative.
 
         EXAMPLES::
 
@@ -6272,8 +6272,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def isqrt(self):
         r"""
-        Returns the integer floor of the square root of self, or raises an
-        ``ValueError`` if self is negative.
+        Returns the integer floor of the square root of ``self``, or raises an
+        ``ValueError`` if ``self`` is negative.
 
         EXAMPLES::
 
@@ -6315,7 +6315,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
            is not None.
 
         -  ``all`` - bool (default: False); if True, return all
-           square roots of self (a list of length 0, 1 or 2).
+           square roots of ``self`` (a list of length 0, 1 or 2).
 
         EXAMPLES::
 
@@ -6752,7 +6752,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def __invert__(self):
         """
-        Return the multiplicative inverse of self, as a rational number.
+        Return the multiplicative inverse of ``self``, as a rational number.
 
         EXAMPLES::
 
@@ -6778,8 +6778,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def inverse_of_unit(self):
         """
-        Return inverse of self if self is a unit in the integers, i.e.,
-        self is -1 or 1. Otherwise, raise a ZeroDivisionError.
+        Return inverse of ``self`` if ``self`` is a unit in the integers, i.e.,
+        ``self`` is -1 or 1. Otherwise, raise a :class:`ZeroDivisionError`.
 
         EXAMPLES::
 
@@ -6803,7 +6803,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def inverse_mod(self, n):
         r"""
-        Return the inverse of self modulo `n`, if this inverse exists.
+        Return the inverse of ``self`` modulo `n`, if this inverse exists.
 
         Otherwise, raises a ``ZeroDivisionError`` exception.
 
@@ -7271,7 +7271,7 @@ def GCD_list(v):
 @cython.binding(True)
 def make_integer(s):
     """
-    Create a Sage integer from the base-32 Python *string* s. This is
+    Create a Sage integer from the base-32 Python *string* ``s``. This is
     used in unpickling integers.
 
     EXAMPLES::
