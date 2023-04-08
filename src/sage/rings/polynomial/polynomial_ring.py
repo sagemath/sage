@@ -175,6 +175,7 @@ from sage.rings.finite_rings.element_base import FiniteRingElement
 from sage.rings.power_series_ring_element import PowerSeries
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
+from sage.rings.power_series_ring_element import PowerSeries
 
 _CommutativeRings = categories.commutative_rings.CommutativeRings()
 
