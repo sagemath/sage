@@ -4870,7 +4870,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         a = -a
         b = b / 2
-        L = set(self.vertices())
+        L = self.vertices()
         n = len(L)
         H0 = HomologyGroup(0, ZZ)
 
