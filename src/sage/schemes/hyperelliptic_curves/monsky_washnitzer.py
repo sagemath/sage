@@ -46,27 +46,33 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import binomial, integer_ceil as ceil
+from sage.arith.misc import integer_ceil as ceil
+from sage.arith.misc import binomial
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc import newton_method_sizes
 from sage.misc.profiler import Profiler
 from sage.misc.repr import repr_lincomb
+from sage.modules.free_module_element import vector
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import is_FreeModuleElement
-from sage.modules.free_module_element import vector
 from sage.modules.module import Module
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
-from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
-from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import RationalField as Rationals
+from sage.rings.rational import Rational
 from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.ring import IntegralDomain
+from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.ring import CommutativeAlgebra
-from sage.rings.ring import IntegralDomain
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
