@@ -195,7 +195,7 @@ tensor ``t`` acts on pairs formed by a linear form and a module element::
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Dict, Literal, Optional, Tuple, Union, overload
-from typing_extensions import override
+from typing_extensions import TypeGuard
 
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
@@ -214,8 +214,11 @@ if TYPE_CHECKING:
     from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
     from sage.tensor.modules.free_module_basis import FreeModuleBasis
 
-IndexCharacter = Literal["UP", "DOWN"]
-IndexConfiguration = Tuple[IndexCharacter, ...]
+IndexCharacterNormalized = Literal["UP", "DOWN"]
+IndexConfigurationNormalized = Tuple[IndexCharacterNormalized, ...]
+IndexConfiguration = Union[IndexConfigurationNormalized, str]
+TensorTypeNormalized = Tuple[int, int]
+TensorType = Union[TensorTypeNormalized, IndexConfiguration]
 
 class FreeModuleTensor(ModuleElementWithMutability):
     r"""
@@ -230,7 +233,12 @@ class FreeModuleTensor(ModuleElementWithMutability):
       `R`, as an instance of
       :class:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`
     - ``tensor_type`` -- pair ``(k, l)`` with ``k`` being the contravariant
-      rank and ``l`` the covariant rank
+      rank and ``l`` the covariant rank. Alternatively, a configuration of
+      contravariant and covariant arguments as a string using ``^`` or ``u`` for
+      upper/contravariant and ``_`` or ``d`` for lower/covariant indices.
+      For instance, ``tensor_type = 'udu'``. If only the two ranks ``(k,l)`` are
+      provided, then it is assumed that the first ``k`` indices are contravariant and
+      the last ``l`` indices are covariant.
     - ``name`` -- (default: ``None``) name given to the tensor
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the tensor;
       if none is provided, the LaTeX symbol is set to ``name``
@@ -248,11 +256,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
     - ``parent`` -- (default: ``None``) some specific parent (e.g. exterior
       power for alternating forms); if ``None``, ``fmodule.tensor_module(k,l)``
       is used
-    - ``config`` -- configuration of contravariant and covariant arguments.
-       This is a tuple of strings using ``^`` for upper/contravariant and ``_`` for `
-       lower/covariant indices. For instance, ``config = ('^','_')``. If ``None``,
-       then it is assumed that the first ``k`` indices are covariant and the
-       last ``l`` indices are contravariant if ``tensor_type = (k,l)``.
 
     EXAMPLES:
 
@@ -272,18 +275,18 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
     """
     _fmodule: FiniteRankFreeModule
-    _config: IndexConfiguration
+    _config: IndexConfigurationNormalized
+    _tensor_type: TensorTypeNormalized
 
     def __init__(
         self,
         fmodule: FiniteRankFreeModule,
-        tensor_type: tuple[int, int],
+        tensor_type: TensorType,
         name: Optional[str] = None,
         latex_name: Optional[str] = None,
         sym: Optional[tuple[int, ...]] = None,
         antisym: Optional[tuple[int, ...]] = None,
         parent=None,
-        config: Optional[Union[tuple[str, ...], IndexConfiguration]] = None,
     ):
         r"""
         TESTS::
@@ -307,24 +310,12 @@ class FreeModuleTensor(ModuleElementWithMutability):
             sage: TestSuite(t1).run()
 
         """
+        self._tensor_type, self._config = _parse_tensor_type(tensor_type)
+        self._tensor_rank = self._tensor_type[0] + self._tensor_type[1]
         if parent is None:
-            parent = fmodule.tensor_module(*tensor_type)
+            parent = fmodule.tensor_module(*self._tensor_type)
         ModuleElementWithMutability.__init__(self, parent)
         self._fmodule = fmodule
-        self._tensor_type = tuple(tensor_type)
-        self._tensor_rank = self._tensor_type[0] + self._tensor_type[1]
-        if config:
-            if len(config) != self._tensor_rank:
-                raise ValueError(
-                    "the length of the index configuration must be equal to the tensor rank"
-                )
-            self._config = tuple(
-                "UP" if type in ("^", "UP") else "DOWN" for type in config
-            )
-        else:
-            self._config = tuple("UP" for _ in range(self._tensor_type[0])) + tuple(
-                "DOWN" for _ in range(self._tensor_type[1])
-            )
         self._is_zero = False  # a priori, may be changed below or via
         # method __bool__()
         self._name = name
@@ -507,16 +498,16 @@ class FreeModuleTensor(ModuleElementWithMutability):
         return self._tensor_rank
 
     @overload
-    def config(self, position: int) -> IndexCharacter:
+    def config(self, position: int) -> IndexCharacterNormalized:
         pass
 
     @overload
-    def config(self, position: None) -> IndexConfiguration:
+    def config(self) -> IndexConfigurationNormalized:
         pass
 
     def config(
         self, position: Optional[int] = None
-    ) -> Union[IndexCharacter, IndexConfiguration]:
+    ) -> Union[IndexCharacterNormalized, IndexConfigurationNormalized]:
         r"""
         Return the configuration of covariant and contravariant indices, or
         the character of the index at a given position.
@@ -535,9 +526,11 @@ class FreeModuleTensor(ModuleElementWithMutability):
             sage: M = FiniteRankFreeModule(ZZ, 3)
             sage: M.tensor((2,1)).config()
             ('UP', 'UP', 'DOWN')
-            sage: M.tensor((2,1), config=('^','_','^')).config()
+            sage: M.tensor('^_^').config()
             ('UP', 'DOWN', 'UP')
-            sage: M.tensor((2,1), config=('^','_','^')).config(1)
+            sage: M.tensor('udu').config()
+            ('UP', 'DOWN', 'UP')
+            sage: M.tensor('^_^').config(1)
             'DOWN'
         """
         if position is None:
@@ -1021,10 +1014,9 @@ class FreeModuleTensor(ModuleElementWithMutability):
         """
         return self.__class__(
             self._fmodule,
-            self._tensor_type,
+            self._config,
             sym=self._sym,
             antisym=self._antisym,
-            config=self._config,
         )
 
     def _new_comp(self, basis):
@@ -1198,55 +1190,38 @@ class FreeModuleTensor(ModuleElementWithMutability):
             old_comp = self._components[from_basis]
             new_comp = self._new_comp(basis)
             rank = self._tensor_rank
-            # loop on the new components:
-            nproc = Parallelism().get('tensor')
+            config = self._config
 
-            if nproc != 1:
-                # Parallel computation
-                lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-                ind_list = [ind for ind in new_comp.non_redundant_index_generator()]
-                ind_step = max(1, int(len(ind_list)/nproc/2))
-                local_list = lol(ind_list, ind_step)
-                # list of input parameters
-                listParalInput = [(old_comp, ppinv, pp, n_con, rank, ii) for ii in local_list]
+            # Parallel computation
+            nproc = Parallelism().get("tensor")
+            lol = lambda lst, sz: [lst[i : i + sz] for i in range(0, len(lst), sz)]
+            ind_list = [ind for ind in new_comp.non_redundant_index_generator()]
+            ind_step = max(1, int(len(ind_list) / nproc / 2))
+            local_list = lol(ind_list, ind_step)
+            # list of input parameters
+            listParalInput = [(old_comp, ppinv, pp, config, ii) for ii in local_list]
 
-                @parallel(p_iter='multiprocessing', ncpus=nproc)
-                def paral_newcomp(old_comp, ppinv, pp, n_con, rank, local_list_ind):
-                    partial = []
-                    for ind in local_list_ind:
-                        res = 0
-                        # Summation on the old components multiplied by the proper
-                        # change-of-basis matrix elements (tensor formula):
-                        for ind_old in old_comp.index_generator():
-                            t = old_comp[[ind_old]]
-                            # TODO
-                            for i in range(n_con): # loop on contravariant indices
-                                t *= ppinv[[ind[i], ind_old[i]]]
-                            for i in range(n_con,rank):  # loop on covariant indices
-                                t *= pp[[ind_old[i], ind[i]]]
-                            res += t
-                        partial.append([ind,res])
-                    return partial
+            @parallel(p_iter="multiprocessing", ncpus=nproc)
+            def paral_newcomp(old_comp, ppinv, pp, config, local_list_ind):
+                partial = []
+                for ind in local_list_ind:
+                    # Summation on the old components multiplied by the proper change-of-basis matrix elements (tensor formula)
 
-                for ii,val in paral_newcomp(listParalInput):
-                    for jj in val:
-                        new_comp[[jj[0]]] = jj[1]
-
-            else:
-                # Sequential computation
-                for ind_new in new_comp.non_redundant_index_generator():
-                    # Summation on the old components multiplied by the proper
-                    # change-of-basis matrix elements (tensor formula):
                     res = 0
-                    # TODO and extract
-                    for ind_old in old_comp.index_generator():
-                        t = old_comp[[ind_old]]
-                        for i in range(n_con): # loop on contravariant indices
-                            t *= ppinv[[ind_new[i], ind_old[i]]]
-                        for i in range(n_con,rank):  # loop on covariant indices
-                            t *= pp[[ind_old[i], ind_new[i]]]
+                    for old_indices in old_comp.index_generator():
+                        t = old_comp[[old_indices]]
+                        for i, character in enumerate(config):
+                            if character == "UP":
+                                t *= ppinv[[ind[i], old_indices[i]]]
+                            else:
+                                t *= pp[[old_indices[i], ind[i]]]
                         res += t
-                    new_comp[ind_new] = res
+                    partial.append([ind, res])
+                return partial
+
+            for ii, val in paral_newcomp(listParalInput):
+                for jj in val:
+                    new_comp[[jj[0]]] = jj[1]
 
             self._components[basis] = new_comp
             # end of case where the computation was necessary
@@ -1790,7 +1765,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
         for basis, comp in self._components.items():
             resu._components[basis] = comp.copy()
         resu._is_zero = self._is_zero
-        resu._config = self._config
         return resu
 
     def common_basis(self, other):
@@ -2081,7 +2055,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
             result._name = '+' + self._name
         if self._latex_name is not None:
             result._latex_name = '+' + self._latex_name
-        result._config = self._config
         return result
 
     def __neg__(self):
@@ -2109,7 +2082,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         """
         result = self._new_instance()
-        result._config = self._config
         for basis in self._components:
             result._components[basis] = - self._components[basis]
         if self._name is not None:
@@ -2164,9 +2136,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if basis is None:
             raise ValueError("no common basis for the addition")
         comp_result = self._components[basis] + other._components[basis]
-        result = self._fmodule.tensor_from_comp(
-            self._tensor_type, comp_result, config=self._config
-        )
+        result = self._fmodule.tensor_from_comp(self._config, comp_result)
         if self._name is not None and other._name is not None:
             result._name = self._name + '+' + other._name
         if self._latex_name is not None and other._latex_name is not None:
@@ -2228,10 +2198,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if basis is None:
             raise ValueError("no common basis for the subtraction")
         comp_result = self._components[basis] - other._components[basis]
-        result = self._fmodule.tensor_from_comp(
-            self._tensor_type, comp_result, config=self._config
-        )
-        result._config = self._config
+        result = self._fmodule.tensor_from_comp(self._config, comp_result)
         if self._name is not None and other._name is not None:
             result._name = self._name + '-' + other._name
         if self._latex_name is not None and other._latex_name is not None:
@@ -2286,7 +2253,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
     ######### End of ModuleElement arithmetic operators ########
 
-    def __mul__(self, other):
+    def __mul__(self, other, swap_indices=False):
         r"""
         Tensor product.
 
@@ -2321,14 +2288,20 @@ class FreeModuleTensor(ModuleElementWithMutability):
             # Reordering of the contravariant and covariant indices:
             k1, l1 = self._tensor_type
             k2, l2 = other._tensor_type
-            if l1 != 0 and False:
-                comp_result = comp_prov.swap_adjacent_indices(k1,
-                                                          self._tensor_rank,
-                                                          self._tensor_rank+k2)
+            if l1 != 0 and swap_indices:
+                from sage.misc.superseded import deprecation
+
+                deprecation(
+                    35448, "swapping of indices to contravariant first is deprecated"
+                )
+                comp_result = comp_prov.swap_adjacent_indices(
+                    k1, self._tensor_rank, self._tensor_rank + k2
+                )
             else:
                 comp_result = comp_prov  # no reordering is necessary
             result = self._fmodule.tensor_from_comp(
-                (k1 + k2, l1 + l2), comp_result, config=self._config + other._config
+                self._config + other._config,
+                comp_result,
             )
             result._name = format_mul_txt(self._name, unicode_otimes, other._name)
             result._latex_name = format_mul_latex(self._latex_name,
@@ -2361,7 +2334,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         """
         result = self._new_instance()
-        result._config = self._config
         for basis in self._components:
             result._components[basis] = self._components[basis] / other
         return result
@@ -2395,7 +2367,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             28
             sage: t(a,b,v) == t.__call__(a,b,v)
             True
-            sage: t(a,b,v) == t.contract(v).contract(b).contract(a)
+            sage: t(a,b,v) == t.contract(v, swap_indices=False).contract(b, swap_indices=False).contract(a, swap_indices=False)
             True
 
         Action of a linear form on a vector::
@@ -2546,18 +2518,24 @@ class FreeModuleTensor(ModuleElementWithMutability):
             res._latex_name = res_latex
         return res
 
-    def trace(self, pos1=0, pos2=1):
+    def trace(
+        self,
+        positions: Union[int, list[tuple[int, int]]] = 0,
+        position2: Optional[int] = None,
+    ):
         r"""
-        Trace (contraction) on two slots of the tensor.
+        Trace (contraction) on two or more slots of the tensor.
+
+        The variance type of the two slots must be opposite of each other.
 
         INPUT:
 
-        - ``pos1`` -- (default: 0) position of the first index for the
-          contraction, with the convention ``pos1=0`` for the first slot
+        - ``positions`` -- (default: 0) either the position of the first index for the
+          contraction, or a list of positions; with the convention that the first
+          slot has position ``0``.
 
-        - ``pos2`` -- (default: 1) position of the second index for the
-          contraction, with the same convention as for ``pos1``; the variance
-          type of ``pos2`` must be opposite to that of ``pos1``
+        - ``position2`` -- (default: None) position of the second index for the
+          contraction.
 
         OUTPUT:
 
@@ -2668,34 +2646,52 @@ class FreeModuleTensor(ModuleElementWithMutability):
             sage: t['^k_..k'] == t.trace(0,3)
             True
 
+        Double contraction on two slots::
+
+            sage: d = M.tensor('udud', name='d')
+            sage: d[0,0,0,0], d[1,1,1,1], d[2,2,2,2] = 1, 2, 3
+            sage: d.trace([(0,1), (2,3)])
+            6
+            sage: d['^i_i^k_k']
+            6
         """
-        # The indices at pos1 and pos2 must be of different types:
-        k_con = self._tensor_type[0]
-        l_cov = self._tensor_type[1]
-        if self.config(pos1) == self.config(pos2) == "UP":
-            raise IndexError(
-                "contraction on two contravariant indices is " + "not allowed"
-            )
-        if self.config(pos1) == self.config(pos2) == "DOWN":
-            raise IndexError("contraction on two covariant indices is " + "not allowed")
+        if not isinstance(positions, list):
+            if position2 is None:
+                positions = [(positions, 1)]
+            else:
+                positions = [(positions, position2)]
+
+        for pos1, pos2 in positions:
+            # The indices at pos1 and pos2 must be of different types:
+            if self.config(pos1) == self.config(pos2) == "UP":
+                raise IndexError(
+                    "contraction on two contravariant indices is not allowed"
+                )
+            if self.config(pos1) == self.config(pos2) == "DOWN":
+                raise IndexError(
+                    "contraction on two covariant indices is not allowed"
+                )
         # Frame selection for the computation:
         if self._fmodule._def_basis in self._components:
             basis = self._fmodule._def_basis
         else: # a basis is picked arbitrarily:
             basis = self.pick_a_basis()
-        resu_comp = self._components[basis].trace(pos1, pos2)
-        if self._tensor_rank == 2:  # result is a scalar
+        resu_comp = self._components[basis].trace(positions)
+        if self._tensor_rank == 2 * len(positions):  # result is a scalar
             return resu_comp
         else:
             result_config = list(self._config)
-            for pos in sorted([pos1, pos2], reverse=True):
+            for pos in sorted(
+                [pos for position in positions for pos in position], reverse=True
+            ):
                 result_config.pop(pos)
             result_config = tuple(result_config)
             return self._fmodule.tensor_from_comp(
-                (k_con - 1, l_cov - 1), resu_comp, config=result_config
+                result_config,
+                resu_comp,
             )
 
-    def contract(self, *args):
+    def contract(self, *args, swap_indices=True):
         r"""
         Contraction on one or more indices with another tensor.
 
@@ -2711,6 +2707,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
           contraction, with the same conventions as for ``pos1``; if ``pos2``
           is not provided, a single contraction on the first index position of
           ``other`` is assumed
+        - ``swap_indices`` -- (default: ``true``) determines whether all contravariant
+           indicies should come first in the result
 
         OUTPUT:
 
@@ -2773,7 +2771,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
             sage: a = M.tensor((1,1))
             sage: a[:] = [[-1,2,3],[4,-5,6],[7,8,9]]
-            sage: s = a.contract(b) ; s
+            sage: s = a.contract(b, swap_indices=False) ; s
             Element of the Rank-3 free module M over the Integer Ring
             sage: s.display()
             2 e_0 - 29 e_1 + 36 e_2
@@ -2782,34 +2780,34 @@ class FreeModuleTensor(ModuleElementWithMutability):
         takes place on the last position of a (i.e. no. 1) and the first
         position of ``b`` (i.e. no. 0)::
 
-            sage: a.contract(b) == a.contract(1, b, 0)
+            sage: a.contract(b, swap_indices=False) == a.contract(1, b, 0, swap_indices=False)
             True
-            sage: a.contract(b) == b.contract(0, a, 1)
+            sage: a.contract(b, swap_indices=False) == b.contract(0, a, 1, swap_indices=False)
             True
-            sage: a.contract(b) == b.contract(a, 1)
+            sage: a.contract(b, swap_indices=False) == b.contract(a, 1, swap_indices=False)
             True
 
         Using the index notation with Einstein convention::
 
-            sage: a['^i_j']*b['^j'] == a.contract(b)
+            sage: a['^i_j']*b['^j'] == a.contract(b, swap_indices=False)
             True
 
         The index ``i`` can be replaced by a dot::
 
-            sage: a['^._j']*b['^j'] == a.contract(b)
+            sage: a['^._j']*b['^j'] == a.contract(b, swap_indices=False)
             True
 
         and the symbol ``^`` may be omitted, the distinction between
         contravariant and covariant indices being the position with respect to
         the symbol ``_``::
 
-            sage: a['._j']*b['j'] == a.contract(b)
+            sage: a['._j']*b['j'] == a.contract(b, swap_indices=False)
             True
 
         Contraction is possible only between a contravariant index and a
         covariant one::
 
-            sage: a.contract(0, b)
+            sage: a.contract(0, b, swap_indices=False)
             Traceback (most recent call last):
             ...
             TypeError: contraction on the two contravariant indices 0 and 0 not permitted
@@ -2820,7 +2818,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             Type-(2,1) tensor on the Rank-3 free module M over the Integer Ring
             sage: c = M.tensor((0,2))
             sage: c[:] = [[-2,3,1], [0,-2,3], [4,-7,6]]
-            sage: s = t.contract(2, c, 1) ; s
+            sage: s = t.contract(2, c, 1, swap_indices=False) ; s
             Type-(1,2) tensor on the Rank-3 free module M over the Integer Ring
             sage: s[:]
             [[[-9, 16, 39], [18, -32, -78], [27, -48, -117]],
@@ -2835,17 +2833,17 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         Using index notation::
 
-            sage: t['^i_j^l']*c['_kl'] == t.contract(2, c, 1)
+            sage: t['^i_j^l']*c['_kl'] == t.contract(2, c, 1, swap_indices=False)
             True
 
         LaTeX notation are allowed::
 
-            sage: t['^{i}_{j}^l']*c['_{kl}'] == t.contract(2, c, 1)
+            sage: t['^{i}_{j}^l']*c['_{kl}'] == t.contract(2, c, 1, swap_indices=False)
             True
 
         Indices not involved in the contraction may be replaced by dots::
 
-            sage: t['..^l']*c['.^l'] == t.contract(2, c, 1)
+            sage: t['..^l']*c['._l'] == t.contract(2, c, 1, swap_indices=False)
             True
 
         The two tensors do not have to be defined on the same basis for the
@@ -2864,7 +2862,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             [Basis (h_0,h_1,h_2) on the Rank-3 free module M over the Integer Ring]
             sage: list(t._components)  # while a is known only in basis e:
             [Basis (e_0,e_1,e_2) on the Rank-3 free module M over the Integer Ring]
-            sage: s1 = t.contract(2, c, 1) ; s1  # yet the computation is possible
+            sage: s1 = t.contract(2, c, 1, swap_indices=False) ; s1  # yet the computation is possible
             Type-(1,2) tensor on the Rank-3 free module M over the Integer Ring
             sage: s1 == s  # ... and yields the same result as previously:
             True
@@ -2877,7 +2875,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             Type-(2,1) tensor on the Rank-3 free module M over the Integer Ring
             sage: d = M([1,-1,2])*c ; d
             Type-(1,2) tensor on the Rank-3 free module M over the Integer Ring
-            sage: s = t.contract(2,1,d,1,0) ; s # the double contraction
+            sage: s = t.contract(2,1,d,1,0, swap_indices=False) ; s # the double contraction
             Type-(1,1) tensor on the Rank-3 free module M over the Integer Ring
             sage: s[:]
             [ -36   30   15]
@@ -2910,8 +2908,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if len(pos2) != ncontr:
             raise TypeError("different number of indices for the contraction")
 
-        k1, l1 = self._tensor_type
-        k2, l2 = other._tensor_type
         for i in range(ncontr):
             p1 = pos1[i]
             p2 = pos2[i]
@@ -2940,10 +2936,17 @@ class FreeModuleTensor(ModuleElementWithMutability):
         for pos in sorted(pos1, reverse=True):
             config_res.pop(pos)
         config_res = tuple(config_res)
-        if False:
+        if swap_indices:
+            from sage.misc.superseded import deprecation
+
+            deprecation(
+                35448, "swapping of indices to contravariant first is deprecated"
+            )
             #
             # Reordering of the indices to have all contravariant indices first:
             #
+            k1, l1 = self._tensor_type
+            k2, l2 = other._tensor_type
             nb_cov_s = 0  # Number of covariant indices of self not involved in the
             # contraction
             for pos in range(k1, k1 + l1):
@@ -2960,10 +2963,9 @@ class FreeModuleTensor(ModuleElementWithMutability):
                 p1 = p2 - nb_cov_s
                 p3 = p2 + nb_con_o
                 cmp_res = cmp_res.swap_adjacent_indices(p1, p2, p3)
-        type_res = (k1+k2-ncontr, l1+l2-ncontr)
-        return self._fmodule.tensor_from_comp(type_res, cmp_res, config=config_res)
+        return self._fmodule.tensor_from_comp(config_res, cmp_res)
 
-    def symmetrize(self, *pos, **kwargs):
+    def symmetrize(self, *pos: int, **kwargs):
         r"""
         Symmetrization over some arguments.
 
@@ -3171,18 +3173,22 @@ class FreeModuleTensor(ModuleElementWithMutability):
         # check whether the symmetrization is possible:
         pos_cov = self._tensor_type[0]   # first covariant position
         pos0 = pos[0]
-        # TODO
-        if pos0 < pos_cov:  # pos0 is a contravariant position
-            for k in range(1,len(pos)):
-                if pos[k] >= pos_cov:
+        if self.config(pos0) == "UP":
+            # pos0 is a contravariant position
+            for k in range(1, len(pos)):
+                if self.config(pos[k]) == "DOWN":
                     raise TypeError(
-                        str(pos[0]) + " is a contravariant position, while " +
-                        str(pos[k]) + " is a covariant position; \n"
-                        "symmetrization is meaningful only on tensor " +
-                        "arguments of the same type")
-        else:  # pos0 is a covariant position
-            for k in range(1,len(pos)):
-                if pos[k] < pos_cov:
+                        str(pos[0])
+                        + " is a contravariant position, while "
+                        + str(pos[k])
+                        + " is a covariant position; \n"
+                        "symmetrization is meaningful only on tensor "
+                        + "arguments of the same type"
+                    )
+        else:
+            # pos0 is a covariant position
+            for k in range(1, len(pos)):
+                if self.config(pos[k]) == "UP":
                     raise TypeError(
                         str(pos[0]) + " is a covariant position, while " +
                         str(pos[k]) + " is a contravariant position; \n"
@@ -3193,9 +3199,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
         else:
             basis = self.pick_a_basis()
         res_comp = self._components[basis].symmetrize(*pos)
-        return self._fmodule.tensor_from_comp(
-            self._tensor_type, res_comp, config=self._config
-        )
+        return self._fmodule.tensor_from_comp(self._config, res_comp)
 
     def antisymmetrize(self, *pos, **kwargs):
         r"""
@@ -3414,18 +3418,22 @@ class FreeModuleTensor(ModuleElementWithMutability):
         # check whether the antisymmetrization is possible:
         pos_cov = self._tensor_type[0]   # first covariant position
         pos0 = pos[0]
-        # TODO
-        if pos0 < pos_cov:  # pos0 is a contravariant position
-            for k in range(1,len(pos)):
-                if pos[k] >= pos_cov:
+        if self.config(pos0) == "UP":
+            # pos0 is a contravariant position
+            for k in range(1, len(pos)):
+                if self.config(pos[k]) == "DOWN":
                     raise TypeError(
-                        str(pos[0]) + " is a contravariant position, while " +
-                        str(pos[k]) + " is a covariant position; \n"
-                        "antisymmetrization is meaningful only on tensor " +
-                        "arguments of the same type")
-        else:  # pos0 is a covariant position
-            for k in range(1,len(pos)):
-                if pos[k] < pos_cov:
+                        str(pos[0])
+                        + " is a contravariant position, while "
+                        + str(pos[k])
+                        + " is a covariant position; \n"
+                        "antisymmetrization is meaningful only on tensor "
+                        + "arguments of the same type"
+                    )
+        else:
+            # pos0 is a covariant position
+            for k in range(1, len(pos)):
+                if self.config(pos[k]) == "UP":
                     raise TypeError(
                         str(pos[0]) + " is a covariant position, while " +
                         str(pos[k]) + " is a contravariant position; \n"
@@ -3436,6 +3444,33 @@ class FreeModuleTensor(ModuleElementWithMutability):
         else:
             basis = self.pick_a_basis()
         res_comp = self._components[basis].antisymmetrize(*pos)
-        return self._fmodule.tensor_from_comp(
-            self._tensor_type, res_comp, config=self._config
+        return self._fmodule.tensor_from_comp(self._config, res_comp)
+
+
+def _parse_tensor_type(
+    tensor_type: TensorType,
+) -> tuple[TensorTypeNormalized, IndexConfigurationNormalized]:
+    if isinstance(tensor_type, str):
+        # tensor_type is a configuration of contravariant and covariant as a string
+        config = tuple(
+            "UP" if type.lower() in ("^", "u") else "DOWN" for type in tensor_type
         )
+        tensor_type = (config.count("UP"), config.count("DOWN"))
+    else:
+        if not _is_normalized_tensor_type(tensor_type):
+            # tensor_type is a pair (k,l) with k the contravariant rank and l the covariant rank
+            config = tuple("UP" for _ in range(tensor_type[0])) + tuple(
+                "DOWN" for _ in range(tensor_type[1])
+            )
+        else:
+            # tensor_type is already normalized
+            config = tensor_type
+            tensor_type = (config.count("UP"), config.count("DOWN"))
+
+    return tensor_type, config
+
+
+def _is_normalized_tensor_type(
+    test: TensorType,
+) -> TypeGuard[tuple[IndexCharacterNormalized, ...]]:
+    return all(x in ["UP", "DOWN"] for x in test)

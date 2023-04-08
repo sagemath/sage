@@ -1,3 +1,4 @@
+# pylint: disable=C0115:missing-class-docstring,C0116:missing-function-docstring
 import pytest
 from sage.rings.rational_field import ZZ
 from sage.tensor.modules.comp import Components
@@ -12,23 +13,33 @@ class TestFreeModuleTensor:
         module.basis("e")
         return module
 
-    def test_init_throws_exception_when_tensor_configuration_has_wrong_length(
+    def test_constructor_accepts_normalized_tensor_config(
         self, module: FiniteRankFreeModule
     ):
-        with pytest.raises(ValueError):
-            FreeModuleTensor(module, (2, 1), config=("^", "^", "^", "^"))
+        tensor = FreeModuleTensor(module, ("DOWN", "UP", "UP"))
+        assert tensor.config() == ("DOWN", "UP", "UP")
 
-    def test_display_comp_takes_tensor_configuration_into_account(
+    def test_constructor_parses_tensor_config(self, module: FiniteRankFreeModule):
+        tensor = FreeModuleTensor(module, "duu")
+        assert tensor.config() == ("DOWN", "UP", "UP")
+
+    def test_constructor_parses_tensor_config_in_latex_notation(
         self, module: FiniteRankFreeModule
     ):
-        tensor = FreeModuleTensor(module, (2, 1), config=("_", "^", "^"))
+        tensor = FreeModuleTensor(module, "_^^")
+        assert tensor.config() == ("DOWN", "UP", "UP")
+
+    def test_display_takes_tensor_config_into_account(
+        self, module: FiniteRankFreeModule
+    ):
+        tensor = FreeModuleTensor(module, "_^^")
         tensor[1, 2, 1], tensor[1, 2, 2] = 2, -1
         assert tensor.display_comp() == "X_1^21 = 2 \nX_1^22 = -1 "
 
     def test_components_transform_according_to_tensor_configuration(
         self, module: FiniteRankFreeModule
     ):
-        tensor = FreeModuleTensor(module, (1, 1), config=("_", "^"))
+        tensor = FreeModuleTensor(module, "_^")
         tensor[0, 1] = -3
         tensor[2, 2] = 2
         assert tensor.display() == "-3 e^0⊗e_1 + 2 e^2⊗e_2"

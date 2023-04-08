@@ -1102,7 +1102,7 @@ class Components(SageObject):
         self,
         symbol,
         latex_symbol=None,
-        index_positions: Optional[Union[IndexConfiguration, str]] = None,
+        index_positions: Optional[IndexConfiguration] = None,
         index_labels=None,
         index_latex_labels=None,
         format_spec=None,
@@ -1309,10 +1309,12 @@ class Components(SageObject):
             else:
                 zero_value = val == 0
             if not zero_value or not only_nonzero:
-                indices = ''  # text indices
-                d_indices = '' # LaTeX down indices
-                u_indices = '' # LaTeX up indices
-                previous: Optional[IndexCharacter] = None  # position of previous index
+                indices = ""  # text indices
+                d_indices = ""  # LaTeX down indices
+                u_indices = ""  # LaTeX up indices
+                previous: Optional[
+                    IndexCharacterNormalized
+                ] = None  # position of previous index
                 for k in range(self._nid):
                     i = ind[k] - si
                     if index_positions[k] == "DOWN":
@@ -2004,15 +2006,22 @@ class Components(SageObject):
             result._comp[ind] = val / other
         return result
 
-    def trace(self, pos1, pos2):
+    def trace(
+        self,
+        positions: Union[int, list[tuple[int, int]]] = 0,
+        position2: Optional[int] = None,
+    ) -> Components:
         r"""
         Index contraction.
 
         INPUT:
 
-        - ``pos1`` -- position of the first index for the contraction (with the
-          convention position=0 for the first slot)
-        - ``pos2`` -- position of the second index for the contraction
+        - ``positions`` -- (default: 0) either the position of the first index for the
+          contraction, or a list of positions; with the convention that the first
+          slot has position ``0``.
+
+        - ``position2`` -- (default: None) position of the second index for the
+          contraction.
 
         OUTPUT:
 
@@ -2064,31 +2073,49 @@ class Components(SageObject):
         if self._nid < 2:
             raise ValueError("contraction can be performed only on " +
                              "components with at least 2 indices")
-        if pos1 < 0 or pos1 > self._nid - 1:
-            raise IndexError("pos1 out of range")
-        if pos2 < 0 or pos2 > self._nid - 1:
-            raise IndexError("pos2 out of range")
-        if pos1 == pos2:
-            raise IndexError("the two positions must differ for the " +
-                             "contraction to be meaningful")
-        si = self._sindex
-        nsi = si + self._dim
-        if self._nid == 2:
-            res = 0
-            for i in range(si, nsi):
-                res += self[[i,i]]
-            return res
+        if not isinstance(positions, list):
+            if position2 is None:
+                raise TypeError(
+                    "the first argument must be a list if no second position is provided"
+                )
+            else:
+                positions = [(positions, position2)]
+
+        for pos1, pos2 in positions:
+            if pos1 < 0 or pos1 > self._nid - 1:
+                raise IndexError("pos1 out of range")
+            if pos2 < 0 or pos2 > self._nid - 1:
+                raise IndexError("pos2 out of range")
+            if pos1 == pos2:
+                raise IndexError(
+                    "the two positions must differ for the "
+                    + "contraction to be meaningful"
+                )
+        if self._nid == 2 * len(positions):
+            # result is scalar
+            result = 0
+            for ind, val in self._comp.items():
+                if all(ind[pos1] == ind[pos2] for pos1, pos2 in positions):
+                    # there is a contribution to the contraction
+                    result += val
+            return result
         else:
             # More than 2 indices
-            result = Components(self._ring, self._frame, self._nid - 2,
-                                self._sindex, self._output_formatter)
-            if pos1 > pos2:
-                pos1, pos2 = (pos2, pos1)
+            result = Components(
+                self._ring,
+                self._frame,
+                self._nid - 2 * len(positions),
+                self._sindex,
+                self._output_formatter,
+            )
             for ind, val in self._comp.items():
-                if ind[pos1] == ind[pos2]:
-                    # there is a contribution to the contraction
-                    ind_res = ind[:pos1] + ind[pos1+1:pos2] + ind[pos2+1:]
-                    result[[ind_res]] += val
+                for pos1, pos2 in positions:
+                    if pos1 > pos2:
+                        pos1, pos2 = (pos2, pos1)
+                    if ind[pos1] == ind[pos2]:
+                        # there is a contribution to the contraction
+                        ind_res = ind[:pos1] + ind[pos1 + 1 : pos2] + ind[pos2 + 1 :]
+                        result[[ind_res]] += val
             return result
 
     def contract(self, *args):
@@ -3810,7 +3837,11 @@ class CompWithSym(Components):
                     result._comp[ind_s + ind_o] = val_s * val_o
         return result
 
-    def trace(self, pos1, pos2):
+    def trace(
+        self,
+        positions: Union[int, list[tuple[int, int]]] = 0,
+        position2: Optional[int] = None,
+    ) -> Components:
         r"""
         Index contraction, taking care of the symmetries.
 
@@ -3924,6 +3955,14 @@ class CompWithSym(Components):
         if self._nid < 2:
             raise TypeError("contraction can be performed only on " +
                             "components with at least 2 indices")
+        if not isinstance(positions, list):
+            if position2 is None:
+                raise TypeError(
+                    "the first argument must be a list if no second position is provided"
+                )
+            else:
+                positions = [(positions, position2)]
+        pos1, pos2 = positions[0]
         if pos1 < 0 or pos1 > self._nid - 1:
             raise IndexError("pos1 out of range")
         if pos2 < 0 or pos2 > self._nid - 1:
