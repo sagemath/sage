@@ -473,13 +473,13 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
 
         EXAMPLES::
 
-            sage: CDF._magma_init_(magma) # optional - magma
+            sage: CDF._magma_init_(magma)                       # optional - magma
             'ComplexField(53 : Bits := true)'
-            sage: magma(CDF) # optional - magma
+            sage: magma(CDF)                                    # optional - magma
             Complex field of precision 15
             sage: floor(RR(log(2**53, 10)))
             15
-            sage: magma(CDF).sage() # optional - magma
+            sage: magma(CDF).sage()                             # optional - magma
             Complex Field with 53 bits of precision
         """
         return "ComplexField(%s : Bits := true)" % self.prec()

@@ -126,8 +126,8 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         False
         sage: Z.category()
         Join of Category of euclidean domains
-             and Category of infinite enumerated sets
-             and Category of metric spaces
+            and Category of infinite enumerated sets
+            and Category of metric spaces
         sage: Z(2^(2^5) + 1)
         4294967297
 
@@ -151,9 +151,9 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
     The lists are interpreted in little-endian order, so that
     entry ``i`` of the list is the coefficient of ``base^i``::
 
-        sage: Z([4,1,7],base=100)
+        sage: Z([4,1,7], base=100)
         70104
-        sage: Z([4,1,7],base=10)
+        sage: Z([4,1,7], base=10)
         714
         sage: Z([3, 7], 10)
         73
@@ -166,13 +166,13 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
     ``z`` represent numbers 10 to 36.  Letter case does not matter.
     ::
 
-        sage: Z("sage",base=32)
+        sage: Z("sage", base=32)
         928270
-        sage: Z("SAGE",base=32)
+        sage: Z("SAGE", base=32)
         928270
-        sage: Z("Sage",base=32)
+        sage: Z("Sage", base=32)
         928270
-        sage: Z([14, 16, 10, 28],base=32)
+        sage: Z([14, 16, 10, 28], base=32)
         928270
         sage: 14 + 16*32 + 10*32^2 + 28*32^3
         928270
@@ -255,16 +255,16 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
     are used to provide the digits (more details in
     :class:`IntegerRing_class`)::
 
-        sage: Z("sage",base=32)
+        sage: Z("sage", base=32)
         928270
-        sage: Z([14, 16, 10, 28],base=32)
+        sage: Z([14, 16, 10, 28], base=32)
         928270
 
     The :meth:`digits<~sage.rings.integer.Integer.digits>` method
     allows you to get the list of digits of an integer in a different
     basis (note that the digits are returned in little-endian order)::
 
-        sage: b = Z([4,1,7],base=100)
+        sage: b = Z([4,1,7], base=100)
         sage: b
         70104
         sage: b.digits(base=71)
@@ -433,23 +433,25 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
             sage: ZZ.range(10)
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-            sage: ZZ.range(-5,5)
+            sage: ZZ.range(-5, 5)
             [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4]
-            sage: ZZ.range(0,50,5)
+            sage: ZZ.range(0, 50, 5)
             [0, 5, 10, 15, 20, 25, 30, 35, 40, 45]
-            sage: ZZ.range(0,50,-5)
+            sage: ZZ.range(0, 50, -5)
             []
-            sage: ZZ.range(50,0,-5)
+            sage: ZZ.range(50, 0, -5)
             [50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
-            sage: ZZ.range(50,0,5)
+            sage: ZZ.range(50, 0, 5)
             []
-            sage: ZZ.range(50,-1,-5)
+            sage: ZZ.range(50, -1, -5)
             [50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0]
 
         It uses different code if the step doesn't fit in a long::
 
-            sage: ZZ.range(0,2^83,2^80)
-            [0, 1208925819614629174706176, 2417851639229258349412352, 3626777458843887524118528, 4835703278458516698824704, 6044629098073145873530880, 7253554917687775048237056, 8462480737302404222943232]
+            sage: ZZ.range(0, 2^83, 2^80)
+            [0, 1208925819614629174706176, 2417851639229258349412352,
+             3626777458843887524118528, 4835703278458516698824704, 6044629098073145873530880,
+             7253554917687775048237056, 8462480737302404222943232]
 
         Make sure :trac:`8818` is fixed::
 
@@ -532,7 +534,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
             sage: ZZ.coerce(int(5)) # indirect doctest
             5
-            sage: ZZ.coerce(GF(7)(2))
+            sage: ZZ.coerce(GF(7)(2))                                                   # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Finite Field of size 7 to Integer Ring
@@ -666,7 +668,8 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             ....:         counter += 1
             ....:         dic[ZZ.random_element(*args, **kwds)] += 1
 
-            sage: prob = lambda x : 1/5
+            sage: def prob(x):
+            ....:     return 1/5
             sage: dic = defaultdict(Integer)
             sage: counter = 0.0
             sage: add_samples(distribution="uniform")
@@ -690,7 +693,8 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
             sage: -10 <= ZZ.random_element(-10, 10) < 10
             True
-            sage: prob = lambda x : 1/20
+            sage: def prob(x):
+            ....:     return 1/20
             sage: dic = defaultdict(Integer)
             sage: counter = 0.0
             sage: add_samples(-10, 10)
@@ -699,7 +703,8 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
             sage: 0 <= ZZ.random_element(5) < 5
             True
-            sage: prob = lambda x : 1/5
+            sage: def prob(x):
+            ....:     return 1/5
             sage: dic = defaultdict(Integer)
             sage: counter = 0.0
             sage: add_samples(5)
@@ -831,7 +836,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             True
             sage: ZZ._is_valid_homomorphism_(ZZ,[2])
             False
-            sage: ZZ._is_valid_homomorphism_(ZZ.quotient_ring(8),[ZZ.quotient_ring(8)(1)])
+            sage: ZZ._is_valid_homomorphism_(ZZ.quotient_ring(8), [ZZ.quotient_ring(8)(1)])
             True
         """
         if base_map is None:
@@ -920,11 +925,11 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: ZZ.extension(x^2-5, 'a')
+            sage: ZZ.extension(x^2 - 5, 'a')                                            # optional - sage.rings.number_field
             Order in Number Field in a with defining polynomial x^2 - 5
-            sage: ZZ.extension([x^2 + 1, x^2 + 2], 'a,b')
-            Relative Order in Number Field in a with defining polynomial
-            x^2 + 1 over its base field
+            sage: ZZ.extension([x^2 + 1, x^2 + 2], 'a,b')                               # optional - sage.rings.number_field
+            Relative Order in Number Field in a
+             with defining polynomial x^2 + 1 over its base field
         """
         from sage.rings.number_field.order import EquationOrder
         return EquationOrder(poly, names=names, **kwds)
@@ -1275,41 +1280,41 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: p = (x + 1)^23 * (x - 1)^23 * (x - 100) * (x + 5445)^5
-            sage: ZZ._roots_univariate_polynomial(p)                                                                    # optional - sage.libs.pari
+            sage: ZZ._roots_univariate_polynomial(p)                                    # optional - sage.libs.pari
             [(100, 1), (-5445, 5), (1, 23), (-1, 23)]
             sage: p *= (1 + x^3458645 - 76*x^3435423343 + x^45346567867756556)
-            sage: ZZ._roots_univariate_polynomial(p)                                                                    # optional - sage.libs.pari
+            sage: ZZ._roots_univariate_polynomial(p)                                    # optional - sage.libs.pari
             [(1, 23), (-1, 23), (100, 1), (-5445, 5)]
             sage: p *= x^156468451540687043504386074354036574634735074
-            sage: ZZ._roots_univariate_polynomial(p)                                                                    # optional - sage.libs.pari
+            sage: ZZ._roots_univariate_polynomial(p)                                    # optional - sage.libs.pari
             [(0, 156468451540687043504386074354036574634735074),
              (1, 23),
              (-1, 23),
              (100, 1),
              (-5445, 5)]
-            sage: ZZ._roots_univariate_polynomial(p, multiplicities=False)                                              # optional - sage.libs.pari
+            sage: ZZ._roots_univariate_polynomial(p, multiplicities=False)              # optional - sage.libs.pari
             [0, 1, -1, 100, -5445]
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=False)
             sage: p = (x + 1)^23 * (x - 1)^23 * (x - 100) * (x + 5445)^5
-            sage: ZZ._roots_univariate_polynomial(p)                                                                    # optional - sage.libs.pari
+            sage: ZZ._roots_univariate_polynomial(p)                                    # optional - sage.libs.pari
             [(100, 1), (-5445, 5), (1, 23), (-1, 23)]
-            sage: ZZ._roots_univariate_polynomial(p, multiplicities=False)                                              # optional - sage.libs.pari
+            sage: ZZ._roots_univariate_polynomial(p, multiplicities=False)              # optional - sage.libs.pari
             [100, -5445, 1, -1]
 
-            sage: ZZ._roots_univariate_polynomial(p, algorithm="sparse")                                                # optional - sage.libs.pari
+            sage: ZZ._roots_univariate_polynomial(p, algorithm="sparse")                # optional - sage.libs.pari
             [(100, 1), (-5445, 5), (1, 23), (-1, 23)]
-            sage: ZZ._roots_univariate_polynomial(p, algorithm="dense")                                                 # optional - sage.libs.pari
+            sage: ZZ._roots_univariate_polynomial(p, algorithm="dense")                 # optional - sage.libs.pari
             [(100, 1), (-5445, 5), (1, 23), (-1, 23)]
-            sage: ZZ._roots_univariate_polynomial(p, algorithm="foobar")                                                # optional - sage.libs.pari
+            sage: ZZ._roots_univariate_polynomial(p, algorithm="foobar")                # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm 'foobar'
 
             sage: p = x^20 * p
-            sage: ZZ._roots_univariate_polynomial(p, algorithm="sparse")                                                # optional - sage.libs.pari
+            sage: ZZ._roots_univariate_polynomial(p, algorithm="sparse")                # optional - sage.libs.pari
             [(0, 20), (100, 1), (-5445, 5), (1, 23), (-1, 23)]
-            sage: ZZ._roots_univariate_polynomial(p, algorithm="dense")                                                 # optional - sage.libs.pari
+            sage: ZZ._roots_univariate_polynomial(p, algorithm="dense")                 # optional - sage.libs.pari
             [(100, 1), (-5445, 5), (0, 20), (1, 23), (-1, 23)]
         """
         deg = p.degree()
@@ -1495,7 +1500,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: macaulay2(ZZ)       #optional - macaulay2
+            sage: macaulay2(ZZ)       # optional - macaulay2
             ZZ
         """
         return "ZZ"

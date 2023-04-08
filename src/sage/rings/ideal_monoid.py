@@ -3,7 +3,7 @@ Monoid of ideals in a commutative ring
 
 WARNING: This is used by some rings that are not commutative! ::
 
-    sage: MS = MatrixSpace(QQ,3,3)
+    sage: MS = MatrixSpace(QQ, 3, 3)
     sage: type(MS.ideal(MS.one()).parent())
     <class 'sage.rings.ideal_monoid.IdealMonoid_c_with_category'>
 """

@@ -35,7 +35,8 @@ as follows::
     sage: A.<x,y,z> = QQ[]
     sage: M = A.derivation_module()
     sage: M
-    Module of derivations over Multivariate Polynomial Ring in x, y, z over Rational Field
+    Module of derivations over
+     Multivariate Polynomial Ring in x, y, z over Rational Field
 
 The method :meth:`~sage.rings.derivation.RingDerivationModule.gens`
 returns the generators of this module::
@@ -76,8 +77,10 @@ of the ring `A` to create derivations::
 Sage knows moreover that `M` is a Lie algebra::
 
     sage: M.category()
-    Join of Category of lie algebras with basis over Rational Field
-     and Category of modules with basis over Multivariate Polynomial Ring in x, y, z over Rational Field
+    Join of
+     Category of lie algebras with basis over Rational Field and
+     Category of modules with basis over
+      Multivariate Polynomial Ring in x, y, z over Rational Field
 
 Computations of Lie brackets are implemented as well::
 
@@ -116,7 +119,9 @@ on `\QQ` and then build the following module of derivations::
 
     sage: M = A.derivation_module(ev)
     sage: M
-    Module of derivations from Multivariate Polynomial Ring in x, y, z over Rational Field to Rational Field
+    Module of derivations
+     from Multivariate Polynomial Ring in x, y, z over Rational Field
+       to Rational Field
     sage: M.gens()
     (d/dx, d/dy, d/dz)
 
@@ -138,7 +143,8 @@ Twisted derivations are handled similarly::
 
     sage: theta = B.hom([B(y),B(z),B(x)])
     sage: theta
-    Ring endomorphism of Fraction Field of Multivariate Polynomial Ring in x, y, z over Rational Field
+    Ring endomorphism of Fraction Field of
+     Multivariate Polynomial Ring in x, y, z over Rational Field
       Defn: x |--> y
             y |--> z
             z |--> x
@@ -225,32 +231,32 @@ class RingDerivationModule(Module, UniqueRepresentation):
             sage: TestSuite(M).run()
 
             sage: from sage.rings.derivation import RingDerivationModule
-            sage: R5.<x> = GF(5)[]                                                      # optional - sage.libs.pari
-            sage: R25.<x> = GF(25)[]                                                    # optional - sage.libs.pari
-            sage: R7.<x> = GF(7)[]                                                      # optional - sage.libs.pari
+            sage: R5.<x> = GF(5)[]                                                      # optional - sage.rings.finite_rings
+            sage: R25.<x> = GF(25)[]                                                    # optional - sage.rings.finite_rings
+            sage: R7.<x> = GF(7)[]                                                      # optional - sage.rings.finite_rings
 
-            sage: RingDerivationModule(R5, R25)                                         # optional - sage.libs.pari
+            sage: RingDerivationModule(R5, R25)                                         # optional - sage.rings.finite_rings
             Module of derivations
              from Univariate Polynomial Ring in x over Finite Field of size 5
-             to Univariate Polynomial Ring in x over Finite Field in z2 of size 5^2
-            sage: RingDerivationModule(R5, R5^2)                                        # optional - sage.libs.pari
+               to Univariate Polynomial Ring in x over Finite Field in z2 of size 5^2
+            sage: RingDerivationModule(R5, R5^2)                                        # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: the codomain must be an algebra over the domain
              or a morphism with the correct domain
-            sage: RingDerivationModule(R5, R7)                                          # optional - sage.libs.pari
+            sage: RingDerivationModule(R5, R7)                                          # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: the codomain must be an algebra over the domain
              or a morphism with the correct domain
 
-            sage: theta = R5.hom([R5.gen()^2])                                          # optional - sage.libs.pari
-            sage: RingDerivationModule(R5, R25, twist=theta)                            # optional - sage.libs.pari
+            sage: theta = R5.hom([R5.gen()^2])                                          # optional - sage.rings.finite_rings
+            sage: RingDerivationModule(R5, R25, twist=theta)                            # optional - sage.rings.finite_rings
             Module of twisted derivations
              from Univariate Polynomial Ring in x over Finite Field of size 5
-             to Univariate Polynomial Ring in x over Finite Field in z2 of size 5^2
+               to Univariate Polynomial Ring in x over Finite Field in z2 of size 5^2
              (twisting morphism: x |--> x^2)
-            sage: RingDerivationModule(R7, R7, twist=theta)                             # optional - sage.libs.pari
+            sage: RingDerivationModule(R7, R7, twist=theta)                             # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: the domain of the derivation must coerce to the domain of the twisting homomorphism
@@ -467,8 +473,10 @@ class RingDerivationModule(Module, UniqueRepresentation):
             sage: M1 = A.derivation_module(); M1
             Module of derivations over Univariate Polynomial Ring in x over Rational Field
             sage: M2 = A.derivation_module(B); M2
-            Module of derivations from Univariate Polynomial Ring in x over Rational Field
-             to Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            Module of derivations
+             from Univariate Polynomial Ring in x over Rational Field
+               to Univariate Polynomial Ring in y over
+                   Univariate Polynomial Ring in x over Rational Field
             sage: M1._coerce_map_from_(M2) is None
             True
             sage: M1.has_coerce_map_from(M2)
@@ -574,7 +582,8 @@ class RingDerivationModule(Module, UniqueRepresentation):
             sage: M.defining_morphism()
             Polynomial base injection morphism:
               From: Univariate Polynomial Ring in x over Rational Field
-              To:   Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+              To:   Univariate Polynomial Ring in y over
+                     Univariate Polynomial Ring in x over Rational Field
 
             sage: ev = R.hom([QQ(0)])
             sage: M = R.derivation_module(ev)
@@ -864,7 +873,8 @@ class RingDerivation(ModuleElement):
             sage: S.<y> = R[]
             sage: M = R.derivation_module(S)
             sage: M.random_element().codomain()
-            Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+            Univariate Polynomial Ring in y over
+             Univariate Polynomial Ring in x over Rational Field
             sage: M.random_element().codomain() is S
             True
 
@@ -1064,10 +1074,10 @@ class RingDerivationWithoutTwist(RingDerivation):
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = GF(5)[]                                                   # optional - sage.libs.pari
-            sage: D = sum(v*R.derivation(v) for v in R.gens()); D                       # optional - sage.libs.pari
+            sage: R.<x,y,z> = GF(5)[]                                                   # optional - sage.rings.finite_rings
+            sage: D = sum(v*R.derivation(v) for v in R.gens()); D                       # optional - sage.rings.finite_rings
             x*d/dx + y*d/dy + z*d/dz
-            sage: D.pth_power() == D                                                    # optional - sage.libs.pari
+            sage: D.pth_power() == D                                                    # optional - sage.rings.finite_rings
             True
 
         """
@@ -1139,17 +1149,17 @@ class RingDerivationWithoutTwist(RingDerivation):
 
         EXAMPLES::
 
-            sage: R.<x,y> = GF(5)[]                                                     # optional - sage.libs.pari
-            sage: Dx = R.derivation(x)                                                  # optional - sage.libs.pari
-            sage: Dx.pth_power()                                                        # optional - sage.libs.pari
+            sage: R.<x,y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
+            sage: Dx = R.derivation(x)                                                  # optional - sage.rings.finite_rings
+            sage: Dx.pth_power()                                                        # optional - sage.rings.finite_rings
             0
-            sage: (x*Dx).pth_power()                                                    # optional - sage.libs.pari
+            sage: (x*Dx).pth_power()                                                    # optional - sage.rings.finite_rings
             x*d/dx
-            sage: (x^6*Dx).pth_power()                                                  # optional - sage.libs.pari
+            sage: (x^6*Dx).pth_power()                                                  # optional - sage.rings.finite_rings
             x^26*d/dx
 
-            sage: Dy = R.derivation(y)                                                  # optional - sage.libs.pari
-            sage: (x*Dx + y*Dy).pth_power()                                             # optional - sage.libs.pari
+            sage: Dy = R.derivation(y)                                                  # optional - sage.rings.finite_rings
+            sage: (x*Dx + y*Dy).pth_power()                                             # optional - sage.rings.finite_rings
             x*d/dx + y*d/dy
 
         An error is raised if the domain has characteristic zero::
@@ -1172,14 +1182,14 @@ class RingDerivationWithoutTwist(RingDerivation):
 
         TESTS::
 
-            sage: R.<x,y> = GF(3)[]                                                     # optional - sage.libs.pari
-            sage: D = R.derivation_module().random_element()                            # optional - sage.libs.pari
-            sage: Dp = D.pth_power()                                                    # optional - sage.libs.pari
-            sage: f = R.random_element()                                                # optional - sage.libs.pari
-            sage: Dp(f) == D(D(D(f)))                                                   # optional - sage.libs.pari
+            sage: R.<x,y> = GF(3)[]                                                     # optional - sage.rings.finite_rings
+            sage: D = R.derivation_module().random_element()                            # optional - sage.rings.finite_rings
+            sage: Dp = D.pth_power()                                                    # optional - sage.rings.finite_rings
+            sage: f = R.random_element()                                                # optional - sage.rings.finite_rings
+            sage: Dp(f) == D(D(D(f)))                                                   # optional - sage.rings.finite_rings
             True
 
-            sage: D.bracket(Dp)                                                         # optional - sage.libs.pari
+            sage: D.bracket(Dp)                                                         # optional - sage.rings.finite_rings
             0
 
         """
@@ -1569,14 +1579,14 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
         TESTS::
 
             sage: from sage.rings.derivation import RingDerivationWithoutTwist_wrapper
-            sage: R.<x,y> = GF(5)[]                                                     # optional - sage.libs.pari
-            sage: S = R.quo([x^5, y^5])                                                 # optional - sage.libs.pari
-            sage: M = S.derivation_module()                                             # optional - sage.libs.pari
-            sage: der = M.random_element()                                              # optional - sage.libs.pari
-            sage: isinstance(der, RingDerivationWithoutTwist_wrapper)                   # optional - sage.libs.pari
+            sage: R.<x,y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
+            sage: S = R.quo([x^5, y^5])                                                 # optional - sage.rings.finite_rings
+            sage: M = S.derivation_module()                                             # optional - sage.rings.finite_rings
+            sage: der = M.random_element()                                              # optional - sage.rings.finite_rings
+            sage: isinstance(der, RingDerivationWithoutTwist_wrapper)                   # optional - sage.rings.finite_rings
             True
 
-            sage: TestSuite(der).run()                                                  # optional - sage.libs.pari
+            sage: TestSuite(der).run()                                                  # optional - sage.rings.finite_rings
 
         """
         if isinstance(arg, list) and len(arg) == 1 and isinstance(arg[0], RingDerivation):
@@ -1607,11 +1617,11 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.libs.pari
-            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.libs.pari
-            sage: Dx = S.derivation(x)                                                  # optional - sage.libs.pari
-            sage: Dy = S.derivation(y)                                                  # optional - sage.libs.pari
-            sage: Dx + Dy                                                               # optional - sage.libs.pari
+            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
+            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.rings.finite_rings
+            sage: Dx = S.derivation(x)                                                  # optional - sage.rings.finite_rings
+            sage: Dy = S.derivation(y)                                                  # optional - sage.rings.finite_rings
+            sage: Dx + Dy                                                               # optional - sage.rings.finite_rings
             d/dx + d/dy
 
         """
@@ -1623,11 +1633,11 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.libs.pari
-            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.libs.pari
-            sage: Dx = S.derivation(x)                                                  # optional - sage.libs.pari
-            sage: Dy = S.derivation(y)                                                  # optional - sage.libs.pari
-            sage: Dx - Dy                                                               # optional - sage.libs.pari
+            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
+            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.rings.finite_rings
+            sage: Dx = S.derivation(x)                                                  # optional - sage.rings.finite_rings
+            sage: Dy = S.derivation(y)                                                  # optional - sage.rings.finite_rings
+            sage: Dx - Dy                                                               # optional - sage.rings.finite_rings
             d/dx - d/dy
 
         """
@@ -1639,10 +1649,10 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.libs.pari
-            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.libs.pari
-            sage: Dx = S.derivation(x)                                                  # optional - sage.libs.pari
-            sage: -Dx                                                                   # optional - sage.libs.pari
+            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
+            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.rings.finite_rings
+            sage: Dx = S.derivation(x)                                                  # optional - sage.rings.finite_rings
+            sage: -Dx                                                                   # optional - sage.rings.finite_rings
             -d/dx
 
         """
@@ -1654,12 +1664,12 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.libs.pari
-            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.libs.pari
-            sage: Dx = S.derivation(x)                                                  # optional - sage.libs.pari
-            sage: Dx * 2                                                                # optional - sage.libs.pari
+            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
+            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.rings.finite_rings
+            sage: Dx = S.derivation(x)                                                  # optional - sage.rings.finite_rings
+            sage: Dx * 2                                                                # optional - sage.rings.finite_rings
             2*d/dx
-            sage: Dx * x^2                                                              # optional - sage.libs.pari
+            sage: Dx * x^2                                                              # optional - sage.rings.finite_rings
             x^2*d/dx
 
         """
@@ -1671,12 +1681,12 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.libs.pari
-            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.libs.pari
-            sage: Dx = S.derivation(x)                                                  # optional - sage.libs.pari
-            sage: 2 * Dx                                                                # optional - sage.libs.pari
+            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
+            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.rings.finite_rings
+            sage: Dx = S.derivation(x)                                                  # optional - sage.rings.finite_rings
+            sage: 2 * Dx                                                                # optional - sage.rings.finite_rings
             2*d/dx
-            sage: x^2 * Dx                                                              # optional - sage.libs.pari
+            sage: x^2 * Dx                                                              # optional - sage.rings.finite_rings
             x^2*d/dx
 
         """
@@ -1689,20 +1699,20 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.libs.pari
-            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.libs.pari
-            sage: M = S.derivation_module()                                             # optional - sage.libs.pari
-            sage: M.basis()                                                             # optional - sage.libs.pari
+            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
+            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.rings.finite_rings
+            sage: M = S.derivation_module()                                             # optional - sage.rings.finite_rings
+            sage: M.basis()                                                             # optional - sage.rings.finite_rings
             Family (d/dx, d/dy)
 
-            sage: S.derivation(x).list()                                                # optional - sage.libs.pari
+            sage: S.derivation(x).list()                                                # optional - sage.rings.finite_rings
             [1, 0]
-            sage: S.derivation(y).list()                                                # optional - sage.libs.pari
+            sage: S.derivation(y).list()                                                # optional - sage.rings.finite_rings
             [0, 1]
 
-            sage: f = x*S.derivation(x) + y*S.derivation(y); f                          # optional - sage.libs.pari
+            sage: f = x*S.derivation(x) + y*S.derivation(y); f                          # optional - sage.rings.finite_rings
             x*d/dx + y*d/dy
-            sage: f.list()                                                              # optional - sage.libs.pari
+            sage: f.list()                                                              # optional - sage.rings.finite_rings
             [x, y]
 
         """
@@ -1896,19 +1906,19 @@ class RingDerivationWithoutTwist_function(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: R.<x,y> = GF(5)[[]]                                                   # optional - sage.libs.pari
-            sage: M = R.derivation_module()                                             # optional - sage.libs.pari
-            sage: M.basis()                                                             # optional - sage.libs.pari
+            sage: R.<x,y> = GF(5)[[]]                                                   # optional - sage.rings.finite_rings
+            sage: M = R.derivation_module()                                             # optional - sage.rings.finite_rings
+            sage: M.basis()                                                             # optional - sage.rings.finite_rings
             Family (d/dx, d/dy)
 
-            sage: R.derivation(x).list()                                                # optional - sage.libs.pari
+            sage: R.derivation(x).list()                                                # optional - sage.rings.finite_rings
             [1, 0]
-            sage: R.derivation(y).list()                                                # optional - sage.libs.pari
+            sage: R.derivation(y).list()                                                # optional - sage.rings.finite_rings
             [0, 1]
 
-            sage: f = x*R.derivation(x) + y*R.derivation(y); f                          # optional - sage.libs.pari
+            sage: f = x*R.derivation(x) + y*R.derivation(y); f                          # optional - sage.rings.finite_rings
             x*d/dx + y*d/dy
-            sage: f.list()                                                              # optional - sage.libs.pari
+            sage: f.list()                                                              # optional - sage.rings.finite_rings
             [x, y]
 
         """
@@ -1981,11 +1991,11 @@ class RingDerivationWithoutTwist_quotient(RingDerivationWithoutTwist_wrapper):
 
         EXAMPLES::
 
-            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.libs.pari
-            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.libs.pari
-            sage: f = x^3*S.derivation(); f                                             # optional - sage.libs.pari
+            sage: R.<X,Y> = GF(5)[]                                                     # optional - sage.rings.finite_rings
+            sage: S.<x,y> = R.quo([X^5, Y^5])                                           # optional - sage.rings.finite_rings
+            sage: f = x^3*S.derivation(); f                                             # optional - sage.rings.finite_rings
             x^3*d/dx
-            sage: f(x^3)                                                                # optional - sage.libs.pari
+            sage: f(x^3)                                                                # optional - sage.rings.finite_rings
             0
 
         """
@@ -2081,10 +2091,10 @@ class RingDerivationWithTwist_generic(RingDerivation):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(5^3)                                                       # optional - sage.libs.pari
-            sage: Frob = k.frobenius_endomorphism()                                     # optional - sage.libs.pari
-            sage: der = k.derivation(a + 1, twist=Frob)                                 # optional - sage.libs.pari
-            sage: latex(der)                                                            # optional - sage.libs.pari
+            sage: k.<a> = GF(5^3)                                                       # optional - sage.rings.finite_rings
+            sage: Frob = k.frobenius_endomorphism()                                     # optional - sage.rings.finite_rings
+            sage: der = k.derivation(a + 1, twist=Frob)                                 # optional - sage.rings.finite_rings
+            sage: latex(der)                                                            # optional - sage.rings.finite_rings
             \left(a + 1\right)  \left(\left[a \mapsto a^{5}\right] - \text{id}\right)
         """
         scalar = self._scalar

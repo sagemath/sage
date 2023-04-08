@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari       (because all doctests use finite fields)
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 The module action induced by a Drinfeld module
 
@@ -59,7 +59,8 @@ class DrinfeldModuleAction(Action):
         sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
         sage: action = phi.action()
         sage: action
-        Action on Finite Field in z of size 11^2 over its base induced by Drinfeld module defined by T |--> t^3 + z
+        Action on Finite Field in z of size 11^2 over its base
+         induced by Drinfeld module defined by T |--> t^3 + z
 
     The action on elements is computed as follows::
 

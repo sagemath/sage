@@ -16,16 +16,16 @@ the other direction.
 ::
 
     sage: r = Integers(7)
-    sage: s = GF(7)
-    sage: r.has_coerce_map_from(s)
+    sage: s = GF(7)                                                                     # optional - sage.rings.finite_rings
+    sage: r.has_coerce_map_from(s)                                                      # optional - sage.rings.finite_rings
     False
-    sage: s.has_coerce_map_from(r)
+    sage: s.has_coerce_map_from(r)                                                      # optional - sage.rings.finite_rings
     True
-    sage: s(1) + r(1)
+    sage: s(1) + r(1)                                                                   # optional - sage.rings.finite_rings
     2
-    sage: parent(s(1) + r(1))
+    sage: parent(s(1) + r(1))                                                           # optional - sage.rings.finite_rings
     Finite Field of size 7
-    sage: parent(r(1) + s(1))
+    sage: parent(r(1) + s(1))                                                           # optional - sage.rings.finite_rings
     Finite Field of size 7
 
 We list the elements of `\ZZ/3\ZZ`::
@@ -259,9 +259,9 @@ def is_IntegerModRing(x):
         Use isinstance(..., sage.rings.abc.IntegerModRing) instead.
         See https://github.com/sagemath/sage/issues/32606 for details.
         True
-        sage: is_IntegerModRing(GF(13))
+        sage: is_IntegerModRing(GF(13))                                                 # optional - sage.rings.finite_rings
         True
-        sage: is_IntegerModRing(GF(4, 'a'))
+        sage: is_IntegerModRing(GF(4, 'a'))                                             # optional - sage.rings.finite_rings
         False
         sage: is_IntegerModRing(10)
         False
@@ -572,7 +572,8 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: R.<t> = QQ[]
             sage: Integers(8).extension(t^2 - 3)
-            Univariate Quotient Polynomial Ring in t over Ring of integers modulo 8 with modulus t^2 + 5
+            Univariate Quotient Polynomial Ring in t
+             over Ring of integers modulo 8 with modulus t^2 + 5
         """
         if self.modulus() == 1:
             return self
@@ -1145,14 +1146,14 @@ In the latter case, please inform the developers.""".format(self.order()))
         """
         TESTS::
 
-            sage: K2 = GF(2)
-            sage: K3 = GF(3)
-            sage: K8 = GF(8,'a')
-            sage: K8(5) # indirect doctest
+            sage: K2 = GF(2)                                                            # optional - sage.rings.finite_rings
+            sage: K3 = GF(3)                                                            # optional - sage.rings.finite_rings
+            sage: K8 = GF(8,'a')                                                        # optional - sage.rings.finite_rings
+            sage: K8(5)  # indirect doctest                                             # optional - sage.rings.finite_rings
             1
-            sage: K8('a+1')
+            sage: K8('a+1')                                                             # optional - sage.rings.finite_rings
             a + 1
-            sage: K8(K2(1))
+            sage: K8(K2(1))                                                             # optional - sage.rings.finite_rings
             1
 
         The following test refers to :trac:`6468`::
@@ -1164,7 +1165,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             ....:         raise PariError
             sage: P = foo_parent()
             sage: F = foo(P)
-            sage: GF(2)(F)
+            sage: GF(2)(F)                                                              # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: error coercing to finite field
@@ -1172,21 +1173,21 @@ In the latter case, please inform the developers.""".format(self.order()))
         The following test refers to :trac:`8970`::
 
             sage: R = Zmod(13); a = R(2)
-            sage: a == R(gap(a))                                                # optional - sage.libs.gap
+            sage: a == R(gap(a))                                                        # optional - sage.libs.gap
             True
 
         libgap interface (:trac:`23714`)::
 
-            sage: a = libgap.eval("Z(13)^2")                                    # optional - sage.libs.gap
-            sage: a.sage()                                                      # optional - sage.libs.gap
+            sage: a = libgap.eval("Z(13)^2")                                            # optional - sage.libs.gap
+            sage: a.sage()                                                              # optional - sage.libs.gap
             4
-            sage: libgap(a.sage()) == a                                         # optional - sage.libs.gap
+            sage: libgap(a.sage()) == a                                                 # optional - sage.libs.gap
             True
 
         better syntax for libgap interface::
 
-            sage: a = libgap.Z(13)^2                                            # optional - sage.libs.gap
-            sage: libgap(a.sage()) == a                                         # optional - sage.libs.gap
+            sage: a = libgap.Z(13)^2                                                    # optional - sage.libs.gap
+            sage: libgap(a.sage()) == a                                                 # optional - sage.libs.gap
             True
         """
         try:
@@ -1318,9 +1319,9 @@ In the latter case, please inform the developers.""".format(self.order()))
             Ring of integers modulo 12
             sage: Z13 = IntegerModRing(13); Z13
             Ring of integers modulo 13
-            sage: F = GF(11); F
+            sage: F = GF(11); F                                                         # optional - sage.rings.finite_rings
             Finite Field of size 11
-            sage: Z11 == Z11, Z11 == Z12, Z11 == Z13, Z11 == F
+            sage: Z11 == Z11, Z11 == Z12, Z11 == Z13, Z11 == F                          # optional - sage.rings.finite_rings
             (True, False, False, False)
 
         In :trac:`15229`, the following was implemented::
@@ -1329,7 +1330,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: R2 = IntegerModRing(5, is_field=True)
             sage: R1 is R2    # used to return False
             True
-            sage: R2 == GF(5)
+            sage: R2 == GF(5)                                                           # optional - sage.rings.finite_rings
             False
 
         """
@@ -1624,7 +1625,7 @@ def crt(v):
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.integer_mod_ring import crt
-        sage: crt([mod(3, 8),mod(1,19),mod(7, 15)])
+        sage: crt([mod(3, 8), mod(1,19), mod(7, 15)])
         1027
     """
     if len(v) == 0:

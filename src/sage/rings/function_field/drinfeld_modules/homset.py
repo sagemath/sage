@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari       (because all doctests use finite fields)
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Set of morphisms between two Drinfeld modules
 
@@ -47,7 +47,9 @@ class DrinfeldModuleHomset(Homset):
         sage: psi = DrinfeldModule(A, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
         sage: H = Hom(phi, psi)
         sage: H
-        Set of Drinfeld module morphisms from (gen) 2*t^2 + z6*t + z6 to (gen) 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
+        Set of Drinfeld module morphisms
+         from (gen) 2*t^2 + z6*t + z6
+           to (gen) 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
 
     ::
 

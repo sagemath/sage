@@ -18,7 +18,7 @@ Using the generators, we can create elements as follows::
     x_3
     sage: b
     y_4
-    sage: c = a*b+a^3-2*b^4
+    sage: c = a*b + a^3 - 2*b^4
     sage: c
     x_3^3 + x_3*y_4 - 2*y_4^4
 
@@ -299,15 +299,16 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         EXAMPLES::
 
-            sage: X.<x,y> = InfinitePolynomialRing(GF(7))                                                               # optional - sage.libs.pari
-            sage: p = x[2]*y[1] + 3*y[0]                                                                                # optional - sage.libs.pari
-            sage: p                                                                                                     # optional - sage.libs.pari
+            sage: X.<x,y> = InfinitePolynomialRing(GF(7))                               # optional - sage.rings.finite_rings
+            sage: p = x[2]*y[1] + 3*y[0]                                                # optional - sage.rings.finite_rings
+            sage: p                                                                     # optional - sage.rings.finite_rings
             x_2*y_1 + 3*y_0
-            sage: p.polynomial()                                                                                        # optional - sage.libs.pari
+            sage: p.polynomial()                                                        # optional - sage.rings.finite_rings
             x_2*y_1 + 3*y_0
-            sage: p.polynomial().parent()                                                                               # optional - sage.libs.pari
-            Multivariate Polynomial Ring in x_2, x_1, x_0, y_2, y_1, y_0 over Finite Field of size 7
-            sage: p.parent()                                                                                            # optional - sage.libs.pari
+            sage: p.polynomial().parent()                                               # optional - sage.rings.finite_rings
+            Multivariate Polynomial Ring in x_2, x_1, x_0, y_2, y_1, y_0
+             over Finite Field of size 7
+            sage: p.parent()                                                            # optional - sage.rings.finite_rings
             Infinite polynomial ring in x, y over Finite Field of size 7
 
         """
@@ -454,11 +455,11 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
             sage: R.<x,y> = InfinitePolynomialRing(QQ)
             sage: f = x[0]
-            sage: f.subs({x[0]:1})
+            sage: f.subs({x[0]: 1})
             1
             sage: f.subs(x_0=5)
             5
-            sage: f.subs({x[0]:1}, x_0=5)
+            sage: f.subs({x[0]: 1}, x_0=5)
             1
 
         TESTS::
@@ -539,10 +540,10 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         EXAMPLES::
 
-            sage: R.<x> = InfinitePolynomialRing(QQbar)                                             # optional - sage.rings.number_field
-            sage: (x[0]+x[1]).is_nilpotent()                                                        # optional - sage.rings.number_field
+            sage: R.<x> = InfinitePolynomialRing(QQbar)                                 # optional - sage.rings.number_field
+            sage: (x[0] + x[1]).is_nilpotent()                                          # optional - sage.rings.number_field
             False
-            sage: R(0).is_nilpotent()                                                               # optional - sage.rings.number_field
+            sage: R(0).is_nilpotent()                                                   # optional - sage.rings.number_field
             True
             sage: _.<x> = InfinitePolynomialRing(Zmod(4))
             sage: (2*x[0]).is_nilpotent()
@@ -895,11 +896,11 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: X.<x,y> = InfinitePolynomialRing(QQ)
             sage: (x[2]*x[1]).symmetric_cancellation_order(x[2]^2)
             (None, 1, 1)
-            sage: (x[2]*x[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])                          # optional - sage.combinat
+            sage: (x[2]*x[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])              # optional - sage.combinat
             (-1, [2, 3, 1], y_1)
-            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])                     # optional - sage.combinat
+            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])         # optional - sage.combinat
             (None, 1, 1)
-            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[2])                     # optional - sage.combinat
+            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[2])         # optional - sage.combinat
             (-1, [2, 3, 1], 1)
 
         """
@@ -1255,8 +1256,8 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             sage: a(x_1=x[100])
             x_100 + x_0
 
-            sage: M = matrix([[1,1], [2,0]])                                                                            # optional - sage.modules
-            sage: a(x_1=M)                                                                                              # optional - sage.modules
+            sage: M = matrix([[1,1], [2,0]])                                            # optional - sage.modules
+            sage: a(x_1=M)                                                              # optional - sage.modules
             [x_0 + 1       1]
             [      2     x_0]
         """
@@ -1386,8 +1387,8 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
 
             sage: X.<x,y> = InfinitePolynomialRing(QQ, implementation='sparse')
             sage: p = x[10]*y[2] + 2*x[1]*y[3]
-            sage: P = Permutation(((1,2),(3,4,5)))                                                  # optional - sage.combinat
-            sage: p^P # indirect doctest                                                            # optional - sage.combinat
+            sage: P = Permutation(((1,2),(3,4,5)))                                      # optional - sage.combinat
+            sage: p^P # indirect doctest                                                # optional - sage.combinat
             x_10*y_1 + 2*x_2*y_4
 
         """
@@ -1477,10 +1478,10 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
 
         An example in which a previous version had failed::
 
-            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='sparse')                   # optional - sage.libs.pari
-            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')                                                                      # optional - sage.libs.pari
-            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')                                                                      # optional - sage.libs.pari
-            sage: p < q # indirect doctest                                                                              # optional - sage.libs.pari
+            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='sparse')                   # optional - sage.rings.finite_rings
+            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')                                                                      # optional - sage.rings.finite_rings
+            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')                                                                      # optional - sage.rings.finite_rings
+            sage: p < q # indirect doctest                                                                              # optional - sage.rings.finite_rings
             False
 
         """
@@ -1534,7 +1535,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: a = x[0] + x[1]
-            sage: a(x_0=2,x_1=x[1])
+            sage: a(x_0=2, x_1=x[1])
             x_1 + 2
             sage: _.parent()
             Infinite polynomial ring in x over Rational Field
@@ -1569,7 +1570,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
 
         A classical and an infinite polynomial ring::
 
-            sage: X.<x,y> = InfinitePolynomialRing(ZZ,order='degrevlex')
+            sage: X.<x,y> = InfinitePolynomialRing(ZZ, order='degrevlex')
             sage: Y.<z,x_3,x_1> = QQ[]
             sage: x[3] == x_3
             True
@@ -1577,16 +1578,16 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         Two infinite polynomial rings with different order and
         implementation::
 
-            sage: Y = InfinitePolynomialRing(QQ,['x','y'],order='deglex',implementation='sparse')
+            sage: Y = InfinitePolynomialRing(QQ,['x','y'], order='deglex', implementation='sparse')
             sage: x[2] == Y(x[2])
             True
 
         An example in which a previous version had failed::
 
-            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='dense')                    # optional - sage.libs.pari
-            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')                                                                      # optional - sage.libs.pari
-            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')                                                                      # optional - sage.libs.pari
-            sage: p < q                                                                                                 # optional - sage.libs.pari
+            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='dense')                    # optional - sage.rings.finite_rings
+            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')                                                                      # optional - sage.rings.finite_rings
+            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')                                                                      # optional - sage.rings.finite_rings
+            sage: p < q                                                                                                 # optional - sage.rings.finite_rings
             False
 
         """

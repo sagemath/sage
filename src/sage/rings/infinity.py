@@ -203,8 +203,8 @@ testing whether something is infinity), so make sure it is satisfied::
 
 We check that :trac:`17990` is fixed::
 
-    sage: m = Matrix([Infinity])
-    sage: m.rows()
+    sage: m = Matrix([Infinity])                                                        # optional - sage.modules
+    sage: m.rows()                                                                      # optional - sage.modules
     [(+Infinity)]
 """
 #*****************************************************************************
@@ -675,7 +675,7 @@ class UnsignedInfinityRing_class(Singleton, Ring):
 
             sage: UnsignedInfinityRing(2) # indirect doctest
             A number less than infinity
-            sage: UnsignedInfinityRing(I)
+            sage: UnsignedInfinityRing(I)                                               # optional - sage.rings.number_field
             A number less than infinity
             sage: UnsignedInfinityRing(unsigned_infinity)
             Infinity
@@ -683,10 +683,10 @@ class UnsignedInfinityRing_class(Singleton, Ring):
             Infinity
             sage: UnsignedInfinityRing(-oo)
             Infinity
-            sage: K.<a> = QuadraticField(3)
-            sage: UnsignedInfinityRing(a)
+            sage: K.<a> = QuadraticField(3)                                             # optional - sage.rings.number_field
+            sage: UnsignedInfinityRing(a)                                               # optional - sage.rings.number_field
             A number less than infinity
-            sage: UnsignedInfinityRing(a - 2)
+            sage: UnsignedInfinityRing(a - 2)                                           # optional - sage.rings.number_field
             A number less than infinity
             sage: UnsignedInfinityRing(RDF(oo)), UnsignedInfinityRing(RDF(-oo))
             (Infinity, Infinity)
@@ -700,14 +700,14 @@ class UnsignedInfinityRing_class(Singleton, Ring):
             (Infinity, Infinity)
             sage: UnsignedInfinityRing(float('+inf')), UnsignedInfinityRing(float('-inf'))
             (Infinity, Infinity)
-            sage: UnsignedInfinityRing(SR(oo)), UnsignedInfinityRing(SR(-oo))
+            sage: UnsignedInfinityRing(SR(oo)), UnsignedInfinityRing(SR(-oo))           # optional - sage.symbolic
             (Infinity, Infinity)
 
         The following rings have a ``is_infinity`` method::
 
             sage: RR(oo).is_infinity()
             True
-            sage: SR(oo).is_infinity()
+            sage: SR(oo).is_infinity()                                                  # optional - sage.symbolic
             True
         """
         # Lazy elements can wrap infinity or not, unwrap first
@@ -747,11 +747,11 @@ class UnsignedInfinityRing_class(Singleton, Ring):
             True
             sage: UnsignedInfinityRing.has_coerce_map_from(CC)
             True
-            sage: UnsignedInfinityRing.has_coerce_map_from(QuadraticField(-163, 'a'))
+            sage: UnsignedInfinityRing.has_coerce_map_from(QuadraticField(-163, 'a'))   # optional - sage.rings.number_field
             True
-            sage: UnsignedInfinityRing.has_coerce_map_from(QQ^3)
+            sage: UnsignedInfinityRing.has_coerce_map_from(QQ^3)                        # optional - sage.modules
             False
-            sage: UnsignedInfinityRing.has_coerce_map_from(SymmetricGroup(13))
+            sage: UnsignedInfinityRing.has_coerce_map_from(SymmetricGroup(13))          # optional - sage.groups
             False
         """
         return isinstance(R, Ring) or R in (int, float, complex)
@@ -1226,7 +1226,7 @@ class InfinityRing_class(Singleton, Ring):
 
             sage: InfinityRing.has_coerce_map_from(int) # indirect doctest
             True
-            sage: InfinityRing.has_coerce_map_from(AA)                          # optional - sage.rings.number_field
+            sage: InfinityRing.has_coerce_map_from(AA)                                  # optional - sage.rings.number_field
             True
             sage: InfinityRing.has_coerce_map_from(RDF)
             True
@@ -1237,7 +1237,7 @@ class InfinityRing_class(Singleton, Ring):
         infinity ring::
 
             sage: cm = get_coercion_model()
-            sage: cm.explain(AA(3), oo, operator.lt)                            # optional - sage.rings.number_field
+            sage: cm.explain(AA(3), oo, operator.lt)                                    # optional - sage.rings.number_field
             Coercion on left operand via
                 Coercion map:
                   From: Algebraic Real Field
@@ -1278,7 +1278,7 @@ class InfinityRing_class(Singleton, Ring):
         r"""
         EXAMPLES::
 
-            sage: QQbar(-2*i)*infinity                                          # optional - sage.rings.number_field
+            sage: QQbar(-2*i)*infinity                                                  # optional - sage.rings.number_field
             (-I)*Infinity
         """
         from sage.symbolic.ring import SR
@@ -1479,9 +1479,9 @@ class FiniteNumber(RingElement):
 
         TESTS::
 
-            sage: a = InfinityRing(pi); a                                       # optional - sage.symbolic
+            sage: a = InfinityRing(pi); a                                               # optional - sage.symbolic
             A positive finite number
-            sage: a._latex_()                                                   # optional - sage.symbolic
+            sage: a._latex_()                                                           # optional - sage.symbolic
             'A positive finite number'
             sage: [latex(InfinityRing(a)) for a in [-2..2]]
             [A negative finite number, A negative finite number, Zero, A positive finite number, A positive finite number]
@@ -1769,7 +1769,7 @@ def test_comparison(ring):
     EXAMPLES::
 
         sage: from sage.rings.infinity import test_comparison
-        sage: rings = [ZZ, QQ, RR, RealField(200), RDF, RLF, AA, RIF]
+        sage: rings = [ZZ, QQ, RR, RealField(200), RDF, RLF, RIF]
         sage: for R in rings:
         ....:     print('testing {}'.format(R))
         ....:     test_comparison(R)
@@ -1779,20 +1779,20 @@ def test_comparison(ring):
         testing Real Field with 200 bits of precision
         testing Real Double Field
         testing Real Lazy Field
-        testing Algebraic Real Field
         testing Real Interval Field with 53 bits of precision
+        sage: test_comparison(AA)                                                       # optional - sage.rings.number_field
 
     Comparison with number fields does not work::
 
-        sage: K.<sqrt3> = NumberField(x^2-3)
-        sage: (-oo < 1+sqrt3) and (1+sqrt3 < oo)     # known bug
+        sage: K.<sqrt3> = NumberField(x^2 - 3)                                          # optional - sage.rings.number_field
+        sage: (-oo < 1 + sqrt3) and (1 + sqrt3 < oo)     # known bug                    # optional - sage.rings.number_field
         False
 
     The symbolic ring handles its own infinities, but answers
     ``False`` (meaning: cannot decide) already for some very
     elementary comparisons::
 
-        sage: test_comparison(SR)      # known bug
+        sage: test_comparison(SR)      # known bug                                      # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         AssertionError: testing -1000.0 in Symbolic Ring: id = ...
