@@ -272,22 +272,22 @@ where `<` is the lexicographic term order.
 
 EXAMPLES::
 
-    sage: m = matrix(2,[2,3,0,1]); m
+    sage: m = matrix(2, [2,3,0,1]); m                                                               # optional - sage.modules
     [2 3]
     [0 1]
-    sage: T = TermOrder(m); T
+    sage: T = TermOrder(m); T                                                                       # optional - sage.modules
     Matrix term order with matrix
     [2 3]
     [0 1]
-    sage: P.<a,b> = PolynomialRing(QQ,2,order=T)
-    sage: P
+    sage: P.<a,b> = PolynomialRing(QQ, 2, order=T)                                                  # optional - sage.modules
+    sage: P                                                                                         # optional - sage.modules
     Multivariate Polynomial Ring in a, b over Rational Field
-    sage: a > b
+    sage: a > b                                                                                     # optional - sage.modules
     False
-    sage: a^3 < b^2
+    sage: a^3 < b^2                                                                                 # optional - sage.modules
     True
-    sage: S = TermOrder('M(2,3,0,1)')
-    sage: T == S
+    sage: S = TermOrder('M(2,3,0,1)')                                                               # optional - sage.modules
+    sage: T == S                                                                                    # optional - sage.modules
     True
 
 Additionally all these monomial orders may be combined to product or block
@@ -683,10 +683,10 @@ class TermOrder(SageObject):
 
         Check that :trac:`29635` is fixed::
 
-            sage: T = PolynomialRing(GF(101^5), 'u,v,w', order=TermOrder('degneglex')).term_order()
-            sage: T.singular_str()
+            sage: T = PolynomialRing(GF(101^5), 'u,v,w', order=TermOrder('degneglex')).term_order()     # optional - sage.libs.pari
+            sage: T.singular_str()                                                                      # optional - sage.libs.pari
             '(a(1:3),ls(3))'
-            sage: (T + T).singular_str()
+            sage: (T + T).singular_str()                                                                # optional - sage.libs.pari
             '(a(1:3),ls(3),a(1:3),ls(3))'
         """
         if isinstance(name, TermOrder):
@@ -929,10 +929,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='m(1,3,1,0)')
-            sage: y > x^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='m(1,3,1,0)')                            # optional - sage.rings.number_field
+            sage: y > x^2 # indirect doctest                                                        # optional - sage.rings.number_field
             True
-            sage: y > x^3
+            sage: y > x^3                                                                           # optional - sage.rings.number_field
             False
         """
         return tuple(sum(l * r for l, r in zip(row, f))
@@ -949,10 +949,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='lex')
-            sage: x > y^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='lex')                                   # optional - sage.rings.number_field
+            sage: x > y^2 # indirect doctest                                                        # optional - sage.rings.number_field
             True
-            sage: x > 1
+            sage: x > 1                                                                             # optional - sage.rings.number_field
             True
         """
         return f
@@ -968,10 +968,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='invlex')
-            sage: x > y^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='invlex')                                # optional - sage.rings.number_field
+            sage: x > y^2 # indirect doctest                                                        # optional - sage.rings.number_field
             False
-            sage: x > 1
+            sage: x > 1                                                                             # optional - sage.rings.number_field
             True
         """
         return f.reversed()
@@ -987,10 +987,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='deglex')
-            sage: x > y^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='deglex')                                # optional - sage.rings.number_field
+            sage: x > y^2 # indirect doctest                                                        # optional - sage.rings.number_field
             False
-            sage: x > 1
+            sage: x > 1                                                                             # optional - sage.rings.number_field
             True
 
         """
@@ -1007,10 +1007,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='degrevlex')
-            sage: x > y^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='degrevlex')                             # optional - sage.rings.number_field
+            sage: x > y^2 # indirect doctest                                                        # optional - sage.rings.number_field
             False
-            sage: x > 1
+            sage: x > 1                                                                             # optional - sage.rings.number_field
             True
 
         """
@@ -1029,10 +1029,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='neglex')
-            sage: x > y^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='neglex')                                # optional - sage.rings.number_field
+            sage: x > y^2 # indirect doctest                                                        # optional - sage.rings.number_field
             False
-            sage: x > 1
+            sage: x > 1                                                                             # optional - sage.rings.number_field
             False
         """
         return tuple(-v for v in f)
@@ -1048,10 +1048,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='negdegrevlex')
-            sage: x > y^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='negdegrevlex')                          # optional - sage.rings.number_field
+            sage: x > y^2 # indirect doctest                                                        # optional - sage.rings.number_field
             True
-            sage: x > 1
+            sage: x > 1                                                                             # optional - sage.rings.number_field
             False
         """
         return (-sum(f.nonzero_values(sort=False)),
@@ -1068,10 +1068,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='negdeglex')
-            sage: x > y^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='negdeglex')                             # optional - sage.rings.number_field
+            sage: x > y^2 # indirect doctest                                                        # optional - sage.rings.number_field
             True
-            sage: x > 1
+            sage: x > 1                                                                             # optional - sage.rings.number_field
             False
         """
         return (-sum(f.nonzero_values(sort=False)), f)
@@ -1087,10 +1087,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='degneglex')
-            sage: x*y > y*z # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='degneglex')                           # optional - sage.rings.number_field
+            sage: x*y > y*z # indirect doctest                                                      # optional - sage.rings.number_field
             False
-            sage: x*y > x
+            sage: x*y > x                                                                           # optional - sage.rings.number_field
             True
         """
         return (sum(f.nonzero_values(sort=False)), tuple(-v for v in f))
@@ -1107,10 +1107,10 @@ class TermOrder(SageObject):
         EXAMPLES::
 
             sage: t = TermOrder('wdegrevlex',(3,2))
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order=t)
-            sage: x > y^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order=t)                                       # optional - sage.rings.number_field
+            sage: x > y^2 # indirect doctest                                                        # optional - sage.rings.number_field
             False
-            sage: x^2 > y^3
+            sage: x^2 > y^3                                                                         # optional - sage.rings.number_field
             True
         """
         return (sum(l * r for (l, r) in zip(f, self._weights)),
@@ -1128,10 +1128,10 @@ class TermOrder(SageObject):
         EXAMPLES::
 
             sage: t = TermOrder('wdeglex',(3,2))
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order=t)
-            sage: x > y^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order=t)                                       # optional - sage.rings.number_field
+            sage: x > y^2 # indirect doctest                                                        # optional - sage.rings.number_field
             False
-            sage: x > y
+            sage: x > y                                                                             # optional - sage.rings.number_field
             True
         """
         return (sum(l * r for (l, r) in zip(f, self._weights)), f)
@@ -1148,10 +1148,10 @@ class TermOrder(SageObject):
         EXAMPLES::
 
             sage: t = TermOrder('negwdeglex',(3,2))
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order=t)
-            sage: x > y^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order=t)                                       # optional - sage.rings.number_field
+            sage: x > y^2 # indirect doctest                                                        # optional - sage.rings.number_field
             True
-            sage: x^2 > y^3
+            sage: x^2 > y^3                                                                         # optional - sage.rings.number_field
             True
         """
         return (-sum(l * r for (l, r) in zip(f, self._weights)), f)
@@ -1168,10 +1168,10 @@ class TermOrder(SageObject):
         EXAMPLES::
 
             sage: t = TermOrder('negwdegrevlex',(3,2))
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order=t)
-            sage: x > y^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order=t)                                       # optional - sage.rings.number_field
+            sage: x > y^2 # indirect doctest                                                        # optional - sage.rings.number_field
             True
-            sage: x^2 > y^3
+            sage: x^2 > y^3                                                                         # optional - sage.rings.number_field
             True
         """
         return (-sum(l * r for (l, r) in zip(f, self._weights)),
@@ -1188,18 +1188,18 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<a,b,c,d,e,f>=PolynomialRing(QQbar, 6, order='degrevlex(3),degrevlex(3)')
-            sage: a > c^4 # indirect doctest
+            sage: P.<a,b,c,d,e,f> = PolynomialRing(QQbar, 6, order='degrevlex(3),degrevlex(3)')     # optional - sage.rings.number_field
+            sage: a > c^4 # indirect doctest                                                        # optional - sage.rings.number_field
             False
-            sage: a > e^4
+            sage: a > e^4                                                                           # optional - sage.rings.number_field
             True
 
         TESTS:
 
         Check that the issue in :trac:`27139` is fixed::
 
-            sage: R.<x,y,z,t> = PolynomialRing(AA, order='lex(2),lex(2)')
-            sage: x > y
+            sage: R.<x,y,z,t> = PolynomialRing(AA, order='lex(2),lex(2)')                           # optional - sage.rings.number_field
+            sage: x > y                                                                             # optional - sage.rings.number_field
             True
         """
         key = tuple()
@@ -1223,10 +1223,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='m(1,3,1,0)')
-            sage: y > x^2 # indirect doctest
+            sage: P.<x,y> = PolynomialRing(QQbar, 2, order='m(1,3,1,0)')                            # optional - sage.rings.number_field
+            sage: y > x^2 # indirect doctest                                                        # optional - sage.rings.number_field
             True
-            sage: y > x^3
+            sage: y > x^3                                                                           # optional - sage.rings.number_field
             False
         """
         for row in self._matrix:
@@ -1252,8 +1252,8 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='lex')
-            sage: f = x + y^2; f.lm() # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='lex')                                 # optional - sage.rings.number_field
+            sage: f = x + y^2; f.lm() # indirect doctest                                            # optional - sage.rings.number_field
             x
 
         This method is called by the lm/lc/lt methods of
@@ -1274,10 +1274,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='invlex')
-            sage: f = x + y; f.lm() # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='invlex')                              # optional - sage.rings.number_field
+            sage: f = x + y; f.lm() # indirect doctest                                              # optional - sage.rings.number_field
             y
-            sage: f = y + x^2; f.lm()
+            sage: f = y + x^2; f.lm()                                                               # optional - sage.rings.number_field
             y
 
         This method is called by the lm/lc/lt methods of
@@ -1298,10 +1298,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='deglex')
-            sage: f = x + y; f.lm() # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='deglex')                              # optional - sage.rings.number_field
+            sage: f = x + y; f.lm() # indirect doctest                                              # optional - sage.rings.number_field
             x
-            sage: f = x + y^2*z; f.lm()
+            sage: f = x + y^2*z; f.lm()                                                             # optional - sage.rings.number_field
             y^2*z
 
         This method is called by the lm/lc/lt methods of
@@ -1324,10 +1324,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='degrevlex')
-            sage: f = x + y; f.lm() # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='degrevlex')                           # optional - sage.rings.number_field
+            sage: f = x + y; f.lm() # indirect doctest                                              # optional - sage.rings.number_field
             x
-            sage: f = x + y^2*z; f.lm()
+            sage: f = x + y^2*z; f.lm()                                                             # optional - sage.rings.number_field
             y^2*z
 
         This method is called by the lm/lc/lt methods of
@@ -1350,12 +1350,12 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='negdegrevlex')
-            sage: f = x + y; f.lm() # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='negdegrevlex')                        # optional - sage.rings.number_field
+            sage: f = x + y; f.lm() # indirect doctest                                              # optional - sage.rings.number_field
             x
-            sage: f = x + x^2; f.lm()
+            sage: f = x + x^2; f.lm()                                                               # optional - sage.rings.number_field
             x
-            sage: f = x^2*y*z^2 + x*y^3*z; f.lm()
+            sage: f = x^2*y*z^2 + x*y^3*z; f.lm()                                                   # optional - sage.rings.number_field
             x*y^3*z
 
         This method is called by the lm/lc/lt methods of
@@ -1378,12 +1378,12 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='negdeglex')
-            sage: f = x + y; f.lm() # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='negdeglex')                           # optional - sage.rings.number_field
+            sage: f = x + y; f.lm() # indirect doctest                                              # optional - sage.rings.number_field
             x
-            sage: f = x + x^2; f.lm()
+            sage: f = x + x^2; f.lm()                                                               # optional - sage.rings.number_field
             x
-            sage: f = x^2*y*z^2 + x*y^3*z; f.lm()
+            sage: f = x^2*y*z^2 + x*y^3*z; f.lm()                                                   # optional - sage.rings.number_field
             x^2*y*z^2
 
         This method is called by the lm/lc/lt methods of
@@ -1406,10 +1406,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='degneglex')
-            sage: f = x + y; f.lm() # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order='degneglex')                           # optional - sage.rings.number_field
+            sage: f = x + y; f.lm() # indirect doctest                                              # optional - sage.rings.number_field
             y
-            sage: f = x + y^2*z; f.lm()
+            sage: f = x + y^2*z; f.lm()                                                             # optional - sage.rings.number_field
             y^2*z
 
         This method is called by the lm/lc/lt methods of
@@ -1435,10 +1435,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<a,b,c,d,e,f>=PolynomialRing(QQbar, 6, order='degrevlex(3),degrevlex(3)')
-            sage: f = a + c^4; f.lm() # indirect doctest
+            sage: P.<a,b,c,d,e,f> = PolynomialRing(QQbar, 6, order='degrevlex(3),degrevlex(3)')     # optional - sage.rings.number_field
+            sage: f = a + c^4; f.lm() # indirect doctest                                            # optional - sage.rings.number_field
             c^4
-            sage: g = a + e^4; g.lm()
+            sage: g = a + e^4; g.lm()                                                               # optional - sage.rings.number_field
             a
         """
         return (f < g) and f or g
@@ -1457,10 +1457,10 @@ class TermOrder(SageObject):
         EXAMPLES::
 
             sage: t = TermOrder('wdeglex',(1,2,3))
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order=t)
-            sage: f = x + y; f.lm() # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order=t)                                     # optional - sage.rings.number_field
+            sage: f = x + y; f.lm() # indirect doctest                                              # optional - sage.rings.number_field
             y
-            sage: f = x*y + z; f.lm()
+            sage: f = x*y + z; f.lm()                                                               # optional - sage.rings.number_field
             x*y
 
         This method is called by the lm/lc/lt methods of
@@ -1484,10 +1484,10 @@ class TermOrder(SageObject):
         EXAMPLES::
 
             sage: t = TermOrder('wdegrevlex',(1,2,3))
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order=t)
-            sage: f = x + y; f.lm() # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order=t)                                     # optional - sage.rings.number_field
+            sage: f = x + y; f.lm() # indirect doctest                                              # optional - sage.rings.number_field
             y
-            sage: f = x + y^2*z; f.lm()
+            sage: f = x + y^2*z; f.lm()                                                             # optional - sage.rings.number_field
             y^2*z
 
         This method is called by the lm/lc/lt methods of
@@ -1511,12 +1511,12 @@ class TermOrder(SageObject):
         EXAMPLES::
 
             sage: t = TermOrder('negwdeglex',(1,2,3))
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order=t)
-            sage: f = x + y; f.lm() # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order=t)                                     # optional - sage.rings.number_field
+            sage: f = x + y; f.lm() # indirect doctest                                              # optional - sage.rings.number_field
             x
-            sage: f = x + x^2; f.lm()
+            sage: f = x + x^2; f.lm()                                                               # optional - sage.rings.number_field
             x
-            sage: f = x^3 + z; f.lm()
+            sage: f = x^3 + z; f.lm()                                                               # optional - sage.rings.number_field
             x^3
 
         This method is called by the lm/lc/lt methods of
@@ -1540,12 +1540,12 @@ class TermOrder(SageObject):
         EXAMPLES::
 
             sage: t = TermOrder('negwdegrevlex',(1,2,3))
-            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order=t)
-            sage: f = x + y; f.lm() # indirect doctest
+            sage: P.<x,y,z> = PolynomialRing(QQbar, 3, order=t)                                     # optional - sage.rings.number_field
+            sage: f = x + y; f.lm() # indirect doctest                                              # optional - sage.rings.number_field
             x
-            sage: f = x + x^2; f.lm()
+            sage: f = x + x^2; f.lm()                                                               # optional - sage.rings.number_field
             x
-            sage: f = x^3 + z; f.lm()
+            sage: f = x^3 + z; f.lm()                                                               # optional - sage.rings.number_field
             x^3
 
         This method is called by the lm/lc/lt methods of
@@ -1571,10 +1571,10 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P.<a,b,c,d,e,f>=PolynomialRing(QQbar, 6, order='degrevlex(3),degrevlex(3)')
-            sage: f = a + c^4; f.lm() # indirect doctest
+            sage: P.<a,b,c,d,e,f> = PolynomialRing(QQbar, 6, order='degrevlex(3),degrevlex(3)')     # optional - sage.rings.number_field
+            sage: f = a + c^4; f.lm() # indirect doctest                                            # optional - sage.rings.number_field
             c^4
-            sage: g = a + e^4; g.lm()
+            sage: g = a + e^4; g.lm()                                                               # optional - sage.rings.number_field
             a
         """
         n = 0
@@ -1600,9 +1600,9 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: t=TermOrder('wdeglex',(1,2,3))
-            sage: P.<a,b,c>=PolynomialRing(QQbar, order=t)
-            sage: P.term_order().tuple_weight([3,2,1])
+            sage: t = TermOrder('wdeglex',(1,2,3))
+            sage: P.<a,b,c> = PolynomialRing(QQbar, order=t)                                        # optional - sage.rings.number_field
+            sage: P.term_order().tuple_weight([3,2,1])                                              # optional - sage.rings.number_field
             10
         """
         return sum(l*r for (l,r) in zip(f,self._weights))
@@ -1647,11 +1647,11 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P = PolynomialRing(GF(127),10,names='x',order='lex(3),deglex(5),lex(2)')
-            sage: T = P.term_order()
-            sage: T.singular_str()
+            sage: P = PolynomialRing(GF(127), 10, names='x', order='lex(3),deglex(5),lex(2)')       # optional - sage.libs.pari
+            sage: T = P.term_order()                                                                # optional - sage.libs.pari
+            sage: T.singular_str()                                                                  # optional - sage.libs.pari
             '(lp(3),Dp(5),lp(2))'
-            sage: P._singular_()
+            sage: P._singular_()                                                                    # optional - sage.libs.pari
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 10
@@ -1774,17 +1774,17 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P = PolynomialRing(GF(127),10,names='x',order='lex(3),deglex(5),lex(2)')
-            sage: T = P.term_order()
-            sage: T.singular_moreblocks()
+            sage: P = PolynomialRing(GF(127), 10, names='x', order='lex(3),deglex(5),lex(2)')       # optional - sage.libs.pari
+            sage: T = P.term_order()                                                                # optional - sage.libs.pari
+            sage: T.singular_moreblocks()                                                           # optional - sage.libs.pari
             0
-            sage: P = PolynomialRing(GF(127),10,names='x',order='lex(3),degneglex(5),lex(2)')
-            sage: T = P.term_order()
-            sage: T.singular_moreblocks()
+            sage: P = PolynomialRing(GF(127), 10, names='x', order='lex(3),degneglex(5),lex(2)')    # optional - sage.libs.pari
+            sage: T = P.term_order()                                                                # optional - sage.libs.pari
+            sage: T.singular_moreblocks()                                                           # optional - sage.libs.pari
             1
-            sage: P = PolynomialRing(GF(127),10,names='x',order='degneglex(5),degneglex(5)')
-            sage: T = P.term_order()
-            sage: T.singular_moreblocks()
+            sage: P = PolynomialRing(GF(127), 10, names='x', order='degneglex(5),degneglex(5)')     # optional - sage.libs.pari
+            sage: T = P.term_order()                                                                # optional - sage.libs.pari
+            sage: T.singular_moreblocks()                                                           # optional - sage.libs.pari
             2
 
         TESTS:
@@ -1814,11 +1814,11 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P = PolynomialRing(GF(127), 8,names='x',order='degrevlex(3),lex(5)')
-            sage: T = P.term_order()
-            sage: T.macaulay2_str()
+            sage: P = PolynomialRing(GF(127), 8,names='x', order='degrevlex(3),lex(5)')             # optional - sage.libs.pari
+            sage: T = P.term_order()                                                                # optional - sage.libs.pari
+            sage: T.macaulay2_str()                                                                 # optional - sage.libs.pari
             '{GRevLex => 3,Lex => 5}'
-            sage: P._macaulay2_().options()['MonomialOrder']  # optional - macaulay2
+            sage: P._macaulay2_().options()['MonomialOrder']  # optional - macaulay2                # optional - sage.libs.pari
             {MonomialSize => 16  }
             {GRevLex => {1, 1, 1}}
             {Lex => 5            }
@@ -1834,16 +1834,16 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: P = PolynomialRing(GF(127), 10,names='x',order='degrevlex')
-            sage: magma(P)                                                        # optional - magma
+            sage: P = PolynomialRing(GF(127), 10, names='x', order='degrevlex')                     # optional - sage.libs.pari
+            sage: magma(P)                                                      # optional - magma  # optional - sage.libs.pari
             Polynomial ring of rank 10 over GF(127)
             Order: Graded Reverse Lexicographical
             Variables: x0, x1, x2, x3, x4, x5, x6, x7, x8, x9
 
         ::
 
-            sage: T = P.term_order()
-            sage: T.magma_str()
+            sage: T = P.term_order()                                                                # optional - sage.libs.pari
+            sage: T.magma_str()                                                                     # optional - sage.libs.pari
             '"grevlex"'
         """
         return self._magma_str
@@ -1875,8 +1875,8 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: t = TermOrder("M(1,2,0,1)")
-            sage: t.matrix()
+            sage: t = TermOrder("M(1,2,0,1)")                                                       # optional - sage.modules
+            sage: t.matrix()                                                                        # optional - sage.modules
             [1 2]
             [0 1]
 

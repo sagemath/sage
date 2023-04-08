@@ -3,8 +3,8 @@ Monoid of ideals in a commutative ring
 
 WARNING: This is used by some rings that are not commutative! ::
 
-    sage: MS = MatrixSpace(QQ, 3, 3)
-    sage: type(MS.ideal(MS.one()).parent())
+    sage: MS = MatrixSpace(QQ, 3, 3)                                                    # optional - sage.modules
+    sage: type(MS.ideal(MS.one()).parent())                                             # optional - sage.modules
     <class 'sage.rings.ideal_monoid.IdealMonoid_c_with_category'>
 """
 
@@ -63,8 +63,8 @@ class IdealMonoid_c(Parent):
             sage: id.parent().category()
             Category of commutative monoids
 
-            sage: MS = MatrixSpace(QQ,3,3)
-            sage: MS.ideal(MS.one()).parent().category()
+            sage: MS = MatrixSpace(QQ, 3, 3)                                            # optional - sage.modules
+            sage: MS.ideal(MS.one()).parent().category()                                # optional - sage.modules
             Category of monoids
         """
         self.__R = R
@@ -141,11 +141,11 @@ class IdealMonoid_c(Parent):
             sage: M = R.ideal_monoid()                                                  # optional - sage.rings.number_field
             sage: M.has_coerce_map_from(R) # indirect doctest                           # optional - sage.rings.number_field
             True
-            sage: M.has_coerce_map_from(QQ.ideal_monoid())
+            sage: M.has_coerce_map_from(QQ.ideal_monoid())                              # optional - sage.rings.number_field
             True
-            sage: M.has_coerce_map_from(Zmod(6))
+            sage: M.has_coerce_map_from(Zmod(6))                                        # optional - sage.rings.number_field
             False
-            sage: M.has_coerce_map_from(loads(dumps(M)))
+            sage: M.has_coerce_map_from(loads(dumps(M)))                                # optional - sage.rings.number_field
             True
         """
         if isinstance(x, IdealMonoid_c):

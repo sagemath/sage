@@ -48,8 +48,8 @@ underlying *classical* polynomial. This holds, e.g., when applying the
 There is a permutation action on Infinite Polynomial Rings by
 permuting the indices of the variables::
 
-    sage: P = Permutation(((4,5),(2,3)))
-    sage: c^P
+    sage: P = Permutation(((4,5),(2,3)))                                                            # optional - sage.combinat
+    sage: c^P                                                                                       # optional - sage.combinat
     x_2^3 + x_2*y_5 - 2*y_5^4
 
 Note that ``P(0)==0``, and thus variables of index zero are invariant
@@ -656,7 +656,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: z = 1/(x[2]*(x[1]+x[2]))+1/(x[1]*(x[1]+x[2]))
             sage: z.parent()
             Fraction Field of Infinite polynomial ring in x over Rational Field
-            sage: factor(z)
+            sage: factor(z)                                                                         # optional - sage.libs.singular
             x_1^-1 * x_2^-1
         """
         if not x.variables():

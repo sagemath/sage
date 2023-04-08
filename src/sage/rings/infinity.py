@@ -288,7 +288,7 @@ class AnInfinity():
         """
         TESTS::
 
-            sage: maxima(-oo)
+            sage: maxima(-oo)                                                                                           # optional - sage.symbolic
             minf
             sage: [x._maxima_init_() for x in [unsigned_infinity, oo, -oo]]
             ['inf', 'inf', 'minf']
@@ -322,9 +322,9 @@ class AnInfinity():
 
         EXAMPLES::
 
-            sage: pari(-oo)
+            sage: pari(-oo)                                                                                             # optional - sage.libs.pari
             -oo
-            sage: pari(oo)
+            sage: pari(oo)                                                                                              # optional - sage.libs.pari
             +oo
         """
         # For some reason, it seems problematic to import sage.libs.all.pari,
@@ -1128,11 +1128,12 @@ class InfinityRing_class(Singleton, Ring):
             sage: InfinityRing(-1.5)
             A negative finite number
             sage: [InfinityRing(a) for a in [-2..2]]
-            [A negative finite number, A negative finite number, Zero, A positive finite number, A positive finite number]
-            sage: K.<a> = QuadraticField(3)
-            sage: InfinityRing(a)
+            [A negative finite number, A negative finite number, Zero,
+             A positive finite number, A positive finite number]
+            sage: K.<a> = QuadraticField(3)                                             # optional - sage.rings.number_field
+            sage: InfinityRing(a)                                                       # optional - sage.rings.number_field
             A positive finite number
-            sage: InfinityRing(a - 2)
+            sage: InfinityRing(a - 2)                                                   # optional - sage.rings.number_field
             A negative finite number
             sage: InfinityRing(RDF(oo)), InfinityRing(RDF(-oo))
             (+Infinity, -Infinity)

@@ -163,11 +163,11 @@ def Ideal(*args, **kwds):
         sage: J = R.ideal([2*x + 2*x^2])
         sage: J
         Principal ideal (x^2 + x) of Univariate Polynomial Ring in x over Rational Field
-        sage: S = R.quotient_ring(I)
-        sage: U = R.quotient_ring(J)
+        sage: S = R.quotient_ring(I)                                            # optional - sage.libs.pari
+        sage: U = R.quotient_ring(J)                                            # optional - sage.libs.pari
         sage: I == J
         True
-        sage: S == U
+        sage: S == U                                                            # optional - sage.libs.pari
         True
     """
     if len(args) == 0:
@@ -295,8 +295,8 @@ class Ideal_generic(MonoidElement):
         the generators are not represented from left to right but from
         top to bottom. This is the case, e.g., for matrices::
 
-            sage: MS = MatrixSpace(QQ,2,2)
-            sage: MS*[MS.1,2]
+            sage: MS = MatrixSpace(QQ, 2, 2)                                            # optional - sage.modules
+            sage: MS * [MS.1, 2]                                                        # optional - sage.modules
             Left Ideal
             (
               [0 1]
@@ -470,11 +470,11 @@ class Ideal_generic(MonoidElement):
 
         And `p`-adic numbers::
 
-            sage: R = Zp(7, prec=10); R
+            sage: R = Zp(7, prec=10); R                                                             # optional - sage.rings.padics
             7-adic Ring with capped relative precision 10
-            sage: I = 7*R; I
+            sage: I = 7*R; I                                                                        # optional - sage.rings.padics
             Principal ideal (7 + O(7^11)) of 7-adic Ring with capped relative precision 10
-            sage: I.base_ring()
+            sage: I.base_ring()                                                                     # optional - sage.rings.padics
             7-adic Ring with capped relative precision 10
         """
         return self.ring().base_ring()
@@ -585,12 +585,14 @@ class Ideal_generic(MonoidElement):
             sage: I = R.ideal(x^2 - 3)
             sage: I.ring()
             Univariate Polynomial Ring in x over Rational Field
-            sage: Rbar = R.quotient(I, names='a')
-            sage: S = PolynomialRing(Rbar, 'y'); y = Rbar.gen(); S
-            Univariate Polynomial Ring in y over Univariate Quotient Polynomial Ring in a over Rational Field with modulus x^2 - 3
-            sage: J = S.ideal(y^2 + 1)
-            sage: J.ring()
-            Univariate Polynomial Ring in y over Univariate Quotient Polynomial Ring in a over Rational Field with modulus x^2 - 3
+            sage: Rbar = R.quotient(I, names='a')                                                   # optional - sage.libs.pari
+            sage: S = PolynomialRing(Rbar, 'y'); y = Rbar.gen(); S                                  # optional - sage.libs.pari
+            Univariate Polynomial Ring in y over
+             Univariate Quotient Polynomial Ring in a over Rational Field with modulus x^2 - 3
+            sage: J = S.ideal(y^2 + 1)                                                              # optional - sage.libs.pari
+            sage: J.ring()                                                                          # optional - sage.libs.pari
+            Univariate Polynomial Ring in y over
+             Univariate Quotient Polynomial Ring in a over Rational Field with modulus x^2 - 3
         """
         return self.__ring
 
@@ -693,16 +695,16 @@ class Ideal_generic(MonoidElement):
 
             sage: R = ZZ
             sage: I = R.ideal(7)
-            sage: I.is_maximal()
+            sage: I.is_maximal()                                                                    # optional - sage.libs.pari
             True
-            sage: R.ideal(16).is_maximal()
+            sage: R.ideal(16).is_maximal()                                                          # optional - sage.libs.pari
             False
             sage: S = Integers(8)
-            sage: S.ideal(0).is_maximal()
+            sage: S.ideal(0).is_maximal()                                                           # optional - sage.libs.pari
             False
-            sage: S.ideal(2).is_maximal()
+            sage: S.ideal(2).is_maximal()                                                           # optional - sage.libs.pari
             True
-            sage: S.ideal(4).is_maximal()
+            sage: S.ideal(4).is_maximal()                                                           # optional - sage.libs.pari
             False
         """
         from sage.rings.integer_ring import ZZ
@@ -1223,7 +1225,7 @@ class Ideal_generic(MonoidElement):
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: I = R.ideal([x^4 + 3*x^2 + 2])
-            sage: I.free_resolution()
+            sage: I.free_resolution()                                                   # optional - sage.modules
             S^1 <-- S^1 <-- 0
         """
         if not self.is_principal():
@@ -1242,7 +1244,7 @@ class Ideal_generic(MonoidElement):
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: I = R.ideal([x^3])
-            sage: I.graded_free_resolution()
+            sage: I.graded_free_resolution()                                            # optional - sage.modules
             S(0) <-- S(-3) <-- 0
         """
         from sage.homology.graded_resolution import GradedFiniteFreeResolution_free_module
@@ -1569,18 +1571,18 @@ class Ideal_pid(Ideal_principal):
 
         EXAMPLES::
 
-            sage: ZZ.ideal(2).is_prime()
+            sage: ZZ.ideal(2).is_prime()                                                            # optional - sage.libs.pari
             True
-            sage: ZZ.ideal(-2).is_prime()
+            sage: ZZ.ideal(-2).is_prime()                                                           # optional - sage.libs.pari
             True
-            sage: ZZ.ideal(4).is_prime()
+            sage: ZZ.ideal(4).is_prime()                                                            # optional - sage.libs.pari
             False
-            sage: ZZ.ideal(0).is_prime()
+            sage: ZZ.ideal(0).is_prime()                                                            # optional - sage.libs.pari
             True
             sage: R.<x> = QQ[]
-            sage: P = R.ideal(x^2+1); P
+            sage: P = R.ideal(x^2 + 1); P                                                           # optional - sage.libs.pari
             Principal ideal (x^2 + 1) of Univariate Polynomial Ring in x over Rational Field
-            sage: P.is_prime()
+            sage: P.is_prime()                                                                      # optional - sage.libs.pari
             True
 
         In fields, only the zero ideal is prime::
@@ -1700,8 +1702,8 @@ class Ideal_fractional(Ideal_generic):
         EXAMPLES::
 
             sage: from sage.rings.ideal import Ideal_fractional
-            sage: K.<a> = NumberField(x^2 + 1)
-            sage: Ideal_fractional(K, [a]) # indirect doctest
+            sage: K.<a> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
+            sage: Ideal_fractional(K, [a]) # indirect doctest                           # optional - sage.rings.number_field
             Fractional ideal (a) of Number Field in a with defining polynomial x^2 + 1
         """
         return "Fractional ideal %s of %s"%(self._repr_short(), self.ring())

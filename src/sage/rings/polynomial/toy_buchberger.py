@@ -127,7 +127,7 @@ zero::
     sage: gb = buchberger_improved(I)                                                               # optional - sage.libs.pari
     ...
     1 reductions to zero.
-    sage: sorted(gb)
+    sage: sorted(gb)                                                                                # optional - sage.libs.pari
     [a + 2*b + 2*c - 1, b*c + 52*c^2 + 38*b + 25*c, b^2 - 26*c^2 - 51*b + 51*c, c^3 + 22*c^2 - 55*b + 49*c]
 
 AUTHORS:
@@ -191,10 +191,10 @@ def buchberger(F):
         sage: R.<x,y,z> = PolynomialRing(QQ)
         sage: I = R.ideal([x^2 - z - 1, z^2 - y - 1, x*y^2 - x - 1])
         sage: set_verbose(0)
-        sage: gb = buchberger(I)
-        sage: gb.is_groebner()
+        sage: gb = buchberger(I)                                                        # optional - sage.libs.singular
+        sage: gb.is_groebner()                                                          # optional - sage.libs.singular
         True
-        sage: gb.ideal() == I
+        sage: gb.ideal() == I                                                           # optional - sage.libs.singular
         True
     """
     G = set(F.gens())
@@ -249,7 +249,7 @@ def buchberger_improved(F):
         sage: from sage.rings.polynomial.toy_buchberger import buchberger_improved
         sage: R.<x,y,z> = PolynomialRing(QQ)
         sage: set_verbose(0)
-        sage: sorted(buchberger_improved(R.ideal([x^4 - y - z, x*y*z - 1])))
+        sage: sorted(buchberger_improved(R.ideal([x^4 - y - z, x*y*z - 1])))            # optional - sage.libs.singular
         [x*y*z - 1, x^3 - y^2*z - y*z^2, y^3*z^2 + y^2*z^3 - x^2]
     """
     F = inter_reduction(F.gens())
@@ -419,10 +419,10 @@ def inter_reduction(Q):
     ::
 
         sage: P.<x,y> = QQ[]
-        sage: reduced = inter_reduction(set([x^2 - 5*y^2, x^3]))
-        sage: reduced == set([x*y^2, x^2-5*y^2])
+        sage: reduced = inter_reduction(set([x^2 - 5*y^2, x^3]))                        # optional - sage.libs.singular
+        sage: reduced == set([x*y^2, x^2-5*y^2])                                        # optional - sage.libs.singular
         True
-        sage: reduced == inter_reduction(set([2*(x^2 - 5*y^2), x^3]))
+        sage: reduced == inter_reduction(set([2*(x^2 - 5*y^2), x^3]))                   # optional - sage.libs.singular
         True
     """
     if not Q:

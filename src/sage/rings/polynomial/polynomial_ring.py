@@ -47,17 +47,17 @@ structures in Sage)::
 
 We create a polynomial ring over a quaternion algebra::
 
-    sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)
-    sage: R.<w> = PolynomialRing(A,sparse=True)
-    sage: f = w^3 + (i+j)*w + 1
-    sage: f
+    sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-1)                                                  # optional - sage.combinat sage.modules
+    sage: R.<w> = PolynomialRing(A, sparse=True)                                                    # optional - sage.combinat sage.modules
+    sage: f = w^3 + (i+j)*w + 1                                                                     # optional - sage.combinat sage.modules
+    sage: f                                                                                         # optional - sage.combinat sage.modules
     w^3 + (i + j)*w + 1
-    sage: f^2
+    sage: f^2                                                                                       # optional - sage.combinat sage.modules
     w^6 + (2*i + 2*j)*w^4 + 2*w^3 - 2*w^2 + (2*i + 2*j)*w + 1
-    sage: f = w + i ; g = w + j
-    sage: f * g
+    sage: f = w + i ; g = w + j                                                                     # optional - sage.combinat sage.modules
+    sage: f * g                                                                                     # optional - sage.combinat sage.modules
     w^2 + (i + j)*w + k
-    sage: g * f
+    sage: g * f                                                                                     # optional - sage.combinat sage.modules
     w^2 + (i + j)*w - k
 
 :trac:`9944` introduced some changes related with
@@ -966,7 +966,7 @@ class PolynomialRing_general(ring.Algebra):
             sage: R.<x> = QQ[]
             sage: R._is_valid_homomorphism_(GF(7), [5])                         # optional - sage.libs.pari
             False
-            sage: R._is_valid_homomorphism_(Qp(7), [5])
+            sage: R._is_valid_homomorphism_(Qp(7), [5])                                                                 # optional - sage.rings.padics
             True
         """
         # Since poly rings are free, any image of the gen
@@ -1315,9 +1315,9 @@ class PolynomialRing_general(ring.Algebra):
             sage: S.<t> = R[]                                                   # optional - sage.libs.pari
             sage: S.krull_dimension()                                           # optional - sage.libs.pari
             2
-            sage: for n in range(10):
-            ....:  S = PolynomialRing(S,'w')
-            sage: S.krull_dimension()
+            sage: for n in range(10):                                           # optional - sage.libs.pari
+            ....:     S = PolynomialRing(S, 'w')
+            sage: S.krull_dimension()                                           # optional - sage.libs.pari
             12
         """
         return self.base_ring().krull_dimension() + 1
@@ -1495,12 +1495,12 @@ class PolynomialRing_general(ring.Algebra):
 
         EXAMPLES::
 
-            sage: R.<x> = QQbar[]
-            sage: R._Karatsuba_threshold
+            sage: R.<x> = QQbar[]                                                                                       # optional - sage.rings.number_field
+            sage: R._Karatsuba_threshold                                                                                # optional - sage.rings.number_field
             8
-            sage: MS = MatrixSpace(ZZ, 2, 2)
-            sage: R.<x> = MS[]
-            sage: R._Karatsuba_threshold
+            sage: MS = MatrixSpace(ZZ, 2, 2)                                                                            # optional - sage.modules
+            sage: R.<x> = MS[]                                                                                          # optional - sage.modules
+            sage: R._Karatsuba_threshold                                                                                # optional - sage.modules
             0
         """
         base_ring = self.base_ring()
@@ -1713,25 +1713,27 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: I = (x^2-1)*R
-            sage: R.quotient_by_principal_ideal(I)
-            Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 - 1
+            sage: I = (x^2 - 1) * R
+            sage: R.quotient_by_principal_ideal(I)                                      # optional - sage.libs.pari
+            Univariate Quotient Polynomial Ring in xbar
+             over Rational Field with modulus x^2 - 1
 
         The same example, using the polynomial instead of the ideal,
         and customizing the variable name::
 
             sage: R.<x> = QQ[]
-            sage: R.quotient_by_principal_ideal(x^2-1, names=('foo',))
-            Univariate Quotient Polynomial Ring in foo over Rational Field with modulus x^2 - 1
+            sage: R.quotient_by_principal_ideal(x^2 - 1, names=('foo',))                # optional - sage.libs.pari
+            Univariate Quotient Polynomial Ring in foo
+             over Rational Field with modulus x^2 - 1
 
         TESTS:
 
         Quotienting by the zero ideal returns ``self`` (:trac:`5978`)::
 
             sage: R = QQ['x']
-            sage: R.quotient_by_principal_ideal(R.zero_ideal()) is R
+            sage: R.quotient_by_principal_ideal(R.zero_ideal()) is R                    # optional - sage.libs.pari
             True
-            sage: R.quotient_by_principal_ideal(0) is R
+            sage: R.quotient_by_principal_ideal(0) is R                                 # optional - sage.libs.pari
             True
         """
         from sage.rings.ideal import Ideal
@@ -1749,9 +1751,9 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
         EXAMPLES::
 
             sage: R = QQ['x']
-            sage: W = R.weyl_algebra(); W
+            sage: W = R.weyl_algebra(); W                                                                               # optional - sage.combinat sage.modules
             Differential Weyl algebra of polynomials in x over Rational Field
-            sage: W.polynomial_ring() == R
+            sage: W.polynomial_ring() == R                                                                              # optional - sage.combinat sage.modules
             True
         """
         from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
@@ -2888,7 +2890,7 @@ class PolynomialRing_cdvr(PolynomialRing_integral_domain):
             sage: isinstance(S, PolynomialRing_cdvr)
             False
 
-            sage: S.<x> = Zp(5)[]
+            sage: S.<x> = Zp(5)[]                                                                                       # optional - sage.rings.padics
             sage: isinstance(S, PolynomialRing_cdvr)
             True
         """
@@ -2919,8 +2921,8 @@ class PolynomialRing_cdvf(PolynomialRing_cdvr, PolynomialRing_field):
             sage: isinstance(S, PolynomialRing_cdvf)
             False
 
-            sage: S.<x> = Qp(5)[]
-            sage: isinstance(S, PolynomialRing_cdvf)
+            sage: S.<x> = Qp(5)[]                                                                                       # optional - sage.rings.padics
+            sage: isinstance(S, PolynomialRing_cdvf)                                                                    # optional - sage.rings.padics
             True
         """
         if element_class is None:
@@ -2952,11 +2954,11 @@ class PolynomialRing_dense_padic_ring_generic(PolynomialRing_cdvr):
         TESTS::
 
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_padic_ring_generic
-            sage: PolynomialRing_dense_padic_ring_generic._implementation_names_impl(None, Zp(2), False)
+            sage: PolynomialRing_dense_padic_ring_generic._implementation_names_impl(None, Zp(2), False)                # optional - sage.rings.padics
             [None]
-            sage: PolynomialRing_dense_padic_ring_generic._implementation_names_impl(None, Zp(2), True)
+            sage: PolynomialRing_dense_padic_ring_generic._implementation_names_impl(None, Zp(2), True)                 # optional - sage.rings.padics
             NotImplemented
-            sage: PolynomialRing_dense_padic_ring_generic._implementation_names_impl("generic", Zp(2), False)
+            sage: PolynomialRing_dense_padic_ring_generic._implementation_names_impl("generic", Zp(2), False)           # optional - sage.rings.padics
             NotImplemented
         """
         if implementation is None and not sparse:
@@ -2981,11 +2983,11 @@ class PolynomialRing_dense_padic_field_generic(PolynomialRing_cdvf):
         TESTS::
 
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_padic_field_generic
-            sage: PolynomialRing_dense_padic_field_generic._implementation_names_impl(None, Qp(2), False)
+            sage: PolynomialRing_dense_padic_field_generic._implementation_names_impl(None, Qp(2), False)               # optional - sage.rings.padics
             [None]
-            sage: PolynomialRing_dense_padic_field_generic._implementation_names_impl(None, Qp(2), True)
+            sage: PolynomialRing_dense_padic_field_generic._implementation_names_impl(None, Qp(2), True)                # optional - sage.rings.padics
             NotImplemented
-            sage: PolynomialRing_dense_padic_field_generic._implementation_names_impl("generic", Qp(2), False)
+            sage: PolynomialRing_dense_padic_field_generic._implementation_names_impl("generic", Qp(2), False)          # optional - sage.rings.padics
             NotImplemented
         """
         if implementation is None and not sparse:
@@ -2999,9 +3001,9 @@ class PolynomialRing_dense_padic_ring_capped_relative(PolynomialRing_dense_padic
         TESTS::
 
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_padic_ring_capped_relative as PRing
-            sage: R = PRing(Zp(13), name='t'); R
+            sage: R = PRing(Zp(13), name='t'); R                                                                        # optional - sage.rings.padics
             Univariate Polynomial Ring in t over 13-adic Ring with capped relative precision 20
-            sage: type(R.gen())
+            sage: type(R.gen())                                                                                         # optional - sage.rings.padics
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_padic_ring_capped_relative_with_category.element_class'>
         """
         if element_class is None:
@@ -3020,9 +3022,9 @@ class PolynomialRing_dense_padic_ring_capped_absolute(PolynomialRing_dense_padic
         TESTS::
 
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_padic_ring_capped_absolute as PRing
-            sage: R = PRing(Zp(13, type='capped-abs'), name='t'); R
+            sage: R = PRing(Zp(13, type='capped-abs'), name='t'); R                                                     # optional - sage.rings.padics
             Univariate Polynomial Ring in t over 13-adic Ring with capped absolute precision 20
-            sage: type(R.gen())
+            sage: type(R.gen())                                                                                         # optional - sage.rings.padics
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_padic_ring_capped_absolute_with_category.element_class'>
         """
         if element_class is None:
@@ -3040,10 +3042,10 @@ class PolynomialRing_dense_padic_ring_fixed_mod(PolynomialRing_dense_padic_ring_
         TESTS::
 
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_padic_ring_fixed_mod as PRing
-            sage: R = PRing(Zp(13, type='fixed-mod'), name='t'); R
+            sage: R = PRing(Zp(13, type='fixed-mod'), name='t'); R                                                      # optional - sage.rings.padics
             Univariate Polynomial Ring in t over 13-adic Ring of fixed modulus 13^20
 
-            sage: type(R.gen())
+            sage: type(R.gen())                                                                                         # optional - sage.rings.padics
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_padic_ring_fixed_mod_with_category.element_class'>
         """
         if element_class is None:
@@ -3061,9 +3063,9 @@ class PolynomialRing_dense_padic_field_capped_relative(PolynomialRing_dense_padi
         TESTS::
 
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_padic_field_capped_relative as PRing
-            sage: R = PRing(Qp(13), name='t'); R
+            sage: R = PRing(Qp(13), name='t'); R                                                                        # optional - sage.rings.padics
             Univariate Polynomial Ring in t over 13-adic Field with capped relative precision 20
-            sage: type(R.gen())
+            sage: type(R.gen())                                                                                         # optional - sage.rings.padics
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_padic_field_capped_relative_with_category.element_class'>
         """
         if element_class is None:
@@ -3231,15 +3233,15 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
 
         Non-maximal ideals are not accepted::
 
-            sage: R.residue_field(t^2 + 1)
+            sage: R.residue_field(t^2 + 1)                                              # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ArithmeticError: ideal is not maximal
-            sage: R.residue_field(0)
+            sage: R.residue_field(0)                                                    # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ArithmeticError: ideal is not maximal
-            sage: R.residue_field(1)
+            sage: R.residue_field(1)                                                    # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ArithmeticError: ideal is not maximal

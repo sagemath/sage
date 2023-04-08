@@ -199,10 +199,10 @@ def normalize_extra_units(base_ring, add_units, warning=True):
         sage: normalize_extra_units(ZZ, [3, -15, 45, 9, 2, 50])
         [2, 3, 5]
         sage: P.<x,y,z> = ZZ[]
-        sage: normalize_extra_units(P, [3*x, z*y**2, 2*z, 18*(x*y*z)**2, x*z, 6*x*z, 5])
+        sage: normalize_extra_units(P, [3*x, z*y**2, 2*z, 18*(x*y*z)**2, x*z, 6*x*z, 5])                                # optional - sage.libs.pari
         [2, 3, 5, z, y, x]
         sage: P.<x,y,z> = QQ[]
-        sage: normalize_extra_units(P, [3*x, z*y**2, 2*z, 18*(x*y*z)**2, x*z, 6*x*z, 5])
+        sage: normalize_extra_units(P, [3*x, z*y**2, 2*z, 18*(x*y*z)**2, x*z, 6*x*z, 5])                                # optional - sage.libs.pari
         [z, y, x]
 
         sage: R.<x, y> = ZZ[]
@@ -210,10 +210,10 @@ def normalize_extra_units(base_ring, add_units, warning=True):
         sage: p = b**2 - 5                                                              # optional - sage.libs.singular
         sage: p == (b-a)*(b+a)                                                          # optional - sage.libs.singular
         True
-        sage: normalize_extra_units(Q, [p])
+        sage: normalize_extra_units(Q, [p])                                                                             # optional - sage.libs.pari
         doctest:...: UserWarning: Localization may not be represented uniquely
         [b^2 - 5]
-        sage: normalize_extra_units(Q, [p], warning=False)
+        sage: normalize_extra_units(Q, [p], warning=False)                                                              # optional - sage.libs.pari
         [b^2 - 5]
     """
     # convert to base ring
@@ -251,11 +251,11 @@ class LocalizationElement(IntegralDomainElement):
     EXAMPLES::
 
         sage: from sage.rings.localization import LocalizationElement
-        sage: P.<x,y,z> = GF(5)[]
-        sage: L = P.localization((x, y*z-x))
-        sage: LocalizationElement(L, 4/(y*z-x)**2)
+        sage: P.<x,y,z> = GF(5)[]                                                                   # optional - sage.libs.pari
+        sage: L = P.localization((x, y*z-x))                                                        # optional - sage.libs.pari
+        sage: LocalizationElement(L, 4/(y*z-x)**2)                                                  # optional - sage.libs.pari
         (-1)/(y^2*z^2 - 2*x*y*z + x^2)
-        sage: _.parent()
+        sage: _.parent()                                                                            # optional - sage.libs.pari
         Multivariate Polynomial Ring in x, y, z over Finite Field of size 5 localized at (x, y*z - x)
     """
 
@@ -601,7 +601,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
         ...
         ValueError: factor 7 of denominator is not a unit
 
-        sage: Localization(Zp(7), (3, 5))
+        sage: Localization(Zp(7), (3, 5))                                                                               # optional - sage.rings.padics
         Traceback (most recent call last):
         ...
         ValueError: all given elements are invertible in
