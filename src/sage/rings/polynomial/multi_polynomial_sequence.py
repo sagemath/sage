@@ -907,16 +907,17 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: F = Sequence([x*y + y + 1, z + 1])
             sage: F.connection_graph()
             Graph on 3 vertices
+            sage: F = Sequence([x*y*z])
+            sage: F.connection_graph().is_clique()
+            True
+            sage: F = Sequence([x*y, y*z])
+            sage: F.connection_graph().is_clique()
+            False
         """
-        V = sorted(self.variables())
         from sage.graphs.graph import Graph
         g = Graph()
-        g.add_vertices(sorted(V))
         for f in self:
-            v = f.variables()
-            a,tail = v[0],v[1:]
-            for b in tail:
-                g.add_edge((a,b))
+            g.add_clique(f.variables())
         return g
 
     def connected_components(self):
