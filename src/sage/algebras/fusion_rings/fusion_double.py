@@ -610,6 +610,8 @@ class FusionDouble(CombinatorialFreeModule):
         Return the dual object ``i^\ast`` to ``i``. The dual is also
         available as an element method of ``i``.
 
+        EXAMPLES::
+
             sage: K = FusionDouble(CyclicPermutationGroup(3),prefix="k")
             sage: [(x,K.dual(x)) for x in K.basis()]
             [(k0, k0),
