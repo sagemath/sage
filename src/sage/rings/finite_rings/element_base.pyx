@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: optional - sage.rings.finite_rings
 """
 Base class for finite field elements
 

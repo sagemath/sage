@@ -397,19 +397,19 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: ZZ[sqrt(2), sqrt(3)]                                                                      # optional - sage.rings.number_field sage.symbolic
+            sage: ZZ[sqrt(2), sqrt(3)]                                                  # optional - sage.rings.number_field sage.symbolic
             Relative Order in Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
             sage: ZZ['x']
             Univariate Polynomial Ring in x over Integer Ring
             sage: ZZ['x,y']
             Multivariate Polynomial Ring in x, y over Integer Ring
-            sage: R = ZZ[sqrt(5) + 1]; R                                                                    # optional - sage.rings.number_field sage.symbolic
+            sage: R = ZZ[sqrt(5) + 1]; R                                                # optional - sage.rings.number_field sage.symbolic
             Order in Number Field in a with defining polynomial x^2 - 2*x - 4 with a = 3.236067977499790?
-            sage: R.is_maximal()                                                                            # optional - sage.rings.number_field sage.symbolic
+            sage: R.is_maximal()                                                        # optional - sage.rings.number_field sage.symbolic
             False
-            sage: R = ZZ[(1 + sqrt(5))/2]; R                                                                # optional - sage.rings.number_field sage.symbolic
+            sage: R = ZZ[(1 + sqrt(5))/2]; R                                            # optional - sage.rings.number_field sage.symbolic
             Order in Number Field in a with defining polynomial x^2 - x - 1 with a = 1.618033988749895?
-            sage: R.is_maximal()                                                                            # optional - sage.rings.number_field sage.symbolic
+            sage: R.is_maximal()                                                        # optional - sage.rings.number_field sage.symbolic
             True
         """
         if x in self:
@@ -981,40 +981,40 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: F = ZZ.residue_field(61); F                                                                           # optional - sage.libs.pari
+            sage: F = ZZ.residue_field(61); F                                           # optional - sage.libs.pari
             Residue field of Integers modulo 61
-            sage: pi = F.reduction_map(); pi                                                                            # optional - sage.libs.pari
+            sage: pi = F.reduction_map(); pi                                            # optional - sage.libs.pari
             Partially defined reduction map:
               From: Rational Field
               To:   Residue field of Integers modulo 61
-            sage: pi(123/234)                                                                                           # optional - sage.libs.pari
+            sage: pi(123/234)                                                           # optional - sage.libs.pari
             6
-            sage: pi(1/61)                                                                                              # optional - sage.libs.pari
+            sage: pi(1/61)                                                              # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ZeroDivisionError: Cannot reduce rational 1/61 modulo 61:
             it has negative valuation
-            sage: lift = F.lift_map(); lift                                                                             # optional - sage.libs.pari
+            sage: lift = F.lift_map(); lift                                             # optional - sage.libs.pari
             Lifting map:
               From: Residue field of Integers modulo 61
               To:   Integer Ring
-            sage: lift(F(12345/67890))                                                                                  # optional - sage.libs.pari
+            sage: lift(F(12345/67890))                                                  # optional - sage.libs.pari
             33
-            sage: (12345/67890) % 61                                                                                    # optional - sage.libs.pari
+            sage: (12345/67890) % 61                                                    # optional - sage.libs.pari
             33
 
         Construction can be from a prime ideal instead of a prime::
 
-            sage: ZZ.residue_field(ZZ.ideal(97))                                                                        # optional - sage.libs.pari
+            sage: ZZ.residue_field(ZZ.ideal(97))                                        # optional - sage.libs.pari
             Residue field of Integers modulo 97
 
         TESTS::
 
-            sage: ZZ.residue_field(ZZ.ideal(96))                                                                        # optional - sage.libs.pari
+            sage: ZZ.residue_field(ZZ.ideal(96))                                        # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: Principal ideal (96) of Integer Ring is not prime
-            sage: ZZ.residue_field(96)                                                                                  # optional - sage.libs.pari
+            sage: ZZ.residue_field(96)                                                  # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: 96 is not prime
@@ -1165,7 +1165,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
             sage: ZZ.completion(infinity, 53)
             Integer Ring
-            sage: ZZ.completion(5, 15, {'print_mode': 'bars'})                                                          # optional - sage.rings.padics
+            sage: ZZ.completion(5, 15, {'print_mode': 'bars'})                          # optional - sage.rings.padics
             5-adic Ring with capped relative precision 15
         """
         if p == sage.rings.infinity.Infinity:
@@ -1553,9 +1553,9 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: v = ZZ.valuation(3); v                                                                                # optional - sage.rings.padics
+            sage: v = ZZ.valuation(3); v                                                # optional - sage.rings.padics
             3-adic valuation
-            sage: v(3)                                                                                                  # optional - sage.rings.padics
+            sage: v(3)                                                                  # optional - sage.rings.padics
             1
 
         .. SEEALSO::
