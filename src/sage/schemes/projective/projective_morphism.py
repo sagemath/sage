@@ -1349,7 +1349,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         K = self.domain().base_ring()
         if K in _NumberFields or K == ZZ or isinstance(K, sage.rings.abc.Order):
             f = self
-        elif isinstance(K, sage.rings.abc.AlgebraicField:
+        elif isinstance(K, sage.rings.abc.AlgebraicField):
             f = self._number_field_from_algebraics()
         else:
             raise TypeError("Must be over a Numberfield or a Numberfield Order or QQbar")
