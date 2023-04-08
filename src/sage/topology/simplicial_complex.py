@@ -4802,7 +4802,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             F = F + [s for s in self.faces()[k] if s in other.faces()[k]]
         return SimplicialComplex(F)
 
-    @cached_method
+    #@cached_method TODO
     def bigraded_betti_numbers(self):
         r"""
         Return a dictionary of the bigraded Betti numbers of ``self``, 
@@ -4821,18 +4821,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.bigraded_betti_numbers()
             {(0, 0): 1, (-1,4 ): 3, (-2, 6): 1, (-2, 8): 2, (-3, 10): 1}
         """
-        from sage.misc.functional import gens 
         from sage.homology.homology_group import HomologyGroup
         L = self.vertices()
         n = len(L)
         B = {}
         H0 = HomologyGroup(0, ZZ)
 
-        for i in range(n+1):
-            for j in range (n+1):
-                B[(-i, 2*j)] = 0
-
-        B[(0,0)] = 1
+        B[(0,0)] = ZZ.one()
 
         for j in range(n+1):
             for x in combinations(L, j):
@@ -4847,7 +4842,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 	    
         return B
 
-    @cached_method
+    #@cached_method TODO
     def bigraded_betti_number(self, a, b):
         r"""
         Return the bigraded Betti number indexed in the form `(-i, 2j)`.
@@ -4863,7 +4858,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: X.bigraded_betti_number(-1, 6)
             1
         """
-        from sage.misc.functional import gens
         from sage.homology.homology_group import HomologyGroup
         if b % 2 == 1:
             raise ValueError("second argument must be even")
@@ -4876,7 +4870,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         n = len(L)
         H0 = HomologyGroup(0, ZZ)
 
-        B = 0
+        B = ZZ.zero() 
 
         for x in combinations(L, b):
             S = self.generated_subcomplex(x)
@@ -4884,7 +4878,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             if b-a-1 in H and H[b-a-1] != H0:
                 B += len(H[b-a-1].gens())
 
-        return ZZ(B)
+        return B
             
 # Miscellaneous utility functions.
 
