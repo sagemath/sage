@@ -18371,6 +18371,9 @@ class GenericGraph(GenericGraph_pyx):
             True
             sage: G.vertices(sort=True)
             [0, 1, 2, 3]
+            sage: G.add_clique({4})
+            sage: G.vertices(sort=True)
+            [0, 1, 2, 3, 4]
             sage: D = DiGraph(4, loops=True)
             sage: D.add_clique(range(4), loops=True)
             sage: D.is_clique(directed_clique=True, loops=True)
@@ -18383,6 +18386,7 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 self.add_edges(itertools.combinations_with_replacement(vertices, 2))
         else:
+            self.add_vertices(vertices)
             if self.is_directed():
                 self.add_edges(itertools.permutations(vertices, 2))
             else:
