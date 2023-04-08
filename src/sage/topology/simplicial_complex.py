@@ -4821,7 +4821,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         from sage.misc.functional import gens 
         from sage.homology.homology_group import HomologyGroup
-        L = set(self.vertices())
+        L = self.vertices()
         n = len(L)
         B = {}
         H0 = HomologyGroup(0, ZZ)
