@@ -4884,7 +4884,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             if b-a-1 in H and H[b-a-1] != H0:
                 B += len(H[b-a-1].gens())
 
-        return B
+        return ZZ(B)
             
 # Miscellaneous utility functions.
 
