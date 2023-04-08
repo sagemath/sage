@@ -4879,8 +4879,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         for x in combinations(L, b):
             S = self.generated_subcomplex(x)
             H = S.homology()
-            if H.get(b-a-1) != H0 and H.get(b-a-1) is not None:
-                B = B + len(gens(H.get(b-a-1)))
+            if b-a-1 in H and H[b-a-1] != H0:
+                B += len(H[b-a-1].gens())
 
         return B
             
