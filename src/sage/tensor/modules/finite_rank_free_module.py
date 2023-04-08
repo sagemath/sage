@@ -2096,7 +2096,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             if len(antisym[0]) == tensor_type[1]:
                 return self.alternating_form(tensor_type[1], name=name,
                                              latex_name=latex_name)
-        elif tensor_type[1] == 0 and tensor_type[0] > 1 and antisym:
+        elif tensor_type[0] > 1 and tensor_type[1] == 0 and antisym:
             if len(antisym[0]) == tensor_type[0]:
                 return self.alternating_contravariant_tensor(tensor_type[0],
                                            name=name, latex_name=latex_name)

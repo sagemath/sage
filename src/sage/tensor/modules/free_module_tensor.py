@@ -316,8 +316,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             parent = fmodule.tensor_module(*self._tensor_type)
         ModuleElementWithMutability.__init__(self, parent)
         self._fmodule = fmodule
-        self._is_zero = False  # a priori, may be changed below or via
-        # method __bool__()
+        self._is_zero = False  # a priori, may be changed below or via method __bool__()
         self._name = name
         if latex_name is None:
             self._latex_name = self._name
@@ -2237,7 +2236,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
             raise NotImplementedError("left tensor product not implemented")
         # Left multiplication by a scalar:
         result = self._new_instance()
-        result._config = self._config
         for basis in self._components:
             result._components[basis] = other * self._components[basis]
         # If other has a name, set the name of the result:
