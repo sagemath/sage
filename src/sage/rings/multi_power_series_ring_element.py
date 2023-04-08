@@ -607,7 +607,7 @@ class MPowerSeries(PowerSeries):
             Multivariate Power Series Ring in t0, t1, t2 over Finite Field of size 5
             sage: t = M.gens()                                                          # optional - sage.rings.finite_rings
             sage: f = (-t[0]^4*t[1]^3*t[2]^4 - 2*t[0]*t[1]^4*t[2]^7                     # optional - sage.rings.finite_rings
-                       + 2*t[1]*t[2]^12 + 2*t[0]^7*t[1]^5*t[2]^2 + M.O(15))
+            ....:      + 2*t[1]*t[2]^12 + 2*t[0]^7*t[1]^5*t[2]^2 + M.O(15))
             sage: f                                                                     # optional - sage.rings.finite_rings
             -t0^4*t1^3*t2^4 - 2*t0*t1^4*t2^7 + 2*t1*t2^12 + 2*t0^7*t1^5*t2^2
             + O(t0, t1, t2)^15
