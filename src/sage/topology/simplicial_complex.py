@@ -4850,8 +4850,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         r"""
         Return the bigraded Betti number indexed in the form `(-i, 2j)`.
 
-        Bigraded Betti number with indices '(-i, 2j)' is defined as a sum of ranks
-        of '(i-j-1)'-th (co)homologies of full subcomplexes with exactly 'j' vertices. 
+        Bigraded Betti number with indices `(-i, 2j)` is defined as a sum of ranks
+        of `(i-j-1)`-th (co)homologies of full subcomplexes with exactly `j` vertices. 
 
         EXAMPLES::
 
