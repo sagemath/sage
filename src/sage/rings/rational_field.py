@@ -616,14 +616,14 @@ class RationalField(Singleton, number_field_base.NumberField):
 
             sage: QQ.embeddings(QQ)
             [Identity endomorphism of Rational Field]
-            sage: QQ.embeddings(CyclotomicField(5))                             # optional - sage.rings.number_field
+            sage: QQ.embeddings(CyclotomicField(5))                                     # optional - sage.rings.number_field
             [Coercion map:
                From: Rational Field
                To:   Cyclotomic Field of order 5 and degree 4]
 
         `K` must have characteristic 0::
 
-            sage: QQ.embeddings(GF(3))                                          # optional - sage.libs.pari
+            sage: QQ.embeddings(GF(3))                                                  # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: no embeddings of the rational field into K.
@@ -772,37 +772,37 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ.hilbert_symbol_negative_at_S([-1,5,3,2,7,11,13,23], -10/7)                     # optional - sage.rings.padics
+            sage: QQ.hilbert_symbol_negative_at_S([-1,5,3,2,7,11,13,23], -10/7)         # optional - sage.rings.padics
             -9867
-            sage: QQ.hilbert_symbol_negative_at_S([3, 5, QQ.places()[0], 11], -15)                  # optional - sage.rings.padics
+            sage: QQ.hilbert_symbol_negative_at_S([3, 5, QQ.places()[0], 11], -15)      # optional - sage.rings.padics
             -33
-            sage: QQ.hilbert_symbol_negative_at_S([3, 5], 2)                                        # optional - sage.rings.padics
+            sage: QQ.hilbert_symbol_negative_at_S([3, 5], 2)                            # optional - sage.rings.padics
             15
 
         TESTS::
 
-            sage: QQ.hilbert_symbol_negative_at_S(5/2, -2)                                          # optional - sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S(5/2, -2)                              # optional - sage.libs.pari sage.modules
             Traceback (most recent call last):
             ...
             TypeError: first argument must be a list or integer
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 0)                                        # optional - sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 0)                            # optional - sage.libs.pari sage.modules
             Traceback (most recent call last):
             ...
             ValueError: second argument must be nonzero
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([-1, 3, 5], 2)                                    # optional - sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([-1, 3, 5], 2)                        # optional - sage.libs.pari sage.modules
             Traceback (most recent call last):
             ...
             ValueError: list should be of even cardinality
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 2)                                        # optional - sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 2)                            # optional - sage.libs.pari sage.modules
             Traceback (most recent call last):
             ...
             ValueError: all entries in list must be prime or -1 for
@@ -810,7 +810,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([5, 7], 2)                                        # optional - sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([5, 7], 2)                            # optional - sage.libs.pari sage.modules
             Traceback (most recent call last):
             ...
             ValueError: second argument must be a nonsquare with
@@ -818,14 +818,14 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([1, 3], sqrt(2))                                  # optional - sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], sqrt(2))                      # optional - sage.libs.pari sage.modules
             Traceback (most recent call last):
             ...
             TypeError: second argument must be a rational number
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([-1, 3], 2)                                       # optional - sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([-1, 3], 2)                           # optional - sage.libs.pari sage.modules
             Traceback (most recent call last):
             ...
             ValueError: if the infinite place is in the list, the second
@@ -1087,7 +1087,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ.algebraic_closure()                                        # optional - sage.rings.number_field
+            sage: QQ.algebraic_closure()                                                # optional - sage.rings.number_field
             Algebraic Field
         """
         from sage.rings.qqbar import QQbar
@@ -1429,39 +1429,41 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QS2gens                                                               # optional - sage.rings.number_field
             [-1]
 
-            sage: all(QQ.selmer_space([], p)[0].dimension() == 0 for p in primes(3, 10))            # optional - sage.libs.pari
+            sage: all(QQ.selmer_space([], p)[0].dimension() == 0                        # optional - sage.libs.pari
+            ....:     for p in primes(3, 10))
             True
 
         In general there is one generator for each `p\in S`, and an
         additional generator of `-1` when `p=2`::
 
-            sage: QS2, QS2gens, fromQS2, toQS2 = QQ.selmer_space([5,7], 2)                          # optional - sage.modules
-            sage: QS2                                                                               # optional - sage.modules
+            sage: QS2, QS2gens, fromQS2, toQS2 = QQ.selmer_space([5,7], 2)              # optional - sage.modules
+            sage: QS2                                                                   # optional - sage.modules
             Vector space of dimension 3 over Finite Field of size 2
-            sage: QS2gens                                                                           # optional - sage.modules
+            sage: QS2gens                                                               # optional - sage.modules
             [5, 7, -1]
-            sage: toQS2(-7)                                                                         # optional - sage.modules
+            sage: toQS2(-7)                                                             # optional - sage.modules
             (0, 1, 1)
-            sage: fromQS2((0,1,1))                                                                  # optional - sage.modules
+            sage: fromQS2((0,1,1))                                                      # optional - sage.modules
             -7
 
         The map ``fromQS2`` is only well-defined modulo `p`'th powers
         (in this case, modulo squares)::
 
-            sage: toQS2(-5/7)                                                                       # optional - sage.modules
+            sage: toQS2(-5/7)                                                           # optional - sage.modules
             (1, 1, 1)
-            sage: fromQS2((1,1,1))                                                                  # optional - sage.modules
+            sage: fromQS2((1,1,1))                                                      # optional - sage.modules
             -35
-            sage: ((-5/7)/(-35)).is_square()                                                        # optional - sage.modules
+            sage: ((-5/7)/(-35)).is_square()                                            # optional - sage.modules
             True
 
         The map ``toQS2`` is not defined on all of `\QQ^*`, only on
         those numbers which are squares away from `5` and `7`::
 
-            sage: toQS2(210)                                                                        # optional - sage.modules
+            sage: toQS2(210)                                                            # optional - sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: argument 210 should have valuations divisible by 2 at all primes in [5, 7]
+            ValueError: argument 210 should have valuations divisible by 2
+            at all primes in [5, 7]
 
         """
         from sage.rings.number_field.selmer_group import pSelmerGroup
@@ -1527,7 +1529,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: gap(QQ) # indirect doctest                                                        # optional - sage.libs.gap
+            sage: gap(QQ) # indirect doctest                                            # optional - sage.libs.gap
             Rationals
         """
         return 'Rationals'
@@ -1641,20 +1643,20 @@ class RationalField(Singleton, number_field_base.NumberField):
         TESTS::
 
             sage: R.<x> = QQ[]
-            sage: QQ._factor_univariate_polynomial(x)                                               # optional - sage.libs.pari
+            sage: QQ._factor_univariate_polynomial(x)                                   # optional - sage.libs.pari
             x
-            sage: QQ._factor_univariate_polynomial(2*x)                                             # optional - sage.libs.pari
+            sage: QQ._factor_univariate_polynomial(2*x)                                 # optional - sage.libs.pari
             (2) * x
-            sage: QQ._factor_univariate_polynomial((x^2 - 1/4)^4)                                   # optional - sage.libs.pari
+            sage: QQ._factor_univariate_polynomial((x^2 - 1/4)^4)                       # optional - sage.libs.pari
             (x - 1/2)^4 * (x + 1/2)^4
-            sage: QQ._factor_univariate_polynomial((2*x + 1) * (3*x^2 - 5)^2)                       # optional - sage.libs.pari
+            sage: QQ._factor_univariate_polynomial((2*x + 1) * (3*x^2 - 5)^2)           # optional - sage.libs.pari
             (18) * (x + 1/2) * (x^2 - 5/3)^2
-            sage: f = prod((k^2*x^k + k)^(k-1) for k in primes(10))                                 # optional - sage.libs.pari
-            sage: QQ._factor_univariate_polynomial(f)                                               # optional - sage.libs.pari
+            sage: f = prod((k^2*x^k + k)^(k-1) for k in primes(10))                     # optional - sage.libs.pari
+            sage: QQ._factor_univariate_polynomial(f)                                   # optional - sage.libs.pari
             (1751787911376562500) * (x^2 + 1/2) * (x^3 + 1/3)^2 * (x^5 + 1/5)^4 * (x^7 + 1/7)^6
-            sage: QQ._factor_univariate_polynomial(10*x^5 - 1)                                      # optional - sage.libs.pari
+            sage: QQ._factor_univariate_polynomial(10*x^5 - 1)                          # optional - sage.libs.pari
             (10) * (x^5 - 1/10)
-            sage: QQ._factor_univariate_polynomial(10*x^5 - 10)                                     # optional - sage.libs.pari
+            sage: QQ._factor_univariate_polynomial(10*x^5 - 10)                         # optional - sage.libs.pari
             (10) * (x - 1) * (x^4 + x^3 + x^2 + x + 1)
 
         """

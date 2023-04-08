@@ -6,11 +6,11 @@ EXAMPLES::
     sage: R = LaurentSeriesRing(QQ, "x")
     sage: R.base_ring()
     Rational Field
-    sage: S = LaurentSeriesRing(GF(17)['x'], 'y')
-    sage: S
-    Laurent Series Ring in y over Univariate Polynomial Ring in x over
-    Finite Field of size 17
-    sage: S.base_ring()
+    sage: S = LaurentSeriesRing(GF(17)['x'], 'y')                                       # optional - sage.rings.finite_rings
+    sage: S                                                                             # optional - sage.rings.finite_rings
+    Laurent Series Ring in y over
+     Univariate Polynomial Ring in x over Finite Field of size 17
+    sage: S.base_ring()                                                                 # optional - sage.rings.finite_rings
     Univariate Polynomial Ring in x over Finite Field of size 17
 
 .. SEEALSO::
@@ -74,7 +74,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         sage: R = LaurentSeriesRing(QQ, 'x'); R
         Laurent Series Ring in x over Rational Field
         sage: x = R.0
-        sage: g = 1 - x + x^2 - x^4 +O(x^8); g
+        sage: g = 1 - x + x^2 - x^4 + O(x^8); g
         1 - x + x^2 - x^4 + O(x^8)
         sage: g = 10*x^(-3) + 2006 - 19*x + x^2 - x^4 +O(x^8); g
         10*x^-3 + 2006 - 19*x + x^2 - x^4 + O(x^8)
@@ -84,7 +84,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         sage: Frac(QQ[['x']])
         Laurent Series Ring in x over Rational Field
-        sage: Frac(GF(5)['y'])
+        sage: Frac(GF(5)['y'])                                                          # optional - sage.rings.finite_rings
         Fraction Field of Univariate Polynomial Ring in y over Finite Field of size 5
 
     When the base ring is a domain, the fraction field is the
@@ -96,17 +96,17 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     Laurent series rings are determined by their variable and the base
     ring, and are globally unique::
 
-        sage: K = Qp(5, prec = 5)
-        sage: L = Qp(5, prec = 200)
-        sage: R.<x> = LaurentSeriesRing(K)
-        sage: S.<y> = LaurentSeriesRing(L)
-        sage: R is S
+        sage: K = Qp(5, prec=5)                                                         # optional - sage.rings.padics
+        sage: L = Qp(5, prec=200)                                                       # optional - sage.rings.padics
+        sage: R.<x> = LaurentSeriesRing(K)                                              # optional - sage.rings.padics
+        sage: S.<y> = LaurentSeriesRing(L)                                              # optional - sage.rings.padics
+        sage: R is S                                                                    # optional - sage.rings.padics
         False
-        sage: T.<y> = LaurentSeriesRing(Qp(5,prec=200))
-        sage: S is T
+        sage: T.<y> = LaurentSeriesRing(Qp(5, prec=200))                                # optional - sage.rings.padics
+        sage: S is T                                                                    # optional - sage.rings.padics
         True
-        sage: W.<y> = LaurentSeriesRing(Qp(5,prec=199))
-        sage: W is T
+        sage: W.<y> = LaurentSeriesRing(Qp(5, prec=199))                                # optional - sage.rings.padics
+        sage: W is T                                                                    # optional - sage.rings.padics
         False
 
         sage: K = LaurentSeriesRing(CC, 'q')
@@ -151,11 +151,14 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     Check categories (:trac:`24420`)::
 
         sage: LaurentSeriesRing(ZZ, 'x').category()
-        Category of infinite commutative no zero divisors algebras over (euclidean domains and infinite enumerated sets and metric spaces)
+        Category of infinite commutative no zero divisors algebras
+         over (euclidean domains and infinite enumerated sets and metric spaces)
         sage: LaurentSeriesRing(QQ, 'x').category()
-        Join of Category of complete discrete valuation fields and Category of commutative algebras over (number fields and quotient fields and metric spaces) and Category of infinite sets
+        Join of Category of complete discrete valuation fields and Category of commutative algebras
+         over (number fields and quotient fields and metric spaces) and Category of infinite sets
         sage: LaurentSeriesRing(Zmod(4), 'x').category()
-        Category of infinite commutative algebras over (finite commutative rings and subquotients of monoids and quotients of semigroups and finite enumerated sets)
+        Category of infinite commutative algebras
+         over (finite commutative rings and subquotients of monoids and quotients of semigroups and finite enumerated sets)
 
     Check coercions (:trac:`24431`)::
 
@@ -219,27 +222,34 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
             sage: RZZ = LaurentSeriesRing(ZZ, 't')
             sage: RZZ.category()
-            Category of infinite commutative no zero divisors algebras over (euclidean domains and infinite enumerated sets and metric spaces)
+            Category of infinite commutative no zero divisors algebras
+             over (euclidean domains and infinite enumerated sets and metric spaces)
             sage: TestSuite(RZZ).run()
 
             sage: R1 = LaurentSeriesRing(Zmod(1), 't')
             sage: R1.category()
-            Category of finite commutative algebras over (finite commutative rings and subquotients of monoids and quotients of semigroups and finite enumerated sets)
+            Category of finite commutative algebras
+             over (finite commutative rings and subquotients of monoids and quotients of semigroups and finite enumerated sets)
             sage: TestSuite(R1).run()
 
             sage: R2 = LaurentSeriesRing(Zmod(2), 't')
             sage: R2.category()
-            Join of Category of complete discrete valuation fields and Category of commutative algebras over (finite enumerated fields and subquotients of monoids and quotients of semigroups) and Category of infinite sets
+            Join of Category of complete discrete valuation fields
+                and Category of commutative algebras over (finite enumerated fields and subquotients of monoids and quotients of semigroups)
+                and Category of infinite sets
             sage: TestSuite(R2).run()
 
             sage: R4 = LaurentSeriesRing(Zmod(4), 't')
             sage: R4.category()
-            Category of infinite commutative algebras over (finite commutative rings and subquotients of monoids and quotients of semigroups and finite enumerated sets)
+            Category of infinite commutative algebras
+             over (finite commutative rings and subquotients of monoids and quotients of semigroups and finite enumerated sets)
             sage: TestSuite(R4).run()
 
             sage: RQQ = LaurentSeriesRing(QQ, 't')
             sage: RQQ.category()
-            Join of Category of complete discrete valuation fields and Category of commutative algebras over (number fields and quotient fields and metric spaces) and Category of infinite sets
+            Join of Category of complete discrete valuation fields
+                and Category of commutative algebras over (number fields and quotient fields and metric spaces)
+                and Category of infinite sets
             sage: TestSuite(RQQ).run()
         """
         base_ring = power_series.base_ring()
@@ -365,9 +375,9 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         """
         EXAMPLES::
 
-            sage: LaurentSeriesRing(QQ,'q') # indirect doctest
+            sage: LaurentSeriesRing(QQ, 'q')  # indirect doctest
             Laurent Series Ring in q over Rational Field
-            sage: LaurentSeriesRing(ZZ,'t',sparse=True)
+            sage: LaurentSeriesRing(ZZ, 't', sparse=True)
             Sparse Laurent Series Ring in t over Integer Ring
         """
         s = "Laurent Series Ring in %s over %s" % (self.variable_name(), self.base_ring())
@@ -526,8 +536,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         EXAMPLES::
 
-            sage: S.<s> = LaurentSeriesRing(GF(3))                                                  # optional - sage.rings.finite_rings
-            sage: S.random_element()  # random                                                      # optional - sage.rings.finite_rings
+            sage: S.<s> = LaurentSeriesRing(GF(3))                                      # optional - sage.rings.finite_rings
+            sage: S.random_element()  # random                                          # optional - sage.rings.finite_rings
             s^-8 + s^-7 + s^-6 + s^-5 + s^-1 + s + s^3 + s^4
             + s^5 + 2*s^6 + s^7 + s^11 + O(s^12)
         """
@@ -641,14 +651,15 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         """
         EXAMPLES::
 
-            sage: R.<x> = LaurentSeriesRing(GF(17))                                                 # optional - sage.rings.finite_rings
-            sage: S.<y> = LaurentSeriesRing(GF(19))                                                 # optional - sage.rings.finite_rings
-            sage: R.hom([y], S) # indirect doctest                                                  # optional - sage.rings.finite_rings
+            sage: R.<x> = LaurentSeriesRing(GF(17))                                     # optional - sage.rings.finite_rings
+            sage: S.<y> = LaurentSeriesRing(GF(19))                                     # optional - sage.rings.finite_rings
+            sage: R.hom([y], S) # indirect doctest                                      # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
-            sage: f = R.hom(x + x^3,R)                                                              # optional - sage.rings.finite_rings
-            sage: f(x^2)                                                                            # optional - sage.rings.finite_rings
+            ValueError: relations do not all (canonically) map to 0
+            under map determined by images of generators
+            sage: f = R.hom(x + x^3,R)                                                  # optional - sage.rings.finite_rings
+            sage: f(x^2)                                                                # optional - sage.rings.finite_rings
             x^2 + 2*x^4 + x^6
 
         The image of the generator needs to be a unit::
@@ -675,8 +686,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         """
         EXAMPLES::
 
-            sage: R.<x> = LaurentSeriesRing(GF(17))                                                 # optional - sage.rings.finite_rings
-            sage: R.characteristic()                                                                # optional - sage.rings.finite_rings
+            sage: R.<x> = LaurentSeriesRing(GF(17))                                     # optional - sage.rings.finite_rings
+            sage: R.characteristic()                                                    # optional - sage.rings.finite_rings
             17
         """
         return self.base_ring().characteristic()
@@ -690,8 +701,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         EXAMPLES::
 
-            sage: R.<x> = LaurentSeriesRing(GF(17))                                                 # optional - sage.rings.finite_rings
-            sage: R.residue_field()                                                                 # optional - sage.rings.finite_rings
+            sage: R.<x> = LaurentSeriesRing(GF(17))                                     # optional - sage.rings.finite_rings
+            sage: R.residue_field()                                                     # optional - sage.rings.finite_rings
             Finite Field of size 17
 
             sage: R.<x> = LaurentSeriesRing(ZZ)

@@ -23,9 +23,9 @@ def prime_finite_field():
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: K = sage.rings.tests.prime_finite_field(); K                              # optional - sage.libs.pari
+        sage: K = sage.rings.tests.prime_finite_field(); K                              # optional - sage.rings.finite_rings
         Finite Field of size ...
-        sage: K.cardinality().is_prime()                                                # optional - sage.libs.pari
+        sage: K.cardinality().is_prime()                                                # optional - sage.rings.finite_rings
         True
     """
     from sage.rings.integer_ring import ZZ
@@ -42,11 +42,11 @@ def finite_field():
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: K = sage.rings.tests.finite_field(); K                                    # optional - sage.libs.pari
+        sage: K = sage.rings.tests.finite_field(); K                                    # optional - sage.rings.finite_rings
         Finite Field...of size ...
-        sage: K.cardinality().is_prime_power()                                          # optional - sage.libs.pari
+        sage: K.cardinality().is_prime_power()                                          # optional - sage.rings.finite_rings
         True
-        sage: while K.cardinality().is_prime():                                         # optional - sage.libs.pari
+        sage: while K.cardinality().is_prime():                                         # optional - sage.rings.finite_rings
         ....:     K = sage.rings.tests.finite_field()
     """
     from sage.rings.integer_ring import ZZ
@@ -65,12 +65,12 @@ def small_finite_field():
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: K = sage.rings.tests.small_finite_field(); K                              # optional - sage.libs.pari
+        sage: K = sage.rings.tests.small_finite_field(); K                              # optional - sage.rings.finite_rings
         Finite Field...of size ...
-        sage: q = K.cardinality()                                                       # optional - sage.libs.pari
-        sage: q.is_prime_power()                                                        # optional - sage.libs.pari
+        sage: q = K.cardinality()                                                       # optional - sage.rings.finite_rings
+        sage: q.is_prime_power()                                                        # optional - sage.rings.finite_rings
         True
-        sage: q <= 2^16                                                                 # optional - sage.libs.pari
+        sage: q <= 2^16                                                                 # optional - sage.rings.finite_rings
         True
     """
     from sage.rings.integer_ring import ZZ
@@ -458,8 +458,8 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
 
         sage: rings = [QQ]
         sage: rings += [ZZ[I], ZZ[I, sqrt(2)]]                                          # optional - sage.rings.number_field
-        sage: rings += [GF(49, 'a')]                                                    # optional - sage.libs.pari
-        sage: rings += [MatrixSpace(GF(17), 3)]                                         # optional - sage.libs.pari sage.modules
+        sage: rings += [GF(49, 'a')]                                                    # optional - sage.rings.finite_rings
+        sage: rings += [MatrixSpace(GF(17), 3)]                                         # optional - sage.rings.finite_rings sage.modules
         sage: for C in rings:
         ....:     sage.rings.tests.test_karatsuba_multiplication(C, 10, 10)
 

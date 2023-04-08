@@ -63,8 +63,8 @@ class IdealMonoid_c(Parent):
             sage: id.parent().category()
             Category of commutative monoids
 
-            sage: MS = MatrixSpace(QQ, 3, 3)                                                                            # optional - sage.modules
-            sage: MS.ideal(MS.one()).parent().category()                                                                # optional - sage.modules
+            sage: MS = MatrixSpace(QQ, 3, 3)                                            # optional - sage.modules
+            sage: MS.ideal(MS.one()).parent().category()                                # optional - sage.modules
             Category of monoids
         """
         self.__R = R

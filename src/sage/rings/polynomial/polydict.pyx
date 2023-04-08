@@ -781,7 +781,7 @@ cdef class PolyDict:
 
         Check that :trac:`29604` is fixed::
 
-            sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])                                                        # optional - sage.libs.pari
+            sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])                        # optional - sage.rings.finite_rings
             'x'
         """
         if not self:
@@ -1074,8 +1074,8 @@ cdef class PolyDict:
 
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                                                             # optional - sage.groups
-            sage: f.scalar_rmult(y)                                                                                     # optional - sage.groups
+            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
+            sage: f.scalar_rmult(y)                                                     # optional - sage.groups
             PolyDict with representation {(2, 3): x*y}
             sage: f = PolyDict({(2,3):2, (1, 2): 3, (2, 1): 4})
             sage: f.scalar_rmult(-2)
@@ -1096,8 +1096,8 @@ cdef class PolyDict:
 
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2,3):x})                                                                               # optional - sage.groups
-            sage: f.scalar_lmult(y)                                                                                     # optional - sage.groups
+            sage: f = PolyDict({(2,3):x})                                               # optional - sage.groups
+            sage: f.scalar_lmult(y)                                                     # optional - sage.groups
             PolyDict with representation {(2, 3): y*x}
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: f.scalar_lmult(-2)
@@ -1125,8 +1125,8 @@ cdef class PolyDict:
 
             sage: from sage.rings.polynomial.polydict import ETuple, PolyDict
             sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                                                             # optional - sage.groups
-            sage: f.term_lmult(ETuple((1, 2)), y)                                                                       # optional - sage.groups
+            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
+            sage: f.term_lmult(ETuple((1, 2)), y)                                       # optional - sage.groups
             PolyDict with representation {(3, 5): y*x}
 
             sage: f = PolyDict({(2,3): 2, (1,2): 3, (2,1): 4})
@@ -1154,8 +1154,8 @@ cdef class PolyDict:
 
             sage: from sage.rings.polynomial.polydict import ETuple, PolyDict
             sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                                                             # optional - sage.groups
-            sage: f.term_rmult(ETuple((1, 2)), y)                                                                       # optional - sage.groups
+            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
+            sage: f.term_rmult(ETuple((1, 2)), y)                                       # optional - sage.groups
             PolyDict with representation {(3, 5): x*y}
 
             sage: f = PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
