@@ -1044,6 +1044,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             self._is_immutable = False
             if not is_mutable or is_immutable:
                 self.set_immutable()
+            self._bbn = copy(C._bbn)
             return
 
         gen_dict = {}
@@ -1125,6 +1126,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
         self._is_immutable = False
         if not is_mutable or is_immutable:
             self.set_immutable()
+
+        # self._bbn: dictionary of bigraded Betti numbers,
+        # indexed by tuples (-i, 2j). For use in the bigraded_betti_numbers
+        # method
+        self._bbn = None
 
     def __hash__(self):
         """
@@ -4551,6 +4557,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             False
         """
         self._is_immutable = True
+        self._bbn = None
         self._facets = tuple(self._facets)
 
     def is_mutable(self):
@@ -4802,7 +4809,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             F = F + [s for s in self.faces()[k] if s in other.faces()[k]]
         return SimplicialComplex(F)
 
-    #@cached_method TODO
     def bigraded_betti_numbers(self):
         r"""
         Return a dictionary of the bigraded Betti numbers of ``self``, 
@@ -4822,6 +4828,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             {(0, 0): 1, (-1,4 ): 3, (-2, 6): 1, (-2, 8): 2, (-3, 10): 1}
         """
         from sage.homology.homology_group import HomologyGroup
+        if self._bbn is not None:
+            return self._bbn
         L = self.vertices()
         n = len(L)
         B = {}
@@ -4839,11 +4847,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         if ind not in B:
                             B[ind] = ZZ.zero()
                         B[ind] += len(H.get(j-k-1).gens())
-	    
-        return B
 
-    #@cached_method TODO
+        self._bbn = B
+        return self._bbn
+
     def bigraded_betti_number(self, a, b):
+        if self._bbn is not None:
+            return self._bbn[(a, b)]
         r"""
         Return the bigraded Betti number indexed in the form `(-i, 2j)`.
 
