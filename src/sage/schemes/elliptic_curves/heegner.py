@@ -101,8 +101,8 @@ import sage.rings.number_field.number_field as number_field
 import sage.rings.all as rings
 
 from sage.arith.functions import lcm
-from sage.arith.misc import (binomial, factorial, is_fundamental_discriminant,
-                             prime_divisors, GCD as gcd, XGCD as xgcd)
+from sage.arith.misc import (binomial, factorial, prime_divisors,
+                             GCD as gcd, XGCD as xgcd)
 from sage.matrix.constructor import Matrix as matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
