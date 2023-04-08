@@ -540,7 +540,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 return ret
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             if is_PolynomialRing(ret):
-                from sage.rings.function_field.all import FunctionField
+                from sage.rings.function_field.constructor import FunctionField
                 return FunctionField(ret.base_ring().fraction_field(), names=(ret.variable_name(),))
             return ret.fraction_field()
 

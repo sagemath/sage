@@ -102,7 +102,6 @@ class Wave(SageObject):
         else:
             raise ValueError("Must give a filename")
 
-
     def save(self, filename='sage.wav'):
         r"""
         Save this wave file to disk, either as a Sage sobj or as a .wav file.

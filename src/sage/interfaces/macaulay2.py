@@ -1618,7 +1618,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             elif cls_str == "String":
                 return str(repr_str)
             elif cls_str == "Module":
-                from sage.modules.all import FreeModule
+                from sage.modules.free_module import FreeModule
                 if self.isFreeModule()._sage_():
                     ring = self.ring()._sage_()
                     rank = self.rank()._sage_()
