@@ -258,13 +258,13 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
 
     Power series ring over finite field::
 
-        sage: S = PowerSeriesRing(GF(65537),'x,y'); S                                   # optional - sage.libs.pari
+        sage: S = PowerSeriesRing(GF(65537),'x,y'); S                                   # optional - sage.rings.finite_rings
         Multivariate Power Series Ring in x, y over Finite Field of size
         65537
 
     Power series ring with many variables::
 
-        sage: R = PowerSeriesRing(ZZ, ['x%s'%p for p in primes(100)]); R
+        sage: R = PowerSeriesRing(ZZ, ['x%s'%p for p in primes(100)]); R                # optional - sage.libs.pari
         Multivariate Power Series Ring in x2, x3, x5, x7, x11, x13, x17, x19,
         x23, x29, x31, x37, x41, x43, x47, x53, x59, x61, x67, x71, x73, x79,
         x83, x89, x97 over Integer Ring
@@ -274,12 +274,12 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
 
       ::
 
-        sage: R.inject_variables()
+        sage: R.inject_variables()                                                      # optional - sage.libs.pari
         Defining x2, x3, x5, x7, x11, x13, x17, x19, x23, x29, x31, x37,
         x41, x43, x47, x53, x59, x61, x67, x71, x73, x79, x83, x89, x97
 
-        sage: f = x47 + 3*x11*x29 - x19 + R.O(3)
-        sage: f in R
+        sage: f = x47 + 3*x11*x29 - x19 + R.O(3)                                        # optional - sage.libs.pari
+        sage: f in R                                                                    # optional - sage.libs.pari
         True
 
 
@@ -520,11 +520,11 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         commutative ring, but also a complete discrete valuation ring (CDVR).
         The appropriate (sub)category is automatically set in this case::
 
-            sage: k = GF(11)                                                            # optional - sage.libs.pari
-            sage: R.<x> = k[[]]                                                         # optional - sage.libs.pari
-            sage: R.category()                                                          # optional - sage.libs.pari
+            sage: k = GF(11)                                                            # optional - sage.rings.finite_rings
+            sage: R.<x> = k[[]]                                                         # optional - sage.rings.finite_rings
+            sage: R.category()                                                          # optional - sage.rings.finite_rings
             Category of complete discrete valuation rings
-            sage: TestSuite(R).run()                                                    # optional - sage.libs.pari
+            sage: TestSuite(R).run()                                                    # optional - sage.rings.finite_rings
 
         It is checked that the default precision is non-negative
         (see :trac:`19409`)::
@@ -616,13 +616,13 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         EXAMPLES::
 
-            sage: R = GF(17)[['y']]                                                     # optional - sage.libs.pari
-            sage: R                                                                     # optional - sage.libs.pari
+            sage: R = GF(17)[['y']]                                                     # optional - sage.rings.finite_rings
+            sage: R                                                                     # optional - sage.rings.finite_rings
             Power Series Ring in y over Finite Field of size 17
-            sage: R.__repr__()                                                          # optional - sage.libs.pari
+            sage: R.__repr__()                                                          # optional - sage.rings.finite_rings
             'Power Series Ring in y over Finite Field of size 17'
-            sage: R.rename('my power series ring')                                      # optional - sage.libs.pari
-            sage: R                                                                     # optional - sage.libs.pari
+            sage: R.rename('my power series ring')                                      # optional - sage.rings.finite_rings
+            sage: R                                                                     # optional - sage.rings.finite_rings
             my power series ring
         """
         s = "Power Series Ring in %s over %s"%(self.variable_name(), self.base_ring())
@@ -662,11 +662,11 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         EXAMPLES::
 
-            sage: R = GF(17)[['y']]                                                     # optional - sage.libs.pari
-            sage: latex(R)  # indirect doctest                                          # optional - sage.libs.pari
+            sage: R = GF(17)[['y']]                                                     # optional - sage.rings.finite_rings
+            sage: latex(R)  # indirect doctest                                          # optional - sage.rings.finite_rings
             \Bold{F}_{17}[[y]]
-            sage: R = GF(17)[['y12']]                                                   # optional - sage.libs.pari
-            sage: latex(R)                                                              # optional - sage.libs.pari
+            sage: R = GF(17)[['y12']]                                                   # optional - sage.rings.finite_rings
+            sage: latex(R)                                                              # optional - sage.rings.finite_rings
             \Bold{F}_{17}[[y_{12}]]
         """
         return "%s[[%s]]"%(latex.latex(self.base_ring()), self.latex_variable_names()[0])
@@ -680,14 +680,14 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         EXAMPLES::
 
-            sage: A = GF(17)[['x']]                                                     # optional - sage.libs.pari
-            sage: A.has_coerce_map_from(ZZ)  # indirect doctest                         # optional - sage.libs.pari
+            sage: A = GF(17)[['x']]                                                     # optional - sage.rings.finite_rings
+            sage: A.has_coerce_map_from(ZZ)  # indirect doctest                         # optional - sage.rings.finite_rings
             True
-            sage: A.has_coerce_map_from(ZZ['x'])                                        # optional - sage.libs.pari
+            sage: A.has_coerce_map_from(ZZ['x'])                                        # optional - sage.rings.finite_rings
             True
-            sage: A.has_coerce_map_from(ZZ['y'])                                        # optional - sage.libs.pari
+            sage: A.has_coerce_map_from(ZZ['y'])                                        # optional - sage.rings.finite_rings
             False
-            sage: A.has_coerce_map_from(ZZ[['x']])                                      # optional - sage.libs.pari
+            sage: A.has_coerce_map_from(ZZ[['x']])                                      # optional - sage.rings.finite_rings
             True
 
         """
@@ -892,15 +892,15 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         We illustrate canonical coercion between power series rings with
         compatible base rings::
 
-            sage: R.<t> = PowerSeriesRing(GF(7)['w'])                                               # optional - sage.libs.pari
+            sage: R.<t> = PowerSeriesRing(GF(7)['w'])                                   # optional - sage.rings.finite_rings
             sage: S = PowerSeriesRing(ZZ, 't')
             sage: f = S([1,2,3,4]); f
             1 + 2*t + 3*t^2 + 4*t^3
-            sage: g = R.coerce(f); g                                                                # optional - sage.libs.pari
+            sage: g = R.coerce(f); g                                                    # optional - sage.rings.finite_rings
             1 + 2*t + 3*t^2 + 4*t^3
-            sage: parent(g)                                                                         # optional - sage.libs.pari
+            sage: parent(g)                                                             # optional - sage.rings.finite_rings
             Power Series Ring in t over Univariate Polynomial Ring in w over Finite Field of size 7
-            sage: S.coerce(g)                                                                       # optional - sage.libs.pari
+            sage: S.coerce(g)                                                           # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion
@@ -981,11 +981,11 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         EXAMPLES::
 
-            sage: R.<T> = GF(7)[[]]; R                                                              # optional - sage.libs.pari
+            sage: R.<T> = GF(7)[[]]; R                                                  # optional - sage.rings.finite_rings
             Power Series Ring in T over Finite Field of size 7
-            sage: R.change_ring(ZZ)                                                                 # optional - sage.libs.pari
+            sage: R.change_ring(ZZ)                                                     # optional - sage.rings.finite_rings
             Power Series Ring in T over Integer Ring
-            sage: R.base_extend(ZZ)                                                                 # optional - sage.libs.pari
+            sage: R.base_extend(ZZ)                                                     # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: no base extension defined
@@ -1003,13 +1003,13 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
             sage: R.<T> = QQ[[]]; R
             Power Series Ring in T over Rational Field
-            sage: R.change_ring(GF(7))                                                              # optional - sage.libs.pari
+            sage: R.change_ring(GF(7))                                                  # optional - sage.rings.finite_rings
             Power Series Ring in T over Finite Field of size 7
-            sage: R.base_extend(GF(7))                                                              # optional - sage.libs.pari
+            sage: R.base_extend(GF(7))                                                  # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: no base extension defined
-            sage: R.base_extend(QuadraticField(3,'a'))                                              # optional - sage.rings.number_field
+            sage: R.base_extend(QuadraticField(3,'a'))                                  # optional - sage.rings.number_field
             Power Series Ring in T over Number Field in a
              with defining polynomial x^2 - 3 with a = 1.732050807568878?
         """
@@ -1233,8 +1233,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         EXAMPLES::
 
-            sage: R.<x> = PowerSeriesRing(GF(17))                                       # optional - sage.libs.pari
-            sage: R.residue_field()                                                     # optional - sage.libs.pari
+            sage: R.<x> = PowerSeriesRing(GF(17))                                       # optional - sage.rings.finite_rings
+            sage: R.residue_field()                                                     # optional - sage.rings.finite_rings
             Finite Field of size 17
             sage: R.<x> = PowerSeriesRing(Zp(5))                                        # optional - sage.rings.padics
             sage: R.residue_field()                                                     # optional - sage.rings.padics
@@ -1330,10 +1330,10 @@ class PowerSeriesRing_over_field(PowerSeriesRing_domain):
 
         EXAMPLES::
 
-            sage: R.<t> = PowerSeriesRing(GF(7))                                        # optional - sage.libs.pari
-            sage: R.fraction_field()                                                    # optional - sage.libs.pari
+            sage: R.<t> = PowerSeriesRing(GF(7))                                        # optional - sage.rings.finite_rings
+            sage: R.fraction_field()                                                    # optional - sage.rings.finite_rings
             Laurent Series Ring in t over Finite Field of size 7
-            sage: Frac(R)                                                               # optional - sage.libs.pari
+            sage: Frac(R)                                                               # optional - sage.rings.finite_rings
             Laurent Series Ring in t over Finite Field of size 7
         """
         return self.laurent_series_ring()
@@ -1347,7 +1347,7 @@ def unpickle_power_series_ring_v0(base_ring, name, default_prec, sparse):
     EXAMPLES::
 
         sage: P.<x> = PowerSeriesRing(QQ)
-        sage: loads(dumps(P)) == P # indirect doctest
+        sage: loads(dumps(P)) == P  # indirect doctest
         True
     """
     return PowerSeriesRing(base_ring, name=name, default_prec = default_prec, sparse=sparse)

@@ -118,7 +118,7 @@ class SymmetricIdeal(Ideal_generic):
 
     The default ordering is lexicographic. We now compute a Groebner basis::
 
-        sage: J = I.groebner_basis(); J   # about 3 seconds                                         # optional - sage.combinat
+        sage: J = I.groebner_basis(); J   # about 3 seconds                             # optional - sage.combinat
         [x_1*y_2*y_1 + 2*x_1*y_2, x_2*y_2*y_1 + 2*x_2*y_1,
          x_2*x_1*y_1^2 + 2*x_2*x_1*y_1, x_2*x_1*y_2 - x_2*x_1*y_1]
 
@@ -127,17 +127,17 @@ class SymmetricIdeal(Ideal_generic):
     four elements.  Ideal membership in ``I`` can now be tested by
     commuting symmetric reduction modulo ``J``::
 
-        sage: I.reduce(J)                                                                           # optional - sage.combinat
+        sage: I.reduce(J)                                                               # optional - sage.combinat
         Symmetric Ideal (0) of Infinite polynomial ring in x, y over Rational Field
 
     The Groebner basis is not point-wise invariant under permutation::
 
-        sage: P = Permutation([2, 1])                                                               # optional - sage.combinat
-        sage: J[2]                                                                                  # optional - sage.combinat
+        sage: P = Permutation([2, 1])                                                   # optional - sage.combinat
+        sage: J[2]                                                                      # optional - sage.combinat
         x_2*x_1*y_1^2 + 2*x_2*x_1*y_1
-        sage: J[2]^P                                                                                # optional - sage.combinat
+        sage: J[2]^P                                                                    # optional - sage.combinat
         x_2*x_1*y_2^2 + 2*x_2*x_1*y_2
-        sage: J[2]^P in J                                                                           # optional - sage.combinat
+        sage: J[2]^P in J                                                               # optional - sage.combinat
         False
 
     However, any element of ``J`` has symmetric reduction zero even
@@ -145,13 +145,13 @@ class SymmetricIdeal(Ideal_generic):
     permutations involve higher variable indices than the ones
     occurring in ``J``::
 
-        sage: [[(p^P).reduce(J) for p in J] for P in Permutations(3)]                               # optional - sage.combinat
+        sage: [[(p^P).reduce(J) for p in J] for P in Permutations(3)]                   # optional - sage.combinat
         [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 
     Since ``I`` is not a Groebner basis, it is no surprise that it cannot detect
     ideal membership::
 
-        sage: [p.reduce(I) for p in J]                                                              # optional - sage.combinat
+        sage: [p.reduce(I) for p in J]                                                  # optional - sage.combinat
         [0, x_2*y_2*y_1 + 2*x_2*y_1, x_2*x_1*y_1^2 + 2*x_2*x_1*y_1, x_2*x_1*y_2 - x_2*x_1*y_1]
 
     Note that we give no guarantee that the computation of a symmetric
@@ -164,12 +164,13 @@ class SymmetricIdeal(Ideal_generic):
     ::
 
         sage: I = X * (x[1])
-        sage: I * I                                                                                 # optional - sage.combinat
-        Symmetric Ideal (x_1^2, x_2*x_1) of Infinite polynomial ring in x, y over Rational Field
-        sage: I^3                                                                                   # optional - sage.combinat
+        sage: I * I                                                                     # optional - sage.combinat
+        Symmetric Ideal (x_1^2, x_2*x_1) of
+         Infinite polynomial ring in x, y over Rational Field
+        sage: I^3                                                                       # optional - sage.combinat
         Symmetric Ideal (x_1^3, x_2*x_1^2, x_2^2*x_1, x_3*x_2*x_1) of
          Infinite polynomial ring in x, y over Rational Field
-        sage: I * I == X * (x[1]^2)                                                                 # optional - sage.combinat
+        sage: I * I == X * (x[1]^2)                                                     # optional - sage.combinat
         False
 
     """
@@ -234,11 +235,11 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: R.<x> = InfinitePolynomialRing(QQ)
             sage: I = R.ideal([x[1]*x[2] + x[3]])
-            sage: I = R * I.groebner_basis()                                                        # optional - sage.combinat
-            sage: I                                                                                 # optional - sage.combinat
+            sage: I = R * I.groebner_basis()                                            # optional - sage.combinat
+            sage: I                                                                     # optional - sage.combinat
             Symmetric Ideal (x_1^2 + x_1, x_2 - x_1) of
              Infinite polynomial ring in x over Rational Field
-            sage: x[2]^2 + x[3] in I # indirect doctest                                             # optional - sage.combinat
+            sage: x[2]^2 + x[3] in I # indirect doctest                                 # optional - sage.combinat
             True
         """
         try:
@@ -259,7 +260,7 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: I = X * (x[1])
-            sage: I*I         # indirect doctest                                                    # optional - sage.combinat
+            sage: I*I         # indirect doctest                                        # optional - sage.combinat
             Symmetric Ideal (x_1^2, x_2*x_1) of Infinite polynomial ring in x over Rational Field
 
         """
@@ -299,7 +300,7 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: I = X * (x[1])
-            sage: I^2     # indirect doctest                                                        # optional - sage.combinat
+            sage: I^2     # indirect doctest                                            # optional - sage.combinat
             Symmetric Ideal (x_1^2, x_2*x_1) of Infinite polynomial ring in x over Rational Field
 
         """
@@ -328,20 +329,20 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: R.<x,y> = InfinitePolynomialRing(QQ)
             sage: I = R.ideal([x[1] + y[2], x[2] - y[1]])
-            sage: I = R * I.groebner_basis()                                                        # optional - sage.combinat
-            sage: I                                                                                 # optional - sage.combinat
+            sage: I = R * I.groebner_basis()                                            # optional - sage.combinat
+            sage: I                                                                     # optional - sage.combinat
             Symmetric Ideal (y_1, x_1) of Infinite polynomial ring in x, y over Rational Field
-            sage: I = R.ideal([x[1] + y[2], x[2] - y[1]])                                           # optional - sage.combinat
-            sage: I.is_maximal()                                                                    # optional - sage.combinat
+            sage: I = R.ideal([x[1] + y[2], x[2] - y[1]])                               # optional - sage.combinat
+            sage: I.is_maximal()                                                        # optional - sage.combinat
             False
 
         The preceding answer is wrong, since it is not the case that
         ``I`` is given by a symmetric Groebner basis::
 
-            sage: I = R * I.groebner_basis()                                                        # optional - sage.combinat
-            sage: I                                                                                 # optional - sage.combinat
+            sage: I = R * I.groebner_basis()                                            # optional - sage.combinat
+            sage: I                                                                     # optional - sage.combinat
             Symmetric Ideal (y_1, x_1) of Infinite polynomial ring in x, y over Rational Field
-            sage: I.is_maximal()                                                                    # optional - sage.combinat
+            sage: I.is_maximal()                                                        # optional - sage.combinat
             True
 
         """
@@ -396,7 +397,7 @@ class SymmetricIdeal(Ideal_generic):
         reduction by ``x[2]^2*y[1]`` works, since one can change
         variable index 1 into 2 and 2 into 3::
 
-            sage: I.reduce([x[2]^2*y[1]])                                                           # optional - sage.combinat
+            sage: I.reduce([x[2]^2*y[1]])                                               # optional - sage.combinat
             Symmetric Ideal (y_3*y_1^2) of Infinite polynomial ring in x, y over Rational Field
 
         The next example shows that tail reduction is not done, unless
@@ -405,8 +406,9 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: J = (y[2]) * X
             sage: I.reduce(J)
-            Symmetric Ideal (x_3^2*y_1 + y_3*y_1^2) of Infinite polynomial ring in x, y over Rational Field
-            sage: I.reduce(J, tailreduce=True)
+            Symmetric Ideal (x_3^2*y_1 + y_3*y_1^2) of
+             Infinite polynomial ring in x, y over Rational Field
+            sage: I.reduce(J, tailreduce=True)                                          # optional - sage.combinat
             Symmetric Ideal (x_3^2*y_1) of Infinite polynomial ring in x, y over Rational Field
 
         """
@@ -451,18 +453,20 @@ class SymmetricIdeal(Ideal_generic):
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: I = X * (x[1] + x[2], x[1]*x[2])
             sage: I.interreduction()
-            Symmetric Ideal (-x_1^2, x_2 + x_1) of Infinite polynomial ring in x over Rational Field
+            Symmetric Ideal (-x_1^2, x_2 + x_1) of
+             Infinite polynomial ring in x over Rational Field
 
         Here, we show the ``report`` option::
 
-            sage: I.interreduction(report=True)
+            sage: I.interreduction(report=True)                                         # optional - sage.combinat
             Symmetric interreduction
             [1/2]  >
             [2/2] :>
             [1/2]  >
             [2/2] T[1]>
             >
-            Symmetric Ideal (-x_1^2, x_2 + x_1) of Infinite polynomial ring in x over Rational Field
+            Symmetric Ideal (-x_1^2, x_2 + x_1) of
+             Infinite polynomial ring in x over Rational Field
 
         ``[m/n]`` indicates that polynomial number ``m`` is considered
         and the total number of polynomials under consideration is
@@ -476,8 +480,9 @@ class SymmetricIdeal(Ideal_generic):
             sage: R = SymmetricReductionStrategy(X)
             sage: R
             Symmetric Reduction Strategy in Infinite polynomial ring in x over Rational Field
-            sage: I.interreduction(RStrat=R)
-            Symmetric Ideal (-x_1^2, x_2 + x_1) of Infinite polynomial ring in x over Rational Field
+            sage: I.interreduction(RStrat=R)                                            # optional - sage.combinat
+            Symmetric Ideal (-x_1^2, x_2 + x_1) of
+             Infinite polynomial ring in x over Rational Field
             sage: R
             Symmetric Reduction Strategy in Infinite polynomial ring in x over Rational Field, modulo
                 x_1^2,
@@ -565,7 +570,7 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: I = X * (x[1] + x[2], x[1]*x[2])
-            sage: I.interreduced_basis()                                                            # optional - sage.combinat
+            sage: I.interreduced_basis()                                                # optional - sage.combinat
             [-x_1^2, x_2 + x_1]
 
         """
@@ -612,11 +617,12 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: I = X * (x[1] + x[2], x[1]*x[2])
-            sage: I.symmetrisation()                                                                # optional - sage.combinat
-            Symmetric Ideal (-x_1^2, x_2 + x_1) of Infinite polynomial ring in x over Rational Field
-            sage: I.symmetrisation(N=3)                                                             # optional - sage.combinat
+            sage: I.symmetrisation()                                                    # optional - sage.combinat
+            Symmetric Ideal (-x_1^2, x_2 + x_1) of
+             Infinite polynomial ring in x over Rational Field
+            sage: I.symmetrisation(N=3)                                                 # optional - sage.combinat
             Symmetric Ideal (-2*x_1) of Infinite polynomial ring in x over Rational Field
-            sage: I.symmetrisation(N=3, use_full_group=True)                                        # optional - sage.combinat
+            sage: I.symmetrisation(N=3, use_full_group=True)                            # optional - sage.combinat
             Symmetric Ideal (-2*x_1) of Infinite polynomial ring in x over Rational Field
 
         """
@@ -671,7 +677,7 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: I = X * (x[1] + x[2], x[1]*x[2])
-            sage: I.symmetric_basis()                                                               # optional - sage.combinat
+            sage: I.symmetric_basis()                                                   # optional - sage.combinat
             [x_1^2, x_2 + x_1]
 
         """
@@ -796,10 +802,10 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: X.<x,y> = InfinitePolynomialRing(QQ)
             sage: I1 = X * (x[1] + x[2], x[1]*x[2])
-            sage: I1.groebner_basis()                                                               # optional - sage.combinat
+            sage: I1.groebner_basis()                                                   # optional - sage.combinat
             [x_1]
             sage: I2 = X * (y[1]^2*y[3] + y[1]*x[3])
-            sage: I2.groebner_basis()                                                               # optional - sage.combinat
+            sage: I2.groebner_basis()                                                   # optional - sage.combinat
             [x_1*y_2 + y_2^2*y_1, x_2*y_1 + y_2*y_1^2]
 
         Note that a symmetric Groebner basis of a principal ideal is
@@ -809,13 +815,13 @@ class SymmetricIdeal(Ideal_generic):
         and Hillar, the result is the same, but the computation takes
         much longer::
 
-            sage: I2.groebner_basis(use_full_group=True)                                            # optional - sage.combinat
+            sage: I2.groebner_basis(use_full_group=True)                                # optional - sage.combinat
             [x_1*y_2 + y_2^2*y_1, x_2*y_1 + y_2*y_1^2]
 
         Last, we demonstrate how the report on the progress of
         computations looks like::
 
-            sage: I1.groebner_basis(report=True, reduced=True)                                      # optional - sage.combinat
+            sage: I1.groebner_basis(report=True, reduced=True)                          # optional - sage.combinat
             Symmetric interreduction
             [1/2]  >
             [2/2] :>
@@ -888,7 +894,7 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: R.<x,y> = InfinitePolynomialRing(ZZ)
             sage: I = R * [x[1] + x[2], y[1]]
-            sage: I.groebner_basis()                                                                # optional - sage.combinat
+            sage: I.groebner_basis()                                                    # optional - sage.combinat
             Traceback (most recent call last):
             ...
             TypeError: The base ring (= Integer Ring) must be a field
@@ -897,17 +903,17 @@ class SymmetricIdeal(Ideal_generic):
 
         In an earlier version, the following examples failed::
 
-            sage: X.<y,z> = InfinitePolynomialRing(GF(5), order='degrevlex')                        # optional - sage.libs.pari
+            sage: X.<y,z> = InfinitePolynomialRing(GF(5), order='degrevlex')            # optional - sage.libs.pari
             sage: I = ['-2*y_0^2 + 2*z_0^2 + 1', '-y_0^2 + 2*y_0*z_0 - 2*z_0^2 - 2*z_0 - 1',
             ....:      'y_0*z_0 + 2*z_0^2 - 2*z_0 - 1', 'y_0^2 + 2*y_0*z_0 - 2*z_0^2 + 2*z_0 - 2',
             ....:      '-y_0^2 - 2*y_0*z_0 - z_0^2 + y_0 - 1'] * X
-            sage: I.groebner_basis()                                                                # optional - sage.combinat sage.libs.pari
+            sage: I.groebner_basis()                                                    # optional - sage.combinat sage.libs.pari
             [1]
 
-            sage: Y.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex',                        # optional - sage.libs.pari
+            sage: Y.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex',            # optional - sage.libs.pari
             ....:                                  implementation='sparse')
             sage: I = ['-y_3'] * Y
-            sage: I.groebner_basis()                                                                # optional - sage.libs.pari
+            sage: I.groebner_basis()                                                    # optional - sage.libs.pari
             [y_1]
 
         """

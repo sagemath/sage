@@ -73,18 +73,18 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
 
             sage: from sage.rings.polynomial.polynomial_ring_homomorphism import PolynomialRingHomomorphism_from_base
             sage: R.<x> = ZZ[]
-            sage: S = GF(5)['x']                                                # optional - sage.libs.pari
-            sage: f = ZZ.hom(GF(5))                                             # optional - sage.libs.pari
-            sage: F = PolynomialRingHomomorphism_from_base(R.Hom(S), f)         # optional - sage.libs.pari
-            sage: F(2 * x, check=True)                                          # optional - sage.libs.pari
+            sage: S = GF(5)['x']                                                        # optional - sage.rings.finite_rings
+            sage: f = ZZ.hom(GF(5))                                                     # optional - sage.rings.finite_rings
+            sage: F = PolynomialRingHomomorphism_from_base(R.Hom(S), f)                 # optional - sage.rings.finite_rings
+            sage: F(2 * x, check=True)                                                  # optional - sage.rings.finite_rings
             2*x
 
-            sage: k = GF(49, 'z')                                               # optional - sage.libs.pari
-            sage: A = PolynomialRing(GF(7), 'x', sparse=True)                   # optional - sage.libs.pari
-            sage: B = PolynomialRing(k, 'x', sparse=True)                       # optional - sage.libs.pari
-            sage: g = GF(7).hom(k)                                              # optional - sage.libs.pari
-            sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)         # optional - sage.libs.pari
-            sage: G(A.gen()^1000000, True, construct=False)                     # optional - sage.libs.pari
+            sage: k = GF(49, 'z')                                                       # optional - sage.rings.finite_rings
+            sage: A = PolynomialRing(GF(7), 'x', sparse=True)                           # optional - sage.rings.finite_rings
+            sage: B = PolynomialRing(k, 'x', sparse=True)                               # optional - sage.rings.finite_rings
+            sage: g = GF(7).hom(k)                                                      # optional - sage.rings.finite_rings
+            sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)                 # optional - sage.rings.finite_rings
+            sage: G(A.gen()^1000000, True, construct=False)                             # optional - sage.rings.finite_rings
             x^1000000
 
         """

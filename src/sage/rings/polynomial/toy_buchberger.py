@@ -24,39 +24,40 @@ EXAMPLES:
 Consider Katsura-6 with respect to a ``degrevlex`` ordering. ::
 
     sage: from sage.rings.polynomial.toy_buchberger import *
-    sage: P.<a,b,c,e,f,g,h,i,j,k> = PolynomialRing(GF(32003))
-    sage: I = sage.rings.ideal.Katsura(P, 6)
+    sage: P.<a,b,c,e,f,g,h,i,j,k> = PolynomialRing(GF(32003))                           # optional - sage.rings.finite_rings
+    sage: I = sage.rings.ideal.Katsura(P, 6)                                            # optional - sage.rings.finite_rings
 
-    sage: g1 = buchberger(I)
-    sage: g2 = buchberger_improved(I)
-    sage: g3 = I.groebner_basis()
+    sage: g1 = buchberger(I)                                                            # optional - sage.rings.finite_rings
+    sage: g2 = buchberger_improved(I)                                                   # optional - sage.rings.finite_rings
+    sage: g3 = I.groebner_basis()                                                       # optional - sage.rings.finite_rings
 
 All algorithms actually compute a Groebner basis::
 
-    sage: Ideal(g1).basis_is_groebner()
+    sage: Ideal(g1).basis_is_groebner()                                                 # optional - sage.rings.finite_rings
     True
-    sage: Ideal(g2).basis_is_groebner()
+    sage: Ideal(g2).basis_is_groebner()                                                 # optional - sage.rings.finite_rings
     True
-    sage: Ideal(g3).basis_is_groebner()
+    sage: Ideal(g3).basis_is_groebner()                                                 # optional - sage.rings.finite_rings
     True
 
 The results are correct::
 
-    sage: Ideal(g1) == Ideal(g2) == Ideal(g3)
+    sage: Ideal(g1) == Ideal(g2) == Ideal(g3)                                           # optional - sage.rings.finite_rings
     True
 
 If ``get_verbose()`` is `\ge 1`, a protocol is provided::
 
     sage: from sage.misc.verbose import set_verbose
     sage: set_verbose(1)
-    sage: P.<a,b,c> = PolynomialRing(GF(127))
-    sage: I = sage.rings.ideal.Katsura(P)
+    sage: P.<a,b,c> = PolynomialRing(GF(127))                                           # optional - sage.rings.finite_rings
+    sage: I = sage.rings.ideal.Katsura(P)                                               # optional - sage.rings.finite_rings
     // sage... ideal
 
-    sage: I
-    Ideal (a + 2*b + 2*c - 1, a^2 + 2*b^2 + 2*c^2 - a, 2*a*b + 2*b*c - b) of Multivariate Polynomial Ring in a, b, c over Finite Field of size 127
+    sage: I                                                                             # optional - sage.rings.finite_rings
+    Ideal (a + 2*b + 2*c - 1, a^2 + 2*b^2 + 2*c^2 - a, 2*a*b + 2*b*c - b)
+     of Multivariate Polynomial Ring in a, b, c over Finite Field of size 127
 
-    sage: buchberger(I)  # random
+    sage: buchberger(I)  # random                                                       # optional - sage.rings.finite_rings
     (a + 2*b + 2*c - 1, a^2 + 2*b^2 + 2*c^2 - a) => -2*b^2 - 6*b*c - 6*c^2 + b + 2*c
     G: set([a + 2*b + 2*c - 1, 2*a*b + 2*b*c - b, a^2 + 2*b^2 + 2*c^2 - a, -2*b^2 - 6*b*c - 6*c^2 + b + 2*c])
     <BLANKLINE>
@@ -117,18 +118,19 @@ If ``get_verbose()`` is `\ge 1`, a protocol is provided::
 The original Buchberger algorithm performs 15 useless reductions to
 zero for this example::
 
-    sage: gb = buchberger(I)
+    sage: gb = buchberger(I)                                                            # optional - sage.rings.finite_rings
     ...
     15 reductions to zero.
 
 The 'improved' Buchberger algorithm in contrast only performs 1 reduction to
 zero::
 
-    sage: gb = buchberger_improved(I)
+    sage: gb = buchberger_improved(I)                                                   # optional - sage.rings.finite_rings
     ...
     1 reductions to zero.
-    sage: sorted(gb)                                                                                # optional - sage.libs.pari
-    [a + 2*b + 2*c - 1, b*c + 52*c^2 + 38*b + 25*c, b^2 - 26*c^2 - 51*b + 51*c, c^3 + 22*c^2 - 55*b + 49*c]
+    sage: sorted(gb)                                                                    # optional - sage.rings.finite_rings
+    [a + 2*b + 2*c - 1, b*c + 52*c^2 + 38*b + 25*c,
+     b^2 - 26*c^2 - 51*b + 51*c, c^3 + 22*c^2 - 55*b + 49*c]
 
 AUTHORS:
 

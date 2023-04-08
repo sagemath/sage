@@ -21,7 +21,8 @@ def IdealMonoid(R):
     EXAMPLES::
 
         sage: R = QQ['x']
-        sage: sage.rings.ideal_monoid.IdealMonoid(R)
+        sage: from sage.rings.ideal_monoid import IdealMonoid
+        sage: IdealMonoid(R)
         Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
     """
     return IdealMonoid_c(R)
@@ -34,7 +35,8 @@ class IdealMonoid_c(Parent):
     TESTS::
 
         sage: R = QQ['x']
-        sage: M = sage.rings.ideal_monoid.IdealMonoid(R)
+        sage: from sage.rings.ideal_monoid import IdealMonoid
+        sage: M = IdealMonoid(R)
         sage: TestSuite(M).run()
           Failure in _test_category:
         ...
@@ -51,16 +53,18 @@ class IdealMonoid_c(Parent):
 
         TESTS::
 
-            sage: R = QuadraticField(-23, 'a')
-            sage: M = sage.rings.ideal_monoid.IdealMonoid(R); M # indirect doctest
-            Monoid of ideals of Number Field in a with defining polynomial x^2 + 23 with a = 4.795831523312720?*I
+            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
+            sage: from sage.rings.ideal_monoid import IdealMonoid
+            sage: M = IdealMonoid(R); M # indirect doctest                              # optional - sage.rings.number_field
+            Monoid of ideals of Number Field in a with defining polynomial x^2 + 23
+             with a = 4.795831523312720?*I
 
             sage: id = QQ.ideal(6)
             sage: id.parent().category()
             Category of commutative monoids
 
-            sage: MS = MatrixSpace(QQ, 3, 3)                                                                            # optional - sage.modules
-            sage: MS.ideal(MS.one()).parent().category()                                                                # optional - sage.modules
+            sage: MS = MatrixSpace(QQ, 3, 3)                                            # optional - sage.modules
+            sage: MS.ideal(MS.one()).parent().category()                                # optional - sage.modules
             Category of monoids
         """
         self.__R = R
@@ -77,9 +81,11 @@ class IdealMonoid_c(Parent):
 
         TESTS::
 
-            sage: R = QuadraticField(-23, 'a')
-            sage: M = sage.rings.ideal_monoid.IdealMonoid(R); M._repr_()
-            'Monoid of ideals of Number Field in a with defining polynomial x^2 + 23 with a = 4.795831523312720?*I'
+            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
+            sage: from sage.rings.ideal_monoid import IdealMonoid
+            sage: M = IdealMonoid(R); M._repr_()                                        # optional - sage.rings.number_field
+            'Monoid of ideals of Number Field in a with defining polynomial x^2 + 23
+             with a = 4.795831523312720?*I'
         """
         return "Monoid of ideals of %s" % self.__R
 
@@ -89,8 +95,9 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R = QuadraticField(-23, 'a')
-            sage: M = sage.rings.ideal_monoid.IdealMonoid(R); M.ring() is R
+            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
+            sage: from sage.rings.ideal_monoid import IdealMonoid
+            sage: M = IdealMonoid(R); M.ring() is R                                     # optional - sage.rings.number_field
             True
         """
         return self.__R
@@ -101,11 +108,12 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R.<a> = QuadraticField(-23)
-            sage: M = sage.rings.ideal_monoid.IdealMonoid(R)
-            sage: M(a)   # indirect doctest
+            sage: R.<a> = QuadraticField(-23)                                           # optional - sage.rings.number_field
+            sage: from sage.rings.ideal_monoid import IdealMonoid
+            sage: M = IdealMonoid(R)                                                    # optional - sage.rings.number_field
+            sage: M(a)   # indirect doctest                                             # optional - sage.rings.number_field
             Fractional ideal (a)
-            sage: M([a-4, 13])
+            sage: M([a-4, 13])                                                          # optional - sage.rings.number_field
             Fractional ideal (13, 1/2*a + 9/2)
         """
         try:
@@ -129,9 +137,9 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R = QuadraticField(-23, 'a')
-            sage: M = R.ideal_monoid()
-            sage: M.has_coerce_map_from(R) # indirect doctest
+            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
+            sage: M = R.ideal_monoid()                                                  # optional - sage.rings.number_field
+            sage: M.has_coerce_map_from(R) # indirect doctest                           # optional - sage.rings.number_field
             True
             sage: M.has_coerce_map_from(QQ.ideal_monoid())                              # optional - sage.rings.number_field
             True
@@ -151,13 +159,13 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R = QuadraticField(-23, 'a')
-            sage: M = R.ideal_monoid()
-            sage: M == QQ
+            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
+            sage: M = R.ideal_monoid()                                                  # optional - sage.rings.number_field
+            sage: M == QQ                                                               # optional - sage.rings.number_field
             False
-            sage: M == 17
+            sage: M == 17                                                               # optional - sage.rings.number_field
             False
-            sage: M == R.ideal_monoid()
+            sage: M == R.ideal_monoid()                                                 # optional - sage.rings.number_field
             True
         """
         if not isinstance(other, IdealMonoid_c):
@@ -171,13 +179,13 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R = QuadraticField(-23, 'a')
-            sage: M = R.ideal_monoid()
-            sage: M != QQ
+            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
+            sage: M = R.ideal_monoid()                                                  # optional - sage.rings.number_field
+            sage: M != QQ                                                               # optional - sage.rings.number_field
             True
-            sage: M != 17
+            sage: M != 17                                                               # optional - sage.rings.number_field
             True
-            sage: M != R.ideal_monoid()
+            sage: M != R.ideal_monoid()                                                 # optional - sage.rings.number_field
             False
         """
         return not (self == other)
@@ -188,13 +196,13 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R = QuadraticField(-23, 'a')
-            sage: M = R.ideal_monoid()
-            sage: hash(M) == hash(QQ)
+            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
+            sage: M = R.ideal_monoid()                                                  # optional - sage.rings.number_field
+            sage: hash(M) == hash(QQ)                                                   # optional - sage.rings.number_field
             False
-            sage: hash(M) == 17
+            sage: hash(M) == 17                                                         # optional - sage.rings.number_field
             False
-            sage: hash(M) == hash(R.ideal_monoid())
+            sage: hash(M) == hash(R.ideal_monoid())                                     # optional - sage.rings.number_field
             True
         """
         # uses a random number, to have a distinct hash
