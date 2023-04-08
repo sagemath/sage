@@ -10,7 +10,10 @@ EXAMPLES::
     sage: from sage.rings.polynomial.flatten import FlatteningMorphism
     sage: phi = FlatteningMorphism(R); phi
     Flattening morphism:
-      From: Univariate Polynomial Ring in X over Multivariate Polynomial Ring in s, t over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+      From: Univariate Polynomial Ring in X
+            over Multivariate Polynomial Ring in s, t
+            over Univariate Polynomial Ring in y
+            over Univariate Polynomial Ring in x over Rational Field
       To:   Multivariate Polynomial Ring in x, y, s, t, X over Rational Field
     sage: phi('x*y*s + t*X').parent()
     Multivariate Polynomial Ring in x, y, s, t, X over Rational Field
@@ -108,36 +111,36 @@ class FlatteningMorphism(Morphism):
 
         ::
 
-            sage: K.<v> = NumberField(x^3 - 2)                                                                          # optional - sage.rings.number_field
-            sage: R = K['x','y']['a','b']                                                                               # optional - sage.rings.number_field
+            sage: K.<v> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
+            sage: R = K['x','y']['a','b']                                               # optional - sage.rings.number_field
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                                                             # optional - sage.rings.number_field
-            sage: f(R('v*a*x^2 + b^2 + 1/v*y'))                                                                         # optional - sage.rings.number_field
+            sage: f = FlatteningMorphism(R)                                             # optional - sage.rings.number_field
+            sage: f(R('v*a*x^2 + b^2 + 1/v*y'))                                         # optional - sage.rings.number_field
             v*x^2*a + b^2 + (1/2*v^2)*y
 
         ::
 
-            sage: R = QQbar['x','y']['a','b']                                                                           # optional - sage.rings.number_field
+            sage: R = QQbar['x','y']['a','b']                                           # optional - sage.rings.number_field
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                                                             # optional - sage.rings.number_field
-            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))                                                       # optional - sage.rings.number_field
+            sage: f = FlatteningMorphism(R)                                             # optional - sage.rings.number_field
+            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))                       # optional - sage.rings.number_field
             1.414213562373095?*x^2*a + b^2 + I*y
 
         ::
 
-            sage: R.<z> = PolynomialRing(QQbar, 1)                                                                      # optional - sage.rings.number_field
+            sage: R.<z> = PolynomialRing(QQbar, 1)                                      # optional - sage.rings.number_field
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                                                             # optional - sage.rings.number_field
-            sage: f.domain(), f.codomain()                                                                              # optional - sage.rings.number_field
+            sage: f = FlatteningMorphism(R)                                             # optional - sage.rings.number_field
+            sage: f.domain(), f.codomain()                                              # optional - sage.rings.number_field
             (Multivariate Polynomial Ring in z over Algebraic Field,
              Multivariate Polynomial Ring in z over Algebraic Field)
 
         ::
 
-            sage: R.<z> = PolynomialRing(QQbar)                                                                         # optional - sage.rings.number_field
+            sage: R.<z> = PolynomialRing(QQbar)                                         # optional - sage.rings.number_field
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: f = FlatteningMorphism(R)                                                                             # optional - sage.rings.number_field
-            sage: f.domain(), f.codomain()                                                                              # optional - sage.rings.number_field
+            sage: f = FlatteningMorphism(R)                                             # optional - sage.rings.number_field
+            sage: f.domain(), f.codomain()                                              # optional - sage.rings.number_field
             (Univariate Polynomial Ring in z over Algebraic Field,
              Univariate Polynomial Ring in z over Algebraic Field)
 
@@ -243,7 +246,8 @@ class FlatteningMorphism(Morphism):
             sage: h.section()
             Unflattening morphism:
               From: Multivariate Polynomial Ring in a, b, c, x, y, z over Rational Field
-              To:   Multivariate Polynomial Ring in x, y, z over Multivariate Polynomial Ring in a, b, c over Rational Field
+              To:   Multivariate Polynomial Ring in x, y, z
+                    over Multivariate Polynomial Ring in a, b, c over Rational Field
 
         ::
 
@@ -252,7 +256,8 @@ class FlatteningMorphism(Morphism):
             sage: FlatteningMorphism(R).section()
             Unflattening morphism:
               From: Multivariate Polynomial Ring in a, b, c over Integer Ring
-              To:   Univariate Polynomial Ring in c over Univariate Polynomial Ring in b over Univariate Polynomial Ring in a over Integer Ring
+              To:   Univariate Polynomial Ring in c over Univariate Polynomial Ring in b
+                    over Univariate Polynomial Ring in a over Integer Ring
         """
         return UnflatteningMorphism(self.codomain(), self.domain())
 
@@ -268,7 +273,8 @@ class FlatteningMorphism(Morphism):
             sage: f.inverse()
             Unflattening morphism:
               From: Multivariate Polynomial Ring in x, y, u, v over Rational Field
-              To:   Multivariate Polynomial Ring in u, v over Multivariate Polynomial Ring in x, y over Rational Field
+              To:   Multivariate Polynomial Ring in u, v
+                    over Multivariate Polynomial Ring in x, y over Rational Field
         """
         return self.section()
 
@@ -286,7 +292,8 @@ class UnflatteningMorphism(Morphism):
         sage: g = f(R('x^2 + c*y^2 - z^2'));g
         x^2 + c*y^2 - z^2
         sage: g.parent()
-        Multivariate Polynomial Ring in x, y, z over Univariate Polynomial Ring in c over Rational Field
+        Multivariate Polynomial Ring in x, y, z
+         over Univariate Polynomial Ring in c over Rational Field
 
     ::
 
@@ -296,7 +303,8 @@ class UnflatteningMorphism(Morphism):
         sage: UnflatteningMorphism(R, S)
         Unflattening morphism:
           From: Multivariate Polynomial Ring in a, b, x, y over Rational Field
-          To:   Multivariate Polynomial Ring in x, y over Multivariate Polynomial Ring in a, b over Rational Field
+          To:   Multivariate Polynomial Ring in x, y
+                over Multivariate Polynomial Ring in a, b over Rational Field
     """
 
     def __init__(self, domain, codomain):
@@ -367,8 +375,8 @@ class UnflatteningMorphism(Morphism):
 
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: rings = [ZZ['x']['y']['a,b,c']]
-            sage: rings += [GF(4)['x','y']['a','b']]                                                                    # optional - sage.libs.pari
-            sage: rings += [AA['x']['a','b']['y'], QQbar['a1','a2']['t']['X','Y']]                                      # optional - sage.rings.number_field
+            sage: rings += [GF(4)['x','y']['a','b']]                                    # optional - sage.rings.finite_rings
+            sage: rings += [AA['x']['a','b']['y'], QQbar['a1','a2']['t']['X','Y']]      # optional - sage.rings.number_field
             sage: for R in rings:
             ....:    f = FlatteningMorphism(R)
             ....:    g = f.section()
@@ -425,8 +433,9 @@ class SpecializationMorphism(Morphism):
         sage: from sage.rings.polynomial.flatten import SpecializationMorphism
         sage: xi = SpecializationMorphism(S, {c:0}); xi
         Specialization morphism:
-              From: Univariate Polynomial Ring in z over Univariate Polynomial Ring in c over Rational Field
-              To:   Univariate Polynomial Ring in z over Rational Field
+          From: Univariate Polynomial Ring in z
+                over Univariate Polynomial Ring in c over Rational Field
+          To:   Univariate Polynomial Ring in z over Rational Field
         sage: xi(z^2+c)
         z^2
 
@@ -439,8 +448,11 @@ class SpecializationMorphism(Morphism):
         sage: from sage.rings.polynomial.flatten import SpecializationMorphism
         sage: xi = SpecializationMorphism(S, D); xi
         Specialization morphism:
-          From: Multivariate Polynomial Ring in x, y, z over Multivariate Polynomial Ring in a, b, c over Multivariate Polynomial Ring in u, v over Rational Field
-          To:   Multivariate Polynomial Ring in y, z over Univariate Polynomial Ring in c over Univariate Polynomial Ring in v over Rational Field
+          From: Multivariate Polynomial Ring in x, y, z
+                over Multivariate Polynomial Ring in a, b, c
+                over Multivariate Polynomial Ring in u, v over Rational Field
+          To:   Multivariate Polynomial Ring in y, z over Univariate Polynomial Ring in c
+                over Univariate Polynomial Ring in v over Rational Field
         sage: xi(a*(x*z+y^2)*u+b*v*u*(x*z+y^2)*y^2*c+c*y^2*z^2)
         2*v*c*y^4 + c*y^2*z^2 + y^2
     """
@@ -657,8 +669,10 @@ class FractionSpecializationMorphism(Morphism):
             sage: phi = FractionSpecializationMorphism(Frac(S), {c:3})
             sage: phi
             Fraction Specialization morphism:
-                From: Fraction Field of Multivariate Polynomial Ring in x, y over Multivariate Polynomial Ring in a, c over Rational Field
-                To:   Fraction Field of Multivariate Polynomial Ring in x, y over Univariate Polynomial Ring in a over Rational Field
+              From: Fraction Field of Multivariate Polynomial Ring in x, y
+                    over Multivariate Polynomial Ring in a, c over Rational Field
+              To:   Fraction Field of Multivariate Polynomial Ring in x, y
+                    over Univariate Polynomial Ring in a over Rational Field
         """
         if not is_FractionField(domain):
             raise TypeError("domain must be a fraction field")

@@ -655,11 +655,11 @@ class QuotientRingElement(RingElement):
         The issue from :trac:`8005` was most likely fixed as part of
         :trac:`9138`::
 
-            sage: F = GF(5)                                                     # optional - sage.libs.pari
-            sage: R.<x,y> = F[]                                                 # optional - sage.libs.pari
-            sage: I = Ideal(R, [x, y])                                          # optional - sage.libs.pari
-            sage: S.<x1,y1> = QuotientRing(R, I)                                # optional - sage.libs.pari
-            sage: x1^4                                                          # optional - sage.libs.pari
+            sage: F = GF(5)                                                             # optional - sage.rings.finite_rings
+            sage: R.<x,y> = F[]                                                         # optional - sage.rings.finite_rings
+            sage: I = Ideal(R, [x, y])                                                  # optional - sage.rings.finite_rings
+            sage: S.<x1,y1> = QuotientRing(R, I)                                        # optional - sage.rings.finite_rings
+            sage: x1^4                                                                  # optional - sage.rings.finite_rings
             0
         """
         # A containment test is not implemented for univariate polynomial
@@ -682,18 +682,18 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')             # optional - sage.libs.pari
-            sage: I = sage.rings.ideal.FieldIdeal(R)                            # optional - sage.libs.pari
-            sage: Q = R.quo(I)                                                  # optional - sage.libs.pari
-            sage: f = Q(z*y + 2*x)                                              # optional - sage.libs.pari
-            sage: f.lt()                                                        # optional - sage.libs.pari
+            sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')                     # optional - sage.rings.finite_rings
+            sage: I = sage.rings.ideal.FieldIdeal(R)                                    # optional - sage.rings.finite_rings
+            sage: Q = R.quo(I)                                                          # optional - sage.rings.finite_rings
+            sage: f = Q(z*y + 2*x)                                                      # optional - sage.rings.finite_rings
+            sage: f.lt()                                                                # optional - sage.rings.finite_rings
             2*xbar
 
         TESTS::
 
-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                       # optional - sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                   # optional - sage.libs.singular
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
-            sage: (a + 3*a*b + b).lt()                                                      # optional - sage.libs.singular
+            sage: (a + 3*a*b + b).lt()                                                  # optional - sage.libs.singular
             3*a*b
         """
         return self.__class__(self.parent(), self.__rep.lt())
@@ -704,18 +704,18 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')             # optional - sage.libs.pari
-            sage: I = sage.rings.ideal.FieldIdeal(R)                            # optional - sage.libs.pari
-            sage: Q = R.quo(I)                                                  # optional - sage.libs.pari
-            sage: f = Q(z*y + 2*x)                                              # optional - sage.libs.pari
-            sage: f.lm()                                                        # optional - sage.libs.pari
+            sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')                     # optional - sage.rings.finite_rings
+            sage: I = sage.rings.ideal.FieldIdeal(R)                                    # optional - sage.rings.finite_rings
+            sage: Q = R.quo(I)                                                          # optional - sage.rings.finite_rings
+            sage: f = Q(z*y + 2*x)                                                      # optional - sage.rings.finite_rings
+            sage: f.lm()                                                                # optional - sage.rings.finite_rings
             xbar
 
         TESTS::
 
-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                       # optional - sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                   # optional - sage.libs.singular
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
-            sage: (a+3*a*b+b).lm()                                                          # optional - sage.libs.singular
+            sage: (a+3*a*b+b).lm()                                                      # optional - sage.libs.singular
             a*b
 
         """
@@ -727,18 +727,18 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')             # optional - sage.libs.pari
-            sage: I = sage.rings.ideal.FieldIdeal(R)                            # optional - sage.libs.pari
-            sage: Q = R.quo(I)                                                  # optional - sage.libs.pari
-            sage: f = Q(z*y + 2*x)                                              # optional - sage.libs.pari
-            sage: f.lc()                                                        # optional - sage.libs.pari
+            sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')                     # optional - sage.rings.finite_rings
+            sage: I = sage.rings.ideal.FieldIdeal(R)                                    # optional - sage.rings.finite_rings
+            sage: Q = R.quo(I)                                                          # optional - sage.rings.finite_rings
+            sage: f = Q(z*y + 2*x)                                                      # optional - sage.rings.finite_rings
+            sage: f.lc()                                                                # optional - sage.rings.finite_rings
             2
 
         TESTS::
 
-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                       # optional - sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                   # optional - sage.libs.singular
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
-            sage: (a + 3*a*b + b).lc()                                                      # optional - sage.libs.singular
+            sage: (a + 3*a*b + b).lc()                                                  # optional - sage.libs.singular
             3
         """
         return self.__rep.lc()
@@ -754,17 +754,17 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                       # optional - sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                   # optional - sage.libs.singular
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
-            sage: a.variables()                                                             # optional - sage.libs.singular
+            sage: a.variables()                                                         # optional - sage.libs.singular
             (a,)
-            sage: b.variables()                                                             # optional - sage.libs.singular
+            sage: b.variables()                                                         # optional - sage.libs.singular
             (b,)
-            sage: s = a^2 + b^2 + 1; s                                                      # optional - sage.libs.singular
+            sage: s = a^2 + b^2 + 1; s                                                  # optional - sage.libs.singular
             1
-            sage: s.variables()                                                             # optional - sage.libs.singular
+            sage: s.variables()                                                         # optional - sage.libs.singular
             ()
-            sage: (a + b).variables()                                                       # optional - sage.libs.singular
+            sage: (a + b).variables()                                                   # optional - sage.libs.singular
             (a, b)
         """
         return tuple(self.__class__(self.parent(), v) for v in self.__rep.variables())
@@ -779,13 +779,13 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                       # optional - sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)                   # optional - sage.libs.singular
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
-            sage: a.monomials()                                                             # optional - sage.libs.singular
+            sage: a.monomials()                                                         # optional - sage.libs.singular
             [a]
-            sage: (a + a*b).monomials()                                                     # optional - sage.libs.singular
+            sage: (a + a*b).monomials()                                                 # optional - sage.libs.singular
             [a*b, a]
-            sage: R.zero().monomials()                                                      # optional - sage.libs.singular
+            sage: R.zero().monomials()                                                  # optional - sage.libs.singular
             []
         """
         return [self.__class__(self.parent(), m) for m in self.__rep.monomials()]
@@ -801,10 +801,10 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(GF(2), 2)                            # optional - sage.libs.pari
-            sage: I = sage.rings.ideal.FieldIdeal(P)                            # optional - sage.libs.pari
-            sage: Q = P.quo(I)                                                  # optional - sage.libs.pari
-            sage: Q._singular_()                                                # optional - sage.libs.pari
+            sage: P.<x,y> = PolynomialRing(GF(2), 2)                                    # optional - sage.rings.finite_rings
+            sage: I = sage.rings.ideal.FieldIdeal(P)                                    # optional - sage.rings.finite_rings
+            sage: Q = P.quo(I)                                                          # optional - sage.rings.finite_rings
+            sage: Q._singular_()                                                        # optional - sage.rings.finite_rings
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/2
             //   number of vars : 2
@@ -814,11 +814,11 @@ class QuotientRingElement(RingElement):
             // quotient ring from ideal
             _[1]=x2+x
             _[2]=y2+y
-            sage: xbar = Q(x); xbar                                             # optional - sage.libs.pari
+            sage: xbar = Q(x); xbar                                                     # optional - sage.rings.finite_rings
             xbar
-            sage: xbar._singular_()                                             # optional - sage.libs.pari
+            sage: xbar._singular_()                                                     # optional - sage.rings.finite_rings
             x
-            sage: Q(xbar._singular_()) # a round-trip                           # optional - sage.libs.pari
+            sage: Q(xbar._singular_()) # a round-trip                                   # optional - sage.rings.finite_rings
             xbar
 
         TESTS::
@@ -840,12 +840,12 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: P.<x,y> = PolynomialRing(GF(2))                               # optional - sage.libs.pari
-            sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))                # optional - sage.libs.pari
-            sage: xbar, ybar = Q.gens()                                         # optional - sage.libs.pari
-            sage: magma(xbar)                       # optional - magma          # optional - sage.libs.pari
+            sage: P.<x,y> = PolynomialRing(GF(2))                                       # optional - sage.rings.finite_rings
+            sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))                        # optional - sage.rings.finite_rings
+            sage: xbar, ybar = Q.gens()                                                 # optional - sage.rings.finite_rings
+            sage: magma(xbar)                       # optional - magma                  # optional - sage.rings.finite_rings
             x
-            sage: xbar._magma_init_(magma)          # optional - magma          # optional - sage.libs.pari
+            sage: xbar._magma_init_(magma)          # optional - magma                  # optional - sage.rings.finite_rings
             '_sage_[...]!_sage_ref...'
         """
         g = magma(self.__rep)
@@ -858,19 +858,19 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: R.<x,y> = PolynomialRing(GF(7), 2)                            # optional - sage.libs.pari
-            sage: Q = R.quotient([x^2 - y])                                     # optional - sage.libs.pari
-            sage: x, y = Q.gens()                                               # optional - sage.libs.pari
-            sage: f = (x^3 + 2*y^2*x)^7; f                                      # optional - sage.libs.pari
+            sage: R.<x,y> = PolynomialRing(GF(7), 2)                                    # optional - sage.rings.finite_rings
+            sage: Q = R.quotient([x^2 - y])                                             # optional - sage.rings.finite_rings
+            sage: x, y = Q.gens()                                                       # optional - sage.rings.finite_rings
+            sage: f = (x^3 + 2*y^2*x)^7; f                                              # optional - sage.rings.finite_rings
             2*xbar*ybar^17 + xbar*ybar^10
-            sage: mf = macaulay2(f); mf             # optional - macaulay2      # optional - sage.libs.pari
+            sage: mf = macaulay2(f); mf             # optional - macaulay2              # optional - sage.rings.finite_rings
                 17      10
             2x*y   + x*y
-            sage: mf.sage()                         # optional - macaulay2      # optional - sage.libs.pari
+            sage: mf.sage()                         # optional - macaulay2              # optional - sage.rings.finite_rings
             2*x*y^17 + x*y^10
-            sage: mf.sage() == f                    # optional - macaulay2      # optional - sage.libs.pari
+            sage: mf.sage() == f                    # optional - macaulay2              # optional - sage.rings.finite_rings
             True
-            sage: Q(mf)                             # optional - macaulay2      # optional - sage.libs.pari
+            sage: Q(mf)                             # optional - macaulay2              # optional - sage.rings.finite_rings
             2*xbar*ybar^17 + xbar*ybar^10
 
         In Macaulay2, the variable names for a quotient ring are inherited from
@@ -882,15 +882,15 @@ class QuotientRingElement(RingElement):
 
         ::
 
-            sage: R.<x,y> = PolynomialRing(GF(7), 2)                            # optional - sage.libs.pari
-            sage: Q = R.quotient([x^2 - y], names=R.gens())                     # optional - sage.libs.pari
-            sage: x, y = Q.gens()                                               # optional - sage.libs.pari
-            sage: f = (x^3 + 2*y^2*x)^7; f                                      # optional - sage.libs.pari
+            sage: R.<x,y> = PolynomialRing(GF(7), 2)                                    # optional - sage.rings.finite_rings
+            sage: Q = R.quotient([x^2 - y], names=R.gens())                             # optional - sage.rings.finite_rings
+            sage: x, y = Q.gens()                                                       # optional - sage.rings.finite_rings
+            sage: f = (x^3 + 2*y^2*x)^7; f                                              # optional - sage.rings.finite_rings
             2*x*y^17 + x*y^10
-            sage: macaulay2(f)                      # optional - macaulay2      # optional - sage.libs.pari
+            sage: macaulay2(f)                      # optional - macaulay2              # optional - sage.rings.finite_rings
                 17      10
             2x*y   + x*y
-            sage: _.sage()                          # optional - macaulay2      # optional - sage.libs.pari
+            sage: _.sage()                          # optional - macaulay2              # optional - sage.rings.finite_rings
             2*x*y^17 + x*y^10
 
         TESTS:
@@ -898,15 +898,15 @@ class QuotientRingElement(RingElement):
         Check that changing the currently defined global variables (`x`, `y`,
         ...) in Macaulay2 does not affect the result of this conversion::
 
-            sage: R.<x,y> = PolynomialRing(GF(7), 2)                            # optional - sage.libs.pari
-            sage: Q = R.quotient([x^2 - y], names=R.gens())                     # optional - sage.libs.pari
-            sage: x, y = Q.gens()                                               # optional - sage.libs.pari
-            sage: f = (x^3 + 2*y^2*x)^7                                         # optional - sage.libs.pari
-            sage: macaulay2(f)                      # optional - macaulay2      # optional - sage.libs.pari
+            sage: R.<x,y> = PolynomialRing(GF(7), 2)                                    # optional - sage.rings.finite_rings
+            sage: Q = R.quotient([x^2 - y], names=R.gens())                             # optional - sage.rings.finite_rings
+            sage: x, y = Q.gens()                                                       # optional - sage.rings.finite_rings
+            sage: f = (x^3 + 2*y^2*x)^7                                                 # optional - sage.rings.finite_rings
+            sage: macaulay2(f)                      # optional - macaulay2              # optional - sage.rings.finite_rings
                 17      10
             2x*y   + x*y
-            sage: macaulay2.use(R.quotient([x, y])) # optional - macaulay2      # optional - sage.libs.pari
-            sage: macaulay2(f)                      # optional - macaulay2      # optional - sage.libs.pari
+            sage: macaulay2.use(R.quotient([x, y])) # optional - macaulay2              # optional - sage.rings.finite_rings
+            sage: macaulay2(f)                      # optional - macaulay2              # optional - sage.rings.finite_rings
                 17      10
             2x*y   + x*y
         """
@@ -935,17 +935,18 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: P.<a,b,c,d,e> = PolynomialRing(GF(2), 5, order='lex')                     # optional - sage.libs.pari
-            sage: I1 = ideal([a*b + c*d + 1, a*c*e + d*e, a*b*e + c*e, b*c + c*d*e + 1])    # optional - sage.libs.pari
-            sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))                            # optional - sage.libs.pari
-            sage: I2 = ideal([Q(f) for f in I1.gens()])                                     # optional - sage.libs.pari
-            sage: f = Q((a*b + c*d + 1)^2  + e)                                             # optional - sage.libs.pari
-            sage: f.reduce(I2.gens())                                                       # optional - sage.libs.pari
+            sage: P.<a,b,c,d,e> = PolynomialRing(GF(2), 5, order='lex')                 # optional - sage.rings.finite_rings
+            sage: I1 = ideal([a*b + c*d + 1, a*c*e + d*e,                               # optional - sage.rings.finite_rings
+            ....:             a*b*e + c*e, b*c + c*d*e + 1])
+            sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))                        # optional - sage.rings.finite_rings
+            sage: I2 = ideal([Q(f) for f in I1.gens()])                                 # optional - sage.rings.finite_rings
+            sage: f = Q((a*b + c*d + 1)^2  + e)                                         # optional - sage.rings.finite_rings
+            sage: f.reduce(I2.gens())                                                   # optional - sage.rings.finite_rings
             ebar
 
         Notice that the result above is not minimal::
 
-            sage: I2.reduce(f)                                                              # optional - sage.libs.pari
+            sage: I2.reduce(f)                                                          # optional - sage.rings.finite_rings
             0
         """
         try:

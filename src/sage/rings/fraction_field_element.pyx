@@ -533,7 +533,7 @@ cdef class FractionFieldElement(FieldElement):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: magma((x^2 + x + 1)/(x + 1)) # optional - magma # indirect doctest
+            sage: magma((x^2 + x + 1)/(x + 1))  # optional - magma # indirect doctest
             (x^2 + x + 1)/(x + 1)
 
         ::

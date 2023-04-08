@@ -288,7 +288,7 @@ class AnInfinity():
         """
         TESTS::
 
-            sage: maxima(-oo)                                                                                           # optional - sage.symbolic
+            sage: maxima(-oo)                                                           # optional - sage.symbolic
             minf
             sage: [x._maxima_init_() for x in [unsigned_infinity, oo, -oo]]
             ['inf', 'inf', 'minf']
@@ -322,9 +322,9 @@ class AnInfinity():
 
         EXAMPLES::
 
-            sage: pari(-oo)                                                                                             # optional - sage.libs.pari
+            sage: pari(-oo)                                                             # optional - sage.libs.pari
             -oo
-            sage: pari(oo)                                                                                              # optional - sage.libs.pari
+            sage: pari(oo)                                                              # optional - sage.libs.pari
             +oo
         """
         # For some reason, it seems problematic to import sage.libs.all.pari,

@@ -20,7 +20,7 @@ EXAMPLES::
 First, consider an example from arithmetic geometry::
 
     sage: A.<x,y> = PolynomialRing(ZZ, 2)
-    sage: B.<X,Y> = PolynomialRing(Rationals(),2)
+    sage: B.<X,Y> = PolynomialRing(Rationals(), 2)
     sage: f = -y^2 - y + x^3 + 7*x + 1
     sage: fx = f.derivative(x)
     sage: fy = f.derivative(y)
@@ -34,7 +34,7 @@ singularities.
 To look at the singularities of the arithmetic surface, we need to do
 the corresponding computation over `\ZZ`::
 
-    sage: I = A.ideal([f,fx,fy])
+    sage: I = A.ideal([f, fx, fy])
     sage: gb = d_basis(I); gb
     [x - 2020, y - 11313, 22627]
 

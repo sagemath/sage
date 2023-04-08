@@ -144,8 +144,9 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R.<abc> = PolynomialRing(QQ, sparse=True); R
         Sparse Univariate Polynomial Ring in abc over Rational Field
 
-        sage: R.<w> = PolynomialRing(PolynomialRing(GF(7),'k')); R                                                      # optional - sage.libs.pari
-        Univariate Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
+        sage: R.<w> = PolynomialRing(PolynomialRing(GF(7),'k')); R                      # optional - sage.rings.finite_rings
+        Univariate Polynomial Ring in w over
+         Univariate Polynomial Ring in k over Finite Field of size 7
 
     The square bracket notation::
 
@@ -179,32 +180,32 @@ def PolynomialRing(base_ring, *args, **kwds):
     like 2^1000000 * x^1000000 in FLINT may be unwise.
     ::
 
-        sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); ZxNTL                                              # optional - sage.libs.ntl
+        sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); ZxNTL              # optional - sage.libs.ntl
         Univariate Polynomial Ring in x over Integer Ring (using NTL)
-        sage: ZxFLINT = PolynomialRing(ZZ, 'x', implementation='FLINT'); ZxFLINT                                        # optional - sage.libs.flint
+        sage: ZxFLINT = PolynomialRing(ZZ, 'x', implementation='FLINT'); ZxFLINT        # optional - sage.libs.flint
         Univariate Polynomial Ring in x over Integer Ring
-        sage: ZxFLINT is ZZ['x']                                                                                        # optional - sage.libs.flint
+        sage: ZxFLINT is ZZ['x']                                                        # optional - sage.libs.flint
         True
-        sage: ZxFLINT is PolynomialRing(ZZ, 'x')                                                                        # optional - sage.libs.flint
+        sage: ZxFLINT is PolynomialRing(ZZ, 'x')                                        # optional - sage.libs.flint
         True
-        sage: xNTL = ZxNTL.gen()                                                                                        # optional - sage.libs.ntl
-        sage: xFLINT = ZxFLINT.gen()                                                                                    # optional - sage.libs.flint
-        sage: xNTL.parent()                                                                                             # optional - sage.libs.ntl
+        sage: xNTL = ZxNTL.gen()                                                        # optional - sage.libs.ntl
+        sage: xFLINT = ZxFLINT.gen()                                                    # optional - sage.libs.flint
+        sage: xNTL.parent()                                                             # optional - sage.libs.ntl
         Univariate Polynomial Ring in x over Integer Ring (using NTL)
-        sage: xFLINT.parent()                                                                                           # optional - sage.libs.flint
+        sage: xFLINT.parent()                                                           # optional - sage.libs.flint
         Univariate Polynomial Ring in x over Integer Ring
 
     There is a coercion from the non-default to the default
     implementation, so the values can be mixed in a single
     expression::
 
-        sage: (xNTL + xFLINT^2)                                                                                         # optional - sage.libs.flint sage.libs.ntl
+        sage: (xNTL + xFLINT^2)                                                         # optional - sage.libs.flint sage.libs.ntl
         x^2 + x
 
     The result of such an expression will use the default, i.e.,
     the FLINT implementation::
 
-        sage: (xNTL + xFLINT^2).parent()                                                                                # optional - sage.libs.flint sage.libs.ntl
+        sage: (xNTL + xFLINT^2).parent()                                                # optional - sage.libs.flint sage.libs.ntl
         Univariate Polynomial Ring in x over Integer Ring
 
     The generic implementation uses neither NTL nor FLINT::
@@ -259,9 +260,9 @@ def PolynomialRing(base_ring, *args, **kwds):
     The Singular implementation always returns a multivariate ring,
     even for 1 variable::
 
-        sage: PolynomialRing(QQ, "x", implementation="singular")                                                        # optional - sage.libs.singular
+        sage: PolynomialRing(QQ, "x", implementation="singular")                        # optional - sage.libs.singular
         Multivariate Polynomial Ring in x over Rational Field
-        sage: P.<x> = PolynomialRing(QQ, implementation="singular"); P                                                  # optional - sage.libs.singular
+        sage: P.<x> = PolynomialRing(QQ, implementation="singular"); P                  # optional - sage.libs.singular
         Multivariate Polynomial Ring in x over Rational Field
 
     **3. PolynomialRing(base_ring, n, names, ...)** (where the arguments
@@ -278,7 +279,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: PolynomialRing(QQ, 2, 'alpha0')
         Multivariate Polynomial Ring in alpha00, alpha01 over Rational Field
 
-        sage: PolynomialRing(GF(7), 'y', 5)                                                                             # optional - sage.libs.pari
+        sage: PolynomialRing(GF(7), 'y', 5)                                             # optional - sage.rings.finite_rings
         Multivariate Polynomial Ring in y0, y1, y2, y3, y4 over Finite Field of size 7
 
         sage: PolynomialRing(QQ, 'y', 3, sparse=True)
@@ -298,16 +299,19 @@ def PolynomialRing(base_ring, *args, **kwds):
     example, here is a ring with generators labeled by the primes less
     than 100::
 
-        sage: R = PolynomialRing(ZZ, ['x%s'%p for p in primes(100)]); R                                                 # optional - sage.libs.pari
-        Multivariate Polynomial Ring in x2, x3, x5, x7, x11, x13, x17, x19, x23, x29, x31, x37, x41, x43, x47, x53, x59, x61, x67, x71, x73, x79, x83, x89, x97 over Integer Ring
+        sage: R = PolynomialRing(ZZ, ['x%s'%p for p in primes(100)]); R                 # optional - sage.libs.pari
+        Multivariate Polynomial Ring in x2, x3, x5, x7, x11, x13, x17, x19, x23, x29,
+         x31, x37, x41, x43, x47, x53, x59, x61, x67, x71, x73, x79, x83, x89, x97
+         over Integer Ring
 
     By calling the
     :meth:`~sage.structure.category_object.CategoryObject.inject_variables`
     method, all those variable names are available for interactive use::
 
-        sage: R.inject_variables()                                                                                      # optional - sage.libs.pari
-        Defining x2, x3, x5, x7, x11, x13, x17, x19, x23, x29, x31, x37, x41, x43, x47, x53, x59, x61, x67, x71, x73, x79, x83, x89, x97
-        sage: (x2 + x41 + x71)^2                                                                                        # optional - sage.libs.pari
+        sage: R.inject_variables()                                                      # optional - sage.libs.pari
+        Defining x2, x3, x5, x7, x11, x13, x17, x19, x23, x29, x31, x37, x41, x43,
+        x47, x53, x59, x61, x67, x71, x73, x79, x83, x89, x97
+        sage: (x2 + x41 + x71)^2                                                        # optional - sage.libs.pari
         x2^2 + 2*x2*x41 + x41^2 + 2*x2*x71 + 2*x41*x71 + x71^2
 
     **4. PolynomialRing(base_ring, n, ..., var_array=var_array, ...)**
@@ -323,9 +327,13 @@ def PolynomialRing(base_ring, *args, **kwds):
     It is possible to create higher-dimensional arrays::
 
         sage: PolynomialRing(ZZ, 2, 3, var_array=('p', 'q'))
-        Multivariate Polynomial Ring in p00, q00, p01, q01, p02, q02, p10, q10, p11, q11, p12, q12 over Integer Ring
+        Multivariate Polynomial Ring
+         in p00, q00, p01, q01, p02, q02, p10, q10, p11, q11, p12, q12
+         over Integer Ring
         sage: PolynomialRing(ZZ, 2, 3, 4, var_array='m')
-        Multivariate Polynomial Ring in m000, m001, m002, m003, m010, m011, m012, m013, m020, m021, m022, m023, m100, m101, m102, m103, m110, m111, m112, m113, m120, m121, m122, m123 over Integer Ring
+        Multivariate Polynomial Ring in m000, m001, m002, m003, m010, m011,
+         m012, m013, m020, m021, m022, m023, m100, m101, m102, m103, m110,
+         m111, m112, m113, m120, m121, m122, m123 over Integer Ring
 
     The array is always at least 2-dimensional. So, if
     ``var_array`` is a single string and only a single number `n`
@@ -418,9 +426,9 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     The generic implementation is different in some cases::
 
-        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)    # optional - sage.libs.pari
+        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)    # optional - sage.rings.finite_rings
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
-        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)                                                                           # optional - sage.libs.pari
+        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)                                                                           # optional - sage.rings.finite_rings
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
 
         sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
@@ -433,7 +441,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
         sage: R = PolynomialRing(ZZ, 'j', sparse=True); TestSuite(R).run(); type(R)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category'>
-        sage: R = PolynomialRing(GF(49), 'j', sparse=True); TestSuite(R).run(); type(R)                                                             # optional - sage.libs.pari
+        sage: R = PolynomialRing(GF(49), 'j', sparse=True); TestSuite(R).run(); type(R)                                                             # optional - sage.rings.finite_rings
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
 
     If the requested implementation is not known or not supported for
@@ -443,7 +451,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: unknown implementation 'Foo' for dense polynomial rings over Integer Ring
-        sage: R.<x0> = PolynomialRing(GF(2), implementation='GF2X', sparse=True)                                                                    # optional - sage.libs.pari
+        sage: R.<x0> = PolynomialRing(GF(2), implementation='GF2X', sparse=True)                                                                    # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: unknown implementation 'GF2X' for sparse polynomial rings over Finite Field of size 2
@@ -555,7 +563,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     We run the testsuite for various polynomial rings, skipping tests that currently fail::
 
-        sage: R.<w> = PolynomialRing(PolynomialRing(GF(7),'k')); TestSuite(R).run(); R                                                              # optional - sage.libs.pari
+        sage: R.<w> = PolynomialRing(PolynomialRing(GF(7),'k')); TestSuite(R).run(); R                                                              # optional - sage.rings.finite_rings
         Univariate Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
         sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); TestSuite(ZxNTL).run(skip='_test_pickling'); ZxNTL
         Univariate Polynomial Ring in x over Integer Ring (using NTL)
@@ -577,9 +585,9 @@ def PolynomialRing(base_ring, *args, **kwds):
         Multivariate Polynomial Ring in x over Rational Field
         sage: Q0 = PolynomialRing(QQ,"x",0); TestSuite(Q0).run(skip=['_test_elements', '_test_elements_eq_transitive', '_test_gcd_vs_xgcd', '_test_quo_rem']); Q0
         Multivariate Polynomial Ring in no variables over Rational Field
-        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)    # optional - sage.libs.pari
+        sage: R = PolynomialRing(GF(2), 'j', implementation="generic"); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)    # optional - sage.rings.finite_rings
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
-        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)                                                                           # optional - sage.libs.pari
+        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)                                                                           # optional - sage.rings.finite_rings
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
         sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
@@ -587,7 +595,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
         sage: R = PolynomialRing(ZZ, 'j', sparse=True); TestSuite(R).run(); type(R)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category'>
-        sage: R = PolynomialRing(GF(49), 'j', sparse=True); TestSuite(R).run(); type(R)                                                             # optional - sage.libs.pari
+        sage: R = PolynomialRing(GF(49), 'j', sparse=True); TestSuite(R).run(); type(R)                                                             # optional - sage.rings.finite_rings
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
         sage: P.<y,z> = PolynomialRing(RealIntervalField(2))
         sage: TestSuite(P).run(skip=['_test_elements', '_test_elements_eq_transitive'])
@@ -934,37 +942,37 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
 
     EXAMPLES::
 
-        sage: R.<x, y, z> = BooleanPolynomialRing() # indirect doctest                              # optional - sage.rings.polynomial.pbori
-        sage: R                                                                                     # optional - sage.rings.polynomial.pbori
+        sage: R.<x, y, z> = BooleanPolynomialRing() # indirect doctest                  # optional - sage.rings.polynomial.pbori
+        sage: R                                                                         # optional - sage.rings.polynomial.pbori
         Boolean PolynomialRing in x, y, z
 
-        sage: p = x*y + x*z + y*z                                                                   # optional - sage.rings.polynomial.pbori
-        sage: x*p                                                                                   # optional - sage.rings.polynomial.pbori
+        sage: p = x*y + x*z + y*z                                                       # optional - sage.rings.polynomial.pbori
+        sage: x*p                                                                       # optional - sage.rings.polynomial.pbori
         x*y*z + x*y + x*z
 
-        sage: R.term_order()                                                                        # optional - sage.rings.polynomial.pbori
+        sage: R.term_order()                                                            # optional - sage.rings.polynomial.pbori
         Lexicographic term order
 
-        sage: R = BooleanPolynomialRing(5, 'x', order='deglex(3),deglex(2)')                        # optional - sage.rings.polynomial.pbori
-        sage: R.term_order()                                                                        # optional - sage.rings.polynomial.pbori
+        sage: R = BooleanPolynomialRing(5, 'x', order='deglex(3),deglex(2)')            # optional - sage.rings.polynomial.pbori
+        sage: R.term_order()                                                            # optional - sage.rings.polynomial.pbori
         Block term order with blocks:
         (Degree lexicographic term order of length 3,
          Degree lexicographic term order of length 2)
 
-        sage: R = BooleanPolynomialRing(3, 'x', order='degneglex')                                  # optional - sage.rings.polynomial.pbori
-        sage: R.term_order()                                                                        # optional - sage.rings.polynomial.pbori
+        sage: R = BooleanPolynomialRing(3, 'x', order='degneglex')                      # optional - sage.rings.polynomial.pbori
+        sage: R.term_order()                                                            # optional - sage.rings.polynomial.pbori
         Degree negative lexicographic term order
 
-        sage: BooleanPolynomialRing(names=('x','y'))                                                # optional - sage.rings.polynomial.pbori
+        sage: BooleanPolynomialRing(names=('x','y'))                                    # optional - sage.rings.polynomial.pbori
         Boolean PolynomialRing in x, y
 
-        sage: BooleanPolynomialRing(names='x,y')                                                    # optional - sage.rings.polynomial.pbori
+        sage: BooleanPolynomialRing(names='x,y')                                        # optional - sage.rings.polynomial.pbori
         Boolean PolynomialRing in x, y
 
     TESTS::
 
-        sage: P.<x,y> = BooleanPolynomialRing(2, order='deglex')                                    # optional - sage.rings.polynomial.pbori
-        sage: x > y                                                                                 # optional - sage.rings.polynomial.pbori
+        sage: P.<x,y> = BooleanPolynomialRing(2, order='deglex')                        # optional - sage.rings.polynomial.pbori
+        sage: x > y                                                                     # optional - sage.rings.polynomial.pbori
         True
 
         sage: P.<x0, x1, x2, x3> = BooleanPolynomialRing(4, order='deglex(2),deglex(2)')            # optional - sage.rings.polynomial.pbori
