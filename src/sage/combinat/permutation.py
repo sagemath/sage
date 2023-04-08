@@ -998,8 +998,8 @@ class Permutation(CombinatorialElement):
         cycles = []
         toConsider = -1
 
-        #Create the list [1,2,...,len(p)]
-        l = [ i+1 for i in range(len(p))]
+        # Create the list [1,2,...,len(p)]
+        l = [i + 1 for i in range(len(p))]
         cycle = []
 
         #Go through until we've considered every number between
@@ -3101,11 +3101,25 @@ class Permutation(CombinatorialElement):
 
         See :oeis:`A111111`
 
+        For instance, ``[6,1,3,5,2,4]`` is not simple because it maps the
+        interval ``[3,4,5,6]`` to ``[2,3,4,5]``, whereas ``[2,6,3,5,1,4]`` is
+        simple.
+
         EXAMPLES::
 
             sage: g = Permutation([4,2,3,1])
             sage: g.is_simple()
             False
+
+            sage: g = Permutation([6,1,3,5,2,4])
+            sage: g.is_simple()
+            False
+
+            sage: g = Permutation([2,6,3,5,1,4])
+            sage: g.is_simple()
+            True
+
+        TESTS::
 
             sage: [len([pi for pi in Permutations(n) if pi.is_simple()])
             ....:  for n in range(5)]
