@@ -4837,8 +4837,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 S = self.generated_subcomplex(x)
                 H = S.homology()
                 for k in range(j):
-                    if H.get(j-k-1) != H0 and H.get(j-k-1) is not None:
-                        B[(-k, 2*j)] += len(H.get(j-k-1).gens())
+                    if j-k-1 in H and H[j-k-1] != H0:
+                        ind = (-k, 2*j)
+                        if ind not in B:
+                            B[ind] = ZZ.zero()
+                        B[ind] += len(H.get(j-k-1).gens())
 	    
         return B
 
