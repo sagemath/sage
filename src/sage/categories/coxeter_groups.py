@@ -97,7 +97,7 @@ class CoxeterGroups(Category_singleton):
     TESTS::
 
         sage: W = CoxeterGroups().example()
-        sage: TestSuite(W).run()
+        sage: TestSuite(W).run()                                                        # optional - sage.combinat
     """
 
     def super_categories(self):

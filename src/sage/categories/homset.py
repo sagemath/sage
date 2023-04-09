@@ -298,17 +298,17 @@ def Hom(X, Y, category=None, check=True):
     Checks that the domain and codomain are in the specified
     category. Case of a non parent::
 
-        sage: S = SimplicialComplex([[1,2], [1,4]]); S.rename("S")
-        sage: Hom(S, S, SimplicialComplexes())
+        sage: S = SimplicialComplex([[1,2], [1,4]]); S.rename("S")                      # optional - sage.graphs
+        sage: Hom(S, S, SimplicialComplexes())                                          # optional - sage.graphs
         Set of Morphisms from S to S in Category of finite simplicial complexes
 
-        sage: Hom(Set(), S, Sets())
+        sage: Hom(Set(), S, Sets())                                                     # optional - sage.graphs
         Set of Morphisms from {} to S in Category of sets
 
-        sage: Hom(S, Set(), Sets())
+        sage: Hom(S, Set(), Sets())                                                     # optional - sage.graphs
         Set of Morphisms from S to {} in Category of sets
 
-        sage: H = Hom(S, S, ChainComplexes(QQ))
+        sage: H = Hom(S, S, ChainComplexes(QQ))                                         # optional - sage.graphs
         Traceback (most recent call last):
         ...
         ValueError: S is not in Category of chain complexes over Rational Field
@@ -321,11 +321,11 @@ def Hom(X, Y, category=None, check=True):
         ....:     def super_categories(self): return [Objects()]
         ....:     def __contains__(self, X): return True
         sage: C = PermissiveCategory(); C.rename("Permissive category")
-        sage: S.category().is_subcategory(C)
+        sage: S.category().is_subcategory(C)                                            # optional - sage.graphs
         False
-        sage: S in C
+        sage: S in C                                                                    # optional - sage.graphs
         True
-        sage: Hom(S, S, C)
+        sage: Hom(S, S, C)                                                              # optional - sage.graphs
         Set of Morphisms from S to S in Permissive category
 
     With ``check=False``, uninitialized parents, as can appear upon
@@ -349,16 +349,16 @@ def Hom(X, Y, category=None, check=True):
     uninitialized parent::
 
         sage: P.<x,y> = QQ['x,y']
-        sage: Q = P.quotient([x^2-1,y^2-1])
-        sage: q = Q.an_element()
-        sage: explain_pickle(dumps(Q))
+        sage: Q = P.quotient([x^2-1, y^2-1])                                            # optional - sage.libs.singular
+        sage: q = Q.an_element()                                                        # optional - sage.libs.singular
+        sage: explain_pickle(dumps(Q))                                                  # optional - sage.libs.singular
         pg_...
         ... = pg_dynamic_class('QuotientRing_generic_with_category', (pg_QuotientRing_generic, pg_getattr(..., 'parent_class')), None, None, pg_QuotientRing_generic)
         si... = unpickle_newobj(..., ())
         ...
         si... = pg_unpickle_MPolynomialRing_libsingular(..., ('x', 'y'), ...)
         si... = ... pg_Hom(si..., si..., ...) ...
-        sage: Q == loads(dumps(Q))
+        sage: Q == loads(dumps(Q))                                                      # optional - sage.libs.singular
         True
 
     Check that the ``_Hom_`` method of the ``category`` input is used::
@@ -732,7 +732,7 @@ class Homset(Set_generic):
         """
         TESTS::
 
-            sage: Hom(ZZ^2, QQ, category=Sets())._repr_()                                               # optional - sage.modules
+            sage: Hom(ZZ^2, QQ, category=Sets())._repr_()                               # optional - sage.modules
             'Set of Morphisms from Ambient free module of rank 2 over the principal ideal domain Integer Ring to Rational Field in Category of sets'
         """
         return "Set of Morphisms from {} to {} in {}".format(self._domain,
@@ -749,10 +749,10 @@ class Homset(Set_generic):
             sage: hash(Hom(QQ, ZZ)) == hash((QQ, ZZ, QQ))
             True
 
-            sage: E = EllipticCurve('37a')                                                              # optional - sage.symbolic
-            sage: H = E(0).parent(); H                                                                  # optional - sage.symbolic
+            sage: E = EllipticCurve('37a')                                              # optional - sage.symbolic
+            sage: H = E(0).parent(); H                                                  # optional - sage.symbolic
             Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
-            sage: hash(H) == hash((H.domain(), H.codomain(), H.base()))                                 # optional - sage.symbolic
+            sage: hash(H) == hash((H.domain(), H.codomain(), H.base()))                 # optional - sage.symbolic
             True
         """
         return hash((self._domain, self._codomain, self.base()))
@@ -906,24 +906,24 @@ class Homset(Set_generic):
 
         TESTS::
 
-            sage: G.<x,y,z> = FreeGroup()                                                               # optional - sage.groups
-            sage: H = Hom(G, G)                                                                         # optional - sage.groups
-            sage: H(H.identity())                                                                       # optional - sage.groups
+            sage: G.<x,y,z> = FreeGroup()                                               # optional - sage.groups
+            sage: H = Hom(G, G)                                                         # optional - sage.groups
+            sage: H(H.identity())                                                       # optional - sage.groups
             Identity endomorphism of Free Group on generators {x, y, z}
-            sage: H()                                                                                   # optional - sage.groups
+            sage: H()                                                                   # optional - sage.groups
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 0 to an element of
              Set of Morphisms from Free Group on generators {x, y, z}
              to Free Group on generators {x, y, z} in Category of infinite groups
-            sage: H("whatever")                                                                         # optional - sage.groups
+            sage: H("whatever")                                                         # optional - sage.groups
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 'whatever' to an element of
              Set of Morphisms from Free Group on generators {x, y, z}
              to Free Group on generators {x, y, z} in Category of infinite groups
-            sage: HH = Hom(H, H)                                                                        # optional - sage.groups
-            sage: HH(HH.identity(), foo="bar")                                                          # optional - sage.groups
+            sage: HH = Hom(H, H)                                                        # optional - sage.groups
+            sage: HH(HH.identity(), foo="bar")                                          # optional - sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: no keywords are implemented for
@@ -1004,41 +1004,41 @@ class Homset(Set_generic):
         this point this is the simplest one to create (gosh)::
 
             sage: cat = Groups().Finite().Commutative()
-            sage: C3 = PermutationGroup([(1,2,3)])                                                      # optional - sage.groups
-            sage: C3._refine_category_(cat)                                                             # optional - sage.groups
-            sage: C2 = PermutationGroup([(1,2)])                                                        # optional - sage.groups
-            sage: C2._refine_category_(cat)                                                             # optional - sage.groups
-            sage: H = Hom(C3, C2, cat)                                                                  # optional - sage.groups
-            sage: H.homset_category()                                                                   # optional - sage.groups
+            sage: C3 = PermutationGroup([(1,2,3)])                                      # optional - sage.groups
+            sage: C3._refine_category_(cat)                                             # optional - sage.groups
+            sage: C2 = PermutationGroup([(1,2)])                                        # optional - sage.groups
+            sage: C2._refine_category_(cat)                                             # optional - sage.groups
+            sage: H = Hom(C3, C2, cat)                                                  # optional - sage.groups
+            sage: H.homset_category()                                                   # optional - sage.groups
             Category of finite commutative groups
-            sage: H.category()                                                                          # optional - sage.groups
+            sage: H.category()                                                          # optional - sage.groups
             Category of homsets of unital magmas
-            sage: cls = H._abstract_element_class; cls                                                  # optional - sage.groups
+            sage: cls = H._abstract_element_class; cls                                  # optional - sage.groups
             <class 'sage.categories.homsets.GroupHomset_libgap_with_category._abstract_element_class'>
-            sage: cls.__bases__ == (H.category().element_class, H.homset_category().morphism_class)     # optional - sage.groups
+            sage: cls.__bases__ == (H.category().element_class, H.homset_category().morphism_class)  # optional - sage.groups
             True
 
         A morphism of finite commutative semigroups is also a morphism
         of semigroups, of magmas, ...; it thus inherits code from all
         those categories::
 
-            sage: issubclass(cls, Semigroups().Finite().morphism_class)                                 # optional - sage.groups
+            sage: issubclass(cls, Semigroups().Finite().morphism_class)                 # optional - sage.groups
             True
-            sage: issubclass(cls, Semigroups().morphism_class)                                          # optional - sage.groups
+            sage: issubclass(cls, Semigroups().morphism_class)                          # optional - sage.groups
             True
-            sage: issubclass(cls, Magmas().Commutative().morphism_class)                                # optional - sage.groups
+            sage: issubclass(cls, Magmas().Commutative().morphism_class)                # optional - sage.groups
             True
-            sage: issubclass(cls, Magmas().morphism_class)                                              # optional - sage.groups
+            sage: issubclass(cls, Magmas().morphism_class)                              # optional - sage.groups
             True
-            sage: issubclass(cls, Sets().morphism_class)                                                # optional - sage.groups
+            sage: issubclass(cls, Sets().morphism_class)                                # optional - sage.groups
             True
 
         Recall that FiniteMonoids() is a full subcategory of
         ``Monoids()``, but not of ``FiniteSemigroups()``. Thus::
 
-            sage: issubclass(cls, Monoids().Finite().Homsets().element_class)                           # optional - sage.groups
+            sage: issubclass(cls, Monoids().Finite().Homsets().element_class)           # optional - sage.groups
             True
-            sage: issubclass(cls, Semigroups().Finite().Homsets().element_class)                        # optional - sage.groups
+            sage: issubclass(cls, Semigroups().Finite().Homsets().element_class)        # optional - sage.groups
             False
         """
         class_name = "%s._abstract_element_class"%self.__class__.__name__
