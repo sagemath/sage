@@ -2665,6 +2665,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         self._graph.add_edge(new_face[i], new_face[j])
             self._complex = {}
             self.__contractible = None
+            self._bbn = None
 
     def remove_face(self, face, check=False):
         """
@@ -2789,6 +2790,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         self._complex = {}
         self.__contractible = None
         self.__enlarged = {}
+        self._bbn = None
 
     def remove_faces(self, faces, check=False):
         """
@@ -4557,7 +4559,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             False
         """
         self._is_immutable = True
-        self._bbn = None
         self._facets = tuple(self._facets)
 
     def is_mutable(self):
@@ -4853,7 +4854,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def bigraded_betti_number(self, a, b):
         if self._bbn is not None:
-            return self._bbn[(a, b)]
+            return self._bbn.get((a,b), ZZ.zero())
         r"""
         Return the bigraded Betti number indexed in the form `(-i, 2j)`.
 
@@ -4870,9 +4871,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         from sage.homology.homology_group import HomologyGroup
         if b % 2 == 1:
-            raise ValueError("second argument must be even")
+            return ZZ.zero()
         if a == 0 and b == 0:
-            return 1
+            return ZZ.one()
 
         a = -a
         b //= 2
@@ -4880,7 +4881,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         n = len(L)
         H0 = HomologyGroup(0, ZZ)
 
-        B = ZZ.zero() 
+        B = 0
 
         for x in combinations(L, b):
             S = self.generated_subcomplex(x)
@@ -4888,7 +4889,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             if b-a-1 in H and H[b-a-1] != H0:
                 B += len(H[b-a-1].gens())
 
-        return B
+        return ZZ(B)
             
 # Miscellaneous utility functions.
 
