@@ -313,7 +313,7 @@ lexicographical order.
 
 ::
 
-    sage: P.<a,b,c,d,e,f> = PolynomialRing(QQ, 6,order='degrevlex(4),neglex(2)')
+    sage: P.<a,b,c,d,e,f> = PolynomialRing(QQ, 6, order='degrevlex(4),neglex(2)')
     sage: a > c^4
     False
     sage: a > e^4
@@ -341,7 +341,7 @@ some term order Singular supports but Sage doesn't::
     Traceback (most recent call last):
     ...
     ValueError: unknown term order 'royalorder'
-    sage: T = TermOrder("royalorder",force=True)
+    sage: T = TermOrder("royalorder", force=True)
     sage: T
     royalorder term order
     sage: T.singular_str()
@@ -647,7 +647,7 @@ class TermOrder(SageObject):
         :trac:`12748`)::
 
             sage: T = TermOrder('degrevlex', 6) + TermOrder('degrevlex',10)
-            sage: R.<x0,y0,z0,x1,y1,z1,a0,a1,a2,a3,a4,a5,a6,a7,a8> = PolynomialRing(QQ,order=T)
+            sage: R.<x0,y0,z0,x1,y1,z1,a0,a1,a2,a3,a4,a5,a6,a7,a8> = PolynomialRing(QQ, order=T)
             Traceback (most recent call last):
             ...
             ValueError: the length of the given term order (16) differs from the number of variables (15)
@@ -2170,8 +2170,8 @@ def termorder_from_singular(S):
         sage: termorder_from_singular(singular)                                         # optional - sage.libs.singular
         Block term order with blocks:
         (Matrix term order with matrix
-        [1 2]
-        [3 0],
+           [1 2]
+           [3 0],
          Weighted degree reverse lexicographic term order with weights (2, 3),
          Lexicographic term order of length 2)
 

@@ -60,7 +60,8 @@ Strategy object::
     sage: from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy
     sage: S = SymmetricReductionStrategy(X, [y[2]^2*x[1]])
     sage: S
-    Symmetric Reduction Strategy in Infinite polynomial ring in x, y over Rational Field, modulo
+    Symmetric Reduction Strategy in
+     Infinite polynomial ring in x, y over Rational Field, modulo
         x_1*y_2^2
     sage: S.reduce(p)
     x_3*y_1^2 + y_3*y_1
@@ -74,7 +75,8 @@ change variable index 1 into 2 and 2 into 3. So, we add this to
 
     sage: S.add_generator(y[1]^2*x[2])
     sage: S
-    Symmetric Reduction Strategy in Infinite polynomial ring in x, y over Rational Field, modulo
+    Symmetric Reduction Strategy in
+     Infinite polynomial ring in x, y over Rational Field, modulo
         x_2*y_1^2,
         x_1*y_2^2
     sage: S.reduce(p)                                                                   # optional - sage.combinat
@@ -93,7 +95,8 @@ Symmetric Reduction Strategy is created::
 
     sage: S2 = SymmetricReductionStrategy(X, [y[2]^2*x[1],y[1]^2*x[2]], tailreduce=True)
     sage: S2
-    Symmetric Reduction Strategy in Infinite polynomial ring in x, y over Rational Field, modulo
+    Symmetric Reduction Strategy in
+     Infinite polynomial ring in x, y over Rational Field, modulo
         x_2*y_1^2,
         x_1*y_2^2
     with tailreduction
@@ -265,7 +268,8 @@ cdef class SymmetricReductionStrategy:
             sage: from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy
             sage: S = SymmetricReductionStrategy(X, [y[2]^2*y[1],y[1]^2*y[2]])
             sage: S
-            Symmetric Reduction Strategy in Infinite polynomial ring in y over Rational Field, modulo
+            Symmetric Reduction Strategy in
+             Infinite polynomial ring in y over Rational Field, modulo
                 y_2*y_1^2,
                 y_2^2*y_1
             sage: S.gens()
@@ -295,7 +299,8 @@ cdef class SymmetricReductionStrategy:
             sage: R = SymmetricReductionStrategy(X)
             sage: R.setgens(S.gens())
             sage: R
-            Symmetric Reduction Strategy in Infinite polynomial ring in y over Rational Field, modulo
+            Symmetric Reduction Strategy in
+             Infinite polynomial ring in y over Rational Field, modulo
                 y_2*y_1^2,
                 y_2^2*y_1
             sage: R.gens() is S.gens()
@@ -316,7 +321,8 @@ cdef class SymmetricReductionStrategy:
             sage: from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy
             sage: S = SymmetricReductionStrategy(X, [y[2]^2*y[1],y[1]^2*y[2]])
             sage: S
-            Symmetric Reduction Strategy in Infinite polynomial ring in y over Rational Field, modulo
+            Symmetric Reduction Strategy in
+             Infinite polynomial ring in y over Rational Field, modulo
                 y_2*y_1^2,
                 y_2^2*y_1
             sage: S.reset()
@@ -336,7 +342,7 @@ cdef class SymmetricReductionStrategy:
 
             sage: from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy
             sage: X.<x,y> = InfinitePolynomialRing(QQ)
-            sage: S = SymmetricReductionStrategy(X, [y[2]^2*y[1],y[1]^2*y[2]], tailreduce=True)
+            sage: S = SymmetricReductionStrategy(X, [y[2]^2*y[1], y[1]^2*y[2]], tailreduce=True)
             sage: S  # indirect doctest
             Symmetric Reduction Strategy in Infinite polynomial ring in x, y over Rational Field, modulo
                 y_2*y_1^2,
