@@ -202,9 +202,9 @@ cpdef factor_aurifeuillian(n, check=True):
 
 def factor_cunningham(m, proof=None):
     r"""
-    Return factorization of self obtained using trial division
+    Return factorization of ``self`` obtained using trial division
     for all primes in the so called Cunningham table. This is
-    efficient if self has some factors of type `b^n+1` or `b^n-1`,
+    efficient if ``self`` has some factors of type `b^n+1` or `b^n-1`,
     with `b` in `\{2,3,5,6,7,10,11,12\}`.
 
     You need to install an optional package to use this method,
@@ -245,12 +245,12 @@ def factor_cunningham(m, proof=None):
 
 cpdef factor_trial_division(m, long limit=LONG_MAX):
     r"""
-    Return partial factorization of self obtained using trial division
-    for all primes up to limit, where limit must fit in a C signed long.
+    Return partial factorization of ``self`` obtained using trial division
+    for all primes up to ``limit``, where ``limit`` must fit in a C ``signed long``.
 
     INPUT:
 
-    - ``limit`` -- integer (default: ``LONG_MAX``) that fits in a C signed long
+    - ``limit`` -- integer (default: ``LONG_MAX``) that fits in a C ``signed long``
 
     EXAMPLES::
 
@@ -294,7 +294,7 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
     r"""
     Factor this integer using PARI.
 
-    This function returns a list of pairs, not a ``Factorization``
+    This function returns a list of pairs, not a :class:`Factorization`
     object. The first element of each pair is the factor, of type
     ``Integer`` if ``int_`` is ``False`` or ``int`` otherwise,
     the second element is the positive exponent, of type ``int``.

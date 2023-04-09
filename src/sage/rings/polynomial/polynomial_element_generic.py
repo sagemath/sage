@@ -795,9 +795,9 @@ class Polynomial_generic_sparse(Polynomial):
         Returns the quotient and remainder of the Euclidean division of
         ``self`` and ``other``.
 
-        Raises ZerodivisionError if ``other`` is zero.
+        Raises :class:`ZerodivisionError` if ``other`` is zero.
 
-        Raises ArithmeticError if ``other`` has a nonunit leading coefficient
+        Raises :class:`ArithmeticError` if ``other`` has a nonunit leading coefficient
         and this causes the Euclidean division to fail.
 
         EXAMPLES::
@@ -815,7 +815,8 @@ class Polynomial_generic_sparse(Polynomial):
             sage: f.quo_rem(g)
             Traceback (most recent call last):
             ...
-            ArithmeticError: Division non exact (consider coercing to polynomials over the fraction field)
+            ArithmeticError: Division non exact
+            (consider coercing to polynomials over the fraction field)
             sage: g = 0
             sage: f.quo_rem(g)
             Traceback (most recent call last):
@@ -978,7 +979,7 @@ class Polynomial_generic_sparse(Polynomial):
         """
         Return this polynomial but with the coefficients reversed.
 
-        If an optional degree argument is given the coefficient list will be
+        If an optional degree argument is given, the coefficient list will be
         truncated or zero padded as necessary and the reverse polynomial will
         have the specified degree.
 
@@ -1000,7 +1001,7 @@ class Polynomial_generic_sparse(Polynomial):
 
     def truncate(self, n):
         """
-        Return the polynomial of degree `< n` equal to `self` modulo `x^n`.
+        Return the polynomial of degree `< n` equal to ``self`` modulo `x^n`.
 
         EXAMPLES::
 
@@ -1065,8 +1066,8 @@ class Polynomial_generic_field(Polynomial_singular_repr,
     @coerce_binop
     def quo_rem(self, other):
         """
-        Returns a tuple (quotient, remainder) where
-            self = quotient * other + remainder.
+        Returns a tuple ``(quotient, remainder)`` where
+        ``self = quotient * other + remainder``.
 
         EXAMPLES::
 

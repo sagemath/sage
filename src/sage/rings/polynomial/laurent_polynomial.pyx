@@ -179,14 +179,14 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
             sage: R.<x> = LaurentPolynomialRing(QQ)
             sage: a = x^2 + 3*x^3 + 5*x^-1
-            sage: a.change_ring(GF(3))
+            sage: a.change_ring(GF(3))                                                  # optional - sage.rings.finite_rings
             2*x^-1 + x^2
 
         Check that :trac:`22277` is fixed::
 
             sage: R.<x, y> = LaurentPolynomialRing(QQ)
             sage: a = 2*x^2 + 3*x^3 + 4*x^-1
-            sage: a.change_ring(GF(3))
+            sage: a.change_ring(GF(3))                                                  # optional - sage.rings.finite_rings
             -x^2 + x^-1
         """
         return self._parent.change_ring(R)(self)
@@ -389,7 +389,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: Pxy = PolynomialRing(QQ, "x,y")
             sage: Paxb = PolynomialRing(QQ, "a,x,b")
             sage: Qx = PolynomialRing(ZZ, "x")
-            sage: Rx = PolynomialRing(GF(2), "x")
+            sage: Rx = PolynomialRing(GF(2), "x")                                       # optional - sage.rings.finite_rings
             sage: p1 = Lx.gen()
             sage: p2 = Lx.zero()
             sage: p3 = Lx.one()
@@ -397,8 +397,10 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: p5 = Lx.gen()**3 + 2*Lx.gen()**2
             sage: p6 = Lx.gen() >> 2
 
-            sage: for P,x in [(Px, Px.gen()), (Qx, Qx.gen()), (Rx, Rx.gen()),
-            ....:             (Pxy, Pxy.gen(0)), (Paxb, Paxb.gen(1))]:
+            sage: Pxes = [(Px, Px.gen()), (Qx, Qx.gen()),
+            ....:         (Pxy, Pxy.gen(0)), (Paxb, Paxb.gen(1))]
+            sage: Pxes += [(Rx, Rx.gen())]                                              # optional - sage.rings.finite_rings
+            sage: for P, x in Pxes:
             ....:     assert P(p1) == x and parent(P(p1)) is P
             ....:     assert P(p2) == P.zero() and parent(P(p2)) is P
             ....:     assert P(p3) == P.one() and parent(P(p3)) is P
@@ -3107,7 +3109,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         OUTPUT:
 
-        Returns True if self contains a monomial including the inverse of
+        Returns True if ``self`` contains a monomial including the inverse of
         ``self.parent().gen(i)``, False otherwise.
 
         EXAMPLES::
@@ -3132,7 +3134,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def has_any_inverse(self):
         """
-        Returns True if self contains any monomials with a negative exponent, False otherwise.
+        Return True if ``self`` contains any monomials with a negative exponent, False otherwise.
 
         EXAMPLES::
 
@@ -3410,7 +3412,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def univariate_polynomial(self, R=None):
         """
-        Returns a univariate polynomial associated to this
+        Return a univariate polynomial associated to this
         multivariate polynomial.
 
         INPUT:
@@ -3467,7 +3469,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def factor(self):
         """
-        Returns a Laurent monomial (the unit part of the factorization) and a factored multi-polynomial.
+        Return a Laurent monomial (the unit part of the factorization) and a factored multi-polynomial.
 
         EXAMPLES::
 
@@ -3526,7 +3528,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         EXAMPLES::
 
             sage: L.<x,y,z> = LaurentPolynomialRing(QQ)
-            sage: p = (1 + x*y + z^-3)
+            sage: p = 1 + x*y + z^-3
             sage: (p**2).is_square()
             True
             sage: (p**2).is_square(root=True)

@@ -593,17 +593,17 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def degree(self, x=None, std_grading=False):
         """
-        Return the degree of self in x, where x must be one of the
-        generators for the parent of self.
+        Return the degree of ``self`` in ``x``, where ``x`` must be one of the
+        generators for the parent of ``self``.
 
         INPUT:
 
         - ``x`` - multivariate polynomial (a generator of the parent
-           of self). If ``x`` is not specified (or is None), return
-           the total degree, which is the maximum degree of any
-           monomial. Note that a weighted term ordering alters the
-           grading of the generators of the ring; see the tests below.
-           To avoid this behavior, set the optional argument ``std_grading=True``.
+          of ``self``). If ``x`` is not specified (or is None), return
+          the total degree, which is the maximum degree of any
+          monomial. Note that a weighted term ordering alters the
+          grading of the generators of the ring; see the tests below.
+          To avoid this behavior, set the optional argument ``std_grading=True``.
 
         OUTPUT: integer
 
@@ -631,9 +631,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             2
             sage: y.degree()
             3
-            sage: x.degree(y),x.degree(x),y.degree(x),y.degree(y)
+            sage: x.degree(y), x.degree(x), y.degree(x), y.degree(y)
             (0, 1, 0, 1)
-            sage: f = (x^2*y+x*y^2)
+            sage: f = x^2*y + x*y^2
             sage: f.degree(x)
             2
             sage: f.degree(y)
@@ -643,7 +643,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f.degree(std_grading=True)
             3
 
-        Note that if ``x`` is not a generator of the parent of self,
+        Note that if ``x`` is not a generator of the parent of ``self``,
         for example if it is a generator of a polynomial algebra which
         maps naturally to this one, then it is converted to an element
         of this algebra. (This fixes the problem reported in
@@ -712,8 +712,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def total_degree(self):
         """
-        Return the total degree of self, which is the maximum degree of any
-        monomial in self.
+        Return the total degree of ``self``, which is the maximum degree of any
+        monomial in ``self``.
 
         EXAMPLES::
 
@@ -741,8 +741,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def monomial_coefficient(self, mon):
         """
-        Return the coefficient in the base ring of the monomial mon in
-        self, where mon must have the same parent as self.
+        Return the coefficient in the base ring of the monomial ``mon`` in
+        ``self``, where ``mon`` must have the same parent as ``self``.
 
         This function contrasts with the function
         ``coefficient`` which returns the coefficient of a
@@ -763,16 +763,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         EXAMPLES:
 
-        The parent of the return is a member of the base ring.
-
         ::
 
             sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
-
-        The parent of the return is a member of the base ring.
-
-        ::
-
             sage: f = 2 * x * y                                                         # optional - sage.rings.number_field
             sage: c = f.monomial_coefficient(x*y); c                                    # optional - sage.rings.number_field
             2
@@ -1026,7 +1019,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default :class:`RealField` precision).
 
         OUTPUT:
 
@@ -1157,7 +1150,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         - ``i`` -- an integer.
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default :class:`RealField` precision).
 
         OUTPUT:
 
@@ -1284,11 +1277,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         EXAMPLES::
 
             sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
-            sage: (x+y).is_homogeneous()                                                # optional - sage.rings.number_field
+            sage: (x + y).is_homogeneous()                                              # optional - sage.rings.number_field
             True
             sage: (x.parent()(0)).is_homogeneous()                                      # optional - sage.rings.number_field
             True
-            sage: (x+y^2).is_homogeneous()                                              # optional - sage.rings.number_field
+            sage: (x + y^2).is_homogeneous()                                            # optional - sage.rings.number_field
             False
             sage: (x^2 + y^2).is_homogeneous()                                          # optional - sage.rings.number_field
             True
@@ -1371,7 +1364,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: (x*y).is_monomial()                                                   # optional - sage.rings.number_field
             True
 
-        To allow a non-1 leading coefficient, use is_term()::
+        To allow a non-1 leading coefficient, use :meth:`is_term`::
 
             sage: (2*x*y).is_term()                                                     # optional - sage.rings.number_field
             True
@@ -1400,7 +1393,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: (7*x^5*y).is_term()                                                   # optional - sage.rings.number_field
             True
 
-        To require leading coefficient 1, use is_monomial()::
+        To require leading coefficient 1, use :meth:`is_monomial`::
 
             sage: (2*x*y).is_monomial()                                                 # optional - sage.rings.number_field
             False
@@ -1411,10 +1404,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def subs(self, fixed=None, **kw):
         """
-        Fixes some given variables in a given multivariate polynomial and
-        returns the changed multivariate polynomials. The polynomial itself
-        is not affected. The variable,value pairs for fixing are to be
-        provided as a dictionary of the form {variable:value}.
+        Fix some given variables in a given multivariate polynomial and
+        return the changed multivariate polynomials. The polynomial itself
+        is not affected. The variable, value pairs for fixing are to be
+        provided as a dictionary of the form ``{variable: value}``.
 
         This is a special case of evaluating the polynomial with some of
         the variables constants and the others the original variables.
@@ -1427,7 +1420,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         -  ``**kw`` - named parameters
 
 
-        OUTPUT: new MPolynomial
+        OUTPUT: new :class:`MPolynomial`
 
         EXAMPLES::
 
@@ -1448,10 +1441,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def monomials(self):
         """
-        Returns the list of monomials in self. The returned list is
-        decreasingly ordered by the term ordering of self.parent().
+        Return the list of monomials in ``self``. The returned list is
+        decreasingly ordered by the term ordering of ``self.parent()``.
 
-        OUTPUT: list of MPolynomials representing Monomials
+        OUTPUT: list of :class:`MPolynomial` instances, representing monomials
 
         EXAMPLES::
 
@@ -1463,14 +1456,13 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         ::
 
             sage: R.<fx,fy,gx,gy> = QQbar[]                                             # optional - sage.rings.number_field
-            sage: F = ((fx*gy - fy*gx)^3)                                               # optional - sage.rings.number_field
-            sage: F                                                                     # optional - sage.rings.number_field
+            sage: F = (fx*gy - fy*gx)^3; F                                              # optional - sage.rings.number_field
             -fy^3*gx^3 + 3*fx*fy^2*gx^2*gy + (-3)*fx^2*fy*gx*gy^2 + fx^3*gy^3
             sage: F.monomials()                                                         # optional - sage.rings.number_field
             [fy^3*gx^3, fx*fy^2*gx^2*gy, fx^2*fy*gx*gy^2, fx^3*gy^3]
             sage: F.coefficients()                                                      # optional - sage.rings.number_field
             [-1, 3, -3, 1]
-            sage: sum(map(mul,zip(F.coefficients(),F.monomials()))) == F                # optional - sage.rings.number_field
+            sage: sum(map(mul, zip(F.coefficients(), F.monomials()))) == F              # optional - sage.rings.number_field
             True
         """
         ring = self.parent()
@@ -1538,13 +1530,13 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
 
-        -  ``R`` - (default: None) PolynomialRing
+        -  ``R`` - (default: None) :class:`PolynomialRing`
 
 
         If this polynomial is not in at most one variable, then a
-        ValueError exception is raised. This is checked using the
-        is_univariate() method. The new Polynomial is over the same base
-        ring as the given MPolynomial.
+        :class:`ValueError` exception is raised. This is checked using the
+        method :meth:`is_univariate`. The new :class:`Polynomial` is over the same base
+        ring as the given :class:`MPolynomial`.
 
         EXAMPLES::
 
@@ -1634,7 +1626,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def variable(self,i):
         """
-        Returns `i`-th variable occurring in this polynomial.
+        Return the `i`-th variable occurring in this polynomial.
 
         EXAMPLES::
 
@@ -1649,7 +1641,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def nvariables(self):
         """
-        Number of variables in this polynomial
+        Return the number of variables in this polynomial.
 
         EXAMPLES::
 
@@ -1682,8 +1674,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def lm(self):
         """
-        Returns the lead monomial of self with respect to the term order of
-        self.parent().
+        Return the lead monomial of ``self`` with respect to the term order of
+        ``self.parent()``.
 
         EXAMPLES::
 
@@ -1731,8 +1723,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def lc(self):
         """
-        Returns the leading coefficient of self i.e.,
-        self.coefficient(self.lm())
+        Returns the leading coefficient of ``self``, i.e.,
+        ``self.coefficient(self.lm())``
 
         EXAMPLES::
 
@@ -1753,7 +1745,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def lt(self):
         r"""
-        Returns the leading term of self i.e., self.lc()\*self.lm(). The
+        Return the leading term of ``self`` i.e., ``self.lc()*self.lm()``. The
         notion of "leading term" depends on the ordering defined in the
         parent ring.
 
@@ -1855,7 +1847,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         r"""
         Differentiates ``self`` with respect to variable ``var``.
 
-        If ``var`` is not one of the generators of this ring, _derivative(var)
+        If ``var`` is not one of the generators of this ring, ``_derivative(var)``
         is called recursively on each coefficient of this polynomial.
 
         .. SEEALSO::
@@ -1916,7 +1908,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
             The integral is always chosen so the constant term is 0.
 
-        If ``var`` is not one of the generators of this ring, integral(var)
+        If ``var`` is not one of the generators of this ring, ``integral(var)``
         is called recursively on each coefficient of this polynomial.
 
         EXAMPLES:
@@ -1933,7 +1925,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: R = ZZ['x']['y, z']
             sage: y, z = R.gens()
             sage: R.an_element().integral(y).parent()
-            Multivariate Polynomial Ring in y, z over Univariate Polynomial Ring in x over Rational Field
+            Multivariate Polynomial Ring in y, z
+             over Univariate Polynomial Ring in x over Rational Field
 
         On polynomials with coefficients in power series::
 
@@ -2009,7 +2002,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``proof'' - insist on provably correct results (default: ``True``
+        - ``proof`` - insist on provably correct results (default: ``True``
           unless explicitly disabled for the ``"polynomial"`` subsystem with
           :class:`sage.structure.proof.proof.WithProof`.)
 
@@ -2163,15 +2156,15 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
     @handle_AA_and_QQbar
     def lift(self,I):
         """
-        given an ideal I = (f_1,...,f_r) and some g (== self) in I, find
-        s_1,...,s_r such that g = s_1 f_1 + ... + s_r f_r
+        Given an ideal `I = (f_1,...,f_r)` and some `g` (= ``self``) in `I`, find
+        `s_1,...,s_r` such that `g = s_1 f_1 + ... + s_r f_r`.
 
         ALGORITHM: Use Singular.
 
         EXAMPLES::
 
-            sage: A.<x,y> = PolynomialRing(CC,2,order='degrevlex')
-            sage: I = A.ideal([x^10 + x^9*y^2, y^8 - x^2*y^7 ])
+            sage: A.<x,y> = PolynomialRing(CC, 2, order='degrevlex')
+            sage: I = A.ideal([x^10 + x^9*y^2, y^8 - x^2*y^7])
             sage: f = x*y^13 + y^12
             sage: M = f.lift(I)
             sage: M
@@ -2181,7 +2174,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over ``QQbar`` (:trac:`25351`)::
 
             sage: A.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
             sage: I = A.ideal([x^2 + y^2 - 1, x^2 - y^2])                               # optional - sage.rings.number_field
@@ -2459,22 +2452,22 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
 def degree_lowest_rational_function(r, x):
     r"""
-    Return the difference of valuations of r with respect to variable x.
+    Return the difference of valuations of ``r`` with respect to variable ``x``.
 
     INPUT:
 
     - ``r`` -- a multivariate rational function
 
-    - ``x`` -- a multivariate polynomial ring generator x
+    - ``x`` -- a multivariate polynomial ring generator
 
     OUTPUT:
 
-    - ``integer`` -- the difference val_x(p) - val_x(q) where r = p/q
+    - ``integer`` -- the difference `val_x(p) - val_x(q)` where `r = p/q`
 
     .. NOTE::
 
         This function should be made a method of the
-        FractionFieldElement class.
+        :class:`FractionFieldElement` class.
 
     EXAMPLES::
 

@@ -774,13 +774,13 @@ class PolynomialSequence_generic(Sequence_generic):
     def subs(self, *args, **kwargs):
         """
         Substitute variables for every polynomial in this system and
-        return a new system. See ``MPolynomial.subs`` for calling
+        return a new system. See :meth:`MPolynomial.subs` for calling
         convention.
 
         INPUT:
 
-        -  ``args`` - arguments to be passed to ``MPolynomial.subs``
-        -  ``kwargs`` - keyword arguments to be passed to ``MPolynomial.subs``
+        -  ``args`` - arguments to be passed to :meth:`MPolynomial.subs`
+        -  ``kwargs`` - keyword arguments to be passed to :meth:`MPolynomial.subs`
 
         EXAMPLES::
 
@@ -1033,12 +1033,12 @@ class PolynomialSequence_generic(Sequence_generic):
 
         - `(f_1,...,f_n) = (g_1,...,g_s)`
 
-        - `LT(g_i) != LT(g_j)` for all `i != j`
+        - `LT(g_i) \neq LT(g_j)` for all `i \neq j`
 
         - `LT(g_i)` does not divide `m` for all monomials `m` of
-           `\{g_1,...,g_{i-1},g_{i+1},...,g_s\}`
+          `\{g_1,...,g_{i-1},g_{i+1},...,g_s\}`
 
-        - `LC(g_i) == 1` for all `i` if the coefficient ring is a field.
+        - `LC(g_i) = 1` for all `i` if the coefficient ring is a field.
 
         EXAMPLES::
 
@@ -1173,29 +1173,29 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
           with linear leading terms which were used for reduction is
           also returned (default: ``False``).
 
-        - ```use_polybori`` - if ``True`` then ``polybori.ll.eliminate`` is
-          called. While this is typically faster what is implemented here, it
+        - ``use_polybori`` - if ``True`` then ``polybori.ll.eliminate`` is
+          called. While this is typically faster than what is implemented here, it
           is less flexible (``skip`` is not supported) and may increase the
           degree (default: ``False``)
 
         OUTPUT:
 
-        When ``return_reductors==True``, then a pair of sequences of
+        With ``return_reductors=True``, a pair of sequences of
         boolean polynomials are returned, along with the promises that:
 
-          1. The union of the two sequences spans the
-             same boolean ideal as the argument of the method
+        1. The union of the two sequences spans the
+           same boolean ideal as the argument of the method
 
-          2. The second sequence only contains linear polynomials, and
-             it forms a reduced groebner basis (they all have pairwise
-             distinct leading variables, and the leading variable of a
-             polynomial does not occur anywhere in other polynomials).
+        2. The second sequence only contains linear polynomials, and
+           it forms a reduced groebner basis (they all have pairwise
+           distinct leading variables, and the leading variable of a
+           polynomial does not occur anywhere in other polynomials).
 
-          3. The leading variables of the second sequence do not occur
-             anywhere in the first sequence (these variables have been
-             eliminated).
+        3. The leading variables of the second sequence do not occur
+           anywhere in the first sequence (these variables have been
+           eliminated).
 
-        When ``return_reductors==False``, only the first sequence is
+        With ``return_reductors=False``, only the first sequence is
         returned.
 
         EXAMPLES::
@@ -1209,7 +1209,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             sage: F.eliminate_linear_variables(skip=lambda lm,tail: str(lm)=='a')       # optional - sage.rings.polynomial.pbori
             [a + c + d, a*c + a*d + a + c, c*d + c]
 
-        The list of reductors can be requested by setting 'return_reductors' to ``True``::
+        The list of reductors can be requested by setting ``return_reductors`` to ``True``::
 
             sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # optional - sage.rings.polynomial.pbori
             sage: F = Sequence([a + b + d, a + b + c])                                  # optional - sage.rings.polynomial.pbori
@@ -1220,7 +1220,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             [a + b + d, c + d]
 
 
-        If the input system is detected to be inconsistent then [1] is returned
+        If the input system is detected to be inconsistent then ``[1]`` is returned,
         and the list of reductors is empty::
 
             sage: R.<x,y,z> = BooleanPolynomialRing()                                   # optional - sage.rings.polynomial.pbori
@@ -1530,11 +1530,11 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         return solutions
 
     def reduced(self):
-        """
-        If this sequence is `(f_1, ..., f_n)` this method returns `(g_1, ..., g_s)` such that:
+        r"""
+        If this sequence is `f_1, ..., f_n`, return `g_1, ..., g_s` such that:
 
-        -  `<f_1,...,f_n> = <g_1,...,g_s>`
-        -  `LT(g_i) != LT(g_j)` for all `i != j``
+        - `(f_1,...,f_n) = (g_1,...,g_s)`
+        - `LT(g_i) \neq LT(g_j)` for all `i \neq j`
         - `LT(g_i)` does not divide `m` for all monomials `m` of
           `{g_1,...,g_{i-1},g_{i+1},...,g_s}`
 
@@ -1595,7 +1595,7 @@ class PolynomialSequence_gf2e(PolynomialSequence_generic):
             sage: F2 = F.weil_restriction()                                             # optional - sage.rings.finite_rings
             sage: F2                                                                    # optional - sage.rings.finite_rings
             [x0*y0 + x1*y1 + 1, x1*y0 + x0*y1 + x1*y1, x1 + 1, x0 + x1, x0^2 + x0,
-            x1^2 + x1, y0^2 + y0, y1^2 + y1]
+             x1^2 + x1, y0^2 + y0, y1^2 + y1]
 
         Another bigger example for a small scale AES::
 

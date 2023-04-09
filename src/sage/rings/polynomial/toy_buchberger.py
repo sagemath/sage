@@ -384,8 +384,8 @@ def select(P):
 
         sage: from sage.rings.polynomial.toy_buchberger import select
         sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
-        sage: ps = [x^3 - z -1, z^3 - y - 1, x^5 - y - 2]
-        sage: pairs = [[ps[i], ps[j]] for i in range(3) for j in range(i+1, 3)]
+        sage: ps = [x^3 - z - 1, z^3 - y - 1, x^5 - y - 2]
+        sage: pairs = [[ps[i], ps[j]] for i in range(3) for j in range(i + 1, 3)]
         sage: select(pairs)
         [x^3 - z - 1, -y + z^3 - 1]
     """
@@ -403,10 +403,10 @@ def inter_reduction(Q):
 
     OUTPUT:
 
-    if ``Q`` is the set `(f_1, ..., f_n)`, this method returns `(g_1,
-    ..., g_s)` such that:
+    if ``Q`` is the set `f_1, ..., f_n`, this method returns `g_1,
+    ..., g_s` such that:
 
-    - `<f_1,...,f_n> = <g_1,...,g_s>`
+    - `(f_1,...,f_n) = (g_1,...,g_s)`
     - `LM(g_i) \neq LM(g_j)` for all `i \neq j`
     - `LM(g_i)` does not divide `m` for all monomials `m` of
       `\{g_1,...,g_{i-1}, g_{i+1},...,g_s\}`
@@ -422,7 +422,7 @@ def inter_reduction(Q):
 
         sage: P.<x,y> = QQ[]
         sage: reduced = inter_reduction(set([x^2 - 5*y^2, x^3]))                        # optional - sage.libs.singular
-        sage: reduced == set([x*y^2, x^2-5*y^2])                                        # optional - sage.libs.singular
+        sage: reduced == set([x*y^2, x^2 - 5*y^2])                                      # optional - sage.libs.singular
         True
         sage: reduced == inter_reduction(set([2*(x^2 - 5*y^2), x^3]))                   # optional - sage.libs.singular
         True

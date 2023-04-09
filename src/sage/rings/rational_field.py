@@ -11,7 +11,7 @@ Interactively, an instance of :class:`RationalField` is available as ``QQ``::
     Rational Field
 
 Values of various types can be converted to rational numbers by using the
-``__call__`` method of ``RationalField`` (that is, by treating ``QQ`` as a
+:meth:`__call__` method of :class:`RationalField` (that is, by treating ``QQ`` as a
 function).
 
 ::
@@ -304,7 +304,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def construction(self):
         r"""
-        Returns a pair ``(functor, parent)`` such that ``functor(parent)``
+        Return a pair ``(functor, parent)`` such that ``functor(parent)``
         returns ``self``.
 
         This is the construction of `\QQ` as the fraction field of `\ZZ`.
@@ -468,7 +468,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         Returns a Python generator for the list of rational numbers with
         heights in ``range(start, end)``. Follows the same
-        convention as Python range, see ``range?`` for details.
+        convention as Python :func:`range`, type ``range?`` for details.
 
         See also ``__iter__()``.
 
@@ -749,7 +749,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def hilbert_symbol_negative_at_S(self, S, b, check=True):
         r"""
-        Returns an integer that has a negative Hilbert symbol with respect
+        Return an integer that has a negative Hilbert symbol with respect
         to a given rational number and a given set of primes (or places).
 
         The function is algorithm 3.4.1 in [Kir2016]_. It finds an integer `a`
@@ -923,7 +923,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def gens(self):
         r"""
-        Return a tuple of generators of `\QQ` which is only ``(1,)``.
+        Return a tuple of generators of `\QQ`, which is only ``(1,)``.
 
         EXAMPLES::
 
@@ -936,7 +936,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         r"""
         Return the ``n``-th generator of `\QQ`.
 
-        There is only the 0-th generator which is 1.
+        There is only the 0-th generator, which is 1.
 
         EXAMPLES::
 
@@ -950,7 +950,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def degree(self):
         r"""
-        Return the degree of `\QQ` which is 1.
+        Return the degree of `\QQ`, which is 1.
 
         EXAMPLES::
 
@@ -961,7 +961,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def absolute_degree(self):
         r"""
-        Return the absolute degree of `\QQ` which is 1.
+        Return the absolute degree of `\QQ`, which is 1.
 
         EXAMPLES::
 
@@ -972,7 +972,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def ngens(self):
         r"""
-        Return the number of generators of `\QQ` which is 1.
+        Return the number of generators of `\QQ`, which is 1.
 
         EXAMPLES::
 
@@ -1095,7 +1095,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def order(self):
         r"""
-        Return the order of `\QQ` which is `\infty`.
+        Return the order of `\QQ`, which is `\infty`.
 
         EXAMPLES::
 
