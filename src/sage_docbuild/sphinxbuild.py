@@ -237,7 +237,7 @@ class SageSphinxLogger():
         if not skip_this_line:
             # sphinx does produce messages in the current locals which
             # could be non-ascii
-            # see https://trac.sagemath.org/ticket/27706
+            # see https://github.com/sagemath/sage/issues/27706
             self._stream.write(line if isinstance(line, str) else line.encode('utf8'))
             self._stream.flush()
 

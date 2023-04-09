@@ -8,7 +8,7 @@ import sys
 DOT_SAGE = os.environ.get('DOT_SAGE', os.path.join(os.environ.get('HOME'),
                                                    '.sage'))
 
-# Override to not pick up user configuration, see Trac #20270
+# Override to not pick up user configuration, see Issue #20270
 os.environ['SAGE_STARTUP_FILE'] = os.path.join(DOT_SAGE, 'init-doctests.sage')
 
 
@@ -41,8 +41,8 @@ if __name__ == "__main__":
                         type=float, default=-1.0, const=1.0, metavar="SECONDS",
                         help="warn if tests take more time than SECONDS")
     # By default, include all tests marked 'sagemath_doc_html' -- see
-    # https://trac.sagemath.org/ticket/25345 and
-    # https://trac.sagemath.org/ticket/26110:
+    # https://github.com/sagemath/sage/issues/25345 and
+    # https://github.com/sagemath/sage/issues/26110:
     parser.add_argument("--optional", metavar="FEATURES", default=_get_optional_defaults(),
         help='only run tests including one of the "# optional" tags listed in FEATURES (separated by commas); '
              'if "sage" is listed, will also run the standard doctests; '
@@ -141,7 +141,7 @@ if __name__ == "__main__":
         sys.exit(2)
 
     # Limit the number of threads to 2 to save system resources.
-    # See Trac #23713, #23892, #30351
+    # See Issue #23713, #23892, #30351
     if sys.platform == 'darwin':
         os.environ["OMP_NUM_THREADS"] = "1"
     else:
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     DC = DocTestController(args, args.filenames)
     err = DC.run()
 
-    # Trac #33521: Do not run pytest if the pytest configuration is not available.
+    # Issue #33521: Do not run pytest if the pytest configuration is not available.
     # This happens when the source tree is not available and SAGE_SRC falls back
     # to SAGE_LIB.
     from sage.env import SAGE_SRC

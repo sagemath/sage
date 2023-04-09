@@ -1,5 +1,5 @@
 r"""
-Arithmetic subgroups (finite index subgroups of `\SL_2(\ZZ)`)
+Arithmetic subgroups, finite index subgroups of `\SL_2(\ZZ)`
 """
 ################################################################################
 #
@@ -744,7 +744,7 @@ class ArithmeticSubgroup(Group):
         so this should usually be overridden in subclasses; but it doesn't have
         to be.
         """
-        i = Cusp([1,0])
+        i = Cusp([1, 0])
         L = [i]
         for a in self.coset_reps():
             ai = i.apply([a.a(), a.b(), a.c(), a.d()])
@@ -757,11 +757,12 @@ class ArithmeticSubgroup(Group):
                 L.append(ai)
         return L
 
-    def are_equivalent(self, x, y, trans = False):
+    def are_equivalent(self, x, y, trans=False):
         r"""
-        Test whether or not cusps x and y are equivalent modulo self.  If self
-        has a reduce_cusp() method, use that; otherwise do a slow explicit
-        test.
+        Test whether or not cusps x and y are equivalent modulo self.
+
+        If self has a reduce_cusp() method, use that; otherwise do a
+        slow explicit test.
 
         If trans = False, returns True or False. If trans = True, then return
         either False or an element of self mapping x onto y.
@@ -970,7 +971,7 @@ class ArithmeticSubgroup(Group):
             sage: [n for n in [1..200] if Gamma0(n).genus() == 1]
             [11, 14, 15, 17, 19, 20, 21, 24, 27, 32, 36, 49]
         """
-        return ZZ(1 + (self.projective_index()) / ZZ(12)  - (self.nu2())/ZZ(4) - (self.nu3())/ZZ(3) - self.ncusps()/ZZ(2))
+        return ZZ(1 + (self.projective_index()) / ZZ(12) - (self.nu2())/ZZ(4) - (self.nu3())/ZZ(3) - self.ncusps()/ZZ(2))
 
     def farey_symbol(self):
         r"""

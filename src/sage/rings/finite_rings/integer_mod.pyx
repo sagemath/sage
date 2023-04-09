@@ -91,14 +91,12 @@ from sage.libs.pari.all import pari, PariError
 import sage.rings.integer_ring as integer_ring
 import sage.rings.rational_field
 
-import sage.interfaces.all
-
 import sage.rings.integer
 cimport sage.rings.integer
 from sage.rings.integer cimport Integer
 
 from sage.structure.coerce cimport py_scalar_to_element
-from sage.structure.richcmp import rich_to_bool_sgn, rich_to_bool
+from sage.structure.richcmp cimport rich_to_bool_sgn, rich_to_bool
 import sage.structure.element
 cimport sage.structure.element
 coerce_binop = sage.structure.element.coerce_binop
@@ -110,14 +108,16 @@ from sage.misc.persist import register_unpickle_override
 
 from sage.structure.parent cimport Parent
 
-from sage.arith.all import crt, lcm
+from sage.arith.misc import CRT as crt
+from sage.arith.functions import lcm
 from sage.groups.generic import discrete_log
 
 
 cdef Integer one_Z = Integer(1)
 
+
 def Mod(n, m, parent=None):
-    """
+    r"""
     Return the equivalence class of `n` modulo `m` as
     an element of `\ZZ/m\ZZ`.
 
@@ -779,14 +779,14 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             na = a_red.multiplicative_order()
             nb = b_red.multiplicative_order()
             if not na.divides(nb):  # cannot be a power
-                raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}" \
+                raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}"
                               + (f" (no solution modulo {q})" if q != self.modulus() else ""))
 
             if p == 2 and e >= 3:   # (ZZ/2^e)* is not cyclic; must not give unsolvable DLPs to Pari
                 try:
                     v = discrete_log(a_red, b_red, nb)
                 except ValueError:
-                    raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}" \
+                    raise ValueError(f"no logarithm of {self} found to base {b} modulo {self.modulus()}"
                                   + (f" (no solution modulo {q})" if q != self.modulus() else ""))
             else:
                 try:
@@ -1299,7 +1299,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     vmod.append(w)
                     moduli.append(k)
                 # Now combine in all possible ways using the CRT
-                from sage.arith.all import CRT_basis
+                from sage.arith.misc import CRT_basis
                 basis = CRT_basis(moduli)
                 from sage.misc.mrange import cartesian_product_iterator
                 v = []
@@ -1523,7 +1523,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     return [K(a.lift()*p**(pval // n) + p**(k - (pval - pval//n)) * b) for a in mod(upart, p**(k-pval)).nth_root(n, all=True, algorithm=algorithm) for b in range(p**(pval - pval//n))]
                 else:
                     return K(p**(pval // n) * mod(upart, p**(k-pval)).nth_root(n, algorithm=algorithm).lift())
-            from sage.rings.padics.all import ZpFM
+            from sage.rings.padics.factory import ZpFM
             R = ZpFM(p,k)
             self_orig = self
             if p == 2:
@@ -1598,7 +1598,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         return [a for a in self.parent() if a**n == self]
 
     def _balanced_abs(self):
-        """
+        r"""
         This function returns `x` or `-x`, whichever has a
         positive representative in `-n/2 < x \leq n/2`.
 
@@ -1608,8 +1608,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         if self.lift() > self.__modulus.sageInteger >> 1:
             return -self
-        else:
-            return self
+        return self
 
     def rational_reconstruction(self):
         """
@@ -1947,7 +1946,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
 
 cdef class IntegerMod_gmp(IntegerMod_abstract):
-    """
+    r"""
     Elements of `\ZZ/n\ZZ` for n not small enough
     to be operated on in word size.
 
@@ -2354,7 +2353,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
     @coerce_binop
     def gcd(self, IntegerMod_gmp other):
-        """
+        r"""
         Greatest common divisor
 
         Returns the "smallest" generator in `\ZZ / N\ZZ` of the ideal
@@ -2387,7 +2386,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
 
 cdef class IntegerMod_int(IntegerMod_abstract):
-    """
+    r"""
     Elements of `\ZZ/n\ZZ` for n small enough to
     be operated on in 32 bits
 
@@ -3022,20 +3021,18 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         # Either it failed but extend was True, or the generic algorithm is better
         return IntegerMod_abstract.sqrt(self, extend=extend, all=all)
 
-
     def _balanced_abs(self):
-        """
+        r"""
         This function returns `x` or `-x`, whichever has a
         positive representative in `-n/2 < x \leq n/2`.
         """
         if self.ivalue > self.__modulus.int32 / 2:
             return -self
-        else:
-            return self
+        return self
 
     @coerce_binop
     def gcd(self, IntegerMod_int other):
-        """
+        r"""
         Greatest common divisor
 
         Returns the "smallest" generator in `\ZZ / N\ZZ` of the ideal
@@ -3213,7 +3210,7 @@ cdef int jacobi_int(int_fast32_t a, int_fast32_t m) except -2:
 ######################################################################
 
 cdef class IntegerMod_int64(IntegerMod_abstract):
-    """
+    r"""
     Elements of `\ZZ/n\ZZ` for n small enough to
     be operated on in 64 bits
 
@@ -3688,22 +3685,20 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             sage: hash(a)
             8943
         """
-
         return hash(self.ivalue)
 
     def _balanced_abs(self):
-        """
+        r"""
         This function returns `x` or `-x`, whichever has a
         positive representative in `-n/2 < x \leq n/2`.
         """
         if self.ivalue > self.__modulus.int64 / 2:
             return -self
-        else:
-            return self
+        return self
 
     @coerce_binop
     def gcd(self, IntegerMod_int64 other):
-        """
+        r"""
         Greatest common divisor
 
         Returns the "smallest" generator in `\ZZ / N\ZZ` of the ideal
@@ -4470,7 +4465,7 @@ cdef class IntegerMod_to_Integer(Map):
             Set of Morphisms from Finite Field of size 2 to Integer Ring in Category of sets
         """
         import sage.categories.homset
-        from sage.categories.all import Sets
+        from sage.categories.sets_cat import Sets
         Morphism.__init__(self, sage.categories.homset.Hom(R, integer_ring.ZZ, Sets()))
 
     cpdef Element _call_(self, x):

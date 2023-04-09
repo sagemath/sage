@@ -442,4 +442,3 @@ cdef class pAdicFloatingPointElement(FPElement):
         sig_off()
 
         return ans
-

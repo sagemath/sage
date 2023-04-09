@@ -506,6 +506,7 @@ class lazy_attribute(_lazy_attribute):
         if hasattr(f, "__module__"):
             self.__module__ = f.__module__
 
+
 class lazy_class_attribute(lazy_attribute):
     """
     A lazy class attribute for an class is like a usual class attribute,
@@ -601,7 +602,6 @@ class lazy_class_attribute(lazy_attribute):
         """
         result = self.f(cls)
         if result is NotImplemented:
-            return getattr(super(cls, cls),self.__name__)
+            return getattr(super(cls, cls), self.__name__)
         setattr(cls, self.__name__, result)
         return result
-

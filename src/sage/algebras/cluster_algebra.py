@@ -354,7 +354,7 @@ mutating at the initial seed::
 
 from copy import copy
 
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.categories.homset import Hom
 from sage.categories.morphism import SetMorphism
 from sage.categories.rings import Rings
@@ -1331,8 +1331,8 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         # mutate_initial to name new cluster variables.
         splitnames = map(lambda w: w.partition(kwargs['cluster_variable_prefix']),
                 kwargs['cluster_variable_names'] + kwargs['coefficient_names'])
-        nfi = 1 + max([-1] + [int(v) for u, _, v in splitnames
-                              if u == '' and v.isdigit()])
+        nfi = 1 + max((int(v) for u, _, v in splitnames
+                       if u == '' and v.isdigit()), default=-1)
         kwargs.setdefault('next_free_index', nfi)
 
         # Determine scalars

@@ -202,9 +202,9 @@ cdef class LocalGenericElement(CommutativeRingElement):
     def slice(self, i, j, k = 1, lift_mode='simple'):
         r"""
         Returns the sum of the `pi^{i + l \cdot k}` terms of the series
-        expansion of this element, where pi is the uniformizer, 
-        for `i + l \cdot k` between ``i`` and ``j-1`` inclusive, and 
-        nonnegative integers `l`. Behaves analogously to the slice 
+        expansion of this element, where pi is the uniformizer,
+        for `i + l \cdot k` between ``i`` and ``j-1`` inclusive, and
+        nonnegative integers `l`. Behaves analogously to the slice
         function for lists.
 
         INPUT:
@@ -268,7 +268,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             doctest:warning
             ...
             DeprecationWarning: __getitem__ is changing to match the behavior of number fields. Please use expansion instead.
-            See http://trac.sagemath.org/14825 for details.
+            See https://github.com/sagemath/sage/issues/14825 for details.
             5^-2 + 5 + O(5^3)
 
         TESTS:
@@ -300,7 +300,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             5^2 + O(5^8)
 
         Test that slices also work over eisenstein extensions::
-            
+
             sage: F = Qp(5)
             sage: H.<x> = F[]
             sage: T.<t> = F.extension(x^2-5)
@@ -313,7 +313,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             3*t^-2 + 4*t + O(t^6)
 
         Test that slices also work over unramified extensions::
-            
+
             sage: F = Qp(5)
             sage: H.<x> = F[]
             sage: T.<t> = F.extension(x^2-2)
@@ -326,7 +326,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             3*5^-1 + (3*t + 4)*5^2 + O(5^6)
 
         Test that slices also work over 2-step extensions (unramified followed by eisenstein)::
-        
+
             sage: F = Qp(5)
             sage: H.<x> = F[]
             sage: T.<t> = F.extension(x^2-3)
@@ -337,7 +337,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             (2*t + 2)*w^-23 + O(w^2)
             sage: a.slice(0, 1)
             O(w)
-        
+
         Verify that :trac:`14106` has been fixed::
 
             sage: R = Zp(5,7)
@@ -408,8 +408,8 @@ cdef class LocalGenericElement(CommutativeRingElement):
         return ans
 
     def _latex_(self):
-        """
-        Returns a latex representation of self.
+        r"""
+        Return a latex representation of self.
 
         EXAMPLES::
 
@@ -737,10 +737,10 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         The square root or the list of all square roots of this element.
 
-        NOTE:
+        .. NOTE::
 
-        The square root is chosen (resp. the square roots are ordered) in
-        a deterministic way, which is compatible with change of precision.
+            The square root is chosen (resp. the square roots are ordered) in
+            a deterministic way, which is compatible with change of precision.
 
         EXAMPLES::
 
@@ -1001,7 +1001,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         # so that this test doesn't take too long for large precision cap
         prec_cutoff = int(min((10000 / (1 + self.precision_relative())).ceil(), 100))
 
-        from sage.categories.all import Fields
+        from sage.categories.fields import Fields
         if self.parent() in Fields():
             v = self.valuation()
             from sage.rings.infinity import infinity

@@ -58,6 +58,7 @@ from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.element import ModuleElementWithMutability
+from sage.tensor.modules.comp import CompWithSym
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.tensor_with_indices import TensorWithIndices
 
@@ -68,6 +69,7 @@ if TYPE_CHECKING:
     from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
     from sage.manifolds.differentiable.symplectic_form import SymplecticForm
     from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
+    from sage.manifolds.point import ManifoldPoint
     from sage.tensor.modules.comp import Components
 
 
@@ -107,8 +109,8 @@ class TensorField(ModuleElementWithMutability):
 
     .. MATH::
 
-        t(p):\ \underbrace{T_q^*M\times\cdots\times T_q^*M}_{k\ \; \mbox{times}}
-        \times \underbrace{T_q M\times\cdots\times T_q M}_{l\ \; \mbox{times}}
+        t(p):\ \underbrace{T_q^*M\times\cdots\times T_q^*M}_{k\ \; \text{times}}
+        \times \underbrace{T_q M\times\cdots\times T_q M}_{l\ \; \text{times}}
         \longrightarrow K,
 
     where `T_q^* M` is the dual vector space to `T_q M` and `K` is the
@@ -175,8 +177,8 @@ class TensorField(ModuleElementWithMutability):
         Module T^(0,2)(S^2) of type-(0,2) tensors fields on the 2-dimensional
          differentiable manifold S^2
         sage: t.parent().category()
-        Category of modules over Algebra of differentiable scalar fields on the
-         2-dimensional differentiable manifold S^2
+        Category of tensor products of modules over Algebra of differentiable scalar fields
+         on the 2-dimensional differentiable manifold S^2
 
     The parent of `t` is not a free module, for the sphere `S^2` is not
     parallelizable::
@@ -495,40 +497,8 @@ class TensorField(ModuleElementWithMutability):
         self._restrictions = {} # dict. of restrictions of self on subdomains
                                 # of self._domain, with the subdomains as keys
         # Treatment of symmetry declarations:
-        self._sym = []
-        if sym is not None and sym != []:
-            if isinstance(sym[0], (int, Integer)):
-                # a single symmetry is provided as a tuple -> 1-item list:
-                sym = [tuple(sym)]
-            for isym in sym:
-                if len(isym) > 1:
-                    for i in isym:
-                        if i < 0 or i > self._tensor_rank - 1:
-                            raise IndexError("invalid position: {}".format(i) +
-                                 " not in [0,{}]".format(self._tensor_rank-1))
-                    self._sym.append(tuple(isym))
-        self._antisym = []
-        if antisym is not None and antisym != []:
-            if isinstance(antisym[0], (int, Integer)):
-                # a single antisymmetry is provided as a tuple -> 1-item list:
-                antisym = [tuple(antisym)]
-            for isym in antisym:
-                if len(isym) > 1:
-                    for i in isym:
-                        if i < 0 or i > self._tensor_rank - 1:
-                            raise IndexError("invalid position: {}".format(i) +
-                                " not in [0,{}]".format(self._tensor_rank-1))
-                    self._antisym.append(tuple(isym))
-        # Final consistency check:
-        index_list = []
-        for isym in self._sym:
-            index_list += isym
-        for isym in self._antisym:
-            index_list += isym
-        if len(index_list) != len(set(index_list)):
-            # There is a repeated index position:
-            raise IndexError("incompatible lists of symmetries: the same " +
-                             "position appears more than once")
+        self._sym, self._antisym = CompWithSym._canonicalize_sym_antisym(
+            self._tensor_rank, sym, antisym)
         # Initialization of derived quantities:
         self._init_derived()
 
@@ -591,7 +561,7 @@ class TensorField(ModuleElementWithMutability):
 
         """
         # Special cases
-        if self._tensor_type == (0,2) and self._sym == [(0,1)]:
+        if self._tensor_type == (0,2) and self._sym == ((0,1),):
             description = "Field of symmetric bilinear forms "
             if self._name is not None:
                 description += self._name + " "
@@ -620,7 +590,7 @@ class TensorField(ModuleElementWithMutability):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         else:
             return self._latex_name
 
@@ -957,13 +927,13 @@ class TensorField(ModuleElementWithMutability):
         elif len(self._sym) == 1:
             s = "symmetry: {}; ".format(self._sym[0])
         else:
-            s = "symmetries: {}; ".format(self._sym)
+            s = "symmetries: {}; ".format(list(self._sym))
         if not self._antisym:
             a = "no antisymmetry"
         elif len(self._antisym) == 1:
             a = "antisymmetry: {}".format(self._antisym[0])
         else:
-            a = "antisymmetries: {}".format(self._antisym)
+            a = "antisymmetries: {}".format(list(self._antisym))
         print(s + a)
 
     #### End of simple accessors #####
@@ -3665,7 +3635,7 @@ class TensorField(ModuleElementWithMutability):
 
     lie_der = lie_derivative
 
-    def at(self, point):
+    def at(self, point: ManifoldPoint) -> FreeModuleTensor:
         r"""
         Value of ``self`` at a point of its domain.
 

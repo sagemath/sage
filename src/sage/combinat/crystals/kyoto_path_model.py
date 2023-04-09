@@ -227,7 +227,7 @@ class KyotoPathModel(TensorProductOfCrystals):
                 enumerate(P.simple_coroots()) ) != level:
             raise ValueError( "{} is not a level {} weight".format(weight, level) )
 
-        return super(KyotoPathModel, cls).__classcall__(cls, crystals, weight, P)
+        return super().__classcall__(cls, crystals, weight, P)
 
     def __init__(self, crystals, weight, P):
         """
@@ -321,6 +321,7 @@ class KyotoPathModel(TensorProductOfCrystals):
         An element in the Kyoto path model.
         """
         # For simplicity (and safety), we use the regular crystals implementation
+
         def epsilon(self, i):
             r"""
             Return `\varepsilon_i` of ``self``.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Congruence Subgroup `\Gamma_1(N)`
+Congruence subgroup `\Gamma_1(N)`
 """
 
 #*****************************************************************************

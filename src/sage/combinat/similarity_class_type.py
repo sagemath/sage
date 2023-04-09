@@ -156,7 +156,7 @@ REFERENCES:
 .. [PSS13] Prasad, A., Singla, P., and Spallone, S., *Similarity of matrices
    over local rings of length two*. :arxiv:`1212.6157`
 
-.. [PR22] Prasad, A., Ram, S., *Splitting subspaces and a finite field 
+.. [PR22] Prasad, A., Ram, S., *Splitting subspaces and a finite field
    interpretation of the Touchard-Riordan formula*. :arxiv:`2205.11076`
 
 .. [R17] Ramaré, O., *Rationality of the zeta function of the subgroups of
@@ -170,7 +170,7 @@ AUTHOR:
 - Amritanshu Prasad (2013-09-09): added functions for similarity classes over
   rings of length two
 
-- Amritanshu Prasad (2022-07-31): added computation of similarity class type of 
+- Amritanshu Prasad (2022-07-31): added computation of similarity class type of
   a given matrix and invariant subspace generating function
 """
 # ****************************************************************************
@@ -189,22 +189,23 @@ AUTHOR:
 # ****************************************************************************
 
 from itertools import chain, product
-from sage.misc.misc_c import prod
-from sage.arith.misc import factorial
-from sage.arith.all import moebius, divisors
+
+from sage.arith.misc import divisors, factorial, moebius
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.combinat.combinat import CombinatorialElement
+from sage.combinat.misc import IterableFunctionCall
+from sage.combinat.partition import Partitions, Partition
+from sage.misc.cachefunc import cached_in_parent_method, cached_function
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.misc_c import prod
+from sage.rings.fraction_field import FractionField
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 from sage.structure.element import Element, is_Matrix
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.combinat import CombinatorialElement
-from sage.combinat.partition import Partitions, Partition
-from sage.rings.fraction_field import FractionField
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.misc.cachefunc import cached_in_parent_method, cached_function
-from sage.combinat.misc import IterableFunctionCall
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
 
 @cached_function
 def fq(n, q=None):
@@ -387,7 +388,7 @@ def invariant_subspace_generating_function(la, q=None, t=None):
     u = invariant_subspace_generating_function(la[1:], q=q, t=t)
     return R((t**(la[0]+1) * q**(sum(la[1:])) * u.substitute(t=t/q) - u.substitute(t=t*q)) / (t - 1))
 
-    
+
 class PrimarySimilarityClassType(Element,
                                  metaclass=InheritComparisonClasscallMetaclass):
     r"""
@@ -1068,7 +1069,7 @@ class SimilarityClassType(CombinatorialElement):
         .. MATH::
 
             \sum_{j\geq 0} a_j(q) t^j,
-        
+
         where `a_j(q)` denotes the number of `j`-dimensional invariant subspaces
         of dimensiona `j` for any matrix with the similarity class type ``self``
         with entries in a field of order `q`.
@@ -1429,7 +1430,7 @@ def input_parsing(data):
                     data = PrimarySimilarityClassType(*data)
                     case = 'pri'
                 except(TypeError, ValueError):
-                    raise ValueError("Expected a Partition, a SimilarityClassType or a PrimarySimilarityClassType, got a %s" % type(data))
+                    raise ValueError("expected a Partition, a SimilarityClassType or a PrimarySimilarityClassType, got a %s" % type(data))
     return case, data
 
 

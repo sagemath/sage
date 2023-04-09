@@ -2,12 +2,34 @@ r"""
 Join features
 """
 
+# ****************************************************************************
+#       Copyright (C) 2021-2022 Matthias Koeppe
+#                     2021-2022 Kwankyu Lee
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from . import Feature, FeatureTestResult
 
 
 class JoinFeature(Feature):
     r"""
     Join of several :class:`~sage.features.Feature` instances.
+
+    This creates a new feature as the union of the given features. Typically
+    these are executables of an SPKG. For an example, see
+    :class:`~sage.features.rubiks.Rubiks`.
+
+    Furthermore, this can be the union of a single feature. This is used to map
+    the given feature to a more convenient name to be used in ``optional`` tags
+    of doctests. Thus you can equip a feature such as a
+    :class:`~sage.features.PythonModule` with a tag name that differs from the
+    systematic tag name. As an example for this use case, see
+    :class:`~sage.features.meataxe.Meataxe`.
 
     EXAMPLES::
 
@@ -77,7 +99,7 @@ class JoinFeature(Feature):
             sage: Latte().is_functional()  # optional - latte_int
             doctest:warning...
             DeprecationWarning: method JoinFeature.is_functional; use is_present instead
-            See https://trac.sagemath.org/33114 for details.
+            See https://github.com/sagemath/sage/issues/33114 for details.
             FeatureTestResult('latte_int', True)
         """
         try:

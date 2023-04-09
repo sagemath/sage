@@ -980,7 +980,7 @@ cdef class CoxGroupElement:
 
         cdef Length i = 0
         cdef CoxGroupElement res
-        for i from 0 <= i < list.size():
+        for i in range(list.size()):
             res = self._new()
             res.word = list[i]
             coatoms.append(res)

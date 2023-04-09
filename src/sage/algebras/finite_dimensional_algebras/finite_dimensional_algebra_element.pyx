@@ -640,4 +640,3 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             True
         """
         return self.matrix().characteristic_polynomial()
-

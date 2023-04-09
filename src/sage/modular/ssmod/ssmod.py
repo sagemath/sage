@@ -1,15 +1,7 @@
 """
-Module of Supersingular Points
+Module of supersingular points
 
 The module of divisors on the modular curve `X_0(N)` over `F_p` supported at supersingular points.
-
-AUTHORS:
-
-- William Stein
-
-- David Kohel
-
-- Iftikhar Burhanuddin
 
 EXAMPLES::
 
@@ -52,6 +44,15 @@ TESTS::
     True
     sage: loads(dumps(d)) == d
     True
+
+AUTHORS:
+
+- William Stein
+
+- David Kohel
+
+- Iftikhar Burhanuddin
+
 """
 
 # ****************************************************************************

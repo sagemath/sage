@@ -46,6 +46,7 @@ Lattice polyhedra
    sage/geometry/polyhedron/palp_database
    sage/geometry/polyhedron/ppl_lattice_polygon
    sage/geometry/polyhedron/ppl_lattice_polytope
+   sage/geometry/polyhedron/generating_function
 
 Combinatorial Polyhedra
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -112,6 +113,7 @@ Backends for Polyhedra
    sage/geometry/polyhedron/backend_cdd
    sage/geometry/polyhedron/backend_cdd_rdf
    sage/geometry/polyhedron/backend_field
+   sage/geometry/polyhedron/backend_number_field
    sage/geometry/polyhedron/backend_normaliz
    sage/geometry/polyhedron/backend_polymake
    sage/geometry/polyhedron/backend_ppl

@@ -7,6 +7,5 @@ cpdef dict sum(dict_iter)
 cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=*)
 cpdef dict sum_of_monomials(monomials, scalar)
 cpdef dict sum_of_terms(index_coeff_pairs)
-cdef inline dict remove_zeros(dict D)
+cdef dict remove_zeros(dict D)
 cpdef dict convert_remove_zeroes(dict D, R)
-

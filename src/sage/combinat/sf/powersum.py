@@ -19,10 +19,11 @@ Power sum symmetric functions
 #*****************************************************************************
 from . import sfa, multiplicative, classical
 from sage.combinat.partition import Partition
-from sage.arith.all import divisors
+from sage.arith.misc import divisors
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.misc_c import prod
+
 
 class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     def __init__(self, Sym):
@@ -476,8 +477,8 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`
             """
-            dct = {Partition([n * i for i in lam]): coeff
-                   for (lam, coeff) in self.monomial_coefficients().items()}
+            dct = {lam.stretch(n): coeff
+                   for lam, coeff in self.monomial_coefficients().items()}
             return self.parent()._from_dict(dct)
 
         adams_operation = frobenius
@@ -934,6 +935,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 return (1-q)**n * t**n / m
 
             return self.parent()._apply_module_morphism(self, f, t.parent())
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

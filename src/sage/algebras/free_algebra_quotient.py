@@ -169,9 +169,9 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             sage: a = H._element_constructor_([1,2,3,4]); a
             1 + 2*i + 3*j + 4*k
         """
-        return self.element_class(self,x)
+        return self.element_class(self, x)
 
-    def _coerce_map_from_(self,S):
+    def _coerce_map_from_(self, S):
         """
         EXAMPLES::
 
@@ -183,7 +183,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             sage: H._coerce_map_from_(GF(7))
             False
         """
-        return S==self or self.__free_algebra.has_coerce_map_from(S)
+        return S == self or self.__free_algebra.has_coerce_map_from(S)
 
     def _repr_(self):
         """
@@ -197,7 +197,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
         n = self.__ngens
         r = self.__module.dimension()
         x = self.variable_names()
-        return "Free algebra quotient on %s generators %s and dimension %s over %s"%(n,x,r,R)
+        return "Free algebra quotient on %s generators %s and dimension %s over %s" % (n, x, r, R)
 
     def gen(self, i):
         """
@@ -295,6 +295,8 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
         """
         The free module of the algebra.
 
+        EXAMPLES::
+
             sage: H = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0]; H
             Free algebra quotient on 3 generators ('i', 'j', 'k') and dimension 4 over Rational Field
             sage: H.module()
@@ -331,11 +333,13 @@ def hamilton_quatalg(R):
     constructed as a free algebra quotient.
 
     INPUT:
-        - R -- a commutative ring
+
+    - R -- a commutative ring
 
     OUTPUT:
-        - Q -- quaternion algebra
-        - gens -- generators for Q
+
+    - Q -- quaternion algebra
+    - gens -- generators for Q
 
     EXAMPLES::
 
@@ -355,12 +359,14 @@ def hamilton_quatalg(R):
     """
     n = 3
     from sage.algebras.free_algebra import FreeAlgebra
-    from sage.matrix.all import MatrixSpace
+    from sage.matrix.matrix_space import MatrixSpace
     A = FreeAlgebra(R, n, 'i')
     F = A.monoid()
     i, j, k = F.gens()
-    mons = [ F(1), i, j, k ]
-    M = MatrixSpace(R,4)
-    mats = [M([0,1,0,0, -1,0,0,0, 0,0,0,-1, 0,0,1,0]),  M([0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0]),  M([0,0,0,1, 0,0,-1,0, 0,1,0,0, -1,0,0,0]) ]
-    H3 = FreeAlgebraQuotient(A,mons,mats, names=('i','j','k'))
+    mons = [F(1), i, j, k]
+    M = MatrixSpace(R, 4)
+    mats = [M([0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0]),
+            M([0, 0, 1, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, -1, 0, 0]),
+            M([0, 0, 0, 1, 0, 0, -1, 0, 0, 1, 0, 0, -1, 0, 0, 0])]
+    H3 = FreeAlgebraQuotient(A, mons, mats, names=('i', 'j', 'k'))
     return H3, H3.gens()

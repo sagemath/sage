@@ -184,4 +184,3 @@ def reversed_hermite_form(Matrix mat, bint transformation=False):
 
     if transformation:
         return U
-

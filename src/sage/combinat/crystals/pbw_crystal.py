@@ -32,10 +32,12 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.pbw_datum import PBWData, PBWDatum
 
+
 class PBWCrystalElement(Element):
     """
     A crystal element in the PBW model.
     """
+
     def __init__(self, parent, lusztig_datum, long_word=None):
         """
         Initialize ``self``.
@@ -401,7 +403,7 @@ class PBWCrystal(Parent, UniqueRepresentation):
         cartan_type = CartanType(cartan_type)
         if not cartan_type.is_finite():
             raise NotImplementedError("only implemented for finite types")
-        return super(PBWCrystal, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         """

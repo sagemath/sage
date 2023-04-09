@@ -1,5 +1,5 @@
 r"""
-Hyperbolic Functions
+Hyperbolic functions
 
 The full set of hyperbolic and inverse hyperbolic functions is
 available:

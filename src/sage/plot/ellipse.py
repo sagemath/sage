@@ -192,7 +192,8 @@ class Ellipse(GraphicPrimitive):
         options = self.options()
         p = patches.Ellipse(
                 (self.x,self.y),
-                self.r1*2.,self.r2*2.,self.angle/pi*180.)
+                self.r1*2.,self.r2*2.,
+                angle=self.angle/pi*180.)
         p.set_linewidth(float(options['thickness']))
         p.set_fill(options['fill'])
         a = float(options['alpha'])

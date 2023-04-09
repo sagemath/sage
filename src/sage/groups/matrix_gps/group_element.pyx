@@ -687,7 +687,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             return order.sage()
         else:
             assert order.IsInfinity()
-            from sage.rings.all import Infinity
+            from sage.rings.infinity import Infinity
             return Infinity
 
     def word_problem(self, gens=None):
@@ -823,4 +823,3 @@ def _unpickle_generic_element(G, mat):
         True
     """
     return G.element_class(G, mat, False, False)
-

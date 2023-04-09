@@ -36,7 +36,7 @@ from collections.abc import Iterator
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.posets import Posets
-from sage.categories.all import Monoids
+from sage.categories.monoids import Monoids
 from sage.combinat.posets.posets import Poset, FinitePoset
 from sage.categories.finite_posets import FinitePosets
 from sage.combinat.binary_tree import BinaryTrees
@@ -48,7 +48,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.integer import Integer
-from sage.rings.semirings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
@@ -61,7 +61,7 @@ from sage.graphs.digraph import DiGraph
 
 
 class TamariIntervalPoset(Element,
-        metaclass=InheritComparisonClasscallMetaclass):
+                          metaclass=InheritComparisonClasscallMetaclass):
     r"""
     The class of Tamari interval-posets.
 
@@ -3231,7 +3231,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         final_forest = TamariIntervalPosets.final_forest(tree1)
         try:
             return initial_forest.intersection(final_forest)
-        except Exception:
+        except ValueError:
             raise ValueError("the two binary trees are not comparable on the Tamari lattice")
 
     @staticmethod
@@ -3280,7 +3280,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         tree2 = dw2.to_binary_tree_tamari()
         try:
             return TamariIntervalPosets.from_binary_trees(tree1, tree2)
-        except Exception:
+        except ValueError:
             raise ValueError("the two Dyck words are not comparable on the Tamari lattice")
 
     @staticmethod
@@ -3539,7 +3539,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         The comparison is first by size, then using the
         cubical coordinates.
 
-        .. SEEALSO:: :meth:`cubical_coordinates`
+        .. SEEALSO:: :meth:`~TamariIntervalPoset.cubical_coordinates`
 
         INPUT:
 
@@ -3568,6 +3568,7 @@ class TamariIntervalPosets_all(DisjointUnionEnumeratedSets, TamariIntervalPosets
     r"""
     The enumerated set of all Tamari interval-posets.
     """
+
     def __init__(self):
         r"""
         TESTS::
@@ -3655,6 +3656,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
     r"""
     The enumerated set of interval-posets of a given size.
     """
+
     def __init__(self, size):
         r"""
         TESTS::
@@ -3707,7 +3709,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             sage: [TamariIntervalPosets(i).cardinality() for i in range(6)]
             [1, 1, 3, 13, 68, 399]
         """
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         n = self._size
         if n == 0:
             return Integer(1)

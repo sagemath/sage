@@ -1,6 +1,6 @@
 # cython: binding=True
 """
-Matching Polynomial
+Matching polynomial
 
 This module contains the following methods:
 

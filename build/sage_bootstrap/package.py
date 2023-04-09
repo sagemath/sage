@@ -46,6 +46,7 @@ class Package(object):
         self._init_checksum()
         self._init_version()
         self._init_type()
+        self._init_install_requires()
 
     def __repr__(self):
         return 'Package {0}'.format(self.name)
@@ -229,6 +230,21 @@ class Package(object):
         """
         return self.__type
 
+    @property
+    def distribution_name(self):
+        """
+        Return the Python distribution name or ``None`` for non-Python packages
+        """
+        if self.__install_requires is None:
+            return None
+        for line in self.__install_requires.split('\n'):
+            line = line.strip()
+            if line.startswith('#'):
+                continue
+            for part in line.split():
+                return part
+        return None
+
     def __eq__(self, other):
         return self.tarball == other.tarball
 
@@ -312,3 +328,10 @@ class Package(object):
             'base', 'standard', 'optional', 'experimental'
         ]
         self.__type = package_type
+
+    def _init_install_requires(self):
+        try:
+            with open(os.path.join(self.path, 'install-requires.txt')) as f:
+                self.__install_requires = f.read().strip()
+        except IOError:
+            self.__install_requires = None

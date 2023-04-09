@@ -328,8 +328,8 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
         D = -M
         Delta = A
         a = [0]
-        a.append((2*K(3)**-1*A**2-B)*(N*A-M*B)*K(2)**-1 \
-                    - M*(N*K(2)**-1-M*A*K(3)**-1))
+        a.append((2*K(3)**-1*A**2-B)*(N*A-M*B)*K(2)**-1
+                 - M*(N*K(2)**-1-M*A*K(3)**-1))
         B0 = R
         B1 = K(2)**-1*(N*A-M*B)
         C0 = 0

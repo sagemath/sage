@@ -1766,7 +1766,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     .. MATH::
 
-                      F(s) = \frac{1}{2\pi i} \int_{\gamma-i\infty}^{\gamma + i\infty} e^{st} F(s) dt,
+                      f(t) = \frac{1}{2\pi i} \int_{\gamma-i\infty}^{\gamma + i\infty} e^{st} F(s) ds,
 
     where `\gamma` is chosen so that the contour path of
     integration is in the region of convergence of `F(s)`.
@@ -2252,7 +2252,6 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
         sage: sefms("x # 3") == SR(x != 3)
         True
         sage: solve([x != 5], x)
-        #0: solve_rat_ineq(ineq=_SAGE_VAR_x # 5)
         [[x - 5 != 0]]
         sage: solve([2*x==3, x != 5], x)
         [[x == (3/2), (-7/2) != 0]]
@@ -2441,7 +2440,6 @@ def maxima_options(**kwds):
 
 syms_cur = symbol_table.get('functions', {})
 syms_default = dict(syms_cur)
-
 
 
 def _find_var(name, interface=None):

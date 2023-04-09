@@ -105,7 +105,7 @@ integers. So for example,
 
 Another important feature of maple is its online help. We can
 access this through sage as well. After reading the description of
-the command, you can press q to immediately get back to your
+the command, you can press :kbd:`q` to immediately get back to your
 original prompt.
 
 Incidentally you can always get into a maple console by the
@@ -337,7 +337,7 @@ class Maple(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
-            sage: maple.__reduce__()
+            sage: Maple().__reduce__()
             (<function reduce_load_Maple at 0x...>, ())
             sage: f, args = _
             sage: f(*args)

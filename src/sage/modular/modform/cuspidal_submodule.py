@@ -1,5 +1,5 @@
 """
-The Cuspidal Subspace
+The cuspidal subspace
 
 EXAMPLES::
 
@@ -174,15 +174,16 @@ class CuspidalSubmodule(ModularFormsSubmodule):
         A = self.ambient_module()
         return A.modular_symbols(sign).cuspidal_submodule()
 
-
     def change_ring(self, R):
         r"""
-        Change the base ring of self to R, when this makes sense. This differs
-        from :meth:`~sage.modular.modform.space.ModularFormsSpace.base_extend`
-        in that there may not be a canonical map from self to the new space, as
-        in the first example below. If this space has a character then this may
-        fail when the character cannot be defined over R, as in the second
-        example.
+        Change the base ring of ``self`` to ``R``, when this makes sense.
+
+        This differs from
+        :meth:`~sage.modular.modform.space.ModularFormsSpace.base_extend`
+        in that there may not be a canonical map from ``self`` to the new
+        space, as in the first example below. If this space has a
+        character then this may fail when the character cannot be
+        defined over ``R``, as in the second example.
 
         EXAMPLES::
 
@@ -236,7 +237,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
             prec = Integer(prec)
         if self.dimension() == 0:
             return []
-        M = self.modular_symbols(sign = 1)
+        M = self.modular_symbols(sign=1)
         return M.q_expansion_basis(prec)
 
     def _compute_hecke_matrix_prime(self, p):

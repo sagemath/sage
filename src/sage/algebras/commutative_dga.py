@@ -100,6 +100,8 @@ from sage.rings.quotient_ring import QuotientRing_nc
 from sage.rings.quotient_ring_element import QuotientRingElement
 from sage.misc.cachefunc import cached_function
 
+import sage.interfaces.abc
+
 
 def sorting_keys(element):
     r"""
@@ -173,34 +175,54 @@ class Differential(UniqueRepresentation, Morphism,
             sage: d2 = A.cdg_algebra({x: x*y, z: t, y: -x*y, t: 0}).differential()
             sage: d1 is d2
             True
+
+        Check that :trac:`34818` is solved::
+
+            sage: A.<a,b,x,u> = GradedCommutativeAlgebra(QQ,degrees=(2,2,3,3))
+            sage: A = A.quotient(A.ideal([a*u,b*u,x*u]))
+            sage: A.cdg_algebra({x:a*b,a:u})
+            Commutative Differential Graded Algebra with generators ('a', 'b', 'x', 'u') in degrees (2, 2, 3, 3) with relations [a*u, b*u, x*u] over Rational Field with differential:
+               a --> u
+               b --> 0
+               x --> a*b
+               u --> 0
+            sage: A.cdg_algebra({x:a*b,a:u,u:a^2})
+            Traceback (most recent call last):
+            ...
+            ValueError: the differential does not preserve the ideal
         """
         if isinstance(im_gens, (list, tuple)):
-            im_gens = {A.gen(i): x for i, x in enumerate(im_gens)}
-
-        R = A.cover_ring()
-        I = A.defining_ideal()
-        if A.base_ring().characteristic() != 2:
-            squares = R.ideal([R.gen(i)**2 for i, d in enumerate(A._degrees)
-                               if is_odd(d)], side='twosided')
+            im_gens = {A.gen(i): A(x) for i, x in enumerate(im_gens)}
         else:
-            squares = R.ideal(0, side='twosided')
+            im_gens = {A(a): A(im_gens[a]) for a in im_gens}
 
-        if I != squares:
-            A_free = GCAlgebra(A.base(), names=A._names, degrees=A._degrees)
-            free_diff = {A_free(a): A_free(im_gens[a]) for a in im_gens}
-            B = A_free.cdg_algebra(free_diff)
-            IB = B.ideal([B(g) for g in I.gens()])
-            BQ = GCAlgebra.quotient(B, IB)
-            # We check that the differential respects the
-            # relations in the quotient method, but we also have
-            # to check this here, in case a GCAlgebra with
-            # relations is defined first, and then a differential
-            # imposed on it.
-            for g in IB.gens():
-                if not BQ(g.differential()).is_zero():
-                    raise ValueError("The differential does not preserve the ideal")
+        I = A.defining_ideal()
 
-        im_gens = {A(a): A(im_gens[a]) for a in im_gens}
+        def image_monomial(exponent):
+            i = 0
+            cexp = list(exponent)
+            ell = len(cexp)
+            while i < ell:
+                if not cexp[i]:
+                    i +=1
+                    continue
+                a = A.gen(i)
+                try:
+                    da = im_gens[a]
+                except KeyError:
+                    da = A.zero()
+                cexp[i] -= 1
+                b = A.prod(A.gen(j) ** cexp[j] for j in range(len(cexp)))
+                db = image_monomial(cexp)
+                im =  da * b + (-1)**A._degrees[i] * a * db
+                return A(im)
+            return A.zero()
+
+        for g in I.gens():
+            d = g.dict()
+            res = A.sum(d[ex] * image_monomial(ex) for ex in d)
+            if not res.is_zero():
+                raise ValueError("the differential does not preserve the ideal")
 
         for i in im_gens:
             x = im_gens[i]
@@ -208,10 +230,10 @@ class Differential(UniqueRepresentation, Morphism,
                     and (not x.is_homogeneous()
                          or total_degree(x.degree())
                          != total_degree(i.degree()) + 1)):
-                raise ValueError("The given dictionary does not determine a degree 1 map")
+                raise ValueError("the given dictionary does not determine a degree 1 map")
 
-        im_gens = tuple(im_gens.get(x, A.zero()) for x in A.gens())
-        return super(Differential, cls).__classcall__(cls, A, im_gens)
+        im_gens = tuple([im_gens.get(x, A.zero()) for x in A.gens()])
+        return super().__classcall__(cls, A, im_gens)
 
     def __init__(self, A, im_gens):
         r"""
@@ -243,14 +265,14 @@ class Differential(UniqueRepresentation, Morphism,
             sage: A.cdg_algebra({a:b, b:c})
             Traceback (most recent call last):
             ...
-            ValueError: The given dictionary does not determine a valid differential
+            ValueError: the given dictionary does not determine a valid differential
         """
         self._dic_ = {A.gen(i): x for i, x in enumerate(im_gens)}
         Morphism.__init__(self, Hom(A, A, category=Modules(A.base_ring())))
 
         for i in A.gens():
             if not self(self(i)).is_zero():
-                raise ValueError("The given dictionary does not determine a valid differential")
+                raise ValueError("the given dictionary does not determine a valid differential")
 
     def _call_(self, x):
         r"""
@@ -600,7 +622,7 @@ class Differential_multigraded(Differential):
             if y != 0:
                 diff_deg.append(y.degree() - x.degree())
         if len(set(diff_deg)) > 1:
-            raise ValueError("The differential does not have a well-defined degree")
+            raise ValueError("the differential does not have a well-defined degree")
         self._degree_of_differential = diff_deg[0]
 
     @cached_method
@@ -941,7 +963,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         """
         if names is None:
             if degrees is None:
-                raise ValueError("You must specify names or degrees")
+                raise ValueError("you must specify names or degrees")
             else:
                 n = len(degrees)
             names = tuple('x{}'.format(i) for i in range(n))
@@ -958,22 +980,15 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             # Deal with multigrading: convert lists and tuples to elements
             # of an additive abelian group.
             if degrees:
-                multigrade = False
                 try:
                     rank = len(list(degrees[0]))
                     G = AdditiveAbelianGroup([0] * rank)
                     degrees = [G(vector(d)) for d in degrees]
-                    multigrade = True
                 except TypeError:
                     # The entries of degrees are not iterables, so
                     # treat as singly-graded.
                     pass
-                if multigrade:
-                    if sorted(map(sum, degrees)) != list(map(sum, degrees)):
-                        raise ValueError("the generators should be ordered in increased total degree")
-                else:
-                    if sorted(degrees) != list(degrees):
-                        raise ValueError("the generators should be ordered in increasing degree")
+
             degrees = tuple(degrees)
         if not R or not I:
             if n > 1:
@@ -998,9 +1013,9 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                              for i in range(n) if is_odd(tot_degs[i])],
                             side='twosided')
 
-        return super(GCAlgebra, cls).__classcall__(cls, base=base, names=names,
-                                                   degrees=degrees, R=R, I=I,
-                                                   category=category)
+        return super().__classcall__(cls, base=base, names=names,
+                                     degrees=degrees, R=R, I=I,
+                                     category=category)
 
     def __init__(self, base, R=None, I=None, names=None, degrees=None, category=None):
         """
@@ -1203,7 +1218,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             [x^2*z, y^2*z, z*t]
         """
         if check and any(not i.is_homogeneous() for i in I.gens()):
-            raise ValueError("The ideal must be homogeneous")
+            raise ValueError("the ideal must be homogeneous")
         NCR = self.cover_ring()
         gens1 = list(self.defining_ideal().gens())
         gens2 = [i.lift() for i in I.gens()]
@@ -1236,7 +1251,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                                                         .gens()):
                 return False
             return self.cover_ring().has_coerce_map_from(other.cover_ring())
-        return super(GCAlgebra, self)._coerce_map_from_(other)
+        return super()._coerce_map_from_(other)
 
     def _element_constructor_(self, x, coerce=True):
         r"""
@@ -1269,8 +1284,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             R = self.cover_ring()
             x = R(x)
 
-        from sage.interfaces.singular import is_SingularElement
-        if is_SingularElement(x):
+        if isinstance(x, sage.interfaces.abc.SingularElement):
             # self._singular_().set_ring()
             x = self.element_class(self, x.sage_poly(self.cover_ring()))
             return x
@@ -1447,10 +1461,10 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 sage: A(0).degree()
                 Traceback (most recent call last):
                 ...
-                ValueError: The zero element does not have a well-defined degree
+                ValueError: the zero element does not have a well-defined degree
             """
             if self.is_zero():
-                raise ValueError("The zero element does not have a well-defined degree")
+                raise ValueError("the zero element does not have a well-defined degree")
             exps = self.lift().dict().keys()
             degrees = self.parent()._degrees
             n = self.parent().ngens()
@@ -1581,7 +1595,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 sage: (t + x).basis_coefficients()
                 Traceback (most recent call last):
                 ...
-                ValueError: This element is not homogeneous
+                ValueError: this element is not homogeneous
 
                 sage: B.<c,d> = GradedCommutativeAlgebra(QQ, degrees=((2,0), (0,4)))
                 sage: B.basis(4)
@@ -1591,10 +1605,10 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 sage: (c^2 - 1/2 * d).basis_coefficients()
                 Traceback (most recent call last):
                 ...
-                ValueError: This element is not homogeneous
+                ValueError: this element is not homogeneous
             """
             if not self.is_homogeneous(total):
-                raise ValueError('This element is not homogeneous')
+                raise ValueError('this element is not homogeneous')
 
             basis = self.parent().basis(self.degree(total))
             lift = self.lift()
@@ -1726,7 +1740,7 @@ class GCAlgebra_multigraded(GCAlgebra):
             [x^2*z, y^2*z, z*t]
         """
         if check and any(not i.is_homogeneous() for i in I.gens()):
-            raise ValueError("The ideal must be homogeneous")
+            raise ValueError("the ideal must be homogeneous")
         NCR = self.cover_ring()
         gens1 = list(self.defining_ideal().gens())
         gens2 = [i.lift() for i in I.gens()]
@@ -1755,7 +1769,7 @@ class GCAlgebra_multigraded(GCAlgebra):
                 return False
         elif isinstance(other, GCAlgebra):   # Not multigraded
             return False
-        return super(GCAlgebra_multigraded, self)._coerce_map_from_(other)
+        return super()._coerce_map_from_(other)
 
     def basis(self, n, total=False):
         """
@@ -1880,18 +1894,18 @@ class GCAlgebra_multigraded(GCAlgebra):
                 sage: (a**2*b + c).degree()
                 Traceback (most recent call last):
                 ...
-                ValueError: This element is not homogeneous
+                ValueError: this element is not homogeneous
                 sage: (a**2*b + c).degree(total=True)
                 3
                 sage: A(0).degree()
                 Traceback (most recent call last):
                 ...
-                ValueError: The zero element does not have a well-defined degree
+                ValueError: the zero element does not have a well-defined degree
             """
             if total:
                 return GCAlgebra.Element.degree(self)
             if self.is_zero():
-                raise ValueError("The zero element does not have a well-defined degree")
+                raise ValueError("the zero element does not have a well-defined degree")
             degrees = self.parent()._degrees_multi
             n = self.parent().ngens()
             exps = self.lift().dict().keys()
@@ -1899,7 +1913,7 @@ class GCAlgebra_multigraded(GCAlgebra):
             if len(set(l)) == 1:
                 return l[0]
             else:
-                raise ValueError('This element is not homogeneous')
+                raise ValueError('this element is not homogeneous')
 
 
 ###########################################################
@@ -1995,7 +2009,7 @@ class DifferentialGCAlgebra(GCAlgebra):
             sage: A.cdg_algebra({a: a*b*c})
             Traceback (most recent call last):
             ...
-            ValueError: The given dictionary does not determine a degree 1 map
+            ValueError: the given dictionary does not determine a degree 1 map
 
         The differential composed with itself must be zero::
 
@@ -2003,7 +2017,7 @@ class DifferentialGCAlgebra(GCAlgebra):
             sage: A.cdg_algebra({a:b, b:c})
             Traceback (most recent call last):
             ...
-            ValueError: The given dictionary does not determine a valid differential
+            ValueError: the given dictionary does not determine a valid differential
         """
         cat = Algebras(A.base()).Graded() & ChainComplexes(A.base())
         GCAlgebra.__init__(self, A.base(), names=A._names,
@@ -2012,6 +2026,49 @@ class DifferentialGCAlgebra(GCAlgebra):
         self._differential = Differential(self, differential._dic_)
         self._minimalmodels = {}
         self._numerical_invariants = {}
+
+    def cdg_algebra(self, differential):
+        r"""
+        Construct a differential graded commutative algebra from the underlying
+        graded commutative algebra by specifying a differential. This may be used
+        to get a new differential over the same algebra structure.
+
+        INPUT:
+
+        - ``differential`` -- a dictionary defining a differential or
+          a map defining a valid differential
+
+        The keys of the dictionary are generators of the algebra, and
+        the associated values are their targets under the
+        differential. Any generators which are not specified are
+        assumed to have zero differential. Alternatively, the
+        differential can be defined using the :meth:`differential`
+        method; see below for an example.
+
+        .. SEEALSO::
+
+            :meth:`differential`
+
+        EXAMPLES::
+
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(GF(5), degrees=(2, 3, 2, 4))
+            sage: B = A.quotient(A.ideal(x^3-z*t))
+            sage: C = B.cdg_algebra({y:t})
+            sage: C
+            Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (2, 3, 2, 4) with relations [x^3 - z*t] over Finite Field of size 5 with differential:
+            x --> 0
+            y --> t
+            z --> 0
+            t --> 0
+            sage: C.cdg_algebra({})
+            Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (2, 3, 2, 4) with relations [x^3 - z*t] over Finite Field of size 5 with differential:
+            x --> 0
+            y --> 0
+            z --> 0
+            t --> 0
+
+        """
+        return self.graded_commutative_algebra().cdg_algebra(differential)
 
     def graded_commutative_algebra(self):
         """
@@ -2088,17 +2145,17 @@ class DifferentialGCAlgebra(GCAlgebra):
             sage: B.quotient(B.ideal(y*x))
             Traceback (most recent call last):
             ...
-            ValueError: The differential does not preserve the ideal
+            ValueError: the differential does not preserve the ideal
             sage: B.quotient(B.ideal(x))
             Traceback (most recent call last):
             ...
-            ValueError: The differential does not preserve the ideal
+            ValueError: the differential does not preserve the ideal
         """
         J = self.ideal(I)
         AQ = GCAlgebra.quotient(self, J, check)
         for g in I.gens():
             if not AQ(g.differential()).is_zero():
-                raise ValueError("The differential does not preserve the ideal")
+                raise ValueError("the differential does not preserve the ideal")
         dic = {AQ(a): AQ(a.differential()) for a in self.gens()}
         return AQ.cdg_algebra(dic)
 
@@ -2883,10 +2940,10 @@ class DifferentialGCAlgebra(GCAlgebra):
                 sage: (x*z+y**2).is_coboundary()
                 Traceback (most recent call last):
                 ...
-                ValueError: This element is not homogeneous
+                ValueError: this element is not homogeneous
             """
             if not self.is_homogeneous():
-                raise ValueError('This element is not homogeneous')
+                raise ValueError('this element is not homogeneous')
             # To avoid taking the degree of 0, we special-case it.
             if self.is_zero():
                 return True
@@ -2929,7 +2986,7 @@ class DifferentialGCAlgebra(GCAlgebra):
                 return self.is_coboundary()
             if (not isinstance(other, DifferentialGCAlgebra.Element)
                or self.parent() is not other.parent()):
-                raise ValueError('The element {} does not lie in this DGA'
+                raise ValueError('the element {} does not lie in this DGA'
                                  .format(other))
             if (self - other).is_homogeneous():
                 return (self - other).is_coboundary()
@@ -3073,7 +3130,7 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra,
             sage: B = A.cdg_algebra(differential={x:y, t:z}) # bad
             Traceback (most recent call last):
             ...
-            ValueError: The differential does not have a well-defined degree
+            ValueError: the differential does not have a well-defined degree
         """
         cat = Algebras(A.base()).Graded() & ChainComplexes(A.base())
         GCAlgebra_multigraded.__init__(self, A.base(), names=A._names,
@@ -3426,7 +3483,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
         sage: GradedCommutativeAlgebra(QQ)
         Traceback (most recent call last):
         ...
-        ValueError: You must specify names or degrees
+        ValueError: you must specify names or degrees
     """
     if max_degree:
         from .finite_gca import FiniteGCAlgebra

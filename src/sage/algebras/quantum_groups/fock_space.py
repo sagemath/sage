@@ -1354,9 +1354,8 @@ class FockSpace(Parent, UniqueRepresentation):
                 return fock.sum_of_terms((fock._indices([[]]*k + list(pt)), c) for pt,c in cur)
 
             cur = R.A()._A_to_fock_basis(la)
-            s = cur.support()
-            s.sort() # Sort lex, which respects dominance order
-            s.pop() # Remove the largest
+            s = sorted(cur.support())  # Sort lex, which respects dominance order
+            s.pop()  # Remove the largest
 
             q = R._q
             while s:
@@ -2189,9 +2188,8 @@ class FockSpaceTruncated(FockSpace):
 
             # Perform the triangular reduction
             cur = self.realization_of().A(algorithm)._A_to_fock_basis(la)
-            s = cur.support()
-            s.sort() # Sort lex, which respects dominance order
-            s.pop() # Remove the largest
+            s = sorted(cur.support())  # Sort lex, which respects dominance order
+            s.pop()  # Remove the largest
 
             q = self.realization_of()._q
             while s:

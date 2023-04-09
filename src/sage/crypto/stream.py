@@ -12,15 +12,14 @@ Stream Cryptosystems
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .cryptosystem import SymmetricKeyCryptosystem
-from .stream_cipher import LFSRCipher, ShrinkingGeneratorCipher
-
+from sage.arith.misc import gcd, power_mod
+from sage.crypto.cryptosystem import SymmetricKeyCryptosystem
+from sage.crypto.stream_cipher import LFSRCipher, ShrinkingGeneratorCipher
 from sage.crypto.util import random_blum_prime
 from sage.monoids.string_monoid import BinaryStrings
-from sage.arith.all import gcd, power_mod
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 
 IntegerModRing = IntegerModFactory("IntegerModRing")
@@ -73,7 +72,7 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
         if not isinstance(key, (list, tuple)) and len(key) == 2:
             raise TypeError("Argument key (= %s) must be a list of tuple of length 2" % key)
         poly, IS = key
-        if not is_Polynomial(poly):
+        if not isinstance(poly, Polynomial):
             raise TypeError("poly (= %s) must be a polynomial." % poly)
         if not isinstance(IS, (list, tuple)):
             raise TypeError("IS (= %s) must be an initial in the key space." % IS)
@@ -288,7 +287,7 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
     is the period. ::
 
         sage: from sage.crypto.stream import blum_blum_shub
-        sage: from sage.crypto.util import carmichael_lambda
+        sage: from sage.arith.misc import carmichael_lambda
         sage: carmichael_lambda(carmichael_lambda(7*11))
         4
         sage: s = [GF(2)(int(str(x))) for x in blum_blum_shub(60, p=7, q=11, seed=13)]

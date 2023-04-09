@@ -244,13 +244,13 @@ class WordDatatype_callable(WordDatatype):
                 if step > 0:
                     start = 0 if key.start is None else key.start
                     length = self._len if key.stop is None else \
-                                int(max(0,ceil((key.stop-start)/float(step))))
+                                int(max(0, ceil((key.stop-start)/float(step))))
                 else:
                     if key.start is None or key.start < 0:
                         raise ValueError("start value must be nonnegative for negative step values")
                     start = key.start
                     stop = 0 if key.stop is None else key.stop
-                    length = int(max(0,ceil((key.stop-start)/float(step))))
+                    length = int(max(0, ceil((key.stop-start)/float(step))))
                 fcn = lambda x: self._func(start + x*step)
                 if length is None:
                     return self._parent(fcn, length=length)
@@ -270,7 +270,7 @@ class WordDatatype_callable(WordDatatype):
                 else:
                     start, stop, step = slice(key.start, key.stop,
                             step).indices(self._len)
-                    length = int(max(0,ceil((stop-start)/float(step))))
+                    length = int(max(0, ceil((stop-start)/float(step))))
                 fcn = lambda x: self._func(start + x*step)
                 return self._parent(fcn, length=length)
         else:
@@ -312,6 +312,7 @@ class WordDatatype_callable(WordDatatype):
                 return self._parent, (s, self._len, 'pickled_function', False)
             else:
                 return self._parent, (s, 'pickled_function', False)
+
 
 class WordDatatype_callable_with_caching(WordDatatype_callable):
     r"""
@@ -581,6 +582,7 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
         """
         self._letter_cache = {}
 
+
 class WordDatatype_iter(WordDatatype):
     # NOTE: The constructor callable should do all the slicing (see islice)
     def __init__(self, parent, iter, length=None):
@@ -839,7 +841,7 @@ class WordDatatype_iter(WordDatatype):
                         length = Infinity
                         stop = None
                     else: # key.stop > 0
-                        length = int(max(0,ceil((key.stop-start)/float(step))))
+                        length = int(max(0, ceil((key.stop-start)/float(step))))
                         stop = int(key.stop)
                     data = itertools.islice(self, start, stop, step)
                 else:
@@ -847,7 +849,7 @@ class WordDatatype_iter(WordDatatype):
                         raise ValueError("start value must be nonnegative for negative step values")
                     start = int(key.start)
                     stop = 0 if key.stop is None else int(key.stop)
-                    length = int(max(0,ceil((stop-start)/float(step))))
+                    length = int(max(0, ceil((stop-start)/float(step))))
                     data = list(itertools.islice(self, start+1))[key]
 
                 if length is None or length is Infinity:
@@ -872,7 +874,7 @@ class WordDatatype_iter(WordDatatype):
                     length = None
                 else: # start >= 0, step >= 1, stop >= 0 or None
                     data = itertools.islice(self, start, stop, step)
-                    length = "unknown" if stop is None else int(max(0,((stop-start)/float(step))))
+                    length = "unknown" if stop is None else int(max(0, ((stop-start)/float(step))))
 
                 return self._parent.factors()(data, length=length)
         else:
@@ -912,8 +914,8 @@ class WordDatatype_iter(WordDatatype):
         """
         if self.is_finite():
             return self._parent, (list(self),)
-        else:
-            return self._parent, (iter(self), 'iter', False)
+        return self._parent, (iter(self), 'iter', False)
+
 
 class WordDatatype_iter_with_caching(WordDatatype_iter):
     def __init__(self, parent, iter, length=None):

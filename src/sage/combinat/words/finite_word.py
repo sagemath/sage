@@ -217,6 +217,7 @@ Left-special and bispecial factors::
 from itertools import repeat
 from collections import defaultdict
 from itertools import islice, cycle
+
 from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.words.words import Words
 from sage.misc.cachefunc import cached_method
@@ -2622,7 +2623,7 @@ class FiniteWord_class(Word_class):
         and lacunas of ``self`` (see [BMBL2008]_ and [BMBFLR2008]_).
 
         Note that a word `w` has at most `|w| + 1` different palindromic factors
-        (see [DJP2001]_). For `f`-palindromes (or pseudopalidromes or theta-palindromes),
+        (see [DJP2001]_). For `f`-palindromes (or pseudopalindromes or theta-palindromes),
         the maximum number of `f`-palindromic factors is `|w|+1-g_f(w)`, where
         `g_f(w)` is the number of pairs `\{a, f(a)\}` such that `a` is a letter,
         `a` is not equal to `f(a)`, and `a` or `f(a)` occurs in `w`, see [Star2011]_.
@@ -4233,7 +4234,7 @@ class FiniteWord_class(Word_class):
             ...
             DeprecationWarning: f._pos_in(w, start) is deprecated.
             Use w.first_occurrence(f, start) instead.
-            See https://trac.sagemath.org/30187 for details.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             2
             sage: Word('12')._pos_in(Word('131231'), 3) is None
             True
@@ -4270,7 +4271,7 @@ class FiniteWord_class(Word_class):
             ...
             DeprecationWarning: f.first_pos_in(w) is deprecated.
             Use w.first_occurrence(f) instead.
-            See https://trac.sagemath.org/30187 for details.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             2
             sage: Word('32').first_pos_in(Word('131231')) is None
             True
@@ -4498,7 +4499,7 @@ class FiniteWord_class(Word_class):
             ...
             DeprecationWarning: f.factor_occurrences_in(w) is deprecated.
             Use w.factor_occurrences_iterator(f) instead.
-            See https://trac.sagemath.org/30187 for details.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             [0, 2, 8]
         """
         from sage.misc.superseded import deprecation
@@ -4524,7 +4525,7 @@ class FiniteWord_class(Word_class):
             ...
             DeprecationWarning: f.nb_factor_occurrences_in(w) is deprecated.
             Use w.number_of_factor_occurrences(f) instead.
-            See https://trac.sagemath.org/30187 for details.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             4
             sage: Word('321').nb_factor_occurrences_in(Word('11233231231311233221123'))
             0
@@ -4569,7 +4570,7 @@ class FiniteWord_class(Word_class):
             ...
             DeprecationWarning: f.nb_subword_occurrences_in(w) is deprecated.
             Use w.number_of_subword_occurrences(f) instead.
-            See https://trac.sagemath.org/30187 for details.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             2604124996
 
             sage: u = Word([0,1,0,1,1,0])
@@ -5949,7 +5950,6 @@ class FiniteWord_class(Word_class):
                     desubstitued_word = desubstitued_word + w_running ** (current_run_length - min_run)
             return desubstitued_word.sturmian_desubstitute_as_possible()
 
-
     def is_sturmian_factor(self):
         r"""
         Tell whether ``self`` is a factor of a Sturmian word.
@@ -6009,7 +6009,6 @@ class FiniteWord_class(Word_class):
         -   Thierry Monteil
         """
         return self.sturmian_desubstitute_as_possible().is_empty()
-
 
     def is_tangent(self):
         r"""
@@ -6079,7 +6078,6 @@ class FiniteWord_class(Word_class):
                 height = height - 1
                 mini = min(mini , height)
         return (maxi - mini <= 2)
-
 
     # TODO.
     # 1. Those three swap functions should use the cmp of python.
@@ -7175,7 +7173,6 @@ class FiniteWord_class(Word_class):
             if end >= p.length():
                 return factor ** q
 
-#######################################################################
 
 class CallableFromListOfWords(tuple):
     r"""
@@ -7222,6 +7219,7 @@ class CallableFromListOfWords(tuple):
             j -= c.length()
         raise IndexError("index (=%s) out of range" % i)
 
+
 class Factorization(list):
     r"""
     A list subclass having a nicer representation for factorization of words.
@@ -7244,6 +7242,7 @@ class Factorization(list):
             (ab, ba)
         """
         return '(%s)' % ', '.join(w.string_rep() for w in self)
+
 
 #######################################################################
 
@@ -7270,12 +7269,12 @@ def evaluation_dict(w):
 
         sage: evaluation_dict('1213121') # keys appear in random order
         {'1': 4, '2': 2, '3': 1}
-
     """
     d = defaultdict(int)
     for a in w:
         d[a] += 1
     return dict(d)
+
 
 def word_to_ordered_set_partition(w):
     r"""

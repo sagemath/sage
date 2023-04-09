@@ -341,8 +341,11 @@ import re
 import sys
 import pexpect
 import shlex
+import time
 
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
+
+import sage.interfaces.abc
 
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.structure.sequence import Sequence_generic
@@ -508,6 +511,52 @@ class Singular(ExtraTabCompletion, Expect):
         """
         return 'quit;'
 
+    def _send_interrupt(self):
+        """
+        Send an interrupt to Singular. If needed, additional
+        semi-colons are sent until we get back at the prompt.
+
+        TESTS:
+
+        The following works without restarting Singular::
+
+            sage: a = singular(1)
+            sage: _ = singular._expect.sendline('while(1){};')
+            sage: singular.interrupt()
+            True
+
+        We can still access a::
+
+            sage: 2*a
+            2
+
+        Interrupting nothing or unfinished input also works::
+
+            sage: singular.interrupt()
+            True
+            sage: _ = singular._expect.sendline('1+')
+            sage: singular.interrupt()
+            True
+            sage: 3*a
+            3
+
+        """
+        # Work around for Singular bug
+        # http://www.singular.uni-kl.de:8002/trac/ticket/727
+        time.sleep(0.1)
+
+        E = self._expect
+        E.sendline(chr(3))
+        # The following is needed so interrupt() works even when
+        # there is no computation going on.
+        for i in range(5):
+            try:
+                E.expect_upto(self._prompt, timeout=0.1)
+                return
+            except pexpect.TIMEOUT:
+                pass
+            E.sendline(";")
+
     def _read_in_file_command(self, filename):
         r"""
         EXAMPLES::
@@ -605,7 +654,7 @@ class Singular(ExtraTabCompletion, Expect):
         # Simon King:
         # In previous versions, the interface was first synchronised and then
         # unused variables were killed. This created a considerable overhead.
-        # By trac ticket #10296, killing unused variables is now done inside
+        # By github issue #10296, killing unused variables is now done inside
         # singular.set(). Moreover, it is not done by calling a separate _eval_line.
         # In that way, the time spent by waiting for the singular prompt is reduced.
 
@@ -1308,7 +1357,7 @@ class Singular(ExtraTabCompletion, Expect):
 
 
 @instancedoc
-class SingularElement(ExtraTabCompletion, ExpectElement):
+class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.SingularElement):
 
     def __init__(self, parent, type, value, is_name=False):
         """
@@ -1607,15 +1656,19 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             br = ZZ
             is_extension = False
         elif charstr[0] in ['0', 'QQ']:
-            from sage.all import QQ
+            from sage.rings.rational_field import QQ
             br = QQ
         elif charstr[0].startswith('Float'):
-            from sage.all import RealField, ceil, log
+            from sage.rings.real_mpfr import RealField
+            from sage.functions.other import ceil
+            from sage.misc.functional import log
             prec = singular.eval('ringlist(basering)[1][2][1]')
             br = RealField(ceil((ZZ(prec)+1)/log(2,10)))
             is_extension = False
         elif charstr[0]=='complex':
-            from sage.all import ComplexField, ceil, log
+            from sage.rings.complex_mpfr import ComplexField
+            from sage.functions.other import ceil
+            from sage.misc.functional import log
             prec = singular.eval('ringlist(basering)[1][2][1]')
             br = ComplexField(ceil((ZZ(prec)+1)/log(2,10)))
             is_extension = False
@@ -1635,7 +1688,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         if is_extension:
             minpoly = singular.eval('minpoly')
             if minpoly == '0':
-                from sage.all import Frac
+                from sage.rings.fraction_field import FractionField as Frac
                 BR = Frac(br[charstr[1]])
             else:
                 is_short = singular.eval('short')
@@ -1652,7 +1705,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         # Now, we form the polynomial ring over BR with the given variables,
         # using Singular's term order
         from sage.rings.polynomial.term_order import termorder_from_singular
-        from sage.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         # Meanwhile Singulars quotient rings are also of 'ring' type, not 'qring' as it was in the past.
         # To find out if a singular ring is a quotient ring or not checking for ring type does not help
         # and instead of that we check if the quotient ring is zero or not:
@@ -1792,14 +1845,14 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
                 out = R(self)
                 self.parent().eval('short=%s'%is_short)
                 return out
-            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (\
-                    self.name(),variable_str)).split(",")
+            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (
+                self.name(),variable_str)).split(",")
             self.parent().eval('short=%s'%is_short)
         else:
             if isinstance(R, MPolynomialRing_libsingular):
                 return R(self)
-            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (\
-                    self.name(),variable_str)).split(",")
+            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (
+                self.name(),variable_str)).split(",")
 
         # Directly treat constants
         if singular_poly_list[0] in ['1', '(1.000e+00)']:
@@ -2284,16 +2337,24 @@ class SingularFunctionElement(FunctionElement):
 
 def is_SingularElement(x):
     r"""
-    Returns True is x is of type ``SingularElement``.
+    Return True is ``x`` is of type :class:`SingularElement`.
+
+    This function is deprecated; use :func:`isinstance`
+    (of :class:`sage.interfaces.abc.SingularElement`) instead.
 
     EXAMPLES::
 
         sage: from sage.interfaces.singular import is_SingularElement
         sage: is_SingularElement(singular(2))
+        doctest:...: DeprecationWarning: the function is_SingularElement is deprecated; use isinstance(x, sage.interfaces.abc.SingularElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
         True
         sage: is_SingularElement(2)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_SingularElement is deprecated; use isinstance(x, sage.interfaces.abc.SingularElement) instead")
+
     return isinstance(x, SingularElement)
 
 
@@ -2734,7 +2795,8 @@ def singular_gb_standard_options(func):
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
         sage: sage_getargspec(I.interreduced_basis)
-        ArgSpec(args=['self'], varargs=None, keywords=None, defaults=None)
+        FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getsourcelines(I.interreduced_basis)
         (['    @handle_AA_and_QQbar\n',
           '    @singular_gb_standard_options\n',

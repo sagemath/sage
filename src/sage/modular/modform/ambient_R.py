@@ -1,5 +1,5 @@
 """
-Modular Forms over a Non-minimal Base Ring
+Modular forms over a non-minimal base ring
 """
 
 #########################################################################
@@ -146,7 +146,6 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
             <class 'sage.modular.modform.cuspidal_submodule.CuspidalSubmodule_R_with_category'>
         """
         return CuspidalSubmodule_R(self)
-
 
     def change_ring(self, R):
         r"""

@@ -660,6 +660,25 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         self._semigroup = G
 
+    def construction(self):
+        r"""
+        Return the functorial construction of ``self``.
+
+        This implementation of the method only returns ``None``.
+
+        TESTS::
+
+            sage: A = matrix([[1,1,0],[-1,0,1],[0,-1,-1]])
+            sage: M = Matroid(A)
+            sage: G = SymmetricGroup(3)
+            sage: def on_groundset(g,x):
+            ....:     return g(x+1)-1
+            sage: OTG = M.orlik_terao_algebra(QQ, invariant=(G,on_groundset))
+            sage: OTG.construction() is None
+            True
+        """
+        return None
+
     def _basis_action(self, g, f):
         r"""
         Let ``f`` be an n.b.c. set so that it indexes a basis

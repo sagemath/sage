@@ -26,6 +26,7 @@ AUTHORS:
 
 from sage.combinat.crystals.tensor_product import TensorProductOfRegularCrystalsElement
 
+
 class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
     """
     An element in a tensor product of Kirillov-Reshetikhin tableaux.
@@ -109,6 +110,7 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         sage: T.to_rigged_configuration().to_tensor_product_of_kirillov_reshetikhin_tableaux()
         [[2], [3]] (X) [[1]] (X) [[-1]] (X) [[1]]
     """
+
     def __init__(self, parent, list=[[]], **options):
         r"""
         Construct a TensorProductOfKirillovReshetikhinTableauxElement.

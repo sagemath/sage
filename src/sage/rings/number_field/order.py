@@ -65,7 +65,7 @@ We compute a suborder, which has index a power of 17 in the maximal order::
 #                          2020 John H. Palmieri <jhpalmieri64@gmail.com>
 #                          2020 Thierry Monteil <sage@lma.metelu.net>
 #                          2021 Antonio Rojas <arojas@archlinux.org>
-#                          2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#                          2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -491,6 +491,14 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         """
         if not self.is_maximal():
             raise NotImplementedError("ideals of non-maximal orders not yet supported.")
+        from sage.misc.superseded import deprecation
+        deprecation(34806, 'In the future, constructing an ideal of the ring of '
+                           'integers of a number field will use an implementation '
+                           'compatible with ideals of other (non-maximal) orders, '
+                           'rather than returning an integral fractional ideal of '
+                           'its containing number field. Use .fractional_ideal(), '
+                           'together with an .is_integral() check if desired, to '
+                           'avoid your code breaking with future changes to Sage.')
         I = self.number_field().ideal(*args, **kwds)
         if not I.is_integral():
             raise ValueError("ideal must be integral; use fractional_ideal to create a non-integral ideal.")
@@ -520,7 +528,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: k.<a> = NumberField(x^2 + 5077); G = k.class_group(); G
             Class group of order 22 with structure C22 of Number Field in a with defining polynomial x^2 + 5077
             sage: G.0 ^ -9
-            Fractional ideal class (11, a + 7)
+            Fractional ideal class (43, a + 13)
             sage: Ok = k.maximal_order(); Ok
             Maximal Order in Number Field in a with defining polynomial x^2 + 5077
             sage: Ok * (11, a + 7)
@@ -867,12 +875,12 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
             sage: F.<alpha> = NumberField(x**2+3)
             sage: F.ring_of_integers().zeta(6)
-            1/2*alpha + 1/2
+            -1/2*alpha + 1/2
             sage: O = F.order([3*alpha])
             sage: O.zeta(3)
             Traceback (most recent call last):
             ...
-            ArithmeticError: There are no 3rd roots of unity in self.
+            ArithmeticError: there are no 3rd roots of unity in self
         """
         roots_in_field = self.number_field().zeta(n, True)
         roots_in_self = [self(x) for x in roots_in_field if x in self]
@@ -880,7 +888,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             if all:
                 return []
             else:
-                raise ArithmeticError("There are no %s roots of unity in self." % n.ordinal_str())
+                raise ArithmeticError("there are no %s roots of unity in self" % n.ordinal_str())
         if all:
             return roots_in_self
         else:

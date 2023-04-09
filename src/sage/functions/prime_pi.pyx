@@ -1,5 +1,13 @@
 r"""
-Counting Primes
+Counting primes
+
+EXAMPLES::
+
+    sage: z = sage.functions.prime_pi.PrimePi()
+    sage: loads(dumps(z))
+    prime_pi
+    sage: loads(dumps(z)) == z
+    True
 
 AUTHORS:
 
@@ -12,14 +20,6 @@ AUTHORS:
 - Dima Pasechnik (2021): removed buggy cython code, replaced it with
   calls to primecount/primecountpy spkg
 
-
-EXAMPLES::
-
-    sage: z = sage.functions.prime_pi.PrimePi()
-    sage: loads(dumps(z))
-    prime_pi
-    sage: loads(dumps(z)) == z
-    True
 """
 
 # ****************************************************************************

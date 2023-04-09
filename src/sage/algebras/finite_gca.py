@@ -6,17 +6,16 @@ AUTHORS:
 - Michael Jung (2021): initial version
 
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2021 Michael Jung <m.jung at vu.nl>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import annotations
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.algebras import Algebras
 from sage.misc.cachefunc import cached_method
@@ -26,6 +25,7 @@ from sage.misc.functional import is_odd, is_even
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.condition_set import ConditionSet
 from sage.rings.integer_ring import ZZ
+
 
 class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
     r"""
@@ -484,16 +484,15 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
         n = len(self._degrees)
         return self._weighted_vectors([0 for _ in range(n)])
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return the generators of ``self`` as a list.
+        Return the generators of ``self`` as a tuple.
 
         EXAMPLES::
 
             sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(4,8,2), max_degree=10)
             sage: A.gens()
-            [x, y, z]
-
+            (x, y, z)
         """
         n = len(self._degrees)
         zero = [0 for _ in range(n)]
@@ -502,7 +501,7 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
             ind = list(zero)
             ind[k] = 1
             indices.append(self._weighted_vectors(ind))
-        return [self.monomial(ind) for ind in indices]
+        return tuple([self.monomial(ind) for ind in indices])
 
     @cached_method
     def gen(self, i):

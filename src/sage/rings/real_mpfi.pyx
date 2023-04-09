@@ -1284,7 +1284,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         return (__create__RealIntervalFieldElement_version1, (self._parent, self.upper(), self.lower()))
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Deallocate ``self``.
 
@@ -2586,7 +2586,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) + RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2610,7 +2610,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(2) - RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2634,7 +2634,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) * RR(1)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             1
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2658,7 +2658,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1) / RR(1/2)
             doctest:...:
             DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See http://trac.sagemath.org/15114 for details.
+            See https://github.com/sagemath/sage/issues/15114 for details.
             2
             sage: import warnings; warnings.resetwarnings()
         """
@@ -2912,7 +2912,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1.0) << 32
             4294967296
         """
-        if isinstance(x, RealIntervalFieldElement) and isinstance(y, (int,long, Integer)):
+        if isinstance(x, RealIntervalFieldElement) and isinstance(y, (int, Integer)):
             return x._lshift_(y)
         return sage.structure.element.bin_op(x, y, operator.lshift)
 
@@ -2944,7 +2944,7 @@ cdef class RealIntervalFieldElement(RingElement):
             0.062500000000000000?
         """
         if isinstance(x, RealIntervalFieldElement) and \
-               isinstance(y, (int,long,Integer)):
+               isinstance(y, (int, Integer)):
             return x._rshift_(y)
         return sage.structure.element.bin_op(x, y, operator.rshift)
 
@@ -4411,7 +4411,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         if exponent == 2:
             return self.square()
-        if isinstance(exponent, (int, long, Integer)):
+        if isinstance(exponent, (int, Integer)):
             q, r = divmod (exponent, 2)
             if r == 0:  # x^(2q) = (x^q)^2
                 xq = RingElement.__pow__(self, q)
@@ -5356,7 +5356,8 @@ def __create__RealIntervalField_version0(prec, sci_not):
     """
     return RealIntervalField(prec, sci_not)
 
-## Keep all old versions!!!
+
+# Keep all old versions!!!
 def __create__RealIntervalFieldElement_version0(parent, x, base=10):
     """
     For pickling.
@@ -5367,6 +5368,7 @@ def __create__RealIntervalFieldElement_version0(parent, x, base=10):
         2.2000000000000002?
     """
     return RealIntervalFieldElement(parent, x, base=base)
+
 
 def __create__RealIntervalFieldElement_version1(parent, lower, upper):
     """

@@ -1,4 +1,4 @@
-"""
+r"""
 Finite residue fields
 
 We can take the residue field of maximal ideals in the ring of integers
@@ -20,13 +20,13 @@ monogenic (i.e., 2 is an essential discriminant divisor)::
 
     sage: K.<a> = NumberField(x^3 + x^2 - 2*x + 8)
     sage: F = K.factor(2); F
-    (Fractional ideal (1/2*a^2 - 1/2*a + 1)) * (Fractional ideal (-a^2 + 2*a - 3)) * (Fractional ideal (-3/2*a^2 + 5/2*a - 4))
+    (Fractional ideal (-1/2*a^2 + 1/2*a - 1)) * (Fractional ideal (-a^2 + 2*a - 3)) * (Fractional ideal (3/2*a^2 - 5/2*a + 4))
     sage: F[0][0].residue_field()
-    Residue field of Fractional ideal (1/2*a^2 - 1/2*a + 1)
+    Residue field of Fractional ideal (-1/2*a^2 + 1/2*a - 1)
     sage: F[1][0].residue_field()
     Residue field of Fractional ideal (-a^2 + 2*a - 3)
     sage: F[2][0].residue_field()
-    Residue field of Fractional ideal (-3/2*a^2 + 5/2*a - 4)
+    Residue field of Fractional ideal (3/2*a^2 - 5/2*a + 4)
 
 We can also form residue fields from `\ZZ`::
 
@@ -160,9 +160,9 @@ from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
 from sage.rings.ideal import is_Ideal
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.element cimport Element
 
-from sage.rings.number_field.number_field_element import is_NumberFieldElement
 from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
 
 from sage.modules.free_module_element import FreeModuleElement
@@ -170,7 +170,7 @@ from sage.rings.fraction_field import is_FractionField
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.structure.factory import UniqueFactory
 from sage.structure.element cimport parent
@@ -258,9 +258,9 @@ class ResidueFieldFactory(UniqueFactory):
     the index of ``ZZ[a]`` in the maximal order for all ``a``::
 
         sage: K.<a> = NumberField(x^3 + x^2 - 2*x + 8); P = K.ideal(2).factor()[0][0]; P
-        Fractional ideal (1/2*a^2 - 1/2*a + 1)
+        Fractional ideal (-1/2*a^2 + 1/2*a - 1)
         sage: F = K.residue_field(P); F
-        Residue field of Fractional ideal (1/2*a^2 - 1/2*a + 1)
+        Residue field of Fractional ideal (-1/2*a^2 + 1/2*a - 1)
         sage: F(a)
         0
         sage: B = K.maximal_order().basis(); B
@@ -270,7 +270,7 @@ class ResidueFieldFactory(UniqueFactory):
         sage: F(B[2])
         0
         sage: F
-        Residue field of Fractional ideal (1/2*a^2 - 1/2*a + 1)
+        Residue field of Fractional ideal (-1/2*a^2 + 1/2*a - 1)
         sage: F.degree()
         1
 
@@ -295,12 +295,12 @@ class ResidueFieldFactory(UniqueFactory):
             if not is_Ideal(p):
                 if isinstance(p, (int, Integer, Rational)):
                     p = ZZ.ideal(p)
-                elif is_NumberFieldElement(p):
+                elif isinstance(p, NumberFieldElement_base):
                     if p.parent().is_field():
                         p = p.parent().ring_of_integers().ideal(p)
                     else:
                         p = p.parent().ideal(p)
-                elif is_Polynomial(p):
+                elif isinstance(p, Polynomial):
                     p = p.parent().ideal(p)
                 #elif isinstance(p.parent(), FractionField_1poly_field):
                 #    p = p.parent().ring_of_integers().ideal(p)
@@ -730,15 +730,15 @@ class ResidueField_generic(Field):
         EXAMPLES::
 
             sage: I = QQ[3^(1/3)].factor(5)[1][0]; I
-            Fractional ideal (-a + 2)
+            Fractional ideal (a - 2)
             sage: k = I.residue_field(); k
-            Residue field of Fractional ideal (-a + 2)
+            Residue field of Fractional ideal (a - 2)
             sage: f = k.lift_map(); f
             Lifting map:
-              From: Residue field of Fractional ideal (-a + 2)
+              From: Residue field of Fractional ideal (a - 2)
               To:   Maximal Order in Number Field in a with defining polynomial x^3 - 3 with a = 1.442249570307409?
             sage: f.domain()
-            Residue field of Fractional ideal (-a + 2)
+            Residue field of Fractional ideal (a - 2)
             sage: f.codomain()
             Maximal Order in Number Field in a with defining polynomial x^3 - 3 with a = 1.442249570307409?
             sage: f(k.0)
@@ -768,7 +768,7 @@ class ResidueField_generic(Field):
 
             sage: K.<a> = NumberField(x^3-11)
             sage: F = K.ideal(37).factor(); F
-            (Fractional ideal (37, a + 9)) * (Fractional ideal (37, a + 12)) * (Fractional ideal (2*a - 5))
+            (Fractional ideal (37, a + 9)) * (Fractional ideal (37, a + 12)) * (Fractional ideal (-2*a + 5))
             sage: k = K.residue_field(F[0][0])
             sage: l = K.residue_field(F[1][0])
             sage: k == l
@@ -846,7 +846,7 @@ cdef class ReductionMap(Map):
             sage: F.reduction_map()
             Partially defined reduction map:
               From: Number Field in a with defining polynomial x^3 + x^2 - 2*x + 8
-              To:   Residue field of Fractional ideal (1/2*a^2 - 1/2*a + 1)
+              To:   Residue field of Fractional ideal (-1/2*a^2 + 1/2*a - 1)
 
             sage: K.<theta_5> = CyclotomicField(5)
             sage: F = K.factor(7)[0][0].residue_field()
@@ -870,7 +870,7 @@ cdef class ReductionMap(Map):
         self._PBinv = PBinv
         self._to_order = to_order # used for lift
         self._PB = PB # used for lift
-        from sage.categories.all import SetsWithPartialMaps
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         self._repr_type_str = "Partially defined reduction"
         Map.__init__(self, Hom(K, F, SetsWithPartialMaps()))
 
@@ -1579,8 +1579,8 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
             self._populate_coercion_lists_(coerce_list=coerce_list, convert_list=[ReductionMap(K, self, None, None, None, None)]) # could be special-cased a bit more.
         else:
             PBinv = PB**(-1)
-            self._populate_coercion_lists_(coerce_list=[IntegerMod_to_IntegerMod(GF(intp), self), Integer_to_IntegerMod(self), Int_to_IntegerMod(self), ResidueFieldHomomorphism_global(OK, self, to_vs, to_order, PB, PBinv)], \
-                                                 convert_list=[ReductionMap(K, self, to_vs, to_order, PB, PBinv)])
+            self._populate_coercion_lists_(coerce_list=[IntegerMod_to_IntegerMod(GF(intp), self), Integer_to_IntegerMod(self), Int_to_IntegerMod(self), ResidueFieldHomomorphism_global(OK, self, to_vs, to_order, PB, PBinv)],
+                                           convert_list=[ReductionMap(K, self, to_vs, to_order, PB, PBinv)])
 
     def _element_constructor_(self, x):
         """
@@ -1846,7 +1846,7 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
     """
     # we change the order for consistency with FiniteField_ntl_gf2e's __cinit__
     def __init__(self, q, name, modulus, repr, p, to_vs, to_order, PB):
-        """
+        r"""
         INPUT:
 
         - ``p`` -- the prime ideal defining this residue field
@@ -1919,5 +1919,3 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
             return FiniteField_ntl_gf2e._element_constructor_(self, x)
         except TypeError:
             return ResidueField_generic._element_constructor_(self, x)
-
-

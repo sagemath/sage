@@ -1,7 +1,6 @@
 """
 Parser For gambit And lrs Nash Equilibria
 """
-
 # ****************************************************************************
 #       Copyright (C) 2014 James Campbell james.campbell@tanti.org.uk
 #                     2015 Vincent Knight
@@ -12,6 +11,7 @@ Parser For gambit And lrs Nash Equilibria
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 
 class Parser():
     r"""
@@ -150,7 +150,7 @@ class Parser():
             doctest:warning...
             DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
             creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://trac.sagemath.org/27745 for details.
+            See https://github.com/sagemath/sage/issues/27745 for details.
             sage: g1_name, g2_name = tmp_filename(), tmp_filename()
             sage: g1_file, g2_file = open(g1_name, 'w'), open(g2_name, 'w')
             sage: _ = g1_file.write(game1_str)
@@ -298,4 +298,3 @@ class Parser():
             nice_stuff.append(profile)
 
         return nice_stuff
-

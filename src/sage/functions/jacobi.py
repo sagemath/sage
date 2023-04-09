@@ -1,5 +1,5 @@
 r"""
-Jacobi Elliptic Functions
+Jacobi elliptic functions
 
 This module implements the 12 Jacobi elliptic functions, along with their
 inverses and the Jacobi amplitude function.

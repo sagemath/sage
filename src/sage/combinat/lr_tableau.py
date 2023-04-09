@@ -288,6 +288,7 @@ def is_littlewood_richardson(t, heights):
             return False
     return True
 
+
 def _tableau_join(t1, t2, shift=0):
     """
     Join semistandard tableau ``t1`` with semistandard tableau ``t2``

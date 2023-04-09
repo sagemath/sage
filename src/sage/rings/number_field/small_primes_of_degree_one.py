@@ -227,7 +227,7 @@ class Small_primes_of_degree_one_iter():
              [29, 41, 61, 89, 101, 109, 149, 181, 229, 241]
              sage: ids[9] == N.ideal(3*a + 1/2*b + 5/2)
              True
-        
+
         We test that :trac:`23468` is fixed::
 
             sage: R.<z> = QQ[]

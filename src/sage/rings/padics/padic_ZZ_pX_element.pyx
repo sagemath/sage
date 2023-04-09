@@ -483,12 +483,12 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             4*5 + 5^2 + 5^3 + 2*5^4
             sage: (a+b).trace()
             4*5 + 5^2 + 5^3 + 2*5^4
- 
+
         TESTS:
 
         We check that :trac:`32072` is resolved::
 
-            sage: F = Qp(2)                                                                                                                                                                       
+            sage: F = Qp(2)
             sage: S.<x> = F[]
             sage: L.<w> = F.ext(x^2 - 2)
             sage: L(0, 20).trace()
@@ -658,7 +658,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
         for i from 0 <= i < len(L):
             if isinstance(L[i], ntl_ZZ):
                 L[i] = ntl_ZZ_p(L[i]*pshift_z, ctx)
-            elif isinstance(L[i], Integer) or isinstance(L[i], Rational) or isinstance(L[i], (int, long)):
+            elif isinstance(L[i], (Integer, Rational, int)):
                 L[i] = ntl_ZZ_p(L[i]*pshift_m, ctx)
             elif isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime):
                 L[i] = ntl_ZZ_p((L[i] >> min_val).lift(), ctx)
@@ -676,7 +676,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
                 py_tmp = ntl_ZZ.__new__(ntl_ZZ)
                 py_tmp.x = tmp
                 L[i] = ntl_ZZ_p(py_tmp, ctx)
-            elif isinstance(L[i], Integer) or isinstance(L[i], Rational) or isinstance(L[i], (int, long)):
+            elif isinstance(L[i], (Integer, Rational, int)):
                 L[i] = ntl_ZZ_p(L[i]//pshift_m, ctx)
             elif isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime):
                 L[i] = ntl_ZZ_p((L[i] >> min_val).lift(), ctx)
@@ -689,7 +689,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
                 L[i] = ntl_ZZ_p(py_tmp, ctx)
     else:
         for i from 0 <= i < len(L):
-            if isinstance(L[i], ntl_ZZ) or isinstance(L[i], Integer) or isinstance(L[i], Rational) or isinstance(L[i], (int, long)):
+            if isinstance(L[i], (ntl_ZZ, Integer, Rational, int)):
                 L[i] = ntl_ZZ_p(L[i], ctx)
             elif (isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime)) or is_IntegerMod(L[i]) or (L[i].modulus_context() is not ctx):
                 L[i] = ntl_ZZ_p(L[i].lift(), ctx)
@@ -865,7 +865,7 @@ cdef get_val_prec(PowComputer_ext pp, a):
         py_tmp = ntl_ZZ.__new__(ntl_ZZ)
         py_tmp.x = pp.pow_ZZ_tmp(1)[0]
         return (Integer(a.valuation(py_tmp)), big, two)
-    if isinstance(a, (int, long)):
+    if isinstance(a, int):
         if a == 0:
             return (big, big, two)
         return (Integer(a).valuation(pp.prime), big, two)
@@ -914,4 +914,3 @@ cdef get_val_prec(PowComputer_ext pp, a):
             print(py_tmp)
             raise TypeError("modulus must be a positive power of the appropriate prime")
     raise TypeError("unsupported type for list element: %s" % type(a))
-

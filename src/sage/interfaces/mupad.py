@@ -147,7 +147,7 @@ class Mupad(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
-            sage: mupad.__reduce__()
+            sage: Mupad().__reduce__()
             (<function reduce_load_mupad at 0x...>, ())
 
         """
@@ -524,7 +524,6 @@ class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
         res = P.completions(self._name+"::", strip=True)
         return res if res != [] else P._tab_completion()
 
-
     def __call__(self, *args):
         """
         EXAMPLES::
@@ -690,4 +689,3 @@ def __doctest_cleanup():
     """
     import sage.interfaces.quit
     sage.interfaces.quit.expect_quitall()
-

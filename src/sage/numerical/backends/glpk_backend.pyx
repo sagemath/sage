@@ -80,9 +80,9 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``binary`` - ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` - ``True`` if the variable is integral (default: ``False``).
 
         - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
 
@@ -116,7 +116,7 @@ cdef class GLPKBackend(GenericBackend):
             1.0
         """
         cdef int vtype = int(bool(binary)) + int(bool(continuous)) + int(bool(integer))
-        if  vtype == 0:
+        if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
@@ -197,7 +197,7 @@ cdef class GLPKBackend(GenericBackend):
             42.0
         """
         cdef int vtype = int(bool(binary)) + int(bool(continuous)) + int(bool(integer))
-        if  vtype == 0:
+        if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
@@ -1135,8 +1135,8 @@ cdef class GLPKBackend(GenericBackend):
 
         if solution_status == GLP_OPT:
             pass
-        elif (solution_status == GLP_FEAS) and (solve_status == GLP_ETMLIM or solve_status == GLP_EITLIM \
-                                            or solve_status == GLP_EMIPGAP or solve_status == GLP_EOBJLL or solve_status == GLP_EOBJUL):
+        elif (solution_status == GLP_FEAS) and (solve_status == GLP_ETMLIM or solve_status == GLP_EITLIM
+                                                or solve_status == GLP_EMIPGAP or solve_status == GLP_EOBJLL or solve_status == GLP_EOBJUL):
             # no exception when time limit or iteration limit or  mip gap tolerances or objective limits reached.
             pass
         elif solution_status == GLP_UNDEF:

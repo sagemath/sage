@@ -52,13 +52,13 @@ Functions and methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
+from sage.arith.misc import binomial, integer_floor, is_prime_power
+from sage.categories.sets_cat import EmptySetError
 from sage.modules.free_module import VectorSpace
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import binomial, integer_floor, is_prime_power
 from .incidence_structures import IncidenceStructure
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
-from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
 from sage.matrix.matrix_space import MatrixSpace
 from sage.libs.gap.libgap import libgap
@@ -343,11 +343,11 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
     # we relabel the points with the integers from 0 to n^2 + n as follows:
     # - the affine plane is the set of points [x:y:1] (i.e. the third coordinate
     #   is non-zero) and gets relabeled from 0 to n^2-1
-    affine_plane   = lambda x,y: relabel[x] + n * relabel[y]
+    affine_plane = lambda x,y: relabel[x] + n * relabel[y]
 
     # - the affine line is the set of points [x:1:0] (i.e. the third coordinate is
     #   zero but not the second one) and gets relabeled from n^2 to n^2 + n - 1
-    line_infinity  = lambda x: n2 + relabel[x]
+    line_infinity = lambda x: n2 + relabel[x]
 
     # - the point is [1:0:0] and gets relabeled n^2 + n
     point_infinity = n2 + n
@@ -380,7 +380,7 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
 
     if point_coordinates:
         zero = K.zero()
-        one  = K.one()
+        one = K.one()
         d = {affine_plane(x,y): (x,y,one)
              for x in Kiter
              for y in Kiter}

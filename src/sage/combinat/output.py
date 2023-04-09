@@ -22,6 +22,7 @@ from sage.combinat.tableau import Tableaux
 # When using bar should be replaced by '|' or ''.
 lr_macro = Template(r'\def\lr#1{\multicolumn{1}{$bar@{\hspace{.6ex}}c@{\hspace{.6ex}}$bar}{\raisebox{-.3ex}{$$#1$$}}}')
 
+
 def tex_from_array(array, with_lines=True):
     r"""
     Return a latex string for a two dimensional array of partition, composition or skew composition shape

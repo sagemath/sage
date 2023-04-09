@@ -671,7 +671,7 @@ Modules
 -------
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     sage/structure/coerce
     sage/structure/coerce_actions

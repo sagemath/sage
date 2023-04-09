@@ -818,7 +818,7 @@ def standardize_names_index_set(names=None, index_set=None, ngens=None):
             index_set = tuple(names)
 
     from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-    if isinstance(index_set, dict): # dict of {name: index} -- not likely to be used
+    if isinstance(index_set, dict):  # dict of {name: index} -- not likely to be used
         if names is not None:
             raise ValueError("cannot give index_set as a dict and names")
         names = normalize_names(-1, tuple(index_set.keys()))
@@ -841,4 +841,3 @@ def standardize_names_index_set(names=None, index_set=None, ngens=None):
                              " the number of generators")
 
     return (names, index_set)
-

@@ -18,8 +18,9 @@ jobs:
 
   release_dist:
 
-    # This job, in contrast to "dist" in tox.yml,
-    # does not use "configure --enable-download-from-upstream-url".
+    # This job, in contrast to "dist" in ci-macos.yml,
+    # does not use "configure --enable-download-from-upstream-url"
+    # (the default since #32390).
     #
     # In this way, we check that all necessary package tarballs
     # have already been uploaded to the Sage server at the time
@@ -31,15 +32,15 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install bootstrap prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
       - name: make dist
         run: |
-          ./bootstrap -D && ./configure && make dist
-      - uses: actions/upload-artifact@v2
+          ./bootstrap -D && ./configure --disable-download-from-upstream-url && make dist
+      - uses: actions/upload-artifact@v3
         with:
           path: "dist/*.tar.gz"
           name: release_dist
@@ -50,7 +51,7 @@ jobs:
     env:
       CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install bootstrap prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
@@ -62,7 +63,7 @@ jobs:
           make pypi-sdists V=0
           (mkdir dist && mv upstream/sage*.tar.gz dist/)
           ls -l dist
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: "dist/*.tar.gz"
           name: dist
@@ -105,9 +106,9 @@ jobs:
       # Use 'build', not 'pip wheel'
       CIBW_BUILD_FRONTEND: build
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: dist
           path: dist
@@ -130,7 +131,7 @@ jobs:
               pipx run cibuildwheel==2.7.0 unpacked/$pkg*
           done
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: wheels
           path: ./wheelhouse/*.whl
@@ -142,7 +143,7 @@ jobs:
       CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
     steps:
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: wheels
           path: wheelhouse

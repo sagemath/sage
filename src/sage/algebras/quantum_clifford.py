@@ -948,8 +948,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
             if any(p[i] != 0 for i in range(Cl._n)):
                 return super().__invert__()
             tk = 2 * Cl._k
-            w = tuple([tk-val if val else 0 for val in w])
-            return Cl.element_class(Cl, {(p, w) : coeff.inverse_of_unit()})
+            w = tuple([tk - val if val else 0 for val in w])
+            return Cl.element_class(Cl, {(p, w): coeff.inverse_of_unit()})
 
         __invert__ = inverse
-

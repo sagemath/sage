@@ -453,7 +453,7 @@ def _sympysage_rf(self):
         sage: assert rising_factorial(x,y)._sympy_() == rfxy.rewrite('gamma', piecewise=False)
         sage: assert rising_factorial(x,y) == rfxy._sage_()
     """
-    from sage.arith.all import rising_factorial
+    from sage.arith.misc import rising_factorial
     return rising_factorial(self.args[0]._sage_(), self.args[1]._sage_())
 
 def _sympysage_ff(self):
@@ -466,7 +466,7 @@ def _sympysage_ff(self):
         sage: assert falling_factorial(x,y)._sympy_() == ffxy.rewrite('gamma') # known bug
         sage: assert falling_factorial(x,y) == ffxy._sage_()
     """
-    from sage.arith.all import falling_factorial
+    from sage.arith.misc import falling_factorial
     return falling_factorial(self.args[0]._sage_(), self.args[1]._sage_())
 
 def _sympysage_lgamma(self):
@@ -1181,7 +1181,7 @@ def sympy_set_to_list(set, vars):
     elif isinstance(set, (Union, Interval)):
         x = vars[0]
         if isinstance(set, Interval):
-            left,right,lclosed,rclosed = set._args
+            left, right, lclosed, rclosed = set._args
             if lclosed:
                 rel1 = [x._sage_() > left._sage_()]
             else:
@@ -1198,4 +1198,3 @@ def sympy_set_to_list(set, vars):
         if isinstance(set, Union):
             return [sympy_set_to_list(iv, vars) for iv in set._args]
     return set
-

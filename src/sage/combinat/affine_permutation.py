@@ -23,7 +23,7 @@ from sage.structure.parent import Parent
 from sage.rings.integer_ring import ZZ
 
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.composition import Composition
@@ -42,6 +42,7 @@ class AffinePermutation(ClonableArray):
         sage: p
         Type A affine permutation with window [3, -1, 0, 6, 5, 4, 10, 9]
     """
+
     def __init__(self, parent, lst, check=True):
         r"""
         Initialize ``self``
@@ -161,20 +162,18 @@ class AffinePermutation(ClonableArray):
         return self.__rmul__(q)
 
     @cached_method
-    def inverse(self):
+    def __invert__(self):
         r"""
         Return the inverse affine permutation.
 
         EXAMPLES::
 
             sage: p = AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
-            sage: p.inverse()
+            sage: p.inverse()  # indirect doctest
             Type A affine permutation with window [0, -1, 1, 6, 5, 4, 10, 11]
         """
-        inv = [self.position(i) for i in range(1,len(self)+1)]
+        inv = [self.position(i) for i in range(1, len(self) + 1)]
         return type(self)(self.parent(), inv, check=False)
-
-    __invert__=inverse
 
     def apply_simple_reflection(self, i, side='right'):
         r"""
@@ -409,7 +408,6 @@ class AffinePermutation(ClonableArray):
             return (fin, gr)
 
 
-
 class AffinePermutationTypeA(AffinePermutation):
     #----------------------
     #Type-specific methods.
@@ -449,7 +447,6 @@ class AffinePermutationTypeA(AffinePermutation):
         l = sorted([i % (k+1) for i in self])
         if l != list(range(k+1)):
             raise ValueError("entries must have distinct residues")
-
 
     def value(self, i, base_window=False):
         r"""
@@ -732,7 +729,6 @@ class AffinePermutationTypeA(AffinePermutation):
             best_T.reverse()
         return best_T
 
-
     def maximal_cyclic_decomposition(self, typ='decreasing', side='right', verbose=False):
         r"""
         Find the unique maximal decomposition of ``self`` into cyclically
@@ -855,8 +851,8 @@ class AffinePermutationTypeA(AffinePermutation):
                 a=self(i)
                 for j in range(i-self.k, i):
                     b=self(j)
-                    #A small rotation is necessary for the reduced word from
-                    #the lehmer code to match the element.
+                    # A small rotation is necessary for the reduced word from
+                    # the Lehmer code to match the element.
                     if a < b:
                         code[i-1]+=((b-a)//(self.k+1)+1)
         elif typ[0] == 'i' and side[0] == 'l':
@@ -1067,6 +1063,8 @@ class AffinePermutationTypeA(AffinePermutation):
         return tab
 
 #-------------------------------------------------------------------------------
+
+
 class AffinePermutationTypeC(AffinePermutation):
     #----------------------
     #Type-specific methods.
@@ -1322,7 +1320,6 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
         if s % 2:
             raise ValueError("type B affine permutations have an even number of "
                              "entries less than 0 to the right of the 0th position")
-
 
     def apply_simple_reflection_right(self, i):
         r"""
@@ -1845,8 +1842,6 @@ class AffinePermutationTypeG(AffinePermutation):
         return A(self)
 
 
-
-
 #-------------------------------------------------------------------------
 #    Class of all affine permutations.
 #-------------------------------------------------------------------------
@@ -2329,6 +2324,7 @@ class AffinePermutationGroupTypeA(AffinePermutationGroupGeneric):
         return x
 
     Element = AffinePermutationTypeA
+
 
 class AffinePermutationGroupTypeC(AffinePermutationGroupGeneric):
     #------------------------

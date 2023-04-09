@@ -2010,7 +2010,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS:
 
-        Ensure that ticket :trac:`8395` is fixed. ::
+        Ensure that issue :trac:`8395` is fixed. ::
 
             sage: def my_add_edges(G, m, n):
             ....:     for i in range(m):
@@ -4586,7 +4586,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             ....:  return h
             ...
             sage: all( random_acyclic(100, .2).is_directed_acyclic()    # long time
-            ....:      for i in range(50))                              # long time
+            ....:      for i in range(50))
             True
 
         TESTS::

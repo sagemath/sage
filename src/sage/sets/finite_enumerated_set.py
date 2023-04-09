@@ -109,7 +109,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         self._elements = elements
         Parent.__init__(self, facade=True, category=FiniteEnumeratedSets())
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Conversion to boolean.
 
@@ -121,8 +121,6 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             False
         """
         return bool(self._elements)
-
-    
 
     def _repr_(self):
         """

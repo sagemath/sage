@@ -26,7 +26,9 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, QQ, Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import Matrix
 
@@ -70,7 +72,7 @@ def qfsolve(G):
 
         sage: M = Matrix(QQ, [[3, 0, 0, 0], [0, 5, 0, 0], [0, 0, -7, 0], [0, 0, 0, -11]])
         sage: qfsolve(M)
-        (3, -4, -3, -2)
+        (3, 4, -3, -2)
     """
     ret = G.__pari__().qfsolve()
     if ret.type() == 't_COL':

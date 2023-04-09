@@ -17,7 +17,7 @@ Functions, Classes and Methods
 ==============================
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2015 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,8 +25,7 @@ Functions, Classes and Methods
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
-
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object import SageObject
@@ -269,7 +268,7 @@ def split_str_by_op(string, op, strip_parentheses=True):
                 return False
         return bool(open == 0)
 
-    factors = list()
+    factors = []
     balanced = True
     if string and op is not None and string.startswith(op):
         raise ValueError("'%s' is invalid since it starts with a '%s'." %
@@ -357,10 +356,8 @@ def repr_op(left, op, right=None, latex=False):
         if any(sig in s for sig in signals) or latex and s.startswith(r'\frac'):
             if latex:
                 return r'\left({}\right)'.format(s)
-            else:
-                return '({})'.format(s)
-        else:
-            return s
+            return '({})'.format(s)
+        return s
 
     return add_parentheses(left, op) + op + add_parentheses(right, op)
 
@@ -843,7 +840,7 @@ class NotImplementedOZero(NotImplementedError):
             exact_part = asymptotic_ring.zero()
         self.exact_part = exact_part
 
-        super(NotImplementedOZero, self).__init__(message)
+        super().__init__(message)
 
 
 class NotImplementedBZero(NotImplementedError):
@@ -913,7 +910,7 @@ class NotImplementedBZero(NotImplementedError):
             exact_part = asymptotic_ring.zero()
         self.exact_part = exact_part
 
-        super(NotImplementedBZero, self).__init__(message)
+        super().__init__(message)
 
 
 def transform_category(category,
@@ -1081,7 +1078,7 @@ class Locals(dict):
             <function log at 0x...>
         """
         try:
-            return super(Locals, self).__getitem__(key)
+            return super().__getitem__(key)
         except KeyError as ke:
             try:
                 return self.default_locals()[key]
@@ -1188,8 +1185,7 @@ class WithLocals(SageObject):
         """
         if locals is None:
             return Locals()
-        else:
-            return Locals(locals)
+        return Locals(locals)
 
     def locals(self, locals=None):
         r"""

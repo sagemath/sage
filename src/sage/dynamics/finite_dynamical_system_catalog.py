@@ -5,7 +5,7 @@ This module contains constructors for several specific discrete
 dynamical systems.
 These are accessible through
 :mod:`sage.dynamics.finite_dynamical_system_catalog. <sage.dynamics.finite_dynamical_system_catalog>`
-or just through `finite_dynamical_systems.`
+or just through ``finite_dynamical_systems.``
 (type either of these in Sage and hit ``tab`` for a list).
 
 AUTHORS:

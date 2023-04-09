@@ -486,7 +486,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
             True
 
         """
-        from sage.categories.all import AdditiveMagmas
+        from sage.categories.additive_magmas import AdditiveMagmas
         self._generators = generators
 
         category = AdditiveMagmas().AdditiveAssociative().AdditiveUnital()

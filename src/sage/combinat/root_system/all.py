@@ -76,7 +76,7 @@ Representation theory
 ---------------------
 
 - :ref:`sage.combinat.root_system.weyl_characters`
-- :ref:`sage.combinat.root_system.fusion_ring`
+- :ref:`sage.algebras.fusion_rings.fusion_ring`
 - :ref:`sage.combinat.root_system.integrable_representations`
 - :ref:`sage.combinat.root_system.branching_rules`
 - :ref:`sage.combinat.root_system.hecke_algebra_representation`
@@ -136,7 +136,6 @@ lazy_import('sage.combinat.root_system.extended_affine_weyl_group',
 lazy_import('sage.combinat.root_system.coxeter_group', 'CoxeterGroup')
 lazy_import('sage.combinat.root_system.weyl_characters', ['WeylCharacterRing',
                                                           'WeightRing'])
-lazy_import('sage.combinat.root_system.fusion_ring', ['FusionRing'])
 from .branching_rules import BranchingRule, branching_rule_from_plethysm, branching_rule
 
 lazy_import('sage.combinat.root_system.non_symmetric_macdonald_polynomials', 'NonSymmetricMacdonaldPolynomials')

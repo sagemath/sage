@@ -1076,11 +1076,11 @@ def CirculantGraph(n, adjacency):
     EXAMPLES: Compare plotting using the predefined layout and
     networkx::
 
-        sage: import networkx
-        sage: n = networkx.cycle_graph(23)
-        sage: spring23 = Graph(n)
+        sage: import networkx                                                           # optional - networkx
+        sage: n = networkx.cycle_graph(23)                                              # optional - networkx
+        sage: spring23 = Graph(n)                                                       # optional - networkx
         sage: posdict23 = graphs.CirculantGraph(23,2)
-        sage: spring23.show() # long time
+        sage: spring23.show() # long time                                               # optional - networkx
         sage: posdict23.show() # long time
 
     We next view many cycle graphs as a Sage graphics array. First we
@@ -2558,7 +2558,7 @@ def PaleyGraph(q):
     """
     from sage.rings.finite_rings.integer_mod import mod
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    from sage.arith.all import is_prime_power
+    from sage.arith.misc import is_prime_power
     if not is_prime_power(q):
         raise ValueError("parameter q must be a prime power")
     if not mod(q, 4) == 1:
@@ -3409,29 +3409,29 @@ def WheelGraph(n):
 
     Next, using the spring-layout algorithm::
 
-        sage: import networkx
+        sage: import networkx                                                           # optional - networkx
         sage: g = []
         sage: j = []
-        sage: for i in range(9):
+        sage: for i in range(9):                                                        # optional - networkx
         ....:  spr = networkx.wheel_graph(i+3)
         ....:  k = Graph(spr)
         ....:  g.append(k)
         ...
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - networkx
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
         ...
-        sage: G = graphics_array(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)                                                     # optional - networkx
+        sage: G.show() # long time                                                      # optional - networkx
 
     Compare the plotting::
 
-        sage: n = networkx.wheel_graph(23)
-        sage: spring23 = Graph(n)
+        sage: n = networkx.wheel_graph(23)                                              # optional - networkx
+        sage: spring23 = Graph(n)                                                       # optional - networkx
         sage: posdict23 = graphs.WheelGraph(23)
-        sage: spring23.show() # long time
+        sage: spring23.show() # long time                                               # optional - networkx
         sage: posdict23.show() # long time
     """
     from sage.graphs.generators.basic import CycleGraph
@@ -3660,7 +3660,7 @@ def nauty_gentreeg(options="", debug=False):
 
         sage: gen = graphs.nauty_gentreeg("4", debug=True)
         sage: print(next(gen))
-        >A ...gentreeg Z=2:3 D=3 n=4
+        >A ...gentreeg ...
         sage: gen = graphs.nauty_gentreeg("4 -q", debug=True)
         sage: next(gen)
         ''
@@ -3687,7 +3687,7 @@ def nauty_gentreeg(options="", debug=False):
         sage: list(graphs.nauty_gentreeg("3 -x", debug=True))
         ['>E Usage: ...gentreeg [-D#] [-Z#:#] [-ulps] [-q] n [res/mod] ...
         sage: list(graphs.nauty_gentreeg("3", debug=True))
-        ['>A ...gentreeg Z=2:2 D=2 n=3\n', Graph on 3 vertices]
+        ['>A ...gentreeg ...\n', Graph on 3 vertices]
     """
     import shlex
     from sage.features.nauty import NautyExecutable
@@ -3933,7 +3933,7 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
     from sage.rings.integer_ring import ZZ
     from sage.matrix.constructor import matrix, block_matrix, \
         ones_matrix, identity_matrix
-    from sage.arith.all import two_squares
+    from sage.arith.misc import two_squares
     p = 4*t + 1
     try:
         x = two_squares(p)

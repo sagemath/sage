@@ -1,5 +1,5 @@
 r"""
-Congruence Subgroup `\Gamma_0(N)`
+Congruence subgroup `\Gamma_0(N)`
 """
 
 # ****************************************************************************
@@ -103,7 +103,6 @@ class Gamma0_class(GammaH_class):
         Modular Symbols subspace of dimension 5 of Modular Symbols space of dimension 18 for Gamma_0(100) of weight 2 with sign 1 over Rational Field
 
     """
-
 
     def __init__(self, level):
         r"""
@@ -482,13 +481,14 @@ class Gamma0_class(GammaH_class):
             [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
         """
         n = self.level()
-        return sum([euler_phi(gcd(d,n//d)) for d in n.divisors()])
-
+        return sum(euler_phi(gcd(d, n // d)) for d in n.divisors())
 
     def nu2(self):
         r"""
         Return the number of elliptic points of order 2 for this congruence
-        subgroup `\Gamma_0(N)`. The number of these is given by a standard formula:
+        subgroup `\Gamma_0(N)`.
+
+        The number of these is given by a standard formula:
         0 if `N` is divisible by 4 or any prime congruent to -1 mod 4, and
         otherwise `2^d` where d is the number of odd primes dividing `N`.
 

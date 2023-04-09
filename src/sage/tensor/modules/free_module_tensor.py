@@ -194,17 +194,22 @@ tensor ``t`` acts on pairs formed by a linear form and a module element::
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, Optional
 
-from sage.rings.integer import Integer
-from sage.structure.element import ModuleElementWithMutability
-from sage.tensor.modules.comp import (Components, CompWithSym, CompFullySym,
-                                      CompFullyAntiSym)
-from sage.tensor.modules.tensor_with_indices import TensorWithIndices
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
+from sage.rings.integer import Integer
+from sage.structure.element import ModuleElementWithMutability
+from sage.tensor.modules.comp import (
+    CompFullyAntiSym,
+    CompFullySym,
+    Components,
+    CompWithSym,
+)
+from sage.tensor.modules.tensor_with_indices import TensorWithIndices
 
 if TYPE_CHECKING:
+    from sage.symbolic.expression import Expression
     from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
     from sage.tensor.modules.free_module_basis import FreeModuleBasis
 
@@ -264,8 +269,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
         self,
         fmodule: FiniteRankFreeModule,
         tensor_type,
-        name=None,
-        latex_name=None,
+        name: Optional[str] = None,
+        latex_name: Optional[str] = None,
         sym=None,
         antisym=None,
         parent=None,
@@ -309,41 +314,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
                               # bases, with the bases as keys (initially empty)
 
         # Treatment of symmetry declarations:
-        self._sym = []
-        if sym is not None and sym != []:
-            if isinstance(sym[0], (int, Integer)):
-                # a single symmetry is provided as a tuple -> 1-item list:
-                sym = [tuple(sym)]
-            for isym in sym:
-                if len(isym) > 1:
-                    for i in isym:
-                        if i<0 or i>self._tensor_rank-1:
-                            raise IndexError("invalid position: " + str(i) +
-                                " not in [0," + str(self._tensor_rank-1) + "]")
-                    self._sym.append(tuple(isym))
-        self._antisym = []
-        if antisym is not None and antisym != []:
-            if isinstance(antisym[0], (int, Integer)):
-                # a single antisymmetry is provided as a tuple -> 1-item list:
-                antisym = [tuple(antisym)]
-            for isym in antisym:
-                if len(isym) > 1:
-                    for i in isym:
-                        if i<0 or i>self._tensor_rank-1:
-                            raise IndexError("invalid position: " + str(i) +
-                                " not in [0," + str(self._tensor_rank-1) + "]")
-                    self._antisym.append(tuple(isym))
-
-        # Final consistency check:
-        index_list = []
-        for isym in self._sym:
-            index_list += isym
-        for isym in self._antisym:
-            index_list += isym
-        if len(index_list) != len(set(index_list)):
-            # There is a repeated index position:
-            raise IndexError("incompatible lists of symmetries: the same " +
-                             "position appears more than once")
+        self._sym, self._antisym = CompWithSym._canonicalize_sym_antisym(
+            self._tensor_rank, sym, antisym)
 
         # Initialization of derived quantities:
         FreeModuleTensor._init_derived(self)
@@ -405,7 +377,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         """
         # Special cases
-        if self._tensor_type == (0,2) and self._sym == [(0,1)]:
+        if self._tensor_type == (0,2) and self._sym == ((0,1),):
             description = "Symmetric bilinear form "
         else:
             # Generic case
@@ -563,13 +535,13 @@ class FreeModuleTensor(ModuleElementWithMutability):
         elif len(self._sym) == 1:
             s = "symmetry: {}; ".format(self._sym[0])
         else:
-            s = "symmetries: {}; ".format(self._sym)
+            s = "symmetries: {}; ".format(list(self._sym))
         if len(self._antisym) == 0:
             a = "no antisymmetry"
         elif len(self._antisym) == 1:
             a = "antisymmetry: {}".format(self._antisym[0])
         else:
-            a = "antisymmetries: {}".format(self._antisym)
+            a = "antisymmetries: {}".format(list(self._antisym))
         print(s+a)
 
     #### End of simple accessors #####
@@ -924,7 +896,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
                                         only_nonzero=only_nonzero,
                                         only_nonredundant=only_nonredundant)
 
-    def set_name(self, name=None, latex_name=None):
+    def set_name(self, name: Optional[str] = None, latex_name: Optional[str] = None):
         r"""
         Set (or change) the text name and LaTeX name of ``self``.
 
@@ -1101,6 +1073,12 @@ class FreeModuleTensor(ModuleElementWithMutability):
         fmodule = self._fmodule
         if basis is None:
             basis = fmodule._def_basis
+        try:
+            # Standard bases of tensor modules are keyed to the base module's basis,
+            # not to the TensorFreeSubmoduleBasis_comp instance.
+            basis = basis._base_module_basis
+        except AttributeError:
+            pass
         if basis not in self._components:
             # The components must be computed from
             # those in the basis from_basis
@@ -1170,7 +1148,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
                 for ii,val in paral_newcomp(listParalInput):
                     for jj in val:
                         new_comp[[jj[0]]] = jj[1]
-
 
             else:
                 # Sequential computation
@@ -1582,7 +1559,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
             else:
                 basis = self._fmodule._def_basis
         return self.comp(basis)[args]
-
 
     def __setitem__(self, args, value):
         r"""
@@ -2289,7 +2265,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             result._components[basis] = self._components[basis] / other
         return result
 
-    def __call__(self, *args):
+    def __call__(self, *args) -> Expression:
         r"""
         The tensor acting on linear forms and module elements as a multilinear
         map.
@@ -3091,7 +3067,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             for k in range(1,len(pos)):
                 if pos[k] < pos_cov:
                     raise TypeError(
-                        str(pos[0]) + " is a covariant position, while " + \
+                        str(pos[0]) + " is a covariant position, while " +
                         str(pos[k]) + " is a contravariant position; \n"
                         "symmetrization is meaningful only on tensor " +
                         "arguments of the same type")
@@ -3101,7 +3077,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
             basis = self.pick_a_basis()
         res_comp = self._components[basis].symmetrize(*pos)
         return self._fmodule.tensor_from_comp(self._tensor_type, res_comp)
-
 
     def antisymmetrize(self, *pos, **kwargs):
         r"""
@@ -3332,7 +3307,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             for k in range(1,len(pos)):
                 if pos[k] < pos_cov:
                     raise TypeError(
-                        str(pos[0]) + " is a covariant position, while " + \
+                        str(pos[0]) + " is a covariant position, while " +
                         str(pos[k]) + " is a contravariant position; \n"
                         "antisymmetrization is meaningful only on tensor " +
                         "arguments of the same type")

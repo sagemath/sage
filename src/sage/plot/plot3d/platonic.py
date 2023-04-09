@@ -1,5 +1,5 @@
 r"""
-Platonic Solids
+Platonic solids
 
 EXAMPLES: The five platonic solids in a row:
 

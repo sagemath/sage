@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -144,10 +144,12 @@ cdef class ntl_ZZX():
 
     def __reduce__(self):
         """
-        sage: from sage.libs.ntl.ntl_ZZX import ntl_ZZX
-        sage: f = ntl_ZZX([1,2,0,4])
-        sage: loads(dumps(f)) == f
-        True
+        EXAMPLES::
+
+            sage: from sage.libs.ntl.ntl_ZZX import ntl_ZZX
+            sage: f = ntl_ZZX([1,2,0,4])
+            sage: loads(dumps(f)) == f
+            True
         """
         return unpickle_class_value, (ntl_ZZX, self.list())
 
@@ -183,6 +185,8 @@ cdef class ntl_ZZX():
 
     def __setitem__(self, long i, a):
         """
+        EXAMPLES::
+
             sage: n=ntl.ZZX([1,2,3])
             sage: n
             [1 2 3]
@@ -692,12 +696,14 @@ cdef class ntl_ZZX():
         return (self*other).quo_rem(g)[0]
 
     def xgcd(self, ntl_ZZX other, proof=None):
-        """
-        If self and other are coprime over the rationals, return r, s,
-        t such that r = s*self + t*other.  Otherwise return 0.  This
-        is \emph{not} the same as the \sage function on polynomials
-        over the integers, since here the return value r is always an
-        integer.
+        r"""
+        If ``self`` and ``other`` are coprime over the rationals,
+        return ``r, s, t`` such that ``r = s*self + t*other``.
+        Otherwise return 0.
+
+        This is \emph{not} the same as the \sage function on
+        polynomials over the integers, since here the return value r
+        is always an integer.
 
         Here r is the resultant of a and b; if r != 0, then this
         function computes s and t such that: a*s + b*t = r; otherwise
@@ -709,7 +715,6 @@ cdef class ntl_ZZX():
         randomized strategy that errors with probability no more than
         `2^{-80}`.
 
-
         EXAMPLES::
 
             sage: f = ntl.ZZX([1,2,3]) * ntl.ZZX([4,5])**2
@@ -717,7 +722,8 @@ cdef class ntl_ZZX():
             sage: f.xgcd(g)   # nothing since they are not coprime
             (0, [], [])
 
-        In this example the input quadratic polynomials have a common root modulo 13.
+        In this example the input quadratic polynomials have a common root modulo 13::
+
             sage: f = ntl.ZZX([5,0,1])
             sage: g = ntl.ZZX([18,0,1])
             sage: f.xgcd(g)
@@ -805,7 +811,8 @@ cdef class ntl_ZZX():
             sage: f == g
             True
 
-        Though f and g are equal, they are not the same objects in memory:
+        Though f and g are equal, they are not the same objects in memory::
+
             sage: f is g
             False
         """

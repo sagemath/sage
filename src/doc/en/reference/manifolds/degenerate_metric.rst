@@ -2,7 +2,7 @@ Degenerate Metric Manifolds
 ===========================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/manifolds/differentiable/degenerate
 

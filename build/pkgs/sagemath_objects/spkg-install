@@ -19,15 +19,11 @@ export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 # (Important because sagemath-objects uses MANIFEST.in for filtering.)
 # Do not install the wheel.
 DIST_DIR="$(mktemp -d)"
-if ! python3 -m build --outdir "$DIST_DIR"/dist .; then
-    # This happens on Debian without python3-venv installed - "ensurepip" is missing
-    echo "Falling back to --no-isolation"
-    python3 -m build --no-isolation --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
-fi
+python3 -m build --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
 
 wheel=$(cd "$DIST_DIR" && sdh_store_wheel . && echo $wheel)
 ls -l "$wheel"
 
 if [ "$SAGE_CHECK" != no ]; then
-    tox -v -e sagepython-norequirements --installpkg "$wheel"
+    tox -r -v -e sagepython-sagewheels-nopypi-norequirements --installpkg $wheel
 fi

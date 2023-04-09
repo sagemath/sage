@@ -29,10 +29,10 @@ the United States; the final section is a checkpoint of sorts.
 The tutorial assumes that one is familiar with the basics of Sage, such
 as outlined in the previous tutorials.
 
-For a refresher, make sure the syntax below for defining a function and
-getting a value makes sense; then evaluate the cell by clicking the
-"evaluate" link, or by pressing Shift\-Enter (hold down Shift while
-pressing the Enter key).
+For a refresher, make sure the syntax below for defining a function
+and getting a value makes sense; then evaluate the cell by clicking
+the "evaluate" link, or by pressing :kbd:`Shift` + :kbd:`Enter` (hold
+down :kbd:`Shift` while pressing the :kbd:`Enter` key).
 
 ::
 

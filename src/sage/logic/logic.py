@@ -318,7 +318,7 @@ class SymbolicLogic:
               'CPAREN',
               'CPAREN'],
              {'a': 'False', 'b': 'False'},
-             ['a', 'b', 'b']]       
+             ['a', 'b', 'b']]
         """
         toks = ['OPAREN'] + statement1[0] + ['OR'] + statement2[0] + ['CPAREN']
         variables = dict(statement1[1])
@@ -326,10 +326,9 @@ class SymbolicLogic:
         var_order = statement1[2] + statement2[2]
         return [toks, variables, var_order]
 
-
-    #TODO: implement the simplify function which calls
-    #a c++ implementation of the ESPRESSO algorithm
-    #to simplify the truthtable: probably Minilog
+    # TODO: implement the simplify function which calls
+    # a c++ implementation of the ESPRESSO algorithm
+    # to simplify the truthtable: probably Minilog
     def simplify(self, table):
         """
         Call a C++ implementation of the ESPRESSO algorithm to simplify the

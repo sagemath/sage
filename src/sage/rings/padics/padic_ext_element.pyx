@@ -509,4 +509,3 @@ cdef class pAdicExtElement(pAdicGenericElement):
             return R.residue_field()(self.expansion(0))
         else:
             raise NotImplementedError("residue() not implemented in extensions for absprec larger than one")
-

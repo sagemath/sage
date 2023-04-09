@@ -88,6 +88,7 @@ class AbstractSingleCrystalElement(Element):
     r"""
     Abstract base class for elements in crystals with a single element.
     """
+
     def __lt__(self, other):
         r"""
         EXAMPLES::
@@ -258,7 +259,7 @@ class TCrystal(UniqueRepresentation, Parent):
             weight = cartan_type
             cartan_type = weight.parent().cartan_type()
         cartan_type = CartanType(cartan_type)
-        return super(TCrystal, cls).__classcall__(cls, cartan_type, weight)
+        return super().__classcall__(cls, cartan_type, weight)
 
     def __init__(self, cartan_type, weight):
         r"""
@@ -350,6 +351,7 @@ class TCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a `T_{\lambda}` crystal.
         """
+
         def _repr_(self):
             r"""
             EXAMPLES::
@@ -514,7 +516,7 @@ class RCrystal(UniqueRepresentation, Parent):
             weight = cartan_type
             cartan_type = weight.parent().cartan_type()
         cartan_type = CartanType(cartan_type)
-        return super(RCrystal, cls).__classcall__(cls, cartan_type, weight, dual)
+        return super().__classcall__(cls, cartan_type, weight, dual)
 
     def __init__(self, cartan_type, weight, dual):
         r"""
@@ -612,6 +614,7 @@ class RCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a `R_{\lambda}` crystal.
         """
+
         def _repr_(self):
             r"""
             EXAMPLES::
@@ -789,7 +792,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
         cartan_type = CartanType(cartan_type)
         if i not in cartan_type.index_set():
             raise ValueError('i must an element of the index set')
-        return super(ElementaryCrystal, cls).__classcall__(cls, cartan_type, i)
+        return super().__classcall__(cls, cartan_type, i)
 
     def __init__(self, cartan_type, i):
         r"""
@@ -854,6 +857,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a `B_i` crystal.
         """
+
         def __init__(self, parent, m):
             r"""
             EXAMPLES::
@@ -1091,7 +1095,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
             P = cartan_type.root_system().ambient_space()
             if P is None:
                 P = cartan_type.root_system().weight_lattice()
-        return super(ComponentCrystal, cls).__classcall__(cls, cartan_type, P)
+        return super().__classcall__(cls, cartan_type, P)
 
     def __init__(self, cartan_type, P):
         r"""
@@ -1172,6 +1176,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
         r"""
         Element of a component crystal.
         """
+
         def _repr_(self):
             r"""
             EXAMPLES::

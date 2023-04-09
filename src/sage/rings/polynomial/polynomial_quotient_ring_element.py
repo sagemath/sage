@@ -683,8 +683,54 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
     def minpoly(self):
         """
         The minimal polynomial of this element, which is by definition the
-        minimal polynomial of right multiplication by this element.
+        minimal polynomial of the :meth:`matrix` of this element.
+
+        ALGORITHM: Use
+        :meth:`~sage.rings.polynomial.polynomial_zz_pex.Polynomial_ZZ_pEX.minpoly_mod`
+        if possible, otherwise compute the minimal polynomial of the :meth:`matrix`.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: S.<a> = R.quotient(x^3 + 2*x - 5)
+            sage: (a+123).minpoly()
+            x^3 - 369*x^2 + 45389*x - 1861118
+            sage: (a+123).matrix().minpoly()
+            x^3 - 369*x^2 + 45389*x - 1861118
+
+        One useful application of this function is to compute a minimal
+        polynomial of a finite-field element over an intermediate extension,
+        rather than the absolute minimal polynomial over the prime field::
+
+            sage: F2.<i> = GF((431,2), modulus=[1,0,1])
+            sage: F6.<u> = F2.extension(3)
+            sage: (u+1).minpoly()
+            x^6 + 425*x^5 + 19*x^4 + 125*x^3 + 189*x^2 + 239*x + 302
+            sage: ext = F6.over(F2)
+            sage: ext(u+1).minpoly()  # indirect doctest
+            x^3 + (396*i + 428)*x^2 + (80*i + 39)*x + 9*i + 178
+
+        TESTS:
+
+        We make sure that the previous example works on random examples::
+
+            sage: p = random_prime(50)
+            sage: K.<u> = GF((p, randrange(1,20)))
+            sage: L.<v> = K.extension(randrange(2,20))
+            sage: LK = L.over(K)
+            sage: a = L.random_element()
+            sage: poly = LK(a).minpoly()  # indirect doctest
+            sage: poly(a)
+            0
+            sage: abs_deg = a.minpoly().degree()
+            sage: poly.degree() == abs_deg // gcd(abs_deg, K.degree())
+            True
         """
+        poly = self.lift()
+        try:
+            return poly.minpoly_mod(self.parent().modulus())
+        except AttributeError:
+            pass
         return self.matrix().minpoly()
 
     def norm(self):
@@ -714,3 +760,26 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             389
         """
         return self.matrix().trace()
+
+    def rational_reconstruction(self, *args, **kwargs):
+        r"""
+        Compute a rational reconstruction of this polynomial quotient
+        ring element to its cover ring.
+
+        This method is a thin convenience wrapper around
+        :meth:`Polynomial.rational_reconstruction`.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(65537)[]
+            sage: m = x^11 + 25345*x^10 + 10956*x^9 + 13873*x^8 + 23962*x^7 + 17496*x^6 + 30348*x^5 + 7440*x^4 + 65438*x^3 + 7676*x^2 + 54266*x + 47805
+            sage: f = 20437*x^10 + 62630*x^9 + 63241*x^8 + 12820*x^7 + 42171*x^6 + 63091*x^5 + 15288*x^4 + 32516*x^3 + 2181*x^2 + 45236*x + 2447
+            sage: f_mod_m = R.quotient(m)(f)
+            sage: f_mod_m.rational_reconstruction()
+            (51388*x^5 + 29141*x^4 + 59341*x^3 + 7034*x^2 + 14152*x + 23746,
+             x^5 + 15208*x^4 + 19504*x^3 + 20457*x^2 + 11180*x + 28352)
+        """
+        m = self.parent().modulus()
+        R = m.parent()
+        f = R(self._polynomial)
+        return f.rational_reconstruction(m, *args, **kwargs)

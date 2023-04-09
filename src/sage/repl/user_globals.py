@@ -156,6 +156,8 @@ def initialize_globals(all, g=None):
     for key in dir(all):
         if key[0] != '_':
             user_globals[key] = getattr(all, key)
+    from sage.misc.lazy_import import clean_namespace
+    clean_namespace(user_globals)
 
 
 def get_global(name):

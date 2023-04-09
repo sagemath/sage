@@ -320,14 +320,14 @@ class Sphere(PseudoRiemannianSubmanifold):
         from sage.misc.prandom import getrandbits
         from time import time
         if unique_tag is None:
-            unique_tag = getrandbits(128)*time()
+            unique_tag = getrandbits(128) * time()
 
-        return super(cls, Sphere).__classcall__(cls, n, radius=radius,
-                                           ambient_space=ambient_space,
-                                           center=center,
-                                           name=name, latex_name=latex_name,
-                                           coordinates=coordinates, names=names,
-                                           unique_tag=unique_tag)
+        return super().__classcall__(cls, n, radius=radius,
+                                     ambient_space=ambient_space,
+                                     center=center,
+                                     name=name, latex_name=latex_name,
+                                     coordinates=coordinates, names=names,
+                                     unique_tag=unique_tag)
 
     def __init__(self, n, radius=1, ambient_space=None, center=None, name=None,
                  latex_name=None, coordinates='spherical', names=None,

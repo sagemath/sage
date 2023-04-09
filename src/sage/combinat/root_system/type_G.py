@@ -13,6 +13,8 @@ Root system data for type G
 from . import ambient_space
 from sage.sets.family import Family
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
+
+
 class AmbientSpace(ambient_space.AmbientSpace):
     """
     EXAMPLES::
@@ -54,6 +56,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         sage: [WeylDim(['G',2],[a,b]) for a,b in [[0,0], [1,0], [0,1], [1,1]]] # indirect doctest
         [1, 7, 14, 64]
     """
+
     def dimension(self):
         """
         EXAMPLES::
@@ -72,6 +75,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             Finite family {1: (0, 1, -1), 2: (1, -2, 1)}
          """
         return self.monomial(1)-self.monomial(2) if i == 1 else self.monomial(0)-2*self.monomial(1)+self.monomial(2)
+
     def positive_roots(self):
         """
         EXAMPLES::
@@ -106,6 +110,8 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
 
 from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_crystallographic
+
+
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
     def __init__(self):
         """
@@ -274,6 +280,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
         return CartanTypeFolded(self, ['D', 4], [[1, 3, 4], [2]])
+
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override

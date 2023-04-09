@@ -31,6 +31,7 @@ from sage.combinat.crystals.monomial_crystals import CrystalOfNakajimaMonomials
 from sage.combinat.rigged_configurations.rc_crystal import CrystalOfRiggedConfigurations
 from sage.rings.integer_ring import ZZ
 
+
 def HighestWeightCrystal(dominant_weight, model=None):
     r"""
     Return the highest weight crystal of highest weight ``dominant_weight``
@@ -257,6 +258,7 @@ def HighestWeightCrystal(dominant_weight, model=None):
 
     raise ValueError("invalid model")
 
+
 class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
     """
     Commonalities for all finite dimensional type `E` highest weight crystals.
@@ -264,6 +266,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
     Subclasses should setup an attribute column_crystal in their
     ``__init__`` method before calling the ``__init__`` method of this class.
     """
+
     def __init__(self, dominant_weight):
         """
         EXAMPLES::
@@ -329,6 +332,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
         dominant_weight = self._highest_weight
         tensor = sum(( [self.column_crystal[i]]*dominant_weight.coefficient(i) for i in dominant_weight.support()), [])
         return self._element_constructor_(*[B.module_generators[0] for B in tensor])
+
 
 class FiniteDimensionalHighestWeightCrystal_TypeE6(FiniteDimensionalHighestWeightCrystal_TypeE):
     r"""

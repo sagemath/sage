@@ -204,7 +204,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef Py_ssize_t i, j
 
         x = self.fetch('list')
-        if not x is None:
+        if x is not None:
             return x
         x = []
         for i from 0 <= i < self._nrows:
@@ -247,6 +247,22 @@ cdef class Matrix(sage.structure.element.Matrix):
         return self._dict()
 
     monomial_coefficients = dict
+
+    def items(self):
+        r"""
+        Return an iterable of ``((i,j), value)`` elements.
+
+        This may (but is not guaranteed to) suppress zero values.
+
+        EXAMPLES::
+
+            sage: a = matrix(QQ['x,y'], 2, range(6), sparse=True); a
+            [0 1 2]
+            [3 4 5]
+            sage: list(a.items())
+            [((0, 1), 1), ((0, 2), 2), ((1, 0), 3), ((1, 1), 4), ((1, 2), 5)]
+        """
+        return self._dict().items()
 
     def _dict(self):
         """
@@ -293,7 +309,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [   3    4   10]
         """
         d = self.fetch('dict')
-        if not d is None:
+        if d is not None:
             return d
 
         cdef Py_ssize_t i, j
@@ -4596,7 +4612,8 @@ cdef class Matrix(sage.structure.element.Matrix):
             (0, 1)
         """
         x = self.fetch('pivots')
-        if not x is None: return tuple(x)
+        if x is not None:
+            return tuple(x)
         self.echelon_form()
         x = self.fetch('pivots')
         if x is None:
@@ -4634,10 +4651,10 @@ cdef class Matrix(sage.structure.element.Matrix):
             ....:                 [8*x^2 + 12*x + 15,  8*x^2 + 9*x + 16] ])
             sage: m.rank()
             2
-
         """
         x = self.fetch('rank')
-        if not x is None: return x
+        if x is not None:
+            return x
         if self._nrows == 0 or self._ncols == 0:
             return 0
         r = len(self.pivots())
@@ -4665,12 +4682,13 @@ cdef class Matrix(sage.structure.element.Matrix):
             (2,)
         """
         x = self.fetch('nonpivots')
-        if not x is None: return tuple(x)
+        if x is not None:
+            return tuple(x)
 
         X = set(self.pivots())
         np = []
         for j in xrange(self.ncols()):
-            if not (j in X):
+            if j not in X:
                 np.append(j)
         np = tuple(np)
         self.cache('nonpivots',np)
@@ -4761,7 +4779,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [(0, 0), (1, 0), (1, 1), (0, 2)]
         """
         x = self.fetch('nonzero_positions_by_column')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x
@@ -6123,7 +6141,7 @@ def set_max_rows(n):
         sage: from sage.matrix.matrix0 import set_max_rows
         sage: set_max_rows(20)
         doctest:...: DeprecationWarning: 'set_max_rows' is replaced by 'matrix.options.max_rows'
-        See https://trac.sagemath.org/30552 for details.
+        See https://github.com/sagemath/sage/issues/30552 for details.
 
     """
     from sage.misc.superseded import deprecation
@@ -6140,7 +6158,7 @@ def set_max_cols(n):
         sage: from sage.matrix.matrix0 import set_max_cols
         sage: set_max_cols(50)
         doctest:...: DeprecationWarning: 'set_max_cols' is replaced by 'matrix.options.max_cols'
-        See https://trac.sagemath.org/30552 for details.
+        See https://github.com/sagemath/sage/issues/30552 for details.
 
     """
     from sage.misc.superseded import deprecation

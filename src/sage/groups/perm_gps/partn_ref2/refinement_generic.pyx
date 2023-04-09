@@ -427,7 +427,7 @@ cdef class LabelledBranching:
             sage: from sage.groups.perm_gps.partn_ref2.refinement_generic import LabelledBranching
             sage: L = LabelledBranching(3)
             sage: L.small_generating_set()
-            []
+            [()]
             sage: L.add_gen(libgap.eval('(1,2,3)'))
             sage: L.small_generating_set()
             [(1,2,3)]
@@ -639,7 +639,7 @@ cdef class PartitionRefinement_generic:
         self._backtrack(True)
         self._finish_latex()
 
-    cdef void _backtrack(self, bint first_step = False):
+    cdef void _backtrack(self, bint first_step=False):
         r"""
         Backtracking with pruning.
 

@@ -193,8 +193,9 @@ def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
 
     - ``p`` - positive prime number (optional, default 2)
 
-    OUTPUT: ``matrix`` - change-of-basis matrix, a square matrix over
-    GF(p)
+    OUTPUT:
+
+    ``matrix`` - change-of-basis matrix, a square matrix over GF(p)
 
     .. note::
 
@@ -1081,6 +1082,7 @@ def atomic_basis_odd(n, basis, p, **kwds):
                             p_mono = []
                         result.append((tuple(q_mono), tuple(p_mono)))
     return tuple(result)
+
 
 #############################################################################
 def steenrod_basis_error_check(dim, p, **kwds):

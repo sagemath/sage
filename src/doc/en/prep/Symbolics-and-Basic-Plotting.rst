@@ -29,7 +29,8 @@ and evaluation in Sage.  We provide a (very) brief refresher.
    value makes sense.
 
 #. Then evaluate the cell by clicking the "evaluate" link, or by
-   pressing Shift\-Enter (hold down Shift while pressing the Enter key).
+   pressing :kbd:`Shift` + :kbd:`Enter` (hold down :kbd:`Shift`
+   while pressing the :kbd:`Enter` key).
 
 ::
 

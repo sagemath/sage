@@ -132,6 +132,12 @@ AC_ARG_ENABLE([editable],
               [AC_SUBST([SAGE_EDITABLE], [$enableval])],
               [AC_SUBST([SAGE_EDITABLE], [yes])])
 
+AC_ARG_ENABLE([wheels],
+              [AS_HELP_STRING([--enable-wheels],
+                              [build wheels for the Sage library and update them on "sage -b"; if disabled, use "make wheels" to build wheels])],
+              [AC_SUBST([SAGE_WHEELS], [$enableval])],
+              [])
+
 # Check whether we are on a supported platform
 AC_CANONICAL_BUILD()
 AC_CANONICAL_HOST()
@@ -435,8 +441,9 @@ AC_ARG_ENABLE([experimental-packages],
   [AS_HELP_STRING([--enable-experimental-packages],
     [allow installing experimental packages (default: no = ask for user confirmation for each package)])])
 AC_ARG_ENABLE([download-from-upstream-url],
-  [AS_HELP_STRING([--enable-download-from-upstream-url],
-    [allow downloading packages from their upstream URL if they cannot be found on the Sage mirrors])])
+  [AS_HELP_STRING([--disable-download-from-upstream-url],
+    [disallow downloading packages from their upstream URL if they cannot be found on the Sage mirrors])], [],
+    [AS_VAR_SET([enable_download_from_upstream_url], [yes])])
 
 SAGE_SPKG_OPTIONS=""
 AS_IF([test "x$enable_experimental_packages" = "xyes"], [
@@ -480,7 +487,7 @@ AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
 AC_ARG_ENABLE([r],
   AS_HELP_STRING([--disable-r],
                  [disable build of the R package and related packages]), [
-    for pkg in r rpy2 r_jupyter pcre; do
+    for pkg in r rpy2 r_jupyter; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -489,7 +496,7 @@ AC_ARG_ENABLE([doc],
   AS_HELP_STRING([--disable-doc],
                  [disable build of the Sage documentation and packages depending on it]), [
     dnl Disable packages needed for docbuilding
-    for pkg in sage_docbuild alabaster babel snowballstemmer imagesize sphinx sphinxcontrib_devhelp sphinxcontrib_jsmath sphinxcontrib_serializinghtml sphinxcontrib_applehelp sphinxcontrib_htmlhelp sphinxcontrib_qthelp sphinxcontrib_websupport jupyter_sphinx furo; do
+    for pkg in sage_docbuild alabaster babel snowballstemmer imagesize sphinx sphinxcontrib_devhelp sphinxcontrib_jsmath sphinxcontrib_serializinghtml sphinxcontrib_applehelp sphinxcontrib_htmlhelp sphinxcontrib_qthelp sphinxcontrib_websupport jupyter_sphinx furo sphinx_copybutton; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
     AS_VAR_IF([enableval], [no], [dnl Disable the docbuild by disabling the install tree for documentation

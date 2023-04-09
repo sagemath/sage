@@ -671,9 +671,7 @@ class Magmas(Category_singleton):
                         ZeroDivisionError: rational division by zero
 
                         sage: ~C([2,2,2,2])
-                        Traceback (most recent call last):
-                        ...
-                        TypeError: no conversion of this rational to integer
+                        (1/2, 1/2, 0.500000000000000, 3)
                     """
                     # variant without coercion:
                     # return self.parent()._cartesian_product_of_elements(
@@ -712,6 +710,8 @@ class Magmas(Category_singleton):
                 def one(self):
                     r"""
                     Return the unit element of ``self``.
+
+                    EXAMPLES::
 
                         sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup
                         sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()
@@ -776,17 +776,18 @@ class Magmas(Category_singleton):
 
         def __init_extra__(self):
             """
+            EXAMPLES::
+
                 sage: S = Semigroups().example("free")
                 sage: S('a') * S('b') # indirect doctest
                 'ab'
                 sage: S('a').__class__._mul_ == S('a').__class__._mul_parent
                 True
-
             """
             # This should instead register the multiplication to the coercion model
             # But this is not yet implemented in the coercion model
             #
-            # Trac ticket #11900: The following used to test whether
+            # Github issue #11900: The following used to test whether
             # self.product != self.product_from_element_class_mul. But
             # that is, of course, a bug. Namely otherwise, if the parent
             # has an optimized `product` then its elements will *always* use
@@ -858,6 +859,7 @@ class Magmas(Category_singleton):
               this can be used when the base set is infinite.
 
             OUTPUT:
+
             The multiplication table as an object of the class
             :class:`~sage.matrix.operation_table.OperationTable`
             which defines several methods for manipulating and
@@ -1128,8 +1130,8 @@ class Magmas(Category_singleton):
                     sage: B[3] * B[2]
                     4*B[2] + 6*B[3] + 5*B[6]
                 """
-                assert(x in self)
-                assert(y in self)
+                assert x in self
+                assert y in self
                 return self.retract(self.lift(x) * self.lift(y))
 
     class Realizations(RealizationsCategory):

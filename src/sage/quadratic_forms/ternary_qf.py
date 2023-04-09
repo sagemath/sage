@@ -1,5 +1,5 @@
 """
-Ternary Quadratic Form with integer coefficients
+Ternary quadratic form with integer coefficients
 
 AUTHOR:
 
@@ -26,19 +26,25 @@ The form `a*x^2 + b*y^2 + c*z^2 + r*yz + s*xz + t*xy` is stored as a tuple (a, b
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.rings.integer_ring import ZZ
-from sage.arith.all import gcd, kronecker_symbol
-from sage.quadratic_forms.quadratic_form import QuadraticForm
+from sage.arith.misc import gcd, kronecker as kronecker_symbol
 from sage.matrix.constructor import matrix, identity_matrix
-from sage.structure.element import is_Vector, is_Matrix
-from sage.quadratic_forms.ternary import _reduced_ternary_form_eisenstein_with_matrix
-from sage.quadratic_forms.ternary import _reduced_ternary_form_eisenstein_without_matrix, _find_zeros_mod_p_odd, _find_zeros_mod_p_2, _find_p_neighbor_from_vec, _basic_lemma
-from sage.quadratic_forms.ternary import _find_all_ternary_qf_by_level_disc, _find_a_ternary_qf_by_level_disc
 from sage.misc.prandom import randint
+from sage.quadratic_forms.quadratic_form import QuadraticForm
+from sage.quadratic_forms.ternary import (_basic_lemma,
+                                          _find_a_ternary_qf_by_level_disc,
+                                          _find_all_ternary_qf_by_level_disc,
+                                          _find_p_neighbor_from_vec,
+                                          _find_zeros_mod_p_2,
+                                          _find_zeros_mod_p_odd,
+                                          _reduced_ternary_form_eisenstein_with_matrix,
+                                          _reduced_ternary_form_eisenstein_without_matrix)
+
 from sage.rings.finite_rings.integer_mod import mod
-from sage.rings.ring import is_Ring
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygens
+from sage.rings.ring import is_Ring
+from sage.structure.element import is_Vector, is_Matrix
+from sage.structure.sage_object import SageObject
 
 
 class TernaryQF(SageObject):

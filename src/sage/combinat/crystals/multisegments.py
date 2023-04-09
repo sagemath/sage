@@ -22,6 +22,7 @@ from sage.combinat.root_system.cartan_type import CartanType
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 
+
 class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
     r"""
     The type `A_n^{(1)}` crystal `B(\infty)` realized using
@@ -132,6 +133,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
     - [JL2009]_
     - [LTV1999]_
     """
+
     def __init__(self, n):
         """
         Initialize ``self``.
@@ -186,6 +188,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
         """
         An element in a BZ multisegments crystal.
         """
+
         def __init__(self, parent, value):
             """
             Initialize ``self``.

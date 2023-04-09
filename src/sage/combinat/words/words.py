@@ -965,11 +965,12 @@ class FiniteWords(AbstractLanguage):
 
     def __contains__(self, x):
         """
-        Tests whether self contains x.
+        Tests whether ``self`` contains ``x``.
 
         OUTPUT:
-            This method returns True if x is a word of the appropriate
-            length and the alphabets of the parents match. Returns False
+
+            This method returns ``True`` if ``x`` is a word of the appropriate
+            length and the alphabets of the parents match. It returns ``False``
             otherwise.
 
         EXAMPLES::

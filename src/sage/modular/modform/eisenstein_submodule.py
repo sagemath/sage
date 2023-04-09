@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-The Eisenstein Subspace
+The Eisenstein subspace
 """
 
 from sage.arith.functions import lcm

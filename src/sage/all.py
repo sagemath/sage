@@ -54,61 +54,12 @@ Check that :trac:`34506` is resolved::
 # ****************************************************************************
 
 import os
-import sys
 import operator
 import math
 
-############ setup warning filters before importing Sage stuff ####
-import warnings
-
-__with_pydebug = hasattr(sys, 'gettotalrefcount')   # This is a Python debug build (--with-pydebug)
-if __with_pydebug:
-    # a debug build does not install the default warning filters. Sadly, this breaks doctests so we
-    # have to re-add them:
-    warnings.filterwarnings('ignore', category=PendingDeprecationWarning)
-    warnings.filterwarnings('ignore', category=ImportWarning)
-    warnings.filterwarnings('ignore', category=ResourceWarning)
-else:
-    deprecationWarning = ('ignore', None, DeprecationWarning, None, 0)
-    if deprecationWarning in warnings.filters:
-        warnings.filters.remove(deprecationWarning)
-
-# Ignore all deprecations from IPython etc.
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-    module='(IPython|ipykernel|jupyter_client|jupyter_core|nbformat|notebook|ipywidgets|storemagic|jedi)')
-
-# scipy 1.18 introduced reprecation warnings on a number of things they are moving to
-# numpy, e.g. DeprecationWarning: scipy.array is deprecated
-#             and will be removed in SciPy 2.0.0, use numpy.array instead
-# This affects networkx 2.2 up and including 2.4 (cf. :trac:29766)
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-    module='(scipy|networkx)')
-
-# However, be sure to keep OUR deprecation warnings
-warnings.filterwarnings('default', category=DeprecationWarning,
-    message=r'[\s\S]*See https?://trac\.sagemath\.org/[0-9]* for details.')
-
-# Ignore Python 3.9 deprecation warnings
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-    module='ast')
-
-# Ignore packaging 20.5 deprecation warnings
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-    module='(.*[.]_vendor[.])?packaging')
-
-# Ignore numpy warnings triggered by pythran
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-                        module='pythran')
-
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-                        message='The distutils(.sysconfig module| package) is deprecated',
-                        module='Cython|distutils|numpy|sage.env|sage.features')
-
 ################ end setup warnings ###############################
 
-
-from .all__sagemath_environment import *
-
+from .all__sagemath_repl import *  # includes .all__sagemath_objects, .all__sagemath_environment
 
 ###################################################################
 
@@ -123,13 +74,11 @@ import sage.misc.lazy_import
 
 from sage.misc.all       import *         # takes a while
 from sage.typeset.all    import *
-from sage.repl.all       import *
 
 from sage.misc.sh import sh
 
 from sage.libs.all       import *
 from sage.data_structures.all import *
-from sage.doctest.all    import *
 
 from sage.structure.all  import *
 from sage.rings.all      import *
@@ -289,6 +238,12 @@ lazy_import('sage.misc.sageinspect', 'is_function_or_cython_function',
 # Sage startup).
 set_random_seed()
 
+
+# Relink imported lazy_import objects to point to the appropriate namespace
+
+from sage.misc.lazy_import import clean_namespace
+clean_namespace()
+del clean_namespace
 
 # From now on it is ok to resolve lazy imports
 sage.misc.lazy_import.finish_startup()

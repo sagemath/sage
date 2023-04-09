@@ -33,6 +33,7 @@ from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
 
+
 def DynkinDiagram(*args, **kwds):
     r"""
     Return the Dynkin diagram corresponding to the input.
@@ -246,6 +247,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
     Implementation note: if a Cartan type is given, then the nodes
     are initialized from the index set of this Cartan type.
     """
+
     def __init__(self, t=None, index_set=None, odd_isotropic_roots=[],
                  **options):
         """
@@ -842,6 +844,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
                     val = scalarproducts_to_order.get(self[i,j]*self[j,i], infinity)
                     coxeter_diagram.add_edge(i,j, val)
         return coxeter_diagram.copy(immutable=True)
+
 
 def precheck(t, letter=None, length=None, affine=None, n_ge=None, n=None):
     """

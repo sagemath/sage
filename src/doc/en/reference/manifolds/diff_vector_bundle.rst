@@ -2,7 +2,7 @@ Differentiable Vector Bundles
 =============================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/manifolds/differentiable/vector_bundle
 

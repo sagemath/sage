@@ -11,7 +11,7 @@ This file constructs some examples of Sandpiles.
 
 The examples are accessible by typing ``sandpiles.NAME``, where
 ``NAME`` is the name of the example.  You can get a list by typing
-``sandpiles.`` and hitting the TAB key::
+``sandpiles.`` and hitting the :kbd:`Tab` key::
 
    sandpiles.Complete
    sandpiles.Cycle
@@ -139,8 +139,7 @@ class SandpileExamples():
             sage: s.invariant_factors()
             [1, 1, 8]
         """
-        return Sandpile(graphs.DiamondGraph(),0)
-
+        return Sandpile(graphs.DiamondGraph(), 0)
 
     def Fan(self, n, deg_three_verts=False):
         """

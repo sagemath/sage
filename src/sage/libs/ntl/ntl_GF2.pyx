@@ -116,6 +116,8 @@ cdef class ntl_GF2():
 
     def __mul__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o*o
@@ -137,6 +139,8 @@ cdef class ntl_GF2():
 
     def __truediv__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o/o
@@ -159,6 +163,8 @@ cdef class ntl_GF2():
 
     def __sub__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o-o
@@ -180,6 +186,8 @@ cdef class ntl_GF2():
 
     def __add__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o+o
@@ -201,6 +209,8 @@ cdef class ntl_GF2():
 
     def __neg__(ntl_GF2 self):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: -z
@@ -214,6 +224,8 @@ cdef class ntl_GF2():
 
     def __pow__(ntl_GF2 self, long e, ignored):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: z^2
@@ -254,6 +266,7 @@ def unpickle_class_value(cls, x):
     """
     return cls(x)
 
+
 def unpickle_class_args(cls, x):
     """
     Here for unpickling.
@@ -266,4 +279,3 @@ def unpickle_class_args(cls, x):
         <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(*x)
-

@@ -89,8 +89,8 @@ class NumberFields(Category_singleton):
             sage: ZZ in NumberFields()
             False
         """
-        import sage.rings.number_field.number_field_base
-        return sage.rings.number_field.number_field_base.is_NumberField(x)
+        from sage.rings.number_field.number_field_base import NumberField
+        return isinstance(x, NumberField)
 
     def _call_(self, x):
         r"""
@@ -208,6 +208,26 @@ class NumberFields(Category_singleton):
                 return Z
 
             raise ValueError('algorithm must be "gp" or "pari"')
+
+        def _test_absolute_disc(self, **options):
+            r"""
+            Run basic tests for the method :meth:`absolute_discriminant` of ``self``.
+
+            See the documentation for :class:`TestSuite` for information on
+            further options.
+
+            INPUT:
+
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+
+            EXAMPLES::
+
+                sage: S = NumberField(x**3-x-1, 'a')
+                sage: S._test_absolute_disc()
+            """
+            from sage.rings.integer import Integer
+            tester = self._tester(**options)
+            tester.assertIsInstance(self.absolute_discriminant(), Integer)
 
     class ElementMethods:
         pass

@@ -1,5 +1,5 @@
 r"""
-Bezier Paths
+Bezier paths
 """
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,

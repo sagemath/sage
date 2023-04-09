@@ -1,5 +1,5 @@
 """
-Finite Fields of Characteristic 2
+Finite fields of characteristic 2
 """
 
 #*****************************************************************************
@@ -18,6 +18,7 @@ Finite Fields of Characteristic 2
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.libs.pari.all import pari
 from sage.rings.integer import Integer
+from sage.misc.superseded import deprecated_function_alias
 
 
 def late_import():
@@ -50,6 +51,7 @@ def late_import():
 
     import sage.rings.polynomial.polynomial_element
     is_Polynomial = sage.rings.polynomial.polynomial_element.is_Polynomial
+
 
 class FiniteField_ntl_gf2e(FiniteField):
     """
@@ -137,8 +139,8 @@ class FiniteField_ntl_gf2e(FiniteField):
             raise ValueError("q must be a 2-power")
         FiniteField.__init__(self, GF2, names, normalize=True)
 
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        if not is_Polynomial(modulus):
+        from sage.rings.polynomial.polynomial_element import Polynomial
+        if not isinstance(modulus, Polynomial):
             raise TypeError("modulus must be a polynomial")
 
         self._cache = Cache_ntl_gf2e(self, k, modulus)
@@ -276,7 +278,7 @@ class FiniteField_ntl_gf2e(FiniteField):
         """
         return GF2
 
-    def fetch_int(self, number):
+    def from_integer(self, number):
         r"""
         Given an integer `n` less than :meth:`cardinality` with base `2`
         representation `a_0 + 2 \cdot a_1 + \cdots + 2^k a_k`, returns
@@ -290,14 +292,16 @@ class FiniteField_ntl_gf2e(FiniteField):
         EXAMPLES::
 
             sage: k.<a> = GF(2^48)
-            sage: k.fetch_int(2^43 + 2^15 + 1)
+            sage: k.from_integer(2^43 + 2^15 + 1)
             a^43 + a^15 + 1
-            sage: k.fetch_int(33793)
+            sage: k.from_integer(33793)
             a^15 + a^10 + 1
             sage: 33793.digits(2) # little endian
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
         """
         return self._cache.fetch_int(number)
+
+    fetch_int = deprecated_function_alias(33941, from_integer)
 
     def _pari_modulus(self):
         """

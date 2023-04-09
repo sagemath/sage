@@ -1221,8 +1221,6 @@ bool factor(const ex& the_ex, ex& res_ex)
         den = normalized.op(1);
         ex res_den;
         bool dres = factorpoly(den, res_den);
-        if (not nres and not dres)
-                return false;
         if (not nres)
                 res_ex = num;
         if (not dres)

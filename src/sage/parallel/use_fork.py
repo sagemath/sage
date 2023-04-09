@@ -2,15 +2,15 @@
 Parallel iterator built using the ``fork()`` system call
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from shutil import rmtree
@@ -41,7 +41,7 @@ class WorkerData():
         sage: W.starttime  # random
         1499330252.463206
     """
-    def __init__(self, input, starttime=None, failure=""):
+    def __init__(self, input_value, starttime=None, failure=""):
         r"""
         See the class documentation for description of the inputs.
 
@@ -50,7 +50,7 @@ class WorkerData():
             sage: from sage.parallel.use_fork import WorkerData
             sage: W = WorkerData(42)
         """
-        self.input = input
+        self.input = input_value
         self.starttime = starttime or walltime()
         self.failure = failure
 
@@ -197,8 +197,7 @@ class p_iter_fork():
                             if T - W.starttime > timeout:
                                 if self.verbose:
                                     print(
-                                        "Killing subprocess %s with input %s which took too long"
-                                         % (pid, W.input) )
+                                        "Killing subprocess %s with input %s which took too long" % (pid, W.input))
                                 os.kill(pid, signal.SIGKILL)
                                 W.failure = " (timed out)"
                     except KeyError:
@@ -206,7 +205,7 @@ class p_iter_fork():
                         pass
                     else:
                         # collect data from process that successfully terminated
-                        sobj = os.path.join(dir, '%s.sobj'%pid)
+                        sobj = os.path.join(dir, '%s.sobj' % pid)
                         try:
                             with open(sobj, "rb") as file:
                                 data = file.read()
@@ -219,7 +218,7 @@ class p_iter_fork():
                             except Exception as E:
                                 answer = "INVALID DATA {}".format(E)
 
-                        out = os.path.join(dir, '%s.out'%pid)
+                        out = os.path.join(dir, '%s.out' % pid)
                         try:
                             with open(out) as file:
                                 sys.stdout.write(file.read())

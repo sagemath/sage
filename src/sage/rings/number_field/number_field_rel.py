@@ -93,12 +93,18 @@ from .number_field_ideal import is_NumberFieldIdeal
 from .number_field import (NumberField, NumberField_generic,
     put_natural_embedding_first, proof_flag,
     is_NumberFieldHomsetCodomain)
-from sage.rings.number_field.number_field_base import is_NumberField
+from sage.rings.number_field.number_field_base import NumberField as NumberField_base
 from sage.rings.number_field.order import (RelativeOrder, is_NumberFieldOrder,
                                            relative_order_from_ring_generators)
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
 from sage.libs.pari.all import pari_gen
 
+from sage.categories.homset import Hom
+from sage.categories.sets_cat import Sets
+from sage.modules.free_module import VectorSpace
+from sage.modules.free_module_element import vector
+
+from sage.rings.real_mpfr import RR
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 
@@ -213,14 +219,14 @@ class NumberField_relative(NumberField_generic):
             sage: l.<b> = k.extension(5*x^2 + 3); l
             Number Field in b with defining polynomial 5*x^2 + 3 over its base field
             sage: l.pari_rnf()
-            [x^2 + (-1/2*y^2 + y - 3/2)*x + (-1/4*y^3 + 1/4*y^2 - 3/4*y - 13/4), ..., y^4 + 6*y^2 + 1, x^2 + (-1/2*y^2 + y - 3/2)*x + (-1/4*y^3 + 1/4*y^2 - 3/4*y - 13/4)], [0, 0]]
+            [x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4), ..., y^4 + 6*y^2 + 1, x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4)], [0, 0]]
             sage: b
             b
 
             sage: l.<b> = k.extension(x^2 + 3/5); l
             Number Field in b with defining polynomial x^2 + 3/5 over its base field
             sage: l.pari_rnf()
-            [x^2 + (-1/2*y^2 + y - 3/2)*x + (-1/4*y^3 + 1/4*y^2 - 3/4*y - 13/4), ..., y^4 + 6*y^2 + 1, x^2 + (-1/2*y^2 + y - 3/2)*x + (-1/4*y^3 + 1/4*y^2 - 3/4*y - 13/4)], [0, 0]]
+            [x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4), ..., y^4 + 6*y^2 + 1, x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4)], [0, 0]]
             sage: b
             b
 
@@ -271,7 +277,7 @@ class NumberField_relative(NumberField_generic):
             raise NotImplementedError("Embeddings not implemented for relative number fields")
         if names is not None:
             name = names
-        if not is_NumberField(base):
+        if not isinstance(base, NumberField_base):
             raise TypeError("base (=%s) must be a number field"%base)
         if not isinstance(polynomial, polynomial_element.Polynomial):
             try:
@@ -2062,6 +2068,75 @@ class NumberField_relative(NumberField_generic):
                                         check=False, universe=self.Hom(self))
         return self.__automorphisms
 
+    def logarithmic_embedding(self, prec=53):
+        r"""
+        Return the morphism of ``self`` under the logarithmic embedding
+        in the category Set.
+
+        The logarithmic embedding is defined as a map from the relative number field ``self`` to `\RR^n`.
+
+        It is defined under Definition 4.9.6 in [Coh1993]_.
+
+        INPUT:
+
+        - ``prec`` -- desired floating point precision.
+
+        OUTPUT:
+
+        - the morphism of ``self`` under the logarithmic embedding in the category Set.
+
+        EXAMPLES::
+
+            sage: K.<k> = CyclotomicField(3)
+            sage: R.<x> = K[]
+            sage: L.<l> = K.extension(x^5 + 5)
+            sage: f = L.logarithmic_embedding()
+            sage: f(0)
+            (-1, -1, -1, -1, -1)
+            sage: f(5)
+            (3.21887582486820, 3.21887582486820, 3.21887582486820,
+            3.21887582486820, 3.21887582486820)
+
+        ::
+
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: t = K['t'].gen()
+            sage: L.<a> = K.extension(t^4 - i)
+            sage: f = L.logarithmic_embedding()
+            sage: f(0)
+            (-1, -1, -1, -1, -1, -1, -1, -1)
+            sage: f(3)
+            (2.19722457733622, 2.19722457733622, 2.19722457733622, 2.19722457733622,
+            2.19722457733622, 2.19722457733622, 2.19722457733622, 2.19722457733622)
+        """
+        def closure_map(x, prec=53):
+            """
+            The function closure of the logarithmic embedding.
+            """
+            K = self
+            K_embeddings = K.places(prec)
+            r1, r2 = K.signature()
+            r = r1 + r2 - 1
+
+            from sage.rings.real_mpfr import RealField
+            Reals = RealField(prec)
+
+            if x == 0:
+                return vector([-1 for _ in range(r + 1)])
+
+            x_logs = []
+            for i in range(r1):
+                sigma = K_embeddings[i]
+                x_logs.append(Reals(abs(sigma(x))).log())
+            for i in range(r1, r + 1):
+                tau = K_embeddings[i]
+                x_logs.append(2 * Reals(abs(tau(x))).log())
+
+            return vector(x_logs)
+
+        hom = Hom(self, VectorSpace(RR, len(closure_map(self(0), prec))), Sets())
+        return hom(closure_map)
+
     def places(self, all_complex=False, prec=None):
         """
         Return the collection of all infinite places of self.
@@ -2141,7 +2216,7 @@ class NumberField_relative(NumberField_generic):
         """
         I = self.absolute_different()
         J = self.ideal(self.base_field().absolute_different().gens())
-        return  I/J
+        return I/J
 
     def different(self):
         """

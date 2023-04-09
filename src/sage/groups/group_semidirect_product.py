@@ -61,9 +61,9 @@ class GroupSemidirectProductElement(CartesianProduct.Element):
             return gstr
         return gstr + " * " + hstr
 
-    def inverse(self):
+    def __invert__(self):
         r"""
-        The inverse of ``self``.
+        Return the inverse of ``self``.
 
         EXAMPLES::
 
@@ -88,8 +88,6 @@ class GroupSemidirectProductElement(CartesianProduct.Element):
         else:
             hi = ~h
             return self.__class__(par, (par._twist(hi, ~g), hi))
-
-    __invert__ = inverse
 
     def to_opposite(self):
         r"""

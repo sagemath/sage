@@ -37,7 +37,6 @@ TESTS::
 #*****************************************************************************
 
 
-import sage.rings.number_field.all
 from . import polynomial_element
 import sage.rings.rational_field
 import sage.rings.complex_mpfr
@@ -235,7 +234,8 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         ring, polynomial, names = key
 
         R = ring.base_ring()
-        from sage.categories.all import IntegralDomains, Fields
+        from sage.categories.integral_domains import IntegralDomains
+        from sage.categories.fields import Fields
         if R in IntegralDomains():
             try:
                 is_irreducible = polynomial.is_irreducible()
@@ -256,7 +256,7 @@ def is_PolynomialQuotientRing(x):
     return isinstance(x, PolynomialQuotientRing_generic)
 
 
-class PolynomialQuotientRing_generic(CommutativeRing):
+class PolynomialQuotientRing_generic(QuotientRing_generic):
     """
     Quotient of a univariate polynomial ring by an ideal.
 
@@ -321,7 +321,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         sage: isinstance(Q.an_element(),Q.element_class)
         True
         sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]
-        ['cartesian_product', 'inverse_of_unit', 'is_idempotent', 'is_one', 'is_unit', 'lift', 'powers']
+        ['cartesian_product', 'inverse', 'inverse_of_unit', 'is_idempotent', 'is_one', 'is_unit', 'lift', 'powers']
         sage: first_class = Q.__class__
 
     We try to find out whether `Q` is a field. Indeed it is, and thus its category,
@@ -339,6 +339,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
          'euclidean_degree',
          'factor',
          'gcd',
+         'inverse',
          'inverse_of_unit',
          'is_idempotent',
          'is_one',
@@ -417,7 +418,9 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             # Note that is_finite() is cheap so it does not seem to do a lazy
             # _refine_category_() in is_finite() as we do for is_field()
             category = category.Finite()
-        CommutativeRing.__init__(self, ring, names=name, category=category)
+
+        QuotientRing_generic.__init__(self, ring, ring.ideal(polynomial), names=name, category=category)
+        self._base = ring  # backwards compatibility -- different from QuotientRing_generic
 
     _ideal_class_ = QuotientRing_generic._ideal_class_
 
@@ -698,7 +701,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: Qz != Qx
             False
         """
-        return  not (self == other)
+        return not (self == other)
 
     def __hash__(self):
         """
@@ -779,11 +782,11 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         -- Simon King (2010-05)
         """
         from sage.categories.pushout import QuotientFunctor
-        Cover = self.base()
+        Cover = self.__ring
+        kwds = {}
         if Cover in CommutativeRings():
-            return QuotientFunctor([self.modulus()]*Cover, self.variable_names(),
-                                   domain=CommutativeRings(), codomain=CommutativeRings()), Cover
-        return QuotientFunctor([self.modulus()]*self.base(), self.variable_names()), Cover
+            kwds['domain'] = kwds['codomain'] = CommutativeRings()
+        return QuotientFunctor([self.modulus()]*Cover, self.variable_names(), **kwds), Cover
 
     @cached_method
     def base_ring(self):
@@ -1053,7 +1056,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
                 ret = False
 
         if ret:
-            from sage.categories.all import Fields
+            from sage.categories.fields import Fields
             self._refine_category_(Fields())
         return ret
 
@@ -1109,7 +1112,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         Unfortunately, the program above is already unable to determine
         that the modulus is irreducible.
         """
-        from sage.categories.all import IntegralDomains
+        from sage.categories.integral_domains import IntegralDomains
         if self.category().is_subcategory(IntegralDomains()):
             return True
         ret = self.base_ring().is_integral_domain(proof)
@@ -1209,7 +1212,8 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
         if not isinstance(self.base_ring(), sage.rings.rational_field.RationalField):
             raise NotImplementedError("Computation of number field only implemented for quotients of the polynomial ring over the rational field.")
-        return sage.rings.number_field.all.NumberField(self.modulus(), self.variable_name())
+        from sage.rings.number_field.number_field import NumberField
+        return NumberField(self.modulus(), self.variable_name())
 
     def polynomial_ring(self):
         """
@@ -1292,9 +1296,9 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: len(iso_classes[1][1])
             2
         """
-        from sage.rings.number_field.number_field_base import is_NumberField
+        from sage.rings.number_field.number_field_base import NumberField
         K = self.base_ring()
-        if not is_NumberField(K) or not self.__polynomial.is_squarefree():
+        if not isinstance(K, NumberField) or not self.__polynomial.is_squarefree():
             raise NotImplementedError
 
         from sage.rings.ideal import is_Ideal
@@ -1791,7 +1795,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1)], 3)
             [2, a + 1]
             sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1), K.ideal(a)], 3)
-            [2, a + 1, a]
+            [2, a + 1, -a]
 
         """
         fields, isos, iso_classes = self._S_decomposition(tuple(S))
@@ -1974,7 +1978,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             # interface which we cannot provide (e.g. NumberFields).
             # So we just check some important special cases here (note that
             # integral domains is already handled elsewhere.)
-            from sage.categories.all import Fields
+            from sage.categories.fields import Fields
             if isomorphic_ring in Fields():
                 self._refine_category_(Fields())
 
@@ -2020,7 +2024,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
             return from_isomorphic_ring, to_isomorphic_ring, isomorphic_ring
 
-        from sage.categories.all import NumberFields
+        from sage.categories.number_fields import NumberFields
         if self.base_ring() in NumberFields():
             try:
                 isomorphic_ring = self.base_ring().extension(self.modulus(), names=self.variable_names())
@@ -2063,7 +2067,8 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
         tester.assertNotIsInstance(ring, PolynomialQuotientRing_generic)
 
-        from sage.categories.all import Fields, IntegralDomains
+        from sage.categories.fields import Fields
+        from sage.categories.integral_domains import IntegralDomains
         if ring.category().is_subcategory(IntegralDomains()):
             category = IntegralDomains()
             if ring.category().is_subcategory(Fields()):

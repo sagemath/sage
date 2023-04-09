@@ -80,13 +80,11 @@ def is_ToricRationalDivisorClass(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.toric.divisor_class import (
-        ....:   is_ToricRationalDivisorClass)
+        sage: from sage.schemes.toric.divisor_class import is_ToricRationalDivisorClass
         sage: is_ToricRationalDivisorClass(1)
         False
         sage: dP6 = toric_varieties.dP6()
-        sage: D = dP6.rational_class_group().gen(0)
-        sage: D
+        sage: D = dP6.rational_class_group().gen(0); D
         Divisor class [1, 0, 0, 0]
         sage: is_ToricRationalDivisorClass(D)
         True
@@ -329,7 +327,7 @@ def _ToricRationalDivisorClass_unpickle_v1(parent, entries,
     v._init(degree, parent)
     cdef Rational z
     cdef Py_ssize_t i
-    for i from 0 <= i < degree:
+    for i in range(degree):
         z = Rational(entries[i])
         mpq_set(v._entries[i], z.value)
     v._is_immutable = not is_mutable

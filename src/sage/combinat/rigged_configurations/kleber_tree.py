@@ -71,7 +71,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.features import FeatureNotPresentError
 from sage.rings.integer import Integer
 
@@ -89,6 +89,7 @@ from sage.graphs.dot2tex_utils import have_dot2tex
 ######################################
 # Latex method for viewing the trees #
 ######################################
+
 
 def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=white', style_line=None,
                hspace=2.5, vspace=-2.5, start=None, rpos=None, node_id=0, node_prefix='T',
@@ -199,6 +200,7 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
 # Kleber tree nodes #
 #####################
 
+
 class KleberTreeNode(Element):
     r"""
     A node in the Kleber tree.
@@ -218,6 +220,7 @@ class KleberTreeNode(Element):
     - ``dominant_root`` -- The dominating root
     - ``parent_node``   -- (default:None) The parent node of this node
     """
+
     def __init__(self, parent_obj, node_weight, dominant_root, parent_node=None):
         r"""
         Initialize the tree node.
@@ -494,6 +497,7 @@ class KleberTreeNode(Element):
 #######################
 # Kleber tree classes #
 #######################
+
 
 class KleberTree(UniqueRepresentation, Parent):
     r"""
@@ -1316,6 +1320,7 @@ class VirtualKleberTree(KleberTree):
             Kleber tree of Cartan type ['A', 7, 1] and B = ((2, 2), (6, 2))
         """
         return KleberTree(self._folded_ct.folding_of(), self.B)
+
 
 class KleberTreeTypeA2Even(VirtualKleberTree):
     r"""

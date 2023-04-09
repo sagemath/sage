@@ -210,7 +210,7 @@ class Mwrank_class(Expect):
         """
         EXAMPLES::
 
-            sage: mwrank.__reduce__()
+            sage: Mwrank().__reduce__()
             (<function _reduce_load_mwrank at 0x...>, ())
         """
 
@@ -362,4 +362,3 @@ def mwrank_console():
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%mwrank magics instead.')
     os.system('mwrank')
-

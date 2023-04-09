@@ -99,5 +99,3 @@ unicode_mapsto = '\u21A6'          # '↦'
 unicode_mathbbR = '\u211D'         # 'ℝ'
 
 unicode_mathbbC = '\u2102'         # 'ℂ'
-
-

@@ -102,7 +102,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
 
         TESTS::
 
-            sage: L = posets.BooleanLattice(4)
+            sage: L = posets.BooleanLattice(3)
             sage: M = L.moebius_algebra(QQ)
             sage: TestSuite(M).run()
         """
@@ -632,7 +632,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
 
             TESTS::
 
-                sage: L = posets.BooleanLattice(4)
+                sage: L = posets.BooleanLattice(3)
                 sage: M = L.quantum_moebius_algebra()
                 sage: TestSuite(M.KL()).run() # long time
             """

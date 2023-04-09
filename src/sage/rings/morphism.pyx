@@ -404,7 +404,7 @@ def is_RingHomomorphism(phi):
         doctest:warning
         ...
         DeprecationWarning: is_RingHomomorphism() should not be used anymore. Check whether the category_for() your morphism is a subcategory of Rings() instead.
-        See http://trac.sagemath.org/23204 for details.
+        See https://github.com/sagemath/sage/issues/23204 for details.
         True
         sage: sage.rings.morphism.is_RingHomomorphism(2/3)
         False
@@ -412,7 +412,7 @@ def is_RingHomomorphism(phi):
     sage.misc.superseded.deprecation(23204, "is_RingHomomorphism() should not be used anymore. Check whether the category_for() your morphism is a subcategory of Rings() instead.")
     # We use the category framework to determine whether something is a ring homomorphism.
     from sage.categories.map import Map
-    from sage.categories.all import Rings
+    from sage.categories.rings import Rings
     return isinstance(phi, Map) and phi.category_for().is_subcategory(Rings())
 
 
@@ -1654,7 +1654,7 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
         doctest:warning
         ...
         DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.
-        See http://trac.sagemath.org/23204 for details.
+        See https://github.com/sagemath/sage/issues/23204 for details.
         sage: TestSuite(f).run()
 
     """
@@ -1668,7 +1668,7 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
             doctest:warning
             ...
             DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.
-            See http://trac.sagemath.org/23204 for details.
+            See https://github.com/sagemath/sage/issues/23204 for details.
             sage: isinstance(f, RingHomomorphism_coercion)
             True
 
@@ -2035,8 +2035,8 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         """
         D = self.domain()
         ig = self._im_gens
-        s = '\n'.join(['%s |--> %s'%(D.gen(i), ig[i]) for\
-                       i in range(D.ngens())])
+        s = '\n'.join('{} |--> {}'.format(D.gen(i), ig[i])
+                       for i in range(D.ngens()))
         if s and self._base_map is not None:
             s += '\nwith map of base ring'
         return s
@@ -2866,21 +2866,22 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
         """
         return hash(self.phi)
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         Used internally for printing this function.
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2,y^2]); f = S.hom([yy,xx])
+            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2,y^2])
+            sage: f = S.hom([yy,xx])
             sage: print(f._repr_defn())
             xx |--> yy
             yy |--> xx
         """
         D = self.domain()
         ig = self.phi.im_gens()
-        return '\n'.join(['%s |--> %s'%(D.gen(i), ig[i]) for\
-                          i in range(D.ngens())])
+        return '\n'.join('{} |--> {}'.format(D.gen(i), ig[i])
+                         for i in range(D.ngens()))
 
     cpdef Element _call_(self, x):
         """
@@ -2938,6 +2939,48 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         self._power = n
         self._q = self._p ** self._power
         RingHomomorphism.__init__(self, Hom(domain, domain))
+
+    cdef _update_slots(self, dict _slots):
+        """
+        Update information with the given slots.
+
+        Helper function for copying or pickling.
+
+        EXAMPLES::
+
+            sage: K = Frac(GF(5)['T'])
+            sage: phi = K.frobenius_endomorphism()
+            sage: psi = copy(phi)
+            sage: phi == psi
+            True
+        """
+        self._p = _slots['_domain'].characteristic()
+        self._power = _slots['_power']
+        self._q = self._p ** self._power
+        RingHomomorphism._update_slots(self, _slots)
+
+    cdef dict _extra_slots(self):
+        """
+        Return additional information about this morphism
+        as a dictionary.
+
+        Helper function for copying or pickling.
+
+        EXAMPLES::
+
+            sage: K = Frac(GF(25)['T'])
+            sage: phi = K.frobenius_endomorphism(2)
+            sage: phi
+            Frobenius endomorphism x |--> x^(5^2) of Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
+
+            sage: psi = loads(dumps(phi)); psi
+            Frobenius endomorphism x |--> x^(5^2) of Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
+            sage: phi == psi
+            True
+        """
+        slots = RingHomomorphism._extra_slots(self)
+        slots['_power'] = self._power
+        return slots
 
     def _repr_(self):
         """
@@ -3118,8 +3161,8 @@ def _tensor_product_ring(B, A):
         ...
         ValueError: term ordering must be global
     """
-    from .finite_rings.finite_field_base import is_FiniteField
-    from .number_field.number_field_base import is_NumberField
+    from .finite_rings.finite_field_base import FiniteField
+    from .number_field.number_field_base import NumberField
     from .polynomial.multi_polynomial_ring import is_MPolynomialRing
     from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
     from .polynomial.polynomial_ring import is_PolynomialRing
@@ -3136,7 +3179,7 @@ def _tensor_product_ring(B, A):
     def term_order(A):
         # univariate rings do not have a term order
         if (is_PolynomialRing(A) or is_PolynomialQuotientRing(A)
-            or ((is_NumberField(A) or is_FiniteField(A))
+            or (isinstance(A, (NumberField, FiniteField))
                 and not A.is_prime_field())):
             return TermOrder('lex', 1)
         try:
@@ -3159,7 +3202,7 @@ def _tensor_product_ring(B, A):
         elif is_QuotientRing(A):
             to_R = A.ambient().hom(R_gens_A, R, check=False)
             return list(to_R(A.defining_ideal()).gens())
-        elif ((is_NumberField(A) or is_FiniteField(A))
+        elif (isinstance(A, (NumberField, FiniteField))
               and not A.is_prime_field()):
             to_R = A.polynomial_ring().hom(R_gens_A, R, check=False)
             return [to_R(A.polynomial())]

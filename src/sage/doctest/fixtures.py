@@ -340,7 +340,6 @@ def trace_method(obj, meth, **kwds):
 
     - ``reads`` -- (default: ``True``)
       whether to trace read access as well.
-      
 
     EXAMPLES::
 

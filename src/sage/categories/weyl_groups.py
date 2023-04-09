@@ -1,10 +1,5 @@
 r"""
 Weyl Groups
-
-REFERENCES:
-
-.. [Dye] Dyer. *Bruhat intervals, polyhedral cones and Kazhdan-Lusztig-Stanley polynomials*. Math.Z., 215(2):223-236, 1994.
-.. [JahStu] Jahn and Stump. *Bruhat intervals, subword complexes and brick polyhedra for finite Coxeter groups*. Preprint, available at :arxiv:`2103.03715`, 2021.
 """
 #*****************************************************************************
 #  Copyright (C) 2009    Nicolas M. Thiery <nthiery at users.sf.net>
@@ -155,7 +150,7 @@ class WeylGroups(Category_singleton):
             if hasattr(ct, "PieriFactors"):
                 return ct.PieriFactors(self, *args, **keywords)
             raise NotImplementedError("Pieri factors for type {}".format(ct))
-        
+
         def bruhat_cone(self, x, y, side='upper', backend='cdd'):
             r"""
             Return the (upper or lower) Bruhat cone associated to the interval ``[x,y]``.
@@ -207,8 +202,8 @@ class WeylGroups(Category_singleton):
 
             REFERENCES:
 
-            - [Dye]_
-            - [JahStu]_
+            - [Dy1994]_
+            - [JS2021]_
             """
             from sage.modules.free_module_element import vector
             if side == 'upper':
@@ -354,7 +349,6 @@ class WeylGroups(Category_singleton):
 
             return self in self.parent().pieri_factors()
 
-
         def left_pieri_factorizations(self, max_length=None):
             r"""
             Returns all factorizations of ``self`` as `uv`, where `u`
@@ -498,7 +492,6 @@ class WeylGroups(Category_singleton):
             return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length=u.length())
                            for (u,v) in self.left_pieri_factorizations(max_length)
                            if u != W.one()))
-
 
         def stanley_symmetric_function(self):
             r"""

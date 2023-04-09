@@ -2,7 +2,7 @@ r"""
 Schubert Polynomials
 
 
-See :wikipedia:`Schubert_polynomial` and 
+See :wikipedia:`Schubert_polynomial` and
 `SymmetricFunctions.com <https://www.symmetricfunctions.com/schubert.htm#schubert>`_.
 Schubert polynomials are representatives of cohomology classes in flag varieties.
 In `n` variables, they are indexed by permutations `w \in S_n`. They also form
@@ -73,15 +73,18 @@ We can also check the properties listed in :wikipedia:`Schubert_polynomial`::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.categories.all import GradedAlgebrasWithBasis
+from sage.combinat.key_polynomial import KeyPolynomial
+from sage.combinat.permutation import Permutations, Permutation
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
-from sage.combinat.permutation import Permutations, Permutation
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 import sage.libs.symmetrica.all as symmetrica
-from sage.misc.cachefunc import cached_method
 
 
 def SchubertPolynomialRing(R):
@@ -147,7 +150,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             x0
         """
         p = symmetrica.t_SCHUBERT_POLYNOM(self)
-        if not is_MPolynomial(p):
+        if not isinstance(p, MPolynomial):
             R = PolynomialRing(self.parent().base_ring(), 1, 'x0')
             p = R(p)
         return p
@@ -414,6 +417,17 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             sage: X(x1^2*x2)
             X[3, 2, 1]
 
+            sage: S.<x> = InfinitePolynomialRing(QQ)
+            sage: X(x[0]^2*x[1])
+            X[3, 2, 1]
+            sage: X(x[0]*x[1]^2*x[2]^2*x[3] + x[0]^2*x[1]^2*x[2]*x[3] + x[0]^2*x[1]*x[2]^2*x[3])
+            X[2, 4, 5, 3, 1]
+
+            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+            sage: k = KeyPolynomialBasis(QQ)
+            sage: X(k([3,2,1]))
+            X[4, 3, 2, 1]
+
         TESTS:
 
         We check that :trac:`12924` is fixed::
@@ -422,25 +436,42 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             sage: X._element_constructor_([1,2,1])
             Traceback (most recent call last):
             ...
-            ValueError: The input [1, 2, 1] is not a valid permutation
+            ValueError: the input [1, 2, 1] is not a valid permutation
 
         Now we check for correct handling of the empty
         permutation (:trac:`23443`)::
 
             sage: X([])
             X[1]
+
+        Check the round trip from key polynomials::
+
+            sage: k = KeyPolynomials(ZZ)
+            sage: X = SchubertPolynomialRing(ZZ)
+            sage: it = iter(Permutations())
+            sage: for _ in range(50):
+            ....:     P = next(it)
+            ....:     assert X(k(X(P))) == X(P), P
         """
         if isinstance(x, list):
             # checking the input to avoid symmetrica crashing Sage, see trac 12924
             if x not in Permutations():
-                raise ValueError("The input %s is not a valid permutation" % x)
+                raise ValueError(f"the input {x} is not a valid permutation")
             perm = Permutation(x).remove_extra_fixed_points()
             return self._from_dict({perm: self.base_ring().one()})
         elif isinstance(x, Permutation):
             perm = x.remove_extra_fixed_points()
             return self._from_dict({perm: self.base_ring().one()})
-        elif is_MPolynomial(x):
+        elif isinstance(x, MPolynomial):
             return symmetrica.t_POLYNOM_SCHUBERT(x)
+        elif isinstance(x, InfinitePolynomial):
+            R = x.polynomial().parent()
+            # massage the term order to be what symmetrica expects
+            S = PolynomialRing(R.base_ring(),
+                               names=list(map(repr, reversed(R.gens()))))
+            return symmetrica.t_POLYNOM_SCHUBERT(S(x.polynomial()))
+        elif isinstance(x, KeyPolynomial):
+            return self(x.expand())
         else:
             raise TypeError
 

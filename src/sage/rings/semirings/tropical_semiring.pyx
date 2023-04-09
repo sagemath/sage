@@ -99,7 +99,7 @@ cdef class TropicalSemiringElement(Element):
         return repr(self._val)
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::
@@ -135,7 +135,7 @@ cdef class TropicalSemiringElement(Element):
 
     # Comparisons
     cpdef _richcmp_(left, right, int op):
-        """
+        r"""
         Return the standard comparison of ``left`` and ``right``.
 
         EXAMPLES::
@@ -189,7 +189,7 @@ cdef class TropicalSemiringElement(Element):
         cdef TropicalSemiringElement self, x
         self = left
         x = right
-        
+
         if self._val is None:
             if x._val is None:
                 return rich_to_bool(op, 0)
@@ -259,7 +259,7 @@ cdef class TropicalSemiringElement(Element):
         return x
 
     def __neg__(self):
-        """
+        r"""
         Return the additive inverse, which only exists for `\infty`.
 
         EXAMPLES::
@@ -610,7 +610,7 @@ class TropicalSemiring(Parent, UniqueRepresentation):
 
     @cached_method
     def zero(self):
-        """
+        r"""
         Return the (tropical) additive identity element `+\infty`.
 
         EXAMPLES::
@@ -671,4 +671,3 @@ cdef class TropicalToTropical(Map):
             +infinity
         """
         return self.codomain()((<TropicalSemiringElement>x)._val)
-

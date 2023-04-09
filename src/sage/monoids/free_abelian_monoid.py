@@ -220,7 +220,6 @@ class FreeAbelianMonoid_class(Parent):
             return x
         return self.element_class(self, x)
 
-
     def __contains__(self, x):
         """
         Return True if `x` is an element of this abelian monoid.
@@ -308,4 +307,3 @@ class FreeAbelianMonoid_class(Parent):
             return ZZ.one()
         from sage.rings.infinity import infinity
         return infinity
-

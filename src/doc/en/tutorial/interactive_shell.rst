@@ -549,7 +549,7 @@ You can also use the following more concise notation:
     sage: V = QQ^3
 
 Then it is easy to list all member functions for :math:`V` using tab
-completion. Just type ``V.``, then type the ``[tab key]`` key on your
+completion. Just type ``V.``, then type the :kbd:`Tab` key on your
 keyboard:
 
 .. skip
@@ -567,7 +567,7 @@ keyboard:
     ...
     V.zero_vector
 
-If you type the first few letters of a function, then ``[tab key]``,
+If you type the first few letters of a function, then the :kbd:`Tab` key,
 you get only functions that begin as indicated.
 
 .. skip

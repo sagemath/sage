@@ -30,9 +30,10 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import annotations
 from itertools import accumulate
+from collections.abc import Sequence
 
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.additive_monoids import AdditiveMonoids
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
@@ -108,6 +109,25 @@ class Composition(CombinatorialElement):
         [1, 1, 2, 1]
         sage: Composition(descents=({0,1,3},5))
         [1, 1, 2, 1]
+
+    An integer composition may be regarded as a sequence. Thus it is an
+    instance of the Python abstract base class ``Sequence`` allows us to check if objects
+    behave "like" sequences based on implemented methods. Note that
+    ``collections.abc.Sequence`` is not the same as
+    :class:`sage.structure.sequence.Sequence`::
+
+        sage: import collections.abc
+        sage: C = Composition([3,2,3])
+        sage: isinstance(C, collections.abc.Sequence)
+        True
+        sage: issubclass(C.__class__, collections.abc.Sequence)
+        True
+
+    Typically, instances of ``collections.abc.Sequence`` have a ``.count`` method.
+    ``Composition.count`` counts the number of parts of a specified size::
+
+        sage: C.count(3)
+        2
 
     EXAMPLES::
 
@@ -1350,6 +1370,66 @@ class Composition(CombinatorialElement):
                 return False
         return False
 
+    def count(self, n):
+        r"""
+        Return the number of parts of size  ``n``.
+
+        EXAMPLES::
+
+            sage: C = Composition([3,2,3])
+            sage: C.count(3)
+            2
+            sage: C.count(2)
+            1
+            sage: C.count(1)
+            0
+        """
+        return sum(i == n for i in self)
+
+    def specht_module(self, base_ring=None):
+        r"""
+        Return the Specht module corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: SM = Composition([1,2,2]).specht_module(QQ)
+            sage: SM
+            Specht module of [(0, 0), (1, 0), (1, 1), (2, 0), (2, 1)] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
+            s[2, 2, 1]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
+        cells = []
+        for i, row in enumerate(self):
+            for j in range(row):
+                cells.append((i, j))
+        return SpechtModule(R, cells)
+
+    def specht_module_dimension(self, base_ring=None):
+        r"""
+        Return the dimension of the Specht module corresponding to ``self``.
+
+        INPUT:
+
+        - ``base_ring`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: Composition([1,2,2]).specht_module_dimension()
+            5
+            sage: Composition([1,2,2]).specht_module_dimension(GF(2))
+            5
+        """
+        from sage.combinat.specht_module import specht_module_rank
+        return specht_module_rank(self, base_ring)
+
+Sequence.register(Composition)
 ##############################################################
 
 
@@ -1510,14 +1590,14 @@ class Compositions(UniqueRepresentation, Parent):
     results. It is up to the user to ensure that the inner and outer
     compositions themselves satisfy the parts and slope constraints.
 
-    Note that if you specify ``min_part=0``, then the objects produced may
-    have parts equal to zero. This violates the internal assumptions
-    that the composition class makes. Use at your own risk, or
-    preferably consider using ``IntegerVectors`` instead::
+    Note that setting ``min_part=0`` is not allowed::
 
-        sage: Compositions(2, length=3, min_part=0).list()
-        doctest:...: RuntimeWarning: Currently, setting min_part=0 produces Composition objects which violate internal assumptions.  Calling methods on these objects may produce errors or WRONG results!
-        [[2, 0, 0], [1, 1, 0], [1, 0, 1], [0, 2, 0], [0, 1, 1], [0, 0, 2]]
+        sage: Compositions(2, length=3, min_part=0)
+        Traceback (most recent call last):
+        ...
+        ValueError: setting min_part=0 is not allowed for Compositions
+
+    Instead you must use ``IntegerVectors``::
 
         sage: list(IntegerVectors(2, 3))
         [[2, 0, 0], [1, 1, 0], [1, 0, 1], [0, 2, 0], [0, 1, 1], [0, 0, 2]]
@@ -1597,7 +1677,7 @@ class Compositions(UniqueRepresentation, Parent):
         """
         if n is None:
             if kwargs:
-                raise ValueError("Incorrect number of arguments")
+                raise ValueError("incorrect number of arguments")
             return Compositions_all()
         else:
             if not kwargs:
@@ -1614,8 +1694,7 @@ class Compositions(UniqueRepresentation, Parent):
                 if 'min_part' not in kwargs:
                     kwargs['min_part'] = 1
                 elif kwargs['min_part'] == 0:
-                    from warnings import warn
-                    warn("Currently, setting min_part=0 produces Composition objects which violate internal assumptions.  Calling methods on these objects may produce errors or WRONG results!", RuntimeWarning)
+                    raise ValueError("setting min_part=0 is not allowed for Compositions")
 
                 if 'outer' in kwargs:
                     kwargs['ceiling'] = list(kwargs['outer'])
@@ -1636,7 +1715,7 @@ class Compositions(UniqueRepresentation, Parent):
                         kwargs['min_length'] = len(inner)
                 return IntegerListsLex(n, **kwargs)
 
-    def __init__(self, is_infinite=False):
+    def __init__(self, is_infinite=False, category=None):
         """
         Initialize ``self``.
 
@@ -1645,10 +1724,12 @@ class Compositions(UniqueRepresentation, Parent):
             sage: C = Compositions()
             sage: TestSuite(C).run()
         """
+        if category is None:
+            category = EnumeratedSets()
         if is_infinite:
-            Parent.__init__(self, category=InfiniteEnumeratedSets())
+            Parent.__init__(self, category=category.Infinite())
         else:
-            Parent.__init__(self, category=FiniteEnumeratedSets())
+            Parent.__init__(self, category=category.Finite())
 
     Element = Composition
 
@@ -1832,6 +1913,7 @@ class Compositions_all(Compositions):
     """
     Class of all compositions.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -1841,7 +1923,8 @@ class Compositions_all(Compositions):
             sage: C = Compositions()
             sage: TestSuite(C).run()
         """
-        Compositions.__init__(self, True)
+        cat = AdditiveMonoids()
+        Compositions.__init__(self, True, category=cat)
 
     def _repr_(self) -> str:
         """
@@ -1869,6 +1952,32 @@ class Compositions_all(Compositions):
         if size is None:
             return self
         return Compositions(size)
+
+    def zero(self):
+        """
+        Return the zero of the additive monoid.
+
+        This is the empty composition.
+
+        EXAMPLES::
+
+            sage: C = Compositions()
+            sage: C.zero()
+            []
+        """
+        return Composition([])
+
+    def _an_element_(self):
+        """
+        Return an element of ``self``.
+
+        EXAMPLES::
+
+            sage: C = Compositions()
+            sage: C.an_element()
+            []
+        """
+        return self.zero()
 
     def __iter__(self):
         """

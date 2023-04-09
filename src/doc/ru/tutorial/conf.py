@@ -41,4 +41,3 @@ latex_documents = [
 
 # Additional LaTeX stuff if necessary:
 #latex_elements['preamble'] += '\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}\n'
-

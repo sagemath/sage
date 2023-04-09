@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 Controller for the commandline actions
+
+AUTHORS:
+
+    - Volker Braun (2016): initial version
+    - Thierry Monteil (2022): clean option to remove outdated source tarballs
 """
 
 
@@ -26,6 +31,7 @@ from sage_bootstrap.creator import PackageCreator
 from sage_bootstrap.pypi import PyPiVersion, PyPiNotFound, PyPiError
 from sage_bootstrap.fileserver import FileServer
 from sage_bootstrap.expand_class import PackageClass
+from sage_bootstrap.env import SAGE_DISTFILES
 
 
 class Application(object):
@@ -52,7 +58,7 @@ class Application(object):
         arb
         autotools
         [...]
-        zn_poly
+        zlib
 
         $ sage -package list --has-file=spkg-configure.m4 :experimental:
         perl_term_readline_gnu
@@ -62,7 +68,7 @@ class Application(object):
         boost_cropped
         brial
         [...]
-        zn_poly
+        zlib
         """
         log.debug('Listing packages')
         pc = PackageClass(*package_classes, **filters)
@@ -142,13 +148,22 @@ class Application(object):
         """
         Update a package to the latest version. This modifies the Sage sources.
         """
+        pkg = Package(package_name)
+        dist_name = pkg.distribution_name
+        if dist_name is None:
+            log.debug('%s does not have Python distribution info in install-requires.txt' % pkg)
+            return
+        if pkg.tarball_pattern.endswith('.whl'):
+            source = 'wheel'
+        else:
+            source = 'pypi'
         try:
-            pypi = PyPiVersion(package_name)
+            pypi = PyPiVersion(dist_name, source=source)
         except PyPiNotFound:
-            log.debug('%s is not a pypi package', package_name)
+            log.debug('%s is not a pypi package', dist_name)
             return
         else:
-            pypi.update(Package(package_name))
+            pypi.update(pkg)
         if commit:
             self.commit(package_name)
 
@@ -260,12 +275,20 @@ class Application(object):
     def create(self, package_name, version=None, tarball=None, pkg_type=None, upstream_url=None,
                description=None, license=None, upstream_contact=None, pypi=False, source='normal'):
         """
-        Create a normal package
+        Create a package
+
+        $ sage --package create foo --version 1.3 --tarball FoO-VERSION.tar.gz --type experimental
+
+        $ sage --package create scikit_spatial --pypi --type optional
+
+        $ sage --package create torch --pypi --source pip --type optional
+
+        $ sage --package create jupyterlab_markup --pypi --source wheel --type optional
         """
         if '-' in package_name:
             raise ValueError('package names must not contain dashes, use underscore instead')
         if pypi:
-            pypi_version = PyPiVersion(package_name)
+            pypi_version = PyPiVersion(package_name, source=source)
             if source == 'normal':
                 if not tarball:
                     # Guess the general format of the tarball name.
@@ -275,6 +298,14 @@ class Application(object):
                 # Use a URL from pypi.io instead of the specific URL received from the PyPI query
                 # because it follows a simple pattern.
                 upstream_url = 'https://pypi.io/packages/source/{0:1.1}/{0}/{1}'.format(package_name, tarball)
+            elif source == 'wheel':
+                if not tarball:
+                    tarball = pypi_version.tarball.replace(pypi_version.version, 'VERSION')
+                if not tarball.endswith('-none-any.whl'):
+                    raise ValueError('Only platform-independent wheels can be used for wheel packages, got {0}'.format(tarball))
+                if not version:
+                    version = pypi_version.version
+                upstream_url = 'https://pypi.io/packages/py3/{0:1.1}/{0}/{1}'.format(package_name, tarball)
             if not description:
                 description = pypi_version.summary
             if not license:
@@ -303,3 +334,23 @@ class Application(object):
             else:
                 update = ChecksumUpdater(package_name)
             update.fix_checksum()
+
+    def clean(self):
+        """
+        Remove outdated source tarballs from the upstream/ directory
+
+        $ sage --package clean
+        42 files were removed from the .../upstream directory
+        """
+        log.debug('Cleaning upstream/ directory')
+        package_names = PackageClass(':all:').names
+        keep = [Package(package_name).tarball.filename for package_name in package_names]
+        count = 0
+        for filename in os.listdir(SAGE_DISTFILES):
+            if filename not in keep:
+                filepath = os.path.join(SAGE_DISTFILES, filename)
+                if os.path.isfile(filepath):
+                    log.debug('Removing file {}'.format(filepath))
+                    os.remove(filepath)
+                    count += 1
+        print('{} files were removed from the {} directory'.format(count, SAGE_DISTFILES))

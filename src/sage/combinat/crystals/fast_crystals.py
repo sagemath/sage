@@ -116,7 +116,7 @@ class FastCrystal(UniqueRepresentation, Parent):
         if len(shape) > 2:
             raise ValueError("The shape must have length <=2")
         shape = shape + (0,)*(2-len(shape))
-        return super(FastCrystal, cls).__classcall__(cls, cartan_type, shape, format)
+        return super().__classcall__(cls, cartan_type, shape, format)
 
     def __init__(self, ct, shape, format):
         """
@@ -127,7 +127,7 @@ class FastCrystal(UniqueRepresentation, Parent):
             sage: TestSuite(C).run()
         """
         Parent.__init__(self, category = ClassicalCrystals())
-#        super(FastCrystal, self).__init__(category = FiniteEnumeratedSets())
+#        super().__init__(category = FiniteEnumeratedSets())
         self._cartan_type = ct
         if ct[1] != 2:
             raise NotImplementedError
@@ -177,8 +177,8 @@ class FastCrystal(UniqueRepresentation, Parent):
             l2_str = "%d/2"%int(2*l2)
         self.rename("The fast crystal for %s2 with shape [%s,%s]"%(ct[0],l1_str,l2_str))
         self.module_generators = [self(0)]
-#        self._digraph = ClassicalCrystal.digraph(self)
-        self._digraph = super(FastCrystal, self).digraph()
+        # self._digraph = ClassicalCrystal.digraph(self)
+        self._digraph = super().digraph()
         self._digraph_closure = self.digraph().transitive_closure()
 
     def _type_a_init(self, l1, l2):

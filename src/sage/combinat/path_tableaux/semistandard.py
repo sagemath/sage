@@ -85,7 +85,7 @@ from sage.combinat.skew_tableau import SkewTableau, SkewTableaux
 from sage.combinat.tableau import Tableau
 from sage.combinat.gelfand_tsetlin_patterns import GelfandTsetlinPattern
 from sage.combinat.partition import _Partitions
-from sage.rings.semirings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 
 ###############################################################################
 
@@ -468,6 +468,7 @@ class SemistandardPathTableau(PathTableau):
         LHS = self.promotion().to_tableau()
         RHS = self.to_tableau().promotion_inverse(len(self)-2)
         tester.assertEqual(LHS,RHS)
+
 
 class SemistandardPathTableaux(PathTableaux):
     """

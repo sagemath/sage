@@ -17,7 +17,7 @@ from sage.misc.functional import is_even
 from sage.misc.misc_c import prod as mul
 from sage.misc.superseded import deprecated_function_alias
 from sage.modules.free_module_element import vector
-from sage.rings.finite_rings.element_base import is_FiniteFieldElement
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.ideal import FieldIdeal, Ideal
 from sage.rings.integer_ring import ZZ
@@ -173,12 +173,12 @@ cdef class SBox(SageObject):
             sage: S.output_size()
             3
         """
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
 
         if "S" in kwargs:
             args = kwargs["S"]
 
-        if len(args) == 1 and is_Polynomial(args[0]):
+        if len(args) == 1 and isinstance(args[0], Polynomial):
             # SBox defined via Univariate Polynomial, compute lookup table
             # by evaluating the polynomial on every base_ring element
             poly = args[0]
@@ -195,7 +195,7 @@ cdef class SBox(SageObject):
 
         _S_list = []
         for e in S:
-            if is_FiniteFieldElement(e):
+            if isinstance(e, Element) and isinstance(e.parent(), FiniteField):
                 e = e.polynomial().change_ring(ZZ).subs(e.parent().characteristic())
             _S_list.append(e)
         S = _S_list
@@ -2030,4 +2030,3 @@ def misty_construction(*args):
         64
     """
     return sbox_construction(misty_substitute, list(args))
-

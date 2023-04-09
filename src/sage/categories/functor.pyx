@@ -292,9 +292,8 @@ cdef class Functor(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: x (=Integer Ring) is not in Category of fields
-
         """
-        if not (x in  self.__domain):
+        if x not in self.__domain:
             raise TypeError("x (=%s) is not in %s" % (x, self.__domain))
         return x
 
@@ -681,11 +680,9 @@ def ForgetfulFunctor(domain, codomain):
 
         sage: ForgetfulFunctor(abgrps, abgrps) == IdentityFunctor(abgrps)
         True
-
     """
     if domain == codomain:
         return IdentityFunctor(domain)
     if not domain.is_subcategory(codomain):
         raise ValueError("Forgetful functor not supported for domain %s" % domain)
     return ForgetfulFunctor_generic(domain, codomain)
-

@@ -373,5 +373,3 @@ cdef class localvars:
 
     def __exit__(self, type, value, traceback):
         self._obj.__temporarily_change_names(self._orig[0], self._orig[1])
-
-

@@ -85,13 +85,14 @@ class FormalSum(ModuleElement):
     def __init__(self, x, parent=None, check=True, reduce=True):
         """
         INPUT:
-            - ``x`` -- object
-            - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
-            - ``check`` -- bool (default: True) if False, might not coerce
-                           coefficients into base ring, which can speed
-                           up constructing a formal sum.
-            - ``reduce`` -- reduce (default: True) if False, do not
-                            combine common terms
+
+        - ``x`` -- object
+        - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
+        - ``check`` -- bool (default: ``True``) if ``False``, might not coerce
+          coefficients into base ring, which can speed
+          up constructing a formal sum.
+        - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
+          combine common terms
 
         EXAMPLES::
 
@@ -265,7 +266,7 @@ class FormalSum(ModuleElement):
         """
         return self.__class__([(s*c, x) for (c, x) in self], check=False, parent=self.parent())
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         EXAMPLES::
 
@@ -277,8 +278,6 @@ class FormalSum(ModuleElement):
             True
         """
         return not all(c.is_zero() for c, _ in self._data)
-
-    
 
     def reduce(self):
         """

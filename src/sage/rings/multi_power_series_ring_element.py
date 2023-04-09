@@ -1668,8 +1668,10 @@ class MPowerSeries(PowerSeries):
         """
         Formal integral for multivariate power series.
 
-        INPUT: ``xx`` - a generator of the power series ring (the
-        one with respect to which to integrate)
+        INPUT:
+
+        - ``xx`` -- a generator of the power series ring (the
+          one with respect to which to integrate)
 
         EXAMPLES::
 

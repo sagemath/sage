@@ -762,9 +762,9 @@ class SR_generic(MPolynomialSystemGenerator):
 
             # constant addition
             if e == 4:
-                b = b + k.fetch_int(6)
+                b = b + k.from_integer(6)
             elif e == 8:
-                b = b + k.fetch_int(99)
+                b = b + k.from_integer(99)
 
             return b
 
@@ -782,9 +782,9 @@ class SR_generic(MPolynomialSystemGenerator):
         """
         k = self.k
         if self.e == 4:
-            return k.fetch_int(6)
+            return k.from_integer(6)
         elif self.e == 8:
-            return k.fetch_int(99)
+            return k.from_integer(99)
         else:
             raise TypeError("sbox constant only defined for e in (4, 8)")
 
@@ -876,11 +876,11 @@ class SR_generic(MPolynomialSystemGenerator):
         if not inversion_only:
             with AllowZeroInversionsContext(self):
                 S = [self.sub_byte(elem) for elem in sorted(k)]
-            return  SBox(S)
+            return SBox(S)
         else:
             e = self.e
             S = [elem ** (2**e - 2) for elem in sorted(k)]
-            return  SBox(S)
+            return SBox(S)
 
     def shift_rows(self, d):
         r"""
@@ -963,7 +963,6 @@ class SR_generic(MPolynomialSystemGenerator):
         # AES uses the column major ordering
         return Matrix(k, d.ncols(), d.nrows(), ret).transpose()
 
-
     def add_round_key(self, d, key):
         r"""
         Perform the ``AddRoundKey`` operation on
@@ -1006,7 +1005,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
             sage: sr = mq.SR(2, 2, 2, 4)
             sage: k = sr.base_ring()
-            sage: e1 = [k.fetch_int(e) for e in range(2*2)]; e1
+            sage: e1 = [k.from_integer(e) for e in range(2*2)]; e1
             [0, 1, a, a + 1]
             sage: e2 = sr.phi( Matrix(k, 2*2, 1, e1) )
             sage: sr.state_array(e1) # note the column major ordering
@@ -1229,8 +1228,8 @@ class SR_generic(MPolynomialSystemGenerator):
 
             sage: sr = mq.SR(10, 4, 4, 8, star=True, allow_zero_inversions=True)
             sage: k = sr.base_ring()
-            sage: plaintext = sr.state_array([k.fetch_int(e) for e in range(16)])
-            sage: key = sr.state_array([k.fetch_int(e) for e in range(16)])
+            sage: plaintext = sr.state_array([k.from_integer(e) for e in range(16)])
+            sage: key = sr.state_array([k.from_integer(e) for e in range(16)])
             sage: print(sr.hex_str_matrix( sr(plaintext, key) ))
             0A 41 F1 C6
             94 6E C3 53
@@ -1301,9 +1300,9 @@ class SR_generic(MPolynomialSystemGenerator):
         F = self.base_ring()
 
         if isinstance(P, str):
-            P = self.state_array([F.fetch_int(ZZ(P[i:i+2], 16)) for i in range(0, len(P), 2)])
+            P = self.state_array([F.from_integer(ZZ(P[i: i + 2], 16)) for i in range(0, len(P), 2)])
         if isinstance(K, str):
-            K = self.state_array([F.fetch_int(ZZ(K[i:i+2], 16)) for i in range(0, len(K), 2)])
+            K = self.state_array([F.from_integer(ZZ(K[i: i + 2], 16)) for i in range(0, len(K), 2)])
 
         if self.is_state_array(P) and self.is_state_array(K):
             _type = self.state_array
@@ -1433,9 +1432,9 @@ class SR_generic(MPolynomialSystemGenerator):
         for x in range(M.nrows()):
             for y in range(M.ncols()):
                 if e == 8:
-                    st.append("%02X" % M[x, y].integer_representation())
+                    st.append("%02X" % M[x, y].to_integer())
                 else:
-                    st.append("%X" % M[x, y].integer_representation())
+                    st.append("%X" % M[x, y].to_integer())
             st.append("\n")
         return " ".join(st)
 
@@ -1464,9 +1463,9 @@ class SR_generic(MPolynomialSystemGenerator):
         for y in range(M.ncols()):
             for x in range(M.nrows()):
                 if e == 8:
-                    st.append("%02X" % M[x, y].integer_representation())
+                    st.append("%02X" % M[x, y].to_integer())
                 else:
-                    st.append("%X" % M[x, y].integer_representation())
+                    st.append("%X" % M[x, y].to_integer())
             #st.append("\n")
         return "".join(st)
 
@@ -1508,7 +1507,6 @@ class SR_generic(MPolynomialSystemGenerator):
             for j in range(src.ncols()):
                 dst[row+i, col+j] = src[i, j]
         return dst
-
 
     def varformatstr(self, name, n=None, rc=None, e=None):
         r"""
@@ -1799,7 +1797,6 @@ class SR_generic(MPolynomialSystemGenerator):
         else:
             names = self.varstrs("k", 0, r*c, e)
 
-
         for _n in process(list(range(n))):
             names += self.varstrs("k", _n+1, r*c, e)
             names += self.varstrs("x", _n+1, r*c, e)
@@ -1879,7 +1876,6 @@ class SR_generic(MPolynomialSystemGenerator):
                 wj = ciphertext
 
             lin = (wj + ki + M * xj + rcon).list()
-
 
             wi = Matrix(R, r*c*e, 1, _vars("w", i, r*c, e))
             xi = Matrix(R, r*c*e, 1, _vars("x", i, r*c, e))
@@ -2321,13 +2317,13 @@ class SR_gf2n(SR_generic):
 
         lin = Matrix(self.base_ring(), length*e, length*e)
         if e == 4:
-            l = [ k.fetch_int(x) for x in  (5, 1, 12, 5) ]
+            l = [k.from_integer(x) for x in (5, 1, 12, 5)]
             for k in range( 0, length ):
                 for i in range(0, 4):
                     for j in range(0, 4):
                         lin[k*4+j, k*4+i] = l[(i-j)%4] ** (2**j)
         elif e == 8:
-            l = [ k.fetch_int(x) for x in  (5, 9, 249, 37, 244, 1, 181, 143) ]
+            l = [k.from_integer(x) for x in (5, 9, 249, 37, 244, 1, 181, 143)]
             for k in range( 0, length ):
                 for i in range(0, 8):
                     for j in range(0, 8):
@@ -2713,8 +2709,6 @@ class SR_gf2(SR_generic):
         k = self.k
         a = k.gen()
 
-
-
         if r == 1:
             M = Matrix(k, r, r, 1)
 
@@ -2776,7 +2770,6 @@ class SR_gf2(SR_generic):
                                   0, 1, 1, 1, \
                                   1, 0, 1, 1, \
                                   1, 1, 0, 1])
-
 
         Z = Z.transpose() # account for endianess mismatch
 

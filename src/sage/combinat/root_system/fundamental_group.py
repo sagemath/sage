@@ -249,7 +249,7 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
         """
         return self.parent()._prefix + "[" + repr(self.value()) + "]"
 
-    def inverse(self):
+    def __invert__(self):
         r"""
         Return the inverse element of ``self``.
 
@@ -257,7 +257,7 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
 
             sage: from sage.combinat.root_system.fundamental_group import FundamentalGroupOfExtendedAffineWeylGroup
             sage: F = FundamentalGroupOfExtendedAffineWeylGroup(['A',3,1])
-            sage: F(1).inverse()
+            sage: F(1).inverse()   # indirect doctest
             pi[3]
             sage: F = FundamentalGroupOfExtendedAffineWeylGroup(['E',6,1], prefix="f")
             sage: F(1).inverse()
@@ -265,8 +265,6 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
         """
         par = self.parent()
         return self.__class__(par, par.dual_node(self.value()))
-
-    __invert__ = inverse
 
     def _richcmp_(self, x, op):
         r"""

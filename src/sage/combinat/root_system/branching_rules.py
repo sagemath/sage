@@ -1009,6 +1009,7 @@ class BranchingRule(SageObject):
     """
     A class for branching rules.
     """
+
     def __init__(self, R, S, f, name="default", intermediate_types=[],
                  intermediate_names=[]):
         """
@@ -1949,6 +1950,7 @@ def branching_rule(Rtype, Stype, rule="default"):
                                  lambda x: [x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7],-(x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7])], "vii")
         raise ValueError("Wrong source Cartan Type for rule %s" % rule)
     raise ValueError("Rule not found")
+
 
 get_branching_rule = branching_rule
 

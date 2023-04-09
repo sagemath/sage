@@ -7,7 +7,7 @@ groups (or more general permutation groups) called
 objects have a more group theoretic flavor than the more combinatorial
 :class:`~sage.combinat.permutation.Permutation`.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2006 David Joyner
 #       Copyright (C) 2019 Vincent Delecroix <20100.delecroix@gmail.com>
@@ -16,16 +16,17 @@ objects have a more group theoretic flavor than the more combinatorial
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from . import permgroup_element
 from sage.misc.sage_eval import sage_eval
 from sage.misc.lazy_import import lazy_import
 from sage.interfaces.gap import GapElement
-lazy_import('sage.combinat.permutation', ['Permutation', 'from_cycles'])
 from sage.libs.pari.all import pari_gen
 from sage.libs.gap.element import GapElement_Permutation
+lazy_import('sage.combinat.permutation', ['Permutation', 'from_cycles'])
+
 
 def PermutationGroupElement(g, parent=None, check=True):
     r"""
@@ -118,6 +119,7 @@ def PermutationGroupElement(g, parent=None, check=True):
 
     return parent.element_class(g, parent, check)
 
+
 def string_to_tuples(g):
     """
     EXAMPLES::
@@ -136,9 +138,10 @@ def string_to_tuples(g):
         raise ValueError("g (= %s) must be a string" % g)
     elif g == '()':
         return []
-    g = g.replace('\n','').replace(' ', '').replace(')(', '),(').replace(')', ',)')
+    g = g.replace('\n', '').replace(' ', '').replace(')(', '),(').replace(')', ',)')
     g = '[' + g + ']'
     return sage_eval(g, preparse=False)
+
 
 def standardize_generator(g, convert_dict=None, as_cycles=False):
     r"""
@@ -258,6 +261,6 @@ def standardize_generator(g, convert_dict=None, as_cycles=False):
     if convert_dict is not None and needs_conversion:
         g = [tuple([convert_dict[x] for x in cycle]) for cycle in g]
     if not as_cycles:
-        degree = max([1] + [max(cycle+(1,)) for cycle in g])
+        degree = max([1] + [max(cycle + (1,)) for cycle in g])
         g = from_cycles(degree, g)
     return g

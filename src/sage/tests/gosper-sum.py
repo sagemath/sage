@@ -214,4 +214,3 @@ in the book fails the proof)::
     sage: t.simplify_full().is_trivial_zero()
     False
 """
-

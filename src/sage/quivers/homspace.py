@@ -17,6 +17,7 @@ Quiver Homspace
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 from sage.categories.homset import Homset
 from sage.quivers.morphism import QuiverRepHom
 from sage.misc.cachefunc import cached_method
@@ -53,8 +54,8 @@ class QuiverHomSpace(Homset):
         sage: H.dimension()
         2
         sage: H.gens()
-        [Homomorphism of representations of Multi-digraph on 2 vertices,
-         Homomorphism of representations of Multi-digraph on 2 vertices]
+        (Homomorphism of representations of Multi-digraph on 2 vertices,
+         Homomorphism of representations of Multi-digraph on 2 vertices)
     """
     Element = QuiverRepHom
 
@@ -499,25 +500,25 @@ class QuiverHomSpace(Homset):
         """
         return self._space.dimension()
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return a list of generators of the hom space (as a `k`-vector
+        Return a tuple of generators of the hom space (as a `k`-vector
         space).
 
         OUTPUT:
 
-        - list of :class:`QuiverRepHom` objects, the generators
+        - tuple of :class:`QuiverRepHom` objects, the generators
 
         EXAMPLES::
 
             sage: Q = DiGraph({1:{2:['a', 'b']}}).path_semigroup()
             sage: H = Q.S(QQ, 2).Hom(Q.P(QQ, 1))
             sage: H.gens()
-            [Homomorphism of representations of Multi-digraph on 2 vertices,
-             Homomorphism of representations of Multi-digraph on 2 vertices]
+            (Homomorphism of representations of Multi-digraph on 2 vertices,
+             Homomorphism of representations of Multi-digraph on 2 vertices)
         """
-        return [self.element_class(self._domain, self._codomain, f)
-                for f in self._space.gens()]
+        return tuple([self.element_class(self._domain, self._codomain, f)
+                      for f in self._space.gens()])
 
     def coordinates(self, hom):
         """

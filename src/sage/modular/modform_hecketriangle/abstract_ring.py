@@ -89,17 +89,17 @@ class FormsRing_abstract(Parent):
 
         if (base_ring.characteristic() > 0):
             raise NotImplementedError("only characteristic 0 is supported")
-        self._group               = group
-        self._red_hom             = red_hom
-        self._base_ring           = base_ring
-        self._coeff_ring          = FractionField(PolynomialRing(base_ring,'d'))
-        self._pol_ring            = PolynomialRing(base_ring,'x,y,z,d')
-        self._rat_field           = FractionField(self._pol_ring)
+        self._group = group
+        self._red_hom = red_hom
+        self._base_ring = base_ring
+        self._coeff_ring = FractionField(PolynomialRing(base_ring,'d'))
+        self._pol_ring = PolynomialRing(base_ring,'x,y,z,d')
+        self._rat_field = FractionField(self._pol_ring)
 
         # default values
-        self._weight              = None
-        self._ep                  = None
-        self._analytic_type       = self.AT(["quasi", "mero"])
+        self._weight = None
+        self._ep = None
+        self._analytic_type = self.AT(["quasi", "mero"])
 
         self.default_prec(10)
         self.disp_prec(5)
@@ -222,23 +222,21 @@ class FormsRing_abstract(Parent):
             sage: MR4.has_coerce_map_from(MF2)
             True
         """
-
         from .space import FormsSpace_abstract
         from .functors import _common_subgroup
-        if (    isinstance(S, FormsRing_abstract)\
-            and self._group         == _common_subgroup(self._group, S._group)\
-            and self._analytic_type >= S._analytic_type\
-            and self.base_ring().has_coerce_map_from(S.base_ring()) ):
+        if (isinstance(S, FormsRing_abstract)
+            and self._group == _common_subgroup(self._group, S._group)
+            and self._analytic_type >= S._analytic_type
+            and self.base_ring().has_coerce_map_from(S.base_ring())):
                 return True
-        elif isinstance(S, FormsRing_abstract):
+        if isinstance(S, FormsRing_abstract):
             return False
-        elif isinstance(S, FormsSpace_abstract):
-            raise RuntimeError( "This case should not occur." )
+        if isinstance(S, FormsSpace_abstract):
+            raise RuntimeError("this case should not occur")
             # return self._coerce_map_from_(S.graded_ring())
-        elif (self.AT("holo") <= self._analytic_type) and (self.coeff_ring().has_coerce_map_from(S)):
+        if (self.AT("holo") <= self._analytic_type) and (self.coeff_ring().has_coerce_map_from(S)):
             return True
-        else:
-            return False
+        return False
 
     def _an_element_(self):
         r"""
@@ -1949,12 +1947,12 @@ class FormsRing_abstract(Parent):
         reduced_self = extended_self.reduce_type(["holo"], degree = (QQ(k), ep))
 
         if (n == infinity):
-            l2  = ZZ(0)
-            l1  = ZZ((k-(1-ep)) / ZZ(4))
+            l2 = ZZ(0)
+            l1 = ZZ((k-(1-ep)) / ZZ(4))
         else:
             num = ZZ((k-(1-ep)*n/(n-2)) * (n-2) / ZZ(4))
-            l2  = num % n
-            l1  = ((num-l2)/n).numerator()
+            l2 = num % n
+            l1 = ((num-l2)/n).numerator()
 
         # If the space is one dimensional we return the normalized generator
         if l1 == 0:

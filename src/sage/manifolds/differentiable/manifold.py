@@ -1438,9 +1438,9 @@ class DifferentiableManifold(TopologicalManifold):
             Free module T^(2,1)(U) of type-(2,1) tensors fields on the Open
              subset U of the 3-dimensional differentiable manifold M
             sage: TU.category()
-            Category of finite dimensional modules over Algebra of
-             differentiable scalar fields on the Open subset U of the
-             3-dimensional differentiable manifold M
+            Category of tensor products of finite dimensional modules
+             over Algebra of differentiable scalar fields
+              on the Open subset U of the 3-dimensional differentiable manifold M
             sage: TU.base_ring()
             Algebra of differentiable scalar fields on the Open subset U of
              the 3-dimensional differentiable manifold M
@@ -2977,7 +2977,6 @@ class DifferentiableManifold(TopologicalManifold):
                              " has not been defined on the {}".format(self))
         return self._frame_changes[(frame1, frame2)]
 
-
     def set_change_of_frame(self, frame1, frame2, change_of_frame,
                          compute_inverse=True):
         r"""
@@ -3403,7 +3402,7 @@ class DifferentiableManifold(TopologicalManifold):
         """
         return bool(self._covering_frames)
 
-    def tangent_space(self, point):
+    def tangent_space(self, point, base_ring=None):
         r"""
         Tangent space to ``self`` at a given point.
 
@@ -3411,6 +3410,8 @@ class DifferentiableManifold(TopologicalManifold):
 
         - ``point`` -- :class:`~sage.manifolds.point.ManifoldPoint`;
           point `p` on the manifold
+
+        - ``base_ring`` -- (default: the symbolic ring) the base ring
 
         OUTPUT:
 
@@ -3445,7 +3446,7 @@ class DifferentiableManifold(TopologicalManifold):
             raise TypeError("{} is not a manifold point".format(point))
         if point not in self:
             raise ValueError("{} is not a point on the {}".format(point, self))
-        return TangentSpace(point)
+        return TangentSpace(point, base_ring=base_ring)
 
     def curve(self, coord_expression, param, chart=None,
               name=None, latex_name=None):
@@ -3955,7 +3956,7 @@ class DifferentiableManifold(TopologicalManifold):
                                                                AffineConnection
         return AffineConnection(self, name, latex_name)
 
-    def metric(self, name: str, signature: Optional[int] = None, 
+    def metric(self, name: str, signature: Optional[int] = None,
                latex_name: Optional[str] = None,
                dest_map: Optional[DiffMap] = None) -> PseudoRiemannianMetric:
         r"""

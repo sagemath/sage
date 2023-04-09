@@ -202,21 +202,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.functions import lcm
+from sage.arith.misc import divisors, gcd
+from sage.categories.groups import Groups
+from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
+from sage.groups.group import AbelianGroup as AbelianGroupBase
+from sage.matrix.constructor import matrix
+from sage.matrix.special import diagonal_matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
+from sage.misc.mrange import cartesian_product_iterator, mrange
+from sage.modules.free_module_element import vector
+from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.infinity import infinity
-from sage.arith.all import divisors, gcd, lcm
-from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
-from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
-from sage.misc.mrange import mrange, cartesian_product_iterator
-from sage.groups.group import AbelianGroup as AbelianGroupBase
-from sage.categories.groups import Groups
-from sage.matrix.constructor import matrix
-from sage.matrix.special import diagonal_matrix
-from sage.modules.free_module_element import vector
 
 
 # TODO: this uses perm groups - the AbelianGroupElement instance method
@@ -646,9 +647,9 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         return self.elementary_divisors() == ()
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
-        Returns True if this group is nontrivial.
+        Return ``True`` if this group is nontrivial.
 
         EXAMPLES::
 
@@ -661,8 +662,6 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             False
         """
         return not self.is_trivial()
-
-    
 
     @cached_method
     def dual_group(self, names="X", base_ring=None):
@@ -1677,7 +1676,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             sage: F.order()
             +Infinity
 
-        Testing ticket :trac:`18863`::
+        Testing issue :trac:`18863`::
 
             sage: G = AbelianGroup(5,[2])
             sage: G.subgroup([prod(g^k for g,k in zip(G.gens(),[1,-2,3,-4,5]))])

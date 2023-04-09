@@ -36,7 +36,8 @@ EXAMPLES::
 For a Cython ``cdef class``, a decorator cannot be used. Instead, call
 :func:`instancedoc` as a function after defining the class::
 
-    sage: cython('''  # optional - sage.misc.cython
+    sage: cython(                                               # optional - sage.misc.cython
+    ....: '''
     ....: from sage.misc.instancedoc import instancedoc
     ....: cdef class Y:
     ....:     "Class docstring"

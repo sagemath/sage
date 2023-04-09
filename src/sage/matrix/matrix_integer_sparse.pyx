@@ -219,7 +219,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         be dangerous if you change entries of the returned dict.
         """
         d = self.fetch('dict')
-        if not d is None:
+        if d is not None:
             return d
 
         cdef Py_ssize_t i, j, k
@@ -311,10 +311,9 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [0 1 0 0 0 0 1 0]
             sage: M._nonzero_positions_by_row()
             [(0, 3), (1, 1), (1, 6)]
-
         """
         x = self.fetch('nonzero_positions')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x
@@ -343,10 +342,9 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [0 1 0 0 0 0 1 0]
             sage: M._nonzero_positions_by_column()
             [(1, 1), (0, 3), (1, 6)]
-
         """
         x = self.fetch('nonzero_positions_by_column')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x

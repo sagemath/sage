@@ -2,7 +2,7 @@
 # cython: binding=True
 # distutils: language = c++
 r"""
-Path Enumeration
+Path enumeration
 
 This module is meant for all functions related to path enumeration in graphs.
 

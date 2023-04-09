@@ -1667,8 +1667,6 @@ class pAdicAutomorphicFormElement(ModuleElement):
         """
         return any(not o.is_zero() for o in self._value)
 
-    
-
     def __getitem__(self, e1):
         r"""
         Evaluate a `p`-adic automorphic form on a matrix in `GL_2(\QQ_p)`.

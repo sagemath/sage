@@ -243,4 +243,3 @@ class Submodule_free_ambient(Module_free_ambient):
             True
         """
         return self._ambient
-

@@ -39,11 +39,13 @@ from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_C import KRTToRCBijectionTypeC
 from sage.combinat.rigged_configurations.bij_type_C import RCToKRTBijectionTypeC
 
+
 class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
     r"""
     Specific implementation of the bijection from KR tableaux to rigged
     configurations for type `B_n^{(1)}`.
     """
+
     def run(self, verbose=False):
         """
         Run the bijection from a tensor product of KR tableaux to a rigged
@@ -536,11 +538,13 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
             self._update_vacancy_nums(tableau_height - 1)
             self._update_partition_values(tableau_height - 1)
 
+
 class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
     r"""
     Specific implementation of the bijection from rigged configurations to
     tensor products of KR tableaux for type `B_n^{(1)}`.
     """
+
     def run(self, verbose=False, build_graph=False):
         """
         Run the bijection from rigged configurations to tensor product of KR

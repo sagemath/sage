@@ -1,8 +1,7 @@
 """
 Ambient spaces
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -10,11 +9,11 @@ Ambient spaces
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.ring import CommutativeRing
+from sage.categories.commutative_rings import CommutativeRings
 from sage.schemes.generic.scheme import Scheme
 
 
@@ -30,7 +29,7 @@ def is_AmbientSpace(x):
         sage: is_AmbientSpace(AffineSpace(2, QQ))
         True
         sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
-        sage: is_AmbientSpace(P.subscheme([x+y+z]))
+        sage: is_AmbientSpace(P.subscheme([x + y + z]))
         False
     """
     return isinstance(x, AmbientSpace)
@@ -40,7 +39,6 @@ class AmbientSpace(Scheme):
     Base class for ambient spaces over a ring.
 
     INPUT:
-
 
     -  ``n`` - dimension
 
@@ -54,7 +52,7 @@ class AmbientSpace(Scheme):
             sage: A = AmbientSpace(5, ZZ)
             sage: TestSuite(A).run() # not tested (abstract scheme with no elements?)
         """
-        if not isinstance(R, CommutativeRing):
+        if R not in CommutativeRings():
             raise TypeError("R (={}) must be a commutative ring".format(R))
         if n < 0:
             raise ValueError("n (={}) must be nonnegative".format(n))
@@ -198,9 +196,9 @@ class AmbientSpace(Scheme):
 
         EXAMPLES::
 
-            sage: AffineSpace(3,QQ).is_projective()
+            sage: AffineSpace(3, QQ).is_projective()
             False
-            sage: ProjectiveSpace(3,QQ).is_projective()
+            sage: ProjectiveSpace(3, QQ).is_projective()
             True
         """
         # overloaded in the projective space derived class
@@ -229,13 +227,13 @@ class AmbientSpace(Scheme):
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: PQ = P.base_extend(QQ); PQ
             Projective Space of dimension 2 over Rational Field
-            sage: PQ.base_extend(GF(5))
+            sage: PQ.base_extend(GF(5))                                                 # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: no natural map from the base ring (=Rational Field)
             to R (=Finite Field of size 5)!
         """
-        if isinstance(R, CommutativeRing):
+        if R in CommutativeRings():
             if self.base_ring() == R:
                 return self
             if not R.has_coerce_map_from(self.base_ring()):
@@ -259,8 +257,8 @@ class AmbientSpace(Scheme):
             sage: P.ambient_space() is P
             True
 
-            sage: A = AffineSpace(2, GF(3))
-            sage: A.ambient_space()
+            sage: A = AffineSpace(2, GF(3))                                             # optional - sage.rings.finite_rings
+            sage: A.ambient_space()                                                     # optional - sage.rings.finite_rings
             Affine Space of dimension 2 over Finite Field of size 3
         """
         return self
@@ -278,6 +276,27 @@ class AmbientSpace(Scheme):
             ()
         """
         return ()
+
+    def identity_morphism(self):
+        """
+        Return the identity morphism.
+
+        OUTPUT: the identity morphism of the scheme ``self``
+
+        EXAMPLES::
+
+            sage: A = AffineSpace(2, GF(3))                                             # optional - sage.rings.finite_rings
+            sage: A.identity_morphism()                                                 # optional - sage.rings.finite_rings
+            Scheme endomorphism of Affine Space of dimension 2 over Finite Field of size 3
+              Defn: Identity map
+
+            sage: P = ProjectiveSpace(3, ZZ)
+            sage: P.identity_morphism()
+            Scheme endomorphism of Projective Space of dimension 3 over Integer Ring
+              Defn: Identity map
+        """
+        from sage.schemes.generic.morphism import SchemeMorphism_polynomial_id
+        return SchemeMorphism_polynomial_id(self)
 
     ######################################################################
     # Associated MPolynomial ring generators
@@ -306,8 +325,8 @@ class AmbientSpace(Scheme):
             sage: AffineSpace(0, QQ).gens()
             ()
 
-            sage: P.<x, y, z> = ProjectiveSpace(2, GF(5))
-            sage: P.gens()
+            sage: P.<x, y, z> = ProjectiveSpace(2, GF(5))                               # optional - sage.rings.finite_rings
+            sage: P.gens()                                                              # optional - sage.rings.finite_rings
             (x, y, z)
         """
         return self.coordinate_ring().gens()
@@ -360,7 +379,7 @@ class AmbientSpace(Scheme):
         base = self.base_scheme()
         if base.is_noetherian():
             return self.dimension_relative() + base.dimension()
-        raise NotImplementedError("Cannot compute the dimension of this scheme.")
+        raise NotImplementedError("cannot compute the dimension of this scheme")
 
     dimension = dimension_absolute
 

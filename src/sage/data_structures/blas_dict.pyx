@@ -448,4 +448,3 @@ cpdef dict convert_remove_zeroes(dict D, R):
     for index in for_removal:
         del D[index]
     return D
-

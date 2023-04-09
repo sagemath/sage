@@ -4,7 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-"""
+r"""
 Dense univariate polynomials over `\ZZ`, implemented using FLINT
 
 AUTHORS:
@@ -59,7 +59,7 @@ from sage.libs.pari.all import pari, pari_gen
 from sage.structure.factorization import Factorization
 
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.arith.all import lcm
+from sage.arith.functions import lcm
 
 from sage.libs.arb.arb_fmpz_poly cimport arb_fmpz_poly_evaluate_arb, arb_fmpz_poly_evaluate_acb
 from sage.libs.flint.fmpz cimport *
@@ -367,7 +367,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         interpreted as polynomial composition or evaluation by this
         method.
 
-        If the argument is not simply an integer (``int``, ``long`` or
+        If the argument is not simply an integer (``int`` or
         ``Integer``) a real number (``RealNumber``) a real interval
         (``RealIntervalFieldElement``) or a polynomial (of the same type as
         ``self``), the call is passed on to the generic implementation in the
@@ -428,7 +428,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
                 fmpz_clear(z_fmpz)
                 sig_off()
                 return z
-            if isinstance(x0, (int, long)):
+            if isinstance(x0, int):
                 x0 = Integer(x0)
             if isinstance(x0, Integer):
                 a = <Integer> x0
@@ -1394,7 +1394,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         return smallInteger(fmpz_poly_degree(self.__poly))
 
     def pseudo_divrem(self, B):
-        """
+        r"""
         Write ``A = self``.  This function computes polynomials `Q` and `R`
         and an integer `d` such that
 

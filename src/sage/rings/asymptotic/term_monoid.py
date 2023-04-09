@@ -181,7 +181,7 @@ Various
         ...
         FutureWarning: This class/method/function is marked as experimental.
         It, its functionality or its interface might change without a formal deprecation.
-        See https://trac.sagemath.org/31922 for details.
+        See https://github.com/sagemath/sage/issues/31922 for details.
 
 
 .. TODO::
@@ -1851,7 +1851,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
             ...
             DeprecationWarning: Passing 'coefficient' as a positional argument is deprecated;
             specify it as keyword argument 'coefficient=...'.
-            See https://trac.sagemath.org/32215 for details.
+            See https://github.com/sagemath/sage/issues/32215 for details.
             O(x)
             sage: OT(G.gen(), 4, coefficient=5)
             Traceback (most recent call last):
@@ -1864,7 +1864,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
                 f'takes one positional argument, '
                 f'another positional argument is deprecated, '
                 f'but {len(args)+1} were given')
-        elif len(args) == 1:
+        if len(args) == 1:
             from sage.misc.superseded import deprecation
             deprecation(32215,
                 "Passing 'coefficient' as a positional argument is deprecated; "
@@ -4877,7 +4877,7 @@ class BTerm(TermWithCoefficient):
         if not (self.growth >= other.growth):
             raise ArithmeticError(f'{self} cannot absorb {other}')
 
-        valid_from_new = dict()
+        valid_from_new = {}
         for variable_name in set().union(self.valid_from.keys(), other.valid_from.keys()):
             if variable_name in self.valid_from and other.valid_from:
                 valid_from_new[variable_name] = (max(self.valid_from[variable_name], other.valid_from[variable_name]))
@@ -4919,7 +4919,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
         sage: BT is BTermMonoid(TermMonoid, G, QQ)
         True
     """
-    __init__ = experimental(trac_number=31922)(GenericTermMonoid.__init__)
+    __init__ = experimental(issue_number=31922)(GenericTermMonoid.__init__)
 
     # enable the category framework for elements
     Element = BTerm
@@ -4968,13 +4968,13 @@ class BTermMonoid(TermWithCoefficientMonoid):
             sage: T = TermMonoid('B', G, ZZ)
             sage: T._default_kwds_construction_()
             {'coefficient': 1, 'valid_from': {'x': 0}}
-            sage: T.from_construction((None, {'growth': G.gen()}))  # indirect doctest
+            sage: T.from_construction((None, {'growth': G.gen()}))          # indirect doctest
             B(x, x >= 0)
-            sage: T.from_construction(
-            ....:     (None, {'growth': G.gen(), 'coefficient': 2}))  # indirect doctest
+            sage: T.from_construction(                                      # indirect doctest
+            ....:     (None, {'growth': G.gen(), 'coefficient': 2}))
             B(2*x, x >= 0)
-            sage: T.from_construction(
-            ....:     (None, {'growth': G.gen(), 'valid_from': {'x': 5}}))  # indirect doctest
+            sage: T.from_construction(                                      # indirect doctest
+            ....:     (None, {'growth': G.gen(), 'valid_from': {'x': 5}}))
             B(x, x >= 5)
         """
         defaults = {}
@@ -5339,7 +5339,7 @@ class TermMonoidFactory(UniqueRepresentation, UniqueFactory):
             sage: type(MyTermMonoid('B', G, QQ))
             <class '__main__.MyBTermMonoid_with_category'>
         """
-        super(TermMonoidFactory, self).__init__(name)
+        super().__init__(name)
 
         if exact_term_monoid_class is None:
             exact_term_monoid_class = ExactTermMonoid

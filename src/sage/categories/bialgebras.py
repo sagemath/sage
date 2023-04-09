@@ -10,7 +10,8 @@ Bialgebras
 # *****************************************************************************
 
 from sage.categories.category_types import Category_over_base_ring
-from sage.categories.all import Algebras, Coalgebras
+from sage.categories.algebras import Algebras
+from sage.categories.coalgebras import Coalgebras
 from sage.categories.super_modules import SuperModulesCategory
 from sage.misc.lazy_import import LazyImport
 

@@ -1,5 +1,5 @@
 r"""
-Trigonometric Functions
+Trigonometric functions
 """
 from sage.symbolic.function import GinacFunction
 import math

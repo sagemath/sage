@@ -179,6 +179,8 @@ Python floats.
 import os
 import re
 
+import sage.interfaces.abc
+
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from sage.env import DOT_SAGE
 from pexpect import EOF
@@ -275,7 +277,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
         # The space before the \n is also important.
         return ')read %s \n'%filename
 
-
     def _quit_string(self):
         """
         Returns the string used to quit Axiom.
@@ -318,7 +319,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
         j = s.find(end)
         s = s[i+len(start):j].split()
         return s
-
 
     def _tab_completion(self, verbose=True, use_disk_cache=True):
         """
@@ -389,7 +389,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
 
         if out.find("error") != -1:
             raise TypeError("Error executing code in Axiom\nCODE:\n\t%s\nAxiom ERROR:\n\t%s"%(cmd, out))
-
 
     def get(self, var):
         r"""
@@ -490,7 +489,7 @@ class Axiom(PanAxiom):
         """
         EXAMPLES::
 
-            sage: axiom.__reduce__()
+            sage: Axiom().__reduce__()
             (<function reduce_load_Axiom at 0x...>, ())
             sage: f, args = _
             sage: f(*args)
@@ -555,7 +554,7 @@ class Axiom(PanAxiom):
 
 
 @instancedoc
-class PanAxiomElement(ExpectElement):
+class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
     def __call__(self, x):
         """
         EXAMPLES::
@@ -766,7 +765,6 @@ class PanAxiomElement(ExpectElement):
         else:
             return s
 
-
     def _sage_(self):
         """
         Convert self to a Sage object.
@@ -834,7 +832,8 @@ class PanAxiomElement(ExpectElement):
             return self._sage_domain()
 
         if type == "Float":
-            from sage.rings.all import RealField, ZZ
+            from sage.rings.real_mpfr import RealField
+            from sage.rings.integer_ring import ZZ
             prec = max(self.mantissa().length()._sage_(), 53)
             R = RealField(prec)
             x,e,b = self.unparsed_input_form().lstrip('float(').rstrip(')').split(',')
@@ -864,7 +863,6 @@ class PanAxiomElement(ExpectElement):
                 return sage.misc.sage_eval.sage_eval(self.unparsed_input_form(), locals={str(vars):vars})
         except Exception:
             raise NotImplementedError
-
 
     def _sage_domain(self):
         """
@@ -944,17 +942,23 @@ AxiomExpectFunction = PanAxiomExpectFunction
 
 def is_AxiomElement(x):
     """
-    Returns True of x is of type AxiomElement.
+    Return True if ``x`` is of type :class:`AxiomElement`.
 
     EXAMPLES::
 
         sage: from sage.interfaces.axiom import is_AxiomElement
-        sage: is_AxiomElement(axiom(2)) #optional - axiom
-        True
         sage: is_AxiomElement(2)
+        doctest:...: DeprecationWarning: the function is_AxiomElement is deprecated; use isinstance(x, sage.interfaces.abc.AxiomElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
+        sage: is_AxiomElement(axiom(2))  # optional - axiom
+        True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_AxiomElement is deprecated; use isinstance(x, sage.interfaces.abc.AxiomElement) instead")
+
     return isinstance(x, AxiomElement)
+
 
 #Instances
 axiom = Axiom(name='axiom')
@@ -993,4 +997,3 @@ def axiom_console():
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%axiom magics instead.')
     os.system('axiom -nox')
-

@@ -202,6 +202,7 @@ class Rule(UniqueRepresentation):
     e.g., the case of Hecke insertion, in which a letter bumped
     into a row may change a different row).
     """
+
     def to_pairs(self, obj1=None, obj2=None, check=True):
         r"""
         Given a valid input for the RSK algorithm, such as
@@ -530,6 +531,7 @@ class RuleRSK(Rule):
         sage: RSK_inverse(p, q, insertion=RSK.rules.RSK)
         [[1, 2, 3, 3], [2, 1, 2, 2]]
     """
+
     def insertion(self, j, r):
         r"""
         Insert the letter ``j`` from the second row of the biword
@@ -700,6 +702,7 @@ class RuleEG(Rule):
         ....:     for wd in p.reduced_words())
         True
     """
+
     def insertion(self, j, r):
         r"""
         Insert the letter ``j`` from the second row of the biword
@@ -866,6 +869,7 @@ class RuleHecke(Rule):
         sage: wp == w
         True
     """
+
     def forward_rule(self, obj1, obj2, check_standard=False):
         r"""
         Return a pair of tableaux obtained by applying Hecke
@@ -1306,6 +1310,7 @@ class RuleDualRSK(Rule):
         ...
         ValueError: p(=[[1, 2, 3]]) and q(=[[1, 2]]) must have the same shape
     """
+
     def to_pairs(self, obj1=None, obj2=None, check=True):
         r"""
         Given a valid input for the dual RSK algorithm, such as
@@ -1686,6 +1691,7 @@ class RuleCoRSK(RuleRSK):
         ...
         ValueError: invalid strict cobiword
     """
+
     def to_pairs(self, obj1=None, obj2=None, check=True):
         r"""
         Given a valid input for the coRSK algorithm, such as
@@ -2008,6 +2014,7 @@ class RuleSuperRSK(RuleRSK):
         ...
         ValueError: p(=[[1, 2, 3]]) and q(=[[1, 2]]) must have the same shape
     """
+
     def to_pairs(self, obj1=None, obj2=None, check=True):
         r"""
         Given a valid input for the super RSK algorithm, such as
@@ -2644,6 +2651,7 @@ class RuleStar(Rule):
         ....:          insertion='Star', output='word') for w in words)])
         True
     """
+
     def forward_rule(self, obj1, obj2=None, check_braid=True):
         r"""
         Return a pair of tableaux obtained by applying forward insertion
@@ -2958,6 +2966,7 @@ class RuleStar(Rule):
                 df.append([])
             return DecreasingHeckeFactorization(df)
 
+
 class InsertionRules():
     r"""
     Catalog of rules for RSK-like insertion algorithms.
@@ -2971,6 +2980,7 @@ class InsertionRules():
     Star = RuleStar
 
 #####################################################################
+
 
 def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False, **options):
     r"""
@@ -3179,6 +3189,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
 
 robinson_schensted_knuth = RSK
 RSK.rules = InsertionRules
+
 
 def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
     r"""

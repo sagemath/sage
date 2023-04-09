@@ -38,6 +38,7 @@ TESTS::
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA
 
+
 class KRTToRCBijectionTypeDTri(KRTToRCBijectionTypeA):
     r"""
     Specific implementation of the bijection from KR tableaux to rigged
@@ -46,6 +47,7 @@ class KRTToRCBijectionTypeDTri(KRTToRCBijectionTypeA):
     This inherits from type `A_n^{(1)}` because we use the same methods in
     some places.
     """
+
     def next_state(self, val):
         r"""
         Build the next state for type `D_4^{(3)}`.
@@ -233,11 +235,13 @@ class KRTToRCBijectionTypeDTri(KRTToRCBijectionTypeA):
                     P.rigging[j-1] -= 1
                     break
 
+
 class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
     r"""
     Specific implementation of the bijection from rigged configurations to
     tensor products of KR tableaux for type `D_4^{(3)}`.
     """
+
     def next_state(self, height):
         r"""
         Build the next state for type `D_4^{(3)}`.

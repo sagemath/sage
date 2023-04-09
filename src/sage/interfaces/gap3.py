@@ -12,7 +12,7 @@ AUTHORS:
 
     The experimental package for GAP3 is Jean Michel's pre-packaged GAP3,
     which is a minimal GAP3 distribution containing packages that have
-    no equivalent in GAP4, see :trac:`20107` and also 
+    no equivalent in GAP4, see :trac:`20107` and also
 
         https://webusers.imj-prg.fr/~jean.michel/gap3/
 
@@ -212,7 +212,7 @@ Controlling variable names used by GAP3::
     ...
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Franco Saliola <saliola@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -224,8 +224,8 @@ Controlling variable names used by GAP3::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.interfaces.expect import Expect
@@ -235,6 +235,7 @@ from sage.cpython.string import bytes_to_str
 
 # gap3_cmd should point to the gap3 executable
 gap3_cmd = 'gap3'
+
 
 class Gap3(Gap_generic):
     r"""
@@ -624,8 +625,9 @@ class Gap3(Gap_generic):
         """
         return []
 
-    
+
 gap3 = Gap3()
+
 
 class GAP3Element(GapElement_generic):
     r"""

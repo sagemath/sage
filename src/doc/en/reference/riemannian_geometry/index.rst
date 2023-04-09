@@ -2,7 +2,7 @@ Differential Geometry of Curves and Surfaces
 ============================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/geometry/riemannian_manifolds/parametrized_surface3d
    sage/geometry/riemannian_manifolds/surface3d_generators

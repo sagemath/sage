@@ -81,7 +81,7 @@ AC_DEFUN([SAGE_SPKG_COLLECT_INIT], [
 dnl Intialize the collection variables.
 # To deal with ABI incompatibilities when gcc is upgraded, every package
 # (except gcc) should depend on gcc if gcc is already installed.
-# See https://trac.sagemath.org/ticket/24703
+# See https://github.com/sagemath/sage/issues/24703
 if test x$SAGE_INSTALL_GCC = xexists; then
     SAGE_GCC_DEP='$(SAGE_LOCAL)/bin/gcc'
 else

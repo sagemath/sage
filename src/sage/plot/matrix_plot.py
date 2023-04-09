@@ -1,5 +1,5 @@
 """
-Matrix Plots
+Matrix plots
 """
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
@@ -241,7 +241,6 @@ class MatrixPlot(GraphicPrimitive):
         else:
             subplot.xaxis.tick_bottom()
         subplot.xaxis.set_ticks_position('both') #only tick marks, not tick labels
-
 
 
 @suboptions('colorbar', orientation='vertical', format=None)
@@ -552,7 +551,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
         sage: matrix_plot(identity_matrix(100), origin='lower')
         doctest:...: DeprecationWarning: the option 'origin' is replaced by 'flip_y'
-        See https://trac.sagemath.org/27891 for details.
+        See https://github.com/sagemath/sage/issues/27891 for details.
         Graphics object consisting of 1 graphics primitive
     """
     if 'origin' in options:
@@ -584,7 +583,6 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         sparse = True
     else:
         sparse = False
-
 
     try:
         if sparse:

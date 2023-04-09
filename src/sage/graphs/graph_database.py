@@ -967,7 +967,8 @@ class GraphDatabase(SQLDatabase):
         """
         Create a GraphQuery on this database.
 
-        For full class details, type ``GraphQuery?`` and press ``shift+enter``.
+        For full class details, type ``GraphQuery?``
+        and press :kbd:`Shift` + :kbd:`Enter`.
 
         EXAMPLES::
 

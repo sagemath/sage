@@ -20,7 +20,10 @@ from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.modules.fg_pid.fgp_element import FGP_Element
 from sage.modules.free_quadratic_module import FreeQuadraticModule
 from sage.arith.misc import gcd
-from sage.rings.all import ZZ, Zp, QQ, IntegerModRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.padics.factory import Zp
+from sage.rings.rational_field import QQ
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.groups.additive_abelian.qmodnz import QmodnZ
 from sage.matrix.constructor import matrix
 from sage.matrix.special import diagonal_matrix
@@ -144,7 +147,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
             1/4
         """
         value_module = self.parent().value_module()
-        return value_module( self.lift().inner_product(other.lift()) )
+        return value_module(self.lift().inner_product(other.lift()))
 
     inner_product = _mul_
     b = _mul_
@@ -296,7 +299,6 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         self._modulus = modulus
         self._modulus_qf = modulus_qf
 
-
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
@@ -313,10 +315,10 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             [0 0 0]
             [0 0 0]
         """
-        return ( "Finite quadratic module over %s with invariants %s\n"
-                 % (self.base_ring(), self.invariants()) +
-                 "Gram matrix of the quadratic form with values in %r:\n%r"
-                 % (self.value_module_qf(), self.gram_matrix_quadratic()))
+        return ("Finite quadratic module over %s with invariants %s\n"
+                % (self.base_ring(), self.invariants()) +
+                "Gram matrix of the quadratic form with values in %r:\n%r"
+                % (self.value_module_qf(), self.gram_matrix_quadratic()))
 
     def _module_constructor(self, V, W, check=False):
         r"""
@@ -850,7 +852,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             [1 0 0]
             [0 0 1]
 
-        We compute the kernel of the action of the orthogonal group of `L` on the discriminant group.
+        We compute the kernel of the action of the orthogonal group of `L` on the discriminant group::
 
             sage: L = IntegralLattice('A4')
             sage: O = L.orthogonal_group()

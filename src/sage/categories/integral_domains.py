@@ -144,4 +144,3 @@ class IntegralDomains(CategoryWithAxiom):
 
     class ElementMethods:
         pass
-

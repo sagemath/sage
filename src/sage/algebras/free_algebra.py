@@ -149,7 +149,7 @@ from sage.algebras.free_algebra_element import FreeAlgebraElement
 
 from sage.structure.factory import UniqueFactory
 from sage.misc.cachefunc import cached_method
-from sage.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import Algebra
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -282,7 +282,7 @@ class FreeAlgebraFactory(UniqueFactory):
             PolRing = PolynomialRing(base_ring, *args, **kwds)
             if degrees is None:
                 return (PolRing,)
-            from sage.all import TermOrder
+            from sage.rings.polynomial.term_order import TermOrder
             T = TermOrder(PolRing.term_order(), PolRing.ngens() + 1)
             varnames = list(PolRing.variable_names())
             newname = 'x'

@@ -431,21 +431,21 @@ def cubie_colors(label, state0):
     clr_any = named_colors['white']
     state = inv_list(state0)
     if label == 1:
-        return  [clr_any, named_colors[color_of_square(state[1-1])], clr_any] #ulb,
+        return [clr_any, named_colors[color_of_square(state[1-1])], clr_any] #ulb,
     if label == 2:
-        return  [clr_any,named_colors[color_of_square(state[2-1])],clr_any] # ub,
+        return [clr_any,named_colors[color_of_square(state[2-1])],clr_any] # ub,
     if label == 3:
-        return  [clr_any, named_colors[color_of_square(state[3-1])], named_colors[color_of_square(state[27-1])]] # ubr,
+        return [clr_any, named_colors[color_of_square(state[3-1])], named_colors[color_of_square(state[27-1])]] # ubr,
     if label == 4:
-        return  [clr_any, named_colors[color_of_square(state[4-1])], clr_any] # ul,
+        return [clr_any, named_colors[color_of_square(state[4-1])], clr_any] # ul,
     if label == 5:
-        return  [clr_any, named_colors[color_of_square(state[5-1])], named_colors[color_of_square(state[26-1])]] # ur,
+        return [clr_any, named_colors[color_of_square(state[5-1])], named_colors[color_of_square(state[26-1])]] # ur,
     if label == 6:
-        return  [named_colors[color_of_square(state[17-1])], named_colors[color_of_square(state[6-1])], clr_any] # ufl,
+        return [named_colors[color_of_square(state[17-1])], named_colors[color_of_square(state[6-1])], clr_any] # ufl,
     if label == 7:
-        return  [named_colors[color_of_square(state[18-1])], named_colors[color_of_square(state[7-1])], clr_any] # uf,
+        return [named_colors[color_of_square(state[18-1])], named_colors[color_of_square(state[7-1])], clr_any] # uf,
     if label == 8:
-        return  [named_colors[color_of_square(state[19-1])], named_colors[color_of_square(state[8-1])], named_colors[color_of_square(state[25-1])]] # urf,
+        return [named_colors[color_of_square(state[19-1])], named_colors[color_of_square(state[8-1])], named_colors[color_of_square(state[25-1])]] # urf,
     if label == 17:
         return [named_colors[color_of_square(state[17-1])], named_colors[color_of_square(state[6-1])], clr_any] # flu
     if label == 18:
@@ -944,7 +944,7 @@ class CubeGroup(PermutationGroup_generic):
         line13 = "             +--------------+\n"
         return line1+line2+line3+line4+line5+line6+line7+line8+line9+line10+line11+line12+line13
 
-    def plot_cube(self, mv, title=True, colors = [lpurple, yellow, red, green, orange, blue]):
+    def plot_cube(self, mv, title=True, colors=[lpurple, yellow, red, green, orange, blue]):
         r"""
         Input the move mv, as a string in the Singmaster notation, and
         output the 2D plot of the cube in that state.

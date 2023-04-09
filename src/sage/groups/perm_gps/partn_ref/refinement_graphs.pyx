@@ -7,10 +7,9 @@ EXAMPLES::
 
 REFERENCE:
 
-- [1] McKay, Brendan D. Practical Graph Isomorphism. Congressus Numerantium,
+- [1] McKay, Brendan D. *Practical Graph Isomorphism*. Congressus Numerantium,
   Vol. 30 (1981), pp. 45-87.
 """
-
 # ****************************************************************************
 #       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #
@@ -643,9 +642,8 @@ cdef int compare_graphs(int *gamma_1, int *gamma_2, void *S1, void *S2, int degr
     r"""
     Compare gamma_1(S1) and gamma_2(S2).
 
-    Return return -1 if gamma_1(S1) < gamma_2(S2), 0 if gamma_1(S1) ==
-    gamma_2(S2), 1 if gamma_1(S1) > gamma_2(S2).  (Just like the python
-    \code{cmp}) function.
+    Return -1 if gamma_1(S1) < gamma_2(S2), 0 if gamma_1(S1) ==
+    gamma_2(S2), 1 if gamma_1(S1) > gamma_2(S2).
 
     INPUT:
 
@@ -1257,8 +1255,9 @@ cdef void free_dg_edge_gen(iterator *dg_edge_gen):
     sig_free(dg_edge_gen)
 
 
-def generate_dense_graphs_edge_addition(int n, bint loops, G = None, depth = None, bint construct = False,
-    bint indicate_mem_err = True):
+def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
+                                        bint construct=False,
+                                        bint indicate_mem_err=True):
     r"""
 
     EXAMPLES::
@@ -1534,7 +1533,10 @@ cdef void free_cgd_2(void *data):
     cdef canonical_generator_data *cgd = <canonical_generator_data *> data
     deallocate_cgd(cgd)
 
-def generate_dense_graphs_vert_addition(int n, base_G = None, bint construct = False, bint indicate_mem_err = True):
+
+def generate_dense_graphs_vert_addition(int n, base_G=None,
+                                        bint construct=False,
+                                        bint indicate_mem_err=True):
     r"""
 
     EXAMPLES::

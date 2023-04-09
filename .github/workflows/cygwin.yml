@@ -73,14 +73,14 @@ jobs:
         choco install git python39 python39-pip --source cygwin
 
     - name: Check out SageMath
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: ${{ inputs.sage_repo }}
         ref: ${{ inputs.sage_ref }}
         fetch-depth: 2000
 
     - name: Check out git-trac-command
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: sagemath/git-trac-command
         path: git-trac-command
@@ -95,7 +95,7 @@ jobs:
       if: inputs.sage_trac_git != ''
 
     - name: Download upstream artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         path: upstream
         name: ${{ inputs.upstream_artifact }}
@@ -106,7 +106,7 @@ jobs:
       if: inputs.upstream_artifact
 
     - name: Download sage-local artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: ${{ env.LOCAL_ARTIFACT_NAME }}
         path: C:\\tools\\cygwin\\tmp
@@ -124,7 +124,7 @@ jobs:
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/"$(basename "$a")".tar" "$a"; fi; done; cp -r logs/* "artifacts/$LOGS_ARTIFACT_NAME"'
       if: always()
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         path: artifacts
         name: ${{ env.LOGS_ARTIFACT_NAME }}
@@ -142,7 +142,7 @@ jobs:
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ inputs.stage }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
       if: always()
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       # upload-artifact@v2 does not support whitespace in file names.
       # so we tar up the directory ourselves
       with:

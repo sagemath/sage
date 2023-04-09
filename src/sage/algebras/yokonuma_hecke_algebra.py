@@ -454,7 +454,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         return self.g(i) + (~self._q + self._q) * self.e(i)
 
     class Element(CombinatorialFreeModule.Element):
-        def inverse(self):
+        def __invert__(self):
             r"""
             Return the inverse if ``self`` is a basis element.
 
@@ -463,7 +463,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
                 sage: Y = algebras.YokonumaHecke(3, 3)
                 sage: t = prod(Y.t()); t
                 t1*t2*t3
-                sage: ~t
+                sage: t.inverse()   # indirect doctest
                 t1^2*t2^2*t3^2
                 sage: [3*~(t*g) for g in Y.g()]
                 [(q^-1+q)*t2*t3^2 + (q^-1+q)*t1*t3^2
@@ -494,5 +494,3 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             c = ~self.coefficients()[0]
             telt = H.monomial( (tuple((H._d - e) % H._d for e in t), H._Pn.one()) )
             return c * telt * H.prod(H.inverse_g(i) for i in reversed(w.reduced_word()))
-
-        __invert__ = inverse

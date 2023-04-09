@@ -121,8 +121,7 @@ Sage example in ./combinat.tex, line 654::
 
 Sage example in ./combinat.tex, line 661::
 
-  sage: C = L()
-  sage: C._name = 'C'
+  sage: C = L.undefined(valuation=1)
   sage: C.define( z + C * C )
 
 Sage example in ./combinat.tex, line 666::
@@ -889,7 +888,7 @@ Sage example in ./combinat.tex, line 2688::
 
 Sage example in ./combinat.tex, line 2697::
 
-  sage: BT = CombinatorialSpecies()
+  sage: BT = CombinatorialSpecies(min=1)
   sage: Leaf =  SingletonSpecies()
   sage: BT.define( Leaf + (BT*BT) )
 
@@ -906,7 +905,7 @@ Sage example in ./combinat.tex, line 2707::
 Sage example in ./combinat.tex, line 2727::
 
   sage: g = BT.isotype_generating_series(); g
-  x + x^2 + 2*x^3 + 5*x^4 + 14*x^5 + O(x^6)
+  z + z^2 + 2*z^3 + 5*z^4 + 14*z^5 + 42*z^6 + 132*z^7 + O(z^8)
 
 Sage example in ./combinat.tex, line 2733::
 
@@ -922,7 +921,7 @@ Sage example in ./combinat.tex, line 2743::
 
 Sage example in ./combinat.tex, line 2752::
 
-  sage: L = FW.isotype_generating_series().coefficients(15); L
+  sage: L = FW.isotype_generating_series()[:15]; L
   [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987]
 
 Sage example in ./combinat.tex, line 2769::
@@ -1053,4 +1052,3 @@ Sage example in ./combinat.tex, line 3214::
   645490122795799841856164638490742749440
 
 """
-

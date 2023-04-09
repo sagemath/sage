@@ -414,13 +414,13 @@ class AffineGroupElement(MultiplicativeGroupElement):
         if v in parent.vector_space():
             return self._A*v + self._b
 
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        if is_Polynomial(v) and parent.degree() == 1:
+        from sage.rings.polynomial.polynomial_element import Polynomial
+        if isinstance(v, Polynomial) and parent.degree() == 1:
             ring = v.parent()
             return ring([self._A[0,0], self._b[0]])
 
-        from sage.rings.polynomial.multi_polynomial import is_MPolynomial
-        if is_MPolynomial(v) and parent.degree() == v.parent().ngens():
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
+        if isinstance(v, MPolynomial) and parent.degree() == v.parent().ngens():
             ring = v.parent()
             from sage.modules.free_module_element import vector
             image_coords = self._A * vector(ring, ring.gens()) + self._b
@@ -455,7 +455,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         if self_on_left:
             return self(x)
 
-    def inverse(self):
+    def __invert__(self):
         """
         Return the inverse group element.
 
@@ -473,18 +473,16 @@ class AffineGroupElement(MultiplicativeGroupElement):
             sage: ~g
                   [1 1]     [1]
             x |-> [0 1] x + [0]
-            sage: g * g.inverse()
+            sage: g * g.inverse()   # indirect doctest
                   [1 0]     [0]
             x |-> [0 1] x + [0]
             sage: g * g.inverse() == g.inverse() * g == G(1)
             True
         """
         parent = self.parent()
-        A = parent.matrix_space()(self._A.inverse())
-        b = -A*self.b()
+        A = parent.matrix_space()(~self._A)
+        b = -A * self.b()
         return parent.element_class(parent, A, b, check=False)
-
-    __invert__ = inverse
 
     def _richcmp_(self, other, op):
         """

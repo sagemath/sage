@@ -1,5 +1,5 @@
 """
-Tornaria Methods for Computing with Quadratic Forms
+Tornaria methods for computing with quadratic forms
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Gonzalo Tornaria
@@ -11,17 +11,19 @@ Tornaria Methods for Computing with Quadratic Forms
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.integer_ring import ZZ
-from sage.misc.functional import is_odd
-
+from sage.arith.misc import (CRT_vectors,
+                             factor,
+                             gcd,
+                             hilbert_symbol,
+                             kronecker as kronecker_symbol,
+                             prime_to_m_part)
 from sage.libs.pari.all import pari
+from sage.misc.functional import is_odd
 from sage.misc.misc_c import prod
-from sage.arith.all import (factor, gcd, prime_to_m_part, CRT_vectors,
-        hilbert_symbol, kronecker_symbol)
-
-from sage.quadratic_forms.quadratic_form import QuadraticForm__constructor as QuadraticForm
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
+from sage.quadratic_forms.quadratic_form import QuadraticForm__constructor as QuadraticForm
+from sage.rings.integer_ring import ZZ
 
 
 # TO DO -- Add second argument
@@ -331,7 +333,7 @@ def clifford_invariant(self, p):
         1
     """
     n = self.dim() % 8
-    if  n == 1 or n == 2:
+    if n == 1 or n == 2:
         s = 1
     elif n == 3 or n == 4:
         s = hilbert_symbol(-1, -self.disc(), p)
@@ -586,12 +588,11 @@ def is_zero(self, v, p=0) -> bool:
         True
         sage: Q1.is_zero([1,1,0], 2)
         False
-
     """
     norm = self(v)
     if p != 0:
         norm = norm % p
-    return  norm == 0
+    return norm == 0
 
 
 def is_zero_nonsingular(self, v, p=0) -> bool:

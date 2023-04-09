@@ -8,21 +8,21 @@ Tests for deprecations of imports in global namespace from :trac:`33602`::
     DeprecationWarning:
     Importing PowerSeries from here is deprecated;
     please use "from sage.rings.power_series_ring_element import PowerSeries" instead.
-    See https://trac.sagemath.org/33602 for details.
+    See https://github.com/sagemath/sage/issues/33602 for details.
     ...
     sage: PuiseuxSeries
     doctest:warning...:
     DeprecationWarning:
     Importing PuiseuxSeries from here is deprecated;
     please use "from sage.rings.puiseux_series_ring_element import PuiseuxSeries" instead.
-    See https://trac.sagemath.org/33602 for details.
+    See https://github.com/sagemath/sage/issues/33602 for details.
     ...
     sage: LaurentSeries
     doctest:warning...:
     DeprecationWarning:
     Importing LaurentSeries from here is deprecated;
     please use "from sage.rings.laurent_series_ring_element import LaurentSeries" instead.
-    See https://trac.sagemath.org/33602 for details.
+    See https://github.com/sagemath/sage/issues/33602 for details.
     ...
 """
 # ****************************************************************************
@@ -146,7 +146,7 @@ from .laurent_series_ring import LaurentSeriesRing
 lazy_import('sage.rings.laurent_series_ring_element', 'LaurentSeries', deprecation=33602)
 
 # Lazy Laurent series ring
-lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyTaylorSeriesRing',
+lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
                                             'LazySymmetricFunctions', 'LazyDirichletSeriesRing'])
 
 # Tate algebras

@@ -14,6 +14,7 @@ all: doc-html
 
 clean:
 	rm -rf en/reference/*/sage
+	rm -rf en/reference/documentation/sage_docbuild
 	rm -rf en/reference/sage
 	rm -f common/*.pyc
 

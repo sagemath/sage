@@ -30,7 +30,9 @@ from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_sgn, mpz_get_ui, mpz_set, mpz_set_si, mpz_set_ui
 from sage.libs.gmp.mpq cimport mpq_denref, mpq_numref
 from sage.rings.integer cimport smallInteger
-from sage.rings.all import RealField, ComplexField, QuadraticField
+from sage.rings.real_mpfr import RealField
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.number_field.number_field import QuadraticField
 from sage.matrix.args cimport (MatrixArgs, MA_ENTRIES_SEQ_SEQ,
                                MA_ENTRIES_SEQ_FLAT, MA_ENTRIES_CALLABLE,
                                MA_ENTRIES_UNKNOWN, MA_ENTRIES_SCALAR)
@@ -352,7 +354,7 @@ cpdef set_integer_from_gen(Integer self, Gen x):
             break
         elif paritype == t_PADIC:
             if x._valp() < 0:
-                raise TypeError("Cannot convert p-adic with negative valuation to an integer")
+                raise TypeError("cannot convert p-adic with negative valuation to an integer")
             # Lifting a PADIC yields an integer
             x = x.lift()
             break

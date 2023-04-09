@@ -24,8 +24,6 @@ using monospace fonts. The difference is that one is restricted to
 #
 #                  https://www.gnu.org/licenses/
 # ******************************************************************************
-
-import os
 import sys
 from sage.structure.sage_object import SageObject
 
@@ -230,7 +228,7 @@ class CharacterArt(SageObject):
             sage: aa = ascii_art([p3, p5])
             sage: aa.get_breakpoints()
             doctest:...: DeprecationWarning: get_breakpoints() is deprecated
-            See https://trac.sagemath.org/29204 for details.
+            See https://github.com/sagemath/sage/issues/29204 for details.
             [6]
         """
         from sage.misc.superseded import deprecation

@@ -2,10 +2,21 @@
 r"""
 Feature for testing the presence of msolve
 
-`msolve <https://msolve.lip6.fr/>`_ is a multivariate polynomial system solver
-developed mainly by Jérémy Berthomieu (Sorbonne University), Christian Eder
-(TU Kaiserslautern), and Mohab Safey El Din (Sorbonne University).
+`msolve <https://msolve.lip6.fr/>`_ is a multivariate polynomial system solver.
+
+.. SEEALSO::
+
+    - :mod:`sage.rings.polynomial.msolve`
 """
+
+# *****************************************************************************
+#       Copyright (C) 2022 Marc Mezzarobba
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 import subprocess
 from . import Executable

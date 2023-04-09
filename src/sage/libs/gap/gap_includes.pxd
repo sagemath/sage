@@ -76,8 +76,10 @@ cdef extern from "gap/intobj.h" nogil:
 
 
 cdef extern from "gap/io.h" nogil:
-    UInt OpenOutputStream(Obj stream)
-    UInt CloseOutput()
+    ctypedef struct TypOutputFile:
+        pass
+    UInt OpenOutputStream(TypOutputFile* output, Obj stream)
+    UInt CloseOutput(TypOutputFile* output)
 
 
 cdef extern from "gap/libgap-api.h" nogil:
@@ -182,4 +184,4 @@ cdef extern from "gap/stringobj.h" nogil:
     bint IS_STRING(Obj obj)
     bint IsStringConv(Obj obj)
     Obj NEW_STRING(Int)
-    void C_NEW_STRING(Obj new_gap_string, int length, char* c_string)
+    Obj MakeStringWithLen(const char* buf, size_t len)

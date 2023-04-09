@@ -4,7 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-"""
+r"""
 Optimized Quadratic Number Field Elements
 
 This file defines a Cython class ``NumberFieldElement_quadratic`` to speed up
@@ -23,16 +23,15 @@ AUTHORS:
     The ``_new()`` method should be overridden in this class to copy the ``D``
     and ``standard_embedding`` attributes
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 include "sage/libs/ntl/decl.pxi"
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
@@ -1555,7 +1554,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (3*a-2)/7 * b
             1
 
-        This fixes ticket :trac:`9357`::
+        This fixes issue :trac:`9357`::
 
             sage: K.<a> = NumberField(x^2+1)
             sage: d = K(0)
@@ -1634,7 +1633,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 #################################################################################
 
     def __hash__(self):
-        """
+        r"""
         Return hash of this number field element.
 
         For elements in `\ZZ` or `\QQ` the hash coincides with the one in the
@@ -2019,10 +2018,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         mpq_canonicalize(res.value)
         return res
 
-
     def norm(self, K=None):
-        """
-        Return the norm of self. If the second argument is None, this is the
+        r"""
+        Return the norm of ``self``.
+
+        If the second argument is ``None``, this is the
         norm down to `\QQ`. Otherwise, return the norm down to K (which had
         better be either `\QQ` or this number field).
 
@@ -2129,9 +2129,15 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         # D = 1 mod 4
         return mpz_fdiv_ui(self.D.value, 4) == 1
 
-    def charpoly(self, var='x'):
+    def charpoly(self, var='x', algorithm=None):
         r"""
         The characteristic polynomial of this element over `\QQ`.
+
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
 
         EXAMPLES::
 
@@ -2147,15 +2153,16 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         R = QQ[var]
         return R([self.norm(), -self.trace(), 1])
 
-    def minpoly(self, var='x'):
+    def minpoly(self, var='x', algorithm=None):
         r"""
         The minimal polynomial of this element over `\QQ`.
 
         INPUT:
 
-        -  ``var`` -- the minimal polynomial is defined over a polynomial ring
-           in a variable with this name. If not specified this defaults to
-           ``x``.
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements: and ignored
+
 
         EXAMPLES::
 
@@ -2651,10 +2658,17 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         """
         return ZZ(NumberFieldElement_quadratic.trace(self))
 
-    def charpoly(self, var='x'):
+    def charpoly(self, var='x', algorithm=None):
         r"""
         The characteristic polynomial of this element, which is over `\ZZ`
         because this element is an algebraic integer.
+
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
+
 
         EXAMPLES::
 
@@ -2671,9 +2685,16 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         R = ZZ[var]
         return R([self.norm(), -self.trace(), 1])
 
-    def minpoly(self, var='x'):
+    def minpoly(self, var='x', algorithm=None):
         r"""
         The minimal polynomial of this element over `\ZZ`.
+
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
+
 
         EXAMPLES::
 
@@ -3074,4 +3095,3 @@ cpdef bint is_sqrt_disc(Rational ad, Rational bd):
     mpz_clear(denom)
 
     return ret
-

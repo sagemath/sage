@@ -155,7 +155,7 @@ from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.data_structures.bitset import Bitset

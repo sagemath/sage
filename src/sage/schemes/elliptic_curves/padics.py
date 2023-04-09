@@ -21,25 +21,28 @@ Miscellaneous `p`-adic methods
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-
-import sage.rings.all as rings
-from . import padic_lseries as plseries
-import sage.arith.all as arith
-from sage.rings.all import (
-    Qp, Zp,
-    Integers,
-    Integer,
-    O,
-    PowerSeriesRing,
-    LaurentSeriesRing,
-    RationalField)
 import math
-import sage.misc.misc as misc
+
+import sage.arith.all as arith
 import sage.matrix.all as matrix
-sqrt = math.sqrt
-import sage.schemes.hyperelliptic_curves.monsky_washnitzer
+import sage.misc.misc as misc
+import sage.rings.all as rings
 import sage.schemes.hyperelliptic_curves.hypellfrob
+import sage.schemes.hyperelliptic_curves.monsky_washnitzer
+
 from sage.misc.cachefunc import cached_method
+from sage.rings.big_oh import O
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.integer import Integer
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.padics.factory import Qp, Zp
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import RationalField
+
+from . import padic_lseries as plseries
+
+sqrt = math.sqrt
+
 
 def __check_padic_hypotheses(self, p):
     r"""
@@ -98,8 +101,10 @@ def _normalize_padic_lseries(self, p, normalize, implementation, precision):
         raise ValueError("Implementation should be one of  'sage', 'eclib', 'num' or 'pollackstevens'")
     return (p, normalize, implementation, precision)
 
+
 @cached_method(key=_normalize_padic_lseries)
-def padic_lseries(self, p, normalize = None, implementation = 'eclib', precision = None):
+def padic_lseries(self, p, normalize=None, implementation='eclib',
+                  precision=None):
     r"""
     Return the `p`-adic `L`-series of self at
     `p`, which is an object whose approx method computes
@@ -176,10 +181,10 @@ def padic_lseries(self, p, normalize = None, implementation = 'eclib', precision
         sage: L = e.padic_lseries(3, implementation = 'sage')
         sage: L.series(5,prec=10)
         2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 3^6 + O(3^7) + (1 + 3 + 2*3^2 + 3^3 + O(3^4))*T + (1 + 2*3 + O(3^4))*T^2 + (3 + 2*3^2 + O(3^3))*T^3 + (2*3 + 3^2 + O(3^3))*T^4 + (2 + 2*3 + 2*3^2 + O(3^3))*T^5 + (1 + 3^2 + O(3^3))*T^6 + (2 + 3^2 + O(3^3))*T^7 + (2 + 2*3 + 2*3^2 + O(3^3))*T^8 + (2 + O(3^2))*T^9 + O(T^10)
-        
+
     Also the numerical modular symbols can be used.
-    This may allow for much larger conductor in some instances::   
-    
+    This may allow for much larger conductor in some instances::
+
         sage: E = EllipticCurve([101,103])
         sage: L = E.padic_lseries(5, implementation="num")
         sage: L.series(2)
@@ -209,16 +214,16 @@ def padic_lseries(self, p, normalize = None, implementation = 'eclib', precision
     if implementation in ['sage', 'eclib', 'num']:
         if self.ap(p) % p != 0:
             Lp = plseries.pAdicLseriesOrdinary(self, p,
-                                  normalize = normalize, implementation = implementation)
+                                  normalize=normalize, implementation=implementation)
         else:
             Lp = plseries.pAdicLseriesSupersingular(self, p,
-                                  normalize = normalize, implementation = implementation)
+                                  normalize=normalize, implementation=implementation)
     else:
         phi = self.pollack_stevens_modular_symbol(sign=0)
         if phi.parent().level() % p == 0:
-            Phi = phi.lift(p, precision, eigensymbol = True)
+            Phi = phi.lift(p, precision, eigensymbol=True)
         else:
-            Phi = phi.p_stabilize_and_lift(p, precision, eigensymbol = True)
+            Phi = phi.p_stabilize_and_lift(p, precision, eigensymbol=True)
         Lp = Phi.padic_lseries()  #mm TODO should this pass precision on too ?
         Lp._cinf = self.real_components()
     return Lp
@@ -287,7 +292,7 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_regulator(5, max_prec)           # long time
         sage: for prec in range(1, max_prec):                 # long time
-        ....:     assert E.padic_regulator(5, prec) == full   # long time
+        ....:     assert E.padic_regulator(5, prec) == full
 
     A case where the generator belongs to the formal group already
     (:trac:`3632`)::
@@ -658,7 +663,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_height(5, max_prec)(P)           # long time
         sage: for prec in range(1, max_prec):                 # long time
-        ....:     assert E.padic_height(5, prec)(P) == full   # long time
+        ....:     assert E.padic_height(5, prec)(P) == full
 
     A supersingular prime for a curve::
 
@@ -698,7 +703,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     TESTS:
 
-    Check that ticket :trac:`20798` is solved::
+    Check that issue :trac:`20798` is solved::
 
         sage: E = EllipticCurve("91b")
         sage: h = E.padic_height(7,10)
@@ -860,7 +865,7 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_height(5, max_prec)(P)           # long time
         sage: for prec in range(2, max_prec):                 # long time
-        ....:     assert E.padic_height_via_multiply(5, prec)(P) == full   # long time
+        ....:     assert E.padic_height_via_multiply(5, prec)(P) == full
     """
     if check_hypotheses:
         if not p.is_prime():
@@ -1042,7 +1047,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
         sage: E2 = E.padic_E2(5, max_N)                     # long time
         sage: max_sigma = E.padic_sigma(p, max_N, E2=E2)    # long time
         sage: for N in range(3, max_N):                     # long time
-        ....:    sigma = E.padic_sigma(p, N, E2=E2)         # long time
+        ....:    sigma = E.padic_sigma(p, N, E2=E2)
         ....:    assert sigma == max_sigma
     """
     if check_hypotheses:
@@ -1091,7 +1096,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
 
     Rt = x.parent()
 
-    A  = (x + c) * f
+    A = (x + c) * f
     # do integral over QQ, to avoid divisions by p
     A = Rt(QQt(A).integral())
     A = (-X.a1()/2 - A) * f
@@ -1224,10 +1229,10 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
         sage: E = EllipticCurve([1, 2, 3, 4, 7])                            # long time
         sage: E2 = E.padic_E2(5, 50)                                        # long time
         sage: for N in range(2, 10):                                        # long time
-        ....:    for lamb in range(10):                                     # long time
-        ....:       correct = E.padic_sigma(5, N + 3*lamb, E2=E2)           # long time
-        ....:       compare = E.padic_sigma_truncated(5, N=N, lamb=lamb, E2=E2)    # long time
-        ....:       assert compare == correct                               # long time
+        ....:    for lamb in range(10):
+        ....:       correct = E.padic_sigma(5, N + 3*lamb, E2=E2)
+        ....:       compare = E.padic_sigma_truncated(5, N=N, lamb=lamb, E2=E2)
+        ....:       assert compare == correct
     """
     if check_hypotheses:
         p = __check_padic_hypotheses(self, p)
@@ -1279,7 +1284,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
 
     Rt = x.parent()
 
-    A  = (x + c) * f
+    A = (x + c) * f
     # do integral over QQ, to avoid divisions by p
     A = Rt(QQt(A).integral())
     A = (-X.a1()/2 - A) * f
@@ -1476,7 +1481,7 @@ def padic_E2(self, p, prec=20, check=False, check_hypotheses=True, algorithm="au
     if self.conductor() % p == 0:
         if not self.conductor() % (p**2) == 0:
             eq = self.tate_curve(p)
-            return  eq.E2(prec=prec)
+            return eq.E2(prec=prec)
 
     X = self.minimal_model().short_weierstrass_model()
     frob_p = X.matrix_of_frobenius(p, prec, check, check_hypotheses, algorithm).change_ring(Integers(p**prec))

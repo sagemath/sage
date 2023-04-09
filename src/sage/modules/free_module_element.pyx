@@ -371,7 +371,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         ...
         TypeError: cannot convert 2-dimensional array to a vector
 
-    If any of the arguments to vector have Python type int, long, real,
+    If any of the arguments to vector have Python type int, real,
     or complex, they will first be coerced to the appropriate Sage
     objects. This fixes :trac:`3847`. ::
 
@@ -475,7 +475,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     # We first efficiently handle the important special case of the zero vector
     # over a ring. See trac 11657.
     # !! PLEASE DO NOT MOVE THIS CODE LOWER IN THIS FUNCTION !!
-    arg1_integer = isinstance(arg1, (int, long, Integer))
+    arg1_integer = isinstance(arg1, (int, Integer))
     if arg2 is None and is_Ring(arg0) and arg1_integer:
         M = FreeModule(arg0, arg1, bool(sparse))
         v = M.zero_vector()
@@ -898,14 +898,14 @@ def random_vector(ring, degree=None, *args, **kwds):
         ...
         ValueError: degree of a random vector must be non-negative, not -9
     """
-    if isinstance(ring, (Integer, int, long)):
-        if not degree is None:
+    if isinstance(ring, (Integer, int)):
+        if degree is not None:
             arglist = list(args)
             arglist.insert(0, degree)
             args = tuple(arglist)
         degree = ring
         ring = ZZ
-    if not isinstance(degree,(Integer, int, long)):
+    if not isinstance(degree, (Integer, int)):
         raise TypeError("degree of a random vector must be an integer, not %s" % degree)
     if degree < 0:
         raise ValueError("degree of a random vector must be non-negative, not %s" % degree)
@@ -1536,10 +1536,20 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: v = vector(QQ['x,y'], [1..5]); v.change_ring(GF(3))
             (1, 2, 0, 1, 2)
+
+        TESTS:
+
+        Check for :trac:`29630`::
+
+            sage: v = vector(QQ, 4, {0:1}, sparse=True)
+            sage: v.change_ring(AA).is_sparse()
+            True
         """
         if self.base_ring() is R:
             return self
         M = self._parent.change_ring(R)
+        if M.is_sparse():
+            return M(self.dict(), coerce=True)
         return M(self.list(), coerce=True)
 
     def coordinate_ring(self):
@@ -1592,7 +1602,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             if isinstance(ord, AnInfinity):
                 return ord
             v.append(ord)
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         return lcm(v)
 
     def items(self):
@@ -3743,7 +3753,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         from sage.misc.latex import latex
         vector_delimiters = latex.vector_delimiters()
         s = '\\left' + vector_delimiters[0]
-        s += ',\,'.join(latex(a) for a in self.list())
+        s += r',\,'.join(latex(a) for a in self.list())
         return s + '\\right' + vector_delimiters[1]
 
     def dense_vector(self):
@@ -4371,7 +4381,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: w.pairwise_product(v)
             (2*x^2, x^3, 3*x^2 + 9*x)
         """
-        if not right._parent is left._parent:
+        if right._parent is not left._parent:
             right = left.parent().ambient_module()(right)
         cdef list a = left._entries
         cdef list b = (<FreeModuleElement_generic_dense>right)._entries

@@ -4,7 +4,8 @@ Invariant modules
 
 # ****************************************************************************
 #       Copyright (C) 2021 Trevor K. Karn <karnx018 at umn.edu>
-#                          Travis Scrimshaw
+#                     2021 Travis Scrimshaw
+#                     2022 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +21,7 @@ from sage.categories.finitely_generated_semigroups import FinitelyGeneratedSemig
 from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 from sage.sets.family import Family
 from sage.matrix.constructor import Matrix
+
 
 class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
     r"""
@@ -64,7 +66,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
         sage: [I.lift(b) for b in I.basis()]
         [M[1] + M[2] + M[3]]
-    
+
     The we could also have the action be a right-action, instead of the
     default left-action::
 
@@ -262,9 +264,29 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
                          category=category,
                          *args, **kwargs)
 
+    def construction(self):
+        r"""
+        Return the functorial construction of ``self``.
+
+        EXAMPLES::
+
+            sage: G = CyclicPermutationGroup(3)
+            sage: R = G.regular_representation(); R
+            Left Regular Representation of Cyclic group of order 3 as a permutation group over Integer Ring
+            sage: I = R.invariant_module()
+            sage: I.construction()
+            (EquivariantSubobjectConstructionFunctor,
+            Left Regular Representation of Cyclic group of order 3 as a permutation group over Integer Ring)
+        """
+        from sage.categories.pushout import EquivariantSubobjectConstructionFunctor
+        return (EquivariantSubobjectConstructionFunctor(self._semigroup,
+                                                        self._action,
+                                                        self._side),
+                self.ambient())
+
     def _repr_(self):
         r"""
-        Return a string representaion of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 

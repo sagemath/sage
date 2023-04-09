@@ -130,7 +130,7 @@ def mandelbrot_plot(f=None, **kwds):
     ``interact`` to ``True``. (This is only implemented for ``z^2 + c``)::
 
         sage: mandelbrot_plot(interact=True)
-        interactive(children=(FloatSlider(value=0.0, description='Real center', max=1.0, min=-1.0, step=1e-05),
+        ...interactive(children=(FloatSlider(value=0.0, description='Real center', max=1.0, min=-1.0, step=1e-05),
         FloatSlider(value=0.0, description='Imag center', max=1.0, min=-1.0, step=1e-05),
         FloatSlider(value=4.0, description='Width', max=4.0, min=1e-05, step=1e-05),
         IntSlider(value=500, description='Iterations', max=1000),
@@ -144,7 +144,7 @@ def mandelbrot_plot(f=None, **kwds):
 
         sage: mandelbrot_plot(interact=True, x_center=-0.75, y_center=0.25,
         ....: image_width=1/2, number_of_colors=75)
-        interactive(children=(FloatSlider(value=-0.75, description='Real center', max=1.0, min=-1.0, step=1e-05),
+        ...interactive(children=(FloatSlider(value=-0.75, description='Real center', max=1.0, min=-1.0, step=1e-05),
         FloatSlider(value=0.25, description='Imag center', max=1.0, min=-1.0, step=1e-05),
         FloatSlider(value=0.5, description='Width', max=4.0, min=1e-05, step=1e-05),
         IntSlider(value=500, description='Iterations', max=1000),
@@ -283,9 +283,10 @@ def mandelbrot_plot(f=None, **kwds):
                     max_iteration = 50
 
                 # Mandelbrot of General Polynomial Map
-                return polynomial_mandelbrot(f, parameter, x_center, y_center, \
-                 image_width, max_iteration, pixel_count, level_sep, \
+                return polynomial_mandelbrot(f, parameter, x_center, y_center,
+                 image_width, max_iteration, pixel_count, level_sep,
                  number_of_colors, base_color)
+
 
 def external_ray(theta, **kwds):
     r"""
@@ -600,14 +601,14 @@ def julia_plot(f=None, **kwds):
     the form ``f = z^2 + c``)::
 
         sage: julia_plot(interact=True)
-        interactive(children=(FloatSlider(value=-1.0, description='Real c'...
+        ...interactive(children=(FloatSlider(value=-1.0, description='Real c'...
 
         ::
 
         sage: R.<z> = CC[]
         sage: f = z^2 + 1/2
         sage: julia_plot(f,interact=True)
-        interactive(children=(FloatSlider(value=0.5, description='Real c'...
+        ...interactive(children=(FloatSlider(value=0.5, description='Real c'...
 
     To return the Julia set of a random `c` value with (formal) cycle structure
     `(2,3)`, set ``period = [2,3]``::

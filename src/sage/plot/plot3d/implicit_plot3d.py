@@ -1,5 +1,5 @@
 """
-Implicit Plots
+Implicit plots
 """
 from .implicit_surface import ImplicitSurface
 

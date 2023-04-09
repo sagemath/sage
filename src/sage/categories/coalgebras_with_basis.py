@@ -13,7 +13,9 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from sage.categories.all import ModulesWithBasis, tensor, Hom
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.categories.tensor import tensor
+from sage.categories.homset import Hom
 from sage.categories.super_modules import SuperModulesCategory
 from sage.categories.filtered_modules import FilteredModulesCategory
 

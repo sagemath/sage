@@ -43,7 +43,7 @@ Finally, this module contains some data-structures for matrix-like
 objects like operation tables (e.g. the multiplication table of a group).
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
 
    sage/matrix/matrix_space

@@ -8,7 +8,7 @@ The Sage Manuals
 
 Sage's manuals are written in `ReST <http://docutils.sourceforge.net/rst.html>`_
 (reStructuredText), and generated with the software `Sphinx
-<http://sphinx.pocoo.org>`_:
+<https://www.sphinx-doc.org/>`_:
 
 .. LIST-TABLE::
    :widths: 4 12
@@ -84,7 +84,7 @@ The documentation can contain links toward modules, classes, or methods, e.g.::
 
 For links toward classes, methods, or function, replace **:mod:** by
 **:class:**, **:meth:** or **:func:** respectively.  See `Sphinx' documentation
-<http://sphinx.pocoo.org/markup/inline.html>`_.
+<https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html>`_.
 
 **Short links:** the link ``:func:`~sage.mod1.mod2.mod3.func1``` is equivalent
 to ``:func:`func1 <sage.mod1.mod2.mod3.func1>```: the function's name will be
@@ -195,7 +195,7 @@ Two **help** commands which give plenty of documentation for the ``sage
     sage --docbuild -H # a more comprehensive one
 
 **Output formats:** All output formats supported by Sphinx (e.g. pdf) can be
-used in Sage. See `<http://sphinx.pocoo.org/builders.html>`_.
+used in Sage. See `<http://www.sphinx-doc.org/builders.html>`_.
 
 **Broken links:** in order to build the documentation while reporting the broken
 links that it contains, use the ``--warn-links`` flag. Note that Sphinx will not

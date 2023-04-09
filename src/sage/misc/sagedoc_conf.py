@@ -118,7 +118,7 @@ def skip_TESTS_block(app, what, name, obj, options, docstringlines):
     """
     from sage.misc.sagedoc import skip_TESTS_block as sagedoc_skip_TESTS
     if not docstringlines:
-        # No docstring, so don't do anything. See Trac #19932.
+        # No docstring, so don't do anything. See Issue #19932.
         return
     s = sagedoc_skip_TESTS("\n".join(docstringlines))
     lines = s.split("\n")
@@ -145,9 +145,6 @@ class SagemathTransform(Transform):
                 source = blankline_re.sub('', source)
                 node.rawsource = source
                 node[:] = [nodes.Text(source)]
-
-from sage.misc.sageinspect import sage_getargspec
-autodoc_builtin_argspec = sage_getargspec
 
 # This is only used by sage.misc.sphinxify
 def setup(app):

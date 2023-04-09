@@ -291,8 +291,8 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             v = self.element()
             manin_symbols = A.ambient_hecke_module().manin_symbols_basis()
             F = formal_sum.FormalSums(A.base_ring())
-            ms = F([(v[i], manin_symbols[i]) for i in \
-                  range(v.degree()) if v[i] != 0], check=False, reduce=False)
+            ms = F([(v[i], manin_symbols[i]) for i in range(v.degree())
+                    if v[i] != 0], check=False, reduce=False)
             self.__manin_symbols = ms
         return self.__manin_symbols
 

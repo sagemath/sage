@@ -1,6 +1,6 @@
 From: Jeroen Demeyer
 Allow error recovery. See discussion at
-http://trac.sagemath.org/ticket/20710#comment:18
+https://github.com/sagemath/sage/issues/20710#comment:18
 
 diff --git a/src/env/error.c b/src/env/error.c
 index a898b76..154de0f 100644

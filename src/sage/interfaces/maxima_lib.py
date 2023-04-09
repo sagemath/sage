@@ -77,6 +77,26 @@ The output is parseable (i. e. :trac:`31796` is fixed)::
     sage: bar == foo
     True
 
+TESTS:
+
+Check our workaround for a race in ecl works, see :trac:`26968`.
+We use a temporary `MAXIMA_USERDIR` so it's empty; we place it
+in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
+
+    sage: import tempfile, subprocess
+    sage: tmpdir = tempfile.TemporaryDirectory(dir=DOT_SAGE)
+    sage: _ = subprocess.run(['sage', '-c',  # long time
+    ....: f'''
+    ....: import os
+    ....: os.environ["MAXIMA_USERDIR"] = "{tmpdir.name}"
+    ....: if not os.fork():
+    ....:     import sage.interfaces.maxima_lib
+    ....: else:
+    ....:     import sage.interfaces.maxima_lib
+    ....:     os.wait()
+    ....: '''])
+    sage: tmpdir.cleanup()
+
 """
 
 # ****************************************************************************
@@ -116,7 +136,23 @@ ecl_eval("(in-package :maxima)")
 ecl_eval("(setq $nolabels t))")
 ecl_eval("(defvar *MAXIMA-LANG-SUBDIR* NIL)")
 ecl_eval("(set-locale-subdir)")
-ecl_eval("(set-pathnames)")
+
+try:
+    ecl_eval("(set-pathnames)")
+except RuntimeError:
+    # Recover from :trac:`26968` by creating `*maxima-objdir*` here.
+    # This cannot be done before calling `(set-pathnames)` since
+    # `*maxima-objdir*` is computed there.
+    # We use python `os.makedirs()` which is immune to the race.
+    # Using `(ensure-directories-exist ...)` in lisp would be
+    # subject to the same race condition and since `*maxima-objdir*`
+    # has multiple components this is quite plausible to happen.
+    maxima_objdir = ecl_eval("*maxima-objdir*").python()[1:-1]
+    import os
+    os.makedirs(maxima_objdir, exist_ok=True)
+    # Call `(set-pathnames)` again to complete its job.
+    ecl_eval("(set-pathnames)")
+
 ecl_eval("(defun add-lineinfo (x) x)")
 ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (merror "Divergent Integral"))))')
 ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
@@ -128,7 +164,7 @@ ecl_eval("(setf $errormsg nil)")
 # which the text of the question is included. This is accomplished by
 # redirecting *standard-output* to a string.
 #
-# After an update in Trac 31553, this routine also preprocesses the
+# After an update in Issue 31553, this routine also preprocesses the
 # text to replace space symbols with strings. This prevents those
 # symbols from being turned into ugly newlines -- a problem that we
 # used to avoid with a custom patch.
@@ -158,14 +194,14 @@ ecl_eval(r"""
                             (mterpri))))))))
 """)
 
-## Redirection of ECL and Maxima stdout to /dev/null
+# Redirection of ECL and Maxima stdout to /dev/null
 ecl_eval(r"""(defparameter *dev-null* (make-two-way-stream
               (make-concatenated-stream) (make-broadcast-stream)))""")
 ecl_eval("(setf original-standard-output *standard-output*)")
 ecl_eval("(setf *standard-output* *dev-null*)")
 #ecl_eval("(setf *error-output* *dev-null*)")
 
-## Default options set in Maxima
+# Default options set in Maxima
 # display2d -- no ascii art output
 # keepfloat -- don't automatically convert floats to rationals
 
@@ -183,48 +219,21 @@ init_code = ['besselexpand : true', 'display2d : false', 'domain : complex', 'ke
 init_code.append('nolabels : true')
 for l in init_code:
     ecl_eval("#$%s$"%l)
-## To get more debug information uncomment the next line
-## should allow to do this through a method
+# To get more debug information uncomment the next line
+# should allow to do this through a method
 #ecl_eval("(setf *standard-output* original-standard-output)")
 
-## This is the main function (ECL object) used for evaluation
+# This is the main function (ECL object) used for evaluation
 # This returns an EclObject
 maxima_eval=ecl_eval("""
 (defun maxima-eval( form )
-    (let ((result (catch 'macsyma-quit (cons 'maxima_eval (meval form)))))
-        ;(princ (list "result=" result))
-        ;(terpri)
-        ;(princ (list "$error=" $error))
-        ;(terpri)
-        (cond
-            ((and (consp result) (eq (car result) 'maxima_eval)) (cdr result))
-            ((eq result 'maxima-error)
-                (let ((the-jig (process-error-argl (cddr $error))))
-                    (mapc #'set (car the-jig) (cadr the-jig))
-                    (error (concatenate 'string
-                        "Error executing code in Maxima: "
-                        (with-output-to-string (stream)
-                           (apply #'mformat stream (cadr $error)
-                             (caddr the-jig)))))
-                ))
-            (t
-                (let ((the-jig (process-error-argl (cddr $error))))
-                    (mapc #'set (car the-jig) (cadr the-jig))
-                    (error (concatenate 'string "Maxima condition. result:"
-                        (princ-to-string result) "$error:"
-                        (with-output-to-string (stream)
-                            (apply #'mformat stream (cadr $error)
-                              (caddr the-jig)))))
-                ))
-        )
-    )
-)
+    (with-$error (meval form)))
 """)
 
-## Number of instances of this interface
+# Number of instances of this interface
 maxima_lib_instances = 0
 
-## Here we define several useful ECL/Maxima objects
+# Here we define several useful ECL/Maxima objects
 # The Maxima string function can change the structure of its input
 #maxprint=EclObject("$STRING")
 maxprint=EclObject(r"""(defun mstring-for-sage (form)
@@ -678,10 +687,10 @@ class MaximaLib(MaximaAbstract):
         """
         return MaximaLibElementFunction
 
-    ## some helper functions to wrap the calculus use of the maxima interface.
-    ## these routines expect arguments living in the symbolic ring
-    ## and return something that is hopefully coercible into the symbolic
-    ## ring again.
+    # some helper functions to wrap the calculus use of the maxima interface.
+    # these routines expect arguments living in the symbolic ring
+    # and return something that is hopefully coercible into the symbolic
+    # ring again.
 
     def sr_integral(self,*args):
         """
@@ -864,7 +873,7 @@ class MaximaLib(MaximaAbstract):
             sage: sum(1/(m^4 + 2*m^3 + 3*m^2 + 2*m)^2, m, 0, infinity)
             Traceback (most recent call last):
             ...
-            RuntimeError: ECL says: Error executing code in Maxima: Zero to negative power computed.
+            RuntimeError: ECL says: Zero to negative power computed.
 
         Similar situation for :trac:`12410`::
 
@@ -872,8 +881,7 @@ class MaximaLib(MaximaAbstract):
             sage: sum(1/x*(-1)^x, x, 0, oo)
             Traceback (most recent call last):
             ...
-            RuntimeError: ECL says: Error executing code in Maxima: Zero to negative power computed.
-
+            RuntimeError: ECL says: Zero to negative power computed.
         """
         try:
             return max_to_sr(maxima_eval([[max_ratsimp],[[max_simplify_sum],([max_sum],[sr_to_max(SR(a)) for a in args])]]))
@@ -1037,17 +1045,22 @@ class MaximaLib(MaximaAbstract):
 
 def is_MaximaLibElement(x):
     r"""
-    Returns True if x is of type MaximaLibElement.
+    Return True if ``x`` is of type :class:`MaximaLibElement`.
 
     EXAMPLES::
 
         sage: from sage.interfaces.maxima_lib import maxima_lib, is_MaximaLibElement
+        sage: is_MaximaLibElement(1)
+        doctest:...: DeprecationWarning: the function is_MaximaLibElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaLibElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
+        False
         sage: m = maxima_lib(1)
         sage: is_MaximaLibElement(m)
         True
-        sage: is_MaximaLibElement(1)
-        False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_MaximaLibElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaLibElement) instead")
+
     return isinstance(x, MaximaLibElement)
 
 
@@ -1187,6 +1200,8 @@ def reduce_load_MaximaLib():
 import sage.rings.real_double
 import sage.symbolic.expression
 import sage.symbolic.integration.integral
+
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.symbolic.operators import FDerivativeOperator, add_vararg, mul_vararg
 
 car=EclObject("car")
@@ -1201,7 +1216,7 @@ meval=EclObject("meval")
 NIL=EclObject("NIL")
 lisp_length=EclObject("length")
 
-## Dictionaries for standard operators
+# Dictionaries for standard operators
 sage_op_dict = {
     sage.functions.other.abs : "MABS",
     add_vararg : "MPLUS",
@@ -1230,7 +1245,7 @@ sage_op_dict = dict([(k,EclObject(sage_op_dict[k])) for k in sage_op_dict])
 max_op_dict = dict([(sage_op_dict[k],k) for k in sage_op_dict])
 
 
-## Here we correct the dictionaries for some simple operators
+# Here we correct the dictionaries for some simple operators
 
 def sage_rat(x,y):
     r"""
@@ -1260,7 +1275,7 @@ max_op_dict[mtimes]=mul_vararg
 max_op_dict[rat]=sage_rat
 
 
-## Here we build dictionaries for operators needing special conversions.
+# Here we build dictionaries for operators needing special conversions.
 ratdisrep = EclObject("ratdisrep")
 mrat = EclObject("MRAT")
 mqapply = EclObject("MQAPPLY")
@@ -1508,12 +1523,12 @@ special_sage_to_max={
 }
 
 
-## Dictionaries for symbols
+# Dictionaries for symbols
 sage_sym_dict={}
 max_sym_dict={}
 
 
-## Generic conversion functions
+# Generic conversion functions
 
 max_i=EclObject("$%I")
 def pyobject_to_max(obj):
@@ -1546,9 +1561,11 @@ def pyobject_to_max(obj):
     """
     if isinstance(obj,sage.rings.rational.Rational):
         return EclObject(obj) if (obj.denom().is_one()) else EclObject([[rat], obj.numer(),obj.denom()])
-    elif isinstance(obj,sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic) and obj.parent().defining_polynomial().list() == [1,0,1]:
-        re, im = obj.list()
-        return EclObject([[mplus], pyobject_to_max(re), [[mtimes], pyobject_to_max(im), max_i]])
+    elif isinstance(obj, NumberFieldElement_base):
+        from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
+        if isinstance(obj, NumberFieldElement_quadratic) and obj.parent().defining_polynomial().list() == [1,0,1]:
+            re, im = obj.list()
+            return EclObject([[mplus], pyobject_to_max(re), [[mtimes], pyobject_to_max(im), max_i]])
     return EclObject(obj)
 
 # This goes from SR to EclObject

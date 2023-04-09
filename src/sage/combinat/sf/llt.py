@@ -50,6 +50,7 @@ m_to_hcosp_cache={}
 QQt = QQ['t'].fraction_field()
 # This is to become the "abstract algebra" for llt polynomials
 
+
 class LLT_class(UniqueRepresentation):
     r"""
     A class for working with LLT symmetric functions.
@@ -406,7 +407,6 @@ class LLT_class(UniqueRepresentation):
         return LLT_spin(self)
 
 
-
 class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def __init__(self, llt, prefix):
@@ -645,7 +645,6 @@ class LLT_spin(LLT_generic):
 
         LLT_generic.__init__(self, llt, prefix="HSp%s" % level)
 
-
     def _to_m(self, part):
         r"""
         Returns a function which gives the coefficient of a partition
@@ -744,6 +743,7 @@ class LLT_cospin(LLT_generic):
 
     class Element(LLT_generic.Element):
         pass
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

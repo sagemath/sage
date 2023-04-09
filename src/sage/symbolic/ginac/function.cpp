@@ -976,7 +976,7 @@ ex function::evalf(int level, PyObject* kwds) const
 		// convert seq to a PyTuple of Expressions
 		PyObject* args = py_funcs.exvector_to_PyTuple(eseq);
 		// call opt.evalf_f with this list
-		PyObject* pyresult = PyEval_CallObjectWithKeywords(
+		PyObject* pyresult = PyObject_Call(
 			PyObject_GetAttrString(reinterpret_cast<PyObject*>(opt.evalf_f),
 				"_evalf_"), args, kwds);
 		Py_DECREF(args);
@@ -1056,7 +1056,7 @@ ex function::series(const relational & r, int order, unsigned options) const
 		// add the point of expansion as a keyword argument
 		PyDict_SetItemString(kwds, "at", py_funcs.ex_to_pyExpression(r.rhs()));
 		// call opt.series_f with this list
-		PyObject* pyresult = PyEval_CallObjectWithKeywords(
+		PyObject* pyresult = PyObject_Call(
 			PyObject_GetAttrString(reinterpret_cast<PyObject*>(opt.series_f),
 				"_series_"), args, kwds);
 		Py_DECREF(args);
@@ -1321,7 +1321,7 @@ ex function::derivative(const symbol & s) const
 			PyObject* kwds = Py_BuildValue("{s:O}","diff_param",
 					symb);
 			// call opt.derivative_f with this list
-			PyObject* pyresult = PyEval_CallObjectWithKeywords(
+			PyObject* pyresult = PyObject_Call(
 				PyObject_GetAttrString(
 					reinterpret_cast<PyObject*>(opt.derivative_f),
 					"_tderivative_"), args, kwds);
@@ -1478,7 +1478,7 @@ ex function::pderivative(unsigned diff_param) const // partial differentiation
 		// create a dictionary {'diff_param': diff_param}
 		PyObject* kwds = Py_BuildValue("{s:I}","diff_param",diff_param);
 		// call opt.derivative_f with this list
-		PyObject* pyresult = PyEval_CallObjectWithKeywords(
+		PyObject* pyresult = PyObject_Call(
 			PyObject_GetAttrString(reinterpret_cast<PyObject*>(opt.derivative_f),
 				"_derivative_"), args, kwds);
 		Py_DECREF(args);
@@ -1557,7 +1557,7 @@ ex function::power(const ex & power_param) const // power of function
 		PyObject* kwds = PyDict_New();
 		PyDict_SetItemString(kwds, "power_param", py_funcs.ex_to_pyExpression(power_param));
 		// call opt.power_f with this list
-		PyObject* pyresult = PyEval_CallObjectWithKeywords(
+		PyObject* pyresult = PyObject_Call(
 			PyObject_GetAttrString(reinterpret_cast<PyObject*>(opt.power_f),
 				"_power_"), args, kwds);
 		Py_DECREF(args);

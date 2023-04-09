@@ -11,7 +11,8 @@ from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.modules.fg_pid.fgp_element import FGP_Element
 from sage.rings.integer_ring import ZZ
 
-def AdditiveAbelianGroup(invs, remember_generators = True):
+
+def AdditiveAbelianGroup(invs, remember_generators=True):
     r"""
     Construct a finitely-generated additive abelian group.
 
@@ -140,7 +141,6 @@ def cover_and_relations_from_invariants(invs):
     A = ZZ**n
     B = A.span([A.gen(i) * invs[i] for i in range(n)])
     return (A, B)
-
 
 
 class AdditiveAbelianGroupElement(FGP_Element):
@@ -351,7 +351,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
             1
         """
         if not self.invariants():
-            return 1
+            return ZZ(1)
         else:
             ann =  self.annihilator().gen()
             if ann:

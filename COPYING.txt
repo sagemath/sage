@@ -130,7 +130,6 @@ tachyon                     Modified BSD
 threejs                     MIT License
 tornado                     Apache License
 zlib                        Custom (Modified BSD)
-zn_poly                     GPLv2 or GPLv3 (no later versions, see below)
 
 CONTACT INFO:
      William Stein; wstein@gmail.com;
@@ -1345,54 +1344,5 @@ Copyright (C) 1995-2004 Jean-loup Gailly and Mark Adler
 
   Jean-loup Gailly jloup@gzip.org
   Mark Adler madler@alumni.caltech.edu
-
-
-================================================================================
-
-zn_poly: a library for polynomial arithmetic (version 0.9)
-
-Copyright (C) 2007, 2008, David Harvey
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or
-(at your option) version 3 of the License.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License,
-along with this program (see gpl-2.0.txt and gpl-3.0.txt). If not,
-see <http://www.gnu.org/licenses/>.
-
-Licensing notes:
-
-(1)
-zn_poly is NOT released under the "GPL v2 or later" or "GPL v3 or later".
-Both v2 and v3 are fine, but for now I am excluding later versions. If you
-need zn_poly under a different license, ask me and I'll consider it.
-
-(2)
-zn_poly incorporates small amounts of code from other projects:
-
-   (2a)
-   The file "wide_arith.h" includes some assembly macros from the file
-   "longlong.h" in GMP 4.2.1; see http://gmplib.org/. The copyright to this
-   code is held by the Free Software Foundation, and it was released under
-   "LGPL v2.1 or later".
-
-   (2b)
-   The file "wide_arith.h" also includes assembly macros from the file
-   "SPMM_ASM.h" in NTL 5.4.1; see http://www.shoup.net/ntl/. The copyright
-   to this code is held by Victor Shoup, and it was released under "GPL v2 or
-   later".
-
-   (2c)
-   The filer "profiler.h" contains x86 cycle counting code from the file
-   "profiler.h" in FLINT 1.0; see http://www.flintlib.org/. The copyright
-   to this code is held by William Hart, and it was released under "GPL v2 or
-   later".
 
 ===============================================================================

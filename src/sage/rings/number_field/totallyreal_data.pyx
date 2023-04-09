@@ -27,7 +27,8 @@ AUTHORS:
 from libc.math cimport sqrt
 from cysignals.memory cimport sig_malloc, sig_free
 
-from sage.arith.all import binomial, gcd
+from sage.arith.misc import binomial
+from sage.arith.misc import GCD as gcd
 from sage.libs.gmp.mpz cimport *
 from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

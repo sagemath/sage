@@ -98,7 +98,7 @@
 #    (Linux only--no-op on other platforms.)  Check shared libraries loaded by
 #    EXECUTABLE (may be a program or another library) for a library starting
 #    with SONAME, and if found appends SONAME to the LD_PRELOAD environment
-#    variable.  See https://trac.sagemath.org/24885.
+#    variable.  See https://github.com/sagemath/sage/issues/24885.
 
 set -o allexport
 
@@ -166,7 +166,7 @@ sdh_configure() {
     echo "Configuring $PKG_NAME"
     # Run all configure scripts with bash to work around bugs with
     # non-portable scripts.
-    # See https://trac.sagemath.org/ticket/24491
+    # See https://github.com/sagemath/sage/issues/24491
     if [ -z "$CONFIG_SHELL" ]; then
         export CONFIG_SHELL=`command -v bash`
     fi
@@ -290,6 +290,8 @@ sdh_pip_install() {
 
 sdh_pip_editable_install() {
     echo "Installing $PKG_NAME (editable mode)"
+    # Until https://github.com/sagemath/sage/issues/34209 switches us to PEP 660 editable wheels
+    export SETUPTOOLS_ENABLE_FEATURES=legacy-editable
     python3 -m pip install --verbose --no-deps --no-index --no-build-isolation --isolated --editable "$@" || \
         sdh_die "Error installing $PKG_NAME"
 }

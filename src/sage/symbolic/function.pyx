@@ -502,7 +502,7 @@ cdef class Function(SageObject):
             sage: (out, parent(out))
             (0, Integer Ring)
 
-        Check that `real_part` and `imag_part` still works after :trac:`21216`::
+        Check that ``real_part`` and ``imag_part`` still works after :trac:`21216`::
 
             sage: import numpy
             sage: a = numpy.array([1+2*I, -2-3*I], dtype=complex)
@@ -988,7 +988,7 @@ cdef class BuiltinFunction(Function):
                 # This special case should be removed when
                 # Python always raise an error for factorial(float).
                 # This case will be delegated to the gamma function.
-                # see Trac ticket #30764
+                # see Github issue #30764
                 if self._name != 'factorial':
                     import math as module
             elif all(isinstance(arg, complex) for arg in args):

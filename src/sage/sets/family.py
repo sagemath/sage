@@ -1380,6 +1380,23 @@ class TrivialFamily(AbstractFamily):
         """
         self.__init__(state['_enumeration'])
 
+    def map(self, f, name=None):
+        r"""
+        Return the family `( f(\mathtt{self}[i]) )_{i \in I}`,
+        where `I` is the index set of ``self``.
+
+        The result is again a :class:`TrivialFamily`.
+
+        EXAMPLES::
+
+            sage: from sage.sets.family import TrivialFamily
+            sage: f = TrivialFamily(['a', 'b', 'd'])
+            sage: g = f.map(lambda x: x + '1'); g
+            Family ('a1', 'b1', 'd1')
+        """
+        # tuple([... for ...]) is faster than tuple(... for ...)
+        return Family(tuple([f(x) for x in self._enumeration]), name=name)
+
 
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.rings.infinity import Infinity

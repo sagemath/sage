@@ -512,7 +512,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             # room for other parents (e.g. polynomial ring et al.)
 
         try:
-            return super(GenericProduct, self)._element_constructor_(data)
+            return super()._element_constructor_(data)
         except (TypeError, ValueError):
             pass
         if isinstance(data, (tuple, list, CartesianProduct.Element)):
@@ -1441,9 +1441,7 @@ class UnivariateProduct(GenericProduct):
             sage: type(GrowthGroup('x^ZZ * log(x)^ZZ'))  # indirect doctest
             <class 'sage.rings.asymptotic.growth_group_cartesian.UnivariateProduct_with_category'>
         """
-        super(UnivariateProduct, self).__init__(
-            sets, category, order='lex', **kwargs)
-
+        super().__init__(sets, category, order='lex', **kwargs)
 
     CartesianProduct = CartesianProductGrowthGroups
 
@@ -1474,8 +1472,6 @@ class MultivariateProduct(GenericProduct):
             sage: type(GrowthGroup('x^ZZ * y^ZZ'))  # indirect doctest
             <class 'sage.rings.asymptotic.growth_group_cartesian.MultivariateProduct_with_category'>
         """
-        super(MultivariateProduct, self).__init__(
-            sets, category, order='product', **kwargs)
-
+        super().__init__(sets, category, order='product', **kwargs)
 
     CartesianProduct = CartesianProductGrowthGroups

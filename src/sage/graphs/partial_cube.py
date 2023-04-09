@@ -166,7 +166,6 @@ def depth_first_traversal(G, start):
         sage: t = list(sage.graphs.partial_cube.depth_first_traversal(H, '00'))
         sage: len(t)
         16
-
     """
     neighbors = G.neighbor_out_iterator
     seen = set()
@@ -286,7 +285,7 @@ def is_partial_cube(G, certificate=False):
     # Initial sanity check: are there few enough edges?
     # Needed so that we don't try to use union-find on a dense
     # graph and incur superquadratic runtimes.
-    if 1 << (2*G.size()//n) > n:
+    if 1 << (2 * G.size() // n) > n:
         return fail
 
     # Check for bipartiteness.
@@ -399,13 +398,13 @@ def is_partial_cube(G, certificate=False):
 
     # Rest of data structure: point from states to list and list to states
     state_to_active_token = {v: -1 for v in g}
-    token_to_states = [[] for i in activeTokens]  # (i.e. vertices on which each token acts)
+    token_to_states = [[] for _ in activeTokens]  # (i.e. vertices on which each token acts)
 
     def scan(v):
         """
         Find the next token that is effective for v.
         """
-        a = next(i for i in range(state_to_active_token[v]+1, len(activeTokens))
+        a = next(i for i in range(state_to_active_token[v] + 1, len(activeTokens))
                  if activeTokens[i] is not None and activeTokens[i] in action[v])
         state_to_active_token[v] = a
         token_to_states[a].append(v)

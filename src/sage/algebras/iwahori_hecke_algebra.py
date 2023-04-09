@@ -30,10 +30,12 @@ from sage.misc.bindable_class import BindableClass
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.realizations import Realizations, Category_realization_of_parent
-from sage.categories.all import AlgebrasWithBasis, FiniteDimensionalAlgebrasWithBasis, CoxeterGroups
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
+from sage.categories.coxeter_groups import CoxeterGroups
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.arith.all import is_square
+from sage.arith.misc import is_square
 from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.sets.family import Family
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -1732,7 +1734,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 sage: T1.parent()
                 Iwahori-Hecke algebra of type A2 in 1,-1 over Integer Ring in the T-basis
             """
-            def inverse(self):
+            def __invert__(self):
                 r"""
                 Return the inverse if ``self`` is a basis element.
 
@@ -1746,7 +1748,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                     sage: R.<q> = LaurentPolynomialRing(QQ)
                     sage: H = IwahoriHeckeAlgebra("A2", q).T()
                     sage: [T1,T2] = H.algebra_generators()
-                    sage: x = (T1*T2).inverse(); x
+                    sage: x = (T1*T2).inverse(); x   # indirect doctest
                     (q^-2)*T[2,1] + (q^-2-q^-1)*T[1] + (q^-2-q^-1)*T[2] + (q^-2-2*q^-1+1)
                     sage: x*T1*T2
                     1
@@ -1770,8 +1772,6 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 w = self.support_of_term()
 
                 return H.prod(H.inverse_generator(i) for i in reversed(w.reduced_word()))
-
-            __invert__ = inverse
 
     standard = T
 
@@ -2284,9 +2284,14 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 {(1,): -1, (1, 2, 1): 1}
                 sage: Cp._decompose_into_generators(W([1,2,3,1,2]))      # optional - coxeter3
                 {(1,): 1, (1, 2, 1): -1, (1, 2, 1, 3, 2): 1, (1, 3, 2): -1}
+
+            TESTS::
+
+                sage: Cp._decompose_into_generators(W([]))               # optional - coxeter3
+                {(): 1}
             """
             # l(y) = 0 or 1
-            if not u:
+            if not len(u):
                 return {(): 1}
             if len(u) == 1:
                 return {(u[0],): 1}
@@ -2487,6 +2492,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         def __init__(self, IHAlgebra, prefix=None):
             r"""
             Initialize the `A`-basis of the Iwahori-Hecke algebra ``IHAlgebra``.
+
+            EXAMPLES::
 
                 sage: R.<v> = LaurentPolynomialRing(QQ)
                 sage: H = IwahoriHeckeAlgebra('A3', v**2)

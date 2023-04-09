@@ -36,7 +36,7 @@ from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singu
 
 from sage.libs.pari.all import pari_gen
 from sage.structure.richcmp import richcmp, richcmp_item, rich_to_bool, rich_to_bool_sgn
-from sage.structure.element import coerce_binop
+from sage.structure.element import coerce_binop, parent
 
 from sage.rings.infinity import infinity, Infinity
 from sage.rings.integer_ring import ZZ
@@ -100,7 +100,7 @@ class Polynomial_generic_sparse(Polynomial):
                 w = {}
                 for n, c in x.dict().items():
                     w[n] = R(c)
-                # The following line has been added in trac ticket #9944.
+                # The following line has been added in github issue #9944.
                 # Apparently, the "else" case has never occurred before.
                 x = w
         elif isinstance(x, (list, tuple)):
@@ -408,7 +408,7 @@ class Polynomial_generic_sparse(Polynomial):
         for n in D:
             del x[n]
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         """
         Return the `n`-th coefficient of this polynomial.
 
@@ -436,37 +436,36 @@ class Polynomial_generic_sparse(Polynomial):
             sage: f[:2]
             -42.000*x + 8.0000
 
-        Any other kind of slicing is deprecated or an error::
+        Any other kind of slicing is an error, see :trac:`18940`::
 
             sage: f[1:3]
-            doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See http://trac.sagemath.org/18940 for details.
-            73.500*x^2 - 42.000*x
+            Traceback (most recent call last):
+            ...
+            IndexError: polynomial slicing with a start is not defined
+
             sage: f[1:3:2]
             Traceback (most recent call last):
             ...
-            NotImplementedError: polynomial slicing with a step is not defined
+            IndexError: polynomial slicing with a step is not defined
+
+        TESTS::
+
             sage: f["hello"]
             Traceback (most recent call last):
             ...
             TypeError: list indices must be integers, not str
         """
         if isinstance(n, slice):
-            d = self.degree() + 1
             start, stop, step = n.start, n.stop, n.step
             if step is not None:
-                raise NotImplementedError("polynomial slicing with a step is not defined")
-            if start is None:
-                start = 0
-            else:
-                if start < 0:
-                    start = 0
-                from sage.misc.superseded import deprecation
-                deprecation(18940, "polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead")
+                raise IndexError("polynomial slicing with a step is not defined")
+            if start is not None:
+                raise IndexError("polynomial slicing with a start is not defined")
+            d = self.degree() + 1
             if stop is None or stop > d:
                 stop = d
-            x = self.__coeffs
-            v = {k: x[k] for k in x.keys() if start <= k < stop}
+            v = {key: val for key, val in self.__coeffs.items()
+                 if key < stop}
             return self.parent()(v)
 
         try:
@@ -542,6 +541,29 @@ class Polynomial_generic_sparse(Polynomial):
         if not self.__coeffs:
             return -1
         return max(self.__coeffs)
+
+    def __floordiv__(self, right):
+        """
+        Return the quotient upon division (no remainder).
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQbar, sparse=True)
+            sage: f = (1+2*x)^3 + 3*x; f
+            8*x^3 + 12*x^2 + 9*x + 1
+            sage: g = f // (1+2*x); g
+            4*x^2 + 4*x + 5/2
+            sage: f - g * (1+2*x)
+            -3/2
+            sage: f.quo_rem(1+2*x)
+            (4*x^2 + 4*x + 5/2, -3/2)
+
+        """
+        P = self.parent()
+        if P is parent(right):
+            return self._floordiv_(right)
+        d = P.base_ring()(right)
+        return self.map_coefficients(lambda c: c // d)
 
     def _add_(self, right):
         r"""
@@ -800,6 +822,16 @@ class Polynomial_generic_sparse(Polynomial):
             sage: g = x*y^5
             sage: f.quo_rem(g)
             (-y^5 + 2*y^2, y^3 - 2*x^2*y^2 - y)
+
+        Polynomials over noncommutative rings are also allowed::
+
+            sage: HH = QuaternionAlgebra(QQ, -1, -1)
+            sage: P.<x> = PolynomialRing(HH, sparse=True)
+            sage: f = P.random_element(5)
+            sage: g = P.random_element((0, 5))
+            sage: q, r = f.quo_rem(g)
+            sage: f == q*g + r
+            True
 
         TESTS::
 

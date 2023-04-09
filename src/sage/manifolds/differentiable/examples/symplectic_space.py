@@ -91,6 +91,28 @@ class StandardSymplecticSpace(EuclideanSpace):
             sage: omega = M.symplectic_form()
             sage: omega.display()
             omega = -dq∧dp
+
+        An isomomorphism of its tangent space (at any point) with an indefinite inner product space
+        with distinguished basis::
+
+            sage: Q_M_qp = omega[:]; Q_M_qp
+            [ 0 -1]
+            [ 1  0]
+            sage: W_M_qp = VectorSpace(RR, 2, inner_product_matrix=Q_M_qp); W_M_qp
+            Ambient quadratic space of dimension 2 over Real Field with 53 bits of precision
+            Inner product matrix:
+            [0.000000000000000 -1.00000000000000]
+            [ 1.00000000000000 0.000000000000000]
+            sage: T = M.tangent_space(M.point(), base_ring=RR); T
+            Tangent space at Point on the Standard symplectic space R2
+            sage: phi_M_qp = T.isomorphism_with_fixed_basis(T.default_basis(), codomain=W_M_qp); phi_M_qp
+            Generic morphism:
+            From: Tangent space at Point on the Standard symplectic space R2
+            To:   Ambient quadratic space of dimension 2 over Real Field with 53 bits of precision
+            Inner product matrix:
+            [0.000000000000000 -1.00000000000000]
+            [ 1.00000000000000 0.000000000000000]
+
         """
         # Check that manifold is even dimensional
         if dimension % 2 == 1:

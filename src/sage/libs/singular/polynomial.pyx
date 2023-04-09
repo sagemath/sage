@@ -5,16 +5,15 @@ AUTHOR:
 
 - Martin Albrecht (2009-07): refactoring
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -22,7 +21,7 @@ cdef extern from *: # hack to get at cython macro
     int unlikely(int)
 
 import re
-plusminus_pattern = re.compile("([^\(^])([\+\-])")
+plusminus_pattern = re.compile(r"([^\(^])([\+\-])")
 parenthvar_pattern = re.compile(r"\(([a-zA-Z][a-zA-Z0-9]*)\)")
 
 from sage.cpython.string cimport bytes_to_str, str_to_bytes
@@ -36,6 +35,7 @@ from sage.libs.singular.decl cimport omAlloc0, omStrDup, omFree
 from sage.libs.singular.decl cimport p_GetComp, p_SetComp
 from sage.libs.singular.decl cimport pSubst
 from sage.libs.singular.decl cimport p_Normalize
+from sage.libs.singular.decl cimport ndCopyMap, maMapPoly
 
 from sage.libs.singular.singular cimport sa2si, si2sa, overflow_check
 
@@ -201,25 +201,33 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly 
     """
     cdef long l = len(args)
     cdef ideal *to_id = idInit(l,1)
+    cdef bint constant_args = 1
     for i from 0 <= i < l:
         to_id.m[i]= p_Copy( get_element(args[i]), r)
+        if not p_IsConstant(to_id.m[i], r):
+            constant_args = 0
 
-    cdef ideal *from_id=idInit(1,1)
-    from_id.m[0] = p
-
+    cdef ideal *from_id
     rChangeCurrRing(r)
-    cdef ideal *res_id = fast_map_common_subexp(from_id, r, to_id, r)
-    ret[0] = res_id.m[0]
+    cdef ideal *res_id
+    if not constant_args:
+        from_id = idInit(1,1)
+        from_id.m[0] = p
+
+        res_id = fast_map_common_subexp(from_id, r, to_id, r)
+        ret[0] = res_id.m[0]
+
+        from_id.m[0] = NULL
+        res_id.m[0] = NULL
+        id_Delete(&from_id, r)
+        id_Delete(&res_id, r)
+    else:
+        ret[0] = maMapPoly(p, r, to_id, r, ndCopyMap)
 
     # Unsure why we have to normalize here. See #16958
     p_Normalize(ret[0], r)
 
-    from_id.m[0] = NULL
-    res_id.m[0] = NULL
-
     id_Delete(&to_id, r)
-    id_Delete(&from_id, r)
-    id_Delete(&res_id, r)
 
     return 0
 
@@ -490,25 +498,25 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         for j in range(1, n+1):
             e = p_GetExp(p, j, r)
             if e > 0:
-                multi += " "+latex_gens[j-1]
+                multi += " " + latex_gens[j-1]
             if e > 1:
-                multi += "^{%d}"%e
+                multi += "^{%d}" % e
         multi = multi.lstrip().rstrip()
 
         # Next determine coefficient of multinomial
-        c =  si2sa( p_GetCoeff(p, r), r, base)
+        c =  si2sa(p_GetCoeff(p, r), r, base)
         if not multi:
             multi = latex(c)
         elif c != 1:
-            if  c == -1:
-                multi = "-%s"%(multi)
+            if c == -1:
+                multi = "-%s" % (multi)
             else:
                 sc = latex(c)
                 # Add parenthesis if the coefficient consists of terms divided by +, -
                 # (starting with - is not enough) and is not the constant term
                 if not atomic_repr and multi and (sc.find("+") != -1 or sc[1:].find("-") != -1):
-                    sc = "\\left(%s\\right)"%sc
-                multi = "%s %s"%(sc,multi)
+                    sc = "\\left(%s\\right)" % sc
+                multi = "%s %s" % (sc, multi)
 
         # Now add on coefficiented multinomials
         if poly:

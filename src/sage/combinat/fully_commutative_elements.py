@@ -214,7 +214,9 @@ class FullyCommutativeElement(NormalizedClonableList):
         - ``display_labeling`` -- boolean (default: False). Setting the value to
           True will display the label `s_i` for each element `i` of the poset
 
-        OUTPUT: A labeled poset where the underlying set is `\{0,1,...,k-1\}`
+        OUTPUT:
+
+        A labeled poset where the underlying set is `\{0,1,...,k-1\}`
         and where each element `i` carries `s_i` as its label. The partial order
         `\prec` on the poset is defined by declaring `i\prec j` if `i<j` and
         `m(s_i,s_j)\neq 2`.

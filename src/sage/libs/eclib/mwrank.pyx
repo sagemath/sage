@@ -83,7 +83,7 @@ mwrank_set_precision(150)
 
 def get_precision():
     """
-    Returns the working floating point bit precision of mwrank, which is
+    Return the working floating point bit precision of mwrank, which is
     equal to the global NTL real number precision.
 
     OUTPUT:
@@ -119,7 +119,7 @@ def set_precision(n):
        This change is global and affects *all* future calls of eclib
        functions by Sage.
 
-    .. note::
+    .. NOTE::
 
         The minimal value to which the precision may be set is 53.
         Lower values will be increased to 53.
@@ -335,7 +335,7 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
         return string_sigoff(Curvedata_repr(self.x))[:-1]
 
     def silverman_bound(self):
-        """
+        r"""
         The Silverman height bound for this elliptic curve.
 
         OUTPUT:
@@ -345,7 +345,7 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
         + B`, where `h(P)` is the naive height and `\hat{h}(P)` the
         canonical height.
 
-        .. note::
+        .. NOTE::
 
             Since eclib can compute this to arbitrary precision, we
             could return a Sage real, but this is only a bound and in
@@ -364,7 +364,7 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
         return Curvedata_silverman_bound(self.x)
 
     def cps_bound(self):
-        """
+        r"""
         The Cremona-Prickett-Siksek height bound for this elliptic curve.
 
         OUTPUT:
@@ -374,12 +374,11 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
         + B`, where `h(P)` is the naive height and `\hat{h}(P)` the
         canonical height.
 
-        .. note::
+        .. NOTE::
 
-            Since eclib can compute this to arbitrary precision, we
+            Since ``eclib`` can compute this to arbitrary precision, we
             could return a Sage real, but this is only a bound and in
-            the contexts in which it is used extra precision is
-            irrelevant.
+            the contexts in which it is used extra precision is irrelevant.
 
         EXAMPLES::
 
@@ -399,7 +398,7 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
         return x
 
     def height_constant(self):
-        """
+        r"""
         A height bound for this elliptic curve.
 
         OUTPUT:
@@ -410,12 +409,11 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
         canonical height.  This is the minimum of the Silverman and
         Cremona_Prickett-Siksek height bounds.
 
-        .. note::
+        .. NOTE::
 
-            Since eclib can compute this to arbitrary precision, we
+            Since ``eclib`` can compute this to arbitrary precision, we
             could return a Sage real, but this is only a bound and in
-            the contexts in which it is used extra precision is
-            irrelevant.
+            the contexts in which it is used extra precision is irrelevant.
 
         EXAMPLES::
 
@@ -542,7 +540,7 @@ cdef class _mw:
     cdef int verb
 
     def __init__(self, _Curvedata curve, verb=False, pp=1, maxr=999):
-        """
+        r"""
         Constructor for mw class.
 
         INPUT:
@@ -595,9 +593,9 @@ cdef class _mw:
             Reducing saturation bound from given value 20 to computed index bound 3
             Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
-            Checking 2-saturation 
+            Checking 2-saturation
             Points were proved 2-saturated (max q used = 7)
-            Checking 3-saturation 
+            Checking 3-saturation
             Points were proved 3-saturated (max q used = 7)
             done
             P2 = [-2:3:1]         is generator number 2
@@ -605,10 +603,10 @@ cdef class _mw:
             Reducing saturation bound from given value 20 to computed index bound 4
             Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
-            Checking 2-saturation 
+            Checking 2-saturation
             possible kernel vector = [1,1]
             This point may be in 2E(Q): [14:-52:1]
-            ...and it is! 
+            ...and it is!
             Replacing old generator #1 with new generator [1:-1:1]
             Reducing index bound from 4 to 2
             Points have successfully been 2-saturated (max q used = 7)
@@ -620,9 +618,9 @@ cdef class _mw:
             Reducing saturation bound from given value 20 to computed index bound 3
             Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
-            Checking 2-saturation 
+            Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)
-            Checking 3-saturation 
+            Checking 3-saturation
             Points were proved 3-saturated (max q used = 13)
             done, index = 1.
             P4 = [-1:3:1]        = -1*P1 + -1*P2 + -1*P3 (mod torsion)
@@ -704,10 +702,10 @@ cdef class _mw:
 
         .. NOTE::
 
-           The eclib function which implements this only carries out
-           any saturation if the rank of the points increases upon
-           adding the new point.  This is because it is assumed that
-           one saturates as ones goes along.
+            The eclib function which implements this only carries out
+            any saturation if the rank of the points increases upon
+            adding the new point.  This is because it is assumed that
+            one saturates as ones goes along.
 
         EXAMPLES::
 
@@ -753,7 +751,7 @@ cdef class _mw:
 
     def getbasis(self):
         """
-        Returns the current basis of the mw structure.
+        Return the current basis of the mw structure.
 
         OUTPUT:
 
@@ -778,7 +776,7 @@ cdef class _mw:
 
     def regulator(self):
         """
-        Returns the regulator of the current basis of the mw group.
+        Return the regulator of the current basis of the mw group.
 
         OUTPUT:
 
@@ -810,7 +808,7 @@ cdef class _mw:
 
     def rank(self):
         """
-        Returns the rank of the current basis of the mw group.
+        Return the rank of the current basis of the mw group.
 
         OUTPUT:
 
@@ -842,7 +840,7 @@ cdef class _mw:
         - ``sat_bnd`` (int, default -1) -- upper bound on primes at
           which to saturate.  If -1 (default), compute a bound for the
           primes which may not be saturated, and use that.  Otherwise,
-          the bound used is the minumum of the value of ``sat_bnd``
+          the bound used is the minimum of the value of ``sat_bnd``
           and the computed bound.
 
         - ``sat_low_bd`` (int, default 2) -- only do saturation at
@@ -908,7 +906,7 @@ cdef class _mw:
         return ok, index, unsat
 
     def search(self, h_lim, int moduli_option=0, int verb=0):
-        """
+        r"""
         Search for points in the mw group.
 
         INPUT:
@@ -926,17 +924,16 @@ cdef class _mw:
 
         .. NOTE::
 
-           The effect of the search is also governed by the class
-           options, notably whether the points found are processed:
-           meaning that linear relations are found and saturation is
-           carried out, with the result that the list of generators
-           will always contain a `\ZZ`-span of the saturation of the
-           points found, modulo torsion.
+            The effect of the search is also governed by the class
+            options, notably whether the points found are processed:
+            meaning that linear relations are found and saturation is
+            carried out, with the result that the list of generators
+            will always contain a `\ZZ`-span of the saturation of the
+            points found, modulo torsion.
 
         OUTPUT:
 
-        None.  The effect of the search is to update the list of
-        generators.
+        None. The effect of the search is to update the list of generators.
 
         EXAMPLES::
 
@@ -1069,7 +1066,7 @@ cdef class _two_descent:
 
     def getrank(self):
         """
-        Returns the rank (after doing a 2-descent).
+        Return the rank (after doing a 2-descent).
 
         OUTPUT:
 
@@ -1102,7 +1099,7 @@ cdef class _two_descent:
 
     def getrankbound(self):
         """
-        Returns the rank upper bound (after doing a 2-descent).
+        Return the rank upper bound (after doing a 2-descent).
 
         OUTPUT:
 
@@ -1135,7 +1132,7 @@ cdef class _two_descent:
 
     def getselmer(self):
         """
-        Returns the 2-Selmer rank (after doing a 2-descent).
+        Return the 2-Selmer rank (after doing a 2-descent).
 
         OUTPUT:
 
@@ -1167,7 +1164,7 @@ cdef class _two_descent:
 
     def ok(self):
         """
-        Returns the success flag (after doing a 2-descent).
+        Return the success flag (after doing a 2-descent).
 
         OUTPUT:
 
@@ -1196,7 +1193,7 @@ cdef class _two_descent:
 
     def getcertain(self):
         """
-        Returns the certainty flag (after doing a 2-descent).
+        Return the certainty flag (after doing a 2-descent).
 
         OUTPUT:
 
@@ -1273,8 +1270,8 @@ cdef class _two_descent:
         sig_off()
 
     def getbasis(self):
-        """
-        Returns the basis of points found by doing a 2-descent.
+        r"""
+        Return the basis of points found by doing a 2-descent.
 
         If the success and certain flags are 1, this will be a
         `\ZZ/2\ZZ`-basis for `E(\QQ)/2E(\QQ)` (modulo torsion),
@@ -1282,7 +1279,8 @@ cdef class _two_descent:
 
         .. NOTE::
 
-           You must call ``saturate()`` first, or a RunTimeError will be raised.
+            You must call ``saturate()`` first, or a ``RunTimeError``
+            will be raised.
 
         OUTPUT:
 
@@ -1320,7 +1318,7 @@ cdef class _two_descent:
 
     def regulator(self):
         """
-        Returns the regulator of the points found by doing a 2-descent.
+        Return the regulator of the points found by doing a 2-descent.
 
         OUTPUT:
 

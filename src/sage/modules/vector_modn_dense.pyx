@@ -163,7 +163,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     def __cinit__(self, parent=None, x=None, coerce=True, copy=True):
         self._entries = NULL
         self._is_immutable = 0
-        if not parent is None:
+        if parent is not None:
             self._init(parent.degree(), parent, parent.base_ring().order())
 
     def __init__(self, parent, x, coerce=True, copy=True):

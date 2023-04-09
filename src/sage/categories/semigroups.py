@@ -327,7 +327,7 @@ class Semigroups(CategoryWithAxiom):
                     generators = self.semigroup_generators()
             if isinstance(generators, (list, tuple)):
                 generators = dict((self(g), self(g)) for g in generators)
-            left  = (side == "left"  or side == "twosided")
+            left = (side == "left"  or side == "twosided")
             right = (side == "right" or side == "twosided")
 
             def add_edge(source, target, label, side_label):
@@ -509,7 +509,6 @@ class Semigroups(CategoryWithAxiom):
             if n <= 0:
                 raise ArithmeticError("only positive powers are supported in a semigroup")
             return generic_power(self, n)
-
 
     class SubcategoryMethods:
 
@@ -882,7 +881,7 @@ class Semigroups(CategoryWithAxiom):
                     sage: M.semigroup_generators()
                     Family ('a', 'b', 'c', 'd')
                     sage: M.algebra(ZZ).algebra_generators()
-                    Finite family {0: B['a'], 1: B['b'], 2: B['c'], 3: B['d']}
+                    Family (B['a'], B['b'], B['c'], B['d'])
                 """
                 return self.basis().keys().semigroup_generators().map(self.monomial)
 

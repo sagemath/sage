@@ -18,7 +18,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.functions.all import floor
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import GCD
+from sage.arith.misc import GCD
 
 
 def cholesky_decomposition(self, bit_prec = 53):
@@ -190,7 +190,6 @@ def vectors_by_length(self, bound):
     # Initialize Q with zeros and Copy the Cholesky array into Q
     Q = self.cholesky_decomposition()
 
-
     # 1. Initialize
     T = n * [RDF(0)]    # Note: We index the entries as 0 --> n-1
     U = n * [RDF(0)]
@@ -353,7 +352,6 @@ def complementary_subform_to_vector(self, v):
 
     if not done_flag:
         raise RuntimeError("There is a problem cancelling out the matrix entries! =O")
-
 
     # Return the complementary matrix
     return Q1.extract_variables(range(1,n))

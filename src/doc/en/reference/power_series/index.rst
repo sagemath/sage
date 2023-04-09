@@ -2,7 +2,7 @@ Power Series Rings and Laurent Series Rings
 ===========================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/power_series_ring
    sage/rings/power_series_ring_element

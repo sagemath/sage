@@ -103,7 +103,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.combinat.posets.posets import FinitePoset
 from sage.env import POLYTOPE_DATA_DIR
 from sage.geometry.cone import _ambient_space_point, integral_length
@@ -736,7 +736,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                                                      for point in points])
         M = self._embedding_matrix = H.basis_matrix().transpose()
         # In order to use facet normals obtained from subpolytopes, we
-        # need the following (see Trac #9188).
+        # need the following (see Issue #9188).
         # Basis for the ambient space with spanned subspace in front
         basis = M.columns() + M.integer_kernel().basis()
         # Let's represent it as columns of a matrix
@@ -887,7 +887,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         - ``data`` - point or matrix of points (as columns) in the affine
           subspace spanned by this polytope
 
-        OUTPUT: The same point(s) in the coordinates of the ambient space of
+        OUTPUT:
+
+        The same point(s) in the coordinates of the ambient space of
         this polytope.
 
         TESTS::
@@ -1053,7 +1055,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         - ``data`` -- rational point or matrix of points (as columns) in the
           ambient space
 
-        OUTPUT: The same point(s) in the coordinates of the affine subspace
+        OUTPUT:
+
+        The same point(s) in the coordinates of the affine subspace
         space spanned by this polytope.
 
         TESTS::
@@ -3178,10 +3182,11 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
              ((2,3), (2,3)),
              ((1,2), (1,2)),
              ((1,3), (1,3))]
-            sage: PMs = [i._palp_PM_max(check=True)
-            ....:        for i in ReflexivePolytopes(2)] # long time
-            sage: all(len(i) == len(j.automorphisms_of_rows_and_columns())
-            ....:     for j, i in PMs) # long time
+            sage: PMs = ( i._palp_PM_max(check=True)
+            ....:         for i in ReflexivePolytopes(2) )
+            sage: results = ( len(i) == len(j.automorphisms_of_rows_and_columns())
+            ....:             for j, i in PMs )
+            sage: all(results)  # long time
             True
         """
         def PGE(S, u, v):
@@ -3331,8 +3336,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                     ccf = cf
                     # Now let us find out where the end of the
                     # next symmetry block is:
-                    if  h < c+1:
-                        h = S[h-1]
+                    if h < c + 1:
+                        h = S[h - 1]
                     s = n_p
                     # Check through this block for each possible permutation
                     while s > 0:
@@ -3503,8 +3508,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         By default, everything is shown with more or less pretty
         combination of size and color parameters.
 
-        INPUT: Most of the parameters are self-explanatory:
+        INPUT:
 
+        Most of the parameters are self-explanatory:
 
         -  ``show_facets`` - (default:True)
 
@@ -3649,7 +3655,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 pplot += text3d(i+self.nvertices(), bc+index_shift*(p-bc), rgbcolor=pindex_color)
         return pplot
 
-    def polyhedron(self):
+    def polyhedron(self, **kwds):
         r"""
         Return the Polyhedron object determined by this polytope's vertices.
 
@@ -3660,7 +3666,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
-        return Polyhedron(vertices=[list(v) for v in self._vertices])
+        return Polyhedron(vertices=[list(v) for v in self._vertices], **kwds)
 
     def show3d(self):
         """
@@ -3778,7 +3784,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 0,  0, 0)
             in 3-d lattice M
 
-        Only two of the above points:
+        Only two of the above points::
 
             sage: p.points(1, 3)                                                # optional - palp
             M(0,  1, 0),
@@ -3898,14 +3904,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-
         -  ``keys`` - a string of options passed to poly.x. The
            key "f" is added automatically.
 
         -  ``reduce_dimension`` - (default: False) if ``True`` and this
            polytope is not full-dimensional, poly.x will be called for the
            vertices of this polytope in some basis of the spanned affine space.
-
 
         OUTPUT: the output of poly.x as a string.
 
@@ -5248,8 +5252,8 @@ def _palp_convert_permutation(permutation):
             elif o in range(65, 91):
                 i = o - 28
             else:
-                raise ValueError('Cannot convert PALP index '
-                                 + i + ' to number.')
+                raise ValueError('cannot convert PALP index '
+                                 + i + ' to number')
         return i
     n = len(permutation)
     domain = [from_palp_index(i) for i in permutation]
@@ -5257,6 +5261,7 @@ def _palp_convert_permutation(permutation):
     from sage.groups.perm_gps.permgroup_named import SymmetricGroup
     S = SymmetricGroup(n)
     return make_permgroup_element(S, domain)
+
 
 def _read_nef_x_partitions(data):
     r"""
@@ -5322,7 +5327,6 @@ def _read_poly_x_incidences(data, dim):
 
     INPUT:
 
-
     -  ``data`` - an opened file with incidence
        information. The first line will be skipped, each consecutive line
        contains incidence information for all faces of one dimension, the
@@ -5330,8 +5334,9 @@ def _read_poly_x_incidences(data, dim):
 
     -  ``dim`` - dimension of the polytope.
 
+    OUTPUT:
 
-    OUTPUT: a sequence F, such that F[d][i] is a sequence of vertices
+    a sequence F, such that F[d][i] is a sequence of vertices
     or facets corresponding to the i-th d-dimensional face.
 
     TESTS::
@@ -5549,12 +5554,12 @@ def convex_hull(points):
 
     INPUT:
 
-
     -  ``points`` - a list that can be converted into
        vectors of the same dimension over ZZ.
 
+    OUTPUT:
 
-    OUTPUT: list of vertices of the convex hull of the given points (as
+    list of vertices of the convex hull of the given points (as
     vectors).
 
     EXAMPLES: Let's compute the convex hull of several points on a line
@@ -5628,11 +5633,9 @@ def minkowski_sum(points1, points2):
 
     INPUT:
 
-
     -  ``points1, points2`` - lists of objects that can be
        converted into vectors of the same dimension, treated as vertices
        of two polytopes.
-
 
     OUTPUT: list of vertices of the Minkowski sum, given as vectors.
 
@@ -5659,7 +5662,9 @@ def positive_integer_relations(points):
     - ``points`` - lattice points given as columns of a
       matrix
 
-    OUTPUT: matrix of relations between given points with non-negative
+    OUTPUT:
+
+    matrix of relations between given points with non-negative
     integer coefficients
 
     EXAMPLES: This is a 3-dimensional reflexive polytope::

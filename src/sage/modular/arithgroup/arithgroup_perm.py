@@ -147,9 +147,9 @@ def sl2z_word_problem(A):
         True
     """
     A = SL2Z(A)
-    output=[]
+    output = []
 
-    ## If A00 is zero
+    # If A00 is zero
     if A[0,0]==0:
         c=A[1,1]
         if c != 1:
@@ -167,20 +167,20 @@ def sl2z_word_problem(A):
         n=(-A[0,1]/A[0,0]).ceil()  #n s.t. 0 <= A[0,1]+n*A[0,0] < A[0,0]
         A=A*Lm**n
         output.append((0, -n))
-   ## At this point A00>0 and A01>=0
+    # At this point A00>0 and A01>=0
     while not (A[0,0]==0 or A[0,1]==0):
         if A[0,0]>A[0,1]:
             n=(A[0,0]/A[0,1]).floor()
             A=A*SL2Z([1,0,-n,1])
             output.append((1, n))
 
-        else:      #A[0,0]<=A[0,1]
+        else:      # A[0,0]<=A[0,1]
             n=(A[0,1]/A[0,0]).floor()
             A=A*SL2Z([1,-n,0,1])
             output.append((0, n))
 
     if A==SL2Z(1):
-        pass       #done, so don't add R^0
+        pass       # done, so don't add R^0
     elif A[0,0]==0:
         c=A[1,1]
         if c != 1:
@@ -1216,11 +1216,10 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             Looped multi-digraph on 2 vertices
         """
         from sage.graphs.digraph import DiGraph
-        res = DiGraph(multiedges=True,loops=True)
+        res = DiGraph(multiedges=True, loops=True)
         res.add_vertices(list(range(self.index())))
 
-
-        if right_cosets: # invert the permutations
+        if right_cosets:  # invert the permutations
             S2 = [None]*self.index()
             S3 = [None]*self.index()
             L = [None]*self.index()

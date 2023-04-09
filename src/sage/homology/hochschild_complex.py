@@ -669,7 +669,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
         def _add_(self, other):
             """
             Module addition
-            
+
             EXAMPLES::
 
                 sage: F.<x,y> = FreeAlgebra(ZZ)

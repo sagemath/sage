@@ -9,7 +9,7 @@ Check that gamma function imports are deprecated (:trac:`24411`)::
     sage: beta(x, x)
     doctest:warning...: DeprecationWarning:
     Importing beta from here is deprecated; please use "from sage.functions.gamma import beta" instead.
-    See http://trac.sagemath.org/24411 for details.
+    See https://github.com/sagemath/sage/issues/24411 for details.
     beta(x, x)
 """
 
@@ -1518,7 +1518,7 @@ class Function_factorial(GinacFunction):
             sage: type(factorial(float(3.2)))
             <class 'float'>
         """
-        if isinstance(x, Integer):
+        if isinstance(x, (int, Integer)):
             try:
                 return x.factorial()
             except OverflowError:
@@ -1819,10 +1819,10 @@ class Function_prod(BuiltinFunction):
             product(sin(m), m, 1, n)
             sage: isinstance(r.operator(), sage.functions.other.Function_prod)
             True
-            sage: r = sympy(sprod(sin(m), m, 1, n)).sage(); r # known bug
+            sage: r = sympy(sprod(sin(m), m, 1, n)).sage(); r  # known bug
             product(sin(m), m, 1, n)
-            sage: isinstance(r.operator(),
-            ....:     sage.functions.other.Function_prod) # known bug
+            sage: isinstance(r.operator(),                     # known bug
+            ....:     sage.functions.other.Function_prod)
             True
             sage: giac(sprod(m, m, 1, n)).sage()
             factorial(n)

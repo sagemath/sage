@@ -2206,7 +2206,7 @@ class TopologicalManifold(ManifoldSubset):
             sage: M.options._reset()
         """
         NAME = 'manifolds'
-        module = 'sage.manifolds'
+        module = 'sage.manifolds.manifold'
         option_class = 'TopologicalManifold'
         textbook_output = dict(default=True,
                              description='textbook-like output instead of the Pynac output for derivatives',

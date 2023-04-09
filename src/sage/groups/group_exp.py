@@ -211,19 +211,17 @@ class GroupExpElement(ElementWrapper, MultiplicativeGroupElement):
             raise ValueError("%s is not an element of %s" % (x, parent._G))
         ElementWrapper.__init__(self, parent, x)
 
-    def inverse(self):
+    def __invert__(self):
         r"""
         Invert the element ``self``.
 
         EXAMPLES::
 
             sage: EZ = GroupExp()(ZZ)
-            sage: EZ(-3).inverse()
+            sage: EZ(-3).inverse()  # indirect doctest
             3
         """
         return GroupExpElement(self.parent(), -self.value)
-
-    __invert__ = inverse
 
     def __mul__(self, x):
         r"""

@@ -329,14 +329,14 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
         pow_self._value = pow(self.value(), m)
         return pow_self
 
-    def inverse(self):
+    def __invert__(self):
         """
         Return the inverse element.
 
         EXAMPLES::
 
             sage: G.<a,b> = AbelianGroupWithValues([2,-1], [0,4])
-            sage: a.inverse()
+            sage: a.inverse()   # indirect doctest
             a^-1
             sage: a.inverse().value()
             1/2
@@ -349,12 +349,9 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
             sage: (a*b).inverse().value()
             -1/2
         """
-        m = AbelianGroupElement.inverse(self)
+        m = AbelianGroupElement.__invert__(self)
         m._value = ~self.value()
         return m
-
-    __invert__ = inverse
-
 
 
 class AbelianGroupWithValues_class(AbelianGroup_class):

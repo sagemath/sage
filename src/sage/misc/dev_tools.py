@@ -169,7 +169,7 @@ def load_submodules(module=None, exclude_pattern=None):
         load sage.geometry.polyhedron.palp_database... succeeded
         load sage.geometry.polyhedron.ppl_lattice_polygon... succeeded
     """
-    import pkgutil
+    from .package_dir import walk_packages
 
     if module is None:
         import sage
@@ -181,7 +181,7 @@ def load_submodules(module=None, exclude_pattern=None):
     else:
         exclude = None
 
-    for importer, module_name, ispkg in pkgutil.walk_packages(module.__path__, module.__name__ + '.'):
+    for importer, module_name, ispkg in walk_packages(module.__path__, module.__name__ + '.'):
         if ispkg or module_name in sys.modules:
             continue
 
@@ -473,7 +473,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements('deprecated_RR')
         Traceback (most recent call last):
         ...
-        LookupError: object named 'deprecated_RR' is deprecated (see trac ticket 17458)
+        LookupError: object named 'deprecated_RR' is deprecated (see github issue 17458)
         sage: lazy_import('sage.all', 'RR', namespace=sage.__dict__, deprecation=17458)
         sage: import_statements('RR')
         from sage.rings.real_mpfr import RR
@@ -525,12 +525,12 @@ def import_statements(*objects, **kwds):
     if kwds:
         raise TypeError("Unexpected '{}' argument".format(next(iter(kwds))))
 
-    def expand_comma_separated_names(object):
-        if isinstance(object, str):
-            for w in object.strip('()').split(','):
+    def expand_comma_separated_names(obj):
+        if isinstance(obj, str):
+            for w in obj.strip('()').split(','):
                 yield w.strip()
         else:
-            yield object
+            yield obj
 
     for obj in itertools.chain.from_iterable(expand_comma_separated_names(object)
                                              for object in objects):
@@ -558,7 +558,7 @@ def import_statements(*objects, **kwds):
                 if isinstance(obj[i], LazyImport):
                     tmp = obj.pop(i)
                     # Ignore deprecated lazy imports
-                    tmp_deprecation = tmp._get_deprecation_ticket()
+                    tmp_deprecation = tmp._get_deprecation_issue()
                     if tmp_deprecation:
                         deprecation = tmp_deprecation
                     else:
@@ -584,7 +584,7 @@ def import_statements(*objects, **kwds):
             except IndexError:
                 if deprecation:
                     raise LookupError(
-                        "object named {!r} is deprecated (see trac ticket "
+                        "object named {!r} is deprecated (see github issue "
                         "{})".format(name, deprecation))
                 else:
                     raise LookupError("no object named {!r}".format(name))

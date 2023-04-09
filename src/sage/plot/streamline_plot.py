@@ -1,5 +1,5 @@
 """
-Streamline Plots
+Streamline plots
 """
 # ****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,

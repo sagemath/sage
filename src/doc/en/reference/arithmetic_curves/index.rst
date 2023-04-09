@@ -2,7 +2,7 @@ Elliptic curves
 =========================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/elliptic_curves/constructor
    sage/schemes/elliptic_curves/jacobian
@@ -15,13 +15,15 @@ Elliptic curves
 Maps between them
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/elliptic_curves/hom
    sage/schemes/elliptic_curves/weierstrass_morphism
    sage/schemes/elliptic_curves/ell_curve_isogeny
    sage/schemes/elliptic_curves/hom_velusqrt
    sage/schemes/elliptic_curves/hom_composite
+   sage/schemes/elliptic_curves/hom_scalar
+   sage/schemes/elliptic_curves/hom_frobenius
    sage/schemes/elliptic_curves/isogeny_small_degree
 
 
@@ -29,7 +31,7 @@ Elliptic curves over number fields
 ----------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/elliptic_curves/ell_rational_field
    sage/schemes/elliptic_curves/ec_database
@@ -51,7 +53,7 @@ Elliptic curves over number fields
 The following relate to elliptic curves over local nonarchimedean fields.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/elliptic_curves/ell_local_data
    sage/schemes/elliptic_curves/kodaira_symbol
@@ -60,7 +62,7 @@ The following relate to elliptic curves over local nonarchimedean fields.
 Analytic properties over `\CC`.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/elliptic_curves/ell_wp
    sage/schemes/elliptic_curves/period_lattice
@@ -69,7 +71,7 @@ Analytic properties over `\CC`.
 Modularity and `L`-series over `\QQ`.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/elliptic_curves/modular_parametrization
    sage/schemes/elliptic_curves/ell_modular_symbols
@@ -82,7 +84,7 @@ To be sorted
 ------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/elliptic_curves/descent_two_isogeny
    sage/schemes/elliptic_curves/ell_egros
@@ -98,7 +100,7 @@ Hyperelliptic curves
 ====================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/hyperelliptic_curves/constructor
    sage/schemes/hyperelliptic_curves/hyperelliptic_generic

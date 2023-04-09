@@ -32,9 +32,13 @@ class PackageClass(object):
         def included_in_filter(pkg):
             if pkg.name in excluded:
                 return False
-            if not all(pkg.has_file(filename) for filename in filenames):
+            if not all(any(pkg.has_file(filename)
+                           for filename in filename_disjunction.split('|'))
+                       for filename_disjunction in filenames):
                 return False
-            return not any(pkg.has_file(filename) for filename in no_filenames)
+            return not any(any(pkg.has_file(filename)
+                               for filename in no_filename_disjunction.split('|'))
+                           for no_filename_disjunction in no_filenames)
 
         for package_name_or_class in package_names_or_classes:
             if package_name_or_class == ':all:':

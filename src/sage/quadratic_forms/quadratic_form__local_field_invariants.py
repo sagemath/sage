@@ -21,15 +21,15 @@ quadratic forms over the rationals.
 # places, is_semi_definite, and support for number fields.
 ###########################################################################
 
-
 from copy import deepcopy
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RR
-from sage.arith.all import prime_divisors, hilbert_symbol
+
+from sage.arith.misc import hilbert_symbol, prime_divisors
 from sage.functions.all import sgn
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
 
 
 def rational_diagonal_form(self, return_matrix=False):
@@ -223,7 +223,7 @@ def _rational_diagonal_form_and_transformation(self):
     """
     n = self.dim()
     K = self.base_ring().fraction_field()
-    Q = self.base_change_to(K)
+    Q = self.change_ring(K)
     MS = MatrixSpace(K, n, n)
 
     try:
@@ -340,7 +340,6 @@ def signature_vector(self):
             z += 1
 
     return (p, n, z)
-
 
 
 def signature(self):

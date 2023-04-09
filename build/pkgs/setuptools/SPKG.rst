@@ -4,26 +4,24 @@ setuptools: Build system for Python packages
 Description
 -----------
 
-setuptools is a collection of enhancements to the Python distutils (for
-Python 2.6 and up) that allow you to more easily build and distribute
-Python packages, especially ones that have dependencies on other
-packages.
+setuptools is the classical build system for Python packages,
+a collection of enhancements to the Python distutils.
 
-Website: http://pypi.python.org/pypi/setuptools/
+This package represents version 63.x of ``setuptools``.
+Sage installs this version to provide the build system
+for non-PEP 517 packages. In particular, Sage uses it
+for building ``numpy``, whose build system ``numpy.distutils`` 
+is not compatible with newer versions of ``setuptools``,
+see https://github.com/numpy/numpy/pull/22154
 
 License
 -------
 
-PSF or ZPL. i.e Python Software Foundation License or Zope Public
-License
-
+MIT License
 
 Upstream Contact
 ----------------
 
--  Phillip J. Eby (distutils-sig@python org)
+http://pypi.python.org/pypi/setuptools/
 
-Dependencies
-------------
-
--  python
+https://github.com/pypa/setuptools

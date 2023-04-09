@@ -85,7 +85,7 @@ def is_CallableSymbolicExpressionRing(x):
         doctest:warning...
         DeprecationWarning: is_CallableSymbolicExpressionRing is deprecated;
         use isinstance(..., sage.rings.abc.CallableSymbolicExpressionRing instead
-        See https://trac.sagemath.org/32665 for details.
+        See https://github.com/sagemath/sage/issues/32665 for details.
         False
         sage: var('x,y,z')
         (x, y, z)
@@ -111,7 +111,7 @@ def is_CallableSymbolicExpression(x):
         doctest:warning...
         DeprecationWarning: is_CallableSymbolicExpression is deprecated;
         use isinstance(..., Expression) and ....is_callable() instead
-        See https://trac.sagemath.org/34215 for details.
+        See https://github.com/sagemath/sage/issues/34215 for details.
         True
         sage: is_CallableSymbolicExpression(a+2*x)
         False
@@ -358,7 +358,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
             sage: R._repr_()
             'Callable function ring with arguments (x, y, theta)'
 
-        We verify that :trac:`12298` has been fixed:: 
+        We verify that :trac:`12298` has been fixed::
 
             sage: S = CallableSymbolicExpressionRing([var('z')])
             sage: S._repr_()

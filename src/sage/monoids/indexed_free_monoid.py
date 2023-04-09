@@ -1002,7 +1002,6 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
         if x not in self._indices:
             raise IndexError("{} is not in the index set".format(x))
         try:
-            return self.element_class(self, {self._indices(x):1})
-        except (TypeError, NotImplementedError): # Backup (e.g., if it is a string)
-            return self.element_class(self, {x:1})
-
+            return self.element_class(self, {self._indices(x): 1})
+        except (TypeError, NotImplementedError):  # Backup (e.g., if it is a string)
+            return self.element_class(self, {x: 1})

@@ -48,7 +48,7 @@ class SymmetricGroupConjugacyClassMixin():
             Conjugacy class of cycle type [4] in
              Symmetric group of order 4! as a permutation group
         """
-        return "Conjugacy class of cycle type %s in %s"%(self._part, self._parent)
+        return "Conjugacy class of cycle type %s in %s" % (self._part, self._parent)
 
     def __eq__(self, other):
         r"""
@@ -167,8 +167,9 @@ class SymmetricGroupConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyC
         """
         if not self._set:
             self._set = Set(self._parent.element_class(x, self._parent, check=False)
-                            for x in conjugacy_class_iterator(self._part, self._domain) )
+                            for x in conjugacy_class_iterator(self._part, self._domain))
         return self._set
+
 
 class PermutationsConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyClass):
     """
@@ -197,7 +198,7 @@ class PermutationsConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyCla
             part = elt.cycle_type()
         else:
             elt = P.element_in_conjugacy_classes(part)
-        SymmetricGroupConjugacyClassMixin.__init__(self, range(1, P.n+1), part)
+        SymmetricGroupConjugacyClassMixin.__init__(self, range(1, P.n + 1), part)
         ConjugacyClass.__init__(self, P, elt)
 
     def __iter__(self):
@@ -241,11 +242,12 @@ class PermutationsConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyCla
         """
         if not self._set:
             self._set = Set(from_cycles(self._parent.n, x, self._parent)
-                            for x in conjugacy_class_iterator(self._part, self._domain) )
+                            for x in conjugacy_class_iterator(self._part, self._domain))
         return self._set
 
+
 #####################################################################
-## Helper functions
+# Helper functions
 
 def default_representative(part, G):
     r"""
@@ -284,7 +286,7 @@ def default_representative(part, G):
     total = 0
     cycles = []
     for p in part:
-        cycles.append(tuple(D[total:total+p]))
+        cycles.append(tuple(D[total:total + p]))
         total += p
     return G.element_class(cycles, G, check=False)
 

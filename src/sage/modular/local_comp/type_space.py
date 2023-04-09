@@ -33,7 +33,7 @@ from .liftings import lift_gen_to_gamma1, lift_ramified
 
 
 @cached_function
-def example_type_space(example_no = 0):
+def example_type_space(example_no=0):
     r"""
     Quickly return an example of a type space. Used mainly to speed up
     doctesting.
@@ -497,7 +497,7 @@ class TypeSpace(SageObject):
             True
         """
         f = self.prime() ** self.u()
-        from sage.groups.matrix_gps.all import SL
+        from sage.groups.matrix_gps.linear import SL
         G = SL(2, Zmod(f))
         gg = G(g)
         s = G([1,1,0,1])

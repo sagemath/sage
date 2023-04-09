@@ -61,7 +61,7 @@ AUTHORS:
 cimport cython
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.function_field.all import FunctionField
+from sage.rings.function_field.constructor import FunctionField
 
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
@@ -2636,4 +2636,3 @@ cdef class DifferentialAGCodeDecoder_K_extension(Decoder_K_extension):
             sage: TestSuite(circuit).run(skip='_test_pickling')               # long time
         """
         super().__init__(pls, G, Q, DifferentialAGCodeDecoder_K, verbose=verbose)
-

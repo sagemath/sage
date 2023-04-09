@@ -12,6 +12,9 @@ Groups available as finite presentations:
 - Alternating group, `A_n` of order `n!/2` --
   :func:`groups.presentation.Alternating <sage.groups.finitely_presented_named.AlternatingPresentation>`
 
+- the `n`-fruit Cactus group, a standard notation for which is `J_n` --
+  :func:`groups.presentation.Cactus <sage.groups.finitely_presented_named.CactusPresentation>`
+
 - Cyclic group, `C_n` of order `n` --
   :func:`groups.presentation.Cyclic <sage.groups.finitely_presented_named.CyclicPresentation>`
 
@@ -214,7 +217,7 @@ def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
 
     - ``p`` -- (optional) a prime number, where we construct the
       Heisenberg group over the finite field `\ZZ/p\ZZ`
- 
+
     OUTPUT:
 
     Finitely generated Heisenberg group over the finite field
@@ -249,7 +252,7 @@ def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
         [0 0 1]
         sage: p = 3
         sage: Hp = groups.presentation.Heisenberg(p=3)
-        sage: Hp.order() == p**3 
+        sage: Hp.order() == p**3
         True
         sage: Hnp = groups.presentation.Heisenberg(n=2, p=3)
         sage: len(Hnp.relations())
@@ -560,3 +563,35 @@ def BinaryDihedralPresentation(n):
     x,y,z = F.gens()
     rls = (x**-2 * y**2, x**-2 * z**n, x**-2 * x*y*z)
     return FinitelyPresentedGroup(F, rls)
+
+def CactusPresentation(n):
+    r"""
+    Build the `n`-fruit cactus group as a finitely presented group.
+
+    OUTPUT:
+
+    Cactus group `J_n` as a finitely presented group.
+
+    EXAMPLES::
+
+        sage: J3 = groups.presentation.Cactus(3); J3
+        Finitely presented group < s12, s13, s23 |
+         s12^2, s13^2, s23^2, s13*s12*s13^-1*s23^-1, s13*s23*s13^-1*s12^-1 >
+    """
+    from sage.groups.cactus_group import CactusGroup
+    G = CactusGroup(n)
+    F = FreeGroup(G.variable_names())
+    gens = F.gens()
+    rls = [g**2 for g in gens]
+    Gg = G.group_generators()
+    K = Gg.keys()
+    for i,key in enumerate(K):
+        for j,key2 in enumerate(K):
+            if i == j:
+                continue
+            x,y = (Gg[key] * Gg[key2])._data
+            if key == x and key2 == y:
+                continue
+            elt = gens[i] * gens[j] * ~gens[K.index(y)] * ~gens[K.index(x)]
+            rls.append(elt)
+    return FinitelyPresentedGroup(F, tuple(rls))

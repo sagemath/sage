@@ -1307,9 +1307,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         H = self._hasse_diagram
         # See trac #21528 for explanation.
-        return ( (H.in_degree_sequence().count(1) ==
+        return ((H.in_degree_sequence().count(1) ==
                  H.out_degree_sequence().count(1)) and
-                 self.is_meet_semidistributive() )
+                self.is_meet_semidistributive())
 
     def is_meet_semidistributive(self, certificate=False):
         r"""
@@ -1693,11 +1693,11 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         H = self._hasse_diagram
         jn = H.join_matrix()
         n = H.order()
-        for e in range(n-2, -1, -1):
+        for e in range(n - 2, -1, -1):
             t = 0
             for uc in H.neighbors_out(e):
                 t = jn[t, uc]
-                if t == n-1:
+                if t == n - 1:
                     break
             else:
                 if certificate:
@@ -1882,8 +1882,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         H = self._hasse_diagram
         mt = H.meet_matrix()
-        n = H.order()-1
-        for e in range(2, n+1):
+        n = H.order() - 1
+        for e in range(2, n + 1):
             t = n
             for lc in H.neighbors_in(e):
                 t = mt[t, lc]
@@ -1903,8 +1903,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         any join of elements `x_1, x_2, \ldots, x_{n+1}` is join of a
         proper subset of `x_i`.
 
-        This can be also characterized by sublattices: a lattice
-        of breadth at least `n` contains a sublattice isomorphic to the
+        This can be also characterized by subposets: a lattice
+        of breadth at least `n` contains a subposet isomorphic to the
         Boolean lattice of `2^n` elements.
 
         INPUT:
@@ -3010,7 +3010,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         # Todo: This and ordinal_sum() of posets could keep
         # distinguished linear extension, if it is defined
         # for both posets/lattices. That can be done after
-        # trac ticket #21607.
+        # github issue #21607.
 
         if labels not in ['integers', 'pairs']:
             raise ValueError("labels must be either 'pairs' or 'integers'")
@@ -3085,9 +3085,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if elements_only:
             return [self[e] for e in
                     self._hasse_diagram.vertical_decomposition(return_list=True)]
-        elms = ( [0] +
-                 self._hasse_diagram.vertical_decomposition(return_list=True) +
-                 [self.cardinality() - 1] )
+        elms = ([0] +
+                self._hasse_diagram.vertical_decomposition(return_list=True) +
+                [self.cardinality() - 1])
         n = len(elms)
         result = []
         for i in range(n - 1):
@@ -4300,7 +4300,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return True
 
         if (type == 'interval' and len(self.join_irreducibles()) !=
-            len(self.meet_irreducibles())):
+                len(self.meet_irreducibles())):
             return False
 
         if type == 'upper' or type == 'interval':
@@ -4974,6 +4974,7 @@ def _log_2(n):
     if 1 << bits == n:
         return bits
     return bits + 1
+
 
 ############################################################################
 

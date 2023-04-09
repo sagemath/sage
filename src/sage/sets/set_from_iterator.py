@@ -162,7 +162,6 @@ class EnumeratedSetFromIterator(Parent):
         else:
             Parent.__init__(self, facade = True, category = EnumeratedSets())
 
-
         if name is not None:
             self.rename(name)
 
@@ -526,7 +525,9 @@ class Decorator():
             sage: d = Decorator()
             sage: d.f = find_local_minimum
             sage: sage_getargspec(d) # indirect doctest
-            ArgSpec(args=['f', 'a', 'b', 'tol', 'maxfun'], varargs=None, keywords=None, defaults=(1.48e-08, 500))
+            FullArgSpec(args=['f', 'a', 'b', 'tol', 'maxfun'],
+                        varargs=None, varkw=None, defaults=(1.48e-08, 500),
+                        kwonlyargs=[], kwonlydefaults=None, annotations={})
         """
         from sage.misc.sageinspect import sage_getargspec
         return sage_getargspec(self.f)
@@ -944,8 +945,8 @@ class EnumeratedSetFromIterator_method_decorator():
         TESTS::
 
             sage: from sage.sets.set_from_iterator import set_from_method
-            sage: class A:
-            ....:  @set_from_method()    # indirect doctest
+            sage: class A:                # indirect doctest
+            ....:  @set_from_method()
             ....:  def f(self):
             ....:      return xsrange(3)
             sage: a = A()

@@ -193,8 +193,8 @@ cdef class dancing_linksWrapper:
         r"""
         Reinitialization of the search algorithm
 
-        This recreates an empty `dancing_links` object and adds the rows to
-        the instance of dancing_links.
+        This recreates an empty ``dancing_links`` object and adds the rows to
+        the instance of ``dancing_links.``
 
         EXAMPLES::
 
@@ -805,7 +805,7 @@ cdef class dancing_linksWrapper:
         INPUT:
 
         - ``ncpus`` -- integer (default: ``None``), maximal number of
-          subprocesses to use at the same time. If `ncpus>1` the dancing
+          subprocesses to use at the same time. If ``ncpus>1`` the dancing
           links problem is split into independent subproblems to allow
           parallel computation. If ``None``, it detects the number of
           effective CPUs in the system using
@@ -968,8 +968,8 @@ cdef class dancing_linksWrapper:
 
         .. NOTE::
 
-            When comparing the time taken by method `one_solution`,
-            have in mind that `one_solution_using_sat_solver` first
+            When comparing the time taken by method ``one_solution``,
+            have in mind that ``one_solution_using_sat_solver`` first
             creates the SAT solver instance from the dancing links
             solver. This copy of data may take many seconds depending on
             the size of the problem.
@@ -1030,7 +1030,7 @@ cdef class dancing_linksWrapper:
             sage: d = dlx_solver(rows)
             sage: p,x = d.to_milp()
             sage: p
-            Boolean Program (no objective, 4 variables, 4 constraints)
+            Boolean Program (no objective, 4 variables, ... constraints)
             sage: x
             MIPVariable with 4 binary components
 
@@ -1041,7 +1041,7 @@ cdef class dancing_linksWrapper:
             Maximization:
             <BLANKLINE>
             <BLANKLINE>
-            Constraints:
+            Constraints:...
               one 1 in 0-th column: 1.0 <= x_0 + x_1 <= 1.0
               one 1 in 1-th column: 1.0 <= x_0 + x_2 <= 1.0
               one 1 in 2-th column: 1.0 <= x_0 + x_1 <= 1.0
@@ -1096,8 +1096,8 @@ cdef class dancing_linksWrapper:
 
         .. NOTE::
 
-            When comparing the time taken by method `one_solution`, have in
-            mind that `one_solution_using_milp_solver` first creates (and
+            When comparing the time taken by method ``one_solution``, have in
+            mind that ``one_solution_using_milp_solver`` first creates (and
             caches) the MILP solver instance from the dancing links solver.
             This copy of data may take many seconds depending on the size
             of the problem.

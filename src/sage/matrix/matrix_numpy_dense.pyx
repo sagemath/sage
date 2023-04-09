@@ -314,9 +314,9 @@ cdef class Matrix_numpy_dense(Matrix_dense):
         """
         cdef Py_ssize_t i, j
         tol = float(tol)
-        key = 'symmetric_%s'%tol
+        key = 'symmetric_%s' % tol
         b = self.fetch(key)
-        if not b is None:
+        if b is not None:
             return b
         if self._nrows != self._ncols:
             self.cache(key, False)

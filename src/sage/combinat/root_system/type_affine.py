@@ -51,7 +51,7 @@ class AmbientSpace(CombinatorialFreeModule):
         \delta,\delta\rangle=0` and similarly for the null coroot.
 
         In the current implementation, `\Lambda_0` and the null coroot
-        are identified:
+        are identified::
 
             sage: L = RootSystem(["A",3,1]).ambient_space()
             sage: Lambda = L.fundamental_weights()
@@ -347,7 +347,7 @@ class AmbientSpace(CombinatorialFreeModule):
             - :meth:`CartanType.col_annihilator`
             - :meth:`null_root`
         """
-        cartan_type  = self.cartan_type()
+        cartan_type = self.cartan_type()
         special_node = cartan_type.special_node()
         if i == special_node:
             return self(self._classical_alpha_0()) + self.monomial("delta")

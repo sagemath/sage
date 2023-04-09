@@ -75,7 +75,7 @@ cdef inline bint _do_sig(fmpq_poly_t op):
         sage: g = 2/3 + t^2
         sage: _ = f * g      # indirect doctest
     """
-    # Trac #12173: check that the degree is greater than 1000 before computing
+    # Issue #12173: check that the degree is greater than 1000 before computing
     # the max limb size
     return (fmpq_poly_length(op) > 0 and
             (fmpq_poly_degree(op) > 1000 or
@@ -2163,7 +2163,9 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: (zeta^2 + zeta + 1).galois_group(pari_group=True)
             PARI group [2, -1, 1, "S2"] of degree 2
         """
-        from sage.groups.all import PariGroup, PermutationGroup, TransitiveGroup
+        from sage.groups.pari_group import PariGroup
+        from sage.groups.perm_gps.permgroup import PermutationGroup
+        from sage.groups.perm_gps.permgroup_named import TransitiveGroup
 
         if not self.is_irreducible():
             raise ValueError("The polynomial must be irreducible")
@@ -2513,25 +2515,25 @@ cdef class Polynomial_rational_flint(Polynomial):
     def galois_group_davenport_smith_test(self, num_trials=50, assume_irreducible=False):
         """
         Use the Davenport-Smith test to attempt to certify that `f` has Galois group A_n or S_n.
- 
+
         Return 1 if the Galois group is certified as S_n, 2 if A_n, or 0 if no conclusion is reached.
-        
+
         By default, we first check that `f` is irreducible. For extra efficiency, one can override this
         by specifying `assume_irreducible=True`; this yields undefined results if `f` is not irreducible.
-        
+
         A corresponding function in Magma is `IsEasySnAn`.
 
         EXAMPLES::
 
             sage: P.<x> = QQ[]
             sage: u = x^7 + x + 1
-            sage: u.galois_group_davenport_smith_test()                                                         
+            sage: u.galois_group_davenport_smith_test()
             1
-            sage: u = x^7 - x^4 - x^3 + 3*x^2 - 1                                           
-            sage: u.galois_group_davenport_smith_test()                                                         
+            sage: u = x^7 - x^4 - x^3 + 3*x^2 - 1
+            sage: u.galois_group_davenport_smith_test()
             2
             sage: u = x^7 - 2
-            sage: u.galois_group_davenport_smith_test()                                                         
+            sage: u.galois_group_davenport_smith_test()
             0
 
         """

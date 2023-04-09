@@ -653,6 +653,24 @@ cpdef list si2sa_resolution(Resolution res):
     - ``res`` -- Singular resolution
 
     The procedure is destructive and ``res`` is not usable afterward.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.singular import si2sa_resolution
+        sage: from sage.libs.singular.function import singular_function
+        sage: module = singular_function("module")
+        sage: mres = singular_function('mres')
+
+        sage: S.<x,y,z,w> = PolynomialRing(QQ)
+        sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+        sage: mod = module(I)
+        sage: r = mres(mod, 0)
+        sage: si2sa_resolution(r)
+        [
+                                         [ y  x]
+                                         [-z -y]
+        [z^2 - y*w y*z - x*w y^2 - x*z], [ w  z]
+        ]
     """
     cdef ring *singular_ring
     cdef syStrategy singular_res
@@ -754,6 +772,27 @@ cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees):
     - ``degrees`` -- list of integers or integer vectors
 
     The procedure is destructive, and ``res`` is not usable afterward.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.singular import si2sa_resolution_graded
+        sage: from sage.libs.singular.function import singular_function
+        sage: module = singular_function("module")
+        sage: mres = singular_function('mres')
+
+        sage: S.<x,y,z,w> = PolynomialRing(QQ)
+        sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+        sage: mod = module(I)
+        sage: r = mres(mod, 0)
+        sage: res_mats, res_degs = si2sa_resolution_graded(r, (1, 1, 1, 1))
+        sage: res_mats
+        [
+                                         [ y  x]
+                                         [-z -y]
+        [z^2 - y*w y*z - x*w y^2 - x*z], [ w  z]
+        ]
+        sage: res_degs
+        [[[2], [2], [2]], [[1, 1, 1], [1, 1, 1]]]
     """
     cdef ring *singular_ring
     cdef syStrategy singular_res
@@ -865,9 +904,9 @@ cdef number *sa2si_QQ(Rational r, ring *_ring):
 
     INPUT:
 
-    - ``r`` - a sage rational number
+    - ``r`` -- a sage rational number
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -895,9 +934,9 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring):
 
     INPUT:
 
-    - ``quo`` - a sage integer
+    - ``quo`` -- a sage integer
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -963,9 +1002,9 @@ cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a ntl_gf2e finite field
+    - ``elem`` -- a sage element of a ntl_gf2e finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -1028,9 +1067,9 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a generic finite field
+    - ``elem`` -- a sage element of a generic finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -1094,14 +1133,13 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a FractionField of polynomials over the rationals
+    - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
     - A (pointer to) a singular number
-
 
     TESTS::
 
@@ -1245,14 +1283,13 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a FractionField of polynomials over the rationals
+    - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
     - A (pointer to) a singular number
-
 
     TESTS::
 
@@ -1346,9 +1383,9 @@ cdef number *sa2si_NF(object elem, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage element of a NumberField
+    - ``elem`` -- a sage element of a NumberField
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
@@ -1437,14 +1474,13 @@ cdef number *sa2si_ZZ(Integer d, ring *_ring):
 
     INPUT:
 
-    - ``elem`` - a sage Integer
+    - ``elem`` -- a sage Integer
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     OUTPUT:
 
     - A (pointer to) a singular number
-
 
     TESTS::
 
@@ -1650,7 +1686,7 @@ cdef object si2sa_intvec(intvec *v):
 
     INPUT:
 
-    - ``v`` -- a (pointer to) a singular intvec
+    - ``v`` -- a (pointer to) singular intvec
 
     OUTPUT:
 
@@ -1669,14 +1705,7 @@ cdef object si2sa_intvec(intvec *v):
 cdef extern from *: # hack to get at cython macro
     int unlikely(int)
 
-cdef extern from "dlfcn.h":
-    void *dlopen(char *, long)
-    char *dlerror()
-    void dlclose(void *handle)
-
-cdef extern from "dlfcn.h":
-    cdef long RTLD_LAZY
-    cdef long RTLD_GLOBAL
+from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
 
 cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     """
@@ -1689,21 +1718,27 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     - ``_ring`` -- a pointer to some ring.
 
     Whether an overflow occurs or not partially depends
-    on the number of variables in the ring. See trac ticket
+
+    on the number of variables in the ring. See github issue
     :trac:`11856`. With Singular 4, it is by default optimized
     for at least 4 variables on 64-bit and 2 variables on 32-bit,
     which in both cases makes a maximal default exponent of
     2^16-1.
 
+
     EXAMPLES::
 
         sage: P.<x,y> = QQ[]
-        sage: y^(2^16-1)
-        y^65535
-        sage: y^2^16
+        sage: y^(2^30)
+        Traceback (most recent call last):             # 32-bit
+        ...                                            # 32-bit
+        OverflowError: exponent overflow (1073741824)  # 32-bit
+        y^1073741824  # 64-bit
+        sage: y^2^32
         Traceback (most recent call last):
         ...
-        OverflowError: exponent overflow (65536)
+        OverflowError: Python int too large to convert to C unsigned long  # 32-bit
+        OverflowError: exponent overflow (4294967296)  # 64-bit
     """
     if unlikely(e > _ring.bitmask):
         raise OverflowError("exponent overflow (%d)"%(e))
@@ -1726,8 +1761,6 @@ cdef init_libsingular():
 
     cdef void *handle = NULL
 
-    from sage.env import LIBSINGULAR_PATH
-    lib = str_to_bytes(LIBSINGULAR_PATH, FS_ENCODING, "surrogateescape")
 
     # This is a workaround for https://github.com/Singular/Singular/issues/1113
     # and can be removed once that fix makes it into release of Singular that
@@ -1744,10 +1777,12 @@ cdef init_libsingular():
 
     import platform
     if not platform.system().startswith("CYGWIN"):
+        # reload the current module to force reload of libSingular (see #33446)
+        lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
         handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
         if not handle:
             err = dlerror()
-            raise ImportError(f"cannot load Singular library from {LIBSINGULAR_PATH} ({err})")
+            raise RuntimeError(f"Could not reload Singular library with RTLD_GLOBAL ({err})")
 
     # load SINGULAR
     siInit(lib)

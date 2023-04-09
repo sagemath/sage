@@ -70,8 +70,8 @@ from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_s
 from sage.rings.polynomial.polydict import PolyDict, ETuple
 from sage.rings.polynomial.term_order import TermOrder
 
-from sage.interfaces.singular import is_SingularElement
-from sage.interfaces.macaulay2 import is_Macaulay2Element
+import sage.interfaces.abc
+
 from sage.libs.pari.all import pari_gen
 
 from sage.structure.element import Element
@@ -420,7 +420,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         except TypeError:
             pass
 
-        from .multi_polynomial_libsingular import MPolynomial_libsingular
+        from .multi_polynomial import MPolynomial_libsingular
 
         if isinstance(x, MPolynomial_polydict):
             P = x.parent()
@@ -489,7 +489,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             else:
                 raise TypeError("unable to coerce since the denominator is not 1")
 
-        elif is_SingularElement(x) and self._has_singular:
+        elif isinstance(x, sage.interfaces.abc.SingularElement) and self._has_singular:
             self._singular_().set_ring()
             try:
                 return x.sage_poly(self)
@@ -507,7 +507,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
                 raise TypeError("unable to evaluate {!r} in {}".format(x, self))
             return self(x)
 
-        elif is_Macaulay2Element(x):
+        elif isinstance(x, sage.interfaces.abc.Macaulay2Element):
             try:
                 s = x.sage_polystring()
                 if len(s) == 0:
@@ -639,9 +639,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         res = f.esub(g)
 
-        return MPolynomial_polydict(self, PolyDict({res: coeff},
-                                                   force_int_exponents=False,
-                                                   force_etuples=False))
+        return MPolynomial_polydict(self, PolyDict({res: coeff}))
 
     def monomial_lcm(self, f, g):
         """
@@ -690,8 +688,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         res = {i: max(f[i], g[i])
                for i in f.common_nonzero_positions(g)}
 
-        return self(PolyDict({ETuple(res, length): one},
-                             force_int_exponents=False, force_etuples=False))
+        return self(PolyDict({ETuple(res, length): one}))
 
     def monomial_reduce(self, f, G):
         r"""
@@ -891,10 +888,36 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         while tempvector != maxvector:
             tempvector = addwithcarry(list(tempvector), maxvector, pos)
-            M.append(R(PolyDict({ETuple(tempvector): one},
-                                force_int_exponents=False,
-                                force_etuples=False)))
+            M.append(R(PolyDict({ETuple(tempvector): one})))
         return M
+
+    def sum(self, terms):
+        r"""
+        Return a sum of elements of this multipolynomial ring.
+
+        This is method is much faster than the Python builtin sum.
+
+        EXAMPLES::
+
+            sage: R = QQ['x']
+            sage: S = R['y, z']
+            sage: x = R.gen()
+            sage: y, z = S.gens()
+            sage: S.sum([x*y, 2*x^2*z - 2*x*y, 1 + y + z])
+            (-x + 1)*y + (2*x^2 + 1)*z + 1
+
+        Comparison with builtin sum::
+
+            sage: sum([x*y, 2*x^2*z - 2*x*y, 1 + y + z])
+            (-x + 1)*y + (2*x^2 + 1)*z + 1
+        """
+        elt = PolyDict({}, check=False)
+        for t in terms:
+            elt += self(t).element()
+        # NOTE: here we should be using self.element_class but polynomial rings are not complient
+        # with categories...
+        from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
+        return MPolynomial_polydict(self, elt)
 
 
 class MPolynomialRing_polydict_domain(IntegralDomain,
@@ -927,10 +950,7 @@ class MPolynomialRing_polydict_domain(IntegralDomain,
         if not self._has_singular:
             # pass through
             MPolynomialRing_base.ideal(self, gens, **kwds)
-        if is_SingularElement(gens):
-            gens = list(gens)
-            do_coerce = True
-        if is_Macaulay2Element(gens):
+        if isinstance(gens, (sage.interfaces.abc.SingularElement, sage.interfaces.abc.Macaulay2Element)):
             gens = list(gens)
             do_coerce = True
         elif not isinstance(gens, (list, tuple)):

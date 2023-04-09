@@ -1,5 +1,5 @@
 r"""
-Airy Functions
+Airy functions
 
 This module implements Airy functions and their generalized derivatives. It
 supports symbolic functionality through Maxima and numeric evaluation through

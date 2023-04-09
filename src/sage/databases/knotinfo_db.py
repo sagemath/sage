@@ -75,6 +75,7 @@ class KnotInfoColumns(Enum):
          'PD Notation (vector)',
          'PD Notation (KnotTheory)',
          'Braid Notation',
+         'Quasipositive Braid',
          'Multivariable Alexander Polynomial',
          'HOMFLYPT Polynomial',
          'Unoriented',
@@ -261,7 +262,6 @@ class KnotInfoFilename(Enum):
         """
         return 'column_dict.sobj'
 
-
     def sobj_data(self, column):
         r"""
         Return the file name under which the data of the given
@@ -310,11 +310,8 @@ class KnotInfoFilename(Enum):
         else:
             return '%sdiagram_display.php?%s' %(self.url(), fname)
 
-
     knots = ['https://knotinfo.math.indiana.edu/', 'knotinfo_data_complete']
     links = ['https://linkinfo.sitehost.iu.edu/',  'linkinfo_data_complete']
-
-
 
 
 #----------------------------------------------------------------------------------------------------------------------------
@@ -405,7 +402,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
             self._create_data_sobj(sobj_path=sobj_path)
         return
 
-
     def version(self):
         r"""
         Return the version of the database currently installed on the device.
@@ -437,7 +433,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         self._feature.require()
         from database_knotinfo import version
         return version()
-
 
     def demo_version(self):
         r"""
@@ -481,7 +476,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         from database_knotinfo import link_list
         self._knot_list = link_list()
         return self._knot_list
-
 
     def link_list(self):
         r"""
@@ -556,8 +550,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
         save(column_dict, '%s/%s' %(sobj_path, self.filename.knots.sobj_column()))
 
-
-
     def _create_data_sobj(self, sobj_path=None):
         r"""
         Create ``sobj`` files containing the contents of the whole table.
@@ -595,23 +587,23 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         for col in cols:
             val_list = []
 
-            if  col.column_type() != col.types.OnlyLinks:
-                for i in range(1 , len_knots):
+            if col.column_type() != col.types.OnlyLinks:
+                for i in range(1, len_knots):
                     if col.name == self._names_column:
-                        row_dict[self._knot_prefix + knot_list[i][col.name]] = [i - 1 , 1]
+                        row_dict[self._knot_prefix + knot_list[i][col.name]] = [i - 1, 1]
 
                     val_list.append(knot_list[i][col.name])
 
-            if  col.column_type() != col.types.OnlyKnots:
-                for i in range(1 , len_links):
+            if col.column_type() != col.types.OnlyKnots:
+                for i in range(1, len_links):
                     if col.name == self._names_column:
                         link_name = link_list[i][col.name]
                         link_name = link_name.replace('{', '_')
                         link_name = link_name.replace(',', '_')
                         link_name = link_name.replace('}', '')
- 
+
                         num_comp = int(link_list[i][self._components_column])
-                        row_dict[link_name] = [i + len_knots - 2 , num_comp]
+                        row_dict[link_name] = [i + len_knots - 2, num_comp]
 
                     val_list.append(link_list[i][col.name])
 
@@ -619,7 +611,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
                 save(val_list, '%s/%s' %(sobj_path, self.filename.knots.sobj_data(col)))
 
         save(row_dict,    '%s/%s' %(sobj_path, self.filename.knots.sobj_row()))
-
 
     @cached_method
     def columns(self):
@@ -637,7 +628,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         """
         column_dict = self.read_column_dict()
         return KnotInfoColumns('Columns', column_dict)
-
 
     # -------------------------------------------------------------------------------------------------------------
     # read the dictionary for the column names from sobj-file
@@ -716,7 +706,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         names = self.read(self.columns().name)
         return {k:names[v[0]] for k, v in row_dict.items()}
 
-
     # -------------------------------------------------------------------------------------------------------------
     # read the number of knots contained in the database (without proper links) from the according sobj-file.
     # -------------------------------------------------------------------------------------------------------------
@@ -739,7 +728,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         if not self._num_knots:
             self.demo_version()
         return self._num_knots
-
 
     # -------------------------------------------------------------------------------------------------------------
     # read an sobj-file obtained from KnotInfo database
@@ -802,7 +790,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         tester.assertTrue(all(L.is_recoverable(unique=False) for L, in sample))
 
 
-
 column_demo_sample = {
     'name':                 ['Name',                 KnotInfoColumnTypes.KnotsAndLinks],
     'name_unoriented':      ['Name - Unoriented',    KnotInfoColumnTypes.OnlyLinks],
@@ -822,6 +809,8 @@ column_demo_sample = {
     'homfly_polynomial':    ['HOMFLY',               KnotInfoColumnTypes.OnlyKnots],
     'homflypt_polynomial':  ['HOMFLYPT Polynomial',  KnotInfoColumnTypes.OnlyLinks],
     'kauffman_polynomial':  ['Kauffman',             KnotInfoColumnTypes.KnotsAndLinks],
+    'khovanov_polynomial':  ['Khovanov',             KnotInfoColumnTypes.KnotsAndLinks],
+    'khovanov_torsion_polynomial': ['Khovanov Torsion', KnotInfoColumnTypes.OnlyKnots],
     'determinant':          ['Determinant',          KnotInfoColumnTypes.KnotsAndLinks],
     'positive':             ['Positive',             KnotInfoColumnTypes.OnlyKnots],
     'fibered':              ['Fibered',              KnotInfoColumnTypes.OnlyKnots],
@@ -1089,5 +1078,60 @@ data_demo_sample = {
         '1-3*t+ 3*t^2-3*t^3+ t^4',
         '1-3*t+ 5*t^2-3*t^3+ t^4',
         '1-t+ t^2-t^3+ t^4-t^5+ t^6',
-        '3-5*t+ 3*t^2']
+        '3-5*t+ 3*t^2'],
+    dc.conway_polynomial: [
+        '1',
+        '1+z^2',
+        '1-z^2',
+        '1+3*z^2+z^4',
+        '1+2*z^2',
+        '1-2*z^2',
+        '1-z^2-z^4',
+        '1+z^2+z^4',
+        '1+6*z^2+5*z^4+z^6',
+        '1+3*z^2',
+        '-z',
+        'z',
+        '-2*z',
+        '2*z + z^3',
+        'z^3',
+        'z^3',
+        '-2*z + z^3',
+        '2*z + 2*z^3',
+        '-3*z-2*z^3',
+        '3*z + 2*z^3',
+        '-3*z-4*z^3-z^5'],
+    dc.khovanov_polynomial: [
+        '',
+        'q^(-9)t^(-3)+q^(-5)t^(-2)+q^(-3)+q^(-1)',
+        'q^(-5)t^(-2)+q^(-1)t^(-1)+q+q^(-1)+qt+q^5t^2',
+        'q^(-15)t^(-5)+q^(-11)t^(-4)+q^(-11)t^(-3)+q^(-7)t^(-2)+q^(-5)+q^(-3)',
+        'q^(-13)t^(-5)+q^(-9)t^(-4)+q^(-9)t^(-3)+(q^(-7)+q^(-5))t^(-2)+q^(-3)t^(-1)+q^(-3)+q^(-1)',
+        'q^(-9)t^(-4)+q^(-5)t^(-3)+q^(-5)t^(-2)+(q^(-3)+q^(-1))t^(-1)+2q+q^(-1)+qt+q^5t^2',
+        'q^(-11)t^(-4)+(q^(-9)+q^(-7))t^(-3)+(q^(-7)+q^(-5))t^(-2)+(q^(-5)+q^(-3))t^(-1)+q^(-3)+2q^(-1)+tq^(-1)+q^3t^2',
+        'q^(-7)t^(-3)+(q^(-5)+q^(-3))t^(-2)+(q^(-3)+q^(-1))t^(-1)+2q+2q^(-1)+t(q+q^3)+(q^3+q^5)t^2+q^7t^3',
+        'q^(-21)t^(-7)+q^(-17)t^(-6)+q^(-17)t^(-5)+q^(-13)t^(-4)+q^(-13)t^(-3)+q^(-9)t^(-2)+q^(-7)+q^(-5)',
+        'q^(-17)t^(-7)+q^(-13)t^(-6)+q^(-13)t^(-5)+(q^(-11)+q^(-9))t^(-4)+(q^(-9)+q^(-7))t^(-3)+(q^(-7)+q^(-5))t^(-2)+q^(-3)t^(-1)+q^(-3)+q^(-1)',
+        '1 + q^(-2) + 1/(q^6*t^2) + 1/(q^4*t^2)',
+        '1 + q^2 + q^4*t^2 + q^6*t^2',
+        '1 + q^(-2) + 1/(q^10*t^4) + 1/(q^8*t^4) + 1/(q^6*t^2) + 1/(q^2*t)',
+        'q^2 + q^4 + q^6*t^2 + q^10*t^3 + q^10*t^4 + q^12*t^4',
+        '2 + 2/q^2 + 1/(q^8*t^3) + 1/(q^6*t^2) + 1/(q^4*t^2) + 1/(q^2*t) + t + q^4*t^2',
+        '2 + 2/q^2 + 1/(q^8*t^3) + 1/(q^6*t^2) + 1/(q^4*t^2) + 1/(q^2*t) + t + q^4*t^2',
+        '1 + 2/q^2 + 1/(q^10*t^4) + 1/(q^8*t^4) + 1/(q^8*t^3) + 2/(q^6*t^2) + 1/(q^4*t^2) + 2/(q^2*t) + t + q^2*t + q^4*t^2',
+        'q^2 + q^4 + q^4*t + 2*q^6*t^2 + q^8*t^2 + 2*q^10*t^3 + 2*q^10*t^4 + q^12*t^4 + q^12*t^5 + q^14*t^5 + q^16*t^6',
+        'q^(-4) + q^(-2) + 1/(q^16*t^6) + 1/(q^14*t^6) + 1/(q^14*t^5) + 1/(q^12*t^4) + 1/(q^10*t^4) + 1/(q^10*t^3) + 1/(q^8*t^3) + 1/(q^8*t^2) + 1/(q^6*t^2) + 1/(q^4*t)',
+        'q^2 + q^4 + q^4*t + q^6*t^2 + q^8*t^2 + q^8*t^3 + q^10*t^3 + q^10*t^4 + q^12*t^4 + q^14*t^5 + q^14*t^6 + q^16*t^6',
+        'q^(-6) + q^(-4) + 1/(q^18*t^6) + 1/(q^16*t^6) + 1/(q^16*t^5) + 1/(q^12*t^4) + 1/(q^12*t^3) + 1/(q^8*t^2)'],
+    dc.khovanov_torsion_polynomial: [
+        '',
+        'Q^(-7)t^(-2)',
+        'Q^(-3)t^(-1)+Q^3t^2',
+        'Q^(-13)t^(-4)+Q^(-9)t^(-2)',
+        'Q^(-11)t^(-4)+Q^(-7)t^(-2)+Q^(-5)t^(-1)',
+        'Q^(-7)t^(-3)+Q^(-3)t^(-1)+Q^(-1)+Q^3t^2',
+        'Q^(-9)t^(-3)+Q^(-7)t^(-2)+Q^(-5)t^(-1)+Q^(-3)+Qt^2',
+        'Q^(-5)t^(-2)+Q^(-3)t^(-1)+Q^(-1)+Qt+Q^3t^2+Q^5t^3',
+        'Q^(-19)t^(-6)+Q^(-15)t^(-4)+Q^(-11)t^(-2)',
+        'Q^(-15)t^(-6)+Q^(-11)t^(-4)+Q^(-9)t^(-3)+Q^(-7)t^(-2)+Q^(-5)t^(-1)']
 }

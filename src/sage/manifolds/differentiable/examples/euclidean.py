@@ -717,7 +717,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
                                       start_index=start_index,
                                       unique_tag=unique_tag)
 
-        return super(cls, EuclideanSpace).__classcall__(cls,
+        return super().__classcall__(cls,
                                      n, name=name, latex_name=latex_name,
                                      coordinates=coordinates, symbols=symbols,
                                      metric_name=metric_name,
@@ -772,7 +772,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
         if category is None:
             category = Manifolds(RR).Smooth().Connected() & MetricSpaces().Complete()
             # NB: RR is a proxy for the field of real numbers, until
-            #     Trac #24456 is ready
+            #     Issue #24456 is ready
         PseudoRiemannianManifold.__init__(self, n, name, metric_name=metric_name,
                                           signature=n, base_manifold=base_manifold,
                                           latex_name=latex_name,

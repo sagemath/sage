@@ -459,10 +459,11 @@ cdef ring* access_singular_ring(r) except <ring*> -1:
 cdef poly* copy_sage_polynomial_into_singular_poly(p):
     return p_Copy(access_singular_poly(p), access_singular_ring(p.parent()))
 
+
 def all_vectors(s):
     """
-    Checks if a sequence ``s`` consists of free module
-    elements over a singular ring.
+    Check if a sequence ``s`` consists of free module elements
+    over a singular ring.
 
     EXAMPLES::
 
@@ -478,11 +479,9 @@ def all_vectors(s):
         sage: all_vectors([M(0), M((x,y)),(0,0)])
         False
     """
-    for p in s:
-        if not (isinstance(p, FreeModuleElement_generic_dense)\
-            and is_sage_wrapper_for_singular_ring(p.parent().base_ring())):
-            return False
-    return True
+    return all(isinstance(p, FreeModuleElement_generic_dense)
+               and is_sage_wrapper_for_singular_ring(p.parent().base_ring())
+               for p in s)
 
 
 cdef class Converter(SageObject):
@@ -1200,8 +1199,8 @@ cdef class SingularFunction(SageObject):
 
         - ``args`` -- a list of arguments
         - ``ring`` -- a multivariate polynomial ring
-        - ``interruptible`` -- if ``True`` pressing Ctrl-C during the
-          execution of this function will interrupt the computation
+        - ``interruptible`` -- if ``True`` pressing :kbd:`Ctrl` + :kbd:`C`
+          during the execution of this function will interrupt the computation
           (default: ``True``)
 
         - ``attributes`` -- a dictionary of optional Singular
@@ -1300,12 +1299,12 @@ cdef class SingularFunction(SageObject):
             ring = self.common_ring(args, ring)
             if ring is None:
                 if dummy_ring is None:
-                    from sage.rings.polynomial.all import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                     from sage.rings.rational_field import QQ
                     dummy_ring = PolynomialRing(QQ, "dummy", implementation="singular") # seems a reasonable default
                 ring = dummy_ring
         if not (isinstance(ring, MPolynomialRing_libsingular) or isinstance(ring, NCPolynomialRing_plural)):
-            raise TypeError("Cannot call Singular function '%s' with ring parameter of type '%s'"%(self._name,type(ring)))
+            raise TypeError("cannot call Singular function '%s' with ring parameter of type '%s'" % (self._name,type(ring)))
         return call_function(self, args, ring, interruptible, attributes)
 
     def _instancedoc_(self):
@@ -1332,7 +1331,7 @@ INPUT:
 
 - ``args`` -- a list of arguments
 - ``ring`` -- a multivariate polynomial ring
-- ``interruptible`` -- if ``True`` pressing Ctrl-C during the
+- ``interruptible`` -- if ``True`` pressing :kbd:`Ctrl` + :kbd:`C` during the
   execution of this function will interrupt the computation
   (default: ``True``)
 - ``attributes`` -- a dictionary of optional Singular attributes
@@ -1362,7 +1361,7 @@ EXAMPLES::
 
 The Singular documentation for '%s' is given below.
 """%(self._name,self._name)
-        # Trac ticket #11268: Include the Singular documentation as a block of code
+        # Github issue #11268: Include the Singular documentation as a block of code
         singular_doc = get_docstring(self._name).split('\n')
         if len(singular_doc) > 1:
             return prefix + "\n::\n\n"+'\n'.join(["    "+L for L in singular_doc])
@@ -1394,9 +1393,7 @@ The Singular documentation for '%s' is given below.
                 ring2 = a.parent()
             elif is_sage_wrapper_for_singular_ring(a):
                 ring2 = a
-            elif isinstance(a, int) or\
-                isinstance(a, long) or\
-                isinstance(a, basestring):
+            elif isinstance(a, (int, str)):
                 continue
             elif isinstance(a, Matrix_integer_dense):
                 continue

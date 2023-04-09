@@ -113,17 +113,15 @@ AUTHORS:
 
 - Sebastian Oehms May 2020: initial version
 """
-
-##############################################################################
+# ###########################################################################
 #       Copyright (C) 2020 Sebastian Oehms <seb.oehms@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-##############################################################################
-
+#                  https://www.gnu.org/licenses/
+# ###########################################################################
 from warnings import warn
 
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -188,7 +186,8 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
         inverse_Tietze = ()
         len_self = len(self_Tietze)
 
-        inverse_Tietze = tuple([-1*self_Tietze[len_self - i - 1] for i in range(len_self)])
+        inverse_Tietze = tuple([-1 * self_Tietze[len_self - i - 1]
+                                for i in range(len_self)])
         P = self.parent()
         return P(inverse_Tietze)
 
@@ -829,9 +828,9 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
 
         from sage.structure.category_object import normalize_names
         names = tuple(normalize_names(n, names))
-        return super(CubicHeckeAlgebra, cls).__classcall__(cls, names,
-                                                           cubic_equation_parameters=cubic_equation_parameters,
-                                                           cubic_equation_roots=cubic_equation_roots)
+        return super().__classcall__(cls, names,
+                                     cubic_equation_parameters=cubic_equation_parameters,
+                                     cubic_equation_roots=cubic_equation_roots)
 
     def __init__(self, names, cubic_equation_parameters=None, cubic_equation_roots=None):
         r"""
@@ -1628,7 +1627,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     def _create_matrix_list_for_one(self, representation_type):
         r"""
         Return the matrix list for the given representation type
-        for ``self.one()`.
+        for ``self.one()``.
 
         EXAMPLES::
 
@@ -1757,11 +1756,11 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
                 raise RuntimeError('fatal: base ring embedding %s does not work' % bri)
 
         test_eleBgenEmb = self._tester(**options)
-        test_eleBgenEmb.assertTrue(eleBgenEmb == eleB)
+        test_eleBgenEmb.assertEqual(eleBgenEmb, eleB)
         test_eleEgenEmb = self._tester(**options)
-        test_eleEgenEmb.assertTrue(eleEgenEmb == eleE)
+        test_eleEgenEmb.assertEqual(eleEgenEmb, eleE)
         test_eleBembE = self._tester(**options)
-        test_eleBembE.assertTrue(eleBembE == eleB)
+        test_eleBembE.assertEqual(eleBembE, eleB)
 
     # --------------------------------------------------------------------------
     # _test_matrix_constructions
@@ -1806,7 +1805,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             m12mult = m1*m2
             m12mat = b12.matrix(representation_type=representation_type)
             test_matrix = self._tester(**options)
-            test_matrix.assertTrue(m12mult == m12mat)
+            test_matrix.assertEqual(m12mult, m12mat)
 
         from sage.combinat.root_system.reflection_group_real import is_chevie_available
 
@@ -2366,8 +2365,8 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     @cached_method
     def _reduce_gen_power(self, k):
         r"""
-        Return the ``k``-th power on an arbitrary generator,
-        for example ``c0^k` .
+        Return the `k`-th power on an arbitrary generator,
+        for example `c_0^k`.
 
         INPUT:
 
@@ -3272,7 +3271,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         if nstrands == self._nstrands - 1 and self._cubic_hecke_subalgebra is not None:
             return self._cubic_hecke_subalgebra
 
-        names_red = names[:nstrands-1]
+        names_red = names[:nstrands - 1]
         if self.base_ring() == self.base_ring(generic=True):
             SubHeckeAlg = CubicHeckeAlgebra(names=names_red)
         else:
@@ -3535,4 +3534,3 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             return char_function
         irrs = [irr for irr in self.irred_repr if irr.number_gens() == self._nstrands - 1]
         return [self.characters(irrs[i], original=original) for i in range(len(irrs))]
-

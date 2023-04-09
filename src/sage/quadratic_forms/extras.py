@@ -1,8 +1,10 @@
-"Quadratic form extras"
+"""
+Extra functions for quadratic forms
+"""
 
 from sage.matrix.constructor import matrix
 from sage.structure.element import is_Matrix
-from sage.arith.all import legendre_symbol
+from sage.arith.misc import legendre_symbol
 from sage.rings.integer_ring import ZZ
 
 

@@ -10,7 +10,8 @@ Weyl Character Rings
 # ****************************************************************************
 
 import sage.combinat.root_system.branching_rules
-from sage.categories.all import Algebras, AlgebrasWithBasis
+from sage.categories.algebras import Algebras
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
@@ -18,6 +19,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 from sage.misc.functional import is_even
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
 
@@ -90,7 +92,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
     https://doc.sagemath.org/html/en/thematic_tutorials/lie.html
     """
     @staticmethod
-    def __classcall__(cls, ct, base_ring=ZZ, prefix=None, style="lattice", k=None, conjugate=False, cyclotomic_order=None):
+    def __classcall__(cls, ct, base_ring=ZZ, prefix=None, style="lattice", k=None, conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False):
         """
         TESTS::
 
@@ -103,12 +105,12 @@ class WeylCharacterRing(CombinatorialFreeModule):
         ct = CartanType(ct)
         if prefix is None:
             if ct.is_atomic():
-                prefix = ct[0]+str(ct[1])
+                prefix = ct[0] + str(ct[1])
             else:
                 prefix = repr(ct)
-        return super(WeylCharacterRing, cls).__classcall__(cls, ct, base_ring=base_ring, prefix=prefix, style=style, k=k, conjugate=conjugate, cyclotomic_order=cyclotomic_order)
+        return super().__classcall__(cls, ct, base_ring=base_ring, prefix=prefix, style=style, k=k, conjugate=conjugate, cyclotomic_order=cyclotomic_order, fusion_labels=fusion_labels, inject_variables=inject_variables)
 
-    def __init__(self, ct, base_ring=ZZ, prefix=None, style="lattice", k=None, conjugate=False, cyclotomic_order=None):
+    def __init__(self, ct, base_ring=ZZ, prefix=None, style="lattice", k=None, conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False):
         """
         EXAMPLES::
 
@@ -129,7 +131,11 @@ class WeylCharacterRing(CombinatorialFreeModule):
         self._prefix = prefix
         self._style = style
         self._fusion_labels = None
+        self._field = None
+        self._basecoer = None
         self._k = k
+        if k is not None:
+            self._k = Integer(k)
         if ct.is_irreducible():
             self._opposition = ct.opposition_automorphism()
             self._highest = self._space.highest_root()
@@ -149,9 +155,11 @@ class WeylCharacterRing(CombinatorialFreeModule):
         else:
             B = self._space
 
-        cat = AlgebrasWithBasis(base_ring).Subobjects()
+        cat = AlgebrasWithBasis(base_ring).Commutative()
         if k is None:
-            cat = cat.Graded()
+            cat = cat.Subobjects().Graded()
+        else:
+            cat = cat.FiniteDimensional()
         CombinatorialFreeModule.__init__(self, base_ring, B, category=cat)
 
         # Register the embedding of self into ambient as a coercion
@@ -170,7 +178,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 self._m_g = 2
             else:
                 self._m_g = 3
-            if ct[0] in ['B','F']:
+            if ct[0] in ['B', 'F']:
                 self._nf = 2
             else:
                 self._nf = 1
@@ -194,6 +202,9 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 self._cyclotomic_order = self._fg * self._l
             else:
                 self._cyclotomic_order = cyclotomic_order
+            self._fusion_labels = fusion_labels
+            if fusion_labels:
+                self.fusion_labels(labels=fusion_labels, inject_variables=inject_variables)
 
     @cached_method
     def ambient(self):
@@ -448,7 +459,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         # object which can't be coerced into self
         if len(args) > 1:
             args = (args,)
-        return super(WeylCharacterRing, self).__call__(*args)
+        return super().__call__(*args)
 
     def _element_constructor_(self, weight):
         """
@@ -529,7 +540,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 d[g] = d.get(g,0) + d1[k]
             elif epsilon == -1:
                 d[g] = d.get(g,0) - d1[k]
-        return self._from_dict(d)
+        return self._from_dict(d, coerce=True)
 
     def dot_reduce(self, a):
         r"""
@@ -707,8 +718,15 @@ class WeylCharacterRing(CombinatorialFreeModule):
         alpha = self._space.simple_roots()
         r = self.rank()
         cm = {}
+        supp = []
         for i in index_set:
-            cm[i] = tuple(int(alpha[i].inner_product(alphacheck[j])) for j in index_set)
+            temp = []
+            cm[i] = [0] * r
+            for ind,j in enumerate(index_set):
+                cm[i][ind] = int(alpha[i].inner_product(alphacheck[j]))
+                if cm[i][ind]:
+                    temp.append(ind)
+            supp.append(temp)
             if debug:
                 print("cm[%s]=%s" % (i, cm[i]))
         accum = dd
@@ -725,15 +743,21 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 if coroot >= 0:
                     mu = v
                     for j in range(coroot+1):
-                        next[mu] = next.get(mu,0)+accum[v]
+                        next[mu] = next.get(mu,0) + accum[v]
                         if debug:
                             print("     mu=%s, next[mu]=%s" % (mu, next[mu]))
-                        mu = tuple(mu[k] - cm[i][k] for k in range(r))
+                        mu = list(mu)
+                        for k in supp[i-1]:
+                            mu[k] -= cm[i][k]
+                        mu = tuple(mu)
                 else:
                     mu = v
                     for j in range(-1-coroot):
-                        mu = tuple(mu[k] + cm[i][k] for k in range(r))
-                        next[mu] = next.get(mu,0)-accum[v]
+                        mu = list(mu)
+                        for k in supp[i-1]:
+                            mu[k] += cm[i][k]
+                        mu = tuple(mu)
+                        next[mu] = next.get(mu,0) - accum[v]
                         if debug:
                             print("     mu=%s, next[mu]=%s" % (mu, next[mu]))
             accum = {}
@@ -1178,6 +1202,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         """
         A class for Weyl characters.
         """
+
         def cartan_type(self):
             """
             Return the Cartan type of ``self``.
@@ -1733,7 +1758,7 @@ class WeightRing(CombinatorialFreeModule):
             sage: a3.cartan_type(), a3.base_ring(), a3.parent()
             (['A', 3], Integer Ring, The Weyl Character Ring of Type A3 with Integer Ring coefficients)
         """
-        return super(WeightRing, cls).__classcall__(cls, parent, prefix=prefix)
+        return super().__classcall__(cls, parent, prefix=prefix)
 
     def __init__(self, parent, prefix):
         """
@@ -1770,7 +1795,7 @@ class WeightRing(CombinatorialFreeModule):
                 # TODO: this only works for irreducible Cartan types!
                 prefix = (self._cartan_type[0].lower() + str(self._rank))
         self._prefix = prefix
-        category = AlgebrasWithBasis(self._base_ring)
+        category = AlgebrasWithBasis(self._base_ring).Commutative()
         CombinatorialFreeModule.__init__(self, self._base_ring, self._space, category=category)
 
     def _repr_(self):
@@ -1818,7 +1843,7 @@ class WeightRing(CombinatorialFreeModule):
         # object which can't be coerced into self
         if len(args) > 1:
             args = (args,)
-        return super(WeightRing, self).__call__(*args)
+        return super().__call__(*args)
 
     def _element_constructor_(self, weight):
         """
@@ -2006,6 +2031,7 @@ class WeightRing(CombinatorialFreeModule):
         """
         A class for weight ring elements.
         """
+
         def cartan_type(self):
             """
             Return the Cartan type.

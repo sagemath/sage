@@ -271,14 +271,14 @@ that our form actually represents the Euler class appropriately.
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2021 Michael Jung <m.jung at vu.nl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#******************************************************************************
+# *****************************************************************************
 
 from sage.algebras.finite_gca import FiniteGCAlgebra
 from sage.combinat.free_module import IndexedFreeModuleElement
@@ -290,7 +290,7 @@ from .affine_connection import AffineConnection
 from .bundle_connection import BundleConnection
 from .levi_civita_connection import LeviCivitaConnection
 from sage.symbolic.expression import Expression
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
@@ -693,10 +693,10 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
         Algebra of characteristic cohomology classes of the Tangent bundle TM
          over the 8-dimensional differentiable manifold M
         sage: CR.gens()
-        [Characteristic cohomology class (p_1)(TM) of the Tangent bundle TM over
+        (Characteristic cohomology class (p_1)(TM) of the Tangent bundle TM over
          the 8-dimensional differentiable manifold M,
          Characteristic cohomology class (p_2)(TM) of the Tangent bundle TM
-         over the 8-dimensional differentiable manifold M]
+         over the 8-dimensional differentiable manifold M)
 
     The default base ring is `\QQ`::
 
@@ -712,12 +712,12 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
          complex vector bundle E -> M of rank 2 over the base space
          4-dimensional differentiable manifold M
         sage: CR_E.gens()
-        [Characteristic cohomology class (c_1)(E) of the Differentiable complex
+        (Characteristic cohomology class (c_1)(E) of the Differentiable complex
          vector bundle E -> M of rank 2 over the base space 4-dimensional
          differentiable manifold M,
          Characteristic cohomology class (c_2)(E) of the Differentiable
          complex vector bundle E -> M of rank 2 over the base space
-         4-dimensional differentiable manifold M]
+         4-dimensional differentiable manifold M)
 
     Characteristic cohomology class ring over an oriented manifold::
 
@@ -727,9 +727,9 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
         True
         sage: CR = TS2.characteristic_cohomology_class_ring()
         sage: CR.gens()
-        [Characteristic cohomology class (e)(TS^2) of the Tangent bundle TS^2
+        (Characteristic cohomology class (e)(TS^2) of the Tangent bundle TS^2
          over the 2-sphere S^2 of radius 1 smoothly embedded in the Euclidean
-         space E^3]
+         space E^3,)
     """
     Element = CharacteristicCohomologyClassRingElement
 
@@ -795,7 +795,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
             Characteristic cohomology class pontr(TM) of the Tangent bundle
              TM over the 8-dimensional differentiable manifold M
         """
-        if isinstance(x, (str, Expression)) or is_Polynomial(x):
+        if isinstance(x, (str, Expression)) or isinstance(x, Polynomial):
             return self._build_element(x, **kwargs)
 
         R = self.base_ring()
@@ -983,7 +983,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
             val = P(val.taylor(x, 0, pow_range))
 
         # turn polynomial into a characteristic cohomology class via sequences
-        if is_Polynomial(val):
+        if isinstance(val, Polynomial):
             if class_type is None:
                 raise TypeError(f'class_type must be stated if {val} '
                                 f'is a polynomial')
@@ -1042,6 +1042,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
         vbundle = self._vbundle
         repr = f'Algebra of characteristic cohomology classes of the {vbundle}'
         return repr
+
 
 # *****************************************************************************
 # ALGORITHMS
@@ -1102,6 +1103,7 @@ def multiplicative_sequence(q, n=None):
                             for k in range(n + 1)
                             for p in Partitions(k)})
     return Sym.e()(mon_pol)
+
 
 def additive_sequence(q, k, n=None):
     r"""
@@ -1299,9 +1301,9 @@ class Algorithm_generic(SageObject):
             sage: g = M.metric()
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select standard frame
-            sage: cmat = [ [nab.curvature_form(i, j, e) # long time
-            ....:           for j in TM.irange()]       # long time
-            ....:         for i in TM.irange()]         # long time
+            sage: cmat = [ [nab.curvature_form(i, j, e)  # long time
+            ....:           for j in TM.irange()]
+            ....:         for i in TM.irange()]
 
         Import the algorithm::
 
@@ -1498,8 +1500,8 @@ class PontryaginAlgorithm(Singleton, Algorithm_generic):
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select standard frame
             sage: cmat = [ [nab.curvature_form(i, j, e) # long time
-            ....:           for j in TM.irange()]       # long time
-            ....:         for i in TM.irange()]         # long time
+            ....:           for j in TM.irange()]
+            ....:         for i in TM.irange()]
 
         Import the algorithm::
 
@@ -1795,9 +1797,9 @@ class PontryaginEulerAlgorithm(Singleton, Algorithm_generic):
             sage: g = M.metric()
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select the standard frame
-            sage: cmat = [ [nab.curvature_form(i, j, e) # long time
-            ....:           for j in TM.irange()]       # long time
-            ....:         for i in TM.irange()]         # long time
+            sage: cmat = [ [nab.curvature_form(i, j, e)  # long time
+            ....:           for j in TM.irange()]
+            ....:         for i in TM.irange() ]
 
         Import the algorithm::
 
@@ -1845,4 +1847,4 @@ class PontryaginEulerAlgorithm(Singleton, Algorithm_generic):
             return nab._domain._one_scalar_field  # no computation necessary
         if i == 0:
             return fast_wedge_power(EulerAlgorithm().get(nab)[0], n)
-        return fast_wedge_power(PontryaginAlgorithm().get(nab)[i-1], n)
+        return fast_wedge_power(PontryaginAlgorithm().get(nab)[i - 1], n)

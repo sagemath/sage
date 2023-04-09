@@ -21,7 +21,7 @@ Base class for polyhedra: Methods related to lattice points
 #       Copyright (C) 2019      Julian Ritter
 #       Copyright (C) 2019-2020 Laith Rastanawi
 #       Copyright (C) 2019-2020 Sophia Elia
-#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -262,21 +262,21 @@ class Polyhedron_base2(Polyhedron_base1):
         volume = `\frac{1}{dim(S)!}`) is always 1. Here we test this on
         simplices up to dimension 3::
 
-            sage: s1 = polytopes.simplex(1,backend='normaliz')              # optional - pynormaliz
-            sage: s2 = polytopes.simplex(2,backend='normaliz')              # optional - pynormaliz
-            sage: s3 = polytopes.simplex(3,backend='normaliz')              # optional - pynormaliz
-            sage: [s1.h_star_vector(),s2.h_star_vector(),s3.h_star_vector()]  # optional - pynormaliz
+            sage: s1 = polytopes.simplex(1,backend='normaliz')                      # optional - pynormaliz
+            sage: s2 = polytopes.simplex(2,backend='normaliz')                      # optional - pynormaliz
+            sage: s3 = polytopes.simplex(3,backend='normaliz')                      # optional - pynormaliz
+            sage: [s1.h_star_vector(), s2.h_star_vector(), s3.h_star_vector()]      # optional - pynormaliz
             [[1], [1], [1]]
 
         For a less trivial example, we compute the `h^*`-vector of the
         `0/1`-cube, which has the Eulerian numbers `(3,i)` for `i \in [0,2]`
         as an `h^*`-vector::
 
-            sage: cube = polytopes.cube(intervals='zero_one', backend='normaliz') # optional - pynormaliz
-            sage: cube.h_star_vector()   # optional - pynormaliz
+            sage: cube = polytopes.cube(intervals='zero_one', backend='normaliz')   # optional - pynormaliz
+            sage: cube.h_star_vector()                                              # optional - pynormaliz
             [1, 4, 1]
-            sage: from sage.combinat.combinat import eulerian_number
-            sage: [eulerian_number(3,i) for i in range(3)]
+            sage: from sage.combinat.combinat import eulerian_number                                                        # optional - sage.combinat
+            sage: [eulerian_number(3,i) for i in range(3)]                                                                  # optional - sage.combinat
             [1, 4, 1]
 
         TESTS::
@@ -293,8 +293,8 @@ class Polyhedron_base2(Polyhedron_base1):
             ...
             TypeError: The h_star vector is only defined for lattice polytopes
 
-            sage: t2 = Polyhedron(vertices=[[AA(sqrt(2))],[1/2]])
-            sage: t2.h_star_vector()
+            sage: t2 = Polyhedron(vertices=[[AA(sqrt(2))], [1/2]])                  # optional - sage.rings.number_field
+            sage: t2.h_star_vector()                                                # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: The h_star vector is only defined for lattice polytopes
@@ -675,3 +675,132 @@ class Polyhedron_base2(Polyhedron_base1):
             raise EmptySetError('polyhedron does not contain any integral points')
 
         return self.get_integral_point(current_randstate().python_random().randint(0, count-1), **kwds)
+
+    def generating_function_of_integral_points(self, **kwds):
+        r"""
+        Return the multivariate generating function of the
+        integral points of this polyhedron.
+
+        To be precise, this returns
+
+        .. MATH::
+
+            \sum_{(r_0,\dots,r_{d-1}) \in \mathit{polyhedron}\cap \ZZ^d}
+            y_0^{r_0} \dots y_{d-1}^{r_{d-1}}.
+
+        This calls
+        :func:`~sage.geometry.polyhedron.generating_function.generating_function_of_integral_points`,
+        so have a look at the documentation and examples there.
+
+        INPUT:
+
+        The following keyword arguments are passed to
+        :func:`~sage.geometry.polyhedron.generating_function.generating_function_of_integral_points`:
+
+        - ``split`` -- (default: ``False``) a boolean or list
+
+          - ``split=False`` computes the generating function directly,
+            without any splitting.
+
+          - When ``split`` is a list of disjoint polyhedra, then
+            for each of these polyhedra, this polyhedron is intersected with it,
+            its generating function computed and all these generating functions
+            are summed up.
+
+          - ``split=True`` splits into `d!` disjoint polyhedra.
+
+        - ``result_as_tuple`` -- (default: ``None``) a boolean or ``None``
+
+          This specifies whether the output is a (partial) factorization
+          (``result_as_tuple=False``) or a sum of such (partial)
+          factorizations (``result_as_tuple=True``). By default
+          (``result_as_tuple=None``), this is automatically determined.
+          If the output is a sum, it is represented as a tuple whose
+          entries are the summands.
+
+        - ``indices`` -- (default: ``None``) a list or tuple
+
+          If this
+          is ``None``, this is automatically determined.
+
+        - ``name`` -- (default: ``'y'``) a string
+
+          The variable names of the Laurent polynomial ring of the output
+          are this string followed by an integer.
+
+        - ``names`` -- a list or tuple of names (strings), or a comma separated string
+
+          ``name`` is extracted from ``names``, therefore ``names`` has to contain
+          exactly one variable name, and ``name`` and``names`` cannot be specified
+          both at the same time.
+
+        - ``Factorization_sort`` (default: ``False``) and
+          ``Factorization_simplify`` (default: ``True``) -- booleans
+
+          These are passed on to
+          :class:`sage.structure.factorization.Factorization` when creating
+          the result.
+
+        - ``sort_factors`` -- (default: ``False``) a boolean
+
+          If set, then
+          the factors of the output are sorted such that the numerator is
+          first and only then all factors of the denominator. It is ensured
+          that the sorting is always the same; use this for doctesting.
+
+        OUTPUT:
+
+        The generating function as a (partial)
+        :class:`~sage.structure.factorization.Factorization`
+        of the result whose factors are Laurent polynomials
+
+        The result might be a tuple of such factorizations
+        (depending on the parameter ``result_as_tuple``) as well.
+
+        .. NOTE::
+
+            At the moment, only polyhedra with nonnegative coordinates
+            (i.e. a polyhedron in the nonnegative orthant) are handled.
+
+        EXAMPLES::
+
+            sage: P2 = (
+            ....:   Polyhedron(ieqs=[(0, 0, 0, 1), (0, 0, 1, 0), (0, 1, 0, -1)]),
+            ....:   Polyhedron(ieqs=[(0, -1, 0, 1), (0, 1, 0, 0), (0, 0, 1, 0)]))
+            sage: P2[0].generating_function_of_integral_points(sort_factors=True)               # optional - sage.combinat
+            1 * (-y0 + 1)^-1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
+            sage: P2[1].generating_function_of_integral_points(sort_factors=True)               # optional - sage.combinat
+            1 * (-y1 + 1)^-1 * (-y2 + 1)^-1 * (-y0*y2 + 1)^-1
+            sage: (P2[0] & P2[1]).Hrepresentation()
+            (An equation (1, 0, -1) x + 0 == 0,
+             An inequality (1, 0, 0) x + 0 >= 0,
+             An inequality (0, 1, 0) x + 0 >= 0)
+            sage: (P2[0] & P2[1]).generating_function_of_integral_points(sort_factors=True)     # optional - sage.combinat
+            1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
+
+        The number of integer partitions
+        `1 \leq r_0 \leq r_1 \leq r_2 \leq r_3 \leq r_4`::
+
+            sage: P = Polyhedron(ieqs=[(-1, 1, 0, 0, 0, 0), (0, -1, 1, 0, 0, 0),
+            ....:                      (0, 0, -1, 1, 0, 0), (0, 0, 0, -1, 1, 0),
+            ....:                      (0, 0, 0, 0, -1, 1)])
+            sage: f = P.generating_function_of_integral_points(sort_factors=True); f            # optional - sage.combinat
+            y0*y1*y2*y3*y4 * (-y4 + 1)^-1 * (-y3*y4 + 1)^-1 * (-y2*y3*y4 + 1)^-1 *
+            (-y1*y2*y3*y4 + 1)^-1 * (-y0*y1*y2*y3*y4 + 1)^-1
+            sage: f = f.value()                                                                 # optional - sage.combinat
+            sage: P.<z> = PowerSeriesRing(ZZ)                                                   # optional - sage.combinat
+            sage: c = f.subs({y: z for y in f.parent().gens()}); c                              # optional - sage.combinat
+            z^5 + z^6 + 2*z^7 + 3*z^8 + 5*z^9 + 7*z^10 + 10*z^11 + 13*z^12 + 18*z^13 +
+            23*z^14 + 30*z^15 + 37*z^16 + 47*z^17 + 57*z^18 + 70*z^19 + 84*z^20 +
+            101*z^21 + 119*z^22 + 141*z^23 + 164*z^24 + O(z^25)
+            sage: ([Partitions(k, length=5).cardinality() for k in range(5,20)] ==              # optional - sage.combinat
+            ....:     c.truncate().coefficients(sparse=False)[5:20])
+            True
+
+        .. SEEALSO::
+
+            More examples can be found at
+            :func:`~sage.geometry.polyhedron.generating_function.generating_function_of_integral_points`.
+        """
+        from .generating_function import generating_function_of_integral_points
+        return generating_function_of_integral_points(self, **kwds)

@@ -292,4 +292,3 @@ cpdef list[list] contpath_comps(int deg, list values, double y0r, double y0i, li
     free(c_otherdegrees)
     free(c_othercoefs)
     return l
-

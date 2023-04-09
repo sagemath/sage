@@ -196,7 +196,7 @@ class LocalGeneric(CommutativeRing):
             O(5^8)
             sage: S = ZpLC(5, 15)
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/23505 for details.
+            See https://github.com/sagemath/sage/issues/23505 for details.
             sage: S.is_lattice_prec()
             True
             sage: x = S(25, 8)

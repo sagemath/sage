@@ -28,13 +28,13 @@ What about a sequence starting with `3, 7, 15, 1` ?
 
 ::
 
-    sage: search = oeis([3, 7, 15, 1], max_results=4) ; search  # optional -- internet
+    sage: search = oeis([3, 7, 15, 1], max_results=4) ; search  # optional -- internet # random
     0: A001203: Simple continued fraction expansion of Pi.
     1: A240698: Partial sums of divisors of n, cf. A027750.
     2: A082495: a(n) = (2^n - 1) mod n.
     3: A165416: Irregular array read by rows: The n-th row contains those distinct positive integers that each, when written in binary, occurs as a substring in binary n.
 
-    sage: [u.id() for u in search]                      # optional -- internet
+    sage: [u.id() for u in search]                      # optional -- internet  # random
     ['A001203', 'A240698', 'A082495', 'A165416']
     sage: c = search[0] ; c                             # optional -- internet
     A001203: Simple continued fraction expansion of Pi.
@@ -349,7 +349,7 @@ class OEIS:
 
     The database can be searched by description::
 
-        sage: oeis('prime gap factorization', max_results=4) # optional --internet
+        sage: oeis('prime gap factorization', max_results=4) # optional --internet # random
         0: A073491: Numbers having no prime gaps in their factorization.
         1: A073485: Product of any number of consecutive primes; squarefree numbers with no gaps in their prime factorization.
         2: A073490: Number of prime gaps in factorization of n.
@@ -491,7 +491,7 @@ class OEIS:
             2: A...: ...
 
             sage: prime_gaps = _[2] ; prime_gaps        # optional -- internet
-            A073490: Number of prime gaps in factorization of n.
+            A...
 
             sage: oeis('beaver')                        # optional -- internet
             0: A...: ...eaver...
@@ -535,7 +535,7 @@ class OEIS:
 
         EXAMPLES::
 
-            sage: oeis.find_by_subsequence([2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377])  # optional -- internet
+            sage: oeis.find_by_subsequence([2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377])  # optional -- internet # random
             0: A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
             1: A212804: Expansion of (1 - x)/(1 - x - x^2).
             2: A020695: Pisot sequence E(2,3).
@@ -592,7 +592,7 @@ class OEIS:
                 '%D ' + ident + ' Lewis Carroll, The Hunting of the Snark.\n'
                 '%D ' + ident + ' Deep Thought, The Answer to the Ultimate Question of Life, The Universe, and Everything.\n'
                 '%H ' + ident + ' Wikipedia, <a href="https://en.wikipedia.org/wiki/42_(number)">42 (number)</a>\n'
-                '%H ' + ident + ' See. also <a href="https://trac.sagemath.org/sage_trac/ticket/42">trac ticket #42</a>\n'
+                '%H ' + ident + ' See. also <a href="https://github.com/sagemath/sage/issues/42">github issue #42</a>\n'
                 '%H ' + ident + ' Do not confuse with the sequence <a href="/A000042">A000042</a> or the sequence <a href="/A000024">A000024</a>\n'
                 '%H ' + ident + ' The string http://42.com is not a link.\n'
                 '%F ' + ident + ' For n big enough, s(n+1) - s(n) = 0.\n'
@@ -1556,7 +1556,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
             sage: HTML = s.links(format="html");  HTML
             0: Wikipedia, <a href="https://en.wikipedia.org/wiki/42_(number)">42 (number)</a>
-            1: See. also <a href="https://trac.sagemath.org/sage_trac/ticket/42">trac ticket #42</a>
+            1: See. also <a href="https://github.com/sagemath/sage/issues/42">github issue #42</a>
             ...
             sage: type(HTML)
             <class 'sage.misc.html.HtmlFragment'>

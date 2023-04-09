@@ -53,7 +53,7 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
 * The type :class:`bool` (*booleans*) has two values: ``True`` and ``False``. The
   boolean operators are denoted by their names ``or``, ``and``, ``not``.
 
-* The Python types :class:`int` and :class:`long` are used to
+* The Python type :class:`int` is used to
   represent integers of limited size. To handle arbitrary large
   integers with exact arithmetic, Sage uses its own type named
   :class:`Integer`.

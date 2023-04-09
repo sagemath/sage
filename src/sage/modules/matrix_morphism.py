@@ -817,8 +817,8 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             T^2 - 3*T + 2
         """
         if not self.is_endomorphism():
-            raise ArithmeticError("charpoly only defined for endomorphisms " +\
-                    "(i.e., domain = range)")
+            raise ArithmeticError("charpoly only defined for endomorphisms "
+                                  "(i.e., domain = range)")
         return self.matrix().charpoly(var)
 
     charpoly = characteristic_polynomial
@@ -1236,7 +1236,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         # testing for the identity matrix will only work for
         #   endomorphisms which have the same basis for domain and codomain
         #   so we test equality on a basis, which is sufficient
-        return all( self(u) == u for u in self.domain().basis() )
+        return all(self(u) == u for u in self.domain().basis())
 
     def is_zero(self):
         r"""
@@ -1369,7 +1369,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         if self.codomain() != other.codomain():
             return False
         # check agreement on any basis of the domain
-        return all( self(u) == other(u) for u in self.domain().basis() )
+        return all(self(u) == other(u) for u in self.domain().basis())
 
     def restrict_domain(self, sub):
         """
@@ -1770,7 +1770,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
         - Rob Beezer (2011-06-28)
         """
         # Testing equality of free modules over PIDs is unreliable
-        #   see Trac #11579 for explanation and status
+        #   see Issue #11579 for explanation and status
         # We test if image equals codomain with two inclusions
         #   reverse inclusion of below is trivially true
         return self.codomain().is_submodule(self.image())

@@ -61,6 +61,7 @@ class AbstractSetPartition(ClonableArray,
     r"""
     Methods of set partitions which are independent of the base set
     """
+
     def _repr_(self):
         """
         Return a string representation of ``self``.
@@ -693,7 +694,7 @@ class SetPartition(AbstractSetPartition,
 
         for key in kwargs:
             if key not in valid_args:
-                raise ValueError("unknown keyword argument: %s"%key)
+                raise ValueError("unknown keyword argument: %s" % key)
             if key == 'plot':
                 if not (kwargs['plot'] == 'cyclic'
                         or kwargs['plot'] == 'linear'
@@ -1008,7 +1009,7 @@ class SetPartition(AbstractSetPartition,
         elif bijection == "intertwining":
             return self.to_restricted_growth_word_intertwining()
         else:
-            raise ValueError("The given bijection is not valid.")
+            raise ValueError("the given bijection is not valid")
 
     def to_restricted_growth_word_blocks(self):
         r"""
@@ -1149,7 +1150,7 @@ class SetPartition(AbstractSetPartition,
         elif bijection == "psi":
             return self.to_rook_placement_psi()
         else:
-            raise ValueError("The given map is not valid.")
+            raise ValueError("the given map is not valid")
 
     def to_rook_placement_gamma(self):
         """
@@ -2065,7 +2066,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         else:
             try:
                 if s.cardinality() == infinity:
-                    raise ValueError("The set must be finite")
+                    raise ValueError("the set must be finite")
             except AttributeError:
                 pass
             s = frozenset(s)
@@ -2185,7 +2186,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         elif bijection == "intertwining":
             return self.from_restricted_growth_word_intertwining(w)
         else:
-            raise ValueError("The given bijection is not valid.")
+            raise ValueError("the given bijection is not valid")
 
     def from_restricted_growth_word_blocks(self, w):
         r"""
@@ -2345,7 +2346,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         elif bijection == "psi":
             return self.from_rook_placement_psi(rooks, n)
         else:
-            raise ValueError("The given bijection is not valid.")
+            raise ValueError("the given bijection is not valid")
 
     def from_arcs(self, arcs, n):
         r"""
@@ -2663,6 +2664,7 @@ class SetPartitions_all(SetPartitions):
     r"""
     All set partitions.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -2948,7 +2950,7 @@ class SetPartitions_setparts(SetPartitions_set):
 
             sage: SetPartitions(5, [2,2,1]).parts
             doctest:...: DeprecationWarning: The attribute parts for the partition of block sizes is deprecated, use the method shape instead.
-            See https://trac.sagemath.org/25865 for details.
+            See https://github.com/sagemath/sage/issues/25865 for details.
             [2, 2, 1]
         """
         from sage.misc.superseded import deprecation
@@ -3112,7 +3114,6 @@ class SetPartitions_setparts(SetPartitions_set):
             return False
         return sorted(map(len, x), reverse=True) == self._parts
 
-
     def random_element(self):
         r"""
         Return a random set partition of ``self``.
@@ -3200,7 +3201,7 @@ class SetPartitions_setn(SetPartitions_set):
 
             sage: SetPartitions(5, 3).n
             doctest:...: DeprecationWarning: The attribute n for the number of blocks is deprecated, use the method number_of_blocks instead.
-            See https://trac.sagemath.org/25462 for details.
+            See https://github.com/sagemath/sage/issues/25462 for details.
             3
         """
         from sage.misc.superseded import deprecation

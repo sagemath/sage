@@ -34,11 +34,12 @@ from sage.combinat.composition import Compositions, Composition
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutations
 from sage.rings.integer import Integer
-from sage.categories.all import AlgebrasWithBasis
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.abstract_method import abstract_method
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.realizations import RealizationsCategory
+
 
 class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
@@ -472,7 +473,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 y = self.dual()(y)
                 v = 1 if side == 'left' else 0
                 return self.sum(coeff * y[IJ[1-v]] * self[IJ[v]] \
-                                for (IJ, coeff) in x.coproduct() if IJ[1-v] in y)
+                                for (IJ, coeff) in x.coproduct() if IJ[1-v] in y.support())
             else:
                 return self._skew_by_coercion(x, y, side=side)
 
@@ -993,6 +994,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
     """
     A class for algebra morphism defined on a free algebra from the image of the generators
     """
+
     def __init__(self, domain, on_generators, position = 0, codomain = None, category = None, anti = False):
         """
         Given a map on the multiplicative basis of a free algebra, this method
@@ -1076,12 +1078,15 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
         assert codomain is not None
         if category is None:
             if anti:
-                category = ModulesWithBasis (domain.base_ring())
+                category = ModulesWithBasis(domain.base_ring())
             else:
                 category = AlgebrasWithBasis(domain.base_ring())
         self._anti = anti
         self._on_generators = on_generators
-        ModuleMorphismByLinearity.__init__(self, domain = domain, codomain = codomain, position = position, category = category)
+        ModuleMorphismByLinearity.__init__(self, domain=domain,
+                                           codomain=codomain,
+                                           position=position,
+                                           category=category)
 
     def __eq__(self, other):
         """
@@ -1150,6 +1155,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
         if self._anti:
             c = reversed(c)
         return self.codomain().prod(self._on_generators(i) for i in c)
+
 
 class GradedModulesWithInternalProduct(Category_over_base_ring):
     r"""

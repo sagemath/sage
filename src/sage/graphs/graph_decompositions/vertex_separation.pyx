@@ -474,7 +474,7 @@ def linear_ordering_to_path_decomposition(G, L):
 ##################################################################
 
 def pathwidth(self, k=None, certificate=False, algorithm="BAB", verbose=False,
-              max_prefix_length=20, max_prefix_number=10**6):
+              max_prefix_length=20, max_prefix_number=10**6, *, solver=None):
     r"""
     Compute the pathwidth of ``self`` (and provides a decomposition)
 
@@ -512,6 +512,14 @@ def pathwidth(self, k=None, certificate=False, algorithm="BAB", verbose=False,
     - ``max_prefix_number`` -- integer (default: 10**6); upper bound on the
       number of stored prefixes used to prevent using too much memory. This
       parameter is used only when ``algorithm=="BAB"``.
+
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     OUTPUT:
 
@@ -566,6 +574,12 @@ def pathwidth(self, k=None, certificate=False, algorithm="BAB", verbose=False,
         Traceback (most recent call last):
         ...
         ValueError: algorithm "SuperFast" has not been implemented yet, please contribute
+
+    Using a specific solver::
+
+        sage: g = graphs.PetersenGraph()
+        sage: g.pathwidth(solver='SCIP')  # optional - pyscipopt
+        5
     """
     from sage.graphs.graph import Graph
     if not isinstance(self, Graph):
@@ -574,7 +588,8 @@ def pathwidth(self, k=None, certificate=False, algorithm="BAB", verbose=False,
     pw, L = vertex_separation(self, algorithm=algorithm, verbose=verbose,
                               cut_off=k, upper_bound=None if k is None else (k+1),
                               max_prefix_length=max_prefix_length,
-                              max_prefix_number=max_prefix_number)
+                              max_prefix_number=max_prefix_number,
+                              solver=solver)
 
     if k is None:
         return (pw, linear_ordering_to_path_decomposition(self, L)) if certificate else pw
@@ -785,6 +800,13 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
         sage: D.add_edge(0, 8)
         sage: print(vertex_separation(D))
         (3, [10, 11, 8, 9, 4, 5, 6, 7, 0, 1, 2, 3])
+
+    Using a specific MILP solver::
+
+        sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation
+        sage: G = graphs.PetersenGraph()
+        sage: vs, L = vertex_separation(G, algorithm="MILP", solver="SCIP"); vs  # optional - pyscipopt
+        5
 
     TESTS:
 
@@ -1249,6 +1271,108 @@ def width_of_path_decomposition(G, L):
 # MILP formulation for vertex separation #
 ##########################################
 
+def _vertex_separation_MILP_formulation(G, integrality=False, solver=None):
+    r"""
+    MILP formulation of the vertex separation of `G` and the optimal ordering of its vertices.
+
+    This MILP is an improved version of the formulation proposed in [SP2010]_. See the
+    :mod:`module's documentation <sage.graphs.graph_decompositions.vertex_separation>` for
+    more details on this MILP formulation.
+
+    INPUT:
+
+    - ``G`` -- a Graph or a DiGraph
+
+    - ``integrality`` -- boolean (default: ``False``); specify if variables
+      `x_v^t` and `u_v^t` must be integral or if they can be relaxed. This has
+      no impact on the validity of the solution, but it is sometimes faster to
+      solve the problem using binary variables only.
+
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    OUTPUT:
+
+    - the :class:`~sage.numerical.mip.MixedIntegerLinearProgram`
+
+    - :class:`sage.numerical.mip.MIPVariable` objects ``x``, ``u``, ``y``, ``z``.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.graph_decompositions.vertex_separation import _vertex_separation_MILP_formulation
+        sage: G = digraphs.DeBruijn(2,3)
+        sage: p, x, u, y, z = _vertex_separation_MILP_formulation(G)
+        sage: p
+        Mixed Integer Program (minimization, 193 variables, 449 constraints)
+    """
+    from sage.graphs.graph import Graph
+    from sage.graphs.digraph import DiGraph
+    if not isinstance(G, Graph) and not isinstance(G, DiGraph):
+        raise ValueError("the first input parameter must be a Graph or a DiGraph")
+
+    from sage.numerical.mip import MixedIntegerLinearProgram
+    p = MixedIntegerLinearProgram(maximization=False, solver=solver)
+
+    # Declaration of variables.
+    x = p.new_variable(binary=integrality, nonnegative=True)
+    u = p.new_variable(binary=integrality, nonnegative=True)
+    y = p.new_variable(binary=True)
+    z = p.new_variable(integer=True, nonnegative=True)
+
+    N = G.order()
+    V = list(G)
+    neighbors_out = G.neighbors_out if G.is_directed() else G.neighbors
+
+    # (2) x[v,t] <= x[v,t+1]   for all v in V, and for t:=0..N-2
+    # (3) y[v,t] <= y[v,t+1]   for all v in V, and for t:=0..N-2
+    for v in V:
+        for t in range(N - 1):
+            p.add_constraint(x[v, t] - x[v, t + 1] <= 0)
+            p.add_constraint(y[v, t] - y[v, t + 1] <= 0)
+
+    # (4) y[v,t] <= x[w,t]  for all v in V, for all w in N^+(v), and for all t:=0..N-1
+    for v in V:
+        for w in neighbors_out(v):
+            for t in range(N):
+                p.add_constraint(y[v, t] - x[w, t] <= 0)
+
+    # (5) sum_{v in V} y[v,t] == t+1 for t:=0..N-1
+    for t in range(N):
+        p.add_constraint(p.sum(y[v, t] for v in V) == t + 1)
+
+    # (6) u[v,t] >= x[v,t]-y[v,t]    for all v in V, and for all t:=0..N-1
+    for v in V:
+        for t in range(N):
+            p.add_constraint(x[v, t] - y[v, t] - u[v, t] <= 0)
+
+    # (7) z >= sum_{v in V} u[v,t]   for all t:=0..N-1
+    for t in range(N):
+        p.add_constraint(p.sum(u[v, t] for v in V) - z['z'] <= 0)
+
+    # (8)(9) 0 <= x[v,t] and u[v,t] <= 1
+    if not integrality:
+        for v in V:
+            for t in range(N):
+                p.add_constraint(x[v, t], min=0, max=1)
+                p.add_constraint(u[v, t], min=0, max=1)
+
+    # (10) y[v,t] in {0,1}
+    # already declared
+
+    # (11) 0 <= z <= |V|
+    p.add_constraint(z['z'] <= N)
+
+    #  (1) Minimize z
+    p.set_objective(z['z'])
+
+    return p, x, u, y, z
+
+
 @rename_keyword(deprecation=32222, verbosity='verbose')
 def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
                            *, integrality_tolerance=1e-3):
@@ -1341,65 +1465,11 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
         ...
         ValueError: the first input parameter must be a Graph or a DiGraph
     """
-    from sage.graphs.graph import Graph
-    from sage.graphs.digraph import DiGraph
-    if not isinstance(G, Graph) and not isinstance(G, DiGraph):
-        raise ValueError("the first input parameter must be a Graph or a DiGraph")
+    from sage.numerical.mip import MIPSolverException
 
-    from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
-    p = MixedIntegerLinearProgram(maximization=False, solver=solver)
-
-    # Declaration of variables.
-    x = p.new_variable(binary=integrality, nonnegative=True)
-    u = p.new_variable(binary=integrality, nonnegative=True)
-    y = p.new_variable(binary=True)
-    z = p.new_variable(integer=True, nonnegative=True)
-
+    p, x, u, y, z = _vertex_separation_MILP_formulation(G, integrality=integrality, solver=solver)
     N = G.order()
     V = list(G)
-    neighbors_out = G.neighbors_out if G.is_directed() else G.neighbors
-
-    # (2) x[v,t] <= x[v,t+1]   for all v in V, and for t:=0..N-2
-    # (3) y[v,t] <= y[v,t+1]   for all v in V, and for t:=0..N-2
-    for v in V:
-        for t in range(N - 1):
-            p.add_constraint(x[v, t] - x[v, t + 1] <= 0)
-            p.add_constraint(y[v, t] - y[v, t + 1] <= 0)
-
-    # (4) y[v,t] <= x[w,t]  for all v in V, for all w in N^+(v), and for all t:=0..N-1
-    for v in V:
-        for w in neighbors_out(v):
-            for t in range(N):
-                p.add_constraint(y[v, t] - x[w, t] <= 0)
-
-    # (5) sum_{v in V} y[v,t] == t+1 for t:=0..N-1
-    for t in range(N):
-        p.add_constraint(p.sum(y[v, t] for v in V) == t + 1)
-
-    # (6) u[v,t] >= x[v,t]-y[v,t]    for all v in V, and for all t:=0..N-1
-    for v in V:
-        for t in range(N):
-            p.add_constraint(x[v, t] - y[v, t] - u[v, t] <= 0)
-
-    # (7) z >= sum_{v in V} u[v,t]   for all t:=0..N-1
-    for t in range(N):
-        p.add_constraint(p.sum(u[v, t] for v in V) - z['z'] <= 0)
-
-    # (8)(9) 0 <= x[v,t] and u[v,t] <= 1
-    if not integrality:
-        for v in V:
-            for t in range(N):
-                p.add_constraint(x[v, t], min=0, max=1)
-                p.add_constraint(u[v, t], min=0, max=1)
-
-    # (10) y[v,t] in {0,1}
-    # already declared
-
-    # (11) 0 <= z <= |V|
-    p.add_constraint(z['z'] <= N)
-
-    #  (1) Minimize z
-    p.set_objective(z['z'])
 
     try:
         obj = p.solve(log=verbose)

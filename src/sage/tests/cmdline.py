@@ -725,7 +725,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
     except KeyError:
         pass
 
-    __with_pydebug = hasattr(sys, 'gettotalrefcount')   # This is a Python debug build (--with-pydebug) 
+    __with_pydebug = hasattr(sys, 'gettotalrefcount')   # This is a Python debug build (--with-pydebug)
     if __with_pydebug and pydebug_ignore_warnings:
         pexpect_env['PYTHONWARNINGS'] = ','.join([
             'ignore::DeprecationWarning',

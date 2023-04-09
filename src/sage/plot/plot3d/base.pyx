@@ -1,5 +1,5 @@
 r"""
-Base Classes for 3D Graphics Objects and Plotting
+Base classes for 3D graphics objects and plotting
 
 The most important facts about these classes are
 that you can simply add graphics objects
@@ -9,7 +9,7 @@ choosing a viewer and setting
 various parameters for displaying the graphics.
 
 Most of the other methods of these classes are technical and
-for special usage. 
+for special usage.
 
 AUTHORS:
 
@@ -999,7 +999,7 @@ cdef class Graphics3d(SageObject):
       "camera_position","updir",
       # "look_at", # omit look_at. viewdir is sufficient for most purposes
       "viewdir")
-      
+
     # The tachyon "aspectratio" parameter is outdated for normal users:
     # From the tachyon documentation:
     # "By using the aspect ratio parameter, one can produce images which look
@@ -1085,7 +1085,7 @@ cdef class Graphics3d(SageObject):
         updir = _flip_orientation(updir)
         camera_position = _flip_orientation(camera_position)
         light_position = _flip_orientation(light_position)
-       
+
         return """
 begin_scene
 resolution {resolution_x:d} {resolution_y:d}
@@ -1167,9 +1167,9 @@ end_scene""".format(
     def _tostring(s):
         r"""
         Converts vector information to a space-separated string.
-    
+
         EXAMPLES::
-    
+
             sage: sage.plot.plot3d.base.Graphics3d._tostring((1.0,1.2,-1.3))
             '1.00000000000000 1.20000000000000 -1.30000000000000'
         """
@@ -1682,7 +1682,7 @@ end_scene""".format(
            the viewpoint, with respect to the cube
            $[-1,1]\\times[-1,1]\\times[-1,1]$,
            into which the bounding box of the scene
-           is scaled and centered. 
+           is scaled and centered.
            The default viewing direction is towards the origin.
 
         -  ``viewdir`` (for tachyon) -- (default: None) three coordinates
@@ -1713,7 +1713,7 @@ end_scene""".format(
 
            * ``'lowest'``: worst quality rendering, preview (and fastest).
              Sets tachyon command line flag ``-lowestshade``.
-             
+
         -  ``extra_opts`` (for tachyon) -- string (default: empty string);
            extra options that will be appended to the tachyon command line.
 

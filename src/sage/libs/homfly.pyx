@@ -102,9 +102,8 @@ def homfly_polynomial_dict(link):
     cdef Poly* c_output = homfly(link)
     sig_off()
     cdef int l = c_output.len
-    d = dict()
+    d = {}
     for i in range(l):
         ter = c_output.term[i]
         d[(int(ter.l), int(ter.m))] = int(ter.coef)
     return d
-

@@ -112,18 +112,18 @@ class StackInterpreter(InterpreterSpec):
         Initializes the fields described in the documentation for
         InterpreterSpec.__init__, as well as the following:
 
-        mc_args, mc_constants, mc_stack -- MemoryChunk values
-        return_type -- the type returned by the C interpreter (None for int,
-                       where 1 means success and 0 means error)
-        mc_retval -- None, or the MemoryChunk to use as a return value
-        ipow_range -- the range of exponents supported by the ipow
-                      instruction (default is False, meaning never use ipow)
-        adjust_retval -- None, or a string naming a function to call
-                         in the wrapper's __call__ to modify the return
-                         value of the interpreter
-        implement_call_c -- True if the wrapper should have a fast cdef call_c
-                            method (that bypasses the Python call overhead)
-                            (default True)
+        - mc_args, mc_constants, mc_stack -- MemoryChunk values
+        - return_type -- the type returned by the C interpreter (None for int,
+          where 1 means success and 0 means error)
+        - mc_retval -- None, or the MemoryChunk to use as a return value
+        - ipow_range -- the range of exponents supported by the ipow
+          instruction (default is False, meaning never use ipow)
+        - adjust_retval -- None, or a string naming a function to call
+          in the wrapper's __call__ to modify the return
+          value of the interpreter
+        - implement_call_c -- True if the wrapper should have a fast cdef call_c
+          method (that bypasses the Python call overhead)
+          (default True)
 
         EXAMPLES::
 

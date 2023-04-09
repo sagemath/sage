@@ -1,5 +1,5 @@
 """
-Logarithmic Functions
+Logarithmic functions
 
 AUTHORS:
 
@@ -1243,6 +1243,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
 
 harmonic_number = Function_harmonic_number_generalized()
 
+
 class _Function_swap_harmonic(BuiltinFunction):
     r"""
     Harmonic number function with swapped arguments. For internal use only.
@@ -1262,13 +1263,17 @@ class _Function_swap_harmonic(BuiltinFunction):
     """
     def __init__(self):
         BuiltinFunction.__init__(self, "_swap_harmonic", nargs=2)
+
     def _eval_(self, a, b, **kwds):
-        return harmonic_number(b,a,**kwds)
+        return harmonic_number(b, a, **kwds)
+
 
 _swap_harmonic = _Function_swap_harmonic()
 
+
 register_symbol(_swap_harmonic, {'maxima': 'gen_harmonic_number'})
 register_symbol(_swap_harmonic, {'maple': 'harmonic'})
+
 
 class Function_harmonic_number(BuiltinFunction):
     r"""

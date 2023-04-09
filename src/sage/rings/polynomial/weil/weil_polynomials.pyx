@@ -83,7 +83,7 @@ cdef class dfs_manager:
     """
     Data structure to manage depth-first search.
 
-    Such a structure is created and managed by an instance of `WeilPolynomials_iter`. 
+    Such a structure is created and managed by an instance of `WeilPolynomials_iter`.
     There is generally no need for a user to manipulate it directly.
     """
     cdef int d
@@ -424,15 +424,15 @@ class WeilPolynomials():
 
     - ``node_limit`` -- integer (default ``None``)
 
-        If set, imposes an upper bound on the number of terminal nodes during the search 
+        If set, imposes an upper bound on the number of terminal nodes during the search
         (will raise a ``RuntimeError`` if exceeded).
 
     - ``parallel`` -- boolean (default ``False``), whether to use multiple processes
 
-        If set, will raise an error unless this file was compiled with OpenMP support 
+        If set, will raise an error unless this file was compiled with OpenMP support
         (see instructions at the top of :mod:`sage.rings.polynomial.weil.weil_polynomials`).
 
-    - ``squarefree`` -- boolean (default ``False``), 
+    - ``squarefree`` -- boolean (default ``False``),
 
         If set, only squarefree polynomials will be returned.
 
@@ -526,10 +526,10 @@ class WeilPolynomials():
 
     Test that :trac:`31809` is resolved::
 
-        sage: from sage.rings.polynomial.weil.weil_polynomials import WeilPolynomials 
-        sage: foo = list(WeilPolynomials(12, 3, lead=(1,0,9,2,46), squarefree=False)) 
+        sage: from sage.rings.polynomial.weil.weil_polynomials import WeilPolynomials
+        sage: foo = list(WeilPolynomials(12, 3, lead=(1,0,9,2,46), squarefree=False))
         sage: bar = list(WeilPolynomials(12, 3, lead=(1,0,9,2,46), squarefree=True))
-        sage: bar == [f for f in foo if f.is_squarefree()]                              
+        sage: bar == [f for f in foo if f.is_squarefree()]
         True
 
     Test that :trac:`32348` is resolved::
@@ -585,4 +585,3 @@ class WeilPolynomials():
             158
         """
         return self.w.node_count()
-

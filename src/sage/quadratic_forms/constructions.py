@@ -1,15 +1,14 @@
 """
-Some Extras
+Constructions of quadratic forms
 """
 ##
 # Some extra routines to make the QuadraticForm class more useful.
 ##
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.quadratic_forms.quadratic_form import QuadraticForm
-
 
 
 def BezoutianQuadraticForm(f, g):
@@ -46,7 +45,7 @@ def BezoutianQuadraticForm(f, g):
 
     """
     # Check that f and g are polynomials with a common base ring
-    if not is_Polynomial(f) or not is_Polynomial(g):
+    if not isinstance(f, Polynomial) or not isinstance(g, Polynomial):
         raise TypeError("one of your inputs is not a polynomial")
     if f.base_ring() != g.base_ring():   # TO DO:  Change this to allow coercion!
         raise TypeError("these polynomials are not defined over the same coefficient ring")

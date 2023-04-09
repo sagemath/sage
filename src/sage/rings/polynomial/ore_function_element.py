@@ -1,11 +1,10 @@
 r"""
-An element in the fraction field of a Ore polynomial ring.
+Fraction field elements of Ore polynomial rings
 
 AUTHOR:
 
 - Xavier Caruso (2020-05)
 """
-
 
 # ***************************************************************************
 #    Copyright (C) 2020 Xavier Caruso <xavier.caruso@normalesup.org>
@@ -16,7 +15,6 @@ AUTHOR:
 #    (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-
 
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
 from sage.misc.cachefunc import cached_method
@@ -847,7 +845,7 @@ class OreFunction_with_large_center(OreFunction):
             3/(z^2 + 2)
 
         The reduced trace lies in the center of `S`, which is the fraction field
-        of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`.
+        of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`::
 
             sage: tr.parent()
             Fraction Field of Univariate Polynomial Ring in z over Finite Field of size 5
@@ -908,7 +906,7 @@ class OreFunction_with_large_center(OreFunction):
             (z + 2)/(z^2 + 4)
 
         The reduced norm lies in the center of `S`, which is the fraction field
-        of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`.
+        of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`. ::
 
             sage: N.parent()
             Fraction Field of Univariate Polynomial Ring in z over Finite Field of size 5

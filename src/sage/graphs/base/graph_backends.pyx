@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Backends for Sage (di)graphs.
+Backends for Sage (di)graphs
 
 This module implements :class:`GenericGraphBackend` (the base class for
 backends).

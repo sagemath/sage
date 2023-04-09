@@ -1,6 +1,31 @@
 """
 Coercion via construction functors
 """
+# ****************************************************************************
+#       Copyright (C) 2007-2014 Robert Bradshaw
+#                     2007-2018 David Roe
+#                     2009-2013 Simon King
+#                     2010      John Cremona
+#                     2010-2011 Mike Hansen
+#                     2012      Julian Rueth
+#                     2013-2016 Peter Bruin
+#                     2014      Wilfried Luebbe
+#                     2015      Benjamin Hackl
+#                     2015      Daniel Krenn
+#                     2016-2020 Frédéric Chapoton
+#                     2017      Jori Mäntysalo
+#                     2018      Vincent Delecroix
+#                     2020      Marc Mezzarobba
+#                     2020-2022 Matthias Koeppe
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+import operator
 
 from sage.misc.lazy_import import lazy_import
 from sage.structure.coerce_exceptions import CoercionException
@@ -807,7 +832,7 @@ class PolynomialFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, var, multi_variate=False, sparse=False):
+    def __init__(self, var, multi_variate=False, sparse=False, implementation=None):
         """
         TESTS::
 
@@ -831,6 +856,7 @@ class PolynomialFunctor(ConstructionFunctor):
         self.var = var
         self.multi_variate = multi_variate
         self.sparse = sparse
+        self.implementation = implementation
 
     def _apply_functor(self, R):
         """
@@ -844,7 +870,10 @@ class PolynomialFunctor(ConstructionFunctor):
 
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        return PolynomialRing(R, self.var, sparse=self.sparse)
+        kwds = {}
+        if self.implementation:
+            kwds['implementation'] = self.implementation
+        return PolynomialRing(R, self.var, sparse=self.sparse, **kwds)
 
     def _apply_functor_to_morphism(self, f):
         """
@@ -1263,10 +1292,9 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
             sage: R.construction()[0](f)     # indirect doctest
             Traceback (most recent call last):
             ...
-            NotImplementedError: Morphisms for infinite polynomial rings are not implemented yet.
-
+            NotImplementedError: morphisms for infinite polynomial rings are not implemented yet
         """
-        raise NotImplementedError("Morphisms for infinite polynomial rings are not implemented yet.")
+        raise NotImplementedError("morphisms for infinite polynomial rings are not implemented yet")
 
     def _apply_functor(self, R):
         """
@@ -1323,7 +1351,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
             sage: F != sage.categories.pushout.InfinitePolynomialFunctor(['a','b','x'],'deglex','sparse')
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     __hash__ = ConstructionFunctor.__hash__
 
@@ -1732,9 +1760,10 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             Multivariate Laurent Polynomial Ring in s, t over Rational Field
 
         """
-        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing, is_LaurentPolynomialRing
-        if self.multi_variate and is_LaurentPolynomialRing(R):
-            return LaurentPolynomialRing(R.base_ring(), (list(R.variable_names()) + [self.var]))
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+        from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
+        if self.multi_variate and isinstance(R, LaurentPolynomialRing_generic):
+            return LaurentPolynomialRing(R.base_ring(), list(R.variable_names()) + [self.var])
         else:
             return LaurentPolynomialRing(R, self.var)
 
@@ -2825,7 +2854,7 @@ class QuotientFunctor(ConstructionFunctor):
         if codomain is None:
             codomain = Rings()
         Functor.__init__(self, domain, codomain)
-        
+
         self.I = I
         if names is None:
             self.names = None
@@ -2850,8 +2879,8 @@ class QuotientFunctor(ConstructionFunctor):
             Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + 2, y^2 + 3*x)
 
         Note that the ``quo()`` method of a field used to return the
-        integer zero. That strange behaviour was removed in trac
-        ticket :trac:`9138`. It now returns a trivial quotient ring
+        integer zero. That strange behaviour was removed in github
+        issue :trac:`9138`. It now returns a trivial quotient ring
         when applied to a field::
 
             sage: F = ZZ.quo([5]*ZZ).construction()[0]
@@ -2995,7 +3024,7 @@ class QuotientFunctor(ConstructionFunctor):
             # quotient by I would result in the trivial ring/group/...
             # Rather than create the zero ring, we claim they can't be merged
             # TODO: Perhaps this should be detected at a higher level...
-            raise TypeError("Trivial quotient intersection.")
+            raise TypeError("trivial quotient intersection")
         # GF(p) has a coercion from Integers(p). Hence, merging should
         # yield a field if either self or other yields a field.
         return QuotientFunctor(I, names=self.names, as_field=as_field,
@@ -3434,8 +3463,8 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             # nothing else helps, hence, we move to the pushout of the codomains of the embeddings
             try:
                 P = pushout(self.embeddings[0].parent(), other.embeddings[0].parent())
-                from sage.rings.number_field.number_field import is_NumberField
-                if is_NumberField(P):
+                from sage.rings.number_field.number_field_base import NumberField
+                if isinstance(P, NumberField):
                     return P.construction()[0]
             except CoercionException:
                 return None
@@ -3677,6 +3706,134 @@ class PermutationGroupFunctor(ConstructionFunctor):
             new_domain = FiniteEnumeratedSet(sorted(new_domain, key=str))
         return PermutationGroupFunctor(self.gens() + other.gens(),
                                        new_domain)
+
+
+class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
+    r"""
+    Constructor for subobjects invariant or equivariant under given semigroup actions.
+
+    Let `S` be a semigroup that
+    - acts on a parent `X` as `s \cdot x` (``action``, ``side='left'``) or
+    - acts on `X` as `x \cdot s` (``action``, ``side='right'``),
+    and (possibly trivially)
+    - acts on `X` as `s * x` (``other_action``, ``other_side='left'``) or
+    - acts on `X` as `x * s` (``other_action``, ``other_side='right'``).
+
+    The `S`-equivariant subobject is the subobject
+
+    .. MATH::
+
+        X^S := \{x \in X : s \cdot x = s * x,\, \forall s \in S \}
+
+    when ``side = other_side = 'left'`` and mutatis mutandis for the other values
+    of ``side`` and ``other_side``.
+
+    When ``other_action`` is trivial, `X^S` is called the `S`-invariant subobject.
+
+    EXAMPLES:
+
+    Monoterm symmetries of a tensor, here only for matrices: row (index 0),
+    column (index 1); the order of the extra element 2 in a permutation determines
+    whether it is a symmetry or an antisymmetry::
+
+        sage: GSym01 = PermutationGroup([[(0,1),(2,),(3,)]]); GSym01
+        Permutation Group with generators [(0,1)]
+        sage: GASym01 = PermutationGroup([[(0,1),(2,3)]]); GASym01
+        Permutation Group with generators [(0,1)(2,3)]
+        sage: from sage.categories.action import Action
+        sage: from sage.structure.element import Matrix
+        sage: class TensorIndexAction(Action):
+        ....:     def _act_(self, g, x):
+        ....:         if isinstance(x, Matrix):
+        ....:             if g(0) == 1:
+        ....:                 if g(2) == 2:
+        ....:                     return x.transpose()
+        ....:                 else:
+        ....:                     return -x.transpose()
+        ....:             else:
+        ....:                 return x
+        ....:         raise NotImplementedError
+        sage: M = matrix([[1, 2], [3, 4]]); M
+        [1 2]
+        [3 4]
+        sage: GSym01_action = TensorIndexAction(GSym01, M.parent())
+        sage: GASym01_action = TensorIndexAction(GASym01, M.parent())
+        sage: GSym01_action.act(GSym01.0, M)
+        [1 3]
+        [2 4]
+        sage: GASym01_action.act(GASym01.0, M)
+        [-1 -3]
+        [-2 -4]
+        sage: Sym01 = M.parent().invariant_module(GSym01, action=GSym01_action); Sym01
+        (Permutation Group with generators [(0,1)])-invariant submodule
+         of Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
+        sage: list(Sym01.basis())
+        [B[0], B[1], B[2]]
+        sage: list(Sym01.basis().map(Sym01.lift))
+        [
+        [1 0]  [0 1]  [0 0]
+        [0 0], [1 0], [0 1]
+        ]
+        sage: ASym01 = M.parent().invariant_module(GASym01, action=GASym01_action); ASym01
+        (Permutation Group with generators [(0,1)(2,3)])-invariant submodule
+         of Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
+        sage: list(ASym01.basis())
+        [B[0]]
+        sage: list(ASym01.basis().map(ASym01.lift))
+        [
+        [ 0  1]
+        [-1  0]
+        ]
+        sage: from sage.categories.pushout import pushout
+        sage: pushout(Sym01, QQ)
+        (Permutation Group with generators [(0,1)])-invariant submodule
+         of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+    """
+    def __init__(self, S, action=operator.mul, side='left',
+                 other_action=None, other_side='left'):
+        """
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3); G.rename('S3')
+            sage: M = FreeModule(ZZ, [1,2,3], prefix='M'); M.rename('M')
+            sage: action = lambda g, x: M.term(g(x))
+            sage: I = M.invariant_module(G, action_on_basis=action); I
+            (S3)-invariant submodule of M
+            sage: I.construction()
+            (EquivariantSubobjectConstructionFunctor,
+            Representation of S3 indexed by {1, 2, 3} over Integer Ring)
+        """
+        from sage.categories.sets_cat import Sets
+        super().__init__(Sets(), Sets())
+        self.S = S
+        self.action = action
+        self.side = side
+        self.other_action = other_action
+        self.other_side = other_side
+
+    def _apply_functor(self, X):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        TESTS::
+
+            sage: from sage.categories.pushout import EquivariantSubobjectConstructionFunctor
+            sage: M2 = MatrixSpace(QQ, 2); M2
+            Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+            sage: F = EquivariantSubobjectConstructionFunctor(M2,
+            ....:                                             operator.mul, 'left',
+            ....:                                             operator.mul, 'right'); F
+            EquivariantSubobjectConstructionFunctor
+            sage: F(M2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: non-trivial other_action=<built-in function mul> is not implemented
+        """
+        other_action = self.other_action
+        if other_action is not None:
+            raise NotImplementedError(f'non-trivial {other_action=} is not implemented')
+        # Currently only implemented for FiniteDimensionalModulesWithBasis
+        return X.invariant_module(self.S, action=self.action, side=self.side)
 
 
 class BlackBoxConstructionFunctor(ConstructionFunctor):
@@ -4576,10 +4733,10 @@ def type_to_parent(P):
         sage: type_to_parent(list)
         Traceback (most recent call last):
         ...
-        TypeError: Not a scalar type.
+        TypeError: not a scalar type
     """
     from sage.structure.coerce import py_scalar_parent
     parent = py_scalar_parent(P)
     if parent is None:
-        raise TypeError("Not a scalar type.")
+        raise TypeError("not a scalar type")
     return parent

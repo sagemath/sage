@@ -111,27 +111,27 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from copy import copy, deepcopy
+from itertools import combinations, product
+
 from cpython.object cimport Py_EQ, Py_NE
 
 from sage.data_structures.bitset_base cimport *
-from sage.structure.richcmp cimport rich_to_bool
-from sage.matroids.matroid cimport Matroid
-from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
-from .lean_matrix cimport (LeanMatrix, GenericMatrix, BinaryMatrix,
-                           TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix,
-                           RationalMatrix, generic_identity)
-from .set_system cimport SetSystem
-from .utilities import newlabel, spanning_stars, spanning_forest, lift_cross_ratios
-from sage.graphs.spanning_tree import kruskal
 from sage.graphs.graph import Graph
-
-from sage.matrix.matrix2 cimport Matrix
-import sage.matrix.constructor
+from sage.graphs.spanning_tree import kruskal
 from sage.matrix.constructor import matrix
-from copy import copy, deepcopy
-from sage.rings.all import ZZ, QQ, FiniteField, GF
-import itertools
-from itertools import combinations, product
+from sage.matrix.matrix2 cimport Matrix
+from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
+from sage.matroids.lean_matrix cimport (LeanMatrix, GenericMatrix, BinaryMatrix,
+                                        TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix,
+                                        RationalMatrix, generic_identity)
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.set_system cimport SetSystem
+from sage.matroids.utilities import newlabel, spanning_stars, spanning_forest, lift_cross_ratios
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.structure.richcmp cimport rich_to_bool
 
 cdef bint GF2_not_defined = True
 cdef GF2, GF2_one, GF2_zero
@@ -269,8 +269,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: LinearMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],
-            ....:                       [0, 1, 1, 2, 3]]))  # indirect doctest
+            sage: LinearMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],        # indirect doctest
+            ....:                                     [0, 1, 1, 2, 3]]))
             Linear matroid of rank 2 on 5 elements represented over the Finite
             Field of size 5
         """
@@ -292,8 +292,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = LinearMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],
-            ....:                       [0, 1, 1, 2, 3]]))  # indirect doctest
+            sage: M = LinearMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],    # indirect doctest
+            ....:                                         [0, 1, 1, 2, 3]]))
             sage: M = None
         """
         if self._prow is not NULL:
@@ -761,7 +761,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         return {e: R[self._idx[e]] for e in self.groundset()}
 
     cpdef LeanMatrix _reduced_representation(self, B=None):
-        """
+        r"""
         Return a reduced representation of the matroid, i.e. a matrix `R` such
         that `[I\ \ R]` represents the matroid.
 
@@ -800,7 +800,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     # (field) isomorphism
 
     cpdef bint _is_field_isomorphism(self, LinearMatroid other, morphism):  # not safe if self == other
-        """
+        r"""
         Version of :meth:`<LinearMatroid.is_field_isomorphism>` that does no
         type checking.
 
@@ -966,7 +966,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         return self._is_field_isomorphism(other, morphism)
 
     cpdef is_field_isomorphism(self, other, morphism):
-        """
+        r"""
         Test if a provided morphism induces a bijection between represented
         matroids.
 
@@ -1322,7 +1322,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         return type(self)(reduced_matrix=M, groundset=rows + cols)
 
     cpdef dual(self):
-        """
+        r"""
         Return the dual of the matroid.
 
         Let `M` be a matroid with ground set `E`. If `B` is the set of bases
@@ -1354,7 +1354,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         return type(self)(reduced_matrix=R, groundset=cols + rows)
 
     cpdef has_line_minor(self, k, hyperlines=None, certificate=False):
-        """
+        r"""
         Test if the matroid has a `U_{2, k}`-minor.
 
         The matroid `U_{2, k}` is a matroid on `k` elements in which every
@@ -3071,8 +3071,8 @@ cdef class BinaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: BinaryMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],
-            ....:                       [0, 1, 1, 2, 3]]))  # indirect doctest
+            sage: BinaryMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],        # indirect doctest
+            ....:                                     [0, 1, 1, 2, 3]]))
             Binary matroid of rank 2 on 5 elements, type (1, 7)
         """
         cdef BinaryMatrix A
@@ -3130,7 +3130,7 @@ cdef class BinaryMatroid(LinearMatroid):
         self._one = GF2_one
 
     cpdef base_ring(self):
-        """
+        r"""
         Return the base ring of the matrix representing the matroid,
         in this case `\GF{2}`.
 
@@ -3308,7 +3308,7 @@ cdef class BinaryMatroid(LinearMatroid):
         return self._A.copy()   # Deprecated Sage matrix operation
 
     cpdef LeanMatrix _reduced_representation(self, B=None):
-        """
+        r"""
         Return a reduced representation of the matroid, i.e. a matrix `R` such
         that `[I\ \ R]` represents the matroid.
 
@@ -4136,8 +4136,8 @@ cdef class TernaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: TernaryMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],
-            ....:                       [0, 1, 1, 2, 3]]))  # indirect doctest
+            sage: TernaryMatroid(matrix=Matrix(GF(5), [[1, 0, 1, 1, 1],       # indirect doctest
+            ....:                                      [0, 1, 1, 2, 3]]))
             Ternary matroid of rank 2 on 5 elements, type 1+
         """
         cdef TernaryMatrix A
@@ -4197,7 +4197,7 @@ cdef class TernaryMatroid(LinearMatroid):
         self._two = GF3_minus_one
 
     cpdef base_ring(self):
-        """
+        r"""
         Return the base ring of the matrix representing the matroid, in this
         case `\GF{3}`.
 
@@ -4381,7 +4381,7 @@ cdef class TernaryMatroid(LinearMatroid):
         return self._A.copy()   # Deprecated Sage matrix operation
 
     cpdef LeanMatrix _reduced_representation(self, B=None):
-        """
+        r"""
         Return a reduced representation of the matroid, i.e. a matrix `R`
         such that `[I\ \ R]` represents the matroid.
 
@@ -4563,7 +4563,7 @@ cdef class TernaryMatroid(LinearMatroid):
         return self._t_invariant
 
     cpdef bicycle_dimension(self):
-        """
+        r"""
         Return the bicycle dimension of the ternary matroid.
 
         The bicycle dimension of a linear subspace `V` is
@@ -5041,8 +5041,9 @@ cdef class QuaternaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: QuaternaryMatroid(matrix=Matrix(GF(4, 'x'),
-            ....:     [[1, 0, 1, 1, 1], [0, 1, 1, 1, 1]]))  # indirect doctest
+            sage: QuaternaryMatroid(matrix=Matrix(GF(4, 'x'),                 # indirect doctest
+            ....:                                 [[1, 0, 1, 1, 1],
+            ....:                                  [0, 1, 1, 1, 1]]))
             Quaternary matroid of rank 2 on 5 elements
         """
         cdef QuaternaryMatrix A
@@ -5096,7 +5097,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         self._x_one = (<QuaternaryMatrix>self._A)._x_one
 
     cpdef base_ring(self):
-        """
+        r"""
         Return the base ring of the matrix representing the matroid, in this
         case `\GF{4}`.
 
@@ -5273,7 +5274,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         return self._A.copy()   # Deprecated Sage matrix operation
 
     cpdef LeanMatrix _reduced_representation(self, B=None):
-        """
+        r"""
         Return a reduced representation of the matroid, i.e. a matrix `R` such
         that `[I\ \ R]` represents the matroid.
 
@@ -5413,7 +5414,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         return self._q_invariant
 
     cpdef bicycle_dimension(self):
-        """
+        r"""
         Return the bicycle dimension of the quaternary matroid.
 
         The bicycle dimension of a linear subspace `V` is
@@ -5760,8 +5761,8 @@ cdef class RegularMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: RegularMatroid(matrix=Matrix(ZZ, [[1, 0, 1, 1, 1],
-            ....:                       [0, 1, 1, 1, 1]]))  # indirect doctest
+            sage: RegularMatroid(matrix=Matrix(ZZ, [[1, 0, 1, 1, 1],          # indirect doctest
+            ....:                                   [0, 1, 1, 1, 1]]))
             Regular matroid of rank 2 on 5 elements with 7 bases
         """
         LinearMatroid.__init__(self, matrix, groundset, reduced_matrix, ring=ZZ, keep_initial_representation=keep_initial_representation)
@@ -5810,7 +5811,7 @@ cdef class RegularMatroid(LinearMatroid):
         return P
 
     cpdef base_ring(self):
-        """
+        r"""
         Return the base ring of the matrix representing the matroid, in this
         case `\ZZ`.
 
@@ -6230,7 +6231,7 @@ cdef class RegularMatroid(LinearMatroid):
             return {e:idx[m[str(e)]] for e in self.groundset() if str(e) in m}
 
     cpdef has_line_minor(self, k, hyperlines=None, certificate=False):
-        """
+        r"""
         Test if the matroid has a `U_{2, k}`-minor.
 
         The matroid `U_{2, k}` is a matroid on `k` elements in which every

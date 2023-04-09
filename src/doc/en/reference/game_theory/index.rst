@@ -2,7 +2,7 @@ Game Theory
 ===========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/game_theory/cooperative_game
    sage/game_theory/matching_game

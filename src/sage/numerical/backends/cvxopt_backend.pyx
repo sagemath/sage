@@ -137,7 +137,7 @@ cdef class CVXOPTBackend(GenericBackend):
         This amounts to adding a new column to the matrix. By default,
         the variable is both positive and real.
         Variable types are always continuous, and thus the parameters
-        ``binary``, ``integer``, and ``continuous`` have no effect. 
+        ``binary``, ``integer``, and ``continuous`` have no effect.
 
         INPUT:
 
@@ -1002,4 +1002,3 @@ cdef class CVXOPTBackend(GenericBackend):
             return self.param[name]
         else:
             self.param[name] = value
-

@@ -311,7 +311,9 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
     - `p` - prime, optional, default 2
     - `generic` - boolean, optional, default ``None``
 
-    OUTPUT: a triple ``profile, precision, truncation_type``, in
+    OUTPUT:
+
+    a triple ``profile, precision, truncation_type``, in
     standard form as described below.
 
     The "standard form" is as follows: ``profile`` should be a tuple
@@ -638,6 +640,7 @@ def milnor_mono_to_string(mono, latex=False, generic=False):
                 string = string + ")"
         return string.strip(" ")
 
+
 def serre_cartan_mono_to_string(mono, latex=False, generic=False):
     r"""
     String representation of element of the Serre-Cartan basis.
@@ -730,7 +733,9 @@ def wood_mono_to_string(mono, latex=False):
     - ``latex`` - boolean (optional, default False), if true, output
       LaTeX string
 
-    OUTPUT: ``string`` - concatenation of strings of the form
+    OUTPUT:
+
+    ``string`` - concatenation of strings of the form
     ``Sq^{2^s (2^{t+1}-1)}`` for each pair (s,t)
 
     EXAMPLES::
@@ -773,8 +778,9 @@ def wall_mono_to_string(mono, latex=False):
     - ``latex`` - boolean (optional, default False), if true, output
       LaTeX string
 
-    OUTPUT: ``string`` - concatenation of strings ``Q^{m}_{k}`` for
-    each pair (m,k)
+    OUTPUT:
+
+    ``string`` - concatenation of strings ``Q^{m}_{k}`` for each pair (m,k)
 
     EXAMPLES::
 
@@ -812,8 +818,9 @@ def wall_long_mono_to_string(mono, latex=False):
     - ``latex`` - boolean (optional, default False), if true, output
       LaTeX string
 
-    OUTPUT: ``string`` - concatenation of strings of the form
-    ``Sq^(2^m)``
+    OUTPUT:
+
+    ``string`` - concatenation of strings of the form ``Sq^(2^m)``
 
     EXAMPLES::
 
@@ -855,8 +862,10 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
     - ``latex`` - boolean (optional, default False), if true, output
       LaTeX string
 
-    OUTPUT: ``string`` - concatenation of strings of the form
-    ``X^{m}_{k}`` for each pair (m,k)
+    OUTPUT:
+
+    ``string`` - concatenation of strings of the form ``X^{m}_{k}``
+    for each pair (m,k)
 
     EXAMPLES::
 
@@ -894,8 +903,9 @@ def arnonA_long_mono_to_string(mono, latex=False, p=2):
     - ``latex`` - boolean (optional, default False), if true, output
       LaTeX string
 
-    OUTPUT: ``string`` - concatenation of strings of the form
-    ``Sq(2^m)``
+    OUTPUT:
+
+    ``string`` - concatenation of strings of the form ``Sq(2^m)``
 
     EXAMPLES::
 
@@ -939,8 +949,10 @@ def pst_mono_to_string(mono, latex=False, generic=False):
 
     - ``generic`` - whether to format generically, or for the prime 2 (default)
 
-    OUTPUT: ``string`` - concatenation of strings of the form
-    ``P^{s}_{t}`` for each pair (s,t)
+    OUTPUT:
+
+    ``string`` - concatenation of strings of the form ``P^{s}_{t}``
+    for each pair (s,t)
 
     EXAMPLES::
 
@@ -999,8 +1011,10 @@ def comm_mono_to_string(mono, latex=False, generic=False):
 
     - ``generic`` - whether to format generically, or for the prime 2 (default)
 
-    OUTPUT: ``string`` - concatenation of strings of the form
-    ``c_{s,t}`` for each pair (s,t)
+    OUTPUT:
+
+    ``string`` - concatenation of strings of the form ``c_{s,t}``
+    for each pair (s,t)
 
     EXAMPLES::
 
@@ -1059,8 +1073,10 @@ def comm_long_mono_to_string(mono, p, latex=False, generic=False):
 
     - ``generic`` - whether to format generically, or for the prime 2 (default)
 
-    OUTPUT: ``string`` - concatenation of strings of the form ``s_{2^s
-    ... 2^(s+t-1)}`` for each pair (s,t)
+    OUTPUT:
+
+    ``string`` - concatenation of strings of the form ``s_{2^s... 2^(s+t-1)}``
+    for each pair (s,t)
 
     EXAMPLES::
 
@@ -1121,7 +1137,9 @@ def convert_perm(m):
 
     - ``m`` - tuple of non-negative integers with no repetitions
 
-    OUTPUT: ``list`` - conversion of ``m`` to a permutation of the set
+    OUTPUT:
+
+    ``list`` - conversion of ``m`` to a permutation of the set
     1,2,...,len(m)
 
     If ``m=(3,7,4)``, then one can view ``m`` as representing the

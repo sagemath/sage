@@ -1,9 +1,12 @@
-# -*- coding: utf-8 -*-
 r"""
 Features for testing the presence of ``latex`` and equivalent programs
 """
+
 # ****************************************************************************
 #       Copyright (C) 2021 Sebastien Labbe <slabqc@gmail.com>
+#                     2021 Matthias Koeppe
+#                     2022 Kwankyu Lee
+#                     2022 Sebastian Oehms
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +17,11 @@ Features for testing the presence of ``latex`` and equivalent programs
 
 from . import StaticFile, Executable, FeatureTestResult, FeatureNotPresentError
 
-class latex(Executable):
+latex_url = 'https://www.latex-project.org/'
+latex_spkg = 'texlive'
+
+
+class LaTeX(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``latex``
 
@@ -24,7 +31,7 @@ class latex(Executable):
         sage: latex().is_present()             # optional - latex
         FeatureTestResult('latex', True)
     """
-    def __init__(self):
+    def __init__(self, name):
         r"""
         TESTS::
 
@@ -32,8 +39,7 @@ class latex(Executable):
             sage: isinstance(latex(), latex)
             True
         """
-        Executable.__init__(self, "latex", executable="latex",
-                            url="https://www.latex-project.org/")
+        super().__init__(name, executable=name, spkg=latex_spkg, url=latex_url)
 
     def is_functional(self):
         r"""
@@ -44,6 +50,23 @@ class latex(Executable):
             sage: from sage.features.latex import latex
             sage: latex().is_functional()             # optional - latex
             FeatureTestResult('latex', True)
+
+        When the feature is not functional, more information on the reason
+        can be obtained as follows::
+
+            sage: result = latex().is_functional()    # not tested
+            sage: print(result.reason)                # not tested
+            Running latex on a sample file
+            (with command='latex -interaction=nonstopmode tmp_wmpos8ak.tex')
+            returned non-zero exit status='1' with stderr=''
+            and stdout='This is pdfTeX,
+            ...
+            Runaway argument?
+            {document
+            ! File ended while scanning use of \end.
+            ...
+            No pages of output.
+            Transcript written on tmp_wmpos8ak.log.'
         """
         lines = []
         lines.append(r"\documentclass{article}")
@@ -62,7 +85,7 @@ class latex(Executable):
 
         # running latex
         from subprocess import run
-        cmd = ['latex', '-interaction=nonstopmode', filename_tex]
+        cmd = [self.name, '-interaction=nonstopmode', filename_tex]
         cmd = ' '.join(cmd)
         result = run(cmd, shell=True, cwd=base, capture_output=True, text=True)
 
@@ -71,10 +94,36 @@ class latex(Executable):
             return FeatureTestResult(self, True)
         else:
             return FeatureTestResult(self, False, reason="Running latex on "
-                        "a sample file returned non-zero "
-                        "exit status {}".format(result.returncode))
+                                     "a sample file (with command='{}') returned non-zero "
+                                     "exit status='{}' with stderr='{}' "
+                                     "and stdout='{}'".format(result.args,
+                                                              result.returncode,
+                                                              result.stderr.strip(),
+                                                              result.stdout.strip()))
 
-class pdflatex(Executable):
+
+class latex(LaTeX):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of ``latex``
+
+    EXAMPLES::
+
+        sage: from sage.features.latex import latex
+        sage: latex().is_present()             # optional - latex
+        FeatureTestResult('latex', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.latex import latex
+            sage: isinstance(latex(), latex)
+            True
+        """
+        super().__init__("latex")
+
+
+class pdflatex(LaTeX):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``pdflatex``
 
@@ -92,10 +141,10 @@ class pdflatex(Executable):
             sage: isinstance(pdflatex(), pdflatex)
             True
         """
-        Executable.__init__(self, "pdflatex", executable="pdflatex",
-                            url="https://www.latex-project.org/")
+        super().__init__("pdflatex")
 
-class xelatex(Executable):
+
+class xelatex(LaTeX):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``xelatex``
 
@@ -113,10 +162,10 @@ class xelatex(Executable):
             sage: isinstance(xelatex(), xelatex)
             True
         """
-        Executable.__init__(self, "xelatex", executable="xelatex",
-                            url="https://www.latex-project.org/")
+        super().__init__("xelatex")
 
-class lualatex(Executable):
+
+class lualatex(LaTeX):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``lualatex``
 
@@ -134,9 +183,29 @@ class lualatex(Executable):
             sage: isinstance(lualatex(), lualatex)
             True
         """
-        Executable.__init__(self, "lualatex", executable="lualatex",
-                            url="https://www.latex-project.org/")
+        super().__init__("lualatex")
 
+
+class dvips(Executable):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of ``dvips``
+
+    EXAMPLES::
+
+        sage: from sage.features.latex import dvips
+        sage: dvips().is_present()             # optional - dvips
+        FeatureTestResult('dvips', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.latex import dvips
+            sage: isinstance(dvips(), dvips)
+            True
+        """
+        Executable.__init__(self, "dvips", executable="dvips",
+                            url="https://tug.org/texinfohtml/dvips.html")
 
 class TeXFile(StaticFile):
     r"""
@@ -145,12 +214,19 @@ class TeXFile(StaticFile):
     EXAMPLES::
 
         sage: from sage.features.latex import TeXFile
-        sage: TeXFile('x', 'x.tex').is_present()  # optional: pdflatex
+        sage: TeXFile('x', 'x.tex').is_present()  # optional - latex
         FeatureTestResult('x', True)
-        sage: TeXFile('nonexisting', 'xxxxxx-nonexisting-file.tex').is_present()  # optional - pdflatex
-        FeatureTestResult('nonexisting', False)
     """
     def __init__(self, name, filename, **kwds):
+        r"""
+        Initialize.
+
+        TESTS::
+
+            sage: from sage.features.latex import TeXFile
+            sage: TeXFile('nonexisting', 'xxxxxx-nonexisting-file.tex').is_present()  # optional - latex
+            FeatureTestResult('nonexisting', False)
+        """
         StaticFile.__init__(self, name, filename, search_path=[], **kwds)
 
     def absolute_filename(self) -> str:
@@ -161,7 +237,7 @@ class TeXFile(StaticFile):
 
             sage: from sage.features.latex import TeXFile
             sage: feature = TeXFile('latex_class_article', 'article.cls')
-            sage: feature.absolute_filename()  # optional - pdflatex
+            sage: feature.absolute_filename()  # optional - latex
             '.../latex/base/article.cls'
         """
         from subprocess import run, CalledProcessError, PIPE
@@ -171,8 +247,22 @@ class TeXFile(StaticFile):
                        universal_newlines=True, check=True)
             return proc.stdout.strip()
         except CalledProcessError:
-            raise FeatureNotPresentError(self,
-                                         reason="{filename!r} not found by kpsewhich".format(filename=self.filename))
+            reason = "{filename!r} not found by kpsewhich".format(filename=self.filename)
+            raise FeatureNotPresentError(self, reason)
+
+    def _is_present(self):
+        r"""
+        Test for the presence of the TeX file.
+
+        EXAMPLES::
+
+            sage: from sage.features.latex import LaTeXPackage, latex
+            sage: f = LaTeXPackage("tkz-graph")
+            sage: g = latex()
+            sage: not f.is_present() or bool(g.is_present())  # indirect doctest
+            True
+        """
+        return latex().is_present() and super()._is_present()
 
 
 class LaTeXPackage(TeXFile):
@@ -183,7 +273,7 @@ class LaTeXPackage(TeXFile):
     EXAMPLES::
 
         sage: from sage.features.latex import LaTeXPackage
-        sage: LaTeXPackage('graphics').is_present()  # optional - pdflatex
+        sage: LaTeXPackage('graphics').is_present()  # optional - latex
         FeatureTestResult('latex_package_graphics', True)
     """
     @staticmethod
@@ -206,4 +296,5 @@ def all_features():
             pdflatex(),
             xelatex(),
             lualatex(),
+            dvips(),
             LaTeXPackage("tkz-graph")]

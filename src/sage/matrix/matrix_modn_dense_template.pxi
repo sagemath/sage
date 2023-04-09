@@ -109,7 +109,7 @@ from libc.stdio cimport snprintf
 
 from sage.modules.vector_modn_dense cimport Vector_modn_dense
 
-from sage.arith.all import is_prime
+from sage.arith.misc import is_prime
 from sage.structure.element cimport (Element, Vector, Matrix,
         ModuleElement, RingElement)
 from sage.matrix.matrix_dense cimport Matrix_dense
@@ -278,7 +278,7 @@ cdef inline celement linbox_det(celement modulus, celement* entries, Py_ssize_t 
     cdef ModField *F = new ModField(<long>modulus)
     cdef celement *cpy = linbox_copy(modulus, entries, n, n)
 
-    cdef celement d
+    cdef celement d = 0
     cdef size_t nbthreads
     nbthreads = Parallelism().get('linbox')
 
@@ -299,7 +299,7 @@ cdef inline celement linbox_matrix_matrix_multiply(celement modulus, celement* a
     C = A*B
     """
     cdef ModField *F = new ModField(<long>modulus)
-    cdef ModField.Element one, zero
+    cdef ModField.Element one = 0, zero = 0
     F[0].init(one, <int>1)
     F[0].init(zero, <int>0)
 
@@ -327,7 +327,7 @@ cdef inline int linbox_matrix_vector_multiply(celement modulus, celement* C, cel
     C = A*v
     """
     cdef ModField *F = new ModField(<long>modulus)
-    cdef ModField.Element one, zero
+    cdef ModField.Element one = 0, zero = 0
     F.init(one, <int>1)
     F.init(zero, <int>0)
 
@@ -1840,7 +1840,11 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
     def right_kernel_matrix(self, algorithm='linbox', basis='echelon'):
         r"""
         Returns a matrix whose rows form a basis for the right kernel
-        of ``self``, where ``self`` is a matrix over a (small) finite field.
+        of ``self``.
+
+        If the base ring is the ring of integers modulo a composite,
+        the keyword arguments are ignored and the computation is
+        delegated to :meth:`Matrix_dense.right_kernel_matrix`.
 
         INPUT:
 
@@ -1894,7 +1898,10 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [0 0 0 0]
         """
         if self.fetch('in_echelon_form') is None:
-            self = self.echelon_form(algorithm=algorithm)
+            try:
+                self = self.echelon_form(algorithm=algorithm)
+            except NotImplementedError:  # composite modulus
+                return Matrix_dense.right_kernel_matrix(self)
 
         cdef Py_ssize_t r = self.rank()
         cdef Py_ssize_t nrows = self._nrows

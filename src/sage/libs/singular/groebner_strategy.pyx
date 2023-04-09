@@ -157,7 +157,7 @@ cdef class GroebnerStrategy(SageObject):
             sage: del strat
         """
         # WARNING: the Cython class self._parent is no longer accessible!
-        # see http://trac.sagemath.org/sage_trac/ticket/11339
+        # see https://github.com/sagemath/sage/issues/11339
         cdef ring *oldRing = NULL
         if self._strat:
             omfree(self._strat.sevS)
@@ -536,7 +536,7 @@ cdef class NCGroebnerStrategy(SageObject):
         if unlikely(self._parent._ring != currRing):
             rChangeCurrRing(self._parent._ring)
 
-        cdef int max_ind
+        cdef int max_ind = 0
         cdef poly *_p = redNF(p_Copy(p._poly, self._parent._ring), max_ind, 0, self._strat)
         if likely(_p!=NULL):
             _p = redtailBba(_p, max_ind, self._strat)

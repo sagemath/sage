@@ -402,4 +402,3 @@ cdef int mpz_vector_cmp(mpz_vector* v, mpz_vector* w):
         elif c > 0:
             return 1
     return 0
-

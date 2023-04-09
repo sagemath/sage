@@ -12,7 +12,7 @@ from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.all import ModulesWithBasis
+from sage.categories.modules_with_basis import ModulesWithBasis
 
 
 class QuotientModuleWithBasis(CombinatorialFreeModule):

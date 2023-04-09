@@ -95,7 +95,7 @@ cdef class IntList:
             [1, -2]
         """
         cdef TimeSeries T
-        if isinstance(values, (int,long,Integer)):
+        if isinstance(values, (int, Integer)):
             self._length = values
             values = None
         elif isinstance(values, TimeSeries):
@@ -150,7 +150,7 @@ cdef class IntList:
             return rich_to_bool(op, -1 if c < 0 else 1)
         return rich_to_bool(op, 0)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Deallocate memory used by the IntList, if it was allocated.
         """

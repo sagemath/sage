@@ -78,7 +78,7 @@ DUMMY_PACKAGES = @SAGE_DUMMY_PACKAGES@
 
 # Set to the path to Sage's GCC (if GCC is installed) to force rebuilds
 # of packages if GCC changed.
-# See m4/sage_spkg_collect.m4 and https://trac.sagemath.org/ticket/24703
+# See m4/sage_spkg_collect.m4 and https://github.com/sagemath/sage/issues/24703
 GCC_DEP = @SAGE_GCC_DEP@
 
 # Versions of all the packages, in the format
@@ -128,7 +128,23 @@ PIP_PACKAGES = @SAGE_PIP_PACKAGES@
 # Packages that use the 'script' package build rules
 SCRIPT_PACKAGES = @SAGE_SCRIPT_PACKAGES@
 
+# Packages for which we build wheels for PyPI
+PYPI_WHEEL_PACKAGES =				\
+	sage_sws2rst				\
+	sage_setup				\
+	sagemath_environment			\
+	sagemath_objects			\
+	sagemath_repl				\
+	sagemath_categories
 
+# sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib
+WHEEL_PACKAGES = $(PYPI_WHEEL_PACKAGES)		\
+	sage_conf				\
+	sagelib					\
+	sage_docbuild
+
+# Packages for which build sdists for PyPI
+PYPI_SDIST_PACKAGES = $(WHEEL_PACKAGES)
 
 # Generate the actual inst_<pkgname> variables; for each package that is
 # actually built this generates a line like:
@@ -198,6 +214,7 @@ SAGE_I_TARGETS = sagelib doc
 # Tell make not to look for files with these names:
 .PHONY: all all-sage all-toolchain all-build all-sageruntime \
 	all-start build-start base toolchain toolchain-deps base-toolchain \
+	pypi-sdists pypi-wheels wheels \
 	sagelib \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
 	doc-uninstall \
@@ -392,6 +409,52 @@ _clean-broken-gcc:
 	package=$${package%%-*}; \
 	$(MAKE) $$package-SAGE_LOCAL-uninstall $$package-SAGE_VENV-uninstall
 
+%-installcheck:
+	@stampfile=$@; \
+	stampfile=$${stampfile%-installcheck}; \
+	if [ -s $$stampfile ]; then \
+	    echo >&2 "# Checking $$stampfile"; \
+            tree=$${stampfile%%/$(SPKG_INST_RELDIR)/*}; \
+	    package_with_version=$${stampfile##*/}; \
+	    package=$${package_with_version%%-*}; \
+	    if ! $(SAGE_VENV)/bin/python3 $(SAGE_ROOT)/build/bin/sage-spkg-installcheck --verbose $$package $$tree; then \
+		case "$$tree" in \
+		    "$(SAGE_LOCAL)") echo "    make $$package-SAGE_LOCAL-uninstall;";; \
+		    "$(SAGE_VENV)")  echo "    make $$package-SAGE_VENV-uninstall;";; \
+		    *)               echo "    ./sage --buildsh -c \"sage-spkg-uninstall $$package $$tree\";";; \
+		esac; \
+	    fi; \
+	fi;
+
+list-broken-packages: auditwheel_or_delocate
+	@fix_broken_packages=$$($(MAKE) -s $(patsubst %,%-installcheck,$(wildcard $(SAGE_LOCAL)/$(SPKG_INST_RELDIR)/* $(SAGE_VENV)/$(SPKG_INST_RELDIR)/*))); \
+	if [ -n "$$fix_broken_packages" ]; then \
+	    echo >&2 ; \
+	    echo >&2 "Uninstall broken packages by typing:"; \
+	    echo >&2 ; \
+	    echo >&2 "$$fix_broken_packages"; \
+	fi
+
+pypi-sdists: $(PYPI_SDIST_PACKAGES:%=%-sdist)
+	@echo "Built sdists are in upstream/"
+
+# Ensuring wheels are present, even for packages that may have been installed
+# as editable. Until we have better uninstallation of script packages, we
+# just remove the timestamps, which will lead to rebuilds of the packages.
+pypi-wheels:
+	for a in $(PYPI_WHEEL_PACKAGES); do \
+	    rm -f $(SAGE_VENV)/var/lib/sage/installed/$$a-*; \
+	done
+	$(MAKE_REC) SAGE_EDITABLE=no SAGE_WHEELS=yes $(PYPI_WHEEL_PACKAGES)
+	@echo "Built wheels are in venv/var/lib/sage/wheels/"
+
+wheels:
+	for a in $(WHEEL_PACKAGES); do \
+	    rm -f $(SAGE_VENV)/var/lib/sage/installed/$$a-*; \
+	done
+	$(MAKE_REC) SAGE_EDITABLE=no SAGE_WHEELS=yes $(WHEEL_PACKAGES)
+	@echo "Built wheels are in venv/var/lib/sage/wheels/"
+
 #==============================================================================
 # Setting SAGE_CHECK... variables
 #==============================================================================
@@ -403,7 +466,7 @@ define SET_SAGE_CHECK
 $(eval SAGE_CHECK_$(1) := $(2))
 endef
 # Set defaults
-$(foreach pkgname, $(NORMAL_PACKAGES),\
+$(foreach pkgname, $(NORMAL_PACKAGES) $(SCRIPT_PACKAGES),\
 	$(eval $(call SET_SAGE_CHECK,$(pkgname),$(SAGE_CHECK))))
 
 # Parsing the SAGE_CHECK_PACKAGES variable:
@@ -416,8 +479,9 @@ $(foreach pkgname, $(NORMAL_PACKAGES),\
 #
 # Since Python's self-tests seem to fail on all platforms, we disable
 # its test suite by default.
+# meson_python 0.10.0 fails on some platforms, so we reduce it to warnings.
 # However, if SAGE_CHECK=warn, we do not do that.
-SAGE_CHECK_PACKAGES_DEFAULT_yes := !python3
+SAGE_CHECK_PACKAGES_DEFAULT_yes := !python3,?meson_python
 SAGE_CHECK_PACKAGES_DEFAULT_warn :=
 SAGE_CHECK_PACKAGES_DEFAULT_no :=
 comma := ,
@@ -433,7 +497,7 @@ $(foreach clause, $(SAGE_CHECK_PACKAGES_sep),					\
 	       $(eval $(call SET_SAGE_CHECK,$(subst ?,,$(clause)),warn)),	\
 	       $(eval $(call SET_SAGE_CHECK,$(clause),yes)))))
 debug-check:
-	@echo $(foreach pkgname, $(NORMAL_PACKAGES), SAGE_CHECK_$(pkgname) = $(SAGE_CHECK_$(pkgname)))
+	@echo $(foreach pkgname, $(NORMAL_PACKAGES) $(SCRIPT_PACKAGES), SAGE_CHECK_$(pkgname) = $(SAGE_CHECK_$(pkgname)))
 
 
 #==============================================================================
@@ -649,8 +713,8 @@ $(1)-$(4)-no-deps:
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
 		SAGE_SPKG_WHEELS=$$($(4))/var/lib/sage/wheels \
 		SAGE_INST_LOCAL=$$($(4)) \
-		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' '$$(SAGE_LOGS)/$(1)-$(2).log' && \
-	    rm -f "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-*" && \
+		sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' '$$(SAGE_LOGS)/$(1)-$(2).log' && \
+	    rm -f "$$($(4))/$(SPKG_INST_RELDIR)/$(1)"-* && \
 	    touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"; \
 	else ( \
 	    echo; \
@@ -677,11 +741,18 @@ $(1)-$(4)-uninstall:
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env-config' && \
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
 		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-uninstall'
-	-rm -f "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"
+	-rm -f "$$($(4))/$(SPKG_INST_RELDIR)/$(1)"-*
 
 $(1)-uninstall: $(1)-$(4)-uninstall
 
 $(1)-clean: $(1)-uninstall
+
+$(1)-sdist: FORCE python_build sage_setup cython
+	$(AM_V_at) cd '$$(SAGE_ROOT)' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
+		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-src'
 
 # Recursive tox invocation (note - we do not set the environment here).
 # Setting SAGE_SPKG_WHEELS is for the benefit of sagelib's tox.ini

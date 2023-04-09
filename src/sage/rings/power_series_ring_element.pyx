@@ -1119,7 +1119,7 @@ cdef class PowerSeries(AlgebraElement):
             T^2 + O(T^3)
         """
         from sage.rings.power_series_ring import PowerSeriesRing
-        if isinstance(other, (int, Integer, long)):
+        if isinstance(other, (int, Integer)):
             return PowerSeriesRing(IntegerModRing(other), self.variable())(self)
         raise NotImplementedError("Mod on power series ring elements not defined except modulo an integer.")
 

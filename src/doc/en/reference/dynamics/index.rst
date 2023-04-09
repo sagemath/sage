@@ -4,7 +4,7 @@ Discrete dynamics
 =================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    cellular_automata
    complex_dynamics
@@ -21,7 +21,7 @@ Arithmetic Dynamical Systems
 ----------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/dynamics/arithmetic_dynamics/generic_ds
    sage/dynamics/arithmetic_dynamics/affine_ds

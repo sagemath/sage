@@ -1,5 +1,5 @@
 r"""
-q-expansion of j-invariant
+`q`-expansion of `j`-invariant
 """
 from .eis_series import eisenstein_series_qexp
 from .vm_basis import delta_qexp

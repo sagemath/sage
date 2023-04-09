@@ -2,7 +2,7 @@ Statistics
 ==========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/stats/basic_stats
    sage/stats/intlist

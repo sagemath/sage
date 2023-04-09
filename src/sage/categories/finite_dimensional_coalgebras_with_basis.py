@@ -27,5 +27,5 @@ def FiniteDimensionalCoalgebrasWithBasis(base_ring):
 
         sage: TestSuite(C).run()
     """
-    from sage.categories.all import CoalgebrasWithBasis
+    from sage.categories.coalgebras_with_basis import CoalgebrasWithBasis
     return CoalgebrasWithBasis(base_ring).FiniteDimensional()

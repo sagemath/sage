@@ -18,26 +18,24 @@ on:
         default: >-
           ["ubuntu-trusty-toolchain-gcc_9",
            "ubuntu-xenial-toolchain-gcc_9",
-           "ubuntu-bionic",
+           "ubuntu-bionic-gcc_8-python3.8",
            "ubuntu-focal",
            "ubuntu-jammy",
            "ubuntu-kinetic",
-           "debian-stretch",
+           "ubuntu-lunar",
            "debian-buster",
            "debian-bullseye",
            "debian-bookworm",
            "debian-sid",
-           "linuxmint-19",
-           "linuxmint-19.3",
+           "linuxmint-19-gcc_8-python3.8",
+           "linuxmint-19.3-gcc_8-python3.8",
            "linuxmint-20.1",
            "linuxmint-20.2",
            "linuxmint-20.3",
            "linuxmint-21",
-           "fedora-26",
-           "fedora-27",
-           "fedora-28",
-           "fedora-29",
-           "fedora-30",
+           "linuxmint-21.1",
+           "fedora-29-python3.8",
+           "fedora-30-python3.8",
            "fedora-31",
            "fedora-32",
            "fedora-33",
@@ -45,18 +43,19 @@ on:
            "fedora-35",
            "fedora-36",
            "fedora-37",
+           "fedora-38",
            "centos-7-devtoolset-gcc_11",
-           "centos-stream-8",
-           "centos-stream-9",
+           "centos-stream-8-python3.9",
+           "centos-stream-9-python3.9",
            "gentoo-python3.9",
            "gentoo-python3.10",
+           "gentoo-python3.11",
            "archlinux-latest",
-           "opensuse-15.3",
-           "opensuse-15.4",
-           "opensuse-tumbleweed",
+           "opensuse-15.3-gcc_11-python3.9",
+           "opensuse-15.4-gcc_11-python3.10",
+           "opensuse-tumbleweed-python3.10",
            "conda-forge",
-           "ubuntu-bionic-i386",
-           "manylinux-2_24-i686",
+           "ubuntu-bionic-gcc_8-i386",
            "debian-buster-i386",
            ]
       tox_packages_factors:
@@ -66,14 +65,40 @@ on:
           ["minimal",
            "standard",
            ]
+      extra_sage_packages:
+        description: 'Extra Sage packages to install as system packages'
+        type: string
+        default: ""
       max_parallel:
         type: number
-        default: 20
+        default: 24
+      free_disk_space:
+        default: false
+        type: boolean
       #
       # Publishing to GitHub Packages
       #
       docker_push_repository:
         required: false
+        type: string
+      #
+      # Incremental builds
+      #
+      docker_targets:
+        default: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
+        type: string
+      incremental:
+        default: false
+        type: boolean
+      from_docker_repository:
+        required: false
+        type: string
+      from_docker_target:
+        required: false
+        type: string
+      from_docker_tag:
+        required: false
+        default: "$BUILD_TAG"
         type: string
       #
       # For use in upstream CIs
@@ -104,19 +129,24 @@ jobs:
         tox_system_factor:   ${{ fromJson(inputs.tox_system_factors) }}
         tox_packages_factor: ${{ fromJson(inputs.tox_packages_factors) }}
     env:
-      TOX_ENV:            docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
+      TOX_ENV:            "docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}${{ inputs.incremental && '-incremental' || '' }}"
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
-      DOCKER_TARGETS:     with-system-packages configured with-targets-pre with-targets with-targets-optional
+      DOCKER_TARGETS:     ${{ inputs.docker_targets }}
       TARGETS_PRE:        ${{ inputs.targets_pre }}
       TARGETS:            ${{ inputs.targets }}
       TARGETS_OPTIONAL:   ${{ inputs.targets_optional }}
+      FROM_DOCKER_REPOSITORY: ${{ inputs.from_docker_repository }}
+      FROM_DOCKER_TARGET: ${{ inputs.from_docker_target }}
+      FROM_DOCKER_TAG:    ${{ inputs.from_docker_tag }}
+      EXTRA_CONFIGURE_ARGS: --enable-fat-binary
+      EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
       - name: Check out SageMath
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ${{ inputs.sage_repo }}
           ref: ${{ inputs.sage_ref }}
-          fetch-depth: 2000
+          fetch-depth: 10000
       - name: fetch tags
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: free disk space
@@ -130,8 +160,9 @@ jobs:
           dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n | tail -n 50
           sudo apt-get --fix-broken --yes remove $(dpkg-query -f '${Package}\n' -W | grep -E '^(ghc-|google-cloud-sdk|google-chrome|firefox|mysql-server|dotnet-sdk|hhvm|mono)') || echo "(error ignored)"
           df -h
+        if: inputs.free_disk_space
       - name: Check out git-trac-command
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: sagemath/git-trac-command
           path: git-trac-command
@@ -146,7 +177,7 @@ jobs:
         if: inputs.sage_trac_git != ''
 
       - name: Download upstream artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}
@@ -171,7 +202,7 @@ jobs:
               TOKEN="${{ secrets.GITHUB_TOKEN }}"
             fi
             if echo "$TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin; then
-              echo "DOCKER_PUSH_REPOSITORY=${{ inputs.docker_push_repository }}" >> $GITHUB_ENV
+              echo "DOCKER_PUSH_REPOSITORY=$(echo ${{ inputs.docker_push_repository }} | tr "[:upper:]" "[:lower:]")" >> $GITHUB_ENV
               echo "DOCKER_CONFIG_FILE=$HOME/.docker/config.json" >> $GITHUB_ENV
             fi
             # From the docker documentation via .ci/update-env.sh:
@@ -198,7 +229,7 @@ jobs:
           if [ -f .tox/$TOX_ENV/Dockertags ]; then CONTAINERS=$(docker create $(tail -1 .tox/$TOX_ENV/Dockertags) /bin/bash || true); fi
           if [ -n "$CONTAINERS" ]; then for CONTAINER in $CONTAINERS; do for ARTIFACT in /sage/logs; do docker cp $CONTAINER:$ARTIFACT artifacts/$LOGS_ARTIFACT_NAME && HAVE_LOG=1; done; if [ -n "$HAVE_LOG" ]; then break; fi; done; fi
         if: always()
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}

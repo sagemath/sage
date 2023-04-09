@@ -458,4 +458,3 @@ Sage example in ./linalg.tex, line 2949::
   True
 
 """
-

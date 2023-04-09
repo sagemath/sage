@@ -423,7 +423,7 @@ cpdef bint is_Expression(x):
         doctest:warning...
         DeprecationWarning: is_Expression is deprecated;
         use isinstance(..., sage.structure.element.Expression) instead
-        See https://trac.sagemath.org/32638 for details.
+        See https://github.com/sagemath/sage/issues/32638 for details.
         True
         sage: is_Expression(2)
         False
@@ -1603,7 +1603,7 @@ cdef class Expression(Expression_abc):
             sage: x._eval_self(CC)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot evaluate symbolic expression to a numeric value.
+            TypeError: cannot evaluate symbolic expression to a numeric value
 
         Check if we can compute a real evaluation even if the expression
         contains complex coefficients::
@@ -1644,7 +1644,7 @@ cdef class Expression(Expression_abc):
                 ans = ans.real
             return R(ans)
         else:
-            raise TypeError("Cannot evaluate symbolic expression to a numeric value.")
+            raise TypeError("cannot evaluate symbolic expression to a numeric value")
 
     cpdef _convert(self, kwds):
         """
@@ -3464,6 +3464,12 @@ cdef class Expression(Expression_abc):
 
             sage: bool(x^2 + 2*x + 1 != (x + 1)^2)
             False
+
+        Check that :trac:`16031` is fixed::
+
+            sage: expr = reduce(lambda u, v: 1/u -v, [1/pi] + list(continued_fraction(pi)[:20]))
+            sage: expr.is_zero()
+            False
         """
         if self.is_relational():
             # constants are wrappers around Sage objects, compare directly
@@ -3644,7 +3650,7 @@ cdef class Expression(Expression_abc):
                     # We don't want to be in the business of trying to
                     # ensure enough precision to solve EVERY problem,
                     # but since there are two real-life examples in
-                    # Trac tickets 31424 and 31665 that are aided by
+                    # Github issues 31424 and 31665 that are aided by
                     # a bump, we reluctantly enter that game.
                     domain = ComplexIntervalField(128)
                 else:
@@ -4712,7 +4718,7 @@ cdef class Expression(Expression_abc):
                 return self.gradient()
             else:
                 raise ValueError("No differentiation variable specified.")
-        if not isinstance(deg, (int, long, sage.rings.integer.Integer)) \
+        if not isinstance(deg, (int, sage.rings.integer.Integer)) \
                 or deg < 1:
             raise TypeError("argument deg should be an integer >= 1.")
         cdef Expression symbol = self.coerce_in(symb)
@@ -5050,7 +5056,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that ticket :trac:`7472` is fixed (Taylor polynomial in
+        Check that issue :trac:`7472` is fixed (Taylor polynomial in
         more variables)::
 
             sage: x,y = var('x y'); taylor(x*y^3,(x,1),(y,1),4)
@@ -5673,7 +5679,7 @@ cdef class Expression(Expression_abc):
 
             sage: cmd = 'subs({}={}, {})'              # optional - maple
             sage: for s1,s2 in subs:                   # optional - maple
-            ....:     maple.eval(cmd.format(s1,s2, E)) # optional - maple
+            ....:     maple.eval(cmd.format(s1,s2, E))
             'y^4+y^2+y'
             'x^4+x+y'
             'x^4+x^2+x'
@@ -5683,7 +5689,7 @@ cdef class Expression(Expression_abc):
 
             sage: cmd = '{} /. {} -> {}'                    # optional - mathematica
             sage: for s1,s2 in subs:                        # optional - mathematica
-            ....:     mathematica.eval(cmd.format(E,s1,s2)) # optional - mathematica
+            ....:     mathematica.eval(cmd.format(E,s1,s2))
                  2    4
             y + y  + y
                  4
@@ -5695,7 +5701,7 @@ cdef class Expression(Expression_abc):
         The same, with formatting more suitable for cut and paste::
 
             sage: for s1,s2 in subs:                        # optional - mathematica
-            ....:     mathematica(cmd.format(E,s1,s2))      # optional - mathematica
+            ....:     mathematica(cmd.format(E,s1,s2))
             y + y^2 + y^4
             x + x^4 + y
             x^4 + y
@@ -5873,7 +5879,7 @@ cdef class Expression(Expression_abc):
             # this is needed because sometimes this function get called as
             # expr.substitute(None, **kwds). This is because its signature used
             # to be (in_dict=None, **kwds) instead of (*args, **kwds)
-            # (see ticket #12834)
+            # (see issue #12834)
             args = args[1:]
 
         for a in args:
@@ -6326,7 +6332,7 @@ cdef class Expression(Expression_abc):
             sage: len(a)
             doctest:warning...
             DeprecationWarning: using len on a symbolic expression is deprecated; use method number_of_operands instead
-            See https://trac.sagemath.org/29738 for details.
+            See https://github.com/sagemath/sage/issues/29738 for details.
             0
             sage: len((a^2 + b^2 + (x+y)^2))
             3
@@ -7000,7 +7006,7 @@ cdef class Expression(Expression_abc):
         # the following is a temporary fix for GiNaC bug #9505
         if is_a_mul(ss._gobj): # necessarily n=1 here
             res = self
-            for i from 0 <= i < ss._gobj.nops():
+            for i in range(ss._gobj.nops()):
                 res = res.coefficient(new_Expression_from_GEx(self._parent, ss._gobj.op(i)))
             return res
         sig_on()
@@ -7064,7 +7070,7 @@ cdef class Expression(Expression_abc):
             sage: p.coefficients(x, sparse=False)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot return dense coefficient list with noninteger exponents.
+            ValueError: cannot return dense coefficient list with noninteger exponents
 
         Series coefficients are now handled correctly (:trac:`17399`)::
 
@@ -7126,12 +7132,12 @@ cdef class Expression(Expression_abc):
         else:
             from sage.rings.integer_ring import ZZ
             if any(not c[1] in ZZ for c in l):
-                raise ValueError("Cannot return dense coefficient list with noninteger exponents.")
+                raise ValueError("cannot return dense coefficient list with noninteger exponents")
             if not l:
                 l = [[0, 0]]
             val = l[0][1]
             if val < 0:
-                raise ValueError("Cannot return dense coefficient list with negative valuation.")
+                raise ValueError("cannot return dense coefficient list with negative valuation")
             deg = l[-1][1]
             ret = [ZZ(0)] * int(deg+1)
             for c in l:
@@ -8258,7 +8264,7 @@ cdef class Expression(Expression_abc):
             sage: (x^(1/3)).horner(x)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot return dense coefficient list with noninteger exponents.
+            ValueError: cannot return dense coefficient list with noninteger exponents
         """
         coef = self.coefficients(x, sparse=False)
         res = coef[-1]
@@ -9174,7 +9180,7 @@ cdef class Expression(Expression_abc):
             0.0
             sage: maxima('atan2(0,0.6)')
             0.0
-            sage: SR(0).arctan2(0) # see trac ticket #21614
+            sage: SR(0).arctan2(0) # see github issue #21614
             NaN
             sage: SR(I).arctan2(1)
             arctan2(I, 1)
@@ -10135,7 +10141,7 @@ cdef class Expression(Expression_abc):
                 sig_off()
             return new_Expression_from_GEx(self._parent, ex)
         elif is_a_mul(self._gobj):
-            for i from 0 <= i < self._gobj.nops():
+            for i in range(self._gobj.nops()):
                 oper = self._gobj.op(i)
                 if not is_a_power(oper):
                     vec.push_back(oper)
@@ -10225,7 +10231,7 @@ cdef class Expression(Expression_abc):
                 sig_off()
             return new_Expression_from_GEx(self._parent, ex)
         elif is_a_mul(self._gobj):
-            for i from 0 <= i < self._gobj.nops():
+            for i in range(self._gobj.nops()):
                 oper = self._gobj.op(i)
                 if is_a_power(oper):
                     ex = oper.op(0)
@@ -10318,7 +10324,7 @@ cdef class Expression(Expression_abc):
             return (new_Expression_from_GEx(self._parent, ex.op(0)),
                     new_Expression_from_GEx(self._parent, ex.op(1)))
         elif is_a_mul(self._gobj):
-            for i from 0 <= i < self._gobj.nops():
+            for i in range(self._gobj.nops()):
                 oper = self._gobj.op(i)
                 if is_a_power(oper):   # oper = ex^power
                     ex = oper.op(0)
@@ -10593,14 +10599,22 @@ cdef class Expression(Expression_abc):
         else:
             return self
 
-    def simplify(self):
+    def simplify(self, algorithm='maxima'):
         """
         Return a simplified version of this symbolic expression.
 
         .. NOTE::
 
-           Currently, this just sends the expression to Maxima
-           and converts it back to Sage.
+           When using ``algorithm='maxima'``, this just sends the expression to Maxima
+           and converts it back to Sage. When ``algorithm='sympy'``,
+           sympy's simplify method is used.
+
+        INPUT:
+
+        - ``self`` -- an expression with held operations
+        - ``algorithm`` - (default: ``'maxima'``)  one of
+            - ``'maxima'`` - use Maxima (the default)
+            - ``'sympy'`` - use SymPy
 
         .. SEEALSO::
 
@@ -10617,6 +10631,12 @@ cdef class Expression(Expression_abc):
             sage: f.simplify()
             x^(-a + 1)*sin(2)
 
+        ::
+
+            sage: expr = (-1/5*(2*sqrt(6)*(sqrt(5) - 5) + 11*sqrt(5) - 11)/(2*sqrt(6)*sqrt(5) - 11))
+            sage: expr.simplify(algorithm='sympy')
+            1/5*sqrt(5) - 1/5
+
         TESTS:
 
         Check that :trac:`14637` is fixed::
@@ -10625,8 +10645,23 @@ cdef class Expression(Expression_abc):
             sage: acos(cos(x)).simplify()
             x
             sage: forget()
+
+        Check that simplifying with sympy works correctly::
+
+            sage: expr = (-1/5*(2*sqrt(6)*(sqrt(5) - 5) + 11*sqrt(5) - 11)/(2*sqrt(6)*sqrt(5) - 11))
+            sage: expr.simplify(algorithm='sympy')
+            1/5*sqrt(5) - 1/5
+
+
         """
-        return self._parent(self._maxima_())
+        if algorithm == 'maxima':
+            return self._parent(self._maxima_())
+        elif algorithm == 'sympy':
+            return self._sympy_().simplify()._sage_()
+        else:
+            raise NotImplementedError(
+                    "unknown algorithm: '{}'".format(algorithm))
+
 
     def simplify_full(self):
         """
@@ -10702,6 +10737,10 @@ cdef class Expression(Expression_abc):
             sage: f.simplify_full()
             sin(x)/cos(x)
 
+        Check that :trac:`20846` is fixed::
+
+            sage: ((1/6*pi^2).series(x)).simplify_full()
+            1/6*pi^2
         """
         x = self
         x = x.simplify_factorial()
@@ -11290,10 +11329,11 @@ cdef class Expression(Expression_abc):
 
     def canonicalize_radical(self):
         r"""
-        Choose a canonical branch of the given expression. The square
-        root, cube root, natural log, etc. functions are multi-valued. The
-        ``canonicalize_radical()`` method will choose *one* of these values
-        based on a heuristic.
+        Choose a canonical branch of the given expression.
+
+        The square root, cube root, natural log, etc. functions are
+        multi-valued. The ``canonicalize_radical()`` method will
+        choose *one* of these values based on a heuristic.
 
         For example, ``sqrt(x^2)`` has two values: ``x``, and
         ``-x``. The ``canonicalize_radical()`` function will choose
@@ -11898,6 +11938,11 @@ cdef class Expression(Expression_abc):
             x + sqrt(x)
             sage: factor((x + sqrt(x))/(x - sqrt(x)))
             (x + sqrt(x))/(x - sqrt(x))
+
+        Check that :trac:`33640` is fixed::
+
+            sage: ((x + 1)^2 - 2*x - 1).factor()
+            x^2
         """
         from sage.calculus.calculus import symbolic_expression_from_maxima_string
         cdef GEx x
@@ -12086,7 +12131,7 @@ cdef class Expression(Expression_abc):
             sage: wrong.convert()
             Traceback (most recent call last):
             ...
-            ValueError: Cannot convert
+            ValueError: cannot convert
         """
         from . import units
         return units.convert(self, target)
@@ -13717,10 +13762,11 @@ cpdef new_Expression(parent, x):
             from sage.symbolic.constants import NaN
             return NaN
         exp = x
-    elif isinstance(x, long):
-        exp = x
     elif isinstance(x, int):
-        exp = GEx(<long>x)
+        try:
+            exp = GEx(<long>x)
+        except OverflowError:
+            exp = x
     elif x is infinity:
         return new_Expression_from_GEx(parent, g_Infinity)
     elif x is minus_infinity:

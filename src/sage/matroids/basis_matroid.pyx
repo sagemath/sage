@@ -79,7 +79,7 @@ from .basis_exchange_matroid cimport BasisExchangeMatroid
 from .set_system cimport SetSystem
 from cpython.object cimport Py_EQ, Py_NE
 
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 
 from itertools import permutations, combinations
 
@@ -1280,8 +1280,9 @@ cdef long set_to_index(bitset_t S):
         s = bitset_next(S, s + 1)
     return index
 
+
 cdef  index_to_set(bitset_t S, long index, long k, long n):
-    """
+    r"""
     Compute the k-subset of `\{0, ..., n-1\}` of rank index
     """
     bitset_clear(S)

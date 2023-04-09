@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-"""
+r"""
 Matrices over the `\GF{2}` via NTL
 
 This class is only provided to have a complete NTL interface and for
@@ -13,11 +13,11 @@ comparison purposes. Sage's native matrices over `F_2` are much faster
 for many problems like matrix multiplication and Gaussian elimination.
 
 AUTHORS:
- - Martin Albrecht <malb@informatik.uni-bremen.de>
-   2008-09: initial version
+
+- Martin Albrecht <malb@informatik.uni-bremen.de> 2008-09: initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #         Copyright (C) 2005 William Stein <wstein@gmail.com>
 #    Copyright (C) 2008 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
@@ -30,8 +30,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr
@@ -131,6 +131,8 @@ cdef class ntl_mat_GF2():
 
     def __reduce__(self):
         """
+        EXAMPLES::
+
             sage: A = random_matrix(GF(2),4,4)
             sage: B = ntl.mat_GF2(A)
             sage: loads(dumps(B)) == B # indirect doctest
@@ -375,17 +377,18 @@ cdef class ntl_mat_GF2():
         sig_off()
         return r
 
-    def gauss(self,ncols=-1):
-        """
-        Performs unitary row operations so as to bring this matrix
-        into row echelon form (not reduced!).  If the optional
-        argument \code{ncols} is supplied, stops when first ncols
-        columns are in echelon form.  The return value is the rank (or
-        the rank of the first ncols columns).
+    def gauss(self, ncols=-1):
+        r"""
+        Perform unitary row operations so as to bring this matrix
+        into row echelon form (not reduced!).
+
+        If the optional argument ``ncols`` is supplied, stops when
+        first ``ncols`` columns are in echelon form.  The return value is
+        the rank (or the rank of the first ``ncols`` columns).
 
         INPUT:
 
-        ncols -- number of columns to process (default: all)
+        - ``ncols`` -- number of columns to process (default: all)
 
         EXAMPLES::
 

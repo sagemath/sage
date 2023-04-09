@@ -1,18 +1,18 @@
-jupyterlab_widgets: A JupyterLab extension for Jupyter/IPython widgets
-======================================================================
+jupyterlab_widgets: Jupyter interactive widgets for JupyterLab
+==============================================================
 
 Description
 -----------
 
-A JupyterLab extension for Jupyter/IPython widgets.
+Jupyter interactive widgets for JupyterLab
 
 License
 -------
 
-BSD License
+BSD-3-Clause
 
 Upstream Contact
 ----------------
 
-Home page: https://github.com/jupyter-widgets/ipywidgets
+https://pypi.org/project/jupyterlab-widgets/
 

@@ -1503,7 +1503,7 @@ if( DEBUGLEVEL_ell >= 4, print("    end of bnfredquartique"));
 \\ si bigflag !=0 alors on applique bnfredquartique.
 \\ si flag3 ==1 alors on utilise bnfqfsolve2 (equation aux normes) pour resoudre Legendre
 \\ aut est une liste d'automorphismes connus de bnf
-\\ (ca peut aider a factoriser certains discriminiants).
+\\ (ca peut aider a factoriser certains discriminants).
 \\ ell est de la forme y^2=x^3+A*x^2+B*x+C
 \\ ie ell=[0,A,0,B,C], avec A,B et C entiers.
 \\

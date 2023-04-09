@@ -5,7 +5,7 @@ Free and graded resolutions are tools for commutative algebra and algebraic
 geometry.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/homology/free_resolution
    sage/homology/graded_resolution

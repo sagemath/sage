@@ -87,13 +87,8 @@ class Histogram(GraphicPrimitive):
 
         TESTS::
 
-            sage: h = histogram([10,3,5], normed=True)[0]
-            doctest:warning...:
-            DeprecationWarning: the 'normed' option is deprecated. Use 'density' instead.
-            See https://trac.sagemath.org/25260 for details.
+            sage: h = histogram([10,3,5], density=True)[0]
             sage: h.get_minmax_data()
-            doctest:warning ...
-            ...VisibleDeprecationWarning: Passing `normed=True` on non-uniform bins has always been broken, and computes neither the probability density function nor the probability mass function. The result is only correct if the bins are uniform, when density=True will produce the same result anyway. The argument will be removed in a future version of numpy.
             {'xmax': 10.0, 'xmin': 3.0, 'ymax': 0.476190476190..., 'ymin': 0}
         """
         import numpy

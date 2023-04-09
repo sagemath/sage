@@ -21,7 +21,7 @@ Base class for polyhedra: Initialization and access to Vrepresentation and Hrepr
 #       Copyright (C) 2019      Julian Ritter
 #       Copyright (C) 2019-2020 Laith Rastanawi
 #       Copyright (C) 2019-2020 Sophia Elia
-#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1366,11 +1366,9 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         except AttributeError:
             from sage.rings.integer_ring import ZZ
             from sage.rings.rational_field import QQ
-            from sage.rings.real_double import RDF
-
             if self.base_ring() is ZZ or self.base_ring() is QQ:
                 cdd_type = 'rational'
-            elif self.base_ring() is RDF:
+            elif isinstance(self.base_ring(), sage.rings.abc.RealDoubleField):
                 cdd_type = 'real'
             else:
                 raise TypeError('the base ring must be ZZ, QQ, or RDF')
@@ -1431,11 +1429,9 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         except AttributeError:
             from sage.rings.integer_ring import ZZ
             from sage.rings.rational_field import QQ
-            from sage.rings.real_double import RDF
-
             if self.base_ring() is ZZ or self.base_ring() is QQ:
                 cdd_type = 'rational'
-            elif self.base_ring() is RDF:
+            elif isinstance(self.base_ring(), sage.rings.abc.RealDoubleField):
                 cdd_type = 'real'
             else:
                 raise TypeError('the base ring must be ZZ, QQ, or RDF')

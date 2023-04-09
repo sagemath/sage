@@ -110,7 +110,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         TESTS:
 
-        Regression test for :trac:`12489`. This ticket improving
+        Regression test for :trac:`12489`. This issue improving
         equality test revealed that the conversion back from the dual
         basis did not strip cancelled terms from the dictionary::
 
@@ -214,7 +214,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             sage: h._self_to_dual(h([2,1]) + 3*h[1,1,1])
             21*m[1, 1, 1] + 11*m[2, 1] + 4*m[3]
 
-        This is for internal use only. Please use instead:
+        This is for internal use only. Please use instead::
 
             sage: m(h([2,1]) + 3*h[1,1,1])
             21*m[1, 1, 1] + 11*m[2, 1] + 4*m[3]
@@ -536,6 +536,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         - ``dual`` -- self as an element of the dual basis.
         """
+
         def __init__(self, A, dictionary=None, dual=None):
             """
             Create an element of a dual basis.
@@ -588,7 +589,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
                 dual = parent._dual_basis._from_dict(dual_dict)
 
-
             if dictionary is None:
                 # We need to compute the monomial coefficients dictionary
                 dictionary = {}
@@ -610,7 +610,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             # Initialize self
             self._dual = dual
             classical.SymmetricFunctionAlgebra_classical.Element.__init__(self, A, dictionary)
-
 
         def dual(self):
             """
@@ -888,6 +887,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                 3
             """
             return self._dual.expand(n, alphabet)
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

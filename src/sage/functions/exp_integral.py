@@ -1,5 +1,5 @@
 r"""
-Exponential Integrals
+Exponential integrals
 
 AUTHORS:
 
@@ -335,7 +335,6 @@ class Function_exp_integral_e1(BuiltinFunction):
         """
         import mpmath
         return mpmath_utils_call(mpmath.e1, z, parent=parent)
-
 
     def _print_latex_(self, z):
         r"""
@@ -1312,7 +1311,7 @@ Chi = cosh_integral = Function_cosh_integral()
 
 ###################################################################
 # Code below here was moved from sage/functions/transcendental.py
-# This occurred as part of Trac #11143.
+# This occurred as part of Issue #11143.
 ###################################################################
 
 # This class has a name which is not specific enough

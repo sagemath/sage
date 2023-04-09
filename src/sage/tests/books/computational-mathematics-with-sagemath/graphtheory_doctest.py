@@ -417,4 +417,3 @@ Sage example in ./graphtheory.tex, line 2260::
   sage: g.show(edge_colors=edge_coloring(g, hex_colors=True))
 
 """
-

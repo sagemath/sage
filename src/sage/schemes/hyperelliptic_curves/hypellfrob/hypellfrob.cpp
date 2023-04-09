@@ -26,8 +26,8 @@
 
 #include "hypellfrob.h"
 #include "recurrences_ntl.h"
-#include "recurrences_zn_poly.h"
 
+#include <cassert>
 
 NTL_CLIENT
 
@@ -74,16 +74,9 @@ The intervals are supplied in "target", simply as the list
 There are three possible underlying implementations:
    * ntl_interval_products (ZZ_p version),
    * ntl_interval_products (zz_p version),
-   * zn_poly_interval_products.
-This function is a wrapper which takes ZZ_p input, calls one of the three
+This function is a wrapper which takes ZZ_p input, calls one of the two
 above implementations depending on the size of the current ZZ_p modulus, and
 produces output in ZZ_p format.
-
-If the force_ntl flag is set, it will never use the zn_poly version.
-
-Note that the zn_poly version occasionally fails; this happens more frequently
-for smaller p, but is extremely rare for larger p. This wrapper detects this
-and falls back on the zz_p/ZZ_p versions, which should never fail.
 
 PRECONDITIONS:
    Let d = b[n-1] - a[0]. Then 2, 3, ... 1 + floor(sqrt(d)) must all be
@@ -92,57 +85,9 @@ PRECONDITIONS:
 */
 void interval_products_wrapper(vector<mat_ZZ_p>& output,
                                const mat_ZZ_p& M0, const mat_ZZ_p& M1,
-                               const vector<ZZ>& target,
-                               int force_ntl = 0)
+                               const vector<ZZ>& target)
 {
    const ZZ& modulus = ZZ_p::modulus();
-
-   if (!force_ntl  &&  modulus <= (1UL << (ULONG_BITS - 1)) - 1)
-   {
-      // Small modulus; let's try using zn_poly if we're allowed.
-      // (we don't allow the full ULONG_BITS bits, because I'm worried I
-      // sometimes use NTL code which requires longs rather than ulongs.)
-      zn_mod_t mod;
-      zn_mod_init(mod, to_ulong(modulus));
-
-      int r = M0.NumRows();
-
-      // convert to zn_mod format
-      vector<vector<ulong> > M0_temp(r, vector<ulong>(r));
-      vector<vector<ulong> > M1_temp(r, vector<ulong>(r));
-      vector<vector<vector<ulong> > > output_temp(target.size()/2, M0_temp);
-
-      for (int x = 0; x < r; x++)
-      for (int y = 0; y < r; y++)
-      {
-         M0_temp[y][x] = to_ulong(rep(M0[y][x]));
-         M1_temp[y][x] = to_ulong(rep(M1[y][x]));
-      }
-
-      int success = zn_poly_interval_products(output_temp, M0_temp, M1_temp,
-                                              target, mod);
-      zn_mod_clear(mod);
-
-      // note: if we failed, we fall back on the ZZ_p or zz_p versions below
-      if (success)
-      {
-         // convert back to ZZ_p format
-         output.clear();
-         mat_ZZ_p temp;
-         temp.SetDims(r, r);
-         for (size_t i = 0; i < target.size()/2; i++)
-         {
-            for (int x = 0; x < r; x++)
-            for (int y = 0; y < r; y++)
-               temp[y][x] = output_temp[i][y][x];
-            output.push_back(temp);
-         }
-
-         return;
-      }
-
-      // failed
-   }
 
    if (!modulus.SinglePrecision())
    {
@@ -182,11 +127,10 @@ void interval_products_wrapper(vector<mat_ZZ_p>& output,
 
 void hypellfrob_interval_products_wrapper(mat_ZZ_p& output,
                                const mat_ZZ_p& M0, const mat_ZZ_p& M1,
-                               const vector<ZZ>& target,
-                               int force_ntl = 0)
+                               const vector<ZZ>& target)
 {
    vector<mat_ZZ_p> mat_vector;
-   interval_products_wrapper(mat_vector, M0, M1, target, force_ntl);
+   interval_products_wrapper(mat_vector, M0, M1, target);
    int r = M0.NumRows();
    output.SetDims(r, r * mat_vector.size());
 
@@ -327,7 +271,7 @@ void padic_invert_matrix(mat_ZZ_p& B, const mat_ZZ_p& A, const ZZ& p, int N)
 /*
 The main function exported from this module. See hypellfrob.h for information.
 */
-int matrix(mat_ZZ& output, const ZZ& p, int N, const ZZX& Q, int force_ntl)
+int matrix(mat_ZZ& output, const ZZ& p, int N, const ZZX& Q)
 {
    // check input conditions
    if (N < 1 || p < 3)
@@ -521,8 +465,8 @@ int matrix(mat_ZZ& output, const ZZ& p, int N, const ZZX& Q, int force_ntl)
       vector<mat_ZZ_p> MH, DH;
       MH.reserve(L);
       DH.reserve(L);
-      interval_products_wrapper(MH, MH0[j], MH1[j], s, force_ntl);
-      interval_products_wrapper(DH, DH0[j], DH1[j], s, force_ntl);
+      interval_products_wrapper(MH, MH0[j], MH1[j], s);
+      interval_products_wrapper(DH, DH0[j], DH1[j], s);
 
       // Use the vandermonde matrix to extend all the way up to L if necessary.
       if (L > N)
@@ -709,8 +653,8 @@ int matrix(mat_ZZ& output, const ZZ& p, int N, const ZZX& Q, int force_ntl)
    }
    modulusV.restore();
    vector<mat_ZZ_p> MV, DV;
-   interval_products_wrapper(MV, MV0, MV1, s, force_ntl);
-   interval_products_wrapper(DV, DV0, DV1, s, force_ntl);
+   interval_products_wrapper(MV, MV0, MV1, s);
+   interval_products_wrapper(DV, DV0, DV1, s);
 
    // Divide out each MV[j] by DV[j]. Note that for 1 <= j < N, both of them
    // should be divisible by p too, so we take that into account here.

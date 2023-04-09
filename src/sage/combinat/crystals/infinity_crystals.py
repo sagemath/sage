@@ -206,7 +206,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             return InfinityCrystalOfTableauxTypeD(cartan_type)
         if cartan_type.type() == 'Q':
             return DualInfinityQueerCrystalOfTableaux(cartan_type)
-        return super(InfinityCrystalOfTableaux, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         """
@@ -288,12 +288,13 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
                  or isinstance(P, InfinityCrystalOfNonSimplyLacedRC))):
             from sage.combinat.rigged_configurations.bij_infinity import FromRCIsomorphism
             return FromRCIsomorphism(Hom(P, self))
-        return super(InfinityCrystalOfTableaux, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     class Element(InfinityCrystalOfTableauxElement):
         r"""
         Elements in `\mathcal{B}(\infty)` crystal of tableaux.
         """
+
         def phi(self,i):
             r"""
             Return `\varphi_i` of ``self``.
@@ -605,7 +606,7 @@ class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
             sage: B is B2
             True
         """
-        return super(InfinityCrystalOfTableauxTypeD, cls).__classcall__(cls, CartanType(cartan_type))
+        return super().__classcall__(cls, CartanType(cartan_type))
 
     @cached_method
     def module_generator(self):
@@ -633,6 +634,7 @@ class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
         """
         pass
 
+
 #########################################################
 ## Queer superalgebra
 
@@ -650,7 +652,7 @@ class DualInfinityQueerCrystalOfTableaux(CrystalOfWords):
             True
         """
         cartan_type = CartanType(cartan_type)
-        return super(DualInfinityQueerCrystalOfTableaux, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         """

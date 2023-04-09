@@ -1052,4 +1052,3 @@ cdef class PuiseuxSeries(AlgebraElement):
             25*x^(23/2) + O(x^(27/2))
         """
         return self.__invert__()
-

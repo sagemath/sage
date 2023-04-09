@@ -869,6 +869,7 @@ class GraphClasses(UniqueRepresentation):
         EXAMPLES::
 
             sage: graph_classes.update_db()  # optional - internet
+            Database downloaded
         """
         self._download_db()
 

@@ -30,15 +30,16 @@ EXAMPLES::
     Cyclic group of order 4 as a permutation group
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 David Joyner and William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.morphism import Morphism
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
+
 
 class PermutationGroupMorphism(Morphism):
     """
@@ -46,8 +47,9 @@ class PermutationGroupMorphism(Morphism):
     """
     def _repr_type(self):
         """
-        Returns the type of this morphism.  This is used for printing
-        the morphism.
+        Return the type of this morphism.
+
+        This is used for printing the morphism.
 
         EXAMPLES::
 
@@ -60,7 +62,7 @@ class PermutationGroupMorphism(Morphism):
 
     def kernel(self):
         """
-        Returns the kernel of this homomorphism as a permutation group.
+        Return the kernel of this homomorphism as a permutation group.
 
         EXAMPLES::
 
@@ -134,7 +136,7 @@ class PermutationGroupMorphism(Morphism):
     def __call__(self, g):
         """
         Some python code for wrapping GAP's Images function but only for
-        permutation groups. Returns an error if g is not in G.
+        permutation groups. This returns an error if g is not in G.
 
         EXAMPLES::
 
@@ -148,8 +150,10 @@ class PermutationGroupMorphism(Morphism):
         """
         return self.image(g)
 
+
 class PermutationGroupMorphism_id(PermutationGroupMorphism):
     pass
+
 
 class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
     def __init__(self, G, H, gap_hom):
@@ -201,7 +205,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
 
     def _gap_(self, gap=None):
         """
-        Returns a GAP version of this morphism.
+        Return a GAP version of this morphism.
 
         EXAMPLES::
 
@@ -217,7 +221,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
     def __call__(self, g):
         """
         Some python code for wrapping GAP's Images function but only for
-        permutation groups. Returns an error if g is not in G.
+        permutation groups. This returns an error if g is not in G.
 
         EXAMPLES::
 
@@ -236,7 +240,7 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
         """
         Some python code for wrapping GAP's GroupHomomorphismByImages
         function but only for permutation groups. Can be expensive if G is
-        large. Returns "fail" if gens does not generate self or if the map
+        large. This returns "fail" if gens does not generate self or if the map
         does not extend to a group homomorphism, self - other.
 
         EXAMPLES::
@@ -270,8 +274,9 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
 
     def _repr_defn(self):
         """
-        Returns the definition of this morphism.  This is used when
-        printing the morphism.
+        Return the definition of this morphism.
+
+        This is used when printing the morphism.
 
         EXAMPLES::
 
@@ -281,11 +286,11 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
             sage: phi._repr_defn()
             '[(1,2,3,4)] -> [(1,2,3,4)]'
         """
-        return "%s -> %s"%(list(self.domain().gens()), self._images)
+        return "%s -> %s" % (list(self.domain().gens()), self._images)
 
     def _gap_(self):
         """
-        Returns a GAP representation of this morphism.
+        Return a GAP representation of this morphism.
 
         EXAMPLES::
 
@@ -298,9 +303,10 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
         """
         return self.domain()._gap_().GroupHomomorphismByImages(self.codomain(), self.domain().gens(), self._images)
 
-def is_PermutationGroupMorphism(f):
+
+def is_PermutationGroupMorphism(f) -> bool:
     """
-    Returns True if the argument ``f`` is a PermutationGroupMorphism.
+    Return True if the argument ``f`` is a PermutationGroupMorphism.
 
     EXAMPLES::
 
