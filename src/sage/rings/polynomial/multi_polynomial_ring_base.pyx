@@ -133,14 +133,13 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
             sage: QQ['a','b']['x','y'].flattening_morphism()
             Flattening morphism:
-              From: Multivariate Polynomial Ring in x, y over Multivariate
-              Polynomial Ring in a, b over Rational Field
-              To:   Multivariate Polynomial Ring in a, b, x, y over Rational
-              Field
+              From: Multivariate Polynomial Ring in x, y
+                    over Multivariate Polynomial Ring in a, b over Rational Field
+              To:   Multivariate Polynomial Ring in a, b, x, y over Rational Field
 
             sage: QQ['x,y'].flattening_morphism()
-            Identity endomorphism of Multivariate Polynomial Ring in x, y
-            over Rational Field
+            Identity endomorphism of
+             Multivariate Polynomial Ring in x, y over Rational Field
         """
         base = self.base_ring()
         if is_MPolynomialRing(base) or polynomial_ring.is_PolynomialRing(base):
@@ -151,7 +150,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
     def construction(self):
         """
-        Returns a functor F and base ring R such that F(R) == self.
+        Returns a functor ``F`` and base ring ``R`` such that ``F(R) == self``.
 
         EXAMPLES::
 
@@ -284,7 +283,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
     def remove_var(self, *var, order=None):
         """
-        Remove a variable or sequence of variables from self.
+        Remove a variable or sequence of variables from ``self``.
 
         If ``order`` is not specified, then the subring inherits the
         term order of the original ring, if possible.
@@ -294,14 +293,14 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: P.<x,y,z,w> = PolynomialRing(ZZ)
             sage: P.remove_var(z)
             Multivariate Polynomial Ring in x, y, w over Integer Ring
-            sage: P.remove_var(z,x)
+            sage: P.remove_var(z, x)
             Multivariate Polynomial Ring in y, w over Integer Ring
-            sage: P.remove_var(y,z,x)
+            sage: P.remove_var(y, z, x)
             Univariate Polynomial Ring in w over Integer Ring
 
         Removing all variables results in the base ring::
 
-            sage: P.remove_var(y,z,x,w)
+            sage: P.remove_var(y, z, x, w)
             Integer Ring
 
         If possible, the term order is kept::
@@ -317,7 +316,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         Be careful with block orders when removing variables::
 
             sage: R.<x,y,z,u,v> = PolynomialRing(ZZ, order='deglex(2),lex(3)')
-            sage: R.remove_var(x,y,z)
+            sage: R.remove_var(x, y, z)
             Traceback (most recent call last):
             ...
             ValueError: impossible to use the original term order (most
@@ -345,18 +344,18 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
     def univariate_ring(self, x):
         """
         Return a univariate polynomial ring whose base ring comprises all
-        but one variables of self.
+        but one variables of ``self``.
 
         INPUT:
 
-        - ``x`` -- a variable of self.
+        - ``x`` -- a variable of ``self``.
 
         EXAMPLES::
 
             sage: P.<x,y,z> = QQ[]
             sage: P.univariate_ring(y)
-            Univariate Polynomial Ring in y over Multivariate Polynomial
-            Ring in x, z over Rational Field
+            Univariate Polynomial Ring in y
+             over Multivariate Polynomial Ring in x, z over Rational Field
         """
         return self.remove_var(x)[str(x)]
 
@@ -368,9 +367,9 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         This function can be called in two ways:
 
-        1. interpolation(bound, points, values)
+        1. ``interpolation(bound, points, values)``
 
-        2. interpolation(bound, function)
+        2. ``interpolation(bound, function)``
 
         INPUT:
 
@@ -402,14 +401,12 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: R.interpolation(4, F)                                                 # optional - sage.modules
             x^3*y + z^2 + y + 25
 
-
             sage: def F(a,b,c):
             ....:     return a^3*b + b + c^2 + 25
             ....:
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: R.interpolation([3,1,2], F)                                           # optional - sage.modules
             x^3*y + z^2 + y + 25
-
 
             sage: def F(a,b,c):
             ....:     return a^3*b + b + c^2 + 25
@@ -438,7 +435,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             without any notice that there are more.
 
             Lastly, the interpolation function for univariate polynomial rings
-            is called ``lagrange_polynomial()``.
+            is called :meth:`lagrange_polynomial`.
 
         .. WARNING::
 
@@ -447,14 +444,14 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             the given bounds. In particular it will *not* notice or check
             whether the result yields the correct evaluation for other points
             as well. So if you give wrong bounds, you will get a wrong answer
-            without any warning.
+            without any warning. ::
 
-            sage: def F(a,b,c):
-            ....:     return a^3*b + b + c^2 + 25
-            ....:
-            sage: R.<x,y,z> = PolynomialRing(QQ)
-            sage: R.interpolation(3, F)                                                 # optional - sage.modules
-            1/2*x^3 + x*y + z^2 - 1/2*x + y + 25
+                sage: def F(a,b,c):
+                ....:     return a^3*b + b + c^2 + 25
+                ....:
+                sage: R.<x,y,z> = PolynomialRing(QQ)
+                sage: R.interpolation(3, F)                                             # optional - sage.modules
+                1/2*x^3 + x*y + z^2 - 1/2*x + y + 25
 
         .. SEEALSO::
 
@@ -679,7 +676,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(QQ,order=TermOrder('degrevlex',1)+TermOrder('lex',2))
+            sage: P.<x,y,z> = PolynomialRing(QQ, order=TermOrder('degrevlex',1)
+            ....:                                      + TermOrder('lex',2))
             sage: print(P.repr_long())
             Polynomial Ring
              Base Ring : Rational Field
@@ -1335,9 +1333,9 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
     def change_ring(self, base_ring=None, names=None, order=None):
         """
-        Return a new multivariate polynomial ring which isomorphic to
-        self, but has a different ordering given by the parameter
-        'order' or names given by the parameter 'names'.
+        Return a new multivariate polynomial ring which is isomorphic to
+        ``self``, but has a different ordering given by the parameter
+        ``order`` or names given by the parameter ``names``.
 
         INPUT:
 
@@ -1406,7 +1404,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         The number of such monomials equals `\binom{n+k-1}{k}`
         where `n` is the number of variables and `k` the degree::
 
-            sage: len(mons) == binomial(3+2-1,2)
+            sage: len(mons) == binomial(3 + 2 - 1, 2)
             True
         """
         deg_of_gens = [x.degree() for x in self.gens()]
@@ -1527,7 +1525,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
     def macaulay_resultant(self, *args, **kwds):
         r"""
-        This is an implementation of the Macaulay Resultant. It computes
+        This is an implementation of the Macaulay resultant. It computes
         the resultant of universal polynomials as well as polynomials
         with constant coefficients. This is a project done in
         sage days 55. It's based on the implementation in Maple by
@@ -1550,17 +1548,17 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         INPUT:
 
         - ``args`` -- a list of `n` homogeneous polynomials in `n` variables.
-                  works when ``args[0]`` is the list of polynomials,
-                  or ``args`` is itself the list of polynomials
+          works when ``args[0]`` is the list of polynomials,
+          or ``args`` is itself the list of polynomials
 
         kwds:
 
         - ``sparse`` -- boolean (optional - default: ``False``)
-                     if ``True`` function creates sparse matrices.
+          if ``True``, the function creates sparse matrices.
 
         OUTPUT:
 
-        - the macaulay resultant, an element of the base ring of ``self``
+        - the Macaulay resultant, an element of the base ring of ``self``
 
         .. TODO::
             Working with sparse matrices should usually give faster results,
@@ -1572,20 +1570,18 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         The number of polynomials has to match the number of variables::
 
             sage: R.<x,y,z> = PolynomialRing(QQ, 3)
-            sage: R.macaulay_resultant([y, x+z])                                        # optional - sage.modules
+            sage: R.macaulay_resultant([y, x + z])                                      # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: number of polynomials(= 2) must equal number of
-            variables (= 3)
+            TypeError: number of polynomials(= 2) must equal number of variables (= 3)
 
         The polynomials need to be all homogeneous::
 
-            sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: R.macaulay_resultant([y, x+z, z+x^3])                                 # optional - sage.modules
+            sage: R.<x,y,z> = PolynomialRing(QQ, 3)
+            sage: R.macaulay_resultant([y, x + z, z + x^3])                             # optional - sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: resultant for non-homogeneous polynomials is
-            not supported
+            TypeError: resultant for non-homogeneous polynomials is not supported
 
         All polynomials must be in the same ring::
 
@@ -1599,7 +1595,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         The following example recreates Proposition 2.10 in Ch.3 in [CLO2005]::
 
             sage: K.<x,y> = PolynomialRing(ZZ, 2)
-            sage: flist,R = K._macaulay_resultant_universal_polynomials([1,1,2])
+            sage: flist, R = K._macaulay_resultant_universal_polynomials([1,1,2])
             sage: R.macaulay_resultant(flist)                                           # optional - sage.modules
             u2^2*u4^2*u6 - 2*u1*u2*u4*u5*u6 + u1^2*u5^2*u6 - u2^2*u3*u4*u7 +
             u1*u2*u3*u5*u7 + u0*u2*u4*u5*u7 - u0*u1*u5^2*u7 + u1*u2*u3*u4*u8 -
@@ -1609,7 +1605,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             u1^2*u3^2*u11 - 2*u0*u1*u3*u4*u11 + u0^2*u4^2*u11
 
         The following example degenerates into the determinant of
-        a `3*3` matrix::
+        a `3\times 3` matrix::
 
             sage: K.<x,y> = PolynomialRing(ZZ, 2)
             sage: flist,R = K._macaulay_resultant_universal_polynomials([1,1,1])
@@ -1629,52 +1625,52 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         A simple example with constant rational coefficients::
 
-            sage: R.<x,y,z,w> = PolynomialRing(QQ,4)
-            sage: R.macaulay_resultant([w,z,y,x])                                       # optional - sage.modules
+            sage: R.<x,y,z,w> = PolynomialRing(QQ, 4)
+            sage: R.macaulay_resultant([w, z, y, x])                                    # optional - sage.modules
             1
 
         An example where the resultant vanishes::
 
-            sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: R.macaulay_resultant([x+y,y^2,x])                                     # optional - sage.modules
+            sage: R.<x,y,z> = PolynomialRing(QQ, 3)
+            sage: R.macaulay_resultant([x + y, y^2, x])                                 # optional - sage.modules
             0
 
         An example of bad reduction at a prime `p = 5`::
 
-            sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: R.macaulay_resultant([y,x^3+25*y^2*x,5*z])                            # optional - sage.modules
+            sage: R.<x,y,z> = PolynomialRing(QQ, 3)
+            sage: R.macaulay_resultant([y, x^3 + 25*y^2*x, 5*z])                        # optional - sage.modules
             125
 
         The input can given as an unpacked list of polynomials::
 
-            sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: R.macaulay_resultant(y,x^3+25*y^2*x,5*z)                              # optional - sage.modules
+            sage: R.<x,y,z> = PolynomialRing(QQ, 3)
+            sage: R.macaulay_resultant(y, x^3 + 25*y^2*x, 5*z)                          # optional - sage.modules
             125
 
         An example when the coefficients live in a finite field::
 
             sage: F = FiniteField(11)                                                   # optional - sage.rings.finite_rings
             sage: R.<x,y,z,w> = PolynomialRing(F, 4)                                    # optional - sage.rings.finite_rings
-            sage: R.macaulay_resultant([z,x^3,5*y,w])                                   # optional - sage.modules sage.rings.finite_rings
+            sage: R.macaulay_resultant([z, x^3, 5*y, w])                                # optional - sage.modules sage.rings.finite_rings
             4
 
         Example when the denominator in the algorithm vanishes(in this case
         the resultant is the constant term of the quotient of
         char polynomials of numerator/denominator)::
 
-            sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: R.macaulay_resultant([y, x+z, z^2])                                   # optional - sage.modules
+            sage: R.<x,y,z> = PolynomialRing(QQ, 3)
+            sage: R.macaulay_resultant([y, x + z, z^2])                                 # optional - sage.modules
             -1
 
-        When there are only 2 polynomials, macaulay resultant degenerates
+        When there are only 2 polynomials, the Macaulay resultant degenerates
         to the traditional resultant::
 
-            sage: R.<x> = PolynomialRing(QQ,1)
+            sage: R.<x> = PolynomialRing(QQ, 1)
             sage: f =  x^2 + 1; g = x^5 + 1
             sage: fh = f.homogenize()
             sage: gh = g.homogenize()
             sage: RH = fh.parent()
-            sage: f.resultant(g) == RH.macaulay_resultant([fh,gh])                      # optional - sage.modules
+            sage: f.resultant(g) == RH.macaulay_resultant([fh, gh])                     # optional - sage.modules
             True
 
         """
