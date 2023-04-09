@@ -3518,7 +3518,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         return x
 
     def rational_reconstruction(self, Integer m):
-        """
+        r"""
         Return the rational reconstruction of this integer modulo `m`, i.e.,
         the unique (if it exists) rational number that reduces to ``self``
         modulo m and whose numerator and denominator is bounded by
