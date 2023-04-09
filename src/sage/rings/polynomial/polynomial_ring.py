@@ -63,7 +63,7 @@ We create a polynomial ring over a quaternion algebra::
 :trac:`9944` introduced some changes related with
 coercion. Previously, a dense and a sparse polynomial ring with the
 same variable name over the same base ring evaluated equal, but of
-course they were not identical.Coercion maps are cached - but if a
+course they were not identical. Coercion maps are cached - but if a
 coercion to a dense ring is requested and a coercion to a sparse ring
 is returned instead (since the cache keys are equal!), all hell breaks
 loose.
@@ -79,9 +79,9 @@ works as follows::
     True
     sage: R.has_coerce_map_from(S)
     False
-    sage: (R.0+S.0).parent()
+    sage: (R.0 + S.0).parent()
     Univariate Polynomial Ring in x over Rational Field
-    sage: (S.0+R.0).parent()
+    sage: (S.0 + R.0).parent()
     Univariate Polynomial Ring in x over Rational Field
 
 It may be that one has rings of dense or sparse polynomials over
@@ -107,9 +107,9 @@ to the default FLINT implementation, but not vice versa::
 
     sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')                              # optional - sage.libs.ntl
     sage: S.<x> = PolynomialRing(ZZ, implementation='FLINT')                            # optional - sage.libs.flint
-    sage: (S.0+R.0).parent() is S                                                       # optional - sage.libs.flint sage.libs.ntl
+    sage: (S.0 + R.0).parent() is S                                                       # optional - sage.libs.flint sage.libs.ntl
     True
-    sage: (R.0+S.0).parent() is S                                                       # optional - sage.libs.flint sage.libs.ntl
+    sage: (R.0 + S.0).parent() is S                                                       # optional - sage.libs.flint sage.libs.ntl
     True
 
 TESTS::
@@ -603,7 +603,8 @@ class PolynomialRing_general(ring.Algebra):
 
             sage: QQ['a','b']['x'].flattening_morphism()
             Flattening morphism:
-              From: Univariate Polynomial Ring in x over Multivariate Polynomial Ring in a, b over Rational Field
+              From: Univariate Polynomial Ring in x over
+                    Multivariate Polynomial Ring in a, b over Rational Field
               To:   Multivariate Polynomial Ring in a, b, x over Rational Field
 
             sage: QQ['x'].flattening_morphism()
@@ -732,9 +733,9 @@ class PolynomialRing_general(ring.Algebra):
 
             sage: R.<x> = PolynomialRing(QQ, sparse=True)
             sage: S.<x> = QQ[]
-            sage: (R.0+S.0).parent()
+            sage: (R.0 + S.0).parent()
             Univariate Polynomial Ring in x over Rational Field
-            sage: (S.0+R.0).parent()
+            sage: (S.0 + R.0).parent()
             Univariate Polynomial Ring in x over Rational Field
 
         Here we test a feature that was implemented in :trac:`813`::
@@ -743,7 +744,7 @@ class PolynomialRing_general(ring.Algebra):
             sage: Q = Frac(QQ['x'])['y']
             sage: Q.has_coerce_map_from(P)
             True
-            sage: P.0+Q.0
+            sage: P.0 + Q.0
             y + x
 
         In order to avoid bidirectional coercions (which are generally
@@ -1068,8 +1069,8 @@ class PolynomialRing_general(ring.Algebra):
 
     def extend_variables(self, added_names, order = 'degrevlex'):
         r"""
-        Returns a multivariate polynomial ring with the same base ring but
-        with added_names as additional variables.
+        Return a multivariate polynomial ring with the same base ring but
+        with ``added_names`` as additional variables.
 
         EXAMPLES::
 
@@ -1362,7 +1363,7 @@ class PolynomialRing_general(ring.Algebra):
             sage: R.random_element(6).degree()
             6
 
-        If a tuple of two integers is given for the degree argument, a degree
+        If a tuple of two integers is given for the ``degree`` argument, a degree
         is first uniformly chosen, then a polynomial of that degree is given::
 
             sage: R.random_element(degree=(0, 8)).degree() in range(0, 9)
@@ -1374,7 +1375,7 @@ class PolynomialRing_general(ring.Algebra):
         Note that the zero polynomial has degree ``-1``, so if you want to
         consider it set the minimum degree to ``-1``::
 
-            sage: while R.random_element(degree=(-1,2),x=-1,y=1) != R.zero():
+            sage: while R.random_element(degree=(-1,2), x=-1, y=1) != R.zero():
             ....:     pass
 
         TESTS::
@@ -1561,10 +1562,10 @@ class PolynomialRing_general(ring.Algebra):
 
         -  ``max_degree`` - an int; the iterator will generate
            all polynomials which have degree less than or equal to
-           max_degree
+           ``max_degree``
 
         -  ``of_degree`` - an int; the iterator will generate
-           all polynomials which have degree of_degree
+           all polynomials which have degree ``of_degree``
 
 
         OUTPUT: an iterator
@@ -1875,16 +1876,16 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         - ``sign`` -- integer (default `1`), the sign `s` of the functional equation
 
         - ``lead`` -- integer, list of integers or list of pairs of integers (default `1`),
-            constraints on the leading few coefficients of the generated polynomials.
-            If pairs `(a, b)` of integers are given, they are treated as a constraint
-            of the form `\equiv a \pmod{b}`; the moduli must be in decreasing order by
-            divisibility, and the modulus of the leading coefficient must be 0.
+          constraints on the leading few coefficients of the generated polynomials.
+          If pairs `(a, b)` of integers are given, they are treated as a constraint
+          of the form `\equiv a \pmod{b}`; the moduli must be in decreasing order by
+          divisibility, and the modulus of the leading coefficient must be 0.
 
         .. SEEALSO::
 
             More documentation and additional options are available using the iterator
             :class:`sage.rings.polynomial.weil.weil_polynomials.WeilPolynomials`
-            directly. In addition, polynomials have a method `is_weil_polynomial` to
+            directly. In addition, polynomials have a method :meth:`is_weil_polynomial` to
             test whether or not the given polynomial is a Weil polynomial.
 
         EXAMPLES::
@@ -1904,9 +1905,9 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
             sage: l = R.weil_polynomials(4, 2, lead=((1,0), (2,4), (1,2)))              # optional - sage.libs.flint
             sage: l                                                                     # optional - sage.libs.flint
             [T^4 + 2*T^3 + 5*T^2 + 4*T + 4,
-            T^4 + 2*T^3 + 3*T^2 + 4*T + 4,
-            T^4 - 2*T^3 + 5*T^2 - 4*T + 4,
-            T^4 - 2*T^3 + 3*T^2 - 4*T + 4]
+             T^4 + 2*T^3 + 3*T^2 + 4*T + 4,
+             T^4 - 2*T^3 + 5*T^2 - 4*T + 4,
+             T^4 - 2*T^3 + 3*T^2 - 4*T + 4]
 
         We do not require Weil polynomials to be monic. This example generates Weil
         polynomials associated to K3 surfaces over `GF(2)` of Picard number at least 12::
@@ -2113,7 +2114,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
         - ``points`` -- a list of pairs `(x_0, y_0), (x_1, y_1),
           \dots, (x_n, y_n)` of elements of the base ring of ``self``,
           where `x_i - x_j` is invertible for `i \neq j`.  This method
-          converts the `x_i` and `y_i` into the base ring of `self`.
+          converts the `x_i` and `y_i` into the base ring of ``self``.
 
         - ``full_table`` -- boolean (default: ``False``): If ``True``,
           return the full divided-difference table.  If ``False``,
@@ -2200,7 +2201,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
         - ``points`` -- a list of pairs `(x_0, y_0), (x_1, y_1),
           \dots, (x_n, y_n)` of elements of the base ring of ``self``,
           where `x_i - x_j` is invertible for `i \neq j`.  This method
-          converts the `x_i` and `y_i` into the base ring of `self`.
+          converts the `x_i` and `y_i` into the base ring of ``self``.
 
         - ``algorithm`` -- (default: ``'divided_difference'``): one of
           the following:
@@ -2551,10 +2552,11 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             2
             sage: f.is_irreducible()                                                    # optional - sage.rings.finite_rings
             True
-            sage: GF(19)['x'].irreducible_element(21, algorithm="first_lexicographic")  # optional - sage.rings.finite_rings
+            sage: R = GF(19)['x']                                                       # optional - sage.rings.finite_rings
+            sage: R.irreducible_element(21, algorithm="first_lexicographic")            # optional - sage.rings.finite_rings
             x^21 + x + 5
-            sage: GF(5**2, 'a')['x'].irreducible_element(17,                            # optional - sage.rings.finite_rings
-            ....:                                        algorithm="first_lexicographic")
+            sage: R = GF(5**2, 'a')['x']                                                # optional - sage.rings.finite_rings
+            sage: R.irreducible_element(17, algorithm="first_lexicographic")            # optional - sage.rings.finite_rings
             x^17 + a*x + 4*a + 3
 
         AUTHORS:
@@ -3372,13 +3374,13 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
           Currently available options are:
 
           - ``'adleman-lenstra'``: a variant of the Adleman--Lenstra
-              algorithm as implemented in PARI.
+            algorithm as implemented in PARI.
 
           - ``'conway'``: look up the Conway polynomial of degree `n`
             over the field of `p` elements in the database; raise a
             ``RuntimeError`` if it is not found.
 
-          - ``'ffprimroot'``: use the ``ffprimroot()`` function from
+          - ``'ffprimroot'``: use the :pari:`ffprimroot` function from
             PARI.
 
           - ``'first_lexicographic'``: return the lexicographically
@@ -3391,7 +3393,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
           - ``'primitive'``: return a polynomial `f` such that a root of
             `f` generates the multiplicative group of the finite field
             extension defined by `f`. This uses the Conway polynomial if
-            possible, otherwise it uses ``ffprimroot``.
+            possible, otherwise it uses ``'ffprimroot'``.
 
           - ``'random'``: try random polynomials until an irreducible
             one is found.
@@ -3399,7 +3401,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
           If ``algorithm`` is ``None``, use `x - 1` in degree 1. In
           degree > 1, the Conway polynomial is used if it is found in
           the database.  Otherwise, the algorithm ``minimal_weight``
-          is used if `p = 2`, and the algorithm ``adleman-lenstra`` if
+          is used if `p = 2`, and the algorithm ``'adleman-lenstra'`` if
           `p > 2`.
 
         OUTPUT:
@@ -3505,9 +3507,9 @@ def polygen(ring_or_element, name="x"):
 
     INPUT:
 
-    - polygen(base_ring, name="x")
+    - ``polygen(base_ring, name="x")``
 
-    - polygen(ring_element, name="x")
+    - ``polygen(ring_element, name="x")``
 
     If the first input is a ring, return a polynomial generator over
     that ring. If it is a ring element, return a polynomial generator
@@ -3523,9 +3525,9 @@ def polygen(ring_or_element, name="x"):
 
     .. note::
 
-       If you give a list or comma separated string to polygen, you'll
+       If you give a list or comma-separated string to :func:`polygen`, you'll
        get a tuple of indeterminates, exactly as if you called
-       polygens.
+       :func:`polygens`.
     """
     if is_RingElement(ring_or_element):
         base_ring = ring_or_element.parent()
@@ -3552,7 +3554,7 @@ def polygens(base_ring, names="x", *args):
         x^2 + 2*x*y + y^2 + 2*x*z + 2*y*z + z^2
         sage: parent(x)
         Multivariate Polynomial Ring in x, y, z over Rational Field
-        sage: t = polygens(QQ,['x','yz','abc'])
+        sage: t = polygens(QQ, ['x','yz','abc'])
         sage: t
         (x, yz, abc)
 

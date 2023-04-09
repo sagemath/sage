@@ -88,7 +88,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     3. ``LaurentPolynomialRing(base_ring, name, n, order='degrevlex')``
     4. ``LaurentPolynomialRing(base_ring, n, name, order='degrevlex')``
 
-    The optional arguments sparse and order *must* be explicitly
+    The optional arguments ``sparse`` and ``order`` *must* be explicitly
     named, and the other arguments must be given positionally.
 
     INPUT:
@@ -101,10 +101,10 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     - ``order`` -- string or
       :class:`~sage.rings.polynomial.term_order.TermOrder`, e.g.,
 
-        - ``'degrevlex'`` (default) -- degree reverse lexicographic
-        - ``'lex'`` -- lexicographic
-        - ``'deglex'`` -- degree lexicographic
-        - ``TermOrder('deglex',3) + TermOrder('deglex',3)`` -- block ordering
+      - ``'degrevlex'`` (default) -- degree reverse lexicographic
+      - ``'lex'`` -- lexicographic
+      - ``'deglex'`` -- degree lexicographic
+      - ``TermOrder('deglex',3) + TermOrder('deglex',3)`` -- block ordering
 
     OUTPUT:
 
@@ -120,7 +120,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
 
     ::
 
-        sage: R.<x,y> = LaurentPolynomialRing(QQ,2); R
+        sage: R.<x,y> = LaurentPolynomialRing(QQ, 2); R
         Multivariate Laurent Polynomial Ring in x, y over Rational Field
         sage: f = x^2 - 2*y^-2
 
@@ -162,8 +162,9 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
            sage: R.<abc> = LaurentPolynomialRing(QQ, sparse=True); R
            Univariate Laurent Polynomial Ring in abc over Rational Field
 
-           sage: R.<w> = LaurentPolynomialRing(PolynomialRing(GF(7),'k')); R
-           Univariate Laurent Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
+           sage: R.<w> = LaurentPolynomialRing(PolynomialRing(GF(7),'k')); R            # optional - sage.rings.finite_rings
+           Univariate Laurent Polynomial Ring in w over
+            Univariate Polynomial Ring in k over Finite Field of size 7
 
        Rings with different variables are different::
 
@@ -210,10 +211,12 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
        ::
 
            sage: LaurentPolynomialRing(QQ, 'x', 10)
-           Multivariate Laurent Polynomial Ring in x0, x1, x2, x3, x4, x5, x6, x7, x8, x9 over Rational Field
+           Multivariate Laurent Polynomial Ring in x0, x1, x2, x3, x4, x5, x6, x7, x8, x9
+            over Rational Field
 
-           sage: LaurentPolynomialRing(GF(7), 'y', 5)
-           Multivariate Laurent Polynomial Ring in y0, y1, y2, y3, y4 over Finite Field of size 7
+           sage: LaurentPolynomialRing(GF(7), 'y', 5)                                   # optional - sage.rings.finite_rings
+           Multivariate Laurent Polynomial Ring in y0, y1, y2, y3, y4
+            over Finite Field of size 7
 
            sage: LaurentPolynomialRing(QQ, 'y', 3, sparse=True)
            Multivariate Laurent Polynomial Ring in y0, y1, y2 over Rational Field
@@ -222,11 +225,12 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
        :meth:`~sage.structure.category_object.CategoryObject.inject_variables`
        method, all those variable names are available for interactive use::
 
-           sage: R = LaurentPolynomialRing(GF(7),15,'w'); R
-           Multivariate Laurent Polynomial Ring in w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14 over Finite Field of size 7
-           sage: R.inject_variables()
+           sage: R = LaurentPolynomialRing(GF(7), 15, 'w'); R                           # optional - sage.rings.finite_rings
+           Multivariate Laurent Polynomial Ring in w0, w1, w2, w3, w4, w5, w6, w7,
+            w8, w9, w10, w11, w12, w13, w14 over Finite Field of size 7
+           sage: R.inject_variables()                                                   # optional - sage.rings.finite_rings
            Defining w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14
-           sage: (w0 + 2*w8 + w13)^2
+           sage: (w0 + 2*w8 + w13)^2                                                    # optional - sage.rings.finite_rings
            w0^2 + 4*w0*w8 + 4*w8^2 + 2*w0*w13 + 4*w8*w13 + w13^2
     """
     from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
