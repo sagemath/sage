@@ -2959,7 +2959,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: g = L([2], valuation=-1, constant=1); g
             2*x^-1 + 1 + x + x^2 + O(x^3)
             sage: g * g^-1
-            1 + O(x^7)
+            1
 
             sage: L.<x> = LazyPowerSeriesRing(QQ)
             sage: ~(x + x^2)

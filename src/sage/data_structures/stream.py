@@ -170,6 +170,72 @@ class Stream():
         """
         return True
 
+    def _cache_iterator(self):
+        r"""
+        Iterate over the known ``(degree, coefficient)``-pairs.
+        """
+        raise NotImplementedError
+
+    def __ne__(self, other):
+        """
+        Return ``True`` if ``self`` and ``other`` are known to be different.
+
+        This can be decided only if we have already encountered a
+        coefficient which is different in ``self`` and ``other``.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_zero, Stream_function
+            sage: s1 = Stream_exact([0, 1])
+            sage: s1 != Stream_exact([1])
+            True
+            sage: s1 != Stream_zero()
+            True
+            sage: s2 = Stream_function(lambda n: 2 if n else 0, True, 0)
+            sage: s1 != s2
+            False
+            sage: s2[1]
+            2
+            sage: s1 != s2
+            True
+
+        """
+        if isinstance(self, Stream_zero):
+            # bool(other) is True if we do not know that other is zero
+            # other.is_nonzero() is True if we know that other is non-zero
+            return other.is_nonzero()
+        if isinstance(other, Stream_zero):
+            return self.is_nonzero()
+        if isinstance(self, Stream_exact) and isinstance(other, Stream_exact):
+            return not self == other
+        # In the remaining cases we only know finitely many
+        # coefficients of at least one of the streams
+        ao_f = self._approximate_order
+        ao_g = other._approximate_order
+        if ao_g < ao_f:
+            f, g = other, self
+            ao_f, ao_g = ao_g, ao_f
+        else:
+            f, g = self, other
+        if f._true_order and ao_f < ao_g:
+            return True
+        f_iter = f._cache_iterator()
+        g_iter = g._cache_iterator()
+        f_deg, f_val = next(f_iter, (None, None))
+        g_deg, g_val = next(g_iter, (None, None))
+        while f_deg is not None and g_deg is not None:
+            if f_deg == g_deg and f_val != g_val:
+                return True
+            elif f_deg < g_deg:
+                f_deg, f_val = next(f_iter, (None, None))
+            else:
+                g_deg, g_val = next(g_iter, (None, None))
+        return False
+
 
 class Stream_inexact(Stream):
     """
@@ -205,6 +271,34 @@ class Stream_inexact(Stream):
         else:
             self._cache = list()
             self._iter = self.iterate_coefficients()
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if the cache contains a nonzero element.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function
+            sage: CS = Stream_function(lambda n: 1/n, False, 1)
+            sage: CS.is_nonzero()
+            False
+            sage: CS[1]
+            1
+            sage: CS.is_nonzero()
+            True
+        """
+        if self._is_sparse:
+            return any(self._cache.values())
+        return any(self._cache)
+
+    def _cache_iterator(self):
+        r"""
+        Iterate over the known ``(degree, coefficient)``-pairs.
+        """
+        if self._is_sparse:
+            yield from self._cache.items()  # does python guarantee that they are sorted?
+        elif self._true_order:
+            yield from enumerate(self._cache, self._approximate_order)
 
     def __getstate__(self):
         """
@@ -607,6 +701,31 @@ class Stream_exact(Stream):
             True
         """
         return hash((self._initial_coefficients, self._degree, self._constant))
+
+    def _cache_iterator(self):
+        r"""
+        Iterate over the known ``(degree, coefficient)``-pairs.
+        """
+        i = self._approximate_order
+        while True:
+            yield i, self[i]
+            i += 1
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        An assumption of this class is that it is nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_exact
+            sage: g = Stream_exact([0, 1])
+            sage: g.is_nonzero()
+            True
+        """
+        return True
 
     def __eq__(self, other):
         """
@@ -1343,6 +1462,26 @@ class Stream_cauchy_mul(Stream_binary):
                 c += val * self._right[n-k]
         return c
 
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_function,
+            ....:     Stream_cauchy_mul, Stream_cauchy_invert)
+            sage: f = Stream_function(lambda n: n, True, 1)
+            sage: g = Stream_cauchy_mul(f, f, True)
+            sage: g.is_nonzero()
+            False
+            sage: fi = Stream_cauchy_invert(f)
+            sage: h = Stream_cauchy_mul(fi, fi, True)
+            sage: h.is_nonzero()
+            True
+        """
+        return self._left.is_nonzero() and self._right.is_nonzero()
+
 
 class Stream_cauchy_mul_commutative(Stream_cauchy_mul, Stream_binaryCommutative):
     """
@@ -1959,6 +2098,11 @@ class Stream_scalar(Stream_inexact):
     Base class for operators multiplying a coefficient stream by a
     scalar.
 
+    INPUT:
+
+    - ``series`` -- a :class:`Stream`
+    - ``scalar`` -- a non-zero, non-one scalar
+
     .. TODO::
 
         This does not inherit from :class:`Stream_unary`, because of
@@ -2042,6 +2186,27 @@ class Stream_scalar(Stream_inexact):
         return (isinstance(other, type(self)) and self._series == other._series
                 and self._scalar == other._scalar)
 
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_rmul, Stream_function)
+            sage: f = Stream_function(lambda n: n, True, 1)
+            sage: g = Stream_rmul(f, 2, True)
+            sage: g.is_nonzero()
+            False
+
+            sage: from sage.data_structures.stream import Stream_cauchy_invert
+            sage: fi = Stream_cauchy_invert(f)
+            sage: g = Stream_rmul(fi, 2, True)
+            sage: g.is_nonzero()
+            True
+        """
+        return self._series.is_nonzero()
+
 
 class Stream_rmul(Stream_scalar):
     """
@@ -2051,7 +2216,7 @@ class Stream_rmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a scalar
+    - ``scalar`` -- a non-zero, non-one scalar
 
     EXAMPLES::
 
@@ -2092,7 +2257,7 @@ class Stream_lmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a scalar
+    - ``scalar`` -- a non-zero, non-one scalar
 
     EXAMPLES::
 
@@ -2194,6 +2359,27 @@ class Stream_neg(Stream_unary):
             [0, -1, -2, -3, -4, -5, -6, -7, -8, -9]
         """
         return -self._series[n]
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_neg, Stream_function)
+            sage: f = Stream_function(lambda n: n, True, 1)
+            sage: g = Stream_neg(f, True)
+            sage: g.is_nonzero()
+            False
+
+            sage: from sage.data_structures.stream import Stream_cauchy_invert
+            sage: fi = Stream_cauchy_invert(f)
+            sage: g = Stream_neg(fi, True)
+            sage: g.is_nonzero()
+            True
+        """
+        return self._series.is_nonzero()
 
 
 class Stream_cauchy_invert(Stream_unary):
@@ -2312,6 +2498,23 @@ class Stream_cauchy_invert(Stream_unary):
                     c += l * self._series[n - k]
             yield -c * self._ainv
 
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        An assumption of this class is that it is nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_cauchy_invert, Stream_function)
+            sage: f = Stream_function(lambda n: n^2, False, 1)
+            sage: g = Stream_cauchy_invert(f)
+            sage: g.is_nonzero()
+            True
+        """
+        return True
+
 
 class Stream_map_coefficients(Stream_inexact):
     r"""
@@ -2322,6 +2525,11 @@ class Stream_map_coefficients(Stream_inexact):
 
     - ``series`` -- a :class:`Stream`
     - ``function`` -- a function that modifies the elements of the stream
+
+    .. WARNING::
+
+        We assume for equality that ``function`` is a function in the
+        mathematical sense.
 
     EXAMPLES::
 
@@ -2436,7 +2644,8 @@ class Stream_map_coefficients(Stream_inexact):
 
 class Stream_shift(Stream):
     """
-    Operator for shifting a nonzero, nonexact stream.
+    Operator for shifting a nonexact stream which is not known to
+    be zero.
 
     Instances of this class share the cache with its input stream.
 
@@ -2444,6 +2653,7 @@ class Stream_shift(Stream):
 
     - ``series`` -- a :class:`Stream`
     - ``shift`` -- an integer
+
     """
     def __init__(self, series, shift):
         """
@@ -2547,6 +2757,21 @@ class Stream_shift(Stream):
         """
         return (isinstance(other, type(self)) and self._shift == other._shift
                 and self._series == other._series)
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_shift, Stream_function
+            sage: f = Stream_function(lambda n: 0, False, 1)
+            sage: g = Stream_shift(f, 3)
+            sage: g.is_nonzero()
+            False
+        """
+        return self._series.is_nonzero()
 
 
 class Stream_truncated(Stream_inexact):
@@ -2755,10 +2980,52 @@ class Stream_truncated(Stream_inexact):
         # dense case
         return super().order()
 
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_truncated
+            sage: def fun(n): return 1 if ZZ(n).is_power_of(2) else 0
+            sage: f = Stream_function(fun, False, 0)
+            sage: [f[i] for i in range(0, 4)]
+            [0, 1, 1, 0]
+            sage: f._cache
+            [1, 1, 0]
+            sage: s = Stream_truncated(f, -5, 0)
+            sage: s.is_nonzero()
+            False
+            sage: [f[i] for i in range(7,10)]  # updates the cache of s
+            [0, 1, 0]
+            sage: s.is_nonzero()
+            True
+
+            sage: f = Stream_function(fun, True, 0)
+            sage: [f[i] for i in range(0, 4)]
+            [0, 1, 1, 0]
+            sage: f._cache
+            {1: 1, 2: 1, 3: 0}
+            sage: s = Stream_truncated(f, -5, 0)
+            sage: s.is_nonzero()
+            False
+            sage: [f[i] for i in range(7,10)]  # updates the cache of s
+            [0, 1, 0]
+            sage: s.is_nonzero()
+            True
+        """
+        if self._is_sparse:
+            return any(c for n, c in self._series._cache.items()
+                       if n + self._shift >= self._approximate_order)
+        offset = self._series._approximate_order + self._shift
+        start = self._approximate_order - offset
+        return any(self._cache[start:])
+
 
 class Stream_derivative(Stream_inexact):
     """
-    Operator for taking derivatives of a stream.
+    Operator for taking derivatives of a non-exact stream.
 
     INPUT:
 
@@ -2866,3 +3133,20 @@ class Stream_derivative(Stream_inexact):
         """
         return (isinstance(other, type(self)) and self._shift == other._shift
                 and self._series == other._series)
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_derivative
+            sage: f = Stream_exact([1,2])
+            sage: Stream_derivative(f, 1, True).is_nonzero()
+            True
+            sage: Stream_derivative(f, 2, True).is_nonzero() # it might be nice if this gave False
+            True
+        """
+        # since self._series is not exact, this is correct
+        return self._series.is_nonzero()
