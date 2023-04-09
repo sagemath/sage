@@ -1524,7 +1524,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         return solutions
 
     def reduced(self):
-        """
+        r"""
         If this sequence is `f_1, ..., f_n`, return `g_1, ..., g_s` such that:
 
         - `(f_1,...,f_n) = (g_1,...,g_s)`
