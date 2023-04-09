@@ -206,7 +206,7 @@ cpdef inline split_complex_string(string, int base=10):
         else:
             return None
 
-        if  z.group(prefix + '_re_abs') is not None:
+        if z.group(prefix + '_re_abs') is not None:
             x = z.expand(r'\g<' + prefix + '_re_abs>')
             if z.group(prefix + '_re_sign') is not None:
                 x = z.expand(r'\g<' + prefix + '_re_sign>') + x
@@ -313,8 +313,8 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         try:
             n = _mpc_rounding_modes.index(rnd)
         except ValueError:
-            raise ValueError("rnd (=%s) must be of the form RNDxy"\
-                "where x and y are one of N, Z, U, D" % rnd)
+            raise ValueError("rnd (=%s) must be of the form RNDxy"
+                             "where x and y are one of N, Z, U, D" % rnd)
         self.__rnd = n
         self.__rnd_str = rnd
 
@@ -1158,8 +1158,8 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             TypeError: can...t convert complex to float; use abs(z)
         """
         if mpfr_zero_p(self.value.im):
-            return mpfr_get_d(self.value.re,\
-                                   rnd_re((<MPComplexField_class>self._parent).__rnd))
+            return mpfr_get_d(self.value.re,
+                              rnd_re((<MPComplexField_class>self._parent).__rnd))
         else:
             raise TypeError("can't convert complex to float; use abs(z)")
 

@@ -26,15 +26,24 @@ doctests.
 Some key language and library features have been backported to Python 3.8
 using one of two mechanisms:
 
-- ``from __future__ import annotations`` (see
-  https://docs.python.org/3.7/library/__future__.html) modernizes type
-  annotations according to PEP 563 (Postponed evaluation of
-  annotations, see https://www.python.org/dev/peps/pep-0563).  All
-  Sage library code that uses type annotations should include this
-  ``__future__`` import and follow PEP 563.
+- ``from __future__ import annotations`` (see Python reference for
+  `__future__ <https://docs.python.org/3.8/library/__future__.html>`_)
+  modernizes type annotations according to `PEP 563
+  <https://www.python.org/dev/peps/pep-0563>`_ (Postponed evaluation
+  of annotations).  All Sage library code that uses type annotations
+  should include this ``__future__`` import and follow PEP 563.
 
-- The Sage distribution includes the backport packages ``importlib_metadata``
-  and ``importlib_resources``.
+- Backport packages
+
+  - `importlib_metadata <../reference/spkg/importlib_metadata>`_
+    (to be used in place of ``importlib.metadata``),
+  - `importlib_resources <../reference/spkg/importlib_resources>`_
+    (to be used in place of ``importlib.resources``),
+  - `typing_extensions <../reference/spkg/typing_extensions>`_
+    (to be used in place of ``typing``).
+
+  The Sage library declares these packages as dependencies and ensures that
+  versions that provide features of Python 3.11 are available.
 
 Meta-ticket :trac:`29756` keeps track of newer Python features and serves
 as a starting point for discussions on how to make use of them in the

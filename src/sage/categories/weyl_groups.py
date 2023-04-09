@@ -349,7 +349,6 @@ class WeylGroups(Category_singleton):
 
             return self in self.parent().pieri_factors()
 
-
         def left_pieri_factorizations(self, max_length=None):
             r"""
             Returns all factorizations of ``self`` as `uv`, where `u`
@@ -493,7 +492,6 @@ class WeylGroups(Category_singleton):
             return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length=u.length())
                            for (u,v) in self.left_pieri_factorizations(max_length)
                            if u != W.one()))
-
 
         def stanley_symmetric_function(self):
             r"""

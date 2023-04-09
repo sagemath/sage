@@ -327,12 +327,12 @@ class ode_solver():
         sage: T = ode_solver()                               # not tested
         sage: T.algorithm = "bsimp"                          # not tested
         sage: vander = van_der_pol()                         # not tested
-        sage: T.function=vander                              # not tested
-        sage: T.ode_solve(y_0 = [1,0], t_span=[0,2000],      # not tested
-        ....:             num_points=1000)                   # not tested
+        sage: T.function = vander                            # not tested
+        sage: T.ode_solve(y_0=[1, 0], t_span=[0, 2000],      # not tested
+        ....:             num_points=1000)
         sage: from tempfile import NamedTemporaryFile        # not tested
         sage: with NamedTemporaryFile(suffix=".png") as f:   # not tested
-        ....:     T.plot_solution(i=0, filename=f.name)      # not tested
+        ....:     T.plot_solution(i=0, filename=f.name)
 
     """
     def __init__(self,function=None,jacobian=None,h = 1e-2,error_abs=1e-10,error_rel=1e-10, a=False,a_dydt=False,scale_abs=False,algorithm="rkf45",y_0=None,t_span=None,params = []):

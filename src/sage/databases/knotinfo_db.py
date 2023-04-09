@@ -262,7 +262,6 @@ class KnotInfoFilename(Enum):
         """
         return 'column_dict.sobj'
 
-
     def sobj_data(self, column):
         r"""
         Return the file name under which the data of the given
@@ -311,11 +310,8 @@ class KnotInfoFilename(Enum):
         else:
             return '%sdiagram_display.php?%s' %(self.url(), fname)
 
-
     knots = ['https://knotinfo.math.indiana.edu/', 'knotinfo_data_complete']
     links = ['https://linkinfo.sitehost.iu.edu/',  'linkinfo_data_complete']
-
-
 
 
 #----------------------------------------------------------------------------------------------------------------------------
@@ -406,7 +402,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
             self._create_data_sobj(sobj_path=sobj_path)
         return
 
-
     def version(self):
         r"""
         Return the version of the database currently installed on the device.
@@ -438,7 +433,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         self._feature.require()
         from database_knotinfo import version
         return version()
-
 
     def demo_version(self):
         r"""
@@ -482,7 +476,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         from database_knotinfo import link_list
         self._knot_list = link_list()
         return self._knot_list
-
 
     def link_list(self):
         r"""
@@ -557,8 +550,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
         save(column_dict, '%s/%s' %(sobj_path, self.filename.knots.sobj_column()))
 
-
-
     def _create_data_sobj(self, sobj_path=None):
         r"""
         Create ``sobj`` files containing the contents of the whole table.
@@ -596,10 +587,10 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         for col in cols:
             val_list = []
 
-            if  col.column_type() != col.types.OnlyLinks:
-                for i in range(1 , len_knots):
+            if col.column_type() != col.types.OnlyLinks:
+                for i in range(1, len_knots):
                     if col.name == self._names_column:
-                        row_dict[self._knot_prefix + knot_list[i][col.name]] = [i - 1 , 1]
+                        row_dict[self._knot_prefix + knot_list[i][col.name]] = [i - 1, 1]
 
                     val_list.append(knot_list[i][col.name])
 
@@ -621,7 +612,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
         save(row_dict,    '%s/%s' %(sobj_path, self.filename.knots.sobj_row()))
 
-
     @cached_method
     def columns(self):
         r"""
@@ -638,7 +628,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         """
         column_dict = self.read_column_dict()
         return KnotInfoColumns('Columns', column_dict)
-
 
     # -------------------------------------------------------------------------------------------------------------
     # read the dictionary for the column names from sobj-file
@@ -717,7 +706,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         names = self.read(self.columns().name)
         return {k:names[v[0]] for k, v in row_dict.items()}
 
-
     # -------------------------------------------------------------------------------------------------------------
     # read the number of knots contained in the database (without proper links) from the according sobj-file.
     # -------------------------------------------------------------------------------------------------------------
@@ -740,7 +728,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         if not self._num_knots:
             self.demo_version()
         return self._num_knots
-
 
     # -------------------------------------------------------------------------------------------------------------
     # read an sobj-file obtained from KnotInfo database
@@ -801,7 +788,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         l = list(KnotInfo)
         sample = some_tuples(l, 1, len(l), max_samples=max_samples)
         tester.assertTrue(all(L.is_recoverable(unique=False) for L, in sample))
-
 
 
 column_demo_sample = {

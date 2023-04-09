@@ -523,22 +523,32 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f = -5/t^(10) + 1/3 + t + t^2 - 10/3*t^3 + O(t^5); f
             -5*t^-10 + 1/3 + t + t^2 - 10/3*t^3 + O(t^5)
 
-        Slicing is deprecated::
+        Slicing can be used to truncate, keeping the same precision::
 
-            sage: f[-10:2]
-            doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See https://github.com/sagemath/sage/issues/18940 for details.
+            sage: f[:2]
             -5*t^-10 + 1/3 + t + O(t^5)
+
+        Any other kind of slicing is an error, see :trac:`18940`::
+
+            sage: f[-10:2:2]
+            Traceback (most recent call last):
+            ...
+            IndexError: polynomial slicing with a step is not defined
+
             sage: f[0:]
-            1/3 + t + t^2 - 10/3*t^3 + O(t^5)
+            Traceback (most recent call last):
+            ...
+            IndexError: polynomial slicing with a start is not defined
         """
         if isinstance(i, slice):
             start, stop, step = i.start, i.stop, i.step
-            if start is None:
-                start = 0
+            if step is not None:
+                raise IndexError("polynomial slicing with a step is not defined")
+            if start is not None:
+                raise IndexError("polynomial slicing with a start is not defined")
             if stop > self.__u.degree() or stop is None:
                 stop = self.__u.degree()
-            f = self.__u[start-self.__n:stop-self.__n:step]  # deprecation(18940)
+            f = self.__u[:stop - self.__n]
             return type(self)(self._parent, f, self.__n)
 
         return self.__u[i - self.__n]

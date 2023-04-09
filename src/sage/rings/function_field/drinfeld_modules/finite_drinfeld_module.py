@@ -109,7 +109,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
     The morphism that defines a Drinfeld module is injective (see
     [Gos1998]_, cor. 4.5.2). If the Drinfeld module is finite, one can
-    retrieve preimages:
+    retrieve preimages::
 
         sage: a = A.random_element()
         sage: phi.invert(phi(a)) == a

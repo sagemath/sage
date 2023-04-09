@@ -896,8 +896,8 @@ class BoundarySpace_wtk_g1(BoundarySpace):
             sage: [ B(Cusp(i,7)) for i in range(7) ]
             [0, [1/7], [2/7], [3/7], -[3/7], -[2/7], -[1/7]]
         """
-        N    = self.level()
-        k    = self.weight()
+        N = self.level()
+        k = self.weight()
         sign = self.sign()
         i, eps = self._cusp_index(c)
         if i != -1:
@@ -1146,7 +1146,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             sage: S.dimension()
             8
         """
-        k    = self.weight()
+        k = self.weight()
         sign = self.sign()
         i, eps = self._cusp_index(c)
         if i != -1:

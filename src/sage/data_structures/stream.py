@@ -122,13 +122,13 @@ class Stream():
         If an approximate order or even the true order is known, it
         must be set after calling ``super().__init__``.
 
-        Otherwise, a lazy attribute `_approximate_order` has to be
+        Otherwise, a lazy attribute ``_approximate_order`` has to be
         defined.  Any initialization code depending on the
         approximate orders of input streams can be put into this
         definition.
 
         However, keep in mind that (trivially) this initialization
-        code is not executed if `_approximate_order` is set to a
+        code is not executed if ``_approximate_order`` is set to a
         value before it is accessed.
 
     """
@@ -159,10 +159,14 @@ class Stream():
 
     def __ne__(self, other):
         """
-        Check inequality of ``self`` and ``other``.
+        Return whether ``self`` and ``other`` are known to be different.
 
         The default is to always return ``False`` as it usually
         cannot be decided whether they are equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
 
         EXAMPLES::
 
@@ -172,6 +176,7 @@ class Stream():
             False
             sage: CS != Stream(-2)
             False
+
         """
         return False
 
@@ -204,14 +209,7 @@ class Stream_inexact(Stream):
     - ``is_sparse`` -- boolean; whether the implementation of the stream is sparse
     - ``true_order`` -- boolean; if the approximate order is the actual order
 
-    .. TODO::
-
-        The ``approximate_order`` is currently only updated when
-        invoking :meth:`order`.  It might make sense to update it
-        whenever the coefficient one larger than the current
-        ``approximate_order`` is computed, since in some methods this
-        will allow shortcuts.
-
+    If the cache is dense, it begins with the first non-zero term.
     """
     def __init__(self, is_sparse, true_order):
         """
@@ -225,7 +223,6 @@ class Stream_inexact(Stream):
             sage: g = Stream_function(lambda n: n, False, 0)
             sage: isinstance(g, Stream_inexact)
             True
-
         """
         super().__init__(true_order)
         self._is_sparse = is_sparse
@@ -234,27 +231,6 @@ class Stream_inexact(Stream):
         else:
             self._cache = list()
             self._iter = self.iterate_coefficients()
-
-    @lazy_attribute
-    def _offset(self):
-        """
-        Return the offset of a stream with a dense cache.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_function
-            sage: f = Stream_function(lambda n: n, False, -3)
-            sage: f._offset
-            -3
-            sage: [f[i] for i in range(-3, 5)]
-            [-3, -2, -1, 0, 1, 2, 3, 4]
-            sage: f._cache
-            [-3, -2, -1, 0, 1, 2, 3, 4]
-        """
-        # self[n] = self._cache[n-self._offset]
-        if self._is_sparse:
-            raise ValueError("_offset is only for dense streams")
-        return self._approximate_order
 
     def is_nonzero(self):
         r"""
@@ -364,38 +340,67 @@ class Stream_inexact(Stream):
             sage: [f[i] for i in range(10)]
             [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
             sage: f._cache
-            {0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
+            {1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
 
             sage: f = Stream_function(lambda n: n^2, False, 0)
             sage: f[3]
             9
             sage: f._cache
-            [0, 1, 4, 9]
+            [1, 4, 9]
             sage: [f[i] for i in range(10)]
             [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
             sage: f._cache
-            [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+            [1, 4, 9, 16, 25, 36, 49, 64, 81]
         """
         if n < self._approximate_order:
             return ZZ.zero()
 
         if self._is_sparse:
             try:
-                c = self._cache[n]
+                return self._cache[n]
             except KeyError:
-                c = self.get_coefficient(n)
-                self._cache[n] = c
-        else:
-            i = n - self._offset
-            if i >= len(self._cache):
-                a = len(self._cache) + self._offset
-                # It is important to extend by generator:
-                # self._iter might recurse, and thereby extend the
-                # cache itself, too.
-                self._cache.extend(next(self._iter) for _ in range(a, n+1))
-            c = self._cache[i]
+                pass
 
-        return c
+            c = self.get_coefficient(n)
+            if self._true_order or n > self._approximate_order:
+                self._cache[n] = c
+                return c
+
+            if c:
+                self._true_order = True
+                self._cache[n] = c
+                return c
+
+            # self._approximate_order is not in self._cache if
+            # self._true_order is False
+            ao = self._approximate_order + 1
+            while ao in self._cache:
+                if self._cache[ao]:
+                    self._true_order = True
+                    break
+                ao += 1
+            self._approximate_order = ao
+            return c
+
+        # Dense implementation
+        while not self._true_order and n >= self._approximate_order:
+            c = next(self._iter)
+            if c:
+                self._true_order = True
+                self._cache.append(c)
+            else:
+                self._approximate_order += 1
+
+        if self._true_order:
+            # It is important to extend by generator:
+            # self._iter might recurse, and thereby extend the
+            # cache itself, too.
+            i = n - self._approximate_order
+            self._cache.extend(next(self._iter)
+                               for _ in range(i - len(self._cache) + 1))
+            return self._cache[i]
+
+        return ZZ.zero()
 
     def iterate_coefficients(self):
         """
@@ -427,48 +432,37 @@ class Stream_inexact(Stream):
             sage: f = Stream_function(lambda n: n, True, 0)
             sage: f.order()
             1
+
+        TESTS::
+
+            sage: f = Stream_function(lambda n: n*(n+1), False, -1)
+            sage: f.order()
+            1
+            sage: f._true_order
+            True
+
+            sage: f = Stream_function(lambda n: n*(n+1), True, -1)
+            sage: f.order()
+            1
+            sage: f._true_order
+            True
         """
         if self._true_order:
             return self._approximate_order
-        if self._is_sparse:
-            n = self._approximate_order
-            cache = self._cache
-            while True:
-                if n in cache:
-                    if cache[n]:
-                        self._approximate_order = n
-                        self._true_order = True
-                        return n
-                    n += 1
-                else:
-                    if self[n]:
-                        self._approximate_order = n
-                        self._true_order = True
-                        return n
-                    n += 1
-        else:
-            n = self._approximate_order
-            cache = self._cache
-            while True:
-                if n - self._offset < len(cache):
-                    if cache[n - self._offset]:
-                        self._approximate_order = n
-                        self._true_order = True
-                        return n
-                    n += 1
-                else:
-                    if self[n]:
-                        self._approximate_order = n
-                        self._true_order = True
-                        return n
-                    n += 1
+        n = self._approximate_order
+        while not self[n]:
+            n += 1
+        return n
 
     def __ne__(self, other):
         """
-        Check inequality of ``self`` and ``other``.
+        Return whether ``self`` and ``other`` are known to be different.
 
-        Check if there are any differences in the caches to see if they
-        are known to be not equal.
+        Only the elements in the caches are considered.
+
+        INPUT:
+
+        - ``other`` -- a stream
 
         EXAMPLES::
 
@@ -534,31 +528,30 @@ class Stream_inexact(Stream):
             True
             sage: g != f
             True
+
         """
+        # TODO: more cases, in particular mixed implementations,
+        # could be detected
         if not isinstance(other, Stream_inexact):
             return False
 
-        if self._is_sparse:
+        if self._is_sparse and other._is_sparse:
             for i in self._cache:
                 if i in other._cache and other._cache[i] != self._cache[i]:
                     return True
-        else:  # they are dense
-            # Make ``self`` have the smaller approximate order.
-            if self._approximate_order > other._approximate_order:
-                self, other = other, self
-            saorder = self._approximate_order
-            soffset = self._offset
-            oaorder = other._approximate_order
-            ooffset = other._offset
-            end = min(oaorder, soffset + len(self._cache))
-            for i in range(saorder, end):
-                if self._cache[i-soffset]:
-                    return True
-            # now check all known values
-            end = min(soffset + len(self._cache), ooffset + len(other._cache))
-            for i in range(oaorder, end):
-                if self._cache[i-soffset] != other._cache[i-ooffset]:
-                    return True
+
+        elif not self._is_sparse and not other._is_sparse:
+            if ((self._true_order
+                 and other._approximate_order > self._approximate_order)
+                or (other._true_order
+                    and self._approximate_order > other._approximate_order)):
+                return True
+
+            if not self._true_order or not other._true_order:
+                return False
+
+            if any(i != j for i, j in zip(self._cache, other._cache)):
+                return True
 
         return False
 
@@ -763,7 +756,9 @@ class Stream_exact(Stream):
 
     def __eq__(self, other):
         """
-        Test the equality between ``self`` and ``other``.
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        If ``other`` is also exact, equality is computable.
 
         INPUT:
 
@@ -795,6 +790,7 @@ class Stream_exact(Stream):
             sage: t = Stream_exact([2], order=-1, degree=5, constant=1)
             sage: s == t
             False
+
         """
         return (isinstance(other, type(self))
                 and self._degree == other._degree
@@ -804,8 +800,10 @@ class Stream_exact(Stream):
 
     def __ne__(self, other):
         """
-        Test inequality between ``self`` and ``other``, where
-        other is exact or inexact, but not zero.
+        Return whether ``self`` and ``other`` are known to be different.
+
+        The argument ``other`` may be exact or inexact, but is
+        assumed to be non-zero.
 
         INPUT:
 
@@ -850,9 +848,12 @@ class Stream_exact(Stream):
                 if self[i] != other._cache[i]:
                     return True
         else:
-            if other._offset > self._approximate_order:
-                return False
-            return any(self[i] != c for i, c in enumerate(other._cache, other._offset))
+            if other._true_order:
+                return any(self[i] != c
+                           for i, c in enumerate(other._cache,
+                                                 other._approximate_order))
+            if other._approximate_order > self._approximate_order:
+                return True
 
         return False
 
@@ -1092,11 +1093,11 @@ class Stream_unary(Stream_inexact):
 
     def __eq__(self, other):
         """
-        Test equality.
+        Return whether ``self`` and ``other`` are known to be equal.
 
         INPUT:
 
-        - ``other`` -- a stream of coefficients
+        - ``other`` -- a stream
 
         EXAMPLES::
 
@@ -1176,11 +1177,11 @@ class Stream_binary(Stream_inexact):
 
     def __eq__(self, other):
         """
-        Test equality.
+        Return whether ``self`` and ``other`` are known to be equal.
 
         INPUT:
 
-        - ``other`` -- a :class:`Stream` of coefficients
+        - ``other`` -- a stream
 
         EXAMPLES::
 
@@ -1239,11 +1240,11 @@ class Stream_binaryCommutative(Stream_binary):
 
     def __eq__(self, other):
         """
-        Test the equality between ``self`` and ``other``.
+        Return whether ``self`` and ``other`` are known to be equal.
 
         INPUT:
 
-        - ``other`` -- a :class:`Stream` of coefficients
+        - ``other`` -- a stream
 
         EXAMPLES::
 
@@ -1328,7 +1329,11 @@ class Stream_zero(Stream):
 
     def __eq__(self, other):
         """
-        Check equality of ``self`` and ``other``.
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
 
         EXAMPLES::
 
@@ -1853,16 +1858,19 @@ class Stream_cauchy_compose(Stream_binary):
         fv = self._left._approximate_order
         gv = self._right._approximate_order
         if n < 0:
-            return sum(self._left[i] * self._neg_powers[-i][n]
-                       for i in range(fv, n // gv + 1))
+            return sum(f_coeff_i * self._neg_powers[-i][n]
+                       for i in range(fv, n // gv + 1)
+                       if (f_coeff_i := self._left[i]))
         # n > 0
         while len(self._pos_powers) <= n // gv:
             # TODO: possibly we always want a dense cache here?
             self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1], self._right, self._is_sparse))
-        ret = sum(self._left[i] * self._neg_powers[-i][n] for i in range(fv, 0))
+        ret = sum(f_coeff_i * self._neg_powers[-i][n] for i in range(fv, 0)
+                  if (f_coeff_i := self._left[i]))
         if n == 0:
             ret += self._left[0]
-        return ret + sum(self._left[i] * self._pos_powers[i][n] for i in range(1, n // gv+1))
+        return ret + sum(f_coeff_i * self._pos_powers[i][n] for i in range(1, n // gv + 1)
+                         if (f_coeff_i := self._left[i]))
 
 
 class Stream_plethysm(Stream_binary):
@@ -2015,7 +2023,6 @@ class Stream_plethysm(Stream_binary):
 #                             " support")
         return self._left._approximate_order * self._right._approximate_order
 
-
     def get_coefficient(self, n):
         r"""
         Return the ``n``-th coefficient of ``self``.
@@ -2090,7 +2097,7 @@ class Stream_plethysm(Stream_binary):
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_function(lambda n: s[n], True, 0)
             sage: h = Stream_plethysm(f, g, True, p)
-            sage: B = p[2, 2, 1](sum(s[i] for i in range(7)))
+            sage: B = p[2, 2, 1](sum(p(s[i]) for i in range(7)))
             sage: all(h.compute_product(k, Partition([2, 2, 1])) == B.restrict_degree(k) for k in range(7))
             True
         """
@@ -2230,11 +2237,11 @@ class Stream_scalar(Stream_inexact):
 
     def __eq__(self, other):
         """
-        Test equality.
+        Return whether ``self`` and ``other`` are known to be equal.
 
         INPUT:
 
-        - ``other`` -- a stream of coefficients
+        - ``other`` -- a stream
 
         EXAMPLES::
 
@@ -2685,11 +2692,11 @@ class Stream_map_coefficients(Stream_inexact):
 
     def __eq__(self, other):
         """
-        Test equality.
+        Return whether ``self`` and ``other`` are known to be equal.
 
         INPUT:
 
-        - ``other`` -- a stream of coefficients
+        - ``other`` -- a stream
 
         EXAMPLES::
 
@@ -2765,7 +2772,6 @@ class Stream_shift(Stream):
         """
         return self._series.order() + self._shift
 
-
     def __getitem__(self, n):
         """
         Return the ``n``-th coefficient of ``self``.
@@ -2800,11 +2806,11 @@ class Stream_shift(Stream):
 
     def __eq__(self, other):
         """
-        Test equality.
+        Return whether ``self`` and ``other`` are known to be equal.
 
         INPUT:
 
-        - ``other`` -- a stream of coefficients
+        - ``other`` -- a stream
 
         EXAMPLES::
 
@@ -2837,6 +2843,255 @@ class Stream_shift(Stream):
             True
         """
         return self._series.is_nonzero()
+
+
+class Stream_truncated(Stream_inexact):
+    """
+    Operator for shifting a nonzero, nonexact stream that has
+    been shifted below its minimal valuation.
+
+    Instances of this class share the cache with its input stream.
+
+    INPUT:
+
+    - ``series`` -- a :class:`Stream_inexact`
+    - ``shift`` -- an integer
+    - ``minimal_valuation`` -- an integer; this is also the approximate order
+    """
+    def __init__(self, series, shift, minimal_valuation):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_truncated
+            sage: def fun(n): return 1 if ZZ(n).is_power_of(2) else 0
+            sage: s = Stream_truncated(Stream_function(fun, True, 0), -5, 0)
+            sage: TestSuite(s).run(skip="_test_pickling")
+            sage: s = Stream_truncated(Stream_function(fun, False, 0), -5, 0)
+            sage: TestSuite(s).run(skip="_test_pickling")
+
+        Verify that we have used the cache to see if we can get the
+        true order at initialization::
+
+            sage: f = Stream_function(fun, True, 0)
+            sage: [f[i] for i in range(0, 10)]
+            [0, 1, 1, 0, 1, 0, 0, 0, 1, 0]
+            sage: f._cache
+            {1: 1, 2: 1, 3: 0, 4: 1, 5: 0, 6: 0, 7: 0, 8: 1, 9: 0}
+            sage: s = Stream_truncated(f, -5, 0)
+            sage: s._true_order
+            True
+            sage: s._approximate_order
+            3
+            sage: f = Stream_function(fun, False, 0)
+            sage: [f[i] for i in range(0, 10)]
+            [0, 1, 1, 0, 1, 0, 0, 0, 1, 0]
+            sage: f._cache
+            [1, 1, 0, 1, 0, 0, 0, 1, 0]
+            sage: s = Stream_truncated(f, -5, 0)
+            sage: s._true_order
+            True
+            sage: s._approximate_order
+            3
+        """
+        super().__init__(series._is_sparse, False)
+        assert isinstance(series, Stream_inexact)
+        self._series = series
+        # We share self._series._cache but not self._series._approximate order
+        # self._approximate_order cannot be updated by self._series.__getitem__
+        self._cache = series._cache
+        self._shift = shift
+        ao = minimal_valuation
+        # Try to find the true order based on the values already computed
+        if self._is_sparse:
+            ao -= shift
+            while ao in self._cache:
+                if self._cache[ao]:
+                    self._true_order = True
+                    break
+                ao += 1
+            ao += shift
+        else:
+            start = ao - (series._approximate_order + shift)
+            for val in self._cache[start:]:
+                if val:
+                    self._true_order = True
+                    break
+                ao += 1
+        self._approximate_order = ao
+
+    def __getitem__(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_truncated
+            sage: def fun(n): return 1 if ZZ(n).is_power_of(2) else 0
+            sage: s = Stream_truncated(Stream_function(fun, True, 0), -5, 0)
+            sage: [s[i] for i in range(10)]
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+            sage: s._approximate_order
+            3
+            sage: s._true_order
+            True
+            sage: s = Stream_truncated(Stream_function(fun, False, 0), -5, 0)
+            sage: s[10]
+            0
+            sage: s._approximate_order
+            3
+            sage: s._true_order
+            True
+        """
+        if n < self._approximate_order:
+            return ZZ.zero()
+        ret = self._series[n-self._shift]
+        if not self._true_order:
+            if self._is_sparse:
+                ao = self._approximate_order - self._shift
+                while ao in self._cache:
+                    if self._cache[ao]:
+                        self._true_order = True
+                        break
+                    ao += 1
+                self._approximate_order = ao + self._shift
+            else:  # dense case
+                offset = self._series._approximate_order + self._shift
+                start = self._approximate_order - offset
+                for val in self._cache[start:]:
+                    if val:
+                        self._true_order = True
+                        break
+                    self._approximate_order += 1
+        return ret
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_truncated
+            sage: def fun(n): return 1 if ZZ(n).is_power_of(2) else 0
+            sage: s = Stream_truncated(Stream_function(fun, True, 0), -5, 0)
+            sage: hash(s) == hash(s)
+            True
+        """
+        return hash((type(self), self._series))
+
+    def __eq__(self, other):
+        """
+        Test equality.
+
+        INPUT:
+
+        - ``other`` -- a stream of coefficients
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_truncated
+            sage: def fun(n): return 1 if ZZ(n).is_power_of(2) else 0
+            sage: f = Stream_function(fun, True, 0)
+            sage: sm5 = Stream_truncated(f, -5, 0)
+            sage: sm2 = Stream_truncated(f, -2, 0)
+            sage: sm2 == sm5
+            False
+            sage: sm5 == Stream_truncated(f, -5, 0)
+            True
+        """
+        # We assume that comparisons of this class are done only by elements in
+        #    a common ring; in particular, the minimum order will be the same.
+        return (isinstance(other, type(self)) and self._shift == other._shift
+                and self._series == other._series)
+
+    def order(self):
+        """
+        Return the order of ``self``, which is the minimum index ``n`` such
+        that ``self[n]`` is nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_truncated
+            sage: def fun(n): return 1 if ZZ(n).is_power_of(2) else 0
+            sage: s = Stream_truncated(Stream_function(fun, True, 0), -5, 0)
+            sage: s.order()
+            3
+            sage: s = Stream_truncated(Stream_function(fun, False, 0), -5, 0)
+            sage: s.order()
+            3
+
+        Check that it also worked properly with the cache partially filled::
+
+            sage: f = Stream_function(fun, True, 0)
+            sage: dummy = [f[i] for i in range(10)]
+            sage: s = Stream_truncated(f, -5, 0)
+            sage: s.order()
+            3
+            sage: f = Stream_function(fun, False, 0)
+            sage: dummy = [f[i] for i in range(10)]
+            sage: s = Stream_truncated(f, -5, 0)
+            sage: s.order()
+            3
+        """
+        if self._true_order:
+            return self._approximate_order
+        if self._is_sparse:
+            n = self._approximate_order
+            cache = self._series._cache
+            while True:
+                if n - self._shift in cache:
+                    if cache[n-self._shift]:
+                        self._approximate_order = n
+                        self._true_order = True
+                        return n
+                elif self[n]:
+                    return n
+                n += 1
+        # dense case
+        return super().order()
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_truncated
+            sage: def fun(n): return 1 if ZZ(n).is_power_of(2) else 0
+            sage: f = Stream_function(fun, False, 0)
+            sage: [f[i] for i in range(0, 4)]
+            [0, 1, 1, 0]
+            sage: f._cache
+            [1, 1, 0]
+            sage: s = Stream_truncated(f, -5, 0)
+            sage: s.is_nonzero()
+            False
+            sage: [f[i] for i in range(7,10)]  # updates the cache of s
+            [0, 1, 0]
+            sage: s.is_nonzero()
+            True
+
+            sage: f = Stream_function(fun, True, 0)
+            sage: [f[i] for i in range(0, 4)]
+            [0, 1, 1, 0]
+            sage: f._cache
+            {1: 1, 2: 1, 3: 0}
+            sage: s = Stream_truncated(f, -5, 0)
+            sage: s.is_nonzero()
+            False
+            sage: [f[i] for i in range(7,10)]  # updates the cache of s
+            [0, 1, 0]
+            sage: s.is_nonzero()
+            True
+        """
+        if self._is_sparse:
+            return any(c for n, c in self._series._cache.items()
+                       if n + self._shift >= self._approximate_order)
+        offset = self._series._approximate_order + self._shift
+        start = self._approximate_order - offset
+        return any(self._cache[start:])
 
 
 class Stream_derivative(Stream_inexact):
@@ -2929,11 +3184,11 @@ class Stream_derivative(Stream_inexact):
 
     def __eq__(self, other):
         """
-        Test equality.
+        Return whether ``self`` and ``other`` are known to be equal.
 
         INPUT:
 
-        - ``other`` -- a stream of coefficients
+        - ``other`` -- a stream
 
         EXAMPLES::
 

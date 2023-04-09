@@ -485,7 +485,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             self._prefixcl = "s"
 
         self._ct0 = cartan_type.classical()
-        self._R0  = self._ct0.root_system()
+        self._R0 = self._ct0.root_system()
         self._I0 = self._ct0.index_set()
         self._ct0v = self._ct0.dual()
         self._R0v = self._ct0v.root_system()

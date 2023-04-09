@@ -1061,10 +1061,20 @@ class Set_object_enumerated(Set_object):
             False
             sage: Set([1]) == set([1])
             True
+
+        Test set equality and inequality::
+
+            sage: L = {0}
+            sage: S = Set(L)
+            sage: S == L
+            True
+            sage: S != L
+            False
         """
         if not isinstance(other, Set_object_enumerated):
             if isinstance(other, (set, frozenset)):
-                return self.set() == other
+                if self.set() == other:
+                    return rich_to_bool(op, 0)
             return NotImplemented
         if self.set() == other.set():
             return rich_to_bool(op, 0)

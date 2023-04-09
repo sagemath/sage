@@ -106,7 +106,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         x = self.fetch('echelon_form_'+algorithm)
         if x is not None: return x
 
-        if  algorithm == "frac":
+        if algorithm == "frac":
             E = self.matrix_over_field()
             E.echelonize(**kwds)
         else:

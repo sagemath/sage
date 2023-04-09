@@ -232,8 +232,8 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
                 k = g
         elif existence:
             return True
-        F       = FiniteField(g,'x')
-        F_set   = list(F)
+        F = FiniteField(g,'x')
+        F_set = list(F)
         F_k_set = F_set[:k]
 
         G = F

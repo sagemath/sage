@@ -126,7 +126,6 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
         return PowerSeriesRing(ZZ, var_str)(theta_vec, Max)
 
 
-
 # -------------  Compute the theta function by using an explicit Cholesky decomposition ------------
 
 
@@ -224,8 +223,6 @@ def theta_by_cholesky(self, q_prec):
                 L[i] = floor(Z - U[i])
                 x[i] = ceil(-Z - U[i]) - 1
 
-
-
             # 3a. Main loop
             x[i] += 1
             while (x[i] > L[i]):
@@ -235,32 +232,32 @@ def theta_by_cholesky(self, q_prec):
             # 3b. Main loop
             if (i > 0):
                 from_step3_flag = True
-                T[i-1] = T[i] - Q[i,i] * (x[i] + U[i]) * (x[i] + U[i])
-                i += - 1
+                T[i - 1] = T[i] - Q[i, i] * (x[i] + U[i]) * (x[i] + U[i])
+                i += -1
                 U[i] = 0
-                for j in range(i+1, n):
-                    U[i] += Q[i,j] * x[j]
+                for j in range(i + 1, n):
+                    U[i] += Q[i, j] * x[j]
 
         # 4. Solution found (This happens when i=0)
         from_step4_flag = True
-        Q_val_double = q_prec - T[0] + Q[0,0] * (x[0] + U[0]) * (x[0] + U[0])
+        Q_val_double = q_prec - T[0] + Q[0, 0] * (x[0] + U[0]) * (x[0] + U[0])
         Q_val = floor(Q_val_double + half)        # Note: This rounds the value up, since the "round" function returns a float, but floor returns integer.
 
         # OPTIONAL SAFETY CHECK:
         eps = 0.000000001
-        if (abs(Q_val_double - Q_val) > eps):
-            raise RuntimeError("Oh No!  We have a problem with the floating point precision... \n" \
-                + " Q_val_double = " + str(Q_val_double) + "\n" \
-                + " Q_val = " + str(Q_val) + "\n" \
+        if abs(Q_val_double - Q_val) > eps:
+            raise RuntimeError("Oh No! We have a problem with the floating point precision... \n"
+                + " Q_val_double = " + str(Q_val_double) + "\n"
+                + " Q_val = " + str(Q_val) + "\n"
                 + " x = " + str(x) + "\n")
 
-        if (Q_val <= q_prec):
+        if Q_val <= q_prec:
             theta[Q_val] += 2
 
         # 5. Check if x = 0, for exit condition. =)
         done_flag = True
         for j in range(n):
-            if (x[j] != 0):
+            if x[j] != 0:
                 done_flag = False
 
     # Set the value: theta[0] = 1
