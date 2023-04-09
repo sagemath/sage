@@ -1116,7 +1116,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
     def content(self, other):
         """
-        Return the content of ``self`` and ``other``, i.e. the unique positive
+        Return the content of ``self`` and ``other``, i.e., the unique positive
         rational number `c` such that ``self/c`` and ``other/c`` are coprime
         integers.
 
@@ -1193,7 +1193,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         -  ``p`` -- a prime number
 
         - ``prec`` (int) -- desired floating point precision (default:
-          default RealField precision).
+          default :class:`RealField` precision).
 
         OUTPUT:
 
@@ -1230,7 +1230,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         INPUT:
 
         - ``prec`` (int) -- desired floating point precision (default:
-          default RealField precision).
+          default :class:`RealField` precision).
 
         OUTPUT:
 
@@ -1266,7 +1266,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         INPUT:
 
         - ``prec`` (int) -- desired floating point precision (default:
-          default RealField precision).
+          default :class:`RealField` precision).
 
         OUTPUT:
 
@@ -1309,7 +1309,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         INPUT:
 
         - ``prec`` (int) -- desired floating point precision (default:
-          default RealField precision).
+          default :class:`RealField` precision).
 
         OUTPUT:
 
@@ -1404,11 +1404,11 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-         - ``L`` -- a number field
-         - ``element`` -- (default: ``False``) boolean whether to also output
-           an element of which ``self`` is a norm
-         - proof -- If ``True``, then the output is correct unconditionally.
-           If ``False``, then the output assumes GRH.
+        - ``L`` -- a number field
+        - ``element`` -- (default: ``False``) boolean whether to also output
+          an element of which ``self`` is a norm
+        - ``proof`` -- If ``True``, then the output is correct unconditionally.
+          If ``False``, then the output assumes GRH.
 
         OUTPUT:
 
@@ -1420,7 +1420,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         ALGORITHM:
 
-        Uses PARI's bnfisnorm. See ``_bnfisnorm()``.
+        Uses the PARI function :pari:`bnfisnorm`. See :meth:`_bnfisnorm()`.
 
         EXAMPLES::
 
@@ -1612,9 +1612,9 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         This test makes sure we workaround a bug in GMP (see :trac:`4612`)::
 
-            sage: [ -a for a in srange(100) if not QQ(-a^3).is_perfect_power() ]
+            sage: [-a for a in srange(100) if not QQ(-a^3).is_perfect_power()]
             []
-            sage: [ -a for a in srange(100) if not QQ(-a^3).is_perfect_power(True) ]
+            sage: [-a for a in srange(100) if not QQ(-a^3).is_perfect_power(True)]
             []
         """
         cdef int s
@@ -2971,7 +2971,7 @@ cdef class Rational(sage.structure.element.FieldElement):
     def numerator(self):
         """
         Return the numerator of this rational number.
-        numer is an alias of numerator.
+        ``numer`` is an alias of ``numerator``.
 
         EXAMPLES::
 
@@ -3021,7 +3021,7 @@ cdef class Rational(sage.structure.element.FieldElement):
     def denominator(self):
         """
         Return the denominator of this rational number.
-        denom is an alias of denominator.
+        ``denom`` is an alias of ``denominator``.
 
         EXAMPLES::
 
@@ -3344,7 +3344,7 @@ cdef class Rational(sage.structure.element.FieldElement):
     def round(Rational self, mode="away"):
         """
         Return the nearest integer to ``self``, rounding away from 0 by
-        default, for consistency with the builtin Python round.
+        default, for consistency with the builtin Python :func:`round`.
 
         INPUT:
 
@@ -3557,7 +3557,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
     def is_integral(self):
         r"""
-        Determine if a rational number is integral (i.e is in
+        Determine if a rational number is integral (i.e., is in
         `\ZZ`).
 
         OUTPUT: bool
