@@ -3340,8 +3340,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
     def round(Rational self, mode="even"):
         """
-        Return the nearest integer to ``self``, rounding away from 0 by
-        default, for consistency with the builtin Python round.
+        Return the nearest integer to ``self``, rounding to even by
+        default for consistency with the builtin Python round.
 
         INPUT:
 
