@@ -17,7 +17,7 @@ from sage.quadratic_forms.count_local_2 import count_modp__by_gauss_sum
 
 
 def count_modp_solutions__by_Gauss_sum(self, p, m):
-    """
+    r"""
     Return the number of solutions of `Q(x) = m (mod p)` of a
     non-degenerate quadratic form over the finite field `\ZZ/p\ZZ`,
     where `p` is a prime number > 2.
