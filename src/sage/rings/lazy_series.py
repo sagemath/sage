@@ -938,9 +938,13 @@ class LazyModuleElement(Element):
 
             sage: fz = L(lambda n: 0, valuation=0)
             sage: L.zero() == fz
-            False
+            Traceback (most recent call last):
+            ...
+            ValueError: undecidable
             sage: fz == L.zero()
-            False
+            Traceback (most recent call last):
+            ...
+            ValueError: undecidable
 
         TESTS::
 
@@ -952,13 +956,15 @@ class LazyModuleElement(Element):
 
         """
         if op is op_EQ:
-            prec = self.parent().options['halting_precision']
-            if prec is None:
-                return self._coeff_stream == other._coeff_stream
-
             # they may be trivially equal
             if self._coeff_stream == other._coeff_stream:
                 return True
+            # they may be trivially different
+            if self._coeff_stream != other._coeff_stream:
+                return False
+            prec = self.parent().options['halting_precision']
+            if prec is None:
+                raise ValueError("undecidable")
             # otherwise we check the first prec coefficients
             m = min(self._coeff_stream._approximate_order,
                     other._coeff_stream._approximate_order)
@@ -1003,7 +1009,9 @@ class LazyModuleElement(Element):
             sage: M = L(lambda n: 2*n if n < 10 else 1, valuation=0); M
             O(z^7)
             sage: bool(M)
-            True
+            Traceback (most recent call last):
+            ...
+            ValueError: undecidable
             sage: M[15]
             1
             sage: bool(M)
@@ -1013,7 +1021,9 @@ class LazyModuleElement(Element):
             sage: M = L(lambda n: 2*n if n < 10 else 1, valuation=0); M
             O(z^7)
             sage: bool(M)
-            True
+            Traceback (most recent call last):
+            ...
+            ValueError: undecidable
             sage: M[15]
             1
             sage: bool(M)
@@ -1040,9 +1050,11 @@ class LazyModuleElement(Element):
             True
             sage: g.define(1 + z*g)
             sage: bool(g)
-            True
+            Traceback (most recent call last):
+            ...
+            ValueError: undecidable
         """
-        return bool(self._coeff_stream)
+        return not (self == self.parent().zero())
 
     def define(self, s):
         r"""
@@ -1716,7 +1728,9 @@ class LazyModuleElement(Element):
         Different scalars potentially give different series::
 
             sage: 2 * M == 3 * M
-            False
+            Traceback (most recent call last):
+            ...
+            ValueError: undecidable
 
         Sparse series can be multiplied with a scalar::
 
