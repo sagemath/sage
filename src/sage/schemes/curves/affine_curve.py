@@ -37,20 +37,20 @@ EXAMPLES::
 
 Closed points of arbitrary degree can be computed::
 
-    sage: C.closed_points()                                                             # optional - sage.rings.finite_rings
+    sage: C.closed_points()                                                             # optional - sage.rings.finite_rings  # long time
     [Point (x, y, z), Point (x + 1, y, z)]
-    sage: C.closed_points(2)                                                            # optional - sage.rings.finite_rings
+    sage: C.closed_points(2)                                                            # optional - sage.rings.finite_rings  # long time
     [Point (x^2 + x + 1, y + 1, z),
      Point (y^2 + y + 1, x + y, z),
      Point (y^2 + y + 1, x + y + 1, z)]
-    sage: p = _[0]                                                                      # optional - sage.rings.finite_rings
-    sage: p.places()                                                                    # optional - sage.rings.finite_rings
+    sage: p = _[0]                                                                      # optional - sage.rings.finite_rings  # long time
+    sage: p.places()                                                                    # optional - sage.rings.finite_rings  # long time
     [Place (x^2 + x + 1, (1/(x^4 + x^2 + 1))*z^7 + (1/(x^4 + x^2 + 1))*z^6 + 1)]
 
 The places at infinity correspond to the extra closed points of the curve's
 projective closure::
 
-    sage: C.places_at_infinity()                                                        # optional - sage.rings.finite_rings
+    sage: C.places_at_infinity()                                                        # optional - sage.rings.finite_rings  # long time
     [Place (1/x, 1/x*z)]
 
 It is easy to transit to and from the function field of the curve::
@@ -2087,7 +2087,7 @@ class IntegralAffineCurve(AffineCurve_field):
             (x/(x^5 + 1))*y^4 + x^2/(x^5 + 1)
             sage: df = f.differential(); df                                             # optional - sage.rings.finite_rings
             ((1/(x^10 + 1))*y^4 + x^6/(x^10 + 1)) d(x)
-            sage: df.divisor()                                                          # optional - sage.rings.finite_rings
+            sage: df.divisor()                                                          # optional - sage.rings.finite_rings  # long time
             2*Place (1/x, 1/x^4*y^4 + 1/x^3*y^3 + 1/x^2*y^2 + 1/x*y + 1)
              + 2*Place (1/x, 1/x*y + 1)
              - 2*Place (x + 1, y)
@@ -2285,7 +2285,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
             sage: A.<x,y> = AffineSpace(GF(7^2), 2)                                     # optional - sage.rings.finite_rings
             sage: C = Curve(x^2 - x^4 - y^4)                                            # optional - sage.rings.finite_rings
-            sage: C._singularities                                                      # optional - sage.rings.finite_rings
+            sage: C._singularities                                                      # optional - sage.rings.finite_rings  # long time
             [(Point (x, y),
               [Place (x, 1/x*y^3 + 1/x*y^2 + 1), Place (x, 1/x*y^3 + 1/x*y^2 + 6)])]
         """

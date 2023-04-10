@@ -1074,7 +1074,7 @@ class ModularForm_abstract(ModuleElement):
 
             sage: F = Newforms(1,12)[0]
             sage: chi = DirichletGroup(7).0
-            sage: abs(F.symsquare_lseries(chi).check_functional_equation()) < 1e-5
+            sage: abs(F.symsquare_lseries(chi).check_functional_equation()) < 1e-5  # long time
             True
 
         AUTHORS:
@@ -2736,14 +2736,14 @@ class ModularFormElement_elliptic_curve(Newform):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('5077a')
+            sage: E = EllipticCurve('389a')
             sage: f = E.modular_form()
             sage: f
-            q - 2*q^2 - 3*q^3 + 2*q^4 - 4*q^5 + O(q^6)
+            q - 2*q^2 - 2*q^3 + 2*q^4 - 3*q^5 + O(q^6)
             sage: f.q_expansion(10)
-            q - 2*q^2 - 3*q^3 + 2*q^4 - 4*q^5 + 6*q^6 - 4*q^7 + 6*q^9 + O(q^10)
+            q - 2*q^2 - 2*q^3 + 2*q^4 - 3*q^5 + 4*q^6 - 5*q^7 + q^9 + O(q^10)
             sage: f.parent()
-            Modular Forms space of dimension 423 for Congruence Subgroup Gamma0(5077) of weight 2 over Rational Field
+            Modular Forms space of dimension 33 for Congruence Subgroup Gamma0(389) of weight 2 over Rational Field
 
             sage: E = EllipticCurve('37a')
             sage: f = E.modular_form() ; f
