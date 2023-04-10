@@ -18,7 +18,7 @@ def reduced_binary_form1(self):
 
     EXAMPLES::
 
-        sage: QuadraticForm(ZZ,2,[5,5,2]).reduced_binary_form1()                        # optional - sage.symbolic
+        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form1()                      # optional - sage.symbolic
         (
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 2 -1 ]
@@ -80,7 +80,7 @@ def reduced_binary_form(self):
 
     EXAMPLES::
 
-        sage: QuadraticForm(ZZ,2,[5,5,2]).reduced_binary_form()
+        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form()
         (
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 2 -1 ]
@@ -281,8 +281,7 @@ def minkowski_reduction_for_4vars__SP(self):
 
     EXAMPLES::
 
-        sage: Q = QuadraticForm(ZZ,4,[30,17,11,12,29,25,62,64,25,110])
-        sage: Q
+        sage: Q = QuadraticForm(ZZ, 4, [30,17,11,12,29,25,62,64,25,110]); Q
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 30 17 11 12 ]
         [ * 29 25 62 ]

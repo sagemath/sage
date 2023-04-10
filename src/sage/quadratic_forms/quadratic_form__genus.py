@@ -56,13 +56,13 @@ def local_genus_symbol(self, p):
     Return the Conway-Sloane genus symbol of 2 times a quadratic form
     defined over `\ZZ` at a prime number `p`.
 
-    This is defined (in the
-    Genus_Symbol_p_adic_ring() class in the quadratic_forms/genera
-    subfolder) to be a list of tuples (one for each Jordan component
+    This is defined (in the class
+    :class:`~sage.quadratic_forms.genera.genus.Genus_Symbol_p_adic_ring`)
+    to be a list of tuples (one for each Jordan component
     p^m*A at p, where A is a unimodular symmetric matrix with
     coefficients the p-adic integers) of the following form:
 
-        1. If p>2 then return triples of the form [`m`, `n`, `d`] where
+        1. If `p>2`, then return triples of the form [`m`, `n`, `d`] where
 
             `m` = valuation of the component
 
@@ -70,7 +70,7 @@ def local_genus_symbol(self, p):
 
             `d` = det(A) in {1,u} for normalized quadratic non-residue u.
 
-        2. If p=2 then return quintuples of the form [`m`,`n`,`s`, `d`, `o`] where
+        2. If `p=2`, then return quintuples of the form [`m`,`n`,`s`, `d`, `o`] where
 
             `m` = valuation of the component
 
@@ -97,7 +97,7 @@ def local_genus_symbol(self, p):
     OUTPUT:
 
     a Conway-Sloane genus symbol at `p`, which is an
-    instance of the Genus_Symbol_p_adic_ring class.
+    instance of the class :class:`~sage.quadratic_forms.genera.genus.Genus_Symbol_p_adic_ring`.
 
     EXAMPLES::
 

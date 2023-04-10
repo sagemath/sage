@@ -226,8 +226,8 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
 def short_primitive_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     r"""
     Return a list of lists of short primitive vectors `v`, sorted by length, with
-    Q(`v`) < len_bound.  The list in output `[i]` indexes all vectors of
-    length `i`.  If the up_to_sign_flag is set to ``True``, then only one of
+    Q(`v`) < ``len_bound``.  The list in output `[i]` indexes all vectors of
+    length `i`.  If the ``up_to_sign_flag`` is set to ``True``, then only one of
     the vectors of the pair `[v, -v]` is listed.
 
     .. NOTE::
@@ -377,7 +377,7 @@ def automorphisms(self):
 
 def number_of_automorphisms(self):
     """
-    Return the number of automorphisms (of det 1 and -1) of
+    Return the number of automorphisms (of det `1` and `-1`) of
     the quadratic form.
 
     OUTPUT:
@@ -412,7 +412,7 @@ def set_number_of_automorphisms(self, num_autos):
 
     The fact that this result was set externally is recorded in the
     internal list of external initializations, accessible by the
-    method list_external_initializations().
+    method :meth:`list_external_initializations`.
 
     OUTPUT: None
 

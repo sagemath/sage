@@ -34,7 +34,7 @@ from sage.rings.rational_field import QQ
 
 def siegel_product(self, u):
     """
-    Computes the infinite product of local densities of the quadratic
+    Compute the infinite product of local densities of the quadratic
     form for the number `u`.
 
     EXAMPLES::

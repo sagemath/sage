@@ -21,9 +21,9 @@ from sage.rings.rational_field import QQ
 ##############################################################################
 
 def is_globally_equivalent_to(self, other, return_matrix=False):
-    """
+    r"""
     Determine if the current quadratic form is equivalent to the
-    given form over ZZ.
+    given form over `\ZZ`.
 
     If ``return_matrix`` is True, then we return the transformation
     matrix `M` so that ``self(M) == other``.
@@ -114,21 +114,19 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
 
 
 def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_equivalence_test=False):
-    """
-    Determine if the current quadratic form (defined over ZZ) is
+    r"""
+    Determine if the current quadratic form (defined over `\ZZ`) is
     locally equivalent to the given form over the real numbers and the
-    `p`-adic integers for every prime p.
+    `p`-adic integers for every prime `p`.
 
     This works by comparing the local Jordan decompositions at every
     prime, and the dimension and signature at the real place.
 
     INPUT:
 
-    a QuadraticForm
+    - a :class:`QuadraticForm`
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -138,7 +136,6 @@ def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_
         False
         sage: Q1.is_locally_equivalent_to(Q2)
         True
-
     """
     # TO IMPLEMENT:
     if self.det() == 0:
@@ -183,9 +180,7 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
 
     a QuadraticForm
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -206,7 +201,6 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
         True
         sage: Q2.has_equivalent_Jordan_decomposition_at_prime(Q3, 11)                   # optional - sage.libs.pari
         False
-
     """
     # Sanity Checks
     # if not isinstance(other, QuadraticForm):

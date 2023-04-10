@@ -140,7 +140,8 @@ def rational_diagonal_form(self, return_matrix=False):
         ...
         TypeError
         sage: Q.rational_diagonal_form()
-        Quadratic form in 4 variables over Real Interval Field with 53 bits of precision with coefficients:
+        Quadratic form in 4 variables over Real Interval Field with 53 bits of precision
+        with coefficients:
         [ 5 0.?e-14 0.?e-13 0.?e-13 ]
         [ * -0.05000000000000? 0.?e-12 0.?e-12 ]
         [ * * 13.00000000000? 0.?e-10 ]
@@ -285,21 +286,15 @@ def _rational_diagonal_form_and_transformation(self):
 
 def signature_vector(self):
     """
-    Returns the triple `(p, n, z)` of integers where
+    Return the triple `(p, n, z)` of integers where
 
     - `p` = number of positive eigenvalues
     - `n` = number of negative eigenvalues
     - `z` = number of zero eigenvalues
 
-    for the symmetric matrix associated to Q.
+    for the symmetric matrix associated to `Q`.
 
-    INPUT:
-
-    (none)
-
-    OUTPUT:
-
-    a triple of integers >= 0
+    OUTPUT: a triple of integers >= 0
 
     EXAMPLES::
 
@@ -387,7 +382,7 @@ def signature(self):
 def hasse_invariant(self, p):
     r"""
     Computes the Hasse invariant at a prime `p` or at infinity, as given on p55 of
-    Cassels's book.  If Q is diagonal with coefficients `a_i`, then the
+    Cassels's book.  If `Q` is diagonal with coefficients `a_i`, then the
     (Cassels) Hasse invariant is given by
 
     .. MATH::
@@ -395,27 +390,25 @@ def hasse_invariant(self, p):
         c_p = \prod_{i < j} (a_i, a_j)_p
 
     where `(a,b)_p` is the Hilbert symbol at `p`.  The underlying
-    quadratic form must be non-degenerate over `Q_p` for this to make
+    quadratic form must be non-degenerate over `\QQ_p` for this to make
     sense.
 
     .. WARNING::
 
         This is different from the O'Meara Hasse invariant, which
         allows `i <= j` in the product.  That is given by the method
-        hasse_invariant__OMeara(p).
+        :meth:`hasse_invariant__OMeara`.
 
     .. NOTE::
 
-        We should really rename this hasse_invariant__Cassels(), and
-        set hasse_invariant() as a front-end to it.
+        We should really rename this ``hasse_invariant__Cassels``, and
+        set :meth:`hasse_invariant` as a front-end to it.
 
     INPUT:
 
     - `p` -- a prime number > 0 or `-1` for the infinite place
 
-    OUTPUT:
-
-    1 or -1
+    OUTPUT: `1` or `-1`
 
     EXAMPLES::
 
@@ -497,9 +490,7 @@ def hasse_invariant__OMeara(self, p):
 
     - `p` -- a prime number > 0 or `-1` for the infinite place
 
-    OUTPUT:
-
-    1 or -1
+    OUTPUT: `1` or `-1`
 
     EXAMPLES::
 
@@ -563,7 +554,7 @@ def is_hyperbolic(self, p):
 
     REFERENCES:
 
-    This criteria follows from Cassels's "Rational Quadratic Forms":
+    This criterion follows from Cassels's "Rational Quadratic Forms":
 
     - local invariants for hyperbolic plane (Lemma 2.4, p58)
     - direct sum formulas (Lemma 2.3, p58)
@@ -624,9 +615,7 @@ def is_anisotropic(self, p):
 
     - `p` -- a prime number > 0 or `-1` for the infinite place
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -650,13 +639,14 @@ def is_anisotropic(self, p):
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p)]).is_anisotropic(p)     # optional - sage.libs.pari
+        sage: [DiagonalQuadraticForm(ZZ,                                                # optional - sage.libs.pari
+        ....:                        [1, -least_quadratic_nonresidue(p)]).is_anisotropic(p)
         ....:  for p in prime_range(3, 30)]
         [True, True, True, True, True, True, True, True, True]
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p),                        # optional - sage.libs.pari
+        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p),            # optional - sage.libs.pari
         ....:                             p, -p*least_quadratic_nonresidue(p)]).is_anisotropic(p)
         ....:  for p in prime_range(3, 30)]
         [True, True, True, True, True, True, True, True, True]
@@ -688,8 +678,8 @@ def is_anisotropic(self, p):
 
 
 def is_isotropic(self, p):
-    """
-    Checks if Q is isotropic over the p-adic numbers `Q_p` or `RR`.
+    r"""
+    Checks if Q is isotropic over the p-adic numbers `\QQ_p` or `\RR`.
 
     INPUT:
 
@@ -721,13 +711,14 @@ def is_isotropic(self, p):
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p)]).is_isotropic(p)   # optional - sage.libs.pari
+        sage: [DiagonalQuadraticForm(ZZ,                                                # optional - sage.libs.pari
+        ....:                        [1, -least_quadratic_nonresidue(p)]).is_isotropic(p)
         ....:  for p in prime_range(3, 30)]
         [False, False, False, False, False, False, False, False, False]
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p),                    # optional - sage.libs.pari
+        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p),            # optional - sage.libs.pari
         ....:                             p, -p*least_quadratic_nonresidue(p)]).is_isotropic(p)
         ....:  for p in prime_range(3, 30)]
         [False, False, False, False, False, False, False, False, False]
@@ -764,25 +755,19 @@ def anisotropic_primes(self):
 
 def compute_definiteness(self):
     """
-    Computes whether the given quadratic form is positive-definite,
+    Compute whether the given quadratic form is positive-definite,
     negative-definite, indefinite, degenerate, or the zero form.
 
-    This caches one of the following strings in self.__definiteness_string:
+    This caches one of the following strings in ``self.__definiteness_string``:
     "pos_def", "neg_def", "indef", "zero", "degenerate".  It is called
     from all routines like:
 
-        is_positive_definite(), is_negative_definite(), is_indefinite(), etc.
+        :meth:`is_positive_definite`, :meth:`is_negative_definite`, :meth:`is_indefinite`, etc.
 
     Note:  A degenerate form is considered neither definite nor indefinite.
     Note:  The zero-dim'l form is considered both positive definite and negative definite.
 
-    INPUT:
-
-        QuadraticForm
-
-    OUTPUT:
-
-        boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -859,15 +844,9 @@ def compute_definiteness_string_by_determinants(self):
     """
     Compute the (positive) definiteness of a quadratic form by looking
     at the signs of all of its upper-left subdeterminants.  See also
-    self.compute_definiteness() for more documentation.
+    :meth:`compute_definiteness` for more documentation.
 
-    INPUT:
-
-        None
-
-    OUTPUT:
-
-        string describing the definiteness
+    OUTPUT: string describing the definiteness
 
     EXAMPLES::
 
@@ -944,13 +923,7 @@ def is_positive_definite(self):
     Note:  A degenerate form is considered neither definite nor indefinite.
     Note:  The zero-dim'l form is considered both positive definite and negative definite.
 
-    INPUT:
-
-        None
-
-    OUTPUT:
-
-        boolean -- True or False
+    OUTPUT: boolean -- True or False
 
     EXAMPLES::
 
@@ -982,13 +955,7 @@ def is_negative_definite(self):
     Note:  A degenerate form is considered neither definite nor indefinite.
     Note:  The zero-dim'l form is considered both positive definite and negative definite.
 
-    INPUT:
-
-        None
-
-    OUTPUT:
-
-        boolean -- True or False
+    OUTPUT: boolean -- True or False
 
     EXAMPLES::
 
@@ -1020,13 +987,7 @@ def is_indefinite(self):
     Note:  A degenerate form is considered neither definite nor indefinite.
     Note:  The zero-dim'l form is not considered indefinite.
 
-    INPUT:
-
-        None
-
-    OUTPUT:
-
-        boolean -- True or False
+    OUTPUT: boolean -- True or False
 
     EXAMPLES::
 
@@ -1059,13 +1020,7 @@ def is_definite(self):
     Note:  A degenerate form is considered neither definite nor indefinite.
     Note:  The zero-dim'l form is considered indefinite.
 
-    INPUT:
-
-        None
-
-    OUTPUT:
-
-        boolean -- True or False
+    OUTPUT: boolean -- True or False
 
     EXAMPLES::
 

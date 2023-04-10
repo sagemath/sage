@@ -27,7 +27,7 @@ def cholesky_decomposition(self, bit_prec = 53):
 
     RESTRICTIONS:
 
-        Q must be given as a QuadraticForm defined over `\ZZ`, `\QQ`, or some
+        `Q` must be given as a :class:`QuadraticForm` defined over `\ZZ`, `\QQ`, or some
         real field. If it is over some real field, then an error is raised if
         the precision given is not less than the defined precision of the real
         field defining the quadratic form!
@@ -39,11 +39,9 @@ def cholesky_decomposition(self, bit_prec = 53):
 
     INPUT:
 
-        ``bit_prec`` -- a natural number (default 53).
+    - ``bit_prec`` -- a natural number (default 53).
 
-    OUTPUT:
-
-        an upper triangular real matrix of precision ``bit_prec``.
+    OUTPUT: an upper triangular real matrix of precision ``bit_prec``.
 
 
     TO DO:
@@ -124,12 +122,12 @@ def vectors_by_length(self, bound):
 
     INPUT:
 
-       bound -- an integer >= 0
+    - ``bound`` -- an integer >= 0
 
     OUTPUT:
 
-        A list L of length (bound + 1) whose entry L `[i]` is a list of
-        all vectors of length `i`.
+    - a list ``L`` of length (``bound`` + 1) whose entry ``L[i]`` is a list of
+      all vectors of length `i`.
 
     Reference: This is a slightly modified version of Cohn's Algorithm
     2.7.5 in "A Course in Computational Number Theory", with the
@@ -278,11 +276,9 @@ def complementary_subform_to_vector(self, v):
 
     INPUT:
 
-        `v` -- a list of self.dim() integers
+    - `v` -- a list of ``self.dim()`` integers
 
-    OUTPUT:
-
-        a QuadraticForm over `ZZ`
+    OUTPUT: a :class:`QuadraticForm` over ``ZZ``
 
 
     EXAMPLES::
@@ -309,7 +305,6 @@ def complementary_subform_to_vector(self, v):
         [ 880 -480 -160 ]
         [ * 624 -96 ]
         [ * * 240 ]
-
     """
     n = self.dim()
 
@@ -361,7 +356,7 @@ def complementary_subform_to_vector(self, v):
 def split_local_cover(self):
     """
     Tries to find subform of the given (positive definite quaternary)
-    quadratic form Q of the form
+    quadratic form `Q` of the form
 
     .. MATH::
 
@@ -370,16 +365,10 @@ def split_local_cover(self):
     where `d > 0` is as small as possible.
 
     This is done by exhaustive search on small vectors, and then
-    comparing the local conditions of its sum with it's complementary
-    lattice and the original quadratic form Q.
+    comparing the local conditions of its sum with its complementary
+    lattice and the original quadratic form `Q`.
 
-    INPUT:
-
-        none
-
-    OUTPUT:
-
-        a QuadraticForm over ZZ
+    OUTPUT: a :class:`QuadraticForm` over ``ZZ``
 
     EXAMPLES::
 
@@ -389,7 +378,6 @@ def split_local_cover(self):
         [ 3 0 0 ]
         [ * 5 0 ]
         [ * * 7 ]
-
     """
     from sage.quadratic_forms.quadratic_form import QuadraticForm
 

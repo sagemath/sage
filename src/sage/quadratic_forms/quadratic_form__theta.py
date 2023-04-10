@@ -76,25 +76,23 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
     vector) up to the precision `O(q^Max)`.  This also caches the result
     for future computations.
 
-    If var_str = '', then we return a vector `v` where `v[i]` counts the
+    If ``var_str`` = ``''``, then we return a vector `v` where `v[i]` counts the
     number of vectors of length `i`.
 
-    The safe_flag allows us to select whether we want a copy of the
+    The ``safe_flag`` allows us to select whether we want a copy of the
     output, or the original output.  It is only meaningful when a
     vector is returned, otherwise a copy is automatically made in
-    creating the power series.  By default safe_flag = True, so we
+    creating the power series.  By default ``safe_flag=True``, so we
     return a copy of the cached information.  If this is set to False,
     then the routine is much faster but the return values are
     vulnerable to being corrupted by the user.
 
     INPUT:
 
-        Max -- an integer >=0
-        var_str -- a string
+    - ``Max`` -- an integer >=0
+    - ``var_str`` -- a string
 
-    OUTPUT:
-
-        a power series or a vector
+    OUTPUT: a power series or a vector
 
     EXAMPLES::
 
@@ -155,8 +153,10 @@ def theta_by_cholesky(self, q_prec):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: Theta = Q.theta_by_cholesky(10)
         sage: Theta
-        1 + 8*q + 24*q^2 + 32*q^3 + 24*q^4 + 48*q^5 + 96*q^6 + 64*q^7 + 24*q^8 + 104*q^9 + 144*q^10
-        sage: Expected =  [1] + [8*sum([d for d in divisors(n) if d%4 != 0])  for n in range(1,11)]
+        1 + 8*q + 24*q^2 + 32*q^3 + 24*q^4 + 48*q^5 + 96*q^6
+         + 64*q^7 + 24*q^8 + 104*q^9 + 144*q^10
+        sage: Expected = [1] + [8*sum([d for d in divisors(n) if d%4 != 0])
+        ....:                   for n in range(1, 11)]
         sage: Expected
         [1, 8, 24, 32, 24, 48, 96, 64, 24, 104, 144]
         sage: Theta.list() == Expected

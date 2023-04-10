@@ -137,7 +137,7 @@ def _local_genera(p, rank, det_val, max_scale, even):
 
     - ``rank`` -- the rank of this genus
 
-    - ``det_val`` -- valuation of the determinant at p
+    - ``det_val`` -- valuation of the determinant at `p`
 
     - ``max_scale`` -- an integer the maximal scale of a jordan block
 
@@ -330,7 +330,7 @@ def Genus(A, factored_determinant=None):
 
     - ``A`` -- a symmetric matrix with integer coefficients
 
-    - ``factored_determinant`` -- (default: ``None``) a factorization object
+    - ``factored_determinant`` -- (default: ``None``) a :class:`Factorization` object,
       the factored determinant of ``A``
 
     OUTPUT:
@@ -427,12 +427,11 @@ def is_GlobalGenus(G):
         sage: G = Genus(A)
         sage: is_GlobalGenus(G)
         True
-        sage: G=Genus(matrix.diagonal([2, 2, 2, 2]))
-        sage: G._local_symbols[0]._symbol=[[0,2,3,0,0], [1,2,5,1,0]]
+        sage: G = Genus(matrix.diagonal([2, 2, 2, 2]))
+        sage: G._local_symbols[0]._symbol = [[0,2,3,0,0], [1,2,5,1,0]]
         sage: G._representative=None
         sage: is_GlobalGenus(G)
         False
-
     """
     D = G.determinant()
     r, s = G.signature_pair()
@@ -490,7 +489,8 @@ def is_2_adic_genus(genus_symbol_quintuple_list):
         sage: is_2_adic_genus(G3.symbol_tuple_list())  # This raises an error
         Traceback (most recent call last):
         ...
-        TypeError: The genus symbols are not quintuples, so it's not a genus symbol for the prime p=2.
+        TypeError: The genus symbols are not quintuples,
+        so it's not a genus symbol for the prime p=2.
 
         sage: A = Matrix(ZZ, 2, 2, [1,0,0,2])
         sage: G2 = LocalGenusSymbol(A, 2)
@@ -527,7 +527,7 @@ def canonical_2_adic_compartments(genus_symbol_quintuple_list):
     r"""
     Given a `2`-adic local symbol (as the underlying list of quintuples)
     this returns a list of lists of indices of the
-    genus_symbol_quintuple_list which are in the same compartment.  A
+    ``genus_symbol_quintuple_list`` which are in the same compartment.  A
     compartment is defined to be a maximal interval of Jordan
     components all (scaled) of type I (i.e. odd).
 
@@ -596,7 +596,7 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
     r"""
     Given a `2`-adic local symbol (as the underlying list of quintuples)
     this returns a list of lists of indices of the
-    genus_symbol_quintuple_list which are in the same train.  A train
+    ``genus_symbol_quintuple_list`` which are in the same train.  A train
     is defined to be a maximal interval of Jordan components so that
     at least one of each adjacent pair (allowing zero-dimensional
     Jordan components) is (scaled) of type I (i.e. odd).
@@ -643,7 +643,9 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
         [[0, 2, 3, 0, 0]]
         sage: canonical_2_adic_trains(G2.symbol_tuple_list())
         [[0]]
-        sage: symbol = [[0, 1,  1, 1, 1], [1, 2, -1, 0, 0], [2, 1,  1, 1, 1], [3, 1,  1, 1, 1], [4, 1,  1, 1, 1], [5, 2, -1, 0, 0], [7, 1,  1, 1, 1], [10, 1, 1, 1, 1], [11, 1, 1, 1, 1], [12, 1, 1, 1, 1]]
+        sage: symbol = [[0, 1,  1, 1, 1], [1, 2, -1, 0, 0], [2, 1,  1, 1, 1],
+        ....:           [3, 1,  1, 1, 1], [4, 1,  1, 1, 1], [5, 2, -1, 0, 0],
+        ....:           [7, 1,  1, 1, 1], [10, 1, 1, 1, 1], [11, 1, 1, 1, 1], [12, 1, 1, 1, 1]]
         sage: canonical_2_adic_trains(symbol)
         [[0, 1, 2, 3, 4, 5], [6], [7, 8, 9]]
 
@@ -656,7 +658,6 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
     .. NOTE::
 
         See [CS1999]_, pp. 381-382 for definitions and examples.
-
     """
     if compartments is not None:
         from sage.misc.superseded import deprecation
@@ -1030,7 +1031,6 @@ def split_odd(A):
         Traceback (most recent call last):
         ...
         RuntimeError: The matrix A does not admit a non-even splitting.
-
     """
     n0 = A.nrows()
     if n0 == 1:
@@ -1127,11 +1127,11 @@ def two_adic_symbol(A, val):
     The genus symbol of a component `2^m f` is of the form ``(m,n,s,d[,o])``,
     where
 
-    - m = valuation of the component
-    - n = dimension of f
-    - d = det(f) in {1,3,5,7}
-    - s = 0 (or 1) if even (or odd)
-    - o = oddity of f (= 0 if s = 0) in `Z/8Z`
+    - `m` = valuation of the component
+    - `n` = dimension of f
+    - `d` = det(f) in {1,3,5,7}
+    - `s` = 0 (or 1) if even (or odd)
+    - `o` = oddity of f (= 0 if s = 0) in `Z/8Z`
 
     INPUT:
 
@@ -1268,14 +1268,14 @@ class Genus_Symbol_p_adic_ring():
         sage: p = 2
         sage: s2 = p_adic_symbol(A, p, 2); s2
         [[0, 2, 3, 1, 4], [1, 1, 1, 1, 1], [2, 1, 1, 1, 1]]
-        sage: G2 = Genus_Symbol_p_adic_ring(p,s2);G2
+        sage: G2 = Genus_Symbol_p_adic_ring(p,s2); G2
         Genus symbol at 2:    [1^-2 2^1 4^1]_6
 
         sage: A = diagonal_matrix(ZZ, [1, 2, 3, 4])
         sage: p = 3
         sage: s3 = p_adic_symbol(A, p, 1); s3
         [[0, 3, -1], [1, 1, 1]]
-        sage: G3 = Genus_Symbol_p_adic_ring(p,s3);G3
+        sage: G3 = Genus_Symbol_p_adic_ring(p,s3); G3
         Genus symbol at 3:     1^-3 3^1
     """
     def __init__(self, prime, symbol, check = True):
@@ -1547,13 +1547,12 @@ class Genus_Symbol_p_adic_ring():
 
             sage: A = matrix.diagonal([3, 16])
             sage: G = Genus(A)
-            sage: sym2 = G.local_symbols()[0]
-            sage: sym2
+            sage: sym2 = G.local_symbols()[0]; sym2
             Genus symbol at 2:    [1^-1]_3:[16^1]_1
             sage: sym2.automorphous_numbers()
             [3, 5]
 
-            sage: A = matrix(ZZ,3,[2,1,0, 1,2,0, 0,0,18])
+            sage: A = matrix(ZZ, 3, [2,1,0, 1,2,0, 0,0,18])
             sage: G = Genus(A)
             sage: sym = G.local_symbols()
             sage: sym[0]
@@ -1762,7 +1761,7 @@ class Genus_Symbol_p_adic_ring():
 
     def gram_matrix(self, check=True):
         r"""
-        Return a gram matrix of a representative of this local genus.
+        Return a Gram matrix of a representative of this local genus.
 
         INPUT:
 
@@ -2024,14 +2023,16 @@ class Genus_Symbol_p_adic_ring():
 
             sage: A = DiagonalQuadraticForm(ZZ, [1, 2, 3, 4]).Hessian_matrix()
             sage: p = 2
-            sage: G2 = Genus_Symbol_p_adic_ring(p, p_adic_symbol(A, p, 2)); G2.symbol_tuple_list()
+            sage: G2 = Genus_Symbol_p_adic_ring(p, p_adic_symbol(A, p, 2))
+            sage: G2.symbol_tuple_list()
             [[1, 2, 3, 1, 4], [2, 1, 1, 1, 1], [3, 1, 1, 1, 1]]
             sage: G2.number_of_blocks()
             3
 
             sage: A = DiagonalQuadraticForm(ZZ, [1,2,3,4]).Hessian_matrix()
             sage: p = 3
-            sage: G3 = Genus_Symbol_p_adic_ring(p, p_adic_symbol(A, p, 2)); G3.symbol_tuple_list()
+            sage: G3 = Genus_Symbol_p_adic_ring(p, p_adic_symbol(A, p, 2))
+            sage: G3.symbol_tuple_list()
             [[0, 3, 1], [1, 1, -1]]
             sage: G3.number_of_blocks()
             2
@@ -2099,7 +2100,6 @@ class Genus_Symbol_p_adic_ring():
             Genus symbol at 3:     1^3 3^-1
             sage: G3.dimension()
             4
-
         """
         return sum([ s[1] for s in self._symbol ])
 
@@ -2306,7 +2306,7 @@ class Genus_Symbol_p_adic_ring():
     def trains(self):
         r"""
         Compute the indices for each of the trains in this local genus
-        symbol if it is associated to the prime p=2 (and raise an
+        symbol if it is associated to the prime `p=2` (and raise an
         error for all other primes).
 
         OUTPUT:
@@ -2335,7 +2335,7 @@ class Genus_Symbol_p_adic_ring():
     def compartments(self):
         r"""
         Compute the indices for each of the compartments in this local genus
-        symbol if it is associated to the prime p=2 (and raise an
+        symbol if it is associated to the prime `p=2` (and raise an
         error for all other primes).
 
         OUTPUT:
@@ -2376,7 +2376,7 @@ class GenusSymbol_global_ring():
       sorted by their primes
 
     - ``representative`` -- (default: ``None``) integer symmetric matrix;
-      the gram matrix of a representative of this genus
+      the Gram matrix of a representative of this genus
 
     - ``check`` -- (default: ``True``) a boolean; checks the input
 
@@ -2397,7 +2397,7 @@ class GenusSymbol_global_ring():
 
     .. SEEALSO::
 
-        :func:`Genus` to create a :class:`GenusSymbol_global_ring` from the gram matrix directly.
+        :func:`Genus` to create a :class:`GenusSymbol_global_ring` from the Gram matrix directly.
     """
 
     def __init__(self, signature_pair, local_symbols, representative=None, check=True):
@@ -3056,12 +3056,12 @@ class GenusSymbol_global_ring():
 
         INPUT:
 
-        - ``backend`` -- (default:``None``)
-        - ``algorithm`` -- (default:``None``)
+        - ``backend`` -- (default: ``None``)
+        - ``algorithm`` -- (default: ``None``)
 
         OUTPUT:
 
-        - a list of gram matrices
+        - a list of Gram matrices
 
         EXAMPLES::
 
@@ -3224,7 +3224,7 @@ class GenusSymbol_global_ring():
 
             sage: A = matrix.diagonal(ZZ, [1, 1, 1, 1])
             sage: GS = Genus(A)
-            sage: GS._standard_mass()           # optional - sage.symbolic
+            sage: GS._standard_mass()                                                   # optional - sage.symbolic
             1/48
 
         """
@@ -3279,7 +3279,7 @@ class GenusSymbol_global_ring():
 
             sage: from sage.quadratic_forms.genera.genus import genera
             sage: G = genera((8,0), 1, even=True)[0]
-            sage: G.mass()                 # optional - sage.symbolic
+            sage: G.mass()                                                              # optional - sage.symbolic
             1/696729600
             sage: G.mass(backend='magma')  # optional - magma
             1/696729600
@@ -3339,7 +3339,7 @@ class GenusSymbol_global_ring():
         r"""
         Return the level of this genus.
 
-        This is the denominator of the inverse gram matrix
+        This is the denominator of the inverse Gram matrix
         of a representative.
 
         EXAMPLES::
@@ -3392,7 +3392,7 @@ class GenusSymbol_global_ring():
 
 def _gram_from_jordan_block(p, block, discr_form=False):
     r"""
-    Return the gram matrix of this jordan block.
+    Return the Gram matrix of this jordan block.
 
     This is a helper for :meth:`discriminant_form` and :meth:`gram_matrix`.
     No input checks.
@@ -3404,7 +3404,7 @@ def _gram_from_jordan_block(p, block, discr_form=False):
     - ``block`` -- a list of 3 integers or 5 integers if `p` is `2`
 
     - ``discr_form`` -- bool (default: ``False``); if ``True`` invert the scales
-      to obtain a gram matrix for the discriminant form instead.
+      to obtain a Gram matrix for the discriminant form instead.
 
     EXAMPLES::
 

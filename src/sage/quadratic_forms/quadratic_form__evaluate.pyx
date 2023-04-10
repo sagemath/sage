@@ -14,13 +14,13 @@ def QFEvaluateVector(Q, v):
             Q' = v^t * Q * v.
 
     Note: This is a Python wrapper for the fast evaluation routine
-    QFEvaluateVector_cdef().  This routine is for internal use and is
+    :func:`QFEvaluateVector_cdef`.  This routine is for internal use and is
     called more conveniently as Q(M).
 
     INPUT:
 
-    - Q -- QuadraticForm over a base ring R
-    - v -- a tuple or list (or column matrix) of Q.dim() elements of R
+    - `Q` -- :class:`QuadraticForm` over a base ring `R`
+    - ``v`` -- a tuple or list (or column matrix) of ``Q.dim()`` elements of `R`
 
     OUTPUT:
 
@@ -39,7 +39,6 @@ def QFEvaluateVector(Q, v):
         0
         sage: QFEvaluateVector(Q, (1,0,1,0))
         9
-
     """
     return QFEvaluateVector_cdef(Q, v)
 
@@ -74,15 +73,15 @@ def QFEvaluateMatrix(Q, M, Q2):
             Q2 = M^t * Q * M.
 
     Note: This is a Python wrapper for the fast evaluation routine
-    QFEvaluateMatrix_cdef().  This routine is for internal use and is
+    :func:`QFEvaluateMatrix_cdef`.  This routine is for internal use and is
     called more conveniently as Q(M).  The inclusion of Q2 as an
-    argument is to avoid having to create a QuadraticForm here, which
+    argument is to avoid having to create a :func:`QuadraticForm` here, which
     for now creates circular imports.
 
     INPUT:
 
-    - Q -- QuadraticForm over a base ring R
-    - M -- a Q.dim() x Q2.dim() matrix of elements of R
+    - ``Q`` -- QuadraticForm over a base ring `R`
+    - ``M`` -- a Q.dim() x Q2.dim() matrix of elements of `R`
 
     OUTPUT:
 
@@ -107,7 +106,6 @@ def QFEvaluateMatrix(Q, M, Q2):
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 0 2 ]
         [ * 7 ]
-
     """
     return QFEvaluateMatrix_cdef(Q, M, Q2)
 
@@ -115,7 +113,7 @@ def QFEvaluateMatrix(Q, M, Q2):
 cdef QFEvaluateMatrix_cdef(Q, M, Q2):
     """
     Routine to quickly evaluate a quadratic form Q on a matrix M.  See
-    the Python wrapper function QFEvaluateMatrix() above for details.
+    the Python wrapper function :func:`QFEvaluateMatrix` above for details.
 
     """
     # Create the new quadratic form

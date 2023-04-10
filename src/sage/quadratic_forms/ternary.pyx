@@ -505,10 +505,10 @@ def pseudorandom_primitive_zero_mod_p(a, b, c, r, s, t, p):
         sage: Q = TernaryQF([1, 2, 2, -1, 0, 0])
         sage: p = 1009
         sage: from sage.quadratic_forms.ternary import pseudorandom_primitive_zero_mod_p
-        sage: v = pseudorandom_primitive_zero_mod_p(1, 2, 2, -1, 0, 0, p)                           # optional - sage.libs.pari
-        sage: v[2]                                                                                  # optional - sage.libs.pari
+        sage: v = pseudorandom_primitive_zero_mod_p(1, 2, 2, -1, 0, 0, p)               # optional - sage.libs.pari
+        sage: v[2]                                                                      # optional - sage.libs.pari
         1
-        sage: Q(v)%p                                                                                # optional - sage.libs.pari
+        sage: Q(v)%p                                                                    # optional - sage.libs.pari
         0
 
     """
@@ -613,16 +613,16 @@ def _find_zeros_mod_p(a, b, c, r, s, t, p):
         sage: from sage.quadratic_forms.ternary import _find_zeros_mod_p
         sage: Q = TernaryQF([1, 2, 2, -1, 0, 0])
         sage: p = 1009
-        sage: zeros_1009 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, p)                                  # optional - sage.libs.pari
-        sage: len(zeros_1009)                                                                       # optional - sage.libs.pari
+        sage: zeros_1009 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, p)                      # optional - sage.libs.pari
+        sage: len(zeros_1009)                                                           # optional - sage.libs.pari
         1010
-        sage: zeros_1009.sort()                                                                     # optional - sage.libs.pari
-        sage: zeros_1009[0]                                                                         # optional - sage.libs.pari
+        sage: zeros_1009.sort()                                                         # optional - sage.libs.pari
+        sage: zeros_1009[0]                                                             # optional - sage.libs.pari
         (0, 32, 1)
         sage: Q((0, 32, 1))
         2018
-        sage: zeros_2 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, 2)                                     # optional - sage.libs.pari
-        sage: zeros_2                                                                               # optional - sage.libs.pari
+        sage: zeros_2 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, 2)                         # optional - sage.libs.pari
+        sage: zeros_2                                                                   # optional - sage.libs.pari
         [(0, 1, 0), (0, 0, 1), (1, 1, 1)]
 
     """
@@ -975,9 +975,9 @@ def _find_p_neighbor_from_vec(a, b, c, r, s, t, p, v, mat = False):
         sage: Q.disc()
         29
         sage: v = (9, 7, 1)
-        sage: v in Q.find_zeros_mod_p(11)                                                           # optional - sage.libs.pari
+        sage: v in Q.find_zeros_mod_p(11)                                               # optional - sage.libs.pari
         True
-        sage: q11, M = _find_p_neighbor_from_vec(1, 3, 3, -2, 0, -1, 11, v, mat = True)
+        sage: q11, M = _find_p_neighbor_from_vec(1, 3, 3, -2, 0, -1, 11, v, mat=True)
         sage: Q11 = TernaryQF(q11)
         sage: Q11
         Ternary quadratic form with integer coefficients:

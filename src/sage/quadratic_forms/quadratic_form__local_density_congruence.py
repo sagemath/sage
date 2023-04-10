@@ -19,7 +19,7 @@ from sage.quadratic_forms.count_local_2 import count_modp__by_gauss_sum
 def count_modp_solutions__by_Gauss_sum(self, p, m):
     """
     Return the number of solutions of `Q(x) = m (mod p)` of a
-    non-degenerate quadratic form over the finite field `Z/pZ`,
+    non-degenerate quadratic form over the finite field `\ZZ/p\ZZ`,
     where `p` is a prime number > 2.
 
     .. NOTE::
@@ -58,15 +58,15 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
     Find the Good-type local density of Q representing `m` at `p`.
     (Assuming that `p` > 2 and Q is given in local diagonal form.)
 
-    The additional congruence condition arguments Zvec and NZvec can
-    be either a list of indices or None.  Zvec = [] is equivalent to
-    Zvec = None which both impose no additional conditions, but NZvec
-    = [] returns no solutions always while NZvec = None imposes no
+    The additional congruence condition arguments ``Zvec`` and ``NZvec`` can
+    be either a list of indices or None.  ``Zvec=[]`` is equivalent to
+    ``Zvec=None``, which both impose no additional conditions, but
+    ``NZvec=[]`` returns no solutions always while ``NZvec=None`` imposes no
     additional condition.
 
     .. TODO::
 
-        Add type checking for Zvec, NZvec, and that Q is in local
+        Add type checking for ``Zvec``, ``NZvec``, and that Q is in local
         normal form.
 
     INPUT:
@@ -77,7 +77,7 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
 
     - `m` -- an integer
 
-    - Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
+    - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
     OUTPUT: a rational number
 
@@ -92,7 +92,6 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: Q.local_good_density_congruence_odd(3, 1, None, None)
         8/9
-
     """
     n = self.dim()
 
@@ -141,22 +140,22 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
 
 
 def local_good_density_congruence_even(self, m, Zvec, NZvec):
-    """
+    r"""
     Find the Good-type local density of Q representing `m` at `p=2`.
     (Assuming Q is given in local diagonal form.)
 
-    The additional congruence condition arguments Zvec and NZvec can
-    be either a list of indices or None.  Zvec = [] is equivalent to
-    Zvec = None which both impose no additional conditions, but NZvec
-    = [] returns no solutions always while NZvec = None imposes no
+    The additional congruence condition arguments ``Zvec`` and ``NZvec`` can
+    be either a list of indices or None.  ``Zvec=[]`` is equivalent to
+    ``Zvec=None`` which both impose no additional conditions, but
+    ``NZvec=[]`` returns no solutions always while ``NZvec=None`` imposes no
     additional condition.
 
-    WARNING: Here the indices passed in Zvec and NZvec represent
+    WARNING: Here the indices passed in ``Zvec`` and ``NZvec`` represent
     indices of the solution vector `x` of Q(`x`) = `m (mod p^k)`, and *not*
     the Jordan components of Q.  They therefore are required (and
     assumed) to include either all or none of the indices of a given
     Jordan component of Q.  This is only important when `p=2` since
-    otherwise all Jordan blocks are 1x1, and so there the indices and
+    otherwise all Jordan blocks are `1 \times 1`, and so there the indices and
     Jordan blocks coincide.
 
     .. TODO::
@@ -172,7 +171,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
 
     - `m` -- an integer
 
-    - Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
+    - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
     OUTPUT: a rational number
 
@@ -221,7 +220,6 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
         1
         sage: Q.local_good_density_congruence_even(5, None, None)
         3/4
-
     """
     n = self.dim()
 
@@ -328,18 +326,18 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     .. TODO::
 
-        Add Documentation about the additional congruence
-        conditions Zvec and NZvec.
+        Add documentation about the additional congruence
+        conditions ``Zvec`` and ``NZvec``.
 
     INPUT:
 
-    - Q -- quadratic form assumed to be block diagonal and p-integral
+    - Q -- quadratic form assumed to be block diagonal and `p`-integral
 
     - `p` -- a prime number
 
     - `m` -- an integer
 
-    - Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
+    - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
     OUTPUT: a rational number
 
@@ -410,7 +408,7 @@ def local_zero_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - `m` -- an integer
 
-    - Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
+    - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
     OUTPUT: a rational number
 
@@ -437,7 +435,6 @@ def local_zero_density_congruence(self, p, m, Zvec=None, NZvec=None):
         0
         sage: Q.local_zero_density_congruence(3, 9, None, None)
         8/81
-
     """
     #  DIAGNOSTIC
     verbose(" In local_zero_density_congruence with ")
@@ -484,7 +481,7 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - `m` -- an integer
 
-    - Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
+    - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
     OUTPUT: a rational number
 
@@ -533,8 +530,6 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
         0
         sage: Q.local_badI_density_congruence(3, 18, None, None)
         0
-
-
     """
     #  DIAGNOSTIC
     verbose(" In local_badI_density_congruence with ")
@@ -649,7 +644,7 @@ def local_badII_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - `m` -- an integer
 
-    - Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
+    - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
     OUTPUT: a rational number
 
@@ -684,7 +679,6 @@ def local_badII_density_congruence(self, p, m, Zvec=None, NZvec=None):
         4/27
         sage: Q.local_badII_density_congruence(3, 18, None, None)
         4/9
-
     """
     #  DIAGNOSTIC
     verbose(" In local_badII_density_congruence with ")
@@ -796,7 +790,7 @@ def local_bad_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - `m` -- an integer
 
-    - Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
+    - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
     OUTPUT: a rational number
 
@@ -833,7 +827,6 @@ def local_bad_density_congruence(self, p, m, Zvec=None, NZvec=None):
         4/9
         sage: Q.local_bad_density_congruence(3, 27, None, None)
         8/27
-
     """
     return self.local_badI_density_congruence(p, m, Zvec, NZvec) + self.local_badII_density_congruence(p, m, Zvec, NZvec)
 
@@ -855,7 +848,7 @@ def local_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - `m` -- an integer
 
-    - Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
+    - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
     OUTPUT: a rational number
 
@@ -927,7 +920,7 @@ def local_primitive_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - `m` -- an integer
 
-    - Zvec, NZvec -- non-repeating lists of integers in range(self.dim()) or None
+    - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
     OUTPUT: a rational number
 

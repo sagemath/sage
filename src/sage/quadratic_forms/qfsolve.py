@@ -47,7 +47,7 @@ def qfsolve(G):
 
     ALGORITHM:
 
-    Uses PARI/GP function ``qfsolve``.
+    Uses PARI/GP function :pari:`qfsolve`.
 
     EXAMPLES::
 
@@ -82,7 +82,7 @@ def qfsolve(G):
 
 def qfparam(G, sol):
     r"""
-    Parametrizes the conic defined by the matrix ``G``.
+    Parametrize the conic defined by the matrix ``G``.
 
     INPUT:
 
@@ -98,7 +98,7 @@ def qfparam(G, sol):
 
     ALGORITHM:
 
-    Uses PARI/GP function ``qfparam``.
+    Uses PARI/GP function :pari:`qfparam`.
 
     EXAMPLES::
 
@@ -111,7 +111,8 @@ def qfparam(G, sol):
         sage: ret = qfparam(M, sol); ret
         (-12*t^2 - 1, 24*t, 24)
         sage: ret.parent()
-        Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
+        Ambient free module of rank 3 over the principal ideal domain
+         Univariate Polynomial Ring in t over Rational Field
     """
     R = QQ['t']
     mat = G.__pari__().qfparam(sol)
@@ -133,7 +134,7 @@ def solve(self, c=0):
 
     ALGORITHM:
 
-    Uses PARI's qfsolve(). Algorithm described by Jeroen Demeyer; see comments on :trac:`19112`
+    Uses PARI's :pari:`qfsolve`. Algorithm described by Jeroen Demeyer; see comments on :trac:`19112`
 
     EXAMPLES::
 
