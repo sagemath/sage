@@ -3338,7 +3338,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         mpz_tdiv_q(n.value, mpq_numref(self.value), mpq_denref(self.value))
         return n
 
-    def round(Rational self, mode="away"):
+    def round(Rational self, mode="even"):
         """
         Return the nearest integer to ``self``, rounding away from 0 by
         default, for consistency with the builtin Python round.
@@ -3362,13 +3362,13 @@ cdef class Rational(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: (9/2).round()
-            5
+            4
             sage: n = 4/3; n.round()
             1
             sage: n = -17/4; n.round()
             -4
             sage: n = -5/2; n.round()
-            -3
+            -2
             sage: n.round("away")
             -3
             sage: n.round("up")
