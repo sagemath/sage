@@ -186,7 +186,7 @@ def Watson_mass_at_2(self):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.Watson_mass_at_2()               # WARNING:  WE NEED TO CHECK THIS CAREFULLY!       # optional - sage.symnolic
+        sage: Q.Watson_mass_at_2()  # WARNING:  WE NEED TO CHECK THIS CAREFULLY!        # optional - sage.symbolic
         384
 
     """
