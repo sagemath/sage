@@ -18,7 +18,7 @@ For more information see https://github.com/sagemath/sage/pull/35172
 
 import os
 import sys
-from logging import info, warning, debug, getLogger, INFO, DEBUG
+from logging import info, warning, debug, getLogger, INFO, DEBUG, WARNING
 from json import loads
 from enum import Enum
 from datetime import datetime, timedelta
@@ -152,13 +152,11 @@ class GhLabelSynchronizer:
         r"""
         Return data obtained from ``gh`` command ``api``.
         """
-        s = self._url.split('/')
-        owner = s[3]
-        repo = s[4]
         meth = '-X GET'
         if method:
             meth='-X %s' % method
-        cmd = 'gh api %s -H \"Accept: application/vnd.github+json\" /repos/%s/%s/%s %s' % (meth, owner, repo, path_args, query)
+        cmd = 'gh api %s -H \"Accept: application/vnd.github+json\" %s %s' % (meth, path_args, query)
+        debug('Execute command: %s' % cmd)
         if method:
             return check_output(cmd, shell=True)
         return loads(check_output(cmd, shell=True))
@@ -171,11 +169,12 @@ class GhLabelSynchronizer:
         if self._pr:
             issue = 'pr'
         cmd = 'gh %s view %s --json %s' % (issue, self._url, key)
+        debug('Execute command: %s' % cmd)
         return loads(check_output(cmd, shell=True))[key]
 
     def is_open(self):
         r"""
-        Return if the issue res. PR is open.
+        Return ``True`` if the issue res. PR is open.
         """
         if self._open is not None:
             return self._open
@@ -188,7 +187,7 @@ class GhLabelSynchronizer:
 
     def is_draft(self):
         r"""
-        Return if the PR is a draft.
+        Return ``True`` if the PR is a draft.
         """
         if self._draft is not None:
             return self._draft
@@ -199,22 +198,55 @@ class GhLabelSynchronizer:
         info('Issue %s is draft %s' % (self._issue, self._draft))
         return self._draft
 
+    def is_auth_team_member(self, login):
+        r"""
+        Return ``True`` if the user with given login belongs to an authorized
+        team.
+        """
+        def verify_membership(team):
+            path_args = '/orgs/sagemath/teams/%s/memberships/%s' % (team, login)
+            try:
+                res = self.rest_api(path_args)
+                if res['state'] == 'active' and res['role'] == 'member':
+                    info('User %s is a member of %s' % (login, team))
+                    return True
+            except CalledProcessError:
+                pass
+
+            info('User %s is not a member of %s' % (login, team))
+            return False
+
+        # check for the Triage team
+        if verify_membership('triage'):
+            return True
+
+        return False
+
+    def actor_authorized(self):
+        r"""
+        Return ``True`` if the actor belongs to an authorized team.
+        """
+        return self.is_auth_team_member(self._actor)
+
     def clean_warnings(self):
         r"""
         Remove all warnings that have been posted by ``GhLabelSynchronizer``
         more than ``warning_lifetime`` ago.
         """
         warning_lifetime = timedelta(minutes=5)
-        time_frame = timedelta(hours=12) # timedelta to search for comments
+        time_frame = timedelta(minutes=730) # timedelta to search for comments including 10 minutes overlap with cron-cycle
         per_page = 100
         today = datetime.today()
         since = today - time_frame
         query = '-F per_page=%s -F page={} -f since=%s' % (per_page, since.strftime(datetime_format))
-        path = 'issues/comments'
+        s = self._url.split('/')
+        owner = s[3]
+        repo = s[4]
+        path_args = '/repos/%s/%s/issues/comments' % (owner, repo)
         page = 1
         comments = []
         while True:
-            comments_page = self.rest_api(path, query=query.format(page))
+            comments_page = self.rest_api(path_args, query=query.format(page))
             comments += comments_page
             if len(comments_page) < per_page:
                 break
@@ -236,7 +268,7 @@ class GhLabelSynchronizer:
                     debug('github-actions %s %s is %s old' % (self._warning_prefix, comment_id, lifetime))
                     if lifetime > warning_lifetime:
                         try:
-                            self.rest_api('%s/%s' % (path, comment_id), method='DELETE')
+                            self.rest_api('%s/%s' % (path_args, comment_id), method='DELETE')
                             info('Comment %s on issue %s deleted' % (comment_id, issue))
                         except CalledProcessError:
                             # the comment may have been deleted by a bot running in parallel
@@ -740,7 +772,7 @@ class GhLabelSynchronizer:
         if action is Action.submitted:
             rev_state = RevState(rev_state)
             if rev_state is RevState.approved:
-                if self.positive_review_valid():
+                if self.actor_authorized() and self.positive_review_valid():
                     self.select_label(State.positive_review)
 
             if rev_state is RevState.changes_requested:
@@ -799,15 +831,50 @@ class GhLabelSynchronizer:
 ###############################################################################
 # Main
 ###############################################################################
+last_arg = None
+run_tests = False
+default_actor = 'sagetrac-github-bot'
 cmdline_args = sys.argv[1:]
 num_args = len(cmdline_args)
 
-# getLogger().setLevel(INFO)
-getLogger().setLevel(DEBUG)
+if num_args:
+    last_arg = cmdline_args[num_args-1]
 
+if last_arg in ('-t', '--test'):
+    getLogger().setLevel(DEBUG)
+    cmdline_args.pop()
+    run_tests = True
+elif last_arg in ('-d', '--debug'):
+    getLogger().setLevel(DEBUG)
+    cmdline_args.pop()
+elif last_arg in ('-i', '--info'):
+    getLogger().setLevel(INFO)
+    cmdline_args.pop()
+elif last_arg in ('-w', '--warning'):
+    getLogger().setLevel(INFO)
+    info('cmdline_args (%s) %s' % (num_args, cmdline_args))
+    getLogger().setLevel(WARNING)
+    cmdline_args.pop()
+else:
+    getLogger().setLevel(DEBUG)
+
+num_args = len(cmdline_args)
 info('cmdline_args (%s) %s' % (num_args, cmdline_args))
 
-if num_args == 5:
+if run_tests and num_args in (1,2):
+    if num_args == 2:
+        url, actor = cmdline_args
+    else:
+        url, = cmdline_args
+        actor = default_actor
+
+    info('url: %s' % url)
+    info('actor: %s' % actor)
+
+    gh = GhLabelSynchronizer(url, actor)
+    gh.run_tests()
+
+elif num_args == 5:
     action, url, actor, label, rev_state = cmdline_args
     action = Action(action)
 
@@ -820,23 +887,19 @@ if num_args == 5:
     gh = GhLabelSynchronizer(url, actor)
     gh.run(action, label=label, rev_state=rev_state)
 
-elif num_args == 2:
-    url, actor = cmdline_args
-
-    info('url: %s' % url)
-    info('actor: %s' % actor)
-
-    gh = GhLabelSynchronizer(url, actor)
-    gh.run_tests()
-
 elif num_args == 1:
     url, = cmdline_args
 
     info('url: %s' % url)
 
-    gh = GhLabelSynchronizer(url, 'sagetrac-github-bot')
+    gh = GhLabelSynchronizer(url, default_actor)
 
 else:
-    print('Need 5 arguments: action, url, actor, label, rev_state' )
-    print('Running tests is possible with 2 arguments: url, actor' )
-    print('Cleaning warning comments is possible with 1 argument: url' )
+    print('Need 5 arguments to synchronize: action, url, actor, label, rev_state')
+    print('Need 1 argument to clean warning comments: url')
+    print('Need 1 argument to run tests: url')
+    print('The following options may be appended:')
+    print('    -t --test to run the test suite')
+    print('    -i --info to set the log-level to INFO')
+    print('    -d --debug to set the log-level to DEBUG (default)')
+    print('    -w --warning to set the log-level to WARNING')

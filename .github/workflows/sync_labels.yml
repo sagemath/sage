@@ -13,9 +13,13 @@ on:
     types: [submitted]
   pull_request_target:
     types: [opened, reopened, closed, ready_for_review, converted_to_draft, synchronize, labeled, unlabeled]
+  schedule:
+    # run cleaning of warning comments twice a day
+    - cron: '00 6,18 * * *'
 
 jobs:
   synchronize:
+    if: vars.SYNC_LABELS_ACTIVE == 'yes' # variable from repository settings to suspend the job
     runs-on: ubuntu-latest
     steps:
       # Checkout the Python script
@@ -25,10 +29,11 @@ jobs:
           files: .github/sync_labels.py
 
       # Perform synchronization
-      - name: Call script
+      - name: Call script for synchronization
+        if: github.event.schedule == ''
         run: |
           chmod a+x .github/sync_labels.py
-          .github/sync_labels.py $ACTION $ISSUE_URL $PR_URL $ACTOR "$LABEL" "$REV_STATE"
+          .github/sync_labels.py $ACTION $ISSUE_URL $PR_URL $ACTOR "$LABEL" "$REV_STATE" $LOG_LEVEL
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ACTION: ${{ github.event.action }}
@@ -37,3 +42,15 @@ jobs:
           ACTOR: ${{ github.actor }}
           LABEL: ${{ github.event.label.name }}
           REV_STATE: ${{ github.event.review.state }}
+          LOG_LEVEL: ${{ vars.SYNC_LABELS_LOG_LEVEL }} # variable from repository settings, values can be "--debug", "--info" or "--warning"
+
+      # Perform cleaning
+      - name: Call script for cleaning
+        if: github.event.schedule != ''
+        run: |
+          chmod a+x .github/sync_labels.py
+          .github/sync_labels.py $REPO_URL $LOG_LEVEL
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_URL: ${{ github.event.repository.html_url }}
+          LOG_LEVEL: ${{ vars.SYNC_LABELS_LOG_LEVEL }} # variable from repository settings, values can be "--debug", "--info" or "--warning"
