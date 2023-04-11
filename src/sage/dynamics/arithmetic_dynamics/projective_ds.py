@@ -6226,10 +6226,6 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         Determine if the point is preperiodic with respect to this
         dynamical system.
 
-        .. NOTE::
-
-            This is only implemented for projective space (not subschemes).
-
         ALGORITHM:
 
         We know that a point is preperiodic if and only if it has
@@ -6293,6 +6289,17 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: p = X((-1, 1, 0))
             sage: f._is_preperiodic(p, return_period=True)
             (0, 2)
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme(x)
+            sage: f = DynamicalSystem([x^2 - y^2, y^2, z^2], domain=X)
+            sage: p = X((0, 1, 0))
+            sage: f._is_preperiodic(p, return_period=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: orbit of point leaves domain
 
         ::
 
