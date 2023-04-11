@@ -4827,7 +4827,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.bigraded_betti_numbers(base_ring=QQ)
             {(0, 0): 1, (-1, 4): 3, (-2, 6): 1, (-2, 8): 2, (-3, 10): 1}
         """
-        if self._bbn is not None and base_ring in self._bbn:
+        if self._bbn is not None and 0 in self._bbn and base_ring in self._bbn[0]:
             return self._bbn[base_ring]
 
         from sage.homology.homology_group import HomologyGroup
@@ -4850,9 +4850,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         B[ind] += len(H[j-k-1].gens())
 
         if self._bbn is not None:
+            self._bbn[0].add(base_ring)
             self._bbn[base_ring] = B
         else:
-            self._bbn = {base_ring: B}
+            self._bbn = {0:{base_ring}, base_ring: B}
         return B 
 
     def bigraded_betti_number(self, a, b, base_ring=ZZ):
