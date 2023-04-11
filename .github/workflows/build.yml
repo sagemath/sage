@@ -23,7 +23,23 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
+
+    strategy:
+      matrix:
+        include:
+          - container: debian-bullseye
+            python: 3.9
+          - container: ubuntu-jammy
+            python: 3.10
+          - container: ubuntu-lunar
+            python: 3.11
+
+    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || matrix.container }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
+    
+    continue-on-error: true
+
+    name: Python ${{ matrix.python }}
+
     steps:
       - name: Checkout
         id: checkout
