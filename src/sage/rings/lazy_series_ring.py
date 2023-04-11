@@ -467,7 +467,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                     if valuation is None:
                         raise ValueError("you must specify the degree for the polynomial 0")
                     degree = valuation
-                if x == R.zero():
+                if not x:
                     coeff_stream = Stream_exact([], order=degree, constant=constant)
                     return self.element_class(self, coeff_stream)
                 initial_coefficients = [x[i] for i in range(x.valuation(), x.degree() + 1)]

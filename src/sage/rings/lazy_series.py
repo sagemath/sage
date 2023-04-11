@@ -2959,7 +2959,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: g = L([2], valuation=-1, constant=1); g
             2*x^-1 + 1 + x + x^2 + O(x^3)
             sage: g * g^-1
-            1 + O(x^7)
+            1
 
             sage: L.<x> = LazyPowerSeriesRing(QQ)
             sage: ~(x + x^2)
@@ -3293,10 +3293,9 @@ class LazyCauchyProductSeries(LazyModuleElement):
         d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
                                  False, 0)
         f = P.undefined(valuation=0)
-        if P in Rings().Commutative():
-            d_self_f = Stream_cauchy_mul_commutative(d_self, f._coeff_stream, False)
-        else:
-            d_self_f = Stream_cauchy_mul(d_self, f._coeff_stream, False)
+        # d_self and f._coeff_stream always commute, the coefficients
+        # of the product are of the form sum_{k=1}^n a_k a_{n+1-k}.
+        d_self_f = Stream_cauchy_mul_commutative(d_self, f._coeff_stream, False)
         int_d_self_f = Stream_function(lambda n: d_self_f[n-1] / R(n) if n else R.one(),
                                        False, 0)
         f._coeff_stream._target = int_d_self_f
@@ -3346,14 +3345,10 @@ class LazyCauchyProductSeries(LazyModuleElement):
         d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
                                  P.is_sparse(), 0)
         coeff_stream_inverse = Stream_cauchy_invert(coeff_stream)
-        if P in Rings().Commutative():
-            d_self_quo_self = Stream_cauchy_mul_commutative(d_self,
-                                                            coeff_stream_inverse,
-                                                            P.is_sparse())
-        else:
-            d_self_quo_self = Stream_cauchy_mul(d_self,
-                                                coeff_stream_inverse,
-                                                P.is_sparse())
+        # d_self and coeff_stream_inverse always commute
+        d_self_quo_self = Stream_cauchy_mul_commutative(d_self,
+                                                        coeff_stream_inverse,
+                                                        P.is_sparse())
         int_d_self_quo_self = Stream_function(lambda n: d_self_quo_self[n-1] / R(n),
                                               P.is_sparse(), 1)
         return P.element_class(P, int_d_self_quo_self)
@@ -4644,6 +4639,9 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: g
             O(z^8)
 
+            sage: g = L(lambda n: n)
+            sage: f(g)
+            z^2 + 4*z^3 + 10*z^4 + 20*z^5 + 35*z^6 + O(z^7)
         """
         fP = parent(self)
         if len(g) != fP._arity:
