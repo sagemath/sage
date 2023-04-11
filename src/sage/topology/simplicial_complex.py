@@ -4878,7 +4878,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             return base_ring.zero()
         if a == 0 and b == 0:
             return base_ring.one()
-        if self._bbn is not None and base_ring in self._bbn:
+        if self._bbn is not None and base_ring in self._bbn and (a,b) in self._bbn[base_ring]:
             return self._bbn[base_ring].get((a,b), base_ring.zero())
             
         from sage.homology.homology_group import HomologyGroup
@@ -4896,6 +4896,16 @@ class SimplicialComplex(Parent, GenericCellComplex):
             H = S.homology(base_ring=base_ring)
             if b-a-1 in H and H[b-a-1] != H0:
                 B += len(H[b-a-1].gens())
+
+        res = base_ring(B)
+
+        if self._bbn is not None:
+            if base_ring in self._bbn:
+                self._bbn[base_ring][(-a,2*b)] = res 
+            else:
+                self._bbn[base_ring] = {(-a,2*b): res}
+        else:
+            self._bbn = {base_ring: {(-a,2*b): res}}
 
         return base_ring(B)
             
