@@ -1126,9 +1126,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if not is_mutable or is_immutable:
             self.set_immutable()
 
-        # self._bbn: dictionary of bigraded Betti numbers,
-        # indexed by tuples (-i, 2j). For use in the bigraded_betti_numbers
-        # method
+        # self._bbn: dictionary indexed by base_ring of dictionaries of 
+        # bigraded Betti numbers, indexed by tuples (-i, 2j). 
+        # For use in the bigraded_betti_numbers method.
         self._bbn = None
 
     def __hash__(self):
@@ -4827,8 +4827,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.bigraded_betti_numbers(base_ring=QQ)
             {(0, 0): 1, (-1, 4): 3, (-2, 6): 1, (-2, 8): 2, (-3, 10): 1}
         """
-        if self._bbn is not None:
-            return self._bbn
+        if self._bbn is not None and base_ring in self._bbn:
+            return self._bbn[base_ring]
 
         from sage.homology.homology_group import HomologyGroup
         L = self.vertices()
@@ -4849,8 +4849,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
                             B[ind] = base_ring.zero()
                         B[ind] += len(H[j-k-1].gens())
 
-        self._bbn = B
-        return self._bbn
+        if self._bbn is not None:
+            self._bbn[base_ring] = B
+        else:
+            self._bbn = {base_ring: B}
+        return B 
 
     def bigraded_betti_number(self, a, b, base_ring=ZZ):
         r"""
@@ -4875,8 +4878,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             return base_ring.zero()
         if a == 0 and b == 0:
             return base_ring.one()
-        if self._bbn is not None:
-            return self._bbn.get((a,b), base_ring.zero())
+        if self._bbn is not None and base_ring in self._bbn:
+            return self._bbn[base_ring].get((a,b), base_ring.zero())
             
         from sage.homology.homology_group import HomologyGroup
 
