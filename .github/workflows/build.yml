@@ -27,12 +27,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - container: debian-bullseye
-            python: 3.9
-          - container: ubuntu-jammy
-            python: 3.10
-          - container: ubuntu-lunar
-            python: 3.11
+          - container: debian-bullseye-standard
+            python: '3.9'
+          - container: ubuntu-jammy-standard
+            python: '3.10'
+          - container: ubuntu-lunar-standard
+            python: '3.11'
 
     container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || matrix.container }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
     
