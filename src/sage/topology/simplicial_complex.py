@@ -4865,15 +4865,18 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: X = SimplicialComplex([[0,1],[1,2],[2,0],[1,2,3]])
             sage: X.bigraded_betti_numbers()
-            {(0, 0): 1, ,(-1,4): 1, (-1, 6): 1, (-2, 8): 1}
+            {(0, 0): 1, (-1,4): 1, (-1, 6): 1, (-2, 8): 1}
             sage: X.bigraded_betti_number(-1, 6)
             1
         """
-        from sage.homology.homology_group import HomologyGroup
-        if b % 2 == 1:
+        if b % 2:
             return ZZ.zero()
         if a == 0 and b == 0:
             return ZZ.one()
+        if self._bbn is not None:
+            return self._bb.get((a,b), ZZ.zero())
+            
+        from sage.homology.homology_group import HomologyGroup
 
         a = -a
         b //= 2
