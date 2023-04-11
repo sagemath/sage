@@ -505,7 +505,7 @@ class ContinuousMap(Morphism):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         else:
             return self._latex_name
 
@@ -1119,7 +1119,7 @@ class ContinuousMap(Morphism):
 
             sage: latex(Phi.display(c_xy, c_cart))
             \begin{array}{llcl} \Phi:& S^2 & \longrightarrow & \RR^3
-             \\ \mbox{on}\ U : & \left(x, y\right) & \longmapsto
+             \\ \text{on}\ U : & \left(x, y\right) & \longmapsto
              & \left(X, Y, Z\right) = \left(\frac{2 \, x}{x^{2} + y^{2} + 1},
                \frac{2 \, y}{x^{2} + y^{2} + 1},
                \frac{x^{2} + y^{2} - 1}{x^{2} + y^{2} + 1}\right)
@@ -1176,7 +1176,7 @@ class ContinuousMap(Morphism):
              2*y/(x**2 + y**2 + 1), (x**2 + y**2 - 1)/(x**2 + y**2 + 1))
             sage: latex(Phi.display(c_xy, c_cart))
             \begin{array}{llcl} \Phi:& S^2 & \longrightarrow & \RR^3
-             \\ \mbox{on}\ U : & \left(x, y\right) & \longmapsto
+             \\ \text{on}\ U : & \left(x, y\right) & \longmapsto
              & \left(X, Y, Z\right) = \left(\frac{2 x}{x^{2} + y^{2} + 1},
                \frac{2 y}{x^{2} + y^{2} + 1},
                \frac{x^{2} + y^{2} - 1}{x^{2} + y^{2} + 1}\right)
@@ -1212,7 +1212,7 @@ class ContinuousMap(Morphism):
                 result._latex += ' & '
             else:
                 result._txt += 'on ' + chart1._domain._name + ': '
-                result._latex += r'\mbox{on}\ ' + latex(chart1._domain) + \
+                result._latex += r'\text{on}\ ' + latex(chart1._domain) + \
                                 r': & '
             result._txt += repr(coords1) + ' ' + unicode_mapsto + ' '
             result._latex += latex(coords1) + r'& \longmapsto & '

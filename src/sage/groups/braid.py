@@ -1467,7 +1467,6 @@ class Braid(FiniteTypeArtinGroupElement):
             return {qa: C[qa].homology() for qa in C}
         return self.annular_khovanov_complex(qagrad, ring).homology()
 
-
     @cached_method
     def left_normal_form(self, algorithm='libbraiding'):
         r"""
@@ -1866,7 +1865,6 @@ class Braid(FiniteTypeArtinGroupElement):
         b2 = B._element_from_libbraiding(L)
         n2 = len(b2.Tietze())
         return b2 if n2 <= n0 else b0
-
 
     def ultra_summit_set(self):
         """

@@ -368,7 +368,7 @@ Comprehensive Module List
     sage/combinat/tutorial
     sage/combinat/vector_partition
     sage/combinat/words/abstract_word
-    sage/combinat/words
+    sage/combinat/words/all
     sage/combinat/words/alphabet
     sage/combinat/words/finite_word
     sage/combinat/words/infinite_word

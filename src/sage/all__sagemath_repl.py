@@ -37,9 +37,17 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 warnings.filterwarnings('ignore', category=DeprecationWarning,
     module='(.*[.]_vendor[.])?packaging')
 
-# Ignore numpy warnings triggered by pythran
+# Ignore a few warnings triggered by pythran 0.12.1
 warnings.filterwarnings('ignore', category=DeprecationWarning,
-                        module='pythran')
+    message='\n\n  `numpy.distutils` is deprecated since NumPy 1.23.0',
+    module='pythran.dist')
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+    message='pkg_resources is deprecated as an API|'
+            'Deprecated call to `pkg_resources.declare_namespace(.*)`',
+    module='pkg_resources')
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+    message='msvccompiler is deprecated and slated to be removed',
+    module='distutils.msvccompiler')
 
 warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message='The distutils(.sysconfig module| package) is deprecated',
