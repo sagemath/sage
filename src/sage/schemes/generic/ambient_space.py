@@ -29,7 +29,7 @@ def is_AmbientSpace(x):
         sage: is_AmbientSpace(AffineSpace(2, QQ))
         True
         sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
-        sage: is_AmbientSpace(P.subscheme([x+y+z]))
+        sage: is_AmbientSpace(P.subscheme([x + y + z]))
         False
     """
     return isinstance(x, AmbientSpace)
@@ -196,9 +196,9 @@ class AmbientSpace(Scheme):
 
         EXAMPLES::
 
-            sage: AffineSpace(3,QQ).is_projective()
+            sage: AffineSpace(3, QQ).is_projective()
             False
-            sage: ProjectiveSpace(3,QQ).is_projective()
+            sage: ProjectiveSpace(3, QQ).is_projective()
             True
         """
         # overloaded in the projective space derived class
@@ -227,7 +227,7 @@ class AmbientSpace(Scheme):
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: PQ = P.base_extend(QQ); PQ
             Projective Space of dimension 2 over Rational Field
-            sage: PQ.base_extend(GF(5))
+            sage: PQ.base_extend(GF(5))                                                 # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: no natural map from the base ring (=Rational Field)
@@ -257,8 +257,8 @@ class AmbientSpace(Scheme):
             sage: P.ambient_space() is P
             True
 
-            sage: A = AffineSpace(2, GF(3))
-            sage: A.ambient_space()
+            sage: A = AffineSpace(2, GF(3))                                             # optional - sage.rings.finite_rings
+            sage: A.ambient_space()                                                     # optional - sage.rings.finite_rings
             Affine Space of dimension 2 over Finite Field of size 3
         """
         return self
@@ -285,8 +285,8 @@ class AmbientSpace(Scheme):
 
         EXAMPLES::
 
-            sage: A = AffineSpace(2, GF(3))
-            sage: A.identity_morphism()
+            sage: A = AffineSpace(2, GF(3))                                             # optional - sage.rings.finite_rings
+            sage: A.identity_morphism()                                                 # optional - sage.rings.finite_rings
             Scheme endomorphism of Affine Space of dimension 2 over Finite Field of size 3
               Defn: Identity map
 
@@ -325,8 +325,8 @@ class AmbientSpace(Scheme):
             sage: AffineSpace(0, QQ).gens()
             ()
 
-            sage: P.<x, y, z> = ProjectiveSpace(2, GF(5))
-            sage: P.gens()
+            sage: P.<x, y, z> = ProjectiveSpace(2, GF(5))                               # optional - sage.rings.finite_rings
+            sage: P.gens()                                                              # optional - sage.rings.finite_rings
             (x, y, z)
         """
         return self.coordinate_ring().gens()

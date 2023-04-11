@@ -16,11 +16,14 @@ EXAMPLES::
 
     sage: phi = EllipticCurve('11a1').modular_parametrization()
     sage: phi
-    Modular parameterization from the upper half plane to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+    Modular parameterization
+     from the upper half plane
+       to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
     sage: phi(0.5+CDF(I))
     (285684.320516... + 7.0...e-11*I : 1.526964169...e8 + 5.6...e-8*I : 1.00000000000000)
     sage: phi.power_series(prec = 7)
-    (q^-2 + 2*q^-1 + 4 + 5*q + 8*q^2 + q^3 + 7*q^4 + O(q^5), -q^-3 - 3*q^-2 - 7*q^-1 - 13 - 17*q - 26*q^2 - 19*q^3 + O(q^4))
+    (q^-2 + 2*q^-1 + 4 + 5*q + 8*q^2 + q^3 + 7*q^4 + O(q^5),
+     -q^-3 - 3*q^-2 - 7*q^-1 - 13 - 17*q - 26*q^2 - 19*q^3 + O(q^4))
 
 AUTHORS:
 
@@ -64,7 +67,10 @@ class ModularParameterization:
 
         sage: phi = EllipticCurve('11a1').modular_parametrization()
         sage: phi
-        Modular parameterization from the upper half plane to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+        Modular parameterization
+         from the upper half plane
+           to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20
+              over Rational Field
     """
     def __init__(self, E):
         r"""
@@ -264,7 +270,7 @@ class ModularParameterization:
 
             sage: E = EllipticCurve('389a1')
             sage: phi = E.modular_parametrization()
-            sage: X,Y = phi.power_series(prec=10)
+            sage: X, Y = phi.power_series(prec=10)
             sage: X
             q^-2 + 2*q^-1 + 4 + 7*q + 13*q^2 + 18*q^3 + 31*q^4 + 49*q^5 + 74*q^6 + 111*q^7 + O(q^8)
             sage: Y

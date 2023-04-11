@@ -615,7 +615,6 @@ class GenericGraph(GenericGraph_pyx):
 
         return self._backend.is_subgraph(other._backend, self, ignore_labels=not self.weighted())
 
-
     def _use_labels_for_hash(self):
         r"""
         Helper method for method ``__hash__``.
@@ -647,7 +646,6 @@ class GenericGraph(GenericGraph_pyx):
         if not hasattr(self, "_hash_labels") or self._hash_labels is None:
             self._hash_labels = self.weighted()
         return self._hash_labels
-
 
     @cached_method
     def __hash__(self):
@@ -18762,8 +18760,8 @@ class GenericGraph(GenericGraph_pyx):
             raise TypeError('both arguments must be of the same class')
 
         multiedges = self.allows_multiple_edges() or other.allows_multiple_edges()
-        loops      = self.allows_loops()          or other.allows_loops()
-        weighted   = self.weighted()              and other.weighted()
+        loops = self.allows_loops()          or other.allows_loops()
+        weighted = self.weighted()              and other.weighted()
 
         if self._directed:
             from sage.graphs.digraph import DiGraph
@@ -21015,7 +21013,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         from . import graph_plot
         layout_options = {key: kwds[key] for key in kwds.keys() if key in graph_plot.layout_options}
-        kwds           = {key: kwds[key] for key in kwds.keys() if key not in graph_plot.layout_options}
+        kwds = {key: kwds[key] for key in kwds.keys() if key not in graph_plot.layout_options}
         if pos3d is None:
             pos3d = self.layout(dim=3, **layout_options)
 

@@ -176,7 +176,8 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
             sage: [a.transport(g) for g in a.automorphism_group()]
             [{2, 3}*{1, 4}, {2, 3}*{1, 4}, {2, 3}*{1, 4}, {2, 3}*{1, 4}]
         """
-        from sage.groups.all import PermutationGroupElement, PermutationGroup
+        from sage.groups.perm_gps.constructor import PermutationGroupElement
+        from sage.groups.perm_gps.permgroup import PermutationGroup
         from sage.combinat.species.misc import change_support
 
         left, right = self._list
