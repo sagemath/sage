@@ -1778,6 +1778,20 @@ class LazyModuleElement(Element):
             sage: 1 * M is M
             True
 
+        TESTS:
+
+        Check that non-commutativity is taken into account::
+
+            sage: M = MatrixSpace(ZZ, 2)
+            sage: L.<z> = LazyPowerSeriesRing(M)
+            sage: f = L(lambda n: matrix([[1,n],[0,1]]))
+            sage: m = matrix([[1,0],[1,1]])
+            sage: (m * f - f * m)[1]
+            [-1  0]
+            [ 0  1]
+            sage: m * f[1] - f[1] * m
+            [-1  0]
+            [ 0  1]
         """
         # With the current design, the coercion model does not have
         # enough information to detect a priori that this method only
