@@ -720,6 +720,11 @@ class Stream_function(Stream_inexact):
     - ``approximate_order`` -- integer; a lower bound for the order
       of the stream
 
+    .. WARNING::
+
+        We assume for equality that ``function`` is a function in the
+        mathematical sense.
+
     EXAMPLES::
 
         sage: from sage.data_structures.stream import Stream_function
@@ -751,6 +756,43 @@ class Stream_function(Stream_inexact):
         self.get_coefficient = function
         super().__init__(is_sparse, true_order)
         self._approximate_order = approximate_order
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function
+            sage: f = Stream_function(lambda n: n, True, 0)
+            sage: g = Stream_function(lambda n: 1, False, 1)
+            sage: hash(f) == hash(g)
+            True
+        """
+        # We don't hash the function as it might not be hashable.
+        return hash(type(self))
+
+    def __eq__(self, other):
+        """
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function
+            sage: fun = lambda n: n
+            sage: f = Stream_function(fun, True, 0)
+            sage: g = Stream_function(fun, False, 0)
+            sage: h = Stream_function(lambda n: n, False, 0)
+            sage: f == g
+            True
+            sage: f == h
+            False
+        """
+        return isinstance(other, type(self)) and self.get_coefficient == other.get_coefficient
 
 
 class Stream_uninitialized(Stream_inexact):
@@ -1959,6 +2001,11 @@ class Stream_scalar(Stream_inexact):
     Base class for operators multiplying a coefficient stream by a
     scalar.
 
+    INPUT:
+
+    - ``series`` -- a :class:`Stream`
+    - ``scalar`` -- a non-zero, non-one scalar
+
     .. TODO::
 
         This does not inherit from :class:`Stream_unary`, because of
@@ -2051,7 +2098,7 @@ class Stream_rmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a scalar
+    - ``scalar`` -- a non-zero, non-one scalar
 
     EXAMPLES::
 
@@ -2092,7 +2139,7 @@ class Stream_lmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a scalar
+    - ``scalar`` -- a non-zero, non-one scalar
 
     EXAMPLES::
 
@@ -2323,6 +2370,11 @@ class Stream_map_coefficients(Stream_inexact):
     - ``series`` -- a :class:`Stream`
     - ``function`` -- a function that modifies the elements of the stream
 
+    .. WARNING::
+
+        We assume for equality that ``function`` is a function in the
+        mathematical sense.
+
     EXAMPLES::
 
         sage: from sage.data_structures.stream import (Stream_map_coefficients, Stream_function)
@@ -2436,7 +2488,7 @@ class Stream_map_coefficients(Stream_inexact):
 
 class Stream_shift(Stream):
     """
-    Operator for shifting a nonzero, nonexact stream.
+    Operator for shifting a non-zero, non-exact stream.
 
     Instances of this class share the cache with its input stream.
 
@@ -2551,7 +2603,7 @@ class Stream_shift(Stream):
 
 class Stream_truncated(Stream_inexact):
     """
-    Operator for shifting a nonzero, nonexact stream that has
+    Operator for shifting a non-zero, non-exact stream that has
     been shifted below its minimal valuation.
 
     Instances of this class share the cache with its input stream.
@@ -2758,7 +2810,7 @@ class Stream_truncated(Stream_inexact):
 
 class Stream_derivative(Stream_inexact):
     """
-    Operator for taking derivatives of a stream.
+    Operator for taking derivatives of a non-exact stream.
 
     INPUT:
 
