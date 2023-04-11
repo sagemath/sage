@@ -1044,7 +1044,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             self._is_immutable = False
             if not is_mutable or is_immutable:
                 self.set_immutable()
-            self._bbn = copy(C._bbn)
             return
 
         gen_dict = {}
@@ -4810,7 +4809,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             F = F + [s for s in self.faces()[k] if s in other.faces()[k]]
         return SimplicialComplex(F)
 
-    def bigraded_betti_numbers(self):
+    def bigraded_betti_numbers(self, base_ring=ZZ):
         r"""
         Return a dictionary of the bigraded Betti numbers of ``self``, 
         with keys `(-i, 2j)`.
@@ -4824,37 +4823,36 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: X = SimplicialComplex([[0,1],[1,2],[1,3],[2,3]])
             sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
             sage: X.bigraded_betti_numbers()
-            {(0, 0): 1, (-1,4 ): 2, (-1, 6): 1, (-2, 6): 1, (-2, 8): 1}
-            sage: Y.bigraded_betti_numbers()
-            {(0, 0): 1, (-1,4 ): 3, (-2, 6): 1, (-2, 8): 2, (-3, 10): 1}
+            {(0, 0): 1, (-1, 4): 2, (-1, 6): 1, (-2, 6): 1, (-2, 8): 1}
+            sage: Y.bigraded_betti_numbers(base_ring=QQ)
+            {(0, 0): 1, (-1, 4): 3, (-2, 6): 1, (-2, 8): 2, (-3, 10): 1}
         """
-        from sage.homology.homology_group import HomologyGroup
         if self._bbn is not None:
             return self._bbn
+
+        from sage.homology.homology_group import HomologyGroup
         L = self.vertices()
         n = len(L)
         B = {}
-        H0 = HomologyGroup(0, ZZ)
+        H0 = HomologyGroup(0, base_ring)
 
-        B[(0,0)] = ZZ.one()
+        B[(0,0)] = base_ring.one()
 
         for j in range(n+1):
             for x in combinations(L, j):
                 S = self.generated_subcomplex(x)
-                H = S.homology()
+                H = S.homology(base_ring=base_ring)
                 for k in range(j):
                     if j-k-1 in H and H[j-k-1] != H0:
                         ind = (-k, 2*j)
                         if ind not in B:
-                            B[ind] = ZZ.zero()
-                        B[ind] += len(H.get(j-k-1).gens())
+                            B[ind] = base_ring.zero()
+                        B[ind] += len(H[j-k-1].gens())
 
         self._bbn = B
         return self._bbn
 
-    def bigraded_betti_number(self, a, b):
-        if self._bbn is not None:
-            return self._bbn.get((a,b), ZZ.zero())
+    def bigraded_betti_number(self, a, b, base_ring=ZZ):
         r"""
         Return the bigraded Betti number indexed in the form `(-i, 2j)`.
 
@@ -4864,17 +4862,21 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: X = SimplicialComplex([[0,1],[1,2],[2,0],[1,2,3]])
-            sage: X.bigraded_betti_numbers()
-            {(0, 0): 1, (-1,4): 1, (-1, 6): 1, (-2, 8): 1}
             sage: X.bigraded_betti_number(-1, 6)
             1
+            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)
+            1
+            sage: X.bigraded_betti_numbers()
+            {(0, 0): 1, (-1, 4): 1, (-1, 6): 1, (-2, 8): 1}
+            sage: X.bigraded_betti_number(-2, 5)
+            0
         """
         if b % 2:
-            return ZZ.zero()
+            return base_ring.zero()
         if a == 0 and b == 0:
-            return ZZ.one()
+            return base_ring.one()
         if self._bbn is not None:
-            return self._bb.get((a,b), ZZ.zero())
+            return self._bbn.get((a,b), base_ring.zero())
             
         from sage.homology.homology_group import HomologyGroup
 
@@ -4882,17 +4884,17 @@ class SimplicialComplex(Parent, GenericCellComplex):
         b //= 2
         L = self.vertices()
         n = len(L)
-        H0 = HomologyGroup(0, ZZ)
+        H0 = HomologyGroup(0, base_ring)
 
         B = 0
 
         for x in combinations(L, b):
             S = self.generated_subcomplex(x)
-            H = S.homology()
+            H = S.homology(base_ring=base_ring)
             if b-a-1 in H and H[b-a-1] != H0:
                 B += len(H[b-a-1].gens())
 
-        return ZZ(B)
+        return base_ring(B)
             
 # Miscellaneous utility functions.
 
