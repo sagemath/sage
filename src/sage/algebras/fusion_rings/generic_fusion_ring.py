@@ -31,22 +31,23 @@ from sage.rings.qqbar import QQbar
 
 class FusionRing(CombinatorialFreeModule):
     @staticmethod
-    def __classcall_private__(cls, input_data, base_ring=ZZ, prefix=None, conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False, **kwds):
+    def __classcall_private__(cls, input_data, level=None, base_ring=ZZ, prefix=None, conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False, **kwds):
         """
         Select the correct parent depending on the given input.
         """
         if input_data in Groups:
             if prefix is None:
                 prefix = "s"
-            from sage.algebras.fusion_rings.fusion_double import FusionRingFromQuantumDouble
-            return FusionRingFromQuantumDouble(input_data, base_ring=base_ring, prefix=prefix, cyclotomic_order=cyclotomic_order, fusion_labels=fusion_labels, inject_variables=inject_variables)
-        elif isinstance(input_data, tuple):
+            from sage.algebras.fusion_rings.fusion_double import FusionDouble
+            return FusionDouble(input_data, base_ring=base_ring, prefix=prefix, cyclotomic_order=cyclotomic_order, fusion_labels=fusion_labels, inject_variables=inject_variables)
+        else:
             try:
-                ct = CartanType(input_data[:-1])
+                ct = CartanType(input_data)
             except ValueError:
-                raise ValueError("Input data cannot be parsed as a valid CartanType")
-            from sage.algebras.fusion_rings.fusion_ring_from_wcr import FusionRingFromWCR
-            return FusionRingFromWCR(ct, input_data[-1], conjugate=conjugate, base_ring=base_ring, prefix=prefix, cyclotomic_order=cyclotomic_order, fusion_labels=fusion_labels, inject_variables=inject_variables)
+                raise ValueError("Input data must be a group or an object that can be coerced into a CartanType")
+            assert level is not None, "Fusion level must be supplied when input data is a CartanType"
+            from sage.algebras.fusion_rings.verlinde_algebra import VerlindeAlgebra
+            return VerlindeAlgebra(ct, level, conjugate=conjugate, base_ring=base_ring, prefix=prefix, cyclotomic_order=cyclotomic_order, fusion_labels=fusion_labels, inject_variables=inject_variables)
 
     def __init__(self, names, base_ring=ZZ, prefix=None, conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False):
         self._names = names
@@ -123,7 +124,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: FusionRing(("A2", 1)).conj_matrix()
+            sage: FusionRing("A2", 1).conj_matrix()
             [1 0 0]
             [0 0 1]
             [0 1 0]
@@ -140,7 +141,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: B31 = FusionRing(("B3", 1))
+            sage: B31 = FusionRing("B3", 1)
             sage: Dp = B31.D_plus(); Dp
             2*zeta48^13 - 2*zeta48^5
             sage: Dm = B31.D_minus(); Dm
@@ -173,7 +174,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: E83 = FusionRing(("E8", 3), conjugate=True)
+            sage: E83 = FusionRing("E8", 3, conjugate=True)
             sage: [Dp, Dm] = [E83.D_plus(), E83.D_minus()]
             sage: Dp*Dm == E83.global_q_dimension()
             True
@@ -228,9 +229,9 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: FusionRing(("A2", 2)).field()
+            sage: FusionRing("A2", 2).field()
             Cyclotomic Field of order 60 and degree 16
-            sage: FusionRing(("B2", 2)).field()
+            sage: FusionRing("B2", 2).field()
             Cyclotomic Field of order 40 and degree 16
             sage: FusionRing(SymmetricGroup(3)).field()
             Cyclotomic Field of order 24 and degree 8
@@ -259,7 +260,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A13 = FusionRing(("A1", 3))
+            sage: A13 = FusionRing("A1", 3)
             sage: A13.fusion_labels("x")
             sage: fb = list(A13.basis()); fb
             [x0, x1, x2, x3]
@@ -333,7 +334,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A13 = FusionRing(("A1", 3), fusion_labels="a", inject_variables=True)
+            sage: A13 = FusionRing("A1", 3, fusion_labels="a", inject_variables=True)
             sage: A13.fvars_field()
             Cyclotomic Field of order 40 and degree 16
             sage: A13.field()
@@ -369,7 +370,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F41 = FusionRing(("F4", 1), fusion_labels="f", inject_variables=True)
+            sage: F41 = FusionRing("F4", 1, fusion_labels="f", inject_variables=True)
             sage: f1*f1
             f0 + f1
             sage: comp, sig = F41.get_braid_generators(f1, f0, 4, verbose=False)
@@ -449,7 +450,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A14 = FusionRing(("A1", 4))
+            sage: A14 = FusionRing("A1", 4)
             sage: A14.get_order()
             [(0, 0), (1/2, -1/2), (1, -1), (3/2, -3/2), (2, -2)]
             sage: A14.fusion_labels(["one", "two", "three", "four", "five"], inject_variables=True)
@@ -536,13 +537,13 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: FR = FusionRing(("A1", 4))
+            sage: FR = FusionRing("A1", 4)
             sage: FR.fusion_labels(['idd', 'one', 'two', 'three', 'four'], inject_variables=True)
             sage: fmats = FR.get_fmatrix()
             sage: fmats.find_orthogonal_solution(verbose=False)             # long time
             sage: len(FR._emap('sig_2k', (1, one, one, 5)))                 # long time
             13
-            sage: FR = FusionRing(("A1", 2))
+            sage: FR = FusionRing("A1", 2)
             sage: FR.fusion_labels("a", inject_variables=True)
             sage: fmats = FR.get_fmatrix()
             sage: fmats.find_orthogonal_solution(verbose=False)
@@ -607,7 +608,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A14 = FusionRing(("A1", 4))
+            sage: A14 = FusionRing("A1", 4)
             sage: A14.get_order()
             [(0, 0), (1/2, -1/2), (1, -1), (3/2, -3/2), (2, -2)]
             sage: A14.fusion_labels(["zero", "one", "two", "three", "four"], inject_variables=True)
@@ -640,7 +641,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A15 = FusionRing(("A1", 5))
+            sage: A15 = FusionRing("A1", 5)
             sage: A15.get_fmatrix()
             F-Matrix factory for The Fusion Ring of Type A1 and level 5 with Integer Ring coefficients
 
@@ -666,7 +667,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A15 = FusionRing(("A1", 5))
+            sage: A15 = FusionRing("A1", 5)
             sage: w = A15.get_order(); w
             [(0, 0), (1/2, -1/2), (1, -1), (3/2, -3/2), (2, -2), (5/2, -5/2)]
             sage: A15.set_order([w[k] for k in [0, 4, 1, 3, 5, 2]])
@@ -697,7 +698,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: FusionRing(("E6", 1)).global_q_dimension()
+            sage: FusionRing("E6", 1).global_q_dimension()
             3
 
         For the Drinfeld double, it is the square of the order of the underlying quantum group.
@@ -726,7 +727,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: [FusionRing((ct, k)).is_multiplicity_free() for ct in ("A1", "A2", "B2", "C3") for k in (1, 2, 3)]
+            sage: [FusionRing(ct, k).is_multiplicity_free() for ct in ("A1", "A2", "B2", "C3") for k in (1, 2, 3)]
             [True, True, True, True, True, False, True, True, False, True, False, False]
 
         EXAMPLES::
@@ -750,15 +751,15 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: G23 = FusionRing(("G2", 3))
+            sage: G23 = FusionRing("G2", 3)
             sage: G23.fusion_labels("g")
             sage: b = G23.basis().list(); b
             [g0, g1, g2, g3, g4, g5]
             sage: [(x, y, z) for x in b for y in b for z in b if G23.N_ijk(x, y, z) > 1]
             [(g3, g3, g3), (g3, g3, g4), (g3, g4, g3), (g4, g3, g3)]
-            sage: all(G23.N_ijk(x, y, z)==G23.N_ijk(y, z, x) for x in b for y in b for z in b)
+            sage: all(G23.N_ijk(x, y, z) == G23.N_ijk(y, z, x) for x in b for y in b for z in b)
             True
-            sage: all(G23.N_ijk(x, y, z)==G23.N_ijk(y, x, z) for x in b for y in b for z in b)
+            sage: all(G23.N_ijk(x, y, z) == G23.N_ijk(y, x, z) for x in b for y in b for z in b)
             True
 
         EXAMPLES::
@@ -823,7 +824,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: I = FusionRing(("E8", 2), conjugate=True)  # Ising MTC
+            sage: I = FusionRing("E8", 2, conjugate=True)  # Ising MTC
             sage: I.fusion_labels(["i0", "p", "s"], inject_variables=True)
             sage: I.r_matrix(s, s, i0) == I.root_of_unity(-1/8)
             True
@@ -873,7 +874,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A11 = FusionRing(("A1", 1))
+            sage: A11 = FusionRing("A1", 1)
             sage: A11.field()
             Cyclotomic Field of order 24 and degree 8
             sage: for n in [1..7]:
@@ -925,7 +926,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: G21 = FusionRing(("G2", 1))
+            sage: G21 = FusionRing("G2", 1)
             sage: b = G21.basis()
             sage: [G21.s_ijconj(x, y) for x in b for y in b]
             [1, -zeta60^14 + zeta60^6 + zeta60^4, -zeta60^14 + zeta60^6 + zeta60^4, -1]
@@ -940,17 +941,17 @@ class FusionRing(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: E62 = FusionRing(("E6", 2))
+            sage: E62 = FusionRing("E6", 2)
             sage: E62.fusion_labels("e", inject_variables=True)
             sage: E62.s_ij(e8, e1).conjugate() == E62.s_ijconj(e8, e1)
             True
-            sage: F41 = FusionRing(("F4", 1))
+            sage: F41 = FusionRing("F4", 1)
             sage: fmats = F41.get_fmatrix()
             sage: fmats.find_orthogonal_solution(verbose=False)
             sage: b = F41.basis()
             sage: all(F41.s_ijconj(x, y) == F41._basecoer(F41.s_ij(x, y, base_coercion=False).conjugate()) for x in b for y in b)
             True
-            sage: G22 = FusionRing(("G2", 2))
+            sage: G22 = FusionRing("G2", 2)
             sage: fmats = G22.get_fmatrix()
             sage: fmats.find_orthogonal_solution(verbose=False)         # long time (~11 s)
             sage: b = G22.basis()                                       # long time
@@ -976,7 +977,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: D91 = FusionRing(("D9", 1))
+            sage: D91 = FusionRing("D9", 1)
             sage: D91.s_matrix()
             [          1           1           1           1]
             [          1           1          -1          -1]
@@ -1029,7 +1030,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = FusionRing(("G2", 1))
+            sage: F = FusionRing("G2", 1)
             sage: tqo=F.total_q_order(); tqo
             zeta60^15 - zeta60^11 - zeta60^9 + 2*zeta60^3 + zeta60
             sage: tqo.is_real_positive()
@@ -1071,10 +1072,10 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A21 = FusionRing(("A2", 1))
+            sage: A21 = FusionRing("A2", 1)
             sage: A21.test_braid_representation(max_strands=4)
             True
-            sage: F41 = FusionRing(("F4", 1))            # long time
+            sage: F41 = FusionRing("F4", 1)            # long time
             sage: F41.test_braid_representation()        # long time
             True
         """
@@ -1112,7 +1113,7 @@ class FusionRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: B21 = FusionRing(("B2", 1))
+            sage: B21 = FusionRing("B2", 1)
             sage: [x.twist() for x in B21.basis().list()]
             [0, 1, 5/8]
             sage: [B21.root_of_unity(x.twist()) for x in B21.basis().list()]
@@ -1155,7 +1156,7 @@ class FusionRing(CombinatorialFreeModule):
 
             EXAMPLES::
 
-                sage: A22 = FusionRing(("A2", 2))
+                sage: A22 = FusionRing("A2", 2)
                 sage: x = A22(1, 0); x
                 A22(1,0)
                 sage: x.is_simple_object()
@@ -1181,7 +1182,7 @@ class FusionRing(CombinatorialFreeModule):
 
             EXAMPLES::
 
-                sage: B22 = FusionRing(("B2", 2))
+                sage: B22 = FusionRing("B2", 2)
                 sage: [(b.q_dimension())^2 for b in B22.basis()]
                 [1, 4, 5, 1, 5, 4]
 
@@ -1207,7 +1208,7 @@ class FusionRing(CombinatorialFreeModule):
 
             EXAMPLES::
 
-                sage: G21 = FusionRing(("G2", 1))
+                sage: G21 = FusionRing("G2", 1)
                 sage: [x.twist() for x in G21.basis()]
                 [0, 4/5]
                 sage: [G21.root_of_unity(x.twist()) for x in G21.basis()]
@@ -1216,11 +1217,11 @@ class FusionRing(CombinatorialFreeModule):
                 sage: zeta60^((4/5)*(60/2))
                 zeta60^14 - zeta60^4
 
-                sage: F42 = FusionRing(("F4", 2))
+                sage: F42 = FusionRing("F4", 2)
                 sage: [x.twist() for x in F42.basis()]
                 [0, 18/11, 2/11, 12/11, 4/11]
 
-                sage: E62 = FusionRing(("E6", 2))
+                sage: E62 = FusionRing("E6", 2)
                 sage: [x.twist() for x in E62.basis()]
                 [0, 26/21, 12/7, 8/21, 8/21, 26/21, 2/3, 4/7, 2/3]
 

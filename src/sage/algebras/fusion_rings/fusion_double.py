@@ -13,7 +13,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.sets.set import Set
 
-class FusionRingFromQuantumDouble(FusionRing):
+class FusionDouble(FusionRing):
     r"""
     This constructs the Fusion Ring of the modular tensor category of modules over the Drinfeld
     Double of a finite group. Usage is similar to :class:`FusionRing`::.

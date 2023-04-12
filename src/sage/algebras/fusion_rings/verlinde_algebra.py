@@ -17,7 +17,7 @@ from sage.combinat.root_system.weyl_characters import WeylCharacterRing
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 
-class FusionRingFromWCR(FusionRing):
+class VerlindeAlgebra(FusionRing):
     r"""
     Return the Fusion Ring (Verlinde Algebra) of level ``k``.
 
@@ -60,7 +60,7 @@ class FusionRingFromWCR(FusionRing):
 
     EXAMPLES::
 
-        sage: A22 = FusionRing(("A2", 2))
+        sage: A22 = FusionRing("A2", 2)
         sage: [f1, f2] = A22.fundamental_weights()
         sage: M = [A22(x) for x in [0*f1, 2*f1, 2*f2, f1+f2, f2, f1]]
         sage: [M[3] * x for x in M]
@@ -76,7 +76,7 @@ class FusionRingFromWCR(FusionRing):
     weights of the basis elements, then assign new labels to them while
     injecting them into the global namespace::
 
-        sage: B22 = FusionRing(("B2", 2))
+        sage: B22 = FusionRing("B2", 2)
         sage: b = [B22(x) for x in B22.get_order()]; b
         [B22(0,0), B22(1,0), B22(0,1), B22(2,0), B22(1,1), B22(0,2)]
         sage: [x.weight() for x in b]
@@ -187,9 +187,9 @@ class FusionRingFromWCR(FusionRing):
 
     Every fusion ring should pass this test::
 
-        sage: test_verlinde(FusionRing(("A2", 1)))
+        sage: test_verlinde(FusionRing("A2", 1))
         True
-        sage: test_verlinde(FusionRing(("B4", 2))) # long time (.56s)
+        sage: test_verlinde(FusionRing("B4", 2)) # long time (.56s)
         True
 
     As an exercise, the reader may verify the examples in
@@ -201,7 +201,7 @@ class FusionRingFromWCR(FusionRing):
     construct it as the conjugate of the `E_8` level 2
     :class:`FusionRing`::
 
-        sage: I = FusionRing(("E8", 2), conjugate=True)
+        sage: I = FusionRing("E8", 2, conjugate=True)
         sage: I.fusion_labels(["i0", "p", "s"], inject_variables=True)
         sage: b = I.basis().list(); b
         [i0, p, s]
@@ -270,7 +270,7 @@ class FusionRingFromWCR(FusionRing):
     of `SL(2, \ZZ)`. Let us confirm these identities for the Fibonacci MTC
     ``FusionRing("G2", 1)``::
 
-        sage: R = FusionRing(("G2", 1))
+        sage: R = FusionRing("G2", 1)
         sage: S = R.s_matrix(unitary=True)
         sage: T = R.twists_matrix()
         sage: C = R.conj_matrix()
@@ -300,7 +300,7 @@ class FusionRingFromWCR(FusionRing):
         """
         EXAMPLES::
 
-            sage: FusionRing(("A1", 3))
+            sage: FusionRing("A1", 3)
             The Fusion Ring of Type A1 and level 3 with Integer Ring coefficients
         """
         return self._WCR._repr_()
@@ -311,7 +311,7 @@ class FusionRingFromWCR(FusionRing):
 
         EXAMPLES::
 
-            sage: G22 = FusionRing(("G2", 2))
+            sage: G22 = FusionRing("G2", 2)
             sage: G22._test_verlinde()
         """
         tester = self._tester(**options)
@@ -333,7 +333,7 @@ class FusionRingFromWCR(FusionRing):
 
         EXAMPLES::
 
-            sage: G22 = FusionRing(("G2", 2))
+            sage: G22 = FusionRing("G2", 2)
             sage: G22._test_total_q_order()
         """
         tester = self._tester(**options)
@@ -347,7 +347,7 @@ class FusionRingFromWCR(FusionRing):
 
         EXAMPLES::
 
-            sage: G22 = FusionRing(("G2", 2))
+            sage: G22 = FusionRing("G2", 2)
             sage: G22.cartan_type()
             ['G', 2]
         """
@@ -360,7 +360,7 @@ class FusionRingFromWCR(FusionRing):
 
         EXAMPLES::
 
-            sage: G22 = FusionRing(("G2", 2))
+            sage: G22 = FusionRing("G2", 2)
             sage: G22.fundamental_weights()
             Finite family {1: (1, 0, -1), 2: (2, -1, -1)}
         """
@@ -372,7 +372,7 @@ class FusionRingFromWCR(FusionRing):
 
         EXAMPLES::
 
-            sage: B22 = FusionRing(('B2', 2))
+            sage: B22 = FusionRing('B2', 2)
             sage: B22.fusion_level()
             2
         """
@@ -391,10 +391,10 @@ class FusionRingFromWCR(FusionRing):
 
         EXAMPLES::
 
-            sage: B22 = FusionRing(('B2', 2))
+            sage: B22 = FusionRing('B2', 2)
             sage: B22.fusion_l()
             10
-            sage: D52 = FusionRing(('D5', 2))
+            sage: D52 = FusionRing('D5', 2)
             sage: D52.fusion_l()
             10
         """
@@ -413,7 +413,7 @@ class FusionRingFromWCR(FusionRing):
 
         EXAMPLES::
 
-            sage: A22 = FusionRing(("A2", 2))
+            sage: A22 = FusionRing("A2", 2)
             sage: b = A22.basis().list()
             sage: all(x*y == sum(A22.Nk_ij(x, y, k)*k for k in b) for x in b for y in b)
             True
@@ -446,7 +446,7 @@ class FusionRingFromWCR(FusionRing):
 
         EXAMPLES::
 
-            sage: G21 = FusionRing(("G2", 1))
+            sage: G21 = FusionRing("G2", 1)
             sage: b = G21.basis()
             sage: [G21.s_ij(x, y) for x in b for y in b]
             [1, -zeta60^14 + zeta60^6 + zeta60^4, -zeta60^14 + zeta60^6 + zeta60^4, -1]
@@ -489,7 +489,7 @@ class FusionRingFromWCR(FusionRing):
 
         EXAMPLES::
 
-            sage: R = FusionRing(("A1", 2))
+            sage: R = FusionRing("A1", 2)
             sage: c = R.virasoro_central_charge(); c
             3/2
             sage: Dp = R.D_plus(); Dp
@@ -563,7 +563,7 @@ class FusionRingFromWCR(FusionRing):
 
             EXAMPLES::
 
-                sage: F = FusionRing(("A1", 3))
+                sage: F = FusionRing("A1", 3)
                 sage: [x.twist() for x in F.basis()]
                 [0, 3/10, 4/5, 3/2]
                 sage: [x.ribbon(base_coercion=False) for x in F.basis()]
@@ -619,7 +619,7 @@ class FusionRingFromWCR(FusionRing):
 
             EXAMPLES::
 
-                sage: A21 = FusionRing(("A2", 1))
+                sage: A21 = FusionRing("A2", 1)
                 sage: [x.weight() for x in A21.basis().list()]
                 [(0, 0, 0), (2/3, -1/3, -1/3), (1/3, 1/3, -2/3)]
             """
