@@ -261,7 +261,6 @@ from sage.data_structures.stream import (
     Stream_dirichlet_invert,
     Stream_plethysm
 )
-from sage.misc.unknown import Unknown, UnknownError
 
 
 class LazyModuleElement(Element):
@@ -953,23 +952,30 @@ class LazyModuleElement(Element):
             False
 
             sage: fz = L(lambda n: 0, valuation=0)
-            sage: (L.zero() == fz) is None
-            True
-            sage: (fz == L.zero()) is None
-            True
+            sage: L.zero() == fz
+            False
+            sage: fz == L.zero()
+            False
 
-        With using :class:`Unknown`::
+        With using secure computations::
 
-            sage: L.options.use_unknown = True
+            sage: L.options.secure = True
             sage: fz = L(lambda n: 0, valuation=0)
-            sage: (L.zero() == fz) is None
-            True
-            sage: (fz == L.zero()) is None
-            True
-            sage: (fz != L.zero()) is None
-            True
+            sage: L.zero() == fz
+            Traceback (most recent call last):
+            ...
+            ValueError: undecidable
+            sage: fz == L.zero()
+            Traceback (most recent call last):
+            ...
+            ValueError: undecidable
+            sage: fz != L.zero()
+            Traceback (most recent call last):
+            ...
+            ValueError: undecidable
 
-        With using finite halting precision::
+        With using finite halting precision (which ignores
+        the ``secure`` option)::
 
             sage: L.options.halting_precision = 40
             sage: fz = L(lambda n: 0, valuation=0)
@@ -989,43 +995,20 @@ class LazyModuleElement(Element):
             True
         """
         if op is op_EQ:
-            if (not self.parent().options['use_unknown']
-                and self.parent().options['halting_precision'] is None):
-                return self._coeff_stream == other._coeff_stream
+            if self._coeff_stream == other._coeff_stream:
+                return True
 
-            if isinstance(self._coeff_stream, Stream_zero):
-                if isinstance(other._coeff_stream, Stream_zero):
-                    return True
-                if other._coeff_stream.is_undefined() or other._coeff_stream.is_nonzero():
-                    return False
-            elif isinstance(other._coeff_stream, Stream_zero):
-                if self._coeff_stream.is_undefined() or self._coeff_stream.is_nonzero():
-                    return False
-            elif isinstance(self._coeff_stream, Stream_exact):
-                if isinstance(other._coeff_stream, Stream_exact):
-                    return self._coeff_stream == other._coeff_stream
-                if self._coeff_stream != other._coeff_stream or other._coeff_stream.is_undefined():
-                    return False
-            elif isinstance(other._coeff_stream, Stream_exact):
-                if other._coeff_stream != self._coeff_stream or self._coeff_stream.is_undefined():
-                    return False
-            else:
-                # both streams are inexact, perhaps they are equal by
-                # construction
-                if self._coeff_stream == other._coeff_stream:
-                    return True
-                # perhaps their caches are different
-                if self._coeff_stream != other._coeff_stream:
-                    return False
-                if self._coeff_stream.is_undefined() or other._coeff_stream.is_undefined():
-                    return False
+            if (not self.parent().options['secure']
+                and self.parent().options['halting_precision'] is None):
+                return False
+
+            if self._coeff_stream != other._coeff_stream:
+                return False
 
             # undecidable otherwise
             prec = self.parent().options['halting_precision']
             if prec is None:
-                return None
-                #return Unknown
-                # raise UnknownError("undecidable")
+                raise ValueError("undecidable")
             # at least one of the approximate orders is not infinity
             m = min(self._coeff_stream._approximate_order,
                     other._coeff_stream._approximate_order)
@@ -1068,7 +1051,7 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(GF(2))                                  # optional - sage.rings.finite_rings
             sage: bool(z - z)                                                           # optional - sage.rings.finite_rings
             False
-            sage: f = 1/(1 - z)                                                         # optional - sage.rings.finite_rings
+            sage: f = 1 / (1 - z)                                                       # optional - sage.rings.finite_rings
             sage: bool(f)                                                               # optional - sage.rings.finite_rings
             True
             sage: M = L(lambda n: n, valuation=0); M                                    # optional - sage.rings.finite_rings
@@ -1131,7 +1114,6 @@ class LazyModuleElement(Element):
             sage: M.is_zero()
             True
 
-
         With finite halting precision, it can be considered to
         be indistinguishable from zero until possibly enough
         coefficients are computed::
@@ -1155,30 +1137,24 @@ class LazyModuleElement(Element):
             return False
 
         prec = self.parent().options['halting_precision']
-        if prec is None and not self.parent().options['use_unknown']:
+        if prec is None and not self.parent().options['secure']:
             return True
 
         if isinstance(self._coeff_stream, Stream_exact):
             return True
-        if self._coeff_stream.is_undefined():
+        if self._coeff_stream.is_uninitialized():
             return True
-        if self._coeff_stream._is_sparse:
-            cache = self._coeff_stream._cache
-            if any(cache[a] for a in cache):
-                return True
-        else:
-            if any(self._coeff_stream._cache):
-                return True
+        if self._coeff_stream.is_nonzero():
+            return True
 
         if prec is None:
-            return True
-            #raise UnknownError("undecidable")
+            raise ValueError("undecidable")
         v = self._coeff_stream._approximate_order
         return any(self[i] for i in range(v, v + prec))
 
     def is_nonzero(self):
-        """
-        Return ``True`` if ``self`` is known to be nonzero.
+        r"""
+        Return ``True`` if ``self`` is *known* to be nonzero.
 
         EXAMPLES:
 
@@ -1221,6 +1197,52 @@ class LazyModuleElement(Element):
         if self.parent().options['halting_precision'] is not None:
             return bool(self)
         return False
+
+    def prove_nonzero(self):
+        r"""
+        Generate coefficients until the result is shown to be nonzero
+        and returns the degree with the first nonzero coefficient.
+
+        .. WARNING::
+
+            If the stream is exactly zero, this will run forever.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(GF(5))
+            sage: g = L(lambda n: 0 if n < 50 else 1, valuation=2)
+            sage: g.prove_nonzero()
+            50
+
+            sage: L.zero().prove_nonzero()
+            Traceback (most recent call last):
+            ...
+            ValueError: trivially zero
+        """
+        if isinstance(self._coeff_stream, Stream_zero):
+            raise ValueError("trivially zero")
+
+        i = self._coeff_stream._approximate_order
+        while True:
+            if self[i]:
+                return i
+            i += 1
+
+    def is_trivial_zero(self):
+        r"""
+        Return whether ``self`` is known to be trivially zero.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(ZZ)
+            sage: f = L(lambda n: 0, valuation=2)
+            sage: f.is_trivial_zero()
+            False
+
+            sage: L.zero().is_trivial_zero()
+            True
+        """
+        return isinstance(self._coeff_stream, Stream_zero)
 
     def define(self, s):
         r"""
@@ -1532,9 +1554,9 @@ class LazyModuleElement(Element):
             O(z^-3)
 
             sage: s = L.undefined(valuation=0); s
-            Uninitialized Lazy Laurent Series
+            Uninitialized Lazy Series
             sage: (s + s^2).map_coefficients(lambda f: f % 3)
-            Uninitialized Lazy Laurent Series
+            Uninitialized Lazy Series
             sage: L(0)
             0
 
@@ -1547,8 +1569,8 @@ class LazyModuleElement(Element):
         """
         if isinstance(self._coeff_stream, Stream_zero):
             return '0'
-        if self._coeff_stream.is_undefined():
-            return 'Uninitialized Lazy Laurent Series'
+        if self._coeff_stream.is_uninitialized():
+            return 'Uninitialized Lazy Series'
         return self._format_series(repr)
 
     def _latex_(self):
@@ -1600,7 +1622,7 @@ class LazyModuleElement(Element):
         from sage.misc.latex import latex
         if isinstance(self._coeff_stream, Stream_zero):
             return latex('0')
-        if self._coeff_stream.is_undefined():
+        if self._coeff_stream.is_uninitialized():
             return latex("Undef")
         return self._format_series(latex)
 
@@ -1614,14 +1636,17 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(e)                                      # optional - sage.combinat
             sage: L.options.display_length = 3                                          # optional - sage.combinat
             sage: ascii_art(1 / (1 - e[1]*z))                                           # optional - sage.combinat
-            e[] + e[1]*z + e[1, 1]*z^2 + O(e[]*z^3)
+            e[] + e[1]*z + e[1, 1]*z^2 + O(e[]*z^3
+            sage: x = L.undefined(valuation=0)                                          # optional - sage.combinat
+            sage: ascii_art(x + x^2 - 5)                                                # optional - sage.combinat
+            Uninitialized Lazy Series
             sage: L.options._reset()                                                    # optional - sage.combinat
         """
         from sage.typeset.ascii_art import ascii_art, AsciiArt
         if isinstance(self._coeff_stream, Stream_zero):
             return AsciiArt('0')
-        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._target is None:
-            return AsciiArt('Uninitialized Lazy Laurent Series')
+        if self._coeff_stream.is_uninitialized():
+            return AsciiArt('Uninitialized Lazy Series')
         return self._format_series(ascii_art, True)
 
     def _unicode_art_(self):
@@ -1635,13 +1660,16 @@ class LazyModuleElement(Element):
             sage: L.options.display_length = 3                                          # optional - sage.combinat
             sage: unicode_art(1 / (1 - e[1]*z))                                         # optional - sage.combinat
             e[] + e[1]*z + e[1, 1]*z^2 + O(e[]*z^3)
+            sage: x = L.undefined(valuation=0)                                          # optional - sage.combinat
+            sage: ascii_art(x + x^2 - 5)                                                # optional - sage.combinat
+            Uninitialized Lazy Series
             sage: L.options._reset()                                                    # optional - sage.combinat
         """
         from sage.typeset.unicode_art import unicode_art, UnicodeArt
         if isinstance(self._coeff_stream, Stream_zero):
             return UnicodeArt('0')
-        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._target is None:
-            return UnicodeArt('Uninitialized Lazy Laurent Series')
+        if self._coeff_stream.is_uninitialized():
+            return UnicodeArt('Uninitialized Lazy Series')
         return self._format_series(unicode_art, True)
 
     def change_ring(self, ring):
@@ -1923,12 +1951,14 @@ class LazyModuleElement(Element):
 
         Different scalars potentially give different series::
 
-            sage: (2 * M == 3 * M) is None
-            True
+            sage: 2 * M == 3 * M
+            False
 
-            sage: L.options.use_unknown = True
-            sage: (2 * M == 3 * M) is None
-            True
+            sage: L.options.secure = True
+            sage: 2 * M == 3 * M
+            Traceback (most recent call last):
+            ...
+            ValueError: undecidable
 
             sage: L.options.halting_precision = 30
             sage: 2 * M == 3 * M

@@ -676,7 +676,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
               - constant_length:   3
               - display_length:    7
               - halting_precision: None
-              - use_unknown:     True
+              - secure:            False
 
             sage: LLS.options.display_length
             7
@@ -712,9 +712,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         halting_precision = dict(default=None,
                                  description='the number of coefficients, beginning with the approximate valuation, to check in equality tests',
                                  checker=lambda x: x is None or x in ZZ and x > 0)
-        use_unknown = dict(default=True,
-                             description='whether to raise an error when a comparison is unknown',
-                             checker=lambda x: x is True or x is False)
+        secure = dict(default=False,
+                      description='whether to raise an error when a comparison is unknown',
+                      checker=lambda x: x is True or x is False)
 
     @cached_method
     def one(self):
@@ -1162,8 +1162,15 @@ class LazyLaurentSeriesRing(LazySeriesRing):
     be equal are considered to be different::
 
         sage: f = L(lambda n: 0, valuation=0)
-        sage: (f == 0) is None
-        True
+        sage: f == 0
+        False
+
+        sage: f = L(constant=1, valuation=0).derivative(); f
+        1 + 2*z + 3*z^2 + 4*z^3 + 5*z^4 + 6*z^5 + 7*z^6 + O(z^7)
+        sage: g = L(lambda n: (n+1), valuation=0); g
+        1 + 2*z + 3*z^2 + 4*z^3 + 5*z^4 + 6*z^5 + 7*z^6 + O(z^7)
+        sage: f == g
+        False
 
     .. WARNING::
 
@@ -1171,8 +1178,9 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         ``f != g`` returning ``True`` might not mean that the two
         series are actually different::
 
+            sage: f = L(lambda n: 0, valuation=0)
             sage: g = L.zero()
-            sage: (f != g) is None
+            sage: f != g
             True
 
         This can be verified by :meth:`~sage.rings.lazy_series.is_nonzero()`,
@@ -1192,23 +1200,25 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         False
 
     We additionally provide two other methods of performing comparisons.
-    The first is returning an :class:`Unknown` and the second uses a check
+    The first is raising a ``ValueError`` and the second uses a check
     up to a (user set) finite precision. These behaviors are set using the
-    options ``use_unknown`` and ``halting_precision``. In particular,
+    options ``secure`` and ``halting_precision``. In particular,
     this applies to series that are not specified by a finite number
     of initial coefficients and a constant for the remaining coefficients.
     Equality checking will depend on the coefficients which have
     already been computed. If this information is not enough to
-    check that two series are different, then if ``L.options.use_unknown``
-    is set to ``True``, then we return an :class:`Unknown`::
+    check that two series are different, then if ``L.options.secure``
+    is set to ``True``, then we raise a ``ValueError``::
 
-        sage: L.options.use_unknown = True
+        sage: L.options.secure = True
         sage: f = 1 / (z + z^2); f
         z^-1 - 1 + z - z^2 + z^3 - z^4 + z^5 + O(z^6)
         sage: f2 = f * 2  # currently no coefficients computed
         sage: f3 = f * 3  # currently no coefficients computed
-        sage: (f2 == f3) is None
-        True
+        sage: f2 == f3
+        Traceback (most recent call last):
+        ...
+        ValueError: undecidable
         sage: f2  # computes some of the coefficients of f2
         2*z^-1 - 2 + 2*z - 2*z^2 + 2*z^3 - 2*z^4 + 2*z^5 + O(z^6)
         sage: f3  # computes some of the coefficients of f3
@@ -1216,16 +1226,22 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         sage: f2 == f3
         False
         sage: f2a = f + f
-        sage: (f2 == f2a) is None
-        True
+        sage: f2 == f2a
+        Traceback (most recent call last):
+        ...
+        ValueError: undecidable
         sage: zf = L(lambda n: 0, valuation=0)
-        sage: (zf == 0) is None
-        True
+        sage: zf == 0
+        Traceback (most recent call last):
+        ...
+        ValueError: undecidable
 
     For boolean checks, an error is raised when it is not known to be nonzero::
 
         sage: bool(zf)
-        True
+        Traceback (most recent call last):
+        ...
+        ValueError: undecidable
 
     If the halting precision is set to a finite number `p` (for unlimited
     precision, it is set to ``None``), then it will check up to `p` values
