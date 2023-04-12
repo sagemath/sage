@@ -59,7 +59,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
     value is `p`-divisible, where the last vector returned was `v`.  For
     an initial call, no `v` needs to be passed.
 
-    Returns vectors whose last non-zero entry is normalized to 0 or 1 (so no
+    Return vectors whose last non-zero entry is normalized to 0 or 1 (so no
     lines are counted repeatedly).  The ordering is by increasing the
     first non-normalized entry.  If we have tested all (lines of)
     vectors, then return None.

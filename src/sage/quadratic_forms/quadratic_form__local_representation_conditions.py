@@ -69,9 +69,8 @@ class QuadraticFormLocalRepresentationConditions():
         False
         sage: L = [m  for m in range(-5, 25)  if Q2.is_locally_represented_number(m)]
         sage: L1 = [0] + [m for m in range(1, 25)
-        ....:             if len([p
-        ....:                     for p in prime_factors(squarefree_part(ZZ(m)))
-        ....:                     if (p % 4) == 3]) % 2 == 0]
+        ....:             if len([p for p in prime_factors(squarefree_part(ZZ(m)))
+        ....:                       if (p % 4) == 3]) % 2 == 0]
         sage: L == L1
         True
         sage: L

@@ -93,7 +93,7 @@ def gamma__exact(n):
 
 def zeta__exact(n):
     r"""
-    Returns the exact value of the Riemann Zeta function
+    Return the exact value of the Riemann Zeta function
 
     The argument must be a critical value, namely either positive even
     or negative odd.
@@ -200,7 +200,7 @@ def QuadraticBernoulliNumber(k, d):
 
 def quadratic_L_function__exact(n, d):
     r"""
-    Returns the exact value of a quadratic twist of the Riemann Zeta function
+    Return the exact value of a quadratic twist of the Riemann Zeta function
     by `\chi_d(x) = \left(\frac{d}{x}\right)`.
 
     The input `n` must be a critical value.

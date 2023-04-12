@@ -1511,7 +1511,7 @@ class BinaryQF(SageObject):
 
     def small_prime_value(self, Bmax=1000):
         r"""
-        Returns a prime represented by this (primitive positive definite) binary form.
+        Return a prime represented by this (primitive positive definite) binary form.
 
         INPUT:
 

@@ -111,7 +111,7 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
 
 def Pall_mass_density_at_odd_prime(self, p):
     r"""
-    Returns the local representation density of a form (for
+    Return the local representation density of a form (for
     representing itself) defined over `\ZZ`, at some prime `p>2`.
 
     REFERENCES:
@@ -169,7 +169,7 @@ def Pall_mass_density_at_odd_prime(self, p):
 
 def Watson_mass_at_2(self):
     """
-    Returns the local mass of the quadratic form when `p=2`, according
+    Return the local mass of the quadratic form when `p=2`, according
     to Watson's Theorem 1 of "The 2-adic density of a quadratic form"
     in Mathematika 23 (1976), pp 94--106.
 
@@ -253,7 +253,7 @@ def Watson_mass_at_2(self):
 
 def Kitaoka_mass_at_2(self):
     """
-    Returns the local mass of the quadratic form when `p=2`, according
+    Return the local mass of the quadratic form when `p=2`, according
     to Theorem 5.6.3 on pp108--9 of Kitaoka's Book "The Arithmetic of
     Quadratic Forms".
 

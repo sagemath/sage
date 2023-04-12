@@ -355,7 +355,7 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
 
 def jordan_blocks_in_unimodular_list_by_scale_power(self, p):
     """
-    Returns a list of Jordan components, whose component at index `i`
+    Return a list of Jordan components, whose component at index `i`
     should be scaled by the factor `p^i`.
 
     This is only defined for integer-valued quadratic forms

@@ -112,7 +112,7 @@ def parity(self, allow_rescaling_flag=True):
 
 def is_even(self, allow_rescaling_flag=True):
     """
-    Returns true iff after rescaling by some appropriate factor, the
+    Return true iff after rescaling by some appropriate factor, the
     form represents no odd integers.  For more details, see :meth:`parity`.
 
     Requires that `Q` is defined over ``ZZ``.
@@ -132,7 +132,7 @@ def is_even(self, allow_rescaling_flag=True):
 
 def is_odd(self, allow_rescaling_flag=True):
     """
-    Returns true iff after rescaling by some appropriate factor, the
+    Return true iff after rescaling by some appropriate factor, the
     form represents some odd integers.  For more details, see :meth:`parity`.
 
     Requires that `Q` is defined over ``ZZ``.
@@ -152,7 +152,7 @@ def is_odd(self, allow_rescaling_flag=True):
 
 def conway_species_list_at_odd_prime(self, p):
     """
-    Returns an integer called the 'species' which determines the type
+    Return an integer called the 'species' which determines the type
     of the orthogonal group over the finite field `F_p`.
 
     This assumes that the given quadratic form is a unimodular Jordan
@@ -220,7 +220,7 @@ def conway_species_list_at_odd_prime(self, p):
 
 def conway_species_list_at_2(self):
     """
-    Returns an integer called the 'species' which determines the type
+    Return an integer called the 'species' which determines the type
     of the orthogonal group over the finite field `F_p`.
 
     This assumes that the given quadratic form is a unimodular Jordan
@@ -545,7 +545,7 @@ def conway_standard_p_mass(self, p):
 
 def conway_standard_mass(self):
     """
-    Returns the infinite product of the standard mass factors.
+    Return the infinite product of the standard mass factors.
 
     OUTPUT: a rational number > 0
 

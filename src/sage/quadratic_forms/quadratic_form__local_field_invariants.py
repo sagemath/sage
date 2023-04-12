@@ -337,7 +337,7 @@ def signature_vector(self):
 
 def signature(self):
     """
-    Returns the signature of the quadratic form, defined as:
+    Return the signature of the quadratic form, defined as:
 
        number of positive eigenvalues - number of negative eigenvalues
 

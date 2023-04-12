@@ -115,7 +115,7 @@ def cholesky_decomposition(self, bit_prec = 53):
 
 def vectors_by_length(self, bound):
     """
-    Returns a list of short vectors together with their values.
+    Return a list of short vectors together with their values.
 
     This is a naive algorithm which uses the Cholesky decomposition,
     but does not use the LLL-reduction algorithm.

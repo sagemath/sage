@@ -13,13 +13,15 @@ def QFEvaluateVector(Q, v):
 
             Q' = v^t * Q * v.
 
-    Note: This is a Python wrapper for the fast evaluation routine
-    :func:`QFEvaluateVector_cdef`.  This routine is for internal use and is
-    called more conveniently as Q(M).
+    .. NOTE::
+
+        This is a Python wrapper for the fast evaluation routine
+        :func:`QFEvaluateVector_cdef`.  This routine is for internal use and is
+        called more conveniently as Q(M).
 
     INPUT:
 
-    - `Q` -- :class:`QuadraticForm` over a base ring `R`
+    - ``Q`` -- :class:`QuadraticForm` over a base ring `R`
     - ``v`` -- a tuple or list (or column matrix) of ``Q.dim()`` elements of `R`
 
     OUTPUT:
@@ -65,27 +67,27 @@ cdef QFEvaluateVector_cdef(Q, v):
 
 
 def QFEvaluateMatrix(Q, M, Q2):
-    """
-    Evaluate this quadratic form Q on a matrix M of elements coercible
+    r"""
+    Evaluate this quadratic form Q on a matrix `M` of elements coercible
     to the base ring of the quadratic form, which in matrix notation
     is given by:
 
-            Q2 = M^t * Q * M.
+    .. MATH::
+
+            Q_2 = M^t * Q * M.
 
     Note: This is a Python wrapper for the fast evaluation routine
     :func:`QFEvaluateMatrix_cdef`.  This routine is for internal use and is
-    called more conveniently as Q(M).  The inclusion of Q2 as an
+    called more conveniently as ``Q(M)``.  The inclusion of Q2 as an
     argument is to avoid having to create a :func:`QuadraticForm` here, which
     for now creates circular imports.
 
     INPUT:
 
-    - ``Q`` -- QuadraticForm over a base ring `R`
-    - ``M`` -- a Q.dim() x Q2.dim() matrix of elements of `R`
+    - ``Q`` -- :class:`QuadraticForm` over a base ring `R`
+    - ``M`` -- a ``Q.dim()`` `\times` ``Q2.dim()`` matrix of elements of `R`
 
-    OUTPUT:
-
-    - Q2 -- a QuadraticForm over R
+    OUTPUT: a :class:`QuadraticForm` over `R`
 
     EXAMPLES::
 
@@ -112,7 +114,7 @@ def QFEvaluateMatrix(Q, M, Q2):
 
 cdef QFEvaluateMatrix_cdef(Q, M, Q2):
     """
-    Routine to quickly evaluate a quadratic form Q on a matrix M.  See
+    Routine to quickly evaluate a quadratic form Q on a matrix `M`.  See
     the Python wrapper function :func:`QFEvaluateMatrix` above for details.
 
     """
