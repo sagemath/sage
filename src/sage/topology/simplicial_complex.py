@@ -4836,7 +4836,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         B = {}
         H0 = HomologyGroup(0, base_ring)
 
-        B[(0,0)] = base_ring.one()
+        B[(0,0)] = ZZ.one()
 
         for j in range(n+1):
             for x in combinations(L, j):
@@ -4846,7 +4846,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     if j-k-1 in H and H[j-k-1] != H0:
                         ind = (-k, 2*j)
                         if ind not in B:
-                            B[ind] = base_ring.zero()
+                            B[ind] = ZZ.zero()
                         B[ind] += len(H[j-k-1].gens())
 
         if self._bbn is not None:
@@ -4898,7 +4898,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             if b-a-1 in H and H[b-a-1] != H0:
                 B += len(H[b-a-1].gens())
 
-        res = base_ring(B)
+        res = ZZ(B)
 
         if self._bbn is not None:
             if base_ring in self._bbn:
