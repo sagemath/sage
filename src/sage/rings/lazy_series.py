@@ -939,21 +939,21 @@ class LazyModuleElement(Element):
             False
 
             sage: fz = L(lambda n: 0, valuation=0)
-            sage: L.zero() == fz
-            False
-            sage: fz == L.zero()
-            False
+            sage: (L.zero() == fz) is None
+            True
+            sage: (fz == L.zero()) is None
+            True
 
         With using :class:`Unknown`::
 
             sage: L.options.use_unknown = True
             sage: fz = L(lambda n: 0, valuation=0)
-            sage: L.zero() == fz
-            Unknown
-            sage: fz == L.zero()
-            Unknown
-            sage: fz != L.zero()
-            Unknown
+            sage: (L.zero() == fz) is None
+            True
+            sage: (fz == L.zero()) is None
+            True
+            sage: (fz != L.zero()) is None
+            True
 
         With using finite halting precision::
 
@@ -1009,7 +1009,8 @@ class LazyModuleElement(Element):
             # undecidable otherwise
             prec = self.parent().options['halting_precision']
             if prec is None:
-                return Unknown
+                return None
+                #return Unknown
                 # raise UnknownError("undecidable")
             # at least one of the approximate orders is not infinity
             m = min(self._coeff_stream._approximate_order,
@@ -1018,7 +1019,7 @@ class LazyModuleElement(Element):
 
         if op is op_NE:
             ret = (self == other)
-            if ret is Unknown:
+            if ret is None:
                 return ret
             return not ret
 
@@ -1165,7 +1166,8 @@ class LazyModuleElement(Element):
                 return True
 
         if prec is None:
-            raise UnknownError("undecidable")
+            return True
+            #raise UnknownError("undecidable")
         v = self._coeff_stream._approximate_order
         return any(self[i] for i in range(v, v + prec))
 
@@ -1918,12 +1920,12 @@ class LazyModuleElement(Element):
 
         Different scalars potentially give different series::
 
-            sage: 2 * M == 3 * M
-            False
+            sage: (2 * M == 3 * M) is None
+            True
 
             sage: L.options.use_unknown = True
-            sage: 2 * M == 3 * M
-            Unknown
+            sage: (2 * M == 3 * M) is None
+            True
 
             sage: L.options.halting_precision = 30
             sage: 2 * M == 3 * M
