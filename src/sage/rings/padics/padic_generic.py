@@ -491,7 +491,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         if not self.is_field() and print_mode is None:
             return self
         if print_mode is None:
-            return self.change(field=False)
+            return self.change(field=False, check=False)
         else:
             from sage.misc.superseded import deprecation
             deprecation(23227, "Use the change method if you want to change print options in integer_ring()")
