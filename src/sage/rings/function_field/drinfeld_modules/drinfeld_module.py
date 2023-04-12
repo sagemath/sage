@@ -1589,7 +1589,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         where `g_i` is the `i`-th coefficient of the generator of self.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: A = GF(3)['T']
             sage: K.<T> = Frac(A)
