@@ -12,9 +12,8 @@ cardinality).
 In the following code, sets are represented as integers, where the `i`-th bit is
 set if element `i` belongs to the set.
 """
-
-from libc.stdint cimport uint8_t
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free
+
 
 cdef class FastDigraph:
 
@@ -53,7 +52,7 @@ cdef class FastDigraph:
         self.n = D.order()
         self.graph = <int *>check_calloc(self.n, sizeof(int))
 
-        cdef int i, j
+        cdef int i
         cdef int tmp
 
         # When the vertices are not consecutive integers
