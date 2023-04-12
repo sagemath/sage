@@ -160,8 +160,10 @@ def conway_species_list_at_odd_prime(self, p):
     number is always positive, otherwise it may be positive or
     negative (or zero, but that is considered positive by convention).
 
-    Note: The species of a zero dimensional form is always 0+, so we
-    interpret the return value of zero as positive here! =)
+    .. NOTE:
+
+        The species of a zero dimensional form is always 0+, so we
+        interpret the return value of zero as positive here! =)
 
     INPUT:
 
@@ -228,8 +230,10 @@ def conway_species_list_at_2(self):
     number is always positive, otherwise it may be positive or
     negative.
 
-    Note: The species of a zero dimensional form is always 0+, so we
-    interpret the return value of zero as positive here! =)
+    .. NOTE::
+
+        The species of a zero dimensional form is always 0+, so we
+        interpret the return value of zero as positive here! =)
 
     OUTPUT: a list of integers
 
@@ -307,10 +311,10 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
     the prime `p=2`.  This is an invariant defined (mod 8), ad.
 
     This assumes that the form is given as a block diagonal form with
-    unimodular blocks of size <= 2 and the 1x1 blocks are all in the upper
+    unimodular blocks of size `\leq 2` and the `1 \times 1` blocks are all in the upper
     leftmost position.
 
-    OUTPUT: an integer 0 <= x <= 7
+    OUTPUT: an integer `0 \leq x \leq 7`
 
     EXAMPLES::
 

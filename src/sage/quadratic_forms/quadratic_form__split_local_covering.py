@@ -113,7 +113,7 @@ def cholesky_decomposition(self, bit_prec = 53):
 
 
 def vectors_by_length(self, bound):
-    """
+    r"""
     Return a list of short vectors together with their values.
 
     This is a naive algorithm which uses the Cholesky decomposition,
@@ -121,7 +121,7 @@ def vectors_by_length(self, bound):
 
     INPUT:
 
-    - ``bound`` -- an integer >= 0
+    - ``bound`` -- an integer `\geq 0`
 
     OUTPUT:
 
@@ -266,14 +266,18 @@ def complementary_subform_to_vector(self, v):
     """
     Find the `(n-1)`-dimensional quadratic form orthogonal to the vector `v`.
 
-    Note: This is usually not a direct summand!
+    .. NOTE::
 
-    Technical Notes: There is a minor difference in the cancellation
-    code here (form the C++ version) since the notation Q `[i,j]` indexes
-    coefficients of the quadratic polynomial here, not the symmetric
-    matrix.  Also, it produces a better splitting now, for the full
-    lattice (as opposed to a sublattice in the C++ code) since we
-    now extend `v` to a unimodular matrix.
+        This is usually not a direct summand!
+
+    .. NOTE::
+
+        There is a minor difference in the cancellation
+        code here (form the C++ version) since the notation Q `[i,j]` indexes
+        coefficients of the quadratic polynomial here, not the symmetric
+        matrix.  Also, it produces a better splitting now, for the full
+        lattice (as opposed to a sublattice in the C++ code) since we
+        now extend `v` to a unimodular matrix.
 
     INPUT:
 

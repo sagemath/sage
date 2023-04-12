@@ -339,7 +339,7 @@ def Kitaoka_mass_at_2(self):
 
 
 def mass_at_two_by_counting_mod_power(self, k):
-    """
+    r"""
     Computes the local mass at `p=2` assuming that it's stable (mod `2^k`).
 
     .. NOTE::
@@ -352,7 +352,7 @@ def mass_at_two_by_counting_mod_power(self, k):
 
     INPUT:
 
-    - ``k`` -- an integer >= 1
+    - ``k`` -- an integer `\geq 1`
 
     OUTPUT: a rational number
 

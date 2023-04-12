@@ -491,9 +491,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         - ``p`` -- a positive prime number or "infinity"
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -613,8 +611,8 @@ def local_representation_conditions(self, recompute_flag=False, silent_flag=Fals
     r"""
     .. WARNING::
 
-        THIS ONLY WORKS CORRECTLY FOR FORMS IN >=3 VARIABLES,
-        WHICH ARE LOCALLY UNIVERSAL AT ALMOST ALL PRIMES!
+        This only works correctly for forms in >=3 variables,
+        which are locally universal at almost all primes!
 
     This class finds the local conditions for a number to be integrally
     represented by an integer-valued quadratic form.  These conditions

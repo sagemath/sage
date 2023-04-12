@@ -19,13 +19,13 @@ Variable Substitution, Multiplication, Division, Scaling
 
 
 def swap_variables(self, r, s, in_place=False):
-    """
+    r"""
     Switch the variables `x_r` and `x_s` in the quadratic form
     (replacing the original form if the ``in_place`` flag is True).
 
     INPUT:
 
-    - ``r``, ``s`` -- integers >= 0
+    - ``r``, ``s`` -- integers `\geq 0`
 
     OUTPUT:
 
@@ -74,7 +74,7 @@ def swap_variables(self, r, s, in_place=False):
 
 
 def multiply_variable(self, c, i, in_place=False):
-    """
+    r"""
     Replace the variables `x_i` by `c*x_i` in the quadratic form
     (replacing the original form if the ``in_place`` flag is True).
 
@@ -85,7 +85,7 @@ def multiply_variable(self, c, i, in_place=False):
 
     - ``c`` -- an element of ``self.base_ring()``
 
-    - ``i`` -- an integer >= 0
+    - ``i`` -- an integer `\geq 0`
 
     OUTPUT: a :class:`QuadraticForm` (by default, otherwise none)
 
@@ -116,7 +116,7 @@ def multiply_variable(self, c, i, in_place=False):
 
 
 def divide_variable(self, c, i, in_place=False):
-    """
+    r"""
     Replace the variables `x_i` by `(x_i)/c` in the quadratic form
     (replacing the original form if the ``in_place`` flag is True).
 
@@ -128,7 +128,7 @@ def divide_variable(self, c, i, in_place=False):
 
     - ``c`` -- an element of ``self.base_ring()``
 
-    - ``i`` -- an integer >= 0
+    - ``i`` -- an integer `\geq 0`
 
     OUTPUT:
 
@@ -213,13 +213,13 @@ def scale_by_factor(self, c, change_value_ring_flag=False):
 
 
 def extract_variables(QF, var_indices):
-    """
+    r"""
     Extract the variables (in order) whose indices are listed in
     ``var_indices``, to give a new quadratic form.
 
     INPUT:
 
-    - ``var_indices`` -- a list of integers >= 0
+    - ``var_indices`` -- a list of integers `\geq 0`
 
     OUTPUT: a :class:`QuadraticForm`
 
@@ -244,15 +244,15 @@ def extract_variables(QF, var_indices):
 
 
 def elementary_substitution(self, c, i, j, in_place=False):  # CHECK THIS!!!
-    """
-    Perform the substitution `x_i --> x_i + c*x_j` (replacing the
+    r"""
+    Perform the substitution `x_i \longmapsto x_i + c*x_j` (replacing the
     original form if the ``in_place`` flag is True).
 
     INPUT:
 
     - ``c`` -- an element of ``self.base_ring()``
 
-    - ``i``, ``j`` -- integers >= 0
+    - ``i``, ``j`` -- integers `\geq 0`
 
     OUTPUT:
 
@@ -317,8 +317,8 @@ def elementary_substitution(self, c, i, j, in_place=False):  # CHECK THIS!!!
 
 
 def add_symmetric(self, c, i, j, in_place=False):
-    """
-    Perform the substitution `x_j --> x_j + c*x_i`, which has the
+    r"""
+    Perform the substitution `x_j \longmapsto x_j + c*x_i`, which has the
     effect (on associated matrices) of symmetrically adding
     `c * j`-th row/column to the `i`-th row/column.
 
@@ -330,7 +330,7 @@ def add_symmetric(self, c, i, j, in_place=False):
 
     - ``c`` -- an element of ``self.base_ring()``
 
-    - ``i``, ``j`` -- integers >= 0
+    - ``i``, ``j`` -- integers `\geq 0`
 
     OUTPUT:
 

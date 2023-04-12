@@ -36,7 +36,7 @@ def count_modp_solutions__by_Gauss_sum(self, p, m):
 
     - ``m`` -- an integer
 
-    OUTPUT: an integer >= 0
+    OUTPUT: an integer `\geq 0`
 
     EXAMPLES::
 

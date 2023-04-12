@@ -117,8 +117,12 @@ class TernaryQF(SageObject):
         return self._a, self._b, self._c, self._r, self._s, self._t
 
     def coefficient(self, n):
-        """
-        Return the ``n``-th coefficient of the ternary quadratic form, with ``0<=n<=5``.
+        r"""
+        Return the `n`-th coefficient of the ternary quadratic form.
+
+        INPUT:
+
+        - ``n`` -- integer with `0 \leq n \leq 5`.
 
         EXAMPLES::
 

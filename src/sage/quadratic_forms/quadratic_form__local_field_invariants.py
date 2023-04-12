@@ -294,7 +294,7 @@ def signature_vector(self):
 
     for the symmetric matrix associated to Q.
 
-    OUTPUT: a triple of integers >= 0
+    OUTPUT: a triple of integers `\geq 0`
 
     EXAMPLES::
 
@@ -390,7 +390,7 @@ def hasse_invariant(self, p):
     .. WARNING::
 
         This is different from the O'Meara Hasse invariant, which
-        allows `i <= j` in the product.  That is given by the method
+        allows `i \leq j` in the product.  That is given by the method
         :meth:`hasse_invariant__OMeara`.
 
     .. NOTE::
@@ -557,9 +557,7 @@ def is_hyperbolic(self, p):
 
     - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -679,9 +677,7 @@ def is_isotropic(self, p):
 
     - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -757,9 +753,13 @@ def compute_definiteness(self):
     from all routines like: :meth:`is_positive_definite`, :meth:`is_negative_definite`,
     :meth:`is_indefinite`, etc.
 
-    Note:  A degenerate form is considered neither definite nor indefinite.
+    .. NOTE::
 
-    Note:  The zero-dimensional form is considered both positive definite and negative definite.
+        A degenerate form is considered neither definite nor indefinite.
+
+    .. NOTE:
+
+        The zero-dimensional form is considered both positive definite and negative definite.
 
     OUTPUT: boolean
 
@@ -914,8 +914,13 @@ def is_positive_definite(self):
     """
     Determines if the given quadratic form is positive-definite.
 
-    Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dimensional form is considered both positive definite and negative definite.
+    .. NOTE::
+
+        A degenerate form is considered neither definite nor indefinite.
+
+    .. NOTE::
+
+        The zero-dimensional form is considered both positive definite and negative definite.
 
     OUTPUT: boolean -- True or False
 
@@ -946,8 +951,13 @@ def is_negative_definite(self):
     """
     Determines if the given quadratic form is negative-definite.
 
-    Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dimensional form is considered both positive definite and negative definite.
+    .. NOTE::
+
+        A degenerate form is considered neither definite nor indefinite.
+
+    .. NOTE::
+
+        The zero-dimensional form is considered both positive definite and negative definite.
 
     OUTPUT: boolean -- True or False
 
@@ -978,8 +988,13 @@ def is_indefinite(self):
     """
     Determines if the given quadratic form is indefinite.
 
-    Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dimensional form is not considered indefinite.
+    .. NOTE::
+
+        A degenerate form is considered neither definite nor indefinite.
+
+    .. NOTE::
+
+        The zero-dimensional form is not considered indefinite.
 
     OUTPUT: boolean -- True or False
 
@@ -1011,8 +1026,13 @@ def is_definite(self):
     """
     Determines if the given quadratic form is (positive or negative) definite.
 
-    Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dimensional form is considered indefinite.
+    .. NOTE::
+
+        A degenerate form is considered neither definite nor indefinite.
+
+    .. NOTE::
+
+        The zero-dimensional form is considered indefinite.
 
     OUTPUT: boolean -- True or False
 

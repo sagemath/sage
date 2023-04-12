@@ -76,11 +76,13 @@ def QFEvaluateMatrix(Q, M, Q2):
 
             Q_2 = M^t * Q * M.
 
-    Note: This is a Python wrapper for the fast evaluation routine
-    :func:`QFEvaluateMatrix_cdef`.  This routine is for internal use and is
-    called more conveniently as ``Q(M)``.  The inclusion of Q2 as an
-    argument is to avoid having to create a :func:`QuadraticForm` here, which
-    for now creates circular imports.
+    .. NOTE::
+
+        This is a Python wrapper for the fast evaluation routine
+        :func:`QFEvaluateMatrix_cdef`.  This routine is for internal use and is
+        called more conveniently as ``Q(M)``.  The inclusion of ``Q2`` as an
+        argument is to avoid having to create a :func:`QuadraticForm` here, which
+        for now creates circular imports.
 
     INPUT:
 

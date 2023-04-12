@@ -66,7 +66,7 @@ def local_density(self, p, m):
 
 def local_primitive_density(self, p, m):
     """
-    Gives the local primitive density -- should be called by the user. =)
+    Return the local primitive density -- should be called by the user. =)
 
     NOTE: This screens for imprimitive forms, and puts the
     quadratic form in local normal form, which is a *requirement* of

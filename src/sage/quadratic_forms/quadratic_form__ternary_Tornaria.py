@@ -289,7 +289,7 @@ def discrec(self):
 
 def hasse_conductor(self):
     """
-    This is the product of all primes where the Hasse invariant equals -1
+    This is the product of all primes where the Hasse invariant equals `-1`
 
     EXAMPLES::
 
@@ -535,7 +535,7 @@ def representation_number_list(self, B):
 
 def representation_vector_list(self, B, maxvectors=10**8):
     """
-    Find all vectors `v` where `Q(v) < B`.
+    Find all vectors `v` where Q(`v`) `< B`.
 
     This only works for positive definite quadratic forms.
 
@@ -581,7 +581,7 @@ def representation_vector_list(self, B, maxvectors=10**8):
 
 def is_zero(self, v, p=0) -> bool:
     r"""
-    Determine if the vector `v` is on the conic `Q(x) = 0` mod `p`.
+    Determine if the vector `v` is on the conic Q(`x`) `= 0` mod `p`.
 
     EXAMPLES::
 

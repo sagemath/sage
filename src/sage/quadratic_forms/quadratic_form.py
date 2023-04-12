@@ -194,7 +194,7 @@ class QuadraticForm(SageObject):
     #. ``QuadraticForm(R, n, entries)``, where
 
        - ``R`` -- ring for which the quadratic form is defined
-       - ``n`` -- an integer >= 0
+       - ``n`` -- an integer `\geq 0`
        - ``entries`` -- a list of `n(n+1)/2` coefficients of the quadratic form
          in `R` (given lexicographically, or equivalently, by rows of the
          matrix)
@@ -1398,7 +1398,7 @@ class QuadraticForm(SageObject):
     def is_primitive(self):
         """
         Determines if the given integer-valued form is primitive
-        (i.e. not an integer (>1) multiple of another integer-valued
+        (i.e. not an integer (`> 1`) multiple of another integer-valued
         quadratic form).
 
         EXAMPLES::
@@ -1503,8 +1503,9 @@ class QuadraticForm(SageObject):
         Return the determinant of the Gram matrix of 2*Q, or
         equivalently the determinant of the Hessian matrix of Q.
 
-        (Note: This is always defined over the same ring as the
-        quadratic form.)
+        .. NOTE:
+
+            This is always defined over the same ring as the quadratic form.
 
         EXAMPLES::
 
@@ -1529,9 +1530,11 @@ class QuadraticForm(SageObject):
         """
         Return the determinant of the Gram matrix of Q.
 
-        (Note: This is defined over the fraction field of the ring of
-        the quadratic form, but is often not defined over the same
-        ring as the quadratic form.)
+        .. NOTE::
+
+            This is defined over the fraction field of the ring of
+            the quadratic form, but is often not defined over the same
+            ring as the quadratic form.)
 
         EXAMPLES::
 
@@ -1547,11 +1550,13 @@ class QuadraticForm(SageObject):
         defined over the new base ring `R`.  Here `R` must be
         coercible to from the current base ring.
 
-        Note: This is preferable to performing an explicit
-        coercion through the :meth:`base_ring` method, which does
-        not affect the individual coefficients.  This is
-        particularly useful for performing fast modular
-        arithmetic evaluations.
+        .. NOTE::
+
+            This is preferable to performing an explicit
+            coercion through the :meth:`base_ring` method, which does
+            not affect the individual coefficients.  This is
+            particularly useful for performing fast modular
+            arithmetic evaluations.
 
         INPUT:
 
@@ -1762,8 +1767,7 @@ def DiagonalQuadraticForm(R, diag):
 
     EXAMPLES::
 
-        sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
-        sage: Q
+        sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7]); Q
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 1 0 0 0 ]
         [ * 3 0 0 ]

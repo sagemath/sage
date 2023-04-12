@@ -14,7 +14,7 @@ from sage.quadratic_forms.count_local_2 import CountAllLocalTypesNaive
 
 def count_congruence_solutions_as_vector(self, p, k, m, zvec, nzvec):
     r"""
-    Gives the number of integer solution vectors `x` satisfying the
+    Return the number of integer solution vectors `x` satisfying the
     congruence Q(`x`) `= m` (mod `p^k`) of each solution type (i.e. All,
     Good, Zero, Bad, BadI, BadII) which satisfy the additional
     congruence conditions of having certain coefficients = 0 (mod `p`)

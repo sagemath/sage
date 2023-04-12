@@ -134,7 +134,7 @@ def reduced_binary_form(self):
 
 
 def minkowski_reduction(self):
-    """
+    r"""
     Find a Minkowski-reduced form equivalent to the given one.
     This means that
 
@@ -144,7 +144,9 @@ def minkowski_reduction(self):
 
     for all `s_i` where GCD`(s_k, ... s_n) = 1`.
 
-    Note: When Q has dim <= 4 we can take all `s_i` in {1, 0, -1}.
+    .. NOTE::
+
+        When Q has dim `\leq 4` we can take all `s_i` in `\{1, 0, -1\}`.
 
     REFERENCES:
 
@@ -154,7 +156,7 @@ def minkowski_reduction(self):
 
     EXAMPLES::
 
-        sage: Q = QuadraticForm(ZZ,4,[30, 17, 11, 12, 29, 25, 62, 64, 25, 110])
+        sage: Q = QuadraticForm(ZZ, 4, [30, 17, 11, 12, 29, 25, 62, 64, 25, 110])
         sage: Q
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 30 17 11 12 ]
@@ -262,15 +264,17 @@ def minkowski_reduction(self):
 
 
 def minkowski_reduction_for_4vars__SP(self):
-    """
+    r"""
     Find a Minkowski-reduced form equivalent to the given one.
     This means that
 
-        Q(`v_k`) <= Q(`s_1 * v_1 + ... + s_n * v_n`)
+        Q(`v_k`) `\leq` Q(`s_1 * v_1 + ... + s_n * v_n`)
 
     for all `s_i` where GCD(`s_k, ... s_n`) = 1.
 
-    Note: When Q has dim <= 4 we can take all `s_i` in {1, 0, -1}.
+    .. NOTE::
+
+        When Q has dim `\leq 4`, we can take all `s_i` in `\{1, 0, -1\}`.
 
     REFERENCES:
 

@@ -71,7 +71,7 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
 # -------------  Compute the theta function by using the PARI/GP routine qfrep  ------------
 
 def theta_by_pari(self, Max, var_str='q', safe_flag=True):
-    """
+    r"""
     Use PARI/GP to compute the theta function as a power series (or
     vector) up to the precision `O(q^Max)`.  This also caches the result
     for future computations.
@@ -89,7 +89,7 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
 
     INPUT:
 
-    - ``Max`` -- an integer >=0
+    - ``Max`` -- an integer `\geq 0`
     - ``var_str`` -- a string
 
     OUTPUT: a power series or a vector

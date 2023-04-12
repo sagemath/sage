@@ -33,14 +33,16 @@ def find_entry_with_minimal_scale_at_prime(self, p):
     we write the quadratic form as a symmetric matrix `M`, then this
     entry ``M[i,j]`` has the minimal valuation at the prime `p`.)
 
-    Note: This answer is independent of the kind of matrix (Gram or
-    Hessian) associated to the form.
+    .. NOTE::
+
+        This answer is independent of the kind of matrix (Gram or
+        Hessian) associated to the form.
 
     INPUT:
 
     - ``p`` -- a prime number > 0
 
-    OUTPUT: a pair of integers >= 0
+    OUTPUT: a pair of integers `\geq 0`
 
     EXAMPLES::
 
