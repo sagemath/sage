@@ -1581,9 +1581,10 @@ class BinaryQF(SageObject):
             sage: Q.solve_integer(773187972)                                            # needs sage.libs.pari
             (4919, 1337)
 
-        If `Q` is of the form `[1,0,c]` as above and `n` is a prime or
-        four times a prime, Cornacchia's algorithm can be used, which is
-        typically much faster than the general method::
+        If `Q` is of the form `[1,0,c]` as above and `n` is a prime
+        (or four times a prime whenever `c \equiv 3 \pmod 4`), then
+        Cornacchia's algorithm can be used, which is typically much
+        faster than the general method::
 
             sage: Q = BinaryQF([1, 0, 12345])
             sage: n = 2^99 + 5273
@@ -1625,7 +1626,7 @@ class BinaryQF(SageObject):
             sage: abc = [1, 0, randrange(1,10^3)]
             sage: Q = BinaryQF(abc)
             sage: n = random_prime(10^9)
-            sage: if randrange(2):
+            sage: if Q[2] % 4 == 3 and randrange(2):
             ....:     n *= 4
             sage: xy1 = Q.solve_integer(n, algorithm='cornacchia')
             sage: xy1 is None or Q(*xy1) == n
