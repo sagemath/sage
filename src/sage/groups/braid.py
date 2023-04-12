@@ -76,8 +76,10 @@ from sage.misc.misc_c import prod
 from sage.categories.groups import Groups
 from sage.groups.free_group import FreeGroup, is_FreeGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+from sage.groups.perm_gps.permgroup_named import SymmetricGroupElement
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.matrix.constructor import identity_matrix, matrix
+from sage.combinat.permutation import Permutation
 from sage.combinat.permutation import Permutations
 from sage.combinat.subset import Subsets
 from sage.categories.action import Action
@@ -2678,7 +2680,14 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             sage: B = BraidGroup(4)
             sage: B([1, 2, 3]) # indirect doctest
             s0*s1*s2
+            sage: p = Permutation([3,1,2,4]); B(p)
+            s0*s1
+            sage: q = SymmetricGroup(4)((1,2)); B(q)
+            s0
         """
+        if not isinstance(x, (tuple, list)):
+            if isinstance(x, (SymmetricGroupElement, Permutation)):
+                x = self._standard_lift_Tietze(x)
         return self.element_class(self, x)
 
     def an_element(self):
