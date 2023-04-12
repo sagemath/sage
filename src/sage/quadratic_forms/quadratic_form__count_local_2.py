@@ -13,9 +13,9 @@ from sage.quadratic_forms.count_local_2 import CountAllLocalTypesNaive
 
 
 def count_congruence_solutions_as_vector(self, p, k, m, zvec, nzvec):
-    """
+    r"""
     Gives the number of integer solution vectors `x` satisfying the
-    congruence Q(`x`) `= m (mod p^k)` of each solution type (i.e. All,
+    congruence Q(`x`) `= m` (mod `p^k`) of each solution type (i.e. All,
     Good, Zero, Bad, BadI, BadII) which satisfy the additional
     congruence conditions of having certain coefficients = 0 (mod `p`)
     and certain collections of coefficients not congruent to the zero
@@ -25,9 +25,9 @@ def count_congruence_solutions_as_vector(self, p, k, m, zvec, nzvec):
     specified by ``zvec`` and ``nzvec`` (and therefore is counted) iff both of
     the following conditions hold:
 
-        1) `x[i] == 0 (mod p)` for all `i` in zvec
+    1. `x_i = 0` (mod `p`) for all `i` in ``zvec``
 
-        2) `x[i] != 0 (mod p) for all i` in nzvec
+    2. `x_i \neq 0` (mod `p`) for all `i` in ``nzvec``
 
 
     REFERENCES:
@@ -37,10 +37,10 @@ def count_congruence_solutions_as_vector(self, p, k, m, zvec, nzvec):
 
     INPUT:
 
-    - `p` -- prime number > 0
-    - `k` -- an integer > 0
-    - `m` -- an integer (depending only on mod `p^k`)
-    - ``zvec``, ``nzvec`` -- a list of integers in ``range(self.dim())``, or ``None``
+    - ``p`` -- prime number > 0
+    - ``k`` -- an integer > 0
+    - ``m`` -- an integer (depending only on mod `p^k`)
+    - ``zvec``, ``nzvec`` -- lists of integers in ``range(self.dim())``, or ``None``
 
     OUTPUT:
 
@@ -73,20 +73,20 @@ def count_congruence_solutions_as_vector(self, p, k, m, zvec, nzvec):
 ##///////////////////////////////////////////
 
 def count_congruence_solutions(self, p, k, m, zvec, nzvec):
-    """
-    Count all solutions of Q(`x`) `= m (mod p^k)` satisfying the
+    r"""
+    Count all solutions of Q(`x`) = `m` (mod `p^k`) satisfying the
     additional congruence conditions described in
     :meth:`QuadraticForm.count_congruence_solutions_as_vector`.
 
     INPUT:
 
-    - `p` -- prime number > 0
+    - ``p`` -- prime number > 0
 
-    - `k` -- an integer > 0
+    - ``k`` -- an integer > 0
 
-    - `m` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- an integer (depending only on mod `p^k`)
 
-    - ``zvec``, ``nzvec`` -- a list of integers in ``range(self.dim())``, or ``None``
+    - ``zvec``, ``nzvec`` -- lists of integers in ``range(self.dim())``, or ``None``
 
     EXAMPLES::
 
@@ -98,20 +98,20 @@ def count_congruence_solutions(self, p, k, m, zvec, nzvec):
 
 
 def count_congruence_solutions__good_type(self, p, k, m, zvec, nzvec):
-    """
-    Counts the good-type solutions of Q(x) = m (mod p^k) satisfying the
+    r"""
+    Count the good-type solutions of Q(`x`) = `m` (mod `p^k`) satisfying the
     additional congruence conditions described in
     :meth:`QuadraticForm.count_congruence_solutions_as_vector`.
 
     INPUT:
 
-    - `p` -- prime number > 0
+    - ``p`` -- prime number > 0
 
-    - `k` -- an integer > 0
+    - ``k`` -- an integer > 0
 
-    - `m` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- an integer (depending only on mod `p^k`)
 
-    - ``zvec``, ``nzvec`` -- a list of integers up to dim(Q)
+    - ``zvec``, ``nzvec`` -- lists of integers up to dim(Q)
 
     EXAMPLES::
 
@@ -124,19 +124,19 @@ def count_congruence_solutions__good_type(self, p, k, m, zvec, nzvec):
 
 def count_congruence_solutions__zero_type(self, p, k, m, zvec, nzvec):
     """
-    Counts the zero-type solutions of Q(`x`) = `m (mod p^k)` satisfying the
+    Counts the zero-type solutions of Q(`x`) = `m` (mod `p^k`) satisfying the
     additional congruence conditions described in
     :meth:`QuadraticForm.count_congruence_solutions_as_vector`.
 
     INPUT:
 
-    - `p` -- prime number > 0
+    - ``p`` -- prime number > 0
 
-    - `k` -- an integer > 0
+    - ``k`` -- an integer > 0
 
-    - `m` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- an integer (depending only on mod `p^k`)
 
-    - ``zvec``, ``nzvec`` -- a list of integers up to dim(Q)
+    - ``zvec``, ``nzvec`` -- lists of integers up to dim(Q)
 
     EXAMPLES::
 
@@ -149,19 +149,19 @@ def count_congruence_solutions__zero_type(self, p, k, m, zvec, nzvec):
 
 def count_congruence_solutions__bad_type(self, p, k, m, zvec, nzvec):
     """
-    Counts the bad-type solutions of Q(`x`) `= m (mod p^k)` satisfying the
+    Counts the bad-type solutions of Q(`x`) = `m` (mod `p^k`) satisfying the
     additional congruence conditions described in
     :meth:`QuadraticForm.count_congruence_solutions_as_vector`.
 
     INPUT:
 
-    - `p` -- prime number > 0
+    - ``p`` -- prime number > 0
 
-    - `k` -- an integer > 0
+    - ``k`` -- an integer > 0
 
-    - `m` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- an integer (depending only on mod `p^k`)
 
-    - ``zvec``, ``nzvec`` -- a list of integers up to dim(Q)
+    - ``zvec``, ``nzvec`` -- lists of integers up to dim(Q)
 
     EXAMPLES::
 
@@ -174,19 +174,19 @@ def count_congruence_solutions__bad_type(self, p, k, m, zvec, nzvec):
 
 def count_congruence_solutions__bad_type_I(self, p, k, m, zvec, nzvec):
     """
-    Counts the bad-typeI solutions of Q(`x`) = `m (mod p^k)` satisfying
+    Counts the bad-typeI solutions of Q(`x`) = `m` (mod `p^k`) satisfying
     the additional congruence conditions described in
     :meth:`QuadraticForm.count_congruence_solutions_as_vector`.
 
     INPUT:
 
-    - `p` -- prime number > 0
+    - ``p`` -- prime number > 0
 
-    - `k` -- an integer > 0
+    - ``k`` -- an integer > 0
 
-    - `m` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- an integer (depending only on mod `p^k`)
 
-    - ``zvec``, ``nzvec`` -- a list of integers up to dim(Q)
+    - ``zvec``, ``nzvec`` -- lists of integers up to dim(Q)
 
     EXAMPLES::
 
@@ -199,19 +199,19 @@ def count_congruence_solutions__bad_type_I(self, p, k, m, zvec, nzvec):
 
 def count_congruence_solutions__bad_type_II(self, p, k, m, zvec, nzvec):
     """
-    Counts the bad-typeII solutions of Q(`x`) `= m (mod p^k)` satisfying
+    Counts the bad-typeII solutions of Q(`x`) = `m` (mod `p^k`) satisfying
     the additional congruence conditions described in
     :meth:`QuadraticForm.count_congruence_solutions_as_vector`.
 
     INPUT:
 
-    - `p` -- prime number > 0
+    - ``p`` -- prime number > 0
 
-    - `k` -- an integer > 0
+    - ``k`` -- an integer > 0
 
-    - `m` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- an integer (depending only on mod `p^k`)
 
-    - ``zvec``, ``nzvec`` -- a list of integers up to dim(Q)
+    - ``zvec``, ``nzvec`` -- lists of integers up to dim(Q)
 
     EXAMPLES::
 

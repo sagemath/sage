@@ -18,7 +18,7 @@ from sage.quadratic_forms.count_local_2 import count_modp__by_gauss_sum
 
 def count_modp_solutions__by_Gauss_sum(self, p, m):
     r"""
-    Return the number of solutions of `Q(x) = m (mod p)` of a
+    Return the number of solutions of Q(`x`) = `m` (mod `p`) of a
     non-degenerate quadratic form over the finite field `\ZZ/p\ZZ`,
     where `p` is a prime number > 2.
 
@@ -32,9 +32,9 @@ def count_modp_solutions__by_Gauss_sum(self, p, m):
 
     INPUT:
 
-    - `p` -- a prime number > 2
+    - ``p`` -- a prime number > 2
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
     OUTPUT: an integer >= 0
 
@@ -71,11 +71,11 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
 
     INPUT:
 
-    - Q -- quadratic form assumed to be diagonal and p-integral
+    - ``self`` -- quadratic form Q, assumed to be diagonal and p-integral
 
-    - `p` -- a prime number
+    - ``p`` -- a prime number
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -151,7 +151,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
     additional condition.
 
     WARNING: Here the indices passed in ``Zvec`` and ``NZvec`` represent
-    indices of the solution vector `x` of Q(`x`) = `m (mod p^k)`, and *not*
+    indices of the solution vector `x` of Q(`x`) = `m` (mod `p^k`), and *not*
     the Jordan components of Q.  They therefore are required (and
     assumed) to include either all or none of the indices of a given
     Jordan component of Q.  This is only important when `p=2` since
@@ -167,9 +167,9 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
 
     - Q -- quadratic form assumed to be block diagonal and 2-integral
 
-    - `p` -- a prime number
+    - ``p`` -- a prime number
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -322,7 +322,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
 def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
     Find the Good-type local density of Q representing `m` at `p`.
-    (Front end routine for parity specific routines for p.)
+    (Front end routine for parity specific routines for `p`.)
 
     .. TODO::
 
@@ -331,11 +331,11 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     INPUT:
 
-    - Q -- quadratic form assumed to be block diagonal and `p`-integral
+    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
 
-    - `p` -- a prime number
+    - ``p`` -- a prime number
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -398,15 +398,15 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
 def local_zero_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
     Find the Zero-type local density of Q representing `m` at `p`,
-    allowing certain congruence conditions mod p.
+    allowing certain congruence conditions mod `p`.
 
     INPUT:
 
-    - Q -- quadratic form assumed to be block diagonal and `p`-integral
+    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
 
-    - `p` -- a prime number
+    - ``p`` -- a prime number
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -471,15 +471,15 @@ def local_zero_density_congruence(self, p, m, Zvec=None, NZvec=None):
 def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
     Find the Bad-type I local density of Q representing `m` at `p`.
-    (Assuming that p > 2 and Q is given in local diagonal form.)
+    (Assuming that `p` > 2 and Q is given in local diagonal form.)
 
     INPUT:
 
-    - Q -- quadratic form assumed to be block diagonal and `p`-integral
+    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
 
-    - `p` -- a prime number
+    - ``p`` -- a prime number
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -638,11 +638,11 @@ def local_badII_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     INPUT:
 
-    - Q -- quadratic form assumed to be block diagonal and p-integral
+    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
 
-    - `p` -- a prime number
+    - ``p`` -- a prime number
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -784,11 +784,11 @@ def local_bad_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     INPUT:
 
-    - Q -- quadratic form assumed to be block diagonal and p-integral
+    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
 
-    - `p` -- a prime number
+    - ``p`` -- a prime number
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -842,11 +842,11 @@ def local_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     INPUT:
 
-    - Q -- quadratic form assumed to be block diagonal and p-integral
+    - ``self`` -- quadratic form Q, assumed to be block diagonal and p-integral
 
-    - `p` -- a prime number
+    - ``p`` -- a prime number
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -914,11 +914,11 @@ def local_primitive_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     INPUT:
 
-    - Q -- quadratic form assumed to be block diagonal and p-integral
+    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
 
-    - `p` -- a prime number
+    - ``p`` -- a prime number
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 

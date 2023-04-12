@@ -1127,11 +1127,11 @@ def two_adic_symbol(A, val):
     The genus symbol of a component `2^m f` is of the form ``(m,n,s,d[,o])``,
     where
 
-    - `m` = valuation of the component
-    - `n` = dimension of f
-    - `d` = det(f) in {1,3,5,7}
-    - `s` = 0 (or 1) if even (or odd)
-    - `o` = oddity of f (= 0 if s = 0) in `Z/8Z`
+    - ``m`` = valuation of the component
+    - ``n`` = dimension of `f`
+    - ``d`` = det(`f`) in {1,3,5,7}
+    - ``s`` = 0 (or 1) if even (or odd)
+    - ``o`` = oddity of `f` (= 0 if s = 0) in `\ZZ/8\ZZ`
 
     INPUT:
 
@@ -1452,7 +1452,7 @@ class Genus_Symbol_p_adic_ring():
 
         INPUT:
 
-        - other -- a :class:`Genus_Symbol_p_adic_ring` object
+        - ``other`` -- a :class:`Genus_Symbol_p_adic_ring` object
 
         OUTPUT:
 
@@ -1490,7 +1490,7 @@ class Genus_Symbol_p_adic_ring():
 
         INPUT:
 
-        - other -- a :class:`Genus_Symbol_p_adic_ring` object
+        - ``other`` -- a :class:`Genus_Symbol_p_adic_ring` object
 
         OUTPUT:
 
@@ -1765,7 +1765,7 @@ class Genus_Symbol_p_adic_ring():
 
         INPUT:
 
-        - check (default: ``True``) -- double check the result
+        - ``check`` (default: ``True``) -- double check the result
 
         EXAMPLES::
 

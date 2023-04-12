@@ -92,7 +92,7 @@ def local_genus_symbol(self, p):
 
     INPUT:
 
-    - `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
     OUTPUT:
 

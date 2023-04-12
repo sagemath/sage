@@ -292,7 +292,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - `p` -- a positive prime number or "infinity"
+        - ``p`` -- a positive prime number or "infinity"
 
         OUTPUT: a list of integers
 
@@ -317,7 +317,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - `p` -- a positive prime number.  (Is 'infinity' allowed here?)
+        - ``p`` -- a positive prime number.  (Is 'infinity' allowed here?)
 
         OUTPUT: a list of integers
 
@@ -371,7 +371,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - `p` -- a positive prime number or "infinity".
+        - ``p`` -- a positive prime number or "infinity".
 
         OUTPUT: boolean
 
@@ -488,9 +488,9 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - `m` -- an integer
+        - ``m`` -- an integer
 
-        - `p` -- a positive prime number or "infinity".
+        - ``p`` -- a positive prime number or "infinity".
 
         OUTPUT:
 
@@ -559,7 +559,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - `m` -- an integer
+        - ``m`` -- an integer
 
         OUTPUT: boolean
 
@@ -645,11 +645,11 @@ def local_representation_conditions(self, recompute_flag=False, silent_flag=Fals
     tells us that all positive integers are locally represented at p=2
     except those of the forms:
 
-        `2^6 * u * r^2` with  `u = 1 (mod 8)`
+        `2^6 * u * r^2` with  `u = 1` (mod 8)
 
-        `2^5 * u * r^2` with `u = 3 (mod 8)`
+        `2^5 * u * r^2` with `u = 3` (mod 8)
 
-        `2 * u * r^2` with `u = 7 (mod 8)`
+        `2 * u * r^2` with `u = 7` (mod 8)
 
     At the real numbers, the vector which looks like
 
@@ -730,7 +730,7 @@ def is_locally_universal_at_prime(self, p) -> bool:
 
     INPUT:
 
-    - `p` -- a positive prime number or "infinity".
+    - ``p`` -- a positive prime number or "infinity".
 
     OUTPUT: boolean
 
@@ -832,9 +832,9 @@ def is_locally_represented_number_at_place(self, m, p) -> bool:
 
     INPUT:
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
-    - `p` -- a prime number > 0 or 'infinity'
+    - ``p`` -- a prime number > 0 or 'infinity'
 
     OUTPUT: boolean
 
@@ -877,7 +877,7 @@ def is_locally_represented_number(self, m) -> bool:
 
     INPUT:
 
-    - `m` -- an integer
+    - ``m`` -- an integer
 
     OUTPUT: boolean
 

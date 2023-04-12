@@ -184,7 +184,7 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
 
 class QuadraticForm(SageObject):
     r"""
-    The ``QuadraticForm`` class represents a quadratic form in n variables with
+    The ``QuadraticForm`` class represents a quadratic form in `n` variables with
     coefficients in the ring `R`.
 
     INPUT:
@@ -193,25 +193,25 @@ class QuadraticForm(SageObject):
 
     #. ``QuadraticForm(R, n, entries)``, where
 
-       - `R` -- ring for which the quadratic form is defined
-       - `n` -- an integer >= 0
+       - ``R`` -- ring for which the quadratic form is defined
+       - ``n`` -- an integer >= 0
        - ``entries`` -- a list of `n(n+1)/2` coefficients of the quadratic form
          in `R` (given lexicographically, or equivalently, by rows of the
          matrix)
 
     #. ``QuadraticForm(p)``, where
 
-      - `p` -- a homogeneous polynomial of degree `2`
+       - ``p`` -- a homogeneous polynomial of degree `2`
 
     #. ``QuadraticForm(R, n)``, where
 
-       - `R` -- a ring
-       - `n` -- a symmetric `n \times n` matrix with even diagonal (relative to
+       - ``R`` -- a ring
+       - ``n`` -- a symmetric `n \times n` matrix with even diagonal (relative to
          `R`)
 
     #. ``QuadraticForm(R)``, where
 
-       - `R` -- a symmetric `n \times n` matrix with even diagonal (relative to
+       - ``R`` -- a symmetric `n \times n` matrix with even diagonal (relative to
          its base ring)
 
     If the keyword argument ``unsafe_initialize`` is True, then the subsequent
@@ -261,7 +261,7 @@ class QuadraticForm(SageObject):
     ::
 
         sage: Q = QuadraticForm(QQ, 2, range(1,4))
-        sage: A = Matrix(ZZ,2,2,[-1,0,0,1])
+        sage: A = Matrix(ZZ, 2, 2,[-1,0,0,1])
         sage: Q(A)
         Quadratic form in 2 variables over Rational Field with coefficients:
         [ 1 -2 ]
@@ -1085,12 +1085,13 @@ class QuadraticForm(SageObject):
 
     def _is_even_symmetric_matrix_(self, A, R=None):
         """
-        Tests if a matrix is symmetric, defined over R, and has even diagonal in R.
+        Tests if a matrix is symmetric, defined over `R`, and has even diagonal in `R`.
 
         INPUT:
-            A -- matrix
 
-            R -- ring
+        - ``A`` -- matrix
+
+        - ``R`` -- ring
 
         EXAMPLES::
 
@@ -1191,7 +1192,7 @@ class QuadraticForm(SageObject):
 
     def Gram_matrix_rational(self):
         """
-        Return a (symmetric) Gram matrix A for the quadratic form Q,
+        Return a (symmetric) Gram matrix `A` for the quadratic form Q,
         meaning that
 
         .. MATH::
@@ -1216,7 +1217,7 @@ class QuadraticForm(SageObject):
 
     def Gram_matrix(self):
         """
-        Return a (symmetric) Gram matrix A for the quadratic form Q,
+        Return a (symmetric) Gram matrix `A` for the quadratic form Q,
         meaning that
 
         .. MATH::
@@ -1224,7 +1225,7 @@ class QuadraticForm(SageObject):
             Q(x) = x^t * A * x,
 
         defined over the base ring of Q.  If this is not possible,
-        then a TypeError is raised.
+        then a :class:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -1304,13 +1305,13 @@ class QuadraticForm(SageObject):
 
     def polynomial(self,names='x'):
         r"""
-        Return the polynomial in 'n' variables of the quadratic form in the ring 'R[names].'
+        Return the quadratic form as a polynomial in `n` variables.
 
         INPUT:
 
-        - ``self`` - a quadratic form over a commutative ring.
-        - ``names`` - the names of the variables. Digits will be appended to the name for each different canonical
-          variable, e.g., x1, x2, x3 etc.
+        - ``self`` - a quadratic form over a commutative ring
+
+        - ``names`` - specification of the names of the variables; see :func:`PolynomialRing`
 
         OUTPUT: The polynomial form of the quadratic form.
 
@@ -1695,7 +1696,7 @@ class QuadraticForm(SageObject):
 
         INPUT:
 
-        `v, w` -- two vectors
+        ``v``, ``w`` -- two vectors
 
         OUTPUT:
 
@@ -1752,7 +1753,7 @@ def DiagonalQuadraticForm(R, diag):
 
     INPUT:
 
-    - `R` -- ring
+    - ``R`` -- ring
     - ``diag`` -- list/tuple of elements coercible to `R`
 
     OUTPUT:

@@ -23,8 +23,8 @@ def random_quadraticform(R, n, rand_arg_list=[]):
 
     INPUT:
 
-    - `R` -- a ring.
-    - `n` -- an integer `\ge 0`
+    - ``R`` -- a ring
+    - ``n`` -- an integer `\ge 0`
     - ``rand_arg_list`` -- a list of at most 3 arguments which can be taken by
       ``R.random_element()``.
 

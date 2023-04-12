@@ -304,7 +304,7 @@ def conway_species_list_at_2(self):
 def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
     """
     Determines the 'octane' of this full unimodular Jordan block at
-    the prime `p=2`.  This is an invariant defined `(mod 8)`, ad.
+    the prime `p=2`.  This is an invariant defined (mod 8), ad.
 
     This assumes that the form is given as a block diagonal form with
     unimodular blocks of size <= 2 and the 1x1 blocks are all in the upper
@@ -392,7 +392,7 @@ def conway_diagonal_factor(self, p):
 
     INPUT:
 
-    - `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
     OUTPUT: a rational number > 0
 
@@ -431,7 +431,7 @@ def conway_cross_product_doubled_power(self, p):
 
     INPUT:
 
-    - `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
     OUTPUT: a rational number
 
@@ -485,7 +485,7 @@ def conway_p_mass(self, p):
 
     INPUT:
 
-    - `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
     OUTPUT: a rational number > 0
 
@@ -514,7 +514,7 @@ def conway_standard_p_mass(self, p):
 
     INPUT:
 
-    - `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
     OUTPUT: a rational number > 0
 

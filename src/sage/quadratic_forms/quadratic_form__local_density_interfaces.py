@@ -20,12 +20,10 @@ def local_density(self, p, m):
 
     INPUT:
 
-    - `p` -- a prime number > 0
-    - `m` -- an integer
+    - ``p`` -- a prime number > 0
+    - ``m`` -- an integer
 
-    OUTPUT:
-
-    a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 
@@ -76,8 +74,8 @@ def local_primitive_density(self, p, m):
 
     INPUT:
 
-    - `p` -- a prime number > 0
-    - `m` -- an integer
+    - ``p`` -- a prime number > 0
+    - ``m`` -- an integer
 
     OUTPUT: a rational number
 

@@ -346,9 +346,9 @@ def clifford_invariant(self, p):
 
 def clifford_conductor(self):
     """
-    This is the product of all primes where the Clifford invariant is -1
+    This is the product of all primes where the Clifford invariant is `-1`
 
-    ..NOTE::
+    .. NOTE::
 
         For ternary forms, this is the discriminant of the
         quaternion algebra associated to the quadratic space

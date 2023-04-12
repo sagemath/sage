@@ -288,11 +288,11 @@ def signature_vector(self):
     """
     Return the triple `(p, n, z)` of integers where
 
-    - `p` = number of positive eigenvalues
-    - `n` = number of negative eigenvalues
-    - `z` = number of zero eigenvalues
+    - ``p`` = number of positive eigenvalues
+    - ``n`` = number of negative eigenvalues
+    - ``z`` = number of zero eigenvalues
 
-    for the symmetric matrix associated to `Q`.
+    for the symmetric matrix associated to Q.
 
     OUTPUT: a triple of integers >= 0
 
@@ -343,13 +343,7 @@ def signature(self):
 
     of the matrix of the quadratic form.
 
-    INPUT:
-
-        None
-
-    OUTPUT:
-
-        an integer
+    OUTPUT: an integer
 
     EXAMPLES::
 
@@ -382,7 +376,7 @@ def signature(self):
 def hasse_invariant(self, p):
     r"""
     Computes the Hasse invariant at a prime `p` or at infinity, as given on p55 of
-    Cassels's book.  If `Q` is diagonal with coefficients `a_i`, then the
+    Cassels's book.  If Q is diagonal with coefficients `a_i`, then the
     (Cassels) Hasse invariant is given by
 
     .. MATH::
@@ -406,7 +400,7 @@ def hasse_invariant(self, p):
 
     INPUT:
 
-    - `p` -- a prime number > 0 or `-1` for the infinite place
+    - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
     OUTPUT: `1` or `-1`
 
@@ -488,7 +482,7 @@ def hasse_invariant__OMeara(self, p):
 
     INPUT:
 
-    - `p` -- a prime number > 0 or `-1` for the infinite place
+    - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
     OUTPUT: `1` or `-1`
 
@@ -561,7 +555,7 @@ def is_hyperbolic(self, p):
 
     INPUT:
 
-    - `p` -- a prime number > 0 or `-1` for the infinite place
+    - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
     OUTPUT:
 
@@ -609,11 +603,11 @@ def is_hyperbolic(self, p):
 
 def is_anisotropic(self, p):
     r"""
-    Check if the quadratic form is anisotropic over the p-adic numbers `\QQ_p` or `\RR`.
+    Check if the quadratic form is anisotropic over the `p`-adic numbers `\QQ_p` or `\RR`.
 
     INPUT:
 
-    - `p` -- a prime number > 0 or `-1` for the infinite place
+    - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
     OUTPUT: boolean
 
@@ -679,11 +673,11 @@ def is_anisotropic(self, p):
 
 def is_isotropic(self, p):
     r"""
-    Checks if Q is isotropic over the p-adic numbers `\QQ_p` or `\RR`.
+    Checks if Q is isotropic over the `p`-adic numbers `\QQ_p` or `\RR`.
 
     INPUT:
 
-    - `p` -- a prime number > 0 or `-1` for the infinite place
+    - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
     OUTPUT:
 
@@ -760,11 +754,11 @@ def compute_definiteness(self):
 
     This caches one of the following strings in ``self.__definiteness_string``:
     "pos_def", "neg_def", "indef", "zero", "degenerate".  It is called
-    from all routines like:
-
-        :meth:`is_positive_definite`, :meth:`is_negative_definite`, :meth:`is_indefinite`, etc.
+    from all routines like: :meth:`is_positive_definite`, :meth:`is_negative_definite`,
+    :meth:`is_indefinite`, etc.
 
     Note:  A degenerate form is considered neither definite nor indefinite.
+
     Note:  The zero-dim'l form is considered both positive definite and negative definite.
 
     OUTPUT: boolean

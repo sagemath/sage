@@ -110,9 +110,9 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
 
 
 def Pall_mass_density_at_odd_prime(self, p):
-    """
+    r"""
     Returns the local representation density of a form (for
-    representing itself) defined over `ZZ`, at some prime `p>2`.
+    representing itself) defined over `\ZZ`, at some prime `p>2`.
 
     REFERENCES:
 
@@ -121,11 +121,9 @@ def Pall_mass_density_at_odd_prime(self, p):
 
     INPUT:
 
-        `p` -- a prime number > 2.
+    - ``p`` -- a prime number > 2.
 
-    OUTPUT:
-
-        a rational number.
+    OUTPUT: a rational number.
 
     EXAMPLES::
 
@@ -175,13 +173,7 @@ def Watson_mass_at_2(self):
     to Watson's Theorem 1 of "The 2-adic density of a quadratic form"
     in Mathematika 23 (1976), pp 94--106.
 
-    INPUT:
-
-        none
-
-    OUTPUT:
-
-        a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 
@@ -265,13 +257,7 @@ def Kitaoka_mass_at_2(self):
     to Theorem 5.6.3 on pp108--9 of Kitaoka's Book "The Arithmetic of
     Quadratic Forms".
 
-    INPUT:
-
-        none
-
-    OUTPUT:
-
-        a rational number > 0
+    OUTPUT: a rational number > 0
 
     EXAMPLES::
 
@@ -351,9 +337,9 @@ def Kitaoka_mass_at_2(self):
 
 def mass_at_two_by_counting_mod_power(self, k):
     """
-    Computes the local mass at `p=2` assuming that it's stable `(mod 2^k)`.
+    Computes the local mass at `p=2` assuming that it's stable (mod `2^k`).
 
-    Note: This is **way** too slow to be useful, even when k=1!!!
+    Note: This is **way** too slow to be useful, even when `k=1`!!!
 
     .. TODO::
 
@@ -361,11 +347,9 @@ def mass_at_two_by_counting_mod_power(self, k):
 
     INPUT:
 
-    - k -- an integer >= 1
+    - ``k`` -- an integer >= 1
 
-    OUTPUT:
-
-    a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 

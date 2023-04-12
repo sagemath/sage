@@ -38,7 +38,7 @@ def find_entry_with_minimal_scale_at_prime(self, p):
 
     INPUT:
 
-    - `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
     OUTPUT: a pair of integers >= 0
 
@@ -90,7 +90,7 @@ def local_normal_form(self, p):
 
     INPUT:
 
-    - `p` -- a positive prime number.
+    - ``p`` -- a positive prime number
 
     OUTPUT: a quadratic form over `\ZZ`
 
@@ -251,7 +251,7 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
 
     INPUT:
 
-    - `p` -- a prime number > 0.
+    - ``p`` -- a prime number > 0.
 
     OUTPUT:
 
@@ -365,7 +365,7 @@ def jordan_blocks_in_unimodular_list_by_scale_power(self, p):
     INPUT:
 
     - ``self`` -- a quadratic form over ``ZZ``, which has integer Gram matrix if `p = 2`
-    - `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
     OUTPUT: a list of `p`-unimodular quadratic forms
 

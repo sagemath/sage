@@ -23,7 +23,7 @@ def BezoutianQuadraticForm(f, g):
 
     INPUT:
 
-    - `f`, `g` -- polynomials in `R[x]`, for some ring `R`
+    - ``f``, ``g`` -- polynomials in `R[x]`, for some ring `R`
 
     OUTPUT:
 
@@ -76,8 +76,8 @@ def HyperbolicPlane_quadratic_form(R, r=1):
 
     INPUT:
 
-    - `R`: a ring
-    - `n` (integer, default 1) number of copies
+    - ``R``: a ring
+    - ``n`` (integer, default 1) number of copies
 
     EXAMPLES::
 

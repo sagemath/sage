@@ -276,7 +276,7 @@ def complementary_subform_to_vector(self, v):
 
     INPUT:
 
-    - `v` -- a list of ``self.dim()`` integers
+    - ``v`` -- a list of ``self.dim()`` integers
 
     OUTPUT: a :class:`QuadraticForm` over ``ZZ``
 

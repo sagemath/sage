@@ -25,7 +25,7 @@ def swap_variables(self, r, s, in_place=False):
 
     INPUT:
 
-    - `r`, `s` -- integers >= 0
+    - ``r``, ``s`` -- integers >= 0
 
     OUTPUT:
 
@@ -83,9 +83,9 @@ def multiply_variable(self, c, i, in_place=False):
 
     INPUT:
 
-    - `c` -- an element of ``self.base_ring()``
+    - ``c`` -- an element of ``self.base_ring()``
 
-    - `i` -- an integer >= 0
+    - ``i`` -- an integer >= 0
 
     OUTPUT:
 
@@ -128,9 +128,9 @@ def divide_variable(self, c, i, in_place=False):
 
     INPUT:
 
-    - `c` -- an element of ``self.base_ring()``
+    - ``c`` -- an element of ``self.base_ring()``
 
-    - `i` -- an integer >= 0
+    - ``i`` -- an integer >= 0
 
     OUTPUT:
 
@@ -256,9 +256,9 @@ def elementary_substitution(self, c, i, j, in_place=False):  # CHECK THIS!!!
 
     INPUT:
 
-    - `c` -- an element of ``self.base_ring()``
+    - ``c`` -- an element of ``self.base_ring()``
 
-    - `i`, `j` -- integers >= 0
+    - ``i``, ``j`` -- integers >= 0
 
     OUTPUT:
 
@@ -334,9 +334,9 @@ def add_symmetric(self, c, i, j, in_place=False):
 
     INPUT:
 
-    - `c` -- an element of ``self.base_ring()``
+    - ``c`` -- an element of ``self.base_ring()``
 
-    - `i`, `j` -- integers >= 0
+    - ``i``, ``j`` -- integers >= 0
 
     OUTPUT:
 
