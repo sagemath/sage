@@ -478,6 +478,12 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             2-adic Ring with lattice-cap precision (label: test)
             sage: R.integer_ring({'mode':'series'}) is R
             True
+
+        The `secure` attribute for relaxed type is preserved::
+
+            sage: K = QpER(5, secure=True)
+            sage: K.integer_ring().is_secure()
+            True
         """
         # Currently does not support fields with non integral defining
         # polynomials.  This should change when the padic_general_extension

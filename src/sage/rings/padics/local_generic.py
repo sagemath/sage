@@ -375,6 +375,25 @@ class LocalGeneric(CommutativeRing):
             37-adic Ring with lattice-cap precision (label: change)
             sage: S.change(label = "new")
             37-adic Ring with lattice-cap precision (label: new)
+
+
+        TESTS:
+
+        The `secure` attribute for relaxed type is copied::
+
+            sage: R = ZpER(5, secure=True); R
+            5-adic Ring handled with relaxed arithmetics
+            sage: K = R.change(field=True); K
+            5-adic Field handled with relaxed arithmetics
+            sage: K.is_secure()
+            True
+
+        The `check=False` option works for relaxed type::
+
+            sage: R = ZpER(5) ; R
+            5-adic Ring handled with relaxed arithmetics
+            sage: K = R.change(field=True, check=False) ; K
+            5-adic Field handled with relaxed arithmetics
         """
         # We support both print_* and * for *=mode, pos, sep, alphabet
         for atr in ('print_mode', 'print_pos', 'print_sep', 'print_alphabet'):
