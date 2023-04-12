@@ -1279,8 +1279,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         See :trac:`31443`::
 
             sage: E = EllipticCurve('1590g1')
-            sage: m = E.modular_symbol(nap=300)
-            sage: [m(a/5) for a in [1..4]]
+            sage: m = E.modular_symbol(nap=300)     # long time
+            sage: [m(a/5) for a in [1..4]]          # long time
             [13/2, -13/2, -13/2, 13/2]
 
         These values are correct, as verified by the numerical
@@ -1519,7 +1519,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             Traceback (most recent call last):
             ...
             RuntimeError: unable to compute analytic rank using rubinstein algorithm (unable to convert ' 6.19283... and is too large' to an integer)
-            sage: EllipticCurve([1234567,89101112]).analytic_rank(algorithm='sympow')
+            sage: EllipticCurve([1234567,89101112]).analytic_rank(algorithm='sympow')  # long time
             Traceback (most recent call last):
             ...
             RuntimeError: failed to compute analytic rank
@@ -1867,10 +1867,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: r, s, G = E.simon_two_descent(); r,s
             (6, 6)
             sage: E = EllipticCurve([0, 0, 0, -10012, 346900])
-            sage: r, s, G = E.simon_two_descent(); r,s
+            sage: r, s, G = E.simon_two_descent(); r,s  # long time
             (7, 7)
             sage: E = EllipticCurve([0, 0, 1, -23737, 960366])
-            sage: r, s, G = E.simon_two_descent(); r,s
+            sage: r, s, G = E.simon_two_descent(); r,s  # long time
             (8, 8)
 
         Example from :trac:`10832`::
@@ -2810,13 +2810,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         EXAMPLES::
 
             sage: E = EllipticCurve('389a1')
-            sage: E.point_search(5, verbose=False)
+            sage: E.point_search(1, verbose=False)
             [(-1 : 1 : 1), (0 : 0 : 1)]
 
         Increasing the height_limit takes longer, but finds no more
         points::
 
-            sage: E.point_search(10, verbose=False)
+            sage: E.point_search(10, verbose=False)  # long time
             [(-1 : 1 : 1), (0 : 0 : 1)]
 
         In fact this curve has rank 2 so no more than 2 points will ever be
@@ -5946,7 +5946,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         See :trac:`22063`::
 
-            sage: for n in [67,71,74,91]:
+            sage: for n in [67,71,74,91]:  # long time
             ....:     assert 4*n^6 + 4*n^2 in [P[0] for P in EllipticCurve([0,0,0,2,n^2]).integral_points()]
 
         ALGORITHM:
