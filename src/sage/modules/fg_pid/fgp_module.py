@@ -13,17 +13,17 @@ and `W` are free.
     obstruction to extending the implementation is only that one has to
     decide how elements print.
 
-We represent `M = V / W` as a pair ``(V, W)`` with `W` contained in
+We represent `M = V / W` as a pair `(V, W)` with `W` contained in
 `V`, and we internally represent elements of `M` non-canonically as elements
 `x` of `V`.  We also fix independent generators ``g[i]`` for `M` in
 `V`, and when we print out elements of `V` we print their coordinates
 with respect to the ``g[i]``; over `\ZZ` this is canonical, since each
-coefficient is reduce modulo the additive order of ``g[i]``. To obtain
+coefficient is reduced modulo the additive order of ``g[i]``. To obtain
 the vector in `V` corresponding to `x` in `M`, use ``x.lift()``.
 
-Morphisms between finitely generated R modules are well supported.
+Morphisms between finitely generated `R`-modules are well supported.
 You create a homomorphism by simply giving the images of generators of
-`M_0` in `M_1`.  Given a morphism `\phi: M0 \to M1`, you can compute the image of
+`M_0` in `M_1`.  Given a morphism `\phi: M_0 \to M_1`, you can compute the image of
 `\phi`, the kernel of `\phi`, and using ``y = phi.lift(x)`` you can lift an
 element `x` in `M_1` to an element `y` in `M_0`, if such a `y` exists.
 
@@ -31,7 +31,7 @@ TECHNICAL NOTE: For efficiency, we introduce a notion of optimized
 representation for quotient modules.  The optimized representation of
 `M=V/W` is the quotient `V'/W'` where `V'` has as basis lifts of the
 generators ``g[i]`` for `M`.  We internally store a morphism from `M_0=V_0/W_0`
-to `M_1=V_1/W_1` by giving a morphism from the optimized representation `V0'`
+to `M_1=V_1/W_1` by giving a morphism from the optimized representation `V_0'`
 of `M_0` to `V_1` that sends `W_0` into `W_1`.
 
 
@@ -236,16 +236,16 @@ def FGP_Module(V, W, check=True):
 
     - ``V`` -- a free `R`-module
 
-    - ``W`` -- a free `R`-submodule of ``V``
+    - ``W`` -- a free `R`-submodule of `V`
 
     - ``check`` -- bool (default: ``True``); if ``True``, more checks
       on correctness are performed; in particular, we check the data
-      types of ``V`` and ``W``, and that ``W`` is a submodule of ``V``
+      types of ``V`` and ``W``, and that `W` is a submodule of `V`
       with the same base ring.
 
     OUTPUT:
 
-    - the quotient ``V / W`` as a finitely generated `R`-module
+    - the quotient `V/W` as a finitely generated `R`-module
 
     EXAMPLES::
 
@@ -288,13 +288,13 @@ def is_FGP_Module(x):
 
 class FGP_Module_class(Module):
     """
-    A finitely generated module over a PID presented as a quotient ``V / W``.
+    A finitely generated module over a PID presented as a quotient `V/W`.
 
     INPUT:
 
     - ``V`` -- an `R`-module
 
-    - ``W`` -- an `R`-submodule of ``V``
+    - ``W`` -- an `R`-submodule of `V`
 
     - ``check`` -- bool (default: ``True``)
 
@@ -338,11 +338,11 @@ class FGP_Module_class(Module):
 
         - ``V`` -- an `R`-module
 
-        - ``W`` -- an `R`-submodule of V
+        - ``W`` -- an `R`-submodule of `V`
 
         - ``check`` -- bool (default: ``True``); if ``True``, more checks on
           correctness are performed; in particular, we check the data types of
-          ``V`` and ``W``, and that ``W`` is a submodule of ``V`` with the same
+          ``V`` and ``W``, and that `W` is a submodule of `V` with the same
           base ring `R`.
 
         EXAMPLES::
@@ -375,21 +375,21 @@ class FGP_Module_class(Module):
 
     def _module_constructor(self, V, W, check=True):
         r"""
-        Construct a quotient module ``V/W``.
+        Construct a quotient module `V/W`.
 
         This should be overridden in derived classes.
 
         INPUT:
 
-        - ``V`` -- an `R`-module.
+        - ``V`` -- an `R`-module
 
-        - ``W`` -- an `R`-submodule of ``V``.
+        - ``W`` -- an `R`-submodule of `V`
 
-        - ``check`` -- bool (default: ``True``).
+        - ``check`` -- bool (default: ``True``)
 
         OUTPUT:
 
-        The quotient ``V/W``.
+        The quotient `V/W`.
 
         EXAMPLES::
 
@@ -408,7 +408,7 @@ class FGP_Module_class(Module):
 
         INPUT:
 
-        - ``S`` -- anything.
+        - ``S`` -- anything
 
         OUTPUT:
 
@@ -1993,7 +1993,7 @@ def random_fgp_module(n, R=ZZ, finite=False):
 
     - ``R`` -- base ring (default: ``ZZ``)
 
-    - ``finite`` -- bool (default: ``True``); if True, make the random module finite.
+    - ``finite`` -- bool (default: ``True``); if True, make the random module finite
 
     EXAMPLES::
 
