@@ -1027,7 +1027,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: q = A.base_ring().cardinality()
             sage: exp = phi.exponential(); exp
-            z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^8)
+            z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^7)
 
         The exponential is returned as a lazy power series, meaning that
         any of its coefficients can be computed on demands::
@@ -1043,13 +1043,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
             sage: exp = phi.exponential(); exp
-            z + ((T/(T^4+4))*z^5) + O(z^8)
+            z + ((T/(T^4+4))*z^5) + O(z^7)
 
         The exponential is the compositional inverse of the logarithm
         (see :meth:`logarithm`)::
 
             sage: log = phi.logarithm(); log
-            z + ((4*T/(T^4+4))*z^5) + O(z^8)
+            z + ((4*T/(T^4+4))*z^5) + O(z^7)
             sage: exp.compose(log)
             z + O(z^8)
             sage: log.compose(exp)
@@ -1074,7 +1074,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         exponential.
         """
         L = LazyPowerSeriesRing(self._base, name)
-        return L(self._compute_coefficient_exp, valuation=1)
+        exp = lambda k: self._compute_coefficient_exp(k)
+        return L(exp)
 
     def gen(self):
         r"""
@@ -1287,7 +1288,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: log = phi.logarithm(); log
-            z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^8)
+            z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^7)
 
         The logarithm is returned as a lazy power series, meaning that
         any of its coefficients can be computed on demands::
@@ -1303,7 +1304,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
             sage: phi.logarithm()
-            z + ((4*T/(T^4+4))*z^5) + O(z^8)
+            z + ((4*T/(T^4+4))*z^5) + O(z^7)
 
         TESTS::
 
@@ -1319,7 +1320,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             True
         """
         L = LazyPowerSeriesRing(self._base, name)
-        return L(self._compute_coefficient_log, valuation=1)
+        log = lambda k: self._compute_coefficient_log(k)
+        return L(log)
 
 
     def morphism(self):
