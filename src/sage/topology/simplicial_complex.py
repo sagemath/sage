@@ -1044,6 +1044,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             self._is_immutable = False
             if not is_mutable or is_immutable:
                 self.set_immutable()
+            self._bbn = C._bbn
             return
 
         gen_dict = {}
@@ -4850,7 +4851,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         B[ind] += len(H[j-k-1].gens())
 
         if self._bbn is not None:
-            self._bbn[0].add(base_ring)
+            if 0 in self._bbn:
+                self._bbn[0].add(base_ring)
+            else:
+                self._bbn[0] = {base_ring}
             self._bbn[base_ring] = B
         else:
             self._bbn = {0: {base_ring}, base_ring: B}
