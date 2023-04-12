@@ -90,7 +90,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         return L
 
     def _modified_print_mode(self, print_mode):
-
         r"""
         Return a dictionary of print options, starting with ``self``'s
         print options but modified by the options in the dictionary
@@ -968,7 +967,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                         tester.assertEqual(y.expansion(i), x.expansion(i))
                     xx = y + (x % b)
                     tester.assertTrue(xx.is_equal_to(x,prec))
-
 
     def _test_log(self, **options):
         r"""
