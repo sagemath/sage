@@ -199,9 +199,21 @@ class Stream():
         """
         return False
 
-    def is_undefined(self):
+    def is_trivially_ne(self, other):
         """
-        Return ``True`` if ``self`` is an undefined stream.
+        Return if ``self`` is trivially not equal to ``other``.
+
+        The default implementation is ``False``.
+
+        .. NOTE::
+
+            This does not check that the streams are equal.
+        """
+        return False
+
+    def is_uninitialized(self):
+        """
+        Return ``True`` if ``self`` is an uninitialized stream.
         """
         return False
 
@@ -542,7 +554,10 @@ class Stream_inexact(Stream):
         # TODO: more cases, in particular mixed implementations,
         # could be detected
         if not isinstance(other, Stream_inexact):
-            return False
+            return (other != self)
+
+        if self.is_uninitialized() != other.is_uninitialized():
+            return True
 
         if self._is_sparse and other._is_sparse:
             for i in self._cache:
@@ -746,7 +761,6 @@ class Stream_exact(Stream):
             sage: s = Stream_exact([1])
             sage: s.order()
             0
-
         """
         return self._approximate_order
 
@@ -843,13 +857,17 @@ class Stream_exact(Stream):
             [0, 0, 0, 2, 1, 1, 1, 1]
             sage: [f[i] for i in range(-3, 5)]
             [0, 0, 0, 2, 1, 1, 1, 1]
-
         """
         if isinstance(other, type(self)):
             return (self._degree != other._degree
                     or self._approximate_order != other._approximate_order
                     or self._initial_coefficients != other._initial_coefficients
                     or self._constant != other._constant)
+        if other.is_uninitialized():
+            return True
+        if isinstance(other, Stream_zero):
+            # We are assumed to be nonzero
+            return True
         # if other is not exact, we can at least compare with the
         # elements in its cache
         if other._is_sparse:
@@ -1009,7 +1027,6 @@ class Stream_uninitialized(Stream_inexact):
         sage: C._target = one
         sage: C[4]
         0
-
     """
     def __init__(self, approximate_order, true_order=False):
         """
@@ -1048,9 +1065,16 @@ class Stream_uninitialized(Stream_inexact):
             yield self._target[n]
             n += 1
 
-    def is_undefined(self):
+    def is_uninitialized(self):
         """
-        Return ``True`` if ``self`` is an undefined stream.
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized
+            sage: C = Stream_uninitialized(0)
+            sage: C.is_uninitialized()
+            True
         """
         return self._target is None
 
@@ -1074,7 +1098,6 @@ class Stream_unary(Stream_inexact):
         sage: [g[i] for i in range(10)]
         [0, 4, 8, 12, 16, 20, 24, 28, 32, 36]
     """
-
     def __init__(self, series, is_sparse):
         """
         Initialize ``self``.
@@ -1130,11 +1153,19 @@ class Stream_unary(Stream_inexact):
         """
         return isinstance(other, type(self)) and self._series == other._series
 
-    def is_undefined(self):
+    def is_uninitialized(self):
         """
-        Return ``True`` if ``self`` is an undefined stream.
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_unary
+            sage: C = Stream_uninitialized(0)
+            sage: M = Stream_unary(C, True)
+            sage: M.is_uninitialized()
+            True
         """
-        return self._series.is_undefined()
+        return self._series.is_uninitialized()
 
 
 class Stream_binary(Stream_inexact):
@@ -1224,11 +1255,23 @@ class Stream_binary(Stream_inexact):
             return False
         return self._left == other._left and self._right == other._right
 
-    def is_undefined(self):
+    def is_uninitialized(self):
         """
-        Return ``True`` if ``self`` is an undefined stream.
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_sub, Stream_function
+            sage: C = Stream_uninitialized(0)
+            sage: F = Stream_function(lambda n: n, True, 0)
+            sage: B = Stream_sub(F, C, True)
+            sage: B.is_uninitialized()
+            True
+            sage: Bp = Stream_sub(F, F, True)
+            sage: Bp.is_uninitialized()
+            False
         """
-        return self._left.is_undefined() or self._right.is_undefined()
+        return self._left.is_uninitialized() or self._right.is_uninitialized()
 
 
 class Stream_binaryCommutative(Stream_binary):
@@ -1369,6 +1412,33 @@ class Stream_zero(Stream):
             True
         """
         return self is other or isinstance(other, Stream_zero)
+
+    def __ne__(self, other):
+        """
+        Return whether ``self`` and ``other`` are known to be not equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_zero, Stream_function
+            sage: Stream_zero() != Stream_zero()
+            False
+            sage: f = Stream_function(lambda n: 2*n, True, 0)
+            sage: Stream_zero() != f
+            False
+            sage: f[0]
+            0
+            sage: Stream_zero() != f
+            False
+            sage: f[1]
+            2
+            sage: Stream_zero() != f
+            True
+        """
+        return self is not other and not isinstance(other, Stream_zero) and other.is_nonzero()
 
     def __hash__(self):
         """
@@ -2353,11 +2423,19 @@ class Stream_scalar(Stream_inexact):
         """
         return self._series.is_nonzero()
 
-    def is_undefined(self):
+    def is_uninitialized(self):
         """
-        Return ``True`` if ``self`` is an undefined stream.
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_lmul, Stream_function
+            sage: C = Stream_uninitialized(0)
+            sage: B = Stream_lmul(C, 2, True)
+            sage: B.is_uninitialized()
+            True
         """
-        return self._series.is_undefined()
+        return self._series.is_uninitialized()
 
 
 class Stream_rmul(Stream_scalar):
@@ -2791,11 +2869,19 @@ class Stream_map_coefficients(Stream_inexact):
         return (isinstance(other, type(self)) and self._series == other._series
                 and self._function == other._function)
 
-    def is_undefined(self):
+    def is_uninitialized(self):
         """
-        Return ``True`` if ``self`` is an undefined stream.
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_map_coefficients
+            sage: C = Stream_uninitialized(0)
+            sage: M = Stream_map_coefficients(C, lambda n: -n, True)
+            sage: M.is_uninitialized()
+            True
         """
-        return self._series.is_undefined()
+        return self._series.is_uninitialized()
 
 
 class Stream_shift(Stream):
@@ -2930,11 +3016,20 @@ class Stream_shift(Stream):
         """
         return self._series.is_nonzero()
 
-    def is_undefined(self):
+    def is_uninitialized(self):
         """
-        Return ``True`` if ``self`` is an undefined stream.
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_shift
+            sage: C = Stream_uninitialized(0)
+            sage: S = Stream_shift(C, 5)
+            sage: S.is_uninitialized()
+            True
         """
-        return self._series.is_undefined()
+        return self._series.is_uninitialized()
+
 
 class Stream_truncated(Stream_inexact):
     """
@@ -3184,11 +3279,19 @@ class Stream_truncated(Stream_inexact):
         start = self._approximate_order - offset
         return any(self._cache[start:])
 
-    def is_undefined(self):
+    def is_uninitialized(self):
         """
-        Return ``True`` if ``self`` is an undefined stream.
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_truncated
+            sage: C = Stream_uninitialized(0)
+            sage: S = Stream_truncated(C, -5, 3)
+            sage: S.is_uninitialized()
+            True
         """
-        return self._series.is_undefined()
+        return self._series.is_uninitialized()
 
 
 class Stream_derivative(Stream_inexact):
@@ -3275,7 +3378,6 @@ class Stream_derivative(Stream_inexact):
             True
             sage: hash(f) == hash(g)
             False
-
         """
         return hash((type(self), self._series, self._shift))
 
@@ -3319,8 +3421,16 @@ class Stream_derivative(Stream_inexact):
         """
         return self._series.is_nonzero()
 
-    def is_undefined(self):
+    def is_uninitialized(self):
         """
-        Return ``True`` if ``self`` is an undefined stream.
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_derivative
+            sage: C = Stream_uninitialized(0)
+            sage: D = Stream_derivative(C, 1, True)
+            sage: D.is_uninitialized()
+            True
         """
-        return self._series.is_undefined()
+        return self._series.is_uninitialized()
