@@ -99,7 +99,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.flatten import FlatteningMorphism, UnflatteningMorphism
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
-from sage.rings.padics.all import Qp
+from sage.rings.padics.factory import Qp
 from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
@@ -2336,7 +2336,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # is always nonnegative, so if this value is within -err of 0, return 0.
             if h < 0:
                 assert h > -err, "A negative height less than -error_bound was computed. " + \
-                 "This should be impossible, please report bug on trac.sagemath.org."
+                 "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
                     # This should be impossible. The error bound for Wells' is rigorous
                     # and the actual height is always >= 0. If we see something less than -err,
                     # something has g one very wrong.

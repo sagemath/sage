@@ -23,10 +23,12 @@ from sage.categories.category_types import Category_over_base_ring
 from sage.categories.homsets import Homsets
 from sage.misc.functional import log
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-from sage.rings.ring_extension import RingExtension_generic
+
+lazy_import('sage.rings.polynomial.ore_polynomial_ring', 'OrePolynomialRing')
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
+lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
 
 
 class DrinfeldModules(Category_over_base_ring):
@@ -423,7 +425,7 @@ class DrinfeldModules(Category_over_base_ring):
             0
         """
         if self._characteristic is None:
-            raise NotImplementedError('function ring characteristic not ' \
+            raise NotImplementedError('function ring characteristic not '
                                       'implemented in this case')
         return self._characteristic
 
@@ -496,7 +498,7 @@ class DrinfeldModules(Category_over_base_ring):
         gen = self._ore_polring(gen)
         T = self._function_ring.gen()
         if gen[0] != self._base_morphism(T):
-            raise ValueError('constant coefficient must equal that of the ' \
+            raise ValueError('constant coefficient must equal that of the '
                              'category')
         return DrinfeldModule(self._function_ring, gen)
 

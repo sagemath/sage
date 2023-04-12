@@ -690,7 +690,6 @@ class TriangularModuleMorphism(ModuleMorphism):
 
         self._inverse_on_support = inverse_on_support
 
-
         if invertible is None and (domain.basis().keys() == codomain.basis().keys()) and \
            (self._inverse_on_support==identity or domain in Modules.FiniteDimensional):
             invertible = True

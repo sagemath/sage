@@ -2940,7 +2940,8 @@ class GenusSymbol_global_ring():
             [0 0 0 0 0 0 1 0]
             [0 0 0 0 0 0 0 2]
         """
-        from sage.quadratic_forms.all import QuadraticForm, quadratic_form_from_invariants
+        from sage.quadratic_forms.quadratic_form import QuadraticForm
+        from sage.quadratic_forms.quadratic_form import quadratic_form_from_invariants
         sminus = self.signature_pair_of_matrix()[1]
         det = self.determinant()
         m = self.rank()
@@ -2972,8 +2973,8 @@ class GenusSymbol_global_ring():
             ....:     G = genera((1,2), det, even=False)
             ....:     assert all(g==Genus(g.representative()) for g in G)
             sage: for det in range(1, 9): # long time (8s, 2020)
-            ....:     G = genera((2,2), det, even=False) # long time
-            ....:     assert all(g==Genus(g.representative()) for g in G) # long time
+            ....:     G = genera((2,2), det, even=False)
+            ....:     assert all(g==Genus(g.representative()) for g in G)
         """
         from sage.modules.free_quadratic_module_integer_symmetric import IntegralLattice, local_modification
         q = self.rational_representative()

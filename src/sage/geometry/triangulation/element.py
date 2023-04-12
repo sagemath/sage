@@ -111,8 +111,6 @@ def triangulation_render_2d(triangulation, **kwds):
         plot_triangs
 
 
-
-
 def triangulation_render_3d(triangulation, **kwds):
     r"""
     Return a graphical representation of a 3-d triangulation.
@@ -363,7 +361,6 @@ class Triangulation(Element):
         """
         return self._triangulation[i]
 
-
     def __len__(self):
         """
         Return the length of the triangulation.
@@ -379,7 +376,6 @@ class Triangulation(Element):
             2
         """
         return len(self._triangulation)
-
 
     def _repr_(self):
         r"""
@@ -400,7 +396,6 @@ class Triangulation(Element):
         s += ', '.join([ '<'+','.join(map(str,t))+'>' for t in self._triangulation])
         s += ')'
         return s
-
 
     def plot(self, **kwds):
         r"""
@@ -424,7 +419,6 @@ class Triangulation(Element):
             return triangulation_render_3d(self, **kwds)
 
         raise NotImplementedError('Plotting '+str(dim)+'-dimensional triangulations not implemented!')
-
 
     def gkz_phi(self):
         r"""
@@ -459,7 +453,6 @@ class Triangulation(Element):
             for i in simplex:
                 vec[i] = vec[i] + vol
         return vec
-
 
     def enumerate_simplices(self):
         r"""
@@ -504,7 +497,6 @@ class Triangulation(Element):
         """
         pc = self._point_configuration
         return tuple( pc.simplex_to_int(t) for t in self )
-
 
     def fan(self, origin=None):
         r"""
@@ -564,7 +556,6 @@ class Triangulation(Element):
         points = self.point_configuration().points()
         return Fan(self, (vector(R, p) - origin for p in points))
 
-
     @cached_method
     def simplicial_complex(self):
         r"""
@@ -588,7 +579,6 @@ class Triangulation(Element):
         """
         from sage.topology.simplicial_complex import SimplicialComplex
         return SimplicialComplex(self)
-
 
     @cached_method
     def _boundary_simplex_dictionary(self):
@@ -632,7 +622,6 @@ class Triangulation(Element):
                 facet = simplex[:i] + simplex[i+1:]
                 result[facet] = result.get(facet, tuple()) + (simplex,)
         return result
-
 
     @cached_method
     def boundary(self):

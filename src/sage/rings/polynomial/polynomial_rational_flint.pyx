@@ -2163,7 +2163,9 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: (zeta^2 + zeta + 1).galois_group(pari_group=True)
             PARI group [2, -1, 1, "S2"] of degree 2
         """
-        from sage.groups.all import PariGroup, PermutationGroup, TransitiveGroup
+        from sage.groups.pari_group import PariGroup
+        from sage.groups.perm_gps.permgroup import PermutationGroup
+        from sage.groups.perm_gps.permgroup_named import TransitiveGroup
 
         if not self.is_irreducible():
             raise ValueError("The polynomial must be irreducible")

@@ -336,7 +336,6 @@ class Function_exp_integral_e1(BuiltinFunction):
         import mpmath
         return mpmath_utils_call(mpmath.e1, z, parent=parent)
 
-
     def _print_latex_(self, z):
         r"""
         Custom ``_print_latex_`` method.

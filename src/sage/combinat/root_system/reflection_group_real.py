@@ -271,7 +271,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             cls = IrreducibleComplexReflectionGroup
         else:
             cls = ComplexReflectionGroup
-        cls.__init__(self, W_types, index_set            = index_set,
+        cls.__init__(self, W_types, index_set = index_set,
                                     hyperplane_index_set = hyperplane_index_set,
                                     reflection_index_set = reflection_index_set)
 
@@ -326,7 +326,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             sage: W = ReflectionGroup(["B",2])                          # optional - gap3
 
             sage: for w in W.iteration("breadth",True):                 # optional - gap3
-            ....:     print("%s %s"%(w, w._reduced_word))               # optional - gap3
+            ....:     print("%s %s"%(w, w._reduced_word))
             () []
             (1,3)(2,6)(5,7) [1]
             (1,5)(2,4)(6,8) [0]
@@ -567,7 +567,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             sage: S = W.simple_reflections()                            # optional - gap3
             sage: N = W.fundamental_weights()                           # optional - gap3
             sage: for i in W.index_set():                               # optional - gap3
-            ....:     for j in W.index_set():                           # optional - gap3
+            ....:     for j in W.index_set():
             ....:         print("{} {} {} {}".format(i, j, N[i], N[i]*S[j].to_matrix()))
             1 1 (3/4, 1/2, 1/4) (-1/4, 1/2, 1/4)
             1 2 (3/4, 1/2, 1/4) (3/4, 1/2, 1/4)
@@ -801,9 +801,9 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
                 sage: W = ReflectionGroup(['A',2])                      # optional - gap3
                 sage: for w in W:                                       # optional - gap3
-                ....:     rcr = w.right_coset_representatives()         # optional - gap3
-                ....:     print("%s %s"%(w.reduced_word(),              # optional - gap3
-                ....:                    [v.reduced_word() for v in rcr]))  # optional - gap3
+                ....:     rcr = w.right_coset_representatives()
+                ....:     print("%s %s"%(w.reduced_word(),
+                ....:                    [v.reduced_word() for v in rcr]))
                 [] [[], [2], [1], [2, 1], [1, 2], [1, 2, 1]]
                 [2] [[], [2], [1]]
                 [1] [[], [1], [1, 2]]
@@ -830,9 +830,9 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
                 sage: W = ReflectionGroup(['A',2])                      # optional - gap3
                 sage: for w in W:                                       # optional - gap3
-                ....:     lcr = w.left_coset_representatives()          # optional - gap3
-                ....:     print("%s %s"%(w.reduced_word(),              # optional - gap3
-                ....:                    [v.reduced_word() for v in lcr]))  # optional - gap3
+                ....:     lcr = w.left_coset_representatives()
+                ....:     print("%s %s"%(w.reduced_word(),
+                ....:                    [v.reduced_word() for v in lcr]))
                 [] [[], [2], [1], [1, 2], [2, 1], [1, 2, 1]]
                 [2] [[], [2], [1]]
                 [1] [[], [1], [2, 1]]

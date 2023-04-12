@@ -222,13 +222,13 @@ cdef class Fmpz_poly(SageObject):
         """
         cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         if not isinstance(left, Fmpz_poly) or not isinstance(right, Fmpz_poly):
-            if isinstance(left, int) :
+            if isinstance(left, int):
                 fmpz_poly_scalar_mul_si(res.poly, (<Fmpz_poly>right).poly, left)
-            elif isinstance(left, Integer) :
+            elif isinstance(left, Integer):
                 fmpz_poly_scalar_mul_mpz(res.poly, (<Fmpz_poly>right).poly, (<Integer>left).value)
-            elif  isinstance(right, int) :
+            elif isinstance(right, int):
                 fmpz_poly_scalar_mul_si(res.poly, (<Fmpz_poly>left).poly, right)
-            elif isinstance(right, Integer) :
+            elif isinstance(right, Integer):
                 fmpz_poly_scalar_mul_mpz(res.poly, (<Fmpz_poly>left).poly, (<Integer>right).value)
             else:
                 raise TypeError

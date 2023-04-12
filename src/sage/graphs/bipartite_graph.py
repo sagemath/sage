@@ -308,10 +308,10 @@ class BipartiteGraph(Graph):
 
     #. From a NetworkX bipartite graph::
 
-        sage: import networkx
-        sage: G = graphs.OctahedralGraph()
-        sage: N = networkx.make_clique_bipartite(G.networkx_graph())
-        sage: B = BipartiteGraph(N)
+        sage: import networkx                                                                       # optional - networkx
+        sage: G = graphs.OctahedralGraph()                                                          # optional - networkx
+        sage: N = networkx.make_clique_bipartite(G.networkx_graph())                                # optional - networkx
+        sage: B = BipartiteGraph(N)                                                                 # optional - networkx
 
     TESTS:
 

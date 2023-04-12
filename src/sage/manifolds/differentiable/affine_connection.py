@@ -1996,15 +1996,16 @@ class AffineConnection(SageObject):
                         @parallel(p_iter='multiprocessing', ncpus=nproc)
                         def make_Riem(frame, gam, gam_gam, gam_sc, local_list_ijkl):
                             partial = []
-                            for i,j,k,l in local_list_ijkl:
-                                partial.append([i,j,k,l, frame[k](gam[[i,j,l]]) - \
-                                                         frame[l](gam[[i,j,k]]) + \
-                                                         gam_gam[[i,k,j,l]] -  \
-                                                         gam_gam[[i,l,j,k]] -  \
-                                                         gam_sc[[i,j,k,l]]])
+                            for i, j, k, l in local_list_ijkl:
+                                partial.append([i, j, k, l,
+                                                frame[k](gam[[i, j, l]]) -
+                                                frame[l](gam[[i, j, k]]) +
+                                                gam_gam[[i, k, j, l]] -
+                                                gam_gam[[i, l, j, k]] -
+                                                gam_sc[[i, j, k, l]]])
                             return partial
                         # Computation and assignation of values
-                        for ii,val in make_Riem(listParalInput):
+                        for ii, val in make_Riem(listParalInput):
                             for jj in val:
                                 res[jj[0], jj[1], jj[2], jj[3]] = jj[4]
 
