@@ -1623,16 +1623,30 @@ class BinaryQF(SageObject):
         Also when using the ``"cornacchia"`` algorithm::
 
             sage: # needs sage.libs.pari
-            sage: abc = [1, 0, randrange(1,10^3)]
-            sage: Q = BinaryQF(abc)
             sage: n = random_prime(10^9)
-            sage: if Q[2] % 4 == 3 and randrange(2):
-            ....:     n *= 4
-            sage: xy1 = Q.solve_integer(n, algorithm='cornacchia')
-            sage: xy1 is None or Q(*xy1) == n
+            sage: c = randrange(1, 10^3)
+
+            sage: # needs sage.libs.pari
+            sage: Q1 = BinaryQF(1, 0, c)
+            sage: xy = Q1.solve_integer(n, algorithm='cornacchia')
+            sage: xy is None or Q1(*xy) == n
             True
-            sage: xy2 = Q.solve_integer(n)
-            sage: (xy1 is None) == (xy2 is None)
+            sage: (xy is None) == (Q1.solve_integer(n) is None)
+            True
+
+            sage: # needs sage.libs.pari
+            sage: Q3 = BinaryQF(1, 0, 4*c+3)
+            sage: xy = Q3.solve_integer(n, algorithm='cornacchia')
+            sage: xy is None or Q3(*xy) == n
+            True
+            sage: (xy is None) == (Q3.solve_integer(n) is None)
+            True
+
+            sage: # needs sage.libs.pari
+            sage: xy = Q3.solve_integer(4*n, algorithm='cornacchia')
+            sage: xy is None or Q3(*xy) == 4*n
+            True
+            sage: (xy is None) == (Q3.solve_integer(4*n) is None)
             True
 
         Test for square discriminants specifically (:trac:`33026`)::
