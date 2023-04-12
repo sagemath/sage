@@ -944,35 +944,27 @@ class DrinfeldModule(Parent, UniqueRepresentation):
              ((1, 2), (12, 29, 6)),
              ((1, 2), (31, 31, 7))]
 
+        Use the ``nonzero=True`` flag to display only the parameters
+        whose `j`-invariant value is nonzero::
+
+            sage: phi.basic_j_invariant_parameters(nonzero=True)
+            [((2,), (31, 6))]
+
+
         One can specify the list of coefficients indices to be
         considered in the computation::
 
-            sage: A = GF(3)['T']
+            sage: A = GF(2)['T']
             sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, T, 2, T, 2*T, T^3, T^4 + T^2 + 1])
-            sage: phi.basic_j_invariant_parameters([1, 5])
-            [((1, 5), (273, 91, 31)),
-             ((1, 5), (297, 163, 55)),
-             ((1, 5), (295, 157, 53)),
-             ((1, 5), (265, 67, 23)),
-             ((1, 5), (357, 343, 115)),
-             ...
-             ((1, 5), (146, 74, 25))]
-
-        Use ``nonzero=True`` to speed up the computations for Drinfeld
-        modules having multiple zero coefficients::
-
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, 0, T+1, 0, 1, 0, T])
-            sage: phi.basic_j_invariant_parameters(nonzero=True)
-            [((2, 4), (260, 641, 26)),
-             ((2, 4), (157, 19, 1)),
-             ((2, 4), (27, 24, 1)),
-             ((2, 4), (188, 143, 6)),
-             ((2, 4), (401, 260, 11)),
-             ...
-             ((2, 4), (288, 39, 2))]
+            sage: phi = DrinfeldModule(A, [T, T, 1, T])
+            sage: phi.basic_j_invariant_parameters([1, 2])
+            [((1, 2), (1, 2, 1)),
+             ((1, 2), (4, 1, 1)),
+             ((1, 2), (7, 0, 1)),
+             ((1, 2), (5, 3, 2)),
+             ((1, 2), (0, 7, 3)),
+             ((1, 2), (6, 5, 3)),
+             ((1, 2), (7, 7, 4))]
 
         TESTS::
 
