@@ -579,11 +579,10 @@ class InterfaceInit(Converter):
         """
         # This code should probably be moved into the interface
         # object in a nice way.
-        from sage.symbolic.ring import is_SymbolicVariable
         if self.name_init != "_maxima_init_":
             raise NotImplementedError
         args = ex.operands()
-        if (not all(is_SymbolicVariable(v) for v in args) or
+        if (not all(isinstance(v, Expression) and v.is_symbol() for v in args) or
             len(args) != len(set(args))):
             # An evaluated derivative of the form f'(1) is not a
             # symbolic variable, yet we would like to treat it like
@@ -1103,12 +1102,11 @@ class FriCASConverter(InterfaceInit):
              ,1,1,2
 
         """
-        from sage.symbolic.ring import is_SymbolicVariable
         args = ex.operands()  # the arguments the derivative is evaluated at
         params = operator.parameter_set()
         params_set = set(params)
         mult = ",".join(str(params.count(i)) for i in params_set)
-        if (not all(is_SymbolicVariable(v) for v in args) or
+        if (not all(isinstance(v, Expression) and v.is_symbol() for v in args) or
             len(args) != len(set(args))):
             # An evaluated derivative of the form f'(1) is not a
             # symbolic variable, yet we would like to treat it like
