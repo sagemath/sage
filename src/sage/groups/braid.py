@@ -1492,7 +1492,7 @@ class Braid(FiniteTypeArtinGroupElement):
             (1,)
             sage: b = B([-2, 2, -4, -4, 4, -5, -1, 4, -1, 1])
             sage: L1 = b.left_normal_form(); L1
-            (s0^-1*s1^-1*s2^-1*s3^-1*s4^-1*s0^-1*s1^-1*s2^-1*s3^-1*s0^-1*s1^-1*s2^-1*s0^-1*s1^-1*s0^-1,
+            (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s3^-1*s2^-1*s1^-1*s0^-1*s4^-1*s3^-1*s2^-1*s1^-1*s0^-1,
             s0*s2*s1*s0*s3*s2*s1*s0*s4*s3*s2*s1,
             s3)
             sage: L1 == b.left_normal_form()
@@ -1500,8 +1500,8 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: B([1]).left_normal_form(algorithm='artin')
             (1, s0)
             sage: B([-3]).left_normal_form(algorithm='artin')
-            (s0^-1*s1^-1*s2^-1*s3^-1*s4^-1*s0^-1*s1^-1*s2^-1*s3^-1*s0^-1*s1^-1*s2^-1*s0^-1*s1^-1*s0^-1,
-            s0*s1*s0*s2*s1*s3*s2*s1*s0*s4*s3*s2*s1*s0)
+            (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s3^-1*s2^-1*s1^-1*s0^-1*s4^-1*s3^-1*s2^-1*s1^-1*s0^-1,
+            s0*s1*s2*s3*s4*s0*s1*s2*s3*s1*s2*s0*s1*s0)
             sage: B = BraidGroup(3)
             sage: B([1,2,-1]).left_normal_form()
             (s0^-1*s1^-1*s0^-1, s1*s0, s0*s1)
@@ -2732,7 +2732,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         OUTPUT:
 
-        The lexicographically smallest word that represents the braid,
+        A shortest word that represents the braid,
         in Tietze list form.
 
         EXAMPLES::
@@ -2740,22 +2740,25 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             sage: B = BraidGroup(5)
             sage: P = Permutation([5, 3, 1, 2, 4])
             sage: B._standard_lift_Tietze(P)
-            (1, 2, 1, 3, 2, 4)
+            (1, 2, 3, 4, 1, 2)
         """
-        if not p.length():
-            return ()
-        pl = p
-        l = []
-        while pl.length():
-            i = 1
-            while i < max(pl):
-                if pl(i) > pl(i+1):
-                    l.append(i)
-                    pl = self._coxeter_group.simple_reflection(i) * pl
-                    i = 1
-                else:
-                    i += 1
-        return tuple(l)
+        G = SymmetricGroup(self.strands())
+        pl = G(p)
+        return tuple(pl.reduced_word())
+        # if not p.length():
+        #     return ()
+        # pl = p
+        # l = []
+        # while pl.length():
+        #     i = 1
+        #     while i < max(pl):
+        #         if pl(i) > pl(i+1):
+        #             l.append(i)
+        #             pl = self._coxeter_group.simple_reflection(i) * pl
+        #             i = 1
+        #         else:
+        #             i += 1
+        # return tuple(l)
 
     @cached_method
     def _links_gould_representation(self, symbolics=False):
@@ -3364,7 +3367,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
             sage: B = BraidGroup(5)
             sage: B._element_from_libbraiding([[-2], [2, 1], [1, 2], [2, 1]])
-            (s0^-1*s1^-1*s2^-1*s3^-1*s0^-1*s1^-1*s2^-1*s0^-1*s1^-1*s0^-1)^2*s1*s0^2*s1^2*s0
+            (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s3^-1*s2^-1*s1^-1*s0^-1)^2*s1*s0^2*s1^2*s0
             sage: B._element_from_libbraiding([[0]])
             1
         """

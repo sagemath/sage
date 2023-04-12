@@ -103,20 +103,41 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         Return the corresponding Coxeter group element under the natural
         projection.
 
+        INPUT:
+
+        - W -- (default: ``None``) It may be ``G = SymmetricGroup(n)`` if ``self.parent()``
+          is either an Artin group of type ``['A', n-1]`` or ``BraidGroup(n)`` to obtain an
+          element of ``G`` instead a ``Standard Permutation``.
+
         OUTPUT:
 
-        A permutation.
+        An element of the Coxeter group or an elemento of a symmetric group.
 
         EXAMPLES::
 
-            sage: A.<s1,s2,s3> = ArtinGroup(['B',3])
+            sage: B.<s1,s2,s3> = ArtinGroup(['B',3])
             sage: b = s1 * s2 / s3 / s2
-            sage: b.coxeter_group_element()
+            sage: b1 = b.coxeter_group_element(); b1
             [ 1 -1  0]
             [ 2 -1  0]
             [ a -a  1]
             sage: b.coxeter_group_element().reduced_word()
             [1, 2, 3, 2]
+            sage: A.<s1,s2,s3> = ArtinGroup(['A',3])
+            sage: c = s1 * s2 *s3
+            sage: c1 = c.coxeter_group_element(); c1
+            [4, 1, 2, 3]
+            sage: c1.reduced_word()
+            [3, 2, 1]
+            sage: c.coxeter_group_element(W=SymmetricGroup(4))
+            (1,4,3,2)
+            sage: A.<s1,s2,s3> = BraidGroup(4)
+            sage: c = s1 * s2 *s3
+            sage: c.coxeter_group_element()
+            [4, 1, 2, 3]
+            sage: c.coxeter_group_element(W=SymmetricGroup(4))
+            (1,4,3,2)
+
         """
         if W is None:
             W = self.parent().coxeter_group()
@@ -208,7 +229,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
             sage: B = BraidGroup(4)
             sage: b = B([1, 2, 3, -1, 2, -3])
             sage: b.left_normal_form()
-            (s0^-1*s1^-1*s2^-1*s0^-1*s1^-1*s0^-1, s0*s1*s2*s1*s0, s0*s2*s1)
+            (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1, s0*s1*s2*s1*s0, s0*s2*s1)
             sage: c = B([1])
             sage: c.left_normal_form()
             (1, s0)
@@ -649,7 +670,7 @@ class ArtinGroup(FinitelyPresentedGroup):
             sage: B = BraidGroup(5)
             sage: P = Permutation([5, 3, 1, 2, 4])
             sage: B._standard_lift(P)
-            s0*s1*s0*s2*s1*s3
+            s0*s1*s2*s3*s0*s1
         """
         return self(self._standard_lift_Tietze(w))
 
@@ -711,7 +732,7 @@ class FiniteTypeArtinGroup(ArtinGroup):
 
             sage: B = BraidGroup(5)
             sage: B.delta()
-            s0*s1*s0*s2*s1*s0*s3*s2*s1*s0
+            s0*s1*s2*s3*s0*s1*s2*s0*s1*s0
         """
         return self._standard_lift(self._coxeter_group.long_element())
 
