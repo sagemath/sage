@@ -264,9 +264,7 @@ cdef class ntl_ZZ_pX():
         if i < 0:
             r.set_from_int(0)
         else:
-            sig_on()
             r.x = ZZ_pX_coeff( self.x, i)
-            sig_off()
         return r
 
     cdef int getitem_as_int(ntl_ZZ_pX self, long i):
