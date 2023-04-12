@@ -663,7 +663,7 @@ class QuadraticForm(SageObject):
     def list_external_initializations(self):
         """
         Return a list of the fields which were set externally at
-        creation, and not created through the usual QuadraticForm
+        creation, and not created through the usual :class:`QuadraticForm`
         methods.  These fields are as good as the external process
         that made them, and are thus not guaranteed to be correct.
 
@@ -1500,7 +1500,7 @@ class QuadraticForm(SageObject):
 
     def det(self):
         """
-        Gives the determinant of the Gram matrix of 2*Q, or
+        Return the determinant of the Gram matrix of 2*Q, or
         equivalently the determinant of the Hessian matrix of Q.
 
         (Note: This is always defined over the same ring as the
@@ -1527,7 +1527,7 @@ class QuadraticForm(SageObject):
 
     def Gram_det(self):
         """
-        Gives the determinant of the Gram matrix of Q.
+        Return the determinant of the Gram matrix of Q.
 
         (Note: This is defined over the fraction field of the ring of
         the quadratic form, but is often not defined over the same
@@ -1661,8 +1661,10 @@ class QuadraticForm(SageObject):
         in `R` with diagonal in `2R`.
         (Caveat: This always returns the principal ideal when working over a field!)
 
-        WARNING:  THIS ONLY WORKS OVER A PID RING OF INTEGERS FOR NOW!
-              (Waiting for Sage fractional ideal support.)
+        .. WARNING::
+
+            This only works over a PID ring of integers for now!
+            (Waiting for Sage fractional ideal support.)
 
         EXAMPLES::
 
@@ -1689,18 +1691,16 @@ class QuadraticForm(SageObject):
         r"""
         Return the value of the associated bilinear map on two vectors
 
-        Given a quadratic form `Q` over some base ring `R` with
+        Given a quadratic form Q over some base ring `R` with
         characteristic not equal to 2, this gives the image of two
         vectors with coefficients in `R` under the associated bilinear
-        map `B`, given by the relation `2 B(v,w) = Q(v) + Q(w) - Q(v+w)`.
+        map `B`, given by the relation `2 B(v,w)` = Q(`v`) + Q(`w`) `-` Q(`v+w`).
 
         INPUT:
 
-        ``v``, ``w`` -- two vectors
+        - ``v``, ``w`` -- two vectors
 
-        OUTPUT:
-
-        an element of the base ring `R`.
+        OUTPUT: an element of the base ring `R`.
 
         EXAMPLES:
 

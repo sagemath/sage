@@ -199,7 +199,7 @@ def CountAllLocalTypesNaive(Q, p, k, m, zvec, nzvec):
 cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     """
     Internal routine to check if a given solution vector `w` (of Q(`w`) =
-    `m \mod p^k`) is of a certain local type and satisfies certain
+    `m` mod `p^k`) is of a certain local type and satisfies certain
     congruence conditions mod `p`.
 
     NOTE: No internal checking is done to test if `p` is a prime >=2, or

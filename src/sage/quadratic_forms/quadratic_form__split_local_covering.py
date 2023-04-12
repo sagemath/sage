@@ -22,12 +22,12 @@ from sage.arith.misc import GCD
 
 def cholesky_decomposition(self, bit_prec = 53):
     r"""
-    Give the Cholesky decomposition of this quadratic form `Q` as a real matrix
+    Give the Cholesky decomposition of this quadratic form Q as a real matrix
     of precision ``bit_prec``.
 
     RESTRICTIONS:
 
-        `Q` must be given as a :class:`QuadraticForm` defined over `\ZZ`, `\QQ`, or some
+        Q must be given as a :class:`QuadraticForm` defined over `\ZZ`, `\QQ`, or some
         real field. If it is over some real field, then an error is raised if
         the precision given is not less than the defined precision of the real
         field defining the quadratic form!
@@ -39,14 +39,15 @@ def cholesky_decomposition(self, bit_prec = 53):
 
     INPUT:
 
-    - ``bit_prec`` -- a natural number (default 53).
+    - ``bit_prec`` -- a natural number (default 53)
 
     OUTPUT: an upper triangular real matrix of precision ``bit_prec``.
 
 
-    TO DO:
+    .. TODO::
+
         If we only care about working over the real double field (RDF), then we
-        can use the ``cholesky()`` method present for square matrices over that.
+        can use the method :meth:`cholesky` present for square matrices over that.
 
     .. note::
 
@@ -54,10 +55,8 @@ def cholesky_decomposition(self, bit_prec = 53):
 
         ::
 
-            ##/////////////////////////////////////////////////////////////////////////////////////////////////
-            ##/// Finds the Cholesky decomposition of a quadratic form -- as an upper-triangular matrix!
-            ##/// (It's assumed to be global, hence twice the form it refers to.)  <-- Python revision asks:  Is this true?!? =|
-            ##/////////////////////////////////////////////////////////////////////////////////////////////////
+            Finds the Cholesky decomposition of a quadratic form -- as an upper-triangular matrix!
+            (It's assumed to be global, hence twice the form it refers to.)  <-- Python revision asks:  Is this true?!? =|
 
 
     EXAMPLES::
@@ -129,12 +128,14 @@ def vectors_by_length(self, bound):
     - a list ``L`` of length (``bound`` + 1) whose entry ``L[i]`` is a list of
       all vectors of length `i`.
 
-    Reference: This is a slightly modified version of Cohn's Algorithm
+    REFERENCES:
+
+    This is a slightly modified version of Cohn's Algorithm
     2.7.5 in "A Course in Computational Number Theory", with the
     increment step moved around and slightly re-indexed to allow clean
     looping.
 
-   .. NOTE::
+    .. NOTE::
 
         We could speed this up for very skew matrices by using LLL
         first, and then changing coordinates back, but for our purposes
@@ -263,7 +264,7 @@ def vectors_by_length(self, bound):
 
 def complementary_subform_to_vector(self, v):
     """
-    Finds the `(n-1)`-dim'l quadratic form orthogonal to the vector `v`.
+    Find the `(n-1)`-dimensional quadratic form orthogonal to the vector `v`.
 
     Note: This is usually not a direct summand!
 
@@ -356,7 +357,7 @@ def complementary_subform_to_vector(self, v):
 def split_local_cover(self):
     """
     Tries to find subform of the given (positive definite quaternary)
-    quadratic form `Q` of the form
+    quadratic form Q of the form
 
     .. MATH::
 

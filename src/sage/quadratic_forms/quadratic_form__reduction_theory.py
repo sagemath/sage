@@ -80,7 +80,7 @@ def reduced_binary_form(self):
 
     EXAMPLES::
 
-        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form()
+        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form()                       # optional - sage.symbolic
         (
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 2 -1 ]
@@ -146,12 +146,11 @@ def minkowski_reduction(self):
 
     Note: When Q has dim <= 4 we can take all `s_i` in {1, 0, -1}.
 
-    References:
+    REFERENCES:
 
-        Schulze-Pillot's paper on "An algorithm for computing genera
-            of ternary and quaternary quadratic forms", p138.
-        Donaldson's 1979 paper "Minkowski Reduction of Integral
-            Matrices", p203.
+    - Schulze-Pillot's paper on "An algorithm for computing genera
+      of ternary and quaternary quadratic forms", p138.
+    - Donaldson's 1979 paper "Minkowski Reduction of Integral Matrices", p203.
 
     EXAMPLES::
 
@@ -273,11 +272,11 @@ def minkowski_reduction_for_4vars__SP(self):
 
     Note: When Q has dim <= 4 we can take all `s_i` in {1, 0, -1}.
 
-    References:
-        Schulze-Pillot's paper on "An algorithm for computing genera
-            of ternary and quaternary quadratic forms", p138.
-        Donaldson's 1979 paper "Minkowski Reduction of Integral
-            Matrices", p203.
+    REFERENCES:
+
+    - Schulze-Pillot's paper on "An algorithm for computing genera
+      of ternary and quaternary quadratic forms", p138.
+    - Donaldson's 1979 paper "Minkowski Reduction of Integral Matrices", p203.
 
     EXAMPLES::
 

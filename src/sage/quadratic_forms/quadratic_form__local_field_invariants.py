@@ -40,10 +40,10 @@ def rational_diagonal_form(self, return_matrix=False):
     - ``return_matrix`` -- (boolean, default: False) also return the
       transformation matrix
 
-    OUTPUT: either ``D`` (if ``return_matrix`` is false) or ``(D,T)``
+    OUTPUT: either ``D`` (if ``return_matrix`` is false) or ``(D, T)``
     (if ``return_matrix`` is true) where
 
-    - ``D`` -- the diagonalized form of this quadratic form.
+    - ``D`` -- the diagonalized form of this quadratic form
 
     - ``T`` -- transformation matrix. This is such that
       ``T.transpose() * self.matrix() * T`` gives ``D.matrix()``.
@@ -189,7 +189,7 @@ def _rational_diagonal_form_and_transformation(self):
 
     OUTPUT: a tuple ``(D,T)`` where
 
-    - ``D`` -- the diagonalized form of this quadratic form.
+    - ``D`` -- the diagonalized form of this quadratic form
 
     - ``T`` -- transformation matrix. This is such that
       ``T.transpose() * self.matrix() * T`` gives ``D.matrix()``.
@@ -759,7 +759,7 @@ def compute_definiteness(self):
 
     Note:  A degenerate form is considered neither definite nor indefinite.
 
-    Note:  The zero-dim'l form is considered both positive definite and negative definite.
+    Note:  The zero-dimensional form is considered both positive definite and negative definite.
 
     OUTPUT: boolean
 
@@ -915,7 +915,7 @@ def is_positive_definite(self):
     Determines if the given quadratic form is positive-definite.
 
     Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dim'l form is considered both positive definite and negative definite.
+    Note:  The zero-dimensional form is considered both positive definite and negative definite.
 
     OUTPUT: boolean -- True or False
 
@@ -947,7 +947,7 @@ def is_negative_definite(self):
     Determines if the given quadratic form is negative-definite.
 
     Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dim'l form is considered both positive definite and negative definite.
+    Note:  The zero-dimensional form is considered both positive definite and negative definite.
 
     OUTPUT: boolean -- True or False
 
@@ -979,7 +979,7 @@ def is_indefinite(self):
     Determines if the given quadratic form is indefinite.
 
     Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dim'l form is not considered indefinite.
+    Note:  The zero-dimensional form is not considered indefinite.
 
     OUTPUT: boolean -- True or False
 
@@ -1012,7 +1012,7 @@ def is_definite(self):
     Determines if the given quadratic form is (positive or negative) definite.
 
     Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dim'l form is considered indefinite.
+    Note:  The zero-dimensional form is considered indefinite.
 
     OUTPUT: boolean -- True or False
 

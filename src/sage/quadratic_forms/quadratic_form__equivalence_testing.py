@@ -124,7 +124,7 @@ def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_
 
     INPUT:
 
-    - a :class:`QuadraticForm`
+    - ``other`` -- a :class:`QuadraticForm`
 
     OUTPUT: boolean
 
@@ -174,11 +174,11 @@ def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_
 def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
     """
     Determines if the given quadratic form has a Jordan decomposition
-    equivalent to that of self.
+    equivalent to that of ``self``.
 
     INPUT:
 
-    a QuadraticForm
+    - ``other`` -- a :class:`QuadraticForm`
 
     OUTPUT: boolean
 
@@ -354,7 +354,7 @@ def is_rationally_isometric(self, other, return_matrix=False):
         [ * * * * 1 ]
         sage: W = DiagonalQuadraticForm(K, [a, a, a, 2, 1]); W                          # optional - sage.rings.number_field
         Quadratic form in 5 variables over Number Field in a
-         with defining polynomial x^4 + 2*x + 6 with   coefficients:
+         with defining polynomial x^4 + 2*x + 6 with coefficients:
         [ a 0 0 0 0 ]
         [ * a 0 0 0 ]
         [ * * a 0 0 ]

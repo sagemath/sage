@@ -241,8 +241,8 @@ class TernaryQF(SageObject):
     def matrix(self):
         """
         Return the Hessian matrix associated to the ternary quadratic form.
-        That is, if `Q` is a ternary quadratic form, `Q(x,y,z) = a*x^2 + b*y^2 + c*z^2 + r*y*z + s*x*z + t*x*y`,
-        then the Hessian matrix associated to `Q` is
+        That is, if Q is a ternary quadratic form, Q`(x,y,z) = a*x^2 + b*y^2 + c*z^2 + r*y*z + s*x*z + t*x*y`,
+        then the Hessian matrix associated to Q is
         ::
 
             [2*a t s]
@@ -830,7 +830,7 @@ class TernaryQF(SageObject):
 
     def find_zeros_mod_p(self, p):
         """
-        Find the zeros of the given ternary quadratic positive definite form modulo a prime ``p``, where ``p`` doesn't divide the discriminant of the form.
+        Find the zeros of the given ternary quadratic positive definite form modulo a prime `p`, where `p` doesn't divide the discriminant of the form.
 
         EXAMPLES::
 
@@ -860,12 +860,12 @@ class TernaryQF(SageObject):
 
     def find_p_neighbor_from_vec(self, p, v, mat=False):
         r"""
-        Finds the reduced equivalent of the ``p``-neighbor of this ternary quadratic form associated to a given
+        Finds the reduced equivalent of the `p`-neighbor of this ternary quadratic form associated to a given
         vector `v` satisfying:
 
-        1. `Q(v) = 0  \mod p`
+        1. Q(`v`) = 0  mod `p`
 
-        2. `v` is a non-singular point of the conic `Q(v) = 0 \mod p`.
+        2. `v` is a non-singular point of the conic Q(`v`) = 0 mod `p`.
 
         Reference:  Gonzalo Tornaria's Thesis, Thrm 3.5, p34.
 
@@ -901,7 +901,7 @@ class TernaryQF(SageObject):
 
     def find_p_neighbors(self, p, mat=False):
         """
-        Find a list with all the reduced equivalent of the ``p``-neighbors of this ternary quadratic form, given by the zeros mod ``p`` of the form.
+        Find a list with all the reduced equivalent of the `p`-neighbors of this ternary quadratic form, given by the zeros mod `p` of the form.
         See :meth:`find_p_neighbor_from_vec` for more information.
 
         EXAMPLES::
@@ -930,7 +930,7 @@ class TernaryQF(SageObject):
 
     def basic_lemma(self, p):
         """
-        Finds a number represented by ``self`` and coprime to the prime ``p``.
+        Find a number represented by ``self`` and coprime to the prime `p`.
 
         EXAMPLES::
 
@@ -995,8 +995,8 @@ class TernaryQF(SageObject):
         """
         Return `A`, the automorphism of the ternary quadratic form such that:
 
-        - `Av = -v`.
-        - `Au = 0`, if `u` is orthogonal to `v`.
+        - `Av = -v`,
+        - `Au = 0`, if `u` is orthogonal to `v`,
 
         where `v` is a given vector.
 
@@ -1754,7 +1754,7 @@ class TernaryQF(SageObject):
             sage: Q = TernaryQF([1, 1, 7, 0, 0, 0])
             sage: Q._number_of_automorphisms_reduced()
             8
-            sage: len(Q.automorphisms(slow = False))
+            sage: len(Q.automorphisms(slow=False))
             8
             sage: Q = TernaryQF([3, 4, 5, 3, 3, 2])
             sage: Q._number_of_automorphisms_reduced()
@@ -1941,7 +1941,7 @@ class TernaryQF(SageObject):
             sage: Q = TernaryQF([-19, -7, -6, -12, 20, 23])
             sage: Q.is_negative_definite()
             True
-            sage: Q.number_of_automorphisms(slow = False)
+            sage: Q.number_of_automorphisms(slow=False)
             24
         """
         if not self.is_definite():

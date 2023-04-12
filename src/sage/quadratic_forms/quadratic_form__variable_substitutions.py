@@ -87,9 +87,7 @@ def multiply_variable(self, c, i, in_place=False):
 
     - ``i`` -- an integer >= 0
 
-    OUTPUT:
-
-    a QuadraticForm (by default, otherwise none)
+    OUTPUT: a :class:`QuadraticForm` (by default, otherwise none)
 
     EXAMPLES::
 
@@ -172,11 +170,9 @@ def scale_by_factor(self, c, change_value_ring_flag=False):
 
     INPUT:
 
-        `c` -- a scalar in the fraction field of the value ring of the form.
+    - ``c`` -- a scalar in the fraction field of the value ring of the form
 
-    OUTPUT:
-
-        A quadratic form of the same dimension
+    OUTPUT: a quadratic form of the same dimension
 
     EXAMPLES::
 
@@ -223,11 +219,9 @@ def extract_variables(QF, var_indices):
 
     INPUT:
 
-    ``var_indices`` -- a list of integers >= 0
+    - ``var_indices`` -- a list of integers >= 0
 
-    OUTPUT:
-
-    a :class:`QuadraticForm`
+    OUTPUT: a :class:`QuadraticForm`
 
     EXAMPLES::
 
@@ -262,7 +256,7 @@ def elementary_substitution(self, c, i, j, in_place=False):  # CHECK THIS!!!
 
     OUTPUT:
 
-    a QuadraticForm (by default, otherwise none)
+    a :class:`QuadraticForm` (by default, otherwise none)
 
     EXAMPLES::
 

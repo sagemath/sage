@@ -370,7 +370,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - ``p`` -- a positive prime number or "infinity".
+        - ``p`` -- a positive prime number or "infinity"
 
         OUTPUT: boolean
 
@@ -489,7 +489,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         - ``m`` -- an integer
 
-        - ``p`` -- a positive prime number or "infinity".
+        - ``p`` -- a positive prime number or "infinity"
 
         OUTPUT:
 
@@ -626,35 +626,29 @@ def local_representation_conditions(self, recompute_flag=False, silent_flag=Fals
     square-classes in the `p`-adic integers `\ZZ_p`, and are labeled by the
     `\QQ_p` square-classes `t*(\QQ_p)^2` with `t` given as follows:
 
-        `p > 2`  ==>  [ *  1  u  p  u p  *  *  *  * ]
+    - for `p > 2`, ``[ *  1  u  p  u p  *  *  *  * ]``,
 
-        `p = 2`  ==>  [ *  1  3  5  7  2  6  10  14 ]
+    - for `p = 2`, ``[ *  1  3  5  7  2  6  10  14 ]``.
 
     The integer appearing in each place tells us how `p`-divisible a
     number needs to be in that square-class in order to be locally
-    represented by `Q`.  A negative number indicates that the entire `\QQ_p`
+    represented by Q.  A negative number indicates that the entire `\QQ_p`
     square-class is not represented, while a positive number `x` indicates
     that `t*p^{(2*x)} (\ZZ_p)^2` is locally represented but `t*p^{(2*(x-1))}`
     `(\ZZ_p)^2` is not.
 
-    As an example, the vector
-
-        [2  3  0  0  0  0  2  0  infinity]
-
-    tells us that all positive integers are locally represented at p=2
+    As an example, the vector ``[2  3  0  0  0  0  2  0  infinity]``
+    tells us that all positive integers are locally represented at `p=2`
     except those of the forms:
 
-        `2^6 * u * r^2` with  `u = 1` (mod 8)
+    - `2^6 * u * r^2` with `u = 1` (mod 8)
 
-        `2^5 * u * r^2` with `u = 3` (mod 8)
+    - `2^5 * u * r^2` with `u = 3` (mod 8)
 
-        `2 * u * r^2` with `u = 7` (mod 8)
+    - `2 * u * r^2` with `u = 7` (mod 8)
 
-    At the real numbers, the vector which looks like
-
-        [infinity, 0, infinity, None, None, None, None, None, None]
-
-    means that `Q` is negative definite (i.e. the 0 tells us all
+    At the real numbers, the vector which looks like ``[infinity, 0, infinity, None, None, None, None, None, None]``
+    means that Q is negative definite (i.e. the 0 tells us all
     positive reals are represented).  The real vector always appears,
     and is listed before the other ones.
 
@@ -729,7 +723,7 @@ def is_locally_universal_at_prime(self, p) -> bool:
 
     INPUT:
 
-    - ``p`` -- a positive prime number or "infinity".
+    - ``p`` -- a positive prime number or "infinity"
 
     OUTPUT: boolean
 

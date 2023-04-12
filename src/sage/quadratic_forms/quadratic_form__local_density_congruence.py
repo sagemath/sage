@@ -150,22 +150,24 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
     ``NZvec=[]`` returns no solutions always while ``NZvec=None`` imposes no
     additional condition.
 
-    WARNING: Here the indices passed in ``Zvec`` and ``NZvec`` represent
-    indices of the solution vector `x` of Q(`x`) = `m` (mod `p^k`), and *not*
-    the Jordan components of Q.  They therefore are required (and
-    assumed) to include either all or none of the indices of a given
-    Jordan component of Q.  This is only important when `p=2` since
-    otherwise all Jordan blocks are `1 \times 1`, and so there the indices and
-    Jordan blocks coincide.
+    .. WARNING::
+
+        Here the indices passed in ``Zvec`` and ``NZvec`` represent
+        indices of the solution vector `x` of Q(`x`) = `m` (mod `p^k`), and *not*
+        the Jordan components of Q.  They therefore are required (and
+        assumed) to include either all or none of the indices of a given
+        Jordan component of Q.  This is only important when `p=2` since
+        otherwise all Jordan blocks are `1 \times 1`, and so there the indices and
+        Jordan blocks coincide.
 
     .. TODO::
 
-        Add type checking for Zvec, NZvec, and that Q is in local
+        Add type checking for ``Zvec`` and ``NZvec``, and that Q is in local
         normal form.
 
     INPUT:
 
-    - Q -- quadratic form assumed to be block diagonal and 2-integral
+    - ``self`` -- quadratic form Q, assumed to be block diagonal and 2-integral
 
     - ``p`` -- a prime number
 

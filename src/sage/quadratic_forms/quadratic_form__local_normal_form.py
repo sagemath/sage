@@ -251,7 +251,7 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
 
     INPUT:
 
-    - ``p`` -- a prime number > 0.
+    - ``p`` -- a prime number > 0
 
     OUTPUT:
 

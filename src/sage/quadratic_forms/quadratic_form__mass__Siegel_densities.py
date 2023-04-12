@@ -25,14 +25,17 @@ from sage.rings.rational_field import QQ
 
 def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson"):
     """
-    Gives the mass of transformations (det 1 and -1).
+    Return the mass of transformations (det 1 and -1).
 
-    WARNING: THIS IS BROKEN RIGHT NOW... =(
+    .. WARNING::
 
-    Optional Arguments:
+        This is broken right now...
 
-    - When p > 2  --  odd_algorithm = "Pall" (only one choice for now)
-    - When p = 2  --  even_algorithm = "Kitaoka" or "Watson"
+    INPUT:
+
+    - ``odd_algorithm`` -- algorithm to be used when `p>2`; ``"Pall"`` (only one choice for now)
+    - ``even_algorithm`` -- algorithm to be used when `p=2`;
+      either ``"Kitaoka"`` or ``"Watson"`` (the default)
 
     REFERENCES:
 
@@ -121,7 +124,7 @@ def Pall_mass_density_at_odd_prime(self, p):
 
     INPUT:
 
-    - ``p`` -- a prime number > 2.
+    - ``p`` -- a prime number > 2
 
     OUTPUT: a rational number.
 
@@ -339,7 +342,9 @@ def mass_at_two_by_counting_mod_power(self, k):
     """
     Computes the local mass at `p=2` assuming that it's stable (mod `2^k`).
 
-    Note: This is **way** too slow to be useful, even when `k=1`!!!
+    .. NOTE::
+
+        This is **way** too slow to be useful, even when `k=1`.
 
     .. TODO::
 

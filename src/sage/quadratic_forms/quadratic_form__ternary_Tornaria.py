@@ -247,8 +247,8 @@ def level__Tornaria(self):
     Return the level of the quadratic form,
     defined as
 
-        level(B)    for even dimension
-        level(B)/4  for odd dimension
+    - level(B)    for even dimension,
+    - level(B)/4  for odd dimension,
 
     where 2Q(`x`) `= x^t * B * x`.
 
@@ -500,7 +500,7 @@ def xi_rec(self,p):
 
 def lll(self):
     """
-    Return an LLL-reduced form of Q (using Pari).
+    Return an LLL-reduced form of Q (using PARI).
 
     EXAMPLES::
 
@@ -581,7 +581,7 @@ def representation_vector_list(self, B, maxvectors=10**8):
 
 def is_zero(self, v, p=0) -> bool:
     r"""
-    Determine if the vector `v` is on the conic `Q(x) = 0 \mod p`.
+    Determine if the vector `v` is on the conic `Q(x) = 0` mod `p`.
 
     EXAMPLES::
 

@@ -1515,11 +1515,9 @@ class BinaryQF(SageObject):
 
         INPUT:
 
-        - ``Bmax`` -- a positive bound on the representing integers.
+        - ``Bmax`` -- a positive bound on the representing integers
 
-        OUTPUT:
-
-        A prime number represented by the form.
+        OUTPUT: a prime number represented by the form
 
         .. NOTE::
 
@@ -1549,7 +1547,7 @@ class BinaryQF(SageObject):
 
     def solve_integer(self, n, *, algorithm="general"):
         r"""
-        Solve `Q(x, y) = n` in integers `x` and `y` where `Q` is this
+        Solve Q(`x`, `y`) = `n` in integers `x` and `y` where Q is this
         quadratic form.
 
         INPUT:
@@ -1564,7 +1562,7 @@ class BinaryQF(SageObject):
 
         OUTPUT:
 
-        A tuple `(x, y)` of integers satisfying `Q(x, y) = n`, or ``None``
+        A tuple `(x, y)` of integers satisfying Q(`x`, `y`) = `n`, or ``None``
         if no solution exists.
 
         ALGORITHM: :pari:`qfbsolve` or :pari:`qfbcornacchia`
@@ -1575,7 +1573,7 @@ class BinaryQF(SageObject):
             sage: Q.solve_integer(773187972)                                            # optional - sage.libs.pari
             (4919, 1337)
 
-        If `Q` is of the form `[1,0,c]` as above and `n` is a prime or
+        If Q is of the form `[1,0,c]` as above and `n` is a prime or
         four times a prime, Cornacchia's algorithm can be used, which is
         typically much faster than the general method::
 

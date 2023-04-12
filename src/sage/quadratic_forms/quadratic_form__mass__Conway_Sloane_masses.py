@@ -115,7 +115,7 @@ def is_even(self, allow_rescaling_flag=True):
     Return true iff after rescaling by some appropriate factor, the
     form represents no odd integers.  For more details, see :meth:`parity`.
 
-    Requires that `Q` is defined over ``ZZ``.
+    Requires that Q is defined over ``ZZ``.
 
     EXAMPLES::
 
@@ -135,7 +135,7 @@ def is_odd(self, allow_rescaling_flag=True):
     Return true iff after rescaling by some appropriate factor, the
     form represents some odd integers.  For more details, see :meth:`parity`.
 
-    Requires that `Q` is defined over ``ZZ``.
+    Requires that Q is defined over ``ZZ``.
 
     EXAMPLES::
 
@@ -160,7 +160,7 @@ def conway_species_list_at_odd_prime(self, p):
     number is always positive, otherwise it may be positive or
     negative (or zero, but that is considered positive by convention).
 
-    Note: The species of a zero dim'l form is always 0+, so we
+    Note: The species of a zero dimensional form is always 0+, so we
     interpret the return value of zero as positive here! =)
 
     INPUT:
@@ -228,7 +228,7 @@ def conway_species_list_at_2(self):
     number is always positive, otherwise it may be positive or
     negative.
 
-    Note: The species of a zero dim'l form is always 0+, so we
+    Note: The species of a zero dimensional form is always 0+, so we
     interpret the return value of zero as positive here! =)
 
     OUTPUT: a list of integers

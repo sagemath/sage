@@ -276,7 +276,7 @@ def theta_series_degree_2(Q, prec):
 
     INPUT:
 
-    - ``prec`` -- an integer.
+    - ``prec`` -- an integer
 
     OUTPUT:
 

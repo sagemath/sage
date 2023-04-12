@@ -64,9 +64,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
     first non-normalized entry.  If we have tested all (lines of)
     vectors, then return None.
 
-    OUTPUT:
-
-    vector or None
+    OUTPUT: vector or None
 
     EXAMPLES::
 
@@ -146,8 +144,8 @@ def find_p_neighbor_from_vec(self, p, y):
     INPUT:
 
     - ``p`` -- a prime number
-    - ``y`` -- a vector with `q(y) \in p \ZZ`.
-    - ``odd`` -- (default=``False``) if `p=2` return also odd neighbors
+    - ``y`` -- a vector with `q(y) \in p \ZZ`
+    - ``odd`` -- (default: ``False``) if `p=2` return also odd neighbors
 
     EXAMPLES::
 
@@ -162,7 +160,7 @@ def find_p_neighbor_from_vec(self, p, y):
 
     Since the base ring and the domain are not yet separate,
     for rational, half integral forms we just pretend
-    the base ring is `ZZ`::
+    the base ring is ``ZZ``::
 
         sage: Q = QuadraticForm(QQ, matrix.diagonal([1,1,1,1]))
         sage: v = vector([1,1,1,1])
@@ -239,7 +237,7 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
     Return all classes in the `p`-neighbor graph of ``self``.
 
     Starting from the given seeds, this function successively
-    finds p-neighbors until no new quadratic form (class) is obtained.
+    finds `p`-neighbors until no new quadratic form (class) is obtained.
 
     INPUT:
 
@@ -251,14 +249,12 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
 
     - ``max_classes`` -- (default: ``1000``) break the computation when ``max_classes`` are found
 
-    - ``algorithm`` -- (optional) one of 'orbits', 'random', 'exhaustion'
+    - ``algorithm`` -- (optional) one of ``'orbits'``, ``'random'``, ``'exhaustion'``
 
     - ``max_random_trys`` -- (default: ``1000``) the maximum number of neighbors
-                             computed for a single lattice
+      computed for a single lattice
 
-    OUTPUT:
-
-    - a list of quadratic forms
+    OUTPUT: a list of quadratic forms
 
     EXAMPLES::
 
@@ -367,9 +363,7 @@ def orbits_lines_mod_p(self, p):
 
     - ``p`` -- a prime number
 
-    OUTPUT:
-
-    - a list of vectors over ``GF(p)``
+    OUTPUT: a list of vectors over ``GF(p)``
 
     EXAMPLES::
 
