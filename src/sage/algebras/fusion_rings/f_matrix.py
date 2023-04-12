@@ -1865,7 +1865,7 @@ class FMatrix(SageObject):
             undertake a :func:`NumberField` computation.
         """
         ct = self._FR.cartan_type()
-        k = self._FR._k
+        k = self._FR.fusion_level()
         # Don't try when k is large and odd for SU(2)_k
         if ct.letter == 'A':
             if ct.n == 1 and k >= 9 and k % 2:
