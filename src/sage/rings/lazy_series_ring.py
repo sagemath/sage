@@ -676,7 +676,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
               - constant_length:   3
               - display_length:    7
               - halting_precision: None
-              - use_unknown:     False
+              - use_unknown:     True
 
             sage: LLS.options.display_length
             7
@@ -712,7 +712,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         halting_precision = dict(default=None,
                                  description='the number of coefficients, beginning with the approximate valuation, to check in equality tests',
                                  checker=lambda x: x is None or x in ZZ and x > 0)
-        use_unknown = dict(default=False,
+        use_unknown = dict(default=True,
                              description='whether to raise an error when a comparison is unknown',
                              checker=lambda x: x is True or x is False)
 
@@ -1162,8 +1162,8 @@ class LazyLaurentSeriesRing(LazySeriesRing):
     be equal are considered to be different::
 
         sage: f = L(lambda n: 0, valuation=0)
-        sage: f == 0
-        False
+        sage: (f == 0) is None
+        True
 
     .. WARNING::
 
@@ -1172,7 +1172,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         series are actually different::
 
             sage: g = L.zero()
-            sage: f != g
+            sage: (f != g) is None
             True
 
         This can be verified by :meth:`~sage.rings.lazy_series.is_nonzero()`,
@@ -1207,8 +1207,8 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         z^-1 - 1 + z - z^2 + z^3 - z^4 + z^5 + O(z^6)
         sage: f2 = f * 2  # currently no coefficients computed
         sage: f3 = f * 3  # currently no coefficients computed
-        sage: f2 == f3
-        Unknown
+        sage: (f2 == f3) is None
+        True
         sage: f2  # computes some of the coefficients of f2
         2*z^-1 - 2 + 2*z - 2*z^2 + 2*z^3 - 2*z^4 + 2*z^5 + O(z^6)
         sage: f3  # computes some of the coefficients of f3
@@ -1216,18 +1216,16 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         sage: f2 == f3
         False
         sage: f2a = f + f
-        sage: f2 == f2a
-        Unknown
+        sage: (f2 == f2a) is None
+        True
         sage: zf = L(lambda n: 0, valuation=0)
-        sage: zf == 0
-        Unknown
+        sage: (zf == 0) is None
+        True
 
     For boolean checks, an error is raised when it is not known to be nonzero::
 
         sage: bool(zf)
-        Traceback (most recent call last):
-        ...
-        UnknownError: undecidable
+        True
 
     If the halting precision is set to a finite number `p` (for unlimited
     precision, it is set to ``None``), then it will check up to `p` values

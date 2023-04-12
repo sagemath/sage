@@ -665,7 +665,7 @@ class Stream_exact(Stream):
                 if order + len(initial_coefficients) == self._degree:
                     # Strip off the constant values at the end
                     for w in reversed(initial_coefficients):
-                        if w != self._constant:
+                        if not (w == self._constant):
                             break
                         initial_coefficients.pop()
                         self._degree -= 1
