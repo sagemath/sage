@@ -18,17 +18,17 @@ from sage.rings.integer_ring import ZZ
 def theta_series(self, Max=10, var_str='q', safe_flag=True):
     """
     Compute the theta series as a power series in the variable given
-    in var_str (which defaults to '`q`'), up to the specified precision
-    `O(q^max)`.
+    in ``var_str`` (which defaults to '`q`'), up to the specified precision
+    `O(q^{\max})`.
 
     This uses the PARI/GP function :pari:`qfrep`, wrapped by the
     theta_by_pari() method. This caches the result for future
     computations.
 
-    The safe_flag allows us to select whether we want a copy of the
+    The ``safe_flag`` allows us to select whether we want a copy of the
     output, or the original output.  It is only meaningful when a
     vector is returned, otherwise a copy is automatically made in
-    creating the power series.  By default safe_flag = True, so we
+    creating the power series.  By default ``safe_flag`` = True, so we
     return a copy of the cached information.  If this is set to False,
     then the routine is much faster but the return values are
     vulnerable to being corrupted by the user.
@@ -73,7 +73,7 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
 def theta_by_pari(self, Max, var_str='q', safe_flag=True):
     r"""
     Use PARI/GP to compute the theta function as a power series (or
-    vector) up to the precision `O(q^Max)`.  This also caches the result
+    vector) up to the precision `O(q^{Max})`.  This also caches the result
     for future computations.
 
     If ``var_str`` = ``''``, then we return a vector `v` where `v[i]` counts the
@@ -272,7 +272,7 @@ def theta_by_cholesky(self, q_prec):
 
 def theta_series_degree_2(Q, prec):
     r"""
-    Compute the theta series of degree 2 for the quadratic form Q.
+    Compute the theta series of degree 2 for the quadratic form `Q`.
 
     INPUT:
 

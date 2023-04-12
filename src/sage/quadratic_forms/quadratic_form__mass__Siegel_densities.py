@@ -40,7 +40,7 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
     REFERENCES:
 
     - Nipp's Book "Tables of Quaternary Quadratic Forms".
-    - Papers of Pall (only for p>2) and Watson (for `p=2` -- tricky!).
+    - Papers of Pall (only for `p>2`) and Watson (for `p=2` -- tricky!).
     - Siegel, Milnor-Hussemoller, Conway-Sloane Paper IV, Kitoaka (all of which
       have problems...)
 
@@ -340,7 +340,7 @@ def Kitaoka_mass_at_2(self):
 
 def mass_at_two_by_counting_mod_power(self, k):
     r"""
-    Computes the local mass at `p=2` assuming that it's stable (mod `2^k`).
+    Compute the local mass at `p=2` assuming that it's stable (mod `2^k`).
 
     .. NOTE::
 

@@ -78,7 +78,7 @@ def multiply_variable(self, c, i, in_place=False):
     Replace the variables `x_i` by `c*x_i` in the quadratic form
     (replacing the original form if the ``in_place`` flag is True).
 
-    Here `c` must be an element of the base_ring defining the
+    Here `c` must be an element of the base ring defining the
     quadratic form.
 
     INPUT:
@@ -120,7 +120,7 @@ def divide_variable(self, c, i, in_place=False):
     Replace the variables `x_i` by `(x_i)/c` in the quadratic form
     (replacing the original form if the ``in_place`` flag is True).
 
-    Here `c` must be an element of the base_ring defining the
+    Here `c` must be an element of the base ring defining the
     quadratic form, and the division must be defined in the base
     ring.
 

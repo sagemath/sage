@@ -292,7 +292,7 @@ def signature_vector(self):
     - ``n`` = number of negative eigenvalues
     - ``z`` = number of zero eigenvalues
 
-    for the symmetric matrix associated to Q.
+    for the symmetric matrix associated to `Q`.
 
     OUTPUT: a triple of integers `\geq 0`
 
@@ -339,7 +339,7 @@ def signature(self):
     """
     Return the signature of the quadratic form, defined as:
 
-       number of positive eigenvalues - number of negative eigenvalues
+       number of positive eigenvalues `-` number of negative eigenvalues
 
     of the matrix of the quadratic form.
 
@@ -375,8 +375,8 @@ def signature(self):
 
 def hasse_invariant(self, p):
     r"""
-    Computes the Hasse invariant at a prime `p` or at infinity, as given on p55 of
-    Cassels's book.  If Q is diagonal with coefficients `a_i`, then the
+    Compute the Hasse invariant at a prime `p` or at infinity, as given on p55 of
+    Cassels's book.  If `Q` is diagonal with coefficients `a_i`, then the
     (Cassels) Hasse invariant is given by
 
     .. MATH::
@@ -465,7 +465,7 @@ def hasse_invariant__OMeara(self, p):
     Compute the O'Meara Hasse invariant at a prime `p`.
 
     This is defined on
-    p167 of O'Meara's book. If Q is diagonal with coefficients `a_i`,
+    p167 of O'Meara's book. If `Q` is diagonal with coefficients `a_i`,
     then the (Cassels) Hasse invariant is given by
 
     .. MATH::
@@ -671,7 +671,7 @@ def is_anisotropic(self, p):
 
 def is_isotropic(self, p):
     r"""
-    Checks if Q is isotropic over the `p`-adic numbers `\QQ_p` or `\RR`.
+    Checks if `Q` is isotropic over the `p`-adic numbers `\QQ_p` or `\RR`.
 
     INPUT:
 

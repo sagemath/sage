@@ -971,10 +971,10 @@ class QuadraticForm(SageObject):
 
     def __call__(self, v):
         """
-        Evaluate this quadratic form Q on a vector or matrix of elements
+        Evaluate this quadratic form `Q` on a vector or matrix of elements
         coercible to the base ring of the quadratic form.  If a vector
-        is given then the output will be the ring element Q(`v`), but if a
-        matrix is given then the output will be the quadratic form Q'
+        is given then the output will be the ring element `Q(v)`, but if a
+        matrix is given then the output will be the quadratic form `Q'`
         which in matrix notation is given by:
 
         .. MATH::
@@ -1150,7 +1150,7 @@ class QuadraticForm(SageObject):
 
     def matrix(self):
         """
-        Return the Hessian matrix A for which Q(X) =  `(1/2) * X^t * A * X`.
+        Return the Hessian matrix `A` for which `Q(X) = (1/2) * X^t * A * X`.
 
         EXAMPLES::
 
@@ -1165,7 +1165,7 @@ class QuadraticForm(SageObject):
 
     def Hessian_matrix(self):
         """
-        Return the Hessian matrix A for which Q(X) = `(1/2) * X^t * A * X`.
+        Return the Hessian matrix `A` for which `Q(X) = (1/2) * X^t * A * X`.
 
         EXAMPLES::
 
@@ -1192,7 +1192,7 @@ class QuadraticForm(SageObject):
 
     def Gram_matrix_rational(self):
         """
-        Return a (symmetric) Gram matrix `A` for the quadratic form Q,
+        Return a (symmetric) Gram matrix `A` for the quadratic form `Q`,
         meaning that
 
         .. MATH::
@@ -1217,14 +1217,14 @@ class QuadraticForm(SageObject):
 
     def Gram_matrix(self):
         """
-        Return a (symmetric) Gram matrix `A` for the quadratic form Q,
+        Return a (symmetric) Gram matrix `A` for the quadratic form `Q`,
         meaning that
 
         .. MATH::
 
             Q(x) = x^t * A * x,
 
-        defined over the base ring of Q.  If this is not possible,
+        defined over the base ring of `Q`.  If this is not possible,
         then a :class:`TypeError` is raised.
 
         EXAMPLES::
@@ -1500,8 +1500,8 @@ class QuadraticForm(SageObject):
 
     def det(self):
         """
-        Return the determinant of the Gram matrix of 2*Q, or
-        equivalently the determinant of the Hessian matrix of Q.
+        Return the determinant of the Gram matrix of `2*Q`, or
+        equivalently the determinant of the Hessian matrix of `Q`.
 
         .. NOTE:
 
@@ -1528,7 +1528,7 @@ class QuadraticForm(SageObject):
 
     def Gram_det(self):
         """
-        Return the determinant of the Gram matrix of Q.
+        Return the determinant of the Gram matrix of `Q`.
 
         .. NOTE::
 
@@ -1696,10 +1696,10 @@ class QuadraticForm(SageObject):
         r"""
         Return the value of the associated bilinear map on two vectors
 
-        Given a quadratic form Q over some base ring `R` with
+        Given a quadratic form `Q` over some base ring `R` with
         characteristic not equal to 2, this gives the image of two
         vectors with coefficients in `R` under the associated bilinear
-        map `B`, given by the relation `2 B(v,w)` = Q(`v`) + Q(`w`) `-` Q(`v+w`).
+        map `B`, given by the relation `2 B(v,w) = Q(v) + Q(w) - Q(v+w)`.
 
         INPUT:
 

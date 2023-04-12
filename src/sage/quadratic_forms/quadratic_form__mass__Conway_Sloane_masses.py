@@ -115,7 +115,7 @@ def is_even(self, allow_rescaling_flag=True):
     Return true iff after rescaling by some appropriate factor, the
     form represents no odd integers.  For more details, see :meth:`parity`.
 
-    Requires that Q is defined over ``ZZ``.
+    Requires that `Q` is defined over ``ZZ``.
 
     EXAMPLES::
 
@@ -135,7 +135,7 @@ def is_odd(self, allow_rescaling_flag=True):
     Return true iff after rescaling by some appropriate factor, the
     form represents some odd integers.  For more details, see :meth:`parity`.
 
-    Requires that Q is defined over ``ZZ``.
+    Requires that `Q` is defined over ``ZZ``.
 
     EXAMPLES::
 
@@ -306,7 +306,7 @@ def conway_species_list_at_2(self):
 
 
 def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
-    """
+    r"""
     Determines the 'octane' of this full unimodular Jordan block at
     the prime `p=2`.  This is an invariant defined (mod 8), ad.
 
@@ -392,7 +392,7 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
 
 def conway_diagonal_factor(self, p):
     """
-    Computes the diagonal factor of Conway's `p`-mass.
+    Compute the diagonal factor of Conway's `p`-mass.
 
     INPUT:
 
@@ -485,7 +485,7 @@ def conway_type_factor(self):
 
 def conway_p_mass(self, p):
     """
-    Computes Conway's `p`-mass.
+    Compute Conway's `p`-mass.
 
     INPUT:
 
@@ -514,7 +514,7 @@ def conway_p_mass(self, p):
 
 def conway_standard_p_mass(self, p):
     """
-    Computes the standard (generic) Conway-Sloane `p`-mass.
+    Compute the standard (generic) Conway-Sloane `p`-mass.
 
     INPUT:
 

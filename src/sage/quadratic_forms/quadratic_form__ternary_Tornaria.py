@@ -250,7 +250,7 @@ def level__Tornaria(self):
     - level(B)    for even dimension,
     - level(B)/4  for odd dimension,
 
-    where 2Q(`x`) `= x^t * B * x`.
+    where `2Q(x) = x^t * B * x`.
 
     This agrees with the usual level for even dimension...
 
@@ -320,7 +320,7 @@ def clifford_invariant(self, p):
 
     EXAMPLES:
 
-    For hyperbolic spaces, the clifford invariant is +1::
+    For hyperbolic spaces, the Clifford invariant is +1::
 
         sage: H = QuadraticForm(ZZ, 2, [0, 1, 0])
         sage: H.clifford_invariant(2)                                                   # optional - sage.libs.pari
@@ -369,7 +369,7 @@ def clifford_conductor(self):
         sage: QuadraticForm(ZZ, 3, [2, -2, 0, 2, 0, 5]).clifford_conductor()            # optional - sage.libs.pari
         30
 
-    For hyperbolic spaces, the clifford conductor is 1::
+    For hyperbolic spaces, the Clifford conductor is 1::
 
         sage: H = QuadraticForm(ZZ, 2, [0, 1, 0])
         sage: H.clifford_conductor()                                                    # optional - sage.libs.pari
@@ -389,7 +389,7 @@ def clifford_conductor(self):
 
 def basiclemma(self, M):
     """
-    Find a number represented by self and coprime to M.
+    Find a number represented by self and coprime to `M`.
 
     EXAMPLES::
 
@@ -404,7 +404,7 @@ def basiclemma(self, M):
 
 def basiclemmavec(self, M):
     """
-    Find a vector where the value of the quadratic form is coprime to M.
+    Find a vector where the value of the quadratic form is coprime to `M`.
 
     EXAMPLES::
 
@@ -500,7 +500,7 @@ def xi_rec(self,p):
 
 def lll(self):
     """
-    Return an LLL-reduced form of Q (using PARI).
+    Return an LLL-reduced form of `Q` (using PARI).
 
     EXAMPLES::
 
@@ -535,7 +535,7 @@ def representation_number_list(self, B):
 
 def representation_vector_list(self, B, maxvectors=10**8):
     """
-    Find all vectors `v` where Q(`v`) `< B`.
+    Find all vectors `v` where `Q(v) < B`.
 
     This only works for positive definite quadratic forms.
 
@@ -581,7 +581,7 @@ def representation_vector_list(self, B, maxvectors=10**8):
 
 def is_zero(self, v, p=0) -> bool:
     r"""
-    Determine if the vector `v` is on the conic Q(`x`) `= 0` mod `p`.
+    Determine if the vector `v` is on the conic `Q(x) = 0` (mod `p`).
 
     EXAMPLES::
 
@@ -601,7 +601,7 @@ def is_zero(self, v, p=0) -> bool:
 
 def is_zero_nonsingular(self, v, p=0) -> bool:
     """
-    Determine if the vector `v` is on the conic Q(`x`) = 0 (mod `p`),
+    Determine if the vector `v` is on the conic `Q(x) = 0` (mod `p`),
     and that this point is non-singular point of the conic.
 
     EXAMPLES::
@@ -624,7 +624,7 @@ def is_zero_nonsingular(self, v, p=0) -> bool:
 
 def is_zero_singular(self, v, p=0) -> bool:
     """
-    Determine if the vector `v` is on the conic Q(`x`) = 0 (mod `p`),
+    Determine if the vector `v` is on the conic `Q(x) = 0` (mod `p`),
     and that this point is singular point of the conic.
 
     EXAMPLES::

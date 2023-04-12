@@ -68,7 +68,7 @@ def local_genus_symbol(self, p):
 
       -     `n` = rank of `A`
 
-      -     `d` = det(`A`) in {1,u} for normalized quadratic non-residue u.
+      -     `d` = det(`A`) in {1,`u`} for normalized quadratic non-residue `u`.
 
     - If `p=2`, then return quintuples of the form [`m`, `n`, `s`, `d`, `o`] where
 

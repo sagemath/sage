@@ -22,20 +22,19 @@ from sage.arith.misc import GCD
 
 def cholesky_decomposition(self, bit_prec = 53):
     r"""
-    Give the Cholesky decomposition of this quadratic form Q as a real matrix
+    Give the Cholesky decomposition of this quadratic form `Q` as a real matrix
     of precision ``bit_prec``.
 
     RESTRICTIONS:
 
-        Q must be given as a :class:`QuadraticForm` defined over `\ZZ`, `\QQ`, or some
+        `Q` must be given as a :class:`QuadraticForm` defined over `\ZZ`, `\QQ`, or some
         real field. If it is over some real field, then an error is raised if
         the precision given is not less than the defined precision of the real
         field defining the quadratic form!
 
     REFERENCE:
 
-        From Cohen's "A Course in Computational Algebraic Number Theory" book,
-        p 103.
+    - Cohen's "A Course in Computational Algebraic Number Theory" book, p 103.
 
     INPUT:
 
@@ -46,7 +45,7 @@ def cholesky_decomposition(self, bit_prec = 53):
 
     .. TODO::
 
-        If we only care about working over the real double field (RDF), then we
+        If we only care about working over the real double field (``RDF``), then we
         can use the method :meth:`cholesky` present for square matrices over that.
 
     .. note::
@@ -361,7 +360,7 @@ def complementary_subform_to_vector(self, v):
 def split_local_cover(self):
     """
     Tries to find subform of the given (positive definite quaternary)
-    quadratic form Q of the form
+    quadratic form `Q` of the form
 
     .. MATH::
 

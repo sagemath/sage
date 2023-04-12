@@ -140,13 +140,13 @@ def minkowski_reduction(self):
 
     .. MATH::
 
-            Q(v_k) <= Q(s_1 * v_1 + ... + s_n * v_n)
+            Q(v_k) \leq Q(s_1 * v_1 + ... + s_n * v_n)
 
     for all `s_i` where GCD`(s_k, ... s_n) = 1`.
 
     .. NOTE::
 
-        When Q has dim `\leq 4` we can take all `s_i` in `\{1, 0, -1\}`.
+        When `Q` has dim `\leq 4` we can take all `s_i` in `\{1, 0, -1\}`.
 
     REFERENCES:
 
@@ -268,13 +268,15 @@ def minkowski_reduction_for_4vars__SP(self):
     Find a Minkowski-reduced form equivalent to the given one.
     This means that
 
-        Q(`v_k`) `\leq` Q(`s_1 * v_1 + ... + s_n * v_n`)
+    .. MATH::
+
+        Q(v_k) \leq Q(s_1 * v_1 + ... + s_n * v_n)
 
     for all `s_i` where GCD(`s_k, ... s_n`) = 1.
 
     .. NOTE::
 
-        When Q has dim `\leq 4`, we can take all `s_i` in `\{1, 0, -1\}`.
+        When `Q` has dim `\leq 4`, we can take all `s_i` in `\{1, 0, -1\}`.
 
     REFERENCES:
 

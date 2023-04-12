@@ -12,8 +12,8 @@ from sage.sets.set import Set
 
 def count_modp__by_gauss_sum(n, p, m, Qdet):
     r"""
-    Return the number of solutions of Q(`x`) = `m` over the finite field
-    `\ZZ/p\ZZ`, where `p` is a prime number > 2 and Q is a non-degenerate
+    Return the number of solutions of `Q(x) = m` over the finite field
+    `\ZZ/p\ZZ`, where `p` is a prime number > 2 and `Q` is a non-degenerate
     quadratic form of dimension `n` >= 1 and has Gram determinant ``Qdet``.
 
     REFERENCE:
@@ -22,13 +22,12 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
 
     INPUT:
 
-    - ``n`` -- an integer >= 1
+    - ``n`` -- an integer `\geq 1`
     - ``p`` -- a prime number > 2
     - ``m`` -- an integer
     - ``Qdet`` -- a integer which is non-zero mod `p`
 
-    OUTPUT:
-        an integer >= 0
+    OUTPUT: an integer `\geq 0`
 
     EXAMPLES::
 
@@ -198,8 +197,8 @@ def CountAllLocalTypesNaive(Q, p, k, m, zvec, nzvec):
 
 cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     """
-    Internal routine to check if a given solution vector `w` (of Q(`w`) =
-    `m` mod `p^k`) is of a certain local type and satisfies certain
+    Internal routine to check if a given solution vector `w` (of `Q(w) =
+    m` mod `p^k`) is of a certain local type and satisfies certain
     congruence conditions mod `p`.
 
     NOTE: No internal checking is done to test if `p` is a prime >=2, or

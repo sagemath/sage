@@ -178,7 +178,15 @@ class TernaryQF(SageObject):
 
     def __call__(self, v):
         """
-        Evaluate this ternary quadratic form Q on a vector of 3 elements, or matrix of elements in Z, with 3 rows. If a vector is given then the output will be an integer Q(`v`), but if a matrix is given the output will be a ternary quadratic form if the matrix has 3 columns, or a quadratic form if not. The quadratic form in matrix notation will be:
+        Evaluate this ternary quadratic form `Q` on a vector of 3 elements,
+        or matrix of elements in Z, with 3 rows.
+
+        OUTPUT:
+
+        If a vector is given, then the output will be an integer `Q(v)`,
+        but if a matrix is given, the output will be a ternary quadratic form
+        if the matrix has 3 columns, or a quadratic form if not.
+        The quadratic form in matrix notation will be:
 
         .. MATH::
 
@@ -245,8 +253,8 @@ class TernaryQF(SageObject):
     def matrix(self):
         """
         Return the Hessian matrix associated to the ternary quadratic form.
-        That is, if Q is a ternary quadratic form, Q`(x,y,z) = a*x^2 + b*y^2 + c*z^2 + r*y*z + s*x*z + t*x*y`,
-        then the Hessian matrix associated to Q is
+        That is, if `Q` is a ternary quadratic form, `Q(x,y,z) = a*x^2 + b*y^2 + c*z^2 + r*y*z + s*x*z + t*x*y`,
+        then the Hessian matrix associated to `Q` is
         ::
 
             [2*a t s]
@@ -867,9 +875,9 @@ class TernaryQF(SageObject):
         Finds the reduced equivalent of the `p`-neighbor of this ternary quadratic form associated to a given
         vector `v` satisfying:
 
-        1. Q(`v`) = 0  mod `p`
+        1. `Q(v) = 0`  (mod `p`)
 
-        2. `v` is a non-singular point of the conic Q(`v`) = 0 mod `p`.
+        2. `v` is a non-singular point of the conic `Q(v) = 0` (mod `p`).
 
         Reference:  Gonzalo Tornaria's Thesis, Thrm 3.5, p34.
 

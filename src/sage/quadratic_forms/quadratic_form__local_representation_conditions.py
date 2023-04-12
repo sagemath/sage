@@ -646,7 +646,7 @@ def local_representation_conditions(self, recompute_flag=False, silent_flag=Fals
     - `2 * u * r^2` with `u = 7` (mod 8)
 
     At the real numbers, the vector which looks like ``[infinity, 0, infinity, None, None, None, None, None, None]``
-    means that Q is negative definite (i.e. the 0 tells us all
+    means that `Q` is negative definite (i.e. the 0 tells us all
     positive reals are represented).  The real vector always appears,
     and is listed before the other ones.
 

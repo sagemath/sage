@@ -3,10 +3,10 @@
 
 def QFEvaluateVector(Q, v):
     """
-    Evaluate this quadratic form Q on a vector or matrix of elements
+    Evaluate this quadratic form `Q` on a vector or matrix of elements
     coercible to the base ring of the quadratic form.  If a vector
-    is given then the output will be the ring element Q(v), but if a
-    matrix is given then the output will be the quadratic form Q'
+    is given, then the output will be the ring element `Q(v)`, but if a
+    matrix is given, then the output will be the quadratic form `Q'`
     which in matrix notation is given by:
 
     .. MATH::
@@ -24,9 +24,7 @@ def QFEvaluateVector(Q, v):
     - ``Q`` -- :class:`QuadraticForm` over a base ring `R`
     - ``v`` -- a tuple or list (or column matrix) of ``Q.dim()`` elements of `R`
 
-    OUTPUT:
-
-        an element of R
+    OUTPUT: an element of `R`
 
     EXAMPLES::
 
@@ -48,8 +46,8 @@ def QFEvaluateVector(Q, v):
 
 cdef QFEvaluateVector_cdef(Q, v):
     """
-    Routine to quickly evaluate a quadratic form Q on a vector v.  See
-    the Python wrapper function QFEvaluate() above for details.
+    Routine to quickly evaluate a quadratic form `Q` on a vector `v`.  See
+    the Python wrapper function :meth:`QFEvaluate` above for details.
 
     """
     # If we are passed a matrix A, return the quadratic form Q(A(x))
@@ -68,7 +66,7 @@ cdef QFEvaluateVector_cdef(Q, v):
 
 def QFEvaluateMatrix(Q, M, Q2):
     r"""
-    Evaluate this quadratic form Q on a matrix `M` of elements coercible
+    Evaluate this quadratic form `Q` on a matrix `M` of elements coercible
     to the base ring of the quadratic form, which in matrix notation
     is given by:
 
@@ -116,7 +114,7 @@ def QFEvaluateMatrix(Q, M, Q2):
 
 cdef QFEvaluateMatrix_cdef(Q, M, Q2):
     """
-    Routine to quickly evaluate a quadratic form Q on a matrix `M`.  See
+    Routine to quickly evaluate a quadratic form `Q` on a matrix `M`.  See
     the Python wrapper function :func:`QFEvaluateMatrix` above for details.
 
     """

@@ -18,7 +18,7 @@ from sage.quadratic_forms.count_local_2 import count_modp__by_gauss_sum
 
 def count_modp_solutions__by_Gauss_sum(self, p, m):
     r"""
-    Return the number of solutions of Q(`x`) = `m` (mod `p`) of a
+    Return the number of solutions of `Q(x) = m` (mod `p`) of a
     non-degenerate quadratic form over the finite field `\ZZ/p\ZZ`,
     where `p` is a prime number > 2.
 
@@ -55,8 +55,8 @@ def count_modp_solutions__by_Gauss_sum(self, p, m):
 
 def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
     """
-    Find the Good-type local density of Q representing `m` at `p`.
-    (Assuming that `p` > 2 and Q is given in local diagonal form.)
+    Find the Good-type local density of `Q` representing `m` at `p`.
+    (Assuming that `p` > 2 and `Q` is given in local diagonal form.)
 
     The additional congruence condition arguments ``Zvec`` and ``NZvec`` can
     be either a list of indices or None.  ``Zvec=[]`` is equivalent to
@@ -66,12 +66,12 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
 
     .. TODO::
 
-        Add type checking for ``Zvec``, ``NZvec``, and that Q is in local
+        Add type checking for ``Zvec``, ``NZvec``, and that `Q` is in local
         normal form.
 
     INPUT:
 
-    - ``self`` -- quadratic form Q, assumed to be diagonal and p-integral
+    - ``self`` -- quadratic form `Q`, assumed to be diagonal and p-integral
 
     - ``p`` -- a prime number
 
@@ -141,8 +141,8 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
 
 def local_good_density_congruence_even(self, m, Zvec, NZvec):
     r"""
-    Find the Good-type local density of Q representing `m` at `p=2`.
-    (Assuming Q is given in local diagonal form.)
+    Find the Good-type local density of `Q` representing `m` at `p=2`.
+    (Assuming `Q` is given in local diagonal form.)
 
     The additional congruence condition arguments ``Zvec`` and ``NZvec`` can
     be either a list of indices or None.  ``Zvec=[]`` is equivalent to
@@ -153,21 +153,21 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
     .. WARNING::
 
         Here the indices passed in ``Zvec`` and ``NZvec`` represent
-        indices of the solution vector `x` of Q(`x`) = `m` (mod `p^k`), and *not*
-        the Jordan components of Q.  They therefore are required (and
+        indices of the solution vector `x` of `Q(x) = m` (mod `p^k`), and *not*
+        the Jordan components of `Q`.  They therefore are required (and
         assumed) to include either all or none of the indices of a given
-        Jordan component of Q.  This is only important when `p=2` since
+        Jordan component of `Q`.  This is only important when `p=2` since
         otherwise all Jordan blocks are `1 \times 1`, and so there the indices and
         Jordan blocks coincide.
 
     .. TODO::
 
-        Add type checking for ``Zvec`` and ``NZvec``, and that Q is in local
+        Add type checking for ``Zvec`` and ``NZvec``, and that `Q` is in local
         normal form.
 
     INPUT:
 
-    - ``self`` -- quadratic form Q, assumed to be block diagonal and 2-integral
+    - ``self`` -- quadratic form `Q`, assumed to be block diagonal and 2-integral
 
     - ``p`` -- a prime number
 
@@ -323,7 +323,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
 
 def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
-    Find the Good-type local density of Q representing `m` at `p`.
+    Find the Good-type local density of `Q` representing `m` at `p`.
     (Front end routine for parity specific routines for `p`.)
 
     .. TODO::
@@ -333,7 +333,7 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     INPUT:
 
-    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
+    - ``self`` -- quadratic form `Q`, assumed to be block diagonal and `p`-integral
 
     - ``p`` -- a prime number
 
@@ -399,12 +399,12 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 def local_zero_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
-    Find the Zero-type local density of Q representing `m` at `p`,
+    Find the Zero-type local density of `Q` representing `m` at `p`,
     allowing certain congruence conditions mod `p`.
 
     INPUT:
 
-    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
+    - ``self`` -- quadratic form `Q`, assumed to be block diagonal and `p`-integral
 
     - ``p`` -- a prime number
 
@@ -472,12 +472,12 @@ def local_zero_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
-    Find the Bad-type I local density of Q representing `m` at `p`.
-    (Assuming that `p` > 2 and Q is given in local diagonal form.)
+    Find the Bad-type I local density of `Q` representing `m` at `p`.
+    (Assuming that `p` > 2 and `Q` is given in local diagonal form.)
 
     INPUT:
 
-    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
+    - ``self`` -- quadratic form `Q`, assumed to be block diagonal and `p`-integral
 
     - ``p`` -- a prime number
 
@@ -635,12 +635,12 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 def local_badII_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
-    Find the Bad-type II local density of Q representing `m` at `p`.
-    (Assuming that `p` > 2 and Q is given in local diagonal form.)
+    Find the Bad-type II local density of `Q` representing `m` at `p`.
+    (Assuming that `p` > 2 and `Q` is given in local diagonal form.)
 
     INPUT:
 
-    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
+    - ``self`` -- quadratic form `Q`, assumed to be block diagonal and `p`-integral
 
     - ``p`` -- a prime number
 
@@ -781,12 +781,12 @@ def local_badII_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 def local_bad_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
-    Find the Bad-type local density of Q representing
+    Find the Bad-type local density of `Q` representing
     `m` at `p`, allowing certain congruence conditions mod `p`.
 
     INPUT:
 
-    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
+    - ``self`` -- quadratic form `Q`, assumed to be block diagonal and `p`-integral
 
     - ``p`` -- a prime number
 
@@ -839,12 +839,12 @@ def local_bad_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 def local_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
-    Find the local density of Q representing `m` at `p`,
+    Find the local density of `Q` representing `m` at `p`,
     allowing certain congruence conditions mod `p`.
 
     INPUT:
 
-    - ``self`` -- quadratic form Q, assumed to be block diagonal and p-integral
+    - ``self`` -- quadratic form `Q`, assumed to be block diagonal and p-integral
 
     - ``p`` -- a prime number
 
@@ -907,7 +907,7 @@ def local_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 def local_primitive_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
-    Find the primitive local density of Q representing
+    Find the primitive local density of `Q` representing
     `m` at `p`, allowing certain congruence conditions mod `p`.
 
     .. NOTE::
@@ -916,7 +916,7 @@ def local_primitive_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     INPUT:
 
-    - ``self`` -- quadratic form Q, assumed to be block diagonal and `p`-integral
+    - ``self`` -- quadratic form `Q`, assumed to be block diagonal and `p`-integral
 
     - ``p`` -- a prime number
 

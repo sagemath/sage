@@ -85,7 +85,7 @@ def local_normal_form(self, p):
     Return a locally integrally equivalent quadratic form over
     the `p`-adic integers `\ZZ_p` which gives the Jordan decomposition.
 
-    The Jordan components are written as sums of blocks of size <= 2
+    The Jordan components are written as sums of blocks of size `\leq 2`
     and are arranged by increasing scale, and then by increasing norm.
     This is equivalent to saying that we put the `1 \times 1` blocks before
     the `2 \times 2` blocks in each Jordan component.
