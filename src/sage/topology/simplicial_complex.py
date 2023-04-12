@@ -4853,7 +4853,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             self._bbn[0].add(base_ring)
             self._bbn[base_ring] = B
         else:
-            self._bbn = {0:{base_ring}, base_ring: B}
+            self._bbn = {0: {base_ring}, base_ring: B}
         return B 
 
     def bigraded_betti_number(self, a, b, base_ring=ZZ):
@@ -4902,11 +4902,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         if self._bbn is not None:
             if base_ring in self._bbn:
-                self._bbn[base_ring][(-a,2*b)] = res 
+                self._bbn[base_ring][(-a, 2*b)] = res 
             else:
-                self._bbn[base_ring] = {(-a,2*b): res}
+                self._bbn[base_ring] = {(-a, 2*b): res}
         else:
-            self._bbn = {base_ring: {(-a,2*b): res}}
+            self._bbn = {base_ring: {(-a, 2*b): res}}
 
         return base_ring(B)
             
