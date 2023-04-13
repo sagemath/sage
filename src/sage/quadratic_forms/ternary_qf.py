@@ -483,7 +483,7 @@ class TernaryQF(SageObject):
 
         OUTPUT:
 
-        If ``k`` times the :meth:`content` of the ternary quadratic form is an integer, return a ternary quadratic form;
+        If ``k`` times the content of the ternary quadratic form is an integer, return a ternary quadratic form;
         otherwise, return a quadratic form of dimension 3.
 
         EXAMPLES::
@@ -525,8 +525,8 @@ class TernaryQF(SageObject):
         """
         Return the reciprocal quadratic form associated to the given form.
 
-        This is defined as the multiple of the :meth:`primitive` :meth:`adjoint` with the same
-        :meth:`content` as the given form.
+        This is defined as the multiple of the primitive adjoint with the same
+        content as the given form.
 
         EXAMPLES::
 
@@ -565,7 +565,7 @@ class TernaryQF(SageObject):
 
     def divisor(self):
         """
-        Return the :meth:`content` of the :meth:`adjoint` form associated to the given form.
+        Return the content of the adjoint form associated to the given form.
 
         EXAMPLES::
 
@@ -644,7 +644,7 @@ class TernaryQF(SageObject):
 
     def omega(self):
         """
-        Return the :meth:`content` of the :meth:`adjoint` of the primitive associated
+        Return the content of the adjoint of the primitive associated
         ternary quadratic form.
 
         EXAMPLES::
@@ -659,8 +659,8 @@ class TernaryQF(SageObject):
 
     def delta(self):
         """
-        Return the :meth:`omega` of the :meth:`adjoint` of the given ternary quadratic form,
-        which is the same as the :meth:`omega` of the :meth:`reciprocal` form.
+        Return the omega of the adjoint of the given ternary quadratic form,
+        which is the same as the omega of the reciprocal form.
 
         EXAMPLES::
 
@@ -678,8 +678,8 @@ class TernaryQF(SageObject):
         return self.adjoint().omega()
 
     def level(self):
-        r"""
-        Return the level of the ternary quadratic form, which is 4 times the :meth:`discriminant` divided by the :meth:`divisor`.
+        """
+        Return the level of the ternary quadratic form, which is 4 times the discriminant divided by the divisor.
 
         EXAMPLES::
 
