@@ -3121,8 +3121,6 @@ class Permutation(CombinatorialElement):
             sage: g.is_simple()
             True
 
-        TESTS::
-
             sage: [len([pi for pi in Permutations(n) if pi.is_simple()])
             ....:  for n in range(6)]
             [1, 1, 2, 0, 2, 6]
