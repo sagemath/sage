@@ -17,7 +17,7 @@ def QFEvaluateVector(Q, v):
 
         This is a Python wrapper for the fast evaluation routine
         :func:`QFEvaluateVector_cdef`.  This routine is for internal use and is
-        called more conveniently as Q(M).
+        called more conveniently as ``Q(M)``.
 
     INPUT:
 

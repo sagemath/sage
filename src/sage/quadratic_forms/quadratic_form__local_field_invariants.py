@@ -285,7 +285,7 @@ def _rational_diagonal_form_and_transformation(self):
 
 
 def signature_vector(self):
-    """
+    r"""
     Return the triple `(p, n, z)` of integers where
 
     - ``p`` = number of positive eigenvalues

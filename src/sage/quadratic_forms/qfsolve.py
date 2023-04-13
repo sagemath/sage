@@ -82,19 +82,19 @@ def qfsolve(G):
 
 def qfparam(G, sol):
     r"""
-    Parametrize the conic defined by the matrix ``G``.
+    Parametrize the conic defined by the matrix `G`.
 
     INPUT:
 
-     - ``G`` -- a `3 \times 3`-matrix over `\QQ`
+    - ``G`` -- a `3 \times 3`-matrix over `\QQ`
 
-     - ``sol`` -- a triple of rational numbers providing a solution
-       to sol*G*sol^t = 0
+    - ``sol`` -- a triple of rational numbers providing a solution
+      to sol*G*sol^t = 0
 
     OUTPUT:
 
     A triple of polynomials that parametrizes all solutions of
-    x*G*x^t = 0 up to scaling.
+    `x*G*x^t = 0` up to scaling.
 
     ALGORITHM:
 

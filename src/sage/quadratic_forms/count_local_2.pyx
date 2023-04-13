@@ -17,8 +17,8 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
     quadratic form of dimension `n` >= 1 and has Gram determinant ``Qdet``.
 
     REFERENCE:
-        These are defined in Table 1 on p363 of Hanke's "Local
-        Densities..." paper.
+
+    These are defined in Table 1 on p363 of Hanke's "Local Densities..." paper.
 
     INPUT:
 

@@ -222,9 +222,7 @@ class QuadraticForm(SageObject):
     - ``determinant``
 
 
-    OUTPUT:
-
-    quadratic form
+    OUTPUT: quadratic form
 
     EXAMPLES::
 
@@ -1761,9 +1759,7 @@ def DiagonalQuadraticForm(R, diag):
     - ``R`` -- ring
     - ``diag`` -- list/tuple of elements coercible to `R`
 
-    OUTPUT:
-
-    quadratic form
+    OUTPUT: quadratic form
 
     EXAMPLES::
 

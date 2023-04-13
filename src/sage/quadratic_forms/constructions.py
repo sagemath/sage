@@ -25,9 +25,7 @@ def BezoutianQuadraticForm(f, g):
 
     - ``f``, ``g`` -- polynomials in `R[x]`, for some ring `R`
 
-    OUTPUT:
-
-    a quadratic form over `R`
+    OUTPUT: a quadratic form over `R`
 
     EXAMPLES::
 

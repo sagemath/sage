@@ -1562,7 +1562,7 @@ class BinaryQF(SageObject):
 
         OUTPUT:
 
-        A tuple `(x, y)` of integers satisfying `Q(x, y) = `n`, or ``None``
+        A tuple `(x, y)` of integers satisfying `Q(x, y) = n`, or ``None``
         if no solution exists.
 
         ALGORITHM: :pari:`qfbsolve` or :pari:`qfbcornacchia`
@@ -1738,7 +1738,7 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
          3*x^2 + 3*x*y + 6*y^2, 4*x^2 + x*y + 4*y^2]
 
     The number of inequivalent reduced binary forms with a fixed negative
-    fundamental discriminant D is the class number of the quadratic field
+    fundamental discriminant `D` is the class number of the quadratic field
     `\QQ(\sqrt{D})`::
 
         sage: len(BinaryQF_reduced_representatives(-13*4))

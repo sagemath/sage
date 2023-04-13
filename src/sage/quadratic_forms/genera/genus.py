@@ -416,9 +416,7 @@ def is_GlobalGenus(G):
 
     - ``G`` -- :class:`GenusSymbol_global_ring` object
 
-    OUTPUT:
-
-    - boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -471,9 +469,7 @@ def is_2_adic_genus(genus_symbol_quintuple_list):
     - ``genus_symbol_quintuple_list`` -- a quintuple of integers (with certain
       restrictions).
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -534,11 +530,9 @@ def canonical_2_adic_compartments(genus_symbol_quintuple_list):
     INPUT:
 
     - ``genus_symbol_quintuple_list`` -- a quintuple of integers (with certain
-      restrictions).
+      restrictions)
 
-    OUTPUT:
-
-    a list of lists of integers.
+    OUTPUT: a list of lists of integers
 
     EXAMPLES::
 
@@ -610,9 +604,7 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
       restrictions).
     - ``compartments`` -- this argument is deprecated
 
-    OUTPUT:
-
-    a list of lists of distinct integers.
+    OUTPUT: a list of lists of distinct integers
 
     EXAMPLES::
 
@@ -711,9 +703,7 @@ def canonical_2_adic_reduction(genus_symbol_quintuple_list):
 
     - ``compartments`` -- a list of lists of distinct integers (optional)
 
-    OUTPUT:
-
-    a list of lists of distinct integers.
+    OUTPUT: a list of lists of distinct integers.
 
     EXAMPLES::
 
@@ -797,9 +787,7 @@ def basis_complement(B):
 
     - ``B`` -- matrix over a field in row echelon form
 
-    OUTPUT:
-
-    a rectangular matrix over a field
+    OUTPUT: a rectangular matrix over a field
 
     EXAMPLES::
 
@@ -842,9 +830,7 @@ def signature_pair_of_matrix(A):
 
     - ``A`` -- symmetric matrix (assumed to be non-degenerate)
 
-    OUTPUT:
-
-    - `(p, n)` -- a pair (tuple) of integers.
+    OUTPUT: `(p, n)` -- a pair (tuple) of integers.
 
     EXAMPLES::
 
@@ -900,9 +886,7 @@ def p_adic_symbol(A, p, val):
       divisor of `A` needed to obtain enough precision.
       Calculation is modulo `p` to the ``val+3``.
 
-    OUTPUT:
-
-    a list of lists of integers
+    OUTPUT: a list of lists of integers
 
     EXAMPLES::
 
@@ -960,15 +944,13 @@ def is_even_matrix(A):
     Determines if the integral symmetric matrix `A` is even
     (i.e. represents only even numbers).  If not, then it returns the
     index of an odd diagonal entry.  If it is even, then we return the
-    index -1.
+    index `-1`.
 
     INPUT:
 
     - ``A`` -- symmetric integer matrix
 
-    OUTPUT:
-
-    a pair of the form (boolean, integer)
+    OUTPUT: a pair of the form (boolean, integer)
 
     EXAMPLES::
 
@@ -1079,8 +1061,8 @@ def split_odd(A):
 def trace_diag_mod_8(A):
     r"""
     Return the trace of the diagonalised form of `A` of an integral
-    symmetric matrix which is diagonalizable `\mod 8`.  (Note that since
-    the Jordan decomposition into blocks of size `<=` 2 is not unique
+    symmetric matrix which is diagonalizable mod `8`.  (Note that since
+    the Jordan decomposition into blocks of size `\leq 2` is not unique
     here, this is not the same as saying that `A` is always diagonal in
     any `2`-adic Jordan decomposition!)
 
@@ -1089,9 +1071,7 @@ def trace_diag_mod_8(A):
     - ``A`` -- symmetric matrix with coefficients in `\ZZ` which is odd in
       `\ZZ/2\ZZ` and has determinant not divisible by `8`.
 
-    OUTPUT:
-
-    an integer
+    OUTPUT: an integer
 
     EXAMPLES::
 
@@ -1221,13 +1201,13 @@ def two_adic_symbol(A, val):
 
 class Genus_Symbol_p_adic_ring():
     r"""
-    Local genus symbol over a p-adic ring.
+    Local genus symbol over a `p`-adic ring.
 
     The genus symbol of a component `p^m A` for odd prime `= p` is of the
     form `(m,n,d)`, where
 
     - `m` = valuation of the component
-    - `n` = rank of A
+    - `n` = rank of `A`
     - `d = det(A) \in \{1,u\}` for a normalized quadratic non-residue `u`.
 
     The genus symbol of a component `2^m A` is of the form `(m, n, s, d, o)`,
@@ -1237,13 +1217,14 @@ class Genus_Symbol_p_adic_ring():
     - `n` = rank of `A`
     - `d` = det(A) in `\{1,3,5,7\}`
     - `s` = 0 (or 1) if even (or odd)
-    - `o` = oddity of `A` (= 0 if s = 0) in `Z/8Z`
-          = the trace of the diagonalization of `A`
+    - `o` = oddity of `A` (= 0 if s = 0) in `Z/8Z` = the trace of the diagonalization of `A`
 
     The genus symbol is a list of such symbols (ordered by `m`) for each
     of the Jordan blocks `A_1,...,A_t`.
 
-    Reference: [CS1999]_ Conway and Sloane 3rd edition, Chapter 15, Section 7.
+    REFERENCE:
+
+    [CS1999]_ Conway and Sloane 3rd edition, Chapter 15, Section 7.
 
 
     .. WARNING::
@@ -1315,9 +1296,7 @@ class Genus_Symbol_p_adic_ring():
         r"""
         String representation for the `p`-adic genus symbol
 
-        OUTPUT:
-
-        a string
+        OUTPUT: a string
 
         EXAMPLES::
 
@@ -1454,9 +1433,7 @@ class Genus_Symbol_p_adic_ring():
 
         - ``other`` -- a :class:`Genus_Symbol_p_adic_ring` object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1492,9 +1469,7 @@ class Genus_Symbol_p_adic_ring():
 
         - ``other`` -- a :class:`Genus_Symbol_p_adic_ring` object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1537,8 +1512,8 @@ class Genus_Symbol_p_adic_ring():
 
         OUTPUT:
 
-        - a list of integers representing the square classes of generators of
-          the automorphous numbers
+        a list of integers representing the square classes of generators of
+        the automorphous numbers
 
         EXAMPLES:
 
@@ -1933,9 +1908,7 @@ class Genus_Symbol_p_adic_ring():
         r"""
         Return the prime number `p` of this `p`-adic local symbol.
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: an integer
 
         EXAMPLES::
 
@@ -1979,9 +1952,7 @@ class Genus_Symbol_p_adic_ring():
         Return a copy of the underlying list of lists of integers
         defining the genus symbol.
 
-        OUTPUT:
-
-        a list of lists of integers
+        OUTPUT: a list of lists of integers
 
         EXAMPLES::
 
@@ -2012,9 +1983,7 @@ class Genus_Symbol_p_adic_ring():
         r"""
         Return the number of positive dimensional symbols/Jordan blocks.
 
-        OUTPUT:
-
-        A non-negative integer
+        OUTPUT: a non-negative integer
 
         EXAMPLES::
 
@@ -2046,9 +2015,7 @@ class Genus_Symbol_p_adic_ring():
         integral symmetric matrix which generated this genus symbol as
         the Gram matrix of `Q`) associated to this local genus symbol.
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: an integer
 
         EXAMPLES::
 
@@ -2078,9 +2045,7 @@ class Genus_Symbol_p_adic_ring():
         r"""
         Return the dimension of a quadratic form associated to this genus symbol.
 
-        OUTPUT:
-
-        an non-negative integer
+        OUTPUT: a non-negative integer
 
         EXAMPLES::
 
@@ -2165,8 +2130,8 @@ class Genus_Symbol_p_adic_ring():
 
     def excess(self):
         r"""
-        Returns the p-excess of the quadratic form whose Hessian
-        matrix is the symmetric matrix A.  When p = 2 the p-excess is
+        Returns the `p`-excess of the quadratic form whose Hessian
+        matrix is the symmetric matrix `A`.  When `p = 2`, the `p`-excess is
         called the oddity.
 
         .. WARNING::
@@ -2179,9 +2144,7 @@ class Genus_Symbol_p_adic_ring():
 
         [CS1999]_ Conway and Sloane Book, 3rd edition, pp 370-371.
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: an integer
 
         EXAMPLES::
 
@@ -2247,9 +2210,7 @@ class Genus_Symbol_p_adic_ring():
         The scale of `(L,b)` is defined as the ideal
         `b(L,L)`.
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: an integer
 
         EXAMPLES::
 
@@ -2291,7 +2252,7 @@ class Genus_Symbol_p_adic_ring():
 
     def level(self):
         r"""
-        Return the maximal scale of a jordan component.
+        Return the maximal scale of a Jordan component.
 
         EXAMPLES::
 
@@ -2309,9 +2270,7 @@ class Genus_Symbol_p_adic_ring():
         symbol if it is associated to the prime `p=2` (and raise an
         error for all other primes).
 
-        OUTPUT:
-
-        a list of non-negative integers
+        OUTPUT: a list of non-negative integers
 
         EXAMPLES::
 
@@ -2338,9 +2297,7 @@ class Genus_Symbol_p_adic_ring():
         symbol if it is associated to the prime `p=2` (and raise an
         error for all other primes).
 
-        OUTPUT:
-
-        a list of non-negative integers
+        OUTPUT: a list of non-negative integers
 
         EXAMPLES::
 
@@ -2372,7 +2329,7 @@ class GenusSymbol_global_ring():
 
     - ``signature_pair`` -- a tuple of two non-negative integers
 
-    - ``local_symbols`` -- a list of :class:`Genus_Symbol_p_adic_ring`` instances
+    - ``local_symbols`` -- a list of :class:`Genus_Symbol_p_adic_ring` instances
       sorted by their primes
 
     - ``representative`` -- (default: ``None``) integer symmetric matrix;
@@ -2438,9 +2395,7 @@ class GenusSymbol_global_ring():
         r"""
         Return a string representing the global genus symbol.
 
-        OUTPUT:
-
-        a string
+        OUTPUT: a string
 
         EXAMPLES::
 
@@ -2508,9 +2463,7 @@ class GenusSymbol_global_ring():
 
         a :class:`GenusSymbol_global_ring` object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2560,9 +2513,7 @@ class GenusSymbol_global_ring():
 
         a ``GenusSymbol_global_ring`` object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2603,12 +2554,10 @@ class GenusSymbol_global_ring():
     def signature_pair(self):
         r"""
         Return the signature pair `(p, n)` of the (non-degenerate)
-        global genus symbol, where p is the number of positive
-        eigenvalues and n is the number of negative eigenvalues.
+        global genus symbol, where `p` is the number of positive
+        eigenvalues and `n` is the number of negative eigenvalues.
 
-        OUTPUT:
-
-        a pair of integers `(p, n)` each `>= 0`
+        OUTPUT: a pair of integers `(p, n)`, each `\geq 0`
 
         EXAMPLES::
 
@@ -2625,9 +2574,7 @@ class GenusSymbol_global_ring():
         r"""
         Return the proper spinor kernel.
 
-        OUTPUT:
-
-        A pair ``(A, K)`` where
+        OUTPUT: a pair `(A, K)` where
 
         .. MATH::
 
@@ -2667,9 +2614,7 @@ class GenusSymbol_global_ring():
         r"""
         Return the improper spinor kernel.
 
-        OUTPUT:
-
-        A pair ``(A, K)`` where
+        OUTPUT: a pair ``(A, K)`` where
 
         .. MATH::
 
@@ -2712,9 +2657,7 @@ class GenusSymbol_global_ring():
 
         - ``proper`` -- boolean
 
-        OUTPUT:
-
-        a list of primes not dividing the determinant
+        OUTPUT: a list of primes not dividing the determinant
 
         EXAMPLES::
 
@@ -2818,9 +2761,7 @@ class GenusSymbol_global_ring():
         matrix is the Gram matrix giving rise to this global genus
         symbol.
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: an integer
 
         EXAMPLES::
 
@@ -2919,9 +2860,7 @@ class GenusSymbol_global_ring():
         Return a representative of the rational
         bilinear form defined by this genus.
 
-        OUTPUT:
-
-        A diagonal_matrix.
+        OUTPUT: a diagonal_matrix
 
         EXAMPLES::
 
@@ -3059,9 +2998,7 @@ class GenusSymbol_global_ring():
         - ``backend`` -- (default: ``None``)
         - ``algorithm`` -- (default: ``None``)
 
-        OUTPUT:
-
-        - a list of Gram matrices
+        OUTPUT: a list of Gram matrices
 
         EXAMPLES::
 
@@ -3271,9 +3208,7 @@ class GenusSymbol_global_ring():
 
         - ``backend`` -- default: ``'sage'``, or ``'magma'``
 
-        OUTPUT:
-
-        a rational number
+        OUTPUT: a rational number
 
         EXAMPLES::
 
@@ -3358,9 +3293,7 @@ class GenusSymbol_global_ring():
         The scale of `(L,b)` is defined as the ideal
         `b(L,L)`.
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: an integer
 
         EXAMPLES::
 

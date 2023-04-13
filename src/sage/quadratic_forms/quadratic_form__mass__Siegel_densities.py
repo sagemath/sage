@@ -119,8 +119,8 @@ def Pall_mass_density_at_odd_prime(self, p):
 
     REFERENCES:
 
-        Pall's article "The Weight of a Genus of Positive n-ary Quadratic Forms"
-        appearing in Proc. Symp. Pure Math. VIII (1965), pp95--105.
+    Pall's article "The Weight of a Genus of Positive n-ary Quadratic Forms"
+    appearing in Proc. Symp. Pure Math. VIII (1965), pp95--105.
 
     INPUT:
 

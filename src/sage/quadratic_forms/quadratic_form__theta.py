@@ -16,10 +16,10 @@ from sage.rings.integer_ring import ZZ
 
 
 def theta_series(self, Max=10, var_str='q', safe_flag=True):
-    """
+    r"""
     Compute the theta series as a power series in the variable given
     in ``var_str`` (which defaults to '`q`'), up to the specified precision
-    `O(q^{\max})`.
+    `O(q^{Max})`.
 
     This uses the PARI/GP function :pari:`qfrep`, wrapped by the
     theta_by_pari() method. This caches the result for future
@@ -35,7 +35,7 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
 
     .. TODO::
 
-        Allow the option Max='mod_form' to give enough coefficients
+        Allow the option ``Max='mod_form'`` to give enough coefficients
         to ensure we determine the theta series as a modular form.  This
         is related to the Sturm bound, but we will need to be careful about
         this (particularly for half-integral weights!).
@@ -144,8 +144,7 @@ def theta_by_cholesky(self, q_prec):
 
     REFERENCE:
 
-        From Cohen's "A Course in Computational Algebraic Number Theory" book,
-        p 102.
+    Cohen's "A Course in Computational Algebraic Number Theory" book, p 102.
 
     EXAMPLES::
 

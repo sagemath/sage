@@ -678,7 +678,7 @@ class TernaryQF(SageObject):
         return self.adjoint().omega()
 
     def level(self):
-        """
+        r"""
         Return the level of the ternary quadratic form, which is 4 times the :meth:`discriminant` divided by the :meth:`divisor`.
 
         EXAMPLES::
@@ -692,7 +692,7 @@ class TernaryQF(SageObject):
         return 4 * self.disc() // self.divisor()
 
     def is_eisenstein_reduced(self) -> bool:
-        """
+        r"""
         Determine if the ternary quadratic form is Eisenstein reduced.
 
         That is, if we have a ternary quadratic form:
@@ -703,16 +703,14 @@ class TernaryQF(SageObject):
 
         then
 
-        ::
-
-            1- a<=b<=c;
-            2- r, s, and t are all positive or all nonpositive;
-            3- a>=|t|; a>=|s|; b>=|r|;
-            4- a+b+r+s+t>=0;
-            5- a=t implies s<=2*r; a=s implies t<=2*r; b=r implies t<=2*s;
-            6- a=-t implies s=0; a=-s implies t=0; b=-r implies t=0;
-            7- a+b+r+s+t=0 implies 2*a+2*s+t<=0;
-            8- a=b implies |r|<=|s|; b=c implies |s|<=|t|.
+        1. `a \leq b \leq c`;
+        2. `r`, `s`, and `t` are all positive or all nonpositive;
+        3. `a \geq |t|`; `a \geq |s|`; `b \geq |r|`;
+        4. `a+b+r+s+t \geq 0`;
+        5. `a=t` implies `s \leq 2*r`; `a=s` implies `t \leq 2*r`; `b=r` implies `t \leq 2*s`;
+        6. `a=-t` implies `s=0`; `a=-s` implies `t=0`; `b=-r` implies `t=0`;
+        7. `a+b+r+s+t = 0` implies `2*a+2*s+t \leq 0`;
+        8. `a=b` implies `|r| \leq |s|`; `b=c` implies `|s| \leq |t|`.
 
         EXAMPLES::
 
@@ -768,7 +766,7 @@ class TernaryQF(SageObject):
         return True
 
     def reduced_form_eisenstein(self, matrix=True):
-        """
+        r"""
         Return the Eisenstein reduced form equivalent to the given positive ternary quadratic form,
         which is unique.
 
@@ -805,8 +803,8 @@ class TernaryQF(SageObject):
 
     def pseudorandom_primitive_zero_mod_p(self, p):
         """
-        Return a tuple of the form v = (a, b, 1) such that is a zero of the given ternary quadratic
-        positive definite form modulo an odd prime p, where p doesn't divides the discriminant of the form.
+        Return a tuple of the form `v = (a, b, 1)` such that is a zero of the given ternary quadratic
+        positive definite form modulo an odd prime `p`, where `p` doesn't divides the discriminant of the form.
 
         EXAMPLES::
 
@@ -879,7 +877,9 @@ class TernaryQF(SageObject):
 
         2. `v` is a non-singular point of the conic `Q(v) = 0` (mod `p`).
 
-        Reference:  Gonzalo Tornaria's Thesis, Thrm 3.5, p34.
+        REFERENCES:
+
+        Gonzalo Tornaria's Thesis, Thrm 3.5, p34.
 
         EXAMPLES::
 
@@ -958,7 +958,9 @@ class TernaryQF(SageObject):
         Return the value of the genus characters Xi_p... which may be
         missing one character. We allow `-1` as a prime.
 
-        Reference: Dickson's "Studies in the Theory of Numbers"
+        REFERENCES:
+
+        Dickson's "Studies in the Theory of Numbers"
 
         EXAMPLES::
 
