@@ -1521,8 +1521,10 @@ cdef class RealDoubleElement(FieldElement):
 
     def round(self):
         """
-        Rounds ``self`` to the nearest integer. Uses the convention of rounding
-        half to even (i.e. if the fractional part of ``self`` is `0.5`, then it
+        Round ``self`` to the nearest integer.
+        
+        This uses the convention of rounding half to even
+        (i.e., if the fractional part of ``self`` is `0.5`, then it
         is rounded to the nearest even integer).
 
         EXAMPLES::
