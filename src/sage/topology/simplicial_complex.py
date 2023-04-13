@@ -4813,7 +4813,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
     def bigraded_betti_numbers(self, base_ring=ZZ):
         r"""
         Return a dictionary of the bigraded Betti numbers of ``self``, 
-        with keys `(-i, 2j)`.
+        with keys `(-a, 2b)`.
 
         .. SEEALSO::
 
@@ -4828,7 +4828,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.bigraded_betti_numbers(base_ring=QQ)
             {(0, 0): 1, (-1, 4): 3, (-2, 6): 1, (-2, 8): 2, (-3, 10): 1}
         """
-        if self._bbn is not None and base_ring in self._bbn:
+        if self._bbn is not None and 0 in self._bbn and base_ring in self._bbn[0]:
             return self._bbn[base_ring]
 
         from sage.homology.homology_group import HomologyGroup
@@ -4851,17 +4851,21 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         B[ind] += len(H[j-k-1].gens())
 
         if self._bbn is not None:
-            self._bbn[base_ring].update(B)
+            if 0 in self._bbn:
+                self._bbn[0].add(base_ring)
+            else:
+                self._bbn[0] = {base_ring}
+            self._bbn[base_ring] = B
         else:
-            self._bbn = {base_ring: B}
+            self._bbn = {0: {base_ring}, base_ring: B}
         return B 
 
     def bigraded_betti_number(self, a, b, base_ring=ZZ):
         r"""
-        Return the bigraded Betti number indexed in the form `(-i, 2j)`.
+        Return the bigraded Betti number indexed in the form `(-a, 2b)`.
 
-        Bigraded Betti number with indices `(-i, 2j)` is defined as a sum of ranks
-        of `(j-i-1)`-th (co)homologies of full subcomplexes with exactly `j` vertices. 
+        Bigraded Betti number with indices `(-a, 2b)` is defined as a sum of ranks
+        of `(b-a-1)`-th (co)homologies of full subcomplexes with exactly `b` vertices. 
 
         EXAMPLES::
 
@@ -4884,7 +4888,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             
         from sage.homology.homology_group import HomologyGroup
 
-        a = -a
         b //= 2
         L = self.vertices()
         n = len(L)
@@ -4895,18 +4898,18 @@ class SimplicialComplex(Parent, GenericCellComplex):
         for x in combinations(L, b):
             S = self.generated_subcomplex(x)
             H = S.homology(base_ring=base_ring)
-            if b-a-1 in H and H[b-a-1] != H0:
-                B += len(H[b-a-1].gens())
+            if b+a-1 in H and H[b+a-1] != H0:
+                B += len(H[b+a-1].gens())
 
         B = ZZ(B)
 
         if self._bbn is not None:
             if base_ring in self._bbn:
-                self._bbn[base_ring][(-a, 2*b)] = B
+                self._bbn[base_ring][(a, 2*b)] = B
             else:
-                self._bbn[base_ring] = {(-a, 2*b): B}
+                self._bbn[base_ring] = {(a, 2*b): B}
         else:
-            self._bbn = {base_ring: {(-a, 2*b): B}}
+            self._bbn = {base_ring: {(a, 2*b): B}}
 
         return B
             
