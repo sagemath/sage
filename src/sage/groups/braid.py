@@ -449,7 +449,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: B.<s0,s1,s2> = BraidGroup()
             sage: S = SymmetricGroup(4)
             sage: b = s0*s1/s2/s1
-            sage: c0 = b.permutation(W=S)
+            sage: c0 = b.permutation(W=S); c0
             (1,4,2)
             sage: c1 = b.permutation(W=Permutations(4)); c1
             [4, 1, 3, 2]
