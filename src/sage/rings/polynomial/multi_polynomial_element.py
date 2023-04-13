@@ -1969,7 +1969,6 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             raise ValueError("must specify which variable to integrate "
                              "with respect to")
 
-
         # TODO:
         # calling the coercion model bin_op is much more accurate than using the
         # true division (which is bypassed by polynomials). But it does not work
