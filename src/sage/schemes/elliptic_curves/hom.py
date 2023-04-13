@@ -899,7 +899,7 @@ def compare_via_evaluation(left, right):
         d = left.degree()
         e = integer_floor(1 + 2 * (2*d.sqrt() + 1).log(q))  # from Hasse bound
         e = next(i for i, n in enumerate(E.count_points(e+1), 1) if n > 4*d)
-        EE = E.base_extend(F.extension(e))
+        EE = E.base_extend(F.extension(e,'U'))
         Ps = EE.gens()
         return all(left._eval(P) == right._eval(P) for P in Ps)
     elif isinstance(F, number_field_base.NumberField):
@@ -981,7 +981,7 @@ def find_post_isomorphism(phi, psi):
                 if len(isos) <= 1:
                     break
             else:
-                E = E.base_extend(E.base_field().extension(2))
+                E = E.base_extend(E.base_field().extension(2,'U'))
 
     elif isinstance(F, number_field_base.NumberField):
         for _ in range(100):
