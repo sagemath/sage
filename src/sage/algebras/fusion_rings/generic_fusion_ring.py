@@ -30,6 +30,82 @@ from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.qqbar import QQbar
 
 class FusionRing(CombinatorialFreeModule):
+    """
+    This class constructs the FusionRing of a modular tensor category.
+    There are two classes currently implemented, Verlinde algebras,
+    and the Fusion Ring of the Drinfeld Double of a finite group.
+    Such a category is a semisimple braided tensor category, with
+    a finite number of simple objects, and its Grothendieck group
+    is the fusion ring. It also has a twist or ribbon method,
+    which makes it a ribbon category. It has an S-matrix, which is
+    invertible, and so it is a *modular tensor category* (MTC).
+
+    The Verlinde algebra, which is the first class of fusion
+    ring we can construct with this class, is the Grothendieck group
+    of a modular tensor category (MTC) `\mathcal{C}(\mathfrak{g},k)`,
+    where `\mathfrak{g}` is a semisimple Lie algebra, and `k`, the
+    *level* is a positive integer. The objects of this category
+    are in bijection with the weights in the level `k` fundamental
+    alcove, and the fusion coefficients, which are the structure
+    constants of the ring, are computed by the Kac-Walton formula.
+    The category `\mathcal{C}(\mathfrak{g},k)` has various realizations
+    as the category of fields in a Wess-Zumino-Witten conformal field
+    theory, the (semisimplified) category tilting modules of a quantum group at a
+    root of unity, the Drinfeld category related to monodromy of the KZ equation,
+    or as a category based on the integrable highest weight
+    modules of an untwisted affine Lie algebra of level `k`.
+
+    REFERENCES:
+
+    - [BaKi2001]_ Chapter 3
+    - [DFMS1996]_ Chapter 16
+    - [EGNO2015]_ Chapter 8
+    - [Feingold2004]_
+    - [Fuchs1994]_
+    - [Row2006]_
+    - [Walton1990]_
+    - [Wan2010]_
+
+    On the other hand, the Drinfeld double of a finite group is a
+    braided Hopf whose modules form a MTC.
+
+    REFERENCES:
+
+    - [BaKi2001]_ Chapter 3
+    - [Mas1995]_
+    - [CHW2015]_
+    - [Goff1999]_
+
+    INPUT either:
+
+    - ``ct`` -- the Cartan type of a simple (finite-dimensional) Lie algebra
+    - ``k`` -- the level
+
+    or:
+
+    - ``G`` -- a finite group.
+
+    OPTIONAL:
+
+    - ``conjugate`` -- (default ``False``) set ``True`` to obtain the complex conjugate ring
+    - ``cyclotomic_order`` -- (default computed depending on ``ct`` and ``k``)
+    - ``fusion_labels`` --  (default None) either a tuple of strings to use as labels of the
+      basis of simple objects, or a string from which the labels will be
+      constructed
+    - ``inject_variables`` -- (default ``False``): use with ``fusion_labels``.
+      If ``inject_variables`` is ``True``, the fusion labels will be variables
+      that can be accessed from the command line
+
+    The cyclotomic order is an integer `N` such that all computations
+    will return elements of the cyclotomic field of `N`-th roots of unity.
+    Normally you will never need to change this but consider changing it
+    if :meth:`root_of_unity` raises a ``ValueError``.
+
+    For further information, see
+    :class:`~sage.algebras.fusion_rings.verlinde_algebra.VerlindeAlgebra` and
+    :class:`~sage.algebras.fusion_rings.fusion_double.FusionDouble`
+    for the two classes of Fusion Rings that are implemented.
+    """
     @staticmethod
     def __classcall_private__(cls, input_data, level=None, base_ring=ZZ, prefix=None, conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False, **kwds):
         """
