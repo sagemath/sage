@@ -3124,15 +3124,14 @@ class Permutation(CombinatorialElement):
         TESTS::
 
             sage: [len([pi for pi in Permutations(n) if pi.is_simple()])
-            ....:  for n in range(5)]
-            [1, 1, 2, 0, 2]
+            ....:  for n in range(6)]
+            [1, 1, 2, 0, 2, 6]
         """
         n = len(self)
         if n <= 2:
             return True
 
         # testing intervals starting at position 0
-        start = 0
         left = right = self._list[0]
         end = 1
         while end < n - 1:
@@ -3141,7 +3140,7 @@ class Permutation(CombinatorialElement):
                 left = elt
             elif elt > right:
                 right = elt
-            if right - left == end - start:
+            if right - left == end:
                 return False
             elif right - left == n - 1:
                 break
