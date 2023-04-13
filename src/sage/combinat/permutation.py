@@ -877,7 +877,7 @@ class Permutation(CombinatorialElement):
         t = []
         w = list(self)
         for i in reversed(shape):
-            t = [ w[:i] ] + t
+            t = [w[:i]] + t
             w = w[i:]
         return tableau.Tableau(t)
 
@@ -1020,7 +1020,7 @@ class Permutation(CombinatorialElement):
                 #Start with the first element in the list
                 toConsider = l[0]
                 l.remove(toConsider)
-                cycle = [ toConsider ]
+                cycle = [toConsider]
                 cycleFirst = toConsider
 
             #Figure out where the element under consideration
@@ -3078,7 +3078,7 @@ class Permutation(CombinatorialElement):
 
     def is_derangement(self) -> bool:
         r"""
-        Return if ``self`` is a derangement.
+        Return whether ``self`` is a derangement.
 
         A permutation `\sigma` is a derangement if `\sigma` has no
         fixed points.
@@ -3096,16 +3096,16 @@ class Permutation(CombinatorialElement):
 
     def is_simple(self) -> bool:
         """
-        Return if ``self`` is simple.
+        Return whether ``self`` is simple.
 
         A permutation is simple if it does not send any proper sub-interval
         to a sub-interval.
 
-        See :oeis:`A111111`
-
         For instance, ``[6,1,3,5,2,4]`` is not simple because it maps the
         interval ``[3,4,5,6]`` to ``[2,3,4,5]``, whereas ``[2,6,3,5,1,4]`` is
         simple.
+
+        See :oeis:`A111111`
 
         EXAMPLES::
 
