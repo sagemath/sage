@@ -4865,7 +4865,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Return the bigraded Betti number indexed in the form `(-i, 2j)`.
 
         Bigraded Betti number with indices `(-i, 2j)` is defined as a sum of ranks
-        of `(i-j-1)`-th (co)homologies of full subcomplexes with exactly `j` vertices. 
+        of `(j-i-1)`-th (co)homologies of full subcomplexes with exactly `j` vertices. 
 
         EXAMPLES::
 
@@ -4902,17 +4902,17 @@ class SimplicialComplex(Parent, GenericCellComplex):
             if b-a-1 in H and H[b-a-1] != H0:
                 B += len(H[b-a-1].gens())
 
-        res = ZZ(B)
+        B = ZZ(B)
 
         if self._bbn is not None:
             if base_ring in self._bbn:
-                self._bbn[base_ring][(-a, 2*b)] = res 
+                self._bbn[base_ring][(-a, 2*b)] = B
             else:
-                self._bbn[base_ring] = {(-a, 2*b): res}
+                self._bbn[base_ring] = {(-a, 2*b): B}
         else:
-            self._bbn = {base_ring: {(-a, 2*b): res}}
+            self._bbn = {base_ring: {(-a, 2*b): B}}
 
-        return base_ring(B)
+        return B
             
 # Miscellaneous utility functions.
 
