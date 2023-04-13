@@ -5002,6 +5002,14 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: FY = P.feichtner_yuzvinsky_ring([P.top(),5,1,2,3,4])
             sage: FY.defining_ideal().groebner_basis()
             [h0^2 - h0*h1, h1^2, h2, h3, h4, h5]
+
+        TESTS::
+
+            sage: B2 = posets.BooleanLattice(2)
+            sage: B2.feichtner_yuzvinsky_ring([1,2,1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the input set G must not contain duplicates
         """
         if base_ring is None:
             from sage.rings.rational_field import QQ
