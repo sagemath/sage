@@ -262,7 +262,7 @@ def vectors_by_length(self, bound):
 
 
 def complementary_subform_to_vector(self, v):
-    """
+    r"""
     Find the `(n-1)`-dimensional quadratic form orthogonal to the vector `v`.
 
     .. NOTE::
@@ -282,7 +282,7 @@ def complementary_subform_to_vector(self, v):
 
     - ``v`` -- a list of ``self.dim()`` integers
 
-    OUTPUT: a :class:`QuadraticForm` over ``ZZ``
+    OUTPUT: a :class:`QuadraticForm` over `\ZZ`
 
 
     EXAMPLES::
@@ -358,7 +358,7 @@ def complementary_subform_to_vector(self, v):
 
 
 def split_local_cover(self):
-    """
+    r"""
     Tries to find subform of the given (positive definite quaternary)
     quadratic form `Q` of the form
 
@@ -372,7 +372,7 @@ def split_local_cover(self):
     comparing the local conditions of its sum with its complementary
     lattice and the original quadratic form `Q`.
 
-    OUTPUT: a :class:`QuadraticForm` over ``ZZ``
+    OUTPUT: a :class:`QuadraticForm` over `\ZZ`
 
     EXAMPLES::
 

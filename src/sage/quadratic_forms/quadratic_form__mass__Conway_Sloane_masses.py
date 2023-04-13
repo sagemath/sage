@@ -30,7 +30,7 @@ def parity(self, allow_rescaling_flag=True):
 
     INPUT:
 
-    - ``self`` -- a quadratic form with base_ring ``ZZ``, which we may
+    - ``self`` -- a quadratic form with base ring `\ZZ`, which we may
       require to have integer Gram matrix.
 
     OUTPUT:
@@ -111,11 +111,11 @@ def parity(self, allow_rescaling_flag=True):
 
 
 def is_even(self, allow_rescaling_flag=True):
-    """
+    r"""
     Return true iff after rescaling by some appropriate factor, the
     form represents no odd integers.  For more details, see :meth:`parity`.
 
-    Requires that `Q` is defined over ``ZZ``.
+    Requires that `Q` is defined over `\ZZ`.
 
     EXAMPLES::
 
@@ -131,11 +131,11 @@ def is_even(self, allow_rescaling_flag=True):
 
 
 def is_odd(self, allow_rescaling_flag=True):
-    """
+    r"""
     Return true iff after rescaling by some appropriate factor, the
     form represents some odd integers.  For more details, see :meth:`parity`.
 
-    Requires that `Q` is defined over ``ZZ``.
+    Requires that `Q` is defined over `\ZZ`.
 
     EXAMPLES::
 
@@ -391,7 +391,7 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
 
 
 def conway_diagonal_factor(self, p):
-    """
+    r"""
     Compute the diagonal factor of Conway's `p`-mass.
 
     INPUT:
@@ -429,7 +429,7 @@ def conway_diagonal_factor(self, p):
 
 
 def conway_cross_product_doubled_power(self, p):
-    """
+    r"""
     Compute twice the power of `p` which evaluates the 'cross product'
     term in Conway's mass formula.
 
@@ -465,7 +465,7 @@ def conway_cross_product_doubled_power(self, p):
 
 
 def conway_type_factor(self):
-    """
+    r"""
     This is a special factor only present in the mass formula when `p=2`.
 
     OUTPUT: a rational number
@@ -484,7 +484,7 @@ def conway_type_factor(self):
 
 
 def conway_p_mass(self, p):
-    """
+    r"""
     Compute Conway's `p`-mass.
 
     INPUT:
@@ -513,7 +513,7 @@ def conway_p_mass(self, p):
 
 
 def conway_standard_p_mass(self, p):
-    """
+    r"""
     Compute the standard (generic) Conway-Sloane `p`-mass.
 
     INPUT:
@@ -548,7 +548,7 @@ def conway_standard_p_mass(self, p):
 
 
 def conway_standard_mass(self):
-    """
+    r"""
     Return the infinite product of the standard mass factors.
 
     OUTPUT: a rational number > 0
@@ -586,7 +586,7 @@ def conway_standard_mass(self):
 
 
 def conway_mass(self):
-    """
+    r"""
     Compute the mass by using the Conway-Sloane mass formula.
 
     OUTPUT: a rational number > 0

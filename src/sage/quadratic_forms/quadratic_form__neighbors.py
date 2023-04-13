@@ -145,7 +145,7 @@ def find_p_neighbor_from_vec(self, p, y):
 
     - ``p`` -- a prime number
     - ``y`` -- a vector with `q(y) \in p \ZZ`
-    - ``odd`` -- (default: ``False``) if `p=2` return also odd neighbors
+    - ``odd`` -- (default: ``False``) if `p=2`, return also odd neighbors
 
     EXAMPLES::
 
@@ -160,7 +160,7 @@ def find_p_neighbor_from_vec(self, p, y):
 
     Since the base ring and the domain are not yet separate,
     for rational, half integral forms we just pretend
-    the base ring is ``ZZ``::
+    the base ring is `\ZZ`::
 
         sage: Q = QuadraticForm(QQ, matrix.diagonal([1,1,1,1]))
         sage: v = vector([1,1,1,1])

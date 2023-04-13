@@ -288,9 +288,9 @@ def signature_vector(self):
     r"""
     Return the triple `(p, n, z)` of integers where
 
-    - ``p`` = number of positive eigenvalues
-    - ``n`` = number of negative eigenvalues
-    - ``z`` = number of zero eigenvalues
+    - `p` = number of positive eigenvalues
+    - `n` = number of negative eigenvalues
+    - `z` = number of zero eigenvalues
 
     for the symmetric matrix associated to `Q`.
 

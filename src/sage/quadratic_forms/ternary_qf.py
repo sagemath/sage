@@ -233,8 +233,8 @@ class TernaryQF(SageObject):
             raise TypeError("presently we can only evaluate a quadratic form on a list, tuple, vector or matrix")
 
     def quadratic_form(self):
-        """
-        Return the object :class:`QuadraticForm` with the same coefficients as ``self`` over ``ZZ``.
+        r"""
+        Return a :class:`QuadraticForm` with the same coefficients as ``self`` over `\ZZ`.
 
         EXAMPLES::
 

@@ -95,19 +95,19 @@ class QuadraticFormLocalRepresentationConditions():
         [0]
     """
     def __init__(self, Q):
-        """
-        Takes a QuadraticForm and computes its local conditions (if
-        they do not already exist).  The recompute_flag overrides the
+        r"""
+        Takes a :class:`QuadraticForm` and computes its local conditions (if
+        they do not already exist).  The ``recompute_flag`` overrides the
         previously computed conditions if they exist, and stores the
         new conditions.
 
         INPUT:
 
-        - ``Q`` -- Quadratic form over ``ZZ``
+        - ``Q`` -- Quadratic form over `\ZZ`
 
         OUTPUT:
 
-        a  QuadraticFormLocalRepresentationConditions object
+        a :class:`QuadraticFormLocalRepresentationConditions` object
 
         EXAMPLES::
 

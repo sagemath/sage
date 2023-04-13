@@ -1532,7 +1532,7 @@ class QuadraticForm(SageObject):
 
             This is defined over the fraction field of the ring of
             the quadratic form, but is often not defined over the same
-            ring as the quadratic form.)
+            ring as the quadratic form.
 
         EXAMPLES::
 

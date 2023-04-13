@@ -356,17 +356,17 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
 
 
 def jordan_blocks_in_unimodular_list_by_scale_power(self, p):
-    """
+    r"""
     Return a list of Jordan components, whose component at index `i`
     should be scaled by the factor `p^i`.
 
     This is only defined for integer-valued quadratic forms
-    (i.e. forms with ``base_ring`` ``ZZ``), and the indexing only works
+    (i.e., forms with base ring `\ZZ`), and the indexing only works
     correctly for `p=2` when the form has an integer Gram matrix.
 
     INPUT:
 
-    - ``self`` -- a quadratic form over ``ZZ``, which has integer Gram matrix if `p = 2`
+    - ``self`` -- a quadratic form over `\ZZ`, which has integer Gram matrix if `p = 2`
     - ``p`` -- a prime number > 0
 
     OUTPUT: a list of `p`-unimodular quadratic forms
