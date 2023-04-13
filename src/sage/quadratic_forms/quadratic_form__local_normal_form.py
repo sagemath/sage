@@ -27,7 +27,7 @@ from sage.arith.misc import is_prime
 
 
 def find_entry_with_minimal_scale_at_prime(self, p):
-    """
+    r"""
     Finds the entry of the quadratic form with minimal scale at the
     prime `p`, preferring diagonal entries in case of a tie.  (I.e.  If
     we write the quadratic form as a symmetric matrix `M`, then this

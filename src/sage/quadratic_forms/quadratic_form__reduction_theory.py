@@ -18,7 +18,7 @@ def reduced_binary_form1(self):
 
     EXAMPLES::
 
-        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form1()                      # optional - sage.symbolic
+        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form1()                  # optional - sage.symbolic
         (
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 2 -1 ]
@@ -80,7 +80,7 @@ def reduced_binary_form(self):
 
     EXAMPLES::
 
-        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form()                       # optional - sage.symbolic
+        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form()                   # optional - sage.symbolic
         (
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 2 -1 ]
