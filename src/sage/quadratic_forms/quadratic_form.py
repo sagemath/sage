@@ -259,7 +259,7 @@ class QuadraticForm(SageObject):
     ::
 
         sage: Q = QuadraticForm(QQ, 2, range(1,4))
-        sage: A = Matrix(ZZ, 2, 2,[-1,0,0,1])
+        sage: A = Matrix(ZZ, 2, 2, [-1,0,0,1])
         sage: Q(A)
         Quadratic form in 2 variables over Rational Field with coefficients:
         [ 1 -2 ]
