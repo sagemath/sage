@@ -1075,7 +1075,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         L = LazyPowerSeriesRing(self._base, name)
         exp = lambda k: self._compute_coefficient_exp(k)
-        return L(exp)
+        return L(exp, valuation=1)
 
     def gen(self):
         r"""
@@ -1321,7 +1321,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         L = LazyPowerSeriesRing(self._base, name)
         log = lambda k: self._compute_coefficient_log(k)
-        return L(log)
+        return L(log, valuation=1)
 
 
     def morphism(self):
