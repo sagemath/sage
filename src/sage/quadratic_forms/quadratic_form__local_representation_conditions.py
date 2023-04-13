@@ -103,7 +103,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - Q -- Quadratic form over ``ZZ``
+        - ``Q`` -- Quadratic form over ``ZZ``
 
         OUTPUT:
 
@@ -630,7 +630,7 @@ def local_representation_conditions(self, recompute_flag=False, silent_flag=Fals
 
     The integer appearing in each place tells us how `p`-divisible a
     number needs to be in that square-class in order to be locally
-    represented by Q.  A negative number indicates that the entire `\QQ_p`
+    represented by `Q`.  A negative number indicates that the entire `\QQ_p`
     square-class is not represented, while a positive number `x` indicates
     that `t*p^{(2*x)} (\ZZ_p)^2` is locally represented but `t*p^{(2*(x-1))}`
     `(\ZZ_p)^2` is not.
@@ -646,7 +646,7 @@ def local_representation_conditions(self, recompute_flag=False, silent_flag=Fals
     - `2 * u * r^2` with `u = 7` (mod 8)
 
     At the real numbers, the vector which looks like ``[infinity, 0, infinity, None, None, None, None, None, None]``
-    means that `Q` is negative definite (i.e. the 0 tells us all
+    means that `Q` is negative definite (i.e., the 0 tells us all
     positive reals are represented).  The real vector always appears,
     and is listed before the other ones.
 

@@ -151,9 +151,9 @@ def is_odd(self, allow_rescaling_flag=True):
 
 
 def conway_species_list_at_odd_prime(self, p):
-    """
+    r"""
     Return an integer called the 'species' which determines the type
-    of the orthogonal group over the finite field `F_p`.
+    of the orthogonal group over the finite field `\GF{p}`.
 
     This assumes that the given quadratic form is a unimodular Jordan
     block at an odd prime `p`.  When the dimension is odd then this
@@ -221,9 +221,9 @@ def conway_species_list_at_odd_prime(self, p):
 
 
 def conway_species_list_at_2(self):
-    """
+    r"""
     Return an integer called the 'species' which determines the type
-    of the orthogonal group over the finite field `F_p`.
+    of the orthogonal group over the finite field `\GF{p}`.
 
     This assumes that the given quadratic form is a unimodular Jordan
     block at an odd prime `p`.  When the dimension is odd then this

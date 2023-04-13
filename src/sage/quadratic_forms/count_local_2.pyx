@@ -14,7 +14,7 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
     r"""
     Return the number of solutions of `Q(x) = m` over the finite field
     `\ZZ/p\ZZ`, where `p` is a prime number > 2 and `Q` is a non-degenerate
-    quadratic form of dimension `n` >= 1 and has Gram determinant ``Qdet``.
+    quadratic form of dimension `n \geq 1` and has Gram determinant ``Qdet``.
 
     REFERENCE:
 

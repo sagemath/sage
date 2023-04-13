@@ -18,7 +18,7 @@ from sage.rings.integer_ring import ZZ
 def theta_series(self, Max=10, var_str='q', safe_flag=True):
     r"""
     Compute the theta series as a power series in the variable given
-    in ``var_str`` (which defaults to '`q`'), up to the specified precision
+    in ``var_str`` (which defaults to ``'q'``), up to the specified precision
     `O(q^{Max})`.
 
     This uses the PARI/GP function :pari:`qfrep`, wrapped by the
@@ -76,7 +76,7 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
     vector) up to the precision `O(q^{Max})`.  This also caches the result
     for future computations.
 
-    If ``var_str`` = ``''``, then we return a vector `v` where `v[i]` counts the
+    If ``var_str`` = ``''``, then we return a vector `v` where ``v[i]`` counts the
     number of vectors of length `i`.
 
     The ``safe_flag`` allows us to select whether we want a copy of the

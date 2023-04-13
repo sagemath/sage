@@ -56,7 +56,7 @@ def count_modp_solutions__by_Gauss_sum(self, p, m):
 def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
     """
     Find the Good-type local density of `Q` representing `m` at `p`.
-    (Assuming that `p` > 2 and `Q` is given in local diagonal form.)
+    (Assuming that `p > 2` and `Q` is given in local diagonal form.)
 
     The additional congruence condition arguments ``Zvec`` and ``NZvec`` can
     be either a list of indices or None.  ``Zvec=[]`` is equivalent to
@@ -71,7 +71,7 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
 
     INPUT:
 
-    - ``self`` -- quadratic form `Q`, assumed to be diagonal and p-integral
+    - ``self`` -- quadratic form `Q`, assumed to be diagonal and `p`-integral
 
     - ``p`` -- a prime number
 
@@ -473,7 +473,7 @@ def local_zero_density_congruence(self, p, m, Zvec=None, NZvec=None):
 def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
     Find the Bad-type I local density of `Q` representing `m` at `p`.
-    (Assuming that `p` > 2 and `Q` is given in local diagonal form.)
+    (Assuming that `p > 2` and `Q` is given in local diagonal form.)
 
     INPUT:
 
@@ -636,7 +636,7 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
 def local_badII_density_congruence(self, p, m, Zvec=None, NZvec=None):
     """
     Find the Bad-type II local density of `Q` representing `m` at `p`.
-    (Assuming that `p` > 2 and `Q` is given in local diagonal form.)
+    (Assuming that `p > 2` and `Q` is given in local diagonal form.)
 
     INPUT:
 
@@ -844,7 +844,7 @@ def local_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     INPUT:
 
-    - ``self`` -- quadratic form `Q`, assumed to be block diagonal and p-integral
+    - ``self`` -- quadratic form `Q`, assumed to be block diagonal and `p`-integral
 
     - ``p`` -- a prime number
 

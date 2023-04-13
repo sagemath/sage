@@ -272,7 +272,7 @@ def complementary_subform_to_vector(self, v):
     .. NOTE::
 
         There is a minor difference in the cancellation
-        code here (form the C++ version) since the notation Q `[i,j]` indexes
+        code here (form the C++ version) since the notation ``Q[i,j]`` indexes
         coefficients of the quadratic polynomial here, not the symmetric
         matrix.  Also, it produces a better splitting now, for the full
         lattice (as opposed to a sublattice in the C++ code) since we

@@ -124,7 +124,7 @@ def count_congruence_solutions__good_type(self, p, k, m, zvec, nzvec):
 
 def count_congruence_solutions__zero_type(self, p, k, m, zvec, nzvec):
     """
-    Counts the zero-type solutions of `Q(x) = m` (mod `p^k`) satisfying the
+    Count the zero-type solutions of `Q(x) = m` (mod `p^k`) satisfying the
     additional congruence conditions described in
     :meth:`QuadraticForm.count_congruence_solutions_as_vector`.
 
@@ -149,7 +149,7 @@ def count_congruence_solutions__zero_type(self, p, k, m, zvec, nzvec):
 
 def count_congruence_solutions__bad_type(self, p, k, m, zvec, nzvec):
     """
-    Counts the bad-type solutions of `Q(x) = m` (mod `p^k`) satisfying the
+    Count the bad-type solutions of `Q(x) = m` (mod `p^k`) satisfying the
     additional congruence conditions described in
     :meth:`QuadraticForm.count_congruence_solutions_as_vector`.
 
@@ -174,7 +174,7 @@ def count_congruence_solutions__bad_type(self, p, k, m, zvec, nzvec):
 
 def count_congruence_solutions__bad_type_I(self, p, k, m, zvec, nzvec):
     """
-    Counts the bad-typeI solutions of `Q(x) = m` (mod `p^k`) satisfying
+    Count the bad-typeI solutions of `Q(x) = m` (mod `p^k`) satisfying
     the additional congruence conditions described in
     :meth:`QuadraticForm.count_congruence_solutions_as_vector`.
 
@@ -199,7 +199,7 @@ def count_congruence_solutions__bad_type_I(self, p, k, m, zvec, nzvec):
 
 def count_congruence_solutions__bad_type_II(self, p, k, m, zvec, nzvec):
     """
-    Counts the bad-typeII solutions of `Q(x) = m` (mod `p^k`) satisfying
+    Count the bad-typeII solutions of `Q(x) = m` (mod `p^k`) satisfying
     the additional congruence conditions described in
     :meth:`QuadraticForm.count_congruence_solutions_as_vector`.
 
