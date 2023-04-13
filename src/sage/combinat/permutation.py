@@ -3130,11 +3130,39 @@ class Permutation(CombinatorialElement):
         n = len(self)
         if n <= 2:
             return True
-        for k in range(1, n - 1):
-            for start in range(n - k):
-                slic = self[start:start + k + 1]
-                if max(slic) == min(slic) + k:
+
+        # testing intervals starting at position 0
+        start = 0
+        left = right = self._list[0]
+        end = 1
+        while end < n - 1:
+            elt = self._list[end]
+            if elt < left:
+                left = elt
+            elif elt > right:
+                right = elt
+            if right - left == end - start:
+                return False
+            elif right - left == n - 1:
+                break
+            end += 1
+
+        # testing intervals starting at later positions
+        for start in range(1, n - 1):
+            left = right = self._list[start]
+            end = start + 1
+            while end < n:
+                elt = self._list[end]
+                if elt < left:
+                    left = elt
+                elif elt > right:
+                    right = elt
+                if right - left == end - start:
                     return False
+                elif right - left > n - 1 - start:
+                    break
+                end += 1
+
         return True
 
     ############
