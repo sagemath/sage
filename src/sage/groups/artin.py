@@ -111,7 +111,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
         OUTPUT:
 
-        An element of the Coxeter group or an elemento of a symmetric group.
+        An element of the Coxeter group or an element of a symmetric group.
 
         EXAMPLES::
 
@@ -132,12 +132,21 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
             sage: c.coxeter_group_element(W=SymmetricGroup(4))
             (1,4,3,2)
             sage: A.<s1,s2,s3> = BraidGroup(4)
-            sage: c = s1 * s2 *s3
-            sage: c.coxeter_group_element()
+            sage: c = s1 * s2 * s3^-1
+            sage: c0 = c.coxeter_group_element(); c0
             [4, 1, 2, 3]
-            sage: c.coxeter_group_element(W=SymmetricGroup(4))
+            sage: c1 = c.coxeter_group_element(W=SymmetricGroup(4)); c1
             (1,4,3,2)
 
+        From an element of the Coxeter group it is possible to recover
+        the image by the standard section to the Artin group.
+
+            sage: B(b1)
+            s1*s2*s3*s2
+            sage: A(c0)
+            s1*s2*s3
+            sage: A(c0) == A(c1)
+            True
         """
         if W is None:
             W = self.parent().coxeter_group()

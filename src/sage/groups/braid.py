@@ -441,18 +441,26 @@ class Braid(FiniteTypeArtinGroupElement):
 
         OUTPUT:
 
-        The image of ``self`` under the natural projection map to ``W``.
+        The image of ``self`` under the natural projection map to ``W``
+        as either a standard permutation or an element of a symmetric group.
 
         EXAMPLES::
 
             sage: B.<s0,s1,s2> = BraidGroup()
             sage: S = SymmetricGroup(4)
             sage: b = s0*s1/s2/s1
-            sage: b.permutation(W=S)
+            sage: c0 = b.permutation(W=S)
             (1,4,2)
-            sage: c = b.permutation(W=Permutations(4)); c
+            sage: c1 = b.permutation(W=Permutations(4)); c1
             [4, 1, 3, 2]
-            sage: c == b.permutation()
+            sage: c1 == b.permutation()
+            True
+
+        From a permutation it is also possible to recover the permutation braid.
+
+            sage: B(c0)
+            s0*s1*s2*s1
+            sage: B(c0) == B(c1)
             True
         """
         return self.coxeter_group_element(W)
