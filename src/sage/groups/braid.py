@@ -3427,7 +3427,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         INPUT:
 
         - ``isomorphism`` -- boolean (default ``False``). If ``True`` an isomorphism
-        from ``self`` and the isomorphic group and its inverse are provided
+          from ``self`` and the isomorphic group and its inverse are provided
 
         EXAMPLES:
 
@@ -3451,7 +3451,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         n = self.strands()
         F = FreeGroup(2, "x")
-        rel = [n * (2,)+ (n - 1) * (-1,)]
+        rel = [n * (2,) + (n - 1) * (-1,)]
         rel += [(1,) + (j - 1) * (2,) + (1,) + j * (-2,) + (-1,) + (j + 1) * (2,) + (-1,) + j * (-2,)
                 for j in range(2, n - 1)]
         G = F / rel
