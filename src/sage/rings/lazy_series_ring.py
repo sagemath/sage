@@ -293,7 +293,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.has_coerce_map_from(R)
             True
             sage: L(R(lambda n: n))
-            z + z^3 + z^5 + O(z^7)
+            z + z^3 + z^5 + z^7 + O(z^8)
             sage: L(R([2,4,6])) == L.zero()
             True
             sage: L(R([2,4,6], valuation=2, constant=4)) == L.zero()
@@ -328,6 +328,28 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             ValueError: unable to convert ...
+
+        Converting from the corresponding rational functions::
+
+            sage: L = LazyLaurentSeriesRing(QQ, 't')
+            sage: tt = L.gen()
+            sage: R.<t> = LaurentPolynomialRing(QQ)
+            sage: f = (1 + t) / (1 + t + t^2); f
+            (t + 1)/(t^2 + t + 1)
+            sage: f.parent()
+            Fraction Field of Univariate Polynomial Ring in t over Rational Field
+            sage: L(f)
+            1 - t^2 + t^3 - t^5 + t^6 + O(t^7)
+            sage: L(f) == (1 + tt) / (1 + tt + tt^2)
+            True
+            sage: f = (3 + t) / (t^3 - t^5); f
+            (-t - 3)/(t^5 - t^3)
+            sage: f.parent()
+            Fraction Field of Univariate Polynomial Ring in t over Rational Field
+            sage: L(f)
+            3*t^-3 + t^-2 + 3*t^-1 + 1 + 3*t + t^2 + 3*t^3 + O(t^4)
+            sage: L(f) - (3 + tt) / (tt^3 - tt^5)
+            O(t^4)
 
         TESTS:
 
@@ -542,6 +564,15 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 elif x.parent()._arity == 1:
                     return self.element_class(self, stream)
                 raise ValueError(f"unable to convert {x} into {self}")
+
+            # Check if we can realize the input as a rational function
+            try:
+                FF = self._laurent_poly_ring.fraction_field()
+                x = FF(x)
+            except (TypeError, ValueError, AttributeError):
+                pass
+            else:
+                return self(x.numerator()) / self(x.denominator())
 
         else:
             x = coefficients
@@ -1475,7 +1506,6 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
     # === special functions ===
 
-
     def q_pochhammer(self, q=None):
         r"""
         Return the infinite ``q``-Pochhammer symbol `(a; q)_{\infty}`,
@@ -1879,7 +1909,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: g = L([1,3,5,7,9], 5, -1); g
             z^5 + 3*z^6 + 5*z^7 + 7*z^8 + 9*z^9 - z^10 - z^11 - z^12 + O(z^13)
 
-        Finally, ``x`` can be a polynomial::
+        Additionally, ``x`` can be a polynomial::
 
             sage: P.<x> = QQ[]
             sage: p = x + 3*x^2 + x^5
@@ -1895,6 +1925,22 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L.<x,y> = LazyPowerSeriesRing(ZZ)
             sage: L(p)
             x + (x*y+y^2)
+
+        Finally ``x`` can be in the corresponding fraction field::
+
+            sage: R.<a,b,c> = PolynomialRing(ZZ)
+            sage: L = LazyPowerSeriesRing(ZZ, 'a,b,c')
+            sage: aa, bb, cc = L.gens()
+            sage: f = (1 + a + b) / (1 + a*b + c^3); f
+            (a + b + 1)/(c^3 + a*b + 1)
+            sage: f.parent()
+            Fraction Field of Multivariate Polynomial Ring in a, b, c over Integer Ring
+            sage: L(f)
+            1 + (a+b) + (-a*b) + (-a^2*b-a*b^2-c^3) + (a^2*b^2-a*c^3-b*c^3)
+             + (a^3*b^2+a^2*b^3+2*a*b*c^3) + (-a^3*b^3+2*a^2*b*c^3+2*a*b^2*c^3+c^6)
+             + O(a,b,c)^7
+            sage: L(f) == (1 + aa + bb) / (1 + aa*bb + cc^3)
+            True
 
         TESTS::
 
@@ -2002,6 +2048,15 @@ class LazyPowerSeriesRing(LazySeriesRing):
                             constant=self.base_ring()(stream._constant),
                             valuation=valuation)
             return self.element_class(self, stream)
+
+        # Check if we can realize the input as a rational function
+        try:
+            FF = self._laurent_poly_ring.fraction_field()
+            x = FF(x)
+        except (TypeError, ValueError, AttributeError):
+            pass
+        else:
+            return self(x.numerator()) / self(x.denominator())
 
         if callable(x) or isinstance(x, (GeneratorType, map, filter)):
             if valuation is None:

@@ -185,7 +185,7 @@ class SymplecticForm(DiffForm):
         return type(self)(
             self._vmodule,
             "unnamed symplectic form",
-            latex_name=r"\mbox{unnamed symplectic form}",
+            latex_name=r"\text{unnamed symplectic form}",
         )
 
     def _init_derived(self):

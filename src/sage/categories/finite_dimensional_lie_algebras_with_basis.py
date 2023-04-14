@@ -24,9 +24,7 @@ from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.lie_algebras import LieAlgebras
 from sage.categories.subobjects import SubobjectsCategory
-from sage.algebras.free_algebra import FreeAlgebra
 from sage.sets.family import Family
-from sage.matrix.constructor import matrix
 
 
 class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
@@ -97,6 +95,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  The 6-Witt Lie algebra over Ring of integers modulo 6
                  in the Poincare-Birkhoff-Witt basis
             """
+            from sage.algebras.free_algebra import FreeAlgebra
+
             # Create the UEA relations
             # We need to get names for the basis elements, not just the generators
             I = self._basis_ordering
@@ -321,6 +321,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: parent(m)
                 Full MatrixSpace of 0 by 0 dense matrices over Rational Field
             """
+            from sage.matrix.constructor import matrix
+
             B = self.basis()
             m = matrix(self.base_ring(),
                        [[self.killing_form(x, y) for x in B] for y in B])
@@ -420,6 +422,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  D{1} + D{1, 2} + D{2, 3} + D{3},
                  D{1, 2, 3} + D{1, 3} + D{2})
             """
+            from sage.matrix.constructor import matrix
+
             #from sage.algebras.lie_algebras.subalgebra import LieSubalgebra
             #if isinstance(S, LieSubalgebra) or S is self:
             if S is self:
@@ -541,6 +545,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             :wikipedia:`Derivation_(differential_algebra)`
             """
             from sage.matrix.constructor import matrix
+
             R = self.base_ring()
             B = self.basis()
             keys = list(B.keys())
@@ -581,6 +586,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 [1 0 0], [0 1 0]
                 )
             """
+            from sage.matrix.constructor import matrix
+
             R = self.base_ring()
             IDer = matrix(R, [b.adjoint_matrix().list() for b in self.basis()])
             N = self.dimension()
@@ -691,6 +698,9 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             if A not in LieAlgebras(self.base_ring()).FiniteDimensional().WithBasis():
                 raise NotImplementedError("A must be a finite dimensional"
                                           " Lie algebra with basis")
+
+            from sage.matrix.constructor import matrix
+
             B = self.basis()
             AB = A.basis()
             try:
@@ -798,6 +808,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 Subalgebra generated of Lie algebra on 2 generators (x, y) over Rational Field with basis:
                 ()
             """
+            from sage.matrix.constructor import matrix
+
             # Make sure we lift everything to the ambient space
             if self in LieAlgebras(self.base_ring()).Subobjects():
                 A = self.ambient()
@@ -1373,6 +1385,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: X * Y
                 Z
             """
+            from sage.matrix.constructor import matrix
+
             K = self._basis_ordering
             mats = []
             R = self.base_ring()
@@ -1606,6 +1620,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: E1 * E2 - E2 * E1 == e12.adjoint_matrix()
                 True
             """
+            from sage.matrix.constructor import matrix
+
             P = self.parent()
             basis = P.basis()
             return matrix(self.base_ring(),

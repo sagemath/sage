@@ -1984,7 +1984,7 @@ class StandardSkewTableaux(SkewTableaux):
         elif skp in SkewPartitions():
             return StandardSkewTableaux_shape(skp)
         else:
-            raise TypeError("Invalid argument")
+            raise TypeError("invalid argument")
 
     def __contains__(self, x):
         """
@@ -2333,7 +2333,7 @@ class SemistandardSkewTableaux(SkewTableaux):
         if p is None:
             if mu is None:
                 return SemistandardSkewTableaux_all(max_entry)
-            raise ValueError("You must specify either a size or a shape")
+            raise ValueError("you must specify either a size or a shape")
 
         if isinstance(p, (int, Integer)):
             if mu is None:
@@ -2347,7 +2347,7 @@ class SemistandardSkewTableaux(SkewTableaux):
             else:
                 return SemistandardSkewTableaux_shape_weight(p, mu)
 
-        raise ValueError("Invalid input")
+        raise ValueError("invalid input")
 
     def __contains__(self, x):
         """

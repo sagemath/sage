@@ -355,8 +355,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
     .. MATH::
 
-        t(p):\ \underbrace{T_q^*M\times\cdots\times T_q^*M}_{k\ \; \mbox{times}}
-        \times \underbrace{T_q M\times\cdots\times T_q M}_{l\ \; \mbox{times}}
+        t(p):\ \underbrace{T_q^*M\times\cdots\times T_q^*M}_{k\ \; \text{times}}
+        \times \underbrace{T_q M\times\cdots\times T_q M}_{l\ \; \text{times}}
         \longrightarrow K,
 
     where `T_q^* M` is the dual vector space to `T_q M` and `K` is the
@@ -657,7 +657,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         # Initialization of derived quantities:
         self._init_derived()
 
-
     def _repr_(self):
         r"""
         String representation of ``self``.
@@ -768,7 +767,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
                 format_spec = basis
             basis = basis.frame()
         return (basis, format_spec)
-
 
     def _set_comp_unsafe(self, basis=None):
         r"""
@@ -1510,7 +1508,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
                             rsum += tc[[indk]].coord_function(chart) * \
                                     vc[[i]].coord_function(chart).diff(ind[k])
                     resc[[ind]] = rsum.scalar_field()
-
 
             #
             # 3/ Final result (the tensor)

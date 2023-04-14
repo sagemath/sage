@@ -2194,7 +2194,7 @@ class DyckWord_complete(DyckWord):
                     pi[touches[i] - 1] = pi[touches[i + 1] - 1]
                 pi[touches[-1] - 1] = a
             D, touch_sequence = pealing(D, return_touches=True)
-        return Permutations()(pi, check_input=False)
+        return Permutations()(pi, check=False)
 
     @combinatorial_map(name='to 321 avoiding permutation')
     def to_321_avoiding_permutation(self) -> Permutation:

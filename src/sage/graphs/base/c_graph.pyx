@@ -44,7 +44,7 @@ method :meth:`realloc <sage.graphs.base.c_graph.CGraph.realloc>`.
 # ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
-from sage.rings.integer cimport Integer, smallInteger
+from sage.rings.integer cimport smallInteger
 from sage.arith.long cimport pyobject_to_long
 from libcpp.queue cimport priority_queue, queue
 from libcpp.stack cimport stack
@@ -3751,7 +3751,6 @@ cdef class CGraphBackend(GenericGraphBackend):
         # studied.
         cdef int x_int = self.get_vertex(x)
         cdef int y_int = self.get_vertex(y)
-        cdef int u = 0
         cdef int v = 0
         cdef int w = 0
         cdef int pred
@@ -3978,7 +3977,6 @@ cdef class CGraphBackend(GenericGraphBackend):
         # studied.
         cdef int x_int = self.get_vertex(x)
         cdef int y_int = self.get_vertex(y)
-        cdef int u = 0
         cdef int v = 0
         cdef int w = 0
         cdef int pred
@@ -4586,7 +4584,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             ....:  return h
             ...
             sage: all( random_acyclic(100, .2).is_directed_acyclic()    # long time
-            ....:      for i in range(50))                              # long time
+            ....:      for i in range(50))
             True
 
         TESTS::
@@ -4680,7 +4678,6 @@ cdef class CGraphBackend(GenericGraphBackend):
                         # // answer = [u]
                         cycle = [self.vertex_label(u)]
 
-                        tmp = u
                         while u != uu:
                             u = parent.get(u, uu)
                             cycle.append(self.vertex_label(u))
@@ -4899,7 +4896,7 @@ cdef class Search_iterator:
             sage: next(g.breadth_first_search(0))
             0
         """
-        cdef int v_int, v_dist
+        cdef int v_int
         cdef int w_int
         cdef int l
         cdef CGraph cg = self.graph.cg()

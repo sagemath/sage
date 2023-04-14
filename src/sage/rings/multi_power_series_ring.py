@@ -205,7 +205,7 @@ AUTHORS:
 
 
 from sage.rings.ring import CommutativeRing
-from sage.rings.polynomial.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
@@ -562,8 +562,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             Multivariate Power Series Ring in x, y over Finite Field of size 5
         """
         return PowerSeriesRing(R, names = self.variable_names(), default_prec = self.default_prec())
-
-
 
     def remove_var(self, *var):
         """

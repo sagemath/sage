@@ -99,18 +99,17 @@ Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.sets.set import Set
 from sage.misc.cachefunc import cached_function
-from itertools import combinations
 from itertools import chain
 from sage.features import PythonModule
 from sage.sets.disjoint_set import DisjointSet
 from sage.rings.infinity import Infinity
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
-from cysignals.memory cimport sig_malloc, sig_calloc, sig_free
+from cysignals.memory cimport sig_calloc, sig_free
 
 
 def is_valid_tree_decomposition(G, T):

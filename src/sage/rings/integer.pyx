@@ -972,7 +972,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return [ self ]
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         mpz_clear(self.value)
 
     def __repr__(self):
@@ -3812,11 +3812,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             else:
                 limit = bound
             while m <= limit:
-                if  mpz_divisible_ui_p(self.value, m):
+                if mpz_divisible_ui_p(self.value, m):
                     mpz_set_ui(x.value, m)
                     sig_off()
                     return x
-                m += dif[i%8]
+                m += dif[i % 8]
                 i += 1
             mpz_abs(x.value, self.value)
             sig_off()
@@ -3833,6 +3833,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         -  ``algorithm`` - string
 
            - ``'pari'`` - (default) use the PARI library
+
+           - ``'flint'`` - use the FLINT library
 
            - ``'kash'`` - use the KASH computer algebra system (requires
              kash)
@@ -3899,6 +3901,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n.factor(limit=1000)
             2 * 11 * 41835640583745019265831379463815822381094652231
 
+        An example where FLINT is used::
+
+            sage: n = 82862385732327628428164127822
+            sage: n.factor(algorithm='flint')
+            2 * 3 * 11 * 13 * 41 * 73 * 22650083 * 1424602265462161
+
         We factor using a quadratic sieve algorithm::
 
             sage: p = next_prime(10^20)                                             # optional - sage.libs.pari
@@ -3929,7 +3937,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         from sage.structure.factorization import Factorization
         from sage.structure.factorization_integer import IntegerFactorization
 
-        if algorithm not in ['pari', 'kash', 'magma', 'qsieve', 'ecm']:
+        if algorithm not in ['pari', 'flint', 'kash', 'magma', 'qsieve', 'ecm']:
             raise ValueError("Algorithm is not known")
 
         cdef Integer n, p, unit
@@ -3982,6 +3990,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             F.sort()
             return IntegerFactorization(F, unit=unit, unsafe=True,
                                            sort=False, simplify=False)
+        elif algorithm == 'flint':
+            from sage.rings.factorint import factor_using_flint
+            F = factor_using_flint(n)
+            F.sort()
+            return IntegerFactorization(F, unit=unit, unsafe=True,
+                                           sort=False, simplify=False)
+
         elif algorithm in ['kash', 'magma']:
             if algorithm == 'kash':
                 from sage.interfaces.kash import kash as I
@@ -3998,10 +4013,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             message = "the factorization returned by qsieve may be incomplete (the factors may not be prime) or even wrong; see qsieve? for details"
             from warnings import warn
             warn(message, RuntimeWarning, stacklevel=5)
-            from sage.interfaces.qsieve import qsieve
-            res = [(p, 1) for p in qsieve(n)[0]]
-            F = IntegerFactorization(res, unit)
-            return F
+            from sage.libs.flint.qsieve import qsieve
+            F = qsieve(n)
+            F.sort()
+            return IntegerFactorization(F, unit=unit, unsafe=True,
+                                           sort=False, simplify=False)
         else:
             from sage.interfaces.ecm import ecm
             res = [(p, 1) for p in ecm.factor(n, proof=proof)]
@@ -5589,7 +5605,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         - ``proof`` (boolean, default ``True``) -- if ``False`` then
           for negative discriminants a faster algorithm is used by
           the PARI library which is known to give incorrect results
-          when the class group has many cyclic factors.
+          when the class group has many cyclic factors.  However the
+          results are correct for discriminants `D` with `|D|\le 2\cdot10^{10}`.
 
         OUTPUT:
 
@@ -5598,7 +5615,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         .. NOTE::
 
-           This is not always equal to the number of classes of
+           For positive `D`, this is not always equal to the number of classes of
            primitive binary quadratic forms of discriminant `D`, which
            is equal to the narrow class number. The two notions are
            the same when `D<0`, or `D>0` and the fundamental unit of
@@ -6033,6 +6050,73 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             False
         """
         return self.__pari__().issquarefree()
+
+    def is_discriminant(self):
+        """
+        Returns True if this integer is a discriminant.
+
+        .. NOTE::
+
+            A discriminant is an integer congruent to 0 or 1 modulo 4.
+
+        EXAMPLES::
+
+            sage: (-1).is_discriminant()
+            False
+            sage: (-4).is_discriminant()
+            True
+            sage: 100.is_discriminant()
+            True
+            sage: 101.is_discriminant()
+            True
+
+        TESTS::
+
+            sage: 0.is_discriminant()
+            True
+            sage: 1.is_discriminant()
+            True
+            sage: len([D for D in srange(-100,100) if D.is_discriminant()])
+            100
+        """
+        return self%4 in [0,1]
+
+    def is_fundamental_discriminant(self):
+        """
+        Returns True if this integer is a fundamental_discriminant.
+
+        .. NOTE::
+
+            A fundamental discriminant is a discrimimant, not 0 or 1 and not a square multiple of a smaller discriminant.
+
+        EXAMPLES::
+
+            sage: (-4).is_fundamental_discriminant()
+            True
+            sage: (-12).is_fundamental_discriminant()
+            False
+            sage: 101.is_fundamental_discriminant()
+            True
+
+        TESTS::
+
+            sage: 0.is_fundamental_discriminant()
+            False
+            sage: 1.is_fundamental_discriminant()
+            False
+            sage: len([D for D in srange(-100,100) if D.is_fundamental_discriminant()])
+            61
+
+        """
+        if self in [0,1]:
+            return False
+        Dmod4 = self%4
+        if Dmod4 in [2,3]:
+            return False
+        if Dmod4 == 1:
+            return self.is_squarefree()
+        d = self//4
+        return d%4 in [2,3] and d.is_squarefree()
 
     cpdef __pari__(self):
         """

@@ -1726,7 +1726,7 @@ class HyperplaneArrangementElement(Element):
             ((0, 0), (0, 8), (8, 0), (8, 8))
         """
         import itertools
-        from sage.matroids.all import Matroid
+        from sage.matroids.constructor import Matroid
         R = self.parent().base_ring()
         parallels = self._parallel_hyperplanes()
         A_list = [parallel[0][1] for parallel in parallels]
@@ -1934,7 +1934,7 @@ class HyperplaneArrangementElement(Element):
                         # In this case, at least one of the vertices is not on the hyperplane.
                         # So we check if any ray or line pokes the hyperplane.
                         if (    any(ieq[1:]*r[:]*direction < 0 for r in region.rays()) or
-                                any(ieq[1:]*l[:]          != 0 for l in region_lines)):
+                                any(ieq[1:]*l[:] != 0 for l in region_lines)):
                             splits = True
 
                 if splits:

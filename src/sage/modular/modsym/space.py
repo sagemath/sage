@@ -35,7 +35,7 @@ from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.rings.number_field.number_field_base import is_NumberField
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.structure.all import Sequence, SageObject
@@ -1046,7 +1046,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         if not self.is_cuspidal():
             raise ValueError("self must be cuspidal")
         K = self.base_ring()
-        if not is_NumberField(K):
+        if not isinstance(K, NumberField):
             raise TypeError("self must be over QQ or a number field.")
         n = K.degree()
         if n == 1:

@@ -124,6 +124,9 @@ class FiniteField_pari_ffelt(FiniteField):
         self._one_element = self.element_class(self, 1)
         self._gen = self.element_class(self, self._gen_pari)
 
+        # Cache for Frobenius endomorphisms (O(n) field elements)
+        self.__pari_frobenius_powers = []
+
     Element = FiniteFieldElement_pari_ffelt
 
     def __reduce__(self):
@@ -201,3 +204,33 @@ class FiniteField_pari_ffelt(FiniteField):
             20
         """
         return self._degree
+
+    def _pari_frobenius(self, k=1):
+        """
+        Return a cached PARI Frobenius endomorphism (internally defined
+        by the image of the generator).
+
+        TESTS::
+
+            sage: F = FiniteField(37^10, 'a', impl='pari_ffelt')
+            sage: x = F.random_element()
+            sage: all(x**(37**k) == F(F._pari_frobenius(k).ffmap(x)) for k in range(1, 30) if k % 10 != 0)
+            True
+            sage: F(F._pari_frobenius(-1).ffmap(x))**37 == x
+            True
+
+        """
+        k = k % self.degree()
+        if k == 0:
+            raise ValueError("_pari_frobenius requires a non-zero exponent")
+        g = self.gen()
+        i = len(self.__pari_frobenius_powers)
+        if i == 0:
+            self.__pari_frobenius_powers.append(g.__pari__().fffrobenius(1))
+            i = 1
+        f1 = self.__pari_frobenius_powers[0]
+        while i < k:
+            i += 1
+            fi = self.__pari_frobenius_powers[-1].ffcompomap(f1)
+            self.__pari_frobenius_powers.append(fi)
+        return self.__pari_frobenius_powers[k-1]

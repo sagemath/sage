@@ -464,7 +464,7 @@ class RootLatticeRealizations(Category_over_base_ring):
         @cached_method
         def alpha(self):
             r"""
-            Returns the family `(\alpha_i)_{i\in I}` of the simple roots,
+            Return the family `(\alpha_i)_{i\in I}` of the simple roots,
             with the extra feature that, for simple irreducible root
             systems, `\alpha_0` yields the opposite of the highest root.
 
@@ -475,13 +475,12 @@ class RootLatticeRealizations(Category_over_base_ring):
                 alpha[1]
                 sage: alpha[0]
                 -alpha[1] - alpha[2]
-
             """
             if self.root_system.is_finite() and self.root_system.is_irreducible():
-                return Family(self.index_set(), self.simple_root, \
-                              hidden_keys = [0], hidden_function = lambda i: - self.highest_root())
-            else:
-                return self.simple_roots()
+                return Family(self.index_set(), self.simple_root,
+                              hidden_keys=[0],
+                              hidden_function=lambda i: - self.highest_root())
+            return self.simple_roots()
 
         @cached_method
         def basic_imaginary_roots(self):
@@ -1900,7 +1899,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: L.classical().highest_root()
                 2*alpha[1] + 2*alpha[2] + alpha[3]
             """
-            cartan_type  = self.cartan_type()
+            cartan_type = self.cartan_type()
             special_node = cartan_type.special_node()
             a = self.cartan_type().col_annihilator()
             classical = self.classical()

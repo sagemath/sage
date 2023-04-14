@@ -71,9 +71,6 @@ from sage.misc.lazy_attribute import lazy_attribute
 
 from sage.rings.rational_field import QQ
 from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import is_NumberFieldOrder
-from sage.categories.number_fields import NumberFields
-from sage.rings.real_mpfr import RealField
 
 
 class MPolynomial_element(MPolynomial):
@@ -1078,8 +1075,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             prec = 53
 
         if self.is_zero():
+            from sage.rings.real_mpfr import RealField
             return RealField(prec).zero()
 
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
         from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 
         K = self.base_ring()
@@ -1135,6 +1135,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f.local_height(2, prec=2)
             0.75
         """
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
+
         if prec is None:
             prec = 53
 
@@ -1183,6 +1186,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f.local_height_arch(0, prec=2)
             1.0
         """
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        from sage.categories.number_fields import NumberFields
+
         if prec is None:
             prec = 53
 
@@ -1962,7 +1968,6 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         if var is None:
             raise ValueError("must specify which variable to integrate "
                              "with respect to")
-
 
         # TODO:
         # calling the coercion model bin_op is much more accurate than using the

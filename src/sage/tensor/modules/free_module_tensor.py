@@ -1152,7 +1152,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
                     for jj in val:
                         new_comp[[jj[0]]] = jj[1]
 
-
             else:
                 # Sequential computation
                 for ind_new in new_comp.non_redundant_index_generator():
@@ -1563,7 +1562,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
             else:
                 basis = self._fmodule._def_basis
         return self.comp(basis)[args]
-
 
     def __setitem__(self, args, value):
         r"""
@@ -3101,7 +3099,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
             basis = self.pick_a_basis()
         res_comp = self._components[basis].symmetrize(*pos)
         return self._fmodule.tensor_from_comp(self._tensor_type, res_comp)
-
 
     def antisymmetrize(self, *pos, **kwargs):
         r"""

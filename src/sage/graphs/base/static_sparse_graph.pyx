@@ -182,7 +182,6 @@ with C arguments).
 # ****************************************************************************
 
 cimport cpython
-from libc.string cimport memset
 from libc.limits cimport INT_MAX
 from libc.math cimport sqrt
 from libcpp.vector cimport vector
@@ -732,8 +731,8 @@ def tarjan_strongly_connected_components(G):
 
     Checking against NetworkX::
 
-        sage: import networkx
-        sage: for i in range(10):                          # long time
+        sage: import networkx                                                                       # optional - networkx
+        sage: for i in range(10):                          # long time                              # optional - networkx
         ....:      g = digraphs.RandomDirectedGNP(100,.05)
         ....:      h = g.networkx_graph()
         ....:      scc1 = g.strongly_connected_components()
@@ -783,7 +782,6 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef size_t v, w, i
     cdef size_t s_nscc = <size_t>nscc
-    cdef int tmp = nscc + 1
     cdef vector[vector[int]] scc_list = vector[vector[int]](nscc, vector[int]())
     cdef vector[vector[int]] sons = vector[vector[int]](nscc + 1, vector[int]())
     cdef vector[int].iterator iter
@@ -827,7 +825,6 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
     output.neighbors[0] = output.edges
 
     for v in range(1, s_nscc + 1):
-        degv = sons[v].size()
         output.neighbors[v] = output.neighbors[v - 1] + sons[v - 1].size()
         for i in range(sons[v].size()):
             output.neighbors[v][i] = sons[v][i]

@@ -63,7 +63,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
             sage: a.automorphism_group()
             Symmetric group of order 1! as a permutation group
         """
-        from sage.groups.all import SymmetricGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         return SymmetricGroup(1)
 
 
