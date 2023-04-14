@@ -2539,6 +2539,8 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
        - ``'pari'`` - (default) use the PARI c library
 
+       - ``'flint'`` - use the FLINT library
+
        - ``'kash'`` - use KASH computer algebra system (requires that
          kash be installed)
 
@@ -2586,6 +2588,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         -20
         sage: factor(-next_prime(10^2) * next_prime(10^7))                              # optional - sage.libs.pari
         -1 * 101 * 10000019
+
+    ::
+
+        sage: factor(293292629867846432923017396246429, algorithm='flint')
+        3 * 4852301647696687 * 20148007492971089
 
     ::
 

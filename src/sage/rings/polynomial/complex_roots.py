@@ -147,7 +147,6 @@ def intervals_disjoint(intvs):
     return True
 
 
-
 def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
     """
     Compute the complex roots of a given polynomial with exact

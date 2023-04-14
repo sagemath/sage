@@ -79,6 +79,7 @@ AUTHORS:
 from cpython cimport *
 from cysignals.signals cimport sig_check
 
+from sage.misc.lazy_string import lazy_string
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
@@ -4955,11 +4956,10 @@ cdef class Matrix(Matrix1):
         """
         K = self.fetch('right_kernel')
         if K is not None:
-            verbose("retrieving cached right kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
             return K
 
         R = self.base_ring()
-        tm = verbose("computing a right kernel for %sx%s matrix over %s" % (self.nrows(), self.ncols(), R),level=1)
+        tm = verbose(lazy_string("computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=1)
 
         # Sanitize basis format
         #   'computed' is OK in right_kernel_matrix(), but not here
@@ -4981,7 +4981,7 @@ cdef class Matrix(Matrix1):
         else:
             K = ambient.submodule_with_basis(M.rows(), already_echelonized=False, check=False)
 
-        verbose("done computing a right kernel for %sx%s matrix over %s" % (self.nrows(), self.ncols(), R),level=1, t=tm)
+        verbose(lazy_string("done computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=1, t=tm)
         self.cache('right_kernel', K)
         return K
 
@@ -5131,7 +5131,6 @@ cdef class Matrix(Matrix1):
         """
         K = self.fetch('left_kernel')
         if K is not None:
-            verbose("retrieving cached left kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
             return K
 
         tm = verbose("computing left kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
@@ -8034,11 +8033,11 @@ cdef class Matrix(Matrix1):
             [ 1.00 0.000  10.0]
             [0.000  1.00  1.00]
         """
-        tm = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm'%(self._nrows, self._ncols, algorithm))
         cdef Py_ssize_t start_row, c, r, nr, nc, i, best_r
         if self.fetch('in_echelon_form'):
             return self.fetch('pivots')
 
+        tm = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm'%(self._nrows, self._ncols, algorithm))
         self.check_mutability()
         cdef Matrix A
 

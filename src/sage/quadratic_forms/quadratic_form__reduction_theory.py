@@ -3,7 +3,8 @@ Reduction Theory
 """
 from copy import deepcopy
 from sage.matrix.constructor import matrix
-from sage.functions.all import floor
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "floor")
 from sage.misc.mrange import mrange
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
@@ -17,7 +18,7 @@ def reduced_binary_form1(self):
 
     EXAMPLES::
 
-        sage: QuadraticForm(ZZ,2,[5,5,2]).reduced_binary_form1()
+        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form1()                  # optional - sage.symbolic
         (
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 2 -1 ]
@@ -79,7 +80,7 @@ def reduced_binary_form(self):
 
     EXAMPLES::
 
-        sage: QuadraticForm(ZZ,2,[5,5,2]).reduced_binary_form()
+        sage: QuadraticForm(ZZ, 2, [5,5,2]).reduced_binary_form()                   # optional - sage.symbolic
         (
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 2 -1 ]
@@ -133,28 +134,29 @@ def reduced_binary_form(self):
 
 
 def minkowski_reduction(self):
-    """
+    r"""
     Find a Minkowski-reduced form equivalent to the given one.
     This means that
 
     .. MATH::
 
-            Q(v_k) <= Q(s_1 * v_1 + ... + s_n * v_n)
+            Q(v_k) \leq Q(s_1 * v_1 + ... + s_n * v_n)
 
     for all `s_i` where GCD`(s_k, ... s_n) = 1`.
 
-    Note: When Q has dim <= 4 we can take all `s_i` in {1, 0, -1}.
+    .. NOTE::
 
-    References:
+        When `Q` has dim `\leq 4` we can take all `s_i` in `\{1, 0, -1\}`.
 
-        Schulze-Pillot's paper on "An algorithm for computing genera
-            of ternary and quaternary quadratic forms", p138.
-        Donaldson's 1979 paper "Minkowski Reduction of Integral
-            Matrices", p203.
+    REFERENCES:
+
+    - Schulze-Pillot's paper on "An algorithm for computing genera
+      of ternary and quaternary quadratic forms", p138.
+    - Donaldson's 1979 paper "Minkowski Reduction of Integral Matrices", p203.
 
     EXAMPLES::
 
-        sage: Q = QuadraticForm(ZZ,4,[30, 17, 11, 12, 29, 25, 62, 64, 25, 110])
+        sage: Q = QuadraticForm(ZZ, 4, [30, 17, 11, 12, 29, 25, 62, 64, 25, 110])
         sage: Q
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 30 17 11 12 ]
@@ -262,26 +264,29 @@ def minkowski_reduction(self):
 
 
 def minkowski_reduction_for_4vars__SP(self):
-    """
+    r"""
     Find a Minkowski-reduced form equivalent to the given one.
     This means that
 
-        Q(`v_k`) <= Q(`s_1 * v_1 + ... + s_n * v_n`)
+    .. MATH::
+
+        Q(v_k) \leq Q(s_1 * v_1 + ... + s_n * v_n)
 
     for all `s_i` where GCD(`s_k, ... s_n`) = 1.
 
-    Note: When Q has dim <= 4 we can take all `s_i` in {1, 0, -1}.
+    .. NOTE::
 
-    References:
-        Schulze-Pillot's paper on "An algorithm for computing genera
-            of ternary and quaternary quadratic forms", p138.
-        Donaldson's 1979 paper "Minkowski Reduction of Integral
-            Matrices", p203.
+        When `Q` has dim `\leq 4`, we can take all `s_i` in `\{1, 0, -1\}`.
+
+    REFERENCES:
+
+    - Schulze-Pillot's paper on "An algorithm for computing genera
+      of ternary and quaternary quadratic forms", p138.
+    - Donaldson's 1979 paper "Minkowski Reduction of Integral Matrices", p203.
 
     EXAMPLES::
 
-        sage: Q = QuadraticForm(ZZ,4,[30,17,11,12,29,25,62,64,25,110])
-        sage: Q
+        sage: Q = QuadraticForm(ZZ, 4, [30,17,11,12,29,25,62,64,25,110]); Q
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 30 17 11 12 ]
         [ * 29 25 62 ]
