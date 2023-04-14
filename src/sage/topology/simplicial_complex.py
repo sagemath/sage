@@ -1129,10 +1129,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         # self._bbn: a dictionary indexed by base_ring, whose value is a dictionary of 
         # bigraded Betti numbers, indexed by tuples (-i, 2j). 
-        # self._bbn also has a key 0, whose value is a set of all base 
-        # rings for which we called bigraded_betti_numbers(base_ring=base_ring)
         # For use in the bigraded_betti_numbers method.
-        self._bbn = None
+        self._bbn = {}
+        # self.__bbn_called_rings: a set of base rings for which we called
+        # bigraded_betti_numbers(base_ring=base_ring)
+        self.__bbn_called_rings = set()
 
     def __hash__(self):
         """
@@ -4830,7 +4831,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.bigraded_betti_numbers(base_ring=QQ)
             {(0, 0): 1, (-1, 4): 3, (-2, 6): 1, (-2, 8): 2, (-3, 10): 1}
         """
-        if self._bbn is not None and 0 in self._bbn and base_ring in self._bbn[0]:
+        if base_ring in self.__bbn_called_rings:
             return self._bbn[base_ring]
 
         from sage.homology.homology_group import HomologyGroup
@@ -4839,7 +4840,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         B = {}
         H0 = HomologyGroup(0, base_ring)
 
-        B[(0,0)] = ZZ.one()
+        B[(0, 0)] = ZZ.one()
 
         for j in range(n+1):
             for x in combinations(L, j):
@@ -4852,20 +4853,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
                             B[ind] = ZZ.zero()
                         B[ind] += len(H[j-k-1].gens())
 
-        # The value associated to the key `0` in self._bbn
-        # is the set of all base rings for which the method
-        # bigraded_betti_numbers() has already been called
-        # This is stored for caching purposes, as bigraded_betti_number()
-        # updates the dictionary with the key base_ring by adding
-        # the single number it computed.
-        if self._bbn is not None:
-            if 0 in self._bbn:
-                self._bbn[0].add(base_ring)
-            else:
-                self._bbn[0] = {base_ring}
-            self._bbn[base_ring] = B
-        else:
-            self._bbn = {0: {base_ring}, base_ring: B}
+        # We update the dictionary, because some of the 
+        # single values may already be stored in self._bbn[base_ring]
+        self._bbn[base_ring].update(B)
+        self.__bbn_called_rings.add(base_ring)
+
         return B 
 
     def bigraded_betti_number(self, a, b, base_ring=ZZ):
@@ -4873,7 +4865,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Return the bigraded Betti number indexed in the form `(-a, 2b)`.
 
         Bigraded Betti number with indices `(-a, 2b)` is defined as a sum of ranks
-        of `(b-a-1)`-th (co)homologies of full subcomplexes with exactly `b` vertices. 
+        of `(b-a-1)`-th (co)homologies of full subcomplexes with exactly `b` vertices.
 
         EXAMPLES::
 
@@ -4882,19 +4874,23 @@ class SimplicialComplex(Parent, GenericCellComplex):
             2
             sage: X.bigraded_betti_number(-1, 8)
             0
-            sage: X.bigraded_betti_numbers()
-            {(0, 0): 1, (-1, 4): 2, (-1, 6): 1, (-2, 6): 1, (-2, 8): 1}
             sage: X.bigraded_betti_number(-2, 5)
             0
             sage: X.bigraded_betti_number(0, 0)
-            1 
+            1
+            sage: X.bigraded_betti_numbers()
+            {(0, 0): 1, (-1, 4): 2, (-1, 6): 1, (-2, 6): 1, (-2, 8): 1}
+            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)
+            2
+            sage: X.bigraded_betti_number(-1, 8)
+            0
         """
         if b % 2:
-            return base_ring.zero()
+            return ZZ.zero()
         if a == 0 and b == 0:
-            return base_ring.one()
-        if self._bbn is not None and base_ring in self._bbn and (a,b) in self._bbn[base_ring]:
-            return self._bbn[base_ring].get((a,b), base_ring.zero())
+            return ZZ.one()
+        if base_ring in self._bbn and (a,b) in self._bbn[base_ring]:
+            return self._bbn[base_ring].get((a,b), ZZ.zero())
             
         from sage.homology.homology_group import HomologyGroup
 
@@ -4913,16 +4909,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         B = ZZ(B)
 
-        # We add the single value to the dictionary indxed
-        # by the key base_ring in self._bbn, so we do not
-        # have to compute it twice.
-        if self._bbn is not None:
-            if base_ring in self._bbn:
-                self._bbn[base_ring][(a, 2*b)] = B
-            else:
-                self._bbn[base_ring] = {(a, 2*b): B}
+        if base_ring in self._bbn:
+            self._bbn[base_ring][(a, 2*b)] = B
         else:
-            self._bbn = {base_ring: {(a, 2*b): B}}
+            self._bbn[base_ring] = {(a, 2*b): B}
 
         return B
             
