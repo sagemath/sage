@@ -4640,7 +4640,6 @@ class BTerm(TermWithCoefficient):
                 raise ValueError('B-Term has not defined all variables which occur in the term in valid_from.')
         self.valid_from = valid_from
 
-
     def construction(self):
         r"""
         Return a construction of this term.

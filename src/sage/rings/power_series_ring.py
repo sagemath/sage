@@ -365,7 +365,6 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
         return _multi_variate(base_ring, num_gens=names, names=arg2,
                      order=order, default_prec=default_prec, sparse=sparse)
 
-
     # univariate case: the arguments to PowerSeriesRing used to be
     # (base_ring, name=None, default_prec=20, names=None, sparse=False),
     # and thus that is what the code below expects; this behavior is being

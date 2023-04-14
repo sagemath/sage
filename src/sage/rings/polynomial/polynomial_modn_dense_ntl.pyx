@@ -209,7 +209,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
             sage: f[:3]
             13*x^2 + 10*x + 5
         """
-        return self._parent._base(self.__poly[n]._sage_())
+        return self._parent._base((<ntl_ZZ_pX> self.__poly)[n]._integer_())
 
     def _unsafe_mutate(self, n, value):
         n = int(n)
