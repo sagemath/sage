@@ -355,7 +355,6 @@ class MPowerSeries(PowerSeries):
         except AttributeError:
             pass
 
-
         # set the correct background value, depending on what type of input x is
         try:
             xparent = x.parent() # 'int' types have no parent
@@ -630,7 +629,6 @@ class MPowerSeries(PowerSeries):
                %{'val':self._value()._latex_(),
                  'gens':', '.join(g._latex_() for g in self.parent().gens()),
                  'prec':self._prec}
-
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
@@ -1765,8 +1763,6 @@ class MPowerSeries(PowerSeries):
         """
         raise NotImplementedError("__pari__")
 
-
-
     ###
     ### the following don't make sense for multivariable power series
     ###
@@ -1787,7 +1783,6 @@ class MPowerSeries(PowerSeries):
         """
         #return [self.parent(c) for c in self._bg_value.list()]
         raise NotImplementedError("Multivariate power series do not have list of coefficients; use 'coefficients' to get a dict of coefficients.")
-
 
     def variable(self):
         """

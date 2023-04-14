@@ -56,9 +56,10 @@ def _Functor_unpickle(Cl, D, domain, codomain):
     """
     F = Functor.__new__(Cl)
     Functor.__init__(F,domain,codomain)
-    for s,v in D:
-        setattr(F,s,v)
+    for s, v in D:
+        setattr(F, s, v)
     return F
+
 
 cdef class Functor(SageObject):
     """
@@ -313,9 +314,8 @@ cdef class Functor(SageObject):
             The identity functor on Category of rings
             sage: I.rename('Id'); I
             Id
-
         """
-        return "Functor from %s to %s"%(self.__domain, self.__codomain)
+        return "Functor from %s to %s" % (self.__domain, self.__codomain)
 
     def __call__(self, x):
         """
@@ -585,7 +585,6 @@ class IdentityFunctor_generic(ForgetfulFunctor_generic):
             sage: F = IdentityFunctor(Groups())
             sage: loads(F.dumps()) == F
             True
-
         """
         return IdentityFunctor, (self.domain(), )
 
@@ -597,9 +596,8 @@ class IdentityFunctor_generic(ForgetfulFunctor_generic):
             sage: F = IdentityFunctor(fields)
             sage: F #indirect doctest
             The identity functor on Category of fields
-
         """
-        return "The identity functor on %s"%(self.domain())
+        return "The identity functor on %s" % (self.domain())
 
     def _apply_functor(self, x):
         """
@@ -621,6 +619,7 @@ class IdentityFunctor_generic(ForgetfulFunctor_generic):
         """
         return x
 
+
 def IdentityFunctor(C):
     """
     Construct the identity functor of the given category.
@@ -639,9 +638,9 @@ def IdentityFunctor(C):
         sage: F = IdentityFunctor(rings)
         sage: F(ZZ['x','y']) is ZZ['x','y']
         True
-
     """
     return IdentityFunctor_generic(C)
+
 
 def ForgetfulFunctor(domain, codomain):
     """

@@ -8,17 +8,17 @@ ctypedef unsigned int uint
 cdef extern from "stdlib.h":
     ctypedef void const_void "const void"
     void qsort(void *base, int nmemb, int size,
-            int(*compar)(const_void *, const_void *)) nogil
+               int(*compar)(const_void *, const_void *)) nogil
 
     void *bsearch(const_void *key, const_void *base, size_t nmemb,
                   size_t size, int(*compar)(const_void *, const_void *)) nogil
 
 ctypedef struct short_digraph_s:
-   uint32_t *  edges
-   uint32_t ** neighbors
-   PyObject * edge_labels
-   int m
-   int n
+    uint32_t *  edges
+    uint32_t ** neighbors
+    PyObject * edge_labels
+    int m
+    int n
 
 ctypedef short_digraph_s short_digraph[1]
 

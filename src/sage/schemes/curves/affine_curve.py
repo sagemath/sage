@@ -993,7 +993,8 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             indices = [int(i) for i in indices] # type checking
             indices.sort()
             if indices[0] < 0 or indices[-1] > n - 1:
-                raise ValueError("index values must be between 0 and one minus the dimension of the ambient space " \
+                raise ValueError("index values must be between 0 and one "
+                                 "minus the dimension of the ambient space "
                                  "of this curve")
         # construct the projection map
         if AS is None:
@@ -1554,8 +1555,9 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             if C.is_smooth():
                 raise TypeError("this curve is already nonsingular")
             else:
-                raise TypeError("this curve has no singular points over its base field. If working over"\
-                                " a number field use extend=True")
+                raise TypeError("this curve has no singular points over "
+                                "its base field. If working over "
+                                "a number field use extend=True")
         not_resolved = True
         t = 0
         # loop through the patches and blow up each until no patch has singular points
@@ -1630,8 +1632,8 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                 b_data = [B[0][i]]
                 # projection map and its inverse
                 t_pi = B[2][i]
-                coords = [(BC.ambient_space().gens()[j] - pts[0][j])/(BC.ambient_space().gens()[i] - pts[0][i]) for\
-                          j in range(n)]
+                coords = [(BC.ambient_space().gens()[j] - pts[0][j]) / (BC.ambient_space().gens()[i] - pts[0][i])
+                          for j in range(n)]
                 coords.pop(i)
                 coords.insert(0, BC.ambient_space().gens()[i])
                 H = Hom(BC, B[0][i])
@@ -1640,7 +1642,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                 # with the projection map
                 L = list(t_maps)
                 for j in range(len(t_maps)):
-                    L[j] = L[j]*t_pi
+                    L[j] = L[j] * t_pi
                 for j in range(len(B[1][i])):
                     L.insert(t + j, B[1][i][j])
                 b_data.append(L)

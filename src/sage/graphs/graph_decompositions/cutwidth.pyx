@@ -528,6 +528,7 @@ def cutwidth_dyn(G, lower_bound=0):
     finally:
         sig_free(neighborhoods)
 
+
 cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S, int v, int k):
     r"""
     Check whether an ordering with the given cost `k` exists, and updates data
@@ -571,7 +572,6 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S,
     cdef int mini = (<uint8_t> -1)
 
     cdef int i
-    cdef int next_set
 
     # For each possible extension of the current set with a vertex, check whether
     # there exists a cheap path toward {1..n}, and update the cost.
@@ -735,7 +735,7 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
 
     p.set_objective(z['z'])
 
-    obj = p.solve(log=verbose)
+    _ = p.solve(log=verbose)
 
     # We now extract the ordering and the cost of the solution
     val_x = p.get_values(x, convert=bool, tolerance=integrality_tolerance)

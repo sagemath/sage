@@ -1055,7 +1055,7 @@ Scrolling down in the right pane shows "Annotations":
 
        docker (fedora-31, standard)
        artifacts/logs-commit-8ca1c2df8f1fb4c6d54b44b34b4d8320ebecb164-tox-docker-fedora-31-standard/config.log#L1
-       configure: notice: the following SPKGs did not find equivalent system packages: arb cbc cddlib cmake eclib ecm fflas_ffpack flint flintqs fplll givaro gp
+       configure: notice: the following SPKGs did not find equivalent system packages: arb cbc cddlib cmake eclib ecm fflas_ffpack flint fplll givaro gp
 
 Clicking on the annotations does not take you to a very useful
 place. To view details, click on one of the items in the pane. This
