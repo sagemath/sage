@@ -104,7 +104,6 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             self.__generators = tuple(self(x) for x in self._R.gens())
             return self.__generators[i]
 
-
     def variable_names_recursive(self, depth=infinity):
         r"""
         Return the list of variable names of this ring and its base rings,
@@ -188,7 +187,6 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             return LaurentPolynomialFunctor(vars[0], False), self.base_ring()
         else:
             return LaurentPolynomialFunctor(vars[-1], True), LaurentPolynomialRing(self.base_ring(), vars[:-1])
-
 
     def completion(self, p=None, prec=20, extras=None):
         r"""

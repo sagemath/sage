@@ -2356,17 +2356,17 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 xterm = 1
                 yterm = 1
             C = E.mwrank_curve(verbose)
-            if not (verbose is None):
+            if verbose is not None:
                 C.set_verbose(verbose)
             C.two_descent(verbose=verbose, second_limit=descent_second_limit)
             C.saturate(bound=sat_bound)
             G = C.gens()
             if proof is True and C.certain() is False:
                 del self.__mwrank_curve
-                raise RuntimeError("Unable to compute the rank, hence generators, with certainty (lower bound=%s, generators found=%s).  This could be because Sha(E/Q)[2] is nontrivial."%(C.rank(),G) + \
-                      "\nTry increasing descent_second_limit then trying this command again.")
+                raise RuntimeError("Unable to compute the rank, hence generators, with certainty (lower bound=%s, generators found=%s).  This could be because Sha(E/Q)[2] is nontrivial." % (C.rank(), G) +
+                                   "\nTry increasing descent_second_limit then trying this command again.")
             proved = C.certain()
-            G = [[x*xterm,y*yterm,z] for x, y, z in G]
+            G = [[x*xterm, y*yterm, z] for x, y, z in G]
         else:
             # when gens() calls mwrank it passes the command-line
             # parameter "-p 100" which helps curves with large

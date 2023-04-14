@@ -3239,7 +3239,6 @@ class LazyCauchyProductSeries(LazyModuleElement):
         right_inverse = Stream_cauchy_invert(right)
         return P.element_class(P, Stream_cauchy_mul(left, right_inverse, P.is_sparse()))
 
-
     def _floordiv_(self, other):
         r"""
         Return ``self`` floor divided by ``other``.

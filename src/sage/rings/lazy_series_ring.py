@@ -1507,7 +1507,6 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
     # === special functions ===
 
-
     def q_pochhammer(self, q=None):
         r"""
         Return the infinite ``q``-Pochhammer symbol `(a; q)_{\infty}`,

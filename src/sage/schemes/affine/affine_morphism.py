@@ -378,9 +378,12 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             if self._is_prime_finite_field:
                 prime = polys[0].base_ring().characteristic()
                 degree = max(poly_numerator.degree(), poly_denominator.degree())
-                height = max([abs(c.lift()) for c in poly_numerator.coefficients()]\
-                              + [abs(c.lift()) for c in poly_denominator.coefficients()])
-                num_terms = max(len(poly_numerator.coefficients()), len(poly_denominator.coefficients()))
+                height = max([abs(c.lift())
+                              for c in poly_numerator.coefficients()]
+                             + [abs(c.lift())
+                                for c in poly_denominator.coefficients()])
+                num_terms = max(len(poly_numerator.coefficients()),
+                                len(poly_denominator.coefficients()))
                 largest_value = num_terms * height * (prime - 1) ** degree
                 # If the calculations will not overflow the float data type use domain float
                 # Else use domain integer

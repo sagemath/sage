@@ -74,7 +74,7 @@ EXAMPLES: Decimal expansions of constants
 
 We can obtain floating point approximations to each of these
 constants by coercing into the real field with given precision. For
-example, to 200 decimal places we have the following::
+example, to 200 binary places we have the following::
 
     sage: R = RealField(200); R
     Real Field with 200 bits of precision

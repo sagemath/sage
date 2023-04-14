@@ -2549,6 +2549,9 @@ cdef class Expression(Expression_abc):
             True
             sage: SR(1.2).is_algebraic()
             False
+
+            sage: complex_root_of(x^3 - x^2 - x - 1, 0).is_algebraic()
+            True
         """
         from sage.rings.qqbar import QQbar
         try:

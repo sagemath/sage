@@ -1209,7 +1209,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         return self.parent()(self.summands.mapped(lambda element: term * element),
                              simplify=simplify, convert=False)
 
-
     def _mul_(self, other):
         r"""
         Multiply this asymptotic expansion by another asymptotic expansion ``other``.
@@ -1308,7 +1307,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             Asymptotic Ring <n^ZZ> over Symbolic Constants Subring
         """
         return self * ~other
-
 
     def __invert__(self, precision=None):
         r"""
@@ -1485,7 +1483,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         return self.parent(exact_terms)
 
-
     def error_part(self):
         r"""
         Return the expansion consisting of all error terms of this
@@ -1510,7 +1507,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                     for term in self.summands.elements_topological()
                     if not term.is_exact()),
                    parent.zero())
-
 
     def __pow__(self, exponent, precision=None):
         r"""
@@ -1717,9 +1713,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             raise combine_exceptions(
                 ValueError('Cannot take %s to the exponent %s.' % (self, exponent)), e)
 
-
     pow = __pow__
-
 
     def __pow_number__(self, exponent, precision=None, check_convergence=False):
         r"""
@@ -1872,7 +1866,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             precision=precision)
 
         return result * pmax
-
 
     def sqrt(self, precision=None):
         r"""
@@ -2243,7 +2236,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         if not expr_o:
             return large_result
-
 
         if base == 'e':
             geom = expr_o
@@ -3910,7 +3902,6 @@ class AsymptoticRing(Algebra, UniqueRepresentation, WithLocals):
         return MutablePoset(key=lambda element: element.growth,
                             can_merge=can_absorb,
                             merge=absorption)
-
 
     def _create_element_in_extension_(self, term, old_term_parent=None):
         r"""

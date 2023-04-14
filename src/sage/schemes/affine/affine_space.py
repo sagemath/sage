@@ -599,10 +599,10 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         if isinstance(right, AffineSpace_generic):
             if self is right:
                 return self.__pow__(2)
-            return AffineSpace(self.dimension_relative() + right.dimension_relative(),\
+            return AffineSpace(self.dimension_relative() + right.dimension_relative(),
                     self.base_ring(), self.variable_names() + right.variable_names())
         elif isinstance(right, AlgebraicScheme_subscheme):
-            AS = self*right.ambient_space()
+            AS = self * right.ambient_space()
             CR = AS.coordinate_ring()
             n = self.ambient_space().coordinate_ring().ngens()
 
@@ -610,7 +610,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             psi = right.ambient_space().coordinate_ring().hom(list(CR.gens()[n:]), CR)
             return AS.subscheme([phi(t) for t in self.defining_polynomials()] + [psi(t) for t in right.defining_polynomials()])
         else:
-            raise TypeError('%s must be an affine space or affine subscheme'%right)
+            raise TypeError('%s must be an affine space or affine subscheme' % right)
 
     def change_ring(self, R):
         r"""
