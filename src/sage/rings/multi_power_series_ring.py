@@ -568,8 +568,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         """
         return PowerSeriesRing(R, names = self.variable_names(), default_prec = self.default_prec())
 
-
-
     def remove_var(self, *var):
         """
         Remove given variable or sequence of variables from self.

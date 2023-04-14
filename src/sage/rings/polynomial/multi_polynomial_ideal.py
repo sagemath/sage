@@ -1670,7 +1670,6 @@ class MPolynomialIdeal_singular_repr(
         """
         R = self.ring()
 
-
         for other in others:
             if not isinstance(other, MPolynomialIdeal_singular_repr) or other.ring() != R:
                 raise TypeError("Intersection is only available for ideals of the same ring.")

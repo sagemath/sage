@@ -440,7 +440,6 @@ class pRational:
             return (self.__class__(self.p, (sx - sred)/(pd*ox), 0),
                     self.__class__(self.p, sred, sval, valuation=sval))
 
-
     def __lshift__(self, n):
         r"""
         Return the product of this element by ``p^n``.
@@ -1249,7 +1248,6 @@ class DifferentialPrecisionGeneric(SageObject):
             return s + "  " + status
         else:
             return status
-
 
     def history(self, compact=True, separate_reduce=False, timings=True, output_type='asciiart'):
         r"""

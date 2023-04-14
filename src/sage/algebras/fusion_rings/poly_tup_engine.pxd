@@ -21,4 +21,3 @@ cdef tuple reduce_poly_dict(dict eq_dict, ETuple nonz, KSHandler known_sq, Numbe
 cdef tuple _flatten_coeffs(tuple eq_tup)
 cpdef tuple _unflatten_coeffs(field, tuple eq_tup)
 cdef int has_appropriate_linear_term(tuple eq_tup)
-

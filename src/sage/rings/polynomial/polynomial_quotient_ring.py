@@ -2381,8 +2381,6 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
         return self.gen().field_extension(names)
 
 
-
-
 class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
     """
     EXAMPLES::

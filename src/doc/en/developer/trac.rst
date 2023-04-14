@@ -8,12 +8,11 @@ The Sage Trac Server
 
 .. WARNING::
 
-    **Sage development is scheduled to move to GitHub in February 2023.** The exact
-    date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
-    the transition, some parts of this guide (especially those related with `the
-    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
-    updated according to the new workflow on GitHub. See our `transition guide from Trac to
-    GitHub
+    **Sage development moved to GitHub in February 2023.** After the transition,
+    some parts of this guide (especially those related with `the Sage Trac
+    server <https://trac.sagemath.org>`_) became obsolete and need to be
+    updated according to the new workflow on GitHub. See our `transition guide
+    from Trac to GitHub
     <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
     for the preliminary version of the workflow.
 
@@ -46,8 +45,8 @@ the :trac:`Sage trac timeline <timeline>`.
 
 .. WARNING::
 
-    **Sage development is scheduled to move to GitHub in February 2023.**
-    All functions of our Trac server will be taken over by our main repository,
+    **Sage development moved to GitHub in February 2023.**
+    All functions of our Trac server were taken over by our main repository,
     https://github.com/sagemath/sage.
 
 
@@ -354,10 +353,8 @@ other tests that run on GitHub Actions.
 
 .. WARNING::
 
-    **Sage development is scheduled to move to GitHub in February 2023.**
-    After the move, the patch buildbot will no longer be available; the three
-    workflows above are considered a full replacement. If you miss any features
-    of the patch buildbot, please report this in :trac:`33457`.
+    **Sage development moved to GitHub in February 2023.**
+    After the move, the patch buildbot no longer operates.
 
 The following are some other relevant issues:
 

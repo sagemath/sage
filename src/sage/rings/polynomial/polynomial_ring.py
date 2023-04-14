@@ -965,7 +965,6 @@ class PolynomialRing_general(ring.Algebra):
             macaulay2 = m2_default
         return macaulay2._macaulay2_input_ring(self.base_ring(), self.gens())
 
-
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         EXAMPLES::
