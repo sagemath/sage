@@ -1614,30 +1614,34 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
             sage: P = WordPaths('abAB')
             sage: p = P('aaababbb')
-            sage: a = p.animate(); a    # optional -- ImageMagick
+            sage: a = p.animate(); print(a)
             Animation with 9 frames
-            sage: show(a)               # optional -- ImageMagick
-            sage: a.gif(delay=35, iterations=3)    # optional -- ImageMagick
+            sage: show(a)                           # optional -- ImageMagick  # long time
+            sage: show(a, delay=35, iterations=3)   # optional -- ImageMagick  # long time
 
         ::
 
             sage: P = WordPaths('abcdef',steps='triangle')
             sage: p =  P('abcdef')
-            sage: p.animate()           # optional -- ImageMagick
+            sage: a = p.animate(); print(a)
             Animation with 8 frames
+            sage: show(a)                           # optional -- ImageMagick  # long time
 
         If the path is closed, the plain polygon is added at the end of the
         animation::
 
             sage: P = WordPaths('abAB')
             sage: p = P('ababAbABABaB')
-            sage: a = p.animate(); a    # optional -- ImageMagick
+            sage: a = p.animate(); print(a)
             Animation with 14 frames
+            sage: show(a)                           # optional -- ImageMagick  # long time
 
         Another example illustrating a Fibonacci tile::
 
             sage: w = words.fibonacci_tile(2)
-            sage: show(w.animate())  # optional -- ImageMagick
+            sage: a = w.animate(); print(a)
+            Animation with 54 frames
+            sage: show(a)                           # optional -- ImageMagick  # long time
 
         The first 4 Fibonacci tiles in an animation::
 
@@ -1645,7 +1649,9 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             sage: b = words.fibonacci_tile(1).animate()
             sage: c = words.fibonacci_tile(2).animate()
             sage: d = words.fibonacci_tile(3).animate()
-            sage: (a*b*c*d).show()  # optional -- ImageMagick   # long time
+            sage: print(a*b*c*d)
+            Animation with 296 frames
+            sage: show(a*b*c*d)                     # optional -- ImageMagick  # long time
 
         .. note::
 
