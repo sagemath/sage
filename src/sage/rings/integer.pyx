@@ -3984,13 +3984,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return factor_trial_division(self)
 
         if algorithm == 'pari':
-            from sage.rings.factorint import factor_using_pari
+            from sage.rings.factorint_pari import factor_using_pari
             F = factor_using_pari(n, int_=int_, debug_level=verbose, proof=proof)
             F.sort()
             return IntegerFactorization(F, unit=unit, unsafe=True,
                                            sort=False, simplify=False)
         elif algorithm == 'flint':
-            from sage.rings.factorint import factor_using_flint
+            from sage.rings.factorint_flint import factor_using_flint
             F = factor_using_flint(n)
             F.sort()
             return IntegerFactorization(F, unit=unit, unsafe=True,
