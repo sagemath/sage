@@ -53,23 +53,23 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
     EXAMPLES::
 
         sage: from sage.rings.factorint import aurifeuillian
-        sage: aurifeuillian(2, 2)
+        sage: aurifeuillian(2,2)
         [5, 13]
-        sage: aurifeuillian(2, 2^5)
+        sage: aurifeuillian(2,2^5)
         [1985, 2113]
-        sage: aurifeuillian(5, 3)
+        sage: aurifeuillian(5,3)
         [1471, 2851]
-        sage: aurifeuillian(15, 1)
+        sage: aurifeuillian(15,1)
         [19231, 142111]
-        sage: aurifeuillian(12, 3)
+        sage: aurifeuillian(12,3)
         Traceback (most recent call last):
         ...
         ValueError: n has to be square-free
-        sage: aurifeuillian(1, 2)
+        sage: aurifeuillian(1,2)
         Traceback (most recent call last):
         ...
         ValueError: n has to be greater than 1
-        sage: aurifeuillian(2, 0)
+        sage: aurifeuillian(2,0)
         Traceback (most recent call last):
         ...
         ValueError: m has to be positive
@@ -133,24 +133,24 @@ cpdef factor_aurifeuillian(n, check=True):
     EXAMPLES::
 
         sage: from sage.rings.factorint import factor_aurifeuillian as fa
-        sage: fa(2^6 + 1)                                                               # optional - sage.libs.pari
+        sage: fa(2^6+1)
         [5, 13]
-        sage: fa(2^58 + 1)                                                              # optional - sage.libs.pari
+        sage: fa(2^58+1)
         [536838145, 536903681]
-        sage: fa(3^3 + 1)                                                               # optional - sage.libs.pari
+        sage: fa(3^3+1)
         [4, 1, 7]
-        sage: fa(5^5 - 1)                                                               # optional - sage.libs.pari
+        sage: fa(5^5-1)
         [4, 11, 71]
-        sage: prod(_) == 5^5 - 1                                                        # optional - sage.libs.pari
+        sage: prod(_) == 5^5-1
         True
-        sage: fa(2^4 + 1)                                                               # optional - sage.libs.pari
+        sage: fa(2^4+1)
         [17]
-        sage: fa((6^2*3)^3 + 1)                                                         # optional - sage.libs.pari
+        sage: fa((6^2*3)^3+1)
         [109, 91, 127]
 
     TESTS::
 
-        sage: for n in [2,3,5,6,30,31,33]:                                              # optional - sage.libs.pari
+        sage: for n in [2,3,5,6,30,31,33]:
         ....:     for m in [8,96,109201283]:
         ....:         s = -1 if n % 4 == 1 else 1
         ....:         y = (m^2*n)^n + s
@@ -206,9 +206,9 @@ cpdef factor_aurifeuillian(n, check=True):
 
 def factor_cunningham(m, proof=None):
     r"""
-    Return factorization of ``self`` obtained using trial division
+    Return factorization of self obtained using trial division
     for all primes in the so called Cunningham table. This is
-    efficient if ``self`` has some factors of type `b^n+1` or `b^n-1`,
+    efficient if self has some factors of type `b^n+1` or `b^n-1`,
     with `b` in `\{2,3,5,6,7,10,11,12\}`.
 
     You need to install an optional package to use this method,
@@ -226,7 +226,7 @@ def factor_cunningham(m, proof=None):
         sage: from sage.rings.factorint import factor_cunningham
         sage: factor_cunningham(2^257-1) # optional - cunningham_tables
         535006138814359 * 1155685395246619182673033 * 374550598501810936581776630096313181393
-        sage: factor_cunningham((3^101+1)*(2^60).next_prime(), proof=False) # optional - cunningham_tables
+        sage: factor_cunningham((3^101+1)*(2^60).next_prime(),proof=False) # optional - cunningham_tables
         2^2 * 379963 * 1152921504606847009 * 1017291527198723292208309354658785077827527
 
     """
@@ -249,12 +249,12 @@ def factor_cunningham(m, proof=None):
 
 cpdef factor_trial_division(m, long limit=LONG_MAX):
     r"""
-    Return partial factorization of ``self`` obtained using trial division
-    for all primes up to ``limit``, where ``limit`` must fit in a C ``signed long``.
+    Return partial factorization of self obtained using trial division
+    for all primes up to limit, where limit must fit in a C signed long.
 
     INPUT:
 
-    - ``limit`` -- integer (default: ``LONG_MAX``) that fits in a C ``signed long``
+    - ``limit`` -- integer (default: ``LONG_MAX``) that fits in a C signed long
 
     EXAMPLES::
 
@@ -298,7 +298,7 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
     r"""
     Factor this integer using PARI.
 
-    This function returns a list of pairs, not a :class:`Factorization`
+    This function returns a list of pairs, not a ``Factorization``
     object. The first element of each pair is the factor, of type
     ``Integer`` if ``int_`` is ``False`` or ``int`` otherwise,
     the second element is the positive exponent, of type ``int``.
@@ -321,16 +321,16 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
 
     EXAMPLES::
 
-        sage: factor(-2**72 + 3, algorithm='pari')  # indirect doctest                  # optional - sage.libs.pari
+        sage: factor(-2**72 + 3, algorithm='pari')  # indirect doctest
         -1 * 83 * 131 * 294971519 * 1472414939
 
     Check that PARI's debug level is properly reset (:trac:`18792`)::
 
-        sage: alarm(0.5); factor(2^1000 - 1, verbose=5)                                 # optional - sage.libs.pari
+        sage: alarm(0.5); factor(2^1000 - 1, verbose=5)
         Traceback (most recent call last):
         ...
         AlarmInterrupt
-        sage: pari.get_debug_level()                                                    # optional - sage.libs.pari
+        sage: pari.get_debug_level()
         0
     """
     from sage.libs.pari.all import pari
