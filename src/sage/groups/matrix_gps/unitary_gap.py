@@ -2,6 +2,19 @@ r"""
 Unitary Groups `GU(n,q)` and `SU(n,q)` with GAP
 """
 
+# ****************************************************************************
+#       Copyright (C) 2006 David Joyner and William Stein
+#                     2018 Sebastian Oehms
+#                     2018 Travis Scrimshaw
+#                     2023 Matthias Koeppe
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
 from sage.groups.matrix_gps.named_group_gap import NamedMatrixGroup_gap
 from sage.groups.matrix_gps.unitary import UnitaryMatrixGroup_generic

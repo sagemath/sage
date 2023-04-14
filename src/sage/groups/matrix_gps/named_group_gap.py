@@ -2,6 +2,19 @@
 Base for Classical Matrix Groups with GAP
 """
 
+##############################################################################
+#       Copyright (C) 2006 David Joyner and William Stein <wstein@gmail.com>
+#                     2013 Volker Braun <vbraun.name@gmail.com>
+#                     2017 John Palmieri
+#                     2023 Matthias Koeppe
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#
+#  The full text of the GPL is available at:
+#
+#                  http://www.gnu.org/licenses/
+##############################################################################
+
 from sage.groups.matrix_gps.matrix_group_gap import MatrixGroup_gap
 from sage.groups.matrix_gps.named_group import NamedMatrixGroup_generic
 

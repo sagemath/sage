@@ -2,6 +2,29 @@
 Finitely Generated Matrix Groups with GAP
 """
 
+# #############################################################################
+#       Copyright (C) 2006      William Stein <wstein@gmail.com>
+#                     2006-2008 David Joyner
+#                     2008-2010 Simon King
+#                     2009      Mike Hansen
+#                     2011-2013 Volker Braun <vbraun.name@gmail.com>
+#                     2013-2023 Travis Scrimshaw
+#                     2015      Pierre Guillot
+#                     2017      Ben Hutz
+#                     2017      Rebecca Lauren Miller
+#                     2018      Dima Pasechnik
+#                     2018-2019 Sebastian Oehms
+#                     2018-2020 Frédéric Chapoton
+#                     2019      Vincent Delecroix
+#                     2023      Matthias Koeppe
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#
+#  The full text of the GPL is available at:
+#
+#                  https://www.gnu.org/licenses/
+# #############################################################################
+
 from sage.combinat.integer_vector import IntegerVectors
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.groups.matrix_gps.matrix_group_gap import MatrixGroup_gap

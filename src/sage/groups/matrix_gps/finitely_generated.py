@@ -51,16 +51,23 @@ AUTHORS:
 - Sebastian Oehms (2019-01): Revision of :trac:`25706` (:trac:`26903` and :trac:`27143`).
 """
 
-##############################################################################
+# #############################################################################
 #       Copyright (C) 2006 David Joyner and William Stein <wstein@gmail.com>
-#       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
+#                     2009 Mike Hansen
+#                     2012 Rob Beezer
+#                     2013 Volker Braun <vbraun.name@gmail.com>
+#                     2013 Nathann Cohen
+#                     2013 Travis Scrimshaw
+#                     2017 Peter Bruin
+#                     2021 Frédéric Chapoton
+#                     2023 Matthias Koeppe
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-##############################################################################
+# #############################################################################
 
 from sage.groups.matrix_gps.group_element import is_MatrixGroupElement
 from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic

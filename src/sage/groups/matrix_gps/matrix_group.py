@@ -41,6 +41,12 @@ AUTHORS:
 
 # ****************************************************************************
 #       Copyright (C) 2006 David Joyner and William Stein <wstein@gmail.com>
+#                     2009      Mike Hansen
+#                     2013      Volker Braun <vbraun.name@gmail.com>
+#                     2017-2021 Frédéric Chapoton
+#                     2018-2019 Sebastian Oehms
+#                     2020      Siddharth Singh
+#                     2023      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

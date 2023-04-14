@@ -2,6 +2,23 @@ r"""
 Matrix group over a ring that GAP understands
 """
 
+# ****************************************************************************
+#       Copyright (C) 2006      William Stein <wstein@gmail.com>
+#                     2006-2008 David Joyner
+#                     2013      Volker Braun <vbraun.name@gmail.com>
+#                     2017      Dima Pasechnik
+#                     2021      Frédéric Chapoton
+#                     2018-2019 Sebastian Oehms
+#                     2020      Vincent Delecroix
+#                     2023      Matthias Koeppe
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from sage.categories.groups import Groups
 from sage.groups.group import Group
 from sage.groups.libgap_mixin import GroupMixinLibGAP

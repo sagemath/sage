@@ -2,6 +2,21 @@ r"""
 Matrix group elements implemented in GAP
 """
 
+#*****************************************************************************
+#       Copyright (C) 2006      David Joyner and William Stein <wstein@gmail.com>
+#                     2013      Volker Braun <vbraun.name@gmail.com>
+#                     2015-2017 Vincent Delecroix
+#                     2016      Travis Scrimshaw <tscrimsh at umn.edu>
+#                     2018      Jeroen Demeyer
+#                     2023      Matthias Koeppe
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
 from sage.groups.matrix_gps.group_element cimport is_MatrixGroupElement
 from sage.libs.gap.element cimport GapElement, GapElement_List
 from sage.misc.cachefunc import cached_method

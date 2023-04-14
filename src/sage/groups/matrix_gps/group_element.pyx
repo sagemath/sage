@@ -63,9 +63,11 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2006 David Joyner and William Stein <wstein@gmail.com>
-#       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
-#       Copyright (C) 2016 Travis Scrimshaw <tscrimsh at umn.edu>
+#       Copyright (C) 2006      David Joyner and William Stein <wstein@gmail.com>
+#                     2013      Volker Braun <vbraun.name@gmail.com>
+#                     2016      Travis Scrimshaw <tscrimsh at umn.edu>
+#                     2016-2018 Jeroen Demeyer
+#                     2023      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
