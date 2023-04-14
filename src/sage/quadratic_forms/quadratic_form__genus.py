@@ -59,7 +59,7 @@ def local_genus_symbol(self, p):
     This is defined (in the class
     :class:`~sage.quadratic_forms.genera.genus.Genus_Symbol_p_adic_ring`)
     to be a list of tuples (one for each Jordan component
-    `p^m*A` at `p`, where `A` is a unimodular symmetric matrix with
+    `p^m\cdot A` at `p`, where `A` is a unimodular symmetric matrix with
     coefficients the `p`-adic integers) of the following form:
 
     - If `p>2`, then return triples of the form [`m`, `n`, `d`] where
@@ -68,7 +68,7 @@ def local_genus_symbol(self, p):
 
       - `n` = rank of `A`
 
-      - `d` = det(`A`) in {1,`u`} for normalized quadratic non-residue `u`.
+      - `d` = det(`A`) in {1, `u`} for normalized quadratic non-residue `u`.
 
     - If `p=2`, then return quintuples of the form [`m`, `n`, `s`, `d`, `o`] where
 
@@ -76,7 +76,7 @@ def local_genus_symbol(self, p):
 
       - `n` = rank of `A`
 
-      - `d` = det(`A`) in {1,3,5,7}
+      - `d` = det(`A`) in {1, 3, 5, 7}
 
       - `s` = 0 (or 1) if `A` is even (or odd)
 

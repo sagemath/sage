@@ -364,7 +364,7 @@ def split_local_cover(self):
 
     .. MATH::
 
-        d*x^2 + T(y,z,w)
+        d\cdot x^2 + T(y,z,w)
 
     where `d > 0` is as small as possible.
 

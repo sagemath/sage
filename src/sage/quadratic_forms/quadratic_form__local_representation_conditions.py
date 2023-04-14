@@ -622,7 +622,7 @@ def local_representation_conditions(self, recompute_flag=False, silent_flag=Fals
     unless `p=2`).  The first element is always the prime `p` where the
     local obstruction occurs, and the next 8 (or 4) entries represent
     square-classes in the `p`-adic integers `\ZZ_p`, and are labeled by the
-    `\QQ_p` square-classes `t*(\QQ_p)^2` with `t` given as follows:
+    `\QQ_p` square-classes `t\cdot (\QQ_p)^2` with `t` given as follows:
 
     - for `p > 2`, ``[ *  1  u  p  u p  *  *  *  * ]``,
 
@@ -632,18 +632,18 @@ def local_representation_conditions(self, recompute_flag=False, silent_flag=Fals
     number needs to be in that square-class in order to be locally
     represented by `Q`.  A negative number indicates that the entire `\QQ_p`
     square-class is not represented, while a positive number `x` indicates
-    that `t*p^{(2*x)} (\ZZ_p)^2` is locally represented but `t*p^{(2*(x-1))}`
+    that `t\cdot p^{(2\cdot x)} (\ZZ_p)^2` is locally represented but `t\cdot p^{(2\cdot (x-1))}`
     `(\ZZ_p)^2` is not.
 
     As an example, the vector ``[2  3  0  0  0  0  2  0  infinity]``
     tells us that all positive integers are locally represented at `p=2`
     except those of the forms:
 
-    - `2^6 * u * r^2` with `u = 1` (mod 8)
+    - `2^6\cdot u\cdot r^2` with `u = 1` (mod 8)
 
-    - `2^5 * u * r^2` with `u = 3` (mod 8)
+    - `2^5\cdot u\cdot r^2` with `u = 3` (mod 8)
 
-    - `2 * u * r^2` with `u = 7` (mod 8)
+    - `2\cdot u\cdot r^2` with `u = 7` (mod 8)
 
     At the real numbers, the vector which looks like ``[infinity, 0, infinity, None, None, None, None, None, None]``
     means that `Q` is negative definite (i.e., the 0 tells us all

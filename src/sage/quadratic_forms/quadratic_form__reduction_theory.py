@@ -140,9 +140,9 @@ def minkowski_reduction(self):
 
     .. MATH::
 
-            Q(v_k) \leq Q(s_1 * v_1 + ... + s_n * v_n)
+            Q(v_k) \leq Q(s_1\cdot v_1 + ... + s_n\cdot v_n)
 
-    for all `s_i` where GCD`(s_k, ... s_n) = 1`.
+    for all `s_i` where `\gcd(s_k, ... s_n) = 1`.
 
     .. NOTE::
 
@@ -270,7 +270,7 @@ def minkowski_reduction_for_4vars__SP(self):
 
     .. MATH::
 
-        Q(v_k) \leq Q(s_1 * v_1 + ... + s_n * v_n)
+        Q(v_k) \leq Q(s_1\cdot v_1 + ... + s_n\cdot v_n)
 
     for all `s_i` where GCD(`s_k, ... s_n`) = 1.
 
