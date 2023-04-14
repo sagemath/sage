@@ -19,7 +19,7 @@ AUTHOR:
 #*****************************************************************************
 
 #######################################
-## Sorting
+#  Sorting
 
 cpdef inline tuple category_sort_key(object category):
     """
@@ -106,7 +106,7 @@ cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory):
     return tuple(out)
 
 #############################################
-## Join
+#  Join
 
 cdef bint is_supercategory_of_done(new_cat, dict done):
     # This is a helper function. It replaces the closure
@@ -164,7 +164,7 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
                 axs = axs | {axiom}
         done[category] = axs
         for axiom in axiomsS.difference(axs):
-            todo.add( (category, axiom) )
+            todo.add((category, axiom))
 
     # Invariants:
     # - the current list of categories is stored in the keys of ``done``
@@ -198,7 +198,7 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
         # Mark old categories with new axioms as todo
         for category in done:
             for axiom in new_axioms:
-                todo.add( (category, axiom) )
+                todo.add((category, axiom))
         for new_cat in new_cats:
             axs = new_cat.axioms()
             for (cat, axiom) in ignore_axioms:
@@ -206,13 +206,13 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
                     axs = axs | {axiom}
             done[new_cat] = axs
             for axiom in axiomsS.difference(axs):
-                todo.add( (new_cat, axiom) )
+                todo.add((new_cat, axiom))
 
     return _sort_uniq(done)
 
 
 #############################################
-## Axiom related functions
+#  Axiom related functions
 
 cdef class AxiomContainer(dict):
     """
