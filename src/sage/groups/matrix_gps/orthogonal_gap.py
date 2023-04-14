@@ -29,7 +29,7 @@ class OrthogonalMatrixGroup_gap(OrthogonalMatrixGroup_generic, NamedMatrixGroup_
 
         OUTPUT:
 
-        A matrix `M` such that, for every group element g, the
+        A matrix `M` such that, for every group element `g`, the
         identity `g m g^T = m` holds. In characteristic different from
         two, this uniquely determines the orthogonal group.
 

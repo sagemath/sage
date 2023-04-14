@@ -46,7 +46,7 @@ class UnitaryMatrixGroup_gap(UnitaryMatrixGroup_generic, NamedMatrixGroup_gap, F
 
         EXAMPLES::
 
-            sage: G32=GU(3,2)
+            sage: G32 = GU(3,2)
             sage: G32.invariant_form()
             [0 0 1]
             [0 1 0]

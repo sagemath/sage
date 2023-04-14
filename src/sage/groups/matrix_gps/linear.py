@@ -195,7 +195,7 @@ def SL(n, R, var='a'):
 
         This group is also available via ``groups.matrix.SL()``.
 
-   INPUT:
+    INPUT:
 
     - ``n`` -- a positive integer.
 
@@ -277,7 +277,7 @@ def SL(n, R, var='a'):
 class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
 
     def _check_matrix(self, x, *args):
-        """a
+        r"""
         Check whether the matrix ``x`` is special linear.
 
         See :meth:`~sage.groups.matrix_gps.matrix_group._check_matrix`

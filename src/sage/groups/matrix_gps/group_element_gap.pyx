@@ -37,10 +37,10 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
 
     - ``parent`` -- the parent
 
-    - ``check`` -- bool (default: ``True``); if ``True`` does some
+    - ``check`` -- bool (default: ``True``); if ``True``, do some
       type checking
 
-    - ``convert`` -- bool (default: ``True``); if ``True`` convert
+    - ``convert`` -- bool (default: ``True``); if ``True``, convert
       ``M`` to the right matrix space
     """
     def __init__(self, parent, M, check=True, convert=True):
@@ -318,7 +318,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         OUTPUT:
 
         A factorization object that contains information about the
-        order of factors and the exponents. A ``ValueError`` is raised
+        order of factors and the exponents. A :class:`ValueError` is raised
         if the group element cannot be written as a word in ``gens``.
 
         ALGORITHM:

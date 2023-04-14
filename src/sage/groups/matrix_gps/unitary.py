@@ -67,13 +67,11 @@ def finite_field_sqrt(ring):
     """
     Helper function.
 
-    INPUT:
-
-    A ring.
+    INPUT: A ring.
 
     OUTPUT:
 
-    Integer q such that ``ring`` is the finite field with `q^2` elements.
+    Integer `q` such that ``ring`` is the finite field with `q^2` elements.
 
     EXAMPLES::
 
@@ -165,9 +163,9 @@ def GU(n, R, var='a', invariant_form=None):
 
     .. NOTE::
 
-        For a finite field the matrices that preserve a sesquilinear
-        form over `F_q` live over `F_{q^2}`. So ``GU(n,q)`` for
-        a prime power ``q`` constructs the matrix group over the base
+        For a finite field, the matrices that preserve a sesquilinear
+        form over `\GF{q}` live over `\GF{q^2}`. So ``GU(n,q)`` for
+        a prime power `q` constructs the matrix group over the base
         ring ``GF(q^2)``.
 
     .. NOTE::
@@ -186,13 +184,11 @@ def GU(n, R, var='a', invariant_form=None):
 
     - ``invariant_form`` -- (optional) instances being accepted by
       the matrix-constructor which define a `n \times n` square matrix
-      over R describing the hermitian form to be kept invariant
+      over `R` describing the hermitian form to be kept invariant
       by the unitary group; the form is checked to be
       non-degenerate and hermitian but not to be positive definite
 
-    OUTPUT:
-
-    Return the general unitary group.
+    OUTPUT: The general unitary group.
 
     EXAMPLES::
 
@@ -279,8 +275,8 @@ def SU(n, R, var='a', invariant_form=None):
     .. NOTE::
 
         For a finite field the matrices that preserve a sesquilinear
-        form over `F_q` live over `F_{q^2}`. So ``SU(n,q)`` for
-        a prime power ``q`` constructs the matrix group over the base
+        form over `\GF{q}` live over `\GF{q^2}`. So ``SU(n,q)`` for
+        a prime power `q` constructs the matrix group over the base
         ring ``GF(q^2)``.
 
     .. NOTE::
@@ -396,13 +392,11 @@ class UnitaryMatrixGroup_generic(NamedMatrixGroup_generic):
         Return the hermitian form preserved by the unitary
         group.
 
-        OUTPUT:
-
-        A square matrix describing the bilinear form
+        OUTPUT: A square matrix describing the bilinear form
 
         EXAMPLES::
 
-            sage: SU4 = SU(4,QQ)
+            sage: SU4 = SU(4, QQ)
             sage: SU4.invariant_form()
             [1 0 0 0]
             [0 1 0 0]

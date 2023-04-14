@@ -93,7 +93,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         - ``seed`` -- ``None`` or an integer specifying the seed
           to fix results depending on pseudo-random-numbers. Here
           it makes sense to be used with respect to the ``'smaller'``
-          option, since gap produces random output in that context.
+          option, since GAP produces random output in that context.
 
         OUTPUT:
 
@@ -112,7 +112,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: G.as_permutation_group().order()
             2
 
-        A finite subgroup of  GL(12,Z) as a permutation group::
+        A finite subgroup of `GL(12,\ZZ)` as a permutation group::
 
             sage: imf = libgap.function_factory('ImfMatrixGroup')
             sage: GG = imf( 12, 3 )
@@ -137,7 +137,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             In this case, the "smaller" option returned an isomorphic
             group of lower degree. The above example used GAP's library
             of irreducible maximal finite ("imf") integer matrix groups
-            to construct the MatrixGroup G over GF(7). The section
+            to construct the :class:`MatrixGroup` `G` over `\GF{7}`. The section
             "Irreducible Maximal Finite Integral Matrix Groups" in the
             GAP reference manual has more details.
 
@@ -148,7 +148,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             involve the use of random elements and the permutation
             representation (or even the degree of the representation) is
             not guaranteed to be the same for different calls of
-            SmallerDegreePermutationRepresentation."
+            ``SmallerDegreePermutationRepresentation``."
 
             To obtain a reproducible result the optional argument ``seed``
             may be used as in the example above.
@@ -161,7 +161,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: a.order(), b.order()
             (2, 1)
 
-        The above example in GL(12,Z), reduced modulo 7::
+        The above example in `GL(12,\ZZ)`, reduced modulo 7::
 
             sage: MS = MatrixSpace(GF(7), 12, 12)
             sage: G = MatrixGroup([MS(g) for g in GG.GeneratorsOfGroup()])
@@ -481,7 +481,8 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: K.<v> = CyclotomicField(8)
             sage: a = v-v^3 #sqrt(2)
             sage: i = v^2
-            sage: Octa = MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [(1+i)/a,0, 0,(1-i)/a])
+            sage: Octa = MatrixGroup([(-1+i)/2, (-1+i)/2,  (1+i)/2, (-1-i)/2],
+            ....:                    [(1+i)/a, 0,  0, (1-i)/a])
             sage: Octa.molien_series(prec=30)
             1 + t^8 + t^12 + t^16 + t^18 + t^20 + 2*t^24 + t^26 + t^28 + O(t^30)
 
@@ -491,7 +492,9 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: z5 = v^2
             sage: i = z5^5
             sage: a = 2*z5^3 + 2*z5^2 + 1 #sqrt(5)
-            sage: Ico = MatrixGroup([[z5^3,0, 0,z5^2], [0,1, -1,0], [(z5^4-z5)/a, (z5^2-z5^3)/a, (z5^2-z5^3)/a, -(z5^4-z5)/a]])
+            sage: Ico = MatrixGroup([[z5^3,0, 0,z5^2],
+            ....:                    [0,1, -1,0],
+            ....:                    [(z5^4-z5)/a, (z5^2-z5^3)/a, (z5^2-z5^3)/a, -(z5^4-z5)/a]])
             sage: Ico.molien_series(prec=40)
             1 + t^12 + t^20 + t^24 + t^30 + t^32 + t^36 + O(t^40)
 
@@ -500,20 +503,22 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: G = MatrixGroup(CyclicPermutationGroup(3))
             sage: chi = G.character(G.character_table()[1])
             sage: G.molien_series(chi, prec=10)
-            t + 2*t^2 + 3*t^3 + 5*t^4 + 7*t^5 + 9*t^6 + 12*t^7 + 15*t^8 + 18*t^9 + 22*t^10 + O(t^11)
+            t + 2*t^2 + 3*t^3 + 5*t^4 + 7*t^5 + 9*t^6
+             + 12*t^7 + 15*t^8 + 18*t^9 + 22*t^10 + O(t^11)
 
         ::
 
             sage: K = GF(5)
             sage: S = MatrixGroup(SymmetricGroup(4))
-            sage: G = MatrixGroup([matrix(K,4,4,[K(y) for u in m.list() for y in u])for m in S.gens()])
+            sage: G = MatrixGroup([matrix(K, 4, 4, [K(y) for u in m.list() for y in u])
+            ....:                  for m in S.gens()])
             sage: G.molien_series(return_series=False)
             1/(t^10 - t^9 - t^8 + 2*t^5 - t^2 - t + 1)
 
         ::
 
             sage: i = GF(7)(3)
-            sage: G = MatrixGroup([[i^3,0,0,-i^3],[i^2,0,0,-i^2]])
+            sage: G = MatrixGroup([[i^3,0, 0,-i^3], [i^2,0, 0,-i^2]])
             sage: chi = G.character(G.character_table()[4])
             sage: G.molien_series(chi)
             3*t^5 + 6*t^11 + 9*t^17 + 12*t^23 + O(t^25)
@@ -597,7 +602,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             K[x]^G_{\chi} = \{f \in K[x] | \pi f = \chi(\pi) f \forall \pi\in G\}
 
-        be the ring of invariants of `G` relative to `\chi`. Then the Reynold's operator
+        be the ring of invariants of `G` relative to `\chi`. Then the Reynolds operator
         is a map `R` from `K[x]` into `K[x]^G_{\chi}` defined by
 
         .. MATH:
@@ -644,10 +649,12 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: chi = G.character(G.character_table()[1])
             sage: R.<x,y,z> = K[]
             sage: G.reynolds_operator(x*y^5, chi)
-            1/3*x*y^5 + (-2/3*izeta3^3 - izeta3^2 - 8/3*izeta3 - 4/3)*x^5*z + (2/3*izeta3^3 + izeta3^2 + 8/3*izeta3 + 1)*y*z^5
+            1/3*x*y^5 + (-2/3*izeta3^3 - izeta3^2 - 8/3*izeta3 - 4/3)*x^5*z
+                      + (2/3*izeta3^3 + izeta3^2 + 8/3*izeta3 + 1)*y*z^5
             sage: R.<x,y,z> = QQbar[]
             sage: G.reynolds_operator(x*y^5, chi)
-             1/3*x*y^5 + (-0.1666666666666667? + 0.2886751345948129?*I)*x^5*z + (-0.1666666666666667? - 0.2886751345948129?*I)*y*z^5
+             1/3*x*y^5 + (-0.1666666666666667? + 0.2886751345948129?*I)*x^5*z
+                       + (-0.1666666666666667? - 0.2886751345948129?*I)*y*z^5
 
         ::
 
@@ -661,7 +668,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: Tetra.reynolds_operator(x^4, chi)
             1/4*x^4 + (1/2*v)*x^2*y^2 + 1/4*y^4
             sage: R.<x>=L[]
-            sage: LL.<w> = L.extension(x^2+v)
+            sage: LL.<w> = L.extension(x^2 + v)
             sage: R.<x,y> = LL[]
             sage: Tetra.reynolds_operator(x^4, chi)
             Traceback (most recent call last):
@@ -684,9 +691,9 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             1/8*x^3*y - 1/8*x*y^3 + 1/8*y^3*z - 1/8*y*z^3 - 1/8*x^3*w + 1/8*z^3*w +
             1/8*x*w^3 - 1/8*z*w^3
 
-        Characteristic p>0 examples::
+        Characteristic `p>0` examples::
 
-            sage: G = MatrixGroup([[0,1,1,0]])
+            sage: G = MatrixGroup([[0,1, 1,0]])
             sage: R.<w,x> = GF(2)[]
             sage: G.reynolds_operator(x)
             Traceback (most recent call last):
@@ -696,7 +703,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         ::
 
             sage: i = GF(7)(3)
-            sage: G = MatrixGroup([[i^3,0,0,-i^3],[i^2,0,0,-i^2]])
+            sage: G = MatrixGroup([[i^3,0, 0,-i^3], [i^2,0, 0,-i^2]])
             sage: chi = G.character(G.character_table()[4])
             sage: R.<w,x> = GF(7)[]
             sage: f = w^5*x + x^6
@@ -710,7 +717,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         ::
 
             sage: K = GF(3^2,'t')
-            sage: G = MatrixGroup([matrix(K,2,2, [0,K.gen(),1,0])])
+            sage: G = MatrixGroup([matrix(K, 2, 2, [0,K.gen(), 1,0])])
             sage: R.<x,y> = GF(3)[]
             sage: G.reynolds_operator(x^8)
             -x^8 - y^8
@@ -718,7 +725,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         ::
 
             sage: K = GF(3^2,'t')
-            sage: G = MatrixGroup([matrix(GF(3),2,2, [0,1,1,0])])
+            sage: G = MatrixGroup([matrix(GF(3), 2, 2, [0,1, 1,0])])
             sage: R.<x,y> = K[]
             sage: f = -K.gen()*x
             sage: G.reynolds_operator(f)
@@ -863,8 +870,10 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: chi = G.character(G.character_table()[1])
             sage: R.<x,y,z> = K[]
             sage: sorted(G.invariants_of_degree(2, R=R, chi=chi))
-            [x*y + (-2*izeta3^3 - 3*izeta3^2 - 8*izeta3 - 4)*x*z + (2*izeta3^3 + 3*izeta3^2 + 8*izeta3 + 3)*y*z,
-             x^2 + (2*izeta3^3 + 3*izeta3^2 + 8*izeta3 + 3)*y^2 + (-2*izeta3^3 - 3*izeta3^2 - 8*izeta3 - 4)*z^2]
+            [x*y + (-2*izeta3^3 - 3*izeta3^2 - 8*izeta3 - 4)*x*z
+                 + (2*izeta3^3 + 3*izeta3^2 + 8*izeta3 + 3)*y*z,
+             x^2 + (2*izeta3^3 + 3*izeta3^2 + 8*izeta3 + 3)*y^2
+                 + (-2*izeta3^3 - 3*izeta3^2 - 8*izeta3 - 4)*z^2]
 
         ::
 
@@ -872,7 +881,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: chi = S3.character(S3.character_table()[0])
             sage: sorted(S3.invariants_of_degree(5, chi=chi))
             [x0^3*x1^2 - x0^2*x1^3 - x0^3*x2^2 + x1^3*x2^2 + x0^2*x2^3 - x1^2*x2^3,
-            x0^4*x1 - x0*x1^4 - x0^4*x2 + x1^4*x2 + x0*x2^4 - x1*x2^4]
+             x0^4*x1 - x0*x1^4 - x0^4*x2 + x1^4*x2 + x0*x2^4 - x1*x2^4]
         """
         D = self.degree()
         deg = int(deg)

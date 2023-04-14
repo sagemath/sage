@@ -208,9 +208,7 @@ class SymplecticMatrixGroup_generic(NamedMatrixGroup_generic):
         """
         Return the quadratic form preserved by the symplectic group.
 
-        OUTPUT:
-
-        A matrix.
+        OUTPUT: A matrix.
 
         EXAMPLES::
 

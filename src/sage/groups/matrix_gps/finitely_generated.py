@@ -141,7 +141,7 @@ def normalize_square_matrices(matrices):
 
 def QuaternionMatrixGroupGF3():
     r"""
-    The quaternion group as a set of `2\times 2` matrices over `GF(3)`.
+    The quaternion group as a set of `2\times 2` matrices over `\GF{3}`.
 
     OUTPUT:
 
