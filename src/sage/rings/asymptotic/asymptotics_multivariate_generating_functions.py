@@ -3324,7 +3324,6 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Ring):
         from sage.rings.semirings.non_negative_integer_semiring import NN
         return self(NN.an_element(), [(self.base().an_element(), NN(3))])
 
-
     Element = FractionWithFactoredDenominator
 
 

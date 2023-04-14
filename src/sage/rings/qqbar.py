@@ -4107,8 +4107,6 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         self.exactify()
         return bool(self)
 
-
-
     def is_square(self):
         """
         Return whether or not this number is square.

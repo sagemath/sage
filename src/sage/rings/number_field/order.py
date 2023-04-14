@@ -1179,6 +1179,44 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         """
         return hash((self._K, self._module_rep))
 
+    def conductor(self):
+        r"""
+        For orders in *quadratic* number fields, return the conductor
+        of this order.
+
+        The conductor is the unique positive integer `f` such that
+        the discriminant of this order is `f^2` times the discriminant
+        of the containing quadratic field.
+
+        Not implemented for orders in number fields of degree `\neq 2`.
+
+        .. SEEALSO ::
+
+            :meth:`sage.rings.number_field.number_field.NumberField_quadratic.order_of_conductor`
+
+        EXAMPLES::
+
+            sage: K.<t> = QuadraticField(-101)
+            sage: K.maximal_order().conductor()
+            1
+            sage: K.order(5*t).conductor()
+            5
+            sage: K.discriminant().factor()
+            -1 * 2^2 * 101
+            sage: K.order(5*t).discriminant().factor()
+            -1 * 2^2 * 5^2 * 101
+
+        TESTS::
+
+            sage: type(K.order(5*t).conductor())
+            <class 'sage.rings.integer.Integer'>
+        """
+        if not isinstance(self._K, sage.rings.abc.NumberField_quadratic):
+            raise NotImplementedError('not implemented for number fields of degree != 2')
+        D = self.discriminant()
+        D0 = self._K.discriminant()
+        return (D // D0).sqrt()
+
     def random_element(self, *args, **kwds):
         r"""
         Return a random element of this order.
@@ -1602,6 +1640,11 @@ class Order_absolute(Order):
             3 * 5 * 13^29 * 733
             sage: L.discriminant() / O.discriminant() == L.index_in(O)^2
             True
+
+        TESTS::
+
+            sage: type(K.order(5*a).discriminant())
+            <class 'sage.rings.integer.Integer'>
         """
         try:
             return self.__discriminant
@@ -1609,7 +1652,7 @@ class Order_absolute(Order):
             if self._is_maximal():
                 D = self._K.discriminant()
             else:
-                D = self._K.discriminant(self.basis())
+                D = ZZ(self._K.discriminant(self.basis()))
             self.__discriminant = D
             return D
 

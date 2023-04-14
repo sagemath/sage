@@ -1018,8 +1018,6 @@ class ContinuedFraction_base(SageObject):
         """
         return bool(self.quotient(0)) or self.quotient(1) is not Infinity
 
-
-
     def is_zero(self):
         r"""
         Test whether ``self`` is zero.
