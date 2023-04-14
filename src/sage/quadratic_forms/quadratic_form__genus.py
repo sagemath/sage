@@ -64,23 +64,23 @@ def local_genus_symbol(self, p):
 
     - If `p>2`, then return triples of the form [`m`, `n`, `d`] where
 
-      -     `m` = valuation of the component
+      - `m` = valuation of the component
 
-      -     `n` = rank of `A`
+      - `n` = rank of `A`
 
-      -     `d` = det(`A`) in {1,`u`} for normalized quadratic non-residue `u`.
+      - `d` = det(`A`) in {1,`u`} for normalized quadratic non-residue `u`.
 
     - If `p=2`, then return quintuples of the form [`m`, `n`, `s`, `d`, `o`] where
 
-      -     `m` = valuation of the component
+      - `m` = valuation of the component
 
-      -     `n` = rank of `A`
+      - `n` = rank of `A`
 
-      -     `d` = det(`A`) in {1,3,5,7}
+      - `d` = det(`A`) in {1,3,5,7}
 
-      -     `s` = 0 (or 1) if `A` is even (or odd)
+      - `s` = 0 (or 1) if `A` is even (or odd)
 
-      -     `o` = oddity of `A` (= 0 if `s` = 0) in `\ZZ/8\ZZ` = the trace of the diagonalization of `A`
+      - `o` = oddity of `A` (= 0 if `s` = 0) in `\ZZ/8\ZZ` = the trace of the diagonalization of `A`
 
     .. NOTE::
 

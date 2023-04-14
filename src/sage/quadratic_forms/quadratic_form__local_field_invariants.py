@@ -40,15 +40,15 @@ def rational_diagonal_form(self, return_matrix=False):
     - ``return_matrix`` -- (boolean, default: False) also return the
       transformation matrix
 
-    OUTPUT: either ``D`` (if ``return_matrix`` is false) or ``(D, T)``
-    (if ``return_matrix`` is true) where
+    OUTPUT: either the diagonal quadratic form `D` (if ``return_matrix`` is false)
+    or the pair `(D, T)` (if ``return_matrix`` is true) where
 
-    - ``D`` -- the diagonalized form of this quadratic form
+    - `D` -- the diagonalized form of this quadratic form
 
-    - ``T`` -- transformation matrix. This is such that
+    - `T` -- transformation matrix. This is such that
       ``T.transpose() * self.matrix() * T`` gives ``D.matrix()``.
 
-    Both ``D`` and ``T`` are defined over the fraction field of the
+    Both `D` and `T` are defined over the fraction field of the
     base ring of the given form.
 
     EXAMPLES::
@@ -187,14 +187,14 @@ def _rational_diagonal_form_and_transformation(self):
     the corresponding transformation matrix. This is over the fraction
     field of the base ring of the given quadratic form.
 
-    OUTPUT: a tuple ``(D,T)`` where
+    OUTPUT: a tuple `(D,T)` where
 
-    - ``D`` -- the diagonalized form of this quadratic form
+    - `D` -- the diagonalized form of this quadratic form
 
-    - ``T`` -- transformation matrix. This is such that
+    - `T` -- transformation matrix. This is such that
       ``T.transpose() * self.matrix() * T`` gives ``D.matrix()``.
 
-    Both ``D`` and ``T`` are defined over the fraction field of the
+    Both `D` and `T` are defined over the fraction field of the
     base ring of the given form.
 
     EXAMPLES::
