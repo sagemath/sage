@@ -4855,7 +4855,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         # We update the dictionary, because some of the 
         # single values may already be stored in self._bbn[base_ring]
-        self._bbn[base_ring].update(B)
+        self._bbn[base_ring] = B
         self.__bbn_called_rings.add(base_ring)
 
         return B 
@@ -4889,7 +4889,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             return ZZ.zero()
         if a == 0 and b == 0:
             return ZZ.one()
-        if base_ring in self._bbn and (a,b) in self._bbn[base_ring]:
+        if base_ring in self._bbn:
             return self._bbn[base_ring].get((a,b), ZZ.zero())
             
         from sage.homology.homology_group import HomologyGroup
