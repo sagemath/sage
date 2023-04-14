@@ -1127,8 +1127,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if not is_mutable or is_immutable:
             self.set_immutable()
 
-        # self._bbn: dictionary indexed by base_ring of dictionaries of 
+        # self._bbn: a dictionary indexed by base_ring, whose value is a dictionary of 
         # bigraded Betti numbers, indexed by tuples (-i, 2j). 
+        # self._bbn also has a key 0, whose value is a set of all base 
+        # rings for which we called bigraded_betti_numbers(base_ring=base_ring)
         # For use in the bigraded_betti_numbers method.
         self._bbn = None
 
@@ -4850,6 +4852,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
                             B[ind] = ZZ.zero()
                         B[ind] += len(H[j-k-1].gens())
 
+        # The value associated to the key `0` in self._bbn
+        # is the set of all base rings for which the method
+        # bigraded_betti_numbers() has already been called
+        # This is stored for caching purposes, as bigraded_betti_number()
+        # updates the dictionary with the key base_ring by adding
+        # the single number it computed.
         if self._bbn is not None:
             if 0 in self._bbn:
                 self._bbn[0].add(base_ring)
@@ -4903,6 +4911,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         B = ZZ(B)
 
+        # We add the single value to the dictionary indxed
+        # by the key base_ring in self._bbn, so we do not
+        # have to compute it twice.
         if self._bbn is not None:
             if base_ring in self._bbn:
                 self._bbn[base_ring][(a, 2*b)] = B
