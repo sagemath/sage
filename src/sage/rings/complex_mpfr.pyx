@@ -1039,10 +1039,10 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: numpy.array([1.0, 2.5j]).dtype
+            sage: import numpy                                                          # optional - numpy
+            sage: numpy.array([1.0, 2.5j]).dtype                                        # optional - numpy
             dtype('complex128')
-            sage: numpy.array([1.000000000000000000000000000000000000j]).dtype
+            sage: numpy.array([1.000000000000000000000000000000000000j]).dtype          # optional - numpy
             dtype('O')
         """
         if self._prec <= 53:

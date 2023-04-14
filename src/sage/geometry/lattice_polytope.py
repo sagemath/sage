@@ -295,7 +295,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
         sage: p.points()
         Empty collection
         in 3-d lattice M
-        sage: p.faces()
+        sage: p.faces()                                                         # optional - sage.graphs
         ((-1-d lattice polytope in 3-d lattice M,),)
     """
     if isinstance(data, LatticePolytopeClass):
@@ -765,15 +765,15 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: p = LatticePolytope([], lattice=ToricLattice(3).dual()); p
             -1-d lattice polytope in 3-d lattice M
-            sage: a = p.faces()[0][0]
+            sage: a = p.faces()[0][0]                                           # optional - sage.graphs
             sage: p = LatticePolytope([], lattice=ToricLattice(3).dual()); p
             -1-d lattice polytope in 3-d lattice M
-            sage: a = p.faces()[0][0]; a
+            sage: a = p.faces()[0][0]; a                                        # optional - sage.graphs
             -1-d lattice polytope in 3-d lattice M
-            sage: a.facet_normals()
+            sage: a.facet_normals()                                             # optional - sage.graphs
             Empty collection
             in 3-d lattice N
-            sage: a
+            sage: a                                                             # optional - sage.graphs
             -1-d lattice polytope in 3-d lattice M
         """
         assert not hasattr(self, "_facet_normals")
@@ -1335,7 +1335,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: o = lattice_polytope.cross_polytope(3)
             sage: # indirect doctest
-            sage: for i, face in enumerate(o.faces(0)):
+            sage: for i, face in enumerate(o.faces(0)):                         # optional - sage.graphs
             ....:     if face.vertex(0) != o.vertex(i):
             ....:         print("Wrong order!")
         """
@@ -1380,10 +1380,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: o.adjacent()
+            sage: o.adjacent()                                                  # optional - sage.graphs
             ()
-            sage: face = o.faces(1)[0]
-            sage: face.adjacent()
+            sage: face = o.faces(1)[0]                                          # optional - sage.graphs
+            sage: face.adjacent()                                               # optional - sage.graphs
             (1-d face of 3-d reflexive polytope in 3-d lattice M,
              1-d face of 3-d reflexive polytope in 3-d lattice M,
              1-d face of 3-d reflexive polytope in 3-d lattice M,
@@ -1505,12 +1505,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             3-d reflexive polytope in 3-d lattice M
             sage: o.ambient() is o
             True
-            sage: face = o.faces(1)[0]
-            sage: face
+            sage: face = o.faces(1)[0]                                          # optional - sage.graphs
+            sage: face                                                          # optional - sage.graphs
             1-d face of 3-d reflexive polytope in 3-d lattice M
-            sage: face.ambient()
+            sage: face.ambient()                                                # optional - sage.graphs
             3-d reflexive polytope in 3-d lattice M
-            sage: face.ambient() is o
+            sage: face.ambient() is o                                           # optional - sage.graphs
             True
         """
         return self._ambient
@@ -1533,14 +1533,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         But each of its other faces is contained in one or more facets::
 
-            sage: face = o.faces(1)[0]
-            sage: face.ambient_facet_indices()
+            sage: face = o.faces(1)[0]                                          # optional - sage.graphs
+            sage: face.ambient_facet_indices()                                  # optional - sage.graphs
             (4, 5)
-            sage: face.vertices()
+            sage: face.vertices()                                               # optional - sage.graphs
             M(1, 0, 0),
             M(0, 1, 0)
             in 3-d lattice M
-            sage: o.facets()[face.ambient_facet_indices()[0]].vertices()
+            sage: o.facets()[face.ambient_facet_indices()[0]].vertices()        # optional - sage.graphs
             M(1, 0,  0),
             M(0, 1,  0),
             M(0, 0, -1)
@@ -1561,10 +1561,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         EXAMPLES::
 
             sage: cube = lattice_polytope.cross_polytope(3).polar()
-            sage: face = cube.facets()[0]
-            sage: face.ambient_point_indices()                                  # optional - palp
+            sage: face = cube.facets()[0]                                                           # optional - sage.graphs
+            sage: face.ambient_point_indices()                                  # optional - palp   # optional - sage.graphs
             (4, 5, 6, 7, 8, 9, 10, 11, 12)
-            sage: cube.points(face.ambient_point_indices()) == face.points()    # optional - palp
+            sage: cube.points(face.ambient_point_indices()) == face.points()    # optional - palp   # optional - sage.graphs
             True
         """
         if self._ambient is self:
@@ -1587,10 +1587,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         EXAMPLES::
 
             sage: cube = lattice_polytope.cross_polytope(3).polar()
-            sage: face = cube.facets()[0]
-            sage: face.ambient_ordered_point_indices()                          # optional - palp
+            sage: face = cube.facets()[0]                                                           # optional - sage.graphs
+            sage: face.ambient_ordered_point_indices()                          # optional - palp   # optional - sage.graphs
             (5, 8, 4, 9, 10, 11, 6, 12, 7)
-            sage: cube.points(face.ambient_ordered_point_indices())             # optional - palp
+            sage: cube.points(face.ambient_ordered_point_indices())             # optional - palp   # optional - sage.graphs
             N(-1, -1, -1),
             N(-1, -1,  0),
             N(-1, -1,  1),
@@ -1621,8 +1621,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: o = lattice_polytope.cross_polytope(3)
             sage: o.ambient_vertex_indices()
             (0, 1, 2, 3, 4, 5)
-            sage: face = o.faces(1)[0]
-            sage: face.ambient_vertex_indices()
+            sage: face = o.faces(1)[0]                                                              # optional - sage.graphs
+            sage: face.ambient_vertex_indices()                                                     # optional - sage.graphs
             (0, 1)
         """
         return self._ambient_vertex_indices
@@ -1657,13 +1657,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         For an edge the boundary is formed by the end points::
 
-            sage: face = square.edges()[0]
-            sage: face.points()
+            sage: face = square.edges()[0]                                                          # optional - sage.graphs
+            sage: face.points()                                                                     # optional - sage.graphs
             N(-1, -1),
             N(-1,  1),
             N(-1,  0)
             in 2-d lattice N
-            sage: face.boundary_point_indices()
+            sage: face.boundary_point_indices()                                                     # optional - sage.graphs
             (0, 1)
         """
         return tuple(i
@@ -1696,8 +1696,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         For an edge the boundary is formed by the end points::
 
-            sage: face = square.edges()[0]
-            sage: face.boundary_points()
+            sage: face = square.edges()[0]                                                          # optional - sage.graphs
+            sage: face.boundary_points()                                                            # optional - sage.graphs
             N(-1, -1),
             N(-1,  1)
             in 2-d lattice N
@@ -1794,7 +1794,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: o.distances([1,2,3/2])
             (-3/2, 5/2, 11/2, 3/2, -1/2, -7/2, 1/2, 7/2)
-            sage: o.distances([1,2,sqrt(2)])
+            sage: o.distances([1,2,sqrt(2)])                                                        # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unable to convert sqrt(2) to an element of Rational Field
@@ -1842,15 +1842,15 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(4)
-            sage: e = o.edges()[0]; e
+            sage: e = o.edges()[0]; e                                           # optional - sage.graphs
             1-d face of 4-d reflexive polytope in 4-d lattice M
-            sage: ed = e.dual(); ed
+            sage: ed = e.dual(); ed                                             # optional - sage.graphs
             2-d face of 4-d reflexive polytope in 4-d lattice N
-            sage: ed.ambient() is e.ambient().polar()
+            sage: ed.ambient() is e.ambient().polar()                           # optional - sage.graphs
             True
-            sage: e.ambient_vertex_indices() == ed.ambient_facet_indices()
+            sage: e.ambient_vertex_indices() == ed.ambient_facet_indices()      # optional - sage.graphs
             True
-            sage: e.ambient_facet_indices() == ed.ambient_vertex_indices()
+            sage: e.ambient_facet_indices() == ed.ambient_vertex_indices()      # optional - sage.graphs
             True
         """
         for f in self._ambient.polar().faces(codim=self.dim() + 1):
@@ -1893,11 +1893,11 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: o.edges()
+            sage: o.edges()                                                     # optional - sage.graphs
             (1-d face of 3-d reflexive polytope in 3-d lattice M,
             ...
              1-d face of 3-d reflexive polytope in 3-d lattice M)
-            sage: len(o.edges())
+            sage: len(o.edges())                                                # optional - sage.graphs
             12
         """
         return self.faces(dim=1)
@@ -1920,13 +1920,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         Let's take a look at the face lattice of a square::
 
             sage: square = LatticePolytope([(0,0), (1,0), (1,1), (0,1)])
-            sage: L = square.face_lattice()
-            sage: L
+            sage: L = square.face_lattice()                                     # optional - sage.graphs
+            sage: L                                                             # optional - sage.graphs
             Finite lattice containing 10 elements with distinguished linear extension
 
         To see all faces arranged by dimension, you can do this::
 
-            sage: for level in L.level_sets(): print(level)
+            sage: for level in L.level_sets(): print(level)                     # optional - sage.graphs
             [-1-d face of 2-d lattice polytope in 2-d lattice M]
             [0-d face of 2-d lattice polytope in 2-d lattice M,
              0-d face of 2-d lattice polytope in 2-d lattice M,
@@ -1940,31 +1940,31 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         For a particular face you can look at its actual vertices... ::
 
-            sage: face = L.level_sets()[1][0]
-            sage: face.vertices()
+            sage: face = L.level_sets()[1][0]                                   # optional - sage.graphs
+            sage: face.vertices()                                               # optional - sage.graphs
             M(0, 0)
             in 2-d lattice M
 
         ... or you can see the index of the vertex of the original polytope that
         corresponds to the above one::
 
-            sage: face.ambient_vertex_indices()
+            sage: face.ambient_vertex_indices()                                 # optional - sage.graphs
             (0,)
-            sage: square.vertex(0)
+            sage: square.vertex(0)                                              # optional - sage.graphs
             M(0, 0)
 
         An alternative to extracting faces from the face lattice is to use
         :meth:`faces` method::
 
-            sage: face is square.faces(dim=0)[0]
+            sage: face is square.faces(dim=0)[0]                                # optional - sage.graphs
             True
 
         The advantage of working with the face lattice directly is that you
         can (relatively easily) get faces that are related to the given one::
 
-            sage: face = L.level_sets()[1][0]
-            sage: D = L.hasse_diagram()
-            sage: sorted(D.neighbors(face))
+            sage: face = L.level_sets()[1][0]                                   # optional - sage.graphs
+            sage: D = L.hasse_diagram()                                         # optional - sage.graphs
+            sage: sorted(D.neighbors(face))                                     # optional - sage.graphs
             [-1-d face of 2-d lattice polytope in 2-d lattice M,
              1-d face of 2-d lattice polytope in 2-d lattice M,
              1-d face of 2-d lattice polytope in 2-d lattice M]
@@ -1972,21 +1972,21 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         However, you can achieve some of this functionality using
         :meth:`facets`, :meth:`facet_of`, and :meth:`adjacent` methods::
 
-            sage: face = square.faces(0)[0]
-            sage: face
+            sage: face = square.faces(0)[0]                                     # optional - sage.graphs
+            sage: face                                                          # optional - sage.graphs
             0-d face of 2-d lattice polytope in 2-d lattice M
-            sage: face.vertices()
+            sage: face.vertices()                                               # optional - sage.graphs
             M(0, 0)
             in 2-d lattice M
-            sage: face.facets()
+            sage: face.facets()                                                 # optional - sage.graphs
             (-1-d face of 2-d lattice polytope in 2-d lattice M,)
-            sage: face.facet_of()
+            sage: face.facet_of()                                               # optional - sage.graphs
             (1-d face of 2-d lattice polytope in 2-d lattice M,
              1-d face of 2-d lattice polytope in 2-d lattice M)
-            sage: face.adjacent()
+            sage: face.adjacent()                                               # optional - sage.graphs
             (0-d face of 2-d lattice polytope in 2-d lattice M,
              0-d face of 2-d lattice polytope in 2-d lattice M)
-            sage: face.adjacent()[0].vertices()
+            sage: face.adjacent()[0].vertices()                                 # optional - sage.graphs
             M(1, 0)
             in 2-d lattice M
 
@@ -1995,20 +1995,20 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: superp = LatticePolytope([(1,2,3,4), (5,6,7,8),
             ....:                           (1,2,4,8), (1,3,9,7)])
-            sage: superp.face_lattice()
+            sage: superp.face_lattice()                                         # optional - sage.graphs
             Finite lattice containing 16 elements with distinguished linear extension
-            sage: superp.face_lattice().top()
+            sage: superp.face_lattice().top()                                   # optional - sage.graphs
             3-d lattice polytope in 4-d lattice M
-            sage: p = superp.facets()[0]
-            sage: p
+            sage: p = superp.facets()[0]                                        # optional - sage.graphs
+            sage: p                                                             # optional - sage.graphs
             2-d face of 3-d lattice polytope in 4-d lattice M
-            sage: p.face_lattice()
+            sage: p.face_lattice()                                              # optional - sage.graphs
             Finite poset containing 8 elements with distinguished linear extension
-            sage: p.face_lattice().bottom()
+            sage: p.face_lattice().bottom()                                     # optional - sage.graphs
             -1-d face of 3-d lattice polytope in 4-d lattice M
-            sage: p.face_lattice().top()
+            sage: p.face_lattice().top()                                        # optional - sage.graphs
             2-d face of 3-d lattice polytope in 4-d lattice M
-            sage: p.face_lattice().top() is p
+            sage: p.face_lattice().top() is p                                   # optional - sage.graphs
             True
         """
         if self._ambient is self:
@@ -2098,7 +2098,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         Let's take a look at the faces of a square::
 
             sage: square = LatticePolytope([(0,0), (1,0), (1,1), (0,1)])
-            sage: square.faces()
+            sage: square.faces()                                                # optional - sage.graphs
             ((-1-d face of 2-d lattice polytope in 2-d lattice M,),
              (0-d face of 2-d lattice polytope in 2-d lattice M,
               0-d face of 2-d lattice polytope in 2-d lattice M,
@@ -2112,7 +2112,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         Its faces of dimension one (i.e., edges)::
 
-            sage: square.faces(dim=1)
+            sage: square.faces(dim=1)                                           # optional - sage.graphs
             (1-d face of 2-d lattice polytope in 2-d lattice M,
              1-d face of 2-d lattice polytope in 2-d lattice M,
              1-d face of 2-d lattice polytope in 2-d lattice M,
@@ -2120,16 +2120,16 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         Its faces of codimension one are the same (also edges)::
 
-            sage: square.faces(codim=1) is square.faces(dim=1)
+            sage: square.faces(codim=1) is square.faces(dim=1)                  # optional - sage.graphs
             True
 
         Let's pick a particular face::
 
-            sage: face = square.faces(dim=1)[0]
+            sage: face = square.faces(dim=1)[0]                                 # optional - sage.graphs
 
         Now you can look at the actual vertices of this face... ::
 
-            sage: face.vertices()
+            sage: face.vertices()                                               # optional - sage.graphs
             M(0, 0),
             M(0, 1)
             in 2-d lattice M
@@ -2137,9 +2137,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         ... or you can see indices of the vertices of the original polytope that
         correspond to the above ones::
 
-            sage: face.ambient_vertex_indices()
+            sage: face.ambient_vertex_indices()                                 # optional - sage.graphs
             (0, 3)
-            sage: square.vertices(face.ambient_vertex_indices())
+            sage: square.vertices(face.ambient_vertex_indices())                # optional - sage.graphs
             M(0, 0),
             M(0, 1)
             in 2-d lattice M
@@ -2365,12 +2365,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         EXAMPLES::
 
             sage: square = LatticePolytope([(0,0), (1,0), (1,1), (0,1)])
-            sage: square.facet_of()
+            sage: square.facet_of()                                             # optional - sage.graphs
             ()
-            sage: face = square.faces(0)[0]
-            sage: len(face.facet_of())
+            sage: face = square.faces(0)[0]                                     # optional - sage.graphs
+            sage: len(face.facet_of())                                          # optional - sage.graphs
             2
-            sage: face.facet_of()[1]
+            sage: face.facet_of()[1]                                            # optional - sage.graphs
             1-d face of 2-d lattice polytope in 2-d lattice M
         """
         L = self._ambient.face_lattice()
@@ -2388,11 +2388,11 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: o.facets()
+            sage: o.facets()                                                    # optional - sage.graphs
             (2-d face of 3-d reflexive polytope in 3-d lattice M,
             ...
              2-d face of 3-d reflexive polytope in 3-d lattice M)
-            sage: len(o.facets())
+            sage: len(o.facets())                                               # optional - sage.graphs
             8
         """
         return self.faces(codim=1)
@@ -2420,14 +2420,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             [0 1 1 0]
             [1 1 0 0]
             [1 0 0 1]
-            sage: o.faces(1)[0].incidence_matrix()
+            sage: o.faces(1)[0].incidence_matrix()                              # optional - sage.graphs
             [1 0]
             [0 1]
 
             sage: o = lattice_polytope.cross_polytope(4)
             sage: o.incidence_matrix().column(3).nonzero_positions()
             [3, 4, 5, 6]
-            sage: o.facets()[3].ambient_vertex_indices()
+            sage: o.facets()[3].ambient_vertex_indices()                        # optional - sage.graphs
             (3, 4, 5, 6)
 
         TESTS::
@@ -2580,8 +2580,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         Its edges also have a single interior point each::
 
-            sage: face = square.edges()[0]
-            sage: face.interior_points()
+            sage: face = square.edges()[0]                                                          # optional - sage.graphs
+            sage: face.interior_points()                                                            # optional - sage.graphs
             N(-1, 0)
             in 2-d lattice N
         """
@@ -3055,13 +3055,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M(-1,  0),
             M( 0, -1)
             in 2-d lattice M
-            sage: o._palp_modified_normal_form()
+            sage: o._palp_modified_normal_form()                                # optional - sage.graphs
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
             M(-1,  0)
             in 2-d lattice M
-            sage: o._palp_modified_normal_form(permutation=True)
+            sage: o._palp_modified_normal_form(permutation=True)                # optional - sage.graphs
             (M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -3108,13 +3108,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M(-1,  0),
             M( 0, -1)
             in 2-d lattice M
-            sage: o._palp_native_normal_form()
+            sage: o._palp_native_normal_form()                                  # optional - sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
             M(-1,  0)
             in 2-d lattice M
-            sage: o._palp_native_normal_form(permutation=True)
+            sage: o._palp_native_normal_form(permutation=True)                  # optional - sage.groups
             (M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -3159,8 +3159,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: o = lattice_polytope.cross_polytope(2)
             sage: PM = o.vertex_facet_pairing_matrix()
-            sage: PM_max = PM.permutation_normal_form()
-            sage: PM_max == o._palp_PM_max()
+            sage: PM_max = PM.permutation_normal_form()                         # optional - sage.graphs
+            sage: PM_max == o._palp_PM_max()                                    # optional - sage.graphs
             True
             sage: P2 = ReflexivePolytope(2, 0)
             sage: PM_max, permutations = P2._palp_PM_max(check=True)
@@ -4074,7 +4074,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         EXAMPLES::
 
             sage: p = lattice_polytope.cross_polytope(2).polar()
-            sage: p.traverse_boundary()
+            sage: p.traverse_boundary()                                         # optional - sage.graphs
             [3, 0, 1, 2]
         """
         if self.dim() != 2:

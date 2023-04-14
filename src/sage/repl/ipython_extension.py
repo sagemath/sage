@@ -350,12 +350,13 @@ class SageMagics(Magics):
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('''
+            sage: shell.run_cell(                                                       # optional - sage.misc.cython
+            ....: '''
             ....: %%cython
             ....: def f():
             ....:     print('test')
             ....: ''')
-            sage: f()
+            sage: f()                                                                   # optional - sage.misc.cython
             test
         """
         from sage.misc.cython import cython_compile
@@ -406,10 +407,10 @@ class SageMagics(Magics):
             ....: ''')
             sage: fib
             <fortran ...>
-            sage: from numpy import array
-            sage: a = array(range(10), dtype=float)
-            sage: fib(a, 10)
-            sage: a
+            sage: from numpy import array                                               # optional - numpy
+            sage: a = array(range(10), dtype=float)                                     # optional - numpy
+            sage: fib(a, 10)                                                            # optional - numpy
+            sage: a                                                                     # optional - numpy
             array([  0.,   1.,   1.,   2.,   3.,   5.,   8.,  13.,  21.,  34.])
         """
         from sage.misc.inline_fortran import fortran

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 r"""
 Genus
 
@@ -29,15 +30,8 @@ from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import IntegerRing, ZZ
 from sage.rings.rational_field import RationalField, QQ
 from sage.rings.integer import Integer
-from sage.interfaces.gp import gp
-from sage.libs.pari import pari
-from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from copy import copy, deepcopy
 from sage.misc.verbose import verbose
-from sage.functions.gamma import gamma
-from sage.functions.transcendental import zeta
-from sage.symbolic.constants import pi
-from sage.symbolic.ring import SR
 from sage.quadratic_forms.special_values import quadratic_L_function__exact
 lazy_import('sage.quadratic_forms.genera.normal_form', '_min_nonsquare')
 lazy_import('sage.interfaces.magma', 'magma')
@@ -125,6 +119,9 @@ def genera(sig_pair, determinant, max_scale=None, even=False):
     # render the output deterministic for testing
     genera.sort(key=lambda x: [s.symbol_tuple_list() for s in x.local_symbols()])
     return genera
+
+
+genera = staticmethod(genera)
 
 
 def _local_genera(p, rank, det_val, max_scale, even):
@@ -920,6 +917,9 @@ def p_adic_symbol(A, p, val):
     """
     if p % 2 == 0:
         return two_adic_symbol(A, val)
+
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+
     m0 = min([ c.valuation(p) for c in A.list() ])
     q = p**m0
     n = A.nrows()
@@ -1151,6 +1151,8 @@ def two_adic_symbol(A, val):
         [[0, 2, 3, 1, 4], [1, 1, 1, 1, 1], [2, 1, 1, 1, 1]]
 
     """
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+
     n = A.nrows()
     # deal with the empty matrix
     if n == 0:
@@ -2995,9 +2997,13 @@ class GenusSymbol_global_ring():
             L = local_modification(L, sym.gram_matrix(), p)
         L = L.gram_matrix().change_ring(ZZ)
         if LLL:
+            from sage.libs.pari import pari
+
             sig = self.signature_pair_of_matrix()
             if sig[0] * sig[1] != 0:
                 from sage.env import SAGE_EXTCODE
+                from sage.interfaces.gp import gp
+
                 m = pari(L)
                 gp.read(SAGE_EXTCODE + "/pari/simon/qfsolve.gp")
                 m = gp.eval('qflllgram_indefgoon(%s)'%m)
@@ -3218,10 +3224,14 @@ class GenusSymbol_global_ring():
 
             sage: A = matrix.diagonal(ZZ, [1, 1, 1, 1])
             sage: GS = Genus(A)
-            sage: GS._standard_mass()
+            sage: GS._standard_mass()           # optional - sage.symbolic
             1/48
 
         """
+        from sage.symbolic.constants import pi
+        from sage.symbolic.ring import SR
+        from sage.functions.transcendental import zeta
+        from sage.functions.gamma import gamma
         n = self.dimension()
         if n % 2 == 0:
             s = n // 2
@@ -3269,7 +3279,7 @@ class GenusSymbol_global_ring():
 
             sage: from sage.quadratic_forms.genera.genus import genera
             sage: G = genera((8,0), 1, even=True)[0]
-            sage: G.mass()
+            sage: G.mass()                 # optional - sage.symbolic
             1/696729600
             sage: G.mass(backend='magma')  # optional - magma
             1/696729600

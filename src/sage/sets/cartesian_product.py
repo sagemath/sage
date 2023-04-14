@@ -36,14 +36,14 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
     EXAMPLES::
 
-        sage: G = cartesian_product([GF(5), Permutations(10)])
-        sage: G.cartesian_factors()
+        sage: G = cartesian_product([GF(5), Permutations(10)])                          # optional - sage.rings.finite_rings
+        sage: G.cartesian_factors()                                                     # optional - sage.rings.finite_rings
         (Finite Field of size 5, Standard permutations of 10)
-        sage: G.cardinality()
+        sage: G.cardinality()                                                           # optional - sage.rings.finite_rings
         18144000
-        sage: G.random_element()    # random
+        sage: G.random_element()    # random                                            # optional - sage.rings.finite_rings
         (1, [4, 7, 6, 5, 10, 1, 3, 2, 8, 9])
-        sage: G.category()
+        sage: G.category()                                                              # optional - sage.rings.finite_rings
         Join of Category of finite monoids
             and Category of Cartesian products of monoids
             and Category of Cartesian products of finite enumerated sets
@@ -92,24 +92,24 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = cartesian_product([GF(5), GF(3)])
-            sage: x = C((1,3)); x
+            sage: C = cartesian_product([GF(5), GF(3)])                                 # optional - sage.rings.finite_rings
+            sage: x = C((1,3)); x                                                       # optional - sage.rings.finite_rings
             (1, 0)
-            sage: x.parent()
+            sage: x.parent()                                                            # optional - sage.rings.finite_rings
             The Cartesian product of (Finite Field of size 5, Finite Field of size 3)
-            sage: x[0].parent()
+            sage: x[0].parent()                                                         # optional - sage.rings.finite_rings
             Finite Field of size 5
-            sage: x[1].parent()
+            sage: x[1].parent()                                                         # optional - sage.rings.finite_rings
             Finite Field of size 3
 
         An iterable is also accepted as input::
 
-            sage: C(i for i in range(2))
+            sage: C(i for i in range(2))                                                # optional - sage.rings.finite_rings
             (0, 1)
 
         TESTS::
 
-            sage: C((1,3,4))
+            sage: C((1,3,4))                                                            # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: (1, 3, 4) should be of length 2

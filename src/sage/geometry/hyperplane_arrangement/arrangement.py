@@ -66,7 +66,7 @@ supported::
 
 Number fields are also possible::
 
-    sage: x = var('x')
+    sage: x = polygen(QQ, 'x')
     sage: NF.<a> = NumberField(x**4 - 5*x**2 + 5, embedding=1.90)                                           # optional - sage.rings.number_field
     sage: H.<y,z> = HyperplaneArrangements(NF)                                                              # optional - sage.rings.number_field
     sage: A = H([[(-a**3 + 3*a, -a**2 + 4), 1], [(a**3 - 4*a, -1), 1],                                      # optional - sage.rings.number_field
@@ -423,8 +423,8 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: a.<x,y,z> = hyperplane_arrangements.braid(3)   # indirect doctest
-            sage: (x, y) == a._first_ngens(2)
+            sage: a.<x,y,z> = hyperplane_arrangements.braid(3)   # indirect doctest     # optional - sage.graphs
+            sage: (x, y) == a._first_ngens(2)                                           # optional - sage.graphs
             True
         """
         return self.parent()._first_ngens(n)

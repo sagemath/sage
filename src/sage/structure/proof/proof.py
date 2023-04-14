@@ -192,14 +192,16 @@ def get_flag(t = None, subsystem = None):
 
 class WithProof():
     """
-    Use WithProof to temporarily set the value of one of the proof
+    Use :class:`WithProof` to temporarily set the value of one of the proof
     systems for a block of code, with a guarantee that it will be set
     back to how it was before after the block is done, even if there is an error.
 
-    EXAMPLES::
+    EXAMPLES:
+
+    This would hang "forever" if attempted with ``proof=True``::
 
         sage: proof.arithmetic(True)
-        sage: with proof.WithProof('arithmetic',False):    # this would hang "forever" if attempted with proof=True
+        sage: with proof.WithProof('arithmetic', False):                                # optional - sage.libs.pari
         ....:      print((10^1000 + 453).is_prime())
         ....:      print(1/0)
         Traceback (most recent call last):

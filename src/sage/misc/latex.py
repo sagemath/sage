@@ -184,7 +184,8 @@ def list_function(x):
         '\\left[1, 2, 3\\right]'
         sage: latex([1,2,3])  # indirect doctest
         \left[1, 2, 3\right]
-        sage: latex([Matrix(ZZ,3,range(9)), Matrix(ZZ,3,range(9))]) # indirect doctest
+        sage: latex([Matrix(ZZ, 3, range(9)),   # indirect doctest                      # optional - sage.modules
+        ....:        Matrix(ZZ, 3, range(9))])
         \left[\left(\begin{array}{rrr}
         0 & 1 & 2 \\
         3 & 4 & 5 \\
@@ -367,11 +368,11 @@ def dict_function(x):
     EXAMPLES::
 
         sage: from sage.misc.latex import dict_function
-        sage: x,y,z = var('x,y,z')
-        sage: print(dict_function({x/2: y^2}))
+        sage: x,y,z = var('x,y,z')                                                      # optional - sage.symbolic
+        sage: print(dict_function({x/2: y^2}))                                          # optional - sage.symbolic
         \left\{\frac{1}{2} \, x : y^{2}\right\}
-        sage: d = {(1,2,x^2): [sin(z^2), y/2]}
-        sage: latex(d)
+        sage: d = {(1,2,x^2): [sin(z^2), y/2]}                                          # optional - sage.symbolic
+        sage: latex(d)                                                                  # optional - sage.symbolic
         \left\{\left(1, 2, x^{2}\right) :
                \left[\sin\left(z^{2}\right), \frac{1}{2} \, y\right]\right\}
     """
@@ -450,9 +451,9 @@ class LatexExpr(str):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)
+        sage: latex(x^20 + 1)                                                           # optional - sage.symbolic
         x^{20} + 1
-        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")
+        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")                                       # optional - sage.symbolic
         \frac{x^2 + 1}{x - 2}
 
     ``LatexExpr`` simply converts to string without doing anything
@@ -465,15 +466,15 @@ class LatexExpr(str):
 
     The result of :func:`latex` is of type ``LatexExpr``::
 
-        sage: L = latex(x^20 + 1)
-        sage: L
+        sage: L = latex(x^20 + 1)                                                       # optional - sage.symbolic
+        sage: L                                                                         # optional - sage.symbolic
         x^{20} + 1
-        sage: type(L)
+        sage: type(L)                                                                   # optional - sage.symbolic
         <class 'sage.misc.latex.LatexExpr'>
 
     A ``LatexExpr`` can be converted to a plain string::
 
-        sage: str(latex(x^20 + 1))
+        sage: str(latex(x^20 + 1))                                                      # optional - sage.symbolic
         'x^{20} + 1'
     """
     def __add__(self, other):
@@ -558,7 +559,7 @@ def has_latex_attr(x) -> bool:
     EXAMPLES::
 
         sage: from sage.misc.latex import has_latex_attr
-        sage: has_latex_attr(identity_matrix(3))
+        sage: has_latex_attr(identity_matrix(3))                                        # optional - sage.modules
         True
         sage: has_latex_attr("abc")  # strings have no _latex_ method
         False
@@ -566,15 +567,15 @@ def has_latex_attr(x) -> bool:
     Types inherit the ``_latex_`` method of the class to which they refer,
     but calling it is broken::
 
-        sage: T = type(identity_matrix(3)); T
+        sage: T = type(identity_matrix(3)); T                                           # optional - sage.modules
         <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
-        sage: hasattr(T, '_latex_')
+        sage: hasattr(T, '_latex_')                                                     # optional - sage.modules
         True
-        sage: T._latex_()
+        sage: T._latex_()                                                               # optional - sage.modules
         Traceback (most recent call last):
         ...
         TypeError: ..._latex_... needs an argument
-        sage: has_latex_attr(T)
+        sage: has_latex_attr(T)                                                         # optional - sage.modules
         False
     """
     return hasattr(x, '_latex_') and not isinstance(x, type)
@@ -917,12 +918,12 @@ class LatexCall:
             3
             sage: latex(1==0)
             \mathrm{False}
-            sage: print(latex([x,2]))
+            sage: print(latex([x, 2]))                                                  # optional - sage.symbolic
             \left[x, 2\right]
 
         Check that :trac:`11775` is fixed::
 
-            sage: latex((x,2), combine_all=True)
+            sage: latex((x,2), combine_all=True)                                        # optional - sage.symbolic
             x 2
         """
         if has_latex_attr(x):
@@ -961,9 +962,9 @@ class Latex(LatexCall):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)
+        sage: latex(x^20 + 1)                                                           # optional - sage.symbolic
         x^{20} + 1
-        sage: latex(FiniteField(25,'a'))
+        sage: latex(FiniteField(25,'a'))                                                # optional - sage.libs.pari
         \Bold{F}_{5^{2}}
         sage: latex("hello")
         \text{\texttt{hello}}
@@ -973,7 +974,7 @@ class Latex(LatexCall):
     LaTeX expressions can be added; note that a space is automatically
     inserted::
 
-        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)
+        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)                                    # optional - sage.symbolic
         y \neq x^{20} + 1
     """
     def __init__(self, debug=False, slide=False, density=150, pdflatex=None, engine=None):
@@ -1212,18 +1213,18 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = matrix(1, 1, [17])
-            sage: latex(a)
+            sage: a = matrix(1, 1, [17])                                                # optional - sage.modules
+            sage: latex(a)                                                              # optional - sage.modules
             \left(\begin{array}{r}
             17
             \end{array}\right)
             sage: latex.matrix_delimiters("[", "]")
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left[\begin{array}{r}
             17
             \end{array}\right]
             sage: latex.matrix_delimiters(left="\\{")
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left\{\begin{array}{r}
             17
             \end{array}\right]
@@ -1273,14 +1274,14 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = vector(QQ, [1,2,3])
-            sage: latex(a)
+            sage: a = vector(QQ, [1,2,3])                                               # optional - sage.modules
+            sage: latex(a)                                                              # optional - sage.modules
             \left(1,\,2,\,3\right)
             sage: latex.vector_delimiters("[", "]")
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left[1,\,2,\,3\right]
             sage: latex.vector_delimiters(right="\\}")
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left[1,\,2,\,3\right\}
             sage: latex.vector_delimiters()
             ['[', '\\}']
@@ -1318,18 +1319,18 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: a = matrix(1, 1, [42])
-            sage: latex(a)
+            sage: a = matrix(1, 1, [42])                                                # optional - sage.modules
+            sage: latex(a)                                                              # optional - sage.modules
             \left(\begin{array}{r}
             42
             \end{array}\right)
             sage: latex.matrix_column_alignment('c')
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left(\begin{array}{c}
             42
             \end{array}\right)
             sage: latex.matrix_column_alignment('l')
-            sage: latex(a)
+            sage: latex(a)                                                              # optional - sage.modules
             \left(\begin{array}{l}
             42
             \end{array}\right)
@@ -2019,7 +2020,7 @@ def coeff_repr(c):
         sage: from sage.misc.latex import coeff_repr
         sage: coeff_repr(QQ(1/2))
         '\\frac{1}{2}'
-        sage: coeff_repr(-x^2)
+        sage: coeff_repr(-x^2)                                                          # optional - sage.symbolic
         '\\left(-x^{2}\\right)'
     """
     try:
@@ -2198,8 +2199,8 @@ def latex_varify(a, is_fname=False):
 
     TESTS:
 
-        sage: abc = var('abc')
-        sage: latex((abc/(abc+1)+42)/(abc-1))  # trac #15870
+        sage: abc = var('abc')                                                          # optional - sage.symbolic
+        sage: latex((abc/(abc+1)+42)/(abc-1))  # trac #15870                            # optional - sage.symbolic
         \frac{\frac{\mathit{abc}}{\mathit{abc} + 1} + 42}{\mathit{abc} - 1}
     """
     if a in common_varnames:
@@ -2270,12 +2271,12 @@ def latex_variable_name(x, is_fname=False):
 
     TESTS::
 
-        sage: latex_variable_name('_C')  # trac #16007
+        sage: latex_variable_name('_C')  # trac #16007                                  # optional - sage.symbolic
         'C'
-        sage: latex_variable_name('_K1')
+        sage: latex_variable_name('_K1')                                                # optional - sage.symbolic
         'K_{1}'
 
-        sage: latex_variable_name('5')
+        sage: latex_variable_name('5')                                                  # optional - sage.symbolic
         '5'
     """
     # if x is an integer (it might be the case for padics), we return x

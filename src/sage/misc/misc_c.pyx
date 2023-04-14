@@ -745,7 +745,7 @@ def cyflush():
     EXAMPLES::
 
         sage: R.<t> = QQ[]
-        sage: t^(sys.maxsize//2)
+        sage: t^(sys.maxsize//2)                                                        # optional - sage.libs.flint
         Traceback (most recent call last):
         ...
         RuntimeError: FLINT exception

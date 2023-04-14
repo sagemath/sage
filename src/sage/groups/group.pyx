@@ -39,11 +39,11 @@ def is_Group(x):
 
     EXAMPLES::
 
-        sage: F.<a,b> = FreeGroup()
+        sage: F.<a,b> = FreeGroup()                                                     # optional - sage.groups
         sage: from sage.groups.group import is_Group
-        sage: is_Group(F)
+        sage: is_Group(F)                                                               # optional - sage.groups
         True
-        sage: is_Group("a string")
+        sage: is_Group("a string")                                                      # optional - sage.groups
         False
     """
     from sage.groups.old import Group as OldGroup
@@ -91,7 +91,7 @@ cdef class Group(Parent):
             sage: G = Group(category=Groups()) # todo: do the same test with some subcategory of Groups when there will exist one
             sage: G.category()
             Category of groups
-            sage: G = Group(category = CommutativeAdditiveGroups())
+            sage: G = Group(category=CommutativeAdditiveGroups())
             Traceback (most recent call last):
             ...
             ValueError: (Category of commutative additive groups,) is not a subcategory of Category of groups
@@ -100,10 +100,10 @@ cdef class Group(Parent):
 
         Check for :trac:`8119`::
 
-            sage: G = SymmetricGroup(2)
-            sage: h = hash(G)
-            sage: G.rename('S2')
-            sage: h == hash(G)
+            sage: G = SymmetricGroup(2)                                                 # optional - sage.groups
+            sage: h = hash(G)                                                           # optional - sage.groups
+            sage: G.rename('S2')                                                        # optional - sage.groups
+            sage: h == hash(G)                                                          # optional - sage.groups
             True
         """
         from sage.categories.groups import Groups
@@ -143,7 +143,7 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: SL(2, 7).is_commutative()
+            sage: SL(2, 7).is_commutative()                                             # optional - sage.rings.finite_rings
             False
         """
         return self.is_abelian()
@@ -215,8 +215,8 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup([2,3,4,5])
-            sage: G.an_element()
+            sage: G = AbelianGroup([2,3,4,5])                                           # optional - sage.groups
+            sage: G.an_element()                                                        # optional - sage.groups
             f0*f1*f2*f3
         """
         from sage.misc.misc_c import prod

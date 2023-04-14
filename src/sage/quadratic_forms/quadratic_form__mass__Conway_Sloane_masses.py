@@ -7,10 +7,8 @@ from sage.arith.misc import (fundamental_discriminant,
                              legendre_symbol,
                              prime_divisors)
 from sage.misc.misc_c import prod
-from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.symbolic.constants import pi
 
 
 def parity(self, allow_rescaling_flag=True):
@@ -590,16 +588,19 @@ def conway_standard_mass(self):
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 3, [2, -2, 0, 3, -5, 4])
-        sage: Q.conway_standard_mass()
+        sage: Q.conway_standard_mass()                                                  # optional - sage.symbolic
         1/6
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.conway_standard_mass()
+        sage: Q.conway_standard_mass()                                                  # optional - sage.symbolic
         1/6
 
     """
+    from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
+    from sage.symbolic.constants import pi
+
     n = self.dim()
     if n % 2 == 0:
         s = n // 2
@@ -628,19 +629,19 @@ def conway_mass(self):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.conway_mass()
+        sage: Q.conway_mass()                                                           # optional - sage.symbolic
         1/48
 
         sage: Q = DiagonalQuadraticForm(ZZ, [7,1,1])
-        sage: Q.conway_mass()
+        sage: Q.conway_mass()                                                           # optional - sage.symbolic
         3/16
 
         sage: Q = QuadraticForm(ZZ, 3, [7, 2, 2, 2, 0, 2]) + DiagonalQuadraticForm(ZZ, [1])
-        sage: Q.conway_mass()
+        sage: Q.conway_mass()                                                           # optional - sage.symbolic
         3/32
 
         sage: Q = QuadraticForm(Matrix(ZZ,2,[2,1,1,2]))
-        sage: Q.conway_mass()
+        sage: Q.conway_mass()                                                           # optional - sage.symbolic
         1/12
     """
     # Try to use the cached result

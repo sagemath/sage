@@ -118,36 +118,36 @@ def LatticePolytope_PPL(*args):
         sage: LatticePolytope_PPL((0,0),(1,0),(0,1))
         A 2-dimensional lattice polytope in ZZ^2 with 3 vertices
 
-        sage: from ppl import point, Generator_System, C_Polyhedron, Linear_Expression, Variable
-        sage: p = point(Linear_Expression([2,3],0));  p
+        sage: from ppl import point, Generator_System, C_Polyhedron, Linear_Expression, Variable    # optional - pplpy
+        sage: p = point(Linear_Expression([2,3],0));  p                                             # optional - pplpy
         point(2/1, 3/1)
-        sage: LatticePolytope_PPL(p)
+        sage: LatticePolytope_PPL(p)                                                                # optional - pplpy
         A 0-dimensional lattice polytope in ZZ^2 with 1 vertex
 
-        sage: P = C_Polyhedron(Generator_System(p));  P
+        sage: P = C_Polyhedron(Generator_System(p));  P                                             # optional - pplpy
         A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 point
-        sage: LatticePolytope_PPL(P)
+        sage: LatticePolytope_PPL(P)                                                                # optional - pplpy
         A 0-dimensional lattice polytope in ZZ^2 with 1 vertex
 
     A ``TypeError`` is raised if the arguments do not specify a lattice polytope::
 
-        sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
-        sage: LatticePolytope_PPL((0,0),(1/2,1))
+        sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL         # optional - pplpy
+        sage: LatticePolytope_PPL((0,0),(1/2,1))                                                    # optional - pplpy
         Traceback (most recent call last):
         ...
         TypeError: unable to convert rational 1/2 to an integer
 
-        sage: from ppl import point, Generator_System, C_Polyhedron, Linear_Expression, Variable
-        sage: p = point(Linear_Expression([2,3],0), 5);  p
+        sage: from ppl import point, Generator_System, C_Polyhedron, Linear_Expression, Variable    # optional - pplpy
+        sage: p = point(Linear_Expression([2,3],0), 5);  p                                          # optional - pplpy
         point(2/5, 3/5)
-        sage: LatticePolytope_PPL(p)
+        sage: LatticePolytope_PPL(p)                                                                # optional - pplpy
         Traceback (most recent call last):
          ...
         TypeError: generator is not a lattice polytope generator
 
-        sage: P = C_Polyhedron(Generator_System(p));  P
+        sage: P = C_Polyhedron(Generator_System(p));  P                                             # optional - pplpy
         A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 point
-        sage: LatticePolytope_PPL(P)
+        sage: LatticePolytope_PPL(P)                                                                # optional - pplpy
         Traceback (most recent call last):
         ...
         TypeError: polyhedron has non-integral generators

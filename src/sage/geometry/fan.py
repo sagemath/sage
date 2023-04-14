@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.graphs, sage.combinat
 r"""
 Rational polyhedral fans
 

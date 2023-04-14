@@ -319,13 +319,13 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
     Computation of a maximum stable set in Petersen's graph::
 
-         sage: g = graphs.PetersenGraph()
-         sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
-         sage: b = p.new_variable(binary=True)
-         sage: p.set_objective(sum([b[v] for v in g]))
-         sage: for (u,v) in g.edges(sort=False, labels=None):
+         sage: g = graphs.PetersenGraph()                                               # optional - sage.graphs
+         sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')          # optional - sage.graphs
+         sage: b = p.new_variable(binary=True)                                          # optional - sage.graphs
+         sage: p.set_objective(sum([b[v] for v in g]))                                  # optional - sage.graphs
+         sage: for (u,v) in g.edges(sort=False, labels=None):                           # optional - sage.graphs
          ....:     p.add_constraint(b[u] + b[v], max=1)
-         sage: p.solve(objective_only=True)
+         sage: p.solve(objective_only=True)                                             # optional - sage.graphs
          4.0
 
     TESTS:
@@ -663,13 +663,13 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='ppl')
             sage: p.base_ring()
             Rational Field
-            sage: from sage.rings.qqbar import AA                                      # optional - sage.rings.number_field
-            sage: p = MixedIntegerLinearProgram(solver='InteractiveLP', base_ring=AA)  # optional - sage.rings.number_field
-            sage: p.base_ring()                                                        # optional - sage.rings.number_field
+            sage: from sage.rings.qqbar import AA                                       # optional - sage.rings.number_field
+            sage: p = MixedIntegerLinearProgram(solver='InteractiveLP', base_ring=AA)   # optional - sage.rings.number_field
+            sage: p.base_ring()                                                         # optional - sage.rings.number_field
             Algebraic Real Field
-            sage: d = polytopes.dodecahedron()                                         # optional - sage.rings.number_field
-            sage: p = MixedIntegerLinearProgram(base_ring=d.base_ring())               # optional - sage.rings.number_field
-            sage: p.base_ring()                                                        # optional - sage.rings.number_field
+            sage: d = polytopes.dodecahedron()                                          # optional - sage.rings.number_field
+            sage: p = MixedIntegerLinearProgram(base_ring=d.base_ring())                # optional - sage.rings.number_field
+            sage: p.base_ring()                                                         # optional - sage.rings.number_field
             Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
         """
         return self._backend.base_ring()
@@ -2633,14 +2633,14 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
          Computation of a maximum stable set in Petersen's graph::
 
-            sage: g = graphs.PetersenGraph()
-            sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
-            sage: b = p.new_variable(nonnegative=True)
-            sage: p.set_objective(sum([b[v] for v in g]))
-            sage: for (u,v) in g.edges(sort=False, labels=None):
+            sage: g = graphs.PetersenGraph()                                            # optional - sage.graphs
+            sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')       # optional - sage.graphs
+            sage: b = p.new_variable(nonnegative=True)                                  # optional - sage.graphs
+            sage: p.set_objective(sum([b[v] for v in g]))                               # optional - sage.graphs
+            sage: for (u,v) in g.edges(sort=False, labels=None):                        # optional - sage.graphs
             ....:     p.add_constraint(b[u] + b[v], max=1)
-            sage: p.set_binary(b)
-            sage: p.solve(objective_only=True)
+            sage: p.set_binary(b)                                                       # optional - sage.graphs
+            sage: p.solve(objective_only=True)                                          # optional - sage.graphs
             4.0
 
         Constraints in the objective function are respected::
@@ -2851,7 +2851,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
               The command ::
 
-                  sage: p = MixedIntegerLinearProgram(solver="CPLEX") # optional - CPLEX
+                  sage: p = MixedIntegerLinearProgram(solver="CPLEX")   # optional - CPLEX
                   sage: p.solver_parameter("CPX_PARAM_TILIM", 60)       # optional - CPLEX
 
               works as intended.
@@ -2987,17 +2987,17 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         EXAMPLES::
 
-            sage: g = graphs.CubeGraph(9)
-            sage: p = MixedIntegerLinearProgram(solver="GLPK")
-            sage: p.solver_parameter("mip_gap_tolerance",100)
-            sage: b = p.new_variable(binary=True)
-            sage: p.set_objective(p.sum(b[v] for v in g))
-            sage: for v in g:
+            sage: g = graphs.CubeGraph(9)                                               # optional - sage.graphs
+            sage: p = MixedIntegerLinearProgram(solver="GLPK")                          # optional - sage.graphs
+            sage: p.solver_parameter("mip_gap_tolerance",100)                           # optional - sage.graphs
+            sage: b = p.new_variable(binary=True)                                       # optional - sage.graphs
+            sage: p.set_objective(p.sum(b[v] for v in g))                               # optional - sage.graphs
+            sage: for v in g:                                                           # optional - sage.graphs
             ....:     p.add_constraint(b[v] + p.sum(b[u] for u in g.neighbors(v)) <= 1)
-            sage: p.add_constraint(b[v] == 1)  # Force an easy non-0 solution
-            sage: p.solve() # rel tol 100
+            sage: p.add_constraint(b[v] == 1)  # Force an easy non-0 solution           # optional - sage.graphs
+            sage: p.solve() # rel tol 100                                               # optional - sage.graphs
             1.0
-            sage: p.best_known_objective_bound()  # random
+            sage: p.best_known_objective_bound()  # random                              # optional - sage.graphs
             48.0
         """
         return self._backend.best_known_objective_bound()
@@ -3021,17 +3021,17 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         EXAMPLES::
 
-            sage: g = graphs.CubeGraph(9)
-            sage: p = MixedIntegerLinearProgram(solver="GLPK")
-            sage: p.solver_parameter("mip_gap_tolerance",100)
-            sage: b = p.new_variable(binary=True)
-            sage: p.set_objective(p.sum(b[v] for v in g))
-            sage: for v in g:
+            sage: g = graphs.CubeGraph(9)                                               # optional - sage.graphs
+            sage: p = MixedIntegerLinearProgram(solver="GLPK")                          # optional - sage.graphs
+            sage: p.solver_parameter("mip_gap_tolerance",100)                           # optional - sage.graphs
+            sage: b = p.new_variable(binary=True)                                       # optional - sage.graphs
+            sage: p.set_objective(p.sum(b[v] for v in g))                               # optional - sage.graphs
+            sage: for v in g:                                                           # optional - sage.graphs
             ....:     p.add_constraint(b[v] + p.sum(b[u] for u in g.neighbors(v)) <= 1)
-            sage: p.add_constraint(b[v] == 1)  # Force an easy non-0 solution
-            sage: p.solve() # rel tol 100
+            sage: p.add_constraint(b[v] == 1)  # Force an easy non-0 solution           # optional - sage.graphs
+            sage: p.solve() # rel tol 100                                               # optional - sage.graphs
             1.0
-            sage: p.get_relative_objective_gap()  # random
+            sage: p.get_relative_objective_gap()  # random                              # optional - sage.graphs
             46.99999999999999
 
         TESTS:
@@ -3039,7 +3039,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         Just make sure that the variable *has* been defined, and is not just
         undefined::
 
-            sage: p.get_relative_objective_gap() > 1
+            sage: p.get_relative_objective_gap() > 1                                    # optional - sage.graphs
             True
         """
         return self._backend.get_relative_objective_gap()

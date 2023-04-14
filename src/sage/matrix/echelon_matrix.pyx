@@ -48,8 +48,8 @@ def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, 
     EXAMPLES::
 
         sage: from sage.matrix.echelon_matrix import reduced_echelon_matrix_iterator
-        sage: it = reduced_echelon_matrix_iterator(GF(2),2,3)
-        sage: for m in it:
+        sage: it = reduced_echelon_matrix_iterator(GF(2), 2, 3)                         # optional - sage.rings.finite_rings
+        sage: for m in it:                                                              # optional - sage.rings.finite_rings
         ....:     print(m)
         ....:     print(m.pivots())
         ....:     print("*******")
@@ -87,21 +87,21 @@ def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, 
     Testing cardinalities::
 
         sage: q = 71
-        sage: F = GF(q)
-        sage: len(list(reduced_echelon_matrix_iterator(F, 1, 3, copy=False))) == q**2+q+1
+        sage: F = GF(q)                                                                             # optional - sage.rings.finite_rings
+        sage: len(list(reduced_echelon_matrix_iterator(F, 1, 3, copy=False))) == q**2+q+1           # optional - sage.rings.finite_rings
         True
-        sage: len(list(reduced_echelon_matrix_iterator(F, 2, 3, copy=False))) == q**2+q+1
+        sage: len(list(reduced_echelon_matrix_iterator(F, 2, 3, copy=False))) == q**2+q+1           # optional - sage.rings.finite_rings
         True
 
     Testing options::
 
-        sage: it = reduced_echelon_matrix_iterator(GF(4,'z'), 2, 4, copy=False)
-        sage: next(it) is next(it)
+        sage: it = reduced_echelon_matrix_iterator(GF(4, 'z'), 2, 4, copy=False)                    # optional - sage.rings.finite_rings
+        sage: next(it) is next(it)                                                                  # optional - sage.rings.finite_rings
         True
-        sage: for a in it: pass
+        sage: for a in it: pass                                                                     # optional - sage.rings.finite_rings
 
-        sage: it = reduced_echelon_matrix_iterator(GF(4,'z'), 2, 4, set_immutable=True)
-        sage: all(a.is_immutable() and a.echelon_form() == a for a in it)
+        sage: it = reduced_echelon_matrix_iterator(GF(4, 'z'), 2, 4, set_immutable=True)            # optional - sage.rings.finite_rings
+        sage: all(a.is_immutable() and a.echelon_form() == a for a in it)                           # optional - sage.rings.finite_rings
         True
     """
     cdef Matrix m0,m,mm

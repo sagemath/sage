@@ -898,18 +898,18 @@ class Func_chebyshev_T(ChebyshevFunction):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: z = numpy.array([1,2])
-            sage: z2 = numpy.array([[1,2],[1,2]])
-            sage: z3 = numpy.array([1,2,3.])
-            sage: chebyshev_T(1,z)
+            sage: import numpy                                                          # optional - numpy
+            sage: z = numpy.array([1,2])                                                # optional - numpy
+            sage: z2 = numpy.array([[1,2],[1,2]])                                       # optional - numpy
+            sage: z3 = numpy.array([1,2,3.])                                            # optional - numpy
+            sage: chebyshev_T(1,z)                                                      # optional - numpy
             array([1., 2.])
-            sage: chebyshev_T(1,z2)
+            sage: chebyshev_T(1,z2)                                                     # optional - numpy
             array([[1., 2.],
                    [1., 2.]])
-            sage: chebyshev_T(1,z3)
+            sage: chebyshev_T(1,z3)                                                     # optional - numpy
             array([1., 2., 3.])
-            sage: chebyshev_T(z,0.1)
+            sage: chebyshev_T(z,0.1)                                                    # optional - numpy
             array([ 0.1 , -0.98])
         """
         from scipy.special import eval_chebyt
@@ -1185,18 +1185,18 @@ class Func_chebyshev_U(ChebyshevFunction):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: z = numpy.array([1,2])
-            sage: z2 = numpy.array([[1,2],[1,2]])
-            sage: z3 = numpy.array([1,2,3.])
-            sage: chebyshev_U(1,z)
+            sage: import numpy                                                          # optional - numpy
+            sage: z = numpy.array([1,2])                                                # optional - numpy
+            sage: z2 = numpy.array([[1,2],[1,2]])                                       # optional - numpy
+            sage: z3 = numpy.array([1,2,3.])                                            # optional - numpy
+            sage: chebyshev_U(1,z)                                                      # optional - numpy
             array([2., 4.])
-            sage: chebyshev_U(1,z2)
+            sage: chebyshev_U(1,z2)                                                     # optional - numpy
             array([[2., 4.],
                    [2., 4.]])
-            sage: chebyshev_U(1,z3)
+            sage: chebyshev_U(1,z3)                                                     # optional - numpy
             array([2., 4., 6.])
-            sage: chebyshev_U(z,0.1)
+            sage: chebyshev_U(z,0.1)                                                    # optional - numpy
             array([ 0.2 , -0.96])
         """
         from scipy.special import eval_chebyu
@@ -2297,12 +2297,12 @@ class Func_ultraspherical(GinacFunction):
 
     Numerical evaluation with the mpmath library::
 
-        sage: from mpmath import gegenbauer as gegenbauer_mp
-        sage: from mpmath import mp
-        sage: mp.pretty = True; mp.dps=25
-        sage: gegenbauer_mp(-7,0.5,0.3)
+        sage: from mpmath import gegenbauer as gegenbauer_mp                            # optional - mpmath
+        sage: from mpmath import mp                                                     # optional - mpmath
+        sage: mp.pretty = True; mp.dps=25                                               # optional - mpmath
+        sage: gegenbauer_mp(-7,0.5,0.3)                                                 # optional - mpmath
         0.1291811875
-        sage: gegenbauer_mp(2+3j, -0.75, -1000j)
+        sage: gegenbauer_mp(2+3j, -0.75, -1000j)                                        # optional - mpmath
         (-5038991.358609026523401901 + 9414549.285447104177860806j)
 
     TESTS:
