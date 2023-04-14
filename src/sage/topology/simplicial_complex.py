@@ -4877,15 +4877,17 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
-            sage: X = SimplicialComplex([[0,1],[1,2],[2,0],[1,2,3]])
+            sage: X = SimplicialComplex([[0,1],[1,2],[2,0],[1,3]])
             sage: X.bigraded_betti_number(-1, 6)
             1
             sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)
-            1
+            2
             sage: X.bigraded_betti_numbers()
-            {(0, 0): 1, (-1, 4): 1, (-1, 6): 1, (-2, 8): 1}
+            {(0, 0): 1, (-1, 4): 2, (-1, 6): 1, (-2, 6): 1, (-2, 8): 1}
             sage: X.bigraded_betti_number(-2, 5)
             0
+            sage: X.bigraded_betti_number(0, 0)
+            1
         """
         if b % 2:
             return base_ring.zero()
