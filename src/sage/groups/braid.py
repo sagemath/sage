@@ -67,28 +67,31 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.rings.integer import Integer
-from sage.rings.integer_ring import IntegerRing
+from sage.categories.action import Action
+from sage.categories.groups import Groups
+from sage.combinat.permutation import Permutation
+from sage.combinat.permutation import Permutations
+from sage.combinat.subset import Subsets
+from sage.features import PythonModule
+from sage.groups.artin import FiniteTypeArtinGroup, FiniteTypeArtinGroupElement
+from sage.groups.finitely_presented import FinitelyPresentedGroup
+from sage.groups.finitely_presented import GroupMorphismWithGensImages
+from sage.groups.free_group import FreeGroup, is_FreeGroup
+from sage.functions.generalized import sign
+from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+from sage.groups.perm_gps.permgroup_named import SymmetricGroupElement
+from sage.knots.knot import Knot
+from sage.libs.gap.libgap import libgap
+from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
-from sage.categories.groups import Groups
-from sage.groups.free_group import FreeGroup, is_FreeGroup
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.groups.perm_gps.permgroup_named import SymmetricGroupElement
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import IntegerRing
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.matrix.constructor import identity_matrix, matrix
-from sage.combinat.permutation import Permutation
-from sage.combinat.permutation import Permutations
-from sage.combinat.subset import Subsets
-from sage.categories.action import Action
-from sage.knots.knot import Knot
 from sage.sets.set import Set
-from sage.groups.finitely_presented import FinitelyPresentedGroup
-from sage.groups.artin import FiniteTypeArtinGroup, FiniteTypeArtinGroupElement
 from sage.structure.richcmp import richcmp, rich_to_bool
-from sage.features import PythonModule
 
 
 lazy_import('sage.libs.braiding',
@@ -3417,6 +3420,94 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         gens_mirr = [~g for g in self.gens()]
         return self.hom(gens_mirr, check=False)
 
+    def presentation2gens(self, isomorphisms=False):
+        """
+        Construct an isomorphic group to ``gens`` with only two generators
+
+        INPUT:
+
+        - ``isomorphism`` -- boolean (default ``False``). If ``True`` an isomorphism
+        from ``self`` and the isomorphic group and its inverse are provided
+
+        EXAMPLES:
+
+            sage: B = BraidGroup(3)
+            sage: B.presentation2gens()
+            Finitely presented group < x0, x1 | x1^3*x0^-2 >
+            sage: B = BraidGroup(4)
+            sage: G, hom1, hom2 = B.presentation2gens(isomorphisms=True)
+            sage: G
+            Finitely presented group < x0, x1 | x1^4*x0^-3, x0*x1*x0*x1^-2*x0^-1*x1^3*x0^-1*x1^-2 >
+            sage: hom1(B.gen(0))
+            x0*x1^-1
+            sage: hom1(B.gen(1))
+            x1*x0*x1^-2
+            sage: hom1(B.gen(2))
+            x1^2*x0*x1^-3
+            sage: all(hom2(hom1(a)) == a for a in B.gens())
+            True
+            sage: all(hom2(a) == B.one() for a in G.relations())
+            True
+        """
+        n = self.strands()
+        F = FreeGroup(2, "x")
+        rel = [n * (2,)+ (n - 1) * (-1,)]
+        rel += [(1,) + (j - 1) * (2,) + (1,) + j * (-2,) + (-1,) + (j + 1) * (2,) + (-1,) + j * (-2,)
+                for j in range(2, n - 1)]
+        G = F / rel
+        if not isomorphisms:
+            return G
+        a1 = (1, -2)
+        L1 = [j * (2,) + a1 + j * (-2,) for j in range(n - 1)]
+        h1 = self.hom(codomain=G, im_gens=[G(a) for a in L1], check=False)
+        a2 = tuple(range(1, n))
+        L2 = [(1,) + a2, a2]
+        h2 = G.hom(codomain=self, im_gens=[self(a) for a in L2], check=False)
+        return (G, h1, h2)
+
+    def epimorphisms(self, H):
+        r"""
+        Return the epimorphisms from ``self`` to ``H``, up to automorphism of `H` passing
+        through the presentation of two gens for ``self``
+
+        INPUT:
+
+        - `H` -- Another group
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(5)
+            sage: B.epimorphisms(SymmetricGroup(5))
+            [Generic morphism:
+            From: Braid group on 5 strands
+            To:   Symmetric group of order 5! as a permutation group
+            Defn: s0 |--> (1,5)
+                    s1 |--> (4,5)
+                    s2 |--> (3,4)
+                    s3 |--> (2,3)]
+
+        ALGORITHM:
+
+        Uses libgap's GQuotients function.
+        """
+        G, hom1, hom2 = self.presentation2gens(isomorphisms=True)
+        from sage.misc.misc_c import prod
+        HomSpace = self.Hom(H)
+        G0g = libgap(self)
+        Gg = libgap(G)
+        Hg = libgap(H)
+        gquotients = Gg.GQuotients(Hg)
+        hom1g = libgap.GroupHomomorphismByImagesNC(G0g,Gg,[libgap(hom1(u)) for u in self.gens()])
+        g0quotients = [hom1g * h for h in gquotients]
+        res = []
+        # the following closure is needed to attach a specific value of quo to
+        # each function in the different morphisms
+        fmap = lambda tup: (lambda a: H(prod(tup[abs(i)-1]**sign(i) for i in a.Tietze())))
+        for quo in g0quotients:
+            tup = tuple(H(quo.ImageElm(i.gap()).sage()) for i in self.gens())
+            fhom = GroupMorphismWithGensImages(HomSpace, fmap(tup))
+            res.append(fhom)
+        return res
 
 def BraidGroup(n=None, names='s'):
     """
