@@ -1045,6 +1045,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             if not is_mutable or is_immutable:
                 self.set_immutable()
             self._bbn = C._bbn
+            self.__bbn_called_rings = C.__bbn_called_rings
             return
 
         gen_dict = {}
@@ -2668,7 +2669,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         self._graph.add_edge(new_face[i], new_face[j])
             self._complex = {}
             self.__contractible = None
-            self._bbn = None
+            self._bbn = {}
+            self.__bbn_called_rings = set()
 
     def remove_face(self, face, check=False):
         """
@@ -2793,7 +2795,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         self._complex = {}
         self.__contractible = None
         self.__enlarged = {}
-        self._bbn = None
+        self._bbn = {}
+        self.__bbn_called_rings = set()
 
     def remove_faces(self, faces, check=False):
         """
