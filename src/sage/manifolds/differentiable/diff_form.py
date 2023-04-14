@@ -789,7 +789,7 @@ class DiffForm(TensorField):
             common_domain = nondegenerate_tensor.domain().intersection(self.domain())
             result = self.restrict(common_domain) * eps.restrict(common_domain)
         else:
-            result = self.up(nondegenerate_tensor).contract(*range(p), eps, *range(p))
+            result = self.contract(*range(p), eps, *range(p))
             if p > 1:
                 result = result / factorial(p)
             if minus_eigenvalues_convention:
