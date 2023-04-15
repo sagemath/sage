@@ -1173,8 +1173,20 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: rho = DrinfeldModule(A, [p_root, 0, 0, 0, 1])
             sage: rho.rank()
             4
+
+        TESTS::
+
+        The rank must be an ``Integer``::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+            sage: isinstance(phi.rank(), Integer)
+            True
         """
-        return self._gen.degree()
+        return Integer(self._gen.degree())
 
     def velu(self, isog):
         r"""
