@@ -1196,9 +1196,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def hom(self, u, codomain=None):
         if codomain is None:
-            H = End(self)
+            H = self.Hom(self)
         else:
-            H = Hom(self, codomain)
+            H = self.Hom(codomain)
         return H(u)
 
     def velu(self, isog):

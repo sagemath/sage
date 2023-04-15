@@ -410,3 +410,11 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             True
         """
         return self._ore_polynomial
+
+    def _composition_(self, other, H):
+        return H(self.ore_polynomial() * other.ore_polynomial())
+
+    def __invert__(self):
+        if not self.is_isomorphism():
+            raise ZeroDivisionError("this morphism is not invertible")
+        return self.parent()(~(self.ore_polynomial()[0]))
