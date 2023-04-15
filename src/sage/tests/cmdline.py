@@ -530,11 +530,11 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: ret                                                   # long time
         0
 
-        sage: (out, err, ret) = test_executable([  # optional - gdb # long time
+        sage: (out, err, ret) = test_executable([                   # long time  # optional - gdb
         ....:     "sage", "--gdb"], 'quit\n')
-        sage: out.find('(gdb) ') >= 0              # optional - gdb # long time
+        sage: out.find('(gdb) ') >= 0                               # long time  # optional - gdb
         True
-        sage: ret                                  # optional - gdb # long time
+        sage: ret                                                   # long time  # optional - gdb
         0
 
         sage: (out, err, ret) = test_executable(["sage", "--mwrank", "-v0", "-q"], "0 0 0 0 1\n")

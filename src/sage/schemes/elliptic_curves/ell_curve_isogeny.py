@@ -889,15 +889,15 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     Examples over relative number fields used not to work (see :trac:`16779`)::
 
         sage: pol26 = hilbert_class_polynomial(-4*26)
-        sage: pol = NumberField(pol26,'a').optimized_representation()[0].polynomial()   # optional - sage.rings.number_field, long time
-        sage: K.<a> = NumberField(pol)                                                  # optional - sage.rings.number_field, long time
-        sage: j = pol26.roots(K)[0][0]                                                  # optional - sage.rings.number_field, long time
-        sage: E = EllipticCurve(j=j)                                                    # optional - sage.rings.number_field, long time
-        sage: L.<b> = K.extension(x^2 + 26)                                             # optional - sage.rings.number_field, long time
-        sage: EL = E.change_ring(L)                                                     # optional - sage.rings.number_field, long time
-        sage: iso2 = EL.isogenies_prime_degree(2); len(iso2)                            # optional - sage.rings.number_field, long time
+        sage: pol = NumberField(pol26,'a').optimized_representation()[0].polynomial()   # long time  # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(pol)                                                  # long time  # optional - sage.rings.number_field
+        sage: j = pol26.roots(K)[0][0]                                                  # long time  # optional - sage.rings.number_field
+        sage: E = EllipticCurve(j=j)                                                    # long time  # optional - sage.rings.number_field
+        sage: L.<b> = K.extension(x^2 + 26)                                             # long time  # optional - sage.rings.number_field
+        sage: EL = E.change_ring(L)                                                     # long time  # optional - sage.rings.number_field
+        sage: iso2 = EL.isogenies_prime_degree(2); len(iso2)                            # long time  # optional - sage.rings.number_field
         1
-        sage: iso3 = EL.isogenies_prime_degree(3); len(iso3)                            # optional - sage.rings.number_field, long time
+        sage: iso3 = EL.isogenies_prime_degree(3); len(iso3)                            # long time  # optional - sage.rings.number_field
         2
 
     Examples over function fields used not to work (see :trac:`11327`)::
