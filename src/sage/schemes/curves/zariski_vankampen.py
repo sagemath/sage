@@ -1488,7 +1488,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     Compute the fundamental group of the complement of a curve
     defined by a list of polynomials with the extra information about the correspondence of the generators
     and meridians of the elements of the list.
-g
+
     INPUT:
 
     - ``flist`` -- a  tuple of polynomial with two variables, over a number field
@@ -1549,14 +1549,14 @@ g
     if len(flist)>0:
         f = prod(flist)
         x, y = flist[0].parent().gens()
-    else: 
+    else:
         R = PolynomialRing(QQ, ('x', 'y'))
         x, y = R.gens()
         f = R(1)
     flist1 = [_ for _ in flist]
     if projective:
         while f.degree(y) < f.degree():
-            flist1 = [g.subs({x: x + y}) for g in flist] 
+            flist1 = [g.subs({x: x + y}) for g in flist]
             f = prod(flist1)
     if braid_mon is None:
         if len(flist1) == 1:

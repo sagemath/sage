@@ -3400,10 +3400,10 @@ class HyperplaneArrangementElement(Element):
              Hyperplane x - y + 0,
              Hyperplane x + 0*y + 0,
              Hyperplane x + 0*y + 1]
-            sage: G, dic = H._fundamental_group_()
+            sage: G, dic = H._fundamental_group_() # optional - sirocco
             sage: G
             Finitely presented group < x0, x1, x2, x3, x4 | x3*x2*x3^-1*x2^-1, x2^-1*x0^-1*x2*x4*x0*x4^-1,
-                                       x0*x1*x3*x0^-1*x3^-1*x1^-1, x0*x2*x4*x2^-1*x0^-1*x4^-1, 
+                                       x0*x1*x3*x0^-1*x3^-1*x1^-1, x0*x2*x4*x2^-1*x0^-1*x4^-1,
                                        x0*x1^-1*x0^-1*x3^-1*x1*x3,
                                        x4*x3^-1*x1*x3*x4^-1*x3^-1*x1^-1*x3 >
             sage: dic
@@ -3412,7 +3412,7 @@ class HyperplaneArrangementElement(Element):
         .. WARNING::
 
             This functionality requires the sirocco package to be installed.
-        """        
+        """
         from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
         from sage.rings.qqbar import QQbar
         n = self.dimension()
