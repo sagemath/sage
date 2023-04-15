@@ -1125,17 +1125,25 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
     arrangement1 = [_.change_ring(F) for _ in arrangement1]
     x, y = f.parent().gens()
     glist = tuple(_[0] for f0 in arrangement1 for _ in f0.factor())
-    g = prod(glist)
+    g = f.parent()(prod(glist))
     d = g.degree(y)
     while not g.coefficient(y**d) in F:
         g = g.subs({x: x + y})
         d = g.degree(y)
         arrangement1 = tuple(f1.subs({x: x + y}) for f1 in arrangement1)
         glist = tuple(f1.subs({x: x + y}) for f1 in glist)
-    disc = discrim(glist)
-    V = corrected_voronoi_diagram(tuple(disc))
-    G, E, p, EC, DG = voronoi_cells(V)
-    p0 = (p[0], p[1])
+    if d>0:
+        disc = discrim(glist)
+    else:
+        disc = []
+    if len(disc) == 0:
+        computebm = False
+        result = []
+        p0 = (0, 0)
+    else:
+        V = corrected_voronoi_diagram(tuple(disc))
+        G, E, p, EC, DG = voronoi_cells(V)
+        p0 = (p[0], p[1])
     if computebm:
         geombasis = geometric_basis(G, E, EC, p, DG)
         segs = set()
@@ -1173,8 +1181,8 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
                 x1 = tuple(path[i + 1].vector())
                 braidpath = braidpath * segsbraids[(x0, x1)]
             result.append(braidpath)
-        if len(arrangement1) == 1:
-            return result
+    if len(arrangement1) == 1:
+        return result
     p1 = p0[0] + I1 * p0[1]
     strands = {}
     roots_base = []
@@ -1186,13 +1194,14 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
     if not holdstrand:
         roots_base.sort()
         strands = {i + 1: par[1] + 1  for i, par in enumerate(roots_base)}
-    if computebm and not holdstrand:
+    computebm0 = computebm or len(disc) == 0
+    if computebm0 and not holdstrand:
         return (result, strands)
-    elif computebm and holdstrand:
+    elif computebm0 and holdstrand:
         return (result,roots_base)
-    elif not computebm and not holdstrand:
-        return strands
-    elif not computebm and holdstrand:
+    elif not computebm0 and not holdstrand:
+            return strands
+    elif not computebm0 and holdstrand:
         return roots_base
 
 @parallel
@@ -1377,21 +1386,33 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
         sage: bm = braid_monodromy(f); print(bm) # optional - sirocco
         [s1*s2*s0*s1*s0^-1*s1^-1*s0^-1, s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1, (s0*s1)^2]
-        sage: g = fundamental_group(f, projective=True, braid_mon=bm); print (g) # optional - sirocco
+        sage: g = fundamental_group(f, projective=True, braid_mon=bm); g # optional - sirocco
         Finitely presented group < x0, x1 | x1*x0^2*x1, x0^-1*x1^-1*x0^-1*x1*x0^-1*x1^-1 >
         sage: print (g.order(), g.abelian_invariants()) # optional - sirocco
         12 (4,)
     """
     g = f
+    x, y = g.parent().gens()
+    F = g.parent().base_ring()
+    d = g.degree(y)
+    while not g.coefficient(y**d) in F:
+        g = g.subs({x: x + y})
+        d = g.degree(y)
     if projective:
-        x, y = g.parent().gens()
         while g.degree(y) < g.degree():
             g = g.subs({x: x + y})
+    # if g.degree(y) == 1:
+    #     if projective:
+    #         return FreeGroup(1) / [[g.degree()]]
+    #     return FreeGroup(1)/[]
     if braid_mon is None:
         bm = braid_monodromy(g)
     else:
-        bm =braid_mon
-    d = bm[0].parent().strands()
+        bm = braid_mon
+    if bm == []:
+        d = g.degree(y)
+    else:
+        d = bm[0].parent().strands()
     F = FreeGroup(d)
 
     @parallel
@@ -1458,10 +1479,8 @@ def braid_monodromy_arrangement(flist):
         it can be also a method for affine line arrangements.
     """
     f = prod(flist)
-    if len(flist) == 1:
-        d = f.degree()
-        dic ={j + 1 : 1 for j in range(d)}
-        return (braid_monodromy(f), dic)
+    # if len(flist) == 1:
+    #     return (braid_monodromy(f), {})
     return braid_monodromy(f, arrangement=flist, holdstrand=False)
 
 def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False, braid_mon=None):
@@ -1469,7 +1488,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     Compute the fundamental group of the complement of a curve
     defined by a list of polynomials with the extra information about the correspondence of the generators
     and meridians of the elements of the list.
-
+g
     INPUT:
 
     - ``flist`` -- a  tuple of polynomial with two variables, over a number field
@@ -1511,15 +1530,15 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         sage: g # optional - sirocco
         Finitely presented group < x0, x1, x2 | x2*x1*x2^-1*x1^-1, x1*x0*x1^-1*x0^-1, x2*x0*x2*x0^-1*x2^-1*x0^-1 >
         sage: dic # optional - sirocco
-        {(-1, -3, -2, -1): 3, 1: 1, 2: 2, 3: 1}
+        {1: (1,), 2: (2,), 3: (-1, -3, -2, -1)}
         sage: BM = braid_monodromy_arrangement(flist) # optional - sirocco
         sage: (g, dic) == fundamental_group_arrangement(flist, braid_mon=BM) # optional - sirocco
         True
         sage: fundamental_group_arrangement(flist, simplified=False, braid_mon=BM) # optional - sirocco
-        (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2, x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1, x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1, 1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >, {(-4, -3, -2, -1): 3, 1: 1, 2: 2, 3: 1, 4: 1})
+        (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2, x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1, x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1, 1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >, {1: (1,), 2: (2,), 3: (-4, -3, -2, -1)})
         sage: fundamental_group_arrangement(flist, projective=True, braid_mon=BM) # optional - sirocco
-        (Finitely presented group < x |  >, {(-1, -1, -1): 2, 1: 1})
-
+        (Finitely presented group < x |  >, {1: (1,), 2: (-1, -1, -1)})
+    
     .. TODO::
 
         Create a class ``arrangements_of_curves`` with a ``fundamental_group`` method
@@ -1527,37 +1546,52 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         hyperplane arrangements defined over a number subfield of ``QQbar`` after
         applying a generic line section.
     """
-    f = prod(flist)
+    if len(flist)>0:
+        f = prod(flist)
+        x, y = flist[0].parent().gens()
+    else: 
+        R = PolynomialRing(QQ, ('x', 'y'))
+        x, y = R.gens()
+        f = R(1)
+    flist1 = [_ for _ in flist]
+    if projective:
+        while f.degree(y) < f.degree():
+            flist1 = [g.subs({x: x + y}) for g in flist] 
+            f = prod(flist1)
     if braid_mon is None:
-        bm, dic = braid_monodromy_arrangement(flist)
+        if len(flist1) == 1:
+            bm = braid_monodromy_arrangement(flist1)
+            dic = {j + 1: 1 for j in range(len(flist))}
+        elif len(flist1) == 0:
+            bm = []
+            dic = dict()
+        else:
+            bm, dic = braid_monodromy_arrangement(flist1)
     else:
         bm, dic = braid_mon
     g = fundamental_group(f, simplified=False, projective=projective, puiseux=puiseux, braid_mon=bm)
-    if not simplified and projective:
-        return (g, dic)
-    elif not simplified:
-        a = tuple(-i - 1 for i in reversed(range(g.ngens())))
-        dic[a] = len(flist) + 1
-        return (g,dic)
-    hom = g.simplification_isomorphism()
-    g1 = hom.codomain()
-    dic1 = {}
-    for j in range(g.ngens()):
-        x = hom(g.gen(j)).Tietze()
-        if len(x) == 1:
-            i = x[0]
-            if i not in dic1.keys():
-                dic1[i] = dic[j + 1]
-    if projective:
-        Lg = [j+1 for j in range(len(flist)) if j+1 not in dic1.keys()]
-        if len(Lg) == 1:
-            j = Lg[0]
-            i = [i + 1 for i in range(g.ngens()) if dic[i + 1] == j][0]
-            t = hom(g([i])).Tietze()
-            dic1[t] = j
+    if simplified:
+        hom = g.simplification_isomorphism()
     else:
+        hom = g.hom(codomain=g, im_gens=list(g.gens()), check=False)
+    g1 = hom.codomain()
+    if len(flist) == 0:
+        return (g1, dict())
+    dic1 = {}
+    for i in range(len(flist1)):
+        j = [j1 for j1 in dic.keys() if dic[j1] == i + 1][0]
+        dic1[i + 1] = hom(g([j])).Tietze()
+    # if projective:
+    #     Lg = [j+1 for j in range(len(flist1)) if j+1 not in dic1.keys()]
+    #     if len(Lg) == 1:
+    #         j = Lg[0]
+    #         i = [i + 1 for i in range(g.ngens()) if dic[i + 1] == j][0]
+    #         t = hom(g([i])).Tietze()
+    #         dic1[j] = t
+    # elif f.degree(y) == f.degree():
+    if not projective and f.degree(y) == f.degree():
         t = prod(hom(x) for x in g.gens()).inverse().Tietze()
-        dic1[t] = len(flist) + 1
+        dic1[len(flist1) + 1] = t
     n = g1.ngens()
     rels = [_.Tietze() for _ in g1.relations()]
     g1 = FreeGroup(n) / rels

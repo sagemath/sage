@@ -3377,6 +3377,61 @@ class HyperplaneArrangementElement(Element):
         else:
             raise ValueError("invalid algorithm")
 
+    def _fundamental_group_(self):
+        r"""
+        It computes the fundamental group of the complement of an affine line arrangement in `\mathbb{C}^2`
+        with equations with coefficients in a subfield of ``QQbar``
+
+        OUTPUT:
+
+        A group finitely presented with the assignation of each line to a member of a group (meridian).
+
+        EXAMPLES::
+
+            sage: A.<x, y> = HyperplaneArrangements(QQ)
+            sage: L = [y + x, y + x - 1]
+            sage: H = A(L)
+            sage: G, dic = H._fundamental_group_(); G
+            Finitely presented group < x0, x1 |  >
+            sage: L = [x, y, x + 1, y + 1, x - y]
+            sage: H = A(L); list(H)
+            [Hyperplane 0*x + y + 0,
+             Hyperplane 0*x + y + 1,
+             Hyperplane x - y + 0,
+             Hyperplane x + 0*y + 0,
+             Hyperplane x + 0*y + 1]
+            sage: G, dic = H._fundamental_group_()
+            sage: G
+            Finitely presented group < x0, x1, x2, x3, x4 | x3*x2*x3^-1*x2^-1, x2^-1*x0^-1*x2*x4*x0*x4^-1,
+                                       x0*x1*x3*x0^-1*x3^-1*x1^-1, x0*x2*x4*x2^-1*x0^-1*x4^-1, 
+                                       x0*x1^-1*x0^-1*x3^-1*x1*x3,
+                                       x4*x3^-1*x1*x3*x4^-1*x3^-1*x1^-1*x3 >
+            sage: dic
+            {1: (5,), 2: (4,), 3: (1,), 4: (3,), 5: (2,)}
+        
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """        
+        from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
+        from sage.rings.qqbar import QQbar
+        n = self.dimension()
+        if n != 2:
+            print("This method only applies to two dimensional arrangements")
+            return None
+        K = self.base_ring()
+        if not K.is_subring(QQbar):
+            print("This method only works if the base field has an embedding in QQbar")
+            return None
+        S = self.parent().ambient_space().symmetric_space()
+        L = []
+        for h in self:
+            coeff = h.coefficients()
+            V = (1,) + S.gens()
+            p = S.sum(V[i]*c for i, c in enumerate(coeff))
+            L.append(p)
+        G, dic = fundamental_group_arrangement(L, puiseux=True)
+        return (G, dic)
 
 class HyperplaneArrangements(Parent, UniqueRepresentation):
     """
