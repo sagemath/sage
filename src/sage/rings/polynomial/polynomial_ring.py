@@ -180,7 +180,7 @@ import sage.interfaces.abc
 
 def is_PolynomialRing(x):
     """
-    Return True if x is a *univariate* polynomial ring (and not a
+    Return True if ``x`` is a *univariate* polynomial ring (and not a
     sparse multivariate polynomial ring in one variable).
 
     EXAMPLES::
@@ -1013,7 +1013,7 @@ class PolynomialRing_general(ring.Algebra):
 
     def base_extend(self, R):
         """
-        Return the base extension of this polynomial ring to R.
+        Return the base extension of this polynomial ring to `R`.
 
         EXAMPLES::
 
@@ -1037,12 +1037,13 @@ class PolynomialRing_general(ring.Algebra):
 
     def change_ring(self, R):
         """
-        Return the polynomial ring in the same variable as self over R.
+        Return the polynomial ring in the same variable as ``self`` over `R`.
 
         EXAMPLES::
 
-            sage: R.<ZZZ> = RealIntervalField() []; R
-            Univariate Polynomial Ring in ZZZ over Real Interval Field with 53 bits of precision
+            sage: R.<ZZZ> = RealIntervalField()[]; R
+            Univariate Polynomial Ring in ZZZ over
+             Real Interval Field with 53 bits of precision
             sage: R.change_ring(GF(19^2, 'b'))                                          # optional - sage.rings.finite_rings
             Univariate Polynomial Ring in ZZZ over Finite Field in b of size 19^2
         """
@@ -1052,7 +1053,7 @@ class PolynomialRing_general(ring.Algebra):
 
     def change_var(self, var):
         r"""
-        Return the polynomial ring in variable var over the same base
+        Return the polynomial ring in variable ``var`` over the same base
         ring.
 
         EXAMPLES::
@@ -1143,7 +1144,7 @@ class PolynomialRing_general(ring.Algebra):
 
         EXAMPLES::
 
-            sage: R.<ZZZ> = RealIntervalField() []; R
+            sage: R.<ZZZ> = RealIntervalField()[]; R
             Univariate Polynomial Ring in ZZZ over Real Interval Field with 53 bits of precision
             sage: R.characteristic()
             0
@@ -1371,8 +1372,8 @@ class PolynomialRing_general(ring.Algebra):
             sage: while not all(found):
             ....:     found[R.random_element(degree=(0, 8)).degree()] = True
 
-        Note that the zero polynomial has degree ``-1``, so if you want to
-        consider it set the minimum degree to ``-1``::
+        Note that the zero polynomial has degree `-1`, so if you want to
+        consider it set the minimum degree to `-1`::
 
             sage: while R.random_element(degree=(-1,2), x=-1, y=1) != R.zero():
             ....:     pass
@@ -1518,7 +1519,7 @@ class PolynomialRing_general(ring.Algebra):
     def karatsuba_threshold(self):
         """
         Return the Karatsuba threshold used for this ring by the method
-        _mul_karatsuba to fall back to the schoolbook algorithm.
+        :meth:`_mul_karatsuba` to fall back to the schoolbook algorithm.
 
         EXAMPLES::
 
@@ -1533,7 +1534,7 @@ class PolynomialRing_general(ring.Algebra):
 
     def set_karatsuba_threshold(self, Karatsuba_threshold):
         """
-        Changes the default threshold for this ring in the method _mul_karatsuba
+        Changes the default threshold for this ring in the method :meth:`_mul_karatsuba`
         to fall back to the schoolbook algorithm.
 
         .. warning::
@@ -1628,10 +1629,10 @@ class PolynomialRing_general(ring.Algebra):
 
         -  ``max_degree`` - an int; the iterator will generate
            all monic polynomials which have degree less than or equal to
-           max_degree
+           ``max_degree``
 
         -  ``of_degree`` - an int; the iterator will generate
-           all monic polynomials which have degree of_degree
+           all monic polynomials which have degree ``of_degree``
 
 
         OUTPUT: an iterator
@@ -1909,7 +1910,7 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
              T^4 - 2*T^3 + 3*T^2 - 4*T + 4]
 
         We do not require Weil polynomials to be monic. This example generates Weil
-        polynomials associated to K3 surfaces over `GF(2)` of Picard number at least 12::
+        polynomials associated to K3 surfaces over `\GF{2}` of Picard number at least 12::
 
             sage: R.<T> = QQ[]
             sage: l = R.weil_polynomials(10, 1, lead=2)                                 # optional - sage.libs.flint
@@ -2125,7 +2126,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
         The Newton divided-difference coefficients of the `n`-th
         Lagrange interpolation polynomial `P_n(x)` that passes through
         the points in ``points`` (see :meth:`lagrange_polynomial`).
-        These are the coefficients `F_{0,0}, F_{1,1}, \dots, `F_{n,n}`
+        These are the coefficients `F_{0,0}, F_{1,1}, \dots, F_{n,n}`
         in the base ring of ``self`` such that
 
         .. MATH::
@@ -2208,7 +2209,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
           - ``'divided_difference'``: use the method of divided
             differences.
 
-          - ``algorithm='neville'``: adapt Neville's method as
+          - ``'neville'``: adapt Neville's method as
             described on page 144 of [BF2005]_ to recursively generate
             the Lagrange interpolation polynomial.  Neville's method
             generates a table of approximating polynomials, where the
@@ -2938,7 +2939,7 @@ class PolynomialRing_cdvf(PolynomialRing_cdvr, PolynomialRing_field):
 
 class PolynomialRing_dense_padic_ring_generic(PolynomialRing_cdvr):
     r"""
-    A class for dense polynomial ring over padic rings
+    A class for dense polynomial ring over p-adic rings
     """
     def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         PolynomialRing_cdvr.__init__(self, base_ring, sparse=False, name=name,
@@ -2967,7 +2968,7 @@ class PolynomialRing_dense_padic_ring_generic(PolynomialRing_cdvr):
 
 class PolynomialRing_dense_padic_field_generic(PolynomialRing_cdvf):
     r"""
-    A class for dense polynomial ring over padic fields
+    A class for dense polynomial ring over p-adic fields
     """
     def __init__(self, base_ring, name=None, implementation=None, element_class=None, category=None):
         PolynomialRing_cdvf.__init__(self, base_ring, sparse=False, name=name,

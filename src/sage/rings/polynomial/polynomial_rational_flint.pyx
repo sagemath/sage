@@ -193,11 +193,11 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
         """
-        Initialises the associated data for the polynomial self.
+        Initialises the associated data for the polynomial ``self``.
 
         INPUT:
 
-        - ``parent`` - Polynomial ring, the parent of self
+        - ``parent`` - Polynomial ring, the parent of ``self``
         - ``x`` - Data for the new polynomial self, e.g. a polynomial, an
           integer, a rational, a list of rationals, a dictionary with keys
           the degrees and the rational coefficients, etc (default: ``None``)
@@ -319,7 +319,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def __copy__(self):
         """
-        Return a copy of self.
+        Return a copy of ``self``.
 
         TESTS::
 
@@ -334,7 +334,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def _singular_(self, singular=singular_default):
         """
-        Return a Singular representation of self.
+        Return a Singular representation of ``self``.
 
         INPUT:
 
@@ -375,7 +375,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         """
         Return the degree of ``self``.
 
-        By convention, the degree of the zero polynomial is -1.
+        By convention, the degree of the zero polynomial is `-1`.
 
         EXAMPLES::
 
@@ -418,7 +418,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _unsafe_mutate(self, unsigned long n, value):
         """
-        Sets the `n`-th coefficient of self to value.
+        Sets the `n`-th coefficient of ``self`` to value.
 
         TESTS::
 
@@ -557,7 +557,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        - ``n`` - The power of `t` modulo which self is truncated
+        - ``n`` - The power of `t` modulo which ``self`` is truncated
 
         EXAMPLES::
 
@@ -603,7 +603,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f.reverse()
             t^4 + t^3 + 1/2*t^2 + 1/3*t + 1/4
 
-        Next, an example we the returned polynomial has lower degree because
+        Next, an example where the returned polynomial has lower degree because
         the original polynomial has low coefficients equal to zero::
 
             sage: R.<t> = QQ[]
@@ -612,7 +612,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             3/4*t^5 + 6
 
         The next example illustrates the passing of a value for ``degree`` less
-        than the length of self, notationally resulting in truncation prior to
+        than the length of ``self``, notationally resulting in truncation prior to
         reversing::
 
             sage: R.<t> = QQ[]
@@ -621,7 +621,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             t^2 + t + 1/2
 
         Now we illustrate the passing of a value for ``degree`` greater than
-        the length of self, notationally resulting in zero padding at the top
+        the length of ``self``, notationally resulting in zero padding at the top
         end prior to reversing::
 
             sage: R.<t> = QQ[]
@@ -681,7 +681,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def revert_series(self, n):
         r"""
-        Return a polynomial `f` such that `f(self(x)) = self(f(x)) = x mod x^n`.
+        Return a polynomial `f` such that ``f(self(x)) = self(f(x)) = x mod x^n``.
 
         EXAMPLES::
 
@@ -721,7 +721,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef bint is_zero(self) except -1:
         """
-        Return whether or not self is the zero polynomial.
+        Return whether or not ``self`` is the zero polynomial.
 
         EXAMPLES::
 
@@ -756,7 +756,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def __bool__(self):
         """
-        Return whether or not self is non-zero.
+        Return whether or not ``self`` is non-zero.
 
         EXAMPLES::
 
@@ -808,7 +808,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def __rshift__(self, n):
         """
-        Notationally returns the quotient of Euclidean division of self
+        Notationally returns the quotient of Euclidean division of ``self``
         by `t^n`.
 
         EXAMPLES::
@@ -922,11 +922,11 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     @coerce_binop
     def quo_rem(self, right):
-        """
+        r"""
         Return the quotient and remainder of the Euclidean division of
-        self and right.
+        ``self`` and ``right``.
 
-        Raises a ZerodivisionError if right is zero.
+        Raises a :class:`ZeroDivisionError` if ``right`` is zero.
 
         EXAMPLES::
 
@@ -953,10 +953,10 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     @coerce_binop
     def gcd(self, right):
-        """
-        Return the (monic) greatest common divisor of self and right.
+        r"""
+        Return the (monic) greatest common divisor of ``self`` and ``right``.
 
-        Corner cases:  if self and right are both zero, returns zero.  If
+        Corner cases:  if ``self`` and ``right`` are both zero, returns zero.  If
         only one of them is zero, returns the other polynomial, up to
         normalisation.
 
@@ -982,11 +982,11 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     @coerce_binop
     def lcm(self, right):
-        """
-        Return the monic (or zero) least common multiple of self and right.
+        r"""
+        Return the monic (or zero) least common multiple of ``self`` and ``right``.
 
-        Corner cases:  if either of self and right are zero, returns zero.
-        This behaviour is ensures that the relation lcm(a,b) gcd(a,b) == a b
+        Corner cases:  if either of ``self`` and ``right`` are zero, returns zero.
+        This behaviour is ensures that the relation `lcm(a,b)\cdot gcd(a,b) = a\cdot b`
         holds up to multiplication by rationals.
 
         EXAMPLES::
@@ -1009,14 +1009,14 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     @coerce_binop
     def xgcd(self, right):
-        """
-        Return polynomials d, s, and t such that d == s * self + t * right,
-        where d is the (monic) greatest common divisor of self and right.
-        The choice of s and t is not specified any further.
+        r"""
+        Return polynomials `d`, `s`, and `t` such that ``d == s * self + t * right``,
+        where `d` is the (monic) greatest common divisor of ``self`` and ``right``.
+        The choice of `s` and `t` is not specified any further.
 
-        Corner cases:  if self and right are zero, returns zero polynomials.
-        Otherwise, if only self is zero, returns (d, s, t) = (right, 0, 1) up
-        to normalisation, and similarly if only right is zero.
+        Corner cases:  if ``self`` and ``right`` are zero, returns zero polynomials.
+        Otherwise, if only ``self`` is zero, returns ``(d, s, t) = (right, 0, 1)`` up
+        to normalisation, and similarly if only ``right`` is zero.
 
         EXAMPLES::
 
@@ -1050,7 +1050,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _mul_(self, right):
         """
-        Return the product of self and right.
+        Return the product of ``self`` and ``right``.
 
         EXAMPLES::
 
@@ -1116,7 +1116,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _rmul_(self, Element left):
         r"""
-        Return left * self, where left is a rational number.
+        Return ``left * self``, where ``left`` is a rational number.
 
         EXAMPLES::
 
@@ -1136,7 +1136,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _lmul_(self, Element right):
         r"""
-        Return self * right, where right is a rational number.
+        Return ``self * right``, where ``right`` is a rational number.
 
         EXAMPLES::
 
@@ -1299,7 +1299,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def __floordiv__(Polynomial_rational_flint self, right):
         """
-        Return the quotient of self and right obtain by Euclidean division.
+        Return the quotient of ``self`` and ``right`` obtained by Euclidean division.
 
         EXAMPLES::
 
@@ -1396,7 +1396,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _mod_(self, right):
         """
-        Return the remainder of self and right obtain by Euclidean division.
+        Return the remainder of ``self`` and ``right`` obtain by Euclidean division.
 
         EXAMPLES::
 
@@ -1435,7 +1435,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def numerator(self):
         """
-        Return the numerator of self.
+        Return the numerator of ``self``.
 
         Representing self as the quotient of an integer polynomial and
         a positive integer denominator (coprime to the content of the
@@ -1460,7 +1460,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def denominator(self):
         """
-        Return the denominator of self.
+        Return the denominator of ``self``.
 
         EXAMPLES::
 
@@ -1527,7 +1527,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def real_root_intervals(self):
         """
-        Return isolating intervals for the real roots of self.
+        Return isolating intervals for the real roots of ``self``.
 
         EXAMPLES:
 
@@ -1545,10 +1545,10 @@ cdef class Polynomial_rational_flint(Polynomial):
     @coerce_binop
     def resultant(Polynomial_rational_flint self, right):
         r"""
-        Return the resultant of self and right.
+        Return the resultant of ``self`` and ``right``.
 
-        Enumerating the roots over `\QQ` as `r_1, \cdots, r_m` and
-        `s_1, \cdots, s_n` and letting `x` and `y` denote the leading
+        Enumerating the roots over `\QQ` as `r_1, \dots, r_m` and
+        `s_1, \dots, s_n` and letting `x` and `y` denote the leading
         coefficients of `f` and `g`, the resultant of the two polynomials
         is defined by
 
@@ -1610,7 +1610,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             False
             sage: R(-1/2).is_irreducible()
             False
-            sage: (t+1).is_irreducible()
+            sage: (t + 1).is_irreducible()
             True
 
         Test that caching works::
@@ -2067,7 +2067,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         -  ``pari_group`` - bool (default: ``False``); if ``True`` instead
            return the Galois group as a PARI group.  This has a useful label
            in it, and may be slightly faster since it doesn't require looking
-           up a group in Gap.  To get a permutation group from a PARI
+           up a group in GAP.  To get a permutation group from a PARI
            group ``P``, type ``PermutationGroup(P)``.
 
         -  ``algorithm`` - ``'pari'``, ``'gap'``, ``'kash'``, ``'magma'`` (default:
@@ -2075,9 +2075,7 @@ cdef class Polynomial_rational_flint(Polynomial):
            ``'gap'``, for degrees from 12 to 15;
            ``'kash'``, for degrees from 16 or more).
 
-        OUTPUT:
-
-        -  Galois group
+        OUTPUT: Galois group
 
         ALGORITHM:
 
@@ -2234,23 +2232,21 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def factor_mod(self, p):
         """
-        Return the factorization of self modulo the prime ``p``.
+        Return the factorization of ``self`` modulo the prime `p`.
 
         Assumes that the degree of this polynomial is at least one, and raises
-        a ``ValueError`` otherwise.
+        a :class:`ValueError` otherwise.
 
         INPUT:
 
         -  ``p`` - Prime number
 
-        OUTPUT:
-
-        -  Factorization of this polynomial  modulo ``p``
+        OUTPUT: Factorization of this polynomial  modulo `p`
 
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: (x^5 + 17*x^3 + x+ 3).factor_mod(3)
+            sage: (x^5 + 17*x^3 + x + 3).factor_mod(3)
             x * (x^2 + 1)^2
             sage: (x^5 + 2).factor_mod(5)
             (x + 2)^5
@@ -2278,7 +2274,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         return R(1)._factor_pari_helper(G, unit=R(self).leading_coefficient())
 
     def factor_padic(self, p, prec=10):
-        """
+        r"""
         Return the `p`-adic factorization of this polynomial to the given
         precision.
 
@@ -2288,47 +2284,53 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         -  ``prec`` - Integer; the precision
 
-        OUTPUT:
-
-        - factorization of ``self`` viewed as a `p`-adic polynomial
+        OUTPUT: factorization of ``self`` viewed as a `p`-adic polynomial
 
         EXAMPLES::
 
             sage: R.<x> = QQ[]
             sage: f = x^3 - 2
             sage: f.factor_padic(2)
-            (1 + O(2^10))*x^3 + O(2^10)*x^2 + O(2^10)*x + 2 + 2^2 + 2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^8 + 2^9 + O(2^10)
+            (1 + O(2^10))*x^3 + O(2^10)*x^2 + O(2^10)*x
+            + 2 + 2^2 + 2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^8 + 2^9 + O(2^10)
             sage: f.factor_padic(3)
-            (1 + O(3^10))*x^3 + O(3^10)*x^2 + O(3^10)*x + 1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10)
+            (1 + O(3^10))*x^3 + O(3^10)*x^2 + O(3^10)*x
+            + 1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10)
             sage: f.factor_padic(5)
-            ((1 + O(5^10))*x + 2 + 4*5 + 2*5^2 + 2*5^3 + 5^4 + 3*5^5 + 4*5^7 + 2*5^8 + 5^9 + O(5^10)) * ((1 + O(5^10))*x^2 + (3 + 2*5^2 + 2*5^3 + 3*5^4 + 5^5 + 4*5^6 + 2*5^8 + 3*5^9 + O(5^10))*x + 4 + 5 + 2*5^2 + 4*5^3 + 4*5^4 + 3*5^5 + 3*5^6 + 4*5^7 + 4*5^9 + O(5^10))
+            ((1 + O(5^10))*x
+             + 2 + 4*5 + 2*5^2 + 2*5^3 + 5^4 + 3*5^5 + 4*5^7 + 2*5^8 + 5^9 + O(5^10))
+            * ((1 + O(5^10))*x^2
+               + (3 + 2*5^2 + 2*5^3 + 3*5^4 + 5^5 + 4*5^6 + 2*5^8 + 3*5^9 + O(5^10))*x
+               + 4 + 5 + 2*5^2 + 4*5^3 + 4*5^4 + 3*5^5 + 3*5^6 + 4*5^7 + 4*5^9 + O(5^10))
 
         The input polynomial is considered to have "infinite" precision,
         therefore the `p`-adic factorization of the polynomial is not
-        the same as first coercing to `Q_p` and then factoring
+        the same as first coercing to `\QQ_p` and then factoring
         (see also :trac:`15422`)::
 
             sage: f = x^2 - 3^6
-            sage: f.factor_padic(3,5)
+            sage: f.factor_padic(3, 5)
             ((1 + O(3^5))*x + 3^3 + O(3^5)) * ((1 + O(3^5))*x + 2*3^3 + 2*3^4 + O(3^5))
             sage: f.change_ring(Qp(3,5)).factor()
             Traceback (most recent call last):
             ...
-            PrecisionError: p-adic factorization not well-defined since the discriminant is zero up to the requestion p-adic precision
+            PrecisionError: p-adic factorization not well-defined since
+            the discriminant is zero up to the requestion p-adic precision
 
         A more difficult example::
 
             sage: f = 100 * (5*x + 1)^2 * (x + 5)^2
             sage: f.factor_padic(5, 10)
-            (4*5^4 + O(5^14)) * ((1 + O(5^9))*x + 5^-1 + O(5^9))^2 * ((1 + O(5^10))*x + 5 + O(5^10))^2
+            (4*5^4 + O(5^14)) * ((1 + O(5^9))*x + 5^-1 + O(5^9))^2
+            * ((1 + O(5^10))*x + 5 + O(5^10))^2
 
         Try some bogus inputs::
 
-            sage: f.factor_padic(3,-1)
+            sage: f.factor_padic(3, -1)
             Traceback (most recent call last):
             ...
             ValueError: prec_cap must be non-negative
-            sage: f.factor_padic(6,10)
+            sage: f.factor_padic(6, 10)
             Traceback (most recent call last):
             ...
             ValueError: p must be prime
@@ -2362,12 +2364,10 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        -  ``p`` - Prime number; coerceable to ``Integer``
-        -  ``e`` - Exponent; coerceable to ``Integer``
+        -  ``p`` - Prime number; coerceable to :class:`Integer`
+        -  ``e`` - Exponent; coerceable to :class:`Integer`
 
-        OUTPUT:
-
-        -  Hensel lifts; list of polynomials over `\ZZ / p^e \ZZ`
+        OUTPUT: Hensel lifts; list of polynomials over `\ZZ / p^e \ZZ`
 
         EXAMPLES::
 
@@ -2388,7 +2388,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             []
             sage: R(x).hensel_lift(7, 2)
             [x]
-            sage: R(x-1).hensel_lift(7, 2)
+            sage: R(x - 1).hensel_lift(7, 2)
             [x + 48]
 
         Variable names that are reserved in PARI, such as ``I``, are
@@ -2446,16 +2446,14 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         The discriminant of constant polynomials is defined to be 0.
 
-        OUTPUT:
-
-        -  Discriminant, an element of the base ring of the polynomial ring
+        OUTPUT: Discriminant, an element of the base ring of the polynomial ring
 
         .. NOTE::
 
-            Note the identity `R_n(f) := (-1)^(n (n-1)/2) R(f,f') a_n^(n-k-2)`,
+            Note the identity `R_n(f) := (-1)^{(n (n-1)/2)} R(f,f') a_n^{(n-k-2)}`,
             where `n` is the degree of this polynomial, `a_n` is the leading
             coefficient, `f'` is the derivative of `f`, and `k` is the degree
-            of `f'`.  Calls :meth:`.resultant`.
+            of `f'`.  Calls :meth:`resultant`.
 
         ALGORITHM:
 
@@ -2514,14 +2512,14 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def galois_group_davenport_smith_test(self, num_trials=50, assume_irreducible=False):
         """
-        Use the Davenport-Smith test to attempt to certify that `f` has Galois group A_n or S_n.
+        Use the Davenport-Smith test to attempt to certify that `f` has Galois group `A_n` or `S_n`.
 
-        Return 1 if the Galois group is certified as S_n, 2 if A_n, or 0 if no conclusion is reached.
+        Return 1 if the Galois group is certified as `S_n`, 2 if `A_n`, or 0 if no conclusion is reached.
 
         By default, we first check that `f` is irreducible. For extra efficiency, one can override this
-        by specifying `assume_irreducible=True`; this yields undefined results if `f` is not irreducible.
+        by specifying ``assume_irreducible=True``; this yields undefined results if `f` is not irreducible.
 
-        A corresponding function in Magma is `IsEasySnAn`.
+        A corresponding function in Magma is ``IsEasySnAn``.
 
         EXAMPLES::
 

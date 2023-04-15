@@ -1200,7 +1200,7 @@ cdef class CommutativeRing(Ring):
         EXAMPLES::
 
             sage: R.<x, y> = GF(3)[]                                                    # optional - sage.rings.finite_rings
-            sage: R.localization((x*y, x**2+y**2))                                      # optional - sage.rings.finite_rings
+            sage: R.localization((x*y, x**2 + y**2))                                    # optional - sage.rings.finite_rings
             Multivariate Polynomial Ring in x, y over Finite Field of size 3
              localized at (y, x, x^2 + y^2)
             sage: ~y in _                                                               # optional - sage.rings.finite_rings
