@@ -943,13 +943,24 @@ class PolynomialSequence_generic(Sequence_generic):
              Polynomial Sequence with 128 Polynomials in 128 Variables,
              Polynomial Sequence with 128 Polynomials in 128 Variables]
         """
-        g = self.connection_graph()
-        C = sorted(g.connected_components())
-
-        P = [[] for _ in range(len(C))]
+        # Use a union-find data structure to encode relationships between
+        # variables, i.e., that they belong to a same polynomial
+        from sage.sets.disjoint_set import DisjointSet
+        DS = DisjointSet(self.variables())
+        L = []  # to avoid calling twice f.variables()
         for f in self:
-            for i,c in enumerate(C):
-                if len(set(f.variables()).difference(c)) == 0:
+            var = f.variables()
+            u = var[0]
+            L.append((u, f))
+            for v in var[1:]:
+                DS.union(u, v)
+        # Get one representative element per set of variables
+        roots = list(DS.root_to_elements_dict().keys())
+
+        P = [[] for _ in range(len(roots))]
+        for u, f in L:
+            for i, r in enumerate(roots):
+                if DS.find(u) == DS.find(r):
                     P[i].append(f)
                     break
         P = sorted([PolynomialSequence(sorted(p)) for p in P])
