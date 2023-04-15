@@ -294,45 +294,6 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return bool(self._polynomial)
 
-    def depth(self):
-        r"""
-        Return the depth of the given quasimodular form.
-
-        Note that the quasimodular form must be homogeneous of weight
-        `k`. Recall that the *depth* is the integer `p` such that
-
-        .. MATH::
-
-            f = f_0 + f_1 E_2 + \cdots + f_p E_2^p,
-
-        where `f_i` is a modular form of weight `k - 2i` and `f_p` is
-        nonzero.
-
-        EXAMPLES::
-
-            sage: QM = QuasiModularForms(1)
-            sage: E2, E4, E6 = QM.gens()
-            sage: E2.depth()
-            1
-            sage: F = E4^2 + E6*E2 + E4*E2^2 + E2^4
-            sage: F.depth()
-            4
-            sage: QM(7/11).depth()
-            0
-
-        TESTS::
-
-            sage: QM = QuasiModularForms(1)
-            sage: (QM.0 + QM.1).depth()
-            Traceback (most recent call last):
-            ...
-            ValueError: the given graded quasiform is not an homogeneous element
-        """
-        if not self.is_homogeneous():
-            raise ValueError("the given graded quasiform is not an "
-                             "homogeneous element")
-        return self._polynomial.degree()
-
     def is_zero(self):
         r"""
         Return whether the given quasimodular form is zero.
