@@ -1027,7 +1027,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: q = A.base_ring().cardinality()
             sage: exp = phi.exponential(); exp
-            z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^7)
+            z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^8)
 
         The exponential is returned as a lazy power series, meaning that
         any of its coefficients can be computed on demands::
@@ -1043,13 +1043,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
             sage: exp = phi.exponential(); exp
-            z + ((T/(T^4+4))*z^5) + O(z^7)
+            z + ((T/(T^4+4))*z^5) + O(z^8)
 
         The exponential is the compositional inverse of the logarithm
         (see :meth:`logarithm`)::
 
             sage: log = phi.logarithm(); log
-            z + ((4*T/(T^4+4))*z^5) + O(z^7)
+            z + ((4*T/(T^4+4))*z^5) + O(z^8)
             sage: exp.compose(log)
             z + O(z^8)
             sage: log.compose(exp)
@@ -1288,7 +1288,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: log = phi.logarithm(); log
-            z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^7)
+            z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^8)
 
         The logarithm is returned as a lazy power series, meaning that
         any of its coefficients can be computed on demands::
@@ -1304,7 +1304,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
             sage: phi.logarithm()
-            z + ((4*T/(T^4+4))*z^5) + O(z^7)
+            z + ((4*T/(T^4+4))*z^5) + O(z^8)
 
         TESTS::
 
