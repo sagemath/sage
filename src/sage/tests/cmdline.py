@@ -530,11 +530,11 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: ret                                                   # long time
         0
 
-        sage: (out, err, ret) = test_executable([   # optional - gdb    # long time
+        sage: (out, err, ret) = test_executable([  # optional - gdb # long time
         ....:     "sage", "--gdb"], 'quit\n')
-        sage: out.find('(gdb) ') >= 0               # optional - gdb    # long time
+        sage: out.find('(gdb) ') >= 0              # optional - gdb # long time
         True
-        sage: ret                                   # optional - gdb    # long time
+        sage: ret                                  # optional - gdb # long time
         0
 
         sage: (out, err, ret) = test_executable(["sage", "--mwrank", "-v0", "-q"], "0 0 0 0 1\n")
@@ -732,8 +732,8 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: with open(input, 'w') as F:
         ....:     _ = F.write(s)
         sage: L = ["sage", "--ipynb2rst", input, output]
-        sage: _ = test_executable(L)                        # optional - pandoc  # long time
-        sage: print(open(output, 'r').read() == t)          # optional - pandoc  # long time # known bug #32697
+        sage: _ = test_executable(L)                # long time  # optional - pandoc
+        sage: print(open(output, 'r').read() == t)  # long time  # optional - pandoc  # known bug #32697
         True
     """
     pexpect_env = dict(os.environ)

@@ -298,12 +298,15 @@ class GaloisRepresentation(SageObject):
             sage: rho.isogeny_bound() # See Section 5.10 of [Ser1972].  # long time
             [3, 5]
             sage: K = NumberField(x**2 + 1, 'a')
-            sage: EllipticCurve_from_j(K(1728)).galois_representation().isogeny_bound() # CM over K
+            sage: E = EllipticCurve_from_j(K(1728))             # CM over K
+            sage: E.galois_representation().isogeny_bound()
             [0]
-            sage: EllipticCurve_from_j(K(0)).galois_representation().isogeny_bound() # CM NOT over K  # long time
+            sage: E = EllipticCurve_from_j(K(0))                # CM NOT over K
+            sage: E.galois_representation().isogeny_bound()     # long time
             [2, 3]
-            sage: E = EllipticCurve_from_j(K(2268945/128)) # c.f. [Sut2012]
-            sage: E.galois_representation().isogeny_bound() # No 7-isogeny, but...  # long time
+            sage: E = EllipticCurve_from_j(K(2268945/128))      # c.f. [Sut2012]
+            sage: rho = E.galois_representation()
+            sage: rho.isogeny_bound()  # No 7-isogeny, but...   # long time
             [7]
 
         For curves with rational CM, there are infinitely many primes
@@ -371,21 +374,21 @@ class GaloisRepresentation(SageObject):
             sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
             sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
             sage: rho = E.galois_representation()
-            sage: rho.isogeny_bound() # See Section 5.10 of [Ser1972].  # long time
-            [3, 5]
-            sage: rho.reducible_primes()  # long time
+            sage: rho.reducible_primes() # See Section 5.10 of [Ser1972].  # long time
             [3, 5]
 
             sage: K = NumberField(x**2 + 1, 'a')
-            sage: EllipticCurve_from_j(K(1728)).galois_representation().isogeny_bound() # CM over K
+            sage: E = EllipticCurve_from_j(K(1728))             # CM over K
+            sage: E.galois_representation().reducible_primes()
             [0]
-            sage: EllipticCurve_from_j(K(0)).galois_representation().reducible_primes() # CM but NOT over K  # long time
+            sage: E = EllipticCurve_from_j(K(0))                # CM but NOT over K
+            sage: E.galois_representation().reducible_primes()  # long time
             [2, 3]
-            sage: E = EllipticCurve_from_j(K(2268945/128)) # c.f. [Sut2012]
+            sage: E = EllipticCurve_from_j(K(2268945/128))      # c.f. [Sut2012]
             sage: rho = E.galois_representation()
-            sage: rho.isogeny_bound() # ... but there is no 7-isogeny ...  # long time
+            sage: rho.isogeny_bound()  # No 7-isogeny, but...   # long time
             [7]
-            sage: rho.reducible_primes()  # long time
+            sage: rho.reducible_primes()                        # long time
             []
 
         For curves with rational CM, there are infinitely many primes
