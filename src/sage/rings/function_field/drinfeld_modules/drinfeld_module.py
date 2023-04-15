@@ -1176,7 +1176,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         TESTS::
 
-        The rank must be an ``Integer``::
+        The generator must have positive degree (see PR #35519)::
 
             sage: Fq = GF(25)
             sage: A.<T> = Fq[]
