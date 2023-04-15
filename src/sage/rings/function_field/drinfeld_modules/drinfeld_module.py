@@ -991,9 +991,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             See [Gos1998]_, Definition 4.5.8 for the general definition.
 
-        A rank two Drinfeld module is supersingular if and only if its
-        height equals its rank.
-
         EXAMPLES::
 
             sage: Fq = GF(25)
@@ -1037,6 +1034,27 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 return Integer(self(p).valuation() // p.degree())
         except NotImplementedError:
             raise NotImplementedError('height not implemented in this case')
+
+    def is_supersingular(self):
+        r"""
+        Return ``True`` whether the Drinfeld module is supersingular.
+
+        A Drinfeld module is supersingular if and only if its
+        height equals its rank.
+
+        EXAMPLES::
+
+            sage: Fq = GF(343)
+            sage: A.<T> = Fq[]
+            sage: K.<z6> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [1, 0, z6])
+            sage: phi.is_supersingular()
+            True
+            sage: phi(phi.characteristic()) # Purely inseparable
+            z6*t^2
+
+        """
+        return self.height() == self.rank()
 
     def is_finite(self) -> bool:
         r"""
@@ -1176,6 +1194,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         return self._gen.degree()
 
+    def hom(self, u, codomain=None):
+        if codomain is None:
+            H = End(self)
+        else:
+            H = Hom(self, codomain)
+        return H(u)
+
     def velu(self, isog):
         r"""
         Return a new Drinfeld module such that input is an
@@ -1253,9 +1278,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if isog == 0:
             raise e
         quo, rem = (isog * self.gen()).right_quo_rem(isog)
-        char_deg = self.characteristic().degree()
-        if not char_deg.divides(isog.valuation()) \
-                or rem != 0:
-            raise e
-        else:
+        if rem.is_zero() and quo[0] == self.gen()[0]:
             return self.category().object(quo)
+        else:
+            raise e

@@ -475,11 +475,6 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Return ``True`` whether the Drinfeld module is ordinary; raise a
         NotImplementedError if the rank is not two.
 
-        A rank two finite Drinfeld module is *ordinary* if and only if
-        the function ring-characteristic does not divide the Frobenius
-        trace. A *supersingular* rank two finite Drinfeld module is a
-        Drinfeld module that is not ordinary.
-
         A rank two Drinfeld module is *ordinary* if and only if it is
         not supersingular; see :meth:`is_supersingular`.
 
@@ -494,48 +489,6 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: phi_p = phi(phi.characteristic())
             sage: phi_p  # Purely inseparable
             z6*t^2
-
-        ALGORITHM:
-
-            Compute the Frobenius trace and test if the
-            `\mathbb{F}_q[T]` characteristic divides it.
-
-            We could also test if the image of the
-            `\mathbb{F}_q[T]`-characteristic under the Drinfeld module
-            is purely inseparable; see [Gek1991]_, Proposition 4.1.
         """
         self._check_rank_two()
         return not self.is_supersingular()
-
-    def is_supersingular(self):
-        r"""
-        Return ``True`` whether the Drinfeld module is supersingular; raise a
-        NotImplementedError if the rank is not two.
-
-        A rank two finite Drinfeld module is *supersingular* if and only
-        if the function ring-characteristic divides the Frobenius
-        trace. An *ordinary* rank two finite Drinfeld module is a
-        Drinfeld module that is not supersingular.
-
-        EXAMPLES::
-
-            sage: Fq = GF(343)
-            sage: A.<T> = Fq[]
-            sage: K.<z6> = Fq.extension(2)
-            sage: phi = DrinfeldModule(A, [1, 0, z6])
-            sage: phi.is_supersingular()
-            True
-            sage: phi(phi.characteristic()) # Purely inseparable
-            z6*t^2
-
-        ALGORITHM:
-
-            Compute the Frobenius trace and test if the function
-            ring-characteristic divides it.
-
-            We could also test if the image of the function
-            ring-characteristic under the Drinfeld module is purely
-            inseparable; see [Gek1991]_, Proposition 4.1.
-        """
-        self._check_rank_two()
-        return self.characteristic().divides(self.frobenius_trace())

@@ -153,12 +153,18 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             raise TypeError('parent should be a DrinfeldModuleHomset')
         domain = parent.domain()
         codomain = parent.codomain()
+        A = domain.category().function_ring()
         # NOTE: it used to be x.parent() is parent, but this was False.
         # DrinfeldModuleHomset inherits Homset, which does NOT inherit
         # UniqueRepresentation
-        if x.parent() == parent:  # x is a DrinfeldModuleMorphism
+        if x.parent() == parent:
+            # x is a DrinfeldModuleMorphism
             ore_pol = x.ore_polynomial()
-        else:  # x is an Ore polynomial
+        elif domain is codomain and A.has_coerce_map_from(x.parent()):
+            # x is in the function field; we return the endomorphism phi_x
+            ore_pol = domain(A(x))
+        else:
+            # x is an Ore polynomial
             ore_pol = domain.ore_polring()(x)
         if ore_pol * domain.gen() != codomain.gen() * ore_pol:
             raise ValueError('Ore polynomial does not define a morphism')
