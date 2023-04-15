@@ -1596,10 +1596,10 @@ class Polyhedron_base6(Polyhedron_base5):
 
             sage: D = polytopes.dodecahedron()                                  # optional - sage.rings.number_field
             sage: E3 = EuclideanSpace(3)                                        # optional - sage.rings.number_field    # optional - sage.symbolic
-            sage: submanifolds = [                                              # optional - sage.rings.number_field    # optional - sage.symbolic  # long time
+            sage: submanifolds = [                               # long time    # optional - sage.rings.number_field    # optional - sage.symbolic
             ....:     F.as_polyhedron().affine_hull_manifold(name=f'F{i}', orthogonal=True, ambient_space=E3)
             ....:     for i, F in enumerate(D.facets())]
-            sage: sum(FM.plot({}, srange(-2, 2, 0.1), srange(-2, 2, 0.1), opacity=0.2)  # not tested                    # optional - sage.symbolic  # optional - sage.plot  # optional - sage.rings.number_field  # long time
+            sage: sum(FM.plot({}, srange(-2, 2, 0.1), srange(-2, 2, 0.1), opacity=0.2)  # not tested    # long time     # optional - sage.symbolic  # optional - sage.plot  # optional - sage.rings.number_field
             ....:     for FM in submanifolds) + D.plot()
             Graphics3d Object
 

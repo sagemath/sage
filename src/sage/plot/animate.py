@@ -1043,7 +1043,8 @@ class Animation(WithEqualityById, SageObject):
             sage: a = animate([sin(x + float(k)) for k in srange(0,2*pi,0.7)],
             ....:                xmin=0, xmax=2*pi, figsize=[2,1])
             sage: dir = tmp_dir()
-            sage: a.apng()  # long time
+            sage: a.apng(show_path=True)  # long time
+            Animation saved to ....png.
             sage: a.apng(savefile=dir + 'my_animation.png', delay=35, iterations=3)  # long time
             sage: a.apng(savefile=dir + 'my_animation.png', show_path=True)  # long time
             Animation saved to .../my_animation.png.

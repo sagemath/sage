@@ -442,7 +442,7 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
 
     Zero-tests over ``QQbar`` are currently very slow, so we test only very small examples::
 
-        test_karatsuba_multiplication(QQbar, 3, 3, numtests=2)
+        sage: test_karatsuba_multiplication(QQbar, 3, 3, numtests=2)        # long time
 
     Larger degrees (over ``ZZ``, using FLINT)::
 
