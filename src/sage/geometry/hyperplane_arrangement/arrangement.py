@@ -3377,10 +3377,15 @@ class HyperplaneArrangementElement(Element):
         else:
             raise ValueError("invalid algorithm")
 
-    def _fundamental_group_(self):
+    def _fundamental_group_(self, proj=False):
         r"""
         It computes the fundamental group of the complement of an affine line arrangement in `\mathbb{C}^2`
         with equations with coefficients in a subfield of ``QQbar``
+        
+        INPUT:
+        
+        - ``proj`` -- (optional, default ``False``). It decides if it computes the fundamental group
+          of the complement in the affine or projective space
 
         OUTPUT:
 
@@ -3408,8 +3413,14 @@ class HyperplaneArrangementElement(Element):
                                        x4*x3^-1*x1*x3*x4^-1*x3^-1*x1^-1*x3 >
             sage: dic
             {1: (5,), 2: (4,), 3: (1,), 4: (3,), 5: (2,), 6: (-5, -4, -3, -2, -1)}
+            sage: H=A(x,y,x+y)
+            sage: H._fundamental_group_()
+            (Finitely presented group < x0, x1, x2 | x0*x1^-1*x0^-1*x2^-1*x1*x2, x0*x1*x2*x1^-1*x0^-1*x2^-1 >,
+             {1: (3,), 2: (1,), 3: (2,), 4: (-3, -2, -1)})
+            sage: H._fundamental_group_(proj=True) # optional - sirocco
+            (Finitely presented group < x0, x1, x2 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
             sage: H = hyperplane_arrangements.braid(4).essentialization()
-            sage: H._fundamental_group_() # optional - sirocco
+            sage: H._fundamental_group_(proj=True) # optional - sirocco
             (Finitely presented group < x0, x1, x2, x3, x4 | x1*x3*x1^-1*x3^-1,
                                         x0*x2*x0^-1*x2^-1, x4^-1*x1^-1*x0^-1*x4*x0*x1,
                                         x3*x4*x2*x3^-1*x2^-1*x4^-1, x3*x4^-1*x3^-1*x2^-1*x4*x2,
@@ -3420,16 +3431,23 @@ class HyperplaneArrangementElement(Element):
 
             This functionality requires the sirocco package to be installed.
         """
-        from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
-        from sage.rings.qqbar import QQbar
         from sage.combinat.permutation import Permutation
+        from sage.groups.free_group import FreeGroup
+        from sage.rings.qqbar import QQbar
+        from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
         n = self.dimension()
         r = len(self)
-        affine = n == 2
-        projective = n==3 and self.is_central()
+        affine = n == 2 and not proj
+        projective = n==3 and self.is_central() and proj
+        if (n == 1 and not proj) or (n == 2 and proj and self.is_central()):
+            r1 = r - projective
+            G = FreeGroup(r1) / []
+            dic = {j: (j,) for j in range(1, r)}
+            dic[r] = tuple(-j for j in reversed(range(1, r)))
+            return (G, dic)
         casos = affine or projective
         if not casos:
-            print("This method only applies to two dimensional arrangements")
+            print("This method does not apply")
             return None
         K = self.base_ring()
         if not K.is_subring(QQbar):
