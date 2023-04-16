@@ -932,8 +932,8 @@ class Category(UniqueRepresentation, SageObject):
 
         TESTS::
 
-            sage: C = HopfAlgebrasWithBasis(GF(7))                                                                      # optional - sage.libs.pari
-            sage: C._set_of_super_categories == frozenset(C._all_super_categories_proper)                               # optional - sage.libs.pari
+            sage: C = HopfAlgebrasWithBasis(GF(7))                                     # optional - sage.libs.pari
+            sage: C._set_of_super_categories == set(C._all_super_categories_proper)    # optional - sage.libs.pari
             True
         """
         return frozenset(self._all_super_categories_proper)
