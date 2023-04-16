@@ -749,7 +749,7 @@ cdef class P1List():
                 self.s[i] = <int>(ll_s % ll_N)
                 self.t[i] = <int>(ll_t % ll_N)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Deallocates memory for an object of the class P1List.
         """

@@ -1169,7 +1169,7 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
             '\\left\\langle\\left(1,\\,2,\\,3\\right)_{L},
              \\left(0,\\,4,\\,8\\right)_{L}\\right\\rangle'
         """
-        s  = '\\left\\langle'
+        s = '\\left\\langle'
         s += ', '.join([ b._latex_() for b in self.basis() ])
         s += '\\right\\rangle'
         return s

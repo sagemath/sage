@@ -267,7 +267,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
 
     # Check that every x \in G-{0},occurs exactly l times as a difference
     counter = {g: 0 for g in Glist}
-    where   = {g: set() for g in Glist}
+    where = {g: set() for g in Glist}
     del counter[identity]
 
     for i,d in enumerate(D):
@@ -293,7 +293,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
             counter[gg] += tmp_counter[gg]//stabi
 
     # Check the counter and report any error
-    too_few  = []
+    too_few = []
     too_much = []
     for g in Glist:
         if g == identity:
@@ -591,8 +591,8 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
         x = K.multiplicative_generator()
         D = K.cyclotomic_cosets(x**((v-1)//k), [K.one()])
         if is_difference_family(K, D, v, k, l):
-            print("**  You found a new example of radical difference set **\n"\
-                  "**  for the parameters (v,k,l)=({},{},{}).            **\n"\
+            print("**  You found a new example of radical difference set **\n"
+                  "**  for the parameters (v,k,l)=({},{},{}).            **\n"
                   "**  Please contact sage-devel@googlegroups.com        **\n".format(v, k, l))
             if existence:
                 return True
@@ -602,8 +602,8 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
             D = K.cyclotomic_cosets(x**((v-1)//(k-1)), [K.one()])
             D[0].insert(0,K.zero())
             if is_difference_family(K, D, v, k, l):
-                print("**  You found a new example of radical difference set **\n"\
-                      "**  for the parameters (v,k,l)=({},{},{}).            **\n"\
+                print("**  You found a new example of radical difference set **\n"
+                      "**  for the parameters (v,k,l)=({},{},{}).            **\n"
                       "**  Please contact sage-devel@googlegroups.com        **\n".format(v, k, l))
                 if existence:
                     return True

@@ -2609,11 +2609,11 @@ class Blahs(Category_singleton):
 
     class SubcategoryMethods:
         FiniteDimensional = axiom("FiniteDimensional")
-        Commutative       = axiom("Commutative")
-        Unital            = axiom("Unital")
-        Connected         = axiom("Connected")
-        Flying            = axiom("Flying")
-        Blue              = axiom("Blue")
+        Commutative = axiom("Commutative")
+        Unital = axiom("Unital")
+        Connected = axiom("Connected")
+        Flying = axiom("Flying")
+        Blue = axiom("Blue")
 
     class FiniteDimensional(CategoryWithAxiom):
         pass

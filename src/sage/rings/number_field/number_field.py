@@ -12153,7 +12153,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         if D > 0:
             raise NotImplementedError("Hilbert class polynomial is not implemented for real quadratic fields.")
 
-        from sage.schemes.elliptic_curves.all import hilbert_class_polynomial as HCP
+        from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial as HCP
         return QQ[name](HCP(D))
 
     def number_of_roots_of_unity(self):
@@ -12174,6 +12174,31 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         if d == -3:
             return 6
         return 2
+
+    def order_of_conductor(self, f):
+        r"""
+        Return the unique order with the given conductor in this quadratic field.
+
+        .. SEEALSO ::
+
+            :meth:`sage.rings.number_field.order.Order.conductor`
+
+        EXAMPLES::
+
+            sage: K.<t> = QuadraticField(-123)
+            sage: K.order_of_conductor(1) is K.maximal_order()
+            True
+            sage: K.order_of_conductor(2).gens()
+            (1, t)
+            sage: K.order_of_conductor(44).gens()
+            (1, 22*t)
+            sage: K.order_of_conductor(9001).conductor()
+            9001
+        """
+        f = ZZ(f)
+        if f <= 0:
+            raise ValueError('conductor must be a positive integer')
+        return self.order([f * g for g in self.maximal_order().gens()])
 
 
 def is_fundamental_discriminant(D):

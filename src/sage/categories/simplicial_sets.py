@@ -1,12 +1,12 @@
 """
 Simplicial Sets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2015 John H. Palmieri <palmieri at math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
@@ -15,6 +15,7 @@ from sage.categories.sets_cat import Sets
 from sage.categories.homsets import HomsetsCategory
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
+
 
 class SimplicialSets(Category_singleton):
     r"""
@@ -384,7 +385,6 @@ class SimplicialSets(Category_singleton):
                         char[e] = G.one()
                 return (G, char)
 
-
             def universal_cover_map(self):
                 r"""
                 Return the universal covering map of the simplicial set.
@@ -456,7 +456,7 @@ class SimplicialSets(Category_singleton):
                 """
                 from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
                 from sage.topology.simplicial_set_morphism import SimplicialSetMorphism
-                char = {a : b for (a,b) in character.items()}
+                char = {a: b for (a, b) in character.items()}
                 G = list(char.values())[0].parent()
                 if not G.is_finite():
                     raise NotImplementedError("can only compute universal covers of spaces with finite fundamental group")
@@ -465,14 +465,14 @@ class SimplicialSets(Category_singleton):
 
                 for s in self.n_cells(0):
                     for g in G:
-                        cell =  AbstractSimplex(0,name="({}, {})".format(s, g))
-                        cells_dict[(s,g)] = cell
+                        cell = AbstractSimplex(0, name="({}, {})".format(s, g))
+                        cells_dict[(s, g)] = cell
                         char[s] = G.one()
 
                 for d in range(1, self.dimension() + 1):
                     for s in self.n_cells(d):
                         if s not in char.keys():
-                            if d==1 and  s.is_degenerate():
+                            if d == 1 and s.is_degenerate():
                                 char[s] = G.one()
                             elif s.is_degenerate():
                                 if 0 in s.degeneracies():
@@ -483,8 +483,8 @@ class SimplicialSets(Category_singleton):
                                 char[s] = char[self.face(s, d)]
                         if s.is_nondegenerate():
                             for g in G:
-                                cell =  AbstractSimplex(d,name="({}, {})".format(s, g))
-                                cells_dict[(s,g)] = cell
+                                cell = AbstractSimplex(d, name="({}, {})".format(s, g))
+                                cells_dict[(s, g)] = cell
                                 fd = []
                                 faces = self.faces(s)
                                 f0 = faces[0]
