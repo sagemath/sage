@@ -3377,6 +3377,18 @@ class HyperplaneArrangementElement(Element):
         else:
             raise ValueError("invalid algorithm")
 
+    def hyperplane_section(self):
+        P = self.intersection_poset(element_label="subspace")
+        n0 = self.dimension()
+        n1 = self.center().dimension()
+        U = [p.linear_part().basis_matrix() for p in P if p.dimension() == n1 + 1]
+        for v in ZZ^n0:
+            if 0 not in [w * v for w in U]:
+                break
+        h0 = self.parent()((0,) + tuple(v))
+        H1 = H.add_hyperplane(h0)
+        return H1.restriction(h0)
+
     def _fundamental_group_(self, proj=False):
         r"""
         It computes the fundamental group of the complement of an affine line arrangement in `\mathbb{C}^2`
