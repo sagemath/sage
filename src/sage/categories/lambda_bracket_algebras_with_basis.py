@@ -63,11 +63,14 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         EXAMPLES::
 
-            sage: C = LieConformalAlgebras(QQbar)                                           # optional - sage.rings.number_field
-            sage: C.WithBasis().FinitelyGenerated()                                         # optional - sage.rings.number_field
+            sage: C = LieConformalAlgebras(QQbar)                                      # optional - sage.rings.number_field
+            sage: C1 = C.WithBasis().FinitelyGenerated(); C1                           # optional - sage.rings.number_field
             Category of finitely generated Lie conformal algebras with basis
              over Algebraic Field
-            sage: C.WithBasis().FinitelyGenerated() is C.FinitelyGenerated().WithBasis()    # optional - sage.rings.number_field
+            sage: C2 = C.FinitelyGenerated().WithBasis(); C2                           # optional - sage.rings.number_field
+            Category of finitely generated Lie conformal algebras with basis
+             over Algebraic Field
+            sage: C1 is C2                                                             # optional - sage.rings.number_field
             True
         """
         class Graded(GradedModulesCategory):
