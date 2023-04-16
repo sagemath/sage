@@ -491,7 +491,7 @@ def _dict_update_check_duplicate(dict d1, dict d2):
     Merge the dictionary ``d2`` into ``d1`` and check for duplicates.
 
     The two dictionaries must be of the form ``{expr: replacement}``. This
-    function throws a ``ValueError`` if any expressions are substituted
+    function throws a :class:`ValueError` if any expressions are substituted
     for twice.
 
     EXAMPLES:
@@ -594,7 +594,7 @@ def _subs_make_dict(s):
         sage: actual == expected
         True
 
-    Check that a ``TypeError`` is raised if the input is not valid::
+    Check that a :class:`TypeError` is raised if the input is not valid::
 
         sage: _subs_make_dict(1)
         Traceback (most recent call last):
@@ -673,7 +673,7 @@ def _subs_fun_make_dict(s):
         sage: actual == expected
         True
 
-    Check that a ``TypeError`` is raised if the input is not valid::
+    Check that a :class:`TypeError` is raised if the input is not valid::
 
         sage: _subs_fun_make_dict(1)
         Traceback (most recent call last):
@@ -718,7 +718,7 @@ cdef class Expression(Expression_abc):
 
         The Python object corresponding to this expression, assuming
         this expression is a single numerical value or an infinity
-        representable in Python. Otherwise, a ``TypeError`` is raised.
+        representable in Python. Otherwise, a :class:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -1931,7 +1931,7 @@ cdef class Expression(Expression_abc):
         """
         Return float conversion of ``self``, assuming ``self`` is constant.
 
-        Otherwise, raise a ``TypeError``.
+        Otherwise, raise a :class:`TypeError`.
 
         OUTPUT:
 
@@ -3176,7 +3176,7 @@ cdef class Expression(Expression_abc):
     def left_hand_side(self):
         """
         If ``self`` is a relational expression, return the left hand side
-        of the relation.  Otherwise, raise a ``ValueError``.
+        of the relation.  Otherwise, raise a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -3198,7 +3198,7 @@ cdef class Expression(Expression_abc):
     def right_hand_side(self):
         """
         If ``self`` is a relational expression, return the right hand side
-        of the relation.  Otherwise, raise a ``ValueError``.
+        of the relation.  Otherwise, raise a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -4665,7 +4665,7 @@ cdef class Expression(Expression_abc):
 
     def _derivative(self, symb=None, deg=1):
         """
-        Return the deg-th (partial) derivative of ``self`` with respect to ``symb``.
+        Return the ``deg``-th (partial) derivative of ``self`` with respect to ``symb``.
 
         EXAMPLES::
 
@@ -5265,16 +5265,16 @@ cdef class Expression(Expression_abc):
            full expansion into sines and cosines immediately, set the optional
            parameter full to ``True``.
 
-        -  ``half_angles`` - (default: ``False``) If ``True``, causes
-           half-angles to be simplified away.
+        - ``half_angles`` - (default: ``False``) If ``True``, causes
+          half-angles to be simplified away.
 
         -  ``plus`` -- (default: ``True``) Controls the sum rule;
-           expansion of sums (e.g. `\sin(x + y)`) will take place only if plus
-           is ``True``.
+           expansion of sums (e.g. `\sin(x + y)`) will take place only
+           if ``plus`` is ``True``.
 
         -  ``times`` -- (default: ``True``) Controls the product
            rule, expansion of products (e.g. `\sin(2 x)`) will take place only
-           if times is True.
+           if ``times`` is ``True``.
 
         OUTPUT:
 
