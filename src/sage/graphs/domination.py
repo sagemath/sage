@@ -666,6 +666,8 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
     Listing minimal distance-`k` dominating sets::
 
         sage: G = graphs.Grid2dGraph(2, 3)
+        sage: list(G.minimal_dominating_sets(k=0))
+        [{(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)}]
         sage: list(G.minimal_dominating_sets(k=1))
         [{(0, 0), (0, 2), (1, 1)},
          {(0, 1), (1, 1)},
@@ -819,6 +821,7 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
         raise ValueError("the domination distance must be a non-negative integer")
     elif not k:
         yield set(int_to_vertex) if to_dominate is None else set(to_dominate)
+        return
     elif k > 1:
         # We build a graph H with an edge between u and v if these vertices are
         # at distance at most k in G
