@@ -67,8 +67,8 @@ cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
 
 
 cdef class Polynomial_ZZ_pEX(Polynomial_template):
-    """
-    Univariate Polynomials over GF(p^n) via NTL's ZZ_pEX.
+    r"""
+    Univariate Polynomials over `\GF{p^n}` via NTL's ``ZZ_pEX``.
 
     EXAMPLES::
 
@@ -78,8 +78,8 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         x^4 + 2*a*x^3 + a^2*x^2 + x + a
     """
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
-        """
-        Create a new univariate polynomials over GF(p^n).
+        r"""
+        Create a new univariate polynomials over `\GF{p^n}`.
 
         EXAMPLES::
 
@@ -156,7 +156,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
 
     cdef get_unsafe(self, Py_ssize_t i):
-        """
+        r"""
         Return the `i`-th coefficient of ``self``.
 
         EXAMPLES::
@@ -180,7 +180,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return self._parent._base(ZZ_pE_c_to_list(c_pE))
 
     cpdef list list(self, bint copy=True):
-        """
+        r"""
         Return the list of coefficients.
 
         EXAMPLES::
@@ -202,7 +202,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
                 for i in range(celement_len(&self.x, (<Polynomial_template>self)._cparent))]
 
     cpdef _lmul_(self, Element left):
-        """
+        r"""
         EXAMPLES::
 
             sage: K.<a> = GF(next_prime(2**60)**3)
@@ -223,7 +223,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return r
 
     def __call__(self, *x, **kwds):
-        """
+        r"""
         Evaluate polynomial at `a`.
 
         EXAMPLES::
@@ -288,7 +288,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return K(ZZ_pE_c_to_list(c_b))
 
     def resultant(self, other):
-        """
+        r"""
         Return the resultant of ``self`` and ``other``, which must lie in the same
         polynomial ring.
 
@@ -320,21 +320,22 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return K(K.polynomial_ring()(ZZ_pE_c_to_list(r)))
 
     def is_irreducible(self, algorithm="fast_when_false", iter=1):
-        """
+        r"""
         Return ``True`` precisely when ``self`` is irreducible over its base ring.
 
         INPUT:
 
-        - ``algorithm`` -- a string (default "fast_when_false"),
+        - ``algorithm`` -- a string (default ``"fast_when_false"``),
           there are 3 available algorithms:
-          ``"fast_when_true"``, ``"fast_when_false"`` and ``"probabilistic".``
+          ``"fast_when_true"``, ``"fast_when_false"``, and ``"probabilistic".``
+
         - ``iter`` -- (default: 1) if the algorithm is ``"probabilistic"``,
-            defines the number of iterations. The error probability is bounded
-            by `q^{\text{iter}}` for polynomials in `\GF{q}[x]`.
+          defines the number of iterations. The error probability is bounded
+          by `q^{\text{iter}}` for polynomials in `\GF{q}[x]`.
 
         EXAMPLES::
 
-            sage: K.<a>=GF(next_prime(2**60)**3)
+            sage: K.<a> = GF(next_prime(2**60)**3)
             sage: R.<x> = PolynomialRing(K, implementation='NTL')
             sage: P = x^3 + (2-a)*x + 1
             sage: P.is_irreducible(algorithm="fast_when_false")
@@ -350,7 +351,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             False
             sage: Q.is_irreducible(algorithm="probabilistic")
             False
-            """
+        """
         self._parent._modulus.restore()
         if algorithm=="fast_when_false":
             sig_on()
@@ -413,7 +414,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return r
 
     cpdef _richcmp_(self, other, int op):
-        """
+        e"""
         EXAMPLES::
 
             sage: K.<a> = GF(next_prime(2**60)**3)
@@ -441,7 +442,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return Polynomial._richcmp_(self, other, op)
 
     def shift(self, int n):
-        """
+        r"""
         EXAMPLES::
 
             sage: K.<a> = GF(next_prime(2**60)**3)
@@ -462,7 +463,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return r
 
     def __lshift__(self, int n):
-        """
+        r"""
         EXAMPLES::
 
             sage: K.<a> = GF(next_prime(2**60)**3)
@@ -476,7 +477,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return self.shift(n)
 
     def __rshift__(self, int n):
-        """
+        r"""
         EXAMPLES::
 
             sage: K.<a> = GF(next_prime(2**60)**3)
