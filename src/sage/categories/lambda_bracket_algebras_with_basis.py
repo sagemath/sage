@@ -77,9 +77,10 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: LieConformalAlgebras(QQbar).WithBasis().FinitelyGenerated().Graded()  # optional - sage.rings.number_field
-                Category of H-graded finitely generated Lie conformal algebras with basis
-                 over Algebraic Field
+                sage: C = LieConformalAlgebras(QQbar)                                  # optional - sage.rings.number_field
+                sage: C.WithBasis().FinitelyGenerated().Graded()                       # optional - sage.rings.number_field
+                Category of H-graded finitely generated Lie conformal algebras
+                 with basis over Algebraic Field
             """
             class ParentMethods:
 
