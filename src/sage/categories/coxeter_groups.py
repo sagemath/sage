@@ -2385,19 +2385,21 @@ class CoxeterGroups(Category_singleton):
             We now run consistency tests with permutations and
             :meth:`bruhat_lower_covers`::
 
-                sage: W = WeylGroup(["A", 3])                                                                           # optional - sage.combinat sage.groups
-                sage: P4 = Permutations(4)                                                                              # optional - sage.combinat sage.groups
+                sage: W = WeylGroup(["A", 3])                                           # optional - sage.combinat sage.groups
+                sage: P4 = Permutations(4)                                              # optional - sage.combinat sage.groups
                 sage: def P4toW(w): return W.from_reduced_word(w.reduced_word())
-                sage: for u in P4:                                                                                      # optional - sage.combinat sage.groups
+                sage: for u in P4:                                                      # optional - sage.combinat sage.groups
                 ....:     for v in P4:
                 ....:         assert u.bruhat_lequal(v) == P4toW(u).bruhat_le(P4toW(v))
 
-                sage: W = WeylGroup(["B", 3])                                                                           # optional - sage.combinat sage.groups
-                sage: P = W.bruhat_poset()  # This is built from bruhat_lower_covers                                    # optional - sage.combinat sage.groups sage.graphs
-                sage: Q = Poset((W, attrcall("bruhat_le")))                             # long time (10s)               # optional - sage.combinat sage.groups sage.graphs
-                sage: all(u.bruhat_le(v) == P.is_lequal(u,v) for u in W for v in W)     # long time  (7s)               # optional - sage.combinat sage.groups sage.graphs
+                sage: W = WeylGroup(["B", 3])                                           # optional - sage.combinat sage.groups
+                sage: P = W.bruhat_poset()  # This is built from bruhat_lower_covers    # optional - sage.combinat sage.groups sage.graphs
+                sage: Q = Poset((W, attrcall("bruhat_le")))     # long time (10s)       # optional - sage.combinat sage.groups sage.graphs
+                sage: all(u.bruhat_le(v) == P.is_lequal(u,v)    # long time  (7s)       # optional - sage.combinat sage.groups sage.graphs
+                ....:     for u in W for v in W)
                 True
-                sage: all(P.is_lequal(u,v) == Q.is_lequal(u,v) for u in W for v in W)   # long time  (9s)               # optional - sage.combinat sage.groups sage.graphs
+                sage: all(P.is_lequal(u,v) == Q.is_lequal(u,v)  # long time  (9s)       # optional - sage.combinat sage.groups sage.graphs
+                ....:     for u in W for v in W)
                 True
             """
             if not have_same_parent(self, other):
