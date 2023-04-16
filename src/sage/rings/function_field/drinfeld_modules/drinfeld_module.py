@@ -1276,8 +1276,75 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         else:
             raise e
 
-    def hom(self, u, codomain=None):
+    def hom(self, x, codomain=None):
+        r"""
+        Return the homomorphism defined by ``x`` having this
+        ring as domain.
+
+        We recall that an endomorphism `f : \phi \to \psi` between
+        two Drinfeld modules is defined by a Ore polynomial `u`,
+        which is subject to the relation `phi_T u = u \psi_T`.
+
+        INPUT:
+
+        - ``x`` -- an element of the ring of functions, or a
+          Ore polynomial
+
+        - ``codomain`` -- a Drinfeld module or ``None`` (default:
+          ``None``)
+
+        EXAMPLES:
+
+        An important class of endomorphisms of a Drinfeld module
+        `\phi` is the scalar multiplications, that are endomorphisms
+        given by the Ore polynomials `\phi_a` with `a` in the function
+        ring `A`. We construct them as follows::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: phi
+            Drinfeld module defined by T |--> z*t^3 + t^2 + z
+
+            sage: phi.hom(T)
+            Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              Defn: z*t^3 + t^2 + z
+
+            sage: phi.hom(T^2 + 1)
+            Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              Defn: z^2*t^6 + (3*z^2 + z + 1)*t^5 + t^4 + 2*z^2*t^3 + (3*z^2 + z + 1)*t^2 + z^2 + 1
+
+        We can define a morphism by passing in the Ore polynomial
+        defining it.
+        For example, below, we construct the Frobenius endomorphism
+        of `\phi`::
+
+            sage: t = phi.ore_variable()
+            sage: phi.hom(t^3)
+            Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              Defn: t^3
+
+        If the input Ore polynomial defines a morphism to another
+        Drinfeld module, the latter is determined automatically:
+
+            sage: phi.hom(t + 1)
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^3 + (3*z^2 + 2*z + 2)*t^2 + (2*z^2 + 3*z + 4)*t + z
+              Defn: t + 1
+
+        TESTS::
+
+            sage: phi.hom(t)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input does not define an isogeny
+
+        """
+        if self.function_ring().has_coerce_map_from(x.parent()):
+            return self.Hom(self)(x)
         if codomain is None:
-            codomain = self.velu(u)
+            codomain = self.velu(x)
         H = self.Hom(codomain)
-        return H(u)
+        return H(x)

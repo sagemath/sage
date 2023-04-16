@@ -415,14 +415,80 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         return self._ore_polynomial
 
     def _composition_(self, other, H):
+        r"""
+        Return the composite of this morphism and ``other``.
+
+        EXAMPLES::
+
+            sage: Fq = GF(2)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 1, z, z^2])
+            sage: f = phi.frobenius_endomorphism()
+            sage: f
+            Endomorphism of Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
+              Defn: t^3
+            sage: f * f  # indirect doctest
+            Endomorphism of Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
+              Defn: t^6
+
+        """
         return H(self.ore_polynomial() * other.ore_polynomial())
 
     def __invert__(self):
+        r"""
+        Return the inverse of this morphism.
+
+        Only morphisms defined by constant nonzero Ore
+        polynomials are invertible.
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 1, z, z^2])
+            sage: f = phi.hom(2); f
+            Endomorphism of Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
+              Defn: 2
+            sage: f.inverse()  # indirect doctest
+            Endomorphism of Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
+              Defn: 3
+
+        ::
+
+            sage: F = phi.frobenius_endomorphism()
+            sage: F.inverse()  # indirect doctest
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: this morphism is not invertible
+
+        """
         if not self.is_isomorphism():
             raise ZeroDivisionError("this morphism is not invertible")
         return self.parent()(~(self.ore_polynomial()[0]))
 
     def _motive_matrix(self):
+        r"""
+        Return the matrix giving the action of this morphism
+        on the motives of the underlying Drinfeld modules.
+
+        For internal use. Do not call this method directly.
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1])
+            sage: t = phi.ore_variable()
+            sage: u = t^2 + (2*z^2 + 3*z + 3)*t + (2*z + 3)
+            sage: f = phi.hom(u)
+            sage: f._motive_matrix()
+            [                      T + 3 + z                 3 + 3*z + 2*z^2]
+            [(1 + z + z^2)*T + 3 + 2*z - z^2               T + 2 - z + 2*z^2]
+
+        """
         phi = self.domain()
         phiT = phi.gen()
         r = phiT.degree()
@@ -456,6 +522,59 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         return matrix(KT, rows)
 
     def norm(self, ideal=True):
+        r"""
+        Return the norm of this isogeny.
+
+        INPUT:
+
+        - ``ideal`` -- a boolean (default: ``True``); if ``True``,
+          return the norm as an ideal in the function ring of the Drinfeld
+          modules; if ``False``, return the norm as an element in this
+          function ring (only relevant for endomorphisms)
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: t = phi.ore_variable()
+            sage: f = phi.hom(t + 1)
+            sage: f.norm()
+            Principal ideal (T + 4) of Univariate Polynomial Ring in T over Finite Field of size 5
+
+        The norm of the Frobenius endomorphism is equal to the characteristic::
+
+            sage: F = phi.frobenius_endomorphism()
+            sage: F.norm()
+            Principal ideal (T^3 + 3*T + 3) of Univariate Polynomial Ring in T over Finite Field of size 5
+            sage: phi.characteristic()
+            T^3 + 3*T + 3
+
+        For `a` in the underlying function ring, the norm of the
+        endomorphism given by `\phi_a` is `a^r` where `r` is the rank::
+
+            sage: g = phi.hom(T)
+            sage: g.norm()
+            Principal ideal (T^3) of Univariate Polynomial Ring in T over Finite Field of size 5
+
+            sage: h = phi.hom(T+1)
+            sage: h.norm()
+            Principal ideal (T^3 + 3*T^2 + 3*T + 1) of Univariate Polynomial Ring in T over Finite Field of size 5
+
+        For endomorphisms, the norm is not an ideal of `A` but it makes
+        sense as an actual element of `A`. We can get this element by passing
+        in the argument ``ideal=False``::
+
+            sage: phi.hom(2*T).norm(ideal=False)
+            3*T^3
+
+            sage: f.norm(ideal=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: norm is defined as an actual element only for endomorphisms
+
+        """
         nu = self._motive_matrix().det()
         # We cast to A
         A = self.domain().function_ring()
@@ -469,6 +588,48 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             raise ValueError("norm is defined as an actual element only for endomorphisms")
 
     def dual_isogeny(self):
+        r"""
+        Return a dual isogeny to this morphism.
+
+        By definition, a dual isogeny of `f : \phi \to \psi` is an
+        isogeny `g : \psi \to \phi` such that the composite `g \circ f`
+        is the multiplication by a generator of the norm of `f`.
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: t = phi.ore_variable()
+            sage: f = phi.hom(t + 1)
+            sage: f
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^3 + (3*z^2 + 2*z + 2)*t^2 + (2*z^2 + 3*z + 4)*t + z
+              Defn: t + 1
+            sage: g = f.dual_isogeny()
+            sage: g
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^3 + (3*z^2 + 2*z + 2)*t^2 + (2*z^2 + 3*z + 4)*t + z
+              To:   Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              Defn: z*t^2 + (4*z + 1)*t + z + 4
+
+        We check that `f \circ g` (resp. `g \circ f`) is the multiplication
+        by the norm of `f`::
+
+            sage: a = f.norm().gen(); a
+            T + 4
+            sage: g * f == phi.hom(a)
+            True
+
+            sage: psi = f.codomain()
+            sage: f * g == psi.hom(a)
+            True
+
+        """
+        if not self.is_isogeny():
+            raise ValueError("the dual isogeny of the zero morphism is not defined")
         nu = self._motive_matrix().det().monic()
         A = self.domain().function_ring()
         nu = A([c.in_base() for c in nu.list()])
@@ -476,6 +637,40 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         return self.codomain().hom(dual, codomain=self.domain())
 
     def characteristic_polynomial(self, var='X'):
+        r"""
+        Return the characteristic polynomial of this endomorphism.
+
+        INPUT:
+
+        - ``var`` -- a string (default: ``X``), the name of the
+          variable of the characteristic polynomial
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+
+            sage: f = phi.frobenius_endomorphism()
+            sage: f.characteristic_polynomial()
+            X^3 + (T + 1)*X^2 + (2*T + 3)*X + 2*T^3 + T + 1
+
+        We verify, on an example, that the caracteristic polynomial
+        of a morphism corresponding to `\phi_a` is `(X-a)^r` where `r`
+        is the rank::
+
+            sage: g = phi.hom(T^2 + 1)
+            sage: chi = g.characteristic_polynomial()
+            sage: chi.factor()
+            (X + 4*T^2 + 4)^3
+
+        An example with another variable name::
+
+            sage: f.characteristic_polynomial(var='Y')
+            Y^3 + (T + 1)*Y^2 + (2*T + 3)*Y + 2*T^3 + T + 1
+
+        """
         if self.domain() is not self.codomain():
             raise ValueError("characteristic polynomial is only defined for endomorphisms")
         P = self._motive_matrix().charpoly()
@@ -485,4 +680,38 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         return parent([A([c.in_base() for c in co.list()]) for co in P.list()])
 
     def charpoly(self, var='X'):
+        r"""
+        Return the characteristic polynomial of this endomorphism.
+
+        INPUT:
+
+        - ``var`` -- a string (default: ``X``), the name of the
+          variable of the characteristic polynomial
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+
+            sage: f = phi.frobenius_endomorphism()
+            sage: f.charpoly()
+            X^3 + (T + 1)*X^2 + (2*T + 3)*X + 2*T^3 + T + 1
+
+        We verify, on an example, that the caracteristic polynomial
+        of a morphism corresponding to `\phi_a` is `(X-a)^r` where `r`
+        is the rank::
+
+            sage: g = phi.hom(T^2 + 1)
+            sage: chi = g.charpoly()
+            sage: chi.factor()
+            (X + 4*T^2 + 4)^3
+
+        An example with another variable name::
+
+            sage: f.charpoly(var='Y')
+            Y^3 + (T + 1)*Y^2 + (2*T + 3)*Y + 2*T^3 + T + 1
+
+        """
         return self.characteristic_polynomial(var)
