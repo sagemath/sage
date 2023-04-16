@@ -1200,7 +1200,7 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
     elif computebm0 and holdstrand:
         return (result,roots_base)
     elif not computebm0 and not holdstrand:
-            return strands
+        return strands
     elif not computebm0 and holdstrand:
         return roots_base
 
@@ -1538,7 +1538,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2, x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1, x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1, 1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >, {1: (1,), 2: (2,), 3: (-4, -3, -2, -1)})
         sage: fundamental_group_arrangement(flist, projective=True, braid_mon=BM) # optional - sirocco
         (Finitely presented group < x |  >, {1: (1,), 2: (-1, -1, -1)})
-    
+
     .. TODO::
 
         Create a class ``arrangements_of_curves`` with a ``fundamental_group`` method
@@ -1548,12 +1548,18 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     """
     if len(flist)>0:
         f = prod(flist)
-        x, y = flist[0].parent().gens()
+        R = f.parent()
     else:
         R = PolynomialRing(QQ, ('x', 'y'))
-        x, y = R.gens()
         f = R(1)
+    x, y = R.gens()
+    F = R.base_ring()
     flist1 = [_ for _ in flist]
+    d = f.degree(y)
+    while not f.coefficient(y**d) in F:
+        flist1 = [g.subs({x: x + y}) for g in flist1]
+        f = prod(flist1)
+        d = f.degree(y)
     if projective:
         while f.degree(y) < f.degree():
             flist1 = [g.subs({x: x + y}) for g in flist]

@@ -3391,7 +3391,7 @@ class HyperplaneArrangementElement(Element):
             sage: A.<x, y> = HyperplaneArrangements(QQ)
             sage: L = [y + x, y + x - 1]
             sage: H = A(L)
-            sage: G, dic = H._fundamental_group_(); G
+            sage: G, dic = H._fundamental_group_(); G # optional - sirocco
             Finitely presented group < x0, x1 |  >
             sage: L = [x, y, x + 1, y + 1, x - y]
             sage: H = A(L); list(H)
@@ -3407,16 +3407,28 @@ class HyperplaneArrangementElement(Element):
                                        x0*x1^-1*x0^-1*x3^-1*x1*x3,
                                        x4*x3^-1*x1*x3*x4^-1*x3^-1*x1^-1*x3 >
             sage: dic
-            {1: (5,), 2: (4,), 3: (1,), 4: (3,), 5: (2,)}
-        
+            {1: (5,), 2: (4,), 3: (1,), 4: (3,), 5: (2,), 6: (-5, -4, -3, -2, -1)}
+            sage: H = hyperplane_arrangements.braid(4).essentialization()
+            sage: H._fundamental_group_() # optional - sirocco
+            (Finitely presented group < x0, x1, x2, x3, x4 | x1*x3*x1^-1*x3^-1,
+                                        x0*x2*x0^-1*x2^-1, x4^-1*x1^-1*x0^-1*x4*x0*x1,
+                                        x3*x4*x2*x3^-1*x2^-1*x4^-1, x3*x4^-1*x3^-1*x2^-1*x4*x2,
+                                        x4*x0*x1^-1*x0^-1*x4^-1*x1 >,
+             {1: (5,), 2: (1,), 3: (2,), 4: (3,), 5: (4,), 6: (-2, -1, -4, -3, -5)})
+
         .. WARNING::
 
             This functionality requires the sirocco package to be installed.
         """
         from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
         from sage.rings.qqbar import QQbar
+        from sage.combinat.permutation import Permutation
         n = self.dimension()
-        if n != 2:
+        r = len(self)
+        affine = n == 2
+        projective = n==3 and self.is_central()
+        casos = affine or projective
+        if not casos:
             print("This method only applies to two dimensional arrangements")
             return None
         K = self.base_ring()
@@ -3424,13 +3436,22 @@ class HyperplaneArrangementElement(Element):
             print("This method only works if the base field has an embedding in QQbar")
             return None
         S = self.parent().ambient_space().symmetric_space()
+        if projective:
+            S = PolynomialRing(K, S.gens()[:-1])
+        infinity = [0, 0, 0, 1] == self[0].primitive().coefficients()
         L = []
         for h in self:
             coeff = h.coefficients()
+            if projective:
+                coeff = (coeff[3], coeff[1], coeff[2])
             V = (1,) + S.gens()
             p = S.sum(V[i]*c for i, c in enumerate(coeff))
-            L.append(p)
-        G, dic = fundamental_group_arrangement(L, puiseux=True)
+            if p.degree() > 0:
+                L.append(p)
+        G, dic = fundamental_group_arrangement(L, puiseux=True, projective=projective and not infinity)
+        if infinity:
+            p = Permutation([r] + [j for j in range(1, r)] )
+            dic = {j: dic[p(j)] for j in range(1, r + 1)}
         return (G, dic)
 
 class HyperplaneArrangements(Parent, UniqueRepresentation):
