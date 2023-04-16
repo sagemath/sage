@@ -2687,7 +2687,7 @@ class CompletionFunctor(ConstructionFunctor):
         does not decrease the capped precision.
 
         EXAMPLES::
-
+ZZZ
             sage: R1.<a> = Zp(5, prec=20)[]                                             # optional - sage.rings.padics
             sage: R2 = Qp(5, prec=40)                                                   # optional - sage.rings.padics
             sage: R2(1) + a       # indirect doctest                                    # optional - sage.rings.padics
@@ -2706,22 +2706,23 @@ class CompletionFunctor(ConstructionFunctor):
             sage: RIF(1) > RR(1)
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for >: 'Real Interval Field with 53 bits of precision' and 'Real Field with 53 bits of precision'
+            TypeError: unsupported operand parent(s) for >:
+            'Real Interval Field with 53 bits of precision' and 'Real Field with 53 bits of precision'
 
         We check that various pushouts work::
 
             sage: R0 = RealIntervalField(30)
             sage: R1 = RealIntervalField(30, sci_not=True)
             sage: R2 = RealIntervalField(53)
-            sage: R3 = RealIntervalField(53, sci_not = True)
+            sage: R3 = RealIntervalField(53, sci_not=True)
             sage: R4 = RealIntervalField(90)
-            sage: R5 = RealIntervalField(90, sci_not = True)
+            sage: R5 = RealIntervalField(90, sci_not=True)
             sage: R6 = RealField(30)
             sage: R7 = RealField(30, sci_not=True)
-            sage: R8 = RealField(53, rnd = 'RNDD')
-            sage: R9 = RealField(53, sci_not = True, rnd = 'RNDZ')
-            sage: R10 = RealField(53, sci_not = True)
-            sage: R11 = RealField(90, sci_not = True, rnd = 'RNDZ')
+            sage: R8 = RealField(53, rnd='RNDD')
+            sage: R9 = RealField(53, sci_not=True, rnd='RNDZ')
+            sage: R10 = RealField(53, sci_not=True)
+            sage: R11 = RealField(90, sci_not=True, rnd='RNDZ')
             sage: Rlist = [R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11]
             sage: from sage.categories.pushout import pushout
             sage: pushouts = [R0,R0,R0,R1,R0,R1,R0,R1,R0,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R1,R0,R1,R2,R2,R2,R3,R0,R1,R2,R3,R3,R3,R1,R1,R3,R3,R3,R3,R1,R1,R3,R3,R3,R3,R0,R1,R2,R3,R4,R4,R0,R1,R2,R3,R3,R5,R1,R1,R3,R3,R5,R5,R1,R1,R3,R3,R3,R5,R0,R1,R0,R1,R0,R1,R6,R6,R6,R7,R7,R7,R1,R1,R1,R1,R1,R1,R7,R7,R7,R7,R7,R7,R0,R1,R2,R3,R2,R3,R6,R7,R8,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R9,R9,R10,R9,R1,R1,R3,R3,R3,R3,R7,R7,R10,R10,R10,R10,R1,R1,R3,R3,R5,R5,R7,R7,R9,R9,R10,R11]
@@ -2730,18 +2731,20 @@ class CompletionFunctor(ConstructionFunctor):
 
         ::
 
-            sage: P0 = ZpFM(5, 10)                                                                                      # optional - sage.rings.padics
-            sage: P1 = ZpFM(5, 20)                                                                                      # optional - sage.rings.padics
-            sage: P2 = ZpCR(5, 10)                                                                                      # optional - sage.rings.padics
-            sage: P3 = ZpCR(5, 20)                                                                                      # optional - sage.rings.padics
-            sage: P4 = ZpCA(5, 10)                                                                                      # optional - sage.rings.padics
-            sage: P5 = ZpCA(5, 20)                                                                                      # optional - sage.rings.padics
-            sage: P6 = Qp(5, 10)                                                                                        # optional - sage.rings.padics
-            sage: P7 = Qp(5, 20)                                                                                        # optional - sage.rings.padics
-            sage: Plist = [P2,P3,P4,P5,P6,P7]                                                                           # optional - sage.rings.padics
+            sage: P0 = ZpFM(5, 10)                                                      # optional - sage.rings.padics
+            sage: P1 = ZpFM(5, 20)                                                      # optional - sage.rings.padics
+            sage: P2 = ZpCR(5, 10)                                                      # optional - sage.rings.padics
+            sage: P3 = ZpCR(5, 20)                                                      # optional - sage.rings.padics
+            sage: P4 = ZpCA(5, 10)                                                      # optional - sage.rings.padics
+            sage: P5 = ZpCA(5, 20)                                                      # optional - sage.rings.padics
+            sage: P6 = Qp(5, 10)                                                        # optional - sage.rings.padics
+            sage: P7 = Qp(5, 20)                                                        # optional - sage.rings.padics
+            sage: Plist = [P2,P3,P4,P5,P6,P7]                                           # optional - sage.rings.padics
             sage: from sage.categories.pushout import pushout
-            sage: pushouts = [P2,P3,P4,P5,P6,P7,P3,P3,P5,P5,P7,P7,P4,P5,P4,P5,P6,P7,P5,P5,P5,P5,P7,P7,P6,P7,P6,P7,P6,P7,P7,P7,P7,P7,P7,P7]  # optional - sage.rings.padics
-            sage: all(P is Q for P, Q in zip(pushouts, [pushout(a, b) for a in Plist for b in Plist]))                                      # optional - sage.rings.padics
+            sage: pushouts = [P2,P3,P4,P5,P6,P7,P3,P3,P5,P5,P7,P7,P4,P5,P4,P5,P6,P7,    # optional - sage.rings.padics
+            ....:             P5,P5,P5,P5,P7,P7,P6,P7,P6,P7,P6,P7,P7,P7,P7,P7,P7,P7]
+            sage: all(P is Q                                                            # optional - sage.rings.padics
+            ....:     for P, Q in zip(pushouts, [pushout(a, b) for a in Plist for b in Plist]))
             True
         """
         if self == other: # both are Completion functors with the same p
@@ -2835,19 +2838,19 @@ class QuotientFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: P.<x,y> = ZZ[]
-        sage: Q = P.quo([x^2 + y^2] * P)                                                                                # optional - sage.rings.finite_rings
-        sage: F = Q.construction()[0]                                                                                   # optional - sage.rings.finite_rings
-        sage: F(QQ['x','y'])                                                                                            # optional - sage.rings.finite_rings
+        sage: Q = P.quo([x^2 + y^2] * P)                                                # optional - sage.rings.finite_rings
+        sage: F = Q.construction()[0]                                                   # optional - sage.rings.finite_rings
+        sage: F(QQ['x','y'])                                                            # optional - sage.rings.finite_rings
         Quotient of Multivariate Polynomial Ring in x, y over Rational Field
          by the ideal (x^2 + y^2)
-        sage: F(QQ['x','y']) == QQ['x','y'].quo([x^2 + y^2] * QQ['x','y'])                                              # optional - sage.rings.finite_rings
+        sage: F(QQ['x','y']) == QQ['x','y'].quo([x^2 + y^2] * QQ['x','y'])              # optional - sage.rings.finite_rings
         True
-        sage: F(QQ['x','y','z'])                                                                                        # optional - sage.rings.finite_rings
+        sage: F(QQ['x','y','z'])                                                        # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         CoercionException: Cannot apply this quotient functor to
          Multivariate Polynomial Ring in x, y, z over Rational Field
-        sage: F(QQ['y','z'])                                                                                            # optional - sage.rings.finite_rings
+        sage: F(QQ['y','z'])                                                            # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: Could not find a mapping of the passed element to this ring.
@@ -2877,20 +2880,24 @@ class QuotientFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import QuotientFunctor
             sage: P.<t> = ZZ[]
             sage: F = QuotientFunctor([5 + t^2] * P)
-            sage: F(P)                                                                                                  # optional - sage.rings.finite_rings
-            Univariate Quotient Polynomial Ring in tbar over Integer Ring with modulus t^2 + 5
-            sage: F(QQ['t'])                                                                                            # optional - sage.rings.finite_rings
-            Univariate Quotient Polynomial Ring in tbar over Rational Field with modulus t^2 + 5
+            sage: F(P)                                                                  # optional - sage.rings.finite_rings
+            Univariate Quotient Polynomial Ring in tbar
+             over Integer Ring with modulus t^2 + 5
+            sage: F(QQ['t'])                                                            # optional - sage.rings.finite_rings
+            Univariate Quotient Polynomial Ring in tbar
+             over Rational Field with modulus t^2 + 5
             sage: F = QuotientFunctor([5 + t^2] * P, names='s')
-            sage: F(P)                                                                                                  # optional - sage.rings.finite_rings
-            Univariate Quotient Polynomial Ring in s over Integer Ring with modulus t^2 + 5
-            sage: F(QQ['t'])                                                                                            # optional - sage.rings.finite_rings
-            Univariate Quotient Polynomial Ring in s over Rational Field with modulus t^2 + 5
+            sage: F(P)                                                                  # optional - sage.rings.finite_rings
+            Univariate Quotient Polynomial Ring in s
+             over Integer Ring with modulus t^2 + 5
+            sage: F(QQ['t'])                                                            # optional - sage.rings.finite_rings
+            Univariate Quotient Polynomial Ring in s
+             over Rational Field with modulus t^2 + 5
             sage: F = QuotientFunctor([5] * ZZ, as_field=True)
-            sage: F(ZZ)                                                                                                 # optional - sage.rings.finite_rings
+            sage: F(ZZ)                                                                 # optional - sage.rings.finite_rings
             Finite Field of size 5
             sage: F = QuotientFunctor([5] * ZZ)
-            sage: F(ZZ)                                                                                                 # optional - sage.rings.finite_rings
+            sage: F(ZZ)                                                                 # optional - sage.rings.finite_rings
             Ring of integers modulo 5
 
         """
@@ -2964,14 +2971,14 @@ class QuotientFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P.<x> = QQ[]
-            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                    # optional - sage.rings.finite_rings
-            sage: F == loads(dumps(F))                                                                                  # optional - sage.rings.finite_rings
+            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]    # optional - sage.rings.finite_rings
+            sage: F == loads(dumps(F))                                                  # optional - sage.rings.finite_rings
             True
             sage: P2.<x,y> = QQ[]
-            sage: F == P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                  # optional - sage.rings.finite_rings
+            sage: F == P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # optional - sage.rings.finite_rings
             False
             sage: P3.<x> = ZZ[]
-            sage: F == P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                  # optional - sage.rings.finite_rings
+            sage: F == P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # optional - sage.rings.finite_rings
             True
         """
         if not isinstance(other, QuotientFunctor):
@@ -2989,14 +2996,14 @@ class QuotientFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: P.<x> = QQ[]
-            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                    # optional - sage.rings.finite_rings
-            sage: F != loads(dumps(F))                                                                                  # optional - sage.rings.finite_rings
+            sage: F = P.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]    # optional - sage.rings.finite_rings
+            sage: F != loads(dumps(F))                                                  # optional - sage.rings.finite_rings
             False
             sage: P2.<x,y> = QQ[]
-            sage: F != P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                  # optional - sage.rings.finite_rings
+            sage: F != P2.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # optional - sage.rings.finite_rings
             True
             sage: P3.<x> = ZZ[]
-            sage: F != P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]                                  # optional - sage.rings.finite_rings
+            sage: F != P3.quo([(x^2+1)^2*(x^2-3),(x^2+1)^2*(x^5+3)]).construction()[0]  # optional - sage.rings.finite_rings
             False
         """
         return not (self == other)
@@ -3313,21 +3320,24 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: x = polygen(QQ, 'x')
-            sage: K.<a> = NumberField(x^3 + x^2 + 1)                                                                    # optional - sage.rings.number_field
-            sage: F = K.construction()[0]                                                                               # optional - sage.rings.number_field
-            sage: F(ZZ)       # indirect doctest                                                                        # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 + x^2 + 1)                                    # optional - sage.rings.number_field
+            sage: F = K.construction()[0]                                               # optional - sage.rings.number_field
+            sage: F(ZZ)       # indirect doctest                                        # optional - sage.rings.number_field
             Order in Number Field in a with defining polynomial x^3 + x^2 + 1
-            sage: F(ZZ['t'])  # indirect doctest                                                                        # optional - sage.rings.number_field
-            Univariate Quotient Polynomial Ring in a over Univariate Polynomial Ring in t over Integer Ring with modulus a^3 + a^2 + 1
-            sage: F(RR)       # indirect doctest                                                                        # optional - sage.rings.number_field
-            Univariate Quotient Polynomial Ring in a over Real Field with 53 bits of precision with modulus a^3 + a^2 + 1.00000000000000
+            sage: F(ZZ['t'])  # indirect doctest                                        # optional - sage.rings.number_field
+            Univariate Quotient Polynomial Ring in a over
+             Univariate Polynomial Ring in t over Integer Ring with modulus a^3 + a^2 + 1
+            sage: F(RR)       # indirect doctest                                        # optional - sage.rings.number_field
+            Univariate Quotient Polynomial Ring in a over
+             Real Field with 53 bits of precision with modulus a^3 + a^2 + 1.00000000000000
 
         Check that :trac:`13538` is fixed::
 
-            sage: K = Qp(3, 3)                                                                                          # optional - sage.rings.padics
-            sage: R.<a> = K[]                                                                                           # optional - sage.rings.padics
-            sage: AEF = sage.categories.pushout.AlgebraicExtensionFunctor([a^2 - 3], ['a'], [None])                     # optional - sage.rings.padics
-            sage: AEF(K)                                                                                                # optional - sage.rings.padics
+            sage: from sage.categories.pushout import AlgebraicExtensionFunctor
+            sage: K = Qp(3, 3)                                                          # optional - sage.rings.padics
+            sage: R.<a> = K[]                                                           # optional - sage.rings.padics
+            sage: AEF = AlgebraicExtensionFunctor([a^2 - 3], ['a'], [None])             # optional - sage.rings.padics
+            sage: AEF(K)                                                                # optional - sage.rings.padics
             3-adic Eisenstein Extension Field in a defined by a^2 - 3
 
         """
@@ -3698,7 +3708,8 @@ class PermutationGroupFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: from sage.categories.pushout import PermutationGroupFunctor
-            sage: PF = PermutationGroupFunctor([PermutationGroupElement([(1,2)])], [1,2]); PF  # optional - sage.groups
+            sage: PF = PermutationGroupFunctor([PermutationGroupElement([(1,2)])],      # optional - sage.groups
+            ....:                              [1,2]); PF
             PermutationGroupFunctor[(1,2)]
         """
         Functor.__init__(self, Groups(), Groups())

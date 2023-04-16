@@ -351,9 +351,9 @@ class QuotientFields(Category_singleton):
 
             Here is an example to show that :trac:`7868` has been resolved::
 
-                sage: R.<x,y> = GF(2)[]                                                 # optional - sage.libs.pari
-                sage: f = x*y/(x+y)                                                     # optional - sage.libs.pari
-                sage: f.factor()                                                        # optional - sage.libs.pari
+                sage: R.<x,y> = GF(2)[]                                                 # optional - sage.rings.finite_rings
+                sage: f = x*y/(x+y)                                                     # optional - sage.rings.finite_rings
+                sage: f.factor()                                                        # optional - sage.rings.finite_rings
                 (x + y)^-1 * y * x
             """
             return (self.numerator().factor(*args, **kwds) /
@@ -473,14 +473,14 @@ class QuotientFields(Category_singleton):
 
             And also over finite fields (see :trac:`6052`, :trac:`9945`)::
 
-                sage: R.<x> = GF(2)[]                                                   # optional - sage.libs.pari
-                sage: q = (x+1)/(x^3+x+1)                                               # optional - sage.libs.pari
-                sage: q.partial_fraction_decomposition()                                # optional - sage.libs.pari
+                sage: R.<x> = GF(2)[]                                                   # optional - sage.rings.finite_rings
+                sage: q = (x+1)/(x^3+x+1)                                               # optional - sage.rings.finite_rings
+                sage: q.partial_fraction_decomposition()                                # optional - sage.rings.finite_rings
                 (0, [(x + 1)/(x^3 + x + 1)])
 
-                sage: R.<x> = GF(11)[]                                                  # optional - sage.libs.pari
-                sage: q = x + 1 + 1/(x+1) + x^2/(x^3 + 2*x + 9)                         # optional - sage.libs.pari
-                sage: q.partial_fraction_decomposition()                                # optional - sage.libs.pari
+                sage: R.<x> = GF(11)[]                                                  # optional - sage.rings.finite_rings
+                sage: q = x + 1 + 1/(x+1) + x^2/(x^3 + 2*x + 9)                         # optional - sage.rings.finite_rings
+                sage: q.partial_fraction_decomposition()                                # optional - sage.rings.finite_rings
                 (x + 1, [1/(x + 1), x^2/(x^3 + 2*x + 9)])
 
             And even the rationals::

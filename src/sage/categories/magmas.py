@@ -383,11 +383,11 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: SymmetricGroup(1).algebra(QQ).is_field()              # optional - sage.groups
+                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # optional - sage.groups
                     True
-                    sage: SymmetricGroup(1).algebra(ZZ).is_field()              # optional - sage.groups
+                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # optional - sage.groups
                     False
-                    sage: SymmetricGroup(2).algebra(QQ).is_field()              # optional - sage.groups
+                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # optional - sage.groups
                     False
                 """
                 if not self.base_ring().is_field(proof):

@@ -975,21 +975,21 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: S = SymmetricGroupAlgebra(QQ, 4)                                  # optional - sage.groups sage.modules
                 sage: S.cardinality()                                                   # optional - sage.groups sage.modules
                 +Infinity
-                sage: S = SymmetricGroupAlgebra(GF(2), 4)  # not tested -- MRO bug trac #15475      # optional - sage.groups sage.libs.pari sage.modules
-                sage: S.cardinality()                      # not tested -- MRO bug trac #15475      # optional - sage.groups sage.libs.pari sage.modules
+                sage: S = SymmetricGroupAlgebra(GF(2), 4)  # not tested -- MRO bug trac #15475      # optional - sage.groups sage.rings.finite_rings sage.modules
+                sage: S.cardinality()                      # not tested -- MRO bug trac #15475      # optional - sage.groups sage.rings.finite_rings sage.modules
                 16777216
-                sage: S.cardinality().factor()             # not tested -- MRO bug trac #15475      # optional - sage.groups sage.libs.pari sage.modules
+                sage: S.cardinality().factor()             # not tested -- MRO bug trac #15475      # optional - sage.groups sage.rings.finite_rings sage.modules
                 2^24
 
                 sage: E.<x,y> = ExteriorAlgebra(QQ)                                     # optional - sage.combinat sage.modules
                 sage: E.cardinality()                                                   # optional - sage.combinat sage.modules
                 +Infinity
-                sage: E.<x,y> = ExteriorAlgebra(GF(3))                                  # optional - sage.combinat sage.libs.pari sage.modules
-                sage: E.cardinality()                                                   # optional - sage.combinat sage.libs.pari sage.modules
+                sage: E.<x,y> = ExteriorAlgebra(GF(3))                                  # optional - sage.combinat sage.rings.finite_rings sage.modules
+                sage: E.cardinality()                                                   # optional - sage.combinat sage.rings.finite_rings sage.modules
                 81
 
-                sage: s = SymmetricFunctions(GF(2)).s()                                 # optional - sage.combinat sage.libs.pari sage.modules
-                sage: s.cardinality()                                                   # optional - sage.combinat sage.libs.pari sage.modules
+                sage: s = SymmetricFunctions(GF(2)).s()                                 # optional - sage.combinat sage.rings.finite_rings sage.modules
+                sage: s.cardinality()                                                   # optional - sage.combinat sage.rings.finite_rings sage.modules
                 +Infinity
             """
             from sage.rings.infinity import Infinity
