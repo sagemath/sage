@@ -2109,23 +2109,25 @@ class CoxeterGroups(Category_singleton):
 
             TESTS::
 
-                sage: w0.binary_factorizations().category()                                                             # optional - sage.combinat sage.groups
+                sage: w0.binary_factorizations().category()                             # optional - sage.combinat sage.groups
                 Category of finite enumerated sets
 
             Check that this is independent of the implementation of the group, see :trac:`34799`::
 
-                sage: W1 = WeylGroup(['A', 3])                                                                          # optional - sage.combinat sage.groups
-                sage: W2 = Permutations(4)                                                                              # optional - sage.combinat sage.groups
-                sage: P = lambda pi: W2(list(pi.to_permutation()))                                                      # optional - sage.combinat sage.groups
-                sage: d1 = {P(pi): set((P(w[0]), P(w[1])) for w in pi.binary_factorizations()) for pi in W1}            # optional - sage.combinat sage.groups
-                sage: d2 = {pi: set(pi.binary_factorizations()) for pi in W2}                                           # optional - sage.combinat sage.groups
-                sage: d1 == d2                                                                                          # optional - sage.combinat sage.groups
+                sage: W1 = WeylGroup(['A', 3])                                          # optional - sage.combinat sage.groups
+                sage: W2 = Permutations(4)                                              # optional - sage.combinat sage.groups
+                sage: P = lambda pi: W2(list(pi.to_permutation()))                      # optional - sage.combinat sage.groups
+                sage: d1 = {P(pi): set((P(w[0]), P(w[1]))                               # optional - sage.combinat sage.groups
+                ....:                  for w in pi.binary_factorizations())
+                ....:       for pi in W1}
+                sage: d2 = {pi: set(pi.binary_factorizations()) for pi in W2}           # optional - sage.combinat sage.groups
+                sage: d1 == d2                                                          # optional - sage.combinat sage.groups
                 True
-                sage: sage.combinat.permutation.Permutations.options.mult = "r2l"                                       # optional - sage.combinat sage.groups
-                sage: d3 = {pi: set(pi.binary_factorizations()) for pi in W2}                                           # optional - sage.combinat sage.groups
-                sage: d1 == d3                                                                                          # optional - sage.combinat sage.groups
+                sage: sage.combinat.permutation.Permutations.options.mult = "r2l"       # optional - sage.combinat sage.groups
+                sage: d3 = {pi: set(pi.binary_factorizations()) for pi in W2}           # optional - sage.combinat sage.groups
+                sage: d1 == d3                                                          # optional - sage.combinat sage.groups
                 True
-                sage: sage.combinat.permutation.Permutations.options._reset()                                           # optional - sage.combinat sage.groups
+                sage: sage.combinat.permutation.Permutations.options._reset()           # optional - sage.combinat sage.groups
             """
             from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
             W = self.parent()

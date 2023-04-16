@@ -82,9 +82,10 @@ class FinitelyGeneratedLieConformalAlgebras(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: C = LieConformalAlgebras(QQbar).FinitelyGenerated()                                           # optional - sage.rings.number_field
-                    sage: C.Super().Graded()                                                                            # optional - sage.rings.number_field
-                    Category of H-graded super finitely generated lie conformal algebras over Algebraic Field
+                    sage: C = LieConformalAlgebras(QQbar).FinitelyGenerated()           # optional - sage.rings.number_field
+                    sage: C.Super().Graded()                                            # optional - sage.rings.number_field
+                    Category of H-graded super finitely generated
+                     lie conformal algebras over Algebraic Field
                 """
                 return "H-graded {}".format(self.base_category()._repr_object_names())
 
@@ -104,7 +105,8 @@ class FinitelyGeneratedLieConformalAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: LieConformalAlgebras(QQbar).WithBasis().FinitelyGenerated().Graded()                              # optional - sage.rings.number_field
-                Category of H-graded finitely generated Lie conformal algebras with basis over Algebraic Field
+                sage: LieConformalAlgebras(QQbar).WithBasis().FinitelyGenerated().Graded()      # optional - sage.rings.number_field
+                Category of H-graded finitely generated Lie conformal algebras with basis
+                 over Algebraic Field
             """
             return "H-graded {}".format(self.base_category()._repr_object_names())

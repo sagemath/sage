@@ -488,8 +488,9 @@ class ForgetfulFunctor_generic(Functor):
         TESTS::
 
             sage: F = ForgetfulFunctor(FiniteFields(), Fields())
-            sage: F #indirect doctest
-            The forgetful functor from Category of finite enumerated fields to Category of fields
+            sage: F  # indirect doctest
+            The forgetful functor from Category of finite enumerated fields
+             to Category of fields
 
         """
         return "The forgetful functor from %s to %s" % (self.domain(),
