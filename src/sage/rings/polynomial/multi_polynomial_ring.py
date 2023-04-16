@@ -895,7 +895,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         r"""
         Return a sum of elements of this multipolynomial ring.
 
-        This is method is much faster than the Python builtin sum.
+        This is method is much faster than the Python builtin :func:`sum`.
 
         EXAMPLES::
 
@@ -906,7 +906,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             sage: S.sum([x*y, 2*x^2*z - 2*x*y, 1 + y + z])
             (-x + 1)*y + (2*x^2 + 1)*z + 1
 
-        Comparison with builtin sum::
+        Comparison with builtin :func:`sum`::
 
             sage: sum([x*y, 2*x^2*z - 2*x*y, 1 + y + z])
             (-x + 1)*y + (2*x^2 + 1)*z + 1

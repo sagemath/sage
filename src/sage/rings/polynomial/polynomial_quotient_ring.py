@@ -1359,7 +1359,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
     def S_class_group(self, S, proof=True):
         r"""
-        If self is an étale algebra `D` over a number field `K` (i.e.
+        If ``self`` is an étale algebra `D` over a number field `K` (i.e.
         a quotient of `K[x]` by a squarefree polynomial) and `S` is a
         finite set of places of `K`, return a list of generators of
         the `S`-class group of `D`.
@@ -1530,7 +1530,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
     def class_group(self, proof=True):
         r"""
-        If self is a quotient ring of a polynomial ring over a number
+        If ``self`` is a quotient ring of a polynomial ring over a number
         field `K`, by a polynomial of nonzero discriminant, return a
         list of generators of the class group.
 
@@ -2291,18 +2291,18 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
 
     def field_extension(self, names):
         r"""
-        Takes a polynomial quotient ring, and returns a tuple with three
-        elements: the NumberField defined by the same polynomial quotient
-        ring, a homomorphism from its parent to the NumberField sending the
+        Take a polynomial quotient ring, and return a tuple with three
+        elements: the :class:`NumberField` defined by the same polynomial quotient
+        ring, a homomorphism from its parent to the :class:`NumberField` sending the
         generators to one another, and the inverse isomorphism.
 
         OUTPUT:
 
         -  field
 
-        -  homomorphism from self to field
+        -  homomorphism from ``self`` to field
 
-        -  homomorphism from field to self
+        -  homomorphism from field to ``self``
 
 
         EXAMPLES::
@@ -2401,14 +2401,14 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
 
     def base_field(self):
         r"""
-        Alias for base_ring, when we're defined over a field.
+        Alias for :meth:`base_ring`, when we're defined over a field.
         """
         return self.base_ring()
 
     def complex_embeddings(self, prec=53):
         r"""
         Return all homomorphisms of this ring into the approximate complex
-        field with precision prec.
+        field with precision ``prec``.
 
         EXAMPLES::
 

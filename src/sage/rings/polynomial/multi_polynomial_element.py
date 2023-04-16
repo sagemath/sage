@@ -194,7 +194,7 @@ class MPolynomial_element(MPolynomial):
 
         ::
 
-            sage: R.<x,y,z>=PolynomialRing(CC,3,order='deglex')
+            sage: R.<x,y,z> = PolynomialRing(CC, 3, order='deglex')
             sage: x^1*y^2*z^3 > x^3*y^2*z^0
             True
             sage: x^1*y^2*z^4 < x^1*y^1*z^5
@@ -390,8 +390,8 @@ class MPolynomial_element(MPolynomial):
 
         Ensure that :trac:`13704` is fixed.::
 
-            sage: R.<t>=PolynomialRing(QQ)
-            sage: S.<x,y>=PolynomialRing(R)
+            sage: R.<t> = PolynomialRing(QQ)
+            sage: S.<x,y> = PolynomialRing(R)
             sage: x/S(2)
             1/2*x
         """
@@ -422,7 +422,7 @@ class MPolynomial_element(MPolynomial):
 
             sage: R.<x,y> = QQ[]
             sage: f = x^2 + 5*y
-            sage: f.change_ring(GF(5))                                                  # optional - sage.libs.pari
+            sage: f.change_ring(GF(5))                                                  # optional - sage.rings.finite_rings
             x^2
 
         ::
@@ -542,8 +542,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         EXAMPLES::
 
-            sage: R = GF(13)['a,b']['c,d']                                              # optional - sage.libs.pari
-            sage: macaulay2(R('a^2 + c'))                       # optional - macaulay2 sage.libs.pari
+            sage: R = GF(13)['a,b']['c,d']                                              # optional - sage.rings.finite_rings
+            sage: macaulay2(R('a^2 + c'))                       # optional - macaulay2 sage.rings.finite_rings
                  2
             c + a
 
@@ -552,7 +552,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         Elements of the base ring are coerced to the polynomial ring
         correctly::
 
-            sage: macaulay2(R('a^2')).ring()._operator('===', R)    # optional - macaulay2 sage.libs.pari
+            sage: macaulay2(R('a^2')).ring()._operator('===', R)    # optional - macaulay2 sage.rings.finite_rings
             true
         """
         if macaulay2 is None:
@@ -625,7 +625,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ::
 
-            sage: R = PolynomialRing(QQ,'x,y',order=TermOrder('wdeglex',(2,3)))
+            sage: R = PolynomialRing(QQ, 'x,y', order=TermOrder('wdeglex',(2,3)))
             sage: x,y = R.gens()
             sage: x.degree()
             2
@@ -661,37 +661,37 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             ...
             TypeError: x must canonically coerce to parent
 
-            sage: GF(3037000453)['x','y'].gen(0).degree(x^2)                            # optional - sage.libs.pari
+            sage: GF(3037000453)['x','y'].gen(0).degree(x^2)                            # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: x must be one of the generators of the parent
 
         TESTS::
 
-            sage: R = PolynomialRing(GF(2)['t'], 'x,y', order=TermOrder('wdeglex', (2,3)))          # optional - sage.libs.pari
-            sage: x, y = R.gens()                                                       # optional - sage.libs.pari
-            sage: x.degree()                                                            # optional - sage.libs.pari
+            sage: R = PolynomialRing(GF(2)['t'], 'x,y', order=TermOrder('wdeglex', (2,3)))          # optional - sage.rings.finite_rings
+            sage: x, y = R.gens()                                                       # optional - sage.rings.finite_rings
+            sage: x.degree()                                                            # optional - sage.rings.finite_rings
             2
-            sage: y.degree()                                                            # optional - sage.libs.pari
+            sage: y.degree()                                                            # optional - sage.rings.finite_rings
             3
-            sage: x.degree(y), x.degree(x), y.degree(x), y.degree(y)                    # optional - sage.libs.pari
+            sage: x.degree(y), x.degree(x), y.degree(x), y.degree(y)                    # optional - sage.rings.finite_rings
             (0, 1, 0, 1)
-            sage: f = (x^2*y + x*y^2)                                                   # optional - sage.libs.pari
-            sage: f.degree(x)                                                           # optional - sage.libs.pari
+            sage: f = (x^2*y + x*y^2)                                                   # optional - sage.rings.finite_rings
+            sage: f.degree(x)                                                           # optional - sage.rings.finite_rings
             2
-            sage: f.degree(y)                                                           # optional - sage.libs.pari
+            sage: f.degree(y)                                                           # optional - sage.rings.finite_rings
             2
-            sage: f.degree()                                                            # optional - sage.libs.pari
+            sage: f.degree()                                                            # optional - sage.rings.finite_rings
             8
-            sage: f.degree(std_grading=True)                                            # optional - sage.libs.pari
+            sage: f.degree(std_grading=True)                                            # optional - sage.rings.finite_rings
             3
-            sage: R(0).degree()                                                         # optional - sage.libs.pari
+            sage: R(0).degree()                                                         # optional - sage.rings.finite_rings
             -1
 
         Degree of zero polynomial for other implementation :trac:`20048` ::
 
-            sage: R.<x,y> = GF(3037000453)[]                                            # optional - sage.libs.pari
-            sage: R.zero().degree(x)                                                    # optional - sage.libs.pari
+            sage: R.<x,y> = GF(3037000453)[]                                            # optional - sage.rings.finite_rings
+            sage: R.zero().degree(x)                                                    # optional - sage.rings.finite_rings
             -1
         """
         if x is None:
@@ -944,7 +944,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
            -  a monomial (very fast, but not as flexible)
 
 
-        OUTPUT: element of the parent of self
+        OUTPUT: element of the parent of ``self``
 
         .. SEEALSO::
 
@@ -983,8 +983,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         ::
 
             sage: R.<x,y> = RR[]
-            sage: f=x*y+5
-            sage: c=f.coefficient({x:0,y:0}); c
+            sage: f = x*y + 5
+            sage: c = f.coefficient({x: 0, y: 0}); c
             5.00000000000000
             sage: parent(c)
             Multivariate Polynomial Ring in x, y over Real Field with 53 bits of precision
@@ -1021,9 +1021,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         - ``prec`` -- desired floating point precision (default:
           default :class:`RealField` precision).
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number.
 
         EXAMPLES::
 
@@ -1101,9 +1099,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number.
 
         EXAMPLES::
 
@@ -1153,9 +1149,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         - ``prec`` -- desired floating point precision (default:
           default :class:`RealField` precision).
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number.
 
         EXAMPLES::
 
@@ -1274,7 +1268,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def is_homogeneous(self):
         """
-        Return True if self is a homogeneous polynomial.
+        Return True if ``self`` is a homogeneous polynomial.
 
         EXAMPLES::
 
@@ -1681,15 +1675,15 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')                     # optional - sage.libs.pari
-            sage: (x^1*y^2 + y^3*z^4).lm()                                              # optional - sage.libs.pari
+            sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')                     # optional - sage.rings.finite_rings
+            sage: (x^1*y^2 + y^3*z^4).lm()                                              # optional - sage.rings.finite_rings
             x*y^2
-            sage: (x^3*y^2*z^4 + x^3*y^2*z^1).lm()                                      # optional - sage.libs.pari
+            sage: (x^3*y^2*z^4 + x^3*y^2*z^1).lm()                                      # optional - sage.rings.finite_rings
             x^3*y^2*z^4
 
         ::
 
-            sage: R.<x,y,z>=PolynomialRing(CC,3,order='deglex')
+            sage: R.<x,y,z> = PolynomialRing(CC, 3, order='deglex')
             sage: (x^1*y^2*z^3 + x^3*y^2*z^0).lm()
             x*y^2*z^3
             sage: (x^1*y^2*z^4 + x^1*y^1*z^5).lm()
@@ -1697,7 +1691,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ::
 
-            sage: R.<x,y,z>=PolynomialRing(QQbar,3,order='degrevlex')                   # optional - sage.rings.number_field
+            sage: R.<x,y,z> = PolynomialRing(QQbar, 3, order='degrevlex')               # optional - sage.rings.number_field
             sage: (x^1*y^5*z^2 + x^4*y^1*z^3).lm()                                      # optional - sage.rings.number_field
             x*y^5*z^2
             sage: (x^4*y^7*z^1 + x^4*y^2*z^3).lm()                                      # optional - sage.rings.number_field
@@ -1706,9 +1700,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         TESTS::
 
             sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict
-            sage: R.<x,y> = MPolynomialRing_polydict(GF(2), 2, order='lex')             # optional - sage.libs.pari
-            sage: f = x + y                                                             # optional - sage.libs.pari
-            sage: f.lm()                                                                # optional - sage.libs.pari
+            sage: R.<x,y> = MPolynomialRing_polydict(GF(2), 2, order='lex')             # optional - sage.rings.finite_rings
+            sage: f = x + y                                                             # optional - sage.rings.finite_rings
+            sage: f.lm()                                                                # optional - sage.rings.finite_rings
             x
 
         """
@@ -1765,9 +1759,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         TESTS::
 
             sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict
-            sage: R.<x,y> = MPolynomialRing_polydict(GF(2), 2, order='lex')             # optional - sage.libs.pari
-            sage: f = x + y                                                             # optional - sage.libs.pari
-            sage: f.lt()                                                                # optional - sage.libs.pari
+            sage: R.<x,y> = MPolynomialRing_polydict(GF(2), 2, order='lex')             # optional - sage.rings.finite_rings
+            sage: f = x + y                                                             # optional - sage.rings.finite_rings
+            sage: f.lt()                                                                # optional - sage.rings.finite_rings
             x
         """
         try:
@@ -1812,7 +1806,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def _floordiv_(self, right):
         r"""
-        Quotient of division of self by other. This is denoted //.
+        Quotient of division of ``self`` by other. This is denoted //.
 
         .. note::
 
@@ -2093,12 +2087,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         We check a case that failed with an exception at some point::
 
-            sage: k.<u> = GF(4)                                                         # optional - sage.libs.pari
-            sage: R.<v> = k[]                                                           # optional - sage.libs.pari
-            sage: l.<v> = R.quo(v^3 + v + 1)                                            # optional - sage.libs.pari
-            sage: R.<x,y> = l[]                                                         # optional - sage.libs.pari
-            sage: f = y^3 + x^3 + (u + 1)*x                                             # optional - sage.libs.pari
-            sage: f.factor()                                                            # optional - sage.libs.pari
+            sage: k.<u> = GF(4)                                                         # optional - sage.rings.finite_rings
+            sage: R.<v> = k[]                                                           # optional - sage.rings.finite_rings
+            sage: l.<v> = R.quo(v^3 + v + 1)                                            # optional - sage.rings.finite_rings
+            sage: R.<x,y> = l[]                                                         # optional - sage.rings.finite_rings
+            sage: f = y^3 + x^3 + (u + 1)*x                                             # optional - sage.rings.finite_rings
+            sage: f.factor()                                                            # optional - sage.rings.finite_rings
             x^3 + y^3 + (u + 1)*x
 
         """
@@ -2197,7 +2191,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
     @handle_AA_and_QQbar
     def quo_rem(self, right):
         """
-        Returns quotient and remainder of self and right.
+        Returns quotient and remainder of ``self`` and ``right``.
 
         EXAMPLES::
 
@@ -2222,7 +2216,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over ``QQbar`` (:trac:`25351`)::
 
             sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
             sage: f = y*x^2 + x + 1                                                     # optional - sage.rings.number_field
@@ -2397,7 +2391,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         Make sure the remainder returns the correct type, fixing :trac:`13903`::
 
             sage: R.<y1,y2> = PolynomialRing(Qp(5), 2, order='lex')                     # optional - sage.rings.padics
-            sage: G=[y1^2 + y2^2, y1*y2 + y2^2, y2^3]                                   # optional - sage.rings.padics
+            sage: G = [y1^2 + y2^2, y1*y2 + y2^2, y2^3]                                 # optional - sage.rings.padics
             sage: type((y2^3).reduce(G))                                                # optional - sage.rings.padics
             <class 'sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict'>
 
@@ -2461,9 +2455,7 @@ def degree_lowest_rational_function(r, x):
 
     - ``x`` -- a multivariate polynomial ring generator
 
-    OUTPUT:
-
-    - ``integer`` -- the difference `val_x(p) - val_x(q)` where `r = p/q`
+    OUTPUT: integer -- the difference `val_x(p) - val_x(q)` where `r = p/q`
 
     .. NOTE::
 
@@ -2472,11 +2464,11 @@ def degree_lowest_rational_function(r, x):
 
     EXAMPLES::
 
-        sage: R1 = PolynomialRing(FiniteField(5), 3, names=["a", "b", "c"])             # optional - sage.libs.pari
-        sage: F = FractionField(R1)                                                     # optional - sage.libs.pari
-        sage: a,b,c = R1.gens()                                                         # optional - sage.libs.pari
-        sage: f = 3*a*b^2*c^3 + 4*a*b*c                                                 # optional - sage.libs.pari
-        sage: g = a^2*b*c^2 + 2*a^2*b^4*c^7                                             # optional - sage.libs.pari
+        sage: R1 = PolynomialRing(FiniteField(5), 3, names=["a", "b", "c"])             # optional - sage.rings.finite_rings
+        sage: F = FractionField(R1)                                                     # optional - sage.rings.finite_rings
+        sage: a,b,c = R1.gens()                                                         # optional - sage.rings.finite_rings
+        sage: f = 3*a*b^2*c^3 + 4*a*b*c                                                 # optional - sage.rings.finite_rings
+        sage: g = a^2*b*c^2 + 2*a^2*b^4*c^7                                             # optional - sage.rings.finite_rings
 
     Consider the quotient
     `f/g = \frac{4 + 3 bc^{2}}{ac + 2 ab^{3}c^{6}}` (note the
@@ -2484,13 +2476,13 @@ def degree_lowest_rational_function(r, x):
 
     ::
 
-        sage: r = f/g; r                                                                # optional - sage.libs.pari
+        sage: r = f/g; r                                                                # optional - sage.rings.finite_rings
         (-2*b*c^2 - 1)/(2*a*b^3*c^6 + a*c)
-        sage: degree_lowest_rational_function(r, a)                                     # optional - sage.libs.pari
+        sage: degree_lowest_rational_function(r, a)                                     # optional - sage.rings.finite_rings
         -1
-        sage: degree_lowest_rational_function(r, b)                                     # optional - sage.libs.pari
+        sage: degree_lowest_rational_function(r, b)                                     # optional - sage.rings.finite_rings
         0
-        sage: degree_lowest_rational_function(r, c)                                     # optional - sage.libs.pari
+        sage: degree_lowest_rational_function(r, c)                                     # optional - sage.rings.finite_rings
         -1
     """
     from sage.rings.fraction_field import FractionField

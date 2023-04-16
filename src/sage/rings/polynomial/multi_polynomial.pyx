@@ -1113,7 +1113,8 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,y,z> = QQ[]
             sage: f = x^3 + y^3 + z^3
             sage: f.jacobian_ideal()
-            Ideal (3*x^2, 3*y^2, 3*z^2) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            Ideal (3*x^2, 3*y^2, 3*z^2) of
+             Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         return self.parent().ideal(self.gradient())
 
@@ -1252,17 +1253,17 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y>=ZZ[]
+            sage: R.<x,y> = ZZ[]
             sage: x.is_generator()
             True
-            sage: (x+y-y).is_generator()
+            sage: (x + y - y).is_generator()
             True
             sage: (x*y).is_generator()
             False
-            sage: R.<x,y>=QQ[]
+            sage: R.<x,y> = QQ[]
             sage: x.is_generator()
             True
-            sage: (x+y-y).is_generator()
+            sage: (x + y - y).is_generator()
             True
             sage: (x*y).is_generator()
             False
@@ -1276,7 +1277,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         If ``f`` is a :class:`sage.categories.map.Map`, then the resulting
         polynomial will be defined over the codomain of ``f``. Otherwise, the
-        resulting polynomial will be over the same ring as self. Set
+        resulting polynomial will be over the same ring as ``self``. Set
         ``new_base_ring`` to override this behaviour.
 
         INPUT:
@@ -1362,8 +1363,8 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``self``, ``right``: multivariate polynomials
-        - ``variable``: optional, compute the Sylvester matrix with respect to this
+        - ``self``, ``right`` -- multivariate polynomials
+        - ``variable`` -- optional, compute the Sylvester matrix with respect to this
           variable. If ``variable`` is not provided, the first variable of the
           polynomial ring is used.
 
@@ -1533,7 +1534,7 @@ cdef class MPolynomial(CommutativePolynomial):
         the same ring as the polynomial::
 
             sage: R.<x,y> = QQ[]
-            sage: f = x^5*y+3*x^2*y^2-2*x+y-1
+            sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1
             sage: f.discriminant(y)                                                     # optional - sage.libs.singular
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
             sage: f.polynomial(y).discriminant()                                        # optional - sage.libs.singular
@@ -1653,9 +1654,13 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: K.<x,y> = PolynomialRing(ZZ, 2)
             sage: flist, R = K._macaulay_resultant_universal_polynomials([1,1,2])
             sage: flist[0].macaulay_resultant(flist[1:])                                # optional - sage.modules
-            u2^2*u4^2*u6 - 2*u1*u2*u4*u5*u6 + u1^2*u5^2*u6 - u2^2*u3*u4*u7 + u1*u2*u3*u5*u7 + u0*u2*u4*u5*u7 - u0*u1*u5^2*u7 + u1*u2*u3*u4*u8 - u0*u2*u4^2*u8 - u1^2*u3*u5*u8 + u0*u1*u4*u5*u8 + u2^2*u3^2*u9 - 2*u0*u2*u3*u5*u9 + u0^2*u5^2*u9 - u1*u2*u3^2*u10 + u0*u2*u3*u4*u10 + u0*u1*u3*u5*u10 - u0^2*u4*u5*u10 + u1^2*u3^2*u11 - 2*u0*u1*u3*u4*u11 + u0^2*u4^2*u11
+            u2^2*u4^2*u6 - 2*u1*u2*u4*u5*u6 + u1^2*u5^2*u6 - u2^2*u3*u4*u7 + u1*u2*u3*u5*u7
+            + u0*u2*u4*u5*u7 - u0*u1*u5^2*u7 + u1*u2*u3*u4*u8 - u0*u2*u4^2*u8 - u1^2*u3*u5*u8
+            + u0*u1*u4*u5*u8 + u2^2*u3^2*u9 - 2*u0*u2*u3*u5*u9 + u0^2*u5^2*u9
+            - u1*u2*u3^2*u10 + u0*u2*u3*u4*u10 + u0*u1*u3*u5*u10 - u0^2*u4*u5*u10
+            + u1^2*u3^2*u11 - 2*u0*u1*u3*u4*u11 + u0^2*u4^2*u11
 
-        The following example degenerates into the determinant of a `3*3` matrix::
+        The following example degenerates into the determinant of a `3\times 3` matrix::
 
             sage: K.<x,y> = PolynomialRing(ZZ, 2)
             sage: flist, R = K._macaulay_resultant_universal_polynomials([1,1,1])
@@ -1873,12 +1878,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def lift(self, I):
         """
-        given an ideal ``I = (f_1,...,f_r)`` and some ``g (== self)`` in ``I``,
-        find ``s_1,...,s_r`` such that ``g = s_1 f_1 + ... + s_r f_r``.
+        Given an ideal `I = (f_1,\dots,f_r)` that contains ``self``,
+        find `s_1,\dots,s_r` such that ``self`` `= s_1 f_1 + ... + s_r f_r`.
 
         EXAMPLES::
 
-            sage: A.<x,y> = PolynomialRing(CC,2,order='degrevlex')
+            sage: A.<x,y> = PolynomialRing(CC, 2, order='degrevlex')
             sage: I = A.ideal([x^10 + x^9*y^2, y^8 - x^2*y^7 ])
             sage: f = x*y^13 + y^12
             sage: M = f.lift(I)
@@ -1901,7 +1906,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         OUTPUT:
 
-         - a multivariate polynomial representing the inverse of ``f`` modulo ``I``
+        a multivariate polynomial representing the inverse of ``f`` modulo `I`
 
         EXAMPLES::
 
@@ -2053,7 +2058,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: r = x*y - (2*z-1)/(z^2+z+1) * x + y/z
             sage: p = r * (x + z*y - 1/z^2)
             sage: q = r * (x*y*z + 1)
-            sage: gcd(p,q)
+            sage: gcd(p, q)
             (z^3 + z^2 + z)*x*y + (-2*z^2 + z)*x + (z^2 + z + 1)*y
 
         Polynomials over polynomial rings are converted to a simpler polynomial
@@ -2061,10 +2066,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: A.<z,t> = ZZ[]
             sage: B.<x,y> = A[]
-            sage: r = x*y*z*t+1
+            sage: r = x*y*z*t + 1
             sage: p = r * (x - y + z - t + 1)
             sage: q = r * (x*z - y*t)
-            sage: gcd(p,q)
+            sage: gcd(p, q)
             z*t*x*y + 1
             sage: _.parent()
             Multivariate Polynomial Ring in x, y over
@@ -2303,7 +2308,7 @@ cdef class MPolynomial(CommutativePolynomial):
         .. TODO::
 
             When Newton's Method doesn't converge to a root in the upper half plane.
-            Now we just return z0. It would be better to modify and find the unique root
+            Now we just return `z_0`. It would be better to modify and find the unique root
             in the upper half plane.
 
         EXAMPLES::
@@ -2351,11 +2356,13 @@ cdef class MPolynomial(CommutativePolynomial):
         An example where precision needs to be increased::
 
             sage: R.<x,y> = PolynomialRing(QQ)
-            sage: F = -16*x^7 - 114*x^6*y - 345*x^5*y^2 - 599*x^4*y^3 - 666*x^3*y^4 - 481*x^2*y^5 - 207*x*y^6 - 40*y^7
+            sage: F = (-16*x^7 - 114*x^6*y - 345*x^5*y^2 - 599*x^4*y^3
+            ....:      - 666*x^3*y^4 - 481*x^2*y^5 - 207*x*y^6 - 40*y^7)
             sage: F.reduced_form(prec=50, smallest_coeffs=False)                        # optional - sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: accuracy of Newton's root not within tolerance(0.000012... > 1e-06), increase precision
+            ValueError: accuracy of Newton's root not within tolerance(0.000012... > 1e-06),
+            increase precision
             sage: F.reduced_form(prec=100, smallest_coeffs=False)                       # optional - sage.modules
             (
                                                                   [-1 -1]
@@ -2411,11 +2418,12 @@ cdef class MPolynomial(CommutativePolynomial):
         ::
 
             sage: R.<x,y> = PolynomialRing(RR)
-            sage: F = 217.992172373276*x^3 + 96023.1505442490*x^2*y + 1.40987971253579e7*x*y^2\
-            + 6.90016027113216e8*y^3
+            sage: F = (217.992172373276*x^3 + 96023.1505442490*x^2*y
+            ....:      + 1.40987971253579e7*x*y^2 + 6.90016027113216e8*y^3)
             sage: F.reduced_form(smallest_coeffs=False) # tol 1e-8                      # optional - sage.modules
             (
-            -39.5673942565918*x^3 + 111.874026298523*x^2*y + 231.052762985229*x*y^2 - 138.380829811096*y^3,
+            -39.5673942565918*x^3 + 111.874026298523*x^2*y
+             + 231.052762985229*x*y^2 - 138.380829811096*y^3,
             <BLANKLINE>
             [-147 -148]
             [   1    1]
@@ -2424,12 +2432,16 @@ cdef class MPolynomial(CommutativePolynomial):
         ::
 
             sage: R.<x,y> = PolynomialRing(CC)
-            sage: F = (0.759099196558145 + 0.845425869641446*CC.0)*x^3 + (84.8317207268542 + 93.8840848648033*CC.0)*x^2*y\
-            + (3159.07040755858 + 3475.33037377779*CC.0)*x*y^2 + (39202.5965389079 + 42882.5139724962*CC.0)*y^3
-            sage: F.reduced_form(smallest_coeffs=False) # tol 1e-11                     # optional - sage.modules
+            sage: F = ((0.759099196558145 + 0.845425869641446*CC.0)*x^3
+            ....:      + (84.8317207268542 + 93.8840848648033*CC.0)*x^2*y
+            ....:      + (3159.07040755858 + 3475.33037377779*CC.0)*x*y^2
+            ....:      + (39202.5965389079 + 42882.5139724962*CC.0)*y^3)
+            sage: F.reduced_form(smallest_coeffs=False)  # tol 1e-11                    # optional - sage.modules
             (
-            (-0.759099196558145 - 0.845425869641446*I)*x^3 + (-0.571709908900118 - 0.0418133346027929*I)*x^2*y
-            + (0.856525964330103 - 0.0721403997649759*I)*x*y^2 + (-0.965531044130330 + 0.754252314465703*I)*y^3,
+            (-0.759099196558145 - 0.845425869641446*I)*x^3
+            + (-0.571709908900118 - 0.0418133346027929*I)*x^2*y
+            + (0.856525964330103 - 0.0721403997649759*I)*x*y^2
+            + (-0.965531044130330 + 0.754252314465703*I)*y^3,
             <BLANKLINE>
             [-1 37]
             [ 0 -1]
@@ -2570,10 +2582,10 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: _.<x,y> = Zmod(4)[]
             sage: (2*x).is_nilpotent()
             True
-            sage: (2+y*x).is_nilpotent()
+            sage: (2 + y*x).is_nilpotent()
             False
             sage: _.<x,y> = Zmod(36)[]
-            sage: (4+6*x).is_nilpotent()
+            sage: (4 + 6*x).is_nilpotent()
             False
             sage: (6*x + 12*y + 18*x*y + 24*(x^2+y^2)).is_nilpotent()
             True

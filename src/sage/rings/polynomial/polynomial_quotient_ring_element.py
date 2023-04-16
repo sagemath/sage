@@ -346,7 +346,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: S.<y> = R.quotient(x^2 + 2*x + 1)
             sage: (2*y).is_unit()
             True
-            sage: (y+1).is_unit()
+            sage: (y + 1).is_unit()
             False
 
         TESTS:
@@ -461,9 +461,9 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         -  field
 
-        -  homomorphism from self to field
+        -  homomorphism from ``self`` to field
 
-        -  homomorphism from field to self
+        -  homomorphism from field to ``self``
 
 
         EXAMPLES::
