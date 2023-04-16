@@ -1898,27 +1898,30 @@ class CoxeterGroups(Category_singleton):
 
             Check that this is independent of the implementation of the group, see :trac:`34799`::
 
-                sage: W1 = WeylGroup(['A', 2])                                                                          # optional - sage.combinat sage.groups
-                sage: W2 = Permutations(3)                                                                              # optional - sage.combinat sage.groups
+                sage: W1 = WeylGroup(['A', 2])                                          # optional - sage.combinat sage.groups
+                sage: W2 = Permutations(3)                                              # optional - sage.combinat sage.groups
                 sage: P = lambda pi: W2(list(pi.to_permutation()))
-                sage: d1 = set((P(w1), P(w2)) for w1 in W1 for w2 in W1                # optional - sage.combinat sage.groups
+                sage: d1 = set((P(w1), P(w2)) for w1 in W1 for w2 in W1                 # optional - sage.combinat sage.groups
                 ....:                         if w1.absolute_le(w2))
-                sage: d2 = set((w1, w2) for w1 in W2 for w2 in W2                      # optional - sage.combinat sage.groups
-                ....:                   if w1.absolute_le(w2))                         
-                sage: d1 == d2                                                         # optional - sage.combinat sage.groups
+                sage: d2 = set((w1, w2) for w1 in W2 for w2 in W2                       # optional - sage.combinat sage.groups
+                ....:                   if w1.absolute_le(w2))
+                sage: d1 == d2                                                          # optional - sage.combinat sage.groups
                 True
-                sage: sage.combinat.permutation.Permutations.options.mult = "r2l"                                       # optional - sage.combinat sage.groups
-                sage: d3 = set((w1, w2) for w1 in W2 for w2 in W2 if w1.absolute_le(w2))                                # optional - sage.combinat sage.groups
-                sage: d1 == d3                                                                                          # optional - sage.combinat sage.groups
+                sage: sage.combinat.permutation.Permutations.options.mult = "r2l"       # optional - sage.combinat sage.groups
+                sage: d3 = set((w1, w2)                                                 # optional - sage.combinat sage.groups
+                ....:          for w1 in W2 for w2 in W2 if w1.absolute_le(w2))
+                sage: d1 == d3                                                          # optional - sage.combinat sage.groups
                 True
-                sage: sage.combinat.permutation.Permutations.options._reset()                                           # optional - sage.combinat sage.groups
+                sage: sage.combinat.permutation.Permutations.options._reset()           # optional - sage.combinat sage.groups
 
-                sage: W1 = WeylGroup(['B', 2])                                                                          # optional - sage.combinat sage.groups
-                sage: W2 = SignedPermutations(2)                                                                        # optional - sage.combinat sage.groups
-                sage: P = lambda pi: W2(list(pi.to_permutation()))                                                      # optional - sage.combinat sage.groups
-                sage: d1 = set((P(w1), P(w2)) for w1 in W1 for w2 in W1 if w1.absolute_le(w2))                          # optional - sage.combinat sage.groups
-                sage: d2 = set((w1, w2) for w1 in W2 for w2 in W2 if w1.absolute_le(w2))                                # optional - sage.combinat sage.groups
-                sage: d1 == d2                                                                                          # optional - sage.combinat sage.groups
+                sage: W1 = WeylGroup(['B', 2])                                          # optional - sage.combinat sage.groups
+                sage: W2 = SignedPermutations(2)                                        # optional - sage.combinat sage.groups
+                sage: P = lambda pi: W2(list(pi.to_permutation()))                      # optional - sage.combinat sage.groups
+                sage: d1 = set((P(w1), P(w2))                                           # optional - sage.combinat sage.groups
+                ....:          for w1 in W1 for w2 in W1 if w1.absolute_le(w2))
+                sage: d2 = set((w1, w2)                                                 # optional - sage.combinat sage.groups
+                ....:          for w1 in W2 for w2 in W2 if w1.absolute_le(w2))
+                sage: d1 == d2                                                          # optional - sage.combinat sage.groups
                 True
             """
             if self == other:

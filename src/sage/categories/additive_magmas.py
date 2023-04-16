@@ -917,15 +917,15 @@ class AdditiveMagmas(Category_singleton):
 
                         EXAMPLES::
 
-                           sage: x = cartesian_product((GF(7)(2), 17)); x                                               # optional - sage.rings.finite_rings
+                           sage: x = cartesian_product((GF(7)(2), 17)); x               # optional - sage.rings.finite_rings
                            (2, 17)
-                           sage: -x                                                                                     # optional - sage.rings.finite_rings
+                           sage: -x                                                     # optional - sage.rings.finite_rings
                            (5, -17)
 
                         TESTS::
 
                            sage: C = AdditiveMagmas().AdditiveUnital().AdditiveInverse().CartesianProducts() 
-                           sage: x.parent() in C                                       # optional - sage.rings.finite_rings
+                           sage: x.parent() in C                                        # optional - sage.rings.finite_rings
                            True
                         """
                         return self.parent()._cartesian_product_of_elements(
