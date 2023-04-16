@@ -76,7 +76,7 @@ pair and study it::
 
 We separate the system in independent subsystems::
 
-    sage: C = Sequence(r2).connected_components(); C
+    sage: C = Sequence(sorted(r2)).connected_components(); C
     [[w213 + k113 + x111 + x112 + x113,
      w212 + k112 + x110 + x111 + x112 + 1,
      w211 + k111 + x110 + x111 + x113 + 1,
@@ -962,7 +962,7 @@ class PolynomialSequence_generic(Sequence_generic):
             else:
                 Ps[r] = [f]
 
-        return sorted(PolynomialSequence(self.ring(), sorted(p)) for p in Ps.values())
+        return [PolynomialSequence(self.ring(), p) for p in Ps.values()]
 
     def _groebner_strategy(self):
         """
