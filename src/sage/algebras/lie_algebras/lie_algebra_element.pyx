@@ -18,10 +18,9 @@ AUTHORS:
 # ****************************************************************************
 
 from copy import copy
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+from cpython.object cimport Py_EQ, Py_NE, Py_GT, Py_GE
 
 from sage.misc.repr import repr_lincomb
-from sage.combinat.free_module import CombinatorialFreeModule
 from sage.structure.element cimport have_same_parent, parent
 from sage.structure.coerce cimport coercion_model
 from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
@@ -116,7 +115,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
             -[a, [a, b]] + [a, b] - [[a, b], b]
         """
         s = codomain.zero()
-        if not self: # If we are 0
+        if not self:  # If we are 0
             return s
         names = self.parent().variable_names()
         if base_map is None:
@@ -408,7 +407,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
         if scalar_parent != self._parent.base_ring():
             # Temporary needed by coercion (see Polynomial/FractionField tests).
             if self._parent.base_ring().has_coerce_map_from(scalar_parent):
-                scalar = self._parent.base_ring()( scalar )
+                scalar = self._parent.base_ring()(scalar)
             else:
                 return None
         if self_on_left:
@@ -479,7 +478,7 @@ cdef class LieAlgebraMatrixWrapper(LieAlgebraElementWrapper):
             sage: z.value.is_immutable()
             True
         """
-        value.set_immutable() # Make the matrix immutable for hashing
+        value.set_immutable()  # Make the matrix immutable for hashing
         LieAlgebraElementWrapper.__init__(self, parent, value)
 
 
@@ -681,7 +680,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         if scalar_parent != self._parent.base_ring():
             # Temporary needed by coercion (see Polynomial/FractionField tests).
             if self._parent.base_ring().has_coerce_map_from(scalar_parent):
-                scalar = self._parent.base_ring()( scalar )
+                scalar = self._parent.base_ring()(scalar)
             else:
                 return None
         cdef LieSubalgebraElementWrapper ret
@@ -827,7 +826,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
         zero = self._parent.base_ring().zero()
         I = self._parent._indices
         cdef int i
-        for i,v in enumerate(self.value):
+        for i, v in enumerate(self.value):
             if v != zero:
                 yield (I[i], v)
 
@@ -879,7 +878,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             {'x': 2, 'z': -3/2}
         """
         I = self._parent._indices
-        return {I[i]: v for i,v in self.value.iteritems()}
+        return {I[i]: v for i, v in self.value.iteritems()}
 
     def __getitem__(self, i):
         """
@@ -1262,7 +1261,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         cdef dict d = {}
         for t, g in self._t_dict.items():
             for k, c in g.monomial_coefficients(copy=False).iteritems():
-                d[k,t] = c
+                d[k, t] = c
         if self._c_coeff:
             d['c'] = self._c_coeff
         if self._d_coeff:
@@ -1322,7 +1321,6 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         if not self or not y:
             return self._parent.zero()
 
-        gd = self._parent._g.basis()
         cdef dict d = {}
         cdef UntwistedAffineLieAlgebraElement rt = <UntwistedAffineLieAlgebraElement>(y)
         c = self._parent.base_ring().zero()
@@ -1472,11 +1470,11 @@ class FreeLieAlgebraElement(LieAlgebraElement):
 
         cdef dict d = {}
         zero = self.base_ring().zero()
-        for ml, cl in self._monomial_coefficients.iteritems(): # The left monomials
-            for mr, cr in y._monomial_coefficients.iteritems(): # The right monomials
+        for ml, cl in self._monomial_coefficients.iteritems():  # The left monomials
+            for mr, cr in y._monomial_coefficients.iteritems():  # The right monomials
                 if ml == mr:
                     continue
-                if ml < mr: # Make sure ml < mr
+                if ml < mr:  # Make sure ml < mr
                     a, b = ml, mr
                 else:
                     a, b = mr, ml
@@ -1490,8 +1488,9 @@ class FreeLieAlgebraElement(LieAlgebraElement):
             return self.parent().zero()
         return type(self)(self.parent(), d)
 
+
 #####################################################################
-## Helper classes for free Lie algebras
+# Helper classes for free Lie algebras
 
 cdef class LieObject(SageObject):
     """

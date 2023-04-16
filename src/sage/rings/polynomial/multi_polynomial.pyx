@@ -1390,8 +1390,8 @@ cdef class MPolynomial(CommutativePolynomial):
         If both polynomials are of positive degree with respect to variable, the
         determinant of the Sylvester matrix is the resultant::
 
-            sage: f = R.random_element(4)
-            sage: g = R.random_element(4)
+            sage: f = R.random_element(4) or (x^2 * y^2)
+            sage: g = R.random_element(4) or (x^2 * y^2)
             sage: f.sylvester_matrix(g, x).determinant() == f.resultant(g, x)
             True
 

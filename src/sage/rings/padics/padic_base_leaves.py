@@ -1128,6 +1128,8 @@ class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
 
             sage: R = ZpER(7)
             sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
+            sage: R = ZpER(7, secure=True)
+            sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
         """
         from sage.rings.padics import padic_relaxed_element
         self._default_prec, self._halting_prec, self._secure = prec
@@ -1162,6 +1164,8 @@ class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
         TESTS::
 
             sage: K = QpER(7)
+            sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])
+            sage: K = QpER(7, secure=True)
             sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])
         """
         from sage.rings.padics import padic_relaxed_element

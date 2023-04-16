@@ -759,7 +759,6 @@ class UnsignedInfinityRing_class(Singleton, Ring):
 UnsignedInfinityRing = UnsignedInfinityRing_class()
 
 
-
 class LessThanInfinity(_uniq, RingElement):
     def __init__(self, parent=UnsignedInfinityRing):
         """
@@ -1749,7 +1748,6 @@ InfinityRing = InfinityRing_class()
 infinity = InfinityRing.gen(0)
 Infinity = infinity
 minus_infinity = InfinityRing.gen(1)
-
 
 
 def test_comparison(ring):
