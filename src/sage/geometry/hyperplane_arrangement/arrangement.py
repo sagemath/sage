@@ -344,18 +344,19 @@ arrangements.
 # - create ties with the Sage matroid methods
 # - hyperplane arrangements over other fields
 
+from sage.combinat.permutation import Permutation
+from sage.geometry.hyperplane_arrangement.hyperplane import AmbientVectorSpace, Hyperplane
+from sage.matrix.constructor import matrix, vector
+from sage.misc.cachefunc import cached_method
+from sage.modules.free_module import VectorSpace
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.misc.cachefunc import cached_method
-from sage.matrix.constructor import matrix, vector
-from sage.modules.free_module import VectorSpace
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-from sage.geometry.hyperplane_arrangement.hyperplane import AmbientVectorSpace, Hyperplane
 
 
 class HyperplaneArrangementElement(Element):
@@ -1033,7 +1034,7 @@ class HyperplaneArrangementElement(Element):
                 raise ValueError('hyperplane is not in the arrangement')
         return parent(*planes, backend=self._backend)
 
-    def restriction(self, hyperplane):
+    def restriction(self, hyperplane, permutation=False):
         r"""
         Return the restriction to a hyperplane.
 
@@ -1098,7 +1099,18 @@ class HyperplaneArrangementElement(Element):
         names = list(parent._names)
         names.pop(pivot)
         H = HyperplaneArrangements(parent.base_ring(), names=tuple(names))
-        return H(*hyperplanes, signed=False, backend=self._backend)
+        result = H(*hyperplanes, signed=False, backend=self._backend)
+        if permutation:
+            L1 = [_ for _ in result]
+            L = []
+            for h in hyperplanes:
+                h0 = H(h, signed=False)[0]
+                j = L1.index(h0)
+                L.append(j + 1)
+            P = Permutation(L)
+            return (result, P)
+        else:
+            return result
 
     def change_ring(self, base_ring):
         """
@@ -3382,20 +3394,20 @@ class HyperplaneArrangementElement(Element):
         n0 = self.dimension()
         n1 = self.center().dimension()
         U = [p.linear_part().basis_matrix() for p in P if p.dimension() == n1 + 1]
-        for v in ZZ^n0:
+        for v in ZZ**n0:
             if 0 not in [w * v for w in U]:
                 break
         h0 = self.parent()((0,) + tuple(v))
-        H1 = H.add_hyperplane(h0)
-        return H1.restriction(h0)
+        H1 = self.add_hyperplane(h0)
+        return H1.restriction(h0, permutation=True)
 
     def _fundamental_group_(self, proj=False):
         r"""
         It computes the fundamental group of the complement of an affine line arrangement in `\mathbb{C}^2`
         with equations with coefficients in a subfield of ``QQbar``
-        
+
         INPUT:
-        
+
         - ``proj`` -- (optional, default ``False``). It decides if it computes the fundamental group
           of the complement in the affine or projective space
 
@@ -3418,12 +3430,12 @@ class HyperplaneArrangementElement(Element):
              Hyperplane x + 0*y + 0,
              Hyperplane x + 0*y + 1]
             sage: G, dic = H._fundamental_group_() # optional - sirocco
-            sage: G
+            sage: G # optional - sirocco
             Finitely presented group < x0, x1, x2, x3, x4 | x3*x2*x3^-1*x2^-1, x2^-1*x0^-1*x2*x4*x0*x4^-1,
                                        x0*x1*x3*x0^-1*x3^-1*x1^-1, x0*x2*x4*x2^-1*x0^-1*x4^-1,
                                        x0*x1^-1*x0^-1*x3^-1*x1*x3,
                                        x4*x3^-1*x1*x3*x4^-1*x3^-1*x1^-1*x3 >
-            sage: dic
+            sage: dic # optional - sirocco
             {1: (5,), 2: (4,), 3: (1,), 4: (3,), 5: (2,), 6: (-5, -4, -3, -2, -1)}
             sage: H=A(x,y,x+y)
             sage: H._fundamental_group_()
@@ -3443,7 +3455,6 @@ class HyperplaneArrangementElement(Element):
 
             This functionality requires the sirocco package to be installed.
         """
-        from sage.combinat.permutation import Permutation
         from sage.groups.free_group import FreeGroup
         from sage.rings.qqbar import QQbar
         from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
