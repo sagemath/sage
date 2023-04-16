@@ -943,28 +943,26 @@ class PolynomialSequence_generic(Sequence_generic):
              Polynomial Sequence with 128 Polynomials in 128 Variables,
              Polynomial Sequence with 128 Polynomials in 128 Variables]
         """
+        # precompute the list of variables in each polynomial
+        vss = [f.variables() for f in self]
+
         # Use a union-find data structure to encode relationships between
         # variables, i.e., that they belong to a same polynomial
         from sage.sets.disjoint_set import DisjointSet
-        DS = DisjointSet(self.variables())
-        L = []  # to avoid calling twice f.variables()
-        for f in self:
-            var = f.variables()
-            u = var[0]
-            L.append((u, f))
-            for v in var[1:]:
+        DS = DisjointSet(set().union(*vss))
+        for u, *vs in vss:
+            for v in vs:
                 DS.union(u, v)
-        # Get one representative element per set of variables
-        roots = list(DS.root_to_elements_dict().keys())
 
-        P = [[] for _ in range(len(roots))]
-        for u, f in L:
-            for i, r in enumerate(roots):
-                if DS.find(u) == DS.find(r):
-                    P[i].append(f)
-                    break
-        P = sorted([PolynomialSequence(sorted(p)) for p in P])
-        return P
+        Ps = {}  # map root element -> polynomials in this component
+        for f, vs in zip(self, vss):
+            r = DS.find(vs[0])
+            if r in Ps:
+                Ps[r].append(f)
+            else:
+                Ps[r] = [f]
+
+        return sorted(PolynomialSequence(self.ring(), sorted(p)) for p in Ps.values())
 
     def _groebner_strategy(self):
         """
