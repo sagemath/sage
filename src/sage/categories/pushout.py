@@ -2687,7 +2687,7 @@ class CompletionFunctor(ConstructionFunctor):
         does not decrease the capped precision.
 
         EXAMPLES::
-ZZZ
+
             sage: R1.<a> = Zp(5, prec=20)[]                                             # optional - sage.rings.padics
             sage: R2 = Qp(5, prec=40)                                                   # optional - sage.rings.padics
             sage: R2(1) + a       # indirect doctest                                    # optional - sage.rings.padics
