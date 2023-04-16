@@ -1045,7 +1045,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             if not is_mutable or is_immutable:
                 self.set_immutable()
             self._bbn = C._bbn
-            self.__bbn_called_rings = C.__bbn_called_rings
+            self._bbn_all_computed = C._bbn_all_computed
             return
 
         gen_dict = {}
@@ -1132,9 +1132,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # bigraded Betti numbers, indexed by tuples (-i, 2j). 
         # For use in the bigraded_betti_numbers method.
         self._bbn = {}
-        # self.__bbn_called_rings: a set of base rings for which we called
+        # self._bbn_all_computed: a set of base rings for which we called
         # bigraded_betti_numbers(base_ring=base_ring)
-        self.__bbn_called_rings = set()
+        self._bbn_all_computed = set()
 
     def __hash__(self):
         """
@@ -2670,7 +2670,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             self._complex = {}
             self.__contractible = None
             self._bbn = {}
-            self.__bbn_called_rings = set()
+            self._bbn_all_computed = set()
 
     def remove_face(self, face, check=False):
         """
@@ -2796,7 +2796,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         self.__contractible = None
         self.__enlarged = {}
         self._bbn = {}
-        self.__bbn_called_rings = set()
+        self._bbn_all_computed = set()
 
     def remove_faces(self, faces, check=False):
         """
@@ -4834,7 +4834,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.bigraded_betti_numbers(base_ring=QQ)
             {(0, 0): 1, (-1, 4): 3, (-2, 6): 1, (-2, 8): 2, (-3, 10): 1}
         """
-        if base_ring in self.__bbn_called_rings:
+        if base_ring in self._bbn_all_computed:
             return self._bbn[base_ring]
 
         from sage.homology.homology_group import HomologyGroup
@@ -4856,10 +4856,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
                             B[ind] = ZZ.zero()
                         B[ind] += len(H[j-k-1].gens())
 
-        # We update the dictionary, because some of the 
-        # single values may already be stored in self._bbn[base_ring]
         self._bbn[base_ring] = B
-        self.__bbn_called_rings.add(base_ring)
+        self._bbn_all_computed.add(base_ring)
 
         return B 
 
@@ -4893,7 +4891,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if a == 0 and b == 0:
             return ZZ.one()
         if base_ring in self._bbn:
-            return self._bbn[base_ring].get((a,b), ZZ.zero())
+            if base_ring in self._bbn_all_computed:
+                return self._bbn[base_ring].get((a,b), ZZ.zero())
+            elif (a, b) in self._bbn[base_ring]:
+                return self._bbn[base_ring][a, b]
             
         from sage.homology.homology_group import HomologyGroup
 
