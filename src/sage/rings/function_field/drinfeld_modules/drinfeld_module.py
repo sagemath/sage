@@ -1326,7 +1326,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
               Defn: t^3
 
         If the input Ore polynomial defines a morphism to another
-        Drinfeld module, the latter is determined automatically:
+        Drinfeld module, the latter is determined automatically::
 
             sage: phi.hom(t + 1)
             Drinfeld Module morphism:
