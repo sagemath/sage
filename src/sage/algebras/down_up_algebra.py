@@ -77,7 +77,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         sage: d * u^2
         b*u^2*d + a*u*(d*u) + g*u
 
-    We verify some examples of Proposition 3.5 in [BR1988]_, which states
+    We verify some examples of Proposition 3.5 in [BR1998]_, which states
     that the 0-th degree part is commutative::
 
         sage: DU0 = [u^i * (d*u)^j * d^i for i,j in
