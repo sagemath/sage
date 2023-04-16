@@ -1303,8 +1303,8 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: S = SymmetricGroupAlgebra(QQ, 3)                                                              # optional - sage.groups sage.modules
-                    sage: S._to_cellular_element   # no implementation currently uses this                              # optional - sage.groups sage.modules
+                    sage: S = SymmetricGroupAlgebra(QQ, 3)                              # optional - sage.groups sage.modules
+                    sage: S._to_cellular_element   # no implementation currently uses this          # optional - sage.groups sage.modules
                     NotImplemented
                 """
 

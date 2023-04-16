@@ -67,7 +67,8 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
                 sage: L._test_nilpotency()                                              # optional - sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
-                AssertionError: claimed nilpotency step 3 does not match the actual nilpotency step 2
+                AssertionError: claimed nilpotency step 3
+                does not match the actual nilpotency step 2
                 sage: L = LieAlgebra(QQ, {('X','Y'): {'X': 1}}, nilpotent=True)         # optional - sage.combinat sage.modules
                 sage: L._test_nilpotency()                                              # optional - sage.combinat sage.modules
                 Traceback (most recent call last):

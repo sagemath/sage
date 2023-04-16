@@ -2924,11 +2924,12 @@ class QuotientFunctor(ConstructionFunctor):
         TESTS::
 
             sage: P.<x,y> = ZZ[]
-            sage: Q = P.quo([2 + x^2, 3*x + y^2])                                                                       # optional - sage.rings.finite_rings
-            sage: F = Q.construction()[0]; F                                                                            # optional - sage.rings.finite_rings
+            sage: Q = P.quo([2 + x^2, 3*x + y^2])                                       # optional - sage.rings.finite_rings
+            sage: F = Q.construction()[0]; F                                            # optional - sage.rings.finite_rings
             QuotientFunctor
-            sage: F(QQ['x','y'])     # indirect doctest                                                                 # optional - sage.rings.finite_rings
-            Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + 2, y^2 + 3*x)
+            sage: F(QQ['x','y'])     # indirect doctest                                 # optional - sage.rings.finite_rings
+            Quotient of Multivariate Polynomial Ring in x, y over Rational Field
+             by the ideal (x^2 + 2, y^2 + 3*x)
 
         Note that the ``quo()`` method of a field used to return the
         integer zero. That strange behaviour was removed in github
