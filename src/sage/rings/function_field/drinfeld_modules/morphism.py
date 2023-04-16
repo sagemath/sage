@@ -23,6 +23,9 @@ from sage.misc.latex import latex
 from sage.categories.morphism import Morphism
 from sage.structure.unique_representation import UniqueRepresentation
 
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.matrix.constructor import matrix
+
 
 class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
                              metaclass=InheritComparisonClasscallMetaclass):
@@ -418,3 +421,68 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         if not self.is_isomorphism():
             raise ZeroDivisionError("this morphism is not invertible")
         return self.parent()(~(self.ore_polynomial()[0]))
+
+    def _motive_matrix(self):
+        phi = self.domain()
+        phiT = phi.gen()
+        r = phiT.degree()
+        K = phi.base_over_constants_field()
+        S = phi.ore_polring()
+        Frob = S.twisting_morphism()
+        KT = PolynomialRing(K, name='T')
+
+        # The first row:
+        # we write u = u0 + u1*phiT + u2*phiT^2 + ...
+        u = self.ore_polynomial()
+        us = [ ]
+        while not u.is_zero():
+            u, ui = u.right_quo_rem(phiT)
+            us.append(ui)
+        l = len(us)
+        row = [KT([us[i][j] for i in range(l)]) for j in range(r)]
+        rows = [row]
+
+        # The next rows:
+        # each row is obtained from the previous one by
+        # applying the semi-linear transformation f |-> t*f
+        inv = K(phiT[r]).inverse()
+        B = inv * phiT
+        T = KT.gen()
+        for i in range(1, r):
+            row = [c.map_coefficients(Frob) for c in row]
+            row = [(inv*T - B[0]) * row[-1]] + [row[j-1] - B[j]*row[-1] for j in range(1, r)]
+            rows.append(row)
+
+        return matrix(KT, rows)
+
+    def norm(self, ideal=True):
+        nu = self._motive_matrix().det()
+        # We cast to A
+        A = self.domain().function_ring()
+        if ideal:
+            nu = A([c.in_base() for c in nu.monic().list()])
+            return A.ideal(nu)
+        elif self.domain() is self.codomain():
+            nu = A([c.in_base() for c in nu.list()])
+            return nu
+        else:
+            raise ValueError("norm is defined as an actual element only for endomorphisms")
+
+    def dual_isogeny(self):
+        nu = self._motive_matrix().det().monic()
+        A = self.domain().function_ring()
+        nu = A([c.in_base() for c in nu.list()])
+        dual = self.domain()(nu) // self.ore_polynomial()
+        return self.codomain().hom(dual, codomain=self.domain())
+
+    def characteristic_polynomial(self, var='X'):
+        if self.domain() is not self.codomain():
+            raise ValueError("characteristic polynomial is only defined for endomorphisms")
+        P = self._motive_matrix().charpoly()
+        # We cast to the correct parent
+        A = self.domain().function_ring()
+        parent = PolynomialRing(A, name=var)
+        return parent([A([c.in_base() for c in co.list()]) for co in P.list()])
+
+    def charpoly(self, var='X'):
+        return self.characteristic_polynomial(var)

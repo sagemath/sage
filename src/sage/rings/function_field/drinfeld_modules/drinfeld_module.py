@@ -1194,13 +1194,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         return self._gen.degree()
 
-    def hom(self, u, codomain=None):
-        if codomain is None:
-            H = self.Hom(self)
-        else:
-            H = self.Hom(codomain)
-        return H(u)
-
     def velu(self, isog):
         r"""
         Return a new Drinfeld module such that input is an
@@ -1282,3 +1275,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return self.category().object(quo)
         else:
             raise e
+
+    def hom(self, u, codomain=None):
+        if codomain is None:
+            codomain = self.velu(u)
+        H = self.Hom(codomain)
+        return H(u)
