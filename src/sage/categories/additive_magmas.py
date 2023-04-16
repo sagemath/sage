@@ -924,7 +924,8 @@ class AdditiveMagmas(Category_singleton):
 
                         TESTS::
 
-                           sage: x.parent() in AdditiveMagmas().AdditiveUnital().AdditiveInverse().CartesianProducts()  # optional - sage.rings.finite_rings
+                           sage: C = AdditiveMagmas().AdditiveUnital().AdditiveInverse().CartesianProducts() 
+                           sage: x.parent() in C                                       # optional - sage.rings.finite_rings
                            True
                         """
                         return self.parent()._cartesian_product_of_elements(
