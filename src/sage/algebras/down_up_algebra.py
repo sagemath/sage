@@ -87,7 +87,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         sage: all(x * y == y * x for x, y in cartesian_product([DU0, DU0]))
         True
 
-    We verify that `DU(2, -1, \gamma)` can be desribed as the universal
+    We verify that `DU(2, -1, \gamma)` can be described as the universal
     enveloping algebra of the 3-dimensional Lie algebra spanned by `x,y,z`
     satisfying `z = [x, y]`, `[x, z] = \gamma x`, and `[z, y] = \gamma y`::
 
