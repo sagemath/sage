@@ -1035,6 +1035,123 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         except NotImplementedError:
             raise NotImplementedError('height not implemented in this case')
 
+    def is_isomorphic(self, other, absolutely=False):
+        r"""
+        Return ``True`` is this Drinfeld module is isomorphic to
+        ``other``.
+
+        INPUT:
+
+        - ``absolutely`` -- a boolean (default: ``False``); if ``True``,
+          check the existence of an isomorphism defined on the base
+          field; if ``False`` check over an algebraic closure.
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: t = phi.ore_variable()
+
+        We create a second Drinfeld module, which is isomorphic to `\phi`
+        and then check that they are indeed isomorphic::
+
+            sage: psi = phi.velu(z)
+            sage: phi.is_isomorphic(psi)
+            True
+
+        In the example below, `\phi` and `\psi` are isogeneous but not
+        isomorphic::
+
+            sage: psi = phi.velu(t + 1)
+            sage: phi.is_isomorphic(psi)
+            False
+
+        Here is an example of two Drinfeld modules which are isomorphic
+        on an algebraic closure but not on the base field::
+
+            sage: phi = DrinfeldModule(A, [z, 1])
+            sage: psi = DrinfeldModule(A, [z, z])
+            sage: phi.is_isomorphic(psi)
+            False
+            sage: phi.is_isomorphic(psi, absolutely=True)
+            True
+
+        On certain fields, testing isomorphisms on the base field may
+        fail::
+
+            sage: K = A.fraction_field()
+            sage: T = K.gen()
+            sage: phi = DrinfeldModule(A, [T, 0, 1])
+            sage: psi = DrinfeldModule(A, [T, 0, T])
+            sage: psi.is_isomorphic(phi)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot solve the equation u^24 == T
+
+        However, it never fails over the algebraic closure::
+
+            sage: psi.is_isomorphic(phi, absolutely=True)
+            True
+
+        TESTS::
+
+        A Drifeld module is always isomorphic to itself::
+
+            sage: phi = DrinfeldModule(A, [T] + [K.random_element() for _ in range(3)] + [1])
+            sage: phi.is_isomorphic(phi)
+            True
+
+        Two Drinfeld modules of different ranks are never isomorphic::
+
+            sage: psi = DrinfeldModule(A, [T] + [K.random_element() for _ in range(5)] + [1])
+            sage: phi.is_isomorphic(psi)
+            False
+
+        """
+        if self.category() is not other.category():
+            raise ValueError("Drinfeld modules are not in the same category")
+        if self is other:
+            return True
+        r = self.rank()
+        if other.rank() != r:
+            return False
+        q = self._Fq.cardinality()
+        A = self.gen()
+        B = other.gen()
+        e = Integer(0)
+        ue = self._base(1)
+        for i in range(1, r+1):
+            ai = A[i]
+            bi = B[i]
+            if ai == 0 and bi == 0:
+                continue
+            if ai == 0 or bi == 0:
+                return False
+            if e != q - 1:
+                # u^e = ue
+                # u^(q^i - 1) = ai/bi
+                e, s, t = e.xgcd(q**i - 1)
+                ue = ue**s * (ai/bi)**t
+        for i in range(1, r+1):
+            if A[i]:
+                f = (q**i - 1) // e
+                if A[i] != B[i] * ue**f:
+                    return False
+        if absolutely:
+            return True
+        else:
+            ue = ue.backend(force=True)
+            try:
+                _ = ue.nth_root(e)
+            except ValueError:
+                return False
+            except (AttributeError, NotImplementedError):
+                raise NotImplementedError("cannot solve the equation u^%s == %s" % (e, ue))
+            return True
+
+
     def is_supersingular(self):
         r"""
         Return ``True`` whether the Drinfeld module is supersingular.

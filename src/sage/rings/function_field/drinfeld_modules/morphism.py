@@ -771,8 +771,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         is the rank::
 
             sage: g = phi.hom(T^2 + 1)
-            sage: chi = g.charpoly()
-            sage: chi.factor()
+            sage: g.charpoly().factor()
             (X + 4*T^2 + 4)^3
 
         An example with another variable name::
