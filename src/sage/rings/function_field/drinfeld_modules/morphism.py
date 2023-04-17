@@ -96,8 +96,13 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
     TESTS::
 
-        sage: morphism.parent() == Hom(phi, psi)
+        sage: morphism.parent() is Hom(phi, psi)
         True
+        sage: Hom(phi, psi)(morphism) == morphism
+        True
+
+    ::
+
         sage: phi.frobenius_endomorphism().parent() == End(phi)
         True
         sage: End(phi)(0).parent() == End(phi)
@@ -115,8 +120,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
           Defn: t + z^5 + z^3 + z + 1
         sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol) is morphism
         True
-    """
 
+    """
     @staticmethod
     def __classcall_private__(cls, parent, x):
         """
@@ -627,6 +632,14 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: f * g == psi.hom(a)
             True
 
+        TESTS::
+
+            sage: zero = phi.hom(0)
+            sage: zero.dual_isogeny()
+            Traceback (most recent call last):
+            ...
+            ValueError: the dual isogeny of the zero morphism is not defined
+
         """
         if not self.is_isogeny():
             raise ValueError("the dual isogeny of the zero morphism is not defined")
@@ -669,6 +682,15 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
             sage: f.characteristic_polynomial(var='Y')
             Y^3 + (T + 1)*Y^2 + (2*T + 3)*Y + 2*T^3 + T + 1
+
+        TESTS::
+
+            sage: t = phi.ore_variable()
+            sage: isog = phi.hom(t + 1)
+            sage: isog.characteristic_polynomial()
+            Traceback (most recent call last):
+            ...
+            ValueError: characteristic polynomial is only defined for endomorphisms
 
         """
         if self.domain() is not self.codomain():

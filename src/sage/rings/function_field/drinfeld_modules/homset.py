@@ -200,10 +200,9 @@ class DrinfeldModuleHomset(Homset):
         False
         sage: frobenius_endomorphism in H
         False
-    """
 
+    """
     Element = DrinfeldModuleMorphism
-    __contains__ = Parent.__contains__
 
     def __init__(self, X, Y, category=None, check=True):
         """
@@ -238,8 +237,7 @@ class DrinfeldModuleHomset(Homset):
         if check:
             if X.category() != Y.category() \
                     or not isinstance(X.category(), DrinfeldModules):
-                raise ValueError('Drinfeld modules must be in the same '
-                                 'category')
+                raise ValueError('Drinfeld modules must be in the same category')
             if category != X.category():
                 raise ValueError('category should be DrinfeldModules')
         base = category.base()

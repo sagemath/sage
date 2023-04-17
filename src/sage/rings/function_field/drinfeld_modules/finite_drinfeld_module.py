@@ -437,37 +437,38 @@ class FiniteDrinfeldModule(DrinfeldModule):
         """
         deg = ore_pol.degree()
         r = self.rank()
-        base_over_Fq = self.base_over_constants_field()
+        E = self.base()
+        K = self.base_over_constants_field()
         if ore_pol not in self._ore_polring:
             raise TypeError('input must be an Ore polynomial')
-        if ore_pol.degree() == 0:
-            coord = base_over_Fq(self._base(ore_pol)).vector()
-            if coord.nonzero_positions == [0]:
-                return self._Fq(coord[0])
-        if ore_pol == 0:
-            return self._Fq.zero()
         if deg % r != 0:
-            raise ValueError('input must be in the image of the Drinfeld '
-                             'module')
+            raise ValueError('input must be in the image of the Drinfeld module')
+
+        if ore_pol.degree() <= 0:
+            return K(ore_pol[0]).in_base()
 
         k = deg // r
-        T = self._function_ring.gen()
-        mat_lines = [[0 for _ in range(k+1)] for _ in range(k+1)]
-        for i in range(k+1):
-            phi_T_i = self(T**i)
+        A = self._function_ring
+        T = A.gen()
+        mat_rows = [[E.zero() for _ in range(k+1)] for _ in range(k+1)]
+        mat_rows[0][0] = E.one()
+        phiT = self.gen()
+        phiTi = self.ore_polring().one()
+        for i in range(1, k+1):
+            phiTi *= phiT
             for j in range(i+1):
-                mat_lines[j][i] = phi_T_i[r*j]
-        mat = Matrix(mat_lines)
-        vec = vector([list(ore_pol)[r*j] for j in range(k+1)])
-        coeffs_K = list((mat**(-1)) * vec)
-        coeffs_Fq = list(map(lambda x: base_over_Fq(x).vector()[0], coeffs_K))
-        pre_image = self._function_ring(coeffs_Fq)
-
-        if self(pre_image) == ore_pol:
-            return pre_image
-        else:
-            raise ValueError('input must be in the image of the Drinfeld '
-                             'module')
+                mat_rows[j][i] = phiTi[r*j]
+        mat = Matrix(mat_rows)
+        vec = vector([ore_pol[r*j] for j in range(k+1)])
+        coeffs_K = list(mat.inverse() * vec)
+        try:
+            coeffs_Fq = [K(c).in_base() for c in coeffs_K]
+            pre_image = A(coeffs_Fq)
+            if self(pre_image) == ore_pol:
+                return pre_image
+        except ValueError:
+            pass
+        raise ValueError('input must be in the image of the Drinfeld module')
 
     def is_ordinary(self):
         r"""
