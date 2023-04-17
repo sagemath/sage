@@ -1522,7 +1522,7 @@ class HyperplaneArrangementElement(Element):
         return all(R.n_facets() == rank for R in self.regions())
 
     @cached_method
-    def essentialization(self):
+    def essentialization(self, permutation=False):
         r"""
         Return the essentialization of the hyperplane arrangement.
 
@@ -1615,7 +1615,18 @@ class HyperplaneArrangementElement(Element):
         names = tuple(name for i, name in enumerate(parent._names) if i not in echelon_pivots)
         # Construct the result
         restricted_parent = HyperplaneArrangements(R, names=names)
-        return restricted_parent(*restricted, signed=False, backend=self._backend)
+        result = restricted_parent(*restricted, signed=False, backend=self._backend)
+        if permutation:
+            L1 = [_ for _ in result]
+            L = []
+            for h in restricted:
+                h0 = restricted_parent(h, signed=False)[0]
+                j = L1.index(h0)
+                L.append(j + 1)
+            P = Permutation(L)
+            return (result, P)
+        else:
+            return result
 
     def sign_vector(self, p):
         r"""
