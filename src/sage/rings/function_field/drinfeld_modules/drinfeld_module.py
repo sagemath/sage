@@ -1095,7 +1095,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: psi.is_isomorphic(phi, absolutely=True)
             True
 
-        TESTS::
+        TESTS:
 
         A Drifeld module is always isomorphic to itself::
 
@@ -1395,8 +1395,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def hom(self, x, codomain=None):
         r"""
-        Return the homomorphism defined by ``x`` having this
-        ring as domain.
+        Return the homomorphism defined by ``x`` having this Drinfeld
+        module as domain.
 
         We recall that an endomorphism `f : \phi \to \psi` between
         two Drinfeld modules is defined by a Ore polynomial `u`,
@@ -1412,17 +1412,17 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         EXAMPLES:
 
-        An important class of endomorphisms of a Drinfeld module
-        `\phi` is the scalar multiplications, that are endomorphisms
-        given by the Ore polynomials `\phi_a` with `a` in the function
-        ring `A`. We construct them as follows::
-
             sage: Fq = GF(5)
             sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(3)
             sage: phi = DrinfeldModule(A, [z, 0, 1, z])
             sage: phi
             Drinfeld module defined by T |--> z*t^3 + t^2 + z
+
+        An important class of endomorphisms of a Drinfeld module
+        `\phi` is given by scalar multiplications, that are endomorphisms
+        corresponding to the Ore polynomials `\phi_a` with `a` in the function
+        ring `A`. We construct them as follows::
 
             sage: phi.hom(T)
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
@@ -1432,7 +1432,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
               Defn: z^2*t^6 + (3*z^2 + z + 1)*t^5 + t^4 + 2*z^2*t^3 + (3*z^2 + z + 1)*t^2 + z^2 + 1
 
-        We can define a morphism by passing in the Ore polynomial
+        We can also define a morphism by passing in the Ore polynomial
         defining it.
         For example, below, we construct the Frobenius endomorphism
         of `\phi`::
