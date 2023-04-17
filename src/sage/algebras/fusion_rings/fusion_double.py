@@ -5,6 +5,8 @@ The Fusion Ring of the Drinfeld Double of a Finite Group
 # ****************************************************************************
 #  Copyright (C) 2023 Wenqi Li
 #                     Daniel Bump <bump at match.stanford.edu>
+#                     Travis Scrimshaw <tcscrims at gmail.com>
+#                     Guillermo Aboumrad <gh_willieab>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -111,7 +113,11 @@ class FusionDouble(CombinatorialFreeModule):
     impractical. Although the :class:`FusionDouble` class and its methods
     work well for groups of moderate size, the :class:`FMatrix` may not be
     computable. For the dihedral group of order 8, there are already 22
-    simple objects, and the F-matrix seems out of reach.
+    simple objects, and the F-matrix seems out of reach. The actual limitation
+    is that singular will not create a polynomial ring in more than
+    `2^{15}-1 = 32767` symbols, and there are more than this many F-matrix
+    values to be computed for the dihedral group of order 8, so in the
+    current implementation, this FusionRing is out of reach.
 
     It is an open problem to classify the finite groups whose fusion doubles
     are multiplicity-free. Abelian groups, dihedral groups, dicyclic groups,
@@ -123,11 +129,11 @@ class FusionDouble(CombinatorialFreeModule):
     try to implement them as GAP permutation groups. Thus::
 
         sage: G1 = GL(2, 2)
-        sage: H1 = FusionDouble(G1, prefix="b", inject_variables=True)
-        Traceback (most recent call last):
-        ...
-        AttributeError: 'LinearMatrixGroup_gap_with_category' object has no attribute 'centralizer'
-        sage: G2 = G1.as_permutation_group()
+        sage: hasattr(G1,"centralizer")
+        False
+        sage: G2=G1.as_permutation_group()
+        sage: hasattr(G2,"centralizer")
+        True
         sage: H2 = FusionDouble(G2, prefix="b", inject_variables=True)
         sage: b7^2
         b0 + b1 + b7
@@ -422,9 +428,6 @@ class FusionDouble(CombinatorialFreeModule):
         such that `r_i g_i r_i^{-1} = h_i`, and then `\chi_i^{(h_i)}(x) =
         \chi_i(r_i^{-1}xr_i)`, and this definition does not depend on the
         choice of `r_i`.
-
-        This formula is due to Christopher Goff [Goff1999]_ when the
-        centralizers are normal, and to Wenqi Li in the general case.
 
         .. NOTE::
 
