@@ -247,6 +247,8 @@ class DrinfeldModuleHomset(Homset):
         # ARGH: the next line does not work
         # because Map.__mul__ does not call the coercion system
         self.register_action(DrinfeldModuleMorphismAction(A, self, False, operator.mul))
+        if X is Y:
+            self.register_coercion(A)
 
     def _latex_(self):
         r"""

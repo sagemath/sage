@@ -22,6 +22,7 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.latex import latex
 from sage.categories.morphism import Morphism
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.element import coerce_binop
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.matrix.constructor import matrix
@@ -419,6 +420,42 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return self._ore_polynomial
 
+    @coerce_binop
+    def __add__(self, other):
+        r"""
+        Return the sum of this morphism and ``other``.
+
+        INPUT:
+
+        - ``other`` -- a morphism of Drinfeld modules in the
+          same category
+
+        TESTS::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: t = phi.ore_variable()
+            sage: f = phi.hom(t + 1)
+            sage: g = T * f
+            sage: f + g  # indirect doctest
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^3 + (3*z^2 + 2*z + 2)*t^2 + (2*z^2 + 3*z + 4)*t + z
+              Defn: (2*z^2 + 4*z + 4)*t^4 + (z + 1)*t^3 + t^2 + (2*z^2 + 4*z)*t + z + 1
+
+        We check that coercion from the function ring works::
+
+            sage: F = phi.frobenius_endomorphism()
+            sage: F + T
+            Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              Defn: (z + 1)*t^3 + t^2 + z
+
+        """
+        u = self.ore_polynomial() + other.ore_polynomial()
+        return self.parent()(u)
+
     def _composition_(self, other, H):
         r"""
         Return the composite of this morphism and ``other``.
@@ -718,8 +755,16 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: phi = DrinfeldModule(A, [z, 0, 1, z])
 
             sage: f = phi.frobenius_endomorphism()
-            sage: f.charpoly()
+            sage: chi = f.charpoly()
+            sage: chi
             X^3 + (T + 1)*X^2 + (2*T + 3)*X + 2*T^3 + T + 1
+
+        We check that the characteristic polynomial annihilates the
+        morphism (Cayley-Hamilton's theorem)::
+
+            sage: chi(f)
+            Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+              Defn: 0
 
         We verify, on an example, that the caracteristic polynomial
         of a morphism corresponding to `\phi_a` is `(X-a)^r` where `r`
