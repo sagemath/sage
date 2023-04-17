@@ -414,7 +414,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return r
 
     cpdef _richcmp_(self, other, int op):
-        e"""
+        r"""
         EXAMPLES::
 
             sage: K.<a> = GF(next_prime(2**60)**3)
