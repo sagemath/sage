@@ -3500,7 +3500,7 @@ class HyperplaneArrangementElement(Element):
             L = []
             for j in range(1, r + 1):
                 k0 = perm(j)
-                if  k0 < k:
+                if k0 < k:
                     L.append(k0)
                 elif k0 > k:
                     L.append(k0 - 1)
