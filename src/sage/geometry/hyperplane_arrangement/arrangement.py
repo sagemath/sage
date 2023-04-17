@@ -1042,10 +1042,18 @@ class HyperplaneArrangementElement(Element):
 
         - ``hyperplane`` -- a hyperplane of the hyperplane arrangement
 
+        - ``permutation`` -- (optional, default ``False``) If ``True``
+          it computes the permutation relating the order of hyperplanes
+          in the input and in the output.
+
         OUTPUT:
 
         The restriction of the hyperplane arrangement to the given
-        ``hyperplane``.
+        ``hyperplane``. If ``permutation`` is set to ``True``, also a permutation
+        ``P`` such that if if the restriction of the ``j``-th hyperplane of ``self``
+        (forgetting ``hyperplane``) occupies the ``k``-th position in the restriction,
+        then ``P(j)=k``. If several hyperplanes of ``self`` produce the same hyperplane
+        in the restriction, the second output is ``None``.
 
         EXAMPLES::
 
@@ -1055,6 +1063,12 @@ class HyperplaneArrangementElement(Element):
             Hyperplane 0*u + 0*x + y - z + 0
             sage: R = A.restriction(H);  R
             Arrangement <x - z | u - x | u - z>
+            sage: A.restriction(H, permutation=True)
+            (Arrangement <x - z | u - x | u - z>, None)
+            sage: A.add_hyperplane(z).restriction(z, permutation=True)
+            (Arrangement of 6 hyperplanes of dimension 3 and rank 3, [1, 2, 3, 4, 5, 6])
+            sage: A.add_hyperplane(u).restriction(u, permutation=True)
+            (Arrangement of 6 hyperplanes of dimension 3 and rank 3, [2, 4, 5, 6, 3, 1])
             sage: D = A.deletion(H);  D
             Arrangement of 5 hyperplanes of dimension 4 and rank 3
             sage: ca = A.characteristic_polynomial()
@@ -1107,8 +1121,11 @@ class HyperplaneArrangementElement(Element):
                 h0 = H(h, signed=False)[0]
                 j = L1.index(h0)
                 L.append(j + 1)
-            P = Permutation(L)
-            return (result, P)
+            if len(L) > len(set(L)):
+                return (result, None)
+            else:
+                P = Permutation(L)
+                return (result, P)
         else:
             return result
 
@@ -3390,6 +3407,38 @@ class HyperplaneArrangementElement(Element):
             raise ValueError("invalid algorithm")
 
     def hyperplane_section(self):
+        r"""
+        It computes a generic hyperplane section of ``self``, a central arrangement
+
+        OUTPUT:
+
+        An arrangement obtained by intersecting with a generic hyperplane.
+
+        EXAMPLES::
+
+            sage: A.<u,x,y,z> = hyperplane_arrangements.braid(4); A
+            Arrangement of 6 hyperplanes of dimension 4 and rank 3
+            sage: [_.coefficients() for _ in A]
+            [[0, 0, 0, 1, -1],
+            [0, 0, 1, -1, 0],
+            [0, 0, 1, 0, -1],
+            [0, 1, -1, 0, 0],
+            [0, 1, 0, -1, 0],
+            [0, 1, 0, 0, -1]]
+            sage: A1, P = A.hyperplane_section()
+            sage: [_.coefficients() for _ in A1]
+            [[0, 0, 0, 1],
+            [0, 0, 1, -1],
+            [0, 0, 1, 0],
+            [0, 1, -1, 0],
+            [0, 1, 0, -1],
+            [0, 1, 0, 0]]
+            sage: P
+            [2, 4, 5, 6, 3, 1]
+        """
+        if not self.is_central():
+            print("It applies only to central arrangements")
+            return None
         P = self.intersection_poset(element_label="subspace")
         n0 = self.dimension()
         n1 = self.center().dimension()
