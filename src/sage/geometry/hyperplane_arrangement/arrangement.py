@@ -695,7 +695,7 @@ class HyperplaneArrangementElement(Element):
         from sage.geometry.hyperplane_arrangement.plot import plot
         return plot(self, **kwds)
 
-    def cone(self, variable='t'):
+    def cone(self, variable='t', permutation=False):
         r"""
         Return the cone over the hyperplane arrangement.
 
@@ -703,11 +703,19 @@ class HyperplaneArrangementElement(Element):
 
         - ``variable`` -- string; the name of the additional variable
 
+        - ``permutation`` -- (optional, default ``False``) If ``True``
+          it computes the permutation relating the order of hyperplanes
+          in the input and in the output.
+
         OUTPUT:
 
         A new hyperplane arrangement. Its equations consist of
         `[0, -d, a_1, \ldots, a_n]` for each `[d, a_1, \ldots, a_n]` in the
         original arrangement and the equation `[0, 1, 0, \ldots, 0]`.
+        If ``permutation`` is set to ``True``, also a permutation
+        ``P`` such that if if the cone of the ``j``-th hyperplane of ``self``
+        occupies the ``k``-th position in the cone, then ``P(j)=k``.
+
 
         .. WARNING::
 
@@ -741,6 +749,11 @@ class HyperplaneArrangementElement(Element):
              Hyperplane t + 0*x + y - z + 0,
              Hyperplane t + x - y + 0*z + 0,
              Hyperplane t + x + 0*y - z + 0)
+            sage: b1, P = a.cone(permutation=True)
+            sage: b1 == b
+            True
+            sage: P
+            [1, 5, 2, 6, 3, 7, 4]
         """
         hyperplanes = []
         for h in self.hyperplanes():
@@ -750,7 +763,18 @@ class HyperplaneArrangementElement(Element):
         P = self.parent()
         names = (variable,) + P._names
         H = HyperplaneArrangements(self.parent().base_ring(), names=names)
-        return H(*hyperplanes, backend=self._backend)
+        result = H(*hyperplanes, backend=self._backend)
+        if permutation:
+            L1 = [_ for _ in result]
+            L = []
+            for h in hyperplanes:
+                h0 = H(h)[0]
+                j = L1.index(h0)
+                L.append(j + 1)
+            P = Permutation(L)
+            return (result, P)
+        else:
+            return result
 
     @cached_method
     def intersection_poset(self, element_label="int"):
@@ -3406,9 +3430,14 @@ class HyperplaneArrangementElement(Element):
         else:
             raise ValueError("invalid algorithm")
 
-    def hyperplane_section(self):
+    def hyperplane_section(self, proj=True):
         r"""
-        It computes a generic hyperplane section of ``self``, a central arrangement
+        It computes a generic hyperplane section of ``self``, an arrangement
+
+        INPUT:
+
+        - ``proj`` -- (optional, default ``True``). It decides if it the
+          ambient space is affine or projective
 
         OUTPUT:
 
@@ -3420,49 +3449,90 @@ class HyperplaneArrangementElement(Element):
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
             sage: [_.coefficients() for _ in A]
             [[0, 0, 0, 1, -1],
-            [0, 0, 1, -1, 0],
-            [0, 0, 1, 0, -1],
-            [0, 1, -1, 0, 0],
-            [0, 1, 0, -1, 0],
-            [0, 1, 0, 0, -1]]
+             [0, 0, 1, -1, 0],
+             [0, 0, 1, 0, -1],
+             [0, 1, -1, 0, 0],
+             [0, 1, 0, -1, 0],
+             [0, 1, 0, 0, -1]]
             sage: A1, P = A.hyperplane_section()
+            sage: A1
+            Arrangement of 6 hyperplanes of dimension 3 and rank 3
             sage: [_.coefficients() for _ in A1]
-            [[0, 0, 0, 1],
-            [0, 0, 1, -1],
-            [0, 0, 1, 0],
-            [0, 1, -1, 0],
-            [0, 1, 0, -1],
-            [0, 1, 0, 0]]
+            [[0, 0, 1, -1],
+             [0, 1, -1, 0],
+             [0, 1, 0, -1],
+             [0, 3, 3, 10],
+             [0, 3, 10, 3],
+             [0, 10, 3, 3]]
             sage: P
-            [2, 4, 5, 6, 3, 1]
+            [1, 2, 3, 6, 5, 4]
+            sage: a = hyperplane_arrangements.semiorder(3); a
+            Arrangement of 6 hyperplanes of dimension 3 and rank 2
+            sage: a1, p = a.hyperplane_section(proj=False)
+            sage: a1
+            Arrangement of 6 hyperplanes of dimension 2 and rank 2
+            sage: p
+            [2, 1, 5, 3, 6, 4]
         """
-        if not self.is_central():
-            print("It applies only to central arrangements")
-            return None
-        P = self.intersection_poset(element_label="subspace")
+        from sage.matrix.constructor import Matrix
+        if proj and not self.is_central():
+            raise TypeError('The arrangement is not central')
         n0 = self.dimension()
+        r = self.n_hyperplanes()
+        A = self.parent()
+        if not proj:
+            H, perm0 = self.cone(permutation=True)
+            H1, perm1 = H.hyperplane_section()
+            perm = perm0 * perm1
+            k = perm(r + 1)
+            h0 = H1[k - 1]
+            c0 = h0.coefficients()[1:]
+            j = next((i for i, x in enumerate(c0)), None)
+            H1a = H1.deletion(h0)
+            c1a = [h.coefficients()[1:] for h in H1a]
+            mat = Matrix([c0] + c1a)
+            mat.swap_columns(0, j)
+            for j in range(1, n0):
+                mat.add_multiple_of_column(j, 0, -mat[0, j] / mat[0, 0])
+            vrs = H1.parent().variable_names()[1:]
+            A1 = HyperplaneArrangements(self.base_ring(), names=vrs)
+            H1b = A1(mat.rows()[1:])
+            L = []
+            for j in range(1, r + 1):
+                k0 = perm(j)
+                if  k0 < k:
+                    L.append(k0)
+                elif k0 > k:
+                    L.append(k0 - 1)
+            return (H1b, Permutation(L))
+        P = self.intersection_poset(element_label="subspace")
         n1 = self.center().dimension()
-        U = [p.linear_part().basis_matrix() for p in P if p.dimension() == n1 + 1]
+        U = [p.linear_part().basis()[0] for p in P if p.dimension() == n1 + 1]
+        U0 = sum(U)
         for v in ZZ**n0:
-            if 0 not in [w * v for w in U]:
+            v1 = v + U0
+            if 0 not in [w * v1 for w in U]:
                 break
-        h0 = self.parent()((0,) + tuple(v))
+        h0 = self.parent()((0,) + tuple(v1))
         H1 = self.add_hyperplane(h0)
         return H1.restriction(h0, permutation=True)
 
     def _fundamental_group_(self, proj=False):
         r"""
-        It computes the fundamental group of the complement of an affine line arrangement in `\mathbb{C}^2`
-        with equations with coefficients in a subfield of ``QQbar``
+        It computes the fundamental group of the complement of an affine
+        hyperplane arrangement in `\mathbb{C}^n`, or a projective hyperplane
+        arrangement in `\mathbb{CP}^n`, `n=1,2`, whose equations have
+        coefficients in a subfield of ``QQbar``
 
         INPUT:
 
-        - ``proj`` -- (optional, default ``False``). It decides if it computes the fundamental group
-          of the complement in the affine or projective space
+        - ``proj`` -- (optional, default ``False``). It decides if it computes the
+          fundamental group of the complement in the affine or projective space
 
         OUTPUT:
 
-        A group finitely presented with the assignation of each line to a member of a group (meridian).
+        A group finitely presented with the assignation of each hyperplane to
+        a member of a group (meridian).
 
         EXAMPLES::
 
@@ -3491,7 +3561,7 @@ class HyperplaneArrangementElement(Element):
             (Finitely presented group < x0, x1, x2 | x0*x1^-1*x0^-1*x2^-1*x1*x2, x0*x1*x2*x1^-1*x0^-1*x2^-1 >,
              {1: (3,), 2: (1,), 3: (2,), 4: (-3, -2, -1)})
             sage: H._fundamental_group_(proj=True) # optional - sirocco
-            (Finitely presented group < x0, x1, x2 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
+            (Finitely presented group < x0, x1 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
             sage: H = hyperplane_arrangements.braid(4).essentialization()
             sage: H._fundamental_group_(proj=True) # optional - sirocco
             (Finitely presented group < x0, x1, x2, x3, x4 | x1*x3*x1^-1*x3^-1,
@@ -3512,19 +3582,17 @@ class HyperplaneArrangementElement(Element):
         affine = n == 2 and not proj
         projective = n==3 and self.is_central() and proj
         if (n == 1 and not proj) or (n == 2 and proj and self.is_central()):
-            r1 = r - projective
+            r1 = r - proj
             G = FreeGroup(r1) / []
             dic = {j: (j,) for j in range(1, r)}
             dic[r] = tuple(-j for j in reversed(range(1, r)))
             return (G, dic)
         casos = affine or projective
         if not casos:
-            print("This method does not apply")
-            return None
+            raise TypeError('The method does not apply')
         K = self.base_ring()
         if not K.is_subring(QQbar):
-            print("This method only works if the base field has an embedding in QQbar")
-            return None
+            raise TypeError('the base field is not in QQbar')
         S = self.parent().ambient_space().symmetric_space()
         if projective:
             S = PolynomialRing(K, S.gens()[:-1])
@@ -3543,6 +3611,75 @@ class HyperplaneArrangementElement(Element):
             p = Permutation([r] + [j for j in range(1, r)] )
             dic = {j: dic[p(j)] for j in range(1, r + 1)}
         return (G, dic)
+
+    def fundamental_group(self, projective=False):
+        r"""
+        It computes the fundamental group of the complement of an affine
+        hyperplane arrangement in `\mathbb{C}^n`, or a projective hyperplane
+        arrangement in `\mathbb{CP}^n`, whose equations have
+        coefficients in a subfield of ``QQbar``
+
+        INPUT:
+
+        - ``projective`` -- (optional, default ``False``). It decides if it computes the
+          fundamental group of the complement in the affine or projective space
+
+        OUTPUT:
+
+        A group finitely presented with the assignation of each hyperplane to
+        a member of a group (meridian).
+
+        EXAMPLES::
+
+            sage: A.<x, y> = HyperplaneArrangements(QQ)
+            sage: L = [y + x, y + x - 1]
+            sage: H = A(L)
+            sage: G, dic = H.fundamental_group(); G # optional - sirocco
+            Finitely presented group < x0, x1 |  >
+            sage: L = [x, y, x + 1, y + 1, x - y]
+            sage: H = A(L); list(H)
+            [Hyperplane 0*x + y + 0,
+             Hyperplane 0*x + y + 1,
+             Hyperplane x - y + 0,
+             Hyperplane x + 0*y + 0,
+             Hyperplane x + 0*y + 1]
+            sage: G, dic = H.fundamental_group() # optional - sirocco
+            sage: G # optional - sirocco
+            Finitely presented group < x0, x1, x2, x3, x4 | x3*x2*x3^-1*x2^-1, x2^-1*x0^-1*x2*x4*x0*x4^-1,
+                                       x0*x1*x3*x0^-1*x3^-1*x1^-1, x0*x2*x4*x2^-1*x0^-1*x4^-1,
+                                       x0*x1^-1*x0^-1*x3^-1*x1*x3,
+                                       x4*x3^-1*x1*x3*x4^-1*x3^-1*x1^-1*x3 >
+            sage: dic # optional - sirocco
+            {1: (5,), 2: (4,), 3: (1,), 4: (3,), 5: (2,), 6: (-5, -4, -3, -2, -1)}
+            sage: H=A(x,y,x+y)
+            sage: H.fundamental_group()
+            (Finitely presented group < x0, x1, x2 | x0*x1^-1*x0^-1*x2^-1*x1*x2, x0*x1*x2*x1^-1*x0^-1*x2^-1 >,
+             {1: (3,), 2: (1,), 3: (2,), 4: (-3, -2, -1)})
+            sage: H.fundamental_group(projective=True) # optional - sirocco
+            (Finitely presented group < x0, x1 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
+            sage: H = hyperplane_arrangements.braid(4)
+            sage: H.fundamental_group(projective=True) # optional - sirocco
+            (Finitely presented group < x0, x1, x2, x3, x4 | x0*x3*x0^-1*x3^-1, x2*x4^-1*x2^-1*x4, x2*x3*x1*x3^-1*x2^-1*x1^-1,
+             x1*x4*x0*x1^-1*x0^-1*x4^-1, x3^-1*x2^-1*x1^-1*x3*x1*x2, x0^-1*x1*x4*x0*x4^-1*x1^-1 >,
+             {1: (5,), 2: (1,), 3: (2,), 4: (3,), 5: (-4, -5, -3, -2, -1), 6: (4,)})
+            sage: H = hyperplane_arrangements.coordinate(5)
+            sage: g = H.fundamental_group(projective=True)[0]
+            sage: g.is_abelian(), g.abelian_invariants()
+            (True, (0, 0, 0, 0))
+
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """
+        n = self.dimension()
+        if n <= 2 or (n == 3 and projective):
+            return self._fundamental_group_(proj=projective)
+        H1, P = self.hyperplane_section(proj=projective)
+        H2, dic = H1.fundamental_group(projective=projective)
+        if not projective:
+            P = Permutation(list(P) + [self.n_hyperplanes() + 1])
+        dic = {j: dic[P(j)] for j in dic.keys()}
+        return (H2, dic)
 
 class HyperplaneArrangements(Parent, UniqueRepresentation):
     """
