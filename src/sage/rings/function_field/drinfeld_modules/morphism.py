@@ -767,7 +767,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
               Defn: 0
 
         We verify, on an example, that the caracteristic polynomial
-        of a morphism corresponding to `\phi_a` is `(X-a)^r` where `r`
+        of the morphism corresponding to `\phi_a` is `(X-a)^r` where `r`
         is the rank::
 
             sage: g = phi.hom(T^2 + 1)

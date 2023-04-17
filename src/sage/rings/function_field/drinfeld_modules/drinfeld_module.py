@@ -1410,7 +1410,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         - ``codomain`` -- a Drinfeld module or ``None`` (default:
           ``None``)
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Fq = GF(5)
             sage: A.<T> = Fq[]
