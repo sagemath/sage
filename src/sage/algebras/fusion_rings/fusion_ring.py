@@ -8,7 +8,10 @@ Fusion Rings
 #                     Nicolas Thiery <nthiery at users.sf.net>
 #                2022 Guillermo Aboumrad <gh_willieab>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
@@ -813,9 +816,11 @@ class FusionRing(WeylCharacterRing):
     def s_ij(self, elt_i, elt_j, base_coercion=True):
         r"""
         Return the element of the S-matrix of this fusion ring corresponding to
-        the given elements. This is the unnormalized S-matrix, denoted
-        `\tilde{s}_{ij}` in [BaKi2001]_ . To obtain the normalized S-matrix,
-        divide by ``self.global_q_dimension()`` or use ``self.S_matrix()`` with
+        the given elements.
+
+        This is the unnormalized S-matrix, denoted `\tilde{s}_{ij}`
+        in [BaKi2001]_ . To obtain the normalized S-matrix, divide by
+        :meth:`global_q_dimension()` or use :meth:`S_matrix()` with
         the option ``unitary=True``.
 
         This is computed using the formula
