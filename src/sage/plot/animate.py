@@ -1058,6 +1058,12 @@ class Animation(WithEqualityById, SageObject):
             ...
             ValueError: Chunk IHDR mismatch
 
+        TESTS::
+
+            sage: a = animate([])
+            sage: a.apng(show_path=True)
+            Animation saved to file ....png.
+
         """
         pngdir = self.png()
         if savefile is None:
