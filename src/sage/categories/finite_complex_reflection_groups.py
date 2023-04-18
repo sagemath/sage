@@ -854,7 +854,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     sage: sorted( w.reduced_word() for w in W.noncrossing_partition_lattice(W.from_reduced_word([2])) ) # optional - gap3
                     [[], [2]]
                 """
-                from sage.combinat.posets.all import Poset, LatticePoset
+                from sage.combinat.posets.posets import Poset
+                from sage.combinat.posets.lattices import LatticePoset
 
                 R = self.reflections()
                 if L is None:

@@ -181,12 +181,11 @@ def LinearTensorParent(free_module_parent, linear_functions_parent):
     return LinearTensorParent_class(free_module_parent, linear_functions_parent)
 
 
-
-#*****************************************************************************
+# ****************************************************************************
 #
 # Parent of linear functions tensored with a free module
 #
-#*****************************************************************************
+# ****************************************************************************
 
 class LinearTensorParent_class(Parent):
     r"""

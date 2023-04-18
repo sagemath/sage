@@ -89,17 +89,17 @@ class FormsRing_abstract(Parent):
 
         if (base_ring.characteristic() > 0):
             raise NotImplementedError("only characteristic 0 is supported")
-        self._group               = group
-        self._red_hom             = red_hom
-        self._base_ring           = base_ring
-        self._coeff_ring          = FractionField(PolynomialRing(base_ring,'d'))
-        self._pol_ring            = PolynomialRing(base_ring,'x,y,z,d')
-        self._rat_field           = FractionField(self._pol_ring)
+        self._group = group
+        self._red_hom = red_hom
+        self._base_ring = base_ring
+        self._coeff_ring = FractionField(PolynomialRing(base_ring,'d'))
+        self._pol_ring = PolynomialRing(base_ring,'x,y,z,d')
+        self._rat_field = FractionField(self._pol_ring)
 
         # default values
-        self._weight              = None
-        self._ep                  = None
-        self._analytic_type       = self.AT(["quasi", "mero"])
+        self._weight = None
+        self._ep = None
+        self._analytic_type = self.AT(["quasi", "mero"])
 
         self.default_prec(10)
         self.disp_prec(5)
@@ -816,11 +816,11 @@ class FormsRing_abstract(Parent):
         (X,Y,Z,dX,dY,dZ) = self.diff_alg().gens()
 
         if (self.hecke_n() == infinity):
-            return   (X*Z-X*Y) * dX\
+            return (X*Z-X*Y) * dX\
                    + ZZ(1)/ZZ(2) * (Y*Z-X) * dY\
                    + ZZ(1)/ZZ(4) * (Z**2-X) * dZ
         else:
-            return   1/self._group.n() * (X*Z-Y) * dX\
+            return 1/self._group.n() * (X*Z-Y) * dX\
                    + ZZ(1)/ZZ(2) * (Y*Z-X**(self._group.n()-1)) * dY\
                    + (self._group.n()-2) / (4*self._group.n()) * (Z**2-X**(self._group.n()-2)) * dZ
 
@@ -1926,18 +1926,18 @@ class FormsRing_abstract(Parent):
         # The case n=infinity is special (there are 2 cusps)
         # Until we/I get confirmation what is what sort of Eisenstein series
         # this case is excluded...
-        if    n == infinity:
+        if n == infinity:
             # We set the weight zero Eisenstein series to 1
             pass
-        elif  k == 0:
+        elif k == 0:
             return self.one()
-        elif  k == 2:
+        elif k == 2:
             # This is a bit problematic, e.g. for n=infinity there is a
             # classical Eisenstein series of weight 2
             return self.E2()
-        elif  k == 4:
+        elif k == 4:
             return self.E4()
-        elif  k == 6:
+        elif k == 6:
             return self.E6()
 
         # Basic variables
@@ -1947,12 +1947,12 @@ class FormsRing_abstract(Parent):
         reduced_self = extended_self.reduce_type(["holo"], degree = (QQ(k), ep))
 
         if (n == infinity):
-            l2  = ZZ(0)
-            l1  = ZZ((k-(1-ep)) / ZZ(4))
+            l2 = ZZ(0)
+            l1 = ZZ((k-(1-ep)) / ZZ(4))
         else:
             num = ZZ((k-(1-ep)*n/(n-2)) * (n-2) / ZZ(4))
-            l2  = num % n
-            l1  = ((num-l2)/n).numerator()
+            l2 = num % n
+            l1 = ((num-l2)/n).numerator()
 
         # If the space is one dimensional we return the normalized generator
         if l1 == 0:

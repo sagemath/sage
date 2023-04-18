@@ -43,15 +43,15 @@ AUTHOR:
 - Robert Bradshaw: initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.tuple cimport PyTuple_GET_ITEM
 
@@ -62,9 +62,7 @@ from sage.structure.element cimport parent
 from sage.structure.parent cimport Parent
 
 from . import homset
-import sage.structure.element
 from weakref import ref
-from sage.misc.constant_function import ConstantFunction
 
 
 cdef inline category(x):
@@ -243,8 +241,8 @@ cdef class Action(Functor):
 
     def _repr_(self):
         side = "Left" if self._is_left else "Right"
-        return "%s %s by %r on %r"%(side, self._repr_name_(), self.G,
-                                    self.underlying_set())
+        return "%s %s by %r on %r" % (side, self._repr_name_(), self.G,
+                                      self.underlying_set())
 
     def _repr_name_(self):
         return "action"
@@ -604,8 +602,9 @@ cdef class ActionEndomorphism(Morphism):
         return self._action._act_(self._g, x)
 
     def _repr_(self):
-        return "Action of %s on %s under %s."%(self._g,
-                                               self._action.underlying_set(), self._action)
+        return "Action of %s on %s under %s." % (self._g,
+                                                 self._action.underlying_set(),
+                                                 self._action)
 
     def __mul__(left, right):
         cdef ActionEndomorphism left_c, right_c

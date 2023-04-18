@@ -2977,7 +2977,6 @@ class DifferentiableManifold(TopologicalManifold):
                              " has not been defined on the {}".format(self))
         return self._frame_changes[(frame1, frame2)]
 
-
     def set_change_of_frame(self, frame1, frame2, change_of_frame,
                          compute_inverse=True):
         r"""

@@ -31,7 +31,7 @@ from sage.libs.linbox.linbox cimport \
 
 from sage.libs.linbox.fflas cimport \
     fgemm, pfgemm, fgemv, Det, pDet, Rank, pRank, ReducedRowEchelonForm, pReducedRowEchelonForm, applyP, \
-    MinPoly, CharPoly, MinPoly, \
+    MinPoly, CharPoly, \
     ModFloatDensePolynomial as ModDensePoly
 
 ctypedef Poly1Dom[ModField, Dense] ModDensePolyRing
@@ -52,7 +52,7 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
     ``Matrix_modn_dense_double`` class is used for larger moduli.
 
     Routines here are for the most basic access, see the
-    `matrix_modn_dense_template.pxi` file for higher-level routines.
+    ``matrix_modn_dense_template.pxi`` file for higher-level routines.
     """
     def __cinit__(self):
         """
