@@ -3497,7 +3497,7 @@ class HyperplaneArrangementElement(Element):
             sage: a1, p = a.hyperplane_section(proj=False); a1
             Arrangement of 12 hyperplanes of dimension 2 and rank 2
             sage: p = Permutation([p(j) for j in [1 .. 12]] + [13]); p
-            [1, 5, 9, 12, 10, 11, 7, 8, 3, 4, 2, 6, 13]
+            [1, 5, 11, 12, 9, 10, 7, 8, 3, 4, 2, 6, 13]
             sage: ca1, p2 = a1.cone(permutation=True)
             sage: m1 = ca1.matroid()
             sage: q = p1.inverse() * p * p2
@@ -3517,6 +3517,12 @@ class HyperplaneArrangementElement(Element):
             k = perm(r + 1)
             mat = Matrix(h.coefficients()[1:] for h in H1)
             mat.swap_rows(0, k - 1)
+            if k == 1:
+                trans = Permutation(range(1, r + 2))
+            else:
+                trans = Permutation([k] + list(range(2, k)) + [1] + list(range(k + 1, r + 2)))
+            perm = perm * trans
+            perm = Permutation([perm(j) - 1 for j in range(1, r + 1)])
             for j in range(mat.ncols()):
                 if mat[0, j] != 0:
                     mat.swap_columns(0, j)
@@ -3534,14 +3540,7 @@ class HyperplaneArrangementElement(Element):
                 j = L1b.index(h0)
                 L2.append(j + 1)
             perm2 = Permutation(L2)
-            L = []
-            for j in range(1, r + 1):
-                k0 = perm(j)
-                if k0 < k:
-                    L.append(k0)
-                elif k0 > k:
-                    L.append(k0 - 1)
-            return (H1b, Permutation(L) * perm2)
+            return (H1b, perm * perm2)
         P = self.intersection_poset(element_label="subspace")
         n1 = self.center().dimension()
         U = [p.linear_part().basis()[0] for p in P if p.dimension() == n1 + 1]
