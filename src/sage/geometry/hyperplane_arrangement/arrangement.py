@@ -714,7 +714,8 @@ class HyperplaneArrangementElement(Element):
         original arrangement and the equation `[0, 1, 0, \ldots, 0]`.
         If ``permutation`` is set to ``True``, also a permutation
         ``P`` such that if if the cone of the ``j``-th hyperplane of ``self``
-        occupies the ``k``-th position in the cone, then ``P(j)=k``.
+        occupies the ``k``-th position in the cone, then ``P(j)=k``. In the source
+        the hyperplane at infinity is the last one.
 
 
         .. WARNING::
@@ -754,6 +755,8 @@ class HyperplaneArrangementElement(Element):
             True
             sage: P
             [1, 5, 2, 6, 3, 7, 4]
+            sage: b1[P(b1.n_hyperplanes())-1]
+            Hyperplane t + 0*x + 0*y + 0*z + 0
         """
         hyperplanes = []
         for h in self.hyperplanes():
@@ -3458,32 +3461,48 @@ class HyperplaneArrangementElement(Element):
 
             sage: A.<u,x,y,z> = hyperplane_arrangements.braid(4); A
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
-            sage: [_.coefficients() for _ in A]
-            [[0, 0, 0, 1, -1],
-             [0, 0, 1, -1, 0],
-             [0, 0, 1, 0, -1],
-             [0, 1, -1, 0, 0],
-             [0, 1, 0, -1, 0],
-             [0, 1, 0, 0, -1]]
+            sage: M = A.matroid()
             sage: A1, P = A.hyperplane_section()
             sage: A1
             Arrangement of 6 hyperplanes of dimension 3 and rank 3
-            sage: [_.coefficients() for _ in A1]
-            [[0, 0, 1, -1],
-             [0, 1, -1, 0],
-             [0, 1, 0, -1],
-             [0, 3, 3, 10],
-             [0, 3, 10, 3],
-             [0, 10, 3, 3]]
             sage: P
             [1, 2, 3, 6, 5, 4]
+            sage: M1 = A1.matroid()
+            sage: M.is_isomorphism(M1, {j: P(j + 1) - 1 for j in M.groundset()})
+            True
+            sage: A2, Q = A1.hyperplane_section(); A2
+            Arrangement of 6 hyperplanes of dimension 2 and rank 2
+            sage: M2 = A2.matroid()
+            sage: T1 = M1.truncation()
+            sage: T1.is_isomorphism(M2, {j: Q(j + 1) - 1 for j in T1.groundset()})
+            True
             sage: a = hyperplane_arrangements.semiorder(3); a
             Arrangement of 6 hyperplanes of dimension 3 and rank 2
+            sage: ca, p0 = a.cone(permutation=True)
+            sage: m = ca.matroid()
             sage: a1, p = a.hyperplane_section(proj=False)
             sage: a1
             Arrangement of 6 hyperplanes of dimension 2 and rank 2
-            sage: p
-            [2, 1, 5, 3, 6, 4]
+            sage: p = Permutation([p(j) for j in [1 .. 6]] + [7]); p
+            [6, 5, 2, 1, 4, 3, 7]
+            sage: ca1, p1 = a1.cone(permutation=True)
+            sage: m1 = ca1.matroid()
+            sage: q = p0.inverse() * p * p1
+            sage: m.is_isomorphism(m1, {j: q(j + 1) - 1 for j in m.groundset()})
+            True
+            sage: a = hyperplane_arrangements.Shi(4).hyperplane_section(proj=False)[0]; a
+            Arrangement of 12 hyperplanes of dimension 3 and rank 3
+            sage: ca, p1 = a.cone(permutation=True)
+            sage: m = ca.matroid().truncation()
+            sage: a1, p = a.hyperplane_section(proj=False); a1
+            Arrangement of 12 hyperplanes of dimension 2 and rank 2
+            sage: p = Permutation([p(j) for j in [1 .. 12]] + [13]); p
+            [1, 5, 9, 12, 10, 11, 7, 8, 3, 4, 2, 6, 13]
+            sage: ca1, p2 = a1.cone(permutation=True)
+            sage: m1 = ca1.matroid()
+            sage: q = p1.inverse() * p * p2
+            sage: m.is_isomorphism(m1, {j: q(j + 1) - 1 for j in m.groundset()})
+            True
         """
         from sage.matrix.constructor import Matrix
         if proj and not self.is_central():
@@ -3496,18 +3515,25 @@ class HyperplaneArrangementElement(Element):
             H1, perm1 = H.hyperplane_section()
             perm = perm0 * perm1
             k = perm(r + 1)
-            h0 = H1[k - 1]
-            c0 = h0.coefficients()[1:]
-            j = next((i for i, x in enumerate(c0)), None)
-            H1a = H1.deletion(h0)
-            c1a = [h.coefficients()[1:] for h in H1a]
-            mat = Matrix([c0] + c1a)
-            mat.swap_columns(0, j)
-            for j in range(1, n0):
+            mat = Matrix(h.coefficients()[1:] for h in H1)
+            mat.swap_rows(0, k - 1)
+            for j in range(mat.ncols()):
+                if mat[0, j] != 0:
+                    mat.swap_columns(0, j)
+                    break
+            for j in range(1, mat.ncols()):
                 mat.add_multiple_of_column(j, 0, -mat[0, j] / mat[0, 0])
             vrs = H1.parent().variable_names()[1:]
             A1 = HyperplaneArrangements(self.base_ring(), names=vrs)
-            H1b = A1(mat.rows()[1:])
+            mat_rows = mat.rows()[1:]
+            H1b = A1(mat_rows)
+            L1b = [_ for _ in H1b]
+            L2 = []
+            for h in mat_rows:
+                h0 = A1(h)[0]
+                j = L1b.index(h0)
+                L2.append(j + 1)
+            perm2 = Permutation(L2)
             L = []
             for j in range(1, r + 1):
                 k0 = perm(j)
@@ -3515,7 +3541,7 @@ class HyperplaneArrangementElement(Element):
                     L.append(k0)
                 elif k0 > k:
                     L.append(k0 - 1)
-            return (H1b, Permutation(L))
+            return (H1b, Permutation(L) * perm2)
         P = self.intersection_poset(element_label="subspace")
         n1 = self.center().dimension()
         U = [p.linear_part().basis()[0] for p in P if p.dimension() == n1 + 1]
