@@ -231,7 +231,9 @@ def set_intersphinx_mappings(app, config):
     'python': ('https://docs.python.org/',
                 os.path.join(SAGE_DOC_SRC, "common",
                              "python{}.inv".format(python_version))),
-    'pplpy': (PPLPY_DOCS, None)}
+    }
+    if PPLPY_DOCS and os.path.exists(os.path.join(PPLPY_DOCS, 'objects.inv')):
+        app.config.intersphinx_mapping['pplpy'] = (PPLPY_DOCS, None)
 
     # Add master intersphinx mapping
     dst = os.path.join(invpath, 'objects.inv')
