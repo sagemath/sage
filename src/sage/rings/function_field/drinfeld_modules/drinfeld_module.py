@@ -913,8 +913,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ...
             ValueError: input must be >= 0 and <= rank
         """
-        if not isinstance(n, Integer) and not isinstance(n, int):
-            raise TypeError('input must be an integer')
+        n = Integer(n)
         if not 0 <= n <= self.rank():
             raise ValueError('input must be >= 0 and <= rank')
         return self.coefficients(sparse=False)[n]
@@ -1024,6 +1023,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_supersingular()
             True
 
+        ::
+
+            sage
         """
         try:
             if self.characteristic().is_zero():
@@ -1037,14 +1039,14 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def is_isomorphic(self, other, absolutely=False):
         r"""
-        Return ``True`` is this Drinfeld module is isomorphic to
+        Return ``True`` if this Drinfeld module is isomorphic to
         ``other``.
 
         INPUT:
 
         - ``absolutely`` -- a boolean (default: ``False``); if ``True``,
           check the existence of an isomorphism defined on the base
-          field; if ``False`` check over an algebraic closure.
+          field; if ``False``, check over an algebraic closure.
 
         EXAMPLES::
 
@@ -1061,7 +1063,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_isomorphic(psi)
             True
 
-        In the example below, `\phi` and `\psi` are isogeneous but not
+        In the example below, `\phi` and `\psi` are isogenous but not
         isomorphic::
 
             sage: psi = phi.velu(t + 1)
@@ -1081,8 +1083,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         On certain fields, testing isomorphisms on the base field may
         fail::
 
-            sage: K = A.fraction_field()
-            sage: T = K.gen()
+            sage: L = A.fraction_field()
+            sage: T = L.gen()
             sage: phi = DrinfeldModule(A, [T, 0, 1])
             sage: psi = DrinfeldModule(A, [T, 0, T])
             sage: psi.is_isomorphic(phi)
@@ -1095,17 +1097,29 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: psi.is_isomorphic(phi, absolutely=True)
             True
 
+        Note finally that when the constant coefficients of `\phi_T` and
+        `\psi_T` differ, `\phi` and `\psi` do not belong to the same category
+        and checking whether they are isomorphic does not make sense; in this
+        case, an error is raised::
+
+            sage: phi = DrinfeldModule(A, [z, 0, 1])
+            sage: psi = DrinfeldModule(A, [z^2, 0, 1])
+            sage: phi.is_isomorphic(psi)
+            Traceback (most recent call last):
+            ...
+            ValueError: Drinfeld modules are not in the same category
+
         TESTS:
 
         A Drifeld module is always isomorphic to itself::
 
-            sage: phi = DrinfeldModule(A, [T] + [K.random_element() for _ in range(3)] + [1])
+            sage: phi = DrinfeldModule(A, [z] + [K.random_element() for _ in range(3)] + [1])
             sage: phi.is_isomorphic(phi)
             True
 
         Two Drinfeld modules of different ranks are never isomorphic::
 
-            sage: psi = DrinfeldModule(A, [T] + [K.random_element() for _ in range(5)] + [1])
+            sage: psi = DrinfeldModule(A, [z] + [K.random_element() for _ in range(5)] + [1])
             sage: phi.is_isomorphic(psi)
             False
 

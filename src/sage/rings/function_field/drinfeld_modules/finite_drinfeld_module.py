@@ -405,7 +405,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             ...
             ValueError: input must be in the image of the Drinfeld module
 
-            sage: phi.invert(t^3 + t^2 + 1)
+            sage: phi.invert(t^4 + t^2 + 1)
             Traceback (most recent call last):
             ...
             ValueError: input must be in the image of the Drinfeld module
@@ -434,19 +434,29 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: phi_r5 = cat.random_object(5)
             sage: phi_r5.invert(phi_r5(a)) == a
             True
+
+        ::
+
+            sage: B.<X> = Fq[]
+            sage: phi_r5.invert(X)
+            Traceback (most recent call last):
+            ...
+            TypeError: input must be an Ore polynomial
+
         """
         deg = ore_pol.degree()
         r = self.rank()
         E = self.base()
         K = self.base_over_constants_field()
-        if ore_pol not in self._ore_polring:
+        if ore_pol in self._ore_polring:
+            ore_pol = self._ore_polring(ore_pol)
+        else:
             raise TypeError('input must be an Ore polynomial')
+
+        if deg <= 0:
+            return K(ore_pol[0]).in_base()
         if deg % r != 0:
             raise ValueError('input must be in the image of the Drinfeld module')
-
-        if ore_pol.degree() <= 0:
-            return K(ore_pol[0]).in_base()
-
         k = deg // r
         A = self._function_ring
         T = A.gen()
