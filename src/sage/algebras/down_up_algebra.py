@@ -59,6 +59,17 @@ class DownUpAlgebra(CombinatorialFreeModule):
     where `y` covers `x` and `z` covers `y`. For `r`-differential posets
     we have `du - ud = r 1` and afford a representation of a
     :class:`Weyl algebra <sage.algebras.weyl_algebra.DifferentialWeylAlgebra>`.
+    This is obtained from DU(0, 1, 2r)`. For a `(q,r)`-differential poset,
+    we have the `d` and `u` operators satisfying
+
+    .. MATH::
+
+        \begin{aligned}
+        d^2u & = q(q+1) dud - q^3 ud^2 + r d,
+        \\ du^2 & = q(q+1) udu - q^3 u^2d + r u,
+        \end{aligned}
+
+    or `\alpha = q(q+1)`, `\beta = -q^3`, and `\gamma = r`.
 
     EXAMPLES:
 
@@ -107,6 +118,32 @@ class DownUpAlgebra(CombinatorialFreeModule):
         True
         sage: d*u^2 - 2*u*d*u + u^2*d == g*u
         True
+
+    Young's lattice is known to be a differential poset. Thus we can
+    construct a representation of `DU(0, 1, 2)` on this poset (which
+    gives a proof that Fomin's :class:`growth diagrams <GrowthDiagram>`
+    are equivalent to edge local rules or shadow lines construction
+    for :func:`RSK`)::
+
+        sage: DU = algebras.DownUp(0, 1, 2)
+        sage: d, u = DU.gens()
+        sage: d^2*u == 0*d*u*d + 1*u*d*d + 2*d
+        True
+        sage: d*u^2 == 0*u*d*u + 1*u*u*d + 2*u
+        True
+
+        sage: YL = CombinatorialFreeModule(DU.base_ring(), Partitions())
+        sage: def d_action(la):
+        ....:     return YL.sum_of_monomials(la.remove_cell(*c) for c in la.removable_cells())
+        sage: def u_action(la):
+        ....:     return YL.sum_of_monomials(la.add_cell(*c) for c in la.addable_cells())
+        sage: D = YL.module_morphism(on_basis=d_action, codomain=YL)
+        sage: U = YL.module_morphism(on_basis=u_action, codomain=YL)
+        sage: for la in PartitionsInBox(5, 5):
+        ....:     b = YL.basis()[la]
+        ....:     assert (D*D*U)(b) == 0*(D*U*D)(b) + 1*(U*D*D)(b) + 2*D(b)
+        ....:     assert (D*U*U)(b) == 0*(U*D*U)(la) + 1*(U*U*D)(b) + 2*U(b)
+        ....:     assert (D*U)(b) == (U*D)(b) + b  # the Weyl algebra relation
 
     .. TODO::
 
@@ -497,6 +534,17 @@ class VermaModule(CombinatorialFreeModule):
         sage: B = crystals.Tableaux(['A',1], shape=[5])
         sage: [b.weight() for b in B]
         [(5, 0), (4, 1), (3, 2), (2, 3), (1, 4), (0, 5)]
+
+    An example with periodic weights (see Theorem 2.13 of [BR1998]_)::
+
+        sage: k.<z6> = CyclotomicField(6)
+        sage: al = z6 + 1
+        sage: (al - 1)^6 == 1
+        True
+        sage: DU = algebras.DownUp(al, 1-al, 0)
+        sage: V = DU.verma_module(5)
+        sage: list(V.weights()[:8])
+        [5, 5*z6 + 5, 10*z6, 10*z6 - 5, 5*z6 - 5, 0, 5, 5*z6 + 5]
     """
     @staticmethod
     def __classcall_private__(cls, DU, la):
