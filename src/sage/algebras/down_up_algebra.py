@@ -416,6 +416,10 @@ class DownUpAlgebra(CombinatorialFreeModule):
         r"""
         Return the Verma module `V(\lambda)` of ``self``.
 
+        .. SEEALSO::
+
+            :class:`~sage.algebras.down_up_algebra.VermaModule`
+
         EXAMPLES::
 
             sage: R.<a,b,g> = QQ[]
@@ -470,8 +474,29 @@ class VermaModule(CombinatorialFreeModule):
         (b+1)*v[3]
         sage: u*d * v[3]
         (a*b+1)*v[3]
-        sage: v[3].degree()
+        sage: v[3].weight()
         (b + 1, a*b + 1)
+
+    An `U(\mathfrak{sl}_2)` example::
+
+        sage: DU = algebras.DownUp(2, -1, -2)
+        sage: d, u = DU.gens()
+        sage: V = DU.verma_module(5)
+        sage: list(V.weights()[:10])
+        [5, 8, 9, 8, 5, 0, -7, -16, -27, -40]
+        sage: v6 = V.basis()[6]
+        sage: d * v6
+        0
+        sage: [V.basis()[i].weight() for i in range(6)]
+        [(5, 0), (8, 5), (9, 8), (8, 9), (5, 8), (0, 5)]
+
+    Note that these are the same `\mathfrak{sl}_2` weights from the usual
+    construction of the irreducible representation `V(5)` (but they are
+    different as `\mathfrak{gl}_2` weights)::
+
+        sage: B = crystals.Tableaux(['A',1], shape=[5])
+        sage: [b.weight() for b in B]
+        [(5, 0), (4, 1), (3, 2), (2, 3), (1, 4), (0, 5)]
     """
     @staticmethod
     def __classcall_private__(cls, DU, la):
@@ -534,7 +559,7 @@ class VermaModule(CombinatorialFreeModule):
                 m1 = cur
 
         self._weights = lazy_list(_la_iter())
-        cat = Modules(R).WithBasis().Graded()
+        cat = Modules(R).WithBasis()
         CombinatorialFreeModule.__init__(self, R, NonNegativeIntegers(),
                                          prefix='v', category=cat)
 
@@ -592,32 +617,16 @@ class VermaModule(CombinatorialFreeModule):
             sage: V = DU.verma_module(0)
             sage: V.weights()
             lazy list [0, 0, 0, ...]
+
+        We reproduce the Fibonacci numbers example from [BR1998]_::
+
+            sage: R.<la> = QQ[]
+            sage: DU = algebras.DownUp(1, 1, 0, R)
+            sage: V = DU.verma_module(la)
+            sage: list(V.weights()[:11])
+            [la, la, 2*la, 3*la, 5*la, 8*la, 13*la, 21*la, 34*la, 55*la, 89*la]
         """
         return self._weights
-
-    def degree_on_basis(self, n):
-        r"""
-        Return the degree of the basis element indexed by ``n``.
-
-        This is the vector with the pair `(\lambda_n, \lambda_{n-1})`.
-
-        EXAMPLES::
-
-            sage: R.<a,b,g> = QQ[]
-            sage: DU = algebras.DownUp(a, b, g)
-            sage: V = DU.verma_module(5)
-            sage: V.degree_on_basis(0)
-            (5, 0)
-            sage: V.degree_on_basis(1)
-            (5*a + g, 5)
-            sage: V.degree_on_basis(2)
-            (5*a^2 + a*g + 5*b + g, 5*a + g)
-        """
-        R = self.base_ring()
-        V = FreeModule(R, 2)
-        if not n:
-            return V([self._weights[0], R.zero()])
-        return V([self._weights[n], self._weights[n-1]])
 
     def _action_on_basis(self, m, n):
         r"""
@@ -696,3 +705,88 @@ class VermaModule(CombinatorialFreeModule):
             return P.linear_combination((P._action_on_basis(m, n), mc*nc)
                                         for m, mc in scalar._monomial_coefficients.items()
                                         for n, nc in self._monomial_coefficients.items())
+
+        def is_weight_vector(self):
+            """
+            Return if ``self`` is a weight vector.
+
+            EXAMPLES::
+
+                sage: DU = algebras.DownUp(2, -1, -2)
+                sage: V = DU.verma_module(5)
+                sage: V.zero().is_weight_vector()
+                False
+                sage: B = V.basis()
+                sage: [B[i].weight() for i in range(6)]
+                [(5, 0), (8, 5), (9, 8), (8, 9), (5, 8), (0, 5)]
+                sage: B[5].is_weight_vector()
+                True
+                sage: v = B[0] + B[1]
+                sage: v.is_weight_vector()
+                False
+
+                sage: DU = algebras.DownUp(2, -1, 0)
+                sage: V = DU.verma_module(0)
+                sage: B = V.basis()
+                sage: v = sum(i*B[i] for i in range(1,5))
+                sage: v.is_weight_vector()
+                True
+            """
+            if not self:
+                return False
+
+            P = self.parent()
+            R = P.base_ring()
+            weights = P._weights
+
+            def get_wt(n):
+                if not n:
+                    return (R(P._weights[0]), R.zero())
+                return (R(P._weights[n]), R(P._weights[n-1]))
+
+            it = iter(self._monomial_coefficients)
+            wt = get_wt(next(it))
+            return all(get_wt(n) == wt for n in it)
+
+        def weight(self):
+            r"""
+            Return the weight of ``self``.
+
+            For `v_n`, this is the vector with the pair
+            `(\lambda_n, \lambda_{n-1})`.
+
+            EXAMPLES::
+
+                sage: R.<a,b,g> = QQ[]
+                sage: DU = algebras.DownUp(a, b, g)
+                sage: V = DU.verma_module(5)
+                sage: B = V.basis()
+                sage: B[0].weight()
+                (5, 0)
+                sage: B[1].weight()
+                (5*a + g, 5)
+                sage: B[2].weight()
+                (5*a^2 + a*g + 5*b + g, 5*a + g)
+
+                sage: V.zero().weight()
+                Traceback (most recent call last):
+                ...
+                ValueError: the zero element does not have well-defined weight
+                sage: (B[0] + B[1]).weight()
+                Traceback (most recent call last):
+                ...
+                ValueError: not a weight vector
+            """
+            if not self:
+                raise ValueError("the zero element does not have well-defined weight")
+            if not self.is_weight_vector():
+                raise ValueError("not a weight vector")
+            P = self.parent()
+            R = P.base_ring()
+            V = FreeModule(R, 2)
+            weights = P._weights
+            it = iter(self._monomial_coefficients)
+            n = next(it)
+            if not n:
+                return V([P._weights[0], R.zero()])
+            return V([P._weights[n], P._weights[n-1]])
