@@ -59,7 +59,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
     where `y` covers `x` and `z` covers `y`. For `r`-differential posets
     we have `du - ud = r 1` and afford a representation of a
     :class:`Weyl algebra <sage.algebras.weyl_algebra.DifferentialWeylAlgebra>`.
-    This is obtained from DU(0, 1, 2r)`. For a `(q,r)`-differential poset,
+    This is obtained from `DU(0, 1, 2r)`. For a `(q,r)`-differential poset,
     we have the `d` and `u` operators satisfying
 
     .. MATH::
@@ -69,7 +69,8 @@ class DownUpAlgebra(CombinatorialFreeModule):
         \\ du^2 & = q(q+1) udu - q^3 u^2d + r u,
         \end{aligned}
 
-    or `\alpha = q(q+1)`, `\beta = -q^3`, and `\gamma = r`.
+    or `\alpha = q(q+1)`, `\beta = -q^3`, and `\gamma = r`. Specializing
+    `q = -1` recovers the `r`-differential poset relation.
 
     EXAMPLES:
 
@@ -478,7 +479,7 @@ class VermaModule(CombinatorialFreeModule):
 
     .. MATH::
 
-        d \cdot v_n = \lambda_{n-1} v_{n-1} \qquad\qquad
+        d \cdot v_n = \lambda_{n-1} v_{n-1}, \qquad\qquad
         u \cdot v_n = v_{n+1},
 
     where `\lambda_n = \alpha \lambda_{n-1} + \beta \lambda_{n-2} + \gamma`
