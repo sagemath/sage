@@ -45,14 +45,17 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.rings.number_field.number_field import NumberField
+from sage.arith.misc import legendre_symbol, primes
+from sage.misc.functional import cyclotomic_polynomial
 from sage.modules.free_module import VectorSpace
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.misc.functional import cyclotomic_polynomial
-from sage.arith.all import legendre_symbol, primes
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.rational_field import QQ
 from sage.sets.set import Set
-from sage.rings.all import Integer, ZZ, QQ, Infinity
+from sage.structure.sage_object import SageObject
 
 
 class GaloisRepresentation(SageObject):
@@ -1151,9 +1154,9 @@ def Billerey_P_l(E, l):
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import Billerey_P_l
         sage: [Billerey_P_l(E,l) for l in primes(10)]
         [x^2 + 8143*x + 16777216,
-        x^2 + 451358*x + 282429536481,
-        x^4 - 664299076*x^3 + 205155493652343750*x^2 - 39595310449600219726562500*x + 3552713678800500929355621337890625,
-        x^4 - 207302404*x^3 - 377423798538689366394*x^2 - 39715249826471656586987520004*x + 36703368217294125441230211032033660188801]
+         x^2 + 451358*x + 282429536481,
+         x^4 - 664299076*x^3 + 205155493652343750*x^2 - 39595310449600219726562500*x + 3552713678800500929355621337890625,
+         x^4 - 207302404*x^3 - 377423798538689366394*x^2 - 39715249826471656586987520004*x + 36703368217294125441230211032033660188801]
     """
     K = E.base_field()
     qq = K.primes_above(l)
@@ -1187,11 +1190,11 @@ def Billerey_B_l(E,l,B=0):
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import Billerey_B_l
         sage: [Billerey_B_l(E,l) for l in primes(15)]
         [1123077552537600,
-        227279663773903886745600,
-        0,
-        0,
-        269247154818492941287713746693964214802283882086400,
-        0]
+         227279663773903886745600,
+         0,
+         0,
+         269247154818492941287713746693964214802283882086400,
+         0]
     """
     d = E.base_field().absolute_degree()
     P = Billerey_P_l(E, l)

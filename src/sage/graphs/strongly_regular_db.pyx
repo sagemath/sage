@@ -32,7 +32,9 @@ import os
 
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
-from sage.arith.all import is_square, is_prime_power, divisors
+from sage.arith.misc import is_square
+from sage.arith.misc import is_prime_power
+from sage.arith.misc import divisors
 from sage.misc.cachefunc import cached_function
 from sage.combinat.designs.orthogonal_arrays import orthogonal_array
 from sage.combinat.designs.bibd import balanced_incomplete_block_design
@@ -2871,13 +2873,13 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
         sage: from sage.graphs.strongly_regular_db import apparently_feasible_parameters
         sage: for p in sorted(apparently_feasible_parameters(1300)):   # not tested
-        ....:     if graphs.strongly_regular_graph(*p,existence=True) is True: # not tested
-        ....:         try:                                             # not tested
-        ....:             _ = graphs.strongly_regular_graph(*p)        # not tested
-        ....:             print(p, "built successfully")               # not tested
-        ....:         except RuntimeError as e:                        # not tested
-        ....:             if 'Brouwer' not in str(e):                  # not tested
-        ....:                 raise                                    # not tested
+        ....:     if graphs.strongly_regular_graph(*p,existence=True) is True:
+        ....:         try:
+        ....:             _ = graphs.strongly_regular_graph(*p)
+        ....:             print(p, "built successfully")
+        ....:         except RuntimeError as e:
+        ....:             if 'Brouwer' not in str(e):
+        ....:                 raise
 
     `\mu=0` behaves correctly (:trac:`19712`)::
 

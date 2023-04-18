@@ -116,10 +116,10 @@ else
         echo "However, these system packages will not be used for building Sage"
         if [ -f "$PKG_SCRIPTS"/install-requires.txt ]; then
             echo "because using Python site-packages is not supported by the Sage distribution;"
-            echo "see https://trac.sagemath.org/ticket/29023"
+            echo "see https://github.com/sagemath/sage/issues/29023"
         else
             echo "because spkg-configure.m4 has not been written for this package;"
-            echo "see https://trac.sagemath.org/ticket/27330"
+            echo "see https://github.com/sagemath/sage/issues/27330"
         fi
     fi
 fi

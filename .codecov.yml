@@ -1,0 +1,18 @@
+# https://docs.codecov.com/docs/pull-request-comments#disable-comment
+comment: false
+# https://docs.codecov.com/docs/codecovyml-reference#codecov
+codecov:
+  require_ci_to_pass: false
+# https://docs.codecov.com/docs/commit-status
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 0%
+        base: auto
+    patch:
+      default:
+        target: auto
+        threshold: 0%
+        base: auto

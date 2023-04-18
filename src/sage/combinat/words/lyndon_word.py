@@ -12,17 +12,15 @@ Lyndon words
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-
-from sage.combinat.composition import Composition, Compositions
-from sage.rings.integer import Integer
-from sage.arith.all import divisors, gcd, moebius, multinomial
-
-from sage.combinat.necklace import _sfc
-from sage.combinat.words.words import FiniteWords
-from sage.combinat.words.finite_word import FiniteWord_class
+from sage.arith.misc import divisors, gcd, moebius, multinomial
 from sage.combinat.combinat_cython import lyndon_word_iterator
+from sage.combinat.composition import Composition, Compositions
+from sage.combinat.necklace import _sfc
+from sage.combinat.words.finite_word import FiniteWord_class
+from sage.combinat.words.words import FiniteWords
+from sage.rings.integer import Integer
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 def LyndonWords(e=None, k=None):

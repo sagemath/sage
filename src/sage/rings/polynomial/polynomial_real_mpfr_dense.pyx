@@ -85,12 +85,12 @@ cdef class PolynomialRealDense(Polynomial):
             sage: PolynomialRealDense(RR['x'], [1,a])
             Traceback (most recent call last):
             ...
-            TypeError: Cannot evaluate symbolic expression to a numeric value.
+            TypeError: cannot evaluate symbolic expression to a numeric value
             sage: R.<x> = SR[]
             sage: (x-a).change_ring(RR)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot evaluate symbolic expression to a numeric value.
+            TypeError: cannot evaluate symbolic expression to a numeric value
             sage: sig_on_count()
             0
 

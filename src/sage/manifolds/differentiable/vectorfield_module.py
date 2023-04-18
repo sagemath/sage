@@ -396,7 +396,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r"\text{" + str(self) + r"}"
         else:
             return self._latex_name
 
@@ -890,7 +890,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             :class:`~sage.manifolds.differentiable.tensorfield.TensorField`
             for more examples and documentation.
         """
-        # Until https://trac.sagemath.org/ticket/30373 is done,
+        # Until https://github.com/sagemath/sage/issues/30373 is done,
         # TensorProductFunctor._functor_name is "tensor", so this method
         # also needs to double as the tensor product construction
         if isinstance(args[0], Parent):
@@ -1205,7 +1205,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
         return PseudoRiemannianMetric(self, name, signature=signature[0]-signature[1],
                                       latex_name=latex_name)
-
 
     def symplectic_form(
         self, name: Optional[str] = None, latex_name: Optional[str] = None

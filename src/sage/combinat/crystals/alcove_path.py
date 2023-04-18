@@ -31,7 +31,7 @@ from sage.categories.loop_crystals import LoopCrystals
 from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
-from sage.all import vector
+from sage.modules.free_module_element import free_module_element as vector
 from sage.rings.integer import Integer
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.misc.misc_c import prod
@@ -193,9 +193,9 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         sage: K = crystals.KirillovReshetikhin(['B',3,1],2,1)
         sage: T = crystals.TensorProduct(K,K)
         sage: g = T.digraph() #long time
-        sage: for e in g.edges(sort=False): #long time
-        ....:     if e[0].phi(0) == 1 and e[2] == 0: #long time
-        ....:         g.delete_edge(e)  #long time
+        sage: for e in g.edges(sort=False):  #long time
+        ....:     if e[0].phi(0) == 1 and e[2] == 0:
+        ....:         g.delete_edge(e)
 
         sage: C = crystals.AlcovePaths(['B',3,1],[0,2,0], highest_weight_crystal=False)
         sage: g2 = C.digraph() #long time

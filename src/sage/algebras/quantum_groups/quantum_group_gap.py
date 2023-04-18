@@ -2689,4 +2689,3 @@ def _unpickle_generic_element(parent, data):
         ret.append(libgap(data[2 * i]))
         ret.append(one * libgap(data[2 * i + 1].subs(q=parent._libgap_q)))
     return parent.element_class(parent, F.ObjByExtRep(ret))
-

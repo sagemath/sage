@@ -184,7 +184,7 @@ def _interpolation_matrix_problem(points, tau, parameters, wy):
     EXAMPLES:
 
     The following parameters arise from Guruswami-Sudan decoding of an [6,2,5]
-    GRS code over F(11) with multiplicity 2 and list size 4.
+    GRS code over F(11) with multiplicity 2 and list size 4. ::
 
         sage: from sage.coding.guruswami_sudan.interpolation import _interpolation_matrix_problem
         sage: F = GF(11)

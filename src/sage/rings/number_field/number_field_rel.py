@@ -93,7 +93,7 @@ from .number_field_ideal import is_NumberFieldIdeal
 from .number_field import (NumberField, NumberField_generic,
     put_natural_embedding_first, proof_flag,
     is_NumberFieldHomsetCodomain)
-from sage.rings.number_field.number_field_base import is_NumberField
+from sage.rings.number_field.number_field_base import NumberField as NumberField_base
 from sage.rings.number_field.order import (RelativeOrder, is_NumberFieldOrder,
                                            relative_order_from_ring_generators)
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
@@ -104,7 +104,9 @@ from sage.categories.sets_cat import Sets
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
 
-from sage.rings.all import RR, QQ, ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
 
 
 def is_RelativeNumberField(x):
@@ -275,7 +277,7 @@ class NumberField_relative(NumberField_generic):
             raise NotImplementedError("Embeddings not implemented for relative number fields")
         if names is not None:
             name = names
-        if not is_NumberField(base):
+        if not isinstance(base, NumberField_base):
             raise TypeError("base (=%s) must be a number field"%base)
         if not isinstance(polynomial, polynomial_element.Polynomial):
             try:
@@ -2116,7 +2118,7 @@ class NumberField_relative(NumberField_generic):
             r1, r2 = K.signature()
             r = r1 + r2 - 1
 
-            from sage.rings.all import RealField
+            from sage.rings.real_mpfr import RealField
             Reals = RealField(prec)
 
             if x == 0:

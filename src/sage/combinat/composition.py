@@ -1386,6 +1386,48 @@ class Composition(CombinatorialElement):
         """
         return sum(i == n for i in self)
 
+    def specht_module(self, base_ring=None):
+        r"""
+        Return the Specht module corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: SM = Composition([1,2,2]).specht_module(QQ)
+            sage: SM
+            Specht module of [(0, 0), (1, 0), (1, 1), (2, 0), (2, 1)] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
+            s[2, 2, 1]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
+        cells = []
+        for i, row in enumerate(self):
+            for j in range(row):
+                cells.append((i, j))
+        return SpechtModule(R, cells)
+
+    def specht_module_dimension(self, base_ring=None):
+        r"""
+        Return the dimension of the Specht module corresponding to ``self``.
+
+        INPUT:
+
+        - ``base_ring`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: Composition([1,2,2]).specht_module_dimension()
+            5
+            sage: Composition([1,2,2]).specht_module_dimension(GF(2))
+            5
+        """
+        from sage.combinat.specht_module import specht_module_rank
+        return specht_module_rank(self, base_ring)
 
 Sequence.register(Composition)
 ##############################################################
@@ -1635,7 +1677,7 @@ class Compositions(UniqueRepresentation, Parent):
         """
         if n is None:
             if kwargs:
-                raise ValueError("Incorrect number of arguments")
+                raise ValueError("incorrect number of arguments")
             return Compositions_all()
         else:
             if not kwargs:

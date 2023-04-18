@@ -988,7 +988,7 @@ cdef class BuiltinFunction(Function):
                 # This special case should be removed when
                 # Python always raise an error for factorial(float).
                 # This case will be delegated to the gamma function.
-                # see Trac ticket #30764
+                # see Github issue #30764
                 if self._name != 'factorial':
                     import math as module
             elif all(isinstance(arg, complex) for arg in args):

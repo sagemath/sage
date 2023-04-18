@@ -8,7 +8,8 @@ EXAMPLES::
     sage: C = HyperellipticCurve(f); C
     Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
     sage: C(QQ)
-    Set of rational points of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
+    Set of rational points of Hyperelliptic Curve over Rational Field
+     defined by y^2 = x^5 + x + 1
     sage: P = C([0,1,1])
     sage: J = C.jacobian(); J
     Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
@@ -21,23 +22,18 @@ EXAMPLES::
 
 ::
 
-    sage: F.<a> = GF(3)
-    sage: R.<x> = F[]
-    sage: f = x^5-1
-    sage: C = HyperellipticCurve(f)
-    sage: J = C.jacobian()
-    sage: X = J(F)
-    sage: a = x^2-x+1
-    sage: b = -x +1
-    sage: c = x-1
-    sage: d = 0
-    sage: D1 = X([a,b])
-    sage: D1
+    sage: F.<a> = GF(3)                                                                 # optional - sage.rings.finite_rings
+    sage: R.<x> = F[]                                                                   # optional - sage.rings.finite_rings
+    sage: f = x^5 - 1                                                                   # optional - sage.rings.finite_rings
+    sage: C = HyperellipticCurve(f)                                                     # optional - sage.rings.finite_rings
+    sage: J = C.jacobian()                                                              # optional - sage.rings.finite_rings
+    sage: X = J(F)                                                                      # optional - sage.rings.finite_rings
+    sage: a = x^2 - x + 1; b = -x + 1; c = x - 1; d = 0                                 # optional - sage.rings.finite_rings
+    sage: D1 = X([a,b]); D1                                                             # optional - sage.rings.finite_rings
     (x^2 + 2*x + 1, y + x + 2)
-    sage: D2 = X([c,d])
-    sage: D2
+    sage: D2 = X([c,d]); D2                                                             # optional - sage.rings.finite_rings
     (x + 2, y)
-    sage: D1+D2
+    sage: D1 + D2                                                                       # optional - sage.rings.finite_rings
     (x^2 + 2*x + 2, y + 2*x + 1)
 """
 # ****************************************************************************
@@ -49,7 +45,7 @@ EXAMPLES::
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import is_Integer, Integer
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.schemes.generic.homset import SchemeHomset_points
 from sage.schemes.generic.morphism import is_SchemeMorphism
@@ -102,23 +98,18 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
 
         ::
 
-            sage: F.<a> = GF(3)
-            sage: R.<x> = F[]
-            sage: f = x^5-1
-            sage: C = HyperellipticCurve(f)
-            sage: J = C.jacobian()
-            sage: X = J(F)
-            sage: a = x^2-x+1
-            sage: b = -x +1
-            sage: c = x-1
-            sage: d = 0
-            sage: D1 = X([a,b])
-            sage: D1
+            sage: F.<a> = GF(3)                                                         # optional - sage.rings.finite_rings
+            sage: R.<x> = F[]                                                           # optional - sage.rings.finite_rings
+            sage: f = x^5 - 1                                                           # optional - sage.rings.finite_rings
+            sage: C = HyperellipticCurve(f)                                             # optional - sage.rings.finite_rings
+            sage: J = C.jacobian()                                                      # optional - sage.rings.finite_rings
+            sage: X = J(F)                                                              # optional - sage.rings.finite_rings
+            sage: a = x^2 - x + 1; b = -x + 1; c = x - 1; d = 0                         # optional - sage.rings.finite_rings
+            sage: D1 = X([a,b]); D1                                                     # optional - sage.rings.finite_rings
             (x^2 + 2*x + 1, y + x + 2)
-            sage: D2 = X([c,d])
-            sage: D2
+            sage: D2 = X([c,d]); D2                                                     # optional - sage.rings.finite_rings
             (x + 2, y)
-            sage: D1+D2
+            sage: D1 + D2                                                               # optional - sage.rings.finite_rings
             (x^2 + 2*x + 2, y + 2*x + 1)
         """
         if isinstance(P, (Integer, int)) and P == 0:
@@ -138,15 +129,15 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
                     P1 = R(P1)
                     P2 = R(P2)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
-                if is_Integer(P1) and is_Polynomial(P2):
+                if is_Integer(P1) and isinstance(P2, Polynomial):
                     R = PolynomialRing(self.value_ring(), 'x')
                     P1 = R(P1)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
-                if is_Integer(P2) and is_Polynomial(P1):
+                if is_Integer(P2) and isinstance(P1, Polynomial):
                     R = PolynomialRing(self.value_ring(), 'x')
                     P2 = R(P2)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
-                if is_Polynomial(P1) and is_Polynomial(P2):
+                if isinstance(P1, Polynomial) and isinstance(P2, Polynomial):
                     return JacobianMorphism_divisor_class_field(self, tuple(P))
                 if is_SchemeMorphism(P1) and is_SchemeMorphism(P2):
                     return self(P1) - self(P2)

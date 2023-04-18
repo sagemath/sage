@@ -34,7 +34,7 @@ from sage.combinat.composition import Compositions, Composition
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutations
 from sage.rings.integer import Integer
-from sage.categories.all import AlgebrasWithBasis
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.abstract_method import abstract_method
 from sage.categories.category_types import Category_over_base_ring
@@ -472,8 +472,9 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 x = self(x)
                 y = self.dual()(y)
                 v = 1 if side == 'left' else 0
-                return self.sum(coeff * y[IJ[1-v]] * self[IJ[v]] \
-                                for (IJ, coeff) in x.coproduct() if IJ[1-v] in y.support())
+                return self.sum(coeff * y[IJ[1-v]] * self[IJ[v]]
+                                for (IJ, coeff) in x.coproduct()
+                                if IJ[1-v] in y.support())
             else:
                 return self._skew_by_coercion(x, y, side=side)
 
@@ -710,9 +711,9 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             # TODO: generalize to keys indexing the basis of the graded component
             from sage.combinat.composition import Compositions
             return matrix(self.base_ring(),
-                    [[self.duality_pairing(self[I], basis[J]) \
-                            for J in Compositions(degree)] \
-                            for I in Compositions(degree)])
+                          [[self.duality_pairing(self[I], basis[J])
+                            for J in Compositions(degree)]
+                           for I in Compositions(degree)])
 
         def counit_on_basis(self, I):
             r"""

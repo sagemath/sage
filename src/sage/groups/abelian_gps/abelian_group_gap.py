@@ -338,7 +338,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
         if isinstance(x, AbelianGroupElement_gap):
             try:
                 if x in self._cover:
-                    x = self.gap().NaturalHomomorphism().Image(x.gap())
+                    x = self._cover.gap().NaturalHomomorphismByNormalSubgroup(self._relations).Image(x.gap())
                 else:
                     x = x.gap()
             except AttributeError:
@@ -994,7 +994,6 @@ class AbelianGroupQuotient_gap(AbelianGroup_gap):
         if isinstance(S, AbelianGroup_gap):
             return self._cover._coerce_map_from_(S)
 
-
     def cover(self):
         r"""
         Return the covering group of this quotient group.
@@ -1043,7 +1042,7 @@ class AbelianGroupQuotient_gap(AbelianGroup_gap):
             From: Abelian group with gap, generator orders (4,)
             To:   Quotient abelian group with generator orders (2,)
         """
-        phi = self.gap().NaturalHomomorphism()
+        phi = self._cover.gap().NaturalHomomorphismByNormalSubgroup(self._relations)
         Hom = self._cover.Hom(self)
         return Hom(phi)
 

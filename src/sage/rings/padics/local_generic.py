@@ -196,7 +196,7 @@ class LocalGeneric(CommutativeRing):
             O(5^8)
             sage: S = ZpLC(5, 15)
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/23505 for details.
+            See https://github.com/sagemath/sage/issues/23505 for details.
             sage: S.is_lattice_prec()
             True
             sage: x = S(25, 8)
@@ -375,6 +375,25 @@ class LocalGeneric(CommutativeRing):
             37-adic Ring with lattice-cap precision (label: change)
             sage: S.change(label = "new")
             37-adic Ring with lattice-cap precision (label: new)
+
+
+        TESTS:
+
+        The `secure` attribute for relaxed type is copied::
+
+            sage: R = ZpER(5, secure=True); R
+            5-adic Ring handled with relaxed arithmetics
+            sage: K = R.change(field=True); K
+            5-adic Field handled with relaxed arithmetics
+            sage: K.is_secure()
+            True
+
+        The `check=False` option works for relaxed type::
+
+            sage: R = ZpER(5) ; R
+            5-adic Ring handled with relaxed arithmetics
+            sage: K = R.change(field=True, check=False) ; K
+            5-adic Field handled with relaxed arithmetics
         """
         # We support both print_* and * for *=mode, pos, sep, alphabet
         for atr in ('print_mode', 'print_pos', 'print_sep', 'print_alphabet'):
@@ -682,7 +701,6 @@ class LocalGeneric(CommutativeRing):
         """
         return self
 
-
     def absolute_degree(self):
         r"""
         Return the degree of this extension over the prime p-adic field/ring.
@@ -735,7 +753,6 @@ class LocalGeneric(CommutativeRing):
             return self.absolute_degree()
         else:
             raise NotImplementedError("For a relative p-adic ring or field you must use relative_degree or absolute_degree as appropriate")
-
 
     def absolute_e(self):
         r"""
@@ -843,7 +860,6 @@ class LocalGeneric(CommutativeRing):
             2
         """
         return self.e()
-
 
     def absolute_f(self):
         r"""
@@ -1171,7 +1187,6 @@ class LocalGeneric(CommutativeRing):
             for i in range(n):
                 M[i,j] <<= s
         return shift_rows, shift_cols
-
 
     def _matrix_smith_form(self, M, transformation, integral, exact):
         r"""

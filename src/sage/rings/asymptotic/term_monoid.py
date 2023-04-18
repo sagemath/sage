@@ -181,7 +181,7 @@ Various
         ...
         FutureWarning: This class/method/function is marked as experimental.
         It, its functionality or its interface might change without a formal deprecation.
-        See https://trac.sagemath.org/31922 for details.
+        See https://github.com/sagemath/sage/issues/31922 for details.
 
 
 .. TODO::
@@ -1851,7 +1851,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
             ...
             DeprecationWarning: Passing 'coefficient' as a positional argument is deprecated;
             specify it as keyword argument 'coefficient=...'.
-            See https://trac.sagemath.org/32215 for details.
+            See https://github.com/sagemath/sage/issues/32215 for details.
             O(x)
             sage: OT(G.gen(), 4, coefficient=5)
             Traceback (most recent call last):
@@ -4640,7 +4640,6 @@ class BTerm(TermWithCoefficient):
                 raise ValueError('B-Term has not defined all variables which occur in the term in valid_from.')
         self.valid_from = valid_from
 
-
     def construction(self):
         r"""
         Return a construction of this term.
@@ -4919,7 +4918,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
         sage: BT is BTermMonoid(TermMonoid, G, QQ)
         True
     """
-    __init__ = experimental(trac_number=31922)(GenericTermMonoid.__init__)
+    __init__ = experimental(issue_number=31922)(GenericTermMonoid.__init__)
 
     # enable the category framework for elements
     Element = BTerm
@@ -4968,13 +4967,13 @@ class BTermMonoid(TermWithCoefficientMonoid):
             sage: T = TermMonoid('B', G, ZZ)
             sage: T._default_kwds_construction_()
             {'coefficient': 1, 'valid_from': {'x': 0}}
-            sage: T.from_construction((None, {'growth': G.gen()}))  # indirect doctest
+            sage: T.from_construction((None, {'growth': G.gen()}))          # indirect doctest
             B(x, x >= 0)
-            sage: T.from_construction(
-            ....:     (None, {'growth': G.gen(), 'coefficient': 2}))  # indirect doctest
+            sage: T.from_construction(                                      # indirect doctest
+            ....:     (None, {'growth': G.gen(), 'coefficient': 2}))
             B(2*x, x >= 0)
-            sage: T.from_construction(
-            ....:     (None, {'growth': G.gen(), 'valid_from': {'x': 5}}))  # indirect doctest
+            sage: T.from_construction(                                      # indirect doctest
+            ....:     (None, {'growth': G.gen(), 'valid_from': {'x': 5}}))
             B(x, x >= 5)
         """
         defaults = {}

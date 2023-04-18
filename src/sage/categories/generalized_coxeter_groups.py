@@ -68,7 +68,6 @@ class GeneralizedCoxeterGroups(Category_singleton):
         """
         return None
 
-
     class Finite(CategoryWithAxiom):
         """
         The category of finite generalized Coxeter groups.

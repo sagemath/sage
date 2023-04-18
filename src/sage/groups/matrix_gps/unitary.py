@@ -50,7 +50,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.misc.latex import latex
 from sage.misc.cachefunc import cached_method
 from sage.groups.matrix_gps.named_group import (
@@ -77,7 +77,7 @@ def finite_field_sqrt(ring):
         sage: finite_field_sqrt(GF(4, 'a'))
         2
     """
-    if not is_FiniteField(ring):
+    if not isinstance(ring, FiniteField):
         raise ValueError('not a finite field')
     q, rem = ring.cardinality().sqrtrem()
     if rem:
@@ -107,7 +107,7 @@ def _UG(n, R, special, var='a', invariant_form=None):
         latex_prefix ='S'
 
     degree, ring = normalize_args_vectorspace(n, R, var=var)
-    if is_FiniteField(ring):
+    if isinstance(ring, FiniteField):
         q = ring.cardinality()
         ring = GF(q**2, name=var)
         if invariant_form is not None:
@@ -134,12 +134,11 @@ def _UG(n, R, special, var='a', invariant_form=None):
         name = '{0} Unitary Group of degree {1} over {2}'.format(prefix, degree, ring)
         ltx  = r'\text{{{0}U}}_{{{1}}}({2})'.format(latex_prefix, degree, latex(ring))
 
-    if is_FiniteField(ring):
+    if isinstance(ring, FiniteField):
         cmd = '{0}U({1}, {2})'.format(latex_prefix, degree, q)
         return UnitaryMatrixGroup_gap(degree, ring, special, name, ltx, cmd)
     else:
         return UnitaryMatrixGroup_generic(degree, ring, special, name, ltx, invariant_form=invariant_form)
-
 
 
 ###############################################################################
@@ -257,7 +256,6 @@ def GU(n, R, var='a', invariant_form=None):
     return _UG(n, R, False, var=var, invariant_form=invariant_form)
 
 
-
 ###############################################################################
 # Special Unitary Group
 ###############################################################################
@@ -351,7 +349,6 @@ def SU(n, R, var='a', invariant_form=None):
     return _UG(n, R, True, var=var, invariant_form=invariant_form)
 
 
-
 ########################################################################
 # Unitary Group class
 ########################################################################
@@ -409,7 +406,6 @@ class UnitaryMatrixGroup_generic(NamedMatrixGroup_generic):
         m = identity_matrix(self.base_ring(), self.degree())
         m.set_immutable()
         return m
-
 
     def _check_matrix(self, x, *args):
         """

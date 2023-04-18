@@ -749,7 +749,7 @@ cdef class P1List():
                 self.s[i] = <int>(ll_s % ll_N)
                 self.t[i] = <int>(ll_t % ll_N)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Deallocates memory for an object of the class P1List.
         """
@@ -1407,7 +1407,7 @@ def _make_p1list(n):
         sage: from sage.modular.modsym.p1list import _make_p1list
         sage: _make_p1list(3)
         doctest:...: DeprecationWarning: _make_p1list() is deprecated
-        See https://trac.sagemath.org/25848 for details.
+        See https://github.com/sagemath/sage/issues/25848 for details.
         The projective line over the integers modulo 3
     """
     from sage.misc.superseded import deprecation_cython as deprecation

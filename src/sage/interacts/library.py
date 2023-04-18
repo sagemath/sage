@@ -115,7 +115,7 @@ def library_interact(
         doctest:warning
         ...
         DeprecationWarning: Use decorator factory @library_interact(widgets) instead of @library_interact without any arguments.
-        See https://trac.sagemath.org/33382 for details.
+        See https://github.com/sagemath/sage/issues/33382 for details.
         sage: f()  # an interact appears if using the notebook, else code
         ...Interactive function <function f at ...> with 1 widget
         n: TransformIntSlider(value=5, description='n', max=15, min=-5)
@@ -161,7 +161,7 @@ def html(obj):
         sage: html("<h1>Hello world</h1>")
         <h1>Hello world</h1>
     """
-    from sage.all import html
+    from sage.misc.html import html
     pretty_print(html(obj))
 
 
@@ -1032,7 +1032,7 @@ def secant_method(title, f, interval, d, maxn):
         L = sum(line([(c,k*i), (d,k*i)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(c,k*i-k/4), (c,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(d,k*i-k/4), (d,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
-        S = sum(line([(c,f(c)), (d,f(d)), (d-(d-c)*f(d)/(f(d)-f(c)), 0)], color="green") for  (c,d) in intervals)
+        S = sum(line([(c,f(c)), (d,f(d)), (d-(d-c)*f(d)/(f(d)-f(c)), 0)], color="green") for (c, d) in intervals)
         show(P + L + S, xmin=a, xmax=b)
 
 
@@ -1301,7 +1301,7 @@ def simpson_integration(
     else:
         interval = interval_g[0]
     def parabola(a, b, c):
-        from sage.all import solve
+        from sage.symbolic.relation import solve
         A, B, C = SR.var("A, B, C")
         K = solve([A*a[0]**2+B*a[0]+C==a[1], A*b[0]**2+B*b[0]+C==b[1], A*c[0]**2+B*c[0]+C==c[1]], [A, B, C], solution_dict=True)[0]
         f = K[A]*x**2+K[B]*x+K[C]
@@ -1436,7 +1436,7 @@ def riemann_sum(
         sage: interacts.calculus.riemann_sum()
         Manual interactive function <function riemann_sum at ...> with 9 widgets
           title: HTMLText(value='<h2>Riemann integral with random sampling</h2>')
-          f: EvalText(value='x^2+1', description='$f(x)=$', layout=Layout(max_width='41em'))
+          f: EvalText(value='x^2+1',... description='$f(x)=$', layout=Layout(max_width='41em'))
           n: IntSlider(value=5, description='# divisions', max=30, min=1)
           hr1: HTMLText(value='<hr>')
           interval_input: ToggleButtons(description='Integration interval', options=('from slider', 'from keyboard'), value='from slider')

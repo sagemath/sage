@@ -58,10 +58,12 @@ of the given rank with conductor less than the listed maximal conductor,
 which are not included in the tables.
 
 AUTHORS:
+
 - William Stein (2007-10-07): initial version
+
 - Simon Spicer (2014-10-24): Added examples of more high-rank curves
 
-See also the functions cremona_curves() and cremona_optimal_curves()
+See also the functions :func:`cremona_curves` and :func:`cremona_optimal_curves`
 which enable easy looping through the Cremona elliptic curve database.
 
 """
@@ -125,7 +127,8 @@ class EllipticCurves:
             sage: L[0].cremona_label()
             Traceback (most recent call last):
             ...
-            LookupError: Cremona database does not contain entry for Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 2582*x + 48720 over Rational Field
+            LookupError: Cremona database does not contain entry for Elliptic Curve
+            defined by y^2 + x*y = x^3 + x^2 - 2582*x + 48720 over Rational Field
             sage: elliptic_curves.rank(6, n=3, labels=True)
             []
         """

@@ -390,7 +390,7 @@ Or we can do it using number fields. ::
     sage: # domain.
     sage: # To stick with the behaviour of previous versions, the domain is set
     sage: # to 'real' in the following.
-    sage: # See Trac #10682 for further details.
+    sage: # See Issue #10682 for further details.
     sage: n = var('n')
     sage: f = x^(1/n)*y^(1/n)-(x*y)^(1/n)
     sage: assume(real(x) > 0, real(y) > 0)

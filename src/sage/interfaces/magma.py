@@ -1827,7 +1827,7 @@ def is_MagmaElement(x):
         sage: from sage.interfaces.magma import is_MagmaElement
         sage: is_MagmaElement(2)
         doctest:...: DeprecationWarning: the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_MagmaElement(magma(2))                    # optional - magma
         True

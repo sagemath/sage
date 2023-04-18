@@ -409,7 +409,7 @@ def float_function(x):
         sage: latex(float(2e-13))
         2 \times 10^{-13}
     """
-    from sage.all import RDF
+    from sage.rings.real_double import RDF
     return latex(RDF(x))
 
 

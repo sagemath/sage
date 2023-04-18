@@ -55,7 +55,7 @@ AUTHOR:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ import numbers
 from sage.rings.integer         cimport smallInteger
 from .conversions               cimport bit_rep_to_Vrep_list
 from .base                      cimport CombinatorialPolyhedron
-from .face_iterator             cimport FaceIterator_base
+from .face_iterator             cimport FaceIterator_base, FaceStatus
 from .polyhedron_face_lattice   cimport PolyhedronFaceLattice
 from .face_data_structure       cimport face_len_atoms, face_init, face_free, face_copy, face_issubset
 from .face_list_data_structure  cimport bit_rep_to_coatom_rep
@@ -177,7 +177,7 @@ cdef class CombinatorialFace(SageObject):
             self.atoms              = it.atoms
             self.coatoms            = it.coatoms
 
-            if it.structure.face_status == 0:
+            if it.structure.face_status == FaceStatus.NOT_INITIALIZED:
                 raise LookupError("face iterator not set to a face")
 
             face_init(self.face, self.coatoms.n_atoms(), self.coatoms.n_coatoms())

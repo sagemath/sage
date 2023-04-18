@@ -1108,7 +1108,7 @@ class QuiverRepHom(CallMorphism):
             Representation with dimension vector (5, 2, 1, 1, 4)
 
         The algebraic dual of an indecomposable projective is the indecomposable
-        projective of the same vertex in the opposite quiver.
+        projective of the same vertex in the opposite quiver. ::
 
             sage: Q.reverse().P(QQ, 4)
             Representation with dimension vector (5, 2, 1, 1, 4)

@@ -325,7 +325,6 @@ class FormsBase(SageObject):
         self._ring = ring
         self._variables = variables
 
-
     def _jacobian_determinant(self, *args):
         """
         Return the Jacobian determinant.
@@ -372,7 +371,6 @@ class FormsBase(SageObject):
         jac = [diff(p,d) for p,d in args]
         return matrix(self._ring, jac).det()
 
-
     def ring(self):
         """
         Return the polynomial ring.
@@ -398,7 +396,6 @@ class FormsBase(SageObject):
         """
         return self._ring
 
-
     def variables(self):
         """
         Return the variables of the form.
@@ -421,7 +418,6 @@ class FormsBase(SageObject):
             (x, None)
         """
         return self._variables
-
 
     def is_homogeneous(self):
         """
@@ -687,7 +683,6 @@ class AlgebraicForm(FormsBase):
             s += ' given by ' + str(self.form())
         return s
 
-
     def form(self):
         """
         Return the defining polynomial.
@@ -708,7 +703,6 @@ class AlgebraicForm(FormsBase):
         return self._polynomial
 
     polynomial = form
-
 
     def homogenized(self, var='h'):
         """
@@ -872,7 +866,6 @@ class AlgebraicForm(FormsBase):
             raise ValueError('less monomials were passed than the form actually has')
         return result
 
-
     def coefficients(self):
         """
         Alias for ``coeffs()``.
@@ -890,7 +883,6 @@ class AlgebraicForm(FormsBase):
             (a, b, c, d, e, f)
         """
         return self.coeffs()
-
 
     def transformed(self, g):
         r"""
@@ -1019,7 +1011,6 @@ class QuadraticForm(AlgebraicForm):
         polynomial = sum([coeffs[i]*x**(2-i)*z**i for i in range(3)])
         return cls(2, 2, polynomial, *args)
 
-
     @cached_method
     def monomials(self):
         """
@@ -1060,7 +1051,6 @@ class QuadraticForm(AlgebraicForm):
         mixed = tuple(mixed)
         return squares + mixed
 
-
     @cached_method
     def coeffs(self):
         r"""
@@ -1087,7 +1077,6 @@ class QuadraticForm(AlgebraicForm):
             (a, b, c, 1/2*d, 1/2*e, 1/2*f)
         """
         return self._extract_coefficients(self.monomials())
-
 
     def scaled_coeffs(self):
         r"""
@@ -1117,7 +1106,6 @@ class QuadraticForm(AlgebraicForm):
         squares = coeff[0:self._n]
         mixed = tuple( c/2 for c in coeff[self._n:] )
         return squares + mixed
-
 
     @cached_method
     def matrix(self):
@@ -1157,7 +1145,6 @@ class QuadraticForm(AlgebraicForm):
         return A
 
     _matrix_ = matrix
-
 
     def discriminant(self):
         """
@@ -1290,7 +1277,6 @@ class QuadraticForm(AlgebraicForm):
         p = sum([ sum([ Aadj[i,j]*var[i]*var[j] for i in range(n) ]) for j in range(n)])
         return invariant_theory.quadratic_form(p, self.variables())
 
-
     def as_QuadraticForm(self):
         """
         Convert into a :class:`~sage.quadratic_forms.quadratic_form.QuadraticForm`.
@@ -1420,7 +1406,6 @@ class BinaryQuartic(AlgebraicForm):
         """
         return self._extract_coefficients(self.monomials())
 
-
     def scaled_coeffs(self):
         """
         The coefficients of a binary quartic.
@@ -1451,7 +1436,6 @@ class BinaryQuartic(AlgebraicForm):
         coeff = self.coeffs()
         return (coeff[0], coeff[1]/4, coeff[2]/6, coeff[3]/4, coeff[4])
 
-
     @cached_method
     def EisensteinD(self):
         r"""
@@ -1481,7 +1465,6 @@ class BinaryQuartic(AlgebraicForm):
         assert len(a) == 5
         return a[0]*a[4]+3*a[2]**2-4*a[1]*a[3]
 
-
     @cached_method
     def EisensteinE(self):
         r"""
@@ -1510,7 +1493,6 @@ class BinaryQuartic(AlgebraicForm):
         a = self.scaled_coeffs()
         assert len(a) == 5
         return a[0]*a[3]**2 +a[1]**2*a[4] -a[0]*a[2]*a[4] -2*a[1]*a[2]*a[3] +a[2]**3
-
 
     @cached_method
     def g_covariant(self):
@@ -1562,7 +1544,6 @@ class BinaryQuartic(AlgebraicForm):
             (3*a2**2 - 2*a1*a3 - a0*a4)*xpow[2] + \
             (2*a2*a3 - 2*a1*a4)*xpow[3] + \
             (a3**2 - a2*a4)*xpow[4]
-
 
     @cached_method
     def h_covariant(self):
@@ -2614,7 +2595,6 @@ class TernaryQuadratic(QuadraticForm):
         else:
             return (x**2, y**2, R.one(), x*y, x, y)
 
-
     @cached_method
     def coeffs(self):
         r"""
@@ -2642,7 +2622,6 @@ class TernaryQuadratic(QuadraticForm):
             (a20, a02, a00, a11, a10, a01)
         """
         return self._extract_coefficients(self.monomials())
-
 
     def scaled_coeffs(self):
         r"""
@@ -2793,7 +2772,6 @@ class TernaryCubic(AlgebraicForm):
             return (x**3, y**3, R.one(), x**2*y, x**2, x*y**2,
                     y**2, x, y, x*y)
 
-
     @cached_method
     def coeffs(self):
         r"""
@@ -2826,7 +2804,6 @@ class TernaryCubic(AlgebraicForm):
             (a30, a03, a00, a21, a20, a12, a02, a10, a01, a11)
         """
         return self._extract_coefficients(self.monomials())
-
 
     def scaled_coeffs(self):
         r"""
@@ -2866,7 +2843,6 @@ class TernaryCubic(AlgebraicForm):
                 1/F(3)*a[6], 1/F(3)*a[7], 1/F(3)*a[8],
                 1/F(6)*a[9])
 
-
     def S_invariant(self):
         """
         Return the S-invariant.
@@ -2887,7 +2863,6 @@ class TernaryCubic(AlgebraicForm):
               -(b1**2*c1**2+c2**2*a2**2+a3**2*b3**2)
               +(c2*a2*a3*b3+a3*b3*b1*c1+b1*c1*c2*a2) )
         return S
-
 
     def T_invariant(self):
         """
@@ -2939,7 +2914,6 @@ class TernaryCubic(AlgebraicForm):
                    c2**2*a2**2*b1*c1+a3**2*b3**2*b1*c1+a3**2*b3**2*c2*a2) )
         return T
 
-
     @cached_method
     def polar_conic(self):
         r"""
@@ -2985,7 +2959,6 @@ class TernaryCubic(AlgebraicForm):
         polar = matrix(self._ring, [[A00, A01, A02],[A01, A11, A12],[A02, A12, A22]])
         return polar
 
-
     @cached_method
     def Hessian(self):
         """
@@ -3023,7 +2996,6 @@ class TernaryCubic(AlgebraicForm):
         F = self._ring.base_ring()
         return 1/F(216) * H.det()
 
-
     def Theta_covariant(self):
         r"""
         Return the `\Theta` covariant.
@@ -3056,7 +3028,6 @@ class TernaryCubic(AlgebraicForm):
         quadratic = TernaryQuadratic(3, 2, self._ring.zero(), self.variables())
         F = self._ring.base_ring()
         return 1/F(9) * _covariant_conic(U_coeffs, H_coeffs, quadratic.monomials())
-
 
     def J_covariant(self):
         """
@@ -3268,7 +3239,6 @@ class SeveralAlgebraicForms(FormsBase):
 
     __getitem__ = get_form
 
-
     def homogenized(self, var='h'):
         """
         Return form as defined by a homogeneous polynomial.
@@ -3300,7 +3270,6 @@ class SeveralAlgebraicForms(FormsBase):
             return self
         forms = [f.homogenized(var=var) for f in self._forms]
         return self.__class__(forms)
-
 
     def _check_covariant(self, method_name, g=None, invariant=False):
         r"""
@@ -3356,7 +3325,6 @@ class SeveralAlgebraicForms(FormsBase):
 
 class TwoAlgebraicForms(SeveralAlgebraicForms):
 
-
     def first(self):
         """
         Return the first of the two forms.
@@ -3380,7 +3348,6 @@ class TwoAlgebraicForms(SeveralAlgebraicForms):
             x^2 + y^2
         """
         return self._forms[0]
-
 
     def second(self):
         """
@@ -3677,7 +3644,6 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         """
         return self.get_form(0).matrix().det()
 
-
     def Delta_prime_invariant(self):
         r"""
         Return the `\Delta'` invariant.
@@ -3695,7 +3661,6 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             True
         """
         return self.get_form(1).matrix().det()
-
 
     def _Theta_helper(self, scaled_coeffs_1, scaled_coeffs_2):
         """
@@ -3743,7 +3708,6 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         """
         return self._Theta_helper(self.get_form(0).scaled_coeffs(), self.get_form(1).scaled_coeffs())
 
-
     def Theta_prime_invariant(self):
         r"""
         Return the `\Theta'` invariant.
@@ -3761,7 +3725,6 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             True
         """
         return self._Theta_helper(self.get_form(1).scaled_coeffs(), self.get_form(0).scaled_coeffs())
-
 
     def Phi_invariant(self):
         r"""
@@ -3799,7 +3762,6 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             + 4*b0*b5*B0*B5 + 2*a1*b2*B1*B5 - 2*b0*b4*B1*B5 + 2*a1*b1*B2*B5 \
             - 2*b0*b3*B2*B5 - 2*b0*b2*B3*B5 + 2*a0*b4*B3*B5 - 2*b0*b1*B4*B5 \
             + 2*a0*b3*B4*B5 - a0*a1*B5**2 + b0**2*B5**2
-
 
     def _T_helper(self, scaled_coeffs_1, scaled_coeffs_2):
         """
@@ -3883,7 +3845,6 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
         return t00*w*w + 2*t01*w*x + 2*t02*w*y + 2*t30*w*z + t11*x*x + 2*t12*x*y \
             + 2*t13*x*z + t22*y*y + 2*t23*y*z + t33*z*z
 
-
     def T_covariant(self):
         """
         The `T`-covariant.
@@ -3904,7 +3865,6 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             True
         """
         return self._T_helper(self.get_form(0).scaled_coeffs(), self.get_form(1).scaled_coeffs())
-
 
     def T_prime_covariant(self):
         """
@@ -3927,7 +3887,6 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             True
         """
         return self._T_helper(self.get_form(1).scaled_coeffs(), self.get_form(0).scaled_coeffs())
-
 
     def J_covariant(self):
         """
@@ -3953,7 +3912,6 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             [self.second().form(), 2],
             [self.T_covariant(), 4],
             [self.T_prime_covariant(), 4])
-
 
     def syzygy(self, Delta, Theta, Phi, Theta_prime, Delta_prime, U, V, T, T_prime, J):
         """

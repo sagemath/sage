@@ -149,7 +149,7 @@ class SupportView(MappingView, Sequence, Set):
             sage: supp == [1]
             doctest:warning...
             DeprecationWarning: comparing a SupportView with a list is deprecated
-            See https://trac.sagemath.org/34509 for details.
+            See https://github.com/sagemath/sage/issues/34509 for details.
             True
         """
         if isinstance(other, list):
@@ -168,7 +168,7 @@ class SupportView(MappingView, Sequence, Set):
             sage: supp != [1]
             doctest:warning...
             DeprecationWarning: comparing a SupportView with a list is deprecated
-            See https://trac.sagemath.org/34509 for details.
+            See https://github.com/sagemath/sage/issues/34509 for details.
             False
         """
         if isinstance(other, list):

@@ -68,7 +68,9 @@ List all fields in the database ramified at 101::
 
 import os
 
-from sage.rings.all import NumberField, RationalField, PolynomialRing
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.rational_field import RationalField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.misc import powerset
 from sage.env import SAGE_SHARE
 

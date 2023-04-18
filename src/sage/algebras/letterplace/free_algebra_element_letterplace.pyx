@@ -3,7 +3,7 @@ Weighted homogeneous elements of free algebras, in letterplace implementation
 
 AUTHOR:
 
-- Simon King (2011-03-23): Trac ticket :trac:`7797`
+- Simon King (2011-03-23): Github issue :trac:`7797`
 
 """
 
@@ -17,7 +17,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.groups.perm_gps.all import CyclicPermutationGroup
+from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
 from sage.libs.singular.function import lib, singular_function
 from sage.misc.repr import repr_lincomb
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal

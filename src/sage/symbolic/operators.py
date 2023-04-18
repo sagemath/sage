@@ -1,7 +1,8 @@
 "Operators"
 
 import operator
-from sage.symbolic.ring import is_SymbolicVariable, SR
+
+from sage.structure.element import Expression
 
 
 def add_vararg(first, *rest):
@@ -123,7 +124,7 @@ class FDerivativeOperator():
            D[0](f)(1)
 
         """
-        if (not all(is_SymbolicVariable(x) for x in args) or
+        if (not all(isinstance(x, Expression) and x.is_symbol() for x in args) or
                 len(args) != len(set(args))):
             # An evaluated derivative of the form f'(1) is not a
             # symbolic variable, yet we would like to treat it
@@ -131,6 +132,8 @@ class FDerivativeOperator():
             # temporary variable e.g. `t0` and then evaluate the
             # derivative f'(t0) symbolically at t0=1. See trac
             # #12796.
+            from sage.symbolic.ring import SR
+
             temp_args = SR.temp_var(n=len(args))
             vars = [temp_args[i] for i in self._parameter_set]
             return self._f(*temp_args).diff(*vars).function(*temp_args)(*args)
@@ -169,6 +172,8 @@ class FDerivativeOperator():
         Return a new function derivative operator with the same
         parameter set but for a new function.
 
+        EXAMPLES::
+
             sage: from sage.symbolic.operators import FDerivativeOperator
             sage: f = function('foo')
             sage: b = function('bar')
@@ -194,3 +199,65 @@ class FDerivativeOperator():
             [0, 1]
         """
         return self._parameter_set
+
+class DerivativeOperator():
+    """
+    Derivative operator.
+
+    Acting with this operator onto a function gives a new operator (of
+    type :class:`FDerivativeOperator`) representing the function
+    differentiated with respect to one or multiple of its arguments.
+
+    This operator takes a list of indices specifying the position of
+    the arguments to differentiate. For example, D[0, 0, 1] is an
+    operator that differentiates a function twice with respect to its
+    first argument and once with respect to its second argument.
+
+    EXAMPLES::
+
+        sage: x, y = var('x,y'); f = function('f')
+        sage: D[0](f)(x)
+        diff(f(x), x)
+        sage: D[0](f)(x, y)
+        diff(f(x, y), x)
+        sage: D[0, 1](f)(x, y)
+        diff(f(x, y), x, y)
+        sage: D[0, 1](f)(x, x^2)
+        D[0, 1](f)(x, x^2)
+
+    """
+    class DerivativeOperatorWithParameters():
+        def __init__(self, parameter_set):
+            self._parameter_set = parameter_set
+        def __call__(self, function):
+            return FDerivativeOperator(function, self._parameter_set)
+        def __repr__(self):
+            """
+            Return the string representation of this derivative operator.
+
+            EXAMPLES::
+
+                sage: D[0]
+                D[0]
+                sage: D[0, 1]
+                D[0, 1]
+            """
+            return "D[%s]" % (", ".join(map(repr, self._parameter_set)))
+
+    def __getitem__(self, args):
+        """
+        TESTS:
+
+        The order in which the indices are given should not matter::
+
+            sage: x, y = var('x,y'); f = function('f')
+            sage: bool(D[0, 1, 0](f)(x, y) == D[0, 0, 1](f)(x, y))
+            True
+            sage: bool(D[1, 0, 0](f)(x, y) == D[0, 0, 1](f)(x, y))
+            True
+        """
+        if not isinstance(args, tuple):
+            args = (args,)
+        return self.DerivativeOperatorWithParameters(args)
+
+D = DerivativeOperator()

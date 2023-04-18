@@ -43,7 +43,7 @@ Special Update/Build Instructions
 
 -  Do NOT quote SAGE_LOCAL when setting CPPFLAGS and/or LDFLAGS,
    in spkg-install as this caused the build to break. See
-   http://trac.sagemath.org/sage_trac/ticket/10187#comment:117
+   :issue:`10187#comment:117`
 
 -  TODO: Add the ECL test suite, and an spkg-check file to run it.
 -  TODO: Make ECL use Sage's Boehm GC on MacOS X as well (but perhaps

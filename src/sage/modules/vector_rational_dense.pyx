@@ -326,7 +326,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             mpq_set_z(a.value, (<Integer>left).value)
         else:
             # should not happen
-            raise TypeError("Cannot convert %s to %s" % (type(left).__name__, Rational.__name__))
+            raise TypeError("cannot convert %s to %s" % (type(left).__name__, Rational.__name__))
         z = self._new_c()
         cdef Py_ssize_t i
         for i in range(self._degree):
@@ -343,7 +343,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             mpq_set_z(a.value, (<Integer>right).value)
         else:
             # should not happen
-            raise TypeError("Cannot convert %s to %s" % (type(right).__name__, Rational.__name__))
+            raise TypeError("cannot convert %s to %s" % (type(right).__name__, Rational.__name__))
         z = self._new_c()
         cdef Py_ssize_t i
         for i in range(self._degree):

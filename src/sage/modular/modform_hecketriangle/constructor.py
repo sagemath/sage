@@ -131,26 +131,26 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
 
     analytic_type = AT(["quasi", "mero"])
 
-    R              = PolynomialRing(base_ring,'x,y,z,d')
-    F              = FractionField(R)
-    (x,y,z,d)      = R.gens()
-    R2             = PolynomialRing(PolynomialRing(base_ring, 'd'), 'x,y,z')
-    dhom           = R.hom( R2.gens() + (R2.base().gen(),), R2)
+    R = PolynomialRing(base_ring,'x,y,z,d')
+    F = FractionField(R)
+    (x,y,z,d) = R.gens()
+    R2 = PolynomialRing(PolynomialRing(base_ring, 'd'), 'x,y,z')
+    dhom = R.hom( R2.gens() + (R2.base().gen(),), R2)
 
-    f              = F(f)
+    f = F(f)
 
-    num            = R(f.numerator())
-    denom          = R(f.denominator())
-    ep_num         = set([ZZ(1) - 2*(( sum([g.exponents()[0][m] for m in [1,2]]) )%2) for g in   dhom(num).monomials()])
-    ep_denom       = set([ZZ(1) - 2*(( sum([g.exponents()[0][m] for m in [1,2]]) )%2) for g in dhom(denom).monomials()])
+    num = R(f.numerator())
+    denom = R(f.denominator())
+    ep_num = set([ZZ.one() - 2*((sum([g.exponents()[0][m] for m in [1, 2]])) % 2) for g in dhom(num).monomials()])
+    ep_denom = set([ZZ.one() - 2*((sum([g.exponents()[0][m] for m in [1, 2]])) % 2) for g in dhom(denom).monomials()])
 
     if (n == infinity):
-        hom_num    = R(   num.subs(x=x**4, y=y**2, z=z**2) )
-        hom_denom  = R( denom.subs(x=x**4, y=y**2, z=z**2) )
+        hom_num = R(   num.subs(x=x**4, y=y**2, z=z**2) )
+        hom_denom = R( denom.subs(x=x**4, y=y**2, z=z**2) )
     else:
-        n          = ZZ(n)
-        hom_num    = R(   num.subs(x=x**4, y=y**(2*n), z=z**(2*(n-2))) )
-        hom_denom  = R( denom.subs(x=x**4, y=y**(2*n), z=z**(2*(n-2))) )
+        n = ZZ(n)
+        hom_num = R(   num.subs(x=x**4, y=y**(2*n), z=z**(2*(n-2))) )
+        hom_denom = R( denom.subs(x=x**4, y=y**(2*n), z=z**(2*(n-2))) )
 
     # Determine whether the denominator of f is homogeneous
     if (len(ep_denom) == 1 and dhom(hom_denom).is_homogeneous()):
@@ -159,20 +159,19 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
         #       elem,  homo,  k,    ep,   analytic_type
         return (False, False, None, None, None)
 
-
     # Determine whether f is homogeneous
     if (len(ep_num) == 1 and dhom(hom_num).is_homogeneous()):
-        homo   = True
+        homo = True
         if (n == infinity):
             weight = (dhom(hom_num).degree() - dhom(hom_denom).degree())
         else:
             weight = (dhom(hom_num).degree() - dhom(hom_denom).degree()) / (n-2)
-        ep     = ep_num.pop() / ep_denom.pop()
+        ep = ep_num.pop() / ep_denom.pop()
     # TODO: decompose f (resp. its degrees) into homogeneous parts
     else:
-        homo   = False
+        homo = False
         weight = None
-        ep     = None
+        ep = None
 
     # Note that we intentionally leave out the d-factor!
     if (n == infinity):

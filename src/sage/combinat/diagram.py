@@ -490,6 +490,46 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         if not all(all(list(i in NN for i in c)) for c in self._cells):
             raise ValueError("Diagrams must be indexed by non-negative integers")
 
+    def specht_module(self, base_ring=None):
+        r"""
+        Return the Specht module corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.diagram import Diagram
+            sage: D = Diagram([(0,0), (1,1), (2,2), (2,3)])
+            sage: SM = D.specht_module(QQ)
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
+            s[2, 1, 1] + s[2, 2] + 2*s[3, 1] + s[4]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, len(self))
+        return SpechtModule(R, self)
+
+    def specht_module_dimension(self, base_ring=None):
+        r"""
+        Return the dimension of the Specht module corresponding to ``self``.
+
+        INPUT:
+
+        - ``base_ring`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: from sage.combinat.diagram import Diagram
+            sage: D = Diagram([(0,0), (1,1), (2,2), (2,3)])
+            sage: D.specht_module_dimension()
+            12
+            sage: D.specht_module(QQ).dimension()
+            12
+        """
+        from sage.combinat.specht_module import specht_module_rank
+        return specht_module_rank(self, base_ring)
 
 class Diagrams(UniqueRepresentation, Parent):
     r"""
@@ -1013,15 +1053,28 @@ class NorthwestDiagram(Diagram, metaclass=InheritComparisonClasscallMetaclass):
 
         This implementation uses the algorithm suggested in Remark 25
         of [RS1995]_.
+
+        TESTS:
+
+        Corner case::
+
+            sage: from sage.combinat.diagram import NorthwestDiagram
+            sage: D = NorthwestDiagram([])
+            sage: D.peelable_tableaux()
+            {[]}
         """
         # TODO: There is a condition on the first column (if the rows in Dhat
         # are a subset of the rows in the first column) which simplifies the
         # description without performing JDT, so we should implement that
 
+        # empty diagram case
+        if not self:
+            return set([Tableau([])])
+
         # if there is a single column in the diagram then there is only
         # one posslbe peelable tableau.
         if self._n_nonempty_cols == 1:
-            return {Tableau([[i+1] for i, j in self.cells()])}
+            return set([Tableau([[i+1] for i, j in self.cells()])])
 
         first_col = min(j for i, j in self._cells)
 

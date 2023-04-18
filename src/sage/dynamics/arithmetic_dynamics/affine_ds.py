@@ -43,8 +43,7 @@ from sage.matrix.constructor import identity_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import typecall
 from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.fraction_field import FractionField
 from sage.rings.fraction_field import is_FractionField
 from sage.rings.quotient_ring import is_QuotientRing
@@ -251,7 +250,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
                 raise ValueError('domain and codomain do not agree')
             if R not in Fields():
                 return typecall(cls, polys, domain)
-            if is_FiniteField(R):
+            if isinstance(R, FiniteField):
                 return DynamicalSystem_affine_finite_field(polys, domain)
             return DynamicalSystem_affine_field(polys, domain)
         elif isinstance(morphism_or_polys,(list, tuple)):
@@ -299,7 +298,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         if R not in Fields():
             return typecall(cls, polys, domain)
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
             return DynamicalSystem_affine_finite_field(polys, domain)
         return DynamicalSystem_affine_field(polys, domain)
 
@@ -319,7 +318,8 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         """
         L = polys_or_rat_fncts
         # Next attribute needed for _fast_eval and _fastpolys
-        self._is_prime_finite_field = is_PrimeFiniteField(L[0].base_ring())
+        R = L[0].base_ring()
+        self._is_prime_finite_field = isinstance(R, FiniteField) and R.is_prime_field()
         DynamicalSystem.__init__(self, L, domain)
 
     def __copy__(self):

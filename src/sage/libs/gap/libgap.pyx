@@ -695,7 +695,7 @@ class Gap(Parent):
             sage: libgap.List
             <Gap function "List">
             sage: libgap.GlobalRandomSource
-            <RandomSource in IsGlobalRandomSource>
+            <RandomSource in IsGAPRandomSource>
         """
         if name in dir(self.__class__):
             return getattr(self.__class__, name)

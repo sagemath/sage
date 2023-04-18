@@ -61,7 +61,7 @@ from sage.structure.element import is_Matrix
 from sage.arith.misc import gcd
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
 from sage.misc.cachefunc import cached_method
-from sage.quadratic_forms.all import QuadraticForm
+from sage.quadratic_forms.quadratic_form import QuadraticForm
 
 ###############################################################################
 #
@@ -349,7 +349,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
     basis = [matrix.block(1, 3, [matrix.zero(dims[i], sum_degree[i]),
                                  Lattices[i].basis_matrix(),
                                  matrix.zero(dims[i], sum_degree[-1] - sum_degree[i+1])
-                                ])  for i in range(N)]
+                                ]) for i in range(N)]
     basis_matrix = matrix.block(N, 1, basis)
     ipm = ambient.inner_product_matrix()
     direct_sum = FreeQuadraticModule_integer_symmetric(ambient=ambient,
@@ -362,6 +362,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
     phi = [Lattices[i].hom(direct_sum.basis()[sum_dims[i]:sum_dims[i+1]])
            for i in range(N)]
     return [direct_sum, phi]
+
 
 def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
     r"""
@@ -1092,7 +1093,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
                 for t in D:
                     if t != 0 and t.q() == 0:
                         break
-                if t.q() != 0 :
+                if t.q() != 0:
                     # no isotropic vector left
                     break
                 L = L.overlattice([t.lift()])

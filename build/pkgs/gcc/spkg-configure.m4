@@ -78,7 +78,7 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
             SAGE_MUST_INSTALL_GCC([gcc is already installed in SAGE_LOCAL])
 
             # Check whether it actually works...
-            # See https://trac.sagemath.org/ticket/24599
+            # See https://github.com/sagemath/sage/issues/24599
             SAGE_CHECK_BROKEN_GCC()
             if test x$SAGE_BROKEN_GCC = xyes; then
                 # Prentend that GCC is not installed.
@@ -167,7 +167,7 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
                 ],
                 [1[[3-9]].*], [
                     # Install our own GCC if the system-provided one is newer than 12.x.
-                    # See https://trac.sagemath.org/ticket/29456
+                    # See https://github.com/sagemath/sage/issues/29456
                     SAGE_SHOULD_INSTALL_GCC([$CXX is g++ version $GXX_VERSION, which is too recent for this version of Sage])
                 ])
             fi
@@ -181,7 +181,7 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
     fi
 
     # Check that the assembler and linker used by $CXX match $AS and $LD.
-    # See http://trac.sagemath.org/sage_trac/ticket/14296
+    # See https://github.com/sagemath/sage/issues/14296
     if test -n "$AS"; then
         CXX_as=`$CXX -print-prog-name=as 2>/dev/null`
         CXX_as=`command -v $CXX_as 2>/dev/null`

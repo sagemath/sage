@@ -46,7 +46,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import integer_ceil as ceil
+from sage.arith.misc import integer_ceil as ceil
 from sage.arith.misc import binomial
 from sage.functions.log import log
 from sage.matrix.constructor import matrix
@@ -58,13 +58,20 @@ from sage.modules.free_module_element import vector
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.modules.module import Module
-from sage.rings.all import (Integers, Integer, PolynomialRing, PowerSeriesRing,
-                            Rationals, Rational, LaurentSeriesRing, QQ, ZZ,
-                            IntegralDomain)
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import RationalField as Rationals
+from sage.rings.rational import Rational
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.ring import IntegralDomain
 from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
-from sage.rings.padics.all import pAdicField
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.padics.factory import Qp as pAdicField
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.ring import CommutativeAlgebra
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
@@ -489,7 +496,7 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
             ...
             ArithmeticError: 2 and 3 must be invertible in the coefficient ring (=Ring of integers modulo 10) of Q
         """
-        if not is_Polynomial(Q):
+        if not isinstance(Q, Polynomial):
             raise TypeError("Q (=%s) must be a polynomial" % Q)
 
         if Q.degree() != 3 or not Q[2].is_zero():
@@ -502,7 +509,7 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
                                   "coefficient ring (=%s) of Q" % base_ring)
 
         # CommutativeAlgebra.__init__ tries to establish a coercion
-        # from the base ring, by trac ticket #9138. The corresponding
+        # from the base ring, by github issue #9138. The corresponding
         # hom set is cached.  In order to use self as cache key, its
         # string representation is used. In otder to get the string
         # representation, we need to know the attributes _a and
@@ -1519,7 +1526,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
         sage: M = monsky_washnitzer.adjusted_prec(p, prec)
         sage: R.<x> = PolynomialRing(Integers(p**M))
         sage: A = monsky_washnitzer.matrix_of_frobenius(            # long time
-        ....:                           x^3 - x + R(1/4), p, M)     # long time
+        ....:                           x^3 - x + R(1/4), p, M)
         sage: B = A.change_ring(Integers(p**prec)); B               # long time
         [74311982 57996908]
         [95877067 25828133]
@@ -1537,7 +1544,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
         sage: M = monsky_washnitzer.adjusted_prec(p, prec)
         sage: R.<x> = PolynomialRing(Integers(p**M))
         sage: A = monsky_washnitzer.matrix_of_frobenius(            # long time
-        ....:                           x^3 - x + R(1/4), p, M)     # long time
+        ....:                           x^3 - x + R(1/4), p, M)
         sage: B = A.change_ring(Integers(p**prec))                  # long time
         sage: B.det()                                               # long time
         5
@@ -1556,13 +1563,13 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
         sage: A = A.change_ring(Integers(p**max_prec))              # long time
         sage: result = []                                           # long time
         sage: for prec in range(1, max_prec):                       # long time
-        ....:     M = monsky_washnitzer.adjusted_prec(p, prec)      # long time
-        ....:     R.<x> = PolynomialRing(Integers(p^M),'x')         # long time
-        ....:     B = monsky_washnitzer.matrix_of_frobenius(        # long time
-        ....:                       x^3 - x + R(1/4), p, M)         # long time
-        ....:     B = B.change_ring(Integers(p**prec))              # long time
-        ....:     result.append(B == A.change_ring(                 # long time
-        ....:                              Integers(p**prec)))      # long time
+        ....:     M = monsky_washnitzer.adjusted_prec(p, prec)
+        ....:     R.<x> = PolynomialRing(Integers(p^M),'x')
+        ....:     B = monsky_washnitzer.matrix_of_frobenius(
+        ....:                       x^3 - x + R(1/4), p, M)
+        ....:     B = B.change_ring(Integers(p**prec))
+        ....:     result.append(B == A.change_ring(
+        ....:                              Integers(p**prec)))
         sage: result == [True] * (max_prec - 1)                     # long time
         True
 
@@ -2367,7 +2374,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         if R is None:
             R = Q.base_ring()
 
-        # Trac ticket #9138: CommutativeAlgebra.__init__ must not be
+        # Github issue #9138: CommutativeAlgebra.__init__ must not be
         # done so early.  It tries to register a coercion, but that
         # requires the hash being available.  But the hash, in its
         # default implementation, relies on the string representation,
@@ -2389,7 +2396,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
             Q = C.hyperelliptic_polynomials()[0].change_ring(R)
             self._curve = C
 
-        if is_Polynomial(Q):
+        if isinstance(Q, Polynomial):
             self._Q = Q.change_ring(R)
             self._coeffs = self._Q.coefficients(sparse=False)
             if self._coeffs.pop() != 1:
@@ -2410,7 +2417,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         self._series_ring_y = self._series_ring.gen(0)
         self._series_ring_0 = self._series_ring.zero()
 
-        # Trac ticket #9138: Initialise the commutative algebra here!
+        # Github issue #9138: Initialise the commutative algebra here!
         # Below, we do self(self._poly_ring.gen(0)), which requires
         # the initialisation being finished.
         CommutativeAlgebra.__init__(self, R)

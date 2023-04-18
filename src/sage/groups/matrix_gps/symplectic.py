@@ -42,7 +42,7 @@ AUTHORS:
 
 from sage.misc.latex import latex
 from sage.misc.cachefunc import cached_method
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.groups.matrix_gps.named_group import (
     normalize_args_vectorspace, normalize_args_invariant_form,
     NamedMatrixGroup_generic, NamedMatrixGroup_gap)
@@ -145,7 +145,7 @@ def Sp(n, R, var='a', invariant_form=None):
         raise ValueError('the degree must be even')
 
     if invariant_form is not None:
-        if is_FiniteField(ring):
+        if isinstance(ring, FiniteField):
             raise NotImplementedError("invariant_form for finite groups is fixed by GAP")
 
         invariant_form = normalize_args_invariant_form(ring, degree, invariant_form)
@@ -165,7 +165,6 @@ def Sp(n, R, var='a', invariant_form=None):
         return SymplecticMatrixGroup_gap(degree, ring, True, name, ltx, cmd)
     except ValueError:
         return SymplecticMatrixGroup_generic(degree, ring, True, name, ltx, invariant_form=invariant_form)
-
 
 
 class SymplecticMatrixGroup_generic(NamedMatrixGroup_generic):

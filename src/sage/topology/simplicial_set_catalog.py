@@ -26,6 +26,8 @@ This provides pre-built simplicial sets:
 - the Hopf map: this is a pre-built morphism, from which one can
   extract its domain, codomain, mapping cone, etc.
 
+- the complex of a group presentation.
+
 All of these examples are accessible by typing
 ``simplicial_sets.NAME``, where ``NAME`` is the name of the
 example. Type ``simplicial_sets.[TAB]`` for a complete list.
@@ -48,4 +50,4 @@ from .simplicial_set_examples import (Sphere, ClassifyingSpace,
                                       KleinBottle, Torus,
                                       Simplex, Horn, Point,
                                       ComplexProjectiveSpace,
-                                      HopfMap)
+                                      HopfMap, PresentationComplex)

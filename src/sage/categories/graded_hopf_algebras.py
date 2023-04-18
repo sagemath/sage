@@ -35,5 +35,5 @@ def GradedHopfAlgebras(base_ring):
         :class:`super Hopf algebras
         <sage.categories.hopf_algebras.HopfAlgebras.Super>`.
     """
-    from sage.categories.all import HopfAlgebras
+    from sage.categories.hopf_algebras import HopfAlgebras
     return HopfAlgebras(base_ring).Graded()

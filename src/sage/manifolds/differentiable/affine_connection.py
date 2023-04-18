@@ -1996,15 +1996,16 @@ class AffineConnection(SageObject):
                         @parallel(p_iter='multiprocessing', ncpus=nproc)
                         def make_Riem(frame, gam, gam_gam, gam_sc, local_list_ijkl):
                             partial = []
-                            for i,j,k,l in local_list_ijkl:
-                                partial.append([i,j,k,l, frame[k](gam[[i,j,l]]) - \
-                                                         frame[l](gam[[i,j,k]]) + \
-                                                         gam_gam[[i,k,j,l]] -  \
-                                                         gam_gam[[i,l,j,k]] -  \
-                                                         gam_sc[[i,j,k,l]]])
+                            for i, j, k, l in local_list_ijkl:
+                                partial.append([i, j, k, l,
+                                                frame[k](gam[[i, j, l]]) -
+                                                frame[l](gam[[i, j, k]]) +
+                                                gam_gam[[i, k, j, l]] -
+                                                gam_gam[[i, l, j, k]] -
+                                                gam_sc[[i, j, k, l]]])
                             return partial
                         # Computation and assignation of values
-                        for ii,val in make_Riem(listParalInput):
+                        for ii, val in make_Riem(listParalInput):
                             for jj in val:
                                 res[jj[0], jj[1], jj[2], jj[3]] = jj[4]
 
@@ -2210,7 +2211,7 @@ class AffineConnection(SageObject):
                         comega[k] = coef_frame[[i1,j1,k]]
                     forms[(i1,j1)] = omega
             self._connection_forms[frame] = forms
-        return  self._connection_forms[frame][(i,j)]
+        return self._connection_forms[frame][(i,j)]
 
     def torsion_form(self, i, frame=None):
         r"""
@@ -2312,7 +2313,7 @@ class AffineConnection(SageObject):
                         ctheta[k,l] = torsion_comp[[i1,k,l]]
                 forms[i1] = theta
             self._torsion_forms[frame] = forms
-        return  self._torsion_forms[frame][i]
+        return self._torsion_forms[frame][i]
 
     def curvature_form(self, i, j, frame=None):
         r"""
@@ -2422,7 +2423,7 @@ class AffineConnection(SageObject):
                             comega[k,l] = riemann_comp[[i1,j1,k,l]]
                     forms[(i1,j1)] = omega
             self._curvature_forms[frame] = forms
-        return  self._curvature_forms[frame][(i,j)]
+        return self._curvature_forms[frame][(i, j)]
 
     def set_calc_order(self, symbol, order, truncate=False):
         r"""

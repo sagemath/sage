@@ -174,15 +174,17 @@ class ModularForm_abstract(ModuleElement):
         """
         return self.parent().level()
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         """
-        Return true. For compatibility with elements of a graded modular forms ring.
+        Return ``True``.
+
+        For compatibility with elements of a graded modular forms ring.
 
         An alias of this method is ``is_modular_form``.
 
         .. SEEALSO::
 
-            :meth: `sage.modular.modform.element.GradedModularFormElement.is_homogeneous`
+            :meth:`sage.modular.modform.element.GradedModularFormElement.is_homogeneous`
 
         EXAMPLES::
 
@@ -190,11 +192,12 @@ class ModularForm_abstract(ModuleElement):
             True
         """
         return True
+
     is_modular_form = is_homogeneous  # alias
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -3394,6 +3397,18 @@ class GradedModularFormElement(ModuleElement):
             q + 8193*q^2 + 1594324*q^3 + 67117057*q^4 + 1220703126*q^5 + O(q^6)
         """
         return str(self.q_expansion())
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        TESTS::
+
+            sage: M = ModularFormsRing(1)
+            sage: latex(M.0)
+            1 + 240 q + 2160 q^{2} + 6720 q^{3} + 17520 q^{4} + 30240 q^{5} + O(q^{6})
+        """
+        return self.q_expansion()._latex_()
 
     def __getitem__(self, weight):
         r"""

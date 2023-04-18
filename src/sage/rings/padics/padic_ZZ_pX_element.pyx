@@ -483,12 +483,12 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             4*5 + 5^2 + 5^3 + 2*5^4
             sage: (a+b).trace()
             4*5 + 5^2 + 5^3 + 2*5^4
- 
+
         TESTS:
 
         We check that :trac:`32072` is resolved::
 
-            sage: F = Qp(2)                                                                                                                                                                       
+            sage: F = Qp(2)
             sage: S.<x> = F[]
             sage: L.<w> = F.ext(x^2 - 2)
             sage: L(0, 20).trace()

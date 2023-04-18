@@ -188,7 +188,7 @@ def loadable_module_extension():
         sage: loadable_module_extension() in EXTENSION_SUFFIXES
         doctest:warning...
         DeprecationWarning: loadable_module_extension is deprecated; use importlib.machinery.EXTENSION_SUFFIXES instead
-        See https://trac.sagemath.org/33636 for details.
+        See https://github.com/sagemath/sage/issues/33636 for details.
         True
     """
     from sage.misc.superseded import deprecation
@@ -1372,13 +1372,14 @@ def sage_getfile(obj):
 
     A problem fixed in :trac:`16309`::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: cython(                           # optional - sage.misc.cython
+        ....: '''
         ....: class Bar: pass
         ....: cdef class Foo: pass
         ....: ''')
-        sage: sage_getfile(Bar)
+        sage: sage_getfile(Bar)                 # optional - sage.misc.cython
         '...pyx'
-        sage: sage_getfile(Foo)
+        sage: sage_getfile(Foo)                 # optional - sage.misc.cython
         '...pyx'
 
     By :trac:`18249`, we return an empty string for Python builtins. In that

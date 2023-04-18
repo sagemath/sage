@@ -61,6 +61,8 @@ subgroups of index p
 -- ComplexReflectionGroup, the complex reflection group `G(m, p, n)` or
                            the exceptional complex reflection group `G_m`
 
+-- SmallPermutationGroup, a permutation realization of an group specified by its GAP id.
+
 AUTHOR:
 
 - David Joyner (2007-06): split from permgp.py (suggested by Nick Alexander)
@@ -86,24 +88,24 @@ REFERENCES:
 # ****************************************************************************
 from pathlib import Path
 
-from sage.rings.all import Integer
-from sage.libs.gap.libgap import libgap
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.arith.all import factor, valuation
+from sage.arith.misc import factor, valuation
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
-from sage.misc.functional import is_even
-from sage.misc.cachefunc import cached_method, weak_cached_function
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_element import SymmetricGroupElement
-from sage.structure.unique_representation import CachedRepresentation
+from sage.libs.gap.libgap import libgap
+from sage.misc.cachefunc import cached_method, weak_cached_function
+from sage.misc.functional import is_even
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer import Integer
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.sets.family import Family
+from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.sets.primes import Primes
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-from sage.sets.non_negative_integers import NonNegativeIntegers
-from sage.sets.family import Family
-from sage.sets.primes import Primes
+from sage.structure.unique_representation import CachedRepresentation
 
 
 class PermutationGroup_unique(CachedRepresentation, PermutationGroup_generic):
@@ -330,6 +332,42 @@ class SymmetricGroup(PermutationGroup_symalt):
             Symmetric group of order 3! as a permutation group
         """
         return "Symmetric group of order {}! as a permutation group".format(self.degree())
+
+    def _coerce_map_from_(self, G):
+        """
+        Return if there is a coercion map from ``G`` into ``self``.
+
+        EXAMPLES::
+
+            sage: J3 = groups.misc.Cactus(3)
+            sage: S5 = SymmetricGroup(5)
+            sage: S5.coerce_map_from(J3)
+            Conversion via _from_cactus_group_element map:
+              From: Cactus Group with 3 fruit
+              To:   Symmetric group of order 5! as a permutation group
+            sage: S2 = SymmetricGroup(2)
+            sage: S2._coerce_map_from_(J3) is None
+            True
+        """
+        from sage.groups.cactus_group import CactusGroup
+        if isinstance(G, CactusGroup) and G._n <= self._deg:
+            return self._from_cactus_group_element
+        return super()._coerce_map_from_(G)
+
+    def _from_cactus_group_element(self, x):
+        """
+        Return an element of ``self`` from a cactus group element.
+
+        EXAMPLES::
+
+            sage: J3 = groups.misc.Cactus(3)
+            sage: s12,s13,s23 = J3.gens()
+            sage: elt = s12*s23*s13
+            sage: S5 = SymmetricGroup(5)
+            sage: S5._from_cactus_group_element(elt)
+            (2,3)
+        """
+        return self(x.to_permutation())
 
     def cartan_type(self):
         r"""
@@ -599,7 +637,7 @@ class SymmetricGroup(PermutationGroup_symalt):
             Category of finite dimensional unital cellular semigroup algebras
              over Rational Field
 
-        In the following case, a usual group algebra is returned:
+        In the following case, a usual group algebra is returned::
 
             sage: S = SymmetricGroup([2,3,5])
             sage: S.algebra(QQ)
@@ -3399,3 +3437,105 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         ret = [self._m * i for i in reversed(range(self._n-1))]
         ret.append((self._n-1)*self._m - self._n)
         return tuple(sorted(ret, reverse=True))
+
+class SmallPermutationGroup(PermutationGroup_generic):
+    r"""
+    A GAP SmallGroup, returned as a permutation group.
+
+    GAP contains a library SGL of small groups, each identified by
+    its GAP SmallGroup id. (MAGMA uses the same identifiers).
+    The GAP SmallGroup id is a pair ``[n,k]`` consisting of
+    ``n``, the order of the group, and ``k``, an index determining
+    the group specifically. This class can construct the group as a
+    permutation group from this data.
+
+    INPUT:
+
+    - ``order`` -- the order of the group
+
+    - ``gap_id`` -- the numerical index in the GAP id of the group
+
+    Generators may be obtained through the :meth:`gens` method.
+    These could change for a particular group in later releases
+    of GAP. In many instances the degree of the constructed group
+    ``SmallPermutationGroup(n,k)`` will be a permutation group on
+    `n` letters, but this will not always be true.
+
+    EXAMPLES::
+
+        sage: G = SmallPermutationGroup(12,4); G
+        Group of order 12 and GAP Id 4 as a permutation group
+        sage: G.gens()
+        ((1,2)(3,5)(4,10)(6,8)(7,12)(9,11),
+        (1,3)(2,5)(4,7)(6,9)(8,11)(10,12),
+        (1,4,8)(2,6,10)(3,7,11)(5,9,12))
+        sage: G.character_table()
+        [ 1  1  1  1  1  1]
+        [ 1 -1 -1  1  1 -1]
+        [ 1 -1  1  1 -1  1]
+        [ 1  1 -1  1 -1 -1]
+        [ 2  0 -2 -1  0  1]
+        [ 2  0  2 -1  0 -1]
+        sage: def numgps(n): return ZZ(libgap.NumberSmallGroups(n))
+        sage: all(SmallPermutationGroup(n,k).id()==[n,k] for n in [1..64] for k in [1..numgps(n)])
+        True
+        sage: H = SmallPermutationGroup(6,1)
+        sage: H.is_abelian()
+        False
+        sage: [H.centralizer(g) for g in H.conjugacy_classes_representatives()]
+        [Subgroup generated by [(1,2)(3,6)(4,5), (1,3,5)(2,4,6)] of (Group of order 6 and GAP Id 1 as a permutation group),
+        Subgroup generated by [(1,2)(3,6)(4,5)] of (Group of order 6 and GAP Id 1 as a permutation group),
+        Subgroup generated by [(1,3,5)(2,4,6), (1,5,3)(2,6,4)] of (Group of order 6 and GAP Id 1 as a permutation group)]
+    """
+
+    def __init__(self, order, gap_id):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: TestSuite(SmallPermutationGroup(60,5)).run()
+        """
+        self._n = order
+        self._gap_id = gap_id
+        self._gap_small_group = libgap.SmallGroup(order,gap_id)
+        gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
+        PermutationGroup_generic.__init__(self, gap_group=gap_permutation_group)
+
+    def _repr_(self):
+        r"""
+        EXAMPLES::
+
+            sage: G = SmallPermutationGroup(12,4); G
+            Group of order 12 and GAP Id 4 as a permutation group
+        """
+        return "Group of order %s and GAP Id %s as a permutation group"%(self._n, self._gap_id)
+
+    def order(self):
+        """
+        Return the order of the group corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: [SmallPermutationGroup(21,k).order() for k in [1,2]]
+            [21, 21]
+        """
+        return self._n
+
+    def gap_small_group(self):
+        r"""
+        Return the GAP small group object corresponding to ``self``.
+
+        GAP realizes some small groups as PermutationGroup, others as PcGroups
+        (polycyclic groups). The :class:`SmallPermutationGroup` class always
+        returns a PermutationGroup, but in the process of creating this group
+        a GAP SmallGroup is generated. This method returns that group.
+
+        EXAMPLES::
+
+            sage: SmallPermutationGroup(168,41).gap_small_group()
+            <pc group of size 168 with 5 generators>
+            sage: SmallPermutationGroup(168,42).gap_small_group()
+            Group([ (3,4)(5,6), (1,2,3)(4,5,7) ])
+        """
+        return self._gap_small_group

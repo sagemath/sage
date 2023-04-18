@@ -60,7 +60,7 @@ def is_ComplexIntervalField(x):
         doctest:warning...
         DeprecationWarning: is_ComplexIntervalField is deprecated;
         use isinstance(..., sage.rings.abc.ComplexIntervalField) instead
-        See https://trac.sagemath.org/32612 for details.
+        See https://github.com/sagemath/sage/issues/32612 for details.
         True
         sage: is_CIF(CC)
         False

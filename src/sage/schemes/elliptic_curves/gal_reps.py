@@ -121,7 +121,8 @@ from sage.rings.fast_arith import prime_range
 import sage.misc.all as misc
 from sage.misc.verbose import verbose
 import sage.rings.all as rings
-from sage.rings.all import RealField, GF
+from sage.rings.real_mpfr import RealField
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
 from math import sqrt
 from sage.libs.pari.all import pari
@@ -261,9 +262,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` -- a prime number
 
-        OUTPUT:
-
-        - a boolean
+        OUTPUT: A boolean.
 
         The answer is cached.
 
@@ -314,9 +313,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` -- a prime number
 
-        OUTPUT:
-
-        - a boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -714,9 +711,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p``  a prime number
 
-        OUTPUT:
-
-        - a string.
+        OUTPUT: A string.
 
         EXAMPLES::
 
@@ -916,14 +911,14 @@ class GaloisRepresentation(SageObject):
                     a_ell = self._E.ap(ell)
                     u = k(a_ell)**2 * k(ell)**(-1)
                     if u == 3:
-                        verbose("found an element of order 6",2)
+                        verbose("found an element of order 6", level=2)
                         # found an element of order 6:
                         self.__image_type[p] = non_split_str
                         return self.__image_type[p]
 
                     if u == 2 and not has_an_el_order_4:
                         # found an element of order 4
-                        verbose("found an element of order 4",2)
+                        verbose("found an element of order 4", level=2)
                         has_an_el_order_4 = True
                         if has_an_el_order_3:
                             self.__image_type[p] = s4_str
@@ -931,13 +926,13 @@ class GaloisRepresentation(SageObject):
 
                     if u == 1 and not has_an_el_order_3:
                         # found an element of order 3
-                        verbose("found an element of order 3",2)
+                        verbose("found an element of order 3", level=2)
                         has_an_el_order_3 = True
                         if has_an_el_order_4:
                             self.__image_type[p] = s4_str
                             return self.__image_type[p]
 
-            verbose("p=5 and we could not determine the image, yet", 2)
+            verbose("p=5 and we could not determine the image, yet", level=2)
             # we have not yet determined the image, there are only the following possible subgroups of PGL_2
             # (unless we were unlucky and none of the elements of order 6 showed up above, for instance)
             # A_4       of order 12 with elements of order 2 and 3
@@ -988,25 +983,25 @@ class GaloisRepresentation(SageObject):
             could_be_split = 1
             could_be_non_split = 1
             # loops over primes as long as we still have two options left
-            while ell < 10000 and (could_be_exc + could_be_split + could_be_non_split  > 1):
+            while ell < 10000 and (could_be_exc + could_be_split + could_be_non_split > 1):
                 ell = arith.next_prime(ell)
                 if Np % ell != 0:
                     a_ell = self._E.ap(ell)
                     u = k(a_ell)**2 * k(ell)**(-1)
                     if (u not in ex_setp) and could_be_exc == 1:
                         # it can not be in the exceptional
-                        verbose("the image cannot be exceptional, found u=%s"%u,2)
+                        verbose("the image cannot be exceptional, found u=%s"%u, level=2)
                         could_be_exc = 0
                     if a_ell != 0 and arith.kronecker(a_ell**2 - 4*ell,p) == 1 and could_be_non_split == 1:
                         # it can not be in the normalizer of the non-split Cartan
-                        verbose("the image cannot be non-split, found u=%s"%u,2)
+                        verbose("the image cannot be non-split, found u=%s"%u, level=2)
                         could_be_non_split = 0
                     if a_ell != 0 and arith.kronecker(a_ell**2 - 4*ell,p) == -1 and could_be_split == 1:
                         # it can not be in the normalizer of the split Cartan
-                        verbose("the image cannot be split, found u=%s"%u,2)
+                        verbose("the image cannot be split, found u=%s"%u, level=2)
                         could_be_split = 0
 
-            assert could_be_exc + could_be_split + could_be_non_split  > 0, "bug in image_type."
+            assert could_be_exc + could_be_split + could_be_non_split > 0, "bug in image_type."
 
             if could_be_exc + could_be_split + could_be_non_split == 1:
                 # it is only one of the three cases:
@@ -1028,7 +1023,7 @@ class GaloisRepresentation(SageObject):
                     f = R([1,-3,1]) #(X**2 - 3*X+1)
                     el5 = f.roots()
                     # loops over primes as long as we still have two options left
-                    while ell < 10000 and (could_be_s4 + could_be_a4 + could_be_a5  > 1):
+                    while ell < 10000 and (could_be_s4 + could_be_a4 + could_be_a5 > 1):
                         ell = arith.next_prime(ell)
                         if Np % ell != 0:
                             a_ell = self._E.ap(ell)
@@ -1042,7 +1037,7 @@ class GaloisRepresentation(SageObject):
                                 could_be_a4 = 0
                                 could_be_s4 = 0
 
-                    assert (could_be_s4 + could_be_a4 + could_be_a5  > 0), "bug in image_type."
+                    assert (could_be_s4 + could_be_a4 + could_be_a5 > 0), "bug in image_type."
 
                     if could_be_s4 + could_be_a4 + could_be_a5 == 1:
                         if could_be_s4 == 1:
@@ -1064,7 +1059,7 @@ class GaloisRepresentation(SageObject):
             K = self._E.division_field(p, 'z')
             d = K.absolute_degree()
 
-            verbose("field of degree %s.  try to compute Galois group"%(d),2)
+            verbose("field of degree %s.  try to compute Galois group"%(d), level=2)
             # If the degree is too big, we have no chance at the Galois
             # group.  K.galois_group calls is_galois which used to rely on
             # pari's Galois group computations, so degree < 12
@@ -1253,9 +1248,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` another prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1288,9 +1281,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` a different prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1327,9 +1318,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` a different prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1359,9 +1348,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1389,9 +1376,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1416,9 +1401,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1443,9 +1426,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1471,9 +1452,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 

@@ -2,7 +2,7 @@ This directory contains Pynac, a C++ library for symbolic manipulation based on 
 
 # HISTORY #
 
-Until https://trac.sagemath.org/ticket/32386 (Sage 9.5 development series, 2021), Pynac was maintained in a separate repository, https://github.com/pynac/pynac, and releases were included in Sage as SPKG.
+Until https://github.com/sagemath/sage/issues/32386 (Sage 9.5 development series, 2021), Pynac was maintained in a separate repository, https://github.com/pynac/pynac, and releases were included in Sage as SPKG.
 
 ## Earlier history ##
 

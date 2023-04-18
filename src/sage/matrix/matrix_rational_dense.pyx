@@ -111,7 +111,7 @@ from sage.rings.integer_ring import ZZ, is_IntegerRing
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 import sage.rings.abc
 from sage.rings.rational_field import QQ
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 
 from .matrix2 import decomp_seq
 from .matrix0 import Matrix as Matrix_base
@@ -158,7 +158,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         return Matrix_rational_dense.__new__(Matrix_rational_dense, parent, None, None, None)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         fmpq_mat_clear(self._matrix)
 
     def __init__(self, parent, entries=None, copy=None, bint coerce=True):

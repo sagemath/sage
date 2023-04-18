@@ -53,7 +53,9 @@ from sage.matrix.constructor import matrix, diagonal_matrix
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import richcmp, richcmp_not_equal
-from sage.categories.all import WeylGroups, FiniteWeylGroups, AffineWeylGroups
+from sage.categories.weyl_groups import WeylGroups
+from sage.categories.finite_weyl_groups import FiniteWeylGroups
+from sage.categories.affine_weyl_groups import AffineWeylGroups
 from sage.categories.permutation_groups import PermutationGroups
 from sage.sets.family import Family
 from sage.matrix.constructor import Matrix

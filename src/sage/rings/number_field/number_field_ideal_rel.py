@@ -170,7 +170,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: J.absolute_ideal().norm()
             4
 
-        Now pass 'm' as the name for the generator of the absolute field:
+        Now pass 'm' as the name for the generator of the absolute field::
 
             sage: J.absolute_ideal('m')
             Fractional ideal (m^2)

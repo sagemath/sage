@@ -160,9 +160,9 @@ from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
 from sage.rings.ideal import is_Ideal
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.element cimport Element
 
-from sage.rings.number_field.number_field_element import is_NumberFieldElement
 from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
 
 from sage.modules.free_module_element import FreeModuleElement
@@ -170,7 +170,7 @@ from sage.rings.fraction_field import is_FractionField
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.structure.factory import UniqueFactory
 from sage.structure.element cimport parent
@@ -295,12 +295,12 @@ class ResidueFieldFactory(UniqueFactory):
             if not is_Ideal(p):
                 if isinstance(p, (int, Integer, Rational)):
                     p = ZZ.ideal(p)
-                elif is_NumberFieldElement(p):
+                elif isinstance(p, NumberFieldElement_base):
                     if p.parent().is_field():
                         p = p.parent().ring_of_integers().ideal(p)
                     else:
                         p = p.parent().ideal(p)
-                elif is_Polynomial(p):
+                elif isinstance(p, Polynomial):
                     p = p.parent().ideal(p)
                 #elif isinstance(p.parent(), FractionField_1poly_field):
                 #    p = p.parent().ring_of_integers().ideal(p)
@@ -870,7 +870,7 @@ cdef class ReductionMap(Map):
         self._PBinv = PBinv
         self._to_order = to_order # used for lift
         self._PB = PB # used for lift
-        from sage.categories.all import SetsWithPartialMaps
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         self._repr_type_str = "Partially defined reduction"
         Map.__init__(self, Hom(K, F, SetsWithPartialMaps()))
 
@@ -1579,8 +1579,8 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
             self._populate_coercion_lists_(coerce_list=coerce_list, convert_list=[ReductionMap(K, self, None, None, None, None)]) # could be special-cased a bit more.
         else:
             PBinv = PB**(-1)
-            self._populate_coercion_lists_(coerce_list=[IntegerMod_to_IntegerMod(GF(intp), self), Integer_to_IntegerMod(self), Int_to_IntegerMod(self), ResidueFieldHomomorphism_global(OK, self, to_vs, to_order, PB, PBinv)], \
-                                                 convert_list=[ReductionMap(K, self, to_vs, to_order, PB, PBinv)])
+            self._populate_coercion_lists_(coerce_list=[IntegerMod_to_IntegerMod(GF(intp), self), Integer_to_IntegerMod(self), Int_to_IntegerMod(self), ResidueFieldHomomorphism_global(OK, self, to_vs, to_order, PB, PBinv)],
+                                           convert_list=[ReductionMap(K, self, to_vs, to_order, PB, PBinv)])
 
     def _element_constructor_(self, x):
         """

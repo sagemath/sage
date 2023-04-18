@@ -9,7 +9,7 @@ TESTS::
     doctest:warning
     ...
     DeprecationWarning: find_generators is deprecated. Please use sage.modular.modform.ring.generators instead.
-    See https://trac.sagemath.org/31559 for details.
+    See https://github.com/sagemath/sage/issues/31559 for details.
     [(4,
     1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + 60480*q^6 + 82560*q^7 + 140400*q^8 + 181680*q^9 + O(q^10)),
     (6,
@@ -22,7 +22,7 @@ TESTS::
     doctest:warning
     ...
     DeprecationWarning: Importing find_generators from here is deprecated; please use "from sage.modular.modform.ring import find_generators" instead.
-    See https://trac.sagemath.org/31559 for details.
+    See https://github.com/sagemath/sage/issues/31559 for details.
     [(4,
     1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + 60480*q^6 + 82560*q^7 + 140400*q^8 + 181680*q^9 + O(q^10)),
     (6,
@@ -35,7 +35,7 @@ TESTS::
     doctest:warning
     ...
     DeprecationWarning: basis_for_modform_space is deprecated. Please use sage.modular.modform.ring.q_expansion_basis instead.
-    See https://trac.sagemath.org/31559 for details.
+    See https://github.com/sagemath/sage/issues/31559 for details.
     [1 + 240*q + O(q^2)]
 
 ::
@@ -46,7 +46,7 @@ TESTS::
     doctest:warning
     ...
     DeprecationWarning: Importing _span_of_forms_in_weight from here is deprecated; please use "from sage.modular.modform.ring import _span_of_forms_in_weight" instead.
-    See https://trac.sagemath.org/31559 for details.
+    See https://github.com/sagemath/sage/issues/31559 for details.
     Vector space of degree 5 and dimension 2 over Rational Field
     Basis matrix:
     [        1         0    196560  16773120 398034000]

@@ -76,8 +76,10 @@ cdef extern from "gap/intobj.h" nogil:
 
 
 cdef extern from "gap/io.h" nogil:
-    UInt OpenOutputStream(Obj stream)
-    UInt CloseOutput()
+    ctypedef struct TypOutputFile:
+        pass
+    UInt OpenOutputStream(TypOutputFile* output, Obj stream)
+    UInt CloseOutput(TypOutputFile* output)
 
 
 cdef extern from "gap/libgap-api.h" nogil:

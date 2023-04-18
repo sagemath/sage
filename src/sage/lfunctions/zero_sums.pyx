@@ -18,20 +18,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object cimport SageObject
-from sage.rings.integer_ring import ZZ
-from sage.rings.real_double import RDF
-from sage.rings.complex_double import CDF
-from sage.rings.infinity import PlusInfinity
-from sage.arith.all import prime_powers, next_prime
+from sage.arith.misc import next_prime
 from sage.functions.log import log, exp
 from sage.functions.other import real, imag
-from sage.symbolic.constants import pi, euler_gamma
-from sage.libs.pari.all import pari
+from sage.libs.flint.ulong_extras cimport n_is_prime
 from sage.misc.verbose import verbose
 from sage.parallel.decorate import parallel
 from sage.parallel.ncpus import ncpus as num_cpus
-from sage.libs.flint.ulong_extras cimport n_is_prime
+from sage.rings.complex_double import CDF
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_double import RDF
+from sage.structure.sage_object cimport SageObject
+from sage.symbolic.constants import euler_gamma, pi
+
 
 cdef extern from "<math.h>":
     double c_exp "exp"(double)
@@ -373,7 +373,6 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         z = s - 1
         sigma = RDF(real(z))
-        log2 = log(RDF(2))
         # Compute maximum possible Dirichlet series truncation error
         # When s is in the critical strip: no guaranteed precision
         if abs(sigma) <= 0.5:
@@ -653,7 +652,6 @@ cdef class LFunctionZeroSum_abstract(SageObject):
         """
         npi = self._pi
         twopi = 2 * npi
-        eg = self._euler_gamma
 
         t = RDF(Delta * twopi)
         expt = RDF(exp(t))
@@ -746,7 +744,6 @@ cdef class LFunctionZeroSum_abstract(SageObject):
         from scipy.special import erfcx
 
         npi = self._pi
-        eg = self._euler_gamma
         Deltasqrtpi = Delta * npi.sqrt()
 
         t = RDF(Delta * npi * 2)
@@ -1345,7 +1342,6 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
         cdef double z = 0
         cdef double p = 0
-        cdef double q = 0
         cdef double sqrtp = 0
         cdef double sqrtq = 0
         cdef double logp = 0
@@ -1724,7 +1720,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
             sage: N = 3455601108357547341532253864901605231198511505793733138900595189472144724781456635380154149870961231592352897621963802238155192936274322687070
             sage: Z = LFunctionZeroSum(E,N)
             sage: Z.analytic_rank_upper_bound(max_Delta=2.37,adaptive=False, # long time
-            ....: root_number=1,bad_primes=bad_primes,ncpus=2)               # long time
+            ....: root_number=1,bad_primes=bad_primes,ncpus=2)
             32
         """
         # Helper function: compute zero sum and apply parity if not False

@@ -236,11 +236,11 @@ class CoxeterGroups(Category_singleton):
                 sage: W.braid_group_as_finitely_presented_group()
                 Finitely presented group < S1, S2 | (S1*S2)^2*(S1^-1*S2^-1)^2 >
 
-                sage: W = ReflectionGroup(['B',3], index_set=["AA","BB",5])  # optional - gap3
-                sage: W.braid_group_as_finitely_presented_group()            # optional - gap3
+                sage: W = ReflectionGroup(['B',3], index_set=["AA","BB","5"])  # optional - gap3
+                sage: W.braid_group_as_finitely_presented_group()               # optional - gap3
                 Finitely presented group < SAA, SBB, S5 |
-                 SAA*SBB*SAA*SBB^-1*SAA^-1*SBB^-1, SAA*S5*SAA^-1*S5^-1,
-                 (SBB*S5)^2*(SBB^-1*S5^-1)^2 >
+                 (SAA*SBB)^2*(SAA^-1*SBB^-1)^2, SAA*S5*SAA^-1*S5^-1,
+                 SBB*S5*SBB*S5^-1*SBB^-1*S5^-1 >
             """
             from sage.groups.free_group import FreeGroup
             from sage.misc.misc_c import prod
@@ -285,25 +285,25 @@ class CoxeterGroups(Category_singleton):
                 sage: sorted(W.braid_orbit([2,1,1,2,1]))
                 [[1, 2, 1, 1, 2], [2, 1, 1, 2, 1], [2, 1, 2, 1, 2], [2, 2, 1, 2, 2]]
 
-                sage: W = ReflectionGroup(['A',3], index_set=["AA","BB",5])  # optional - gap3
-                sage: w = W.long_element()                                   # optional - gap3
-                sage: W.braid_orbit(w.reduced_word())                        # optional - gap3
-                [['AA', 5, 'BB', 5, 'AA', 'BB'],
-                 ['AA', 'BB', 5, 'BB', 'AA', 'BB'],
-                 [5, 'BB', 'AA', 5, 'BB', 5],
-                 ['BB', 5, 'AA', 'BB', 5, 'AA'],
-                 [5, 'BB', 5, 'AA', 'BB', 5],
-                 ['BB', 5, 'AA', 'BB', 'AA', 5],
-                 [5, 'AA', 'BB', 'AA', 5, 'BB'],
-                 ['BB', 'AA', 5, 'BB', 5, 'AA'],
-                 ['AA', 'BB', 'AA', 5, 'BB', 'AA'],
-                 [5, 'BB', 'AA', 'BB', 5, 'BB'],
-                 ['BB', 'AA', 5, 'BB', 'AA', 5],
-                 [5, 'AA', 'BB', 5, 'AA', 'BB'],
-                 ['AA', 'BB', 5, 'AA', 'BB', 'AA'],
-                 ['BB', 5, 'BB', 'AA', 'BB', 5],
-                 ['AA', 5, 'BB', 'AA', 5, 'BB'],
-                 ['BB', 'AA', 'BB', 5, 'BB', 'AA']]
+                sage: W = ReflectionGroup(['A',3], index_set=["AA","BB","5"])  # optional - gap3
+                sage: w = W.long_element()                                     # optional - gap3
+                sage: W.braid_orbit(w.reduced_word())                          # optional - gap3
+                [['BB', '5', 'AA', 'BB', '5', 'AA'],
+                 ['5', 'BB', '5', 'AA', 'BB', '5'],
+                 ['BB', 'AA', 'BB', '5', 'BB', 'AA'],
+                 ['AA', '5', 'BB', 'AA', '5', 'BB'],
+                 ['5', 'AA', 'BB', 'AA', '5', 'BB'],
+                 ['AA', 'BB', '5', 'AA', 'BB', 'AA'],
+                 ['AA', 'BB', 'AA', '5', 'BB', 'AA'],
+                 ['AA', 'BB', '5', 'BB', 'AA', 'BB'],
+                 ['BB', 'AA', '5', 'BB', 'AA', '5'],
+                 ['BB', '5', 'AA', 'BB', 'AA', '5'],
+                 ['AA', '5', 'BB', '5', 'AA', 'BB'],
+                 ['5', 'BB', 'AA', '5', 'BB', '5'],
+                 ['5', 'BB', 'AA', 'BB', '5', 'BB'],
+                 ['5', 'AA', 'BB', '5', 'AA', 'BB'],
+                 ['BB', '5', 'BB', 'AA', 'BB', '5'],
+                 ['BB', 'AA', '5', 'BB', '5', 'AA']]
 
             .. TODO::
 
@@ -1608,25 +1608,25 @@ class CoxeterGroups(Category_singleton):
                 sage: sorted(w.reduced_words())
                 [[2, 3, 4, 2], [3, 2, 4, 2], [3, 4, 2, 4]]
 
-                sage: W = ReflectionGroup(['A',3], index_set=["AA","BB",5])  # optional - gap3
-                sage: w = W.long_element()                                   # optional - gap3
-                sage: w.reduced_words()                                      # optional - gap3
-                [['AA', 5, 'BB', 5, 'AA', 'BB'],
-                 ['AA', 'BB', 5, 'BB', 'AA', 'BB'],
-                 [5, 'BB', 'AA', 5, 'BB', 5],
-                 ['BB', 5, 'AA', 'BB', 5, 'AA'],
-                 [5, 'BB', 5, 'AA', 'BB', 5],
-                 ['BB', 5, 'AA', 'BB', 'AA', 5],
-                 [5, 'AA', 'BB', 'AA', 5, 'BB'],
-                 ['BB', 'AA', 5, 'BB', 5, 'AA'],
-                 ['AA', 'BB', 'AA', 5, 'BB', 'AA'],
-                 [5, 'BB', 'AA', 'BB', 5, 'BB'],
-                 ['BB', 'AA', 5, 'BB', 'AA', 5],
-                 [5, 'AA', 'BB', 5, 'AA', 'BB'],
-                 ['AA', 'BB', 5, 'AA', 'BB', 'AA'],
-                 ['BB', 5, 'BB', 'AA', 'BB', 5],
-                 ['AA', 5, 'BB', 'AA', 5, 'BB'],
-                 ['BB', 'AA', 'BB', 5, 'BB', 'AA']]
+                sage: W = ReflectionGroup(['A',3], index_set=["AA","BB","5"])  # optional - gap3
+                sage: w = W.long_element()                                     # optional - gap3
+                sage: w.reduced_words()                                        # optional - gap3
+                [['BB', '5', 'AA', 'BB', '5', 'AA'],
+                 ['5', 'BB', '5', 'AA', 'BB', '5'],
+                 ['BB', 'AA', 'BB', '5', 'BB', 'AA'],
+                 ['AA', '5', 'BB', 'AA', '5', 'BB'],
+                 ['5', 'AA', 'BB', 'AA', '5', 'BB'],
+                 ['AA', 'BB', '5', 'AA', 'BB', 'AA'],
+                 ['AA', 'BB', 'AA', '5', 'BB', 'AA'],
+                 ['AA', 'BB', '5', 'BB', 'AA', 'BB'],
+                 ['BB', 'AA', '5', 'BB', 'AA', '5'],
+                 ['BB', '5', 'AA', 'BB', 'AA', '5'],
+                 ['AA', '5', 'BB', '5', 'AA', 'BB'],
+                 ['5', 'BB', 'AA', '5', 'BB', '5'],
+                 ['5', 'BB', 'AA', 'BB', '5', 'BB'],
+                 ['5', 'AA', 'BB', '5', 'AA', 'BB'],
+                 ['BB', '5', 'BB', 'AA', 'BB', '5'],
+                 ['BB', 'AA', '5', 'BB', '5', 'AA']]
 
             .. TODO::
 

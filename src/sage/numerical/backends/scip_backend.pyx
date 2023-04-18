@@ -24,10 +24,7 @@ AUTHORS:
 
 from os import sys
 from os.path import splitext
-from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.numerical.mip import MIPSolverException
-from libc.float cimport DBL_MAX
-from libc.limits cimport INT_MAX
 from pyscipopt import Model
 
 

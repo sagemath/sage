@@ -258,7 +258,7 @@ def load(filename, globals, attach=False):
             # Preparse to a file to enable tracebacks with
             # code snippets. Use preparse_file_named to make
             # the file name appear in the traceback as well.
-            # See Trac 11812.
+            # See Issue 11812.
             if attach:
                 add_attached_file(fpath)
             with open(preparse_file_named(fpath)) as f:

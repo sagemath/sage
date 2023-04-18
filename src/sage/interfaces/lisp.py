@@ -527,7 +527,7 @@ def is_LispElement(x):
         sage: from sage.interfaces.lisp import is_LispElement
         sage: is_LispElement(2)
         doctest:...: DeprecationWarning: the function is_LispElement is deprecated; use isinstance(x, sage.interfaces.abc.LispElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_LispElement(lisp(2))
         True

@@ -37,10 +37,7 @@ REFERENCES:
 
 - [TIDES]_
 """
-
-
-
-from  sage.rings.real_mpfr import RealField
+from sage.rings.real_mpfr import RealField
 from sage.calculus.all import symbolic_expression
 from sage.misc.flatten import flatten
 from sage.ext.fast_callable import fast_callable
@@ -48,8 +45,6 @@ from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.functions.log import log, exp
 from sage.functions.other import floor, ceil
 from sage.misc.functional import sqrt
-
-
 
 
 def subexpressions_list(f, pars=None):
@@ -297,7 +292,6 @@ def subexpressions_list(f, pars=None):
             stackcomp.append(sqrt(a))
             stack.append(sqrt(a))
 
-
         elif i == 'neg':
             a = stack.pop(-1)
             detail.append(('mul', -1, a))
@@ -305,7 +299,6 @@ def subexpressions_list(f, pars=None):
             stackcomp.append(-a)
 
     return stackcomp,detail
-
 
 
 def remove_repeated(l1, l2):
@@ -350,11 +343,12 @@ def remove_repeated(l1, l2):
                 j+=1
 
 
-
 def remove_constants(l1,l2):
     """
     Given two lists, remove the entries in the first that are real constants,
     and also the corresponding elements in the second one.
+
+    EXAMPLES::
 
         sage: from sage.interfaces.tides import subexpressions_list, remove_constants
         sage: f(a)=[1+cos(7)*a]
@@ -374,7 +368,6 @@ def remove_constants(l1,l2):
             l2.pop(i)
         else:
             i+=1
-
 
 
 def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
@@ -443,7 +436,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
         '\ttolrel = 9.9999999999999998e-17 ;\n'
         sage: shutil.rmtree(tempdir)
 
-    Check that ticket :trac:`17179` is fixed (handle expressions like `\\pi`)::
+    Check that issue :trac:`17179` is fixed (handle expressions like `\\pi`)::
 
         sage: from sage.interfaces.tides import genfiles_mintides
         sage: import os
@@ -519,7 +512,6 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
                 oper += '_c'
             l3.append((oper, aa, bb))
 
-
     n = len(var)
     res = []
     for i in range(len(l3)):
@@ -547,7 +539,6 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
             string += "sin_mc("+el[1]+",XX[{}], i);".format(i+n+1)
         elif el[0] == 'cos':
             string += "cos_mc("+el[1]+",XX[{}], i);".format(i+n-1)
-
 
         res.append(string)
 
@@ -726,7 +717,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
         '\tmp_tides_delta(function_iteration, NULL, nvar, npar, nfun, v, p, tini, dt, nipt, tolrel, tolabs, NULL, fd);\n'
         sage: shutil.rmtree(tempdir)
 
-    Check that ticket :trac:`17179` is fixed (handle expressions like `\\pi`)::
+    Check that issue :trac:`17179` is fixed (handle expressions like `\\pi`)::
 
         sage: from sage.interfaces.tides import genfiles_mpfr
         sage: import os
@@ -902,7 +893,6 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     outfile.write(auxstring)
     outfile.close()
 
-
     npar = len(parameter_values)
     outfile = open(driver, 'a')
 
@@ -945,7 +935,6 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     outfile.write('\tmpfr_t tini, dt; \n')
     outfile.write('\tmpfr_init2(tini, TIDES_PREC); \n')
     outfile.write('\tmpfr_init2(dt, TIDES_PREC); \n')
-
 
     outfile.write('\tmpfr_set_str(tini, "{}", 10, TIDES_RND);;\n'.format(RR(initial).str()))
     outfile.write('\tmpfr_set_str(dt, "{}", 10, TIDES_RND);\n'.format(RR(delta).str()))

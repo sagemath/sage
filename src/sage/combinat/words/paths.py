@@ -384,7 +384,7 @@ class WordPaths_all(FiniteWords):
             True
 
         If size of alphabet is twice the number of steps, then opposite
-        vectors are used for the second part of the alphabet.
+        vectors are used for the second part of the alphabet::
 
             sage: WordPaths('abcd',[(2,1),(2,4)])
             Word Paths over 4 steps
@@ -455,10 +455,10 @@ class WordPaths_all(FiniteWords):
             sage: W1 == W3
             False
         """
-        return self is other or (type(self) == type(other) and \
-               self.alphabet() == other.alphabet() and \
-               self.vector_space() == other.vector_space() and \
-               self.letters_to_steps() == other.letters_to_steps())
+        return self is other or (type(self) == type(other) and
+            self.alphabet() == other.alphabet() and
+            self.vector_space() == other.vector_space() and
+            self.letters_to_steps() == other.letters_to_steps())
 
     def __ne__(self, other):
         r"""
@@ -1226,7 +1226,7 @@ class FiniteWordPath_all(SageObject):
             '(0.000, 0.000) -- (1.00, 0.000) -- (1.50, 0.866) -- (1.00, 1.73) -- (0.000, 1.73) -- (-0.500, 0.866)'
 
         """
-        from sage.all import n
+        from sage.misc.functional import N as n
         f = lambda x: n(x,digits=3)
         l = [str(tuple(map(f, pt))) for pt in self.points()]
         return ' -- '.join(l)

@@ -19,7 +19,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # ****************************************************************************
 
 from sage.graphs.graph import Graph
-from sage.arith.all import is_prime_power
+from sage.arith.misc import is_prime_power
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
 

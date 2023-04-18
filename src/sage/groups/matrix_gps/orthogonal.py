@@ -85,7 +85,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.misc.latex import latex
 from sage.misc.cachefunc import cached_method
 from sage.groups.matrix_gps.named_group import (
@@ -127,7 +127,7 @@ def normalize_args_e(degree, ring, e):
         ...
         ValueError: must have e=-1 or e=1 for even degree
     """
-    if is_FiniteField(ring) and degree%2 == 0:
+    if isinstance(ring, FiniteField) and degree%2 == 0:
         if e not in (-1, +1):
             raise ValueError('must have e=-1 or e=1 for even degree')
     else:
@@ -171,7 +171,7 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
     e = normalize_args_e(degree, ring, e)
 
     if invariant_form is not None:
-        if is_FiniteField(ring):
+        if isinstance(ring, FiniteField):
             raise NotImplementedError("invariant_form for finite groups is fixed by GAP")
 
     if e == 0:
@@ -202,12 +202,11 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
                                                          latex(ring),
                                                          '+' if e == 1 else '-')
 
-    if is_FiniteField(ring):
+    if isinstance(ring, FiniteField):
         cmd  = '{0}O({1}, {2}, {3})'.format(ltx_prefix, e, degree, ring.order())
         return OrthogonalMatrixGroup_gap(degree, ring, False, name, ltx, cmd)
     else:
         return OrthogonalMatrixGroup_generic(degree, ring, False, name, ltx, invariant_form=invariant_form)
-
 
 
 ########################################################################
@@ -320,7 +319,6 @@ def GO(n, R, e=0, var='a', invariant_form=None):
     return _OG(n, R, False, e=e, var=var, invariant_form=invariant_form)
 
 
-
 ########################################################################
 # Special Orthogonal Group
 ########################################################################
@@ -429,7 +427,6 @@ def SO(n, R, e=None, var='a', invariant_form=None):
         Special Orthogonal Group of degree 2 and form parameter 1 over Finite Field of size 3
     """
     return _OG(n, R, True, e=e, var=var, invariant_form=invariant_form)
-
 
 
 ########################################################################

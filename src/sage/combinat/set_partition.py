@@ -455,7 +455,7 @@ class AbstractSetPartition(ClonableArray,
             for part in s:
                 cur = []
                 for i in part:
-                    cur.extend(self[i-1]) # -1 for indexing
+                    cur.extend(self[i - 1])  # -1 for indexing
                 ret.append(cur)
             return ret
         return [self.parent()(union(s)) for s in SP]
@@ -517,18 +517,18 @@ class AbstractSetPartition(ClonableArray,
             if sp.max_block_size() == 1:
                 return SetPartition([sp.base_set()])
             support = sorted(a for S in sp for a in S)
-            initials = [a for S in sp for a in S if next(a,support) in S]
+            initials = [a for S in sp for a in S if next(a, support) in S]
             singletons = [a for S in sp for a in S if len(S) == 1]
             if not initials and not singletons:
                 return sp
             rho = pre_conjugate(
                 SetPartition([[a for a in S if a not in initials]
-                for S in sp if len(S)>1 and any(a not in initials for a in S)]))
+                for S in sp if len(S) > 1 and any(a not in initials for a in S)]))
             # add back initials as singletons and singletons as terminals
             return SetPartition([addback(S, singletons, support[::-1])
-                for S in rho]+[[a] for a in initials])
+                for S in rho] + [[a] for a in initials])
         support = sorted(a for S in self for a in S)
-        return SetPartition([[support[-support.index(a)-1] for a in S]
+        return SetPartition([[support[-support.index(a) - 1] for a in S]
             for S in pre_conjugate(self)])
 
 
@@ -694,7 +694,7 @@ class SetPartition(AbstractSetPartition,
 
         for key in kwargs:
             if key not in valid_args:
-                raise ValueError("unknown keyword argument: %s"%key)
+                raise ValueError("unknown keyword argument: %s" % key)
             if key == 'plot':
                 if not (kwargs['plot'] == 'cyclic'
                         or kwargs['plot'] == 'linear'
@@ -789,7 +789,7 @@ class SetPartition(AbstractSetPartition,
         """
         latex_options = self.latex_options()
         if latex_options["plot"] is None:
-            return repr(self).replace("{",r"\{").replace("}",r"\}")
+            return repr(self).replace("{", r"\{").replace("}", r"\}")
 
         from sage.misc.latex import latex
         latex.add_package_to_preamble_if_available("tikz")
@@ -812,7 +812,7 @@ class SetPartition(AbstractSetPartition,
             res += "\\draw (0,0) circle [radius={}];\n".format(radius)
 
             # Add nodes
-            for k,i in enumerate(base_set):
+            for k, i in enumerate(base_set):
                 location = (cardinality - k) * degrees - 270
                 if latex_options['show_labels']:
                     res += "\\node[label={}:{}]".format(location, i)
@@ -841,7 +841,7 @@ class SetPartition(AbstractSetPartition,
         elif latex_options['plot'] == 'linear':
             angle = latex_options['angle']
             # setup line
-            for k,i in enumerate(base_set):
+            for k, i in enumerate(base_set):
                 if latex_options['show_labels']:
                     res += "\\node[below=.05cm] at ({},0) {{${}$}};\n".format(k, i)
                 res += "\\node[draw,circle, inner sep=0pt, minimum width=4pt, fill=black] "
@@ -944,9 +944,8 @@ class SetPartition(AbstractSetPartition,
             sage: s = SetPartition([[1,3],[2,4]])
             sage: s.to_permutation()
             [3, 4, 1, 2]
-
         """
-        return Permutation(tuple( map(tuple, self.standard_form()) ))
+        return Permutation(tuple(map(tuple, self.standard_form())))
 
     def to_restricted_growth_word(self, bijection="blocks"):
         r"""
@@ -1009,7 +1008,7 @@ class SetPartition(AbstractSetPartition,
         elif bijection == "intertwining":
             return self.to_restricted_growth_word_intertwining()
         else:
-            raise ValueError("The given bijection is not valid.")
+            raise ValueError("the given bijection is not valid")
 
     def to_restricted_growth_word_blocks(self):
         r"""
@@ -1072,13 +1071,13 @@ class SetPartition(AbstractSetPartition,
 
         """
         A = sorted(self.arcs())
-        O = [min(B) for B in self] # openers
-        C = [max(B) for B in self] # closers
-        I = [0]*self.size()
+        O = [min(B) for B in self]  # openers
+        C = [max(B) for B in self]  # closers
+        I = [0] * self.size()
         for i in O:
-            I[i-1] = sum(1 for k,l in A if k < i < l) + sum(1 for k in C if k < i)
-        for (i,j) in A:
-            I[j-1] = sum(1 for k,l in A if i < k < j < l) + sum(1 for k in C if i < k < j)
+            I[i-1] = sum(1 for k, l in A if k < i < l) + sum(1 for k in C if k < i)
+        for i, j in A:
+            I[j-1] = sum(1 for k, l in A if i < k < j < l) + sum(1 for k in C if i < k < j)
         return I
 
     def openers(self):
@@ -1150,7 +1149,7 @@ class SetPartition(AbstractSetPartition,
         elif bijection == "psi":
             return self.to_rook_placement_psi()
         else:
-            raise ValueError("The given map is not valid.")
+            raise ValueError("the given map is not valid")
 
     def to_rook_placement_gamma(self):
         """
@@ -1207,9 +1206,9 @@ class SetPartition(AbstractSetPartition,
         w = self.to_restricted_growth_word_blocks()
         # the set of openers - leftmost occurrences of a letter in w
         EC = sorted([w.index(i) for i in range(max(w)+1)])
-        rooks = [] # pairs (row i, column j)
-        R = [] # attacked rows
-        for c in range(n): # columns from left to right
+        rooks = []  # pairs (row i, column j)
+        R = []  # attacked rows
+        for c in range(n):  # columns from left to right
             if c not in EC:
                 r = 0
                 w_c = w[c]
@@ -1293,9 +1292,9 @@ class SetPartition(AbstractSetPartition,
         # the number of closers which are larger than i and whose
         # block is before the block of i
         rs = [sum(1 for j in R if j > i and w[j] < w[i]) for i in range(n)]
-        EC = [n-j for j in R] # empty columns
-        rooks = [] # pairs (row i, column j)
-        for i in range(1,n):
+        EC = [n-j for j in R]  # empty columns
+        rooks = []  # pairs (row i, column j)
+        for i in range(1, n):
             U = [j for j in range(n+1-i, n+1) if j not in EC]
             if rs[i] < len(U):
                 j = U[rs[i]]
@@ -1355,7 +1354,7 @@ class SetPartition(AbstractSetPartition,
                 P = sorted(P, key=lambda B: (-len(B), min(B)))
                 b = P.index(B)
                 i = j - b - 1
-                degrees.append((j,i))
+                degrees.append((j, i))
         # reconstruct rooks from degree sequence
         rooks = []
         attacked_rows = []
@@ -1364,7 +1363,7 @@ class SetPartition(AbstractSetPartition,
             while d > i + sum(1 for r in attacked_rows if r > i):
                 i += 1
             attacked_rows.append(i)
-            rooks.append((i,j))
+            rooks.append((i, j))
         return sorted(rooks)
 
     def apply_permutation(self, p):
@@ -1418,11 +1417,11 @@ class SetPartition(AbstractSetPartition,
         # each arc is sorted, but the set of arcs might not be
         arcs = sorted(self.arcs(), key=min)
         while arcs:
-            i1,j1 = arcs.pop(0)
-            for i2,j2 in arcs:
+            i1, j1 = arcs.pop(0)
+            for i2, j2 in arcs:
                 # we know that i1 < i2 and i1 < j1 and i2 < j2
                 if i2 < j1 < j2:
-                    yield ((i1,j1), (i2,j2))
+                    yield ((i1, j1), (i2, j2))
 
     def crossings(self):
         r"""
@@ -1472,9 +1471,9 @@ class SetPartition(AbstractSetPartition,
             sage: n.number_of_crossings()
             1
         """
-        return Integer( len(list(self.crossings_iterator())) )
+        return Integer(len(list(self.crossings_iterator())))
 
-    def is_noncrossing(self):
+    def is_noncrossing(self) -> bool:
         r"""
         Check if ``self`` is noncrossing.
 
@@ -1535,11 +1534,11 @@ class SetPartition(AbstractSetPartition,
         # each arc is sorted, but the set of arcs might not be
         arcs = sorted(self.arcs(), key=min)
         while arcs:
-            i1,j1 = arcs.pop(0)
-            for i2,j2 in arcs:
+            i1, j1 = arcs.pop(0)
+            for i2, j2 in arcs:
                 # we know that i1 < i2 and i1 < j1 and i2 < j2
                 if i2 < j2 < j1:
-                    yield ((i1,j1), (i2,j2))
+                    yield ((i1, j1), (i2, j2))
 
     def nestings(self):
         r"""
@@ -1596,7 +1595,7 @@ class SetPartition(AbstractSetPartition,
             c += one
         return c
 
-    def is_nonnesting(self):
+    def is_nonnesting(self) -> bool:
         r"""
         Return if ``self`` is nonnesting or not.
 
@@ -1624,7 +1623,7 @@ class SetPartition(AbstractSetPartition,
             return True
         return False
 
-    def is_atomic(self):
+    def is_atomic(self) -> bool:
         r"""
         Return if ``self`` is an atomic set partition.
 
@@ -1682,7 +1681,7 @@ class SetPartition(AbstractSetPartition,
             sage: SetPartition([('c','b'),('d','f'),('e','a')]).standardization()
             {{1, 5}, {2, 3}, {4, 6}}
         """
-        r = {e: i for i,e in enumerate(sorted(self.base_set()), 1)}
+        r = {e: i for i, e in enumerate(sorted(self.base_set()), 1)}
         return SetPartitions(len(r))([[r[e] for e in b] for b in self])
 
     def restriction(self, I):
@@ -1782,7 +1781,7 @@ class SetPartition(AbstractSetPartition,
         cur = 1
         ret = []
         for part in s:
-            sub_parts = [list(self[i-1]) for i in part] # -1 for indexing
+            sub_parts = [list(self[i - 1]) for i in part]  # -1 for indexing
             # Standardizing sub_parts (the cur variable not being reset
             # to 1 gives us the offset we want):
             mins = [min(i) for i in sub_parts]
@@ -1985,16 +1984,16 @@ class SetPartition(AbstractSetPartition,
         if base_set_dict is not None:
             vertices_dict = base_set_dict
         else:
-            vertices_dict = {val: pos for pos,val in enumerate(sorted_vertices_list)}
+            vertices_dict = {val: pos for pos, val in enumerate(sorted_vertices_list)}
 
         for elt in vertices_dict:
             pos = vertices_dict[elt]
-            diag += point((pos,0), size=30, color=color)
+            diag += point((pos, 0), size=30, color=color)
             diag += text(elt, (pos, -sgn(angle)*0.1), color=color)
             # TODO: change 0.1 to something proportional to the height of the picture
 
-        for (k,j) in self.arcs():
-            pos_k,pos_j = float(vertices_dict[k]),float(vertices_dict[j])
+        for k, j in self.arcs():
+            pos_k, pos_j = float(vertices_dict[k]), float(vertices_dict[j])
             center = ((pos_k+pos_j) / 2, -abs(pos_j-pos_k) / (2*tan(angle)))
             r1 = abs((pos_j-pos_k) / (2*sin(angle)))
             sector = (sgn(angle) * (pi/2 - angle), sgn(angle) * (pi/2 + angle))
@@ -2066,7 +2065,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         else:
             try:
                 if s.cardinality() == infinity:
-                    raise ValueError("The set must be finite")
+                    raise ValueError("the set must be finite")
             except AttributeError:
                 pass
             s = frozenset(s)
@@ -2079,7 +2078,7 @@ class SetPartitions(UniqueRepresentation, Parent):
             else:
                 part = sorted(part, reverse=True)
                 if part not in Partitions(len(s)):
-                    raise ValueError("part must be an integer partition of %s"%len(s))
+                    raise ValueError("part must be an integer partition of %s" % len(s))
                 return SetPartitions_setparts(s, Partition(part))
         else:
             return SetPartitions_set(s)
@@ -2138,7 +2137,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         if isinstance(s, SetPartition):
             if isinstance(s.parent(), SetPartitions):
                 return self.element_class(self, s, check=check)
-            raise ValueError("cannot convert %s into an element of %s"%(s, self))
+            raise ValueError("cannot convert %s into an element of %s" % (s, self))
         return self.element_class(self, s, check=check)
 
     Element = SetPartition
@@ -2186,7 +2185,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         elif bijection == "intertwining":
             return self.from_restricted_growth_word_intertwining(w)
         else:
-            raise ValueError("The given bijection is not valid.")
+            raise ValueError("the given bijection is not valid")
 
     def from_restricted_growth_word_blocks(self, w):
         r"""
@@ -2257,17 +2256,17 @@ class SetPartitions(UniqueRepresentation, Parent):
         if len(w) == 0:
             return self.element_class(self, [])
         R = [[1]]
-        C = [1] # closers, always reverse sorted
-        m = 0 # max
-        for i in range(1,len(w)):
-            if w[i] == 1 + m: # i+1 is an opener
+        C = [1]  # closers, always reverse sorted
+        m = 0  # max
+        for i in range(1, len(w)):
+            if w[i] == 1 + m:  # i+1 is an opener
                 m += 1
-                R.append([i+1])
+                R.append([i + 1])
             else:
                 # add i+1 to the block, such that there are I[i] closers thereafter
                 l = C[w[i]]
                 B = next(B for B in R if l in B)
-                B.append(i+1)
+                B.append(i + 1)
                 C.remove(l)
             C = [i+1] + C
         return self.element_class(self, R)
@@ -2346,7 +2345,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         elif bijection == "psi":
             return self.from_rook_placement_psi(rooks, n)
         else:
-            raise ValueError("The given bijection is not valid.")
+            raise ValueError("the given bijection is not valid")
 
     def from_arcs(self, arcs, n):
         r"""
@@ -2372,9 +2371,9 @@ class SetPartitions(UniqueRepresentation, Parent):
             sage: SetPartitions().from_arcs([(2,3)], 5)
             {{1}, {2, 3}, {4}, {5}}
         """
-        P = DisjointSet(range(1,n+1))
-        for i,j in arcs:
-            P.union(i,j)
+        P = DisjointSet(range(1, n + 1))
+        for i, j in arcs:
+            P.union(i, j)
         return self.element_class(self, P)
 
     def from_rook_placement_gamma(self, rooks, n):
@@ -2423,9 +2422,9 @@ class SetPartitions(UniqueRepresentation, Parent):
         if n == 0:
             return self.element_class(self, [])
         # the columns of the board, beginning with column n-1
-        C = [set(range(n+1-j, n+1)) for j in range(1,n)]
+        C = [set(range(n+1-j, n+1)) for j in range(1, n)]
         # delete cells north and east of each rook
-        for (j,i) in rooks:
+        for j, i in rooks:
             # north
             C[n-j-1].difference_update(range(j+1, i+1))
             # east
@@ -2478,10 +2477,10 @@ class SetPartitions(UniqueRepresentation, Parent):
         """
         # the closers correspond to the empty columns
         cols = [j for j, _ in rooks]
-        R = [j for j in range(1,n+1) if j not in cols]
+        R = [j for j in range(1, n + 1) if j not in cols]
         # the columns of the board, beginning with column n-1
-        C = [set(range(n+1-j, n+1)) if n-j not in R else set() for j in range(1,n)]
-        for (j,i) in rooks: # column j from right, row i from top
+        C = [set(range(n+1-j, n+1)) if n-j not in R else set() for j in range(1, n)]
+        for j, i in rooks:  # column j from right, row i from top
             # south
             C[n-j-1].difference_update(range(i, n+1))
             # east
@@ -2491,10 +2490,10 @@ class SetPartitions(UniqueRepresentation, Parent):
         C_flat = [i for c in C for i in c]
         # the number of closers which are larger than i and whose
         # block is before the block of i
-        rs = [C_flat.count(i) for i in range(1,n+1)]
+        rs = [C_flat.count(i) for i in range(1, n + 1)]
         # create the blocks
         P = [[] for _ in R]
-        for i in range(1, n+1):
+        for i in range(1, n + 1):
             k = rs[i-1]
             # find k-th block which does not yet have a closer
             b = 0
@@ -2542,15 +2541,15 @@ class SetPartitions(UniqueRepresentation, Parent):
         # we refer to the cell in row i and column j with (i, j)
         P = []
         rooks_by_column = {j: i for (i, j) in rooks}
-        for c in range(1, n+1):
+        for c in range(1, n + 1):
             # determine the weight of column c
             try:
                 r = rooks_by_column[c]
                 n_rooks = 1
-                ne = r-1 + sum(1 for i,j in rooks if i > r and j < c)
+                ne = r-1 + sum(1 for i, j in rooks if i > r and j < c)
             except KeyError:
                 n_rooks = 0
-                ne = sum(1 for i,j in rooks if j < c)
+                ne = sum(1 for i, j in rooks if j < c)
 
             b = c - n_rooks - ne
             if len(P) == b-1:
@@ -2560,7 +2559,7 @@ class SetPartitions(UniqueRepresentation, Parent):
             P = sorted(P, key=lambda B: (-len(B), min(B)))
         return self.element_class(self, P)
 
-    def is_less_than(self, s, t):
+    def is_less_than(self, s, t) -> bool:
         r"""
         Check if `s < t` in the refinement ordering on set partitions.
 
@@ -2609,7 +2608,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
     lt = is_less_than
 
-    def is_strict_refinement(self, s, t):
+    def is_strict_refinement(self, s, t) -> bool:
         r"""
         Return ``True`` if ``s`` is a strict refinement of ``t`` and
         satisfies `s \neq t`.
@@ -2762,7 +2761,7 @@ class SetPartitions_set(SetPartitions):
             sage: SetPartitions([1,2,3])
             Set partitions of {1, 2, 3}
         """
-        return "Set partitions of %s"%(Set(self._set))
+        return "Set partitions of %s" % (Set(self._set))
 
     def __contains__(self, x):
         """
@@ -2939,24 +2938,7 @@ class SetPartitions_setparts(SetPartitions_set):
             sage: SetPartitions(4, [2,2])
             Set partitions of {1, 2, 3, 4} with sizes in [2, 2]
         """
-        return "Set partitions of %s with sizes in %s"%(Set(self._set), self._parts)
-
-    @property
-    def parts(self):
-        r"""
-        ``self.parts`` is deprecated; use :meth:`shape` instead.
-
-        TESTS::
-
-            sage: SetPartitions(5, [2,2,1]).parts
-            doctest:...: DeprecationWarning: The attribute parts for the partition of block sizes is deprecated, use the method shape instead.
-            See https://trac.sagemath.org/25865 for details.
-            [2, 2, 1]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(25865, "The attribute parts for the partition of block sizes is deprecated,"
-                           " use the method shape instead.")
-        return self.shape()
+        return "Set partitions of %s with sizes in %s" % (Set(self._set), self._parts)
 
     def shape(self):
         r"""
@@ -3190,24 +3172,7 @@ class SetPartitions_setn(SetPartitions_set):
             sage: SetPartitions(5, 3)
             Set partitions of {1, 2, 3, 4, 5} with 3 parts
         """
-        return "Set partitions of %s with %s parts"%(Set(self._set), self._k)
-
-    @property
-    def n(self):
-        r"""
-        ``self.n`` is deprecated; use :meth:`number_of_blocks` instead.
-
-        TESTS::
-
-            sage: SetPartitions(5, 3).n
-            doctest:...: DeprecationWarning: The attribute n for the number of blocks is deprecated, use the method number_of_blocks instead.
-            See https://trac.sagemath.org/25462 for details.
-            3
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(25462, "The attribute n for the number of blocks is deprecated,"
-                           " use the method number_of_blocks instead.")
-        return self.number_of_blocks()
+        return "Set partitions of %s with %s parts" % (Set(self._set), self._k)
 
     def number_of_blocks(self):
         r"""

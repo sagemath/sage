@@ -23,9 +23,9 @@ from math import floor
 
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.rings.rational_field import QQ
-from sage.rings.all import RealField
+from sage.rings.real_mpfr import RealField
 from sage.rings.number_field.unit_group import UnitGroup
-from sage.arith.all import gcd
+from sage.arith.misc import GCD as gcd
 from sage.matrix.constructor import matrix, column_matrix
 from sage.libs.pari.all import pari
 from sage.modules.free_module_element import vector
@@ -101,11 +101,11 @@ def IQ_points_of_bounded_height(PN, K, dim, bound):
     EXAMPLES:
 
         sage: from sage.schemes.projective.proj_bdd_height import IQ_points_of_bounded_height
-        sage: CF.<a> = CyclotomicField(3)
-        sage: P.<x,y,z> = ProjectiveSpace(CF, 2)
-        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, -1)))
+        sage: CF.<a> = CyclotomicField(3)                                                           # optional - sage.rings.number_field
+        sage: P.<x,y,z> = ProjectiveSpace(CF, 2)                                                    # optional - sage.rings.number_field
+        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, -1)))                                  # optional - sage.rings.number_field
         0
-        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, 1)))
+        sage: len(list(IQ_points_of_bounded_height(P, CF, 2, 1)))                                   # optional - sage.rings.number_field
         57
     """
     if bound < 1:
@@ -181,9 +181,9 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
     EXAMPLES:
 
         sage: from sage.schemes.projective.proj_bdd_height import points_of_bounded_height
-        sage: K.<a> = NumberField(x^3 - 7)
-        sage: P.<x,y,z> = ProjectiveSpace(K, 2)
-        sage: len(list(points_of_bounded_height(P, K, 2, 1)))
+        sage: K.<a> = NumberField(x^3 - 7)                                                          # optional - sage.rings.number_field
+        sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # optional - sage.rings.number_field
+        sage: len(list(points_of_bounded_height(P, K, 2, 1)))                                       # optional - sage.rings.number_field
         13
     """
     if bound < 1:
@@ -277,7 +277,7 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
 
     T = column_matrix(fund_unit_logs).delete_rows([r]).change_ring(QQ)
 
-    # insert_row only takes integers, see https://trac.sagemath.org/ticket/11328
+    # insert_row only takes integers, see https://github.com/sagemath/sage/issues/11328
     M = ((-1)*matrix.identity(r)).insert_row(r, [Integer(1) for i in range(r)])
     M = M.transpose().insert_row(0, [Integer(0) for i in range(r + 1)]).transpose()
     M = M.change_ring(QQ)
