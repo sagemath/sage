@@ -5477,28 +5477,28 @@ class Permutation(CombinatorialElement):
     def number_of_nth_roots(self, n):
         r"""
         Return the number of n-th roots of ``self``.
-        
+
         A n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
 
         Note that the number of n-th roots only depend on the cyclic type of ``self``.
 
         EXAMPLES::
-        
+ 
             sage: Sigma = Permutations(5).identity()
             sage: Sigma.number_of_nth_roots(3)
             21
-            
+ 
             sage: Sigma = Permutation('(1, 3)')
             sage: Sigma.number_of_nth_roots(2)
             0
-        
+
         .. SEEALSO::
-        
+
                 * :meth:`nth_roots`
                 * :meth:`has_nth_root`
-        
+
         TESTS:
-            
+
         We compute the number of square roots of the identity (i.e. involutions in `S_n`, :oeis:`A000085`), then the number of cubic roots::
             
             sage: [Permutations(n).identity().number_of_nth_roots(2) for n in range(2, 10)]
@@ -5522,7 +5522,6 @@ class Permutation(CombinatorialElement):
             ...
             ValueError: n must be at least 1
         """
-        
         from sage.combinat.partition import Partitions
         from sage.combinat.set_partition import SetPartitions
         from sage.arith.misc import divisors, gcd
@@ -5530,7 +5529,7 @@ class Permutation(CombinatorialElement):
 
         if n < 1:
             raise ValueError('n must be at least 1')
-        
+
         Cycles = self.cycle_type().to_exp_dict()
         Result = 1
         for m, N in Cycles.items():
@@ -5538,10 +5537,10 @@ class Permutation(CombinatorialElement):
             Result *= sum(SetPartitions(N, pa).cardinality() *
                           prod(factorial(x-1) * m**(x-1) for x in pa)
                           for pa in Partitions(N, parts_in=parts))
-        
+
             if not Result:
-                return 0    
-        
+                return 0
+
         return Result
 
 def _tableau_contribution(T):
