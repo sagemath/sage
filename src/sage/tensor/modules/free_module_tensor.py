@@ -2586,7 +2586,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if using is not None:
             if self.tensor_type() != (0, 2):
                 raise ValueError(
-                    "trace with respect to a non-degenerate form is only defined for type-(0,2) tensor fields"
+                    "trace with respect to a non-degenerate form is only defined for type-(0,2) tensor"
                 )
             return self.up(using, 1).trace()
 
