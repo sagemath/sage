@@ -288,8 +288,8 @@ class MPolynomial_element(MPolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQbar[]
-            sage: x + y
+            sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
+            sage: x + y                                                                 # optional - sage.rings.number_field
             x + y
         """
         elt = self.__element + right.__element
@@ -302,8 +302,8 @@ class MPolynomial_element(MPolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQbar[]
-            sage: x - y
+            sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
+            sage: x - y                                                                 # optional - sage.rings.number_field
             x - y
         """
         elt = self.__element - right.__element
@@ -316,8 +316,8 @@ class MPolynomial_element(MPolynomial):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQbar[]
-            sage: x * y
+            sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
+            sage: x * y                                                                 # optional - sage.rings.number_field
             x*y
         """
         elt = self.__element * right.__element

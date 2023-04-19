@@ -66,7 +66,7 @@ class Polynomial_generic_sparse(Polynomial):
     A more extensive example::
 
         sage: A.<T> = PolynomialRing(Integers(5), sparse=True)                          # optional - sage.libs.pari
-        sage: f = T^2 + 1; B = A.quo(f)
+        sage: f = T^2 + 1; B = A.quo(f)                                                 # optional - sage.libs.pari
         sage: C.<s> = PolynomialRing(B)                                                 # optional - sage.libs.pari
         sage: C                                                                         # optional - sage.libs.pari
         Univariate Polynomial Ring in s over Univariate Quotient Polynomial Ring in Tbar
