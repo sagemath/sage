@@ -4694,9 +4694,9 @@ class Graph(GenericGraph):
         self._scream_if_not_simple()
         g = self
         if not g:
-            return 0 if value_only else g.parent()()
+            return ZZ.zero() if value_only else g.parent()()
         elif not g.size():
-            return 0 if value_only else g.parent()([[next(g.vertex_iterator())], []])
+            return ZZ.zero() if value_only else g.parent()([[next(g.vertex_iterator())], []])
         from sage.numerical.mip import MixedIntegerLinearProgram
 
         p = MixedIntegerLinearProgram(maximization=True, solver=solver)
