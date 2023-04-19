@@ -1052,12 +1052,26 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return [(tuple(coeff_indices), tuple(p)) for p in integral_points
                 if gcd(p) == 1]
 
-    def basic_j_invariants(self):
+    def basic_j_invariants(self, nonzero=False):
         r"""
         Return a dictionary whose keys are all the basic `j`-invariants
         parameters and values are the corresponding `j`-invariant.
 
         See the method :meth:`j_invariant` for definitions.
+
+        INPUT:
+
+        - ``nonzero`` (boolean, default: ``False``) -- if this flag
+          is set to ``True``, then only the parameters for which the
+          corresponding basic `j`-invariant is nonzero are returned.
+
+        .. WARNING::
+
+            The usage of this method can be computationally
+            expensive e.g. if the rank is greater than four,
+            or if `q` is large. Setting the ``nonzero`` flag to ``True``
+            can speed up the computation considerably if the Drinfeld
+            module generator possesses multiple zero coefficients.
 
         EXAMPLES::
 
@@ -1068,6 +1082,12 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
             sage: phi.basic_j_invariants()
             {((1,), (26, 1)): z12^10 + 4*z12^9 + 3*z12^8 + 2*z12^7 + 3*z12^6 + z12^5 + z12^3 + 4*z12^2 + z12 + 2}
+
+        ::
+
+            sage: phi = DrinfeldModule(A, [p_root, 0, 1, z12])
+            sage: phi.basic_j_invariants(nonzero=True)
+            {((2,), (651, 26)): z12^11 + 3*z12^10 + 4*z12^9 + 3*z12^8 + z12^7 + 2*z12^6 + 3*z12^4 + 2*z12^3 + z12^2 + 4*z12}
 
         ::
 
@@ -1087,7 +1107,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             T^11 + 3*T^10 + T^9 + 4*T^8 + T^7 + 2*T^6 + 2*T^4 + 3*T^3 + 2*T^2 + 3
         """
         return {parameter: self.j_invariant(parameter, check=False)
-                for parameter in self.basic_j_invariant_parameters()}
+                for parameter in self.basic_j_invariant_parameters(nonzero=nonzero)}
 
     def coefficient(self, n):
         r"""
