@@ -139,7 +139,7 @@ from sage.misc.cachefunc import cached_method
 
 cpdef is_Polynomial(f):
     """
-    Return True if ``f`` is of type univariate polynomial.
+    Return ``True`` if ``f`` is of type univariate polynomial.
 
     This function is deprecated.
 
@@ -162,7 +162,7 @@ cpdef is_Polynomial(f):
         sage: is_Polynomial(f)
         True
 
-    However this function does not return True for genuine multivariate
+    However this function does not return ``True`` for genuine multivariate
     polynomial type objects or symbolic polynomials, since those are
     not of the same data type as univariate polynomials::
 
@@ -2027,7 +2027,7 @@ cdef class Polynomial(CommutativePolynomial):
           contained within the given ring.
 
         - ``assume_squarefree`` (bool) -- Used for polynomials over
-          finite fields.  If True, this polynomial is assumed to be
+          finite fields.  If ``True``, this polynomial is assumed to be
           squarefree.
 
         EXAMPLES::
@@ -5159,12 +5159,12 @@ cdef class Polynomial(CommutativePolynomial):
 
     def is_constant(self):
         """
-        Return True if this is a constant polynomial.
+        Return ``True`` if this is a constant polynomial.
 
         OUTPUT:
 
 
-        -  ``bool`` - True if and only if this polynomial is
+        -  ``bool`` - ``True`` if and only if this polynomial is
            constant
 
 
@@ -5182,7 +5182,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def is_monomial(self):
         """
-        Return True if ``self`` is a monomial, i.e., a power of the generator.
+        Return ``True`` if ``self`` is a monomial, i.e., a power of the generator.
 
         EXAMPLES::
 
@@ -5526,7 +5526,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def is_monic(self):
         """
-        Returns True if this polynomial is monic. The zero polynomial is by
+        Returns ``True`` if this polynomial is monic. The zero polynomial is by
         definition not monic.
 
         EXAMPLES::
@@ -5553,7 +5553,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def is_unit(self):
         r"""
-        Return True if this polynomial is a unit.
+        Return ``True`` if this polynomial is a unit.
 
         EXAMPLES::
 
@@ -5600,7 +5600,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def is_nilpotent(self):
         r"""
-        Return True if this polynomial is nilpotent.
+        Return ``True`` if this polynomial is nilpotent.
 
         EXAMPLES::
 
@@ -5635,7 +5635,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def is_gen(self):
         r"""
-        Return True if this polynomial is the distinguished generator of
+        Return ``True`` if this polynomial is the distinguished generator of
         the parent polynomial ring.
 
         EXAMPLES::
@@ -5646,8 +5646,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R(x).is_gen()
             True
 
-        Important - this function doesn't return True if ``self`` equals the
-        generator; it returns True if ``self`` *is* the generator.
+        Important - this function doesn't return ``True`` if ``self`` equals the
+        generator; it returns ``True`` if ``self`` *is* the generator.
 
         ::
 
@@ -6276,8 +6276,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         OUTPUT:
 
-        If ``lengths`` is False, a list of rational numbers. If ``lengths`` is
-        True, a list of couples `(s,l)` where `s` is the slope and `l` the
+        If ``lengths`` is ``False``, a list of rational numbers. If ``lengths`` is
+        ``True``, a list of couples `(s,l)` where `s` is the slope and `l` the
         length of the corresponding segment in the Newton polygon.
 
         EXAMPLES::
@@ -7519,9 +7519,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         -  ``ring`` - the ring to find roots in
 
-        -  ``multiplicities`` - bool (default: True) if True
+        -  ``multiplicities`` - bool (default: ``True``) if ``True``
            return list of pairs `(r, n)`, where `r` is the root and `n` is the
-           multiplicity. If False, just return the unique roots, with no
+           multiplicity. If ``False``, just return the unique roots, with no
            information about multiplicities.
 
         -  ``algorithm`` - the root-finding algorithm to use.
@@ -8702,7 +8702,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def all_roots_in_interval(self, a=None, b=None):
         r"""
-        Return True if the roots of this polynomial are all real and
+        Return ``True`` if the roots of this polynomial are all real and
         contained in the given interval.
 
         EXAMPLES::
@@ -8727,7 +8727,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def is_real_rooted(self):
         r"""
-        Return True if the roots of this polynomial are all real.
+        Return ``True`` if the roots of this polynomial are all real.
 
         EXAMPLES::
 
@@ -8879,7 +8879,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def is_weil_polynomial(self, return_q=False):
         r"""
-        Return True if this is a Weil polynomial.
+        Return ``True`` if this is a Weil polynomial.
 
         This polynomial must have rational or integer coefficients.
 
@@ -9604,7 +9604,7 @@ cdef class Polynomial(CommutativePolynomial):
     @cached_method
     def is_squarefree(self):
         """
-        Return False if this polynomial is not square-free, i.e., if there is a
+        Return ``False`` if this polynomial is not square-free, i.e., if there is a
         non-unit `g` in the polynomial ring such that `g^2` divides ``self``.
 
         .. WARNING::
@@ -12099,15 +12099,15 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
         r"""
         INPUT:
 
-        - ``secure`` -- a boolean (default: False)
+        - ``secure`` -- a boolean (default: ``False``)
 
         OUTPUT: The degree of ``self``.
 
-        If ``secure`` is True and the degree of this polynomial
+        If ``secure`` is ``True`` and the degree of this polynomial
         is not determined (because the leading coefficient is
         indistinguishable from 0), an error is raised
 
-        If ``secure`` is False, the returned value is the largest
+        If ``secure`` is ``False``, the returned value is the largest
         `n` so that the coefficient of `x^n` does not compare equal
         to `0`.
 

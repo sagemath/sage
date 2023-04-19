@@ -919,9 +919,9 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
 
     @coerce_binop
     def quo_rem(self, right):
-        """
-        Return `q` and `r`, with the degree of `r` less than the degree of `right`,
-        such that `q * right + r = self`.
+        r"""
+        Return `q` and `r`, with the degree of `r` less than the degree of ``right``,
+        such that `q \cdot` ``right`` `{}+ r =` ``self``.
 
         EXAMPLES::
 
@@ -946,7 +946,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
 
     cpdef _floordiv_(self, right):
         """
-        Return the whole part of ``self``/right, without remainder.
+        Return the whole part of ``self``/``right``, without remainder.
 
         For q = n // d, we have deg(n - q*d) < deg(d)
 
@@ -1476,9 +1476,9 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
 
     @coerce_binop
     def quo_rem(self, right):
-        """
-        Return `q` and `r`, with the degree of `r` less than the degree of `right`,
-        such that ``q * right + r = self``.
+        r"""
+        Return `q` and `r`, with the degree of `r` less than the degree of ``right``,
+        such that `q \cdot` ``right`` `+ r =` ``self``.
 
         EXAMPLES::
 

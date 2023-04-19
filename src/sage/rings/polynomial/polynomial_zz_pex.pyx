@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.ntl sage.rings.finite_rings
 # distutils: libraries = NTL_LIBRARIES gmp
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -331,7 +332,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         - ``iter`` -- (default: 1) if the algorithm is ``"probabilistic"``,
           defines the number of iterations. The error probability is bounded
-          by `q^{\text{iter}}` for polynomials in `\GF{q}[x]`.
+          by `q^{\text{-iter}}` for polynomials in `\GF{q}[x]`.
 
         EXAMPLES::
 

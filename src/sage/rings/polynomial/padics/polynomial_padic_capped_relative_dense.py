@@ -997,7 +997,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
     def rescale(self, a):
         r"""
-        Return ``f(a*x)``
+        Return `f(a\cdot x)`.
 
         .. TODO::
 

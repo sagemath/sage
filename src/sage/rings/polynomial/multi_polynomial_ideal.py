@@ -933,11 +933,11 @@ class MPolynomialIdeal_singular_repr(
         INPUT:
 
 
-        -  ``algorithm`` -- string:
+        - ``algorithm`` -- string:
 
-           -  ``'sy'`` -- (default) use the Shimoyama-Yokoyama algorithm
+          - ``'sy'`` -- (default) use the Shimoyama-Yokoyama algorithm
 
-           -  ``'gtz'`` -- use the Gianni-Trager-Zacharias algorithm
+          - ``'gtz'`` -- use the Gianni-Trager-Zacharias algorithm
 
 
         OUTPUT: a list of associated primes
@@ -4229,7 +4229,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         ``'giac:gbasis'``
             Giac's ``gbasis`` command (if available)
 
-        If only a system is given - e.g. ``'magma`` - the default algorithm is
+        If only a system is given - e.g. ``'magma'`` - the default algorithm is
         chosen for that system.
 
         .. NOTE::

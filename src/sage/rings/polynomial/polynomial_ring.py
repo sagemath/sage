@@ -107,14 +107,14 @@ to the default FLINT implementation, but not vice versa::
 
     sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')                              # optional - sage.libs.ntl
     sage: S.<x> = PolynomialRing(ZZ, implementation='FLINT')                            # optional - sage.libs.flint
-    sage: (S.0 + R.0).parent() is S                                                       # optional - sage.libs.flint sage.libs.ntl
+    sage: (S.0 + R.0).parent() is S                                                     # optional - sage.libs.flint sage.libs.ntl
     True
-    sage: (R.0 + S.0).parent() is S                                                       # optional - sage.libs.flint sage.libs.ntl
+    sage: (R.0 + S.0).parent() is S                                                     # optional - sage.libs.flint sage.libs.ntl
     True
 
 TESTS::
 
-    sage: K.<x>=FractionField(QQ['x'])
+    sage: K.<x> = FractionField(QQ['x'])
     sage: V.<z> = K[]
     sage: x+z
     z + x
@@ -1559,14 +1559,12 @@ class PolynomialRing_general(ring.Algebra):
 
         INPUT: Pass exactly one of:
 
-
         -  ``max_degree`` - an int; the iterator will generate
            all polynomials which have degree less than or equal to
            ``max_degree``
 
         -  ``of_degree`` - an int; the iterator will generate
            all polynomials which have degree ``of_degree``
-
 
         OUTPUT: an iterator
 

@@ -2971,7 +2971,7 @@ cdef class Rational(sage.structure.element.FieldElement):
     def numerator(self):
         """
         Return the numerator of this rational number.
-        ``numer`` is an alias of ``numerator``.
+        :meth:`numer` is an alias of :meth:`numerator`.
 
         EXAMPLES::
 
@@ -3021,7 +3021,7 @@ cdef class Rational(sage.structure.element.FieldElement):
     def denominator(self):
         """
         Return the denominator of this rational number.
-        ``denom`` is an alias of ``denominator``.
+        :meth:`denom` is an alias of :meth:`denominator`.
 
         EXAMPLES::
 

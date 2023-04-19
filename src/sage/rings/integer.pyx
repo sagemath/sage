@@ -1594,7 +1594,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         between ``-b//2`` and ``b//2`` (both included). For instance in base 9,
         one uses digits from -4 to 4. If ``b`` is even, one has to choose
         between digits from ``-b//2`` to ``b//2 - 1`` or ``-b//2 + 1`` to ``b//2``
-        (base 10 for instance: either -5 to 4 or -4 to 5), and this is
+        (base 10 for instance: either `-5` to `4` or `-4` to `5`), and this is
         defined by the value of ``positive_shift``.
 
         INPUT:
@@ -1603,9 +1603,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
           nonnegative or the nonpositive integers can be represented by
           ``balanced_digits``. Thus we say base must be greater than 2.
 
-        - ``positive_shift`` -- boolean (default: True); for even bases, the
+        - ``positive_shift`` -- boolean (default: ``True``); for even bases, the
           representation uses digits from ``-b//2 + 1`` to ``b//2`` if set to
-          True, and from ``-b//2`` to ``b//2 - 1`` otherwise. This has no
+          ``True``, and from ``-b//2`` to ``b//2 - 1`` otherwise. This has no
           effect for odd bases.
 
         EXAMPLES::
@@ -3848,7 +3848,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
            - ``'ecm'`` - use ECM-GMP, an implementation of Hendrik
              Lenstra's elliptic curve method.
 
-        - ``proof`` - bool (default: True) whether or not to prove
+        - ``proof`` - bool (default: ``True``) whether or not to prove
           primality of each factor (only applicable for ``'pari'``
           and ``'ecm'``).
 
@@ -4145,7 +4145,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def divides(self, n):
         """
-        Return True if ``self`` divides ``n``.
+        Return ``True`` if ``self`` divides ``n``.
 
         EXAMPLES::
 
@@ -4770,7 +4770,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def is_unit(self):
         r"""
-        Return ``true`` if this integer is a unit, i.e., 1 or `-1`.
+        Return ``True`` if this integer is a unit, i.e., `1` or `-1`.
 
         EXAMPLES::
 
@@ -5226,9 +5226,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        - ``proof`` -- Boolean or ``None`` (default). If False, use a
+        - ``proof`` -- Boolean or ``None`` (default). If ``False``, use a
           strong pseudo-primality test (see :meth:`is_pseudoprime`).
-          If True, use a provable primality test.  If unset, use the
+          If ``True``, use a provable primality test.  If unset, use the
           :mod:`default arithmetic proof flag <sage.structure.proof.proof>`.
 
         .. NOTE::
@@ -5329,7 +5329,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         - ``self`` -- A PARI pseudoprime
 
-        - ``proof`` -- Mandatory proof flag (True, False or None)
+        - ``proof`` -- Mandatory proof flag (``True``, ``False`` or ``None``)
 
         OUTPUT:
 
@@ -5641,7 +5641,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         TESTS:
 
-        The integer must not be a square or an error is raised::
+        The integer must not be a square, or an error is raised::
 
            sage: 100.class_number()
            Traceback (most recent call last):
@@ -5649,7 +5649,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
            ValueError: class_number not defined for square integers
 
 
-        The integer must be 0 or 1 mod 4 or an error is raised::
+        The integer must be 0 or 1 mod 4, or an error is raised::
 
            sage: 10.class_number()
            Traceback (most recent call last):
@@ -6037,8 +6037,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def is_squarefree(self):
         """
-        Return True if this integer is not divisible by the square of any
-        prime and False otherwise.
+        Return ``True`` if this integer is not divisible by the square of any
+        prime and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -6053,7 +6053,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def is_discriminant(self):
         """
-        Return True if this integer is a discriminant.
+        Return ``True`` if this integer is a discriminant.
 
         .. NOTE::
 
@@ -6083,7 +6083,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def is_fundamental_discriminant(self):
         """
-        Return True if this integer is a fundamental discriminant.
+        Return ``True`` if this integer is a fundamental discriminant.
 
         .. NOTE::
 
@@ -6321,17 +6321,17 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``prec`` - integer (default: None): if None, return an exact
+        -  ``prec`` -- integer (default: ``None``): if ``None``, return an exact
            square root; otherwise return a numerical square root, to the
            given bits of precision.
 
-        -  ``extend`` - bool (default: True); if True, return a
+        -  ``extend`` -- bool (default: ``True``); if ``True``, return a
            square root in an extension ring, if necessary. Otherwise, raise a
-           ValueError if the square is not in the base ring. Ignored if prec
-           is not None.
+           :class:`ValueError` if the square is not in the base ring. Ignored if ``prec``
+           is not ``None``.
 
-        -  ``all`` - bool (default: False); if True, return all
-           square roots of ``self`` (a list of length 0, 1 or 2).
+        -  ``all`` - bool (default: ``False``); if ``True``, return all
+           square roots of ``self`` (a list of length 0, 1, or 2).
 
         EXAMPLES::
 
@@ -6586,12 +6586,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     cpdef _shift_helper(Integer self, y, int sign):
         """
-        Function used to compute left and right shifts of integers.
-        Shifts self y bits to the left if sign is 1, and to the right
-        if sign is `-1`.
+        Compute left and right shifts of integers.
+        Shifts ``self`` ``y`` bits to the left if ``sign`` is `1`, and to the right
+        if ``sign`` is `-1`.
 
         WARNING: This function does no error checking. In particular,
-        it assumes that sign is either 1 or -1,
+        it assumes that ``sign`` is either `1` or `-1`.
 
         EXAMPLES::
 

@@ -650,7 +650,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         ``RealField(prec)`` (or ``RDF`` if ``prec=53``).
 
         There is an optional flag ``all_complex``, which defaults to
-        False.  If ``all_complex`` is True, then the real embeddings
+        ``False``.  If ``all_complex`` is ``True``, then the real embeddings
         are returned as embeddings into the corresponding complex
         field.
 
@@ -721,7 +721,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         -  ``p`` - a prime integer.
 
-        -  ``check`` (default True) - if True, check the primality of
+        -  ``check`` (default ``True``) - if ``True``, check the primality of
            `p`, else do not.
 
         OUTPUT: The residue field at this prime.
@@ -1278,7 +1278,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         - ``proof`` -- ignored
 
-        - ``orders`` (default False) -- if True, output two lists, the
+        - ``orders`` (default ``False``) -- if ``True``, output two lists, the
           generators and their orders
 
         OUTPUT:

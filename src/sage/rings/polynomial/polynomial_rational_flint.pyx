@@ -986,7 +986,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         Return the monic (or zero) least common multiple of ``self`` and ``right``.
 
         Corner cases:  if either of ``self`` and ``right`` are zero, returns zero.
-        This behaviour is ensures that the relation `lcm(a,b)\cdot gcd(a,b) = a\cdot b`
+        This behaviour is ensures that the relation `\lcm(a,b)\cdot \gcd(a,b) = a\cdot b`
         holds up to multiplication by rationals.
 
         EXAMPLES::
