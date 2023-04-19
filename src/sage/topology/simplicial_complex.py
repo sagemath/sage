@@ -1128,8 +1128,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if not is_mutable or is_immutable:
             self.set_immutable()
 
-        # self._bbn: a dictionary indexed by base_ring, whose value is a dictionary of 
-        # bigraded Betti numbers, indexed by tuples (-i, 2j). 
+        # self._bbn: a dictionary indexed by base_ring, whose value is a dictionary of
+        # bigraded Betti numbers, indexed by tuples (-i, 2j).
         # For use in the bigraded_betti_numbers method.
         self._bbn = {}
         # self._bbn_all_computed: a set of base rings for which we called
@@ -4818,7 +4818,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def bigraded_betti_numbers(self, base_ring=ZZ):
         r"""
-        Return a dictionary of the bigraded Betti numbers of ``self``, 
+        Return a dictionary of the bigraded Betti numbers of ``self``,
         with keys `(-a, 2b)`.
 
         .. SEEALSO::
@@ -4859,7 +4859,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         self._bbn[base_ring] = B
         self._bbn_all_computed.add(base_ring)
 
-        return B 
+        return B
 
     def bigraded_betti_number(self, a, b, base_ring=ZZ):
         r"""
@@ -4895,7 +4895,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 return self._bbn[base_ring].get((a,b), ZZ.zero())
             elif (a, b) in self._bbn[base_ring]:
                 return self._bbn[base_ring][a, b]
-            
+
         from sage.homology.homology_group import HomologyGroup
 
         b //= 2
@@ -4919,7 +4919,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             self._bbn[base_ring] = {(a, 2*b): B}
 
         return B
-            
+
 # Miscellaneous utility functions.
 
 # The following two functions can be used to generate the facets for
