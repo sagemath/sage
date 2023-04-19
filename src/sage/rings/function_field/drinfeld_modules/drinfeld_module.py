@@ -1174,7 +1174,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: rho.rank()
             4
 
-        TESTS::
+        TESTS:
 
         The generator must have positive degree (see PR #35519)::
 
