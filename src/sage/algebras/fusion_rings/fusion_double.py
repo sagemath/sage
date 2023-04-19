@@ -123,37 +123,15 @@ class FusionDouble(CombinatorialFreeModule):
     are multiplicity-free. Abelian groups, dihedral groups, dicyclic groups,
     and all groups of order 16 are multiplicity-free.  On the other hand, for
     groups of order 32, some are multiplicity-free and others are not.
+    These can all be constructed using :class:`SmallPermutationGroup`.
 
-    Some groups, as currently implemented in Sage, may be missing methods such
-    as centralizers which are needed by this code. To circumvent this, you may
-    try to implement them as GAP permutation groups. Thus::
+    EXAMPLES::
 
-        sage: G1 = GL(2, 2)
-        sage: hasattr(G1,"centralizer")
-        False
-        sage: G2=G1.as_permutation_group()
-        sage: hasattr(G2,"centralizer")
-        True
-        sage: H2 = FusionDouble(G2, prefix="b", inject_variables=True)
-        sage: b7^2
-        b0 + b1 + b7
-        sage: b7.ribbon()
-        zeta3
+        sage: G = SmallPermutationGroup(16,9)
+        sage: F = FusionDouble(G, prefix="b",inject_variables=True)
+        sage: b13^2 # long time (4s)
+        b0 + b2 + b4 + b15 + b16 + b17 + b18 + b24 + b26 + b27
 
-    In this example, implementing the nonabelian group of order 6 as
-    the matrix group ``G1`` will not work with the ``FusionDouble``, so we
-    recreate it as the permutation group ``G2``.
-
-    If we instead used `\GL(2, 3)`, this group has 48 elements. In this case,
-    the first computation of squaring ``b2`` takes a long time. However, the
-    fusion coefficients are cached and this fusion ring is not too slow to work
-    with. (Of course the F-matrix is not available for this group.) ::
-
-        sage: G = GL(2, 3).as_permutation_group()
-        sage: F = FusionDouble(G, prefix="b")
-        sage: b13 = F.basis()[13]
-        sage: b13^2  # long time
-        b0 + b1 + b5 + b6 + b13 + b26 + b30 + b31 + b32 + b33 + b38 + b39
     """
     @staticmethod
     def __classcall_private__(cls, G, prefix="s", inject_variables=False):
@@ -414,6 +392,7 @@ class FusionDouble(CombinatorialFreeModule):
         to the fixed representative `g_k` of the class `\mathcal{C}_i`
         and `\mathcal{C}_j`, the formula will make use of variable elements
         `h_i` and `h_j` that are subject to the condition `h_i h_j = g_k`.
+        See [GoMa2010]_ equation (7).
 
         .. MATH::
 

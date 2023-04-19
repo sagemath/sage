@@ -210,8 +210,8 @@ class FusionRing(WeylCharacterRing):
     As an exercise, the reader may verify the examples in
     Section 5.3 of [RoStWa2009]_. Here we check the example
     of the Ising modular tensor category, which is related
-    to the BPZ minimal model `M(4, 3)` or to an `E_8` coset
-    model. See [DFMS1996]_ Sections 7.4.2 and 18.4.1.
+    to the Belavin, Polyakov, Zamolodchikov  minimal model `M(4, 3)`
+    or to an `E_8` coset model. See [DFMS1996]_ Sections 7.4.2 and 18.4.1.
     [RoStWa2009]_ Example 5.3.4 tells us how to
     construct it as the conjugate of the `E_8` level 2
     :class:`FusionRing`::

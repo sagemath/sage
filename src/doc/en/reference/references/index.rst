@@ -2704,6 +2704,10 @@ REFERENCES:
               doubles of finite groups*. PhD Thesis,
               University of California, Santa Cruz. 1999.
 
+.. [GoMa2010] Christopher Goff and Geoffrey Mason, 
+            *Generalized twisted quantum doubles and the McKay correspondence*,
+            J. Algebra 324 (2010), no. 11, 3007–3016. 
+
 .. [GJ2016] Muddappa Seetharama Gowda and Juyoung Jeong.
             Spectral cones in Euclidean Jordan algebras.
             Linear Algebra and its Applications, 509:286-305, 2016.
