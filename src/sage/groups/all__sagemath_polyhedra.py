@@ -1,4 +1,4 @@
-from .all__sagemath_objects import *
+from .all__sagemath_categories import *
 
 from .additive_abelian.all import *
 from .matrix_gps.all__sagemath_polyhedra import *

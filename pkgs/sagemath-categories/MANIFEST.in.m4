@@ -35,6 +35,8 @@ include sage/interfaces/tab_completion.p*
 
 graft sage/typeset                     # dep of sage.categories.tensor
 
+include sage/groups/generic.p*
+
 include sage/rings/ring.*
 include sage/rings/quotient_ring*.p*
 include sage/rings/homset.p*
