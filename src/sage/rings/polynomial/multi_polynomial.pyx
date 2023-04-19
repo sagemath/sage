@@ -2875,11 +2875,12 @@ cdef class MPolynomial_libsingular(MPolynomial):
 
     EXAMPLES::
 
+        sage: from sage.rings.polynomial.multi_polynomial import MPolynomial_libsingular
         sage: R1.<x> = QQ[]
-        sage: isinstance(x, sage.rings.polynomial.multi_polynomial.MPolynomial_libsingular)
+        sage: isinstance(x, MPolynomial_libsingular)
         False
         sage: R2.<y,z> = QQ[]
-        sage: isinstance(y, sage.rings.polynomial.multi_polynomial.MPolynomial_libsingular)
+        sage: isinstance(y, MPolynomial_libsingular)                                    # optional - sage.libs.singular
         True
 
     By design, there is a unique direct subclass::

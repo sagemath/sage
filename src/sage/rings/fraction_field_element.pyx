@@ -1207,7 +1207,7 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
             sage: R.<t> = QQ[]
             sage: h = (t^14 + 2*t^12 - 4*t^11 - 8*t^9 + 6*t^8 + 12*t^6 - 4*t^5          # optional - sage.libs.pari
             ....:      - 8*t^3 + t^2 + 2)/(t^6 + 6*t^5 + 9*t^4 - 2*t^2 - 12*t - 18)
-            sage: h.support()
+            sage: h.support()                                                           # optional - sage.libs.pari
             [t - 1, t + 3, t^2 + 2, t^2 + t + 1, t^4 - 2]
         """
         L = [fac[0] for fac in self.numerator().factor()] + [fac[0] for fac in self.denominator().factor()]

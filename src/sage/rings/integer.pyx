@@ -3903,7 +3903,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         An example where FLINT is used::
 
             sage: n = 82862385732327628428164127822
-            sage: n.factor(algorithm='flint')
+            sage: n.factor(algorithm='flint')                                           # optional - sage.libs.flint
             2 * 3 * 11 * 13 * 41 * 73 * 22650083 * 1424602265462161
 
         We factor using a quadratic sieve algorithm::
