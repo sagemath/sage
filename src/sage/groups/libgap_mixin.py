@@ -544,6 +544,31 @@ class GroupMixinLibGAP():
         return [self.subgroup(sub.Representative().GeneratorsOfGroup())
                 for sub in self.gap().ConjugacyClassesSubgroups()]
 
+    def exponent(self):
+        r"""
+        Computes the exponent of the group.
+
+        The exponent `e` of a group `G` is the LCM of the orders of its
+        elements, that is, `e` is the smallest integer such that `g^e = 1`
+        for all `g \in G`.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2, 3)
+            sage: G.exponent()
+            24
+
+            sage: H = groups.matrix.Heisenberg(2)
+            sage: H.exponent()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
+        """
+        if not self.is_finite():
+            raise NotImplementedError("group must be finite")
+        from sage.rings.integer import Integer
+        return Integer(self._libgap_().Exponent())
+
     def intersection(self, other):
         """
         Return the intersection of two groups (if it makes sense) as a
