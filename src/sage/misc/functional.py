@@ -2008,7 +2008,7 @@ def transpose(x):
 
         sage: M = MatrixSpace(QQ, 3, 3)                                                 # optional - sage.modules
         sage: A = M([1,2,3, 4,5,6, 7,8,9])                                              # optional - sage.modules
-        sage: transpose(A)
+        sage: transpose(A)                                                              # optional - sage.modules
         [1 4 7]
         [2 5 8]
         [3 6 9]
