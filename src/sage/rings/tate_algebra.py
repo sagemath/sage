@@ -683,7 +683,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
         return elts
 
 
-
 # Tate algebras
 ###############
 

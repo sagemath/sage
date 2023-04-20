@@ -8,12 +8,11 @@ Optional: Using the Git-Trac Command
 
 .. WARNING::
 
-    **Sage development is scheduled to move to GitHub in February 2023.** The exact
-    date will be announced in `<https://groups.google.com/g/sage-devel>`_. After
-    the transition, some parts of this guide (especially those related with `the
-    Sage Trac server <https://trac.sagemath.org>`_) will become obsolete and be
-    updated according to the new workflow on GitHub. See our `transition guide from Trac to
-    GitHub
+    **Sage development moved to GitHub in February 2023.** After the transition,
+    some parts of this guide (especially those related with `the Sage Trac
+    server <https://trac.sagemath.org>`_) became obsolete and need to be
+    updated according to the new workflow on GitHub. See our `transition guide
+    from Trac to GitHub
     <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
     for the preliminary version of the workflow.
 

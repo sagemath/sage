@@ -1263,13 +1263,13 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     # since (0 : 0 : 1) has multiplicity r, divide out by the highest
                     # shared power of the corresponding variable before doing the resultant computations
                     if j == 0:
-                        div_pow = min([e[1] for e in npoly.exponents()])
-                        npoly = PP.coordinate_ring()(dict([((v[0],v[1] - div_pow,v[2]),g) for (v,g) in\
-                                                         npoly.dict().items()]))
+                        div_pow = min(e[1] for e in npoly.exponents())
+                        npoly = PP.coordinate_ring()({(v0, v1 - div_pow, v2): g
+                            for (v0, v1, v2), g in npoly.dict().items()})
                     else:
-                        div_pow = min([e[0] for e in npoly.exponents()])
-                        npoly = PP.coordinate_ring()(dict([((v[0] - div_pow,v[1],v[2]),g) for (v,g) in\
-                                                         npoly.dict().items()]))
+                        div_pow = min(e[0] for e in npoly.exponents())
+                        npoly = PP.coordinate_ring()({(v0 - div_pow, v1, v2): g
+                            for (v0, v1, v2), g in npoly.dict().items()})
                     # check the degree again
                     if npoly.degree() != d - r:
                         need_continue = True

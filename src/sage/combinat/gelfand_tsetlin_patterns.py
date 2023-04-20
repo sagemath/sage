@@ -993,7 +993,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             [2, 0]
             [2, 1]
         """
-        row = [x-1 for x in upper_row[1:]]
+        row = [x - 1 for x in upper_row[1:]]
         row_len = len(row)
         pos = 0
         while pos >= 0:
@@ -1002,11 +1002,11 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
                 pos -= 1
                 continue
             # If it would create an invalid entry, backstep
-            if ( pos > 0 and (row[pos] >= row[pos-1] \
-                    or (self._strict and row[pos] == row[pos-1]-1)) ) \
+            if (pos > 0 and (row[pos] >= row[pos - 1]
+                    or (self._strict and row[pos] == row[pos - 1] - 1))) \
                     or row[pos] >= upper_row[pos] \
                     or (self._k is not None and row[pos] >= self._k):
-                row[pos] = upper_row[pos+1] - 1
+                row[pos] = upper_row[pos + 1] - 1
                 pos -= 1
                 continue
             row[pos] += 1
