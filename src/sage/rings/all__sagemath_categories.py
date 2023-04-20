@@ -61,6 +61,10 @@ from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.power_series_ring_element', 'PowerSeries', deprecation=33602)
 
+# Laurent series ring in one variable
+from .laurent_series_ring import LaurentSeriesRing
+lazy_import('sage.rings.laurent_series_ring_element', 'LaurentSeries', deprecation=33602)
+
 del lazy_import
 
 # Big-oh notation

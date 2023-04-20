@@ -13,3 +13,6 @@ from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rationa
 
 # Infinite Polynomial Rings
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+
+# Laurent Polynomial Rings
+from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing

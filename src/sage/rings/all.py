@@ -95,10 +95,6 @@ from sage.rings.complex_arb import ComplexBallField, CBF
 
 lazy_import("sage.rings.imaginary_unit", "I")
 
-# Laurent series ring in one variable
-from .laurent_series_ring import LaurentSeriesRing
-lazy_import('sage.rings.laurent_series_ring_element', 'LaurentSeries', deprecation=33602)
-
 # Lazy Laurent series ring
 lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
                                             'LazySymmetricFunctions', 'LazyDirichletSeriesRing'])

@@ -27,7 +27,6 @@ from sage.rings.polynomial.convolution import convolution
 from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor as BooleanPolynomialRing
 
 # Laurent Polynomial Rings
-from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 lazy_import('sage.rings.polynomial.omega', 'MacMahonOmega')
 
 # Ore Polynomial Rings

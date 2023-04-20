@@ -112,7 +112,8 @@ include sage/rings/polynomial/multi_polynomial_element.p*
 include sage/rings/polynomial/polydict.p*
 include sage/rings/polynomial/term_order.p*
 include sage/rings/polynomial/flatten.p*
-include sage/rings/polynomial/laurent_polynomial_ring_base.p*
+include sage/rings/polynomial/laurent_polynomial_ring*.p*
+include sage/rings/polynomial/laurent_polynomial.p*                     # but not laurent_polynomial_mpair, which needs Matrix
 include sage/rings/polynomial/ideal.p*
 include sage/rings/polynomial/toy*.p*
 include sage/rings/polynomial/symmetric_*.p*
@@ -133,6 +134,7 @@ include sage/rings/power_series_ring_element.p*
 include sage/rings/power_series_ring.p*
 include sage/rings/multi_power_series_ring.py
 include sage/rings/multi_power_series_ring_element.py
+include sage/rings/laurent_series_ring*.p*
 
 graft sage/rings/semirings
 
