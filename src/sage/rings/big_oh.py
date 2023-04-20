@@ -13,9 +13,12 @@ from sage.arith.misc import factor
 
 try:
     from .laurent_series_ring_element import LaurentSeries
-    from sage.rings.puiseux_series_ring_element import PuiseuxSeries
 except ImportError:
     LaurentSeries = ()
+
+try:
+    from sage.rings.puiseux_series_ring_element import PuiseuxSeries
+except ImportError:
     PuiseuxSeries = ()
 
 try:
