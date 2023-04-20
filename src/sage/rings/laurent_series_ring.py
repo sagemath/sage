@@ -573,9 +573,9 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: parent(1/2 * t)
             Laurent Series Ring in t over Rational Field
 
-            sage: QQbar.gen() * t
+            sage: QQbar.gen() * t                                                       # optional - sage.rings.number_field
             I*t
-            sage: parent(QQbar.gen() * t)
+            sage: parent(QQbar.gen() * t)                                               # optional - sage.rings.number_field
             Laurent Series Ring in t over Algebraic Field
         """
         from sage.categories.pushout import CompletionFunctor
@@ -658,7 +658,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             ...
             ValueError: relations do not all (canonically) map to 0
             under map determined by images of generators
-            sage: f = R.hom(x + x^3,R)                                                  # optional - sage.rings.finite_rings
+            sage: f = R.hom(x + x^3, R)                                                 # optional - sage.rings.finite_rings
             sage: f(x^2)                                                                # optional - sage.rings.finite_rings
             x^2 + 2*x^4 + x^6
 
