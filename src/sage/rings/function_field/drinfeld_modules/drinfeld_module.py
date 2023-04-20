@@ -1472,10 +1472,26 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ...
             ValueError: the input does not define an isogeny
 
+        ::
+
+            sage: phi.hom(T + z)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input does not define an isogeny
+
         """
         if self.function_ring().has_coerce_map_from(x.parent()):
             return self.Hom(self)(x)
         if codomain is None:
-            codomain = self.velu(x)
+            try:
+                codomain = self.velu(x)
+            except TypeError:
+                raise ValueError("the input does not define an isogeny")
         H = self.Hom(codomain)
         return H(x)
+
+        # TODO: implement the method `moh`, the analogue of `hom`
+        # with fixed codomain.
+        # It's not straightforward because `left_divides` does not
+        # work currently because Sage does not know how to invert the
+        # Frobenius endomorphism; this is due to the RingExtension stuff.
