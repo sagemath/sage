@@ -1143,7 +1143,7 @@ class NumberField_relative(NumberField_generic):
 
     def is_galois_relative(self):
         r"""
-        Return True if for this relative extension `L/K`, `L` is a
+        Return ``True`` if for this relative extension `L/K`, `L` is a
         Galois extension of `K`.
 
         EXAMPLES::
@@ -1172,7 +1172,7 @@ class NumberField_relative(NumberField_generic):
 
     def is_galois_absolute(self):
         r"""
-        Return True if for this relative extension `L/K`, `L` is a Galois extension of `\QQ`.
+        Return ``True`` if for this relative extension `L/K`, `L` is a Galois extension of `\QQ`.
 
         EXAMPLES::
 
@@ -1265,7 +1265,7 @@ class NumberField_relative(NumberField_generic):
 
     def is_CM_extension(self):
         """
-        Return True is this is a CM extension, i.e. a totally imaginary
+        Return ``True`` is this is a CM extension, i.e. a totally imaginary
         quadratic extension of a totally real field.
 
         EXAMPLES::

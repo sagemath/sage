@@ -468,7 +468,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
     cpdef _coerce_map_from_(self, other):
         """
-        Return True if and only if there exists a coercion map from
+        Return ``True`` if and only if there exists a coercion map from
         ``other`` to ``self``.
 
         TESTS::

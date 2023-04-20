@@ -741,7 +741,7 @@ cdef class FpTElement(FieldElement):
 
     cpdef bint is_square(self):
         """
-        Return True if this element is the square of another element of the fraction field.
+        Return ``True`` if this element is the square of another element of the fraction field.
 
         EXAMPLES::
 
@@ -1852,7 +1852,7 @@ cdef inline bint normalize(nmod_poly_t numer, nmod_poly_t denom, long p):
 
     The normalized form of 0 is 0/1.
 
-    Return True if numer and denom were changed.
+    Return ``True`` if numer and denom were changed.
     """
     cdef long a
     cdef bint changed

@@ -101,7 +101,7 @@ TUNE_CHARPOLY_NF = 25
 
 def is_NumberFieldElement(x):
     """
-    Return True if x is of type NumberFieldElement, i.e., an element of
+    Return ``True`` if x is of type NumberFieldElement, i.e., an element of
     a number field.
 
     EXAMPLES::
@@ -2111,7 +2111,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def is_totally_positive(self):
         """
-        Returns True if self is positive for all real embeddings of its
+        Return ``True`` if self is positive for all real embeddings of its
         parent number field. We do nothing at complex places, so e.g. any
         element of a totally complex number field will return True.
 
@@ -2155,7 +2155,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def is_square(self, root=False):
         """
-        Return True if self is a square in its parent number field and
+        Return ``True`` if self is a square in its parent number field and
         otherwise return False.
 
         INPUT:
@@ -2338,7 +2338,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def is_nth_power(self, n):
         r"""
-        Return True if ``self`` is an `n`'th power in its parent `K`.
+        Return ``True`` if ``self`` is an `n`'th power in its parent `K`.
 
         EXAMPLES::
 
@@ -2638,7 +2638,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def __bool__(self):
         """
-        Return True if this number field element is nonzero.
+        Return ``True`` if this number field element is nonzero.
 
         EXAMPLES::
 

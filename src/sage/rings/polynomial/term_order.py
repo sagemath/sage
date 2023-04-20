@@ -1906,7 +1906,7 @@ class TermOrder(SageObject):
 
     def __eq__(self, other):
         """
-        Return true if ``self`` and ``other`` are equal.
+        Return ``True`` if ``self`` and ``other`` are equal.
 
         EXAMPLES::
 
@@ -1962,7 +1962,7 @@ class TermOrder(SageObject):
 
     def __ne__(self, other):
         """
-        Return true if ``self`` and ``other`` are not equal.
+        Return ``True`` if ``self`` and ``other`` are not equal.
 
         EXAMPLES::
 
@@ -2072,7 +2072,7 @@ class TermOrder(SageObject):
 
     def is_global(self):
         r"""
-        Return true if this term order is definitely
+        Return ``True`` if this term order is definitely
         global. Return false otherwise, which includes
         unknown term orders.
 
@@ -2104,7 +2104,7 @@ class TermOrder(SageObject):
 
     def is_local(self):
         r"""
-        Return true if this term order is definitely
+        Return ``True`` if this term order is definitely
         local. Return false otherwise, which includes
         unknown term orders.
 
@@ -2131,7 +2131,7 @@ class TermOrder(SageObject):
 
     def is_block_order(self):
         """
-        Return true if ``self`` is a block term order.
+        Return ``True`` if ``self`` is a block term order.
 
         EXAMPLES::
 
@@ -2143,7 +2143,7 @@ class TermOrder(SageObject):
 
     def is_weighted_degree_order(self):
         """
-        Return true if ``self`` is a weighted degree term order.
+        Return ``True`` if ``self`` is a weighted degree term order.
 
         EXAMPLES::
 

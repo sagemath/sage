@@ -76,7 +76,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
     def __bool__(self):
         """
-        Return True if the element is not zero.
+        Return ``True`` if the element is not zero.
 
         EXAMPLES::
 

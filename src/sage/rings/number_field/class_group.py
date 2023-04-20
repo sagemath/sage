@@ -192,7 +192,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
 
     def is_principal(self):
         r"""
-        Returns True iff this ideal class is the trivial (principal) class
+        Return ``True`` iff this ideal class is the trivial (principal) class
 
         EXAMPLES::
 

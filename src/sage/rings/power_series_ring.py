@@ -450,7 +450,7 @@ def _single_variate():
 
 def is_PowerSeriesRing(R):
     """
-    Return True if this is a *univariate* power series ring.  This is in
+    Return ``True`` if this is a *univariate* power series ring.  This is in
     keeping with the behavior of ``is_PolynomialRing``
     versus ``is_MPolynomialRing``.
 
@@ -1162,7 +1162,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
     def __contains__(self, x):
         """
-        Return True if x is an element of this power series ring or
+        Return ``True`` if x is an element of this power series ring or
         canonically coerces to this ring.
 
         EXAMPLES::

@@ -3463,7 +3463,7 @@ def truncate_to_prec(poly, R, absprec):
 
 def krasner_check(poly, prec):
     r"""
-    Returns True iff poly determines a unique isomorphism class of
+    Return ``True`` iff poly determines a unique isomorphism class of
     extensions at precision prec.
 
     Currently just returns True (thus allowing extensions that are not
@@ -3480,7 +3480,7 @@ def krasner_check(poly, prec):
 
 def is_eisenstein(poly):
     r"""
-    Returns True iff this monic polynomial is Eisenstein.
+    Return ``True`` iff this monic polynomial is Eisenstein.
 
     A polynomial is Eisenstein if it is monic, the constant term has
     valuation 1 and all other terms have positive valuation.
@@ -3508,7 +3508,7 @@ def is_eisenstein(poly):
 
 def is_unramified(poly):
     r"""
-    Returns true iff this monic polynomial is unramified.
+    Return ``True`` iff this monic polynomial is unramified.
 
     A polynomial is unramified if its reduction modulo the maximal
     ideal is irreducible.

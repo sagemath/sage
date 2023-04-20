@@ -180,7 +180,7 @@ import sage.interfaces.abc
 
 def is_PolynomialRing(x):
     """
-    Return True if ``x`` is a *univariate* polynomial ring (and not a
+    Return ``True`` if ``x`` is a *univariate* polynomial ring (and not a
     sparse multivariate polynomial ring in one variable).
 
     EXAMPLES::
@@ -1261,7 +1261,7 @@ class PolynomialRing_general(ring.Algebra):
 
     def is_sparse(self):
         """
-        Return true if elements of this polynomial ring have a sparse
+        Return ``True`` if elements of this polynomial ring have a sparse
         representation.
 
         EXAMPLES::

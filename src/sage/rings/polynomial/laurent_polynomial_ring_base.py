@@ -139,7 +139,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def is_integral_domain(self, proof=True):
         """
-        Returns True if self is an integral domain.
+        Return ``True`` if self is an integral domain.
 
         EXAMPLES::
 
@@ -157,7 +157,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def is_noetherian(self):
         """
-        Returns True if self is Noetherian.
+        Return ``True`` if self is Noetherian.
 
         EXAMPLES::
 
@@ -493,7 +493,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def is_exact(self):
         """
-        Returns True if the base ring is exact.
+        Return ``True`` if the base ring is exact.
 
         EXAMPLES::
 

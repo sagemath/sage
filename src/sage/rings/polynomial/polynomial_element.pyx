@@ -10304,7 +10304,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def has_cyclotomic_factor(self):
         r"""
-        Return True if the given polynomial has a nontrivial cyclotomic factor.
+        Return ``True`` if the given polynomial has a nontrivial cyclotomic factor.
 
         The algorithm assumes that the polynomial has rational coefficients.
 

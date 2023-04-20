@@ -792,7 +792,7 @@ GF = FiniteField = FiniteFieldFactory("FiniteField")
 
 def is_PrimeFiniteField(x):
     """
-    Returns True if ``x`` is a prime finite field.
+    Return ``True`` if ``x`` is a prime finite field.
 
     This function is deprecated.
 

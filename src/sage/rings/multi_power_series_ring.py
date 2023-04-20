@@ -224,7 +224,7 @@ _IntegralDomains = IntegralDomains()
 
 def is_MPowerSeriesRing(x):
     """
-    Return true if input is a multivariate power series ring.
+    Return ``True`` if input is a multivariate power series ring.
 
     TESTS::
 
@@ -423,7 +423,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
     def is_integral_domain(self, proof=False):
         """
-        Return True if the base ring is an integral domain; otherwise
+        Return ``True`` if the base ring is an integral domain; otherwise
         return False.
 
         EXAMPLES::

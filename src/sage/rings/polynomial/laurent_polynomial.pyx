@@ -3109,7 +3109,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         OUTPUT:
 
-        Returns True if ``self`` contains a monomial including the inverse of
+        Return ``True`` if ``self`` contains a monomial including the inverse of
         ``self.parent().gen(i)``, False otherwise.
 
         EXAMPLES::
@@ -3134,7 +3134,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def has_any_inverse(self):
         """
-        Return True if ``self`` contains any monomials with a negative exponent, False otherwise.
+        Return ``True`` if ``self`` contains any monomials with a negative exponent, False otherwise.
 
         EXAMPLES::
 

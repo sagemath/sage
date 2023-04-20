@@ -343,7 +343,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def _contains_(self, x):
         """
-        Return True if x is an element of this ideal.
+        Return ``True`` if x is an element of this ideal.
 
         This function is called (indirectly) when the ``in`` operator is used.
 
@@ -948,7 +948,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def is_integral(self):
         """
-        Return True if this ideal is integral.
+        Return ``True`` if this ideal is integral.
 
         EXAMPLES::
 
@@ -968,7 +968,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def is_maximal(self):
         """
-        Return True if this ideal is maximal.  This is equivalent to
+        Return ``True`` if this ideal is maximal.  This is equivalent to
         self being prime and nonzero.
 
         EXAMPLES::
@@ -984,7 +984,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def is_prime(self):
         """
-        Return True if this ideal is prime.
+        Return ``True`` if this ideal is prime.
 
         EXAMPLES::
 
@@ -1129,7 +1129,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def is_principal(self, proof=None):
         r"""
-        Return True if this ideal is principal.
+        Return ``True`` if this ideal is principal.
 
         Since it uses the PARI method :pari:`bnfisprincipal`, specify
         ``proof=True`` (this is the default setting) to prove the correctness
@@ -1238,7 +1238,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def is_zero(self):
         """
-        Return True iff self is the zero ideal
+        Return ``True`` iff self is the zero ideal
 
         Note that `(0)` is a ``NumberFieldIdeal``, not a
         ``NumberFieldFractionalIdeal``.
@@ -1735,7 +1735,7 @@ def basis_to_module(B, K):
 
 def is_NumberFieldIdeal(x):
     """
-    Return True if x is an ideal of a number field.
+    Return ``True`` if x is an ideal of a number field.
 
     EXAMPLES::
 
@@ -1824,7 +1824,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
     def divides(self, other):
         """
-        Returns True if this ideal divides other and False otherwise.
+        Return ``True`` if this ideal divides other and False otherwise.
 
         EXAMPLES::
 
@@ -1955,7 +1955,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
     def is_maximal(self):
         """
-        Return True if this ideal is maximal.  This is equivalent to
+        Return ``True`` if this ideal is maximal.  This is equivalent to
         self being prime, since it is nonzero.
 
         EXAMPLES::
@@ -1971,7 +1971,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
     def is_trivial(self, proof=None):
         """
-        Returns True if this is a trivial ideal.
+        Return ``True`` if this is a trivial ideal.
 
         EXAMPLES::
 
@@ -2390,7 +2390,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
     def is_coprime(self, other):
         """
-        Returns True if this ideal is coprime to the other, else False.
+        Return ``True`` if this ideal is coprime to the other, else False.
 
         INPUT:
 
@@ -2920,7 +2920,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
     def is_S_unit(self, S):
         r"""
-        Return True if this fractional ideal is a unit with respect to the list of primes ``S``.
+        Return ``True`` if this fractional ideal is a unit with respect to the list of primes ``S``.
 
         INPUT:
 
@@ -2950,7 +2950,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
     def is_S_integral(self, S):
         r"""
-        Return True if this fractional ideal is integral with respect to the list of primes ``S``.
+        Return ``True`` if this fractional ideal is integral with respect to the list of primes ``S``.
 
         INPUT:
 
@@ -3211,7 +3211,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
 def is_NumberFieldFractionalIdeal(x):
     """
-    Return True if x is a fractional ideal of a number field.
+    Return ``True`` if x is a fractional ideal of a number field.
 
     EXAMPLES::
 

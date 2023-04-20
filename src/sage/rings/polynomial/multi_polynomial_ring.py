@@ -793,7 +793,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
     def monomial_pairwise_prime(self, h, g):
         r"""
-        Return True if ``h`` and ``g`` are pairwise prime.
+        Return ``True`` if ``h`` and ``g`` are pairwise prime.
 
         Both are treated as monomials.
 

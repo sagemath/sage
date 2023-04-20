@@ -764,7 +764,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
     cpdef bint is_zero(self) except -1:
         """
-        Return True if ``self`` is equal to zero.
+        Return ``True`` if ``self`` is equal to zero.
 
         EXAMPLES::
 
@@ -780,7 +780,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
     cpdef bint is_one(self) except -1:
         """
-        Return True if ``self`` is equal to one.
+        Return ``True`` if ``self`` is equal to one.
 
         EXAMPLES::
 

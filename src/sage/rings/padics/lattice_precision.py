@@ -259,7 +259,7 @@ class pRational:
 
     def is_p_power(self):
         r"""
-        Return true if this element is a power of `p`.
+        Return ``True`` if this element is a power of `p`.
 
         TESTS::
 
@@ -279,7 +279,7 @@ class pRational:
 
     def is_zero(self):
         r"""
-        Return true if this element vanishes.
+        Return ``True`` if this element vanishes.
 
         TESTS::
 

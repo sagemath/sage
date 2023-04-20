@@ -12,7 +12,7 @@ TESTS::
 
 def is_NumberField(x):
     """
-    Return True if ``x`` is of number field type.
+    Return ``True`` if ``x`` is of number field type.
 
     This function is deprecated.
 
@@ -180,7 +180,7 @@ cdef class NumberField(Field):
 
     def is_absolute(self):
         """
-        Return True if self is viewed as a single extension over Q.
+        Return ``True`` if self is viewed as a single extension over Q.
 
         EXAMPLES::
 

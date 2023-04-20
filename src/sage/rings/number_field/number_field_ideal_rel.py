@@ -93,7 +93,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def _contains_(self, x):
         """
-        Return True if x is an element of this ideal.
+        Return ``True`` if x is an element of this ideal.
 
         This function is called (indirectly) when the ``in`` operator is used.
 
@@ -308,7 +308,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def is_principal(self, proof=None):
         """
-        Return True if this ideal is principal.  If so, set
+        Return ``True`` if this ideal is principal.  If so, set
         self.__reduced_generators, with length one.
 
         EXAMPLES::
@@ -334,7 +334,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def is_zero(self):
         r"""
-        Return True if this is the zero ideal.
+        Return ``True`` if this is the zero ideal.
 
         EXAMPLES::
 
@@ -624,7 +624,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     def is_integral(self):
         """
-        Return True if this ideal is integral.
+        Return ``True`` if this ideal is integral.
 
         EXAMPLES::
 
@@ -858,7 +858,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
 def is_NumberFieldFractionalIdeal_rel(x):
     """
-    Return True if x is a fractional ideal of a relative number field.
+    Return ``True`` if x is a fractional ideal of a relative number field.
 
     EXAMPLES::
 

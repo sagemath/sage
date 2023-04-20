@@ -525,7 +525,7 @@ cdef class FMElement(pAdicTemplateElement):
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
-        Returns True if self is indistinguishable from zero.
+        Return ``True`` if self is indistinguishable from zero.
 
         EXAMPLES::
 

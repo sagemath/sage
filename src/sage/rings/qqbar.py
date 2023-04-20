@@ -3134,7 +3134,7 @@ class AlgebraicGenerator(SageObject):
 
     def is_trivial(self):
         """
-        Return true iff this is the trivial generator (alpha == 1), which
+        Return ``True`` iff this is the trivial generator (alpha == 1), which
         does not actually extend the rationals.
 
         EXAMPLES::
@@ -7737,7 +7737,7 @@ class ANExtensionElement(ANDescr):
 
     def is_complex(self):
         r"""
-        Return True if the number field that defines this element is not real.
+        Return ``True`` if the number field that defines this element is not real.
 
         This does not imply that the element itself is definitely non-real, as
         in the example below.

@@ -1023,7 +1023,7 @@ def GaussianField():
 
 def is_AbsoluteNumberField(x):
     """
-    Return True if x is an absolute number field.
+    Return ``True`` if x is an absolute number field.
 
     EXAMPLES::
 
@@ -1046,7 +1046,7 @@ def is_AbsoluteNumberField(x):
 
 def is_QuadraticField(x) -> bool:
     r"""
-    Return True if x is of the quadratic *number* field type.
+    Return ``True`` if x is of the quadratic *number* field type.
 
     This function is deprecated. Use :func:`isinstance` with
     :class:`~sage.rings.abc.NumberField_quadratic` instead.
@@ -1240,7 +1240,7 @@ CyclotomicField = CyclotomicFieldFactory("sage.rings.number_field.number_field.C
 
 def is_CyclotomicField(x) -> bool:
     """
-    Return True if x is a cyclotomic field, i.e., of the special
+    Return ``True`` if x is a cyclotomic field, i.e., of the special
     cyclotomic field class. This function does not return True for a
     number field that just happens to be isomorphic to a cyclotomic
     field.
@@ -2680,7 +2680,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     def is_isomorphic(self, other, isomorphism_maps=False) -> bool:
         """
-        Return True if self is isomorphic as a number field to other.
+        Return ``True`` if self is isomorphic as a number field to other.
 
         EXAMPLES::
 
@@ -2740,7 +2740,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     def is_totally_real(self):
         """
-        Return True if self is totally real, and False otherwise.
+        Return ``True`` if self is totally real, and False otherwise.
 
         Totally real means that every isomorphic embedding of self into the
         complex numbers has image contained in the real numbers.
@@ -2758,7 +2758,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     def is_totally_imaginary(self):
         """
-        Return True if self is totally imaginary, and False otherwise.
+        Return ``True`` if self is totally imaginary, and False otherwise.
 
         Totally imaginary means that no isomorphic embedding of self into
         the complex numbers has image contained in the real numbers.
@@ -2776,7 +2776,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     def is_CM(self):
         r"""
-        Return True if self is a CM field (i.e. a totally imaginary
+        Return ``True`` if self is a CM field (i.e. a totally imaginary
         quadratic extension of a totally real field).
 
         EXAMPLES::
@@ -6088,7 +6088,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     def is_field(self, proof=True):
         """
-        Return True since a number field is a field.
+        Return ``True`` since a number field is a field.
 
         EXAMPLES::
 
@@ -6100,7 +6100,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     @cached_method
     def is_galois(self):
         r"""
-        Return True if this number field is a Galois extension of
+        Return ``True`` if this number field is a Galois extension of
         `\QQ`.
 
         EXAMPLES::
@@ -6119,7 +6119,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     @cached_method
     def is_abelian(self):
         r"""
-        Return True if this number field is an abelian Galois extension of
+        Return ``True`` if this number field is an abelian Galois extension of
         `\QQ`.
 
         EXAMPLES::
@@ -11304,7 +11304,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
     def is_galois(self):
         """
-        Return True since all cyclotomic fields are automatically Galois.
+        Return ``True`` since all cyclotomic fields are automatically Galois.
 
         EXAMPLES::
 
@@ -11315,7 +11315,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
     def is_abelian(self):
         """
-        Return True since all cyclotomic fields are automatically abelian.
+        Return ``True`` since all cyclotomic fields are automatically abelian.
 
         EXAMPLES::
 
@@ -11326,7 +11326,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
     def is_isomorphic(self, other):
         """
-        Return True if the cyclotomic field self is isomorphic as a number
+        Return ``True`` if the cyclotomic field self is isomorphic as a number
         field to other.
 
         EXAMPLES::
@@ -12005,7 +12005,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
 
     def is_galois(self):
         """
-        Return True since all quadratic fields are automatically Galois.
+        Return ``True`` since all quadratic fields are automatically Galois.
 
         EXAMPLES::
 
@@ -12203,7 +12203,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
 
 def is_fundamental_discriminant(D):
     r"""
-    Return True if the integer `D` is a fundamental
+    Return ``True`` if the integer `D` is a fundamental
     discriminant, i.e., if `D \cong 0,1\pmod{4}`, and
     `D\neq 0, 1` and either (1) `D` is square free or
     (2) we have `D\cong 0\pmod{4}` with

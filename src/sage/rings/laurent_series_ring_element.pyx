@@ -235,7 +235,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def is_monomial(self):
         """
-        Return True if this element is a monomial.  That is, if self is
+        Return ``True`` if this element is a monomial.  That is, if self is
         `x^n` for some integer `n`.
 
         EXAMPLES::

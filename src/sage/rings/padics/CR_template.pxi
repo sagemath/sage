@@ -959,7 +959,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     cpdef bint _is_exact_zero(self) except -1:
         """
-        Returns true if this element is exactly zero.
+        Return ``True`` if this element is exactly zero.
 
         EXAMPLES::
 
@@ -975,7 +975,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
-        Returns True if this element is indistinguishable from zero
+        Return ``True`` if this element is indistinguishable from zero
         but has finite precision.
 
         EXAMPLES::
@@ -1037,7 +1037,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     def __bool__(self):
         """
-        Returns True if self is distinguishable from zero.
+        Return ``True`` if self is distinguishable from zero.
 
         For most applications, explicitly specifying the power of p
         modulo which the element is supposed to be nonzero is

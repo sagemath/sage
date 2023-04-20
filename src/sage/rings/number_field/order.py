@@ -321,7 +321,7 @@ RelativeOrder = RelativeOrderFactory("sage.rings.number_field.order.RelativeOrde
 
 def is_NumberFieldOrder(R):
     r"""
-    Return True if R is either an order in a number field or is the ring `\ZZ` of integers.
+    Return ``True`` if R is either an order in a number field or is the ring `\ZZ` of integers.
 
     EXAMPLES::
 
@@ -1067,7 +1067,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
     def is_suborder(self, other):
         """
-        Return True if self and other are both orders in the
+        Return ``True`` if self and other are both orders in the
         same ambient number field and self is a subset of other.
 
         EXAMPLES::
@@ -2446,7 +2446,7 @@ class Order_relative(Order):
 
     def is_suborder(self, other):
         """
-        Return True if self is a subset of the order other.
+        Return ``True`` if self is a subset of the order other.
 
         EXAMPLES::
 

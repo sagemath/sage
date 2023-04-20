@@ -173,7 +173,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
     cpdef bint _is_exact_zero(self) except -1:
         """
-        Returns True if self is exactly zero.  Since
+        Return ``True`` if self is exactly zero.  Since
         non-capped-relative elements cannot be exact, this function
         always returns False.
 
@@ -186,7 +186,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
-        Returns True if self is indistinguishable from zero, but not
+        Return ``True`` if self is indistinguishable from zero, but not
         exactly zero.
 
         EXAMPLES::
@@ -198,7 +198,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
     cpdef bint _is_zero_rep(self) except -1:
         """
-        Returns True is self is indistinguishable from zero.
+        Return ``True`` is self is indistinguishable from zero.
 
         EXAMPLES::
 

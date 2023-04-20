@@ -174,7 +174,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
     def is_galois(self, K=None):
         """
-        Returns True if this extension is Galois.
+        Return ``True`` if this extension is Galois.
 
         Every unramified extension is Galois.
 

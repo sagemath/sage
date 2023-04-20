@@ -1268,7 +1268,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def is_homogeneous(self):
         """
-        Return True if ``self`` is a homogeneous polynomial.
+        Return ``True`` if ``self`` is a homogeneous polynomial.
 
         EXAMPLES::
 
@@ -1489,7 +1489,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def is_univariate(self):
         """
-        Returns True if this multivariate polynomial is univariate and
+        Return ``True`` if this multivariate polynomial is univariate and
         False otherwise.
 
         EXAMPLES::
@@ -1796,7 +1796,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def __bool__(self):
         """
-        Return True if self != 0
+        Return ``True`` if self != 0
 
         .. note::
 

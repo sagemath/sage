@@ -271,7 +271,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
 
     def is_injective(self):
         """
-        Return true since any power of the Frobenius endomorphism
+        Return ``True`` since any power of the Frobenius endomorphism
         over an unramified padic field is always injective.
 
         EXAMPLES::
@@ -286,7 +286,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
 
     def is_surjective(self):
         """
-        Return true since any power of the Frobenius endomorphism
+        Return ``True`` since any power of the Frobenius endomorphism
         over an unramified padic field is always surjective.
 
         EXAMPLES::
@@ -301,7 +301,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
 
     def is_identity(self):
         """
-        Return true if this morphism is the identity morphism.
+        Return ``True`` if this morphism is the identity morphism.
 
         EXAMPLES::
 
