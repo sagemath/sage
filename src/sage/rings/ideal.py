@@ -743,28 +743,28 @@ class Ideal_generic(MonoidElement):
 
             sage: R.<x, y> = QQ[]
             sage: I = R.ideal([x^2, x*y])
-            sage: I.is_primary()
+            sage: I.is_primary()                                                        # optional - sage.libs.singular
             False
-            sage: J = I.primary_decomposition()[1]; J
+            sage: J = I.primary_decomposition()[1]; J                                   # optional - sage.libs.singular
             Ideal (y, x^2) of Multivariate Polynomial Ring in x, y over Rational Field
-            sage: J.is_primary()
+            sage: J.is_primary()                                                        # optional - sage.libs.singular
             True
-            sage: J.is_prime()
+            sage: J.is_prime()                                                          # optional - sage.libs.singular
             False
 
         Some examples from the Macaulay2 documentation::
 
             sage: R.<x, y, z> = GF(101)[]                                               # optional - sage.rings.finite_rings
             sage: I = R.ideal([y^6])                                                    # optional - sage.rings.finite_rings
-            sage: I.is_primary()                                                        # optional - sage.rings.finite_rings
+            sage: I.is_primary()                                                        # optional - sage.libs.singular sage.rings.finite_rings
             True
-            sage: I.is_primary(R.ideal([y]))                                            # optional - sage.rings.finite_rings
+            sage: I.is_primary(R.ideal([y]))                                            # optional - sage.libs.singular sage.rings.finite_rings
             True
-            sage: I = R.ideal([x^4, y^7])                                               # optional - sage.rings.finite_rings
-            sage: I.is_primary()                                                        # optional - sage.rings.finite_rings
+            sage: I = R.ideal([x^4, y^7])                                               # optional - sage.libs.singular sage.rings.finite_rings
+            sage: I.is_primary()                                                        # optional - sage.libs.singular sage.rings.finite_rings
             True
-            sage: I = R.ideal([x*y, y^2])                                               # optional - sage.rings.finite_rings
-            sage: I.is_primary()                                                        # optional - sage.rings.finite_rings
+            sage: I = R.ideal([x*y, y^2])                                               # optional - sage.libs.singular sage.rings.finite_rings
+            sage: I.is_primary()                                                        # optional - sage.libs.singular sage.rings.finite_rings
             False
 
         .. NOTE::

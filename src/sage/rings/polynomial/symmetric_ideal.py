@@ -910,17 +910,19 @@ class SymmetricIdeal(Ideal_generic):
 
         In an earlier version, the following examples failed::
 
-            sage: X.<y,z> = InfinitePolynomialRing(GF(5), order='degrevlex')            # optional - sage.libs.pari
-            sage: I = ['-2*y_0^2 + 2*z_0^2 + 1', '-y_0^2 + 2*y_0*z_0 - 2*z_0^2 - 2*z_0 - 1',
-            ....:      'y_0*z_0 + 2*z_0^2 - 2*z_0 - 1', 'y_0^2 + 2*y_0*z_0 - 2*z_0^2 + 2*z_0 - 2',
+            sage: X.<y,z> = InfinitePolynomialRing(GF(5), order='degrevlex')            # optional - sage.rings.finite_rings
+            sage: I = ['-2*y_0^2 + 2*z_0^2 + 1',
+            ....:      '-y_0^2 + 2*y_0*z_0 - 2*z_0^2 - 2*z_0 - 1',
+            ....:      'y_0*z_0 + 2*z_0^2 - 2*z_0 - 1',
+            ....:      'y_0^2 + 2*y_0*z_0 - 2*z_0^2 + 2*z_0 - 2',
             ....:      '-y_0^2 - 2*y_0*z_0 - z_0^2 + y_0 - 1'] * X
-            sage: I.groebner_basis()                                                    # optional - sage.combinat sage.libs.pari
+            sage: I.groebner_basis()                                                    # optional - sage.combinat sage.rings.finite_rings
             [1]
 
-            sage: Y.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex',            # optional - sage.libs.pari
+            sage: Y.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex',            # optional - sage.rings.finite_rings
             ....:                                  implementation='sparse')
             sage: I = ['-y_3'] * Y
-            sage: I.groebner_basis()                                                    # optional - sage.libs.pari
+            sage: I.groebner_basis()                                                    # optional - sage.combinat sage.rings.finite_rings
             [y_1]
 
         """

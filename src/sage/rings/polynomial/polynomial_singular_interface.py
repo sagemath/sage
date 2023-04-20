@@ -5,8 +5,8 @@ AUTHORS:
 
 - Martin Albrecht <malb@informatik.uni-bremen.de> (2006-04-21)
 - Robert Bradshaw: Re-factor to avoid multiple inheritance vs. Cython (2007-09)
-- Syed Ahmad Lavasani: Added function field to _singular_init_ (2011-12-16)
-       Added non-prime finite fields to _singular_init_ (2012-1-22)
+- Syed Ahmad Lavasani: Added function field to _singular_init_ (2011-12-16);
+  Added non-prime finite fields to _singular_init_ (2012-1-22)
 
 TESTS::
 

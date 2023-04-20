@@ -105,7 +105,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         sage: QQ(RR(1/7)) - 1/7
         0
 
-    If you specify an optional second base argument, then the string
+    If you specify the optional second argument ``base``, then the string
     representation of the float is used.
 
     ::
@@ -469,7 +469,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         heights in ``range(start, end)``. Follows the same
         convention as Python :func:`range`, type ``range?`` for details.
 
-        See also ``__iter__()``.
+        See also :meth:`__iter__`.
 
         EXAMPLES:
 
@@ -635,9 +635,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         r"""
         Return all Galois automorphisms of ``self``.
 
-        OUTPUT:
-
-        - a sequence containing just the identity morphism
+        OUTPUT: a sequence containing just the identity morphism
 
         EXAMPLES::
 
@@ -652,15 +650,15 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def places(self, all_complex=False, prec=None):
         r"""
-        Return the collection of all infinite places of self, which
-        in this case is just the embedding of self into `\RR`.
+        Return the collection of all infinite places of ``self``, which
+        in this case is just the embedding of ``self`` into `\RR`.
 
         By default, this returns homomorphisms into ``RR``.  If
         ``prec`` is not None, we simply return homomorphisms into
         ``RealField(prec)`` (or ``RDF`` if ``prec=53``).
 
         There is an optional flag ``all_complex``, which defaults to
-        False.  If ``all_complex`` is True, then the real embeddings
+        ``False``.  If ``all_complex`` is ``True``, then the real embeddings
         are returned as embeddings into the corresponding complex
         field.
 
@@ -731,7 +729,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         -  ``p`` - a prime integer.
 
-        -  ``check`` (default True) - if True check the primality of
+        -  ``check`` (default ``True``) - if ``True``, check the primality of
            `p`, else do not.
 
         OUTPUT: The residue field at this prime.
@@ -758,10 +756,10 @@ class RationalField(Singleton, number_field_base.NumberField):
         INPUT:
 
         - ``S`` -- a list of rational primes, the infinite place as real
-          embedding of `\QQ` or as -1
+          embedding of `\QQ` or as `-1`
         - ``b`` -- a non-zero rational number which is a non-square locally
           at every prime in ``S``.
-        - ``check`` -- ``bool`` (default:``True``) perform additional checks on
+        - ``check`` -- ``bool`` (default: ``True``) perform additional checks on
           input and confirm the output.
 
         OUTPUT:
@@ -1081,7 +1079,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def algebraic_closure(self):
         r"""
-        Return the algebraic closure of self (which is `\QQbar`).
+        Return the algebraic closure of ``self`` (which is `\QQbar`).
 
         EXAMPLES::
 
@@ -1107,8 +1105,8 @@ class RationalField(Singleton, number_field_base.NumberField):
         r"""
         Return a defining polynomial of `\QQ`, as for other number fields.
 
-        This is also aliased to :meth:`self.defining_polynomial()`
-        and :meth:`self.absolute_polynomial()`.
+        This is also aliased to :meth:`defining_polynomial`
+        and :meth:`absolute_polynomial`.
 
         EXAMPLES::
 
@@ -1139,9 +1137,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         See :func:`TestSuite` for a typical use case.
 
-        OUTPUT:
-
-        An iterator over 100 elements of `\QQ`.
+        OUTPUT: An iterator over 100 elements of `\QQ`.
 
         EXAMPLES::
 
@@ -1180,7 +1176,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def random_element(self, num_bound=None, den_bound=None, *args, **kwds):
         r"""
-        Return an random element of `\QQ`.
+        Return a random element of `\QQ`.
 
         Elements are constructed by randomly choosing integers
         for the numerator and denominator, not necessarily coprime.
@@ -1290,7 +1286,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         - ``proof`` -- ignored
 
-        - ``orders`` (default False) -- if True, output two lists, the
+        - ``orders`` (default ``False``) -- if ``True``, output two lists, the
           generators and their orders
 
         OUTPUT:
@@ -1309,7 +1305,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
             :meth:`RationalField.selmer_space`, which gives additional
             output when `m=p` is prime: as well as generators, it gives an
-            abstract vector space over `GF(p)` isomorphic to `\QQ(S,p)`
+            abstract vector space over `\GF{p}` isomorphic to `\QQ(S,p)`
             and maps implementing the isomorphism between this space and
             `\QQ(S,p)` as a subgroup of `\QQ^*/(\QQ^*)^p`.
 
@@ -1396,7 +1392,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         (tuple) ``QSp``, ``QSp_gens``, ``from_QSp``, ``to_QSp`` where
 
-        - ``QSp`` is an abstract vector space over `GF(p)` isomorphic to `\QQ(S,p)`;
+        - ``QSp`` is an abstract vector space over `\GF{p}` isomorphic to `\QQ(S,p)`;
 
         - ``QSp_gens`` is a list of elements of `\QQ^*` generating `\QQ(S,p)`;
 

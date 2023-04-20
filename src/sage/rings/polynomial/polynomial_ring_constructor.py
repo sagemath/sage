@@ -122,7 +122,7 @@ def PolynomialRing(base_ring, *args, **kwds):
     one multivariate polynomial ring over each base ring for each
     choice of names of variables and term order.  The names of the
     generators can only be temporarily changed after the ring has been
-    created.  Do this using the localvars context:
+    created.  Do this using the :func:`localvars` context.
 
     EXAMPLES:
 
@@ -173,7 +173,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     This is exactly the same ring as what PolynomialRing returns::
 
-        sage: R is PolynomialRing(QQ,'zz')
+        sage: R is PolynomialRing(QQ, 'zz')
         True
 
     However, rings with different variables are different::
@@ -368,7 +368,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     Consider ::
 
-        sage: R.<x,y> = PolynomialRing(QQ,2); R
+        sage: R.<x,y> = PolynomialRing(QQ, 2); R
         Multivariate Polynomial Ring in x, y over Rational Field
         sage: f = x^2 - 2*y^2
 
@@ -946,12 +946,11 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
 
     - ``n`` -- number of variables (an integer > 1)
     - ``names`` -- names of ring variables, may be a string or list/tuple of strings
-    - ``order`` -- term order (default: lex)
+    - ``order`` -- term order (default: ``'lex'``)
 
     EXAMPLES::
 
-        sage: R.<x, y, z> = BooleanPolynomialRing() # indirect doctest                  # optional - sage.rings.polynomial.pbori
-        sage: R                                                                         # optional - sage.rings.polynomial.pbori
+        sage: R.<x, y, z> = BooleanPolynomialRing(); R  # indirect doctest              # optional - sage.rings.polynomial.pbori
         Boolean PolynomialRing in x, y, z
 
         sage: p = x*y + x*z + y*z                                                       # optional - sage.rings.polynomial.pbori

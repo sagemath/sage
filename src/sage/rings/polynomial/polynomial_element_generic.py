@@ -740,7 +740,7 @@ class Polynomial_generic_sparse(Polynomial):
 
     def shift(self, n):
         r"""
-        Returns this polynomial multiplied by the power `x^n`.
+        Return this polynomial multiplied by the power `x^n`.
 
         If `n` is negative, terms below `x^n` will be discarded. Does
         not change this polynomial.
@@ -791,10 +791,10 @@ class Polynomial_generic_sparse(Polynomial):
     @coerce_binop
     def quo_rem(self, other):
         """
-        Returns the quotient and remainder of the Euclidean division of
+        Return the quotient and remainder of the Euclidean division of
         ``self`` and ``other``.
 
-        Raises :class:`ZerodivisionError` if ``other`` is zero.
+        Raises :class:`ZeroDivisionError` if ``other`` is zero.
 
         Raises :class:`ArithmeticError` if ``other`` has a nonunit leading coefficient
         and this causes the Euclidean division to fail.
@@ -899,7 +899,7 @@ class Polynomial_generic_sparse(Polynomial):
 
     @coerce_binop
     def gcd(self,other,algorithm=None):
-        """
+        r"""
         Return the gcd of this polynomial and ``other``
 
         INPUT:
@@ -911,27 +911,27 @@ class Polynomial_generic_sparse(Polynomial):
 
         Two algorithms are provided:
 
-        - ``generic``: Uses the generic implementation, which depends on the
+        - ``generic`` -- Uses the generic implementation, which depends on the
           base ring being a UFD or a field.
-        - ``dense``: The polynomials are converted to the dense representation,
+        - ``dense`` -- The polynomials are converted to the dense representation,
           their gcd is computed and is converted back to the sparse
           representation.
 
-        Default is ``dense`` for polynomials over ZZ and ``generic`` in the
+        Default is ``dense`` for polynomials over `\ZZ` and ``generic`` in the
         other cases.
 
         EXAMPLES::
 
-            sage: R.<x> = PolynomialRing(ZZ,sparse=True)
+            sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: p = x^6 + 7*x^5 + 8*x^4 + 6*x^3 + 2*x^2 + x + 2
             sage: q = 2*x^4 - x^3 - 2*x^2 - 4*x - 1
-            sage: gcd(p,q)
+            sage: gcd(p, q)
             x^2 + x + 1
-            sage: gcd(p, q, algorithm = "dense")
+            sage: gcd(p, q, algorithm="dense")
             x^2 + x + 1
-            sage: gcd(p, q, algorithm = "generic")
+            sage: gcd(p, q, algorithm="generic")
             x^2 + x + 1
-            sage: gcd(p, q, algorithm = "foobar")
+            sage: gcd(p, q, algorithm="foobar")
             Traceback (most recent call last):
             ...
             ValueError: Unknown algorithm 'foobar'
@@ -1018,7 +1018,7 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = PolynomialRing(ZZ,sparse=True)
+            sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: p = x^100 - 3*x^10 + 12
             sage: p.number_of_terms()
             3
@@ -1065,7 +1065,7 @@ class Polynomial_generic_field(Polynomial_singular_repr,
     @coerce_binop
     def quo_rem(self, other):
         """
-        Returns a tuple ``(quotient, remainder)`` where
+        Return a tuple ``(quotient, remainder)`` where
         ``self = quotient * other + remainder``.
 
         EXAMPLES::
@@ -1136,7 +1136,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
     """
     def newton_slopes(self, repetition=True):
         """
-        Returns a list of the Newton slopes of this polynomial.
+        Return a list of the Newton slopes of this polynomial.
 
         These are the valuations of the roots of this polynomial.
 
@@ -1166,7 +1166,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
     def newton_polygon(self):
         r"""
-        Returns a list of vertices of the Newton polygon of this polynomial.
+        Return a list of vertices of the Newton polygon of this polynomial.
 
         .. NOTE::
 
@@ -1237,7 +1237,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             sage: f(root)                                                               # optional - sage.rings.padics
             O(5^10)
 
-            sage: g = (x^2 + 1)*(x - 7)                                                 # optional - sage.rings.padics
+            sage: g = (x^2 + 1) * (x - 7)                                               # optional - sage.rings.padics
             sage: g.hensel_lift(2)  # here, 2 is a multiple root modulo p               # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
@@ -1330,7 +1330,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         """
         INPUT:
 
-        -  slope -- a rational number (default: the first slope
+        -  ``slope`` -- a rational number (default: the first slope
            in the Newton polygon of ``self``)
 
         OUTPUT:

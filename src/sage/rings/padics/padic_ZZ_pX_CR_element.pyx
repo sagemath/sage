@@ -1256,7 +1256,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         If ``relprec`` is negative, will set ``self.relprec`` to be negative
         (indicating unnormalized unit)
 
-        Returns`` True`` iff ``self.relprec = 0``, ie ``self`` was set to an
+        Returns ``True`` iff ``self.relprec = 0``, ie ``self`` was set to an
         inexact zero.
 
         Note that this will wipe out anything in ``self.unit``.  Be

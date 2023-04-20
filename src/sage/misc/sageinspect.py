@@ -1942,8 +1942,8 @@ def _sage_getdoc_unformatted(obj):
         Integer(x=None, base=0)
         File: sage/rings/integer.pyx (starting at line ...)
         <BLANKLINE>
-            The ``Integer`` class represents arbitrary precision
-            integers. It derives from the ``Element`` class, so
+            The :class:`Integer` class represents arbitrary precision
+            integers. It derives from the :class:`Element` class, so
             integers can be used as ring elements anywhere in Sage.
         ...
 
@@ -2017,8 +2017,8 @@ def sage_getdoc_original(obj):
 
         sage: print(sage_getdoc_original(sage.rings.integer.Integer))
         <BLANKLINE>
-            The ``Integer`` class represents arbitrary precision
-            integers. It derives from the ``Element`` class, so
+            The :class:`Integer` class represents arbitrary precision
+            integers. It derives from the :class:`Element` class, so
             integers can be used as ring elements anywhere in Sage.
         ...
 
