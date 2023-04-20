@@ -256,7 +256,6 @@ class PadicValuationFactory(UniqueFactory):
         else:
             raise NotImplementedError("cannot rewrite %r which is defined on %r as a pseudo-valuation on %r"%(v, v.domain(), G.parent()))
 
-
         assert(v.domain() is G.parent())
 
         # To obtain uniqueness of p-adic valuations, we need a canonical
@@ -378,7 +377,6 @@ class PadicValuationFactory(UniqueFactory):
             raise NotImplementedError("cannot normalize %r" % (R,))
 
         return K, L, G
-
 
     def create_object(self, version, key, **extra_args):
         r"""
