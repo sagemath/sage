@@ -153,8 +153,6 @@ class QuotientRingElement(RingElement):
         """
         return self.__rep not in self.parent().defining_ideal()
 
-
-
     def is_unit(self):
         """
         Return True if self is a unit in the quotient ring.
