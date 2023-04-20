@@ -42,10 +42,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element import parent
-from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_mpair, LaurentPolynomial_univariate
+from sage.misc.lazy_import import LazyImport
+from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_univariate
 from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.element import parent
 
 
 def is_LaurentPolynomialRing(R):
@@ -586,7 +587,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             raise ValueError("base ring must be an integral domain")
         LaurentPolynomialRing_generic.__init__(self, R)
 
-    Element = LaurentPolynomial_mpair
+    Element = LazyImport('sage.rings.polynomial.laurent_polynomial_mpair', 'LaurentPolynomial_mpair')
 
     def _repr_(self):
         """
