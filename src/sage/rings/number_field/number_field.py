@@ -2032,11 +2032,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         CHECKME: handling of the case where codomain is not a number field?
 
-           sage: Hom(K, VectorSpace(QQ,3))
-           Set of Morphisms
-            from Number Field in i with defining polynomial x^2 + 1
-              to Vector space of dimension 3 over Rational Field
-              in Category of commutative additive groups
+        ::
+
+            sage: Hom(K, VectorSpace(QQ,3))
+            Set of Morphisms
+             from Number Field in i with defining polynomial x^2 + 1
+               to Vector space of dimension 3 over Rational Field
+               in Category of commutative additive groups
 
         TESTS:
 
@@ -11203,7 +11205,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                 gen_pow_e *= gen
 
     def _element_constructor_(self, x, check=True):
-        """
+        r"""
         Create an element of this cyclotomic field from `x`.
 
         EXAMPLES:
@@ -11749,7 +11751,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         return self.__zeta_order
 
     def _multiplicative_order_table(self):
-        """
+        r"""
         Return a dictionary that maps powers of `\zeta` to their order. This
         makes computing the orders of the elements of finite order in this
         field faster.
