@@ -315,7 +315,7 @@ class GroupAlgebras(AlgebrasCategory):
                 sage: S2 = SymmetricGroup(2)                                            # optional - sage.groups
                 sage: GroupAlgebra(S2).is_integral_domain()                             # optional - sage.groups sage.modules
                 False
-                sage: S1 = SymmetricGroup(1)
+                sage: S1 = SymmetricGroup(1)                                            # optional - sage.groups
                 sage: GroupAlgebra(S1).is_integral_domain()                             # optional - sage.groups sage.modules
                 True
                 sage: GroupAlgebra(S1, IntegerModRing(4)).is_integral_domain()          # optional - sage.groups sage.modules
