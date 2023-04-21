@@ -23,6 +23,8 @@ AUTHORS:
   the common :class:`EllipticCurveHom` interface.
 
 - Lorenz Panny (2022): :meth:`~EllipticCurveHom.matrix_on_subgroup`
+
+- Lorenz Panny (2023): :meth:`~EllipticCurveHom.trace`, :meth:`~EllipticCurveHom.characteristic_polynomial`
 """
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_not_equal, richcmp, op_EQ, op_NE
@@ -31,6 +33,7 @@ from sage.categories.morphism import Morphism
 
 from sage.arith.misc import integer_floor
 
+from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings import finite_field_base
 from sage.rings.number_field import number_field_base
 
@@ -282,6 +285,83 @@ class EllipticCurveHom(Morphism):
             return self._degree
         except AttributeError:
             raise NotImplementedError('children must implement')
+
+    @cached_method
+    def trace(self):
+        r"""
+        Return the trace of this elliptic-curve morphism, which must
+        be an endomorphism.
+
+        ALGORITHM: :func:`compute_trace_generic`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(QQ, [42, 42])
+            sage: m5 = E.scalar_multiplication(5)
+            sage: m5.trace()
+            10
+
+        ::
+
+            sage: E = EllipticCurve(GF(71^2), [45, 45])
+            sage: P = E.lift_x(27)
+            sage: P.order()
+            71
+            sage: tau = E.isogeny(P, codomain=E)
+            sage: tau.trace()
+            -1
+
+        TESTS:
+
+        It also works for more complicated :class:`EllipticCurveHom`
+        children::
+
+            sage: tau = E.isogeny(P, codomain=E, algorithm='velusqrt')
+            sage: tau.trace()
+            -1
+
+        Check that negation commutes with taking the trace::
+
+            sage: (-tau).trace()
+            1
+        """
+        return compute_trace_generic(self)
+
+    def characteristic_polynomial(self):
+        r"""
+        Return the characteristic polynomial of this elliptic-curve
+        morphism, which must be an endomorphism.
+
+        .. SEEALSO::
+
+            - :meth:`degree`
+            - :meth:`trace`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(QQ, [42, 42])
+            sage: m5 = E.scalar_multiplication(5)
+            sage: m5.characteristic_polynomial()
+            x^2 - 10*x + 25
+
+        ::
+
+            sage: E = EllipticCurve(GF(71), [42, 42])
+            sage: pi = E.frobenius_endomorphism()
+            sage: pi.characteristic_polynomial()
+            x^2 - 8*x + 71
+            sage: E.frobenius().charpoly()
+            x^2 - 8*x + 71
+
+        TESTS::
+
+            sage: m5.characteristic_polynomial().parent()
+            Univariate Polynomial Ring in x over Integer Ring
+            sage: pi.characteristic_polynomial().parent()
+            Univariate Polynomial Ring in x over Integer Ring
+        """
+        R = ZZ['x']
+        return R([self.degree(), -self.trace(), 1])
 
     def kernel_polynomial(self):
         r"""
@@ -1006,3 +1086,111 @@ def find_post_isomorphism(phi, psi):
 
     # found no suitable isomorphism -- either doesn't exist or a bug
     raise ValueError('isogenies not equal up to post-isomorphism')
+
+
+def compute_trace_generic(phi):
+    r"""
+    Compute the trace of the given elliptic-curve endomorphism `\varphi`.
+
+    ALGORITHM: Simple variant of Schoof's algorithm.
+
+    EXAMPLES:
+
+    It works over finite fields::
+
+        sage: from sage.schemes.elliptic_curves.hom import compute_trace_generic
+        sage: E = EllipticCurve(GF(31337), [1,1])
+        sage: compute_trace_generic(E.frobenius_endomorphism())
+        314
+
+    It works over `\QQ`::
+
+        sage: from sage.schemes.elliptic_curves.hom import compute_trace_generic
+        sage: E = EllipticCurve(QQ, [1,2,3,4,5])
+        sage: m3 = E.scalar_multiplication(3)
+        sage: compute_trace_generic(m3)
+        6
+
+    It works over number fields (for a CM curve)::
+
+        sage: from sage.schemes.elliptic_curves.hom import compute_trace_generic
+        sage: x = polygen(QQ)
+        sage: K.<t> = NumberField(5*x^2 - 2*x + 1)
+        sage: E = EllipticCurve(K, [1,0])
+        sage: phi = E.isogeny([t,0,1], codomain=E)  # phi = 1 + 2*i
+        sage: compute_trace_generic(phi)
+        4
+
+    TESTS:
+
+    Check on random elliptic curves over finite fields that
+    the result for Frobenius matches
+    :meth:`~sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.trace_of_frobenius`::
+
+        sage: from sage.schemes.elliptic_curves.hom import compute_trace_generic
+        sage: p = random_prime(10^3)
+        sage: e = randrange(1, ceil(log(10^5,p)))
+        sage: F.<t> = GF((p, e))
+        sage: E = choice(EllipticCurve(j=F.random_element()).twists())
+        sage: pi = E.frobenius_endomorphism()
+        sage: compute_trace_generic(pi) == E.trace_of_frobenius()
+        True
+
+    Check that the nonexistence of `p`-torsion for supersingular curves
+    does not cause trouble::
+
+        sage: from sage.schemes.elliptic_curves.hom import compute_trace_generic
+        sage: E = EllipticCurve(GF(5), [0,1])
+        sage: E.division_polynomial(5)
+        4
+        sage: m7 = E.scalar_multiplication(7)
+        sage: compute_trace_generic(-m7)
+        -14
+    """
+    from sage.rings.finite_rings.integer_mod import Mod
+    from sage.groups.generic import discrete_log
+    from sage.sets.primes import Primes
+
+    E = phi.domain()
+    if phi.codomain() != E:
+        raise ValueError('trace only makes sense for endomorphisms')
+
+    d = phi.degree()
+
+    F = E.base_field()
+    S,X = F['X'].objgen()
+
+    M = 4 * d.isqrt() + 1  # |trace| <= 2 sqrt(deg)
+    tr = Mod(0,1)
+
+    for l in Primes():
+        xpoly = E.division_polynomial(l)
+        if xpoly.degree() < 1:  # supersingular and l == p
+            continue
+        mu = xpoly.factor()[0][0]
+        if isinstance(F, number_field_base.NumberField):
+            FF = F.extension(mu, 'X')
+        else:
+            FF = mu.splitting_field('X')
+        xx = mu.any_root(ring=FF, assume_squarefree=True)
+        T,Y = FF['Y'].objgen()
+        ypoly = E.defining_polynomial()(xx, Y, 1)
+        if ypoly.is_irreducible():
+            if isinstance(F, number_field_base.NumberField):
+                FF = FF.extension(ypoly, 'Y')
+            else:
+                FF = ypoly.splitting_field('Y')
+            xx = FF(xx)
+        EE = E.change_ring(FF)
+        P = EE.lift_x(xx)
+
+        Q = phi._eval(P)
+        R = phi._eval(Q)
+        t = discrete_log(R + d*P, Q, ord=l, operation='+')
+        assert not R - t*Q + d*P
+
+        tr = tr.crt(Mod(t, l))
+        if tr.modulus() >= M:
+            break
+
+    return tr.lift_centered()
