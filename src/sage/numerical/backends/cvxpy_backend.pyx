@@ -933,7 +933,7 @@ cdef class CVXPYBackend:
         else:
             return self.col_lower_bound[index]
 
-    cpdef remove_constraint(self, index):
+    cpdef remove_constraint(self, int index):
         """
         Remove a linear constraint by index.
 
