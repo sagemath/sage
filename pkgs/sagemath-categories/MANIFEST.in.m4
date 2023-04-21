@@ -169,6 +169,9 @@ include sage/sets/set.py
 include sage/sets/set_from_iterator.py
 include sage/sets/totally_ordered_finite_set.py
 
+include sage/data_structures/stream.p*
+include sage/rings/lazy_series*.p*
+
 global-exclude *.c
 global-exclude *.cpp
 
