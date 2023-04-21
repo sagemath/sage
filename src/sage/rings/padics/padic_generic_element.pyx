@@ -2000,13 +2000,13 @@ cdef class pAdicGenericElement(LocalGenericElement):
         return infinity
 
     def valuation(self, p = None):
-        """
+        r"""
         Return the valuation of this element.
 
         INPUT:
 
         - ``self`` -- a `p`-adic element
-        - ``p`` -- a prime (default: ``None``). If specified, will make sure that ``p == self.parent().prime()`
+        - ``p`` -- a prime (default: ``None``). If specified, will make sure that ``p == self.parent().prime()``
 
         .. NOTE::
 
@@ -2113,7 +2113,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         raise NotImplementedError
 
     cpdef val_unit(self):
-        """
+        r"""
         Return ``(self.valuation(), self.unit_part())``. To be overridden in
         derived classes.
 
