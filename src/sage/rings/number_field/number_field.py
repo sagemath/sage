@@ -2167,7 +2167,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         - ``den_bound`` -- Bound on denominators of the coefficients
           of the resulting element
 
-        - ``integral_coefficients`` (default: ``False``) --- If ``True``, then
+        - ``integral_coefficients`` -- (default: ``False``) If ``True``, then
           the resulting element will have integral
           coefficients. This option overrides any
           value of ``den_bound``.
@@ -3232,7 +3232,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         Fields created with the :func:`QuadraticField` or
         :func:`CyclotomicField` constructors come with an implicit
         embedding. To get one of these fields without the embedding, use
-        the generic :func:`NumberField` constructor.
+        the generic :class:`NumberField` constructor.
 
         EXAMPLES::
 
@@ -4135,13 +4135,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         INPUT:
 
-        - ``num_integer_primes`` (default: 10000) -- an
+        - ``num_integer_primes`` -- (default: 10000) an
           integer. We try to find primes of absolute norm no greater than the
           ``num_integer_primes``-th prime number. For example, if
           ``num_integer_primes`` is 2, the largest norm found will be 3, since
           the second prime is 3.
 
-        - ``max_iterations (default: 100)`` - an integer. We
+        - ``max_iterations`` --  (default: 100) an integer. We
           test ``max_iterations`` integers to find small primes before raising
           :class:`StopIteration`.
 
@@ -4392,7 +4392,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             RuntimeError: Unable to factor discriminant with trial division
 
         Next, we illustrate the ``maximize_at_primes`` and ``assume_disc_small``
-        parameters of the :func:`NumberField` constructor. The following would take
+        parameters of the :class:`NumberField` constructor. The following would take
         a very long time without the ``maximize_at_primes`` option::
 
             sage: K.<a> = NumberField(x^2 - p*q, maximize_at_primes=[p])
@@ -4415,7 +4415,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             return self._pari_nf
 
     def pari_zk(self):
-        """
+        r"""
         Integral basis of the PARI number field corresponding to this field.
 
         This is the same as ``pari_nf().getattr('zk')``, but much faster.
@@ -4931,7 +4931,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``proof`` -- if ``False``, assume the GRH in computing the class group
 
-        - ``orders`` (default: ``False``) -- if ``True``, output two lists, the
+        - ``orders`` -- (default: ``False``) if ``True``, output two lists, the
           generators and their orders
 
         OUTPUT:
@@ -6163,6 +6163,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K = NumberField(x^15 + x^14 - 14*x^13 - 13*x^12 + 78*x^11 + 66*x^10
             ....:                  - 220*x^9 - 165*x^8 + 330*x^7 + 210*x^6 - 252*x^5
             ....:                  - 126*x^4 + 84*x^3 + 28*x^2 - 8*x - 10, 'a')
+            sage: K.is_galois()
             False
         """
         return self.galois_group().is_galois()
@@ -7689,7 +7690,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``Ilist`` -- a list of integral ideals, assumed pairwise coprime
 
-        - ``check`` (boolean, default ``True``) -- if ``True``, result is checked
+        - ``check`` -- (boolean, default ``True``) if ``True``, result is checked
 
         OUTPUT:
 
