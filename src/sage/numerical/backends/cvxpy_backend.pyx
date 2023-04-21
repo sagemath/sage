@@ -947,11 +947,28 @@ cdef class CVXPYBackend:
             sage: p = get_solver(solver="CVXPY")
             sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraint( zip(range(5), range(5)), 2, 2)
-            sage: p.add_linear_constraint( zip(range(5), range(5)), 1, 1, name='foo')
-            sage: p.remove_constraint(0)
-            sage: p.nrows()
+            sage: row_index = p.nrows(); row_index
+            5
+            sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2)
+            sage: p.nrows() - row_index
             1
+            sage: p.add_linear_constraint(zip(range(5), range(5)), 1, 1, name='foo')
+            sage: p.nrows() - row_index
+            2
+            sage: p.remove_constraint(row_index)
+            sage: p.nrows() - row_index
+            1
+            sage: p.row_name(row_index)
+            'foo'
+            sage: p.row_bounds(row_index)
+            (1, 1)
+            sage: p.cvxpy_problem().constraints
+            [Inequality(Constant(CONSTANT, ZERO, ())),
+             Inequality(Constant(CONSTANT, ZERO, ())),
+             Inequality(Constant(CONSTANT, ZERO, ())),
+             Inequality(Constant(CONSTANT, ZERO, ())),
+             Inequality(Constant(CONSTANT, ZERO, ())),
+             Equality(Expression(AFFINE, UNKNOWN, ()), Constant(CONSTANT, NONNEGATIVE, ()))]
         """
         del self.Matrix[index]
         del self.row_lower_bound[index]
