@@ -1380,8 +1380,8 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
         return ans
 
     def section(self):
-        """
-        Returns a map back to ``ZZ`` that approximates an element of this
+        r"""
+        Returns a map back to `\ZZ` that approximates an element of this
         `p`-adic ring by an integer.
 
         EXAMPLES::
@@ -1398,11 +1398,11 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
 
 
 cdef class pAdicConvert_FP_ZZ(RingMap):
-    """
-    The map from a floating point ring back to ``ZZ`` that returns the smallest
+    r"""
+    The map from a floating point ring back to `\ZZ` that returns the smallest
     non-negative integer approximation to its input which is accurate up to the precision.
 
-    If the input is not in the closure of the image of ``ZZ``, raises a :class:`ValueError`.
+    If the input is not in the closure of the image of `\ZZ`, raises a :class:`ValueError`.
 
     EXAMPLES::
 
@@ -1669,8 +1669,8 @@ cdef class pAdicConvert_FP_QQ(RingMap):
         return ans
 
 cdef class pAdicConvert_QQ_FP(Morphism):
-    """
-    The inclusion map from ``QQ`` to a floating point ring.
+    r"""
+    The inclusion map from `\QQ` to a floating point ring.
 
     EXAMPLES::
 

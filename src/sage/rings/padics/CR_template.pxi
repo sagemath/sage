@@ -9,7 +9,7 @@ See the documentation of ``mpz_linkage.pxi`` for the functions needed.
 
 The gluing file does the following:
 
-- ``ctypedef``'s ``celement`` to be the appropriate type (e.g. ``mpz``_t)
+- ``ctypedef``'s ``celement`` to be the appropriate type (e.g. ``mpz_t``)
 - includes the linkage file
 - includes this template
 - defines a concrete class inheriting from ``CRElement``, and implements

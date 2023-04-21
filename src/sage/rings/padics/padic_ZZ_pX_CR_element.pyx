@@ -10,7 +10,7 @@ r"""
 This file implements elements of Eisenstein and unramified extensions
 of `\ZZ_p` and `\QQ_p` with capped relative precision.
 
-For the parent class see padic_extension_leaves.pyx.
+For the parent class see :mod:`sage.rings.padics.padic_extension_leaves`.
 
 The underlying implementation is through NTL's ``ZZ_pX`` class.  Each
 element contains the following data:
@@ -726,7 +726,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cdef int _set_from_mpz_rel(self, mpz_t x, long relprec) except -1:
         """
-        Sets ``self`` from an ``mpz_t`` with relative precision bounded by ``relprec``.
+        Set ``self`` from an ``mpz_t`` with relative precision bounded by ``relprec``.
 
         EXAMPLES::
 
@@ -772,7 +772,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cdef int _set_from_mpz_both(self, mpz_t x, long absprec, long relprec) except -1:
         """
-        Sets ``self`` from an ``mpz_t`` with relative precision bounded by ``relprec``
+        Set ``self`` from an ``mpz_t`` with relative precision bounded by ``relprec``
         and absolute precision bounded by ``absprec``.
 
         EXAMPLES::

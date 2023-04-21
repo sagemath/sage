@@ -868,8 +868,8 @@ cdef class FMElement(pAdicTemplateElement):
         return chash(self.value, 0, self.prime_pow.ram_prec_cap, self.prime_pow)
 
 cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
-    """
-    The canonical inclusion from ``ZZ`` to a fixed modulus ring.
+    r"""
+    The canonical inclusion from `\ZZ` to a fixed modulus ring.
 
     EXAMPLES::
 
@@ -993,8 +993,8 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
         return ans
 
     def section(self):
-        """
-        Returns a map back to ``ZZ`` that approximates an element of this
+        r"""
+        Returns a map back to `\ZZ` that approximates an element of this
         `p`-adic ring by an integer.
 
         EXAMPLES::
@@ -1010,11 +1010,11 @@ cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
         return self._section
 
 cdef class pAdicConvert_FM_ZZ(RingMap):
-    """
-    The map from a fixed modulus ring back to ``ZZ`` that returns the smallest
+    r"""
+    The map from a fixed modulus ring back to `\ZZ` that returns the smallest
     non-negative integer approximation to its input which is accurate up to the precision.
 
-    If the input is not in the closure of the image of ``ZZ``, raises a :class:`ValueError`.
+    If the input is not in the closure of the image of `\ZZ`, raises a :class:`ValueError`.
 
     EXAMPLES::
 
