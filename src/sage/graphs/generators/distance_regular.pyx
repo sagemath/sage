@@ -2305,7 +2305,7 @@ def pseudo_partition_graph(int m, int a):
     EXAMPLES::
 
         sage: from sage.graphs.generators.distance_regular import *
-        sage: pseudo_partition_graph(6, 1)
+        sage: pseudo_partition_graph(6, 1)  # long time
         Folded Johnson graph with parameters 12,6: Graph on 462 vertices
 
     Not all graphs built with this function are pseudo partition graphs as

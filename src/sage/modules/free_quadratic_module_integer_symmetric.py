@@ -806,14 +806,16 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         Test that the memory leak in :trac:`31625` is fixed::
 
             sage: import gc
+            sage: gc.freeze()
             sage: L = IntegralLattice("A2")
-            sage: for k in range(1,500):
+            sage: for k in range(1,500):  # long time
             ....:     G = L.twist(k)
             ....:     D = G.discriminant_group()
             sage: tmp = gc.collect()
             sage: tmp = gc.collect()
             sage: len([a for a in gc.get_objects() if type(a)==type(L)])<=300
             True
+            sage: gc.unfreeze()
         """
         from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
         D = TorsionQuadraticModule(self.dual_lattice(), self)
