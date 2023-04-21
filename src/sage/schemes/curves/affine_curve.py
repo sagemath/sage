@@ -1810,7 +1810,6 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         f = self.defining_polynomial()
         return braid_monodromy(f)
 
-
     def riemann_surface(self, **kwargs):
         r"""
         Return the complex Riemann surface determined by this curve

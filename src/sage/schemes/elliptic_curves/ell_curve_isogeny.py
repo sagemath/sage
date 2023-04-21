@@ -986,7 +986,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
     __inner_kernel_polynomial = None # the inner kernel polynomial (ignoring preisomorphism)
 
-
     #
     # member variables common to Velu's formula
     #
@@ -998,14 +997,12 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     __v = None
     __w = None
 
-
     #
     # member variables specific to Kohel's algorithm.
     #
     __psi = None # psi polynomial
     __phi = None # phi polynomial
     __omega = None # omega polynomial, an element of k[x][y]
-
 
     #
     # Python Special Functions
@@ -1478,7 +1475,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         fx,fy = self.rational_maps()
         return fr'\left( {fx._latex_()} , {fy._latex_()} \right)'
 
-
     ###########################
     # Private Common Functions
     ###########################
@@ -1695,7 +1691,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             X_map = posti_X_map(X_map)
 
         self.__ratl_maps = self.__xfield(X_map), self.__xyfield(Y_map)
-
 
     def __init_kernel_polynomial(self):
         r"""
@@ -2251,7 +2246,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         else: # odd degree case
 
             phi, omega, v, w, _, d = self.__init_odd_kernel_polynomial(E, psi)
-
 
         #
         # Set up the necessary instance variables
@@ -2868,7 +2862,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             self.__init_kernel_polynomial()
         return self.__kernel_polynomial
 
-
     def is_separable(self):
         r"""
         Determine whether or not this isogeny is separable.
@@ -2891,7 +2884,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
         """
         return True
-
 
     def _set_pre_isomorphism(self, preWI):
         """
@@ -2981,7 +2973,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         self.__set_pre_isomorphism(domain, isom)
 
-
     def _set_post_isomorphism(self, postWI):
         """
         Modify this isogeny by post-composing with a
@@ -3044,7 +3035,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         self.__clear_cached_values()
 
         self.__set_post_isomorphism(codomain, isom)
-
 
     def dual(self):
         r"""
@@ -3269,7 +3259,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             phi_hat._set_post_isomorphism(post_iso)
             phi_hat.__perform_inheritance_housekeeping()
             return phi_hat
-
 
     @staticmethod
     def _composition_impl(left, right):

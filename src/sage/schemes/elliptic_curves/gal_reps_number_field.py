@@ -119,7 +119,6 @@ class GaloisRepresentation(SageObject):
         else:
             return "Compatible family of Galois representations associated to the " + repr(self.E)
 
-
     def __eq__(self,other):
         r"""
         Compares two Galois representations.
@@ -156,7 +155,6 @@ class GaloisRepresentation(SageObject):
             True
         """
         return self.E
-
 
     def non_surjective(self, A=100):
         r"""
@@ -711,7 +709,6 @@ def _exceptionals(E, L, patience=1000):
                 if u not in (1, 2, 4) and u**2 - 3 * u + 1 != 0:
                     D[l][2] = False
 
-
             if D[l] == [False, False, False]:
                 unexc.append(l)
 
@@ -905,7 +902,6 @@ def _semistable_reducible_primes(E, verbose=False):
         else:
             if verbose:
                 print("gx and gy both 0!")
-
 
         ## It is possible that our curve has CM. ##
 

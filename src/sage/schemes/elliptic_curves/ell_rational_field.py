@@ -403,7 +403,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self.__is_integral = bool(misc.mul([x.denominator() == 1 for x in self.ainvs()]))
             return self.__is_integral
 
-
     def mwrank(self, options=''):
         r"""
         Run Cremona's mwrank program on this elliptic curve and return the
@@ -917,7 +916,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         if not python_ints:
             v = [Integer(x) for x in v]
         return v
-
 
         # There is some overhead associated with coercing the PARI
         # list back to Python, but it's not bad.  It's better to do it
@@ -2711,7 +2709,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             raise RuntimeError("curve must be minimal.")
         return self.mwrank_curve().CPS_height_bound()
 
-
     def silverman_height_bound(self, algorithm='default'):
         r"""
         Return the Silverman height bound.
@@ -3645,7 +3642,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         return L
 
-
     def modular_degree(self, algorithm='sympow', M=1):
         r"""
         Return the modular degree at level `MN` of this elliptic curve. The case
@@ -3778,7 +3774,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             except KeyError:
                 # self._generalized_congmod_numbers() also populates cache
                 return self._generalized_congmod_numbers(M)["moddeg"]
-
 
     def modular_parametrization(self):
         r"""
@@ -3914,7 +3909,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             except KeyError:
                 # self._generalized_congmod_numbers() also populates cache
                 return self._generalized_congmod_numbers(M)["congnum"]
-
 
     def cremona_label(self, space=False):
         """
@@ -4488,7 +4482,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         return Et, D
 
-
     ##########################################################
     # Isogeny class
     ##########################################################
@@ -4954,7 +4947,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 #         Return an isogeny from self to other if the two curves are in
 #         the same isogeny class.
 #         """
-
 
     def optimal_curve(self):
         """
@@ -6391,7 +6383,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         else:
             proof = bool(proof)
 
-
         if not self.is_integral():
             raise ValueError("S_integral_points() can only be called on an integral model")
         if not all(self.is_p_minimal(s) for s in S):
@@ -6710,7 +6701,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             disc_sh = R(E.short_weierstrass_model().discriminant()) #computes y^2=x^3 -27c4x -54c6
             k4 = R(20**4 * max(3**6 * c4**2, 16*(disc_sh.abs().sqrt())**3))
             k3 = R(32/3 * disc_sh.abs().sqrt() * (8 + 0.5*disc_sh.abs().log())**4)
-
 
         k2 = max(R(b2.abs()), R(b4.abs().sqrt()), R(b6.abs()**(1/3)), R(b8.abs()**(1/4))).log()
         k1 = R(7 * 10**(38*len_S+49)) * R(len_S**(20*len_S+15)) * max_S**24 * R(max(1,log(max_S, e))**(4*len_S - 2)) * k3 * k3.log()**2 * ((20*len_S - 19)*k3 + (e*k4).log()) + 2*R(2*b2.abs()+6).log()
