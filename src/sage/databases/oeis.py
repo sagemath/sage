@@ -981,7 +981,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: f = oeis(53) ; f                      # optional -- internet
-            A000053: Local stops on New York City Broadway line (IRT #1) subway.
+            A000053: Local stops on New York City...
 
             sage: f.keywords()                          # optional -- internet
             ('nonn', 'fini', ...)
@@ -1630,13 +1630,15 @@ class OEISSequence(SageObject, UniqueRepresentation):
             A005598: a(n) = 1 + Sum_{i=1..n} (n-i+1)*phi(i).
 
             sage: nbalanced.cross_references()              # optional -- internet
-            ('A049703', 'A049695', 'A103116', 'A000010')
+            ('A000010', 'A002088', 'A011755', 'A049695', 'A049703', 'A103116')
 
             sage: nbalanced.cross_references(fetch=True)    # optional -- internet
-            0: A049703: a(0) = 0; for n>0, a(n) = A005598(n)/2.
-            1: A049695: Array T read by diagonals; ...
-            2: A103116: a(n) = Sum_{i=1..n} (n-i+1)*phi(i).
-            3: A000010: Euler totient function phi(n): count numbers <= n and prime to n.
+            0: A000010: Euler totient function phi(n): count numbers <= n and prime to n.
+            1: A002088: Sum of totient function: a(n) = Sum_{k=1..n} phi(k), cf. A000010.
+            2: A011755: a(n) = Sum_{k=1..n} k*phi(k).
+            3: A049695: Array T read by diagonals; T(i,j) is the number of nonnegative slopes of lines determined by 2 lattice points in [ 0,i ] X [ 0,j ] if i > 0; T(0,j)=1 if j > 0; T(0,0)=0.
+            4: A049703: a(0) = 0; for n>0, a(n) = A005598(n)/2.
+            5: A103116: a(n) = Sum_{i=1..n} (n-i+1)*phi(i).
 
             sage: phi = _[3]                                # optional -- internet
 

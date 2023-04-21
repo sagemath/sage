@@ -684,7 +684,6 @@ cdef class StaticSparseBackend(CGraphBackend):
             raise LookupError("one of the two vertices does not belong to the graph")
 
         cdef StaticSparseCGraph cg = self._cg
-        cdef list l
 
         cdef uint32_t * edge = has_edge(cg.g, u, v)
         if not edge:
@@ -696,9 +695,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         # all labels.
         if self.multiple_edges(None):
             return self._all_edge_labels(u, v, edge)
-
-        else:
-            return edge_label(cg.g, edge)
+        return edge_label(cg.g, edge)
 
     cdef inline list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL):
         """
@@ -1079,7 +1076,7 @@ cdef class StaticSparseBackend(CGraphBackend):
           - ``2`` -- as ``1`` but ignore the labels
         """
         cdef object v, l
-        cdef int u_int, prev_u_int, v_int, l_int, l_int_other, tmp
+        cdef int u_int, prev_u_int, v_int, l_int_other, tmp
         cdef StaticSparseCGraph cg = self._cg
         cdef CGraph cg_other = other.cg()
         cdef list b_vertices_2
