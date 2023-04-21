@@ -54,7 +54,8 @@ Methods
 
 # ****************************************************************************
 #       Copyright (C) 2009 Nathann Cohen <nathann.cohen@gmail.com>
-#                     2019 Jean-Florent Raymond  <j-florent.raymond@uca.fr>
+#                     2019 Jean-Florent Raymond <j-florent.raymond@uca.fr>
+#                     2023 David Coudert <david.coudert@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -583,7 +584,7 @@ def _cand_ext_enum(G, to_dom, u_next):
                 break
 
 
-def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
+def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
     r"""
     Return an iterator over the minimal dominating sets of a graph.
 
@@ -594,9 +595,11 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
     - ``to_dominate`` -- vertex iterable or ``None`` (default: ``None``);
       the set of vertices to be dominated.
 
-    - ``work_on_copy`` -- boolean (default: ``True``); whether or not to work on
+    - ``work_on_copy`` -- boolean (default: ``False``); whether or not to work on
       a copy of the input graph; if set to ``False``, the input graph will be
       modified (relabeled).
+
+    - ``k`` -- a non-negative integer (default: ``1``); the domination distance
 
     OUTPUT:
 
@@ -660,6 +663,31 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
         sage: len(ll) == len(pp) and all(x in pp for x in ll) and all(x in ll for x in pp)
         True
 
+    Listing minimal distance-`k` dominating sets::
+
+        sage: G = graphs.Grid2dGraph(2, 3)
+        sage: list(G.minimal_dominating_sets(k=0))
+        [{(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)}]
+        sage: list(G.minimal_dominating_sets(k=1))
+        [{(0, 0), (0, 2), (1, 1)},
+         {(0, 1), (1, 1)},
+         {(0, 0), (0, 1), (0, 2)},
+         {(0, 2), (1, 0)},
+         {(0, 0), (1, 2)},
+         {(0, 1), (1, 0), (1, 2)},
+         {(1, 0), (1, 1), (1, 2)}]
+        sage: list(G.minimal_dominating_sets(k=2))
+        [{(0, 0), (1, 2)},
+         {(0, 2), (1, 2)},
+         {(1, 0), (1, 2)},
+         {(0, 1)},
+         {(0, 0), (0, 2)},
+         {(0, 2), (1, 0)},
+         {(0, 0), (1, 0)},
+         {(1, 1)}]
+        sage: list(G.minimal_dominating_sets(k=3))
+        [{(0, 0)}, {(0, 1)}, {(0, 2)}, {(1, 0)}, {(1, 1)}, {(1, 2)}]
+
     TESTS:
 
     The empty graph is handled correctly::
@@ -701,8 +729,21 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
         ....:     return True
         sage: check_uniqueness(graphs.RandomGNP(9, 0.5))
         True
-    """
 
+    Asking for a negative distance::
+
+        sage: next(Graph(1).minimal_dominating_sets(k=-1))
+        Traceback (most recent call last):
+        ...
+        ValueError: the domination distance must be a non-negative integer
+
+    Trying to dominate vertices that are not part of the graph::
+
+        sage: next(Graph(1).minimal_dominating_sets(to_dominate=['foo']))
+        Traceback (most recent call last):
+        ...
+        ValueError: vertex (foo) is not a vertex of the graph
+    """
     def tree_search(H, plng, dom, i):
         r"""
         Enumerate minimal dominating sets recursively.
@@ -768,15 +809,30 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
     int_to_vertex = list(G)
     vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
 
-    if work_on_copy:
+    if to_dominate is None:
+        vertices_to_dominate = set(range(G.order()))
+    else:
+        for u in to_dominate:
+            if u not in G:
+                raise ValueError(f"vertex ({u}) is not a vertex of the graph")
+        vertices_to_dominate = {vertex_to_int[u] for u in to_dominate}
+
+    if k < 0:
+        raise ValueError("the domination distance must be a non-negative integer")
+    elif not k:
+        yield set(int_to_vertex) if to_dominate is None else set(to_dominate)
+        return
+    elif k > 1:
+        # We build a graph H with an edge between u and v if these vertices are
+        # at distance at most k in G
+        H = G.__class__(G.order())
+        for u, ui in vertex_to_int.items():
+            H.add_edges((ui, vertex_to_int[v]) for v in G.breadth_first_search(u, distance=k) if u != v)
+        G = H
+    elif work_on_copy:
         G.relabel(perm=vertex_to_int)
     else:
         G = G.relabel(perm=vertex_to_int, inplace=False)
-
-    if to_dominate is None:
-        vertices_to_dominate = set(G)
-    else:
-        vertices_to_dominate = set(to_dominate)
 
     if not vertices_to_dominate:
         # base case: vertices_to_dominate is empty
