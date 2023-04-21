@@ -905,18 +905,39 @@ class PolynomialSequence_generic(Sequence_generic):
 
             sage: B.<x,y,z> = BooleanPolynomialRing()
             sage: F = Sequence([x*y + y + 1, z + 1])
-            sage: F.connection_graph()
+            sage: G = F.connection_graph(); G
             Graph on 3 vertices
+            sage: G.is_connected()
+            False
+            sage: F = Sequence([x])
+            sage: F.connection_graph()
+            Graph on 1 vertex
+
+        TESTS::
+
+            sage: F = Sequence([], B)
+            sage: F.connection_graph()
+            Graph on 0 vertices
+            sage: F = Sequence([1], B)
+            sage: F.connection_graph()
+            Graph on 0 vertices
+            sage: F = Sequence([x])
+            sage: F.connection_graph()
+            Graph on 1 vertex
+            sage: F = Sequence([x, y])
+            sage: F.connection_graph()
+            Graph on 2 vertices
+            sage: F = Sequence([x*y*z])
+            sage: F.connection_graph().is_clique()
+            True
+            sage: F = Sequence([x*y, y*z])
+            sage: F.connection_graph().is_clique()
+            False
         """
-        V = sorted(self.variables())
         from sage.graphs.graph import Graph
         g = Graph()
-        g.add_vertices(sorted(V))
         for f in self:
-            v = f.variables()
-            a,tail = v[0],v[1:]
-            for b in tail:
-                g.add_edge((a,b))
+            g.add_clique(f.variables())
         return g
 
     def connected_components(self):
