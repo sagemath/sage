@@ -77,37 +77,38 @@ pair and study it::
 We separate the system in independent subsystems::
 
     sage: C = Sequence(r2).connected_components(); C
-    [[w213 + k113 + x111 + x112 + x113,
-     w212 + k112 + x110 + x111 + x112 + 1,
-     w211 + k111 + x110 + x111 + x113 + 1,
-     w210 + k110 + x110 + x112 + x113,
-     x110*w112 + x111*w111 + x112*w110 + x113*w113 + 1,
-     x110*w112 + x111*w110 + x111*w111 + x111*w113 + x112*w111 + x113*w110 + x113*w112 + w111,
-     x110*w111 + x111*w110 + x111*w112 + x112*w110 + x113*w111 + x113*w113 + w113,
-     x110*w111 + x110*w113 + x111*w111 + x111*w112 + x112*w110 + x112*w113 + x113*w111 + x111,
-     x110*w111 + x110*w112 + x111*w110 + x111*w113 + x112*w111 + x113*w113 + x113,
-     x110*w111 + x110*w112 + x111*w110 + x111*w111 + x112*w110 + x112*w113 + x113*w112,
-     x110*w110 + x110*w113 + x111*w112 + x112*w111 + x113*w110,
-     x110*w110 + x110*w112 + x111*w110 + x111*w112 + x111*w113 + x112*w110 + x112*w111 + x113*w112 + x112,
-     x110*w110 + x110*w112 + x110*w113 + x111*w110 + x111*w111 + x112*w112 + x113*w110 + x110,
-     x110*w110 + x110*w111 + x111*w110 + x111*w113 + x112*w112 + x113*w111,
-     x110*w110 + x110*w111 + x110*w113 + x111*w111 + x112*w110 + x112*w112 + x113*w110 + w110,
-     x110*w110 + x110*w111 + x110*w112 + x111*w112 + x112*w110 + x112*w111 + x112*w113 + x113*w111 + w112],
-    [w203 + k103 + x101 + x102 + x103,
-    w202 + k102 + x100 + x101 + x102 + 1,
-    w201 + k101 + x100 + x101 + x103 + 1,
-    w200 + k100 + x100 + x102 + x103,
-    x100*w102 + x101*w101 + x102*w100 + x103*w103 + 1,
-    x100*w102 + x101*w100 + x101*w101 + x101*w103 + x102*w101 + x103*w100 + x103*w102 + w101,
-    x100*w101 + x101*w100 + x101*w102 + x102*w100 + x103*w101 + x103*w103 + w103,
-    x100*w101 + x100*w103 + x101*w101 + x101*w102 + x102*w100 + x102*w103 + x103*w101 + x101,
-    x100*w101 + x100*w102 + x101*w100 + x101*w103 + x102*w101 + x103*w103 + x103, x100*w101 + x100*w102 + x101*w100 + x101*w101 + x102*w100 + x102*w103 + x103*w102,
-    x100*w100 + x100*w103 + x101*w102 + x102*w101 + x103*w100,
-    x100*w100 + x100*w102 + x101*w100 + x101*w102 + x101*w103 + x102*w100 + x102*w101 + x103*w102 + x102,
-    x100*w100 + x100*w102 + x100*w103 + x101*w100 + x101*w101 + x102*w102 + x103*w100 + x100,
-    x100*w100 + x100*w101 + x101*w100 + x101*w103 + x102*w102 + x103*w101,
-    x100*w100 + x100*w101 + x100*w103 + x101*w101 + x102*w100 + x102*w102 + x103*w100 + w100,
-    x100*w100 + x100*w101 + x100*w102 + x101*w102 + x102*w100 + x102*w101 + x102*w103 + x103*w101 + w102]]
+    [[w200 + k100 + x100 + x102 + x103,
+      w201 + k101 + x100 + x101 + x103 + 1,
+      w202 + k102 + x100 + x101 + x102 + 1,
+      w203 + k103 + x101 + x102 + x103,
+      x100*w100 + x100*w103 + x101*w102 + x102*w101 + x103*w100,
+      x100*w100 + x100*w101 + x101*w100 + x101*w103 + x102*w102 + x103*w101,
+      x100*w101 + x100*w102 + x101*w100 + x101*w101 + x102*w100 + x102*w103 + x103*w102,
+      x100*w100 + x100*w102 + x100*w103 + x101*w100 + x101*w101 + x102*w102 + x103*w100 + x100,
+      x100*w101 + x100*w103 + x101*w101 + x101*w102 + x102*w100 + x102*w103 + x103*w101 + x101,
+      x100*w100 + x100*w102 + x101*w100 + x101*w102 + x101*w103 + x102*w100 + x102*w101 + x103*w102 + x102,
+      x100*w101 + x100*w102 + x101*w100 + x101*w103 + x102*w101 + x103*w103 + x103,
+      x100*w100 + x100*w101 + x100*w103 + x101*w101 + x102*w100 + x102*w102 + x103*w100 + w100,
+      x100*w102 + x101*w100 + x101*w101 + x101*w103 + x102*w101 + x103*w100 + x103*w102 + w101,
+      x100*w100 + x100*w101 + x100*w102 + x101*w102 + x102*w100 + x102*w101 + x102*w103 + x103*w101 + w102,
+      x100*w101 + x101*w100 + x101*w102 + x102*w100 + x103*w101 + x103*w103 + w103,
+      x100*w102 + x101*w101 + x102*w100 + x103*w103 + 1],
+     [w210 + k110 + x110 + x112 + x113,
+      w211 + k111 + x110 + x111 + x113 + 1,
+      w212 + k112 + x110 + x111 + x112 + 1,
+      w213 + k113 + x111 + x112 + x113,
+      x110*w110 + x110*w113 + x111*w112 + x112*w111 + x113*w110,
+      x110*w110 + x110*w111 + x111*w110 + x111*w113 + x112*w112 + x113*w111,
+      x110*w111 + x110*w112 + x111*w110 + x111*w111 + x112*w110 + x112*w113 + x113*w112,
+      x110*w110 + x110*w112 + x110*w113 + x111*w110 + x111*w111 + x112*w112 + x113*w110 + x110,
+      x110*w111 + x110*w113 + x111*w111 + x111*w112 + x112*w110 + x112*w113 + x113*w111 + x111,
+      x110*w110 + x110*w112 + x111*w110 + x111*w112 + x111*w113 + x112*w110 + x112*w111 + x113*w112 + x112,
+      x110*w111 + x110*w112 + x111*w110 + x111*w113 + x112*w111 + x113*w113 + x113,
+      x110*w110 + x110*w111 + x110*w113 + x111*w111 + x112*w110 + x112*w112 + x113*w110 + w110,
+      x110*w112 + x111*w110 + x111*w111 + x111*w113 + x112*w111 + x113*w110 + x113*w112 + w111,
+      x110*w110 + x110*w111 + x110*w112 + x111*w112 + x112*w110 + x112*w111 + x112*w113 + x113*w111 + w112,
+      x110*w111 + x111*w110 + x111*w112 + x112*w110 + x113*w111 + x113*w113 + w113,
+      x110*w112 + x111*w111 + x112*w110 + x113*w113 + 1]]
     sage: C[0].groebner_basis()
     Polynomial Sequence with 30 Polynomials in 16 Variables
 
@@ -963,18 +964,37 @@ class PolynomialSequence_generic(Sequence_generic):
              Polynomial Sequence with 128 Polynomials in 128 Variables,
              Polynomial Sequence with 128 Polynomials in 128 Variables,
              Polynomial Sequence with 128 Polynomials in 128 Variables]
-        """
-        g = self.connection_graph()
-        C = sorted(g.connected_components())
 
-        P = [[] for _ in range(len(C))]
-        for f in self:
-            for i,c in enumerate(C):
-                if len(set(f.variables()).difference(c)) == 0:
-                    P[i].append(f)
-                    break
-        P = sorted([PolynomialSequence(sorted(p)) for p in P])
-        return P
+        TESTS:
+
+        Check the order of the output (:trac:`35518`)::
+
+            sage: R.<x,y,z> = PolynomialRing(ZZ)
+            sage: Sequence([x,z,y]).connected_components()
+            [[x], [z], [y]]
+            sage: Sequence([x,z,x*y*z,y]).connected_components()
+            [[x, z, x*y*z, y]]
+        """
+        # precompute the list of variables in each polynomial
+        vss = [f.variables() for f in self]
+
+        # Use a union-find data structure to encode relationships between
+        # variables, i.e., that they belong to a same polynomial
+        from sage.sets.disjoint_set import DisjointSet
+        DS = DisjointSet(set().union(*vss))
+        for u, *vs in vss:
+            for v in vs:
+                DS.union(u, v)
+
+        Ps = {}  # map root element -> polynomials in this component
+        for f, vs in zip(self, vss):
+            r = DS.find(vs[0])
+            if r in Ps:
+                Ps[r].append(f)
+            else:
+                Ps[r] = [f]
+
+        return [PolynomialSequence(self.ring(), p) for p in Ps.values()]
 
     def _groebner_strategy(self):
         """
