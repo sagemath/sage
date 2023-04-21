@@ -4346,7 +4346,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         raise NotImplementedError
 
     def inverse_mod(self, I):
-        """
+        r"""
         Returns the inverse of ``self`` mod the integral ideal `I`.
 
         INPUT:
