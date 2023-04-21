@@ -1565,7 +1565,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
     def is_integer(self):
         """
-        Returns True if this number is a integer
+        Return ``True`` if this number is a integer
 
         EXAMPLES::
 

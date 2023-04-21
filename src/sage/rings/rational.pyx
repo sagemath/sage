@@ -394,7 +394,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
 
 def is_Rational(x):
     """
-    Return true if ``x`` is of the Sage :class:`Rational` type.
+    Return ``True`` if ``x`` is of the Sage :class:`Rational` type.
 
     EXAMPLES::
 

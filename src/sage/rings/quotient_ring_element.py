@@ -136,7 +136,7 @@ class QuotientRingElement(RingElement):
 
     def __bool__(self):
         """
-        Return True if quotient ring element is non-zero in the
+        Return ``True`` if quotient ring element is non-zero in the
         quotient ring `R/I`, by determining whether the element
         is in `I`.
 
@@ -158,7 +158,7 @@ class QuotientRingElement(RingElement):
 
     def is_unit(self):
         """
-        Return True if self is a unit in the quotient ring.
+        Return ``True`` if self is a unit in the quotient ring.
 
         EXAMPLES::
 

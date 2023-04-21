@@ -122,7 +122,7 @@ from sage.structure.richcmp cimport richcmp
 
 def is_PowerSeries(x):
     """
-    Return True if ``x`` is an instance of a univariate
+    Return ``True`` if ``x`` is an instance of a univariate
     or multivariate power series.
 
     EXAMPLES::
@@ -218,7 +218,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def is_gen(self):
         """
-        Return True if this is the generator (the variable) of the power
+        Return ``True`` if this is the generator (the variable) of the power
         series ring.
 
         EXAMPLES::
@@ -948,7 +948,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def __bool__(self):
         """
-        Return True if this power series is not equal to 0.
+        Return ``True`` if this power series is not equal to 0.
 
         EXAMPLES::
 
@@ -968,7 +968,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def is_unit(self):
         """
-        Return True if this power series is invertible.
+        Return ``True`` if this power series is invertible.
 
         A power series is invertible precisely when the
         constant term is invertible.
@@ -1232,7 +1232,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def is_monomial(self):
         """
-        Return True if this element is a monomial.  That is, if self is
+        Return ``True`` if this element is a monomial.  That is, if self is
         `x^n` for some non-negative integer `n`.
 
         EXAMPLES::
@@ -1460,7 +1460,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def is_square(self):
         """
-        Return True if this function has a square root in this ring, e.g.,
+        Return ``True`` if this function has a square root in this ring, e.g.,
         there is an element `y` in ``self.parent()``
         such that `y^2` equals ``self``.
 

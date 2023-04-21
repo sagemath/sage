@@ -51,7 +51,7 @@ from sage.structure.element import parent
 
 def is_LaurentPolynomialRing(R):
     """
-    Returns True if and only if R is a Laurent polynomial ring.
+    Return ``True`` if and only if R is a Laurent polynomial ring.
 
     EXAMPLES::
 

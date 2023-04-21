@@ -1890,7 +1890,7 @@ cdef class RealDoubleElement(FieldElement):
 
     def is_integer(self):
         """
-        Return True if this number is a integer
+        Return ``True`` if this number is a integer
 
         EXAMPLES::
 

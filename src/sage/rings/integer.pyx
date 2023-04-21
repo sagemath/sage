@@ -323,7 +323,7 @@ mpz_ui_pow_ui(PARI_PSEUDOPRIME_LIMIT, 2, 64)
 
 def is_Integer(x):
     """
-    Return true if ``x`` is of the Sage :class:`Integer` type.
+    Return ``True`` if ``x`` is of the Sage :class:`Integer` type.
 
     EXAMPLES::
 
@@ -7431,7 +7431,7 @@ _mpz_realloc(global_dummy_Integer.value, 1)
 
 def _check_global_dummy_Integer():
     """
-    Return true if the global dummy Integer is ok.
+    Return ``True`` if the global dummy :class:`Integer` is ok.
 
     TESTS::
 

@@ -2450,7 +2450,7 @@ cdef class ComplexBall(RingElement):
 
         OUTPUT:
 
-        Return True iff ``self`` and ``other`` are equal as sets, i.e. if their
+        Return ``True`` iff ``self`` and ``other`` are equal as sets, i.e. if their
         real and imaginary parts each have the same midpoint and radius.
 
         Note that this is not the same thing as testing whether both ``self``
@@ -2471,7 +2471,7 @@ cdef class ComplexBall(RingElement):
 
     def overlaps(self, ComplexBall other):
         """
-        Return True iff ``self`` and ``other`` have some point in common.
+        Return ``True`` iff ``self`` and ``other`` have some point in common.
 
         INPUT:
 
@@ -2539,7 +2539,7 @@ cdef class ComplexBall(RingElement):
 
     def __contains__(self, other):
         """
-        Return True if ``other`` can be verified to be contained in ``self``.
+        Return ``True`` if ``other`` can be verified to be contained in ``self``.
 
         Depending on the type of ``other``, the test may use interval
         arithmetic with a precision determined by the parent of ``self`` and

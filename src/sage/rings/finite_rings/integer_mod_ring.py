@@ -701,7 +701,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
     @cached_method
     def is_field(self, proof=None):
         r"""
-        Return True precisely if the order is prime.
+        Return ``True`` precisely if the order is prime.
 
         INPUT:
 
