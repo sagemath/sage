@@ -2,19 +2,19 @@
 Floating point template for complete discrete valuation rings
 
 In order to use this template you need to write a linkage file and
-gluing file.  For an example see mpz_linkage.pxi (linkage file) and
-padic_floating_point_element.pyx (gluing file).
+gluing file.  For an example see ``mpz_linkage.pxi`` (linkage file) and
+``padic_floating_point_element.pyx`` (gluing file).
 
 The linkage file implements a common API that is then used in the
-class FPElement defined here.  See sage/libs/linkages/padics/API.pxi
+class :class:`FPElement` defined here.  See ``sage/libs/linkages/padics/API.pxi``
 for the functions needed.
 
 The gluing file does the following:
 
-- ctypedef's celement to be the appropriate type (e.g. mpz_t)
+- ``ctypedef``'s ``celement`` to be the appropriate type (e.g. ``mpz_t``)
 - includes the linkage file
 - includes this template
-- defines a concrete class inheriting from FPElement, and implements
+- defines a concrete class inheriting from :class:`FPElement`, and implements
   any desired extra methods
 
 AUTHORS:
@@ -795,7 +795,7 @@ cdef class FPElement(pAdicTemplateElement):
 
     def add_bigoh(self, absprec):
         """
-        Returns a new element truncated modulo `\pi^{\mbox{absprec}}`.
+        Return a new element truncated modulo `\pi^{\mbox{absprec}}`.
 
         INPUT:
 
@@ -803,7 +803,7 @@ cdef class FPElement(pAdicTemplateElement):
 
         OUTPUT:
 
-            - a new element truncated modulo `\pi^{\mbox{absprec}}`.
+        a new element truncated modulo `\pi^{\mbox{absprec}}`.
 
         EXAMPLES::
 
@@ -865,7 +865,7 @@ cdef class FPElement(pAdicTemplateElement):
 
     def is_zero(self, absprec = None):
         r"""
-        Returns whether self is zero modulo `\pi^{\mbox{absprec}}`.
+        Returns whether ``self`` is zero modulo `\pi^{\mbox{absprec}}`.
 
         INPUT:
 
@@ -897,7 +897,7 @@ cdef class FPElement(pAdicTemplateElement):
         """
         Return ``True`` if this element is distinguishable from zero.
 
-        For most applications, explicitly specifying the power of p
+        For most applications, explicitly specifying the power of `p`
         modulo which the element is supposed to be nonzero is preferable.
 
         EXAMPLES::
@@ -910,14 +910,14 @@ cdef class FPElement(pAdicTemplateElement):
 
     def is_equal_to(self, _right, absprec=None):
         r"""
-        Returns whether this element is equal to ``right`` modulo `p^{\mbox{absprec}}`.
+        Return whether this element is equal to ``right`` modulo `p^{\mbox{absprec}}`.
 
-        If ``absprec`` is ``None``, determines whether self and right
+        If ``absprec`` is ``None``, determines whether ``self`` and ``right``
         have the same value.
 
         INPUT:
 
-        - ``right`` -- a p-adic element with the same parent
+        - ``right`` -- a `p`-adic element with the same parent
         - ``absprec`` -- a positive integer or ``None`` (default: ``None``)
 
         EXAMPLES::
@@ -1137,7 +1137,7 @@ cdef class FPElement(pAdicTemplateElement):
 
     cpdef pAdicTemplateElement unit_part(FPElement self):
         r"""
-        Returns the unit part of this element.
+        Return the unit part of this element.
 
         If the valuation of this element is positive, then the high
         digits of the result will be zero.
@@ -1167,7 +1167,7 @@ cdef class FPElement(pAdicTemplateElement):
 
     cdef long valuation_c(self):
         """
-        Returns the valuation of this element.
+        Return the valuation of this element.
 
         If this element is an exact zero, returns ``maxordp``, which is defined as
         ``(1L << (sizeof(long) * 8 - 2))-1``.
@@ -1204,7 +1204,7 @@ cdef class FPElement(pAdicTemplateElement):
 
     cpdef val_unit(self, p=None):
         """
-        Returns a 2-tuple, the first element set to the valuation of
+        Return a 2-tuple, the first element set to the valuation of
         this element, and the second to the unit part.
 
         If this element is either zero or infinity, raises an error.
@@ -1381,7 +1381,7 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
 
     def section(self):
         """
-        Returns a map back to ZZ that approximates an element of this
+        Returns a map back to ``ZZ`` that approximates an element of this
         `p`-adic ring by an integer.
 
         EXAMPLES::
@@ -1399,10 +1399,10 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
 
 cdef class pAdicConvert_FP_ZZ(RingMap):
     """
-    The map from a floating point ring back to ZZ that returns the smallest
+    The map from a floating point ring back to ``ZZ`` that returns the smallest
     non-negative integer approximation to its input which is accurate up to the precision.
 
-    If the input is not in the closure of the image of ZZ, raises a ValueError.
+    If the input is not in the closure of the image of ``ZZ``, raises a :class:`ValueError`.
 
     EXAMPLES::
 
@@ -1602,7 +1602,7 @@ cdef class pAdicCoercion_QQ_FP(RingHomomorphism):
 
     def section(self):
         """
-        Returns a map back to the rationals that approximates an element by
+        Return a map back to the rationals that approximates an element by
         a rational number.
 
         EXAMPLES::
@@ -1670,7 +1670,7 @@ cdef class pAdicConvert_FP_QQ(RingMap):
 
 cdef class pAdicConvert_QQ_FP(Morphism):
     """
-    The inclusion map from QQ to a floating point ring.
+    The inclusion map from ``QQ`` to a floating point ring.
 
     EXAMPLES::
 
@@ -1908,7 +1908,7 @@ cdef class pAdicCoercion_FP_frac_field(RingHomomorphism):
 
     def section(self):
         r"""
-        Returns a map back to the ring that converts elements of
+        Return a map back to the ring that converts elements of
         non-negative valuation.
 
         EXAMPLES::

@@ -17,7 +17,7 @@ element contains the following data:
 
 - ``ordp`` (``long``) -- A power of the uniformizer to scale the unit
   by.  For unramified extensions this uniformizer is `p`, for Eisenstein
-  extensions it is not.  A value equal to the maximum value of a long
+  extensions it is not.  A value equal to the maximum value of a ``long``
   indicates that the element is an exact zero.
 
 - ``relprec`` (``long``) -- A signed integer giving the precision to
@@ -39,14 +39,14 @@ element contains the following data:
   may not actually be a unit.  This ``ZZ_pX`` is created with global
   ntl modulus determined by the absolute value of ``relprec``.  If
   ``relprec`` is 0, ``unit`` **is not initialized**, or destructed if
-  normalized and found to be zero.  Otherwise, let `r` be relprec and
+  normalized and found to be zero.  Otherwise, let `r` be ``relprec`` and
   `e` be the ramification index over `\QQ_p` or `\ZZ_p`.
   Then the modulus of unit is given by `p^{ceil(r/e)}`.  Note that all
   kinds of problems arise if you try to mix moduli.
   ``ZZ_pX_conv_modulus`` gives a semi-safe way to convert between
   different moduli without having to pass through ``ZZX``.
 
-- ``prime_pow`` (some subclass of ``PowComputer_ZZ_pX``) -- a class,
+- ``prime_pow`` (some subclass of :class:`PowComputer_ZZ_pX`) -- a class,
   identical among all elements with the same parent, holding common
   data.
 
@@ -57,7 +57,7 @@ element contains the following data:
   + ``prime_pow.f``   -- The inertia degree
 
   + ``prime_pow.prec_cap`` -- the unramified precision cap.  For
-    Eisenstein extensions this is the smallest power of p that is
+    Eisenstein extensions this is the smallest power of `p` that is
     zero.
 
   + ``prime_pow.ram_prec_cap`` -- the ramified precision cap.  For
@@ -67,14 +67,14 @@ element contains the following data:
   + ``prime_pow.pow_ZZ_tmp``, prime_pow.pow_mpz_t_tmp``,
     ``prime_pow.pow_Integer`` -- functions for accessing powers of
     `p`.  The first two return pointers.  See
-    ``sage/rings/padics/pow_computer_ext`` for examples and important
+    :mod:`sage.rings.padics.pow_computer_ext` for examples and important
     warnings.
 
   + ``prime_pow.get_context``, ``prime_pow.get_context_capdiv``,
     ``prime_pow.get_top_context`` -- obtain an
     ``ntl_ZZ_pContext_class`` corresponding to `p^n`.  The capdiv
     version divides by ``prime_pow.e`` as appropriate.
-    ``top_context`` corresponds to `p^{prec_cap}`.
+    ``top_context`` corresponds to `p^{\text{prec_cap}}`.
 
   + ``prime_pow.restore_context``,
     ``prime_pow.restore_context_capdiv``,
@@ -1538,7 +1538,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cdef int _cmp_units(left, pAdicGenericElement right) except -2:
         """
-        For units ``left`` and ``right``, returns 0 if they are equal up to
+        For units ``left`` and ``right``, return 0 if they are equal up to
         the lesser of the two precisions, or 1 if they are not.
 
         EXAMPLES::
@@ -2056,7 +2056,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef _add_(self, _right):
         """
-        Computes the sum of ``self`` and ``right``.
+        Compute the sum of ``self`` and ``right``.
 
         EXAMPLES::
 
@@ -2350,7 +2350,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         is indistinguishable from zero.
 
         If this element is an inexact zero of valuation less than ``absprec``,
-        raises a ``PrecisionError``.
+        raises a :class:`PrecisionError`.
 
         EXAMPLES::
 
@@ -2660,9 +2660,11 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: a = W(345, 17); a
             4*w^5 + 3*w^7 + w^9 + 3*w^10 + 2*w^11 + 4*w^12 + w^13 + 2*w^14 + 2*w^15 + O(w^17)
             sage: b = a.lift_to_precision(19); b
-            4*w^5 + 3*w^7 + w^9 + 3*w^10 + 2*w^11 + 4*w^12 + w^13 + 2*w^14 + 2*w^15 + w^17 + 2*w^18 + O(w^19)
+            4*w^5 + 3*w^7 + w^9 + 3*w^10 + 2*w^11 + 4*w^12 + w^13 + 2*w^14 + 2*w^15
+             + w^17 + 2*w^18 + O(w^19)
             sage: c = a.lift_to_precision(24); c
-            4*w^5 + 3*w^7 + w^9 + 3*w^10 + 2*w^11 + 4*w^12 + w^13 + 2*w^14 + 2*w^15 + w^17 + 2*w^18 + 4*w^19 + 4*w^20 + 2*w^21 + 4*w^23 + O(w^24)
+            4*w^5 + 3*w^7 + w^9 + 3*w^10 + 2*w^11 + 4*w^12 + w^13 + 2*w^14 + 2*w^15
+             + w^17 + 2*w^18 + 4*w^19 + 4*w^20 + 2*w^21 + 4*w^23 + O(w^24)
             sage: a._ntl_rep()
             [19 35 118 60 121]
             sage: b._ntl_rep()
@@ -2718,7 +2720,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def expansion(self, n = None, lift_mode = 'simple'):
         """
-        Return a list giving a series representation of self.
+        Return a list giving a series representation of ``self``.
 
         - If ``lift_mode == 'simple'`` or ``'smallest'``, the returned
           list will consist of integers (in the Eisenstein case) or a
@@ -2838,7 +2840,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         the power basis `1, x, x^2, \ldots, x^{d-1}` for this
         extension field.  Thus the *rows* of this matrix give the
         images of each of the `x^i`.  The entries of the matrices are
-        IntegerMod elements, defined modulo `p^{N / e}` where `N` is
+        :class:`IntegerMod` elements, defined modulo `p^{N / e}` where `N` is
         the absolute precision of this element (unless this element is
         zero to arbitrary precision; in that case the entries are
         integer zeros.)
@@ -2954,7 +2956,11 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: E = a.teichmuller_expansion(); E
             5-adic expansion of a + O(5^4) (teichmuller)
             sage: list(E)
-            [a + (2*a^3 + 2*a^2 + 3*a + 4)*5 + (4*a^3 + 3*a^2 + 3*a + 2)*5^2 + (4*a^2 + 2*a + 2)*5^3 + O(5^4), (3*a^3 + 3*a^2 + 2*a + 1) + (a^3 + 4*a^2 + 1)*5 + (a^2 + 4*a + 4)*5^2 + O(5^3), (4*a^3 + 2*a^2 + a + 1) + (2*a^3 + 2*a^2 + 2*a + 4)*5 + O(5^2), (a^3 + a^2 + a + 4) + O(5)]
+            [a + (2*a^3 + 2*a^2 + 3*a + 4)*5 + (4*a^3 + 3*a^2 + 3*a + 2)*5^2
+               + (4*a^2 + 2*a + 2)*5^3 + O(5^4),
+             (3*a^3 + 3*a^2 + 2*a + 1) + (a^3 + 4*a^2 + 1)*5 + (a^2 + 4*a + 4)*5^2 + O(5^3),
+             (4*a^3 + 2*a^2 + a + 1) + (2*a^3 + 2*a^2 + 2*a + 4)*5 + O(5^2),
+             (a^3 + a^2 + a + 4) + O(5)]
             sage: sum([c * 5^i for i, c in enumerate(E)])
             a + O(5^4)
             sage: all(c^625 == c for c in E)
@@ -2964,14 +2970,17 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: f = x^3 - 98*x + 7
             sage: W.<w> = ZpCR(7,3).ext(f)
             sage: b = (1+w)^5; L = b.teichmuller_expansion(); L
-            [1 + O(w^9), 5 + 5*w^3 + w^6 + 4*w^7 + O(w^8), 3 + 3*w^3 + O(w^7), 3 + 3*w^3 + O(w^6), O(w^5), 4 + 5*w^3 + O(w^4), 3 + O(w^3), 6 + O(w^2), 6 + O(w)]
+            [1 + O(w^9), 5 + 5*w^3 + w^6 + 4*w^7 + O(w^8), 3 + 3*w^3 + O(w^7),
+             3 + 3*w^3 + O(w^6), O(w^5), 4 + 5*w^3 + O(w^4), 3 + O(w^3),
+             6 + O(w^2), 6 + O(w)]
             sage: sum([w^i*L[i] for i in range(9)]) == b
             True
             sage: all(L[i]^(7^3) == L[i] for i in range(9))
             True
 
             sage: L = W(3).teichmuller_expansion(); L
-            [3 + 3*w^3 + w^7 + O(w^9), O(w^8), O(w^7), 4 + 5*w^3 + O(w^6), O(w^5), O(w^4), 3 + O(w^3), 6 + O(w^2)]
+            [3 + 3*w^3 + w^7 + O(w^9), O(w^8), O(w^7), 4 + 5*w^3 + O(w^6),
+             O(w^5), O(w^4), 3 + O(w^3), 6 + O(w^2)]
             sage: sum([w^i*L[i] for i in range(len(L))])
             3 + O(w^9)
         """
@@ -3039,7 +3048,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: S.<x> = R[]
             sage: f = x^5 + 77*x^3 - 98*x^2 - 7
             sage: W.<w> = R.ext(f)
-            sage: y = W.teichmuller(3, 15); y #indirect doctest
+            sage: y = W.teichmuller(3, 15); y  # indirect doctest
             3 + 4*w^5 + 2*w^8 + 6*w^10 + w^11 + 6*w^12 + 5*w^13 + 4*w^14 + O(w^15)
 
             sage: y^7 == y
@@ -3081,7 +3090,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def precision_absolute(self):
         """
-        Return the absolute precision of this element, ie the power of the
+        Return the absolute precision of this element, i.e., the power of the
         uniformizer modulo which this element is defined.
 
         EXAMPLES::
@@ -3116,7 +3125,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def precision_relative(self):
         """
-        Return the relative precision of this element, ie the power of the
+        Return the relative precision of this element, i.e., the power of the
         uniformizer modulo which the unit part of ``self`` is defined.
 
         EXAMPLES::
@@ -3149,7 +3158,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cdef long valuation_c(self):
         """
-        Return the valuation of this element
+        Return the valuation of this element.
 
         EXAMPLES::
 
@@ -3173,7 +3182,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef pAdicZZpXCRElement unit_part(self):
         """
-        Return the unit part of this element, ie ``self / uniformizer^(self.valuation())``
+        Return the unit part of this element, ie ``self / uniformizer^(self.valuation())``.
 
         EXAMPLES::
 
@@ -3222,7 +3231,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         otherwise they will be in the interval `[(1-p)/2, p/2]`.
 
         Note that zeros are truncated from the returned list, so you
-        must use the ``valuation()`` function to completely recover ``self``.
+        must use the method :meth:`valuation` to completely recover ``self``.
 
         EXAMPLES::
 

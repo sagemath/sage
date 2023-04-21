@@ -29,7 +29,7 @@ from sage.categories.morphism cimport Morphism
 
 cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
     """
-    A class implementing Frobenius endomorphisms on padic fields.
+    A class implementing Frobenius endomorphisms on p-adic fields.
     """
     def __init__ (self,domain,n=1):
         """
@@ -272,7 +272,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
     def is_injective(self):
         """
         Return ``True`` since any power of the Frobenius endomorphism
-        over an unramified padic field is always injective.
+        over an unramified p-adic field is always injective.
 
         EXAMPLES::
 
@@ -287,7 +287,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
     def is_surjective(self):
         """
         Return ``True`` since any power of the Frobenius endomorphism
-        over an unramified padic field is always surjective.
+        over an unramified p-adic field is always surjective.
 
         EXAMPLES::
 
@@ -335,7 +335,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
 
     cpdef _richcmp_(left, right, int op):
         """
-        Compare ``left'' and ``right''
+        Compare ``left`` and ``right``
 
         EXAMPLES::
 
