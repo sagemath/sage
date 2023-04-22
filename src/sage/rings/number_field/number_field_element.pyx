@@ -246,9 +246,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         INPUT:
 
 
-        -  ``parent`` - a number field
+        -  ``parent`` -- a number field
 
-        -  ``f`` - defines an element of a number field.
+        -  ``f`` -- defines an element of a number field.
 
 
         EXAMPLES:
@@ -907,11 +907,11 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        - ``num_bound`` - Bound for the numerator of coefficients of result
+        - ``num_bound`` -- Bound for the numerator of coefficients of result
 
-        - ``den_bound`` - Bound for the denominator of coefficients of result
+        - ``den_bound`` -- Bound for the denominator of coefficients of result
 
-        - ``distribution`` - Distribution to use for coefficients of result
+        - ``distribution`` -- Distribution to use for coefficients of result
 
         EXAMPLES::
 
@@ -1320,9 +1320,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         INPUT:
 
 
-        -  ``prec`` - (default: None) integer bits of precision
+        -  ``prec`` -- (default: None) integer bits of precision
 
-        -  ``i`` - (default: None) integer, which embedding to
+        -  ``i`` -- (default: None) integer, which embedding to
            use
 
 
@@ -1405,7 +1405,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        -  ``P`` - a prime ideal of the parent of ``self``
+        -  ``P`` -- a prime ideal of the parent of ``self``
 
         - ``prec`` (int) -- desired floating point precision (default:
           default :class:`RealField` precision).
@@ -1513,7 +1513,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         INPUT:
 
 
-        -  ``prec`` - integer (default: 53) bits of precision
+        -  ``prec`` -- integer (default: 53) bits of precision
 
 
         EXAMPLES::
@@ -2163,7 +2163,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         INPUT:
 
 
-        -  ``root`` - if ``True``, also return a square root (or
+        -  ``root`` -- if ``True``, also return a square root (or
            ``None`` if ``self`` is not a perfect square)
 
 
@@ -3724,7 +3724,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         INPUT:
 
 
-        -  ``base`` - field or morphism
+        -  ``base`` -- field or morphism
 
 
         EXAMPLES:
@@ -3917,7 +3917,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         INPUT:
 
 
-        -  ``P`` - a prime ideal of the parent of ``self``
+        - ``P`` -- a prime ideal of the parent of ``self``
 
         - ``prec`` (int) -- desired floating point precision (default:
           default :class:`RealField` precision).
@@ -3974,7 +3974,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         INPUT:
 
         - ``i`` (int) - an integer in ``range(r+s)`` where `(r,s)` is the
-           signature of the parent field (so `n=r+2s` is the degree).
+          signature of the parent field (so `n=r+2s` is the degree).
 
         - ``prec`` (int) -- desired floating point precision (default:
           default :class:`RealField` precision).
@@ -4351,7 +4351,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        -  ``I`` - may be an ideal of ``self.parent()``, or an element or list
+        -  ``I`` -- may be an ideal of ``self.parent()``, or an element or list
            of elements of ``self.parent()`` generating a nonzero ideal. A :class:`ValueError`
            is raised if `I` is non-integral or zero. A :class:`ZeroDivisionError` is
            raised if `I + (x) \neq (1)`.
@@ -4410,9 +4410,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        - ``P`` - proper ideal of the number field (or an extension)
+        - ``P`` -- proper ideal of the number field (or an extension)
 
-        - ``m`` - positive integer
+        - ``m`` -- positive integer
 
         OUTPUT:
 
@@ -4629,7 +4629,7 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
         INPUT:
 
 
-        -  ``magma`` - a Magma interpreter
+        -  ``magma`` -- a Magma interpreter
 
 
         OUTPUT: MagmaElement that has parent the Magma object corresponding
@@ -5161,7 +5161,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
 
         INPUT:
 
-        -  ``P`` - a prime ideal of relative number field which is the parent of ``self``
+        -  ``P`` -- a prime ideal of relative number field which is the parent of ``self``
 
         EXAMPLES::
 
@@ -5253,7 +5253,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
 
         INPUT:
 
-        -  ``I`` - may be an ideal of ``self.parent()``, or an
+        -  ``I`` -- may be an ideal of ``self.parent()``, or an
            element or list of elements of ``self.parent()`` generating a nonzero
            ideal. A :class:`ValueError` is raised if `I` is non-integral or is zero.
            A :class:`ZeroDivisionError` is raised if `I + (x) \neq (1)`.
@@ -5380,7 +5380,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         INPUT:
 
 
-        -  ``I`` - may be an ideal of ``self.parent()``, or an
+        -  ``I`` -- may be an ideal of ``self.parent()``, or an
            element or list of elements of ``self.parent()`` generating a nonzero
            ideal. A :class:`ValueError` is raised if `I` is non-integral or is zero.
            A :class:`ZeroDivisionError` is raised if `I + (x) \neq (1)`.

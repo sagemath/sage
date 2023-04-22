@@ -72,9 +72,9 @@ class NumberFieldIdeal(Ideal_generic):
         """
         INPUT:
 
-        -  ``field`` - a number field
+        -  ``field`` -- a number field
 
-        -   ``x`` - a list of :class:`NumberFieldElement` objects belonging to the field
+        -   ``x`` -- a list of :class:`NumberFieldElement` objects belonging to the field
 
         EXAMPLES::
 
@@ -146,7 +146,7 @@ class NumberFieldIdeal(Ideal_generic):
         INPUT:
 
 
-        -  ``magma`` - a Magma interpreter
+        -  ``magma`` -- a Magma interpreter
 
 
         OUTPUT: :class:`MagmaElement` corresponding to this ideal.
@@ -1587,9 +1587,9 @@ class NumberFieldIdeal(Ideal_generic):
 
         INPUT:
 
-        - ``e`` - element of the number field
+        - ``e`` -- element of the number field
 
-        - ``m`` - positive integer
+        - ``m`` -- positive integer
 
         OUTPUT:
 
@@ -2041,7 +2041,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``f`` - an integral element of the number field
+        - ``f`` -- an integral element of the number field
 
         OUTPUT:
 
@@ -2202,7 +2202,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``reduce`` - bool. If ``True`` (default), use ``small_residue`` to get
+        - ``reduce`` -- bool. If ``True`` (default), use ``small_residue`` to get
           small representatives of the residues.
 
         OUTPUT:
@@ -2261,13 +2261,13 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``subgp_gens`` - either ``None`` or a list of elements of the number
+        - ``subgp_gens`` -- either ``None`` or a list of elements of the number
           field of ``self``. These need not be integral, but should be coprime to
           the ideal ``self``. If the list is empty or ``None``, the function returns
           an iterator through a list of representatives for the invertible
           residues modulo the integral ideal ``self``.
 
-        - ``reduce`` - bool. If ``True`` (default), use ``small_residues`` to
+        - ``reduce`` -- bool. If ``True`` (default), use ``small_residues`` to
           get small representatives of the residues.
 
         .. note::
@@ -2480,7 +2480,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``J`` - another integral ideal of the same field as ``self``, which must also be integral.
+        - ``J`` -- another integral ideal of the same field as ``self``, which must also be integral.
 
         OUTPUT:
 
@@ -2566,7 +2566,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``flag`` - when ``flag=2`` it computes the generators of the group
+        - ``flag`` -- when ``flag=2`` it computes the generators of the group
           `(O_K/I)^*`, which takes more time. By default
           ``flag=1`` (no generators are computed).
 
@@ -2674,14 +2674,14 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``x`` - a non-zero element of the number field of ``self``,
+        - ``x`` -- a non-zero element of the number field of ``self``,
           which must have valuation equal to 0 at all prime ideals in
           the support of the ideal ``self``.
-        - ``gens`` - a list of elements of the number field which generate `(R
+        - ``gens`` -- a list of elements of the number field which generate `(R
           / I)^*`, where `R` is the ring of integers of the field and `I` is
           this ideal, or ``None``. If ``None``, use the generators calculated
           by :meth:`~idealstar`.
-        - ``check`` - if ``True``, do a consistency check on the results. Ignored
+        - ``check`` -- if ``True``, do a consistency check on the results. Ignored
           if ``gens`` is ``None``.
 
         OUTPUT:
