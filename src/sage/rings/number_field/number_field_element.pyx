@@ -1420,7 +1420,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+5)
+            sage: K.<a> = NumberField(x^2 + 5)
             sage: [1/K(2).abs_non_arch(P) for P in K.primes_above(2)]
             [2.00000000000000]
             sage: [1/K(3).abs_non_arch(P) for P in K.primes_above(3)]
@@ -1430,7 +1430,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         A relative example::
 
-            sage: L.<b> = K.extension(x^2-5)
+            sage: L.<b> = K.extension(x^2 - 5)
             sage: [b.abs_non_arch(P) for P in L.primes_above(b)]
             [0.447213595499958, 0.447213595499958]
         """
@@ -1520,11 +1520,15 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: k.<a> = NumberField(x^3 - 2)
             sage: a.complex_embeddings()
-            [-0.629960524947437 - 1.09112363597172*I, -0.629960524947437 + 1.09112363597172*I, 1.25992104989487]
+            [-0.629960524947437 - 1.09112363597172*I,
+             -0.629960524947437 + 1.09112363597172*I,
+             1.25992104989487]
             sage: a.complex_embeddings(10)
             [-0.63 - 1.1*I, -0.63 + 1.1*I, 1.3]
             sage: a.complex_embeddings(100)
-            [-0.62996052494743658238360530364 - 1.0911236359717214035600726142*I, -0.62996052494743658238360530364 + 1.0911236359717214035600726142*I, 1.2599210498948731647672106073]
+            [-0.62996052494743658238360530364 - 1.0911236359717214035600726142*I,
+             -0.62996052494743658238360530364 + 1.0911236359717214035600726142*I,
+             1.2599210498948731647672106073]
         """
         phi = self.number_field().complex_embeddings(prec)
         return [f(self) for f in phi]
@@ -1587,9 +1591,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-         - ``L`` -- a number field containing `K` = ``self.parent()``
+         - ``L`` -- a number field containing `K` = ``self.parent()``.
          - ``element`` -- ``True`` or ``False``, whether to also output an element
-           of which ``self`` is a norm
+           of which ``self`` is a norm.
          - ``proof`` -- If ``True``, then the output is correct unconditionally.
            If ``False``, then the output is correct under GRH.
 
@@ -1598,7 +1602,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         If ``element`` is ``False``, then the output is a boolean `B`, which is
         ``True`` if and only if ``self`` is the relative norm of an element of `L`
         to `K`.
-        If element is ``False``, then the output is a pair `(B, x)`, where
+
+        If ``element`` is ``True``, then the output is a pair `(B, x)`, where
         `B` is as above. If `B` is ``True``, then `x` is an element of `L` such that
         ``self == x.norm(K)``. Otherwise, `x` is ``None``.
 
@@ -2888,15 +2893,15 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         EXAMPLES::
 
             sage: K.<a> = QuadraticField(2)
-            sage: SR(a) # indirect doctest
+            sage: SR(a) # indirect doctest                                              # optional - sage.symbolic
             sqrt(2)
-            sage: SR(3*a-5) # indirect doctest
+            sage: SR(3*a-5) # indirect doctest                                          # optional - sage.symbolic
             3*sqrt(2) - 5
             sage: K.<a> = QuadraticField(2, embedding=-1.4)
-            sage: SR(a) # indirect doctest
+            sage: SR(a) # indirect doctest                                              # optional - sage.symbolic
             -sqrt(2)
             sage: K.<a> = NumberField(x^2 - 2)
-            sage: SR(a) # indirect doctest
+            sage: SR(a) # indirect doctest                                              # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: an embedding into RR or CC must be specified
@@ -2904,26 +2909,26 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         Now a more complicated example::
 
             sage: K.<a> = NumberField(x^3 + x - 1, embedding=0.68)
-            sage: b = SR(a); b # indirect doctest
+            sage: b = SR(a); b # indirect doctest                                       # optional - sage.symbolic
             (1/18*sqrt(31)*sqrt(3) + 1/2)^(1/3) - 1/3/(1/18*sqrt(31)*sqrt(3) + 1/2)^(1/3)
-            sage: (b^3 + b - 1).canonicalize_radical()
+            sage: (b^3 + b - 1).canonicalize_radical()                                  # optional - sage.symbolic
             0
 
         Make sure we got the right one::
 
             sage: CC(a)
             0.682327803828019
-            sage: CC(b)
+            sage: CC(b)                                                                 # optional - sage.symbolic
             0.682327803828019
 
         Special case for cyclotomic fields::
 
             sage: K.<zeta> = CyclotomicField(19)
-            sage: SR(zeta) # indirect doctest
+            sage: SR(zeta) # indirect doctest                                           # optional - sage.symbolic
             e^(2/19*I*pi)
             sage: CC(zeta)
             0.945817241700635 + 0.324699469204683*I
-            sage: CC(SR(zeta))
+            sage: CC(SR(zeta))                                                          # optional - sage.symbolic
             0.945817241700635 + 0.324699469204683*I
 
             sage: SR(zeta^5 + 2)
@@ -2935,22 +2940,22 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         printed as a numerical approximation::
 
             sage: K.<a> = NumberField(x^5-x+1, embedding=-1)
-            sage: SR(a)
+            sage: SR(a)                                                                 # optional - sage.symbolic
             -1.167303978261419?
 
         ::
 
             sage: K.<a> = NumberField(x^6-x^3-1, embedding=1)
-            sage: SR(a)
+            sage: SR(a)                                                                 # optional - sage.symbolic
             (1/2*sqrt(5) + 1/2)^(1/3)
 
         In this field, general elements cannot be written in terms of
         radicals, but particular elements might be::
 
             sage: K.<a> = NumberField(x^10 + 6*x^6 + 9*x^2 + 1, embedding=CC(0.332*I))
-            sage: SR(a)
+            sage: SR(a)                                                                 # optional - sage.symbolic
             0.3319890295845093?*I
-            sage: SR(a^5+3*a)
+            sage: SR(a^5+3*a)                                                           # optional - sage.symbolic
             I
 
         Conversely, some elements are too complicated to be written in
@@ -2962,10 +2967,11 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: K.<a> = NumberField(QQ['x']([6, -65, 163, -185, 81, -15, 1]), embedding=4.9)
             sage: b = a + a^3
-            sage: SR(b.minpoly()).solve(SR('x'), explicit_solutions=True)
+            sage: SR(b.minpoly()).solve(SR('x'), explicit_solutions=True)               # optional - sage.symbolic
             []
-            sage: SR(b)
-            1/8*(sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5)^3 + 1/2*sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5/2
+            sage: SR(b)                                                                 # optional - sage.symbolic
+            1/8*(sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5)^3
+             + 1/2*sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5/2
 
         TESTS:
 
@@ -2975,7 +2981,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: p = x^8 + x^7 - 9*x^6 - 3*x^5 - 6*x^4 + x^3 - 14*x^2 + 2*x + 2
             sage: rt = sorted(p.roots(AA, multiplicities=False))[1]
             sage: K.<a> = NumberField(p, embedding=rt)
-            sage: SR(a)
+            sage: SR(a)                                                                 # optional - sage.symbolic
             -0.3056815681115094?
 
         """
@@ -3973,7 +3979,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        - ``i`` (int) - an integer in ``range(r+s)`` where `(r,s)` is the
+        - ``i`` (int) -- an integer in ``range(r+s)`` where `(r,s)` is the
           signature of the parent field (so `n=r+2s` is the degree).
 
         - ``prec`` (int) -- desired floating point precision (default:

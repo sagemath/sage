@@ -1765,8 +1765,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         Check that :trac:`30961` is fixed::
 
             sage: QQi = i.parent()
-            sage: x = SR.var('x')
-            sage: QQi((x, x))
+            sage: x = SR.var('x')                                                       # optional - sage.symbolic
+            sage: QQi((x, x))                                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unable to convert x to a rational

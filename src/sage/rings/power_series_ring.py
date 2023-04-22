@@ -176,21 +176,21 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
     INPUT:
 
 
-    -  ``base_ring`` - a commutative ring
+    -  ``base_ring`` -- a commutative ring
 
-    -  ``name``, ``names`` - name(s) of the indeterminate
+    -  ``name``, ``names`` -- name(s) of the indeterminate
 
-    - ``default_prec`` - the default precision used if an exact object must
+    - ``default_prec`` -- the default precision used if an exact object must
        be changed to an approximate object in order to do an arithmetic
        operation.  If left as ``None``, it will be set to the global
        default (20) in the univariate case, and 12 in the multivariate case.
 
-    -  ``sparse`` - (default: ``False``) whether power series
+    -  ``sparse`` -- (default: ``False``) whether power series
        are represented as sparse objects.
 
-    - ``order`` - (default: ``negdeglex``) term ordering, for multivariate case
+    - ``order`` -- (default: ``negdeglex``) term ordering, for multivariate case
 
-    - ``num_gens`` - number of generators, for multivariate case
+    - ``num_gens`` -- number of generators, for multivariate case
 
 
     There is a unique power series ring over each base ring with given
@@ -216,7 +216,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
 
     ::
 
-        sage: S = PowerSeriesRing(QQ, 'x', default_prec = 15); S
+        sage: S = PowerSeriesRing(QQ, 'x', default_prec=15); S
         Power Series Ring in x over Rational Field
         sage: S.default_prec()
         15
@@ -252,7 +252,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
 
     Power series ring over polynomial ring::
 
-        sage: H = PowerSeriesRing(PolynomialRing(ZZ,3,'z'),4,'f'); H
+        sage: H = PowerSeriesRing(PolynomialRing(ZZ,3,'z'), 4, 'f'); H
         Multivariate Power Series Ring in f0, f1, f2, f3 over Multivariate
         Polynomial Ring in z0, z1, z2 over Integer Ring
 
@@ -480,13 +480,13 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         INPUT:
 
 
-        -  ``base_ring`` - a commutative ring
+        -  ``base_ring`` -- a commutative ring
 
-        -  ``name`` - name of the indeterminate
+        -  ``name`` -- name of the indeterminate
 
-        -  ``default_prec`` - the default precision
+        -  ``default_prec`` -- the default precision
 
-        -  ``sparse`` - whether or not power series are
+        -  ``sparse`` -- whether or not power series are
            sparse
 
         - ``implementation`` -- either ``'poly'``, ``'mpoly'``, or
@@ -706,12 +706,12 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         INPUT:
 
 
-        -  ``f`` - object, e.g., a power series ring element
+        -  ``f`` -- object, e.g., a power series ring element
 
-        -  ``prec`` - (default: infinity); truncation precision
+        -  ``prec`` -- (default: infinity); truncation precision
            for coercion
 
-        -  ``check`` - bool (default: True), whether to verify
+        -  ``check`` -- bool (default: ``True``), whether to verify
            that the coefficients, etc., coerce in correctly.
 
 
@@ -759,15 +759,15 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         Conversion from symbolic series::
 
-            sage: x,y = var('x,y')
-            sage: s=(1/(1-x)).series(x,3); s
+            sage: x,y = var('x,y')                                                      # optional - sage.symbolic
+            sage: s = (1/(1-x)).series(x,3); s                                          # optional - sage.symbolic
             1 + 1*x + 1*x^2 + Order(x^3)
-            sage: R.<x> = PowerSeriesRing(QQ)
-            sage: R(s)
+            sage: R.<x> = PowerSeriesRing(QQ)                                           # optional - sage.symbolic
+            sage: R(s)                                                                  # optional - sage.symbolic
             1 + x + x^2 + O(x^3)
-            sage: ex=(gamma(1-y)).series(y,3)
-            sage: R.<y> = PowerSeriesRing(SR)
-            sage: R(ex)
+            sage: ex = (gamma(1-y)).series(y,3)                                         # optional - sage.symbolic
+            sage: R.<y> = PowerSeriesRing(SR)                                           # optional - sage.symbolic
+            sage: R(ex)                                                                 # optional - sage.symbolic
             1 + euler_gamma*y + (1/2*euler_gamma^2 + 1/12*pi^2)*y^2 + O(y^3)
 
         Laurent series with non-negative valuation are accepted (see
@@ -823,7 +823,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
     def construction(self):
         """
-        Return the functorial construction of self, namely, completion of
+        Return the functorial construction of ``self``, namely, completion of
         the univariate polynomial ring with respect to the indeterminate
         (to a given precision).
 
@@ -898,7 +898,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: g = R.coerce(f); g                                                    # optional - sage.rings.finite_rings
             1 + 2*t + 3*t^2 + 4*t^3
             sage: parent(g)                                                             # optional - sage.rings.finite_rings
-            Power Series Ring in t over Univariate Polynomial Ring in w over Finite Field of size 7
+            Power Series Ring in t over
+             Univariate Polynomial Ring in w over Finite Field of size 7
             sage: S.coerce(g)                                                           # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -926,7 +927,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         EXAMPLES::
 
-            sage: S = RationalField(); R.<t>=PowerSeriesRing(S)
+            sage: S = RationalField(); R.<t> = PowerSeriesRing(S)
             sage: f = R.hom([0])
             sage: f(3)
             3
@@ -974,9 +975,9 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
     def base_extend(self, R):
         """
-        Return the power series ring over R in the same variable as self,
-        assuming there is a canonical coerce map from the base ring of self
-        to R.
+        Return the power series ring over `R` in the same variable as ``self``,
+        assuming there is a canonical coerce map from the base ring of ``self``
+        to `R`.
 
         EXAMPLES::
 
@@ -996,7 +997,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
     def change_ring(self, R):
         """
-        Return the power series ring over R in the same variable as self.
+        Return the power series ring over `R` in the same variable as ``self``.
 
         EXAMPLES::
 
@@ -1029,7 +1030,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
     def is_exact(self):
         """
-        Return False since the ring of power series over any ring is not
+        Return ``False`` since the ring of power series over any ring is not
         exact.
 
         EXAMPLES::
@@ -1099,13 +1100,12 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         r"""
         Return a random power series.
 
-
         INPUT:
 
-        -  ``prec`` - Integer specifying precision of output (default:
-           default precision of self)
+        -  ``prec`` -- Integer specifying precision of output (default:
+           default precision of ``self``)
 
-        -  ``*args, **kwds`` - Passed on to the ``random_element`` method for
+        -  ``*args``, ``**kwds`` -- Passed on to the ``random_element`` method for
            the base ring
 
         OUTPUT:
@@ -1113,7 +1113,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         -  Power series with precision ``prec`` whose coefficients are
            random elements from the base ring, randomized subject to the
            arguments ``*args`` and ``**kwds``
-
 
         ALGORITHM:
 
@@ -1134,7 +1133,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: T.default_prec()
             20
             sage: T.random_element()  # random
-            4 + 2*t - t^2 - t^3 + 2*t^4 + t^5 + t^6 - 2*t^7 - t^8 - t^9 + t^11 - 6*t^12 + 2*t^14 + 2*t^16 - t^17 - 3*t^18 + O(t^20)
+            4 + 2*t - t^2 - t^3 + 2*t^4 + t^5 + t^6 - 2*t^7 - t^8 - t^9 + t^11
+             - 6*t^12 + 2*t^14 + 2*t^16 - t^17 - 3*t^18 + O(t^20)
             sage: S = PowerSeriesRing(ZZ,'t', default_prec=4)
             sage: S.random_element()  # random
             2 - t - 5*t^2 + t^3 + O(t^4)
@@ -1147,7 +1147,9 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: SR = PowerSeriesRing(RR,'v')
 
             sage: SZ.random_element(x=4, y=6)  # random
-            4 + 5*v + 5*v^2 + 5*v^3 + 4*v^4 + 5*v^5 + 5*v^6 + 5*v^7 + 4*v^8 + 5*v^9 + 4*v^10 + 4*v^11 + 5*v^12 + 5*v^13 + 5*v^14 + 5*v^15 + 5*v^16 + 5*v^17 + 4*v^18 + 5*v^19 + O(v^20)
+            4 + 5*v + 5*v^2 + 5*v^3 + 4*v^4 + 5*v^5 + 5*v^6 + 5*v^7 + 4*v^8
+             + 5*v^9 + 4*v^10 + 4*v^11 + 5*v^12 + 5*v^13 + 5*v^14 + 5*v^15
+             + 5*v^16 + 5*v^17 + 4*v^18 + 5*v^19 + O(v^20)
             sage: SZ.random_element(3, x=4, y=6)  # random
             5 + 4*v + 5*v^2 + O(v^3)
             sage: SQ.random_element(3, num_bound=3, den_bound=100)  # random
@@ -1184,7 +1186,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
     def is_field(self, proof = True):
         """
-        Return False since the ring of power series over any ring is never
+        Return ``False`` since the ring of power series over any ring is never
         a field.
 
         EXAMPLES::
@@ -1197,7 +1199,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
     def is_finite(self):
         """
-        Return False since the ring of power series over any ring is never
+        Return ``False`` since the ring of power series over any ring is never
         finite.
 
         EXAMPLES::
@@ -1251,12 +1253,12 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         EXAMPLES::
 
-            sage: R.<t> = PowerSeriesRing(ZZ,default_prec=5)
+            sage: R.<t> = PowerSeriesRing(ZZ, default_prec=5)
             sage: S = R.laurent_series_ring(); S
             Laurent Series Ring in t over Integer Ring
             sage: S.default_prec()
             5
-            sage: f = 1+t; g=1/f; g
+            sage: f = 1 + t; g = 1/f; g
             1 - t + t^2 - t^3 + t^4 + O(t^5)
         """
         try:

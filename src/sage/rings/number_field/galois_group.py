@@ -319,7 +319,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
 
     def group(self):
         """
-        While :class:`GaloisGroup_v1` is being deprecated, this provides public access to the Pari/GAP group
+        While :class:`GaloisGroup_v1` is being deprecated, this provides public access to the PARI/GAP group
         in order to keep all aspects of that API.
 
         EXAMPLES::
@@ -1043,7 +1043,7 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
     @lazy_attribute
     def _pari_data(self):
         """
-        Access to Pari information for the ambient Galois group.
+        Access to PARI information for the ambient Galois group.
 
         EXAMPLES::
 
@@ -1065,7 +1065,7 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
         - ``name`` -- a variable name for the new field.
 
         - ``polred`` -- whether to optimize the generator of the newly created field
-            for a simpler polynomial, using Pari's :pari:`polredbest`.
+            for a simpler polynomial, using PARI's :pari:`polredbest`.
             Defaults to ``True`` when the degree of the fixed field is at most 8.
 
         - ``threshold`` -- positive number; polred only performed if the cost is at most this threshold

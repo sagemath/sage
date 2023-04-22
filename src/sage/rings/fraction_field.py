@@ -618,8 +618,8 @@ class FractionField_generic(ring.Field):
 
         Check that :trac:`26150` is fixed::
 
-            sage: z = SR.var('z')
-            sage: CyclotomicField(2)['z'].fraction_field()(2*(4*z + 5)/((z + 1)*(z - 1)^4))     # optional - sage.rings.number_field
+            sage: z = SR.var('z')                                                               # optional - sage.symbolic
+            sage: CyclotomicField(2)['z'].fraction_field()(2*(4*z + 5)/((z + 1)*(z - 1)^4))     # optional - sage.rings.number_field sage.symbolic
             (8*z + 10)/(z^5 - 3*z^4 + 2*z^3 + 2*z^2 - 3*z + 1)
 
         ::
