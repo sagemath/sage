@@ -2776,7 +2776,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             3
             sage: Integer(125).log(5, prec=53)
             3.00000000000000
-            sage: log(Integer(125))
+            sage: log(Integer(125))                                                     # optional - sage.symbolic
             3*log(5)
 
         For extremely large numbers, this works::
@@ -2789,7 +2789,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         works in a reasonable amount of time for this ``x``::
 
             sage: x = 3^100000
-            sage: log(x)
+            sage: log(x)                                                                # optional - sage.symbolic
             log(1334971414230...5522000001)
 
         But approximations are probably more useful in this
@@ -2797,7 +2797,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: x.log(3, 53)  # default precision for RealField
             100000.000000000
-            sage: (x +1 ).log(3, 53)
+            sage: (x + 1).log(3, 53)
             100000.000000000
             sage: (x + 1).log(3, 1000)
             100000.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -2810,7 +2810,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         We also get logarithms of negative integers, via the
         symbolic ring, using the branch from `-\pi` to `\pi`::
 
-            sage: log(-1)
+            sage: log(-1)                                                               # optional - sage.symbolic
             I*pi
 
         The logarithm of zero is done likewise::

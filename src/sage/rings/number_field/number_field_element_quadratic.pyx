@@ -2590,7 +2590,7 @@ cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic_sqrt):
 
         EXAMPLES::
 
-            sage: I.log()
+            sage: I.log()                                                               # optional - sage.symbolic
             1/2*I*pi
         """
         from sage.symbolic.ring import SR

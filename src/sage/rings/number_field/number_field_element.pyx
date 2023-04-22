@@ -2280,7 +2280,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         Using the ``extend`` keyword::
 
             sage: K = QuadraticField(-5)
-            sage: z = K(-7).sqrt(extend=True); z
+            sage: z = K(-7).sqrt(extend=True); z                                        # optional - sage.symbolic
             sqrt(-7)
             sage: CyclotomicField(4)(4).sqrt(extend=False)
             2
@@ -2381,9 +2381,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         If the exponent is not integral, perform this operation in
         the symbolic ring::
 
-            sage: sqrt2^(1/5)
+            sage: sqrt2^(1/5)                                                           # optional - sage.symbolic
             2^(1/10)
-            sage: sqrt2^sqrt2
+            sage: sqrt2^sqrt2                                                           # optional - sage.symbolic
             2^(1/2*sqrt(2))
 
         Sage follows Python's convention `0^0 = 1`::
@@ -2401,10 +2401,10 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         Test :trac:`14895`::
 
             sage: K.<sqrt2> = QuadraticField(2)
-            sage: 2^sqrt2
+            sage: 2^sqrt2                                                               # optional - sage.symbolic
             2^sqrt(2)
             sage: K.<a> = NumberField(x^2+1)
-            sage: 2^a
+            sage: 2^a                                                                   # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Number Field in a with defining polynomial x^2 + 1 to Symbolic Ring
@@ -2931,7 +2931,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: CC(SR(zeta))                                                          # optional - sage.symbolic
             0.945817241700635 + 0.324699469204683*I
 
-            sage: SR(zeta^5 + 2)
+            sage: SR(zeta^5 + 2)                                                        # optional - sage.symbolic
             e^(10/19*I*pi) + 2
 
         For degree greater than 5, sometimes Galois theory prevents a
