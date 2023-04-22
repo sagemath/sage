@@ -313,6 +313,13 @@ class EllipticCurveHom(Morphism):
 
         TESTS:
 
+        Make sure the cached value of the trace is not accidentally
+        copied on composition with automorphisms::
+
+            sage: aut = E.automorphisms()[1]  # [-1]
+            sage: (aut * tau).trace()
+            1
+
         It also works for more complicated :class:`EllipticCurveHom`
         children::
 
@@ -772,7 +779,7 @@ class EllipticCurveHom(Morphism):
             sage: EllipticCurveIsogeny(E,X^3-13*X^2-58*X+503,check=False)
             Isogeny of degree 7 from Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 107*x + 552 over Rational Field to Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 5252*x - 178837 over Rational Field
         """
-        return hash((self.domain(), self.codomain(), self.kernel_polynomial()))
+        return hash((self.domain(), self.codomain(), self.kernel_polynomial(), self.scaling_factor()))
 
     def as_morphism(self):
         r"""
