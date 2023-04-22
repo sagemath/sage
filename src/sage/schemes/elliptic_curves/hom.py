@@ -1057,8 +1057,6 @@ def find_post_isomorphism(phi, psi):
         raise ValueError('codomains not isomorphic')
 
     F = E.base_ring()
-    from sage.rings.finite_rings import finite_field_base
-    from sage.rings.number_field import number_field_base
 
     if isinstance(F, finite_field_base.FiniteField):
         while len(isos) > 1:
@@ -1100,6 +1098,12 @@ def compute_trace_generic(phi):
     Compute the trace of the given elliptic-curve endomorphism `\varphi`.
 
     ALGORITHM: Simple variant of Schoof's algorithm.
+    For enough small primes `\ell`, we find an order-`\ell` point `P`
+    on `E` and use a discrete-logarithm calculation to find the unique
+    scalar `t_\ell \in \{0,...,\ell-1\}` such that
+    `\varphi^2(P)+[\deg(\varphi)]P = [t_\ell]\varphi(P)`.
+    Then `t_\ell` equals the trace of `\varphi` modulo `\ell`, which
+    can therefore be recovered using the Chinese remainder theorem.
 
     EXAMPLES:
 
@@ -1124,7 +1128,7 @@ def compute_trace_generic(phi):
         sage: x = polygen(QQ)
         sage: K.<t> = NumberField(5*x^2 - 2*x + 1)
         sage: E = EllipticCurve(K, [1,0])
-        sage: phi = E.isogeny([t,0,1], codomain=E)  # phi = 1 + 2*i
+        sage: phi = E.isogeny([t,0,1], codomain=E)  # phi = 2 + i
         sage: compute_trace_generic(phi)
         4
 
@@ -1155,8 +1159,20 @@ def compute_trace_generic(phi):
         -14
     """
     from sage.rings.finite_rings.integer_mod import Mod
+    from sage.rings.polynomial.polynomial_ring import polygen
     from sage.groups.generic import discrete_log
     from sage.sets.primes import Primes
+
+    # Construct the field extension defined by the given polynomial,
+    # in such a way that the result is recognized by Sage as a field.
+    def ffext(poly):
+        rng = poly.parent()
+        fld = rng.base_ring()
+        if isinstance(fld, finite_field_base.FiniteField):
+            # Workaround: .extension() would return a PolynomialQuotientRing
+            # rather than another FiniteField.
+            return poly.splitting_field(rng.variable_name())
+        return fld.extension(poly, rng.variable_name())
 
     E = phi.domain()
     if phi.codomain() != E:
@@ -1165,7 +1181,7 @@ def compute_trace_generic(phi):
     d = phi.degree()
 
     F = E.base_field()
-    S,X = F['X'].objgen()
+    X = polygen(F, 'X')
 
     M = 4 * d.isqrt() + 1  # |trace| <= 2 sqrt(deg)
     tr = Mod(0,1)
@@ -1175,18 +1191,12 @@ def compute_trace_generic(phi):
         if xpoly.degree() < 1:  # supersingular and l == p
             continue
         mu = xpoly.factor()[0][0]
-        if isinstance(F, number_field_base.NumberField):
-            FF = F.extension(mu, 'X')
-        else:
-            FF = mu.splitting_field('X')
+        FF = ffext(mu)
         xx = mu.any_root(ring=FF, assume_squarefree=True)
-        T,Y = FF['Y'].objgen()
+        Y = polygen(FF, 'Y')
         ypoly = E.defining_polynomial()(xx, Y, 1)
         if ypoly.is_irreducible():
-            if isinstance(F, number_field_base.NumberField):
-                FF = FF.extension(ypoly, 'Y')
-            else:
-                FF = ypoly.splitting_field('Y')
+            FF = ffext(ypoly)
             xx = FF(xx)
         EE = E.change_ring(FF)
         P = EE.lift_x(xx)
