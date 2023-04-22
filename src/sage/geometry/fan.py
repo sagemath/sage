@@ -737,7 +737,7 @@ def FaceFan(polytope, lattice=None):
         ValueError: face fans are defined only for
         polytopes containing the origin as an interior point!
 
-        sage: interval_in_QQ2 = Polyhedron([ (0,-1), (0,+1) ])
+        sage: interval_in_QQ2 = Polyhedron([(0,-1), (0,+1)])
         sage: FaceFan(interval_in_QQ2).generating_cones()
         (1-d cone of Rational polyhedral fan in 2-d lattice M,
          1-d cone of Rational polyhedral fan in 2-d lattice M)
@@ -753,7 +753,7 @@ def FaceFan(polytope, lattice=None):
         "face fans are defined only for polytopes containing "
         "the origin as an interior point!")
     if is_LatticePolytope(polytope):
-        if any(d <= 0 for d in polytope.distances([0]*polytope.dim())):
+        if any(d <= 0 for d in polytope.distances([0] * polytope.dim())):
             raise interior_point_error
         cones = (f.ambient_vertex_indices() for f in polytope.facets())
         rays = polytope.vertices()
@@ -763,8 +763,8 @@ def FaceFan(polytope, lattice=None):
         if not (polytope.is_compact() and
                 polytope.relative_interior_contains(origin)):
             raise interior_point_error
-        cones = [ [ v.index() for v in facet.incident() ]
-                  for facet in polytope.inequalities() ]
+        cones = [[v.index() for v in facet.incident()]
+                  for facet in polytope.inequalities()]
         rays = [vector(_) for _ in polytope.vertices()]
         is_complete = polytope.dim() == polytope.ambient_dim()
         if lattice is None:
@@ -904,7 +904,7 @@ def Fan2d(rays, lattice=None):
         (False, True)
 
         sage: fan = Fan2d([(1,1), (-1,-1), (1,-1), (-1,1)])
-        sage: [ cone.ambient_ray_indices() for cone in fan ]
+        sage: [cone.ambient_ray_indices() for cone in fan]
         [(2, 1), (1, 3), (3, 0), (0, 2)]
         sage: fan.is_complete()
         True
@@ -961,13 +961,14 @@ def Fan2d(rays, lattice=None):
 
     # remove multiple rays without changing order
     rays = normalize_rays(rays, lattice)
-    rays = sorted( (r, i) for i, r in enumerate(rays) )
-    distinct_rays = [ rays[i] for i in range(len(rays)) if rays[i][0] != rays[i-1][0] ]
+    rays = sorted((r, i) for i, r in enumerate(rays))
+    distinct_rays = [rays[i] for i in range(len(rays))
+                     if rays[i][0] != rays[i-1][0]]
     if distinct_rays:
-        rays = sorted( (i, r) for r, i in distinct_rays )
-        rays = [ r[1] for r in rays ]
+        rays = sorted((i, r) for r, i in distinct_rays)
+        rays = [r[1] for r in rays]
     else:  # all given rays were the same
-        rays = [ rays[0][0] ]
+        rays = [rays[0][0]]
     lattice = rays[0].parent()
     if lattice.dimension() != 2:
         raise ValueError('the lattice must be 2-dimensional.')
@@ -978,7 +979,8 @@ def Fan2d(rays, lattice=None):
 
     import math
     # each sorted_rays entry = (angle, ray, original_ray_index)
-    sorted_rays = sorted( (math.atan2(r[0],r[1]), r, i) for i,r in enumerate(rays) )
+    sorted_rays = sorted((math.atan2(r[0], r[1]), r, i)
+                         for i, r in enumerate(rays))
     cones = []
     is_complete = True
     for i in range(n):
@@ -987,7 +989,7 @@ def Fan2d(rays, lattice=None):
         if r1.is_zero():
             raise ValueError('only non-zero vectors define rays')
         assert r0 != r1
-        cross_prod = r0[0]*r1[1]-r0[1]*r1[0]
+        cross_prod = r0[0] * r1[1] - r0[1] * r1[0]
         if cross_prod < 0:
             r0_index = (i-1) % len(sorted_rays)
             r1_index = i
@@ -1492,7 +1494,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
                         rays_to_index[f_rays] = f_index
                         index_to_cones.append([i])
                 # Add all relations between faces of cone to L
-                for f,g in L_cone.cover_relations_iterator():
+                for f, g in L_cone.cover_relations_iterator():
                     L.add_edge(rays_to_index[face_to_rays[f]],
                                rays_to_index[face_to_rays[g]])
                 # Add the inclusion of cone into the fan itself
@@ -2458,7 +2460,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             Integer Ring
         """
         m = self.rays().matrix().stack(matrix(ZZ, 1, self.lattice_dim()))
-        m = m.augment(matrix(ZZ, m.nrows(), 1, [1]*m.nrows()))
+        m = m.augment(matrix(ZZ, m.nrows(), 1, [1] * m.nrows()))
         return matrix(ZZ, m.integer_kernel().matrix())
 
     def generating_cone(self, n):
@@ -3216,12 +3218,12 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         d_max = max(map(len, facets)) + 1
         SR = []
         for d in range(1, d_max):
-            checked = set([])
+            checked = set()
             for facet in facets:
                 for I_minus_j_list in Combinations(facet, d):
                     I_minus_j = frozenset(I_minus_j_list)
                     for j in all_points - I_minus_j:
-                        I = I_minus_j.union( frozenset([j]) )
+                        I = I_minus_j.union(frozenset([j]))
 
                         if I in checked:
                             continue
@@ -3253,8 +3255,8 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             Ideal (A*E, C*D, A*B*C, B*D*E) of Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
         """
         generators_indices = self.primitive_collections()
-        SR = ring.ideal([ prod([ ring.gen(i) for i in sr]) for sr in generators_indices ])
-        return SR
+        return ring.ideal([prod([ring.gen(i) for i in sr])
+                           for sr in generators_indices])
 
     def linear_equivalence_ideal(self, ring):
         """
@@ -3277,9 +3279,9 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             Ideal (-3*A + 3*C - D + E, -2*A - 2*C - D - E, A + B + C + D + E) of Multivariate Polynomial Ring in A, B, C, D, E over Rational Field
         """
         gens = []
-        for d in range(0,self.dim()):
-            gens.append( sum([ self.ray(i)[d] * ring.gen(i)
-                               for i in range(0, self.nrays()) ]) )
+        for d in range(self.dim()):
+            gens.append(sum([self.ray(i)[d] * ring.gen(i)
+                             for i in range(self.nrays())]))
         return ring.ideal(gens)
 
     def oriented_boundary(self, cone):
@@ -3379,12 +3381,12 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
                 outward_v = []
             else:
                 Q = N_QQ.quotient(c.rays())
-                outward_v = [ Q.lift(q) for q in Q.gens() ]
+                outward_v = [Q.lift(q) for q in Q.gens()]
 
             outward_vectors[c] = outward_v
             orientation = sign(matrix(outward_v + list(c.rays().basis())).det())
             generating_cones.append(tuple([orientation, c]))
-        boundaries = {self:FormalSum(generating_cones)}
+        boundaries = {self: FormalSum(generating_cones)}
 
         # The orientation of each facet is arbitrary, but the
         # partition of the boundary in positively and negatively
@@ -3520,7 +3522,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         The extended complex is only defined for complete fans::
 
-            sage: fan = Fan([ Cone([(1,0)]) ])
+            sage: fan = Fan([Cone([(1,0)])])
             sage: fan.is_complete()
             False
             sage: fan.complex(extended=True)
@@ -3555,12 +3557,13 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         dim = self.dim()
         delta = {}
         for degree in range(1, dim + 1):
-            m = matrix(base_ring, len(self(degree-1)), len(self(degree)), base_ring.zero())
+            m = matrix(base_ring, len(self(degree - 1)), len(self(degree)),
+                       base_ring.zero())
             for i, cone in enumerate(self(degree)):
                 boundary = self.oriented_boundary(cone)
                 for orientation, d_cone in boundary:
-                    m[self(degree-1).index(d_cone), i] = orientation
-            delta[dim-degree] = m
+                    m[self(degree - 1).index(d_cone), i] = orientation
+            delta[dim - degree] = m
 
         from sage.homology.chain_complex import ChainComplex
         if not extended:
