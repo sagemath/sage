@@ -1544,7 +1544,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         OUTPUT:
 
         ``False`` if ``cone`` is not a cone or if ``cone`` is not
-        equivalent to a cone of the fan ; ``True`` otherwise
+        equivalent to a cone of the fan, ``True`` otherwise
 
         TESTS::
 
@@ -2285,7 +2285,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         OUTPUT:
 
         ``False`` if ``cone`` is not a cone or if ``cone`` is not
-        equivalent to a cone of the fan ; ``True`` otherwise
+        equivalent to a cone of the fan, ``True`` otherwise
 
         .. NOTE::
 
