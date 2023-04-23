@@ -12,6 +12,7 @@ Elements of multivariate Laurent polynomial rings
 
 from sage.rings.integer cimport Integer
 from sage.categories.map cimport Map
+from sage.structure.element cimport CommutativeAlgebraElement, Element, ModuleElement, RingElement
 from sage.structure.element import is_Element, coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
@@ -68,7 +69,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         ::
 
-            sage: from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_mpair
+            sage: from sage.rings.polynomial.laurent_polynomial_mpair import LaurentPolynomial_mpair
             sage: LaurentPolynomial_mpair(L, {(1,2): 1/42}, mon=(-3, -3))
             1/42*w^-2*z^-1
 

@@ -43,7 +43,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.lazy_import import LazyImport
-from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_univariate
+from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial, LaurentPolynomial_univariate
 from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import parent
@@ -527,7 +527,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
         if isinstance(x, Expression):
             return x.laurent_polynomial(ring=self)
 
-        elif isinstance(x, (LaurentPolynomial_univariate, LaurentPolynomial_mpair)):
+        elif isinstance(x, LaurentPolynomial):
             P = x.parent()
             if set(self.variable_names()) & set(P.variable_names()):
                 if isinstance(x, LaurentPolynomial_univariate):
@@ -743,7 +743,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         elif isinstance(x, Expression):
             return x.laurent_polynomial(ring=self)
 
-        elif isinstance(x, (LaurentPolynomial_univariate, LaurentPolynomial_mpair)):
+        elif isinstance(x, LaurentPolynomial):
             if self.variable_names() == P.variable_names():
                 # No special processing needed here;
                 #   handled by LaurentPolynomial_mpair.__init__
