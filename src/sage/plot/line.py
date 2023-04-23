@@ -391,14 +391,14 @@ def line2d(points, **options):
 
         sage: line([])      #returns an empty plot
         Graphics object consisting of 0 graphics primitives
-        sage: import numpy; line(numpy.array([]))
+        sage: import numpy; line(numpy.array([]))                                       # optional - numpy
         Graphics object consisting of 0 graphics primitives
         sage: line([(1,1)])
         Graphics object consisting of 1 graphics primitive
 
     A line with numpy arrays::
 
-        sage: line(numpy.array([[1,2], [3,4]]))
+        sage: line(numpy.array([[1,2], [3,4]]))                                         # optional - numpy
         Graphics object consisting of 1 graphics primitive
 
     A line with a legend::

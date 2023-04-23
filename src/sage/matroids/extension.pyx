@@ -59,7 +59,7 @@ cdef class CutNode:
 
         EXAMPLES::
 
-            sage: len(list(matroids.named_matroids.Fano().linear_subclasses()))  # indirect doctest
+            sage: len(list(matroids.named_matroids.Fano().linear_subclasses()))  # indirect doctest     # optional - sage.libs.pari
             16
         """
         cdef CutNode node

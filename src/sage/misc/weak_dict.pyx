@@ -339,13 +339,13 @@ cdef class WeakValueDictionary(dict):
 
         EXAMPLES::
 
-            sage: L = [(p,GF(p)) for p in prime_range(10)]
+            sage: L = [(p, GF(p)) for p in prime_range(10)]                             # optional - sage.rings.finite_rings
             sage: import sage.misc.weak_dict
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
             sage: len(D)
             0
-            sage: D = sage.misc.weak_dict.WeakValueDictionary(L)
-            sage: len(D) == len(L)
+            sage: D = sage.misc.weak_dict.WeakValueDictionary(L)                        # optional - sage.rings.finite_rings
+            sage: len(D) == len(L)                                                      # optional - sage.rings.finite_rings
             True
         """
         try:
@@ -429,29 +429,29 @@ cdef class WeakValueDictionary(dict):
         EXAMPLES::
 
             sage: import sage.misc.weak_dict
-            sage: L = [(p,GF(p)) for p in prime_range(10)]
-            sage: D = sage.misc.weak_dict.WeakValueDictionary(L)
-            sage: len(D)
+            sage: L = [(p, GF(p)) for p in prime_range(10)]                             # optional - sage.rings.finite_rings
+            sage: D = sage.misc.weak_dict.WeakValueDictionary(L)                        # optional - sage.rings.finite_rings
+            sage: len(D)                                                                # optional - sage.rings.finite_rings
             4
 
         The value for an existing key is returned and not overridden::
 
-            sage: D.setdefault(5, ZZ)
+            sage: D.setdefault(5, ZZ)                                                   # optional - sage.rings.finite_rings
             Finite Field of size 5
-            sage: D[5]
+            sage: D[5]                                                                  # optional - sage.rings.finite_rings
             Finite Field of size 5
 
         For a non-existing key, the default value is stored and returned::
 
-            sage: 4 in D
+            sage: 4 in D                                                                # optional - sage.rings.finite_rings
             False
-            sage: D.setdefault(4, ZZ)
+            sage: D.setdefault(4, ZZ)                                                   # optional - sage.rings.finite_rings
             Integer Ring
-            sage: 4 in D
+            sage: 4 in D                                                                # optional - sage.rings.finite_rings
             True
-            sage: D[4]
+            sage: D[4]                                                                  # optional - sage.rings.finite_rings
             Integer Ring
-            sage: len(D)
+            sage: len(D)                                                                # optional - sage.rings.finite_rings
             5
 
         TESTS:
@@ -460,7 +460,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D.setdefault(matrix([]),ZZ)
+            sage: D.setdefault(matrix([]), ZZ)                                          # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: mutable matrices are unhashable
@@ -535,7 +535,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D[matrix([])] = ZZ
+            sage: D[matrix([])] = ZZ                                                    # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: mutable matrices are unhashable
@@ -560,15 +560,15 @@ cdef class WeakValueDictionary(dict):
         EXAMPLES::
 
             sage: import sage.misc.weak_dict
-            sage: L = [GF(p) for p in prime_range(10^3)]
-            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
-            sage: 20 in D
+            sage: L = [GF(p) for p in prime_range(10^3)]                                # optional - sage.rings.finite_rings
+            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))             # optional - sage.rings.finite_rings
+            sage: 20 in D                                                               # optional - sage.rings.finite_rings
             True
-            sage: D.pop(20)
+            sage: D.pop(20)                                                             # optional - sage.rings.finite_rings
             Finite Field of size 73
-            sage: 20 in D
+            sage: 20 in D                                                               # optional - sage.rings.finite_rings
             False
-            sage: D.pop(20)
+            sage: D.pop(20)                                                             # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             KeyError: 20
@@ -579,7 +579,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D.pop(matrix([]))
+            sage: D.pop(matrix([]))                                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: mutable matrices are unhashable
@@ -636,17 +636,17 @@ cdef class WeakValueDictionary(dict):
         EXAMPLES::
 
             sage: import sage.misc.weak_dict
-            sage: L = [GF(p) for p in prime_range(10^3)]
-            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
-            sage: 100 in D
+            sage: L = [GF(p) for p in prime_range(10^3)]                                # optional - sage.rings.finite_rings
+            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))             # optional - sage.rings.finite_rings
+            sage: 100 in D                                                              # optional - sage.rings.finite_rings
             True
-            sage: 200 in D
+            sage: 200 in D                                                              # optional - sage.rings.finite_rings
             False
-            sage: D.get(100, "not found")
+            sage: D.get(100, "not found")                                               # optional - sage.rings.finite_rings
             Finite Field of size 547
-            sage: D.get(200, "not found")
+            sage: D.get(200, "not found")                                               # optional - sage.rings.finite_rings
             'not found'
-            sage: D.get(200) is None
+            sage: D.get(200) is None                                                    # optional - sage.rings.finite_rings
             True
 
         TESTS:
@@ -655,7 +655,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D.get(matrix([]))
+            sage: D.get(matrix([]))                                                     # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: mutable matrices are unhashable
@@ -695,7 +695,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D[matrix([])]
+            sage: D[matrix([])]                                                         # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: mutable matrices are unhashable
@@ -739,7 +739,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: matrix([]) in D
+            sage: matrix([]) in D                                                       # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: mutable matrices are unhashable
@@ -1193,13 +1193,13 @@ cdef class CachedWeakValueDictionary(WeakValueDictionary):
 
         EXAMPLES::
 
-            sage: L = [(p,GF(p)) for p in prime_range(10)]
+            sage: L = [(p, GF(p)) for p in prime_range(10)]                             # optional - sage.rings.finite_rings
             sage: from sage.misc.weak_dict import CachedWeakValueDictionary
-            sage: D = CachedWeakValueDictionary()
-            sage: len(D)
+            sage: D = CachedWeakValueDictionary()                                       # optional - sage.rings.finite_rings
+            sage: len(D)                                                                # optional - sage.rings.finite_rings
             0
-            sage: D = CachedWeakValueDictionary(L)
-            sage: len(D) == len(L)
+            sage: D = CachedWeakValueDictionary(L)                                      # optional - sage.rings.finite_rings
+            sage: len(D) == len(L)                                                      # optional - sage.rings.finite_rings
             True
 
         A :class:`CachedWeakValueDictionary` with a cache size of zero

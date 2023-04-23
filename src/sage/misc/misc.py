@@ -723,19 +723,19 @@ def compose(f, g):
 
         sage: def g(x): return 3*x
         sage: def f(x): return x + 1
-        sage: h1 = compose(f,g)
-        sage: h2 = compose(g,f)
-        sage: _ = var ('x')
-        sage: h1(x)
+        sage: h1 = compose(f, g)
+        sage: h2 = compose(g, f)
+        sage: _ = var('x')                                                              # optional - sage.symbolic
+        sage: h1(x)                                                                     # optional - sage.symbolic
         3*x + 1
-        sage: h2(x)
+        sage: h2(x)                                                                     # optional - sage.symbolic
         3*x + 3
 
     ::
 
-        sage: _ = function('f g')
-        sage: _ = var ('x')
-        sage: compose(f,g)(x)
+        sage: _ = function('f g')                                                       # optional - sage.symbolic
+        sage: _ = var('x')                                                              # optional - sage.symbolic
+        sage: compose(f, g)(x)                                                          # optional - sage.symbolic
         f(g(x))
 
     """
@@ -759,22 +759,22 @@ def nest(f, n, x):
     EXAMPLES::
 
         sage: def f(x): return x^2 + 1
-        sage: x = var('x')
-        sage: nest(f, 3, x)
+        sage: x = var('x')                                                              # optional - sage.symbolic
+        sage: nest(f, 3, x)                                                             # optional - sage.symbolic
         ((x^2 + 1)^2 + 1)^2 + 1
 
     ::
 
-        sage: _ = function('f')
-        sage: _ = var('x')
-        sage: nest(f, 10, x)
+        sage: _ = function('f')                                                         # optional - sage.symbolic
+        sage: _ = var('x')                                                              # optional - sage.symbolic
+        sage: nest(f, 10, x)                                                            # optional - sage.symbolic
         f(f(f(f(f(f(f(f(f(f(x))))))))))
 
     ::
 
-        sage: _ = function('f')
-        sage: _ = var('x')
-        sage: nest(f, 0, x)
+        sage: _ = function('f')                                                         # optional - sage.symbolic
+        sage: _ = var('x')                                                              # optional - sage.symbolic
+        sage: nest(f, 0, x)                                                             # optional - sage.symbolic
         x
 
     """
@@ -821,15 +821,15 @@ class BackslashOperator:
         """
         EXAMPLES::
 
-            sage: A = random_matrix(ZZ, 4)
-            sage: while A.rank() != 4:
+            sage: A = random_matrix(ZZ, 4)                                              # optional - sage.modules
+            sage: while A.rank() != 4:                                                  # optional - sage.modules
             ....:     A = random_matrix(ZZ, 4)
-            sage: B = random_matrix(ZZ, 4)
-            sage: temp = A * BackslashOperator()
-            sage: temp.left is A
+            sage: B = random_matrix(ZZ, 4)                                              # optional - sage.modules
+            sage: temp = A * BackslashOperator()                                        # optional - sage.modules
+            sage: temp.left is A                                                        # optional - sage.modules
             True
-            sage: X = temp * B
-            sage: A * X == B
+            sage: X = temp * B                                                          # optional - sage.modules
+            sage: A * X == B                                                            # optional - sage.modules
             True
         """
         self.left = left
@@ -839,16 +839,16 @@ class BackslashOperator:
         r"""
         EXAMPLES::
 
-            sage: A = matrix(RDF, 5, 5, 2)
-            sage: b = vector(RDF, 5, range(5))
-            sage: v = A \ b
-            sage: v.zero_at(1e-19)  # On at least one platform, we get a "negative zero"
+            sage: A = matrix(RDF, 5, 5, 2)                                              # optional - sage.modules
+            sage: b = vector(RDF, 5, range(5))                                          # optional - sage.modules
+            sage: v = A \ b                                                             # optional - sage.modules
+            sage: v.zero_at(1e-19)  # On at least one platform, we get a "negative zero"   # optional - sage.modules
             (0.0, 0.5, 1.0, 1.5, 2.0)
-            sage: v = A._backslash_(b)
-            sage: v.zero_at(1e-19)
+            sage: v = A._backslash_(b)                                                  # optional - sage.modules
+            sage: v.zero_at(1e-19)                                                      # optional - sage.modules
             (0.0, 0.5, 1.0, 1.5, 2.0)
-            sage: v = A * BackslashOperator() * b
-            sage: v.zero_at(1e-19)
+            sage: v = A * BackslashOperator() * b                                       # optional - sage.modules
+            sage: v.zero_at(1e-19)                                                      # optional - sage.modules
             (0.0, 0.5, 1.0, 1.5, 2.0)
         """
         return self.left._backslash_(right)
@@ -893,10 +893,10 @@ def is_iterator(it) -> bool:
         sage: list(x)
         [4, 3, 2, 1]
 
-        sage: P = Partitions(3)
-        sage: is_iterator(P)
+        sage: P = Partitions(3)                                                         # optional - sage.combinat
+        sage: is_iterator(P)                                                            # optional - sage.combinat
         False
-        sage: is_iterator(iter(P))
+        sage: is_iterator(iter(P))                                                      # optional - sage.combinat
         True
     """
     # see trac #7398 for a discussion

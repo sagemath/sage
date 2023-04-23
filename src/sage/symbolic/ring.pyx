@@ -1167,17 +1167,17 @@ cdef class NumpyToSRMorphism(Morphism):
 
     We check that :trac:`8949` and :trac:`9769` are fixed (see also :trac:`18076`)::
 
-        sage: import numpy
+        sage: import numpy                                                              # optional - numpy
         sage: f(x) = x^2
-        sage: f(numpy.int8('2'))
+        sage: f(numpy.int8('2'))                                                        # optional - numpy
         4
-        sage: f(numpy.int32('3'))
+        sage: f(numpy.int32('3'))                                                       # optional - numpy
         9
 
     Note that the answer is a Sage integer and not a numpy type::
 
-        sage: a = f(numpy.int8('2')).pyobject()
-        sage: type(a)
+        sage: a = f(numpy.int8('2')).pyobject()                                         # optional - numpy
+        sage: type(a)                                                                   # optional - numpy
         <class 'sage.rings.integer.Integer'>
 
     This behavior also applies to standard functions::
@@ -1200,15 +1200,15 @@ cdef class NumpyToSRMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: import numpy
+            sage: import numpy                                                          # optional - numpy
             sage: from sage.symbolic.ring import NumpyToSRMorphism
-            sage: f = NumpyToSRMorphism(numpy.float64)
-            sage: f(numpy.float64('2.0'))
+            sage: f = NumpyToSRMorphism(numpy.float64)                                  # optional - numpy
+            sage: f(numpy.float64('2.0'))                                               # optional - numpy
             2.0
-            sage: _.parent()
+            sage: _.parent()                                                            # optional - numpy
             Symbolic Ring
 
-            sage: NumpyToSRMorphism(str)
+            sage: NumpyToSRMorphism(str)                                                # optional - numpy
             Traceback (most recent call last):
             ...
             TypeError: <... 'str'> is not a numpy number type
@@ -1235,18 +1235,18 @@ cdef class NumpyToSRMorphism(Morphism):
         This should be called when coercing or converting a NumPy
         float or complex to the Symbolic Ring::
 
-            sage: import numpy
-            sage: SR(numpy.int32('1')).pyobject().parent()
+            sage: import numpy                                                          # optional - numpy
+            sage: SR(numpy.int32('1')).pyobject().parent()                              # optional - numpy
             Integer Ring
-            sage: SR(numpy.int64('-2')).pyobject().parent()
+            sage: SR(numpy.int64('-2')).pyobject().parent()                             # optional - numpy
             Integer Ring
 
-            sage: SR(numpy.float16('1')).pyobject().parent()
+            sage: SR(numpy.float16('1')).pyobject().parent()                            # optional - numpy
             Real Double Field
-            sage: SR(numpy.float64('2.0')).pyobject().parent()
+            sage: SR(numpy.float64('2.0')).pyobject().parent()                          # optional - numpy
             Real Double Field
 
-            sage: SR(numpy.complex64(1jr)).pyobject().parent()
+            sage: SR(numpy.complex64(1jr)).pyobject().parent()                          # optional - numpy
             Complex Double Field
         """
         return new_Expression_from_pyobject(self.codomain(), self._intermediate_ring(a), True)
@@ -1260,13 +1260,13 @@ cdef class UnderscoreSageMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: import sympy
+            sage: import sympy                                                          # optional - sympy
             sage: from sage.symbolic.ring import UnderscoreSageMorphism
-            sage: b = sympy.var('b')
-            sage: f = UnderscoreSageMorphism(type(b), SR)
-            sage: f(b)
+            sage: b = sympy.var('b')                                                    # optional - sympy
+            sage: f = UnderscoreSageMorphism(type(b), SR)                               # optional - sympy
+            sage: f(b)                                                                  # optional - sympy
             b
-            sage: _.parent()
+            sage: _.parent()                                                            # optional - sympy
             Symbolic Ring
         """
         import sage.categories.homset
@@ -1282,9 +1282,9 @@ cdef class UnderscoreSageMorphism(Morphism):
         This should be called when coercing or converting a SymPy
         object to the Symbolic Ring::
 
-            sage: import sympy
-            sage: b = sympy.var('b')
-            sage: bool(SR(b) == SR(b._sage_()))
+            sage: import sympy                                                          # optional - sympy
+            sage: b = sympy.var('b')                                                    # optional - sympy
+            sage: bool(SR(b) == SR(b._sage_()))                                         # optional - sympy
             True
         """
         return self.codomain()(a._sage_())

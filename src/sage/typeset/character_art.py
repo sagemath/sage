@@ -58,8 +58,8 @@ class CharacterArt(SageObject):
 
         EXAMPLES::
 
-            sage: i = var('i')
-            sage: ascii_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))
+            sage: i = var('i')                                                          # optional - sage.symbolic
+            sage: ascii_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))                       # optional - sage.symbolic
              pi*x
             e
 

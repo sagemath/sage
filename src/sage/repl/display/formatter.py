@@ -24,17 +24,17 @@ generally, all sage expression as an ASCII art object::
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
     sage: shell.run_cell('%display ascii_art')
-    sage: shell.run_cell('integral(x^2/pi^x, x)')
+    sage: shell.run_cell('integral(x^2/pi^x, x)')                                       # optional - sage.symbolic
        -x / 2    2                      \
     -pi  *\x *log (pi) + 2*x*log(pi) + 2/
     --------------------------------------
                      3
                    log (pi)
-    sage: shell.run_cell("i = var('i')")
-    sage: shell.run_cell('sum(i*x^i, i, 0, 10)')
+    sage: shell.run_cell("i = var('i')")                                                # optional - sage.symbolic
+    sage: shell.run_cell('sum(i*x^i, i, 0, 10)')                                        # optional - sage.symbolic
         10      9      8      7      6      5      4      3      2
     10*x   + 9*x  + 8*x  + 7*x  + 6*x  + 5*x  + 4*x  + 3*x  + 2*x  + x
-    sage: shell.run_cell('StandardTableaux(4).list()')
+    sage: shell.run_cell('StandardTableaux(4).list()')                                  # optional - sage.combinat
     [
     [                                                                  1  4    1  3
     [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
@@ -132,8 +132,8 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('%display ascii_art')   # indirect doctest
-            sage: shell.run_cell("i = var('i')")
-            sage: shell.run_cell('sum(i*x^i, i, 0, 10)')
+            sage: shell.run_cell("i = var('i')")                                        # optional - sage.symbolic
+            sage: shell.run_cell('sum(i*x^i, i, 0, 10)')                                # optional - sage.symbolic
                 10      9      8      7      6      5      4      3      2
             10*x   + 9*x  + 8*x  + 7*x  + 6*x  + 5*x  + 4*x  + 3*x  + 2*x  + x
             sage: shell.run_cell('%display default')

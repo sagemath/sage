@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Iterators over finite submodules of a `\ZZ`-module
 

@@ -123,7 +123,7 @@ class InterfaceMagic():
             ('maxima', 'cell')
             sage: 'gap' in MockShell.magics
             True
-            sage: 'maxima' in MockShell.magics
+            sage: 'maxima' in MockShell.magics                                          # optional - sage.symbolic
             True
         """
         if shell is None:

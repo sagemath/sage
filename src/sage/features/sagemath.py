@@ -134,6 +134,53 @@ class sage__groups(JoinFeature):
                              [PythonModule('sage.groups.perm_gps.permgroup')])
 
 
+class sage__libs__flint(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.flint`
+    and other modules depending on FLINT and arb.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__libs__flint
+        sage: sage__libs__flint().is_present()                       # optional - sage.libs.flint
+        FeatureTestResult('sage.libs.flint', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__flint
+            sage: isinstance(sage__libs__flint(), sage__libs__flint)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.flint',
+                             [PythonModule('sage.libs.flint.flint'),
+                              PythonModule('sage.libs.arb.arith')])
+
+
+class sage__libs__ntl(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.ntl`
+    and other modules depending on NTL and arb.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__libs__ntl
+        sage: sage__libs__ntl().is_present()                       # optional - sage.libs.ntl
+        FeatureTestResult('sage.libs.ntl', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__ntl
+            sage: isinstance(sage__libs__ntl(), sage__libs__ntl)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.ntl',
+                             [PythonModule('sage.libs.ntl.convert')])
+
+
 class sage__libs__pari(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.pari`.
@@ -290,6 +337,28 @@ class sage__rings__padics(JoinFeature):
                              [PythonModule('sage.rings.padics.factory')])
 
 
+class sage__rings__polynomial__pbori(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.rings.polynomial.pbori`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__rings__polynomial__pbori
+        sage: sage__rings__polynomial__pbori().is_present()                       # optional - sage.rings.polynomial.pbori
+        FeatureTestResult('sage.rings.polynomial.pbori', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__rings__polynomial__pbori
+            sage: isinstance(sage__rings__polynomial__pbori(), sage__rings__polynomial__pbori)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.rings.polynomial.pbori',
+                             [PythonModule('sage.rings.polynomial.pbori.pbori')])
+
+
 class sage__rings__real_double(PythonModule):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_double`.
@@ -382,6 +451,8 @@ def all_features():
             sage__geometry__polyhedron(),
             sage__graphs(),
             sage__groups(),
+            sage__libs__flint(),
+            sage__libs__ntl(),
             sage__libs__pari(),
             sage__modules(),
             sage__plot(),
@@ -389,6 +460,7 @@ def all_features():
             sage__rings__function_field(),
             sage__rings__number_field(),
             sage__rings__padics(),
+            sage__rings__polynomial__pbori(),
             sage__rings__real_double(),
             sage__rings__real_mpfr(),
             sage__symbolic()]

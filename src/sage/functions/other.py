@@ -381,14 +381,14 @@ class Function_ceil(BuiltinFunction):
 
             sage: latex(ceil(x))
             \left \lceil x \right \rceil
-            sage: ceil(x)._sympy_()
+            sage: ceil(x)._sympy_()                                                     # optional - sympy
             ceiling(x)
 
         ::
 
-            sage: import numpy
-            sage: a = numpy.linspace(0,2,6)
-            sage: ceil(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.linspace(0,2,6)                                             # optional - numpy
+            sage: ceil(a)                                                               # optional - numpy
             array([0., 1., 1., 2., 2., 2.])
 
         Test pickling::
@@ -550,11 +550,11 @@ class Function_floor(BuiltinFunction):
 
         ::
 
-            sage: import numpy
-            sage: a = numpy.linspace(0,2,6)
-            sage: floor(a)
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.linspace(0,2,6)                                             # optional - numpy
+            sage: floor(a)                                                              # optional - numpy
             array([0., 0., 0., 1., 1., 2.])
-            sage: floor(x)._sympy_()
+            sage: floor(x)._sympy_()                                                    # optional - sympy
             floor(x)
 
         Test pickling::

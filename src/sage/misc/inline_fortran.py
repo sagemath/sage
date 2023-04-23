@@ -112,10 +112,10 @@ class InlineFortran:
             ....: C END FILE FIB1.F
             ....: '''
             sage: fortran(code, globals())
-            sage: import numpy
-            sage: a = numpy.array(range(10), dtype=float)
-            sage: fib(a, 10)
-            sage: a
+            sage: import numpy                                                          # optional - numpy
+            sage: a = numpy.array(range(10), dtype=float)                               # optional - numpy
+            sage: fib(a, 10)                                                            # optional - numpy
+            sage: a                                                                     # optional - numpy
             array([  0.,   1.,   1.,   2.,   3.,   5.,   8.,  13.,  21.,  34.])
 
         TESTS::

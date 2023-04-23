@@ -683,16 +683,17 @@ def SelectiveFormatter(formatter, skip_values):
 
         sage: from sage.plot.plot import SelectiveFormatter
         sage: import matplotlib.pyplot as plt
-        sage: import numpy
-        sage: fig=plt.figure()
-        sage: ax=fig.add_subplot(111)
-        sage: t = numpy.arange(0.0, 2.0, 0.01)
-        sage: s = numpy.sin(2*numpy.pi*t)
-        sage: p = ax.plot(t, s)
-        sage: formatter=SelectiveFormatter(ax.xaxis.get_major_formatter(),skip_values=[0,1])
-        sage: ax.xaxis.set_major_formatter(formatter)
+        sage: import numpy                                                              # optional - numpy
+        sage: fig = plt.figure()
+        sage: ax = fig.add_subplot(111)
+        sage: t = numpy.arange(0.0, 2.0, 0.01)                                          # optional - numpy
+        sage: s = numpy.sin(2*numpy.pi*t)                                               # optional - numpy
+        sage: p = ax.plot(t, s)                                                         # optional - numpy
+        sage: formatter = SelectiveFormatter(ax.xaxis.get_major_formatter(),            # optional - numpy
+        ....:                                skip_values=[0,1])
+        sage: ax.xaxis.set_major_formatter(formatter)                                   # optional - numpy
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # optional - numpy
         ....:     fig.savefig(f.name)
 
     """
@@ -717,16 +718,16 @@ def SelectiveFormatter(formatter, skip_values):
 
                     sage: from sage.plot.plot import SelectiveFormatter
                     sage: import matplotlib.pyplot as plt
-                    sage: import numpy
-                    sage: fig=plt.figure()
-                    sage: ax=fig.add_subplot(111)
-                    sage: t = numpy.arange(0.0, 2.0, 0.01)
-                    sage: s = numpy.sin(2*numpy.pi*t)
-                    sage: line=ax.plot(t, s)
-                    sage: formatter=SelectiveFormatter(ax.xaxis.get_major_formatter(),skip_values=[0,1])
-                    sage: ax.xaxis.set_major_formatter(formatter)
+                    sage: import numpy                                                                                  # optional - numpy
+                    sage: fig = plt.figure()
+                    sage: ax = fig.add_subplot(111)
+                    sage: t = numpy.arange(0.0, 2.0, 0.01)                                                              # optional - numpy
+                    sage: s = numpy.sin(2*numpy.pi*t)                                                                   # optional - numpy
+                    sage: line = ax.plot(t, s)                                                                          # optional - numpy
+                    sage: formatter = SelectiveFormatter(ax.xaxis.get_major_formatter(), skip_values=[0,1])             # optional - numpy
+                    sage: ax.xaxis.set_major_formatter(formatter)                                                       # optional - numpy
                     sage: from tempfile import NamedTemporaryFile
-                    sage: with NamedTemporaryFile(suffix=".png") as f:
+                    sage: with NamedTemporaryFile(suffix=".png") as f:                                                  # optional - numpy
                     ....:     fig.savefig(f.name)
                 """
                 self.formatter=formatter
@@ -1139,9 +1140,12 @@ def plot(funcs, *args, **kwds):
     By default, color will change from one primitive to the next.
     This may be controlled by modifying ``color`` option::
 
-        sage: g1 = plot([x*exp(-n*x^2)/.4 for n in [1..3]], (0, 2), color='blue', aspect_ratio=.8); g1
+        sage: g1 = plot([x*exp(-n*x^2)/.4 for n in [1..3]], (0, 2),
+        ....:           color='blue', aspect_ratio=.8); g1
         Graphics object consisting of 3 graphics primitives
-        sage: g2 = plot([x*exp(-n*x^2)/.4 for n in [1..3]], (0, 2), color=['red','red','green'], linestyle=['-','--','-.'], aspect_ratio=.8); g2
+        sage: g2 = plot([x*exp(-n*x^2)/.4 for n in [1..3]], (0, 2),
+        ....:           color=['red','red','green'], linestyle=['-','--','-.'],
+        ....:           aspect_ratio=.8); g2
         Graphics object consisting of 3 graphics primitives
 
     .. PLOT::
@@ -1601,7 +1605,7 @@ def plot(funcs, *args, **kwds):
         sage: p2 = plot(sin(x), -pi, pi, fill='min', fillalpha=1)
         sage: p3 = plot(sin(x), -pi, pi, fill='max')
         sage: p4 = plot(sin(x), -pi, pi, fill=(1-x)/3, fillcolor='blue', fillalpha=.2)
-        sage: graphics_array([[p1, p2], [p3, p4]]).show(frame=True, axes=False) # long time
+        sage: graphics_array([[p1, p2], [p3, p4]]).show(frame=True, axes=False)  # long time
 
     .. PLOT::
 
@@ -1615,11 +1619,15 @@ def plot(funcs, *args, **kwds):
     The basic options for filling a list of plots::
 
         sage: (f1, f2) = x*exp(-1*x^2)/.35, x*exp(-2*x^2)/.35
-        sage: p1 = plot([f1, f2], -pi, pi, fill={1: [0]}, fillcolor='blue', fillalpha=.25, color='blue')
-        sage: p2 = plot([f1, f2], -pi, pi, fill={0: x/3, 1:[0]}, color=['blue'])
-        sage: p3 = plot([f1, f2], -pi, pi, fill=[0, [0]], fillcolor=['orange','red'], fillalpha=1, color={1: 'blue'})
-        sage: p4 = plot([f1, f2], (x,-pi, pi), fill=[x/3, 0], fillcolor=['grey'], color=['red', 'blue'])
-        sage: graphics_array([[p1, p2], [p3, p4]]).show(frame=True, axes=False) # long time
+        sage: p1 = plot([f1, f2], -pi, pi, fill={1: [0]},
+        ....:           fillcolor='blue', fillalpha=.25, color='blue')
+        sage: p2 = plot([f1, f2], -pi, pi, fill={0: x/3, 1:[0]},
+        ....:           color=['blue'])
+        sage: p3 = plot([f1, f2], -pi, pi, fill=[0, [0]],
+        ....:           fillcolor=['orange','red'], fillalpha=1, color={1: 'blue'})
+        sage: p4 = plot([f1, f2], (x,-pi, pi), fill=[x/3, 0],
+        ....:           fillcolor=['grey'], color=['red', 'blue'])
+        sage: graphics_array([[p1, p2], [p3, p4]]).show(frame=True, axes=False)  # long time
 
     .. PLOT::
 
@@ -1670,9 +1678,11 @@ def plot(funcs, *args, **kwds):
     like ``i:j`` will fill between the ith function and the line y=j::
 
         sage: def b(n): return lambda x: bessel_J(n, x) + 0.5*(n-1)
-        sage: plot([b(c) for c in [1..5]], 0, 20, fill={i:[i-1] for i in [1..4]}, color={i:'blue' for i in [1..5]}, aspect_ratio=3, ymax=3)
+        sage: plot([b(c) for c in [1..5]], 0, 20, fill={i: [i-1] for i in [1..4]},
+        ....:      color={i: 'blue' for i in [1..5]}, aspect_ratio=3, ymax=3)
         Graphics object consisting of 9 graphics primitives
-        sage: plot([b(c) for c in [1..5]], 0, 20, fill={i:i-1 for i in [1..4]}, color='blue', aspect_ratio=3) # long time
+        sage: plot([b(c) for c in [1..5]], 0, 20, fill={i: i-1 for i in [1..4]},  # long time
+        ....:      color='blue', aspect_ratio=3)
         Graphics object consisting of 9 graphics primitives
 
     .. PLOT::
@@ -1687,7 +1697,8 @@ def plot(funcs, *args, **kwds):
     Extra options will get passed on to :meth:`~sage.plot.graphics.Graphics.show`,
     as long as they are valid::
 
-        sage: plot(sin(x^2), (x, -3, 3), title=r'Plot of $\sin(x^2)$', axes_labels=['$x$','$y$']) # These labels will be nicely typeset
+        sage: plot(sin(x^2), (x, -3, 3),  # These labels will be nicely typeset
+        ....:      title=r'Plot of $\sin(x^2)$', axes_labels=['$x$','$y$'])
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -1697,7 +1708,8 @@ def plot(funcs, *args, **kwds):
 
     ::
 
-        sage: plot(sin(x^2), (x, -3, 3), title='Plot of sin(x^2)', axes_labels=['x','y']) # These will not
+        sage: plot(sin(x^2), (x, -3, 3),  # These will not
+        ....:      title='Plot of sin(x^2)', axes_labels=['x','y'])
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -1707,7 +1719,8 @@ def plot(funcs, *args, **kwds):
 
     ::
 
-        sage: plot(sin(x^2), (x, -3, 3), axes_labels=['x','y'], axes_labels_size=2.5) # Large axes labels (w.r.t. the tick marks)
+        sage: plot(sin(x^2), (x, -3, 3),  # Large axes labels (w.r.t. the tick marks)
+        ....:      axes_labels=['x','y'], axes_labels_size=2.5)
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -1719,7 +1732,7 @@ def plot(funcs, *args, **kwds):
 
         sage: plot(sin(x^2), (x, -3, 3), figsize=[8,2])
         Graphics object consisting of 1 graphics primitive
-        sage: plot(sin(x^2), (x, -3, 3)).show(figsize=[8,2]) # These are equivalent
+        sage: plot(sin(x^2), (x, -3, 3)).show(figsize=[8,2])  # These are equivalent
 
     .. PLOT::
 
@@ -1731,17 +1744,19 @@ def plot(funcs, *args, **kwds):
 
     ::
 
-        sage: plot(sin(pi*x), (x, -8, 8), ticks=[[-7,-3,0,3,7],[-1/2,0,1/2]])
+        sage: plot(sin(pi*x), (x, -8, 8), ticks=[[-7,-3,0,3,7], [-1/2,0,1/2]])
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        g = plot(sin(pi*x), (x, -8, 8), ticks=[[-7,-3,0,3,7],[-1/2,0,1/2]])
+        g = plot(sin(pi*x), (x, -8, 8), ticks=[[-7,-3,0,3,7], [-1/2,0,1/2]])
         sphinx_plot(g)
 
     ::
 
-        sage: plot(2*x + 1, (x, 0, 5), ticks=[[0, 1, e, pi, sqrt(20)], [1, 3, 2*e + 1, 2*pi + 1, 2*sqrt(20) + 1]], tick_formatter="latex")
+        sage: plot(2*x + 1, (x, 0, 5), tick_formatter="latex",
+        ....:     ticks=[[0, 1, e, pi, sqrt(20)],
+        ....:            [1, 3, 2*e + 1, 2*pi + 1, 2*sqrt(20) + 1]])
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -1753,7 +1768,7 @@ def plot(funcs, *args, **kwds):
 
     ::
 
-        sage: plot(sin(x),(x,0,2*pi),ticks=pi/3,tick_formatter=pi)
+        sage: plot(sin(x), (x,0,2*pi), ticks=pi/3, tick_formatter=pi)
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -1763,12 +1778,13 @@ def plot(funcs, *args, **kwds):
 
     You can even have custom tick labels along with custom positioning. ::
 
-        sage: plot(x**2, (x,0,3), ticks=[[1,2.5],[0.5,1,2]], tick_formatter=[["$x_1$","$x_2$"],["$y_1$","$y_2$","$y_3$"]])
+        sage: plot(x**2, (x,0,3), ticks=[[1,2.5], [0.5,1,2]],
+        ....:      tick_formatter=[["$x_1$","$x_2$"], ["$y_1$","$y_2$","$y_3$"]])
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        g = plot(x**2, (x,0,3), ticks=[[1,2.5],[0.5,1,2]], tick_formatter=[["$x_1$","$x_2$"],["$y_1$","$y_2$","$y_3$"]])
+        g = plot(x**2, (x,0,3), ticks=[[1,2.5],[0.5,1,2]], tick_formatter=[["$x_1$","$x_2$"], ["$y_1$","$y_2$","$y_3$"]])
         sphinx_plot(g)
 
     You can force Type 1 fonts in your figures by providing the relevant
@@ -1859,7 +1875,7 @@ def plot(funcs, *args, **kwds):
 
         sage: plot(arcsec(x/2), -2, 2)  # plot should be empty; no valid points
         Graphics object consisting of 0 graphics primitives
-        sage: plot(sqrt(x^2-1), -2, 2)  # [-1, 1] is excluded automatically
+        sage: plot(sqrt(x^2 - 1), -2, 2)  # [-1, 1] is excluded automatically
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -2541,7 +2557,7 @@ def parametric_plot(funcs, *args, **kwargs):
     is 1, so that circles look like circles. ::
 
         sage: t = var('t')
-        sage: parametric_plot( (cos(t), sin(t)), (t, 0, 2*pi))
+        sage: parametric_plot((cos(t), sin(t)), (t, 0, 2*pi))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -2552,7 +2568,7 @@ def parametric_plot(funcs, *args, **kwargs):
 
     ::
 
-        sage: parametric_plot( (sin(t), sin(2*t)), (t, 0, 2*pi), color=hue(0.6) )
+        sage: parametric_plot((sin(t), sin(2*t)), (t, 0, 2*pi), color=hue(0.6) )
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -2581,23 +2597,25 @@ def parametric_plot(funcs, *args, **kwargs):
 
     .. PLOT::
 
-        t =var('t')
+        t = var('t')
         g = parametric_plot((t, t**2), (t, -4, 4), fill=True)
         sphinx_plot(g)
 
     A filled Hypotrochoid::
 
-        sage: parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x,0, 8*pi), fill=True)
+        sage: parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)],
+        ....:                 (x, 0, 8*pi), fill=True)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
 
-        g = parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x,0, 8*pi), fill=True)
+        g = parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x, 0, 8*pi), fill=True)
         sphinx_plot(g)
 
     ::
 
-        sage: parametric_plot( (5*cos(x), 5*sin(x), x), (x,-12, 12), plot_points=150, color="red") # long time
+        sage: parametric_plot((5*cos(x), 5*sin(x), x), (x, -12, 12),  # long time
+        ....:                 plot_points=150, color="red")
         Graphics3d Object
 
     .. PLOT::
@@ -2608,8 +2626,8 @@ def parametric_plot(funcs, *args, **kwargs):
 
     ::
 
-        sage: y=var('y')
-        sage: parametric_plot( (5*cos(x), x*y, cos(x*y)), (x, -4,4), (y,-4,4)) # long time`
+        sage: y = var('y')
+        sage: parametric_plot((5*cos(x), x*y, cos(x*y)), (x, -4, 4), (y, -4, 4))  # long time`
         Graphics3d Object
 
     .. PLOT::
@@ -2621,8 +2639,8 @@ def parametric_plot(funcs, *args, **kwargs):
 
     ::
 
-        sage: t=var('t')
-        sage: parametric_plot( vector((sin(t), sin(2*t))), (t, 0, 2*pi), color='green') # long time
+        sage: t = var('t')
+        sage: parametric_plot(vector((sin(t), sin(2*t))), (t, 0, 2*pi), color='green') # long time
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -2693,8 +2711,8 @@ def parametric_plot(funcs, *args, **kwargs):
 
     One test for :trac:`7165`::
 
-        sage: m = SR.var('m')
-        sage: parametric_plot([real(exp(i*m)),imaginary(exp(i*m))], (m,0,7))
+        sage: m = SR.var('m')                                                           # optional - sage.symbolic
+        sage: parametric_plot([real(exp(i*m)), imaginary(exp(i*m))], (m, 0, 7))         # optional - sage.symbolic
         Graphics object consisting of 1 graphics primitive
     """
     num_ranges = 0
@@ -2797,7 +2815,8 @@ def polar_plot(funcs, *args, **kwds):
 
     Fill the area between two functions::
 
-        sage: polar_plot(cos(4*x) + 1.5, 0, 2*pi, fill=0.5 * cos(4*x) + 2.5, fillcolor='orange')
+        sage: polar_plot(cos(4*x) + 1.5, 0, 2*pi, fill=0.5 * cos(4*x) + 2.5,
+        ....:            fillcolor='orange')
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -2807,7 +2826,8 @@ def polar_plot(funcs, *args, **kwds):
 
     Fill the area between several spirals::
 
-        sage: polar_plot([(1.2+k*0.2)*log(x) for k in range(6)], 1, 3 * pi, fill={0: [1], 2: [3], 4: [5]})
+        sage: polar_plot([(1.2+k*0.2)*log(x) for k in range(6)], 1, 3 * pi,
+        ....:            fill={0: [1], 2: [3], 4: [5]})
         Graphics object consisting of 9 graphics primitives
 
     .. PLOT::
@@ -2863,7 +2883,7 @@ def list_plot(data, plotjoined=False, **kwargs):
 
     EXAMPLES::
 
-        sage: list_plot([i^2 for i in range(5)]) # long time
+        sage: list_plot([i^2 for i in range(5)])  # long time
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -2896,8 +2916,8 @@ def list_plot(data, plotjoined=False, **kwargs):
 
     You can provide a numpy array.::
 
-        sage: import numpy
-        sage: list_plot(numpy.arange(10))
+        sage: import numpy                                                              # optional - numpy
+        sage: list_plot(numpy.arange(10))                                               # optional - numpy
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -2908,7 +2928,7 @@ def list_plot(data, plotjoined=False, **kwargs):
 
     ::
 
-        sage: list_plot(numpy.array([[1,2], [2,3], [3,4]]))
+        sage: list_plot(numpy.array([[1,2], [2,3], [3,4]]))                             # optional - numpy
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -2976,7 +2996,9 @@ def list_plot(data, plotjoined=False, **kwargs):
         sage: list_plot(x_coords, y_coords)
         Traceback (most recent call last):
         ...
-        TypeError: The second argument 'plotjoined' should be boolean (True or False).  If you meant to plot two lists 'x' and 'y' against each other, use 'list_plot(list(zip(x,y)))'.
+        TypeError: The second argument 'plotjoined' should be boolean (True or False).
+        If you meant to plot two lists 'x' and 'y' against each other,
+        use 'list_plot(list(zip(x,y)))'.
 
     Dictionaries with numeric keys and values can be plotted::
 
@@ -3023,12 +3045,12 @@ def list_plot(data, plotjoined=False, **kwargs):
 
         Instead this will work. We drop the point `(0,1)`.::
 
-            sage: list_plot(list(zip(range(1,len(yl)), yl[1:])), scale='loglog') # long time
+            sage: list_plot(list(zip(range(1,len(yl)), yl[1:])), scale='loglog')  # long time
             Graphics object consisting of 1 graphics primitive
 
     We use :func:`list_plot_loglog` and plot in a different base.::
 
-        sage: list_plot_loglog(list(zip(range(1,len(yl)), yl[1:])), base=2) # long time
+        sage: list_plot_loglog(list(zip(range(1,len(yl)), yl[1:])), base=2)  # long time
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -3235,22 +3257,22 @@ def plot_semilogy(funcs, *args, **kwds):
 
     EXAMPLES::
 
-        sage: plot_semilogy(exp, (1,10)) # long time # plot in semilogy scale, base 10
+        sage: plot_semilogy(exp, (1, 10))  # long time # plot in semilogy scale, base 10
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        g = plot_semilogy(exp, (1,10)) # long time # plot in semilogy scale, base 10
+        g = plot_semilogy(exp, (1,10))  # long time # plot in semilogy scale, base 10
         sphinx_plot(g)
 
     ::
 
-        sage: plot_semilogy(exp, (1,10), base=2) # long time # with base 2
+        sage: plot_semilogy(exp, (1, 10), base=2)  # long time # with base 2
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        g = plot_semilogy(exp, (1,10), base=2) # long time # with base 2
+        g = plot_semilogy(exp, (1,10), base=2)  # long time # with base 2
         sphinx_plot(g)
 
     """
@@ -3274,19 +3296,20 @@ def list_plot_loglog(data, plotjoined=False, **kwds):
     EXAMPLES::
 
         sage: yl = [5**k for k in range(10)]; xl = [2**k for k in range(10)]
-        sage: list_plot_loglog(list(zip(xl, yl))) # long time # plot in loglog scale with base 10
+        sage: list_plot_loglog(list(zip(xl, yl)))  # long time # use loglog scale with base 10
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
         yl = [5**k for k in range(10)]
         xl = [2**k for k in range(10)]
-        g = list_plot_loglog(list(zip(xl, yl))) # long time # plot in loglog scale with base 10
+        g = list_plot_loglog(list(zip(xl, yl)))  # long time # plot in loglog scale with base 10
         sphinx_plot(g)
 
     ::
 
-        sage: list_plot_loglog(list(zip(xl, yl)), base=2.1) # long time # with base 2.1 on both axes
+        sage: list_plot_loglog(list(zip(xl, yl)),  # long time # with base 2.1 on both axes
+        ....:                  base=2.1)
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -3298,7 +3321,8 @@ def list_plot_loglog(data, plotjoined=False, **kwds):
 
     ::
 
-        sage: list_plot_loglog(list(zip(xl, yl)), base=(2,5)) # long time
+        sage: list_plot_loglog(list(zip(xl, yl)),  # long time
+        ....:                  base=(2, 5))
         Graphics object consisting of 1 graphics primitive
 
     .. warning::
@@ -3472,13 +3496,14 @@ def reshape(v, n, m):
 
     ::
 
-        sage: M = [[plot(sin(k*x),(x,-pi,pi)) for k in range(3)],[plot(cos(j*x),(x,-pi,pi)) for j in [3..5]]]
+        sage: M = [[plot(sin(k*x), (x,-pi,pi)) for k in range(3)],
+        ....:      [plot(cos(j*x), (x,-pi,pi)) for j in [3..5]]]
         sage: graphics_array(M,6,1)  # long time (up to 4s on sage.math, 2012)
         Graphics Array of size 6 x 1
 
     TESTS::
 
-        sage: L = [plot(sin(k*x),(x,-pi,pi)) for k in [1..3]]
+        sage: L = [plot(sin(k*x), (x,-pi,pi)) for k in [1..3]]
         sage: graphics_array(L,0,-1) # indirect doctest
         Traceback (most recent call last):
         ...
@@ -3539,10 +3564,10 @@ def graphics_array(array, nrows=None, ncols=None):
         sage: f(x) = sin(x)
         sage: g(x) = sin(2*x)
         sage: h(x) = sin(4*x)
-        sage: p1 = plot(f, (-2*pi,2*pi), color=hue(0.5)) # long time
-        sage: p2 = plot(g, (-2*pi,2*pi), color=hue(0.9)) # long time
-        sage: p3 = parametric_plot((f,g), (0,2*pi), color=hue(0.6)) # long time
-        sage: p4 = parametric_plot((f,h), (0,2*pi), color=hue(1.0)) # long time
+        sage: p1 = plot(f, (-2*pi,2*pi), color=hue(0.5))  # long time
+        sage: p2 = plot(g, (-2*pi,2*pi), color=hue(0.9))  # long time
+        sage: p3 = parametric_plot((f,g), (0,2*pi), color=hue(0.6))  # long time
+        sage: p4 = parametric_plot((f,h), (0,2*pi), color=hue(1.0))  # long time
 
     Now make a graphics array out of the plots::
 
@@ -3570,8 +3595,8 @@ def graphics_array(array, nrows=None, ncols=None):
 
     Here we give only one row::
 
-        sage: p1 = plot(sin,(-4,4))
-        sage: p2 = plot(cos,(-4,4))
+        sage: p1 = plot(sin, (-4,4))
+        sage: p2 = plot(cos, (-4,4))
         sage: ga = graphics_array([p1, p2])
         sage: ga
         Graphics Array of size 1 x 2
@@ -3827,7 +3852,8 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
     TESTS::
 
         sage: from sage.plot.plot import adaptive_refinement
-        sage: adaptive_refinement(sin, (0,0), (pi,0), adaptive_tolerance=0.01, adaptive_recursion=0)
+        sage: adaptive_refinement(sin, (0,0), (pi,0), adaptive_tolerance=0.01,
+        ....:                     adaptive_recursion=0)
         []
         sage: adaptive_refinement(sin, (0,0), (pi,0), adaptive_tolerance=0.01)
         [(0.125*pi, 0.3826834323650898), (0.1875*pi, 0.5555702330196022), (0.25*pi, 0.7071067811865475), (0.3125*pi, 0.8314696123025452), (0.375*pi, 0.9238795325112867), (0.4375*pi, 0.9807852804032304), (0.5*pi, 1.0), (0.5625*pi, 0.9807852804032304), (0.625*pi, 0.9238795325112867), (0.6875*pi, 0.8314696123025455), (0.75*pi, 0.7071067811865476), (0.8125*pi, 0.5555702330196022), (0.875*pi, 0.3826834323650899)]
@@ -3843,7 +3869,8 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
         sage: f(x) = sin(1/x)
         sage: n1 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_tolerance=0.01)); n1
         15
-        sage: n2 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_recursion=10, adaptive_tolerance=0.01)); n2
+        sage: n2 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_recursion=10,
+        ....:                              adaptive_tolerance=0.01)); n2
         79
         sage: n3 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_tolerance=0.001)); n3
         26

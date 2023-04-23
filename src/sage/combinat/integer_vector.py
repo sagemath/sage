@@ -92,11 +92,11 @@ def is_gale_ryser(r,s):
     EXAMPLES::
 
         sage: from sage.combinat.integer_vector import is_gale_ryser
-        sage: is_gale_ryser([4,2,2],[3,3,1,1])
+        sage: is_gale_ryser([4,2,2], [3,3,1,1])                                         # optional - sage.combinat
         True
-        sage: is_gale_ryser([4,2,1,1],[3,3,1,1])
+        sage: is_gale_ryser([4,2,1,1], [3,3,1,1])                                       # optional - sage.combinat
         True
-        sage: is_gale_ryser([3,2,1,1],[3,3,1,1])
+        sage: is_gale_ryser([3,2,1,1], [3,3,1,1])                                       # optional - sage.combinat
         False
 
     REMARK: In the literature, what we are calling a
@@ -207,14 +207,14 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
         sage: p1 = [2,2,1]
         sage: p2 = [2,2,1]
-        sage: print(gale_ryser_theorem(p1, p2))     # not tested
+        sage: print(gale_ryser_theorem(p1, p2))     # not tested                        # optional - sage.combinat
         [1 1 0]
         [1 0 1]
         [0 1 0]
-        sage: A = gale_ryser_theorem(p1, p2)
-        sage: rs = [sum(x) for x in A.rows()]
-        sage: cs = [sum(x) for x in A.columns()]
-        sage: p1 == rs; p2 == cs
+        sage: A = gale_ryser_theorem(p1, p2)                                            # optional - sage.combinat
+        sage: rs = [sum(x) for x in A.rows()]                                           # optional - sage.combinat
+        sage: cs = [sum(x) for x in A.columns()]                                        # optional - sage.combinat
+        sage: p1 == rs; p2 == cs                                                        # optional - sage.combinat
         True
         True
 
@@ -224,27 +224,27 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
         sage: p1 = [3,3,1,1]
         sage: p2 = [3,3,1,1]
-        sage: gale_ryser_theorem(p1, p2, algorithm = "ryser")
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # optional - sage.combinat
         [1 1 1 0]
         [1 1 0 1]
         [1 0 0 0]
         [0 1 0 0]
         sage: p1 = [4,2,2]
         sage: p2 = [3,3,1,1]
-        sage: gale_ryser_theorem(p1, p2, algorithm = "ryser")
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # optional - sage.combinat
         [1 1 1 1]
         [1 1 0 0]
         [1 1 0 0]
         sage: p1 = [4,2,2,0]
         sage: p2 = [3,3,1,1,0,0]
-        sage: gale_ryser_theorem(p1, p2, algorithm = "ryser")
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # optional - sage.combinat
         [1 1 1 1 0 0]
         [1 1 0 0 0 0]
         [1 1 0 0 0 0]
         [0 0 0 0 0 0]
         sage: p1 = [3,3,2,1]
         sage: p2 = [3,2,2,1,1]
-        sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))  # not tested
+        sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))  # not tested         # optional - sage.combinat
         [1 1 1 0 0]
         [1 1 0 0 1]
         [1 0 1 0 0]
@@ -253,7 +253,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
     With `0` in the sequences, and with unordered inputs::
 
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
-        sage: gale_ryser_theorem([3,3,0,1,1,0], [3,1,3,1,0], algorithm="ryser")
+        sage: gale_ryser_theorem([3,3,0,1,1,0], [3,1,3,1,0], algorithm="ryser")         # optional - sage.combinat
         [1 1 1 0 0]
         [1 0 1 1 0]
         [0 0 0 0 0]
@@ -261,7 +261,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         [0 0 1 0 0]
         [0 0 0 0 0]
         sage: p1 = [3,1,1,1,1]; p2 = [3,2,2,0]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # optional - sage.combinat
         [1 1 1 0]
         [1 0 0 0]
         [1 0 0 0]
@@ -288,17 +288,17 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         ....:        print("Algorithm %s failed with this input:" % algorithm)
         ....:        print(s1, s2)
 
-        sage: for algorithm in ["gale", "ryser"]:             # long time
+        sage: for algorithm in ["gale", "ryser"]:             # long time               # optional - sage.combinat
         ....:    for i in range(50):
         ....:       test_algorithm(algorithm, 3, 10)
 
     Null matrix::
 
-        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="gale")
+        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="gale")                   # optional - sage.combinat
         [0 0 0 0]
         [0 0 0 0]
         [0 0 0 0]
-        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="ryser")
+        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="ryser")                  # optional - sage.combinat
         [0 0 0 0]
         [0 0 0 0]
         [0 0 0 0]
@@ -595,7 +595,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
     Note that trailing zeros are ignored so that ``[3, 0]`` does not show
     up in the following list (since ``[3]`` does)::
 
-        sage: IntegerVectors(3, max_length=2).list()
+        sage: IntegerVectors(3, max_length=2).list()                                    # optional - sage.combinat
         [[3], [2, 1], [1, 2], [0, 3]]
 
     If ``n`` and ``k`` are both specified, then it returns the class
@@ -614,9 +614,9 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
     Further examples::
 
-        sage: IntegerVectors(-1, 0, min_part = 1).list()
+        sage: IntegerVectors(-1, 0, min_part=1).list()
         []
-        sage: IntegerVectors(-1, 2, min_part = 1).list()
+        sage: IntegerVectors(-1, 2, min_part=1).list()
         []
         sage: IntegerVectors(0, 0, min_part=1).list()
         [[]]
@@ -667,9 +667,9 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
     An example showing the same output by using IntegerListsLex::
 
-        sage: IntegerVectors(4, max_length=2).list()
+        sage: IntegerVectors(4, max_length=2).list()                                    # optional - sage.combinat
         [[4], [3, 1], [2, 2], [1, 3], [0, 4]]
-        sage: list(IntegerListsLex(4, max_length=2))
+        sage: list(IntegerListsLex(4, max_length=2))                                    # optional - sage.combinat
         [[4], [3, 1], [2, 2], [1, 3], [0, 4]]
 
     .. SEEALSO::
@@ -1392,12 +1392,12 @@ class IntegerVectorsConstraints(IntegerVectors):
         """
         TESTS::
 
-            sage: [3,2,2,1] in IntegerVectors(8,4, min_part = 1)
+            sage: [3,2,2,1] in IntegerVectors(8, 4, min_part=1)                         # optional - sage.combinat
             True
-            sage: [3,2,2,1] in IntegerVectors(8,4, min_part = 2)
+            sage: [3,2,2,1] in IntegerVectors(8, 4, min_part=2)                         # optional - sage.combinat
             False
 
-            sage: [0,3,0,1,2] in IntegerVectors(6, max_length=3)
+            sage: [0,3,0,1,2] in IntegerVectors(6, max_length=3)                        # optional - sage.combinat
             False
         """
         if isinstance(x, IntegerVector) and x.parent() is self:
@@ -1421,17 +1421,17 @@ class IntegerVectorsConstraints(IntegerVectors):
 
         EXAMPLES::
 
-            sage: IntegerVectors(3, 3, min_part=1).cardinality()
+            sage: IntegerVectors(3, 3, min_part=1).cardinality()                        # optional - sage.combinat
             1
-            sage: IntegerVectors(5, 3, min_part=1).cardinality()
+            sage: IntegerVectors(5, 3, min_part=1).cardinality()                        # optional - sage.combinat
             6
-            sage: IntegerVectors(13, 4, max_part=4).cardinality()
+            sage: IntegerVectors(13, 4, max_part=4).cardinality()                       # optional - sage.combinat
             20
-            sage: IntegerVectors(k=4, max_part=3).cardinality()
+            sage: IntegerVectors(k=4, max_part=3).cardinality()                         # optional - sage.combinat
             256
-            sage: IntegerVectors(k=3, min_part=2, max_part=4).cardinality()
+            sage: IntegerVectors(k=3, min_part=2, max_part=4).cardinality()             # optional - sage.combinat
             27
-            sage: IntegerVectors(13, 4, min_part=2, max_part=4).cardinality()
+            sage: IntegerVectors(13, 4, min_part=2, max_part=4).cardinality()           # optional - sage.combinat
             16
         """
         if self.k is None:
@@ -1465,9 +1465,9 @@ class IntegerVectorsConstraints(IntegerVectors):
         """
         EXAMPLES::
 
-            sage: IntegerVectors(-1, 0, min_part = 1).list()
+            sage: IntegerVectors(-1, 0, min_part=1).list()
             []
-            sage: IntegerVectors(-1, 2, min_part = 1).list()
+            sage: IntegerVectors(-1, 2, min_part=1).list()
             []
             sage: IntegerVectors(0, 0, min_part=1).list()
             [[]]
@@ -1512,7 +1512,7 @@ class IntegerVectorsConstraints(IntegerVectors):
             sage: all(map(lambda x: x.cardinality() == len(x.list()), iv))
             True
             sage: essai = [[1,1,1], [2,5,6], [6,5,2]]
-            sage: iv = [ IntegerVectors(x[0], x[1], max_part = x[2]-1) for x in essai ]
+            sage: iv = [ IntegerVectors(x[0], x[1], max_part=x[2]-1) for x in essai ]
             sage: all(map(lambda x: x.cardinality() == len(x.list()), iv))
             True
         """

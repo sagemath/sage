@@ -568,13 +568,13 @@ class Triangulation(Element):
         EXAMPLES::
 
             sage: p = polytopes.cuboctahedron()
-            sage: sc = p.triangulate(engine='internal').simplicial_complex()
-            sage: sc
+            sage: sc = p.triangulate(engine='internal').simplicial_complex()            # optional - sage.graphs
+            sage: sc                                                                    # optional - sage.graphs
             Simplicial complex with 12 vertices and 16 facets
 
         Any convex set is contractable, so its reduced homology groups vanish::
 
-            sage: sc.homology()
+            sage: sc.homology()                                                         # optional - sage.graphs
             {0: 0, 1: 0, 2: 0, 3: 0}
         """
         from sage.topology.simplicial_complex import SimplicialComplex
@@ -672,20 +672,20 @@ class Triangulation(Element):
 
             sage: p = polytopes.cuboctahedron()
             sage: triangulation = p.triangulate(engine='internal')
-            sage: bd_sc = triangulation.boundary_simplicial_complex()
-            sage: bd_sc
+            sage: bd_sc = triangulation.boundary_simplicial_complex()                   # optional - sage.graphs
+            sage: bd_sc                                                                 # optional - sage.graphs
             Simplicial complex with 12 vertices and 20 facets
 
         The boundary of every convex set is a topological sphere, so it has
         spherical homology::
 
-            sage: bd_sc.homology()
+            sage: bd_sc.homology()                                                      # optional - sage.graphs
             {0: 0, 1: 0, 2: Z}
 
         It is a subcomplex of ``self`` as a :meth:`simplicial_complex`::
 
-            sage: sc = triangulation.simplicial_complex()
-            sage: all(f in sc for f in bd_sc.maximal_faces())
+            sage: sc = triangulation.simplicial_complex()                               # optional - sage.graphs
+            sage: all(f in sc for f in bd_sc.maximal_faces())                           # optional - sage.graphs
             True
         """
         from sage.topology.simplicial_complex import SimplicialComplex
@@ -921,7 +921,7 @@ class Triangulation(Element):
             sage: p = PointConfiguration([[1,0,0], [0,1,0], [0,0,1], [-1,0,1],
             ....:                         [1,0,-1], [-1,0,0], [0,-1,0], [0,0,-1]])
             sage: t = p.triangulate()
-            sage: t.adjacency_graph()
+            sage: t.adjacency_graph()                                           # optional - sage.graphs
             Graph on 8 vertices
 
         """

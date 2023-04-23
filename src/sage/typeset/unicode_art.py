@@ -44,8 +44,8 @@ class UnicodeArt(CharacterArt):
 
     EXAMPLES::
 
-        sage: i = var('i')
-        sage: unicode_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))
+        sage: i = var('i')                                                              # optional - sage.symbolic
+        sage: unicode_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))                         # optional - sage.symbolic
          π⋅x
         ℯ
     """
@@ -88,9 +88,9 @@ def unicode_art(*obj, **kwds):
 
     EXAMPLES::
 
-        sage: result = unicode_art(integral(exp(sqrt(x))/(x+pi), x))
+        sage: result = unicode_art(integral(exp(sqrt(x))/(x+pi), x))                    # optional - sage.symbolic
         ...
-        sage: result
+        sage: result                                                                    # optional - sage.symbolic
             ⌠
             ⎮   √x
             ⎮  ℯ
@@ -107,7 +107,7 @@ def unicode_art(*obj, **kwds):
     an unicode art separator::
 
         sage: sep_line = unicode_art('\n'.join(' ⎟ ' for _ in range(5)), baseline=5)
-        sage: unicode_art(*AlternatingSignMatrices(3),
+        sage: unicode_art(*AlternatingSignMatrices(3),                                  # optional - sage.combinat
         ....:             separator=sep_line, sep_baseline=1)
                 ⎟         ⎟         ⎟            ⎟         ⎟         ⎟
         ⎛1 0 0⎞ ⎟ ⎛0 1 0⎞ ⎟ ⎛1 0 0⎞ ⎟ ⎛ 0  1  0⎞ ⎟ ⎛0 0 1⎞ ⎟ ⎛0 1 0⎞ ⎟ ⎛0 0 1⎞
@@ -117,14 +117,14 @@ def unicode_art(*obj, **kwds):
 
     TESTS::
 
-        sage: n = var('n')
-        sage: unicode_art(sum(binomial(2 * n, n + 1) * x^n, n, 0, oo))
+        sage: n = var('n')                                                              # optional - sage.symbolic
+        sage: unicode_art(sum(binomial(2 * n, n + 1) * x^n, n, 0, oo))                  # optional - sage.symbolic
          ⎛        _________    ⎞
         -⎝2⋅x + ╲╱ 1 - 4⋅x  - 1⎠
         ─────────────────────────
                    _________
              2⋅x⋅╲╱ 1 - 4⋅x
-        sage: unicode_art(list(DyckWords(3)))
+        sage: unicode_art(list(DyckWords(3)))                                           # optional - sage.combinat
         ⎡                                   ╱╲   ⎤
         ⎢            ╱╲    ╱╲      ╱╲╱╲    ╱  ╲  ⎥
         ⎣ ╱╲╱╲╱╲, ╱╲╱  ╲, ╱  ╲╱╲, ╱    ╲, ╱    ╲ ⎦

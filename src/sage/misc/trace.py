@@ -53,17 +53,17 @@ def trace(code, preparse=True):
     The only real way to test this is via pexpect spawning a
     sage subprocess that uses IPython::
 
-        sage: import pexpect
-        sage: s = pexpect.spawn('sage')
-        sage: _ = s.sendline("trace('print(factor(10))'); print(3+97)")
-        sage: _ = s.expect('ipdb>', timeout=90)
-        sage: _ = s.sendline("s"); _ = s.sendline("c")
-        sage: _ = s.expect('100', timeout=90)
+        sage: import pexpect                                                            # optional - pexpect
+        sage: s = pexpect.spawn('sage')                                                 # optional - pexpect
+        sage: _ = s.sendline("trace('print(factor(10))'); print(3+97)")                 # optional - pexpect
+        sage: _ = s.expect('ipdb>', timeout=90)                                         # optional - pexpect
+        sage: _ = s.sendline("s"); _ = s.sendline("c")                                  # optional - pexpect
+        sage: _ = s.expect('100', timeout=90)                                           # optional - pexpect
 
     Seeing the ipdb prompt and the 2 \* 5 in the output below is a
     strong indication that the trace command worked correctly::
 
-        sage: print(s.before[s.before.find(b'--'):].decode())
+        sage: print(s.before[s.before.find(b'--'):].decode())                           # optional - pexpect
         --...
         ...ipdb> c
         ...2 * 5...

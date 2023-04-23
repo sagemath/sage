@@ -73,12 +73,12 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: M = CombinatorialFreeModule(ZZ, [0,1,2,3])
+            sage: M = CombinatorialFreeModule(ZZ, [0,1,2,3])                                        # optional - sage.modules
             sage: R.<x,y> = QQ[]
-            sage: H = Hom(M, R, category=Sets())
-            sage: f = H(lambda v: v[0]*x + v[1]*(x^2-y) + v[2]^2*(y+2) + v[3] - v[0]^2)
-            sage: Im = f.image()
-            sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',
+            sage: H = Hom(M, R, category=Sets())                                                    # optional - sage.modules
+            sage: f = H(lambda v: v[0]*x + v[1]*(x^2-y) + v[2]^2*(y+2) + v[3] - v[0]^2)             # optional - sage.modules
+            sage: Im = f.image()                                                                    # optional - sage.modules
+            sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',                     # optional - sage.modules
             ....:                         '_test_some_elements', '_test_elements'])
         """
         if not is_Parent(domain_subset):
@@ -173,20 +173,20 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])
-            sage: R.<x,y> = ZZ[]
-            sage: H = Hom(M, R, category=Sets())
-            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))
-            sage: Im = f.image()
-            sage: Im.ambient() is R
+            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])                         # optional - sage.modules
+            sage: R.<x,y> = ZZ[]                                                        # optional - sage.modules
+            sage: H = Hom(M, R, category=Sets())                                        # optional - sage.modules
+            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))                  # optional - sage.modules
+            sage: Im = f.image()                                                        # optional - sage.modules
+            sage: Im.ambient() is R                                                     # optional - sage.modules
             True
 
-            sage: P = Partitions(3).map(attrcall('conjugate'))
-            sage: P.ambient() is None
+            sage: P = Partitions(3).map(attrcall('conjugate'))                          # optional - sage.combinat
+            sage: P.ambient() is None                                                   # optional - sage.combinat
             True
 
-            sage: R = Permutations(10).map(attrcall('reduced_word'))
-            sage: R.ambient() is None
+            sage: R = Permutations(10).map(attrcall('reduced_word'))                    # optional - sage.combinat
+            sage: R.ambient() is None                                                   # optional - sage.combinat
             True
         """
         return self._map.codomain()
@@ -197,14 +197,14 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])
+            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])                         # optional - sage.modules
             sage: R.<x,y> = ZZ[]
-            sage: H = Hom(M, R, category=Sets())
-            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))
-            sage: Im = f.image()
-            sage: p = Im.lift(Im.an_element()); p
+            sage: H = Hom(M, R, category=Sets())                                        # optional - sage.modules
+            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))                  # optional - sage.modules
+            sage: Im = f.image()                                                        # optional - sage.modules
+            sage: p = Im.lift(Im.an_element()); p                                       # optional - sage.modules
             2*x - 4
-            sage: p.parent() is R
+            sage: p.parent() is R                                                       # optional - sage.modules
             True
         """
         return x
@@ -219,13 +219,13 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])
-            sage: R.<x,y> = ZZ[]
-            sage: H = Hom(M, R, category=Sets())
-            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))
-            sage: Im = f.image()
-            sage: p = 2 * x - 4
-            sage: Im.retract(p).parent()
+            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])                         # optional - sage.modules
+            sage: R.<x,y> = ZZ[]                                                        # optional - sage.modules
+            sage: H = Hom(M, R, category=Sets())                                        # optional - sage.modules
+            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))                  # optional - sage.modules
+            sage: Im = f.image()                                                        # optional - sage.modules
+            sage: p = 2 * x - 4                                                         # optional - sage.modules
+            sage: Im.retract(p).parent()                                                # optional - sage.modules
             Multivariate Polynomial Ring in x, y over Integer Ring
         """
         return x
@@ -234,7 +234,7 @@ class ImageSubobject(Parent):
         r"""
         TESTS::
 
-            sage: Partitions(3).map(attrcall('conjugate'))
+            sage: Partitions(3).map(attrcall('conjugate'))                              # optional - sage.combinat
             Image of Partitions of the integer 3 by
              The map *.conjugate() from Partitions of the integer 3
         """
@@ -251,8 +251,8 @@ class ImageSubobject(Parent):
         :meth:`~sage.categories.enumerated_sets.EnumeratedSets.ParentMethods.map`
         defaults to ``is_injective=True``):
 
-            sage: R = Permutations(10).map(attrcall('reduced_word'))
-            sage: R.cardinality()
+            sage: R = Permutations(10).map(attrcall('reduced_word'))                    # optional - sage.combinat
+            sage: R.cardinality()                                                       # optional - sage.combinat
             3628800
 
             sage: Evens = ZZ.map(lambda x: 2 * x)
@@ -294,12 +294,12 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: P = Partitions()
-            sage: H = Hom(P, ZZ)
-            sage: f = H(ZZ.sum)
-            sage: X = f.image()
-            sage: it = iter(X)
-            sage: [next(it) for _ in range(5)]
+            sage: P = Partitions()                                                      # optional - sage.combinat
+            sage: H = Hom(P, ZZ)                                                        # optional - sage.combinat
+            sage: f = H(ZZ.sum)                                                         # optional - sage.combinat
+            sage: X = f.image()                                                         # optional - sage.combinat
+            sage: it = iter(X)                                                          # optional - sage.combinat
+            sage: [next(it) for _ in range(5)]                                          # optional - sage.combinat
             [0, 1, 2, 3, 4]
         """
         if self._is_injective and self._is_injective != 'check':
@@ -322,8 +322,8 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: R = SymmetricGroup(10).map(attrcall('reduced_word'))
-            sage: R.an_element()
+            sage: R = SymmetricGroup(10).map(attrcall('reduced_word'))                  # optional - sage.groups
+            sage: R.an_element()                                                        # optional - sage.groups
             [9, 8, 7, 6, 5, 4, 3, 2]
         """
         domain_element = self._domain_subset.an_element()
@@ -336,9 +336,9 @@ class ImageSubobject(Parent):
         EXAMPLES::
 
             sage: from sage.sets.image_set import ImageSet
-            sage: S = ImageSet(sin, RealSet.open(0, pi/4)); S
+            sage: S = ImageSet(sin, RealSet.open(0, pi/4)); S                           # optional - sage.symbolic
             Image of (0, 1/4*pi) by The map sin from (0, 1/4*pi)
-            sage: S._sympy_()
+            sage: S._sympy_()                                                           # optional - sage.symbolic
             ImageSet(Lambda(x, sin(x)), Interval.open(0, pi/4))
         """
         from sympy import imageset
@@ -360,23 +360,23 @@ class ImageSet(ImageSubobject, Set_base, Set_add_sub_operators, Set_boolean_oper
 
     Symbolics::
 
-        sage: ImageSet(sin, RealSet.open(0, pi/4))
+        sage: ImageSet(sin, RealSet.open(0, pi/4))                                      # optional - sage.symbolic
         Image of (0, 1/4*pi) by The map sin from (0, 1/4*pi)
-        sage: _.an_element()
+        sage: _.an_element()                                                            # optional - sage.symbolic
         1/2*sqrt(-sqrt(2) + 2)
 
-        sage: sos(x,y) = x^2 + y^2; sos
+        sage: sos(x,y) = x^2 + y^2; sos                                                 # optional - sage.symbolic
         (x, y) |--> x^2 + y^2
-        sage: ImageSet(sos, ZZ^2)
+        sage: ImageSet(sos, ZZ^2)                                                       # optional - sage.symbolic
         Image of
          Ambient free module of rank 2 over the principal ideal domain Integer Ring by
          The map (x, y) |--> x^2 + y^2 from Vector space of dimension 2 over Symbolic Ring
-        sage: _.an_element()
+        sage: _.an_element()                                                            # optional - sage.symbolic
         1
-        sage: ImageSet(sos, Set([(3, 4), (3, -4)]))
+        sage: ImageSet(sos, Set([(3, 4), (3, -4)]))                                     # optional - sage.symbolic
         Image of {...(3, -4)...} by
          The map (x, y) |--> x^2 + y^2 from Vector space of dimension 2 over Symbolic Ring
-        sage: _.an_element()
+        sage: _.an_element()                                                            # optional - sage.symbolic
         25
     """
     pass
