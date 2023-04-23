@@ -338,6 +338,9 @@ cdef class CVXPYBackend:
             sage: p.row_name(1)
             'constraint_1'
         """
+        if not isinstance(coefficients, (list, tuple)):
+            # may be generator
+            coefficients = list(coefficients)
         last = len(self.Matrix)
         self.Matrix.append([])
         for i in range(len(self.objective_coefficients)):
@@ -962,33 +965,46 @@ cdef class CVXPYBackend:
             'foo'
             sage: p.row_bounds(row_index)
             (1, 1)
-            sage: p.cvxpy_problem().constraints
-            [Inequality(Constant(CONSTANT, ZERO, ())),
-             Inequality(Constant(CONSTANT, ZERO, ())),
-             Inequality(Constant(CONSTANT, ZERO, ())),
-             Inequality(Constant(CONSTANT, ZERO, ())),
-             Inequality(Constant(CONSTANT, ZERO, ())),
-             Equality(Expression(AFFINE, UNKNOWN, ()), Constant(CONSTANT, NONNEGATIVE, ()))]
+            sage: p.cvxpy_problem().constraints[row_index:]
+            [Equality(Expression(AFFINE, UNKNOWN, ()), Constant(CONSTANT, NONNEGATIVE, ()))]
         """
-        del self.Matrix[index]
-        del self.row_lower_bound[index]
-        del self.row_upper_bound[index]
-        del self.constraint_names[index]
+        self.remove_constraints([index])
 
-        constraints = []
-        for i, row in enumerate(self.Matrix):
-            terms = [v * self.variables[j] for j, v in enumerate(row)]
-            if terms:
-                expr = AddExpression(terms)
-            else:
-                expr = Constant(0)
-            lower_bound = self.row_lower_bound[i]
-            upper_bound = self.row_upper_bound[i]
-            if lower_bound is not None and lower_bound == upper_bound:
-                constraints.append(expr == upper_bound)
-            elif lower_bound is not None:
-                constraints.append(lower_bound <= expr)
-            elif upper_bound is not None:
-                constraints.append(expr <= upper_bound)
+    cpdef remove_constraints(self, indices):
+        r"""
+        Remove several constraints.
 
+        INPUT:
+
+        - ``indices`` -- iterable of integers. The indices of the constraints to remove,
+          in arbitrary order.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver="CVXPY")
+            sage: p.add_variables(5)
+            4
+            sage: row_index = p.nrows(); row_index
+            5
+            sage: for i in range(3):
+            ....:     p.add_linear_constraint(zip(range(5), range(5)), None, 5)
+            sage: p.add_linear_constraint(zip(range(5), range(5)), 1, 1, name='foo')
+            sage: p.cvxpy_problem().constraints[row_index:]
+            [Inequality(Expression(AFFINE, UNKNOWN, ())),
+             Inequality(Expression(AFFINE, UNKNOWN, ())),
+             Inequality(Expression(AFFINE, UNKNOWN, ())),
+             Equality(Expression(AFFINE, UNKNOWN, ()), Constant(CONSTANT, NONNEGATIVE, ()))]
+            sage: p.remove_constraints(range(row_index, row_index + 3))
+            sage: p.cvxpy_problem().constraints[row_index:]
+            [Equality(Expression(AFFINE, UNKNOWN, ()), Constant(CONSTANT, NONNEGATIVE, ()))]
+        """
+        indices = sorted(indices)
+        constraints = list(self.problem.constraints)
+        for index in reversed(indices):
+            del self.Matrix[index]
+            del self.row_lower_bound[index]
+            del self.row_upper_bound[index]
+            del self.constraint_names[index]
+            del constraints[index]
         self.problem = cvxpy.Problem(self.problem.objective, constraints)
