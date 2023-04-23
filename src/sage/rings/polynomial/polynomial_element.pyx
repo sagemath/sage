@@ -1744,8 +1744,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: Pol.<x> = CBF[]
             sage: (x + x^3/6 + x^5/120).revert_series(6)
             ([0.075000000000000 +/- ...e-17])*x^5 + ([-0.166666666666667 +/- ...e-16])*x^3 + x
-            sage: Pol.<x> = SR[]
-            sage: x.revert_series(6)
+            sage: Pol.<x> = SR[]                                                        # optional - sage.symbolic
+            sage: x.revert_series(6)                                                    # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: only implemented for certain base rings
@@ -3386,7 +3386,7 @@ cdef class Polynomial(CommutativePolynomial):
         Check that :trac:`25022` is fixed::
 
             sage: K.<x> = ZZ[]
-            sage: x.change_ring(SR) == SR['x'].gen()
+            sage: x.change_ring(SR) == SR['x'].gen()                                    # optional - sage.symbolic
             True
             sage: x.change_ring(ZZ['x']) == ZZ['x']['x'].gen()
             True
@@ -7991,12 +7991,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         Check that :trac:`30522` is fixed::
 
-            sage: PolynomialRing(SR, names="x")("x^2").roots()
+            sage: PolynomialRing(SR, names="x")("x^2").roots()                          # optional - sage.symbolic
             [(0, 2)]
 
         Check that :trac:`30523` is fixed::
 
-            sage: PolynomialRing(SR, names="x")("x^2 + q").roots()
+            sage: PolynomialRing(SR, names="x")("x^2 + q").roots()                      # optional - sage.symbolic
             [(-sqrt(-q), 1), (sqrt(-q), 1)]
 
         ALGORITHM:
@@ -8115,13 +8115,13 @@ cdef class Polynomial(CommutativePolynomial):
 
         This shows that the issue at :trac:`10901` is fixed::
 
-            sage: a = var('a'); R.<x> = SR[]
-            sage: f = x - a
-            sage: f.roots(RR)
+            sage: a = var('a'); R.<x> = SR[]                                            # optional - sage.symbolic
+            sage: f = x - a                                                             # optional - sage.symbolic
+            sage: f.roots(RR)                                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: cannot evaluate symbolic expression to a numeric value
-            sage: f.roots(CC)
+            sage: f.roots(CC)                                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: cannot evaluate symbolic expression to a numeric value

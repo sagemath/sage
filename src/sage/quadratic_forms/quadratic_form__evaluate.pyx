@@ -2,7 +2,7 @@
 
 
 def QFEvaluateVector(Q, v):
-    """
+    r"""
     Evaluate this quadratic form `Q` on a vector or matrix of elements
     coercible to the base ring of the quadratic form.  If a vector
     is given, then the output will be the ring element `Q(v)`, but if a
@@ -11,7 +11,7 @@ def QFEvaluateVector(Q, v):
 
     .. MATH::
 
-            Q' = v^t * Q * v.
+            Q' = v^t\cdot Q\cdot v.
 
     .. NOTE::
 
@@ -45,7 +45,7 @@ def QFEvaluateVector(Q, v):
 
 
 cdef QFEvaluateVector_cdef(Q, v):
-    """
+    r"""
     Routine to quickly evaluate a quadratic form `Q` on a vector `v`.  See
     the Python wrapper function :meth:`QFEvaluate` above for details.
 
@@ -72,7 +72,7 @@ def QFEvaluateMatrix(Q, M, Q2):
 
     .. MATH::
 
-            Q_2 = M^t * Q * M.
+            Q_2 = M^t\cdot Q\cdot M.
 
     .. NOTE::
 
@@ -113,7 +113,7 @@ def QFEvaluateMatrix(Q, M, Q2):
 
 
 cdef QFEvaluateMatrix_cdef(Q, M, Q2):
-    """
+    r"""
     Routine to quickly evaluate a quadratic form `Q` on a matrix `M`.  See
     the Python wrapper function :func:`QFEvaluateMatrix` above for details.
 

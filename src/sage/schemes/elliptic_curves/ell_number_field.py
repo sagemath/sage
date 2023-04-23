@@ -2461,7 +2461,6 @@ class EllipticCurve_number_field(EllipticCurve_field):
         from sage.schemes.elliptic_curves.period_lattice import PeriodLattice_ell
         return PeriodLattice_ell(self,embedding)
 
-
     def real_components(self, embedding):
         """
         Return the number of real components with respect to a real embedding of the base field.

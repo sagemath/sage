@@ -1057,8 +1057,8 @@ cdef class pAdicConvert_FM_ZZ(RingMap):
         return ans
 
 cdef class pAdicConvert_QQ_FM(Morphism):
-    """
-    The inclusion map from ``QQ`` to a fixed modulus ring that is defined
+    r"""
+    The inclusion map from `\QQ` to a fixed modulus ring that is defined
     on all elements with non-negative `p`-adic valuation.
 
     EXAMPLES::

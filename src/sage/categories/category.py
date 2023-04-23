@@ -26,7 +26,7 @@ We create a couple of categories::
     Category of G-sets for Multiplicative Abelian group isomorphic to C2 x C4 x C9
     sage: Semigroups()
     Category of semigroups
-    sage: VectorSpaces(FiniteField(11))                                                 # optional - sage.libs.pari
+    sage: VectorSpaces(FiniteField(11))                                                 # optional - sage.rings.finite_rings
     Category of vector spaces over Finite Field of size 11
     sage: Ideals(IntegerRing())
     Category of ring ideals in Integer Ring
@@ -53,7 +53,7 @@ Let's check some memberships::
 
     sage: V in VectorSpaces(QQ)                                                         # optional - sage.modules
     True
-    sage: V in VectorSpaces(FiniteField(11))                                            # optional - sage.modules sage.libs.pari
+    sage: V in VectorSpaces(FiniteField(11))                                            # optional - sage.modules sage.rings.finite_rings
     False
     sage: G in Monoids()                                                                # optional - sage.groups
     True
@@ -932,8 +932,8 @@ class Category(UniqueRepresentation, SageObject):
 
         TESTS::
 
-            sage: C = HopfAlgebrasWithBasis(GF(7))                                                                      # optional - sage.libs.pari
-            sage: C._set_of_super_categories == frozenset(C._all_super_categories_proper)                               # optional - sage.libs.pari
+            sage: C = HopfAlgebrasWithBasis(GF(7))                                      # optional - sage.rings.finite_rings
+            sage: C._set_of_super_categories == set(C._all_super_categories_proper)     # optional - sage.rings.finite_rings
             True
         """
         return frozenset(self._all_super_categories_proper)
@@ -1792,9 +1792,9 @@ class Category(UniqueRepresentation, SageObject):
 
         ::
 
-            sage: M3 = VectorSpaces(FiniteField(3))                                     # optional - sage.libs.pari sage.modules
-            sage: M9 = VectorSpaces(FiniteField(9, 'a'))                                # optional - sage.libs.pari sage.modules
-            sage: M3.is_subcategory(M9)                                                 # optional - sage.libs.pari sage.modules
+            sage: M3 = VectorSpaces(FiniteField(3))                                     # optional - sage.rings.finite_rings sage.modules
+            sage: M9 = VectorSpaces(FiniteField(9, 'a'))                                # optional - sage.rings.finite_rings sage.modules
+            sage: M3.is_subcategory(M9)                                                 # optional - sage.rings.finite_rings sage.modules
             False
 
         Join categories are properly handled::
@@ -1805,16 +1805,16 @@ class Category(UniqueRepresentation, SageObject):
 
         ::
 
-            sage: V3 = VectorSpaces(FiniteField(3))                                     # optional - sage.libs.pari
+            sage: V3 = VectorSpaces(FiniteField(3))                                     # optional - sage.rings.finite_rings
             sage: POSet = PartiallyOrderedSets()
-            sage: PoV3 = Category.join((V3, POSet))                                     # optional - sage.libs.pari
-            sage: A3 = AlgebrasWithBasis(FiniteField(3))                                # optional - sage.libs.pari
-            sage: PoA3 = Category.join((A3, POSet))                                     # optional - sage.libs.pari
-            sage: PoA3.is_subcategory(PoV3)                                             # optional - sage.libs.pari
+            sage: PoV3 = Category.join((V3, POSet))                                     # optional - sage.rings.finite_rings
+            sage: A3 = AlgebrasWithBasis(FiniteField(3))                                # optional - sage.rings.finite_rings
+            sage: PoA3 = Category.join((A3, POSet))                                     # optional - sage.rings.finite_rings
+            sage: PoA3.is_subcategory(PoV3)                                             # optional - sage.rings.finite_rings
             True
-            sage: PoV3.is_subcategory(PoV3)                                             # optional - sage.libs.pari
+            sage: PoV3.is_subcategory(PoV3)                                             # optional - sage.rings.finite_rings
             True
-            sage: PoV3.is_subcategory(PoA3)                                             # optional - sage.libs.pari
+            sage: PoV3.is_subcategory(PoA3)                                             # optional - sage.rings.finite_rings
             False
         """
         if c is self:

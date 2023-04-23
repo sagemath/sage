@@ -60,7 +60,7 @@ import operator
 
 from sage.structure.element import CommutativeRingElement, coerce_binop, get_coercion_model, parent
 from sage.misc.misc_c import prod
-import sage.rings.integer
+from sage.rings.integer import Integer
 import sage.rings.integer_ring
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 from . import polydict
@@ -401,7 +401,7 @@ class MPolynomial_element(MPolynomial):
         return self.parent().fraction_field()(self, right, coerce=False)
 
     def __rpow__(self, n):
-        if not isinstance(n, (int, sage.rings.integer.Integer)):
+        if not isinstance(n, (int, Integer)):
             raise TypeError("The exponent must be an integer.")
         return self.parent()(self.__element**n)
 
@@ -2135,8 +2135,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         S = self._singular_().factorize()
         factors = S[1]
         exponents = S[2]
-        v = sorted([(R(factors[i+1]), sage.rings.integer.Integer(exponents[i+1])) \
-                        for i in range(len(factors))])
+        v = sorted([(R(factors[i + 1]), Integer(exponents[i + 1]))
+                    for i in range(len(factors))])
         unit = R(1)
         for i in range(len(v)):
             if v[i][0].is_unit():

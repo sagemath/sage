@@ -3799,10 +3799,10 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
 
 @richcmp_method
-class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
-                        MPolynomialIdeal_macaulay2_repr, \
-                        MPolynomialIdeal_magma_repr, \
-                        Ideal_generic ):
+class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
+                       MPolynomialIdeal_macaulay2_repr,
+                       MPolynomialIdeal_magma_repr,
+                       Ideal_generic):
     def __init__(self, ring, gens, coerce=True):
         r"""
         Create an ideal in a multivariate polynomial ring.

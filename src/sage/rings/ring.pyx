@@ -1142,7 +1142,7 @@ cdef class Ring(ParentWithGens):
 
         For the symbolic ring, there is no reasonable answer::
 
-            sage: SR.epsilon()
+            sage: SR.epsilon()                                                          # optional - sage.symbolics
             Traceback (most recent call last):
             ...
             NotImplementedError

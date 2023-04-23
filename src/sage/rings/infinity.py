@@ -1142,7 +1142,7 @@ class InfinityRing_class(Singleton, Ring):
             (+Infinity, -Infinity)
             sage: InfinityRing(float('+inf')), InfinityRing(float('-inf'))
             (+Infinity, -Infinity)
-            sage: InfinityRing(SR(oo)), InfinityRing(SR(-oo))
+            sage: InfinityRing(SR(oo)), InfinityRing(SR(-oo))                           # optional - sage.symbolic
             (+Infinity, -Infinity)
 
         The following rings have ``is_positive_infinity`` /
@@ -1150,7 +1150,7 @@ class InfinityRing_class(Singleton, Ring):
 
             sage: RR(oo).is_positive_infinity(), RR(-oo).is_negative_infinity()
             (True, True)
-            sage: SR(oo).is_positive_infinity(), SR(-oo).is_negative_infinity()
+            sage: SR(oo).is_positive_infinity(), SR(-oo).is_negative_infinity()         # optional - sage.symbolic
             (True, True)
 
         Complex infinity raises an exception. This is fine (there is
@@ -1250,9 +1250,9 @@ class InfinityRing_class(Singleton, Ring):
         symbolic comparisons with infinities all happen in the
         symbolic ring::
 
-            sage: SR.has_coerce_map_from(InfinityRing)
+            sage: SR.has_coerce_map_from(InfinityRing)                                  # optional - sage.symbolic
             True
-            sage: InfinityRing.has_coerce_map_from(SR)
+            sage: InfinityRing.has_coerce_map_from(SR)                                  # optional - sage.symbolic
             False
 
         Complex numbers do not coerce into the infinity ring (what
@@ -1278,7 +1278,7 @@ class InfinityRing_class(Singleton, Ring):
         r"""
         EXAMPLES::
 
-            sage: QQbar(-2*i)*infinity                                                  # optional - sage.rings.number_field
+            sage: QQbar(-2*i)*infinity                                                  # optional - sage.rings.number_field sage.symbolic
             (-I)*Infinity
         """
         from sage.symbolic.ring import SR
@@ -1726,7 +1726,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
             sage: import sympy                                                          # optional - sympy
             sage: bool(oo == sympy.oo) # indirect doctest                               # optional - sympy
             True
-            sage: bool(SR(oo) == sympy.oo)                                              # optional - sympy
+            sage: bool(SR(oo) == sympy.oo)                                              # optional - sage.symbolic sympy
             True
         """
         import sympy

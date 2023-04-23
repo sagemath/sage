@@ -521,14 +521,14 @@ class UniversalCyclotomicFieldElement(FieldElement):
         r"""
         TESTS::
 
-            sage: SR(E(7))
+            sage: SR(E(7))                                                              # optional - sage.symbolic
             e^(2/7*I*pi)
-            sage: SR(E(5) + 2*E(5,2) + 3*E(5,3))
+            sage: SR(E(5) + 2*E(5,2) + 3*E(5,3))                                        # optional - sage.symbolic
             -sqrt(5) + 1/4*I*sqrt(2*sqrt(5) + 10) - 1/4*I*sqrt(-2*sqrt(5) + 10) - 3/2
 
         Test that the bug reported in :trac:`19912` has been fixed::
 
-            sage: SR(1+E(4))
+            sage: SR(1+E(4))                                                            # optional - sage.symbolic
             I + 1
         """
         from sage.symbolic.constants import pi, I

@@ -31,7 +31,10 @@ EXAMPLES::
 
 ##############################################################################
 #       Copyright (C) 2006 David Joyner and William Stein <wstein@gmail.com>
-#       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
+#                     2013 Volker Braun <vbraun.name@gmail.com>
+#                     2017 Frédéric Chapoton
+#                     2018 Travis Scrimshaw
+#                     2018 Sebastian Oehms
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #

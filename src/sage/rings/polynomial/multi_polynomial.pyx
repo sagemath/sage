@@ -234,9 +234,8 @@ cdef class MPolynomial(CommutativePolynomial):
 
         - Didier Deshommes
         """
-        degs = self.exponents()
         d = self.dict()
-        return  [ d[i] for i in degs ]
+        return [d[i] for i in self.exponents()]
 
     def truncate(self, var, n):
         r"""
@@ -866,7 +865,7 @@ cdef class MPolynomial(CommutativePolynomial):
         Check that :trac:`25022` is fixed::
 
             sage: K.<x,y> = ZZ[]
-            sage: (x*y).change_ring(SR).monomials()                                     # optional - sage.rings.number_field
+            sage: (x*y).change_ring(SR).monomials()                                     # optional - sage.rings.number_field sage.symbolic
             [x*y]
         """
         if isinstance(R, Map):
@@ -1592,7 +1591,7 @@ cdef class MPolynomial(CommutativePolynomial):
             x = variable
         p = self.polynomial(x)
         q = other.polynomial(x)
-        return [R(f) for f in  p.subresultants(q)]
+        return [R(f) for f in p.subresultants(q)]
 
     def macaulay_resultant(self, *args):
         r"""

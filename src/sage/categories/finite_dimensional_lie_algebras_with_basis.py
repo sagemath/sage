@@ -70,27 +70,29 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()                                     # optional - sage.modules sage.combinat
-                sage: UEA = L._construct_UEA(); UEA                                                                     # optional - sage.modules sage.combinat
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # optional - sage.modules sage.combinat
+                sage: UEA = L._construct_UEA(); UEA                                     # optional - sage.modules sage.combinat
                 Noncommutative Multivariate Polynomial Ring in b0, b1, b2
                  over Rational Field, nc-relations: {}
-                sage: UEA.relations(add_commutative=True)                                                               # optional - sage.modules sage.combinat
+                sage: UEA.relations(add_commutative=True)                               # optional - sage.modules sage.combinat
                 {b1*b0: b0*b1, b2*b0: b0*b2, b2*b1: b1*b2}
 
             ::
 
-                sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'):{'z':1}, ('y','z'):{'x':1}, ('z','x'):{'y':1}})             # optional - sage.modules sage.combinat
-                sage: UEA = L._construct_UEA(); UEA                                                                     # optional - sage.modules sage.combinat
+                sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1},                   # optional - sage.modules sage.combinat
+                ....:                             ('y','z'): {'x':1},
+                ....:                             ('z','x'):{'y':1}})
+                sage: UEA = L._construct_UEA(); UEA                                     # optional - sage.modules sage.combinat
                 Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
                  nc-relations: {...}
-                sage: sorted(UEA.relations().items(), key=str)                                                          # optional - sage.modules sage.combinat
+                sage: sorted(UEA.relations().items(), key=str)                          # optional - sage.modules sage.combinat
                 [(y*x, x*y - z), (z*x, x*z + y), (z*y, y*z - x)]
 
             Singular's ``nc_algebra`` does not work over `\ZZ/6\ZZ`,
             so we fallback to the PBW basis in this case::
 
-                sage: L = lie_algebras.pwitt(Zmod(6), 6)                                                                # optional - sage.modules sage.combinat
-                sage: L._construct_UEA()                                                                                # optional - sage.modules sage.combinat
+                sage: L = lie_algebras.pwitt(Zmod(6), 6)                                # optional - sage.modules sage.combinat
+                sage: L._construct_UEA()                                                # optional - sage.modules sage.combinat
                 Universal enveloping algebra of
                  The 6-Witt Lie algebra over Ring of integers modulo 6
                  in the Poincare-Birkhoff-Witt basis
@@ -147,8 +149,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()                                     # optional - sage.modules sage.combinat
-                sage: L._basis_ordering                                                                                 # optional - sage.modules sage.combinat
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # optional - sage.modules sage.combinat
+                sage: L._basis_ordering                                                 # optional - sage.modules sage.combinat
                 (0, 1, 2)
             """
             return tuple(self.basis().keys())
@@ -161,10 +163,10 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: G = SymmetricGroup(3)                                                                             # optional - sage.groups
-                sage: S = GroupAlgebra(G, QQ)                                                                           # optional - sage.groups sage.modules
-                sage: L = LieAlgebra(associative=S)                                                                     # optional - sage.groups sage.modules
-                sage: [L._basis_key_inverse[k] for k in L._basis_ordering]                                              # optional - sage.groups sage.modules
+                sage: G = SymmetricGroup(3)                                             # optional - sage.groups
+                sage: S = GroupAlgebra(G, QQ)                                           # optional - sage.groups sage.modules
+                sage: L = LieAlgebra(associative=S)                                     # optional - sage.groups sage.modules
+                sage: [L._basis_key_inverse[k] for k in L._basis_ordering]              # optional - sage.groups sage.modules
                 [0, 1, 2, 3, 4, 5]
             """
             return {k: i for i,k in enumerate(self._basis_ordering)}
@@ -175,33 +177,34 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: L = lie_algebras.three_dimensional_by_rank(QQ, 3, names=['E','F','H'])                            # optional - sage.groups sage.modules
-                sage: PBW = L.pbw_basis()                                                                               # optional - sage.groups sage.modules
-                sage: PBW._basis_key('E') < PBW._basis_key('H')                                                         # optional - sage.groups sage.modules
+                sage: L = lie_algebras.three_dimensional_by_rank(QQ, 3,                 # optional - sage.groups sage.modules
+                ....:                                            names=['E','F','H'])
+                sage: PBW = L.pbw_basis()                                               # optional - sage.groups sage.modules
+                sage: PBW._basis_key('E') < PBW._basis_key('H')                         # optional - sage.groups sage.modules
                 True
 
             ::
 
-                sage: L = lie_algebras.sl(QQ, 2)                                                                        # optional - sage.groups sage.modules
-                sage: def neg_key(x):                                                                                   # optional - sage.groups sage.modules
+                sage: L = lie_algebras.sl(QQ, 2)                                        # optional - sage.groups sage.modules
+                sage: def neg_key(x):                                                   # optional - sage.groups sage.modules
                 ....:     return -L.basis().keys().index(x)
-                sage: PBW = L.pbw_basis(basis_key=neg_key)                                                              # optional - sage.groups sage.modules
-                sage: prod(PBW.gens())  # indirect doctest                                                              # optional - sage.groups sage.modules
+                sage: PBW = L.pbw_basis(basis_key=neg_key)                              # optional - sage.groups sage.modules
+                sage: prod(PBW.gens())  # indirect doctest                              # optional - sage.groups sage.modules
                 PBW[-alpha[1]]*PBW[alphacheck[1]]*PBW[alpha[1]]
                  - 4*PBW[-alpha[1]]*PBW[alpha[1]] + PBW[alphacheck[1]]^2
                  - 2*PBW[alphacheck[1]]
 
             Check that :trac:`23266` is fixed::
 
-                sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')                                                            # optional - sage.groups sage.modules
-                sage: sl2.indices()                                                                                     # optional - sage.groups sage.modules
+                sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')                            # optional - sage.groups sage.modules
+                sage: sl2.indices()                                                     # optional - sage.groups sage.modules
                 {'e1', 'f1', 'h1'}
-                sage: type(sl2.basis().keys())                                                                          # optional - sage.groups sage.modules
+                sage: type(sl2.basis().keys())                                          # optional - sage.groups sage.modules
                 <class 'list'>
-                sage: Usl2 = sl2.pbw_basis()                                                                            # optional - sage.groups sage.modules
-                sage: Usl2._basis_key(2)                                                                                # optional - sage.groups sage.modules
+                sage: Usl2 = sl2.pbw_basis()                                            # optional - sage.groups sage.modules
+                sage: Usl2._basis_key(2)                                                # optional - sage.groups sage.modules
                 2
-                sage: Usl2._basis_key(3)                                                                                # optional - sage.groups sage.modules
+                sage: Usl2._basis_key(3)                                                # optional - sage.groups sage.modules
                 Traceback (most recent call last):
                 ...
                 KeyError: 3
@@ -214,8 +217,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()                                     # optional - sage.modules
-                sage: L._dense_free_module()                                                                            # optional - sage.modules
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # optional - sage.modules
+                sage: L._dense_free_module()                                            # optional - sage.modules
                 Vector space of dimension 3 over Rational Field
             """
             if R is None:

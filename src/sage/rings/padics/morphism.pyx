@@ -35,7 +35,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         INPUT:
 
-        -  ``domain`` -- an unramified padic field
+        -  ``domain`` -- an unramified p-adic field
 
         -  ``n`` -- an integer (default: 1)
 

@@ -31,7 +31,9 @@ AUTHORS:
 
 # ****************************************************************************
 #       Copyright (C) 2006 David Joyner and William Stein
-#       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
+#                     2013 Volker Braun <vbraun.name@gmail.com>
+#                     2018 Sebastian Oehms
+#                     2018 Travis Scrimshaw
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -206,9 +208,7 @@ class SymplecticMatrixGroup_generic(NamedMatrixGroup_generic):
         """
         Return the quadratic form preserved by the symplectic group.
 
-        OUTPUT:
-
-        A matrix.
+        OUTPUT: A matrix.
 
         EXAMPLES::
 

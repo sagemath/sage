@@ -60,16 +60,17 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
 
             EXAMPLES::
 
-                sage: L = LieAlgebra(QQ, {('X','Y'): {'Z': 1}}, nilpotent=True)                                         # optional - sage.combinat sage.modules
-                sage: L._test_nilpotency()                                                                              # optional - sage.combinat sage.modules
-                sage: L = LieAlgebra(QQ, {('X','Y'): {'Z': 1}},                                                         # optional - sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, {('X','Y'): {'Z': 1}}, nilpotent=True)         # optional - sage.combinat sage.modules
+                sage: L._test_nilpotency()                                              # optional - sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, {('X','Y'): {'Z': 1}},                         # optional - sage.combinat sage.modules
                 ....:                nilpotent=True, step=3)
-                sage: L._test_nilpotency()                                                                              # optional - sage.combinat sage.modules
+                sage: L._test_nilpotency()                                              # optional - sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
-                AssertionError: claimed nilpotency step 3 does not match the actual nilpotency step 2
-                sage: L = LieAlgebra(QQ, {('X','Y'): {'X': 1}}, nilpotent=True)                                         # optional - sage.combinat sage.modules
-                sage: L._test_nilpotency()                                                                              # optional - sage.combinat sage.modules
+                AssertionError: claimed nilpotency step 3
+                does not match the actual nilpotency step 2
+                sage: L = LieAlgebra(QQ, {('X','Y'): {'X': 1}}, nilpotent=True)         # optional - sage.combinat sage.modules
+                sage: L._test_nilpotency()                                              # optional - sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 AssertionError: final term of lower central series is non-zero

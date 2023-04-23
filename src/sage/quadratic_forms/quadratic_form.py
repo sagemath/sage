@@ -105,7 +105,7 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
         Quadratic form in 2 variables over Rational Field with coefficients:
         [ 5 0 ]
         [ * -3 ]
-        sage: all(q.hasse_invariant(p)==-1 for p in P)
+        sage: all(q.hasse_invariant(p) == -1 for p in P)
         True
 
     TESTS:
@@ -769,8 +769,8 @@ class QuadraticForm(SageObject):
         return out_str
 
     def __getitem__(self, ij):
-        """
-        Return the coefficient `a_{ij}` of `x_i * x_j`.
+        r"""
+        Return the coefficient `a_{ij}` of `x_i\cdot x_j`.
 
         EXAMPLES::
 
@@ -795,8 +795,8 @@ class QuadraticForm(SageObject):
         return self.__coeffs[i*self.__n - i*(i-1)//2 + j - i]
 
     def __setitem__(self, ij, coeff):
-        """
-        Set the coefficient `a_{ij}` in front of `x_i * x_j`.
+        r"""
+        Set the coefficient `a_{ij}` in front of `x_i\cdot x_j`.
 
         EXAMPLES::
 
@@ -969,7 +969,7 @@ class QuadraticForm(SageObject):
 # =========================================================================================================================
 
     def __call__(self, v):
-        """
+        r"""
         Evaluate this quadratic form `Q` on a vector or matrix of elements
         coercible to the base ring of the quadratic form.  If a vector
         is given then the output will be the ring element `Q(v)`, but if a
@@ -977,7 +977,7 @@ class QuadraticForm(SageObject):
         which in matrix notation is given by:
 
         .. MATH::
-                Q' = v^t * Q * v.
+                Q' = v^t\cdot Q\cdot v.
 
 
         EXAMPLES:
@@ -1148,8 +1148,8 @@ class QuadraticForm(SageObject):
 # =====================================================================================================
 
     def matrix(self):
-        """
-        Return the Hessian matrix `A` for which `Q(X) = (1/2) * X^t * A * X`.
+        r"""
+        Return the Hessian matrix `A` for which `Q(X) = (1/2) X^t\cdot A\cdot X`.
 
         EXAMPLES::
 
@@ -1163,8 +1163,8 @@ class QuadraticForm(SageObject):
         return self.Hessian_matrix()
 
     def Hessian_matrix(self):
-        """
-        Return the Hessian matrix `A` for which `Q(X) = (1/2) * X^t * A * X`.
+        r"""
+        Return the Hessian matrix `A` for which `Q(X) = (1/2) X^t\cdot A\cdot X`.
 
         EXAMPLES::
 
@@ -1190,13 +1190,13 @@ class QuadraticForm(SageObject):
         return matrix(self.base_ring(), self.dim(), self.dim(), mat_entries)
 
     def Gram_matrix_rational(self):
-        """
+        r"""
         Return a (symmetric) Gram matrix `A` for the quadratic form `Q`,
         meaning that
 
         .. MATH::
 
-            Q(x) = x^t * A * x,
+            Q(x) = x^t\cdot A\cdot x,
 
         defined over the fraction field of the base ring.
 
@@ -1215,13 +1215,13 @@ class QuadraticForm(SageObject):
         return (ZZ(1) / ZZ(2)) * self.matrix()
 
     def Gram_matrix(self):
-        """
+        r"""
         Return a (symmetric) Gram matrix `A` for the quadratic form `Q`,
         meaning that
 
         .. MATH::
 
-            Q(x) = x^t * A * x,
+            Q(x) = x^t\cdot A\cdot x,
 
         defined over the base ring of `Q`.  If this is not possible,
         then a :class:`TypeError` is raised.
@@ -1252,7 +1252,7 @@ class QuadraticForm(SageObject):
         raise TypeError("this form does not have an integral Gram matrix")
 
     def has_integral_Gram_matrix(self):
-        """
+        r"""
         Return whether the quadratic form has an integral Gram matrix (with respect to its base ring).
 
         A warning is issued if the form is defined over a field, since in that case the return is trivially true.
@@ -1485,7 +1485,7 @@ class QuadraticForm(SageObject):
         return self.__base_ring
 
     def coefficients(self):
-        """
+        r"""
         Return the matrix of upper triangular coefficients,
         by reading across the rows from the main diagonal.
 
@@ -1498,8 +1498,8 @@ class QuadraticForm(SageObject):
         return self.__coeffs
 
     def det(self):
-        """
-        Return the determinant of the Gram matrix of `2*Q`, or
+        r"""
+        Return the determinant of the Gram matrix of `2\cdot Q`, or
         equivalently the determinant of the Hessian matrix of `Q`.
 
         .. NOTE:
@@ -1526,7 +1526,7 @@ class QuadraticForm(SageObject):
             return new_det
 
     def Gram_det(self):
-        """
+        r"""
         Return the determinant of the Gram matrix of `Q`.
 
         .. NOTE::
@@ -1591,8 +1591,8 @@ class QuadraticForm(SageObject):
     def level(self):
         r"""
         Determines the level of the quadratic form over a PID, which is a
-        generator for the smallest ideal `N` of `R` such that N * (the matrix of
-        2*Q)^(-1) is in `R` with diagonal in `2R`.
+        generator for the smallest ideal `N` of `R` such that `N\cdot (` the matrix of
+        `2*Q` `)^{(-1)}` is in `R` with diagonal in `2R`.
 
         Over `\ZZ` this returns a non-negative number.
 
@@ -1659,9 +1659,9 @@ class QuadraticForm(SageObject):
             return lvl
 
     def level_ideal(self):
-        """
-        Determines the level of the quadratic form (over `R`), which is the
-        smallest ideal `N` of `R` such that N * (the matrix of 2*Q)^(-1) is
+        r"""
+        Determine the level of the quadratic form (over `R`), which is the
+        smallest ideal `N` of `R` such that `N \cdot (` the matrix of `2Q` `)^{(-1)}` is
         in `R` with diagonal in `2R`.
         (Caveat: This always returns the principal ideal when working over a field!)
 

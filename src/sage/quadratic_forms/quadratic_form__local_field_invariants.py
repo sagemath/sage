@@ -470,7 +470,7 @@ def hasse_invariant__OMeara(self, p):
 
     .. MATH::
 
-        c_p = \prod_{i <= j} (a_i, a_j)_p
+        c_p = \prod_{i \leq j} (a_i, a_j)_p
 
     where `(a,b)_p` is the Hilbert symbol at `p`.
 

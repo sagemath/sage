@@ -1021,7 +1021,6 @@ class GaloisGroup(SageObject):
             d = self.__p1_to_automorphism
         return d[uv]
 
-
     def _alpha_to_p1_element(self, alpha):
         r"""
         Given an element of the ring of integers that is nonzero
@@ -1094,7 +1093,6 @@ class GaloisGroup(SageObject):
         """
         B = self.field().quadratic_field().maximal_order().basis()
         return uv[0]*B[0] + uv[1]*B[1]
-
 
     def _base_is_QQ(self):
         r"""
@@ -1179,7 +1177,6 @@ class GaloisGroup(SageObject):
         M = self.__base
         return isinstance(M, RingClassField) and M.conductor() == 1
 
-
     def __getitem__(self, i):
         """
         EXAMPLES::
@@ -1190,7 +1187,6 @@ class GaloisGroup(SageObject):
             Class field automorphism defined by x^2 + x*y + 44*y^2
         """
         return self._list()[i]
-
 
     def __len__(self):
         """
@@ -2204,7 +2200,6 @@ class HeegnerPoints_level_disc(HeegnerPoints):
         return "Set of all Heegner points on X_0(%s) associated to QQ[sqrt(%s)]"%(
             self.level(), self.discriminant())
 
-
     def discriminant(self):
         r"""
         Return the discriminant of the quadratic imaginary extension `K`.
@@ -2570,7 +2565,6 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
         m = 2*N
         return tuple(sorted( set([a%m for a in R(D).sqrt(all=True)]) ))
 
-
     @cached_method
     def points(self, beta=None):
         r"""
@@ -2756,7 +2750,6 @@ class HeegnerPointOnX0N(HeegnerPoint):
             C = ZZ((B*B - D*c*c)/(4*A))
             f = (A,B,C)
         self.__f = f
-
 
     def __hash__(self):
         """
@@ -3513,7 +3506,6 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         return all(self._check_poly_discriminant(g) for g,_ in f.factor())
 
-
     def point_exact(self, prec=53, algorithm='lll', var='a', optimize=False):
         """
         Return exact point on the elliptic curve over a number field
@@ -3943,7 +3935,6 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         g *= g.denominator()
         return (ZZ(g[2]), ZZ(g[1]), ZZ(g[0]))
 
-
     def _qf_atkin_lehner_act(self, Q, f):
         r"""
         Given a positive integer `Q` with `Q | N` and `\gcd(Q, N/Q) =
@@ -3986,7 +3977,6 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         tau = self._qf_to_tau(f)
         tau2 = ((u*Q*tau + v) / (N*tau + Q))
         return self._qf_from_tau(tau2)
-
 
     def _qf_reduce(self, f):
         """
@@ -4305,7 +4295,6 @@ class KolyvaginPoint(HeegnerPoint):
         else:
             raise NotImplementedError
 
-
     @cached_method
     def trace_to_real_numerical(self, prec=53):
         """
@@ -4485,7 +4474,6 @@ class KolyvaginPoint(HeegnerPoint):
 ##
 ##         """
 ##         raise NotImplementedError
-
 
     def kolyvagin_cohomology_class(self, n=None):
         """
@@ -4862,7 +4850,6 @@ class HeegnerQuatAlg(SageObject):
                 v.append(c)
             c += 1
         return v
-
 
     def optimal_embeddings(self, D, c, R):
         """

@@ -335,7 +335,7 @@ from collections.abc import Iterable
 
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
-from itertools import combinations, permutations, product
+from itertools import combinations, product
 from .set_system cimport SetSystem
 from sage.matrix.constructor import matrix
 
@@ -6307,7 +6307,7 @@ cdef class Matroid(SageObject):
         cdef frozenset Ax, Bx
 
         X = set(C)
-        e = X.pop()
+        _ = X.pop()
         # cl(X) = cl(C), and to be a chord x must be spanned by C
         for x in self._closure(X)-C:
             Ax = self._circuit(X.union([x]))
@@ -7587,7 +7587,7 @@ cdef class Matroid(SageObject):
         MIP.set_objective(sum([f[F] for F in FF]))
         for N in NB:
             MIP.add_constraint(sum([f[F] for F in FF if len(F.intersection(N)) > self.rank(F)]), min=1)
-        opt = MIP.solve(log=verbose)
+        _ = MIP.solve(log=verbose)
 
         fsol = MIP.get_values(f, convert=bool, tolerance=integrality_tolerance)
 

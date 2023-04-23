@@ -587,16 +587,16 @@ class NumberField_relative(NumberField_generic):
 
         INPUT:
 
-        - ``other`` - a number field
+        - ``other`` -- a number field
 
-        - ``names`` - generator name for composite fields
+        - ``names`` -- generator name for composite fields
 
-        - ``both_maps`` - (default: ``False``)  if ``True``, return quadruples
+        - ``both_maps`` -- (default: ``False``)  if ``True``, return quadruples
           (`F`, ``self_into_F, ``other_into_F``, `k`) such that ``self_into_F`` maps ``self`` into
           `F`, ``other_into_F`` maps ``other`` into `F`.  For relative number fields, `k` is
           always ``None``.
 
-        - ``preserve_embedding`` - (default: ``True``) has no effect, but is kept
+        - ``preserve_embedding`` -- (default: ``True``) has no effect, but is kept
           for compatibility with the absolute version of this method.  In every
           case the list of all possible compositums is returned.
 
@@ -2617,11 +2617,11 @@ class NumberField_relative(NumberField_generic):
 
         INPUT:
 
-        -  ``self`` - a number field
+        -  ``self`` -- a number field
 
-        -  ``P`` - a prime ideal of ``self``
+        -  ``P`` -- a prime ideal of ``self``
 
-        -  ``others`` - either ``"positive"`` (default), in which
+        -  ``others`` -- either ``"positive"`` (default), in which
            case the element will have non-negative valuation at all other
            primes of ``self``, or ``"negative"``, in which case the element will have
            non-positive valuation at all other primes of ``self``.

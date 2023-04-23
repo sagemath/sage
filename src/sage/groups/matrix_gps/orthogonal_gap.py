@@ -2,6 +2,21 @@ r"""
 Orthogonal Linear Groups with GAP
 """
 
+# ****************************************************************************
+#       Copyright (C) 2006 David Joyner and William Stein
+#                     2009 Mike Hansen
+#                     2013 Volker Braun <vbraun.name@gmail.com>
+#                     2018 Sebastian Oehms
+#                     2018 Travis Scrimshaw
+#                     2023 Matthias Koeppe
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
 from sage.groups.matrix_gps.named_group_gap import NamedMatrixGroup_gap
 from sage.groups.matrix_gps.orthogonal import OrthogonalMatrixGroup_generic
@@ -29,7 +44,7 @@ class OrthogonalMatrixGroup_gap(OrthogonalMatrixGroup_generic, NamedMatrixGroup_
 
         OUTPUT:
 
-        A matrix `M` such that, for every group element g, the
+        A matrix `M` such that, for every group element `g`, the
         identity `g m g^T = m` holds. In characteristic different from
         two, this uniquely determines the orthogonal group.
 

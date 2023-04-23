@@ -175,11 +175,11 @@ TESTS::
 
 ::
 
-    sage: SR.coerce(RBF(0.42))
+    sage: SR.coerce(RBF(0.42))                                                          # optional - sage.symbolic
     [0.4200000000000000 +/- ...e-17]
-    sage: RBF(0.42) + SR(1)
+    sage: RBF(0.42) + SR(1)                                                             # optional - sage.symbolic
     [1.420000000000000 +/- ...e-16]
-    sage: _.parent()
+    sage: _.parent()                                                                    # optional - sage.symbolic
     Symbolic Ring
 
 Classes and Methods
@@ -457,7 +457,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             False
             sage: RealBallField().has_coerce_map_from(RIF)
             False
-            sage: RealBallField().has_coerce_map_from(SR)
+            sage: RealBallField().has_coerce_map_from(SR)                               # optional - sage.symbolic
             False
             sage: RealBallField().has_coerce_map_from(RR)
             False
@@ -2067,7 +2067,7 @@ cdef class RealBall(RingElement):
 
         EXAMPLES:
 
-        It is possible to create balls whose midpoint is more precise that
+        It is possible to create balls whose midpoint is more precise than
         their parent's nominal precision (see :mod:`~sage.rings.real_arb` for
         more information)::
 

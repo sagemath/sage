@@ -89,12 +89,12 @@ def qfparam(G, sol):
     - ``G`` -- a `3 \times 3`-matrix over `\QQ`
 
     - ``sol`` -- a triple of rational numbers providing a solution
-      to sol*G*sol^t = 0
+      to `x\cdot G\cdot x^t = 0`
 
     OUTPUT:
 
     A triple of polynomials that parametrizes all solutions of
-    `x*G*x^t = 0` up to scaling.
+    `x\cdot G\cdot x^t = 0` up to scaling.
 
     ALGORITHM:
 

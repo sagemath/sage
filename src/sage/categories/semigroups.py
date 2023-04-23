@@ -283,12 +283,13 @@ class Semigroups(CategoryWithAxiom):
 
             ::
 
-                sage: s1 = SymmetricGroup(1); s = s1.cayley_graph(); s.vertices(sort=False)                             # optional - sage.groups sage.graphs
+                sage: s1 = SymmetricGroup(1); s = s1.cayley_graph()                     # optional - sage.groups sage.graphs
+                sage: s.vertices(sort=False)                                            # optional - sage.groups sage.graphs
                 [()]
 
             TESTS::
 
-                sage: SymmetricGroup(2).cayley_graph(side="both")                                                       # optional - sage.groups sage.graphs
+                sage: SymmetricGroup(2).cayley_graph(side="both")                       # optional - sage.groups sage.graphs
                 Traceback (most recent call last):
                 ...
                 ValueError: option 'side' must be 'left', 'right' or 'twosided'

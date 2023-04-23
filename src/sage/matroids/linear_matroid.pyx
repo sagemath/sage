@@ -112,7 +112,7 @@ Methods
 # ****************************************************************************
 
 from copy import copy, deepcopy
-from itertools import combinations, product
+from itertools import product
 
 from cpython.object cimport Py_EQ, Py_NE
 
@@ -122,9 +122,8 @@ from sage.matrix.matrix2 cimport Matrix
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
 from sage.matroids.lean_matrix cimport (LeanMatrix, GenericMatrix, BinaryMatrix,
                                         TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix,
-                                        RationalMatrix, generic_identity)
+                                        RationalMatrix)
 from sage.matroids.matroid cimport Matroid
-from sage.matroids.set_system cimport SetSystem
 from sage.matroids.utilities import newlabel, spanning_stars, spanning_forest, lift_cross_ratios
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer_ring import ZZ
@@ -166,7 +165,7 @@ cdef inline characteristic(LeanMatrix A):
 #     cdef long c, p, row
 #     for c in columns:
 #         is_pivot = False
-#         for row in xrange(r, A.nrows()):
+#         for row in range(r, A.nrows()):
 #             if A.get_unsafe(row, c) != 0:
 #                 is_pivot = True
 #                 p = row
@@ -174,7 +173,7 @@ cdef inline characteristic(LeanMatrix A):
 #         if is_pivot:
 #             A.swap_rows_c(p, r)
 #             A.rescale_row_c(r, A.get_unsafe(r, c) ** (-1), 0)
-#             for row in xrange(A.nrows()):
+#             for row in range(A.nrows()):
 #                 if row != r and A.get_unsafe(row, c) != 0:
 #                     A.add_multiple_of_row_c(row, r, -A.get_unsafe(row, c), 0)
 #             P.append(c)
@@ -274,7 +273,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         """
         basis = self._setup_internal_representation(matrix, reduced_matrix, ring, keep_initial_representation)
         if groundset is None:
-            groundset = list(xrange(self._A.nrows() + self._A.ncols()))
+            groundset = list(range(self._A.nrows() + self._A.ncols()))
         else:
             groundset = list(groundset)
             if len(groundset) != self._A.nrows() + self._A.ncols():
@@ -2087,7 +2086,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             [0 1 1 0 0 1 1]
             [0 0 0 1 1 1 1]
         """
-        cdef long i, j
+        cdef long i
         cdef LeanMatrix M
         ext = []
         if self._representation is None:
@@ -2137,7 +2136,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             [0 0 0 1 1 1 0]
             [1 0 0 0 0 1 1]
         """
-        cdef long i, j
+        cdef long i
         cdef LeanMatrix M
         coext = []
         if self._representation is None:
@@ -3342,7 +3341,7 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         if B is not None:
             self._move_current_basis(B, set())
-        rows, cols = self._current_rows_cols()
+        _, cols = self._current_rows_cols()
         return self._A.matrix_from_rows_and_columns(range(self.full_rank()), [self._idx[e] for e in cols])
 
     # isomorphism
@@ -4415,7 +4414,7 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         if B is not None:
             self._move_current_basis(B, set())
-        rows, cols = self._current_rows_cols()
+        _, cols = self._current_rows_cols()
         return self._A.matrix_from_rows_and_columns(range(self.full_rank()), [self._idx[e] for e in cols])
 
     # isomorphism
@@ -5312,7 +5311,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         """
         if B is not None:
             self._move_current_basis(B, set())
-        rows, cols = self._current_rows_cols()
+        _, cols = self._current_rows_cols()
         return self._A.matrix_from_rows_and_columns(range(self.full_rank()), [self._idx[e] for e in cols])
 
     cpdef _make_invariant(self):
@@ -6031,7 +6030,6 @@ cdef class RegularMatroid(LinearMatroid):
             Digraph on 55 vertices
         """
         # NEW VERSION, Uses Sage'S Graph Isomorphism
-        from sage.graphs.graph import Graph
         from sage.graphs.digraph import DiGraph
         if self._r_hypergraph is not None:
             return (self._hypergraph_vertex_partition, self._hypergraph_tuples, self._r_hypergraph)
@@ -6040,7 +6038,7 @@ cdef class RegularMatroid(LinearMatroid):
         B = {}
         V = []
         E = []
-        for i in xrange(P.nrows()):
+        for i in range(P.nrows()):
             e = self._E[i]
             w = P.get_unsafe(i, i)
             if w != 0:

@@ -1,4 +1,4 @@
-"""
+r"""
 Ternary quadratic form with integer coefficients
 
 AUTHOR:
@@ -7,7 +7,7 @@ AUTHOR:
 
 Based in code of Gonzalo Tornaria
 
-The form `a*x^2 + b*y^2 + c*z^2 + r*yz + s*xz + t*xy` is stored as a tuple ``(a, b, c, r, s, t)`` of integers.
+The form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot yz + s\cdot xz + t\cdot xy` is stored as a tuple ``(a, b, c, r, s, t)`` of integers.
 
 """
 
@@ -57,7 +57,7 @@ class TernaryQF(SageObject):
 
     OUTPUT:
 
-    - the ternary quadratic form `a*x^2 + b*y^2 + c*z^2 + r*y*z + s*x*z + t*x*y`.
+    - the ternary quadratic form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot y\cdot z + s\cdot x\cdot z + t\cdot x\cdot y`.
 
     EXAMPLES::
 
@@ -79,7 +79,7 @@ class TernaryQF(SageObject):
 
     def __init__(self, v):
         r"""
-        Create the ternary quadratic form `a*x^2 + b*y^2 + c*z^2 + r*y*z + s*x*z + t*x*y` from the
+        Create the ternary quadratic form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot y\cdot z + s\cdot x\cdot z + t\cdot x\cdot y` from the
         tuple ``v=[a,b,c,r,s,t]`` over `\ZZ`.
 
         INPUT:
@@ -102,7 +102,7 @@ class TernaryQF(SageObject):
         self._number_of_automorphisms = None
 
     def coefficients(self):
-        """
+        r"""
         Return the list of coefficients of the ternary quadratic form.
 
         EXAMPLES::
@@ -138,7 +138,7 @@ class TernaryQF(SageObject):
         return self.coefficients()[n]
 
     def polynomial(self, names='x,y,z'):
-        """
+        r"""
         Return the polynomial associated to the ternary quadratic form.
 
         EXAMPLES::
@@ -156,7 +156,7 @@ class TernaryQF(SageObject):
         return self._a * x**2 + self._b* y**2 + self._c * z**2 + self._t * x*y + self._s * x*z + self._r * y*z
 
     def _repr_(self):
-        """
+        r"""
         Display the quadratic form.
 
         EXAMPLES::
@@ -177,7 +177,7 @@ class TernaryQF(SageObject):
         return rep
 
     def __call__(self, v):
-        """
+        r"""
         Evaluate this ternary quadratic form `Q` on a vector of 3 elements,
         or matrix of elements in Z, with 3 rows.
 
@@ -190,7 +190,7 @@ class TernaryQF(SageObject):
 
         .. MATH::
 
-            Q' = v^t * Q * v.
+            Q' = v^t\cdot Q\cdot v.
 
         EXAMPLES::
 
@@ -251,15 +251,15 @@ class TernaryQF(SageObject):
         return QuadraticForm(ZZ, 3, [self._a, self._t, self._s, self._b, self._r, self._c])
 
     def matrix(self):
-        """
+        r"""
         Return the Hessian matrix associated to the ternary quadratic form.
-        That is, if `Q` is a ternary quadratic form, `Q(x,y,z) = a*x^2 + b*y^2 + c*z^2 + r*y*z + s*x*z + t*x*y`,
+        That is, if `Q` is a ternary quadratic form, `Q(x,y,z) = a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot y\cdot z + s\cdot x\cdot z + t\cdot x\cdot y`,
         then the Hessian matrix associated to `Q` is
         ::
 
-            [2*a t s]
-            [t 2*b r]
-            [s r 2*c]
+            [2\cdot a t s]
+            [t 2\cdot b r]
+            [s r 2\cdot c]
 
         EXAMPLES::
 
@@ -281,7 +281,7 @@ class TernaryQF(SageObject):
         return M
 
     def disc(self):
-        """
+        r"""
         Return the discriminant of the ternary quadratic form, this is the determinant of the matrix divided by 2.
 
         EXAMPLES::
@@ -425,7 +425,7 @@ class TernaryQF(SageObject):
             [-1 -1 -2]
             [2 0 1]
             sage: Q = TernaryQF([0, 0, 0, 0, 0, 0])
-            sage: Q==-Q
+            sage: Q == -Q
             True
         """
         return TernaryQF([-a for a in self.coefficients()])
@@ -707,9 +707,9 @@ class TernaryQF(SageObject):
         2. `r`, `s`, and `t` are all positive or all nonpositive;
         3. `a \geq |t|`; `a \geq |s|`; `b \geq |r|`;
         4. `a+b+r+s+t \geq 0`;
-        5. `a=t` implies `s \leq 2*r`; `a=s` implies `t \leq 2*r`; `b=r` implies `t \leq 2*s`;
+        5. `a=t` implies `s \leq 2\cdot r`; `a=s` implies `t \leq 2\cdot r`; `b=r` implies `t \leq 2\cdot s`;
         6. `a=-t` implies `s=0`; `a=-s` implies `t=0`; `b=-r` implies `t=0`;
-        7. `a+b+r+s+t = 0` implies `2*a+2*s+t \leq 0`;
+        7. `a+b+r+s+t = 0` implies `2\cdot a+2\cdot s+t \leq 0`;
         8. `a=b` implies `|r| \leq |s|`; `b=c` implies `|s| \leq |t|`.
 
         EXAMPLES::

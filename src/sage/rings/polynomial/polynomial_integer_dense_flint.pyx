@@ -224,8 +224,8 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         if isinstance(x, Polynomial):
             if x.parent() is self.parent():
                 sig_on()
-                fmpz_poly_set(self.__poly, \
-                        (<Polynomial_integer_dense_flint>x).__poly)
+                fmpz_poly_set(self.__poly,
+                              (<Polynomial_integer_dense_flint>x).__poly)
                 sig_off()
                 return
             else:
@@ -412,8 +412,8 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             if isinstance(x, Polynomial_integer_dense_flint):
                 f = self._new()
                 sig_on()
-                fmpz_poly_compose(f.__poly, self.__poly, \
-                    (<Polynomial_integer_dense_flint> x0).__poly)
+                fmpz_poly_compose(f.__poly, self.__poly,
+                                  (<Polynomial_integer_dense_flint> x0).__poly)
                 sig_off()
                 return f
             if is_small_python_int(x0):

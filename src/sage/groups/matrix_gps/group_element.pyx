@@ -63,9 +63,11 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2006 David Joyner and William Stein <wstein@gmail.com>
-#       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
-#       Copyright (C) 2016 Travis Scrimshaw <tscrimsh at umn.edu>
+#       Copyright (C) 2006      David Joyner and William Stein <wstein@gmail.com>
+#                     2013      Volker Braun <vbraun.name@gmail.com>
+#                     2016      Travis Scrimshaw <tscrimsh at umn.edu>
+#                     2016-2018 Jeroen Demeyer
+#                     2023      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -96,9 +98,7 @@ cpdef is_MatrixGroupElement(x):
 
     - ``x`` -- anything.
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: Boolean.
 
     EXAMPLES::
 
@@ -131,7 +131,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
     - ``parent`` -- the parent
 
     - ``check`` -- bool (default: ``True``); if ``True``, then
-       does some type checking
+      do some type checking
 
     - ``convert`` -- bool (default: ``True``); if ``True``, then
       convert ``M`` to the right matrix space
@@ -139,8 +139,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
     EXAMPLES::
 
         sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                                   # optional - sage.combinat
-        sage: g = W.an_element()                                                        # optional - sage.combinat
-        sage: g                                                                         # optional - sage.combinat
+        sage: g = W.an_element(); g                                                     # optional - sage.combinat
         [ 0  0 -1]
         [ 1  0 -1]
         [ 0  1 -1]
@@ -369,28 +368,26 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         """
         Return the inverse group element
 
-        OUTPUT:
-
-        A matrix group element.
+        OUTPUT: A matrix group element.
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                                   # optional - sage.combinat
-            sage: g = W.an_element()                                                        # optional - sage.combinat
-            sage: ~g                                                                        # optional - sage.combinat
+            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # optional - sage.combinat
+            sage: g = W.an_element()                                                    # optional - sage.combinat
+            sage: ~g                                                                    # optional - sage.combinat
             [-1  1  0]
             [-1  0  1]
             [-1  0  0]
-            sage: g * ~g == W.one()                                                         # optional - sage.combinat
+            sage: g * ~g == W.one()                                                     # optional - sage.combinat
             True
-            sage: ~g * g == W.one()                                                         # optional - sage.combinat
+            sage: ~g * g == W.one()                                                     # optional - sage.combinat
             True
 
-            sage: W = CoxeterGroup(['B',3])                                                 # optional - sage.combinat sage.rings.number_field
-            sage: W.base_ring()                                                             # optional - sage.combinat sage.rings.number_field
+            sage: W = CoxeterGroup(['B',3])                                             # optional - sage.combinat sage.rings.number_field
+            sage: W.base_ring()                                                         # optional - sage.combinat sage.rings.number_field
             Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
-            sage: g = W.an_element()                                                        # optional - sage.combinat sage.rings.number_field
-            sage: ~g                                                                        # optional - sage.combinat sage.rings.number_field
+            sage: g = W.an_element()                                                    # optional - sage.combinat sage.rings.number_field
+            sage: ~g                                                                    # optional - sage.combinat sage.rings.number_field
             [-1  1  0]
             [-1  0  a]
             [-a  0  1]
