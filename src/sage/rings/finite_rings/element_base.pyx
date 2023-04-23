@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 """
 Base class for finite field elements
 
@@ -25,7 +26,7 @@ from sage.misc.superseded import deprecated_function_alias
 
 def is_FiniteFieldElement(x):
     """
-    Return True if ``x`` is a finite field element.
+    Return ``True`` if ``x`` is a finite field element.
 
     This function is deprecated.
 
