@@ -38,7 +38,6 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.data_structures.bitset_base cimport *
 from sage.matrix.matrix2 cimport Matrix
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.rational_field import QQ
 from sage.rings.integer cimport Integer
@@ -303,7 +302,7 @@ cdef class LeanMatrix:
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         self.rescale_row_c(x, self.get_unsafe(x, y) ** (-1), 0)
         for i from 0 <= i < self._nrows:
             s = self.get_unsafe(i, y)
@@ -491,7 +490,7 @@ cdef class LeanMatrix:
         """
         return self.copy()
 
-    def __deepcopy__(self, memo={}):
+    def __deepcopy__(self, memo=None):
         """
         Return a deep copy of ``self``.
 
@@ -782,7 +781,6 @@ cdef class GenericMatrix(LeanMatrix):
         Warning: assumes ``M`` is a GenericMatrix instance!
         """
         cdef GenericMatrix A
-        cdef long i, j
         A = GenericMatrix(0, 0, ring=self._base_ring)
         A._entries = self._entries + ((<GenericMatrix>M)._entries)
         A._nrows = self._nrows + M.nrows()
@@ -1145,7 +1143,7 @@ cdef class BinaryMatrix(LeanMatrix):
         """
         Return the matrix obtained by prepending an identity matrix. Special case of ``augment``.
         """
-        cdef long i, j
+        cdef long i
         cdef BinaryMatrix A = BinaryMatrix(self._nrows, self._ncols + self._nrows)
         for i from 0 <= i < self._nrows:
             bitset_lshift(A._M[i], self._M[i], self._nrows)
@@ -1214,7 +1212,7 @@ cdef class BinaryMatrix(LeanMatrix):
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         for i from 0 <= i < self._nrows:
             if bitset_in(self._M[i], y) and i != x:
                 bitset_symmetric_difference(self._M[i], self._M[i], self._M[x])
@@ -1423,7 +1421,7 @@ cdef class BinaryMatrix(LeanMatrix):
         Helper method for isomorphism test.
         """
         cdef BinaryMatrix Q
-        cdef long i, r
+        cdef long i
         Q = BinaryMatrix(self._nrows + 1, self._ncols)
         for i from 0 <= i < self._nrows:
             bitset_copy(Q._M[i], self._M[i])
@@ -1795,7 +1793,7 @@ cdef class TernaryMatrix(LeanMatrix):
 
         Special case of ``augment``.
         """
-        cdef long i, j
+        cdef long i
         cdef TernaryMatrix A = TernaryMatrix(self._nrows, self._ncols + self._nrows)
         for i from 0 <= i < self._nrows:
             bitset_lshift(A._M0[i], self._M0[i], self._nrows)
@@ -1935,7 +1933,7 @@ cdef class TernaryMatrix(LeanMatrix):
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         if self._is_negative(x, y):
             self._row_negate(x)
         for i from 0 <= i < self._nrows:
@@ -2396,7 +2394,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         Return the matrix obtained by prepending an identity matrix. Special
         case of ``augment``.
         """
-        cdef long i, j
+        cdef long i
         cdef QuaternaryMatrix A = QuaternaryMatrix(self._nrows, self._ncols + self._nrows, ring=self._gf4)
         for i from 0 <= i < self._nrows:
             bitset_lshift(A._M0[i], self._M0[i], self._nrows)
@@ -2522,7 +2520,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         self._row_div(x, self.get(x, y))
         for i from 0 <= i < self._nrows:
             if self.is_nonzero(i, y) and i != x:
@@ -3047,7 +3045,7 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         cdef int a, s
         a = self.get(x, y)  # 1 or -1, so inverse is equal to itself
         self.rescale_row_c(x, a, 0)
@@ -3532,7 +3530,7 @@ cdef class RationalMatrix(LeanMatrix):
             This is different from what matroid theorists tend to call a
             pivot, as it does not involve a column exchange!
         """
-        cdef long i, j
+        cdef long i
         cdef mpq_t t
         mpq_init(t)
         mpq_inv(t, self._entries[self.index(x, y)])

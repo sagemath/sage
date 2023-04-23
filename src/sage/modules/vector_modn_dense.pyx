@@ -128,7 +128,7 @@ cdef mod_int ivalue(IntegerMod_abstract x) except -1:
     else:
         raise TypeError("non-fixed size integer")
 
-from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
+from sage.structure.element cimport Element, Vector
 
 cimport sage.modules.free_module_element as free_module_element
 from .free_module_element import vector

@@ -75,7 +75,7 @@ def swap_variables(self, r, s, in_place=False):
 
 def multiply_variable(self, c, i, in_place=False):
     r"""
-    Replace the variables `x_i` by `c*x_i` in the quadratic form
+    Replace the variables `x_i` by `c\cdot x_i` in the quadratic form
     (replacing the original form if the ``in_place`` flag is True).
 
     Here `c` must be an element of the base ring defining the
@@ -245,7 +245,7 @@ def extract_variables(QF, var_indices):
 
 def elementary_substitution(self, c, i, j, in_place=False):  # CHECK THIS!!!
     r"""
-    Perform the substitution `x_i \longmapsto x_i + c*x_j` (replacing the
+    Perform the substitution `x_i \longmapsto x_i + c\cdot x_j` (replacing the
     original form if the ``in_place`` flag is True).
 
     INPUT:
@@ -318,9 +318,9 @@ def elementary_substitution(self, c, i, j, in_place=False):  # CHECK THIS!!!
 
 def add_symmetric(self, c, i, j, in_place=False):
     r"""
-    Perform the substitution `x_j \longmapsto x_j + c*x_i`, which has the
+    Perform the substitution `x_j \longmapsto x_j + c\cdot x_i`, which has the
     effect (on associated matrices) of symmetrically adding
-    `c * j`-th row/column to the `i`-th row/column.
+    `c` times the `j`-th row/column to the `i`-th row/column.
 
     NOTE: This is meant for compatibility with previous code,
     which implemented a matrix model for this class.  It is used

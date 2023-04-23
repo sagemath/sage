@@ -187,7 +187,7 @@ def is_adjoint(self) -> bool:
 
 
 def reciprocal(self):
-    """
+    r"""
     This gives the reciprocal quadratic form associated to the given form.
     This is defined as the multiple of the primitive adjoint with the same
     content as the given form.
@@ -213,7 +213,7 @@ def reciprocal(self):
 
 
 def omega(self):
-    """
+    r"""
     This is the content of the adjoint of the primitive associated quadratic form.
 
     Ref: See Dickson's "Studies in Number Theory".
@@ -229,7 +229,7 @@ def omega(self):
 
 
 def delta(self):
-    """
+    r"""
     This is the omega of the adjoint form,
     which is the same as the omega of the reciprocal form.
 
@@ -243,14 +243,14 @@ def delta(self):
 
 
 def level__Tornaria(self):
-    """
+    r"""
     Return the level of the quadratic form,
     defined as
 
-    - level(B)    for even dimension,
-    - level(B)/4  for odd dimension,
+    - level(`B`)    for even dimension,
+    - level(`B`)/4  for odd dimension,
 
-    where `2Q(x) = x^t * B * x`.
+    where `2Q(x) = x^t\cdot B\cdot x`.
 
     This agrees with the usual level for even dimension...
 
@@ -269,7 +269,7 @@ def level__Tornaria(self):
 
 
 def discrec(self):
-    """
+    r"""
     Return the discriminant of the reciprocal form.
 
     EXAMPLES::

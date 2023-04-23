@@ -1521,8 +1521,11 @@ cdef class RealDoubleElement(FieldElement):
 
     def round(self):
         """
-        Given real number `x`, rounds up if fractional part is greater than
-        `0.5`, rounds down if fractional part is less than `0.5`.
+        Round ``self`` to the nearest integer.
+        
+        This uses the convention of rounding half to even
+        (i.e., if the fractional part of ``self`` is `0.5`, then it
+        is rounded to the nearest even integer).
 
         EXAMPLES::
 
@@ -1530,6 +1533,10 @@ cdef class RealDoubleElement(FieldElement):
             0
             sage: a=RDF(0.51).round(); a
             1
+            sage: RDF(0.5).round()
+            0
+            sage: RDF(1.5).round()
+            2
         """
         return Integer(round(self._value))
 

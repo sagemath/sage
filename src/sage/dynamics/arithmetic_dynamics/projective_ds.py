@@ -1219,9 +1219,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.arakelov_zhang_pairing(g)
             0.326954667248466
             sage: # Correct value should be = 0.323067...
-            sage: f.arakelov_zhang_pairing(g, n=9)
+            sage: f.arakelov_zhang_pairing(g, n=9)  # long time
             0.323091061918965
-            sage: _ - 0.323067
+            sage: _ - 0.323067                      # long time
             0.0000240619189654789
 
         Also from Prop. 18 of Petsche, Szpiro and Tucker, includes places of bad reduction::
@@ -1232,11 +1232,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: a = 7/(b - 1)
             sage: f = DynamicalSystem_projective([a*y^2 - (a*y - x)^2, y^2])
             sage: g = DynamicalSystem_projective([x^2, y^2])
-            sage: # If all archimedean absolute values of a have modulus > 2,
-            sage: # then the pairing should be h(a).
-            sage: f.arakelov_zhang_pairing(g, n=6)
+
+        If all archimedean absolute values of a have modulus > 2,
+        then the pairing should be h(a).::
+
+            sage: f.arakelov_zhang_pairing(g, n=6)  # long time
             1.93846423207664
-            sage: _ - a.global_height()
+            sage: _ - a.global_height()             # long time
             -0.00744591697867292
         """
         n = kwds.pop('n', 5)
@@ -4794,8 +4796,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: f = DynamicalSystem([x^2 - 2*y^2, y^2, z^2])
-            sage: X = f.periodic_points(2, minimal=False, formal=True, return_scheme=True)
-            sage: len(X.defining_polynomials())
+            sage: X = f.periodic_points(2, minimal=False, formal=True, return_scheme=True)  # long time
+            sage: len(X.defining_polynomials())                                             # long time
             19
 
         TESTS::
@@ -5006,7 +5008,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: f = DynamicalSystem_projective([x^2, z^2, y^2])
-            sage: f.multiplier_spectra(2, formal=True)
+            sage: f.multiplier_spectra(2, formal=True)  # long time
             [
             [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [4 0]  [0 0]  [0 0]
             [0 4], [0 0], [0 0], [0 4], [0 4], [0 0], [0 0], [0 4], [0 0], [0 0],
@@ -5132,7 +5134,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: f = DynamicalSystem_projective([x^2, z^2, y^2])
             sage: g = f.change_ring(QQbar)
-            sage: f.multiplier_spectra(1) == g.multiplier_spectra(1)
+            sage: f.multiplier_spectra(1) == g.multiplier_spectra(1)    # long time
             True
 
         ::
@@ -5140,7 +5142,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: K.<w> = QuadraticField(5)
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)
             sage: f = DynamicalSystem_projective([x^2 + w*x*y + y^2, y^2, z^2])
-            sage: f.multiplier_spectra(1)
+            sage: f.multiplier_spectra(1)                               # long time
             [
             [1.000000000000000? - 1.572302755514847?*I                                         0]
             [1.000000000000000? - 1.572302755514847?*I 0.618033988749895? - 1.757887921270715?*I]
@@ -7480,8 +7482,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: f = DynamicalSystem_projective([2*x + 12*y, 11*y+2*z, x+z])
             sage: m1 = matrix(L, 3, 3, [1,4,v^2,0,2,1,1,1,1])
             sage: g = f.conjugate(m1)
-            sage: m = f.conjugating_set(g)[0]
-            sage: f.conjugate(m) == g
+            sage: m = f.conjugating_set(g)[0]   # long time
+            sage: f.conjugate(m) == g           # long time
             True
 
         TESTS:
@@ -8191,7 +8193,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: system = DynamicalSystem_projective([3^5*x^3 + x^2*y - 3^5*x*y^2, -3^5*x^2*y + x*y^2 + 3^5*y^3])
-            sage: system.potential_good_reduction(3, return_conjugation=True)
+            sage: system.potential_good_reduction(3, return_conjugation=True)  # long time
             (False, None, None)
 
         ::
