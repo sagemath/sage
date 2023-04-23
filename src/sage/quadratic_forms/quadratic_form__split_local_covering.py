@@ -21,7 +21,7 @@ from sage.rings.integer_ring import ZZ
 from sage.arith.misc import GCD
 
 
-def cholesky_decomposition(self, bit_prec = 53):
+def cholesky_decomposition(self, bit_prec=53):
     r"""
     Give the Cholesky decomposition of this quadratic form `Q` as a real matrix
     of precision ``bit_prec``.
