@@ -2750,7 +2750,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f(x0, y0).exp() == expf(x0, y0)
             True
 
-            sage: expf.log() == f
+            sage: expf.log() == f  # long time
             True
 
         """

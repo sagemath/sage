@@ -93,7 +93,7 @@ def gamma__exact(n):
 
 def zeta__exact(n):
     r"""
-    Returns the exact value of the Riemann Zeta function
+    Return the exact value of the Riemann Zeta function
 
     The argument must be a critical value, namely either positive even
     or negative odd.
@@ -119,7 +119,7 @@ def zeta__exact(n):
 
     Let us test the accuracy for positive special values::
 
-        sage: all(abs(RR(zeta__exact(2*i))-zeta(RR(2*i))) < 10**(-28) for i in range(1,10))
+        sage: all(abs(RR(zeta__exact(2*i)) - zeta(RR(2*i))) < 10**(-28) for i in range(1,10))
         True
 
     TESTS::
@@ -166,12 +166,14 @@ def QuadraticBernoulliNumber(k, d):
 
     Let us create a list of some odd negative fundamental discriminants::
 
-        sage: test_set = [d for d in srange(-163, -3, 4) if d.is_fundamental_discriminant()]        # optional - sage.libs.pari
+        sage: test_set = [d for d in srange(-163, -3, 4)                                # optional - sage.libs.pari
+        ....:             if d.is_fundamental_discriminant()]
 
     In general, we have `B_{1, \chi_d} = -2 h/w` for odd negative fundamental
     discriminants::
 
-        sage: all(QuadraticBernoulliNumber(1, d) == -len(BinaryQF_reduced_representatives(d))       # optional - sage.libs.pari
+        sage: all(QuadraticBernoulliNumber(1, d)                                        # optional - sage.libs.pari
+        ....:       == -len(BinaryQF_reduced_representatives(d))
         ....:     for d in test_set)
         True
 
@@ -198,7 +200,7 @@ def QuadraticBernoulliNumber(k, d):
 
 def quadratic_L_function__exact(n, d):
     r"""
-    Returns the exact value of a quadratic twist of the Riemann Zeta function
+    Return the exact value of a quadratic twist of the Riemann Zeta function
     by `\chi_d(x) = \left(\frac{d}{x}\right)`.
 
     The input `n` must be a critical value.
@@ -269,7 +271,9 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
 
         sage: RR = RealField(100)
         sage: for i in range(5):
-        ....:     print("L({}, (-4/.)): {}".format(1+2*i, RR(quadratic_L_function__exact(1+2*i, -4)) - quadratic_L_function__numerical(RR(1+2*i),-4, 10000)))
+        ....:     print("L({}, (-4/.)): {}".format(1+2*i,
+        ....:             RR(quadratic_L_function__exact(1+2*i, -4))
+        ....:                - quadratic_L_function__numerical(RR(1+2*i), -4, 10000)))
         L(1, (-4/.)): 0.000049999999500000024999996962707
         L(3, (-4/.)): 4.99999970000003...e-13
         L(5, (-4/.)): 4.99999922759382...e-21
@@ -279,7 +283,7 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
     This procedure fails for negative special values, as the Dirichlet
     series does not converge here::
 
-        sage: quadratic_L_function__numerical(-3,-4, 10000)
+        sage: quadratic_L_function__numerical(-3, -4, 10000)
         Traceback (most recent call last):
         ...
         ValueError: the Dirichlet series does not converge here
@@ -288,8 +292,11 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
     value, to a given accuracy ::
 
         sage: for d in range(-20,0):  # long time (2s on sage.math 2014)
-        ....:     if abs(RR(quadratic_L_function__numerical(1, d, 10000) - quadratic_L_function__exact(1, d))) > 0.001:
-        ....:         print("We have a problem at d = {}: exact = {}, numerical = {}".format(d, RR(quadratic_L_function__exact(1, d)), RR(quadratic_L_function__numerical(1, d))))
+        ....:     if abs(RR(quadratic_L_function__numerical(1, d, 10000)
+        ....:                - quadratic_L_function__exact(1, d))) > 0.001:
+        ....:         print("We have a problem at d = {}: exact = {}, numerical = {}".format(d,
+        ....:                   RR(quadratic_L_function__exact(1, d)),
+        ....:                   RR(quadratic_L_function__numerical(1, d))))
     """
     # Set the correct precision if it is given (for n).
     if isinstance(n.parent(), sage.rings.abc.RealField):

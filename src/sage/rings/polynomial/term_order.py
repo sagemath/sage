@@ -1645,7 +1645,7 @@ class TermOrder(SageObject):
 
     def singular_str(self):
         """
-        Return a SINGULAR representation of self.
+        Return a SINGULAR representation of ``self``.
 
         Used to convert polynomial rings to their SINGULAR representation.
 
@@ -1775,7 +1775,7 @@ class TermOrder(SageObject):
     def singular_moreblocks(self):
         """
         Return a the number of additional blocks SINGULAR needs to allocate
-        for handling non-native orderings like `degneglex`.
+        for handling non-native orderings like ``degneglex``.
 
         EXAMPLES::
 
@@ -1815,7 +1815,7 @@ class TermOrder(SageObject):
 
     def macaulay2_str(self):
         """
-        Return a Macaulay2 representation of self.
+        Return a Macaulay2 representation of ``self``.
 
         Used to convert polynomial rings to their Macaulay2
         representation.
@@ -1837,7 +1837,7 @@ class TermOrder(SageObject):
 
     def magma_str(self):
         """
-        Return a MAGMA representation of self.
+        Return a MAGMA representation of ``self``.
 
         Used to convert polynomial rings to their MAGMA representation.
 
@@ -1859,7 +1859,7 @@ class TermOrder(SageObject):
 
     def blocks(self):
         """
-        Return the term order blocks of self.
+        Return the term order blocks of ``self``.
 
         NOTE:
 
@@ -1898,7 +1898,7 @@ class TermOrder(SageObject):
 
         EXAMPLES::
 
-            sage: t=TermOrder('wdeglex',(2,3))
+            sage: t = TermOrder('wdeglex',(2,3))
             sage: t.weights()
             (2, 3)
         """
@@ -1906,7 +1906,7 @@ class TermOrder(SageObject):
 
     def __eq__(self, other):
         """
-        Return true if self and other are equal.
+        Return ``True`` if ``self`` and ``other`` are equal.
 
         EXAMPLES::
 
@@ -1920,15 +1920,15 @@ class TermOrder(SageObject):
 
         ::
 
-            sage: T1 = TermOrder('lex',2)+TermOrder('lex',3)
-            sage: T2 = TermOrder('lex',3)+TermOrder('lex',2)
+            sage: T1 = TermOrder('lex',2) + TermOrder('lex',3)
+            sage: T2 = TermOrder('lex',3) + TermOrder('lex',2)
             sage: T1 == T2
             False
 
         ::
 
-            sage: T1 = TermOrder('lex',2)+TermOrder('neglex',3)
-            sage: T2 = TermOrder('lex',2)+TermOrder('neglex',3)
+            sage: T1 = TermOrder('lex',2) + TermOrder('neglex',3)
+            sage: T2 = TermOrder('lex',2) + TermOrder('neglex',3)
             sage: T1 == T2
             True
 
@@ -1962,12 +1962,12 @@ class TermOrder(SageObject):
 
     def __ne__(self, other):
         """
-        Return true if self and other are not equal.
+        Return ``True`` if ``self`` and ``other`` are not equal.
 
         EXAMPLES::
 
-            sage: T1 = TermOrder('lex',2)+TermOrder('lex',3)
-            sage: T2 = TermOrder('lex',3)+TermOrder('lex',2)
+            sage: T1 = TermOrder('lex',2) + TermOrder('lex',3)
+            sage: T2 = TermOrder('lex',3) + TermOrder('lex',2)
             sage: T1 != T2
             True
         """
@@ -2072,7 +2072,7 @@ class TermOrder(SageObject):
 
     def is_global(self):
         r"""
-        Return true if this term order is definitely
+        Return ``True`` if this term order is definitely
         global. Return false otherwise, which includes
         unknown term orders.
 
@@ -2104,7 +2104,7 @@ class TermOrder(SageObject):
 
     def is_local(self):
         r"""
-        Return true if this term order is definitely
+        Return ``True`` if this term order is definitely
         local. Return false otherwise, which includes
         unknown term orders.
 
@@ -2131,11 +2131,11 @@ class TermOrder(SageObject):
 
     def is_block_order(self):
         """
-        Return true if self is a block term order.
+        Return ``True`` if ``self`` is a block term order.
 
         EXAMPLES::
 
-            sage: t=TermOrder('deglex',2)+TermOrder('lex',2)
+            sage: t = TermOrder('deglex',2) + TermOrder('lex',2)
             sage: t.is_block_order()
             True
         """
@@ -2143,7 +2143,7 @@ class TermOrder(SageObject):
 
     def is_weighted_degree_order(self):
         """
-        Return true if self is a weighted degree term order.
+        Return ``True`` if ``self`` is a weighted degree term order.
 
         EXAMPLES::
 

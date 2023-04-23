@@ -417,11 +417,11 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         Rational functions are accepted::
 
-            sage: I = sqrt(-1)                                                          # optional - sage.rings.number_field
-            sage: K.<I> = QQ[I]                                                         # optional - sage.rings.number_field
-            sage: P.<t> = PolynomialRing(K)                                             # optional - sage.rings.number_field
-            sage: L.<u> = LaurentSeriesRing(QQ[I])                                      # optional - sage.rings.number_field
-            sage: L((t*I)/(t^3+I*2*t))                                                  # optional - sage.rings.number_field
+            sage: I = sqrt(-1)                                                          # optional - sage.rings.number_field sage.symbolic
+            sage: K.<I> = QQ[I]                                                         # optional - sage.rings.number_field sage.symbolic
+            sage: P.<t> = PolynomialRing(K)                                             # optional - sage.rings.number_field sage.symbolic
+            sage: L.<u> = LaurentSeriesRing(QQ[I])                                      # optional - sage.rings.number_field sage.symbolic
+            sage: L((t*I)/(t^3+I*2*t))                                                  # optional - sage.rings.number_field sage.symbolic
             1/2 + 1/4*I*u^2 - 1/8*u^4 - 1/16*I*u^6 + 1/32*u^8 +
             1/64*I*u^10 - 1/128*u^12 - 1/256*I*u^14 + 1/512*u^16 +
             1/1024*I*u^18 + O(u^20)
@@ -573,9 +573,9 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: parent(1/2 * t)
             Laurent Series Ring in t over Rational Field
 
-            sage: QQbar.gen() * t
+            sage: QQbar.gen() * t                                                       # optional - sage.rings.number_field
             I*t
-            sage: parent(QQbar.gen() * t)
+            sage: parent(QQbar.gen() * t)                                               # optional - sage.rings.number_field
             Laurent Series Ring in t over Algebraic Field
         """
         from sage.categories.pushout import CompletionFunctor
@@ -658,7 +658,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             ...
             ValueError: relations do not all (canonically) map to 0
             under map determined by images of generators
-            sage: f = R.hom(x + x^3,R)                                                  # optional - sage.rings.finite_rings
+            sage: f = R.hom(x + x^3, R)                                                 # optional - sage.rings.finite_rings
             sage: f(x^2)                                                                # optional - sage.rings.finite_rings
             x^2 + 2*x^4 + x^6
 

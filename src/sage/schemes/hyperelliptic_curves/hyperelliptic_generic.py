@@ -621,8 +621,6 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         else:
             return self.local_coordinates_at_nonweierstrass(P, prec, name)
 
-
-
     def rational_points(self, **kwds):
         r"""
         Find rational points on the hyperelliptic curve, all arguments are passed

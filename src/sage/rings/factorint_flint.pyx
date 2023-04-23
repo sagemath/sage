@@ -27,7 +27,7 @@ def factor_using_flint(Integer n):
 
     EXAMPLES::
 
-        sage: from sage.rings.factorint import factor_using_flint
+        sage: from sage.rings.factorint_flint import factor_using_flint
         sage: n = ZZ(9962572652930382)
         sage: factors = factor_using_flint(n)
         sage: factors

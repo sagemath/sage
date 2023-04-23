@@ -514,8 +514,8 @@ cdef class PowerSeries_poly(PowerSeries):
             1.00000000000000 + O(t^4)
         """
         cdef PowerSeries_poly right = <PowerSeries_poly>right_m
-        return PowerSeries_poly(self._parent, self.__f + right.__f, \
-                                         self.common_prec_c(right), check=True)
+        return PowerSeries_poly(self._parent, self.__f + right.__f,
+                                self.common_prec_c(right), check=True)
 
     cpdef _sub_(self, right_m):
         """
@@ -529,8 +529,8 @@ cdef class PowerSeries_poly(PowerSeries):
             13 - 2*w*t
         """
         cdef PowerSeries_poly right = <PowerSeries_poly>right_m
-        return PowerSeries_poly(self._parent, self.__f - right.__f, \
-                                         self.common_prec_c(right), check=True)
+        return PowerSeries_poly(self._parent, self.__f - right.__f,
+                                self.common_prec_c(right), check=True)
 
     cpdef _mul_(self, right_r):
         """
@@ -871,7 +871,7 @@ cdef class PowerSeries_poly(PowerSeries):
         By default, the integration variable is the variable of the
         power series.
 
-        Otherwise, the integration variable is the optional parameter ``var``
+        Otherwise, the integration variable is the optional parameter ``var``.
 
         .. NOTE::
 
@@ -909,15 +909,15 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def reverse(self, precision=None):
         """
-        Return the reverse of f, i.e., the series g such that g(f(x)) = x.
+        Return the reverse of `f`, i.e., the series `g` such that `g(f(x)) = x`.
 
         Given an optional argument ``precision``, return the reverse with given
         precision (note that the reverse can have precision at most
-        ``f.prec()``).  If ``f`` has infinite precision, and the argument
+        ``f.prec()``).  If `f` has infinite precision, and the argument
         ``precision`` is not given, then the precision of the reverse defaults
         to the default precision of ``f.parent()``.
 
-        Note that this is only possible if the valuation of self is exactly
+        Note that this is only possible if the valuation of ``self`` is exactly
         1.
 
         ALGORITHM:
@@ -1019,7 +1019,10 @@ cdef class PowerSeries_poly(PowerSeries):
 
             sage: R.<x> = PowerSeriesRing(QQ, default_prec=20)
             sage: (x - x^2).reverse() # get some Catalan numbers
-            x + x^2 + 2*x^3 + 5*x^4 + 14*x^5 + 42*x^6 + 132*x^7 + 429*x^8 + 1430*x^9 + 4862*x^10 + 16796*x^11 + 58786*x^12 + 208012*x^13 + 742900*x^14 + 2674440*x^15 + 9694845*x^16 + 35357670*x^17 + 129644790*x^18 + 477638700*x^19 + O(x^20)
+            x + x^2 + 2*x^3 + 5*x^4 + 14*x^5 + 42*x^6 + 132*x^7 + 429*x^8 + 1430*x^9
+             + 4862*x^10 + 16796*x^11 + 58786*x^12 + 208012*x^13 + 742900*x^14
+             + 2674440*x^15 + 9694845*x^16 + 35357670*x^17 + 129644790*x^18
+             + 477638700*x^19 + O(x^20)
             sage: (x - x^2).reverse(precision=3)
             x + x^2 + O(x^3)
 
@@ -1032,11 +1035,10 @@ cdef class PowerSeries_poly(PowerSeries):
             ...
             ValueError: Series must have valuation one for reversion.
 
-            sage: Series = PowerSeriesRing(SR, 'x')
-            sage: ser = Series([0, pi])
-            sage: ser
+            sage: Series = PowerSeriesRing(SR, 'x')                                     # optional - sage.symbolic
+            sage: ser = Series([0, pi]); ser                                            # optional - sage.symbolic
             pi*x
-            sage: ser.reverse()
+            sage: ser.reverse()                                                         # optional - sage.symbolic
             1/pi*x + O(x^20)
         """
         if self.valuation() != 1:

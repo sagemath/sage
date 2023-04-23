@@ -67,16 +67,14 @@ class AffineGroupElement(MultiplicativeGroupElement):
       correct vector space.
 
     - ``check`` - bool (default: ``True``). Whether to do some
-       checks or just accept the input as valid.
+      checks or just accept the input as valid.
 
     As a special case, ``A`` can be a matrix obtained from
     :meth:`matrix`, that is, one row and one column larger. In
     that case, the group element defining that matrix is
     reconstructed.
 
-    OUTPUT:
-
-    The affine group element `x \mapsto Ax + b`
+    OUTPUT: The affine group element `x \mapsto Ax + b`
 
     EXAMPLES::
 
@@ -144,9 +142,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the general linear part of an affine group element.
 
-        OUTPUT:
-
-        The matrix `A` of the affine group element `Ax + b`.
+        OUTPUT: The matrix `A` of the affine group element `Ax + b`.
 
         EXAMPLES::
 
@@ -163,9 +159,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the translation part of an affine group element.
 
-        OUTPUT:
-
-        The vector `b` of the affine group element `Ax + b`.
+        OUTPUT: The vector `b` of the affine group element `Ax + b`.
 
         EXAMPLES::
 
@@ -361,9 +355,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         - ``v`` -- a polynomial, a multivariate polynomial, a polyhedron, a
           vector, or anything that can be converted into a vector.
 
-        OUTPUT:
-
-        The image of ``v`` under the affine group element.
+        OUTPUT: The image of ``v`` under the affine group element.
 
         EXAMPLES::
 
@@ -459,9 +451,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the inverse group element.
 
-        OUTPUT:
-
-        Another affine group element.
+        OUTPUT: Another affine group element.
 
         EXAMPLES::
 
@@ -488,9 +478,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Compare ``self`` with ``other``.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 

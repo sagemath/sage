@@ -106,7 +106,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
     def __bool__(self):
         """
-        Return True if the element is not zero.
+        Return ``True`` if the element is not zero.
 
         EXAMPLES::
 
@@ -494,9 +494,8 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             -1/2*x + 1/2
             sage: (t*(x+1) - 1) in I
             True
-
         """
-        assert  len(I.gens()) == 1
+        assert len(I.gens()) == 1
         f = I.gens()[0]._x
         assert f.denominator() == 1
         assert self._x.denominator() == 1

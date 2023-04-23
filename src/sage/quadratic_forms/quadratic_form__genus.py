@@ -56,48 +56,47 @@ def local_genus_symbol(self, p):
     Return the Conway-Sloane genus symbol of 2 times a quadratic form
     defined over `\ZZ` at a prime number `p`.
 
-    This is defined (in the
-    Genus_Symbol_p_adic_ring() class in the quadratic_forms/genera
-    subfolder) to be a list of tuples (one for each Jordan component
-    p^m*A at p, where A is a unimodular symmetric matrix with
-    coefficients the p-adic integers) of the following form:
+    This is defined (in the class
+    :class:`~sage.quadratic_forms.genera.genus.Genus_Symbol_p_adic_ring`)
+    to be a list of tuples (one for each Jordan component
+    `p^m\cdot A` at `p`, where `A` is a unimodular symmetric matrix with
+    coefficients the `p`-adic integers) of the following form:
 
-        1. If p>2 then return triples of the form [`m`, `n`, `d`] where
+    - If `p>2`, then return triples of the form [`m`, `n`, `d`] where
 
-            `m` = valuation of the component
+      - `m` = valuation of the component
 
-            `n` = rank of A
+      - `n` = rank of `A`
 
-            `d` = det(A) in {1,u} for normalized quadratic non-residue u.
+      - `d` = det(`A`) in {1, `u`} for normalized quadratic non-residue `u`.
 
-        2. If p=2 then return quintuples of the form [`m`,`n`,`s`, `d`, `o`] where
+    - If `p=2`, then return quintuples of the form [`m`, `n`, `s`, `d`, `o`] where
 
-            `m` = valuation of the component
+      - `m` = valuation of the component
 
-            `n` = rank of A
+      - `n` = rank of `A`
 
-            `d` = det(A) in {1,3,5,7}
+      - `d` = det(`A`) in {1, 3, 5, 7}
 
-            `s` = 0 (or 1) if A is even (or odd)
+      - `s` = 0 (or 1) if `A` is even (or odd)
 
-            `o` = oddity of A (= 0 if s = 0) in Z/8Z
-              = the trace of the diagonalization of A
+      - `o` = oddity of `A` (= 0 if `s` = 0) in `\ZZ/8\ZZ` = the trace of the diagonalization of `A`
 
     .. NOTE::
 
-        The Conway-Sloane convention for describing the prime 'p = -1'
+        The Conway-Sloane convention for describing the prime `p = -1`
         is not supported here, and neither is the convention for
         including the 'prime' Infinity.  See note on p370 of Conway-Sloane
         (3rd ed) [CS1999]_ for a discussion of this convention.
 
     INPUT:
 
-    - `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
     OUTPUT:
 
     a Conway-Sloane genus symbol at `p`, which is an
-    instance of the Genus_Symbol_p_adic_ring class.
+    instance of the class :class:`~sage.quadratic_forms.genera.genus.Genus_Symbol_p_adic_ring`.
 
     EXAMPLES::
 

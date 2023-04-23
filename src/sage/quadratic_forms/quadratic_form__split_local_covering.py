@@ -27,28 +27,26 @@ def cholesky_decomposition(self, bit_prec = 53):
 
     RESTRICTIONS:
 
-        Q must be given as a QuadraticForm defined over `\ZZ`, `\QQ`, or some
+        `Q` must be given as a :class:`QuadraticForm` defined over `\ZZ`, `\QQ`, or some
         real field. If it is over some real field, then an error is raised if
         the precision given is not less than the defined precision of the real
         field defining the quadratic form!
 
     REFERENCE:
 
-        From Cohen's "A Course in Computational Algebraic Number Theory" book,
-        p 103.
+    - Cohen's "A Course in Computational Algebraic Number Theory" book, p 103.
 
     INPUT:
 
-        ``bit_prec`` -- a natural number (default 53).
+    - ``bit_prec`` -- a natural number (default 53)
 
-    OUTPUT:
-
-        an upper triangular real matrix of precision ``bit_prec``.
+    OUTPUT: an upper triangular real matrix of precision ``bit_prec``.
 
 
-    TO DO:
-        If we only care about working over the real double field (RDF), then we
-        can use the ``cholesky()`` method present for square matrices over that.
+    .. TODO::
+
+        If we only care about working over the real double field (``RDF``), then we
+        can use the method :meth:`cholesky` present for square matrices over that.
 
     .. note::
 
@@ -56,10 +54,8 @@ def cholesky_decomposition(self, bit_prec = 53):
 
         ::
 
-            ##/////////////////////////////////////////////////////////////////////////////////////////////////
-            ##/// Finds the Cholesky decomposition of a quadratic form -- as an upper-triangular matrix!
-            ##/// (It's assumed to be global, hence twice the form it refers to.)  <-- Python revision asks:  Is this true?!? =|
-            ##/////////////////////////////////////////////////////////////////////////////////////////////////
+            Finds the Cholesky decomposition of a quadratic form -- as an upper-triangular matrix!
+            (It's assumed to be global, hence twice the form it refers to.)  <-- Python revision asks:  Is this true?!? =|
 
 
     EXAMPLES::
@@ -116,27 +112,29 @@ def cholesky_decomposition(self, bit_prec = 53):
 
 
 def vectors_by_length(self, bound):
-    """
-    Returns a list of short vectors together with their values.
+    r"""
+    Return a list of short vectors together with their values.
 
     This is a naive algorithm which uses the Cholesky decomposition,
     but does not use the LLL-reduction algorithm.
 
     INPUT:
 
-       bound -- an integer >= 0
+    - ``bound`` -- an integer `\geq 0`
 
     OUTPUT:
 
-        A list L of length (bound + 1) whose entry L `[i]` is a list of
-        all vectors of length `i`.
+    - a list ``L`` of length (``bound`` + 1) whose entry ``L[i]`` is a list of
+      all vectors of length `i`.
 
-    Reference: This is a slightly modified version of Cohn's Algorithm
+    REFERENCES:
+
+    This is a slightly modified version of Cohn's Algorithm
     2.7.5 in "A Course in Computational Number Theory", with the
     increment step moved around and slightly re-indexed to allow clean
     looping.
 
-   .. NOTE::
+    .. NOTE::
 
         We could speed this up for very skew matrices by using LLL
         first, and then changing coordinates back, but for our purposes
@@ -145,7 +143,7 @@ def vectors_by_length(self, bound):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
-        sage: Q.vectors_by_length(5)                                                    # optional - sage.symbolic
+        sage: Q.vectors_by_length(5)                                                # optional - sage.symbolic
         [[[0, 0]],
          [[0, -1], [-1, 0]],
          [[-1, -1], [1, -1]],
@@ -156,7 +154,7 @@ def vectors_by_length(self, bound):
     ::
 
         sage: Q1 = DiagonalQuadraticForm(ZZ, [1,3,5,7])
-        sage: Q1.vectors_by_length(5)                                                   # optional - sage.symbolic
+        sage: Q1.vectors_by_length(5)                                               # optional - sage.symbolic
         [[[0, 0, 0, 0]],
          [[-1, 0, 0, 0]],
          [],
@@ -167,13 +165,13 @@ def vectors_by_length(self, bound):
     ::
 
         sage: Q = QuadraticForm(ZZ, 4, [1,1,1,1, 1,0,0, 1,0, 1])
-        sage: list(map(len, Q.vectors_by_length(2)))                                    # optional - sage.symbolic
+        sage: list(map(len, Q.vectors_by_length(2)))                                # optional - sage.symbolic
         [1, 12, 12]
 
     ::
 
         sage: Q = QuadraticForm(ZZ, 4, [1,-1,-1,-1, 1,0,0, 4,-3, 4])
-        sage: list(map(len, Q.vectors_by_length(3)))                                    # optional - sage.symbolic
+        sage: list(map(len, Q.vectors_by_length(3)))                                # optional - sage.symbolic
         [1, 3, 0, 3]
     """
     # pari uses eps = 1e-6 ; nothing bad should happen if eps is too big
@@ -264,25 +262,27 @@ def vectors_by_length(self, bound):
 
 
 def complementary_subform_to_vector(self, v):
-    """
-    Finds the `(n-1)`-dim'l quadratic form orthogonal to the vector `v`.
+    r"""
+    Find the `(n-1)`-dimensional quadratic form orthogonal to the vector `v`.
 
-    Note: This is usually not a direct summand!
+    .. NOTE::
 
-    Technical Notes: There is a minor difference in the cancellation
-    code here (form the C++ version) since the notation Q `[i,j]` indexes
-    coefficients of the quadratic polynomial here, not the symmetric
-    matrix.  Also, it produces a better splitting now, for the full
-    lattice (as opposed to a sublattice in the C++ code) since we
-    now extend `v` to a unimodular matrix.
+        This is usually not a direct summand!
+
+    .. NOTE::
+
+        There is a minor difference in the cancellation
+        code here (form the C++ version) since the notation ``Q[i,j]`` indexes
+        coefficients of the quadratic polynomial here, not the symmetric
+        matrix.  Also, it produces a better splitting now, for the full
+        lattice (as opposed to a sublattice in the C++ code) since we
+        now extend `v` to a unimodular matrix.
 
     INPUT:
 
-        `v` -- a list of self.dim() integers
+    - ``v`` -- a list of ``self.dim()`` integers
 
-    OUTPUT:
-
-        a QuadraticForm over `ZZ`
+    OUTPUT: a :class:`QuadraticForm` over `\ZZ`
 
 
     EXAMPLES::
@@ -309,7 +309,6 @@ def complementary_subform_to_vector(self, v):
         [ 880 -480 -160 ]
         [ * 624 -96 ]
         [ * * 240 ]
-
     """
     n = self.dim()
 
@@ -359,37 +358,30 @@ def complementary_subform_to_vector(self, v):
 
 
 def split_local_cover(self):
-    """
+    r"""
     Tries to find subform of the given (positive definite quaternary)
-    quadratic form Q of the form
+    quadratic form `Q` of the form
 
     .. MATH::
 
-        d*x^2 + T(y,z,w)
+        d\cdot x^2 + T(y,z,w)
 
     where `d > 0` is as small as possible.
 
     This is done by exhaustive search on small vectors, and then
-    comparing the local conditions of its sum with it's complementary
-    lattice and the original quadratic form Q.
+    comparing the local conditions of its sum with its complementary
+    lattice and the original quadratic form `Q`.
 
-    INPUT:
-
-        none
-
-    OUTPUT:
-
-        a QuadraticForm over ZZ
+    OUTPUT: a :class:`QuadraticForm` over `\ZZ`
 
     EXAMPLES::
 
         sage: Q1 = DiagonalQuadraticForm(ZZ, [7,5,3])
-        sage: Q1.split_local_cover()                                                    # optional - sage.symbolic
+        sage: Q1.split_local_cover()                                                # optional - sage.symbolic
         Quadratic form in 3 variables over Integer Ring with coefficients:
         [ 3 0 0 ]
         [ * 5 0 ]
         [ * * 7 ]
-
     """
     from sage.quadratic_forms.quadratic_form import QuadraticForm
 

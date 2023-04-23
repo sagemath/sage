@@ -21,7 +21,7 @@ from sage.groups.affine_gps.affine_group import AffineGroup
 
 class EuclideanGroup(AffineGroup):
     r"""
-    an Euclidean group.
+    A Euclidean group.
 
     The Euclidean group `E(A)` (or general affine group) of an affine
     space `A` is the group of all invertible affine transformations from

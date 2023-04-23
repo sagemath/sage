@@ -930,8 +930,7 @@ def solve(f, *args, **kwds):
     A basic interface to Giac is provided::
 
         sage: solve([(2/3)^x-2], [x], algorithm='giac')
-        ...
-        [[-log(2)/(log(3) - log(2))]]
+        ...[[-log(2)/(log(3) - log(2))]]
 
         sage: f = (sin(x) - 8*cos(x)*sin(x))*(sin(x)^2 + cos(x)) - (2*cos(x)*sin(x) - sin(x))*(-2*sin(x)^2 + 2*cos(x)^2 - cos(x))
         sage: solve(f, x, algorithm='giac')

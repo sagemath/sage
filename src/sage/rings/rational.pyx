@@ -381,7 +381,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
 
 def is_Rational(x):
     """
-    Return true if x is of the Sage rational number type.
+    Return ``True`` if ``x`` is of the Sage :class:`Rational` type.
 
     EXAMPLES::
 
@@ -1341,7 +1341,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         INPUT:
 
         - ``prec`` (int) -- desired floating point precision (default:
-          default RealField precision).
+          default :class:`RealField` precision).
 
         OUTPUT:
 
@@ -1697,7 +1697,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
     def squarefree_part(self):
         """
-        Return the square free part of `x`, i.e., an integer z such
+        Return the square free part of `x`, i.e., an integer `z` such
         that `x = z y^2`, for a perfect square `y^2`.
 
         EXAMPLES::
@@ -2025,7 +2025,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``n`` - integer (must fit in C int type)
+        -  ``n`` - integer (must fit in C ``int`` type)
 
         AUTHORS:
 
@@ -2088,7 +2088,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``n`` - integer (must fit in C int type)
+        -  ``n`` - integer (must fit in C ``int`` type)
 
         .. NOTE::
 
@@ -2565,7 +2565,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: type(a)
             <class 'sage.rings.rational.Rational'>
 
-        The exponent must fit in a long unless the base is -1, 0, or 1::
+        The exponent must fit in a ``long`` unless the base is -1, 0, or 1::
 
             sage: (1/2)^(2^100)
             Traceback (most recent call last):
@@ -2824,7 +2824,7 @@ cdef class Rational(sage.structure.element.FieldElement):
     def norm(self):
         r"""
         Return the norm from `\QQ` to `\QQ` of `x` (which is just `x`). This
-        was added for compatibility with :class:`NumberFields`.
+        was added for compatibility with :class:`NumberField`.
 
         OUTPUT:
 
@@ -2907,7 +2907,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (1/3).charpoly('x')
              x - 1/3
 
-        The default is var='x'. (:trac:`20967`)::
+        The default is ``var='x'``. (:trac:`20967`)::
 
             sage: a = QQ(2); a.charpoly('x')
             x - 2
@@ -2971,7 +2971,7 @@ cdef class Rational(sage.structure.element.FieldElement):
     def numerator(self):
         """
         Return the numerator of this rational number.
-        ``numer`` is an alias of ``numerator``.
+        :meth:`numer` is an alias of :meth:`numerator`.
 
         EXAMPLES::
 
@@ -3021,7 +3021,7 @@ cdef class Rational(sage.structure.element.FieldElement):
     def denominator(self):
         """
         Return the denominator of this rational number.
-        ``denom`` is an alias of ``denominator``.
+        :meth:`denom` is an alias of :meth:`denominator`.
 
         EXAMPLES::
 
@@ -4127,7 +4127,8 @@ cdef class Z_to_Q(Morphism):
         maps (see :trac:`15618`)::
 
             sage: f.parent()
-            Set of Morphisms from Rational Field to Integer Ring in Category of sets with partial maps
+            Set of Morphisms from Rational Field to Integer Ring
+             in Category of sets with partial maps
         """
         from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         return Q_to_Z(self._codomain.Hom(self.domain(), category=SetsWithPartialMaps()))

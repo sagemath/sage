@@ -525,12 +525,12 @@ group `G` is an instance of the following class::
 
     sage: G = GL(2, ZZ)                                                                 # optional - sage.modules
     sage: type(G)                                                                       # optional - sage.modules
-    <class 'sage.groups.matrix_gps.linear.LinearMatrixGroup_gap_with_category'>
+    <class 'sage.groups.matrix_gps.linear_gap.LinearMatrixGroup_gap_with_category'>
 
 Here is a piece of the hierarchy of classes above it::
 
     sage: for cls in G.__class__.mro(): print(cls)                                      # optional - sage.modules
-    <class 'sage.groups.matrix_gps.linear.LinearMatrixGroup_gap_with_category'>
+    <class 'sage.groups.matrix_gps.linear_gap.LinearMatrixGroup_gap_with_category'>
     ...
     <class 'sage.categories.groups.Groups.parent_class'>
     <class 'sage.categories.monoids.Monoids.parent_class'>

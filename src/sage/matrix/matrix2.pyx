@@ -10452,7 +10452,6 @@ cdef class Matrix(Matrix1):
             [2 3]
             [0 1]
         """
-        from sage.modules.free_module_element import zero_vector
         from sage.matrix.constructor import zero_matrix, matrix
         from sage.misc.functional import sqrt
 

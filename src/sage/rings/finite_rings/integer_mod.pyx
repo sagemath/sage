@@ -2104,7 +2104,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
     cpdef bint is_unit(self):
         """
-        Return True iff this element is a unit.
+        Return ``True`` iff this element is a unit.
 
         EXAMPLES::
 
@@ -2491,7 +2491,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
     cpdef bint is_unit(IntegerMod_int self):
         """
-        Return True iff this element is a unit
+        Return ``True`` iff this element is a unit
 
         EXAMPLES::
 
@@ -3315,7 +3315,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
 
     cpdef bint is_unit(IntegerMod_int64 self):
         """
-        Return True iff this element is a unit.
+        Return ``True`` iff this element is a unit.
 
         EXAMPLES::
 

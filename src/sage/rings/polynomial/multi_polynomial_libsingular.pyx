@@ -370,7 +370,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: polynomials over Ring of integers modulo 1 are not supported in Singular
-            sage: MPolynomialRing_libsingular(SR, 1, ["x"], "lex")
+            sage: MPolynomialRing_libsingular(SR, 1, ["x"], "lex")                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: polynomials over Symbolic Ring are not supported in Singular
@@ -468,7 +468,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
     cpdef _coerce_map_from_(self, other):
         """
-        Return True if and only if there exists a coercion map from
+        Return ``True`` if and only if there exists a coercion map from
         ``other`` to ``self``.
 
         TESTS::
@@ -1234,8 +1234,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             if self.base_ring().is_finite() \
                     or (isinstance(self.base_ring(), NumberField) and self.base_ring().is_absolute()):
                 R.set_ring() #sorry for that, but needed for minpoly
-                if  singular.eval('minpoly') != "(" + self.__minpoly + ")":
-                    singular.eval("minpoly=%s"%(self.__minpoly))
+                if singular.eval('minpoly') != "(" + self.__minpoly + ")":
+                    singular.eval("minpoly=%s" % (self.__minpoly))
                     self.__minpoly = singular.eval('minpoly')[1:-1] # store in correct format
             return R
         except (AttributeError, ValueError):
@@ -2524,7 +2524,9 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: print(f._repr_with_changed_varnames(['FOO', 'BAR', 'FOOBAR']))
             -FOO^2*BAR - 25/27*BAR^3 - FOOBAR^2
         """
-        return  singular_polynomial_str_with_changed_varnames(self._poly, self._parent_ring, varnames)
+        return singular_polynomial_str_with_changed_varnames(self._poly,
+                                                             self._parent_ring,
+                                                             varnames)
 
     def degree(self, MPolynomial_libsingular x=None, int std_grading=False):
         """
@@ -3579,7 +3581,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 else:
                     need_map = True
                     degree = (<unsigned long> p_GetExp(_p, i + 1, _ring)) * (<unsigned long> p_GetMaxExp(_f, _ring))
-                    if  degree > _ring.bitmask:
+                    if degree > _ring.bitmask:
                         id_Delete(&to_id, _ring)
                         p_Delete(&_p, _ring)
                         raise OverflowError("exponent overflow (%d)" % (degree,))
@@ -3781,7 +3783,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         coefficients = [zero] * (pTotDegMax + 1)
         while p:
             pTotDeg = p_Totaldegree(p, r)
-            if ( pTotDeg >= len(coefficients)  or  pTotDeg < 0 ):
+            if (pTotDeg >= len(coefficients) or pTotDeg < 0):
                 raise IndexError("list index("+str(pTotDeg)+" out of range(0-"+str(len(coefficients))+")")
             coefficients[pTotDeg] = si2sa(p_GetCoeff(p, r), r, k)
             p = pNext(p)
@@ -4510,7 +4512,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         _I = idInit(len(I),1)
 
         for f in I:
-            if not (isinstance(f,MPolynomial_libsingular) \
+            if not (isinstance(f,MPolynomial_libsingular)
                     and (<MPolynomial_libsingular>f)._parent is parent):
                 try:
                     f = parent.coerce(f)
@@ -4637,8 +4639,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         _I = idInit(len(I),1)
         for f in I:
-            if not (isinstance(f,MPolynomial_libsingular) \
-                   and (<MPolynomial_libsingular>f)._parent is parent):
+            if not (isinstance(f,MPolynomial_libsingular)
+                    and (<MPolynomial_libsingular>f)._parent is parent):
                 try:
                     f = parent.coerce(f)
                 except TypeError as msg:
@@ -4686,8 +4688,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             rChangeCurrRing(r)
 
         _I = idInit(1, 1)
-        if not (isinstance(other,MPolynomial_libsingular) \
-               and (<MPolynomial_libsingular>other)._parent is parent):
+        if not (isinstance(other,MPolynomial_libsingular)
+                and (<MPolynomial_libsingular>other)._parent is parent):
             try:
                 other = parent.coerce(other)
             except TypeError as msg:
@@ -5723,17 +5725,18 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             True
         """
         if self.base_ring() is QQ:
-            #This part is for compatibility with the univariate case,
-            #where the numerator of a polynomial over RationalField
-            #is a polynomial over IntegerRing
+            # This part is for compatibility with the univariate case,
+            # where the numerator of a polynomial over RationalField
+            # is a polynomial over IntegerRing
             #
             # Github issue #11780: Create the polynomial ring over
             # the integers using the (cached) polynomial ring constructor:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            integer_polynomial_ring = PolynomialRing(ZZ,\
-            self.parent().ngens(), self.parent().gens(), order =\
-            self.parent().term_order())
-            return integer_polynomial_ring(self * self.denominator())
+            integer_poly_ring = PolynomialRing(ZZ,
+                                               self.parent().ngens(),
+                                               self.parent().gens(),
+                                               order=self.parent().term_order())
+            return integer_poly_ring(self * self.denominator())
         else:
             return self * self.denominator()
 

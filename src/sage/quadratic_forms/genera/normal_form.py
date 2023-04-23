@@ -180,7 +180,7 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
 
     - ``D`` -- the jordan matrix over `\QQ_p`
     - ``B`` -- invertible transformation matrix over `\ZZ_p`,
-      i.e, ``D = B * G * B^T``
+      i.e., `D = B * G * B^T`
 
     EXAMPLES::
 
@@ -363,9 +363,7 @@ def _get_small_block_indices(G):
 
     - ``G`` -- a block_diagonal matrix consisting of `1` by `1` and `2` by `2` blocks
 
-    OUTPUT:
-
-    - a list of integers
+    OUTPUT: a list of integers
 
     EXAMPLES::
 
@@ -399,12 +397,10 @@ def _get_homogeneous_block_indices(G):
 
     INPUT:
 
-    - ``G`` -- a block diagonal matrix over the p-adics
+    - ``G`` -- a block diagonal matrix over the `p`-adics
       with blocks of size at most `2`.
 
-    OUTPUT:
-
-    - a list of integers
+    OUTPUT: a list of integers
 
     EXAMPLES::
 

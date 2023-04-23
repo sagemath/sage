@@ -20,7 +20,7 @@ element contains the following data:
   This ``ZZ_pX`` is created with global ntl modulus determined by the
   parent's precision cap and shared among all elements.
 
-- ``prime_pow`` (some subclass of ``PowComputer_ZZ_pX``) -- a class,
+- ``prime_pow`` (some subclass of :class:`PowComputer_ZZ_pX`) -- a class,
   identical among all elements with the same parent, holding common
   data.
 

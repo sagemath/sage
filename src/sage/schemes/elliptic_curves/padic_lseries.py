@@ -1522,7 +1522,6 @@ class pAdicLseriesSupersingular(pAdicLseries):
         frn = A * fr * A**(-1)
         return 1/p*frn
 
-
     def __phi_bpr(self, prec=0):
         r"""
         This returns a geometric Frobenius `\varphi` on the Dieudonné module `D_p(E)`

@@ -45,7 +45,7 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
 
     This is the Hasse diagram of the divisibility order on ``NN``.
 
-        sage: Poset(NN.cayley_graph(elements=[1..12], generators=[2,3,5,7,11])).show()  # optional - sage.graphs
+        sage: Poset(NN.cayley_graph(elements=[1..12], generators=[2,3,5,7,11])).show()  # optional - sage.combinat sage.graphs
 
     Note: as for :class:`NonNegativeIntegers
     <sage.sets.non_negative_integers.NonNegativeIntegers>`, ``NN`` is

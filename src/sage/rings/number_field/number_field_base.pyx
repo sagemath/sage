@@ -12,7 +12,7 @@ TESTS::
 
 def is_NumberField(x):
     """
-    Return True if ``x`` is of number field type.
+    Return ``True`` if ``x`` is of number field type.
 
     This function is deprecated.
 
@@ -145,7 +145,7 @@ cdef class NumberField(Field):
 
     def ring_of_integers(self, *args, **kwds):
         r"""
-        Synonym for ``self.maximal_order(...)``.
+        Synonym for :meth:`maximal_order`.
 
         EXAMPLES::
 
@@ -157,7 +157,7 @@ cdef class NumberField(Field):
 
     def OK(self, *args, **kwds):
         r"""
-        Synonym for ``self.maximal_order(...)``.
+        Synonym for :meth:`maximal_order`.
 
         EXAMPLES::
 
@@ -167,7 +167,7 @@ cdef class NumberField(Field):
         return self.maximal_order(*args, **kwds)
 
     def maximal_order(self):
-        """
+        r"""
         Return the maximal order, i.e., the ring of integers of this
         number field.
 
@@ -179,8 +179,8 @@ cdef class NumberField(Field):
         raise NotImplementedError
 
     def is_absolute(self):
-        """
-        Return True if self is viewed as a single extension over Q.
+        r"""
+        Return ``True`` if ``self`` is viewed as a single extension over `\QQ`.
 
         EXAMPLES::
 
@@ -197,8 +197,8 @@ cdef class NumberField(Field):
         raise NotImplementedError
 
     def signature(self):
-        """
-        Return (r1, r2), where r1 and r2 are the number of real embeddings
+        r"""
+        Return `(r_1, r_2)`, where `r_1` and `r_2` are the number of real embeddings
         and pairs of complex embeddings of this field, respectively.
 
         EXAMPLES::
@@ -234,9 +234,9 @@ cdef class NumberField(Field):
         r"""
         Return the Minkowski bound associated to this number field.
 
-        This is a bound B so that every integral ideal is equivalent
+        This is a bound `B` so that every integral ideal is equivalent
         modulo principal fractional ideals to an integral ideal of
-        norm at most B.
+        norm at most `B`.
 
         .. SEEALSO::
 
@@ -309,9 +309,9 @@ cdef class NumberField(Field):
         r"""
         Return the Bach bound associated to this number field.
 
-        Assuming the General Riemann Hypothesis, this is a bound B so
+        Assuming the General Riemann Hypothesis, this is a bound `B` so
         that every integral ideal is equivalent modulo principal
-        fractional ideals to an integral ideal of norm at most B.
+        fractional ideals to an integral ideal of norm at most `B`.
 
         .. SEEALSO::
 
@@ -345,7 +345,8 @@ cdef class NumberField(Field):
             sage: K.bach_bound().n()
             191669.304126267
 
-        The bound of course also works for the rational numbers:
+        The bound of course also works for the rational numbers::
+
             sage: QQ.minkowski_bound()
             1
         """
@@ -420,7 +421,7 @@ cdef class NumberField(Field):
 
         If a real embedding is not specified, this method will result in an error::
 
-            sage: N.<g> = NumberField(x^3+2)
+            sage: N.<g> = NumberField(x^3 + 2)
             sage: N._get_embedding_approx(1)
             Traceback (most recent call last):
             ...
@@ -448,7 +449,7 @@ cdef class NumberField(Field):
 
     def _matrix_charpoly(self, M, var):
         r"""
-        Use PARI to compute the characteristic polynomial of self as a
+        Use PARI to compute the characteristic polynomial of ``self`` as a
         polynomial over the base ring.
 
         EXAMPLES::

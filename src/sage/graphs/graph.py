@@ -4673,9 +4673,30 @@ class Graph(GenericGraph):
             sage: mad_g = g.maximum_average_degree(value_only=False)
             sage: g.is_isomorphic(mad_g)
             True
+
+        TESTS:
+
+        Check corner cases::
+
+            sage: Graph().maximum_average_degree(value_only=True)
+            0
+            sage: Graph().maximum_average_degree(value_only=False)
+            Graph on 0 vertices
+            sage: Graph(1).maximum_average_degree(value_only=True)
+            0
+            sage: Graph(1).maximum_average_degree(value_only=False)
+            Graph on 1 vertex
+            sage: Graph(2).maximum_average_degree(value_only=True)
+            0
+            sage: Graph(2).maximum_average_degree(value_only=False)
+            Graph on 1 vertex
         """
         self._scream_if_not_simple()
         g = self
+        if not g:
+            return ZZ.zero() if value_only else g.parent()()
+        elif not g.size():
+            return ZZ.zero() if value_only else g.parent()([[next(g.vertex_iterator())], []])
         from sage.numerical.mip import MixedIntegerLinearProgram
 
         p = MixedIntegerLinearProgram(maximization=True, solver=solver)

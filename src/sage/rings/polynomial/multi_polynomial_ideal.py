@@ -145,8 +145,8 @@ when the system has no solutions over the rationals.
     surprising as there are 4 equations in 3 unknowns). ::
 
         sage: P.<x,y,z> = PolynomialRing(ZZ,order='lex')
-        sage: I = ideal(-y^2 - 3*y + z^2 + 3, -2*y*z + z^2 + 2*z + 1, \
-                        x*z + y*z + z^2, -3*x*y + 2*y*z + 6*z^2)
+        sage: I = ideal(-y^2 - 3*y + z^2 + 3, -2*y*z + z^2 + 2*z + 1,
+        ....:           x*z + y*z + z^2, -3*x*y + 2*y*z + 6*z^2)
         sage: I.change_ring(P.change_ring(QQ)).groebner_basis()
         [1]
 
@@ -155,7 +155,8 @@ when the system has no solutions over the rationals.
     which is not 1. ::
 
         sage: I.groebner_basis()
-        [x + y + 57119*z + 4, y^2 + 3*y + 17220, y*z + ..., 2*y + 158864, z^2 + 17223, 2*z + 41856, 164878]
+        [x + y + 57119*z + 4, y^2 + 3*y + 17220, y*z + ...,
+         2*y + 158864, z^2 + 17223, 2*z + 41856, 164878]
 
     Now for each prime `p` dividing this integer 164878, the Groebner
     basis of `I` modulo `p` will be non-trivial and will thus give a
@@ -932,16 +933,14 @@ class MPolynomialIdeal_singular_repr(
         INPUT:
 
 
-        -  ``algorithm`` - string:
+        - ``algorithm`` -- string:
 
-        -  ``'sy'`` - (default) use the Shimoyama-Yokoyama algorithm
+          - ``'sy'`` -- (default) use the Shimoyama-Yokoyama algorithm
 
-        -  ``'gtz'`` - use the Gianni-Trager-Zacharias algorithm
+          - ``'gtz'`` -- use the Gianni-Trager-Zacharias algorithm
 
 
-        OUTPUT:
-
-        -  ``list`` - a list of associated primes
+        OUTPUT: a list of associated primes
 
         EXAMPLES::
 
@@ -971,7 +970,7 @@ class MPolynomialIdeal_singular_repr(
         INPUT:
 
         - keyword arguments are passed on to
-          ``complete_primary_decomposition``; in this way you can
+          :meth:`complete_primary_decomposition`; in this way you can
           specify the algorithm to use.
 
         EXAMPLES::
@@ -1300,7 +1299,7 @@ class MPolynomialIdeal_singular_repr(
 
         Due to integer overflow, the result is correct only modulo ``2^32``, see :trac:`8586`::
 
-            sage: P.<x,y,z> = PolynomialRing(GF(32003),3)                               # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(32003), 3)                              # optional - sage.rings.finite_rings
             sage: sage.rings.ideal.FieldIdeal(P).vector_space_dimension()  # known bug  # optional - sage.rings.finite_rings
             32777216864027
 
@@ -1770,22 +1769,22 @@ class MPolynomialIdeal_singular_repr(
         Return the integral closure of `I, ..., I^p`, where `sI` is
         an ideal in the polynomial ring `R=k[x(1),...x(n)]`. If `p` is
         not given, or `p=0`, compute the closure of all powers up to
-        the maximum degree in t occurring in the closure of `R[It]`
+        the maximum degree in `t` occurring in the closure of `R[It]`
         (so this is the last power whose closure is not just the
         sum/product of the smaller). If `r` is given and ``r is
-        True``, ``I.integral_closure()`` starts with a check whether I
+        True``, ``I.integral_closure()`` starts with a check whether `I`
         is already a radical ideal.
 
         INPUT:
 
-        - ``p`` - powers of I (default: 0)
+        - ``p`` - powers of `I` (default: 0)
 
-        - ``r`` - check whether self is a radical ideal first (default: ``True``)
+        - ``r`` - check whether ``self`` is a radical ideal first (default: ``True``)
 
         EXAMPLES::
 
             sage: R.<x,y> = QQ[]
-            sage: I = ideal([x^2,x*y^4,y^5])
+            sage: I = ideal([x^2, x*y^4, y^5])
             sage: I.integral_closure()
             [x^2, x*y^4, y^5, x*y^3]
 
@@ -2077,10 +2076,10 @@ class MPolynomialIdeal_singular_repr(
             this method: 'The result may have no meaning if the second
             argument (``self``) is not a standard basis'. I (malb)
             believe this refers to the mathematical fact that the
-            results may have no meaning if self is no standard basis,
+            results may have no meaning if ``self`` is no standard basis,
             i.e., Singular doesn't 'add' any additional 'nonsense' to
             the result. So we may actually use reduce to determine if
-            self is a Groebner basis.
+            ``self`` is a Groebner basis.
 
         TESTS:
 
@@ -2426,9 +2425,7 @@ class MPolynomialIdeal_singular_repr(
 
         - ``other`` -- another ideal in the same ring
 
-        OUTPUT:
-
-        - a pair (ideal, integer)
+        OUTPUT: a pair (ideal, integer)
 
         EXAMPLES::
 
@@ -2838,7 +2835,7 @@ class MPolynomialIdeal_singular_repr(
         `R = \bigoplus_d R_d` (which is ``self.ring()``) be a graded
         commutative algebra over a field `K`. The *Hilbert polynomial*
         is the unique polynomial `HP(t)` with rational coefficients
-        such that `HP(d) = dim_K R_d` for all but finitely many
+        such that `HP(d) = \dim_K R_d` for all but finitely many
         positive integers `d`.
 
         EXAMPLES::
@@ -2895,7 +2892,7 @@ class MPolynomialIdeal_singular_repr(
 
             sage: P = PowerSeriesRing(QQ, 't', default_prec=50)
             sage: hs = Minors.hilbert_series()                                          # optional - sage.libs.flint
-            sage: list(P(hs.numerator()) / P(hs.denominator())) == [hp(t = k)
+            sage: list(P(hs.numerator()) / P(hs.denominator())) == [hp(t=k)             # optional - sage.libs.flint
             ....:                                                   for k in range(50)]
             True
 
@@ -2910,7 +2907,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I.hilbert_polynomial()                                                # optional - sage.libs.flint
             3
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over ``QQbar`` (:trac:`25351`)::
 
             sage: P.<x,y,z> = QQbar[]                                                   # optional - sage.rings.number_field
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])                    # optional - sage.rings.number_field
@@ -2967,13 +2964,13 @@ class MPolynomialIdeal_singular_repr(
         Let `I` (which is ``self``) be a homogeneous ideal and
         `R = \bigoplus_d R_d` (which is ``self.ring()``) be a
         graded commutative algebra over a field `K`. Then the
-        *Hilbert function* is defined as `H(d) = dim_K R_d` and
+        *Hilbert function* is defined as `H(d) = \dim_K R_d` and
         the *Hilbert series* of `I` is defined as the formal power
         series `HS(t) = \sum_{d=0}^{\infty} H(d) t^d`.
 
         This power series can be expressed as
         `HS(t) = Q(t) / (1-t)^n` where `Q(t)` is a polynomial
-        over `Z` and `n` the number of variables in `R`.
+        over `\ZZ` and `n` the number of variables in `R`.
         This method returns `Q(t) / (1-t)^n`, normalised so
         that the leading monomial of the numerator is positive.
 
@@ -3068,13 +3065,13 @@ class MPolynomialIdeal_singular_repr(
         Let `I` (which is ``self``) be a homogeneous ideal and
         `R = \bigoplus_d R_d` (which is ``self.ring()``) be a
         graded commutative algebra over a field `K`. Then the
-        *Hilbert function* is defined as `H(d) = dim_K R_d` and
+        *Hilbert function* is defined as `H(d) = \dim_K R_d` and
         the *Hilbert series* of `I` is defined as the formal power
         series `HS(t) = \sum_{d=0}^{\infty} H(d) t^d`.
 
         This power series can be expressed as
         `HS(t) = Q(t) / (1-t)^n` where `Q(t)` is a polynomial
-        over `Z` and `n` the number of variables in `R`. This
+        over `\ZZ` and `n` the number of variables in `R`. This
         method returns `Q(t)`, the numerator; hence the name,
         ``hilbert_numerator``. An optional ``grading`` can be given, in
         which case the graded (or weighted) Hilbert numerator is given.
@@ -3503,7 +3500,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
     @cached_method
     def std(self):
         r"""
-        Computes a GB of the ideal. It is two-sided if and only if the ideal is two-sided.
+        Compute a GB of the ideal. It is two-sided if and only if the ideal is two-sided.
 
         EXAMPLES::
 
@@ -3603,7 +3600,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
     @cached_method
     def twostd(self):
         r"""
-        Computes a two-sided GB of the ideal (even if it is a left ideal).
+        Compute a two-sided GB of the ideal (even if it is a left ideal).
 
         EXAMPLES::
 
@@ -3718,7 +3715,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
     @require_field
     def syzygy_module(self):
         r"""
-        Computes the first syzygy (i.e., the module of relations of the
+        Compute the first syzygy (i.e., the module of relations of the
         given generators) of the ideal.
 
         NOTE:
@@ -3798,10 +3795,10 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
 
 @richcmp_method
-class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
-                        MPolynomialIdeal_macaulay2_repr, \
-                        MPolynomialIdeal_magma_repr, \
-                        Ideal_generic ):
+class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
+                       MPolynomialIdeal_macaulay2_repr,
+                       MPolynomialIdeal_magma_repr,
+                       Ideal_generic):
     def __init__(self, ring, gens, coerce=True):
         r"""
         Create an ideal in a multivariate polynomial ring.
@@ -3847,7 +3844,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         EXAMPLES::
 
            sage: P.<x,y> = PolynomialRing(QQ,2)
-           sage: I = Ideal([x,y+1]); I
+           sage: I = Ideal([x, y + 1]); I
            Ideal (x, y + 1) of Multivariate Polynomial Ring in x, y over Rational Field
            sage: I.gens()
            [x, y + 1]
@@ -3863,7 +3860,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         EXAMPLES::
 
            sage: P.<x,y> = PolynomialRing(QQ,2)
-           sage: I = Ideal([x,y+1])
+           sage: I = Ideal([x, y + 1])
            sage: I.basis
            [x, y + 1]
 
@@ -4232,7 +4229,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         ``'giac:gbasis'``
             Giac's ``gbasis`` command (if available)
 
-        If only a system is given - e.g. ``'magma`` - the default algorithm is
+        If only a system is given - e.g. ``'magma'`` - the default algorithm is
         chosen for that system.
 
         .. NOTE::
@@ -4450,7 +4447,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         Sage also supports local orderings::
 
             sage: P.<x,y,z> = PolynomialRing(QQ, 3, order='negdegrevlex')
-            sage: I = P * (  x*y*z + z^5, 2*x^2 + y^3 + z^7, 3*z^5 +y ^5 )
+            sage: I = P * (  x*y*z + z^5, 2*x^2 + y^3 + z^7, 3*z^5 + y^5 )
             sage: I.groebner_basis()
             [x^2 + 1/2*y^3, x*y*z + z^5, y^5 + 3*z^5, y^4*z - 2*x*z^5, z^6]
 
@@ -4458,7 +4455,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         of the generators using the :meth:`~sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict.lift` method::
 
             sage: P.<x,y,z> = PolynomialRing(QQ, 3)
-            sage: I = P * ( x*y*z + z^5, 2*x^2 + y^3 + z^7, 3*z^5 +y ^5 )
+            sage: I = P * ( x*y*z + z^5, 2*x^2 + y^3 + z^7, 3*z^5 + y^5 )
             sage: J = Ideal(I.groebner_basis())
             sage: f = sum(P.random_element(terms=2)*f for f in I.gens())
             sage: f                       # random
@@ -5291,7 +5288,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
             sage: all(I.random_element(degree=1) == 0 for _ in range(100))              # optional - sage.rings.finite_rings
             True
 
-        If degree equals the degree of the generators a random linear
+        If ``degree`` equals the degree of the generators, a random linear
         combination of the generators is returned::
 
             sage: P.<x,y> = QQ[]
@@ -5349,7 +5346,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         If the input and the output ideals are radical, this is
         equivalent to the statement about algebraic varieties above.
 
-        OUTPUT: MPolynomial Ideal
+        OUTPUT: :class:`MPolynomialIdeal`
 
         EXAMPLES::
 

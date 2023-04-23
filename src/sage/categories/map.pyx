@@ -115,7 +115,7 @@ cdef class Map(Element):
 
         Using domain and codomain::
 
-            sage: Map(QQ['x'], SymmetricGroup(6))                                                                       # optional - sage.groups
+            sage: Map(QQ['x'], SymmetricGroup(6))                                       # optional - sage.groups
             Generic map:
               From: Univariate Polynomial Ring in x over Rational Field
               To:   Symmetric group of order 6! as a permutation group
@@ -260,28 +260,31 @@ cdef class Map(Element):
 
         EXAMPLES::
 
-            sage: Q = QuadraticField(-5)                                                                                # optional - sage.rings.number_field
-            sage: phi = CDF._internal_convert_map_from(Q)                                                               # optional - sage.rings.number_field
+            sage: Q = QuadraticField(-5)                                                # optional - sage.rings.number_field
+            sage: phi = CDF._internal_convert_map_from(Q)                               # optional - sage.rings.number_field
 
         By :trac:`14711`, maps used in the coercion and conversion system
         use *weak* references to domain and codomain, in contrast to other
         maps::
 
-            sage: phi.domain                                                                                            # optional - sage.rings.number_field
+            sage: phi.domain                                                            # optional - sage.rings.number_field
             <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
-            sage: phi._make_strong_references()                                                                         # optional - sage.rings.number_field
-            sage: print(phi.domain)                                                                                     # optional - sage.rings.number_field
-            The constant function (...) -> Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
+            sage: phi._make_strong_references()                                         # optional - sage.rings.number_field
+            sage: print(phi.domain)                                                     # optional - sage.rings.number_field
+            The constant function (...) -> Number Field in a
+            with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
 
         Now, as there is a strong reference, `Q` cannot be garbage collected::
 
             sage: import gc
             sage: _ = gc.collect()
-            sage: C = Q.__class__.__base__                                                                              # optional - sage.rings.number_field
-            sage: numberQuadFields = len([x for x in gc.get_objects() if isinstance(x, C)])                             # optional - sage.rings.number_field
-            sage: del Q, x                                                                                              # optional - sage.rings.number_field
+            sage: C = Q.__class__.__base__                                              # optional - sage.rings.number_field
+            sage: numberQuadFields = len([x for x in gc.get_objects()                   # optional - sage.rings.number_field
+            ....:                         if isinstance(x, C)])
+            sage: del Q, x                                                              # optional - sage.rings.number_field
             sage: _ = gc.collect()
-            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)])                            # optional - sage.rings.number_field
+            sage: numberQuadFields == len([x for x in gc.get_objects()                  # optional - sage.rings.number_field
+            ....:                          if isinstance(x, C)])
             True
 
         However, if we now make the references weak again, the number field can
@@ -289,11 +292,12 @@ cdef class Map(Element):
         invalid. This is why :meth:`_make_weak_references` should only be used
         if one really knows what one is doing::
 
-            sage: phi._make_weak_references()                                                                           # optional - sage.rings.number_field
+            sage: phi._make_weak_references()                                           # optional - sage.rings.number_field
             sage: _ = gc.collect()
-            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)]) + 1                        # optional - sage.rings.number_field
+            sage: numberQuadFields == len([x for x in gc.get_objects()                  # optional - sage.rings.number_field
+            ....:                          if isinstance(x, C)]) + 1
             True
-            sage: phi                                                                                                   # optional - sage.rings.number_field
+            sage: phi                                                                   # optional - sage.rings.number_field
             Defunct map
         """
         if not isinstance(self.domain, ConstantFunction):
@@ -321,28 +325,31 @@ cdef class Map(Element):
 
         EXAMPLES::
 
-            sage: Q = QuadraticField(-5)                                                                                # optional - sage.rings.number_field
-            sage: phi = CDF._internal_convert_map_from(Q)                                                               # optional - sage.rings.number_field
+            sage: Q = QuadraticField(-5)                                                # optional - sage.rings.number_field
+            sage: phi = CDF._internal_convert_map_from(Q)                               # optional - sage.rings.number_field
 
         By :trac:`14711`, maps used in the coercion and conversion system
         use *weak* references to domain and codomain, in contrast to other
         maps::
 
-            sage: phi.domain                                                                                            # optional - sage.rings.number_field
+            sage: phi.domain                                                            # optional - sage.rings.number_field
             <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
-            sage: phi._make_strong_references()                                                                         # optional - sage.rings.number_field
-            sage: print(phi.domain)                                                                                     # optional - sage.rings.number_field
-            The constant function (...) -> Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
+            sage: phi._make_strong_references()                                         # optional - sage.rings.number_field
+            sage: print(phi.domain)                                                     # optional - sage.rings.number_field
+            The constant function (...) -> Number Field in a
+            with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
 
         Now, as there is a strong reference, `Q` cannot be garbage collected::
 
             sage: import gc
             sage: _ = gc.collect()
-            sage: C = Q.__class__.__base__                                                                              # optional - sage.rings.number_field
-            sage: numberQuadFields = len([x for x in gc.get_objects() if isinstance(x, C)])                             # optional - sage.rings.number_field
-            sage: del Q, x                                                                                              # optional - sage.rings.number_field
+            sage: C = Q.__class__.__base__                                              # optional - sage.rings.number_field
+            sage: numberQuadFields = len([x for x in gc.get_objects()                   # optional - sage.rings.number_field
+            ....:                         if isinstance(x, C)])
+            sage: del Q, x                                                              # optional - sage.rings.number_field
             sage: _ = gc.collect()
-            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)])                            # optional - sage.rings.number_field
+            sage: numberQuadFields == len([x for x in gc.get_objects()                  # optional - sage.rings.number_field
+            ....:                          if isinstance(x, C)])
             True
 
         However, if we now make the references weak again, the number field can
@@ -350,17 +357,18 @@ cdef class Map(Element):
         invalid. This is why :meth:`_make_weak_references` should only be used
         if one really knows what one is doing::
 
-            sage: phi._make_weak_references()                                                                           # optional - sage.rings.number_field
+            sage: phi._make_weak_references()                                           # optional - sage.rings.number_field
             sage: _ = gc.collect()
-            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)]) + 1                        # optional - sage.rings.number_field
+            sage: numberQuadFields == len([x for x in gc.get_objects()                  # optional - sage.rings.number_field
+            ....:                          if isinstance(x, C)]) + 1
             True
-            sage: phi                                                                                                   # optional - sage.rings.number_field
+            sage: phi                                                                   # optional - sage.rings.number_field
             Defunct map
-            sage: phi._make_strong_references()                                                                         # optional - sage.rings.number_field
+            sage: phi._make_strong_references()                                         # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             RuntimeError: The domain of this map became garbage collected
-            sage: phi.parent()                                                                                          # optional - sage.rings.number_field
+            sage: phi.parent()                                                          # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError: This map is in an invalid state, the domain has been garbage collected
@@ -554,16 +562,16 @@ cdef class Map(Element):
 
         TESTS::
 
-            sage: Q = QuadraticField(-5)                                                                                # optional - sage.rings.number_field
-            sage: phi = CDF._internal_coerce_map_from(Q); phi                                                           # optional - sage.rings.number_field
+            sage: Q = QuadraticField(-5)                                                # optional - sage.rings.number_field
+            sage: phi = CDF._internal_coerce_map_from(Q); phi                           # optional - sage.rings.number_field
             (map internal to coercion system -- copy before use)
             Composite map:
               From: Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
               To:   Complex Double Field
-            sage: del Q                                                                                                 # optional - sage.rings.number_field
+            sage: del Q                                                                 # optional - sage.rings.number_field
             sage: import gc
             sage: _ = gc.collect()
-            sage: phi                                                                                                   # optional - sage.rings.number_field
+            sage: phi                                                                   # optional - sage.rings.number_field
             Defunct map
         """
         D = self.domain()
@@ -714,7 +722,8 @@ cdef class Map(Element):
             sage: f(1/2)
             Traceback (most recent call last):
             ...
-            TypeError: 1/2 fails to convert into the map's domain Integer Ring, but a `pushforward` method is not properly implemented
+            TypeError: 1/2 fails to convert into the map's domain Integer Ring,
+            but a `pushforward` method is not properly implemented
 
         We test that the default call method really works as described
         above (that was fixed in :trac:`10496`)::
@@ -771,7 +780,8 @@ cdef class Map(Element):
             sage: h(2/3)
             Traceback (most recent call last):
             ...
-            TypeError: 2/3 fails to convert into the map's domain Integer Ring, but a `pushforward` method is not properly implemented
+            TypeError: 2/3 fails to convert into the map's domain Integer Ring,
+            but a `pushforward` method is not properly implemented
         """
         P = parent(x)
         cdef Parent D = self.domain()

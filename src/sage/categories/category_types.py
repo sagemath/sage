@@ -278,7 +278,7 @@ class Category_over_base(CategoryWithParameters):
             'algebras over Rational Field'
             sage: Algebras(Fields())._repr_object_names()
             'algebras over fields'
-            sage: Algebras(GF(2).category())._repr_object_names()                                                       # optional - sage.rings.finite_rings
+            sage: Algebras(GF(2).category())._repr_object_names()                       # optional - sage.rings.finite_rings
             'algebras over (finite enumerated fields and subquotients of monoids and quotients of semigroups)'
         """
         base = self.__base
