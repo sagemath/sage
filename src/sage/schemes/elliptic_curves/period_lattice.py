@@ -1485,7 +1485,6 @@ class PeriodLattice_ell(PeriodLattice):
             z =  self.reduce(z)
         return z
 
-
     def elliptic_logarithm(self, P, prec=None, reduce=True):
         r"""
         Return the elliptic logarithm of a point.

@@ -91,12 +91,12 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         This checks that :trac:`13445` is fixed::
 
-            sage: M = ModularForms(Gamma1(29), base_ring=GF(29))
+            sage: M = ModularForms(Gamma0(11), base_ring=GF(11))
             sage: S = M.cuspidal_subspace()
             sage: 0 in [f.valuation() for f in S.basis()]
             False
             sage: from sage.modular.dims import dimension_cusp_forms
-            sage: len(S.basis()) == dimension_cusp_forms(Gamma1(29), 2)
+            sage: len(S.basis()) == dimension_cusp_forms(Gamma0(11), 2)
             True
         """
         if prec is None:

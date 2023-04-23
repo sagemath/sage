@@ -1230,12 +1230,24 @@ class MatrixSpace(UniqueRepresentation, Parent):
             pass
         else:
             MS = meth_matrix_space()
-            from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
-            from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
-            if is_MatrixGroup(S) or is_ArithmeticSubgroup(S):
-                return self.has_coerce_map_from(MS)
+
+            try:
+                from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
+            except ImportError:
+                pass
             else:
-                return False
+                if is_MatrixGroup(S):
+                    return self.has_coerce_map_from(MS)
+
+            try:
+                from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
+            except ImportError:
+                pass
+            else:
+                if is_ArithmeticSubgroup(S):
+                    return self.has_coerce_map_from(MS)
+
+            return False
 
         # The parent is not matrix-like: coerce via base ring
         return (self.nrows() == self.ncols()) and self._coerce_map_via([B], S)
