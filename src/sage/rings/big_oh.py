@@ -9,15 +9,25 @@ Big O for various types (power series, p-adics, etc.)
     - `polynomials <../../../polynomial_rings/index.html>`_
 """
 
-import sage.arith.all as arith
-from . import laurent_series_ring_element
-from sage.rings.puiseux_series_ring_element import PuiseuxSeries
-import sage.rings.padics.factory as padics_factory
-import sage.rings.padics.padic_generic_element as padic_generic_element
+from sage.arith.misc import factor
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
+lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
+from sage.rings.polynomial.polynomial_element import Polynomial
+
+try:
+    from .laurent_series_ring_element import LaurentSeries
+except ImportError:
+    LaurentSeries = ()
+
+try:
+    from .puiseux_series_ring_element import PuiseuxSeries
+except ImportError:
+    PuiseuxSeries = ()
+
 from . import power_series_ring_element
 from . import integer
 from . import rational
-from sage.rings.polynomial.polynomial_element import Polynomial
 from . import multi_power_series_ring_element
 
 
@@ -137,9 +147,8 @@ def O(*x, **kwds):
                                       "for the maximal ideal (x)")
         return x.parent().completion(x.parent().gen())(0, x.degree(), **kwds)
 
-    elif isinstance(x, laurent_series_ring_element.LaurentSeries):
-        return laurent_series_ring_element.LaurentSeries(x.parent(), 0).\
-            add_bigoh(x.valuation(), **kwds)
+    elif isinstance(x, LaurentSeries):
+        return LaurentSeries(x.parent(), 0).add_bigoh(x.valuation(), **kwds)
 
     elif isinstance(x, PuiseuxSeries):
         return x.add_bigoh(x.valuation(), **kwds)
@@ -148,18 +157,18 @@ def O(*x, **kwds):
         # p-adic number
         if x <= 0:
             raise ArithmeticError("x must be a prime power >= 2")
-        F = arith.factor(x)
+        F = factor(x)
         if len(F) != 1:
             raise ArithmeticError("x must be prime power")
         p, r = F[0]
         if r >= 0:
-            return padics_factory.Zp(p, prec=max(r, 20),
-                                     type='capped-rel')(0, absprec=r, **kwds)
+            return Zp(p, prec=max(r, 20),
+                      type='capped-rel')(0, absprec=r, **kwds)
         else:
-            return padics_factory.Qp(p, prec=max(r, 20),
-                                     type='capped-rel')(0, absprec=r, **kwds)
+            return Qp(p, prec=max(r, 20),
+                      type='capped-rel')(0, absprec=r, **kwds)
 
-    elif isinstance(x, padic_generic_element.pAdicGenericElement):
+    elif isinstance(x, pAdicGenericElement):
         return x.parent()(0, absprec=x.valuation(), **kwds)
     elif hasattr(x, 'O'):
         return x.O(**kwds)
