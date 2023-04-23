@@ -1242,7 +1242,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         OUTPUT:
 
-        - Element of this quotient ring
+        Element of this quotient ring
 
         EXAMPLES::
 
@@ -1252,8 +1252,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: F2.random_element().parent() is F2
             True
         """
-        return self(self.polynomial_ring().random_element( \
-            degree=self.degree()-1, *args, **kwds))
+        return self(self.polynomial_ring().random_element(
+            degree=self.degree() - 1, *args, **kwds))
 
     @cached_method
     def _S_decomposition(self, S):

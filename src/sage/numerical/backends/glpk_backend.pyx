@@ -3129,7 +3129,7 @@ solver_parameter_names_dict = {
   'obj_ll': obj_ll, 'obj_lower_limit': obj_ll,
   'obj_ul': obj_ul, 'obj_upper_limit': obj_ul,
   'it_lim': it_lim, 'iteration_limit': it_lim,
-  'out_frq_simplex': out_frq_simplex, 'output_frequency_intopt': out_frq_simplex,
+  'out_frq_simplex': out_frq_simplex, 'output_frequency_simplex': out_frq_simplex,
   'out_dly_simplex': out_dly_simplex, 'output_delay_simplex': out_dly_simplex,
   'presolve_simplex': presolve_simplex
 }

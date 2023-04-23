@@ -663,9 +663,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     where the default integrator obtains another answer::
 
-        sage: result = integrate(f(x), x)
-        ...
-        sage: result
+        sage: integrate(f(x), x)  # long time
         1/8*sqrt(x)*gamma(1/4)*gamma(-1/4)^2*hypergeometric((-1/4, -1/4, 1/4), (1/2, 3/4), -1/x^2)/(pi*gamma(3/4))
 
     The following definite integral is not found by maxima::
