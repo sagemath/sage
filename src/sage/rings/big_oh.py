@@ -10,6 +10,10 @@ Big O for various types (power series, p-adics, etc.)
 """
 
 from sage.arith.misc import factor
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
+lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 try:
     from .laurent_series_ring_element import LaurentSeries
@@ -17,20 +21,13 @@ except ImportError:
     LaurentSeries = ()
 
 try:
-    from sage.rings.puiseux_series_ring_element import PuiseuxSeries
+    from .puiseux_series_ring_element import PuiseuxSeries
 except ImportError:
     PuiseuxSeries = ()
-
-try:
-    import sage.rings.padics.factory as padics_factory
-    from sage.rings.padics.padic_generic_element.padic_generic_element import pAdicGenericElement
-except ImportError:
-    pAdicGenericElement = ()
 
 from . import power_series_ring_element
 from . import integer
 from . import rational
-from sage.rings.polynomial.polynomial_element import Polynomial
 from . import multi_power_series_ring_element
 
 
@@ -165,11 +162,11 @@ def O(*x, **kwds):
             raise ArithmeticError("x must be prime power")
         p, r = F[0]
         if r >= 0:
-            return padics_factory.Zp(p, prec=max(r, 20),
-                                     type='capped-rel')(0, absprec=r, **kwds)
+            return Zp(p, prec=max(r, 20),
+                      type='capped-rel')(0, absprec=r, **kwds)
         else:
-            return padics_factory.Qp(p, prec=max(r, 20),
-                                     type='capped-rel')(0, absprec=r, **kwds)
+            return Qp(p, prec=max(r, 20),
+                      type='capped-rel')(0, absprec=r, **kwds)
 
     elif isinstance(x, pAdicGenericElement):
         return x.parent()(0, absprec=x.valuation(), **kwds)
