@@ -2067,7 +2067,7 @@ cdef class RealBall(RingElement):
 
         EXAMPLES:
 
-        It is possible to create balls whose midpoint is more precise that
+        It is possible to create balls whose midpoint is more precise than
         their parent's nominal precision (see :mod:`~sage.rings.real_arb` for
         more information)::
 
