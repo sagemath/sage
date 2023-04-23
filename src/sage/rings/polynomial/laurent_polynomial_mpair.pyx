@@ -1165,7 +1165,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         OUTPUT:
 
         Return ``True`` if ``self`` contains a monomial including the inverse of
-        ``self.parent().gen(i)``, False otherwise.
+        ``self.parent().gen(i)``, ``False`` otherwise.
 
         EXAMPLES::
 
@@ -1279,7 +1279,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         - ``in_dict`` -- dictionary (optional)
 
-        - ``**kwargs`` -- keyword arguments
+        - ``**kwds`` -- keyword arguments
 
         OUTPUT:
 
@@ -1395,10 +1395,10 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def _derivative(self, var=None):
         """
-        Computes formal derivative of this Laurent polynomial with
+        Compute formal derivative of this Laurent polynomial with
         respect to the given variable.
 
-        If var is among the generators of this ring, the derivative
+        If ``var`` is among the generators of this ring, the derivative
         is with respect to the generator. Otherwise, ``_derivative(var)`` is called
         recursively for each coefficient of this polynomial.
 
@@ -1475,8 +1475,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         - ``R`` - (default: ``None``) a univariate Laurent polynomial ring
 
         If this polynomial is not in at most one variable, then a
-        ``ValueError`` exception is raised.  The new polynomial is over
-        the same base ring as the given ``LaurentPolynomial`` and in the
+        :class:`ValueError` exception is raised.  The new polynomial is over
+        the same base ring as the given :class:`LaurentPolynomial` and in the
         variable ``x`` if no ring ``R`` is provided.
 
         EXAMPLES::
