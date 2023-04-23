@@ -1112,7 +1112,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         TESTS::
 
-            sage: Seq2.from_recurrence([
+            sage: Seq2.from_recurrence([  # long time
             ....:     f(4*n) == f(2*n),
             ....:     f(4*n + 1) == f(2*n),
             ....:     f(4*n + 2) == f(2*n),
@@ -1179,7 +1179,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ....:     g(22) == 22, g(23) == 23, g(24) == 24, g(25) == 25,
             ....:     g(26) == 26, g(27) == 27, g(28) == 28, g(29) == 29,
             ....:     g(30) == 30, g(31) == 31], g, m, offset=8)
-            sage: (S - T).is_trivial_zero()
+            sage: (S - T).is_trivial_zero()  # long time
             True
 
         Zero-sequence with non-zero initial values::

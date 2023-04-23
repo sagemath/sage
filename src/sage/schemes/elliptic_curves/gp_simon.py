@@ -84,7 +84,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
 
         sage: K.<w> = NumberField(x^2-x-232)
         sage: E = EllipticCurve([2-w,18+3*w,209+9*w,2581+175*w,852-55*w])
-        sage: E.simon_two_descent()
+        sage: E.simon_two_descent()  # long time
         (0, 2, [])
     """
     init()

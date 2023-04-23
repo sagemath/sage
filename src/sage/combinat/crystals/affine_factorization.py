@@ -144,7 +144,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             sage: W = WeylGroup(['A',3,1], prefix='s')
             sage: w = W.from_reduced_word([2,3,2,1])
             sage: B = crystals.AffineFactorization(w,3)
-            sage: TestSuite(B).run()
+            sage: TestSuite(B).run()  # long time
         """
         Parent.__init__(self, category = ClassicalCrystals())
         self.n = n
@@ -407,7 +407,7 @@ def affine_factorizations(w, l, weight=None):
        [[s1, s2, s1], [s2, s1, s2]]
        sage: W = WeylGroup(['A',3], prefix='s')
        sage: w0 = W.long_element()
-       sage: affine_factorizations(w0,6,(1,1,1,1,1,1))
+       sage: affine_factorizations(w0,6,(1,1,1,1,1,1))  # long time
        [[s1, s2, s1, s3, s2, s1],
        [s1, s2, s3, s1, s2, s1],
        [s1, s2, s3, s2, s1, s2],
@@ -498,12 +498,13 @@ class FactorizationToTableaux(CrystalMorphism):
 
             sage: W = WeylGroup(['A',4,1], prefix='s')
             sage: w = W.from_reduced_word([2,1,3,2,4,3,2,1])
-            sage: B = crystals.AffineFactorization(w, 4)
-            sage: phi = B._tableaux_isomorphism
-            sage: all(phi(b).e(i) == phi(b.e(i)) and phi(b).f(i) == phi(b.f(i))
+            sage: B = crystals.AffineFactorization(w, 4)         # long time
+            sage: phi = B._tableaux_isomorphism                  # long time
+            sage: all(phi(b).e(i) == phi(b.e(i)) and             # long time
+            ....:     phi(b).f(i) == phi(b.f(i))
             ....:     for b in B for i in B.index_set())
             True
-            sage: set(phi(b) for b in B) == set(phi.codomain())
+            sage: set(phi(b) for b in B) == set(phi.codomain())  # long time
             True
         """
         return True
