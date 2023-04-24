@@ -89,10 +89,9 @@ class FusionDouble(CombinatorialFreeModule):
     computed, by solving the pentagon and hexagon relations as described
     in [Bond2007]_ and [Ab2022]_, just as for :class:`FusionRing`.
     There is a caveat here, since even if the fusion rules are multiplicity-free,
-    if there are many F-matrix values to compute, even if many of them are
+    if there are too many F-matrix values to compute, even if many of them are
     zero, in the current implementation singular cannot create enough variables.
-    objects, the computation may be too large to be practical. At least,
-    this code can compute the F-matrix for the Fusion Double of the
+    At least, this code can compute the F-matrix for the Fusion Double of the
     symmetric group `S_3`, duplicating the result of [CHW2015]_.
 
     ::
