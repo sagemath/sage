@@ -1,5 +1,20 @@
 # sage.doctest: optional - sage.libs.flint
+r"""
+Integer factorization using FLINT
 
+AUTHORS:
+
+- Michael Orlitzky (2023)
+"""
+
+#*****************************************************************************
+#       Copyright (C) 2023 Michael Orlitzky
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
