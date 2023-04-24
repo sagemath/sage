@@ -9,7 +9,10 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2010 André Apitzsch <andre.apitzsch@st.ovgu.de>
+#       Copyright (C) 2010-2011 André Apitzsch <andre.apitzsch@st.ovgu.de>
+#                     2012      Nils Bruin
+#                     2014      David Roe
+#                     2014      Travis Scrimshaw
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
