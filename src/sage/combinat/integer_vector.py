@@ -516,11 +516,10 @@ class IntegerVector(ClonableArray):
 
         EXAMPLES::
 
-            sage: SM = IntegerVectors()([2,0,1,0,2]).specht_module(QQ)
-            sage: SM
+            sage: SM = IntegerVectors()([2,0,1,0,2]).specht_module(QQ); SM              # optional - sage.combinat
             Specht module of [(0, 0), (0, 1), (2, 0), (4, 0), (4, 1)] over Rational Field
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: s(SM.frobenius_image())
+            sage: s = SymmetricFunctions(QQ).s()                                        # optional - sage.combinat
+            sage: s(SM.frobenius_image())                                               # optional - sage.combinat
             s[2, 2, 1]
         """
         from sage.combinat.specht_module import SpechtModule
@@ -541,9 +540,9 @@ class IntegerVector(ClonableArray):
 
         EXAMPLES::
 
-            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension()
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension()               # optional - sage.combinat
             5
-            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension(GF(2))
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension(GF(2))          # optional - sage.combinat sage.rings.finite_rings
             5
         """
         from sage.combinat.specht_module import specht_module_rank

@@ -584,10 +584,10 @@ class Homset(Set_generic):
 
     Homsets of unique parents are unique as well::
 
-        sage: H = End(AffineSpace(2, names='x,y'))
-        sage: loads(dumps(AffineSpace(2, names='x,y'))) is AffineSpace(2, names='x,y')
+        sage: H = End(AffineSpace(2, names='x,y'))                                      # optional - sage.modules
+        sage: loads(dumps(AffineSpace(2, names='x,y'))) is AffineSpace(2, names='x,y')  # optional - sage.modules
         True
-        sage: loads(dumps(H)) is H
+        sage: loads(dumps(H)) is H                                                      # optional - sage.modules
         True
 
     Conversely, homsets of non-unique parents are non-unique::

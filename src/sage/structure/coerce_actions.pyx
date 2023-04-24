@@ -852,7 +852,7 @@ cdef class IntegerPowAction(IntegerAction):
         Traceback (most recent call last):
         ...
         ValueError: powering must be a right action
-        sage: IntegerPowAction(ZZ, QQ^3)
+        sage: IntegerPowAction(ZZ, QQ^3)                                                # optional - sage.modules
         Traceback (most recent call last):
         ...
         TypeError: no integer powering action defined on Vector space of dimension 3 over Rational Field

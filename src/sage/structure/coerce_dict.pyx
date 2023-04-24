@@ -35,8 +35,8 @@ coerce maps. In previous versions of Sage, the cache was by strong
 references and resulted in a memory leak in the following example.
 However, this leak was fixed by :trac:`715`, using weak references::
 
-    sage: K.<t> = GF(2^55)
-    sage: for i in range(20):
+    sage: K.<t> = GF(2^55)                                                              # optional - sage.rings.finite_rings
+    sage: for i in range(20):                                                           # optional - sage.rings.finite_rings
     ....:     a = K.random_element()
     ....:     E = EllipticCurve(j=a)
     ....:     P = E.random_point()
