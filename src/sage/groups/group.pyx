@@ -143,7 +143,7 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: SL(2, 7).is_commutative()                                             # optional - sage.rings.finite_rings
+            sage: SL(2, 7).is_commutative()                                             # optional - sage.modules sage.rings.finite_rings
             False
         """
         return self.is_abelian()
@@ -165,8 +165,8 @@ cdef class Group(Parent):
 
         TESTS::
 
-            sage: H = SL(2, QQ)
-            sage: H.order()
+            sage: H = SL(2, QQ)                                                         # optional - sage.modules
+            sage: H.order()                                                             # optional - sage.modules
             +Infinity
         """
         try:
