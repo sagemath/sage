@@ -54,7 +54,6 @@ import sage.matrix.matrix_space
 from .matrix_integer_sparse cimport Matrix_integer_sparse
 from .matrix_rational_dense cimport Matrix_rational_dense
 
-from sage.misc.verbose import verbose
 
 cdef class Matrix_rational_sparse(Matrix_sparse):
     def __cinit__(self):

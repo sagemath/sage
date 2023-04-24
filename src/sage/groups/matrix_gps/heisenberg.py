@@ -16,7 +16,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.latex import latex
 from sage.matrix.matrix_space import MatrixSpace
