@@ -43,6 +43,10 @@ REFERENCES:
             University of New South Wales,
             1995
 
+.. [Ab2022] Willie Aboumrad,
+        *Quantum compution with anyons: an F-matrix and braid calculator*
+        (2022). https://arxiv.org/abs/2212.00831
+
 .. [AB2007] \M. Aschenbrenner, C. Hillar,
             *Finite generation of symmetric ideals*.
             Trans. Amer. Math. Soc. 359 (2007), no. 11, 5171--5192.
