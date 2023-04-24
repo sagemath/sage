@@ -4829,9 +4829,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: X = SimplicialComplex([[0,1],[1,2],[1,3],[2,3]])
             sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
-            sage: sorted(X.bigraded_betti_numbers().items(), reverse = True)
+            sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)
             [((0, 0), 1), ((-1, 6), 1), ((-1, 4), 2), ((-2, 8), 1), ((-2, 6), 1)]
-            sage: sorted(Y.bigraded_betti_numbers(base_ring=QQ).items(), reverse = True)
+            sage: sorted(Y.bigraded_betti_numbers(base_ring=QQ).items(), reverse=True)
             [((0, 0), 1), ((-1, 4), 3), ((-2, 8), 2), ((-2, 6), 1), ((-3, 10), 1)]
         """
         if base_ring in self._bbn_all_computed:
@@ -4879,7 +4879,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             0
             sage: X.bigraded_betti_number(0, 0)
             1
-            sage: sorted(X.bigraded_betti_numbers().items(), reverse = True)
+            sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)
             [((0, 0), 1), ((-1, 6), 1), ((-1, 4), 2), ((-2, 8), 1), ((-2, 6), 1)]
             sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)
             2
