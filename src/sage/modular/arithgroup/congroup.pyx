@@ -209,7 +209,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
         raise ArithmeticError(f"M (={M}) must be a divisor of N (={N})")
 
     if (N // M) % t != 0:
-        raise ArithmeticError("t (={t}) must be a divisor of N/M (={N//M})")
+        raise ArithmeticError(f"t (={t}) must be a divisor of N/M (={N//M})")
 
     cdef int d, g, i, j, k, n, aa, bb, cc, dd, Ndivt, halfmax, is_new
     cdef int* R
