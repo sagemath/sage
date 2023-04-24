@@ -57,41 +57,42 @@ def O(*x, **kwds):
 
     This is also useful to create `p`-adic numbers::
 
-        sage: O(7^6)
+        sage: O(7^6)                                                                    # optional - sage.rings.padics
         O(7^6)
-        sage: 1/3 + O(7^6)
+        sage: 1/3 + O(7^6)                                                              # optional - sage.rings.padics
         5 + 4*7 + 4*7^2 + 4*7^3 + 4*7^4 + 4*7^5 + O(7^6)
 
     It behaves well with respect to adding negative powers of `p`::
 
-        sage: a = O(11^-32); a
+        sage: a = O(11^-32); a                                                          # optional - sage.rings.padics
         O(11^-32)
-        sage: a.parent()
+        sage: a.parent()                                                                # optional - sage.rings.padics
         11-adic Field with capped relative precision 20
 
     There are problems if you add a rational with very negative
     valuation to an `O`-Term::
 
-        sage: 11^-12 + O(11^15)
+        sage: 11^-12 + O(11^15)                                                         # optional - sage.rings.padics
         11^-12 + O(11^8)
 
     The reason that this fails is that the constructor doesn't know
     the right precision cap to use. If you cast explicitly or use
     other means of element creation, you can get around this issue::
 
-        sage: K = Qp(11, 30)
-        sage: K(11^-12) + O(11^15)
+        sage: K = Qp(11, 30)                                                            # optional - sage.rings.padics
+        sage: K(11^-12) + O(11^15)                                                      # optional - sage.rings.padics
         11^-12 + O(11^15)
-        sage: 11^-12 + K(O(11^15))
+        sage: 11^-12 + K(O(11^15))                                                      # optional - sage.rings.padics
         11^-12 + O(11^15)
-        sage: K(11^-12, absprec = 15)
+        sage: K(11^-12, absprec=15)                                                     # optional - sage.rings.padics
         11^-12 + O(11^15)
-        sage: K(11^-12, 15)
+        sage: K(11^-12, 15)                                                             # optional - sage.rings.padics
         11^-12 + O(11^15)
 
     We can also work with `asymptotic expansions`_::
 
-        sage: A.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ * log(n)^QQ', coefficient_ring=QQ); A
+        sage: A.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ * log(n)^QQ',            # optional - sage.symbolic
+        ....:                        coefficient_ring=QQ); A
         Asymptotic Ring <QQ^n * n^QQ * log(n)^QQ * Signs^n> over Rational Field
         sage: O(n)
         O(n)

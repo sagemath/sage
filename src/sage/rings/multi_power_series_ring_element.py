@@ -892,14 +892,14 @@ class MPowerSeries(PowerSeries):
             sage: R.<a,b,c> = PowerSeriesRing(ZZ)
             sage: f = 1 + a + b - a*b + R.O(3)
             sage: g = 1 + 2*a - 3*a*b + R.O(3)
-            sage: q, r = f.quo_rem(g); q, r
+            sage: q, r = f.quo_rem(g); q, r                                             # optional - sage.libs.singular
             (1 - a + b + 2*a^2 + O(a, b, c)^3, 0 + O(a, b, c)^3)
-            sage: f == q*g+r
+            sage: f == q*g + r                                                          # optional - sage.libs.singular
             True
 
-            sage: q, r = (a*f).quo_rem(g); q, r
+            sage: q, r = (a*f).quo_rem(g); q, r                                         # optional - sage.libs.singular
             (a - a^2 + a*b + 2*a^3 + O(a, b, c)^4, 0 + O(a, b, c)^4)
-            sage: a*f == q*g+r
+            sage: a*f == q*g + r                                                        # optional - sage.libs.singular
             True
 
             sage: q, r = (a*f).quo_rem(a*g); q, r
@@ -1897,9 +1897,9 @@ class MPowerSeries(PowerSeries):
             sage: f = a + b + a*b + T.O(3)
             sage: exp(f)
             1 + a + b + 1/2*a^2 + 2*a*b + 1/2*b^2 + O(a, b)^3
-            sage: f.exp()
+            sage: f.exp()                                                               # optional - sage.symbolic
             1 + a + b + 1/2*a^2 + 2*a*b + 1/2*b^2 + O(a, b)^3
-            sage: f.exp(prec=2)
+            sage: f.exp(prec=2)                                                         # optional - sage.symbolic
             1 + a + b + O(a, b)^2
             sage: log(exp(f)) - f
             0 + O(a, b)^3
@@ -1987,11 +1987,11 @@ class MPowerSeries(PowerSeries):
 
             sage: T.<a,b> = PowerSeriesRing(ZZ,2)
             sage: f = 1 + a + b + a*b + T.O(5)
-            sage: f.log()
+            sage: f.log()                                                               # optional - sage.symbolic
             a + b - 1/2*a^2 - 1/2*b^2 + 1/3*a^3 + 1/3*b^3 - 1/4*a^4 - 1/4*b^4 + O(a, b)^5
-            sage: log(f)
+            sage: log(f)                                                                # optional - sage.symbolic
             a + b - 1/2*a^2 - 1/2*b^2 + 1/3*a^3 + 1/3*b^3 - 1/4*a^4 - 1/4*b^4 + O(a, b)^5
-            sage: exp(log(f)) - f
+            sage: exp(log(f)) - f                                                       # optional - sage.symbolic
             0 + O(a, b)^5
 
         If the power series has a constant coefficient `c` and
@@ -1999,8 +1999,8 @@ class MPowerSeries(PowerSeries):
         power series over the :class:`~sage.symbolic.ring.SymbolicRing`. These
         are not yet implemented and therefore such cases raise an error::
 
-            sage: g = 2+f
-            sage: log(g)
+            sage: g = 2 + f                                                             # optional - sage.symbolic
+            sage: log(g)                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for -: 'Symbolic Ring' and 'Power
@@ -2009,7 +2009,7 @@ class MPowerSeries(PowerSeries):
         Another workaround for this limitation is to change base ring
         to one which is closed under exponentiation, such as `\RR` or `\CC`::
 
-            sage: log(g.change_ring(RDF))
+            sage: log(g.change_ring(RDF))                                               # optional - sage.symbolic
             1.09861228... + 0.333333333...*a + 0.333333333...*b - 0.0555555555...*a^2
             + 0.222222222...*a*b - 0.0555555555...*b^2 + 0.0123456790...*a^3
             - 0.0740740740...*a^2*b - 0.0740740740...*a*b^2 + 0.0123456790...*b^3
@@ -2018,17 +2018,17 @@ class MPowerSeries(PowerSeries):
 
         TESTS::
 
-            sage: (1+a).log(prec=10).exp()
+            sage: (1+a).log(prec=10).exp()                                              # optional - sage.symbolic
             1 + a + O(a, b)^10
-            sage: a.exp(prec=10).log()
+            sage: a.exp(prec=10).log()                                                  # optional - sage.symbolic
             a + O(a, b)^10
 
-            sage: log(1+a)
+            sage: log(1+a)                                                              # optional - sage.symbolic
             a - 1/2*a^2 + 1/3*a^3 - 1/4*a^4 + 1/5*a^5 - 1/6*a^6 + 1/7*a^7
             - 1/8*a^8 + 1/9*a^9 - 1/10*a^10 + 1/11*a^11 + O(a, b)^12
-            sage: -log(1-a+T.O(5))
+            sage: -log(1-a+T.O(5))                                                      # optional - sage.symbolic
             a + 1/2*a^2 + 1/3*a^3 + 1/4*a^4 + O(a, b)^5
-            sage: a.log(prec=10)
+            sage: a.log(prec=10)                                                        # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: Can only take formal power series for non-zero constant term.

@@ -30,8 +30,8 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         EXAMPLES::
 
-            sage: L.<x,y> = LaurentPolynomialRing(QQ) # indirect doctest
-            sage: x*y
+            sage: L.<x,y> = LaurentPolynomialRing(QQ)  # indirect doctest               # optional - sage.modules
+            sage: x*y                                                                   # optional - sage.modules
             x*y
         """
         cdef type t = type(self)
@@ -113,18 +113,18 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         ::
 
-            sage: L.<a, b> = LaurentPolynomialRing(QQ)
-            sage: L(42)._integer_(ZZ)
+            sage: L.<a, b> = LaurentPolynomialRing(QQ)                                  # optional - sage.modules
+            sage: L(42)._integer_(ZZ)                                                   # optional - sage.modules
             42
-            sage: a._integer_(ZZ)
+            sage: a._integer_(ZZ)                                                       # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: a is not constant
-            sage: L(2/3)._integer_(ZZ)
+            sage: L(2/3)._integer_(ZZ)                                                  # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: no conversion of this rational to integer
-            sage: ZZ(L(42))
+            sage: ZZ(L(42))                                                             # optional - sage.modules
             42
         """
         if not self.is_constant():
@@ -155,14 +155,14 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         ::
 
-            sage: L.<a, b> = LaurentPolynomialRing(QQ)
-            sage: L(42)._rational_()
+            sage: L.<a, b> = LaurentPolynomialRing(QQ)                                  # optional - sage.modules
+            sage: L(42)._rational_()                                                    # optional - sage.modules
             42
-            sage: a._rational_()
+            sage: a._rational_()                                                        # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: a is not constant
-            sage: QQ(L(2/3))
+            sage: QQ(L(2/3))                                                            # optional - sage.modules
             2/3
         """
         if not self.is_constant():
@@ -272,22 +272,22 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
               From: Finite Field in r of size 3^2
               To:   Finite Field in s of size 3^4
               Defn: r |--> 2*s^3 + 2*s^2 + 1
-            sage: T.<X,Y> = LaurentPolynomialRing(R, 2)                                 # optional - sage.rings.finite_rings
-            sage: f = r*X + Y                                                           # optional - sage.rings.finite_rings
-            sage: g = f.map_coefficients(h); g                                          # optional - sage.rings.finite_rings
+            sage: T.<X,Y> = LaurentPolynomialRing(R, 2)                                 # optional - sage.modules sage.rings.finite_rings
+            sage: f = r*X + Y                                                           # optional - sage.modules sage.rings.finite_rings
+            sage: g = f.map_coefficients(h); g                                          # optional - sage.modules sage.rings.finite_rings
             (2*s^3 + 2*s^2 + 1)*X + Y
-            sage: g.parent()                                                            # optional - sage.rings.finite_rings
+            sage: g.parent()                                                            # optional - sage.modules sage.rings.finite_rings
             Multivariate Laurent Polynomial Ring in X, Y
              over Finite Field in s of size 3^4
-            sage: h = lambda x: x.trace()                                               # optional - sage.rings.finite_rings
-            sage: g = f.map_coefficients(h); g                                          # optional - sage.rings.finite_rings
+            sage: h = lambda x: x.trace()
+            sage: g = f.map_coefficients(h); g                                          # optional - sage.modules sage.rings.finite_rings
             X - Y
-            sage: g.parent()                                                            # optional - sage.rings.finite_rings
+            sage: g.parent()                                                            # optional - sage.modules sage.rings.finite_rings
             Multivariate Laurent Polynomial Ring in X, Y
              over Finite Field in r of size 3^2
-            sage: g = f.map_coefficients(h, new_base_ring=GF(3)); g                     # optional - sage.rings.finite_rings
+            sage: g = f.map_coefficients(h, new_base_ring=GF(3)); g                     # optional - sage.modules sage.rings.finite_rings
             X - Y
-            sage: g.parent()                                                            # optional - sage.rings.finite_rings
+            sage: g.parent()                                                            # optional - sage.modules sage.rings.finite_rings
             Multivariate Laurent Polynomial Ring in X, Y over Finite Field of size 3
 
         """
@@ -442,7 +442,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         EXAMPLES::
 
             sage: R.<t> = LaurentPolynomialRing(QQ)
-            sage: (2+t).is_unit()
+            sage: (2 + t).is_unit()
             False
             sage: f = 2*t
             sage: f.is_unit()
@@ -537,7 +537,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         EXAMPLES::
 
             sage: R.<t> = LaurentPolynomialRing(QQ)
-            sage: elt = t^2 + t^4 # indirect doctest
+            sage: elt = t^2 + t^4  # indirect doctest
             sage: elt.polynomial_construction()
             (t^2 + 1, 2)
 
@@ -1628,10 +1628,10 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         The answer is dependent of the base ring::
 
-            sage: S.<u> = LaurentPolynomialRing(QQbar)
-            sage: (2 + 4*t + 2*t^2).is_square()
+            sage: S.<u> = LaurentPolynomialRing(QQbar)                                  # optional - sage.rings.number_field
+            sage: (2 + 4*t + 2*t^2).is_square()                                         # optional - sage.rings.number_field
             False
-            sage: (2 + 4*u + 2*u^2).is_square()
+            sage: (2 + 4*u + 2*u^2).is_square()                                         # optional - sage.rings.number_field
             True
 
         TESTS::
@@ -1756,10 +1756,10 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
             sage: R.<x> = LaurentPolynomialRing(ZZ)
             sage: p = 1/x + 1 + x
-            sage: x,y = var("x, y")
-            sage: p._derivative(x)
+            sage: x,y = var("x, y")                                                     # optional - sage.symbolic
+            sage: p._derivative(x)                                                      # optional - sage.symbolic
             -x^-2 + 1
-            sage: p._derivative(y)
+            sage: p._derivative(y)                                                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y
@@ -1906,7 +1906,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: f = 4*t^-7 + 3*t^3 + 2*t^4 + t^-6
-            sage: f.factor()
+            sage: f.factor()                                                            # optional - sage.libs.pari
             (t^-7) * (4 + t + 3*t^10 + 2*t^11)
         """
         cdef LaurentPolynomial_univariate u, d
