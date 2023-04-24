@@ -6091,20 +6091,21 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: (-4).is_fundamental_discriminant()
+            sage: (-4).is_fundamental_discriminant()                                    # optional - sage.libs.pari
             True
-            sage: (-12).is_fundamental_discriminant()
+            sage: (-12).is_fundamental_discriminant()                                   # optional - sage.libs.pari
             False
-            sage: 101.is_fundamental_discriminant()
+            sage: 101.is_fundamental_discriminant()                                     # optional - sage.libs.pari
             True
 
         TESTS::
 
-            sage: 0.is_fundamental_discriminant()
+            sage: 0.is_fundamental_discriminant()                                       # optional - sage.libs.pari
             False
-            sage: 1.is_fundamental_discriminant()
+            sage: 1.is_fundamental_discriminant()                                       # optional - sage.libs.pari
             False
-            sage: len([D for D in srange(-100,100) if D.is_fundamental_discriminant()])
+            sage: len([D for D in srange(-100,100)                                      # optional - sage.libs.pari
+            ....:      if D.is_fundamental_discriminant()])
             61
 
         """

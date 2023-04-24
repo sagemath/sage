@@ -296,11 +296,11 @@ class FractionField_generic(ring.Field):
             sage: 1/(R.gen() + 1)
             1/(x + 1)
 
-            sage: R = LaurentPolynomialRing(ZZ, 'x,y')
-            sage: FF = FractionField(PolynomialRing(ZZ, 'x,y'))
-            sage: prod(R.gens()) + prod(FF.gens())
+            sage: R = LaurentPolynomialRing(ZZ, 'x,y')                                  # optional - sage.modules
+            sage: FF = FractionField(PolynomialRing(ZZ, 'x,y'))                         # optional - sage.modules
+            sage: prod(R.gens()) + prod(FF.gens())                                      # optional - sage.modules
             2*x*y
-            sage: 1/(R.gen(0) + R.gen(1))
+            sage: 1/(R.gen(0) + R.gen(1))                                               # optional - sage.modules
             1/(x + y)
 
         Test for :trac:`31320`::

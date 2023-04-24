@@ -455,7 +455,7 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: I = X * (x[1] + x[2], x[1]*x[2])
-            sage: I.interreduction()
+            sage: I.interreduction()                                                    # optional - sage.combinat
             Symmetric Ideal (-x_1^2, x_2 + x_1) of
              Infinite polynomial ring in x over Rational Field
 
@@ -491,7 +491,7 @@ class SymmetricIdeal(Ideal_generic):
                 x_1^2,
                 x_2 + x_1
             sage: R = SymmetricReductionStrategy(X, [x[1]^2])
-            sage: I.interreduction(RStrat=R)
+            sage: I.interreduction(RStrat=R)                                            # optional - sage.combinat
             Symmetric Ideal (x_2 + x_1) of Infinite polynomial ring in x over Rational Field
 
         """
@@ -909,7 +909,7 @@ class SymmetricIdeal(Ideal_generic):
         In an earlier version, the following examples failed::
 
             sage: X.<y,z> = InfinitePolynomialRing(GF(5), order='degrevlex')            # optional - sage.rings.finite_rings
-            sage: I = ['-2*y_0^2 + 2*z_0^2 + 1',
+            sage: I = ['-2*y_0^2 + 2*z_0^2 + 1',                                        # optional - sage.rings.finite_rings
             ....:      '-y_0^2 + 2*y_0*z_0 - 2*z_0^2 - 2*z_0 - 1',
             ....:      'y_0*z_0 + 2*z_0^2 - 2*z_0 - 1',
             ....:      'y_0^2 + 2*y_0*z_0 - 2*z_0^2 + 2*z_0 - 2',

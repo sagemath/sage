@@ -95,10 +95,6 @@ from sage.rings.complex_arb import ComplexBallField, CBF
 
 lazy_import("sage.rings.imaginary_unit", "I")
 
-# Lazy Laurent series ring
-lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
-                                            'LazySymmetricFunctions', 'LazyDirichletSeriesRing'])
-
 # Tate algebras
 from .tate_algebra import TateAlgebra
 
