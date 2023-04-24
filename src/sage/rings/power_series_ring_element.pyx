@@ -1412,7 +1412,7 @@ cdef class PowerSeries(AlgebraElement):
 
         Another example::
 
-            sage: (exp(t)).stieltjes_continued_fraction()
+            sage: (exp(t)).stieltjes_continued_fraction()                               # optional - sage.symbolic
             (1,
              -1/2,
              1/6,
@@ -1862,7 +1862,7 @@ cdef class PowerSeries(AlgebraElement):
         one raises an error::
 
             sage: g = 2+f
-            sage: cos(g)
+            sage: cos(g)                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: can only apply cos to formal power series with zero constant term
@@ -1947,7 +1947,7 @@ cdef class PowerSeries(AlgebraElement):
         one raises an error::
 
             sage: g = 2+f
-            sage: sin(g)
+            sage: sin(g)                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: can only apply sin to formal power series with zero constant term

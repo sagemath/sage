@@ -1594,8 +1594,8 @@ cdef class LaurentSeries(AlgebraElement):
 
         TESTS::
 
-            sage: y = var('y')
-            sage: f.derivative(y)
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: f.derivative(y)                                                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y
