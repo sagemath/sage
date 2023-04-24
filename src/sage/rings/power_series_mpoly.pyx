@@ -131,8 +131,8 @@ cdef class PowerSeries_mpoly(PowerSeries):
         EXAMPLES:
         """
         cdef PowerSeries_mpoly right = <PowerSeries_mpoly>right_m
-        return PowerSeries_mpoly(self._parent, self.__f + right.__f, \
-                                         self.common_prec_c(right), check=True)
+        return PowerSeries_mpoly(self._parent, self.__f + right.__f,
+                                 self.common_prec_c(right), check=True)
 
     cpdef _sub_(self, right_m):
         """
@@ -141,14 +141,16 @@ cdef class PowerSeries_mpoly(PowerSeries):
         EXAMPLES:
         """
         cdef PowerSeries_mpoly right = <PowerSeries_mpoly>right_m
-        return PowerSeries_mpoly(self._parent, self.__f - right.__f, \
-                                         self.common_prec_c(right), check=True)
+        return PowerSeries_mpoly(self._parent, self.__f - right.__f,
+                                 self.common_prec_c(right), check=True)
 
     cpdef _rmul_(self, Element c):
-        return PowerSeries_mpoly(self._parent, self.__f._rmul_(c), self._prec, check=False)
+        return PowerSeries_mpoly(self._parent, self.__f._rmul_(c),
+                                 self._prec, check=False)
 
     cpdef _lmul_(self, Element c):
-        return PowerSeries_mpoly(self._parent, self.__f._lmul_(c), self._prec, check=False)
+        return PowerSeries_mpoly(self._parent, self.__f._lmul_(c),
+                                 self._prec, check=False)
 
 
 def make_powerseries_mpoly_v0(parent,  f, prec, is_gen):

@@ -2870,11 +2870,10 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         """
         if not self.is_integral():
             raise ValueError("euler_phi only defined for integral ideals")
-        return prod([(np-1)*np**(e-1) \
-                     for np,e in [(p.absolute_norm(),e) \
-                                  for p,e in self.factor()]])
+        it = ((p.absolute_norm(), e) for p, e in self.factor())
+        return prod((np - 1) * np**(e - 1) for np, e in it)
 
-    def prime_to_S_part(self,S):
+    def prime_to_S_part(self, S):
         r"""
         Return the part of this fractional ideal which is coprime to
         the prime ideals in the list ``S``.

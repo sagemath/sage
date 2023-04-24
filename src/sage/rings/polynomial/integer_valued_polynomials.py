@@ -224,10 +224,15 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     Traceback (most recent call last):
                     ...
                     ValueError: not a polynomial with integer values: 1/3
+
+                    sage: t = polygen(ZZ,'t')
+                    sage: B = IntegerValuedPolynomialRing(QQ).B()
+                    sage: B.from_polynomial(t+1)
+                    B[0] + B[1]
                 """
                 B = self.basis()
                 poly = self._poly
-                remain = p
+                remain = p.change_variable_name('x')
                 result = self.zero()
                 while remain:
                     N = remain.degree()

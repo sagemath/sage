@@ -786,10 +786,8 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
                    "answer with precision at least prec, but we didn't."
         return K(answer)
 
-
     # (man... I love python's local function definitions...)
     return height
-
 
 
 def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
@@ -933,7 +931,6 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
             assert answer.precision_absolute() >= prec, "we should have got an " \
                    "answer with precision at least prec, but we didn't."
         return K(answer)
-
 
     # (man... I love python's local function definitions...)
     return height
