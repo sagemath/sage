@@ -1032,7 +1032,7 @@ cdef class Matrix(Matrix0):
 
             sage: matrix(3, [1..9]).rows()
             [(1, 2, 3), (4, 5, 6), (7, 8, 9)]
-            sage: matrix(RR, 2, [sqrt(2), pi, exp(1), 0]).rows()
+            sage: matrix(RR, 2, [sqrt(2), pi, exp(1), 0]).rows()                        # optional - sage.symbolic
             [(1.41421356237310, 3.14159265358979), (2.71828182845905, 0.000000000000000)]
             sage: matrix(RR, 0, 2, []).rows()
             []
@@ -1613,18 +1613,20 @@ cdef class Matrix(Matrix0):
         ``A.stack(B)`` and ``B.stack(A)`` should be equal::
 
             sage: A = matrix(QQ, 1, 2, [1,2])
-            sage: B = matrix(RR, 1, 2, [sin(1.1), sin(2.2)])
-            sage: C = A.stack(B); C
+            sage: B = matrix(RR, 1, 2, [sin(1.1), sin(2.2)])                            # optional - sage.symbolic
+            sage: C = A.stack(B); C                                                     # optional - sage.symbolic
             [ 1.00000000000000  2.00000000000000]
             [0.891207360061435 0.808496403819590]
-            sage: C.parent()
-            Full MatrixSpace of 2 by 2 dense matrices over Real Field with 53 bits of precision
+            sage: C.parent()                                                            # optional - sage.symbolic
+            Full MatrixSpace of 2 by 2 dense matrices
+             over Real Field with 53 bits of precision
 
-            sage: D = B.stack(A); D
+            sage: D = B.stack(A); D                                                     # optional - sage.symbolic
             [0.891207360061435 0.808496403819590]
             [ 1.00000000000000  2.00000000000000]
-            sage: D.parent()
-            Full MatrixSpace of 2 by 2 dense matrices over Real Field with 53 bits of precision
+            sage: D.parent()                                                            # optional - sage.symbolic
+            Full MatrixSpace of 2 by 2 dense matrices
+             over Real Field with 53 bits of precision
 
         ::
 
@@ -1881,18 +1883,19 @@ cdef class Matrix(Matrix0):
         elements of ``right`` into the base ring of ``self``. ::
 
             sage: A = matrix(QQ, 2, [1,2])
-            sage: B = matrix(RR, 2, [sin(1.1), sin(2.2)])
-            sage: C = A.augment(B); C
+            sage: B = matrix(RR, 2, [sin(1.1), sin(2.2)])                               # optional - sage.symbolic
+            sage: C = A.augment(B); C                                                   # optional - sage.symbolic
             [                  1 183017397/205358938]
             [                  2 106580492/131825561]
-            sage: C.parent()
+            sage: C.parent()                                                            # optional - sage.symbolic
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
 
-            sage: D = B.augment(A); D
+            sage: D = B.augment(A); D                                                   # optional - sage.symbolic
             [0.89120736006...  1.00000000000000]
             [0.80849640381...  2.00000000000000]
-            sage: D.parent()
-            Full MatrixSpace of 2 by 2 dense matrices over Real Field with 53 bits of precision
+            sage: D.parent()                                                            # optional - sage.symbolic
+            Full MatrixSpace of 2 by 2 dense matrices
+             over Real Field with 53 bits of precision
 
         Sometimes it is not possible to coerce into the base ring of
         ``self``.  A solution is to change the base ring of ``self`` to
