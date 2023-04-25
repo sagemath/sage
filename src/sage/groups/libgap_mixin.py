@@ -444,10 +444,10 @@ class GroupMixinLibGAP():
         if not self.is_finite():
             raise NotImplementedError("group must be finite")
         G = self.gap()
-        centralizer = list(G.Centralizer(g).GeneratorsOfGroup())
-        if not centralizer:
-            centralizer = [G.One()]
-        return self.subgroup(centralizer)
+        centralizer_gens = list(G.Centralizer(g).GeneratorsOfGroup())
+        if not centralizer_gens:
+            centralizer_gens = [G.One()]
+        return self.subgroup(centralizer_gens)
 
     def subgroups(self):
         r"""
@@ -543,6 +543,29 @@ class GroupMixinLibGAP():
             raise NotImplementedError("group must be finite")
         return [self.subgroup(sub.Representative().GeneratorsOfGroup())
                 for sub in self.gap().ConjugacyClassesSubgroups()]
+
+    def group_id(self):
+        """
+        Return the ID code of ``self``, which is a list of two integers.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2, 2)
+            sage: G.group_id()
+            [6, 1]
+            sage: G = groups.matrix.GL(2, 3)
+            sage: G.id()
+            [48, 29]
+            sage: G = groups.matrix.GL(2, ZZ)
+            sage: G.group_id()
+            Traceback (most recent call last):
+            ...
+            GAPError: Error, the group identification for groups of size infinity is not available
+        """
+        from sage.rings.integer import Integer
+        return [Integer(n) for n in self.gap().IdGroup()]
+
+    id = group_id
 
     def exponent(self):
         r"""
