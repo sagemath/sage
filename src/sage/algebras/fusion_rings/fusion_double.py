@@ -1,13 +1,20 @@
 """
 The Fusion Ring of the Drinfeld Double of a Finite Group
 """
+
 # ****************************************************************************
 #  Copyright (C) 2023 Wenqi Li
 #                     Daniel Bump <bump at match.stanford.edu>
+#                     Travis Scrimshaw <tcscrims at gmail.com>
+#                     Guillermo Aboumrad <gh_willieab>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 from sage.algebras.fusion_rings.generic_fusion_ring import FusionRing
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
@@ -15,16 +22,19 @@ from sage.sets.set import Set
 
 class FusionDouble(FusionRing):
     r"""
-    This constructs the Fusion Ring of the modular tensor category of modules over the Drinfeld
-    Double of a finite group. Usage is similar to :class:`FusionRing`::.
-    Since many of the methods are similar, we assume the reader is familiar with that
-    class.
+    The fusion ring corresponding to the Drinfeld double of a finite group.
+
+    This is the fusion ring of the modular tensor category of modules
+    over the Drinfeld double of a finite group. Usage is similar
+    to :class:`FusionRing`; we refer the reader to that class for more
+    information.
 
     INPUT:
 
     - ``G`` -- a finite group
-    - ``prefix`` (optional: defaults to 's') a prefix for the names of simple objects.
-    - ``inject_varables`` (optional): set TRUE to create variables for the simple objects.
+    - ``prefix`` -- (default: ``'s'``) a prefix for the names of simple objects
+    - ``inject_varables`` -- (optional) set to ``True`` to create variables
+      for the simple objects
 
     REFERENCES:
 
@@ -38,7 +48,8 @@ class FusionDouble(FusionRing):
         sage: G = DihedralGroup(5)
         sage: H = FusionRing(G, inject_variables=True)
         sage: H.basis()
-        Finite family {0: s0, 1: s1, 2: s2, 3: s3, 4: s4, 5: s5, 6: s6, 7: s7, 8: s8, 9: s9, 10: s10, 11: s11, 12: s12, 13: s13, 14: s14, 15: s15}
+        Finite family {0: s0, 1: s1, 2: s2, 3: s3, 4: s4, 5: s5, 6: s6, 7: s7, 8: s8,
+                       9: s9, 10: s10, 11: s11, 12: s12, 13: s13, 14: s14, 15: s15}
         sage: for x in H.basis():
         ....:     print ("%s : %s"%(x,x^2))
         ....:
@@ -67,60 +78,57 @@ class FusionDouble(FusionRing):
         sage: s8.ribbon()
         zeta5^3
 
-    If the Fusion Double is multiplicity-free, meaning that the fusion coefficients
-    `N_k^{ij}` are bounded by `1`, then the F-matrix may be computed, just as
-    for :class:`FusionRing`. There is a caveat here, since even if the fusion
-    rules are multiplicity-free, if there are many simple objects, the computation
-    may be too large to be practical. At least, this code can compute the F-matrix
-    for the Fusion Double of the symmetric group `S_3`, duplicating the result
-    of [CHW2015]_ .
+    If the fusion double is multiplicity-free, meaning that the fusion
+    coefficients `N_k^{ij}` are bounded by `1`, then the F-matrix may be
+    computed, as is explained l just as for :class:`FusionRing`. There is
+    a caveat here, since even if the fusion rules are multiplicity-free,
+    if there are many F-Matrix values, even if many are zero,
+    the computation may require more variables than singular can
+    create. At least, this code can compute the F-matrix for the Fusion Double of the
+    symmetric group `S_3`, duplicating the result of [CHW2015]_.
 
-    EXAMPLES::
+    ::
 
         sage: G1 = SymmetricGroup(3)
         sage: H1 = FusionRing(G1, prefix="u", inject_variables=True)
         sage: F = H1.get_fmatrix()
 
-    The above commands create the F-matrix factory. You can compute the F-matrices
-    with the command ::
+    The above commands prepare to create the F-matrix. You can compute the 
+    F-matrix values with the command ::
 
         sage: H1.find_orthogonal_solution()  # not tested (10-15 minutes)
 
-    Individual F-matrices may be computed thus ::
+    Individual F-matrices may be found thus ::
 
-        sage: F.fmatrix(u3,u3,u3,u4) # not tested
+        sage: F.fmatrix(u3, u3, u3, u4) # not tested
 
-    see :class:`FMatrix` for more information.
+    See :class:`FMatrix` for more information.
 
-    Unfortunately beyond `S_3` the number of simple objects is larger.
-    Although the :class:`FusionRing` class and its methods work well
-    for groups of moderate size, the FMatrix may not be available.
-    For the dihedral group of order 8, there are already 22
-    simple objects, and the F-matrix seems out of reach.
+    Unfortunately beyond `S_3` the number of simple objects is seemingly
+    impractical. Although the :class:`FusionDouble` class and its methods
+    work well for groups of moderate size, the :class:`FMatrix` may not be
+    computable. For the dihedral group of order 8, there are already 22
+    simple objects, and the F-matrix seems out of reach. The actual limitation
+    is that singular will not create a polynomial ring in more than
+    `2^{15}-1 = 32767` symbols, and there are more than this many F-matrix
+    values to be computed for the dihedral group of order 8, so in the
+    current implementation, this FusionRing is out of reach.
 
-    It is an open problem to classify the finite groups whose fusion doubles are
-    multiplicity-free. Abelian groups, dihedral groups, dicyclic groups, and all
-    groups of order 16 are multiplicity-free.  On the other hand, for groups of order 32,
-    some are multiplicity-free and others are not.
+    It is an open problem to classify the finite groups whose fusion doubles
+    are multiplicity-free. Abelian groups, dihedral groups, dicyclic groups,
+    and all groups of order 16 are multiplicity-free.  On the other hand, for
+    groups of order 32, some are multiplicity-free and others are not.
+    These can all be constructed using :class:`SmallPermutationGroup`.
 
-    Some groups, as currently implemented in Sage, may be missing methods such as
-    centralizers which are needed by this code. To circumvent this, you may
-    try to implement them as GAP Permutation groups. Thus ::
+    EXAMPLES::
 
-        sage: G1 = GL(2,3)
-        sage: G2 = G1.as_permutation_group()
-        sage: H2 = FusionRing(G2, prefix="b", inject_variables=True)
-        sage: b13^2         # long time (43s)
-        b0 + b1 + b5 + b6 + b13 + b26 + b30 + b31 + b32 + b33 + b38 + b39
+        sage: G = SmallPermutationGroup(16,9)
+        sage: F = FusionDouble(G, prefix="b",inject_variables=True)
+        sage: b13^2 # long time (4s)
+        b0 + b2 + b4 + b15 + b16 + b17 + b18 + b24 + b26 + b27
         sage: b13.ribbon()
         zeta3
 
-    In this example, implementing the simple group of order 168 as
-    the matrix group ``G1`` will not work with the ``FusionRing``, so we
-    recreate it as the permutation group ``G2``. Although the test of
-    squaring `b2` takes a long time, the fusion coefficients are cached
-    and this FusionRing is not too slow to work with. (Of course the
-    F-matrix factory is not available for this group.)
     """
     def __init__(self, G, base_ring=ZZ, prefix="s", cyclotomic_order=None, fusion_labels=None, inject_variables=False):
         """

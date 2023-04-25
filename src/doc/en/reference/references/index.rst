@@ -43,6 +43,10 @@ REFERENCES:
             University of New South Wales,
             1995
 
+.. [Ab2022] Willie Aboumrad,
+        *Quantum compution with anyons: an F-matrix and braid calculator*
+        (2022). https://arxiv.org/abs/2212.00831
+
 .. [AB2007] \M. Aschenbrenner, C. Hillar,
             *Finite generation of symmetric ideals*.
             Trans. Amer. Math. Soc. 359 (2007), no. 11, 5171--5192.
@@ -2700,8 +2704,13 @@ REFERENCES:
 .. [GJ2007] \A. Glen, J. Justin, Episturmian words: a survey, Preprint,
             2007, :arxiv:`0801.1655`.
 
-.. [Goff1999] Christopher Goff, Isomorphic fusion algebras of twisted quantum doubles 
-            of finite groups. PhD Thesis, University of California, Santa Cruz. 1999.
+.. [Goff1999] Christopher Goff. *Isomorphic fusion algebras of twisted quantum
+              doubles of finite groups*. PhD Thesis,
+              University of California, Santa Cruz. 1999.
+
+.. [GoMa2010] Christopher Goff and Geoffrey Mason, 
+            *Generalized twisted quantum doubles and the McKay correspondence*,
+            J. Algebra 324 (2010), no. 11, 3007–3016. 
 
 .. [GJ2016] Muddappa Seetharama Gowda and Juyoung Jeong.
             Spectral cones in Euclidean Jordan algebras.
@@ -4432,10 +4441,9 @@ REFERENCES:
 .. [Mat2002] Jiří Matousek, "Lectures on Discrete Geometry", Springer,
              2002
 
-.. [Mas1995] Mason, Geoffrey The quantum double of a finite group and its role 
-            in conformal field theory. Groups '93 Galway/St. Andrews, Vol. 2, 
-            405–417, London Math. Soc. Lecture Note Ser., 212, 
-            Cambridge, 1995.
+.. [Mas1995] Mason, Geoffrey. *The quantum double of a finite group and its role
+             in conformal field theory*. Groups '93 Galway/St. Andrews, Vol. 2,
+             405-417, London Math. Soc. Lecture Note Ser., 212, Cambridge, 1995.
 
 .. [Ma2009] Sarah Mason, An Explicit Construction of Type A Demazure
             Atoms, Journal of Algebraic Combinatorics, Vol. 29,
