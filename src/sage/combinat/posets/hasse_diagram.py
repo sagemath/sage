@@ -126,7 +126,7 @@ class HasseDiagram(DiGraph):
             sage: list(H.linear_extensions())
             [[0, 1, 2, 3], [0, 2, 1, 3]]
         """
-        from sage.combinat.combinat_cython import linear_extension_iterator
+        from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator
         return linear_extension_iterator(self)
 
     def greedy_linear_extensions_iterator(self):

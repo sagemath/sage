@@ -43,8 +43,8 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.combinat.combinat_cython import (set_partition_iterator,
-                                           set_partition_iterator_blocks)
+from sage.combinat.set_partition_iterator import (set_partition_iterator,
+                                                  set_partition_iterator_blocks)
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.combinat import bell_number, stirling_number2 as stirling2
 from sage.combinat.permutation import Permutation
