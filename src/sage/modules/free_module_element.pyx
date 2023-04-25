@@ -4450,9 +4450,9 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         """
         EXAMPLES::
 
-            sage: v = vector(RR, [-1,0,2/3,pi])
-            sage: v.set(3, RR(1))
-            sage: v
+            sage: v = vector(RR, [-1, 0, 2/3, pi])                                      # optional - sage.symbolic
+            sage: v.set(3, RR(1))                                                       # optional - sage.symbolic
+            sage: v                                                                     # optional - sage.symbolic
             (-1.00000000000000, 0.000000000000000, 0.666666666666667, 1.00000000000000)
         """
         self._entries[i] = value

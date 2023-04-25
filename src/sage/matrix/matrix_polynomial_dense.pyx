@@ -3961,22 +3961,22 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         Some particular cases (matrix is zero, dimension is zero, column is zero)::
 
-            sage: Matrix(pR, 2, 1).minimal_kernel_basis()
+            sage: Matrix(pR, 2, 1).minimal_kernel_basis()                               # optional - sage.rings.finite_rings
             [1 0]
             [0 1]
 
-            sage: Matrix(pR, 2, 0).minimal_kernel_basis()
+            sage: Matrix(pR, 2, 0).minimal_kernel_basis()                               # optional - sage.rings.finite_rings
             [1 0]
             [0 1]
 
-            sage: Matrix(pR, 0, 2).minimal_kernel_basis()
+            sage: Matrix(pR, 0, 2).minimal_kernel_basis()                               # optional - sage.rings.finite_rings
             []
 
-            sage: Matrix(pR, 3, 2, [[1,0],[1,0],[1,0]]).minimal_kernel_basis()
+            sage: Matrix(pR, 3, 2, [[1,0],[1,0],[1,0]]).minimal_kernel_basis()          # optional - sage.rings.finite_rings
             [6 1 0]
             [6 0 1]
 
-            sage: Matrix(pR, 3, 2, [[x,0],[1,0],[x+1,0]]).minimal_kernel_basis()
+            sage: Matrix(pR, 3, 2, [[x,0],[1,0],[x+1,0]]).minimal_kernel_basis()        # optional - sage.rings.finite_rings
             [6 x 0]
             [6 6 1]
         """

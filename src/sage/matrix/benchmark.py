@@ -18,13 +18,14 @@ The basic command syntax is as follows::
 """
 
 from .constructor import random_matrix, Matrix
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.timing import cputime
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
-from sage.interfaces.magma import magma
+lazy_import('sage.interfaces.magma', 'magma')
 
 verbose = False
 
