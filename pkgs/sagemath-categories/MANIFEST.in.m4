@@ -143,6 +143,17 @@ include sage/rings/big_oh.p*
 
 include sage/combinat/integer_vector.p*
 graft sage/combinat/integer_lists
+include sage/combinat/backtrack.p*
+include sage/combinat/combinat.p*
+include sage/combinat/combinat_cython.p*
+include sage/combinat/combination.p*
+include sage/combinat/combinatorial_map.p*
+include sage/combinat/composition.p*
+include sage/combinat/permutation.p*
+include sage/combinat/permutation_cython.p*
+include sage/combinat/tools.p*
+# leave out partition - has complicated deps
+# leave out integer_vector_weighted - needs combinat.words.word
 
 # see src/sage/schemes/generic/notes/imports.txt
 include sage/schemes/generic/point.py
@@ -169,8 +180,9 @@ include sage/sets/set.py
 include sage/sets/set_from_iterator.py
 include sage/sets/totally_ordered_finite_set.py
 
-include sage/data_structures/stream.p*
-include sage/rings/lazy_series*.p*
+## These two should probably go to sagemath-combinat instead.
+# include sage/data_structures/stream.p*
+# include sage/rings/lazy_series*.p*
 
 global-exclude *.c
 global-exclude *.cpp

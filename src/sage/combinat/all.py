@@ -58,16 +58,6 @@ from sage.misc.lazy_import import lazy_import
 
 from .all__sagemath_polyhedra import *
 
-from .combinat import (CombinatorialClass, CombinatorialObject,
-                       MapCombinatorialClass,
-                       bell_number, bell_polynomial, bernoulli_polynomial,
-                       catalan_number, euler_number,
-                       fibonacci, fibonacci_sequence, fibonacci_xrange,
-                       lucas_number1, lucas_number2,
-                       number_of_tuples, number_of_unordered_tuples,
-                       polygonal_number, stirling_number1, stirling_number2,
-                       tuples, unordered_tuples)
-
 lazy_import('sage.combinat.combinat',
             ('InfiniteAbstractCombinatorialClass', 'UnionCombinatorialClass',
              'FilteredCombinatorialClass'),
@@ -95,7 +85,6 @@ from .symmetric_group_representations import SymmetricGroupRepresentation, Symme
 from .yang_baxter_graph import YangBaxterGraph
 
 # Permutations
-from .permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
 from .affine_permutation import AffinePermutationGroup
 lazy_import('sage.combinat.colored_permutations', ['ColoredPermutations',
                                                    'SignedPermutation',
@@ -113,7 +102,6 @@ lazy_import("sage.combinat.hillman_grassl", ["WeakReversePlanePartition", "WeakR
 from .perfect_matching import PerfectMatching, PerfectMatchings
 
 # Compositions
-from .composition import Composition, Compositions
 from .composition_signed import SignedCompositions
 
 # Partitions
@@ -208,8 +196,6 @@ from .binary_tree import (BinaryTree, BinaryTrees,
 lazy_import('sage.combinat.interval_posets', ['TamariIntervalPoset', 'TamariIntervalPosets'])
 lazy_import('sage.combinat.rooted_tree', ('RootedTree', 'RootedTrees',
                          'LabelledRootedTree', 'LabelledRootedTrees'))
-
-from .combination import Combinations
 
 from .set_partition import SetPartition, SetPartitions
 from .set_partition_ordered import OrderedSetPartition, OrderedSetPartitions
