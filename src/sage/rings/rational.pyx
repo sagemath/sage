@@ -747,7 +747,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: 1 + 1/(2 + 1/(3 + 1/(4 + 1/5)))
             225/157
 
-            sage: (fibonacci(20)/fibonacci(19)).continued_fraction_list()
+            sage: (fibonacci(20)/fibonacci(19)).continued_fraction_list()               # optional - sage.libs.pari
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]
 
             sage: (-1/3).continued_fraction_list()
