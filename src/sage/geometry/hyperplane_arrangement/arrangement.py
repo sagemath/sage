@@ -633,7 +633,7 @@ class HyperplaneArrangementElement(Element):
         """
         return richcmp(self._hyperplanes, other._hyperplanes, op)
 
-    def union(self, other):
+    def union(self, other, permutation=False):
         r"""
         The union of ``self`` with ``other``.
 
@@ -642,9 +642,18 @@ class HyperplaneArrangementElement(Element):
         - ``other`` -- a hyperplane arrangement or something that can
           be converted into a hyperplane arrangement
 
+
+        - ``permutation`` -- (optional, default ``False``) If ``True``
+          it computes the permutation relating the order of hyperplanes
+          in the input and in the output.
+
         OUTPUT:
 
-        A new hyperplane arrangement.
+        A new hyperplane arrangement `L=(H'_1,\dots,H'_n)` if not ``permutation``.
+        If it is ``True``, a 2-tuple where the first term is `L` and the second is
+        a permutation `\sigma`. If ``self`` is composed by `H_1,\dots,H_r` and
+        ``other`` by `H_{r+1},\dots,H_{n}` (its order if it is a hyperplane
+        arrangement, or the list order otherwise) then `H_i=H'_{i^\sigma}`.
 
         EXAMPLES::
 
@@ -655,6 +664,17 @@ class HyperplaneArrangementElement(Element):
             Arrangement of 8 hyperplanes of dimension 2 and rank 2
             sage: A | B   # syntactic sugar
             Arrangement of 8 hyperplanes of dimension 2 and rank 2
+            sage: A1 = H([1,1,0], [4,5,3]); A1
+            Arrangement <x + 1 | 5*x + 3*y + 4>
+            sage: B =[(1, 1, 1), [2, 0, -1]]
+            sage: C, p = A1.union(B, permutation=True); C
+            Arrangement <-y + 2 | x + 1 | x + y + 1 | 5*x + 3*y + 4>
+            sage: p
+            [2, 4, 3, 1]
+            sage: C1,p1=A1.union(H(B), permutation=True); C == C1
+            True
+            sage: p1
+            [2, 4, 1, 3]
 
         A single hyperplane is coerced into a hyperplane arrangement
         if necessary::
@@ -670,9 +690,27 @@ class HyperplaneArrangementElement(Element):
             Arrangement of 6 hyperplanes of dimension 2 and rank 2
         """
         P = self.parent()
-        other = P(other)
-        hyperplanes = self._hyperplanes + other._hyperplanes
-        return P(*hyperplanes, backend=self._backend)
+        other_h = P(other)
+        if permutation:
+            r = self.n_hyperplanes()
+            L = list(range(1, r + 1))
+            L1 = [_ for _ in other_h]
+            for h in other:
+                h0 = P(h)[0]
+                j = L1.index(h0)
+                L.append(r + j + 1)
+            p0 = Permutation(L)
+        hyperplanes = self._hyperplanes + other_h._hyperplanes
+        result = P(*hyperplanes, backend=self._backend)
+        if permutation:
+            L1 = [_ for _ in result]
+            L = []
+            for h in hyperplanes:
+                j = L1.index(h)
+                L.append(j + 1)
+            p1 = Permutation(L)
+            return (result, p0 * p1)
+        return result
 
     add_hyperplane = union
 
@@ -697,7 +735,7 @@ class HyperplaneArrangementElement(Element):
 
     def cone(self, variable='t', permutation=False):
         r"""
-        Return the cone over the hyperplane arrangement.
+        Return the cone over the hyperplane arrangement `H_1,\dots,H_n`.
 
         INPUT:
 
@@ -709,14 +747,15 @@ class HyperplaneArrangementElement(Element):
 
         OUTPUT:
 
-        A new hyperplane arrangement. Its equations consist of
-        `[0, -d, a_1, \ldots, a_n]` for each `[d, a_1, \ldots, a_n]` in the
-        original arrangement and the equation `[0, 1, 0, \ldots, 0]`.
-        If ``permutation`` is set to ``True``, also a permutation
-        ``P`` such that if if the cone of the ``j``-th hyperplane of ``self``
-        occupies the ``k``-th position in the cone, then ``P(j)=k``. In the source
-        the hyperplane at infinity is the last one.
-
+        If permutation is ``True`` A new hyperplane arrangement `L`.
+        Its equations consist of `[0, -d, a_1, \ldots, a_n]` for each
+        `[d, a_1, \ldots, a_n]` in the original arrangement and the
+        equation `[0, 1, 0, \ldots, 0]` (maybe not in this order).
+        If ``permutation`` is set to ``True``, a tuple whose first term
+        is `L` and whose second term is a permutation `\sigma`. If the
+        cone is `L=(H'_1,\dots,H'_{n+1})` then for `1 \leq i \leq n` the
+        hyperplane `H_i` is associated to `H'_{i^\sigma}` and
+        `H'_{(n + 1)^\sigma}` is the hyperplane at infinity .
 
         .. WARNING::
 
@@ -776,8 +815,7 @@ class HyperplaneArrangementElement(Element):
                 L.append(j + 1)
             P = Permutation(L)
             return (result, P)
-        else:
-            return result
+        return result
 
     @cached_method
     def intersection_poset(self, element_label="int"):
@@ -1075,12 +1113,14 @@ class HyperplaneArrangementElement(Element):
 
         OUTPUT:
 
-        The restriction of the hyperplane arrangement to the given
-        ``hyperplane``. If ``permutation`` is set to ``True``, also a permutation
-        ``P`` such that if if the restriction of the ``j``-th hyperplane of ``self``
-        (forgetting ``hyperplane``) occupies the ``k``-th position in the restriction,
-        then ``P(j)=k``. If several hyperplanes of ``self`` produce the same hyperplane
-        in the restriction, the second output is ``None``.
+        If ``permutation`` is ``False``, the restriction `\mathcal{A}_H` of the
+        hyperplane arrangement `\mathcal{A}` to the given ``hyperplane`` `H`.
+        If ``permutation`` is set to ``True``, also a permutation
+        `\sigma` defined as follows. If `\mathcal{A}=\{H_1 ,\dots, H_{i - 1}, H,
+        H_{i}, \dots, H_{n}\}` and `\mathcal{A}_H=\{H'_1 ,\dots, H'_{n}\}`
+        then the restriction of `H_i` is `H'_{i^\sigma}`. If several hyperplanes
+        of ``self`` produce the same hyperplane in the restriction,
+        the second output is ``None``.
 
         EXAMPLES::
 
@@ -1533,9 +1573,20 @@ class HyperplaneArrangementElement(Element):
         has characteristic 0 is obtained by intersecting the hyperplanes by
         the space spanned by their normal vectors.
 
+        INPUT:
+
+        - ``permutation`` -- (optional, default ``False``) If ``True``
+          it computes the permutation relating the order of hyperplanes
+          in the input and in the output.
+
         OUTPUT:
 
-        The essentialization as a new hyperplane arrangement.
+        The essentialization `\mathcal{A}'` of `\mathcal{A}` as a
+        new hyperplane arrangement  if not ``permutation``. If it is
+        ``True``, a 2-tuple where the first term is `\mathcal{A}'` and
+        the second is a permutation `\sigma` as follows.  If
+        `\mathcal{A} = \{H_1, \dots, H_n\}` and
+        `\mathcal{A}' = \{H'_1, \dots, H'_r\}` then `H_i=H'_{i^\sigma}`.
 
         EXAMPLES::
 
@@ -3455,7 +3506,10 @@ class HyperplaneArrangementElement(Element):
 
         OUTPUT:
 
-        An arrangement obtained by intersecting with a generic hyperplane.
+        An arrangement `\mathcal{A}` obtained by intersecting with a
+        generic hyperplane and a permutation `\sigma`. If ``self`` is
+        `\{H_1 ,\dots, H_{n}\}` and `\mathcal{A}=\{H'_1 ,\dots, H'_{n}\}`
+        then the restriction of `H_i` is `H'_{i^\sigma}`.
 
         EXAMPLES::
 
