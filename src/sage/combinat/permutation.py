@@ -1188,14 +1188,14 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,2,3]).to_matrix()
+            sage: Permutation([1,2,3]).to_matrix()                                      # optional - sage.modules
             [1 0 0]
             [0 1 0]
             [0 0 1]
 
         Alternatively::
 
-            sage: matrix(Permutation([1,3,2]))
+            sage: matrix(Permutation([1,3,2]))                                          # optional - sage.modules
             [1 0 0]
             [0 0 1]
             [0 1 0]
@@ -1208,16 +1208,16 @@ class Permutation(CombinatorialElement):
             sage: Permutations.options.mult='r2l'
             sage: p = Permutation([2,1,3])
             sage: q = Permutation([3,1,2])
-            sage: (p*q).to_matrix()
+            sage: (p*q).to_matrix()                                                     # optional - sage.modules
             [0 0 1]
             [0 1 0]
             [1 0 0]
-            sage: p.to_matrix()*q.to_matrix()
+            sage: p.to_matrix()*q.to_matrix()                                           # optional - sage.modules
             [0 0 1]
             [0 1 0]
             [1 0 0]
             sage: Permutations.options.mult='l2r'
-            sage: (p*q).to_matrix()
+            sage: (p*q).to_matrix()                                                     # optional - sage.modules
             [1 0 0]
             [0 0 1]
             [0 1 0]
@@ -1238,11 +1238,11 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: m = Permutation([1,2,3]).to_alternating_sign_matrix(); m
+            sage: m = Permutation([1,2,3]).to_alternating_sign_matrix(); m              # optional - sage.combinat sage.modules
             [1 0 0]
             [0 1 0]
             [0 0 1]
-            sage: parent(m)
+            sage: parent(m)                                                             # optional - sage.combinat sage.modules
             Alternating sign matrices of size 3
         """
         from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix
@@ -1252,12 +1252,12 @@ class Permutation(CombinatorialElement):
         """
         TESTS::
 
-            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
-            sage: SM = SGA.specht_module([2,1])
-            sage: p213 = Permutations(3)([2,1,3])
-            sage: p213 * SGA.an_element()
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                    # optional - sage.combinat sage.modules
+            sage: SM = SGA.specht_module([2,1])                                         # optional - sage.combinat sage.modules
+            sage: p213 = Permutations(3)([2,1,3])                                       # optional - sage.combinat sage.modules
+            sage: p213 * SGA.an_element()                                               # optional - sage.combinat sage.modules
             3*[1, 2, 3] + [1, 3, 2] + [2, 1, 3] + 2*[3, 1, 2]
-            sage: p213 * SM.an_element()
+            sage: p213 * SM.an_element()                                                # optional - sage.combinat sage.modules
             2*B[0] - 4*B[1]
         """
         if not isinstance(rp, Permutation) and isinstance(rp, Element):
@@ -1297,8 +1297,8 @@ class Permutation(CombinatorialElement):
             [3, 2, 1]
             sage: Permutations.options.mult='l2r'
 
-            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
-            sage: SGA.an_element() * Permutations(3)(p213)
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                    # optional - sage.combinat sage.modules
+            sage: SGA.an_element() * Permutations(3)(p213)                              # optional - sage.combinat sage.modules
             3*[1, 2, 3] + [2, 1, 3] + 2*[2, 3, 1] + [3, 2, 1]
         """
         if not isinstance(lp, Permutation) and isinstance(lp, Element):
@@ -1678,18 +1678,19 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: d = Permutation([3, 1, 2]).to_digraph()
-            sage: d.edges(sort=True, labels=False)
+            sage: d = Permutation([3, 1, 2]).to_digraph()                               # optional - sage.graphs
+            sage: d.edges(sort=True, labels=False)                                      # optional - sage.graphs
             [(1, 3), (2, 1), (3, 2)]
             sage: P = Permutations(range(1, 10))
-            sage: d = Permutation(P.random_element()).to_digraph()
-            sage: all(c.is_cycle() for c in d.strongly_connected_components_subgraphs())
+            sage: d = Permutation(P.random_element()).to_digraph()                      # optional - sage.graphs
+            sage: all(c.is_cycle()                                                      # optional - sage.graphs
+            ....:     for c in d.strongly_connected_components_subgraphs())
             True
 
         TESTS::
 
-            sage: d = Permutation([1]).to_digraph()
-            sage: d.edges(sort=True, labels=False)
+            sage: d = Permutation([1]).to_digraph()                                     # optional - sage.graphs
+            sage: d.edges(sort=True, labels=False)                                      # optional - sage.graphs
             [(1, 1)]
         """
         return DiGraph([self, enumerate(self, start=1)],
@@ -1720,14 +1721,15 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutations(20).random_element().show(representation = "cycles")
-            sage: Permutations(20).random_element().show(representation = "chord-diagram")
-            sage: Permutations(20).random_element().show(representation = "braid")
-            sage: Permutations(20).random_element().show(representation = "braid", orientation='portrait')
+            sage: Permutations(20).random_element().show(representation="cycles")
+            sage: Permutations(20).random_element().show(representation="chord-diagram")
+            sage: Permutations(20).random_element().show(representation="braid")
+            sage: Permutations(20).random_element().show(representation="braid",
+            ....:                                        orientation='portrait')
 
         TESTS::
 
-            sage: Permutations(20).random_element().show(representation = "modern_art")
+            sage: Permutations(20).random_element().show(representation="modern_art")
             Traceback (most recent call last):
             ...
             ValueError: The value of 'representation' must be equal to 'cycles', 'chord-diagram' or 'braid'
@@ -2246,9 +2248,9 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([2,3,4,1]).longest_increasing_subsequences()
+            sage: Permutation([2,3,4,1]).longest_increasing_subsequences()              # optional - sage.graphs
             [[2, 3, 4]]
-            sage: Permutation([5, 7, 1, 2, 6, 4, 3]).longest_increasing_subsequences()
+            sage: Permutation([5, 7, 1, 2, 6, 4, 3]).longest_increasing_subsequences()  # optional - sage.graphs
             [[1, 2, 6], [1, 2, 4], [1, 2, 3]]
 
         .. NOTE::
@@ -2306,16 +2308,17 @@ class Permutation(CombinatorialElement):
         The algorithm is similar to :meth:`longest_increasing_subsequences`.
         Namely, the longest increasing subsequences are encoded as increasing
         sequences in a ranked poset from a smallest to a largest element. Their
-        number can be obtained via dynamic programming : for each `v` in the poset
+        number can be obtained via dynamic programming: for each `v` in the poset
         we compute the number of paths from a smallest element to `v`.
 
         EXAMPLES::
 
-            sage: sum(p.longest_increasing_subsequences_number() for p in Permutations(8))
+            sage: sum(p.longest_increasing_subsequences_number()
+            ....:     for p in Permutations(8))
             120770
 
             sage: p = Permutations(50).random_element()
-            sage: (len(p.longest_increasing_subsequences()) ==
+            sage: (len(p.longest_increasing_subsequences()) ==                          # optional - sage.graphs
             ....:  p.longest_increasing_subsequences_number())
             True
         """
@@ -2354,7 +2357,7 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([3,1,2,4]).cycle_type()
+            sage: Permutation([3,1,2,4]).cycle_type()                                   # optional - sage.combinat
             [3, 1]
         """
         cycle_type = [len(c) for c in self.to_cycles()]
@@ -3019,9 +3022,9 @@ class Permutation(CombinatorialElement):
         EXAMPLES::
 
             sage: p = Permutation([4,2,1,3])
-            sage: D = p.rothe_diagram(); D
+            sage: D = p.rothe_diagram(); D                                              # optional - sage.combinat
             [(0, 0), (0, 1), (0, 2), (1, 0)]
-            sage: D.pp()
+            sage: D.pp()                                                                # optional - sage.combinat
             O O O .
             O . . .
             . . . .
@@ -3038,7 +3041,7 @@ class Permutation(CombinatorialElement):
         EXAMPLES::
 
             sage: p = Permutation([6,4,2,5,1,8,3,7])
-            sage: len(p.reduced_words()) == p.number_of_reduced_words()
+            sage: len(p.reduced_words()) == p.number_of_reduced_words()                 # optional - sage.combinat
             True
         """
         Tx = self.rothe_diagram().peelable_tableaux()
@@ -4221,8 +4224,10 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3])) # indirect doctest
-            [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3], [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
+            sage: p = Permutation([2, 1, 4, 5, 3]); q = Permutation([2, 5, 4, 1, 3])
+            sage: p.right_permutohedron_interval(q)  # indirect doctest                 # optional - sage.graphs
+            [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3],
+             [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
         """
         if len(self) != len(other):
             raise ValueError("len({}) and len({}) must be equal".format(self, other))
@@ -4246,24 +4251,28 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3]))
-            [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3], [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
+            sage: p = Permutation([2, 1, 4, 5, 3]); q = Permutation([2, 5, 4, 1, 3])
+            sage: p.right_permutohedron_interval(q)                                     # optional - sage.graphs
+            [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3],
+             [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
 
         TESTS::
 
-            sage: Permutation([]).right_permutohedron_interval(Permutation([]))
+            sage: Permutation([]).right_permutohedron_interval(Permutation([]))                             # optional - sage.graphs
             [[]]
-            sage: Permutation([3, 1, 2]).right_permutohedron_interval(Permutation([3, 1, 2]))
+            sage: Permutation([3, 1, 2]).right_permutohedron_interval(Permutation([3, 1, 2]))               # optional - sage.graphs
             [[3, 1, 2]]
-            sage: Permutation([1, 3, 2, 4]).right_permutohedron_interval(Permutation([3, 4, 2, 1]))
-            [[3, 1, 4, 2], [3, 4, 1, 2], [3, 4, 2, 1], [1, 3, 4, 2], [1, 3, 2, 4], [3, 2, 4, 1], [3, 2, 1, 4], [3, 1, 2, 4]]
-            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3]))
-            [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3], [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
-            sage: Permutation([2, 5, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))
+            sage: Permutation([1, 3, 2, 4]).right_permutohedron_interval(Permutation([3, 4, 2, 1]))         # optional - sage.graphs
+            [[3, 1, 4, 2], [3, 4, 1, 2], [3, 4, 2, 1], [1, 3, 4, 2],
+             [1, 3, 2, 4], [3, 2, 4, 1], [3, 2, 1, 4], [3, 1, 2, 4]]
+            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3]))   # optional - sage.graphs
+            [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3],
+             [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
+            sage: Permutation([2, 5, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))   # optional - sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: [2, 5, 4, 1, 3] must be lower or equal than [2, 1, 4, 5, 3] for the right permutohedron order
-            sage: Permutation([2, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))
+            sage: Permutation([2, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))      # optional - sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: len([2, 4, 1, 3]) and len([2, 1, 4, 5, 3]) must be equal
@@ -4502,7 +4511,7 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([3,5,1,4,6,2]).has_pattern([1,3,2])
+            sage: Permutation([3,5,1,4,6,2]).has_pattern([1,3,2])                                           # optional - sage.combinat
             True
         """
         p = self
@@ -4522,11 +4531,11 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([6,2,5,4,3,1]).avoids([4,2,3,1])
+            sage: Permutation([6,2,5,4,3,1]).avoids([4,2,3,1])                                              # optional - sage.combinat
             False
-            sage: Permutation([6,1,2,5,4,3]).avoids([4,2,3,1])
+            sage: Permutation([6,1,2,5,4,3]).avoids([4,2,3,1])                                              # optional - sage.combinat
             True
-            sage: Permutation([6,1,2,5,4,3]).avoids([3,4,1,2])
+            sage: Permutation([6,1,2,5,4,3]).avoids([3,4,1,2])                                              # optional - sage.combinat
             True
         """
         return not self.has_pattern(patt)
@@ -4538,7 +4547,7 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([3,5,1,4,6,2]).pattern_positions([1,3,2])
+            sage: Permutation([3,5,1,4,6,2]).pattern_positions([1,3,2])                                     # optional - sage.combinat
             [[0, 1, 3], [2, 3, 5], [2, 4, 5]]
         """
         p = self
@@ -4563,7 +4572,7 @@ class Permutation(CombinatorialElement):
             sage: P = Permutations(6)
             sage: p = P([4,5,1,6,3,2])
             sage: pl = [ [1,2,3], [1,3,2], [3,1,2], [3,2,1] ]
-            sage: for q in pl:
+            sage: for q in pl:                                                                              # optional - sage.combinat
             ....:     s = p.simion_schmidt(q)
             ....:     print("{} {}".format(s, s.has_pattern(q)))
             [4, 6, 1, 5, 3, 2] False
@@ -4647,20 +4656,23 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([3,1,5,4,2]).permutation_poset().cover_relations()
+            sage: Permutation([3,1,5,4,2]).permutation_poset().cover_relations()        # optional - sage.combinat sage.graphs
             [[(2, 1), (5, 2)],
              [(2, 1), (3, 5)],
              [(2, 1), (4, 4)],
              [(1, 3), (3, 5)],
              [(1, 3), (4, 4)]]
-            sage: Permutation([]).permutation_poset().cover_relations()
+            sage: Permutation([]).permutation_poset().cover_relations()                 # optional - sage.combinat sage.graphs
             []
-            sage: Permutation([1,3,2]).permutation_poset().cover_relations()
+            sage: Permutation([1,3,2]).permutation_poset().cover_relations()            # optional - sage.combinat sage.graphs
             [[(1, 1), (2, 3)], [(1, 1), (3, 2)]]
-            sage: Permutation([1,2]).permutation_poset().cover_relations()
+            sage: Permutation([1,2]).permutation_poset().cover_relations()              # optional - sage.combinat sage.graphs
             [[(1, 1), (2, 2)]]
-            sage: P = Permutation([1,5,2,4,3])
-            sage: P.permutation_poset().greene_shape() == P.RS_partition()   # This should hold for any P.
+            sage: P = Permutation([1,5,2,4,3])                                          # optional - sage.combinat sage.graphs
+
+        This should hold for any `P`::
+
+            sage: P.permutation_poset().greene_shape() == P.RS_partition()              # optional - sage.combinat sage.graphs
             True
         """
         from sage.combinat.posets.posets import Poset
@@ -4732,7 +4744,7 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([6,2,3,1,7,5,4]).robinson_schensted()
+            sage: Permutation([6,2,3,1,7,5,4]).robinson_schensted()                     # optional - sage.combinat
             [[[1, 3, 4], [2, 5], [6, 7]], [[1, 3, 5], [2, 6], [4, 7]]]
         """
         return RSK(self, check_standard=True)
@@ -4764,7 +4776,7 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,4,3,2]).left_tableau()
+            sage: Permutation([1,4,3,2]).left_tableau()                                 # optional - sage.combinat
             [[1, 2], [3], [4]]
         """
         return RSK(self, check_standard=True)[0]
@@ -4777,7 +4789,7 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,4,3,2]).right_tableau()
+            sage: Permutation([1,4,3,2]).right_tableau()                                # optional - sage.combinat
             [[1, 2], [3], [4]]
         """
         return RSK(self, check_standard=True)[1]
@@ -4788,17 +4800,17 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,4,3,2]).increasing_tree()
+            sage: Permutation([1,4,3,2]).increasing_tree()                              # optional - sage.combinat
             1[., 2[3[4[., .], .], .]]
-            sage: Permutation([4,1,3,2]).increasing_tree()
+            sage: Permutation([4,1,3,2]).increasing_tree()                              # optional - sage.combinat
             1[4[., .], 2[3[., .], .]]
 
         By passing the option ``compare=max`` one can have the decreasing
         tree instead::
 
-            sage: Permutation([2,3,4,1]).increasing_tree(max)
+            sage: Permutation([2,3,4,1]).increasing_tree(max)                           # optional - sage.combinat
             4[3[2[., .], .], 1[., .]]
-            sage: Permutation([2,3,1,4]).increasing_tree(max)
+            sage: Permutation([2,3,1,4]).increasing_tree(max)                           # optional - sage.combinat
             4[3[2[., .], 1[., .]], .]
         """
         from sage.combinat.binary_tree import LabelledBinaryTree as LBT
@@ -4819,17 +4831,17 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,4,3,2]).increasing_tree_shape()
+            sage: Permutation([1,4,3,2]).increasing_tree_shape()                        # optional - sage.combinat
             [., [[[., .], .], .]]
-            sage: Permutation([4,1,3,2]).increasing_tree_shape()
+            sage: Permutation([4,1,3,2]).increasing_tree_shape()                        # optional - sage.combinat
             [[., .], [[., .], .]]
 
         By passing the option ``compare=max`` one can have the decreasing
         tree instead::
 
-            sage: Permutation([2,3,4,1]).increasing_tree_shape(max)
+            sage: Permutation([2,3,4,1]).increasing_tree_shape(max)                     # optional - sage.combinat
             [[[., .], .], [., .]]
-            sage: Permutation([2,3,1,4]).increasing_tree_shape(max)
+            sage: Permutation([2,3,1,4]).increasing_tree_shape(max)                     # optional - sage.combinat
             [[[., .], [., .]], .]
         """
         return self.increasing_tree(compare).shape()
@@ -4855,22 +4867,22 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,4,3,2]).binary_search_tree()
+            sage: Permutation([1,4,3,2]).binary_search_tree()                           # optional - sage.combinat
             1[., 4[3[2[., .], .], .]]
-            sage: Permutation([4,1,3,2]).binary_search_tree()
+            sage: Permutation([4,1,3,2]).binary_search_tree()                           # optional - sage.combinat
             4[1[., 3[2[., .], .]], .]
 
         By passing the option ``left_to_right=False`` one can have
         the insertion going from right to left::
 
-            sage: Permutation([1,4,3,2]).binary_search_tree(False)
+            sage: Permutation([1,4,3,2]).binary_search_tree(False)                      # optional - sage.combinat
             2[1[., .], 3[., 4[., .]]]
-            sage: Permutation([4,1,3,2]).binary_search_tree(False)
+            sage: Permutation([4,1,3,2]).binary_search_tree(False)                      # optional - sage.combinat
             2[1[., .], 3[., 4[., .]]]
 
         TESTS::
 
-            sage: Permutation([]).binary_search_tree()
+            sage: Permutation([]).binary_search_tree()                                  # optional - sage.combinat
             .
         """
         from sage.combinat.binary_tree import LabelledBinaryTree as LBT
@@ -4891,17 +4903,17 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,4,3,2]).binary_search_tree_shape()
+            sage: Permutation([1,4,3,2]).binary_search_tree_shape()                     # optional - sage.combinat
             [., [[[., .], .], .]]
-            sage: Permutation([4,1,3,2]).binary_search_tree_shape()
+            sage: Permutation([4,1,3,2]).binary_search_tree_shape()                     # optional - sage.combinat
             [[., [[., .], .]], .]
 
         By passing the option ``left_to_right=False`` one can have
         the insertion going from right to left::
 
-            sage: Permutation([1,4,3,2]).binary_search_tree_shape(False)
+            sage: Permutation([1,4,3,2]).binary_search_tree_shape(False)                # optional - sage.combinat
             [[., .], [., [., .]]]
-            sage: Permutation([4,1,3,2]).binary_search_tree_shape(False)
+            sage: Permutation([4,1,3,2]).binary_search_tree_shape(False)                # optional - sage.combinat
             [[., .], [., [., .]]]
         """
         from sage.combinat.binary_tree import binary_search_tree_shape
@@ -4948,7 +4960,7 @@ class Permutation(CombinatorialElement):
         The sylvester class of a permutation in `S_5`::
 
             sage: p = Permutation([3, 5, 1, 2, 4])
-            sage: sorted(p.sylvester_class())
+            sage: sorted(p.sylvester_class())                                           # optional - sage.combinat
             [[1, 3, 2, 5, 4],
              [1, 3, 5, 2, 4],
              [1, 5, 3, 2, 4],
@@ -4960,20 +4972,20 @@ class Permutation(CombinatorialElement):
 
         The sylvester class of a permutation `p` contains `p`::
 
-            sage: all( p in p.sylvester_class() for p in Permutations(4) )
+            sage: all(p in p.sylvester_class() for p in Permutations(4))                # optional - sage.combinat
             True
 
         Small cases::
 
-            sage: list(Permutation([]).sylvester_class())
+            sage: list(Permutation([]).sylvester_class())                               # optional - sage.combinat
             [[]]
 
-            sage: list(Permutation([1]).sylvester_class())
+            sage: list(Permutation([1]).sylvester_class())                              # optional - sage.combinat
             [[1]]
 
         The sylvester classes in `S_3`::
 
-            sage: [sorted(p.sylvester_class()) for p in Permutations(3)]
+            sage: [sorted(p.sylvester_class()) for p in Permutations(3)]                # optional - sage.combinat
             [[[1, 2, 3]],
              [[1, 3, 2], [3, 1, 2]],
              [[2, 1, 3]],
@@ -4983,7 +4995,8 @@ class Permutation(CombinatorialElement):
 
         The left sylvester classes in `S_3`::
 
-            sage: [sorted(p.sylvester_class(left_to_right=True)) for p in Permutations(3)]
+            sage: [sorted(p.sylvester_class(left_to_right=True))                        # optional - sage.combinat
+            ....:  for p in Permutations(3)]
             [[[1, 2, 3]],
              [[1, 3, 2]],
              [[2, 1, 3], [2, 3, 1]],
@@ -4994,7 +5007,7 @@ class Permutation(CombinatorialElement):
         A left sylvester class in `S_5`::
 
             sage: p = Permutation([4, 2, 1, 5, 3])
-            sage: sorted(p.sylvester_class(left_to_right=True))
+            sage: sorted(p.sylvester_class(left_to_right=True))                         # optional - sage.combinat
             [[4, 2, 1, 3, 5],
              [4, 2, 1, 5, 3],
              [4, 2, 3, 1, 5],
@@ -5017,7 +5030,7 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([1,4,3,2]).RS_partition()
+            sage: Permutation([1,4,3,2]).RS_partition()                                 # optional - sage.combinat
             [2, 1, 1]
         """
         return RSK(self)[1].shape()
@@ -5239,15 +5252,16 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([3, 4, 6, 1, 5, 7, 2, 8]).hyperoctahedral_double_coset_type()
+            sage: p = Permutation([3, 4, 6, 1, 5, 7, 2, 8])
+            sage: p.hyperoctahedral_double_coset_type()                                 # optional - sage.combinat
             [3, 1]
-            sage: all(p.hyperoctahedral_double_coset_type() ==
+            sage: all(p.hyperoctahedral_double_coset_type() ==                          # optional - sage.combinat
             ....:     p.inverse().hyperoctahedral_double_coset_type()
             ....:     for p in Permutations(4))
             True
-            sage: Permutation([]).hyperoctahedral_double_coset_type()
+            sage: Permutation([]).hyperoctahedral_double_coset_type()                   # optional - sage.combinat
             []
-            sage: Permutation([3,1,2]).hyperoctahedral_double_coset_type()
+            sage: Permutation([3,1,2]).hyperoctahedral_double_coset_type()              # optional - sage.combinat
             Traceback (most recent call last):
             ...
             ValueError: [3, 1, 2] is a permutation of odd size and has no coset-type
@@ -5324,21 +5338,23 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([]).shifted_shuffle(Permutation([]))
+            sage: Permutation([]).shifted_shuffle(Permutation([]))                      # optional - sage.graphs
             [[]]
-            sage: Permutation([1, 2, 3]).shifted_shuffle(Permutation([1]))
+            sage: Permutation([1, 2, 3]).shifted_shuffle(Permutation([1]))              # optional - sage.graphs
             [[4, 1, 2, 3], [1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3]]
-            sage: Permutation([1, 2]).shifted_shuffle(Permutation([2, 1]))
-            [[4, 1, 3, 2], [4, 3, 1, 2], [1, 4, 3, 2], [1, 4, 2, 3], [1, 2, 4, 3], [4, 1, 2, 3]]
-            sage: Permutation([1]).shifted_shuffle([1])
+            sage: Permutation([1, 2]).shifted_shuffle(Permutation([2, 1]))              # optional - sage.graphs
+            [[4, 1, 3, 2], [4, 3, 1, 2], [1, 4, 3, 2],
+             [1, 4, 2, 3], [1, 2, 4, 3], [4, 1, 2, 3]]
+            sage: Permutation([1]).shifted_shuffle([1])                                 # optional - sage.graphs
             [[2, 1], [1, 2]]
-            sage: len(Permutation([3, 1, 5, 4, 2]).shifted_shuffle(Permutation([2, 1, 4, 3])))
+            sage: p = Permutation([3, 1, 5, 4, 2])
+            sage: len(p.shifted_shuffle(Permutation([2, 1, 4, 3])))                     # optional - sage.graphs
             126
 
         The shifted shuffle product is associative. We can test this on an
         admittedly toy example::
 
-            sage: all( all( all( sorted(flatten([abs.shifted_shuffle(c)
+            sage: all( all( all( sorted(flatten([abs.shifted_shuffle(c)                 # optional - sage.graphs
             ....:                                for abs in a.shifted_shuffle(b)]))
             ....:                == sorted(flatten([a.shifted_shuffle(bcs)
             ....:                                   for bcs in b.shifted_shuffle(c)]))
@@ -5351,7 +5367,7 @@ class Permutation(CombinatorialElement):
         permutations as the ``shifted_shuffle`` method on words (but is
         faster)::
 
-            sage: all( all( sorted(p1.shifted_shuffle(p2))
+            sage: all( all( sorted(p1.shifted_shuffle(p2))                              # optional - sage.graphs
             ....:           == sorted([Permutation(p) for p in
             ....:                      Word(p1).shifted_shuffle(Word(p2))])
             ....:           for p2 in Permutations(3) )
@@ -5368,9 +5384,9 @@ def _tableau_contribution(T):
 
     EXAMPLES::
 
-        sage: T = Tableau([[1,1,1],[2]])
+        sage: T = Tableau([[1,1,1],[2]])                                                # optional - sage.combinat
         sage: from sage.combinat.permutation import _tableau_contribution
-        sage: _tableau_contribution(T)
+        sage: _tableau_contribution(T)                                                  # optional - sage.combinat
         3
     """
     from sage.combinat.tableau import StandardTableaux
@@ -5460,7 +5476,7 @@ class Permutations(UniqueRepresentation, Parent):
 
         sage: p = Permutations(['c', 'a', 't'], 2); p
         Permutations of the set ['c', 'a', 't'] of length 2
-        sage: p.list()
+        sage: p.list()                                                                  # optional - sage.libs.gap
         [['c', 'a'], ['c', 't'], ['a', 'c'], ['a', 't'], ['t', 'c'], ['t', 'a']]
 
     ::
@@ -5487,14 +5503,16 @@ class Permutations(UniqueRepresentation, Parent):
     ::
 
         sage: p = Permutations(bruhat_smaller=[1,3,2,4]); p
-        Standard permutations that are less than or equal to [1, 3, 2, 4] in the Bruhat order
+        Standard permutations that are less than or equal
+        to [1, 3, 2, 4] in the Bruhat order
         sage: p.list()
         [[1, 2, 3, 4], [1, 3, 2, 4]]
 
     ::
 
         sage: p = Permutations(bruhat_greater=[4,2,3,1]); p
-        Standard permutations that are greater than or equal to [4, 2, 3, 1] in the Bruhat order
+        Standard permutations that are greater than or equal
+        to [4, 2, 3, 1] in the Bruhat order
         sage: p.list()
         [[4, 2, 3, 1], [4, 3, 2, 1]]
 
@@ -5892,14 +5910,14 @@ class Permutations_mset(Permutations):
          [2, 2, 1, 1, 2],
          [2, 2, 1, 2, 1],
          [2, 2, 2, 1, 1]]
-        sage: MS = MatrixSpace(GF(2),2,2)
-        sage: A = MS([1,0,1,1])
-        sage: rows = A.rows()
-        sage: rows[0].set_immutable()
-        sage: rows[1].set_immutable()
-        sage: P = Permutations_mset(rows); P
+        sage: MS = MatrixSpace(GF(2), 2, 2)                                             # optional - sage.modules sage.rings.finite_rings
+        sage: A = MS([1,0,1,1])                                                         # optional - sage.modules sage.rings.finite_rings
+        sage: rows = A.rows()                                                           # optional - sage.modules sage.rings.finite_rings
+        sage: rows[0].set_immutable()                                                   # optional - sage.modules sage.rings.finite_rings
+        sage: rows[1].set_immutable()                                                   # optional - sage.modules sage.rings.finite_rings
+        sage: P = Permutations_mset(rows); P                                            # optional - sage.modules sage.rings.finite_rings
         Permutations of the multi-set [(1, 0), (1, 1)]
-        sage: sorted(P)
+        sage: sorted(P)                                                                 # optional - sage.modules sage.rings.finite_rings
         [[(1, 0), (1, 1)], [(1, 1), (1, 0)]]
     """
     @staticmethod
@@ -6442,7 +6460,7 @@ class Permutations_msetk(Permutations_mset):
         """
         TESTS::
 
-            sage: Permutations([1,2,2],2)
+            sage: Permutations([1,2,2], 2)
             Permutations of the multi-set [1, 2, 2] of length 2
         """
         return "Permutations of the multi-set %s of length %s" % (list(self.mset), self._k)
@@ -6453,7 +6471,7 @@ class Permutations_msetk(Permutations_mset):
 
         EXAMPLES::
 
-            sage: Permutations([1,2,2],2).cardinality()
+            sage: Permutations([1,2,2], 2).cardinality()                                # optional - sage.libs.gap
             3
         """
         return ZZ.sum(1 for z in self)
@@ -6462,7 +6480,7 @@ class Permutations_msetk(Permutations_mset):
         """
         EXAMPLES::
 
-            sage: Permutations([1,2,2],2).list()
+            sage: Permutations([1,2,2], 2).list()                                       # optional - sage.libs.gap
             [[1, 2], [2, 1], [2, 2]]
         """
         mset = self.mset
@@ -6571,7 +6589,7 @@ class Arrangements(Permutations):
     EXAMPLES::
 
         sage: mset = [1,1,2,3,4,4,5]
-        sage: Arrangements(mset,2).list()
+        sage: Arrangements(mset, 2).list()                                              # optional - sage.libs.gap
         [[1, 1],
          [1, 2],
          [1, 3],
@@ -6594,11 +6612,11 @@ class Arrangements(Permutations):
          [5, 2],
          [5, 3],
          [5, 4]]
-         sage: Arrangements(mset,2).cardinality()
+         sage: Arrangements(mset, 2).cardinality()                                      # optional - sage.libs.gap
          22
-         sage: Arrangements( ["c","a","t"], 2 ).list()
+         sage: Arrangements( ["c","a","t"], 2 ).list()                                  # optional - sage.libs.gap
          [['c', 'a'], ['c', 't'], ['a', 'c'], ['a', 't'], ['t', 'c'], ['t', 'a']]
-         sage: Arrangements( ["c","a","t"], 3 ).list()
+         sage: Arrangements( ["c","a","t"], 3 ).list()                                  # optional - sage.libs.gap
          [['c', 'a', 't'],
           ['c', 't', 'a'],
           ['a', 'c', 't'],
@@ -6630,7 +6648,7 @@ class Arrangements(Permutations):
         EXAMPLES::
 
             sage: A = Arrangements([1,1,2,3,4,4,5], 2)
-            sage: A.cardinality()
+            sage: A.cardinality()                                                       # optional - sage.libs.gap
             22
         """
         one = ZZ.one()
@@ -6901,20 +6919,20 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: P = Permutations(6)
-            sage: P.has_coerce_map_from(SymmetricGroup(6))
+            sage: P.has_coerce_map_from(SymmetricGroup(6))                              # optional - sage.groups
             True
-            sage: P.has_coerce_map_from(SymmetricGroup(5))
+            sage: P.has_coerce_map_from(SymmetricGroup(5))                              # optional - sage.groups
             True
-            sage: P.has_coerce_map_from(SymmetricGroup(7))
+            sage: P.has_coerce_map_from(SymmetricGroup(7))                              # optional - sage.groups
             False
             sage: P.has_coerce_map_from(Permutations(5))
             True
             sage: P.has_coerce_map_from(Permutations(7))
             False
 
-            sage: P.has_coerce_map_from(groups.misc.Cactus(5))
+            sage: P.has_coerce_map_from(groups.misc.Cactus(5))                          # optional - sage.groups
             True
-            sage: P.has_coerce_map_from(groups.misc.Cactus(7))
+            sage: P.has_coerce_map_from(groups.misc.Cactus(7))                          # optional - sage.groups
             False
         """
         if isinstance(G, SymmetricGroup):
@@ -6936,9 +6954,9 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         TESTS::
 
             sage: P = Permutations(4)
-            sage: G = SymmetricGroup(4)
-            sage: x = G([4,3,1,2])
-            sage: P._from_permutation_group_element(x)
+            sage: G = SymmetricGroup(4)                                                 # optional - sage.groups
+            sage: x = G([4,3,1,2])                                                      # optional - sage.groups
+            sage: P._from_permutation_group_element(x)                                  # optional - sage.groups
             [4, 3, 1, 2]
         """
         return self(x.domain())
@@ -6949,11 +6967,11 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
         EXAMPLES::
 
-            sage: J3 = groups.misc.Cactus(3)
-            sage: s12,s13,s23 = J3.gens()
-            sage: elt = s12 * s23 * s13
-            sage: P5 = Permutations(5)
-            sage: P5._from_cactus_group_element(elt)
+            sage: J3 = groups.misc.Cactus(3)                                            # optional - sage.groups
+            sage: s12,s13,s23 = J3.gens()                                               # optional - sage.groups
+            sage: elt = s12 * s23 * s13                                                 # optional - sage.groups
+            sage: P5 = Permutations(5)                                                  # optional - sage.groups
+            sage: P5._from_cactus_group_element(elt)                                    # optional - sage.groups
             [1, 3, 2, 4, 5]
         """
         return self(x.to_permutation())
@@ -6965,12 +6983,11 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: P = Permutations(4)
-            sage: PG = P.as_permutation_group()
-            sage: PG
+            sage: PG = P.as_permutation_group(); PG                                     # optional - sage.groups
             Symmetric group of order 4! as a permutation group
 
-            sage: G = SymmetricGroup(4)
-            sage: PG is G
+            sage: G = SymmetricGroup(4)                                                 # optional - sage.groups
+            sage: PG is G                                                               # optional - sage.groups
             True
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -7119,7 +7136,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: PP = Permutations(5)
-            sage: PP.element_in_conjugacy_classes([2,2])
+            sage: PP.element_in_conjugacy_classes([2,2])                                # optional - sage.combinat
             [2, 1, 4, 3, 5]
         """
         from sage.combinat.partition import Partition
@@ -7151,7 +7168,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: G = Permutations(5)
-            sage: G.conjugacy_classes_representatives()
+            sage: G.conjugacy_classes_representatives()                                 # optional - sage.combinat
             [[1, 2, 3, 4, 5],
              [2, 1, 3, 4, 5],
              [2, 1, 4, 3, 5],
@@ -7165,10 +7182,10 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         Check some border cases::
 
             sage: S = Permutations(0)
-            sage: S.conjugacy_classes_representatives()
+            sage: S.conjugacy_classes_representatives()                                 # optional - sage.combinat
             [[]]
             sage: S = Permutations(1)
-            sage: S.conjugacy_classes_representatives()
+            sage: S.conjugacy_classes_representatives()                                 # optional - sage.combinat
             [[1]]
         """
         from sage.combinat.partition import Partitions_n
@@ -7182,7 +7199,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: G = Permutations(4)
-            sage: list(G.conjugacy_classes_iterator()) == G.conjugacy_classes()
+            sage: list(G.conjugacy_classes_iterator()) == G.conjugacy_classes()         # optional - sage.combinat
             True
         """
         from sage.combinat.partition import Partitions_n
@@ -7197,7 +7214,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: G = Permutations(4)
-            sage: G.conjugacy_classes()
+            sage: G.conjugacy_classes()                                                 # optional - sage.combinat
             [Conjugacy class of cycle type [1, 1, 1, 1] in Standard permutations of 4,
              Conjugacy class of cycle type [2, 1, 1] in Standard permutations of 4,
              Conjugacy class of cycle type [2, 2] in Standard permutations of 4,
@@ -7218,9 +7235,9 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
             sage: G = Permutations(5)
             sage: g = G([2,3,4,1,5])
-            sage: G.conjugacy_class(g)
+            sage: G.conjugacy_class(g)                                                  # optional - sage.combinat
             Conjugacy class of cycle type [4, 1] in Standard permutations of 5
-            sage: G.conjugacy_class(Partition([2, 1, 1, 1]))
+            sage: G.conjugacy_class(Partition([2, 1, 1, 1]))                            # optional - sage.combinat
             Conjugacy class of cycle type [2, 1, 1, 1] in Standard permutations of 5
         """
         from sage.groups.perm_gps.symgp_conjugacy_class import PermutationsConjugacyClass
@@ -7238,15 +7255,16 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         EXAMPLES::
 
             sage: P = Permutations(4)
-            sage: A = P.algebra(QQ); A
+            sage: A = P.algebra(QQ); A                                                  # optional - sage.combinat sage.modules
             Symmetric group algebra of order 4 over Rational Field
 
-            sage: A.category()
+            sage: A.category()                                                          # optional - sage.combinat sage.modules
             Join of Category of coxeter group algebras over Rational Field
                 and Category of finite group algebras over Rational Field
-                and Category of finite dimensional cellular algebras with basis over Rational Field
-            sage: A = P.algebra(QQ, category=Monoids())
-            sage: A.category()
+                and Category of finite dimensional cellular algebras
+                    with basis over Rational Field
+            sage: A = P.algebra(QQ, category=Monoids())                                 # optional - sage.combinat sage.modules
+            sage: A.category()                                                          # optional - sage.combinat sage.modules
             Category of finite dimensional cellular monoid algebras over Rational Field
         """
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
@@ -7275,9 +7293,9 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
         EXAMPLES::
 
-            sage: A = SymmetricGroup([2,3,7]); A.cartan_type()
+            sage: A = SymmetricGroup([2,3,7]); A.cartan_type()                          # optional - sage.combinat sage.groups
             ['A', 2]
-            sage: A = SymmetricGroup([]); A.cartan_type()
+            sage: A = SymmetricGroup([]); A.cartan_type()                               # optional - sage.combinat sage.groups
             ['A', 0]
         """
         from sage.combinat.root_system.cartan_type import CartanType
@@ -7542,8 +7560,8 @@ def from_permutation_group_element(pge, parent=None):
     EXAMPLES::
 
         sage: import sage.combinat.permutation as permutation
-        sage: pge = PermutationGroupElement([(1,2),(3,4)])
-        sage: permutation.from_permutation_group_element(pge)
+        sage: pge = PermutationGroupElement([(1,2),(3,4)])                              # optional - sage.groups
+        sage: permutation.from_permutation_group_element(pge)                           # optional - sage.groups
         [2, 1, 4, 3]
     """
     if not isinstance(pge, PermutationGroupElement):
@@ -7852,25 +7870,26 @@ def bistochastic_as_sum_of_permutations(M, check = True):
         sage: L.append((6,Permutation([5, 3, 4, 1, 2])))
         sage: L.append((3,Permutation([3, 1, 4, 2, 5])))
         sage: L.append((2,Permutation([1, 4, 2, 3, 5])))
-        sage: M = sum([c * p.to_matrix() for (c,p) in L])
-        sage: decomp = bistochastic_as_sum_of_permutations(M)
-        sage: print(decomp)
-        2*B[[1, 4, 2, 3, 5]] + 3*B[[3, 1, 4, 2, 5]] + 9*B[[4, 1, 3, 5, 2]] + 6*B[[5, 3, 4, 1, 2]]
+        sage: M = sum([c * p.to_matrix() for (c,p) in L])                               # optional - sage.modules
+        sage: decomp = bistochastic_as_sum_of_permutations(M)                           # optional - sage.graphs sage.modules
+        sage: print(decomp)                                                             # optional - sage.graphs sage.modules
+        2*B[[1, 4, 2, 3, 5]] + 3*B[[3, 1, 4, 2, 5]]
+         + 9*B[[4, 1, 3, 5, 2]] + 6*B[[5, 3, 4, 1, 2]]
 
     An exception is raised when the matrix is not positive and bistochastic::
 
         sage: M = Matrix([[2,3],[2,2]])
-        sage: decomp = bistochastic_as_sum_of_permutations(M)
+        sage: decomp = bistochastic_as_sum_of_permutations(M)                           # optional - sage.graphs sage.modules
         Traceback (most recent call last):
         ...
         ValueError: The matrix is not bistochastic
 
-        sage: bistochastic_as_sum_of_permutations(Matrix(GF(7), 2, [2,1,1,2]))
+        sage: bistochastic_as_sum_of_permutations(Matrix(GF(7), 2, [2,1,1,2]))          # optional - sage.graphs sage.modules sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: The base ring of the matrix must have a coercion map to RR
 
-        sage: bistochastic_as_sum_of_permutations(Matrix(ZZ, 2, [2,-1,-1,2]))
+        sage: bistochastic_as_sum_of_permutations(Matrix(ZZ, 2, [2,-1,-1,2]))           # optional - sage.graphs sage.modules
         Traceback (most recent call last):
         ...
         ValueError: The matrix should have nonnegative entries
@@ -7937,12 +7956,12 @@ def bounded_affine_permutation(A):
     EXAMPLES::
 
         sage: from sage.combinat.permutation import bounded_affine_permutation
-        sage: A = Matrix(ZZ, [[1,0,0,0], [0,1,0,0]])
-        sage: bounded_affine_permutation(A)
+        sage: A = Matrix(ZZ, [[1,0,0,0], [0,1,0,0]])                                    # optional - sage.modules
+        sage: bounded_affine_permutation(A)                                             # optional - sage.modules
         [5, 6, 3, 4]
 
-        sage: A = Matrix(ZZ, [[0,1,0,1,0], [0,0,1,1,0]])
-        sage: bounded_affine_permutation(A)
+        sage: A = Matrix(ZZ, [[0,1,0,1,0], [0,0,1,1,0]])                                # optional - sage.modules
+        sage: bounded_affine_permutation(A)                                             # optional - sage.modules
         [1, 4, 7, 8, 5]
 
     REFERENCES:
