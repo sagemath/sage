@@ -489,11 +489,11 @@ cdef class Parser:
             sage: p.parse("(x+1)^5-x").parent() is R
             True
 
-            sage: p = Parser(make_float=RR, make_var=var,
+            sage: p = Parser(make_float=RR, make_var=var,                               # optional - sage.symbolic
             ....:            make_function={'foo': (lambda x: x*x+x)})
-            sage: p.parse("1.5 + foo(b)")
+            sage: p.parse("1.5 + foo(b)")                                               # optional - sage.symbolic
             b^2 + b + 1.50000000000000
-            sage: p.parse("1.9").parent()
+            sage: p.parse("1.9").parent()                                               # optional - sage.symbolic
             Real Field with 53 bits of precision
         """
         self.integer_constructor = make_int
