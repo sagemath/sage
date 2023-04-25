@@ -108,10 +108,10 @@ class IntegralDomains(CategoryWithAxiom):
                 sage: Parent(QQ, category=IntegralDomains()).is_integral_domain()
                 True
 
-                sage: L.<z> = LazyLaurentSeriesRing(QQ)
-                sage: L.is_integral_domain()
+                sage: L.<z> = LazyLaurentSeriesRing(QQ)                                 # optional - sage.combinat
+                sage: L.is_integral_domain()                                            # optional - sage.combinat
                 True
-                sage: L.is_integral_domain(proof=True)
+                sage: L.is_integral_domain(proof=True)                                  # optional - sage.combinat
                 True
             """
             return True
