@@ -402,35 +402,35 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
         sage: from sage.groups.generic import bsgs
         sage: b = Mod(2,37);  a = b^20
-        sage: bsgs(b, a, (0,36))
+        sage: bsgs(b, a, (0, 36))
         20
 
-        sage: p = next_prime(10^20)
-        sage: a = Mod(2,p); b = a^(10^25)
-        sage: bsgs(a, b, (10^25-10^6,10^25+10^6)) == 10^25
+        sage: p = next_prime(10^20)                                                     # optional - sage.libs.pari
+        sage: a = Mod(2,p); b = a^(10^25)                                               # optional - sage.libs.pari
+        sage: bsgs(a, b, (10^25 - 10^6, 10^25 + 10^6)) == 10^25                         # optional - sage.libs.pari
         True
 
-        sage: K = GF(3^6,'b')
-        sage: a = K.gen()
-        sage: b = a^210
-        sage: bsgs(a, b, (0,K.order()-1))
+        sage: K = GF(3^6,'b')                                                           # optional - sage.rings.finite_rings
+        sage: a = K.gen()                                                               # optional - sage.rings.finite_rings
+        sage: b = a^210                                                                 # optional - sage.rings.finite_rings
+        sage: bsgs(a, b, (0, K.order() - 1))                                            # optional - sage.rings.finite_rings
         210
 
-        sage: K.<z> = CyclotomicField(230)
-        sage: w = z^500
-        sage: bsgs(z,w,(0,229))
+        sage: K.<z> = CyclotomicField(230)                                              # optional - sage.rings.number_field
+        sage: w = z^500                                                                 # optional - sage.rings.number_field
+        sage: bsgs(z, w, (0, 229))                                                      # optional - sage.rings.number_field
         40
 
     An additive example in an elliptic curve group::
 
-        sage: F.<a> = GF(37^5)
-        sage: E = EllipticCurve(F, [1,1])
-        sage: P = E.lift_x(a); P
+        sage: F.<a> = GF(37^5)                                                          # optional - sage.rings.finite_rings
+        sage: E = EllipticCurve(F, [1,1])                                               # optional - sage.rings.finite_rings
+        sage: P = E.lift_x(a); P                                                        # optional - sage.rings.finite_rings
         (a : 28*a^4 + 15*a^3 + 14*a^2 + 7 : 1)
 
     This will return a multiple of the order of P::
 
-        sage: bsgs(P,P.parent()(0),Hasse_bounds(F.order()),operation='+')
+        sage: bsgs(P, P.parent()(0), Hasse_bounds(F.order()), operation='+')            # optional - sage.rings.finite_rings
         69327408
 
     AUTHOR:
@@ -548,7 +548,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     Beware, the order must be prime::
 
         sage: I = IntegerModRing(171980)
-        sage: discrete_log_rho(I(2), I(3))
+        sage: discrete_log_rho(I(2), I(3))                                              # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: for Pollard rho algorithm the order of the group must be prime
@@ -556,7 +556,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     If it fails to find a suitable logarithm, it raises a :class:`ValueError`::
 
         sage: I = IntegerModRing(171980)
-        sage: discrete_log_rho(I(31002), I(15501))
+        sage: discrete_log_rho(I(31002), I(15501))                                      # optional - sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: Pollard rho algorithm failed to find a logarithm
@@ -564,18 +564,19 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     The main limitation on the hash function is that we don't want to have
     ``hash(x*y) == hash(x) + hash(y)``::
 
-        sage: I = IntegerModRing(next_prime(2^23))
-        sage: def test():
+        sage: I = IntegerModRing(next_prime(2^23))                                      # optional - sage.libs.pari
+        sage: def test():                                                               # optional - sage.libs.pari
         ....:     try:
         ....:          discrete_log_rho(I(123456), I(1), operation='+')
         ....:     except Exception:
         ....:          print("FAILURE")
-        sage: test()  # random failure
+        sage: test()  # random failure                                                  # optional - sage.libs.pari
         FAILURE
 
     If this happens, we can provide a better hash function::
 
-        sage: discrete_log_rho(I(123456), I(1), operation='+', hash_function=lambda x: hash(x*x))
+        sage: discrete_log_rho(I(123456), I(1), operation='+',                          # optional - sage.libs.pari
+        ....:                  hash_function=lambda x: hash(x*x))
         123456
 
     AUTHOR:
@@ -717,10 +718,10 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(a, b, bounds=(10, 100))
         20
 
-        sage: K = GF(3^6,'b')
-        sage: b = K.gen()
-        sage: a = b^210
-        sage: discrete_log(a, b, K.order()-1)
+        sage: K = GF(3^6, 'b')                                                          # optional - sage.rings.finite_rings
+        sage: b = K.gen()                                                               # optional - sage.rings.finite_rings
+        sage: a = b^210                                                                 # optional - sage.rings.finite_rings
+        sage: discrete_log(a, b, K.order()-1)                                           # optional - sage.rings.finite_rings
         210
 
         sage: b = Mod(1,37);  x = Mod(2,37)
@@ -1190,15 +1191,15 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: b = a^4                                                                   # optional - sage.rings.finite_rings
         sage: order_from_multiple(b, 5^5 - 1, operation='*')                            # optional - sage.rings.finite_rings
         781
-        sage: E = EllipticCurve(k, [2,4])
-        sage: P = E(3*a^4 + 3*a, 2*a + 1)
-        sage: M = E.cardinality(); M
+        sage: E = EllipticCurve(k, [2,4])                                               # optional - sage.rings.finite_rings
+        sage: P = E(3*a^4 + 3*a, 2*a + 1)                                               # optional - sage.rings.finite_rings
+        sage: M = E.cardinality(); M                                                    # optional - sage.rings.finite_rings
         3227
-        sage: F = M.factor()
-        sage: order_from_multiple(P, M, factorization=F, operation='+')
+        sage: F = M.factor()                                                            # optional - sage.rings.finite_rings
+        sage: order_from_multiple(P, M, factorization=F, operation='+')                 # optional - sage.rings.finite_rings
         3227
-        sage: Q = E(0,2)
-        sage: order_from_multiple(Q, M, factorization=F, operation='+')
+        sage: Q = E(0,2)                                                                # optional - sage.rings.finite_rings
+        sage: order_from_multiple(Q, M, factorization=F, operation='+')                 # optional - sage.rings.finite_rings
         7
 
         sage: K.<z> = CyclotomicField(230)                                              # optional - sage.rings.number_field
@@ -1329,13 +1330,13 @@ def order_from_bounds(P, bounds, d=None, operation='+',
         sage: b = a^4                                                                   # optional - sage.rings.finite_rings
         sage: order_from_bounds(b, (5^4, 5^5), operation='*')                           # optional - sage.rings.finite_rings
         781
-        sage: E = EllipticCurve(k, [2,4])
-        sage: P = E(3*a^4 + 3*a, 2*a + 1)
-        sage: bounds = Hasse_bounds(5^5)
-        sage: Q = E(0,2)
-        sage: order_from_bounds(Q, bounds, operation='+')
+        sage: E = EllipticCurve(k, [2,4])                                               # optional - sage.rings.finite_rings
+        sage: P = E(3*a^4 + 3*a, 2*a + 1)                                               # optional - sage.rings.finite_rings
+        sage: bounds = Hasse_bounds(5^5)                                                # optional - sage.rings.finite_rings
+        sage: Q = E(0,2)                                                                # optional - sage.rings.finite_rings
+        sage: order_from_bounds(Q, bounds, operation='+')                               # optional - sage.rings.finite_rings
         7
-        sage: order_from_bounds(P, bounds, 7, operation='+')
+        sage: order_from_bounds(P, bounds, 7, operation='+')                            # optional - sage.rings.finite_rings
         3227
 
         sage: K.<z> = CyclotomicField(230)                                              # optional - sage.rings.number_field
