@@ -845,7 +845,7 @@ cdef class OrePolynomial(AlgebraElement):
 
           .. MATH::
 
-              g = a * u + b * v,
+              g = a \cdot u + b \cdot v,
 
           where `s` is ``self`` and `b` is ``other``.
 
@@ -1079,7 +1079,7 @@ cdef class OrePolynomial(AlgebraElement):
 
           .. MATH::
 
-              g = u * a + v * b
+              g = u \cdot a + v \cdot b
 
           where `a` is ``self`` and `b` is ``other``.
 
@@ -1353,9 +1353,9 @@ cdef class OrePolynomial(AlgebraElement):
             sage: L
             x^5 + (2*t^2 + t + 4)*x^4 + (3*t^2 + 4)*x^3 + (3*t^2 + 3*t + 2)*x^2 + (t^2 + t + 2)*x
 
-            sage: U*P == L
+            sage: U * P == L
             True
-            sage: V*Q == L
+            sage: V * Q == L
             True
         """
         if self.base_ring() not in _Fields:
@@ -1437,9 +1437,9 @@ cdef class OrePolynomial(AlgebraElement):
             sage: L, U, V = P.right_xlcm(Q)
             sage: L
             x^4 + (2*t^2 + t + 2)*x^3 + (3*t^2 + 4*t + 1)*x^2 + (3*t^2 + 4*t + 1)*x + t^2 + 4
-            sage: P*U == L
+            sage: P * U == L
             True
-            sage: Q*V == L
+            sage: Q * V == L
             True
         """
         if self.base_ring() not in _Fields:
@@ -1472,7 +1472,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         The left lcm of ``self`` and ``other``, that is an Ore polynomial
         `l` with the following property: any Ore polynomial is a left multiple of `l` (right divisible by `l`)
-        iff it is left multiple of both ``self`` and ``other`` (right divisible by ``self`` and ``other``).
+        iff it is a left multiple of both ``self`` and ``other`` (right divisible by ``self`` and ``other``).
         If monic is ``True``, `l` is in addition monic. (With this
         extra condition, it is uniquely determined.)
 
