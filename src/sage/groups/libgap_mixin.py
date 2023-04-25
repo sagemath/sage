@@ -435,7 +435,8 @@ class GroupMixinLibGAP():
             [0 2], [2 0], [1 2]
             ) of General Linear Group of degree 2 over Finite Field of size 3
             sage: G = GL(3,2)
-            sage: all(G.order()==G.centralizer(x).order()*G.conjugacy_class(x).cardinality() for x in G)
+            sage: all(G.order() == G.centralizer(x).order() * G.conjugacy_class(x).cardinality()
+            ....:     for x in G)
             True
             sage: H = groups.matrix.Heisenberg(2)
             sage: H.centralizer(H.an_element())
@@ -547,10 +548,18 @@ class GroupMixinLibGAP():
                 for sub in self.gap().ConjugacyClassesSubgroups()]
 
     def group_id(self):
-        """
+        r"""
         Return the ID code of ``self``, which is a list of two integers.
 
+        It is a unique identified assigned by GAP for groups in the
+        ``SmallGroup`` library.
+
         EXAMPLES::
+
+            sage: PGL(2,3).group_id()
+            [24, 12]
+            sage: SymmetricGroup(4).group_id()
+            [24, 12]
 
             sage: G = groups.matrix.GL(2, 2)
             sage: G.group_id()
@@ -558,6 +567,7 @@ class GroupMixinLibGAP():
             sage: G = groups.matrix.GL(2, 3)
             sage: G.id()
             [48, 29]
+
             sage: G = groups.matrix.GL(2, ZZ)
             sage: G.group_id()
             Traceback (most recent call last):
@@ -593,21 +603,6 @@ class GroupMixinLibGAP():
             raise NotImplementedError("group must be finite")
         from sage.rings.integer import Integer
         return Integer(self._libgap_().Exponent())
-
-    def group_id(self):
-        """
-        Return the ID code of this group, which is a list of two integers.
-        It is a unique identified assigned by GAP for groups in the
-        SmallGroup library.
-
-        EXAMPLES::
-
-            sage: PGL(2,3).group_id()
-            [24, 12]
-            sage: SymmetricGroup(4).group_id()
-            [24, 12]
-        """
-        return [Integer(n) for n in self._libgap_().IdGroup()]
 
     def intersection(self, other):
         """
