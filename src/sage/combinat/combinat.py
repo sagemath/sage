@@ -64,18 +64,12 @@ docstrings.
 
 **Implemented in other modules (listed for completeness):**
 
-The ``sage.arith.all`` module contains the following
+The package :mod:`sage.arith` contains the following
 combinatorial functions:
 
--  binomial the binomial coefficient (wrapped from PARI)
+-  :func:`binomial` the binomial coefficient (wrapped from PARI)
 
--  factorial (wrapped from PARI)
-
--  partition (from the Python Cookbook) Generator of the list of
-   all the partitions of the integer `n`.
-
--  :func:`number_of_partitions` (wrapped from PARI) the
-   *number* of partitions:
+-  :func:`factorial` (wrapped from PARI)
 
 -  :func:`falling_factorial` Definition: for integer
    `a \ge 0` we have `x(x-1) \cdots (x-a+1)`. In all
@@ -87,7 +81,12 @@ combinatorial functions:
    other cases we use the GAMMA-function:
    `\frac {\Gamma(x+a)} {\Gamma(x)}`.
 
--  gaussian_binomial the gaussian binomial
+From other modules:
+
+-  :func:`number_of_partitions` (wrapped from PARI) the
+   *number* of partitions:
+
+-  :func:`sage.combinat.q_analogues.gaussian_binomial` the Gaussian binomial
 
 .. MATH::
 
@@ -174,8 +173,6 @@ from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.libs.pari.all import pari
-from sage.misc.prandom import randint
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_function
 from sage.structure.sage_object import SageObject
@@ -187,7 +184,10 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.element import Element
+
 lazy_import('sage.interfaces.maxima_lib', 'maxima')
+lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.misc.prandom', 'randint')
 
 
 def bell_number(n, algorithm='flint', **options) -> Integer:
