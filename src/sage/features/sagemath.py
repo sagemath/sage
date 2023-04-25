@@ -63,9 +63,10 @@ class sage__combinat(JoinFeature):
         """
         # sage.combinat will be a namespace package.
         # Testing whether sage.combinat itself can be imported is meaningless.
+        # Some modules providing basic combinatorics are already included in sagemath-categories.
         # Hence, we test a Python module within the package.
         JoinFeature.__init__(self, 'sage.combinat',
-                             [PythonModule('sage.combinat.combination')])
+                             [PythonModule('sage.combinat.tableau')])
 
 
 class sage__geometry__polyhedron(PythonModule):
