@@ -1,4 +1,4 @@
-from .constructor import FunctionField
+from .all__sagemath_polyhedra import *
 
 from sage.misc.lazy_import import lazy_import
 

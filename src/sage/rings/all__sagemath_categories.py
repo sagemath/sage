@@ -37,7 +37,7 @@ from .fraction_field import FractionField
 Frac = FractionField
 
 # Function field
-from .function_field.all import *
+from .function_field.all__sagemath_categories import *
 
 # Double precision floating point numbers
 from .real_double import RealDoubleField, RDF, RealDoubleElement
@@ -65,10 +65,6 @@ lazy_import('sage.rings.power_series_ring_element', 'PowerSeries', deprecation=3
 from .laurent_series_ring import LaurentSeriesRing
 lazy_import('sage.rings.laurent_series_ring_element', 'LaurentSeries', deprecation=33602)
 
-# Lazy Laurent series ring
-lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
-                                            'LazySymmetricFunctions', 'LazyDirichletSeriesRing'])
-
 del lazy_import
 
 # Big-oh notation
@@ -76,5 +72,4 @@ from .big_oh import O
 
 # Preliminary version of real numbers for doctesting without sage.rings.real_mpfr.
 # sage.rings.all redefines it.
-
-RealNumber = RDF             # used by the preparser to wrap real literals
+RealNumber = RR = RDF             # used by the preparser to wrap real literals

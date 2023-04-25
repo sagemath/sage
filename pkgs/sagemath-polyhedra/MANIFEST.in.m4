@@ -161,6 +161,9 @@ include sage/rings/function_field/divisor.*                             # module
 include sage/rings/function_field/hermite_form_polynomial.*             # cimports Matrix
 include sage/rings/function_field/function_field_valuation.*            # ??
 
+include sage/rings/polynomial/laurent_polynomial_mpair.p*               # cimports Matrix
+
+
 global-exclude *.py[co]
 global-exclude *.so
 global-exclude *.bak
