@@ -2591,7 +2591,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
     ::
 
-        sage: factor(293292629867846432923017396246429, algorithm='flint')
+        sage: factor(293292629867846432923017396246429, algorithm='flint')              # optional - sage.libs.flint
         3 * 4852301647696687 * 20148007492971089
 
     ::

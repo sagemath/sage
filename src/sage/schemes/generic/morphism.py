@@ -113,7 +113,10 @@ def is_SchemeMorphism(f):
         sage: is_SchemeMorphism(f)
         True
     """
-    from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
+    try:
+        from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
+    except ImportError:
+        EllipticCurvePoint_field = ()
     return isinstance(f, (SchemeMorphism, EllipticCurvePoint_field))
 
 
