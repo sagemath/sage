@@ -2922,7 +2922,7 @@ cdef class RingElement(ModuleElement):
 
             sage: (-2).is_prime()
             False
-            sage: RingElement.is_prime(-2)
+            sage: RingElement.is_prime(-2)                                              # optional - sage.libs.pari
             True
 
         Similarly,
