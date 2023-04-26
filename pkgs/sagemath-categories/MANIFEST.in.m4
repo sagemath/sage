@@ -119,6 +119,8 @@ include sage/rings/polynomial/toy*.p*
 include sage/rings/polynomial/symmetric_*.p*
 ## include sage/rings/polynomial/ore*.p*                                   # need for sage.categories.drinfeld_modules
 
+include sage/rings/continued_fraction*.p*
+
 graft sage/rings/function_field
 exclude sage/rings/function_field/*_polymod.*                           # needs Singular
 exclude sage/rings/function_field/derivations*.*                        # module elements
@@ -135,6 +137,7 @@ include sage/rings/power_series_ring.p*
 include sage/rings/multi_power_series_ring.py
 include sage/rings/multi_power_series_ring_element.py
 include sage/rings/laurent_series_ring*.p*
+include sage/rings/puiseux_series_ring*.p*
 
 graft sage/rings/semirings
 

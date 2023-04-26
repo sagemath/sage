@@ -102,10 +102,6 @@ lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerS
 # Tate algebras
 from .tate_algebra import TateAlgebra
 
-# Puiseux series ring
-from .puiseux_series_ring import PuiseuxSeriesRing
-lazy_import('sage.rings.puiseux_series_ring_element', 'PuiseuxSeries', deprecation=33602)
-
 # Pseudo-ring of PARI objects.
 from .pari_ring import PariRing, Pari
 
@@ -123,10 +119,6 @@ from .cif import CIF
 from .invariants.all import *
 
 from .fast_arith import prime_range
-
-# continued fractions
-from sage.rings.continued_fraction import (continued_fraction,
-                                           continued_fraction_list)
 
 # asymptotic ring
 from .asymptotic.all import *

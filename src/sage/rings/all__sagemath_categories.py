@@ -65,10 +65,18 @@ lazy_import('sage.rings.power_series_ring_element', 'PowerSeries', deprecation=3
 from .laurent_series_ring import LaurentSeriesRing
 lazy_import('sage.rings.laurent_series_ring_element', 'LaurentSeries', deprecation=33602)
 
+# Puiseux series ring
+from .puiseux_series_ring import PuiseuxSeriesRing
+lazy_import('sage.rings.puiseux_series_ring_element', 'PuiseuxSeries', deprecation=33602)
+
 del lazy_import
 
 # Big-oh notation
 from .big_oh import O
+
+# continued fractions
+from sage.rings.continued_fraction import (continued_fraction,
+                                           continued_fraction_list)
 
 # Preliminary version of real numbers for doctesting without sage.rings.real_mpfr.
 # sage.rings.all redefines it.
