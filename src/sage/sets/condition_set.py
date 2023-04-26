@@ -420,16 +420,17 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             sage: (5, 7, 9) in ST                                                       # optional - sage.symbolic
             False
 
-            sage: Interval = ConditionSet(RR, x >= -7, x <= 4, vars=[x]); Interval
+            sage: Interval = ConditionSet(RR, x >= -7, x <= 4, vars=[x]); Interval      # optional - sage.symbolic
             { x ∈ Real Field with 53 bits of precision : x >= -7, x <= 4 }
-            sage: Interval._sympy_()
-            ConditionSet(x, (x >= -7) & (x <= 4), SageSet(Real Field with 53 bits of precision))
+            sage: Interval._sympy_()                                                    # optional - sage.symbolic sympy
+            ConditionSet(x, (x >= -7) & (x <= 4),
+                            SageSet(Real Field with 53 bits of precision))
 
         If a predicate is not symbolic, we fall back to creating a wrapper::
 
             sage: Evens = ConditionSet(ZZ, is_even); Evens
             { x ∈ Integer Ring : <function is_even at 0x...>(x) }
-            sage: Evens._sympy_()
+            sage: Evens._sympy_()                                                       # optional - sympy
             SageSet({ x ∈ Integer Ring : <function is_even at 0x...>(x) })
         """
         from sage.interfaces.sympy import sympy_init
