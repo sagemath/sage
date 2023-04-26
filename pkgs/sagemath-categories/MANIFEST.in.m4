@@ -151,6 +151,7 @@ include sage/combinat/combinatorial_map.p*
 include sage/combinat/composition.p*
 include sage/combinat/permutation.p*
 include sage/combinat/permutation_cython.p*
+include sage/combinat/subset.p*
 include sage/combinat/tools.p*
 # leave out partition - has complicated deps
 # leave out integer_vector_weighted - needs combinat.words.word

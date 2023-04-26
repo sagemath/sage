@@ -28,6 +28,9 @@ from .lazy_string import lazy_string
 from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 
+lazy_import("sage.combinat.subset", ["powerset", "subsets"],
+            deprecation=99999)
+
 lazy_import("sage.misc.call", ["AttrCallObject", "attrcall", "call_method"],
             deprecation=29869)
 
@@ -818,69 +821,6 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
             yield elements[a]
         else:
             yield tuple(elements[j] for j in Integer(a).digits(n, padto=repeat))
-
-
-def powerset(X):
-    r"""
-    Iterator over the *list* of all subsets of the iterable X, in no
-    particular order. Each list appears exactly once, up to order.
-
-    INPUT:
-
-    -  ``X`` - an iterable
-
-    OUTPUT: iterator of lists
-
-    EXAMPLES::
-
-        sage: list(powerset([1,2,3]))
-        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
-        sage: [z for z in powerset([0,[1,2]])]
-        [[], [0], [[1, 2]], [0, [1, 2]]]
-
-    Iterating over the power set of an infinite set is also allowed::
-
-        sage: i = 0
-        sage: L = []
-        sage: for x in powerset(ZZ):
-        ....:     if i > 10:
-        ....:         break
-        ....:     else:
-        ....:         i += 1
-        ....:     L.append(x)
-        sage: print(" ".join(str(x) for x in L))
-        [] [0] [1] [0, 1] [-1] [0, -1] [1, -1] [0, 1, -1] [2] [0, 2] [1, 2]
-
-    You may also use subsets as an alias for powerset::
-
-        sage: subsets([1,2,3])
-        <generator object ...powerset at 0x...>
-        sage: list(subsets([1,2,3]))
-        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
-
-        The reason we return lists instead of sets is that the elements of
-        sets must be hashable and many structures on which one wants the
-        powerset consist of non-hashable objects.
-
-    AUTHORS:
-
-    - William Stein
-
-    - Nils Bruin (2006-12-19): rewrite to work for not-necessarily
-      finite objects X.
-    """
-    yield []
-    pairs = []
-    power2 = 1
-    for x in X:
-        pairs.append((power2, x))
-        next_power2 = power2 << 1
-        for w in range(power2, next_power2):
-            yield [x for m, x in pairs if m & w]
-        power2 = next_power2
-
-
-subsets = powerset
 
 
 #################################################################
