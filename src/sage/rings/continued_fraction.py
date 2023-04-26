@@ -205,12 +205,19 @@ AUTHORS:
 
 import numbers
 
+from sage.misc.lazy_import import lazy_import
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, rich_to_bool
 import sage.rings.abc
 from .integer import Integer
 from .integer_ring import ZZ
 from .infinity import Infinity
+
+lazy_import('sage.combinat.words.abstract_word', 'Word_class')
+lazy_import('sage.combinat.words.finite_word', 'FiniteWord_class')
+lazy_import('sage.combinat.words.infinite_word', 'InfiniteWord_class')
+lazy_import('sage.combinat.words.word', 'Word')
+
 
 ZZ_0 = Integer(0)
 ZZ_1 = Integer(1)
@@ -2637,7 +2644,6 @@ def continued_fraction(x, value=None):
         pass
 
     # input for finite or ultimately periodic partial quotient expansion
-    from sage.combinat.words.finite_word import FiniteWord_class
     if isinstance(x, FiniteWord_class):
         x = list(x)
 
@@ -2652,11 +2658,9 @@ def continued_fraction(x, value=None):
 
     # input for infinite partial quotient expansion
     from sage.misc.lazy_list import lazy_list_generic
-    from sage.combinat.words.infinite_word import InfiniteWord_class
     if isinstance(x, (lazy_list_generic, InfiniteWord_class)):
         return ContinuedFraction_infinite(x, value)
 
-    from sage.combinat.words.abstract_word import Word_class
     if isinstance(x, Word_class):
         raise ValueError("word with unknown length cannot be converted "
                          "to continued fractions")
