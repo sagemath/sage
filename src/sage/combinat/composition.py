@@ -1303,7 +1303,7 @@ class Composition(CombinatorialElement):
         TESTS::
 
             sage: empty = Composition([])
-            sage: empty.shuffle_product(empty).list()
+            sage: empty.shuffle_product(empty).list()                                   # optional - sage.combinat
             [[]]
         """
         if overlap:

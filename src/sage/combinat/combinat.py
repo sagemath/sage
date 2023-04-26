@@ -364,9 +364,9 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
 
     TESTS::
 
-        sage: all(bell_number(n) == bell_number(n,'dobinski') for n in range(100))
+        sage: all(bell_number(n) == bell_number(n,'dobinski') for n in range(100))      # optional - sage.libs.flint
         True
-        sage: all(bell_number(n) == bell_number(n,'gap') for n in range(100))           # optional - sage.libs.gap
+        sage: all(bell_number(n) == bell_number(n,'gap') for n in range(100))           # optional - sage.libs.flint sage.libs.gap
         True
         sage: all(bell_number(n) == bell_number(n,'mpmath', prec=500)                   # optional - mpmath sage.libs.flint
         ....:     for n in range(200, 220))
@@ -551,7 +551,7 @@ def euler_number(n, algorithm='flint') -> Integer:
         sage: [euler_number(i) for i in range(10)]                                      # optional - sage.libs.flint
         [1, 0, -1, 0, 5, 0, -61, 0, 1385, 0]
         sage: x = PowerSeriesRing(QQ, 'x').gen().O(10)
-        sage: 2/(exp(x)+exp(-x))
+        sage: 2/(exp(x)+exp(-x))                                                        # optional - sage.symbolic
         1 - 1/2*x^2 + 5/24*x^4 - 61/720*x^6 + 277/8064*x^8 + O(x^10)
         sage: [euler_number(i)/factorial(i) for i in range(11)]                         # optional - sage.libs.flint
         [1, 0, -1/2, 0, 5/24, 0, -61/720, 0, 277/8064, 0, -50521/3628800]
@@ -1512,12 +1512,12 @@ class CombinatorialElement(CombinatorialObject, Element,
     EXAMPLES::
 
         sage: from sage.combinat.combinat import CombinatorialElement
-        sage: e = CombinatorialElement(Partitions(6), [3,2,1])
-        sage: e == loads(dumps(e))
+        sage: e = CombinatorialElement(Partitions(6), [3,2,1])                          # optional - sage.combinat
+        sage: e == loads(dumps(e))                                                      # optional - sage.combinat
         True
-        sage: parent(e)
+        sage: parent(e)                                                                 # optional - sage.combinat
         Partitions of the integer 6
-        sage: list(e)
+        sage: list(e)                                                                   # optional - sage.combinat
         [3, 2, 1]
 
     Check classcalls::
@@ -2225,9 +2225,9 @@ class FilteredCombinatorialClass(CombinatorialClass):
             False
             sage: [4,3,2,1] in P
             False
-            sage: Permutation([1,2,3]) in P
+            sage: Permutation([1,2,3]) in P                                             # optional - sage.combinat
             False
-            sage: Permutation([3,2,1]) in P
+            sage: Permutation([3,2,1]) in P                                             # optional - sage.combinat
             True
         """
         return x in self.combinatorial_class and self.f(x)
@@ -2495,7 +2495,7 @@ class MapCombinatorialClass(ImageSubobject, CombinatorialClass):
         """
         TESTS::
 
-            sage: Partitions(3).map(attrcall('conjugate'))
+            sage: Partitions(3).map(attrcall('conjugate'))                              # optional - sage.combinat
             Image of Partitions of the integer 3 by The map *.conjugate()
              from Partitions of the integer 3
         """
