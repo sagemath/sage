@@ -2892,7 +2892,7 @@ def unshuffle_iterator(a, one=1) -> Iterator:
         [(((), (3, 1)), 3/2), (((3,), (1,)), 3/2), (((1,), (3,)), -3/2),
          (((3, 1), ()), 3/2)]
     """
-    from sage.misc.misc import powerset
+    from sage.combinat.subset import powerset
     n = len(a)
     for I in powerset(range(n)):
         sorted_I = tuple(sorted(I))

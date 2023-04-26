@@ -21,7 +21,7 @@ AUTHORS:
 
 from sage.arith.functions cimport LCM_list
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.misc.misc import subsets
+from sage.combinat.subset import subsets
 
 
 cpdef _fast_possible_periods(self, return_points=False):

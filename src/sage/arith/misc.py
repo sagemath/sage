@@ -20,7 +20,7 @@ AUTHORS:
 import math
 from collections.abc import Iterable
 
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 from sage.misc.misc_c import prod
 
 from sage.structure.element import parent

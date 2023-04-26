@@ -231,7 +231,7 @@ def planar_partitions_rec(X):
         if len(X) > 1:
             yield ([X[0]], [X[1]])
         return
-    from sage.misc.misc import powerset
+    from sage.combinat.subset import powerset
     from itertools import product
     for S in powerset(range(len(X)-1)):
         if not S:
