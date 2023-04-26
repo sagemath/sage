@@ -7,7 +7,7 @@ from .lazy_import import lazy_import
 from .all__sagemath_categories import *
 
 from .misc import (BackslashOperator,               # Depends on sage.env -- can lower to sagemath-objects after splitting this module
-                  union, uniq, powerset, subsets,
+                  union, uniq,
                   exists, forall, is_iterator,
                   random_sublist,
                   pad_zeros,
