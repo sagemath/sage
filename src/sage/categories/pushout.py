@@ -1758,10 +1758,11 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             sage: F2 = LaurentPolynomialFunctor('s', multi_variate=True)
             sage: F3 = LaurentPolynomialFunctor(['s','t'])
             sage: F1(F2(QQ))
-            Univariate Laurent Polynomial Ring in t over Univariate Laurent Polynomial Ring in s over Rational Field
-            sage: F2(F1(QQ))
+            Univariate Laurent Polynomial Ring in t over
+             Univariate Laurent Polynomial Ring in s over Rational Field
+            sage: F2(F1(QQ))                                                            # optional - sage.modules
             Multivariate Laurent Polynomial Ring in t, s over Rational Field
-            sage: F3(QQ)
+            sage: F3(QQ)                                                                # optional - sage.modules
             Multivariate Laurent Polynomial Ring in s, t over Rational Field
 
         """
@@ -1782,10 +1783,11 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             sage: F2 = LaurentPolynomialFunctor('s', multi_variate=True)
             sage: F3 = LaurentPolynomialFunctor(['s','t'])
             sage: F1(F2(QQ))          # indirect doctest
-            Univariate Laurent Polynomial Ring in t over Univariate Laurent Polynomial Ring in s over Rational Field
-            sage: F2(F1(QQ))
+            Univariate Laurent Polynomial Ring in t over
+             Univariate Laurent Polynomial Ring in s over Rational Field
+            sage: F2(F1(QQ))                                                            # optional - sage.modules
             Multivariate Laurent Polynomial Ring in t, s over Rational Field
-            sage: F3(QQ)
+            sage: F3(QQ)                                                                # optional - sage.modules
             Multivariate Laurent Polynomial Ring in s, t over Rational Field
 
         """

@@ -199,10 +199,12 @@ def normalize_extra_units(base_ring, add_units, warning=True):
         sage: normalize_extra_units(ZZ, [3, -15, 45, 9, 2, 50])
         [2, 3, 5]
         sage: P.<x,y,z> = ZZ[]
-        sage: normalize_extra_units(P, [3*x, z*y**2, 2*z, 18*(x*y*z)**2, x*z, 6*x*z, 5])            # optional - sage.libs.pari
+        sage: normalize_extra_units(P,                                                  # optional - sage.libs.pari
+        ....:                       [3*x, z*y**2, 2*z, 18*(x*y*z)**2, x*z, 6*x*z, 5])
         [2, 3, 5, z, y, x]
         sage: P.<x,y,z> = QQ[]
-        sage: normalize_extra_units(P, [3*x, z*y**2, 2*z, 18*(x*y*z)**2, x*z, 6*x*z, 5])            # optional - sage.libs.pari
+        sage: normalize_extra_units(P,                                                  # optional - sage.libs.pari
+        ....:                       [3*x, z*y**2, 2*z, 18*(x*y*z)**2, x*z, 6*x*z, 5])
         [z, y, x]
 
         sage: R.<x, y> = ZZ[]
@@ -252,11 +254,12 @@ class LocalizationElement(IntegralDomainElement):
 
         sage: from sage.rings.localization import LocalizationElement
         sage: P.<x,y,z> = GF(5)[]                                                       # optional - sage.rings.finite_rings
-        sage: L = P.localization((x, y*z-x))                                            # optional - sage.rings.finite_rings
+        sage: L = P.localization((x, y*z - x))                                          # optional - sage.rings.finite_rings
         sage: LocalizationElement(L, 4/(y*z-x)**2)                                      # optional - sage.rings.finite_rings
         (-1)/(y^2*z^2 - 2*x*y*z + x^2)
         sage: _.parent()                                                                # optional - sage.rings.finite_rings
-        Multivariate Polynomial Ring in x, y, z over Finite Field of size 5 localized at (x, y*z - x)
+        Multivariate Polynomial Ring in x, y, z over Finite Field of size 5
+         localized at (x, y*z - x)
     """
 
     def __init__(self, parent, x):
@@ -267,7 +270,7 @@ class LocalizationElement(IntegralDomainElement):
 
             sage: from sage.rings.localization import LocalizationElement
             sage: P.<x> = RR[]
-            sage: L = Localization(P, x**2+x+1)
+            sage: L = Localization(P, x**2 + x + 1)
             sage: l = LocalizationElement(L, (x**2+1)/(x**2+x+1))
             sage: l._value == (x**2+1)/(x**2+x+1)
             True
@@ -634,9 +637,9 @@ class Localization(IntegralDomain, UniqueRepresentation):
         ...
         ValueError: factor x^2 + 2 of denominator is not a unit
 
-        sage: Lau.<u, v> = LaurentPolynomialRing(ZZ)
-        sage: LauL = Lau.localization(u + 1)
-        sage: LauL(~u).parent()
+        sage: Lau.<u, v> = LaurentPolynomialRing(ZZ)                                    # optional - sage.modules
+        sage: LauL = Lau.localization(u + 1)                                            # optional - sage.modules
+        sage: LauL(~u).parent()                                                         # optional - sage.modules
         Multivariate Polynomial Ring in u, v over Integer Ring localized at (v, u, u + 1)
 
     More examples will be shown typing ``sage.rings.localization?``

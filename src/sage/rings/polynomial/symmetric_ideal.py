@@ -480,14 +480,15 @@ class SymmetricIdeal(Ideal_generic):
         Last, we demonstrate the use of the optional parameter ``RStrat``::
 
             sage: from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy
-            sage: R = SymmetricReductionStrategy(X)
-            sage: R
-            Symmetric Reduction Strategy in Infinite polynomial ring in x over Rational Field
+            sage: R = SymmetricReductionStrategy(X); R
+            Symmetric Reduction Strategy in
+             Infinite polynomial ring in x over Rational Field
             sage: I.interreduction(RStrat=R)                                            # optional - sage.combinat
             Symmetric Ideal (-x_1^2, x_2 + x_1) of
              Infinite polynomial ring in x over Rational Field
-            sage: R
-            Symmetric Reduction Strategy in Infinite polynomial ring in x over Rational Field, modulo
+            sage: R                                                                     # optional - sage.combinat
+            Symmetric Reduction Strategy in
+             Infinite polynomial ring in x over Rational Field, modulo
                 x_1^2,
                 x_2 + x_1
             sage: R = SymmetricReductionStrategy(X, [x[1]^2])
@@ -919,7 +920,7 @@ class SymmetricIdeal(Ideal_generic):
 
             sage: Y.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex',            # optional - sage.rings.finite_rings
             ....:                                  implementation='sparse')
-            sage: I = ['-y_3'] * Y
+            sage: I = ['-y_3'] * Y                                                      # optional - sage.rings.finite_rings
             sage: I.groebner_basis()                                                    # optional - sage.combinat sage.rings.finite_rings
             [y_1]
 

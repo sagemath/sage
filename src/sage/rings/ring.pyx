@@ -132,9 +132,9 @@ cdef class Ring(ParentWithGens):
         running ._test_some_elements() . . . pass
         running ._test_zero() . . . pass
         running ._test_zero_divisors() . . . pass
-        sage: TestSuite(QQ['x','y']).run(skip='_test_elements')
-        sage: TestSuite(ZZ['x','y']).run(skip='_test_elements')
-        sage: TestSuite(ZZ['x','y']['t']).run()
+        sage: TestSuite(QQ['x','y']).run(skip='_test_elements')                         # optional - sage.libs.singular
+        sage: TestSuite(ZZ['x','y']).run(skip='_test_elements')                         # optional - sage.libs.singular
+        sage: TestSuite(ZZ['x','y']['t']).run()                                         # optional - sage.libs.singular
 
     Test against another bug fixed in :trac:`9944`::
 
@@ -142,19 +142,21 @@ cdef class Ring(ParentWithGens):
         Join of Category of euclidean domains and Category of commutative algebras over
          (number fields and quotient fields and metric spaces) and Category of infinite sets
         sage: QQ['x','y'].category()
-        Join of Category of unique factorization domains and Category of commutative algebras over
-         (number fields and quotient fields and metric spaces) and Category of infinite sets
-        sage: PolynomialRing(MatrixSpace(QQ,2),'x').category()
+        Join of Category of unique factorization domains
+            and Category of commutative algebras
+                over (number fields and quotient fields and metric spaces)
+            and Category of infinite sets
+        sage: PolynomialRing(MatrixSpace(QQ, 2),'x').category()                         # optional - sage.modules
         Category of infinite algebras over (finite dimensional algebras with basis over
          (number fields and quotient fields and metric spaces) and infinite sets)
-        sage: PolynomialRing(SteenrodAlgebra(2),'x').category()
+        sage: PolynomialRing(SteenrodAlgebra(2),'x').category()                         # optional - sage.combinat sage.modules
         Category of infinite algebras over (super hopf algebras with basis
          over Finite Field of size 2 and supercocommutative super coalgebras
          over Finite Field of size 2)
 
     TESTS::
 
-        sage: Zp(7)._repr_option('element_is_atomic')
+        sage: Zp(7)._repr_option('element_is_atomic')                                   # optional - sage.rings.padics
         False
         sage: QQ._repr_option('element_is_atomic')
         True
@@ -537,8 +539,8 @@ cdef class Ring(ParentWithGens):
 
         Since :trac:`7797`, non-commutative rings have ideals as well::
 
-            sage: A = SteenrodAlgebra(2)
-            sage: A._ideal_class_()
+            sage: A = SteenrodAlgebra(2)                                                # optional - sage.combinat sage.modules
+            sage: A._ideal_class_()                                                     # optional - sage.combinat sage.modules
             <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
 
         """

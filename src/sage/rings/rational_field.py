@@ -736,9 +736,9 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ.residue_field(5)
+            sage: QQ.residue_field(5)                                                   # optional - sage.rings.finite_rings
             Residue field of Integers modulo 5
-            sage: QQ.residue_field(next_prime(10^9))
+            sage: QQ.residue_field(next_prime(10^9))                                    # optional - sage.rings.finite_rings
             Residue field of Integers modulo 1000000007
         """
         from sage.rings.finite_rings.residue_field import ResidueField

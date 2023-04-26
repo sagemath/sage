@@ -486,11 +486,12 @@ class SpecializationMorphism(Morphism):
         The following was fixed in :trac:`23811`::
 
             sage: R.<c> = RR[]
-            sage: P.<z> = AffineSpace(R, 1)
-            sage: H = End(P)
-            sage: f = H([z^2 + c])
-            sage: f.specialization({c:1})
-            Scheme endomorphism of Affine Space of dimension 1 over Real Field with 53 bits of precision
+            sage: P.<z> = AffineSpace(R, 1)                                             # optional - sage.modules
+            sage: H = End(P)                                                            # optional - sage.modules
+            sage: f = H([z^2 + c])                                                      # optional - sage.modules
+            sage: f.specialization({c:1})                                               # optional - sage.modules
+            Scheme endomorphism of
+             Affine Space of dimension 1 over Real Field with 53 bits of precision
               Defn: Defined on coordinates by sending (z) to
                     (z^2 + 1.00000000000000)
         """

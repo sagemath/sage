@@ -305,7 +305,7 @@ cdef class PuiseuxSeries(AlgebraElement):
             sage: p = x^(1/2) + x**3-x**(-1/4)
             sage: p(16)
             8199/2
-            sage: p(pi.n())
+            sage: p(pi.n())                                                             # optional - sage.symbolic
             32.0276049867404
         """
         # use x.nth_root since x**(1/self._e) returns oo when x = 0

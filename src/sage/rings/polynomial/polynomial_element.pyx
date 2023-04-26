@@ -5830,7 +5830,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: f = 3*x^3 + 2*x^2 + x
-            sage: exp(f.global_height())
+            sage: exp(f.global_height())                                                # optional - sage.symbolic
             3.00000000000000
 
         Scaling should not change the result::

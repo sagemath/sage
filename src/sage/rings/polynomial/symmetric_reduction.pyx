@@ -546,9 +546,9 @@ cdef class SymmetricReductionStrategy:
             sage: from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy
             sage: X.<x,y> = InfinitePolynomialRing(QQ)
             sage: S = SymmetricReductionStrategy(X, [y[3]], tailreduce=True)
-            sage: S.reduce(y[4]*x[1] + y[1]*x[4])
+            sage: S.reduce(y[4]*x[1] + y[1]*x[4])                                       # optional - sage.libs.singular
             x_4*y_1
-            sage: S.reduce(y[4]*x[1] + y[1]*x[4], notail=True)
+            sage: S.reduce(y[4]*x[1] + y[1]*x[4], notail=True)                          # optional - sage.libs.singular
             x_4*y_1 + x_1*y_4
 
         Last, we demonstrate the ``report`` option::
@@ -562,7 +562,7 @@ cdef class SymmetricReductionStrategy:
                 y_3 + y_2,
                 x_2 + y_1,
                 x_1*y_2 + y_4 - y_3*y_1
-            sage: S.reduce(x[3] + x[1]*y[3] + x[1]*y[1], report=True)
+            sage: S.reduce(x[3] + x[1]*y[3] + x[1]*y[1], report=True)                   # optional - sage.libs.singular
             :::>
             x_1*y_1 + y_4 - y_3*y_1 - y_1
 

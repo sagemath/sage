@@ -5,11 +5,11 @@ Gosper iterator for homographic transformations
 EXAMPLES::
 
     sage: from sage.rings.continued_fraction_gosper import gosper_iterator
-    sage: x = continued_fraction(pi)
-    sage: it = iter(gosper_iterator(3,2,3,1,x))
-    sage: Word(it, length='infinite')
+    sage: x = continued_fraction(pi)                                                    # optional - sage.symbolic
+    sage: it = iter(gosper_iterator(3,2,3,1,x))                                         # optional - sage.symbolic
+    sage: Word(it, length='infinite')                                                   # optional - sage.combinat sage.symbolic
     word: 1,10,2,2,1,4,1,1,1,97,4,1,2,1,2,45,6,4,9,1,27,2,6,1,4,2,3,1,3,1,15,2,1,1,2,1,1,2,32,1,...
-    sage: continued_fraction((3*pi + 2) / (3*pi + 1))
+    sage: continued_fraction((3*pi + 2) / (3*pi + 1))                                   # optional - sage.combinat sage.symbolic
     [1; 10, 2, 2, 1, 4, 1, 1, 1, 97, 4, 1, 2, 1, 2, 45, 6, 4, 9, 1, ...]
 
 REFERENCES:
@@ -104,9 +104,9 @@ class gosper_iterator():
 
             sage: from sage.rings.continued_fraction_gosper import gosper_iterator
             sage: a, b, c, d = (Integer(randint(-100,100)) for _ in range(4))
-            sage: ig = iter(gosper_iterator(a, b, c, d, continued_fraction(pi)))
-            sage: icf = iter(continued_fraction((a*pi + b) / (c*pi + d)));
-            sage: for i in range(10):
+            sage: ig = iter(gosper_iterator(a, b, c, d, continued_fraction(pi)))        # optional - sage.symbolic
+            sage: icf = iter(continued_fraction((a*pi + b) / (c*pi + d)));              # optional - sage.symbolic
+            sage: for i in range(10):                                                   # optional - sage.symbolic
             ....:     try:
             ....:         assert next(ig) == next(icf)
             ....:     except StopIteration:
@@ -121,8 +121,8 @@ class gosper_iterator():
         TESTS::
 
             sage: from sage.rings.continued_fraction_gosper import gosper_iterator
-            sage: it = gosper_iterator(1, 0, 0, 1, continued_fraction(pi))
-            sage: list(next(it) for _ in range(10))
+            sage: it = gosper_iterator(1, 0, 0, 1, continued_fraction(pi))              # optional - sage.symbolic
+            sage: list(next(it) for _ in range(10))                                     # optional - sage.symbolic
             [3, 7, 15, 1, 292, 1, 1, 1, 2, 1]
         """
         while True:
@@ -156,10 +156,10 @@ class gosper_iterator():
             sage: a = Integer(randint(-100,100)); b = Integer(randint(-100,100));
             sage: c = Integer(randint(-100,100)); d = Integer(randint(-100,100));
             sage: from sage.rings.continued_fraction_gosper import gosper_iterator
-            sage: gi = gosper_iterator(a,b,c,d,continued_fraction(pi))
-            sage: for i in range(10):
+            sage: gi = gosper_iterator(a, b, c, d, continued_fraction(pi))              # optional - sage.symbolic
+            sage: for i in range(10):                                                   # optional - sage.symbolic
             ....:     gi.emit(i)
-            sage: gi.currently_emitted
+            sage: gi.currently_emitted                                                  # optional - sage.symbolic
             10
         """
         self.currently_emitted += 1
@@ -182,10 +182,10 @@ class gosper_iterator():
             sage: a = Integer(randint(-100,100)); b = Integer(randint(-100,100));
             sage: c = Integer(randint(-100,100)); d = Integer(randint(-100,100));
             sage: from sage.rings.continued_fraction_gosper import gosper_iterator
-            sage: gi = gosper_iterator(a,b,c,d,continued_fraction(pi))
-            sage: for i in range(10):
+            sage: gi = gosper_iterator(a, b, c, d, continued_fraction(pi))              # optional - sage.symbolic
+            sage: for i in range(10):                                                   # optional - sage.symbolic
             ....:     gi.ingest()
-            sage: gi.currently_read
+            sage: gi.currently_read                                                     # optional - sage.symbolic
             10
         """
         try:

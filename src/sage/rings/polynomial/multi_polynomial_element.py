@@ -652,11 +652,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         ::
 
             sage: x, y = ZZ['x','y'].gens()
-            sage: GF(3037000453)['x','y'].gen(0).degree(x)
+            sage: GF(3037000453)['x','y'].gen(0).degree(x)                              # optional - sage.rings.finie_rings()
             1
 
             sage: x0, y0 = QQ['x','y'].gens()
-            sage: GF(3037000453)['x','y'].gen(0).degree(x0)
+            sage: GF(3037000453)['x','y'].gen(0).degree(x0)                             # optional - sage.rings.finie_rings()
             Traceback (most recent call last):
             ...
             TypeError: x must canonically coerce to parent
@@ -668,7 +668,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         TESTS::
 
-            sage: R = PolynomialRing(GF(2)['t'], 'x,y', order=TermOrder('wdeglex', (2,3)))          # optional - sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(2)['t'], 'x,y',                                 # optional - sage.rings.finite_rings
+            ....:                    order=TermOrder('wdeglex', (2,3)))
             sage: x, y = R.gens()                                                       # optional - sage.rings.finite_rings
             sage: x.degree()                                                            # optional - sage.rings.finite_rings
             2

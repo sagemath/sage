@@ -1412,15 +1412,15 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f = x + y
             sage: L.<x, y> = ZZ[]
             sage: g = x + y
-            sage: R.<x, y> = GF(25, 'a')[]
-            sage: h = x + y
+            sage: R.<x, y> = GF(25, 'a')[]                                              # optional - sage.rings.finite_rings
+            sage: h = x + y                                                             # optional - sage.rings.finite_rings
             sage: f.sylvester_matrix(g, 'x')                                            # optional - sage.modules
             [1 y]
             [1 y]
-            sage: g.sylvester_matrix(h, 'x')                                            # optional - sage.modules
+            sage: g.sylvester_matrix(h, 'x')                                            # optional - sage.modules sage.rings.finite_rings
             [1 y]
             [1 y]
-            sage: f.sylvester_matrix(h, 'x')                                            # optional - sage.modules
+            sage: f.sylvester_matrix(h, 'x')                                            # optional - sage.modules sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: no common canonical parent for objects with parents:

@@ -466,12 +466,12 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             sage: L(1/2)
             1/2
 
-            sage: L(x + 3/x)
+            sage: L(x + 3/x)                                                            # optional - sage.symbolic
             3*x^-1 + x
 
         ::
 
-            sage: L(exp(x))
+            sage: L(exp(x))                                                             # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unable to convert e^x to a rational
@@ -480,7 +480,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
             sage: U = LaurentPolynomialRing(QQ, 'a')
             sage: V = LaurentPolynomialRing(QQ, 'c')
-            sage: L.<a, b, c, d> = LaurentPolynomialRing(QQ)
+            sage: L.<a, b, c, d> = LaurentPolynomialRing(QQ)                            # optional - sage.modules
             sage: M = LaurentPolynomialRing(QQ, 'c, d')                                 # optional - sage.modules
             sage: Mc, Md = M.gens()                                                     # optional - sage.modules
             sage: N = LaurentPolynomialRing(M, 'a, b')                                  # optional - sage.modules
