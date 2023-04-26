@@ -986,14 +986,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             0
             sage: phi._compute_coefficient_exp(2^4)
             1/(T^64 + T^56 + T^52 + T^50 + T^49 + T^44 + T^42 + T^41 + T^38 + T^37 + T^35 + T^30 + T^29 + T^27 + T^23 + T^15)
-            sage: phi._compute_coefficient_exp(T)
-            Traceback (most recent call last):
-            ...
-            TypeError: input must be an integer
         """
-        if k not in ZZ:
-            raise TypeError("input must be an integer")
-        k = ZZ(k)
         if k.is_zero():
             return self._base.zero()
         if k.is_one():
@@ -1242,14 +1235,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             0
             sage: phi._compute_coefficient_log(2^4)
             1/(T^30 + T^29 + T^27 + T^26 + T^23 + T^22 + T^20 + T^19 + T^15 + T^14 + T^12 + T^11 + T^8 + T^7 + T^5 + T^4)
-            sage: phi._compute_coefficient_log(T)
-            Traceback (most recent call last):
-            ...
-            TypeError: input must be an integer
         """
-        if k not in ZZ:
-            raise TypeError("input must be an integer")
-        k = ZZ(k)
         if k.is_zero():
             return self._base.zero()
         if k.is_one():
