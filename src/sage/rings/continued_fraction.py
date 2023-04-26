@@ -2478,7 +2478,10 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
 
     cf = None
 
-    from sage.rings.real_mpfr import RealLiteral
+    try:
+        from sage.rings.real_mpfr import RealLiteral
+    except ImportError:
+        RealLiteral = ()
     if isinstance(x, RealLiteral):
         from sage.rings.real_mpfi import RealIntervalField
         x = RealIntervalField(x.prec())(x)
