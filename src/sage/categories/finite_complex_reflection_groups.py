@@ -78,7 +78,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
             Reducible real reflection group of rank 4 and type A2 x B2
         """
         from sage.combinat.root_system.reflection_group_real import ReflectionGroup
-        return ReflectionGroup((1,1,3), (2,1,2))
+        return ReflectionGroup((1, 1, 3), (2, 1, 2))
 
     class SubcategoryMethods:
 
@@ -415,7 +415,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
             from sage.rings.integer_ring import ZZ
             return ZZ.prod(self.degrees())
 
-        def is_well_generated(self):
+        def is_well_generated(self) -> bool:
             r"""
             Return whether ``self`` is well-generated.
 
@@ -659,7 +659,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 Irreducible complex reflection group of rank 3 and type G(4,2,3)
             """
             from sage.combinat.root_system.reflection_group_real import ReflectionGroup
-            return ReflectionGroup((4,2,3))
+            return ReflectionGroup((4, 2, 3))
 
         class ParentMethods:
             def coxeter_number(self):
@@ -781,27 +781,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                                                 structure='graded',
                                                 enumeration='breadth')
                 if return_lengths:
-                    return (x for x in step)
-                else:
-                    return (x[0] for x in step)
-
-            def elements_below_coxeter_element(self, c=None):
-                r"""
-                Deprecated method.
-
-                Superseded by :meth:`absolute_order_ideal`
-
-                TESTS::
-
-                    sage: W = CoxeterGroup(['A', 3])
-                    sage: len(list(W.elements_below_coxeter_element()))
-                    doctest:...: DeprecationWarning: The method elements_below_coxeter_element is deprecated. Please use absolute_order_ideal instead.
-                    See https://github.com/sagemath/sage/issues/27924 for details.
-                    14
-                """
-                from sage.misc.superseded import deprecation
-                deprecation(27924, "The method elements_below_coxeter_element is deprecated. Please use absolute_order_ideal instead.")
-                return self.absolute_order_ideal(gens=c)
+                    return step
+                return (x[0] for x in step)
 
             # TODO: have a cached and an uncached version
             @cached_method
@@ -865,11 +846,11 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 else:
                     L = [(pi, pi.reflection_length()) for pi in L]
                 rels = []
-                ref_lens = {pi:l for (pi, l) in L}
+                ref_lens = {pi: l for (pi, l) in L}
                 for (pi, l) in L:
                     for t in R:
                         tau = pi * t
-                        if tau in ref_lens and l+1 == ref_lens[tau]:
+                        if tau in ref_lens and l + 1 == ref_lens[tau]:
                             rels.append((pi, tau))
 
                 P = Poset(([], rels), cover_relations=True, facade=True)
@@ -1012,7 +993,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 Reducible complex reflection group of rank 4 and type A2 x G(3,1,2)
             """
             from sage.combinat.root_system.reflection_group_real import ReflectionGroup
-            return ReflectionGroup((1,1,3), (3,1,2))
+            return ReflectionGroup((1, 1, 3), (3, 1, 2))
 
         class ParentMethods:
             def _test_well_generated(self, **options):
@@ -1193,7 +1174,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     from sage.combinat.q_analogues import q_int
 
                     h = self.coxeter_number()
-                    if not gcd(h,p) == 1:
+                    if not gcd(h, p) == 1:
                         raise ValueError("parameter p = %s is not coprime to the Coxeter number %s" % (p, h))
 
                     if polynomial:
