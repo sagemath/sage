@@ -252,11 +252,11 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     TESTS::
 
-        sage: XQ = SchubertPolynomialRing(QQ)
-        sage: XZ = SchubertPolynomialRing(ZZ)
-        sage: XQ == XZ
+        sage: XQ = SchubertPolynomialRing(QQ)                                           # optional - sage.combinat
+        sage: XZ = SchubertPolynomialRing(ZZ)                                           # optional - sage.combinat
+        sage: XQ == XZ                                                                  # optional - sage.combinat
         False
-        sage: XQ == XQ
+        sage: XQ == XQ                                                                  # optional - sage.combinat
         True
 
     We check that issue :trac:`28681` is fixed::
