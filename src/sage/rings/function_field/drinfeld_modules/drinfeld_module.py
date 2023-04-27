@@ -1009,7 +1009,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def exponential(self, name='z'):
         r"""
-        Return the exponential of the given Drinfeld module.
+        Return the exponential of this Drinfeld module.
 
         INPUT:
 
