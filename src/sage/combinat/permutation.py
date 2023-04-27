@@ -8059,14 +8059,15 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
             sage: Permutations(descents=([1,4], 6)).cardinality()
             40
 
-            sage: P = lambda D, n: Permutations(descents=(D, n+1))
-            sage: all(P(D, n).cardinality() == len(P(D, n).list())
+            sage: def P(D, n):
+            ....:     return Permutations(descents=(D, n + 1))
+            sage: all(P(D, n).cardinality() == len(P(D, n).list())                      # optional - sage.graphs
             ....:     for n in range(5) for D in subsets(range(n)))
             True
 
-            sage: n = 20;
+            sage: n = 20
             sage: D = [6, 8, 10, 11, 12, 13, 14, 15, 17, 19]
-            sage: P(D, n).cardinality()
+            sage: P(D, n).cardinality()                                                 # optional - sage.graphs
             125291047596
 
         """
