@@ -1007,6 +1007,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return the exponential of this Drinfeld module.
 
+        Note that the exponential is only defined for Drinfeld modules
+        over nonfinite field.
+
         INPUT:
 
         - ``name`` (string, default: ``'z'``) -- the name of the
@@ -1051,6 +1054,16 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: log.compose(exp)
             z + O(z^8)
 
+        ::
+
+            sage: Fq.<w> = GF(3)
+            sage: A = Fq['T']
+            sage: phi = DrinfeldModule(A, [w, 1])
+            sage: phi.exponential()
+            Traceback (most recent call last):
+            ...
+            ValueError: base field must not be finite
+
         TESTS::
 
             sage: A = GF(2)['T']
@@ -1069,6 +1082,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         See section 4.6 of [Gos1998]_ for the definition of the
         exponential.
         """
+        if self.is_finite():
+            raise ValueError("base field must not be finite")
         L = LazyPowerSeriesRing(self._base, name)
         exp = lambda k: self._compute_coefficient_exp(k)
         return L(exp, valuation=1)
@@ -1262,7 +1277,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         Return the logarithm of the given Drinfeld module.
 
         By definition, the logarithm is the compositional inverse of the
-        exponential (see :meth:`exponential`).
+        exponential (see :meth:`exponential`). Note that the logarithm
+        is only defined for Drinfeld modules over nonfinite field.
 
         INPUT:
 
@@ -1309,7 +1325,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             True
             sage: log[2**3] == -1/((T**q - T)*(T**(q**2) - T)*(T**(q**3) - T))  # expected value
             True
+
+        ::
+
+            sage: Fq.<w> = GF(3)
+            sage: A = Fq['T']
+            sage: phi = DrinfeldModule(A, [w, 1])
+            sage: phi.logarithm()
+            Traceback (most recent call last):
+            ...
+            ValueError: base field must not be finite
         """
+        if self.is_finite():
+            raise ValueError("base field must not be finite")
         L = LazyPowerSeriesRing(self._base, name)
         log = lambda k: self._compute_coefficient_log(k)
         return L(log, valuation=1)
