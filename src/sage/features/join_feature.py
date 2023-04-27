@@ -2,6 +2,17 @@ r"""
 Join features
 """
 
+# ****************************************************************************
+#       Copyright (C) 2021-2022 Matthias Koeppe
+#                     2021-2022 Kwankyu Lee
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from . import Feature, FeatureTestResult
 
 
@@ -88,7 +99,7 @@ class JoinFeature(Feature):
             sage: Latte().is_functional()  # optional - latte_int
             doctest:warning...
             DeprecationWarning: method JoinFeature.is_functional; use is_present instead
-            See https://trac.sagemath.org/33114 for details.
+            See https://github.com/sagemath/sage/issues/33114 for details.
             FeatureTestResult('latte_int', True)
         """
         try:

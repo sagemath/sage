@@ -46,6 +46,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.extlinks',
     'sphinx.ext.mathjax',
+    'sphinx_copybutton',
     'IPython.sphinxext.ipython_directive',
     'matplotlib.sphinxext.plot_directive',
     'jupyter_sphinx',
@@ -71,7 +72,7 @@ jupyter_sphinx_thebelab_config = {
 plot_html_show_source_link = False
 plot_pre_code = r"""
 # Set locale to prevent having commas in decimal numbers
-# in tachyon input (see https://trac.sagemath.org/ticket/28971)
+# in tachyon input (see https://github.com/sagemath/sage/issues/28971)
 import locale
 locale.setlocale(locale.LC_NUMERIC, 'C')
 def sphinx_plot(graphics, **kwds):
@@ -254,6 +255,12 @@ def set_intersphinx_mappings(app, config):
 
 # By default document are not master.
 multidocs_is_master = True
+
+# https://sphinx-copybutton.readthedocs.io/en/latest/use.html
+copybutton_prompt_text = r"sage: |[.][.][.][.]: |\$ "
+copybutton_prompt_is_regexp = True
+copybutton_exclude = '.linenos, .c1'  # exclude single comments (in particular, # optional!)
+copybutton_only_copy_prompt_lines = True
 
 # Options for HTML output
 # -----------------------
@@ -711,7 +718,7 @@ def call_intersphinx(app, env, node, contnode):
     if res:
         # Replace absolute links to $SAGE_DOC by relative links: this
         # allows to copy the whole documentation tree somewhere else
-        # without breaking links, see Trac #20118.
+        # without breaking links, see Issue #20118.
         if res['refuri'].startswith(SAGE_DOC):
             here = os.path.dirname(os.path.join(builder.outdir,
                                                 node['refdoc']))

@@ -20,7 +20,7 @@ AUTHORS:
 #*****************************************************************************
 
 
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial
 from sage.structure.sage_object import SageObject
@@ -76,7 +76,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         self._trace = trace
         self._one = W.one()
         self._base_ring = q.parent()
-        if is_Polynomial(q):
+        if isinstance(q, Polynomial):
             self._base_ring_type = "polynomial"
         elif isinstance(q, LaurentPolynomial):
             self._base_ring_type = "laurent"

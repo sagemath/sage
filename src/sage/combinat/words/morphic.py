@@ -340,7 +340,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: next(it)
             ('a', 1)
 
-        This shows that ticket :trac:`13668` has been resolved::
+        This shows that issue :trac:`13668` has been resolved::
 
             sage: s = WordMorphism({1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]})
             sage: (s^7).fixed_points()

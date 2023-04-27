@@ -4887,7 +4887,7 @@ class FiniteStateMachine(SageObject):
             return (s.from_state, s.to_state)
         # We use an OrderedDict instead of a dict in order to have a
         # defined ordering of the transitions in the output. See
-        # http://trac.sagemath.org/ticket/16580#comment:3 . As the
+        # https://github.com/sagemath/sage/issues/16580#comment:3 . As the
         # transitions have to be sorted anyway, the performance
         # penalty should be bearable; nevertheless, this is only
         # required for doctests.
@@ -14121,8 +14121,8 @@ class FSMProcessIterator(SageObject, Iterator):
                 sage: T = Transducer([(0, 0, 0, 0)],
                 ....:     initial_states=[0], final_states=[0])
                 sage: it = FSMProcessIterator(T, input_tape=[0, 0])
-                sage: for current in it:
-                ....:     print(current)  # indirect doctest
+                sage: for current in it:                             # indirect doctest
+                ....:     print(current)
                 process (1 branch)
                 + at state 0
                 +-- tape at 1, [[0]]
@@ -14289,10 +14289,10 @@ class FSMProcessIterator(SageObject, Iterator):
             +-- tape at 0, [[]]
             + at state 'b'
             +-- tape at 0, [[]]
-            sage: it._push_branches_(
+            sage: it._push_branches_(                               # indirect doctest
             ....:     A.state('c'),
             ....:     deepcopy(it._current_[((0, 0),)][A.state('a')][0]),
-            ....:     [[]])  # indirect doctest
+            ....:     [[]])
             sage: it._current_
             process (3 branches)
             + at state 'a'

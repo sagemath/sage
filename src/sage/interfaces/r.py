@@ -512,7 +512,7 @@ class R(ExtraTabCompletion, Interface):
              sage: my_r._initialized  # optional - rpy2
              True
 
-        And on package import:
+        And on package import::
 
              sage: my_r = R()  # optional - rpy2
              sage: my_r._initialized  # optional - rpy2
@@ -521,7 +521,7 @@ class R(ExtraTabCompletion, Interface):
              sage: my_r._initialized  # optional - rpy2
              True
 
-        And when fetching help pages:
+        And when fetching help pages::
 
              sage: my_r = R()  # optional - rpy2
              sage: my_r._initialized  # optional - rpy2
@@ -723,7 +723,6 @@ class R(ExtraTabCompletion, Interface):
             if attrname[:1] == "_":
                 raise AttributeError("Attribute {} is not allowed to start with an underscore.".format(attrname))
             return RFunction(self, attrname)
-
 
     def _read_in_file_command(self, filename):
         r"""
@@ -1324,7 +1323,6 @@ class R(ExtraTabCompletion, Interface):
         self._lazy_init()
         return str(robjects.r(code)).rstrip()
 
-
     def _r_to_sage_name(self, s):
         """
         Returns a Sage/Python identifier from an R one.  This involves
@@ -1802,7 +1800,6 @@ class RElement(ExtraTabCompletion, InterfaceElement):
             parsed = robjects.r(self.name())
             return parsed
 
-
     def _latex_(self):
         r"""
         Return LaTeX representation of this R object.
@@ -2002,7 +1999,7 @@ def is_RElement(x):
         sage: from sage.interfaces.r import is_RElement  # optional - rpy2
         sage: is_RElement(2)  # optional - rpy2
         doctest:...: DeprecationWarning: the function is_RElement is deprecated; use isinstance(x, sage.interfaces.abc.RElement) instead
-        See https://trac.sagemath.org/34804 for details.
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_RElement(r(2))  # optional - rpy2
         True

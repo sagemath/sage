@@ -564,10 +564,10 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
         Parent.__init__(self, category = category.WithRealizations())
 
         # Bases
-        Monomial    = self.Monomial()
+        Monomial = self.Monomial()
         Fundamental = self.Fundamental()
         dualImmaculate = self.dualImmaculate()
-        QS          = self.Quasisymmetric_Schur()
+        QS = self.Quasisymmetric_Schur()
 
         # Change of bases
         Fundamental.module_morphism(Monomial.sum_of_finer_compositions,
@@ -3688,7 +3688,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             M = self.realization_of().M()
             if l <= n:
                 from sage.misc.cachefunc import cached_function
-                from sage.arith.all import gcd
+                from sage.arith.misc import gcd
 
                 @cached_function
                 def monolambda(I):

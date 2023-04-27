@@ -26,21 +26,19 @@ AUTHORS:
 
 from sage.matrix.constructor import Matrix
 from sage.modules.free_module_element import vector
-from sage.quadratic_forms.quadratic_form import is_QuadraticForm
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
 from sage.rings.ring import IntegralDomain
 from sage.rings.rational_field import is_RationalField
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
-from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.fraction_field import is_FractionField
 
-from sage.rings.number_field.number_field import is_NumberField
-from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
+from sage.rings.number_field.number_field_base import NumberField
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.affine.affine_point import SchemeMorphism_point_affine
+from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
+from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.all import Sequence
 from sage.structure.element import is_Matrix
 
@@ -107,39 +105,42 @@ def Conic(base_field, F=None, names=None, unique=True):
         sage: X,Y,Z = QQ['X,Y,Z'].gens()
         sage: Conic(X^2 - X*Y + Y^2 - Z^2)
         Projective Conic Curve over Rational Field defined by X^2 - X*Y + Y^2 - Z^2
-        sage: x,y = GF(7)['x,y'].gens()
-        sage: Conic(x^2 - x + 2*y^2 - 3, 'U,V,W')
-        Projective Conic Curve over Finite Field of size 7 defined by U^2 + 2*V^2 - U*W - 3*W^2
+        sage: x,y = GF(7)['x,y'].gens()                                                 # optional - sage.rings.finite_rings
+        sage: Conic(x^2 - x + 2*y^2 - 3, 'U,V,W')                                       # optional - sage.rings.finite_rings
+        Projective Conic Curve over Finite Field of size 7
+         defined by U^2 + 2*V^2 - U*W - 3*W^2
 
     Conic curves given by matrices ::
 
         sage: Conic(matrix(QQ, [[1, 2, 0], [4, 0, 0], [7, 0, 9]]), 'x,y,z')
         Projective Conic Curve over Rational Field defined by x^2 + 6*x*y + 7*x*z + 9*z^2
 
-        sage: x,y,z = GF(11)['x,y,z'].gens()
-        sage: C = Conic(x^2+y^2-2*z^2); C
+        sage: x,y,z = GF(11)['x,y,z'].gens()                                            # optional - sage.rings.finite_rings
+        sage: C = Conic(x^2 + y^2 - 2*z^2); C                                           # optional - sage.rings.finite_rings
         Projective Conic Curve over Finite Field of size 11 defined by x^2 + y^2 - 2*z^2
-        sage: Conic(C.symmetric_matrix(), 'x,y,z')
+        sage: Conic(C.symmetric_matrix(), 'x,y,z')                                      # optional - sage.rings.finite_rings
         Projective Conic Curve over Finite Field of size 11 defined by x^2 + y^2 - 2*z^2
 
     Conics given by coefficients ::
 
         sage: Conic(QQ, [1,2,3])
         Projective Conic Curve over Rational Field defined by x^2 + 2*y^2 + 3*z^2
-        sage: Conic(GF(7), [1,2,3,4,5,6], 'X')
-        Projective Conic Curve over Finite Field of size 7 defined by X0^2 + 2*X0*X1 - 3*X1^2 + 3*X0*X2 - 2*X1*X2 - X2^2
+        sage: Conic(GF(7), [1,2,3,4,5,6], 'X')                                          # optional - sage.rings.finite_rings
+        Projective Conic Curve over Finite Field of size 7
+        defined by X0^2 + 2*X0*X1 - 3*X1^2 + 3*X0*X2 - 2*X1*X2 - X2^2
 
     The conic through a set of points ::
 
         sage: C = Conic(QQ, [[10,2],[3,4],[-7,6],[7,8],[9,10]]); C
-        Projective Conic Curve over Rational Field defined by x^2 + 13/4*x*y - 17/4*y^2 - 35/2*x*z + 91/4*y*z - 37/2*z^2
+        Projective Conic Curve over Rational Field
+         defined by x^2 + 13/4*x*y - 17/4*y^2 - 35/2*x*z + 91/4*y*z - 37/2*z^2
         sage: C.rational_point()
         (10 : 2 : 1)
         sage: C.point([3,4])
         (3 : 4 : 1)
 
-        sage: a = AffineSpace(GF(13),2)
-        sage: Conic([a([x,x^2]) for x in range(5)])
+        sage: a = AffineSpace(GF(13), 2)                                                # optional - sage.rings.finite_rings
+        sage: Conic([a([x,x^2]) for x in range(5)])                                     # optional - sage.rings.finite_rings
         Projective Conic Curve over Finite Field of size 13 defined by x^2 - y*z
     """
     if not (base_field is None or isinstance(base_field, IntegralDomain)):
@@ -196,7 +197,10 @@ def Conic(base_field, F=None, names=None, unique=True):
                          F[3] * y**2 + F[4] * y * z + F[5] * z**2)
         raise TypeError("F (=%s) must be a sequence of 3 or 6"
                         "coefficients" % F)
-    if is_QuadraticForm(F):
+
+    from sage.quadratic_forms.quadratic_form import QuadraticForm
+
+    if isinstance(F, QuadraticForm):
         F = F.matrix()
     if is_Matrix(F) and F.is_square() and F.ncols() == 3:
         if names is None:
@@ -204,7 +208,7 @@ def Conic(base_field, F=None, names=None, unique=True):
         temp_ring = PolynomialRing(F.base_ring(), 3, names)
         F = vector(temp_ring.gens()) * F * vector(temp_ring.gens())
 
-    if not is_MPolynomial(F):
+    if not isinstance(F, MPolynomial):
         raise TypeError("F (=%s) must be a three-variable polynomial or "
                         "a sequence of points or coefficients" % F)
 
@@ -233,11 +237,11 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     if F.parent().ngens() == 3:
         P2 = ProjectiveSpace(2, base_field, names)
-        if is_FiniteField(base_field):
+        if isinstance(base_field, FiniteField):
             return ProjectiveConic_finite_field(P2, F)
         if is_RationalField(base_field):
             return ProjectiveConic_rational_field(P2, F)
-        if is_NumberField(base_field):
+        if isinstance(base_field, NumberField):
             return ProjectiveConic_number_field(P2, F)
         if is_FractionField(base_field) and (is_PolynomialRing(base_field.ring()) or is_MPolynomialRing(base_field.ring())):
             return ProjectiveConic_rational_function_field(P2, F)

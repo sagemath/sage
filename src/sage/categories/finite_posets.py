@@ -9,15 +9,16 @@ Here is some terminology used in this file:
 - An *order ideal* (or *lower set*) of a poset `P` is a subset `S` of `P`
   such that if `x \leq y` and `y\in S` then `x\in S`.
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
+
 
 class FinitePosets(CategoryWithAxiom):
     r"""
@@ -1949,5 +1950,5 @@ class FinitePosets(CategoryWithAxiom):
                 [[]]
             """
             if direction != 'up' and direction != 'down':
-                raise ValueError("Direction must be either 'up' or 'down'.")
+                raise ValueError("direction must be either 'up' or 'down'")
             return self.antichains().map(lambda elements: self.directed_subset(elements, direction))

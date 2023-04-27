@@ -40,7 +40,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.all import ZZ, Integer, vector, SageObject, binomial
+from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
+from sage.modules.free_module_element import free_module_element as vector
+from sage.structure.sage_object import SageObject
+from sage.functions.other import binomial
 from .decoder import Decoder
 
 
@@ -341,8 +345,6 @@ class InformationSetAlgorithm(SageObject):
         return "\\textnormal{{ISD Algorithm ({}) for }}{} \\textnormal{{decoding {} errors}}".format(self._algorithm_name, self.code()._latex_(), _format_decoding_interval(self.decoding_interval()))
 
 
-
-
 class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
     r"""
     The Lee-Brickell algorithm for information-set decoding.
@@ -475,16 +477,16 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
                 # I was not an information set
                 continue
             Gt = Gi_inv * G
-            #step 2.
+            # step 2.
             y = r - vector([r[i] for i in I]) * Gt
             g = Gt.rows()
-            #step 3.
-            for pi in range(p+1):
+            # step 3.
+            for pi in range(p + 1):
                 for A in itertools.combinations(range(k), pi):
                     for m in itertools.product(Fstar, repeat=pi):
-                        e = y - sum(m[i]*g[A[i]] for i in range(pi))
+                        e = y - sum(m[i] * g[A[i]] for i in range(pi))
                         errs = e.hamming_weight()
-                        if  errs >= tau[0] and errs <= tau[1]:
+                        if tau[0] <= errs <= tau[1]:
                             return r - e
 
     def calibrate(self):
@@ -581,7 +583,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         def compute_estimate(p):
             iters = 1.* binomial(n, k)/ \
                 sum( binomial(n-tau, k-i)*binomial(tau,i) for i in range(p+1) )
-            estimate = iters*(T + \
+            estimate = iters*(T +
                 sum(P[pi] * (q-1)**pi * binomial(k, pi) for pi in range(p+1) ))
             return estimate
 
@@ -623,8 +625,6 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
                 search_size = p
         self._parameters = { 'search_size': search_size }
         self._time_estimate = estimates[search_size]
-
-
 
 
 class LinearCodeInformationSetDecoder(Decoder):
@@ -846,7 +846,7 @@ class LinearCodeInformationSetDecoder(Decoder):
             self._algorithm = algorithm_names[algorithm](code, number_errors, **kwargs)
         else:
             raise ValueError("Unknown ISD algorithm '{}'."
-                            " The known algorithms are {}."\
+                            " The known algorithms are {}."
                             .format(algorithm, sorted(algorithm_names)))
 
     _known_algorithms = {

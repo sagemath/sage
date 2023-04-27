@@ -27,7 +27,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
-from sage.arith.all import binomial, euler_phi
+from sage.arith.misc import binomial, euler_phi
 from sage.misc.misc_c import prod
 from sage.matrix.constructor import matrix
 

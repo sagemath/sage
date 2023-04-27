@@ -248,7 +248,7 @@ class _Coordinates():
 
         Because the base :class:`_Coordinates` class automatically checks the
         initializing variables with the transform method, :class:`_Coordinates`
-        cannot be instantiated by itself.  We test a subclass.
+        cannot be instantiated by itself.  We test a subclass::
 
             sage: from sage.plot.plot3d.plot3d import _ArbitraryCoordinates as arb
             sage: x,y,z=var('x,y,z')

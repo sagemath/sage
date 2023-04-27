@@ -26,7 +26,7 @@ REFERENCES:
 # ****************************************************************************
 from __future__ import annotations
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import lcm
+from sage.arith.functions import lcm
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 

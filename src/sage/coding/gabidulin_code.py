@@ -544,7 +544,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
         sage: p = (z9^6 + z9^2 + z9 + 1)*x + z9^7 + z9^5 + z9^4 + z9^2
         sage: vector(p.multi_point_evaluation(C.evaluation_points()))
         doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-        See http://trac.sagemath.org/13215 for details.
+        See https://github.com/sagemath/sage/issues/13215 for details.
         (z9^7 + z9^6 + z9^5 + z9^4 + z9 + 1, z9^6 + z9^5 + z9^3 + z9)
 
     EXAMPLES::

@@ -60,7 +60,7 @@ We compute in a quotient of a polynomial ring over `\ZZ/17\ZZ`::
 Note that the result of a computation is not necessarily reduced::
 
     sage: (a+b)^17
-    256*a*b^16 + 256*b^17
+    a*b^16 + b^17
     sage: S(17) == 0
     True
 
@@ -1643,7 +1643,6 @@ class MPolynomialIdeal_singular_repr(
         """
         R = self.ring()
 
-
         for other in others:
             if not isinstance(other, MPolynomialIdeal_singular_repr) or other.ring() != R:
                 raise TypeError("Intersection is only available for ideals of the same ring.")
@@ -2187,7 +2186,7 @@ class MPolynomialIdeal_singular_repr(
             return PolynomialSequence(nR, sorted([nR(f) for f in nIs],reverse=True), immutable=True)
 
         else:
-            raise TypeError("Cannot convert basis with given algorithm")
+            raise TypeError("cannot convert basis with given algorithm")
 
     @handle_AA_and_QQbar
     def elimination_ideal(self, variables, algorithm=None, *args, **kwds):
@@ -3717,10 +3716,10 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
 
 @richcmp_method
-class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
-                        MPolynomialIdeal_macaulay2_repr, \
-                        MPolynomialIdeal_magma_repr, \
-                        Ideal_generic ):
+class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
+                       MPolynomialIdeal_macaulay2_repr,
+                       MPolynomialIdeal_magma_repr,
+                       Ideal_generic):
     def __init__(self, ring, gens, coerce=True):
         r"""
         Create an ideal in a multivariate polynomial ring.

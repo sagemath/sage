@@ -295,6 +295,8 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
         """
         The free module of the algebra.
 
+        EXAMPLES::
+
             sage: H = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0]; H
             Free algebra quotient on 3 generators ('i', 'j', 'k') and dimension 4 over Rational Field
             sage: H.module()
@@ -357,7 +359,7 @@ def hamilton_quatalg(R):
     """
     n = 3
     from sage.algebras.free_algebra import FreeAlgebra
-    from sage.matrix.all import MatrixSpace
+    from sage.matrix.matrix_space import MatrixSpace
     A = FreeAlgebra(R, n, 'i')
     F = A.monoid()
     i, j, k = F.gens()

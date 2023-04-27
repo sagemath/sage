@@ -3,10 +3,11 @@ Hyperelliptic curves over a general ring
 
 EXAMPLES::
 
-    sage: P.<x> = GF(5)[]
-    sage: f = x^5 - 3*x^4 - 2*x^3 + 6*x^2 + 3*x - 1
-    sage: C = HyperellipticCurve(f); C
-    Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^5 + 2*x^4 + 3*x^3 + x^2 + 3*x + 4
+    sage: P.<x> = GF(5)[]                                                               # optional - sage.rings.finite_rings
+    sage: f = x^5 - 3*x^4 - 2*x^3 + 6*x^2 + 3*x - 1                                     # optional - sage.rings.finite_rings
+    sage: C = HyperellipticCurve(f); C                                                  # optional - sage.rings.finite_rings
+    Hyperelliptic Curve over Finite Field of size 5
+     defined by y^2 = x^5 + 2*x^4 + 3*x^3 + x^2 + 3*x + 4
 
 ::
 
@@ -32,7 +33,7 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.polynomial.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.big_oh import O
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.laurent_series_ring import LaurentSeriesRing
@@ -46,12 +47,13 @@ def is_HyperellipticCurve(C):
     """
     EXAMPLES::
 
+        sage: from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_HyperellipticCurve
         sage: R.<x> = QQ[]; C = HyperellipticCurve(x^3 + x - 1); C
         Hyperelliptic Curve over Rational Field defined by y^2 = x^3 + x - 1
-        sage: sage.schemes.hyperelliptic_curves.hyperelliptic_generic.is_HyperellipticCurve(C)
+        sage: is_HyperellipticCurve(C)
         True
     """
-    return isinstance(C,HyperellipticCurve_generic)
+    return isinstance(C, HyperellipticCurve_generic)
 
 
 class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
@@ -83,14 +85,14 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         sage: C0 = HyperellipticCurve(f0)
         sage: f1 = x^5 - x^3 + x - 22
         sage: C1 = HyperellipticCurve(f1)
-        sage: Q.<y> = GF(5)[]
-        sage: f2 = y^5 - y^3 + y - 22
-        sage: C2 = HyperellipticCurve(f2)
+        sage: Q.<y> = GF(5)[]                                                           # optional - sage.rings.finite_rings
+        sage: f2 = y^5 - y^3 + y - 22                                                   # optional - sage.rings.finite_rings
+        sage: C2 = HyperellipticCurve(f2)                                               # optional - sage.rings.finite_rings
         sage: hash(C0) == hash(C0)
         True
         sage: hash(C0) == hash(C1)
         False
-        sage: hash(C1) == hash(C2)
+        sage: hash(C1) == hash(C2)                                                      # optional - sage.rings.finite_rings
         False
     """
     def __init__(self, PP, f, h=None, names=None, genus=None):
@@ -120,22 +122,26 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def change_ring(self, R):
         """
-        Returns this HyperellipticCurve over a new base ring R.
+        Returns this HyperellipticCurve over a new base ring ``R``.
 
         EXAMPLES::
 
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurve(x^5 - 10*x + 9)
-            sage: K = Qp(3,5)
-            sage: L.<a> = K.extension(x^30-3)
-            sage: HK = H.change_ring(K)
-            sage: HL = HK.change_ring(L); HL
-            Hyperelliptic Curve over 3-adic Eisenstein Extension Field in a defined by x^30 - 3 defined by (1 + O(a^150))*y^2 = (1 + O(a^150))*x^5 + (2 + 2*a^30 + a^60 + 2*a^90 + 2*a^120 + O(a^150))*x + a^60 + O(a^210)
+            sage: K = Qp(3, 5)                                                          # optional - sage.rings.padics
+            sage: L.<a> = K.extension(x^30 - 3)                                         # optional - sage.rings.padics
+            sage: HK = H.change_ring(K)                                                 # optional - sage.rings.padics
+            sage: HL = HK.change_ring(L); HL                                            # optional - sage.rings.padics
+            Hyperelliptic Curve
+             over 3-adic Eisenstein Extension Field in a defined by x^30 - 3
+             defined by (1 + O(a^150))*y^2 = (1 + O(a^150))*x^5
+              + (2 + 2*a^30 + a^60 + 2*a^90 + 2*a^120 + O(a^150))*x + a^60 + O(a^210)
 
-            sage: R.<x> = FiniteField(7)[]
-            sage: H = HyperellipticCurve(x^8 + x + 5)
-            sage: H.base_extend(FiniteField(7^2, 'a'))
-            Hyperelliptic Curve over Finite Field in a of size 7^2 defined by y^2 = x^8 + x + 5
+            sage: R.<x> = FiniteField(7)[]                                              # optional - sage.rings.finite_rings
+            sage: H = HyperellipticCurve(x^8 + x + 5)                                   # optional - sage.rings.finite_rings
+            sage: H.base_extend(FiniteField(7^2, 'a'))                                  # optional - sage.rings.finite_rings
+            Hyperelliptic Curve over Finite Field in a of size 7^2
+             defined by y^2 = x^8 + x + 5
         """
         from .constructor import HyperellipticCurve
         f, h = self._hyperelliptic_polynomials
@@ -192,7 +198,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: H = HyperellipticCurve(x^5+1)
+            sage: H = HyperellipticCurve(x^5 + 1)
             sage: H.is_singular()
             False
 
@@ -201,7 +207,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         the following example.::
 
             sage: R.<x> = QQ[]
-            sage: H = HyperellipticCurve(x^5+2)
+            sage: H = HyperellipticCurve(x^5 + 2)
             sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(-1)
             sage: H.is_singular()
@@ -219,23 +225,23 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
-            sage: R.<x> = GF(13)[]
-            sage: H = HyperellipticCurve(x^8+1)
-            sage: H.is_smooth()
+            sage: R.<x> = GF(13)[]                                                      # optional - sage.rings.finite_rings
+            sage: H = HyperellipticCurve(x^8 + 1)                                       # optional - sage.rings.finite_rings
+            sage: H.is_smooth()                                                         # optional - sage.rings.finite_rings
             True
 
         A hyperelliptic curve with genus at least 2 always has a singularity at
         infinity when viewed as a *plane* projective curve. This can be seen in
         the following example.::
 
-            sage: R.<x> = GF(27, 'a')[]
-            sage: H = HyperellipticCurve(x^10+2)
+            sage: R.<x> = GF(27, 'a')[]                                                 # optional - sage.rings.finite_rings
+            sage: H = HyperellipticCurve(x^10 + 2)                                      # optional - sage.rings.finite_rings
             sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(-1)
-            sage: H.is_smooth()
+            sage: H.is_smooth()                                                         # optional - sage.rings.finite_rings
             True
             sage: from sage.schemes.curves.projective_curve import ProjectivePlaneCurve
-            sage: ProjectivePlaneCurve.is_smooth(H)
+            sage: ProjectivePlaneCurve.is_smooth(H)                                     # optional - sage.rings.finite_rings
             False
         """
         return True
@@ -285,36 +291,40 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             ...
             ValueError: No odd degree model exists over field of definition
 
-            sage: K2 = QuadraticField(-2, 'a')
-            sage: Hp2 = H.change_ring(K2).odd_degree_model(); Hp2
-            Hyperelliptic Curve over Number Field in a with defining polynomial x^2 + 2 with a = 1.414213562373095?*I defined by y^2 = 6*a*x^5 - 29*x^4 - 20*x^2 + 6*a*x + 1
+            sage: K2 = QuadraticField(-2, 'a')                                          # optional - sage.rings.number_field
+            sage: Hp2 = H.change_ring(K2).odd_degree_model(); Hp2                       # optional - sage.rings.number_field
+            Hyperelliptic Curve over Number Field in a
+             with defining polynomial x^2 + 2 with a = 1.414213562373095?*I
+             defined by y^2 = 6*a*x^5 - 29*x^4 - 20*x^2 + 6*a*x + 1
 
-            sage: K3 = QuadraticField(-3, 'b')
-            sage: Hp3 = H.change_ring(QuadraticField(-3, 'b')).odd_degree_model(); Hp3
-            Hyperelliptic Curve over Number Field in b with defining polynomial x^2 + 3 with b = 1.732050807568878?*I defined by y^2 = -4*b*x^5 - 14*x^4 - 20*b*x^3 - 35*x^2 + 6*b*x + 1
+            sage: K3 = QuadraticField(-3, 'b')                                          # optional - sage.rings.number_field
+            sage: Hp3 = H.change_ring(QuadraticField(-3, 'b')).odd_degree_model(); Hp3  # optional - sage.rings.number_field
+            Hyperelliptic Curve over Number Field in b
+             with defining polynomial x^2 + 3 with b = 1.732050807568878?*I
+             defined by y^2 = -4*b*x^5 - 14*x^4 - 20*b*x^3 - 35*x^2 + 6*b*x + 1
 
-            Of course, Hp2 and Hp3 are isomorphic over the composite
+            Of course, ``Hp2`` and ``Hp3`` are isomorphic over the composite
             extension.  One consequence of this is that odd degree models
             reduced over "different" fields should have the same number of
             points on their reductions.  43 and 67 split completely in the
             compositum, so when we reduce we find:
 
-            sage: P2 = K2.factor(43)[0][0]
-            sage: P3 = K3.factor(43)[0][0]
-            sage: Hp2.change_ring(K2.residue_field(P2)).frobenius_polynomial()
+            sage: P2 = K2.factor(43)[0][0]                                              # optional - sage.rings.number_field
+            sage: P3 = K3.factor(43)[0][0]                                              # optional - sage.rings.number_field
+            sage: Hp2.change_ring(K2.residue_field(P2)).frobenius_polynomial()          # optional - sage.rings.number_field
             x^4 - 16*x^3 + 134*x^2 - 688*x + 1849
-            sage: Hp3.change_ring(K3.residue_field(P3)).frobenius_polynomial()
+            sage: Hp3.change_ring(K3.residue_field(P3)).frobenius_polynomial()          # optional - sage.rings.number_field
             x^4 - 16*x^3 + 134*x^2 - 688*x + 1849
-            sage: H.change_ring(GF(43)).odd_degree_model().frobenius_polynomial()
+            sage: H.change_ring(GF(43)).odd_degree_model().frobenius_polynomial()       # optional - sage.rings.finite_rings
             x^4 - 16*x^3 + 134*x^2 - 688*x + 1849
 
-            sage: P2 = K2.factor(67)[0][0]
-            sage: P3 = K3.factor(67)[0][0]
-            sage: Hp2.change_ring(K2.residue_field(P2)).frobenius_polynomial()
+            sage: P2 = K2.factor(67)[0][0]                                              # optional - sage.rings.number_field
+            sage: P3 = K3.factor(67)[0][0]                                              # optional - sage.rings.number_field
+            sage: Hp2.change_ring(K2.residue_field(P2)).frobenius_polynomial()          # optional - sage.rings.number_field
             x^4 - 8*x^3 + 150*x^2 - 536*x + 4489
-            sage: Hp3.change_ring(K3.residue_field(P3)).frobenius_polynomial()
+            sage: Hp3.change_ring(K3.residue_field(P3)).frobenius_polynomial()          # optional - sage.rings.number_field
             x^4 - 8*x^3 + 150*x^2 - 536*x + 4489
-            sage: H.change_ring(GF(67)).odd_degree_model().frobenius_polynomial()
+            sage: H.change_ring(GF(67)).odd_degree_model().frobenius_polynomial()       # optional - sage.rings.finite_rings
             x^4 - 8*x^3 + 150*x^2 - 536*x + 4489
 
         TESTS::
@@ -373,15 +383,18 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         EXAMPLES::
 
             sage: R.<x> = QQ[]; C = HyperellipticCurve(x^3 + x - 1, x); C
-            Hyperelliptic Curve over Rational Field defined by y^2 + x*y = x^3 + x - 1
-            sage: magma(C)             # optional - magma
+            Hyperelliptic Curve over Rational Field
+            defined by y^2 + x*y = x^3 + x - 1
+            sage: magma(C)                                          # optional - magma
             Hyperelliptic Curve defined by y^2 + x*y = x^3 + x - 1 over Rational Field
-            sage: R.<x> = GF(9,'a')[]; C = HyperellipticCurve(x^3 + x - 1, x^10); C
-            Hyperelliptic Curve over Finite Field in a of size 3^2 defined by y^2 + x^10*y = x^3 + x + 2
-            sage: D = magma(C); D             # optional - magma
+            sage: R.<x> = GF(9,'a')[]; C = HyperellipticCurve(x^3 + x - 1, x^10); C     # optional - sage.rings.finite_rings
+            Hyperelliptic Curve over Finite Field in a of size 3^2
+            defined by y^2 + x^10*y = x^3 + x + 2
+            sage: D = magma(C); D                                   # optional - magma  # optional - sage.rings.finite_rings
             Hyperelliptic Curve defined by y^2 + (x^10)*y = x^3 + x + 2 over GF(3^2)
-            sage: D.sage()                    # optional - magma
-            Hyperelliptic Curve over Finite Field in a of size 3^2 defined by y^2 + x^10*y = x^3 + x + 2
+            sage: D.sage()                                          # optional - magma  # optional - sage.rings.finite_rings
+            Hyperelliptic Curve over Finite Field in a of size 3^2
+            defined by y^2 + x^10*y = x^3 + x + 2
         """
         f, h = self._hyperelliptic_polynomials
         return 'HyperellipticCurve(%s, %s)'%(f._magma_init_(magma), h._magma_init_(magma))
@@ -429,15 +442,15 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: H = HyperellipticCurve(x^5-23*x^3+18*x^2+40*x)
-            sage: P = H(1,6)
-            sage: x,y = H.local_coordinates_at_nonweierstrass(P,prec=5)
+            sage: H = HyperellipticCurve(x^5 - 23*x^3 + 18*x^2 + 40*x)
+            sage: P = H(1, 6)
+            sage: x, y = H.local_coordinates_at_nonweierstrass(P, prec=5)
             sage: x
             1 + t + O(t^5)
             sage: y
             6 + t - 7/2*t^2 - 1/2*t^3 - 25/48*t^4 + O(t^5)
-            sage: Q = H(-2,12)
-            sage: x,y = H.local_coordinates_at_nonweierstrass(Q,prec=5)
+            sage: Q = H(-2, 12)
+            sage: x, y = H.local_coordinates_at_nonweierstrass(Q, prec=5)
             sage: x
             -2 + t + O(t^5)
             sage: y
@@ -445,7 +458,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         AUTHOR:
 
-            - Jennifer Balakrishnan (2007-12)
+        - Jennifer Balakrishnan (2007-12)
         """
         d = P[1]
         if d == 0:
@@ -481,7 +494,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: H = HyperellipticCurve(x^5-23*x^3+18*x^2+40*x)
+            sage: H = HyperellipticCurve(x^5 - 23*x^3 + 18*x^2 + 40*x)
             sage: A = H(4, 0)
             sage: x, y = H.local_coordinates_at_weierstrass(A, prec=7)
             sage: x
@@ -496,7 +509,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             t + O(t^5)
 
         AUTHOR:
-            - Jennifer Balakrishnan (2007-12)
+          - Jennifer Balakrishnan (2007-12)
 
             - Francis Clarke (2012-08-26)
         """
@@ -507,7 +520,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         pol = self.hyperelliptic_polynomials()[0]
         pol_prime = pol.derivative()
         b = P[0]
-        t2  = t**2
+        t2 = t**2
         c = b + t2/pol_prime(b)
         c = c.add_bigoh(prec)
         for _ in range(int(1 + log(prec, 2))):
@@ -533,8 +546,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: H = HyperellipticCurve(x^5-5*x^2+1)
-            sage: x,y = H.local_coordinates_at_infinity(10)
+            sage: H = HyperellipticCurve(x^5 - 5*x^2 + 1)
+            sage: x, y = H.local_coordinates_at_infinity(10)
             sage: x
             t^-2 + 5*t^4 - t^8 - 50*t^10 + O(t^12)
             sage: y
@@ -543,8 +556,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         ::
 
             sage: R.<x> = QQ['x']
-            sage: H = HyperellipticCurve(x^3-x+1)
-            sage: x,y = H.local_coordinates_at_infinity(10)
+            sage: H = HyperellipticCurve(x^3 - x + 1)
+            sage: x, y = H.local_coordinates_at_infinity(10)
             sage: x
             t^-2 + t^2 - t^4 - t^6 + 3*t^8 + O(t^12)
             sage: y
@@ -587,16 +600,18 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: H = HyperellipticCurve(x^5-23*x^3+18*x^2+40*x)
+            sage: H = HyperellipticCurve(x^5 - 23*x^3 + 18*x^2 + 40*x)
             sage: H.local_coord(H(1 ,6), prec=5)
             (1 + t + O(t^5), 6 + t - 7/2*t^2 - 1/2*t^3 - 25/48*t^4 + O(t^5))
             sage: H.local_coord(H(4, 0), prec=7)
             (4 + 1/360*t^2 - 191/23328000*t^4 + 7579/188956800000*t^6 + O(t^7), t + O(t^7))
             sage: H.local_coord(H(0, 1, 0), prec=5)
-            (t^-2 + 23*t^2 - 18*t^4 - 569*t^6 + O(t^7), t^-5 + 46*t^-1 - 36*t - 609*t^3 + 1656*t^5 + O(t^6))
+            (t^-2 + 23*t^2 - 18*t^4 - 569*t^6 + O(t^7),
+             t^-5 + 46*t^-1 - 36*t - 609*t^3 + 1656*t^5 + O(t^6))
 
         AUTHOR:
-            - Jennifer Balakrishnan (2007-12)
+
+        - Jennifer Balakrishnan (2007-12)
         """
         if P[1] == 0:
             return self.local_coordinates_at_weierstrass(P, prec, name)
@@ -605,8 +620,6 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         else:
             return self.local_coordinates_at_nonweierstrass(P, prec, name)
 
-
-
     def rational_points(self, **kwds):
         r"""
         Find rational points on the hyperelliptic curve, all arguments are passed
@@ -614,9 +627,10 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES:
 
-        For the LMFDB genus 2 curve `932.a.3728.1 <https://www.lmfdb.org/Genus2Curve/Q/932/a/3728/1>`::
+        For the LMFDB genus 2 curve `932.a.3728.1 <https://www.lmfdb.org/Genus2Curve/Q/932/a/3728/1>`_::
 
-            sage: R.<x> = PolynomialRing(QQ); C = HyperellipticCurve(R([0, -1, 1, 0, 1, -2, 1]), R([1]));
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: C = HyperellipticCurve(R([0, -1, 1, 0, 1, -2, 1]), R([1]))
             sage: C.rational_points(bound=8)
             [(-1 : -3 : 1),
             (-1 : 2 : 1),
@@ -629,9 +643,9 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             (1 : 0 : 1)]
 
         Check that :trac:`29509` is fixed for the LMFDB genus 2 curve
-        `169.a.169.1 <https://www.lmfdb.org/Genus2Curve/Q/169/a/169/1>`::
+        `169.a.169.1 <https://www.lmfdb.org/Genus2Curve/Q/169/a/169/1>`_::
 
-            sage: C = HyperellipticCurve(R([0, 0, 0, 0, 1, 1]), R([1, 1, 0, 1]));
+            sage: C = HyperellipticCurve(R([0, 0, 0, 0, 1, 1]), R([1, 1, 0, 1]))
             sage: C.rational_points(bound=10)
             [(-1 : 0 : 1),
             (-1 : 1 : 1),
@@ -641,9 +655,9 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         An example over a number field::
 
-            sage: R.<x> = PolynomialRing(QuadraticField(2));
-            sage: C = HyperellipticCurve(R([1, 0, 0, 0, 0, 1]));
-            sage: C.rational_points(bound=2)
+            sage: R.<x> = PolynomialRing(QuadraticField(2))                             # optional - sage.rings.number_field
+            sage: C = HyperellipticCurve(R([1, 0, 0, 0, 0, 1]))                         # optional - sage.rings.number_field
+            sage: C.rational_points(bound=2)                                            # optional - sage.rings.number_field
             [(-1 : 0 : 1),
              (0 : -1 : 1),
              (0 : 1 : 0),

@@ -1656,11 +1656,11 @@ class RESetMapReduceWorker(mp.Process):
             sage: w0, w1 = EX._workers
             sage: w0._todo.append(42)
             sage: thief0 = Thread(target = w0._thief, name="Thief")
-            sage: thief0.start()  # known bug (Trac #27537)
+            sage: thief0.start()  # known bug (Issue #27537)
 
-            sage: w1.steal()  # known bug (Trac #27537)
+            sage: w1.steal()  # known bug (Issue #27537)
             42
-            sage: w0._todo  # known bug (Trac #27537)
+            sage: w0._todo  # known bug (Issue #27537)
             deque([])
         """
         self._mapred._signal_task_done()

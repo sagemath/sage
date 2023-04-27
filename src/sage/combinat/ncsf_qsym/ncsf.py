@@ -2254,7 +2254,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                       From: Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
                       To:   Non-Commutative Symmetric Functions over the Rational Field in the Complete basis # Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
                 """
-                from sage.categories.all import tensor
+                from sage.categories.tensor import tensor
                 if hasattr(self, "coproduct_on_generators"):
                     return self.algebra_morphism(self.coproduct_on_generators, codomain = tensor([self, self]))
                 else:
@@ -2500,7 +2500,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 if i < 1:
                     raise ValueError("Not a positive integer: {}".format(i))
                 x = self.algebra_generators()[i]
-                from sage.categories.all import tensor
+                from sage.categories.tensor import tensor
                 return tensor([self.one(), x]) + tensor([x, self.one()])
 
     class Ribbon(CombinatorialFreeModule, BindableClass):

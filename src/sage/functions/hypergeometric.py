@@ -162,27 +162,27 @@ Series expansions of confluent hypergeometric functions::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from functools import reduce
+
+from sage.arith.misc import binomial, factorial, rising_factorial
+from sage.calculus.functional import derivative
+from sage.functions.error import erf
+from sage.functions.gamma import gamma
+from sage.functions.hyperbolic import cosh, sinh
+from sage.functions.log import exp, log
+from sage.functions.other import sqrt, real_part
+from sage.libs.mpmath import utils as mpmath_utils
+from sage.misc.latex import latex
+from sage.misc.misc_c import prod
+from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.infinity import Infinity
-from sage.arith.all import binomial, rising_factorial, factorial
+from sage.structure.element import get_coercion_model
 from sage.symbolic.constants import pi
+from sage.symbolic.expression import Expression
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.ring import SR
-from sage.structure.element import get_coercion_model
-from sage.misc.latex import latex
-from sage.misc.misc_c import prod
-from sage.libs.mpmath import utils as mpmath_utils
-from sage.symbolic.expression import Expression
-from sage.calculus.functional import derivative
-from functools import reduce
-
-from .gamma import gamma
-from .other import sqrt, real_part
-from .log import exp, log
-from .hyperbolic import cosh, sinh
-from .error import erf
 
 
 def rational_param_as_tuple(x):

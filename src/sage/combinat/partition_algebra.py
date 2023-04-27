@@ -15,18 +15,18 @@ Partition/Diagram Algebras
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .combinat import catalan_number
-from sage.combinat.free_module import CombinatorialFreeModule
+from sage.arith.misc import binomial, factorial
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.combinat.combinat import catalan_number
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.permutation import Permutations
 from sage.combinat.set_partition import SetPartition, SetPartitions, SetPartitions_set
-from sage.sets.set import Set, Set_generic
+from sage.combinat.subset import Subsets
+from sage.functions.all import ceil
 from sage.graphs.graph import Graph
-from sage.arith.all import factorial, binomial
-from .permutation import Permutations
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from .subset import Subsets
-from sage.functions.all import ceil
+from sage.sets.set import Set, Set_generic
 
 
 def _int_or_half_int(k):

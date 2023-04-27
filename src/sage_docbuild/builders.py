@@ -386,7 +386,7 @@ class AllBuilder():
         # build the other documents in parallel
         L = [(doc, name, kwds) + args for doc in others]
 
-        # Trac #31344: Work around crashes from multiprocessing
+        # Issue #31344: Work around crashes from multiprocessing
         if sys.platform == 'darwin':
             for target in L:
                 build_other_doc(target)

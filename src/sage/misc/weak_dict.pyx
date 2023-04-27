@@ -825,7 +825,7 @@ cdef class WeakValueDictionary(dict):
             sage: T = list(D.itervalues())
             doctest:warning...:
             DeprecationWarning: use values instead
-            See https://trac.sagemath.org/34488 for details.
+            See https://github.com/sagemath/sage/issues/34488 for details.
         """
         deprecation(34488, "use values instead")
         return self.values()
@@ -929,7 +929,7 @@ cdef class WeakValueDictionary(dict):
             sage: T = list(D.iteritems())
             doctest:warning...:
             DeprecationWarning: use items instead
-            See https://trac.sagemath.org/34488 for details.
+            See https://github.com/sagemath/sage/issues/34488 for details.
         """
         deprecation(34488, "use items instead")
         return self.items()

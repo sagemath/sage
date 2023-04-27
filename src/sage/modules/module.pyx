@@ -254,7 +254,7 @@ cdef class Module(Parent):
             sage: M.endomorphism_ring()
             Set of Morphisms from <sage.modules.module.Module object at ...> to <sage.modules.module.Module object at ...> in Category of modules over Integer Ring
         """
-        from sage.categories.all import End
+        from sage.categories.homset import End
         return End(self)
 
 def is_Module(x):

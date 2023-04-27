@@ -286,14 +286,13 @@ class SuffixTrie(SageObject):
         if word.is_empty():
             return 0
         if word.length() == 1:
-            return self._transition_function[(node,word)]
-        else:
-            return self.transition_function( \
-                    self._transition_function[(node,word[0:1])], word[1:])
+            return self._transition_function[(node, word)]
+        return self.transition_function(
+            self._transition_function[(node, word[0:1])], word[1:])
 
     def states(self):
         r"""
-        Returns the states of the automaton defined by the suffix trie.
+        Return the states of the automaton defined by the suffix trie.
 
         EXAMPLES::
 

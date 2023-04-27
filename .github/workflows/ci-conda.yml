@@ -6,6 +6,9 @@ on:
       - '*'
     branches:
       - 'public/build/**-runci'
+  pull_request:
+    types:
+      - labeled
   workflow_dispatch:
     # Allow to run manually
 
@@ -19,11 +22,18 @@ jobs:
     name: Conda
     runs-on: ${{ matrix.os }}
     
+    # Run on push, workflow dispatch and when certain labels are added 
+    if: |
+      github.event.action != 'labeled' ||
+      github.event.label.name == 'c: packages: optional' || 
+      github.event.label.name == 'c: packages: standard' || 
+      github.event.label.name == 's: run conda ci'
+
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python: [3.8, 3.9]
+        python: ['3.9', '3.10', '3.11']
         conda-env: [environment, environment-optional]
 
     steps:
@@ -45,7 +55,7 @@ jobs:
         run: ./bootstrap-conda
 
       - name: Cache conda packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/conda_pkgs_dir
           key:
@@ -73,17 +83,26 @@ jobs:
         run: |
           ./bootstrap
           echo "::add-matcher::.github/workflows/configure-systempackage-problem-matcher.json"
-          ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt); do echo --with-system-$pkg=force; done)
+          ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt --exclude rpy2); do echo --with-system-$pkg=force; done)
           echo "::remove-matcher owner=configure-system-package-warning::"
           echo "::remove-matcher owner=configure-system-package-error::"
+
+          # Manually install ptyprocess for now, until https://github.com/sagemath/sage/issues/32147 is fixed
+          pip install --no-build-isolation -v -v ptyprocess==0.5.1
 
       - name: Build
         shell: bash -l {0}
         run: |
-          pip install --no-build-isolation -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup
-          pip install --no-build-isolation -v -v -e ./src
+          # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda.
+          pip install --no-build-isolation --no-deps -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup
+          pip install --no-build-isolation --no-deps -v -v -e ./src
         env:
           SAGE_NUM_THREADS: 2
+        
+      - name: Verify dependencies
+        if: always()
+        shell: bash -l {0}
+        run: pip check
 
       - name: Test
         shell: bash -l {0}

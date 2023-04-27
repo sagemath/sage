@@ -74,7 +74,7 @@ def install_scripts(directory=None, ignore_existing=False):
         ....:     install_scripts(d, ignore_existing=True)
         doctest:warning...
         the function install_scripts has been deprecated and will be removed in a future version of Sage
-        See https://trac.sagemath.org/30207 for details.
+        See https://github.com/sagemath/sage/issues/30207 for details.
         Checking that Sage has the command 'gap' installed
         ...
     """

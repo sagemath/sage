@@ -47,17 +47,17 @@ AS_VAR_SET_IF([SAGE_ENABLE_$pkgname], [], [AS_VAR_SET([SAGE_ENABLE_$pkgname], [y
     done
     # --enable-SPKG options
     for pkgname in $(sage-package list :optional: :experimental: | sort); do
-                # Trac #29629: Temporary solution for Sage 9.1: Do not provide
+                # Issue #29629: Temporary solution for Sage 9.1: Do not provide
                 # --enable-SPKG options for installing pip packages
                 if [ ! -f build/pkgs/$pkgname/requirements.txt ]; then
                     pkgtype="$(cat build/pkgs/$pkgname/type)"
-                    # Trac #29124: Do not provide --enable-_recommended and similar
+                    # Issue #29124: Do not provide --enable-_recommended and similar
                     case "$pkgname" in
                         _*) ;;
                         *)  spkg_configures="$spkg_configures
 AC_SUBST(SAGE_ENABLE_$pkgname, [if_installed])"
                             if [ -f build/pkgs/$pkgname/spkg-install -o -f build/pkgs/$pkgname/spkg-install.in ]; then
-                                # Trac #31163: Not just an optional dummy package
+                                # Issue #31163: Not just an optional dummy package
                                 spkg_configures="$spkg_configures
 SAGE_SPKG_ENABLE([$pkgname], [$pkgtype], [$(grep -v ^= build/pkgs/$pkgname/SPKG.rst | head -n1 2>/dev/null || echo $pkgname)])"
                             fi

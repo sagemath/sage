@@ -41,8 +41,8 @@ class SageBaseTarFile(tarfile.TarFile):
     time (the current time), not the timestamps stored in the tarball. This
     is meant to work around https://bugs.python.org/issue32773
 
-    See http://trac.sagemath.org/ticket/20218#comment:16 and
-    https://trac.sagemath.org/ticket/24567 for more background.
+    See https://github.com/sagemath/sage/issues/20218#comment:16 and
+    https://github.com/sagemath/sage/issues/24567 for more background.
     """
 
     umask = 0o022

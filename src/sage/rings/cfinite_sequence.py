@@ -851,7 +851,7 @@ class CFiniteSequence(FieldElement,
             sage: CFiniteSequence((x/(1-x-x^2))^2).closed_form()
             1/5*(n - sqrt(1/5))*(1/2*sqrt(5) + 1/2)^n + 1/5*(n + sqrt(1/5))*(-1/2*sqrt(5) + 1/2)^n
         """
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         from sage.rings.qqbar import QQbar
 
         from sage.symbolic.ring import SR
@@ -1233,7 +1233,7 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
                 return CFiniteSequence(num / den)
         else:
             from sage.matrix.constructor import matrix
-            from sage.functions.other import ceil
+            from sage.arith.misc import integer_ceil as ceil
             from numpy import trim_zeros
             seq = sequence[:]
             while seq and sequence[-1] == 0:

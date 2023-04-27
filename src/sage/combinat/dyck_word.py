@@ -89,7 +89,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.all import Posets
+from sage.categories.posets import Posets
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1979,7 +1979,7 @@ class DyckWord_complete(DyckWord):
             sage: DyckWord(area_sequence=[0,0,0]).number_of_parking_functions()
             6
         """
-        from sage.arith.all import multinomial
+        from sage.arith.misc import multinomial
         return multinomial(self.rise_composition())
 
     def list_parking_functions(self):
@@ -2194,7 +2194,7 @@ class DyckWord_complete(DyckWord):
                     pi[touches[i] - 1] = pi[touches[i + 1] - 1]
                 pi[touches[-1] - 1] = a
             D, touch_sequence = pealing(D, return_touches=True)
-        return Permutations()(pi, check_input=False)
+        return Permutations()(pi, check=False)
 
     @combinatorial_map(name='to 321 avoiding permutation')
     def to_321_avoiding_permutation(self) -> Permutation:
@@ -3778,7 +3778,7 @@ class DyckWords_size(DyckWords):
             ....:      for p in range(7))
             True
         """
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         return (self.k1 - self.k2 + 1) * binomial(self.k1 + self.k2, self.k2) // (self.k1 + 1)
 
 ################################################################

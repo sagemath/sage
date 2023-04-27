@@ -90,7 +90,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import binomial, gcd, divisors
+from sage.arith.misc import binomial
+from sage.arith.misc import GCD as gcd
+from sage.arith.misc import divisors
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.number_field.totallyreal_data import ZZx, lagrange_degree_3, int_has_small_square_divisor, hermite_constant

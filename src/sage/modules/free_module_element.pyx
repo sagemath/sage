@@ -114,7 +114,7 @@ cimport cython
 from cpython.slice cimport PySlice_GetIndicesEx
 
 from sage.structure.sequence import Sequence
-from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
+from sage.structure.element cimport Element, RingElement, Vector
 from sage.structure.element import canonical_coercion
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp, rich_to_bool
 
@@ -1602,7 +1602,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             if isinstance(ord, AnInfinity):
                 return ord
             v.append(ord)
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         return lcm(v)
 
     def items(self):

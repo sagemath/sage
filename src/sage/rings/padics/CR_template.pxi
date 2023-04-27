@@ -905,13 +905,13 @@ cdef class CRElement(pAdicTemplateElement):
             sage: b = R(0); b.add_bigoh(3)
             O(7^3)
 
-            The precision never increases::
+        The precision never increases::
 
             sage: R(4).add_bigoh(2).add_bigoh(4)
             4 + O(7^2)
 
-            Another example that illustrates that the precision does
-            not increase::
+        Another example that illustrates that the precision does
+        not increase::
 
             sage: k = Qp(3,5)
             sage: a = k(1234123412/3^70); a

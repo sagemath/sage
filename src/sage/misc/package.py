@@ -203,7 +203,7 @@ class PackageInfo(NamedTuple):
             sage: package["name"]
             doctest:warning...
             dict-like access is deprecated, use pkg.name instead of pkg['name'], for example
-            See https://trac.sagemath.org/31013 for details.
+            See https://github.com/sagemath/sage/issues/31013 for details.
             'test_package'
             sage: package[0]
             'test_package'
@@ -398,7 +398,7 @@ def installed_packages(exclude_pip=True):
     installed = {}
     if not exclude_pip:
         installed.update(pip_installed_packages(normalization='spkg'))
-    # Sage packages should override pip packages (Trac #23997)
+    # Sage packages should override pip packages (Issue #23997)
 
     for inst_dir in _spkg_inst_dirs():
         try:

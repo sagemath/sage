@@ -108,7 +108,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             \Bold{Z}_{7}
             sage: K = ZpLF(2); K   # indirect doctest
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/23505 for details.
+            See https://github.com/sagemath/sage/issues/23505 for details.
             2-adic Ring with lattice-float precision
             sage: latex(K)
             \Bold{Z}_{2}

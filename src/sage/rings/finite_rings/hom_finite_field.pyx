@@ -106,7 +106,7 @@ from sage.rings.integer cimport Integer
 from sage.categories.homset import Hom
 from sage.structure.element cimport Element
 
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_base
 from sage.rings.morphism cimport RingHomomorphism, RingHomomorphism_im_gens, FrobeniusEndomorphism_generic
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
@@ -227,9 +227,9 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         """
         domain = parent.domain()
         codomain = parent.codomain()
-        if not is_FiniteField(domain):
+        if not isinstance(domain, FiniteField_base):
             raise TypeError("The domain is not a finite field or does not provide the required interface for finite fields")
-        if not is_FiniteField(codomain):
+        if not isinstance(codomain, FiniteField_base):
             raise TypeError("The codomain is not a finite field or does not provide the required interface for finite fields")
         if domain.characteristic() != codomain.characteristic() or codomain.degree() % domain.degree() != 0:
             raise ValueError("No embedding of %s into %s" % (domain, codomain))
@@ -522,7 +522,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             ...
             TypeError: The domain is not a finite field or does not provide the required interface for finite fields
         """
-        if not is_FiniteField(domain):
+        if not isinstance(domain, FiniteField_base):
             raise TypeError("The domain is not a finite field or does not provide the required interface for finite fields")
         try:
             n = Integer(n)
@@ -619,7 +619,10 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             sage: Frob(t) == t^5
             True
         """
-        return x ** self._q
+        if self.is_identity():
+            return x
+        else:
+            return x.pth_power(self._power)
 
 
     def order(self):

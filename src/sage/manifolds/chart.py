@@ -758,7 +758,7 @@ class Chart(UniqueRepresentation, SageObject):
             doctest:warning...
             DeprecationWarning: Chart.add_restrictions is deprecated; provide the
             restrictions at the time of creating the chart
-            See https://trac.sagemath.org/32102 for details.
+            See https://github.com/sagemath/sage/issues/32102 for details.
             sage: X.valid_coordinates(2+i, 1)
             True
             sage: X.valid_coordinates(i, 1)
@@ -2165,7 +2165,7 @@ class RealChart(Chart):
                 rlatex += r"\right]"
                 if bounds[1][1] == 'periodic':
                     rtxt += " (periodic)"
-                    rlatex += r"\mbox{(periodic)}"
+                    rlatex += r"\text{(periodic)}"
             else:
                 rtxt += ")"
                 rlatex += r"\right)"
@@ -2222,7 +2222,7 @@ class RealChart(Chart):
             doctest:warning...
             DeprecationWarning: Chart.add_restrictions is deprecated; provide the
             restrictions at the time of creating the chart
-            See https://trac.sagemath.org/32102 for details.
+            See https://github.com/sagemath/sage/issues/32102 for details.
             sage: X.valid_coordinates(0,2)
             False
             sage: X.valid_coordinates(0,1/3)
@@ -2316,7 +2316,6 @@ class RealChart(Chart):
         self._bounds = tuple(bounds)
         self._restrictions = new_restrictions
         self._fast_valid_coordinates = None
-
 
     def restrict(self, subset, restrictions=None):
         r"""

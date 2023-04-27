@@ -22,7 +22,7 @@ compression of FreeMonoid elements (a feature), and could be packed into words.
 
 # import operator
 from sage.rings.integer import Integer
-from sage.rings.all import RealField
+from sage.rings.real_mpfr import RealField
 from .free_monoid_element import FreeMonoidElement
 from sage.structure.richcmp import richcmp
 

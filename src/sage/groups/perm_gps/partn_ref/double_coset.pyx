@@ -268,9 +268,10 @@ cdef void deallocate_dc_work_space(dc_work_space *work_space):
 
 cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *ordering2,
     int n, bint (*all_children_are_equivalent)(PartitionStack *PS, void *S),
-    int (*refine_and_return_invariant)\
-         (PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len),
-    int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree),
+    int (*refine_and_return_invariant)(PartitionStack *PS, void *S,
+                                       int *cells_to_refine_by, int ctrb_len),
+    int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2,
+                              int degree),
     StabilizerChain *input_group,
     dc_work_space *work_space_prealloc, int *isom) except -1:
     """

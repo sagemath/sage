@@ -9,6 +9,8 @@ see a complete list.
 AUTHORS:
 
 - John H. Palmieri (2016-07)
+
+- Miguel Marco (2022-12)
 """
 # ****************************************************************************
 #  Copyright (C) 2016 John H. Palmieri <palmieri at math.washington.edu>
@@ -32,7 +34,6 @@ import os
 from pyparsing import OneOrMore, nestedExpr
 
 from sage.env import SAGE_ENV
-from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.latex import latex
 from sage.rings.infinity import Infinity
@@ -48,7 +49,8 @@ import sage.topology.simplicial_complex_catalog as simplicial_complexes
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.categories.simplicial_sets', 'SimplicialSets')
 
-########################################################################
+
+# ######################################################################
 # The nerve of a finite monoid, used in sage.categories.finite_monoid.
 
 class Nerve(SimplicialSet_arbitrary):
@@ -359,6 +361,8 @@ def RealProjectiveSpace(n):
         RP^{\infty}
     """
     if n == Infinity:
+        from sage.groups.abelian_gps.abelian_group import AbelianGroup
+
         X = AbelianGroup([2]).nerve()
         X.rename('RP^oo')
         X.rename_latex('RP^{\\infty}')
@@ -790,3 +794,65 @@ def HopfMap():
     return S3.Hom(S2)({alpha_1:s0_sigma, alpha_2:s1_sigma,
                        alpha_3:s2_sigma, alpha_4:s0_sigma,
                        alpha_5:s2_sigma, alpha_6:s1_sigma})
+
+
+def PresentationComplex(G):
+    r"""
+    Return a simplicial set constructed from a group presentation.
+    The result is a subdivision of the presentation complex.
+
+    The presentation complex has a single vertex and it has one edge for
+    each generator. Then triangles (and eventually new edges
+    to glue them) are added to realize the relations.
+
+    INPUT:
+
+    - "G" -- a finitely presented group
+
+    EXAMPLES::
+
+        sage: G = SymmetricGroup(2).as_finitely_presented_group()
+        sage: G
+        Finitely presented group < a | a^2 >
+        sage: S = simplicial_sets.PresentationComplex(G)
+        sage: S
+        Simplicial set with 5 non-degenerate simplices
+        sage: S.face_data()
+        {Delta^0: None,
+         a: (Delta^0, Delta^0),
+         a^-1: (Delta^0, Delta^0),
+         Ta: (a, s_0 Delta^0, a^-1),
+         a^2: (a, s_0 Delta^0, a)}
+        sage: S.fundamental_group()
+        Finitely presented group < e0 | e0^2 >
+    """
+    O = AbstractSimplex(0)
+    SO = O.apply_degeneracies(0)
+    edges = {g: AbstractSimplex(1, name=str(g)) for g in G.gens()}
+    inverseedges = {g.inverse(): AbstractSimplex(1, name=str(g.inverse())) for g in G.gens()}
+    all_edges = {}
+    all_edges.update(edges)
+    all_edges.update(inverseedges)
+    triangles = {g: AbstractSimplex(2, name='T' + str(g)) for g in G.gens()}
+    face_maps = {g: [O, O] for g in all_edges.values()}
+    face_maps.update({triangles[t]: [all_edges[t], SO, all_edges[t.inverse()]] for t in triangles})
+    for r in G.relations():
+        if len(r.Tietze()) == 1:
+            pass
+        elif len(r.Tietze()) == 2:
+            a = all_edges[G([r.Tietze()[0]])]
+            b = all_edges[G([r.Tietze()[1]])]
+            T = AbstractSimplex(2, name=str(r))
+            face_maps[T] = [a, SO, b]
+        else:
+            words = [all_edges[G([a])] for a in r.Tietze()]
+            words[-1] = all_edges[G([-r.Tietze()[-1]])]
+            while len(words) > 3:
+                auxedge = AbstractSimplex(1)
+                face_maps[auxedge] = [O, O]
+                auxtring = AbstractSimplex(2)
+                face_maps[auxtring] = [words[1], auxedge, words[0]]
+                words = [auxedge] + words[2:]
+            auxtring = AbstractSimplex(2)
+            face_maps[auxtring] = [words[1], words[2], words[0]]
+    return SimplicialSet_finite(face_maps, base_point=O)

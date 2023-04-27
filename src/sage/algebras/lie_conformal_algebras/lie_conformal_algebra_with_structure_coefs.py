@@ -17,7 +17,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.sets.family import Family
 from .lie_conformal_algebra_element import LCAStructureCoefficientsElement
 from sage.categories.lie_conformal_algebras import LieConformalAlgebras
@@ -158,18 +158,18 @@ class LieConformalAlgebraWithStructureCoefficients(
                 if lth_product:
                     vals[l]=lth_product
 
-            myvals = tuple([(k,tuple(v.items())) for k,v in vals.items() if v])
+            myvals = tuple((k, tuple(v.items())) for k, v in vals.items() if v)
 
             if key in sc.keys() and sorted(sc[key]) != sorted(myvals):
-                raise ValueError("two distinct values given for one "\
-                                 "and the same bracket, skew-symmetry"\
+                raise ValueError("two distinct values given for one "
+                                 "and the same bracket, skew-symmetry"
                                  "is not satisfied?")
             if myvals:
                 sc[key] = myvals
 
-            #We now add the skew-symmetric part to optimize
-            #brackets computations later
-            key=(mypair[1],mypair[0])
+            # We now add the skew-symmetric part to optimize
+            # brackets computations later
+            key = (mypair[1], mypair[0])
             if index_to_parity[mypair[0]]*index_to_parity[mypair[1]]:
                 parsgn = -1
             else:
@@ -191,11 +191,11 @@ class LieConformalAlgebraWithStructureCoefficients(
                 if kth_product:
                     vals[k]=kth_product
 
-            myvals = tuple([(k,tuple(v.items())) for k,v in vals.items() if v])
+            myvals = tuple((k, tuple(v.items())) for k, v in vals.items() if v)
 
             if key in sc.keys() and sorted(sc[key]) != sorted(myvals):
-                raise ValueError("two distinct values given for one "\
-                                 "and the same bracket. "\
+                raise ValueError("two distinct values given for one "
+                                 "and the same bracket. "
                                  "Skew-symmetry is not satisfied?")
             if myvals:
                 sc[key] = myvals
@@ -233,31 +233,31 @@ class LieConformalAlgebraWithStructureCoefficients(
                 # index_set
                 pass
 
-        issuper=kwds.pop('super', False)
+        issuper = kwds.pop('super', False)
         if parity is None:
-            parity = (0,)*index_set.cardinality()
+            parity = (0,) * index_set.cardinality()
         else:
             issuper = True
 
         try:
             assert len(parity) == index_set.cardinality()
         except AssertionError:
-            raise ValueError("parity should have the same length as the "\
-                             "number of generators, got {}".format(parity))
+            raise ValueError("parity should have the same length as the "
+                             f"number of generators, got {parity}")
 
         s_coeff = LieConformalAlgebraWithStructureCoefficients\
-                    ._standardize_s_coeff(s_coeff, index_set, central_elements,
-                                          parity)
+            ._standardize_s_coeff(s_coeff, index_set, central_elements,
+                                  parity)
 
         if names is not None and central_elements is not None:
             names += tuple(central_elements)
 
-        self._index_to_pos = {k: i for i,k in enumerate(index_set)}
-        #Add central parameters to index_to_pos so that we can
-        #represent names
+        self._index_to_pos = {k: i for i, k in enumerate(index_set)}
+        # Add central parameters to index_to_pos so that we can
+        # represent names
         if central_elements is not None:
-            for i,ce in enumerate(central_elements):
-                self._index_to_pos[ce] = len(index_set)+i
+            for i, ce in enumerate(central_elements):
+                self._index_to_pos[ce] = len(index_set) + i
 
         default_category = LieConformalAlgebras(R).WithBasis().FinitelyGenerated()
         if issuper:

@@ -90,7 +90,7 @@ real space::
     sage: Q = I + W.w0.coxeter_sorting_word(I)
     sage: S = SubwordComplex(Q,W.w0)
     sage: S.brick_polytope()
-    doctest:...: RuntimeWarning: the polytope is build with rational vertices
+    doctest:...: RuntimeWarning: the polytope is built with rational vertices
     A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 32 vertices
 
 AUTHORS:
@@ -768,7 +768,7 @@ class SubwordComplexFacet(Simplex, Element):
             sage: Q = c.reduced_word()*2 + W.w0.coxeter_sorting_word(c) # optional - gap3
             sage: SC = SubwordComplex(Q, W.w0)                          # optional - gap3
             sage: F = SC[15]; F.plot()                                  # optional - gap3
-            Graphics object consisting of 52 graphics primitives
+            Graphics object consisting of 53 graphics primitives
 
         TESTS::
 
@@ -1696,7 +1696,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         else:
             from sage.rings.cc import CC
             from warnings import warn
-            warn("the polytope is build with rational vertices", RuntimeWarning)
+            warn("the polytope is built with rational vertices", RuntimeWarning)
             min_sum = [[QQ(CC(v)) for v in F.extended_weight_configuration()[i]] for F in self]
         return Polyhedron(min_sum)
 
@@ -1737,6 +1737,8 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: c = W.index_set(); Q = c + tuple(W.w0.coxeter_sorting_word(c))    # optional - gap3
             sage: SC = SubwordComplex(Q,W.w0)                           # optional - gap3
             sage: SC.brick_polytope()                                   # optional - gap3
+            doctest:...:
+            RuntimeWarning: the polytope is built with rational vertices
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 32 vertices
         """
         BV = self.brick_vectors(coefficients=coefficients)
@@ -1747,7 +1749,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         else:
             from sage.rings.cc import CC
             from warnings import warn
-            warn("the polytope is build with rational vertices", RuntimeWarning)
+            warn("the polytope is built with rational vertices", RuntimeWarning)
             BV = [[QQ(CC(v).real()) for v in V] for V in BV]
         return Polyhedron(BV)
 

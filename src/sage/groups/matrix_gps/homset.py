@@ -32,7 +32,7 @@ def is_MatrixGroupHomset(x):
         doctest:...: DeprecationWarning:
         Importing MatrixGroupHomset from here is deprecated; please use
         "from sage.groups.libgap_morphism import GroupHomset_libgap as MatrixGroupHomset" instead.
-        See https://trac.sagemath.org/25444 for details.
+        See https://github.com/sagemath/sage/issues/25444 for details.
         False
 
         sage: F = GF(5)

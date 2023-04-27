@@ -127,7 +127,7 @@ def _explain_constructor(cl):
         var = "It accepts unspecified arguments as well.\n"
     else:
         var = ""
-    return("{}\n{}\n{}See the documentation of {}.{} for more details."\
+    return("{}\n{}\n{}See the documentation of {}.{} for more details."
             .format(reqs, opts, var, cl.__module__, cl.__name__))
 
 
@@ -337,7 +337,7 @@ class AbstractCode(Parent):
             ....:        super().__init__(10)
 
         We check we get a sensible error message while asking for an
-        iterator over the elements of our new class:
+        iterator over the elements of our new class::
 
             sage: C = MyCode()
             sage: list(C)
@@ -365,7 +365,7 @@ class AbstractCode(Parent):
             ....:        super().__init__(length)
 
         We check we get a sensible error message while asking if an element is
-        in our new class:
+        in our new class::
 
             sage: C = MyCode(3)
             sage: vector((1, 0, 0, 0, 0, 1, 1)) in C
@@ -461,7 +461,7 @@ class AbstractCode(Parent):
             ....:        super().__init__(10)
 
         We check we get a sensible error message while asking for a string
-        representation of an instance of our new class:
+        representation of an instance of our new class::
 
             sage: C = MyCode()
             sage: C #random
@@ -489,7 +489,7 @@ class AbstractCode(Parent):
             ....:        super().__init__(10)
 
         We check we get a sensible error message while asking for a string
-        representation of an instance of our new class:
+        representation of an instance of our new class::
 
             sage: C = MyCode()
             sage: latex(C)

@@ -42,7 +42,8 @@ import sage.misc.latex as latex
 
 import sage.rings.rational_field as rational_field
 import sage.rings.integer_ring as integer_ring
-from sage.arith.all import kronecker_symbol, gcd
+from sage.arith.misc import kronecker as kronecker_symbol
+from sage.arith.misc import GCD as gcd
 import sage.misc.misc as misc
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
@@ -995,16 +996,38 @@ class NumberFieldIdeal(Ideal_generic):
             False
             sage: K.ideal(17).is_prime()  # ramified
             False
+
+        TESTS:
+
+        Check that we do not factor the norm of the ideal, this used
+        to take half an hour, see :trac:`33360`::
+
+            sage: K.<a,b,c> = NumberField([x^2-2,x^2-3,x^2-5])
+            sage: t = (((-2611940*c + 1925290/7653)*b - 1537130/7653*c
+            ....:       + 10130950)*a + (1343014/7653*c - 8349770)*b
+            ....:       + 6477058*c - 2801449990/4002519)
+            sage: t.is_prime()
+            False
         """
         try:
             return self._pari_prime is not None
         except AttributeError:
-            F = self.factor()  # factorization with caching
-            if len(F) != 1 or F[0][1] != 1:
-                self._pari_prime = None
-            else:
-                self._pari_prime = F[0][0]._pari_prime
-            return self._pari_prime is not None
+            pass
+
+        K = self.number_field().pari_nf()
+        I = self.pari_hnf()
+
+        candidate = K.idealismaximal(I) or None
+
+        # PARI uses probabilistic primality testing inside idealismaximal().
+        if get_flag(None, 'arithmetic'):
+            # proof required, check using isprime()
+            if candidate and not candidate[0].isprime():
+                candidate = None
+
+        self._pari_prime = candidate
+
+        return self._pari_prime is not None
 
     def pari_prime(self):
         r"""
@@ -2073,7 +2096,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         Rbasis = R.basis()
         n = len(Rbasis)
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         M = MatrixSpace(ZZ,n)([R.coordinates(y) for y in self.basis()])
 
         D = M.hermite_form()
@@ -2142,7 +2165,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         R = self.number_field().maximal_order()
         Rbasis = R.basis()
         n = len(Rbasis)
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         M = MatrixSpace(ZZ, n)([R.coordinates(_) for _ in self.basis()])
 
         D = M.hermite_form()
@@ -2283,7 +2306,8 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         g = G.gens_values()
         n = G.ngens()
 
-        from sage.matrix.all import Matrix, diagonal_matrix
+        from sage.matrix.constructor import Matrix
+        from sage.matrix.special import diagonal_matrix
 
         M = diagonal_matrix(ZZ, invs)
         if subgp_gens:
@@ -2711,7 +2735,11 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         G = self.idealstar(2)
         invs = G.invariants()
 
-        from sage.matrix.all import matrix, identity_matrix, zero_matrix, diagonal_matrix, block_matrix
+        from sage.matrix.constructor import Matrix as matrix
+        from sage.matrix.special import identity_matrix
+        from sage.matrix.special import zero_matrix
+        from sage.matrix.special import diagonal_matrix
+        from sage.matrix.special import block_matrix
 
         # We use Hermite normal form twice: once to express the standard
         # generators in terms of the new ones (independently of x) and once to
@@ -2842,11 +2870,10 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         """
         if not self.is_integral():
             raise ValueError("euler_phi only defined for integral ideals")
-        return prod([(np-1)*np**(e-1) \
-                     for np,e in [(p.absolute_norm(),e) \
-                                  for p,e in self.factor()]])
+        it = ((p.absolute_norm(), e) for p, e in self.factor())
+        return prod((np - 1) * np**(e - 1) for np, e in it)
 
-    def prime_to_S_part(self,S):
+    def prime_to_S_part(self, S):
         r"""
         Return the part of this fractional ideal which is coprime to
         the prime ideals in the list ``S``.

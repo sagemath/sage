@@ -11,16 +11,15 @@ AUTHORS:
 - Sebastian Oehms   (2019-01-19): :meth:`section` added to :class:`FormalCompositeMap`.
   See :trac:`27081`.
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from . import homset
 import weakref
@@ -52,6 +51,7 @@ def unpickle_map(_class, parent, _dict, _slots):
         mor.__dict__ = _dict
     return mor
 
+
 def is_Map(x):
     """
     Auxiliary function: Is the argument a map?
@@ -65,6 +65,7 @@ def is_Map(x):
         True
     """
     return isinstance(x, Map)
+
 
 cdef class Map(Element):
     """
@@ -130,13 +131,13 @@ cdef class Map(Element):
         C = parent.codomain()
         self._category_for = parent.homset_category()
         self._codomain = C
-        self.domain    = ConstantFunction(D)
-        self.codomain  = ConstantFunction(C)
+        self.domain = ConstantFunction(D)
+        self.codomain = ConstantFunction(C)
         self._is_coercion = False
         if D.is_exact() and C.is_exact():
-            self._coerce_cost = 10 # default value.
+            self._coerce_cost = 10  # default value.
         else:
-            self._coerce_cost = 10000 # inexact morphisms are bad.
+            self._coerce_cost = 10000  # inexact morphisms are bad.
 
     def __copy__(self):
         """
@@ -558,13 +559,13 @@ cdef class Map(Element):
         D = self.domain()
         if D is None:
             return "Defunct map"
-        s = "%s map:"%self._repr_type()
-        s += "\n  From: %s"%D
-        s += "\n  To:   %s"%self._codomain
+        s = "%s map:" % self._repr_type()
+        s += "\n  From: %s" % D
+        s += "\n  To:   %s" % self._codomain
         if isinstance(self.domain, ConstantFunction):
             d = self._repr_defn()
             if d != '':
-                s += "\n  Defn: %s"%('\n        '.join(d.split('\n')))
+                s += "\n  Defn: %s" % ('\n        '.join(d.split('\n')))
         else:
             d = "(map internal to coercion system -- copy before use)"
             s = d + "\n" + s
@@ -574,12 +575,12 @@ cdef class Map(Element):
         D = self.domain()
         if D is None:
             return "Defunct map"
-        s = "%s map:"%self._repr_type()
-        s += "\n  From: %s"%D
-        s += "\n  To:   %s"%self._codomain
+        s = "%s map:" % self._repr_type()
+        s += "\n  From: %s" % D
+        s += "\n  To:   %s" % self._codomain
         d = self._repr_defn()
         if d != '':
-            s += "\n  Defn: %s"%('\n        '.join(d.split('\n')))
+            s += "\n  Defn: %s" % ('\n        '.join(d.split('\n')))
         return s
 
     def domains(self):
@@ -815,8 +816,8 @@ cdef class Map(Element):
         """
         if not args and not kwds:
             return self(x)
-        else:
-            raise NotImplementedError("_call_with_args not overridden to accept arguments for %s" % type(self))
+        raise NotImplementedError("_call_with_args not overridden "
+                                  f"to accept arguments for {type(self)}")
 
     def __mul__(self, right):
         r"""
@@ -1214,7 +1215,7 @@ cdef class Map(Element):
             sage: psi^2
             Traceback (most recent call last):
             ...
-            TypeError: self must be an endomorphism.
+            TypeError: self must be an endomorphism
 
             sage: K.<a> = NumberField(x^4 - 5*x + 5)
             sage: C5.<z> = CyclotomicField(5)
@@ -1230,7 +1231,7 @@ cdef class Map(Element):
               Defn: z |--> 3/11*a^3 + 4/11*a^2 + 9/11*a - 14/11
         """
         if self.domain() is not self._codomain and n != 1 and n != -1:
-            raise TypeError("self must be an endomorphism.")
+            raise TypeError("self must be an endomorphism")
         if n == 0:
             from sage.categories.morphism import IdentityMorphism
             return IdentityMorphism(self._parent)
@@ -1330,7 +1331,7 @@ cdef class Section(Map):
               To:   Multivariate Polynomial Ring in x, y over Rational Field
         """
         from sage.categories.homset import Hom
-        from sage.categories.all import SetsWithPartialMaps
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         Map.__init__(self, Hom(map.codomain(), map.domain(), SetsWithPartialMaps()))
         self._inverse = map    # TODO: Use this attribute somewhere!
 
@@ -1776,7 +1777,7 @@ cdef class FormalCompositeMap(Map):
                       From: Univariate Polynomial Ring in x over Rational Field
                       To:   Univariate Polynomial Ring in a over Rational Field
         """
-        s = "  %s"%(self.__list[0])
+        s = "  %s" % (self.__list[0])
         for f in self.__list[1:]:
             s += "\nthen\n  %s" % f
         return s
@@ -1870,7 +1871,7 @@ cdef class FormalCompositeMap(Map):
             sage: c2.is_injective()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Not enough information to deduce injectivity.
+            NotImplementedError: not enough information to deduce injectivity
 
         If the first map is surjective and the second map is not injective,
         then the composition is not injective::
@@ -1911,7 +1912,7 @@ cdef class FormalCompositeMap(Map):
         if all(f.is_surjective() for f in injectives):
             return False
 
-        raise NotImplementedError("Not enough information to deduce injectivity.")
+        raise NotImplementedError("not enough information to deduce injectivity")
 
     def is_surjective(self):
         """
@@ -1953,7 +1954,7 @@ cdef class FormalCompositeMap(Map):
             ....:     V2.hom(Matrix([[1], [1]]), V1)).is_surjective()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Not enough information to deduce surjectivity.
+            NotImplementedError: not enough information to deduce surjectivity
         """
         try:
             # we try the category first
@@ -1977,7 +1978,7 @@ cdef class FormalCompositeMap(Map):
         if all(f.is_injective() for f in surjectives):
             return False
 
-        raise NotImplementedError("Not enough information to deduce surjectivity.")
+        raise NotImplementedError("not enough information to deduce surjectivity")
 
     def domains(self):
         """

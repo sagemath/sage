@@ -85,7 +85,7 @@ def is_CallableSymbolicExpressionRing(x):
         doctest:warning...
         DeprecationWarning: is_CallableSymbolicExpressionRing is deprecated;
         use isinstance(..., sage.rings.abc.CallableSymbolicExpressionRing instead
-        See https://trac.sagemath.org/32665 for details.
+        See https://github.com/sagemath/sage/issues/32665 for details.
         False
         sage: var('x,y,z')
         (x, y, z)
@@ -111,7 +111,7 @@ def is_CallableSymbolicExpression(x):
         doctest:warning...
         DeprecationWarning: is_CallableSymbolicExpression is deprecated;
         use isinstance(..., Expression) and ....is_callable() instead
-        See https://trac.sagemath.org/34215 for details.
+        See https://github.com/sagemath/sage/issues/34215 for details.
         True
         sage: is_CallableSymbolicExpression(a+2*x)
         False
@@ -490,11 +490,11 @@ class CallableSymbolicExpressionRingFactory(UniqueFactory):
             (x, y)
         """
         if check:
-            from sage.symbolic.ring import is_SymbolicVariable
+            from sage.structure.element import Expression
             if len(args) == 1 and isinstance(args[0], (list, tuple)):
                 args, = args
             for arg in args:
-                if not is_SymbolicVariable(arg):
+                if not (isinstance(arg, Expression) and arg.is_symbol()):
                     raise TypeError("must construct a function with a tuple (or list) of variables")
             args = tuple(args)
         return args

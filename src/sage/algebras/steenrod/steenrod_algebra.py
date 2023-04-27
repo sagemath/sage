@@ -455,7 +455,9 @@ examples.
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
-from sage.categories.all import ModulesWithBasis, tensor, Hom
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.categories.tensor import tensor
+from sage.categories.homset import Hom
 
 ######################################################
 # the main class
@@ -584,7 +586,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: A1 == SteenrodAlgebra(2, profile=[2,1], basis='pst')
             False
         """
-        from sage.arith.all import is_prime
+        from sage.arith.misc import is_prime
         from sage.categories.super_hopf_algebras_with_basis import SuperHopfAlgebrasWithBasis
         from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets

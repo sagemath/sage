@@ -559,7 +559,7 @@ def is_prime(n):
         if not isinstance(R, NumberField_generic):
             import warnings
             s = f'Testing primality in {R}, which is a field, ' \
-                 'hence the result will always be False. '
+                'hence the result will always be False. '
             if R is QQ:
                 s += 'To test whether n is a prime integer, use ' \
                      'is_prime(ZZ(n)) or ZZ(n).is_prime(). '
@@ -567,6 +567,7 @@ def is_prime(n):
             warnings.warn(s)
 
     return ret
+
 
 def is_pseudoprime(n):
     r"""
@@ -1009,7 +1010,7 @@ def eratosthenes(n):
     return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
 
-def primes(start, stop=None, proof=None):
+def primes(start=2, stop=None, proof=None):
     r"""
     Return an iterator over all primes between start and stop-1,
     inclusive. This is much slower than ``prime_range``, but
@@ -1026,10 +1027,11 @@ def primes(start, stop=None, proof=None):
 
     INPUT:
 
-    - ``start`` - an integer - lower bound for the primes
+    - ``start`` - an integer (default: 2) optional argument -
+      giving lower bound for the primes
 
-    - ``stop`` - an integer (or infinity) optional argument -
-      giving upper (open) bound for the primes
+    - ``stop`` - an integer (or infinity) - giving upper (open) bound for the
+      primes
 
     - ``proof`` - bool or None (default: None)  If True, the function
       yields only proven primes.  If False, the function uses a
@@ -2529,6 +2531,8 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
        - ``'pari'`` - (default) use the PARI c library
 
+       - ``'flint'`` - use the FLINT library
+
        - ``'kash'`` - use KASH computer algebra system (requires that
          kash be installed)
 
@@ -2576,6 +2580,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         -20
         sage: factor( -next_prime(10^2) * next_prime(10^7) )
         -1 * 101 * 10000019
+
+    ::
+
+        sage: factor(293292629867846432923017396246429, algorithm='flint')
+        3 * 4852301647696687 * 20148007492971089
 
     ::
 
@@ -2693,7 +2702,7 @@ def radical(n, *args, **kwds):
         sage: radical(0)
         Traceback (most recent call last):
         ...
-        ArithmeticError: Radical of 0 not defined.
+        ArithmeticError: radical of 0 is not defined
         sage: K.<i> = QuadraticField(-1)
         sage: radical(K(2))
         i + 1

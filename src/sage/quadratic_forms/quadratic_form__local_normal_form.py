@@ -21,33 +21,35 @@ import copy
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import IntegerRing, ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import GCD, valuation, is_prime
+from sage.arith.misc import GCD
+from sage.arith.misc import valuation
+from sage.arith.misc import is_prime
 
 
 def find_entry_with_minimal_scale_at_prime(self, p):
-    """
+    r"""
     Finds the entry of the quadratic form with minimal scale at the
-    prime p, preferring diagonal entries in case of a tie.  (I.e.  If
-    we write the quadratic form as a symmetric matrix M, then this
-    entry M[i,j] has the minimal valuation at the prime p.)
+    prime `p`, preferring diagonal entries in case of a tie.  (I.e.  If
+    we write the quadratic form as a symmetric matrix `M`, then this
+    entry ``M[i,j]`` has the minimal valuation at the prime `p`.)
 
-    Note: This answer is independent of the kind of matrix (Gram or
-    Hessian) associated to the form.
+    .. NOTE::
+
+        This answer is independent of the kind of matrix (Gram or
+        Hessian) associated to the form.
 
     INPUT:
 
-        `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
-    OUTPUT:
-
-        a pair of integers >= 0
+    OUTPUT: a pair of integers `\geq 0`
 
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 2, [6, 2, 20]); Q
         Quadratic form in 2 variables over Integer Ring with coefficients:
-        [ 6 2 ]
-        [ * 20 ]
+          [ 6 2 ]
+          [ * 20 ]
         sage: Q.find_entry_with_minimal_scale_at_prime(2)
         (0, 1)
         sage: Q.find_entry_with_minimal_scale_at_prime(3)
@@ -83,18 +85,16 @@ def local_normal_form(self, p):
     Return a locally integrally equivalent quadratic form over
     the `p`-adic integers `\ZZ_p` which gives the Jordan decomposition.
 
-    The Jordan components are written as sums of blocks of size <= 2
+    The Jordan components are written as sums of blocks of size `\leq 2`
     and are arranged by increasing scale, and then by increasing norm.
-    This is equivalent to saying that we put the 1x1 blocks before
-    the 2x2 blocks in each Jordan component.
+    This is equivalent to saying that we put the `1 \times 1` blocks before
+    the `2 \times 2` blocks in each Jordan component.
 
     INPUT:
 
-    - `p` -- a positive prime number.
+    - ``p`` -- a positive prime number
 
-    OUTPUT:
-
-    a quadratic form over `\ZZ`
+    OUTPUT: a quadratic form over `\ZZ`
 
     .. WARNING::
 
@@ -105,20 +105,20 @@ def local_normal_form(self, p):
         sage: Q = QuadraticForm(ZZ, 2, [10,4,1])
         sage: Q.local_normal_form(5)
         Quadratic form in 2 variables over Integer Ring with coefficients:
-        [ 1 0 ]
-        [ * 6 ]
+          [ 1 0 ]
+          [ * 6 ]
 
     ::
 
         sage: Q.local_normal_form(3)
         Quadratic form in 2 variables over Integer Ring with coefficients:
-        [ 10 0 ]
-        [ * 15 ]
+          [ 10 0 ]
+          [ * 15 ]
 
         sage: Q.local_normal_form(2)
         Quadratic form in 2 variables over Integer Ring with coefficients:
-        [ 1 0 ]
-        [ * 6 ]
+          [ 1 0 ]
+          [ * 6 ]
     """
     # Sanity Checks
     if (self.base_ring() != IntegerRing()):
@@ -237,7 +237,7 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
     `p^{s_i}`-unimodular Jordan component which is further decomposed into
     block diagonals of block size `\le 2`.
 
-    For each `L_i` the 2x2 blocks are listed after the 1x1 blocks
+    For each `L_i` the `2 \times 2` blocks are listed after the `1 \times 1` blocks
     (which follows from the convention of the
     :meth:`local_normal_form` method).
 
@@ -253,7 +253,7 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
 
     INPUT:
 
-    - `p` -- a prime number > 0.
+    - ``p`` -- a prime number > 0
 
     OUTPUT:
 
@@ -272,25 +272,27 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,9,5,7])
         sage: Q.jordan_blocks_by_scale_and_unimodular(3)
         [(0, Quadratic form in 3 variables over Integer Ring with coefficients:
-        [ 1 0 0 ]
-        [ * 5 0 ]
-        [ * * 7 ]), (2, Quadratic form in 1 variables over Integer Ring with coefficients:
-        [ 1 ])]
+               [ 1 0 0 ]
+               [ * 5 0 ]
+               [ * * 7 ]),
+         (2, Quadratic form in 1 variables over Integer Ring with coefficients:
+               [ 1 ])]
 
     ::
 
         sage: Q2 = QuadraticForm(ZZ, 2, [1,1,1])
         sage: Q2.jordan_blocks_by_scale_and_unimodular(2)
         [(-1, Quadratic form in 2 variables over Integer Ring with coefficients:
-        [ 2 2 ]
-        [ * 2 ])]
+                [ 2 2 ]
+                [ * 2 ])]
         sage: Q = Q2 + Q2.scale_by_factor(2)
         sage: Q.jordan_blocks_by_scale_and_unimodular(2)
         [(-1, Quadratic form in 2 variables over Integer Ring with coefficients:
-        [ 2 2 ]
-        [ * 2 ]), (0, Quadratic form in 2 variables over Integer Ring with coefficients:
-        [ 2 2 ]
-        [ * 2 ])]
+                [ 2 2 ]
+                [ * 2 ]),
+         (0, Quadratic form in 2 variables over Integer Ring with coefficients:
+                [ 2 2 ]
+                [ * 2 ])]
     """
     # Try to use the cached result
     try:
@@ -303,15 +305,12 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
         if not hasattr(self, '__jordan_blocks_by_scale_and_unimodular_dict'):
             self.__jordan_blocks_by_scale_and_unimodular_dict = {}
 
-
     # Deal with zero dim'l forms
     if self.dim() == 0:
         return []
 
-
     # Find the Local Normal form of Q at p
     Q1 = self.local_normal_form(p)
-
 
     # Parse this into Jordan Blocks
     n = Q1.dim()
@@ -349,7 +348,6 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
     # Add the last block
     tmp_Jordan_list += [(start_scale, Q1.extract_variables(range(start_ind, n)).scale_by_factor(ZZ(1) / QQ(p)**(start_scale)))]
 
-
     # Cache the result
     self.__jordan_blocks_by_scale_and_unimodular_dict[p] = tmp_Jordan_list
 
@@ -358,22 +356,20 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
 
 
 def jordan_blocks_in_unimodular_list_by_scale_power(self, p):
-    """
-    Returns a list of Jordan components, whose component at index i
-    should be scaled by the factor p^i.
+    r"""
+    Return a list of Jordan components, whose component at index `i`
+    should be scaled by the factor `p^i`.
 
     This is only defined for integer-valued quadratic forms
-    (i.e. forms with base_ring ZZ), and the indexing only works
-    correctly for p=2 when the form has an integer Gram matrix.
+    (i.e., forms with base ring `\ZZ`), and the indexing only works
+    correctly for `p=2` when the form has an integer Gram matrix.
 
     INPUT:
 
-        self -- a quadratic form over ZZ, which has integer Gram matrix if p == 2
-        `p` -- a prime number > 0
+    - ``self`` -- a quadratic form over `\ZZ`, which has integer Gram matrix if `p = 2`
+    - ``p`` -- a prime number > 0
 
-    OUTPUT:
-
-        a list of p-unimodular quadratic forms
+    OUTPUT: a list of `p`-unimodular quadratic forms
 
     EXAMPLES::
 
@@ -385,16 +381,19 @@ def jordan_blocks_in_unimodular_list_by_scale_power(self, p):
 
         sage: Q.scale_by_factor(2).jordan_blocks_in_unimodular_list_by_scale_power(2)
         [Quadratic form in 2 variables over Integer Ring with coefficients:
-        [ 0 2 ]
-        [ * 0 ], Quadratic form in 0 variables over Integer Ring with coefficients:
-        , Quadratic form in 1 variables over Integer Ring with coefficients:
-        [ 345 ]]
+           [ 0 2 ]
+           [ * 0 ],
+         Quadratic form in 0 variables over Integer Ring with coefficients:
+           ,
+         Quadratic form in 1 variables over Integer Ring with coefficients:
+           [ 345 ]]
 
         sage: Q.jordan_blocks_in_unimodular_list_by_scale_power(3)
         [Quadratic form in 2 variables over Integer Ring with coefficients:
-        [ 2 0 ]
-        [ * 10 ], Quadratic form in 1 variables over Integer Ring with coefficients:
-        [ 2 ]]
+           [ 2 0 ]
+           [ * 10 ],
+         Quadratic form in 1 variables over Integer Ring with coefficients:
+           [ 2 ]]
     """
     # Sanity Check
     if self.base_ring() != ZZ:

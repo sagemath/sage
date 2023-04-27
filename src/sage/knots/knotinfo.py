@@ -48,6 +48,12 @@ For different conventions regarding normalization of the polynomial invariants s
 the according documentation of :meth:`KnotInfoBase.homfly_polynomial`,
 :meth:`KnotInfoBase.jones_polynomial` and :meth:`KnotInfoBase.alexander_polynomial`.
 
+Furthermore, note that not all columns available in the database are visible on the web
+pages (see also the related note under :meth:`KnotInfoBase.khovanov_polynomial`).
+It is planned to remove non-visible columns from the database in the future (see
+the `Python Wrapper <https://github.com/soehms/database_knotinfo#readme>`__ for
+updated information).
+
 EXAMPLES::
 
     sage: from sage.knots.knotinfo import KnotInfo
@@ -233,7 +239,6 @@ Thanks to Chuck Livingston and Allison Moore for their support. For further ackn
 ##############################################################################
 
 
-
 from enum import Enum
 from sage.misc.cachefunc import cached_method
 from sage.misc.sage_eval import sage_eval
@@ -243,8 +248,6 @@ from sage.rings.integer_ring import ZZ
 from sage.groups.braid import BraidGroup
 from sage.knots.knot import Knots
 from sage.databases.knotinfo_db import KnotInfoColumns, db
-
-
 
 
 def eval_knotinfo(string, locals={}, to_tuple=True):
@@ -293,7 +296,6 @@ def knotinfo_bool(string):
     elif string == 'N':
         return False
     raise ValueError('%s is not a KnotInfo boolean')
-
 
 
 # ---------------------------------------------------------------------------------
@@ -440,7 +442,6 @@ class KnotInfoBase(Enum):
             return BraidGroup(2)
         else:
             return BraidGroup(n)
-
 
     @cached_method
     def _homfly_pol_ring(self, var1, var2):
@@ -1153,7 +1154,6 @@ class KnotInfoBase(Enum):
         """
         return not knotinfo_bool(self[self.items.unoriented])
 
-
     @cached_method
     def homfly_polynomial(self, var1='v', var2='z', original=False):
         r"""
@@ -1338,7 +1338,6 @@ class KnotInfoBase(Enum):
         a, z = R.gens()
         lc = {'a':  a, 'z': z}
         return R(eval_knotinfo(kauffman_polynomial, locals=lc))
-
 
     @cached_method
     def jones_polynomial(self, variab=None, skein_normalization=False, puiseux=False, original=False, use_sqrt=False):
@@ -1528,9 +1527,7 @@ class KnotInfoBase(Enum):
             else:
                 lc = {'x':  t}
 
-
         return R(eval_knotinfo(jones_polynomial, locals=lc))
-
 
     @cached_method
     def alexander_polynomial(self, var='t', original=False, laurent_poly=False):
@@ -1714,9 +1711,23 @@ class KnotInfoBase(Enum):
 
         .. NOTE ::
 
-            The Khovanov polynomial given in KnotInfo corresponds to the mirror
-            image of the given knot for a `list of 140 exceptions
-            <https://raw.githubusercontent.com/soehms/database_knotinfo/main/hints/list_of_mirrored_khovanov_polynonmial.txt>`__.
+            The data used here were calculated with the program
+            `KhoHo <https://github.com/AShumakovitch/KhoHo>`__. They are no longer
+            visible on the website as of October 30, 2022. Instead, data
+            computed with `KnotJob <https://www.maths.dur.ac.uk/users/dirk.schuetz/knotjob.html>`__
+            are now displayed. The latter program is more accurate in terms of
+            orientation and reflection as it is based on ``PD`` code.
+
+            Even if they are not visible on the website, the data produced by
+            ``KhoHo`` are still available in the database. But maybe this will be
+            discontinued (check out the `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__ for updated information).
+            This interface will be adapted to the changes in an upcoming
+            release.
+
+            Since the results of ``KhoHo`` were computed using the ``DT`` notation,
+            the Khovanov polynomial returned by this method belongs to the
+            mirror image of the given knot for a `list of 140 exceptions
+            <https://raw.githubusercontent.com/soehms/database_knotinfo/ main /hints/list_of_mirrored_khovanov_polynonmial.txt>`__.
 
         EXAMPLES::
 
@@ -1919,7 +1930,7 @@ class KnotInfoBase(Enum):
         else:
             from sage.knots.link import Link
 
-        if   use_item == self.items.pd_notation:
+        if use_item == self.items.pd_notation:
             pd_code = [[a[0], a[3], a[2], a[1]] for a in self.pd_notation()] # take mirror version, see note above
             return Link(pd_code)
         elif use_item == self.items.braid_notation:
@@ -1937,7 +1948,6 @@ class KnotInfoBase(Enum):
                 return Knots().from_gauss_code(self.gauss_notation())
 
         raise ValueError('Link construction using %s not possible' %use_item)
-
 
     @cached_method
     def is_unique(self):
@@ -2150,7 +2160,6 @@ class KnotInfoBase(Enum):
         else:
             return webbrowser.open(filename.diagram_url(self[self.items.name]), new=new, autoraise=autoraise)
 
-
     def knot_atlas_webpage(self, new=0, autoraise=True):
         r"""
         Launch the Knot Atlas web-page for ``self``.
@@ -2190,7 +2199,6 @@ class KnotInfoBase(Enum):
         """
         import webbrowser
         return webbrowser.open(self[self.items.knotilus_page_anon], new=new, autoraise=autoraise)
-
 
 
 # --------------------------------------------------------------------------------------------
@@ -2235,7 +2243,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         sage: L6a2(0) == L6a2('0')
         True
     """
-
 
     def __init__(self, crossing_number, is_knot, is_alternating, name_unoriented=None):
         r"""
@@ -2343,7 +2350,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             res.append(KnotInfoSeries(cross_nr, is_knot, is_alt, curr_n_unori))
         return res
 
-
     @cached_method
     def lower_list(self, oriented=False, comp=None, det=None, homfly=None):
         r"""
@@ -2388,7 +2394,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             l = LS.lower_list(oriented=oriented, comp=comp, det=det, homfly=homfly)
         return l + self.list(oriented=oriented, comp=comp, det=det, homfly=homfly)
 
-
     def __repr__(self):
         r"""
         Return the representation string of ``self``.
@@ -2406,7 +2411,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         else:
             return 'Series of links %s' %(self._name())
 
-
     def __getitem__(self, item):
         r"""
         Return the given ``item`` from the list of ``self``
@@ -2421,12 +2425,12 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             [<KnotInfo.K6_1: '6_1'>, <KnotInfo.K6_2: '6_2'>, <KnotInfo.K6_3: '6_3'>]
         """
         from sage.rings.integer import Integer
-        if  not type(item) in (int, Integer):
+        if not type(item) in (int, Integer):
             raise ValueError('Item must be an integer')
         l = self.list()
         max_item = len(l)
-        if item < 0 or item  > max_item:
-            raise ValueError('Item must be non negative and smaller than %s' %(max_item))
+        if item < 0 or item > max_item:
+            raise ValueError('Item must be non negative and smaller than %s' % (max_item))
 
         return l[item]
 
@@ -2464,12 +2468,12 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             return self[item]
 
         from sage.rings.integer import Integer
-        if  not type(item) in (int, Integer):
+        if not type(item) in (int, Integer):
             raise ValueError('Item must be an integer')
-        l =self.list()
-        max_item = len(l)+1
-        if item < 1 or item  > max_item:
-            raise ValueError('Item must be positive and smaller than %s' %(max_item))
+        l = self.list()
+        max_item = len(l) + 1
+        if item < 1 or item > max_item:
+            raise ValueError('Item must be positive and smaller than %s' % (max_item))
 
         return l[item-1]
 
@@ -2565,7 +2569,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             tester.assertTrue(self.is_recoverable(unique=False, max_samples=max_samples))
         else:
             tester.assertTrue(self.is_recoverable(unique=False))
-
 
     def inject(self, verbose=True):
         r"""

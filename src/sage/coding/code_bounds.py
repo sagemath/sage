@@ -173,11 +173,14 @@ on k, given n, d, q, (b) seek bounds on R, delta, q (assuming n is
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import binomial, is_prime_power
 from sage.libs.gap.libgap import libgap
-from sage.rings.all import QQ, RR, ZZ, RDF
-from sage.arith.misc import is_prime_power
-from sage.arith.all import binomial
 from sage.misc.functional import sqrt, log
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfr import RR
+
 from .delsarte_bounds import (delsarte_bound_hamming_space,
                               delsarte_bound_additive_hamming_space)
 from sage.features.gap import GapPackage
@@ -653,7 +656,7 @@ def entropy_inverse(x, q=2):
     if q < 2:   # Here we check that q is actually at least 2
         raise ValueError("The value q must be an integer greater than 1")
 
-    eps  = 4.5e-16 # find_root has about this as the default xtol
+    eps = 4.5e-16 # find_root has about this as the default xtol
     ymax = 1 - 1/q
     if x <= eps:
         return 0

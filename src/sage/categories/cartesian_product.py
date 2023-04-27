@@ -16,7 +16,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
 from sage.categories.pushout import MultivariateConstructionFunctor
 
-native_python_containers   = set([tuple, list, set, frozenset, range])
+native_python_containers = set([tuple, list, set, frozenset, range])
 
 class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConstructionFunctor):
     """
@@ -155,7 +155,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
             sage: _.category()
             Category of Cartesian products of finite enumerated sets
 
-        Check that the empty product is handled correctly:
+        Check that the empty product is handled correctly::
 
             sage: C = cartesian_product([])
             sage: C

@@ -523,8 +523,6 @@ class NewtonPolygon_element(Element):
         return parent(polyhedron)
 
 
-
-
 class ParentNewtonPolygon(Parent, UniqueRepresentation):
     r"""
     Construct a Newton polygon.
@@ -630,13 +628,15 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
         """
         Parent class for all Newton polygons.
 
+        EXAMPLES::
+
             sage: from sage.geometry.newton_polygon import ParentNewtonPolygon
             sage: ParentNewtonPolygon()
             Parent for Newton polygons
 
         TESTS:
 
-        This class is a singleton.
+        This class is a singleton::
 
             sage: ParentNewtonPolygon() is ParentNewtonPolygon()
             True

@@ -508,7 +508,7 @@ class Octave(Expect):
         m = A.nrows()
         if m != len(b):
             raise ValueError("dimensions of A and b must be compatible")
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         from sage.rings.rational_field import QQ
         MS = MatrixSpace(QQ,m,1)
         b  = MS(list(b)) # converted b to a "column vector"
@@ -707,7 +707,7 @@ class OctaveElement(ExpectElement):
         if self.iscomplex():
             w = [[to_complex(x,R) for x in row] for row in w]
 
-        from sage.matrix.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         return MatrixSpace(R, nrows, ncols)(w)
 
     def _vector_(self, R=None):

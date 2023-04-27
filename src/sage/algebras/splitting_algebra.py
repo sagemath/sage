@@ -217,7 +217,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         deg = monic_polynomial.degree()
 
         from sage.structure.category_object import normalize_names
-        self._root_names  = normalize_names(deg-1, names)
+        self._root_names = normalize_names(deg-1, names)
         root_names = list(self._root_names)
         verbose("Create splitting algebra to base ring %s and polynomial %s (%s %s)"
                 % (base_ring, monic_polynomial, iterate, warning))
@@ -238,8 +238,8 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         if deg < 1:
             raise ValueError("the degree of the polynomial must positive")
 
-        self._splitting_roots     = []
-        self._coefficients_list   = []
+        self._splitting_roots = []
+        self._coefficients_list = []
         self._invertible_elements = {}
 
         if isinstance(base_ring, SplittingAlgebra):
@@ -289,12 +289,12 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
 
             SplittingAlgebra.__init__(self, q, root_names_reduces, warning=False)
 
-            splitting_roots   = base_ring_step._splitting_roots   + self._splitting_roots
+            splitting_roots = base_ring_step._splitting_roots + self._splitting_roots
             coefficients_list = base_ring_step._coefficients_list + self._coefficients_list
 
             verbose("Adding roots: %s" % (splitting_roots))
 
-            self._splitting_roots   = splitting_roots
+            self._splitting_roots = splitting_roots
             self._coefficients_list = coefficients_list
         else:
             PolynomialQuotientRing_domain.__init__(self, P, p, root_name)
@@ -318,15 +318,14 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         self._splitting_roots = [self(root) for root in self._splitting_roots]
         verbose("splitting_roots: %s embedded" % (self._splitting_roots))
 
-
-        # -------------------------------------------------------------------------------------------
+        # --------------------------------------------------------------------
         # try to calculate inverses of the roots. This is possible if the original polynomial
         # has an invertible constant term. For example let cf = [-w, v,-u, 1] that is
         # p = h^3 -u*h^2 + v*h -w, than u = x + y + z, v = x*y + x*z + y*z, w = x*y*z. If
         # w is invertible then 1/x = (v -(u-x)*x)/w, 1/y = (v -(u-y)*y)/w, 1/z = (v -(u-z)*z)/w
-        # -------------------------------------------------------------------------------------------
+        # -----------------------------------------------------------------
         # first find the polynomial with invertible constant coefficient
-        # -------------------------------------------------------------------------------------------
+        # -----------------------------------------------------------------
         cf0_inv = None
         for cf in self._coefficients_list:
             cf0 = cf[0]
@@ -338,14 +337,13 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             except NotImplementedError:
                 verbose("constant coefficient: %s not invertibe" %(cf0))
 
-
-        # ----------------------------------------------------------------------------------
-        # assuming that cf splits into linear factors over self and the _splitting_roots
-        # are its roots we can calculate inverses
-        # ----------------------------------------------------------------------------------
+        # ------------------------------------------------------------------
+        # assuming that cf splits into linear factors over self
+        # and the _splitting_roots are its roots we can calculate inverses
+        # ------------------------------------------------------------------
         if cf0_inv is not None:
             deg_cf = len(cf)-1
-            pf  =  P(cf)
+            pf =  P(cf)
             for root in self._splitting_roots:
                 check = self(pf)
                 if not check.is_zero():
@@ -362,12 +360,11 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
                 self._invertible_elements.update({v: k})
         return
 
-
-    #######################################################################################################################
-    # ---------------------------------------------------------------------------------------------------------------------
+    ########################################################################
+    # ----------------------------------------------------------------------
     # overloaded inherited methods
-    # ---------------------------------------------------------------------------------------------------------------------
-    #######################################################################################################################
+    # ----------------------------------------------------------------------
+    ########################################################################
     def __reduce__(self):
         r"""
         Used in pickling.
@@ -396,7 +393,6 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             par_pol = self.cover_ring()
             defining_polynomial = par_pol(definig_coefficients)
         return self.__class__, (defining_polynomial, self._root_names, self._iterate, False)
-
 
     def _repr_(self):
         r"""
@@ -514,20 +510,17 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         lift = self.lifting_map()
         return hom_from_cover*lift
 
-
-
-    #######################################################################################################################
-    # ---------------------------------------------------------------------------------------------------------------------
+    ###################################################################
+    # -----------------------------------------------------------------
     # local methods
-    # ---------------------------------------------------------------------------------------------------------------------
-    #######################################################################################################################
+    # -----------------------------------------------------------------
+    ###################################################################
 
-
-    #######################################################################################################################
-    # ---------------------------------------------------------------------------------------------------------------------
+    ###################################################################
+    # -----------------------------------------------------------------
     # global methods
-    # ---------------------------------------------------------------------------------------------------------------------
-    #######################################################################################################################
+    # -----------------------------------------------------------------
+    ###################################################################
 
     def is_completely_split(self):
         r"""
@@ -727,7 +720,6 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
             roots = [(r, 1) for r in ext_ring.splitting_roots()]
         return roots
 
-
     deg_pol = monic_polynomial.degree()
     if not root_names:
         from sage.structure.category_object import normalize_names
@@ -740,12 +732,12 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
         pass
 
     if not root_list:
-        # ------------------------------------------------------------------------------
+        # --------------------------------------------------------------
         # no roots found: find roots in an appropriate extension ring
-        # ------------------------------------------------------------------------------
+        # --------------------------------------------------------------
         verbose("no roots in base_ring")
-        if len(name_list) > deg_pol -1:
-            name_list = [name_list[i] for i in range(deg_pol-1)]
+        if len(name_list) > deg_pol - 1:
+            name_list = [name_list[i] for i in range(deg_pol - 1)]
         roots = create_roots(monic_polynomial, warning=warning)
 
     else:

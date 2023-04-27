@@ -568,7 +568,7 @@ class WordMorphism(SageObject):
         """
         return not self == other
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of the morphism.
 
@@ -587,7 +587,7 @@ class WordMorphism(SageObject):
         """
         return "WordMorphism: %s" % str(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the morphism in str.
 
@@ -625,7 +625,7 @@ class WordMorphism(SageObject):
              for lettre, image in self._morph.items()]
         return ', '.join(sorted(L))
 
-    def __call__(self, w, order=1, datatype=None):
+    def __call__(self, w, order=1):
         r"""
         Return the image of ``w`` under self to the given order.
 
@@ -634,8 +634,6 @@ class WordMorphism(SageObject):
         -  ``w`` - word or sequence in the domain of self
 
         -  ``order`` - integer or plus ``Infinity`` (default: 1)
-
-        - ``datatype`` - deprecated
 
         OUTPUT:
 
@@ -752,7 +750,7 @@ class WordMorphism(SageObject):
             sage: m('')
             word:
 
-        The default datatype when the input is a finite word is another
+        When the input is a finite word, the output is another
         finite word::
 
             sage: w = m('aabb')
@@ -764,49 +762,7 @@ class WordMorphism(SageObject):
             sage: import tempfile
             sage: with tempfile.NamedTemporaryFile(suffix=".sobj") as f:
             ....:     save(w, filename=f.name)
-
-        The ``datatype`` argument is deprecated::
-
-            sage: m = WordMorphism('a->ab,b->ba')
-            sage: w = m('aaab',datatype='list')
-            doctest:warning
-            ...
-            DeprecationWarning: the "datatype" argument is deprecated
-            See https://trac.sagemath.org/26307 for details.
-
-            sage: type(w)
-            <class 'sage.combinat.words.word.FiniteWord_list'>
-            sage: w = m('aaab',datatype='str')
-            sage: type(w)
-            <class 'sage.combinat.words.word.FiniteWord_str'>
-            sage: w = m('aaab',datatype='tuple')
-            sage: type(w)
-            <class 'sage.combinat.words.word.FiniteWord_tuple'>
-
-        To use str datatype for the output word, the domain and codomain
-        alphabet must consist of str objects::
-
-            sage: m = WordMorphism({0:[0,1],1:[1,0]})
-            sage: w = m([0],4); type(w)
-            <class 'sage.combinat.words.word.FiniteWord_char'>
-            sage: w = m([0],4,datatype='list')
-            doctest:warning
-            ...
-            DeprecationWarning: the "datatype" argument is deprecated
-            See https://trac.sagemath.org/26307 for details.
-            sage: type(w)
-            <class 'sage.combinat.words.word.FiniteWord_list'>
-            sage: w = m([0],4,datatype='str')
-            Traceback (most recent call last):
-            ...
-            ValueError: 0 not in alphabet
-            sage: w = m([0],4,datatype='tuple'); type(w)
-            <class 'sage.combinat.words.word.FiniteWord_tuple'>
         """
-        if datatype is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(26307, 'the "datatype" argument is deprecated')
-
         if order == 1:
             D = self.domain()
             C = self.codomain()
@@ -817,10 +773,7 @@ class WordMorphism(SageObject):
                 im = C()
                 for a in w:
                     im += self._morph[a]
-                if datatype is not None:
-                    return C(im, datatype=datatype)
-                else:
-                    return im
+                return im
 
             if isinstance(w, Iterable):
                 pass
@@ -853,7 +806,7 @@ class WordMorphism(SageObject):
             return self.fixed_point(letter=letter)
 
         elif isinstance(order, (int, Integer)) and order > 1:
-            return self(self(w, order - 1), datatype=datatype)
+            return self(self(w, order - 1))
 
         elif order == 0:
             return self._domain(w)
@@ -1907,7 +1860,7 @@ class WordMorphism(SageObject):
             sage: for w in f.fixed_points(): print(w)
             abcabbccabcabcabbccbccabcabbccabcabbccab...
 
-        This shows that ticket :trac:`13668` has been resolved::
+        This shows that issue :trac:`13668` has been resolved::
 
             sage: d = {1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]}
             sage: s = WordMorphism(d)
@@ -1918,7 +1871,7 @@ class WordMorphism(SageObject):
             sage: s7r.periodic_point(2)
             word: 2,1,1,10,9,8,7,6,5,4,3,2,1,10,9,8,7,6,5,4,3,2,10,9,8,7,6,5,4,3,2,9,8,7,6,5,4,3,2,8,...
 
-        This shows that ticket :trac:`13668` has been resolved::
+        This shows that issue :trac:`13668` has been resolved::
 
             sage: s = "1->321331332133133,2->133321331332133133,3->2133133133321331332133133"
             sage: s = WordMorphism(s)
@@ -1994,7 +1947,7 @@ class WordMorphism(SageObject):
             sage: f.fixed_points()
             []
 
-        This shows that ticket :trac:`13668` has been resolved::
+        This shows that issue :trac:`13668` has been resolved::
 
             sage: d = {1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]}
             sage: s = WordMorphism(d)
@@ -3003,7 +2956,7 @@ class WordMorphism(SageObject):
 
         # 1D plots
         if dim_fractal == 1:
-            from sage.all import plot
+            from sage.plot.plot import plot
             for a in col_dict:
                 # We plot only the points with a color in col_dict and with positive opacity
                 if (a in col_dict) and (opacity[a] > 0):

@@ -492,8 +492,8 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         if other in [AA, RLF]:
             return True
 
-        from sage.rings.number_field.number_field_base import is_NumberField
-        if is_NumberField(other):
+        from sage.rings.number_field.number_field_base import NumberField
+        if isinstance(other, NumberField):
             emb = other.coerce_embedding()
             return emb is not None and self.has_coerce_map_from(emb.codomain())
 
@@ -2067,7 +2067,7 @@ cdef class RealBall(RingElement):
 
         EXAMPLES:
 
-        It is possible to create balls whose midpoint is more precise that
+        It is possible to create balls whose midpoint is more precise than
         their parent's nominal precision (see :mod:`~sage.rings.real_arb` for
         more information)::
 

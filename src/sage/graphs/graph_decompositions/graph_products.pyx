@@ -130,8 +130,6 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from copy import copy
-
 
 def is_cartesian_product(g, certificate=False, relabeling=False):
     r"""

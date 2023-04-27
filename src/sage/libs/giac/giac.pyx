@@ -27,8 +27,7 @@ in giac, but the mathematical computation  is not done. This class is mainly
 for cython users.  Here A is a Pygen element, and it is ready for any giac
 function.::
 
-    sage: from sage.libs.giac.giac import *     # random
-    //...
+    sage: from sage.libs.giac.giac import *
     sage: A = Pygen('2+2')
     sage: A
     2+2
@@ -154,7 +153,9 @@ from sage.ext.stdsage cimport PY_NEW
 
 from sage.libs.gmp.mpz cimport mpz_t, mpz_init_set
 
-from sage.rings.all import ZZ, QQ, IntegerModRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Matrix
@@ -374,8 +375,7 @@ def _giac(s):
 
         sage: x = libgiac('x')
         sage: (1+2*sin(3*x)).solve(x).simplify()
-        Warning, argument is not an equation, solving 1+2*sin(3*x)=0
-        list[-pi/18,7*pi/18]
+        ...list[-pi/18,7*pi/18]
 
         sage: libgiac.solve('sin(3*x)>2*sin(x)',x)
         Traceback (most recent call last):
@@ -1409,7 +1409,7 @@ cdef class Pygen(GiacMethods_base):
             return result
 
         else:
-            raise TypeError("Cannot convert non giac integers to Integer")
+            raise TypeError("cannot convert non giac integers to Integer")
 
 
     def _rational_(self,Z=None):
@@ -1434,7 +1434,7 @@ cdef class Pygen(GiacMethods_base):
             # giac _RAT_
             return ZZ(self.numer()) / ZZ(self.denom())
         else:
-            raise TypeError("Cannot convert non giac _FRAC_ to QQ")
+            raise TypeError("cannot convert non giac _FRAC_ to QQ")
 
 
     def sage(self):
@@ -1736,7 +1736,7 @@ cdef class Pygen(GiacMethods_base):
                 sig_off()
                 return result
             else:
-                raise TypeError("Cannot convert non _INT_ giac gen")
+                raise TypeError("cannot convert non _INT_ giac gen")
 
 
     property _double:  # immediate double (type _DOUBLE_)
@@ -1750,7 +1750,7 @@ cdef class Pygen(GiacMethods_base):
                 sig_off()
                 return result
             else:
-                raise TypeError("Cannot convert non _DOUBLE_ giac gen")
+                raise TypeError("cannot convert non _DOUBLE_ giac gen")
 
     property help:
         def __get__(self):
@@ -2011,7 +2011,6 @@ class GiacFunctionNoEV(Pygen):
 # Some convenient settings
 ############################################################
 Pygen('printpow(1)').eval()  # default power is ^
-Pygen('add_language(1)').eval()  # Add the french keywords in the giac library language.
 # FIXME: print I for sqrt(-1) instead of i
 # GIAC_try_parse_i(False,context_ptr); (does not work??)
 

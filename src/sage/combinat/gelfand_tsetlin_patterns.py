@@ -544,7 +544,6 @@ class GelfandTsetlinPattern(ClonableArray,
             Traceback (most recent call last):
             ...
             ValueError: must have 0 < 3 < 3
-
         """
         n = len(self)
 
@@ -638,7 +637,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         if top_row is not None:
             top_row = tuple(top_row)
             if any(top_row[i] < top_row[i+1] for i in range(len(top_row)-1)):
-                raise ValueError("The top row must be weakly decreasing")
+                raise ValueError("the top row must be weakly decreasing")
             if n is not None and n != len(top_row):
                 raise ValueError("n must be the length of the specified top row")
             return GelfandTsetlinPatternsTopRow(top_row, strict)
@@ -994,7 +993,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             [2, 0]
             [2, 1]
         """
-        row = [x-1 for x in upper_row[1:]]
+        row = [x - 1 for x in upper_row[1:]]
         row_len = len(row)
         pos = 0
         while pos >= 0:
@@ -1003,11 +1002,11 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
                 pos -= 1
                 continue
             # If it would create an invalid entry, backstep
-            if ( pos > 0 and (row[pos] >= row[pos-1] \
-                    or (self._strict and row[pos] == row[pos-1]-1)) ) \
+            if (pos > 0 and (row[pos] >= row[pos - 1]
+                    or (self._strict and row[pos] == row[pos - 1] - 1))) \
                     or row[pos] >= upper_row[pos] \
                     or (self._k is not None and row[pos] >= self._k):
-                row[pos] = upper_row[pos+1] - 1
+                row[pos] = upper_row[pos + 1] - 1
                 pos -= 1
                 continue
             row[pos] += 1
@@ -1186,14 +1185,14 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             True
         """
         if self._n is not None and self._k is not None:
-            if self._strict and self._k+1 < self._n:
-                raise ValueError('Cannot sample from empty set')
+            if self._strict and self._k + 1 < self._n:
+                raise ValueError('cannot sample from empty set')
             elif self._k < 0:
-                raise ValueError('Cannot sample from empty set')
+                raise ValueError('cannot sample from empty set')
             else:
                 return self._cftp(0)
         else:
-            raise ValueError('Cannot sample from infinite set')
+            raise ValueError('cannot sample from infinite set')
 
 
 class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):

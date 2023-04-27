@@ -78,7 +78,7 @@ from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.misc.misc import cputime
 from sage.misc.verbose import verbose, get_verbose
 
-from sage.arith.all import previous_prime
+from sage.arith.misc import previous_prime
 from sage.arith.long cimport integer_check_long_py
 from sage.arith.power cimport generic_power
 from sage.structure.element cimport Element

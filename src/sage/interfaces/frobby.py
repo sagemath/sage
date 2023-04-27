@@ -52,7 +52,7 @@ class Frobby:
         We compute the lcm of an ideal provided in Monos format. ::
 
             sage: frobby("analyze", input="vars x,y,z;[x^2,x*y];", # optional - frobby
-            ....:     options=["lcm", "iformat monos", "oformat 4ti2"]) # optional - frobby
+            ....:     options=["lcm", "iformat monos", "oformat 4ti2"])
             ' 2 1 0\n\n2 generators\n3 variables\n'
 
 
@@ -123,7 +123,7 @@ class Frobby:
             True
 
         We see how it is much faster to compute this with frobby than the built-in
-        procedure for simplicial complexes.
+        procedure for simplicial complexes::
 
             sage: t=simplicial_complexes.PoincareHomologyThreeSphere() # optional - frobby
             sage: R=PolynomialRing(QQ,16,'x') # optional - frobby
@@ -276,9 +276,9 @@ class Frobby:
             sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
             sage: allOK = True # optional - frobby
             sage: for ring in rings:  # optional - frobby
-            ....:     id0 = ring.ideal(0) # optional - frobby
-            ....:     decom0 = frobby.irreducible_decomposition(id0) # optional - frobby
-            ....:     allOK = allOK and decom0 == [id0] # optional - frobby
+            ....:     id0 = ring.ideal(0)
+            ....:     decom0 = frobby.irreducible_decomposition(id0)
+            ....:     allOK = allOK and decom0 == [id0]
             sage: allOK # optional - frobby
             True
 
@@ -288,9 +288,9 @@ class Frobby:
             sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
             sage: allOK = True # optional - frobby
             sage: for ring in rings: # optional - frobby
-            ....:     id1 = ring.ideal(1) # optional - frobby
-            ....:     decom1 = frobby.irreducible_decomposition(id1) # optional - frobby
-            ....:     allOK = allOK and decom1 == [id1] # optional - frobby
+            ....:     id1 = ring.ideal(1)
+            ....:     decom1 = frobby.irreducible_decomposition(id1)
+            ....:     allOK = allOK and decom1 == [id1]
             sage: allOK # optional - frobby
             True
         """

@@ -25,7 +25,7 @@ from _pytest.doctest import (
 from _pytest.pathlib import import_path, ImportMode
 
 # Import sage.all is necessary to:
-# - avoid cyclic import errors, see Trac #33580
+# - avoid cyclic import errors, see Issue #33580
 # - inject it into globals namespace for doctests
 import sage.all
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker

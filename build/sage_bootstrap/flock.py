@@ -8,7 +8,7 @@ command on some systems).
 # This is originally motivated by pip, but has since been generalized.  We
 # should avoid running pip while uninstalling a package because that is prone
 # to race conditions. This script runs pip under a lock.  For details, see
-# https://trac.sagemath.org/ticket/21672
+# https://github.com/sagemath/sage/issues/21672
 
 import fcntl
 import os

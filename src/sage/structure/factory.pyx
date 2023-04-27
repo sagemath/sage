@@ -222,7 +222,9 @@ cdef class UniqueFactory(SageObject):
     Let us try again, with a Cython class that does allow weak
     references. Now, creation of an instance using the factory works::
 
-        sage: cython('''cdef class C:                                           # optional - sage.misc.cython
+        sage: cython(                                                           # optional - sage.misc.cython
+        ....: '''
+        ....: cdef class C:
         ....:     cdef __weakref__
         ....: ''')
         ....:

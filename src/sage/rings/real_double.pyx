@@ -85,7 +85,7 @@ def is_RealDoubleField(x):
         doctest:warning...
         DeprecationWarning: is_RealDoubleField is deprecated;
         use isinstance(..., sage.rings.abc.RealDoubleField) instead
-        See https://trac.sagemath.org/32610 for details.
+        See https://github.com/sagemath/sage/issues/32610 for details.
         True
         sage: is_RealDoubleField(RealField(53))
         False
@@ -947,7 +947,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: ZZ(RDF(-2345.67))
             Traceback (most recent call last):
             ...
-            TypeError: Cannot convert non-integral float to integer
+            TypeError: cannot convert non-integral float to integer
         """
         return Integer(self._value)
 
@@ -1521,8 +1521,11 @@ cdef class RealDoubleElement(FieldElement):
 
     def round(self):
         """
-        Given real number `x`, rounds up if fractional part is greater than
-        `0.5`, rounds down if fractional part is less than `0.5`.
+        Round ``self`` to the nearest integer.
+        
+        This uses the convention of rounding half to even
+        (i.e., if the fractional part of ``self`` is `0.5`, then it
+        is rounded to the nearest even integer).
 
         EXAMPLES::
 
@@ -1530,6 +1533,10 @@ cdef class RealDoubleElement(FieldElement):
             0
             sage: a=RDF(0.51).round(); a
             1
+            sage: RDF(0.5).round()
+            0
+            sage: RDF(1.5).round()
+            2
         """
         return Integer(round(self._value))
 
