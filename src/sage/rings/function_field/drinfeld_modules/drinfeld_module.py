@@ -1062,7 +1062,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.exponential()
             Traceback (most recent call last):
             ...
-            ValueError: base field must not be finite
+            ValueError: characteristic must be zero (=T + 2)
 
         TESTS::
 
@@ -1083,7 +1083,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         exponential.
         """
         if self.is_finite():
-            raise ValueError("base field must not be finite")
+            raise ValueError(f"characteristic must be zero (={self.characteristic()})")
         L = LazyPowerSeriesRing(self._base, name)
         exp = lambda k: self._compute_coefficient_exp(k)
         return L(exp, valuation=1)
@@ -1334,10 +1334,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.logarithm()
             Traceback (most recent call last):
             ...
-            ValueError: base field must not be finite
+            ValueError: characteristic must be zero (=T + 2)
         """
         if self.is_finite():
-            raise ValueError("base field must not be finite")
+            raise ValueError(f"characteristic must be zero (={self.characteristic()})")
         L = LazyPowerSeriesRing(self._base, name)
         log = lambda k: self._compute_coefficient_log(k)
         return L(log, valuation=1)
