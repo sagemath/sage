@@ -26,6 +26,7 @@ AUTHORS:
 
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Hom
+from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
 from sage.misc.lazy_import import lazy_import
@@ -962,6 +963,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         return self._gen.coefficients(sparse=sparse)
 
+    @cached_method
     def _compute_coefficient_exp(self, k):
         r"""
         Return the `k`-th coefficient of the exponential of ``self``.
@@ -1215,6 +1217,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         q = self._Fq.order()
         return (g**(q+1)) / delta
 
+    @cached_method
     def _compute_coefficient_log(self, k):
         r"""
         Return the `k`-th coefficient of the logarithm of ``self``.
