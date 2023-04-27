@@ -1028,9 +1028,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         any of its coefficients can be computed on demands::
 
             sage: exp[2^4]
-            1/(T^64 + T^56 + T^52 + T^50 + T^49 + T^44 + T^42 + T^41 + T^38 + T^37 + T^35 + T^30 + T^29 + T^27 + T^23 + T^15)
+            1/(T^64 + T^56 + T^52 + ... + T^27 + T^23 + T^15)
             sage: exp[2^5]
-            1/(T^160 + T^144 + T^136 + T^132 + T^130 + T^129 + T^120 + T^116 + T^114 + T^113 + T^108 + T^106 + T^105 + T^102 + T^101 + T^99 + T^92 + T^90 + T^89 + T^86 + T^85 + T^83 + T^78 + T^77 + T^75 + T^71 + T^62 + T^61 + T^59 + T^55 + T^47 + T^31)
+            1/(T^160 + T^144 + T^136 + ... + T^55 + T^47 + T^31)
 
         Example in higher rank::
 
@@ -1283,9 +1283,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         any of its coefficients can be computed on demands::
 
             sage: log[2^4]
-            1/(T^30 + T^29 + T^27 + T^26 + T^23 + T^22 + T^20 + T^19 + T^15 + T^14 + T^12 + T^11 + T^8 + T^7 + T^5 + T^4)
+            1/(T^30 + T^29 + T^27 + ... + T^7 + T^5 + T^4)
             sage: log[2^5]
-            1/(T^62 + T^61 + T^59 + T^58 + T^55 + T^54 + T^52 + T^51 + T^47 + T^46 + T^44 + T^43 + T^40 + T^39 + T^37 + T^36 + T^31 + T^30 + T^28 + T^27 + T^24 + T^23 + T^21 + T^20 + T^16 + T^15 + T^13 + T^12 + T^9 + T^8 + T^6 + T^5)
+            1/(T^62 + T^61 + T^59 + ... + T^8 + T^6 + T^5)
 
         Example in higher rank::
 
