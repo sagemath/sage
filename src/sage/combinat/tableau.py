@@ -510,7 +510,25 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             +---+---+---+
             | 1 | 2 | 3 |
             +---+---+---+
+            sage: Tableaux.options.convention="russian"
+            sage: print(t._repr_diagram())
+              1  2  3
+              4  5
+            sage: print(t._ascii_art_table())
+             \     X  5  X  3  /
+              \   / \   / \   /
+               \ /   \ /   \ /
+                \  4  X  2  /
+                 \   / \   /
+                  \ /   \ /
+                   \  1  /
+                    \   /
+                     \ /
             sage: t = Tableau([]); print(t._ascii_art_table())
+            /\
+            \/
+            sage: Tableaux.options.convention="french"
+            sage: print(t._ascii_art_table())
             ++
             ++
             sage: Tableaux.options._reset()
@@ -546,6 +564,20 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             +----+----+----+---+
             |  1 |  2 | 15 | 7 |
             +----+----+----+---+
+            sage: Tableaux.options.convention="russian"
+            sage: ascii_art(t)
+             \  9  X 10  X  6  X  7  /
+              \   / \   / \   / \   /
+               \ /   \ /   \ /   \ /
+                \  8  X  5  X 15  /
+                 \   / \   / \   /
+                  \ /   \ /   \ /
+                   \ 12  X  2  /
+                    \   / \   /
+                     \ /   \ /
+                      \  1  /
+                       \   /
+                        \ /
             sage: Tableaux.options._reset()
 
         Unicode version::
@@ -573,6 +605,20 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             ├────┼────┼────┬───┐
             │ 1  │ 2  │ 15 │ 7 │
             └────┴────┴────┴───┘
+            sage: Tableaux.options.convention="russian"
+            sage: print(t._ascii_art_table(use_unicode=True))
+             ╲  9  ╳ 10  ╳     ╳  7  ╱
+              ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱
+               ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱
+                ╲  8  ╳  5  ╳ 15  ╱
+                 ╲   ╱ ╲   ╱ ╲   ╱
+                  ╲ ╱   ╲ ╱   ╲ ╱
+                   ╲ 12  ╳  2  ╱
+                    ╲   ╱ ╲   ╱
+                     ╲ ╱   ╲ ╱
+                      ╲  1  ╱
+                       ╲   ╱
+                        ╲ ╱
             sage: Tableaux.options._reset()
         """
         from sage.combinat.output import ascii_art_table
@@ -5499,7 +5545,11 @@ class Tableaux(UniqueRepresentation, Parent):
                    case_sensitive=False)
         convention = dict(default="English",
                         description='Sets the convention used for displaying tableaux and partitions',
-                        values=dict(English='use the English convention',French='use the French convention'),
+                        values=dict(
+                            English='use the English convention',
+                            French='use the French convention',
+                            Russian='use the Russian convention',
+                        ),
                         case_sensitive=False)
         notation = dict(alt_name="convention")
 

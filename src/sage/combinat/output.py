@@ -307,12 +307,22 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
         end_line=lambda r: r'\\'
 
     # now we draw the array
-    tex=r'\raisebox{-.6ex}{$\begin{array}[%s]{*{%s}c}'%(align,max(map(len,array)))
+    raisebox_start = r'\raisebox{-.6ex}{'
+    raisebox_end = r'}'
+    lr_start = r'\lr{'
+    lr_end = r'}'
+    if Tableaux.options.convention == "Russian":
+        raisebox_start += r'\rotatebox{45}{'
+        raisebox_end += r'}'
+        lr_start += r'\rotatebox{-45}{'
+        lr_end += r'}'
+
+    tex=r'%s$\begin{array}[%s]{*{%s}c}'%(raisebox_start,align,max(map(len,array)))
     tex+=end_line(0)+'\n'
     for r in range(len(array)):
-        tex+='&'.join('' if c is None else r'\lr{%s}'%(c,) for c in array[r])
+        tex+='&'.join('' if c is None else r'%s%s%s'%(lr_start,c,lr_end) for c in array[r])
         tex+=end_line(r+1)+'\n'
-    return tex+r'\end{array}$}'
+    return tex+r'\end{array}$'+raisebox_end
 
 
 def ascii_art_table(data, use_unicode=False, convention="English"):
@@ -380,12 +390,59 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
         uh = unicodedata.lookup('BOX DRAWINGS LIGHT UP AND HORIZONTAL')
         dh = unicodedata.lookup('BOX DRAWINGS LIGHT DOWN AND HORIZONTAL')
         vh = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL')
+        urdl = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL UPPER RIGHT TO LOWER LEFT')
+        uldr = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL UPPER LEFT TO LOWER RIGHT')
+        x = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL CROSS')
         from sage.typeset.unicode_art import unicode_art as art
     else:
         v = '|'
         h = '-'
         dl = dr = ul = ur = vr = vl = uh = dh = vh = '+'
+        urdl = '/'
+        uldr = '\\'
+        x = 'X'
         from sage.typeset.ascii_art import ascii_art as art
+
+    if Tableaux.options.convention == "Russian":
+        if not data:
+            return urdl + uldr + '\n' + uldr + urdl
+
+        str_tab = [[str(d) for d in row] for row in data]
+        col_widths = [2] * len(str_tab[0])
+        for row in str_tab:
+            for i, e in enumerate(row):
+                col_widths[i] = max(col_widths[i], len(e))
+        col_width = max(col_widths) + 1
+        max_height = max([a + len(str_tab[a]) for a in range(len(str_tab))])
+        empty_col = ' ' * (col_width * 2)
+        str_list = []
+        for i in range(max_height):
+            # Get the row with the number on it
+            st = ' ' + ' ' * ((max_height - i - 1) * col_width)
+            for a in range(i + 1):
+                b = i - a
+                if a == 0:
+                    st += uldr
+                else:
+                    st += x
+                if len(str_tab[b:]) > 0 and len(str_tab[b][a:]) > 0:
+                    st += str_tab[b][a].rjust(col_width,' ').ljust(col_width * 2 - 1, ' ')
+                else:
+                    st += ' '*(col_width * 2 - 1)
+                if b == 0:
+                    st += urdl
+
+            # Do all of the additional rows
+            for j in range(col_width - 1, 0, -1):
+                st2 = ' ' + ' ' * ((max_height - i - 1) * col_width)
+                st2 += (' ' * j + uldr + ' ' * (2 * (col_width - j) - 1) + urdl + ' ' * (j - 1)) * (i + 1)
+                str_list.append(st2)
+            str_list.append(st)
+        import re
+        mm = min([len(re.search('^ +', l)[0]) for l in str_list]) - 1
+        str_list = [l[mm:] for l in str_list]
+        str_list.reverse()
+        return '\n'.join(str_list)
 
     if not data:
         return dr + dl + '\n' + ur + ul
