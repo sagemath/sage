@@ -3535,33 +3535,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             # Determine whether to use dual mode or not.
             if not self.is_bounded():
                 dual = 0
-
             else:
-                if self.is_simple():
-                    per_face_primal = self.n_Vrepresentation() * self.n_facets()
-                else:
-                    per_face_primal = self.n_Vrepresentation() * self.n_facets() ** 2
-
-                if self.is_simplicial():
-                    per_face_dual = self.n_Vrepresentation() * self.n_facets()
-                else:
-                    per_face_dual = self.n_Vrepresentation() ** 2 * self.n_facets()
-
-                from sage.arith.misc import binomial
-                estimate_n_faces = self.dimension() * binomial(min(self.n_facets(), self.n_Vrepresentation()),
-                                                             self.dimension() // 2)
-
-                # Note that the runtime per face already computes the coatoms of the next level, i.e.
-                # the runtime for each facet suffices to compute all ridges in primal,
-                # the runtime for each vertex suffices to compute all edges in dual.
-                if do_edges:
-                    estimate_primal = estimate_n_faces * per_face_primal
-                    estimate_dual = self.n_Vrepresentation() * per_face_dual
-                else:
-                    estimate_primal = self.n_facets() * per_face_primal
-                    estimate_dual = estimate_n_faces * per_face_dual
-
-                dual = int(estimate_dual < estimate_primal)
+                dual = self._is_dual_faster_to_compute_edges_or_ridges(do_edges)
 
         cdef FaceIterator face_iter
         cdef int dim = self.dimension()
@@ -3613,6 +3588,36 @@ cdef class CombinatorialPolyhedron(SageObject):
             raise ValueError('could not determine edges')
         elif not do_edges and self._ridges is None:
             raise ValueError('could not determine ridges')
+
+    cdef bint _is_dual_faster_to_compute_edges_or_ridges(self, bint do_edges) except -1:
+        """
+        Determine whether edges or ridges should be computed with dual or primal approach.
+        """
+        if self.is_simple():
+            per_face_primal = self.n_Vrepresentation() * self.n_facets()
+        else:
+            per_face_primal = self.n_Vrepresentation() * self.n_facets() ** 2
+
+        if self.is_simplicial():
+            per_face_dual = self.n_Vrepresentation() * self.n_facets()
+        else:
+            per_face_dual = self.n_Vrepresentation() ** 2 * self.n_facets()
+
+        from sage.arith.misc import binomial
+        estimate_n_faces = self.dimension() * binomial(min(self.n_facets(), self.n_Vrepresentation()),
+                                                     self.dimension() // 2)
+
+        # Note that the runtime per face already computes the coatoms of the next level, i.e.
+        # the runtime for each facet suffices to compute all ridges in primal,
+        # the runtime for each vertex suffices to compute all edges in dual.
+        if do_edges:
+            estimate_primal = estimate_n_faces * per_face_primal
+            estimate_dual = self.n_Vrepresentation() * per_face_dual
+        else:
+            estimate_primal = self.n_facets() * per_face_primal
+            estimate_dual = estimate_n_faces * per_face_dual
+
+        return int(estimate_dual < estimate_primal)
 
     cdef size_t _compute_edges_or_ridges_with_iterator(
             self, FaceIterator face_iter, const bint do_atom_rep, const bint do_f_vector,
