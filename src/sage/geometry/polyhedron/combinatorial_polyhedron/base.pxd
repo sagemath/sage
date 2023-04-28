@@ -60,6 +60,5 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef size_t _compute_edges_or_ridges_with_iterator(
             self, FaceIterator face_iter, const bint do_atom_rep,
             ListOfPairs edges, size_t* f_vector) except -1
-    cdef bint _is_dual_faster_to_compute_edges_or_ridges(self, bint do_edges) except -1
 
     cdef int _compute_face_lattice_incidences(self) except -1

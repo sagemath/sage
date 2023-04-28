@@ -3536,7 +3536,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             if not self.is_bounded():
                 dual = 0
             else:
-                dual = self._is_dual_faster_to_compute_edges_or_ridges(do_edges)
+                algorithm = self.choose_algorithm_to_compute_edges_or_ridges("edges" if do_edges else "ridges")
+                dual = self._algorithm_to_dual(algorithm)
 
         cdef FaceIterator face_iter
         cdef int dim = self.dimension()
@@ -3585,9 +3586,57 @@ cdef class CombinatorialPolyhedron(SageObject):
         elif not do_edges and self._ridges is None:
             raise ValueError('could not determine ridges')
 
-    cdef bint _is_dual_faster_to_compute_edges_or_ridges(self, bint do_edges) except -1:
+    def choose_algorithm_to_compute_edges_or_ridges(self, edges_or_ridges):
         """
-        Determine whether edges or ridges should be computed with dual or primal approach.
+        Use some heuristics to pick primal or dual algorithm for
+        computation of edges resp. ridges.
+
+        We estimate how long it takes to compute a face using the primal
+        and the dual algorithm. This may differ significantly, so that e.g.
+        visiting all faces with the primal algorithm is faster than using
+        the dual algorithm to just visit vertices and edges.
+
+        We guess the number of edges and ridges and do a wild estimate on
+        the total number of faces.
+
+        INPUT:
+
+        - ``edges_or_ridges`` -- string; one of:
+          * ``'edges'``
+          * ``'ridges'``
+
+        OUTPUT:
+
+        Either ``'primal'`` or ``'dual'``.
+
+        EXAMPLES::
+
+            sage: C = polytopes.permutahedron(5).combinatorial_polyhedron()
+            sage: C.choose_algorithm_to_compute_edges_or_ridges("edges")
+            'primal'
+            sage: C.choose_algorithm_to_compute_edges_or_ridges("ridges")
+            'primal'
+
+        ::
+
+            sage: C = polytopes.cross_polytope(5).combinatorial_polyhedron()
+            sage: C.choose_algorithm_to_compute_edges_or_ridges("edges")
+            'dual'
+            sage: C.choose_algorithm_to_compute_edges_or_ridges("ridges")
+            'dual'
+
+
+        ::
+
+            sage: C = polytopes.Birkhoff_polytope(5).combinatorial_polyhedron()
+            sage: C.choose_algorithm_to_compute_edges_or_ridges("edges")
+            'dual'
+            sage: C.choose_algorithm_to_compute_edges_or_ridges("ridges")
+            'primal'
+            sage: C.choose_algorithm_to_compute_edges_or_ridges("something_else")
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown computation goal something_else
         """
         if self.is_simple():
             per_face_primal = self.n_Vrepresentation() * self.n_facets()
@@ -3606,14 +3655,16 @@ cdef class CombinatorialPolyhedron(SageObject):
         # Note that the runtime per face already computes the coatoms of the next level, i.e.
         # the runtime for each facet suffices to compute all ridges in primal,
         # the runtime for each vertex suffices to compute all edges in dual.
-        if do_edges:
+        if edges_or_ridges == "edges":
             estimate_primal = estimate_n_faces * per_face_primal
             estimate_dual = self.n_Vrepresentation() * per_face_dual
-        else:
+        elif edges_or_ridges == "ridges":
             estimate_primal = self.n_facets() * per_face_primal
             estimate_dual = estimate_n_faces * per_face_dual
+        else:
+            raise ValueError(f"unknown computation goal {edges_or_ridges}")
 
-        return int(estimate_dual < estimate_primal)
+        return 'dual' if (estimate_dual < estimate_primal) else 'primal'
 
     cdef size_t _compute_edges_or_ridges_with_iterator(
             self, FaceIterator face_iter, const bint do_atom_rep,
