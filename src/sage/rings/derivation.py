@@ -2366,17 +2366,15 @@ class RingDerivationWithTwist_generic(RingDerivation):
 
             sage: R.<x,y> = ZZ[]
             sage: theta = R.hom([y,x])
-            sage: d = R.derivation(x, twist=theta)
-            sage: d
+            sage: d = R.derivation(x, twist=theta); d
             x*([x |--> y, y |--> x] - id)
 
-            sage: D = d.extend_to_fraction_field()
-            sage: D
+            sage: D = d.extend_to_fraction_field(); D                                   # optional - sage.libs.singular
             x*([x |--> y, y |--> x] - id)
-            sage: D.domain()
+            sage: D.domain()                                                            # optional - sage.libs.singular
             Fraction Field of Multivariate Polynomial Ring in x, y over Integer Ring
 
-            sage: D(1/x)
+            sage: D(1/x)                                                                # optional - sage.libs.singular
             (x - y)/y
         """
         parent = self.parent()

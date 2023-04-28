@@ -645,14 +645,14 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             1/2
 
             sage: M = LaurentPolynomialRing(QQ, 'x, y')                                 # optional - sage.modules
-            sage: var('x, y')                                                           # optional - sage.modules
+            sage: var('x, y')                                                           # optional - sage.modules sage.symbolic
             (x, y)
-            sage: M(x/y + 3/x)                                                          # optional - sage.modules
+            sage: M(x/y + 3/x)                                                          # optional - sage.modules sage.symbolic
             x*y^-1 + 3*x^-1
 
         ::
 
-            sage: M(exp(x))                                                             # optional - sage.modules
+            sage: M(exp(x))                                                             # optional - sage.modules sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unable to convert e^x to a rational
@@ -727,7 +727,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         ::
 
-            sage: RL = R.localization(x+1)                                              # optional - sage.modules
+            sage: RL = R.localization(x + 1)                                            # optional - sage.modules
             sage: xi = RL(~x)                                                           # optional - sage.modules
             sage: R(xi) == ~x     # indirect doctests                                   # optional - sage.modules
             True

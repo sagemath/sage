@@ -1004,7 +1004,7 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: K.space_of_holomorphic_differentials()                                # optional - sage.modules
+            sage: K.space_of_holomorphic_differentials()                                # optional - sage.libs.pari sage.modules
             (Vector space of dimension 0 over Rational Field,
              Linear map:
                From: Vector space of dimension 0 over Rational Field
@@ -1037,7 +1037,7 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: K.basis_of_holomorphic_differentials()                                # optional - sage.modules
+            sage: K.basis_of_holomorphic_differentials()                                # optional - sage.libs.pari sage.modules
             []
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]                             # optional - sage.rings.finite_rings

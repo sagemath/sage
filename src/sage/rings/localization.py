@@ -41,35 +41,35 @@ three elements::
 
 Define the representation matrices (of one of the three dimensional irreducible representations)::
 
-    sage: m1 = matrix(L, [[u1, 0, 0], [0, u0, 0], [0, 0, u0]])                          # optional - sage.modules
-    sage: m2 = matrix(L, [[(u0*q - u0)/(u0 - u1), (u0*q - u1)/(u0 - u1), 0],            # optional - sage.modules
+    sage: m1 = matrix(L, [[u1, 0, 0], [0, u0, 0], [0, 0, u0]])                          # optional - sage.libs.pari sage.modules
+    sage: m2 = matrix(L, [[(u0*q - u0)/(u0 - u1), (u0*q - u1)/(u0 - u1), 0],            # optional - sage.libs.pari sage.modules
     ....:                 [(-u1*q + u0)/(u0 - u1), (-u1*q + u1)/(u0 - u1), 0],
     ....:                 [0, 0, -1]])
-    sage: m3 = matrix(L, [[-1, 0, 0],                                                   # optional - sage.modules
+    sage: m3 = matrix(L, [[-1, 0, 0],                                                   # optional - sage.libs.pari sage.modules
     ....:                 [0, u0*(1 - q)/(u1*q - u0), q*(u1 - u0)/(u1*q - u0)],
     ....:                 [0, (u1*q^2 - u0)/(u1*q - u0), (u1*q^ 2 - u1*q)/(u1*q - u0)]])
-    sage: m1.base_ring() == L                                                           # optional - sage.modules
+    sage: m1.base_ring() == L                                                           # optional - sage.libs.pari sage.modules
     True
 
 Check relations of the Ariki-Koike algebra::
 
-    sage: m1*m2*m1*m2 == m2*m1*m2*m1                                                    # optional - sage.modules
+    sage: m1*m2*m1*m2 == m2*m1*m2*m1                                                    # optional - sage.libs.pari sage.modules
     True
-    sage: m2*m3*m2 == m3*m2*m3                                                          # optional - sage.modules
+    sage: m2*m3*m2 == m3*m2*m3                                                          # optional - sage.libs.pari sage.modules
     True
-    sage: m1*m3 == m3*m1                                                                # optional - sage.modules
+    sage: m1*m3 == m3*m1                                                                # optional - sage.libs.pari sage.modules
     True
-    sage: m1**3 - (u0+u1+u2)*m1**2 + (u0*u1+u0*u2+u1*u2)*m1 - u0*u1*u2 == 0             # optional - sage.modules
+    sage: m1**3 - (u0+u1+u2)*m1**2 + (u0*u1+u0*u2+u1*u2)*m1 - u0*u1*u2 == 0             # optional - sage.libs.pari sage.modules
     True
-    sage: m2**2 - (q-1)*m2 - q == 0                                                     # optional - sage.modules
+    sage: m2**2 - (q-1)*m2 - q == 0                                                     # optional - sage.libs.pari sage.modules
     True
-    sage: m3**2 - (q-1)*m3 - q == 0                                                     # optional - sage.modules
+    sage: m3**2 - (q-1)*m3 - q == 0                                                     # optional - sage.libs.pari sage.modules
     True
-    sage: ~m1 in m1.parent()                                                            # optional - sage.modules
+    sage: ~m1 in m1.parent()                                                            # optional - sage.libs.pari sage.modules
     True
-    sage: ~m2 in m2.parent()                                                            # optional - sage.modules
+    sage: ~m2 in m2.parent()                                                            # optional - sage.libs.pari sage.modules
     True
-    sage: ~m3 in m3.parent()                                                            # optional - sage.modules
+    sage: ~m3 in m3.parent()                                                            # optional - sage.libs.pari sage.modules
     True
 
 Obtain specializations in positive characteristic::
@@ -102,7 +102,7 @@ Obtain specializations in positive characteristic::
 
 Obtain specializations in characteristic 0::
 
-    sage: fQ = L.hom((3,5,7,11), codomain=QQ); fQ                                       # optional - sage.rings.finite_rings
+    sage: fQ = L.hom((3,5,7,11), codomain=QQ); fQ                                       # optional -  sage.libs.pari
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring
             localized at (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1,
@@ -112,25 +112,25 @@ Obtain specializations in characteristic 0::
             u1 |--> 5
             u2 |--> 7
             q |--> 11
-    sage: mQ1 = matrix({k: fQ(v) for k, v in m1.dict().items()}); mQ1                   # optional - sage.modules sage.rings.finite_rings
+    sage: mQ1 = matrix({k: fQ(v) for k, v in m1.dict().items()}); mQ1                   # optional - sage.libs.pari sage.modules
     [5 0 0]
     [0 3 0]
     [0 0 3]
-    sage: mQ1.base_ring()                                                               # optional - sage.modules sage.rings.finite_rings
+    sage: mQ1.base_ring()                                                               # optional - sage.libs.pari sage.modules
     Rational Field
-    sage: mQ2 = matrix({k: fQ(v) for k, v in m2.dict().items()}); mQ2                   # optional - sage.modules sage.rings.finite_rings
+    sage: mQ2 = matrix({k: fQ(v) for k, v in m2.dict().items()}); mQ2                   # optional - sage.libs.pari sage.modules
     [-15 -14   0]
     [ 26  25   0]
     [  0   0  -1]
-    sage: mQ3 = matrix({k: fQ(v) for k, v in m3.dict().items()}); mQ3                   # optional - sage.modules sage.rings.finite_rings
+    sage: mQ3 = matrix({k: fQ(v) for k, v in m3.dict().items()}); mQ3                   # optional - sage.libs.pari sage.modules
     [    -1      0      0]
     [     0 -15/26  11/26]
     [     0 301/26 275/26]
 
     sage: S.<x, y, z, t> = QQ[]
     sage: T = S.quo(x + y + z)
-    sage: F = T.fraction_field()                                                        # optional - sage.libs.singular
-    sage: fF = L.hom((x, y, z, t), codomain=F); fF                                      # optional - sage.libs.singular
+    sage: F = T.fraction_field()                                                        # optional - sage.libs.pari sage.libs.singular
+    sage: fF = L.hom((x, y, z, t), codomain=F); fF                                      # optional - sage.libs.pari sage.libs.singular
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring
             localized at (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1,
@@ -141,16 +141,16 @@ Obtain specializations in characteristic 0::
             u1 |--> ybar
             u2 |--> zbar
             q |--> tbar
-    sage: mF1 = matrix({k: fF(v) for k, v in m1.dict().items()}); mF1                   # optional - sage.libs.singular sage.modules
+    sage: mF1 = matrix({k: fF(v) for k, v in m1.dict().items()}); mF1                   # optional - sage.libs.pari sage.libs.singular sage.modules
     [        ybar            0            0]
     [           0 -ybar - zbar            0]
     [           0            0 -ybar - zbar]
-    sage: mF1.base_ring() == F                                                          # optional - sage.libs.singular sage.modules
+    sage: mF1.base_ring() == F                                                          # optional - sage.libs.pari sage.libs.singular sage.modules
     True
 
 TESTS::
 
-    sage: TestSuite(L).run()                                                            # optional - sage.libs.singular sage.modules
+    sage: TestSuite(L).run()                                                            # optional - sage.libs.pari sage.libs.singular sage.modules
 
 AUTHORS:
 

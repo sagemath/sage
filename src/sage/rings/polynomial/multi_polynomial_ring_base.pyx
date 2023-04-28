@@ -1203,23 +1203,23 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         To produce a dense polynomial, pick ``terms=Infinity``::
 
-            sage: P.<x,y,z> = GF(127)[]
-            sage: f = P.random_element(degree=2, terms=Infinity)
-            sage: while len(list(f)) != 10:
+            sage: P.<x,y,z> = GF(127)[]                                                 # optional - sage.rings.finite_rings
+            sage: f = P.random_element(degree=2, terms=Infinity)                        # optional - sage.rings.finite_rings
+            sage: while len(list(f)) != 10:                                             # optional - sage.rings.finite_rings
             ....:     f = P.random_element(degree=2, terms=Infinity)
-            sage: f = P.random_element(degree=3, terms=Infinity)
-            sage: while len(list(f)) != 20:
+            sage: f = P.random_element(degree=3, terms=Infinity)                        # optional - sage.rings.finite_rings
+            sage: while len(list(f)) != 20:                                             # optional - sage.rings.finite_rings
             ....:     f = P.random_element(degree=3, terms=Infinity)
-            sage: f = P.random_element(degree=3, terms=Infinity, choose_degree=True)
-            sage: while len(list(f)) != 20:
+            sage: f = P.random_element(degree=3, terms=Infinity, choose_degree=True)    # optional - sage.rings.finite_rings
+            sage: while len(list(f)) != 20:                                             # optional - sage.rings.finite_rings
             ....:     f = P.random_element(degree=3, terms=Infinity)
 
         The number of terms is silently reduced to the maximum
         available if more terms are requested::
 
-            sage: P.<x,y,z> = GF(127)[]
-            sage: f = P.random_element(degree=2, terms=1000)
-            sage: len(list(f)) <= 10
+            sage: P.<x,y,z> = GF(127)[]                                                 # optional - sage.rings.finite_rings
+            sage: f = P.random_element(degree=2, terms=1000)                            # optional - sage.rings.finite_rings
+            sage: len(list(f)) <= 10                                                    # optional - sage.rings.finite_rings
             True
 
         TESTS:

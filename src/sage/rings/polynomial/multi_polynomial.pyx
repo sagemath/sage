@@ -1393,7 +1393,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: f = R.random_element(4) or (x^2 * y^2)
             sage: g = R.random_element(4) or (x^2 * y^2)
-            sage: f.sylvester_matrix(g, x).determinant() == f.resultant(g, x)           # optional - sage.modules
+            sage: f.sylvester_matrix(g, x).determinant() == f.resultant(g, x)           # optional - sage.libs.singular sage.modules
             True
 
         TESTS:

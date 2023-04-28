@@ -1429,30 +1429,30 @@ class RationalField(Singleton, number_field_base.NumberField):
         In general there is one generator for each `p\in S`, and an
         additional generator of `-1` when `p=2`::
 
-            sage: QS2, QS2gens, fromQS2, toQS2 = QQ.selmer_space([5,7], 2)              # optional - sage.modules
-            sage: QS2                                                                   # optional - sage.modules
+            sage: QS2, QS2gens, fromQS2, toQS2 = QQ.selmer_space([5,7], 2)              # optional - sage.modules sage.rings.number_field
+            sage: QS2                                                                   # optional - sage.modules sage.rings.number_field
             Vector space of dimension 3 over Finite Field of size 2
-            sage: QS2gens                                                               # optional - sage.modules
+            sage: QS2gens                                                               # optional - sage.modules sage.rings.number_field
             [5, 7, -1]
-            sage: toQS2(-7)                                                             # optional - sage.modules
+            sage: toQS2(-7)                                                             # optional - sage.modules sage.rings.number_field
             (0, 1, 1)
-            sage: fromQS2((0,1,1))                                                      # optional - sage.modules
+            sage: fromQS2((0,1,1))                                                      # optional - sage.modules sage.rings.number_field
             -7
 
         The map ``fromQS2`` is only well-defined modulo `p`'th powers
         (in this case, modulo squares)::
 
-            sage: toQS2(-5/7)                                                           # optional - sage.modules
+            sage: toQS2(-5/7)                                                           # optional - sage.modules sage.rings.number_field
             (1, 1, 1)
-            sage: fromQS2((1,1,1))                                                      # optional - sage.modules
+            sage: fromQS2((1,1,1))                                                      # optional - sage.modules sage.rings.number_field
             -35
-            sage: ((-5/7)/(-35)).is_square()                                            # optional - sage.modules
+            sage: ((-5/7)/(-35)).is_square()                                            # optional - sage.modules sage.rings.number_field
             True
 
         The map ``toQS2`` is not defined on all of `\QQ^*`, only on
         those numbers which are squares away from `5` and `7`::
 
-            sage: toQS2(210)                                                            # optional - sage.modules
+            sage: toQS2(210)                                                            # optional - sage.modules sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError: argument 210 should have valuations divisible by 2
