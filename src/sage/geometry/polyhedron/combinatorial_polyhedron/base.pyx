@@ -3544,7 +3544,6 @@ cdef class CombinatorialPolyhedron(SageObject):
         cdef ListOfPairs edges = ListOfPairs()
         cdef int output_dim_init = 1 if do_edges else dim - 2
 
-        cdef bint do_f_vector = False
         cdef size_t* f_vector = NULL
 
         try:
@@ -3561,20 +3560,17 @@ cdef class CombinatorialPolyhedron(SageObject):
                 if not self._f_vector and ((dual ^ do_edges)):
                     # While doing edges in non-dual mode or ridges in dual-mode
                     # one might as well do the f-vector.
-                    do_f_vector = True
-                    # Initialize ``f_vector``.
                     f_vector = <size_t *> check_calloc((dim + 2), sizeof(size_t))
                     f_vector[0] = 1
                     f_vector[dim + 1] = 1
                     face_iter = self._face_iter(dual, -2)
                 else:
-                    do_f_vector = False
                     face_iter = self._face_iter(dual, output_dim_init)
-                self._compute_edges_or_ridges_with_iterator(face_iter, (dual ^ do_edges), do_f_vector,
+                self._compute_edges_or_ridges_with_iterator(face_iter, (dual ^ do_edges),
                                                             edges, f_vector)
 
             # Success, persist the data.
-            if do_f_vector:
+            if f_vector is not NULL:
                 self._persist_f_vector(f_vector, dual)
 
             if do_edges:
@@ -3620,13 +3616,14 @@ cdef class CombinatorialPolyhedron(SageObject):
         return int(estimate_dual < estimate_primal)
 
     cdef size_t _compute_edges_or_ridges_with_iterator(
-            self, FaceIterator face_iter, const bint do_atom_rep, const bint do_f_vector,
+            self, FaceIterator face_iter, const bint do_atom_rep,
             ListOfPairs edges, size_t* f_vector) except -1:
         r"""
         See :meth:`CombinatorialPolyhedron._compute_edges`.
         """
         cdef size_t a, b                # facets of an edge
         cdef int dim = self.dimension()
+        cdef bint do_f_vector = f_vector is not NULL
 
         # The dimension in which to record the edges or ridges.
         cdef output_dimension = 1 if do_atom_rep else dim - 2
