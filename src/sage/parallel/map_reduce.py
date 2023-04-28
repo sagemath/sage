@@ -184,8 +184,8 @@ Second, you need the information necessary to describe a
 
   Compare::
 
-      sage: from sage.combinat.q_analogues import q_factorial
-      sage: q_factorial(5)
+      sage: from sage.combinat.q_analogues import q_factorial                           # optional - sage.combinat
+      sage: q_factorial(5)                                                              # optional - sage.combinat
       q^10 + 4*q^9 + 9*q^8 + 15*q^7 + 20*q^6 + 22*q^5 + 20*q^4 + 15*q^3 + 9*q^2 + 4*q + 1
 
 * **Listing the objects.** One can also compute the list of objects in a
