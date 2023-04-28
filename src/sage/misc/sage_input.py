@@ -581,7 +581,7 @@ class SageInputBuilder:
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sib.result(sib.float_str(repr(RR(e))))
+            sage: sib.result(sib.float_str(repr(RR(e))))                                # optional - sage.symbolic
             2.71828182845905
         """
         return SIE_literal_stringrep(self, n)
@@ -2238,10 +2238,12 @@ class SIE_dict(SageInputExpression):
         sage: from sage.misc.sage_input import SageInputBuilder
 
         sage: sib = SageInputBuilder()
-        sage: sib.dict([('TeX', RR(pi)), ('Metafont', RR(e))])
-        {dict: {{atomic:'TeX'}:{call: {atomic:RR}({atomic:3.1415926535897931})}, {atomic:'Metafont'}:{call: {atomic:RR}({atomic:2.7182818284590451})}}}
+        sage: sib.dict([('TeX', RR(pi)), ('Metafont', RR(e))])                          # optional - sage.symbolic
+        {dict: {{atomic:'TeX'}:{call: {atomic:RR}({atomic:3.1415926535897931})},
+                {atomic:'Metafont'}:{call: {atomic:RR}({atomic:2.7182818284590451})}}}
         sage: sib.dict({-40:-40, 0:32, 100:212})
-        {dict: {{unop:- {atomic:40}}:{unop:- {atomic:40}}, {atomic:0}:{atomic:32}, {atomic:100}:{atomic:212}}}
+        {dict: {{unop:- {atomic:40}}:{unop:- {atomic:40}},
+                {atomic:0}:{atomic:32}, {atomic:100}:{atomic:212}}}
     """
 
     def __init__(self, sib, entries):
