@@ -48,6 +48,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cdef FaceIterator _face_iter(self, bint dual, int dimension)
     cdef int _compute_f_vector(self, size_t num_threads, size_t parallelization_depth, int dual) except -1
+    cdef int _persist_f_vector(self, size_t* input_f_vector, bint input_is_reversed) except -1
 
     cdef inline int _compute_edges(self, dual) except -1:
         return self._compute_edges_or_ridges(dual, True)

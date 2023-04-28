@@ -3495,24 +3495,26 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         parallel_f_vector(structs, num_threads, parallelization_depth, f_vector)
 
-        # Copy ``f_vector``.
-        if dual:
-            if dim > 1 and f_vector[1] < self.n_facets():
-                # The input seemed to be wrong.
-                raise ValueError("not all facets are joins of vertices")
+        self._persist_f_vector(f_vector, dual)
 
-            # We have computed the ``f_vector`` of the dual.
-            # Reverse it:
-            self._f_vector = \
-                tuple(smallInteger(f_vector[dim+1-i]) for i in range(dim+2))
+    cdef int _persist_f_vector(self, size_t* input_f_vector, bint input_is_reversed) except -1:
+        cdef int dim = self.dimension()
 
+        if input_is_reversed:
+            f_vector = \
+                tuple(smallInteger(input_f_vector[dim + 1 - i]) for i in range(dim + 2))
         else:
-            if self.is_bounded() and dim > 1 \
-                    and f_vector[1] < self.n_Vrepresentation() - len(self.far_face_tuple()):
-                # The input seemed to be wrong.
+            f_vector = \
+                tuple(smallInteger(input_f_vector[i]) for i in range(dim + 2))
+
+        # Sanity checks.
+        if dim > 1:
+            if f_vector[-2] < self.n_facets():
+                raise ValueError("not all facets are joins of vertices")
+            if self.is_bounded() and f_vector[1] < self.n_Vrepresentation():
                 raise ValueError("not all vertices are intersections of facets")
 
-            self._f_vector = tuple(smallInteger(f_vector[i]) for i in range(dim+2))
+        self._f_vector = f_vector
 
     cdef int _compute_edges_or_ridges(self, int dual, bint do_edges) except -1:
         r"""
@@ -3596,29 +3598,10 @@ cdef class CombinatorialPolyhedron(SageObject):
                 self._compute_edges_or_ridges_with_iterator(face_iter, (dual ^ do_edges), do_f_vector,
                                                             edges, f_vector)
 
-            # Success, copy the data to ``CombinatorialPolyhedron``.
-
-            # Copy ``f_vector``.
+            # Success, persist the data.
             if do_f_vector:
-                if dual:
-                    if dim > 1 and f_vector[1] < self.n_facets():
-                        # The input seemed to be wrong.
-                        raise ValueError("not all facets are joins of vertices")
+                self._persist_f_vector(f_vector, dual)
 
-                    # We have computed the ``f_vector`` of the dual.
-                    # Reverse it:
-                    self._f_vector = \
-                        tuple(smallInteger(f_vector[dim+1-i]) for i in range(dim+2))
-
-                else:
-                    if self.is_bounded() and dim > 1 \
-                            and f_vector[1] < self.n_Vrepresentation() - len(self.far_face_tuple()):
-                        # The input seemed to be wrong.
-                        raise ValueError("not all vertices are intersections of facets")
-
-                    self._f_vector = tuple(smallInteger(f_vector[i]) for i in range(dim+2))
-
-            # Copy the edge or ridges.
             if do_edges:
                 self._edges = edges
             else:
@@ -3744,7 +3727,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             dimension_one += 1
             dimension_two = dimension_one - 1
 
-        # Success, copy the data to ``CombinatorialPolyhedron``.
+        # Success, persist the data.
         self._face_lattice_incidences = incidences
 
     def _record_all_faces(self):
