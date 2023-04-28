@@ -6786,13 +6786,21 @@ class Graph(GenericGraph):
             {(0, 0): 2, (0, 1): 3, (0, 2): 2, (1, 0): 2, (1, 1): 3, (1, 2): 2}
             sage: F.cliques_number_of(vertices=[(0, 1), (1, 2)])
             {(0, 1): 3, (1, 2): 2}
+            sage: F.cliques_number_of(vertices=(0, 1))
+            3
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
             sage: G.show(figsize=[2,2])
             sage: G.cliques_number_of()
             {0: 2, 1: 2, 2: 1, 3: 1}
         """
-        import networkx
-        return networkx.number_of_cliques(self.networkx_graph(), vertices, cliques)
+        if cliques is None:
+            cliques = self.cliques_maximal()
+
+        if vertices in self: # single vertex
+            return sum(1 for c in cliques if vertices in c)
+        else:
+            return { v : sum(1 for c in cliques if v in c)
+                     for v in vertices or self }
 
     @doc_index("Clique-related methods")
     def cliques_get_max_clique_graph(self):
@@ -7493,17 +7501,32 @@ class Graph(GenericGraph):
 
             sage: C = Graph('DJ{')
             sage: C.cliques_containing_vertex()
-            {0: [[4, 0]], 1: [[4, 1, 2, 3]], 2: [[4, 1, 2, 3]], 3: [[4, 1, 2, 3]], 4: [[4, 0], [4, 1, 2, 3]]}
+            {0: [[0, 4]],
+             1: [[1, 2, 3, 4]],
+             2: [[1, 2, 3, 4]],
+             3: [[1, 2, 3, 4]],
+             4: [[0, 4], [1, 2, 3, 4]]}
+            sage: C.cliques_containing_vertex(4)
+            [[0, 4], [1, 2, 3, 4]]
+            sage: C.cliques_containing_vertex([0, 1])
+            {0: [[0, 4]], 1: [[1, 2, 3, 4]]}
             sage: E = C.cliques_maximal()
             sage: E
             [[0, 4], [1, 2, 3, 4]]
             sage: C.cliques_containing_vertex(cliques=E)
-            {0: [[0, 4]], 1: [[1, 2, 3, 4]], 2: [[1, 2, 3, 4]], 3: [[1, 2, 3, 4]], 4: [[0, 4], [1, 2, 3, 4]]}
+            {0: [[0, 4]],
+             1: [[1, 2, 3, 4]],
+             2: [[1, 2, 3, 4]],
+             3: [[1, 2, 3, 4]],
+             4: [[0, 4], [1, 2, 3, 4]]}
 
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
             sage: G.show(figsize=[2,2])
             sage: G.cliques_containing_vertex()
-            {0: [[0, 1, 2], [0, 1, 3]], 1: [[0, 1, 2], [0, 1, 3]], 2: [[0, 1, 2]], 3: [[0, 1, 3]]}
+            {0: [[0, 1, 2], [0, 1, 3]],
+             1: [[0, 1, 2], [0, 1, 3]],
+             2: [[0, 1, 2]],
+             3: [[0, 1, 3]]}
 
         Since each clique of a 2 dimensional grid corresponds to an edge, the
         number of cliques in which a vertex is involved equals its degree::
@@ -7518,8 +7541,14 @@ class Graph(GenericGraph):
             sage: sorted(sorted(x for x in L) for L in d[(0, 1)])
             [[(0, 0), (0, 1)], [(0, 1), (0, 2)], [(0, 1), (1, 1)]]
         """
-        import networkx
-        return networkx.cliques_containing_node(self.networkx_graph(), vertices, cliques)
+        if cliques is None:
+            cliques = self.cliques_maximal()
+
+        if vertices in self: # single vertex
+            return [c for c in cliques if vertices in c]
+        else:
+            return { v : [c for c in cliques if v in c]
+                     for v in vertices or self }
 
     @doc_index("Clique-related methods")
     def clique_complex(self):
