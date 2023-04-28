@@ -12583,8 +12583,7 @@ cdef class Matrix(Matrix1):
             ....:                 [ 2, -7,  4,  7]])
             sage: A.is_symmetric()
             True
-            sage: L = A.cholesky()
-            sage: L
+            sage: L = A.cholesky(); L
             [ 2  0  0  0]
             [-1  3  0  0]
             [ 2  0  2  0]
@@ -12605,8 +12604,7 @@ cdef class Matrix(Matrix1):
             ....:                 [ -2, -18, -38,  15]])
             sage: A.is_symmetric()
             True
-            sage: L = A.cholesky()                                                                  # optional - sage.rings.number_field
-            sage: L                                                                                 # optional - sage.rings.number_field
+            sage: L = A.cholesky(); L                                                   # optional - sage.rings.number_field
             [   8.83176086632785?                    0                    0                    0]
             [ -3.396831102433787?    9.51112708681461?                    0                    0]
             [ -4.189425026335004?   17.32383862241232?   2.886751345948129?                    0]
@@ -12627,8 +12625,7 @@ cdef class Matrix(Matrix1):
             ....:                [     -21*I, -7*I + 15,  -24*I + 6,       28]])
             sage: A.is_hermitian()                                                                  # optional - sage.rings.number_field
             True
-            sage: L = A.cholesky()                                                                  # optional - sage.rings.number_field
-            sage: L
+            sage: L = A.cholesky(); L                                                   # optional - sage.rings.number_field
             [                4.79...?                         0                       0        0]
             [   0.62...? - 3.54...?*I                  5.00...?                       0        0]
             [   5.21...? - 5.00...?*I   13.58...? + 10.72...?*I               24.98...?        0]
@@ -15479,20 +15476,24 @@ cdef class Matrix(Matrix1):
         from sage.symbolic.ring import SR
         return self.change_ring(SR).exp()
 
-    def elementary_divisors(self):
+    def elementary_divisors(self, algorithm=None):
         r"""
-        If self is a matrix over a principal ideal domain R, return
+        If ``self`` is a matrix over a principal ideal domain `R`, return
         elements `d_i` for `1 \le i \le k = \min(r,s)`
         where `r` and `s` are the number of rows and
-        columns of self, such that the cokernel of self is isomorphic to
+        columns of self, such that the cokernel of ``self`` is isomorphic to
 
         .. MATH::
 
            R/(d_1) \oplus R/(d_2) \oplus R/(d_k)
 
         with `d_i \mid d_{i+1}` for all `i`. These are
-        the diagonal entries of the Smith form of self (see
-        :meth:`smith_form()`).
+        the diagonal entries of the Smith form of ``self`` (see
+        :meth:`smith_form`).
+
+        INPUT:
+
+        - ``algorithm`` -- ignored
 
         EXAMPLES::
 
@@ -15911,7 +15912,8 @@ cdef class Matrix(Matrix1):
             sage: A = matrix(M, 2, 3, [x, 1, 2*x, 2*x, 2, 4*x])                                     # optional - sage.libs.pari
             sage: A.hermite_form(transformation=True, include_zero_rows=False)                      # optional - sage.libs.pari
             ([  x   1 2*x], [1 0])
-            sage: H, U = A.hermite_form(transformation=True, include_zero_rows=True); H, U          # optional - sage.libs.pari
+            sage: H, U = A.hermite_form(transformation=True, include_zero_rows=True)    # optional - sage.rings.finite_rings
+            sage: H, U                                                                  # optional - sage.rings.finite_rings
             (
             [  x   1 2*x]  [1 0]
             [  0   0   0], [5 1]
