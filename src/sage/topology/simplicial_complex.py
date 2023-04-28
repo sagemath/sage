@@ -4194,18 +4194,18 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Z1 = SimplicialComplex([[0,1],[1,2],[2,3,4],[4,5]])
             sage: Z2 = SimplicialComplex([['a','b'],['b','c'],['c','d','e'],['e','f']])
             sage: Z3 = SimplicialComplex([[1,2,3]])
-            sage: Z1.is_isomorphic(Z2)                                                      # optional - sage.graphs
+            sage: Z1.is_isomorphic(Z2)                                                  # optional - sage.graphs
             True
-            sage: Z1.is_isomorphic(Z2, certificate=True)                                    # optional - sage.graphs
+            sage: Z1.is_isomorphic(Z2, certificate=True)                                # optional - sage.graphs
             (True, {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f'})
-            sage: Z3.is_isomorphic(Z2)                                                      # optional - sage.graphs
+            sage: Z3.is_isomorphic(Z2)                                                  # optional - sage.graphs
             False
 
         We check that :trac:`20751` is fixed::
 
             sage: C1 = SimplicialComplex([[1,2,3], [2,4], [3,5], [5,6]])
             sage: C2 = SimplicialComplex([['a','b','c'], ['b','d'], ['c','e'], ['e','f']])
-            sage: C1.is_isomorphic(C2, certificate=True)                                    # optional - sage.graphs
+            sage: C1.is_isomorphic(C2, certificate=True)                                # optional - sage.graphs
             (True, {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f'})
         """
         # Check easy invariants agree
@@ -4630,7 +4630,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: SimplicialComplex([[1,2,3]]).decone()
             Simplicial complex with vertex set () and facets {()}
             sage: SimplicialComplex([[1,2,3], [1,3,4], [1,5,6]]).decone()
-            Simplicial complex with vertex set (2, 3, 4, 5, 6) and facets {(2, 3), (3, 4), (5, 6)}
+            Simplicial complex with vertex set (2, 3, 4, 5, 6)
+             and facets {(2, 3), (3, 4), (5, 6)}
             sage: X = SimplicialComplex([[1,2,3], [1,3,4], [2,5,6]])
             sage: X.decone() == X
             True
@@ -4662,18 +4663,18 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         A 1-dim simplicial complex is balanced iff it is bipartite::
 
-            sage: X = SimplicialComplex([[1,2],[1,4],[3,4],[2,5]])
+            sage: X = SimplicialComplex([[1,2], [1,4], [3,4], [2,5]])
             sage: X.is_balanced()                                                       # optional - sage.graphs
             True
             sage: sorted(X.is_balanced(certificate=True))                               # optional - sage.graphs
             [[1, 3, 5], [2, 4]]
-            sage: X = SimplicialComplex([[1,2],[1,4],[3,4],[2,4]])
+            sage: X = SimplicialComplex([[1,2], [1,4], [3,4], [2,4]])
             sage: X.is_balanced()                                                       # optional - sage.graphs
             False
 
         Any barycentric division is balanced::
 
-            sage: X = SimplicialComplex([[1,2,3],[1,2,4],[2,3,4]])
+            sage: X = SimplicialComplex([[1,2,3], [1,2,4], [2,3,4]])
             sage: X.is_balanced()                                                       # optional - sage.graphs
             False
             sage: X.barycentric_subdivision().is_balanced()                             # optional - sage.graphs
@@ -4681,7 +4682,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         A non-pure balanced complex::
 
-            sage: X = SimplicialComplex([[1,2,3],[3,4]])
+            sage: X = SimplicialComplex([[1,2,3], [3,4]])
             sage: X.is_balanced(check_purity=True)                                      # optional - sage.graphs
             False
             sage: sorted(X.is_balanced(certificate=True))                               # optional - sage.graphs
@@ -4739,7 +4740,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         Simplices are trivially partitionable::
 
-            sage: X = SimplicialComplex([ [1,2,3,4] ])
+            sage: X = SimplicialComplex([[1,2,3,4]])
             sage: X.is_partitionable()
             True
             sage: X.is_partitionable(certificate=True)
@@ -4747,23 +4748,27 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         Shellable complexes are partitionable::
 
-            sage: X = SimplicialComplex([ [1,3,5],[1,3,6],[1,4,5],[1,4,6],[2,3,5],[2,3,6],[2,4,5] ])
+            sage: X = SimplicialComplex([[1,3,5], [1,3,6], [1,4,5], [1,4,6],
+            ....:                        [2,3,5], [2,3,6], [2,4,5]])
             sage: X.is_partitionable()
             True
             sage: P = X.is_partitionable(certificate=True)
-            sage: n_intervals_containing = lambda f: len([ RF for RF in P if RF[0].is_face(f) and f.is_face(RF[1]) ])
-            sage: all( n_intervals_containing(f)==1 for k in X.faces().keys() for f in X.faces()[k] )
+            sage: def n_intervals_containing(f):
+            ....:     return len([RF for RF in P
+            ....:                    if RF[0].is_face(f) and f.is_face(RF[1])])
+            sage: all(n_intervals_containing(f) == 1
+            ....:     for k in X.faces().keys() for f in X.faces()[k])
             True
 
         A non-shellable, non-Cohen-Macaulay, partitionable example, constructed by Björner::
 
-            sage: X = SimplicialComplex([ [1,2,3],[1,2,4],[1,3,4],[2,3,4],[1,5,6] ])
+            sage: X = SimplicialComplex([[1,2,3], [1,2,4], [1,3,4], [2,3,4], [1,5,6]])
             sage: X.is_partitionable()
             True
 
         The bowtie complex is not partitionable::
 
-            sage: X = SimplicialComplex([ [1,2,3],[1,4,5] ])
+            sage: X = SimplicialComplex([[1,2,3], [1,4,5]])
             sage: X.is_partitionable()
             False
         """
@@ -4794,9 +4799,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
-            sage: X = SimplicialComplex([[1,2,3],[1,2,4]])
-            sage: Y = SimplicialComplex([[1,2,3],[1,4,5]])
-            sage: Z = SimplicialComplex([[1,2,3],[1,4],[2,4]])
+            sage: X = SimplicialComplex([[1,2,3], [1,2,4]])
+            sage: Y = SimplicialComplex([[1,2,3], [1,4,5]])
+            sage: Z = SimplicialComplex([[1,2,3], [1,4], [2,4]])
             sage: sorted(X.intersection(Y).facets())
             [(1, 2, 3), (1, 4)]
             sage: X.intersection(X) == X

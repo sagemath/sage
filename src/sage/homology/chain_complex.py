@@ -84,7 +84,7 @@ def _latex_module(R, m):
         '\\Bold{Z}^{3}'
         sage: _latex_module(ZZ, 0)
         '0'
-        sage: _latex_module(GF(3), 1)                                                   # optional - sage.libs.pari
+        sage: _latex_module(GF(3), 1)                                                   # optional - sage.rings.finite_rings
         '\\Bold{F}_{3}^{1}'
     """
     if m == 0:
@@ -187,11 +187,11 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
         Chain complex with at most 2 nonzero terms over Integer Ring
 
         sage: m = matrix(ZZ, 2, 2, [0, 1, 0, 0])
-        sage: D = ChainComplex([m, m], base_ring=GF(2)); D                              # optional - sage.libs.pari
+        sage: D = ChainComplex([m, m], base_ring=GF(2)); D                              # optional - sage.rings.finite_rings
         Chain complex with at most 3 nonzero terms over Finite Field of size 2
-        sage: D == loads(dumps(D))                                                      # optional - sage.libs.pari
+        sage: D == loads(dumps(D))                                                      # optional - sage.rings.finite_rings
         True
-        sage: D.differential(0)==m, m.is_immutable(), D.differential(0).is_immutable()  # optional - sage.libs.pari
+        sage: D.differential(0)==m, m.is_immutable(), D.differential(0).is_immutable()  # optional - sage.rings.finite_rings
         (True, False, True)
 
     Note that when a chain complex is defined in Sage, new
@@ -213,20 +213,21 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
 
         sage: ChainComplex([matrix(QQ, 3, 1), matrix(ZZ, 4, 3)])
         Chain complex with at most 3 nonzero terms over Rational Field
-        sage: ChainComplex([matrix(GF(125, 'a'), 3, 1), matrix(ZZ, 4, 3)])              # optional - sage.libs.pari
+        sage: ChainComplex([matrix(GF(125, 'a'), 3, 1), matrix(ZZ, 4, 3)])              # optional - sage.rings.finite_rings
         Chain complex with at most 3 nonzero terms over Finite Field in a of size 5^3
 
     If the matrices are defined over incompatible rings, an error results::
 
-        sage: ChainComplex([matrix(GF(125, 'a'), 3, 1), matrix(QQ, 4, 3)])              # optional - sage.libs.pari
+        sage: ChainComplex([matrix(GF(125, 'a'), 3, 1), matrix(QQ, 4, 3)])              # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
-        TypeError: no common canonical parent for objects with parents: 'Finite Field in a of size 5^3' and 'Rational Field'
+        TypeError: no common canonical parent for objects with parents:
+        'Finite Field in a of size 5^3' and 'Rational Field'
 
     If the base ring is given explicitly but is not compatible with
     the matrices, an error results::
 
-        sage: ChainComplex([matrix(GF(125, 'a'), 3, 1)], base_ring=QQ)                  # optional - sage.libs.pari
+        sage: ChainComplex([matrix(GF(125, 'a'), 3, 1)], base_ring=QQ)                  # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 0 to a rational
@@ -334,14 +335,15 @@ class Chain_class(ModuleElement):
 
         EXAMPLES::
 
-            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(7))  # optional - sage.libs.pari
-            sage: C.category()                                                                  # optional - sage.libs.pari
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])},           # optional - sage.rings.finite_rings
+            ....:                  base_ring=GF(7))
+            sage: C.category()                                                          # optional - sage.rings.finite_rings
             Category of chain complexes over Finite Field of size 7
 
         TESTS::
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
-            sage: c = C({0:vector([0, 1, 2]), 1:vector([3, 4])})
+            sage: c = C({0: vector([0, 1, 2]), 1: vector([3, 4])})
             sage: TestSuite(c).run()
         """
         # only nonzero vectors shall be stored, ensuring this is the
@@ -359,7 +361,7 @@ class Chain_class(ModuleElement):
         EXAMPLES::
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
-            sage: c = C({0:vector([1, 2, 3]), 1:vector([4, 5])})
+            sage: c = C({0: vector([1, 2, 3]), 1: vector([4, 5])})
             sage: c.vector(0)
             (1, 2, 3)
             sage: c.vector(1)
@@ -381,9 +383,9 @@ class Chain_class(ModuleElement):
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
             sage: C()
             Trivial chain
-            sage: C({0:vector([1, 2, 3])})
+            sage: C({0: vector([1, 2, 3])})
             Chain(0:(1, 2, 3))
-            sage: c = C({0:vector([1, 2, 3]), 1:vector([4, 5])});  c
+            sage: c = C({0: vector([1, 2, 3]), 1: vector([4, 5])});  c
             Chain with 2 nonzero terms over Integer Ring
             sage: c._repr_()
             'Chain with 2 nonzero terms over Integer Ring'
@@ -408,8 +410,9 @@ class Chain_class(ModuleElement):
 
         EXAMPLES::
 
-            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0]), 1:zero_matrix(1,2)})
-            sage: c = C({0:vector([1, 2, 3]), 1:vector([4, 5])})
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0]),
+            ....:                   1: zero_matrix(1,2)})
+            sage: c = C({0: vector([1, 2, 3]), 1: vector([4, 5])})
             sage: ascii_art(c)
                d_2       d_1       d_0  [1]  d_-1
             0 <---- [0] <---- [4] <---- [2] <----- 0
@@ -454,8 +457,9 @@ class Chain_class(ModuleElement):
 
         EXAMPLES::
 
-            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0]), 1:zero_matrix(1,2)})
-            sage: c = C({0:vector([1, 2, 3]), 1:vector([4, 5])})
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0]),
+            ....:                   1: zero_matrix(1,2)})
+            sage: c = C({0: vector([1, 2, 3]), 1: vector([4, 5])})
             sage: unicode_art(c)
                                         ⎛1⎞
                d_2       d_1  ⎛4⎞  d_0  ⎜2⎟  d_-1
@@ -504,7 +508,7 @@ class Chain_class(ModuleElement):
         EXAMPLES::
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
-            sage: c = C({0:vector([0, 1, 2]), 1:vector([3, 4])})
+            sage: c = C({0: vector([0, 1, 2]), 1: vector([3, 4])})
             sage: c.is_cycle()
             True
         """
@@ -527,7 +531,7 @@ class Chain_class(ModuleElement):
         EXAMPLES::
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
-            sage: c = C({0:vector([0, 1, 2]), 1:vector([3, 4])})
+            sage: c = C({0: vector([0, 1, 2]), 1: vector([3, 4])})
             sage: c.is_boundary()
             False
             sage: z3 = C({1:(1, 0)})
@@ -552,7 +556,7 @@ class Chain_class(ModuleElement):
         EXAMPLES::
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
-            sage: c = C({0:vector([0, 1, 2]), 1:vector([3, 4])})
+            sage: c = C({0: vector([0, 1, 2]), 1: vector([3, 4])})
             sage: c + c
             Chain with 2 nonzero terms over Integer Ring
             sage: ascii_art(c + c)
@@ -576,7 +580,7 @@ class Chain_class(ModuleElement):
         EXAMPLES::
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
-            sage: c = C({0:vector([0, 1, 2]), 1:vector([3, 4])})
+            sage: c = C({0: vector([0, 1, 2]), 1: vector([3, 4])})
             sage: 2 * c
             Chain with 2 nonzero terms over Integer Ring
             sage: 2 * c == c + c == c * 2
@@ -598,7 +602,7 @@ class Chain_class(ModuleElement):
         EXAMPLES::
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
-            sage: c = C({0:vector([0, 1, 2]), 1:vector([3, 4])})
+            sage: c = C({0: vector([0, 1, 2]), 1: vector([3, 4])})
             sage: c == c
             True
             sage: c == C(0)
@@ -615,7 +619,7 @@ class Chain_class(ModuleElement):
         EXAMPLES::
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
-            sage: c = C({0:vector([0, 1, 2]), 1:vector([3, 4])})
+            sage: c = C({0: vector([0, 1, 2]), 1: vector([3, 4])})
             sage: c != c
             False
             sage: c != C(0)
@@ -766,7 +770,7 @@ class ChainComplex_class(Parent):
             [2]
             sage: C.rank(0)
             1
-            sage: C.rank(0, ring=GF(2))                                                 # optional - sage.libs.pari
+            sage: C.rank(0, ring=GF(2))                                                 # optional - sage.rings.finite_rings
             0
         """
         degree = self.grading_group()(degree)
@@ -1074,11 +1078,12 @@ class ChainComplex_class(Parent):
 
         EXAMPLES::
 
-            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(2))  # optional - sage.libs.pari
-            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),                 # optional - sage.libs.pari
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])},           # optional - sage.rings.finite_rings
+            ....:                  base_ring=GF(2))
+            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),         # optional - sage.rings.finite_rings
             ....:                   1: matrix(ZZ, 0, 2),
             ....:                   3: matrix(ZZ, 0, 0)})  # base_ring determined from the matrices
-            sage: C == D                                                                        # optional - sage.libs.pari
+            sage: C == D                                                                # optional - sage.rings.finite_rings
             True
         """
         if not isinstance(other, ChainComplex_class) or self.base_ring() != other.base_ring():
@@ -1102,14 +1107,16 @@ class ChainComplex_class(Parent):
 
         EXAMPLES::
 
-            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(2))  # optional - sage.libs.pari
-            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),                 # optional - sage.libs.pari
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])},           # optional - sage.rings.finite_rings
+            ....:                  base_ring=GF(2))
+            sage: D = ChainComplex({0: matrix(GF(2), 2, 3, [1, 0, 0, 0, 0, 0]),         # optional - sage.rings.finite_rings
             ....:                   1: matrix(ZZ, 0, 2),
             ....:                   3: matrix(ZZ, 0, 0)})  # base_ring determined from the matrices
-            sage: C != D                                                                        # optional - sage.libs.pari
+            sage: C != D                                                                # optional - sage.rings.finite_rings
             False
-            sage: E = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=ZZ)
-            sage: C != E                                                                        # optional - sage.libs.pari
+            sage: E = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])},
+            ....:                  base_ring=ZZ)
+            sage: C != E                                                                # optional - sage.rings.finite_rings
             True
         """
         return not self == other
@@ -1135,15 +1142,15 @@ class ChainComplex_class(Parent):
 
         EXAMPLES::
 
-            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(2))  # optional - sage.libs.pari
-            sage: C._homology_chomp(None, GF(2), False, False)   # optional - CHomP             # optional - sage.libs.pari
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(2))  # optional - sage.rings.finite_rings
+            sage: C._homology_chomp(None, GF(2), False, False)   # optional - CHomP             # optional - sage.rings.finite_rings
             doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
             See https://github.com/sagemath/sage/issues/33777 for details.
             {0: Vector space of dimension 2 over Finite Field of size 2, 1: Vector space of dimension 1 over Finite Field of size 2}
 
             sage: D = ChainComplex({0: matrix(ZZ,1,0,[]), 1: matrix(ZZ,1,1,[0]),
             ....:   2: matrix(ZZ,0,1,[])})
-            sage: D._homology_chomp(None, GF(2), False, False)   # optional - CHomP             # optional - sage.libs.pari
+            sage: D._homology_chomp(None, GF(2), False, False)   # optional - CHomP             # optional - sage.rings.finite_rings
             {1: Vector space of dimension 1 over Finite Field of size 2,
             2: Vector space of dimension 1 over Finite Field of size 2}
         """
@@ -1245,7 +1252,7 @@ class ChainComplex_class(Parent):
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
             sage: C.homology()
             {0: Z x Z, 1: Z x C3}
-            sage: C.homology(deg=1, base_ring=GF(3))                                    # optional - sage.libs.pari
+            sage: C.homology(deg=1, base_ring=GF(3))                                    # optional - sage.rings.finite_rings
             Vector space of dimension 2 over Finite Field of size 3
             sage: D = ChainComplex({0: identity_matrix(ZZ, 4), 4: identity_matrix(ZZ, 30)})
             sage: D.homology()
@@ -1453,8 +1460,8 @@ class ChainComplex_class(Parent):
             sage: C.betti()
             {0: 2, 1: 1}
 
-            sage: D = ChainComplex({0:matrix(GF(5), [[3, 1],[1, 2]])})                  # optional - sage.libs.pari
-            sage: D.betti()                                                             # optional - sage.libs.pari
+            sage: D = ChainComplex({0: matrix(GF(5), [[3, 1],[1, 2]])})                 # optional - sage.rings.finite_rings
+            sage: D.betti()                                                             # optional - sage.rings.finite_rings
             {0: 1, 1: 1}
         """
         if base_ring is None:
@@ -1492,7 +1499,7 @@ class ChainComplex_class(Parent):
 
         ALGORITHM:
 
-        let `C` denote the chain complex.  Let `P` equal
+        Let `C` denote the chain complex.  Let `P` equal
         ``max_prime``.  Compute the mod `P` homology of `C`, and use
         this as the base-line computation: the assumption is that this
         is isomorphic to the integral homology tensored with
@@ -1505,14 +1512,14 @@ class ChainComplex_class(Parent):
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
             sage: C.homology()
             {0: Z x Z, 1: Z x C3}
-            sage: C.torsion_list(11)                                                    # optional - sage.libs.pari
+            sage: C.torsion_list(11)                                                    # optional - sage.rings.finite_rings
             [(3, [1])]
             sage: C = ChainComplex([matrix(ZZ, 1, 1, [2]), matrix(ZZ, 1, 1), matrix(1, 1, [3])])
             sage: C.homology(1)
             C2
             sage: C.homology(3)
             C3
-            sage: C.torsion_list(5)                                                     # optional - sage.libs.pari
+            sage: C.torsion_list(5)                                                     # optional - sage.rings.finite_rings
             [(2, [1]), (3, [3])]
         """
         if self.base_ring() != ZZ:
@@ -1557,8 +1564,8 @@ class ChainComplex_class(Parent):
 
             sage: S = simplicial_complexes.Sphere(2)                                    # optional - sage.graphs
             sage: T = simplicial_complexes.Torus()                                      # optional - sage.graphs
-            sage: C = S.chain_complex(augmented=True,cochain=True)                      # optional - sage.graphs
-            sage: D = T.chain_complex(augmented=True,cochain=True)                      # optional - sage.graphs
+            sage: C = S.chain_complex(augmented=True, cochain=True)                     # optional - sage.graphs
+            sage: D = T.chain_complex(augmented=True, cochain=True)                     # optional - sage.graphs
             sage: Hom(C, D)  # indirect doctest                                         # optional - sage.graphs
             Set of Morphisms from Chain complex with at most 4 nonzero terms over
             Integer Ring to Chain complex with at most 4 nonzero terms over Integer

@@ -229,7 +229,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
 
         Testing ``from_characteristic_function``::
 
-            sage: UniqueSimplicialComplex(from_characteristic_function=lambda x: sum(x) <= 4, range(5))
+            sage: UniqueSimplicialComplex(from_characteristic_function=(lambda x: sum(x) <= 4, range(5)))
             Simplicial complex with vertex set (0, 1, 2, 3, 4) and facets {(0, 4), (0, 1, 2), (0, 1, 3)}
         """
         char_fcn = kwds.get('from_characteristic_function', None)
@@ -852,7 +852,7 @@ def K3Surface():
 
     EXAMPLES::
 
-        sage: K3=simplicial_complexes.K3Surface(); K3
+        sage: K3 = simplicial_complexes.K3Surface(); K3
         Minimal triangulation of the K3 surface
         sage: K3.f_vector()
         [1, 16, 120, 560, 720, 288]
@@ -1116,8 +1116,7 @@ def MatchingComplex(n):
     EXAMPLES::
 
         sage: M = simplicial_complexes.MatchingComplex(7)
-        sage: H = M.homology()
-        sage: H
+        sage: H = M.homology(); H
         {0: 0, 1: C3, 2: Z^20}
         sage: H[2].ngens()
         20
