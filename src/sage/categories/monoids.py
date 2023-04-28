@@ -590,7 +590,7 @@ class Monoids(CategoryWithAxiom):
                     False
                     sage: A = GroupAlgebras(QQ).example(); A
                     Algebra of Dihedral group of order 8 as a permutation group over Rational Field
-                    sage: sum(i for i in A.basis()).is_central()
+                    sage: sum(A.basis()).is_central()
                     True
                 """
                 return all(i * self == self * i

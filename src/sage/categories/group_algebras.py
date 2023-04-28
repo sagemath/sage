@@ -398,7 +398,7 @@ class GroupAlgebras(AlgebrasCategory):
             the coercion system (see :trac:`28544`)::
 
                 sage: QG = GroupAlgebras(QQ).example(PermutationGroup([[(1,2,3),(4,5)],[(3,4)]]))
-                sage: s = sum(i for i in QG.basis())
+                sage: s = sum(QG.basis())
                 sage: s.central_form()   # not tested
                 B[()] + B[(4,5)] + B[(3,4,5)] + B[(2,3)(4,5)] + B[(2,3,4,5)] + B[(1,2)(3,4,5)] + B[(1,2,3,4,5)]
 

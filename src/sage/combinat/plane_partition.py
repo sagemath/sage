@@ -340,7 +340,7 @@ class PlanePartition(ClonableArray,
             sage: PP.number_of_boxes()
             6
         """
-        return sum(sum(k for k in row) for row in self)
+        return sum(sum(row) for row in self)
 
     def _repr_diagram(self, show_box=False, use_unicode=False) -> str:
         r"""
@@ -451,8 +451,8 @@ class PlanePartition(ClonableArray,
             return u"∅" if use_unicode else ""
 
         if use_unicode:
-            return u'\n'.join(u"".join(s for s in row) for row in drawing)
-        return '\n'.join("".join(s for s in row) for row in drawing)
+            return u'\n'.join(u"".join(row) for row in drawing)
+        return '\n'.join("".join(row) for row in drawing)
 
     def _ascii_art_(self):
         r"""
