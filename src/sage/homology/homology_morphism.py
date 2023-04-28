@@ -28,6 +28,8 @@ AUTHORS:
 #   - associated_chain_complex_morphism
 # Once this is done, the code here ought to work without modification.
 
+import itertools
+
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
 from sage.categories.morphism import Morphism
@@ -240,14 +242,13 @@ class InducedHomologyMorphism(Morphism):
             mat = mat.transpose()
             H_domain, H_codomain = H_codomain, H_domain
         if deg is None:
-            import numpy as np
             betti_domain = [H_domain.free_module_rank(n)
                             for n in range(domain.dimension()+1)]
             betti_codomain = [H_codomain.free_module_rank(n)
                               for n in range(codomain.dimension()+1)]
             # Compute cumulative sums of Betti numbers to get subdivisions:
-            row_subdivs = list(np.cumsum(betti_codomain[:-1]))
-            col_subdivs = list(np.cumsum(betti_domain[:-1]))
+            row_subdivs = list(itertools.accumulate(betti_codomain[:-1]))
+            col_subdivs = list(itertools.accumulate(betti_domain[:-1]))
             mat.subdivide(row_subdivs, col_subdivs)
         return mat
 
