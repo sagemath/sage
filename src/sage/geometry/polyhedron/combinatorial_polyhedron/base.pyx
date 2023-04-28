@@ -366,10 +366,10 @@ cdef class CombinatorialPolyhedron(SageObject):
         if isinstance(data, Polyhedron_base):
             self._init_from_polyhedron(data)
             return
-        elif isinstance(data, LatticePolytopeClass):
+        if isinstance(data, LatticePolytopeClass):
             self._init_from_lattice_polytope(data)
             return
-        elif isinstance(data, ConvexRationalPolyhedralCone):
+        if isinstance(data, ConvexRationalPolyhedralCone):
             self._init_from_cone(data)
             return
 
