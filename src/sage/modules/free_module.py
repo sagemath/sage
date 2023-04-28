@@ -3381,46 +3381,46 @@ class FreeModule_generic(Module_free_ambient):
             Inner product matrix:
             [ 1  0]
             [ 0 -1]
-            sage: n = magma(N); n                                      # optional - magma
+            sage: n = magma(N); n                               # optional - magma
             Full Vector space of degree 2 over Rational Field
             Inner Product Matrix:
             [ 1  0]
             [ 0 -1]
-            sage: n.Type()                                             # optional - magma
+            sage: n.Type()                                      # optional - magma
             ModTupFld
-            sage: n.sage()                                           # optional - magma
+            sage: n.sage()                                      # optional - magma
             Ambient quadratic space of dimension 2 over Rational Field
             Inner product matrix:
             [ 1  0]
             [ 0 -1]
-            sage: n.sage() is N                                      # optional - magma
+            sage: n.sage() is N                                 # optional - magma
             True
 
         How about some inexact fields::
 
-            sage: v = vector(RR, [1, pi, 5/6])
-            sage: F = v.parent()
-            sage: M = magma(F); M # optional - magma
+            sage: v = vector(RR, [1, pi, 5/6])                                          # optional - sage.symbolic
+            sage: F = v.parent()                                                        # optional - sage.symbolic
+            sage: M = magma(F); M                               # optional - magma      # optional - sage.symbolic
             Full Vector space of degree 3 over Real field of precision 15
-            sage: M.Type() # optional - magma
+            sage: M.Type()                                      # optional - magma      # optional - sage.symbolic
             ModTupFld
-            sage: m = M.sage(); m # optional - magma
+            sage: m = M.sage(); m                               # optional - magma      # optional - sage.symbolic
             Vector space of dimension 3 over Real Field with 53 bits of precision
-            sage: m is F # optional - magma
+            sage: m is F                                        # optional - magma      # optional - sage.symbolic
             True
 
         For interval fields, we can convert to Magma but there is no
         interval field in Magma so we cannot convert back::
 
-            sage: v = vector(RealIntervalField(100), [1, pi, 0.125])
-            sage: F = v.parent()
-            sage: M = magma(v.parent()); M # optional - magma
+            sage: v = vector(RealIntervalField(100), [1, pi, 0.125])                    # optional - sage.symbolic
+            sage: F = v.parent()                                                        # optional - sage.symbolic
+            sage: M = magma(v.parent()); M                      # optional - magma      # optional - sage.symbolic
             Full Vector space of degree 3 over Real field of precision 30
-            sage: M.Type() # optional - magma
+            sage: M.Type()                                      # optional - magma      # optional - sage.symbolic
             ModTupFld
-            sage: m = M.sage(); m # optional - magma
+            sage: m = M.sage(); m                               # optional - magma      # optional - sage.symbolic
             Vector space of dimension 3 over Real Field with 100 bits of precision
-            sage: m is F # optional - magma
+            sage: m is F                                        # optional - magma      # optional - sage.symbolic
             False
         """
         K = magma(self.base_ring())
