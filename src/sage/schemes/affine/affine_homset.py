@@ -36,8 +36,6 @@ from copy import copy
 
 from sage.misc.verbose import verbose
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
-from sage.rings.cc import CC
 from sage.rings.rational_field import is_RationalField
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
@@ -219,9 +217,9 @@ class SchemeHomset_points_affine(SchemeHomset_points):
             sage: A.<x,y> = ZZ[]
             sage: I = A.ideal(x^2 - y^2 - 1)
             sage: V = AffineSpace(ZZ, 2)
-            sage: X = V.subscheme(I)
-            sage: M = X(ZZ)
-            sage: M.points(bound=1)
+            sage: X = V.subscheme(I)                                                    # optional - sage.libs.singular
+            sage: M = X(ZZ)                                                             # optional - sage.libs.singular
+            sage: M.points(bound=1)                                                     # optional - sage.libs.singular
             [(-1, 0), (1, 0)]
 
         ::
@@ -235,15 +233,15 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         ::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: E = A.subscheme([x^2 + y^2 - 1, y^2 - x^3 + x^2 + x - 1])
-            sage: E(A.base_ring()).points()
+            sage: E = A.subscheme([x^2 + y^2 - 1, y^2 - x^3 + x^2 + x - 1])             # optional - sage.libs.singular
+            sage: E(A.base_ring()).points()                                             # optional - sage.libs.singular
             [(-1, 0), (0, -1), (0, 1), (1, 0)]
 
         ::
 
             sage: A.<x,y> = AffineSpace(CC, 2)
-            sage: E = A.subscheme([y^3 - x^3 - x^2, x*y])
-            sage: E(A.base_ring()).points()
+            sage: E = A.subscheme([y^3 - x^3 - x^2, x*y])                               # optional - sage.libs.singular
+            sage: E(A.base_ring()).points()                                             # optional - sage.libs.singular
             verbose 0 (...: affine_homset.py, points)
             Warning: computations in the numerical fields are inexact;points
             may be computed partially or incorrectly.
@@ -253,8 +251,8 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         ::
 
             sage: A.<x1,x2> = AffineSpace(CDF, 2)
-            sage: E = A.subscheme([x1^2 + x2^2 + x1*x2, x1 + x2])
-            sage: E(A.base_ring()).points()
+            sage: E = A.subscheme([x1^2 + x2^2 + x1*x2, x1 + x2])                       # optional - sage.libs.singular
+            sage: E(A.base_ring()).points()                                             # optional - sage.libs.singular
             verbose 0 (...: affine_homset.py, points)
             Warning: computations in the numerical fields are inexact;points
             may be computed partially or incorrectly.
@@ -267,6 +265,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
             if hasattr(X.base_ring(), 'precision'):
                 numerical = True
                 verbose("Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.", level=0)
+                from sage.rings.real_mpfr import RR
                 zero_tol = RR(kwds.pop('zero_tolerance', 10**(-10)))
                 if zero_tol <= 0:
                     raise ValueError("tolerance must be positive")
@@ -405,22 +404,22 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         ::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])
-            sage: len(X(QQ).numerical_points(F=ComplexField(100)))
+            sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])                        # optional - sage.libs.singular
+            sage: len(X(QQ).numerical_points(F=ComplexField(100)))                      # optional - sage.libs.singular
             4
 
         ::
 
             sage: A.<x1, x2> = AffineSpace(QQ, 2)
-            sage: E = A.subscheme([30*x1^100 + 1000*x2^2 + 2000*x1*x2 + 1, x1 + x2])
-            sage: len(E(A.base_ring()).numerical_points(F=CDF, zero_tolerance=1e-9))
+            sage: E = A.subscheme([30*x1^100 + 1000*x2^2 + 2000*x1*x2 + 1, x1 + x2])    # optional - sage.libs.singular
+            sage: len(E(A.base_ring()).numerical_points(F=CDF, zero_tolerance=1e-9))    # optional - sage.libs.singular
             100
 
         TESTS::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])
-            sage: X(QQ).numerical_points(F=QQ)
+            sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])                        # optional - sage.libs.singular
+            sage: X(QQ).numerical_points(F=QQ)                                          # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: F must be a numerical field
@@ -428,15 +427,15 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         ::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])
-            sage: X(QQ).numerical_points(F=CC, zero_tolerance=-1)
+            sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])                        # optional - sage.libs.singular
+            sage: X(QQ).numerical_points(F=CC, zero_tolerance=-1)                       # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: tolerance must be positive
         """
         from sage.schemes.affine.affine_space import is_AffineSpace
         if F is None:
-            F = CC
+            from sage.rings.cc import CC as F
         if F not in Fields() or not hasattr(F, 'precision'):
             raise TypeError('F must be a numerical field')
         X = self.codomain()
@@ -453,6 +452,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
             return []
 
         # if X zero-dimensional
+        from sage.rings.real_mpfr import RR
         zero_tol = RR(kwds.pop('zero_tolerance', 10**(-10)))
         if zero_tol <= 0:
             raise ValueError("tolerance must be positive")

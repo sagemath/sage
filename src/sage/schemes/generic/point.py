@@ -154,7 +154,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
             sage: S = Spec(ZZ)
             sage: P = SchemeTopologicalPoint_prime_ideal(S, 3); P
             Point on Spectrum of Integer Ring defined by the Principal ideal (3) of Integer Ring
-            sage: SchemeTopologicalPoint_prime_ideal(S, 6, check=True)
+            sage: SchemeTopologicalPoint_prime_ideal(S, 6, check=True)                  # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: The argument Principal ideal (6) of Integer Ring must be a prime ideal of Integer Ring

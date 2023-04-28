@@ -372,14 +372,14 @@ class SchemeHomset_generic(HomsetWithBase):
 
             sage: R.<x,y> = QQ[]
             sage: A.<x,y> = AffineSpace(R)
-            sage: C = A.subscheme(x*y - 1)
-            sage: H = C.Hom(C); H
+            sage: C = A.subscheme(x*y - 1)                                              # optional - sage.libs.singular
+            sage: H = C.Hom(C); H                                                       # optional - sage.libs.singular
             Set of morphisms
               From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                     defined by: x*y - 1
               To:   Closed subscheme of Affine Space of dimension 2 over Rational Field
                     defined by: x*y - 1
-            sage: H(1)
+            sage: H(1)                                                                  # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: x must be a ring homomorphism, list or tuple

@@ -148,7 +148,7 @@ class AmbientSpace(Scheme):
 
             sage: from sage.schemes.generic.ambient_space import AmbientSpace
             sage: A = AmbientSpace(3, ZZ)
-            sage: A._validate((x + 1, 1))
+            sage: A._validate((x + 1, 1))                                               # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: ambient spaces must override "_validate" method!
@@ -158,7 +158,7 @@ class AmbientSpace(Scheme):
 
     def change_ring(self, R):
         r"""
-        Return an ambient space over ring `R` and otherwise the same as self.
+        Return an ambient space over ring `R` and otherwise the same as ``self``.
 
         INPUT:
 

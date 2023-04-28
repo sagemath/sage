@@ -50,8 +50,6 @@ import sys
 
 import sage.rings.abc
 
-from sage.calculus.functions import jacobian
-
 from sage.categories.homset import Hom, End
 from sage.categories.fields import Fields
 
@@ -135,9 +133,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         ::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: X = A.subscheme([x - y^2])
-            sage: H = Hom(X, X)
-            sage: H([9/4*x^2, 3/2*y])
+            sage: X = A.subscheme([x - y^2])                                            # optional - sage.libs.singular
+            sage: H = Hom(X, X)                                                         # optional - sage.libs.singular
+            sage: H([9/4*x^2, 3/2*y])                                                   # optional - sage.libs.singular
             Scheme endomorphism of Closed subscheme of Affine Space of dimension 2
              over Rational Field defined by: -y^2 + x
               Defn: Defined on coordinates by sending (x, y) to (9/4*x^2, 3/2*y)
@@ -153,10 +151,10 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         If you pass in quotient ring elements, they are reduced::
 
             sage: A.<x,y,z> = AffineSpace(QQ, 3)
-            sage: X = A.subscheme([x - y])
-            sage: H = Hom(X, X)
-            sage: u,v,w = X.coordinate_ring().gens()
-            sage: H([u, v, u + v])
+            sage: X = A.subscheme([x - y])                                              # optional - sage.libs.singular
+            sage: H = Hom(X, X)                                                         # optional - sage.libs.singular
+            sage: u,v,w = X.coordinate_ring().gens()                                    # optional - sage.libs.singular
+            sage: H([u, v, u + v])                                                      # optional - sage.libs.singular
             Scheme endomorphism of Closed subscheme of Affine Space of dimension 3
              over Rational Field defined by: x - y
               Defn: Defined on coordinates by sending (x, y, z) to (y, y, 2*y)
@@ -164,14 +162,14 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         You must use the ambient space variables to create rational functions::
 
             sage: A.<x,y,z> = AffineSpace(QQ, 3)
-            sage: X = A.subscheme([x^2 - y^2])
-            sage: H = Hom(X, X)
-            sage: u,v,w = X.coordinate_ring().gens()
-            sage: H([u, v, (u+1)/v])
+            sage: X = A.subscheme([x^2 - y^2])                                          # optional - sage.libs.singular
+            sage: H = Hom(X, X)                                                         # optional - sage.libs.singular
+            sage: u,v,w = X.coordinate_ring().gens()                                    # optional - sage.libs.singular
+            sage: H([u, v, (u+1)/v])                                                    # optional - sage.libs.singular
             Traceback (most recent call last):
             ...
             ArithmeticError: Division failed. The numerator is not a multiple of the denominator.
-            sage: H([x, y, (x+1)/y])
+            sage: H([x, y, (x+1)/y])                                                    # optional - sage.libs.singular
             Scheme endomorphism of Closed subscheme of Affine Space of dimension 3
              over Rational Field defined by:
               x^2 - y^2
@@ -182,9 +180,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
             sage: R.<t> = PolynomialRing(QQ)
             sage: A.<x,y,z> = AffineSpace(R, 3)
-            sage: X = A.subscheme(x^2 - y^2)
-            sage: H = End(X)
-            sage: H([x^2/(t*y), t*y^2, x*z])
+            sage: X = A.subscheme(x^2 - y^2)                                            # optional - sage.libs.singular
+            sage: H = End(X)                                                            # optional - sage.libs.singular
+            sage: H([x^2/(t*y), t*y^2, x*z])                                            # optional - sage.libs.singular
             Scheme endomorphism of Closed subscheme of Affine Space of dimension 3
              over Univariate Polynomial Ring in t over Rational Field defined by:
               x^2 - y^2
@@ -886,6 +884,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             return self.__jacobian
         except AttributeError:
             pass
+
+        from sage.calculus.functions import jacobian
+
         self.__jacobian = jacobian(list(self),self.domain().ambient_space().gens())
         return self.__jacobian
 
@@ -1228,7 +1229,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: H = End(A)
             sage: f = H([x - y, x^2 - y^2])
-            sage: f.indeterminacy_locus()
+            sage: f.indeterminacy_locus()                                               # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               1
 
@@ -1236,7 +1237,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: f = A.hom([x, x/y], A)
-            sage: f.indeterminacy_locus()
+            sage: f.indeterminacy_locus()                                               # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               y
         """
@@ -1261,7 +1262,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: H = End(A)
             sage: f = H([x - y, x^2 - y^2])
-            sage: f.indeterminacy_points()
+            sage: f.indeterminacy_points()                                              # optional - sage.libs.singular
             []
 
         ::
@@ -1269,7 +1270,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: A2.<x,y> = AffineSpace(QQ, 2)
             sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
             sage: f = A2.hom([x*y, y, x], P2)
-            sage: f.indeterminacy_points()
+            sage: f.indeterminacy_points()                                              # optional - sage.libs.singular
             [(0, 0)]
 
         """
@@ -1298,20 +1299,20 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: A1.<w> = AffineSpace(QQ, 1)
             sage: A2.<x,y> = AffineSpace(QQ, 2)
             sage: f = A2.hom([x + y], A1)
-            sage: f.image()
+            sage: f.image()                                                             # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 1 over Rational Field defined by:
               (no polynomials)
             sage: f = A2.hom([x, x], A2)
-            sage: f.image()
+            sage: f.image()                                                             # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               x - y
             sage: f = A2.hom([x^2, x^3], A2)
-            sage: f.image()
+            sage: f.image()                                                             # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               x^3 - y^2
             sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
             sage: f = A2.hom([x, x^2, x^3], P2)
-            sage: f.image()
+            sage: f.image()                                                             # optional - sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x1^2 - x0*x2
         """
@@ -1373,9 +1374,9 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
         EXAMPLES::
 
             sage: A2.<x,y> = AffineSpace(QQ, 2)
-            sage: X = A2.subscheme(0)
-            sage: f = X.hom([x, x/y], A2)
-            sage: f.representatives()
+            sage: X = A2.subscheme(0)                                                   # optional - sage.libs.singular
+            sage: f = X.hom([x, x/y], A2)                                               # optional - sage.libs.singular
+            sage: f.representatives()                                                   # optional - sage.libs.singular
             [Scheme morphism:
                From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                      defined by: 0
@@ -1386,9 +1387,9 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
 
             sage: A2.<x,y> = AffineSpace(QQ, 2)
             sage: A1.<a> = AffineSpace(QQ, 1)
-            sage: X = A2.subscheme([x^2 - y^2 - y])
-            sage: f = X.hom([x/y], A1)
-            sage: f.representatives()
+            sage: X = A2.subscheme([x^2 - y^2 - y])                                     # optional - sage.libs.singular
+            sage: f = X.hom([x/y], A1)                                                  # optional - sage.libs.singular
+            sage: f.representatives()                                                   # optional - sage.libs.singular
             [Scheme morphism:
                From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                      defined by: x^2 - y^2 - y
@@ -1399,8 +1400,8 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
                      defined by: x^2 - y^2 - y
                To:   Affine Space of dimension 1 over Rational Field
                Defn: Defined on coordinates by sending (x, y) to ((y + 1)/x)]
-            sage: g = _[1]
-            sage: g.representatives()
+            sage: g = _[1]                                                              # optional - sage.libs.singular
+            sage: g.representatives()                                                   # optional - sage.libs.singular
             [Scheme morphism:
                From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                      defined by: x^2 - y^2 - y
@@ -1415,10 +1416,10 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
         ::
 
             sage: A2.<x,y> = AffineSpace(QQ, 2)
-            sage: P1.<a,b> = ProjectiveSpace(QQ, 1)
-            sage: X = A2.subscheme([x^2 - y^2 - y])
-            sage: f = X.hom([x, y], P1)
-            sage: f.representatives()
+            sage: P1.<a,b> = ProjectiveSpace(QQ, 1)                                     # optional - sage.libs.singular
+            sage: X = A2.subscheme([x^2 - y^2 - y])                                     # optional - sage.libs.singular
+            sage: f = X.hom([x, y], P1)                                                 # optional - sage.libs.singular
+            sage: f.representatives()                                                   # optional - sage.libs.singular
             [Scheme morphism:
                From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                      defined by: x^2 - y^2 - y
@@ -1461,30 +1462,30 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
         EXAMPLES::
 
             sage: A2.<x1,x2> = AffineSpace(QQ, 2)
-            sage: X = A2.subscheme(0)
+            sage: X = A2.subscheme(0)                                                   # optional - sage.libs.singular
             sage: A1.<x> = AffineSpace(QQ, 1)
-            sage: f = X.hom([x1/x2], A1)
-            sage: f.indeterminacy_locus()
+            sage: f = X.hom([x1/x2], A1)                                                # optional - sage.libs.singular
+            sage: f.indeterminacy_locus()                                               # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               x2
 
         ::
 
             sage: A2.<x1,x2> = AffineSpace(QQ, 2)
-            sage: X = A2.subscheme(0)
+            sage: X = A2.subscheme(0)                                                   # optional - sage.libs.singular
             sage: P1.<a,b> = ProjectiveSpace(QQ, 1)
-            sage: f = X.hom([x1,x2], P1)
-            sage: L = f.indeterminacy_locus()
-            sage: L.rational_points()
+            sage: f = X.hom([x1,x2], P1)                                                # optional - sage.libs.singular
+            sage: L = f.indeterminacy_locus()                                           # optional - sage.libs.singular
+            sage: L.rational_points()                                                   # optional - sage.libs.singular
             [(0, 0)]
 
         ::
 
             sage: A2.<x,y> = AffineSpace(QQ, 2)
-            sage: X = A2.subscheme([x^2 - y^2 - y])
-            sage: A1.<a> = AffineSpace(QQ,1)
-            sage: f = X.hom([x/y], A1)
-            sage: f.indeterminacy_locus()
+            sage: X = A2.subscheme([x^2 - y^2 - y])                                     # optional - sage.libs.singular
+            sage: A1.<a> = AffineSpace(QQ, 1)
+            sage: f = X.hom([x/y], A1)                                                  # optional - sage.libs.singular
+            sage: f.indeterminacy_locus()                                               # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               y,
               x
@@ -1492,15 +1493,14 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
         ::
 
             sage: A3.<x,y,z> = AffineSpace(QQ, 3)
-            sage: X = A3.subscheme(x^2 - y*z - x)
+            sage: X = A3.subscheme(x^2 - y*z - x)                                       # optional - sage.libs.singular
             sage: A2.<a,b> = AffineSpace(QQ, 2)
-            sage: f = X.hom([y, y/x], A2)
-            sage: L = f.indeterminacy_locus()
-            sage: L
+            sage: f = X.hom([y, y/x], A2)                                               # optional - sage.libs.singular
+            sage: L = f.indeterminacy_locus(); L                                        # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
               x,
               y*z
-            sage: L.dimension()
+            sage: L.dimension()                                                         # optional - sage.libs.singular
             1
 
         """
@@ -1526,7 +1526,7 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
             sage: P1.<a,b> = ProjectiveSpace(QQ,1)
-            sage: X = P2.subscheme([x^2 - y^2 - y*z])
+            sage: X = P2.subscheme([x^2 - y^2 - y*z])                                   # optional - sage.libs.singular
             sage: f = X.hom([x,y], P1)
             sage: f.is_morphism()
             True
@@ -1543,18 +1543,18 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
 
             sage: A1.<w> = AffineSpace(QQ, 1)
             sage: A2.<x,y> = AffineSpace(QQ, 2)
-            sage: X = A2.subscheme(0)
-            sage: f = X.hom([x + y], A1)
-            sage: f.image()
+            sage: X = A2.subscheme(0)                                                   # optional - sage.libs.singular
+            sage: f = X.hom([x + y], A1)                                                # optional - sage.libs.singular
+            sage: f.image()                                                             # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 1 over Rational Field defined by:
               (no polynomials)
 
         ::
 
             sage: A2.<x,y> = AffineSpace(QQ, 2)
-            sage: X = A2.subscheme([x*y^2 - y^3 - 1])
-            sage: f = X.hom([y, y/x], A2)
-            sage: f.image()
+            sage: X = A2.subscheme([x*y^2 - y^3 - 1])                                   # optional - sage.libs.singular
+            sage: f = X.hom([y, y/x], A2)                                               # optional - sage.libs.singular
+            sage: f.image()                                                             # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               -x^3*y + x^3 - y
         """

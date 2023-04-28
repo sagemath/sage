@@ -625,28 +625,27 @@ class SchemeMorphism(Element):
         minus a point::
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
-            sage: S.<xbar, ybar> = R.quotient(x*y - 1)
+            sage: S.<xbar, ybar> = R.quotient(x*y - 1)                                  # optional - sage.libs.singular
             sage: Rx = PolynomialRing(QQ, 'x')
-            sage: i1 = Rx.hom([xbar])
+            sage: i1 = Rx.hom([xbar])                                                   # optional - sage.libs.singular
             sage: Ry = PolynomialRing(QQ, 'y')
-            sage: i2 = Ry.hom([ybar])
+            sage: i2 = Ry.hom([ybar])                                                   # optional - sage.libs.singular
             sage: Sch = Schemes()
-            sage: f1 = Sch(i1)
-            sage: f2 = Sch(i2)
+            sage: f1 = Sch(i1)                                                          # optional - sage.libs.singular
+            sage: f2 = Sch(i2)                                                          # optional - sage.libs.singular
 
         Now f1 and f2 have the same domain, which is a
         `\mathbb{A}^1` minus a point. We glue along the domain::
 
-            sage: P1 = f1.glue_along_domains(f2)
-            sage: P1
+            sage: P1 = f1.glue_along_domains(f2); P1                                    # optional - sage.libs.singular
             Scheme obtained by gluing X and Y along U, where
               X: Spectrum of Univariate Polynomial Ring in x over Rational Field
               Y: Spectrum of Univariate Polynomial Ring in y over Rational Field
               U: Spectrum of Quotient of Multivariate Polynomial Ring in x, y
                  over Rational Field by the ideal (x*y - 1)
 
-            sage: a, b = P1.gluing_maps()
-            sage: a
+            sage: a, b = P1.gluing_maps()                                               # optional - sage.libs.singular
+            sage: a                                                                     # optional - sage.libs.singular
             Affine Scheme morphism:
               From: Spectrum of Quotient of Multivariate Polynomial Ring in x, y
                     over Rational Field by the ideal (x*y - 1)
@@ -656,7 +655,7 @@ class SchemeMorphism(Element):
                       To:   Quotient of Multivariate Polynomial Ring in x, y over
                             Rational Field by the ideal (x*y - 1)
                       Defn: x |--> xbar
-            sage: b
+            sage: b                                                                     # optional - sage.libs.singular
             Affine Scheme morphism:
               From: Spectrum of Quotient of Multivariate Polynomial Ring in x, y
                     over Rational Field by the ideal (x*y - 1)
@@ -1346,7 +1345,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         TESTS::
 
             sage: R.<t> = QQ[]
-            sage: K.<v> = QuadraticField(2)
+            sage: K.<v> = QuadraticField(2)                                             # optional - sage.rings.number_field
             sage: K2.<w> = NumberField(t**4 - 2)                                        # optional - sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)                                      # optional - sage.rings.number_field
             sage: phi = K.embeddings(K2)[0]                                             # optional - sage.rings.number_field

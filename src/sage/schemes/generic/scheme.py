@@ -96,7 +96,7 @@ class Scheme(Parent):
             sage: I = (x^2 - y^2)*R
             sage: RmodI = R.quotient(I)
             sage: X = Spec(RmodI)
-            sage: TestSuite(X).run()
+            sage: TestSuite(X).run()                                                    # optional - sage.libs.singular
 
         """
         from sage.schemes.generic.morphism import is_SchemeMorphism
@@ -952,8 +952,9 @@ class AffineScheme(UniqueRepresentation, Scheme):
             Point on Spectrum of Integer Ring defined by the Principal ideal (3) of Integer Ring
             sage: type(P)
             <class 'sage.schemes.generic.scheme.AffineScheme_with_category.element_class'>
-            sage: S(ZZ.ideal(next_prime(1000000)))
-            Point on Spectrum of Integer Ring defined by the Principal ideal (1000003) of Integer Ring
+            sage: S(ZZ.ideal(next_prime(1000000)))                                      # optional - sage.libs.pari
+            Point on Spectrum of Integer Ring
+             defined by the Principal ideal (1000003) of Integer Ring
 
             sage: R.<x, y, z> = QQ[]
             sage: S = Spec(R)

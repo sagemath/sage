@@ -17,8 +17,8 @@ Affine, over `\QQ`::
 
     sage: from sage.schemes.affine.affine_rational_point import enum_affine_rational_field
     sage: A.<x,y,z> = AffineSpace(3, QQ)
-    sage: S = A.subscheme([2*x - 3*y])
-    sage: enum_affine_rational_field(S, 2)
+    sage: S = A.subscheme([2*x - 3*y])                                                  # optional - sage.libs.singular
+    sage: enum_affine_rational_field(S, 2)                                              # optional - sage.libs.singular
     [(0, 0, -2), (0, 0, -1), (0, 0, -1/2), (0, 0, 0),
      (0, 0, 1/2), (0, 0, 1), (0, 0, 2)]
 
@@ -85,17 +85,17 @@ def enum_affine_rational_field(X, B):
     ::
 
         sage: A.<w,x,y,z> = AffineSpace(4, QQ)
-        sage: S = A.subscheme([x^2 - y*z + 1, w^3 + z + y^2])
-        sage: enum_affine_rational_field(S(QQ), 1)
+        sage: S = A.subscheme([x^2 - y*z + 1, w^3 + z + y^2])                           # optional - sage.libs.singular
+        sage: enum_affine_rational_field(S(QQ), 1)                                      # optional - sage.libs.singular
         [(0, 0, -1, -1)]
-        sage: enum_affine_rational_field(S(QQ), 2)
+        sage: enum_affine_rational_field(S(QQ), 2)                                      # optional - sage.libs.singular
         [(0, 0, -1, -1), (1, -1, -1, -2), (1, 1, -1, -2)]
 
     ::
 
         sage: A.<x,y> = AffineSpace(2, QQ)
-        sage: C = Curve(x^2 + y - x)
-        sage: enum_affine_rational_field(C, 10) # long time (3 s)
+        sage: C = Curve(x^2 + y - x)                                                    # optional - sage.libs.singular
+        sage: enum_affine_rational_field(C, 10) # long time (3 s)                       # optional - sage.libs.singular
         [(-2, -6), (-1, -2), (-2/3, -10/9), (-1/2, -3/4), (-1/3, -4/9),
          (0, 0), (1/3, 2/9), (1/2, 1/4), (2/3, 2/9), (1, 0),
          (4/3, -4/9), (3/2, -3/4), (5/3, -10/9), (2, -2), (3, -6)]

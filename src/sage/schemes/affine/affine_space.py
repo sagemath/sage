@@ -573,8 +573,8 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A3 = AffineSpace(ZZ, 3, 'x')
             sage: A3.inject_variables()
             Defining x0, x1, x2
-            sage: X = A3.subscheme([x0*x2 - x1])
-            sage: A2*X
+            sage: X = A3.subscheme([x0*x2 - x1])                                        # optional - sage.libs.singular
+            sage: A2*X                                                                  # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 5 over Integer Ring defined by:
               x0*x2 - x1
 
@@ -797,7 +797,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         EXAMPLES::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: X = A.subscheme([x, y^2, x*y^2]); X
+            sage: X = A.subscheme([x, y^2, x*y^2]); X                                   # optional - sage.libs.singular
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               x,
               y^2,
@@ -805,25 +805,25 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         ::
 
-            sage: X.defining_polynomials ()
+            sage: X.defining_polynomials ()                                             # optional - sage.libs.singular
             (x, y^2, x*y^2)
-            sage: I = X.defining_ideal(); I
+            sage: I = X.defining_ideal(); I                                             # optional - sage.libs.singular
             Ideal (x, y^2, x*y^2) of Multivariate Polynomial Ring in x, y over Rational Field
-            sage: I.groebner_basis()
+            sage: I.groebner_basis()                                                    # optional - sage.libs.singular
             [y^2, x]
-            sage: X.dimension()
+            sage: X.dimension()                                                         # optional - sage.libs.singular
             0
-            sage: X.base_ring()
+            sage: X.base_ring()                                                         # optional - sage.libs.singular
             Rational Field
-            sage: X.base_scheme()
+            sage: X.base_scheme()                                                       # optional - sage.libs.singular
             Spectrum of Rational Field
-            sage: X.structure_morphism()
+            sage: X.structure_morphism()                                                # optional - sage.libs.singular
             Scheme morphism:
               From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                     defined by: x, y^2, x*y^2
               To:   Spectrum of Rational Field
               Defn: Structure map
-            sage: X.dimension()
+            sage: X.dimension()                                                         # optional - sage.libs.singular
             0
         """
         from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
@@ -1147,7 +1147,7 @@ class AffineSpace_field(AffineSpace_generic):
         EXAMPLES::
 
             sage: A.<x,y,z> = AffineSpace(QQ, 3)
-            sage: A.curve([y - x^4, z - y^5])
+            sage: A.curve([y - x^4, z - y^5])                                           # optional - sage.libs.pari
             Affine Curve over Rational Field defined by -x^4 + y, -y^5 + z
         """
         from sage.schemes.curves.constructor import Curve
