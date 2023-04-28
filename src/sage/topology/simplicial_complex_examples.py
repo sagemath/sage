@@ -229,7 +229,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
 
         Testing ``from_characteristic_function``::
 
-            sage: UniqueSimplicialComplex(from_characteristic_function=(lambda x:sum(x)<=4, range(5)))
+            sage: UniqueSimplicialComplex(from_characteristic_function=lambda x: sum(x) <= 4, range(5))
             Simplicial complex with vertex set (0, 1, 2, 3, 4) and facets {(0, 4), (0, 1, 2), (0, 1, 3)}
         """
         char_fcn = kwds.get('from_characteristic_function', None)
@@ -469,7 +469,7 @@ def MooreSpace(q):
 
     INPUT:
 
-    -  ``q`` -0 integer, at least 2
+    -  ``q`` -- integer, at least 2
 
     This is a simplicial complex with simplices of dimension 0, 1,
     and 2, such that its reduced homology is isomorphic to
@@ -572,14 +572,14 @@ def QuaternionicProjectivePlane():
 
     EXAMPLES::
 
-        sage: HP2 = simplicial_complexes.QuaternionicProjectivePlane() ; HP2
+        sage: HP2 = simplicial_complexes.QuaternionicProjectivePlane(); HP2             # optional - sage.groups
         Simplicial complex with 15 vertices and 490 facets
-        sage: HP2.f_vector()
+        sage: HP2.f_vector()                                                            # optional - sage.groups
         [1, 15, 105, 455, 1365, 3003, 4515, 4230, 2205, 490]
 
     Checking its automorphism group::
 
-        sage: HP2.automorphism_group().is_isomorphic(AlternatingGroup(5))
+        sage: HP2.automorphism_group().is_isomorphic(AlternatingGroup(5))               # optional - sage.groups
         True
     """
     from sage.groups.perm_gps.permgroup import PermutationGroup
@@ -852,7 +852,7 @@ def K3Surface():
 
     EXAMPLES::
 
-        sage: K3=simplicial_complexes.K3Surface() ; K3
+        sage: K3=simplicial_complexes.K3Surface(); K3
         Minimal triangulation of the K3 surface
         sage: K3.f_vector()
         [1, 16, 120, 560, 720, 288]
@@ -975,7 +975,7 @@ def BarnetteSphere():
 
     EXAMPLES::
 
-        sage: BS = simplicial_complexes.BarnetteSphere() ; BS
+        sage: BS = simplicial_complexes.BarnetteSphere(); BS
         Barnette's triangulation of the 3-sphere
         sage: BS.f_vector()
         [1, 8, 27, 38, 19]
@@ -992,7 +992,7 @@ def BarnetteSphere():
         ....:                          [3, 4, 5, 8], [4, 5, 6, 8], [1, 2, 6, 8],
         ....:                          [1, 5, 6, 8], [1, 3, 5, 8], [2, 4, 6, 8],
         ....:                          [1, 3, 5, 7]])
-        sage: BS.is_isomorphic(BS2)
+        sage: BS.is_isomorphic(BS2)                                                     # optional - sage.graphs
         True
     """
     return UniqueSimplicialComplex([
@@ -1018,7 +1018,7 @@ def BrucknerGrunbaumSphere():
 
     EXAMPLES::
 
-        sage: BGS = simplicial_complexes.BrucknerGrunbaumSphere() ; BGS
+        sage: BGS = simplicial_complexes.BrucknerGrunbaumSphere(); BGS
         Bruckner and Grunbaum's triangulation of the 3-sphere
         sage: BGS.f_vector()
         [1, 8, 28, 40, 20]
@@ -1401,15 +1401,15 @@ def RandomTwoSphere(n):
 
     EXAMPLES::
 
-        sage: G = simplicial_complexes.RandomTwoSphere(6); G
+        sage: G = simplicial_complexes.RandomTwoSphere(6); G                            # optional - sage.graphs
         Simplicial complex with vertex set (0, 1, 2, 3, 4, 5) and 8 facets
-        sage: G.homology()
+        sage: G.homology()                                                              # optional - sage.graphs
         {0: 0, 1: 0, 2: Z}
-        sage: G.is_pure()
+        sage: G.is_pure()                                                               # optional - sage.graphs
         True
-        sage: fg = G.flip_graph(); fg
+        sage: fg = G.flip_graph(); fg                                                   # optional - sage.graphs
         Graph on 8 vertices
-        sage: fg.is_planar() and fg.is_regular(3)
+        sage: fg.is_planar() and fg.is_regular(3)                                       # optional - sage.graphs
         True
     """
     from sage.graphs.generators.random import RandomTriangulation
@@ -1448,14 +1448,14 @@ def ShiftedComplex(generators):
 
     EXAMPLES::
 
-        sage: X = simplicial_complexes.ShiftedComplex([ Simplex([1, 6]), (2, 4), [8] ])
-        sage: sorted(X.facets())
+        sage: X = simplicial_complexes.ShiftedComplex([Simplex([1, 6]), (2, 4), [8]])   # optional - sage.combinat
+        sage: sorted(X.facets())                                                        # optional - sage.combinat
         [(1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (2, 3), (2, 4), (7,), (8,)]
-        sage: X = simplicial_complexes.ShiftedComplex([ [2, 3, 5] ])
-        sage: sorted(X.facets())
+        sage: X = simplicial_complexes.ShiftedComplex([[2, 3, 5]])                      # optional - sage.combinat
+        sage: sorted(X.facets())                                                        # optional - sage.combinat
         [(1, 2, 3), (1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5), (2, 3, 4), (2, 3, 5)]
-        sage: X = simplicial_complexes.ShiftedComplex([ [1, 3, 5], [2, 6] ])
-        sage: sorted(X.facets())
+        sage: X = simplicial_complexes.ShiftedComplex([[1, 3, 5], [2, 6]])              # optional - sage.combinat
+        sage: sorted(X.facets())                                                        # optional - sage.combinat
         [(1, 2, 3), (1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5), (1, 6), (2, 6)]
     """
     from sage.combinat.partition import Partitions
@@ -1577,14 +1577,14 @@ def FareyMap(p):
 
     EXAMPLES::
 
-        sage: S5 = simplicial_complexes.FareyMap(5); S5
+        sage: S5 = simplicial_complexes.FareyMap(5); S5                                 # optional - sage.groups
         Simplicial complex with 12 vertices and 20 facets
-        sage: S5.automorphism_group().cardinality()
+        sage: S5.automorphism_group().cardinality()                                     # optional - sage.groups
         120
 
-        sage: S7 = simplicial_complexes.FareyMap(7); S7
+        sage: S7 = simplicial_complexes.FareyMap(7); S7                                 # optional - sage.groups
         Simplicial complex with 24 vertices and 56 facets
-        sage: S7.f_vector()
+        sage: S7.f_vector()                                                             # optional - sage.groups
         [1, 24, 84, 56]
 
     REFERENCES:
@@ -1642,7 +1642,7 @@ def GenusSix():
     EXAMPLES::
 
         sage: S = simplicial_complexes.GenusSix()
-        sage: S.automorphism_group().cardinality()
+        sage: S.automorphism_group().cardinality()                                      # optional - sage.groups
         12
         sage: S.betti()
         {0: 1, 1: 12, 2: 1}
