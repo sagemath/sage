@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.groups
 r"""
 Group algebras
 
@@ -5,7 +6,7 @@ This functionality has been moved to :mod:`sage.categories.algebra_functor`.
 
 TESTS:
 
-Check that unpicking old group algebra classes works::
+Check that unpickling old group algebra classes works::
 
     sage: G = loads(b"x\x9cM\xceM\n\xc20\x10\x86a\xac\xff\xf1$n\xb2\xf1\x04\x82"
     ....:           b"\xe8>\xe0:\xc4fL\x83i\xda\x99$K\xc1M\xf5\xdaj\x1a\xc1\xdd<"
@@ -100,10 +101,10 @@ def GroupAlgebra(G, R=IntegerRing()):
         ...
         ValueError: 1 is not a magma or additive magma
 
-        sage: GroupAlgebra(GL(3, GF(7)))
+        sage: GroupAlgebra(GL(3, GF(7)))                                                # optional - sage.rings.finite_rings
         Algebra of General Linear Group of degree 3 over Finite Field of size 7
          over Integer Ring
-        sage: GroupAlgebra(GL(3, GF(7)), QQ)
+        sage: GroupAlgebra(GL(3, GF(7)), QQ)                                            # optional - sage.rings.finite_rings
         Algebra of General Linear Group of degree 3 over Finite Field of size 7
          over Rational Field
     """
@@ -180,11 +181,11 @@ class GroupAlgebra_class(CombinatorialFreeModule):
               To:   Algebra of Dihedral group of order 6 as a permutation group over Rational Field
 
             sage: H = PermutationGroup([ [(1,2), (3,4)], [(5,6,7),(12,14,18)] ])
-            sage: kH = H.algebra(GF(2))
-            sage: [a, b] = kH.gens()
-            sage: x = kH(a) + kH(b) + kH.one(); print(x)
+            sage: kH = H.algebra(GF(2))                                                 # optional - sage.rings.finite_rings
+            sage: [a, b] = kH.gens()                                                    # optional - sage.rings.finite_rings
+            sage: x = kH(a) + kH(b) + kH.one(); print(x)                                # optional - sage.rings.finite_rings
             () + (5,6,7)(12,14,18) + (1,2)(3,4)
-            sage: x*x  #checks :trac:34292
+            sage: x*x  #checks :trac:34292                                              # optional - sage.rings.finite_rings
             (5,7,6)(12,18,14)
 
         As expected, there is no coercion when restricting the
