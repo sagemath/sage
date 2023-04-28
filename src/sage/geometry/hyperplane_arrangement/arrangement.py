@@ -2636,7 +2636,7 @@ class HyperplaneArrangementElement(Element):
                  as the convex hull of 3 vertices and 1 line,
              A 3-dimensional polyhedron in QQ^3 defined
                  as the convex hull of 3 vertices and 1 line)
-            sage: A.bounded_regions()[0].is_compact()    # the regions are only *relatively* bounded
+            sage: A.bounded_regions()[0].is_compact()    # the regions are only *relatively* bounded    # optional - sage.combinat
             False
             sage: A.is_essential()                                                      # optional - sage.combinat
             False

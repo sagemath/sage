@@ -401,8 +401,7 @@ class Grid(TransformWidget, HBox, ValueWidget):
 
             sage: from sage.repl.ipython_kernel.widgets import Grid, EvalText
             sage: w = Grid(2, 2, lambda i,j: EvalText(str(j+4*i)),                                  # optional - sage.modules
-            ....:         description="2x2 matrix", transform=matrix)
-            sage: w
+            ....:         description="2x2 matrix", transform=matrix); w
             Grid(value=[[0, 1], [4, 5]],
                         children=(Label(value='2x2 matrix'),
                                   VBox(children=(EvalText(value='0'), EvalText(value='4'))),

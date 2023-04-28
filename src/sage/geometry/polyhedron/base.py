@@ -325,9 +325,9 @@ class Polyhedron_base(Polyhedron_base7):
             [1, 6, 12, 8, 1]
             sage: [len(x) for x in fl_sc.level_sets()]                                  # optional - sage.combinat sage.graphs
             [6, 12, 8]
-            sage: sc_oc.euler_characteristic()
+            sage: sc_oc.euler_characteristic()                                          # optional - sage.graphs
             2
-            sage: sc_oc.homology()
+            sage: sc_oc.homology()                                                      # optional - sage.graphs
             {0: 0, 1: 0, 2: Z}
 
         The polyhedron should be simplicial::
@@ -346,11 +346,11 @@ class Polyhedron_base(Polyhedron_base7):
             ...
             ValueError: self should be compact
         """
-        from sage.topology.simplicial_complex import SimplicialComplex
         if not self.is_compact():
             raise ValueError("self should be compact")
 
         if self.is_simplicial():
+            from sage.topology.simplicial_complex import SimplicialComplex
             inc_mat_cols = self.incidence_matrix().columns()
             ineq_indices = [inc_mat_cols[i].nonzero_positions()
                             for i in range(self.n_Hrepresentation())

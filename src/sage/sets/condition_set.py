@@ -74,7 +74,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
         { x ∈ P : <function <lambda> at 0x...>(x) }
         sage: vector([1, 0, 0]) in P_inter_B                                            # optional - sage.geometry.polyhedron
         True
-        sage: vector([1, 1, 1]) in P_inter_B                                            # optional - sage.geometry.polyhedron
+        sage: vector([1, 1, 1]) in P_inter_B                                            # optional - sage.geometry.polyhedron sage.symbolic
         False
 
         sage: predicate(x, y, z) = sqrt(x^2 + y^2 + z^2) < 1.2; predicate               # optional - sage.symbolic
