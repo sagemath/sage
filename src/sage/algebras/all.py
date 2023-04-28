@@ -18,6 +18,8 @@ Algebras
 #*****************************************************************************
 from sage.misc.lazy_import import lazy_import
 
+from .all__sagemath_polyhedra import *
+
 import sage.algebras.catalog as algebras
 
 from .quatalg.all import *
@@ -28,14 +30,8 @@ from .quantum_groups.all import *
 from .lie_conformal_algebras.all import *
 
 # Algebra base classes
-from .algebra import Algebra
 from .free_algebra import FreeAlgebra
 from .free_algebra_quotient import FreeAlgebraQuotient
-
-
-from .finite_dimensional_algebras.all import FiniteDimensionalAlgebra
-
-lazy_import('sage.algebras.group_algebra', 'GroupAlgebra')
 
 lazy_import('sage.algebras.iwahori_hecke_algebra', 'IwahoriHeckeAlgebra')
 lazy_import('sage.algebras.affine_nil_temperley_lieb',
