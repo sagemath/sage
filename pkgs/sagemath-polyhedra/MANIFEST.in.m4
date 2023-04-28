@@ -72,6 +72,10 @@ include sage/sets/finite_set_map*.p*
 include sage/misc/mrange.p*
 include sage/misc/callable_dict.p*
 
+include sage/algebras/algebra.py
+graft sage/algebras/finite_dimensional_algebras  # for hyperplane arrangements
+include sage/algebras/group_algebra.py
+
 graft sage/matrix
 exclude sage/matrix/misc.*  # until refactored
 exclude sage/matrix/matrix_gap.*
@@ -125,9 +129,12 @@ include sage/groups/matrix_gps/symplectic.p*
 include sage/groups/matrix_gps/unitary.p*
 
 # simplicial complexes
-#graft sage/topology            # depends on sage.combinat.subset
+graft sage/topology            # depends on sage.combinat.subset (now in sagemath-categories)
 
-#graft sage/tensor              # depends on permutations
+#graft sage/tensor              # depends on permutations (now in sagemath-categories),
+                                # but also on SymmetricGroup (could be easily fixed)
+                                # and sage.sets.disjoint_set
+
 #graft sage/matroids            # many doctests use graphs, finite fields
 
 include sage/numerical/mip.p*
@@ -155,13 +162,15 @@ exclude sage/homology/tests.p*
 
 include sage/rings/derivation.p*
 include sage/rings/function_field/differential.p*
-include sage/rings/function_field/derivations.*                         # module elements
-include sage/rings/function_field/differential.*                        # module elements
-include sage/rings/function_field/divisor.*                             # module elements
-include sage/rings/function_field/hermite_form_polynomial.*             # cimports Matrix
-include sage/rings/function_field/function_field_valuation.*            # ??
+include sage/rings/function_field/derivations.p*                         # module elements
+include sage/rings/function_field/derivations_rational.p*                # module elements
+include sage/rings/function_field/differential.p*                        # module elements
+include sage/rings/function_field/divisor.p*                             # module elements
+include sage/rings/function_field/hermite_form_polynomial.p*             # cimports Matrix
+include sage/rings/function_field/valuation.p*                           # ??
 
-include sage/rings/polynomial/laurent_polynomial_mpair.p*               # cimports Matrix
+include sage/rings/polynomial/laurent_polynomial_mpair.p*                # cimports Matrix
+include sage/rings/valuation.p*
 
 
 global-exclude *.py[co]
