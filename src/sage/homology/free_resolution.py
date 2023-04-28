@@ -66,8 +66,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.libs.singular.singular import si2sa_resolution
-from sage.libs.singular.function import singular_function
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.abstract_method import abstract_method
 from sage.misc.classcall_metaclass import ClasscallMetaclass
@@ -866,6 +864,9 @@ class FiniteFreeResolution_singular(FiniteFreeResolution):
             [z^2 - y*w y*z - x*w y^2 - x*z], [-w  z]
             ]
         """
+        from sage.libs.singular.singular import si2sa_resolution
+        from sage.libs.singular.function import singular_function
+
         # This ensures the first component of the Singular resolution to be a
         # module, like the later components. This is important when the
         # components are converted to Sage modules.

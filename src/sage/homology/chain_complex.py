@@ -62,7 +62,6 @@ from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
 from sage.misc.superseded import deprecation
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.fast_arith import prime_range
 from sage.homology.homology_group import HomologyGroup
 
@@ -1518,6 +1517,9 @@ class ChainComplex_class(Parent):
         """
         if self.base_ring() != ZZ:
             raise NotImplementedError('only implemented for base ring the integers')
+
+        from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+
         answer = []
         torsion_free = self.betti(base_ring=GF(max_prime))
         for p in prime_range(min_prime, max_prime):
