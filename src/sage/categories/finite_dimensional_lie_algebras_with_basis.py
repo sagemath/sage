@@ -1594,6 +1594,163 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             R = P[0].parent()
             return R.quotient(P)
 
+        def casimir_element(self, order=2, UEA=None, force_generic=False):
+            r"""
+            Return the Casimir element in the universal enveloping algebra
+            of ``self``.
+
+            A *Casimir element* of order `k` is a distinguished basis element
+            for the center of `U(\mathfrak{g})` of homogeneous degree `k`
+            (that is, it is an element of `U_k \setminus U_{k-1}`, where
+            `\{U_i\}_{i=0}^{\infty}` is the natural filtration of
+            `U(\mathfrak{g})`. When `\mathfrak{g}` is a simple Lie algebra,
+            then this spans `Z(U(\mathfrak{g}))_k`.
+
+            INPUT:
+
+            - ``order`` -- (default: ``2``) the order of the Casimir element
+            - ``UEA`` -- (optional) the universal enveloping algebra to
+              return the result in
+            - ``force_generic`` -- (default: ``False``) if ``True`` for the
+              quadradic order, then this uses the default algorithm; otherwise
+              this is ignored
+
+            ALGORITHM:
+
+            For the quadradic order (i.e., ``order=2``), then this uses
+            K^{ij}`, the inverse of the Killing form matrix, to compute
+            `C_{(2)} = sum_{i,j} K^{ij} X_i \cdot X_j`, where `\{X_1, \ldots,
+            X_n\}` is a basis for `\mathfrak{g}`. Otherwise this solves the
+            system of equations
+
+            .. MATH::
+
+                f_{aj}^b \kappa^{jc\cdots d} + f_{aj}^c \kappa^{cj\cdots d}
+                \cdots + f_{aj}^d \kappa^{bc \cdots j}
+
+            for the symmetric tensor `\kappa^{i_1 \cdots i_m}`, where `m`
+            is the ``order``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['A', 1])
+                sage: C = L.casimir_element(); C
+                1/8*b1^2 + 1/2*b0*b2 - 1/4*b1
+                sage: U = L.universal_enveloping_algebra()
+                sage: all(g * C == C * g for g in U.gens())
+                True
+                sage: U = L.pbw_basis()
+                sage: C = L.casimir_element(UEA=U); C
+                1/2*PBW[alpha[1]]*PBW[-alpha[1]] + 1/8*PBW[alphacheck[1]]^2 - 1/4*PBW[alphacheck[1]]
+                sage: all(g * C == C * g for g in U.algebra_generators())
+                True
+
+                sage: L = LieAlgebra(QQ, cartan_type=['B', 2])
+                sage: U = L.pbw_basis()
+                sage: C = L.casimir_element(UEA=U)
+                sage: all(g * C == C * g for g in U.algebra_generators())
+                True
+
+                sage: L = LieAlgebra(QQ, cartan_type=['C', 3])
+                sage: U = L.pbw_basis()
+                sage: C = L.casimir_element(UEA=U)
+                sage: all(g * C == C * g for g in U.algebra_generators())
+                True
+
+                sage: L = LieAlgebra(QQ, cartan_type=['A', 1])
+                sage: C4 = L.casimir_element(order=4, UEA=L.pbw_basis()); C4
+                4*PBW[alpha[1]]^2*PBW[-alpha[1]]^2
+                 + 2*PBW[alpha[1]]*PBW[alphacheck[1]]^2*PBW[-alpha[1]]
+                 + 1/4*PBW[alphacheck[1]]^4 - PBW[alphacheck[1]]^3
+                 - 4*PBW[alpha[1]]*PBW[-alpha[1]] + 2*PBW[alphacheck[1]]
+                sage: all(g * C4 == C4 * g for g in L.pbw_basis().algebra_generators())
+                True
+
+                sage: L = lie_algebras.Heisenberg(QQ, 2)
+                sage: L.casimir_element()
+                0
+
+            TESTS::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['A', 1])
+                sage: L.casimir_element(1)
+                Traceback (most recent call last):
+                ...
+                ValueError: invalid order
+                sage: 4 * L.casimir_element() == L.casimir_element(force_generic=True)
+                True
+
+            .. TODO::
+
+                Use the symmetry of the tensor to reduce the number of
+                equations and/or variables to solve.
+            """
+            if order < 2:
+                raise ValueError("invalid order")
+
+            if UEA is None:
+                UEA = self.universal_enveloping_algebra()
+
+            B = self.basis()
+
+            if order == 2 and not force_generic:
+                # Special case for the quadradic using the Killing form
+                try:
+                    K = self.killing_form_matrix().inverse()
+                    return UEA.sum(K[i, j] * UEA(x) * UEA(y) for i, x in enumerate(B)
+                                   for j, y in enumerate(B) if K[i, j])
+                except (ValueError, TypeError, ZeroDivisionError):
+                    # fall back to finding solutions to the system of equations
+                    pass
+
+            keys = self.get_order()
+            dim = len(keys)
+            s_coeffs = dict(self.structure_coefficients())
+            for k in list(s_coeffs.keys()):
+                s_coeffs[k[1], k[0]] = -s_coeffs[k]
+
+            # setup the equations
+            from sage.matrix.constructor import matrix
+            from itertools import product
+            eqns = matrix.zero(self.base_ring(), dim**(order+1), dim**order, sparse=True)
+            for ii, p in enumerate(product(range(dim), repeat=order+1)):
+                i = p[0]
+                a = keys[i]
+                for j, b in enumerate(keys):
+                    if (a, b) not in s_coeffs:
+                        continue
+                    sc_val = s_coeffs[a, b]
+                    for k in range(order):
+                        c = keys[p[k+1]]
+                        if not sc_val[c]:
+                            continue
+                        pp = list(p[1:])
+                        pp[k] = j
+                        jj = sum(dim**m * pp[m] for m in range(order))
+                        eqns[ii, jj] += sc_val[c]
+
+            ker = eqns.right_kernel()
+            if ker.dimension() == 0:
+                return self.zero()
+
+            tens = ker.basis()[0]
+            del eqns  # no need to hold onto the matrix
+
+            from sage.rings.integer_ring import ZZ
+            def to_prod(index):
+                coeff = tens[index]
+                p = [0] * order
+                base = dim ** (order-1)
+                for i in range(order):
+                    p[i] = index // base
+                    index %= base
+                    base //= dim
+                p.reverse()
+                return coeff * UEA.prod(UEA(B[keys[i]]) for i in p)
+
+            return UEA.sum(to_prod(index) for index in tens.support())
+
+
     class ElementMethods:
         def adjoint_matrix(self, sparse=False): # In #11111 (more or less) by using matrix of a morphism
             """
