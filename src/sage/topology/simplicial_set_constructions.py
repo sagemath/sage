@@ -1387,7 +1387,7 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
             sage: from sage.topology.simplicial_set_constructions import PushoutOfSimplicialSets_finite
             sage: S2 = simplicial_sets.Sphere(2)
             sage: one = S2.Hom(S2).identity()
-            sage: PushoutOfSimplicialSets_finite([one, one]) == PushoutOfSimplicialSets_finite((one, one))
+            sage: PushoutOfSimplicialSets_finite([one, one]) == PushoutOfSimplicialSets_finite((one, one))                      # optional - sage.graphs
             True
         """
         if maps:
@@ -1411,9 +1411,9 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
             sage: from sage.topology.simplicial_set_constructions import PushoutOfSimplicialSets_finite
             sage: T = simplicial_sets.Torus()
             sage: S2 = simplicial_sets.Sphere(2)
-            sage: PushoutOfSimplicialSets_finite([T.base_point_map(), S2.base_point_map()]).n_cells(0)[0]
+            sage: PushoutOfSimplicialSets_finite([T.base_point_map(), S2.base_point_map()]).n_cells(0)[0]                       # optional - sage.graphs
             *
-            sage: PushoutOfSimplicialSets_finite([T.base_point_map(), S2.base_point_map()], vertex_name='v').n_cells(0)[0]
+            sage: PushoutOfSimplicialSets_finite([T.base_point_map(), S2.base_point_map()], vertex_name='v').n_cells(0)[0]      # optional - sage.graphs
             v
         """
         from sage.graphs.graph import Graph
@@ -1584,15 +1584,15 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
 
             sage: S1 = simplicial_sets.Sphere(1)
             sage: T = simplicial_sets.Torus()
-            sage: X = S1.disjoint_union(T) # a pushout
-            sage: X.structure_map(0)
+            sage: X = S1.disjoint_union(T)  # a pushout                                                                         # optional - sage.graphs
+            sage: X.structure_map(0)                                                                                            # optional - sage.graphs
             Simplicial set morphism:
               From: S^1
               To:   Disjoint union: (S^1 u Torus)
               Defn: [v_0, sigma_1] --> [v_0, sigma_1]
-            sage: X.structure_map(1).domain()
+            sage: X.structure_map(1).domain()                                                                                   # optional - sage.graphs
             Torus
-            sage: X.structure_map(1).codomain()
+            sage: X.structure_map(1).codomain()                                                                                 # optional - sage.graphs
             Disjoint union: (S^1 u Torus)
         """
         return self._structure[i]
@@ -1626,11 +1626,11 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
 
             sage: f_0 = Hom(X, Y_0)({v:v, w:w, x:x, evw:evw, evx:evx})
             sage: f_1 = Hom(X, Y_1)({v:v, w:v, x:x, evw:v.apply_degeneracies(0), evx:evx})
-            sage: P = X.pushout(f_0, f_1)
+            sage: P = X.pushout(f_0, f_1)                                                                                       # optional - sage.graphs
 
             sage: one = Hom(Y_1, Y_1).identity()
             sage: g = Hom(Y_0, Y_1)({v:v, w:v, x:x, evw:v.apply_degeneracies(0), evx:evx, ewx:evx})
-            sage: P.universal_property(g, one)
+            sage: P.universal_property(g, one)                                                                                  # optional - sage.graphs
             Simplicial set morphism:
               From: Pushout of maps:
               Simplicial set morphism:
@@ -1685,10 +1685,10 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
 
             sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
             sage: RP2 = RP5.n_skeleton(2)
-            sage: RP5_2 = RP5.quotient(RP2)
-            sage: RP5_2
+            sage: RP5_2 = RP5.quotient(RP2)                                                                                     # optional - sage.graphs
+            sage: RP5_2                                                                                                         # optional - sage.graphs
             Quotient: (RP^5/Simplicial set with 3 non-degenerate simplices)
-            sage: RP5_2.quotient_map()
+            sage: RP5_2.quotient_map()                                                                                          # optional - sage.graphs
             Simplicial set morphism:
               From: RP^5
               To:   Quotient: (RP^5/Simplicial set with 3 non-degenerate simplices)
@@ -1714,14 +1714,14 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
 
             sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
             sage: RP2 = RP5.n_skeleton(2)
-            sage: RP5_2 = RP5.quotient(RP2)
-            sage: RP5_2.ambient()
+            sage: RP5_2 = RP5.quotient(RP2)                                                                                     # optional - sage.graphs
+            sage: RP5_2.ambient()                                                                                               # optional - sage.graphs
             RP^5
 
             sage: B = simplicial_sets.ClassifyingSpace(groups.misc.MultiplicativeAbelian([2]))
             sage: K = B.n_skeleton(3)
-            sage: Q = B.quotient(K)
-            sage: Q.ambient()
+            sage: Q = B.quotient(K)                                                                                             # optional - sage.graphs
+            sage: Q.ambient()                                                                                                   # optional - sage.graphs
             Classifying space of Multiplicative Abelian group isomorphic to C2
         """
         return self._maps[0].codomain()
@@ -1736,14 +1736,14 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
 
             sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
             sage: RP2 = RP5.n_skeleton(2)
-            sage: RP5_2 = RP5.quotient(RP2)
-            sage: RP5_2.subcomplex()
+            sage: RP5_2 = RP5.quotient(RP2)                                                                                     # optional - sage.graphs
+            sage: RP5_2.subcomplex()                                                                                            # optional - sage.graphs
             Simplicial set with 3 non-degenerate simplices
 
             sage: B = simplicial_sets.ClassifyingSpace(groups.misc.MultiplicativeAbelian([2]))
             sage: K = B.n_skeleton(3)
-            sage: Q = B.quotient(K)
-            sage: Q.subcomplex()
+            sage: Q = B.quotient(K)                                                                                             # optional - sage.graphs
+            sage: Q.subcomplex()                                                                                                # optional - sage.graphs
             Simplicial set with 4 non-degenerate simplices
         """
         return self._maps[0].domain()
@@ -1766,10 +1766,10 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
 
             sage: B = simplicial_sets.ClassifyingSpace(groups.misc.MultiplicativeAbelian([2]))
             sage: K = B.n_skeleton(3)
-            sage: Q = B.quotient(K)
-            sage: Q.n_skeleton(6)
+            sage: Q = B.quotient(K)                                                                                             # optional - sage.graphs
+            sage: Q.n_skeleton(6)                                                                                               # optional - sage.graphs
             Quotient: (Simplicial set with 7 non-degenerate simplices/Simplicial set with 4 non-degenerate simplices)
-            sage: Q.n_skeleton(6).homology()
+            sage: Q.n_skeleton(6).homology()                                                                                    # optional - sage.graphs
             {0: 0, 1: 0, 2: 0, 3: 0, 4: Z, 5: C2, 6: 0}
         """
         if self.is_finite():
@@ -1797,7 +1797,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
         EXAMPLES::
 
             sage: T = simplicial_sets.Torus()
-            sage: T.quotient(T.n_skeleton(1))
+            sage: T.quotient(T.n_skeleton(1))                                                                                   # optional - sage.graphs
             Quotient: (Torus/Simplicial set with 4 non-degenerate simplices)
         """
         return 'Quotient: ({}/{})'.format(self.ambient(), self.subcomplex())
@@ -1811,7 +1811,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
             sage: RPoo = simplicial_sets.RealProjectiveSpace(Infinity)
             sage: RP3 = RPoo.n_skeleton(3)
             sage: RP3.rename_latex('RP^{3}')
-            sage: latex(RPoo.quotient(RP3))
+            sage: latex(RPoo.quotient(RP3))                                                                                     # optional - sage.graphs
             RP^{\infty} / RP^{3}
         """
         return '{} / {}'.format(latex(self.ambient()), latex(self.subcomplex()))
@@ -1835,10 +1835,10 @@ class QuotientOfSimplicialSet_finite(QuotientOfSimplicialSet,
 
             sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
             sage: RP2 = RP5.n_skeleton(2)
-            sage: RP5_2 = RP5.quotient(RP2)
-            sage: RP5_2
+            sage: RP5_2 = RP5.quotient(RP2)                                                                                     # optional - sage.graphs
+            sage: RP5_2                                                                                                         # optional - sage.graphs
             Quotient: (RP^5/Simplicial set with 3 non-degenerate simplices)
-            sage: RP5_2.quotient_map()
+            sage: RP5_2.quotient_map()                                                                                          # optional - sage.graphs
             Simplicial set morphism:
               From: RP^5
               To:   Quotient: (RP^5/Simplicial set with 3 non-degenerate simplices)
@@ -1861,16 +1861,16 @@ class QuotientOfSimplicialSet_finite(QuotientOfSimplicialSet,
         EXAMPLES::
 
             sage: K = simplicial_sets.Simplex(1)
-            sage: S1 = K.quotient(K.n_skeleton(0))
-            sage: q = S1.quotient_map()
-            sage: q
+            sage: S1 = K.quotient(K.n_skeleton(0))                                                                              # optional - sage.graphs
+            sage: q = S1.quotient_map()                                                                                         # optional - sage.graphs
+            sage: q                                                                                                             # optional - sage.graphs
             Simplicial set morphism:
               From: 1-simplex
               To:   Quotient: (1-simplex/Simplicial set with 2 non-degenerate simplices)
               Defn: [(0,), (1,), (0, 1)] --> [*, *, (0, 1)]
-            sage: q.domain() == K
+            sage: q.domain() == K                                                                                               # optional - sage.graphs
             True
-            sage: q.codomain() == S1
+            sage: q.codomain() == S1                                                                                            # optional - sage.graphs
             True
         """
         return self.structure_map(0)
@@ -1885,7 +1885,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
 
             sage: from sage.topology.simplicial_set_constructions import SmashProductOfSimplicialSets_finite as Smash
             sage: S2 = simplicial_sets.Sphere(2)
-            sage: Smash([S2, S2]) == Smash((S2, S2))
+            sage: Smash([S2, S2]) == Smash((S2, S2))                                                                            # optional - sage.graphs
             True
         """
         if factors:
@@ -1913,7 +1913,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
 
             sage: T = simplicial_sets.Torus()
             sage: S2 = simplicial_sets.Sphere(2)
-            sage: T.smash_product(S2).homology() == T.suspension(2).homology()
+            sage: T.smash_product(S2).homology() == T.suspension(2).homology()                                                  # optional - sage.graphs
             True
         """
         if any(not space.is_pointed() for space in factors):
@@ -1931,7 +1931,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
 
             sage: RP4 = simplicial_sets.RealProjectiveSpace(4)
             sage: S1 = simplicial_sets.Sphere(1)
-            sage: S1.smash_product(RP4, S1)
+            sage: S1.smash_product(RP4, S1)                                                                                     # optional - sage.graphs
             Smash product: (S^1 ^ RP^4 ^ S^1)
         """
         s = 'Smash product: ('
@@ -1947,7 +1947,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
 
             sage: RP4 = simplicial_sets.RealProjectiveSpace(4)
             sage: S1 = simplicial_sets.Sphere(1)
-            sage: latex(S1.smash_product(RP4, S1))
+            sage: latex(S1.smash_product(RP4, S1))                                                                              # optional - sage.graphs
             S^{1} \wedge RP^{4} \wedge S^{1}
         """
         return ' \\wedge '.join(latex(X) for X in self._factors)
@@ -1961,7 +1961,7 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
 
             sage: from sage.topology.simplicial_set_constructions import WedgeOfSimplicialSets
             sage: S2 = simplicial_sets.Sphere(2)
-            sage: WedgeOfSimplicialSets([S2, S2]) == WedgeOfSimplicialSets((S2, S2))
+            sage: WedgeOfSimplicialSets([S2, S2]) == WedgeOfSimplicialSets((S2, S2))                                            # optional - sage.graphs
             True
         """
         if factors:
@@ -1991,26 +1991,26 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
 
             sage: CP2 = simplicial_sets.ComplexProjectiveSpace(2)
             sage: K = simplicial_sets.KleinBottle()
-            sage: W = CP2.wedge(K)
-            sage: W.homology()
+            sage: W = CP2.wedge(K)                                                                                              # optional - sage.graphs
+            sage: W.homology()                                                                                                  # optional - sage.graphs
             {0: 0, 1: Z x C2, 2: Z, 3: 0, 4: Z}
 
-            sage: W.inclusion_map(1)
+            sage: W.inclusion_map(1)                                                                                            # optional - sage.graphs
             Simplicial set morphism:
               From: Klein bottle
               To:   Wedge: (CP^2 v Klein bottle)
               Defn: [Delta_{0,0}, Delta_{1,0}, Delta_{1,1}, Delta_{1,2}, Delta_{2,0}, Delta_{2,1}] --> [*, Delta_{1,0}, Delta_{1,1}, Delta_{1,2}, Delta_{2,0}, Delta_{2,1}]
 
-            sage: W.projection_map(0).domain()
+            sage: W.projection_map(0).domain()                                                                                  # optional - sage.graphs
             Wedge: (CP^2 v Klein bottle)
-            sage: W.projection_map(0).codomain() # copy of CP^2
+            sage: W.projection_map(0).codomain() # copy of CP^2                                                                 # optional - sage.graphs
             Quotient: (Wedge: (CP^2 v Klein bottle)/Simplicial set with 6 non-degenerate simplices)
-            sage: W.projection_map(0).codomain().homology()
+            sage: W.projection_map(0).codomain().homology()                                                                     # optional - sage.graphs
             {0: 0, 1: 0, 2: Z, 3: 0, 4: Z}
 
         An error occurs if any of the factors is not pointed::
 
-            sage: CP2.wedge(simplicial_sets.Simplex(1))
+            sage: CP2.wedge(simplicial_sets.Simplex(1))                                                                         # optional - sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: the simplicial sets must be pointed
@@ -2036,7 +2036,7 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
         EXAMPLES::
 
             sage: K = simplicial_sets.KleinBottle()
-            sage: K.wedge(K, K)
+            sage: K.wedge(K, K)                                                                                                 # optional - sage.graphs
             Wedge: (Klein bottle v Klein bottle v Klein bottle)
         """
         s = 'Wedge: ('
@@ -2078,7 +2078,7 @@ class WedgeOfSimplicialSets_finite(WedgeOfSimplicialSets, PushoutOfSimplicialSet
 
             sage: from sage.topology.simplicial_set_constructions import WedgeOfSimplicialSets_finite
             sage: K = simplicial_sets.Simplex(3)
-            sage: WedgeOfSimplicialSets_finite((K,K))
+            sage: WedgeOfSimplicialSets_finite((K,K))                                                                           # optional - sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: the simplicial sets must be pointed
@@ -2102,15 +2102,15 @@ class WedgeOfSimplicialSets_finite(WedgeOfSimplicialSets, PushoutOfSimplicialSet
 
             sage: S1 = simplicial_sets.Sphere(1)
             sage: S2 = simplicial_sets.Sphere(2)
-            sage: W = S1.wedge(S2, S1)
-            sage: W.inclusion_map(1)
+            sage: W = S1.wedge(S2, S1)                                                                                          # optional - sage.graphs
+            sage: W.inclusion_map(1)                                                                                            # optional - sage.graphs
             Simplicial set morphism:
               From: S^2
               To:   Wedge: (S^1 v S^2 v S^1)
               Defn: [v_0, sigma_2] --> [*, sigma_2]
-            sage: W.inclusion_map(0).domain()
+            sage: W.inclusion_map(0).domain()                                                                                   # optional - sage.graphs
             S^1
-            sage: W.inclusion_map(2).domain()
+            sage: W.inclusion_map(2).domain()                                                                                   # optional - sage.graphs
             S^1
         """
         return self.structure_map(i)
