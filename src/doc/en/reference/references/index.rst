@@ -1490,6 +1490,9 @@ REFERENCES:
 .. [Conr] Keith Conrad, "Artin-Hasse-Type Series and Roots of Unity",
           http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf
 
+.. [Coron2023] Basile Coron *Supersolvability of built lattices and Koszulness
+               of generalized Chow rings*. Preprint, :arxiv:`2302.13072` (2023).
+
 .. [CGMRV16] \A. Conte, R. Grossi, A. Marino, R. Rizzi, L. Versari,
              "Directing Road Networks by Listing Strong Orientations.",
              Combinatorial Algorithms, Proceedings of 27th International Workshop,

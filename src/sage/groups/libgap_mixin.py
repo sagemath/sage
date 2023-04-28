@@ -545,7 +545,7 @@ class GroupMixinLibGAP():
             [ 1  1 -1]
             [ 2 -1  0]
             [ 1  1  1]
-            sage: MatrixGroup(SymmetricGroup(5)).character_table()
+            sage: MatrixGroup(SymmetricGroup(5)).character_table()  # long time
             [ 1 -1 -1  1 -1  1  1]
             [ 4  0  1 -1 -2  1  0]
             [ 5  1 -1  0 -1 -1  1]

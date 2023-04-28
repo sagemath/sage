@@ -108,7 +108,7 @@ def nodes_uncached(degree, prec):
         performance.
     """
     cdef long j,j1,n
-    cdef RealNumber r,t1,t2,t3,t4,a,w
+    cdef RealNumber r,t1,t2,t4,a,w
     cdef mpfr_t u,v
     cdef RealField_class R
     if prec < 53:
