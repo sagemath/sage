@@ -31,7 +31,6 @@ AUTHORS:
 
 import re
 import os
-from pyparsing import OneOrMore, nestedExpr
 
 from sage.env import SAGE_ENV
 from sage.misc.cachefunc import cached_method, cached_function
@@ -650,6 +649,8 @@ def simplicial_data_from_kenzo_output(filename):
         sage: S4.homology(reduced=False)                                                # optional - pyparsing
         {0: Z, 1: 0, 2: 0, 3: 0, 4: Z}
     """
+    from pyparsing import OneOrMore, nestedExpr
+
     with open(filename, 'r') as f:
         data = f.read()
     dim = 0

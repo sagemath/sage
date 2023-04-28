@@ -173,8 +173,6 @@ from sage.structure.category_object import normalize_names
 from sage.misc.latex import latex
 from sage.misc.superseded import deprecation
 from sage.matrix.constructor import matrix
-from sage.homology.chain_complex import ChainComplex
-from sage.graphs.graph import Graph
 from functools import total_ordering
 from itertools import combinations, chain
 lazy_import('sage.categories.simplicial_complexes', 'SimplicialComplexes')
@@ -2219,6 +2217,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 current = self._n_cells_sorted(n-1, subcomplex=subcomplex)
             differentials[n-1] = matrix(base_ring, 0, len(current))
         # finally, return the chain complex
+        from sage.homology.chain_complex import ChainComplex
+
         if cochain:
             return ChainComplex(data=differentials, degree=1,
                                 base_ring=base_ring, check=check)
@@ -3707,6 +3707,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             [(0, 1, None), (0, 2, None), (0, 3, None), (1, 2, None), (1, 3, None), (2, 3, None)]
         """
         if self._graph is None:
+            from sage.graphs.graph import Graph
+
             edges = self.n_cells(1)
             vertices = [min(f) for f in self._facets if f.dimension() == 0]
             used_vertices = []  # vertices which are in an edge
@@ -4209,6 +4211,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
             != sorted(x.dimension() for x in other._facets)
             or len(self.vertices()) != len(other.vertices())):
             return False
+
+        from sage.graphs.graph import Graph
+
         g1 = Graph()
         g2 = Graph()
         # With Python 3, "is_isomorphic" for graphs works best if the
@@ -4275,6 +4280,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             2
         """
         from sage.groups.perm_gps.permgroup import PermutationGroup
+        from sage.graphs.graph import Graph
 
         G = Graph()
         G.add_vertices(self.vertices())
