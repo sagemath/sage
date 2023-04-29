@@ -121,7 +121,8 @@ def genera(sig_pair, determinant, max_scale=None, even=False):
     return genera
 
 
-genera = staticmethod(genera)
+# #35557: In Python < 3.10, a staticmethod cannot be called directly
+_genera_staticmethod = staticmethod(genera)
 
 
 def _local_genera(p, rank, det_val, max_scale, even):
