@@ -41,6 +41,9 @@ do
         --yes)
             YES=yes
             ;;
+        --quiet)
+            QUIET=yes
+            ;;
         -*)
             echo >&2 "$0: unknown option $1"
             exit 1
@@ -64,7 +67,13 @@ if [ "$system" = auto ]; then
     fi
 fi
 if [ "$SPKG" = "yes" ]; then
-    system_packages=$(echo $(sage-get-system-packages $system $*))
+    case $system in
+        mamba)
+            base_system=conda;;
+        *)
+            base_system=$system;;
+    esac
+    system_packages=$(echo $(sage-get-system-packages $base_system $*))
 else
     system_packages="$*"
 fi
@@ -143,6 +152,11 @@ case $system:$command in
     *conda*:install)
         [ "$YES" = yes ] && options="$options --yes"
         [ -n "$system_packages" ] && print_shell_command "conda install $options $system_packages"
+        ;;
+    mamba*:install)
+        [ "$YES" = yes ] && options="$options --yes"
+        [ "$QUIET" = yes ] && options="$options --no-banner"
+        [ -n "$system_packages" ] && print_shell_command "mamba install $options $system_packages"
         ;;
     homebrew*:install)
         [ -n "$system_packages" ] && print_shell_command "brew install $system_packages"
