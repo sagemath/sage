@@ -2515,7 +2515,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         The contraction on two slots having the same tensor type cannot occur::
 
-            sage: b =  M.tensor((2,0), name='b') ; b
+            sage: b = M.tensor((2,0), name='b') ; b
             Type-(2,0) tensor b on the Rank-3 free module M over the Integer Ring
             sage: b[:] = [[1,2,3], [4,5,6], [7,8,9]]
             sage: b.trace(0,1)
