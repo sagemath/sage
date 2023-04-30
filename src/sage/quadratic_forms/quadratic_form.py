@@ -502,9 +502,8 @@ class QuadraticForm(SageObject):
         ])
 
     # Genus
-    lazy_import("sage.quadratic_forms.genera.genus", [
-            "genera"
-        ])
+    lazy_import("sage.quadratic_forms.genera.genus",
+                "_genera_staticmethod", as_="genera")
 
     def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None):
         """
