@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.graphs, sage.combinat
 r"""
 Morphisms between toric lattices compatible with fans
 
@@ -360,7 +361,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: normal = NormalFan(diamond)
             sage: N = face.lattice()
             sage: fm = FanMorphism(identity_matrix(2),
-            ....:         normal, face, subdivide=True)
+            ....:                  normal, face, subdivide=True)
             sage: fm._RISGIS()
             (frozenset({2}),
              frozenset({3}),
@@ -774,7 +775,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: quadrant = Fan([quadrant])
             sage: quadrant_bl = quadrant.subdivide([(1,1)])
             sage: fm = FanMorphism(identity_matrix(2),
-            ....:           quadrant, quadrant_bl, check=False)
+            ....:                  quadrant, quadrant_bl, check=False)
 
         Now we report that the morphism is invalid::
 
@@ -861,8 +862,8 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS::
 
-            sage: trivialfan2 = Fan([],[],lattice=ToricLattice(2))
-            sage: trivialfan3 = Fan([],[],lattice=ToricLattice(3))
+            sage: trivialfan2 = Fan([], [], lattice=ToricLattice(2))
+            sage: trivialfan3 = Fan([], [], lattice=ToricLattice(3))
             sage: FanMorphism(zero_matrix(2,3), trivialfan2, trivialfan3)
             Fan morphism defined by the matrix
             [0 0 0]
@@ -983,7 +984,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: normal = NormalFan(diamond)
             sage: N = face.lattice()
             sage: fm = FanMorphism(identity_matrix(2),
-            ....:         normal, face, subdivide=True)
+            ....:                  normal, face, subdivide=True)
             sage: fm.image_cone(Cone([(1,0)]))
             1-d cone of Rational polyhedral fan in 2-d lattice N
             sage: fm.image_cone(Cone([(1,1)]))
@@ -1855,8 +1856,8 @@ class FanMorphism(FreeModuleMorphism):
             sage: phi_i.codomain_fan() is phi.codomain_fan()                            # optional - palp
             True
 
-            sage: trivialfan2 = Fan([],[],lattice=ToricLattice(2))
-            sage: trivialfan3 = Fan([],[],lattice=ToricLattice(3))
+            sage: trivialfan2 = Fan([], [], lattice=ToricLattice(2))
+            sage: trivialfan3 = Fan([], [], lattice=ToricLattice(3))
             sage: f = FanMorphism(zero_matrix(2,3), trivialfan2, trivialfan3)
             sage: [phi.matrix().dimensions() for phi in f.factor()]
             [(0, 3), (0, 0), (2, 0)]
