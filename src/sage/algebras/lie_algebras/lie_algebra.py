@@ -217,7 +217,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
     **4.** We can construct a Lie algebra from a Cartan type by using
     the ``cartan_type`` option::
 
-        sage: L = LieAlgebra(ZZ, cartan_type=['C',3])
+        sage: L = LieAlgebra(ZZ, cartan_type=['C', 3])
         sage: L.inject_variables()
         Defining e1, e2, e3, f1, f2, f3, h1, h2, h3
         sage: e1.bracket(e2)
@@ -229,13 +229,27 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
         sage: L([e2, [e2, e3]])
         2*E[2*alpha[2] + alpha[3]]
 
-        sage: L = LieAlgebra(ZZ, cartan_type=['E',6])
+        sage: L = LieAlgebra(ZZ, cartan_type=['E', 6])
         sage: L
         Lie algebra of ['E', 6] in the Chevalley basis
 
+    When the Cartan type is finite type and simply-laced, we can also
+    specify an asymmetry function from [Kac1990]_ using a Dynkin diagram
+    orientation with the ``epsilon`` option::
+
+        sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(1, 2)])
+        sage: e1, e2 = L.e()
+        sage: L[e1, e2]
+        -E[alpha[1] + alpha[2]]
+
+        sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(2, 1)])
+        sage: e1, e2 = L.e()
+        sage: L[e1, e2]
+        E[alpha[1] + alpha[2]]
+
     We also have matrix versions of the classical Lie algebras::
 
-        sage: L = LieAlgebra(ZZ, cartan_type=['A',2], representation='matrix')
+        sage: L = LieAlgebra(ZZ, cartan_type=['A', 2], representation='matrix')
         sage: L.gens()
         (
         [0 1 0]  [0 0 0]  [0 0 0]  [0 0 0]  [ 1  0  0]  [ 0  0  0]
@@ -246,7 +260,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
     There is also the compact real form of matrix Lie algebras
     implemented (the base ring must currently be a field)::
 
-        sage: L = LieAlgebra(QQ, cartan_type=['A',2], representation="compact real")
+        sage: L = LieAlgebra(QQ, cartan_type=['A', 2], representation="compact real")
         sage: list(L.basis())
         [
         [ 0  1  0]  [ 0  0  1]  [ 0  0  0]  [ i  0  0]  [0 i 0]  [0 0 i]
@@ -376,7 +390,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
         # Parse input as a Cartan type
         # -----
 
-        ct = kwds.get("cartan_type", None)
+        ct = kwds.pop("cartan_type", None)
         if ct is not None:
             from sage.combinat.root_system.cartan_type import CartanType
             ct = CartanType(ct)
@@ -386,16 +400,16 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
                                         kac_moody=kwds.get("kac_moody", True))
             if not ct.is_finite():
                 raise NotImplementedError("non-finite types are not implemented yet, see trac #14901 for details")
-            rep = kwds.get("representation", "bracket")
+            rep = kwds.pop("representation", "bracket")
             if rep == 'bracket':
                 from sage.algebras.lie_algebras.classical_lie_algebra import LieAlgebraChevalleyBasis
-                return LieAlgebraChevalleyBasis(R, ct)
+                return LieAlgebraChevalleyBasis(R, ct, **kwds)
             if rep == 'matrix':
                 from sage.algebras.lie_algebras.classical_lie_algebra import ClassicalMatrixLieAlgebra
-                return ClassicalMatrixLieAlgebra(R, ct)
+                return ClassicalMatrixLieAlgebra(R, ct, **kwds)
             if rep == 'compact real':
                 from sage.algebras.lie_algebras.classical_lie_algebra import MatrixCompactRealForm
-                return MatrixCompactRealForm(R, ct)
+                return MatrixCompactRealForm(R, ct, **kwds)
             raise ValueError("invalid representation")
 
         # Parse the remaining arguments
