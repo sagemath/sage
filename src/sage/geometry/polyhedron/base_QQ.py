@@ -97,13 +97,13 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``verbose`` (boolean; ``False`` by default) -- whether to display
+        - ``verbose`` -- (boolean; ``False`` by default) whether to display
           verbose output.
 
-        - ``use_Hrepresentation`` - (boolean; ``False`` by default) -- whether
+        - ``use_Hrepresentation`` -- (boolean; ``False`` by default) -- whether
           to send the H or V representation to LattE
 
-        - ``preprocess`` - (boolean; ``True`` by default) -- whether, if the integral hull
+        - ``preprocess`` -- (boolean; ``True`` by default) whether, if the integral hull
           is known to lie in a coordinate hyperplane, to tighten bounds to reduce dimension
 
         .. SEEALSO::
@@ -243,12 +243,12 @@ class Polyhedron_QQ(Polyhedron_base):
             is computed using LattE Integrale (optional)
           * ``'latte'``; use LattE integrale program (optional)
           * ``'normaliz'``; use Normaliz program (optional package pynormaliz).
-            The backend of ``self`` must be set to 'normaliz'.
+            The backend of ``self`` must be set to ``'normaliz'``.
 
-        -  ``variable`` -- string (default: 't'); The variable in which the
-           Ehrhart polynomial should be expressed.
+        - ``variable`` -- string (default: ``'t'``); The variable in which the
+          Ehrhart polynomial should be expressed.
 
-        - When the ``engine`` is 'latte', the additional input values are:
+        - When the ``engine`` is ``'latte'``, the additional input values are:
 
           * ``verbose`` - boolean (default: ``False``); If ``True``, print the
             whole output of the LattE command.
@@ -259,9 +259,9 @@ class Polyhedron_QQ(Polyhedron_base):
 
           * ``dual`` - boolean; triangulate and signed-decompose in the dual
             space
-          * ``irrational_primal`` - boolean; triangulate in the dual space,
+          * ``irrational_primal`` -- boolean; triangulate in the dual space,
             signed-decompose in the primal space using irrationalization.
-          * ``irrational_all_primal`` - boolean; triangulate and signed-decompose
+          * ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
             in the primal space using irrationalization.
           * ``maxdet`` -- integer; decompose down to an index (determinant) of
             ``maxdet`` instead of index 1 (unimodular cones).
@@ -270,8 +270,8 @@ class Polyhedron_QQ(Polyhedron_base):
           * ``compute_vertex_cones`` -- string; either 'cdd' or 'lrs' or '4ti2'
           * ``smith_form`` -- string; either 'ilio' or 'lidia'
           * ``dualization`` -- string; either 'cdd' or '4ti2'
-          * ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
-          * ``triangulation_max_height`` - integer; use a uniform distribution
+          * ``triangulation`` -- string; 'cddlib', '4ti2' or 'topcom'
+          * ``triangulation_max_height`` -- integer; use a uniform distribution
             of height from 1 to this number
 
         OUTPUT:
@@ -287,7 +287,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         To start, we find the Ehrhart polynomial of a three-dimensional
         ``simplex``, first using ``engine='latte'``. Leaving the engine
-        unspecified sets the ``engine`` to 'latte' by default::
+        unspecified sets the ``engine`` to ``'latte'`` by default::
 
             sage: simplex = Polyhedron(vertices=[(0,0,0),(3,3,3),(-3,2,1),(1,-1,-2)])
             sage: simplex = simplex.change_ring(QQ)
@@ -408,7 +408,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``variable`` -- string (default: 't'); The variable in which the
+        - ``variable`` -- string (default: ``'t'``); The variable in which the
           Ehrhart polynomial should be expressed.
 
         - ``engine`` -- string; The backend to use. Allowed values are:
@@ -429,21 +429,21 @@ class Polyhedron_QQ(Polyhedron_base):
           consult `the LattE documentation
           <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-          * ``dual`` - boolean; triangulate and signed-decompose in the dual
+          * ``dual`` -- boolean; triangulate and signed-decompose in the dual
             space
-          * ``irrational_primal`` - boolean; triangulate in the dual space,
+          * ``irrational_primal`` -- boolean; triangulate in the dual space,
             signed-decompose in the primal space using irrationalization.
-          * ``irrational_all_primal`` - boolean; triangulate and signed-decompose
+          * ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
             in the primal space using irrationalization.
           * ``maxdet`` -- integer; decompose down to an index (determinant) of
             ``maxdet`` instead of index 1 (unimodular cones).
           * ``no_decomposition`` -- boolean; do not signed-decompose
             simplicial cones.
-          * ``compute_vertex_cones`` -- string; either 'cdd' or 'lrs' or '4ti2'
-          * ``smith_form`` -- string; either 'ilio' or 'lidia'
-          * ``dualization`` -- string; either 'cdd' or '4ti2'
-          * ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
-          * ``triangulation_max_height`` - integer; use a uniform distribution of
+          * ``compute_vertex_cones`` -- string; either ``'cdd'`` or ``'lrs'`` or ``'4ti2'``
+          * ``smith_form`` -- string; either ``'ilio'`` or ``'lidia'``
+          * ``dualization`` -- string; either ``'cdd'`` or ``'4ti2'``
+          * ``triangulation`` - string; ``'cddlib'``, ``'4ti2'`` or ``'topcom'``
+          * ``triangulation_max_height`` -- integer; use a uniform distribution of
             height from 1 to this number
 
         OUTPUT:
@@ -471,8 +471,7 @@ class Polyhedron_QQ(Polyhedron_base):
         backend of the polytope to 'normaliz'::
 
             sage: line_seg = Polyhedron(vertices=[[0], [1/2]],          # optional - pynormaliz
-            ....:                       backend='normaliz')
-            sage: line_seg                                              # optional - pynormaliz
+            ....:                       backend='normaliz'); line_seg
             A 1-dimensional polyhedron in QQ^1 defined as the convex hull of 2 vertices
             sage: line_seg.ehrhart_quasipolynomial()                    # optional - pynormaliz
             (1/2*t + 1, 1/2*t + 1/2)
@@ -527,7 +526,7 @@ class Polyhedron_QQ(Polyhedron_base):
         polynomial is returned::
 
             sage: simplex = Polyhedron(vertices=[(0,0,0), (3,3,3),      # optional - pynormaliz
-            ....:                                (-3,2,1),(1,-1,-2)],
+            ....:                                (-3,2,1), (1,-1,-2)],
             ....:                      backend='normaliz')
             sage: simplex = simplex.change_ring(QQ)                     # optional - pynormaliz
             sage: poly = simplex.ehrhart_quasipolynomial(               # optional - pynormaliz
@@ -589,7 +588,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``variable`` -- string (default: 't'); The variable in which the
+        - ``variable`` -- string (default: ``'t'``); The variable in which the
           Ehrhart polynomial is expressed.
 
         OUTPUT:
@@ -652,20 +651,20 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``verbose`` - boolean (default: ``False``); if ``True``, print the
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print the
           whole output of the LattE command.
 
         The following options are passed to the LattE command, for details you
         should consult `the LattE documentation
         <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-        - ``dual`` - boolean; triangulate and signed-decompose in the dual
+        - ``dual`` -- boolean; triangulate and signed-decompose in the dual
           space
 
-        - ``irrational_primal`` - boolean; triangulate in the dual space,
+        - ``irrational_primal`` -- boolean; triangulate in the dual space,
           signed-decompose in the primal space using irrationalization.
 
-        - ``irrational_all_primal`` - boolean; triangulate and signed-decompose
+        - ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
           in the primal space using irrationalization.
 
         - ``maxdet`` -- integer; decompose down to an index (determinant) of
@@ -673,15 +672,15 @@ class Polyhedron_QQ(Polyhedron_base):
 
         - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones.
 
-        - ``compute_vertex_cones`` -- string; either 'cdd' or 'lrs' or '4ti2'
+        - ``compute_vertex_cones`` -- string; either ``'cdd'`` or ``'lrs'`` or ``'4ti2'``
 
-        - ``smith_form`` -- string; either 'ilio' or 'lidia'
+        - ``smith_form`` -- string; either ``'ilio'`` or ``'lidia'``
 
-        - ``dualization`` -- string; either 'cdd' or '4ti2'
+        - ``dualization`` -- string; either ``'cdd'`` or ``'4ti2'``
 
-        - ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
+        - ``triangulation`` -- string; ``'cddlib'``, ``'4ti2'`` or ``'topcom'``
 
-        - ``triangulation_max_height`` - integer; use a uniform distribution of
+        - ``triangulation_max_height`` -- integer; use a uniform distribution of
           height from 1 to this number
 
         .. NOTE::
@@ -853,7 +852,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         You can obtain non-trivial examples::
 
-            sage: G = AG([(0,1),(2,3),(4,5),(6,7)])
+            sage: G = AG([(0,1),(2,3),(4,5),(6,7)])                     # optional - pynormaliz
             sage: fsp = Cube.fixed_subpolytope(G); fsp                  # optional - pynormaliz
             A 2-dimensional polyhedron in QQ^3 defined as the convex hull of 4 vertices
             sage: fsp.vertices()                                        # optional - pynormaliz
@@ -874,7 +873,7 @@ class Polyhedron_QQ(Polyhedron_base):
            sage: len(G)                                                 # optional - pynormaliz
            2
            sage: fixed_set = P.fixed_subpolytope(G.gens()[0])           # optional - pynormaliz
-           sage: fixed_set
+           sage: fixed_set                                              # optional - pynormaliz
            A 0-dimensional polyhedron in QQ^1 defined as the convex hull of 1 vertex
            sage: fixed_set.vertices_list()                              # optional - pynormaliz
            [[1/4]]
@@ -922,7 +921,7 @@ class Polyhedron_QQ(Polyhedron_base):
         INPUT:
 
         - ``conj_class_reps`` -- a list of representatives of the conjugacy
-          classes of the subgroup of the ``restricted_automorphism_group`` of
+          classes of the subgroup of the :meth:`restricted_automorphism_group` of
           the polytope. Each element is written as a permutation of the vertices
           of the polytope.
 
@@ -988,24 +987,24 @@ class Polyhedron_QQ(Polyhedron_base):
         - ``acting_group`` -- (default=None) a permgroup object. A subgroup of
           the polytope's ``restricted_automorphism_group``. If
           ``None``, it is set to the full ``restricted_automorphism_group`` of the
-          polytope. The acting group should always use output='permutation'.
+          polytope. The acting group should always use ``output='permutation'``.
 
         - ``output`` -- string. an output option. The allowed values are:
 
-            * ``None`` (default): returns the rational function `H^*(t)`. `H^*`
-              is a rational function in `t` with coefficients in the ring of
-              class functions.
-            * ``'e_series_list'``: Returns a list of the ehrhart_series for the
-              fixed_subpolytopes of each conjugacy class representative.
-            * ``'determinant_vec'``: Returns a list of the determinants
-              of `Id-\rho*t` for each conjugacy class representative.
-            * ``'Hstar_as_lin_comb'``: Returns a vector of the coefficients
-              of the irreducible representations in the expression of `H^*`.
-            * ``'prod_det_es'``: Returns a vector of the product of
-              determinants and the Ehrhart series.
-            * ``'complete'``: Returns a list with Hstar,
-              Hstar_as_lin_comb, character table of the acting group, and
-              whether Hstar is effective.
+          * ``None`` (default): returns the rational function `H^*(t)`. `H^*`
+            is a rational function in `t` with coefficients in the ring of
+            class functions.
+          * ``'e_series_list'``: Returns a list of the ehrhart_series for the
+            fixed_subpolytopes of each conjugacy class representative.
+          * ``'determinant_vec'``: Returns a list of the determinants
+            of `Id-\rho*t` for each conjugacy class representative.
+          * ``'Hstar_as_lin_comb'``: Returns a vector of the coefficients
+            of the irreducible representations in the expression of `H^*`.
+          * ``'prod_det_es'``: Returns a vector of the product of
+            determinants and the Ehrhart series.
+          * ``'complete'``: Returns a list with ``Hstar``,
+            ``Hstar_as_lin_comb``, character table of the acting group, and
+            whether ``Hstar`` is effective.
 
         OUTPUT:
 
@@ -1018,7 +1017,7 @@ class Polyhedron_QQ(Polyhedron_base):
         EXAMPLES:
 
         The `H^*`-polynomial of the standard (`d-1`)-dimensional simplex
-        `S = conv(e_1, \dots, e_d)` under its ``restricted_automorphism_group``
+        `S = conv(e_1, \dots, e_d)` under its :meth:`restricted_automorphism_group`
         is equal to 1 = `\chi_{trivial}` (Prop 6.1 [Stap2011]_).
         Here is the computation for the 3-dimensional standard simplex::
 
@@ -1075,9 +1074,8 @@ class Polyhedron_QQ(Polyhedron_base):
         ``'Hstar_as_lin_comb'``. The first coordinate is the coefficient of the
         trivial character; the second is the coefficient of the sign character::
 
-            sage: lin = P._Hstar_function_normaliz(G,                   # optional - pynormaliz
-            ....:                                  output='Hstar_as_lin_comb')
-            sage: lin
+            sage: lin = P._Hstar_function_normaliz(                     # optional - pynormaliz
+            ....:           G, output='Hstar_as_lin_comb'); lin
             ((t^4 + 3*t^3 + 8*t^2 + 3*t + 1)/(t + 1),
              (3*t^3 + 2*t^2 + 3*t)/(t + 1))
         """
@@ -1142,7 +1140,7 @@ class Polyhedron_QQ(Polyhedron_base):
         Test for the effectiveness of the ``Hstar`` series of this polytope.
 
         The ``Hstar`` series of the polytope is determined by the action of a
-        subgroup of the polytope's ``restricted_automorphism_group``. The
+        subgroup of the polytope's :meth:`restricted_automorphism_group`. The
         ``Hstar`` series is effective if it is a polynomial in `t` and the
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if
@@ -1183,7 +1181,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: Hstar = p3.Hstar_function(S3)                         # optional - pynormaliz
             sage: Hlin  = p3.Hstar_function(S3,                         # optional - pynormaliz
             ....:                           output='Hstar_as_lin_comb')]
-            sage: p3.is_effective(Hstar,Hlin)                           # optional - pynormaliz
+            sage: p3.is_effective(Hstar, Hlin)                          # optional - pynormaliz
             True
 
         If the `H^*`-series is not polynomial, then it is not effective::
@@ -1217,7 +1215,7 @@ class Polyhedron_QQ(Polyhedron_base):
         Test for the effectiveness of the ``Hstar`` series of this polytope.
 
         The ``Hstar`` series of the polytope is determined by the action of a
-        subgroup of the polytope's ``restricted_automorphism_group``. The
+        subgroup of the polytope's :meth:`restricted_automorphism_group`. The
         ``Hstar`` series is effective if it is a polynomial in `t` and the
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if
@@ -1243,7 +1241,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: p1 = Polyhedron(vertices=[[0], [1/2]])
             sage: p2 = Polyhedron(vertices=[[0], [1/2]],                     # optional - pynormaliz
             ....:                 backend='normaliz')
-            sage: Hstar    = p2.Hstar_function()
+            sage: Hstar    = p2.Hstar_function()                             # optional - pynormaliz
             sage: Hstarlin = p2.Hstar_function(output='Hstar_as_lin_comb')]  # optional - pynormaliz
             sage: p1._is_effective_normaliz(Hstar, Hstarlin)                 # optional - pynormaliz
             Traceback (most recent call last):

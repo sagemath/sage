@@ -583,8 +583,8 @@ class Polyhedron_base7(Polyhedron_base6):
 
             sage: Dinexact = polytopes.dodecahedron(exact=False)                        # optional - sage.groups
             sage: F2 = Dinexact.faces(2)[2].as_polyhedron()
-            sage: w = F2.volume(measure='induced', engine='internal')   # abs tol 1e-9  # optional - sage.groups
-            sage: RDF(w)
+            sage: w = F2.volume(measure='induced', engine='internal')                   # optional - sage.groups
+            sage: RDF(w)    # abs tol 1e-9
             1.5340627082974878
 
             sage: all(polytopes.simplex(d).volume(measure='induced')                    # optional - sage.rings.number_field sage.symbolic

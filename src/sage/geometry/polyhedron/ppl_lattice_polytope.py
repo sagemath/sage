@@ -987,7 +987,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             True
             sage: set(G.domain()) == set(Z3square.vertices())                           # optional - sage.groups sage.graphs
             True
-            sage: (set(tuple(x) for x in G.orbit(Z3square.vertices()[0])))              # optional - sage.groups sage.graphs
+            sage: (set(tuple(x) for x in G.orbit(Z3square.vertices()[0]))               # optional - sage.groups sage.graphs
             ....:   == set([(0, 0), (1, 2), (3, 3), (2, 1)])
 
             True
