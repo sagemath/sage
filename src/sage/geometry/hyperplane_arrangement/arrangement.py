@@ -400,7 +400,7 @@ class HyperplaneArrangementElement(Element):
             sage: A = H(sqrt5*x + 2*y + 3*z, backend='normaliz')                        # optional - sage.rings.number_field
             sage: A.backend()                                                           # optional - sage.rings.number_field
             'normaliz'
-            sage: A.regions()[0].backend()             # optional - pynormaliz          # optional - sage.rings.number_field
+            sage: A.regions()[0].backend()                              # optional - pynormaliz sage.rings.number_field
             'normaliz'
         """
         super().__init__(parent)
@@ -1782,8 +1782,8 @@ class HyperplaneArrangementElement(Element):
 
         Checks that it creates the regions with the appropriate backend::
 
-            sage: h = H(x,backend='normaliz')                                   # optional - pynormaliz
-            sage: h._make_region([x, 1-x, y, 1-y]).backend()                    # optional - pynormaliz
+            sage: h = H(x,backend='normaliz')                           # optional - pynormaliz
+            sage: h._make_region([x, 1-x, y, 1-y]).backend()            # optional - pynormaliz
             'normaliz'
         """
         ieqs = [h.dense_coefficient_list() for h in hyperplanes]
@@ -1876,8 +1876,8 @@ class HyperplaneArrangementElement(Element):
             sage: for v in norms:                                                       # optional - sage.rings.number_field
             ....:     a,b,c = v
             ....:     A = A.add_hyperplane(a*x + b*y + c*z)
-            sage: R = A.regions()               # optional - pynormaliz                 # optional - sage.rings.number_field
-            sage: R[0].backend()                # optional - pynormaliz                 # optional - sage.rings.number_field
+            sage: R = A.regions()                                       # optional - pynormaliz sage.rings.number_field
+            sage: R[0].backend()                                        # optional - pynormaliz sage.rings.number_field
             'normaliz'
 
         TESTS::
@@ -2203,7 +2203,7 @@ class HyperplaneArrangementElement(Element):
             sage: test_number(a)                                                        # optional - sage.combinat
             True
             sage: a = hyperplane_arrangements.Shi(3)                                    # optional - sage.combinat
-            sage: test_number(a) # long time                                            # optional - sage.combinat
+            sage: test_number(a)  # long time                                           # optional - sage.combinat
             True
 
         TESTS:
@@ -2344,20 +2344,20 @@ class HyperplaneArrangementElement(Element):
              Hyperplane t0 - t1 + 0*t2 + 0,
              Hyperplane t0 + 0*t1 - t2 + 0)
             sage: faces = {F0: F1 for F0, F1 in a.closed_faces()}                       # optional - sage.graphs
-            sage: xGyEz = faces[(0, 1, 1)] # closed face x >= y = z                     # optional - sage.graphs
+            sage: xGyEz = faces[(0, 1, 1)]   # closed face x >= y = z                   # optional - sage.graphs
             sage: xGyEz.representative_point()                                          # optional - sage.graphs
             (0, -1, -1)
-            sage: xGyEz = faces[(0, 1, 1)] # closed face x >= y = z                     # optional - sage.graphs
+            sage: xGyEz = faces[(0, 1, 1)]   # closed face x >= y = z                   # optional - sage.graphs
             sage: xGyEz.representative_point()                                          # optional - sage.graphs
             (0, -1, -1)
-            sage: yGxGz = faces[(1, -1, 1)] # closed face y >= x >= z                   # optional - sage.graphs
-            sage: xGyGz = faces[(1, 1, 1)] # closed face x >= y >= z                    # optional - sage.graphs
+            sage: yGxGz = faces[(1, -1, 1)]  # closed face y >= x >= z                  # optional - sage.graphs
+            sage: xGyGz = faces[(1, 1, 1)]   # closed face x >= y >= z                  # optional - sage.graphs
             sage: a.face_product(xGyEz, yGxGz) == xGyGz                                 # optional - sage.graphs
             True
             sage: a.face_product(yGxGz, xGyEz) == yGxGz                                 # optional - sage.graphs
             True
-            sage: xEzGy = faces[(-1, 1, 0)] # closed face x = z >= y                    # optional - sage.graphs
-            sage: xGzGy = faces[(-1, 1, 1)] # closed face x >= z >= y                   # optional - sage.graphs
+            sage: xEzGy = faces[(-1, 1, 0)]  # closed face x = z >= y                   # optional - sage.graphs
+            sage: xGzGy = faces[(-1, 1, 1)]  # closed face x >= z >= y                  # optional - sage.graphs
             sage: a.face_product(xEzGy, yGxGz) == xGzGy                                 # optional - sage.graphs
             True
         """

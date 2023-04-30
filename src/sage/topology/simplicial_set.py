@@ -3791,15 +3791,15 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
 
         EXAMPLES::
 
-            sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))
-            sage: M.homology()
+            sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                          # optional - sage.groups
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # optional - sage.groups sage.rings.finite_rings
+            sage: M.homology()                                                          # optional - sage.groups sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = simplicial_sets.Torus()
             sage: phi, M = T.algebraic_topological_model(QQ)
-            sage: M.homology()
+            sage: M.homology()                                                          # optional - sage.modules
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
@@ -4047,28 +4047,29 @@ def shrink_simplicial_complex(K):
 
         sage: from sage.topology.simplicial_set import shrink_simplicial_complex
         sage: K = simplicial_complexes.Simplex(3)
-        sage: X = shrink_simplicial_complex(K)
-        sage: X.f_vector()
+        sage: X = shrink_simplicial_complex(K)                                          # optional - sage.graphs
+        sage: X.f_vector()                                                              # optional - sage.graphs
         [1]
 
         sage: Y = simplicial_complexes.Sphere(2)
-        sage: S2 = shrink_simplicial_complex(Y)
-        sage: S2
-        Quotient: (Simplicial set with 14 non-degenerate simplices/Simplicial set with 13 non-degenerate simplices)
-        sage: S2.f_vector()
+        sage: S2 = shrink_simplicial_complex(Y); S2                                     # optional - sage.graphs
+        Quotient: (Simplicial set with
+                   14 non-degenerate simplices/Simplicial set with
+                                               13 non-degenerate simplices)
+        sage: S2.f_vector()                                                             # optional - sage.graphs
         [1, 0, 1]
-        sage: S2.homology()
+        sage: S2.homology()                                                             # optional - sage.graphs sage.modules
         {0: 0, 1: 0, 2: Z}
 
         sage: Z = simplicial_complexes.SurfaceOfGenus(3)
         sage: Z.f_vector()
         [1, 15, 57, 38]
-        sage: Z.homology()
+        sage: Z.homology()                                                              # optional - sage.modules
         {0: 0, 1: Z^6, 2: Z}
-        sage: M = shrink_simplicial_complex(Z)
-        sage: M.f_vector() # random
+        sage: M = shrink_simplicial_complex(Z)                                          # optional - sage.graphs
+        sage: M.f_vector()  # random                                                    # optional - sage.graphs
         [1, 32, 27]
-        sage: M.homology()
+        sage: M.homology()                                                              # optional - sage.graphs sage.modules
         {0: 0, 1: Z^6, 2: Z}
     """
     L = K._contractible_subcomplex()
