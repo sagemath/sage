@@ -145,7 +145,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
 
         from sage.misc.misc import cputime
         from sage.misc.verbose import verbose
-        from sage.functions.all import ceil
+        from sage.arith.misc import integer_ceil as ceil
         from sage.matrix.constructor import Matrix
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 

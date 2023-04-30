@@ -233,7 +233,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         n=len(f.roots())+1
         return rings.Integer(n).ord(rings.Integer(2))
 
-
     def quartic_twist(self, D):
         r"""
         Return the quartic twist of this curve by `D`.

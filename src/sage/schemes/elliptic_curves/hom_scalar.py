@@ -207,7 +207,6 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             raise ValueError(f'{P} not on {self._domain}')
         return self._m * P
 
-
     def _repr_(self):
         """
         Return basic facts about this scalar multiplication as a string.
@@ -219,7 +218,6 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             Scalar-multiplication endomorphism [777] of Elliptic Curve defined by y^2 = x^3 + I*x + I over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         return f'Scalar-multiplication endomorphism [{self._m}] of {self._domain}'
-
 
     # EllipticCurveHom methods
 

@@ -307,7 +307,6 @@ def enum_projective_finite_field(X):
     return pts
 
 
-
 def sieve(X, bound):
     r"""
     Returns the list of all projective, rational points on scheme ``X`` of
