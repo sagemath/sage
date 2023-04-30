@@ -2459,7 +2459,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
         r"""
         Trace (contraction) on two slots of the tensor.
 
-        If a non-degenerate form is provided, the trace of a `(0,2)` tensor field
+        If a non-degenerate form is provided, the trace of a type-`(0,2)` tensor
         is computed by first raising the last index.
 
         INPUT:
@@ -2586,7 +2586,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if using is not None:
             if self.tensor_type() != (0, 2):
                 raise ValueError(
-                    "trace with respect to a non-degenerate form is only defined for type-(0,2) tensor fields"
+                    "trace with respect to a non-degenerate form is only defined for type-(0,2) tensor"
                 )
             return self.up(using, 1).trace()
 
