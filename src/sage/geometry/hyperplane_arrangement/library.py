@@ -90,7 +90,7 @@ class HyperplaneArrangementLibrary():
 
         EXAMPLES::
 
-            sage: hyperplane_arrangements.braid(4)
+            sage: hyperplane_arrangements.braid(4)                                      # optional - sage.graphs
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
         """
         x = polygen(QQ, 'x')
@@ -124,18 +124,18 @@ class HyperplaneArrangementLibrary():
 
         EXAMPLES::
 
-            sage: G = graphs.CycleGraph(4)
-            sage: G.edges(sort=True)
+            sage: G = graphs.CycleGraph(4)                                              # optional - sage.graphs
+            sage: G.edges(sort=True)                                                    # optional - sage.graphs
             [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
-            sage: G.edges(sort=True, labels=False)
+            sage: G.edges(sort=True, labels=False)                                      # optional - sage.graphs
             [(0, 1), (0, 3), (1, 2), (2, 3)]
-            sage: A = {0:{1:1, 3:2}, 1:{0:3, 2:0}, 2:{1:2, 3:1}, 3:{2:0, 0:2}}
-            sage: HA = hyperplane_arrangements.bigraphical(G, A)
-            sage: HA.n_regions()
+            sage: A = {0:{1:1, 3:2}, 1:{0:3, 2:0}, 2:{1:2, 3:1}, 3:{2:0, 0:2}}          # optional - sage.graphs
+            sage: HA = hyperplane_arrangements.bigraphical(G, A)                        # optional - sage.graphs
+            sage: HA.n_regions()                                                        # optional - sage.graphs
             63
-            sage: hyperplane_arrangements.bigraphical(G, 'generic').n_regions()
+            sage: hyperplane_arrangements.bigraphical(G, 'generic').n_regions()         # optional - sage.graphs
             65
-            sage: hyperplane_arrangements.bigraphical(G).n_regions()
+            sage: hyperplane_arrangements.bigraphical(G).n_regions()                    # optional - sage.graphs
             59
 
         REFERENCES:
@@ -253,11 +253,11 @@ class HyperplaneArrangementLibrary():
 
         EXAMPLES::
 
-            sage: G = graphs.CompleteGraph(5)
-            sage: hyperplane_arrangements.G_semiorder(G)
+            sage: G = graphs.CompleteGraph(5)                                           # optional - sage.graphs
+            sage: hyperplane_arrangements.G_semiorder(G)                                # optional - sage.graphs
             Arrangement of 20 hyperplanes of dimension 5 and rank 4
-            sage: g = graphs.HouseGraph()
-            sage: hyperplane_arrangements.G_semiorder(g)
+            sage: g = graphs.HouseGraph()                                               # optional - sage.graphs
+            sage: hyperplane_arrangements.G_semiorder(g)                                # optional - sage.graphs
             Arrangement of 12 hyperplanes of dimension 5 and rank 4
         """
         n = G.num_verts()
@@ -291,13 +291,13 @@ class HyperplaneArrangementLibrary():
 
         EXAMPLES::
 
-            sage: G = graphs.CompleteGraph(5)
-            sage: hyperplane_arrangements.G_Shi(G)
+            sage: G = graphs.CompleteGraph(5)                                           # optional - sage.graphs
+            sage: hyperplane_arrangements.G_Shi(G)                                      # optional - sage.graphs
             Arrangement of 20 hyperplanes of dimension 5 and rank 4
-            sage: g = graphs.HouseGraph()
-            sage: hyperplane_arrangements.G_Shi(g)
+            sage: g = graphs.HouseGraph()                                               # optional - sage.graphs
+            sage: hyperplane_arrangements.G_Shi(g)                                      # optional - sage.graphs
             Arrangement of 12 hyperplanes of dimension 5 and rank 4
-            sage: a = hyperplane_arrangements.G_Shi(graphs.WheelGraph(4));  a
+            sage: a = hyperplane_arrangements.G_Shi(graphs.WheelGraph(4)); a            # optional - sage.graphs
             Arrangement of 12 hyperplanes of dimension 4 and rank 3
         """
         n = G.num_verts()
@@ -333,20 +333,20 @@ class HyperplaneArrangementLibrary():
 
         EXAMPLES::
 
-            sage: G = graphs.CompleteGraph(5)
-            sage: hyperplane_arrangements.graphical(G)
+            sage: G = graphs.CompleteGraph(5)                                           # optional - sage.graphs
+            sage: hyperplane_arrangements.graphical(G)                                  # optional - sage.graphs
             Arrangement of 10 hyperplanes of dimension 5 and rank 4
-            sage: g = graphs.HouseGraph()
-            sage: hyperplane_arrangements.graphical(g)
+            sage: g = graphs.HouseGraph()                                               # optional - sage.graphs
+            sage: hyperplane_arrangements.graphical(g)                                  # optional - sage.graphs
             Arrangement of 6 hyperplanes of dimension 5 and rank 4
 
         TESTS::
 
-            sage: h = hyperplane_arrangements.graphical(g)
-            sage: h.characteristic_polynomial()
+            sage: h = hyperplane_arrangements.graphical(g)                              # optional - sage.graphs
+            sage: h.characteristic_polynomial()                                         # optional - sage.graphs
             x^5 - 6*x^4 + 14*x^3 - 15*x^2 + 6*x
-            sage: h.characteristic_polynomial.clear_cache()  # long time
-            sage: h.characteristic_polynomial()              # long time
+            sage: h.characteristic_polynomial.clear_cache()  # long time                # optional - sage.graphs
+            sage: h.characteristic_polynomial()              # long time                # optional - sage.graphs
             x^5 - 6*x^4 + 14*x^3 - 15*x^2 + 6*x
         """
         n = G.num_verts()
@@ -388,18 +388,18 @@ class HyperplaneArrangementLibrary():
 
         EXAMPLES::
 
-            sage: a = hyperplane_arrangements.Ish(3);  a
+            sage: a = hyperplane_arrangements.Ish(3); a                                 # optional - sage.combinat
             Arrangement of 6 hyperplanes of dimension 3 and rank 2
-            sage: a.characteristic_polynomial()
+            sage: a.characteristic_polynomial()                                         # optional - sage.combinat
             x^3 - 6*x^2 + 9*x
-            sage: b = hyperplane_arrangements.Shi(3)
-            sage: b.characteristic_polynomial()
+            sage: b = hyperplane_arrangements.Shi(3)                                    # optional - sage.combinat
+            sage: b.characteristic_polynomial()                                         # optional - sage.combinat
             x^3 - 6*x^2 + 9*x
 
         TESTS::
 
-            sage: a.characteristic_polynomial.clear_cache()  # long time
-            sage: a.characteristic_polynomial()              # long time
+            sage: a.characteristic_polynomial.clear_cache()  # long time                # optional - sage.combinat
+            sage: a.characteristic_polynomial()              # long time                # optional - sage.combinat
             x^3 - 6*x^2 + 9*x
 
         REFERENCES:
@@ -486,16 +486,16 @@ class HyperplaneArrangementLibrary():
 
         EXAMPLES::
 
-            sage: hyperplane_arrangements.semiorder(4)                              # optional - sage.combinat
+            sage: hyperplane_arrangements.semiorder(4)                                  # optional - sage.combinat
             Arrangement of 12 hyperplanes of dimension 4 and rank 3
 
         TESTS::
 
-            sage: h = hyperplane_arrangements.semiorder(5)
-            sage: h.characteristic_polynomial()
+            sage: h = hyperplane_arrangements.semiorder(5)                              # optional - sage.combinat
+            sage: h.characteristic_polynomial()                                         # optional - sage.combinat
             x^5 - 20*x^4 + 180*x^3 - 790*x^2 + 1380*x
-            sage: h.characteristic_polynomial.clear_cache()  # long time
-            sage: h.characteristic_polynomial()              # long time
+            sage: h.characteristic_polynomial.clear_cache()  # long time                # optional - sage.combinat
+            sage: h.characteristic_polynomial()              # long time                # optional - sage.combinat
             x^5 - 20*x^4 + 180*x^3 - 790*x^2 + 1380*x
         """
         H = make_parent(K, n, names)
