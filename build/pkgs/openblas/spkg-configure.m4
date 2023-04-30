@@ -81,6 +81,7 @@ SAGE_SPKG_CONFIGURE([openblas], [
                          AC_LANG_PUSH([C])
                          AC_RUN_IFELSE([
                            AC_LANG_PROGRAM([[#include <stdio.h>
+                                             #include <string.h>
                                              char *openblas_get_config(void);
                                              int version[3]; ]],
                                            [[version[0] = version[1] = version[2] = 0;
@@ -101,7 +102,8 @@ SAGE_SPKG_CONFIGURE([openblas], [
                                                  >=10000 * ]]SAGE_OPENBLAS_LT_VERSION_MAJOR[[
                                                    + 100 * ]]SAGE_OPENBLAS_LT_VERSION_MINOR[[
                                                          + ]]SAGE_OPENBLAS_LT_VERSION_MICRO[[)
-                                               return 1;]])
+                                               return 1;
+                                             if (!strncmp(openblas_get_config(), "OpenBLAS 0.3.22", 15)) return 1;]])
                          ], [AS_VAR_SET([HAVE_OPENBLAS], [yes])], [AS_VAR_SET([HAVE_OPENBLAS], [no])],
                             [AS_VAR_SET([HAVE_OPENBLAS], [yes])])
                          AC_LANG_POP([C])
