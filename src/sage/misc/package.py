@@ -628,15 +628,15 @@ def package_manifest(package):
     EXAMPLES::
 
         sage: from sage.misc.package import package_manifest
-        sage: sagetex_manifest = package_manifest('sagetex')  # optional - sage_spkg
-        sage: sagetex_manifest['package_name'] == 'sagetex'  # optional - sage_spkg
+        sage: manifest = package_manifest('conway_polynomials')  # optional - sage_spkg
+        sage: manifest['package_name'] == 'conway_polynomials'   # optional - sage_spkg
         True
-        sage: 'files' in sagetex_manifest  # optional - sage_spkg
+        sage: 'files' in manifest                                # optional - sage_spkg
         True
 
     Test a nonexistent package::
 
-        sage: package_manifest('dummy-package')  # optional - sage_spkg
+        sage: package_manifest('dummy-package')                  # optional - sage_spkg
         Traceback (most recent call last):
         ...
         KeyError: 'dummy-package'
