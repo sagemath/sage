@@ -111,9 +111,9 @@ The standard example of a non-regular triangulation (requires TOPCOM)::
     sage: PointConfiguration.set_engine('topcom')                       # optional - topcom
     sage: p = PointConfiguration([[-1,-5/9], [0,10/9], [1,-5/9],
     ....:                         [-2,-10/9], [0,20/9], [2,-10/9]])
-    sage: p_regular = p.restrict_to_regular_triangulations(True)
+    sage: p_regular = p.restrict_to_regular_triangulations(True)        # optional - topcom
     sage: regular = p_regular.triangulations_list()                     # optional - topcom
-    sage: p_nonregular = p.restrict_to_regular_triangulations(False)
+    sage: p_nonregular = p.restrict_to_regular_triangulations(False)    # optional - topcom
     sage: nonregular = p_nonregular.triangulations_list()               # optional - topcom
     sage: len(regular)                                                  # optional - topcom
     16

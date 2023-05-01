@@ -2649,7 +2649,7 @@ class Polytopes():
         It works also with Coxeter types that lead to non-rational coordinates::
 
             sage: perm_b3 = polytopes.generalized_permutahedron(['B',3])   # long time  # optional - sage.combinat sage.rings.number_field
-            sage: perm_b3
+            sage: perm_b3                                                  # long time  # optional - sage.combinat sage.rings.number_field
             A 3-dimensional polyhedron in
              (Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?)^3
              defined as the convex hull of 48 vertices
