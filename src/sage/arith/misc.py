@@ -20,7 +20,6 @@ AUTHORS:
 import math
 from collections.abc import Iterable
 
-from sage.misc.misc import powerset
 from sage.misc.misc_c import prod
 
 from sage.structure.element import parent
@@ -6054,6 +6053,8 @@ def squarefree_divisors(x):
         sage: list(squarefree_divisors(mpz(12)))
         [1, 2, 3, 6]
     """
+    from sage.combinat.subset import powerset
+
     for a in powerset(prime_divisors(x)):
         yield prod(a, ZZ.one())
 

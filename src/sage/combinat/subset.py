@@ -1,7 +1,7 @@
 r"""
 Subsets
 
-The set of subsets of a finite set. The set can be given as a list or a Set
+The set of subsets of a finite set. The set can be given as a list or a :class:`Set`
 or else as an integer `n` which encodes the set `\{1,2,...,n\}`.
 See :class:`Subsets` for more information and examples.
 
@@ -186,11 +186,11 @@ class Subsets_s(Parent):
          {1, 2, 3}, {1, 2, 4}, {1, 3, 4}, {2, 3, 4},
          {1, 2, 3, 4}]
 
-        sage: S = Subsets(Subsets(Subsets(GF(3)))); S
+        sage: S = Subsets(Subsets(Subsets(GF(3)))); S                                   # optional - sage.rings.finite_rings
         Subsets of Subsets of Subsets of Finite Field of size 3
-        sage: S.cardinality()
+        sage: S.cardinality()                                                           # optional - sage.rings.finite_rings
         115792089237316195423570985008687907853269984665640564039457584007913129639936
-        sage: S.unrank(3149254230)  # random
+        sage: S.unrank(3149254230)  # random                                            # optional - sage.rings.finite_rings
         {{{1}, {0, 2}}, {{0, 1, 2}, {0, 1}, {1}, {1, 2}},
          {{2}, {1, 2}, {0, 1, 2}, {0, 2}, {1}, {}},
          {{1, 2}, {0}},
@@ -248,7 +248,7 @@ class Subsets_s(Parent):
 
         EXAMPLES::
 
-            sage: Subsets(GF(13)).underlying_set()
+            sage: Subsets(GF(13)).underlying_set()                                      # optional - sage.rings.finite_rings
             {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
         """
         return self.element_class(self._s)
@@ -550,10 +550,10 @@ class Subsets_s(Parent):
         EXAMPLES::
 
             sage: X = Subsets([7,8,9])
-            sage: X.lattice()
+            sage: X.lattice()                                                           # optional - sage.combinat sage.graphs
             Finite lattice containing 8 elements
             sage: Y = Subsets(0)
-            sage: Y.lattice()
+            sage: Y.lattice()                                                           # optional - sage.combinat sage.graphs
             Finite lattice containing 1 elements
 
         """
@@ -874,8 +874,8 @@ class Subsets_sk(Subsets_s):
 
 def dict_to_list(d):
     r"""
-    Return a list whose elements are the elements of i of d repeated with
-    multiplicity d[i].
+    Return a list whose elements are the elements of ``i`` of ``d`` repeated with
+    multiplicity ``d[i]``.
 
     EXAMPLES::
 
@@ -1168,7 +1168,7 @@ class SubMultiset_s(Parent):
 
 class SubMultiset_sk(SubMultiset_s):
     """
-    The combinatorial class of the subsets of size k of a multiset s.  Note
+    The combinatorial class of the subsets of size ``k`` of a multiset ``s``.  Note
     that each subset is represented by a list of the elements rather than a
     set since we can have multiplicities (no multiset data structure yet in
     sage).
@@ -1291,7 +1291,7 @@ class SubMultiset_sk(SubMultiset_s):
 
     def random_element(self):
         r"""
-        Return a random submultiset of given length
+        Return a random submultiset of given length.
 
         EXAMPLES::
 
@@ -1471,3 +1471,66 @@ class SubsetsSorted(Subsets_s):
             [(), (0,), (1,), (2,), (0, 1), (0, 2), (1, 2), (0, 1, 2)]
         """
         return self.element_class(sorted(set(x)))
+
+
+def powerset(X):
+    r"""
+    Iterator over the *list* of all subsets of the iterable ``X``, in no
+    particular order. Each list appears exactly once, up to order.
+
+    INPUT:
+
+    -  ``X`` - an iterable
+
+    OUTPUT: iterator of lists
+
+    EXAMPLES::
+
+        sage: list(powerset([1,2,3]))
+        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+        sage: [z for z in powerset([0,[1,2]])]
+        [[], [0], [[1, 2]], [0, [1, 2]]]
+
+    Iterating over the power set of an infinite set is also allowed::
+
+        sage: i = 0
+        sage: L = []
+        sage: for x in powerset(ZZ):
+        ....:     if i > 10:
+        ....:         break
+        ....:     else:
+        ....:         i += 1
+        ....:     L.append(x)
+        sage: print(" ".join(str(x) for x in L))
+        [] [0] [1] [0, 1] [-1] [0, -1] [1, -1] [0, 1, -1] [2] [0, 2] [1, 2]
+
+    You may also use subsets as an alias for powerset::
+
+        sage: subsets([1,2,3])
+        <generator object ...powerset at 0x...>
+        sage: list(subsets([1,2,3]))
+        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+
+        The reason we return lists instead of sets is that the elements of
+        sets must be hashable and many structures on which one wants the
+        powerset consist of non-hashable objects.
+
+    AUTHORS:
+
+    - William Stein
+
+    - Nils Bruin (2006-12-19): rewrite to work for not-necessarily
+      finite objects X.
+    """
+    yield []
+    pairs = []
+    power2 = 1
+    for x in X:
+        pairs.append((power2, x))
+        next_power2 = power2 << 1
+        for w in range(power2, next_power2):
+            yield [x for m, x in pairs if m & w]
+        power2 = next_power2
+
+
+subsets = powerset
