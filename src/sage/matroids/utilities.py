@@ -69,10 +69,10 @@ def setprint(X):
     Note that for iterables, the effect can be undesirable::
 
         sage: from sage.matroids.advanced import setprint
-        sage: M = matroids.named_matroids.Fano().delete('efg')                          # optional - sage.libs.pari
-        sage: M.bases()                                                                 # optional - sage.libs.pari
+        sage: M = matroids.named_matroids.Fano().delete('efg')                          # optional - sage.rings.finite_rings
+        sage: M.bases()                                                                 # optional - sage.rings.finite_rings
         Iterator over a system of subsets
-        sage: setprint(M.bases())                                                       # optional - sage.libs.pari
+        sage: setprint(M.bases())                                                       # optional - sage.rings.finite_rings
         [{'a', 'b', 'c'}, {'a', 'b', 'd'}, {'a', 'c', 'd'}]
 
     An exception was made for subclasses of SageObject::
@@ -210,20 +210,20 @@ def sanitize_contractions_deletions(matroid, contractions, deletions):
 
         sage: from sage.matroids.utilities import setprint
         sage: from sage.matroids.utilities import sanitize_contractions_deletions
-        sage: M = matroids.named_matroids.Fano()                                        # optional - sage.libs.pari
-        sage: setprint(sanitize_contractions_deletions(M, 'abc', 'defg'))               # optional - sage.libs.pari
+        sage: M = matroids.named_matroids.Fano()                                        # optional - sage.rings.finite_rings
+        sage: setprint(sanitize_contractions_deletions(M, 'abc', 'defg'))               # optional - sage.rings.finite_rings
         [{'a', 'b', 'c'}, {'d', 'e', 'f', 'g'}]
-        sage: setprint(sanitize_contractions_deletions(M, 'defg', 'abc'))               # optional - sage.libs.pari
+        sage: setprint(sanitize_contractions_deletions(M, 'defg', 'abc'))               # optional - sage.rings.finite_rings
         [{'a', 'b', 'c', 'f'}, {'d', 'e', 'g'}]
-        sage: setprint(sanitize_contractions_deletions(M, [1, 2, 3], 'efg'))            # optional - sage.libs.pari
+        sage: setprint(sanitize_contractions_deletions(M, [1, 2, 3], 'efg'))            # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: [1, 2, 3] is not a subset of the groundset
-        sage: setprint(sanitize_contractions_deletions(M, 'efg', [1, 2, 3]))            # optional - sage.libs.pari
+        sage: setprint(sanitize_contractions_deletions(M, 'efg', [1, 2, 3]))            # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: [1, 2, 3] is not a subset of the groundset
-        sage: setprint(sanitize_contractions_deletions(M, 'ade', 'efg'))                # optional - sage.libs.pari
+        sage: setprint(sanitize_contractions_deletions(M, 'ade', 'efg'))                # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: contraction and deletion sets are not disjoint.
@@ -534,25 +534,25 @@ def lift_cross_ratios(A, lift_map=None):
     EXAMPLES::
 
         sage: from sage.matroids.advanced import lift_cross_ratios, lift_map, LinearMatroid
-        sage: R = GF(7)                                                                 # optional - sage.libs.pari
+        sage: R = GF(7)                                                                 # optional - sage.rings.finite_rings
         sage: to_sixth_root_of_unity = lift_map('sru')                                  # optional - sage.rings.number_field
-        sage: A = Matrix(R, [[1, 0, 6, 1, 2],[6, 1, 0, 0, 1],[0, 6, 3, 6, 0]])          # optional - sage.libs.pari
-        sage: A                                                                         # optional - sage.libs.pari
+        sage: A = Matrix(R, [[1, 0, 6, 1, 2],[6, 1, 0, 0, 1],[0, 6, 3, 6, 0]])          # optional - sage.rings.finite_rings
+        sage: A                                                                         # optional - sage.rings.finite_rings
         [1 0 6 1 2]
         [6 1 0 0 1]
         [0 6 3 6 0]
-        sage: Z = lift_cross_ratios(A, to_sixth_root_of_unity)                          # optional - sage.libs.pari sage.rings.number_field
-        sage: Z                                                                         # optional - sage.libs.pari sage.rings.number_field
+        sage: Z = lift_cross_ratios(A, to_sixth_root_of_unity)                          # optional - sage.rings.finite_rings sage.rings.number_field
+        sage: Z                                                                         # optional - sage.rings.finite_rings sage.rings.number_field
         [ 1  0  1  1  1]
         [ 1  1  0  0  z]
         [ 0 -1  z  1  0]
-        sage: M = LinearMatroid(reduced_matrix=A)                                       # optional - sage.libs.pari
-        sage: sorted(M.cross_ratios())                                                  # optional - sage.libs.pari
+        sage: M = LinearMatroid(reduced_matrix=A)                                       # optional - sage.rings.finite_rings
+        sage: sorted(M.cross_ratios())                                                  # optional - sage.rings.finite_rings
         [3, 5]
-        sage: N = LinearMatroid(reduced_matrix=Z)                                       # optional - sage.libs.pari sage.rings.number_field
-        sage: sorted(N.cross_ratios())                                                  # optional - sage.libs.pari sage.rings.number_field
+        sage: N = LinearMatroid(reduced_matrix=Z)                                       # optional - sage.rings.finite_rings sage.rings.number_field
+        sage: sorted(N.cross_ratios())                                                  # optional - sage.rings.finite_rings sage.rings.number_field
         [-z + 1, z]
-        sage: M.is_isomorphism(N, {e:e for e in M.groundset()})                         # optional - sage.libs.pari sage.rings.number_field
+        sage: M.is_isomorphism(N, {e:e for e in M.groundset()})                         # optional - sage.rings.finite_rings sage.rings.number_field
         True
 
     """
@@ -694,8 +694,8 @@ def lift_map(target):
     EXAMPLES::
 
         sage: from sage.matroids.utilities import lift_map
-        sage: lm = lift_map('gm')                                                       # optional - sage.libs.pari sage.rings.number_field
-        sage: for x in lm:                                                              # optional - sage.libs.pari sage.rings.number_field
+        sage: lm = lift_map('gm')                                                       # optional - sage.rings.finite_rings sage.rings.number_field
+        sage: for x in lm:                                                              # optional - sage.rings.finite_rings sage.rings.number_field
         ....:     if (x == 1) is not (lm[x] == 1):
         ....:         print('not a proper lift map')
         ....:     for y in lm:

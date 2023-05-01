@@ -380,7 +380,7 @@ in caches. This can be achieved by defining an appropriate method
     ....: def f(x): return x == a
     sage: f(b)                                                                          # optional - sage.rings.padics
     True
-    sage: f(c) # if b and c were hashable, this would return True                       # optional - sage.rings.padics
+    sage: f(c)  # if b and c were hashable, this would return True                      # optional - sage.rings.padics
     False
 
     sage: b._cache_key()                                                                # optional - sage.rings.padics
@@ -400,7 +400,7 @@ the parent as its first argument::
 
     sage: S.<a> = Qq(4)                                                                 # optional - sage.rings.padics
     sage: d = a.add_bigoh(1)                                                            # optional - sage.rings.padics
-    sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included    # optional - sage.rings.padics
+    sage: b._cache_key() == d._cache_key()  # this would be True if the parents were not included   # optional - sage.rings.padics
     False
 """
 
@@ -462,7 +462,7 @@ def _cached_function_unpickle(module, name, cache=None):
 
         sage: type(hilbert_class_polynomial)
         <class 'sage.misc.cachefunc.CachedFunction'>
-        sage: loads(dumps(hilbert_class_polynomial)) is hilbert_class_polynomial #indirect doctest
+        sage: loads(dumps(hilbert_class_polynomial)) is hilbert_class_polynomial  #indirect doctest
         True
 
     Verify that the ``cache`` parameter works::
@@ -849,7 +849,7 @@ cdef class CachedFunction():
             sage: P.<x,y> = QQ[]
             sage: I = P * [x,y]
             sage: from sage.misc.sageinspect import sage_getdoc
-            sage: print(sage_getdoc(I.groebner_basis)) # indirect doctest
+            sage: print(sage_getdoc(I.groebner_basis))  # indirect doctest
             WARNING: the enclosing module is marked...
                Return the reduced Groebner basis of this ideal.
             ...
@@ -916,7 +916,7 @@ cdef class CachedFunction():
             sage: I = P*[x,y]
             sage: from sage.misc.sageinspect import sage_getsourcelines
             sage: l = '        elif algorithm.startswith("macaulay2:"):\n'
-            sage: l in sage_getsourcelines(I.groebner_basis)[0] # indirect doctest
+            sage: l in sage_getsourcelines(I.groebner_basis)[0]  # indirect doctest
             True
 
         """
@@ -2255,7 +2255,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             sage: J = loads(dumps(I))
             sage: J.gens
             Pickle of the cached method "gens"
-            sage: J.gens.cache # the cache is dropped because gens is not marked with do_pickle=True
+            sage: J.gens.cache  # the cache is dropped because gens is not marked with do_pickle=True
             sage: J.gens
             Cached version of <function ...gens at 0x...>
         """
@@ -3058,7 +3058,7 @@ def cached_method(f, name=None, key=None, do_pickle=None):
         sage: import __main__
         sage: __main__.C = C
         sage: c = C()
-        sage: hash(c) # random output
+        sage: hash(c)  # random output
         sage: d = loads(dumps(c))
         sage: hash(d) == hash(c)
         True
@@ -3073,7 +3073,7 @@ def cached_method(f, name=None, key=None, do_pickle=None):
 
         sage: __main__.C = C
         sage: c = C()
-        sage: hash(c) # random output
+        sage: hash(c)  # random output
         sage: d = loads(dumps(c))
         sage: hash(d) == hash(c)
         False
@@ -3256,7 +3256,7 @@ cdef class CachedInParentMethod(CachedMethod):
             sage: c = Foo(3)
             sage: c.f()
             27
-            sage: c.f.cache is a.f.cache #indirect doctest
+            sage: c.f.cache is a.f.cache  #indirect doctest
             True
 
         Note that the cache is also available as an

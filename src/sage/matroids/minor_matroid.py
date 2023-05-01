@@ -13,23 +13,23 @@ from `E` and keeping all remaining independent sets. This is denoted ``M \ D``
 
 EXAMPLES::
 
-    sage: M = matroids.named_matroids.Fano()                                            # optional - sage.libs.pari
-    sage: M \ ['a', 'c' ] == M.delete(['a', 'c'])                                       # optional - sage.libs.pari
+    sage: M = matroids.named_matroids.Fano()                                            # optional - sage.rings.finite_rings
+    sage: M \ ['a', 'c' ] == M.delete(['a', 'c'])                                       # optional - sage.rings.finite_rings
     True
-    sage: M / 'a' == M.contract('a')                                                    # optional - sage.libs.pari
+    sage: M / 'a' == M.contract('a')                                                    # optional - sage.rings.finite_rings
     True
-    sage: M / 'c' \ 'ab' == M.minor(contractions='c', deletions='ab')                   # optional - sage.libs.pari
+    sage: M / 'c' \ 'ab' == M.minor(contractions='c', deletions='ab')                   # optional - sage.rings.finite_rings
     True
 
 If a contraction set is not independent (or a deletion set not coindependent),
 this is taken care of::
 
-    sage: M = matroids.named_matroids.Fano()                                            # optional - sage.libs.pari
-    sage: M.rank('abf')                                                                 # optional - sage.libs.pari
+    sage: M = matroids.named_matroids.Fano()                                            # optional - sage.rings.finite_rings
+    sage: M.rank('abf')                                                                 # optional - sage.rings.finite_rings
     2
-    sage: M / 'abf' == M / 'ab' \ 'f'                                                   # optional - sage.libs.pari
+    sage: M / 'abf' == M / 'ab' \ 'f'                                                   # optional - sage.rings.finite_rings
     True
-    sage: M / 'abf' == M / 'af' \ 'b'                                                   # optional - sage.libs.pari
+    sage: M / 'abf' == M / 'af' \ 'b'                                                   # optional - sage.rings.finite_rings
     True
 
 .. SEEALSO::
@@ -132,9 +132,9 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Fano(),  # indirect doctest  # optional - sage.libs.pari
+            sage: M = MinorMatroid(matroids.named_matroids.Fano(),  # indirect doctest  # optional - sage.rings.finite_rings
             ....:                  contractions=set(), deletions=set(['g']))
-            sage: M.is_isomorphic(matroids.Wheel(3))                                    # optional - sage.libs.pari
+            sage: M.is_isomorphic(matroids.Wheel(3))                                    # optional - sage.rings.finite_rings
             True
         """
         if not isinstance(matroid, Matroid):
@@ -423,15 +423,15 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.libs.pari
-            sage: M1 = MinorMatroid(M, set('ab'), set('f'))                             # optional - sage.libs.pari
-            sage: M2 = MinorMatroid(M, set('af'), set('b'))                             # optional - sage.libs.pari
-            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())      # optional - sage.libs.pari
-            sage: M1 == M2  # indirect doctest                                          # optional - sage.libs.pari
+            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: M1 = MinorMatroid(M, set('ab'), set('f'))                             # optional - sage.rings.finite_rings
+            sage: M2 = MinorMatroid(M, set('af'), set('b'))                             # optional - sage.rings.finite_rings
+            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())      # optional - sage.rings.finite_rings
+            sage: M1 == M2  # indirect doctest                                          # optional - sage.rings.finite_rings
             False
-            sage: M1.equals(M2)                                                         # optional - sage.libs.pari
+            sage: M1.equals(M2)                                                         # optional - sage.rings.finite_rings
             True
-            sage: M1 == M3                                                              # optional - sage.libs.pari
+            sage: M1 == M3                                                              # optional - sage.rings.finite_rings
             True
         """
         if not isinstance(other, MinorMatroid):
@@ -455,15 +455,15 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.libs.pari
-            sage: M1 = MinorMatroid(M, set('ab'), set('f'))                             # optional - sage.libs.pari
-            sage: M2 = MinorMatroid(M, set('af'), set('b'))                             # optional - sage.libs.pari
-            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())      # optional - sage.libs.pari
-            sage: M1 != M2  # indirect doctest                                          # optional - sage.libs.pari
+            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
+            sage: M1 = MinorMatroid(M, set('ab'), set('f'))                             # optional - sage.rings.finite_rings
+            sage: M2 = MinorMatroid(M, set('af'), set('b'))                             # optional - sage.rings.finite_rings
+            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())      # optional - sage.rings.finite_rings
+            sage: M1 != M2  # indirect doctest                                          # optional - sage.rings.finite_rings
             True
-            sage: M1.equals(M2)                                                         # optional - sage.libs.pari
+            sage: M1.equals(M2)                                                         # optional - sage.rings.finite_rings
             True
-            sage: M1 != M3                                                              # optional - sage.libs.pari
+            sage: M1 != M3                                                              # optional - sage.rings.finite_rings
             False
         """
         return not self == other

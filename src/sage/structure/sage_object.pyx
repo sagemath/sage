@@ -360,18 +360,18 @@ cdef class SageObject:
         modified to return ``True`` for objects which might behave differently
         in some computations::
 
-            sage: K.<a> = Qq(9)                                             # optional - sage.rings.padics
-            sage: b = a + O(3)                                              # optional - sage.rings.padics
-            sage: c = a + 3                                                 # optional - sage.rings.padics
-            sage: b                                                         # optional - sage.rings.padics
+            sage: K.<a> = Qq(9)                                                         # optional - sage.rings.padics
+            sage: b = a + O(3)                                                          # optional - sage.rings.padics
+            sage: c = a + 3                                                             # optional - sage.rings.padics
+            sage: b                                                                     # optional - sage.rings.padics
             a + O(3)
-            sage: c                                                         # optional - sage.rings.padics
+            sage: c                                                                     # optional - sage.rings.padics
             a + 3 + O(3^20)
-            sage: b == c                                                    # optional - sage.rings.padics
+            sage: b == c                                                                # optional - sage.rings.padics
             True
-            sage: b == a                                                    # optional - sage.rings.padics
+            sage: b == a                                                                # optional - sage.rings.padics
             True
-            sage: c == a                                                    # optional - sage.rings.padics
+            sage: c == a                                                                # optional - sage.rings.padics
             False
 
         If such objects defined a non-trivial hash function, this would break
@@ -379,20 +379,20 @@ cdef class SageObject:
         caches. This can be achieved by defining an appropriate
         ``_cache_key``::
 
-            sage: hash(b)                                                   # optional - sage.rings.padics
+            sage: hash(b)                                                               # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
             sage: @cached_method
             ....: def f(x): return x==a
-            sage: f(b)                                                      # optional - sage.rings.padics
+            sage: f(b)                                                                  # optional - sage.rings.padics
             True
-            sage: f(c) # if b and c were hashable, this would return True   # optional - sage.rings.padics
+            sage: f(c)  # if b and c were hashable, this would return True              # optional - sage.rings.padics
             False
 
-            sage: b._cache_key()                                            # optional - sage.rings.padics
+            sage: b._cache_key()                                                        # optional - sage.rings.padics
             (..., ((0, 1),), 0, 1)
-            sage: c._cache_key()                                            # optional - sage.rings.padics
+            sage: c._cache_key()                                                        # optional - sage.rings.padics
             (..., ((0, 1), (1,)), 0, 20)
 
         An implementation must make sure that for elements ``a`` and ``b``,
@@ -400,8 +400,8 @@ cdef class SageObject:
         In practice this means that the ``_cache_key`` should always include
         the parent as its first argument::
 
-            sage: S.<a> = Qq(4)                                             # optional - sage.rings.padics
-            sage: d = a + O(2)                                              # optional - sage.rings.padics
+            sage: S.<a> = Qq(4)                                                         # optional - sage.rings.padics
+            sage: d = a + O(2)                                                          # optional - sage.rings.padics
             sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included    # optional - sage.rings.padics
             False
 
@@ -525,10 +525,10 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t            # optional - sage.symbolic
+            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t                            # optional - sage.symbolic
             log(sqrt(2) + 1) + log(sqrt(2) - 1)
-            sage: u = t.maxima_methods()                                # optional - sage.symbolic
-            sage: u.parent()                                            # optional - sage.symbolic
+            sage: u = t.maxima_methods()                                                # optional - sage.symbolic
+            sage: u.parent()                                                            # optional - sage.symbolic
             <class 'sage.symbolic.maxima_wrapper.MaximaWrapper'>
         """
         return type(self)
@@ -846,10 +846,10 @@ cdef class SageObject:
         since K is a Python object::
 
             sage: K.<a> = NumberField(x^3 + 2)
-            sage: magma(K) is magma(K)        # optional - magma
+            sage: magma(K) is magma(K)            # optional - magma
             True
             sage: magma2 = Magma()
-            sage: magma(K) is magma2(K)       # optional - magma
+            sage: magma(K) is magma2(K)           # optional - magma
             False
         """
         return repr(self)  # default

@@ -10,13 +10,13 @@ dual of `M`.
 
 EXAMPLES::
 
-    sage: M = matroids.named_matroids.Fano()                                            # optional - sage.libs.pari
-    sage: N = M.dual()                                                                  # optional - sage.libs.pari
-    sage: M.is_basis('abc')                                                             # optional - sage.libs.pari
+    sage: M = matroids.named_matroids.Fano()                                            # optional - sage.rings.finite_rings
+    sage: N = M.dual()                                                                  # optional - sage.rings.finite_rings
+    sage: M.is_basis('abc')                                                             # optional - sage.rings.finite_rings
     True
-    sage: N.is_basis('defg')                                                            # optional - sage.libs.pari
+    sage: N.is_basis('defg')                                                            # optional - sage.rings.finite_rings
     True
-    sage: M.dual().dual() == M                                                          # optional - sage.libs.pari
+    sage: M.dual().dual() == M                                                          # optional - sage.rings.finite_rings
     True
 
 Implementation
@@ -455,17 +455,17 @@ class DualMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.libs.pari
-            sage: M2 = CircuitClosuresMatroid(M1.dual())                                # optional - sage.libs.pari
-            sage: M3 = CircuitClosuresMatroid(M1).dual()                                # optional - sage.libs.pari
+            sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.rings.finite_rings
+            sage: M2 = CircuitClosuresMatroid(M1.dual())                                # optional - sage.rings.finite_rings
+            sage: M3 = CircuitClosuresMatroid(M1).dual()                                # optional - sage.rings.finite_rings
             sage: M4 = CircuitClosuresMatroid(groundset='abcdefg',
             ....:   circuit_closures={3: ['abcdefg'], 2: ['beg', 'cdb', 'cfg',
             ....:   'ace', 'fed', 'gad', 'fab']}).dual()
-            sage: M1.dual() == M2  # indirect doctest                                   # optional - sage.libs.pari
+            sage: M1.dual() == M2  # indirect doctest                                   # optional - sage.rings.finite_rings
             False
-            sage: M2 == M3                                                              # optional - sage.libs.pari
+            sage: M2 == M3                                                              # optional - sage.rings.finite_rings
             False
-            sage: M3 == M4                                                              # optional - sage.libs.pari
+            sage: M3 == M4                                                              # optional - sage.rings.finite_rings
             True
         """
         if not isinstance(other, DualMatroid):
@@ -487,17 +487,17 @@ class DualMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.libs.pari
-            sage: M2 = CircuitClosuresMatroid(M1.dual())                                # optional - sage.libs.pari
-            sage: M3 = CircuitClosuresMatroid(M1).dual()                                # optional - sage.libs.pari
+            sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.rings.finite_rings
+            sage: M2 = CircuitClosuresMatroid(M1.dual())                                # optional - sage.rings.finite_rings
+            sage: M3 = CircuitClosuresMatroid(M1).dual()                                # optional - sage.rings.finite_rings
             sage: M4 = CircuitClosuresMatroid(groundset='abcdefg',
             ....:   circuit_closures={3: ['abcdefg'], 2: ['beg', 'cdb', 'cfg',
             ....:                'ace', 'fed', 'gad', 'fab']}).dual()
-            sage: M1.dual() != M2  # indirect doctest                                   # optional - sage.libs.pari
+            sage: M1.dual() != M2  # indirect doctest                                   # optional - sage.rings.finite_rings
             True
-            sage: M2 != M3                                                              # optional - sage.libs.pari
+            sage: M2 != M3                                                              # optional - sage.rings.finite_rings
             True
-            sage: M3 != M4                                                              # optional - sage.libs.pari
+            sage: M3 != M4                                                              # optional - sage.rings.finite_rings
             False
         """
         return not self == other
