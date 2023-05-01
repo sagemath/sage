@@ -27,34 +27,13 @@ from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object cimport SageObject
 from sage.structure.parent import Parent
-from sage.rings.all import ZZ, QQ, RDF
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
 
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.combinat.permutation import Permutation
 from sage.structure.coerce cimport coercion_model as cm
-
-decode_type_number = {
-    0: 'T_INT (integer)',
-    T_INTPOS: 'T_INTPOS (positive integer)',
-    T_INTNEG: 'T_INTNEG (negative integer)',
-    T_RAT: 'T_RAT (rational number)',
-    T_CYC: 'T_CYC (universal cyclotomic)',
-    T_FFE: 'T_FFE (finite field element)',
-    T_PERM2: 'T_PERM2',
-    T_PERM4: 'T_PERM4',
-    T_BOOL: 'T_BOOL',
-    T_CHAR: 'T_CHAR',
-    T_FUNCTION: 'T_FUNCTION',
-    T_PLIST: 'T_PLIST',
-    T_PLIST_CYC: 'T_PLIST_CYC',
-    T_BLIST: 'T_BLIST',
-    T_STRING: 'T_STRING',
-    T_MACFLOAT: 'T_MACFLOAT (hardware floating point number)',
-    T_COMOBJ: 'T_COMOBJ (component object)',
-    T_POSOBJ: 'T_POSOBJ (positional object)',
-    T_DATOBJ: 'T_DATOBJ (data object)',
-    T_WPOBJ:  'T_WPOBJ (weak pointer object)',
-    }
 
 ############################################################################
 ### helper functions to construct lists and records ########################
@@ -130,6 +109,7 @@ cdef char *capture_stdout(Obj func, Obj obj):
     """
     cdef Obj s, stream, output_text_string
     cdef UInt res
+    cdef TypOutputFile output
     # The only way to get a string representation of an object that is truly
     # consistent with how it would be represented at the GAP REPL is to call
     # ViewObj on it.  Unfortunately, ViewObj *prints* to the output stream,
@@ -145,12 +125,12 @@ cdef char *capture_stdout(Obj func, Obj obj):
         output_text_string = GAP_ValueGlobalVariable("OutputTextString")
         stream = CALL_2ARGS(output_text_string, s, GAP_True)
 
-        if not OpenOutputStream(stream):
+        if not OpenOutputStream(&output, stream):
             raise GAPError("failed to open output capture stream for "
                            "representing GAP object")
 
         CALL_1ARGS(func, obj)
-        CloseOutput()
+        CloseOutput(&output)
         return CSTR_STRING(s)
     finally:
         GAP_Leave()
@@ -163,9 +143,13 @@ cdef char *gap_element_repr(Obj obj):
     GAP on the command-line (i.e. when evaluating an expression that returns
     that object.
     """
-
-    cdef Obj func = GAP_ValueGlobalVariable("ViewObj")
-    return capture_stdout(func, obj)
+    cdef Obj func
+    try:
+        GAP_Enter()
+        func = GAP_ValueGlobalVariable("ViewObj")
+        return capture_stdout(func, obj)
+    finally:
+        GAP_Leave()
 
 
 cdef char *gap_element_str(Obj obj):
@@ -178,8 +162,13 @@ cdef char *gap_element_str(Obj obj):
     slightly different approach more closely mirroring Python's str/repr
     difference (though this does not map perfectly onto GAP).
     """
-    cdef Obj func = GAP_ValueGlobalVariable("Print")
-    return capture_stdout(func, obj)
+    cdef Obj func
+    try:
+        GAP_Enter()
+        func = GAP_ValueGlobalVariable("Print")
+        return capture_stdout(func, obj)
+    finally:
+        GAP_Leave()
 
 
 cdef Obj make_gap_record(sage_dict) except NULL:
@@ -669,11 +658,10 @@ cdef class GapElement(RingElement):
 
             sage: x = libgap(1)
             sage: x._type_number()
-            (0, 'T_INT (integer)')
+            (0, b'integer')
         """
         n = TNUM_OBJ(self.value)
-        global decode_type_number
-        name = decode_type_number.get(n, 'unknown')
+        name = TNAM_OBJ(self.value)
         return (n, name)
 
     def __dir__(self):
@@ -757,7 +745,7 @@ cdef class GapElement(RingElement):
             sage: libgap(0).__str__()
             '0'
         """
-        if  self.value == NULL:
+        if self.value == NULL:
             return 'NULL'
 
         s = char_to_str(gap_element_str(self.value))
@@ -779,7 +767,7 @@ cdef class GapElement(RingElement):
             sage: libgap(0)._repr_()
             '0'
         """
-        if  self.value == NULL:
+        if self.value == NULL:
             return 'NULL'
 
         s = char_to_str(gap_element_repr(self.value))
@@ -3077,7 +3065,7 @@ cdef class GapElement_Permutation(GapElement):
         lst = libgap.ListPerm(self)
 
         if parent is None:
-            return Permutation(lst.sage(), check_input=False)
+            return Permutation(lst.sage(), check=False)
         else:
             return parent.one()._generate_new_GAP(lst)
 

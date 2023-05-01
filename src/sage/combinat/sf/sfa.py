@@ -403,10 +403,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: s.is_integral_domain()
                 True
 
-            The following doctest is disabled pending :trac:`15475`::
-
-                sage: s = SymmetricFunctions(Zmod(14)).s() # not tested
-                sage: s.is_integral_domain() # not tested
+                sage: s = SymmetricFunctions(Zmod(14)).s()
+                sage: s.is_integral_domain()
                 False
             """
             return self.base_ring().is_integral_domain()
@@ -1015,7 +1013,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 m = lam.to_exp_dict() # == {i: m_i | i occurs in lam}
                 p = self.realization_of().power()
                 h = self.realization_of().complete()
-                from sage.arith.all import moebius, squarefree_divisors
+                from sage.arith.misc import moebius, squarefree_divisors
                 mu = moebius
 
                 def component(i, g):  # == h_g[L_i]
@@ -1809,12 +1807,12 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             sage: TestSuite(s).run()
         """
         R = Sym.base_ring()
-        from sage.categories.all import CommutativeRings
+        from sage.categories.commutative_rings import CommutativeRings
         if R not in CommutativeRings():
             raise TypeError("argument R must be a commutative ring")
         try:
             R(Integer(1))
-        except Exception:
+        except (TypeError, ValueError):
             raise ValueError("R must have a unit element")
 
         if basis_name is not None:
@@ -2090,19 +2088,20 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             #   needed for the old kschur functions - TCS
             part = _Partitions(part)
             for part2, c2 in cache_dict[sum(part)][part].items():
-                if hasattr(c2,'subs'): # c3 may be in the base ring
-                    c3 = c*BR(c2.subs(**subs_dict))
+                if hasattr(c2, 'subs'):  # c3 may be in the base ring
+                    c3 = c * BR(c2.subs(**subs_dict))
                 else:
-                    c3 = c*BR(c2)
+                    c3 = c * BR(c2)
                 # c3 = c*c2
                 # if hasattr(c3,'subs'): # c3 may be in the base ring
                 #     c3 = c3.subs(**subs_dict)
-                z_elt[ part2 ] = z_elt.get(part2, zero) + BR(c3)
+                z_elt[part2] = z_elt.get(part2, zero) + BR(c3)
         return self._from_dict(z_elt)
 
-    def _invert_morphism(self, n, base_ring, self_to_other_cache, other_to_self_cache,\
-                         to_other_function=None, to_self_function=None, \
-                         upper_triangular=False, lower_triangular=False, \
+    def _invert_morphism(self, n, base_ring,
+                         self_to_other_cache, other_to_self_cache,
+                         to_other_function=None, to_self_function=None,
+                         upper_triangular=False, lower_triangular=False,
                          ones_on_diagonal=False):
         r"""
         Compute the inverse of a morphism between ``self`` and ``other``
@@ -2245,12 +2244,12 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         #Decide whether we know how to go from self to other or
         #from other to self
         if to_other_function is not None:
-            known_cache    = self_to_other_cache  #the known direction
-            unknown_cache  = other_to_self_cache  #the unknown direction
+            known_cache = self_to_other_cache  #the known direction
+            unknown_cache = other_to_self_cache  #the unknown direction
             known_function = to_other_function
         else:
-            unknown_cache  = self_to_other_cache  #the known direction
-            known_cache    = other_to_self_cache  #the unknown direction
+            unknown_cache = self_to_other_cache  #the known direction
+            known_cache = other_to_self_cache  #the unknown direction
             known_function = to_self_function
 
         #Do nothing if we've already computed the inverse
@@ -2264,7 +2263,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         #should use that.
         #Zt = ZZ['t']
         #t = Zt.gen()
-        one  = base_ring.one()
+        one = base_ring.one()
         zero = base_ring.zero()
 
         #Get and store the list of partitions we'll need
@@ -4711,7 +4710,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         parent = self.parent()
         if parent.has_coerce_map_from(QQ):
             from sage.combinat.partition import Partition
-            from sage.arith.all import gcd, lcm
+            from sage.arith.misc import gcd
+            from sage.arith.functions import lcm
             from itertools import product, repeat, chain
             p = parent.realization_of().power()
 
@@ -5978,8 +5978,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             2*s[2, 2, 1] + s[3, 1, 1] + 4*s[3, 2] + 3*s[4, 1] + 2*s[5]
         """
         p = self.parent().symmetric_function_ring().p()
-        return self.parent()(p.sum(self.eval_at_permutation_roots(rho) \
-            *p(rho)/rho.centralizer_size() for rho in Partitions(n)))
+        return self.parent()(p.sum(self.eval_at_permutation_roots(rho)
+                                   * p(rho) / rho.centralizer_size()
+                                   for rho in Partitions(n)))
 
     def principal_specialization(self, n=infinity, q=None):
         r"""

@@ -35,9 +35,14 @@ Pickling test::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import (hilbert_conductor_inverse, hilbert_conductor,
-                            factor, gcd, kronecker_symbol, valuation)
-from sage.rings.all import RR, Integer
+from sage.arith.misc import (hilbert_conductor_inverse,
+                             hilbert_conductor,
+                             factor,
+                             gcd,
+                             kronecker as kronecker_symbol,
+                             valuation)
+from sage.rings.real_mpfr import RR
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.finite_rings.finite_field_constructor import GF
@@ -46,7 +51,7 @@ from sage.rings.ring import Algebra
 from sage.rings.ideal import Ideal_fractional
 from sage.rings.rational_field import is_RationalField, QQ
 from sage.rings.infinity import infinity
-from sage.rings.number_field.number_field import is_NumberField
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.structure.category_object import normalize_names
 from sage.structure.parent import Parent
@@ -657,7 +662,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         self._b = b
         if is_RationalField(base_ring) and a.denominator() == 1 == b.denominator():
             self.Element = QuaternionAlgebraElement_rational_field
-        elif (is_NumberField(base_ring) and base_ring.degree() > 2 and base_ring.is_absolute() and
+        elif (isinstance(base_ring, NumberField) and base_ring.degree() > 2 and base_ring.is_absolute() and
               a.denominator() == 1 == b.denominator() and base_ring.defining_polynomial().is_monic()):
             # This QuaternionAlgebraElement_number_field class is not
             # designed to work with elements of a quadratic field.  To

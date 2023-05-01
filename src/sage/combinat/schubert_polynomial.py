@@ -73,7 +73,8 @@ We can also check the properties listed in :wikipedia:`Schubert_polynomial`::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.categories.all import GradedAlgebrasWithBasis
+
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.key_polynomial import KeyPolynomial
 from sage.combinat.permutation import Permutations, Permutation
@@ -435,7 +436,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             sage: X._element_constructor_([1,2,1])
             Traceback (most recent call last):
             ...
-            ValueError: The input [1, 2, 1] is not a valid permutation
+            ValueError: the input [1, 2, 1] is not a valid permutation
 
         Now we check for correct handling of the empty
         permutation (:trac:`23443`)::
@@ -455,7 +456,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
         if isinstance(x, list):
             # checking the input to avoid symmetrica crashing Sage, see trac 12924
             if x not in Permutations():
-                raise ValueError("The input %s is not a valid permutation" % x)
+                raise ValueError(f"the input {x} is not a valid permutation")
             perm = Permutation(x).remove_extra_fixed_points()
             return self._from_dict({perm: self.base_ring().one()})
         elif isinstance(x, Permutation):

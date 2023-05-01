@@ -28,7 +28,6 @@ AUTHORS:
 - François Bissey, Bill Page, Jeroen Demeyer (2015-12-09): Upgrade to
   pexpect 4.0.1 + patches, see :trac:`10295`.
 """
-
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -38,7 +37,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 import io
 import os
 import re
@@ -219,7 +217,7 @@ class Expect(Interface):
 
     def server(self):
         """
-        Returns the server used in this interface.
+        Return the server used in this interface.
 
         EXAMPLES::
 
@@ -232,7 +230,7 @@ class Expect(Interface):
 
     def command(self):
         """
-        Returns the command used in this interface.
+        Return the command used in this interface.
 
         EXAMPLES::
 
@@ -1082,11 +1080,11 @@ If this all works, you can then make calls like:
     # BEGIN Synchronization code.
     ###########################################################################
 
-    def _before(self, encoding=None, errors=None):
+    def _before(self, encoding=None, errors=None) -> str:
         r"""
         Return the previous string that was sent through the interface.
 
-        Returns ``str`` objects on both Python 2 and Python 3.
+        This returns a ``str`` object.
 
         The ``encoding`` and ``errors`` arguments are passed to
         :func:`sage.misc.cpython.bytes_to_str`.
@@ -1126,7 +1124,7 @@ If this all works, you can then make calls like:
 
         return after
 
-    def _readline(self, size=-1, encoding=None, errors=None):
+    def _readline(self, size=-1, encoding=None, errors=None) -> str:
         r"""
         Wraps ``spawn.readline`` to pass the return values through
         ``bytes_to_str``, like `Expect._before` and `Expect._after`.
@@ -1139,7 +1137,6 @@ If this all works, you can then make calls like:
             sage: singular._readline()
             '2\r\n'
         """
-
         return bytes_to_str(self._expect.readline(size=size), encoding, errors)
 
     def _interrupt(self):
@@ -1166,12 +1163,10 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-
-        -  ``expr`` - None or a string or list of strings
+        -  ``expr`` -- None or a string or list of strings
            (default: None)
 
-        -  ``timeout`` - None or a number (default: None)
-
+        -  ``timeout`` -- None or a number (default: None)
 
         EXAMPLES:
 
@@ -1345,7 +1340,6 @@ If this all works, you can then make calls like:
         """
         INPUT:
 
-
         -  ``code``       -- text to evaluate
 
         -  ``strip``      -- bool; whether to strip output prompts,
@@ -1393,8 +1387,8 @@ If this all works, you can then make calls like:
                         self._eval_using_file_cutoff and len(code) > self._eval_using_file_cutoff):
                     return self._eval_line_using_file(code)
                 elif split_lines:
-                    return '\n'.join([self._eval_line(L, allow_use_file=allow_use_file, **kwds)
-                                      for L in code.split('\n') if L != ''])
+                    return '\n'.join(self._eval_line(L, allow_use_file=allow_use_file, **kwds)
+                                     for L in code.split('\n') if L)
                 else:
                     return self._eval_line(code, allow_use_file=allow_use_file, **kwds)
         # DO NOT CATCH KeyboardInterrupt, as it is being caught
@@ -1512,7 +1506,9 @@ class ExpectElement(InterfaceElement, sage.interfaces.abc.ExpectElement):
 
     def __hash__(self):
         """
-        Returns the hash of self. This is a default implementation of hash
+        Return the hash of self.
+
+        This is a default implementation of hash
         which just takes the hash of the string of self.
         """
         return hash('%s%s' % (self, self._session_number))
@@ -1544,7 +1540,7 @@ class ExpectElement(InterfaceElement, sage.interfaces.abc.ExpectElement):
                 if P is not None:
                     P.clear(self._name)
 
-        except (RuntimeError, ExceptionPexpect):    # needed to avoid infinite loops in some rare cases
+        except (RuntimeError, ExceptionPexpect):  # needed to avoid infinite loops in some rare cases
             pass
 
 #    def _sage_repr(self):
@@ -1563,11 +1559,11 @@ class StdOutContext:
 
         INPUT:
 
-        - ``interface`` - the interface whose communication shall be dumped.
+        - ``interface`` -- the interface whose communication shall be dumped.
 
-        - ``silent`` - if ``True`` this context does nothing
+        - ``silent`` -- if ``True`` this context does nothing
 
-        - ``stdout`` - optional parameter for alternative stdout device (default: ``None``)
+        - ``stdout`` -- optional parameter for alternative stdout device (default: ``None``)
 
         EXAMPLES::
 
@@ -1621,7 +1617,3 @@ class StdOutContext:
         self.interface._expect.logfile.flush()
         self.stdout.write("\n")
         self.interface._expect.logfile = self._logfile_backup
-
-
-def console(cmd):
-    os.system(cmd)

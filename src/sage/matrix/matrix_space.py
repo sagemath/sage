@@ -43,7 +43,7 @@ import sage.structure.coerce
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 import sage.rings.integer as integer
-import sage.rings.finite_rings.finite_field_constructor
+from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.misc.latex as latex
 import sage.modules.free_module
 
@@ -223,7 +223,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                     else:
                         return matrix_complex_double_dense.Matrix_complex_double_dense
 
-            elif sage.rings.finite_rings.finite_field_constructor.is_FiniteField(R):
+            elif isinstance(R, FiniteField):
                 if R.order() == 2:
                     try:
                         from . import matrix_mod2_dense
@@ -397,7 +397,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         else:
             return matrix_integer_sparse.Matrix_integer_sparse
 
-    if R is sage.rings.real_double.RDF or R is sage.rings.complex_double.CDF:
+    if isinstance(R, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
         from . import matrix_double_sparse
         return matrix_double_sparse.Matrix_double_sparse
 
@@ -1230,12 +1230,24 @@ class MatrixSpace(UniqueRepresentation, Parent):
             pass
         else:
             MS = meth_matrix_space()
-            from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
-            from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
-            if is_MatrixGroup(S) or is_ArithmeticSubgroup(S):
-                return self.has_coerce_map_from(MS)
+
+            try:
+                from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
+            except ImportError:
+                pass
             else:
-                return False
+                if is_MatrixGroup(S):
+                    return self.has_coerce_map_from(MS)
+
+            try:
+                from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
+            except ImportError:
+                pass
+            else:
+                if is_ArithmeticSubgroup(S):
+                    return self.has_coerce_map_from(MS)
+
+            return False
 
         # The parent is not matrix-like: coerce via base ring
         return (self.nrows() == self.ncols()) and self._coerce_map_via([B], S)

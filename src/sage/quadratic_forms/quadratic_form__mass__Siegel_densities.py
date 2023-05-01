@@ -10,55 +10,58 @@ Local Masses and Siegel Densities
 #  Copyright by Jonathan Hanke 2007 <jonhanke@gmail.com>
 ########################################################################
 
-import copy
+from copy import deepcopy
 
+from sage.arith.misc import kronecker, legendre_symbol, prime_divisors
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.functional import squarefree_part
 from sage.misc.misc_c import prod
 from sage.misc.mrange import mrange
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.rational_field import QQ
-from sage.arith.all import legendre_symbol, kronecker, prime_divisors
-from sage.functions.all import sgn
 from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
-from sage.misc.functional import squarefree_part
-from sage.symbolic.constants import pi
-from sage.matrix.matrix_space import MatrixSpace
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson"):
     """
-    Gives the mass of transformations (det 1 and -1).
+    Return the mass of transformations (det 1 and -1).
 
-    WARNING: THIS IS BROKEN RIGHT NOW... =(
+    .. WARNING::
 
-    Optional Arguments:
+        This is broken right now...
 
-    - When p > 2  --  odd_algorithm = "Pall" (only one choice for now)
-    - When p = 2  --  even_algorithm = "Kitaoka" or "Watson"
+    INPUT:
+
+    - ``odd_algorithm`` -- algorithm to be used when `p>2`; ``"Pall"`` (only one choice for now)
+    - ``even_algorithm`` -- algorithm to be used when `p=2`;
+      either ``"Kitaoka"`` or ``"Watson"`` (the default)
 
     REFERENCES:
 
     - Nipp's Book "Tables of Quaternary Quadratic Forms".
-    - Papers of Pall (only for p>2) and Watson (for `p=2` -- tricky!).
+    - Papers of Pall (only for `p>2`) and Watson (for `p=2` -- tricky!).
     - Siegel, Milnor-Hussemoller, Conway-Sloane Paper IV, Kitoaka (all of which
       have problems...)
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
-        sage: m = Q.mass__by_Siegel_densities(); m
+        sage: m = Q.mass__by_Siegel_densities(); m                                  # optional - sage.symbolic
         1/384
-        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)
+        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)                             # optional - sage.symbolic
         0
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: m = Q.mass__by_Siegel_densities(); m
+        sage: m = Q.mass__by_Siegel_densities(); m                                  # optional - sage.symbolic
         1/48
-        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)
+        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)                             # optional - sage.symbolic
         0
     """
+    from sage.symbolic.constants import pi
+
     # Setup
     n = self.dim()
     s = (n-1) // 2
@@ -110,22 +113,20 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
 
 
 def Pall_mass_density_at_odd_prime(self, p):
-    """
-    Returns the local representation density of a form (for
-    representing itself) defined over `ZZ`, at some prime `p>2`.
+    r"""
+    Return the local representation density of a form (for
+    representing itself) defined over `\ZZ`, at some prime `p>2`.
 
     REFERENCES:
 
-        Pall's article "The Weight of a Genus of Positive n-ary Quadratic Forms"
-        appearing in Proc. Symp. Pure Math. VIII (1965), pp95--105.
+    Pall's article "The Weight of a Genus of Positive n-ary Quadratic Forms"
+    appearing in Proc. Symp. Pure Math. VIII (1965), pp95--105.
 
     INPUT:
 
-        `p` -- a prime number > 2.
+    - ``p`` -- a prime number > 2
 
-    OUTPUT:
-
-        a rational number.
+    OUTPUT: a rational number.
 
     EXAMPLES::
 
@@ -155,7 +156,6 @@ def Pall_mass_density_at_odd_prime(self, p):
             generic_factor *= (1 + legendre_symbol(((-1)**m) * d, p) * p**(-m))
         jordan_mass_list = jordan_mass_list + [generic_factor]
 
-
     # Step 3: Compute the local mass $\al_p$ at p.
         MJL = modified_jordan_list
     s = len(modified_jordan_list)
@@ -172,27 +172,23 @@ def Pall_mass_density_at_odd_prime(self, p):
 
 def Watson_mass_at_2(self):
     """
-    Returns the local mass of the quadratic form when `p=2`, according
+    Return the local mass of the quadratic form when `p=2`, according
     to Watson's Theorem 1 of "The 2-adic density of a quadratic form"
     in Mathematika 23 (1976), pp 94--106.
 
-    INPUT:
-
-        none
-
-    OUTPUT:
-
-        a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.Watson_mass_at_2()               # WARNING:  WE NEED TO CHECK THIS CAREFULLY!
+        sage: Q.Watson_mass_at_2()  # WARNING:  WE NEED TO CHECK THIS CAREFULLY!    # optional - sage.symbolic
         384
 
     """
+    from sage.functions.all import sgn
+
     # Make a 0-dim'l quadratic form (for initialization purposes)
-    Null_Form = copy.deepcopy(self)
+    Null_Form = deepcopy(self)
     Null_Form.__init__(ZZ, 0)
 
     # Step 0: Compute Jordan blocks and bounds of the scales to keep track of
@@ -231,7 +227,7 @@ def Watson_mass_at_2(self):
     eps_dict = {}
     for j in range(s_min, s_max+3):
         two_form = (diag_dict[j-2] + diag_dict[j] + dim2_dict[j]).scale_by_factor(2)
-        j_form = (two_form + diag_dict[j-1]).base_change_to(IntegerModRing(4))
+        j_form = (two_form + diag_dict[j-1]).change_ring(IntegerModRing(4))
 
         if j_form.dim() == 0:
             eps_dict[j] = 1
@@ -260,17 +256,11 @@ def Watson_mass_at_2(self):
 
 def Kitaoka_mass_at_2(self):
     """
-    Returns the local mass of the quadratic form when `p=2`, according
+    Return the local mass of the quadratic form when `p=2`, according
     to Theorem 5.6.3 on pp108--9 of Kitaoka's Book "The Arithmetic of
     Quadratic Forms".
 
-    INPUT:
-
-        none
-
-    OUTPUT:
-
-        a rational number > 0
+    OUTPUT: a rational number > 0
 
     EXAMPLES::
 
@@ -280,7 +270,7 @@ def Kitaoka_mass_at_2(self):
 
     """
     # Make a 0-dim'l quadratic form (for initialization purposes)
-    Null_Form = copy.deepcopy(self)
+    Null_Form = deepcopy(self)
     Null_Form.__init__(ZZ, 0)
 
     # Step 0: Compute Jordan blocks and bounds of the scales to keep track of
@@ -349,10 +339,12 @@ def Kitaoka_mass_at_2(self):
 
 
 def mass_at_two_by_counting_mod_power(self, k):
-    """
-    Computes the local mass at `p=2` assuming that it's stable `(mod 2^k)`.
+    r"""
+    Compute the local mass at `p=2` assuming that it's stable (mod `2^k`).
 
-    Note: This is **way** too slow to be useful, even when k=1!!!
+    .. NOTE::
+
+        This is **way** too slow to be useful, even when `k=1`.
 
     .. TODO::
 
@@ -360,11 +352,9 @@ def mass_at_two_by_counting_mod_power(self, k):
 
     INPUT:
 
-    - k -- an integer >= 1
+    - ``k`` -- an integer `\geq 1`
 
-    OUTPUT:
-
-    a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 
@@ -373,7 +363,7 @@ def mass_at_two_by_counting_mod_power(self, k):
         4
     """
     R = IntegerModRing(2**k)
-    Q1 = self.base_change_to(R)
+    Q1 = self.change_ring(R)
     n = self.dim()
     MS = MatrixSpace(R, n)
 

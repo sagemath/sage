@@ -213,11 +213,11 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             from sage.rings.complex_arb import ComplexBallField
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-            from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
+            from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
             from sage.rings.complex_mpfr import ComplexField
             from sage.rings.infinity import InfinityRing, UnsignedInfinityRing
             from sage.rings.real_lazy import RLF, CLF
-            from sage.rings.finite_rings.finite_field_base import is_FiniteField
+            from sage.rings.finite_rings.finite_field_base import FiniteField
 
             from sage.interfaces.maxima import Maxima
 
@@ -226,7 +226,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             if R._is_numerical():
                 # Almost anything with a coercion into any precision of CC
                 return R not in (RLF, CLF)
-            elif is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R) or is_LaurentPolynomialRing(R):
+            elif is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R) or isinstance(R, LaurentPolynomialRing_generic):
                 base = R.base_ring()
                 return base is not self and self.has_coerce_map_from(base)
             elif (R is InfinityRing or R is UnsignedInfinityRing
@@ -234,8 +234,8 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
                                     sage.rings.abc.ComplexIntervalField,
                                     sage.rings.abc.RealBallField,
                                     sage.rings.abc.ComplexBallField,
-                                    sage.rings.abc.IntegerModRing))
-                  or is_FiniteField(R)):
+                                    sage.rings.abc.IntegerModRing,
+                                    FiniteField))):
                 return True
             elif isinstance(R, GenericSymbolicSubring):
                 return True

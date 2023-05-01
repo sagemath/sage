@@ -77,6 +77,26 @@ The output is parseable (i. e. :trac:`31796` is fixed)::
     sage: bar == foo
     True
 
+TESTS:
+
+Check our workaround for a race in ecl works, see :trac:`26968`.
+We use a temporary `MAXIMA_USERDIR` so it's empty; we place it
+in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
+
+    sage: import tempfile, subprocess
+    sage: tmpdir = tempfile.TemporaryDirectory(dir=DOT_SAGE)
+    sage: _ = subprocess.run(['sage', '-c',  # long time
+    ....: f'''
+    ....: import os
+    ....: os.environ["MAXIMA_USERDIR"] = "{tmpdir.name}"
+    ....: if not os.fork():
+    ....:     import sage.interfaces.maxima_lib
+    ....: else:
+    ....:     import sage.interfaces.maxima_lib
+    ....:     os.wait()
+    ....: '''])
+    sage: tmpdir.cleanup()
+
 """
 
 # ****************************************************************************
@@ -94,6 +114,7 @@ The output is parseable (i. e. :trac:`31796` is fixed)::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.structure.element import Expression
 from sage.symbolic.ring import SR
 
 from sage.libs.ecl import EclObject, ecl_eval
@@ -116,7 +137,23 @@ ecl_eval("(in-package :maxima)")
 ecl_eval("(setq $nolabels t))")
 ecl_eval("(defvar *MAXIMA-LANG-SUBDIR* NIL)")
 ecl_eval("(set-locale-subdir)")
-ecl_eval("(set-pathnames)")
+
+try:
+    ecl_eval("(set-pathnames)")
+except RuntimeError:
+    # Recover from :trac:`26968` by creating `*maxima-objdir*` here.
+    # This cannot be done before calling `(set-pathnames)` since
+    # `*maxima-objdir*` is computed there.
+    # We use python `os.makedirs()` which is immune to the race.
+    # Using `(ensure-directories-exist ...)` in lisp would be
+    # subject to the same race condition and since `*maxima-objdir*`
+    # has multiple components this is quite plausible to happen.
+    maxima_objdir = ecl_eval("*maxima-objdir*").python()[1:-1]
+    import os
+    os.makedirs(maxima_objdir, exist_ok=True)
+    # Call `(set-pathnames)` again to complete its job.
+    ecl_eval("(set-pathnames)")
+
 ecl_eval("(defun add-lineinfo (x) x)")
 ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (merror "Divergent Integral"))))')
 ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
@@ -1164,6 +1201,8 @@ def reduce_load_MaximaLib():
 import sage.rings.real_double
 import sage.symbolic.expression
 import sage.symbolic.integration.integral
+
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.symbolic.operators import FDerivativeOperator, add_vararg, mul_vararg
 
 car=EclObject("car")
@@ -1523,9 +1562,11 @@ def pyobject_to_max(obj):
     """
     if isinstance(obj,sage.rings.rational.Rational):
         return EclObject(obj) if (obj.denom().is_one()) else EclObject([[rat], obj.numer(),obj.denom()])
-    elif isinstance(obj,sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic) and obj.parent().defining_polynomial().list() == [1,0,1]:
-        re, im = obj.list()
-        return EclObject([[mplus], pyobject_to_max(re), [[mtimes], pyobject_to_max(im), max_i]])
+    elif isinstance(obj, NumberFieldElement_base):
+        from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
+        if isinstance(obj, NumberFieldElement_quadratic) and obj.parent().defining_polynomial().list() == [1,0,1]:
+            re, im = obj.list()
+            return EclObject([[mplus], pyobject_to_max(re), [[mtimes], pyobject_to_max(im), max_i]])
     return EclObject(obj)
 
 # This goes from SR to EclObject
@@ -1575,9 +1616,8 @@ def sr_to_max(expr):
         # For that, we should change the API of the functions there
         # (we need to have access to op, not only to expr.operands()
         if isinstance(op, FDerivativeOperator):
-            from sage.symbolic.ring import is_SymbolicVariable
             args = expr.operands()
-            if (not all(is_SymbolicVariable(v) for v in args) or
+            if (not all(isinstance(v, Expression) and v.is_symbol() for v in args) or
                 len(args) != len(set(args))):
                 # An evaluated derivative of the form f'(1) is not a
                 # symbolic variable, yet we would like to treat it

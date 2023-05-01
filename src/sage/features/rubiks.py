@@ -1,14 +1,17 @@
-# -*- coding: utf-8 -*-
 r"""
 Features for testing the presence of ``rubiks``
 """
 # ****************************************************************************
+#       Copyright (C) 2020      John H. Palmieri
+#                     2021-2022 Matthias Koeppe
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 from sage.env import RUBIKS_BINS_PREFIX
 
 from . import Executable

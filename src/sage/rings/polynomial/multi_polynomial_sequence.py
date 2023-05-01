@@ -77,37 +77,38 @@ pair and study it::
 We separate the system in independent subsystems::
 
     sage: C = Sequence(r2).connected_components(); C
-    [[w213 + k113 + x111 + x112 + x113,
-     w212 + k112 + x110 + x111 + x112 + 1,
-     w211 + k111 + x110 + x111 + x113 + 1,
-     w210 + k110 + x110 + x112 + x113,
-     x110*w112 + x111*w111 + x112*w110 + x113*w113 + 1,
-     x110*w112 + x111*w110 + x111*w111 + x111*w113 + x112*w111 + x113*w110 + x113*w112 + w111,
-     x110*w111 + x111*w110 + x111*w112 + x112*w110 + x113*w111 + x113*w113 + w113,
-     x110*w111 + x110*w113 + x111*w111 + x111*w112 + x112*w110 + x112*w113 + x113*w111 + x111,
-     x110*w111 + x110*w112 + x111*w110 + x111*w113 + x112*w111 + x113*w113 + x113,
-     x110*w111 + x110*w112 + x111*w110 + x111*w111 + x112*w110 + x112*w113 + x113*w112,
-     x110*w110 + x110*w113 + x111*w112 + x112*w111 + x113*w110,
-     x110*w110 + x110*w112 + x111*w110 + x111*w112 + x111*w113 + x112*w110 + x112*w111 + x113*w112 + x112,
-     x110*w110 + x110*w112 + x110*w113 + x111*w110 + x111*w111 + x112*w112 + x113*w110 + x110,
-     x110*w110 + x110*w111 + x111*w110 + x111*w113 + x112*w112 + x113*w111,
-     x110*w110 + x110*w111 + x110*w113 + x111*w111 + x112*w110 + x112*w112 + x113*w110 + w110,
-     x110*w110 + x110*w111 + x110*w112 + x111*w112 + x112*w110 + x112*w111 + x112*w113 + x113*w111 + w112],
-    [w203 + k103 + x101 + x102 + x103,
-    w202 + k102 + x100 + x101 + x102 + 1,
-    w201 + k101 + x100 + x101 + x103 + 1,
-    w200 + k100 + x100 + x102 + x103,
-    x100*w102 + x101*w101 + x102*w100 + x103*w103 + 1,
-    x100*w102 + x101*w100 + x101*w101 + x101*w103 + x102*w101 + x103*w100 + x103*w102 + w101,
-    x100*w101 + x101*w100 + x101*w102 + x102*w100 + x103*w101 + x103*w103 + w103,
-    x100*w101 + x100*w103 + x101*w101 + x101*w102 + x102*w100 + x102*w103 + x103*w101 + x101,
-    x100*w101 + x100*w102 + x101*w100 + x101*w103 + x102*w101 + x103*w103 + x103, x100*w101 + x100*w102 + x101*w100 + x101*w101 + x102*w100 + x102*w103 + x103*w102,
-    x100*w100 + x100*w103 + x101*w102 + x102*w101 + x103*w100,
-    x100*w100 + x100*w102 + x101*w100 + x101*w102 + x101*w103 + x102*w100 + x102*w101 + x103*w102 + x102,
-    x100*w100 + x100*w102 + x100*w103 + x101*w100 + x101*w101 + x102*w102 + x103*w100 + x100,
-    x100*w100 + x100*w101 + x101*w100 + x101*w103 + x102*w102 + x103*w101,
-    x100*w100 + x100*w101 + x100*w103 + x101*w101 + x102*w100 + x102*w102 + x103*w100 + w100,
-    x100*w100 + x100*w101 + x100*w102 + x101*w102 + x102*w100 + x102*w101 + x102*w103 + x103*w101 + w102]]
+    [[w200 + k100 + x100 + x102 + x103,
+      w201 + k101 + x100 + x101 + x103 + 1,
+      w202 + k102 + x100 + x101 + x102 + 1,
+      w203 + k103 + x101 + x102 + x103,
+      x100*w100 + x100*w103 + x101*w102 + x102*w101 + x103*w100,
+      x100*w100 + x100*w101 + x101*w100 + x101*w103 + x102*w102 + x103*w101,
+      x100*w101 + x100*w102 + x101*w100 + x101*w101 + x102*w100 + x102*w103 + x103*w102,
+      x100*w100 + x100*w102 + x100*w103 + x101*w100 + x101*w101 + x102*w102 + x103*w100 + x100,
+      x100*w101 + x100*w103 + x101*w101 + x101*w102 + x102*w100 + x102*w103 + x103*w101 + x101,
+      x100*w100 + x100*w102 + x101*w100 + x101*w102 + x101*w103 + x102*w100 + x102*w101 + x103*w102 + x102,
+      x100*w101 + x100*w102 + x101*w100 + x101*w103 + x102*w101 + x103*w103 + x103,
+      x100*w100 + x100*w101 + x100*w103 + x101*w101 + x102*w100 + x102*w102 + x103*w100 + w100,
+      x100*w102 + x101*w100 + x101*w101 + x101*w103 + x102*w101 + x103*w100 + x103*w102 + w101,
+      x100*w100 + x100*w101 + x100*w102 + x101*w102 + x102*w100 + x102*w101 + x102*w103 + x103*w101 + w102,
+      x100*w101 + x101*w100 + x101*w102 + x102*w100 + x103*w101 + x103*w103 + w103,
+      x100*w102 + x101*w101 + x102*w100 + x103*w103 + 1],
+     [w210 + k110 + x110 + x112 + x113,
+      w211 + k111 + x110 + x111 + x113 + 1,
+      w212 + k112 + x110 + x111 + x112 + 1,
+      w213 + k113 + x111 + x112 + x113,
+      x110*w110 + x110*w113 + x111*w112 + x112*w111 + x113*w110,
+      x110*w110 + x110*w111 + x111*w110 + x111*w113 + x112*w112 + x113*w111,
+      x110*w111 + x110*w112 + x111*w110 + x111*w111 + x112*w110 + x112*w113 + x113*w112,
+      x110*w110 + x110*w112 + x110*w113 + x111*w110 + x111*w111 + x112*w112 + x113*w110 + x110,
+      x110*w111 + x110*w113 + x111*w111 + x111*w112 + x112*w110 + x112*w113 + x113*w111 + x111,
+      x110*w110 + x110*w112 + x111*w110 + x111*w112 + x111*w113 + x112*w110 + x112*w111 + x113*w112 + x112,
+      x110*w111 + x110*w112 + x111*w110 + x111*w113 + x112*w111 + x113*w113 + x113,
+      x110*w110 + x110*w111 + x110*w113 + x111*w111 + x112*w110 + x112*w112 + x113*w110 + w110,
+      x110*w112 + x111*w110 + x111*w111 + x111*w113 + x112*w111 + x113*w110 + x113*w112 + w111,
+      x110*w110 + x110*w111 + x110*w112 + x111*w112 + x112*w110 + x112*w111 + x112*w113 + x113*w111 + w112,
+      x110*w111 + x111*w110 + x111*w112 + x112*w110 + x113*w111 + x113*w113 + w113,
+      x110*w112 + x111*w111 + x112*w110 + x113*w113 + 1]]
     sage: C[0].groebner_basis()
     Polynomial Sequence with 30 Polynomials in 16 Variables
 
@@ -905,18 +906,39 @@ class PolynomialSequence_generic(Sequence_generic):
 
             sage: B.<x,y,z> = BooleanPolynomialRing()
             sage: F = Sequence([x*y + y + 1, z + 1])
-            sage: F.connection_graph()
+            sage: G = F.connection_graph(); G
             Graph on 3 vertices
+            sage: G.is_connected()
+            False
+            sage: F = Sequence([x])
+            sage: F.connection_graph()
+            Graph on 1 vertex
+
+        TESTS::
+
+            sage: F = Sequence([], B)
+            sage: F.connection_graph()
+            Graph on 0 vertices
+            sage: F = Sequence([1], B)
+            sage: F.connection_graph()
+            Graph on 0 vertices
+            sage: F = Sequence([x])
+            sage: F.connection_graph()
+            Graph on 1 vertex
+            sage: F = Sequence([x, y])
+            sage: F.connection_graph()
+            Graph on 2 vertices
+            sage: F = Sequence([x*y*z])
+            sage: F.connection_graph().is_clique()
+            True
+            sage: F = Sequence([x*y, y*z])
+            sage: F.connection_graph().is_clique()
+            False
         """
-        V = sorted(self.variables())
         from sage.graphs.graph import Graph
         g = Graph()
-        g.add_vertices(sorted(V))
         for f in self:
-            v = f.variables()
-            a,tail = v[0],v[1:]
-            for b in tail:
-                g.add_edge((a,b))
+            g.add_clique(f.variables())
         return g
 
     def connected_components(self):
@@ -942,18 +964,37 @@ class PolynomialSequence_generic(Sequence_generic):
              Polynomial Sequence with 128 Polynomials in 128 Variables,
              Polynomial Sequence with 128 Polynomials in 128 Variables,
              Polynomial Sequence with 128 Polynomials in 128 Variables]
-        """
-        g = self.connection_graph()
-        C = sorted(g.connected_components())
 
-        P = [[] for _ in range(len(C))]
-        for f in self:
-            for i,c in enumerate(C):
-                if len(set(f.variables()).difference(c)) == 0:
-                    P[i].append(f)
-                    break
-        P = sorted([PolynomialSequence(sorted(p)) for p in P])
-        return P
+        TESTS:
+
+        Check the order of the output (:trac:`35518`)::
+
+            sage: R.<x,y,z> = PolynomialRing(ZZ)
+            sage: Sequence([x,z,y]).connected_components()
+            [[x], [z], [y]]
+            sage: Sequence([x,z,x*y*z,y]).connected_components()
+            [[x, z, x*y*z, y]]
+        """
+        # precompute the list of variables in each polynomial
+        vss = [f.variables() for f in self]
+
+        # Use a union-find data structure to encode relationships between
+        # variables, i.e., that they belong to a same polynomial
+        from sage.sets.disjoint_set import DisjointSet
+        DS = DisjointSet(set().union(*vss))
+        for u, *vs in vss:
+            for v in vs:
+                DS.union(u, v)
+
+        Ps = {}  # map root element -> polynomials in this component
+        for f, vs in zip(self, vss):
+            r = DS.find(vs[0])
+            if r in Ps:
+                Ps[r].append(f)
+            else:
+                Ps[r] = [f]
+
+        return [PolynomialSequence(self.ring(), p) for p in Ps.values()]
 
     def _groebner_strategy(self):
         """
@@ -1257,13 +1298,15 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
             This is called "massaging" in [BCJ2007]_.
         """
-        from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing,gauss_on_polys
-        from sage.rings.polynomial.pbori.ll import eliminate,ll_encode,ll_red_nf_redsb
+        from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
 
         R = self.ring()
 
-        if not isinstance(R, BooleanPolynomialRing):
+        if not isinstance(R, BooleanPolynomialRing_base):
             raise NotImplementedError("Only BooleanPolynomialRing's are supported.")
+
+        from sage.rings.polynomial.pbori.pbori import gauss_on_polys
+        from sage.rings.polynomial.pbori.ll import eliminate, ll_encode, ll_red_nf_redsb
 
         F = self
         reductors = []
@@ -1340,10 +1383,11 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             sage: F._groebner_strategy()
             <sage.rings.polynomial.pbori.pbori.GroebnerStrategy object at 0x...>
         """
-        from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
+        from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
+
         R = self.ring()
 
-        if not isinstance(R, BooleanPolynomialRing):
+        if not isinstance(R, BooleanPolynomialRing_base):
             from sage.libs.singular.groebner_strategy import GroebnerStrategy
             return GroebnerStrategy(self.ideal())
         else:
@@ -1452,7 +1496,6 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             []
 
         """
-        from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
         from sage.modules.free_module import VectorSpace
 
         S = self
@@ -1462,6 +1505,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         if eliminate_linear_variables:
             T, reductors = self.eliminate_linear_variables(return_reductors=True)
             if T.variables() != ():
+                from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
+
                 R_solving = BooleanPolynomialRing( T.nvariables(), [str(_) for _ in list(T.variables())] )
             S = PolynomialSequence( R_solving, [ R_solving(f) for f in T] )
 
@@ -1543,11 +1588,13 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             ....:             assert g[i].lt() not in t.divisors()
         """
 
-        from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
+        from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
+
         R = self.ring()
 
-        if isinstance(R, BooleanPolynomialRing):
+        if isinstance(R, BooleanPolynomialRing_base):
             from sage.rings.polynomial.pbori.interred import interred as inter_red
+
             l = [p for p in self if not p==0]
             l = sorted(inter_red(l, completely=True), reverse=True)
             return PolynomialSequence(l, R, immutable=True)

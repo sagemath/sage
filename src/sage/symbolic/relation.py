@@ -930,8 +930,7 @@ def solve(f, *args, **kwds):
     A basic interface to Giac is provided::
 
         sage: solve([(2/3)^x-2], [x], algorithm='giac')
-        ...
-        [[-log(2)/(log(3) - log(2))]]
+        ...[[-log(2)/(log(3) - log(2))]]
 
         sage: f = (sin(x) - 8*cos(x)*sin(x))*(sin(x)^2 + cos(x)) - (2*cos(x)*sin(x) - sin(x))*(-2*sin(x)^2 + 2*cos(x)^2 - cos(x))
         sage: solve(f, x, algorithm='giac')
@@ -1029,7 +1028,6 @@ def solve(f, *args, **kwds):
         TypeError: The first argument to solve() should be a symbolic expression
         or a list of symbolic expressions.
     """
-    from sage.symbolic.ring import is_SymbolicVariable
     from sage.structure.element import Expression
     explicit_solutions = kwds.get('explicit_solutions', None)
     multiplicities = kwds.get('multiplicities', None)
@@ -1076,13 +1074,13 @@ def solve(f, *args, **kwds):
 
     if not args:
         raise TypeError("Please input variables to solve for.")
-    if is_SymbolicVariable(x):
+    if isinstance(x, Expression) and x.is_symbol():
         variables = args
     else:
         variables = tuple(x)
 
     for v in variables:
-        if not is_SymbolicVariable(v):
+        if not (isinstance(v, Expression) and v.is_symbol()):
             raise TypeError("%s is not a valid variable." % repr(v))
 
     try:
@@ -1100,7 +1098,7 @@ def solve(f, *args, **kwds):
             sympy_f = f._sympy_()
         else:
             sympy_f = [s._sympy_() for s in f]
-        if is_SymbolicVariable(x):
+        if isinstance(f, Expression) and f.is_symbol():
             sympy_vars = (x._sympy_(),)
         else:
             sympy_vars = tuple([v._sympy_() for v in x])
@@ -1269,13 +1267,14 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         sage: solve([x==3], [x], solution_dict=True, algorithm='sympy')
         [{x: 3}]
     """
-    from sage.symbolic.ring import is_SymbolicVariable
+    from sage.structure.element import Expression
+
     if f.is_relational():
         if f.operator() is not operator.eq:
             if algorithm == 'sympy':
                 from sympy import S, solveset
                 from sage.interfaces.sympy import sympy_set_to_list
-                if is_SymbolicVariable(x):
+                if isinstance(x, Expression) and x.is_symbol():
                     sympy_vars = (x._sympy_(),)
                 else:
                     sympy_vars = tuple([v._sympy_() for v in x])
@@ -1313,7 +1312,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     if algorithm == 'sympy':
         from sympy import S, solveset
         from sage.interfaces.sympy import sympy_set_to_list
-        if is_SymbolicVariable(x):
+        if isinstance(x, Expression) and x.is_symbol():
             sympy_vars = (x._sympy_(),)
         else:
             sympy_vars = tuple([v._sympy_() for v in x])

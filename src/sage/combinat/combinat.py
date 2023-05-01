@@ -167,11 +167,11 @@ Functions and classes
 from __future__ import annotations
 from typing import Iterator
 
+from sage.arith.misc import bernoulli, factorial
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.arith.all import bernoulli, factorial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.pari.all import pari
@@ -3151,7 +3151,7 @@ def bernoulli_polynomial(x, n: Integer):
         if n < 0:
             raise TypeError
     except TypeError:
-        raise ValueError("The second argument must be a non-negative integer")
+        raise ValueError("the second argument must be a non-negative integer")
 
     if n == 0:
         return x**0   # result should be in the parent of x

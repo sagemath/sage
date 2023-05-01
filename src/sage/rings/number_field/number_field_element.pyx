@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 """
-Number Field Elements
+Number field elements (implementation using NTL)
 
 AUTHORS:
 
@@ -108,11 +108,19 @@ def is_NumberFieldElement(x):
 
         sage: from sage.rings.number_field.number_field_element import is_NumberFieldElement
         sage: is_NumberFieldElement(2)
+        doctest:warning...
+        DeprecationWarning: is_NumberFieldElement is deprecated;
+        use isinstance(..., sage.structure.element.NumberFieldElement) instead
+        See https://github.com/sagemath/sage/issues/34931 for details.
         False
         sage: k.<a> = NumberField(x^7 + 17*x + 1)
         sage: is_NumberFieldElement(a+1)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34931,
+                'is_NumberFieldElement is deprecated; '
+                'use isinstance(..., sage.structure.element.NumberFieldElement) instead')
     return isinstance(x, NumberFieldElement)
 
 
@@ -189,7 +197,7 @@ def _inverse_mod_generic(elt, I):
     return I.small_residue(y)
 
 
-cdef class NumberFieldElement(FieldElement):
+cdef class NumberFieldElement(NumberFieldElement_base):
     """
     An element of a number field.
 
@@ -1664,8 +1672,8 @@ cdef class NumberFieldElement(FieldElement):
             return self.is_norm(L, element=True, proof=proof)[0]
 
         K = self.parent()
-        from sage.rings.number_field.number_field_base import is_NumberField
-        if not is_NumberField(L):
+        from sage.rings.number_field.number_field_base import NumberField
+        if not isinstance(L, NumberField):
             raise ValueError("L (=%s) must be a NumberField in is_norm" % L)
 
         from sage.rings.number_field.number_field import is_AbsoluteNumberField
@@ -3804,8 +3812,8 @@ cdef class NumberFieldElement(FieldElement):
         if base is self.parent():
             return MatrixSpace(base,1)([self])
         if base is not None and base is not self.base_ring():
-            from sage.rings.number_field.number_field_base import is_NumberField
-            if is_NumberField(base):
+            from sage.rings.number_field.number_field_base import NumberField
+            if isinstance(base, NumberField):
                 return self._matrix_over_base(base)
             else:
                 return self._matrix_over_base_morphism(base)
@@ -3884,7 +3892,7 @@ cdef class NumberFieldElement(FieldElement):
         """
         from .number_field_ideal import is_NumberFieldIdeal
         if not is_NumberFieldIdeal(P):
-            if is_NumberFieldElement(P):
+            if isinstance(P, NumberFieldElement):
                 P = self.number_field().fractional_ideal(P)
             else:
                 raise TypeError("P must be an ideal")
@@ -4668,10 +4676,6 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
             sage: a.absolute_charpoly(algorithm='pari') == a.absolute_charpoly(algorithm='sage')
             True
         """
-        # this hack is necessary because quadratic fields override
-        # charpoly(), and they don't take the argument 'algorithm'
-        if algorithm is None:
-            return self.charpoly(var)
         return self.charpoly(var, algorithm)
 
     def absolute_minpoly(self, var='x', algorithm=None):
@@ -4699,10 +4703,6 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
             sage: b.absolute_minpoly(algorithm='pari') == b.absolute_minpoly(algorithm='sage')
             True
         """
-        # this hack is necessary because quadratic fields override
-        # minpoly(), and they don't take the argument 'algorithm'
-        if algorithm is None:
-            return self.minpoly(var)
         return self.minpoly(var, algorithm)
 
     def charpoly(self, var='x', algorithm=None):

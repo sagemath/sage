@@ -262,9 +262,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` -- a prime number
 
-        OUTPUT:
-
-        - a boolean
+        OUTPUT: A boolean.
 
         The answer is cached.
 
@@ -315,9 +313,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` -- a prime number
 
-        OUTPUT:
-
-        - a boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -444,7 +440,6 @@ class GaloisRepresentation(SageObject):
         ans = self._is_surjective(p, A)
         self.__is_surjective[key] = ans
         return ans
-
 
     def _is_surjective(self, p, A):
         r"""
@@ -715,9 +710,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p``  a prime number
 
-        OUTPUT:
-
-        - a string.
+        OUTPUT: A string.
 
         EXAMPLES::
 
@@ -989,7 +982,7 @@ class GaloisRepresentation(SageObject):
             could_be_split = 1
             could_be_non_split = 1
             # loops over primes as long as we still have two options left
-            while ell < 10000 and (could_be_exc + could_be_split + could_be_non_split  > 1):
+            while ell < 10000 and (could_be_exc + could_be_split + could_be_non_split > 1):
                 ell = arith.next_prime(ell)
                 if Np % ell != 0:
                     a_ell = self._E.ap(ell)
@@ -1007,7 +1000,7 @@ class GaloisRepresentation(SageObject):
                         verbose("the image cannot be split, found u=%s"%u, level=2)
                         could_be_split = 0
 
-            assert could_be_exc + could_be_split + could_be_non_split  > 0, "bug in image_type."
+            assert could_be_exc + could_be_split + could_be_non_split > 0, "bug in image_type."
 
             if could_be_exc + could_be_split + could_be_non_split == 1:
                 # it is only one of the three cases:
@@ -1029,7 +1022,7 @@ class GaloisRepresentation(SageObject):
                     f = R([1,-3,1]) #(X**2 - 3*X+1)
                     el5 = f.roots()
                     # loops over primes as long as we still have two options left
-                    while ell < 10000 and (could_be_s4 + could_be_a4 + could_be_a5  > 1):
+                    while ell < 10000 and (could_be_s4 + could_be_a4 + could_be_a5 > 1):
                         ell = arith.next_prime(ell)
                         if Np % ell != 0:
                             a_ell = self._E.ap(ell)
@@ -1043,7 +1036,7 @@ class GaloisRepresentation(SageObject):
                                 could_be_a4 = 0
                                 could_be_s4 = 0
 
-                    assert (could_be_s4 + could_be_a4 + could_be_a5  > 0), "bug in image_type."
+                    assert (could_be_s4 + could_be_a4 + could_be_a5 > 0), "bug in image_type."
 
                     if could_be_s4 + could_be_a4 + could_be_a5 == 1:
                         if could_be_s4 == 1:
@@ -1089,7 +1082,6 @@ class GaloisRepresentation(SageObject):
 
         self.__image_type[p] = "The image could not be determined. Sorry."
         return self.__image_type[p]
-
 
     def image_classes(self,p,bound=10000):
         r"""
@@ -1254,9 +1246,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` another prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1289,9 +1279,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` a different prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1328,9 +1316,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` a different prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1360,9 +1346,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1390,9 +1374,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1417,9 +1399,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1433,7 +1413,6 @@ class GaloisRepresentation(SageObject):
             raise ValueError('p (=%s) must be prime' % p)
         return self._E.j_invariant().valuation(p) >= 0
 
-
     def is_semistable(self,p):
         r"""
         Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is semistable.
@@ -1444,9 +1423,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1472,9 +1449,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 

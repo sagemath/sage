@@ -55,9 +55,6 @@ THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
 OPENMP_CFLAGS = "@OPENMP_CFLAGS@"
 OPENMP_CXXFLAGS = "@OPENMP_CXXFLAGS@"
 
-# The full absolute path to the main Singular library.
-LIBSINGULAR_PATH = "@LIBSINGULAR_PATH@".replace('$SAGE_LOCAL', SAGE_LOCAL)
-
 # Installation location of wheels. This is determined at configuration time
 # and does not depend on the installation location of sage-conf.
 SAGE_SPKG_WHEELS = "@SAGE_VENV@".replace('${SAGE_LOCAL}', SAGE_LOCAL) + "/var/lib/sage/wheels"

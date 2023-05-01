@@ -57,9 +57,9 @@ cdef class GenericBackend:
 
         - ``binary`` - ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` - ``True`` if the variable is integral (default: ``False``).
 
         - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
 
@@ -777,7 +777,7 @@ cdef class GenericBackend:
             sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
             sage: b = p.new_variable(binary=True)                      # optional - Nonexistent_LP_solver
             sage: for u,v in graphs.CycleGraph(5).edges(labels=False): # optional - Nonexistent_LP_solver
-            ....:     p.add_constraint(b[u]+b[v]<=1)                   # optional - Nonexistent_LP_solver
+            ....:     p.add_constraint(b[u]+b[v]<=1)
             sage: p.set_objective(p.sum(b[x] for x in range(5)))       # optional - Nonexistent_LP_solver
             sage: p.solve()                                            # optional - Nonexistent_LP_solver
             2.0
@@ -812,7 +812,7 @@ cdef class GenericBackend:
             sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
             sage: b = p.new_variable(binary=True)                      # optional - Nonexistent_LP_solver
             sage: for u,v in graphs.CycleGraph(5).edges(labels=False): # optional - Nonexistent_LP_solver
-            ....:     p.add_constraint(b[u]+b[v]<=1)                   # optional - Nonexistent_LP_solver
+            ....:     p.add_constraint(b[u]+b[v]<=1)
             sage: p.set_objective(p.sum(b[x] for x in range(5)))       # optional - Nonexistent_LP_solver
             sage: p.solve()                                            # optional - Nonexistent_LP_solver
             2.0
@@ -1555,7 +1555,7 @@ def default_mip_solver(solver=None):
         - a string indicating one of the available solvers
           (see :class:`MixedIntegerLinearProgram`);
 
-        - a callable (typically a subclass of 
+        - a callable (typically a subclass of
           :class:`sage.numerical.backends.generic_backend.GenericBackend`);
 
         - ``None`` (default), in which case the current default solver
@@ -1595,7 +1595,7 @@ def default_mip_solver(solver=None):
             return default_solver
 
         else:
-            for s in ["Cplex", "Gurobi", "Coin", "Glpk", "SCIP"]:
+            for s in ["Cplex", "Gurobi", "Cvxpy/cbc", "Coin", "Glpk", "SCIP"]:
                 try:
                     default_mip_solver(s)
                     return s
@@ -1649,6 +1649,24 @@ def default_mip_solver(solver=None):
     elif solver == "Interactivelp":
         default_solver = solver
 
+    elif solver == "Cvxpy":
+        try:
+            from sage.numerical.backends.cvxpy_backend import CVXPYBackend
+        except ImportError:
+            raise ValueError("CVXPY is not available. Please refer to the documentation to install it.")
+        else:
+            assert CVXPYBackend
+            default_solver = solver
+
+    elif solver.startswith("Cvxpy"):
+        try:
+            s = get_solver(solver=solver)
+            s.solve()
+        except Exception as e:
+            raise ValueError(f"{solver} is not available: {e}. Please refer to the documentation to install it.")
+        else:
+            default_solver = solver
+
     elif solver == "Scip":
         try:
             from sage.numerical.backends.scip_backend import SCIPBackend
@@ -1657,7 +1675,7 @@ def default_mip_solver(solver=None):
             raise ValueError("SCIP is not available. Please refer to the documentation to install it.")
 
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
+        raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
 
 cpdef GenericBackend get_solver(constraint_generation = False, solver = None, base_ring = None):
     """
@@ -1759,7 +1777,8 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
         if base_ring is not None:
             base_ring = base_ring.fraction_field()
-            from sage.rings.all import QQ, RDF
+            from sage.rings.rational_field import QQ
+            from sage.rings.real_double import RDF
             if base_ring is QQ:
                 solver = "Ppl"
             elif solver in ["Interactivelp", "Ppl"] and not base_ring.is_exact():
@@ -1813,10 +1832,16 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         from sage.numerical.backends.interactivelp_backend import InteractiveLPBackend
         return InteractiveLPBackend(base_ring=base_ring)
 
+    elif solver.startswith("Cvxpy"):
+        from sage.numerical.backends.cvxpy_backend import CVXPYBackend
+        if solver == "Cvxpy":
+            return CVXPYBackend()
+        if solver.startswith("Cvxpy/"):
+            return CVXPYBackend(cvxpy_solver=solver[len("Cvxpy/"):])
+
     elif solver == "Scip":
         from sage.numerical.backends.scip_backend import SCIPBackend
         return SCIPBackend()
 
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', None (in which case the default one is used), or a callable.")
-
+        raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', None (in which case the default one is used), or a callable.")

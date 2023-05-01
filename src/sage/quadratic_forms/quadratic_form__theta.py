@@ -11,35 +11,31 @@ AUTHORS:
 """
 from copy import deepcopy
 
-from sage.rings.real_mpfr import RealField
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.integer_ring import ZZ
-from sage.functions.all import floor, ceil
-from sage.misc.functional import sqrt
-from sage.misc.misc import cputime
 
 
 def theta_series(self, Max=10, var_str='q', safe_flag=True):
-    """
+    r"""
     Compute the theta series as a power series in the variable given
-    in var_str (which defaults to '`q`'), up to the specified precision
-    `O(q^max)`.
+    in ``var_str`` (which defaults to ``'q'``), up to the specified precision
+    `O(q^{Max})`.
 
     This uses the PARI/GP function :pari:`qfrep`, wrapped by the
     theta_by_pari() method. This caches the result for future
     computations.
 
-    The safe_flag allows us to select whether we want a copy of the
+    The ``safe_flag`` allows us to select whether we want a copy of the
     output, or the original output.  It is only meaningful when a
     vector is returned, otherwise a copy is automatically made in
-    creating the power series.  By default safe_flag = True, so we
+    creating the power series.  By default ``safe_flag`` = True, so we
     return a copy of the cached information.  If this is set to False,
     then the routine is much faster but the return values are
     vulnerable to being corrupted by the user.
 
     .. TODO::
 
-        Allow the option Max='mod_form' to give enough coefficients
+        Allow the option ``Max='mod_form'`` to give enough coefficients
         to ensure we determine the theta series as a modular form.  This
         is related to the Sturm bound, but we will need to be careful about
         this (particularly for half-integral weights!).
@@ -47,11 +43,13 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
-        sage: Q.theta_series()
+        sage: Q.theta_series()                                                      # optional - sage.libs.pari
         1 + 2*q + 2*q^3 + 6*q^4 + 2*q^5 + 4*q^6 + 6*q^7 + 8*q^8 + 14*q^9 + O(q^10)
 
-        sage: Q.theta_series(25)
-        1 + 2*q + 2*q^3 + 6*q^4 + 2*q^5 + 4*q^6 + 6*q^7 + 8*q^8 + 14*q^9 + 4*q^10 + 12*q^11 + 18*q^12 + 12*q^13 + 12*q^14 + 8*q^15 + 34*q^16 + 12*q^17 + 8*q^18 + 32*q^19 + 10*q^20 + 28*q^21 + 16*q^23 + 44*q^24 + O(q^25)
+        sage: Q.theta_series(25)                                                    # optional - sage.libs.pari
+        1 + 2*q + 2*q^3 + 6*q^4 + 2*q^5 + 4*q^6 + 6*q^7 + 8*q^8 + 14*q^9 + 4*q^10
+        + 12*q^11 + 18*q^12 + 12*q^13 + 12*q^14 + 8*q^15 + 34*q^16 + 12*q^17 + 8*q^18
+        + 32*q^19 + 10*q^20 + 28*q^21 + 16*q^23 + 44*q^24 + O(q^25)
 
     """
     # Sanity Check: Max is an integer or an allowed string:
@@ -73,38 +71,37 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
 # -------------  Compute the theta function by using the PARI/GP routine qfrep  ------------
 
 def theta_by_pari(self, Max, var_str='q', safe_flag=True):
-    """
+    r"""
     Use PARI/GP to compute the theta function as a power series (or
-    vector) up to the precision `O(q^Max)`.  This also caches the result
+    vector) up to the precision `O(q^{Max})`.  This also caches the result
     for future computations.
 
-    If var_str = '', then we return a vector `v` where `v[i]` counts the
+    If ``var_str`` = ``''``, then we return a vector `v` where ``v[i]`` counts the
     number of vectors of length `i`.
 
-    The safe_flag allows us to select whether we want a copy of the
+    The ``safe_flag`` allows us to select whether we want a copy of the
     output, or the original output.  It is only meaningful when a
     vector is returned, otherwise a copy is automatically made in
-    creating the power series.  By default safe_flag = True, so we
+    creating the power series.  By default ``safe_flag=True``, so we
     return a copy of the cached information.  If this is set to False,
     then the routine is much faster but the return values are
     vulnerable to being corrupted by the user.
 
     INPUT:
 
-        Max -- an integer >=0
-        var_str -- a string
+    - ``Max`` -- an integer `\geq 0`
+    - ``var_str`` -- a string
 
-    OUTPUT:
-
-        a power series or a vector
+    OUTPUT: a power series or a vector
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: Prec = 100
-        sage: compute = Q.theta_by_pari(Prec, '')
-        sage: exact = [1] + [8 * sum([d  for d in divisors(i)  if d % 4 != 0])  for i in range(1, Prec)]
-        sage: compute == exact
+        sage: compute = Q.theta_by_pari(Prec, '')                                   # optional - sage.libs.pari
+        sage: exact = [1] + [8 * sum([d  for d in divisors(i)  if d % 4 != 0])      # optional - sage.libs.pari
+        ....:                for i in range(1, Prec)]
+        sage: compute == exact                                                      # optional - sage.libs.pari
         True
 
     """
@@ -124,7 +121,6 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
             return theta_vec
     else:
         return PowerSeriesRing(ZZ, var_str)(theta_vec, Max)
-
 
 
 # -------------  Compute the theta function by using an explicit Cholesky decomposition ------------
@@ -148,8 +144,7 @@ def theta_by_cholesky(self, q_prec):
 
     REFERENCE:
 
-        From Cohen's "A Course in Computational Algebraic Number Theory" book,
-        p 102.
+    Cohen's "A Course in Computational Algebraic Number Theory" book, p 102.
 
     EXAMPLES::
 
@@ -157,8 +152,10 @@ def theta_by_cholesky(self, q_prec):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: Theta = Q.theta_by_cholesky(10)
         sage: Theta
-        1 + 8*q + 24*q^2 + 32*q^3 + 24*q^4 + 48*q^5 + 96*q^6 + 64*q^7 + 24*q^8 + 104*q^9 + 144*q^10
-        sage: Expected =  [1] + [8*sum([d for d in divisors(n) if d%4 != 0])  for n in range(1,11)]
+        1 + 8*q + 24*q^2 + 32*q^3 + 24*q^4 + 48*q^5 + 96*q^6
+         + 64*q^7 + 24*q^8 + 104*q^9 + 144*q^10
+        sage: Expected = [1] + [8*sum([d for d in divisors(n) if d%4 != 0])
+        ....:                   for n in range(1, 11)]
         sage: Expected
         [1, 8, 24, 32, 24, 48, 96, 64, 24, 104, 144]
         sage: Theta.list() == Expected
@@ -176,6 +173,10 @@ def theta_by_cholesky(self, q_prec):
     """
     # RAISE AN ERROR -- This routine is deprecated!
     #raise NotImplementedError, "This routine is deprecated.  Try theta_series(), which uses theta_by_pari()."
+
+    from sage.arith.misc import integer_ceil as ceil, integer_floor as floor
+    from sage.misc.functional import sqrt
+    from sage.rings.real_mpfr import RealField
 
     n = self.dim()
     theta = [0 for i in range(q_prec+1)]
@@ -224,8 +225,6 @@ def theta_by_cholesky(self, q_prec):
                 L[i] = floor(Z - U[i])
                 x[i] = ceil(-Z - U[i]) - 1
 
-
-
             # 3a. Main loop
             x[i] += 1
             while (x[i] > L[i]):
@@ -235,32 +234,32 @@ def theta_by_cholesky(self, q_prec):
             # 3b. Main loop
             if (i > 0):
                 from_step3_flag = True
-                T[i-1] = T[i] - Q[i,i] * (x[i] + U[i]) * (x[i] + U[i])
-                i += - 1
+                T[i - 1] = T[i] - Q[i, i] * (x[i] + U[i]) * (x[i] + U[i])
+                i += -1
                 U[i] = 0
-                for j in range(i+1, n):
-                    U[i] += Q[i,j] * x[j]
+                for j in range(i + 1, n):
+                    U[i] += Q[i, j] * x[j]
 
         # 4. Solution found (This happens when i=0)
         from_step4_flag = True
-        Q_val_double = q_prec - T[0] + Q[0,0] * (x[0] + U[0]) * (x[0] + U[0])
+        Q_val_double = q_prec - T[0] + Q[0, 0] * (x[0] + U[0]) * (x[0] + U[0])
         Q_val = floor(Q_val_double + half)        # Note: This rounds the value up, since the "round" function returns a float, but floor returns integer.
 
         # OPTIONAL SAFETY CHECK:
         eps = 0.000000001
-        if (abs(Q_val_double - Q_val) > eps):
-            raise RuntimeError("Oh No!  We have a problem with the floating point precision... \n" \
-                + " Q_val_double = " + str(Q_val_double) + "\n" \
-                + " Q_val = " + str(Q_val) + "\n" \
+        if abs(Q_val_double - Q_val) > eps:
+            raise RuntimeError("Oh No! We have a problem with the floating point precision... \n"
+                + " Q_val_double = " + str(Q_val_double) + "\n"
+                + " Q_val = " + str(Q_val) + "\n"
                 + " x = " + str(x) + "\n")
 
-        if (Q_val <= q_prec):
+        if Q_val <= q_prec:
             theta[Q_val] += 2
 
         # 5. Check if x = 0, for exit condition. =)
         done_flag = True
         for j in range(n):
-            if (x[j] != 0):
+            if x[j] != 0:
                 done_flag = False
 
     # Set the value: theta[0] = 1
@@ -272,11 +271,11 @@ def theta_by_cholesky(self, q_prec):
 
 def theta_series_degree_2(Q, prec):
     r"""
-    Compute the theta series of degree 2 for the quadratic form Q.
+    Compute the theta series of degree 2 for the quadratic form `Q`.
 
     INPUT:
 
-    - ``prec`` -- an integer.
+    - ``prec`` -- an integer
 
     OUTPUT:
 
@@ -306,6 +305,9 @@ def theta_series_degree_2(Q, prec):
     - Raum, Ryan, Skoruppa, Tornaria, 'On Formal Siegel Modular Forms'
       (preprint)
     """
+    from sage.arith.misc import integer_floor as floor
+    from sage.misc.functional import sqrt
+    from sage.misc.misc import cputime
     from sage.misc.verbose import verbose
 
     if Q.base_ring() != ZZ:

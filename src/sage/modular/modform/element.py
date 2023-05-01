@@ -174,15 +174,17 @@ class ModularForm_abstract(ModuleElement):
         """
         return self.parent().level()
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         """
-        Return true. For compatibility with elements of a graded modular forms ring.
+        Return ``True``.
+
+        For compatibility with elements of a graded modular forms ring.
 
         An alias of this method is ``is_modular_form``.
 
         .. SEEALSO::
 
-            :meth: `sage.modular.modform.element.GradedModularFormElement.is_homogeneous`
+            :meth:`sage.modular.modform.element.GradedModularFormElement.is_homogeneous`
 
         EXAMPLES::
 
@@ -190,11 +192,12 @@ class ModularForm_abstract(ModuleElement):
             True
         """
         return True
+
     is_modular_form = is_homogeneous  # alias
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -1071,7 +1074,7 @@ class ModularForm_abstract(ModuleElement):
 
             sage: F = Newforms(1,12)[0]
             sage: chi = DirichletGroup(7).0
-            sage: abs(F.symsquare_lseries(chi).check_functional_equation()) < 1e-5
+            sage: abs(F.symsquare_lseries(chi).check_functional_equation()) < 1e-5  # long time
             True
 
         AUTHORS:
@@ -2301,13 +2304,22 @@ class Newform(ModularForm_abstract):
 
         EXAMPLES::
 
-            sage: f = Newforms(575, 2, names='a')[4]
-            sage: g, chi = f.minimal_twist(5)
+            sage: f = Newforms(121, 2)[3]
+            sage: g, chi = f.minimal_twist()
             sage: g
-            q + a*q^2 - a*q^3 - 2*q^4 + (1/2*a + 2)*q^5 + O(q^6)
+            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
             sage: chi
+            Dirichlet character modulo 11 of conductor 11 mapping 2 |--> -1
+            sage: f.twist(chi, level=11) == g
+            True
+
+            sage: f = Newforms(575, 2, names='a')[4]    # long time
+            sage: g, chi = f.minimal_twist(5)           # long time
+            sage: g                                     # long time
+            q + a*q^2 - a*q^3 - 2*q^4 + (1/2*a + 2)*q^5 + O(q^6)
+            sage: chi                                   # long time
             Dirichlet character modulo 5 of conductor 5 mapping 2 |--> 1/2*a
-            sage: f.twist(chi, level=g.level()) == g
+            sage: f.twist(chi, level=g.level()) == g    # long time
             True
         """
         if p is None:
@@ -2724,14 +2736,14 @@ class ModularFormElement_elliptic_curve(Newform):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('5077a')
+            sage: E = EllipticCurve('389a')
             sage: f = E.modular_form()
             sage: f
-            q - 2*q^2 - 3*q^3 + 2*q^4 - 4*q^5 + O(q^6)
+            q - 2*q^2 - 2*q^3 + 2*q^4 - 3*q^5 + O(q^6)
             sage: f.q_expansion(10)
-            q - 2*q^2 - 3*q^3 + 2*q^4 - 4*q^5 + 6*q^6 - 4*q^7 + 6*q^9 + O(q^10)
+            q - 2*q^2 - 2*q^3 + 2*q^4 - 3*q^5 + 4*q^6 - 5*q^7 + q^9 + O(q^10)
             sage: f.parent()
-            Modular Forms space of dimension 423 for Congruence Subgroup Gamma0(5077) of weight 2 over Rational Field
+            Modular Forms space of dimension 33 for Congruence Subgroup Gamma0(389) of weight 2 over Rational Field
 
             sage: E = EllipticCurve('37a')
             sage: f = E.modular_form() ; f

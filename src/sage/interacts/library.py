@@ -161,7 +161,7 @@ def html(obj):
         sage: html("<h1>Hello world</h1>")
         <h1>Hello world</h1>
     """
-    from sage.all import html
+    from sage.misc.html import html
     pretty_print(html(obj))
 
 
@@ -1032,7 +1032,7 @@ def secant_method(title, f, interval, d, maxn):
         L = sum(line([(c,k*i), (d,k*i)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(c,k*i-k/4), (c,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(d,k*i-k/4), (d,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
-        S = sum(line([(c,f(c)), (d,f(d)), (d-(d-c)*f(d)/(f(d)-f(c)), 0)], color="green") for  (c,d) in intervals)
+        S = sum(line([(c,f(c)), (d,f(d)), (d-(d-c)*f(d)/(f(d)-f(c)), 0)], color="green") for (c, d) in intervals)
         show(P + L + S, xmin=a, xmax=b)
 
 
@@ -1301,7 +1301,7 @@ def simpson_integration(
     else:
         interval = interval_g[0]
     def parabola(a, b, c):
-        from sage.all import solve
+        from sage.symbolic.relation import solve
         A, B, C = SR.var("A, B, C")
         K = solve([A*a[0]**2+B*a[0]+C==a[1], A*b[0]**2+B*b[0]+C==b[1], A*c[0]**2+B*c[0]+C==c[1]], [A, B, C], solution_dict=True)[0]
         f = K[A]*x**2+K[B]*x+K[C]
@@ -1436,7 +1436,7 @@ def riemann_sum(
         sage: interacts.calculus.riemann_sum()
         Manual interactive function <function riemann_sum at ...> with 9 widgets
           title: HTMLText(value='<h2>Riemann integral with random sampling</h2>')
-          f: EvalText(value='x^2+1', description='$f(x)=$', layout=Layout(max_width='41em'))
+          f: EvalText(value='x^2+1',... description='$f(x)=$', layout=Layout(max_width='41em'))
           n: IntSlider(value=5, description='# divisions', max=30, min=1)
           hr1: HTMLText(value='<hr>')
           interval_input: ToggleButtons(description='Integration interval', options=('from slider', 'from keyboard'), value='from slider')
@@ -1548,7 +1548,7 @@ def function_tool(f, g, xrange, yrange, a, action, do_plot):
     it will simply return the underlying HTML and Sage code which
     creates the mathlet::
 
-        sage: interacts.calculus.function_tool()
+        sage: interacts.calculus.function_tool()  # long time
         ...Interactive function <function function_tool at ...> with 7 widgets
           f: EvalText(value='sin(x)', description='f')
           g: EvalText(value='cos(x)', description='g')
@@ -1678,7 +1678,7 @@ def julia(expo, c_real, c_imag, iterations, zoom_x, zoom_y, plot_points, dpi):
     it will simply return the underlying HTML and Sage code which
     creates the mathlet::
 
-        sage: interacts.fractals.julia()
+        sage: interacts.fractals.julia()  # long time
         ...Interactive function <function julia at ...> with 8 widgets
           expo: FloatSlider(value=2.0, description='expo', max=10.0, min=-10.0)
           c_real: FloatSlider(value=0.5, description='real part const.', max=2.0, min=-2.0, step=0.01)
@@ -1730,7 +1730,7 @@ def mandelbrot(expo, iterations, zoom_x, zoom_y, plot_points, dpi):
     it will simply return the underlying HTML and Sage code which
     creates the mathlet::
 
-        sage: interacts.fractals.mandelbrot()
+        sage: interacts.fractals.mandelbrot()  # long time
         ...Interactive function <function mandelbrot at ...> with 6 widgets
           expo: FloatSlider(value=2.0, description='expo', max=10.0, min=-10.0)
           iterations: IntSlider(value=20, description='# iterations', min=1)
@@ -1775,7 +1775,7 @@ def cellular_automaton(N, rule_number, size):
     it will simply return the underlying HTML and Sage code which
     creates the mathlet::
 
-        sage: interacts.fractals.cellular_automaton()
+        sage: interacts.fractals.cellular_automaton()  # long time
         ...Interactive function <function cellular_automaton at ...> with 3 widgets
           N: IntSlider(value=100, description='Number of iterations', max=500, min=1)
           rule_number: IntSlider(value=110, description='Rule number', max=255)
@@ -1834,7 +1834,7 @@ def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n,
     it will simply return the underlying HTML and Sage code which
     creates the mathlet::
 
-        sage: sage.interacts.algebra.polar_prime_spiral()
+        sage: sage.interacts.algebra.polar_prime_spiral()  # long time
         ...Interactive function <function polar_prime_spiral at ...> with 6 widgets
           interval: IntRangeSlider(value=(1, 1000), description='range', max=4000, min=1, step=10)
           show_factors: Checkbox(value=True, description='show_factors')

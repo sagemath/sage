@@ -1592,7 +1592,7 @@ class FractionWithFactoredDenominator(RingElement):
              432,
              3/5*sqrt(5)*sqrt(3)*sqrt(2)*sqrt(r)/sqrt(pi)
               + 463/6000*sqrt(5)*sqrt(3)*sqrt(2)/(sqrt(pi)*sqrt(r)))
-            sage: F.relative_error(asy[0], alpha, [1, 2, 4, 8, 16], asy[1])  # abs tol 1e-10
+            sage: F.relative_error(asy[0], alpha, [1, 2, 4, 8, 16], asy[1])  # abs tol 1e-10  # long time
             [((4, 3), 2.083333333, [2.092576110], [-0.004436533009]),
              ((8, 6), 2.787374614, [2.790732875], [-0.001204811281]),
              ((16, 12), 3.826259447, [3.827462310], [-0.0003143703383]),
@@ -2821,7 +2821,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: alpha = vector([3, 3, 2])
             sage: interval = [1, 2, 4]
             sage: S = [r*alpha for r in interval]
-            sage: F.maclaurin_coefficients(S, numerical=10)
+            sage: F.maclaurin_coefficients(S, numerical=10)  # long time
             {(3, 3, 2): 0.7849731445,
              (6, 6, 4): 0.7005249476,
              (12, 12, 8): 0.5847732654}
@@ -3323,7 +3323,6 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Ring):
         """
         from sage.rings.semirings.non_negative_integer_semiring import NN
         return self(NN.an_element(), [(self.base().an_element(), NN(3))])
-
 
     Element = FractionWithFactoredDenominator
 
@@ -4029,10 +4028,10 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
         sage: B = function('B')(*tuple(T))
         sage: AB_derivs = {}
         sage: M = matrix([[1, 2],[2, 1]])
-        sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)
-        sage: sorted(DD)
+        sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)  # long time (see :trac:`35207`)
+        sage: sorted(DD)                                 # long time
         [(0, 0, 0), (0, 1, 0), (0, 1, 1), (0, 1, 2)]
-        sage: DD[(0, 1, 2)].number_of_operands()
+        sage: DD[(0, 1, 2)].number_of_operands()         # long time
         246
     """
     from itertools import product

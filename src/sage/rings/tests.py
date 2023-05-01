@@ -421,8 +421,8 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
 
     First check that random tests are reproducible::
 
-        sage: import sage.rings.tests
-        sage: sage.rings.tests.test_karatsuba_multiplication(ZZ, 6, 5, verbose=True, seed=42)
+        sage: from sage.rings.tests import test_karatsuba_multiplication
+        sage: test_karatsuba_multiplication(ZZ, 6, 5, verbose=True, seed=42)
         test_karatsuba_multiplication: ring=Univariate Polynomial Ring in x over Integer Ring, threshold=2
         (2*x^6 - x^5 - x^4 - 3*x^3 + 4*x^2 + 4*x + 1)*(4*x^4 + x^3 - 2*x^2 - 20*x + 3)
           (16*x^2)*(-41*x + 1)
@@ -437,22 +437,27 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
 
     Test Karatsuba multiplication of polynomials of small degree over some common rings::
 
-        sage: for C in [QQ, ZZ[I], ZZ[I, sqrt(2)], GF(49, 'a'), MatrixSpace(GF(17), 3)]:
-        ....:     sage.rings.tests.test_karatsuba_multiplication(C, 10, 10)
+        sage: for C in [QQ, ZZ[I], GF(49, 'a'), MatrixSpace(GF(17), 3)]:
+        ....:     test_karatsuba_multiplication(C, 10, 10)
 
     Zero-tests over ``QQbar`` are currently very slow, so we test only very small examples::
 
-        sage.rings.tests.test_karatsuba_multiplication(QQbar, 3, 3, numtests=2)
+        sage: test_karatsuba_multiplication(QQbar, 3, 3, numtests=2)        # long time
 
     Larger degrees (over ``ZZ``, using FLINT)::
 
-        sage: sage.rings.tests.test_karatsuba_multiplication(ZZ, 1000, 1000, ref_mul=lambda f,g: f*g, base_ring_random_elt_args=[1000])
+        sage: test_karatsuba_multiplication(ZZ, 1000, 1000,
+        ....:                               ref_mul=lambda f,g: f*g,
+        ....:                               base_ring_random_elt_args=[1000])
 
     Some more aggressive tests::
 
-        sage: for C in [QQ, ZZ[I], ZZ[I, sqrt(2)], GF(49, 'a'), MatrixSpace(GF(17), 3)]:
-        ....:     sage.rings.tests.test_karatsuba_multiplication(C, 10, 10) # long time
-        sage: sage.rings.tests.test_karatsuba_multiplication(ZZ, 10000, 10000, ref_mul=lambda f,g: f*g, base_ring_random_elt_args=[100000])
+        sage: testrings = [ZZ[I, sqrt(2)], ZZ[I, sqrt(2), sqrt(3)]]         # long time
+        sage: for C in testrings:                                           # long time
+        ....:     test_karatsuba_multiplication(C, 100, 100)
+        sage: test_karatsuba_multiplication(ZZ, 10000, 10000,               # long time
+        ....:                               ref_mul=lambda f,g: f*g,
+        ....:                               base_ring_random_elt_args=[100000])
 
     """
     from sage.misc.prandom import randint

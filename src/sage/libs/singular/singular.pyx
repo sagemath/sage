@@ -1705,14 +1705,7 @@ cdef object si2sa_intvec(intvec *v):
 cdef extern from *: # hack to get at cython macro
     int unlikely(int)
 
-cdef extern from "dlfcn.h":
-    void *dlopen(char *, long)
-    char *dlerror()
-    void dlclose(void *handle)
-
-cdef extern from "dlfcn.h":
-    cdef long RTLD_LAZY
-    cdef long RTLD_GLOBAL
+from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
 
 cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     """
@@ -1768,8 +1761,6 @@ cdef init_libsingular():
 
     cdef void *handle = NULL
 
-    from sage.env import LIBSINGULAR_PATH
-    lib = str_to_bytes(LIBSINGULAR_PATH, FS_ENCODING, "surrogateescape")
 
     # This is a workaround for https://github.com/Singular/Singular/issues/1113
     # and can be removed once that fix makes it into release of Singular that
@@ -1786,10 +1777,12 @@ cdef init_libsingular():
 
     import platform
     if not platform.system().startswith("CYGWIN"):
+        # reload the current module to force reload of libSingular (see #33446)
+        lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
         handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
         if not handle:
             err = dlerror()
-            raise ImportError(f"cannot load Singular library from {LIBSINGULAR_PATH} ({err})")
+            raise RuntimeError(f"Could not reload Singular library with RTLD_GLOBAL ({err})")
 
     # load SINGULAR
     siInit(lib)

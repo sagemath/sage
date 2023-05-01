@@ -179,14 +179,6 @@ class ExtendedCode(AbstractLinearCode):
         return vector(F, c_list)
 
 
-
-
-
-
-
-
-
-
 class ExtendedCodeExtendedMatrixEncoder(Encoder):
     r"""
     Encoder using original code's generator matrix to compute the extended code's one.
@@ -284,14 +276,6 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
         M = G.augment(extra_col)
         M.set_immutable()
         return M
-
-
-
-
-
-
-
-
 
 
 class ExtendedCodeOriginalCodeDecoder(Decoder):

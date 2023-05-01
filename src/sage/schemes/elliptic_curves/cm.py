@@ -4,11 +4,13 @@ Complex multiplication for elliptic curves
 This module implements the functions
 
 - ``hilbert_class_polynomial``
+- ``is_HCP``
 - ``cm_j_invariants``
 - ``cm_orders``
 - ``discriminants_with_bounded_class_number``
 - ``cm_j_invariants_and_orders``
 - ``largest_fundamental_disc_with_class_number``
+- ``is_cm_j_invariant``
 
 AUTHORS:
 
@@ -42,6 +44,8 @@ from sage.rings.number_field.number_field import is_fundamental_discriminant
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.misc.cachefunc import cached_function
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
+
 
 @cached_function
 def hilbert_class_polynomial(D, algorithm=None):
@@ -172,6 +176,156 @@ def hilbert_class_polynomial(D, algorithm=None):
     return IntegerRing()['x'](coeffs)
 
 
+def is_HCP(f, check_monic_irreducible=True):
+    r"""
+    Determine whether a polynomial is a Hilbert Class Polynomial.
+
+    INPUT:
+
+    - ``f`` -- a polynomial in `\ZZ[X]`.
+    - ``check_monic_irreducible`` (boolean, default ``True``) -- if
+      ``True``, check that ``f`` is a monic, irreducible, integer
+      polynomial.
+
+    OUTPUT:
+
+    (integer) -- either `D` if ``f`` is the Hilbert Class Polynomial
+    `H_D` for discriminant `D`, or `0` if not an HCP.
+
+    ALGORITHM:
+
+    Cremona and Sutherland: Algorithm 2 of [CreSuth2023]_.
+
+    EXAMPLES:
+
+    Even for large degrees this is fast.  We test the largest
+    discriminant of class number 100, for which the HCP has coefficients
+    with thousands of digits::
+
+        sage: from sage.schemes.elliptic_curves.cm import is_HCP
+        sage: D = -1856563
+        sage: D.class_number()
+        100
+        sage: H = hilbert_class_polynomial(D)
+        sage: H.degree()
+        100
+        sage: max(c for c in H).ndigits()
+        2774
+        sage: is_HCP(H)
+        -1856563
+
+    Testing polynomials which are not HCPs is faster::
+
+        sage: is_HCP(H+1)
+        0
+
+
+    TESTS::
+
+        sage: from sage.schemes.elliptic_curves.cm import is_HCP
+        sage: all(is_HCP(hilbert_class_polynomial(D))==D for D in srange(-4,-100,-1) if D.is_discriminant())
+        True
+        sage: all(not is_HCP(hilbert_class_polynomial(D)+1) for D in srange(-4,-100,-1) if D.is_discriminant())
+        True
+    """
+    zero = ZZ(0)
+    # optional check that input is monic and irreducible
+    if check_monic_irreducible:
+        try:
+            if not (all(c in ZZ for c in f) and f.is_monic()):
+                return zero
+            f = f.change_ring(ZZ)
+        except AttributeError:
+            return zero
+
+    from sage.rings.real_mpfr import RR
+    from sage.rings.finite_rings.finite_field_constructor import GF
+
+    h = f.degree()
+    h2list = [d for d in h.divisors() if (d-h)%2 == 0 and d.prime_to_m_part(2) == 1]
+    pmin = 33 * (h**2 * (RR(h+2).log().log()+2)**2).ceil()
+    # Guarantees 4*p > |D| for fundamental D under GRH
+    p = pmin-1
+    n = 0
+    from sage.arith.misc import next_prime
+    from sage.schemes.elliptic_curves.constructor import EllipticCurve
+
+    while True:
+        p = next_prime(p)
+        n += 1
+        fp = f.change_ring(GF(p))
+        # Compute X^p-X mod fp
+        z = fp.parent().gen()
+        r = pow(z, p, fp) - z
+        d = r.gcd(fp).degree()  # number of roots mod p
+        if d == 0:
+            continue
+        if not fp.is_squarefree():
+            continue
+        if d<h and d not in h2list:
+            return zero
+        jp = fp.any_root(degree=-1, assume_squarefree=True)
+        E = EllipticCurve(j=jp)
+        if E.is_supersingular():
+            continue
+        try:
+            D = E.endomorphism_discriminant_from_class_number(h)
+        except ValueError:
+            return zero
+        return D if f == hilbert_class_polynomial(D) else zero
+
+def OrderClassNumber(D0,h0,f):
+    r"""
+    Return the class number h(f**2 * D0), given h(D0)=h0.
+
+    INPUT:
+
+    - ``D0`` (integer) -- a negative fundamental discriminant
+    - ``h0`` (integer) -- the class number of the (maximal) imaginary quadratic order of discriminant ``D0``
+    - ``f`` (integer) -- a positive integer
+
+    OUTPUT:
+
+    (integer) the class number of the imaginary quadratic order of discriminant ``D0*f**2``
+
+    ALGORITHM:
+
+    We use the formula for the class number of the order `\mathcal{O}_{D}` in terms of the class number of the
+     maximal order  `\mathcal{O}_{D_0}`; see [Cox1989]_ Theorem 7.24:
+
+    .. MATH::
+
+        h(D) = \frac{h(D_0)f}{[\mathcal{O}_{D_0}^\times:\mathcal{O}_{D}^\times]}\prod_{p\,|\,f}\left(1-\left(\frac{D_0}{p}\right)\frac{1}{p}\right)
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.cm import OrderClassNumber
+        sage: D0 = -4
+        sage: h = D0.class_number()
+        sage: [OrderClassNumber(D0,h,f) for f in srange(1,20)]
+        [1, 1, 2, 2, 2, 4, 4, 4, 6, 4, 6, 8, 6, 8, 8, 8, 8, 12, 10]
+        sage: all([OrderClassNumber(D0,h,f) == (D0*f**2).class_number() for f in srange(1,20)])
+        True
+
+    """
+    if not D0.is_fundamental_discriminant():
+        raise ValueError("{} is not a fundamental discriminant".format(D0))
+    if f <= 0:
+        raise ValueError("{} is not a positive integer".format(f))
+    if f == 1:
+        return h0
+    ps = f.prime_divisors()
+    from sage.misc.misc_c import prod
+    from sage.arith.misc import kronecker as kronecker_symbol
+    n = (f // prod(ps)) * prod(p-kronecker_symbol(D0,p) for p in ps)
+    if D0 == -3:
+        #assert h0 == 1 and n%3==0
+        return n//3
+    if D0 == -4:
+        #assert h0 == 1 and n%2==0
+        return n//2
+    return n*h0
+
 @cached_function
 def cm_j_invariants(K, proof=None):
     r"""
@@ -189,28 +343,29 @@ def cm_j_invariants(K, proof=None):
     EXAMPLES::
 
         sage: cm_j_invariants(QQ)
-        [-262537412640768000, -147197952000, -884736000, -12288000, -884736, -32768, -3375, 0, 1728, 8000, 54000, 287496, 16581375]
+        [-262537412640768000, -147197952000, -884736000, -12288000, -884736,
+         -32768, -3375, 0, 1728, 8000, 54000, 287496, 16581375]
 
     Over imaginary quadratic fields there are no more than over `QQ`::
 
-        sage: cm_j_invariants(QuadraticField(-1, 'i'))
-        [-262537412640768000, -147197952000, -884736000, -12288000, -884736, -32768, -3375, 0, 1728, 8000, 54000, 287496, 16581375]
+        sage: cm_j_invariants(QuadraticField(-1, 'i'))                                  # optional - sage.rings.number_field
+        [-262537412640768000, -147197952000, -884736000, -12288000, -884736,
+         -32768, -3375, 0, 1728, 8000, 54000, 287496, 16581375]
 
     Over real quadratic fields there may be more, for example::
 
-        sage: len(cm_j_invariants(QuadraticField(5, 'a')))
+        sage: len(cm_j_invariants(QuadraticField(5, 'a')))                              # optional - sage.rings.number_field
         31
 
     Over number fields K of many higher degrees this also works::
 
-        sage: K.<a> = NumberField(x^3 - 2)
-        sage: cm_j_invariants(K)
-        [-262537412640768000, -147197952000, -884736000,
-         -884736, -32768, 8000, -3375, 16581375, 1728, 287496, 0,
-         54000, -12288000,
+        sage: K.<a> = NumberField(x^3 - 2)                                              # optional - sage.rings.number_field
+        sage: cm_j_invariants(K)                                                        # optional - sage.rings.number_field
+        [-262537412640768000, -147197952000, -884736000, -884736, -32768,
+         8000, -3375, 16581375, 1728, 287496, 0, 54000, -12288000,
          31710790944000*a^2 + 39953093016000*a + 50337742902000]
-        sage: K.<a> = NumberField(x^4 - 2)
-        sage: len(cm_j_invariants(K))
+        sage: K.<a> = NumberField(x^4 - 2)                                              # optional - sage.rings.number_field
+        sage: len(cm_j_invariants(K))                                                   # optional - sage.rings.number_field
         23
     """
     return sorted(j for D, f, j in cm_j_invariants_and_orders(K, proof=proof))
@@ -235,11 +390,14 @@ def cm_j_invariants_and_orders(K, proof=None):
     EXAMPLES::
 
         sage: cm_j_invariants_and_orders(QQ)
-        [(-3, 3, -12288000), (-3, 2, 54000), (-3, 1, 0), (-4, 2, 287496), (-4, 1, 1728), (-7, 2, 16581375), (-7, 1, -3375), (-8, 1, 8000), (-11, 1, -32768), (-19, 1, -884736), (-43, 1, -884736000), (-67, 1, -147197952000), (-163, 1, -262537412640768000)]
+        [(-3, 3, -12288000), (-3, 2, 54000), (-3, 1, 0), (-4, 2, 287496), (-4, 1, 1728),
+         (-7, 2, 16581375), (-7, 1, -3375), (-8, 1, 8000), (-11, 1, -32768),
+         (-19, 1, -884736), (-43, 1, -884736000), (-67, 1, -147197952000),
+         (-163, 1, -262537412640768000)]
 
     Over an imaginary quadratic field there are no more than over `QQ`::
 
-        sage: cm_j_invariants_and_orders(QuadraticField(-1, 'i'))
+        sage: cm_j_invariants_and_orders(QuadraticField(-1, 'i'))                       # optional - sage.rings.number_field
         [(-163, 1, -262537412640768000), (-67, 1, -147197952000),
          (-43, 1, -884736000), (-19, 1, -884736), (-11, 1, -32768),
          (-8, 1, 8000), (-7, 1, -3375), (-7, 2, 16581375), (-4, 1, 1728),
@@ -247,17 +405,17 @@ def cm_j_invariants_and_orders(K, proof=None):
 
     Over real quadratic fields there may be more::
 
-        sage: v = cm_j_invariants_and_orders(QuadraticField(5,'a')); len(v)
+        sage: v = cm_j_invariants_and_orders(QuadraticField(5,'a')); len(v)             # optional - sage.rings.number_field
         31
-        sage: [(D, f) for D, f, j in v if j not in QQ]
+        sage: [(D, f) for D, f, j in v if j not in QQ]                                  # optional - sage.rings.number_field
         [(-235, 1), (-235, 1), (-115, 1), (-115, 1), (-40, 1), (-40, 1),
          (-35, 1), (-35, 1), (-20, 1), (-20, 1), (-15, 1), (-15, 1), (-15, 2),
          (-15, 2), (-4, 5), (-4, 5), (-3, 5), (-3, 5)]
 
     Over number fields K of many higher degrees this also works::
 
-        sage: K.<a> = NumberField(x^3 - 2)
-        sage: cm_j_invariants_and_orders(K)
+        sage: K.<a> = NumberField(x^3 - 2)                                              # optional - sage.rings.number_field
+        sage: cm_j_invariants_and_orders(K)                                             # optional - sage.rings.number_field
         [(-163, 1, -262537412640768000), (-67, 1, -147197952000),
          (-43, 1, -884736000), (-19, 1, -884736), (-11, 1, -32768),
          (-8, 1, 8000), (-7, 1, -3375), (-7, 2, 16581375), (-4, 1, 1728),
@@ -283,8 +441,10 @@ def cm_j_invariants_and_orders(K, proof=None):
     # Get the list of CM orders that could possibly have Hilbert class
     # polynomial F(x) with a root in K.  If F(x) has a root alpha in K,
     # then F is the minimal polynomial of alpha in K, so the degree of
-    # F(x) is at most [K:QQ].
-    dlist = sorted(Df for v in discriminants_with_bounded_class_number(K.degree(), proof=proof).values() for Df in v)
+    # F(x) divides [K:QQ].
+    n = K.absolute_degree()
+    T = discriminants_with_bounded_class_number(n, proof=proof)
+    dlist = sorted(sum((Dflist for h,Dflist in T.items() if h.divides(n)), []))
 
     return [(D, f, j) for D, f in dlist
             for j in hilbert_class_polynomial(D*f*f).roots(K, multiplicities=False)]
@@ -304,27 +464,34 @@ def cm_orders(h, proof=None):
 
     OUTPUT:
 
-    - list of 2-tuples `(D,f)`
+    - list of 2-tuples `(D,f)` sorted lexicographically by `(|D|, f)`
 
     EXAMPLES::
 
         sage: cm_orders(0)
         []
         sage: v = cm_orders(1); v
-        [(-3, 3), (-3, 2), (-3, 1), (-4, 2), (-4, 1), (-7, 2), (-7, 1), (-8, 1), (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]
+        [(-3, 1), (-3, 2), (-3, 3), (-4, 1), (-4, 2), (-7, 1), (-7, 2), (-8, 1),
+         (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]
         sage: type(v[0][0]), type(v[0][1])
         (<... 'sage.rings.integer.Integer'>, <... 'sage.rings.integer.Integer'>)
         sage: v = cm_orders(2); v
-         [(-3, 7), (-3, 5), (-3, 4), (-4, 5), (-4, 4), (-4, 3), (-7, 4), (-8, 3), (-8, 2), (-11, 3), (-15, 2), (-15, 1), (-20, 1), (-24, 1), (-35, 1), (-40, 1), (-51, 1), (-52, 1), (-88, 1), (-91, 1), (-115, 1), (-123, 1), (-148, 1), (-187, 1), (-232, 1), (-235, 1), (-267, 1), (-403, 1), (-427, 1)]
+         [(-3, 4), (-3, 5), (-3, 7), (-4, 3), (-4, 4), (-4, 5), (-7, 4), (-8, 2),
+          (-8, 3), (-11, 3), (-15, 1), (-15, 2), (-20, 1), (-24, 1), (-35, 1),
+          (-40, 1), (-51, 1), (-52, 1), (-88, 1), (-91, 1), (-115, 1), (-123, 1),
+          (-148, 1), (-187, 1), (-232, 1), (-235, 1), (-267, 1), (-403, 1), (-427, 1)]
         sage: len(v)
         29
         sage: set([hilbert_class_polynomial(D*f^2).degree() for D,f in v])
         {2}
 
-    Any degree up to 100 is implemented, but may be prohibitively slow::
+    Any degree up to 100 is implemented, but may be slow::
 
         sage: cm_orders(3)
-        [(-3, 9), (-3, 6), (-11, 2), (-19, 2), (-23, 2), (-23, 1), (-31, 2), (-31, 1), (-43, 2), (-59, 1), (-67, 2), (-83, 1), (-107, 1), (-139, 1), (-163, 2), (-211, 1), (-283, 1), (-307, 1), (-331, 1), (-379, 1), (-499, 1), (-547, 1), (-643, 1), (-883, 1), (-907, 1)]
+        [(-3, 6), (-3, 9), (-11, 2), (-19, 2), (-23, 1), (-23, 2), (-31, 1), (-31, 2),
+         (-43, 2), (-59, 1), (-67, 2), (-83, 1), (-107, 1), (-139, 1), (-163, 2),
+         (-211, 1), (-283, 1), (-307, 1), (-331, 1), (-379, 1), (-499, 1), (-547, 1),
+         (-643, 1), (-883, 1), (-907, 1)]
         sage: len(cm_orders(4))
         84
     """
@@ -332,13 +499,16 @@ def cm_orders(h, proof=None):
     if h <= 0:
         # trivial case
         return []
-    # Get information for all discriminants then throw away everything
-    # but for h.  If this is replaced by a table it will be faster,
-    # but not now.   (David Kohel is rumored to have a large table.)
-    return discriminants_with_bounded_class_number(h, proof=proof)[h]
+
+    if h in hDf_dict:
+        return hDf_dict[h]
+    else: # Get all discriminants for all class numbers up to h (which will
+          # be stored in hDf_dict), and return just those with class number h.
+        return discriminants_with_bounded_class_number(h, proof=proof)[h]
 
 # Table from Mark Watkins paper "Class numbers of imaginary quadratic fields".
-# I extracted this by cutting/pasting from the pdf, and running this program:
+
+# WAS extracted this by cutting/pasting from the pdf, and running this program:
 # z = {}
 # for X in open('/Users/wstein/tmp/a.txt').readlines():
 #    if len(X.strip()):
@@ -346,6 +516,10 @@ def cm_orders(h, proof=None):
 #        for i in range(5):
 #            z[v[3*i]]=(v[3*i+2], v[3*i+1])
 
+# The keys are integers 1--100 and the value for each h is (|D|,n)
+# where |D| is the largest absolute discriminant of an imaginary
+# quadratic field with class number h, and n is the number of such
+# fields.  These are all *unconditional* (not dependent on GRH).
 
 watkins_table = {1: (163, 9), 2: (427, 18), 3: (907, 16), 4: (1555, 54), 5: (2683, 25),
                  6: (3763, 51), 7: (5923, 31), 8: (6307, 131), 9: (10627, 34), 10:
@@ -375,13 +549,60 @@ watkins_table = {1: (163, 9), 2: (427, 18), 3: (907, 16), 4: (1555, 54), 5: (268
                  95:(1659067, 241), 96: (1684027, 3283), 97: (1842523, 185), 98: (2383747,580),
                  99: (1480627, 289), 100: (1856563, 1736)}
 
+# Table from Janis Klaise [Klaise2012]_
+
+# Extracted by converting pdf to text via pdf2ps and ps2txt, cutting/pasting
+# and running this code:
+
+# klaise_table = {}
+# for X in open('klaise_table.txt').readlines():
+#     if len(X.strip()):
+#         v = [int(a) for a in X.split()]
+#         for i in range(4):
+#             klaise_table[v[3*i]]=(v[3*i+2], v[3*i+1])
+
+# The keys are integers 1--100 and the value for each h is (|D|,n)
+# where |D| is the largest discriminant of an imaginary quadratic
+# order with class number h, and n is the number of such orders.
+# These are all *unconditional* (not dependent on GRH).
+
+klaise_table = {1: (163, 13), 2: (427, 29), 3: (907, 25), 4: (1555, 84), 5: (2683, 29), 6: (4075, 101),
+                7: (5923, 38), 8: (7987, 208), 9: (10627, 55), 10: (13843, 123), 11: (15667, 46),
+                12: (19723, 379), 13: (20563, 43), 14: (30067, 134), 15: (34483, 95), 16: (35275, 531),
+                17: (37123, 50), 18: (48427, 291), 19: (38707, 59), 20: (58843, 502), 21: (61483, 118),
+                22: (85507, 184), 23: (90787, 78), 24: (111763, 1042), 25: (93307, 101), 26: (103027, 227),
+                27: (103387, 136), 28: (126043, 623), 29: (166147, 94), 30: (137083, 473), 31: (133387, 83),
+                32: (164803, 1231), 33: (222643, 158), 34: (189883, 262), 35: (210907, 111), 36: (217627, 1306),
+                37: (158923, 96), 38: (289963, 284), 39: (253507, 162), 40: (274003, 1418), 41: (296587, 125),
+                42: (301387, 596), 43: (300787, 123), 44: (319867, 911), 45: (308323, 231), 46: (462883, 330),
+                47: (375523, 117), 48: (335203, 2895), 49: (393187, 146), 50: (389467, 445), 51: (546067, 217),
+                52: (457867, 1006), 53: (425107, 130), 54: (532123, 812), 55: (452083, 177), 56: (494323, 1812),
+                57: (615883, 237), 58: (586987, 361), 59: (474307, 144), 60: (662803, 2361), 61: (606643, 149),
+                62: (647707, 386), 63: (991027, 311), 64: (693067, 2919), 65: (703123, 192), 66: (958483, 861),
+                67: (652723, 145), 68: (819163, 1228), 69: (888427, 292), 70: (821683, 704), 71: (909547, 176),
+                72: (947923, 4059), 73: (886867, 137), 74: (951043, 474), 75: (916507, 353), 76: (1086187, 1384),
+                77: (1242763, 236), 78: (1004347, 925), 79: (1333963, 200), 80: (1165483, 3856), 81: (1030723, 339),
+                82: (1446547, 487), 83: (1074907, 174), 84: (1225387, 2998), 85: (1285747, 246), 86: (1534723, 555),
+                87: (1261747, 313), 88: (1265587, 2771), 89: (1429387, 206), 90: (1548523, 1516), 91: (1391083, 249),
+                92: (1452067, 1591), 93: (1475203, 354), 94: (1587763, 600), 95: (1659067, 273), 96: (1684027, 7276),
+                97: (1842523, 208), 98: (2383747, 710), 99: (1480627, 396), 100: (1856563, 2311)}
+
 
 def largest_fundamental_disc_with_class_number(h):
-    """
-    Return largest absolute value of any fundamental discriminant with
-    class number `h`, and the number of fundamental discriminants with
-    that class number.  This is known for `h` up to 100, by work of Mark
-    Watkins.
+    r"""
+    Return largest absolute value of any fundamental negative discriminant with
+    class number `h`, and the number of fundamental negative discriminants with
+    that class number.  This is known (unconditionally) for `h` up to 100,
+    by work of Mark Watkins ([Watkins2004]_).
+
+    .. NOTE::
+
+        The class number of a fundamental negative discriminant `D` is
+        the same as the class number of the imaginary quadratic field
+        `\QQ(\sqrt{D})`, so this function gives the number of such
+        fields of each class number `h\le100`.  It is easy to extend
+        this to larger class number conditional on the GRH, but much
+        harder to obtain unconditional results.
 
     INPUT:
 
@@ -389,201 +610,277 @@ def largest_fundamental_disc_with_class_number(h):
 
     EXAMPLES::
 
-        sage: sage.schemes.elliptic_curves.cm.largest_fundamental_disc_with_class_number(0)
+        sage: from sage.schemes.elliptic_curves.cm import largest_fundamental_disc_with_class_number
+        sage: largest_fundamental_disc_with_class_number(0)
         (0, 0)
-        sage: sage.schemes.elliptic_curves.cm.largest_fundamental_disc_with_class_number(1)
+        sage: largest_fundamental_disc_with_class_number(1)
         (163, 9)
-        sage: sage.schemes.elliptic_curves.cm.largest_fundamental_disc_with_class_number(2)
+        sage: largest_fundamental_disc_with_class_number(2)
         (427, 18)
-        sage: sage.schemes.elliptic_curves.cm.largest_fundamental_disc_with_class_number(10)
+        sage: largest_fundamental_disc_with_class_number(10)
         (13843, 87)
-        sage: sage.schemes.elliptic_curves.cm.largest_fundamental_disc_with_class_number(100)
+        sage: largest_fundamental_disc_with_class_number(100)
         (1856563, 1736)
-        sage: sage.schemes.elliptic_curves.cm.largest_fundamental_disc_with_class_number(101)
+        sage: largest_fundamental_disc_with_class_number(101)
         Traceback (most recent call last):
         ...
-        NotImplementedError: largest discriminant not known for class number 101
+        NotImplementedError: largest fundamental discriminant not available for class number 101
+
     """
     h = Integer(h)
     if h <= 0:
-        # very easy special case
         return Integer(0), Integer(0)
     try:
-        # simply look up the answer in Watkins's table.
         B, c = watkins_table[h]
         return (Integer(B), Integer(c))
     except KeyError:
-        # nobody knows, since I guess Watkins's is state of the art.
-        raise NotImplementedError("largest discriminant not known for class number %s" % h)
+        raise NotImplementedError("largest fundamental discriminant not available for class number %s" % h)
 
-
-@cached_function
-def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
+def largest_disc_with_class_number(h):
     r"""
-    Return dictionary with keys class numbers `h\le hmax` and values the
-    list of all pairs `(D, f)`, with `D<0` a fundamental discriminant such
-    that `Df^2` has class number `h`.  If the optional bound `B` is given,
-    return only those pairs with fundamental `|D| \le B`, though `f` can
-    still be arbitrarily large.
+    Return largest absolute value of any negative discriminant with
+    class number `h`, and the number of fundamental negative
+    discriminants with that class number.  This is known
+    (unconditionally) for `h` up to 100, by work of Mark Watkins
+    [Watkins2004]_ for fundamental discriminants, extended to all
+    discriminants of class number `h\le100` by Klaise [Klaise2012]_.
+
+    .. NOTE::
+
+        The class number of a negative discriminant `D` is
+        the same as the class number of the unique imaginary quadratic order
+        of discriminant `D`, so this function gives the number of such
+        orders of each class number `h\le100`.  It is easy to extend
+        this to larger class number conditional on the GRH, but much
+        harder to obyain unconditional results.
+
+    INPUT:
+
+    - `h` -- integer
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.cm import largest_disc_with_class_number
+        sage: largest_disc_with_class_number(0)
+        (0, 0)
+        sage: largest_disc_with_class_number(1)
+        (163, 13)
+        sage: largest_disc_with_class_number(2)
+        (427, 29)
+        sage: largest_disc_with_class_number(10)
+        (13843, 123)
+        sage: largest_disc_with_class_number(100)
+        (1856563, 2311)
+        sage: largest_disc_with_class_number(101)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: largest discriminant not available for class number 101
+
+    For most `h\le100`, the largest fundamental discriminant with
+    class number `h` is also the largest discriminant, but this is not
+    the case for some `h`::
+
+        sage: from sage.schemes.elliptic_curves.cm import largest_disc_with_class_number, largest_fundamental_disc_with_class_number
+        sage: [h for h in range(1,101) if largest_disc_with_class_number(h)[0] != largest_fundamental_disc_with_class_number(h)[0]]
+        [6, 8, 12, 16, 20, 30, 40, 42, 52, 70]
+        sage: largest_fundamental_disc_with_class_number(6)
+        (3763, 51)
+        sage: largest_disc_with_class_number(6)
+        (4075, 101)
+
+    """
+    h = Integer(h)
+    if h <= 0:
+        return Integer(0), Integer(0)
+    try:
+        B, c = klaise_table[h]
+        return (Integer(B), Integer(c))
+    except KeyError:
+        raise NotImplementedError("largest discriminant not available for class number %s" % h)
+
+# This dict has class numbers h as keys, the value at h is a complete
+# list of pairs (D0,f) such that D=D0*f**2 has class number h.  We
+# initialise it with h=1 only; other values will be added by calls to
+# discriminants_with_bounded_class_number().
+
+hDf_dict = {ZZ(1): [(ZZ(D), ZZ(h)) for D,h in
+                    [(-3, 1), (-3, 2), (-3, 3), (-4, 1), (-4, 2), (-7, 1), (-7, 2),
+                     (-8, 1), (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]]}
+
+def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
+    r"""Return a dictionary with keys class numbers `h\le hmax` and values the
+    list of all pairs `(D_0, f)`, with `D_0<0` a fundamental discriminant such
+    that `D=D_0f^2` has class number `h`.  If the optional bound `B` is given,
+    return only those pairs with `|D| \le B`.
 
     INPUT:
 
     - ``hmax`` -- integer
     - `B` -- integer or None; if None returns all pairs
     - ``proof`` -- this code calls the PARI function :pari:`qfbclassno`, so it
-      could give wrong answers when ``proof``==``False``.  The default is
-      whatever ``proof.number_field()`` is.  If ``proof==False`` and `B` is
-      ``None``, at least the number of discriminants is correct, since it
-      is double checked with Watkins's table.
+      could give wrong answers when ``proof``==``False`` (though only for
+      discriminants greater than `2\cdot10^{10}`).  The default is
+      the current value of ``proof.number_field()``.
 
     OUTPUT:
 
     - dictionary
 
-    In case `B` is not given, we use Mark Watkins's: "Class numbers of
-    imaginary quadratic fields" to compute a `B` that captures all `h`
-    up to `hmax` (only available for `hmax\le100`).
+    .. NOTE::
+
+       In case `B` is not given, then ``hmax`` must be at most 100; we
+       use the tables from [Watkins2004]_ and [Klaise2012]_ to compute
+       a `B` that captures all `h` up to `hmax`.
 
     EXAMPLES::
 
-        sage: v = sage.schemes.elliptic_curves.cm.discriminants_with_bounded_class_number(3)
+        sage: from sage.schemes.elliptic_curves.cm import discriminants_with_bounded_class_number
+        sage: v = discriminants_with_bounded_class_number(3)
         sage: sorted(v)
         [1, 2, 3]
         sage: v[1]
-        [(-3, 3), (-3, 2), (-3, 1), (-4, 2), (-4, 1), (-7, 2), (-7, 1), (-8, 1), (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]
+        [(-3, 1), (-3, 2), (-3, 3), (-4, 1), (-4, 2), (-7, 1), (-7, 2), (-8, 1),
+         (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]
         sage: v[2]
-        [(-3, 7), (-3, 5), (-3, 4), (-4, 5), (-4, 4), (-4, 3), (-7, 4), (-8, 3), (-8, 2), (-11, 3), (-15, 2), (-15, 1), (-20, 1), (-24, 1), (-35, 1), (-40, 1), (-51, 1), (-52, 1), (-88, 1), (-91, 1), (-115, 1), (-123, 1), (-148, 1), (-187, 1), (-232, 1), (-235, 1), (-267, 1), (-403, 1), (-427, 1)]
+        [(-3, 4), (-3, 5), (-3, 7), (-4, 3), (-4, 4), (-4, 5), (-7, 4), (-8, 2),
+         (-8, 3), (-11, 3), (-15, 1), (-15, 2), (-20, 1), (-24, 1), (-35, 1), (-40, 1),
+         (-51, 1), (-52, 1), (-88, 1), (-91, 1), (-115, 1), (-123, 1), (-148, 1),
+         (-187, 1), (-232, 1), (-235, 1), (-267, 1), (-403, 1), (-427, 1)]
         sage: v[3]
-        [(-3, 9), (-3, 6), (-11, 2), (-19, 2), (-23, 2), (-23, 1), (-31, 2), (-31, 1), (-43, 2), (-59, 1), (-67, 2), (-83, 1), (-107, 1), (-139, 1), (-163, 2), (-211, 1), (-283, 1), (-307, 1), (-331, 1), (-379, 1), (-499, 1), (-547, 1), (-643, 1), (-883, 1), (-907, 1)]
-        sage: v = sage.schemes.elliptic_curves.cm.discriminants_with_bounded_class_number(8, proof=False)
+        [(-3, 6), (-3, 9), (-11, 2), (-19, 2), (-23, 1), (-23, 2), (-31, 1), (-31, 2),
+         (-43, 2), (-59, 1), (-67, 2), (-83, 1), (-107, 1), (-139, 1), (-163, 2),
+         (-211, 1), (-283, 1), (-307, 1), (-331, 1), (-379, 1), (-499, 1), (-547, 1),
+         (-643, 1), (-883, 1), (-907, 1)]
+        sage: v = discriminants_with_bounded_class_number(8, proof=False)
         sage: sorted(len(v[h]) for h in v)
         [13, 25, 29, 29, 38, 84, 101, 208]
 
     Find all class numbers for discriminant up to 50::
 
         sage: sage.schemes.elliptic_curves.cm.discriminants_with_bounded_class_number(hmax=5, B=50)
-        {1: [(-3, 3), (-3, 2), (-3, 1), (-4, 2), (-4, 1), (-7, 2), (-7, 1), (-8, 1), (-11, 1), (-19, 1), (-43, 1)], 2: [(-3, 7), (-3, 5), (-3, 4), (-4, 5), (-4, 4), (-4, 3), (-7, 4), (-8, 3), (-8, 2), (-11, 3), (-15, 2), (-15, 1), (-20, 1), (-24, 1), (-35, 1), (-40, 1)], 3: [(-3, 9), (-3, 6), (-11, 2), (-19, 2), (-23, 2), (-23, 1), (-31, 2), (-31, 1), (-43, 2)], 4: [(-3, 13), (-3, 11), (-3, 8), (-4, 10), (-4, 8), (-4, 7), (-4, 6), (-7, 8), (-7, 6), (-7, 3), (-8, 6), (-8, 4), (-11, 5), (-15, 4), (-19, 5), (-19, 3), (-20, 3), (-20, 2), (-24, 2), (-35, 3), (-39, 2), (-39, 1), (-40, 2), (-43, 3)], 5: [(-47, 2), (-47, 1)]}
+        {1: [(-3, 1), (-3, 2), (-3, 3), (-4, 1), (-4, 2), (-7, 1), (-7, 2), (-8, 1), (-11, 1), (-19, 1), (-43, 1)], 2: [(-3, 4), (-4, 3), (-8, 2), (-15, 1), (-20, 1), (-24, 1), (-35, 1), (-40, 1)], 3: [(-11, 2), (-23, 1), (-31, 1)], 4: [(-39, 1)], 5: [(-47, 1)]}
+
     """
-    # imports that are needed only for this function
-    from sage.structure.proof.proof import get_flag
-
-    # deal with input defaults and type checking
-    proof = get_flag(proof, 'number_field')
     hmax = Integer(hmax)
+    global hDf_dict
 
-    # T stores the output
-    T = {}
-
-    # Easy case -- instead of giving error, give meaningful output
-    if hmax < 1:
+    # Easy case where we have already computed and cached the relevant values
+    if hDf_dict and hmax <= max(hDf_dict):
+        T = {h:Dflist for h,Dflist in hDf_dict.items() if h<=hmax}
+        if B:
+            for h in T:
+                T[h] = [Df for Df in T[h] if Df[0].abs()*Df[1]**2<=B]
         return T
 
+    # imports that are needed only for this function
+    from sage.arith.srange import xsrange
+    from sage.structure.proof.proof import get_flag
+    proof = get_flag(proof, 'number_field')
+
     if B is None:
-        # Determine how far we have to go by applying Watkins's theorem.
-        v = [largest_fundamental_disc_with_class_number(h) for h in range(1, hmax+1)]
-        B = max([b for b,_ in v])
-        fund_count = [0] + [cnt for _,cnt in v]
+        if hmax <= 100:
+            # Determine how far we have to go by applying Watkins + Klaise's results.
+            v = [largest_disc_with_class_number(h) for h in range(1, hmax+1)]
+            B = max([b for b,_ in v])
+            #print("Testing all discriminants up to {}".format(B))
+            count = [0] + [cnt for _,cnt in v]
+        else:
+            raise ValueError("if hmax>100 you must specify a discriminant bound B")
     else:
         # Nothing to do -- set to None so we can use this later to know not
         # to do a double check about how many we find.
-        fund_count = None
+        count = None
         B = Integer(B)
 
     if B <= 2:
         # This is an easy special case, since there are no fundamental discriminants
         # this small.
-        return T
+        return {}
 
-    # This lower bound gets used in an inner loop below.
-    from math import log
+    # T stores the values found, to be returned.  It will also be used
+    # to update the global hDf_dict *provided that* the parameter B
+    # was not provided.  Note that we only reach this point if we have
+    # not already computed data for at least one class number, hmax.
 
-    def lb(f):
-        """Lower bound on euler_phi."""
-        # 1.79 > e^gamma = 1.7810724...
-        if f <= 1:
-            return 0  # don't do log(log(1)) = log(0)
-        llf = log(log(f))
-        return f/(1.79*llf + 3.0/llf)
+    # To avoid recomputing class numbers, we initialise T with the
+    # global hDf_dict, only including those (D,f) for which |D|*f**2
+    # <= B if B was provided:
 
-    for D in range(-B, -2):
-        D = Integer(D)
-        if is_fundamental_discriminant(D):
-            h_D = D.class_number(proof)
-            # For each fundamental discriminant D, loop through the f's such
-            # that h(D*f^2) could possibly be <= hmax.  As explained to me by Cremona,
-            # we have h(D*f^2) >= (1/c)*h(D)*phi_D(f) >= (1/c)*h(D)*euler_phi(f), where
-            # phi_D(f) is like euler_phi(f) but the factor (1-1/p) is replaced
-            # by a factor of (1-kr(D,p)*p), where kr(D/p) is the Kronecker symbol.
-            # The factor c is 1 unless D=-4 and f>1 (when c=2) or D=-3 and f>1 (when c=3).
-            # Since (1-1/p) <= 1 and (1-1/p) <= (1+1/p), we see that
-            #     euler_phi(f) <= phi_D(f).
-            #
-            # We have the following analytic lower bound on euler_phi:
-            #
-            #     euler_phi(f) >= lb(f) = f / (exp(euler_gamma)*log(log(n)) + 3/log(log(n))).
-            #
-            # See Theorem 8 of Peter Clark's
-            #   http://math.uga.edu/~pete/4400arithmeticorders.pdf
-            # which is a consequence of Theorem 15 of
-            # [Rosser and Schoenfeld, 1962].
-            #
-            # By Calculus, we see that the lb(f) is an increasing function of f >= 2.
-            #
-            # NOTE: You can visibly "see" that it is a lower bound in Sage with
-            #   lb(n) = n/(exp(euler_gamma)*log(log(n)) + 3/log(log(n)))
-            #   plot(lb, (n, 1, 10^4), color='red') + plot(lambda x: euler_phi(int(x)), 1, 10^4).show()
-            #
-            # So we consider f=1,2,..., until the first f with lb(f)*h_D > c*h_max.
-            # (Note that lb(f) is <= 0 for f=1,2, so nothing special is needed there.)
-            #
-            # TODO: Maybe we could do better using a bound for phi_D(f).
-            #
-            f = Integer(1)
-            chmax=hmax
-            if D==-3:
-                chmax*=3
+    # h_dict caches the class number h of all discriminants previously
+    # encountered; we will use the function OrderClassNumber() to
+    # quicky compute the class number of non-fundamental discriminants
+    # from the fundamental ones. Note that in the initialisation, the
+    # keys of h_dict include nonfundamental discriminants, but we only
+    # update it with fundamental ones.
+
+    from collections import defaultdict
+    T = defaultdict(set)
+    h_dict = {}
+    for h, Dflist in hDf_dict.items():
+        for D0,f in Dflist:
+            h_dict[D0*f**2] = h
+        if not count:
+            Dflist = [Df for Df in Dflist if Df[0].abs()*Df[1]**2<=B]
+        T[h] = set(Dflist)
+
+    # We do not need to certify the class number from :pari:`qfbclassno` for discriminants under 2*10^10
+    if B < 2*10**10:
+        proof = False
+
+    for D in xsrange(-3, -B-1, -1):
+        if not D.is_discriminant():
+            continue
+        D0 = D.squarefree_part()
+        if D0%4 !=1:
+            D0 *= 4
+        f = (D//D0).isqrt()
+
+        # Now D0 is the fundamental discriminant and f the conductor
+
+        if D in h_dict:
+            h = h_dict[D]
+        else:
+            if f == 1: # D itself is fundamental
+                h = D.class_number(proof)
+                h_dict[D] = h
             else:
-                if D==-4:
-                    chmax*=2
-            while lb(f)*h_D <= chmax:
-                if f == 1:
-                    h = h_D
-                else:
-                    h = (D*f*f).class_number(proof)
-                # If the class number of this order is within the range, then
-                # use it.  (NOTE: In some cases there is a simple relation between
-                # the class number for D and D*f^2, and this could be used to
-                # optimize this inner loop a little.)
-                if h <= hmax:
-                    z = (D, f)
-                    if h in T:
-                        T[h].append(z)
-                    else:
-                        T[h] = [z]
-                f += 1
+                h = OrderClassNumber(D0,h_dict[D0],f)
+
+        # If the class number of this order is within the range, then store (D0,f)
+        if h <= hmax:
+            T[h].add((D0,f))
+
+    # sort each list of (D,f) pairs by (|D|,f)
 
     for h in T:
-        T[h] = list(reversed(T[h]))
+        T[h] = list(T[h])
+        T[h].sort(key=lambda Df: (Df[0].abs(), Df[1]))
 
-    if fund_count is not None:
-        # Double check that we found the right number of fundamental
-        # discriminants; we might as well, since Watkins provides this
-        # data.
+    # count is None precisely when the user provided a value of B
+    if count is not None:
+        # 1. Check that we found the right number of discriminants
         for h in T:
-            if len([DD for DD, ff in T[h] if ff == 1]) != fund_count[h]:
+            if len(T[h]) != count[h]:
                 raise RuntimeError("number of discriminants inconsistent with Watkins's table")
+        # 2. Update the global dict
+        hDf_dict.update(dict(T))
 
     return T
 
 
 @cached_function
-def is_cm_j_invariant(j, method='new'):
-    """
-    Return whether or not this is a CM `j`-invariant.
+def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
+    r"""Return whether or not this is a CM `j`-invariant, and the CM discriminant if it is.
 
     INPUT:
 
     - ``j`` -- an element of a number field `K`
+
+    - ``algorithm`` (string, default 'CremonaSutherland') -- the algorithm
+      used, either 'CremonaSutherland' (the default, very much faster
+      for all but very small degrees), 'exhaustive' or 'reduction'
+
+    - ``method`` (string) -- deprecated name for ``algorithm``
 
     OUTPUT:
 
@@ -592,15 +889,24 @@ def is_cm_j_invariant(j, method='new'):
     imaginary quadratic order of discriminant `D=df^2` where `d` is
     the associated fundamental discriminant and `f` the index.
 
-    .. NOTE::
+    ALGORITHM:
 
-        The current implementation makes use of the classification of
-        all orders of class number up to 100, and hence will raise an
-        error if `j` is an algebraic integer of degree greater than
-        this.  It would be possible to implement a more general
-        version, using the fact that `d` must be supported on the
-        primes dividing the discriminant of the minimal polynomial of
-        `j`.
+    The default algorithm used is to test whether the minimal
+    polynomial of ``j`` is a Hilbert CLass Polynomail, using
+    :func:`is_HCP` which implements Algorithm 2 of [CreSuth2023]_ by
+    Cremona and Sutherland.
+
+    Two older algorithms are available, both of which are much slower
+    except for very small degrees.
+
+    Method 'exhaustive' makes use of the complete and unconditionsl classification of
+    all orders of class number up to 100, and hence will raise an
+    error if `j` is an algebraic integer of degree greater than
+    this.
+
+    Method 'reduction' constructs an elliptic curve over the number
+    field `\QQ(j)` and computes its traces of Frobenius at several
+    primes of degree 1.
 
     EXAMPLES::
 
@@ -610,23 +916,38 @@ def is_cm_j_invariant(j, method='new'):
         sage: is_cm_j_invariant(8000)
         (True, (-8, 1))
 
-        sage: K.<a> = QuadraticField(5)
-        sage: is_cm_j_invariant(282880*a + 632000)
+        sage: K.<a> = QuadraticField(5)                                                    # optional - sage.rings.number_field
+        sage: is_cm_j_invariant(282880*a + 632000)                                         # optional - sage.rings.number_field
         (True, (-20, 1))
-        sage: K.<a> = NumberField(x^3 - 2)
-        sage: is_cm_j_invariant(31710790944000*a^2 + 39953093016000*a + 50337742902000)
+        sage: K.<a> = NumberField(x^3 - 2)                                                 # optional - sage.rings.number_field
+        sage: is_cm_j_invariant(31710790944000*a^2 + 39953093016000*a + 50337742902000)    # optional - sage.rings.number_field
         (True, (-3, 6))
+
+    An example of large degree.  This is only possible using the default algorithm::
+
+        sage: from sage.schemes.elliptic_curves.cm import is_cm_j_invariant
+        sage: D = -1856563
+        sage: H = hilbert_class_polynomial(D)
+        sage: H.degree()
+        100
+        sage: K.<j> = NumberField(H)
+        sage: is_cm_j_invariant(j)
+        (True, (-1856563, 1))
 
     TESTS::
 
         sage: from sage.schemes.elliptic_curves.cm import is_cm_j_invariant
         sage: all(is_cm_j_invariant(j) == (True, (d,f)) for d,f,j in cm_j_invariants_and_orders(QQ))
         True
+
     """
+    if method:
+        if not algorithm:
+            algorithm = method
+        raise DeprecationWarning("'method' is deprecated, use 'algorithm instead'")
+
     # First we check that j is an algebraic number:
-    from sage.rings.number_field.number_field_element import NumberFieldElement
-    from sage.rings.number_field.number_field import NumberField
-    if not isinstance(j, NumberFieldElement) and j not in QQ:
+    if not isinstance(j, NumberFieldElement_base) and j not in QQ:
         raise NotImplementedError("is_cm_j_invariant() is only implemented for number field elements")
 
     # for j in ZZ we have a lookup-table:
@@ -643,42 +964,60 @@ def is_cm_j_invariant(j, method='new'):
     if j in QQ:
         return False, None
 
-    # Now j has degree at least 2.  If it is not integral so is not CM:
+    # Next we find its minimal polynomial of j:
 
-    if not j.is_integral():
+    if j.parent().absolute_degree() == 2:
+        jpol = j.absolute_minpoly() # no algorithm parameter
+    else:
+        jpol = j.absolute_minpoly(algorithm='pari')
+
+    # If it does not have integer coefficients then j is not integral, hence not CM:
+
+    if not all(c in ZZ for c in jpol):
         return False, None
 
-    # Next we find its minimal polynomial and degree h, and if h is
-    # less than the degree of j.parent() we recreate j as an element
-    # of Q(j):
+    # Otherwise test whether it is a Hilbert Class Polynomial
+    # (using the fact that we know that it is monic and irreducible):
 
-    jpol = PolynomialRing(QQ,'x')([-j,1]) if j in QQ else j.absolute_minpoly()
+    if algorithm == 'CremonaSutherland':
+        D = is_HCP(jpol, check_monic_irreducible=False)
+        if D:
+            D0 = D.squarefree_part()
+            if D0%4 !=1:
+                D0 *= 4
+            f = ZZ(D//D0).isqrt()
+            return (True, (D0,f))
+        else:
+            return (False, None)
+
     h = jpol.degree()
-
-    # This will be used as a fall-back if we cannot determine the
-    # result using local data.  For this to be necessary there would
-    # have to be very few primes of degree 1 and norm under 1000,
-    # since we only need to find one prime of degree 1, good
-    # reduction for which a_P is nonzero.
-    if method=='old':
+    if algorithm in ['exhaustive', 'old']:
         if h>100:
             raise NotImplementedError("CM data only available for class numbers up to 100")
         for d,f in cm_orders(h):
             if jpol == hilbert_class_polynomial(d*f**2):
-                return True, (d,f)
-        return False, None
+                return (True, (d,f))
+        return (False, None)
 
-    # replace j by a clone whose parent is Q(j), if necessary:
+    if algorithm not in ['reduction', 'new']:
+        raise ValueError("Invalid algorithm {} in is_cm_j_invariant".format(algorithm))
+
+    # Now we use the reduction algorithm
+
+    # If the degree h is less than the degree of j.parent() we recreate j as an element
+    # of Q(j, and replace j by a clone whose parent is Q(j), if necessary:
 
     K = j.parent()
     if h < K.absolute_degree():
+        from sage.rings.number_field.number_field import NumberField
+
         K = NumberField(jpol, 'j')
         j = K.gen()
 
     # Construct an elliptic curve with j-invariant j, with
     # integral model:
 
-    from sage.schemes.elliptic_curves.all import EllipticCurve
+    from sage.schemes.elliptic_curves.constructor import EllipticCurve
     E = EllipticCurve(j=j).integral_model()
     D = E.discriminant()
     prime_bound = 1000 # test primes of degree 1 up to this norm
@@ -716,16 +1055,16 @@ def is_cm_j_invariant(j, method='new'):
         DP = aP**2 - 4*P.norm()
         dP = DP.squarefree_part()
         fP = ZZ(DP//dP).isqrt()
-        if cmd==0:      # first one, so store d and f
+        if cmd == 0:      # first one, so store d and f
             cmd = dP
             cmf = fP
         elif cmd != dP: # inconsistent with previous
-            return False, None
+            return (False, None)
         else:           # consistent d, so update f
             cmf = cmf.gcd(fP)
 
-    if cmd==0: # no conclusion, we found no degree 1 primes, revert to old method
-        return is_cm_j_invariant(j, method='old')
+    if cmd == 0: # no conclusion, we found no degree 1 primes, revert to default algorithm
+        return is_cm_j_invariant(j)
 
     # it looks like cm by disc cmd * f**2 where f divides cmf
 
@@ -735,11 +1074,10 @@ def is_cm_j_invariant(j, method='new'):
 
     # Now we must check if h(cmd*f**2)==h for f|cmf; if so we check
     # whether j is a root of the associated Hilbert class polynomial.
+    h0 = cmd.class_number()
     for f in cmf.divisors(): # only positive divisors
-        d = cmd*f**2
-        if h != d.class_number():
+        if h != OrderClassNumber(cmd,h0,f):
             continue
-        pol = hilbert_class_polynomial(d)
-        if pol(j) == 0:
-            return True, (cmd, f)
-    return False, None
+        if jpol == hilbert_class_polynomial(cmd*f**2):
+            return (True, (cmd, f))
+    return (False, None)

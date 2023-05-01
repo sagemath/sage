@@ -918,10 +918,10 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
 
     ::
 
-        sage: from sage.rings.number_field.number_field import is_NumberField
+        sage: from sage.rings.number_field.number_field_base import NumberField
         sage: type(K)
         <class 'sage.rings.number_field.number_field.NumberField_quadratic_with_category'>
-        sage: is_NumberField(K)
+        sage: isinstance(K, NumberField)
         True
 
     Quadratic number fields are cached::
@@ -1382,7 +1382,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     This example was suggested on sage-nt; see :trac:`18942`::
 
         sage: G = DirichletGroup(80)
-        sage: for chi in G:
+        sage: for chi in G:             # long time
         ....:     D = ModularSymbols(chi, 2, -1).cuspidal_subspace().new_subspace().decomposition()
         ....:     for f in D:
         ....:         elt = f.q_eigenform(10, 'alpha')[3]
@@ -8308,7 +8308,7 @@ class NumberField_absolute(NumberField_generic):
         if is_NumberFieldOrder(R) and self.has_coerce_map_from(R.number_field()):
             return self._generic_coerce_map(R)
         # R is not QQ by the above tests
-        if is_NumberField(R) and R.coerce_embedding() is not None:
+        if isinstance(R, number_field_base.NumberField) and R.coerce_embedding() is not None:
             if self.coerce_embedding() is not None:
                 try:
                     return number_field_morphisms.EmbeddedNumberFieldMorphism(R, self)
@@ -12153,7 +12153,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         if D > 0:
             raise NotImplementedError("Hilbert class polynomial is not implemented for real quadratic fields.")
 
-        from sage.schemes.elliptic_curves.all import hilbert_class_polynomial as HCP
+        from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial as HCP
         return QQ[name](HCP(D))
 
     def number_of_roots_of_unity(self):
@@ -12175,6 +12175,31 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
             return 6
         return 2
 
+    def order_of_conductor(self, f):
+        r"""
+        Return the unique order with the given conductor in this quadratic field.
+
+        .. SEEALSO ::
+
+            :meth:`sage.rings.number_field.order.Order.conductor`
+
+        EXAMPLES::
+
+            sage: K.<t> = QuadraticField(-123)
+            sage: K.order_of_conductor(1) is K.maximal_order()
+            True
+            sage: K.order_of_conductor(2).gens()
+            (1, t)
+            sage: K.order_of_conductor(44).gens()
+            (1, 22*t)
+            sage: K.order_of_conductor(9001).conductor()
+            9001
+        """
+        f = ZZ(f)
+        if f <= 0:
+            raise ValueError('conductor must be a positive integer')
+        return self.order([f * g for g in self.maximal_order().gens()])
+
 
 def is_fundamental_discriminant(D):
     r"""
@@ -12188,16 +12213,15 @@ def is_fundamental_discriminant(D):
     EXAMPLES::
 
         sage: [D for D in range(-15,15) if is_fundamental_discriminant(D)]
+        ...
+        DeprecationWarning: is_fundamental_discriminant(D) is deprecated; please use D.is_fundamental_discriminant()
+        ...
         [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
         sage: [D for D in range(-15,15) if not is_square(D) and QuadraticField(D,'a').disc() == D]
         [-15, -11, -8, -7, -4, -3, 5, 8, 12, 13]
     """
-    d = D % 4
-    if d not in [0, 1]:
-        return False
-    return D != 1 and D != 0 and \
-        (arith.is_squarefree(D) or
-            (d == 0 and (D // 4) % 4 in [2, 3] and arith.is_squarefree(D // 4)))
+    deprecation(35147, "is_fundamental_discriminant(D) is deprecated; please use D.is_fundamental_discriminant()")
+    return Integer(D).is_fundamental_discriminant()
 
 
 ###################

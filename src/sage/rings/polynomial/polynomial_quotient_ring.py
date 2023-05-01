@@ -37,7 +37,6 @@ TESTS::
 #*****************************************************************************
 
 
-import sage.rings.number_field.all
 from . import polynomial_element
 import sage.rings.rational_field
 import sage.rings.complex_mpfr
@@ -1213,7 +1212,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         if not isinstance(self.base_ring(), sage.rings.rational_field.RationalField):
             raise NotImplementedError("Computation of number field only implemented for quotients of the polynomial ring over the rational field.")
-        return sage.rings.number_field.all.NumberField(self.modulus(), self.variable_name())
+        from sage.rings.number_field.number_field import NumberField
+        return NumberField(self.modulus(), self.variable_name())
 
     def polynomial_ring(self):
         """
@@ -1242,7 +1242,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         OUTPUT:
 
-        - Element of this quotient ring
+        Element of this quotient ring
 
         EXAMPLES::
 
@@ -1252,8 +1252,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: F2.random_element().parent() is F2
             True
         """
-        return self(self.polynomial_ring().random_element( \
-            degree=self.degree()-1, *args, **kwds))
+        return self(self.polynomial_ring().random_element(
+            degree=self.degree() - 1, *args, **kwds))
 
     @cached_method
     def _S_decomposition(self, S):
@@ -1296,9 +1296,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: len(iso_classes[1][1])
             2
         """
-        from sage.rings.number_field.number_field_base import is_NumberField
+        from sage.rings.number_field.number_field_base import NumberField
         K = self.base_ring()
-        if not is_NumberField(K) or not self.__polynomial.is_squarefree():
+        if not isinstance(K, NumberField) or not self.__polynomial.is_squarefree():
             raise NotImplementedError
 
         from sage.rings.ideal import is_Ideal
@@ -2324,8 +2324,6 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
         """
 
         return self.gen().field_extension(names)
-
-
 
 
 class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):

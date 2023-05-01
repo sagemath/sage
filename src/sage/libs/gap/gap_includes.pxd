@@ -51,18 +51,8 @@ cdef extern from "gap/calls.h" nogil:
 
 
 cdef extern from "gap/gasman.h" nogil:
-    Obj NewBag "NewBag"(UInt type, UInt size)
     void MarkBag(Obj bag)
     UInt CollectBags(UInt size, UInt full)
-
-
-cdef extern from "gap/gasman_intern.h" nogil:
-    void CallbackForAllBags(void (*func)(Obj))
-
-
-cdef extern from "gap/gvars.h" nogil:
-    UInt GVarName "GVarName"(char* name)
-    void AssGVar "AssGVar"(UInt gvar, Obj val)
 
 
 cdef extern from "gap/integer.h" nogil:
@@ -76,8 +66,10 @@ cdef extern from "gap/intobj.h" nogil:
 
 
 cdef extern from "gap/io.h" nogil:
-    UInt OpenOutputStream(Obj stream)
-    UInt CloseOutput()
+    ctypedef struct TypOutputFile:
+        pass
+    UInt OpenOutputStream(TypOutputFile* output, Obj stream)
+    UInt CloseOutput(TypOutputFile* output)
 
 
 cdef extern from "gap/libgap-api.h" nogil:
@@ -120,35 +112,22 @@ cdef extern from "gap/objects.h" nogil:
     Obj SHALLOW_COPY_OBJ(Obj obj)
     Obj CopyObj(Obj obj, int mut)
 
-    UInt SIZE_OBJ(Obj obj)
     UInt TNUM_OBJ(Obj obj)
     char* TNAM_OBJ(Obj obj)
 
     cdef enum TNUM:
-        T_INT
-        T_INTPOS
-        T_INTNEG
         T_RAT
         T_CYC
         T_FFE
         T_MACFLOAT
         T_PERM2
         T_PERM4
-        T_TRANS2
-        T_TRANS4
-        T_PPERM2
-        T_PPERM4
         T_BOOL
         T_CHAR
         T_FUNCTION
         T_PLIST
-        T_PLIST_CYC
-        T_BLIST
-        T_STRING
         T_COMOBJ
         T_POSOBJ
-        T_DATOBJ
-        T_WPOBJ
 
 
 cdef extern from "gap/permutat.h" nogil:

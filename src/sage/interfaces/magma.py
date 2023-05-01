@@ -209,14 +209,15 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
 import re
 import sys
+import os
 
 from sage.structure.parent import Parent
-from .expect import console, Expect, ExpectElement, ExpectFunction, FunctionElement
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 PROMPT = ">>>"
 
 SAGE_REF = "_sage_ref"
@@ -252,7 +253,6 @@ def extcode_dir(iface=None):
             shutil.copytree('%s/magma/' % SAGE_EXTCODE, tmp + '/data')
             EXTCODE_DIR = "%s/data/" % tmp
         else:
-            import os
             tmp = iface._remote_tmpdir()
             command = 'scp -q -r "%s/magma/" "%s:%s/data" 1>&2 2>/dev/null' % (SAGE_EXTCODE, iface._server, tmp)
             try:
@@ -330,7 +330,6 @@ class Magma(ExtraTabCompletion, Expect):
             Magma
         """
         if command is None:
-            import os
             command = os.getenv('SAGE_MAGMA_COMMAND') or 'magma'
 
         if not user_config:
@@ -339,7 +338,6 @@ class Magma(ExtraTabCompletion, Expect):
         # Obtain the parameters from the environment, to allow the magma = Magma() phrase
         # to work with non-default parameters.
         if seed is None:
-            import os
             seed = os.getenv('SAGE_MAGMA_SEED')
 
         Expect.__init__(self,
@@ -2787,7 +2785,7 @@ def magma_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%magma magics instead.')
-    console('magma')
+    os.system('magma')
 
 
 class MagmaGBLogPrettyPrinter:

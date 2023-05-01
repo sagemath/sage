@@ -651,7 +651,7 @@ packages instead of all of Sage, for example::
   [mkoeppe@sage sage]$ tox -e docker-centos-8-standard -- ratpoints
 
 If the build succeeds, this will create a new image named
-``sage-docker-centos-8-standard-with-targets:9.1.beta9-431-gca4b5b2f33-dirty``,
+``sage-centos-8-standard-with-targets:9.1.beta9-431-gca4b5b2f33-dirty``,
 where
 
 - the image name is derived from the tox environment name and the
@@ -676,22 +676,22 @@ the one just after running the ``configure`` script (``configured``)::
   Step 109/109 : RUN yum install -y zlib-devel || echo "(ignoring error)"
   ...
   Successfully built 4bb14c3d5646
-  Successfully tagged sage-docker-centos-8-standard-with-system-packages:9.1.beta9-435-g861ba33bbc-dirty
+  Successfully tagged sage-centos-8-standard-with-system-packages:9.1.beta9-435-g861ba33bbc-dirty
   Sending build context to Docker daemon ...
   ...
-  Successfully tagged sage-docker-centos-8-standard-configured:9.1.beta9-435-g861ba33bbc-dirty
+  Successfully tagged sage-centos-8-standard-configured:9.1.beta9-435-g861ba33bbc-dirty
   ...
   Sending build context to Docker daemon ...
   ...
-  Successfully tagged sage-docker-centos-8-standard-with-targets:9.1.beta9-435-g861ba33bbc-dirty
+  Successfully tagged sage-centos-8-standard-with-targets:9.1.beta9-435-g861ba33bbc-dirty
 
 Let's verify that the images are available::
 
   (base) egret:~/s/sage/sage-rebasing/worktree-algebraic-2018-spring (mkoeppe *$%>)$ docker images | head
   REPOSITORY                                                TAG                               IMAGE ID
-  sage-docker-centos-8-standard-with-targets                9.1.beta9-435-g861ba33bbc-dirty   7ecfa86fceab
-  sage-docker-centos-8-standard-configured                  9.1.beta9-435-g861ba33bbc-dirty   4314929e2b4c
-  sage-docker-centos-8-standard-with-system-packages        9.1.beta9-435-g861ba33bbc-dirty   4bb14c3d5646
+  sage-centos-8-standard-with-targets                9.1.beta9-435-g861ba33bbc-dirty   7ecfa86fceab
+  sage-centos-8-standard-configured                  9.1.beta9-435-g861ba33bbc-dirty   4314929e2b4c
+  sage-centos-8-standard-with-system-packages        9.1.beta9-435-g861ba33bbc-dirty   4bb14c3d5646
   ...
 
 
@@ -1055,7 +1055,7 @@ Scrolling down in the right pane shows "Annotations":
 
        docker (fedora-31, standard)
        artifacts/logs-commit-8ca1c2df8f1fb4c6d54b44b34b4d8320ebecb164-tox-docker-fedora-31-standard/config.log#L1
-       configure: notice: the following SPKGs did not find equivalent system packages: arb cbc cddlib cmake eclib ecm fflas_ffpack flint flintqs fplll givaro gp
+       configure: notice: the following SPKGs did not find equivalent system packages: arb cbc cddlib cmake eclib ecm fflas_ffpack flint fplll givaro gp
 
 Clicking on the annotations does not take you to a very useful
 place. To view details, click on one of the items in the pane. This
@@ -1082,8 +1082,8 @@ where you replace the token by your token, of course, and
 
 Now you can pull the image and run it::
 
-  $ docker pull ghcr.io/YOUR-GITHUB-USERNAME/sage/sage-docker-fedora-31-standard-configured:f4bd671
-  $ docker run -it ghcr.io/YOUR-GITHUB-USERNAME/sage/sage-docker-fedora-31-standard-configured:f4bd671 bash
+  $ docker pull ghcr.io/YOUR-GITHUB-USERNAME/sage/sage-fedora-31-standard-configured:f4bd671
+  $ docker run -it ghcr.io/YOUR-GITHUB-USERNAME/sage/sage-fedora-31-standard-configured:f4bd671 bash
 
 
 Using our pre-built Docker images published on ghcr.io
@@ -1101,19 +1101,19 @@ the build logs for a given platform.
 The image version corresponding to the latest development release
 receives the additional Docker tag ``dev``, see for example the Docker
 image for the platform `ubuntu-focal-standard
-<https://github.com/sagemath/sage/pkgs/container/sage%2Fsage-docker-ubuntu-focal-standard-with-targets-optional>`_. Thus,
+<https://github.com/sagemath/sage/pkgs/container/sage%2Fsage-ubuntu-focal-standard-with-targets-optional>`_. Thus,
 for example, the following command will work::
 
-  $ docker run -it ghcr.io/sagemath/sage/sage-docker-ubuntu-focal-standard-with-targets-optional:dev bash
-  Unable to find image 'ghcr.io/sagemath/sage/sage-docker-ubuntu-focal-standard-with-targets-optional:dev' locally
-  dev: Pulling from sagemath/sage/sage-docker-ubuntu-focal-standard-with-targets-optional
+  $ docker run -it ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets-optional:dev bash
+  Unable to find image 'ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets-optional:dev' locally
+  dev: Pulling from sagemath/sage/sage-ubuntu-focal-standard-with-targets-optional
   d5fd17ec1767: Already exists
   67586203f0c7: Pull complete
   b63c529f4777: Pull complete
   ...
   159775d1a3d2: Pull complete
   Digest: sha256:e6ba5e12f59c6c4668692ef4cfe4ae5f242556482664fb347bf260f32bf8e698
-  Status: Downloaded newer image for ghcr.io/sagemath/sage/sage-docker-ubuntu-focal-standard-with-targets-optional:dev
+  Status: Downloaded newer image for ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets-optional:dev
   root@8055a7ba0607:/sage# ./sage
   ┌────────────────────────────────────────────────────────────────────┐
   │ SageMath version 9.6, Release Date: 2022-05-15                     │
@@ -1127,7 +1127,7 @@ contain a copy of the source tree and the full logs of the build and
 test.
 
 Also `smaller images corresponding to earlier build stages
-<https://github.com/orgs/sagemath/packages?tab=packages&q=sage-docker-debian-bullseye-standard>`_
+<https://github.com/orgs/sagemath/packages?tab=packages&q=sage-debian-bullseye-standard>`_
 are available:
 
  * ``-with-system-packages`` provides a system installation with

@@ -62,7 +62,8 @@ from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
 from sage.misc.superseded import deprecation
-from sage.rings.all import GF, prime_range
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.fast_arith import prime_range
 from sage.homology.homology_group import HomologyGroup
 
 

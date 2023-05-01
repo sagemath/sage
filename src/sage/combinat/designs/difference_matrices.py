@@ -10,11 +10,11 @@ Functions
 ---------
 """
 
+from sage.arith.misc import divisors, is_prime_power
 from sage.misc.unknown import Unknown
 from sage.misc.cachefunc import cached_function
 from sage.categories.sets_cat import EmptySetError
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
-from sage.arith.all import is_prime_power, divisors
 from .designs_pyx import is_difference_matrix
 from .database import DM as DM_constructions
 
@@ -232,8 +232,8 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
                 k = g
         elif existence:
             return True
-        F       = FiniteField(g,'x')
-        F_set   = list(F)
+        F = FiniteField(g,'x')
+        F_set = list(F)
         F_k_set = F_set[:k]
 
         G = F

@@ -31,7 +31,6 @@ Methods
 
 from sage.data_structures.bitset_base cimport *
 from .basis_matroid cimport BasisMatroid
-from sage.arith.all import binomial
 
 
 cdef class CutNode:

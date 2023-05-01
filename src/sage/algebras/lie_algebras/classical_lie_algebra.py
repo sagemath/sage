@@ -629,9 +629,34 @@ class so(ClassicalMatrixLieAlgebra):
     r"""
     The matrix Lie algebra `\mathfrak{so}_n`.
 
-    The Lie algebra `\mathfrak{so}_n`, which consists of all real
-    anti-symmetric `n \times n` matrices. This is the Lie algebra of
-    type `B_{(n-1)/2}` or `D_{n/2}` if `n` is odd or even respectively.
+    The Lie algebra `\mathfrak{so}_n`, which is isomorphic to the
+    Lie algebra of all anti-symmetric `n \times n` matrices.
+    The implementation here uses a different bilinear form and follows
+    the description in Chapter 8 of [HK2002]_. More precisely, this
+    is the set of matrices:
+
+    .. MATH::
+
+        \begin{pmatrix}
+        A & B \\
+        C & D
+        \end{pmatrix}
+
+    such that `A^t = -D`, `B^t = -B`, `C^t = -C` for `n` even and
+
+    .. MATH::
+
+        \begin{pmatrix}
+        A & B & a \\
+        C & D & b \\
+        c & d & 0
+        \end{pmatrix}
+
+    such that `A^t = -D`, `B^t = -B`, `C^t = -C`, `a^t = -d`,
+    and `b^t = -c` for `n` odd.
+
+    This is the Lie algebra of type `B_{(n-1)/2}` or `D_{n/2}` if `n`
+    is odd or even respectively.
     """
     def __init__(self, R, n):
         """
@@ -647,25 +672,26 @@ class so(ClassicalMatrixLieAlgebra):
         MS = MatrixSpace(R, n)
         one = R.one()
         self._n = n
-        if n % 2 == 0: # Even
-            m = n / 2 - 1 # -1 for indexing
+        if n % 2 == 0:  # Even
+            m = n // 2 - 1  # -1 for indexing
             n -= 1
-            e = [MS({(m-1,n):one, (m,n-1):-one})]
-            f = [MS({(n,m-1):one, (n-1,m):-one})]
-            h = [MS({(m-1,m-1):one, (m,m):one, (n-1,n-1):-one, (n,n):-one})]
+            e = [MS({(m-1, n): one, (m, n-1): -one})]
+            f = [MS({(n, m-1): one, (n-1, m): -one})]
+            h = [MS({(m-1, m-1): one, (m, m): one, (n-1, n-1): -one, (n, n): -one})]
             m += 1
             ct = CartanType(['D', m])
-        else: # Odd
-            m = (n-1) / 2 - 1 # -1 for indexing
+        else:  # Odd
+            m = (n-1) // 2 - 1  # -1 for indexing
             n -= 1
-            e = [MS({(m,n):2, (n,n-1):-2})]
-            f = [MS({(n,m):one, (n-1,n):-one})]
-            h = [MS({(m,m):2, (n-1,n-1):-2})]
+            e = [MS({(m, n): 2, (n, n-1): -2})]
+            f = [MS({(n, m): one, (n-1, n): -one})]
+            h = [MS({(m, m): 2, (n-1, n-1): -2})]
             m += 1
             ct = CartanType(['B', m])
-        e = [MS({(i,i+1):one, (m+i+1,m+i):-one}) for i in range(m-1)] + e
-        f = [MS({(i+1,i):one, (m+i,m+i+1):-one}) for i in range(m-1)] + f
-        h = [MS({(i,i):one, (i+1,i+1):-one, (m+i,m+i):-one, (m+i+1,m+i+1):one}) for i in range(m-1)] + h
+        e = [MS({(i, i+1): one, (m+i+1, m+i): -one}) for i in range(m-1)] + e
+        f = [MS({(i+1, i): one, (m+i, m+i+1): -one}) for i in range(m-1)] + f
+        h = [MS({(i, i): one, (i+1, i+1): -one, (m+i, m+i): -one, (m+i+1, m+i+1): one})
+             for i in range(m-1)] + h
         ClassicalMatrixLieAlgebra.__init__(self, R, ct, e, f, h)
 
     def _repr_(self):
@@ -735,10 +761,10 @@ class so(ClassicalMatrixLieAlgebra):
         i = self.index_set().index(i)
         if i == len(self.index_set()) - 1:
             if self._n % 2 == 0:
-                return h[i-1,i-1] + h[i,i]
+                return h[i-1, i-1] + h[i, i]
             # otherwise we are odd
-            return h[i,i]
-        return h[i,i] - h[i+1,i+1]
+            return h[i, i]
+        return h[i, i] - h[i+1, i+1]
 
 class sp(ClassicalMatrixLieAlgebra):
     r"""

@@ -815,7 +815,7 @@ class CartanType(SuperCartanType_standard):
         """
         if node is None:
             node = lambda i: 'O'
-        ret  = "---".join(node(label(i)) for i in range(1,self.m+1))
+        ret = "---".join(node(label(i)) for i in range(1,self.m+1))
         if self.m == 0:
             if self.n == 0:
                 ret = "X"

@@ -1499,7 +1499,8 @@ class FindStatFunction(SageObject):
             from sage.repl.preparse import preparse
             try:
                 l = {}
-                code = "from sage.all import *\n" + preparse(self.sage_code())
+                environment = 'sage.all'
+                code = f"from {environment} import *\n" + preparse(self.sage_code())
                 exec(code, l)
             except SyntaxError:
                 raise ValueError("could not execute verified code for %s" % self)
@@ -2917,7 +2918,6 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
             sage: FindStatCompoundStatistic("St000042oMp00116").browse()        # optional -- webbrowser
         """
         webbrowser.open(FINDSTAT_URL_STATISTICS + self.id_str())
-
 
     def info(self):
         """

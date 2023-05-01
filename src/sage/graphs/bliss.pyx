@@ -708,12 +708,12 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
 
         sage: G = Graph(graphs.CompleteMultipartiteGraph([8, 2]), sparse=True)  # optional - bliss
         sage: for i,j in G.edges(labels=False, sort=False):                     # optional - bliss
-        ....:     if 0 <= i < 3:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "A")                               # optional - bliss
-        ....:     if 3 <= i < 6:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "B")                               # optional - bliss
-        ....:     if 6 <= i < 8:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "C")                               # optional - bliss
+        ....:     if 0 <= i < 3:
+        ....:         G.set_edge_label(i, j, "A")
+        ....:     if 3 <= i < 6:
+        ....:         G.set_edge_label(i, j, "B")
+        ....:     if 6 <= i < 8:
+        ....:         G.set_edge_label(i, j, "C")
 
         sage: factor(automorphism_group(G).cardinality())                       # optional - bliss
         2^4 * 3^2
@@ -740,12 +740,12 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
 
         sage: G = Graph(graphs.CompleteMultipartiteGraph([8,8,8,5]),sparse=True)# optional - bliss
         sage: for i,j in G.edges(labels=False, sort=False):                     # optional - bliss
-        ....:     if 0 <= i < 3:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "A")                               # optional - bliss
-        ....:     if 3 <= i < 6:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "B")                               # optional - bliss
-        ....:     if 6 <= i < 8:                                                # optional - bliss
-        ....:         G.set_edge_label(i, j, "C")                               # optional - bliss
+        ....:     if 0 <= i < 3:
+        ....:         G.set_edge_label(i, j, "A")
+        ....:     if 3 <= i < 6:
+        ....:         G.set_edge_label(i, j, "B")
+        ....:     if 6 <= i < 8:
+        ....:         G.set_edge_label(i, j, "C")
         sage: automorphism_group(G).cardinality() == prod( factorial(n) for n in [3,3,2,8,8,5,2] )  # optional - bliss
         True
         sage: automorphism_group(G, use_edge_labels=False).cardinality() == prod( factorial(n) for n in [8,8,8,5,3] )  # optional - bliss

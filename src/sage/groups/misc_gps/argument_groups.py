@@ -1192,7 +1192,7 @@ class ArgumentByElement(AbstractArgument):
             sage: a.parent()
             Symbolic Ring
         """
-        from sage.symbolic.ring import SymbolicRing
+        from sage.rings.abc import SymbolicRing
 
         element = self._element_ ** exponent
         parent = element.parent()

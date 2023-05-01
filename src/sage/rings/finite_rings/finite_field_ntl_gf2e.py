@@ -52,6 +52,7 @@ def late_import():
     import sage.rings.polynomial.polynomial_element
     is_Polynomial = sage.rings.polynomial.polynomial_element.is_Polynomial
 
+
 class FiniteField_ntl_gf2e(FiniteField):
     """
     Finite Field of characteristic 2 and order `2^n`.

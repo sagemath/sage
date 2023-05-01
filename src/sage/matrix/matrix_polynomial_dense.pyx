@@ -3938,10 +3938,32 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [  6*x 6*x^2]
             [    1     0]
             [    0     1]
+
+        Some particular cases (matrix is zero, dimension is zero, column is zero)::
+
+            sage: Matrix(pR, 2, 1).minimal_kernel_basis()
+            [1 0]
+            [0 1]
+
+            sage: Matrix(pR, 2, 0).minimal_kernel_basis()
+            [1 0]
+            [0 1]
+
+            sage: Matrix(pR, 0, 2).minimal_kernel_basis()
+            []
+
+            sage: Matrix(pR, 3, 2, [[1,0],[1,0],[1,0]]).minimal_kernel_basis()
+            [6 1 0]
+            [6 0 1]
+
+            sage: Matrix(pR, 3, 2, [[x,0],[1,0],[x+1,0]]).minimal_kernel_basis()
+            [6 x 0]
+            [6 6 1]
         """
+        from sage.matrix.constructor import matrix
+
         m = self.nrows()
         n = self.ncols()
-        d = self.degree()
 
         # set default shifts / check shifts dimension
         if shifts is None:
@@ -3953,14 +3975,16 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         # compute kernel basis
         if row_wise:
-            if d is -1: # matrix is zero
-                from sage.matrix.constructor import matrix
+            if m <= n and self.constant_matrix().rank() == m:
+                # early exit: kernel is empty; note: this covers the case m==0
+                return matrix(self.base_ring(), 0, m)
+
+            if n == 0: # early exit: kernel is identity
                 return matrix.identity(self.base_ring(), m, m)
 
-            if m <= n and self.constant_matrix().rank() == m:
-                # early exit: kernel is empty
-                from sage.matrix.constructor import matrix
-                return matrix(self.base_ring(), 0, m)
+            d = self.degree() # well defined since m > 0 and n > 0
+            if d == -1: # matrix is zero: kernel is identity
+                return matrix.identity(self.base_ring(), m, m)
 
             # degree bounds on the kernel basis
             degree_bound = min(m,n)*d+max(shifts)
@@ -3970,23 +3994,36 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             orders = self.column_degrees(degree_bounds)
             for i in range(n): orders[i] = orders[i]+1
 
+            # note: minimal_approximant_basis requires orders[i] > 0
+            # -> if d>0, then degree_bounds > 0 entry-wise and this tuple
+            # `orders` already has all entries strictly positive
+            # -> if d==0, then `orders[i]` is zero exactly when the column i
+            # of self is zero; we may as well take orders[i] == 1 for such
+            # columns which do not influence the left kernel
+            if d == 0:
+                for i in range(n):
+                    if orders[i] == 0:
+                        orders[i] = 1
+
             # compute approximant basis and retrieve kernel rows
             P = self.minimal_approximant_basis(orders,shifts,True,normal_form)
             row_indices = []
             for i in range(m):
-                if P[i,i].degree() + shifts[i] <= degree_bound:
+                if P[i, i].degree() + shifts[i] <= degree_bound:
                     row_indices.append(i)
             return P[row_indices,:]
 
         else:
-            if d is -1: # matrix is zero
-                from sage.matrix.constructor import matrix
+            if n <= m and self.constant_matrix().rank() == n:
+                # early exit: kernel is empty; this covers the case n==0
+                return matrix(self.base_ring(), n, 0)
+
+            if m == 0: # early exit: kernel is identity
                 return matrix.identity(self.base_ring(), n, n)
 
-            if n <= m and self.constant_matrix().rank() == n:
-                # early exit: kernel is empty
-                from sage.matrix.constructor import matrix
-                return matrix(self.base_ring(), n, 0)
+            d = self.degree() # well defined since m > 0 and n > 0
+            if d == -1: # matrix is zero
+                return matrix.identity(self.base_ring(), n, n)
 
             # degree bounds on the kernel basis
             degree_bound = min(m,n)*d+max(shifts)
@@ -3996,10 +4033,21 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             orders = self.row_degrees(degree_bounds)
             for i in range(m): orders[i] = orders[i]+1
 
+            # note: minimal_approximant_basis requires orders[i] > 0
+            # -> if d>0, then degree_bounds > 0 entry-wise and this tuple
+            # `orders` already has all entries strictly positive
+            # -> if d==0, then `orders[i]` is zero exactly when the row i
+            # of self is zero; we may as well take orders[i] == 1 for such
+            # rows which do not influence the right kernel
+            if d == 0:
+                for i in range(m):
+                    if orders[i] == 0:
+                        orders[i] = 1
+
             # compute approximant basis and retrieve kernel columns
             P = self.minimal_approximant_basis(orders,shifts,False,normal_form)
             column_indices = []
             for j in range(n):
-                if P[j,j].degree() + shifts[j] <= degree_bound:
+                if P[j, j].degree() + shifts[j] <= degree_bound:
                     column_indices.append(j)
             return P[:,column_indices]

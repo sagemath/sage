@@ -1411,7 +1411,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             # if we've used enough primes as determined by bound, or
             # if we've used 3 primes, we check to see if the result is
             # the same.
-            if prod >= bound or (not proof  and  (len(v) % 3 == 0)):
+            if prod >= bound or (not proof and (len(v) % 3 == 0)):
                 M = matrix(ZZ, self._base_ring.degree(), self._nrows+1)
                 L = _lift_crt(M, v)
                 if not proof and L == L_last:

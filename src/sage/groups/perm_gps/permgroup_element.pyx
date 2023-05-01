@@ -121,11 +121,12 @@ from cpython.list cimport *
 from cypari2.gen cimport Gen
 
 from sage.ext.stdsage cimport HAS_DICTIONARY
-from sage.rings.all      import ZZ, Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
 from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import is_Matrix
-from sage.matrix.all     import MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 import sage.structure.coerce as coerce
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool

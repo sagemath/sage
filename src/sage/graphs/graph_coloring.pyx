@@ -1498,11 +1498,11 @@ def _vizing_edge_coloring(g):
 
     INPUT:
 
-    - ``g`` -- a graph.
+    - ``g`` -- a graph
 
     OUTPUT:
 
-    - Returns a partition of the edge set into at most `\Delta + 1` matchings.
+    a partition of the edge set into at most `\Delta + 1` matchings
 
     .. SEEALSO::
 
@@ -1512,7 +1512,7 @@ def _vizing_edge_coloring(g):
     ALGORITHM:
 
     This function's implementation is based on the algorithm described at [MG1992]_
-    
+
     EXAMPLES:
 
     Coloring the edges of the Petersen Graph::
@@ -1643,7 +1643,7 @@ def _vizing_edge_coloring(g):
         e_colors[frozenset((fan_center, fan[-1]))] = d
 
     matchings = dict()
-    for edge, c in e_colors.items(): 
+    for edge, c in e_colors.items():
         matchings[c] = matchings.get(c, []) + [tuple(edge)]
     classes = list(matchings.values())
 

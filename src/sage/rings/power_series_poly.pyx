@@ -405,12 +405,13 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         Return the ``n``-th coefficient of ``self``.
 
-        If ``n`` is a slice object, this will return a power series of the
-        same precision, whose coefficients are the same as ``self`` for
-        those indices in the slice, and 0 otherwise.
-
         This returns 0 for negative coefficients and raises an
         ``IndexError`` if trying to access beyond known coefficients.
+
+        If ``n`` is a slice object ``[:k]``, this will return a power
+        series of the same precision, whose coefficients are the same
+        as ``self`` for those indices in the slice, and 0 otherwise.
+        Other kinds of slicing are not allowed.
 
         EXAMPLES::
 
@@ -426,10 +427,8 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             IndexError: coefficient not known
-            sage: f[1:4]
-            doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See https://github.com/sagemath/sage/issues/18940 for details.
-            -17/5*t^3 + O(t^5)
+
+        Using slices::
 
             sage: R.<t> = ZZ[[]]
             sage: f = (2-t)^5; f
@@ -440,6 +439,13 @@ cdef class PowerSeries_poly(PowerSeries):
             1 + t^3 - 4*t^4 + O(t^7)
             sage: f[:4]
             1 + t^3 + O(t^7)
+
+        TESTS::
+
+            sage: f[1:4]
+            Traceback (most recent call last):
+            ...
+            IndexError: polynomial slicing with a start is not defined
         """
         if isinstance(n, slice):
             return PowerSeries_poly(self._parent, self.polynomial()[n],
@@ -508,8 +514,8 @@ cdef class PowerSeries_poly(PowerSeries):
             1.00000000000000 + O(t^4)
         """
         cdef PowerSeries_poly right = <PowerSeries_poly>right_m
-        return PowerSeries_poly(self._parent, self.__f + right.__f, \
-                                         self.common_prec_c(right), check=True)
+        return PowerSeries_poly(self._parent, self.__f + right.__f,
+                                self.common_prec_c(right), check=True)
 
     cpdef _sub_(self, right_m):
         """
@@ -523,8 +529,8 @@ cdef class PowerSeries_poly(PowerSeries):
             13 - 2*w*t
         """
         cdef PowerSeries_poly right = <PowerSeries_poly>right_m
-        return PowerSeries_poly(self._parent, self.__f - right.__f, \
-                                         self.common_prec_c(right), check=True)
+        return PowerSeries_poly(self._parent, self.__f - right.__f,
+                                self.common_prec_c(right), check=True)
 
     cpdef _mul_(self, right_r):
         """

@@ -238,9 +238,8 @@ cdef class MPolynomial(CommutativePolynomial):
 
         - Didier Deshommes
         """
-        degs = self.exponents()
         d = self.dict()
-        return  [ d[i] for i in degs ]
+        return [d[i] for i in self.exponents()]
 
     def truncate(self, var, n):
         """
@@ -1390,8 +1389,8 @@ cdef class MPolynomial(CommutativePolynomial):
         If both polynomials are of positive degree with respect to variable, the
         determinant of the Sylvester matrix is the resultant::
 
-            sage: f = R.random_element(4)
-            sage: g = R.random_element(4)
+            sage: f = R.random_element(4) or (x^2 * y^2)
+            sage: g = R.random_element(4) or (x^2 * y^2)
             sage: f.sylvester_matrix(g, x).determinant() == f.resultant(g, x)
             True
 
@@ -1592,7 +1591,7 @@ cdef class MPolynomial(CommutativePolynomial):
             x = variable
         p = self.polynomial(x)
         q = other.polynomial(x)
-        return [R(f) for f in  p.subresultants(q)]
+        return [R(f) for f in p.subresultants(q)]
 
     def macaulay_resultant(self, *args):
         r"""
@@ -2347,7 +2346,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: F.reduced_form(prec=50, smallest_coeffs=False)
             Traceback (most recent call last):
             ...
-            ValueError: accuracy of Newton's root not within tolerance(0.0000124... > 1e-06), increase precision
+            ValueError: accuracy of Newton's root not within tolerance(0.000012... > 1e-06), increase precision
             sage: F.reduced_form(prec=100, smallest_coeffs=False)
             (
                                                                   [-1 -1]

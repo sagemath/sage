@@ -27,8 +27,7 @@ in giac, but the mathematical computation  is not done. This class is mainly
 for cython users.  Here A is a Pygen element, and it is ready for any giac
 function.::
 
-    sage: from sage.libs.giac.giac import *     # random
-    //...
+    sage: from sage.libs.giac.giac import *
     sage: A = Pygen('2+2')
     sage: A
     2+2
@@ -154,7 +153,9 @@ from sage.ext.stdsage cimport PY_NEW
 
 from sage.libs.gmp.mpz cimport mpz_t, mpz_init_set
 
-from sage.rings.all import ZZ, QQ, IntegerModRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Matrix
@@ -2010,7 +2011,6 @@ class GiacFunctionNoEV(Pygen):
 # Some convenient settings
 ############################################################
 Pygen('printpow(1)').eval()  # default power is ^
-Pygen('add_language(1)').eval()  # Add the french keywords in the giac library language.
 # FIXME: print I for sqrt(-1) instead of i
 # GIAC_try_parse_i(False,context_ptr); (does not work??)
 

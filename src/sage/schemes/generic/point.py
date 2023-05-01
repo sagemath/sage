@@ -100,6 +100,7 @@ class SchemeTopologicalPoint(SchemePoint):
         """
         SchemePoint.__init__(self, S, parent=S)
 
+
 class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
     def __init__(self, u, x):
         """
@@ -114,26 +115,25 @@ class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
         self.__x = x
 
     def _repr_(self):
-        return "Point on %s defined by x in U, where:\n  U: %s\n  x: %s"%(\
-                   self.scheme(), self.embedding_of_affine_open().domain(),
-                                  self.point_on_affine())
+        return "Point on %s defined by x in U, where:\n  U: %s\n  x: %s" % (
+            self.scheme(), self.embedding_of_affine_open().domain(),
+            self.point_on_affine())
 
     def point_on_affine(self):
         """
-        Return the scheme point on the affine open U.
+        Return the scheme point on the affine open `U`.
         """
         return self.__x
 
     def affine_open(self):
         """
-        Return the affine open subset U.
+        Return the affine open subset `U`.
         """
         return self.__u.domain()
 
     def embedding_of_affine_open(self):
         """
-        Return the embedding from the affine open subset U into this
-        scheme.
+        Return the embedding from the affine open subset `U` into this scheme.
         """
         return self.__u
 
@@ -165,8 +165,9 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         corresponding to a prime ideal::
 
             sage: P2.<x, y, z> = ProjectiveSpace(2, QQ)
-            sage: SchemeTopologicalPoint_prime_ideal(P2, y*z-x^2)
-            Point on Projective Space of dimension 2 over Rational Field defined by the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: SchemeTopologicalPoint_prime_ideal(P2, y*z - x^2)
+            Point on Projective Space of dimension 2 over Rational Field defined by
+             the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         R = S.coordinate_ring()
         from sage.rings.ideal import is_Ideal
@@ -190,8 +191,9 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
 
             sage: from sage.schemes.generic.point import SchemeTopologicalPoint_prime_ideal
             sage: P2.<x, y, z> = ProjectiveSpace(2, QQ)
-            sage: pt = SchemeTopologicalPoint_prime_ideal(P2, y*z-x^2); pt
-            Point on Projective Space of dimension 2 over Rational Field defined by the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: pt = SchemeTopologicalPoint_prime_ideal(P2, y*z - x^2); pt
+            Point on Projective Space of dimension 2 over Rational Field defined by
+             the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field
             sage: pt._repr_()
             'Point on Projective Space of dimension 2 over Rational Field defined by the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field'
         """
@@ -205,7 +207,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
 
             sage: from sage.schemes.generic.point import SchemeTopologicalPoint_prime_ideal
             sage: P2.<x, y, z> = ProjectiveSpace(2, QQ)
-            sage: pt = SchemeTopologicalPoint_prime_ideal(P2, y*z-x^2)
+            sage: pt = SchemeTopologicalPoint_prime_ideal(P2, y*z - x^2)
             sage: pt.prime_ideal()
             Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """

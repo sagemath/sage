@@ -9,7 +9,6 @@ AUTHORS:
 - Matthias Koeppe (2017): stubs
 - Moritz Firsching (2018-04): rest
 """
-
 # *****************************************************************************
 #       Copyright (C) 2010      Nathann Cohen <nathann.cohen@gmail.com>
 #                     2017-2022 Matthias Koeppe
@@ -19,15 +18,11 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from os import sys
 from os.path import splitext
-from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.numerical.mip import MIPSolverException
-from libc.float cimport DBL_MAX
-from libc.limits cimport INT_MAX
 from pyscipopt import Model
 
 

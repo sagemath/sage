@@ -26,7 +26,7 @@ import sage.rings.padics.padic_base_leaves as padic_base_leaves
 
 import sage.rings.abc
 from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 
 from sage.misc.cachefunc import weak_cached_function
 import sage.misc.weak_dict
@@ -747,7 +747,7 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
             specialized = polynomial_ring.PolynomialRing_dense_mod_p
         elif n > 1:  # Specialized code breaks for n == 1
             specialized = polynomial_ring.PolynomialRing_dense_mod_n
-    elif is_FiniteField(base_ring):
+    elif isinstance(base_ring, FiniteField):
         specialized = polynomial_ring.PolynomialRing_dense_finite_field
     elif isinstance(base_ring, padic_base_leaves.pAdicFieldCappedRelative):
         specialized = polynomial_ring.PolynomialRing_dense_padic_field_capped_relative
@@ -762,7 +762,6 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
     if specialized is not None:
         implementation_names = specialized._implementation_names_impl(implementation, base_ring, sparse)
         if implementation_names is not NotImplemented:
-            implementation = implementation_names[0]
             constructor = specialized
 
     # Generic implementations
@@ -780,7 +779,6 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
         else:
             constructor = polynomial_ring.PolynomialRing_commutative
         implementation_names = constructor._implementation_names(implementation, base_ring, sparse)
-        implementation = implementation_names[0]
 
         # Only use names which are not supported by the specialized class.
         if specialized is not None:
@@ -819,10 +817,10 @@ def _multi_variate(base_ring, names, sparse=None, order="degrevlex", implementat
     implementation_names = set([implementation])
 
     if implementation is None or implementation == "singular":
-        from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
         try:
+            from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
             R = MPolynomialRing_libsingular(base_ring, n, names, order)
-        except (TypeError, NotImplementedError):
+        except (ImportError, TypeError, NotImplementedError):
             if implementation is not None:
                 raise
         else:

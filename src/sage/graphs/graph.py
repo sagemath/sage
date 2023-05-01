@@ -112,10 +112,10 @@ covered here.
 
    ::
 
-       sage: import networkx
-       sage: K = networkx.complete_bipartite_graph(12,7)
-       sage: G = Graph(K)
-       sage: G.degree()
+       sage: import networkx                                                            # optional - networkx
+       sage: K = networkx.complete_bipartite_graph(12,7)                                # optional - networkx
+       sage: G = Graph(K)                                                               # optional - networkx
+       sage: G.degree()                                                                 # optional - networkx
        [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 12, 12, 12, 12, 12, 12, 12]
 
 - graph6 or sparse6 format:
@@ -570,6 +570,11 @@ class Graph(GenericGraph):
       immutable graph. Note that ``immutable=True`` is actually a shortcut for
       ``data_structure='static_sparse'``. Set to ``False`` by default.
 
+    - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
+      labels during hashing. This parameter defaults to ``True`` if the graph is
+      weighted. This parameter is ignored if the graph is mutable.
+      Beware that trying to hash unhashable labels will raise an error.
+
     - ``vertex_labels`` -- boolean (default: ``True``); whether to allow any
       object as a vertex (slower), or only the integers `0,...,n-1`, where `n`
       is the number of vertices.
@@ -795,16 +800,16 @@ class Graph(GenericGraph):
 
     #. A NetworkX MultiGraph::
 
-          sage: import networkx
-          sage: g = networkx.MultiGraph({0:[1,2,3], 2:[4]})
-          sage: Graph(g)
+          sage: import networkx                                                         # optional - networkx
+          sage: g = networkx.MultiGraph({0:[1,2,3], 2:[4]})                             # optional - networkx
+          sage: Graph(g)                                                                # optional - networkx
           Multi-graph on 5 vertices
 
     #. A NetworkX graph::
 
-           sage: import networkx
-           sage: g = networkx.Graph({0:[1,2,3], 2:[4]})
-           sage: DiGraph(g)
+           sage: import networkx                                                        # optional - networkx
+           sage: g = networkx.Graph({0:[1,2,3], 2:[4]})                                 # optional - networkx
+           sage: DiGraph(g)                                                             # optional - networkx
            Digraph on 5 vertices
 
     #. An igraph Graph (see also
@@ -910,7 +915,7 @@ class Graph(GenericGraph):
                  weighted=None, data_structure="sparse",
                  vertex_labels=True, name=None,
                  multiedges=None, convert_empty_dict_labels_to_None=None,
-                 sparse=True, immutable=False):
+                 sparse=True, immutable=False, hash_labels=None):
         """
         TESTS::
 
@@ -1252,6 +1257,10 @@ class Graph(GenericGraph):
         if weighted is None:
             weighted = False
         self._weighted = getattr(self, '_weighted', weighted)
+
+        if hash_labels is None and hasattr(data, '_hash_labels'):
+            hash_labels = data._hash_labels
+        self._hash_labels = hash_labels
 
         self._pos = copy(pos)
 
@@ -2669,7 +2678,6 @@ class Graph(GenericGraph):
 
         return self_complement.is_odd_hole_free(certificate=certificate)
 
-
     @doc_index("Graph properties")
     def is_edge_transitive(self):
         r"""
@@ -2887,7 +2895,6 @@ class Graph(GenericGraph):
             elif deg != 2:
                 return False
         return deg_one_counter == 2 and seen_counter == order
-
 
     @doc_index("Connectivity, orientations, trees")
     def degree_constrained_subgraph(self, bounds, solver=None, verbose=0,
@@ -4666,9 +4673,30 @@ class Graph(GenericGraph):
             sage: mad_g = g.maximum_average_degree(value_only=False)
             sage: g.is_isomorphic(mad_g)
             True
+
+        TESTS:
+
+        Check corner cases::
+
+            sage: Graph().maximum_average_degree(value_only=True)
+            0
+            sage: Graph().maximum_average_degree(value_only=False)
+            Graph on 0 vertices
+            sage: Graph(1).maximum_average_degree(value_only=True)
+            0
+            sage: Graph(1).maximum_average_degree(value_only=False)
+            Graph on 1 vertex
+            sage: Graph(2).maximum_average_degree(value_only=True)
+            0
+            sage: Graph(2).maximum_average_degree(value_only=False)
+            Graph on 1 vertex
         """
         self._scream_if_not_simple()
         g = self
+        if not g:
+            return ZZ.zero() if value_only else g.parent()()
+        elif not g.size():
+            return ZZ.zero() if value_only else g.parent()([[next(g.vertex_iterator())], []])
         from sage.numerical.mip import MixedIntegerLinearProgram
 
         p = MixedIntegerLinearProgram(maximization=True, solver=solver)
@@ -6704,9 +6732,9 @@ class Graph(GenericGraph):
             sage: g.clique_number(algorithm="MILP")
             2
             sage: for i in range(10):                                            # optional - mcqd
-            ....:     g = graphs.RandomGNP(15,.5)                                # optional - mcqd
-            ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"): # optional - mcqd
-            ....:         print("This is dead wrong !")                          # optional - mcqd
+            ....:     g = graphs.RandomGNP(15,.5)
+            ....:     if g.clique_number() != g.clique_number(algorithm="mcqd"):
+            ....:         print("This is dead wrong !")
         """
         self._scream_if_not_simple(allow_loops=False)
         if algorithm == "Cliquer":

@@ -96,11 +96,11 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
 
     TESTS::
 
-        sage: Polyhedra(RR, 3, backend='field')
+        sage: Polyhedra(RR, 3, backend='field')                                                                         # optional - sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: the 'field' backend for polyhedron cannot be used with non-exact fields
-        sage: Polyhedra(RR, 3)
+        sage: Polyhedra(RR, 3)                                                                                          # optional - sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: no default backend for computations with Real Field with 53 bits of precision
@@ -858,16 +858,18 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         Test that :trac:`28770` is fixed::
 
             sage: z = QQ['z'].0
-            sage: K = NumberField(z^2 - 2,'s')
-            sage: triangle_QQ._coerce_base_ring(K)
+            sage: K = NumberField(z^2 - 2, 's')                         # optional - sage.rings.number_field
+            sage: triangle_QQ._coerce_base_ring(K)                      # optional - sage.rings.number_field
             Number Field in s with defining polynomial z^2 - 2
-            sage: triangle_QQ._coerce_base_ring(K.gen())
+            sage: triangle_QQ._coerce_base_ring(K.gen())                # optional - sage.rings.number_field
             Number Field in s with defining polynomial z^2 - 2
 
             sage: z = QQ['z'].0
-            sage: K = NumberField(z^2 - 2,'s')
-            sage: K.gen()*polytopes.simplex(backend='field')
-            A 3-dimensional polyhedron in (Number Field in s with defining polynomial z^2 - 2)^4 defined as the convex hull of 4 vertices
+            sage: K = NumberField(z^2 - 2, 's')                         # optional - sage.rings.number_field
+            sage: K.gen() * polytopes.simplex(backend='field')          # optional - sage.rings.number_field
+            A 3-dimensional polyhedron in
+             (Number Field in s with defining polynomial z^2 - 2)^4
+             defined as the convex hull of 4 vertices
         """
         from sage.structure.element import Element
         if isinstance(other, Element):

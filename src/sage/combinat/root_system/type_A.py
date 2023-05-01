@@ -335,7 +335,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             return ""
         if node is None:
             node = self._ascii_art_node
-        ret  = "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
+        ret = "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n+1))
         return ret
 

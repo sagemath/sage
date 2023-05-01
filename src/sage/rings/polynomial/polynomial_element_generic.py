@@ -260,7 +260,6 @@ class Polynomial_generic_sparse(Polynomial):
             except AttributeError:
                 raise ValueError('cannot differentiate with respect to {}'.format(var))
 
-
         # compute formal derivative with respect to generator
         d = {}
         for n, c in self.__coeffs.items():
@@ -408,7 +407,7 @@ class Polynomial_generic_sparse(Polynomial):
         for n in D:
             del x[n]
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         """
         Return the `n`-th coefficient of this polynomial.
 
@@ -436,37 +435,36 @@ class Polynomial_generic_sparse(Polynomial):
             sage: f[:2]
             -42.000*x + 8.0000
 
-        Any other kind of slicing is deprecated or an error::
+        Any other kind of slicing is an error, see :trac:`18940`::
 
             sage: f[1:3]
-            doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
-            See https://github.com/sagemath/sage/issues/18940 for details.
-            73.500*x^2 - 42.000*x
+            Traceback (most recent call last):
+            ...
+            IndexError: polynomial slicing with a start is not defined
+
             sage: f[1:3:2]
             Traceback (most recent call last):
             ...
-            NotImplementedError: polynomial slicing with a step is not defined
+            IndexError: polynomial slicing with a step is not defined
+
+        TESTS::
+
             sage: f["hello"]
             Traceback (most recent call last):
             ...
             TypeError: list indices must be integers, not str
         """
         if isinstance(n, slice):
-            d = self.degree() + 1
             start, stop, step = n.start, n.stop, n.step
             if step is not None:
-                raise NotImplementedError("polynomial slicing with a step is not defined")
-            if start is None:
-                start = 0
-            else:
-                if start < 0:
-                    start = 0
-                from sage.misc.superseded import deprecation
-                deprecation(18940, "polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead")
+                raise IndexError("polynomial slicing with a step is not defined")
+            if start is not None:
+                raise IndexError("polynomial slicing with a start is not defined")
+            d = self.degree() + 1
             if stop is None or stop > d:
                 stop = d
-            x = self.__coeffs
-            v = {k: x[k] for k in x.keys() if start <= k < stop}
+            v = {key: val for key, val in self.__coeffs.items()
+                 if key < stop}
             return self.parent()(v)
 
         try:
@@ -1554,7 +1552,6 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         return roots
 
 
-
 class Polynomial_generic_dense_cdv(Polynomial_generic_dense_inexact, Polynomial_generic_cdv):
     pass
 
@@ -1565,8 +1562,10 @@ class Polynomial_generic_sparse_cdv(Polynomial_generic_sparse, Polynomial_generi
 class Polynomial_generic_cdvr(Polynomial_generic_cdv):
     pass
 
+
 class Polynomial_generic_dense_cdvr(Polynomial_generic_dense_cdv, Polynomial_generic_cdvr):
     pass
+
 
 class Polynomial_generic_sparse_cdvr(Polynomial_generic_sparse_cdv, Polynomial_generic_cdvr):
     pass
@@ -1575,8 +1574,10 @@ class Polynomial_generic_sparse_cdvr(Polynomial_generic_sparse_cdv, Polynomial_g
 class Polynomial_generic_cdvf(Polynomial_generic_cdv, Polynomial_generic_field):
     pass
 
+
 class Polynomial_generic_dense_cdvf(Polynomial_generic_dense_cdv, Polynomial_generic_cdvf):
     pass
+
 
 class Polynomial_generic_sparse_cdvf(Polynomial_generic_sparse_cdv, Polynomial_generic_cdvf):
     pass
@@ -1588,6 +1589,6 @@ class Polynomial_generic_sparse_cdvf(Polynomial_generic_sparse_cdv, Polynomial_g
 from sage.misc.persist import register_unpickle_override
 from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
 
-register_unpickle_override( \
-    'sage.rings.polynomial.polynomial_element_generic', \
+register_unpickle_override(
+    'sage.rings.polynomial.polynomial_element_generic',
     'Polynomial_rational_dense', Polynomial_rational_flint)

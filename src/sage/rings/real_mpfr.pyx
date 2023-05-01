@@ -1570,7 +1570,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         s = self.str(32, no_sci=False, e='@')
         return (__create__RealNumber_version0, (self._parent, s, 32))
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         if self._parent is not None:
             mpfr_clear(self.value)
 
@@ -2990,8 +2990,12 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def round(self):
         """
-         Rounds ``self`` to the nearest integer. The rounding mode of the
-         parent field has no effect on this function.
+         Round ``self`` to the nearest representable integer, rounding halfway
+         cases away from zero.
+         
+         .. NOTE::
+
+             The rounding mode of the parent field does not affect the result.
 
          EXAMPLES::
 

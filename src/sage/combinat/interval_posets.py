@@ -36,7 +36,7 @@ from collections.abc import Iterator
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.posets import Posets
-from sage.categories.all import Monoids
+from sage.categories.monoids import Monoids
 from sage.combinat.posets.posets import Poset, FinitePoset
 from sage.categories.finite_posets import FinitePosets
 from sage.combinat.binary_tree import BinaryTrees
@@ -61,7 +61,7 @@ from sage.graphs.digraph import DiGraph
 
 
 class TamariIntervalPoset(Element,
-        metaclass=InheritComparisonClasscallMetaclass):
+                          metaclass=InheritComparisonClasscallMetaclass):
     r"""
     The class of Tamari interval-posets.
 
@@ -3231,7 +3231,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         final_forest = TamariIntervalPosets.final_forest(tree1)
         try:
             return initial_forest.intersection(final_forest)
-        except Exception:
+        except ValueError:
             raise ValueError("the two binary trees are not comparable on the Tamari lattice")
 
     @staticmethod
@@ -3280,7 +3280,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         tree2 = dw2.to_binary_tree_tamari()
         try:
             return TamariIntervalPosets.from_binary_trees(tree1, tree2)
-        except Exception:
+        except ValueError:
             raise ValueError("the two Dyck words are not comparable on the Tamari lattice")
 
     @staticmethod
@@ -3539,7 +3539,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         The comparison is first by size, then using the
         cubical coordinates.
 
-        .. SEEALSO:: :meth:`cubical_coordinates`
+        .. SEEALSO:: :meth:`~TamariIntervalPoset.cubical_coordinates`
 
         INPUT:
 
@@ -3709,7 +3709,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             sage: [TamariIntervalPosets(i).cardinality() for i in range(6)]
             [1, 1, 3, 13, 68, 399]
         """
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         n = self._size
         if n == 0:
             return Integer(1)

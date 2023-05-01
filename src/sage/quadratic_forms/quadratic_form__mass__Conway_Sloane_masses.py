@@ -1,35 +1,37 @@
 """
 Conway-Sloane masses
 """
+from sage.arith.misc import (fundamental_discriminant,
+                             is_prime,
+                             kronecker as kronecker_symbol,
+                             legendre_symbol,
+                             prime_divisors)
+from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import kronecker_symbol, legendre_symbol, prime_divisors, is_prime, fundamental_discriminant
-from sage.symbolic.constants import pi
-from sage.misc.misc_c import prod
-from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 
 
 def parity(self, allow_rescaling_flag=True):
-    """
+    r"""
     Return the parity ("even" or "odd") of an integer-valued quadratic
-    form over `ZZ`, defined up to similitude/rescaling of the form so that
+    form over `\ZZ`, defined up to similitude/rescaling of the form so that
     its Jordan component of smallest scale is unimodular.  After this
     rescaling, we say a form is even if it only represents even numbers,
     and odd if it represents some odd number.
 
-    If the 'allow_rescaling_flag' is set to False, then we require that
-    the quadratic form have a Gram matrix with coefficients in `ZZ`, and
+    If the ``allow_rescaling_flag`` is set to False, then we require that
+    the quadratic form have a Gram matrix with coefficients in `\ZZ`, and
     look at the unimodular Jordan block to determine its parity.  This
     returns an error if the form is not integer-matrix, meaning that it
     has Jordan components at `p=2` which do not have an integer scale.
 
-    We determine the parity by looking for a 1x1 block in the 0-th
+    We determine the parity by looking for a `1 \times 1` block in the 0-th
     Jordan component, after a possible rescaling.
 
     INPUT:
 
-        self -- a quadratic form with base_ring `ZZ`, which we may
-                require to have integer Gram matrix.
+    - ``self`` -- a quadratic form with base ring `\ZZ`, which we may
+      require to have integer Gram matrix.
 
     OUTPUT:
 
@@ -74,7 +76,6 @@ def parity(self, allow_rescaling_flag=True):
         [ * * 1 ]
         sage: Q.parity()
         'odd'
-
     """
     # Deal with 0-dim'l forms
     if self.dim() == 0:
@@ -109,13 +110,12 @@ def parity(self, allow_rescaling_flag=True):
         return "even"
 
 
-
 def is_even(self, allow_rescaling_flag=True):
-    """
-    Returns true iff after rescaling by some appropriate factor, the
-    form represents no odd integers.  For more details, see parity().
+    r"""
+    Return true iff after rescaling by some appropriate factor, the
+    form represents no odd integers.  For more details, see :meth:`parity`.
 
-    Requires that Q is defined over `ZZ`.
+    Requires that `Q` is defined over `\ZZ`.
 
     EXAMPLES::
 
@@ -131,11 +131,11 @@ def is_even(self, allow_rescaling_flag=True):
 
 
 def is_odd(self, allow_rescaling_flag=True):
-    """
-    Returns true iff after rescaling by some appropriate factor, the
-    form represents some odd integers.  For more details, see parity().
+    r"""
+    Return true iff after rescaling by some appropriate factor, the
+    form represents some odd integers.  For more details, see :meth:`parity`.
 
-    Requires that Q is defined over `ZZ`.
+    Requires that `Q` is defined over `\ZZ`.
 
     EXAMPLES::
 
@@ -150,27 +150,26 @@ def is_odd(self, allow_rescaling_flag=True):
     return self.parity(allow_rescaling_flag) == "odd"
 
 
-
 def conway_species_list_at_odd_prime(self, p):
-    """
-    Returns an integer called the 'species' which determines the type
-    of the orthogonal group over the finite field `F_p`.
+    r"""
+    Return an integer called the 'species' which determines the type
+    of the orthogonal group over the finite field `\GF{p}`.
 
     This assumes that the given quadratic form is a unimodular Jordan
     block at an odd prime `p`.  When the dimension is odd then this
     number is always positive, otherwise it may be positive or
     negative (or zero, but that is considered positive by convention).
 
-    Note: The species of a zero dim'l form is always 0+, so we
-    interpret the return value of zero as positive here! =)
+    .. NOTE:
+
+        The species of a zero dimensional form is always 0+, so we
+        interpret the return value of zero as positive here! =)
 
     INPUT:
 
-        a positive prime number
+    - ``p`` -- a positive prime number
 
-    OUTPUT:
-
-        a list of integers
+    OUTPUT: a list of integers
 
     EXAMPLES::
 
@@ -221,23 +220,22 @@ def conway_species_list_at_odd_prime(self, p):
     return species_list
 
 
-
 def conway_species_list_at_2(self):
-    """
-    Returns an integer called the 'species' which determines the type
-    of the orthogonal group over the finite field `F_p`.
+    r"""
+    Return an integer called the 'species' which determines the type
+    of the orthogonal group over the finite field `\GF{p}`.
 
     This assumes that the given quadratic form is a unimodular Jordan
     block at an odd prime `p`.  When the dimension is odd then this
     number is always positive, otherwise it may be positive or
     negative.
 
-    Note: The species of a zero dim'l form is always 0+, so we
-    interpret the return value of zero as positive here! =)
+    .. NOTE::
 
-    OUTPUT:
+        The species of a zero dimensional form is always 0+, so we
+        interpret the return value of zero as positive here! =)
 
-        a list of integers
+    OUTPUT: a list of integers
 
     EXAMPLES::
 
@@ -300,7 +298,6 @@ def conway_species_list_at_2(self):
         # Append the species to the list
         species_list.append(species)
 
-
     if jordan_list[-1].is_odd():        # Add an entry for the unlisted "s_max + 1" Jordan component as well.
         species_list.append(1)
 
@@ -308,24 +305,16 @@ def conway_species_list_at_2(self):
     return species_list
 
 
-
-
 def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
-    """
+    r"""
     Determines the 'octane' of this full unimodular Jordan block at
-    the prime `p=2`.  This is an invariant defined `(mod 8)`, ad.
+    the prime `p=2`.  This is an invariant defined (mod 8), ad.
 
     This assumes that the form is given as a block diagonal form with
-    unimodular blocks of size <= 2 and the 1x1 blocks are all in the upper
+    unimodular blocks of size `\leq 2` and the `1 \times 1` blocks are all in the upper
     leftmost position.
 
-    INPUT:
-
-        none
-
-    OUTPUT:
-
-        an integer 0 <= x <= 7
+    OUTPUT: an integer `0 \leq x \leq 7`
 
     EXAMPLES::
 
@@ -338,7 +327,6 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [3,7,13])
         sage: Q.conway_octane_of_this_unimodular_Jordan_block_at_2()
         7
-
     """
     # Deal with 'even' forms
     if self.parity() == "even":
@@ -354,7 +342,6 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
     tmp_diag_vec = [None  for i in range(n)]
     tmp_diag_vec[0] = u       # This should be an odd integer!
     ind = 1                  # The next index to diagonalize
-
 
     # Use u to diagonalize the form -- WHAT ARE THE POSSIBLE LOCAL NORMAL FORMS?
     while ind < n:
@@ -404,23 +391,20 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
 
 
 def conway_diagonal_factor(self, p):
-    """
-    Computes the diagonal factor of Conway's `p`-mass.
+    r"""
+    Compute the diagonal factor of Conway's `p`-mass.
 
     INPUT:
 
-        `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
-    OUTPUT:
-
-        a rational number > 0
+    OUTPUT: a rational number > 0
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, range(1,6))
         sage: Q.conway_diagonal_factor(3)
         81/256
-
     """
      # Get the species list at p
     if p == 2:
@@ -445,17 +429,15 @@ def conway_diagonal_factor(self, p):
 
 
 def conway_cross_product_doubled_power(self, p):
-    """
-    Computes twice the power of p which evaluates the 'cross product'
+    r"""
+    Compute twice the power of `p` which evaluates the 'cross product'
     term in Conway's mass formula.
 
     INPUT:
 
-        `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
-    OUTPUT:
-
-        a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 
@@ -483,23 +465,16 @@ def conway_cross_product_doubled_power(self, p):
 
 
 def conway_type_factor(self):
-    """
+    r"""
     This is a special factor only present in the mass formula when `p=2`.
 
-    INPUT:
-
-        none
-
-    OUTPUT:
-
-        a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, range(1,8))
         sage: Q.conway_type_factor()
         4
-
     """
     jordan_list = self.jordan_blocks_in_unimodular_list_by_scale_power(2)
     n2 = sum([J.dim()  for J in jordan_list  if J.is_even()])
@@ -509,16 +484,14 @@ def conway_type_factor(self):
 
 
 def conway_p_mass(self, p):
-    """
-    Computes Conway's `p`-mass.
+    r"""
+    Compute Conway's `p`-mass.
 
     INPUT:
 
-        `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
-    OUTPUT:
-
-        a rational number > 0
+    OUTPUT: a rational number > 0
 
     EXAMPLES::
 
@@ -527,7 +500,6 @@ def conway_p_mass(self, p):
         16/3
         sage: Q.conway_p_mass(3)
         729/256
-
     """
     # Compute the first two factors of the p-mass
     p_mass = self.conway_diagonal_factor(p) * (p ** (self.conway_cross_product_doubled_power(p) / ZZ(2)))
@@ -541,23 +513,20 @@ def conway_p_mass(self, p):
 
 
 def conway_standard_p_mass(self, p):
-    """
-    Computes the standard (generic) Conway-Sloane `p`-mass.
+    r"""
+    Compute the standard (generic) Conway-Sloane `p`-mass.
 
     INPUT:
 
-        `p` -- a prime number > 0
+    - ``p`` -- a prime number > 0
 
-    OUTPUT:
-
-        a rational number > 0
+    OUTPUT: a rational number > 0
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
         sage: Q.conway_standard_p_mass(2)
         2/3
-
     """
     # Some useful variables
     n = self.dim()
@@ -579,30 +548,26 @@ def conway_standard_p_mass(self, p):
 
 
 def conway_standard_mass(self):
-    """
-    Returns the infinite product of the standard mass factors.
+    r"""
+    Return the infinite product of the standard mass factors.
 
-    INPUT:
-
-        none
-
-    OUTPUT:
-
-        a rational number > 0
+    OUTPUT: a rational number > 0
 
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 3, [2, -2, 0, 3, -5, 4])
-        sage: Q.conway_standard_mass()
+        sage: Q.conway_standard_mass()                                              # optional - sage.symbolic
         1/6
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.conway_standard_mass()
+        sage: Q.conway_standard_mass()                                              # optional - sage.symbolic
         1/6
-
     """
+    from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
+    from sage.symbolic.constants import pi
+
     n = self.dim()
     if n % 2 == 0:
         s = n // 2
@@ -621,29 +586,27 @@ def conway_standard_mass(self):
 
 
 def conway_mass(self):
-    """
+    r"""
     Compute the mass by using the Conway-Sloane mass formula.
 
-    OUTPUT:
-
-    a rational number > 0
+    OUTPUT: a rational number > 0
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.conway_mass()
+        sage: Q.conway_mass()                                                       # optional - sage.symbolic
         1/48
 
         sage: Q = DiagonalQuadraticForm(ZZ, [7,1,1])
-        sage: Q.conway_mass()
+        sage: Q.conway_mass()                                                       # optional - sage.symbolic
         3/16
 
         sage: Q = QuadraticForm(ZZ, 3, [7, 2, 2, 2, 0, 2]) + DiagonalQuadraticForm(ZZ, [1])
-        sage: Q.conway_mass()
+        sage: Q.conway_mass()                                                       # optional - sage.symbolic
         3/32
 
-        sage: Q = QuadraticForm(Matrix(ZZ,2,[2,1,1,2]))
-        sage: Q.conway_mass()
+        sage: Q = QuadraticForm(Matrix(ZZ, 2, [2,1,1,2]))
+        sage: Q.conway_mass()                                                       # optional - sage.symbolic
         1/12
     """
     # Try to use the cached result

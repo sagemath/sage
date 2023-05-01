@@ -128,7 +128,7 @@ cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
     res = PY_NEW(Integer)
     if shift > 0:
         if rnd == 'n':
-            if mpz_tstbit(man.value, shift-1) and (mpz_tstbit(man.value, shift)\
+            if mpz_tstbit(man.value, shift-1) and (mpz_tstbit(man.value, shift)
                 or (mpz_scan1(man.value, 0) < (shift-1))):
                 mpz_cdiv_q_2exp(res.value, man.value, shift)
             else:

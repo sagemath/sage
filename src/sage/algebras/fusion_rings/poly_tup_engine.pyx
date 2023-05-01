@@ -9,7 +9,7 @@ Arithmetic Engine for Polynomials as Tuples
 # ****************************************************************************
 
 ###########
-### API ###
+#   API   #
 ###########
 
 cpdef inline tuple poly_to_tup(MPolynomial_libsingular poly):
@@ -115,7 +115,7 @@ cpdef tuple _unflatten_coeffs(field, tuple eq_tup):
     return tuple(unflat)
 
 #################################
-### Useful private predicates ###
+#   Useful private predicates   #
 #################################
 
 cdef inline int has_appropriate_linear_term(tuple eq_tup):
@@ -146,7 +146,7 @@ cdef inline int has_appropriate_linear_term(tuple eq_tup):
     return -1
 
 ######################
-### "Change rings" ###
+#   "Change rings"   #
 ######################
 
 cpdef inline tup_to_univ_poly(tuple eq_tup, univ_poly_ring):
@@ -215,7 +215,7 @@ cpdef inline tuple resize(tuple eq_tup, dict idx_map, int nvars):
     return tuple(resized)
 
 ###########################
-### Convenience methods ###
+#   Convenience methods   #
 ###########################
 
 cdef inline ETuple degrees(tuple poly_tup):
@@ -225,7 +225,7 @@ cdef inline ETuple degrees(tuple poly_tup):
     # Deal with the empty tuple, representing the zero polynomial
     if not poly_tup:
         return ETuple()
-    cdef ETuple max_degs, exp
+    cdef ETuple max_degs
     cdef int i
     max_degs = <ETuple> (<tuple> poly_tup[0])[0]
     for i in range(1, len(poly_tup)):
@@ -251,7 +251,7 @@ cpdef list get_variables_degrees(list eqns, int nvars):
     cdef int i
     max_deg = degrees(eqns[0])
     for i in range(1, len(eqns)):
-        max_deg = max_deg.emax(degrees( <tuple>(eqns[i]) ))
+        max_deg = max_deg.emax(degrees(<tuple>(eqns[i])))
     cdef list dense = [0] * len(max_deg)
     for i in range(max_deg._nonzero):
         dense[max_deg._data[2*i]] = max_deg._data[2*i+1]
@@ -339,7 +339,7 @@ cdef inline bint tup_fixes_sq(tuple eq_tup):
     return True
 
 ######################
-### Simplification ###
+#   Simplification   #
 ######################
 
 cdef dict subs_squares(dict eq_dict, KSHandler known_sq):
@@ -358,7 +358,7 @@ cdef dict subs_squares(dict eq_dict, KSHandler known_sq):
     A dictionary of ``(ETuple, coeff)`` pairs.
     """
     cdef dict subbed, new_e
-    cdef ETuple exp, lm
+    cdef ETuple exp
     cdef int idx, power
     subbed = dict()
     for exp, coeff in eq_dict.items():
@@ -434,7 +434,7 @@ cdef tuple reduce_poly_dict(dict eq_dict, ETuple nonz, KSHandler known_sq, Numbe
     return to_monic(gcf_rmvd, one)
 
 ####################
-### Substitution ###
+#   Substitution   #
 ####################
 
 cpdef dict compute_known_powers(max_degs, dict val_dict, one):
@@ -521,7 +521,7 @@ cdef tuple tup_mul(tuple p1, tuple p2):
     return tuple(prod.items())
 
 ###############
-### Sorting ###
+#   Sorting   #
 ###############
 
 cdef tuple monom_sortkey(ETuple exp):
@@ -564,7 +564,7 @@ cpdef tuple poly_tup_sortkey(tuple eq_tup):
         (2, 0, 2, 2, 0, 1, -2, 1, 2, -2, 2, 1, 0, 1, 1, -1, 1)
     """
     cdef ETuple exp
-    cdef int i, l, nnz
+    cdef int i
     cdef list key = []
     for exp, c in eq_tup:
         # Compare by term degree
@@ -576,4 +576,3 @@ cpdef tuple poly_tup_sortkey(tuple eq_tup):
             key.append(-exp._data[2*i])
             key.append(exp._data[2*i+1])
     return tuple(key)
-

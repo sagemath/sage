@@ -79,9 +79,7 @@ from .basis_exchange_matroid cimport BasisExchangeMatroid
 from .set_system cimport SetSystem
 from cpython.object cimport Py_EQ, Py_NE
 
-from sage.arith.all import binomial
-
-from itertools import permutations, combinations
+from itertools import combinations
 
 # class of general matroids, represented by their list of bases
 
@@ -684,7 +682,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         if self._bases_invariant_var is not None:
             return self._bases_invariant_var
         cdef long i, j
-        cdef bitset_t bb_comp
         cdef list bc
         cdef dict bi
         bc = [0 for i in xrange(len(self))]
@@ -1183,7 +1180,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         N.rename(getattr(self, '__custom_name'))
         return N
 
-    def __deepcopy__(self, memo={}):
+    def __deepcopy__(self, memo=None):
         """
         Create a deep copy.
 
@@ -1201,6 +1198,8 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M.groundset() is N.groundset()
             False
         """
+        if memo is None:
+            memo = {}
         N = BasisMatroid(M=self)
         N.rename(getattr(self, '__custom_name'))
         return N

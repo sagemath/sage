@@ -4,7 +4,7 @@ Neighbors
 
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
-from sage.rings.all import GF, QQ
+from sage.rings.rational_field import QQ
 from copy import deepcopy
 from sage.matrix.constructor import matrix
 
@@ -31,7 +31,7 @@ def find_primitive_p_divisible_vector__random(self, p):
         True
         sage: 5.divides(Q(v))
         True
-        sage: Q = QuadraticForm(QQ,matrix.diagonal([1,1,1,1]))
+        sage: Q = QuadraticForm(QQ, matrix.diagonal([1,1,1,1]))
         sage: v = Q.find_primitive_p_divisible_vector__random(2)
         sage: Q(v)
         2
@@ -59,14 +59,12 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
     value is `p`-divisible, where the last vector returned was `v`.  For
     an initial call, no `v` needs to be passed.
 
-    Returns vectors whose last non-zero entry is normalized to 0 or 1 (so no
+    Return vectors whose last non-zero entry is normalized to 0 or 1 (so no
     lines are counted repeatedly).  The ordering is by increasing the
     first non-normalized entry.  If we have tested all (lines of)
     vectors, then return None.
 
-    OUTPUT:
-
-    vector or None
+    OUTPUT: vector or None
 
     EXAMPLES::
 
@@ -76,7 +74,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
         sage: v = Q.find_primitive_p_divisible_vector__next(5, v); v
         (1, 0)
         sage: v = Q.find_primitive_p_divisible_vector__next(5, v); v
-        sage: Q = QuadraticForm(QQ,matrix.diagonal([1,1,1,1]))
+        sage: Q = QuadraticForm(QQ, matrix.diagonal([1,1,1,1]))
         sage: v = Q.find_primitive_p_divisible_vector__next(2)
         sage: Q(v)
         2
@@ -146,14 +144,14 @@ def find_p_neighbor_from_vec(self, p, y):
     INPUT:
 
     - ``p`` -- a prime number
-    - ``y`` -- a vector with `q(y) \in p \ZZ`.
-    - ``odd`` -- (default=``False``) if `p=2` return also odd neighbors
+    - ``y`` -- a vector with `q(y) \in p \ZZ`
+    - ``odd`` -- (default: ``False``) if `p=2`, return also odd neighbors
 
     EXAMPLES::
 
-        sage: Q = DiagonalQuadraticForm(ZZ,[1,1,1,1])
+        sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: v = vector([0,2,1,1])
-        sage: X = Q.find_p_neighbor_from_vec(3,v); X
+        sage: X = Q.find_p_neighbor_from_vec(3, v); X                               # optional - sage.libs.pari
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 1 0 0 0 ]
         [ * 1 4 4 ]
@@ -162,11 +160,11 @@ def find_p_neighbor_from_vec(self, p, y):
 
     Since the base ring and the domain are not yet separate,
     for rational, half integral forms we just pretend
-    the base ring is `ZZ`::
+    the base ring is `\ZZ`::
 
-        sage: Q = QuadraticForm(QQ,matrix.diagonal([1,1,1,1]))
+        sage: Q = QuadraticForm(QQ, matrix.diagonal([1,1,1,1]))
         sage: v = vector([1,1,1,1])
-        sage: Q.find_p_neighbor_from_vec(2,v)
+        sage: Q.find_p_neighbor_from_vec(2, v)                                      # optional - sage.libs.pari
         Quadratic form in 4 variables over Rational Field with coefficients:
         [ 1/2 1 1 1 ]
         [ * 1 1 2 ]
@@ -178,6 +176,9 @@ def find_p_neighbor_from_vec(self, p, y):
         raise ValueError("y=%s must be of square divisible by p=%s"%(y,p))
     if self.base_ring() not in [ZZ, QQ]:
         raise NotImplementedError("the base ring of this form must be the integers or the rationals")
+
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+
     n = self.dim()
     G = self.Hessian_matrix()
     R = self.base_ring()
@@ -236,7 +237,7 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
     Return all classes in the `p`-neighbor graph of ``self``.
 
     Starting from the given seeds, this function successively
-    finds p-neighbors until no new quadratic form (class) is obtained.
+    finds `p`-neighbors until no new quadratic form (class) is obtained.
 
     INPUT:
 
@@ -248,14 +249,12 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
 
     - ``max_classes`` -- (default: ``1000``) break the computation when ``max_classes`` are found
 
-    - ``algorithm`` -- (optional) one of 'orbits', 'random', 'exhaustion'
+    - ``algorithm`` -- (optional) one of ``'orbits'``, ``'random'``, ``'exhaustion'``
 
     - ``max_random_trys`` -- (default: ``1000``) the maximum number of neighbors
-                             computed for a single lattice
+      computed for a single lattice
 
-    OUTPUT:
-
-    - a list of quadratic forms
+    OUTPUT: a list of quadratic forms
 
     EXAMPLES::
 
@@ -263,26 +262,29 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 2, 1, 3])
         sage: Q.det()
         46
-        sage: mass = Q.conway_mass()
-        sage: g1 = neighbor_iteration([Q],3, mass=mass, algorithm = 'random') # long time
-        sage: g2 = neighbor_iteration([Q],3, algorithm = 'exhaustion') # long time
-        sage: g3 = neighbor_iteration([Q],3, algorithm = 'orbits')
-        sage: mass == sum(1/q.number_of_automorphisms() for q in g1) # long time
+        sage: mass = Q.conway_mass()                                                # optional - sage.symbolic
+        sage: g1 = neighbor_iteration([Q], 3,                          # long time  # optional - sage.symbolic
+        ....:                         mass=mass, algorithm='random')
+        sage: g2 = neighbor_iteration([Q], 3, algorithm='exhaustion')  # long time
+        sage: g3 = neighbor_iteration([Q], 3, algorithm='orbits')                   # optional - sage.libs.gap
+        sage: mass == sum(1/q.number_of_automorphisms() for q in g1)   # long time  # optional - sage.symbolic
         True
-        sage: mass == sum(1/q.number_of_automorphisms() for q in g2) # long time
+        sage: mass == sum(1/q.number_of_automorphisms() for q in g2)   # long time  # optional - sage.symbolic
         True
-        sage: mass == sum(1/q.number_of_automorphisms() for q in g3)
+        sage: mass == sum(1/q.number_of_automorphisms() for q in g3)                # optional - sage.libs.gap sage.symbolic
         True
 
     TESTS::
 
         sage: from sage.quadratic_forms.quadratic_form__neighbors import neighbor_iteration
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 2, 1, 3])
-        sage: g = neighbor_iteration([Q],3,mass=Q.conway_mass(),max_classes=2)
+        sage: g = neighbor_iteration([Q], 3, mass=Q.conway_mass(), max_classes=2)   # optional - sage.symbolic
         ...
-        UserWarning: reached the maximum number of isometry classes=2. Increase the optional argument max_classes to obtain more.
+        UserWarning: reached the maximum number of isometry classes=2.
+        Increase the optional argument max_classes to obtain more.
         Warning: not all classes in the genus were found
-        sage: neighbor_iteration([Q], 3, mass=Q.conway_mass(), max_neighbors=0, algorithm='random')
+        sage: neighbor_iteration([Q], 3,                                            # optional - sage.symbolic
+        ....:                    mass=Q.conway_mass(), max_neighbors=0, algorithm='random')
         Warning: not all classes in the genus were found
         []
     """
@@ -361,15 +363,13 @@ def orbits_lines_mod_p(self, p):
 
     - ``p`` -- a prime number
 
-    OUTPUT:
-
-    - a list of vectors over ``GF(p)``
+    OUTPUT: a list of vectors over ``GF(p)``
 
     EXAMPLES::
 
         sage: from sage.quadratic_forms.quadratic_form__neighbors import orbits_lines_mod_p
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 2, 1, 3])
-        sage: Q.orbits_lines_mod_p(2)
+        sage: Q.orbits_lines_mod_p(2)                                               # optional - sage.libs.gap sage.libs.pari
         [(0, 0, 1),
         (0, 1, 0),
         (0, 1, 1),
@@ -379,6 +379,8 @@ def orbits_lines_mod_p(self, p):
         (1, 1, 1)]
     """
     from sage.libs.gap.libgap import libgap
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+
     # careful the self.automorphism_group() acts from the left
     # but in gap we act from the right!! --> transpose
     gens = self.automorphism_group().gens()

@@ -39,8 +39,6 @@ from sage.matrix.constructor import matrix, zero_matrix
 from sage.misc.latex import latex
 from sage.rings.integer_ring import ZZ
 
-from sage.homology.chain_complex_morphism import ChainComplexMorphism
-from sage.homology.homology_morphism import InducedHomologyMorphism
 from .simplicial_set import SimplicialSet_arbitrary
 
 class SimplicialSetHomset(Homset):
@@ -1312,6 +1310,8 @@ class SimplicialSetMorphism(Morphism):
             [-+-]
             [0|0]
         """
+        from sage.homology.chain_complex_morphism import ChainComplexMorphism
+
         # One or the other chain complex is trivial between these
         # dimensions:
         max_dim = max(self.domain().dimension(), self.codomain().dimension())
@@ -1394,6 +1394,8 @@ class SimplicialSetMorphism(Morphism):
             [-+-]
             [0|2]
         """
+        from sage.homology.homology_morphism import InducedHomologyMorphism
+
         return InducedHomologyMorphism(self, base_ring, cohomology)
 
     def _repr_type(self):
