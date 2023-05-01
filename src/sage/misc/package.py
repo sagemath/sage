@@ -384,12 +384,19 @@ def installed_packages(exclude_pip=True):
     - ``exclude_pip`` -- (optional, default: ``True``) whether "pip" packages
       are excluded from the list
 
-    EXAMPLES::
+    EXAMPLES:
 
-        sage: sorted(installed_packages().keys())  # optional - sage_spkg
-        [...'gmpy2', ...'sage_conf', ...]
-        sage: installed_packages()['gmpy2']  # optional - sage_spkg, random
-        '2.1.0b5'
+    Below we test for a standard package without ``spkg-configure.m4`` script
+    that should be installed in ``SAGE_LOCAL``. When Sage is installed by
+    the Sage distribution (indicated by feature ``sage_spkg``), we should have
+    the installation record for this package. (We do not test for installation
+    records of Python packages. Our ``SAGE_VENV`` is not necessarily the
+    main Sage venv; it could be a user-created venv or a venv created by tox.)
+
+        sage: sorted(installed_packages().keys())         # optional - sage_spkg
+        [...'conway_polynomials', ...]
+        sage: installed_packages()['conway_polynomials']  # optional - sage_spkg, random
+        '0.5'
 
     .. SEEALSO::
 
@@ -424,12 +431,12 @@ def is_package_installed(package, exclude_pip=True):
 
     EXAMPLES::
 
-        sage: is_package_installed('gap')  # optional - sage_spkg
+        sage: is_package_installed('conway_polynomials')  # optional - sage_spkg
         True
 
     Giving just the beginning of the package name is not good enough::
 
-        sage: is_package_installed('matplotli')  # optional - sage_spkg
+        sage: is_package_installed('conway_poly')         # optional - sage_spkg
         False
 
     Otherwise, installing "pillow" would cause this function to think
