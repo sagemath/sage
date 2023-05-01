@@ -365,7 +365,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             The center of a semisimple algebra is semisimple::
 
-                sage: A = DihedralGroup(6).algebra(QQ)
+                sage: A = DihedralGroup(6).algebra(QQ)                                  # optional - sage.groups sage.modules
                 sage: A.center() in Algebras(QQ).Semisimple()                           # optional - sage.groups sage.modules
                 True
 
@@ -973,23 +973,23 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 ....:     def product_on_basis(self, w1, w2):
                 ....:         return self.from_vector(vector(w1*w2))
                 sage: R.<x> = PolynomialRing(QQ)
-                sage: A = PQAlgebra(QQ, x**3 - x**2 + x + 1); y = A.x()
-                sage: a, b = y, 1-y
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, b))
+                sage: A = PQAlgebra(QQ, x**3 - x**2 + x + 1); y = A.x()                             # optional - sage.libs.pari
+                sage: a, b = y, 1 - y                                                               # optional - sage.libs.pari
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, b))               # optional - sage.libs.pari
                 False
 
                For comparison::
 
-                sage: A = PQAlgebra(QQ, x**2 - x); y = A.x()
-                sage: a, b = y, 1-y
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, b))
+                sage: A = PQAlgebra(QQ, x**2 - x); y = A.x()                                        # optional - sage.libs.pari
+                sage: a, b = y, 1-y                                                                 # optional - sage.libs.pari
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, b))               # optional - sage.libs.pari
                 True
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, A.zero(), b))
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, A.zero(), b))     # optional - sage.libs.pari
                 True
-                sage: A = PQAlgebra(QQ, x**3 - x**2 + x - 1); y = A.x()
-                sage: a = (y**2 + 1) / 2
-                sage: b = 1 - a
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, b))
+                sage: A = PQAlgebra(QQ, x**3 - x**2 + x - 1); y = A.x()                             # optional - sage.libs.pari
+                sage: a = (y**2 + 1) / 2                                                            # optional - sage.libs.pari
+                sage: b = 1 - a                                                                     # optional - sage.libs.pari
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, b))               # optional - sage.libs.pari
                 True
 
             2. Some idempotents summing to 1 but not orthogonal::
