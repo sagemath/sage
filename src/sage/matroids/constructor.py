@@ -53,8 +53,8 @@ or::
 A number of special matroids are collected under a ``named_matroids`` submenu.
 To see which, type ``matroids.named_matroids.<tab>`` as above::
 
-    sage: F7 = matroids.named_matroids.Fano()                                           # optional - sage.libs.pari
-    sage: len(F7.nonspanning_circuits())                                                # optional - sage.libs.pari
+    sage: F7 = matroids.named_matroids.Fano()                                           # optional - sage.rings.finite_rings
+    sage: len(F7.nonspanning_circuits())                                                # optional - sage.rings.finite_rings
     7
 
 Constructing matroids
@@ -68,11 +68,11 @@ arguments are documented in detail
 
 EXAMPLES::
 
-   sage: A = Matrix(GF(2), [[1, 0, 0, 0, 1, 1, 1],                                      # optional - sage.libs.pari
+   sage: A = Matrix(GF(2), [[1, 0, 0, 0, 1, 1, 1],                                      # optional - sage.rings.finite_rings
    ....:                    [0, 1, 0, 1, 0, 1, 1],
    ....:                    [0, 0, 1, 1, 1, 0, 1]])
-   sage: M = Matroid(A)                                                                 # optional - sage.libs.pari
-   sage: M.is_isomorphic(matroids.named_matroids.Fano())                                # optional - sage.libs.pari
+   sage: M = Matroid(A)                                                                 # optional - sage.rings.finite_rings
+   sage: M.is_isomorphic(matroids.named_matroids.Fano())                                # optional - sage.rings.finite_rings
    True
 
    sage: M = Matroid(graphs.PetersenGraph())
