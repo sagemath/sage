@@ -213,15 +213,23 @@ class ChainHomotopy(Morphism):
         `\ZZ` in degree 0. Two chain maps `C \to C` will be chain
         homotopic as long as they agree in degree 0. ::
 
-            sage: f = Hom(C,C)({0: identity_matrix(ZZ, 1), 1: matrix(ZZ, 1, 1, [3]), 2: matrix(ZZ, 1, 1, [3])})
-            sage: g = Hom(C,C)({0: identity_matrix(ZZ, 1), 1: matrix(ZZ, 1, 1, [2]), 2: matrix(ZZ, 1, 1, [2])})
-            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1), 1: zero_matrix(ZZ, 1), 2: identity_matrix(ZZ, 1)}, f, g)
+            sage: f = Hom(C,C)({0: identity_matrix(ZZ, 1),
+            ....:               1: matrix(ZZ, 1, 1, [3]),
+            ....:               2: matrix(ZZ, 1, 1, [3])})
+            sage: g = Hom(C,C)({0: identity_matrix(ZZ, 1),
+            ....:               1: matrix(ZZ, 1, 1, [2]),
+            ....:               2: matrix(ZZ, 1, 1, [2])})
+            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1),
+            ....:                    1: zero_matrix(ZZ, 1),
+            ....:                    2: identity_matrix(ZZ, 1)}, f, g)
             sage: H.is_algebraic_gradient_vector_field()
             True
 
         A chain homotopy which is not an algebraic gradient vector field::
 
-            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1), 1: identity_matrix(ZZ, 1), 2: identity_matrix(ZZ, 1)}, f, g)
+            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1),
+            ....:                    1: identity_matrix(ZZ, 1),
+            ....:                    2: identity_matrix(ZZ, 1)}, f, g)
             sage: H.is_algebraic_gradient_vector_field()
             False
         """
@@ -252,9 +260,15 @@ class ChainHomotopy(Morphism):
             sage: from sage.homology.chain_homotopy import ChainHomotopy
             sage: C = ChainComplex({0: zero_matrix(ZZ, 1), 1: identity_matrix(ZZ, 1)})
 
-            sage: f = Hom(C,C)({0: identity_matrix(ZZ, 1), 1: matrix(ZZ, 1, 1, [3]), 2: matrix(ZZ, 1, 1, [3])})
-            sage: g = Hom(C,C)({0: identity_matrix(ZZ, 1), 1: matrix(ZZ, 1, 1, [2]), 2: matrix(ZZ, 1, 1, [2])})
-            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1), 1: zero_matrix(ZZ, 1), 2: identity_matrix(ZZ, 1)}, f, g)
+            sage: f = Hom(C,C)({0: identity_matrix(ZZ, 1),
+            ....:               1: matrix(ZZ, 1, 1, [3]),
+            ....:               2: matrix(ZZ, 1, 1, [3])})
+            sage: g = Hom(C,C)({0: identity_matrix(ZZ, 1),
+            ....:               1: matrix(ZZ, 1, 1, [2]),
+            ....:               2: matrix(ZZ, 1, 1, [2])})
+            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1),
+            ....:                    1: zero_matrix(ZZ, 1),
+            ....:                    2: identity_matrix(ZZ, 1)}, f, g)
             sage: H.is_homology_gradient_vector_field()
             True
         """
@@ -282,8 +296,8 @@ class ChainHomotopy(Morphism):
         EXAMPLES::
 
             sage: from sage.homology.chain_homotopy import ChainHomotopy
-            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)}) # one nonzero term in degree 1
-            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)}) # one nonzero term in degree 0
+            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)})  # one nonzero term in degree 1
+            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)})  # one nonzero term in degree 0
             sage: f = Hom(C, D)({})
             sage: H = ChainHomotopy({1: matrix(ZZ, 1, 2, (3,1))}, f, f)
             sage: H.in_degree(1)
@@ -317,8 +331,8 @@ class ChainHomotopy(Morphism):
         EXAMPLES::
 
             sage: from sage.homology.chain_homotopy import ChainHomotopy
-            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)}) # one nonzero term in degree 1
-            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)}) # one nonzero term in degree 0
+            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)})  # one nonzero term in degree 1
+            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)})  # one nonzero term in degree 0
             sage: f = Hom(C, D)({})
             sage: H = ChainHomotopy({1: matrix(ZZ, 1, 2, (3,1))}, f, f)
             sage: H.in_degree(1)
@@ -337,8 +351,8 @@ class ChainHomotopy(Morphism):
         TESTS::
 
             sage: from sage.homology.chain_homotopy import ChainHomotopy
-            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)}) # one nonzero term in degree 1
-            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)}) # one nonzero term in degree 0
+            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)})  # one nonzero term in degree 1
+            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)})  # one nonzero term in degree 0
             sage: f = Hom(C, D)({})
             sage: H = ChainHomotopy({1: matrix(ZZ, 1, 2, (3,1))}, f, f)
             sage: hash(H)  # random
@@ -348,7 +362,7 @@ class ChainHomotopy(Morphism):
 
     def _repr_(self):
         """
-        String representation
+        String representation.
 
         EXAMPLES::
 
@@ -404,7 +418,9 @@ class ChainContraction(ChainHomotopy):
 
         sage: pi = Hom(C,D)({0: identity_matrix(ZZ, 1)})
         sage: iota = Hom(D,C)({0: identity_matrix(ZZ, 1)})
-        sage: H = ChainContraction({0: zero_matrix(ZZ, 0, 1), 1: zero_matrix(ZZ, 1), 2: identity_matrix(ZZ, 1)}, pi, iota)
+        sage: H = ChainContraction({0: zero_matrix(ZZ, 0, 1),
+        ....:                       1: zero_matrix(ZZ, 1),
+        ....:                       2: identity_matrix(ZZ, 1)}, pi, iota)
     """
     def __init__(self, matrices, pi, iota):
         r"""
