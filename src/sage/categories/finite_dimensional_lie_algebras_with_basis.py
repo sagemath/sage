@@ -1619,7 +1619,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             For the quadradic order (i.e., ``order=2``), then this uses
             K^{ij}`, the inverse of the Killing form matrix, to compute
-            `C_{(2)} = sum_{i,j} K^{ij} X_i \cdot X_j`, where `\{X_1, \ldots,
+            `C_{(2)} = \sum_{i,j} K^{ij} X_i \cdots X_j`, where `\{X_1, \ldots,
             X_n\}` is a basis for `\mathfrak{g}`. Otherwise this solves the
             system of equations
 
@@ -1628,8 +1628,10 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 f_{aj}^b \kappa^{jc\cdots d} + f_{aj}^c \kappa^{cj\cdots d}
                 \cdots + f_{aj}^d \kappa^{bc \cdots j}
 
-            for the symmetric tensor `\kappa^{i_1 \cdots i_m}`, where `m`
-            is the ``order``.
+            for the symmetric tensor `\kappa^{i_1 \cdots i_k}`, where `k`
+            is the ``order``. This system comes from `[X_i, C_{(k)}] = 0`
+            with `C_{(k)} = \sum_{i_1, \ldots, i_k\}^n
+            \kappa^{i_1 \cdots i_k} X_{i_1} \cdots X_{i_k}`.
 
             EXAMPLES::
 
@@ -1641,7 +1643,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 True
                 sage: U = L.pbw_basis()
                 sage: C = L.casimir_element(UEA=U); C
-                1/2*PBW[alpha[1]]*PBW[-alpha[1]] + 1/8*PBW[alphacheck[1]]^2 - 1/4*PBW[alphacheck[1]]
+                1/2*PBW[alpha[1]]*PBW[-alpha[1]] + 1/8*PBW[alphacheck[1]]^2
+                 - 1/4*PBW[alphacheck[1]]
                 sage: all(g * C == C * g for g in U.algebra_generators())
                 True
 
@@ -1736,7 +1739,6 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             tens = ker.basis()[0]
             del eqns  # no need to hold onto the matrix
 
-            from sage.rings.integer_ring import ZZ
             def to_prod(index):
                 coeff = tens[index]
                 p = [0] * order
