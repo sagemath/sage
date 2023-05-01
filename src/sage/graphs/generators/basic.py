@@ -21,7 +21,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 from sage.graphs.graph import Graph
 from math import sin, cos, pi
 from numpy import corrcoef
-from sage.all import Matrix
+from sage.matrix.constructor import Matrix
 
 
 def BullGraph():
