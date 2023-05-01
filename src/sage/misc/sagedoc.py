@@ -671,7 +671,7 @@ def format(s, embedded=False):
         '<<<identity_matrix\n'
         sage: format('identity_matrix>>>')
         'identity_matrix>>>\n'
-        sage: format('<<<identity_matrix>>>')                                                                           # optional - sage.modules
+        sage: format('<<<identity_matrix>>>')                                           # optional - sage.modules
         '...Definition: identity_matrix(...'
         sage: format('<<<identity_matrix>>>')[:28]                            # optional - sphinx
         'Definition: identity_matrix('
@@ -821,7 +821,7 @@ def format_src(s):
         sage: from sage.misc.sagedoc import format_src
         sage: format_src('unladen swallow')
         'unladen swallow'
-        sage: format_src('<<<Sq>>>')[5:15]                                    # optional - sage.combinat sage.modules
+        sage: format_src('<<<Sq>>>')[5:15]                                              # optional - sage.combinat sage.modules
         'Sq(*nums):'
     """
     if not isinstance(s, str):
@@ -1098,14 +1098,14 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     You can search for "matrix" by typing ``search_src("matrix")``.
     This particular search will produce many results::
 
-        sage: len(search_src("matrix", interact=False).splitlines()) # random # long time
+        sage: len(search_src("matrix", interact=False).splitlines())  # random # long time
         9522
 
     You can restrict to the Sage calculus code with
     ``search_src("matrix", module="sage.calculus")``, and this
     produces many fewer results::
 
-        sage: len(search_src("matrix", module="sage.calculus", interact=False).splitlines()) # random
+        sage: len(search_src("matrix", module="sage.calculus", interact=False).splitlines())  # random
         26
 
     Note that you can do tab completion on the ``module`` string.
@@ -1124,11 +1124,11 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
     To fix this, *escape* the parenthesis with a backslash::
 
-        sage: print(search_src(r" fetch\(", "def", interact=False)) # random # long time
+        sage: print(search_src(r" fetch\(", "def", interact=False))  # random # long time
         matrix/matrix0.pyx:    cdef fetch(self, key):
         matrix/matrix0.pxd:    cdef fetch(self, key)
 
-        sage: print(search_src(r" fetch\(", "def", "pyx", interact=False)) # random # long time
+        sage: print(search_src(r" fetch\(", "def", "pyx", interact=False))  # random # long time
         matrix/matrix0.pyx:    cdef fetch(self, key):
 
     As noted above, the search is case-insensitive, but you can make it
@@ -1162,7 +1162,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
     ::
 
-        sage: print(search_src(r'^ *sage[:] .*search_src\(', interact=False)) # long time
+        sage: print(search_src(r'^ *sage[:] .*search_src\(', interact=False))  # long time
         misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) # random # long time
         misc/sagedoc.py:... len(search_src("matrix", module="sage.calculus", interact=False).splitlines()) # random
         misc/sagedoc.py:... len(search_src("matrix", path_re="calc", interact=False).splitlines()) > 15
@@ -1265,11 +1265,11 @@ def search_def(name, extra1='', extra2='', extra3='', extra4='',
 
     See the documentation for :func:`search_src` for more examples. ::
 
-        sage: print(search_def("fetch", interact=False)) # random # long time
+        sage: print(search_def("fetch", interact=False))  # random # long time
         matrix/matrix0.pyx:    cdef fetch(self, key):
         matrix/matrix0.pxd:    cdef fetch(self, key)
 
-        sage: print(search_def("fetch", path_re="pyx", interact=False)) # random # long time
+        sage: print(search_def("fetch", path_re="pyx", interact=False))  # random # long time
         matrix/matrix0.pyx:    cdef fetch(self, key):
     """
     # since we convert name to a regular expression, we need to do the
@@ -1637,8 +1637,8 @@ with 'sage -docbuild {0} html' and try again.""".format(name))
 
         EXAMPLES::
 
-            sage: reference() # indirect doctest, not tested
-            sage: manual() # indirect doctest, not tested
+            sage: reference()  # indirect doctest, not tested
+            sage: manual()  # indirect doctest, not tested
         """
         self._open("reference")
 

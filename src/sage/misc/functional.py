@@ -2,7 +2,7 @@
 """
 Functional notation
 
-These are functions so that you can write foo(x) instead of x.foo()
+These are functions so that you can write ``foo(x)`` instead of ``x.foo()``
 in certain common cases.
 
 AUTHORS:
@@ -201,15 +201,15 @@ def cyclotomic_polynomial(n, var='x'):
 
     EXAMPLES::
 
-        sage: cyclotomic_polynomial(3)                                                                                  # optional - sage.libs.pari
+        sage: cyclotomic_polynomial(3)                                                  # optional - sage.libs.pari
         x^2 + x + 1
-        sage: cyclotomic_polynomial(4)                                                                                  # optional - sage.libs.pari
+        sage: cyclotomic_polynomial(4)                                                  # optional - sage.libs.pari
         x^2 + 1
-        sage: cyclotomic_polynomial(9)                                                                                  # optional - sage.libs.pari
+        sage: cyclotomic_polynomial(9)                                                  # optional - sage.libs.pari
         x^6 + x^3 + 1
-        sage: cyclotomic_polynomial(10)                                                                                 # optional - sage.libs.pari
+        sage: cyclotomic_polynomial(10)                                                 # optional - sage.libs.pari
         x^4 - x^3 + x^2 - x + 1
-        sage: cyclotomic_polynomial(11)                                                                                 # optional - sage.libs.pari
+        sage: cyclotomic_polynomial(11)                                                 # optional - sage.libs.pari
         x^10 + x^9 + x^8 + x^7 + x^6 + x^5 + x^4 + x^3 + x^2 + x + 1
     """
     return ZZ[var].cyclotomic_polynomial(n)
@@ -231,9 +231,10 @@ def decomposition(x):
         sage: c = a * b                                                                                                 # optional - sage.groups
         sage: d = c.decomposition(); d                                                                                  # optional - sage.groups
         [Dirichlet character modulo 4 of conductor 4 mapping 3 |--> -1,
-        Dirichlet character modulo 5 of conductor 5 mapping 2 |--> zeta4]
-        sage: d[0].parent()                                                                                             # optional - sage.groups
-        Group of Dirichlet characters modulo 4 with values in Cyclotomic Field of order 4 and degree 2
+         Dirichlet character modulo 5 of conductor 5 mapping 2 |--> zeta4]
+        sage: d[0].parent()                                                             # optional - sage.groups
+        Group of Dirichlet characters modulo 4
+         with values in Cyclotomic Field of order 4 and degree 2
     """
     return x.decomposition()
 
@@ -663,8 +664,8 @@ def integral(x, *args, **kwds):
 
     EXAMPLES::
 
-        sage: f = cyclotomic_polynomial(10)                                                                             # optional - sage.libs.pari
-        sage: integral(f)                                                                                               # optional - sage.libs.pari
+        sage: f = cyclotomic_polynomial(10)                                             # optional - sage.libs.pari
+        sage: integral(f)                                                               # optional - sage.libs.pari
         1/5*x^5 - 1/4*x^4 + 1/3*x^3 - 1/2*x^2 + x
 
     ::
@@ -722,10 +723,12 @@ def integral(x, *args, **kwds):
 
         sage: sage.calculus.calculus.maxima('domain: real')                                                             # optional - sage.symbolic
         real
-        sage: f = exp(-x) * sinh(sqrt(x))                                                                               # optional - sage.symbolic
-        sage: t = integrate(f, x, 0, Infinity); t            # long time                                                # optional - sage.symbolic
-        1/4*sqrt(pi)*(erf(1) - 1)*e^(1/4) - 1/4*(sqrt(pi)*(erf(1) - 1) - sqrt(pi) + 2*e^(-1) - 2)*e^(1/4) + 1/4*sqrt(pi)*e^(1/4) - 1/2*e^(1/4) + 1/2*e^(-3/4)
-        sage: t.canonicalize_radical()  # long time                                                                     # optional - sage.symbolic
+        sage: f = exp(-x) * sinh(sqrt(x))                                               # optional - sage.symbolic
+        sage: t = integrate(f, x, 0, Infinity); t            # long time                # optional - sage.symbolic
+        1/4*sqrt(pi)*(erf(1) - 1)*e^(1/4)
+         - 1/4*(sqrt(pi)*(erf(1) - 1) - sqrt(pi) + 2*e^(-1) - 2)*e^(1/4)
+         + 1/4*sqrt(pi)*e^(1/4) - 1/2*e^(1/4) + 1/2*e^(-3/4)
+        sage: t.canonicalize_radical()  # long time                                     # optional - sage.symbolic
         1/2*sqrt(pi)*e^(1/4)
         sage: sage.calculus.calculus.maxima('domain: complex')                                                          # optional - sage.symbolic
         complex
@@ -1869,7 +1872,7 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
     EXAMPLES::
 
         sage: from sage.misc.functional import _do_sqrt
-        sage: _do_sqrt(3)                                                                                               # optional - sage.symbolic
+        sage: _do_sqrt(3)                                                               # optional - sage.symbolic
         sqrt(3)
         sage: _do_sqrt(3, prec=10)
         1.7
