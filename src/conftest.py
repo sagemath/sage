@@ -24,10 +24,6 @@ from _pytest.doctest import (
 )
 from _pytest.pathlib import import_path, ImportMode
 
-# Import sage.all is necessary to:
-# - avoid cyclic import errors, see Issue #33580
-# - inject it into globals namespace for doctests
-import sage.all
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
 
 
@@ -138,7 +134,7 @@ def pytest_collect_file(
             return SageDoctestModule.from_parent(parent, path=file_path)
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):
     """
     Add global imports for doctests.
@@ -146,6 +142,7 @@ def add_imports(doctest_namespace: dict[str, Any]):
     See `pytest documentation <https://docs.pytest.org/en/stable/doctest.html#doctest-namespace-fixture>`.
     """
     # Inject sage.all into each doctest
+    import sage.all
     dict_all = sage.all.__dict__
 
     # Remove '__package__' item from the globals since it is not
