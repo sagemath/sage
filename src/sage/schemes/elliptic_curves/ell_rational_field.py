@@ -403,7 +403,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self.__is_integral = bool(misc.mul([x.denominator() == 1 for x in self.ainvs()]))
             return self.__is_integral
 
-
     def mwrank(self, options=''):
         r"""
         Run Cremona's mwrank program on this elliptic curve and return the
@@ -918,7 +917,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             v = [Integer(x) for x in v]
         return v
 
-
         # There is some overhead associated with coercing the PARI
         # list back to Python, but it's not bad.  It's better to do it
         # this way instead of trying to eval the whole list, since the
@@ -1279,8 +1277,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         See :trac:`31443`::
 
             sage: E = EllipticCurve('1590g1')
-            sage: m = E.modular_symbol(nap=300)
-            sage: [m(a/5) for a in [1..4]]
+            sage: m = E.modular_symbol(nap=300)     # long time
+            sage: [m(a/5) for a in [1..4]]          # long time
             [13/2, -13/2, -13/2, 13/2]
 
         These values are correct, as verified by the numerical
@@ -1519,7 +1517,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             Traceback (most recent call last):
             ...
             RuntimeError: unable to compute analytic rank using rubinstein algorithm (unable to convert ' 6.19283... and is too large' to an integer)
-            sage: EllipticCurve([1234567,89101112]).analytic_rank(algorithm='sympow')
+            sage: EllipticCurve([1234567,89101112]).analytic_rank(algorithm='sympow')  # long time
             Traceback (most recent call last):
             ...
             RuntimeError: failed to compute analytic rank
@@ -1867,10 +1865,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: r, s, G = E.simon_two_descent(); r,s
             (6, 6)
             sage: E = EllipticCurve([0, 0, 0, -10012, 346900])
-            sage: r, s, G = E.simon_two_descent(); r,s
+            sage: r, s, G = E.simon_two_descent(); r,s  # long time
             (7, 7)
             sage: E = EllipticCurve([0, 0, 1, -23737, 960366])
-            sage: r, s, G = E.simon_two_descent(); r,s
+            sage: r, s, G = E.simon_two_descent(); r,s  # long time
             (8, 8)
 
         Example from :trac:`10832`::
@@ -2355,17 +2353,17 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 xterm = 1
                 yterm = 1
             C = E.mwrank_curve(verbose)
-            if not (verbose is None):
+            if verbose is not None:
                 C.set_verbose(verbose)
             C.two_descent(verbose=verbose, second_limit=descent_second_limit)
             C.saturate(bound=sat_bound)
             G = C.gens()
             if proof is True and C.certain() is False:
                 del self.__mwrank_curve
-                raise RuntimeError("Unable to compute the rank, hence generators, with certainty (lower bound=%s, generators found=%s).  This could be because Sha(E/Q)[2] is nontrivial."%(C.rank(),G) + \
-                      "\nTry increasing descent_second_limit then trying this command again.")
+                raise RuntimeError("Unable to compute the rank, hence generators, with certainty (lower bound=%s, generators found=%s).  This could be because Sha(E/Q)[2] is nontrivial." % (C.rank(), G) +
+                                   "\nTry increasing descent_second_limit then trying this command again.")
             proved = C.certain()
-            G = [[x*xterm,y*yterm,z] for x, y, z in G]
+            G = [[x*xterm, y*yterm, z] for x, y, z in G]
         else:
             # when gens() calls mwrank it passes the command-line
             # parameter "-p 100" which helps curves with large
@@ -2711,7 +2709,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             raise RuntimeError("curve must be minimal.")
         return self.mwrank_curve().CPS_height_bound()
 
-
     def silverman_height_bound(self, algorithm='default'):
         r"""
         Return the Silverman height bound.
@@ -2810,13 +2807,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         EXAMPLES::
 
             sage: E = EllipticCurve('389a1')
-            sage: E.point_search(5, verbose=False)
+            sage: E.point_search(1, verbose=False)
             [(-1 : 1 : 1), (0 : 0 : 1)]
 
         Increasing the height_limit takes longer, but finds no more
         points::
 
-            sage: E.point_search(10, verbose=False)
+            sage: E.point_search(10, verbose=False)  # long time
             [(-1 : 1 : 1), (0 : 0 : 1)]
 
         In fact this curve has rank 2 so no more than 2 points will ever be
@@ -3645,7 +3642,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         return L
 
-
     def modular_degree(self, algorithm='sympow', M=1):
         r"""
         Return the modular degree at level `MN` of this elliptic curve. The case
@@ -3778,7 +3774,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             except KeyError:
                 # self._generalized_congmod_numbers() also populates cache
                 return self._generalized_congmod_numbers(M)["moddeg"]
-
 
     def modular_parametrization(self):
         r"""
@@ -3914,7 +3909,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             except KeyError:
                 # self._generalized_congmod_numbers() also populates cache
                 return self._generalized_congmod_numbers(M)["congnum"]
-
 
     def cremona_label(self, space=False):
         """
@@ -4488,7 +4482,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         return Et, D
 
-
     ##########################################################
     # Isogeny class
     ##########################################################
@@ -4954,7 +4947,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 #         Return an isogeny from self to other if the two curves are in
 #         the same isogeny class.
 #         """
-
 
     def optimal_curve(self):
         """
@@ -5946,7 +5938,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         See :trac:`22063`::
 
-            sage: for n in [67,71,74,91]:
+            sage: for n in [67,71,74,91]:  # long time
             ....:     assert 4*n^6 + 4*n^2 in [P[0] for P in EllipticCurve([0,0,0,2,n^2]).integral_points()]
 
         ALGORITHM:
@@ -6391,7 +6383,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         else:
             proof = bool(proof)
 
-
         if not self.is_integral():
             raise ValueError("S_integral_points() can only be called on an integral model")
         if not all(self.is_p_minimal(s) for s in S):
@@ -6711,7 +6702,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             k4 = R(20**4 * max(3**6 * c4**2, 16*(disc_sh.abs().sqrt())**3))
             k3 = R(32/3 * disc_sh.abs().sqrt() * (8 + 0.5*disc_sh.abs().log())**4)
 
-
         k2 = max(R(b2.abs()), R(b4.abs().sqrt()), R(b6.abs()**(1/3)), R(b8.abs()**(1/4))).log()
         k1 = R(7 * 10**(38*len_S+49)) * R(len_S**(20*len_S+15)) * max_S**24 * R(max(1,log(max_S, e))**(4*len_S - 2)) * k3 * k3.log()**2 * ((20*len_S - 19)*k3 + (e*k4).log()) + 2*R(2*b2.abs()+6).log()
 
@@ -6983,7 +6973,7 @@ def integral_points_with_bounded_mw_coeffs(E, mw_base, N, x_bound):
         ....:     E = EllipticCurve([0,0,0,a,b])
         ....:     xs = [P[0] for P in E.integral_points()]
         ....:     return x in xs
-        sage: all(t(a,b,x) for a,b,x in [(-2,5, 1318), (4,-1, 4321),
+        sage: all(t(a,b,x) for a,b,x in [(-2,5, 1318), (4,-1, 4321),  # long time
         ....: (0,17, 5234), (11,4, 16833), (-13,37, 60721), (-12,-10, 80327),
         ....: (-7,22, 484961), (-9,28, 764396), (-13,4, 1056517), (-19,-51,
         ....: 2955980), (-24,124, 4435710), (-30,133, 5143326), (-37,60,

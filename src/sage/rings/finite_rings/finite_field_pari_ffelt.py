@@ -225,7 +225,12 @@ class FiniteField_pari_ffelt(FiniteField):
             raise ValueError("_pari_frobenius requires a non-zero exponent")
         g = self.gen()
         i = len(self.__pari_frobenius_powers)
+        if i == 0:
+            self.__pari_frobenius_powers.append(g.__pari__().fffrobenius(1))
+            i = 1
+        f1 = self.__pari_frobenius_powers[0]
         while i < k:
             i += 1
-            self.__pari_frobenius_powers.append(g.__pari__().fffrobenius(i))
+            fi = self.__pari_frobenius_powers[-1].ffcompomap(f1)
+            self.__pari_frobenius_powers.append(fi)
         return self.__pari_frobenius_powers[k-1]

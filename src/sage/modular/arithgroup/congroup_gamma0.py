@@ -593,8 +593,6 @@ class Gamma0_class(GammaH_class):
              sage: all(Gamma0(N).dimension_new_cusp_forms(2)==100 for N in L)
              True
         """
-        from sage.functions.other import floor
-
         N = self.level()
         k = ZZ(k)
 
@@ -669,8 +667,8 @@ class Gamma0_class(GammaH_class):
 
         res = (k - 1) / 12 * N * prod(s0(q, a) for q, a in factors)
         res -= prod(vinf(q, a) for q, a in factors) / ZZ(2)
-        res += ((1 - k)/4 + floor(k/4)) * prod(v2(q, a) for q, a in factors)
-        res += ((1 - k)/3 + floor(k/3)) * prod(v3(q, a) for q, a in factors)
+        res += ((1 - k)/4 + k//4) * prod(v2(q, a) for q, a in factors)
+        res += ((1 - k)/3 + k//3) * prod(v3(q, a) for q, a in factors)
         if k == 2:
             res += moebius(N)
         return res

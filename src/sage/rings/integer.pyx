@@ -3834,6 +3834,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
            - ``'pari'`` - (default) use the PARI library
 
+           - ``'flint'`` - use the FLINT library
+
            - ``'kash'`` - use the KASH computer algebra system (requires
              kash)
 
@@ -3899,6 +3901,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n.factor(limit=1000)
             2 * 11 * 41835640583745019265831379463815822381094652231
 
+        An example where FLINT is used::
+
+            sage: n = 82862385732327628428164127822
+            sage: n.factor(algorithm='flint')
+            2 * 3 * 11 * 13 * 41 * 73 * 22650083 * 1424602265462161
+
         We factor using a quadratic sieve algorithm::
 
             sage: p = next_prime(10^20)                                             # optional - sage.libs.pari
@@ -3929,7 +3937,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         from sage.structure.factorization import Factorization
         from sage.structure.factorization_integer import IntegerFactorization
 
-        if algorithm not in ['pari', 'kash', 'magma', 'qsieve', 'ecm']:
+        if algorithm not in ['pari', 'flint', 'kash', 'magma', 'qsieve', 'ecm']:
             raise ValueError("Algorithm is not known")
 
         cdef Integer n, p, unit
@@ -3982,6 +3990,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             F.sort()
             return IntegerFactorization(F, unit=unit, unsafe=True,
                                            sort=False, simplify=False)
+        elif algorithm == 'flint':
+            from sage.rings.factorint import factor_using_flint
+            F = factor_using_flint(n)
+            F.sort()
+            return IntegerFactorization(F, unit=unit, unsafe=True,
+                                           sort=False, simplify=False)
+
         elif algorithm in ['kash', 'magma']:
             if algorithm == 'kash':
                 from sage.interfaces.kash import kash as I
@@ -3998,10 +4013,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             message = "the factorization returned by qsieve may be incomplete (the factors may not be prime) or even wrong; see qsieve? for details"
             from warnings import warn
             warn(message, RuntimeWarning, stacklevel=5)
-            from sage.interfaces.qsieve import qsieve
-            res = [(p, 1) for p in qsieve(n)[0]]
-            F = IntegerFactorization(res, unit)
-            return F
+            from sage.libs.flint.qsieve import qsieve
+            F = qsieve(n)
+            F.sort()
+            return IntegerFactorization(F, unit=unit, unsafe=True,
+                                           sort=False, simplify=False)
         else:
             from sage.interfaces.ecm import ecm
             res = [(p, 1) for p in ecm.factor(n, proof=proof)]

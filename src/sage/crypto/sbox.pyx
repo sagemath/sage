@@ -940,13 +940,11 @@ cdef class SBox(SageObject):
         Check that :trac:`22453` is fixed::
 
             sage: from sage.crypto.sboxes import AES
-            sage: aes_polys = AES.polynomials()
-            sage: p = aes_polys[0].parent("x3*y0 + x5*y0 + x7*y0 + x6*y1 + x2*y2"
-            ....:                         " + x3*y2 + x4*y2 + x2*y3 + x3*y3 +"
-            ....:                         " x5*y4 + x6*y4 + x3*y5 + x4*y5 + x4*y7"
-            ....:                         " + x2 + x3 + y2 + y3 + y4 + 1")
-            sage: p in aes_polys
-            True
+            sage: aes_polys = AES.polynomials()  # long time
+            sage: aes_polys[3]                   # long time
+            x3*y0 + x5*y0 + x7*y0 + x6*y1 + x2*y2 + x3*y2 + x4*y2
+                  + x2*y3 + x3*y3 + x5*y4 + x6*y4 + x3*y5 + x4*y5
+                  + x4*y7 + x2 + x3 + y2 + y3 + y4 + 1
         """
         cdef Py_ssize_t m = self.m
         cdef Py_ssize_t n = self.n
