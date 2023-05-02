@@ -193,8 +193,7 @@ def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
         (a, b)
         sage: cr = function('cr')
         sage: f = cr(a)
-        sage: g = f.diff(a).integral(b)
-        sage: g
+        sage: g = f.diff(a).integral(b); g
         b*diff(cr(a), a)
         sage: foo = function("foo", nargs=2)
         sage: x,y,z = var("x y z")

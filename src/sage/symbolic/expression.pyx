@@ -1053,9 +1053,9 @@ cdef class Expression(Expression_abc):
 
         Check if :trac:`7876` is fixed::
 
-            sage: (1/2-1/2*I )*sqrt(2)
+            sage: (1/2-1/2*I)*sqrt(2)
             -(1/2*I - 1/2)*sqrt(2)
-            sage: latex((1/2-1/2*I )*sqrt(2))
+            sage: latex((1/2-1/2*I)*sqrt(2))
             -\left(\frac{1}{2} i - \frac{1}{2}\right) \, \sqrt{2}
 
         Check if :trac:`9632` is fixed::
