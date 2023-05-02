@@ -5,7 +5,6 @@ lazy_import("sage.symbolic.constants", "I", deprecation=(18036,
 lazy_import("sage.symbolic.constants", "I", as_="i", deprecation=(18036,
         "import I from sage.symbolic.constants for the imaginary unit viewed as an element of SR, or from sage.rings.imaginary_unit for the element of ZZ[i]"))
 
-import sage.symbolic.expression  # initialize pynac before .ring
 from .ring import SR
 from .constants import (pi, e, NaN, golden_ratio, log2, euler_gamma, catalan,
                        khinchin, twinprime, mertens, glaisher)
