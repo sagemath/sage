@@ -2426,13 +2426,16 @@ def init_pynac_I():
 
     EXAMPLES::
 
+    Just for this doctest, we import ``I`` from :mod:`sage.symbolic.expression`.
+    Library and user code should instead import it from :mod:`sage.symbolic.constants`.
+
         sage: from sage.symbolic.expression import I as symbolic_I
         sage: symbolic_I
         I
         sage: symbolic_I^2
         -1
 
-    Note that conversions to real fields will give TypeErrors::
+    Note that conversions to real fields will give :class:`TypeError`::
 
         sage: float(symbolic_I)
         Traceback (most recent call last):
@@ -2495,7 +2498,7 @@ def init_pynac_I():
 
     Check that :trac:`10064` is fixed::
 
-        sage: y = symbolic_I*symbolic_I*x / x # so y is the expression -1
+        sage: y = symbolic_I*symbolic_I*x / x  # so y is the expression -1
         sage: y.is_positive()
         False
         sage: z = -x / x

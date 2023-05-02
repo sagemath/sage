@@ -2844,7 +2844,7 @@ cdef class Expression(Expression_abc):
 
     def _is_registered_constant_(self):
         """
-        Return True if this symbolic expression is internally represented as
+        Return ``True`` if this symbolic expression is internally represented as
         a constant.
 
         This function is intended to provide an interface to query the internal
