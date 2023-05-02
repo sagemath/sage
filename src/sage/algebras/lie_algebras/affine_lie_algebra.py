@@ -640,7 +640,7 @@ class TwistedAffineLieAlgebra(AffineLieAlgebra):
     A twisted affine Lie algebra is an affine Lie algebra for
     type `X_N^{(r)}` with `r > 1`. We realize this inside an
     untwisted affine Kac--Moody Lie algebra following Chapter 8
-    of [Kac1990]_.
+    of [Ka1990]_.
 
     Let `\overline{\mathfrak{g}}` be the classical Lie algebra by
     taking the index set `I \setminus \{\epsilon\}`, where
@@ -769,15 +769,18 @@ class TwistedAffineLieAlgebra(AffineLieAlgebra):
         if self._cartan_type.dual().type() == 'F':
             # For E_6^(2), we need to take into account the lack of index sets matching
             reindex = {2: 4, 4: 3, 3: 2, 1: 1}
+
             def build_root(O):
                 return Q._from_dict({reindex[i]: c * (ord // a[reindex[i]]) / len(O) for i, c in sum(O) if i in reindex},
                                     remove_zeros=False)
         elif self._cartan_type.type() == 'BC':
             reindex = {n-i: i for i in range(finite_ct.rank())}
+
             def build_root(O):
                 return Q._from_dict({reindex[i]: c * (ord // len(O)) for i, c in sum(O) if i in reindex},
                                     remove_zeros=False)
         else:
+
             def build_root(O):
                 return Q._from_dict({i: c * (ord // a[i]) / len(O) for i, c in sum(O) if i in I},
                                     remove_zeros=False)
@@ -955,20 +958,24 @@ class TwistedAffineLieAlgebra(AffineLieAlgebra):
 
         if self._cartan_type.type() == 'BC':
             mone = -one
+
             def basis_map(r):
                 O = self._root_mapping[r]
                 return self._basic._from_dict({O[0]: one, O[1]: mone**(1+O[1].height())},
                                               remove_zeros=False)
         else:
+
             def basis_map(r):
                 return self._basic._from_dict({s: one for s in self._root_mapping[r]}, remove_zeros=False)
 
         if self._cartan_type.dual().type() == 'G':
             zeta3 = self._basic.base_ring().gen()
+
             def basis_alt(r):
                 return self._basic._from_dict({s: zeta3**ind for ind, s in enumerate(self._root_mapping[r])},
                                               remove_zeros=False)
         elif self._cartan_type.type() == 'BC':
+
             def basis_alt(r):
                 O = self._root_mapping[r]
                 if len(O) == 1:
@@ -977,6 +984,7 @@ class TwistedAffineLieAlgebra(AffineLieAlgebra):
                                               remove_zeros=False)
         else:
             mone = -one
+
             def basis_alt(r):
                 return self._basic._from_dict({s: mone**ind for ind, s in enumerate(self._root_mapping[r])},
                                               remove_zeros=False)

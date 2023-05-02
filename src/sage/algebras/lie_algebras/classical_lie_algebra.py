@@ -2237,9 +2237,11 @@ class LieAlgebraChevalleyBasis_simply_laced(LieAlgebraChevalleyBasis):
 
         sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(2, 1)])
         sage: L.e(1).bracket(L.e(2))
+        E[alpha[1] + alpha[2]]
 
         sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(1, 2)])
         sage: L.e(1).bracket(L.e(2))
+        -E[alpha[1] + alpha[2]]
     """
     def __init__(self, R, cartan_type, epsilon):
         """
