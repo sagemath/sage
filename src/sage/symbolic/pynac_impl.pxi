@@ -2421,12 +2421,9 @@ cdef Element pynac_I
 
 def init_pynac_I():
     """
-    Initialize the numeric I object in pynac. We use the generator of QQ(i).
+    Initialize the numeric ``I`` object in pynac. We use the generator of ``QQ(i)``.
 
     EXAMPLES::
-
-    Just for this doctest, we import ``I`` from :mod:`sage.symbolic.expression`.
-    Library and user code should instead import it from :mod:`sage.symbolic.constants`.
 
         sage: from sage.symbolic.constants import I as symbolic_I
         sage: symbolic_I
@@ -2482,7 +2479,7 @@ def init_pynac_I():
         sage: maxima(2*symbolic_I)
         2*%i
 
-    TESTS:
+    TESTS::
 
         sage: repr(symbolic_I)
         'I'
