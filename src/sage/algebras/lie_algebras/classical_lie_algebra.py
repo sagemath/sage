@@ -2226,7 +2226,7 @@ class LieAlgebraChevalleyBasis_simply_laced(LieAlgebraChevalleyBasis):
     with structure coefficients given by an orientation of the Dynkin
     diagram.
 
-    We follow Chapter 7.7 of [Kac1990]_, where the structure coefficients
+    We follow Chapter 7.7 of [Ka1990]_, where the structure coefficients
     are given by an :meth:`asymmetry function <asymmetry_function>` defined by
     `\varepsilon(\alpha_i, \alpha_j) = -1` if there is an arrow `i \to j` in
     the Dynkin quiver (an orientation of the Dynkin diagram). However we twist

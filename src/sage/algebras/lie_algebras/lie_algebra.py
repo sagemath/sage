@@ -234,7 +234,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
         Lie algebra of ['E', 6] in the Chevalley basis
 
     When the Cartan type is finite type and simply-laced, we can also
-    specify an asymmetry function from [Kac1990]_ using a Dynkin diagram
+    specify an asymmetry function from [Ka1990]_ using a Dynkin diagram
     orientation with the ``epsilon`` option::
 
         sage: L = LieAlgebra(QQ, cartan_type=['A', 2], epsilon=[(1, 2)])
