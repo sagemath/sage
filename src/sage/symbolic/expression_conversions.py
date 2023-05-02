@@ -2226,8 +2226,7 @@ class Exponentialize(ExpressionTreeWalker):
     from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
     from sage.functions.log import exp
     from sage.functions.trig import sin, cos, sec, csc, tan, cot
-    from sage.rings.imaginary_unit import I
-    from sage.symbolic.constants import e
+    from sage.symbolic.constants import e, I
     from sage.rings.integer import Integer
     from sage.symbolic.ring import SR
     from sage.calculus.var import function
