@@ -391,7 +391,7 @@ def installed_packages(exclude_pip=True):
     the Sage distribution (indicated by feature ``sage_spkg``), we should have
     the installation record for this package. (We do not test for installation
     records of Python packages. Our ``SAGE_VENV`` is not necessarily the
-    main Sage venv; it could be a user-created venv or a venv created by tox.)
+    main Sage venv; it could be a user-created venv or a venv created by tox.)::
 
         sage: sorted(installed_packages().keys())         # optional - sage_spkg
         [...'conway_polynomials', ...]
