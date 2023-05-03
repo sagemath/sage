@@ -407,9 +407,16 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
 
         sage: from sage.graphs.generators.basic import CorrelationGraph
         sage: data=[[1,2,3],[4,5,6],[7,8,9999]]
-        sage: CG = CorrelationGraph(data, 0.9, False)
-        sage: CG
-        Correlation Graph: Looped graph on 3 vertices
+        sage: CG1 = CorrelationGraph(data, 0.9, False)
+        sage: CG2 = CorrelationGraph(data, 0.9, True)
+        sage: CG3 = CorrelationGraph(data, 0.1, True)
+        sage: CG1.edges(sort=False)
+        [(0, 0, None), (0, 1, None), (1, 1, None), (2, 2, None)]
+        sage: CG2.edges(sort=False)
+        [(0, 0, None), (0, 1, None), (1, 1, None), (2, 2, None)]
+        sage: CG3.edges(sort=False)
+        [(0, 0, None), (0, 1, None), (0, 2, None), (1, 1, None), (1, 2, None), (2, 2, None)]
+
     """
 
     # compute pairwise correlation coeffecients
