@@ -75,7 +75,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
 from sage.rings.cc import CC
-from sage.symbolic.ring import is_SymbolicVariable
+from sage.structure.element import Expression
 from sage.structure.unique_representation import UniqueRepresentation
 
 # #30074: We use the keys of a dict to store the assumptions.
@@ -427,7 +427,8 @@ def preprocess_assumptions(args):
         if isinstance(x, str):
             del args[i]
             last = x
-        elif ((not hasattr(x, 'assume') or is_SymbolicVariable(x))
+        elif ((not hasattr(x, 'assume')
+               or (isinstance(x, Expression) and x.is_symbol()))
               and last is not None):
             args[i] = GenericDeclaration(x, last)
         else:
@@ -725,7 +726,7 @@ def forget(*args):
             try:
                 x.forget()
             except KeyError:
-                raise TypeError("forget not defined for objects of type '%s'"%type(x))
+                raise TypeError("forget not defined for objects of type '%s'" % type(x))
 
 
 def assumptions(*args):
@@ -782,11 +783,11 @@ def assumptions(*args):
     result = []
     if len(args) == 1:
         result.extend([statement for statement in _assumptions
-            if statement.has(args[0])])
+                       if statement.has(args[0])])
     else:
         for v in args:
-            result += [ statement for statement in list(_assumptions) \
-                            if str(v) in str(statement) ]
+            result += [statement for statement in list(_assumptions)
+                       if str(v) in str(statement)]
     return result
 
 

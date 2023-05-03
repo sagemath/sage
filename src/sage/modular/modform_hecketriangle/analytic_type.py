@@ -170,6 +170,8 @@ class AnalyticTypeElement(LatticePosetElement):
         r"""
         Return a string representation of the analytic type.
 
+        EXAMPLES::
+
             sage: from sage.modular.modform_hecketriangle.analytic_type import AnalyticType
             sage: AT = AnalyticType()
             sage: AT(["quasi", "weak"]).analytic_name()
@@ -328,9 +330,9 @@ class AnalyticType(FiniteLatticePoset):
         sage: el.analytic_type()
         quasi modular
 
-        Similarly the type of the ring element ``el2 = E4/Delta - E6/Delta`` is
-        ``weakly holomorphic`` despite the fact that the sum (``el2``) describes
-        a function which is holomorphic at infinity.
+    Similarly the type of the ring element ``el2 = E4/Delta - E6/Delta`` is
+    ``weakly holomorphic`` despite the fact that the sum (``el2``) describes
+    a function which is holomorphic at infinity::
 
         sage: from sage.modular.modform_hecketriangle.graded_ring import WeakModularFormsRing
         sage: x,y,z,d = var("x,y,z,d")

@@ -20,7 +20,7 @@ import itertools
 from sage.rings.integer_ring import ZZ
 from .composition import Compositions_n, Composition
 from sage.rings.integer import Integer
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 
 
 class SignedCompositions(Compositions_n):

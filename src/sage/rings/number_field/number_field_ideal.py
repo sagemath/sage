@@ -996,16 +996,38 @@ class NumberFieldIdeal(Ideal_generic):
             False
             sage: K.ideal(17).is_prime()  # ramified
             False
+
+        TESTS:
+
+        Check that we do not factor the norm of the ideal, this used
+        to take half an hour, see :trac:`33360`::
+
+            sage: K.<a,b,c> = NumberField([x^2-2,x^2-3,x^2-5])
+            sage: t = (((-2611940*c + 1925290/7653)*b - 1537130/7653*c
+            ....:       + 10130950)*a + (1343014/7653*c - 8349770)*b
+            ....:       + 6477058*c - 2801449990/4002519)
+            sage: t.is_prime()
+            False
         """
         try:
             return self._pari_prime is not None
         except AttributeError:
-            F = self.factor()  # factorization with caching
-            if len(F) != 1 or F[0][1] != 1:
-                self._pari_prime = None
-            else:
-                self._pari_prime = F[0][0]._pari_prime
-            return self._pari_prime is not None
+            pass
+
+        K = self.number_field().pari_nf()
+        I = self.pari_hnf()
+
+        candidate = K.idealismaximal(I) or None
+
+        # PARI uses probabilistic primality testing inside idealismaximal().
+        if get_flag(None, 'arithmetic'):
+            # proof required, check using isprime()
+            if candidate and not candidate[0].isprime():
+                candidate = None
+
+        self._pari_prime = candidate
+
+        return self._pari_prime is not None
 
     def pari_prime(self):
         r"""
@@ -2848,11 +2870,10 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         """
         if not self.is_integral():
             raise ValueError("euler_phi only defined for integral ideals")
-        return prod([(np-1)*np**(e-1) \
-                     for np,e in [(p.absolute_norm(),e) \
-                                  for p,e in self.factor()]])
+        it = ((p.absolute_norm(), e) for p, e in self.factor())
+        return prod((np - 1) * np**(e - 1) for np, e in it)
 
-    def prime_to_S_part(self,S):
+    def prime_to_S_part(self, S):
         r"""
         Return the part of this fractional ideal which is coprime to
         the prime ideals in the list ``S``.

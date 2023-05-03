@@ -1,6 +1,0 @@
-# These generated files are placed in directory provided by the SPKG, so
-# delete the generated files first so that their parent directories can be
-# removed during installation
-GAP_ROOT="$SAGE_LOCAL/share/gap"
-rm -f "$GAP_ROOT/pkg/atlasrep/datagens/"*.*
-rm -f "$GAP_ROOT/pkg/atlasrep/dataword/"*.*

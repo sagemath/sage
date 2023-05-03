@@ -219,7 +219,7 @@ class _GaloisMixin(_GMixin):
             doctest:warning
             ...
             DeprecationWarning: Use .absolute_field().galois_group() if you want the Galois group of the absolute field
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: GK._field_degree
             3
 

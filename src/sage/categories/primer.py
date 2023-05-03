@@ -440,12 +440,12 @@ done by introspection::
 For plain Python methods, one can also just ask in which module they
 are implemented::
 
-    sage: i._pow_.__module__  # not tested (Trac #24275)
+    sage: i._pow_.__module__  # not tested (Issue #24275)
     'sage.categories.semigroups'
 
     sage: pQ._mul_.__module__
     'sage.rings.polynomial.polynomial_element_generic'
-    sage: pQ._pow_.__module__  # not tested (Trac #24275)
+    sage: pQ._pow_.__module__  # not tested (Issue #24275)
     'sage.categories.semigroups'
 
 We see that integers and polynomials have each their own
@@ -524,12 +524,12 @@ group `G` is an instance of the following class::
 
     sage: G = GL(2,ZZ)
     sage: type(G)
-    <class 'sage.groups.matrix_gps.linear.LinearMatrixGroup_gap_with_category'>
+    <class 'sage.groups.matrix_gps.linear_gap.LinearMatrixGroup_gap_with_category'>
 
 Here is a piece of the hierarchy of classes above it::
 
     sage: for cls in G.__class__.mro(): print(cls)
-    <class 'sage.groups.matrix_gps.linear.LinearMatrixGroup_gap_with_category'>
+    <class 'sage.groups.matrix_gps.linear_gap.LinearMatrixGroup_gap_with_category'>
     ...
     <class 'sage.categories.groups.Groups.parent_class'>
     <class 'sage.categories.monoids.Monoids.parent_class'>

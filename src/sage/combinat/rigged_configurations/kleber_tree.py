@@ -71,7 +71,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.features import FeatureNotPresentError
 from sage.rings.integer import Integer
 

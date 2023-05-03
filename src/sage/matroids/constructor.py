@@ -107,7 +107,8 @@ from sage.graphs.graph import Graph
 from sage.structure.element import is_Matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.categories.all import Fields, Rings
+from sage.categories.fields import Fields
+from sage.categories.rings import Rings
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
@@ -360,7 +361,7 @@ def Matroid(groundset=None, data=None, **kwds):
             [0, 1, 2, 3]
 
         The GraphicMatroid object forces its graph to be connected. If a
-        disconnected graph is used as input, it will connect the components.
+        disconnected graph is used as input, it will connect the components::
 
             sage: G1 = graphs.CycleGraph(3); G2 = graphs.DiamondGraph()
             sage: G = G1.disjoint_union(G2)

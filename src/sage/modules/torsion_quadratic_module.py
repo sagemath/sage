@@ -47,7 +47,7 @@ def TorsionQuadraticForm(q):
 
     EXAMPLES::
 
-        sage: q1 = Matrix(QQ,2,[1,1/2,1/2,1])
+        sage: q1 = Matrix(QQ, 2, [1,1/2,1/2,1])
         sage: TorsionQuadraticForm(q1)
         Finite quadratic module over Integer Ring with invariants (2, 2)
         Gram matrix of the quadratic form with values in Q/2Z:
@@ -57,7 +57,7 @@ def TorsionQuadraticForm(q):
     In the following example the quadratic form is degenerate.
     But the bilinear form is still non-degenerate::
 
-        sage: q2 = diagonal_matrix(QQ,[1/4,1/3])
+        sage: q2 = diagonal_matrix(QQ, [1/4,1/3])
         sage: TorsionQuadraticForm(q2)
         Finite quadratic module over Integer Ring with invariants (12,)
         Gram matrix of the quadratic form with values in Q/Z:
@@ -112,7 +112,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
         sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
         sage: V = span([[1/2,1,1], [3/2,2,1], [0,0,1]], ZZ)
         sage: b = V.basis()
-        sage: W = V.span([2*b[0]+4*b[1], 9*b[0]+12*b[1], 4*b[2]])
+        sage: W = V.span([2*b[0] + 4*b[1], 9*b[0] + 12*b[1], 4*b[2]])
         sage: Q = TorsionQuadraticModule(V, W)
         sage: x = Q(b[0] - b[1])
         sage: TestSuite(x).run()
@@ -132,10 +132,9 @@ class TorsionQuadraticModuleElement(FGP_Element):
             sage: V = (1/2)*ZZ^2; W = ZZ^2
             sage: T = TorsionQuadraticModule(V, W)
             sage: g = T.gens()
-            sage: x = g[0]
-            sage: y = g[0] + g[1]
-            sage: x
+            sage: x = g[0]; x
             (1, 0)
+            sage: y = g[0] + g[1]
             sage: x*y
             1/4
 
@@ -154,7 +153,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
 
     def quadratic_product(self):
         r"""
-        Compute the quadratic_product of ``self``.
+        Compute the quadratic product of ``self``.
 
         OUTPUT:
 
@@ -190,7 +189,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
     r"""
     Finite quotients with a bilinear and a quadratic form.
 
-    Let `V` be a symmetric FreeQuadraticModule and `W \subseteq V` a
+    Let `V` be a symmetric :class:`FreeQuadraticModule` and `W \subseteq V` a
     submodule of the same rank as `V`. The quotient `V / W` is a torsion
     quadratic module. It inherits a bilinear form `b` and a quadratic
     form `q`.
@@ -218,8 +217,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
         sage: V = FreeModule(ZZ, 3)
-        sage: T = TorsionQuadraticModule(V, 5*V)
-        sage: T
+        sage: T = TorsionQuadraticModule(V, 5*V); T
         Finite quadratic module over Integer Ring with invariants (5, 5, 5)
         Gram matrix of the quadratic form with values in Q/5Z:
         [1 0 0]
@@ -306,8 +304,8 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
-            sage: V = FreeModule(ZZ,3)
-            sage: T = TorsionQuadraticModule(V, 5*V,modulus=1)
+            sage: V = FreeModule(ZZ, 3)
+            sage: T = TorsionQuadraticModule(V, 5*V, modulus=1)
             sage: T
             Finite quadratic module over Integer Ring with invariants (5, 5, 5)
             Gram matrix of the quadratic form with values in Q/Z:
@@ -344,13 +342,13 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
             sage: V = span([[1/2,1,1], [3/2,2,1], [0,0,1]], ZZ)
             sage: b = V.basis()
-            sage: W = V.span([2*b[0]+4*b[1], 9*b[0]+12*b[1], 4*b[2]])
+            sage: W = V.span([2*b[0] + 4*b[1], 9*b[0] + 12*b[1], 4*b[2]])
             sage: Q = TorsionQuadraticModule(V, W); Q
             Finite quadratic module over Integer Ring with invariants (4, 12)
             Gram matrix of the quadratic form with values in Q/(1/4)Z:
             [0 0]
             [0 0]
-            sage: Q._module_constructor(V,W)
+            sage: Q._module_constructor(V, W)
             Finite quadratic module over Integer Ring with invariants (4, 12)
             Gram matrix of the quadratic form with values in Q/(1/4)Z:
             [0 0]
@@ -439,7 +437,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         We require the quadratic form to be defined modulo `2 \ZZ`::
 
             sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
-            sage: V = FreeQuadraticModule(ZZ,3,matrix.identity(3))
+            sage: V = FreeQuadraticModule(ZZ, 3, matrix.identity(3))
             sage: T = TorsionQuadraticModule((1/10)*V, V)
             sage: T.brown_invariant()
             Traceback (most recent call last):
@@ -546,7 +544,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         r"""
         Return the genus defined by ``self`` and the ``signature_pair``.
 
-        If no such genus exists, raise a ``ValueError``.
+        If no such genus exists, raise a :class:`ValueError`.
 
         REFERENCES:
 
@@ -554,24 +552,24 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         EXAMPLES::
 
-            sage: L = IntegralLattice("D4").direct_sum(IntegralLattice("A2"))
-            sage: D = L.discriminant_group()
-            sage: genus = D.genus(L.signature_pair())
-            sage: genus
+            sage: L = IntegralLattice("D4").direct_sum(IntegralLattice("A2"))           # optional - sage.combinat
+            sage: D = L.discriminant_group()                                            # optional - sage.combinat
+            sage: genus = D.genus(L.signature_pair())                                   # optional - sage.combinat sage.libs.pari
+            sage: genus                                                                 # optional - sage.combinat sage.libs.pari
             Genus of
             None
             Signature:  (6, 0)
             Genus symbol at 2:    1^4:2^-2
             Genus symbol at 3:     1^-5 3^-1
-            sage: genus == L.genus()
+            sage: genus == L.genus()                                                    # optional - sage.combinat sage.libs.pari
             True
 
         Let `H` be an even unimodular lattice of signature `(9, 1)`.
         Then `L = D_4 + A_2` is primitively embedded in `H`. We compute the discriminant
         form of the orthogonal complement of `L` in `H`::
 
-            sage: DK = D.twist(-1)
-            sage: DK
+            sage: DK = D.twist(-1)                                                      # optional - sage.combinat sage.libs.pari
+            sage: DK                                                                    # optional - sage.combinat sage.libs.pari
             Finite quadratic module over Integer Ring with invariants (2, 6)
             Gram matrix of the quadratic form with values in Q/2Z:
             [  1 1/2]
@@ -580,7 +578,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         We know that  `K` has signature `(5, 1)` and thus we can compute
         the genus of `K` as::
 
-            sage: DK.genus((3,1))
+            sage: DK.genus((3,1))                                                       # optional - sage.combinat sage.libs.pari
             Genus of
             None
             Signature:  (3, 1)
@@ -592,7 +590,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
             sage: L = IntegralLattice(matrix.diagonal(range(1,5)))
             sage: D = L.discriminant_group()
-            sage: D.genus((4,0))
+            sage: D.genus((4,0))                                                        # optional - sage.libs.pari
             Genus of
             None
             Signature:  (4, 0)
@@ -601,20 +599,20 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         TESTS::
 
-            sage: L.genus() == D.genus((4,0))
+            sage: L.genus() == D.genus((4,0))                                           # optional - sage.libs.pari
             True
-            sage: D.genus((1,0))
+            sage: D.genus((1,0))                                                        # optional - sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: this discriminant form and signature do not define a genus
 
         A systematic test of lattices of small ranks and determinants::
 
-            sage: from sage.quadratic_forms.genera.genus import genera
-            sage: signatures = [(1,0),(1,1),(1,2),(3,0),(0,4)]
-            sage: dets = range(1,33)
-            sage: genera = flatten([genera(s, d, even=False) for d in dets for s in signatures])    # long time
-            sage: all(g == g.discriminant_form().genus(g.signature_pair()) for g in genera)  # long time
+            sage: from sage.quadratic_forms.genera.genus import genera                                          # optional - sage.libs.pari
+            sage: signatures = [(1,0), (1,1), (1,2), (3,0), (0,4)]                                              # optional - sage.libs.pari
+            sage: dets = range(1, 33)                                                                           # optional - sage.libs.pari
+            sage: genera = flatten([genera(s, d, even=False) for d in dets for s in signatures])  # long time   # optional - sage.libs.pari
+            sage: all(g == g.discriminant_form().genus(g.signature_pair()) for g in genera)       # long time   # optional - sage.libs.pari
             True
             """
         from sage.quadratic_forms.genera.genus import (Genus_Symbol_p_adic_ring,
@@ -752,12 +750,13 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         INPUT:
 
-        - signature_pair -- a tuple of non negative integers ``(s_plus, s_minus)``
-        - even -- bool (default: ``True``)
+        - ``signature_pair`` -- a tuple of non negative integers ``(s_plus, s_minus)``
+        - ``even`` -- bool (default: ``True``)
 
         EXAMPLES::
 
-            sage: L = IntegralLattice("D4").direct_sum(IntegralLattice(3 * Matrix(ZZ,2,[2,1,1,2])))
+            sage: L3 = IntegralLattice(3 * Matrix(ZZ, 2, [2,1,1,2]))
+            sage: L = IntegralLattice("D4").direct_sum(L3)
             sage: D = L.discriminant_group()
             sage: D.is_genus((6,0))
             True
@@ -827,8 +826,8 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         INPUT:
 
         - ``gens`` --  a list of generators, for instance square matrices,
-                       something that acts on ``self``, or an automorphism
-                       of the underlying abelian group
+          something that acts on ``self``, or an automorphism
+          of the underlying abelian group
         - ``check`` -- perform additional checks on the generators
 
         EXAMPLES:
@@ -836,37 +835,37 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         You can provide generators to obtain a subgroup of the full orthogonal group::
 
             sage: D = TorsionQuadraticForm(matrix.identity(2)/2)
-            sage: f = matrix(2,[0,1,1,0])
-            sage: D.orthogonal_group(gens=[f]).order()
+            sage: f = matrix(2, [0,1,1,0])
+            sage: D.orthogonal_group(gens=[f]).order()                                  # optional - sage.groups
             2
 
         If no generators are given a slow brute force approach is used to calculate the full orthogonal group::
 
             sage: D = TorsionQuadraticForm(matrix.identity(3)/2)
-            sage: OD = D.orthogonal_group()
-            sage: OD.order()
+            sage: OD = D.orthogonal_group()                                             # optional - sage.groups
+            sage: OD.order()                                                            # optional - sage.groups
             6
-            sage: fd = D.hom([D.1,D.0,D.2])
-            sage: OD(fd)
+            sage: fd = D.hom([D.1, D.0, D.2])
+            sage: OD(fd)                                                                # optional - sage.groups
             [0 1 0]
             [1 0 0]
             [0 0 1]
 
-        We compute the kernel of the action of the orthogonal group of `L` on the discriminant group.
+        We compute the kernel of the action of the orthogonal group of `L` on the discriminant group::
 
-            sage: L = IntegralLattice('A4')
-            sage: O = L.orthogonal_group()
-            sage: D = L.discriminant_group()
-            sage: Obar = D.orthogonal_group(O.gens())
-            sage: O.order()
+            sage: L = IntegralLattice('A4')                                             # optional - sage.combinat
+            sage: O = L.orthogonal_group()                                              # optional - sage.combinat sage.groups
+            sage: D = L.discriminant_group()                                            # optional - sage.combinat sage.groups
+            sage: Obar = D.orthogonal_group(O.gens())                                   # optional - sage.combinat sage.groups
+            sage: O.order()                                                             # optional - sage.combinat sage.groups
             240
-            sage: Obar.order()
+            sage: Obar.order()                                                          # optional - sage.combinat sage.groups
             2
-            sage: phi = O.hom(Obar.gens())
-            sage: phi.kernel().order()
+            sage: phi = O.hom(Obar.gens())                                              # optional - sage.combinat sage.groups
+            sage: phi.kernel().order()                                                  # optional - sage.combinat sage.groups
             120
         """
-        from sage.groups.fqf_orthogonal import FqfOrthogonalGroup,_isom_fqf
+        from sage.groups.fqf_orthogonal import FqfOrthogonalGroup, _isom_fqf
         from sage.groups.abelian_gps.abelian_group_gap import AbelianGroupGap
 
         ambient = AbelianGroupGap(self.invariants()).aut()
@@ -956,7 +955,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         or `u p^n`.
 
         If `p = 2` is even, then the normal form consists of
-        1 x 1 blocks of the form
+        `1 \times 1` blocks of the form
 
         .. MATH::
 
@@ -981,7 +980,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         INPUT:
 
-        - partial - bool (default: ``False``) return only a partial normal form
+        - ``partial`` - bool (default: ``False``) return only a partial normal form;
           it is not unique but still useful to extract invariants
 
         OUTPUT:
@@ -990,13 +989,13 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         EXAMPLES::
 
-            sage: L1=IntegralLattice(matrix([[-2,0,0],[0,1,0],[0,0,4]]))
+            sage: L1 = IntegralLattice(matrix([[-2,0,0], [0,1,0], [0,0,4]]))
             sage: L1.discriminant_group().normal_form()
             Finite quadratic module over Integer Ring with invariants (2, 4)
             Gram matrix of the quadratic form with values in Q/Z:
             [1/2   0]
             [  0 1/4]
-            sage: L2=IntegralLattice(matrix([[-2,0,0],[0,1,0],[0,0,-4]]))
+            sage: L2 = IntegralLattice(matrix([[-2,0,0], [0,1,0], [0,0,-4]]))
             sage: L2.discriminant_group().normal_form()
             Finite quadratic module over Integer Ring with invariants (2, 4)
             Gram matrix of the quadratic form with values in Q/Z:
@@ -1005,10 +1004,10 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         We check that :trac:`24864` is fixed::
 
-            sage: L1=IntegralLattice(matrix([[-4,0,0],[0,4,0],[0,0,-2]]))
-            sage: AL1=L1.discriminant_group()
-            sage: L2=IntegralLattice(matrix([[-4,0,0],[0,-4,0],[0,0,2]]))
-            sage: AL2=L2.discriminant_group()
+            sage: L1 = IntegralLattice(matrix([[-4,0,0], [0,4,0], [0,0,-2]]))
+            sage: AL1 = L1.discriminant_group()
+            sage: L2 = IntegralLattice(matrix([[-4,0,0], [0,-4,0], [0,0,2]]))
+            sage: AL2 = L2.discriminant_group()
             sage: AL1.normal_form()
             Finite quadratic module over Integer Ring with invariants (2, 4, 4)
             Gram matrix of the quadratic form with values in Q/2Z:
@@ -1025,11 +1024,10 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         Some exotic cases::
 
             sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
-            sage: D4_gram = Matrix(ZZ,4,4,[2,0,0,-1,0,2,0,-1,0,0,2,-1,-1,-1,-1,2])
-            sage: D4 = FreeQuadraticModule(ZZ,4,D4_gram)
+            sage: D4_gram = Matrix(ZZ, 4, 4,[2,0,0,-1, 0,2,0,-1, 0,0,2,-1, -1,-1,-1,2])
+            sage: D4 = FreeQuadraticModule(ZZ, 4, D4_gram)
             sage: D4dual = D4.span(D4_gram.inverse())
-            sage: T = TorsionQuadraticModule((1/6)*D4dual,D4)
-            sage: T
+            sage: T = TorsionQuadraticModule((1/6)*D4dual, D4); T
             Finite quadratic module over Integer Ring with invariants (6, 6, 12, 12)
             Gram matrix of the quadratic form with values in Q/(1/3)Z:
             [ 1/18  1/12  5/36  1/36]
@@ -1129,8 +1127,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
-            sage: T = TorsionQuadraticModule((1/6)*ZZ^3,ZZ^3)
-            sage: T
+            sage: T = TorsionQuadraticModule((1/6)*ZZ^3, ZZ^3); T
             Finite quadratic module over Integer Ring with invariants (6, 6, 6)
             Gram matrix of the quadratic form with values in Q/(1/3)Z:
             [1/36    0    0]
@@ -1167,7 +1164,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
-            sage: V = FreeQuadraticModule(ZZ,3,matrix.identity(3)*10)
+            sage: V = FreeQuadraticModule(ZZ, 3, matrix.identity(3)*10)
             sage: T = TorsionQuadraticModule((1/10)*V, V)
             sage: g = T.gens()
             sage: new_gens = [2*g[0], 5*g[0]]
@@ -1193,9 +1190,8 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         Test that things work without specified gens too::
 
             sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
-            sage: V = FreeQuadraticModule(ZZ,3,matrix.identity(3)*5)
-            sage: T = TorsionQuadraticModule((1/5)*V, V)
-            sage: T
+            sage: V = FreeQuadraticModule(ZZ, 3, matrix.identity(3)*5)
+            sage: T = TorsionQuadraticModule((1/5)*V, V); T
             Finite quadratic module over Integer Ring with invariants (5, 5, 5)
             Gram matrix of the quadratic form with values in Q/Z:
             [1/5   0   0]
@@ -1267,8 +1263,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
             sage: A2 = Matrix(ZZ, 2, 2, [2,-1,-1,2])
             sage: L = IntegralLattice(2*A2)
-            sage: D = L.discriminant_group()
-            sage: D
+            sage: D = L.discriminant_group(); D
             Finite quadratic module over Integer Ring with invariants (2, 6)
             Gram matrix of the quadratic form with values in Q/2Z:
             [  1 1/2]
@@ -1287,9 +1282,8 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         EXAMPLES::
 
             sage: A2 = Matrix(ZZ, 2, 2, [2,-1,-1,2])
-            sage: L = IntegralLattice(2*A2)
-            sage: D = L.discriminant_group()
-            sage: D
+            sage: L = IntegralLattice(2 * A2)
+            sage: D = L.discriminant_group(); D
             Finite quadratic module over Integer Ring with invariants (2, 6)
             Gram matrix of the quadratic form with values in Q/2Z:
             [  1 1/2]

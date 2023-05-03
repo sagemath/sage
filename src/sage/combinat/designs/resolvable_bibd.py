@@ -48,7 +48,7 @@ Functions
 ---------
 """
 from itertools import repeat
-from sage.arith.all import is_prime_power
+from sage.arith.misc import is_prime_power
 from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
 from sage.categories.sets_cat import EmptySetError
 from .bibd import balanced_incomplete_block_design
@@ -257,9 +257,9 @@ def kirkman_triple_system(v,existence=False):
         a = K.primitive_element()
         t = (q - 1) // 6
         A0 = [(0,0),(0,1),(0,2)]
-        B  = [[(a**i,j),(a**(i+2*t),j),(a**(i+4*t),j)] for j in range(3)
+        B = [[(a**i,j),(a**(i+2*t),j),(a**(i+4*t),j)] for j in range(3)
               for i in range(t)]
-        A  = [[(a**i,0),(a**(i+2*t),1),(a**(i+4*t),2)] for i in range(6*t)]
+        A = [[(a**i,0),(a**(i+2*t),1),(a**(i+4*t),2)] for i in range(6*t)]
 
         # Action of K on the points
         action = lambda v,x: (v+x[0],x[1])
@@ -269,7 +269,7 @@ def kirkman_triple_system(v,existence=False):
                    for i,p in enumerate(K)
                    for j in range(3)}
 
-        B0  = [A0] + B + A[t:2*t] + A[3*t:4*t] + A[5*t:6*t]
+        B0 = [A0] + B + A[t:2*t] + A[3*t:4*t] + A[5*t:6*t]
 
         # Classes
         classes = [[[relabel[action(p,x)] for x in tr] for tr in B0]
@@ -399,9 +399,9 @@ def v_4_1_rbibd(v,existence=False):
 
     TESTS::
 
-        sage: for q in prime_powers(2,30):
+        sage: for q in prime_powers(2,30):  # indirect doctest
         ....:     if (3*q+1)%12 == 4:
-        ....:         _ = designs.resolvable_balanced_incomplete_block_design(3*q+1,4) # indirect doctest
+        ....:         _ = designs.resolvable_balanced_incomplete_block_design(3*q+1,4)
     """
     # Volume 1, VII.7.5.a from [BJL99]_
     if v%3 != 1 or not is_prime_power((v-1)//3):
@@ -559,7 +559,7 @@ def PBD_4_7(v,check=True, existence=False):
         from .group_divisible_designs import group_divisible_design
         from .orthogonal_arrays       import transversal_design
         GDD = group_divisible_design(3*5,K=[4],G=[3],check=False)
-        TD  = transversal_design(5,5)
+        TD = transversal_design(5,5)
 
         # A (75,{4},{15})-GDD
         GDD2 = [[3*B[x//3]+x%3 for x in BB] for B in TD for BB in GDD]

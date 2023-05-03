@@ -185,7 +185,7 @@ class SymplecticForm(DiffForm):
         return type(self)(
             self._vmodule,
             "unnamed symplectic form",
-            latex_name=r"\mbox{unnamed symplectic form}",
+            latex_name=r"\text{unnamed symplectic form}",
         )
 
     def _init_derived(self):
@@ -290,9 +290,9 @@ class SymplecticForm(DiffForm):
 
             sage: from sage.manifolds.differentiable.symplectic_form import SymplecticForm
             sage: M = manifolds.Sphere(2, coordinates='stereographic')
-            sage: vol_form = M.induced_metric().volume_form()
-            sage: omega = SymplecticForm.wrap(vol_form, 'omega', r'\omega')
-            sage: omega.display()
+            sage: vol_form = M.induced_metric().volume_form()                   # long time
+            sage: omega = SymplecticForm.wrap(vol_form, 'omega', r'\omega')     # long time
+            sage: omega.display()                                               # long time
             omega = -4/(y1^4 + y2^4 + 2*(y1^2 + 1)*y2^2 + 2*y1^2 + 1) dy1∧dy2
         """
         if form.degree() != 2:

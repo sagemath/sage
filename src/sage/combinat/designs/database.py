@@ -514,7 +514,7 @@ def OA_8_69():
     PBD = [[x for x in B if x not in oval] for B in BIBD]
 
     sets_of_size_seven = [R for R in PBD if len(R) == 7]
-    others             = [R for R in PBD if len(R) != 7]
+    others = [R for R in PBD if len(R) != 7]
 
     # 68, 27, and 52 are the only elements appearing twice in the rows of
     # sets_of_size_seven, and each row contains exactly one of them.
@@ -542,7 +542,6 @@ def OA_8_69():
         B.sort(key=lambda x: int(bool(x not in (68,27,52))))
         for BB in OA_8_7:
             OA.append([B[i] for i in BB])
-
 
     # Adding the  missing 0..0,1..1,... rows
     done = sum(O1,[])+sum(O2,[])
@@ -629,7 +628,7 @@ def OA_8_76():
     PBD.remove([])
 
     sets_of_size_seven = [R for R in PBD if len(R) == 7]
-    others             = [R for R in PBD if len(R) != 7]
+    others = [R for R in PBD if len(R) != 7]
 
     # critical_points are the 10 elements appearing twice in the rows of the 10
     # sets_of_size_seven, and each row contains exactly two of them
@@ -1478,11 +1477,11 @@ def OA_17_560():
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
     alpha = 5
-    beta  = 4
-    p     = 2
-    k     = 17
-    m     = 16
-    n     = p**alpha
+    beta = 4
+    p = 2
+    k = 17
+    m = 16
+    n = p**alpha
 
     G = GF((p, alpha), prefix='x')
     G_set = sorted(G) # sorted by lexicographic order, G[1] = 1
@@ -1659,8 +1658,8 @@ def OA_10_469():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_10_469
-        sage: OA = OA_10_469()
-        sage: is_orthogonal_array(OA,10,469,2)
+        sage: OA = OA_10_469()                  # long time
+        sage: is_orthogonal_array(OA,10,469,2)  # long time
         True
 
     The design is available from the general constructor::
@@ -3695,7 +3694,7 @@ def DM_52_6_1():
         sage: _ = designs.difference_matrix(52,6)
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    F4  = FiniteField(4,'z')
+    F4 = FiniteField(4,'z')
     G13 = FiniteField(13)
     G = F4.cartesian_product(G13)
     z = F4('z')
@@ -3806,9 +3805,9 @@ def DM_56_8_1():
         sage: _ = designs.difference_matrix(56,8)
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    F8  = FiniteField(8,'z')
-    F7  = FiniteField(7)
-    G   = F8.cartesian_product(F7)
+    F8 = FiniteField(8,'z')
+    F7 = FiniteField(7)
+    G = F8.cartesian_product(F7)
 
     w = F8.primitive_element()
     assert w**3 == w+1
@@ -3937,7 +3936,7 @@ def DM_75_8_1():
 
     F3 = FiniteField(3)
     F5 = FiniteField(5)
-    G  = cartesian_product((F3,F5,F5))
+    G = cartesian_product((F3,F5,F5))
 
     M = [
         [(2,0,0), (0,0,0), (0,0,0), (1,0,0), (0,0,0), (1,0,0), (1,0,0), (0,0,0)],
@@ -4122,7 +4121,7 @@ def RBIBD_120_8_1():
     BIBD = new_BIBD
 
     r = {v:i for i,v in enumerate(x for x in range(n) if x not in hyperoval)}
-    BIBD  = [[r[x] for x in B] for B in BIBD ]
+    BIBD = [[r[x] for x in B] for B in BIBD ]
     equiv = [[r[x] for x in B] for B in equiv]
 
     BIBD = IncidenceStructure(range(255),BIBD)
@@ -5009,13 +5008,13 @@ LIST_OF_EDS = "\n".join("    - `k = {}`: {}".format(
                         for k in sorted(EDS))
 
 __doc__ = __doc__.format(
-    LIST_OF_OA_CONSTRUCTIONS   = LIST_OF_OA_CONSTRUCTIONS,
+    LIST_OF_OA_CONSTRUCTIONS = LIST_OF_OA_CONSTRUCTIONS,
     LIST_OF_MOLS_CONSTRUCTIONS = LIST_OF_MOLS_CONSTRUCTIONS,
-    LIST_OF_VMT_VECTORS        = LIST_OF_VMT_VECTORS,
-    LIST_OF_BIBD               = LIST_OF_BIBD,
-    LIST_OF_DF                 = LIST_OF_DF,
-    LIST_OF_DM                 = LIST_OF_DM,
-    LIST_OF_QDM                = LIST_OF_QDM,
-    LIST_OF_EDS                = LIST_OF_EDS)
+    LIST_OF_VMT_VECTORS = LIST_OF_VMT_VECTORS,
+    LIST_OF_BIBD = LIST_OF_BIBD,
+    LIST_OF_DF = LIST_OF_DF,
+    LIST_OF_DM = LIST_OF_DM,
+    LIST_OF_QDM = LIST_OF_QDM,
+    LIST_OF_EDS = LIST_OF_EDS)
 del LIST_OF_OA_CONSTRUCTIONS, LIST_OF_MOLS_CONSTRUCTIONS, LIST_OF_VMT_VECTORS,LIST_OF_DF, LIST_OF_DM, LIST_OF_QDM, LIST_OF_EDS, LIST_OF_BIBD
 del PolynomialRing, ZZ, a,

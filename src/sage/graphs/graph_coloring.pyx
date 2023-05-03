@@ -1498,11 +1498,11 @@ def _vizing_edge_coloring(g):
 
     INPUT:
 
-    - ``g`` -- a graph.
+    - ``g`` -- a graph
 
     OUTPUT:
 
-    - Returns a partition of the edge set into at most `\Delta + 1` matchings.
+    a partition of the edge set into at most `\Delta + 1` matchings
 
     .. SEEALSO::
 
@@ -1512,7 +1512,7 @@ def _vizing_edge_coloring(g):
     ALGORITHM:
 
     This function's implementation is based on the algorithm described at [MG1992]_
-    
+
     EXAMPLES:
 
     Coloring the edges of the Petersen Graph::
@@ -1559,7 +1559,7 @@ def _vizing_edge_coloring(g):
        sage: all(len(Graph(C).matching()) == len(C) for C in colors)
        True
     """
-    # This implementation was discussed in trac ticket #34809
+    # This implementation was discussed in github issue #34809
 
     # dictionary mapping edges to colors
     e_colors = {frozenset(e): None for e in g.edge_iterator(labels=False, sort_vertices=False)}
@@ -1643,7 +1643,7 @@ def _vizing_edge_coloring(g):
         e_colors[frozenset((fan_center, fan[-1]))] = d
 
     matchings = dict()
-    for edge, c in e_colors.items(): 
+    for edge, c in e_colors.items():
         matchings[c] = matchings.get(c, []) + [tuple(edge)]
     classes = list(matchings.values())
 
@@ -2037,7 +2037,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
 
     TESTS:
 
-    Ticket :trac:`24991` is fixed::
+    Issue :trac:`24991` is fixed::
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
         sage: sorted(acyclic_edge_coloring(G, value_only=True) for G in graphs(4))

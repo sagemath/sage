@@ -6,10 +6,9 @@ Constructions of quadratic forms
 ##
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.quadratic_forms.quadratic_form import QuadraticForm
-
 
 
 def BezoutianQuadraticForm(f, g):
@@ -24,18 +23,16 @@ def BezoutianQuadraticForm(f, g):
 
     INPUT:
 
-    - `f`, `g` -- polynomials in `R[x]`, for some ring `R`
+    - ``f``, ``g`` -- polynomials in `R[x]`, for some ring `R`
 
-    OUTPUT:
-
-    a quadratic form over `R`
+    OUTPUT: a quadratic form over `R`
 
     EXAMPLES::
 
         sage: R = PolynomialRing(ZZ, 'x')
         sage: f = R([1,2,3])
         sage: g = R([2,5])
-        sage: Q = BezoutianQuadraticForm(f, g) ; Q
+        sage: Q = BezoutianQuadraticForm(f, g); Q                                       # optional - sage.libs.singular
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 1 -12 ]
         [ * -15 ]
@@ -46,7 +43,7 @@ def BezoutianQuadraticForm(f, g):
 
     """
     # Check that f and g are polynomials with a common base ring
-    if not is_Polynomial(f) or not is_Polynomial(g):
+    if not isinstance(f, Polynomial) or not isinstance(g, Polynomial):
         raise TypeError("one of your inputs is not a polynomial")
     if f.base_ring() != g.base_ring():   # TO DO:  Change this to allow coercion!
         raise TypeError("these polynomials are not defined over the same coefficient ring")
@@ -77,8 +74,8 @@ def HyperbolicPlane_quadratic_form(R, r=1):
 
     INPUT:
 
-    - `R`: a ring
-    - `n` (integer, default 1) number of copies
+    - ``R``: a ring
+    - ``n`` (integer, default 1) number of copies
 
     EXAMPLES::
 

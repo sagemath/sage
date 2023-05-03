@@ -143,6 +143,7 @@ Here we assume that you are using a git checkout.
       $ ./configure --with-python=$CONDA_PREFIX/bin/python             \
                     --prefix=$CONDA_PREFIX                             \
                     $(for pkg in $(./sage -package list :standard:     \
+                                     --exclude rpy2                    \
                                      --has-file spkg-configure.m4      \
                                      --has-file distros/conda.txt); do \
                           echo --with-system-$pkg=force;               \
@@ -173,3 +174,7 @@ suffices to restart Sage.
 After editing any Cython files, rebuild the Sage library using::
 
   $ pip install --no-build-isolation -v -v --editable src
+
+In order to update the conda environment later, you can run::
+
+  $ mamba env update --file src/environment-dev.yml --name sage-dev

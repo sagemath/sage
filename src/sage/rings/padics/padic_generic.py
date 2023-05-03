@@ -90,7 +90,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         return L
 
     def _modified_print_mode(self, print_mode):
-
         r"""
         Return a dictionary of print options, starting with ``self``'s
         print options but modified by the options in the dictionary
@@ -352,7 +351,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             doctest:warning
             ...
             DeprecationWarning: Use the change method if you want to change print options in fraction_field()
-            See http://trac.sagemath.org/23227 for details.
+            See https://github.com/sagemath/sage/issues/23227 for details.
             (('pos', False),)
         """
         if print_mode is not None:
@@ -390,7 +389,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             doctest:warning
             ...
             DeprecationWarning: Use the change method if you want to change print options in fraction_field()
-            See http://trac.sagemath.org/23227 for details.
+            See https://github.com/sagemath/sage/issues/23227 for details.
             3132
             sage: U.<a> = Zq(17^4, 6, print_mode='val-unit', print_max_terse_terms=3)
             sage: U.fraction_field()
@@ -402,7 +401,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
             sage: R = ZpLC(2); R
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/23505 for details.
+            See https://github.com/sagemath/sage/issues/23505 for details.
             2-adic Ring with lattice-cap precision
             sage: K = R.fraction_field(); K
             2-adic Field with lattice-cap precision
@@ -450,7 +449,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             doctest:warning
             ...
             DeprecationWarning: Use the change method if you want to change print options in integer_ring()
-            See http://trac.sagemath.org/23227 for details.
+            See https://github.com/sagemath/sage/issues/23227 for details.
             3132
             sage: U.<a> = Qq(17^4, 6, print_mode='val-unit', print_max_terse_terms=3)
             sage: U.integer_ring()
@@ -459,7 +458,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             doctest:warning
             ...
             DeprecationWarning: Use the change method if you want to change print options in fraction_field()
-            See http://trac.sagemath.org/23227 for details.
+            See https://github.com/sagemath/sage/issues/23227 for details.
             False
 
         TESTS::
@@ -478,6 +477,12 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             2-adic Ring with lattice-cap precision (label: test)
             sage: R.integer_ring({'mode':'series'}) is R
             True
+
+        The `secure` attribute for relaxed type is preserved::
+
+            sage: K = QpER(5, secure=True)
+            sage: K.integer_ring().is_secure()
+            True
         """
         # Currently does not support fields with non integral defining
         # polynomials.  This should change when the padic_general_extension
@@ -485,7 +490,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         if not self.is_field() and print_mode is None:
             return self
         if print_mode is None:
-            return self.change(field=False)
+            return self.change(field=False, check=False)
         else:
             from sage.misc.superseded import deprecation
             deprecation(23227, "Use the change method if you want to change print options in integer_ring()")
@@ -962,7 +967,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                         tester.assertEqual(y.expansion(i), x.expansion(i))
                     xx = y + (x % b)
                     tester.assertTrue(xx.is_equal_to(x,prec))
-
 
     def _test_log(self, **options):
         r"""

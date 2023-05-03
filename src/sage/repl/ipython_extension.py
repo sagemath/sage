@@ -405,7 +405,7 @@ class SageMagics(Magics):
             ....: C END FILE FIB1.F
             ....: ''')
             sage: fib
-            <fortran object>
+            <fortran ...>
             sage: from numpy import array
             sage: a = array(range(10), dtype=float)
             sage: fib(a, 10)

@@ -51,15 +51,12 @@ vertex.
 
 from copy import copy
 from sage.topology.cell_complex import GenericCellComplex
-from sage.homology.chains import Chains, Cochains
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.matrix.constructor import matrix
 from .simplicial_complex import Simplex, lattice_paths, SimplicialComplex
-from sage.homology.chain_complex import ChainComplex
-from sage.graphs.graph import Graph
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.misc.cachefunc import cached_method
 
 
@@ -630,6 +627,8 @@ class DeltaComplex(GenericCellComplex):
             sage: T.homology(subcomplex=A)
             {0: 0, 1: 0, 2: Z}
         """
+        from sage.homology.chain_complex import ChainComplex
+
         if subcomplex is not None:
             # relative chain complex, so don't augment the chain complex
             augmented = False
@@ -776,6 +775,8 @@ class DeltaComplex(GenericCellComplex):
             sage: delta_complexes.Simplex(4).graph() == graphs.CompleteGraph(5)
             True
         """
+        from sage.graphs.graph import Graph
+
         data = {}
         for vertex in range(len(self.n_cells(0))):
             data[vertex] = []
@@ -1523,6 +1524,8 @@ class DeltaComplex(GenericCellComplex):
             sage: list(T.n_chains(1, QQ, cochains=True).basis())
             [\chi_(0, (0, 0)), \chi_(1, (0, 0)), \chi_(2, (0, 0))]
         """
+        from sage.homology.chains import Chains, Cochains
+
         n_cells = tuple(enumerate(self.n_cells(n)))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)

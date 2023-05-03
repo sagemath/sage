@@ -31,7 +31,7 @@ EXAMPLES::
     sage: import sage.media
     doctest:warning...
     DeprecationWarning: the package sage.media is deprecated
-    See http://trac.sagemath.org/12673 for details.
+    See https://github.com/sagemath/sage/issues/12673 for details.
 """
 
 import math
@@ -101,7 +101,6 @@ class Wave(SageObject):
                 raise KeyError(msg + " invalid input to Wave initializer")
         else:
             raise ValueError("Must give a filename")
-
 
     def save(self, filename='sage.wav'):
         r"""

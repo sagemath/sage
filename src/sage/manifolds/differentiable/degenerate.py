@@ -368,7 +368,6 @@ class DegenerateManifold(DifferentiableManifold):
         return resu
 
 
-
 #*******************************************************************************************
 
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal

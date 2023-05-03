@@ -567,7 +567,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             sage: C.__setstate__(C.__getstate__())
         """
         self._graded_component = l[0]
-        # Since trac ticket #21312, the graded component iterator is not used
+        # Since github issue #21312, the graded component iterator is not used
         # anymore but maybe some previously pickled object still have it
         # self._graded_component_it = l[1]
 

@@ -172,7 +172,7 @@ def is_ComplexField(x):
         doctest:warning...
         DeprecationWarning: is_ComplexField is deprecated;
         use isinstance(..., sage.rings.abc.ComplexField) instead
-        See https://trac.sagemath.org/32610 for details.
+        See https://github.com/sagemath/sage/issues/32610 for details.
         True
         sage: is_CF(ComplexField(12))
         True
@@ -976,8 +976,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         except TypeError:
             raise TypeError("unable to coerce to a ComplexNumber: %s" % type(real))
 
-
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         TESTS:
 

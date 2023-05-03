@@ -618,7 +618,7 @@ def linear_program(c, G, h, A=None, b=None, solver=None):
         sage: sol=linear_program(c,G,h)                                                # optional - cvxopt
         doctest:warning...
         DeprecationWarning: linear_program is deprecated; use MixedIntegerLinearProgram instead
-        See https://trac.sagemath.org/32226 for details.
+        See https://github.com/sagemath/sage/issues/32226 for details.
         sage: sol['x']                                                                 # optional - cvxopt
         (0.999..., 1.000...)
 

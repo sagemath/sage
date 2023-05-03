@@ -36,9 +36,9 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.infinity import PlusInfinity
-from sage.matrix.all import zero_matrix
+from sage.matrix.special import zero_matrix
 
 from sage.structure.list_clone import ClonableList
 from sage.combinat.partition import Partition
@@ -148,11 +148,11 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        ``other`` -- the element that ``self`` is compared to
+        - ``other`` -- the element that ``self`` is compared to
 
         OUTPUT:
 
-        A Boolean.
+        A boolean.
 
         TESTS::
 
@@ -160,6 +160,10 @@ class SkewTableau(ClonableList,
             sage: t == 0
             False
             sage: t == SkewTableaux()([[None,1,2]])
+            True
+            sage: t == [(None,1,2)]
+            True
+            sage: t == [[None,1,2]]
             True
 
             sage: s = SkewTableau([[1,2]])
@@ -171,7 +175,7 @@ class SkewTableau(ClonableList,
         if isinstance(other, (Tableau, SkewTableau)):
             return list(self) == list(other)
         else:
-            return list(self) == other
+            return list(self) == other or list(list(row) for row in self) == other
 
     def __ne__(self, other):
         r"""
@@ -181,22 +185,33 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        ``other`` -- the element that ``self`` is compared to
+        - ``other`` -- the element that ``self`` is compared to
 
         OUTPUT:
 
-        A Boolean.
+        A boolean.
 
         TESTS::
 
-            sage: t = Tableau([[2,3],[1]])
+            sage: t = SkewTableau([[None,1,2]])
             sage: t != []
             True
         """
-        if isinstance(other, (Tableau, SkewTableau)):
-            return list(self) != list(other)
-        else:
-            return list(self) != other
+        return not (self == other)
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES:
+
+        Check that :trac:`35137` is fixed::
+
+            sage: t = SkewTableau([[None,1,2]])
+            sage: hash(t) == hash(tuple(t))
+            True
+        """
+        return hash(tuple(self))
 
     def check(self):
         r"""
@@ -1969,7 +1984,7 @@ class StandardSkewTableaux(SkewTableaux):
         elif skp in SkewPartitions():
             return StandardSkewTableaux_shape(skp)
         else:
-            raise TypeError("Invalid argument")
+            raise TypeError("invalid argument")
 
     def __contains__(self, x):
         """
@@ -2318,7 +2333,7 @@ class SemistandardSkewTableaux(SkewTableaux):
         if p is None:
             if mu is None:
                 return SemistandardSkewTableaux_all(max_entry)
-            raise ValueError("You must specify either a size or a shape")
+            raise ValueError("you must specify either a size or a shape")
 
         if isinstance(p, (int, Integer)):
             if mu is None:
@@ -2332,7 +2347,7 @@ class SemistandardSkewTableaux(SkewTableaux):
             else:
                 return SemistandardSkewTableaux_shape_weight(p, mu)
 
-        raise ValueError("Invalid input")
+        raise ValueError("invalid input")
 
     def __contains__(self, x):
         """

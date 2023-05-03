@@ -12,7 +12,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.all import CommutativeAdditiveSemigroups
+from sage.categories.commutative_additive_semigroups import CommutativeAdditiveSemigroups
 from sage.sets.family import Family
 
 class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):

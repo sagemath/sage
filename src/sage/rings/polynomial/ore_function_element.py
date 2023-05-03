@@ -165,7 +165,7 @@ class OreFunction(AlgebraElement):
             sage: P = K.random_element()
             sage: Q = K.random_element()
             sage: D = K.random_element()
-            sage: Q == 0 or D == 0 or (P*D) / (Q*D) == P/Q
+            sage: Q == 0 or D == 0 or (P*D) / (Q*D) == P/Q  # long time
             True
 
         """
@@ -845,7 +845,7 @@ class OreFunction_with_large_center(OreFunction):
             3/(z^2 + 2)
 
         The reduced trace lies in the center of `S`, which is the fraction field
-        of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`.
+        of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`::
 
             sage: tr.parent()
             Fraction Field of Univariate Polynomial Ring in z over Finite Field of size 5
@@ -906,7 +906,7 @@ class OreFunction_with_large_center(OreFunction):
             (z + 2)/(z^2 + 4)
 
         The reduced norm lies in the center of `S`, which is the fraction field
-        of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`.
+        of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`. ::
 
             sage: N.parent()
             Fraction Field of Univariate Polynomial Ring in z over Finite Field of size 5

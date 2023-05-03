@@ -36,4 +36,4 @@ documentation were made by Gary Zablackis.
     [SAGE] {SJ} William Stein, David Joyner, SAGE: System for Algebra
     and Geometry Experimentation, Comm. Computer Algebra 39(2005)61-64.
     (SIGSAM Bull. June 2005) https://sagemath.org/
-    https://trac.sagemath.org/
+    https://github.com/sagemath/sage/issues/

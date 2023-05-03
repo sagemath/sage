@@ -46,7 +46,9 @@ class ChainComplexes(Category_module):
             [Category of modules over Ring of integers modulo 9]
 
         """
-        from sage.categories.all import Fields, Modules, VectorSpaces
+        from sage.categories.fields import Fields
+        from sage.categories.modules import Modules
+        from sage.categories.vector_spaces import VectorSpaces
         base_ring = self.base_ring()
         if base_ring in Fields():
             return [VectorSpaces(base_ring)]

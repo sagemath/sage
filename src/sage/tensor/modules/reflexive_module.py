@@ -110,7 +110,7 @@ class ReflexiveModule_abstract(Parent):
         return self.base_module().tensor_module(l, k)
 
     def tensor(self, *args, **kwds):
-        # Until https://trac.sagemath.org/ticket/30373 is done,
+        # Until https://github.com/sagemath/sage/issues/30373 is done,
         # TensorProductFunctor._functor_name is "tensor", so here we delegate.
         r"""
         Return the tensor product of ``self`` and ``others``.
@@ -256,9 +256,9 @@ class ReflexiveModule_base(ReflexiveModule_abstract):
             sage: M.base_module() is M
             True
 
-            sage: M = Manifold(2, 'M')
-            sage: XM = M.vector_field_module()
-            sage: XM.base_module() is XM
+            sage: M = Manifold(2, 'M')                                          # optional - sage.symbolic
+            sage: XM = M.vector_field_module()                                  # optional - sage.symbolic
+            sage: XM.base_module() is XM                                        # optional - sage.symbolic
             True
         """
         return self
@@ -273,9 +273,9 @@ class ReflexiveModule_base(ReflexiveModule_abstract):
             sage: M.tensor_type()
             (1, 0)
 
-            sage: M = Manifold(2, 'M')
-            sage: XM = M.vector_field_module()
-            sage: XM.tensor_type()
+            sage: M = Manifold(2, 'M')                                          # optional - sage.symbolic
+            sage: XM = M.vector_field_module()                                  # optional - sage.symbolic
+            sage: XM.tensor_type()                                              # optional - sage.symbolic
             (1, 0)
         """
         return (1, 0)
@@ -343,7 +343,7 @@ class ReflexiveModule_dual(ReflexiveModule_abstract):
             sage: A.construction() is None
             True
         """
-        # Until https://trac.sagemath.org/ticket/34605 is done
+        # Until https://github.com/sagemath/sage/issues/34605 is done
         return None
 
 

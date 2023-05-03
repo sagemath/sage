@@ -52,7 +52,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.arith.all import LCM
+from sage.arith.functions import lcm as LCM
 from sage.groups.abelian_gps.element_base import AbelianGroupElementBase
 
 

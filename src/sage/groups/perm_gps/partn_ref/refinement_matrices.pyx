@@ -337,7 +337,7 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
     from sage.combinat.permutation import Permutations
     from sage.matrix.constructor import random_matrix, matrix
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-    from sage.arith.all import next_prime
+    from sage.arith.misc import next_prime
     cdef int h, i, j, nrows, k, num_tests = 0, num_matrices = 0
     cdef MatrixStruct M, N
     for m in range(n):

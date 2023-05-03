@@ -1452,7 +1452,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: octa.h_vector()
             [1, 3, 3, 1]
         """
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         d = self.dimension()
         f = self.f_vector()  # indexed starting at 0, since it's a Python list
         h = []
@@ -1573,7 +1573,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
              [0, 0, 4],
              [1, 2, -1, 0]]
         """
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         ret = [[0]*(i+1) for i in range(self.dimension() + 2)]
         f = self.f_triangle()
         for i, row in enumerate(ret):
@@ -4473,7 +4473,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S = SimplicialComplex([(0,1,2), (2,3,5)])
             sage: print(S._chomp_repr_())
             doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-            See https://trac.sagemath.org/33777 for details.
+            See https://github.com/sagemath/sage/issues/33777 for details.
             (2, 3, 5)
             (0, 1, 2)
 

@@ -10,7 +10,7 @@ Examples of a finite dimensional Lie algebra with basis
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
-from sage.categories.all import LieAlgebras
+from sage.categories.lie_algebras import LieAlgebras
 from sage.modules.free_module import FreeModule
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation

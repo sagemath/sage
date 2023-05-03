@@ -53,7 +53,7 @@ from sage.categories.homset import Hom
 from sage.categories.modules_with_basis import ModulesWithBasis
 from . import sfa
 from sage.combinat.partition import Partitions_n, _Partitions
-from sage.matrix.all import MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.rational_field import QQ
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_function

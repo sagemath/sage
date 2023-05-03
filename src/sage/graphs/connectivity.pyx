@@ -1821,7 +1821,7 @@ def strong_articulation_points(G):
         ...
         TypeError: the input must be a Sage DiGraph
 
-    Ticket :trac:`29958` is fixed::
+    Issue :trac:`29958` is fixed::
 
         sage: D = DiGraph('SA?GA??_??a???@?@OH_?@?I??b??G?AgGGCO??AC????a?????A@????AOCOQ?d??I?')
         sage: SAP = strong_articulation_points(D)
@@ -1920,7 +1920,7 @@ def bridges(G, labels=True):
         sage: list(bridges(g, labels=True))
         [(2, 3, 'label')]
 
-    Ticket :trac:`23817` is solved::
+    Issue :trac:`23817` is solved::
 
         sage: G = Graph()
         sage: G.add_edge(0, 1)

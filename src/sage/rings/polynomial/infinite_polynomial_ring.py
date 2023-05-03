@@ -646,7 +646,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         sage: Z = InfinitePolynomialRing_sparse(QQ, ['x','y'], 'lex')
 
     Nevertheless, since infinite polynomial rings are supposed to be unique
-    parent structures, they do not evaluate equal.
+    parent structures, they do not evaluate equal. ::
 
         sage: Z == X
         False
@@ -936,7 +936,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
                 raise ValueError("cannot convert %s into an element of %s" % (x, self))
 
         # direct conversion will only be used if the underlying polynomials are libsingular.
-        from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomial_libsingular, MPolynomialRing_libsingular
+        from sage.rings.polynomial.multi_polynomial import MPolynomial_libsingular
         # try interpretation in self._P, if we have a dense implementation
         if hasattr(self, '_P'):
             if x.parent() is self._P:
@@ -945,36 +945,38 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             # that MPolynomialRing_polydict does not work in complicated settings.
             # So, if self._P is libsingular (and this will be the case in many
             # applications!), we do it "nicely". Otherwise, we have to use sage_eval.
-            if isinstance(x, MPolynomial_libsingular) and isinstance(self._P, MPolynomialRing_libsingular):
-                if xmaxind == -1:  # Otherwise, x has been an InfinitePolynomial
-                    # We infer the correct variable shift.
-                    # Note: Since we are in the "libsingular" case, there are
-                    # no further "variables" hidden in the base ring of x.parent()
+            if isinstance(x, MPolynomial_libsingular):
+                from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
+                if isinstance(self._P, MPolynomialRing_libsingular):
+                    if xmaxind == -1:  # Otherwise, x has been an InfinitePolynomial
+                        # We infer the correct variable shift.
+                        # Note: Since we are in the "libsingular" case, there are
+                        # no further "variables" hidden in the base ring of x.parent()
+                        try:
+                            VarList = [repr(v) for v in x.variables()]
+                            # since interpretation in base ring
+                            # was impossible, it *must* have
+                            # variables
+                            # This tests admissibility on the fly:
+                            VarList.sort(key=self.varname_key, reverse=True)
+                        except ValueError:
+                            raise ValueError("cannot convert %s into an element of %s - variables are not admissible" % (x, self))
+                        xmaxind = max([int(v.split('_')[1]) for v in VarList])
                     try:
-                        VarList = [repr(v) for v in x.variables()]
-                        # since interpretation in base ring
-                        # was impossible, it *must* have
-                        # variables
-                        # This tests admissibility on the fly:
-                        VarList.sort(key=self.varname_key, reverse=True)
-                    except ValueError:
-                        raise ValueError("cannot convert %s into an element of %s - variables are not admissible" % (x, self))
-                    xmaxind = max([int(v.split('_')[1]) for v in VarList])
-                try:
-                    # Apparently, in libsingular, the polynomial conversion is not done by
-                    # name but by position, if the number of variables in the parents coincide.
-                    # So, we shift self._P to achieve xmaxind, and if the number of variables is
-                    # the same then we shift further. We then *must* be
-                    # able to convert x into self._P, or conversion to self is
-                    # impossible (and will be done in InfinitePolynomial(...)
-                    if self._max < xmaxind:
-                        self.gen()[xmaxind]
-                    if self._P.ngens() == x.parent().ngens():
-                        self.gen()[self._max + 1]
-                    # conversion to self._P will be done in InfinitePolynomial.__init__
-                    return InfinitePolynomial(self, x)
-                except (ValueError, TypeError, NameError):
-                    raise ValueError("cannot convert %s (from %s, but variables %s) into an element of %s - no conversion into underlying polynomial ring %s" % (x, x.parent(), x.variables(), self, self._P))
+                        # Apparently, in libsingular, the polynomial conversion is not done by
+                        # name but by position, if the number of variables in the parents coincide.
+                        # So, we shift self._P to achieve xmaxind, and if the number of variables is
+                        # the same then we shift further. We then *must* be
+                        # able to convert x into self._P, or conversion to self is
+                        # impossible (and will be done in InfinitePolynomial(...)
+                        if self._max < xmaxind:
+                            self.gen()[xmaxind]
+                        if self._P.ngens() == x.parent().ngens():
+                            self.gen()[self._max + 1]
+                        # conversion to self._P will be done in InfinitePolynomial.__init__
+                        return InfinitePolynomial(self, x)
+                    except (ValueError, TypeError, NameError):
+                        raise ValueError("cannot convert %s (from %s, but variables %s) into an element of %s - no conversion into underlying polynomial ring %s" % (x, x.parent(), x.variables(), self, self._P))
             # By now, x or self._P are not libsingular. Since MPolynomialRing_polydict
             # is too buggy, we use string evaluation
             try:
@@ -1014,25 +1016,26 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self._base, VarList, order=self._order)
-        if isinstance(R, MPolynomialRing_libsingular) and isinstance(x, MPolynomial_libsingular):  # everything else is so buggy that it's even not worth to try.
-            try:
-                # Problem: If there is only a partial overlap in the variables
-                # of x.parent() and R, then R(x) raises an error (which, I think,
-                # is a bug, since we talk here about conversion, not coercion).
-                # Hence, for being on the safe side, we coerce into a pushout ring:
-                x = R(1) * x
-                return InfinitePolynomial(self, x)
-            except Exception:
-                # OK, last resort, to be on the safe side
+        if isinstance(x, MPolynomial_libsingular):  # everything else is so buggy that it's even not worth to try.
+            from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
+            if isinstance(R, MPolynomialRing_libsingular):
                 try:
-                    return sage_eval(repr(x), self.gens_dict())
-                except (ValueError, TypeError, NameError):
-                    raise ValueError("cannot convert %s into an element of %s; conversion of the underlying polynomial failed" % (x, self))
-        else:
-            try:
-                return sage_eval(repr(x), self.gens_dict())
-            except (ValueError, TypeError, NameError):
-                raise ValueError("cannot convert %s into an element of %s" % (x, self))
+                    # Problem: If there is only a partial overlap in the variables
+                    # of x.parent() and R, then R(x) raises an error (which, I think,
+                    # is a bug, since we talk here about conversion, not coercion).
+                    # Hence, for being on the safe side, we coerce into a pushout ring:
+                    x = R(1) * x
+                    return InfinitePolynomial(self, x)
+                except Exception:
+                    # OK, last resort, to be on the safe side
+                    try:
+                        return sage_eval(repr(x), self.gens_dict())
+                    except (ValueError, TypeError, NameError):
+                        raise ValueError("cannot convert %s into an element of %s; conversion of the underlying polynomial failed" % (x, self))
+        try:
+            return sage_eval(repr(x), self.gens_dict())
+        except (ValueError, TypeError, NameError):
+            raise ValueError("cannot convert %s into an element of %s" % (x, self))
 
     def tensor_with_ring(self, R):
         """

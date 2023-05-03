@@ -102,7 +102,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: 'a' in f
             doctest:warning...
             DeprecationWarning: using 'index in vector' is deprecated; use 'index in vector.support()' instead
-            See https://trac.sagemath.org/34509 for details.
+            See https://github.com/sagemath/sage/issues/34509 for details.
             True
             sage: 'b' in f
             False

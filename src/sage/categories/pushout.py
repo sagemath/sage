@@ -1154,8 +1154,8 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for +: 'Multivariate Polynomial Ring in x, y, z over Integer Ring' and 'Multivariate Polynomial Ring in y, s over Rational Field'
-            sage: R = PolynomialRing(ZZ, 'x', 500)
-            sage: S = PolynomialRing(GF(5), 'x', 200)
+            sage: R = PolynomialRing(ZZ, 'x', 50)
+            sage: S = PolynomialRing(GF(5), 'x', 20)
             sage: R.gen(0) + S.gen(0)
             2*x0
         """
@@ -1760,9 +1760,10 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             Multivariate Laurent Polynomial Ring in s, t over Rational Field
 
         """
-        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing, is_LaurentPolynomialRing
-        if self.multi_variate and is_LaurentPolynomialRing(R):
-            return LaurentPolynomialRing(R.base_ring(), (list(R.variable_names()) + [self.var]))
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+        from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
+        if self.multi_variate and isinstance(R, LaurentPolynomialRing_generic):
+            return LaurentPolynomialRing(R.base_ring(), list(R.variable_names()) + [self.var])
         else:
             return LaurentPolynomialRing(R, self.var)
 
@@ -2878,8 +2879,8 @@ class QuotientFunctor(ConstructionFunctor):
             Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + 2, y^2 + 3*x)
 
         Note that the ``quo()`` method of a field used to return the
-        integer zero. That strange behaviour was removed in trac
-        ticket :trac:`9138`. It now returns a trivial quotient ring
+        integer zero. That strange behaviour was removed in github
+        issue :trac:`9138`. It now returns a trivial quotient ring
         when applied to a field::
 
             sage: F = ZZ.quo([5]*ZZ).construction()[0]
@@ -3462,8 +3463,8 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             # nothing else helps, hence, we move to the pushout of the codomains of the embeddings
             try:
                 P = pushout(self.embeddings[0].parent(), other.embeddings[0].parent())
-                from sage.rings.number_field.number_field import is_NumberField
-                if is_NumberField(P):
+                from sage.rings.number_field.number_field_base import NumberField
+                if isinstance(P, NumberField):
                     return P.construction()[0]
             except CoercionException:
                 return None

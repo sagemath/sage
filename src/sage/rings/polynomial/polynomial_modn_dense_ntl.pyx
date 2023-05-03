@@ -209,7 +209,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
             sage: f[:3]
             13*x^2 + 10*x + 5
         """
-        return self._parent._base(self.__poly[n]._sage_())
+        return self._parent._base((<ntl_ZZ_pX> self.__poly)[n]._integer_())
 
     def _unsafe_mutate(self, n, value):
         n = int(n)
@@ -382,6 +382,41 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         self.parent()._singular_(singular, force=force).set_ring()  # this is expensive
         self.__singular = singular(str(self))
         return self.__singular
+
+    @coerce_binop
+    def minpoly_mod(self, other):
+        r"""
+        Compute the minimal polynomial of this polynomial modulo another
+        polynomial in the same ring.
+
+        ALGORITHM:
+
+        NTL's ``MinPolyMod()``, which uses Shoup's algorithm [Sho1999]_.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(GF(101), implementation='NTL')
+            sage: f = x^17 + x^2 - 1
+            sage: (x^2).minpoly_mod(f)
+            x^17 + 100*x^2 + 2*x + 100
+
+        TESTS:
+
+        Random testing::
+
+            sage: p = random_prime(2^99)
+            sage: R.<x> = PolynomialRing(GF(p), implementation='NTL')
+            sage: d = randrange(1,50)
+            sage: f = R.random_element(d)
+            sage: g = R.random_element((-1,5*d))
+            sage: poly = g.minpoly_mod(f)
+            sage: poly(R.quotient(f)(g))
+            0
+        """
+        mod = other.ntl_ZZ_pX()
+        elt = self.ntl_ZZ_pX() % mod
+        res = elt.minpoly_mod(mod)
+        return self.parent()(res, construct=True)
 
     def small_roots(self, *args, **kwds):
         r"""

@@ -429,6 +429,7 @@ class RingExtensionFactory(UniqueFactory):
             else:
                 use_generic_constructor = False
                 is_backend_exposed = False
+            ring = (<RingExtension_generic>ring)._backend
 
         # We normalize other attributes
         if gens is not None:
@@ -724,7 +725,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
              sage: E.construction()
 
         """
-        # One could define a construction functor K' -> K' otimes_K L, but we leave this to another ticket
+        # One could define a construction functor K' -> K' otimes_K L, but we leave this to another issue
         pass
 
     def from_base_ring(self, r):
@@ -1927,7 +1928,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         TESTS:
 
-            Ensure ticket :trac:`34692` is fixed::
+            Ensure issue :trac:`34692` is fixed::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]

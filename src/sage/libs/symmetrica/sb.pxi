@@ -111,7 +111,7 @@ def t_POLYNOM_SCHUBERT_symmetrica(a):
 
     cdef OP ca = callocobject(), cres = callocobject()
 
-    if not is_MPolynomial(a):
+    if not isinstance(a, MPolynomial):
         freeall(ca)
         freeall(cres)
         raise TypeError("a (= %s) must be a multivariate polynomial")

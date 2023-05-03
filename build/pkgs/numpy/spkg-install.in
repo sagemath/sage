@@ -7,7 +7,7 @@ if [ `uname` = "Darwin" ]; then
     unset ATLAS
     unset BLAS
     unset LAPACK
-    # https://trac.sagemath.org/ticket/34110#comment:35
+    # https://github.com/sagemath/sage/issues/34110#comment:35
     # The fix for "reciprocal" (affected by a clang compiler bug) in
     # https://github.com/numpy/numpy/pull/19926 relies on -ftrapping-math
     # being used when Apple clang v12+ is used.

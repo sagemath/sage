@@ -8,7 +8,7 @@ sdh_make
 sdh_install glucose ${SAGE_LOCAL}/bin/
 cd ..
 
-# Possible license issue, see warning below and discussion on https://trac.sagemath.org/ticket/26361
+# Possible license issue, see warning below and discussion on https://github.com/sagemath/sage/issues/26361
 cd parallel
 sdh_make
 sdh_install glucose-syrup ${SAGE_LOCAL}/bin/

@@ -157,7 +157,7 @@ cdef class GroebnerStrategy(SageObject):
             sage: del strat
         """
         # WARNING: the Cython class self._parent is no longer accessible!
-        # see http://trac.sagemath.org/sage_trac/ticket/11339
+        # see https://github.com/sagemath/sage/issues/11339
         cdef ring *oldRing = NULL
         if self._strat:
             omfree(self._strat.sevS)

@@ -33,7 +33,8 @@ from sage.structure.unique_representation import UniqueRepresentation
 import sage.categories.all
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import gcd
+from sage.arith.functions import lcm
 from sage.rings.fraction_field import is_FractionField
 from sage.misc.misc_c import prod
 from sage.categories.morphism import SetMorphism

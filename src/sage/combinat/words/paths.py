@@ -384,7 +384,7 @@ class WordPaths_all(FiniteWords):
             True
 
         If size of alphabet is twice the number of steps, then opposite
-        vectors are used for the second part of the alphabet.
+        vectors are used for the second part of the alphabet::
 
             sage: WordPaths('abcd',[(2,1),(2,4)])
             Word Paths over 4 steps
@@ -455,10 +455,10 @@ class WordPaths_all(FiniteWords):
             sage: W1 == W3
             False
         """
-        return self is other or (type(self) == type(other) and \
-               self.alphabet() == other.alphabet() and \
-               self.vector_space() == other.vector_space() and \
-               self.letters_to_steps() == other.letters_to_steps())
+        return self is other or (type(self) == type(other) and
+            self.alphabet() == other.alphabet() and
+            self.vector_space() == other.vector_space() and
+            self.letters_to_steps() == other.letters_to_steps())
 
     def __ne__(self, other):
         r"""
@@ -1226,7 +1226,7 @@ class FiniteWordPath_all(SageObject):
             '(0.000, 0.000) -- (1.00, 0.000) -- (1.50, 0.866) -- (1.00, 1.73) -- (0.000, 1.73) -- (-0.500, 0.866)'
 
         """
-        from sage.all import n
+        from sage.misc.functional import N as n
         f = lambda x: n(x,digits=3)
         l = [str(tuple(map(f, pt))) for pt in self.points()]
         return ' -- '.join(l)
@@ -1614,30 +1614,34 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
             sage: P = WordPaths('abAB')
             sage: p = P('aaababbb')
-            sage: a = p.animate(); a    # optional -- ImageMagick
+            sage: a = p.animate(); print(a)
             Animation with 9 frames
-            sage: show(a)               # optional -- ImageMagick
-            sage: a.gif(delay=35, iterations=3)    # optional -- ImageMagick
+            sage: show(a)                           # long time  # optional -- ImageMagick
+            sage: show(a, delay=35, iterations=3)   # long time  # optional -- ImageMagick
 
         ::
 
             sage: P = WordPaths('abcdef',steps='triangle')
             sage: p =  P('abcdef')
-            sage: p.animate()           # optional -- ImageMagick
+            sage: a = p.animate(); print(a)
             Animation with 8 frames
+            sage: show(a)                           # long time  # optional -- ImageMagick
 
         If the path is closed, the plain polygon is added at the end of the
         animation::
 
             sage: P = WordPaths('abAB')
             sage: p = P('ababAbABABaB')
-            sage: a = p.animate(); a    # optional -- ImageMagick
+            sage: a = p.animate(); print(a)
             Animation with 14 frames
+            sage: show(a)                           # long time  # optional -- ImageMagick
 
         Another example illustrating a Fibonacci tile::
 
             sage: w = words.fibonacci_tile(2)
-            sage: show(w.animate())  # optional -- ImageMagick
+            sage: a = w.animate(); print(a)
+            Animation with 54 frames
+            sage: show(a)                           # long time  # optional -- ImageMagick
 
         The first 4 Fibonacci tiles in an animation::
 
@@ -1645,7 +1649,9 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             sage: b = words.fibonacci_tile(1).animate()
             sage: c = words.fibonacci_tile(2).animate()
             sage: d = words.fibonacci_tile(3).animate()
-            sage: (a*b*c*d).show()  # optional -- ImageMagick   # long time
+            sage: print(a*b*c*d)
+            Animation with 296 frames
+            sage: show(a*b*c*d)                     # long time  # optional -- ImageMagick
 
         .. note::
 

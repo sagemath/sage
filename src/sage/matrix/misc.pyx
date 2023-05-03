@@ -12,21 +12,26 @@ relevant classes and this file deleted.
 
 from cysignals.signals cimport sig_check
 
-from sage.ext.mod_int cimport *
-from sage.libs.gmp.mpz cimport *
-from sage.libs.gmp.mpq cimport *
-from sage.libs.mpfr cimport *
+cimport sage.rings.abc
 
-from sage.libs.flint.fmpz cimport fmpz_set_mpz, fmpz_one
+from sage.arith.misc import CRT_basis, previous_prime
+from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
+from sage.data_structures.binary_search cimport *
+from sage.ext.mod_int cimport *
 from sage.libs.flint.fmpq cimport fmpq_set_mpq, fmpq_canonicalise
 from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry_num, fmpq_mat_entry_den, fmpq_mat_entry
-
-from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
-
-from sage.data_structures.binary_search cimport *
+from sage.libs.flint.fmpz cimport fmpz_set_mpz, fmpz_one
+from sage.libs.gmp.mpq cimport *
+from sage.libs.gmp.mpz cimport *
+from sage.libs.mpfr cimport *
+from sage.misc.verbose import get_verbose, verbose
 from sage.modules.vector_integer_sparse cimport *
-from sage.modules.vector_rational_sparse cimport *
 from sage.modules.vector_modn_sparse cimport *
+from sage.modules.vector_rational_sparse cimport *
+from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr cimport RealNumber
 
 from .matrix0 cimport Matrix
 from .matrix_integer_dense cimport Matrix_integer_dense
@@ -34,17 +39,6 @@ from .matrix_integer_sparse cimport Matrix_integer_sparse
 from .matrix_rational_dense cimport Matrix_rational_dense
 from .matrix_rational_sparse cimport Matrix_rational_sparse
 
-from sage.rings.integer_ring   import ZZ
-from sage.rings.rational_field import QQ
-
-from sage.rings.integer cimport Integer
-from sage.arith.all import previous_prime, CRT_basis
-
-cimport sage.rings.abc
-from sage.rings.real_mpfr cimport RealNumber
-
-
-from sage.misc.verbose import verbose, get_verbose
 
 def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer N):
     """

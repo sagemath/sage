@@ -1000,7 +1000,7 @@ cdef class ImplicitSurface(IndexFaceSet):
             self.region = fast_float(region, *self.vars)
 
         # Comments from Carl Witty, who first wrote this some of this code
-        # See Trac 9483
+        # See Issue 9483
         # When I first wrote the code, I had the idea to create a
         # direct-to-tachyon backend that would use vertex normals
         # to create much nicer-looking plots with smaller numbers

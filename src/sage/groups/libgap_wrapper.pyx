@@ -25,7 +25,7 @@ Note how we call the constructor of both superclasses to initialize
 its output via LibGAP::
 
     sage: FooGroup()
-    <pc group of size 3 with 1 generators>
+    <pc group of size 3 with 1 generator>
     sage: type(FooGroup().gap())
     <class 'sage.libs.gap.element.GapElement'>
 
@@ -106,7 +106,7 @@ class ParentLibGAP(SageObject):
         ....:         ParentLibGAP.__init__(self, lg)
         ....:         Group.__init__(self)
         sage: FooGroup()
-        <pc group of size 3 with 1 generators>
+        <pc group of size 3 with 1 generator>
     """
 
     def __init__(self, libgap_parent, ambient=None):
@@ -461,7 +461,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
         ....:         ParentLibGAP.__init__(self, lg)
         ....:         Group.__init__(self)
         sage: FooGroup()
-        <pc group of size 3 with 1 generators>
+        <pc group of size 3 with 1 generator>
         sage: FooGroup().gens()
         (f1,)
     """

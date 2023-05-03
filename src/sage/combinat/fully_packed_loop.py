@@ -38,7 +38,7 @@ from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix
 
 from sage.misc.decorators import options
 from sage.matrix.constructor import matrix
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.integer import Integer
 from sage.misc.misc_c import prod
 
@@ -468,7 +468,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: fpl = FullyPackedLoop((1, 2, 3))
         Traceback (most recent call last):
         ...
-        ValueError: The alternating sign matrices must be square
+        ValueError: the alternating sign matrices must be square
 
         sage: SVM = SixVertexModel(3)[0]
         sage: FullyPackedLoop(SVM)

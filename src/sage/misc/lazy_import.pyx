@@ -269,14 +269,14 @@ cdef class LazyImport():
         if self._deprecation is not None:
             from sage.misc.superseded import deprecation_cython as deprecation
             try:
-                trac_number, message = self._deprecation
+                issue_number, message = self._deprecation
             except TypeError:
-                trac_number = self._deprecation
+                issue_number = self._deprecation
                 import_command = f'from {self._module} import {self._name}'
                 if self._as_name != self._name:
                     import_command += f' as {self._as_name}'
                 message = f'\nImporting {self._as_name} from here is deprecated; please use "{import_command}" instead.'
-            deprecation(trac_number, message)
+            deprecation(issue_number, message)
         # Replace the lazy import in the namespace by the actual object
         name = self._as_name
         if self._namespace is not None:
@@ -284,22 +284,22 @@ cdef class LazyImport():
                 self._namespace[name] = self._object
         return self._object
 
-    def _get_deprecation_ticket(self):
+    def _get_deprecation_issue(self):
         """
-        Return the ticket number of the deprecation, or 0 if this lazy
+        Return the issue number of the deprecation, or 0 if this lazy
         import is not deprecated.
 
         EXAMPLES::
 
             sage: from sage.misc.lazy_import import LazyImport
             sage: H = LazyImport('sage.categories.homsets', 'Homsets')
-            sage: H._get_deprecation_ticket()
+            sage: H._get_deprecation_issue()
             0
             sage: H = LazyImport('sage.categories.homsets', 'Homsets', deprecation=10668)
-            sage: H._get_deprecation_ticket()
+            sage: H._get_deprecation_issue()
             10668
             sage: H = LazyImport('sage.categories.homsets', 'Homsets', deprecation=(10668, "this is deprecated"))
-            sage: H._get_deprecation_ticket()
+            sage: H._get_deprecation_issue()
             10668
         """
         if self._deprecation is None:
@@ -1014,7 +1014,7 @@ def lazy_import(module, names, as_=None, *,
     - ``deprecation`` -- (optional) if not ``None``, a deprecation warning
       will be issued when the object is actually imported;
       ``deprecation`` should be either a trac number (integer) or a
-      pair ``(trac_number, message)``
+      pair ``(issue_number, message)``
 
     - ``feature`` -- a python module (optional), if it cannot be imported
       an appropriate error is raised
@@ -1070,7 +1070,7 @@ def lazy_import(module, names, as_=None, *,
         sage: my_Qp(5)
         doctest:...: DeprecationWarning:
         Importing my_Qp from here is deprecated; please use "from sage.rings.padics.factory import Qp as my_Qp" instead.
-        See http://trac.sagemath.org/14275 for details.
+        See https://github.com/sagemath/sage/issues/14275 for details.
         5-adic Field with capped relative precision 20
 
     An example of deprecation with a message::
@@ -1078,7 +1078,7 @@ def lazy_import(module, names, as_=None, *,
         sage: lazy_import('sage.rings.padics.factory', 'Qp', 'my_Qp_msg', deprecation=(14275, "This is an example."))
         sage: my_Qp_msg(5)
         doctest:...: DeprecationWarning: This is an example.
-        See http://trac.sagemath.org/14275 for details.
+        See https://github.com/sagemath/sage/issues/14275 for details.
         5-adic Field with capped relative precision 20
 
     An example of an import relying on a feature::

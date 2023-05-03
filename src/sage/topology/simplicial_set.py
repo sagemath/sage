@@ -173,7 +173,7 @@ any simplicial set::
     sage: Sigma3 = groups.permutation.Symmetric(3)
     sage: BSigma3 = Sigma3.nerve()
     sage: pi = BSigma3.fundamental_group(); pi
-    Finitely presented group < e0, e1 | e0^2, e1^3, (e0*e1^-1)^2 >
+    Finitely presented group < e1, e2 | e2^2, e1^3, (e2*e1)^2 >
     sage: pi.order()
     6
     sage: pi.is_abelian()
@@ -254,7 +254,6 @@ copy of the integers::
 
 import copy
 
-from sage.graphs.graph import Graph
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
@@ -263,9 +262,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
-from sage.homology.algebraic_topological_model import algebraic_topological_model_delta_complex
-from sage.homology.chain_complex import ChainComplex
-from sage.homology.chains import Chains, Cochains
 
 from .cell_complex import GenericCellComplex
 from .delta_complex import DeltaComplex
@@ -1686,26 +1682,14 @@ class SimplicialSet_arbitrary(Parent):
             sage: Sigma3.nerve().is_connected()
             True
         """
-        skel = self.n_skeleton(1)
-        edges = skel.n_cells(1)
-        vertices = skel.n_cells(0)
-        used_vertices = set()  # vertices which are in an edge
-        d = {}
-        for e in edges:
-            v = skel.face(e, 0)
-            w = skel.face(e, 1)
-            if v in d:
-                if w in d[v]:
-                    d[v][w] = d[v][w] + [e]
-                else:
-                    d[v][w] = [e]
-            else:
-                d[v] = {w: [e]}
-            used_vertices.update([v, w])
-        for v in vertices:
-            if v not in used_vertices:
-                d[v] = {}
-        return Graph(d, format='dict_of_dicts')
+        from sage.graphs.graph import Graph
+
+        G = Graph(loops=True, multiedges=True)
+        for e in self.n_cells(1):
+            G.add_edge(self.face(e,0), self.face(e,1), e)
+        for v in self.n_cells(0):
+            G.add_vertex(v)
+        return G
 
     def is_connected(self):
         """
@@ -2167,6 +2151,9 @@ class SimplicialSet_arbitrary(Parent):
             return GenericCellComplex.n_chains(self, n=n,
                                                base_ring=base_ring,
                                                cochains=cochains)
+
+        from sage.homology.chains import Chains, Cochains
+
         n_cells = tuple(self.n_cells(n))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)
@@ -3648,6 +3635,8 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             sage: RP2.cohomology(base_ring=GF(2)) == SimplicialSet(RP2).cohomology(base_ring=GF(2))
             True
         """
+        from sage.homology.chain_complex import ChainComplex
+
         if dimensions is None:
             if not self.cells(): # Empty
                 if cochain:
@@ -3796,6 +3785,8 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
         """
+        from sage.homology.algebraic_topological_model import algebraic_topological_model_delta_complex
+
         if base_ring is None:
             base_ring = QQ
         return algebraic_topological_model_delta_complex(self, base_ring)

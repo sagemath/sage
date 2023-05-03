@@ -25,58 +25,80 @@ from sage.misc.superseded import deprecated_function_alias
 
 def is_FiniteFieldElement(x):
     """
-    Returns if x is a finite field element.
+    Return True if ``x`` is a finite field element.
+
+    This function is deprecated.
 
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.element_base import is_FiniteFieldElement
         sage: is_FiniteFieldElement(1)
+        doctest:...: DeprecationWarning: the function is_FiniteFieldElement is deprecated; use isinstance(x, sage.structure.element.FieldElement) and x.parent().is_finite() instead
+        See https://github.com/sagemath/sage/issues/32664 for details.
         False
         sage: is_FiniteFieldElement(IntegerRing())
         False
         sage: is_FiniteFieldElement(GF(5)(2))
         True
     """
-    from sage.rings.finite_rings.finite_field_base import is_FiniteField
-    return isinstance(x, Element) and is_FiniteField(x.parent())
+    from sage.misc.superseded import deprecation
+    deprecation(32664, "the function is_FiniteFieldElement is deprecated; use isinstance(x, sage.structure.element.FieldElement) and x.parent().is_finite() instead")
+
+    from sage.rings.finite_rings.finite_field_base import FiniteField
+    return isinstance(x, Element) and isinstance(x.parent(), FiniteField)
 
 
 cdef class FiniteRingElement(CommutativeRingElement):
     def _nth_root_common(self, n, all, algorithm, cunningham):
         """
         This function exists to reduce code duplication between finite field
-        nth roots and integer_mod nth roots.
+        nth roots and integer_mod nth roots. It assumes that `self` is a field
+        element.
 
         The inputs are described there.
 
         TESTS::
 
             sage: a = Zmod(17)(13)
-            sage: a._nth_root_common(4, True, "Johnston", False)
-            [3, 5, 14, 12]
-            sage: a._nth_root_common(4, True, "Johnston", cunningham=True)  # optional - cunningham_tables
-            [3, 5, 14, 12]
+            sage: sorted(a._nth_root_common(4, True, "Johnston", False))
+            [3, 5, 12, 14]
+            sage: sorted(a._nth_root_common(4, True, "Johnston", cunningham=True))  # optional - cunningham_tables
+            [3, 5, 12, 14]
+
+        Test various prime powers::
+
+            sage: p = 5^5*10000000100 + 1
+            sage: a = GF(p)(3)**(5^7)
+            sage: for e in range(20):
+            ....:     r = a._nth_root_common(5^e, False, "Johnston", False)
+            ....:     assert r**(5^e) == a
+
+        Test very large modulus (assumed impossible to factor in reasonable time)::
+
+            sage: p = 2^1024 + 643
+            sage: a = GF(p, proof=False)(3)**(29*283*3539)
+            sage: r = a._nth_root_common(29*283*3539*12345, False, "Johnston", False)
+            sage: r**(29*283*3539*12345) == a
+            True
+
         """
         K = self.parent()
         q = K.order()
+        gcd = n.gcd(q-1)
         if self.is_one():
-            gcd = n.gcd(q-1)
             if gcd == 1:
                 if all: return [self]
                 else: return self
             else:
-                # the following may eventually be improved to not need a multiplicative generator.
-                g = K.multiplicative_generator()
-                q1overn = (q-1)//gcd
-                nthroot = g**q1overn
+                nthroot = K.zeta(gcd)
                 return [nthroot**a for a in range(gcd)] if all else nthroot
-        n = n % (q-1)
-        if n == 0:
+        if gcd == q-1:
             if all: return []
             else: raise ValueError("no nth root")
         gcd, alpha, beta = n.xgcd(q-1) # gcd = alpha*n + beta*(q-1), so 1/n = alpha/gcd (mod q-1)
         if gcd == 1:
             return [self**alpha] if all else self**alpha
+
         n = gcd
         q1overn = (q-1)//n
         if self**q1overn != 1:
@@ -90,18 +112,26 @@ cdef class FiniteRingElement(CommutativeRingElement):
             F = n.factor()
         from sage.groups.generic import discrete_log
         if algorithm is None or algorithm == 'Johnston':
-            g = K.multiplicative_generator()
+            # In the style of the Adleman-Manders-Miller algorithm,
+            # we will use small order elements instead of a multiplicative
+            # generator, which can be expensive to compute.
             for r, v in F:
+                # 0 < v <= k
                 k, h = (q-1).val_unit(r)
-                z = h * (-h).inverse_mod(r**v)
+                hinv = (-h).inverse_mod(r**v)
+                z = h * hinv
                 x = (1 + z) // r**v
-                if k == 1:
+                if k == v:
                     self = self**x
                 else:
-                    t = discrete_log(self**h, g**(r**v*h), r**(k-v), operation='*')
-                    self = self**x * g**(-z*t)
+                    # We need an element of order r^k (g^h in Johnston's article)
+                    # self^x differs from the actual nth root by an element of
+                    # order dividing r^(k-v)
+                    gh = K.zeta(r**k)
+                    t = discrete_log(self**h, gh**(r**v), r**(k-v), operation='*')
+                    self = self**x * gh**(-hinv*t)
             if all:
-                nthroot = g**q1overn
+                nthroot = K.zeta(n)
                 L = [self]
                 for i in range(1,n):
                     self *= nthroot

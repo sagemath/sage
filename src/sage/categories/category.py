@@ -153,7 +153,7 @@ class Category(UniqueRepresentation, SageObject):
 
     This is achieved as follows::
 
-        sage: from sage.categories.all import Category
+        sage: from sage.categories.category import Category
         sage: class EuclideanDomains(Category):
         ....:     # operations on the category itself
         ....:     def super_categories(self):
@@ -201,7 +201,7 @@ class Category(UniqueRepresentation, SageObject):
 
     ::
 
-        sage: from sage.categories.all import Category
+        sage: from sage.categories.category import Category
         sage: from sage.misc.lazy_attribute import lazy_attribute
         sage: class As (Category):
         ....:     def super_categories(self):
@@ -1469,7 +1469,6 @@ class Category(UniqueRepresentation, SageObject):
             tester.assertTrue(isinstance(self.element_class, type))
 
     _cmp_key = _cmp_key
-
 
     ##########################################################################
     # Construction of the associated abstract classes for parents, elements, ...
@@ -2816,7 +2815,6 @@ class CategoryWithParameters(Category):
                                             cache=cache, **options)
         self._make_named_class_cache[key] = result
         return result
-
 
     @abstract_method
     def _make_named_class_key(self, name):

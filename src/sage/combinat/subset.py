@@ -38,7 +38,7 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element
 
 from sage.sets.set import Set, Set_object_enumerated
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.misc.misc import _stable_uniq as uniq
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
@@ -342,9 +342,9 @@ class Subsets_s(Parent):
             sage: Subsets(3).cardinality()
             8
 
-        TESTS::
+        TESTS:
 
-            ``__len__`` should return a Python int.
+        ``__len__`` should return a Python int::
 
             sage: S = Subsets(Set([1,2,3]))
             sage: len(S)
@@ -1062,7 +1062,7 @@ class SubMultiset_s(Parent):
             sage: len(S.list())
             24
         """
-        from sage.all import prod
+        from sage.misc.misc_c import prod
         return Integer(prod(k + 1 for k in self._d.values()))
 
     def random_element(self):

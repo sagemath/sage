@@ -257,7 +257,7 @@ def is_IntegerModRing(x):
         doctest:warning...
         DeprecationWarning: the function is_IntegerModRing is deprecated.
         Use isinstance(..., sage.rings.abc.IntegerModRing) instead.
-        See https://trac.sagemath.org/32606 for details.
+        See https://github.com/sagemath/sage/issues/32606 for details.
         True
         sage: is_IntegerModRing(GF(13))
         True

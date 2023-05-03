@@ -308,7 +308,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             ...
             ArithmeticError: self must be a square matrix
         """
-# see trac ticket 4502 --- there is an issue with the "#random" pragma that needs to be fixed
+# see github issue 4502 --- there is an issue with the "#random" pragma that needs to be fixed
 #                          as for the mathematical side, scipy v0.7 is expected to fix the invertibility failures
 #
 #            sage: A = Matrix(RDF, [[1, 0], [0, 0]])
@@ -1271,7 +1271,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             sage: ev = A.eigenvalues('symmetric', 1e-13)
             doctest:...: DeprecationWarning: "algorithm" and "tol" should be used
             as keyword argument only
-            See https://trac.sagemath.org/29243 for details.
+            See https://github.com/sagemath/sage/issues/29243 for details.
             sage: ev  # tol 1e-13
             [(-2.0, 4), (1.0, 5), (3.0, 1)]
             sage: A.eigenvalues('symmetric', 1e-13, tol=1e-12)

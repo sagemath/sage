@@ -420,7 +420,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         except TypeError:
             pass
 
-        from .multi_polynomial_libsingular import MPolynomial_libsingular
+        from .multi_polynomial import MPolynomial_libsingular
 
         if isinstance(x, MPolynomial_polydict):
             P = x.parent()
@@ -639,9 +639,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         res = f.esub(g)
 
-        return MPolynomial_polydict(self, PolyDict({res: coeff},
-                                                   force_int_exponents=False,
-                                                   force_etuples=False))
+        return MPolynomial_polydict(self, PolyDict({res: coeff}))
 
     def monomial_lcm(self, f, g):
         """
@@ -690,8 +688,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         res = {i: max(f[i], g[i])
                for i in f.common_nonzero_positions(g)}
 
-        return self(PolyDict({ETuple(res, length): one},
-                             force_int_exponents=False, force_etuples=False))
+        return self(PolyDict({ETuple(res, length): one}))
 
     def monomial_reduce(self, f, G):
         r"""
@@ -891,10 +888,36 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         while tempvector != maxvector:
             tempvector = addwithcarry(list(tempvector), maxvector, pos)
-            M.append(R(PolyDict({ETuple(tempvector): one},
-                                force_int_exponents=False,
-                                force_etuples=False)))
+            M.append(R(PolyDict({ETuple(tempvector): one})))
         return M
+
+    def sum(self, terms):
+        r"""
+        Return a sum of elements of this multipolynomial ring.
+
+        This is method is much faster than the Python builtin sum.
+
+        EXAMPLES::
+
+            sage: R = QQ['x']
+            sage: S = R['y, z']
+            sage: x = R.gen()
+            sage: y, z = S.gens()
+            sage: S.sum([x*y, 2*x^2*z - 2*x*y, 1 + y + z])
+            (-x + 1)*y + (2*x^2 + 1)*z + 1
+
+        Comparison with builtin sum::
+
+            sage: sum([x*y, 2*x^2*z - 2*x*y, 1 + y + z])
+            (-x + 1)*y + (2*x^2 + 1)*z + 1
+        """
+        elt = PolyDict({}, check=False)
+        for t in terms:
+            elt += self(t).element()
+        # NOTE: here we should be using self.element_class but polynomial rings are not complient
+        # with categories...
+        from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
+        return MPolynomial_polydict(self, elt)
 
 
 class MPolynomialRing_polydict_domain(IntegralDomain,
