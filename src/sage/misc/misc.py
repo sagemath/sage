@@ -188,41 +188,6 @@ except KeyError:
     pass
 
 
-def union(x, y=None):
-    """
-    Return the union of x and y, as a list. The resulting list need not
-    be sorted and can change from call to call.
-
-    INPUT:
-
-
-    -  ``x`` - iterable
-
-    -  ``y`` - iterable (may optionally omitted)
-
-
-    OUTPUT: list
-
-    EXAMPLES::
-
-        sage: answer = union([1,2,3,4], [5,6]); answer
-        doctest:...: DeprecationWarning: sage.misc.misc.union is deprecated...
-        See https://github.com/sagemath/sage/issues/32096 for details.
-        [1, 2, 3, 4, 5, 6]
-        sage: union([1,2,3,4,5,6], [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), set([5,6])) == answer
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32096, "sage.misc.misc.union is deprecated, use 'list(set(x).union(y))' or a more suitable replacement")
-    if y is None:
-        return list(set(x))
-    return list(set(x).union(y))
-
-
 def exactly_one_is_true(iterable):
     r"""
     Return whether exactly one element of ``iterable`` evaluates ``True``.
