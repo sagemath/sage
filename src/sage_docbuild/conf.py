@@ -369,10 +369,10 @@ mathjax3_config = {
     },
 }
 
-if os.environ.get('SAGE_USE_CDNS', 'no') == 'yes':
+mathjax_path = 'mathjax/tex-chtml.js'
+if os.environ.get('SAGE_USE_CDNS', 'no') == 'yes' or not os.path.exists(os.path.join(MATHJAX_DIR, mathjax_path)):
     mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
 else:
-    mathjax_path = 'mathjax/tex-chtml.js'
     html_common_static_path += [MATHJAX_DIR]
 
 # A list of glob-style patterns that should be excluded when looking for source
