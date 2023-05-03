@@ -59,6 +59,7 @@ Advanced options::
 import logging
 import argparse
 import os
+import shlex
 import sys
 import sphinx.ext.intersphinx
 from sage.env import SAGE_DOC_SRC
@@ -441,6 +442,8 @@ def main():
     if not name or not typ:
         parser.print_help()
         sys.exit(1)
+    elif name == 'all':
+        sys.exit(os.system(f'cd {shlex.quote(SAGE_DOC_SRC)} && ${{MAKE-make}} doc-{typ}'))
 
     # Set up module-wide logging.
     setup_logger(args.verbose, args.color)
