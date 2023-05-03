@@ -1,0 +1,1 @@
+# The presence of this file ensures that we do not try to pip-install pycygwin -- which would fail with a compilation error
