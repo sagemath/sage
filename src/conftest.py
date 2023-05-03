@@ -113,8 +113,19 @@ class SageDoctestModule(DoctestModule):
                 )
 
 
+class IgnoreCollector(pytest.Collector):
+    """
+    Ignore a file.
+    """
+    def __init__(self, parent: pytest.Collector) -> None:
+        super().__init__('ignore', parent)
+
+    def collect(self) -> Iterable[pytest.Item | pytest.Collector]:
+        return []
+
+
 def pytest_collect_file(
-    file_path: Path, parent: pytest.File
+    file_path: Path, parent: pytest.Collector
 ) -> pytest.Collector | None:
     """
     This hook is called when collecting test files, and can be used to
@@ -128,7 +139,7 @@ def pytest_collect_file(
         # We don't allow pytests to be defined in Cython files.
         # Normally, Cython files are filtered out already by pytest and we only
         # hit this here if someone explicitly runs `pytest some_file.pyx`.
-        return pytest.skip("Skipping Cython file")
+        return IgnoreCollector.from_parent(parent)
     elif file_path.suffix == ".py":
         if parent.config.option.doctestmodules:
             return SageDoctestModule.from_parent(parent, path=file_path)
