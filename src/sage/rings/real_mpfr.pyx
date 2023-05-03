@@ -2992,7 +2992,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
          Round ``self`` to the nearest representable integer, rounding halfway
          cases away from zero.
-         
+
          .. NOTE::
 
              The rounding mode of the parent field does not affect the result.
