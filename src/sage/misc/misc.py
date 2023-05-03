@@ -48,7 +48,7 @@ from .lazy_string import lazy_string
 from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 
-lazy_import("sage.combinat.subset", ["powerset", "subsets"],
+lazy_import("sage.combinat.subset", ["powerset", "subsets", "uniq"],
             deprecation=35564)
 
 lazy_import("sage.misc.call", ["AttrCallObject", "attrcall", "call_method"],
@@ -555,53 +555,6 @@ def union(x, y=None):
     if y is None:
         return list(set(x))
     return list(set(x).union(y))
-
-
-def uniq(x):
-    """
-    Return the sublist of all elements in the list x that is sorted and
-    is such that the entries in the sublist are unique.
-
-    EXAMPLES::
-
-        sage: uniq([1, 1, 8, -5, 3, -5, -13, 13, -13])
-        doctest:...: DeprecationWarning: the output of uniq(X) being sorted is deprecated; use sorted(set(X)) instead if you want sorted output
-        See https://github.com/sagemath/sage/issues/27014 for details.
-        [-13, -5, 1, 3, 8, 13]
-    """
-    # After deprecation period, rename _stable_uniq -> uniq
-    from sage.misc.superseded import deprecation
-    deprecation(27014, "the output of uniq(X) being sorted is deprecated; use sorted(set(X)) instead if you want sorted output")
-    return sorted(set(x))
-
-
-def _stable_uniq(L):
-    """
-    Iterate over the elements of ``L``, yielding every element at most
-    once: keep only the first occurrence of any item.
-
-    The items must be hashable.
-
-    INPUT:
-
-    - ``L`` -- iterable
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import _stable_uniq
-        sage: L = [1, 1, 8, -5, 3, -5, 'a', 'x', 'a']
-        sage: it = _stable_uniq(L)
-        sage: it
-        <generator object _stable_uniq at ...>
-        sage: list(it)
-        [1, 8, -5, 3, 'a', 'x']
-    """
-    seen = set()
-    for x in L:
-        if x in seen:
-            continue
-        yield x
-        seen.add(x)
 
 
 def exactly_one_is_true(iterable):
