@@ -39,7 +39,6 @@ from sage.structure.element import Element
 
 from sage.sets.set import Set, Set_object_enumerated
 from sage.arith.misc import binomial
-from sage.misc.misc import _stable_uniq as uniq
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from . import combination
@@ -1534,3 +1533,30 @@ def powerset(X):
 
 
 subsets = powerset
+
+
+def uniq(L):
+    """
+    Iterate over the elements of ``L``, yielding every element at most
+    once: keep only the first occurrence of any item.
+
+    The items must be hashable.
+
+    INPUT:
+
+    - ``L`` -- iterable
+
+    EXAMPLES::
+
+        sage: L = [1, 1, 8, -5, 3, -5, 'a', 'x', 'a']
+        sage: it = uniq(L); it
+        <generator object uniq at ...>
+        sage: list(it)
+        [1, 8, -5, 3, 'a', 'x']
+    """
+    seen = set()
+    for x in L:
+        if x in seen:
+            continue
+        yield x
+        seen.add(x)
