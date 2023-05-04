@@ -126,7 +126,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         EXAMPLES::
 
             sage: G=groups.matrix.Sp(4,GF(2))
-            sage: R.<w,x,z,y>=GF(2)[]
+            sage: R.<w,x,y,z>=GF(2)[]
             sage: p=x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
             sage: g=G.1
             sage: g
@@ -135,15 +135,25 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             [0 0 0 1]
             [0 1 0 0]
             sage: g(p)
-            w*x*z*y + w*x^2 
+            w*x*y*z + w*z^2
+            sage: p2=x+y^2
+            sage: g2=G.0
+            sage: g2
+            [1 0 1 1]
+            [1 0 0 1]
+            [0 1 0 1]
+            [1 1 1 1]
+            sage: g2(p2)
+            x^2 + z^2 + w + z
+
 
         """
         if isinstance(other, MPolynomial):
             assert self.base_ring()==other.base_ring()
             mRingPoly=other
-            polynomial_vars=mRingPoly.variables()
+            polynomial_vars=mRingPoly.parent().gens()
             varsToSubstituteModuleContext=self*MatrixConstructor(polynomial_vars).transpose()
-            varsToSubstituteRingContext=map(PolynomialRing(self.base_ring(), other.variables()), varsToSubstituteModuleContext)
+            varsToSubstituteRingContext=map(PolynomialRing(self.base_ring(), polynomial_vars), varsToSubstituteModuleContext)            
             substitutionDict={v:s for v,s in zip(polynomial_vars, varsToSubstituteRingContext)}
             return mRingPoly.subs(substitutionDict)
 
