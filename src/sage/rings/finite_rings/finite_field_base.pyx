@@ -122,7 +122,7 @@ cdef class FiniteField(Field):
             False
             sage: F == FiniteField(3^2, 'd')
             False
-            sage: F == FiniteField(3^2, 'c', impl='pari_ffelt')
+            sage: F == FiniteField(3^2, 'c', implementation='pari_ffelt')
             False
         """
         if self is other:
@@ -318,14 +318,14 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: k.<a> = FiniteField(9, impl="pari")
+            sage: k.<a> = FiniteField(9, implementation="pari")
             sage: list(k)
             [0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2]
 
         Partial iteration of a very large finite field::
 
             sage: p = next_prime(2^64)
-            sage: k.<a> = FiniteField(p^2, impl="pari")
+            sage: k.<a> = FiniteField(p^2, implementation="pari")
             sage: it = iter(k); it
             <generator object at ...>
             sage: [next(it) for i in range(10)]
@@ -337,8 +337,8 @@ cdef class FiniteField(Field):
 
             sage: L = []
             sage: from sage.rings.finite_rings.finite_field_base import FiniteField
-            sage: for impl in ("givaro", "pari", "ntl"):
-            ....:     k = GF(8, impl=impl, names="z")
+            sage: for implementation in ("givaro", "pari", "ntl"):
+            ....:     k = GF(8, implementation=implementation, names="z")
             ....:     print(list(FiniteField.__iter__(k)))
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
@@ -1011,7 +1011,7 @@ cdef class FiniteField(Field):
 
         The given modulus is always made monic::
 
-            sage: k.<a> = GF(7^2, modulus=2*x^2-3, impl="pari_ffelt")
+            sage: k.<a> = GF(7^2, modulus=2*x^2-3, implementation="pari_ffelt")
             sage: k.modulus()
             x^2 + 2
 
@@ -1019,21 +1019,21 @@ cdef class FiniteField(Field):
 
         We test the various finite field implementations::
 
-            sage: GF(2, impl="modn").modulus()
+            sage: GF(2, implementation="modn").modulus()
             x + 1
-            sage: GF(2, impl="givaro").modulus()
+            sage: GF(2, implementation="givaro").modulus()
             x + 1
-            sage: GF(2, impl="ntl").modulus()
+            sage: GF(2, implementation="ntl").modulus()
             x + 1
-            sage: GF(2, impl="modn", modulus=x).modulus()
+            sage: GF(2, implementation="modn", modulus=x).modulus()
             x
-            sage: GF(2, impl="givaro", modulus=x).modulus()
+            sage: GF(2, implementation="givaro", modulus=x).modulus()
             x
-            sage: GF(2, impl="ntl", modulus=x).modulus()
+            sage: GF(2, implementation="ntl", modulus=x).modulus()
             x
-            sage: GF(13^2, 'a', impl="givaro", modulus=x^2+2).modulus()
+            sage: GF(13^2, 'a', implementation="givaro", modulus=x^2+2).modulus()
             x^2 + 2
-            sage: GF(13^2, 'a', impl="pari_ffelt", modulus=x^2+2).modulus()
+            sage: GF(13^2, 'a', implementation="pari_ffelt", modulus=x^2+2).modulus()
             x^2 + 2
         """
         # Normally, this is set by the constructor of the implementation
@@ -1075,17 +1075,17 @@ cdef class FiniteField(Field):
             sage: k.polynomial()
             a^2 + 2*a + 2
 
-            sage: F = FiniteField(9, 'a', impl='pari_ffelt')
+            sage: F = FiniteField(9, 'a', implementation='pari_ffelt')
             sage: F.polynomial()
             a^2 + 2*a + 2
 
-            sage: F = FiniteField(7^20, 'a', impl='pari_ffelt')
+            sage: F = FiniteField(7^20, 'a', implementation='pari_ffelt')
             sage: f = F.polynomial(); f
             a^20 + a^12 + 6*a^11 + 2*a^10 + 5*a^9 + 2*a^8 + 3*a^7 + a^6 + 3*a^5 + 3*a^3 + a + 3
             sage: f(F.gen())
             0
 
-            sage: k.<a> = GF(2^20, impl='ntl')
+            sage: k.<a> = GF(2^20, implementation='ntl')
             sage: k.polynomial()
             a^20 + a^10 + a^9 + a^7 + a^6 + a^5 + a^4 + a + 1
             sage: k.polynomial('FOO')
@@ -1432,7 +1432,7 @@ cdef class FiniteField(Field):
 
         The implementation is taken into account, by :trac:`15223`::
 
-            sage: k = FiniteField(9, 'a', impl='pari_ffelt')
+            sage: k = FiniteField(9, 'a', implementation='pari_ffelt')
             sage: F, R = k.construction()
             sage: F(R) is k
             True
@@ -1440,7 +1440,7 @@ cdef class FiniteField(Field):
         """
         from sage.categories.pushout import AlgebraicExtensionFunctor
         try:
-            kwds = {'impl': self._factory_data[2][3]}
+            kwds = {'implementation': self._factory_data[2][3]}
         except (AttributeError, IndexError, TypeError):
             kwds = {}
         if self.degree() == 1:
