@@ -243,9 +243,6 @@ class FiniteFieldFactory(UniqueFactory):
     - ``elem_cache`` -- (default: order < 500) cache all elements to
       avoid creation time; ignored unless ``implementation='givaro'``
 
-    - ``impl`` -- (deprecated, use ``implementation`` instead) for backwards
-      compatibility, accepts the same values as ``implementation``
-
     - ``repr`` -- (default: ``'poly'``) ignored unless ``implementation='givaro'``;
       controls the way elements are printed to the user:
 
@@ -685,8 +682,10 @@ class FiniteFieldFactory(UniqueFactory):
             if n == 1:
                 if implementation is None:
                     implementation = 'modn'
+
                 if name is not None:
                     certify_names((name,) if isinstance(name, str) else name)
+
                 name = ('x',)  # Ignore name
                 # Every polynomial of degree 1 is irreducible
                 check_irreducible = False
@@ -758,6 +757,7 @@ class FiniteFieldFactory(UniqueFactory):
 
             return (order, name, modulus, implementation, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible), {}
 
+    @rename_keyword(deprecation=30507, impl='implementation')
     def create_object(self, version, key, **kwds):
         """
         EXAMPLES::
@@ -813,7 +813,7 @@ class FiniteFieldFactory(UniqueFactory):
 
         if len(key) == 5:
             # for backward compatibility of pickles (see trac 10975).
-            order, name, modulus, impl, _ = key
+            order, name, modulus, implementation, _ = key
             p, n = Integer(order).factor()[0]
             proof = True
             prefix = kwds.get('prefix', None)
@@ -824,7 +824,7 @@ class FiniteFieldFactory(UniqueFactory):
             check_prime = check_irreducible = False
         elif len(key) == 8:
             # For backward compatibility of pickles (see trac #21433)
-            order, name, modulus, impl, _, p, n, proof = key
+            order, name, modulus, implementation, _, p, n, proof = key
             prefix = kwds.get('prefix', None)
             # We can set the defaults here to be those for givaro
             #   as they are otherwise ignored
@@ -832,10 +832,10 @@ class FiniteFieldFactory(UniqueFactory):
             elem_cache = kwds.get('elem_cache', (order < 500))
             check_prime = check_irreducible = False
         elif len(key) == 10:
-            order, name, modulus, impl, p, n, proof, prefix, repr, elem_cache = key
+            order, name, modulus, implementation, p, n, proof, prefix, repr, elem_cache = key
             check_prime = check_irreducible = False
         else:
-            order, name, modulus, impl, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible = key
+            order, name, modulus, implementation, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible = key
 
         from sage.structure.proof.proof import WithProof
         with WithProof('arithmetic', proof):
@@ -844,7 +844,7 @@ class FiniteFieldFactory(UniqueFactory):
             if check_irreducible and not modulus.is_irreducible():
                 raise ValueError("finite field modulus must be irreducible but it is not")
 
-        if impl == 'modn':
+        if implementation == 'modn':
             if n != 1:
                 raise ValueError("the 'modn' implementation requires a prime order")
             from .finite_field_prime_modn import FiniteField_prime_modn
@@ -859,15 +859,16 @@ class FiniteFieldFactory(UniqueFactory):
             # Otherwise, we would have to complicate all of their
             # constructors with check options.
             with WithProof('arithmetic', proof):
-                if impl == 'givaro':
+                if implementation == 'givaro':
                     K = FiniteField_givaro(order, name, modulus, repr, elem_cache)
-                elif impl == 'ntl':
+                elif implementation == 'ntl':
+                    from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
                     K = FiniteField_ntl_gf2e(order, name, modulus)
-                elif impl == 'pari_ffelt' or impl == 'pari':
+                elif implementation == 'pari_ffelt' or implementation == 'pari':
                     from .finite_field_pari_ffelt import FiniteField_pari_ffelt
                     K = FiniteField_pari_ffelt(p, modulus, name)
                 else:
-                    raise ValueError("no such finite field implementation: %r" % impl)
+                    raise ValueError("no such finite field implementation: %r" % implementation)
 
             # Temporary; see create_key_and_extra_args() above.
             if prefix is not None:
