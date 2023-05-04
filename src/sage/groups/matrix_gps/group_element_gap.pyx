@@ -23,6 +23,9 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.element import is_Matrix
 from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport richcmp
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.matrix.constructor import matrix as MatrixConstructor
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 cdef class MatrixGroupElement_gap(ElementLibGAP):
@@ -135,7 +138,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             w*x*z*y + w*x^2 
 
         """
-        if type(other)==MPolynomial_libsingular:
+        if isinstance(other, MPolynomial):
             assert self.base_ring()==other.base_ring()
             mRingPoly=other
             polynomial_vars=mRingPoly.variables()
