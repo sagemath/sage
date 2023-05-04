@@ -979,28 +979,22 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: q = A.base_ring().cardinality()
             sage: phi._compute_coefficient_exp(0)
-            0
-            sage: phi._compute_coefficient_exp(1)
             1
-            sage: phi._compute_coefficient_exp(2)
+            sage: phi._compute_coefficient_exp(1)
             1/(T^2 + T)
+            sage: phi._compute_coefficient_exp(2)
+            1/(T^8 + T^6 + T^5 + T^3)
             sage: phi._compute_coefficient_exp(3)
-            0
-            sage: phi._compute_coefficient_exp(2^4)
-            1/(T^64 + T^56 + T^52 + T^50 + T^49 + T^44 + T^42 + T^41 + T^38 + T^37 + T^35 + T^30 + T^29 + T^27 + T^23 + T^15)
+            1/(T^24 + T^20 + T^18 + T^17 + T^14 + T^13 + T^11 + T^7)
         """
         k = ZZ(k)
         if k.is_zero():
-            return self._base.zero()
-        if k.is_one():
             return self._base.one()
         q = self._Fq.cardinality()
-        if not k.is_power_of(q):
-            return self._base.zero()
         c = self._base.zero()
-        for i in range(k.log(q)):
-            j = k.log(q) - i
-            c += self._compute_coefficient_exp(q**i)*self._compute_coefficient_log(q**j)**(q**i)
+        for i in range(k):
+            j = k - i
+            c += self._compute_coefficient_exp(i)*self._compute_coefficient_log(j)**(q**i)
         return -c
 
     def exponential(self, name='z'):
@@ -1085,7 +1079,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if self.is_finite():
             raise ValueError(f"characteristic must be zero (={self.characteristic()})")
         L = LazyPowerSeriesRing(self._base, name)
-        exp = lambda k: self._compute_coefficient_exp(k)
+        zero = self._base.zero()
+        q = self._Fq.cardinality()
+        exp = lambda k: self._compute_coefficient_exp(ZZ(k).log(q)) if ZZ(k).is_power_of(q) or k == 0 else zero
         return L(exp, valuation=1)
 
     def gen(self):
@@ -1245,32 +1241,26 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: q = A.base_ring().cardinality()
             sage: phi._compute_coefficient_log(0)
-            0
-            sage: phi._compute_coefficient_log(1)
             1
-            sage: phi._compute_coefficient_log(2)
+            sage: phi._compute_coefficient_log(1)
             1/(T^2 + T)
+            sage: phi._compute_coefficient_log(2)
+            1/(T^6 + T^5 + T^3 + T^2)
             sage: phi._compute_coefficient_log(3)
-            0
-            sage: phi._compute_coefficient_log(2^4)
-            1/(T^30 + T^29 + T^27 + T^26 + T^23 + T^22 + T^20 + T^19 + T^15 + T^14 + T^12 + T^11 + T^8 + T^7 + T^5 + T^4)
+            1/(T^14 + T^13 + T^11 + T^10 + T^7 + T^6 + T^4 + T^3)
         """
         k = ZZ(k)
         if k.is_zero():
-            return self._base.zero()
-        if k.is_one():
             return self._base.one()
         r = self._gen.degree()
         T = self._gen[0]
         q = self._Fq.cardinality()
-        if not k.is_power_of(q):
-            return self._base.zero()
         c = self._base.zero()
-        for i in range(k.log(q)):
-            j = k.log(q) - i
+        for i in range(k):
+            j = k - i
             if j < r + 1:
-                c += self._compute_coefficient_log(q**i)*self._gen[j]**(q**i)
-        return c/(T - T**k)
+                c += self._compute_coefficient_log(i)*self._gen[j]**(q**i)
+        return c/(T - T**(q**k))
 
     def logarithm(self, name='z'):
         r"""
@@ -1339,7 +1329,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if self.is_finite():
             raise ValueError(f"characteristic must be zero (={self.characteristic()})")
         L = LazyPowerSeriesRing(self._base, name)
-        log = lambda k: self._compute_coefficient_log(k)
+        zero = self._base.zero()
+        q = self._Fq.cardinality()
+        log = lambda k: self._compute_coefficient_log(ZZ(k).log(q)) if ZZ(k).is_power_of(q) or k == 0 else zero
         return L(log, valuation=1)
 
 
