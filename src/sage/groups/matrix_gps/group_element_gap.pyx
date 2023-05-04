@@ -116,6 +116,33 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             '[1 1]\n[0 1]'
         """
         return str(self.matrix())
+    
+    def __call__(self, other): 
+        r"""
+        
+        EXAMPLES::
+
+            sage: G=groups.matrix.Sp(4,GF(2))
+            sage: R.<w,x,z,y>=GF(2)[]
+            sage: p=x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
+            sage: g=G.1
+            sage: g
+            [0 0 1 0]
+            [1 0 0 0]
+            [0 0 0 1]
+            [0 1 0 0]
+            sage: g(p)
+            w*x*z*y + w*x^2 
+
+        """
+        if type(other)==MPolynomial_libsingular:
+            assert self.base_ring()==other.base_ring()
+            mRingPoly=other
+            polynomial_vars=mRingPoly.variables()
+            varsToSubstituteModuleContext=self*MatrixConstructor(polynomial_vars).transpose()
+            varsToSubstituteRingContext=map(PolynomialRing(self.base_ring(), other.variables()), varsToSubstituteModuleContext)
+            substitutionDict={v:s for v,s in zip(polynomial_vars, varsToSubstituteRingContext)}
+            return mRingPoly.subs(substitutionDict)
 
     def _latex_(self):
         r"""
