@@ -1562,8 +1562,10 @@ class Polynomial_generic_sparse_cdv(Polynomial_generic_sparse, Polynomial_generi
 class Polynomial_generic_cdvr(Polynomial_generic_cdv):
     pass
 
+
 class Polynomial_generic_dense_cdvr(Polynomial_generic_dense_cdv, Polynomial_generic_cdvr):
     pass
+
 
 class Polynomial_generic_sparse_cdvr(Polynomial_generic_sparse_cdv, Polynomial_generic_cdvr):
     pass
@@ -1572,8 +1574,10 @@ class Polynomial_generic_sparse_cdvr(Polynomial_generic_sparse_cdv, Polynomial_g
 class Polynomial_generic_cdvf(Polynomial_generic_cdv, Polynomial_generic_field):
     pass
 
+
 class Polynomial_generic_dense_cdvf(Polynomial_generic_dense_cdv, Polynomial_generic_cdvf):
     pass
+
 
 class Polynomial_generic_sparse_cdvf(Polynomial_generic_sparse_cdv, Polynomial_generic_cdvf):
     pass
@@ -1585,6 +1589,6 @@ class Polynomial_generic_sparse_cdvf(Polynomial_generic_sparse_cdv, Polynomial_g
 from sage.misc.persist import register_unpickle_override
 from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
 
-register_unpickle_override( \
-    'sage.rings.polynomial.polynomial_element_generic', \
+register_unpickle_override(
+    'sage.rings.polynomial.polynomial_element_generic',
     'Polynomial_rational_dense', Polynomial_rational_flint)

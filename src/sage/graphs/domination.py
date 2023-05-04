@@ -11,6 +11,7 @@ and more precisely:
     :delim: |
 
     :meth:`~dominating_set` | Return a minimum distance-`k` dominating set of the graph.
+    :meth:`~dominating_sets` | Return an iterator over the minimum distance-`k` dominating sets of the graph.
     :meth:`~minimal_dominating_sets` | Return an iterator over the minimal dominating sets of a graph.
     :meth:`~is_dominating` | Check whether a set of vertices dominates a graph.
     :meth:`~is_redundant` | Check whether a set of vertices has redundant vertices (with respect to domination).
@@ -54,7 +55,8 @@ Methods
 
 # ****************************************************************************
 #       Copyright (C) 2009 Nathann Cohen <nathann.cohen@gmail.com>
-#                     2019 Jean-Florent Raymond  <j-florent.raymond@uca.fr>
+#                     2019 Jean-Florent Raymond <j-florent.raymond@uca.fr>
+#                     2023 David Coudert <david.coudert@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -214,8 +216,196 @@ def private_neighbors(G, vertex, dom):
 
 
 # ==============================================================================
-# Computation of minimum dominating
+# Computation of minimum dominating sets
 # ==============================================================================
+
+def dominating_sets(g, k=1, independent=False, total=False,
+                    solver=None, verbose=0, *, integrality_tolerance=1e-3):
+    r"""
+    Return an iterator over the minimum distance-`k` dominating sets
+    of the graph.
+
+    A minimum dominating set `S` of a graph `G` is a set of its vertices of
+    minimal cardinality such that any vertex of `G` is in `S` or has one of its
+    neighbors in `S`. See the :wikipedia:`Dominating_set`.
+
+    A minimum distance-`k` dominating set is a set `S` of vertices of `G` of
+    minimal cardinality such that any vertex of `G` is in `S` or at distance at
+    most `k` from a vertex in `S`. A distance-`0` dominating set is the set of
+    vertices itself, and when `k` is the radius of the graph, any vertex
+    dominates all the other vertices.
+
+    As an optimization problem, it can be expressed as follows, where `N^k(u)`
+    denotes the set of vertices at distance at most `k` from `u` (the set of
+    neighbors when `k=1`):
+
+    .. MATH::
+
+        \mbox{Minimize : }&\sum_{v\in G} b_v\\
+        \mbox{Such that : }&\forall v \in G, b_v+\sum_{u \in N^k(v)} b_u\geq 1\\
+        &\forall x\in G, b_x\mbox{ is a binary variable}
+
+    We use constraints generation to iterate over the minimum distance-`k`
+    dominating sets. That is, after reporting a solution, we add a constraint to
+    discard it and solve the problem again until no more solution can be found.
+
+    INPUT:
+
+    - ``k`` -- a non-negative integer (default: ``1``); the domination distance
+
+    - ``independent`` -- boolean (default: ``False``); when ``True``, computes
+      minimum independent dominating sets, that is minimum dominating sets that
+      are also independent sets (see also
+      :meth:`~sage.graphs.graph.independent_set`)
+
+    - ``total`` -- boolean (default: ``False``); when ``True``, computes total
+      dominating sets (see the See the :wikipedia:`Dominating_set`)
+
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+      to 0 by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring; see
+      :meth:`MixedIntegerLinearProgram.get_values`.
+
+    EXAMPLES:
+
+    Number of distance-`k` dominating sets of a Path graph of order 10::
+
+        sage: g = graphs.PathGraph(10)
+        sage: [sum(1 for _ in g.dominating_sets(k=k)) for k in range(11)]
+        [1, 13, 1, 13, 25, 2, 4, 6, 8, 10, 10]
+
+    If we build a graph from two disjoint stars, then link their centers we will
+    find a difference between the cardinality of an independent set and a stable
+    independent set::
+
+        sage: g = 2 * graphs.StarGraph(5)
+        sage: g.add_edge(0, 6)
+        sage: [sum(1 for _ in g.dominating_sets(k=k)) for k in range(11)]
+        [1, 1, 2, 12, 12, 12, 12, 12, 12, 12, 12]
+
+    The total dominating set of the Petersen graph has cardinality 4::
+
+        sage: G = graphs.PetersenGraph()
+        sage: G.dominating_set(total=True, value_only=True)
+        4
+        sage: sorted(G.dominating_sets(k=1))
+        [[0, 2, 6],
+         [0, 3, 9],
+         [0, 7, 8],
+         [1, 3, 7],
+         [1, 4, 5],
+         [1, 8, 9],
+         [2, 4, 8],
+         [2, 5, 9],
+         [3, 5, 6],
+         [4, 6, 7]]
+
+    Independent distance-`k` dominating sets of a Path graph::
+
+        sage: G = graphs.PathGraph(6)
+        sage: sorted(G.dominating_sets(k=1, independent=True))
+        [[1, 4]]
+        sage: sorted(G.dominating_sets(k=2, independent=True))
+        [[0, 3], [0, 4], [0, 5], [1, 3], [1, 4], [1, 5], [2, 4], [2, 5]]
+        sage: sorted(G.dominating_sets(k=3, independent=True))
+        [[2], [3]]
+
+    The dominating set is calculated for both the directed and undirected graphs
+    (modification introduced in :trac:`17905`)::
+
+        sage: g = digraphs.Path(3)
+        sage: g.dominating_set(value_only=True)
+        2
+        sage: list(g.dominating_sets())
+        [[0, 1], [0, 2]]
+        sage: list(g.dominating_sets(k=2))
+        [[0]]
+        sage: g = graphs.PathGraph(3)
+        sage: g.dominating_set(value_only=True)
+        1
+        sage: next(g.dominating_sets())
+        [1]
+
+    TESTS::
+
+        sage: g = Graph([(0, 1)])
+        sage: next(g.dominating_sets(k=-1))
+        Traceback (most recent call last):
+        ...
+        ValueError: the domination distance must be a non-negative integer
+    """
+    g._scream_if_not_simple(allow_multiple_edges=True, allow_loops=not total)
+
+    if not k:
+        yield list(g)
+        return
+    elif k < 0:
+        raise ValueError("the domination distance must be a non-negative integer")
+
+    from sage.numerical.mip import MixedIntegerLinearProgram
+    from sage.numerical.mip import MIPSolverException
+    p = MixedIntegerLinearProgram(maximization=False, solver=solver,
+                                  constraint_generation=True)
+    b = p.new_variable(binary=True)
+
+    if k == 1:
+        # For any vertex v, one of its neighbors or v itself is in the minimum
+        # dominating set. If g is directed, we use the in-neighbors of v
+        # instead.
+        neighbors_iter = g.neighbor_in_iterator if g.is_directed() else g.neighbor_iterator
+    else:
+        # When k > 1, we use BFS to determine the vertices that can reach v
+        # through a path of length at most k
+        gg = g.reverse() if g.is_directed() else g
+
+        def neighbors_iter(x):
+            it = gg.breadth_first_search(x, distance=k)
+            _ = next(it)
+            yield from it
+
+    if total:
+        # We want a total dominating set
+        for v in g:
+            p.add_constraint(p.sum(b[u] for u in neighbors_iter(v)), min=1)
+    else:
+        for v in g:
+            p.add_constraint(b[v] + p.sum(b[u] for u in neighbors_iter(v)), min=1)
+
+    if independent:
+        # no two adjacent vertices are in the set
+        for u, v in g.edge_iterator(labels=None):
+            p.add_constraint(b[u] + b[v], max=1)
+
+    # Minimizes the number of vertices used
+    p.set_objective(p.sum(b[v] for v in g))
+
+    best = g.order()
+    while True:
+        try:
+            p.solve(log=verbose)
+        except MIPSolverException:
+            # No more solutions
+            break
+        b_val = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
+        dom = [v for v in g if b_val[v]]
+        if len(dom) > best:
+            # All minimum solution have been reported
+            break
+        yield dom
+        best = len(dom)
+        # Prevent finding twice a solution
+        p.add_constraint(p.sum(b[u] for u in dom) <= best - 1)
+
 
 def dominating_set(g, k=1, independent=False, total=False, value_only=False,
                    solver=None, verbose=0, *, integrality_tolerance=1e-3):
@@ -317,53 +507,10 @@ def dominating_set(g, k=1, independent=False, total=False, value_only=False,
         sage: [G.dominating_set(k=k, value_only=True) for k in range(G.radius() + 1)]
         [5, 2, 1]
     """
-    g._scream_if_not_simple(allow_multiple_edges=True, allow_loops=not total)
-
-    if not k:
-        return g.order() if value_only else list(g)
-    elif k < 0:
-        raise ValueError("the domination distance must be a non-negative integer")
-
-    from sage.numerical.mip import MixedIntegerLinearProgram
-    p = MixedIntegerLinearProgram(maximization=False, solver=solver)
-    b = p.new_variable(binary=True)
-
-    if k == 1:
-        # For any vertex v, one of its neighbors or v itself is in the minimum
-        # dominating set. If g is directed, we use the in neighbors of v
-        # instead.
-        neighbors_iter = g.neighbor_in_iterator if g.is_directed() else g.neighbor_iterator
-    else:
-        # When k > 1, we use BFS to determine the vertices that can reach v
-        # through a path of length at most k
-        gg = g.reverse() if g.is_directed() else g
-
-        def neighbors_iter(x):
-            it = gg.breadth_first_search(x, distance=k)
-            _ = next(it)
-            yield from it
-
-    if total:
-        # We want a total dominating set
-        for v in g:
-            p.add_constraint(p.sum(b[u] for u in neighbors_iter(v)), min=1)
-    else:
-        for v in g:
-            p.add_constraint(b[v] + p.sum(b[u] for u in neighbors_iter(v)), min=1)
-
-    if independent:
-        # no two adjacent vertices are in the set
-        for u, v in g.edge_iterator(labels=None):
-            p.add_constraint(b[u] + b[v], max=1)
-
-    # Minimizes the number of vertices used
-    p.set_objective(p.sum(b[v] for v in g))
-
-    p.solve(log=verbose)
-    b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
-    dom = [v for v in g if b[v]]
+    dom = next(dominating_sets(g, k=k, independent=independent, total=total,
+                               solver=solver, verbose=verbose,
+                               integrality_tolerance=integrality_tolerance))
     return Integer(len(dom)) if value_only else dom
-
 
 # ==============================================================================
 # Enumeration of minimal dominating set as described in [BDHPR2019]_
@@ -583,7 +730,7 @@ def _cand_ext_enum(G, to_dom, u_next):
                 break
 
 
-def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
+def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
     r"""
     Return an iterator over the minimal dominating sets of a graph.
 
@@ -594,9 +741,11 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
     - ``to_dominate`` -- vertex iterable or ``None`` (default: ``None``);
       the set of vertices to be dominated.
 
-    - ``work_on_copy`` -- boolean (default: ``True``); whether or not to work on
+    - ``work_on_copy`` -- boolean (default: ``False``); whether or not to work on
       a copy of the input graph; if set to ``False``, the input graph will be
       modified (relabeled).
+
+    - ``k`` -- a non-negative integer (default: ``1``); the domination distance
 
     OUTPUT:
 
@@ -660,6 +809,31 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
         sage: len(ll) == len(pp) and all(x in pp for x in ll) and all(x in ll for x in pp)
         True
 
+    Listing minimal distance-`k` dominating sets::
+
+        sage: G = graphs.Grid2dGraph(2, 3)
+        sage: list(G.minimal_dominating_sets(k=0))
+        [{(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)}]
+        sage: list(G.minimal_dominating_sets(k=1))
+        [{(0, 0), (0, 2), (1, 1)},
+         {(0, 1), (1, 1)},
+         {(0, 0), (0, 1), (0, 2)},
+         {(0, 2), (1, 0)},
+         {(0, 0), (1, 2)},
+         {(0, 1), (1, 0), (1, 2)},
+         {(1, 0), (1, 1), (1, 2)}]
+        sage: list(G.minimal_dominating_sets(k=2))
+        [{(0, 0), (1, 2)},
+         {(0, 2), (1, 2)},
+         {(1, 0), (1, 2)},
+         {(0, 1)},
+         {(0, 0), (0, 2)},
+         {(0, 2), (1, 0)},
+         {(0, 0), (1, 0)},
+         {(1, 1)}]
+        sage: list(G.minimal_dominating_sets(k=3))
+        [{(0, 0)}, {(0, 1)}, {(0, 2)}, {(1, 0)}, {(1, 1)}, {(1, 2)}]
+
     TESTS:
 
     The empty graph is handled correctly::
@@ -701,8 +875,21 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
         ....:     return True
         sage: check_uniqueness(graphs.RandomGNP(9, 0.5))
         True
-    """
 
+    Asking for a negative distance::
+
+        sage: next(Graph(1).minimal_dominating_sets(k=-1))
+        Traceback (most recent call last):
+        ...
+        ValueError: the domination distance must be a non-negative integer
+
+    Trying to dominate vertices that are not part of the graph::
+
+        sage: next(Graph(1).minimal_dominating_sets(to_dominate=['foo']))
+        Traceback (most recent call last):
+        ...
+        ValueError: vertex (foo) is not a vertex of the graph
+    """
     def tree_search(H, plng, dom, i):
         r"""
         Enumerate minimal dominating sets recursively.
@@ -768,15 +955,30 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
     int_to_vertex = list(G)
     vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
 
-    if work_on_copy:
+    if to_dominate is None:
+        vertices_to_dominate = set(range(G.order()))
+    else:
+        for u in to_dominate:
+            if u not in G:
+                raise ValueError(f"vertex ({u}) is not a vertex of the graph")
+        vertices_to_dominate = {vertex_to_int[u] for u in to_dominate}
+
+    if k < 0:
+        raise ValueError("the domination distance must be a non-negative integer")
+    elif not k:
+        yield set(int_to_vertex) if to_dominate is None else set(to_dominate)
+        return
+    elif k > 1:
+        # We build a graph H with an edge between u and v if these vertices are
+        # at distance at most k in G
+        H = G.__class__(G.order())
+        for u, ui in vertex_to_int.items():
+            H.add_edges((ui, vertex_to_int[v]) for v in G.breadth_first_search(u, distance=k) if u != v)
+        G = H
+    elif work_on_copy:
         G.relabel(perm=vertex_to_int)
     else:
         G = G.relabel(perm=vertex_to_int, inplace=False)
-
-    if to_dominate is None:
-        vertices_to_dominate = set(G)
-    else:
-        vertices_to_dominate = set(to_dominate)
 
     if not vertices_to_dominate:
         # base case: vertices_to_dominate is empty

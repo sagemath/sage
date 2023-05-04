@@ -121,9 +121,7 @@ No problems here::
     sage: integrate(sin(x^2),x)
     1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x) + (I - 1)*sqrt(2)*erf((1/2*I - 1/2)*sqrt(2)*x) - (I - 1)*sqrt(2)*erf(sqrt(-I)*x) + (I + 1)*sqrt(2)*erf((-1)^(1/4)*x))
 
-    sage: result = integrate((1-x^2)^n,x)
-    ...
-    sage: result
+    sage: integrate((1-x^2)^n,x)  # long time
     x*hypergeometric((1/2, -n), (3/2,), x^2*exp_polar(2*I*pi))
     sage: integrate(x^x,x)
     integrate(x^x, x)
@@ -143,7 +141,7 @@ No problems here::
 
 Other examples that now (:trac:`27958`) work::
 
-    sage: integrate(log(x)*exp(-x^2), x)
+    sage: integrate(log(x)*exp(-x^2), x)  # long time
     1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)
 
     sage: integrate(log(1+sqrt(1+4*x)/2)/x, x, 0, 1)
@@ -201,12 +199,12 @@ Maple documentation::
     1/3*sqrt(3)*arctan(1/3*sqrt(3)*(2*x + 1)) - 1/6*log(x^2 + x + 1) + 1/3*log(x - 1)
     sage: integrate(exp(-x^2), x)
     1/2*sqrt(pi)*erf(x)
-    sage: integrate(exp(-x^2)*log(x), x)
+    sage: integrate(exp(-x^2)*log(x), x)  # long time
     1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)
     sage: f = exp(-x^2)*log(x)
     sage: f.nintegral(x, 0, 999)
     (-0.87005772672831..., 7.5584...e-10, 567, 0)
-    sage: integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)     # todo: maple can do this
+    sage: integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)     # long time  # todo: maple can do this
     integrate(1/(sqrt(2*t^2 + 1)*sqrt(t^2 - 2)), t, 2, 3)
     sage: integral(integral(x*y^2, x, 0, y), y, -2, 2)
     32/5

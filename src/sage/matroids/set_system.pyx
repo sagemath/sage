@@ -401,7 +401,7 @@ cdef class SetSystem:
         Helper method for partition methods below.
         """
         cdef dict C
-        cdef long i, j, v, t0, t
+        cdef long i, v, t0, t
         cdef bint split
 
         C = {}
@@ -453,7 +453,6 @@ cdef class SetSystem:
         """
         Helper method for partition methods below.
         """
-        S = {}
         if P is None:
             P = self.groundset_partition()
         if E is None:
@@ -561,7 +560,7 @@ cdef class SetSystem:
             partition elements is an invariant of the isomorphism class of the
             hypergraph.
         """
-        cdef long h, l
+        cdef long h
         cdef list EP2, H
 
         if P is None:

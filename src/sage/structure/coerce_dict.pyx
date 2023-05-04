@@ -36,7 +36,7 @@ references and resulted in a memory leak in the following example.
 However, this leak was fixed by :trac:`715`, using weak references::
 
     sage: K.<t> = GF(2^55)
-    sage: for i in range(50):
+    sage: for i in range(20):
     ....:     a = K.random_element()
     ....:     E = EllipticCurve(j=a)
     ....:     P = E.random_point()
@@ -404,17 +404,18 @@ cdef class MonoDict:
         sage: import gc
         sage: def count_type(T):
         ....:     return len([c for c in gc.get_objects() if isinstance(c,T)])
-        sage: _ = gc.collect()
+        sage: gc.freeze()  # so that gc.collect() only deals with our trash
         sage: N = count_type(MonoDict)
         sage: for i in range(100):
         ....:     V = [MonoDict({"id":j+100*i}) for j in range(100)]
-        ....:     n= len(V)
-        ....:     for i in range(n): V[i][V[(i+1)%n]]=(i+1)%n
+        ....:     n = len(V)
+        ....:     for i in range(n): V[i][V[(i+1)%n]] = (i+1)%n
         ....:     del V
         ....:     _ = gc.collect()
         ....:     assert count_type(MonoDict) == N
         sage: count_type(MonoDict) == N
         True
+        sage: gc.unfreeze()
 
     AUTHORS:
 
