@@ -150,12 +150,12 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         """
         if isinstance(other, MPolynomial):
             assert self.base_ring()==other.base_ring()
-            mRingPoly=other
-            polynomial_vars=mRingPoly.parent().gens()
-            varsToSubstituteModuleContext=self*MatrixConstructor(polynomial_vars).transpose()
-            varsToSubstituteRingContext=map(PolynomialRing(self.base_ring(), polynomial_vars), varsToSubstituteModuleContext)            
-            substitutionDict={v:s for v,s in zip(polynomial_vars, varsToSubstituteRingContext)}
-            return mRingPoly.subs(substitutionDict)
+            polynomial=other
+            polynomial_vars=polynomial.parent().gens()
+            vars_to_sub_module_context=self*MatrixConstructor(polynomial_vars).transpose()
+            vars_to_sub_ring_context=map(PolynomialRing(self.base_ring(), polynomial_vars), vars_to_sub_module_context)            
+            substitution_dict={v:s for v,s in zip(polynomial_vars, vars_to_sub_ring_context)}
+            return polynomial.subs(substitution_dict)
 
     def _latex_(self):
         r"""
