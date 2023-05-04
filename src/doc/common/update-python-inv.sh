@@ -5,7 +5,8 @@
 #    http://sphinx-doc.org/ext/intersphinx.html
 #
 # To be able to compile Sage without accessing the net, we use a local copy of
-# this database. Here is how to update it:
+# this database. Here is how to update it by downloading the file
+# for the latest stable Python version:
 
 if command -v wget > /dev/null 2>&1 ; then
     rm -f python.inv python2.inv python3.inv
