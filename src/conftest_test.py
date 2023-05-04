@@ -2,9 +2,9 @@ from pathlib import Path
 import subprocess
 
 
-from sage.env import SAGE_ROOT
+from sage.env import SAGE_SRC
 
-input_file = Path(SAGE_ROOT) / "src" / "conftest_inputtest.py"
+input_file = Path(SAGE_SRC) / "conftest_inputtest.py"
 
 
 class TestOldDoctestSageScript:
