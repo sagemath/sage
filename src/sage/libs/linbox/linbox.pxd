@@ -32,7 +32,6 @@ cdef extern from "linbox/matrix/dense-matrix.h":
         ctypedef Modular_double Field
         ctypedef double Element
         DenseMatrix_Modular_double(Field F, size_t m, size_t n)
-        DenseMatrix_Modular_double(Field F, size_t m, size_t n, Element*)
         void setEntry(size_t i, size_t j, Element& a)
         Element &getEntry(size_t i, size_t j)
 
@@ -42,7 +41,6 @@ cdef extern from "linbox/matrix/dense-matrix.h":
         ctypedef Modular_float Field
         ctypedef float Element
         DenseMatrix_Modular_float(Field F, size_t m, size_t n)
-        DenseMatrix_Modular_float(Field F, size_t m, size_t n, Element*)
         void setEntry(size_t i, size_t j, Element& a)
         Element &getEntry(size_t i, size_t j)
 
