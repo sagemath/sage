@@ -966,7 +966,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     @cached_method
     def _compute_coefficient_exp(self, k):
         r"""
-        Return the `k`-th coefficient of the exponential of ``self``.
+        Return the `q^k`-th coefficient of the exponential of this Drinfeld module.
 
         INPUT:
 
