@@ -1232,7 +1232,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     @cached_method
     def _compute_coefficient_log(self, k):
         r"""
-        Return the `k`-th coefficient of the logarithm of ``self``.
+        Return the `q^k`-th coefficient of the logarithm of this Drinfeld module.
 
         TESTS::
 
