@@ -1326,7 +1326,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ...
             ValueError: characteristic must be zero (=T + 2)
         """
-        if self.is_finite():
+        if not self.category()._characteristic:
             raise ValueError(f"characteristic must be zero (={self.characteristic()})")
         L = LazyPowerSeriesRing(self._base, name)
         zero = self._base.zero()
