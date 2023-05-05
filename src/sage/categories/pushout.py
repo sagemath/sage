@@ -3249,7 +3249,10 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
                 if latex_names[i] == latex_variable_name(name):
                     latex_names[i] = None
         self.latex_names = latex_names
-        self.kwds = kwds
+        kwds_self = dict(kwds.items())
+        if 'implementation' in kwds_self:
+            del kwds_self['implementation']
+        self.kwds = kwds_self
 
     def _apply_functor(self, R):
         """
