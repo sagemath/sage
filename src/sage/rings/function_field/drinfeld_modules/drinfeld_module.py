@@ -1001,8 +1001,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return the exponential of this Drinfeld module.
 
-        Note that the exponential is only defined for Drinfeld modules
-        over nonfinite field.
+        Note that the exponential is only defined when the
+        `\mathbb{F}_q[T]`-characteristic is zero.
 
         INPUT:
 
@@ -1268,7 +1268,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         By definition, the logarithm is the compositional inverse of the
         exponential (see :meth:`exponential`). Note that the logarithm
-        is only defined for Drinfeld modules over nonfinite field.
+        is only defined when the `\mathbb{F}_q[T]`-characteristic is
+        zero.
 
         INPUT:
 
