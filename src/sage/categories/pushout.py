@@ -3251,6 +3251,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         self.latex_names = latex_names
         kwds_self = dict(kwds.items())
         if 'implementation' in kwds_self:
+            self.implementations[0] = kwds_self['implementation']
             del kwds_self['implementation']
         self.kwds = kwds_self
 
