@@ -6796,11 +6796,16 @@ class Graph(GenericGraph):
         if cliques is None:
             cliques = self.cliques_maximal()
 
-        if vertices in self: # single vertex
+        if vertices in self:  # single vertex
             return sum(1 for c in cliques if vertices in c)
-        else:
-            return { v : sum(1 for c in cliques if v in c)
-                     for v in vertices or self }
+
+        from collections import Counter
+        count = Counter()
+
+        for c in cliques:
+            count.update(c)
+
+        return {v : count[v] for v in vertices or self}
 
     @doc_index("Clique-related methods")
     def cliques_get_max_clique_graph(self):
@@ -7544,11 +7549,17 @@ class Graph(GenericGraph):
         if cliques is None:
             cliques = self.cliques_maximal()
 
-        if vertices in self: # single vertex
+        if vertices in self:  # single vertex
             return [c for c in cliques if vertices in c]
-        else:
-            return { v : [c for c in cliques if v in c]
-                     for v in vertices or self }
+
+        from collections import defaultdict
+        d = defaultdict(list)
+
+        for c in cliques:
+            for v in c:
+                d[v].append(c)
+
+        return {v : d[v] for v in vertices or self}
 
     @doc_index("Clique-related methods")
     def clique_complex(self):
