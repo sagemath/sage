@@ -329,7 +329,7 @@ class EllipticCurveFactory(UniqueFactory):
             sage: EllipticCurve.create_key_and_extra_args(j=8000)
             ((Rational Field, (0, 1, 0, -3, 1)), {})
 
-        When constructing a curve over `\\QQ` from a Cremona or LMFDB
+        When constructing a curve over `\QQ` from a Cremona or LMFDB
         label, the invariants from the database are returned as
         ``extra_args``::
 
@@ -466,7 +466,7 @@ class EllipticCurveFactory(UniqueFactory):
         .. NOTE::
 
             Keyword arguments are currently only passed to the
-            constructor for elliptic curves over `\\QQ`; elliptic
+            constructor for elliptic curves over `\QQ`; elliptic
             curves over other fields do not support them.
         """
         R, x = key
@@ -680,7 +680,7 @@ def coefficients_from_j(j, minimal_twist=True):
         sage: coefficients_from_j(1)
         [1, 0, 0, 36, 3455]
 
-    The ``minimal_twist`` parameter (ignored except over `\\QQ` and
+    The ``minimal_twist`` parameter (ignored except over `\QQ` and
     True by default) controls whether or not a minimal twist is
     computed::
 
