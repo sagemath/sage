@@ -1409,7 +1409,7 @@ def are_projectively_equivalent(P, Q, base_ring):
 
 def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False):
     r"""
-    Return a sorted list of all elliptic curves defined over `Q`
+    Return a sorted list of all elliptic curves defined over `\QQ`
     with good reduction outside the set `S` of primes.
 
     INPUT:

@@ -139,7 +139,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         INPUT:
 
-        - ``E`` -- An elliptic curve defined over a number field (including `\Q`)
+        - ``E`` -- An elliptic curve defined over a number field (including `\QQ`)
 
         EXAMPLES::
 
