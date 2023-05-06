@@ -2,7 +2,7 @@
 #
 # All these methods are imported in EllipticCurve_rational_field,
 # so there is no reason to add this module to the documentation.
-"""
+r"""
 Miscellaneous `p`-adic methods
 """
 
@@ -577,7 +577,7 @@ def _multiply_point(E, R, P, m):
     return theta, omega, psi_m * d
 
 def _multiple_to_make_good_reduction(E):
-    """
+    r"""
     Return the integer `n_2` such that for all points `P` in `E(\QQ)`
     `n_2*P` has good reduction at all primes.
     If the model is globally minimal the lcm of the

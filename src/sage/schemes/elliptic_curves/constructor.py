@@ -308,7 +308,7 @@ class EllipticCurveFactory(UniqueFactory):
         TypeError: invalid input to EllipticCurve constructor
     """
     def create_key_and_extra_args(self, x=None, y=None, j=None, minimal_twist=True, **kwds):
-        """
+        r"""
         Return a ``UniqueFactory`` key and possibly extra parameters.
 
         INPUT: See the documentation for :class:`EllipticCurveFactory`.
@@ -454,7 +454,7 @@ class EllipticCurveFactory(UniqueFactory):
         return (R, tuple(R(a) for a in x)), kwds
 
     def create_object(self, version, key, **kwds):
-        """
+        r"""
         Create an object from a ``UniqueFactory`` key.
 
         EXAMPLES::
@@ -494,7 +494,7 @@ EllipticCurve = EllipticCurveFactory('sage.schemes.elliptic_curves.constructor.E
 
 
 def EllipticCurve_from_Weierstrass_polynomial(f):
-    """
+    r"""
     Return the elliptic curve defined by a cubic in (long) Weierstrass
     form.
 
@@ -534,7 +534,7 @@ def EllipticCurve_from_Weierstrass_polynomial(f):
     return EllipticCurve(coefficients_from_Weierstrass_polynomial(f))
 
 def coefficients_from_Weierstrass_polynomial(f):
-    """
+    r"""
     Return the coefficients `[a_1, a_2, a_3, a_4, a_6]` of a cubic in
     Weierstrass form.
 
@@ -582,7 +582,7 @@ def coefficients_from_Weierstrass_polynomial(f):
 
 
 def EllipticCurve_from_c4c6(c4, c6):
-    """
+    r"""
     Return an elliptic curve with given `c_4` and
     `c_6` invariants.
 
@@ -664,7 +664,7 @@ def EllipticCurve_from_j(j, minimal_twist=True):
 
 
 def coefficients_from_j(j, minimal_twist=True):
-    """
+    r"""
     Return Weierstrass coefficients `(a_1, a_2, a_3, a_4, a_6)` for an
     elliptic curve with given `j`-invariant.
 
@@ -1238,7 +1238,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
 
 
 def tangent_at_smooth_point(C,P):
-    """Return the tangent at the smooth point `P` of projective curve `C`.
+    r"""Return the tangent at the smooth point `P` of projective curve `C`.
 
     INPUT:
 
@@ -1278,7 +1278,7 @@ def tangent_at_smooth_point(C,P):
         return C.tangents(P,factor=False)[0]
 
 def chord_and_tangent(F, P):
-    """Return the third point of intersection of a cubic with the tangent at one point.
+    r"""Return the third point of intersection of a cubic with the tangent at one point.
 
     INPUT:
 
@@ -1352,7 +1352,7 @@ def chord_and_tangent(F, P):
 
 
 def projective_point(p):
-    """
+    r"""
     Return equivalent point with denominators removed
 
     INPUT:
@@ -1384,7 +1384,7 @@ def projective_point(p):
 
 
 def are_projectively_equivalent(P, Q, base_ring):
-    """
+    r"""
     Test whether ``P`` and ``Q`` are projectively equivalent.
 
     INPUT:

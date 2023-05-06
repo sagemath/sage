@@ -1376,7 +1376,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         return [infinity] + [2 * e[j] - c0 for j in range(1, len(e))]
 
     def _poly(self, a):
-        """
+        r"""
         Given an element a in Qp[alpha] this returns the list
         containing the two coordinates in Qp.
 
