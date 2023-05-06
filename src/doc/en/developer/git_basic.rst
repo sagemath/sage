@@ -6,20 +6,21 @@
 Git Basics
 ==========
 
+
 .. _section-git-ssh:
 
 Git authentication through SSH
 ==============================
 
-In order to push changes securely to a remote repository, git uses
-public-key cryptography. This section will show you how to set up the
-necessary cryptographic keys for Secure Shell (SSH).
+In order to push changes securely to a remote repository, Git uses public-key
+cryptography. This section will show you how to set up the necessary
+cryptographic keys for Secure Shell (SSH).
 
 
 Generating your SSH Keys
 ------------------------
 
-Check whether you have already have suitable SSH keys by inspecting ``.ssh``
+Check whether you already have suitable SSH keys by inspecting ``.ssh``
 directory in your home directory. If you don't have suitable SSH keys yet, you
 can create a key pair with the ``ssh-keygen`` tool.
 
@@ -73,8 +74,8 @@ Linking your Public Key to your GitHub Account
 In order to push your code directly to a branch on your remote ``origin``, Your
 GitHub account needs to know your public key.
 
-No action needed if you have already contributed to any other project on GitHub
-and set up git credentials or SSH keys for this.
+No action is needed if you have already contributed to any other project on GitHub
+and set up Git credentials or SSH keys for this.
 
 New users of GitHub should follow either `Caching your GitHub credentials in
 Git
@@ -125,41 +126,6 @@ following commands instead::
     trac        git@trac.sagemath.org:sage.git (push)
 
 
-.. _section-git-checkout:
-
-Checking out a branch
----------------------
-
-If you want to work with the changes in a PR, you must
-make a local copy. In particular, Git has no concept of directly
-working with the remote branch, the remotes are only bookmarks for
-things that you can get from/to the remote server. Hence, the first
-thing you should do is to get everything from the Sage repo's branch
-into your local repository. This is achieved by::
-
-    [user@localhost sage]$ git fetch upstream u/user/description
-    remote: Counting objects: 62, done.
-    remote: Compressing objects: 100% (48/48), done.
-    remote: Total 48 (delta 42), reused 0 (delta 0)
-    Unpacking objects: 100% (48/48), done.
-    From trac.sagemath.org:sage
-    * [new branch]      u/user/description -> FETCH_HEAD
-
-The ``u/user/description`` branch is now temporarily (until you fetch
-something else) stored in your local git database under the alias
-``FETCH_HEAD``. In the second step, we make it available as a new
-local branch and switch to it. Your local branch can have a different
-name, for example::
-
-    [user@localhost sage]$ git checkout -b my_branch FETCH_HEAD
-    Switched to a new branch 'my_branch'
-
-creates a new branch in your local git repository named ``my_branch``
-and modifies your local Sage filesystem tree to the state of the files
-in that ticket. You can now edit files and commit changes to your
-local branch.
-
-
 .. _section-git-push:
 
 Pushing your changes to a remote
@@ -167,17 +133,54 @@ Pushing your changes to a remote
 
 Push your branch to the remote with either::
 
-    [alice@localhost sage]$ git push --set-upstream origin HEAD:branch-name
+    [alice@localhost sage]$ git push --set-upstream origin HEAD:my_branch
 
-if you started the branch yourself and do not follow any other branch, or use::
+or, if you started the branch yourself and do not follow any other branch, use::
 
-    [alice@localhost sage]$ git push origin HEAD:u/user/description
+    [alice@localhost sage]$ git push origin HEAD:my_branch
 
-if your branch already has an upstream branch.
+if your branch already has an upstream branch. Here "upstream" means the the
+remote "origin", which is *upstream* to your local Git repo. Yes, confusing!
 
 Here, ``HEAD`` means that you are pushing the most recent commit (and, by
 extension, all of its parent commits) of the current local branch to the remote
 branch.
+
+
+.. _section-git-checkout:
+
+Checking out a PR
+-----------------
+
+If you want to work with the changes of a PR branch, you must
+make a local copy of the branch. In particular, Git has no concept of directly
+working with the remote branch, the remotes are only bookmarks for
+things that you can get from/to the remote server. Hence, the first
+thing you should do is to get everything from the branch
+into your local repository. This is achieved by::
+
+    [user@localhost sage]g fetch upstream pull/12345/head
+    remote: Enumerating objects: 12, done.
+    remote: Counting objects: 100% (12/12), done.
+    remote: Compressing objects: 100% (3/3), done.
+    remote: Total 12 (delta 9), reused 11 (delta 9), pack-reused 0
+    Unpacking objects: 100% (12/12), 2.22 KiB | 206.00 KiB/s, done.
+    From https://github.com/sagemath/sage
+     * branch                  refs/pull/12345/head -> FETCH_HEAD
+
+The ``pull/12345/head`` branch refers to the branch of the PR #12345 of the
+remote ``upstream``. The branch is now temporarily (until you fetch something
+else) stored in your local Git database under the alias ``FETCH_HEAD``. In the
+second step, we make it available as a new local branch and switch to it. Your
+local branch can have a different name, for example::
+
+    [user@localhost sage]$ git checkout -b my_branch FETCH_HEAD
+    Switched to a new branch 'my_branch'
+
+creates a new branch in your local Git repository named ``my_branch``
+and modifies your local Sage filesystem tree to the state of the files
+in the branch. You can now edit files and commit changes to your
+local branch.
 
 
 .. _section-git-pull:
@@ -185,14 +188,13 @@ branch.
 Getting changes from a remote
 -----------------------------
 
-A common task during development is to synchronize your local copy of
-the branch with the branch on the GitHub sage repo. In particular, assume you
-downloaded the branch of a PR made by someone else, say Bob, and made some suggestions for
-improvements on the PR. Now Bob incorporated
-your suggestions into his branch, and you want to get the added
-changes to complete your review. Assuming that you originally got
-your local branch as in :ref:`section-git-checkout`, you can just
-issue::
+A common task during development is to synchronize your local copy of the
+branch with the branch on the GitHub Sage repo. In particular, assume you
+downloaded the branch of a PR made by someone else, say Bob, and made some
+suggestions for improvements on the PR. Now Bob incorporated your suggestions
+into his branch, and you want to get the added changes to complete your review.
+Assuming that you originally got your local branch as in
+:ref:`section-git-checkout`, you can just issue::
 
     [bob@localhost sage]$ git pull upstream pull/12345/head
     From https://github.com/sagemath/sage
