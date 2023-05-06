@@ -119,10 +119,10 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             '[1 1]\n[0 1]'
         """
         return str(self.matrix())
-    
+
     def __call__(self, other): 
-        r"""
-        
+        r"""        
+
         EXAMPLES::
 
             sage: G=groups.matrix.Sp(4,GF(2))
