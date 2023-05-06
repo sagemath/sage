@@ -22,7 +22,7 @@ Gitpod
 
 `Gitpod <https://www.gitpod.io>`_ is a free service that will let you build and
 run Sage from an online development environment based on VS Code.
-Without needing to install anything on your computer, Gitpod creates a virtual 
+Without needing to install anything on your computer, Gitpod creates a virtual
 fully-functional workspace with all the dependencies and tools pre-installed.
 
 To get started, `go to Gitpod <https://gitpod.io/#https://github.com/sagemath/sage>`_
@@ -31,7 +31,7 @@ Wait while Gitpod creates a workspace.
 The first time, it may take some time to build Sage.
 
 You can now run and edit Sage's code. Contributing your changes follows the normal
-:ref:`Git workflow <chapter-manual-git>`.
+:ref:`Git workflow <chapter-git-basic>`.
 For this to work, you first have to authorize Gitpod with Trac:
 
  1. In the running Gitpod workspace, generate a new SSH key pair by ``ssh-keygen -f tempkey``.
@@ -44,5 +44,5 @@ For this to work, you first have to authorize Gitpod with Trac:
 After following this procedure, every new Gitpod workspace will have a
 working ``trac`` remote to which you can push your changes.
 
-You can also `use your VS Code Desktop <https://www.gitpod.io/docs/develop/vscode-desktop-support>`_ to keep 
+You can also `use your VS Code Desktop <https://www.gitpod.io/docs/develop/vscode-desktop-support>`_ to keep
 your local IDE configuration while still benefiting from Gitpod’s high-spec servers and automated prebuilds.

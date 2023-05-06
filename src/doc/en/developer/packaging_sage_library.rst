@@ -1,9 +1,9 @@
 
 .. _chapter-modularization:
 
-============================
- Packaging the Sage Library
-============================
+===========================================
+Packaging the Sage Library for Distribution
+===========================================
 
 
 Modules, packages, distribution packages

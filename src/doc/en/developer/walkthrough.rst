@@ -3,54 +3,40 @@
 .. _chapter-walkthrough:
 
 ========================
-Sage Development Process
+Development Walk-through
 ========================
 
-.. WARNING::
+This section is a concise overview of the Sage development process. We will see
+how to make changes to the Sage source code and record them in the Git revision
+control system.
 
-    **Sage development moved to GitHub in February 2023.** After the transition,
-    some parts of this guide (especially those related with `the Sage Trac
-    server <https://trac.sagemath.org>`_) became obsolete and need to be
-    updated according to the new workflow on GitHub. See our `transition guide
-    from Trac to GitHub
-    <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
-    for the preliminary version of the workflow.
-
-This section is a concise overview of the Sage development process. In
-it, we will see how to make changes to the Sage source code and record
-them in the ``git`` revision control system.
-
-We also have a handy `one-page "cheat sheet"
+We also have a handy `one-page cheat sheet
 <http://github.com/sagemath/git-trac-command/raw/master/doc/git-cheat-sheet.pdf>`_
 of commonly used git commands that you can print out and leave on your
 desk.  We have some :ref:`recommended references and tutorials
 <section-git-tutorials>` as well.
 
-In the following sections on :ref:`chapter-sage-trac` and
-:ref:`section-git-tricks-and-tips` we will look at communicating these
-changes back to the Sage project.  All changes to Sage source code
-have to go through the `Sage Trac development server
-<https://trac.sagemath.org>`_.
+In the sections of the following chapter :ref:`section-development-on-github`,
+we will look at communicating these changes back to the Sage project. All
+changes to Sage source code have to go through `the Sage repository
+<https://github.com/sagemath/sage>`_ on GitHub.
 
-As an alternative to using the Trac server directly, you can fork and
-create a Merge Request (MR) at `GitLab <https://gitlab.com/sagemath/sage>`_
-which will automatically fetch your code and open a ticket on our trac
-server.
+Git is a tool to exchange commits (organized into branches) with other
+developers. As a distributed revision control system, it does not have the
+notion of a central server. `The Sage repository
+<https://github.com/sagemath/sage>`_ on GitHub is just one of many possible
+remote repositories from your (or rather your Git) point of view.
 
-Pull Requests (PR) on GitHub are currently not supported by the
-SageMath project.
-
+For examples, we assume your name Alice. Always replace it with your own name.
 
 .. _section-walkthrough-setup-git:
 
-Configuring Git
-===============
+Checking Git
+============
 
-One way or another, ``git`` is what Sage uses for tracking changes.
-So first, open a shell (for instance, Terminal on Mac) and check that
-``git`` works::
+First, open a shell (for instance, Terminal on Mac) and check that Git works::
 
-    [user@localhost]$ git
+    [alice@localhost ~]$ git
     usage: git [--version] [--help] [-C <path>] [-c name=value]
     ...
     The most commonly used git commands are:
@@ -62,35 +48,35 @@ So first, open a shell (for instance, Terminal on Mac) and check that
     concept guides. See 'git help <command>' or 'git help <concept>'
     to read about a specific subcommand or concept.
 
-
-Don't worry about the giant list of subcommands. You really only need
-a handful for effective development, and we will walk you through them
-in this guide. If you got a "command not found" error, then you don't
-have git installed. Now is the time to install it; see
+Don't worry about the giant list of subcommands. You really only need a handful
+of them for effective development, and we will walk you through them in this
+guide. If you got a "command not found" error, then you don't have Git
+installed; now is the time to install it. See
 :ref:`chapter-git-setup` for instructions.
 
-Because we also track who does changes in Sage with git, you must tell
-git how you want to be known. This only needs to be done once::
+Because we also track who does what changes with Git, you must tell
+Git how you want to be known. Check it::
 
-    [user@localhost]$ git config --global user.name "Your Name"
-    [user@localhost]$ git config --global user.email you@yourdomain.example.com
+    [alice@localhost ~]$ git config --global user.name
+    Alice Adventure
+    [alice@localhost ~]$ git config --global user.email
+    alice@wonderland.com
 
-If you have multiple accounts / computers use the same name on each of
-them. This name/email combination ends up in commits, so do it now
-before you forget!
-
+If you have multiple computers, then use the same name on each of them.  This
+name/email combination ends up in commits, so if not done yet, do it now before
+you forget! This only needs to be done once. See :ref:`section-git-setup-name`
+for instructions.
 
 .. _section-walkthrough-sage-source:
 
-Obtaining and Compiling the Sage Source Code
-============================================
+Obtaining the Sage Source Code
+==============================
 
-Obviously one needs the Sage source code to develop.  You can use your
+Obviously one needs the Sage source code to develop. You can use your
 local installation of Sage, or (to start from scratch) download it
-from GitHub which is a public read-only mirror (=faster) of our
-internal git repository::
+from our GitHub Sage repository::
 
-    [user@localhost ~]$ git clone https://github.com/sagemath/sage.git
+    [alice@localhost ~]$ git clone https://github.com/sagemath/sage.git
     Cloning into 'sage'...
     [...]
     Checking connectivity... done.
@@ -99,15 +85,15 @@ This creates a directory named ``sage`` containing the sources for the
 current stable and development releases of Sage. You next need to switch
 to the develop branch (latest development release)::
 
-    [user@localhost ~]$ cd sage
-    [user@localhost sage]$ git checkout develop
+    [alice@localhost ~]$ cd sage
+    [alice@localhost sage]$ git checkout develop
 
-Next, compile Sage, following the instruction in the file
-`README.md <https://github.com/sagemath/sage/#readme>`_ in ``SAGE_ROOT``.
-Additional details can be found in the
-`section on installation from source <../installation/source.html>`_
-in the Sage installation guide.
-If you wish to use conda-forge, see the `section on conda
+Next, build Sage, following the instruction in the file `README.md
+<https://github.com/sagemath/sage/#readme>`_ in ``SAGE_ROOT``. If all
+prerequisites to build are in place, the commands ``./configure && make -j4``
+will do it.  Additional details can be found in the section on `installation
+from source <../installation/source.html>`_ in the Sage installation guide. If
+you wish to use conda-forge, see the section on `conda
 <../installation/conda.html>`_.
 
 .. NOTE::
@@ -117,28 +103,20 @@ If you wish to use conda-forge, see the `section on conda
     capitalization when changing into :envvar:`SAGE_ROOT` can lead to build
     errors for dependencies requiring exact capitalization in path names.
 
-For the experts, note that the repository at
-`git.sagemath.org <http://git.sagemath.org>`_ is where development
-actually takes place.
-
-.. WARNING::
-
-    **Sage development moved to GitHub in February 2023.**
-    Now https://github.com/sagemath/sage.git is the primary repository.
 
 .. _section-walkthrough-branch:
 
 Branching Out
 =============
 
-In order to start modifying Sage, we want to make a *branch* of Sage.
-A branch is a copy (except that it doesn't take up twice the space) of
-the Sage source code where you can store your modifications to the
-Sage source code and which you can upload to trac tickets.
+In order to start modifying Sage, we want to make a new *branch* in the local
+Sage repo. A branch is a copy (except that it doesn't take up twice the space)
+of the Sage source code where you can store your modifications to the Sage
+source code (and which you can push to your fork of the Sage repository on GitHub).
 
 To begin with, type the command ``git branch``. You will see the following::
 
-    [user@localhost sage]$ git branch
+    [alice@localhost sage]$ git branch
     * develop
       master
 
@@ -146,34 +124,34 @@ The asterisk shows you which branch you are on. Without an argument,
 the ``git branch`` command displays a list of all local branches
 with the current one marked by an asterisk.
 
-It is easy to create a new branch; first make sure you are on the branch from
+It is easy to create a new branch. First make sure you are on the branch from
 which you want to branch out. That is, if you are not currently on the
 ``develop`` branch, type the command ``git checkout develop``::
 
-    [user@localhost sage]$ git checkout develop
+    [alice@localhost sage]$ git checkout develop
     Switched to branch 'develop'
     Your branch is up-to-date with 'origin/develop'.
 
 Then use the ``git branch`` command to create a new branch, as follows::
 
-    [user@localhost sage]$ git branch last_twin_prime
+    [alice@localhost sage]$ git branch last_twin_prime
 
 Also note that ``git branch`` creates a new branch, but does not switch
 to it. For this, you have to use ``git checkout``::
 
-    [user@localhost sage]$ git checkout last_twin_prime
+    [alice@localhost sage]$ git checkout last_twin_prime
     Switched to branch 'last_twin_prime'
 
 Now if you use the command ``git branch``, you will see the following::
 
-    [user@localhost sage]$ git branch
+    [alice@localhost sage]$ git branch
       develop
     * last_twin_prime
       master
 
-Note that unless you explicitly upload ("push") a branch to a remote
-git repository, the branch is a local branch that is only on your computer
-and not visible to anyone else.
+Note that unless you explicitly push a branch to a remote Git repository, the
+branch is a local branch that is only on your computer and not visible to
+anyone else.
 
 To avoid typing the new branch name twice you can use the shortcut
 ``git checkout -b my_new_branch`` to create and switch to the new
@@ -184,15 +162,15 @@ branch in one command.
 The History
 ===========
 
-It is always a good idea to check that you are making your edits on
-the version that you think you are on. The first one shows you the
-topmost commit in detail, including its changes to the sources::
+It is always a good idea to check that you are making your edits on the branch
+that you think you are on. The following command shows you the topmost commit
+in detail, including its changes to files::
 
-    [user@localhost sage]$ git show
+    [alice@localhost sage]$ git show
 
 To dig deeper, you can inspect the log::
 
-    [user@localhost sage]$ git log
+    [alice@localhost sage]$ git log
 
 By default, this lists all commits in reverse chronological order.
 
@@ -207,16 +185,15 @@ By default, this lists all commits in reverse chronological order.
 Editing the Source Code
 =======================
 
-Once you have your own branch, feel free to make any changes as you
-like. :ref:`Subsequent chapters <section-writing-code-for-sage>` of
-this developer guide explain how your code should look like to fit
-into Sage, and how we ensure high code quality throughout.
+Once you have your own branch, feel free to make any changes as you like. The
+chapter :ref:`section-writing-code-for-sage` explains how your code should look
+like to fit into Sage, and how we ensure high code quality throughout.
 
-*Status* is probably the most important git command. It tells
+The Git command ``git status`` is probably the most important one of all. It tells
 you which files changed, and how to continue with recording the
 changes::
 
-    [user@localhost sage]$ git status
+    [alice@localhost sage]$ git status
     On branch last_twin_prime
     Changes not staged for commit:
       (use "git add <file>..." to update what will be committed)
@@ -234,10 +211,9 @@ changes::
 
 To dig deeper into what was changed in the files you can use::
 
-    [user@localhost sage]$ git diff some_file.py
+    [alice@localhost sage]$ git diff some_file.py
 
 to show you the differences.
-
 
 
 .. _section-walkthrough-make:
@@ -245,29 +221,28 @@ to show you the differences.
 Rebuilding Sage
 ===============
 
-Once you have made any changes you of course want to build Sage and
-try out your edits. As long as you only modified the Sage library
-(that is, Python and Cython files under ``src/sage/...``) you just
-have to run::
+Once you have made any changes, you of course want to build Sage and try out
+your edits. As long as you only modified the Sage library (that is, Python and
+Cython files under ``src/sage/...``) you just have to run::
 
     [user@localhost sage]$ ./sage -br
 
-to rebuild the Sage library and then start Sage. This should be quite
-fast. If you made changes to
+to rebuild the Sage library and then start Sage (this is not exactly true,
+since if you only modified Python files, there is no need to rebuild).  This
+should be quite fast. If you made changes to
 :ref:`third-party packages <chapter-packaging>`, then you have to run ::
 
     [user@localhost sage]$ make build
 
 as if you were `installing Sage from scratch
-<http://doc.sagemath.org/html/en/installation/source.html>`_.
-However, this time only packages which were changed (or which depend
-on a changed package) will be recompiled,
-so it should be much faster than compiling Sage
-the first time.
+<http://doc.sagemath.org/html/en/installation/source.html>`_.  However, this
+time only packages which were changed (or which depend on a changed package)
+will be recompiled, so it should be much faster than compiling Sage the first
+time.
 
 .. NOTE::
 
-    If you have `pulled a branch from trac
+    If you have `pulled a branch from the GitHub Sage repository
     <http://doc.sagemath.org/html/en/developer/manual_git.html#checking-out-tickets>`_,
     it may depend on changes to third-party packages, so ``./sage -br``
     may fail.  If this happens (and you believe the code in this branch
@@ -299,16 +274,16 @@ and build the documentation (see :ref:`chapter-sage_manuals`).
 
 .. _section-walkthrough-commit:
 
-Commits (Snapshots)
-===================
+Making commits
+==============
 
 Whenever you have reached your goal, a milestone towards it, or
 just feel like you got some work done you should *commit* your
 changes. A commit is just a snapshot of the state of all files in
-the *repository* (the program you are working on).
+the *repository*.
 
-Unlike with some other revision control programs, in git you first
-need to *stage* the changed files, which tells git which files you
+Unlike with some other revision control programs, in Git you first
+need to *stage* the changed files, which tells Git which files you
 want to be part of the next commit::
 
     [user@localhost sage]$ git status

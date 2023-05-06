@@ -473,7 +473,7 @@ information. You can use the existing functions of Sage as templates.
   Note the trailing underscores which makes the citations into hyperlinks. See
   below for more about the master bibliography file. For more about citations,
   see the `Sphinx/reST markup for citations
-  <https://www.sphinx-doc.org/rest.html#citations>`_. For links to trac tickets
+  <https://www.sphinx-doc.org/rest.html#citations>`_. For links to GitHub issues and PRs
   or wikipedia, see :ref:`chapter-sage_manuals_links`.
 
 - A **TESTS** block (highly recommended).
@@ -1172,7 +1172,7 @@ framework. Here is a comprehensive list:
 
     .. CODE-BLOCK:: rest
 
-        The following should yield 4.  See :trac:`2`. ::
+        The following should yield 4.  See :issue:`2`. ::
 
             sage: 2+2  # optional - bug
             5

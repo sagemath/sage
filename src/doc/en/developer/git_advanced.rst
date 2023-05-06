@@ -6,21 +6,11 @@
 Advanced Git
 ============
 
-.. WARNING::
-
-    **Sage development moved to GitHub in February 2023.** After the transition,
-    some parts of this guide (especially those related with `the Sage Trac
-    server <https://trac.sagemath.org>`_) became obsolete and need to be
-    updated according to the new workflow on GitHub. See our `transition guide
-    from Trac to GitHub
-    <https://github.com/sagemath/trac-to-github/blob/master/docs/Migration-Trac-to-Github.md>`_
-    for the preliminary version of the workflow.
-
 This chapter covers some advanced uses of git that go beyond what is
 required to work with branches. These features can be used in Sage
 development, but are not really necessary to contribute to Sage. If
 you are just getting started with Sage development, you should read
-:ref:`chapter-walkthrough` and :ref:`chapter-manual-git` instead.
+:ref:`chapter-walkthrough` and :ref:`chapter-git-basic` instead.
 
 
 Detached Heads and Reviewing Tickets
@@ -34,46 +24,51 @@ without a branch, this is called "detached head". If you have the
 commit already in your local history, you can directly check it
 out without requiring internet access::
 
-    [user@localhost sage]$ git checkout a63227d0636e29a8212c32eb9ca84e9588bbf80b
-    Note: checking out 'a63227d0636e29a8212c32eb9ca84e9588bbf80b'.
+    [user@localhost sage]$ git checkout f9a0d54099d758ccec731a38929902b2b9d0b988
+    Note: switching to 'f9a0d54099d758ccec731a38929902b2b9d0b988'.
 
     You are in 'detached HEAD' state. You can look around, make experimental
     changes and commit them, and you can discard any commits you make in this
-    state without impacting any branches by performing another checkout.
+    state without impacting any branches by switching back to a branch.
 
     If you want to create a new branch to retain commits you create, you may
-    do so (now or later) by using -b with the checkout command again. Example:
+    do so (now or later) by using -c with the switch command. Example:
 
-      git checkout -b new_branch_name
+      git switch -c <new-branch-name>
 
-    HEAD is now at a63227d... Szekeres Snark Graph constructor
+    Or undo this operation with:
+
+      git switch -
+
+    Turn off this advice by setting config variable advice.detachedHead to false
+
+    HEAD is now at f9a0d54099 Fix a slow doctest in matrix_integer_dense_hnf.py
 
 If it is not stored in your local git repository, you need to download
-it from the trac server first::
+it from the upstream repo first::
 
-    [user@localhost sage]$ git fetch trac a63227d0636e29a8212c32eb9ca84e9588bbf80b
-    From ssh://trac/sage
-     * branch            a63227d0636e29a8212c32eb9ca84e9588bbf80b -> FETCH_HEAD
+    [user@localhost sage]$ git fetch upstream f9a0d54099d758ccec731a38929902b2b9d0b988
+    From https://github.com/sagemath/sage
+     * branch                  f9a0d54099d758ccec731a38929902b2b9d0b988 -> FETCH_HEAD
     [user@localhost sage]$ git checkout FETCH_HEAD
-    HEAD is now at a63227d... Szekeres Snark Graph constructor
+    HEAD is now at f9a0d54099 Fix a slow doctest in matrix_integer_dense_hnf.py
 
 Either way, you end up with your current HEAD and working directory
 that is not associated to any local branch::
 
     [user@localhost sage]$ git status
-    # HEAD detached at a63227d
-    nothing to commit, working directory clean
+    HEAD detached at f9a0d54099
+    nothing to commit, working tree clean
 
 This is perfectly fine. You can switch to an existing branch (with the
 usual ``git checkout my_branch``) and back to your detached head.
 
-Detached heads can be used to your advantage when reviewing
-tickets. Just check out the commit (look at the "Commit:" field on the
-trac ticket) that you are reviewing as a detached head. Then you can
-look at the changes and run tests in the detached head. When you are
-finished with the review, you just abandon the detached head. That way
-you never create a new local branch, so you don't have to type ``git
-branch -D my_branch`` at the end to delete the local branch that you
+Detached heads can be used to your advantage when reviewing tickets. Just check
+out the commit (look at the "Commits" tab of the PR) that you are reviewing as
+a detached head. Then you can look at the changes and run tests in the detached
+head. When you are finished with the review, you just abandon the detached
+head. That way you never create a new local branch, so you don't have to type
+``git branch -D my_branch`` at the end to delete the local branch that you
 created only to review the ticket.
 
 
@@ -192,12 +187,12 @@ Reset and Recovery
 Git makes it very hard to truly mess up. Here is a short way to get
 back onto your feet, no matter what. First, if you just want to go
 back to a working Sage installation you can always abandon your
-working branch by switching to your local copy of the ``master``
+working branch by switching to your local copy of the ``develop``
 branch::
 
-    [user@localhost sage]$ git checkout master
+    [user@localhost sage]$ git checkout develop
 
-As long as you did not make any changes to the ``master`` branch
+As long as you did not make any changes to the ``develop`` branch
 directly, this will give you back a working Sage.
 
 If you want to keep your branch but go back to a previous commit you
@@ -264,7 +259,7 @@ file is in exactly the same state as when the hash was computed. This
 also means that you can't change history without modifying the
 hash. If others branched off your code and then you rewrite history,
 then the others are thoroughly screwed. So, ideally, you would only
-rewrite history on branches that you have not yet pushed to trac.
+rewrite history on branches that you have not yet pushed to a public repo.
 
 As an advanced example, consider three commits A, B, C that were made
 on top of each other. For simplicity, we'll assume they just added a

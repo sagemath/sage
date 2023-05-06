@@ -2,9 +2,9 @@
 
 .. _chapter-packaging:
 
-==========================
-Packaging Third-Party Code
-==========================
+===================================
+Packaging Third-Party Code for Sage
+===================================
 
 One of the mottoes of the Sage project is to not reinvent the wheel: If
 an algorithm is already implemented in a well-tested library then
@@ -1245,6 +1245,6 @@ must meet the following requirements:
   this is not possible.
 
 - **Refereeing**. The code must be refereed, as discussed in
-  :ref:`chapter-sage-trac`.
+  :ref:`chapter-github`.
 
 

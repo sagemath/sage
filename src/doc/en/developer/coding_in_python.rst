@@ -45,7 +45,7 @@ using one of two mechanisms:
   The Sage library declares these packages as dependencies and ensures that
   versions that provide features of Python 3.11 are available.
 
-Meta-ticket :trac:`29756` keeps track of newer Python features and serves
+Meta-ticket :issue:`29756` keeps track of newer Python features and serves
 as a starting point for discussions on how to make use of them in the
 Sage library.
 
@@ -599,7 +599,7 @@ in the future. We call this a *deprecation*.
     Deprecated code can only be removed one year after the first
     stable release in which it appeared.
 
-Each deprecation warning contains the number of the trac ticket that defines
+Each deprecation warning contains the number of the GitHub PR that defines
 it. We use 666 in the examples below. For each entry, consult the function's
 documentation for more information on its behaviour and optional arguments.
 
