@@ -26,29 +26,14 @@ cp "$SAGE_ROOT"/config/config.* .
 
 echo
 echo "Now configuring Maxima..."
-sdh_configure --enable-ecl git_found=false
-
+if [[ "$SAGE_SPKG_INSTALL_DOCS" != yes ]] ; then
+    sdh_configure --enable-ecl --disable-build-docs git_found=false
+else
+    sdh_configure --enable-ecl git_found=false 
+fi
 # Note the following is regression in maxima build system
 # see https://sourceforge.net/p/maxima/bugs/3278/
 # and https://sourceforge.net/p/maxima/bugs/2878/
-# For the previous time it was fixed.
-#---------------------------------------------------------------
-# Touching html and info file to avoid to regenerate them.
-# This must be done after configuration since the timestamp need
-# to be later than include-maxima.texi which is generated at
-# configuration time
-for i in doc/info/*.html ; do
-    touch "${i}"
-done
-touch doc/info/maxima.info*
-# Maxima 5.44.0 build_html.sh is not compatible with makeinfo 4.8
-# (which is /usr/bin/makeinfo on macOS).  #30063
-# Do not build the HTML docs unless the user asks for it,
-# in which case it is their problem to install a better
-# makeinfo version.
-if [[ "$SAGE_SPKG_INSTALL_DOCS" != yes ]] ; then
-touch doc/info/maxima_toc.html interfaces/xmaxima/doc/xmaxima.html
-fi
 
 #---------------------------------------------------------------
 
