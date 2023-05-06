@@ -1999,6 +1999,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
           - ``'mwrank_lib'`` -- call mwrank c library
 
+          - ``'pari'`` -- call ellrank in pari
+
         - ``only_use_mwrank`` -- (default: ``True``) if ``False`` try
           using analytic rank methods first
 
@@ -2024,7 +2026,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             4
             sage: EllipticCurve([0, 0, 1, -79, 342]).rank(proof=False)
             5
-            sage: EllipticCurve([0, 0, 1, -79, 342]).simon_two_descent()[0]  # long time (7s on sage.math, 2012)
+            sage: EllipticCurve([0, 0, 1, -79, 342]).rank(algorithm="pari")
             5
 
         Examples with denominators in defining equations::
@@ -2168,6 +2170,21 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self.__rank = (rank, proof)
             return rank
 
+        if algorithm == 'pari':
+            ep = self.pari_curve()
+            lower, upper, s, pts = ep.ellrank()
+            if lower == upper:
+                verbose_verbose(f"rank {lower} unconditionally determined by pari")
+                rank = Integer(lower)
+                self.__rank = (rank, True)
+                ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
+                self._known_points = ge
+                self.__gens = (ge, True)
+                return rank
+            else:
+                verbose_verbose(f"Warning -- rank could not be determined by pari; ellrank returned {lower=}, {upper=}, {s=}, {pts=}", level=1)
+                raise RuntimeError(f"rank not provably correct (lower bound: {lower}, upper bound:{upper}")
+
         raise ValueError("unknown algorithm {!r}".format(algorithm))
 
     def gens(self, proof=None, **kwds):
@@ -2194,6 +2211,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
           - ``'mwrank_lib'`` -- call mwrank C library
 
+          - ``'pari'`` -- use ellrank in pari
+
         - ``only_use_mwrank`` -- bool (default True) if False, first
           attempts to use more naive, natively implemented methods
 
@@ -2218,7 +2237,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             :meth:`~gens_certain` method to find out afterwards
             whether the generators were proved.
 
-        IMPLEMENTATION: Uses Cremona's mwrank C library.
+        IMPLEMENTATION: Uses Cremona's mwrank C library or ellrank in pari.
 
         EXAMPLES::
 
@@ -2333,7 +2352,21 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             except RuntimeError:
                 pass
         # end if (not_use_mwrank)
-        if algorithm == "mwrank_lib":
+        if algorithm == "pari":
+            ep = self.pari_curve()
+            lower, upper, s, pts = ep.ellrank()
+            if lower == upper:
+                verbose_verbose(f"rank {lower} unconditionally determined by pari")
+                rank = Integer(lower)
+                self.__rank = (rank, True)
+                ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
+                self.__gens = (ge, True)
+                self._known_points = ge
+                return ge, True
+            else:
+                verbose_verbose(f"Warning -- rank could not be determined by pari; ellrank returned {lower=}, {upper=}, {s=}, {pts=}", level=1)
+                raise RuntimeError(f"rank not provably correct (lower bound: {lower}, upper bound:{upper}")
+        elif algorithm == "mwrank_lib":
             verbose_verbose("Calling mwrank C++ library.")
             if not self.is_integral():
                 xterm = 1
