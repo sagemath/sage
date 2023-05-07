@@ -18,23 +18,20 @@ some point. You could:
 * Add examples to the documentation
 * Find bugs or typos
 * Fix a bug
-* Implement a new function
+* Implement a new function or create a new class
 * Contribute a useful tutorial for a mathematical topic
 * Translate an existing document to a new language
-* Create a new class, create a fast new C library, etc.
+* Upgrade a package, create a fast new C library, etc.
 
-This document tells you what you need to know to do all the above, from
-reporting bugs to modifying and extending Sage and its documentation.  We also
-discuss how to share your new and modified code with other Sage users around the
-globe.
+This document tells you what you need to know to do all the above. We also
+discuss how to share your new and modified code with other Sage users around
+the globe.
 
 To begin with, you need of course your own copy of Sage source code to change
-it.  Use our `Installation guide
-<http://doc.sagemath.org/html/en/installation/source.html>`_ to get it and for
-instructions to build Sage from source. If you have never worked on software
-before, pay close attention to the `prerequisites to build
-<http://doc.sagemath.org/html/en/installation/source.html#prerequisites>`_ on
-your platform.
+it. Use our `Installation guide
+<http://doc.sagemath.org/html/en/installation/source.html>`_ to get the source
+code and build Sage from source. If you have never worked on software before,
+pay close attention to the prerequisites to build on your platform.
 
 Now here is a brief overview of this guide.
 
@@ -59,21 +56,21 @@ Now here is a brief overview of this guide.
   history of Sage today. You have to be familiar with it to be involved in Sage
   development.
 
-- :ref:`section-git-tricks-and-tips`: Here we give in-depth guide for working
-  with Git for Sage development. Read this when you need help on Git in a
-  tricky situation such as merge conflict.
+- :ref:`section-git-tricks-and-tips`: Here we give an in-depth guide for
+  working with Git for Sage development. Read this when you need help on Git in
+  a tricky situation such as merge conflict.
 
-- :ref:`section-writing-code-for-sage`: This gives guide on conventions in
+- :ref:`section-writing-code-for-sage`: This is a guide on conventions in
   writing code and documentation. To be a good developer, read this part once
   in a while
 
 - :ref:`section-testing-sage`: We value testing Sage highest. Every change of
-  Sage has a risk to break Sage, and must be tested before merge to Sage. This
-  part explains abundant tools to keep Sage working.
+  Sage source code has a risk to break Sage, and must be tested before being
+  merged.  This part explains our various tools to help test Sage.
 
-- :ref:`section-updating-documentation`: All featuers of Sage is documented in
-  our manuals. This part explains the technical aspect of updating
-  documentation on Sage
+- :ref:`section-updating-documentation`: All features of Sage is documented in
+  our manuals. This part explains the technical aspect of updating Sage
+  documentation.
 
 - :ref:`section-more-on-coding`: When you need to know the technical details of
   Sage for coding, read this.
@@ -81,8 +78,8 @@ Now here is a brief overview of this guide.
 - :ref:`section-packaging`: Sage is composed of many third-party packages and
   its own distribution packages. This part is for advanced developers.
 
-For more details, see the table of contents below.  No matter where
-you start, good luck and welcome to Sage development!
+For more details, see the table of contents below. No matter where you start,
+good luck and welcome to Sage development!
 
 Table of Contents
 =================
