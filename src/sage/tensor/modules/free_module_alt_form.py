@@ -160,7 +160,7 @@ class FreeModuleAltForm(FreeModuleTensor):
 
     the contractions::
 
-        sage: s = a.contract(v) ; s
+        sage: s = a.contract(v, swap_indices=False) ; s
         Linear form on the Rank-3 free module M over the Integer Ring
         sage: s.parent()
         Dual of the Rank-3 free module M over the Integer Ring
@@ -765,7 +765,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             i_A B = -26 e_1 - 19 e_2 + 8 e_3
             sage: latex(c)
             \iota_{A} B
-            sage: c == a.contract(b)
+            sage: c == a.contract(b, swap_indices=False)
             True
 
         Case  ``p=1`` and ``q=3``::
@@ -776,7 +776,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             Alternating contravariant tensor i_A B of degree 2 on the Rank-3 free module M over the Integer Ring
             sage: c.display()
             i_A B = 15 e_1∧e_2 - 20 e_1∧e_3 - 10 e_2∧e_3
-            sage: c == a.contract(b)
+            sage: c == a.contract(b, swap_indices=False)
             True
 
         Case  ``p=2`` and ``q=2``::
@@ -798,7 +798,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             Element i_A B of the Rank-3 free module M over the Integer Ring
             sage: c.display()
             i_A B = 10 e_1 + 30 e_2 + 20 e_3
-            sage: c == a.contract(0, 1, b, 0, 1)
+            sage: c == a.contract(0, 1, b, 0, 1, swap_indices=False)
             True
 
         Case  ``p=3`` and ``q=3``::
@@ -807,7 +807,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             sage: a[1,2,3] = -2
             sage: c = a.interior_product(b); c
             -60
-            sage: c  == a.contract(0, 1, 2, b, 0, 1, 2)
+            sage: c  == a.contract(0, 1, 2, b, 0, 1, 2, swap_indices=False)
             True
 
         """
@@ -819,7 +819,7 @@ class FreeModuleAltForm(FreeModuleTensor):
         p_res = alt_tensor._tensor_rank - self._tensor_rank  # degree of result
         if self._tensor_rank == 1:
             # Case p = 1:
-            res = self.contract(alt_tensor)  # contract() deals efficiently
+            res = self.contract(alt_tensor, swap_indices=False)  # contract() deals efficiently
                                              # with antisymmetry for p = 1
         else:
             # Case p > 1:

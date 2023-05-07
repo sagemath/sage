@@ -342,3 +342,24 @@ class FormattedExpansion(SageObject):
 
         """
         return self._latex
+
+    def __eq__(self, other) -> bool:
+        r"""
+        Comparison (equality) operator.
+
+        EXAMPLES::
+
+            sage: from sage.tensor.modules.format_utilities import FormattedExpansion
+            sage: f = FormattedExpansion('v', r'\tilde v')
+            sage: g = FormattedExpansion('v', r'\tilde v')
+            sage: f == g
+            True
+            sage: f == 'v'
+            True
+
+        """
+        if isinstance(other, str):
+            return self._txt == other
+        if not isinstance(other, FormattedExpansion):
+            return False
+        return self._txt == other._txt and self._latex == other._latex

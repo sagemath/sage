@@ -577,7 +577,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             a(v) = -2 e_1 + 9 e_2 + 13 e_3
             sage: s == a(v)
             True
-            sage: s == a.contract(v)
+            sage: s == a.contract(v, swap_indices=False)
             True
 
         Call with two arguments (:class:`FreeModuleTensor` behaviour): return a
@@ -601,7 +601,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             True
             sage: s == id(v)
             True
-            sage: s == id.contract(v)
+            sage: s == id.contract(v, swap_indices=False)
             True
 
         Identity map with two arguments (:class:`FreeModuleTensor` behaviour):
@@ -911,12 +911,12 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             sage: s = a*c ; s
             Type-(2,2) tensor on the Rank-2 free module M over the Integer Ring
             sage: s.display()
-            3 e_0⊗e_0⊗e^0⊗e^0 + 4 e_0⊗e_0⊗e^0⊗e^1 + 6 e_0⊗e_0⊗e^1⊗e^0
-             + 8 e_0⊗e_0⊗e^1⊗e^1 + 5 e_0⊗e_1⊗e^0⊗e^0 + 7 e_0⊗e_1⊗e^0⊗e^1
-             + 10 e_0⊗e_1⊗e^1⊗e^0 + 14 e_0⊗e_1⊗e^1⊗e^1 + 3 e_1⊗e_0⊗e^0⊗e^0
-             + 4 e_1⊗e_0⊗e^0⊗e^1 + 9 e_1⊗e_0⊗e^1⊗e^0 + 12 e_1⊗e_0⊗e^1⊗e^1
-             + 5 e_1⊗e_1⊗e^0⊗e^0 + 7 e_1⊗e_1⊗e^0⊗e^1 + 15 e_1⊗e_1⊗e^1⊗e^0
-             + 21 e_1⊗e_1⊗e^1⊗e^1
+            3 e_0⊗e^0⊗e_0⊗e^0 + 4 e_0⊗e^0⊗e_0⊗e^1 + 5 e_0⊗e^0⊗e_1⊗e^0
+             + 7 e_0⊗e^0⊗e_1⊗e^1 + 6 e_0⊗e^1⊗e_0⊗e^0 + 8 e_0⊗e^1⊗e_0⊗e^1
+             + 10 e_0⊗e^1⊗e_1⊗e^0 + 14 e_0⊗e^1⊗e_1⊗e^1 + 3 e_1⊗e^0⊗e_0⊗e^0
+             + 4 e_1⊗e^0⊗e_0⊗e^1 + 5 e_1⊗e^0⊗e_1⊗e^0 + 7 e_1⊗e^0⊗e_1⊗e^1
+             + 9 e_1⊗e^1⊗e_0⊗e^0 + 12 e_1⊗e^1⊗e_0⊗e^1 + 15 e_1⊗e^1⊗e_1⊗e^0
+             + 21 e_1⊗e^1⊗e_1⊗e^1
 
         TESTS::
 

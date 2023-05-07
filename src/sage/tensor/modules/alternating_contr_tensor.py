@@ -129,7 +129,7 @@ class AlternatingContrTensor(FreeModuleTensor):
     the contractions::
 
         sage: w = f[1] + f[2] + f[3]  # a linear form
-        sage: s = a.contract(w) ; s
+        sage: s = a.contract(w, swap_indices=False) ; s
         Element of the Rank-3 free module M over the Integer Ring
         sage: s.display(e)
         4 e_1 - 7 e_2 + 3 e_3
@@ -647,7 +647,7 @@ class AlternatingContrTensor(FreeModuleTensor):
             i_A B = 3 e^1∧e^2 + 3 e^1∧e^3 - 3 e^1∧e^4 + 9 e^2∧e^3 - 8 e^2∧e^4 + e^3∧e^4
             sage: latex(c)
             \iota_{A} B
-            sage: c == a.contract(b)
+            sage: c == a.contract(b, swap_indices=False)
             True
 
         Case  ``p=2`` and ``q=3``::
@@ -659,7 +659,7 @@ class AlternatingContrTensor(FreeModuleTensor):
             Linear form i_A B on the Rank-4 free module M over the Integer Ring
             sage: c.display()
             i_A B = -6 e^1 + 56 e^2 - 40 e^3 - 34 e^4
-            sage: c == a.contract(0, 1, b, 0, 1)  # contraction on all indices of a
+            sage: c == a.contract(0, 1, b, 0, 1, swap_indices=False)  # contraction on all indices of a
             True
 
         Case  ``p=2`` and ``q=4``::
@@ -670,7 +670,7 @@ class AlternatingContrTensor(FreeModuleTensor):
             Alternating form i_A B of degree 2 on the Rank-4 free module M over the Integer Ring
             sage: c.display()
             i_A B = 20 e^1∧e^2 - 40 e^1∧e^3 - 10 e^1∧e^4 + 30 e^2∧e^3 + 50 e^2∧e^4 + 20 e^3∧e^4
-            sage: c == a.contract(0, 1, b, 0, 1)
+            sage: c == a.contract(0, 1, b, 0, 1, swap_indices=False)
             True
 
         Case  ``p=2`` and ``q=2``::
@@ -680,7 +680,7 @@ class AlternatingContrTensor(FreeModuleTensor):
             sage: b[2,3], b[2,4], b[3,4] = 2, 3, 4
             sage: c = a.interior_product(b); c
             48
-            sage: c == a.contract(0, 1, b, 0, 1)
+            sage: c == a.contract(0, 1, b, 0, 1, swap_indices=False)
             True
 
         Case  ``p=3`` and ``q=3``::
@@ -691,7 +691,7 @@ class AlternatingContrTensor(FreeModuleTensor):
             sage: b[1,2,3], b[1,2,4], b[1,3,4], b[2,3,4] = 3, -1, 2, 5
             sage: c = a.interior_product(b); c
             -120
-            sage: c == a.contract(0, 1, 2, b, 0, 1, 2)
+            sage: c == a.contract(0, 1, 2, b, 0, 1, 2, swap_indices=False)
             True
 
         Case  ``p=3`` and ``q=4``::
@@ -702,7 +702,7 @@ class AlternatingContrTensor(FreeModuleTensor):
             Linear form i_A B on the Rank-4 free module M over the Integer Ring
             sage: c.display()
             i_A B = 150 e^1 + 240 e^2 - 60 e^3 - 90 e^4
-            sage: c == a.contract(0, 1, 2, b, 0, 1, 2)
+            sage: c == a.contract(0, 1, 2, b, 0, 1, 2, swap_indices=False)
             True
 
         Case  ``p=4`` and ``q=4``::
@@ -711,7 +711,7 @@ class AlternatingContrTensor(FreeModuleTensor):
             sage: a[1,2,3,4] = -2
             sage: c = a.interior_product(b); c
             -240
-            sage: c == a.contract(0, 1, 2, 3, b, 0, 1, 2, 3)
+            sage: c == a.contract(0, 1, 2, 3, b, 0, 1, 2, 3, swap_indices=False)
             True
 
         """
@@ -722,7 +722,7 @@ class AlternatingContrTensor(FreeModuleTensor):
         p_res = form._tensor_rank - self._tensor_rank  # degree of the result
         if self._tensor_rank == 1:
             # Case p = 1:
-            res = self.contract(form)  # contract() deals efficiently with
+            res = self.contract(form, swap_indices=False)  # contract() deals efficiently with
                                        # the antisymmetry for p = 1
         else:
             # Case p > 1:
