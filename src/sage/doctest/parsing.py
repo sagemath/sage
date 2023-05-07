@@ -633,6 +633,7 @@ class SageDocTestParser(doctest.DocTestParser):
         for item in res:
             if isinstance(item, doctest.Example):
                 optional_tags = parse_optional_tags(item.source)
+                item.optional_tags = frozenset(optional_tags)
                 if optional_tags:
                     for tag in optional_tags:
                         self.optionals[tag] += 1
