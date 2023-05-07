@@ -55,7 +55,7 @@ installed; now is the time to install it. See
 :ref:`chapter-git-setup` for instructions.
 
 Because we also track who does what changes with Git, you must tell
-Git how you want to be known. Check it::
+Git how you want to be known. Check if Git knows you::
 
     [alice@localhost ~]$ git config --global user.name
     Alice Adventure
@@ -63,9 +63,9 @@ Git how you want to be known. Check it::
     alice@wonderland.com
 
 If you have multiple computers, then use the same name on each of them.  This
-name/email combination ends up in commits, so if not done yet, do it now before
-you forget! This only needs to be done once. See :ref:`section-git-setup-name`
-for instructions.
+name/email combination ends up in commits. So if it's not set yet, do it now
+before you forget! This only needs to be done once. See
+:ref:`section-git-setup-name` for instructions.
 
 .. _section-walkthrough-sage-source:
 
@@ -74,7 +74,7 @@ Obtaining the Sage Source Code
 
 Obviously one needs the Sage source code to develop. You can use your
 local installation of Sage, or (to start from scratch) download it
-from our GitHub Sage repository::
+from our Sage repository on GitHub::
 
     [alice@localhost ~]$ git clone https://github.com/sagemath/sage.git
     Cloning into 'sage'...
@@ -177,21 +177,22 @@ By default, this lists all commits in reverse chronological order.
 - If you find your branch to be in the wrong place, see the
   :ref:`section-git-recovery` section.
 
-- Many programs are available to help you visualize the history tree
-  better. ``tig`` is a very nice text-mode such tool.
+- Many tools are available to help you visualize the history tree better.
+  For instance, ``tig`` is a very nice text-mode tool.
 
 .. _section-walkthrough-add-edit:
 
 Editing the Source Code
 =======================
 
-Once you have your own branch, feel free to make any changes as you like. The
-chapter :ref:`section-writing-code-for-sage` explains how your code should look
-like to fit into Sage, and how we ensure high code quality throughout.
+Once you have your own branch, feel free to make any changes to source files as
+you like. The chapter :ref:`section-writing-code-for-sage` explains how your
+code should look like to fit into Sage, and how we ensure high code quality
+throughout.
 
-The Git command ``git status`` is probably the most important one of all. It tells
-you which files changed, and how to continue with recording the
-changes::
+The Git command ``git status`` is probably the most important of all Git
+commands. It tells you which files changed, and how to continue with recording
+the changes::
 
     [alice@localhost sage]$ git status
     On branch last_twin_prime
@@ -225,19 +226,21 @@ Once you have made any changes, you of course want to build Sage and try out
 your edits. As long as you only modified the Sage library (that is, Python and
 Cython files under ``src/sage/...``) you just have to run::
 
-    [user@localhost sage]$ ./sage -br
+    [alice@localhost sage]$ ./sage -br
 
 to rebuild the Sage library and then start Sage (this is not exactly true,
-since if you only modified Python files, there is no need to rebuild).  This
-should be quite fast. If you made changes to
-:ref:`third-party packages <chapter-packaging>`, then you have to run ::
+since if you only modified Python files, Sage is rebuilt when you start it).  This
+should be quite fast.
 
-    [user@localhost sage]$ make build
+If you made changes to :ref:`third-party packages <chapter-packaging>`
+installed as part of Sage, then you have to run ::
+
+    [alice@localhost sage]$ make build
 
 as if you were `installing Sage from scratch
 <http://doc.sagemath.org/html/en/installation/source.html>`_.  However, this
-time only packages which were changed (or which depend on a changed package)
-will be recompiled, so it should be much faster than compiling Sage the first
+time only, the packages which were changed (or which depend on a changed package)
+will be rebuilt, so it should be much faster than building Sage the first
 time.
 
 .. NOTE::
@@ -252,7 +255,7 @@ Rarely there are conflicts with other packages,
 or with the already-installed older version of the package that you
 changed, in that case you do have to recompile everything using::
 
-    [user@localhost sage]$ make distclean && make build
+    [alice@localhost sage]$ make distclean && make build
 
 Also, don't forget to run the tests (see :ref:`chapter-doctesting`)
 and build the documentation (see :ref:`chapter-sage_manuals`).
@@ -265,7 +268,7 @@ and build the documentation (see :ref:`chapter-sage_manuals`).
     additional changes to files. To minimize the impact of switching between branches,
     install ccache using the command ::
 
-        [user@localhost sage]$ ./sage -i ccache
+        [alice@localhost sage]$ ./sage -i ccache
 
     Recythonization will still occur when rebuilding, but the recompilation stage
     first checks whether previously compiled files are cached for reuse before
@@ -280,13 +283,13 @@ Making commits
 Whenever you have reached your goal, a milestone towards it, or
 just feel like you got some work done you should *commit* your
 changes. A commit is just a snapshot of the state of all files in
-the *repository*.
+the repository.
 
 Unlike with some other revision control programs, in Git you first
 need to *stage* the changed files, which tells Git which files you
 want to be part of the next commit::
 
-    [user@localhost sage]$ git status
+    [alice@localhost sage]$ git status
     # On branch my_branch
     # Untracked files:
     #   (use "git add <file>..." to include in what will be committed)
@@ -306,7 +309,7 @@ want to be part of the next commit::
 Once you are satisfied with the list of staged files, you create a new
 snapshot with the ``git commit`` command::
 
-    [user@localhost sage]$ git commit
+    [alice@localhost sage]$ git commit
     ... editor opens ...
     [my_branch 31331f7] Added the very important foobar text file
      1 file changed, 1 insertion(+)
@@ -327,8 +330,4 @@ You can then continue working towards your next milestone, make
 another commit, repeat until finished. As long as you do not
 ``git checkout`` another branch, all commits that you make will be part of
 the branch that you created.
-
-
-
-
 

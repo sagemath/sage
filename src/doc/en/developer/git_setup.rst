@@ -8,7 +8,7 @@ To work on the Sage source code, you need a working Git installation,
 configured at least to use your name and email address for commits.
 
 For further information about Git, see :ref:`chapter-git-background`, but this
-is not required for a beginner.
+is not required for a beginning Sage developer.
 
 
 .. _section-git-install:
@@ -16,15 +16,15 @@ is not required for a beginner.
 Installing Git
 --------------
 
-First, try Git on the command line. Most platforms will have it installed by
+First, try Git on the command line by typing ``git``. Most platforms will have it installed by
 default if other development tools are installed. If that fails, use the
 following to install Git:
 
 Debian / Ubuntu
-    ``sudo apt-get install git-core``
+    Run ``sudo apt-get install git-core``
 
 Fedora
-    ``sudo yum install git-core``
+    Run ``sudo yum install git-core``
 
 Windows (Cygwin)
     Install the Cygwin package Git. Do not attempt to use native
