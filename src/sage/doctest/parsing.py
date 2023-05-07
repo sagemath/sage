@@ -197,8 +197,8 @@ def parse_tolerance(source, want):
 
     OUTPUT:
 
-    - ``want`` if there are no tolerance tags specified; a
-      :class:`MarkedOutput` version otherwise.
+    ``want`` if there are no tolerance tags specified; a
+    :class:`MarkedOutput` version otherwise.
 
     EXAMPLES::
 
