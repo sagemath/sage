@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sagelib ~= 10.0rc1
+sagelib ~= 10.0rc2
