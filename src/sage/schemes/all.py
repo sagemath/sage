@@ -40,7 +40,7 @@ from .affine.all import *
 
 from .projective.all import *
 
-from .hodge_special_fourfolds import *
+from .hodge_special_fourfolds.all import *
 
 from .product_projective.all import *
 
