@@ -19,11 +19,17 @@ ready for inclusion into Sage.
 
 You can now begin the review by reading the diff code.
 
-**Read the diff:**
+**Check the GitHub checks:** We require all checks have passed.
 
-**Build the code:** while you read the code, you can :ref:`rebuild Sage with the
-new code <section-walkthrough-make>`. If you do not know how to **download the
-code**, :ref:`click here <section-workflows-pr-checkout>`.
+**Read the diff:** Click "Files changed" tab of the PR. Read through the
+changes of all modified files. We use `pull request reviews
+<https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-pull-request-reviews>`_.
+You can add comments directly to changed lines.
+
+**Build the code:** (This is optional if the **build and test** check has passed.)
+While you read the code, you can :ref:`rebuild Sage with the new code
+<section-walkthrough-make>`. If you do not know how to **download the code**,
+:ref:`see here <section-workflows-pr-checkout>`.
 
 The following should generally be checked while reading and testing the code:
 
@@ -40,8 +46,8 @@ The following should generally be checked while reading and testing the code:
   does not have to wonder what exactly it does?
 
 - **Conventions**: Does the code respect :ref:`Sage's conventions
-  <chapter-code-basics>`? :ref:`Python's convention <chapter-python>`?
-  :ref:`Cython's convention <chapter-cython>`?
+  <chapter-code-basics>`? :ref:`Python's conventions <chapter-python>`?
+  :ref:`Cython's conventions <chapter-cython>`?
 
 - **Doctest coverage**: Do all functions contain doctests? Use ``sage -coverage
   <files>`` to check it. Are all aspects of the new/modified methods and classes
@@ -70,20 +76,20 @@ The following should generally be checked while reading and testing the code:
   optional doctests related to the functionality. See :ref:`chapter-doctesting`
   for more information.
 
-You are now ready to change the ticket's status (see
+You are now ready to change the PR's status (see
 :ref:`section-github-pr-status`):
 
 - **positive review**: If the answers to the questions above and other
   reasonable questions are *"yes"*, you can set the PR to
-  ``positive_review``.
+  ``positive review`` status.
 
 - **needs_work**: If something is not as it should, write a list of all points
   that need to be addressed in a comment and change the PR's status to
-  ``needs_work``.
+  ``needs work`` status.
 
 - **needs_info**: If something is not clear to you and prevents you from going
   further with the review, ask your question and set the PR's status to
-  ``needs_info``.
+  ``needs_info`` status.
 
 - If you **do not know what to do**, for instance if you don't feel experienced
   enough to take a final decision, explain what you already did in a comment and
@@ -99,66 +105,25 @@ For more advice on reviewing, see [WSblog]_.
     are followed and that the implementation is mathematically
     correct. Please refrain from additional feature requests or
     open-ended discussion about alternative implementations. If you
-    want the patch written differently, your suggestion should be a
+    want the code written differently, your suggestion should be a
     clear and actionable request.
 
 REFERENCES:
 
 .. [WSblog] William Stein, How to Referee Sage Trac Tickets,
    http://sagemath.blogspot.com/2010/10/how-to-referee-sage-trac-tickets.html
-   (Caveat: mercurial was replaced with git)
-
-.. _section-workflows-review:
-
-Reviewing a change
-==================
-
-Use the checks on GitHub Actions.
-
-Use `pull request reviews
-<https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-pull-request-reviews>`_.
-You can add comments directly to changed lines.
-
-Smaller suggestions can be made `through the github web interface
-<https://egghead.io/lessons/github-add-suggestions-in-a-github-pr-review>`_ as
-part of the `pull request review
-<https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/incorporating-feedback-in-your-pull-request>`_.
-
-If you want to be able to make changes directly to others' PRs** (when the
-author selects to allow edits from maintainers), please contact one of the
-`Sagemath Github admins
-<https://github.com/orgs/sagemath/people?query=role%3Aowner>`_, who can give
-you the relevant permissions.
-
-Change the status of the PR (e.g., "positive review" or "needs work"), choose
-the `correct type of your pull request review
-<https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request#submitting-your-review>`_
-(i.e. "approve" vs "request changes")
-
-For trying the branch of a PR locally, use::
-
-    git fetch upstream pull/PULL-REQUEST-ID/head:LOCAL-BRANCH-NAME
-
-Consult https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/checking-out-pull-requests-locally.
-
-Alternatively,::
-
-    gh pr checkout PULL-REQUEST-ID
-
-Consult https://cli.github.com/manual/gh_pr_checkout.
+   (Caveat: mercurial was replaced with Git and Trac with GitHub)
 
 
 Reviewing and Closing PRs
 =========================
 
-PRs can be closed when they have positive review or for other reasons. To
-learn how to review, please see :ref:`chapter-review`.
+PRs can be closed when they have positive review or for other reasons.
 
-Use one of the *resolution labels* ``r: duplicate``, ``r: invalid``, ``r: wontfix``. Add a comment explaining why the issue has been closed if that's not already clear from the discussion.
-
-Users with the necessary permissions can then directly `close the issue <https://docs.github.com/en/issues/tracking-your-work-with-issues/closing-an-issue>`_: In the dropdown menu on the "Close issue" button, select "Close as not planned"
-
-Otherwise, use the labels "needs review" or "positive review", and someone else with the necessary rights will take care of closing the issue.
+If a PR is closed for a reason other than positive review, use one of the
+**resolution** labels ``r: duplicate``, ``r: invalid``, ``r: wontfix``, and
+``r: worksforme``. Add a comment explaining why the issue has been closed if
+that's not already clear from the discussion.
 
 If you think an issue has been prematurely be closed, feel free to reopen it.
 
@@ -195,16 +160,16 @@ the problem, but there are no guarantees that we will help you
 out. Looking at the open number of tickets that are Sage specific,
 you hopefully will understand why.
 
-**No Support Discussions**: The trac installation is not meant to
-be a system to track down problems when using Sage. Tickets should
+**No Support Discussions**: GitHub is not meant to
+be a system to track down problems when using Sage. An issue should
 be clearly a bug and not "I tried to do X and I couldn't get it to
 work. How do I do this?" That is usually not a bug in Sage and it
 is likely that ``sage-support`` can answer that question for you. If
 it turns out that you did hit a bug, somebody will open a concise
-and to-the-point ticket.
+and to-the-point PR.
 
-**Solution Must Be Achievable**: Tickets must be achievable. Many
-times, tickets that fall into this category usually ran afoul to
+**Solution Must Be Achievable**: Issues must be achievable. Many
+times, issues that fall into this category usually ran afoul to
 some of the other rules listed above. An example would be to
 "Make Sage the best CAS in the world". There is no metric to
 measure this properly and it is highly subjective.

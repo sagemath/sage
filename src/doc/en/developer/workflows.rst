@@ -28,13 +28,13 @@ Development Workflow at a Glance
 1. Alice creates a :ref:`new local branch <section-walkthrough-branch>` and
    :ref:`commits <section-walkthrough-commit>` changes to the Sage source files.
 
-2. Alice pushes the local branch to the remote ``origin`` her fork of the Sage
+2. Alice pushes the local branch to the remote ``origin``, her fork of the Sage
    repo on GitHub, and with it :ref:`creates a PR <section-workflows-push>` to
    the Sage repo. When ready, Alice set the PR to ``needs review`` status.
 
 3. Bob, a developer acting as reviewer, :ref:`examines the PR
    <section-workflows-pr-checkout>`, looks through the changes, leaves comments
-   on the PR, and requests fixes.
+   on the PR, and requests fixes (``needs work``).
 
 4. Alice makes more commits on top of her local branch, and pushes the new
    commits to the remote ``origin``. These new commits are reflected in the PR.
@@ -70,7 +70,7 @@ This will create a new PR titled "Last twin prime" in the Sage repo for the
 branch pushed to your fork ``alice/sage`` from the local branch on your
 desktop. The title is automatically derived from the last commit title. If you
 don't like this, then you can use the ``-t`` switch to specify it explicitly.
-See the manual page of `gh pr create
+See the manual page of the command `gh pr create
 <https://cli.github.com/manual/gh_pr_create>`_ for details.
 
 If you did not provide enough details about the PR at the prompts, you may want
@@ -96,7 +96,7 @@ then you would run::
      * [new ref]               refs/pull/12345/head -> last-twin-prime
     Switched to branch 'last-twin-prime'
 
-The ``gh pr checkout`` command downloads the branch attached to the PR. Just
+The command ``gh pr checkout`` downloads the branch of the PR. Just
 like the ``create`` command, you can specify the local branch name explicitly using
 the ``-b`` switch if you want.
 
@@ -122,12 +122,12 @@ your new commits to your fork by::
     Writing objects: 100% (7/7), 1.98 KiB | 1.98 MiB/s, done.
     Total 7 (delta 6), reused 0 (delta 0), pack-reused 0
     remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
-    To https://github.com/user/sage.git
+    To https://github.com/alice/sage.git
      + 352d842907...56ffdab967 last-twin-prime -> last-twin-prime
 
 Note that you do not push the branch to the remote ``upstream`` the Sage repo.
 Instead the new commits pushed to the remote ``origin`` are shown in the PR at
-the Sage repository.
+the Sage repo.
 
 
 .. _section-workflows-finish:
@@ -141,8 +141,8 @@ times before your branch is ready for review.
 
 Once you are happy with the changes you pushed, they must be
 reviewed by someone else before they can be included in the next
-version of Sage. To mark your PR as ready for review, you should
-set it to ``needs_review`` status.
+release of Sage. To mark your PR as ready for review, you should
+set it to ``needs review`` status.
 
 
 .. _section-workflows-merge:
@@ -170,7 +170,7 @@ Now you go back to your working branch and merge the updated ``develop`` branch:
 If there was no upstream changes conflicting with the changes you made locally,
 this merge operation will finish cleanly. Otherwise, you are in *merge
 conflict*. This rarely happens since Git is smart in merging changes. However,
-once merge conflict happens, you have to manually resolve the conflicts. The
+once merge conflict occurs, you have to manually resolve the conflicts. The
 conflict resolving procedure is explained in :ref:`section-git-conflict`.
 
 

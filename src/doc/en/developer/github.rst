@@ -15,7 +15,7 @@ with Sage. The most important one among them is of course `the Sage repository
 
 .. _section-github-account:
 
-Obtaining a GitHub account
+Obtaining a GitHub Account
 ==========================
 
 To share your work on Sage, you need a GitHub account. If you do not have one
@@ -93,7 +93,7 @@ more details, see `Connecting to GitHub with SSH
 <https://docs.github.com/en/authentication/connecting-to-github-with-ssh>`_.
 
 
-Forking the Sage repository
+Forking the Sage Repository
 ===========================
 
 The first step is to create `your personal fork
@@ -176,51 +176,46 @@ Reporting Bugs
 
 If you think you have found a bug in Sage, here is the procedure:
 
-- Search through our Google groups for postings related to your possible bug (it
-  may have been fixed/reported already):
-
-  * ``sage-devel``: `<https://groups.google.com/group/sage-devel>`_
-  * ``sage-support``: `<https://groups.google.com/group/sage-support>`_
-
-  You also search `the GitHub issues
+- Search through our Google groups `sage-devel <https://groups.google.com/group/sage-devel>`_, `sage-support <https://groups.google.com/group/sage-support>`_ for postings related to your possible bug (it
+  may have been fixed/reported already). You also search `the GitHub issues
   <https://github.com/sagemath/sage/issues>`_ to see if anyone else has already
   opened an issue about your bug.
 
-- If you do not find anything, and you are not sure that you have found a bug,
+- If you do not find anything but you are not sure that you have found a bug,
   ask about it on `sage-devel <https://groups.google.com/group/sage-devel>`_.
 
 - If you are sure that you have found a bug, then create on GitHub a new issue about the bug.
-  In this case, follow the :ref:`section-github-create-issue`.
 
   A bug report should contain:
 
   - An explicit and **reproducible example** illustrating your bug (and/or the
     steps required to reproduce the buggy behavior). It also helps to describe what
-    is the expected behaviour.
+    behaviour is expected.
 
   - The **version of Sage** you run, as well as the version of the optional
     packages that may be involved in the bug.
 
-  - Describe your **operating system** as accurately as you can and the
+  - If relevant, describe your **operating system** as accurately as you can and the
     architecture of your CPU (32 bit, 64 bit, ...).
 
-Thank you in advance for reporting bugs to improve Sage!
+Follow :ref:`section-github-create-issue` for further guide. Thank you in
+advance for reporting bugs to improve Sage!
 
 
 .. _section-github-new-enhancement:
 
-Planning an enhancement
+Planning an Enhancement
 =======================
 
-In addition to bug reports, you should also open
-an issue if you have some new code or an idea that makes Sage better. If
-you have a feature request, start a discussion on ``sage-devel`` first, and
-then if there seems to be a general agreement that you have a good idea, open an
-issue describing the idea.
+In addition to bug reports, you should also open an issue if you have some new
+code or an idea that makes Sage better. If you have a feature request, start a
+discussion on `sage-devel <https://groups.google.com/group/sage-devel>`_ first,
+and then if there seems to be a general agreement that you have a good idea,
+open an issue describing the idea.
 
 Before opening a new issue, consider the following points:
 
-- Make sure that nobody else has opened an issue (or even a PR) about the same
+- Make sure that nobody else has opened an issue (or a PR) about the same
   or closely related issue. Search through the existing issues and PRs with
   some key words.
 
@@ -243,20 +238,20 @@ Before opening a new issue, consider the following points:
 
 .. _section-github-create-issue:
 
-Opening an issue
-=================
+Opening an Issue
+================
 
 Whether it's reporting a bug or planning an enhancement, `issue
 <https://docs.github.com/en/issues/tracking-your-work-with-issues/about-issues>`_
-should be opened on our Sage repo on GitHub `sagemath/sage
-<https://github.com/sagemath/sage/issues>`_.
+should be opened on our Sage repo `sagemath/sage
+<https://github.com/sagemath/sage/issues>`_ on GitHub.
 
 - Think of an apt title. People scan through the titles of issues to decide
   which ones to look into further. So write a title that concisely describes
-  what the issue about.
+  what the issue is about.
 
 - Describe the issue in detail in the issue body. What is the issue? How can we
-  solve the issue? Add links to relevant issues/PR, and other resources.
+  solve the issue? Add links to relevant issues/PRs, and other resources.
 
   You may use GitHub mention ``@USERNAME`` to get attention from the people
   who would be interested in the issue or has expertise in this issue.
@@ -273,7 +268,7 @@ should be opened on our Sage repo on GitHub `sagemath/sage
   - **Priority** labels with prefix ``p:`` such as ``p: trivial / 5``,
     ``p: minor / 4``, ``p: major / 3``, ``p: critical / 2``, and ``p: blocker / 1``
 
-  If the issue is not expected to be solved in a near future, you may add
+  If the issue is not expected to be solved in the near future, you may add
   ``wishlist item`` label.
 
 
@@ -289,8 +284,8 @@ enhancing Sage, then you create a PR on the Sage repo `sagemath/sage
 In addition to what were said about opening an issue, the following applies:
 
 - The title should concisely describe what the PR does. If the PR solves an
-  issue, describe briefly what the PR solves about the issue (do not simply put
-  the issue number in the title).
+  issue, describe briefly what the PR solves (do not simply put the issue
+  number in the title).
 
 - Explain what the PR solves in detail in the body. If the PR solves an issue,
   you may mention the issue here.
@@ -303,7 +298,8 @@ In addition to what were said about opening an issue, the following applies:
   dependency.  This format is understood by various dependency managers.
 
 If you are working on a PR and the PR is not yet quite ready for review, then
-open the PR as *draft*.
+`open the PR as draft
+<https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests#draft-pull-requests>`_.
 
 
 .. _section-github-pr-status:
@@ -313,7 +309,8 @@ The Status of a PR
 
 If a PR is in the state of draft, the review process does not start. Otherwise,
 review process will start for the PR as soon as a reviewer gets interested with
-the PR, and the status of the PR will be indicated by **status** labels.
+the PR, and the status of the PR will be indicated by **status** labels with
+prefix ``s:``.
 
 - ``s: needs review``: The code is ready to be peer-reviewed. If the code is not
   yours, then you can review it. See :ref:`chapter-review`.
@@ -334,14 +331,13 @@ the PR will get one of **resolution** labels: ``r: duplicate``, ``r: invalid``,
 
 .. _section-github-stopgaps:
 
-
-The stopgap
+The Stopgap
 ===========
 
 When Sage returns wrong results, an issue and a PR should be created:
 
-- A "stopgap" issue with all available details.
-- A "stopgap" PR (e.g. :issue:`12699`)
+- A stopgap issue with all available details.
+- A stopgap PR (e.g. :issue:`12699`)
 
 The stopgap PR does not fix the problem but adds a warning that will be
 printed whenever anyone uses the relevant code, until the problem is
@@ -355,7 +351,7 @@ To produce the warning message, use code like the following:
     stopgap("This code contains bugs and may be mathematically unreliable.",
         ISSUE_NUM)
 
-Replace ``ISSUE_NUM`` by the reference number for the stopgap issue. On the stopgap issue, enter the reference number for the stopgap PR. Stopgap issues should be marked as critical.
+Replace ``ISSUE_NUM`` by the reference number for the stopgap issue. On the stopgap issue, enter the reference number for the stopgap PR. Stopgap issues and PRs should be marked as critical.
 
 .. NOTE::
 
@@ -376,14 +372,15 @@ you may not be sure where the comment should go. Then
 - Comments on the submitted code should go on the PR.
 
 
-Checking PRs
-============
+Checks on PRs
+=============
 
 If you manage to fix a bug or enhance Sage, you are our hero. See
 :ref:`chapter-walkthrough` for making changes to the Sage source code and
 :ref:`section-github-create-pr` to create a PR for the changes.
 
-For each push to a PR, automated tests run on GitHub Actions.
+For each push to a PR, automated tests for the branch of the PR run on GitHub
+Actions.
 
 * A `linting workflow
   <https://github.com/sagemath/sage/blob/develop/.github/workflows/lint.yml>`_
@@ -394,29 +391,29 @@ For each push to a PR, automated tests run on GitHub Actions.
   In order to see details when it fails, you can click on the check
   and then select the most recent workflow run.
 
-* The `incremental build and test workflow
+* The `build and test workflow
   <https://github.com/sagemath/sage/blob/develop/.github/workflows/build.yml>`_
   on GitHub Actions builds Sage for the current branch (incrementally
   on top of an installation of the ``develop`` branch) and runs the
-  test.
-
-  Details are again available by clicking on the check.
+  test. Details are again available by clicking on the check.
 
   The automatic workflow runs on a container based on
   ``ubuntu-focal-standard``.  To request a run of the workflow on a different
-  platform, you can issue a `workflow_dispatch
+  platform, you can issue a `workflow dispatch
   <https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow#running-a-workflow>`_.
   You can select any of the platforms for which a `prebuilt container image
   <https://github.com/orgs/sagemath/packages?tab=packages&q=with-targets-optional>`_
   exists.
 
-* The `Documentation workflow
+* The `build documentation workflow
   <https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build.yml>`_
   on GitHub Actions builds the HTML documentation for the current branch.
 
-  A link to the built doc is added in a comment, you can easily inspect changes
+  A link to the built doc is added in a comment, and so you can easily inspect changes
   to the documentation without the need to locally rebuild the docs yourself.
-  If the doc build fails, you can go to Actions tab and examine `Build documentation workflow
+
+  If the doc build fails, you can go to Actions tab and examine `documentation
+  build workflow
   <https://github.com/sagemath/sage/actions/workflows/doc-build.yml>`_ and
   choose the particular branch to see what went wrong.
 
@@ -424,13 +421,10 @@ For each push to a PR, automated tests run on GitHub Actions.
 Final Notes
 ===========
 
-The following are some other relevant issues:
-
 * Every bug fixed should result in a doctest.
 
-* This is not an issue with defects, but there are many enhancements
-  possible for Sage and too few developers to implement all the good
-  ideas.
+* There are many enhancements possible for Sage and too few developers to
+  implement all the good ideas.
 
 * If you are a developer, be nice and try to solve a stale/old issue
   every once in a while.
@@ -440,6 +434,4 @@ The following are some other relevant issues:
   priority. It is very likely that different people will see
   priorities of bugs very differently from us, so please let us know
   if you see a problem with specific PRs.
-
-
 
