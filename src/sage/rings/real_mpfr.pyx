@@ -153,10 +153,6 @@ from .rational cimport Rational
 
 from sage.categories.map cimport Map
 
-cdef ZZ, QQ, RDF
-from .integer_ring import ZZ
-from .rational_field import QQ
-from .real_double import RDF
 from .real_double cimport RealDoubleElement
 
 import sage.rings.rational_field
@@ -729,6 +725,10 @@ cdef class RealField_class(sage.rings.abc.RealField):
             sage: R.get_action(ZZ)
             Right scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Real Field with 53 bits of precision
         """
+        from .integer_ring import ZZ
+        from .rational_field import QQ
+        from .real_double import RDF
+
         if S is ZZ:
             return ZZtoRR(ZZ, self)
         elif S is QQ:
@@ -1872,6 +1872,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RealField(100)(2).imag()
             0
         """
+        from .integer_ring import ZZ
+
         return ZZ(0)
 
     def str(self, int base=10, size_t digits=0, *, no_sci=None,
@@ -2992,7 +2994,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
          Round ``self`` to the nearest representable integer, rounding halfway
          cases away from zero.
-         
+
          .. NOTE::
 
              The rounding mode of the parent field does not affect the result.
