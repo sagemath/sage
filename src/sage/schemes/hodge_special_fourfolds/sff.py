@@ -48,22 +48,64 @@ import random
 from sage.all import ideal, binomial
 # from sage.all import *
 
+def update_macaulay2_packages():
+    r"""Update some ``Macaulay2`` packages to their latest version.
+
+    Execute the command ``update_macaulay2_packages()`` to download in your current directory 
+    all the ``Macaulay2`` packages needed to the functions of this module. 
+    You don't need to do this if you use the development version of ``Macaulay2``.
+    """
+    import os
+    inp = input('Do you want to download or update all the needed files in the current directory: ' + os.getcwd() + "? (y/n) ")
+    if inp not in ('y', 'Y', 'yes', 'Yes', 'YES'):
+        print('## Update not executed. ##')
+        return
+    print('Downloading files in ' + os.getcwd() + '...')
+    s1 = "curl -s -o Cremona.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona.m2 && mkdir -p Cremona && curl -s -o Cremona/tests.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/tests.m2 && curl -s -o Cremona/documentation.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2 && curl -s -o Cremona/examples.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/examples.m2 &&curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2"
+    os.system(s1)
+    s2 = "curl -s -o Resultants.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Resultants.m2 && curl -s -o SparseResultants.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/SparseResultants.m2"
+    os.system(s2)
+    s3 = "curl -s -o PrebuiltExamplesOfRationalFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/PrebuiltExamplesOfRationalFourfolds/main/PrebuiltExamplesOfRationalFourfolds.m2"
+    os.system(s3)
+    if os.path.isfile('Cremona.m2') and os.path.isdir('Cremona') and os.path.isfile('Cremona/tests.m2') and os.path.isfile('Cremona/documentation.m2') and os.path.isfile('Cremona/examples.m2') and os.path.isfile('MultiprojectiveVarieties.m2') and os.path.isfile('SpecialFanoFourfolds.m2') and os.path.isfile('Resultants.m2') and os.path.isfile('SparseResultants.m2') and os.path.isfile('PrebuiltExamplesOfRationalFourfolds.m2'):
+        print('Download successfully completed.')
+    else:
+        raise FileNotFoundError("something went wrong")
+
 def _set_macaulay2_():
     # https://doc.sagemath.org/html/en/reference/interfaces/sage/interfaces/macaulay2.html
     if macaulay2.version() < (1, 21):
-        raise Exception("required Macaulay2, version 1.21 or later")
+        raise Exception("required Macaulay2, version 1.21 or newer")
     macaulay2('needsPackage "SpecialFanoFourfolds"')
+
+    if not (macaulay2('Cremona.Options.Version >= "5.2.1"')).sage():
+        s = """
+        Your version of the Macaulay2 package Cremona is outdated (required version 5.2.1 or newer);"
+        you can manually download the latest version from
+        https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
+        To automatically download the latest version of the package in your current directory,
+        you may execute the following command in a Unix/Linux shell:
+
+        curl -s -o Cremona.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona.m2 && mkdir -p Cremona && curl -s -o Cremona/tests.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/tests.m2 && curl -s -o Cremona/documentation.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2 && curl -s -o Cremona/examples.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/examples.m2 &&curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
+
+        """
+        print(s)
+        update_macaulay2_packages()
+        raise Exception('You should restart Sage and reload this module')
+
     if not (macaulay2('MultiprojectiveVarieties.Options.Version >= "2.7.1"')).sage():
         s = """
         Your version of the Macaulay2 package MultiprojectiveVarieties is outdated (required version 2.7.1 or newer);"
         you can manually download the latest version from
         https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
         To automatically download the latest version of the package in your current directory,
-        you may run the following command:
+        you may execute the following command in a Unix/Linux shell:
     
-        curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2
+        curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
         """
-        raise Exception(s)
+        print(s)
+        update_macaulay2_packages()
+        raise Exception('You should restart Sage and reload this module')
 
     if not (macaulay2('SpecialFanoFourfolds.Options.Version >= "2.7"')).sage():
         s = """
@@ -71,21 +113,34 @@ def _set_macaulay2_():
         you can manually download the latest version from
         https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
         To automatically download the latest version of the package in your current directory,
-        you may run the following command:
+        you may execute the following command in a Unix/Linux shell:
     
         curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
         """
-        raise Exception(s)
+        print(s)
+        update_macaulay2_packages()
+        raise Exception('You should restart Sage and reload this module')
+        
     macaulay2.options.after_print = True
     macaulay2('importFrom_MultiprojectiveVarieties {"coordinates"}')
     macaulay2('importFrom_SpecialFanoFourfolds {"eulerCharacteristic", "numberNodes", "fanoMap", "inverse3"}')
 
 _set_macaulay2_()
 
-_verbose_ = True
-def _verbosity_(b):
+__VERBOSE__ = True
+def verbosity(b):
+    r"""Change the default verbosity for some functions of this module.
+
+    Use ``verbosity(False)`` to suppress messages. Verbosity can be enabled in the specific function you use.
+
+    INPUT:
+
+    :class:`bool`
+
+    """
     if not isinstance(b,bool): raise TypeError("expected True or False")
-    _verbose_ = b
+    global __VERBOSE__
+    __VERBOSE__ = b
 
 class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
     r"""The class of closed subvarieties of projective spaces.
@@ -345,7 +400,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
             self._sectional_genus = Integer(1-P(0))
             return self._sectional_genus
             
-    def topological_euler_characteristic(self, verbose=_verbose_, UseMacaulay2=False):
+    def topological_euler_characteristic(self, verbose=None, UseMacaulay2=False):
         r"""Return the topological Euler characteristic of the variety
     
         .. WARNING::
@@ -367,6 +422,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
             3
             
         """
+        if verbose is None: verbose = __VERBOSE__
         if not(isinstance(UseMacaulay2,bool) and isinstance(verbose,bool)): raise TypeError("expected True or False")
         try:
             return self._topological_euler_characteristic
@@ -385,8 +441,9 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
             self._topological_euler_characteristic = Chern_Fulton_Class.list()[n]
             return self._topological_euler_characteristic
 
-    def _topological_Euler_characteristic_macaulay2(self, verbose=_verbose_):
+    def _topological_Euler_characteristic_macaulay2(self, verbose=None):
         r"""See :meth:`topological_euler_characteristic` for documentation."""
+        if verbose is None: verbose = __VERBOSE__
         try:
             return self._topological_euler_characteristic
         except AttributeError:
@@ -397,7 +454,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
             if verbose: print("-- function eulerCharacteristic() has terminated. --")
             return self._topological_euler_characteristic
 
-    def point(self, verbose=_verbose_, UseMacaulay2=True):
+    def point(self, verbose=None, UseMacaulay2=True):
         r"""
         Pick a random point on the variety defined over a finite field
 
@@ -411,6 +468,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
             True
 
         """
+        if verbose is None: verbose = __VERBOSE__
         if not(isinstance(UseMacaulay2,bool) and isinstance(verbose,bool)): raise TypeError("expected True or False")
         if UseMacaulay2 == False: raise NotImplementedError
         if verbose: print("-- running Macaulay2 function point()... --")
@@ -428,7 +486,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
         if verbose: print("-- function point() has terminated. --")
         return p
 
-    def _describe(self, verbose=_verbose_):
+    def _describe(self, verbose=None):
         r"""Return a brief description of the variety, see :meth:`describe`.
 
         OUTPUT:
@@ -436,6 +494,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
         A string.
         
         """    
+        if verbose is None: verbose = __VERBOSE__
         d = self.dimension()
         s = "dim:.................. " + str(d)
         if verbose: print(s)
@@ -750,7 +809,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
             self._macaulay2_object._sage_object = self
             return self._macaulay2_object
             
-    def parametrize(self, verbose=_verbose_):
+    def parametrize(self, verbose=None):
         r"""Try to return a rational parameterization of the variety. 
 
         OUTPUT:
@@ -803,6 +862,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
             MultirationalMap (birational map from PP^2 to surface in PP^5)
 
         """
+        if verbose is None: verbose = __VERBOSE__
         try:
             return self._parametrization
         except AttributeError:
@@ -1539,14 +1599,14 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
             if self.target() is not other.target(): return False 
         f = macaulay2(self)
         g = macaulay2(other)
-        if _verbose_: print("-- running Macaulay2 operator == between rational maps... --")
+        if __VERBOSE__: print("-- running Macaulay2 operator == between rational maps... --")
         v = (f._operator('==',g)).sage()
-        if _verbose_: print("-- Macaulay2 computation has successfully terminated. --")
+        if __VERBOSE__: print("-- Macaulay2 computation has successfully terminated. --")
         return v 
         
     def __ne__(self,other): return(not(self.__eq__(other)))
 
-    def inverse(self, check=True, verbose=_verbose_, UseMacaulay2=True):
+    def inverse(self, check=True, verbose=None, UseMacaulay2=True):
         r"""Return the inverse of the birational map
 
         OUTPUT:
@@ -1567,6 +1627,7 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
         With the input ``UseMacaulay2=True`` the computation is transferred to ``Macaulay2``.
 
         """
+        if verbose is None: verbose = __VERBOSE__
         if not (isinstance(verbose,bool) or isinstance(UseMacaulay2,bool)): raise TypeError("expected True or False")
         if UseMacaulay2 == False: raise NotImplementedError
         f = macaulay2(self)
@@ -1940,7 +2001,7 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
         except AttributeError:
             raise Exception("cannot find ambient fivefold")
 
-    def _lattice_intersection_matrix(self, verbose=_verbose_):
+    def _lattice_intersection_matrix(self, verbose=None):
         r"""Return the matrix from which we compute the discriminant of ``self``"""
         try:
             return self.__lattice_intersection_Matrix
@@ -1960,7 +2021,7 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
             self.__lattice_intersection_Matrix = matrix([[self.degree(),HS2],[HS2,S2]])
             return self.__lattice_intersection_Matrix
 
-    def discriminant(self, verbose=_verbose_):
+    def discriminant(self, verbose=None):
         r"""Return the discriminant of the special fourfold.
 
         OUTPUT:
@@ -2000,7 +2061,7 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
             self._macaulay2_object._sage_object = self
             return self._macaulay2_object
 
-    def fano_map(self, verbose=_verbose_):
+    def fano_map(self, verbose=None):
         r"""Return the Fano map from the ambient fivefold.
 
         The surface contained in the fourfold ``self`` must admit 
@@ -2016,6 +2077,7 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
             source: PP^5
             target: PP^4
         """
+        if verbose is None: verbose = __VERBOSE__
         X = macaulay2(self)
         if verbose: print("-- running Macaulay2 function fanoMap()... --")
         try:
@@ -2026,7 +2088,7 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
         if verbose: print("-- function fanoMap() has successfully terminated. --")
         return F
 
-    def parameter_count(self, verbose=_verbose_):
+    def parameter_count(self, verbose=None):
         r"""Count of parameters.
 
         This just runs the ``Macaulay2`` function ``parameterCount``, documented at 
@@ -2078,6 +2140,7 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
             (3, (28, 3, 0))
 
         """
+        if verbose is None: verbose = __VERBOSE__
         try:
             return self._macaulay2_parameter_count
         except AttributeError:
@@ -2088,7 +2151,7 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
             if verbose: print("-- function parameterCount() has terminated. --")
             return self._macaulay2_parameter_count
 
-    def detect_congruence(self, Degree = None, verbose=_verbose_):
+    def detect_congruence(self, Degree = None, verbose=None):
         r"""Detect and return a congruence of secant curves for the surface of ``self`` in the ambient fivefold of ``self``.
 
         In the current version, this runs the ``Macaulay2`` function ``detectCongruence``, documented at 
@@ -2146,6 +2209,7 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
             cubic curve of arithmetic genus 0 in PP^7 cut out by 7 hypersurfaces of degrees (1, 1, 1, 1, 2, 2, 2)
 
         """
+        if verbose is None: verbose = __VERBOSE__
         try:
             return self._macaulay2_detect_congruence
         except AttributeError:
@@ -2458,5 +2522,3 @@ def _print_partial_M2_output(m2_str):
     if i != -1: w = w[:i]
     while w[-1] == "\n": w = w[:len(w)-1]
     print(w)
-
-# print('### sff.sage.m2, v.1.0 ###')
