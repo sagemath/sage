@@ -79,6 +79,10 @@ def RIFtol(*args):
 # This is the correct pattern to match ISO/IEC 6429 ANSI escape sequences:
 ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])')
 
+special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|known bug'
+optional_regex = re.compile(fr'({special_optional_regex})|([^ a-z]\s*optional\s*[:-]*((\s|\w|[.])*))')
+special_optional_regex = re.compile(special_optional_regex)
+
 
 def parse_optional_tags(string):
     """
@@ -137,8 +141,6 @@ def parse_optional_tags(string):
     # strip_string_literals replaces comments
     comment = "#" + (literals[comment]).lower()
 
-    optional_regex = re.compile(r'(arb216|arb218|py2|long time|not implemented|not tested|known bug)|([^ a-z]\s*optional\s*[:-]*((\s|\w|[.])*))')
-
     tags = []
     for m in optional_regex.finditer(comment):
         cmd = m.group(1)
@@ -151,8 +153,40 @@ def parse_optional_tags(string):
     return set(tags)
 
 
-def parse_tolerance(source, want):
+def unparse_optional_tags(tags):
+    r"""
+    Return a comment string that sets ``tags``.
+
+    INPUT:
+
+    - ``tags`` -- iterable of tags, as output by :func:`parse_optional_tags`
+
+    EXAMPLES::
+
+        sage: from sage.doctest.parsing import unparse_optional_tags
+        sage: unparse_optional_tags(set())
+        ''
+        sage: unparse_optional_tags({'magma'})
+        '# optional - magma'
+        sage: unparse_optional_tags(['zipp', 'sage.rings.number_field', 'foo'])
+        '# optional - foo zipp sage.rings.number_field'
+        sage: unparse_optional_tags(['long time', 'not tested', 'p4cka9e'])
+        '# long time, not tested, optional - p4cka9e'
     """
+    tags = set(tags)
+    special_tags = set(tag for tag in tags if special_optional_regex.fullmatch(tag))
+    optional_tags = sorted(tags - special_tags,
+                           key=lambda tag: (tag.startswith('sage.'), tag))
+    tags = sorted(special_tags)
+    if optional_tags:
+        tags.append('optional - ' + " ".join(optional_tags))
+    if tags:
+        return '# ' + ', '.join(tags)
+    return ''
+
+
+def parse_tolerance(source, want):
+    r"""
     Return a version of ``want`` marked up with the tolerance tags
     specified in ``source``.
 
