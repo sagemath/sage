@@ -9,20 +9,20 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.functions cimport LCM_list
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.sets.set import Set
 from sage.misc.misc import subsets
+
 
 cpdef _fast_possible_periods(self, return_points=False):
     r"""
