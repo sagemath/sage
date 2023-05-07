@@ -1777,6 +1777,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         Return lower and upper bounds on the rank of the Mordell-Weil
         group `E(\QQ)` and a list of points of infinite order.
 
+        .. WARNING::
+
+            This function is deprecated as the functionality of
+            Simon's script for elliptic curves over the rationals
+            has been ported over to pari.
+            Use :meth:`.rank` with the keyword ``algorithm='pari;`` instead.
+
         INPUT:
 
         - ``verbose`` -- 0, 1, 2, or 3 (default: 0), the verbosity level
@@ -1829,6 +1836,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: E = EllipticCurve('11a1')
             sage: E.simon_two_descent()
+            doctest:warning
+            ...
+            DeprecationWarning: Use E.rank(algorithm="pari") instead, as this script has been ported over to pari.
+            See https://github.com/sagemath/sage/issues/35621 for details.
             (0, 0, [])
             sage: E = EllipticCurve('37a1')
             sage: E.simon_two_descent()
@@ -1909,6 +1920,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.selmer_rank()  # uses mwrank
             1
         """
+        from sage.misc.superseded import deprecation
+        deprecation(35621, 'Use E.rank(algorithm="pari") instead, as this script has been ported over to pari.')
+
         t = EllipticCurve_number_field.simon_two_descent(self, verbose=verbose,
                                                          lim1=lim1, lim3=lim3, limtriv=limtriv,
                                                          maxprob=maxprob, limbigprime=limbigprime,
@@ -2070,6 +2084,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             0
             sage: E._EllipticCurve_rational_field__rank
             (0, True)
+
+            sage: E =EllipticCurve([-113^2,0])
+            sage: E.rank(use_database=False, verbose=False, algorithm="pari")
+            Traceback (most recent call last):
+            ...
+            RuntimeError: rank not provably correct (lower bound: 0, upper bound:2)
         """
         if proof is None:
             from sage.structure.proof.proof import get_flag
@@ -2183,7 +2203,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 return rank
             else:
                 verbose_verbose(f"Warning -- rank could not be determined by pari; ellrank returned {lower=}, {upper=}, {s=}, {pts=}", level=1)
-                raise RuntimeError(f"rank not provably correct (lower bound: {lower}, upper bound:{upper}")
+                raise RuntimeError(f"rank not provably correct (lower bound: {lower}, upper bound:{upper})")
 
         raise ValueError("unknown algorithm {!r}".format(algorithm))
 
@@ -2244,6 +2264,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve('389a')
             sage: E.gens()                 # random output
             [(-1 : 1 : 1), (0 : 0 : 1)]
+            sage: E.gens(algorithm="pari")    # random output
+            [(5/4 : 5/8 : 1), (0 : 0 : 1)]
 
         A non-integral example::
 
@@ -2259,6 +2281,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              over Rational Field
             sage: E1.gens() # random (if database not used)
             [(-400 : 8000 : 1), (0 : -8000 : 1)]
+            sage: E1.gens(algorithm="pari")
+            [(-400 : 8000 : 1), (0 : 0 : 1)]
+
         """
         if proof is None:
             from sage.structure.proof.proof import get_flag
@@ -2365,7 +2390,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 return ge, True
             else:
                 verbose_verbose(f"Warning -- rank could not be determined by pari; ellrank returned {lower=}, {upper=}, {s=}, {pts=}", level=1)
-                raise RuntimeError(f"rank not provably correct (lower bound: {lower}, upper bound:{upper}")
+                raise RuntimeError(f"rank not provably correct (lower bound: {lower}, upper bound:{upper})")
         elif algorithm == "mwrank_lib":
             verbose_verbose("Calling mwrank C++ library.")
             if not self.is_integral():
