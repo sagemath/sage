@@ -23,13 +23,84 @@ yet, choose a username and `create an account <https://github.com/join>`_. In
 the following, we assume your username "alice". So you always read your own
 username if you see "alice".
 
+
+.. _chapter-github-cli:
+
+Using the GitHub CLI
+====================
+
+GitHub provides a command-line interface, the GitHub CLI, that can be used
+instead of the web interface.  The central component of the GitHub CLI is the
+``gh`` command that you can use in your terminal.
+
+Installation
+------------
+
+This :ref:`spkg_github_cli` documents how to install the ``gh`` command for your platform. Or see `GitHub CLI <https://cli.github.com>`_ from GitHub.
+
+Configuration
+-------------
+
+You have to authenticate to your GitHub account to allow ``gh`` command to
+interact with GitHub. Typically the authorization proceeds as follows::
+
+    [alice@localhost sage]$ gh auth login
+    ? What is your preferred protocol for Git operations? HTTPS
+    ? Authenticate Git with your GitHub credentials? Yes
+    ? How would you like to authenticate GitHub CLI? Login with a web browser
+
+    ! First copy your one-time code: 3DA8-5ADA
+    Press Enter to open github.com in your browser...
+    ✓ Authentication complete.
+    - gh config set -h github.com git_protocol https
+    ✓ Configured git protocol
+    ✓ Logged in as sage
+
+where a web browser is used to enter credentials. You can also use an
+authentication token instead, in which case you must first generate `a Personal
+Access Token here <https://github.com/settings/tokens>`_.
+
+Next set the default repo for the ``gh`` command::
+
+    [alice@localhost sage]$ gh repo set-default sagemath/sage
+
+and check::
+
+    [alice@localhost sage]$ gh repo view
+    sagemath/sage
+    ...
+
+which will show the default repo along with its readme, which is quite long.
+
+
+Linking Git to your GitHub Account
+==================================
+
+In order for your Git to work with GitHub, your GitHub account needs to be
+linked with your Git.  No action is needed if you have already contributed to
+any other project on GitHub and set up Git credentials or SSH keys for this.
+
+The above dialogue from ``gh auth login`` already linked your Git to GitHub by
+HTTPS protocol using your GitHub credentials. We assume this in the rest of
+this guide. For more details, see `Caching your GitHub credentials in Git
+<https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git>`_.
+
+If you prefer SSH protocol for Git operations with GitHub, then you follow
+:ref:`section-git-ssh` to generate an SSH keypair and add the keypair to your
+GitHub account. A simple way to upload the keypair is to choose SSH protocol
+for Git operations in the dialogue from ``gh auth login`` command above.  For
+more details, see `Connecting to GitHub with SSH
+<https://docs.github.com/en/authentication/connecting-to-github-with-ssh>`_.
+
+
 Forking the Sage repository
 ===========================
 
-The first step is to create your personal `GitHub fork
+The first step is to create `your personal fork
 <https://docs.github.com/en/get-started/quickstart/fork-a-repo#forking-a-repository>`_
-of the Sage repo. Simply click "Fork" on `the Sage repo
-<https://github.com/sagemath/sage>`_. Then your fork of the Sage repo is created at
+of the Sage repo on GitHub. After logging in to your GitHub account, visit the
+Sage repo https://github.com/sagemath/sage, and simply click "Fork" on the Sage
+repo. Then your fork of the Sage repo is created at
 https://github.com/alice/sage.
 
 Next if you don't have a local Git repo of Sage, then start afresh `cloning
@@ -75,6 +146,20 @@ You also add the Sage repo ``sagemath/sage`` as your remote "upstream"::
     upstream	https://github.com/sagemath/sage.git (fetch)
     upstream	https://github.com/sagemath/sage.git (push)
 
+
+.. NOTE::
+
+    If you linked your Git to GitHub by SSH protocol, then do the following
+    instead to set up remotes::
+
+        [alice@localhost sage]$ git remote add origin git@github.com:alice/sage.git
+        [alice@localhost sage]$ git remote add upstream git@github.com:sagemath/sage.git
+        [alice@localhost sage]$ git remote -v
+        origin	git@github.com:alice/sage.git (fetch)
+        origin	git@github.com:alice/sage.git (push)
+        upstream	git@github.com:sagemath/sage.git (fetch)
+        upstream	git@github.com:sagemath/sage.git (push)
+
 To prevent accidental pushes to ``upstream`` (instead of ``origin``), you may want to disable it by running::
 
     [alice@localhost sage]$ git remote set-url --push upstream DISABLE
@@ -82,53 +167,6 @@ To prevent accidental pushes to ``upstream`` (instead of ``origin``), you may wa
 Of course, you can give arbitrary names to your Git remotes, but ``origin`` and
 ``upstream`` are the established defaults, which will make it easier to use tools
 such as the GitHub CLI.
-
-.. _chapter-github-cli:
-
-Using the GitHub CLI
-====================
-
-GitHub provides a command-line interface, the GitHub CLI, that can be used
-instead of the web interface.  The central component of the GitHub CLI is the
-``gh`` command that you can use in your terminal.
-
-Installation
-------------
-
-This :ref:`spkg_github_cli` documents how to install the ``gh`` command for your platform. Or see `GitHub CLI <https://cli.github.com>`_ from GitHub.
-
-Configuration
--------------
-
-You authenticate with your GitHub account. Typically the authorization proceeds as follows::
-
-    [alice@localhost sage]$ gh auth login
-    ? What is your preferred protocol for Git operations? HTTPS
-    ? Authenticate Git with your GitHub credentials? Yes
-    ? How would you like to authenticate GitHub CLI? Login with a web browser
-
-    ! First copy your one-time code: 3DA8-5ADA
-    Press Enter to open github.com in your browser...
-    ✓ Authentication complete.
-    - gh config set -h github.com git_protocol https
-    ✓ Configured git protocol
-    ✓ Logged in as sage
-
-where a web browser is used to enter credentials. You can also use an
-authentication token instead, in which case you must first generate `a Personal
-Access Token here <https://github.com/settings/tokens>`_.
-
-Next set the default repo for the ``gh`` command::
-
-    [alice@localhost sage]$ gh repo set-default sagemath/sage
-
-and check::
-
-    [alice@localhost sage]$ gh repo view
-    sagemath/sage
-    ...
-
-which will show the default repo along with its readme, which is quite long.
 
 
 .. _section-github-bug-report:

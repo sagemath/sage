@@ -17,6 +17,8 @@ cryptography. This section will show you how to set up the necessary
 cryptographic keys for Secure Shell (SSH).
 
 
+.. _section-github-ssh-key:
+
 Generating your SSH Keys
 ------------------------
 
@@ -64,25 +66,6 @@ The ``ssh-keygen`` tool will let you generate a key with a different
 file name, or protect it with a passphrase. Depending on how much you
 trust your own computer or system administrator, you can leave the
 passphrase empty to be able to login without any human intervention.
-
-
-.. _section-github-ssh-key:
-
-Linking your Public Key to your GitHub Account
-----------------------------------------------
-
-In order to push your code directly to a branch on your remote ``origin``, Your
-GitHub account needs to know your public key.
-
-No action is needed if you have already contributed to any other project on GitHub
-and set up Git credentials or SSH keys for this.
-
-New users of GitHub should follow either `Caching your GitHub credentials in
-Git
-<https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git>`_
-or generate an SSH keypair, or use an already existing one, and upload the
-public key to your GitHub account settings `Connecting to GitHub with SSH
-<https://docs.github.com/en/authentication/connecting-to-github-with-ssh>`_
 
 
 Adding your Public Key for authentication on another server
