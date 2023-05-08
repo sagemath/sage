@@ -984,15 +984,9 @@ errors or warnings issued during the build.
 
 In addition to these automatic runs in our main repository, all Sage
 developers can run the same tests on GitHub Actions in their personal
-forks of the Sage repository. To prepare this, use the following steps:
-
-- `Enable GitHub Actions
+forks of the Sage repository. To prepare this, `enable GitHub Actions
   <https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository#managing-github-actions-permissions-for-your-repository>`_
-  in your fork of the Sage repository.
-
-- Given read/write privileges for packages to GitHub Actions in your
-  fork of the Sage repository. See `Permissions for the GITHUB_TOKEN
-  <https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token>`_
+in your fork of the Sage repository.
 
 As usual we assume that ``origin`` is the name of the remote
 corresponding to your GitHub fork of the Sage repository::
