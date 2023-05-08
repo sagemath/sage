@@ -45,7 +45,7 @@ using one of two mechanisms:
   The Sage library declares these packages as dependencies and ensures that
   versions that provide features of Python 3.11 are available.
 
-Meta-Issue :issue:`29756` keeps track of newer Python features and serves
+Meta :issue:`29756` keeps track of newer Python features and serves
 as a starting point for discussions on how to make use of them in the
 Sage library.
 

@@ -4,6 +4,7 @@
 FAQ: Contributing to Sage
 =========================
 
+
 How can I start contributing to Sage?
 """""""""""""""""""""""""""""""""""""
 
@@ -14,6 +15,7 @@ please report your problems!
 Two popular ways to contribute to Sage are to write code and to
 create documentation or tutorials. Some steps in each direction
 are described below.
+
 
 I want to contribute code to Sage. How do I get started?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -79,6 +81,7 @@ and vice versa. Furthermore, even when the syntax is identical, many
 programming concepts are explained more thoroughly in Python-centered
 resources than in Sage-centered resources; in the latter,
 mathematics is usually the priority.
+
 
 I am not a programmer. Is there another way I can help out?
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -155,6 +158,7 @@ resources can be found by a web search.
   by A. M. Kuchling
 * `reStructuredText <https://docutils.sourceforge.io/rst.html>`_
 
+
 Are there any coding conventions I need to follow?
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -165,7 +169,7 @@ Also consult the Sage Developer's Guide, especially the chapter
 
 
 I submitted a bug fix to the GitHub Sage repo several weeks ago. Why are you ignoring my branch?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 We are not trying to ignore your branch. Most people who work on Sage do so
 in their free time. With hundreds of open tickets of varying degrees of
