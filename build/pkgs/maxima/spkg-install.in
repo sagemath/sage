@@ -26,14 +26,7 @@ cp "$SAGE_ROOT"/config/config.* .
 
 echo
 echo "Now configuring Maxima..."
-if [[ "$SAGE_SPKG_INSTALL_DOCS" != yes ]] ; then
-    sdh_configure --enable-ecl --disable-build-docs git_found=false
-else
-    sdh_configure --enable-ecl git_found=false 
-fi
-# Note the following is regression in maxima build system
-# see https://sourceforge.net/p/maxima/bugs/3278/
-# and https://sourceforge.net/p/maxima/bugs/2878/
+sdh_configure --enable-ecl git_found=false
 
 #---------------------------------------------------------------
 
