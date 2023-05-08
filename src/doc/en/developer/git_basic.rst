@@ -9,12 +9,13 @@ Git Basics
 
 .. _section-git-ssh:
 
-Git authentication through SSH
+Git Authentication through SSH
 ==============================
 
 In order to push changes securely to a remote repository, Git uses public-key
 cryptography. This section will show you how to set up the necessary
-cryptographic keys for Secure Shell (SSH).
+cryptographic keys for the case that you want to use SSH(Secure Shell) protocol
+to authenticate your Git to GitHub.
 
 
 .. _section-github-ssh-key:
@@ -68,62 +69,34 @@ trust your own computer or system administrator, you can leave the
 passphrase empty to be able to login without any human intervention.
 
 
-Adding your Public Key for authentication on another server
------------------------------------------------------------
+Adding your public key for authentication to GitHub
+---------------------------------------------------
 
-If you have an account on a lab or department computer that allows you
-to log in remotely via SSH, you can now also use your SSH keys to
-log in. Just copy the **public** key file (ending in ``.pub``) to
-``~/.ssh/authorized_keys`` on the remote computer and make sure that
-the file is only read/writable by yourself. Voila, the next time you
-ssh into that machine you don't have to provide your password.
+Follow the procedure `Adding a new SSH key to your GitHub account
+<https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account>`_.
+Then check that it works by::
 
-.. NOTE::
-
-    In the command above we set up the remote to only track the
-    ``master`` branch on the Sage repo (the ``-t master``
-    option). This avoids clutter by not automatically downloading all
-    branches ever created. But it also means that you will not fetch
-    everything that is on the repo by default, and you need to explicitly
-    tell git which branch you want to get from the repo. See the
-    :ref:`section-git-checkout` section for examples.
-
-Note that write operations (``push``) use the ssh protocol (specified by the ``git@``
-part). For this to work, you need to have a GitHub account and to set up your ssh public
-key.  Authentication is necessary if you want to upload anything to ensure
-that it really is from you.
-
-The above instructions set up the remote to perform read-only operations (``fetch``)
-using HTTPS from a mirror of the Sage repo instead. The mirror is faster and
-more reliable than our git server. However, this configuration is not recommended if
-you use VS Code as an IDE.
-
-If you want to use SSH only for both ``fetch`` and ``push``, use the
-following commands instead::
-
-    [alice@localhost sage]$ git remote add trac git@trac.sagemath.org:sage.git -t master
+    [alice@localhost sage]$ git remote add origin git@github.com:alice/sage.git
     [alice@localhost sage]$ git remote -v
-    origin      https://github.com/sagemath/sage.git (fetch)
-    origin      https://github.com/sagemath/sage.git (push)
-    trac        git@trac.sagemath.org:sage.git (fetch)
-    trac        git@trac.sagemath.org:sage.git (push)
+    origin  git@github.com:alice/sage.git (fetch)
+    origin  git@github.com:alice/sage.git (push)
 
 
 .. _section-git-push:
 
-Pushing your changes to a remote
---------------------------------
+Pushing your changes to a Remote
+================================
 
-Push your branch to the remote with either::
+Push your branch to the remote ``origin`` with either ::
 
     [alice@localhost sage]$ git push --set-upstream origin HEAD:my_branch
 
-or, if you started the branch yourself and do not follow any other branch, use::
+or ::
 
     [alice@localhost sage]$ git push origin HEAD:my_branch
 
 if your branch already has an upstream branch. Here "upstream" means the the
-remote "origin", which is *upstream* to your local Git repo. Yes, confusing!
+remote ``origin``, which is *upstream* to your local Git repo.
 
 Here, ``HEAD`` means that you are pushing the most recent commit (and, by
 extension, all of its parent commits) of the current local branch to the remote
@@ -133,7 +106,7 @@ branch.
 .. _section-git-checkout:
 
 Checking out a PR
------------------
+=================
 
 If you want to work with the changes of a PR branch, you must
 make a local copy of the branch. In particular, Git has no concept of directly
@@ -142,7 +115,7 @@ things that you can get from/to the remote server. Hence, the first
 thing you should do is to get everything from the branch
 into your local repository. This is achieved by::
 
-    [user@localhost sage]g fetch upstream pull/12345/head
+    [user@localhost sage]git fetch upstream pull/12345/head
     remote: Enumerating objects: 12, done.
     remote: Counting objects: 100% (12/12), done.
     remote: Compressing objects: 100% (3/3), done.
@@ -168,8 +141,8 @@ local branch.
 
 .. _section-git-pull:
 
-Getting changes from a remote
------------------------------
+Getting Changes from a Remote
+=============================
 
 A common task during development is to synchronize your local copy of the
 branch with the branch on the GitHub Sage repo. In particular, assume you
@@ -191,30 +164,30 @@ This command downloads the changes from the branch of the PR and merges
 them into your local branch.
 
 
-.. _section-git-pull-master:
+.. _section-git-pull-develop:
 
 Updating Master
----------------
+===============
 
-The ``master`` branch can be updated just like any other branch. However, your
-local copy of the master branch should stay **identical** to the GitHub Sage repo master
+The ``develop`` branch can be updated just like any other branch. However, your
+local copy of the develop branch should stay **identical** to the GitHub Sage repo develop
 branch.
 
-If you accidentally added commits to your local copy of ``master``, you must
+If you accidentally added commits to your local copy of ``develop``, you must
 delete them before updating the branch.
 
 One way to ensure that you are notified of potential problems is to use ``git
 pull --ff-only``, which will raise an error if a non-trivial merge would be
 required::
 
-    [user@localhost sage]$ git checkout master
-    [user@localhost sage]$ git pull --ff-only upstream master
+    [user@localhost sage]$ git checkout develop
+    [user@localhost sage]$ git pull --ff-only upstream develop
 
 If this pull fails, then something is wrong with the local copy of the
 master branch. To switch to the correct Sage master branch, use::
 
-    [user@localhost sage]$ git checkout master
-    [user@localhost sage]$ git reset --hard upstream/master
+    [user@localhost sage]$ git checkout develop
+    [user@localhost sage]$ git reset --hard upstream/develop
 
 
 .. _section-git-merge:
@@ -222,30 +195,29 @@ master branch. To switch to the correct Sage master branch, use::
 Merging and Rebasing
 ====================
 
-Sometimes, a new version of Sage is released while you work on a git branch.
+Sometimes, a new version of Sage is released while you work on a Git branch.
 
 Let us assume you started ``my_branch`` at commit ``B``. After a while, your
-branch has advanced to commit ``Z``, but you updated ``master`` (see
-:ref:`section-git-pull-master`) and now your git history looks like this (see
+branch has advanced to commit ``Z``, but you updated ``develop`` (see
+:ref:`section-git-pull-develop`) and now your Git history looks like this (see
 :ref:`section_walkthrough_logs`):
 
 .. CODE-BLOCK:: text
 
                      X---Y---Z my_branch
                     /
-               A---B---C---D master
+               A---B---C---D develop
 
 How should you deal with such changes? In principle, there are two ways:
 
-
 * **Rebase:** The first solution is to **replay** commits ``X,Y,Z`` atop of the
-  new ``master``. This is called **rebase**, and it rewrites your current
+  new ``develop``. This is called **rebase**, and it rewrites your current
   branch:
 
   .. CODE-BLOCK:: text
 
       git checkout my_branch
-      git rebase -i master
+      git rebase -i develop
 
   In terms of the commit graph, this results in:
 
@@ -253,27 +225,27 @@ How should you deal with such changes? In principle, there are two ways:
 
                              X'--Y'--Z' my_branch
                             /
-               A---B---C---D master
+               A---B---C---D develop
 
   Note that this operation rewrites the history of ``my_branch`` (see
   :ref:`section-git-rewriting-history`). This can lead to problems if somebody
   began to write code atop of your commits ``X,Y,Z``. It is safe otherwise.
 
-  **Alternatively**, you can rebase ``my_branch`` while updating master at the
+  **Alternatively**, you can rebase ``my_branch`` while updating ``develop`` at the
   same time (see :ref:`section-git-pull`):
 
   .. CODE-BLOCK:: text
 
     git checkout my_branch
-    git pull -r master
+    git pull -r develop
 
-* **Merging** your branch with ``master`` will create a new commit above the two
+* **Merging** your branch with ``develop`` will create a new commit above the two
   of them:
 
   .. CODE-BLOCK:: text
 
       git checkout my_branch
-      git merge master
+      git merge develop
 
   The result is the following commit graph:
 
@@ -281,7 +253,7 @@ How should you deal with such changes? In principle, there are two ways:
 
                      X---Y---Z---W my_branch
                     /           /
-               A---B---C-------D master
+               A---B---C-------D develop
 
   - **Pros:** you did not rewrite history (see
     :ref:`section-git-rewriting-history`).The additional commit is then easily
@@ -290,13 +262,13 @@ How should you deal with such changes? In principle, there are two ways:
   - **Cons:** it introduced an extra merge commit that would
     not be there had you used rebase.
 
-  **Alternatively**, you can merge ``my_branch`` while updating master at the
+  **Alternatively**, you can merge ``my_branch`` while updating ``develop`` at the
   same time (see :ref:`section-git-pull`):
 
   .. CODE-BLOCK:: text
 
     git checkout my_branch
-    git pull master
+    git pull develop
 
 **In case of doubt** use merge rather than rebase. There is less risk involved,
 and rebase in this case is only useful for branches with a very long history.

@@ -159,13 +159,13 @@ more thorough check::
   ___________ summary ____________
   ERROR:   pycodestyle: commands failed
 
-When preparing a branch for a Sage ticket that adds new code,
+When preparing a branch for a PR that adds new code,
 developers should verify that ``./sage -tox -e pycodestyle`` does not
 issue warnings for the added code.  This will avoid later cleanup
 tickets as the Sage codebase is moving toward full PEP 8 compliance.
 
 On the other hand, it is usually not advisable to mix coding-style
-fixes with productive changes on the same ticket because this would
+fixes with productive changes on the same PR because this would
 makes it harder for reviewers to evaluate the changes.
 
 By passing the options ``--count -qq`` we can reduce the output to
@@ -202,8 +202,8 @@ or a few related issues::
 - VS Code: The minimal version of pycodestyle is activated by default in
   ``SAGE_ROOT/.vscode/settings.json`` (the corresponding setting is
   ``"python.linting.pycodestyleEnabled": true``). Note that the
-  ``settings.json`` file is not ignored by git so be aware to keep it in sync
-  with the trac repo. For further details, see the
+  ``settings.json`` file is not ignored by Git so be aware to keep it in sync
+  with the Sage repo on GitHub. For further details, see the
   `official VS Code documentation <https://code.visualstudio.com/docs/python/linting>`__.
 
 *Configuration:* ``[pycodestyle]`` block in ``SAGE_ROOT/src/tox.ini``

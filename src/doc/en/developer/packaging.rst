@@ -622,13 +622,13 @@ For example:
     # gentoo uses 3.2.1
     sphinx >=3, <3.3
 
-The comments may include links to Trac tickets, as in the following example:
+The comments may include links to GitHub Issues/PRs, as in the following example:
 
 .. CODE-BLOCK:: bash
 
     $ cat build/pkgs/packaging/install-requires.txt
     packaging >=18.0
-    # Trac #30975: packaging 20.5 is known to work but we have to silence "DeprecationWarning: Creating a LegacyVersion"
+    # Issue #30975: packaging 20.5 is known to work but we have to silence "DeprecationWarning: Creating a LegacyVersion"
 
 The currently encoded version constraints are merely a starting point.
 Developers and downstream packagers are invited to refine the version
@@ -1048,8 +1048,8 @@ In addition to these fields in ``checksums.ini``, the optional field
 
 The Release Manager uses the information in ``upstream_url`` to
 download the upstream package archive and to make it available on the
-Sage mirrors when a new release is prepared.  On Trac tickets
-upgrading a package, the ticket description should no longer contain
+Sage mirrors when a new release is prepared.  On GitHub PRs
+upgrading a package, the PR description should no longer contain
 the upstream URL to avoid duplication of information.
 
 Note that, like the ``tarball`` field, the ``upstream_url`` is a
@@ -1079,7 +1079,7 @@ For Python packages available from PyPI, there is another shortcut::
     [...............................................................]
 
 The ``upstream_url`` information serves yet another purpose.
-Developers who wish to test a package update from a Trac branch before
+Developers who wish to test a package update from a PR branch before
 the archive is available on a Sage mirror can do so by configuring
 their Sage tree using ``./configure
 --enable-download-from-upstream-url``.  Then Sage will fall back to
@@ -1152,8 +1152,8 @@ or::
 
     [user@localhost]$ sage -f -c package_name
 
-If all went fine, open a ticket, put a link to the original tarball in
-the ticket and upload a branch with the code under
+If all went fine, open a PR, put a link to the original tarball in
+the PR and upload a branch with the code under
 ``SAGE_ROOT/build/pkgs``.
 
 
@@ -1168,19 +1168,19 @@ systems). After they have been in optional for some time without
 problems they can be proposed to be included as standard packages in
 Sage.
 
-To propose a package for optional/experimental inclusion please open a
-trac ticket with the respective ``Component:`` field set to either
-``packages:experimental`` or ``packages:optional``. The associated code
-requirements are described in the following sections.
+To propose a package for optional/experimental inclusion please open a GitHub
+PR added with labels ``c: packages: experimental`` or ``c: packages:
+optional``. The associated code requirements are described in the following
+sections.
 
-After the ticket was reviewed and included, optional packages stay in
+After the PR was reviewed and included, optional packages stay in
 that status for at least a year, after which they can be proposed to be
-included as standard packages in Sage. For this a trac ticket is opened
-with the ``Component:`` field set to ``packages:standard``. Then make
+included as standard packages in Sage. For this a GitHub PR is opened
+with the label ``c: packages: standard``. Then make
 a proposal in the Google Group ``sage-devel``.
 
 Upgrading packages to new upstream versions or with additional patches
-includes opening a ticket in the respective category too, as described
+includes opening a PR in the respective category too, as described
 above.
 
 License Information

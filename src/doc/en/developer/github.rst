@@ -36,7 +36,8 @@ instead of the web interface.  The central component of the GitHub CLI is the
 Installation
 ------------
 
-This :ref:`spkg_github_cli` documents how to install the ``gh`` command for your platform. Or see `GitHub CLI <https://cli.github.com>`_ from GitHub.
+This :ref:`spkg_github_cli` documents how to install the ``gh`` command for
+your platform. Or see `GitHub CLI <https://cli.github.com>`_ from GitHub.
 
 Configuration
 -------------
@@ -85,9 +86,9 @@ HTTPS protocol using your GitHub credentials. We assume this in the rest of
 this guide. For more details, see `Caching your GitHub credentials in Git
 <https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git>`_.
 
-If you prefer SSH protocol for Git operations with GitHub, then you follow
-:ref:`section-git-ssh` to generate an SSH keypair and add the keypair to your
-GitHub account. A simple way to upload the keypair is to choose SSH protocol
+If you prefer SSH protocol for authenticating Git to GitHub, then you follow
+:ref:`section-git-ssh` to generate an SSH keypair and add the SSH public key to your
+GitHub account. A simple way to upload the public key is to choose SSH protocol
 for Git operations in the dialogue from ``gh auth login`` command above.  For
 more details, see `Connecting to GitHub with SSH
 <https://docs.github.com/en/authentication/connecting-to-github-with-ssh>`_.

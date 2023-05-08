@@ -11,7 +11,7 @@ Setting up your workspace
 Configuring text editors and IDEs for use with Sage
 ===================================================
 
-In Meta-ticket :trac:`30500` we are collecting instructions how to configure
+In Meta-Issue :issue:`30500` we are collecting instructions how to configure
 various text editors and IDEs for use with Sage.
 
 
