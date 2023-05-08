@@ -74,8 +74,8 @@ created only to review the ticket.
 
 .. _section-git-update-latest:
 
-Update Branch to Latest SageMath Version (and Minimizing Recompilation Time)
-============================================================================
+Update Branch to Latest SageMath Version
+========================================
 
 - You have a compiled and working new SageMath version ``n``, and
 - you want to work on a branch ``some_code`` which is based on some old SageMath version ``o``
@@ -106,7 +106,7 @@ However sometimes there is a need for a merge, for example
 Then merging in the latest SageMath version has to be done.
 
 
-Merge in the Latest SageMath Version
+Merge in the latest SageMath version
 ------------------------------------
 
 (This is the easy way without minimizing the recompilation time.)
@@ -125,7 +125,7 @@ SageMath. Sometimes this can take ages (as many files are touched and
 their timestamps are renewed) and there is a way to avoid it.
 
 
-Minimize the Recompilation Time
+Minimize the recompilation time
 -------------------------------
 
 Suppose we are on some new SageMath (e.g. on branch ``develop``) which
@@ -167,7 +167,7 @@ To remove the new working tree simply use
     rm -r new_worktree
 
 
-Why not Merging the Other Way Round?
+Why not merging the other Way round?
 ------------------------------------
 
 Being on some new SageMath (e.g. on branch ``develop``) which runs
