@@ -212,9 +212,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
         13
         sage: X.ambient()
         PP^4
-        sage: p = X.point()
-        -- running Macaulay2 function point()... --
-        -- function point() has terminated. --
+        sage: p = X.point(verbose=False)
         sage: p.is_subset(X)
         True
 
@@ -454,7 +452,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
             if verbose: print("-- function eulerCharacteristic() has terminated. --")
             return self._topological_euler_characteristic
 
-    def point(self, verbose=None, UseMacaulay2=True):
+    def point(self, verbose=None, UseMacaulay2=None):
         r"""
         Pick a random point on the variety defined over a finite field
 
@@ -462,15 +460,22 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
 
             sage: X = Veronese(2,2)
             sage: p = X.point()
-            -- running Macaulay2 function point()... --
-            -- function point() has terminated. --
             sage: type(p) is type(X) and p.dimension() == 0 and p.degree() == 1 and p.is_subset(X)
             True
 
         """
         if verbose is None: verbose = __VERBOSE__
+        if UseMacaulay2 is None: UseMacaulay2 = not(self.codimension() == 0 or all(i == 1 for i in self.degrees_generators()) or hasattr(self,"_parametrization"))
         if not(isinstance(UseMacaulay2,bool) and isinstance(verbose,bool)): raise TypeError("expected True or False")
-        if UseMacaulay2 == False: raise NotImplementedError
+        if UseMacaulay2 == False:
+            if self.codimension() == 0:
+                return self.empty().random(*[1 for i in range(self.dimension())])
+            if all(i == 1 for i in self.degrees_generators()) or hasattr(self,"_parametrization"):
+                j = self.parametrize(verbose=verbose)
+                q = j(j.source().point(verbose=verbose,UseMacaulay2=False))
+                assert(q._is_point() and q.is_subset(self))
+                return q
+            raise NotImplementedError
         if verbose: print("-- running Macaulay2 function point()... --")
         X = macaulay2(self) 
         pointOnX = X.point()
@@ -480,11 +485,37 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
         polys = _minbase(ideal(M.minors(2)))
         assert((ideal(polys)).ring() is self.ambient().coordinate_ring())
         p = Embedded_Projective_Variety(self.ambient_space(),polys)
-        p._coordinates = c
+        p._coordinate_list = c
         assert(p.is_subset(self))
         p._macaulay2_object = pointOnX
         if verbose: print("-- function point() has terminated. --")
         return p
+
+    def _is_point(self):
+        r"""Return ``True`` if ``self`` is a point, ``False`` otherwise."""
+        try:
+            return self.__is_Point
+        except AttributeError:
+            if not all(i == 1 for i in self.degrees_generators()): 
+                self.__is_Point = False
+                return self.__is_Point
+            self.__is_Point = self.dimension() == 0 and self.codimension() == self.ambient().dimension()
+            return self.__is_Point
+    
+    def _coordinates(self):
+        r"""Return the homogeneous coordinates of a point."""
+        try:
+            return self._coordinate_list
+        except AttributeError:
+            if not self._is_point():
+                raise ValueError("expected a point")
+            I = self.defining_ideal()
+            M = jacobian(I.gens(),I.ring().gens()).change_ring(I.ring().base_ring())
+            assert((M * matrix([I.ring().gens()]).transpose()).list() == I.gens())
+            c = M.right_kernel_matrix().list()
+            assert(len(c) == self.ambient().dimension() + 1)
+            self._coordinate_list = c
+            return self._coordinate_list
 
     def _describe(self, verbose=None):
         r"""Return a brief description of the variety, see :meth:`describe`.
@@ -779,7 +810,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
         TESTS::
 
             sage: X = Veronese(2,2)
-            sage: Y = X.point(False)
+            sage: Y = X.point()
             sage: X == Y
             False
             sage: X == Veronese(2,2)
@@ -823,10 +854,9 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
             sage: S = surface(5,7,0,1);
             sage: h = S.parametrize();
             sage: h
-            rational map defined by forms of degree 5
+            dominant rational map defined by forms of degree 5
             source: PP^2
-            target: PP^7
-            image: surface of degree 9 and sectional genus 3 in PP^7 cut out by 12 hypersurfaces of degree 2    
+            target: surface of degree 9 and sectional genus 3 in PP^7 cut out by 12 hypersurfaces of degree 2    
             
             sage: L = PP(7).empty().random(1,1,1,1)
             sage: L.parametrize()
@@ -834,9 +864,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
             source: PP^3
             target: linear 3-dimensional subspace of PP^7
 
-            sage: p = L.point()
-            -- running Macaulay2 function point()... --
-            -- function point() has terminated. --            
+            sage: p = L.point()         
             sage: p.parametrize().source()
             PP^0
             
@@ -846,29 +874,29 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
             target: PP^7            
 
             sage: Veronese(2,2).parametrize()
-            -- running Macaulay2 function parametrize()... --
-            -- function parametrize has successfully terminated. --
-            rational map defined by forms of degree 4
+            dominant rational map defined by forms of degree 2
             source: PP^2
             target: surface of degree 4 and sectional genus 0 in PP^5 cut out by 6 hypersurfaces of degree 2
 
-            sage: macaulay2(_)
+            sage: macaulay2(_).describe()
             multi-rational map consisting of one single rational map
             source variety: PP^2
             target variety: surface in PP^5 cut out by 6 hypersurfaces of degree 2
+            base locus: empty subscheme of PP^2
             dominance: true
+            multidegree: {1, 2, 4}
             degree: 1
-            <BLANKLINE>
-            MultirationalMap (birational map from PP^2 to surface in PP^5)
+            degree sequence (map 1/1): [2]
+            coefficient ring: ZZ/33331
 
         """
         if verbose is None: verbose = __VERBOSE__
         try:
-            return self._parametrization
+            return self._parametrization.make_dominant()
         except AttributeError:
             if self.codimension() == 0:
                 f = self.embedding_morphism(self)
-                assert(f.image() is self)
+                assert(f.image() is self and f.is_dominant())
                 self._parametrization = f
                 return self._parametrization
             if set(self.degrees_generators()) == set([1]):
@@ -878,7 +906,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
                 P = ProjectiveSpace(self.dimension(), self.base_ring(),'z')
                 polys = (matrix(P.coordinate_ring().gens()) * M.right_kernel_matrix()).list()
                 f = rational_map(P,self,polys)
-                assert(f.image() is self)
+                assert(f.image() is self and f.is_dominant())
                 self._parametrization = f
                 return self._parametrization
             X = macaulay2(self)
@@ -917,8 +945,8 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
         EXAMPLE::
 
             sage: P = PP(5)
-            sage: X = P.point(False)
-            sage: Y = P.point(False)
+            sage: X = P.point()
+            sage: Y = P.point()
             sage: X.union(Y)
             0-dimensional subscheme of degree 2 in PP^5
             sage: X.union(Y) == X + Y
@@ -939,7 +967,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
         EXAMPLE::
 
             sage: X = Veronese(1,3)
-            sage: Y = X.ambient().point(False)
+            sage: Y = X.ambient().point()
             sage: Z = X.union(Y)
             sage: Z.difference(Y) == X and Z.difference(X) == Y
             True
@@ -1307,9 +1335,11 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
         EXAMPLE::
 
             sage: f = veronese(2,3)
-            sage: p = f.source().point(False)
-            sage: f(p)
-            one-point scheme in PP^9
+            sage: p = f.source().point()
+            sage: f(p).describe()
+            dim:.................. 0
+            codim:................ 9
+            degree:............... 1
             sage: f.inverse_image(f(p)) == p
             True
 
@@ -1341,19 +1371,23 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
             -- running Macaulay2 function inverse()... --
             -- function inverse() has successfully terminated. --
             sage: W = f.target().empty().random(1,1,1,1)
-            sage: f.inverse_image(W)
-            one-point scheme in PP^5
+            sage: f.inverse_image(W).describe()
+            dim:.................. 0
+            codim:................ 5
+            degree:............... 1
 
         TESTS::
 
             sage: P = PP(5)
-            sage: L = projective_variety(P.point(False).union(P.point(False))).random(1,1,1,1)
+            sage: L = projective_variety(P.point().union(P.point())).random(1,1,1,1)
             sage: f = rational_map(L).restriction(L.random(2,2,2)).make_dominant(); f
             dominant rational map defined by forms of degree 1
             source: surface of degree 8 and sectional genus 5 in PP^5 cut out by 3 hypersurfaces of degree 2
             target: surface of degree 4 and sectional genus 3 in PP^3
-            sage: f.inverse_image(f.target().point(False))
-            one-point scheme in PP^5
+            sage: q = f.inverse_image(f.target().point())
+            -- running Macaulay2 function point()... --
+            -- function point() has terminated. --
+            sage: assert(q._is_point() and q.ambient() == P)
 
         """ 
         Z = _check_type_embedded_projective_variety(Z)
@@ -1518,7 +1552,7 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
         EXAMPLE::
 
             sage: f = rational_map(Veronese(1,4))
-            sage: g = rational_map(f.target().point(False))
+            sage: g = rational_map(f.target().point())
             sage: f.compose(g)
             rational map defined by forms of degree 2
             source: PP^4
@@ -1639,9 +1673,9 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
         g = _from_macaulay2map_to_sagemap(g, self.target(), self.source())
         assert(g.source() is self.target() and g.target() is self.source())
         if check == True:
-            p = self.source().point(False)
+            p = self.source().point(verbose=False)
             assert(g(self(p)) == p)
-            q = self.target().point(False)
+            q = self.target().point(verbose=False)
             assert(self(g(q)) == q)
             if verbose: print("-- function inverse() has successfully terminated. --")
         return g
@@ -1780,8 +1814,11 @@ def Veronese(n, d, KK=GF(33331), var='x'):
         surface of degree 4 and sectional genus 0 in PP^5 cut out by 6 hypersurfaces of degree 2
         
     """
-    return veronese(n, d, KK=GF(33331), var='x').image()
- 
+    f = veronese(n, d, KK=GF(33331), var='x')
+    X = f.image()
+    X._parametrization = f  #f.make_dominant()
+    return X
+
 class Rational_Projective_Surface(Embedded_Projective_Variety):
     r"""The class of objects created by the function ``surface``, see :meth:`surface`.
 
@@ -2183,8 +2220,6 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
             sage: f.check()
             Congruence of 2-secant lines to surface in PP^5
             sage: p = X.ambient_fivefold().point()
-            -- running Macaulay2 function point()... --
-            -- function point() has terminated. --
             sage: f(p)
             line in PP^5
 
@@ -2220,7 +2255,8 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
                 _print_partial_M2_output(m2_str)
             f = X.detectCongruence() if Degree is None else X.detectCongruence(Degree)
             def f_s (p):
-                if not (_is_point(p) and p.is_subset(self.ambient_fivefold())):
+                p = _check_type_embedded_projective_variety(p)
+                if not (p._is_point() and p.is_subset(self.ambient_fivefold())):
                     raise Exception("expected a point on the ambient fivefold")
                 C = f(p)
                 D = _from_macaulay2_to_sage(C,self.ambient_space())
@@ -2250,7 +2286,7 @@ class Congruence_of_Secant_Curves_to_Surface(SageObject):
     def check(self, i=1):
         V = self._fourfold.ambient_fivefold()
         for j in range(i):
-            self(V.point(False))
+            self(V.point(verbose=False))
         return self
 
 class IntersectionOfThreeQuadricsInP7(Hodge_Special_Fourfold):
@@ -2382,9 +2418,9 @@ def _expr_var_1 (X):
     if k < 0 or k >= n: return _expr_var_0(k,n) 
     degs = X.degrees_generators()
     if k == 0: 
-        if degs.count(1) == len(degs) and X.degree() == 1: 
-            c = " of coordinates " + str(X._coordinates) if hasattr(X,"_coordinates") else ""
-            c_l = "\\mbox{ of coordinates }" + latex(X._coordinates) if hasattr(X,"_coordinates") else ""
+        if X._is_point(): 
+            c = " of coordinates " + str(X._coordinates())
+            c_l = "\\mbox{ of coordinates }" + latex(X._coordinates())
             return("one-point scheme in PP^" + str(n) + c, "\\mbox{one-point scheme in }" + "\\mathbb{P}^{" + latex(n) + "}" + c_l)
         else:
             return("0-dimensional subscheme of degree " + str(X.degree()) + " in PP^" + str(n), latex(0) + "\\mbox{-dimensional subscheme of degree }" + latex(X.degree())  + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}")
@@ -2423,11 +2459,6 @@ def _expr_var_1 (X):
     
 def _random1 (R):
     return(sum([R.random_element(degree=0) * x for x in R.gens()]))
-
-def _is_point(p):
-    p = _check_type_embedded_projective_variety(p)
-    if not all(i == 1 for i in p.degrees_generators()): return False
-    return(p.dimension() == 0 and p.codimension() == p.ambient().dimension())
 
 def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
     r"""
