@@ -1,1 +1,1 @@
-jupyter-packaging
+# jupyter-packaging # not a direct dependency, and does not support Python 3.11
