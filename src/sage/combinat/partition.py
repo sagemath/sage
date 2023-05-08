@@ -7451,6 +7451,22 @@ class Partitions_starting(Partitions):
             sage: Partitions(3, starting=[2,1]).list()
             [[2, 1], [1, 1, 1]]
 
+            sage: Partitions(7, starting=[2,2,1]).list()
+            [[2, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1]]
+
+            sage: Partitions(7, starting=[3,2]).list()
+            [[3, 1, 1, 1, 1],
+             [2, 2, 2, 1],
+             [2, 2, 1, 1, 1],
+             [2, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1]]
+
+            sage: Partitions(4, starting=[3,2]).list()
+            [[3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]]
+
+            sage: Partitions(3, starting=[1,1]).list()
+            []
+
         TESTS::
 
             sage: p = Partitions(3, starting=[2,1])
@@ -7489,6 +7505,24 @@ class Partitions_starting(Partitions):
         """
         return x in Partitions_n(self.n) and x <= self._starting
 
+    def __iter__(self):
+        """
+        Iterate over partitions less than `self._starting` in lex order.
+        
+        EXAMPLES::
+
+            sage: [p for p in Partitions(3, starting=[2,1])]
+            [[2, 1], [1, 1, 1]]
+            sage: [p for p in Partitions(3, starting=[2,2])]
+            [[2, 1], [1, 1, 1]]
+            sage: [p for p in Partitions(3, starting=[1,1])]
+            []
+        """
+        mu = self.first()
+        while mu:
+            yield mu
+            mu = self.next(mu)
+
     def first(self):
         """
         Return the first partition in ``self``.
@@ -7497,8 +7531,24 @@ class Partitions_starting(Partitions):
 
             sage: Partitions(3, starting=[2,1]).first()
             [2, 1]
+            sage: Partitions(3, starting=[1,1,1]).first()
+            [1, 1, 1]
+            sage: Partitions(3, starting=[1,1]).first()
+            False
+            sage: Partitions(3, starting=[3,1]).first()
+            [3]
+            sage: Partitions(3, starting=[2,2]).first()
+            [2, 1]
         """
-        return self._starting
+        if self._starting in Partitions_n(self.n):
+            return self._starting
+        
+        if (k := self._starting.size()) < self.n:
+            mu = list(self._starting) + [1] * (self.n - k)
+            return next(Partition(mu))
+        
+        #if self._starting.size() > self.n:
+        return self.element_class(self, Partitions(self.n, outer=self._starting).first())
 
     def next(self, part):
         """
