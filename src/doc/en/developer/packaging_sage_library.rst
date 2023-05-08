@@ -6,7 +6,7 @@ Packaging the Sage Library for Distribution
 ===========================================
 
 
-Modules, packages, distribution packages
+Modules, Packages, Distribution Packages
 ========================================
 
 The Sage library consists of a large number of Python modules,
@@ -123,7 +123,7 @@ default, but several packages are converted to implicit namespace
 packages to support modularization.
 
 
-Source directories of distribution packages
+Source Directories of Distribution Packages
 ===========================================
 
 The development of the Sage library uses a monorepo strategy for
@@ -207,7 +207,7 @@ up as "script packages" instead of "normal packages", see :ref:`section-package-
 
 .. _section_dependencies_distributions:
 
-Dependencies and distribution packages
+Dependencies and Distribution Packages
 ======================================
 
 When preparing a portion of the Sage library as a distribution
@@ -483,7 +483,7 @@ macro processor to insert the version information in the generated files
 ``pyproject.toml``, ``setup.cfg``, ``requirements.txt``.
 
 
-Hierarchy of distribution packages
+Hierarchy of Distribution Packages
 ==================================
 
 .. PLOT::
@@ -536,7 +536,7 @@ Not shown in the diagram are build dependencies and optional dependencies for te
   the Sage doctester (:mod:`sage.doctest`), and some related modules from :mod:`sage.misc`.
 
 
-Testing distribution packages
+Testing Distribution Packages
 =============================
 
 Of course, we need tools for testing modularized distributions of

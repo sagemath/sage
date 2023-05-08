@@ -5,7 +5,7 @@
 .. _chapter-doctesting:
 
 =======================
-Running Sage's doctests
+Running Sage's Doctests
 =======================
 
 Doctesting a function ensures that the function performs as claimed by
@@ -686,12 +686,13 @@ function in the global namespace, passing it either a string or a module:
         cpu time: 3.6 seconds
         cumulative wall time: 4.3 seconds
 
+
 .. _section-options:
 
 Optional Arguments
 ==================
 
-Run Long Doctests
+Run long doctests
 -----------------
 
 Ideally, doctests should not take any noticeable amount of time. If
@@ -858,9 +859,10 @@ This seed can be set explicitly to reproduce possible failures::
 It can also be set explicitly using the environment variable
 ``SAGE_DOCTEST_RANDOM_SEED``.
 
+
 .. _section-optional-doctest-flag:
 
-Run Optional Doctests
+Run optional doctests
 ---------------------
 
 You can run tests that require optional packages by using the
@@ -944,7 +946,8 @@ To run all tests, regardless of whether they are marked optional, pass ``all`` a
         cpu time: 4.7 seconds
         cumulative wall time: 11.2 seconds
 
-Running Doctests in Parallel
+
+Running doctests in parallel
 ----------------------------
 
 If you're testing many files, you can get big speedups by using more
@@ -979,7 +982,8 @@ you would like to use (by default Sage just uses 1)::
         cpu time: 4.2 seconds
         cumulative wall time: 21.5 seconds
 
-Doctesting All of Sage
+
+Doctesting all of Sage
 ----------------------
 
 To doctest the whole Sage library use the ``--all`` flag (``-a`` for
@@ -997,7 +1001,7 @@ as well as testing the Sage notebook::
     ...
 
 
-Debugging Tools
+Debugging tools
 ---------------
 
 Sometimes doctests fail (that's why we run them after all).  There are
@@ -1111,7 +1115,7 @@ test by using the ``--failed`` flag (``-f`` for short)::
     No files to doctest
 
 
-Miscellaneous Options
+Miscellaneous options
 ---------------------
 
 There are various other options that change the behavior of Sage's

@@ -84,7 +84,7 @@ Then check that it works by::
 
 .. _section-git-push:
 
-Pushing your changes to a Remote
+Pushing your Changes to a Remote
 ================================
 
 Push your branch to the remote ``origin`` with either ::

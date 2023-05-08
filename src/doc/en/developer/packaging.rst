@@ -34,7 +34,7 @@ for inclusion in the Sage source code.
 
 .. _section-package-types:
 
-Package types
+Package Types
 =============
 
 Not all packages are built by default, they are divided into standard,
@@ -546,7 +546,7 @@ possible.
 
 .. _section-spkg-check:
 
-Self-Tests
+Self-tests
 ----------
 
 The ``spkg-check.in`` file is an optional, but highly recommended,
@@ -808,7 +808,7 @@ word ``SAGE_DOCS``.
 
 .. _section-spkg-patching:
 
-Patching Sources
+Patching sources
 ----------------
 
 Actual changes to the source code must be via patches, which should be placed
@@ -971,7 +971,7 @@ We recommend the following workflow for maintaining a set of patches.
 
 .. _section-spkg-src:
 
-Modified Tarballs
+Modified tarballs
 -----------------
 
 The ``spkg-src`` file is optional and only to document how the upstream
@@ -986,7 +986,7 @@ to apply the same modifications to future versions.
 
 .. _section-spkg-versioning:
 
-Package Versioning
+Package versioning
 ------------------
 
 The ``package-version.txt`` file contains just the version. So if
@@ -1019,7 +1019,7 @@ account.
 
 .. _section-spkg-checksums:
 
-Checksums and Tarball Names
+Checksums and tarball names
 ---------------------------
 
 The ``checksums.ini`` file contains the filename pattern of the
@@ -1089,7 +1089,7 @@ to fewer mirrors.)
 It is then no longer necessary to manually download upstream tarballs.
 
 
-Utility script to create packages
+Utility Script to Create Packages
 =================================
 
 Assuming that you have downloaded
@@ -1126,7 +1126,7 @@ To create a wheel package rather than a normal package, you can use::
 
 .. _section-manual-build:
 
-Building the package
+Building the Package
 ====================
 
 At this stage you have a new tarball that is not yet distributed with
@@ -1183,7 +1183,7 @@ Upgrading packages to new upstream versions or with additional patches
 includes opening a PR in the respective category too, as described
 above.
 
-License Information
+License information
 -------------------
 
 If you are patching a standard Sage spkg, then you should make sure that
@@ -1204,7 +1204,7 @@ be a good solution to make a custom tarball consisting of only the free
 parts; see :ref:`section-spkg-src` and the ``giac`` package as an example.
 
 
-Prerequisites for New Standard Packages
+Prerequisites for new standard packages
 ---------------------------------------
 
 For a package to become part of Sage's standard distribution, it

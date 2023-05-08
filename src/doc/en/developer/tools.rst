@@ -5,7 +5,7 @@
 .. _chapter-tools:
 
 ========================================
-Additional development and testing tools
+Additional Development and Testing Tools
 ========================================
 
 .. _section-tools-tox:

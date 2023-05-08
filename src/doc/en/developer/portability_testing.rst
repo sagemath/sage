@@ -5,7 +5,7 @@
 .. _chapter-portability_testing:
 
 =============================
-Testing on multiple platforms
+Testing on Multiple Platforms
 =============================
 
 Sage is intended to build and run on a variety of platforms,
@@ -26,14 +26,14 @@ The `GitHub Actions
 will automatically test your GitHub PR by attempting an incremental build of
 Sage and running doctests.
 
-Sage buildbots
+Sage Buildbots
 ==============
 
 The `Sage Release buildbot <https://wiki.sagemath.org/buildbot>`_
 builds entire tarballs (e.g., all the development releases) on a
 variety of machines.
 
-Developers' and users' tests on sage-release
+Developers' and Users' Tests on Sage-Release
 ============================================
 
 Sage developers and users are encouraged to contribute to testing
@@ -42,7 +42,7 @@ releases that are announced on `Sage Release
 machines and to report test results (success and failures) by
 responding to the announcements.
 
-Testing Sage on a different platform using Docker
+Testing Sage on a Different Platform using Docker
 =================================================
 
 `Docker <https://www.docker.com>`_ is a popular virtualization
@@ -309,7 +309,7 @@ several developers can work on fixing the bug using containers running
 on their respective machines.
 
 
-Generating Dockerfiles
+Generating dockerfiles
 ----------------------
 
 Sage also provides a script for generating a ``Dockerfile``, which is
@@ -946,7 +946,7 @@ options::
   [mkoeppe@sage worktree-local]$ SKIP_SYSTEM_PKG_INSTALL=yes SKIP_BOOTSTRAP=1 SKIP_CONFIGURE=1 tox -e local-homebrew-macos-minimal -- bash
 
 
-Automatic testing on multiple platforms on GitHub Actions
+Automatic Testing on Multiple Platforms on GitHub Actions
 =========================================================
 
 The Sage source tree includes a default configuration for GitHub
@@ -1087,7 +1087,7 @@ Now you can pull the image and run it::
   $ docker run -it ghcr.io/YOUR-GITHUB-USERNAME/sage/sage-fedora-31-standard-configured:f4bd671 bash
 
 
-Using our pre-built Docker images published on ghcr.io
+Using our Pre-Built Docker images Published on ghcr.io
 ======================================================
 
 Our portability CI on GitHub Actions builds `Docker images
@@ -1146,7 +1146,7 @@ are available:
    ptest`` has not been run yet.
 
 
-Using our pre-built Docker images for development in VS Code
+Using our Pre-Built Docker images for Development in VS Code
 ============================================================
 
 `VS Code <https://code.visualstudio.com/>`_ is very
