@@ -2061,7 +2061,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.minimal_model().rank()
             1
 
-        A large example where mwrank doesn't determine the result with certainty::
+        A large example where mwrank doesn't determine the result with certainty, but pari does::
 
             sage: EllipticCurve([1,0,0,0,37455]).rank(proof=False)
             0
@@ -2069,6 +2069,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             Traceback (most recent call last):
             ...
             RuntimeError: rank not provably correct (lower bound: 0)
+            sage: EllipticCurve([1,0,0,0,37455]).rank(algorithm="pari")
+            0
 
         TESTS::
 
@@ -2076,6 +2078,14 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm 'garbage'
+
+        An example to check if the points are saturated::
+
+            sage: E = EllipticCurve([0,0, 1, -7, 6])
+            sage: E.gens(use_database=False, algorithm="pari") # random
+            [(2 : 0 : 1), (-1 : 3 : 1), (11 : 35 : 1)]
+            sage: E.saturation(_)[1]
+            1
 
         Since :trac:`23962`, the default is to use the Cremona
         database. We also check that the result is cached correctly::
@@ -2204,6 +2214,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             kpts = [ [x[0],x[1]] for x in self._known_points ]
             lower, upper, s, pts = ep.ellrank(pari_effort, kpts)
             ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
+            ge = self.saturation(ge)[0]
             self._known_points = ge
             if len(ge) == upper:
                 verbose_verbose(f"rank {upper} unconditionally determined by pari")
@@ -2256,10 +2267,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           greater than this, a warning message will be displayed.
 
         - ``pari_effort`` -- (default: 0) parameter used in when
-        the algorithm ``pari`` is chosen. It measure of the effort
-        done to find rational points. Values up to 10 can be chosen,
-        the running times increase roughly like the cube of the
-        effort value.
+          the algorithm ``pari`` is chosen. It measure of the effort
+          done to find rational points. Values up to 10 can be chosen,
+          the running times increase roughly like the cube of the
+          effort value.
 
         OUTPUT:
 
@@ -2422,6 +2433,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             kpts = [ [x[0],x[1]] for x in self._known_points ]
             lower, upper, s, pts = ep.ellrank(pari_effort, kpts)
             ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
+            ge = self.saturation(ge)[0]
             self._known_points = ge
             if len(ge) == upper:
                 verbose_verbose(f"rank {upper} unconditionally determined by pari")

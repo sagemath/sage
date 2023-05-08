@@ -174,8 +174,8 @@ def pari_two_descent_work(E):
         sage: pari_two_descent_work(E)
         (0, 0, 0, 0, [])
         sage: E = EllipticCurve('37a')
-        sage: pari_two_descent_work(E)
-        (1, 1, 0, 0, [(-1 : 0 : 1)])
+        sage: pari_two_descent_work(E) # random, up to sign
+        (1, 1, 0, 0, [(0 : -1 : 1)])
         sage: E = EllipticCurve('210e7')
         sage: pari_two_descent_work(E)
         (0, 2, 0, 2, [])
@@ -187,6 +187,7 @@ def pari_two_descent_work(E):
     ep = E.pari_curve()
     lower, rank_upper_bd, s, pts = ep.ellrank()
     gens = sorted([E.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
+    gens = E.saturation(gens)[0]
     # this is explained in the pari-gp documentation:
     # s is the dimension of Sha[2]/2Sha[4],
     # which is a lower bound for dim Sha[2]
