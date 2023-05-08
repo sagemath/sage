@@ -957,12 +957,15 @@ In particular, it automatically runs on our main repository sagemath/sage
 on every release tag.
 
 This is defined in the files
+
 - `$SAGE_ROOT/.github/workflows/ci-linux.yml
   <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-linux.yml>`_
   (which calls `$SAGE_ROOT/.github/workflows/docker.yml
   <https://github.com/sagemath/sage/tree/develop/.github/workflows/docker.yml>`_),
+
 - `$SAGE_ROOT/.github/workflows/ci-macos.yml
   <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-macos.yml>`_, and
+
 - `$SAGE_ROOT/.github/workflows/ci-cygwin-standard.yml
   <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-cygwin-standard.yml>`_
   (which calls `$SAGE_ROOT/.github/workflows/cygwin.yml
