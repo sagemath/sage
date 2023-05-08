@@ -1992,7 +1992,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     def rank(self, use_database=True, verbose=False,
              only_use_mwrank=True,
              algorithm='mwrank_lib',
-             proof=None):
+             proof=None,
+             pari_effort=0):
         r"""
         Return the rank of this elliptic curve, assuming no conjectures.
 
@@ -2022,9 +2023,15 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           ``proof.elliptic_curve`` or ``sage.structure.proof``); note that
           results obtained from databases are considered ``proof=True``
 
+        - ``pari_effort`` -- (default: 0) parameter used in when
+          the algorithm ``pari`` is chosen. It measure of the effort
+          done to find rational points. Values up to 10 can be chosen;
+          the running times increase roughly like the cube of the
+          effort value.
+
         OUTPUT: the rank of the elliptic curve as :class:`Integer`
 
-        IMPLEMENTATION: Uses L-functions, mwrank, and databases.
+        IMPLEMENTATION: Uses L-functions, mwrank, pari, and databases.
 
         EXAMPLES::
 
@@ -2089,7 +2096,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.rank(use_database=False, verbose=False, algorithm="pari")
             Traceback (most recent call last):
             ...
-            RuntimeError: rank not provably correct (lower bound: 0, upper bound:2)
+            RuntimeError: rank not provably correct (lower bound: 0, upper bound:2). Hint: increase pari_effort.
         """
         if proof is None:
             from sage.structure.proof.proof import get_flag
@@ -2192,19 +2199,21 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         if algorithm == 'pari':
             ep = self.pari_curve()
-            lower, upper, s, pts = ep.ellrank()
-            if lower == upper:
-                verbose_verbose(f"rank {lower} unconditionally determined by pari")
-                rank = Integer(lower)
+            # if we know already some points in _known_points
+            # we can give them to pari to speed it up
+            kpts = [ [x[0],x[1]] for x in self._known_points ]
+            lower, upper, s, pts = ep.ellrank(pari_effort, kpts)
+            ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
+            self._known_points = ge
+            if len(ge) == upper:
+                verbose_verbose(f"rank {upper} unconditionally determined by pari")
+                rank = Integer(upper)
                 self.__rank = (rank, True)
-                ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
-                self._known_points = ge
                 self.__gens = (ge, True)
                 return rank
             else:
                 verbose_verbose(f"Warning -- rank could not be determined by pari; ellrank returned {lower=}, {upper=}, {s=}, {pts=}", level=1)
-                raise RuntimeError(f"rank not provably correct (lower bound: {lower}, upper bound:{upper})")
-
+                raise RuntimeError(f"rank not provably correct (lower bound: {len(ge)}, upper bound:{upper}). Hint: increase pari_effort.")
         raise ValueError("unknown algorithm {!r}".format(algorithm))
 
     def gens(self, proof=None, **kwds):
@@ -2246,6 +2255,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           points found by two-descent in the Mordell-Weil group is
           greater than this, a warning message will be displayed.
 
+        - ``pari_effort`` -- (default: 0) parameter used in when
+        the algorithm ``pari`` is chosen. It measure of the effort
+        done to find rational points. Values up to 10 can be chosen,
+        the running times increase roughly like the cube of the
+        effort value.
+
         OUTPUT:
 
         - ``generators`` -- list of generators for the Mordell-Weil
@@ -2266,6 +2281,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             [(-1 : 1 : 1), (0 : 0 : 1)]
             sage: E.gens(algorithm="pari")    # random output
             [(5/4 : 5/8 : 1), (0 : 0 : 1)]
+            sage: E = EllipticCurve([0,2429469980725060,0,275130703388172136833647756388,0])
+            sage: len(E.gens(algorithm="pari"))
+            14
 
         A non-integral example::
 
@@ -2310,7 +2328,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                       only_use_mwrank=True,
                       use_database=True,
                       descent_second_limit=12,
-                      sat_bound=1000):
+                      sat_bound=1000,
+                      pari_effort=0):
         r"""
         Return generators for the Mordell-Weil group `E(Q)` *modulo*
         torsion.
@@ -2333,6 +2352,25 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: gens, proved = E._compute_gens(proof=False)
             sage: proved
             True
+
+        TESTS::
+
+            sage: E = EllipticCurve([-127^2,0])
+            sage: E.gens(use_database=False, algorithm="pari")
+            Traceback (most recent call last):
+            ...
+            RuntimeError: generators could not be determined. So far we found []. Hint: increase pari_effort.
+            sage: E.gens(use_database=False, algorithm="pari",pari_effort=4)
+            [(611429153205013185025/9492121848205441 : 15118836457596902442737698070880/924793900700594415341761 : 1)]
+
+            sage: E = EllipticCurve([-157^2,0])
+            sage: E.gens(use_database=False, algorithm="pari")
+            Traceback (most recent call last):
+            ...
+            RuntimeError: generators could not be determined. So far we found []. Hint: increase pari_effort.
+            sage: E.gens(use_database=False, algorithm="pari",pari_effort=10)
+            [(-166136231668185267540804/2825630694251145858025 : 167661624456834335404812111469782006/150201095200135518108761470235125 : 1)]
+
         """
         # If the optional extended database is installed and an
         # isomorphic curve is in the database then its gens will be
@@ -2379,18 +2417,22 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         # end if (not_use_mwrank)
         if algorithm == "pari":
             ep = self.pari_curve()
-            lower, upper, s, pts = ep.ellrank()
-            if lower == upper:
-                verbose_verbose(f"rank {lower} unconditionally determined by pari")
-                rank = Integer(lower)
+            # if we know already some points in _known_points
+            # we can give them to pari to speed it up
+            kpts = [ [x[0],x[1]] for x in self._known_points ]
+            lower, upper, s, pts = ep.ellrank(pari_effort, kpts)
+            ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
+            self._known_points = ge
+            if len(ge) == upper:
+                verbose_verbose(f"rank {upper} unconditionally determined by pari")
+                rank = Integer(upper)
                 self.__rank = (rank, True)
-                ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
-                self.__gens = (ge, True)
-                self._known_points = ge
-                return ge, True
-            else:
-                verbose_verbose(f"Warning -- rank could not be determined by pari; ellrank returned {lower=}, {upper=}, {s=}, {pts=}", level=1)
-                raise RuntimeError(f"rank not provably correct (lower bound: {lower}, upper bound:{upper})")
+                if len(ge) == rank:
+                    self.__gens = (ge, True)
+                    return ge, True
+            # cases when we did not find all points
+            verbose_verbose(f"Warning -- generators could not be determined by pari; ellrank returned {lower=}, {upper=}, {s=}, {pts=}", level=1)
+            raise RuntimeError(f"generators could not be determined. So far we found {ge}. Hint: increase pari_effort.")
         elif algorithm == "mwrank_lib":
             verbose_verbose("Calling mwrank C++ library.")
             if not self.is_integral():
