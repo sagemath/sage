@@ -121,7 +121,7 @@ class ConstantFieldExtension(FunctionFieldExtension):
         self._F_ext = F_ext
         self._k = k
 
-        super().__init__(embedF, is_backend_exposed=True)
+        super().__init__(embedF)
 
     def top(self):
         """
