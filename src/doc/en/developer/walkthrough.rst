@@ -297,8 +297,8 @@ want to be part of the next commit::
     #       src/sage/primes/last_pair.py
     nothing added to commit but untracked files present (use "git add" to track)
 
-    [user@localhost sage]$ git add src/sage/primes/last_pair.py
-    [user@localhost sage]$ git status
+    [alice@localhost sage]$ git add src/sage/primes/last_pair.py
+    [alice@localhost sage]$ git status
     # On branch my_branch
     # Changes to be committed:
     #   (use "git reset HEAD <file>..." to unstage)

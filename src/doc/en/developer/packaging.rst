@@ -14,7 +14,7 @@ The installation of packages is done through a bash script located in
 ``SAGE_ROOT/build/bin/sage-spkg``. This script is typically invoked by
 giving the command::
 
-    [user@localhost]$ sage -i <options> <package name>...
+    [alice@localhost sage]$ sage -i <options> <package name>...
 
 options can be:
 
@@ -757,7 +757,7 @@ should be declared in a separate file ``dependencies_optional``.
 In order to check that the dependencies of your package are likely
 correct, the following command should work without errors::
 
-    [user@localhost]$ make distclean && make base && make PACKAGE_NAME
+    [alice@localhost sage]$ make distclean && make base && make PACKAGE_NAME
 
 Finally, note that standard packages should only depend on standard
 packages and optional packages should only depend on standard or
@@ -1034,7 +1034,7 @@ upstream is ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, create a new file
 Sage internally replaces the ``VERSION`` substring with the content of
 ``package-version.txt``. To recompute the checksums, run::
 
-    [user@localhost]$ sage --package fix-checksum foo
+    [alice@localhost sage]$ sage --package fix-checksum foo
 
 which will modify the ``checksums.ini`` file with the correct
 checksums.
@@ -1066,14 +1066,14 @@ For Python packages available from PyPI, you should use an
 A package that has the ``upstream_url`` information can be updated by
 simply typing::
 
-    [user@localhost]$ sage --package update numpy 3.14.59
+    [alice@localhost sage]$ sage --package update numpy 3.14.59
 
 which will automatically download the archive and update the
 information in ``build/pkgs/``.
 
 For Python packages available from PyPI, there is another shortcut::
 
-    [user@localhost]$ sage --package update-latest matplotlib
+    [alice@localhost sage]$ sage --package update-latest matplotlib
     Updating matplotlib: 3.3.0 -> 3.3.1
     Downloading tarball to ...matplotlib-3.3.1.tar.bz2
     [...............................................................]
@@ -1095,7 +1095,7 @@ Utility Script to Create Packages
 Assuming that you have downloaded
 ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, you can use::
 
-    [user@localhost]$ sage --package create foo --version 1.3 --tarball FoO-VERSION.tar.gz --type experimental
+    [alice@localhost sage]$ sage --package create foo --version 1.3 --tarball FoO-VERSION.tar.gz --type experimental
 
 to create ``$SAGE_ROOT/build/pkgs/foo/package-version.txt``,
 ``checksums.ini``, and ``type`` in one step.
@@ -1106,7 +1106,7 @@ set the ``upstream_url`` field in ``checksums.ini`` described above.
 
 For Python packages available from PyPI, you can use::
 
-    [user@localhost]$ sage --package create scikit_spatial --pypi --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --type optional
 
 This automatically downloads the most recent version from PyPI and also
 obtains most of the necessary information by querying PyPI.
@@ -1117,11 +1117,11 @@ in the file ``install-requires.txt``.
 
 To create a pip package rather than a normal package, you can use::
 
-    [user@localhost]$ sage --package create scikit_spatial --pypi --source pip --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --source pip --type optional
 
 To create a wheel package rather than a normal package, you can use::
 
-    [user@localhost]$ sage --package create scikit_spatial --pypi --source wheel --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --source wheel --type optional
 
 
 .. _section-manual-build:
@@ -1137,20 +1137,20 @@ in the ``SAGE_ROOT/upstream/`` directory and run
 
 Now you can install the package using::
 
-    [user@localhost]$ sage -i package_name
+    [alice@localhost sage]$ sage -i package_name
 
 or::
 
-    [user@localhost]$ sage -f package_name
+    [alice@localhost sage]$ sage -f package_name
 
 to force a reinstallation. If your package contains a ``spkg-check``
 script (see :ref:`section-spkg-check`) it can be run with::
 
-    [user@localhost]$ sage -i -c package_name
+    [alice@localhost sage]$ sage -i -c package_name
 
 or::
 
-    [user@localhost]$ sage -f -c package_name
+    [alice@localhost sage]$ sage -f -c package_name
 
 If all went fine, open a PR, put a link to the original tarball in
 the PR and upload a branch with the code under

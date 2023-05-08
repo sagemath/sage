@@ -39,7 +39,7 @@ or the following brief instructions::
     Your identification has been saved in /home/user/.ssh/id_rsa.
     Your public key has been saved in /home/user/.ssh/id_rsa.pub.
     The key fingerprint is:
-    ce:32:b3:de:38:56:80:c9:11:f0:b3:88:f2:1c:89:0a user@localhost
+    ce:32:b3:de:38:56:80:c9:11:f0:b3:88:f2:1c:89:0a alice@localhost
     The key's randomart image is:
     +--[ RSA 2048]----+
     |  ....           |
@@ -115,7 +115,7 @@ things that you can get from/to the remote server. Hence, the first
 thing you should do is to get everything from the branch
 into your local repository. This is achieved by::
 
-    [user@localhost sage]git fetch upstream pull/12345/head
+    [alice@localhost sage]$ git fetch upstream pull/12345/head
     remote: Enumerating objects: 12, done.
     remote: Counting objects: 100% (12/12), done.
     remote: Compressing objects: 100% (3/3), done.
@@ -130,7 +130,7 @@ else) stored in your local Git database under the alias ``FETCH_HEAD``. In the
 second step, we make it available as a new local branch and switch to it. Your
 local branch can have a different name, for example::
 
-    [user@localhost sage]$ git checkout -b my_branch FETCH_HEAD
+    [alice@localhost sage]$ git checkout -b my_branch FETCH_HEAD
     Switched to a new branch 'my_branch'
 
 creates a new branch in your local Git repository named ``my_branch``
@@ -180,14 +180,14 @@ One way to ensure that you are notified of potential problems is to use ``git
 pull --ff-only``, which will raise an error if a non-trivial merge would be
 required::
 
-    [user@localhost sage]$ git checkout develop
-    [user@localhost sage]$ git pull --ff-only upstream develop
+    [alice@localhost sage]$ git checkout develop
+    [alice@localhost sage]$ git pull --ff-only upstream develop
 
 If this pull fails, then something is wrong with the local copy of the
 master branch. To switch to the correct Sage master branch, use::
 
-    [user@localhost sage]$ git checkout develop
-    [user@localhost sage]$ git reset --hard upstream/develop
+    [alice@localhost sage]$ git checkout develop
+    [alice@localhost sage]$ git reset --hard upstream/develop
 
 
 .. _section-git-merge:
