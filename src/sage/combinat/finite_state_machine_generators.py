@@ -276,7 +276,7 @@ class AutomatonGenerators():
         letters = list(word)
         length = len(letters)
         from sage.rings.integer_ring import ZZ
-        return Automaton([(ZZ(i), ZZ(i+1), letter)
+        return Automaton([(ZZ(i), ZZ(i + 1), letter)
                           for i, letter in enumerate(letters)],
                          initial_states=[ZZ(0)],
                          final_states=[ZZ(length)],
@@ -1241,7 +1241,7 @@ class TransducerGenerators():
             for ring in output_rings:
                 try:
                     return ring(output)
-                except (ValueError,TypeError):
+                except (ValueError, TypeError):
                     pass
             return output
 
@@ -1353,12 +1353,12 @@ class TransducerGenerators():
         assert equation == parsed_equation, \
             "Parsing of %s failed for unknown reasons." % (equation,)
 
-        rule = self.RecursionRule(K=K,r=r, k=k, s=s, t=to_list(t))
+        rule = self.RecursionRule(K=K, r=r, k=k, s=s, t=to_list(t))
         return rule
 
     def Recursion(self, recursions, base, function=None, var=None,
                   input_alphabet=None, word_function=None,
-                  is_zero=None,  output_rings=[ZZ, QQ]):
+                  is_zero=None, output_rings=[ZZ, QQ]):
         r"""
         Return a transducer realizing the given recursion when reading
         the digit expansion with base ``base``.
@@ -1815,11 +1815,11 @@ class TransducerGenerators():
 
         for given_rule in rules:
             q, remainder = given_rule.r.quo_rem(base**given_rule.K)
-            rule=self.RecursionRule(K=given_rule.K,
-                                    r=remainder,
-                                    k=given_rule.k,
-                                    s=given_rule.s - base**given_rule.k*q,
-                                    t=given_rule.t)
+            rule = self.RecursionRule(K=given_rule.K,
+                                      r=remainder,
+                                      k=given_rule.k,
+                                      s=given_rule.s - base**given_rule.k * q,
+                                      t=given_rule.t)
             for m in range(max_K - rule.K + 1):
                 for ell in range(base**m):
                     R = rule.r + base**rule.K * ell
@@ -1988,9 +1988,8 @@ class TransducerGenerators():
                     "Too many initial conditions, only give one of %s." %
                     cycle[1:])
             required_initial_values.update(intersection)
-            output_sum = sum([edge[2]
-                              for edge in recursion_digraph.\
-                                  outgoing_edge_iterator(cycle[1:])],
+            output_sum = sum([e[2]
+                for e in recursion_digraph.outgoing_edge_iterator(cycle[1:])],
                              [])
             if not is_zero(output_sum):
                 raise ValueError(

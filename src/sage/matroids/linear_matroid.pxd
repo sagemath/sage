@@ -22,8 +22,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     cpdef representation_vectors(self)
     cpdef LeanMatrix _basic_representation(self, B=*)
     cpdef LeanMatrix _reduced_representation(self, B=*)
-    
-    
+
+
     cpdef bint _is_field_isomorphism(self, LinearMatroid other, morphism)
     cpdef is_field_equivalent(self, other)
     cpdef is_field_isomorphism(self, other, morphism)

@@ -274,10 +274,6 @@ cdef initialize():
     # receive error output
     GAP_EvalString(_reset_error_output_cmd)
 
-    # Prepare global GAP variable to hold temporary GAP objects
-    global reference_holder
-    reference_holder = GVarName("$SAGE_libgap_reference_holder")
-
     # Finished!
     _gap_is_initialized = True
 
@@ -396,29 +392,6 @@ cdef Obj gap_eval(str gap_string) except? NULL:
     finally:
         GAP_Leave()
         sig_off()
-
-
-###########################################################################
-### Helper to protect temporary objects from deletion ######################
-############################################################################
-
-# Hold a reference (inside the GAP kernel) to obj so that it doesn't
-# get deleted this works by assigning it to a global variable. This is
-# very simple, but you can't use it to keep two objects alive. Be
-# careful.
-cdef UInt reference_holder
-
-cdef void hold_reference(Obj obj):
-    """
-    Hold a reference (inside the GAP kernel) to obj
-
-    This ensures that the GAP garbage collector does not delete
-    ``obj``. This works by assigning it to a global variable. This is
-    very simple, but you can't use it to keep two objects alive. Be
-    careful.
-    """
-    global reference_holder
-    AssGVar(reference_holder, obj)
 
 
 ############################################################################

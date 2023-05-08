@@ -37,20 +37,20 @@ EXAMPLES::
 
 Closed points of arbitrary degree can be computed::
 
-    sage: C.closed_points()                                                             # optional - sage.rings.finite_rings
+    sage: C.closed_points()                     # long time                             # optional - sage.rings.finite_rings
     [Point (x, y, z), Point (x + 1, y, z)]
-    sage: C.closed_points(2)                                                            # optional - sage.rings.finite_rings
+    sage: C.closed_points(2)                    # long time                             # optional - sage.rings.finite_rings
     [Point (x^2 + x + 1, y + 1, z),
      Point (y^2 + y + 1, x + y, z),
      Point (y^2 + y + 1, x + y + 1, z)]
-    sage: p = _[0]                                                                      # optional - sage.rings.finite_rings
-    sage: p.places()                                                                    # optional - sage.rings.finite_rings
+    sage: p = _[0]                              # long time                             # optional - sage.rings.finite_rings
+    sage: p.places()                            # long time                             # optional - sage.rings.finite_rings
     [Place (x^2 + x + 1, (1/(x^4 + x^2 + 1))*z^7 + (1/(x^4 + x^2 + 1))*z^6 + 1)]
 
 The places at infinity correspond to the extra closed points of the curve's
 projective closure::
 
-    sage: C.places_at_infinity()                                                        # optional - sage.rings.finite_rings
+    sage: C.places_at_infinity()                # long time                             # optional - sage.rings.finite_rings
     [Place (1/x, 1/x*z)]
 
 It is easy to transit to and from the function field of the curve::
@@ -993,7 +993,8 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             indices = [int(i) for i in indices] # type checking
             indices.sort()
             if indices[0] < 0 or indices[-1] > n - 1:
-                raise ValueError("index values must be between 0 and one minus the dimension of the ambient space " \
+                raise ValueError("index values must be between 0 and one "
+                                 "minus the dimension of the ambient space "
                                  "of this curve")
         # construct the projection map
         if AS is None:
@@ -1554,8 +1555,9 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             if C.is_smooth():
                 raise TypeError("this curve is already nonsingular")
             else:
-                raise TypeError("this curve has no singular points over its base field. If working over"\
-                                " a number field use extend=True")
+                raise TypeError("this curve has no singular points over "
+                                "its base field. If working over "
+                                "a number field use extend=True")
         not_resolved = True
         t = 0
         # loop through the patches and blow up each until no patch has singular points
@@ -1630,8 +1632,8 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                 b_data = [B[0][i]]
                 # projection map and its inverse
                 t_pi = B[2][i]
-                coords = [(BC.ambient_space().gens()[j] - pts[0][j])/(BC.ambient_space().gens()[i] - pts[0][i]) for\
-                          j in range(n)]
+                coords = [(BC.ambient_space().gens()[j] - pts[0][j]) / (BC.ambient_space().gens()[i] - pts[0][i])
+                          for j in range(n)]
                 coords.pop(i)
                 coords.insert(0, BC.ambient_space().gens()[i])
                 H = Hom(BC, B[0][i])
@@ -1640,7 +1642,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                 # with the projection map
                 L = list(t_maps)
                 for j in range(len(t_maps)):
-                    L[j] = L[j]*t_pi
+                    L[j] = L[j] * t_pi
                 for j in range(len(B[1][i])):
                     L.insert(t + j, B[1][i][j])
                 b_data.append(L)
@@ -1807,7 +1809,6 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
                                       " to the algebraic field")
         f = self.defining_polynomial()
         return braid_monodromy(f)
-
 
     def riemann_surface(self, **kwargs):
         r"""
@@ -2085,7 +2086,7 @@ class IntegralAffineCurve(AffineCurve_field):
             (x/(x^5 + 1))*y^4 + x^2/(x^5 + 1)
             sage: df = f.differential(); df                                             # optional - sage.rings.finite_rings
             ((1/(x^10 + 1))*y^4 + x^6/(x^10 + 1)) d(x)
-            sage: df.divisor()                                                          # optional - sage.rings.finite_rings
+            sage: df.divisor()                  # long time                             # optional - sage.rings.finite_rings
             2*Place (1/x, 1/x^4*y^4 + 1/x^3*y^3 + 1/x^2*y^2 + 1/x*y + 1)
              + 2*Place (1/x, 1/x*y + 1)
              - 2*Place (x + 1, y)
@@ -2283,7 +2284,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
             sage: A.<x,y> = AffineSpace(GF(7^2), 2)                                     # optional - sage.rings.finite_rings
             sage: C = Curve(x^2 - x^4 - y^4)                                            # optional - sage.rings.finite_rings
-            sage: C._singularities                                                      # optional - sage.rings.finite_rings
+            sage: C._singularities              # long time                             # optional - sage.rings.finite_rings
             [(Point (x, y),
               [Place (x, 1/x*y^3 + 1/x*y^2 + 1), Place (x, 1/x*y^3 + 1/x*y^2 + 6)])]
         """

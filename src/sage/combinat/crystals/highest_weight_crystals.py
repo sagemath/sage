@@ -168,7 +168,7 @@ def HighestWeightCrystal(dominant_weight, model=None):
 
     Check that the correct crystal is constructed for the fundamental weights::
 
-        sage: for ct in CartanType.samples(finite=True, crystallographic=True):
+        sage: for ct in CartanType.samples(finite=True, crystallographic=True):  # long time
         ....:     L = ct.root_system().weight_lattice()
         ....:     La = L.fundamental_weights()
         ....:     for model in ['Tableaux', 'NakajimaMonomials', 'AlcovePaths', 'RiggedConfigurations']:

@@ -268,7 +268,7 @@ from cysignals.memory cimport check_malloc, sig_malloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.graphs.graph_decompositions.fast_digraph cimport FastDigraph, compute_out_neighborhood_cardinality, popcount32
-from libc.stdint cimport uint8_t, int8_t
+from libc.stdint cimport uint8_t
 from sage.data_structures.binary_matrix cimport *
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
 from sage.misc.decorators import rename_keyword
@@ -985,7 +985,7 @@ def vertex_separation_exp(G, verbose=False):
 
     memset(neighborhoods, <uint8_t> -1, mem)
 
-    cdef int i, j, k
+    cdef int i, k
     for k in range(g.n):
         if verbose:
             print("Looking for a strategy of cost", str(k))
@@ -1467,12 +1467,12 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     """
     from sage.numerical.mip import MIPSolverException
 
-    p, x, u, y, z = _vertex_separation_MILP_formulation(G, integrality=integrality, solver=solver)
+    p, _, _, y, z = _vertex_separation_MILP_formulation(G, integrality=integrality, solver=solver)
     N = G.order()
     V = list(G)
 
     try:
-        obj = p.solve(log=verbose)
+        _ = p.solve(log=verbose)
     except MIPSolverException:
         if integrality:
             raise ValueError("unbounded or unexpected error")
@@ -1835,9 +1835,9 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
 
     # ==> Allocate local data structures
 
-    cdef bitset_s *loc_b_prefix         = bm_pool.rows[3 * level]
+    cdef bitset_s *loc_b_prefix = bm_pool.rows[3 * level]
     cdef bitset_s *loc_b_pref_and_neigh = bm_pool.rows[3 * level + 1]
-    cdef bitset_s *b_tmp                = bm_pool.rows[3 * level + 2]
+    cdef bitset_s *b_tmp = bm_pool.rows[3 * level + 2]
     bitset_copy(loc_b_prefix, b_prefix)
     bitset_copy(loc_b_pref_and_neigh, b_prefix_and_neighborhood)
 

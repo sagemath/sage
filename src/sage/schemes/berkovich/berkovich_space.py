@@ -431,8 +431,8 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
                 if not isinstance(ideal, NumberFieldFractionalIdeal):
                     raise ValueError('ideal was not an ideal of a number field')
                 if ideal.number_field() != base:
-                    raise ValueError('passed number field ' + \
-                        '%s but ideal was an ideal of %s' %(base, ideal.number_field()))
+                    raise ValueError('passed number field ' +
+                        '%s but ideal was an ideal of %s' % (base, ideal.number_field()))
                 prime = ideal.smallest_integer()
             else:
                 if ideal not in QQ:
@@ -446,8 +446,8 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
             ideal = None
             self._base_type = 'padic field'
         else:
-            raise ValueError("base of Berkovich Space must be a padic field " + \
-                "or a number field")
+            raise ValueError("base of Berkovich Space must be a padic field "
+                             "or a number field")
         self._ideal = ideal
         self._p = prime
         Parent.__init__(self, base=base, category=TopologicalSpaces())
@@ -472,10 +472,10 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
              Number Field in a with defining polynomial z^2 + 1
         """
         if self._base_type == 'padic field':
-            return "Affine Berkovich line over Cp(%s) of precision %s" %(self.prime(),\
+            return "Affine Berkovich line over Cp(%s) of precision %s" % (self.prime(),
                 self.base().precision_cap())
         else:
-            return "Affine Berkovich line over Cp(%s), with base %s" %(self.prime(),\
+            return "Affine Berkovich line over Cp(%s), with base %s" % (self.prime(),
                 self.base())
 
     def _latex_(self):
@@ -626,8 +626,8 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
                 raise ValueError("base of projective Berkovich space must be projective space")
         if not isinstance(base.base_ring(), sage.rings.abc.pAdicField):
             if base.base_ring() not in NumberFields():
-                raise ValueError("base of projective Berkovich space must be " + \
-                    "projective space over Qp or a number field")
+                raise ValueError("base of projective Berkovich space must be "
+                                 "projective space over Qp or a number field")
             else:
                 if ideal is None:
                     raise ValueError('passed a number field but not an ideal')
@@ -635,8 +635,8 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
                     if not isinstance(ideal, NumberFieldFractionalIdeal):
                         raise ValueError('ideal was not a number field ideal')
                     if ideal.number_field() != base.base_ring():
-                        raise ValueError('passed number field ' + \
-                            '%s but ideal was an ideal of %s' %(base.base_ring(), ideal.number_field()))
+                        raise ValueError('passed number field ' +
+                            '%s but ideal was an ideal of %s' % (base.base_ring(), ideal.number_field()))
                     prime = ideal.smallest_integer()
                 else:
                     if ideal not in QQ:
@@ -705,10 +705,10 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
              with base Number Field in a with defining polynomial x^2 + 1
         """
         if self._base_type == 'padic field':
-            return "Projective Berkovich line over Cp(%s) of precision %s" %(self.prime(),\
+            return "Projective Berkovich line over Cp(%s) of precision %s" % (self.prime(),
                 self.base().base_ring().precision_cap())
         else:
-            return "Projective Berkovich line over Cp(%s), with base %s" %(self.prime(),\
+            return "Projective Berkovich line over Cp(%s), with base %s" % (self.prime(),
                 self.base().base_ring())
 
     def _latex_(self):

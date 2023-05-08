@@ -1643,7 +1643,6 @@ class MPolynomialIdeal_singular_repr(
         """
         R = self.ring()
 
-
         for other in others:
             if not isinstance(other, MPolynomialIdeal_singular_repr) or other.ring() != R:
                 raise TypeError("Intersection is only available for ideals of the same ring.")
@@ -3717,10 +3716,10 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
 
 @richcmp_method
-class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
-                        MPolynomialIdeal_macaulay2_repr, \
-                        MPolynomialIdeal_magma_repr, \
-                        Ideal_generic ):
+class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
+                       MPolynomialIdeal_macaulay2_repr,
+                       MPolynomialIdeal_magma_repr,
+                       Ideal_generic):
     def __init__(self, ring, gens, coerce=True):
         r"""
         Create an ideal in a multivariate polynomial ring.
