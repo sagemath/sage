@@ -216,15 +216,17 @@ We check that :trac:`17990` is fixed::
 #*****************************************************************************
 
 from sys import maxsize
+
+import sage.rings.abc
+
+from sage.misc.fast_methods import Singleton
+from sage.misc.lazy_import import lazy_import
 from sage.rings.ring import Ring
 from sage.structure.element import RingElement, InfinityElement
 from sage.structure.richcmp import rich_to_bool, richcmp
-from sage.misc.fast_methods import Singleton
-import sage.rings.abc
-import sage.rings.integer
-import sage.rings.rational
 
-import sage.rings.integer_ring
+lazy_import('sage.rings.integer', 'Integer')
+
 
 _obj = {}
 class _uniq():
@@ -327,12 +329,11 @@ class AnInfinity():
             sage: pari(oo)
             +oo
         """
-        # For some reason, it seems problematic to import sage.libs.all.pari,
-        # so we call it directly.
+        from sage.libs.pari.all import pari
         if self._sign >= 0:
-            return sage.libs.all.pari('oo')
+            return pari('oo')
         else:
-            return sage.libs.all.pari('-oo')
+            return pari('-oo')
 
     def _latex_(self):
         r"""
@@ -850,7 +851,7 @@ class LessThanInfinity(_uniq, RingElement):
             0
         """
         if isinstance(other, UnsignedInfinity):
-            return sage.rings.integer_ring.ZZ(0)
+            return Integer(0)
         raise ValueError("quotient of number < oo by number < oo not defined")
 
     def _richcmp_(self, other, op):
@@ -1390,7 +1391,7 @@ class FiniteNumber(RingElement):
         if other.is_zero():
             if isinstance(self, InfinityElement):
                 raise SignError("cannot multiply infinity by zero")
-            return sage.rings.integer_ring.ZZ(0)
+            return Integer(0)
         if self.value < 0:
             if isinstance(other, InfinityElement):
                 return -other
@@ -1402,7 +1403,7 @@ class FiniteNumber(RingElement):
         if self.value == 0:
             if isinstance(other, InfinityElement):
                 raise SignError("cannot multiply infinity by zero")
-            return sage.rings.integer_ring.ZZ(0)
+            return Integer(0)
 
     def _div_(self, other):
         """
