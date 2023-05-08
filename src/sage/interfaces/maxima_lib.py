@@ -934,8 +934,15 @@ class MaximaLib(MaximaAbstract):
             e
             sage: limit(f,x = 5)
             7776/3125
-            sage: limit(f,x = 1.2)
+
+        Domain to real, a regression in 5.46.0, see https://sf.net/p/maxima/bugs/4138 ::
+
+            sage: maxima_calculus.eval("domain:real")
+            ...
+            sage: limit(f,x = 1.2).n()
             2.06961575467...
+            sage: maxima_calculus.eval("domain:complex");
+            ...
             sage: var('a')
             a
             sage: limit(x^a,x=0)
@@ -947,7 +954,7 @@ class MaximaLib(MaximaAbstract):
             for more details)
             Is a positive, negative or zero?
             sage: assume(a>0)
-            sage: limit(x^a,x=0)
+            sage: limit(x^a,x=0) # random - not needed for maxima 5.46.0
             Traceback (most recent call last):
             ...
             ValueError: Computation failed ...

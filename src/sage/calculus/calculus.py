@@ -1187,8 +1187,18 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         e
         sage: f.limit(x=5)
         7776/3125
-        sage: f.limit(x=1.2)
+
+    Domain to real, a regression in 5.46.0, see https://sf.net/p/maxima/bugs/4138 ::
+
+        sage: maxima_calculus.eval("domain:real")
+        ...
+        sage: f.limit(x=1.2).n()
         2.06961575467...
+        sage: maxima_calculus.eval("domain:complex");
+        ...
+
+    Otherwise, it works ::
+
         sage: f.limit(x=I, taylor=True)
         (-I + 1)^I
         sage: f(x=1.2)
@@ -1204,7 +1214,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
         sage: var('a')
         a
-        sage: limit(x^a,x=0)
+        sage: limit(x^a,x=0) # random - maxima 5.46.0 does not need extra assumption
         Traceback (most recent call last):
         ...
         ValueError: Computation failed since Maxima requested additional
@@ -1216,7 +1226,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
     With this example, Maxima is looking for a LOT of information::
 
         sage: assume(a>0)
-        sage: limit(x^a,x=0)
+        sage: limit(x^a,x=0) # random - maxima 5.46.0 does not need extra assumption
         Traceback (most recent call last):
         ...
         ValueError: Computation failed since Maxima requested additional
@@ -1225,7 +1235,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
          more details)
         Is a an integer?
         sage: assume(a,'integer')
-        sage: limit(x^a, x=0)
+        sage: limit(x^a, x=0) # random - maxima 5.46.0 does not need extra assumption
         Traceback (most recent call last):
         ...
         ValueError: Computation failed since Maxima requested additional
@@ -2252,10 +2262,10 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
         True
         sage: sefms("x # 3") == SR(x != 3)
         True
-        sage: solve([x != 5], x)
-        [[x - 5 != 0]]
+        sage: solve([x != 5], x) in [[[x - 5 != 0]], [[x < 5], [5 < x]]]
+        True
         sage: solve([2*x==3, x != 5], x)
-        [[x == (3/2), (-7/2) != 0]]
+        [[x == (3/2)...
 
     Make sure that we don't accidentally pick up variables in the maxima namespace (:trac:`8734`)::
 
