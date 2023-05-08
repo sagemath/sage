@@ -57,7 +57,7 @@ TESTS::
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
-from sage.structure.element cimport Element
+from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
@@ -145,7 +145,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         cdef Rational z
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
-                raise TypeError("entries must be a list of length %s"%self._degree)
+                raise TypeError("entries must be a list of length %s" % self._degree)
             for i from 0 <= i < self._degree:
                 z = Rational(x[i])
                 mpq_set(self._entries[i], z.value)
@@ -228,8 +228,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         """
         mpq_set(self._entries[i], (<Rational>value).value)
 
-
-    def list(self,copy=True):
+    def list(self, copy=True):
         """
         The list of entries of the vector.
 
@@ -247,8 +246,8 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             (1, 2, 3, 4)
         """
         cdef int i
-        return [_Rational_from_mpq(self._entries[i]) for i in
-                                  xrange(self._degree)]
+        return [_Rational_from_mpq(self._entries[i])
+                for i in range(self._degree)]
 
     def __reduce__(self):
         return (unpickle_v1, (self._parent, self.list(), self._degree,
@@ -262,7 +261,6 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         for i in range(self._degree):
             mpq_add(z._entries[i], self._entries[i], r._entries[i])
         return z
-
 
     cpdef _sub_(self, right):
         cdef Vector_rational_dense z, r
@@ -298,7 +296,6 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         mpq_clear(t)
         return z
 
-
     cpdef _pairwise_product_(self, Vector right):
         """
         EXAMPLES::
@@ -325,7 +322,8 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             mpq_set_z(a.value, (<Integer>left).value)
         else:
             # should not happen
-            raise TypeError("cannot convert %s to %s" % (type(left).__name__, Rational.__name__))
+            raise TypeError("cannot convert %s to %s" % (type(left).__name__,
+                                                         Rational.__name__))
         z = self._new_c()
         cdef Py_ssize_t i
         for i in range(self._degree):
@@ -342,7 +340,8 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             mpq_set_z(a.value, (<Integer>right).value)
         else:
             # should not happen
-            raise TypeError("cannot convert %s to %s" % (type(right).__name__, Rational.__name__))
+            raise TypeError("cannot convert %s to %s" % (type(right).__name__,
+                                                         Rational.__name__))
         z = self._new_c()
         cdef Py_ssize_t i
         for i in range(self._degree):
@@ -372,6 +371,7 @@ def unpickle_v0(parent, entries, degree):
         z = Rational(entries[i])
         mpq_set(v._entries[i], z.value)
     return v
+
 
 def unpickle_v1(parent, entries, degree, is_mutable):
     cdef Vector_rational_dense v
