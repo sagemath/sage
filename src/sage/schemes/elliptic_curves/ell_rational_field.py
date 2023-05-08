@@ -2310,8 +2310,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              over Rational Field
             sage: E1.gens() # random (if database not used)
             [(-400 : 8000 : 1), (0 : -8000 : 1)]
-            sage: E1.gens(algorithm="pari")
-            [(-400 : 8000 : 1), (0 : 0 : 1)]
+            sage: E1.gens(algorithm="pari")   #random
+            [(-400 : 8000 : 1), (0 : -8000 : 1)]
 
         """
         if proof is None:
@@ -2965,86 +2965,119 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             points = self.saturation(points, verbose=verbose)[0]
         return points
 
-    def selmer_rank(self):
+    def selmer_rank(self, algorithm="pari"):
         r"""
-        The rank of the 2-Selmer group of the curve.
+        Return the rank of the 2-Selmer group of the curve.
 
-        EXAMPLES: The following is the curve 960D1, which has rank 0, but
-        Sha of order 4.
+        INPUT:
 
-        ::
+        - ``algorithm`` -- (default:``'pari'``)
+          either ``'pari'`` or ``'mwrank'``
+
+        EXAMPLES:
+        This example has rank 1, Sha[2] of order 4 and
+        a single rational 2-torsion point::
+
+            sage: E = EllipticCurve([1, 1, 1, 508, -2551])
+            sage: E.selmer_rank()
+            4
+            sage: E.selmer_rank(algorithm="mwrank")
+            4
+
+        The following is the curve 960d1, which has rank 0, but
+        Sha of order 4::
 
             sage: E = EllipticCurve([0, -1, 0, -900, -10098])
             sage: E.selmer_rank()
             3
+            sage: E.selmer_rank(algorithm="mwrank")
+            3
 
-        Here the Selmer rank is equal to the 2-torsion rank (=1) plus
-        the 2-rank of Sha (=2), and the rank itself is zero::
+        This curve has rank 1, and 4 elements in Sha[2].
+        Yet the order of Sha is 16, so that group is the product
+        of two cyclic groups of order 4::
 
+            sage: E = EllipticCurve([1, 0, 0, -150752, -22541610])
+            sage: E.selmer_rank()
+            4
+
+        Instead in this last example of rank 0, Sha is a product of four cyclic groups of order 2::
+
+            sage: E = EllipticCurve([1, 0, 0, -49280, -4214808])
+            sage: E.selmer_rank()
+            5
             sage: E.rank()
             0
-
-        In contrast, for the curve 571A, also with rank 0 and Sha of
-        order 4, we get a worse bound::
-
-            sage: E = EllipticCurve([0, -1, 1, -929, -10595])
-            sage: E.selmer_rank()
-            2
-            sage: E.rank_bound()
-            2
-
-        To establish that the rank is in fact 0 in this case, we would
-        need to carry out a higher descent::
-
-            sage: E.three_selmer_rank() # optional - magma
-            0
-
-        Or use the L-function to compute the analytic rank::
-
-            sage: E.rank(only_use_mwrank=False)
-            0
         """
         try:
             return self.__selmer_rank
         except AttributeError:
-            C = self.mwrank_curve()
-            self.__selmer_rank = C.selmer_rank()
-            return self.__selmer_rank
+            if algorithm=="pari":
+                ep = self.pari_curve()
+                lower, upper, s, pts = ep.ellrank()
+                T = self.torsion_subgroup().invariants()
+                tor = sum(x%2==0 for x in T)
+                return upper + tor + s
+            elif algorithm=="mwrank":
+                C = self.mwrank_curve()
+                self.__selmer_rank = C.selmer_rank()
+                return self.__selmer_rank
+            else:
+                raise ValueError(f"unknown {algorithm=}")
 
-    def rank_bound(self):
+    def rank_bound(self, algorithm="pari"):
         r"""
-        Upper bound on the rank of the curve, computed using
-        2-descent.
+        Return the upper bound on the rank of the curve,
+        computed using a 2-descent.
+
+        INPUT:
+
+        - ``algorithm`` -- (default:``'pari'``)
+          either ``'pari'`` or ``'mwrank'``
 
         In many cases, this is the actual rank of the
-        curve.  If the curve has no 2-torsion it is the same as the
-        2-selmer rank.
+        curve.
 
-        EXAMPLES: The following is the curve 960D1, which has rank 0, but
-        Sha of order 4.
+        EXAMPLES::
 
-        ::
-
-            sage: E = EllipticCurve([0, -1, 0, -900, -10098])
+            sage: E = EllipticCurve("389a1")
             sage: E.rank_bound()
-            0
+            2
 
-        It gives 0 instead of 2, because it knows Sha is nontrivial. In
-        contrast, for the curve 571A, also with rank 0 and Sha of order 4,
-        we get a worse bound::
+        The following is the curve 571a1, which has
+        rank 0, but Sha of order 4, yet pari, using the Cassels
+        pairing is able to show that the rank is 0.
+        The 2-descent in mwrank only determines a weaker upper bound::
 
             sage: E = EllipticCurve([0, -1, 1, -929, -10595])
             sage: E.rank_bound()
+            0
+            sage: E.rank_bound(algorithm="mwrank")
             2
-            sage: E.rank(only_use_mwrank=False)   # uses L-function
+
+        In the following last example, both algorithm only determine a rank bound larger than the actual rank::
+
+            sage: E = EllipticCurve([1, 1, 1, -896670, -327184905])
+            sage: E.rank_bound()
+            2
+            sage: E.rank_bound(algorithm="mwrank")
+            2
+            sage: E.rank(only_use_mwrank=False) # uses L-function
             0
         """
         try:
             return self.__rank_bound
         except AttributeError:
-            C = self.mwrank_curve()
-            self.__rank_bound = C.rank_bound()
-            return self.__rank_bound
+            if algorithm=="pari":
+                ep = self.pari_curve()
+                lower, upper, s, pts = ep.ellrank()
+                return upper
+            elif algorithm=="mwrank":
+                C = self.mwrank_curve()
+                self.__rank_bound = C.rank_bound()
+                return self.__rank_bound
+            else:
+                raise ValueError(f"unknown {algorithm=}")
 
     def an(self, n):
         r"""
