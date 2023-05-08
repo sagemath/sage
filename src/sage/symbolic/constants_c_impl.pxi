@@ -17,7 +17,6 @@ The constant `e`
 #*****************************************************************************
 
 from sage.symbolic.expression cimport Expression
-from sage.symbolic.ring import SR
 
 
 # keep exp(1) for fast access
@@ -126,6 +125,8 @@ cdef class E(Expression):
             [e 0]
             [0 e]
         """
+        from sage.symbolic.ring import SR
+
         global exp_one
         exp_one = SR.one().exp()
         Expression.__init__(self, SR, exp_one)
@@ -171,7 +172,8 @@ cdef class E(Expression):
             try:
                 return right.exp()
             except AttributeError:
+                from sage.symbolic.ring import SR
                 return SR(right).exp()
         else:
+            from sage.symbolic.ring import SR
             return SR(left)**exp_one
-
