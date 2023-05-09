@@ -603,6 +603,27 @@ def _multiple_to_make_good_reduction(E):
     The first multiple of the generator `P` with good reduction in this
     non-minimal model is `30 P`.
 
+    TESTS::
+
+        sage: from sage.schemes.elliptic_curves.padics import _multiple_to_make_good_reduction
+        sage: E = EllipticCurve([1/2,1/3])
+        sage: _multiple_to_make_good_reduction(E)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: This only implemented for integral models. Please change the model first.
+        sage: E = EllipticCurve([0,3])
+        sage: _multiple_to_make_good_reduction(E)
+        1
+        sage: E = EllipticCurve([0,5^7]) # min eq is additive
+        sage: _multiple_to_make_good_reduction(E)
+        5
+        sage: E = EllipticCurve([7,0,0,0,7^7]) # min eq is split mult
+        sage: _multiple_to_make_good_reduction(E)
+        6
+        sage: E = EllipticCurve([0,-3^2,0,0,3^7]) # min eq is non-split mult
+        sage: _multiple_to_make_good_reduction(E)
+        4
+
     """
     if not E.is_integral():
         st = ("This only implemented for integral models. "
