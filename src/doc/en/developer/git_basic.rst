@@ -166,8 +166,8 @@ them into your local branch.
 
 .. _section-git-pull-develop:
 
-Updating master
-===============
+Updating develop
+================
 
 The ``develop`` branch can be updated just like any other branch. However, your
 local copy of the develop branch should stay **identical** to the GitHub Sage repo develop
