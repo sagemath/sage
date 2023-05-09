@@ -1339,7 +1339,6 @@ def log_p_series_part(a, prime, prec):
                  ZZ((gi * p**(-gi.valuation(p))) % (p**(prec+w-gi.valuation(p)))) * p**(gi.valuation(p)) * g**i
                  for i,gi in enumerate(gamma) if gi != 0])
 
-
     beta = 0
     delta = 1 - gamma
     for i in range(1, n+1):

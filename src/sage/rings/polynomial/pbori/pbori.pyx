@@ -2857,11 +2857,14 @@ cdef class BooleanMonomialVariableIterator:
             sage: next(iter(m))
             x
         """
+        cdef int index
         cdef PBVar value
         if self._iter == self._end:
             raise StopIteration
-        value = self._iter.dereference()
+        index = self._iter.dereference()
         self._iter.increment()
+        value = PBBooleVariable(self.pbind[index],
+                                (<BooleanPolynomialRing>self._ring)._pbring)
         return new_BM_from_PBVar(self.parent, self._ring, value)
 
 cdef inline BooleanMonomialVariableIterator new_BMVI_from_BooleanMonomial(
@@ -2875,8 +2878,9 @@ cdef inline BooleanMonomialVariableIterator new_BMVI_from_BooleanMonomial(
     m.parent = monom._parent
     m._ring = monom._ring
     m.obj = monom
-    m._iter = m.obj._pbmonom.variableBegin()
-    m._end = m.obj._pbmonom.variableEnd()
+    m._iter = m.obj._pbmonom.begin()
+    m._end = m.obj._pbmonom.end()
+    m.pbind = (<BooleanPolynomialRing> monom.ring()).pbind
     return m
 
 

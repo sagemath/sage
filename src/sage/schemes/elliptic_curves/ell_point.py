@@ -528,8 +528,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         """
         return bool(self[2])
 
-
-
     def has_finite_order(self):
         """
         Return ``True`` if this point has finite additive order as an

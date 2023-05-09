@@ -664,7 +664,6 @@ class EllipticCurveFormalGroup(SageObject):
             # express it in terms of the formal parameter
             return -Q[0] / Q[1]
 
-
         # Now the general case, not necessarily over a field.
 
         R = rings.PowerSeriesRing(self.curve().base_ring(), "t")

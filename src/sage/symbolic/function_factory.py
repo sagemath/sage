@@ -193,8 +193,7 @@ def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
         (a, b)
         sage: cr = function('cr')
         sage: f = cr(a)
-        sage: g = f.diff(a).integral(b)
-        sage: g
+        sage: g = f.diff(a).integral(b); g
         b*diff(cr(a), a)
         sage: foo = function("foo", nargs=2)
         sage: x,y,z = var("x y z")
@@ -218,7 +217,8 @@ def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
         sage: 2*f
         Traceback (most recent call last):
         ...
-        TypeError: unsupported operand parent(s) for *: 'Integer Ring' and '<class 'sage.symbolic.function_factory...NewSymbolicFunction'>'
+        TypeError: unsupported operand parent(s) for *: 'Integer Ring' and
+        '<class 'sage.symbolic.function_factory...NewSymbolicFunction'>'
 
     You now need to evaluate the function in order to do the arithmetic::
 

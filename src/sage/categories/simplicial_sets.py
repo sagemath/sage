@@ -456,7 +456,7 @@ class SimplicialSets(Category_singleton):
                 """
                 from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
                 from sage.topology.simplicial_set_morphism import SimplicialSetMorphism
-                char = {a : b for (a,b) in character.items()}
+                char = {a: b for (a, b) in character.items()}
                 G = list(char.values())[0].parent()
                 if not G.is_finite():
                     raise NotImplementedError("can only compute universal covers of spaces with finite fundamental group")
@@ -465,14 +465,14 @@ class SimplicialSets(Category_singleton):
 
                 for s in self.n_cells(0):
                     for g in G:
-                        cell =  AbstractSimplex(0,name="({}, {})".format(s, g))
-                        cells_dict[(s,g)] = cell
+                        cell = AbstractSimplex(0, name="({}, {})".format(s, g))
+                        cells_dict[(s, g)] = cell
                         char[s] = G.one()
 
                 for d in range(1, self.dimension() + 1):
                     for s in self.n_cells(d):
                         if s not in char.keys():
-                            if d==1 and  s.is_degenerate():
+                            if d == 1 and s.is_degenerate():
                                 char[s] = G.one()
                             elif s.is_degenerate():
                                 if 0 in s.degeneracies():
@@ -483,8 +483,8 @@ class SimplicialSets(Category_singleton):
                                 char[s] = char[self.face(s, d)]
                         if s.is_nondegenerate():
                             for g in G:
-                                cell =  AbstractSimplex(d,name="({}, {})".format(s, g))
-                                cells_dict[(s,g)] = cell
+                                cell = AbstractSimplex(d, name="({}, {})".format(s, g))
+                                cells_dict[(s, g)] = cell
                                 fd = []
                                 faces = self.faces(s)
                                 f0 = faces[0]

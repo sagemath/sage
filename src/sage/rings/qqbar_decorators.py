@@ -36,7 +36,6 @@ def handle_AA_and_QQbar(func):
 
     @sage_wraps(func)
     def wrapper(*args, **kwds):
-
         """
         TESTS::
 
