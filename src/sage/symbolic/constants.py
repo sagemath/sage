@@ -227,7 +227,10 @@ constants_name_table[repr(infinity)] = infinity
 constants_name_table[repr(unsigned_infinity)] = unsigned_infinity
 constants_name_table[repr(minus_infinity)] = minus_infinity
 
-from sage.symbolic.expression import register_symbol, I
+from sage.symbolic.expression import register_symbol, init_pynac_I
+
+I = init_pynac_I()
+
 register_symbol(infinity, {'maxima':'inf'}, 0)
 register_symbol(minus_infinity, {'maxima':'minf'}, 0)
 register_symbol(unsigned_infinity, {'maxima':'infinity'}, 0)
