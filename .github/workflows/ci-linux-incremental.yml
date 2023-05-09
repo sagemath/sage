@@ -24,6 +24,7 @@ on:
       - reopened
       # When a CI label is added
       - labeled
+  workflow_dispatch:
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch
@@ -34,12 +35,13 @@ jobs:
 
   minimal:
     if: |
-      (github.event.action != 'labeled' &&
-        (contains(github.event.pull_request.labels.*.name, 'c: packages: standard') ||
-         contains(github.event.pull_request.labels.*.name, 'c: packages: optional'))) ||
-      (github.event.action == 'labeled' &&
-        (github.event.label.name == 'c: packages: optional' ||
-         github.event.label.name == 'c: packages: standard'))
+      github.event_name != 'pull_request' ||
+      ((github.event.action != 'labeled' &&
+         (contains(github.event.pull_request.labels.*.name, 'c: packages: standard') ||
+          contains(github.event.pull_request.labels.*.name, 'c: packages: optional'))) ||
+       (github.event.action == 'labeled' &&
+         (github.event.label.name == 'c: packages: optional' ||
+          github.event.label.name == 'c: packages: standard')))
     uses: ./.github/workflows/docker.yml
     with:
       # Build incrementally from published Docker image
