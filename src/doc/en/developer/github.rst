@@ -36,7 +36,7 @@ instead of the web interface.  The central component of the GitHub CLI is the
 Installation
 ------------
 
-This :ref:`spkg_github_cli` documents how to install the ``gh`` command for
+The page :ref:`spkg_github_cli` documents how to install the ``gh`` command for
 your platform. Or see `GitHub CLI <https://cli.github.com>`_ from GitHub.
 
 Configuration
