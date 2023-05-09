@@ -9,7 +9,7 @@ Git Basics
 
 .. _section-git-ssh:
 
-Git Authentication through SSH
+Git authentication through SSH
 ==============================
 
 In order to push changes securely to a remote repository, Git uses public-key
@@ -20,7 +20,7 @@ to authenticate your Git to GitHub.
 
 .. _section-github-ssh-key:
 
-Generating your SSH Keys
+Generating your SSH keys
 ------------------------
 
 Check whether you already have suitable SSH keys by inspecting ``.ssh``
@@ -84,7 +84,7 @@ Then check that it works by::
 
 .. _section-git-push:
 
-Pushing your Changes to a Remote
+Pushing your changes to a remote
 ================================
 
 Push your branch to the remote ``origin`` with either ::
@@ -141,7 +141,7 @@ local branch.
 
 .. _section-git-pull:
 
-Getting Changes from a Remote
+Getting changes from a remote
 =============================
 
 A common task during development is to synchronize your local copy of the
@@ -166,7 +166,7 @@ them into your local branch.
 
 .. _section-git-pull-develop:
 
-Updating Master
+Updating master
 ===============
 
 The ``develop`` branch can be updated just like any other branch. However, your
@@ -192,7 +192,7 @@ master branch. To switch to the correct Sage master branch, use::
 
 .. _section-git-merge:
 
-Merging and Rebasing
+Merging and rebasing
 ====================
 
 Sometimes, a new version of Sage is released while you work on a Git branch.
@@ -276,7 +276,7 @@ and rebase in this case is only useful for branches with a very long history.
 
 .. _section-git-mergetool:
 
-Merge Tools
+Merge tools
 ===========
 
 Simple conflicts can be easily solved with Git only (see :ref:`section-git-conflict`)
@@ -313,7 +313,7 @@ pane.
 
 .. _section-git-conflict:
 
-Conflict Resolution
+Conflict resolution
 -------------------
 
 Merge conflicts happen if there are overlapping edits, and they are an

@@ -19,7 +19,7 @@ Before proceeding, check that you have ``origin`` and ``upstream`` remotes right
     upstream	https://github.com/sagemath/sage.git (push)
 
 
-Development Workflow at a Glance
+Development workflow at a glance
 ================================
 
 .. IMAGE:: static/workflow.*
@@ -48,7 +48,7 @@ Development Workflow at a Glance
 
 .. _section-workflows-pr-create:
 
-Creating a New PR
+Creating a new PR
 =================
 
 Suppose you have written an algorithm for calculating the last twin prime,
@@ -79,7 +79,7 @@ to edit the PR further via the web interface.
 
 .. _section-workflows-pr-checkout:
 
-Checking out an Existing PR
+Checking out an existing PR
 ===========================
 
 If you want to base your work on an existing PR or want to review the code of a PR,
@@ -103,7 +103,7 @@ the ``-b`` switch if you want.
 
 .. _section-workflows-push:
 
-Uploading More Changes to GitHub
+Uploading more changes to GitHub
 ================================
 
 Once you have created a PR, edit the appropriate files and
@@ -132,7 +132,7 @@ the Sage repo.
 
 .. _section-workflows-finish:
 
-Finishing It Up
+Finishing it up
 ===============
 
 It is common to go through a few iterations of commits before you
@@ -147,7 +147,7 @@ set it to ``needs review`` status.
 
 .. _section-workflows-merge:
 
-Merging Upstream develop Branch
+Merging upstream develop branch
 ===============================
 
 It commonly happens that ``develop`` branch at the remote ``upstream`` was updated and you need to merge the upstream changes to your local branch. Then you do::
@@ -172,6 +172,4 @@ this merge operation will finish cleanly. Otherwise, you are in *merge
 conflict*. This rarely happens since Git is smart in merging changes. However,
 once merge conflict occurs, you have to manually resolve the conflicts. The
 conflict resolving procedure is explained in :ref:`section-git-conflict`.
-
-
 

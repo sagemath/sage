@@ -15,7 +15,7 @@ with Sage. The most important one among them is of course `the Sage repository
 
 .. _section-github-account:
 
-Obtaining a GitHub Account
+Obtaining a GitHub account
 ==========================
 
 To share your work on Sage, you need a GitHub account. If you do not have one
@@ -74,7 +74,7 @@ and check::
 which will show the default repo along with its readme, which is quite long.
 
 
-Linking Git to your GitHub Account
+Linking Git to your GitHub account
 ==================================
 
 In order for your Git to work with GitHub, your GitHub account needs to be
@@ -94,7 +94,7 @@ more details, see `Connecting to GitHub with SSH
 <https://docs.github.com/en/authentication/connecting-to-github-with-ssh>`_.
 
 
-Forking the Sage Repository
+Forking the Sage repository
 ===========================
 
 The first step is to create `your personal fork
@@ -172,7 +172,7 @@ such as the GitHub CLI.
 
 .. _section-github-bug-report:
 
-Reporting Bugs
+Reporting bugs
 ==============
 
 If you think you have found a bug in Sage, here is the procedure:
@@ -205,7 +205,7 @@ advance for reporting bugs to improve Sage!
 
 .. _section-github-new-enhancement:
 
-Planning an Enhancement
+Planning an enhancement
 =======================
 
 In addition to bug reports, you should also open an issue if you have some new
@@ -239,7 +239,7 @@ Before opening a new issue, consider the following points:
 
 .. _section-github-create-issue:
 
-Opening an Issue
+Opening an issue
 ================
 
 Whether it's reporting a bug or planning an enhancement, `issue
@@ -305,7 +305,7 @@ If you are working on a PR and the PR is not yet quite ready for review, then
 
 .. _section-github-pr-status:
 
-The Status of a PR
+The status of a PR
 ==================
 
 If a PR is in the state of draft, the review process does not start. Otherwise,
@@ -332,7 +332,7 @@ the PR will get one of **resolution** labels: ``r: duplicate``, ``r: invalid``,
 
 .. _section-github-stopgaps:
 
-The Stopgap
+The stopgap
 ===========
 
 When Sage returns wrong results, an issue and a PR should be created:
@@ -362,7 +362,7 @@ Replace ``ISSUE_NUM`` by the reference number for the stopgap issue. On the stop
     Sage crashes, this is not an issue.
 
 
-Commenting Issues and PRs
+Commenting issues and PRs
 =========================
 
 Anyone can comment on an issue or a PR. If a PR is linked to an issue,
@@ -419,7 +419,7 @@ Actions.
   choose the particular branch to see what went wrong.
 
 
-Final Notes
+Final notes
 ===========
 
 * Every bug fixed should result in a doctest.

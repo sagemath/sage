@@ -115,7 +115,7 @@ REFERENCES:
    (Caveat: mercurial was replaced with Git and Trac with GitHub)
 
 
-Reviewing and Closing PRs
+Reviewing and closing PRs
 =========================
 
 PRs can be closed when they have positive review or for other reasons.
@@ -128,7 +128,7 @@ that's not already clear from the discussion.
 If you think an issue has been prematurely be closed, feel free to reopen it.
 
 
-Reasons to Invalidate PRs
+Reasons to invalidate PRs
 =========================
 
 **One Issue Per One Issue**: An issue must cover only one issue
@@ -175,7 +175,7 @@ some of the other rules listed above. An example would be to
 measure this properly and it is highly subjective.
 
 
-The Release Process
+The release process
 ===================
 
 It is good for developers and reviewers to be aware of the procedure that the

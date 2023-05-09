@@ -18,7 +18,7 @@ machines, it is crucial to test changes to Sage, in particular
 when external packages are added or upgraded, on a wide
 spectrum of platforms.
 
-GitHub Actions
+GitHub actions
 ==============
 
 The `GitHub Actions
@@ -26,14 +26,14 @@ The `GitHub Actions
 will automatically test your GitHub PR by attempting an incremental build of
 Sage and running doctests.
 
-Sage Buildbots
+Sage buildbots
 ==============
 
 The `Sage Release buildbot <https://wiki.sagemath.org/buildbot>`_
 builds entire tarballs (e.g., all the development releases) on a
 variety of machines.
 
-Developers' and Users' Tests on Sage-Release
+Developers' and users' tests on sage-release
 ============================================
 
 Sage developers and users are encouraged to contribute to testing
@@ -42,7 +42,7 @@ releases that are announced on `Sage Release
 machines and to report test results (success and failures) by
 responding to the announcements.
 
-Testing Sage on a Different Platform using Docker
+Testing Sage on a different platform using Docker
 =================================================
 
 `Docker <https://www.docker.com>`_ is a popular virtualization
@@ -946,7 +946,7 @@ options::
   [mkoeppe@sage worktree-local]$ SKIP_SYSTEM_PKG_INSTALL=yes SKIP_BOOTSTRAP=1 SKIP_CONFIGURE=1 tox -e local-homebrew-macos-minimal -- bash
 
 
-Automatic Testing on Multiple Platforms on GitHub Actions
+Automatic testing on multiple platforms on GitHub Actions
 =========================================================
 
 The Sage source tree includes a default configuration for GitHub
@@ -1087,7 +1087,7 @@ Now you can pull the image and run it::
   $ docker run -it ghcr.io/YOUR-GITHUB-USERNAME/sage/sage-fedora-31-standard-configured:f4bd671 bash
 
 
-Using our Pre-Built Docker images Published on ghcr.io
+Using our pre-built Docker images published on ghcr.io
 ======================================================
 
 Our portability CI on GitHub Actions builds `Docker images
@@ -1146,7 +1146,7 @@ are available:
    ptest`` has not been run yet.
 
 
-Using our Pre-Built Docker images for Development in VS Code
+Using our pre-built Docker images for development in VS Code
 ============================================================
 
 `VS Code <https://code.visualstudio.com/>`_ is very

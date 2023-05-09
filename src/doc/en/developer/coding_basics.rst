@@ -31,7 +31,7 @@ style conventions discussed in this chapter.
 
 .. _section-coding-python:
 
-Python Code Style
+Python code style
 =================
 
 Follow the standard Python formatting rules when writing code for
@@ -90,7 +90,7 @@ In particular,
 
 .. _chapter-directory-structure:
 
-Files and Directory Structure
+Files and directory structure
 =============================
 
 Roughly, the Sage directory tree is layout like this. Note that we use
@@ -193,7 +193,7 @@ search, but restricted to function definitions, while
 docstrings for more information and more options.
 
 
-Headings of Sage Library Code Files
+Headings of Sage library code files
 ===================================
 
 The top of each Sage code file should follow this format::
@@ -240,7 +240,7 @@ compatible, that is, less restrictive license (e.g. the BSD license).
 
 .. _section-docstrings:
 
-Documentation Strings
+Documentation strings
 =====================
 
 .. _section-docstring-function:
@@ -771,7 +771,7 @@ there is not one already. That is, you can do the following:
 
 .. _section-latex-typeset:
 
-LaTeX Typesetting
+LaTeX typesetting
 -----------------
 
 In Sage's documentation LaTeX code is allowed and is marked with **backticks**:
@@ -875,7 +875,7 @@ for details about how to add more macros.
 
 .. _section-doctest-writing:
 
-Writing Testable Examples
+Writing testable examples
 -------------------------
 
 The examples from Sage's documentation have a double purpose:
@@ -983,7 +983,7 @@ written.
 
 .. _section-further_conventions:
 
-Special Markup to Influence Doctests
+Special markup to influence doctests
 ------------------------------------
 
 Overly complicated output in the example code can be shortened
@@ -1242,7 +1242,7 @@ further development on Sage.
 
 .. _chapter-testing:
 
-Running Automated Doctests
+Running automated doctests
 ==========================
 
 This section describes Sage's automated testing of test files of the
@@ -1257,7 +1257,7 @@ doctesting modules in the Sage library.
 
 .. _section-testpython:
 
-Testing .py, .pyx and .sage Files
+Testing .py, .pyx and .sage files
 ---------------------------------
 
 Run ``sage -t <filename.py>`` to test all code examples in
@@ -1282,7 +1282,7 @@ write for the documentation and have them work.
 For more information, see :ref:`chapter-doctesting`.
 
 
-Testing reST Documentation
+Testing reST documentation
 --------------------------
 
 Run ``sage -t <filename.rst>`` to test the examples in verbatim
@@ -1325,7 +1325,7 @@ Sage.
 
 .. _section-coding-general-whitespace:
 
-General Coding Style Regarding Whitespace
+General coding style regarding whitespace
 =========================================
 
 Use spaces instead of tabs for indentation. The only exception is for
@@ -1343,7 +1343,7 @@ If you use another editor, we recommend to configure it so you do not
 add tabs to files. See :ref:`section-ide`.
 
 
-Global Options
+Global options
 ==============
 
 Global options for classes can be defined in Sage using

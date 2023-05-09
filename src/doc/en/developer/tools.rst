@@ -13,7 +13,7 @@ Additional Development and Testing Tools
 Tox
 ===
 
-`Tox <https://tox.readthedocs.io/en/latest/>`_ is a popular package that is
+`tox <https://tox.readthedocs.io/en/latest/>`_ is a popular package that is
 used by a large number of Python projects as the standard entry point
 for testing and linting.
 

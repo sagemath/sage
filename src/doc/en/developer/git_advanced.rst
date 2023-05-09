@@ -13,8 +13,8 @@ you are just getting started with Sage development, you should read
 :ref:`chapter-walkthrough` and :ref:`chapter-git-basic` instead.
 
 
-Detached Heads and Reviewing Tickets
-====================================
+Detached heads and reviewing PRs
+================================
 
 Each commit is a snapshot of the Sage source tree at a certain
 point. So far, we always used commits organized in branches. But
@@ -74,8 +74,8 @@ created only to review the ticket.
 
 .. _section-git-update-latest:
 
-Update Branch to Latest SageMath Version
-========================================
+Update branch to latest Sage version
+====================================
 
 - You have a compiled and working new SageMath version ``n``, and
 - you want to work on a branch ``some_code`` which is based on some old SageMath version ``o``
@@ -106,8 +106,8 @@ However sometimes there is a need for a merge, for example
 Then merging in the latest SageMath version has to be done.
 
 
-Merge in the latest SageMath version
-------------------------------------
+Merge in the latest Sage version
+--------------------------------
 
 (This is the easy way without minimizing the recompilation time.)
 
@@ -167,7 +167,7 @@ To remove the new working tree simply use
     [alice@localhost sage]$ rm -r new_worktree
 
 
-Why not merging the other Way round?
+Why not merging the other way round?
 ------------------------------------
 
 Being on some new SageMath (e.g. on branch ``develop``) which runs
@@ -181,7 +181,7 @@ as one cannot simply pursue the first parent of each git commit
 
 .. _section-git-recovery:
 
-Reset and Recovery
+Reset and recovery
 ==================
 
 Git makes it very hard to truly mess up. Here is a short way to get
@@ -249,7 +249,7 @@ reset* command, we just have to reset back into the future::
 
 .. _section-git-rewriting-history:
 
-Rewriting History
+Rewriting history
 =================
 
 Git allows you to rewrite history, but be careful: the SHA1 hash of a
@@ -340,7 +340,7 @@ contains commits A, C and the second contains commit B.
 
 .. _section-git-interactive-rebase:
 
-Interactively Rebasing
+Interactively rebasing
 ======================
 
 An alternative approach to :ref:`section-git-rewriting-history` is to

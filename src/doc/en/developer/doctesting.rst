@@ -35,7 +35,7 @@ either a Python script (with the file extension ".py") or it can be a
 Cython script, in which case it has the file extension ".pyx".
 
 
-Testing a Module
+Testing a module
 ================
 
 Say we want to run all tests in the sudoku module
@@ -198,7 +198,7 @@ installation is a different (older) version than the one we are
 using for Sage development.  Make sure you always test the files
 with the correct version of Sage.
 
-Parallel Testing Many Modules
+Parallel testing many modules
 =============================
 
 So far we have used a single thread to doctest a module in the Sage
@@ -495,7 +495,7 @@ decreases.
 
 .. _section-parallel-test-whole-library:
 
-Parallel Testing the Whole Sage Library
+Parallel testing the whole Sage library
 =======================================
 
 The main Sage library resides in the directory
@@ -569,7 +569,8 @@ you can execute
 Some of the extra testing options are discussed here; run
 ``sage -t -h`` for a complete list.
 
-Beyond the Sage Library
+
+Beyond the Sage library
 =======================
 
 Doctesting also works fine for files not in the Sage library.  For
@@ -663,7 +664,8 @@ and then doctest that::
         cpu time: 0.0 seconds
         cumulative wall time: 0.0 seconds
 
-Doctesting from Within Sage
+
+Doctesting from within Sage
 ===========================
 
 You can run doctests from within Sage, which can be useful since you
@@ -689,7 +691,7 @@ function in the global namespace, passing it either a string or a module:
 
 .. _section-options:
 
-Optional Arguments
+Optional arguments
 ==================
 
 Run long doctests

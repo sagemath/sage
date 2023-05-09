@@ -69,7 +69,7 @@ before you forget! This only needs to be done once. See
 
 .. _section-walkthrough-sage-source:
 
-Obtaining the Sage Source Code
+Obtaining the Sage source code
 ==============================
 
 Obviously one needs the Sage source code to develop. You can use your
@@ -106,7 +106,7 @@ you wish to use conda-forge, see the section on `conda
 
 .. _section-walkthrough-branch:
 
-Branching Out
+Branching out
 =============
 
 In order to start modifying Sage, we want to make a new *branch* in the local
@@ -159,7 +159,7 @@ branch in one command.
 
 .. _section_walkthrough_logs:
 
-The History
+The history
 ===========
 
 It is always a good idea to check that you are making your edits on the branch
@@ -182,7 +182,7 @@ By default, this lists all commits in reverse chronological order.
 
 .. _section-walkthrough-add-edit:
 
-Editing the Source Code
+Editing the source code
 =======================
 
 Once you have your own branch, feel free to make any changes to source files as

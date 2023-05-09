@@ -34,7 +34,7 @@ for inclusion in the Sage source code.
 
 .. _section-package-types:
 
-Package Types
+Package types
 =============
 
 Not all packages are built by default, they are divided into standard,
@@ -140,7 +140,7 @@ and if it does not, then it is a ``dummy`` package.
 
 .. _section-directory-structure:
 
-Directory Structure
+Directory structure
 ===================
 
 Third-party packages in Sage consist of two parts:
@@ -641,7 +641,7 @@ a complex topic; see :trac:`33520`.
 
 .. _section-spkg-SPKG-txt:
 
-The SPKG.rst File
+The SPKG.rst file
 -----------------
 
 The ``SPKG.rst`` file should follow this pattern:
@@ -1089,7 +1089,7 @@ to fewer mirrors.)
 It is then no longer necessary to manually download upstream tarballs.
 
 
-Utility Script to Create Packages
+Utility script to create packages
 =================================
 
 Assuming that you have downloaded
@@ -1126,7 +1126,7 @@ To create a wheel package rather than a normal package, you can use::
 
 .. _section-manual-build:
 
-Building the Package
+Building the package
 ====================
 
 At this stage you have a new tarball that is not yet distributed with
@@ -1159,7 +1159,7 @@ the PR and upload a branch with the code under
 
 .. _section-inclusion-procedure:
 
-Inclusion Procedure for New and Updated Packages
+Inclusion procedure for new and updated packages
 ================================================
 
 Packages that are not part of Sage will first become optional or

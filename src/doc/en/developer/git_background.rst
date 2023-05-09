@@ -13,7 +13,7 @@ steps needed for Sage development.
 
 .. _section-git-configuration:
 
-Configuration Tips
+Configuration tips
 ==================
 
 Your personal Git configurations are saved in the ``~/.gitconfig``
@@ -92,7 +92,7 @@ Or from the command line::
 
 .. _section-fancy-log:
 
-Fancy Log Output
+Fancy log output
 ----------------
 
 Here is an alias to get a fancy log output. It should go in the
@@ -125,13 +125,14 @@ Using this ``lg`` alias gives you the changelog with a colored ASCII graph::
 
 .. _section-git-tutorials:
 
-Tutorials and Summaries
+Tutorials and summaries
 =======================
 
 There are many, many tutorials and command summaries available online.
 
 Beginner
 --------
+
 * `Try Git <https://try.github.io/levels/1/challenges/1>`_ is an entry-level
   tutorial you can do in your browser.  If you are unfamiliar with revision
   control, you will want to pay close attention to the "Advice" section toward
@@ -157,6 +158,7 @@ Beginner
 
 Advanced
 --------
+
 * `Github help <http://help.github.com>`_ has an excellent series of
   how-to guides.
 
@@ -182,7 +184,7 @@ Advanced
   <http://subversion.tigris.org/>`_
 
 
-Summaries/Cheat Sheets
+Summaries/cheat sheets
 ----------------------
 * A `Git cheat sheet <http://github.com/guides/git-cheat-sheet>`_ is a
   page giving summaries of common commands.
@@ -191,7 +193,7 @@ Summaries/Cheat Sheets
   <http://schacon.github.com/git/user-manual.html>`_.
 
 
-Git Best Practices
+Git best practices
 ==================
 
 There are many ways of working with Git. Here are some posts on the
@@ -207,7 +209,7 @@ rules of thumb that other projects have come up with:
   branches where you are doing active development.
 
 
-Manual Pages Online
+Manual pages online
 ===================
 
 You can get these on your own machine with (e.g) ``git help push`` or
@@ -226,6 +228,4 @@ online manual pages for some common commands:
 * `git push <http://schacon.github.com/git/git-push.html>`_
 * `git remote <http://schacon.github.com/git/git-remote.html>`_
 * `git status <http://schacon.github.com/git/git-status.html>`_
-
-
 

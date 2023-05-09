@@ -149,7 +149,7 @@ another option is to use `anonymous hyperlinks
 
 .. _section-add-file:
 
-Adding a New File
+Adding a new file
 =================
 
 If you added a new file to Sage (e.g. ``sage/matroids/my_algorithm.py``) and you
@@ -168,7 +168,7 @@ procedure is different:
 
 .. _section-building-manuals:
 
-Building the Manuals
+Building the manuals
 ====================
 
 *(Do you want to edit the documentation?* :ref:`Click here
@@ -206,7 +206,7 @@ links::
 
 .. _section-manuals-names:
 
-Document Names
+Document names
 --------------
 
 The ``<document-name>`` has the form:
@@ -228,7 +228,7 @@ To specify the French version of the tutorial, you would simply run::
     sage --docbuild fr/tutorial html
 
 
-Syntax Highlighting Cython Code
+Syntax highlighting Cython code
 ===============================
 
 If you want to write :ref:`Cython <chapter-cython>` code in a ReST file, precede
