@@ -329,7 +329,7 @@ consider the following code snippet:
         """
         return fibonacci(i-1) * fibonacci(i-2)
 
-This is clearly wrong; Two developers, namely Alice and Bob, decide to
+This is clearly wrong. Two developers, namely Alice and Bob, decide to
 fix it. Bob corrected the seed values:
 
 .. CODE-BLOCK:: python
@@ -344,12 +344,15 @@ fix it. Bob corrected the seed values:
 
 and turned those changes into a new commit::
 
-    [alice@laptop sage]$ git add fibonacci.py
-    [alice@laptop sage]$ git commit -m 'return correct seed values'
+    [bob@laptop sage]$ git add fibonacci.py
+    [bob@laptop sage]$ git commit -m 'return correct seed values'
 
-He made her changes a PR to the GitHub sage repo and quickly got merged to the ``develop`` branch. Yes, his `fibonacci` function is not yet perfect but is certainly better than the original. Meanwhile, Alice changed the
-multiplication to an addition since that is the correct recursion
-formula:
+He made his changes a PR to the GitHub Sage repo and got it merged to the
+``develop`` branch. His ``fibonacci`` function is not yet perfect but is
+certainly better than the original.
+
+Meanwhile, Alice changed the multiplication to an addition since that is the
+correct recursion formula:
 
 .. CODE-BLOCK:: python
 
@@ -359,11 +362,12 @@ formula:
         """
         return fibonacci(i-1) + fibonacci(i-2)
 
-and merged his branch with the latest ``develop`` branch fetched from the GitHub Sage repo::
+and merged her branch with the latest ``develop`` branch fetched from the GitHub Sage repo::
 
-    [bob@home sage]$ git add fibonacci.py
-    [bob@home sage]$ git commit -m 'corrected recursion formula, must be + instead of *'
-    [bob@home sage]$ git merge develop
+    [alice@home sage]$ git add fibonacci.py
+    [alice@home sage]$ git commit -m 'corrected recursion formula, must be + instead of *'
+    [alice@home sage]$ git fetch upstream develop:develop
+    [alice@home sage]$ git merge develop
     ...
     CONFLICT (content): Merge conflict in fibonacci.py
     Automatic merge failed; fix conflicts and then commit the result.
@@ -379,11 +383,11 @@ The file now looks like this:
         Return the `i`-th Fibonacci number
         """
     <<<<<<< HEAD
+        return fibonacci(i-1) + fibonacci(i-2)
+    =======
         if i > 1:
             return fibonacci(i-1) * fibonacci(i-2)
         return [0, 1][i]
-    =======
-        return fibonacci(i-1) + fibonacci(i-2)
     >>>>>>> 41675dfaedbfb89dcff0a47e520be4aa2b6c5d1b
 
 The conflict is shown between the conflict markers ``<<<<<<<`` and
