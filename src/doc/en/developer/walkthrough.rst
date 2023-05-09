@@ -10,22 +10,10 @@ This section is a concise overview of the Sage development process. We will see
 how to make changes to the Sage source code and record them in the Git revision
 control system.
 
-We also have a handy `one-page cheat sheet
-<http://github.com/sagemath/git-trac-command/raw/master/doc/git-cheat-sheet.pdf>`_
-of commonly used git commands that you can print out and leave on your
-desk.  We have some :ref:`recommended references and tutorials
-<section-git-tutorials>` as well.
-
 In the sections of the following chapter :ref:`section-development-on-github`,
 we will look at communicating these changes back to the Sage project. All
 changes to Sage source code have to go through `the Sage repository
 <https://github.com/sagemath/sage>`_ on GitHub.
-
-Git is a tool to exchange commits (organized into branches) with other
-developers. As a distributed revision control system, it does not have the
-notion of a central server. `The Sage repository
-<https://github.com/sagemath/sage>`_ on GitHub is just one of many possible
-remote repositories from your (or rather your Git) point of view.
 
 For examples, we assume your name Alice. Always replace it with your own name.
 
@@ -234,7 +222,7 @@ to rebuild the Sage library and then start Sage.
 
     All changes to Python files take effect immediately after restarting Sage
     (unless you have used ``./configure --disable-editable`` when you built
-    Sage). Hence you just start Sage instead of ``./sage -br`` if only Python
+    Sage). Hence you can just start Sage instead of ``./sage -br`` if only Python
     files were modified.
 
 If you made changes to :ref:`third-party packages <chapter-packaging>`

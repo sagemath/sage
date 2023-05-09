@@ -6,6 +6,13 @@
 Git Basics
 ==========
 
+Git is a tool to exchange commits (file changes) and branches (organized of
+commits) with other developers.
+
+As a distributed revision control system, Git does not have the notion of a
+central server. However, for Sage development, Git communicates with other
+developers via `the Sage repository <https://github.com/sagemath/sage>`_ on
+GitHub. Hence we assume that throughout this guide.
 
 .. _section-git-ssh:
 

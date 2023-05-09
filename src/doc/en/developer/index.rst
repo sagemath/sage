@@ -94,9 +94,8 @@ First Steps
 .. toctree::
    :maxdepth: 2
 
-   git_setup
    walkthrough
-
+   git_setup
 
 .. _section-development-on-github:
 
