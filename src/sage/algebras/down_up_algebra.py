@@ -1,4 +1,4 @@
-"""
+r"""
 Down-Up Algebras
 
 AUTHORS:
@@ -6,15 +6,15 @@ AUTHORS:
 - Travis Scrimshaw (2023-4): initial version
 """
 
-#*****************************************************************************
-#  Copyright (C) 2023 Travis Scrimshaw <tcscrims at gmail.com>
+# ****************************************************************************
+#       Copyright (C) 2023 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.algebras import Algebras
@@ -461,11 +461,9 @@ class DownUpAlgebra(CombinatorialFreeModule):
 
     def verma_module(self, la):
         r"""
-        Return the Verma module `V(\lambda)` of ``self``.
-
-        .. SEEALSO::
-
-            :class:`~sage.algebras.down_up_algebra.VermaModule`
+        Return the :class:`Verma module
+        <sage.algebras.down_up_algebra.VermaModule>`
+        `V(\lambda)` of ``self``.
 
         EXAMPLES::
 
@@ -647,7 +645,8 @@ class VermaModule(CombinatorialFreeModule):
 
     def highest_weight_vector(self):
         r"""
-        Return the highest weight vector of ``self``.
+        Return the highest weight vector of ``self`` that generates
+        ``self`` as a down-up module.
 
         EXAMPLES::
 
@@ -729,6 +728,9 @@ class VermaModule(CombinatorialFreeModule):
         return self.term(n - m[2] + m[0], coeff)
 
     class Element(CombinatorialFreeModule.Element):
+        r"""
+        An element of a Verma module of a down-up algebra.
+        """
         def _acted_upon_(self, scalar, self_on_left):
             r"""
             Return the action of ``scalar`` (an element of the base ring or
@@ -749,6 +751,12 @@ class VermaModule(CombinatorialFreeModule):
                 True
                 sage: 5 * V.basis()[3]
                 5*v[3]
+                sage: V.basis()[0] * d
+                Traceback (most recent call last):
+                ...
+                TypeError: unsupported operand parent(s) for *:
+                 'Verma module of weight a of Down-Up algebra ...'
+                 and 'Down-Up algebra ...'
             """
             ret = super()._acted_upon_(scalar, self_on_left)
             if ret is not None:
@@ -765,7 +773,7 @@ class VermaModule(CombinatorialFreeModule):
                                         for n, nc in self._monomial_coefficients.items())
 
         def is_weight_vector(self):
-            """
+            r"""
             Return if ``self`` is a weight vector.
 
             EXAMPLES::
