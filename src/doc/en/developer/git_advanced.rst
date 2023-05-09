@@ -63,7 +63,7 @@ that is not associated to any local branch::
 This is perfectly fine. You can switch to an existing branch (with the
 usual ``git checkout my_branch``) and back to your detached head.
 
-Detached heads can be used to your advantage when reviewing tickets. Just check
+Detached heads can be used to your advantage when reviewing PRs. Just check
 out the commit (look at the "Commits" tab of the PR) that you are reviewing as
 a detached head. Then you can look at the changes and run tests in the detached
 head. When you are finished with the review, you just abandon the detached

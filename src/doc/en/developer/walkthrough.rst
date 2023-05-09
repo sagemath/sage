@@ -251,10 +251,10 @@ time.
 .. NOTE::
 
     If you have `pulled a branch from the GitHub Sage repository
-    <https://doc.sagemath.org/html/en/developer/manual_git.html#checking-out-tickets>`_,
-    it may depend on changes to third-party packages, so ``./sage -br``
-    may fail.  If this happens (and you believe the code in this branch
-    should compile), try running ``make build``.
+    <https://doc.sagemath.org/html/en/developer/workflows.html#checking-out-an-existing-pr>`_,
+    it may depend on changes to third-party packages, so ``./sage -br`` may
+    fail.  If this happens (and you believe the code in this branch should
+    compile), try running ``make build``.
 
 Rarely there are conflicts with other packages,
 or with the already-installed older version of the package that you

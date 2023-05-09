@@ -157,7 +157,7 @@ lisp, gmp), it is no longer a problem that belongs in our tracker.
 If your distribution's Pari package is buggy for example, file a
 bug report with them. We are usually willing and able to solve
 the problem, but there are no guarantees that we will help you
-out. Looking at the open number of tickets that are Sage specific,
+out. Looking at the open number of PRs that are Sage specific,
 you hopefully will understand why.
 
 **No Support Discussions**: GitHub is not meant to
@@ -184,7 +184,7 @@ Sage Release Manager uses to make releases. Here it is as of 2023:
 **Beta Release Stage**: For preparing a new beta release or the first release
 candidate, all positively reviewed PRs with the forthcoming release
 milestone are considered. PRs that have dependencies not merged yet are ignored.
-The Release Manager merges PRs in batches of 10 to 20 tickets, taking the
+The Release Manager merges PRs in batches of 10 to 20 PRs, taking the
 PR priority into account. If a merge conflict of a PR to the Release
 Manager's branch occurs, the PR is set back to "needs work" status by the
 Release Manager, and the list of the PRs already merged to the Release

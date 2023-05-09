@@ -162,7 +162,7 @@ more thorough check::
 When preparing a branch for a PR that adds new code,
 developers should verify that ``./sage -tox -e pycodestyle`` does not
 issue warnings for the added code.  This will avoid later cleanup
-tickets as the Sage codebase is moving toward full PEP 8 compliance.
+PRs as the Sage codebase is moving toward full PEP 8 compliance.
 
 On the other hand, it is usually not advisable to mix coding-style
 fixes with productive changes on the same PR because this would
@@ -170,7 +170,7 @@ makes it harder for reviewers to evaluate the changes.
 
 By passing the options ``--count -qq`` we can reduce the output to
 only show the number of style violation warnings.  This can be helpful
-for planning work on coding-style clean-up tickets that focus on one
+for planning work on coding-style clean-up PRs that focus on one
 or a few related issues::
 
   $ ./sage -tox -e pycodestyle -- --count -qq src/sage

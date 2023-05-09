@@ -172,9 +172,9 @@ I submitted a bug fix to the GitHub Sage repo several weeks ago. Why are you ign
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 We are not trying to ignore your branch. Most people who work on Sage do so
-in their free time. With hundreds of open tickets of varying degrees of
-impacts on the whole Sage community, people who work on tickets need
-to prioritize their time and work on those tickets that interest
+in their free time. With hundreds of open PRs of varying degrees of
+impacts on the whole Sage community, people who work on PRs need
+to prioritize their time and work on those PRs that interest
 them. Sometimes you may be the only person who understands your
 branch. In that case, you are encouraged to take extra care to make it
 as easy as possible for anyone to review. Here are some
@@ -189,7 +189,7 @@ tips on making your branch easy to review:
 * Have you clearly described how your branch solves the problem under
   consideration?
 * Have you clearly described how to test the changes in your branch?
-* Have you listed any tickets that your branch depends on?
+* Have you listed any issues/PRs that your branch depends on?
 * Is your branch based on a recent (preferably, the latest) Sage beta version?
 * Does your branch
   `follow relevant conventions <https://doc.sagemath.org/html/en/developer/#writing-code-for-sage>`_

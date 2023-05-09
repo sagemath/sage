@@ -167,7 +167,7 @@ The source directory of a distribution package, such as
   the current development release is ``9.7.beta8``, then such a
   version could be marked ``9.7.beta8.post1``.
 
-  Also sometimes when working on tickets it may be necessary to
+  Also sometimes when working on PRs it may be necessary to
   increment the version because a new feature is needed in another
   distribution package. Such versions should be marked by using the
   version number of the anticipated next development release and
