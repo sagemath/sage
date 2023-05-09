@@ -91,7 +91,7 @@ jobs:
         if: always() && steps.build.outcome == 'success'
         run: |
           ../sage -python -m pip install coverage
-          ../sage -python -m coverage run ./bin/sage-runtests --all -p2
+          ../sage -python -m coverage run ./bin/sage-runtests --all -p2 --random-seed=286735480429121101562228604801325644303
         working-directory: ./src
 
       - name: Prepare coverage results
