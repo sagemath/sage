@@ -3,7 +3,7 @@
 .. _chapter-workflows:
 
 =====================
-Using Git with GItHub
+Using Git with GitHub
 =====================
 
 We continue our introduction to Sage development from :ref:`chapter-walkthrough`.
@@ -30,7 +30,7 @@ Development workflow at a glance
 
 2. Alice pushes the local branch to the remote ``origin``, her fork of the Sage
    repo on GitHub, and with it :ref:`creates a PR <section-workflows-push>` to
-   the Sage repo. When ready, Alice set the PR to ``needs review`` status.
+   the Sage repo. When ready, Alice sets the PR to ``needs review`` status.
 
 3. Bob, a developer acting as reviewer, :ref:`examines the PR
    <section-workflows-pr-checkout>`, looks through the changes, leaves comments
@@ -86,7 +86,6 @@ If you want to base your work on an existing PR or want to review the code of a 
 then you would run::
 
     [alice@localhost sage]$ gh pr checkout 12345
-    gh pr checkout 12345
     remote: Enumerating objects: 7, done.
     remote: Counting objects: 100% (7/7), done.
     remote: Compressing objects: 100% (7/7), done.
@@ -106,13 +105,12 @@ the ``-b`` switch if you want.
 Uploading more changes to GitHub
 ================================
 
-Once you have created a PR, edit the appropriate files and
-commit your changes to your local branch as described in
-:ref:`section-walkthrough-add-edit` and
+Once you have created a PR, edit the appropriate files and commit your changes
+to your local branch as described in :ref:`section-walkthrough-add-edit` and
 :ref:`section-walkthrough-commit`.
 
-If you are ready to share the changes up to now, upload
-your new commits to your fork by::
+If you are ready to share the changes up to now, upload your new commits to
+your fork by::
 
     [alice@localhost sage]$ git push origin
     Enumerating objects: 13, done.

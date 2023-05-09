@@ -76,7 +76,7 @@ Obviously one needs the Sage source code to develop. You can use your
 local installation of Sage, or (to start from scratch) download it
 from our Sage repository on GitHub::
 
-    [alice@localhost ~]$ git clone https://github.com/sagemath/sage.git
+    [alice@localhost ~]$ git clone --origin upstream https://github.com/sagemath/sage.git
     Cloning into 'sage'...
     [...]
     Checking connectivity... done.
@@ -228,9 +228,14 @@ Cython files under ``src/sage/...``) you just have to run::
 
     [alice@localhost sage]$ ./sage -br
 
-to rebuild the Sage library and then start Sage (this is not exactly true,
-since if you only modified Python files, Sage is rebuilt when you start it).  This
-should be quite fast.
+to rebuild the Sage library and then start Sage.
+
+.. NOTE::
+
+    All changes to Python files take effect immediately after restarting Sage
+    (unless you have used ``./configure --disable-editable`` when you built
+    Sage). Hence you just start Sage instead of ``./sage -br`` if only Python
+    files were modified.
 
 If you made changes to :ref:`third-party packages <chapter-packaging>`
 installed as part of Sage, then you have to run ::
@@ -246,7 +251,7 @@ time.
 .. NOTE::
 
     If you have `pulled a branch from the GitHub Sage repository
-    <http://doc.sagemath.org/html/en/developer/manual_git.html#checking-out-tickets>`_,
+    <https://doc.sagemath.org/html/en/developer/manual_git.html#checking-out-tickets>`_,
     it may depend on changes to third-party packages, so ``./sage -br``
     may fail.  If this happens (and you believe the code in this branch
     should compile), try running ``make build``.

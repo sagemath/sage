@@ -9,8 +9,8 @@ Git Basics
 
 .. _section-git-ssh:
 
-Git authentication through SSH
-==============================
+Git authentication through SSH instead of HTTPS
+===============================================
 
 In order to push changes securely to a remote repository, Git uses public-key
 cryptography. This section will show you how to set up the necessary

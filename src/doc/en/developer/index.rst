@@ -61,8 +61,9 @@ Now here is a brief overview of this guide.
   a tricky situation such as merge conflict.
 
 - :ref:`section-writing-code-for-sage`: This is a guide on conventions in
-  writing code and documentation. To be a good developer, read this part once
-  in a while
+  writing code and documentation. As conventions evolve over time, also
+  experienced Sage contributors may want to review this section once in a
+  while.
 
 - :ref:`section-testing-sage`: We value testing Sage highest. Every change of
   Sage source code has a risk to break Sage, and must be tested before being
@@ -81,9 +82,9 @@ Now here is a brief overview of this guide.
 For more details, see the table of contents below. No matter where you start,
 good luck and welcome to Sage development!
 
+
 Table of Contents
 =================
-
 
 .. _section-first-steps:
 

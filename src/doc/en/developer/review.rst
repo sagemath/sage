@@ -83,13 +83,13 @@ You are now ready to change the PR's status (see
   reasonable questions are *"yes"*, you can set the PR to
   ``positive review`` status.
 
-- **needs_work**: If something is not as it should, write a list of all points
+- **needs work**: If something is not as it should, write a list of all points
   that need to be addressed in a comment and change the PR's status to
   ``needs work`` status.
 
-- **needs_info**: If something is not clear to you and prevents you from going
+- **needs info**: If something is not clear to you and prevents you from going
   further with the review, ask your question and set the PR's status to
-  ``needs_info`` status.
+  ``needs info`` status.
 
 - If you **do not know what to do**, for instance if you don't feel experienced
   enough to take a final decision, explain what you already did in a comment and

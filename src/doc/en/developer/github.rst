@@ -294,9 +294,9 @@ In addition to what were said about opening an issue, the following applies:
 - Add type, component, and priority labels. If this PR solves an existing
   issue, please duplicate the labels of the issue to this PR.
 
-- **Dependencies**: Use the phrase ``Depends on``, followed by the issue or PR
-  reference.  Repeat this in separate lines if there is more than one
-  dependency.  This format is understood by various dependency managers.
+- **Dependencies**: Use the phrase ``- Depends on``, followed by the issue or PR
+  reference. Repeat this in separate lines if there is more than one
+  dependency. This format is understood by various dependency managers.
 
 If you are working on a PR and the PR is not yet quite ready for review, then
 `open the PR as draft
