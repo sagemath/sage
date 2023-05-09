@@ -152,18 +152,13 @@ It commonly happens that ``develop`` branch at the remote ``upstream`` was
 updated and you need to merge the upstream changes to your local branch. Then
 you do::
 
-    [alice@localhost sage]$ git checkout develop
-    ....
-    [alice@localhost sage]$ git pull upstream
-    ....
+    [alice@localhost sage]$ git fetch upstream develop:develop
 
 This fast-forwards your local ``develop`` branch to the upstream
 ``develop`` branch.
 
 Now you go back to your working branch and merge the updated ``develop`` branch::
 
-    [alice@localhost sage]$ git checkout last_twin_prime
-    ....
     [alice@localhost sage]$ git merge develop
     ....
 
