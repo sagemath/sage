@@ -148,7 +148,9 @@ set it to ``needs review`` status.
 Merging the upstream develop branch
 ===================================
 
-It commonly happens that ``develop`` branch at the remote ``upstream`` was updated and you need to merge the upstream changes to your local branch. Then you do::
+It commonly happens that ``develop`` branch at the remote ``upstream`` was
+updated and you need to merge the upstream changes to your local branch. Then
+you do::
 
     [alice@localhost sage]$ git checkout develop
     ....
@@ -165,7 +167,7 @@ Now you go back to your working branch and merge the updated ``develop`` branch:
     [alice@localhost sage]$ git merge develop
     ....
 
-If there was no upstream changes conflicting with the changes you made locally,
+If there was no upstream change conflicting with the changes you made locally,
 this merge operation will finish cleanly. Otherwise, you are in *merge
 conflict*. This rarely happens since Git is smart in merging changes. However,
 once merge conflict occurs, you have to manually resolve the conflicts. The
