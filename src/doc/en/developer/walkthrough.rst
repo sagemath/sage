@@ -40,7 +40,7 @@ Don't worry about the giant list of subcommands. You really only need a handful
 of them for effective development, and we will walk you through them in this
 guide. If you got a "command not found" error, then you don't have Git
 installed; now is the time to install it. See
-:ref:`chapter-git-setup` for instructions.
+:ref:`section-git-install` for instructions.
 
 Because we also track who does what changes with Git, you must tell
 Git how you want to be known. Check if Git knows you::

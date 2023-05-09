@@ -4,21 +4,13 @@
 Setting Up Git
 ==============
 
-To work on the Sage source code, you need a working Git installation,
-configured at least to use your name and email address for commits.
-
-For further information about Git, see :ref:`chapter-git-background`, but this
-is not required for a beginning Sage developer.
-
 
 .. _section-git-install:
 
 Installing Git
 --------------
 
-First, try Git on the command line by typing ``git``. Most platforms will have it installed by
-default if other development tools are installed. If that fails, use the
-following to install Git:
+Depending on your platform, use the following to install Git:
 
 Debian / Ubuntu
     Run ``sudo apt-get install git-core``
@@ -54,11 +46,7 @@ Some further resources for installation help are:
 Configuring Git
 ---------------
 
-The commit message of any change contains your name and email address to
-acknowledge your contribution and to have a point of contact if there are
-questions in the future. Filling it in is required if you want to share your
-changes. The simplest way to do this is from the command line. Assuming your
-name ``alice`` and email address ``alice@wonderland.com``,
+Assuming your name ``alice`` and email address ``alice@wonderland.com``,
 
 .. CODE-BLOCK:: shell-session
 
@@ -76,4 +64,7 @@ This will write the settings into your :ref:`Git configuration file
 
 Of course, replace ``Alice Adventure`` and ``alice@wonderland.com`` with your
 actual name and email address.
+
+This is the basic Git configuration for now. For further tips on configuring
+Git, see :ref:`section-git-configuration`.
 
