@@ -56,7 +56,7 @@ class EllipticCurveHom(Morphism):
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
               To:   Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
             sage: E.isogeny(P, algorithm='velusqrt')  # indirect doctest
-            Elliptic-curve isogeny (using Vélu) of degree 127:
+            Elliptic-curve isogeny (using square-root Vélu) of degree 127:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
               To:   Elliptic Curve defined by y^2 = x^3 + 119*x + 231 over Finite Field in z2 of size 257^2
             sage: E.montgomery_model(morphism=True)   # indirect doctest
