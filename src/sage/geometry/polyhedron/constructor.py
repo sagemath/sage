@@ -722,7 +722,8 @@ def Polyhedron(vertices=None, rays=None, lines=None,
 
         if base_ring not in Fields():
             got_compact_Vrep = got_Vrep and not rays and not lines
-            got_cone_Vrep = got_Vrep and all(all(x == 0 for x in v) for v in vertices)
+            got_cone_Vrep = got_Vrep and all(x == 0
+                                             for v in vertices for x in v)
             if not got_compact_Vrep and not got_cone_Vrep:
                 base_ring = base_ring.fraction_field()
                 convert = True
@@ -743,7 +744,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
                 raise ValueError("the only allowed inexact ring is 'RDF' with backend 'cdd'")
 
     # Add the origin if necessary
-    if got_Vrep and len(vertices) == 0 and len(rays + lines) > 0:
+    if got_Vrep and len(vertices) == 0 and bool(rays + lines):
         vertices = [[0] * ambient_dim]
 
     # Specific backends can override the base_ring
