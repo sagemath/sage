@@ -145,8 +145,8 @@ set it to ``needs review`` status.
 
 .. _section-workflows-merge:
 
-Merging upstream develop branch
-===============================
+Merging the upstream develop branch
+===================================
 
 It commonly happens that ``develop`` branch at the remote ``upstream`` was updated and you need to merge the upstream changes to your local branch. Then you do::
 
