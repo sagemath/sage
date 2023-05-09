@@ -1782,7 +1782,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             This function is deprecated as the functionality of
             Simon's script for elliptic curves over the rationals
             has been ported over to pari.
-            Use :meth:`.rank` with the keyword ``algorithm='pari;`` instead.
+            Use :meth:`.rank` with the keyword ``algorithm='pari'`` instead.
 
         INPUT:
 
@@ -2102,6 +2102,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E._EllipticCurve_rational_field__rank
             (0, True)
 
+        This example has Sha = Z/4 x Z/4 and the rank cannot be
+        determined using pari only::
+
             sage: E =EllipticCurve([-113^2,0])
             sage: E.rank(use_database=False, verbose=False, algorithm="pari")
             Traceback (most recent call last):
@@ -2216,6 +2219,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
             ge = self.saturation(ge)[0]
             self._known_points = ge
+            # note that lower is only a conjectural
+            # lower bound for the rank, the only
+            # proven lower bound is #ge.
             if len(ge) == upper:
                 verbose_verbose(f"rank {upper} unconditionally determined by pari")
                 rank = Integer(upper)
@@ -2283,7 +2289,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             :meth:`~gens_certain` method to find out afterwards
             whether the generators were proved.
 
-        IMPLEMENTATION: Uses Cremona's mwrank C library or ellrank in pari.
+        IMPLEMENTATION: Uses Cremona's mwrank C++ library or ellrank in pari.
 
         EXAMPLES::
 
@@ -2379,7 +2385,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             Traceback (most recent call last):
             ...
             RuntimeError: generators could not be determined. So far we found []. Hint: increase pari_effort.
-            sage: E.gens(use_database=False, algorithm="pari",pari_effort=10)
+            sage: E.gens(use_database=False, algorithm="pari",pari_effort=10) # long time
             [(-166136231668185267540804/2825630694251145858025 : 167661624456834335404812111469782006/150201095200135518108761470235125 : 1)]
 
         """
@@ -2435,6 +2441,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             ge = sorted([self.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
             ge = self.saturation(ge)[0]
             self._known_points = ge
+            # note that lower is only a conjectural
+            # lower bound for the rank, the only
+            # proven lower bound is #ge.
             if len(ge) == upper:
                 verbose_verbose(f"rank {upper} unconditionally determined by pari")
                 rank = Integer(upper)
@@ -3015,8 +3024,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             if algorithm=="pari":
                 ep = self.pari_curve()
                 lower, upper, s, pts = ep.ellrank()
-                T = self.torsion_subgroup().invariants()
-                tor = sum(x%2==0 for x in T)
+                tor = self.two_torsion_rank()
                 return upper + tor + s
             elif algorithm=="mwrank":
                 C = self.mwrank_curve()
