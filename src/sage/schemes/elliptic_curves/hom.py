@@ -332,6 +332,11 @@ class EllipticCurveHom(Morphism):
             sage: (-tau).trace()
             1
         """
+        F = self.domain().base_field()
+        if F.characteristic().is_zero():
+            d = self.degree()
+            s = self.scaling_factor()
+            return ZZ(s + d/s)
         return compute_trace_generic(self)
 
     def characteristic_polynomial(self):
@@ -1186,7 +1191,15 @@ def compute_trace_generic(phi):
     M = 4 * d.isqrt() + 1  # |trace| <= 2 sqrt(deg)
     tr = Mod(0,1)
 
+    p = F.characteristic()
+    if p:
+        s = phi.scaling_factor()
+        if s:
+            tr = Mod(ZZ(s + d/s), p)
+
     for l in Primes():
+        if tr.modulus() >= M:
+            break
         xpoly = E.division_polynomial(l)
         if xpoly.degree() < 1:  # supersingular and l == p
             continue
@@ -1202,12 +1215,12 @@ def compute_trace_generic(phi):
         P = EE.lift_x(xx)
 
         Q = phi._eval(P)
+        if not Q:  # we learn nothing when P lies in the kernel
+            continue
         R = phi._eval(Q)
         t = discrete_log(R + d*P, Q, ord=l, operation='+')
         assert not R - t*Q + d*P
 
         tr = tr.crt(Mod(t, l))
-        if tr.modulus() >= M:
-            break
 
     return tr.lift_centered()
