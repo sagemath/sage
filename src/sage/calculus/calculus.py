@@ -1235,7 +1235,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
          more details)
         Is a an integer?
         sage: assume(a,'integer')
-        sage: limit(x^a, x=0) # random - maxima 5.46.0 does not need extra assumption
+        sage: limit(x^a, x=0)  # random - maxima 5.46.0 does not need extra assumption
         Traceback (most recent call last):
         ...
         ValueError: Computation failed since Maxima requested additional
