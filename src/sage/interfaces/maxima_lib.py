@@ -954,7 +954,7 @@ class MaximaLib(MaximaAbstract):
             for more details)
             Is a positive, negative or zero?
             sage: assume(a>0)
-            sage: limit(x^a,x=0) # random - not needed for maxima 5.46.0
+            sage: limit(x^a,x=0)  # random - not needed for maxima 5.46.0
             Traceback (most recent call last):
             ...
             ValueError: Computation failed ...
