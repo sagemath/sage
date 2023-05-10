@@ -140,7 +140,7 @@ Complex exponentiation works, but may require a patched version of
 maxima (:trac:`32898`) for now::
 
     sage: M = i*matrix([[pi]])
-    sage: e^M # not tested, requires patched maxima
+    sage: e^M  # not tested, requires patched maxima
     [-1]
     sage: M = i*matrix([[pi,0],[0,2*pi]])
     sage: e^M
