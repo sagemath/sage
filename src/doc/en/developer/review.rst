@@ -95,7 +95,9 @@ You are now ready to change the PR's status (see
   enough to take a final decision, explain what you already did in a comment and
   ask if someone else could take a look.
 
-For more advice on reviewing, see [WSblog]_.
+For more advice on reviewing, see `How to Referee Sage Trac Tickets
+<http://sagemath.blogspot.com/2010/10/how-to-referee-sage-trac-tickets.html>`_
+(caveat: mercurial was replaced with Git and Trac with GitHub).
 
 .. NOTE::
 
@@ -107,12 +109,6 @@ For more advice on reviewing, see [WSblog]_.
     open-ended discussion about alternative implementations. If you
     want the code written differently, your suggestion should be a
     clear and actionable request.
-
-REFERENCES:
-
-.. [WSblog] William Stein, How to Referee Sage Trac Tickets,
-   http://sagemath.blogspot.com/2010/10/how-to-referee-sage-trac-tickets.html
-   (Caveat: mercurial was replaced with Git and Trac with GitHub)
 
 
 Reviewing and closing PRs

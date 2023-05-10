@@ -1,4 +1,4 @@
-.. highlight:: console
+.. highlight:: shell-session
 
 .. _chapter-walkthrough:
 
