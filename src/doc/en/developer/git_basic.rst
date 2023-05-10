@@ -16,13 +16,13 @@ GitHub. Hence we assume that throughout this guide.
 
 .. _section-git-ssh:
 
-Git authentication through SSH instead of HTTPS
-===============================================
+Git authentication through SSH
+==============================
 
 In order to push changes securely to a remote repository, Git uses public-key
 cryptography. This section will show you how to set up the necessary
 cryptographic keys for the case that you want to use SSH(Secure Shell) protocol
-to authenticate your Git to GitHub.
+to authenticate your Git to GitHub, instead of HTTPS protocol.
 
 
 .. _section-github-ssh-key:

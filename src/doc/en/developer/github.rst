@@ -24,7 +24,7 @@ the following, we assume your username "alice". So you always read your own
 username if you see "alice".
 
 
-.. _chapter-github-cli:
+.. _section-github-cli:
 
 Using the GitHub CLI
 ====================
@@ -78,20 +78,25 @@ Linking Git to your GitHub account
 ==================================
 
 In order for your Git to work with GitHub, your GitHub account needs to be
-linked with your Git.  No action is needed if you have already contributed to
+linked with your Git. No action is needed if you have already contributed to
 any other project on GitHub and set up Git credentials or SSH keys for this.
 
-The above dialogue from ``gh auth login`` already linked your Git to GitHub by
-HTTPS protocol using your GitHub credentials. We assume this in the rest of
-this guide. For more details, see `Caching your GitHub credentials in Git
+The above dialogue from ``gh auth login`` linked your Git to GitHub by HTTPS
+protocol using your GitHub credentials. Alternatively you may like to use
+popular `Git Credential Manager
+<https://github.com/git-ecosystem/git-credential-manager>`_ which stores your
+credentials natively to your platform. For more information, see `Caching your
+GitHub credentials in Git
 <https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git>`_.
 
-If you prefer SSH protocol for authenticating Git to GitHub, then you follow
-:ref:`section-git-ssh` to generate an SSH keypair and add the SSH public key to your
-GitHub account. A simple way to upload the public key is to choose SSH protocol
-for Git operations in the dialogue from ``gh auth login`` command above.  For
-more details, see `Connecting to GitHub with SSH
+If you prefer SSH to HTTPS for authenticating Git to GitHub, then you follow
+:ref:`section-git-ssh` to generate an SSH keypair and add the SSH public key to
+your GitHub account. A simple way to upload the public key is to choose SSH
+protocol for Git operations in the dialogue from ``gh auth login`` command
+above. For more details, see `Connecting to GitHub with SSH
 <https://docs.github.com/en/authentication/connecting-to-github-with-ssh>`_.
+
+We assume HTTPS protocol in the rest of this guide.
 
 
 Forking the Sage repository
