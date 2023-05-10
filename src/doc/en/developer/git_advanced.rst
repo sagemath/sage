@@ -45,7 +45,7 @@ out without requiring internet access::
     HEAD is now at f9a0d54099 Fix a slow doctest in matrix_integer_dense_hnf.py
 
 If it is not stored in your local git repository, you need to download
-it from the upstream repo first::
+it from the ``upstream`` repo first::
 
     [alice@localhost sage]$ git fetch upstream f9a0d54099d758ccec731a38929902b2b9d0b988
     From https://github.com/sagemath/sage

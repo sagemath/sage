@@ -143,7 +143,7 @@ If you already have a local Git repo and only want to link your fork as ``origin
     From https://github.com/alice/sage
      * [new branch]      develop     -> origin/develop
 
-You also add the Sage repo ``sagemath/sage`` as your remote "upstream"::
+You also add the Sage repo ``sagemath/sage`` as your remote ``upstream``::
 
     [alice@localhost sage]$ git remote add upstream https://github.com/sagemath/sage.git
     [alice@localhost sage]$ git remote -v

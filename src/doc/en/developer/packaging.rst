@@ -957,7 +957,7 @@ We recommend the following workflow for maintaining a set of patches.
   commands.
 
 - When a new upstream version becomes available, merge (or import) it
-  into ``upstream``, then create a new branch and rebase in on top of
+  into ``upstream``, then create a new branch and rebase it on top of
   the updated upstream:
 
   .. CODE-BLOCK:: bash
@@ -1052,7 +1052,7 @@ Sage mirrors when a new release is prepared.  On GitHub PRs
 upgrading a package, the PR description should no longer contain
 the upstream URL to avoid duplication of information.
 
-Note that, like the ``tarball`` field, the ``upstream_url`` is a
+Note that, like the ``tarball`` field, the ``tpstream_url`` is a
 template; the substring ``VERSION`` is substituted with the actual
 version.
 
