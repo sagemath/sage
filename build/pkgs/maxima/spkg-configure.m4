@@ -1,8 +1,21 @@
 SAGE_SPKG_CONFIGURE([maxima], [
+  m4_pushdef([SAGE_MAXIMA_MINVER],["5.45.0"])dnl this version and higher allowed
   SAGE_SPKG_DEPCHECK([ecl], [
     dnl First check for the "maxima" executable in the user's PATH, because
     dnl we still use pexpect to communicate with it in a few places.
-    AC_PATH_PROG([SAGE_MAXIMA], [maxima])
+    AC_CACHE_CHECK([for Maxima >= $SAGE_MAXIMA_MINVER], [ac_cv_path_MAXIMA], [
+        AC_PATH_PROGS_FEATURE_CHECK([MAXIMA], [maxima], [
+            maxima_version=`$ac_path_MAXIMA --version 2>&1 | tail -1\
+                | $SED -n -e 's/Maxima *\([[0-9]]*\.[[0-9]]*\.[[0-9]]*\)/\1/p'`
+            AS_IF([test -n "$maxima_version"], [
+                AX_COMPARE_VERSION([$maxima_version], [ge], [$SAGE_MAXIMA_MINVER], [
+                    ac_cv_path_MAXIMA="$ac_path_MAXIMA"
+                    ac_path_MAXIMA_found=:
+                ])
+            ])
+        ])
+    ])
+    SAGE_MAXIMA="$ac_cv_path_MAXIMA"
     AS_IF([test -z "${SAGE_MAXIMA}"], [
       sage_spkg_install_maxima=yes
     ],[
@@ -17,6 +30,7 @@ SAGE_SPKG_CONFIGURE([maxima], [
       ])
     ])
   ])
+  m4_popdef([SAGE_MAXIMA_MINVER])
 ],[],[],[
   # post-check
   AS_IF([test x$sage_spkg_install_maxima = xyes], [
