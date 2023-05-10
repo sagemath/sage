@@ -7505,24 +7505,6 @@ class Partitions_starting(Partitions):
         """
         return x in Partitions_n(self.n) and x <= self._starting
 
-    def __iter__(self):
-        """
-        Iterate over partitions less than `self._starting` in lex order.
-        
-        EXAMPLES::
-
-            sage: [p for p in Partitions(3, starting=[2,1])]
-            [[2, 1], [1, 1, 1]]
-            sage: [p for p in Partitions(3, starting=[2,2])]
-            [[2, 1], [1, 1, 1]]
-            sage: [p for p in Partitions(3, starting=[1,1])]
-            []
-        """
-        mu = self.first()
-        while mu:
-            yield mu
-            mu = self.next(mu)
-
     def first(self):
         """
         Return the first partition in ``self``.
@@ -7542,11 +7524,11 @@ class Partitions_starting(Partitions):
         """
         if self._starting in Partitions_n(self.n):
             return self._starting
-        
+
         if (k := self._starting.size()) < self.n:
             mu = list(self._starting) + [1] * (self.n - k)
             return next(Partition(mu))
-        
+
         #if self._starting.size() > self.n:
         return self.element_class(self, Partitions(self.n, outer=self._starting).first())
 
@@ -7595,6 +7577,8 @@ class Partitions_ending(Partitions):
             [[4], [3, 1], [2, 2]]
             sage: Partitions(4, ending=[4]).list()
             [[4]]
+            sage: Partitions(4, ending=[5]).list()
+            []
 
         TESTS::
 
@@ -7640,7 +7624,11 @@ class Partitions_ending(Partitions):
 
             sage: Partitions(4, ending=[1,1,1,1]).first()
             [4]
+            sage: Partitions(4, ending=[5]).first() is None
+            True
         """
+        if self._ending and self.n <= self._ending[0] and not (self.n == self._ending[0] and len(self._ending) == 1):
+            return None
         return self.element_class(self, [self.n])
 
     def next(self, part):
@@ -7653,8 +7641,10 @@ class Partitions_ending(Partitions):
             [3, 1]
             sage: Partitions(4, ending=[1,1,1,1]).next(Partition([1,1,1,1])) is None
             True
+            sage: Partitions(4, ending=[3]).next(Partition([3,1])) is None
+            True
         """
-        if part == self._ending:
+        if part <= self._ending:
             return None
         return next(part)
 

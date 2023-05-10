@@ -809,17 +809,12 @@ class EnumeratedSets(CategoryWithAxiom):
                 [0, 1, 2, 3, 4]
             """
             f = self.first()
-            yield f
-            while True:
+            while not (f is None or f is False):
+                yield f
                 try:
                     f = self.next(f)
-                except (TypeError, ValueError ):
-                    break
-
-                if f is None or f is False:
-                    break
-                else:
-                    yield f
+                except (TypeError, ValueError):
+                    f = None
 
         def _iterator_from_unrank(self):
             """
