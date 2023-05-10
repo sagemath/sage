@@ -1214,7 +1214,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
         sage: var('a')
         a
-        sage: limit(x^a,x=0) # random - maxima 5.46.0 does not need extra assumption
+        sage: limit(x^a,x=0)  # random - maxima 5.46.0 does not need extra assumption
         Traceback (most recent call last):
         ...
         ValueError: Computation failed since Maxima requested additional
