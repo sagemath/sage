@@ -142,8 +142,9 @@ branch is a local branch that is only on your computer and not visible to
 anyone else.
 
 To avoid typing the new branch name twice you can use the shortcut
-``git checkout -b my_new_branch`` to create and switch to the new
-branch in one command.
+``git checkout -b last_twin_prime develop`` to create and switch to the new
+branch based on ``develop`` in one command.
+
 
 .. _section_walkthrough_logs:
 
