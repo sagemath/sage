@@ -5,7 +5,7 @@ SAGE_SPKG_CONFIGURE([tox], [
        m4_pushdef([TOX4_MIN_VERSION], [4.0.15])
        AC_CACHE_CHECK([for tox 3 >= ]TOX3_MIN_VERSION[ or tox 4 >= ]TOX4_MIN_VERSION, [ac_cv_path_TOX], [
          AC_PATH_PROGS_FEATURE_CHECK([TOX], [tox], [
-            tox_version=$($ac_path_TOX --version 2> /dev/null | tail -1)
+            tox_version=$($ac_path_TOX --version 2> /dev/null | tail -n -1)
             AS_IF([test -n "$tox_version"], [
                 AX_COMPARE_VERSION([$tox_version], [lt], [4], [
                     AX_COMPARE_VERSION([$tox_version], [ge], TOX3_MIN_VERSION, [

@@ -5,10 +5,10 @@ SAGE_SPKG_CONFIGURE([maxima], [
     dnl we still use pexpect to communicate with it in a few places.
     AC_CACHE_CHECK([for Maxima >= $SAGE_MAXIMA_MINVER], [ac_cv_path_MAXIMA], [
         AC_PATH_PROGS_FEATURE_CHECK([MAXIMA], [maxima], [
-            maxima_version=`$ac_path_MAXIMA --version 2>&1 | tail -1\
+            maxima_version=`$ac_path_MAXIMA --version 2>&1 | tail -n -1\
                 | $SED -n -e 's/Maxima *\([[0-9]]*\.[[0-9]]*\.[[0-9]]*\)/\1/p'`
             AS_IF([test -n "$maxima_version"], [
-                AX_COMPARE_VERSION([$maxima_version], [ge], [$SAGE_MAXIMA_MINVER], [
+                AX_COMPARE_VERSION([$maxima_version], [ge], [SAGE_MAXIMA_MINVER], [
                     ac_cv_path_MAXIMA="$ac_path_MAXIMA"
                     ac_path_MAXIMA_found=:
                 ])
