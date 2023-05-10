@@ -7636,7 +7636,10 @@ class Partitions_ending(Partitions):
         Return the next partition after ``part`` in ``self``.
 
         EXAMPLES::
-
+            sage: Partitions(4, ending=[1,1,1,1,1]).next(Partition([4]))
+            [3, 1]
+            sage: Partitions(4, ending=[3,2]).next(Partition([3,1])) is None
+            True
             sage: Partitions(4, ending=[1,1,1,1]).next(Partition([4]))
             [3, 1]
             sage: Partitions(4, ending=[1,1,1,1]).next(Partition([1,1,1,1])) is None
@@ -7644,9 +7647,15 @@ class Partitions_ending(Partitions):
             sage: Partitions(4, ending=[3]).next(Partition([3,1])) is None
             True
         """
-        if part <= self._ending:
+        # if we have passed the last Partition, there is no next partition
+        if part == self._ending:
             return None
-        return next(part)
+
+        # if self._ending is a different size, we should make the comparison
+        mu = next(part)
+        if mu < self._ending:
+            return None
+        return mu
 
 
 class PartitionsInBox(Partitions):
