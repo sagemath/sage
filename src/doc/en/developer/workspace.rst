@@ -8,10 +8,10 @@ Setting up your workspace
 
 .. _section-ide:
 
-Configuring text editors and IDEs for use with Sage
-===================================================
+Text editors and IDEs for use with Sage
+=======================================
 
-In Meta-Issue :issue:`30500` we are collecting instructions how to configure
+In meta :issue:`30500` we are collecting instructions how to configure
 various text editors and IDEs for use with Sage.
 
 
@@ -34,12 +34,12 @@ You can now run and edit Sage's code. Contributing your changes follows the norm
 :ref:`Git workflow <chapter-git-basic>`.
 For this to work, you first have to authorize Gitpod with GitHub:
 
- 1. In the running Gitpod workspace, generate a new SSH key pair by ``ssh-keygen -f tempkey``.
- 2. Save the private key as a secure environment variable in Gitpod using
-    ``gp env PRIVATE_SSH_KEY="$(<tempkey)"``,
-    or by using the `Gitpod UI <https://www.gitpod.io/docs/environment-variables#using-the-account-settings>`_.
- 3. Register the public key with GitHub following the instructions in :ref:`section-github-ssh-key`.
- 4. Close this Gitpod workspace.
+1. In the running Gitpod workspace, generate a new SSH key pair by ``ssh-keygen -f tempkey``.
+2. Save the private key as a secure environment variable in Gitpod using ``gp
+   env PRIVATE_SSH_KEY="$(<tempkey)"``, or by using the `Gitpod UI
+   <https://www.gitpod.io/docs/environment-variables#using-the-account-settings>`_.
+3. Register the public key with GitHub following the instructions in :ref:`section-github-ssh-key`.
+4. Close this Gitpod workspace.
 
 After following this procedure, every new Gitpod workspace will have a
 working ``origin`` remote to which you can push your changes.
