@@ -63,13 +63,13 @@ Now here is a brief overview of this guide.
 - :ref:`section-writing-code-for-sage`: This is a guide on conventions in
   writing code and documentation. A beginning developer should read this to be
   a good developer. As conventions evolve over time, also experienced Sage
-  contributors may want to review this section once in a while.
+  contributors may want to review this chapter once in a while.
 
 - :ref:`section-testing-sage`: We value testing Sage highest. Every change of
   Sage source code has a risk to break Sage, and must be tested before being
   merged.  This part explains our various tools to help test Sage.
 
-- :ref:`section-updating-documentation`: All features of Sage is documented in
+- :ref:`section-updating-documentation`: All features of Sage are documented in
   our manuals. This part explains the technical aspect of updating Sage
   documentation.
 
@@ -96,6 +96,7 @@ First Steps
 
    walkthrough
    git_setup
+
 
 .. _section-development-on-github:
 
@@ -147,6 +148,7 @@ Testing Sage
    portability_testing
    tools
 
+
 .. _section-updating-documentation:
 
 Updating Sage Documentation
@@ -181,6 +183,7 @@ Packaging
 
    packaging
    packaging_sage_library
+
 
 Indices and tables
 ==================
