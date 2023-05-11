@@ -133,7 +133,7 @@ There are many, many tutorials and command summaries available online.
 Beginner
 --------
 
-* `gittutorial <https://git-scm.com/docs/gittutorial>`_ is a introductory tutorial
+* `gittutorial <https://git-scm.com/docs/gittutorial>`_ is an introductory tutorial
   from Git project.
 
 * `Git magic
