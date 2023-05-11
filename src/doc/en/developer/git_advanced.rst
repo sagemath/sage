@@ -44,7 +44,7 @@ out without requiring internet access::
 
     HEAD is now at f9a0d54099 Fix a slow doctest in matrix_integer_dense_hnf.py
 
-If it is not stored in your local git repository, you need to download
+If it is not stored in your local Git repository, you need to download
 it from the ``upstream`` repo first::
 
     [alice@localhost sage]$ git fetch upstream f9a0d54099d758ccec731a38929902b2b9d0b988
@@ -173,9 +173,9 @@ Why not merging the other way round?
 Being on some new SageMath (e.g. on branch ``develop``) which runs
 successfully, it would be possible to merge in our branch
 ``some_code`` into develop. This would produce the same source files
-and avoid unnecessary recompilations. However, it makes reading git's
+and avoid unnecessary recompilations. However, it makes reading Git's
 history very unpleasant: For example, it is hard to keep track of changes etc.,
-as one cannot simply pursue the first parent of each git commit
+as one cannot simply pursue the first parent of each Git commit
 (``git log --first-parent``).
 
 
@@ -214,13 +214,13 @@ which is some 40-digit hexadecimal number (the SHA1 hash). Then use
 
     Any *uncommitted* changes will be lost!
 
-You only need to type the first couple of hex digits, git will
+You only need to type the first couple of hex digits, Git will
 complain if this does not uniquely specify a commit. Also, there is
 the useful abbreviation ``HEAD~`` for the previous commit and
 ``HEAD~n``, with some integer ``n``, for the n-th previous commit.
 
 Finally, perhaps the ultimate human error recovery tool is the
-reflog. This is a chronological history of git operations that you can
+reflog. This is a chronological history of Git operations that you can
 undo if needed. For example, let us assume we messed up the *git
 reset* command and went back too far (say, 5 commits back). And, on
 top of that, deleted a file and committed that::
@@ -239,12 +239,11 @@ because it is no longer in the history. However, here is the reflog::
     1142feb HEAD@{3}: checkout: moving from other_branch to some_branch
     ...
 
-The ``HEAD@{n}`` revisions are shortcuts for the history of git
+The ``HEAD@{n}`` revisions are shortcuts for the history of Git
 operations. Since we want to rewind to before the erroneous *git
 reset* command, we just have to reset back into the future::
 
     [alice@localhost sage]$ git reset --hard HEAD@{2}
-
 
 
 .. _section-git-rewriting-history:
