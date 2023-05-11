@@ -53,8 +53,8 @@ Assuming your name ``alice`` and email address ``alice@wonderland.com``,
     [alice@localhost ~]$ git config --global user.name "Alice Adventure"
     [alice@localhost ~]$ git config --global user.email alice@wonderland.com
 
-This will write the settings into your :ref:`Git configuration file
-<section-git-configuration>` with your name and email:
+This will write the settings into your Git configuration file
+``~/.gitconfig`` with your name and email:
 
 .. CODE-BLOCK:: text
 
