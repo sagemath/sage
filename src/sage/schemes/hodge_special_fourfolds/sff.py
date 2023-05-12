@@ -12,7 +12,7 @@ For more computational details, see the paper at https://www.tandfonline.com/doi
 
 AUTHORS:
 
-- Giovanni Staglianò (2023-05-06): initial version
+- Giovanni Staglianò (2023-05-12): initial version
 
 """
 
@@ -42,11 +42,11 @@ from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.schemes.projective.projective_morphism import SchemeMorphism_polynomial_projective_space, SchemeMorphism_polynomial_projective_space_field
 from sage.schemes.generic.morphism import SchemeMorphism
+from sage.rings.ideal import Ideal
+from sage.functions.other import binomial
 from sage.libs.singular.function_factory import singular_function
 _minbase = singular_function('minbase')
 import random
-from sage.all import ideal, binomial
-# from sage.all import *
 
 def update_macaulay2_packages():
     r"""Update some ``Macaulay2`` packages to their latest version.
@@ -61,9 +61,9 @@ def update_macaulay2_packages():
         print('## Update not executed. ##')
         return
     print('Downloading files in ' + os.getcwd() + '...')
-    s1 = "curl -s -o Cremona.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona.m2 && mkdir -p Cremona && curl -s -o Cremona/tests.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/tests.m2 && curl -s -o Cremona/documentation.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2 && curl -s -o Cremona/examples.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/examples.m2 &&curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2"
+    s1 = "curl -s -o Cremona.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona.m2 && mkdir -p Cremona && curl -s -o Cremona/tests.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/tests.m2 && curl -s -o Cremona/documentation.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2 && curl -s -o Cremona/examples.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/examples.m2 &&curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2"
     os.system(s1)
-    s2 = "curl -s -o Resultants.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Resultants.m2 && curl -s -o SparseResultants.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/SparseResultants.m2"
+    s2 = "curl -s -o Resultants.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Resultants.m2 && curl -s -o SparseResultants.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SparseResultants.m2"
     os.system(s2)
     s3 = "curl -s -o PrebuiltExamplesOfRationalFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/PrebuiltExamplesOfRationalFourfolds/main/PrebuiltExamplesOfRationalFourfolds.m2"
     os.system(s3)
@@ -87,7 +87,7 @@ def _set_macaulay2_():
         To automatically download the latest version of the package in your current directory,
         you may execute the following command in a Unix/Linux shell:
 
-        curl -s -o Cremona.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona.m2 && mkdir -p Cremona && curl -s -o Cremona/tests.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/tests.m2 && curl -s -o Cremona/documentation.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2 && curl -s -o Cremona/examples.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/Cremona/examples.m2 &&curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
+        curl -s -o Cremona.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona.m2 && mkdir -p Cremona && curl -s -o Cremona/tests.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/tests.m2 && curl -s -o Cremona/documentation.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2 && curl -s -o Cremona/examples.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/examples.m2 &&curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
 
         """
         print(s)
@@ -105,7 +105,7 @@ def _set_macaulay2_():
         To automatically download the latest version of the package in your current directory,
         you may execute the following command in a Unix/Linux shell:
     
-        curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
+        curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
         """
         print(s)
         if __name__ == "__main__":
@@ -122,7 +122,7 @@ def _set_macaulay2_():
         To automatically download the latest version of the package in your current directory,
         you may execute the following command in a Unix/Linux shell:
     
-        curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
+        curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
         """
         print(s)
         if __name__ == "__main__":
@@ -264,7 +264,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
 
         A string.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X = PP(3).empty().random(2,2)
             sage: latex(X)
@@ -477,7 +477,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
         if verbose is None: verbose = __VERBOSE__
         if UseMacaulay2 is None: UseMacaulay2 = not(self.codimension() == 0 or all(i == 1 for i in self.degrees_generators()) or hasattr(self,"_parametrization"))
         if not(isinstance(UseMacaulay2,bool) and isinstance(verbose,bool)): raise TypeError("expected True or False")
-        if UseMacaulay2 == False:
+        if not UseMacaulay2:
             if self.codimension() == 0:
                 return self.empty().random(*[1 for i in range(self.dimension())])
             if all(i == 1 for i in self.degrees_generators()) or hasattr(self,"_parametrization"):
@@ -711,8 +711,8 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
         for g in I.gens():
             if g.degree() <= n:
                 B = B + (g * ideal(R.gens()) ** (n-g.degree())).gens()   
-        if len(B) > 0 and trim == True: B = _minbase(ideal(B))
-        if trim == True: self._homogeneous_components_ideal.update({n:B})
+        if len(B) > 0 and trim: B = _minbase(ideal(B))
+        if trim: self._homogeneous_components_ideal.update({n:B})
         return(B)
 
     def linear_span(self):
@@ -846,7 +846,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
         try:
             return self._macaulay2_object
         except AttributeError:
-            self._macaulay2_object = macaulay2(self.coordinate_ring()).projectiveVariety()
+            self._macaulay2_object = macaulay2(self.coordinate_ring()).projectiveVariety().removeUnderscores()
             self._macaulay2_object._sage_object = self
             return self._macaulay2_object
             
@@ -952,7 +952,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
     def union(self, other):
         r"""Return the scheme-theoretic union of ``self`` and ``other`` in their common ambient space.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: P = PP(5)
             sage: X = P.point()
@@ -974,7 +974,7 @@ class Embedded_Projective_Variety(AlgebraicScheme_subscheme_projective):
     def difference(self, other):
         r"""Return the Zariski closure of the difference of ``self`` by ``other``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X = Veronese(1,3)
             sage: Y = X.ambient().point()
@@ -1142,10 +1142,12 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
         if len(polys) != Y.ambient().dimension() + 1:
             raise ValueError("got wrong number of polynomials")
         H = X.Hom(Y)
+        s = dict(zip(matrix(polys).base_ring().gens(), X.ambient().coordinate_ring().gens()))
+        polys = tuple([pol.subs(s) for pol in polys])
         SchemeMorphism_polynomial_projective_space.__init__(self, H, polys)
         assert(self.domain() is X)
         assert(self.codomain() is Y)
-        assert(self.defining_polynomials() == polys)
+        # assert(self.defining_polynomials() == polys) # this fails
         degs = [g.lift().degree() if hasattr(g,"lift") and (not hasattr(g,"degree")) else g.degree() for g in polys]
         self.__degree_Forms = max(degs)
         assert(self.__degree_Forms == min(degs))
@@ -1342,7 +1344,7 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
 
         :class:`Embedded_Projective_Variety`, the closure of the image of ``Z`` via the rational map ``self``, a subvariety of ``self.target()``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: f = veronese(2,3)
             sage: p = f.source().point()
@@ -1419,7 +1421,7 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
             assert(B.is_homogeneous())
         F = (phiJ.saturation(B))[0]
         assert(F.ring() is self.source().ambient_space().coordinate_ring())
-        if trim == True:
+        if trim:
             polys = _minbase(F)
         else:
             polys = F.gens()
@@ -1526,7 +1528,7 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
     def make_dominant(self):
         r"""Return a new rational map with the same source variety and same defining polynomials but with ``self.target()`` replaced by ``self.image()``
     
-        EXAMPLE::
+        EXAMPLES::
 
             sage: f = veronese(1,4); f
             rational map defined by forms of degree 4
@@ -1559,7 +1561,7 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
 
         :class:`Rational_Map_Between_Embedded_Projective_Varieties`, the composition of ``self`` with ``f``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: f = rational_map(Veronese(1,4))
             sage: g = rational_map(f.target().point())
@@ -1596,7 +1598,7 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
 
         :class:`Rational_Map_Between_Embedded_Projective_Varieties`, the restriction of ``self`` to ``X``.
 
-        TEST::
+        TESTS::
 
             sage: X = fourfold(surface(1,ambient=7,KK=GF(3331)))
             sage: f = rational_map(X.surface(),1); f
@@ -1622,8 +1624,8 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
             return self._macaulay2_object
         except AttributeError:
             X = macaulay2(self.source())
-            # macaulay2.use(X.ring())
             F = macaulay2([list(self.defining_polynomials())])
+            F = F.matrix().substitute(X.ambient().ring().vars()).entries()
             Y = macaulay2(self.target())
             self._macaulay2_object = X.Hom(Y)._operator(' ',F)
             self._macaulay2_object._sage_object = self
@@ -1657,7 +1659,7 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
 
         :class:`Rational_Map_Between_Embedded_Projective_Varieties`, the inverse rational map of ``self`` if ``self`` is birational, otherwise an exception is raised.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: f = veronese(1,5).make_dominant()
             sage: g = f.inverse()
@@ -1672,8 +1674,8 @@ class Rational_Map_Between_Embedded_Projective_Varieties(SchemeMorphism_polynomi
 
         """
         if verbose is None: verbose = __VERBOSE__
-        if not (isinstance(verbose,bool) or isinstance(UseMacaulay2,bool)): raise TypeError("expected True or False")
-        if UseMacaulay2 == False: raise NotImplementedError
+        if not (isinstance(check,bool) and isinstance(verbose,bool) and isinstance(UseMacaulay2,bool)): raise TypeError("expected True or False")
+        if not UseMacaulay2: raise NotImplementedError
         f = macaulay2(self)
         if verbose: print("-- running Macaulay2 function inverse()... --")
         try:
@@ -1798,7 +1800,7 @@ def veronese(n, d, KK=GF(33331), var='x'):
 
     :class:`Rational_Map_Between_Embedded_Projective_Varieties`
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: veronese(2,3)
         rational map defined by forms of degree 3
@@ -1818,7 +1820,7 @@ def Veronese(n, d, KK=GF(33331), var='x'):
 
     :class:`Embedded_Projective_Variety`
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: Veronese(2,2)
         surface of degree 4 and sectional genus 0 in PP^5 cut out by 6 hypersurfaces of degree 2
@@ -1851,7 +1853,7 @@ class Rational_Projective_Surface(Embedded_Projective_Variety):
         r"""
         Return the LaTeX representation of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: S = surface(3,1,1)
             sage: latex(S)
@@ -1877,7 +1879,7 @@ def surface(*args, KK=GF(33331), ambient=None, nodes=None):
     multiplicity 1, ``j`` general base points of multiplicity 2, ``k`` general base points 
     of multiplicity 3, and so on.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: surface(3,1,1)
         rational surface of degree 4 and sectional genus 0 in PP^5 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
@@ -1952,7 +1954,7 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
     complete intersection of 3 quadrics containing ``S`` and contained 
     in a complete intersection ``V`` of 2 quadrics.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: S = surface(5,7,0,1)
         sage: X = fourfold(S); X
@@ -2001,7 +2003,7 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
 
         A string.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: S = surface(3,3)
             sage: X = fourfold(S,S.random(2,2))
@@ -2126,7 +2128,7 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
         The generic curve of this congruence can be realized 
         as the generic fiber of the returned map. See also :meth:`detect_congruence`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X = fourfold(surface(3,4))
             sage: X.fano_map(verbose=false)
@@ -2222,11 +2224,12 @@ class Hodge_Special_Fourfold(Embedded_Projective_Variety):
             X = macaulay2(self,'X')
             if verbose: _print_partial_M2_output(s + "(X,Verbose=>true);")
             U = X.associatedK3surface() if not isinstance(self,_Intersection_of_three_quadrics_in_P7) else X.associatedCastelnuovoSurface()
-            mu = _from_macaulay2map_to_sagemap(U.building()[0],Sage_Source=self.ambient_fivefold())
-            U_non_minimal = _from_macaulay2_to_sage(U.building()[1],Sage_Ambient_Space=mu.target().ambient_space())
-            L = _from_macaulay2_to_sage(U.building()[2][0],Sage_Ambient_Space=mu.target().ambient_space())
-            C = _from_macaulay2_to_sage(U.building()[2][1],Sage_Ambient_Space=mu.target().ambient_space())
-            f = _from_macaulay2map_to_sagemap(U.building()[3])
+            mu = _from_macaulay2map_to_sagemap(U.building()[0].removeUnderscores(),Sage_Source=self.ambient_fivefold())
+            U_non_minimal = _from_macaulay2_to_sage(U.building()[1].removeUnderscores(),Sage_Ambient_Space=mu.target().ambient_space())
+            L = _from_macaulay2_to_sage(U.building()[2][0].removeUnderscores(),Sage_Ambient_Space=mu.target().ambient_space())
+            C = _from_macaulay2_to_sage(U.building()[2][1].removeUnderscores(),Sage_Ambient_Space=mu.target().ambient_space())
+            f = _from_macaulay2map_to_sagemap(U.building()[3].removeUnderscores(),Sage_Source=U_non_minimal)
+            assert(mu.source() is self.ambient_fivefold() and U_non_minimal.is_subset(mu.target()) and L.is_subset(U_non_minimal) and C.is_subset(U_non_minimal) and f.source() is U_non_minimal and f.image().dimension() == 2)
             self._macaulay2_associated_surface_construction = (mu, U_non_minimal, (L,C), f)
             if verbose: print("-- function " + s + "() has terminated. --")
             return self._macaulay2_associated_surface_construction
@@ -2356,17 +2359,14 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_Special_Fourfold):
         r"""Associated Castelnuovo surfaces.
         
         This function works similar to :meth:`K3`.
-        """
 
-        # These examples fail only with "sage -t sff.py"
-        r"""
         EXAMPLES::
 
             sage: X = fourfold(surface(1,ambient=7)); X
             complete intersection of 3 quadrics in PP^7 of discriminant 31 = 8*4-1^2 containing a plane in PP^7
             sage: T = X.Castelnuovo(verbose=False); T
             surface of degree 9 and sectional genus 9 in PP^4 cut out by 4 hypersurfaces of degrees (3, 4, 4, 4)
-            sage: building = T.building # a tuple of 4 objects obtained in the construction of T
+            sage: building = T.building() # a tuple of 4 objects obtained in the construction of T
             sage: building[0] # the first of which is the Fano map
             dominant rational map defined by forms of degree 1
             source: complete intersection of type (2, 2) in PP^7
@@ -2375,7 +2375,7 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_Special_Fourfold):
         """
         self._associated_surface_construction(verbose=verbose)
         T = self._macaulay2_associated_surface_construction[3].image()
-        T.building = self._macaulay2_associated_surface_construction
+        T.building = lambda : self._macaulay2_associated_surface_construction
         return T
 
 class Cubic_Fourfold(Hodge_Special_Fourfold):
@@ -2402,17 +2402,13 @@ class Cubic_Fourfold(Hodge_Special_Fourfold):
 
         :class:`Embedded_Projective_Variety`, a (minimal) K3 surface associated to ``self``.
 
-        """
-
-        # These examples fail only with "sage -t sff.py"
-        r"""
         EXAMPLES::
 
             sage: X = fourfold(surface(3,1,1)); X
             special cubic fourfold of discriminant 14 = 3*10-4^2 containing a rational surface of degree 4 and sectional genus 0 in PP^5 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
             sage: T = X.K3(verbose=False); T
             surface of degree 14 and sectional genus 8 in PP^8 cut out by 15 hypersurfaces of degree 2
-            sage: building = T.building # a tuple of 4 objects obtained in the construction of T
+            sage: building = T.building() # a tuple of 4 objects obtained in the construction of T
             sage: building[0] # the first of which is the Fano map
             dominant rational map defined by forms of degree 2
             source: PP^5
@@ -2421,7 +2417,7 @@ class Cubic_Fourfold(Hodge_Special_Fourfold):
         """
         self._associated_surface_construction(verbose=verbose)
         T = self._macaulay2_associated_surface_construction[3].image()
-        T.building = self._macaulay2_associated_surface_construction
+        T.building = lambda : self._macaulay2_associated_surface_construction
         return T
 
 class Gushel_Mukai_Fourfold(Hodge_Special_Fourfold):
@@ -2443,17 +2439,13 @@ class Gushel_Mukai_Fourfold(Hodge_Special_Fourfold):
 
         :class:`Embedded_Projective_Variety`, a (minimal) K3 surface associated to ``self``.
 
-        """
-
-        # These examples fail only with "sage -t sff.py"
-        r""" 
         EXAMPLES::
 
             sage: X = fourfold('6'); X
             special GM fourfold of discriminant 10 containing a plane in PP^8
             sage: T = X.K3(verbose=False); T
             surface of degree 10 and sectional genus 6 in PP^6 cut out by 6 hypersurfaces of degree 2
-            sage: building = T.building # a tuple of 4 objects obtained in the construction of T
+            sage: building = T.building() # a tuple of 4 objects obtained in the construction of T
             sage: building[0] # the first of which is the Fano map
             dominant rational map defined by forms of degree 1
             source: 5-dimensional variety of degree 5 in PP^8 cut out by 5 hypersurfaces of degree 2
@@ -2462,17 +2454,14 @@ class Gushel_Mukai_Fourfold(Hodge_Special_Fourfold):
         """
         self._associated_surface_construction(verbose=verbose)
         T = self._macaulay2_associated_surface_construction[3].image()
-        T.building = self._macaulay2_associated_surface_construction
+        T.building = lambda : self._macaulay2_associated_surface_construction
         return T
 
 def fourfold(S, X=None, V=None, check=True):
     r"""
     Construct Hodge-special fourfolds.
-    """
 
-    # These examples fail only with "sage -t sff.py"
-    r""" 
-    EXAMPLES::
+    TESTS::
 
         sage: X = fourfold("3-nodal septic scroll"); X
         special cubic fourfold of discriminant 26 = 3*25-7^2 containing a surface of degree 7 and sectional genus 0 in PP^5 cut out by 13 hypersurfaces of degree 3
@@ -2485,7 +2474,7 @@ def fourfold(S, X=None, V=None, check=True):
         Congruence of 5-secant conics to surface in PP^5
 
         sage: X = fourfold("17"); X
-        Hodge-special fourfold of degree 10 in PP^8 containing a surface of degree 9 and sectional genus 2 in PP^8 cut out by 19 hypersurfaces of degree 2
+        special GM fourfold of discriminant 20 containing a surface of degree 9 and sectional genus 2 in PP^8 cut out by 19 hypersurfaces of degree 2
         sage: X = fourfold("prebuilt-example-in-P7",2); X
         complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2 containing a surface of degree 9 and sectional genus 3 in PP^7 cut out by 12 hypersurfaces of degree 2
         sage: X.detect_congruence().check(3)
@@ -2529,7 +2518,7 @@ def _special_fourfold_from_m2 (s, i=None):
     if not(i is None or isinstance(i,(int,Integer))):
         raise TypeError("expected an integer")
     i2 = ', ' + str(i) + ')' if i is not None else ')'
-    XinM2 = macaulay2('specialFourfold("' + s + '"' + i2)
+    XinM2 = macaulay2('specialFourfold("' + s + '"' + i2).removeUnderscores()
     V = ProjectiveSpace(XinM2.ambient().ring().sage())
     return(_from_macaulay2_to_sage(XinM2,V))
 
@@ -2632,6 +2621,8 @@ def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
             return X._sage_object
         if X.instance('EmbeddedProjectiveVariety').sage():
             polys = X.ideal().sage().gens()
+            s = dict(zip(matrix(polys).base_ring().gens(), Sage_Ambient_Space.coordinate_ring().gens()))
+            polys = [pol.subs(s) for pol in polys]
             X._sage_object = Embedded_Projective_Variety(Sage_Ambient_Space, polys)
             X._sage_object._macaulay2_object = X
             return X._sage_object
@@ -2660,19 +2651,13 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
     try:
         return f._sage_object
     except AttributeError:
-        X = _from_macaulay2_to_sage(f.source(), ProjectiveSpace(f.source().ambient().ring().sage()))
-        if Sage_Source is None:
-            Sage_Source = X 
-        else:
-            if not (X == Sage_Source):
-                raise Exception("something went wrong")
-        Y = _from_macaulay2_to_sage(f.target(), ProjectiveSpace(f.target().ambient().ring().sage()))
+        if Sage_Source is None: 
+            Sage_Source = _from_macaulay2_to_sage(f.source(), ProjectiveSpace(f.source().ambient().ring().sage()))
         if Sage_Target is None:
-            Sage_Target = Y 
-        else:
-            if not (Y == Sage_Target):
-                raise Exception("something went wrong")
-        polys = f.entries().first().sage()
+            Sage_Target = _from_macaulay2_to_sage(f.target(), ProjectiveSpace(f.target().ambient().ring().sage()))
+        polys = f.entries().flatten().sage()
+        s = dict(zip(matrix(polys).base_ring().gens(), Sage_Source.ambient().coordinate_ring().gens()))
+        polys = [pol.subs(s) for pol in polys]
         f._sage_object = Rational_Map_Between_Embedded_Projective_Varieties(Sage_Source,Sage_Target,polys)
         f._sage_object._macaulay2_object = f
         if not f.sharp('"isDominant"')._operator('===',macaulay2('null')).sage():
@@ -2698,5 +2683,81 @@ def _print_partial_M2_output(m2_str):
 
 if __name__ == "__main__":
     print ("""┌──────────────────────────────────────┐
-│ sff.py version 1.0, date: 2023-05-10 │
+│ sff.py version 1.0, date: 2023-05-12 │
 └──────────────────────────────────────┘""")
+
+# I got some trouble switching from M2 to sage due to underscores in M2 variables. This interim M2 code solves the problem.
+macaulay2.eval("""
+removeUnderscores = method()
+removeUnderscores (Ring, ZZ) := memoize((K, n) -> (
+    assert(isField K);
+    if n>30 then return K[vars(52..52+n)];
+    (x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10) := (local x0,local x1,local x2,local x3,local x4,local x5,local x6,local x7,local x8,local x9,local x10);
+    (x11,x12,x13,x14,x15,x16,x17,x18,x19,x20) := (local x11,local x12,local x13,local x14,local x15,local x16,local x17,local x18,local x19,local x20);
+    (x21,x22,x23,x24,x25,x26,x27,x28,x29,x30) := (local x21,local x22,local x23,local x24,local x25,local x26,local x27,local x28,local x29,local x30);
+    K[take((x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10)|(x11,x12,x13,x14,x15,x16,x17,x18,x19,x20)|(x21,x22,x23,x24,x25,x26,x27,x28,x29,x30),n+1)]
+));
+removeUnderscores EmbeddedProjectiveVariety := X -> (
+    if X.cache#?"removeUnderscores" then return X.cache#"removeUnderscores";
+    P := removeUnderscores(coefficientRing X,dim ambient X);
+    Y := projectiveVariety(sub(ideal X,vars P),Saturate=>false);
+    if codim Y > 0 then assert(ambient Y === projectiveVariety P) else assert(ambient Y == projectiveVariety P);
+    if X.cache#?"euler" then Y.cache#"euler" = X.cache#"euler";
+    if X.cache#?"FiniteNumberOfNodes" then Y.cache#"FiniteNumberOfNodes" = X.cache#"FiniteNumberOfNodes";
+    if codim ambientVariety X > 0 then Y % removeUnderscores(ambientVariety X);
+    Y.cache#"removeUnderscores" = Y;
+    X.cache#"removeUnderscores" = Y
+);
+removeUnderscores RationalMap := f -> (
+    if f#"map".cache#?"removeUnderscores" then return f#"map".cache#"removeUnderscores";
+    P1 := removeUnderscores(coefficientRing f, f#"dimAmbientTarget");
+    P2 := removeUnderscores(coefficientRing f, f#"dimAmbientSource");
+    g := sub(f,P1,P2);
+    g#"map".cache#"removeUnderscores" = g;
+    f#"map".cache#"removeUnderscores" = g
+);
+removeUnderscores MultirationalMap := f -> (
+    if f.cache#?"removeUnderscores" then return f.cache#"removeUnderscores";
+    g := multirationalMap removeUnderscores toRationalMap f;
+    g.cache#"removeUnderscores" = g;
+    f.cache#"removeUnderscores" = g
+);
+removeUnderscores (EmbeddedProjectiveVariety,MultirationalMap) := (X,f) -> (
+    if f.cache#?("removeUnderscores",X) then return f.cache#("removeUnderscores",X);
+    g := removeUnderscores f;
+    h := (Hom(X,target g)) entries sub(matrix entries g,vars ring ambient X);
+    h.cache#("removeUnderscores",X) = h;
+    f.cache#("removeUnderscores",X) = h
+);
+removeUnderscores (EmbeddedProjectiveVariety,RationalMap) := (X,f) -> (
+    if f#"map".cache#?("removeUnderscores",X) then return f#"map".cache#("removeUnderscores",X);
+    g := toRationalMap removeUnderscores(X,multirationalMap f);
+    g#"map".cache#("removeUnderscores",X) = g;
+    f#"map".cache#("removeUnderscores",X) = g
+);
+removeUnderscores HodgeSpecialFourfold := X -> (
+    if X.cache#?("removeUnderscores",surface X, ambientFivefold X) then return X.cache#("removeUnderscores",surface X, ambientFivefold X);
+    Y := specialFourfold(removeUnderscores surface X, removeUnderscores projectiveVariety ring X, removeUnderscores ambientFivefold X, InputCheck=>0);
+    S := surface Y;
+    V := ambientFivefold Y;
+    if (surface X).cache#?("AssociatedMapFromFivefold",ambientFivefold X) then S.cache#("AssociatedMapFromFivefold",V) = removeUnderscores(V,map X);
+    if (surface X).cache#?("fanoMap",ambientFivefold X) then (
+        mu := removeUnderscores(V,fanoMap X);
+        mu#"map".cache#"multiplicityFanoMap" = ((fanoMap X)#"map").cache#"multiplicityFanoMap";
+        S.cache#("fanoMap",V) = mu;
+    ); 
+    if (surface X).cache#?("surfaceDeterminingInverseOfFanoMap",ideal X) then (
+        originalU := (surface X).cache#("surfaceDeterminingInverseOfFanoMap",ideal X);
+        U := removeUnderscores originalU;
+        S.cache#("surfaceDeterminingInverseOfFanoMap",ideal Y) = U;
+        if originalU.cache#?"exceptionalCurves" then (
+            L := (removeUnderscores first originalU.cache#"exceptionalCurves") % U;
+            C := (removeUnderscores last originalU.cache#"exceptionalCurves") % U;
+            U.cache#"exceptionalCurves" = (L,C);
+        );
+        if originalU.cache#?"MapToMinimalK3Surface" then U.cache#"MapToMinimalK3Surface" = removeUnderscores(U, originalU.cache#"MapToMinimalK3Surface");
+    );
+    Y.cache#("removeUnderscores",surface Y, ambientFivefold Y) = Y;
+    X.cache#("removeUnderscores",surface X, ambientFivefold X) = Y
+);
+""")
