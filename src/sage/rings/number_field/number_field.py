@@ -1382,7 +1382,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     This example was suggested on sage-nt; see :trac:`18942`::
 
         sage: G = DirichletGroup(80)
-        sage: for chi in G:
+        sage: for chi in G:             # long time
         ....:     D = ModularSymbols(chi, 2, -1).cuspidal_subspace().new_subspace().decomposition()
         ....:     for f in D:
         ....:         elt = f.q_eigenform(10, 'alpha')[3]
@@ -8285,7 +8285,8 @@ class NumberField_absolute(NumberField_generic):
             sage: K.coerce(sqrt(2))
             Traceback (most recent call last):
             ...
-            TypeError: no canonical coercion from Symbolic Ring to Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
+            TypeError: no canonical coercion from Symbolic Ring to Number Field in a
+            with defining polynomial x^2 - 2 with a = 1.414213562373095?
 
         TESTS::
 

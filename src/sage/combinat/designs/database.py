@@ -1658,8 +1658,8 @@ def OA_10_469():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_10_469
-        sage: OA = OA_10_469()
-        sage: is_orthogonal_array(OA,10,469,2)
+        sage: OA = OA_10_469()                  # long time
+        sage: is_orthogonal_array(OA,10,469,2)  # long time
         True
 
     The design is available from the general constructor::
