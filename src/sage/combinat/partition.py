@@ -7522,7 +7522,7 @@ class Partitions_starting(Partitions):
             sage: Partitions(3, starting=[2,2]).first()
             [2, 1]
         """
-        if self._starting in Partitions_n(self.n):
+        if sum(self._starting) == self.n:
             return self._starting
 
         if (k := self._starting.size()) < self.n:
@@ -7588,6 +7588,7 @@ class Partitions_ending(Partitions):
         Partitions.__init__(self)
         self.n = n
         self._ending = ending_partition
+        self._ending_size_is_not_same = (n != sum(self._ending))
 
     def _repr_(self):
         """
@@ -7653,7 +7654,7 @@ class Partitions_ending(Partitions):
 
         # if self._ending is a different size, we should make the comparison
         mu = next(part)
-        if mu < self._ending:
+        if self._ending_size_is_not_same and mu < self._ending:
             return None
         return mu
 
