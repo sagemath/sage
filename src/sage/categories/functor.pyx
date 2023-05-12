@@ -373,10 +373,10 @@ cdef class Functor(SageObject):
             ....:   def _apply_functor(self, R):
             ....:       return MatrixSpace(R, self._m, self._n)
             sage: F = IllFunctor(2, 2)
-            sage: F(QQ)
+            sage: F(QQ)                                                                 # optional - sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
             sage: F = IllFunctor(2, 3)
-            sage: F(QQ)
+            sage: F(QQ)                                                                 # optional - sage.modules
             Traceback (most recent call last):
             ...
             TypeError: Functor from Category of rings to Category of rings

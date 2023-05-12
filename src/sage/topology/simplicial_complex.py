@@ -173,8 +173,6 @@ from sage.structure.category_object import normalize_names
 from sage.misc.latex import latex
 from sage.misc.superseded import deprecation
 from sage.matrix.constructor import matrix
-from sage.homology.chain_complex import ChainComplex
-from sage.graphs.graph import Graph
 from functools import total_ordering
 from itertools import combinations, chain
 lazy_import('sage.categories.simplicial_complexes', 'SimplicialComplexes')
@@ -1474,12 +1472,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
-            sage: S3 = simplicial_complexes.Sphere(3).barycentric_subdivision()
-            sage: S3.f_vector()
+            sage: S3 = simplicial_complexes.Sphere(3).barycentric_subdivision()         # optional - sage.combinat sage.graphs
+            sage: S3.f_vector()                                                         # optional - sage.combinat sage.graphs
             [1, 30, 150, 240, 120]
-            sage: S3.h_vector()
+            sage: S3.h_vector()                                                         # optional - sage.combinat sage.graphs
             [1, 26, 66, 26, 1]
-            sage: S3.g_vector()
+            sage: S3.g_vector()                                                         # optional - sage.combinat sage.graphs
             [1, 25, 40]
         """
         d = self.dimension()
@@ -1601,14 +1599,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: cs = simplicial_complexes.Torus()
-            sage: cs.F_triangle(cs.facets()[0])
+            sage: cs.F_triangle(cs.facets()[0])                                         # optional - sage.combinat
             F: x^3 + 9*x^2*y + 3*x*y^2 + y^3 + 6*x^2 + 12*x*y
             + 3*y^2 + 4*x + 3*y + 1
 
         TESTS::
 
             sage: S = SimplicialComplex([])
-            sage: S.F_triangle(S.facets()[0])
+            sage: S.F_triangle(S.facets()[0])                                           # optional - sage.combinat
             F: 1
         """
         x, y = polygens(ZZ, 'x, y')
@@ -1626,8 +1624,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def flip_graph(self):
         """
-        If ``self`` is pure, then it returns the flip graph of ``self``,
-        otherwise, it returns ``None``.
+        If ``self`` is pure, return the flip graph of ``self``,
+        otherwise, return ``None``.
 
         The flip graph of a pure simplicial complex is the (undirected) graph
         with vertices being the facets, such that two facets are joined by
@@ -1638,29 +1636,29 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: S0 = simplicial_complexes.Sphere(0)
-            sage: G = S0.flip_graph()
-            sage: G.vertices(sort=True); G.edges(sort=True, labels=False)
+            sage: G = S0.flip_graph()                                                   # optional - sage.graphs
+            sage: G.vertices(sort=True); G.edges(sort=True, labels=False)               # optional - sage.graphs
             [(0,), (1,)]
             [((0,), (1,))]
 
-            sage: G = (S0.wedge(S0)).flip_graph()
-            sage: G.vertices(sort=True); G.edges(sort=True, labels=False)
+            sage: G = (S0.wedge(S0)).flip_graph()                                       # optional - sage.graphs
+            sage: G.vertices(sort=True); G.edges(sort=True, labels=False)               # optional - sage.graphs
             [(0,), ('L1',), ('R1',)]
             [((0,), ('L1',)), ((0,), ('R1',)), (('L1',), ('R1',))]
 
             sage: S1 = simplicial_complexes.Sphere(1)
             sage: S2 = simplicial_complexes.Sphere(2)
-            sage: G = (S1.wedge(S1)).flip_graph()
-            sage: len(G.vertices(sort=False))
+            sage: G = (S1.wedge(S1)).flip_graph()                                       # optional - sage.graphs
+            sage: len(G.vertices(sort=False))                                           # optional - sage.graphs
             6
-            sage: len(G.edges(sort=False))
+            sage: len(G.edges(sort=False))                                              # optional - sage.graphs
             10
 
-            sage: (S1.wedge(S2)).flip_graph() is None
+            sage: (S1.wedge(S2)).flip_graph() is None                                   # optional - sage.graphs
             True
 
-            sage: G = S2.flip_graph()
-            sage: G.vertices(sort=True); G.edges(sort=True, labels=False)
+            sage: G = S2.flip_graph()                                                   # optional - sage.graphs
+            sage: G.vertices(sort=True); G.edges(sort=True, labels=False)               # optional - sage.graphs
             [(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)]
             [((0, 1, 2), (0, 1, 3)),
              ((0, 1, 2), (0, 2, 3)),
@@ -1669,13 +1667,15 @@ class SimplicialComplex(Parent, GenericCellComplex):
              ((0, 1, 3), (1, 2, 3)),
              ((0, 2, 3), (1, 2, 3))]
 
-            sage: T = simplicial_complexes.Torus()
-            sage: G = T.suspension(4).flip_graph()
-            sage: len(G.vertices(sort=False)); len(G.edges(sort=False, labels=False))
+            sage: T = simplicial_complexes.Torus()                                      # optional - sage.graphs
+            sage: G = T.suspension(4).flip_graph()                                      # optional - sage.graphs
+            sage: len(G.vertices(sort=False)); len(G.edges(sort=False, labels=False))   # optional - sage.graphs
             46
             161
         """
         from collections import defaultdict
+        from sage.graphs.graph import Graph
+
         if not self.is_pure():
             return None
         d = self.dimension()
@@ -1699,7 +1699,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def is_pseudomanifold(self):
         """
-        Return True if self is a pseudomanifold.
+        Return True if ``self`` is a pseudomanifold.
 
         A pseudomanifold is a simplicial complex with the following properties:
 
@@ -1720,20 +1720,20 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: S0 = simplicial_complexes.Sphere(0)
-            sage: S0.is_pseudomanifold()
+            sage: S0.is_pseudomanifold()                                                # optional - sage.graphs
             True
-            sage: (S0.wedge(S0)).is_pseudomanifold()
+            sage: (S0.wedge(S0)).is_pseudomanifold()                                    # optional - sage.graphs
             False
             sage: S1 = simplicial_complexes.Sphere(1)
             sage: S2 = simplicial_complexes.Sphere(2)
-            sage: (S1.wedge(S1)).is_pseudomanifold()
+            sage: (S1.wedge(S1)).is_pseudomanifold()                                    # optional - sage.graphs
             False
-            sage: (S1.wedge(S2)).is_pseudomanifold()
+            sage: (S1.wedge(S2)).is_pseudomanifold()                                    # optional - sage.graphs
             False
-            sage: S2.is_pseudomanifold()
+            sage: S2.is_pseudomanifold()                                                # optional - sage.graphs
             True
             sage: T = simplicial_complexes.Torus()
-            sage: T.suspension(4).is_pseudomanifold()
+            sage: T.suspension(4).is_pseudomanifold()                                   # optional - sage.graphs
             True
         """
         if not self.is_pure():
@@ -1858,7 +1858,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S.join(T)
             Simplicial complex with vertex set ('L0', 'L1', 'R2', 'R3') and 4 facets
             sage: S.join(T, rename_vertices=False)
-            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 2), (0, 3), (1, 2), (1, 3)}
+            Simplicial complex with vertex set (0, 1, 2, 3)
+            and facets {(0, 2), (0, 3), (1, 2), (1, 3)}
 
         The notation '*' may be used, as well::
 
@@ -1938,7 +1939,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S0 = SimplicialComplex([[0], [1]])
             sage: S0.suspension() == simplicial_complexes.Sphere(1)
             True
-            sage: S3 = S0.suspension(3)  # the 3-sphere
+            sage: S3 = S0.suspension(3)  # the 3-sphere                                 # optional - sage.graphs
             sage: S3.homology()
             {0: 0, 1: 0, 2: 0, 3: Z}
 
@@ -2217,6 +2218,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 current = self._n_cells_sorted(n-1, subcomplex=subcomplex)
             differentials[n-1] = matrix(base_ring, 0, len(current))
         # finally, return the chain complex
+        from sage.homology.chain_complex import ChainComplex
+
         if cochain:
             return ChainComplex(data=differentials, degree=1,
                                 base_ring=base_ring, check=check)
@@ -2312,7 +2315,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             {0: 0, 1: 0, 2: Z}
             sage: sphere._homology_(reduced=False)
             {0: Z, 1: 0, 2: Z}
-            sage: sphere._homology_(base_ring=GF(2), reduced=False)
+            sage: sphere._homology_(base_ring=GF(2), reduced=False)                     # optional - sage.rings.finite_rings
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 0 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
@@ -2479,9 +2482,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
-            sage: RP2 = simplicial_complexes.RealProjectivePlane()
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))
-            sage: M.homology()
+            sage: RP2 = simplicial_complexes.RealProjectivePlane()                      # optional - sage.rings.finite_rings
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # optional - sage.rings.finite_rings
+            sage: M.homology()                                                          # optional - sage.rings.finite_rings
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
@@ -3583,8 +3586,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: triangle = SimplicialComplex([[0,1], [1,2], [0, 2]])
-            sage: hexagon = triangle.barycentric_subdivision()
-            sage: hexagon
+            sage: hexagon = triangle.barycentric_subdivision(); hexagon                 # optional - sage.combinat sage.graphs
             Simplicial complex with 6 vertices and 6 facets
             sage: hexagon.homology(1) == triangle.homology(1)
             True
@@ -3699,12 +3701,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: S = SimplicialComplex([[0,1,2,3]])
-            sage: G = S.graph(); G
+            sage: G = S.graph(); G                                                      # optional - sage.graphs
             Graph on 4 vertices
-            sage: G.edges(sort=True)
+            sage: G.edges(sort=True)                                                    # optional - sage.graphs
             [(0, 1, None), (0, 2, None), (0, 3, None), (1, 2, None), (1, 3, None), (2, 3, None)]
         """
         if self._graph is None:
+            from sage.graphs.graph import Graph
+
             edges = self.n_cells(1)
             vertices = [min(f) for f in self._facets if f.dimension() == 0]
             used_vertices = []  # vertices which are in an edge
@@ -3774,11 +3778,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
-            sage: h = Graph({0:[1,2,3,4],1:[2,3,4],2:[3]})
-            sage: x = h.clique_complex()
-            sage: x
-            Simplicial complex with vertex set (0, 1, 2, 3, 4) and facets {(0, 1, 4), (0, 1, 2, 3)}
-            sage: x.is_flag_complex()
+            sage: h = Graph({0: [1,2,3,4], 1: [2,3,4], 2: [3]})                         # optional - sage.graphs
+            sage: x = h.clique_complex(); x                                             # optional - sage.graphs
+            Simplicial complex with vertex set (0, 1, 2, 3, 4)
+            and facets {(0, 1, 4), (0, 1, 2, 3)}
+            sage: x.is_flag_complex()                                                   # optional - sage.graphs
             True
 
             sage: X = simplicial_complexes.ChessboardComplex(3,3)
@@ -4015,20 +4019,22 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: S1 = simplicial_complexes.Sphere(1)
-            sage: S1 == S1.connected_component()
+            sage: S1 == S1.connected_component()                                        # optional - sage.graphs
             True
             sage: X = S1.disjoint_union(S1)
-            sage: X == X.connected_component()
+            sage: X == X.connected_component()                                          # optional - sage.graphs
             False
-            sage: X.connected_component(Simplex(['L0'])) == X.connected_component(Simplex(['R0']))
+            sage: CL0 = X.connected_component(Simplex(['L0']))                          # optional - sage.graphs
+            sage: CR0 = X.connected_component(Simplex(['R0']))                          # optional - sage.graphs
+            sage: CL0 == CR0                                                            # optional - sage.graphs
             False
 
             sage: S0 = simplicial_complexes.Sphere(0)
             sage: S0.vertices()
             (0, 1)
-            sage: S0.connected_component()
+            sage: S0.connected_component()                                              # optional - sage.graphs
             Simplicial complex with vertex set (0,) and facets {(0,)}
-            sage: S0.connected_component(Simplex((1,)))
+            sage: S0.connected_component(Simplex((1,)))                                 # optional - sage.graphs
             Simplicial complex with vertex set (1,) and facets {(1,)}
 
             sage: SimplicialComplex([[]]).connected_component()
@@ -4075,51 +4081,51 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: S1 = simplicial_complexes.Sphere(1)
-            sage: S1.fundamental_group()
+            sage: S1.fundamental_group()                                                # optional - sage.graphs sage.groups
             Finitely presented group < e |  >
 
         If we pass the argument ``simplify=False``, we get generators and
         relations in a form which is not usually very helpful. Here is the
         cyclic group of order 2, for instance::
 
-            sage: RP2 = simplicial_complexes.RealProjectiveSpace(2)
-            sage: C2 = RP2.fundamental_group(simplify=False)
-            sage: C2
-            Finitely presented group < e0, e1, e2, e3, e4, e5, e6, e7, e8, e9 | e0, e3, e4, e7, e9, e5*e2^-1*e0, e7*e2^-1*e1, e8*e3^-1*e1, e8*e6^-1*e4, e9*e6^-1*e5 >
-            sage: C2.simplified()
+            sage: RP2 = simplicial_complexes.RealProjectiveSpace(2)                     # optional - sage.libs.pari
+            sage: C2 = RP2.fundamental_group(simplify=False); C2                        # optional - sage.graphs sage.groups sage.libs.pari
+            Finitely presented group < e0, e1, e2, e3, e4, e5, e6, e7, e8, e9 | e0, e3,
+            e4, e7, e9, e5*e2^-1*e0, e7*e2^-1*e1, e8*e3^-1*e1, e8*e6^-1*e4, e9*e6^-1*e5 >
+            sage: C2.simplified()                                                       # optional - sage.graphs sage.groups sage.libs.pari
             Finitely presented group < e1 | e1^2 >
 
         This is the same answer given if the argument ``simplify`` is True
         (the default)::
 
-            sage: RP2.fundamental_group()
+            sage: RP2.fundamental_group()                                               # optional - sage.graphs sage.groups sage.libs.pari
             Finitely presented group < e1 | e1^2 >
 
         You must specify a base point to compute the fundamental group
         of a non-connected complex::
 
-            sage: K = S1.disjoint_union(RP2)
-            sage: K.fundamental_group()
+            sage: K = S1.disjoint_union(RP2)                                            # optional - sage.graphs sage.groups sage.libs.pari
+            sage: K.fundamental_group()                                                 # optional - sage.graphs sage.groups sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: this complex is not connected, so you must specify a base point
-            sage: K.fundamental_group(base_point='L0')
+            sage: K.fundamental_group(base_point='L0')                                  # optional - sage.graphs sage.groups sage.libs.pari
             Finitely presented group < e |  >
-            sage: K.fundamental_group(base_point='R0').order()
+            sage: K.fundamental_group(base_point='R0').order()                          # optional - sage.graphs sage.groups sage.libs.pari
             2
 
         Some other examples::
 
-            sage: S1.wedge(S1).fundamental_group()
+            sage: S1.wedge(S1).fundamental_group()                                      # optional - sage.graphs sage.groups
             Finitely presented group < e0, e1 | >
-            sage: simplicial_complexes.Torus().fundamental_group()
+            sage: simplicial_complexes.Torus().fundamental_group()                      # optional - sage.graphs sage.groups
             Finitely presented group < e1, e4 | e4^-1*e1^-1*e4*e1 >
 
-            sage: G = simplicial_complexes.MooreSpace(5).fundamental_group()
-            sage: G.ngens()
+            sage: G = simplicial_complexes.MooreSpace(5).fundamental_group()            # optional - sage.graphs sage.groups
+            sage: G.ngens()                                                             # optional - sage.graphs sage.groups
             1
-            sage: x = G.gen(0)
-            sage: [(x**n).is_one() for n in range(1,6)]
+            sage: x = G.gen(0)                                                          # optional - sage.graphs sage.groups
+            sage: [(x**n).is_one() for n in range(1,6)]                                 # optional - sage.graphs sage.groups
             [False, False, False, False, True]
         """
         if not self.is_connected():
@@ -4188,18 +4194,18 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Z1 = SimplicialComplex([[0,1],[1,2],[2,3,4],[4,5]])
             sage: Z2 = SimplicialComplex([['a','b'],['b','c'],['c','d','e'],['e','f']])
             sage: Z3 = SimplicialComplex([[1,2,3]])
-            sage: Z1.is_isomorphic(Z2)
+            sage: Z1.is_isomorphic(Z2)                                                  # optional - sage.graphs
             True
-            sage: Z1.is_isomorphic(Z2, certificate=True)
+            sage: Z1.is_isomorphic(Z2, certificate=True)                                # optional - sage.graphs
             (True, {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f'})
-            sage: Z3.is_isomorphic(Z2)
+            sage: Z3.is_isomorphic(Z2)                                                  # optional - sage.graphs
             False
 
         We check that :trac:`20751` is fixed::
 
             sage: C1 = SimplicialComplex([[1,2,3], [2,4], [3,5], [5,6]])
             sage: C2 = SimplicialComplex([['a','b','c'], ['b','d'], ['c','e'], ['e','f']])
-            sage: C1.is_isomorphic(C2, certificate=True)
+            sage: C1.is_isomorphic(C2, certificate=True)                                # optional - sage.graphs
             (True, {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f'})
         """
         # Check easy invariants agree
@@ -4207,6 +4213,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
             != sorted(x.dimension() for x in other._facets)
             or len(self.vertices()) != len(other.vertices())):
             return False
+
+        from sage.graphs.graph import Graph
+
         g1 = Graph()
         g2 = Graph()
         # With Python 3, "is_isomorphic" for graphs works best if the
@@ -4252,27 +4261,28 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: S = simplicial_complexes.Simplex(3)
-            sage: S.automorphism_group().is_isomorphic(SymmetricGroup(4))
+            sage: S.automorphism_group().is_isomorphic(SymmetricGroup(4))           # optional - sage.graphs
             True
 
             sage: P = simplicial_complexes.RealProjectivePlane()
-            sage: P.automorphism_group().is_isomorphic(AlternatingGroup(5))
+            sage: P.automorphism_group().is_isomorphic(AlternatingGroup(5))         # optional - sage.graphs
             True
 
             sage: Z = SimplicialComplex([['1','2'],['2','3','a']])
-            sage: Z.automorphism_group().is_isomorphic(CyclicPermutationGroup(2))
+            sage: Z.automorphism_group().is_isomorphic(CyclicPermutationGroup(2))   # optional - sage.graphs
             True
-            sage: group = Z.automorphism_group()
-            sage: sorted(group.domain())
+            sage: group = Z.automorphism_group()                                    # optional - sage.graphs
+            sage: sorted(group.domain())                                            # optional - sage.graphs
             ['1', '2', '3', 'a']
 
         Check that :trac:`17032` is fixed::
 
             sage: s = SimplicialComplex([[(0,1),(2,3)]])
-            sage: s.automorphism_group().cardinality()
+            sage: s.automorphism_group().cardinality()                              # optional - sage.graphs
             2
         """
         from sage.groups.perm_gps.permgroup import PermutationGroup
+        from sage.graphs.graph import Graph
 
         G = Graph()
         G.add_vertices(self.vertices())
@@ -4309,26 +4319,25 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: S4 = simplicial_complexes.Sphere(4)
             sage: S3 = simplicial_complexes.Sphere(3)
-            sage: fix = S4.fixed_complex([S4.automorphism_group()([(0,1)])])
-            sage: fix
+            sage: fix = S4.fixed_complex([S4.automorphism_group()([(0,1)])]); fix       # optional - sage.groups
             Simplicial complex with vertex set (0, 2, 3, 4, 5) and 5 facets
-            sage: fix.is_isomorphic(S3)
+            sage: fix.is_isomorphic(S3)                                                 # optional - sage.groups
             True
 
         Another simple example::
 
             sage: T = SimplicialComplex([[1,2,3],[2,3,4]])
-            sage: G = T.automorphism_group()
-            sage: T.fixed_complex([G([(1,4)])])
+            sage: G = T.automorphism_group()                                            # optional - sage.groups
+            sage: T.fixed_complex([G([(1,4)])])                                         # optional - sage.groups
             Simplicial complex with vertex set (2, 3) and facets {(2, 3)}
 
         A more sophisticated example::
 
             sage: RP2 = simplicial_complexes.ProjectivePlane()
             sage: CP2 = simplicial_complexes.ComplexProjectivePlane()
-            sage: G = CP2.automorphism_group()
-            sage: H = G.subgroup([G([(2,3),(5,6),(8,9)])])
-            sage: CP2.fixed_complex(H).is_isomorphic(RP2)
+            sage: G = CP2.automorphism_group()                                          # optional - sage.groups
+            sage: H = G.subgroup([G([(2,3),(5,6),(8,9)])])                              # optional - sage.groups
+            sage: CP2.fixed_complex(H).is_isomorphic(RP2)                               # optional - sage.groups
             True
         """
         from sage.categories.groups import Groups
@@ -4621,7 +4630,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: SimplicialComplex([[1,2,3]]).decone()
             Simplicial complex with vertex set () and facets {()}
             sage: SimplicialComplex([[1,2,3], [1,3,4], [1,5,6]]).decone()
-            Simplicial complex with vertex set (2, 3, 4, 5, 6) and facets {(2, 3), (3, 4), (5, 6)}
+            Simplicial complex with vertex set (2, 3, 4, 5, 6)
+             and facets {(2, 3), (3, 4), (5, 6)}
             sage: X = SimplicialComplex([[1,2,3], [1,3,4], [2,5,6]])
             sage: X.decone() == X
             True
@@ -4653,29 +4663,29 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         A 1-dim simplicial complex is balanced iff it is bipartite::
 
-            sage: X = SimplicialComplex([[1,2],[1,4],[3,4],[2,5]])
-            sage: X.is_balanced()
+            sage: X = SimplicialComplex([[1,2], [1,4], [3,4], [2,5]])
+            sage: X.is_balanced()                                                       # optional - sage.graphs
             True
-            sage: sorted(X.is_balanced(certificate=True))
+            sage: sorted(X.is_balanced(certificate=True))                               # optional - sage.graphs
             [[1, 3, 5], [2, 4]]
-            sage: X = SimplicialComplex([[1,2],[1,4],[3,4],[2,4]])
-            sage: X.is_balanced()
+            sage: X = SimplicialComplex([[1,2], [1,4], [3,4], [2,4]])
+            sage: X.is_balanced()                                                       # optional - sage.graphs
             False
 
         Any barycentric division is balanced::
 
-            sage: X = SimplicialComplex([[1,2,3],[1,2,4],[2,3,4]])
-            sage: X.is_balanced()
+            sage: X = SimplicialComplex([[1,2,3], [1,2,4], [2,3,4]])
+            sage: X.is_balanced()                                                       # optional - sage.graphs
             False
-            sage: X.barycentric_subdivision().is_balanced()
+            sage: X.barycentric_subdivision().is_balanced()                             # optional - sage.graphs
             True
 
         A non-pure balanced complex::
 
-            sage: X=SimplicialComplex([[1,2,3],[3,4]])
-            sage: X.is_balanced(check_purity=True)
+            sage: X = SimplicialComplex([[1,2,3], [3,4]])
+            sage: X.is_balanced(check_purity=True)                                      # optional - sage.graphs
             False
-            sage: sorted(X.is_balanced(certificate=True))
+            sage: sorted(X.is_balanced(certificate=True))                               # optional - sage.graphs
             [[1, 4], [2], [3]]
         """
         d = 1 + self.dimension()
@@ -4730,7 +4740,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         Simplices are trivially partitionable::
 
-            sage: X = SimplicialComplex([ [1,2,3,4] ])
+            sage: X = SimplicialComplex([[1,2,3,4]])
             sage: X.is_partitionable()
             True
             sage: X.is_partitionable(certificate=True)
@@ -4738,23 +4748,27 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         Shellable complexes are partitionable::
 
-            sage: X = SimplicialComplex([ [1,3,5],[1,3,6],[1,4,5],[1,4,6],[2,3,5],[2,3,6],[2,4,5] ])
+            sage: X = SimplicialComplex([[1,3,5], [1,3,6], [1,4,5], [1,4,6],
+            ....:                        [2,3,5], [2,3,6], [2,4,5]])
             sage: X.is_partitionable()
             True
             sage: P = X.is_partitionable(certificate=True)
-            sage: n_intervals_containing = lambda f: len([ RF for RF in P if RF[0].is_face(f) and f.is_face(RF[1]) ])
-            sage: all( n_intervals_containing(f)==1 for k in X.faces().keys() for f in X.faces()[k] )
+            sage: def n_intervals_containing(f):
+            ....:     return len([RF for RF in P
+            ....:                    if RF[0].is_face(f) and f.is_face(RF[1])])
+            sage: all(n_intervals_containing(f) == 1
+            ....:     for k in X.faces().keys() for f in X.faces()[k])
             True
 
         A non-shellable, non-Cohen-Macaulay, partitionable example, constructed by Björner::
 
-            sage: X = SimplicialComplex([ [1,2,3],[1,2,4],[1,3,4],[2,3,4],[1,5,6] ])
+            sage: X = SimplicialComplex([[1,2,3], [1,2,4], [1,3,4], [2,3,4], [1,5,6]])
             sage: X.is_partitionable()
             True
 
         The bowtie complex is not partitionable::
 
-            sage: X = SimplicialComplex([ [1,2,3],[1,4,5] ])
+            sage: X = SimplicialComplex([[1,2,3], [1,4,5]])
             sage: X.is_partitionable()
             False
         """
@@ -4785,9 +4799,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
-            sage: X = SimplicialComplex([[1,2,3],[1,2,4]])
-            sage: Y = SimplicialComplex([[1,2,3],[1,4,5]])
-            sage: Z = SimplicialComplex([[1,2,3],[1,4],[2,4]])
+            sage: X = SimplicialComplex([[1,2,3], [1,2,4]])
+            sage: Y = SimplicialComplex([[1,2,3], [1,4,5]])
+            sage: Z = SimplicialComplex([[1,2,3], [1,4], [2,4]])
             sage: sorted(X.intersection(Y).facets())
             [(1, 2, 3), (1, 4)]
             sage: X.intersection(X) == X

@@ -24,13 +24,13 @@ EXAMPLES::
     sage: d = r.differential(2)                                                         # optional - sage.libs.singular
     sage: d                                                                             # optional - sage.libs.singular
     Free module morphism defined as left-multiplication by the matrix
-    [ y  x]
-    [-z -y]
-    [ w  z]
-    Domain: Ambient free module of rank 2 over the integral domain
-     Multivariate Polynomial Ring in x, y, z, w over Rational Field
-    Codomain: Ambient free module of rank 3 over the integral domain
-     Multivariate Polynomial Ring in x, y, z, w over Rational Field
+      [ y  x]
+      [-z -y]
+      [ w  z]
+      Domain:   Ambient free module of rank 2 over the integral domain
+                Multivariate Polynomial Ring in x, y, z, w over Rational Field
+      Codomain: Ambient free module of rank 3 over the integral domain
+                Multivariate Polynomial Ring in x, y, z, w over Rational Field
     sage: d.image()                                                                     # optional - sage.libs.singular
     Submodule of Ambient free module of rank 3 over the integral domain
      Multivariate Polynomial Ring in x, y, z, w over Rational Field
@@ -74,8 +74,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.libs.singular.singular import si2sa_resolution_graded
-from sage.libs.singular.function import singular_function
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.element import Matrix
 from sage.modules.free_module_element import vector
@@ -125,8 +123,7 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
             sage: M = matrix([[x^2, 2*x^2],
             ....:             [3*x^2, 5*x^2],
             ....:             [5*x^2, 4*x^2]])
-            sage: res = FreeResolution(M, graded=True)                                  # optional - sage.libs.singular
-            sage: res                                                                   # optional - sage.libs.singular
+            sage: res = FreeResolution(M, graded=True); res                             # optional - sage.libs.singular
             S(0)⊕S(0) <-- S(-2)⊕S(-2) <-- 0
             sage: res._res_shifts                                                       # optional - sage.libs.singular
             [[2, 2]]
@@ -328,8 +325,7 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
         sage: R.<x> = QQ[]
         sage: M = matrix([[x^3, 3*x^3, 5*x^3],
         ....:             [0, x, 2*x]])
-        sage: res = FreeResolution(M, graded=True)                                      # optional - sage.libs.singular
-        sage: res                                                                       # optional - sage.libs.singular
+        sage: res = FreeResolution(M, graded=True); res                                 # optional - sage.libs.singular
         S(0)⊕S(0)⊕S(0) <-- S(-3)⊕S(-1) <-- 0
     """
     def __init__(self, module, degrees=None, *args, **kwds):
@@ -364,8 +360,7 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
             sage: R.<x> = QQ[]
             sage: M = matrix([[x^3, 3*x^3, 5*x^3],
             ....:             [0, x, 2*x]])
-            sage: res = FreeResolution(M, graded=True)                                  # optional - sage.libs.singular
-            sage: res                                                                   # optional - sage.libs.singular
+            sage: res = FreeResolution(M, graded=True); res                             # optional - sage.libs.singular
             S(0)⊕S(0)⊕S(0) <-- S(-3)⊕S(-1) <-- 0
             sage: res._maps                                                             # optional - sage.libs.singular
             [
@@ -377,8 +372,7 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
             [[3, 1]]
 
             sage: I = R.ideal([x^4])
-            sage: res = I.graded_free_resolution(shifts=[1], degrees=[2])               # optional - sage.libs.singular
-            sage: res                                                                   # optional - sage.libs.singular
+            sage: res = I.graded_free_resolution(shifts=[1], degrees=[2]); res          # optional - sage.libs.singular
             S(-1) <-- S(-9) <-- 0
             sage: res._maps                                                             # optional - sage.libs.singular
             [[x^4]]
@@ -474,8 +468,7 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
 
         sage: S.<x,y,z,w> = PolynomialRing(QQ)
         sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
-        sage: r = I.graded_free_resolution()                                            # optional - sage.libs.singular
-        sage: r                                                                         # optional - sage.libs.singular
+        sage: r = I.graded_free_resolution(); r                                         # optional - sage.libs.singular
         S(0) <-- S(-2)⊕S(-2)⊕S(-2) <-- S(-3)⊕S(-3) <-- 0
         sage: len(r)                                                                    # optional - sage.libs.singular
         2
@@ -483,8 +476,7 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
         sage: I = S.ideal([z^2 - y*w, y*z - x*w, y - x])
         sage: I.is_homogeneous()
         True
-        sage: r = I.graded_free_resolution()                                            # optional - sage.libs.singular
-        sage: r                                                                         # optional - sage.libs.singular
+        sage: r = I.graded_free_resolution(); r                                         # optional - sage.libs.singular
         S(0) <-- S(-1)⊕S(-2)⊕S(-2) <-- S(-3)⊕S(-3)⊕S(-4) <-- S(-5) <-- 0
     """
     def __init__(self, module, degrees=None, shifts=None, name='S', algorithm='heuristic', **kwds):
@@ -522,6 +514,9 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
             sage: r._res_shifts                                                         # optional - sage.libs.singular
             [[2, 2, 2], [3, 3]]
         """
+        from sage.libs.singular.singular import si2sa_resolution_graded
+        from sage.libs.singular.function import singular_function
+
         #cdef int i, j, k, ncols, nrows
         #cdef list res_shifts, prev_shifts, new_shifts
 

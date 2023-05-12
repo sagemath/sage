@@ -240,7 +240,7 @@ class Rings(CategoryWithAxiom):
 
                 sage: A.<x> = RR[]
                 sage: phi = A.hom([x + 1])
-                sage: phi.extend_to_fraction_field()
+                sage: phi.extend_to_fraction_field()                                    # optional - sage.libs.singular
                 Ring endomorphism of Fraction Field of
                  Univariate Polynomial Ring in x over Real Field with 53 bits of precision
                   Defn: x |--> x + 1.00000000000000

@@ -48,6 +48,9 @@ from .lazy_string import lazy_string
 from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 
+lazy_import("sage.combinat.subset", ["powerset", "subsets", "uniq"],
+            deprecation=35564)
+
 lazy_import("sage.misc.call", ["AttrCallObject", "attrcall", "call_method"],
             deprecation=29869)
 
@@ -519,88 +522,6 @@ def walltime(t=0):
     return time.time() - t
 
 
-def union(x, y=None):
-    """
-    Return the union of x and y, as a list. The resulting list need not
-    be sorted and can change from call to call.
-
-    INPUT:
-
-
-    -  ``x`` - iterable
-
-    -  ``y`` - iterable (may optionally omitted)
-
-
-    OUTPUT: list
-
-    EXAMPLES::
-
-        sage: answer = union([1,2,3,4], [5,6]); answer
-        doctest:...: DeprecationWarning: sage.misc.misc.union is deprecated...
-        See https://github.com/sagemath/sage/issues/32096 for details.
-        [1, 2, 3, 4, 5, 6]
-        sage: union([1,2,3,4,5,6], [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), set([5,6])) == answer
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32096, "sage.misc.misc.union is deprecated, use 'list(set(x).union(y))' or a more suitable replacement")
-    if y is None:
-        return list(set(x))
-    return list(set(x).union(y))
-
-
-def uniq(x):
-    """
-    Return the sublist of all elements in the list x that is sorted and
-    is such that the entries in the sublist are unique.
-
-    EXAMPLES::
-
-        sage: uniq([1, 1, 8, -5, 3, -5, -13, 13, -13])
-        doctest:...: DeprecationWarning: the output of uniq(X) being sorted is deprecated; use sorted(set(X)) instead if you want sorted output
-        See https://github.com/sagemath/sage/issues/27014 for details.
-        [-13, -5, 1, 3, 8, 13]
-    """
-    # After deprecation period, rename _stable_uniq -> uniq
-    from sage.misc.superseded import deprecation
-    deprecation(27014, "the output of uniq(X) being sorted is deprecated; use sorted(set(X)) instead if you want sorted output")
-    return sorted(set(x))
-
-
-def _stable_uniq(L):
-    """
-    Iterate over the elements of ``L``, yielding every element at most
-    once: keep only the first occurrence of any item.
-
-    The items must be hashable.
-
-    INPUT:
-
-    - ``L`` -- iterable
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import _stable_uniq
-        sage: L = [1, 1, 8, -5, 3, -5, 'a', 'x', 'a']
-        sage: it = _stable_uniq(L)
-        sage: it
-        <generator object _stable_uniq at ...>
-        sage: list(it)
-        [1, 8, -5, 3, 'a', 'x']
-    """
-    seen = set()
-    for x in L:
-        if x in seen:
-            continue
-        yield x
-        seen.add(x)
-
-
 def exactly_one_is_true(iterable):
     r"""
     Return whether exactly one element of ``iterable`` evaluates ``True``.
@@ -1054,69 +975,6 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
             yield elements[a]
         else:
             yield tuple(elements[j] for j in Integer(a).digits(n, padto=repeat))
-
-
-def powerset(X):
-    r"""
-    Iterator over the *list* of all subsets of the iterable X, in no
-    particular order. Each list appears exactly once, up to order.
-
-    INPUT:
-
-    -  ``X`` - an iterable
-
-    OUTPUT: iterator of lists
-
-    EXAMPLES::
-
-        sage: list(powerset([1,2,3]))
-        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
-        sage: [z for z in powerset([0,[1,2]])]
-        [[], [0], [[1, 2]], [0, [1, 2]]]
-
-    Iterating over the power set of an infinite set is also allowed::
-
-        sage: i = 0
-        sage: L = []
-        sage: for x in powerset(ZZ):
-        ....:     if i > 10:
-        ....:         break
-        ....:     else:
-        ....:         i += 1
-        ....:     L.append(x)
-        sage: print(" ".join(str(x) for x in L))
-        [] [0] [1] [0, 1] [-1] [0, -1] [1, -1] [0, 1, -1] [2] [0, 2] [1, 2]
-
-    You may also use subsets as an alias for powerset::
-
-        sage: subsets([1,2,3])
-        <generator object ...powerset at 0x...>
-        sage: list(subsets([1,2,3]))
-        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
-
-        The reason we return lists instead of sets is that the elements of
-        sets must be hashable and many structures on which one wants the
-        powerset consist of non-hashable objects.
-
-    AUTHORS:
-
-    - William Stein
-
-    - Nils Bruin (2006-12-19): rewrite to work for not-necessarily
-      finite objects X.
-    """
-    yield []
-    pairs = []
-    power2 = 1
-    for x in X:
-        pairs.append((power2, x))
-        next_power2 = power2 << 1
-        for w in range(power2, next_power2):
-            yield [x for m, x in pairs if m & w]
-        power2 = next_power2
-
-
-subsets = powerset
 
 
 #################################################################

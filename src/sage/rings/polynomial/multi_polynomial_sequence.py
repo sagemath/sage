@@ -913,31 +913,31 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: F = Sequence([x*y + y + 1, z + 1])                                    # optional - sage.rings.polynomial.pbori
             sage: G = F.connection_graph(); G                                           # optional - sage.rings.polynomial.pbori
             Graph on 3 vertices
-            sage: G.is_connected()
+            sage: G.is_connected()                                                      # optional - sage.rings.polynomial.pbori
             False
-            sage: F = Sequence([x])
-            sage: F.connection_graph()
+            sage: F = Sequence([x])                                                     # optional - sage.rings.polynomial.pbori
+            sage: F.connection_graph()                                                  # optional - sage.rings.polynomial.pbori
             Graph on 1 vertex
 
         TESTS::
 
-            sage: F = Sequence([], B)
-            sage: F.connection_graph()
+            sage: F = Sequence([], B)                                                   # optional - sage.rings.polynomial.pbori
+            sage: F.connection_graph()                                                  # optional - sage.rings.polynomial.pbori
             Graph on 0 vertices
-            sage: F = Sequence([1], B)
-            sage: F.connection_graph()
+            sage: F = Sequence([1], B)                                                  # optional - sage.rings.polynomial.pbori
+            sage: F.connection_graph()                                                  # optional - sage.rings.polynomial.pbori
             Graph on 0 vertices
-            sage: F = Sequence([x])
-            sage: F.connection_graph()
+            sage: F = Sequence([x])                                                     # optional - sage.rings.polynomial.pbori
+            sage: F.connection_graph()                                                  # optional - sage.rings.polynomial.pbori
             Graph on 1 vertex
-            sage: F = Sequence([x, y])
-            sage: F.connection_graph()
+            sage: F = Sequence([x, y])                                                  # optional - sage.rings.polynomial.pbori
+            sage: F.connection_graph()                                                  # optional - sage.rings.polynomial.pbori
             Graph on 2 vertices
-            sage: F = Sequence([x*y*z])
-            sage: F.connection_graph().is_clique()
+            sage: F = Sequence([x*y*z])                                                 # optional - sage.rings.polynomial.pbori
+            sage: F.connection_graph().is_clique()                                      # optional - sage.rings.polynomial.pbori
             True
-            sage: F = Sequence([x*y, y*z])
-            sage: F.connection_graph().is_clique()
+            sage: F = Sequence([x*y, y*z])                                              # optional - sage.rings.polynomial.pbori
+            sage: F.connection_graph().is_clique()                                      # optional - sage.rings.polynomial.pbori
             False
         """
         from sage.graphs.graph import Graph
