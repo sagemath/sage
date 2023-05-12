@@ -169,6 +169,70 @@ def tex_from_array(array, with_lines=True):
         &&\lr{3}\\
         \end{array}$}
         }
+        sage: Tableaux.options.convention="russian"
+        sage: print(tex_from_array([[1,2,3],[4,5]]))
+        {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+        \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{3}c}\cline{1-2}
+        \lr{\rotatebox{-45}{4}}&\lr{\rotatebox{-45}{5}}\\\cline{1-3}
+        \lr{\rotatebox{-45}{1}}&\lr{\rotatebox{-45}{2}}&\lr{\rotatebox{-45}{3}}\\\cline{1-3}
+        \end{array}$}}
+        }
+        sage: print(tex_from_array([[1,2,3],[4,5]], with_lines=False))
+        {\def\lr#1{\multicolumn{1}{@{\hspace{.6ex}}c@{\hspace{.6ex}}}{\raisebox{-.3ex}{$#1$}}}
+        \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{3}c}\\
+        \lr{\rotatebox{-45}{4}}&\lr{\rotatebox{-45}{5}}\\
+        \lr{\rotatebox{-45}{1}}&\lr{\rotatebox{-45}{2}}&\lr{\rotatebox{-45}{3}}\\
+        \end{array}$}}
+        }
+        sage: print(tex_from_array([[1,2,3],[4,5,6,7],[8]]))
+        {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+        \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{4}c}\cline{1-1}
+        \lr{\rotatebox{-45}{8}}\\\cline{1-4}
+        \lr{\rotatebox{-45}{4}}&\lr{\rotatebox{-45}{5}}&\lr{\rotatebox{-45}{6}}&\lr{\rotatebox{-45}{7}}\\\cline{1-4}
+        \lr{\rotatebox{-45}{1}}&\lr{\rotatebox{-45}{2}}&\lr{\rotatebox{-45}{3}}\\\cline{1-3}
+        \end{array}$}}
+        }
+        sage: print(tex_from_array([[1,2,3],[4,5,6,7],[8]], with_lines=False))
+        {\def\lr#1{\multicolumn{1}{@{\hspace{.6ex}}c@{\hspace{.6ex}}}{\raisebox{-.3ex}{$#1$}}}
+        \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{4}c}\\
+        \lr{\rotatebox{-45}{8}}\\
+        \lr{\rotatebox{-45}{4}}&\lr{\rotatebox{-45}{5}}&\lr{\rotatebox{-45}{6}}&\lr{\rotatebox{-45}{7}}\\
+        \lr{\rotatebox{-45}{1}}&\lr{\rotatebox{-45}{2}}&\lr{\rotatebox{-45}{3}}\\
+        \end{array}$}}
+        }
+        sage: print(tex_from_array([[None,None,3],[None,5,6,7],[8]]))
+        {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+        \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{4}c}\cline{1-1}
+        \lr{\rotatebox{-45}{8}}\\\cline{1-4}
+        &\lr{\rotatebox{-45}{5}}&\lr{\rotatebox{-45}{6}}&\lr{\rotatebox{-45}{7}}\\\cline{2-4}
+        &&\lr{\rotatebox{-45}{3}}\\\cline{3-3}
+        \end{array}$}}
+        }
+        sage: print(tex_from_array([[None,None,3],[None,5,6,7],[None,8]]))
+        {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+        \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{4}c}\cline{2-2}
+        &\lr{\rotatebox{-45}{8}}\\\cline{2-4}
+        &\lr{\rotatebox{-45}{5}}&\lr{\rotatebox{-45}{6}}&\lr{\rotatebox{-45}{7}}\\\cline{2-4}
+        &&\lr{\rotatebox{-45}{3}}\\\cline{3-3}
+        \end{array}$}}
+        }
+        sage: print(tex_from_array([[None,None,3],[None,5,6,7],[8]], with_lines=False))
+        {\def\lr#1{\multicolumn{1}{@{\hspace{.6ex}}c@{\hspace{.6ex}}}{\raisebox{-.3ex}{$#1$}}}
+        \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{4}c}\\
+        \lr{\rotatebox{-45}{8}}\\
+        &\lr{\rotatebox{-45}{5}}&\lr{\rotatebox{-45}{6}}&\lr{\rotatebox{-45}{7}}\\
+        &&\lr{\rotatebox{-45}{3}}\\
+        \end{array}$}}
+        }
+        sage: print(tex_from_array([[None,None,3],[None,5,6,7],[None,8]], with_lines=False))
+        {\def\lr#1{\multicolumn{1}{@{\hspace{.6ex}}c@{\hspace{.6ex}}}{\raisebox{-.3ex}{$#1$}}}
+        \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{4}c}\\
+        &\lr{\rotatebox{-45}{8}}\\
+        &\lr{\rotatebox{-45}{5}}&\lr{\rotatebox{-45}{6}}&\lr{\rotatebox{-45}{7}}\\
+        &&\lr{\rotatebox{-45}{3}}\\
+        \end{array}$}}
+        }
+
         sage: Tableaux.options._reset()
     """
     lr=lr_macro.substitute(bar='|' if with_lines else '')
@@ -239,6 +303,30 @@ def tex_from_array_tuple(a_tuple, with_lines=True):
         &\lr{6}&\lr{7}\\
         \end{array}$}
         }
+        sage: Tableaux.options.convention="russian"
+        sage: print(tex_from_array_tuple([[[1,2,3],[4,5]],[],[[None,6,7],[None,8],[9]]]))
+        {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+        \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{3}c}\cline{1-2}
+        \lr{\rotatebox{-45}{4}}&\lr{\rotatebox{-45}{5}}\\\cline{1-3}
+        \lr{\rotatebox{-45}{1}}&\lr{\rotatebox{-45}{2}}&\lr{\rotatebox{-45}{3}}\\\cline{1-3}
+        \end{array}$}},\emptyset,\raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{3}c}\cline{1-1}
+        \lr{\rotatebox{-45}{9}}\\\cline{1-2}
+        &\lr{\rotatebox{-45}{8}}\\\cline{2-3}
+        &\lr{\rotatebox{-45}{6}}&\lr{\rotatebox{-45}{7}}\\\cline{2-3}
+        \end{array}$}}
+        }
+        sage: print(tex_from_array_tuple([[[1,2,3],[4,5]],[],[[None,6,7],[None,8],[9]]], with_lines=False))
+        {\def\lr#1{\multicolumn{1}{@{\hspace{.6ex}}c@{\hspace{.6ex}}}{\raisebox{-.3ex}{$#1$}}}
+        \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{3}c}\\
+        \lr{\rotatebox{-45}{4}}&\lr{\rotatebox{-45}{5}}\\
+        \lr{\rotatebox{-45}{1}}&\lr{\rotatebox{-45}{2}}&\lr{\rotatebox{-45}{3}}\\
+        \end{array}$}},\emptyset,\raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{3}c}\\
+        \lr{\rotatebox{-45}{9}}\\
+        &\lr{\rotatebox{-45}{8}}\\
+        &\lr{\rotatebox{-45}{6}}&\lr{\rotatebox{-45}{7}}\\
+        \end{array}$}}
+        }
+
         sage: Tableaux.options._reset()
     """
     lr=lr_macro.substitute(bar='|' if with_lines else '')
@@ -377,6 +465,9 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
             │ 2 │
             └───┘
     """
+    if convention == "Russian":
+        return ascii_art_table_russian(data, use_unicode)
+
     if use_unicode:
         import unicodedata
         v  = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL')
@@ -390,59 +481,12 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
         uh = unicodedata.lookup('BOX DRAWINGS LIGHT UP AND HORIZONTAL')
         dh = unicodedata.lookup('BOX DRAWINGS LIGHT DOWN AND HORIZONTAL')
         vh = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL')
-        urdl = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL UPPER RIGHT TO LOWER LEFT')
-        uldr = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL UPPER LEFT TO LOWER RIGHT')
-        x = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL CROSS')
         from sage.typeset.unicode_art import unicode_art as art
     else:
         v = '|'
         h = '-'
         dl = dr = ul = ur = vr = vl = uh = dh = vh = '+'
-        urdl = '/'
-        uldr = '\\'
-        x = 'X'
         from sage.typeset.ascii_art import ascii_art as art
-
-    if Tableaux.options.convention == "Russian":
-        if not data:
-            return urdl + uldr + '\n' + uldr + urdl
-
-        str_tab = [[str(d) for d in row] for row in data]
-        col_widths = [2] * len(str_tab[0])
-        for row in str_tab:
-            for i, e in enumerate(row):
-                col_widths[i] = max(col_widths[i], len(e))
-        col_width = max(col_widths) + 1
-        max_height = max([a + len(str_tab[a]) for a in range(len(str_tab))])
-        empty_col = ' ' * (col_width * 2)
-        str_list = []
-        for i in range(max_height):
-            # Get the row with the number on it
-            st = ' ' + ' ' * ((max_height - i - 1) * col_width)
-            for a in range(i + 1):
-                b = i - a
-                if a == 0:
-                    st += uldr
-                else:
-                    st += x
-                if len(str_tab[b:]) > 0 and len(str_tab[b][a:]) > 0:
-                    st += str_tab[b][a].rjust(col_width,' ').ljust(col_width * 2 - 1, ' ')
-                else:
-                    st += ' '*(col_width * 2 - 1)
-                if b == 0:
-                    st += urdl
-
-            # Do all of the additional rows
-            for j in range(col_width - 1, 0, -1):
-                st2 = ' ' + ' ' * ((max_height - i - 1) * col_width)
-                st2 += (' ' * j + uldr + ' ' * (2 * (col_width - j) - 1) + urdl + ' ' * (j - 1)) * (i + 1)
-                str_list.append(st2)
-            str_list.append(st)
-        import re
-        mm = min([len(re.search('^ +', l)[0]) for l in str_list]) - 1
-        str_list = [l[mm:] for l in str_list]
-        str_list.reverse()
-        return '\n'.join(str_list)
 
     if not data:
         return dr + dl + '\n' + ur + ul
@@ -564,3 +608,141 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
             return output.translate(tr)
         else:
             return output
+
+def ascii_art_table_russian(data, use_unicode=False, compact=False):
+    r"""
+    Return an ascii art table of ``data`` for the russian convention.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.output import ascii_art_table_russian
+        sage: data = [[None, None, 1], [2, 2], [3,4,5], [None, None, 10], [], [6]]
+        sage: print(ascii_art_table_russian(data))
+         \  6  X     X 10  X     X     X     /
+          \   / \   / \   / \   / \   / \   /
+           \ /   \ /   \ /   \ /   \ /   \ /
+            \     X     X  5  X     X     /
+             \   / \   / \   / \   / \   /
+              \ /   \ /   \ /   \ /   \ /
+               \     X  4  X     X     /
+                \   / \   / \   / \   /
+                 \ /   \ /   \ /   \ /
+                  \  3  X  2  X  1  /
+                   \   / \   / \   /
+                    \ /   \ /   \ /
+                     \  2  X     /
+                      \   / \   /
+                       \ /   \ /
+                        \     /
+                         \   /
+                          \ /
+        sage: print(ascii_art_table_russian(data, use_unicode=True))
+         ╲  6  ╳     ╳ 10  ╳     ╳     ╳     ╱
+          ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱
+           ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱
+            ╲     ╳     ╳  5  ╳     ╳     ╱
+             ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱
+              ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱
+               ╲     ╳  4  ╳     ╳     ╱
+                ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱
+                 ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱
+                  ╲  3  ╳  2  ╳  1  ╱
+                   ╲   ╱ ╲   ╱ ╲   ╱
+                    ╲ ╱   ╲ ╱   ╲ ╱
+                     ╲  2  ╳     ╱
+                      ╲   ╱ ╲   ╱
+                       ╲ ╱   ╲ ╱
+                        ╲     ╱
+                         ╲   ╱
+                          ╲ ╱
+        sage: data = [[1, None, 2], [None, 2]]
+        sage: print(ascii_art_table_russian(data))
+         \     X  2  X  2  /
+          \   / \   / \   /
+           \ /   \ /   \ /
+            \     X     /
+             \   / \   /
+              \ /   \ /
+               \  1  /
+                \   /
+                 \ /
+        sage: print(ascii_art_table_russian(data, use_unicode=True))
+         ╲     ╳  2  ╳  2  ╱
+          ╲   ╱ ╲   ╱ ╲   ╱
+           ╲ ╱   ╲ ╱   ╲ ╱
+            ╲     ╳     ╱
+             ╲   ╱ ╲   ╱
+              ╲ ╱   ╲ ╱
+               ╲  1  ╱
+                ╲   ╱
+                 ╲ ╱
+    """
+    if use_unicode:
+        import unicodedata
+        urdl = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL UPPER RIGHT TO LOWER LEFT')
+        uldr = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL UPPER LEFT TO LOWER RIGHT')
+        x = unicodedata.lookup('BOX DRAWINGS LIGHT DIAGONAL CROSS')
+        from sage.typeset.unicode_art import unicode_art as art
+    else:
+        urdl = '/'
+        uldr = '\\'
+        x = 'X'
+        from sage.typeset.ascii_art import ascii_art as art
+
+    if not data:
+        return urdl + uldr + '\n' + uldr + urdl
+
+#    ncols = max(len(row) for row in data)
+#    str_tab = [[None]*ncols] + [[str(val) if val is not None else None for val in row] + [None]*(ncols-len(row))
+#                                for row in data]
+    str_tab = [[str(val) if val is not None else None for val in row] for row in data]
+    col_widths = [2] * len(str_tab[0])
+
+    if use_unicode:
+        # Special handling of overline not adding to printed length
+        def get_len(e):
+            if e is None:
+                return 0
+            return len(e) - list(str(e)).count(u"\u0304")
+    else:
+        def get_len(e):
+            if e is None:
+                return 0
+            return len(e)
+
+    for row in str_tab:
+        for i, e in enumerate(row):
+            col_widths[i] = max(col_widths[i], get_len(e))
+    if compact:
+        col_width = max(col_widths) - 1
+    else:
+        col_width = max(col_widths) + 1
+    max_height = max([a + len(str_tab[a]) for a in range(len(str_tab))])
+    str_list = []
+    for i in range(max_height):
+        # Get the row with the number on it
+        st = ' ' + ' ' * ((max_height - i - 1) * col_width)
+        for a in range(i + 1):
+            b = i - a
+            if a == 0:
+                st += uldr
+            else:
+                st += x
+            if len(str_tab[b:]) > 0 and len(str_tab[b][a:]) > 0 and str_tab[b][a] is not None:
+                st += str_tab[b][a].rjust(col_width,' ').ljust(col_width * 2 - 1, ' ')
+            else:
+                st += ' '*(col_width * 2 - 1)
+            if b == 0:
+                st += urdl
+
+        # Do all of the additional rows
+        for j in range(col_width - 1, 0, -1):
+            st2 = ' ' + ' ' * ((max_height - i - 1) * col_width)
+            st2 += (' ' * j + uldr + ' ' * (2 * (col_width - j) - 1) + urdl + ' ' * (j - 1)) * (i + 1)
+            str_list.append(st2)
+        str_list.append(st)
+    import re
+    mm = min([len(re.search('^ +', l)[0]) for l in str_list]) - 1
+    str_list = [l[mm:] for l in str_list]
+    str_list.reverse()
+    return "\n".join(str_list)

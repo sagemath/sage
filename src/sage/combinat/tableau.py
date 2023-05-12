@@ -392,6 +392,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: print(t._repr_diagram())
               4  5
               1  2  3
+            sage: Tableaux.options.convention='russian'
+            sage: print(t._repr_diagram())
+               5    3
+             4    2
+                1
             sage: Tableaux.options._reset()
 
         TESTS:
@@ -412,6 +417,25 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         for row in str_tab:
             for i,e in enumerate(row):
                 col_widths[i] = max(col_widths[i], len(e))
+
+        if self.parent().options('convention') == "Russian":
+            col_width = max(col_widths) + 1
+            max_height = max([a + len(str_tab[a]) for a in range(len(str_tab))])
+            str_list = []
+            for i in range(max_height):
+                st = ' ' * ((max_height - i - 1) * col_width)
+                for a in range(i + 1):
+                    b = i - a
+                    if len(str_tab[b:]) > 0 and len(str_tab[b][a:]) > 0:
+                        st += str_tab[b][a].rjust(col_width, ' ').ljust(col_width * 2 - 1, ' ')
+                    else:
+                        st += ' ' * (col_width * 2 - 1)
+                str_list.append(st)
+            import re
+            mm = min([len(re.search('^ +', l)[0]) for l in str_list]) - 1
+            str_list = [l[mm:] for l in str_list]
+            str_list.reverse()
+            return '\n'.join(str_list)
 
         if self.parent().options('convention') == "French":
             str_tab = reversed(str_tab)
@@ -463,6 +487,22 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             [                              3 ]
             [              2       3       2 ]
             [   1  2  3,   1  3,   1  2,   1 ]
+            sage: Tableaux.options(convention="russian", ascii_art="table")
+            sage: ascii_art(list(StandardTableaux(3)))
+            [  \     X     X  3  /                                   \  3  X     X     / ]
+            [   \   / \   / \   /                                     \   / \   / \   /  ]
+            [    \ /   \ /   \ /                                       \ /   \ /   \ /   ]
+            [     \     X  2  /      \  2  X  3  /   \  3  X  2  /      \  2  X     /    ]
+            [      \   / \   /        \   / \   /     \   / \   /        \   / \   /     ]
+            [       \ /   \ /          \ /   \ /       \ /   \ /          \ /   \ /      ]
+            [        \  1  /            \  1  /         \  1  /            \  1  /       ]
+            [         \   /              \   /           \   /              \   /        ]
+            [          \ /        ,       \ /     ,       \ /     ,          \ /         ]
+            sage: Tableaux.options(ascii_art="repr")
+            sage: ascii_art(list(StandardTableaux(3)))
+            [      3                           3             ]
+            [    2       2    3     3    2        2          ]
+            [  1      ,     1    ,     1    ,        1       ]
             sage: Tableaux.options._reset()
         """
         ascii = self.parent().options._dispatch(self,'_ascii_art_','ascii_art')
@@ -511,9 +551,6 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             | 1 | 2 | 3 |
             +---+---+---+
             sage: Tableaux.options.convention="russian"
-            sage: print(t._repr_diagram())
-              1  2  3
-              4  5
             sage: print(t._ascii_art_table())
              \     X  5  X  3  /
               \   / \   / \   /
@@ -622,6 +659,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: Tableaux.options._reset()
         """
         from sage.combinat.output import ascii_art_table
+        self.parent().options('convention')
         return ascii_art_table(self, use_unicode=use_unicode,
                                convention=self.parent().options('convention'))
 
@@ -639,6 +677,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: print(t._ascii_art_compact())
             |4|5|
             |1|2|3|
+            sage: Tableaux.options.convention="russian"
+            sage: print(t._ascii_art_compact())
+             \ X5X3/
+              \4X2/
+               \1/
             sage: Tableaux.options._reset()
 
             sage: t = Tableau([[1,2,3,10,15],[12,15,17]])
@@ -653,6 +696,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if not self:
             return "."
 
+        if self.parent().options('convention') == "Russian":
+            from sage.combinat.output import ascii_art_table_russian
+            return ascii_art_table_russian(self, compact=True)
         if self.parent().options('convention') == "English":
             T = self
         else:
@@ -664,6 +710,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         for row in str_tab:
             for i,e in enumerate(row):
                 col_widths[i] = max(col_widths[i], len(e))
+
 
         return "\n".join("|"
                          + "|".join("{:^{width}}".format(e, width=col_widths[i])
@@ -694,6 +741,16 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             \lr{1}&\lr{1}&\lr{2}\\\cline{1-3}
             \end{array}$}
             }
+            sage: Tableaux.options.convention="russian"
+            sage: latex(t)    # indirect doctest
+            {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{\rotatebox{45}{$\begin{array}[t]{*{3}c}\cline{1-1}
+            \lr{\rotatebox{-45}{3}}\\\cline{1-2}
+            \lr{\rotatebox{-45}{2}}&\lr{\rotatebox{-45}{3}}\\\cline{1-3}
+            \lr{\rotatebox{-45}{1}}&\lr{\rotatebox{-45}{1}}&\lr{\rotatebox{-45}{2}}\\\cline{1-3}
+            \end{array}$}}
+            }
+
             sage: Tableaux.options._reset()
         """
         return self.parent().options._dispatch(self,'_latex_', 'latex')
