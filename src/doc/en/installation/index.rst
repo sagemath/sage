@@ -62,6 +62,8 @@ Windows
     `official WSL setup guide
     <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
     sure to do the steps to install WSL2 and set it as default.
+    Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
+    2GB might not allow you to build some packages.
     Then go to the Microsoft Store and install Ubuntu (or another
     Linux distribution). Start Ubuntu from the start menu.
 
@@ -73,6 +75,8 @@ Windows
       `official WSL setup guide
       <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
       sure to do the steps to install WSL2 and set it as default.
+      Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
+      2GB might not allow you to build some packages.
       Then go to the Microsoft Store and install Ubuntu (or another
       Linux distribution). Start Ubuntu from the start menu.
 
