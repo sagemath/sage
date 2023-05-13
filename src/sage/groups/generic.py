@@ -1412,17 +1412,17 @@ def merge_points(P1, P2, operation='+',
         sage: od == lcm(ob, oc)                                                         # optional - sage.rings.finite_rings
         True
 
-        sage: E = EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1])
-        sage: P = E(2*a^5 + 2*a^4 + a^3 + 2, a^4 + a^3 + a^2 + 2*a + 2)
-        sage: P.order()
+        sage: E = EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1])       # optional - sage.rings.finite_rings
+        sage: P = E(2*a^5 + 2*a^4 + a^3 + 2, a^4 + a^3 + a^2 + 2*a + 2)                 # optional - sage.rings.finite_rings
+        sage: P.order()                                                                 # optional - sage.rings.finite_rings
         7
-        sage: Q = E(2*a^5 + 2*a^4 + 1, a^5 + 2*a^3 + 2*a + 2)
-        sage: Q.order()
+        sage: Q = E(2*a^5 + 2*a^4 + 1, a^5 + 2*a^3 + 2*a + 2)                           # optional - sage.rings.finite_rings
+        sage: Q.order()                                                                 # optional - sage.rings.finite_rings
         4
-        sage: R, m = merge_points((P,7), (Q,4), operation='+')
-        sage: R.order() == m
+        sage: R, m = merge_points((P,7), (Q,4), operation='+')                          # optional - sage.rings.finite_rings
+        sage: R.order() == m                                                            # optional - sage.rings.finite_rings
         True
-        sage: m == lcm(7,4)
+        sage: m == lcm(7,4)                                                             # optional - sage.rings.finite_rings
         True
     """
     from operator import mul, add
