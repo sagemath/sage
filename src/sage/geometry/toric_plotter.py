@@ -51,6 +51,7 @@ from math import pi
 
 from sage.arith.misc import integer_ceil as ceil, integer_floor as floor
 from sage.geometry.polyhedron.constructor import Polyhedron
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_element import vector
 lazy_import("sage.plot.all", ["Color", "Graphics",
                               "arrow", "disk", "line", "point",

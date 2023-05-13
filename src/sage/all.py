@@ -180,11 +180,6 @@ except ImportError:
 # when they are first needed.
 ###########################################################
 
-CC = ComplexField()
-QQ = RationalField()
-RR = RealField()  # default real field
-ZZ = IntegerRing()
-
 true = True
 false = False
 from sage.rings.imaginary_unit import I
