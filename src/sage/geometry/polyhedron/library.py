@@ -3248,7 +3248,7 @@ class Polytopes():
             sage: intervals = [[x, x+randint(1,50)] for x in ls]
             sage: P = polytopes.hypercube(4, intervals, backend='field')
             sage: P1 = polytopes.hypercube(4, intervals, backend='ppl')                 # optional - pplpy
-            sage: assert P == P1
+            sage: assert P == P1                                                        # optional - pplpy
 
         Check that coercion for input invervals is handled correctly::
 
