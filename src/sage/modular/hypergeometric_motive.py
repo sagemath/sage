@@ -64,9 +64,10 @@ from itertools import combinations
 from sage.arith.misc import divisors, gcd, euler_phi, moebius, is_prime
 from sage.arith.misc import gauss_sum, kronecker_symbol
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
-from sage.functions.generalized import sgn
-from sage.functions.log import log
-from sage.functions.other import floor, ceil
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.generalized", "sgn")
+lazy_import("sage.functions.log", "log")
+lazy_import("sage.functions.other", ["floor", "ceil"])
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import cyclotomic_polynomial
 from sage.misc.misc_c import prod

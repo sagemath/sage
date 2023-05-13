@@ -28,7 +28,8 @@ Representations of the Symmetric Group
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.ring", "SR")
 from sage.misc.functional import sqrt
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.permutation import Permutation, Permutations, from_cycles

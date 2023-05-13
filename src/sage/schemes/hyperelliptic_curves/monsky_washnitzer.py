@@ -48,9 +48,9 @@ AUTHORS:
 
 from sage.arith.misc import integer_ceil as ceil
 from sage.arith.misc import binomial
-from sage.functions.log import log
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc import newton_method_sizes
 from sage.misc.profiler import Profiler
 from sage.misc.repr import repr_lincomb
@@ -80,6 +80,8 @@ from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_Hyperelli
 from sage.structure.element import CommutativeAlgebraElement, ModuleElement
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import("sage.functions.log", "log")
 
 
 class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):

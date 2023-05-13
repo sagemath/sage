@@ -58,10 +58,11 @@ from sage.rings.integer_ring import ZZ
 from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.ring", "SR")
 from sage.rings.integer import Integer
 from sage.numerical.mip import MixedIntegerLinearProgram
-from sage.functions.generalized import sign
+lazy_import("sage.functions.generalized", "sign")
 from sage.homology.chain_complex import ChainComplex
 from sage.misc.flatten import flatten
 from sage.misc.cachefunc import cached_method

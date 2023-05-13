@@ -201,9 +201,10 @@ from itertools import combinations_with_replacement
 from sage.structure.element import RingElement
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.ring import Ring
-from sage.calculus.var import var
-from sage.calculus.functional import diff
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.var", "var")
+lazy_import("sage.calculus.functional", "diff")
+lazy_import("sage.symbolic.ring", "SR")
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ

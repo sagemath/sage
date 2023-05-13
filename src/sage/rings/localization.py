@@ -112,17 +112,17 @@ Obtain specializations in characteristic 0::
             u1 |--> 5
             u2 |--> 7
             q |--> 11
-    sage: mQ1 = matrix({k: fQ(v) for k, v in m1.dict().items()}); mQ1                   # optional - sage.libs.pari sage.modules
+    sage: mQ1 = matrix({k: fQ(v) for k, v in m1.dict().items()}); mQ1                   # optional - sage.modules sage.rings.finite_rings
     [5 0 0]
     [0 3 0]
     [0 0 3]
-    sage: mQ1.base_ring()                                                               # optional - sage.libs.pari sage.modules
+    sage: mQ1.base_ring()                                                               # optional - sage.modules sage.rings.finite_rings
     Rational Field
-    sage: mQ2 = matrix({k: fQ(v) for k, v in m2.dict().items()}); mQ2                   # optional - sage.libs.pari sage.modules
+    sage: mQ2 = matrix({k: fQ(v) for k, v in m2.dict().items()}); mQ2                   # optional - sage.modules sage.rings.finite_rings
     [-15 -14   0]
     [ 26  25   0]
     [  0   0  -1]
-    sage: mQ3 = matrix({k: fQ(v) for k, v in m3.dict().items()}); mQ3                   # optional - sage.libs.pari sage.modules
+    sage: mQ3 = matrix({k: fQ(v) for k, v in m3.dict().items()}); mQ3                   # optional - sage.modules sage.rings.finite_rings
     [    -1      0      0]
     [     0 -15/26  11/26]
     [     0 301/26 275/26]

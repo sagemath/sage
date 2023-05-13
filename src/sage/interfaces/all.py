@@ -4,8 +4,12 @@ from .sage0 import sage0, sage0_version, Sage
 from .gap import gap, gap_reset_workspace, Gap
 from .gp import gp, gp_version, Gp
 # import problems
-#from maxima_lib import maxima_lib
-from .maxima import maxima, Maxima
+try:
+    # from maxima_lib import maxima_lib
+    from .maxima import maxima, Maxima
+except ImportError:
+    pass
+
 from .singular import singular, singular_version, Singular
 
 from .magma import magma, Magma

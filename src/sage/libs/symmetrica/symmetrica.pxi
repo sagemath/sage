@@ -430,19 +430,12 @@ cdef void late_import():
     Permutation = sage.combinat.permutation.Permutation
     Permutations = sage.combinat.permutation.Permutations
 
-    import sage.functions.all
-    sqrt = sage.functions.all.sqrt
-
-    import sage.misc.all
-    prod = sage.misc.all.prod
-
-    import sage.rings.polynomial.polynomial_ring_constructor
-    PolynomialRing =  sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing
-
-    import sage.rings.all
-    QQ = sage.rings.all.QQ
-    Rational = sage.rings.all.Rational
-    ZZ = sage.rings.all.ZZ
+    from sage.misc.functional import sqrt
+    from sage.misc.misc_c import prod
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.rational_field import QQ
+    from sage.rings.rational import Rational
+    from sage.rings.integer_ring import ZZ
 
     #Symmetric Functions
     import sage.combinat.sf.sf

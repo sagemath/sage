@@ -17,7 +17,8 @@ functions.
 
 import sage.rings.abc
 from sage.structure.parent import Parent
-from sage.functions.log import log
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", "log")
 from sage.misc.functional import sqrt
 from sage.rings.rational_field import is_RationalField
 from sage.sets.set import Set

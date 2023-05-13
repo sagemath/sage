@@ -45,8 +45,9 @@ from sage.misc.mrange import cartesian_product_iterator
 from sage.arith.functions import lcm
 from sage.arith.misc import factorial
 from sage.ext.fast_callable import fast_callable
-from sage.functions.log import log, exp
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", ["log", "exp"])
+lazy_import("sage.symbolic.ring", "SR")
 
 
 class UnionOfIntervals:

@@ -25,7 +25,8 @@ REFERENCES: [FH2015]_, [CS1996]_, [Weh1998]_, [Hutz2007]
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.calculus.functions import jacobian
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.functions", "jacobian")
 from sage.categories.fields import Fields
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.number_fields import NumberFields

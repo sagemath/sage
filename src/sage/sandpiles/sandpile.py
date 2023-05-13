@@ -320,37 +320,37 @@ from textwrap import dedent
 
 from IPython.lib import pretty
 
-from sage.calculus.functional import derivative
+from sage.arith.functions import lcm
+from sage.arith.misc import binomial, falling_factorial
+from sage.arith.srange import xsrange
 from sage.combinat.integer_vector import integer_vectors_nk_fast_iter
 from sage.combinat.parking_functions import ParkingFunctions
 from sage.combinat.set_partition import SetPartitions
 from sage.combinat.vector_partition import IntegerVectorsIterator
-from sage.functions.log import exp
-from sage.functions.other import binomial
+from sage.features.four_ti_2 import FourTi2Executable
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.graphs.graph import Graph
 from sage.graphs.digraph import DiGraph
-from sage.probability.probability_distribution import GeneralDiscreteDistribution
-from sage.topology.simplicial_complex import SimplicialComplex
+from sage.graphs.graph import Graph
 from sage.interfaces.singular import singular
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.misc.functional import det, denominator
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc import exists
 from sage.misc.misc_c import prod
 from sage.misc.temporary_file import tmp_filename
-from sage.arith.srange import xsrange
 from sage.modules.free_module_element import vector
-from sage.misc.lazy_import import lazy_import
-from sage.arith.functions import lcm
-from sage.arith.misc import falling_factorial
+from sage.probability.probability_distribution import GeneralDiscreteDistribution
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.symbolic.constants import I, pi
-from sage.symbolic.ring import SR
-from sage.features.four_ti_2 import FourTi2Executable
+from sage.topology.simplicial_complex import SimplicialComplex
+
+lazy_import("sage.calculus.functional", "derivative")
+lazy_import("sage.functions.log", "exp")
 lazy_import("sage.plot.colors", "rainbow")
+lazy_import("sage.symbolic.constants", ["I", "pi"])
+lazy_import("sage.symbolic.ring", "SR")
 
 
 def _sandpile_help(cls, usage, verbose=True):

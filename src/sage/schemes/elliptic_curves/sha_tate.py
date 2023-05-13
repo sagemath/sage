@@ -80,18 +80,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
+from math import sqrt
+
+import sage.arith.all as arith
+
+from sage.misc.lazy_import import lazy_import
+from sage.misc.verbose import verbose
+from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
+from sage.rings.padics.factory import Qp
 from sage.rings.real_mpfr import RealField
 from sage.rings.rational_field import RationalField
 from sage.rings.real_mpfi import RIF
 from sage.rings.integer_ring import ZZ
-from sage.functions.log import log
-from math import sqrt
-from sage.misc.verbose import verbose
-import sage.arith.all as arith
-from sage.rings.padics.factory import Qp
-from sage.modules.free_module_element import vector
+from sage.structure.sage_object import SageObject
+
+lazy_import("sage.functions.log", "log")
 
 factor = arith.factor
 valuation = arith.valuation

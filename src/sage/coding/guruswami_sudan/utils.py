@@ -19,7 +19,8 @@ AUTHORS:
 #*****************************************************************************
 
 
-from sage.functions.other import floor
+from sage.arith.misc import integer_floor as floor
+from sage.misc.lazy_import import lazy_import
 from sage.misc.functional import sqrt
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer

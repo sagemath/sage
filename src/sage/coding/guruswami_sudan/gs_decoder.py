@@ -24,6 +24,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.arith.misc import integer_floor as floor
 from sage.coding.grs_code import GeneralizedReedSolomonCode
 from sage.rings.integer_ring import ZZ
 from sage.coding.decoder import Decoder
@@ -31,8 +32,9 @@ from sage.coding.guruswami_sudan.interpolation import gs_interpolation_linalg, g
 from sage.coding.guruswami_sudan.utils import (johnson_radius,
                                                gilt,
                                                solve_degree2_to_integer_range)
-from sage.functions.other import floor
+from sage.misc.lazy_import import lazy_import
 from sage.misc.functional import sqrt
+
 
 def n_k_params(C, n_k):
     r"""

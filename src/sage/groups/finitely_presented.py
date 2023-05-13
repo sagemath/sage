@@ -136,7 +136,8 @@ from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
 from sage.misc.cachefunc import cached_method
 from sage.groups.free_group import FreeGroupElement
-from sage.functions.generalized import sign
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.generalized", "sign")
 from sage.matrix.constructor import matrix
 from sage.categories.morphism import SetMorphism
 

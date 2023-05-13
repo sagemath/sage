@@ -111,10 +111,11 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 from copy import copy
 
+from sage.arith.srange import xsrange
+from sage.misc.functional import log
 from sage.misc.misc_c import prod
 import sage.rings.integer_ring as integer_ring
 import sage.rings.integer
-from sage.arith.srange import xsrange
 
 #
 # Lists of names (as strings) which the user may use to identify one
@@ -1271,7 +1272,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             for k in range(l):
                 p, e = L[k]
                 # multiplying by p**e require roughly 'e log_2(p) / 2' additions
-                v = e * sage.functions.log.log(float(p))
+                v = e * log(float(p))
                 if abs(sum_left + v - (S / 2)) > abs(sum_left - (S / 2)):
                     break
                 sum_left += v
@@ -1287,7 +1288,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
                                              S - sum_left)
             return o1 * o2
 
-    return _order_from_multiple_helper(P, F, sage.functions.log.log(float(M)))
+    return _order_from_multiple_helper(P, F, log(float(M)))
 
 
 def order_from_bounds(P, bounds, d=None, operation='+',

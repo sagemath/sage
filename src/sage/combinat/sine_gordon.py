@@ -46,14 +46,14 @@ from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.functions.trig import cos, sin
 from sage.misc.lazy_import import lazy_import
-from sage.symbolic.constants import pi, I
-from sage.functions.log import exp
-from sage.functions.other import ceil
+lazy_import("sage.functions.trig", ["cos", "sin"])
+lazy_import("sage.symbolic.constants", ["pi", "I"])
+lazy_import("sage.functions.log", "exp")
+lazy_import("sage.functions.other", "ceil")
 from sage.misc.flatten import flatten
-from sage.symbolic.ring import SR
-from sage.functions.other import real_part, imag_part
+lazy_import("sage.symbolic.ring", "SR")
+lazy_import("sage.functions.other", ["real_part", "imag_part"])
 from sage.misc.cachefunc import cached_method
 lazy_import("sage.plot.plot", "parametric_plot")
 lazy_import("sage.plot.graphics", "Graphics")

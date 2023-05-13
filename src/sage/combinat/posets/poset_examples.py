@@ -1886,7 +1886,7 @@ def _random_lattice(n, p):
         meet for `e, m` for all `m \in M`. We do that by keeping
         track of meet matrix and list of maximal elements.
     """
-    from sage.functions.other import floor
+    from sage.arith.misc import integer_floor as floor
     from sage.misc.functional import sqrt
     from sage.misc.prandom import random
 

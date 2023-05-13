@@ -64,9 +64,6 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.functional import symbolic_sum
 from sage.misc.misc_c import prod
 
-from sage.functions.other import binomial
-from sage.symbolic.ring import SR
-
 from .linear_code import AbstractLinearCode
 from .encoder import Encoder
 from .decoder import Decoder, DecodingError
@@ -516,7 +513,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             sage: F = GF(11)
             sage: n, k = 10, 5
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
-            sage: C.weight_distribution()
+            sage: C.weight_distribution()                                                                                   # optional - sage.symbolic
             [1, 0, 0, 0, 0, 0, 2100, 6000, 29250, 61500, 62200]
 
         TESTS:
@@ -525,13 +522,16 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
             sage: F = GF(7)
             sage: C = codes.GeneralizedReedSolomonCode(F.list(), 3)
-            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time
+            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time   # optional - sage.symbolic
             True
             sage: F = GF(8)
             sage: C = codes.GeneralizedReedSolomonCode(F.list(), 3)
-            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time
+            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time   # optional - sage.symbolic
             True
         """
+        from sage.symbolic.ring import SR
+        from sage.functions.other import binomial
+
         d = self.minimum_distance()
         n = self.length()
         q = self.base_ring().order()

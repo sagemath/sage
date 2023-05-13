@@ -289,7 +289,8 @@ from sage.libs.flint.arith import number_of_partitions as flint_number_of_partit
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.symbolic.ring import var
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.ring", "var")
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.combinat.skew_partition', 'SkewPartition')

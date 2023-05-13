@@ -17,13 +17,11 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import divisors
-from sage.functions.gamma import psi1
-from sage.functions.log import exp
-from sage.functions.trig import cos, sec
 from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_generic
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.imaginary_unit import I
 from sage.rings.infinity import infinity
@@ -33,9 +31,14 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import AA, AlgebraicField
 from sage.rings.rational_field import QQ
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.symbolic.constants import pi
+
+lazy_import("sage.functions.log", "exp")
+lazy_import("sage.functions.gamma", "psi1")
+lazy_import("sage.functions.trig", ["cos", "sec"])
+lazy_import("sage.symbolic.constants", "pi")
 
 from .hecke_triangle_group_element import HeckeTriangleGroupElement, cyclic_representative, coerce_AA
+
 
 class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
                          UniqueRepresentation):

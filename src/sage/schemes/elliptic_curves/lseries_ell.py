@@ -26,7 +26,6 @@ from sage.structure.sage_object import SageObject
 from sage.rings.real_mpfr import RealField
 from sage.rings.rational_field import RationalField
 from math import sqrt, log, ceil
-import sage.functions.exp_integral as exp_integral
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 
@@ -661,32 +660,32 @@ class Lseries_ell(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a')
-            sage: E.lseries().deriv_at1()
+            sage: E.lseries().deriv_at1()                                               # optional - sage.symbolic
             (0.3059866, 0.000801045)
-            sage: E.lseries().deriv_at1(100)
+            sage: E.lseries().deriv_at1(100)                                            # optional - sage.symbolic
             (0.3059997738340523018204836833216764744526377745903, 1.52493e-45)
-            sage: E.lseries().deriv_at1(1000)
+            sage: E.lseries().deriv_at1(1000)                                           # optional - sage.symbolic
             (0.305999773834052301820483683321676474452637774590771998..., 2.75031e-449)
 
         With less numerical precision, the error is bounded by numerical accuracy::
 
-            sage: L,err = E.lseries().deriv_at1(100, prec=64)
-            sage: L,err
+            sage: L, err = E.lseries().deriv_at1(100, prec=64)                          # optional - sage.symbolic
+            sage: L, err                                                                # optional - sage.symbolic
             (0.305999773834052302, 5.55318e-18)
-            sage: parent(L)
+            sage: parent(L)                                                             # optional - sage.symbolic
             Real Field with 64 bits of precision
-            sage: parent(err)
+            sage: parent(err)                                                           # optional - sage.symbolic
             Real Field with 24 bits of precision and rounding RNDU
 
         Rank 2 and rank 3 elliptic curves::
 
             sage: E = EllipticCurve('389a1')
-            sage: E.lseries().deriv_at1()
+            sage: E.lseries().deriv_at1()                                               # optional - sage.symbolic
             (0.0000000, 0.000000)
             sage: E = EllipticCurve((1, 0, 1, -131, 558))  # curve 59450i1
-            sage: E.lseries().deriv_at1()
+            sage: E.lseries().deriv_at1()                                               # optional - sage.symbolic
             (-0.00010911444, 0.142428)
-            sage: E.lseries().deriv_at1(4000)
+            sage: E.lseries().deriv_at1(4000)                                           # optional - sage.symbolic
             (6.990...e-50, 1.31318e-43)
         """
         sqrtN = sqrt(self.__E.conductor())
@@ -717,10 +716,12 @@ class Lseries_ell(SageObject):
             # positive, so L'(E,1) = 0.
             return (R.zero(), Rerror.zero())
 
+        from sage.functions.exp_integral import exponential_integral_1
+
         an = self.__E.anlist(k)  # list of Sage Integers
         pi = R.pi()
         sqrtN = R(self.__E.conductor()).sqrt()
-        v = exp_integral.exponential_integral_1(2*pi/sqrtN, k)
+        v = exponential_integral_1(2*pi/sqrtN, k)
 
         # Compute series sum and accumulate floating point errors
         L = R.zero()

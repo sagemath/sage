@@ -1373,8 +1373,6 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             //        block   2 : ordering C
 
         """
-        from sage.functions.other import ceil
-
         if singular is None:
             from sage.interfaces.singular import singular
 

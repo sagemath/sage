@@ -23,7 +23,8 @@ install_doc(__package__, __doc__)
 from sage.misc.lazy_import import lazy_import
 
 from sage.dynamics.arithmetic_dynamics.all import *
-from sage.dynamics.complex_dynamics.all import *
+lazy_import('sage.dynamics.complex_dynamics.mandel_julia',
+            ["mandelbrot_plot", "external_ray", "kneading_sequence", "julia_plot"])
 from sage.dynamics.cellular_automata.all import *
 
 # Discrete dynamical systems

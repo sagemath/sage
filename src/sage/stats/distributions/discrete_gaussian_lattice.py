@@ -56,17 +56,20 @@ EXAMPLES::
 # policies, either expressed or implied, of the FreeBSD Project.
 #*****************************************************************************/
 
-from sage.functions.log import exp
-from sage.functions.other import ceil
-from sage.rings.real_mpfr import RealField
-from sage.rings.real_mpfr import RR
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
-from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix, identity_matrix
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+from sage.rings.real_mpfr import RealField
+from sage.structure.sage_object import SageObject
+
+lazy_import("sage.functions.log", "exp")
+lazy_import("sage.functions.other", "ceil")
+
+from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 
 
 def _iter_vectors(n, lower, upper, step=None):

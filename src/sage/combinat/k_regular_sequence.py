@@ -2181,8 +2181,8 @@ class RecurrenceParser():
         """
         from collections import namedtuple
 
+        from sage.arith.misc import integer_ceil as ceil, integer_floor as floor
         from sage.arith.srange import srange
-        from sage.functions.other import ceil, floor
 
         coefficient_ring = self.coefficient_ring
         k = self.k
@@ -2614,7 +2614,6 @@ class RecurrenceParser():
             :meth:`kRegularSequenceSpace.from_recurrence`
         """
         from sage.arith.srange import srange
-        from sage.functions.other import floor
 
         k = self.k
         M = recurrence_rules.M
@@ -2623,8 +2622,8 @@ class RecurrenceParser():
         uu = recurrence_rules.uu
         inhomogeneities = recurrence_rules.inhomogeneities
 
-        lower = floor(ll/k**M)
-        upper = floor((k**(M-1) - k**m + uu)/k**M) + 1
+        lower = ll//k**M
+        upper = (k**(M-1) - k**m + uu) // k**M + 1
 
         return {i: inhomogeneities[i].subsequence(1, {b: 1 for b in srange(lower, upper + 1)},
                                                   minimize=False)
@@ -2841,7 +2840,6 @@ class RecurrenceParser():
         from itertools import chain
 
         from sage.arith.srange import srange
-        from sage.functions.other import floor
         from sage.matrix.constructor import Matrix
         from sage.matrix.special import block_matrix, block_diagonal_matrix, zero_matrix
         from sage.modules.free_module_element import vector
@@ -2885,8 +2883,8 @@ class RecurrenceParser():
 
         if not all(S.is_trivial_zero() for S in inhomogeneities.values()):
             shifted_inhomogeneities = self.shifted_inhomogeneities(recurrence_rules)
-            lower = floor(ll/k**M)
-            upper = floor((k**(M-1) - k**m + uu)/k**M) + 1
+            lower = ll // k**M
+            upper = (k**(M-1) - k**m + uu) // k**M + 1
 
             def wanted_inhomogeneity(row):
                 j, d = ind[row]

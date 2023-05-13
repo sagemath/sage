@@ -1,3 +1,4 @@
+# sage.doctest: # optional - sage.symbolic
 """
 Real intervals with a fixed absolute precision
 """

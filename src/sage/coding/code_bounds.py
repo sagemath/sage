@@ -445,7 +445,7 @@ def griesmer_upper_bound(n,q,d,algorithm=None):
     else:
         # To compute the bound, we keep summing up the terms on the RHS
         # until we start violating the inequality.
-        from sage.functions.other import ceil
+        from sage.arith.misc import integer_ceil as ceil
         den = 1
         s = 0
         k = 0

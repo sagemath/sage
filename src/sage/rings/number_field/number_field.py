@@ -106,7 +106,6 @@ Check that :trac:`23459` is fixed::
 # ****************************************************************************
 from __future__ import annotations
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
 from sage.misc.superseded import (deprecation,
                                   deprecated_function_alias)
 
@@ -166,8 +165,6 @@ _NumberFields = NumberFields()
 
 
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
-
-lazy_import('sage.arith.misc', "is_fundamental_discriminant", deprecation=35305)
 
 
 def is_NumberFieldHomsetCodomain(codomain):

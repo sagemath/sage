@@ -271,7 +271,7 @@ def transvectant(f, g, h=1, scale='default'):
     if h > f._d or h > g._d:
         tv = R(0)
     else:
-        from sage.functions.other import binomial, factorial
+        from sage.arith.misc import binomial, factorial
         if scale == 'default':
             scalar = factorial(f._d-h) * factorial(g._d-h) \
                         * R(factorial(f._d)*factorial(g._d))**(-1)
