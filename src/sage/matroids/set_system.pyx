@@ -733,7 +733,7 @@ cdef class SetSystem:
             sage: N = Matroid(ring=GF(5), reduced_matrix=[[1,0,1],[0,1,1],[1,1,0]])     # optional - sage.rings.finite_rings
             sage: M.is_field_isomorphic(N)                                              # optional - sage.rings.finite_rings
             False
-            sage: any(M.is_field_isomorphism(N, p) for p in Permutations(range(6)))     # optional - sage.combinat sage.libs.pari
+            sage: any(M.is_field_isomorphism(N, p) for p in Permutations(range(6)))     # optional - sage.combinat sage.rings.finite_rings
             False
         """
         cdef long v

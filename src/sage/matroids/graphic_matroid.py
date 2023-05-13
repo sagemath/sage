@@ -1336,6 +1336,8 @@ class GraphicMatroid(Matroid):
             sage: M._subgraph_from_set([0,1,2])
             Looped multi-graph on 3 vertices
         """
+        from sage.graphs.graph import Graph
+
         edge_list = self._groundset_to_edges(X)
         return Graph(edge_list, loops=True, multiedges=True)
 
