@@ -313,10 +313,10 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
                      (x : y : -z + w),
              Projective Plane Curve over Cyclotomic Field of order 3 and degree 2
               defined by a^6 + (-a)*a^3*b^3 - a^4*b*c)
-            sage: proj1[1].ambient_space() is L
+            sage: proj1[1].ambient_space() is L                                         # optional - sage.rings.number_field
             True
-            sage: proj2 = C.projection()
-            sage: proj2[1].ambient_space() is L
+            sage: proj2 = C.projection()                                                # optional - sage.rings.number_field
+            sage: proj2[1].ambient_space() is L                                         # optional - sage.rings.number_field
             False
 
         ::

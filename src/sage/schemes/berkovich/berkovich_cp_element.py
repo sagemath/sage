@@ -2296,7 +2296,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
             sage: ideal = A.prime_above(3)                                              # optional - sage.rings.number_field
             sage: C = Berkovich_Cp_Projective(A, ideal)                                 # optional - sage.rings.number_field
             sage: Q10 = C(a, 1/9)                                                       # optional - sage.rings.number_field
-            sage: Q10.join(Q9)                                                          # optional - sage.rings.number_field
+            sage: Q10.join(Q9)                                                          # optional - sage.rings.number_field sage.rings.padics
             Traceback (most recent call last):
             ...
             ValueError: other must be a point of the same projective Berkovich line

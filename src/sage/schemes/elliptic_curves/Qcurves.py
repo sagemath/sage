@@ -159,7 +159,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
         sage: from sage.schemes.elliptic_curves.Qcurves import is_Q_curve
         sage: R.<x> = PolynomialRing(QQ)
         sage: K.<a> = NumberField(R([-1, -1, 1]))                                       # optional - sage.rings.number_field
-        sage: E = EllipticCurve([K([1,0]), K([-1,0]), K([0,1]), K([0,-2]), K([0,1])])
+        sage: E = EllipticCurve([K([1,0]), K([-1,0]), K([0,1]), K([0,-2]), K([0,1])])   # optional - sage.rings.number_field
         sage: is_Q_curve(E, certificate=True, verbose=True)                             # optional - sage.rings.number_field
         Checking whether Elliptic Curve defined by y^2 + x*y + a*y = x^3 + (-1)*x^2 + (-2*a)*x + a over Number Field in a with defining polynomial x^2 - x - 1 is a Q-curve
         Yes: E is CM (discriminant -15)
@@ -194,11 +194,11 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
         True
         sage: cert                                                                      # optional - sage.rings.number_field
         {'CM': 0,
-        'N': 2,
-        'core_degs': [1, 2],
-        'core_poly': x^2 - 840064*x + 1593413632,
-        'r': 1,
-        'rho': 1}
+         'N': 2,
+         'core_degs': [1, 2],
+         'core_poly': x^2 - 840064*x + 1593413632,
+         'r': 1,
+         'rho': 1}
 
     TESTS::
 
@@ -445,10 +445,10 @@ def Step4Test(E, B, oldB=0, verbose=False):
         sage: from sage.schemes.elliptic_curves.Qcurves import Step4Test
         sage: R.<x> = PolynomialRing(QQ)
         sage: K.<a> = NumberField(R([-3, 0, 9, 0, -6, 0, 1]))                           # optional - sage.rings.number_field
-        sage: E = EllipticCurve([K([1,-3,0,1,0,0]), K([5,-3,-6,1,1,0]),
+        sage: E = EllipticCurve([K([1,-3,0,1,0,0]), K([5,-3,-6,1,1,0]),                 # optional - sage.rings.number_field
         ....:                    K([1,-3,0,1,0,0]), K([-139,-129,331,277,-76,-63]),
         ....:                    K([2466,1898,-5916,-4582,1361,1055])])
-        sage: Step4Test(E, 100, verbose=True)
+        sage: Step4Test(E, 100, verbose=True)                                           # optional - sage.rings.number_field
         (True, 0)
     """
     from sage.arith.misc import primes

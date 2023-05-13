@@ -528,7 +528,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Elliptic Curve defined by
             y^2 + (1+O(3^20))*y = x^3 + (2+2*3+2*3^2+2*3^3+2*3^4+2*3^5+2*3^6+2*3^7+2*3^8+2*3^9+2*3^10+2*3^11+2*3^12+2*3^13+2*3^14+2*3^15+2*3^16+2*3^17+2*3^18+2*3^19+O(3^20))*x
             over 3-adic Field with capped relative precision 20
-            sage: Ep(P)
+            sage: Ep(P)                                                                 # optional - sage.rings.padics
             (0 : 0 : 1 + O(3^20))
 
         Constructing points from the torsion subgroup (which is an abstract
@@ -538,11 +538,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: T = E.torsion_subgroup()
             sage: [E(t) for t in T]
             [(0 : 1 : 0),
-            (9 : 23 : 1),
-            (2 : 2 : 1),
-            (1 : -1 : 1),
-            (2 : -5 : 1),
-            (9 : -33 : 1)]
+             (9 : 23 : 1),
+             (2 : 2 : 1),
+             (1 : -1 : 1),
+             (2 : -5 : 1),
+             (9 : -33 : 1)]
 
         ::
 

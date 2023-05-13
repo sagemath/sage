@@ -1416,7 +1416,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             1.09861228866811
         """
         K = FractionField(self.domain().base_ring())
-        if not (K not in _NumberFields or K == ZZ or isinstance(K, sage.rings.abc.Order)):
+        if not (K in _NumberFields or K == ZZ or isinstance(K, sage.rings.abc.Order)):
             raise TypeError("must be over a number field or a number field order")
         return max([K(c).local_height(v, prec=prec) for f in self for c in f.coefficients()])
 
@@ -1463,7 +1463,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             0.6931471805599453094172321214582
         """
         K = FractionField(self.domain().base_ring())
-        if not (K not in _NumberFields or isinstance(K, sage.rings.abc.Order)):
+        if not (K in _NumberFields or isinstance(K, sage.rings.abc.Order)):
             raise TypeError("must be over a number field or a number field order")
         if K == QQ:
             return max([K(c).local_height_arch(prec=prec) for f in self for c in f.coefficients()])
@@ -1493,10 +1493,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: P2.<u,v,t> = ProjectiveSpace(K, 2)
-            sage: H = Hom(P,P2)
-            sage: f = H([x^2 - 2*y^2, y^2, x*y])
-            sage: f.wronskian_ideal()
+            sage: P2.<u,v,t> = ProjectiveSpace(K, 2)                                    # optional - sage.rings.number_field
+            sage: H = Hom(P, P2)                                                        # optional - sage.rings.number_field
+            sage: f = H([x^2 - 2*y^2, y^2, x*y])                                        # optional - sage.rings.number_field
+            sage: f.wronskian_ideal()                                                   # optional - sage.rings.number_field
             Ideal (4*x*y, 2*x^2 + 4*y^2, -2*y^2) of
              Multivariate Polynomial Ring in x, y over Rational Field
         """

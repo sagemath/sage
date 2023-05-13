@@ -649,7 +649,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         ::
 
             sage: F.<b> = QuadraticField(23)                                            # optional - sage.rings.number_field
-            sage: G.<a> = F.extension(x^3 + 5)
+            sage: G.<a> = F.extension(x^3 + 5)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve(j=1728*b).change_ring(G)                            # optional - sage.rings.number_field
             sage: EF = E.descend_to(F); EF                                              # optional - sage.rings.number_field
             [Elliptic Curve defined by y^2 = x^3 + (27*b-621)*x + (-1296*b+2484)

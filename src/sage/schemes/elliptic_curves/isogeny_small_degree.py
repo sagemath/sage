@@ -1007,7 +1007,7 @@ def isogenies_5_1728(E, minimal_models=True):
     See :trac:`19840`::
 
         sage: K.<a> = NumberField(x^4 - 5*x^2 + 5)                                      # optional - sage.rings.number_field
-        sage: E = EllipticCurve([a^2 + a + 1, a^3 + a^2 + a + 1, a^2 + a,
+        sage: E = EllipticCurve([a^2 + a + 1, a^3 + a^2 + a + 1, a^2 + a,               # optional - sage.rings.number_field
         ....:                    17*a^3 + 34*a^2 - 16*a - 37,
         ....:                    54*a^3 + 105*a^2 - 66*a - 135])
         sage: len(E.isogenies_prime_degree(5))                                          # optional - sage.rings.number_field
