@@ -2617,15 +2617,15 @@ class Polytopes():
         generator::
 
             sage: perm_a3_011 = polytopes.generalized_permutahedron(['A',3], [0,1,1])   # optional - sage.combinat
-            sage: perm_a3_011
+            sage: perm_a3_011                                                           # optional - sage.combinat
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 12 vertices
             sage: perm_a3_110 = polytopes.generalized_permutahedron(['A',3], [1,1,0])   # optional - sage.combinat
-            sage: perm_a3_110
+            sage: perm_a3_110                                                           # optional - sage.combinat
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 12 vertices
             sage: perm_a3_110.is_combinatorially_isomorphic(perm_a3_011)                # optional - sage.combinat
             True
             sage: perm_a3_101 = polytopes.generalized_permutahedron(['A',3], [1,0,1])   # optional - sage.combinat
-            sage: perm_a3_101
+            sage: perm_a3_101                                                           # optional - sage.combinat
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 12 vertices
             sage: perm_a3_110.is_combinatorially_isomorphic(perm_a3_101)                # optional - sage.combinat
             False

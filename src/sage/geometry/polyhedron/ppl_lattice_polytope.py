@@ -988,7 +988,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: set(G.domain()) == set(Z3square.vertices())                           # optional - sage.groups sage.graphs
             True
             sage: (set(tuple(x) for x in G.orbit(Z3square.vertices()[0]))               # optional - sage.groups sage.graphs
-            ....:   == set([(0, 0), (1, 2), (3, 3), (2, 1)])
+            ....:   == set([(0, 0), (1, 2), (3, 3), (2, 1)]))
 
             True
             sage: cell24 = LatticePolytope_PPL(
@@ -1054,7 +1054,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             ((0,0),(3,3)), ((0,0),(3,3))((1,2),(2,1))]
 
             sage: G1 = Z3square.lattice_automorphism_group(point_labels=(1,2,3,4))      # optional - sage.groups sage.graphs
-            sage: G1
+            sage: G1                                                                    # optional - sage.groups sage.graphs
             Permutation Group with generators [(), (2,3), (1,4), (1,4)(2,3)]
             sage: G1.cardinality()                                                      # optional - sage.groups sage.graphs
             4

@@ -3125,12 +3125,12 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.Whirl(4)                                                 # optional - sage.rings.finite_rings
-            sage: P = M.matroid_polytope(); P                                           # optional - sage.geometry.polyhedron sage.libs.pari
+            sage: P = M.matroid_polytope(); P                                           # optional - sage.geometry.polyhedron sage.rings.finite_rings
             A 7-dimensional polyhedron in ZZ^8 defined as the convex hull
             of 46 vertices
 
             sage: M = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
-            sage: M.matroid_polytope()                                                  # optional - sage.geometry.polyhedron sage.libs.pari
+            sage: M.matroid_polytope()                                                  # optional - sage.geometry.polyhedron sage.rings.finite_rings
             A 6-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 29 vertices
 
@@ -3168,12 +3168,12 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.Whirl(4)                                                 # optional - sage.rings.finite_rings
-            sage: M.independence_matroid_polytope()                                     # optional - sage.geometry.polyhedron sage.libs.pari
+            sage: M.independence_matroid_polytope()                                     # optional - sage.geometry.polyhedron sage.rings.finite_rings
             A 8-dimensional polyhedron in ZZ^8 defined as the convex hull
             of 135 vertices
 
             sage: M = matroids.named_matroids.NonFano()                                 # optional - sage.rings.finite_rings
-            sage: M.independence_matroid_polytope()                                     # optional - sage.geometry.polyhedron sage.libs.pari
+            sage: M.independence_matroid_polytope()                                     # optional - sage.geometry.polyhedron sage.rings.finite_rings
             A 7-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 58 vertices
 

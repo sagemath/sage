@@ -511,7 +511,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         [0 0 0 0 1]
         sage: m = M2.random_element()                                                   # optional - sage.libs.gap sage.rings.finite_rings
         sage: M1 = MatrixSpace(GF(2), 5)                                                # optional - sage.rings.finite_rings
-        sage: M1(m * m) == M1(m) * M1(m)                                                # optional - sage.rings.finite_rings
+        sage: M1(m * m) == M1(m) * M1(m)                                                # optional - sage.libs.gap sage.rings.finite_rings
         True
     """
 

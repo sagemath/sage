@@ -406,13 +406,13 @@ class Grid(TransformWidget, HBox, ValueWidget):
                         children=(Label(value='2x2 matrix'),
                                   VBox(children=(EvalText(value='0'), EvalText(value='4'))),
                                   VBox(children=(EvalText(value='1'), EvalText(value='5')))))
-            sage: w.get_interact_value()
+            sage: w.get_interact_value()                                                            # optional - sage.modules
             [0 1]
             [4 5]
 
         TESTS::
 
-            sage: w = Grid(0, 1, lambda i,j: EvalText())
+        sage: w = Grid(0, 1, lambda i,j: EvalText())
             Traceback (most recent call last):
             ...
             ValueError: Grid requires a positive number of rows and columns

@@ -1350,9 +1350,9 @@ def norm(x):
         sage: M = matrix(ZZ, [[1,2,4,3], [-1,0,3,-10]])                                 # optional - sage.modules
         sage: norm(M)  # abs tol 1e-14                                                  # optional - sage.modules
         10.690331129154467
-        sage: norm(CDF(z))
+        sage: norm(CDF(z))                                                              # optional - sage.modules
         5.0
-        sage: norm(CC(z))
+        sage: norm(CC(z))                                                               # optional - sage.modules
         5.00000000000000
 
     The norm of complex numbers::

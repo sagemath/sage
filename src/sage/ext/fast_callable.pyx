@@ -1791,18 +1791,18 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         25
         sage: fc.op_list()
         [('load_arg', 0), ('load_arg', 1), ('py_call', <function my_norm at 0x...>, 2), 'return']
-        sage: fc = fast_callable(expr)
-        sage: fc(3.0r)
+        sage: fc = fast_callable(expr)                                                  # optional - sage.symbolic
+        sage: fc(3.0r)                                                                  # optional - sage.symbolic
         4.0*pi + 12.0
-        sage: fc = fast_callable(x+3, domain=ZZ)
-        sage: fc(4)
+        sage: fc = fast_callable(x+3, domain=ZZ)                                        # optional - sage.symbolic
+        sage: fc(4)                                                                     # optional - sage.symbolic
         7
-        sage: fc = fast_callable(x/3, domain=ZZ)
-        sage: fc(4)
+        sage: fc = fast_callable(x/3, domain=ZZ)                                        # optional - sage.symbolic
+        sage: fc(4)                                                                     # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: no conversion of this rational to integer
-        sage: fc(6)
+        sage: fc(6)                                                                     # optional - sage.symbolic
         2
         sage: fc = fast_callable(etb.call(sin, x), domain=ZZ)                           # optional - sage.symbolic
         sage: fc(0)                                                                     # optional - sage.symbolic

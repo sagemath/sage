@@ -572,19 +572,19 @@ class Polyhedron_base7(Polyhedron_base6):
             3
 
             sage: Dexact = polytopes.dodecahedron()                                     # optional - sage.rings.number_field sage.groups
-            sage: F0 = Dexact.faces(2)[0].as_polyhedron()
+            sage: F0 = Dexact.faces(2)[0].as_polyhedron()                               # optional - sage.rings.number_field sage.groups
             sage: v = F0.volume(measure='induced', engine='internal'); v                # optional - sage.rings.number_field sage.groups
             1.53406271079097?
-            sage: F4 = Dexact.faces(2)[4].as_polyhedron()
+            sage: F4 = Dexact.faces(2)[4].as_polyhedron()                               # optional - sage.rings.number_field sage.groups
             sage: v = F4.volume(measure='induced', engine='internal'); v                # optional - sage.rings.number_field sage.groups
             1.53406271079097?
             sage: RDF(v)    # abs tol 1e-9                                              # optional - sage.rings.number_field sage.groups
             1.53406271079044
 
             sage: Dinexact = polytopes.dodecahedron(exact=False)                        # optional - sage.groups
-            sage: F2 = Dinexact.faces(2)[2].as_polyhedron()
+            sage: F2 = Dinexact.faces(2)[2].as_polyhedron()                             # optional - sage.groups
             sage: w = F2.volume(measure='induced', engine='internal')                   # optional - sage.groups
-            sage: RDF(w)    # abs tol 1e-9
+            sage: RDF(w)    # abs tol 1e-9                                              # optional - sage.groups
             1.5340627082974878
 
             sage: all(polytopes.simplex(d).volume(measure='induced')                    # optional - sage.rings.number_field sage.symbolic

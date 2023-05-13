@@ -347,17 +347,17 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             { (x, y, z) ∈ Ambient free module of rank 3 over the principal
                           ideal domain Integer Ring : sqrt(x^2 + y^2 + z^2) < 12 }
             sage: predicate = SmallTriples._predicates[0]                               # optional - sage.symbolic
-            sage: element = TripleDigits((1, 2, 3))                                     # optional - sage.symbolic
-            sage: SmallTriples._call_predicate(predicate, element)                      # optional - sage.symbolic
+            sage: element = TripleDigits((1, 2, 3))                                     # optional - sage.modules
+            sage: SmallTriples._call_predicate(predicate, element)                      # optional - sage.modules sage.symbolic
             sqrt(14) < 12
 
             sage: var('t')                                                              # optional - sage.symbolic
             t
             sage: TinyUniverse = ZZ^0                                                   # optional - sage.modules
-            sage: Nullary = ConditionSet(TinyUniverse, t > 0, vars=())                  # optional - sage.symbolic
-            sage: predicate = Nullary._predicates[0]                                    # optional - sage.symbolic
-            sage: element = TinyUniverse(0)                                             # optional - sage.symbolic
-            sage: Nullary._call_predicate(predicate, element)                           # optional - sage.symbolic
+            sage: Nullary = ConditionSet(TinyUniverse, t > 0, vars=())                  # optional - sage.modules sage.symbolic
+            sage: predicate = Nullary._predicates[0]                                    # optional - sage.modules sage.symbolic
+            sage: element = TinyUniverse(0)                                             # optional - sage.modules
+            sage: Nullary._call_predicate(predicate, element)                           # optional - sage.modules sage.symbolic
             t > 0
         """
         if isinstance(predicate, Expression) and predicate.is_callable():

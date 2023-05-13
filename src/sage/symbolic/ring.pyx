@@ -1184,7 +1184,7 @@ cdef class NumpyToSRMorphism(Morphism):
 
         sage: cos(int('2'))
         cos(2)
-        sage: numpy.cos(int('2'))
+        sage: numpy.cos(int('2'))                                                       # optional - numpy
         -0.4161468365471424
     """
     cdef _intermediate_ring

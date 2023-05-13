@@ -3633,7 +3633,7 @@ cdef class BinaryMatroid(LinearMatroid):
             2
             sage: for i in [-1, 0, 1]:                                                  # optional - sage.rings.finite_rings
             ....:     print(sorted(e for e in M.groundset()
-            ....:                    if (M\e).bicycle_dimension() == 2 + i]))
+            ....:                    if (M\e).bicycle_dimension() == 2 + i))
             ['a', 'b', 'c', 'e', 'f', 'g']
             ['d']
             ['h']

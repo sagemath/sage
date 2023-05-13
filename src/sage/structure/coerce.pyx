@@ -402,7 +402,7 @@ def parent_is_real_numerical(P):
         True
         sage: parent_is_real_numerical(QuadraticField(-1))                              # optional - sage.rings.number_field
         False
-        sage: [parent_is_real_numerical(R)
+        sage: [parent_is_real_numerical(R)                                              # optional - numpy
         ....:  for R in [CC, complex, gmpy2.mpc, numpy.complexfloating]]
         [False, False, False, False]
         sage: [parent_is_real_numerical(R) for R in [QQ['x'], QQ[['x']], str]]
