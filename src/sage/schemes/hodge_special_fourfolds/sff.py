@@ -751,7 +751,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return True 
 
     def __eq__(self, Y):
-        r"""Return ``True`` if ``self`` is mathematically equal to ``Y``, ``False``otherwise.
+        r"""Return ``True`` if ``self`` is mathematically equal to ``Y``, ``False`` otherwise.
 
         OUTPUT:
 
@@ -1580,7 +1580,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             return self._macaulay2_object
 
     def __eq__(self,other):
-        r"""Return ``True`` if ``self`` is mathematically equal to ``other``, ``False``otherwise.
+        r"""Return ``True`` if ``self`` is mathematically equal to ``other``, ``False`` otherwise.
 
         OUTPUT:
 
