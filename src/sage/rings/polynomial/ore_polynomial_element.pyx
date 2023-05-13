@@ -3030,7 +3030,7 @@ cdef class OrePolynomialBaseringInjection(Morphism):
               From: Finite Field in t of size 5^3
               To:   Ore Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
             sage: R.<t> = QQ[]
-            sage: OrePolynomialBaseringInjection(QQ, k['x', Frob])
+            sage: OrePolynomialBaseringInjection(QQ, k['x', Frob])                      # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             AssertionError: the domain of the injection must be the base ring of the Ore polynomial ring

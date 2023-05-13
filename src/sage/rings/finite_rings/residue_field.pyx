@@ -1318,7 +1318,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
               From: Residue field in abar of
                     Fractional ideal (-14*a^4 + 24*a^3 + 26*a^2 - 58*a + 15)
               To:   Maximal Order in Number Field in a with defining polynomial x^5 - 5*x + 2
-            sage: s(k.gen())
+            sage: s(k.gen())                                                            # optional - sage.rings.number_field
             a
             sage: L.<b> = NumberField(x^5 + 17*x + 1)                                   # optional - sage.rings.number_field
             sage: P = L.factor(53)[0][0]                                                # optional - sage.rings.number_field

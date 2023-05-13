@@ -212,10 +212,10 @@ def normalize_extra_units(base_ring, add_units, warning=True):
         sage: p = b**2 - 5                                                              # optional - sage.libs.singular
         sage: p == (b-a)*(b+a)                                                          # optional - sage.libs.singular
         True
-        sage: normalize_extra_units(Q, [p])                                             # optional - sage.libs.pari
+        sage: normalize_extra_units(Q, [p])                                             # optional - sage.libs.pari sage.libs.singular
         doctest:...: UserWarning: Localization may not be represented uniquely
         [b^2 - 5]
-        sage: normalize_extra_units(Q, [p], warning=False)                              # optional - sage.libs.pari
+        sage: normalize_extra_units(Q, [p], warning=False)                              # optional - sage.libs.pari sage.libs.singular
         [b^2 - 5]
     """
     # convert to base ring
