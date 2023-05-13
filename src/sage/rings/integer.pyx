@@ -2153,7 +2153,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             <class 'sage.rings.rational.Rational'>
             sage: f = 2^(sin(x)-cos(x)); f                                              # optional - sage.symbolic
             2^(-cos(x) + sin(x))
-            sage: f(x=3)
+            sage: f(x=3)                                                                # optional - sage.symbolic
             2^(-cos(3) + sin(3))
 
         A symbolic sum::

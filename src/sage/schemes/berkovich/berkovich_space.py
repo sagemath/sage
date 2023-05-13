@@ -233,7 +233,7 @@ class Berkovich_Cp(Berkovich):
 
             sage: A_ideal_2 = A.prime_above(5)                                          # optional - sage.rings.number_field
             sage: E = Berkovich_Cp_Affine(A, A_ideal_2)                                 # optional - sage.rings.number_field
-            sage: C == E
+            sage: C == E                                                                # optional - sage.rings.number_field
             False
         """
         if not isinstance(right, Berkovich_Cp):
