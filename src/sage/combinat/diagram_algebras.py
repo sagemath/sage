@@ -2425,12 +2425,12 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
     The identity element of the partition algebra is the set
     partition `\{\{1,-1\}, \{2,-2\}, \ldots, \{k,-k\}\}`::
 
-        sage: P = PA.basis().list()
-        sage: PA.one()
+        sage: P = PA.basis().list()                                                     # optional - sage.symbolic
+        sage: PA.one()                                                                  # optional - sage.symbolic
         P{{-2, 2}, {-1, 1}}
-        sage: PA.one() * P[7] == P[7]
+        sage: PA.one() * P[7] == P[7]                                                   # optional - sage.symbolic
         True
-        sage: P[7] * PA.one() == P[7]
+        sage: P[7] * PA.one() == P[7]                                                   # optional - sage.symbolic
         True
 
     We now give some further examples of the use of the other arguments.

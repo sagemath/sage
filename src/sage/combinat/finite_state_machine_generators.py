@@ -1507,9 +1507,9 @@ class TransducerGenerators():
                 sage: binary_expansion = 29.digits(base=2)
                 sage: binary_expansion
                 [1, 0, 1, 1, 1]
-                sage: T(binary_expansion)
+                sage: T(binary_expansion)                                               # optional - sage.symbolic
                 [1, 1, 1]
-                sage: sum(T(binary_expansion))
+                sage: sum(T(binary_expansion))                                          # optional - sage.symbolic
                 3
 
             Indeed, the given non-adjacent form has three non-zero
@@ -1562,7 +1562,7 @@ class TransducerGenerators():
 
             We again consider the example of `n=29`::
 
-                sage: T(29.digits(base=2))
+                sage: T(29.digits(base=2))                                              # optional - sage.symbolic
                 [1, 0, -1, 0, 0, 1, 0]
 
             The same transducer can also be entered bypassing the
@@ -1576,7 +1576,7 @@ class TransducerGenerators():
                 ....:       (0, [])],
                 ....:       2,
                 ....:       is_zero=lambda x: sum(x).is_zero())
-                sage: TR == T
+                sage: TR == T                                                           # optional - sage.symbolic
                 True
 
         -   Here is an artificial example where some of the `s` are
