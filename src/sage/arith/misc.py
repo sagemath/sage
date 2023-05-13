@@ -562,8 +562,8 @@ def is_prime(n):
     R = n.parent()
     if R.is_field():
         # number fields redefine .is_prime(), see #32340
-        from sage.rings.number_field.number_field import NumberField_generic
-        if not isinstance(R, NumberField_generic):
+        from sage.rings.number_field.number_field_base import NumberField
+        if R is QQ or not isinstance(R, NumberField):
             import warnings
             s = f'Testing primality in {R}, which is a field, ' \
                 'hence the result will always be False. '
