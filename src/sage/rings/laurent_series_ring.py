@@ -433,7 +433,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         ::
 
-            sage: L(t*I) / L(t^3+I*2*t)                                                 # optional - sage.rings.number_field
+            sage: L(t*I) / L(t^3+I*2*t)                                                 # optional - sage.rings.number_field sage.symbolic
             1/2 + 1/4*I*u^2 - 1/8*u^4 - 1/16*I*u^6 + 1/32*u^8 +
             1/64*I*u^10 - 1/128*u^12 - 1/256*I*u^14 + 1/512*u^16 +
             1/1024*I*u^18 + O(u^20)
@@ -443,7 +443,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         Check that :trac:`28993` is fixed::
 
             sage: from sage.modular.etaproducts import qexp_eta
-            sage: qexp_eta(S, prec=30)
+            sage: qexp_eta(S, prec=30)                                                  # optional - sage.rings.padics
             1 - t - t^2 + t^5 + t^7 - t^12 - t^15 + t^22 + t^26 + O(t^30)
 
         When converting from `R((z))` to `R((z))((w))`, the variable

@@ -107,7 +107,7 @@ Run test suite for extensions which come from the splitting in the base field::
     sage: v = K.valuation(x^2 + 1)
     sage: L.<x> = FunctionField(GaussianIntegers().fraction_field())
     sage: ws = v.extensions(L)                                                          # optional - sage.rings.function_field
-    sage: for w in ws: TestSuite(w).run(max_runs=100) # long time
+    sage: for w in ws: TestSuite(w).run(max_runs=100)  # long time                      # optional - sage.rings.function_field
 
 Run test suite for a finite place with residual degree and ramification::
 

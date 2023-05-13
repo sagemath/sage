@@ -464,7 +464,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         TESTS::
 
-            sage: g.subs(fixed=x[0], x_1=N)
+            sage: g.subs(fixed=x[0], x_1=N)                                             # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: fixed must be a dict

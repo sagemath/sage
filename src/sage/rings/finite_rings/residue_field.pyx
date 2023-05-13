@@ -61,7 +61,7 @@ TESTS::
     sage: a = ff(z)                                                                     # optional - sage.rings.number_field
     sage: parent(a*a)                                                                   # optional - sage.rings.number_field
     Residue field in zbar of Fractional ideal (17)
-    sage: TestSuite(ff).run()
+    sage: TestSuite(ff).run()                                                           # optional - sage.rings.number_field
 
 Verify that :trac:`15192` has been resolved::
 
@@ -644,12 +644,12 @@ class ResidueField_generic(Field):
 
         Check that :trac:`11319` is fixed::
 
-            sage: GF(13).has_coerce_map_from(F)
+            sage: GF(13).has_coerce_map_from(F)                                         # optional - sage.rings.number_field
             True
 
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + t^2 + 7)
             sage: k.<a> = P.residue_field()
-            sage: k.has_coerce_map_from(Qp(17)) # indirect doctest
+            sage: k.has_coerce_map_from(Qp(17))  # indirect doctest                     # optional - sage.rings.padics
             False
         """
         OK = self.p.ring()

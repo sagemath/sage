@@ -37,7 +37,7 @@ simple arithmetic in it::
 We next make an extension of the above function field, illustrating
 that arithmetic with a tower of three fields is fully supported::
 
-    sage: S.<t> = L[]                                                                   # optional - sage.rings.finite_rings
+    sage: S.<t> = L[]                                                                   # optional - sage.rings.finite_rings sage.rings.function_field
     sage: M.<t> = L.extension(t^2 - x*y)                                                # optional - sage.rings.finite_rings sage.rings.function_field
     sage: M                                                                             # optional - sage.rings.finite_rings sage.rings.function_field
     Function field in t defined by t^2 + 4*x*y
@@ -120,8 +120,8 @@ TESTS::
     sage: TestSuite(J).run()                                                            # optional - sage.rings.finite_rings
     sage: TestSuite(K).run(max_runs=256)   # long time (10s)                            # optional - sage.rings.number_field
     sage: TestSuite(L).run(max_runs=8)     # long time (25s)                            # optional - sage.rings.function_field sage.rings.number_field
-    sage: TestSuite(M).run(max_runs=8)     # long time (35s)
-    sage: TestSuite(N).run(max_runs=8, skip = '_test_derivation')    # long time (15s)
+    sage: TestSuite(M).run(max_runs=8)     # long time (35s)                            # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: TestSuite(N).run(max_runs=8, skip='_test_derivation')      # long time (15s)  # optional - sage.rings.finite_rings
     sage: TestSuite(O).run()                                                            # optional - sage.rings.function_field sage.rings.number_field
     sage: TestSuite(R).run()
     sage: TestSuite(S).run()               # long time (4s)                             # optional - sage.rings.finite_rings sage.rings.function_field

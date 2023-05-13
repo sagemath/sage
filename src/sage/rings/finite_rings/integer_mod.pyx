@@ -1986,7 +1986,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         EXAMPLES::
 
             sage: p = next_prime(2^32)                                                  # optional - sage.libs.pari
-            sage: GF(p)(int(p + 1))                                                     # optional - sage.rings.finite_rings
+            sage: GF(p)(int(p + 1))                                                     # optional - sage.libs.pari sage.rings.finite_rings
             1
         """
         mpz_set_si(self.value, value)

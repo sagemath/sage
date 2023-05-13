@@ -114,14 +114,14 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
             sage: k(77*a^7 + 4)                                                         # optional - sage.rings.number_field
             2*abar + 4
             sage: V = k.vector_space(map=False); v = V([3,-2])                          # optional - sage.rings.number_field
-            sage: type(k.convert_map_from(V))
+            sage: type(k.convert_map_from(V))                                           # optional - sage.rings.number_field
             <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
-            sage: k(v) # indirect doctest
+            sage: k(v)  # indirect doctest                                              # optional - sage.rings.number_field
             59*abar + 3
 
             sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field()
             sage: V = k.vector_space(map=False); v = V([0,1,2,3])
-            sage: k(v) # indirect doctest
+            sage: k(v)  # indirect doctest
             2*a^2 + a
         """
         try:

@@ -1156,7 +1156,7 @@ class PolynomialRing_general(ring.Algebra):
             0
             sage: S = R.change_ring(GF(19^2, 'b')); S                                   # optional - sage.rings.finite_rings
             Univariate Polynomial Ring in ZZZ over Finite Field in b of size 19^2
-            sage: S.characteristic()
+            sage: S.characteristic()                                                    # optional - sage.rings.finite_rings
             19
         """
         return self.base_ring().characteristic()
@@ -2060,7 +2060,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
         Demonstrate that :trac:`8762` is fixed::
 
             sage: R.<x> = PolynomialRing(GF(next_prime(10^20)), sparse=True)            # optional - sage.rings.finite_rings
-            sage: x^(10^20) # this should be fast
+            sage: x^(10^20)  # this should be fast                                      # optional - sage.rings.finite_rings
             x^100000000000000000000
         """
         def _element_class():

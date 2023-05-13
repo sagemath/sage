@@ -1257,26 +1257,27 @@ cdef class OrePolynomial(AlgebraElement):
         The base ring needs to be a field::
 
             sage: R.<t> = QQ[]                                                          # optional - sage.rings.finite_rings
-            sage: sigma = R.hom([t+1])
-            sage: S.<x> = R['x',sigma]
-            sage: a = (x + t) * (x^2 + t*x + 1)
-            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)
-            sage: a.left_gcd(b)
+            sage: sigma = R.hom([t + 1])                                                # optional - sage.rings.finite_rings
+            sage: S.<x> = R['x',sigma]                                                  # optional - sage.rings.finite_rings
+            sage: a = (x + t) * (x^2 + t*x + 1)                                         # optional - sage.rings.finite_rings
+            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)                             # optional - sage.rings.finite_rings
+            sage: a.left_gcd(b)                                                         # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: the base ring must be a field
 
         And the twisting morphism needs to be bijective::
 
-            sage: FR = R.fraction_field()
-            sage: f = FR.hom([FR(t)^2])
-            sage: S.<x> = FR['x',f]
-            sage: a = (x + t) * (x^2 + t*x + 1)
-            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)
-            sage: a.left_gcd(b)
+            sage: FR = R.fraction_field()                                               # optional - sage.rings.finite_rings
+            sage: f = FR.hom([FR(t)^2])                                                 # optional - sage.rings.finite_rings
+            sage: S.<x> = FR['x',f]                                                     # optional - sage.rings.finite_rings
+            sage: a = (x + t) * (x^2 + t*x + 1)                                         # optional - sage.rings.finite_rings
+            sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)                             # optional - sage.rings.finite_rings
+            sage: a.left_gcd(b)                                                         # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            NotImplementedError: inversion of the twisting morphism Ring endomorphism of Fraction Field of Univariate Polynomial Ring in t over Rational Field
+            NotImplementedError: inversion of the twisting morphism Ring endomorphism
+            of Fraction Field of Univariate Polynomial Ring in t over Rational Field
                 Defn: t |--> t^2
         """
         if self.base_ring() not in _Fields:

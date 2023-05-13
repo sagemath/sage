@@ -5688,7 +5688,7 @@ class AlgebraicReal(AlgebraicNumber_base):
             ValueError: Cannot coerce irrational Algebraic Real 2.645751311064591? to Rational
             sage: v = AA(1/2 + sqrt(2))^3 - AA(11/4*sqrt(2)); v                         # optional - sage.symbolic
             3.125000000000000?
-            sage: v._rational_()
+            sage: v._rational_()                                                        # optional - sage.symbolic
             25/8
         """
         self.exactify()

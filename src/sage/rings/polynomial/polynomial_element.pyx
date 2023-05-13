@@ -4269,7 +4269,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: G = f.factor(); G                                                     # optional - sage.rings.finite_rings
             (x + x) * (x + 2*x + 1) * (x^4 + (x + 2)*x^3 + (2*x + 2)*x + 2)
             * (x^4 + 2*x*x^3 + (x + 1)*x + 2)
-            sage: prod(G) == f
+            sage: prod(G) == f                                                          # optional - sage.rings.finite_rings
             True
 
         ::
@@ -4303,8 +4303,9 @@ cdef class Polynomial(CommutativePolynomial):
             4
             sage: F[:2]                                                                 # optional - sage.rings.number_field
             [(T - a, 1),
-             (T - 40085763200/924556084127*a^5 - 145475769880/924556084127*a^4 + 527617096480/924556084127*a^3
-               + 1289745809920/924556084127*a^2 - 3227142391585/924556084127*a - 401502691578/924556084127, 1)]
+             (T - 40085763200/924556084127*a^5 - 145475769880/924556084127*a^4
+               + 527617096480/924556084127*a^3 + 1289745809920/924556084127*a^2
+               - 3227142391585/924556084127*a - 401502691578/924556084127, 1)]
             sage: expand(F)                                                             # optional - sage.rings.number_field
             T^6 + 10/7*T^5 - 867/49*T^4 - 76/245*T^3 + 3148/35*T^2 - 25944/245*T + 48771/1225
 
@@ -4391,7 +4392,7 @@ cdef class Polynomial(CommutativePolynomial):
         A test where nffactor used to fail without a nf structure::
 
             sage: x = polygen(QQ)
-            sage: K = NumberField([x^2-1099511627777, x^3-3], 'a')                      # optional - sage.rings.number_field
+            sage: K = NumberField([x^2 - 1099511627777, x^3 - 3], 'a')                  # optional - sage.rings.number_field
             sage: x = polygen(K)                                                        # optional - sage.rings.number_field
             sage: f = x^3 - 3                                                           # optional - sage.rings.number_field
             sage: factor(f)                                                             # optional - sage.rings.number_field

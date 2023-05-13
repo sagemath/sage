@@ -75,7 +75,7 @@ Check relations of the Ariki-Koike algebra::
 Obtain specializations in positive characteristic::
 
     sage: Fp = GF(17)                                                                   # optional - sage.rings.finite_rings
-    sage: f = L.hom((3,5,7,11), codomain=Fp); f                                         # optional - sage.rings.finite_rings
+    sage: f = L.hom((3,5,7,11), codomain=Fp); f                                         # optional - sage.libs.pari sage.rings.finite_rings
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
             (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1, u2*q - u1, u2*q - u0,
@@ -85,17 +85,17 @@ Obtain specializations in positive characteristic::
             u1 |--> 5
             u2 |--> 7
             q |--> 11
-    sage: mFp1 = matrix({k: f(v) for k, v in m1.dict().items()}); mFp1                  # optional - sage.modules sage.rings.finite_rings
+    sage: mFp1 = matrix({k: f(v) for k, v in m1.dict().items()}); mFp1                  # optional - sage.libs.pari sage.modules sage.rings.finite_rings
     [5 0 0]
     [0 3 0]
     [0 0 3]
-    sage: mFp1.base_ring()                                                              # optional - sage.modules sage.rings.finite_rings
+    sage: mFp1.base_ring()                                                              # optional - sage.libs.pari sage.modules sage.rings.finite_rings
     Finite Field of size 17
-    sage: mFp2 = matrix({k: f(v) for k, v in m2.dict().items()}); mFp2                  # optional - sage.modules sage.rings.finite_rings
+    sage: mFp2 = matrix({k: f(v) for k, v in m2.dict().items()}); mFp2                  # optional - sage.libs.pari sage.modules sage.rings.finite_rings
     [ 2  3  0]
     [ 9  8  0]
     [ 0  0 16]
-    sage: mFp3 = matrix({k: f(v) for k, v in m3.dict().items()}); mFp3                  # optional - sage.modules sage.rings.finite_rings
+    sage: mFp3 = matrix({k: f(v) for k, v in m3.dict().items()}); mFp3                  # optional - sage.libs.pari sage.modules sage.rings.finite_rings
     [16  0  0]
     [ 0  4  5]
     [ 0  7  6]

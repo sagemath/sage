@@ -345,9 +345,9 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         Test that :trac:`15695` is fixed (see also :trac:`18076`)::
 
-            sage: 1j + numpy.float64(2)
+            sage: 1j + numpy.float64(2)                                                 # optional - numpy
             2.00000000000000 + 1.00000000000000*I
-            sage: parent(_)
+            sage: parent(_)                                                             # optional - numpy
             Complex Field with 53 bits of precision
         """
         if S is int or S is float:
