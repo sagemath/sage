@@ -3947,7 +3947,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
             sage: FG = BlackBoxConstructionFunctor(gap)                                 # optional - sage.libs.gap
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # optional - sage.symbolic
-            sage: FM == FG                                                              # optional - sage.symbolic
+            sage: FM == FG                                                              # optional - sage.libs.gap sage.symbolic
             False
             sage: FM == loads(dumps(FM))                                                # optional - sage.symbolic
             True
@@ -3979,7 +3979,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
             sage: FG = BlackBoxConstructionFunctor(gap)                                 # optional - sage.libs.gap
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # optional - sage.symbolic
-            sage: FM == FG       # indirect doctest                                     # optional - sage.symbolic
+            sage: FM == FG       # indirect doctest                                     # optional - sage.libs.gap sage.symbolic
             False
             sage: FM == loads(dumps(FM))                                                # optional - sage.symbolic
             True
@@ -3998,7 +3998,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
             sage: FG = BlackBoxConstructionFunctor(gap)                                 # optional - sage.libs.gap
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # optional - sage.symbolic
-            sage: FM != FG       # indirect doctest                                     # optional - sage.symbolic
+            sage: FM != FG       # indirect doctest                                     # optional - sage.libs.gap sage.symbolic
             True
             sage: FM != loads(dumps(FM))                                                # optional - sage.symbolic
             False
