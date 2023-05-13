@@ -644,16 +644,16 @@ cdef class SymmetricReductionStrategy:
 
         Last, we demonstrate the 'report' option::
 
-            sage: S = SymmetricReductionStrategy(X, [x[2] + y[1],
+            sage: S = SymmetricReductionStrategy(X, [x[2] + y[1],                       # optional - sage.libs.singular
             ....:                                    x[2]*x[3] + x[1]*y[2] + y[4],
             ....:                                    y[3] + y[2]])
-            sage: S
+            sage: S                                                                     # optional - sage.libs.singular
             Symmetric Reduction Strategy in
              Infinite polynomial ring in x, y over Rational Field, modulo
                 y_3 + y_2,
                 x_2 + y_1,
                 x_1*y_2 + y_4 + y_1^2
-            sage: S.tailreduce(x[3] + x[1]*y[3] + x[1]*y[1], report=True)               # optional - sage.combinat
+            sage: S.tailreduce(x[3] + x[1]*y[3] + x[1]*y[1], report=True)               # optional - sage.combinat sage.libs.singular
             T[3]:::>
             T[3]:>
             x_1*y_1 - y_2 + y_1^2 - y_1
