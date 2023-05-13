@@ -1992,7 +1992,7 @@ class SimplicialSet_arbitrary(Parent):
             sage: S3.homology(0, reduced=False)                                         # optional - sage.modules
             Z
 
-            sage: BC3.homology()                                                        # optional - sage.modules
+            sage: BC3.homology()                                                        # optional - sage.groups sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: this simplicial set may be infinite, so specify dimensions when computing homology
