@@ -18271,7 +18271,7 @@ def _matrix_power_symbolic(A, n):
     If the base ring is inexact, the Jordan normal form is not available::
 
         sage: A = matrix(RDF, [[2, -1], [1,  0]])
-        sage: A^n
+        sage: A^n                                                                       # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: Jordan normal form not implemented over inexact rings.
@@ -18279,7 +18279,7 @@ def _matrix_power_symbolic(A, n):
     Testing exponentiation in the integer ring::
 
         sage: A = matrix(ZZ, [[1,-1], [-1,1]])
-        sage: A^(2*n+1)
+        sage: A^(2*n+1)                                                                 # optional - sage.symbolic
         [ 1/2*2^(2*n + 1) -1/2*2^(2*n + 1)]
         [-1/2*2^(2*n + 1)  1/2*2^(2*n + 1)]
 
