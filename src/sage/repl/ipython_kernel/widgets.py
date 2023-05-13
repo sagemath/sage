@@ -412,7 +412,7 @@ class Grid(TransformWidget, HBox, ValueWidget):
 
         TESTS::
 
-        sage: w = Grid(0, 1, lambda i,j: EvalText())
+            sage: w = Grid(0, 1, lambda i,j: EvalText())
             Traceback (most recent call last):
             ...
             ValueError: Grid requires a positive number of rows and columns
