@@ -440,7 +440,7 @@ def CompleteBipartiteGraph(p, q, set_position=True):
 
         sage: import networkx                                                           # optional - networkx
         sage: n = networkx.complete_bipartite_graph(389, 157)              # long time  # optional - networkx
-        sage: spring_big = Graph(n)
+        sage: spring_big = Graph(n)                                                     # optional - networkx
         sage: posdict_big = graphs.CompleteBipartiteGraph(389, 157)        # long time
 
     Compare the plotting::
