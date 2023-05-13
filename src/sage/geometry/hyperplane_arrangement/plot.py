@@ -496,12 +496,12 @@ def legend_3d(hyperplane_arrangement, hyperplane_colors, length):
         sage: legend_3d(c, list(colors.values())[:12], length='long')                   # optional - sage.combinat sage.plot
         Graphics object consisting of 12 graphics primitives
 
-        sage: legend_3d(c, list(colors.values())[:12], length='short')                  # optional - sage.plot
+        sage: legend_3d(c, list(colors.values())[:12], length='short')                  # optional - sage.combinat sage.plot
         Graphics object consisting of 12 graphics primitives
 
-        sage: p = legend_3d(c, list(colors.values())[:12], length='short')              # optional - sage.plot
-        sage: p.set_legend_options(ncol=4)                                              # optional - sage.plot
-        sage: type(p)                                                                   # optional - sage.plot
+        sage: p = legend_3d(c, list(colors.values())[:12], length='short')              # optional - sage.combinat sage.plot
+        sage: p.set_legend_options(ncol=4)                                              # optional - sage.combinat sage.plot
+        sage: type(p)                                                                   # optional - sage.combinat sage.plot
         <class 'sage.plot.graphics.Graphics'>
     """
     if hyperplane_arrangement.dimension() != 3:
