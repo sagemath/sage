@@ -1,6 +1,6 @@
 
 from .number_field import (NumberField, NumberFieldTower, CyclotomicField, QuadraticField,
-                           is_real_place)
+                           is_fundamental_discriminant, is_real_place)
 from .number_field_element import NumberFieldElement
 
 from .order import EquationOrder, GaussianIntegers, EisensteinIntegers
