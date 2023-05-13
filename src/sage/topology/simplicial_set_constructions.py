@@ -48,7 +48,7 @@ will give you the same result each time::
     sage: S2 = simplicial_sets.Sphere(2)
     sage: S2.product(S2) == S2.product(S2)
     True
-    sage: S2.disjoint_union(CP2, S2) == S2.disjoint_union(CP2, S2)
+    sage: S2.disjoint_union(CP2, S2) == S2.disjoint_union(CP2, S2)                      # optional - sage.graphs
     True
 
 AUTHORS:
@@ -1254,7 +1254,7 @@ class PushoutOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
             sage: bouquet = pt.pushout(S1.base_point_map(),                             # optional - sage.graphs
             ....:                      S1.base_point_map(),
             ....:                      S1.base_point_map())
-            sage: bouquet.homology(1)
+            sage: bouquet.homology(1)                                                   # optional - sage.graphs
             Z x Z x Z
         """
         # Import this here to prevent circular imports.
@@ -1728,7 +1728,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
             sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                          # optional - sage.groups
             sage: RP2 = RP5.n_skeleton(2)                                               # optional - sage.groups
             sage: RP5_2 = RP5.quotient(RP2)                                             # optional - sage.graphs sage.groups
-            sage: RP5_2.ambient()                                                       # optional - sage.graphs
+            sage: RP5_2.ambient()                                                       # optional - sage.graphs sage.groups
             RP^5
 
             sage: G = groups.misc.MultiplicativeAbelian([2])                            # optional - sage.groups

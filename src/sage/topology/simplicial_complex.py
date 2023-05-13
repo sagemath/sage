@@ -1940,7 +1940,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S0.suspension() == simplicial_complexes.Sphere(1)
             True
             sage: S3 = S0.suspension(3)  # the 3-sphere                                 # optional - sage.graphs
-            sage: S3.homology()
+            sage: S3.homology()                                                         # optional - sage.graphs
             {0: 0, 1: 0, 2: 0, 3: Z}
 
         For pseudomanifolds, the complex constructed here will be
