@@ -1206,11 +1206,11 @@ cdef class MatrixArgs:
         Constructing a matrix from a PARI ``t_VEC`` or ``t_COL`` with
         ``t_VEC`` or ``t_COL`` elements is currently not supported::
 
-            sage: M(pari([1, a, 0, 1]))                                         # optional - sage.libs.pari
+            sage: M(pari([1, a, 0, 1]))                                                 # optional - sage.libs.pari sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NameError: name 'a' is not defined
-            sage: M(pari([[1, a], [0, 1]]))                                     # optional - sage.libs.pari
+            sage: M(pari([[1, a], [0, 1]]))                                             # optional - sage.libs.pari sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NameError: name 'a' is not defined
