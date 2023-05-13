@@ -1104,17 +1104,17 @@ def CirculantGraph(n, adjacency):
 
         sage: g = []
         sage: j = []
-        sage: for i in range(9):
+        sage: for i in range(9):                                                        # optional - networkx
         ....:     spr = networkx.cycle_graph(i+3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - networkx
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)                                                     # optional - networkx
+        sage: G.show()  # long time                                                     # optional - networkx
 
     Passing a 1 into adjacency should give the cycle.
 
