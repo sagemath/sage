@@ -593,7 +593,7 @@ def format(s, embedded=False):
     r"""noreplace
     Format Sage documentation ``s`` for viewing with IPython.
 
-    This calls ``detex`` on ``s`` to convert LaTeX commands to plain
+    This calls :func:`detex` on ``s`` to convert LaTeX commands to plain
     text, unless the directive ``nodetex`` is given in the first line
     of the string.
 
@@ -607,13 +607,13 @@ def format(s, embedded=False):
 
     INPUT:
 
-    - ``s`` - string
-    - ``embedded`` - boolean (optional, default False)
+    - ``s`` -- string
+    - ``embedded`` -- boolean (optional, default ``False``)
 
     OUTPUT: string
 
-    Set ``embedded`` equal to True if formatting for use in the
-    notebook; this just gets passed as an argument to ``detex``.
+    Set ``embedded`` equal to ``True`` if formatting for use in the
+    notebook; this just gets passed as an argument to :func:`detex`.
 
     .. SEEALSO::
 
@@ -748,22 +748,23 @@ def format(s, embedded=False):
             obj = s[i_0 + i + 3:i_0 + i + 3 + j]
             if obj in docs:
                 t = ''
-            else:
+            elif obj.isidentifier():
                 try:
-                    x = eval('%s.%s' % (toplevel.__name__, obj), locals())
+                    x = getattr(toplevel, obj)
                 except AttributeError:
                     # A pair <<<...>>> has been found, but the object not.
                     i_0 += i + 6 + j
-                    continue
-                except SyntaxError:
-                    # This is a simple heuristics to cover the case of
-                    # a non-matching set of <<< and >>>
-                    i_0 += i + 3
                     continue
                 t0 = sage.misc.sageinspect.sage_getdef(x, obj)
                 t1 = sage.misc.sageinspect.sage_getdoc(x)
                 t = 'Definition: ' + t0 + '\n\n' + t1
                 docs.add(obj)
+            else:
+                # This is a simple heuristics to cover the case of
+                # a non-matching set of <<< and >>>
+                i_0 += i + 3
+                continue
+
             s = s[:i_0 + i] + '\n' + t + s[i_0 + i + 6 + j:]
             i_0 += i
 
@@ -1140,15 +1141,15 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
         sage: print(search_src(r'^ *sage[:] .*search_src\(', interact=False))  # long time
         misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) # random # long time
         misc/sagedoc.py:... len(search_src("matrix", module="sage.calculus", interact=False).splitlines()) # random
-        misc/sagedoc.py:... len(search_src("matrix", path_re="calc", interact=False).splitlines()) > 15
+        misc/sagedoc.py:... len(search_src("matrix", path_re="calc"...
         misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False))
         misc/sagedoc.py:... print(search_src(r" fetch\(", "def", interact=False)) # random # long time
         misc/sagedoc.py:... print(search_src(r" fetch\(", "def", "pyx", interact=False)) # random # long time
         misc/sagedoc.py:... s = search_src('Matrix', path_re='matrix', interact=False); s.find('x') > 0
         misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix', interact=False); s.find('x') > 0
-        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix', interact=False, ignore_case=False); s.find('x') > 0
+        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix',
         misc/sagedoc.py:... len(search_src('log', 'derivative', interact=False).splitlines()) < 40
-        misc/sagedoc.py:... len(search_src('log', 'derivative', interact=False, multiline=True).splitlines()) > 70
+        misc/sagedoc.py:... len(search_src('log', 'derivative'...
         misc/sagedoc.py:... print(search_src(r'^ *sage[:] .*search_src\(', interact=False)) # long time
         misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) > 9000 # long time
         misc/sagedoc.py:... print(search_src('matrix', 'column', 'row', 'sub', 'start', 'index', interact=False)) # random # long time
