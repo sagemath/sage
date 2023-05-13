@@ -38,7 +38,7 @@ REFERENCES:
 - [TIDES]_
 """
 
-from  sage.rings.real_mpfr import RealField
+from sage.rings.real_mpfr import RealField
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.calculus.all", "symbolic_expression")
 from sage.misc.flatten import flatten
