@@ -3,9 +3,6 @@ from .all__sagemath_environment import *
 from .all__sagemath_polyhedra import *
 from .all__sagemath_repl import *
 
-lazy_import('sage.misc.misc', 'union',
-            deprecation=32096)
-
 from .dev_tools import runsnake, import_statements
 
 from .edit_module import edit, set_edit_template
