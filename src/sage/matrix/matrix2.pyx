@@ -10866,12 +10866,13 @@ cdef class Matrix(Matrix1):
 
         A complex subfield of the complex numbers.  ::
 
-            sage: C.<z> = CyclotomicField(5)
-            sage: A = matrix(C, [[              -z^3 - 2*z,             -z^3 - 1, 2*z^3 - 2*z^2 + 2*z,             1],
-            ....:                [         z^3 - 2*z^2 + 1, -z^3 + 2*z^2 - z - 1,                  -1,       z^2 + z],
-            ....:                [-1/2*z^3 - 2*z^2 + z + 1,         -z^3 + z - 2,    -2*z^3 + 1/2*z^2, 2*z^2 - z + 2]])
-            sage: G, M = A.gram_schmidt(orthonormal=False)
-            sage: G
+            sage: C.<z> = CyclotomicField(5)                                            # optional - sage.rings.number_field
+            sage: A = matrix(C,                                                         # optional - sage.rings.number_field
+            ....:       [[              -z^3 - 2*z,             -z^3 - 1, 2*z^3 - 2*z^2 + 2*z,             1],
+            ....:        [         z^3 - 2*z^2 + 1, -z^3 + 2*z^2 - z - 1,                  -1,       z^2 + z],
+            ....:        [-1/2*z^3 - 2*z^2 + z + 1,         -z^3 + z - 2,    -2*z^3 + 1/2*z^2, 2*z^2 - z + 2]])
+            sage: G, M = A.gram_schmidt(orthonormal=False)                              # optional - sage.rings.number_field
+            sage: G                                                                     # optional - sage.rings.number_field
             [                                                      -z^3 - 2*z                                                         -z^3 - 1                                              2*z^3 - 2*z^2 + 2*z                                                                1]
             [                   155/139*z^3 - 161/139*z^2 + 31/139*z + 13/139                 -175/139*z^3 + 180/139*z^2 - 125/139*z - 142/139                     230/139*z^3 + 124/139*z^2 + 6/139*z + 19/139                      -14/139*z^3 + 92/139*z^2 - 6/139*z - 95/139]
             [-10359/19841*z^3 - 36739/39682*z^2 + 24961/39682*z - 11879/39682  -28209/39682*z^3 - 3671/19841*z^2 + 51549/39682*z - 38613/39682    -42769/39682*z^3 - 615/39682*z^2 - 1252/19841*z - 14392/19841   4895/19841*z^3 + 57885/39682*z^2 - 46094/19841*z + 65747/39682]
@@ -11217,7 +11218,7 @@ cdef class Matrix(Matrix1):
             [0 0 0|0 0|0 0|0 0|3]
             sage: T * J * T**(-1) == A                                                  # optional - sage.combinat
             True
-            sage: T.rank()
+            sage: T.rank()                                                              # optional - sage.combinat
             10
 
         Verify that we smoothly move to QQ from ZZ (:trac:`12693`), i.e.
@@ -15110,7 +15111,7 @@ cdef class Matrix(Matrix1):
 
         There is also a shortcut for the conjugate transpose, or "Hermitian transpose"::
 
-            sage: M.H
+            sage: M.H                                                                   # optional - sage.symbolic
             [   I + 2  6*I + 9]
             [-4*I + 3     -5*I]
 
@@ -15662,11 +15663,14 @@ cdef class Matrix(Matrix1):
 
         Empty matrices are handled safely::
 
-            sage: m = MatrixSpace(OE, 2,0)(0); d, u, v = m.smith_form(); u*m*v == d
+            sage: m = MatrixSpace(OE, 2,0)(0)                                           # optional - sage.rings.number_field
+            sage: d, u, v = m.smith_form(); u * m * v == d                              # optional - sage.rings.number_field
             True
-            sage: m = MatrixSpace(OE, 0,2)(0); d, u, v = m.smith_form(); u*m*v == d
+            sage: m = MatrixSpace(OE, 0,2)(0)                                           # optional - sage.rings.number_field
+            sage: d, u, v = m.smith_form(); u * m * v == d                              # optional - sage.rings.number_field
             True
-            sage: m = MatrixSpace(OE, 0,0)(0); d, u, v = m.smith_form(); u*m*v == d
+            sage: m = MatrixSpace(OE, 0,0)(0)                                           # optional - sage.rings.number_field
+            sage: d, u, v = m.smith_form(); u * m * v == d                              # optional - sage.rings.number_field
             True
 
         Some pathological cases that crashed earlier versions::
