@@ -24,7 +24,6 @@ from sage.combinat.root_system.cartan_type import CartanType
 import sage.rings.abc
 from sage.matrix.args import SparseEntry
 from sage.matrix.constructor import Matrix
-from sage.symbolic.ring import SR
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
 
@@ -401,6 +400,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         else:
             from sage.functions.trig import cos
             from sage.symbolic.constants import pi
+            from sage.symbolic.ring import SR
 
             def val(x):
                 if x > -1:
