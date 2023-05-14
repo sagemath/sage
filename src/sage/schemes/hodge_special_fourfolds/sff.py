@@ -2964,7 +2964,7 @@ def _set_macaulay2_():
         if __name__ == "__main__":
             raise RuntimeError("required Macaulay2, version 1.21 or newer")
         return
-    except:
+    except Exception:
         if __name__ == "__main__":
             raise Exception("something went wrong with Macaulay2")
         return
