@@ -40,6 +40,7 @@ from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_domain
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
+from sage.rings.rational_field import QQ
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -702,7 +703,7 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
             # -------------------------------------------------------------------------------------
             reset_coercion = False
             from sage.rings.number_field.number_field_base import NumberField
-            if isinstance(base_ring, NumberField):
+            if base_ring is not QQ and isinstance(base_ring, NumberField):
                 reset_coercion = True
             elif base_ring.is_finite() and not base_ring.is_prime_field():
                 reset_coercion = True
