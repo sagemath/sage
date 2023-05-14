@@ -78,14 +78,14 @@ class DynamicalSystem(SchemeMorphism_polynomial,
     EXAMPLES::
 
         sage: A.<x> = AffineSpace(QQ,1)
-        sage: f = DynamicalSystem_affine([x^2+1])
+        sage: f = DynamicalSystem_affine([x^2 + 1])
         sage: type(f)
         <class 'sage.dynamics.arithmetic_dynamics.affine_ds.DynamicalSystem_affine_field'>
 
     ::
 
         sage: P.<x,y> = ProjectiveSpace(QQ,1)
-        sage: f = DynamicalSystem_projective([x^2+y^2, y^2])
+        sage: f = DynamicalSystem_projective([x^2 + y^2, y^2])
         sage: type(f)
         <class 'sage.dynamics.arithmetic_dynamics.projective_ds.DynamicalSystem_projective_field'>
 
@@ -96,8 +96,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         sage: DynamicalSystem(H([y, x]))
         Dynamical System of Projective Space of dimension 1 over Complex Field
         with 53 bits of precision
-          Defn: Defined on coordinates by sending (x : y) to
-                (y : x)
+          Defn: Defined on coordinates by sending (x : y) to (y : x)
 
     :class:`DynamicalSystem` defaults to projective::
 
@@ -109,16 +108,14 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
     ::
 
-            sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: DynamicalSystem([y, x], domain=A)
-            Dynamical System of Affine Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x, y) to
-                    (y, x)
-            sage: H = End(A)
-            sage: DynamicalSystem(H([y, x]))
-            Dynamical System of Affine Space of dimension 2 over Rational Field
-              Defn: Defined on coordinates by sending (x, y) to
-                    (y, x)
+        sage: A.<x,y> = AffineSpace(QQ, 2)
+        sage: DynamicalSystem([y, x], domain=A)
+        Dynamical System of Affine Space of dimension 2 over Rational Field
+          Defn: Defined on coordinates by sending (x, y) to (y, x)
+        sage: H = End(A)
+        sage: DynamicalSystem(H([y, x]))
+        Dynamical System of Affine Space of dimension 2 over Rational Field
+          Defn: Defined on coordinates by sending (x, y) to (y, x)
 
     Note that ``domain`` is ignored if an endomorphism is passed in::
 
@@ -134,7 +131,8 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
         sage: DynamicalSystem([CC.0*x^2, 4/5*y^2])
-        Dynamical System of Projective Space of dimension 1 over Complex Field with 53 bits of precision
+        Dynamical System of
+         Projective Space of dimension 1 over Complex Field with 53 bits of precision
           Defn: Defined on coordinates by sending (x : y) to
                 (1.00000000000000*I*x^2 : 0.800000000000000*y^2)
         sage: P.<x,y> = ProjectiveSpace(GF(5), 1)
@@ -179,7 +177,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
             sage: from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
             sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: f = DynamicalSystem_projective([x^2+y^2, y^2])
+            sage: f = DynamicalSystem_projective([x^2 + y^2, y^2])
             sage: isinstance(f, DynamicalSystem)
             True
         """
@@ -239,7 +237,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSystem_projective([x^2-y^2, y^2])
+            sage: f = DynamicalSystem_projective([x^2 - y^2, y^2])
             sage: type(f.as_scheme_morphism())
             <class 'sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space_field'>
 
@@ -253,21 +251,21 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         ::
 
             sage: A.<x,y> = AffineSpace(ZZ, 2)
-            sage: f = DynamicalSystem_affine([x^2-2, y^2])
+            sage: f = DynamicalSystem_affine([x^2 - 2, y^2])
             sage: type(f.as_scheme_morphism())
             <class 'sage.schemes.affine.affine_morphism.SchemeMorphism_polynomial_affine_space'>
 
         ::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: f = DynamicalSystem_affine([x^2-2, y^2])
+            sage: f = DynamicalSystem_affine([x^2 - 2, y^2])
             sage: type(f.as_scheme_morphism())
             <class 'sage.schemes.affine.affine_morphism.SchemeMorphism_polynomial_affine_space_field'>
 
         ::
 
             sage: A.<x,y> = AffineSpace(GF(3), 2)
-            sage: f = DynamicalSystem_affine([x^2-2, y^2])
+            sage: f = DynamicalSystem_affine([x^2 - 2, y^2])
             sage: type(f.as_scheme_morphism())
             <class 'sage.schemes.affine.affine_morphism.SchemeMorphism_polynomial_affine_space_finite_field'>
         """
@@ -295,8 +293,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             sage: f = DynamicalSystem_projective([3*x^2, y^2])
             sage: f.change_ring(GF(5))
             Dynamical System of Projective Space of dimension 1 over Finite Field of size 5
-              Defn: Defined on coordinates by sending (x : y) to
-                    (-2*x^2 : y^2)
+              Defn: Defined on coordinates by sending (x : y) to (-2*x^2 : y^2)
         """
         f = self.as_scheme_morphism()
         F = f.change_ring(R)
@@ -325,11 +322,10 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
             sage: R.<c> = PolynomialRing(QQ)
             sage: P.<x,y> = ProjectiveSpace(R, 1)
-            sage: f = DynamicalSystem_projective([x^2 + c*y^2,y^2], domain=P)
+            sage: f = DynamicalSystem_projective([x^2 + c*y^2, y^2], domain=P)
             sage: f.specialization({c:1})
             Dynamical System of Projective Space of dimension 1 over Rational Field
-                  Defn: Defined on coordinates by sending (x : y) to
-                        (x^2 + y^2 : y^2)
+              Defn: Defined on coordinates by sending (x : y) to (x^2 + y^2 : y^2)
         """
         F = self.as_scheme_morphism().specialization(D, phi, homset)
         return F.as_dynamical_system()
@@ -362,7 +358,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         EXAMPLES:
 
-        Note that the number of critical points is 2d-2, but (1:0) has multiplicity 2 in this case::
+        Note that the number of critical points is `2d-2`, but `(1:0)` has multiplicity 2 in this case::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem([1/3*x^3 + x*y^2, y^3], domain=P)
@@ -392,10 +388,11 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             sage: f[0].derivative(x).univariate_polynomial().is_irreducible()
             True
             sage: f.field_of_definition_critical(return_embedding=True, names='b')
-            (Finite Field in b of size 3^6, Ring morphism:
-                From: Finite Field in a of size 3^2
-                To:   Finite Field in b of size 3^6
-                Defn: a |--> 2*b^5 + 2*b^3 + b^2 + 2*b + 2)
+            (Finite Field in b of size 3^6,
+             Ring morphism:
+               From: Finite Field in a of size 3^2
+               To:   Finite Field in b of size 3^6
+               Defn: a |--> 2*b^5 + 2*b^3 + b^2 + 2*b + 2)
         """
         ds = copy(self)
         space = ds.domain().ambient_space()
@@ -475,7 +472,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             [(0 : 1), (1 : 0), (1 : 1)]
             sage: N.<a> = f.field_of_definition_periodic(3); N
             Number Field in a with defining polynomial x^6 + x^5 + x^4 + x^3 + x^2 + x + 1
-            sage: sorted(f.periodic_points(3,minimal=False, R=N), key=str)
+            sage: sorted(f.periodic_points(3, minimal=False, R=N), key=str)
             [(-a^5 - a^4 - a^3 - a^2 - a - 1 : 1),
              (0 : 1),
              (1 : 0),
@@ -504,10 +501,11 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             sage: (g-x).univariate_polynomial().factor()
             (x + 1) * (x + a + 1) * (x^2 + a*x + 1)
             sage: f.field_of_definition_periodic(2, return_embedding=True, names='b')
-            (Finite Field in b of size 2^4, Ring morphism:
-                From: Finite Field in a of size 2^2
-                To:   Finite Field in b of size 2^4
-                Defn: a |--> b^2 + b)
+            (Finite Field in b of size 2^4,
+             Ring morphism:
+               From: Finite Field in a of size 2^2
+               To:   Finite Field in b of size 2^4
+               Defn: a |--> b^2 + b)
         """
         ds = copy(self)
         n = int(n)
@@ -588,7 +586,8 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem([1/3*x^2 + 2/3*x*y, x^2 - 2*y^2], domain=P)
             sage: N.<a> = f.field_of_definition_preimage(P(1,1), 2, simplify_all=True); N
-            Number Field in a with defining polynomial x^8 - 4*x^7 - 128*x^6 + 398*x^5 + 3913*x^4 - 8494*x^3 - 26250*x^2 + 30564*x - 2916
+            Number Field in a with defining polynomial
+             x^8 - 4*x^7 - 128*x^6 + 398*x^5 + 3913*x^4 - 8494*x^3 - 26250*x^2 + 30564*x - 2916
 
         ::
 
@@ -603,10 +602,11 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             sage: P.<x,y> = ProjectiveSpace(G, 1)
             sage: f = DynamicalSystem([x^2 + 2*y^2, y^2], domain=P)
             sage: f.field_of_definition_preimage(P(2,1), 2, return_embedding=True, names='a')
-            (Finite Field in a of size 5^2, Ring morphism:
-                From: Finite Field of size 5
-                To:   Finite Field in a of size 5^2
-                Defn: 1 |--> 1)
+            (Finite Field in a of size 5^2,
+             Ring morphism:
+               From: Finite Field of size 5
+               To:   Finite Field in a of size 5^2
+               Defn: 1 |--> 1)
         """
         ds = copy(self)
         n = int(n)
