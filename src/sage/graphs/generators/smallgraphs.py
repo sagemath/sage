@@ -1904,11 +1904,11 @@ def DejterGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.DejterGraph(); g
+        sage: g = graphs.DejterGraph(); g                                               # optional - sage.rings.finite_rings
         Dejter Graph: Graph on 112 vertices
-        sage: g.is_regular(k=6)
+        sage: g.is_regular(k=6)                                                         # optional - sage.rings.finite_rings
         True
-        sage: g.girth()
+        sage: g.girth()                                                                 # optional - sage.rings.finite_rings
         4
     """
     from sage.graphs.generators.families import CubeGraph
@@ -2668,11 +2668,12 @@ def GolombGraph():
     and 18 edges. It has chromatic number 4, diameter 3, radius 2 and
     girth 3. It can be drawn in the plane as a unit distance graph::
 
-        sage: G = graphs.GolombGraph(); G
+        sage: G = graphs.GolombGraph(); G                                               # optional - sage.symbolic
         Golomb graph: Graph on 10 vertices
-        sage: pos = G.get_pos()
-        sage: dist2 = lambda u,v:(u[0]-v[0])**2 + (u[1]-v[1])**2
-        sage: all(dist2(pos[u], pos[v]) == 1 for u, v in G.edge_iterator(labels=None))
+        sage: pos = G.get_pos()                                                         # optional - sage.symbolic
+        sage: def dist2(u, v):
+        ....:     return (u[0]-v[0])**2 + (u[1]-v[1])**2
+        sage: all(dist2(pos[u], pos[v]) == 1 for u, v in G.edge_iterator(labels=None))  # optional - sage.symbolic
         True
     """
     edge_dict = {
@@ -3743,38 +3744,38 @@ def MoserSpindle():
 
     The Moser spindle is a planar graph having 7 vertices and 11 edges::
 
-        sage: G = graphs.MoserSpindle(); G
+        sage: G = graphs.MoserSpindle(); G                                              # optional - sage.symbolic
         Moser spindle: Graph on 7 vertices
-        sage: G.is_planar()
+        sage: G.is_planar()                                                             # optional - sage.symbolic
         True
-        sage: G.order()
+        sage: G.order()                                                                 # optional - sage.symbolic
         7
-        sage: G.size()
+        sage: G.size()                                                                  # optional - sage.symbolic
         11
 
     It is a Hamiltonian graph with radius 2, diameter 2, and girth 3::
 
-        sage: G.is_hamiltonian()
+        sage: G.is_hamiltonian()                                                        # optional - sage.symbolic
         True
-        sage: G.radius()
+        sage: G.radius()                                                                # optional - sage.symbolic
         2
-        sage: G.diameter()
+        sage: G.diameter()                                                              # optional - sage.symbolic
         2
-        sage: G.girth()
+        sage: G.girth()                                                                 # optional - sage.symbolic
         3
 
     The Moser spindle can be drawn in the plane as a unit distance graph,
     has chromatic number 4, and its automorphism group is isomorphic to
     the dihedral group `D_4`::
 
-        sage: pos = G.get_pos()
-        sage: all(sum((ui-vi)**2 for ui, vi in zip(pos[u], pos[v])) == 1
+        sage: pos = G.get_pos()                                                         # optional - sage.symbolic
+        sage: all(sum((ui-vi)**2 for ui, vi in zip(pos[u], pos[v])) == 1                # optional - sage.symbolic
         ....:         for u, v in G.edge_iterator(labels=None))
         True
-        sage: G.chromatic_number()
+        sage: G.chromatic_number()                                                      # optional - sage.symbolic
         4
-        sage: ag = G.automorphism_group()
-        sage: ag.is_isomorphic(DihedralGroup(4))
+        sage: ag = G.automorphism_group()                                               # optional - sage.symbolic
+        sage: ag.is_isomorphic(DihedralGroup(4))                                        # optional - sage.symbolic
         True
     """
     edge_dict = {
