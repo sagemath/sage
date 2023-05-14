@@ -1416,7 +1416,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             1.09861228866811
         """
         K = FractionField(self.domain().base_ring())
-        if not (K in _NumberFields or K == ZZ or isinstance(K, sage.rings.abc.Order)):
+        if K not in _NumberFields:
             raise TypeError("must be over a number field or a number field order")
         return max([K(c).local_height(v, prec=prec) for f in self for c in f.coefficients()])
 
@@ -1463,7 +1463,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             0.6931471805599453094172321214582
         """
         K = FractionField(self.domain().base_ring())
-        if not (K in _NumberFields or isinstance(K, sage.rings.abc.Order)):
+        if K not in _NumberFields:
             raise TypeError("must be over a number field or a number field order")
         if K == QQ:
             return max([K(c).local_height_arch(prec=prec) for f in self for c in f.coefficients()])

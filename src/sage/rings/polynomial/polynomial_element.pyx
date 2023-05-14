@@ -5316,15 +5316,12 @@ cdef class Polynomial(CommutativePolynomial):
         if self.degree() <= 1:
             return R.fraction_field()
 
-        from sage.rings.number_field.number_field import is_NumberField, NumberField
-
         if is_IntegerRing(R):
             from sage.rings.number_field.number_field import NumberField
             return NumberField(self, names)
 
         from sage.rings.number_field.number_field_base import NumberField as NumberField_base
-
-        if sage.rings.rational_field.is_RationalField(R) or isinstance(R, NumberField_base):
+        if isinstance(R, NumberField_base):
             from sage.rings.number_field.number_field import NumberField
             return NumberField(self, names)
 
@@ -5886,14 +5883,14 @@ cdef class Polynomial(CommutativePolynomial):
         K = self.base_ring()
         if K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K):
             from sage.schemes.projective.projective_space import ProjectiveSpace
-            P = ProjectiveSpace(K, self.number_of_terms()-1)
+            P = ProjectiveSpace(K, self.number_of_terms() - 1)
             return P.point(self.coefficients()).global_height(prec=prec)
         elif isinstance(K, sage.rings.abc.AlgebraicField):
             from sage.rings.qqbar import number_field_elements_from_algebraics
             from sage.schemes.projective.projective_space import ProjectiveSpace
 
             K_pre, P, phi = number_field_elements_from_algebraics(self.coefficients())
-            Pr = ProjectiveSpace(K_pre, len(P)-1)
+            Pr = ProjectiveSpace(K_pre, len(P) - 1)
             return Pr.point(P).global_height(prec=prec)
         raise TypeError("Must be over a Numberfield or a Numberfield Order.")
 
@@ -5941,7 +5938,7 @@ cdef class Polynomial(CommutativePolynomial):
             prec = 53
 
         K = FractionField(self.base_ring())
-        if not (K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K)):
+        if K not in NumberFields():
             raise TypeError("must be over a Numberfield or a Numberfield order")
 
         return max([K(c).local_height(v, prec=prec) for c in self.coefficients()])
@@ -5989,7 +5986,7 @@ cdef class Polynomial(CommutativePolynomial):
             prec = 53
 
         K = FractionField(self.base_ring())
-        if not (K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K)):
+        if K not in NumberFields():
             return TypeError("must be over a Numberfield or a Numberfield Order")
 
         if K == QQ:
