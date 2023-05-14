@@ -24,7 +24,7 @@ REFERENCES: [BM2012]_, [Mol2015]_
 
 from copy import copy
 
-from sage.arith.misc import GCD as gcd
+from sage.arith.misc import gcd
 from sage.functions.hyperbolic import cosh
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
@@ -37,9 +37,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.binary_form_reduce import covariant_z0, epsinv
 from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace
-from sage.symbolic.constants import e
-from sage.arith.misc import gcd
-from copy import copy
+
 
 def bCheck(c, v, p, b):
     r"""
@@ -93,7 +91,7 @@ def scale(c, v, p):
 
     - ``c`` -- an integer polynomial
 
-    - ``v`` -- an integer - the bound on the exponent from blift
+    - ``v`` -- an integer; the bound on the exponent from :func:`blift`
 
     - ``p`` -- a prime
 
@@ -155,8 +153,8 @@ def blift(LF, Li, p, k, S=None, all_orbits=False):
 
         sage: R.<b> = PolynomialRing(QQ)
         sage: from sage.dynamics.arithmetic_dynamics.endPN_minimal_model import blift
-        sage: blift([8*b^3 + 12*b^2 + 6*b + 1, 48*b^2 + 483*b + 117, 72*b + 1341,\
-        ....: -24*b^2 + 411*b + 99, -144*b + 1233, -216*b], 2, 3, 2)
+        sage: blift([8*b^3 + 12*b^2 + 6*b + 1, 48*b^2 + 483*b + 117, 72*b + 1341,
+        ....:        -24*b^2 + 411*b + 99, -144*b + 1233, -216*b], 2, 3, 2)
         [[True, 4]]
     """
 
@@ -248,8 +246,7 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
         sage: affine_minimal(vp, True)
         (
         Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (X : Y) to
-                    (X^2 + Y^2 : X*Y)
+              Defn: Defined on coordinates by sending (X : Y) to (X^2 + Y^2 : X*Y)
         ,
         [3 0]
         [0 1]
@@ -334,16 +331,16 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
 
 def Min(Fun, p, ubRes, conj, all_orbits=False):
     r"""
-    Local loop for Affine_minimal, where we check minimality at the prime p.
+    Local loop for :func:`affine_minimal`, where we check minimality at the prime `p`.
 
-    First we bound the possible k in our transformations A = zp^k + b.
+    First we bound the possible `k` in our transformations `A = zp^k + b`.
     See Theorems 3.3.2 and 3.3.3 in [Molnar]_.
 
     INPUT:
 
     - ``Fun`` -- a dynamical system on projective space
 
-    - ``p`` - a prime
+    - ``p`` -- a prime
 
     - ``ubRes`` -- integer, the upper bound needed for Th. 3.3.3 in [Molnar]_
 
@@ -361,7 +358,8 @@ def Min(Fun, p, ubRes, conj, all_orbits=False):
     EXAMPLES::
 
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-        sage: f = DynamicalSystem_projective([149*x^2 + 39*x*y + y^2, -8*x^2 + 137*x*y + 33*y^2])
+        sage: f = DynamicalSystem_projective([149*x^2 + 39*x*y + y^2,
+        ....:                                 -8*x^2 + 137*x*y + 33*y^2])
         sage: from sage.dynamics.arithmetic_dynamics.endPN_minimal_model import Min
         sage: Min(f, 3, -27000000, matrix(QQ,[[1, 0],[0, 1]]))
         [
@@ -945,6 +943,8 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
         sage: get_bound_dynamical(f.dynatomic_polynomial(1), f)
         35.5546923182219
     """
+    from sage.symbolic.constants import e
+
     def coshdelta(z):
         #The cosh of the hyperbolic distance from z = t+uj to j
         return (z.norm() + 1)/(2*z.imag())
@@ -1002,7 +1002,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
     - ``dynatomic`` -- boolean. whether ``F`` is the periodic points or the
       formal periodic points of period ``m`` for ``f``
 
-    - ``start_n`` - positive integer. the period used to start trying to
+    - ``start_n`` -- positive integer. the period used to start trying to
       create associate binary form ``F``
 
     - ``prec``-- positive integer. precision to use in CC
@@ -1014,7 +1014,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
       properties of the map are utilized to choose how to compute minimal
       orbit representatives
 
-    - ``check_minimal`` -- (default: True), boolean, whether to check
+    - ``check_minimal`` -- (default: ``True``), boolean, whether to check
       if this map is a minimal model
 
     OUTPUT: pair [dynamical system, matrix]
@@ -1024,7 +1024,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         sage: from sage.dynamics.arithmetic_dynamics.endPN_minimal_model import smallest_dynamical
         sage: P.<x,y> = ProjectiveSpace(QQ,1)
         sage: f = DynamicalSystem([50*x^2 + 795*x*y + 2120*y^2, 265*x^2 + 106*y^2])
-        sage: smallest_dynamical(f)  #long time
+        sage: smallest_dynamical(f)  # long time
         [
         Dynamical System of Projective Space of dimension 1 over Rational Field
           Defn: Defined on coordinates by sending (x : y) to
@@ -1034,6 +1034,8 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         [0 1]
         ]
     """
+    from sage.symbolic.constants import e
+
     def insert_item(pts, item, index):
         # binary insertion to maintain list of points left to consider
         N = len(pts)

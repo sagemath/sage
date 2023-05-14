@@ -58,7 +58,7 @@ from itertools import count, product
 import sage.rings.abc
 
 from sage.arith.functions import lcm
-from sage.arith.misc import binomial, gcd, is_prime, moebius, next_prime, primes
+from sage.arith.misc import binomial, gcd, integer_ceil as ceil, is_prime, moebius, next_prime, primes
 from sage.calculus.functions import jacobian
 from sage.categories.fields import Fields
 from sage.categories.finite_fields import FiniteFields
@@ -76,7 +76,6 @@ from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
 from sage.dynamics.arithmetic_dynamics.projective_ds_helper import (
     _fast_possible_periods,
     _all_periodic_points)
-from sage.functions.other import ceil
 from sage.libs.pari.all import PariError
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.misc.cachefunc import cached_method
@@ -116,7 +115,6 @@ from sage.schemes.projective.projective_morphism import (
 from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.structure.element import get_coercion_model
-from sage.symbolic.constants import e
 
 
 class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
@@ -6496,6 +6494,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             return []
 
         if B is None:
+            from sage.symbolic.constants import e
             B = e ** self.height_difference_bound()
 
         p = points_modp[0][0].codomain().base_ring().characteristic()
@@ -6892,6 +6891,9 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                         return list(periodic)
                 while p in badprimes:
                     p = next_prime(p + 1)
+
+                from sage.symbolic.constants import e
+
                 B = e ** DS.height_difference_bound()
                 f = DS.change_ring(GF(p))
                 all_points = f.possible_periods(True) # return the list of points and their periods.
