@@ -3262,7 +3262,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
             sage: E = EllipticCurve([-a^2 - a - 1, a^2 + a])                            # optional - sage.rings.number_field
             sage: Ls = [E.period_lattice(e) for e in embs]                              # optional - sage.rings.number_field
-            sage: pts = [E(2*a^2 - a - 1 , -2*a^2 - 2*a + 6 ),
+            sage: pts = [E(2*a^2 - a - 1 , -2*a^2 - 2*a + 6 ),                          # optional - sage.rings.number_field
             ....:        E(-2/3*a^2 - 1/3 , -4/3*a - 2/3 ),
             ....:        E(5/4*a^2 - 1/2*a , -a^2 - 1/4*a + 9/4 ),
             ....:        E(2*a^2 + 3*a + 4 , -7*a^2 - 10*a - 12 )]

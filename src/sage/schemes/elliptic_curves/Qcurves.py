@@ -519,7 +519,7 @@ def conjugacy_test(jlist, verbose=False):
         sage: conjugacy_test([3 + a, 3 - a])                                            # optional - sage.rings.number_field
         [x^2 - 6*x + 7]
         sage: x = polygen(QQ)                                                           # optional - sage.rings.number_field
-        sage: f = x^3 - 3
+        sage: f = x^3 - 3                                                               # optional - sage.rings.number_field
         sage: K.<a> = f.splitting_field()                                               # optional - sage.rings.number_field
         sage: js = f.roots(K, multiplicities=False)                                     # optional - sage.rings.number_field
         sage: conjugacy_test(js)                                                        # optional - sage.rings.number_field
