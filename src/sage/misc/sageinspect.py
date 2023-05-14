@@ -162,8 +162,8 @@ def is_function_or_cython_function(obj):
     functions::
 
         sage: from ipywidgets.widgets.interaction import signature
-        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_mandelbrot_plot
-        sage: signature(fast_mandelbrot_plot)  # random
+        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_mandelbrot_plot           # optional - sage.symbolic
+        sage: signature(fast_mandelbrot_plot)  # random                                                     # optional - sage.symbolic
         <IPython.utils._signatures.Signature object at 0x7f3ec8274e10>
     """
     # We use type(obj) instead of just obj to avoid __getattr__().
@@ -2376,14 +2376,14 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(I)
         ([...'class MPolynomialIdeal(MPolynomialIdeal_singular_repr,\n',
         ...)
-        sage: x = var('x')
-        sage: lines, lineno = sage_getsourcelines(x); lines[0:5]
+        sage: x = var('x')                                                              # optional - sage.symbolic
+        sage: lines, lineno = sage_getsourcelines(x); lines[0:5]                        # optional - sage.symbolic
         ['cdef class Expression(...):\n',
          '\n',
          '    cdef GEx _gobj\n',
          '\n',
          '    cpdef object pyobject(self):\n']
-        sage: lines[-1]    # last line
+        sage: lines[-1]    # last line                                                  # optional - sage.symbolic
         '        return S\n'
 
     We show some enhancements provided by :trac:`11768`. First, we
