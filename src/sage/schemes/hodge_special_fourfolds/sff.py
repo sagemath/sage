@@ -46,7 +46,6 @@ from sage.rings.ideal import Ideal as ideal
 from sage.functions.other import binomial
 from sage.libs.singular.function_factory import singular_function
 _minbase = singular_function('minbase')
-import random
 
 __VERBOSE__ = True
 def verbosity(b):
@@ -412,7 +411,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         EXAMPLES::
 
             sage: X = Veronese(2,2)
-            sage: p = X.point()
+            sage: with seed(0): p = X.point(); p
+            one-point scheme in PP^5 of coordinates [1, 10850, 2338, 30739, 2409, 33291]
             sage: type(p) is type(X) and p.dimension() == 0 and p.degree() == 1 and p.is_subset(X)
             True
 
@@ -1207,6 +1207,8 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         if self.target().dimension() < 0:
             return("\\mbox{empty rational map}" + "\\newline \\mbox{source: }" + latex(self.source()) + "\\newline \\mbox{target: }" + latex(self.target()))
         type_map = "rational map"
+        if hasattr(self,"_base_locus") or hasattr(self,"_list_of_representatives_of_map"):
+            self.is_morphism()
         if self._is_morphism is True:
             type_map = "morphism"
         if self._is_isomorphism is True:
@@ -1224,6 +1226,12 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
                     else:
                         type_map = "dominant rational map"
         M = "\\mbox{" + type_map + " defined by forms of degree }" + latex(self._degree_forms()) + "\\newline \\mbox{source: }" + latex(self.source()) + "\\newline \\mbox{target: }" + latex(self.target())
+        if hasattr(self,"_base_locus") and self._is_morphism is not True:
+            M = M + "\\newline\\mbox{base locus: }" + latex(self.base_locus())
+        if hasattr(self,"_list_of_representatives_of_map") and len(self._representatives()) > 1:
+            M = M + "\\newline\\mbox{degree sequence: }" + latex(tuple([f._degree_forms() for f in self._representatives()]))
+        if hasattr(self,"_projective_degrees_list"):
+            M = M + "\\newline\\mbox{projective degrees: }" + latex(tuple(self.projective_degrees()))
         if hasattr(self,"_closure_of_image") and self._is_dominant is not True:
             M = M + "\\newline\\mbox{image: }" + latex(self.image())
         return M
@@ -1968,7 +1976,10 @@ class _Rational_projective_surface(Embedded_projective_variety):
         """
         (s,s_l) = _expr_var_1(super())
         if s[0:7] == "surface":
-            s_l = "\\mbox{rational }" + s_l + "\\mbox{ (the image of the plane via the linear system }" + latex(self._linear_system) + "\\mbox{)}"
+            nodes = latex(self._finite_number_of_nodes) + "\\mbox{-nodal } " if hasattr(self,"_finite_number_of_nodes") and self._finite_number_of_nodes > 0 else ""
+            s_l = "\\mbox{rational }" + nodes + s_l
+            if not self._is_ambient_space_forced:
+                s_l = s_l + "\\mbox{ (the image of the plane via the linear system }" + latex(self._linear_system) + "\\mbox{)}"
         return s_l
 
 def surface(*args, KK=GF(33331), ambient=None, nodes=None):
@@ -2519,6 +2530,26 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
     def _repr_(self):
         return("Complete intersection of 3 quadrics in PP^7 of discriminant " + str(self.discriminant(verbose=False)) + " = 8*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface()))
 
+    def _latex_(self):
+        r"""
+        Return the LaTeX representation of the fourfold.
+
+        OUTPUT:
+
+        A string.
+
+        EXAMPLES::
+
+            sage: X = fourfold(surface(1,ambient=7))
+            sage: latex(X)
+            \mbox{Complete intersection of } 3 \mbox{ quadrics in } \mathbb{P}^{ 7 } \mbox{ of discriminant } 31 = \det \left(\begin{array}{rr}
+            8 & 1 \\
+            1 & 4
+            \end{array}\right) \mbox{ containing a } \mbox{plane in }\mathbb{P}^{ 7 }
+
+        """
+        return("\\mbox{Complete intersection of }" + latex(3) + "\\mbox{ quadrics in }" + latex(self.ambient()) + "\\mbox{ of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface()))
+
     def ambient_fivefold(self):
         try:
             return self._ambient_fivefold
@@ -2561,6 +2592,26 @@ class Cubic_fourfold(Hodge_special_fourfold):
 
     def _repr_(self):
         return("Cubic fourfold of discriminant " + str(self.discriminant(verbose=False)) + " = 3*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface()))
+
+    def _latex_(self):
+        r"""
+        Return the LaTeX representation of the cubic fourfold.
+
+        OUTPUT:
+
+        A string.
+
+        EXAMPLES::
+
+            sage: X = fourfold(surface(3,4))
+            sage: latex(X)
+            \mbox{Cubic fourfold of discriminant } 14 = \det \left(\begin{array}{rr}
+            3 & 5 \\
+            5 & 13
+            \end{array}\right) \mbox{ containing a } \mbox{rational } \mbox{surface of degree } 5 \mbox{ and sectional genus } 1 \mbox{ in }\mathbb{P}^{ 5 } \mbox{ cut out by } 5 \mbox{ hypersurfaces of degree } 2 \mbox{ (the image of the plane via the linear system } \left[3, 4\right] \mbox{)}
+
+        """
+        return("\\mbox{Cubic fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface()))
 
     def K3(self, verbose=None):
         r"""Associated K3 surfaces to rational cubic fourfolds.
@@ -2615,6 +2666,10 @@ class GushelMukai_fourfold(Hodge_special_fourfold):
             else:
                 raise Exception("Internal error encountered.")
         return("Gushel-Mukai fourfold of discriminant " + str(d) + e + " containing a " + str(self.surface()) + ", class of the surface in GG(1,4): " + str((a,b)))
+
+    def _latex_(self):
+        r"""Return the LaTeX representation of the Gushel-Mukai fourfold."""
+        return("\\mbox{Gushel-Mukai fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + "\\mbox{ containing a }" + latex(self.surface()))
 
     def K3(self, verbose=None):
         r"""Associated K3 surfaces to rational Gushel-Mukai fourfolds.
@@ -2904,68 +2959,55 @@ def _set_macaulay2_():
     except RuntimeError as err:
         if __name__ == "__main__":
             raise RuntimeError(err)
-        else:
-            print(err)
         return
     except AssertionError as err:
         if __name__ == "__main__":
             raise RuntimeError("required Macaulay2, version 1.21 or newer")
-        else:
-            print("required Macaulay2, version 1.21 or newer")
+        return
+    except:
+        if __name__ == "__main__":
+            raise Exception("something went wrong with Macaulay2")
         return
 
     macaulay2('needsPackage "SpecialFanoFourfolds"')
 
     if not (macaulay2('Cremona.Options.Version >= "5.2.1"')).sage():
-        s = """
-        Your version of the Macaulay2 package Cremona is outdated (required version 5.2.1 or newer);"
-        you can manually download the latest version from
-        https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
-        To automatically download the latest version of the package in your current directory,
-        you may execute the following command in a Unix/Linux shell:
-
-        curl -s -o Cremona.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona.m2 && mkdir -p Cremona && curl -s -o Cremona/tests.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/tests.m2 && curl -s -o Cremona/documentation.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2 && curl -s -o Cremona/examples.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/examples.m2 &&curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
-
-        """
-        print(s)
         if __name__ == "__main__":
+            print(r"""Your version of the Macaulay2 package Cremona is outdated (required version 5.2.1 or newer);"
+you can manually download the latest version from
+https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
+To automatically download the latest version of the package in your current directory,
+you may execute the following command in a Unix/Linux shell:
+
+curl -s -o Cremona.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona.m2 && mkdir -p Cremona && curl -s -o Cremona/tests.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/tests.m2 && curl -s -o Cremona/documentation.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2 && curl -s -o Cremona/examples.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/examples.m2 &&curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
+""")
             update_macaulay2_packages()
-        else:
-            print('Please, execute update_macaulay2_packages() to update the Macaulay2 packages.')
         return
 
     if not (macaulay2('MultiprojectiveVarieties.Options.Version >= "2.7.1"')).sage():
-        s = """
-        Your version of the Macaulay2 package MultiprojectiveVarieties is outdated (required version 2.7.1 or newer);"
-        you can manually download the latest version from
-        https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
-        To automatically download the latest version of the package in your current directory,
-        you may execute the following command in a Unix/Linux shell:
-
-        curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
-        """
-        print(s)
         if __name__ == "__main__":
+            print(r"""Your version of the Macaulay2 package MultiprojectiveVarieties is outdated (required version 2.7.1 or newer);"
+you can manually download the latest version from
+https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
+To automatically download the latest version of the package in your current directory,
+you may execute the following command in a Unix/Linux shell:
+
+curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
+""")
             update_macaulay2_packages()
-        else:
-            print('Please, execute update_macaulay2_packages() to update the Macaulay2 packages.')
         return
 
     if not (macaulay2('SpecialFanoFourfolds.Options.Version >= "2.7.1"')).sage():
-        s = """
-        Your version of the Macaulay2 package SpecialFanoFourfolds is outdated (required version 2.7.1 or newer);"
-        you can manually download the latest version from
-        https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
-        To automatically download the latest version of the package in your current directory,
-        you may execute the following command in a Unix/Linux shell:
-
-        curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
-        """
-        print(s)
         if __name__ == "__main__":
+            print(r"""Your version of the Macaulay2 package SpecialFanoFourfolds is outdated (required version 2.7.1 or newer);"
+you can manually download the latest version from
+https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
+To automatically download the latest version of the package in your current directory,
+you may execute the following command in a Unix/Linux shell:
+
+curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
+""")
             update_macaulay2_packages()
-        else:
-            print('Please, execute update_macaulay2_packages() to update the Macaulay2 packages.')
         return
 
     macaulay2.options.after_print = True
