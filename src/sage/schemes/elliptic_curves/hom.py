@@ -1123,9 +1123,9 @@ def compute_trace_generic(phi):
 
         sage: from sage.schemes.elliptic_curves.hom import compute_trace_generic
         sage: E = EllipticCurve(QQ, [1,2,3,4,5])
-        sage: m3 = E.scalar_multiplication(3)
-        sage: compute_trace_generic(m3)
-        6
+        sage: dbl = E.scalar_multiplication(2)
+        sage: compute_trace_generic(dbl)
+        4
 
     It works over number fields (for a CM curve)::
 
