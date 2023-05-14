@@ -1081,8 +1081,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         L = LazyPowerSeriesRing(self._base, name)
         zero = self._base.zero()
         q = self._Fq.cardinality()
-        exp = lambda k: self._compute_coefficient_exp(ZZ(k).log(q)) if ZZ(k).is_power_of(q) or k == 0 else zero
-        return L(exp, valuation=1)
+
+        def coeff_exp(k):
+            # Return the k-th coefficient of the exponential.
+            k = ZZ(k)
+            if k.is_power_of(q):
+                return self._compute_coefficient_exp(k.log(q))
+            else:
+                return zero
+        return L(coeff_exp, valuation=1)
 
     def gen(self):
         r"""
@@ -1332,8 +1339,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         L = LazyPowerSeriesRing(self._base, name)
         zero = self._base.zero()
         q = self._Fq.cardinality()
-        log = lambda k: self._compute_coefficient_log(ZZ(k).log(q)) if ZZ(k).is_power_of(q) or k == 0 else zero
-        return L(log, valuation=1)
+
+        def coeff_log(k):
+            # Return the k-th coefficient of the logarithm
+            k = ZZ(k)
+            if k.is_power_of(q):
+                return self._compute_coefficient_log(k.log(q))
+            else:
+                return self._base.zero()
+        return L(coeff_log, valuation=1)
 
 
     def morphism(self):
