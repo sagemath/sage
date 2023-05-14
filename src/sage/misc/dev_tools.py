@@ -278,6 +278,8 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     for smodule_name, smodule in sys.modules.items():
         if module_name and not smodule_name.startswith(module_name):
             continue
+        if smodule_name.rpartition('.')[2].startswith('all__sagemath_'):
+            continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:
             u = smodule.__dict__[name]
             if (not isinstance(u, LazyImport) or include_lazy_imports) and all(v is not u for v in obj):
