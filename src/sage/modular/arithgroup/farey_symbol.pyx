@@ -935,7 +935,7 @@ cdef class Farey:
         For example, to plot the fundamental domain of `\Gamma_0(11)`
         with pairings use the following command::
 
-            sage: FareySymbol(Gamma0(11)).fundamental_domain()
+            sage: FareySymbol(Gamma0(11)).fundamental_domain()                          # optional - sage.plot sage.symbolic
             Graphics object consisting of 54 graphics primitives
 
         indicating that side 1 is paired with side 3 and side 2 is
@@ -944,18 +944,20 @@ cdef class Farey:
         To plot the fundamental domain of `\Gamma(3)` without pairings
         use the following command::
 
-            sage: FareySymbol(Gamma(3)).fundamental_domain(show_pairing=False)
+            sage: FareySymbol(Gamma(3)).fundamental_domain(show_pairing=False)          # optional - sage.plot sage.symbolic
             Graphics object consisting of 48 graphics primitives
 
         Plot the fundamental domain of `\Gamma_0(23)` showing the left
         coset representatives::
 
-            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset')
+            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset')       # optional - sage.plot sage.symbolic
             Graphics object consisting of 58 graphics primitives
 
         The same as above but with a custom linestyle::
 
-            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset', linestyle=':', thickness='2')
+            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset',       # optional - sage.plot sage.symbolic
+            ....:                                            linestyle=':',
+            ....:                                            thickness='2')
             Graphics object consisting of 58 graphics primitives
 
         """
