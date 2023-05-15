@@ -2517,7 +2517,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         TESTS:
 
         We check that the degree is an ``Integer`` object (see #35519)::
-            
+
             sage: R.<t> = ZZ[]
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
