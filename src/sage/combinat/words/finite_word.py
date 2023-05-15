@@ -1459,16 +1459,16 @@ class FiniteWord_class(Word_class):
 
             sage: W = Words([0, 1])
             sage: w = W([0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1])
-            sage: t = w.topological_entropy(3); t
+            sage: t = w.topological_entropy(3); t                                       # optional - sage.symbolic
             1/3*log(7)/log(2)
-            sage: n(t)
+            sage: n(t)                                                                  # optional - sage.symbolic
             0.935784974019201
 
         ::
 
             sage: w = words.ThueMorseWord()[:100]
             sage: topo = w.topological_entropy
-            sage: for i in range(0, 41, 5):
+            sage: for i in range(0, 41, 5):                                             # optional - sage.symbolic
             ....:     print("{} {}".format(i, n(topo(i), digits=5)))
             0 1.0000
             5 0.71699
@@ -1492,7 +1492,7 @@ class FiniteWord_class(Word_class):
 
             sage: W = Words(range(20))
             sage: w = W(range(20))
-            sage: w.topological_entropy(3)
+            sage: w.topological_entropy(3)                                              # optional - sage.symbolic
             1/3*log(18)/log(20)
         """
         d = self.parent().alphabet().cardinality()
