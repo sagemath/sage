@@ -282,10 +282,10 @@ cdef class Matrix(Matrix0):
 
         ::
 
-            sage: a = matrix([[pi, sin(x)], [cos(x), 1/e]]); a
+            sage: a = matrix([[pi, sin(x)], [cos(x), 1/e]]); a                          # optional - sage.symbolic
             [    pi sin(x)]
             [cos(x) e^(-1)]
-            sage: a._mathematica_init_()
+            sage: a._mathematica_init_()                                                # optional - sage.symbolic
             '{{Pi, Sin[x]}, {Cos[x], Exp[-1]}}'
         """
         return '{' + ', '.join([v._mathematica_init_() for v in self.rows()]) + '}'
@@ -568,9 +568,9 @@ cdef class Matrix(Matrix0):
 
         If ``self`` was mutable, then converting back to Sage creates a new matrix::
 
-            sage: sA._sage_() is A                                                      # optional - sympy
+            sage: sA._sage_() is A                                                      # optional - sage.symbolic sympy
             False
-            sage: sA._sage_() == A                                                      # optional - sympy
+            sage: sA._sage_() == A                                                      # optional - sage.symbolic sympy
             True
 
         Symbolic matrices are supported::

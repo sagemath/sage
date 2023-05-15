@@ -175,8 +175,10 @@ cdef class MatrixArgs:
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Real Double Field; typ=SCALAR; entries=3.141592653589793>
         [3.141592653589793               0.0]
         [              0.0 3.141592653589793]
-        sage: ma = MatrixArgs(2, 2, entries=pi); ma.finalized(); ma.matrix()                                                            # optional - sage.symbolic
-        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Symbolic Ring; typ=SCALAR; entries=pi>
+        sage: ma = MatrixArgs(2, 2, entries=pi); ma.finalized()                         # optional - sage.symbolic
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
+         over Symbolic Ring; typ=SCALAR; entries=pi>
+        sage: ma.matrix()                                                               # optional - sage.symbolic
         [pi  0]
         [ 0 pi]
         sage: ma = MatrixArgs(ZZ, 2, 2, entries={(0,0):7}); ma.finalized(); ma.matrix()

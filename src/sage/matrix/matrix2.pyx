@@ -721,8 +721,8 @@ cdef class Matrix(Matrix1):
         (:trac:`12406`)::
 
             sage: A = matrix(QQ, 2, [1, 2, 3, 4])
-            sage: b = vector(RDF, [pi, e])
-            sage: A.solve_right(b)  # tol 1e-15
+            sage: b = vector(RDF, [pi, e])                                              # optional - sage.symbolic
+            sage: A.solve_right(b)  # tol 1e-15                                         # optional - sage.symbolic
             (-3.564903478720541, 3.353248066155167)
             sage: R.<t> = ZZ[]
             sage: b = vector(R, [1, t])
@@ -1709,7 +1709,7 @@ cdef class Matrix(Matrix1):
         These numbers are the coefficients of a modified Laguerre polynomial::
 
             sage: x = polygen(QQ)
-            sage: factorial(8) * laguerre(8,-x)
+            sage: factorial(8) * laguerre(8,-x)                                         # optional - sage.symbolic
             x^8 + 64*x^7 + 1568*x^6 + 18816*x^5 + 117600*x^4 + 376320*x^3 +
             564480*x^2 + 322560*x + 40320
 
@@ -10386,7 +10386,7 @@ cdef class Matrix(Matrix1):
         roots, though some small cases pass through.  ::
 
             sage: A = matrix(ZZ, 3, 3, range(9))
-            sage: A.QR()
+            sage: A.QR()                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: QR decomposition unable to compute square roots in Rational Field
