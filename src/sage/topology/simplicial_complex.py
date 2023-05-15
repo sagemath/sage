@@ -3588,15 +3588,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: triangle = SimplicialComplex([[0,1], [1,2], [0, 2]])
             sage: hexagon = triangle.barycentric_subdivision(); hexagon                 # optional - sage.combinat sage.graphs
             Simplicial complex with 6 vertices and 6 facets
-            sage: hexagon.homology(1) == triangle.homology(1)
+            sage: hexagon.homology(1) == triangle.homology(1)                           # optional - sage.combinat sage.graphs
             True
 
         Barycentric subdivisions can get quite large, since each
         `n`-dimensional facet in the original complex produces
         `(n+1)!` facets in the subdivision::
 
-            sage: S4 = simplicial_complexes.Sphere(4)
-            sage: S4
+            sage: S4 = simplicial_complexes.Sphere(4); S4
             Minimal triangulation of the 4-sphere
             sage: S4.barycentric_subdivision()
             Simplicial complex with 62 vertices and 720 facets
