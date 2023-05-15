@@ -851,21 +851,21 @@ cdef class PowerSeries(AlgebraElement):
         EXAMPLES::
 
             sage: R.<m> = CDF[[]]
-            sage: f = CDF(pi)^2 + m^3 + CDF(e)*m^4 + O(m^10); f   # abs tol 5e-16
+            sage: f = CDF(pi)^2 + m^3 + CDF(e)*m^4 + O(m^10); f   # abs tol 5e-16       # optional - sage.symbolic
             9.869604401089358 + 0.0*m + 0.0*m^2 + 1.0*m^3 + 2.718281828459045*m^4 + O(m^10)
-            sage: f[-5]
+            sage: f[-5]                                                                 # optional - sage.symbolic
             0.0
-            sage: f[0]
+            sage: f[0]                                                                  # optional - sage.symbolic
             9.869604401089358
-            sage: f[4]   # abs tol 5e-16
+            sage: f[4]   # abs tol 5e-16                                                # optional - sage.symbolic
             2.718281828459045
-            sage: f[9]
+            sage: f[9]                                                                  # optional - sage.symbolic
             0.0
-            sage: f[10]
+            sage: f[10]                                                                 # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             IndexError: coefficient not known
-            sage: f[1000]
+            sage: f[1000]                                                               # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             IndexError: coefficient not known
@@ -1200,11 +1200,11 @@ cdef class PowerSeries(AlgebraElement):
         EXAMPLES::
 
             sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')                    # optional - sage.libs.pari
-            sage: f = exp(x) + O(x^7); f                                                # optional - sage.libs.pari
+            sage: f = exp(x) + O(x^7); f                                                # optional - sage.libs.pari sage.symbolic
             1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
-            sage: f << 2                                                                # optional - sage.libs.pari
+            sage: f << 2                                                                # optional - sage.libs.pari sage.symbolic
             x^2 + x^3 + 1/2*x^4 + 1/6*x^5 + 1/24*x^6 + 1/120*x^7 + 1/720*x^8 + O(x^9)
-            sage: (f << 99) >> 99                                                       # optional - sage.libs.pari
+            sage: (f << 99) >> 99                                                       # optional - sage.libs.pari sage.symbolic
             1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
         """
         return self.shift(n)
@@ -1218,14 +1218,14 @@ cdef class PowerSeries(AlgebraElement):
         EXAMPLES::
 
             sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')                    # optional - sage.libs.pari
-            sage: f = exp(x) + O(x^7)                                                   # optional - sage.libs.pari
-            sage: f >> 3                                                                # optional - sage.libs.pari
+            sage: f = exp(x) + O(x^7)                                                   # optional - sage.libs.pari sage.symbolic
+            sage: f >> 3                                                                # optional - sage.libs.pari sage.symbolic
             1/6 + 1/24*x + 1/120*x^2 + 1/720*x^3 + O(x^4)
-            sage: f >> 7                                                                # optional - sage.libs.pari
+            sage: f >> 7                                                                # optional - sage.libs.pari sage.symbolic
             O(x^0)
-            sage: f >> 99                                                               # optional - sage.libs.pari
+            sage: f >> 99                                                               # optional - sage.libs.pari sage.symbolic
             O(x^0)
-            sage: (f >> 99) << 99                                                       # optional - sage.libs.pari
+            sage: (f >> 99) << 99                                                       # optional - sage.libs.pari sage.symbolic
             O(x^99)
         """
         return self.shift(-n)
@@ -2516,7 +2516,7 @@ cdef class PowerSeries(AlgebraElement):
         ::
 
             sage: R.<x> = PowerSeriesRing(ZZ)
-            sage: (1 + x + O(x^2)).exp()
+            sage: (1 + x + O(x^2)).exp()                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ArithmeticError: exponential of constant term does not belong to coefficient ring (consider working in a larger ring)

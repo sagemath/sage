@@ -338,7 +338,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
             sage: RDF.coerce(numpy.float64('1'))                                        # optional - numpy
             1.0
 
-            sage: RDF.coerce(pi)
+            sage: RDF.coerce(pi)                                                        # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Symbolic Ring to Real Double Field
@@ -1017,13 +1017,13 @@ cdef class RealDoubleElement(FieldElement):
             sage: sage_input(RDF(-infinity)*polygen(RDF))
             R.<x> = RDF[]
             -RDF(infinity)*x + RDF(NaN)
-            sage: sage_input(RDF(pi), verify=True)
+            sage: sage_input(RDF(pi), verify=True)                                      # optional - sage.symbolic
             # Verified
             RDF(3.1415926535897931)
-            sage: sage_input(RDF(-e), verify=True, preparse=False)
+            sage: sage_input(RDF(-e), verify=True, preparse=False)                      # optional - sage.symbolic
             # Verified
             -RDF(2.718281828459045...)
-            sage: sage_input(RDF(pi)*polygen(RDF), verify=True, preparse=None)
+            sage: sage_input(RDF(pi)*polygen(RDF), verify=True, preparse=None)          # optional - sage.symbolic
             # Verified
             R = RDF['x']
             x = R.gen()

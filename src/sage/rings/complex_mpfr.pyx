@@ -63,15 +63,12 @@ from sage.misc.superseded import deprecated_function_alias
 cimport gmpy2
 gmpy2.import_gmpy2()
 
-# Some objects that are note imported at startup in order to break
+# Some objects that are not imported at startup in order to break
 # circular imports
-NumberFieldElement_quadratic = None
-AlgebraicNumber_base = None
-AlgebraicNumber = None
-AlgebraicReal = None
+NumberFieldElement_quadratic = ()
+UniversalCyclotomicField = ()
 AA = None
 QQbar = None
-SR = None
 CDF = CLF = RLF = None
 def late_import():
     """
@@ -82,25 +79,16 @@ def late_import():
         sage: sage.rings.complex_mpfr.late_import()
     """
     global NumberFieldElement_quadratic
-    global AlgebraicNumber_base
-    global AlgebraicNumber
-    global AlgebraicReal
     global UniversalCyclotomicField
-    global AA, QQbar, SR
+    global AA, QQbar
     global CLF, RLF, CDF
-    if NumberFieldElement_quadratic is None:
-        import sage.rings.number_field.number_field
-        import sage.rings.number_field.number_field_element_quadratic as nfeq
-        NumberFieldElement_quadratic = nfeq.NumberFieldElement_quadratic
-        import sage.rings.qqbar
-        AlgebraicNumber_base = sage.rings.qqbar.AlgebraicNumber_base
-        AlgebraicNumber = sage.rings.qqbar.AlgebraicNumber
-        AlgebraicReal = sage.rings.qqbar.AlgebraicReal
-        from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
-        AA = sage.rings.qqbar.AA
-        QQbar = sage.rings.qqbar.QQbar
-        import sage.symbolic.ring
-        SR = sage.symbolic.ring.SR
+    if CLF is None:
+        try:
+            from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
+            from sage.rings.qqbar import AA, QQbar
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField  # needs GAP
+        except ImportError:
+            pass
         from .real_lazy import CLF, RLF
         from .complex_double import CDF
 

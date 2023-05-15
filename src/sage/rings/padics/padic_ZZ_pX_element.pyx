@@ -614,7 +614,8 @@ def _test_preprocess_list(R, L):
         ([1, 10, 25, 0], -1, NTL modulus 625)
         sage: _test_preprocess_list(ZqCA(25,names='a',implementation="NTL"), [1/5,mod(2,625),Zp(5)(5,3),mod(0,3125)])
         ([1, 10, 25, 0], -1, NTL modulus 625)
-        sage: T.<a> = Qp(5).extension(x^2-5)
+        sage: x = polygen(ZZ, 'x')
+        sage: T.<a> = Qp(5).extension(x^2 - 5)
         sage: _test_preprocess_list(T, [5^-1 + O(5)])
         ([1], -1, NTL modulus 25)
     """
