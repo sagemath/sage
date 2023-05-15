@@ -13,10 +13,10 @@ so that your changes can be reviewed for inclusion in Sage.
 Before proceeding, check that you have ``origin`` and ``upstream`` remotes right::
 
     [alice@localhost sage]$ git remote -v
-    origin	https://github.com/alice/sage.git (fetch)
-    origin	https://github.com/alice/sage.git (push)
-    upstream	https://github.com/sagemath/sage.git (fetch)
-    upstream	https://github.com/sagemath/sage.git (push)
+    origin  https://github.com/alice/sage.git (fetch)
+    origin  https://github.com/alice/sage.git (push)
+    upstream    https://github.com/sagemath/sage.git (fetch)
+    upstream    https://github.com/sagemath/sage.git (push)
 
 
 Development workflow at a glance

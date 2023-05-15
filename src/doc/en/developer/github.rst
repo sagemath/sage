@@ -124,15 +124,15 @@ your fork
     Updating files: 100% (9936/9936), done.
     [alice@localhost ~]$ cd sage
     [alice@localhost sage]$ git remote -v
-    origin	https://github.com/alice/sage.git (fetch)
-    origin	https://github.com/alice/sage.git (push)
+    origin  https://github.com/alice/sage.git (fetch)
+    origin  https://github.com/alice/sage.git (push)
 
 If you already have a local Git repo and only want to link your fork as ``origin`` remote, then do::
 
     [alice@localhost sage]$ git remote add origin https://github.com/alice/sage.git
     [alice@localhost sage]$ git remote -v
-    origin	https://github.com/alice/sage.git (fetch)
-    origin	https://github.com/alice/sage.git (push)
+    origin  https://github.com/alice/sage.git (fetch)
+    origin  https://github.com/alice/sage.git (push)
     [alice@localhost sage]$ git fetch origin
     remote: Enumerating objects: 1136, done.
     remote: Counting objects: 100% (1084/1084), done.
@@ -147,10 +147,10 @@ You also add the Sage repo ``sagemath/sage`` as your remote ``upstream``::
 
     [alice@localhost sage]$ git remote add upstream https://github.com/sagemath/sage.git
     [alice@localhost sage]$ git remote -v
-    origin	https://github.com/alice/sage.git (fetch)
-    origin	https://github.com/alice/sage.git (push)
-    upstream	https://github.com/sagemath/sage.git (fetch)
-    upstream	https://github.com/sagemath/sage.git (push)
+    origin  https://github.com/alice/sage.git (fetch)
+    origin  https://github.com/alice/sage.git (push)
+    upstream    https://github.com/sagemath/sage.git (fetch)
+    upstream    https://github.com/sagemath/sage.git (push)
 
 
 .. NOTE::
@@ -161,10 +161,10 @@ You also add the Sage repo ``sagemath/sage`` as your remote ``upstream``::
         [alice@localhost sage]$ git remote add origin git@github.com:alice/sage.git
         [alice@localhost sage]$ git remote add upstream git@github.com:sagemath/sage.git
         [alice@localhost sage]$ git remote -v
-        origin	git@github.com:alice/sage.git (fetch)
-        origin	git@github.com:alice/sage.git (push)
-        upstream	git@github.com:sagemath/sage.git (fetch)
-        upstream	git@github.com:sagemath/sage.git (push)
+        origin  git@github.com:alice/sage.git (fetch)
+        origin  git@github.com:alice/sage.git (push)
+        upstream    git@github.com:sagemath/sage.git (fetch)
+        upstream    git@github.com:sagemath/sage.git (push)
 
 To prevent accidental pushes to ``upstream`` (instead of ``origin``), you may want to disable it by running::
 
