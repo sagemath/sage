@@ -5821,7 +5821,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: E = EllipticCurve("141d1")
             sage: E.integral_points()
-            [(0 : 0 : 1), (2 : 1 : 1)]
+            [(0 : -1 : 1), (2 : -2 : 1)]
         """
         xmin = pari(xmin)
         xmax = pari(xmax)
@@ -5868,10 +5868,11 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve([0,0,1,-7,6])
             sage: P1 = E.point((2,0)); P2 = E.point((-1,3)); P3 = E.point((4,6))
             sage: a = E.integral_points([P1,P2,P3]); a
-            [(-3 : 0 : 1), (-2 : 3 : 1), (-1 : 3 : 1), (0 : 2 : 1), (1 : 0 : 1),
-             (2 : 0 : 1), (3 : 3 : 1), (4 : 6 : 1), (8 : 21 : 1), (11 : 35 : 1),
-             (14 : 51 : 1), (21 : 95 : 1), (37 : 224 : 1), (52 : 374 : 1),
-             (93 : 896 : 1), (342 : 6324 : 1), (406 : 8180 : 1), (816 : 23309 : 1)]
+            [(-3 : -1 : 1), (-2 : -4 : 1), (-1 : -4 : 1), (0 : -3 : 1),
+             (1 : -1 : 1), (2 : -1 : 1), (3 : -4 : 1), (4 : -7 : 1),
+             (8 : -22 : 1), (11 : -36 : 1), (14 : -52 : 1), (21 : -96 : 1),
+             (37 : -225 : 1), (52 : -375 : 1), (93 : -897 : 1),
+             (342 : -6325 : 1), (406 : -8181 : 1), (816 : -23310 : 1)]
 
         ::
 
@@ -5908,7 +5909,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         An example with negative discriminant::
 
             sage: EllipticCurve('900d1').integral_points()
-            [(-11 : 27 : 1), (-4 : 34 : 1), (4 : 18 : 1), (16 : 54 : 1)]
+            [(-11 : -27 : 1), (-4 : -34 : 1), (4 : -18 : 1), (16 : -54 : 1)]
 
         Another example with rank 5 and no torsion points::
 
@@ -5924,7 +5925,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         The bug reported on :trac:`4525` is now fixed::
 
             sage: EllipticCurve('91b1').integral_points()
-            [(-1 : 3 : 1), (1 : 0 : 1), (3 : 4 : 1)]
+            [(-1 : -4 : 1), (1 : -1 : 1), (3 : -5 : 1)]
 
         ::
 
@@ -6352,17 +6353,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         This is curve "7690e1" which failed until :trac:`4805` was fixed::
 
             sage: EllipticCurve([1,1,1,-301,-1821]).S_integral_points([13,2])
-            [(-13 : 16 : 1),
-             (-9 : 20 : 1),
-             (-7 : 4 : 1),
-             (21 : 30 : 1),
-             (23 : 52 : 1),
-             (63 : 452 : 1),
-             (71 : 548 : 1),
-             (87 : 756 : 1),
-             (2711 : 139828 : 1),
-             (7323 : 623052 : 1),
-             (17687 : 2343476 : 1)]
+            [(-13 : -4 : 1), (-9 : -12 : 1), (-7 : 2 : 1), (21 : -52 : 1),
+             (23 : -76 : 1), (63 : -516 : 1), (71 : -620 : 1), (87 : -844 : 1),
+             (2711 : -142540 : 1), (7323 : -630376 : 1), (17687 : -2361164 : 1)]
 
         - Some parts of this implementation are partially based on the
           function integral_points()

@@ -41,7 +41,7 @@ of :class:`EllipticCurveHom`::
       From: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 419
       To:   Elliptic Curve defined by y^2 = x^3 + 101*x + 285 over Finite Field of size 419
     sage: psi(E.lift_x(11))                                                             # optional - sage.rings.finite_rings
-    (352 : 73 : 1)
+    (352 : 346 : 1)
     sage: psi.rational_maps()                                                           # optional - sage.rings.finite_rings
     ((x^35 + 162*x^34 + 186*x^33 + 92*x^32 - ... + 44*x^3 + 190*x^2 + 80*x
       - 72)/(x^34 + 162*x^33 - 129*x^32 + 41*x^31 + ... + 66*x^3 - 191*x^2 + 119*x + 21),
@@ -407,7 +407,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: psi = EllipticCurveHom_composite(E, E.torsion_points())                           # optional - sage.rings.number_field
             sage: R = E.lift_x(15/4 * (a+3))                                                        # optional - sage.rings.number_field
             sage: psi(R)    # indirect doctest                                                      # optional - sage.rings.number_field
-            (1033648757/303450 : 58397496786187/1083316500*a - 62088706165177/2166633000 : 1)
+            (1033648757/303450 : -58397496786187/1083316500*a + 54706287407197/2166633000 : 1)
 
         Check that copying the order over works::
 

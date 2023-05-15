@@ -748,11 +748,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve('37a'); E
             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
             sage: E.lift_x(1)
-            (1 : 0 : 1)
+            (1 : -1 : 1)
             sage: E.lift_x(2)
-            (2 : 2 : 1)
+            (2 : -3 : 1)
             sage: E.lift_x(1/4, all=True)
-            [(1/4 : -3/8 : 1), (1/4 : -5/8 : 1)]
+            [(1/4 : -5/8 : 1), (1/4 : -3/8 : 1)]
 
         There are no rational points with `x`-coordinate 3::
 
@@ -768,7 +768,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         the base ring to the parent of `x`::
 
             sage: P = E.lift_x(3, extend=True); P                                       # optional - sage.rings.number_field
-            (3 : y : 1)
+            (3 : -y - 1 : 1)
             sage: P.curve()                                                             # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 + y = x^3 + (-1)*x
             over Number Field in y with defining polynomial y^2 + y - 24
@@ -776,15 +776,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         Or we can extend scalars.  There are two such points in `E(\RR)`::
 
             sage: E.change_ring(RR).lift_x(3, all=True)
-            [(3.00000000000000 : 4.42442890089805 : 1.00000000000000),
-             (3.00000000000000 : -5.42442890089805 : 1.00000000000000)]
+            [(3.00000000000000 : -5.42442890089805 : 1.00000000000000),
+             (3.00000000000000 : 4.42442890089805 : 1.00000000000000)]
 
         And of course it always works in `E(\CC)`::
 
             sage: E.change_ring(RR).lift_x(.5, all=True)
             []
             sage: E.change_ring(CC).lift_x(.5)
-            (0.500000000000000 : -0.500000000000000 + 0.353553390593274*I : 1.00000000000000)
+            (0.500000000000000 : -0.500000000000000 - 0.353553390593274*I : 1.00000000000000)
 
         In this example we start with a curve defined over `\QQ`
         which has no rational points with `x=0`, but using
@@ -794,7 +794,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve([0,0,0,0,2]); E
             Elliptic Curve defined by y^2 = x^3 + 2 over Rational Field
             sage: P = E.lift_x(0, extend=True); P                                       # optional - sage.rings.number_field
-            (0 : y : 1)
+            (0 : -y : 1)
             sage: P.curve()                                                             # optional - sage.rings.number_field
             Elliptic Curve defined by y^2 = x^3 + 2
             over Number Field in y with defining polynomial y^2 - 2
@@ -804,7 +804,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve('37a').change_ring(GF(17)); E                       # optional - sage.rings.finite_rings
             Elliptic Curve defined by y^2 + y = x^3 + 16*x over Finite Field of size 17
             sage: E.lift_x(7)                                                           # optional - sage.rings.finite_rings
-            (7 : 11 : 1)
+            (7 : 5 : 1)
             sage: E.lift_x(3)                                                           # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -823,14 +823,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
             sage: E = EllipticCurve('37a')
             sage: P = E.lift_x(pAdicField(17, 5)(6)); P                                 # optional - sage.rings.padics
-            (6 + O(17^5) : 2 + 16*17 + 16*17^2 + 16*17^3 + 16*17^4 + O(17^5) : 1 + O(17^5))
+            (6 + O(17^5) : 14 + O(17^5) : 1 + O(17^5))
             sage: P.curve()                                                             # optional - sage.rings.padics
             Elliptic Curve defined by
             y^2 + (1+O(17^5))*y = x^3 + (16+16*17+16*17^2+16*17^3+16*17^4+O(17^5))*x
             over 17-adic Field with capped relative precision 5
             sage: K.<t> = PowerSeriesRing(QQ, 't', 5)
             sage: P = E.lift_x(1 + t); P
-            (1 + t : 2*t - t^2 + 5*t^3 - 21*t^4 + O(t^5) : 1)
+            (1 + t : -1 - 2*t + t^2 - 5*t^3 + 21*t^4 + O(t^5) : 1)
             sage: K.<a> = GF(16)                                                        # optional - sage.rings.finite_rings
             sage: P = E.change_ring(K).lift_x(a^3); P                                   # optional - sage.rings.finite_rings
             (a^3 : a^3 + a : 1)
@@ -843,7 +843,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Elliptic Curve defined by y^2 = x^3 + 2 over Rational Field
             sage: x = polygen(QQ)
             sage: P = E.lift_x(x, extend=True); P
-            (x : y : 1)
+            (x : -y : 1)
 
         This point is a generic point on E::
 
@@ -853,9 +853,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             over Fraction Field of Univariate Polynomial Ring in x over Rational Field
             with modulus y^2 - x^3 - 2
             sage: -P
-            (x : -y : 1)
+            (x : y : 1)
             sage: 2*P
-            ((1/4*x^4 - 4*x)/(x^3 + 2) : ((1/8*x^6 + 5*x^3 - 4)/(x^6 + 4*x^3 + 4))*y : 1)
+            ((1/4*x^4 - 4*x)/(x^3 + 2) : ((-1/8*x^6 - 5*x^3 + 4)/(x^6 + 4*x^3 + 4))*y : 1)
 
         Check that :trac:`30297` is fixed::
 
@@ -1707,7 +1707,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: xlist = pol.roots(multiplicities=False); xlist
             [9, 2, -1/3, -5]
             sage: [E.lift_x(x, all=True) for x in xlist]
-            [[(9 : 23 : 1), (9 : -33 : 1)], [(2 : 2 : 1), (2 : -5 : 1)], [], []]
+            [[(9 : -33 : 1), (9 : 23 : 1)], [(2 : -5 : 1), (2 : 2 : 1)], [], []]
 
         .. NOTE::
 
