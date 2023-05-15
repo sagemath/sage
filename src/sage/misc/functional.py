@@ -1031,7 +1031,7 @@ def log(*args, **kwds):
 
     EXAMPLES::
 
-        sage: log(e^2)
+        sage: log(e^2)                                                                  # optional - sage.symbolic
         2
 
     To change the base of the logarithm, add a second parameter::
@@ -1579,9 +1579,9 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
     Testing we have sufficient precision for the golden ratio (:trac:`12163`), note
     that the decimal point adds 1 to the string length::
 
-        sage: len(str(n(golden_ratio, digits=5000)))
+        sage: len(str(n(golden_ratio, digits=5000)))                                    # optional - sage.symbolic
         5001
-        sage: len(str(n(golden_ratio, digits=5000000)))  # long time (4s on sage.math, 2012)
+        sage: len(str(n(golden_ratio, digits=5000000)))  # long time (4s on sage.math, 2012)    # optional - sage.symbolic
         5000001
 
     Check that :trac:`14778` is fixed::
@@ -1786,7 +1786,7 @@ def isqrt(x):
 
         sage: isqrt(10)
         3
-        sage: isqrt(10r)
+        sage: isqrt(10r)                                                                # optional - sage.symbolic
         3
     """
     try:
