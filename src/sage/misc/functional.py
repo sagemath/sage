@@ -888,6 +888,7 @@ def is_integrally_closed(x):
         doctest:...DeprecationWarning: use X.is_integrally_closed()
         See https://github.com/sagemath/sage/issues/32347 for details.
         True
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + 189*x + 394)                                    # optional - sage.rings.number_field
         sage: R = K.order(2*a)                                                          # optional - sage.rings.number_field
         sage: is_integrally_closed(R)                                                   # optional - sage.rings.number_field
@@ -1033,7 +1034,7 @@ def log(*args, **kwds):
 
     EXAMPLES::
 
-        sage: log(e^2)
+        sage: log(e^2)                                                                  # optional - sage.symbolic
         2
 
     To change the base of the logarithm, add a second parameter::
@@ -1581,9 +1582,9 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
     Testing we have sufficient precision for the golden ratio (:trac:`12163`), note
     that the decimal point adds 1 to the string length::
 
-        sage: len(str(n(golden_ratio, digits=5000)))
+        sage: len(str(n(golden_ratio, digits=5000)))                                    # optional - sage.symbolic
         5001
-        sage: len(str(n(golden_ratio, digits=5000000)))  # long time (4s on sage.math, 2012)
+        sage: len(str(n(golden_ratio, digits=5000000)))  # long time (4s on sage.math, 2012)    # optional - sage.symbolic
         5000001
 
     Check that :trac:`14778` is fixed::
@@ -1680,6 +1681,7 @@ def regulator(x):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: regulator(NumberField(x^2 - 2, 'a'))                                      # optional - sage.rings.number_field
         0.881373587019543
         sage: regulator(EllipticCurve('11a'))
@@ -1787,7 +1789,7 @@ def isqrt(x):
 
         sage: isqrt(10)
         3
-        sage: isqrt(10r)
+        sage: isqrt(10r)                                                                # optional - sage.symbolic
         3
     """
     try:

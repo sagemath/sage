@@ -80,7 +80,7 @@ def file_and_line(obj):
 
     The following tests against a bug that was fixed in :trac:`11298`::
 
-        sage: edit_module.file_and_line(x)
+        sage: edit_module.file_and_line(x)                                              # optional - sage.symbolic
         ('...sage/symbolic/expression...pyx', ...)
     """
     # d = inspect.getdoc(obj)

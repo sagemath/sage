@@ -382,7 +382,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements(euler_phi)
         from sage.arith.misc import euler_phi
 
-        sage: import_statements(x)
+        sage: import_statements(x)                                                      # optional - sage.symbolic
         from sage.calculus.predefined import x
 
     If you don't like the warning you can disable them with the option ``verbose``::
@@ -390,7 +390,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements(ZZ, verbose=False)
         from sage.rings.integer_ring import Z
 
-        sage: import_statements(x, verbose=False)
+        sage: import_statements(x, verbose=False)                                       # optional - sage.symbolic
         from sage.calculus.predefined import x
 
     If the object has several names, an other way to get the import
@@ -411,7 +411,7 @@ def import_statements(*objects, **kwds):
     The strings are allowed to be comma-separated names, and parenthesis
     are stripped for convenience::
 
-        sage: import_statements('(floor, ceil)')
+        sage: import_statements('(floor, ceil)')                                        # optional - sage.symbolic
         from sage.functions.other import floor, ceil
 
     Specifying a string is also useful for objects that are not
@@ -488,9 +488,9 @@ def import_statements(*objects, **kwds):
         from sage.combinat.partition_algebra import SetPartitionsAk
         sage: import_statements(CIF)
         from sage.rings.cif import CIF
-        sage: import_statements(NaN)
+        sage: import_statements(NaN)                                                    # optional - sage.symbolic
         from sage.symbolic.constants import NaN
-        sage: import_statements(pi)
+        sage: import_statements(pi)                                                     # optional - sage.symbolic
         from sage.symbolic.constants import pi
         sage: import_statements('SAGE_ENV')
         from sage.env import SAGE_ENV

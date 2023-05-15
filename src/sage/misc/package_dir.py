@@ -177,9 +177,9 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     Not a package::
 
-        sage: directory = os.path.join(sage.symbolic.__path__[0], 'ginac'); directory
+        sage: directory = os.path.join(sage.symbolic.__path__[0], 'ginac'); directory   # optional - sage.symbolic
         '.../sage/symbolic/ginac'
-        sage: is_package_or_sage_namespace_package_dir(directory)
+        sage: is_package_or_sage_namespace_package_dir(directory)                       # optional - sage.symbolic
         False
     """
     if os.path.exists(os.path.join(path, '__init__.py')):                # ordinary package
