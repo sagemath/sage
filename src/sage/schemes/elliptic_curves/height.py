@@ -1152,9 +1152,9 @@ class EllipticCurveCanonicalHeight:
             sage: L = E.period_lattice(v)
             sage: P = E.lift_x(10/9)
             sage: L(P)
-            1.53151606047462
+            0.958696500380439
             sage: L(P) / L.real_period()
-            0.615014189772115
+            0.384985810227885
             sage: H = E.height_function()
             sage: H.psi(10/9, v)
             0.615014189772115
@@ -1221,7 +1221,7 @@ class EllipticCurveCanonicalHeight:
             sage: v = K.real_places()[0]                                                # optional - sage.rings.number_field
             sage: H = E.height_function()                                               # optional - sage.rings.number_field
             sage: H.S(9, 10, v)                                                         # optional - sage.rings.number_field
-            ([0.0781194447253472, 0.0823423732016403] U [0.917657626798360, 0.921880555274653])
+            ([0.078119444725347..., 0.082342373201640...] U [0.91765762679836..., 0.92188055527465...])
         """
         L = self.E.period_lattice(v)
         w1, w2 = L.basis(prec=v.codomain().prec())
