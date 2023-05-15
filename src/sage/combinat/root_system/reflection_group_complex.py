@@ -1737,7 +1737,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         coeffs = []
         for i in self.index_set():
-            coeff = 1-E(S[i].order())
+            coeff = 1 - E(S[i].order())
             if coeff in QQ:
                 coeff = QQ(coeff)
             coeffs.append(coeff)
