@@ -12,7 +12,7 @@ For more computational details, see the paper at https://www.tandfonline.com/doi
 
 AUTHORS:
 
-- Giovanni Staglianò (2023-05-14): initial version
+- Giovanni Staglianò (2023-05-15): initial version
 
 """
 
@@ -35,7 +35,9 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.rational_field import RationalField
 from sage.calculus.functions import jacobian
+from sage.features.interfaces import Macaulay2
 from sage.interfaces.macaulay2 import macaulay2, sage
+from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.schemes.projective.projective_space import ProjectiveSpace
@@ -89,7 +91,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
     EXAMPLES::
 
         sage: P, (x0,x1,x2,x3) = ProjectiveSpace(3, GF(101), 'x').objgens()
-        sage: X = projective_variety([x0^2-x1*x2, x1^3+x2^3+x3^3]); X
+        sage: X = projective_variety([x0^2-x1*x2, x1^3+x2^3+x3^3], P); X     # the input P is optional
         curve of degree 6 and arithmetic genus 4 in PP^3 cut out by 2 hypersurfaces of degrees (2, 3)
         sage: X.ambient_space() is P
         True
@@ -103,17 +105,16 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         generators:........... (2, 3)
         dim sing. l.:......... -1
 
-
     Here is another example using simple functions of the class.
 
     ::
 
         sage: K = GF(65521)
-        sage: P4 = PP(4,K); P4
+        sage: PP(4,K)
         PP^4
-        sage: P4.empty()
+        sage: PP(4,K).empty()
         empty subscheme of PP^4
-        sage: X = P4.empty().random(2,2,3)
+        sage: X = PP(4,K).empty().random(2,2,3)
         sage: X
         curve of degree 12 and arithmetic genus 13 in PP^4 cut out by 3 hypersurfaces of degrees (2, 2, 3)
         sage: X.describe()
@@ -133,15 +134,30 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         13
         sage: X.ambient()
         PP^4
-        sage: p = X.point(verbose=False)
-        sage: p.is_subset(X)
+        sage: p = X.point(verbose=False)                                     # optional - macaulay2
+        sage: p.dimension() == 0 and p.degree() == 1 and p.is_subset(X)      # optional - macaulay2
         True
+
+    You can also convert such varieties into ``Macaulay2`` objects.
+
+    ::
+
+        sage: X_ = macaulay2(X); X_                                          # optional - macaulay2
+        curve in PP^4 cut out by 3 hypersurfaces of degrees 2^2 3^1
+        <BLANKLINE>
+        ProjectiveVariety, curve in PP^4
+        sage: X_.cls()                                                       # optional - macaulay2
+        EmbeddedProjectiveVariety
+        <BLANKLINE>
+        Type
 
     """
     def __init__(self, PP, polys = []):
         r"""See :class:`Embedded_projective_variety` for documentation."""
         if not _is_embedded_projective_variety(PP):
             raise TypeError("cannot interpret input as a projective variety")
+        if PP.base_ring() not in Fields():
+            raise ValueError("base ring must be a field")
         if len(polys) > 0:
             if PP.ambient_space() is not PP:
                 raise ValueError("expected a projective ambient space")
@@ -297,7 +313,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._list_of_irreducible_components
 
     def hilbert_polynomial(self):
-        r"""Return the Hilbert polynomial of the projective variety
+        r"""Return the Hilbert polynomial of the projective variety.
 
         OUTPUT:
 
@@ -318,7 +334,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             return self._hilbert_polynomial
 
     def sectional_genus(self):
-        r"""Return the arithmetic genus of the sectional curve of the variety
+        r"""Return the arithmetic genus of the sectional curve of the variety.
 
         OUTPUT:
 
@@ -344,15 +360,15 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             self._sectional_genus = Integer(1-P(0))
             return self._sectional_genus
 
-    def topological_euler_characteristic(self, verbose=None, UseMacaulay2=False):
-        r"""Return the topological Euler characteristic of the variety
+    def topological_euler_characteristic(self, verbose=None, algorithm=None):
+        r"""Return the topological Euler characteristic of the variety.
 
         .. WARNING::
 
             This uses a probabilistic approach which could give wrong answers
             (especially over finite fields of small order).
 
-        With the input ``UseMacaulay2=True`` the computation is transferred to ``Macaulay2``.
+        With the input ``algorithm='macaulay2'`` the computation is transferred to ``Macaulay2``.
 
         OUTPUT:
 
@@ -366,14 +382,16 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             3
 
         """
-        if verbose is None:
-            verbose = __VERBOSE__
-        if not(isinstance(UseMacaulay2,bool) and isinstance(verbose,bool)):
-            raise TypeError("expected True or False")
         try:
             return self._topological_euler_characteristic
         except AttributeError:
-            if UseMacaulay2 or min(self.degrees_generators()) != max(self.degrees_generators()):
+            if verbose is None:
+                verbose = __VERBOSE__
+            if not isinstance(verbose,bool):
+                raise TypeError("expected True or False")
+            if algorithm not in (None, 'macaulay2', 'sage'):
+                raise ValueError("keyword algorithm must be 'macaulay2' or 'sage'")
+            if algorithm == 'macaulay2' or (algorithm is None and min(self.degrees_generators()) != max(self.degrees_generators()) and Macaulay2().is_present()):
                 if verbose:
                     print("--topological_euler_characteristic(): transferring computation to Macaulay2...")
                 return self._topological_Euler_characteristic_macaulay2(verbose=verbose)
@@ -385,26 +403,21 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             h = PolynomialRing(ZZ,'h',1).gens()[0]
             Segre_Class = sum([(-1)**(n-k-1) * sum([(-1)**i*binomial(n-k,i)*m**(n-k-i)*d[i] for i in range(n-k+1)]) * h**(n-k) for k in range(r+1)])
             Chern_Fulton_Class = Segre_Class * (1+h)**(n+1)
-            self._topological_euler_characteristic = Chern_Fulton_Class.list()[n]
+            self._topological_euler_characteristic = Integer(Chern_Fulton_Class.list()[n])
             return self._topological_euler_characteristic
 
     def _topological_Euler_characteristic_macaulay2(self, verbose=None):
         r"""See :meth:`topological_euler_characteristic` for documentation."""
-        if verbose is None:
-            verbose = __VERBOSE__
-        try:
-            return self._topological_euler_characteristic
-        except AttributeError:
-            if verbose:
-                print("-- running Macaulay2 function eulerCharacteristic()... --")
-            X = macaulay2(self)
-            e = X.eulerCharacteristic().sage()
-            self._topological_euler_characteristic = e
-            if verbose:
-                print("-- function eulerCharacteristic() has terminated. --")
-            return self._topological_euler_characteristic
+        if verbose:
+            print("-- running Macaulay2 function eulerCharacteristic()... --")
+        X = macaulay2(self)
+        e = X.eulerCharacteristic().sage()
+        self._topological_euler_characteristic = Integer(e)
+        if verbose:
+            print("-- function eulerCharacteristic() has terminated. --")
+        return self._topological_euler_characteristic
 
-    def point(self, verbose=None, UseMacaulay2=None):
+    def point(self, verbose=None, algorithm=None):
         r"""
         Pick a random point on the variety defined over a finite field
 
@@ -419,16 +432,18 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         """
         if verbose is None:
             verbose = __VERBOSE__
-        if UseMacaulay2 is None:
-            UseMacaulay2 = not(self.codimension() == 0 or all(i == 1 for i in self.degrees_generators()) or hasattr(self,"_parametrization"))
-        if not(isinstance(UseMacaulay2,bool) and isinstance(verbose,bool)):
+        if not isinstance(verbose,bool):
             raise TypeError("expected True or False")
-        if not UseMacaulay2:
+        if algorithm is None:
+            algorithm = 'sage' if self.codimension() == 0 or all(i == 1 for i in self.degrees_generators()) or hasattr(self,"_parametrization") else 'macaulay2'
+        if algorithm not in ('macaulay2', 'sage'):
+            raise ValueError("keyword algorithm must be 'macaulay2' or 'sage'")
+        if algorithm == 'sage':
             if self.codimension() == 0:
                 return self.empty().random(*[1 for i in range(self.dimension())])
             if all(i == 1 for i in self.degrees_generators()) or hasattr(self,"_parametrization"):
                 j = self.parametrize(verbose=verbose)
-                q = j(j.source().point(verbose=verbose,UseMacaulay2=False))
+                q = j(j.source().point(verbose=verbose,algorithm='sage'))
                 assert(q._is_point() and q.is_subset(self))
                 return q
             raise NotImplementedError
@@ -443,7 +458,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         assert((ideal(polys)).ring() is self.ambient().coordinate_ring())
         p = Embedded_projective_variety(self.ambient_space(),polys)
         p._coordinate_list = c
-        assert(p.is_subset(self))
+        assert(p._is_point() and p.is_subset(self))
         p._macaulay2_object = pointOnX
         if verbose:
             print("-- function point() has terminated. --")
@@ -812,9 +827,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return(not(self.__eq__(Y)))
 
     def _macaulay2_init_(self, macaulay2=None):
-        r"""
-        Get the corresponding embedded projective variety in Macaulay2.
-        """
+        r"""Get the corresponding embedded projective variety in Macaulay2."""
         if macaulay2 is None:
             from sage.interfaces.macaulay2 import macaulay2 as m2_default
             macaulay2 = m2_default
@@ -849,30 +862,29 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             source: PP^3
             target: linear 3-dimensional subspace of PP^7
 
-            sage: p = L.point()
-            sage: p.parametrize().source()
-            PP^0
-
             sage: L.ambient().parametrize()
             dominant rational map defined by forms of degree 1
             source: PP^7
             target: PP^7
+
+            sage: with seed(0): p = PP(4,KK=GF(65521)).point(); p
+            one-point scheme in PP^4 of coordinates [1, 37782, 10657, 17260, 21224]
+            sage: p.parametrize()
+            dominant rational map defined by forms of degree 1
+            source: PP^0
+            target: one-point scheme in PP^4 of coordinates [1, 37782, 10657, 17260, 21224]
 
             sage: Veronese(2,2).parametrize()
             dominant rational map defined by forms of degree 2
             source: PP^2
             target: surface of degree 4 and sectional genus 0 in PP^5 cut out by 6 hypersurfaces of degree 2
 
-            sage: macaulay2(_).describe()
-            multi-rational map consisting of one single rational map
-            source variety: PP^2
-            target variety: surface in PP^5 cut out by 6 hypersurfaces of degree 2
-            base locus: empty subscheme of PP^2
-            dominance: true
-            multidegree: {1, 2, 4}
-            degree: 1
-            degree sequence (map 1/1): [2]
-            coefficient ring: ZZ/33331
+            sage: C = Veronese(2,2).intersection(PP(5).empty().random(1)); C
+            curve of degree 4 and arithmetic genus 0 in PP^5 cut out by 7 hypersurfaces of degrees (1, 2, 2, 2, 2, 2, 2)
+            sage: C.parametrize(verbose=False)            # optional - macaulay2
+            rational map defined by forms of degree 4
+            source: PP^1
+            target: curve of degree 4 and arithmetic genus 0 in PP^5 cut out by 7 hypersurfaces of degrees (1, 2, 2, 2, 2, 2, 2)
 
         """
         if verbose is None:
@@ -885,11 +897,11 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
                 assert(f.image() is self and f.is_dominant())
                 self._parametrization = f
                 return self._parametrization
-            if set(self.degrees_generators()) == set([1]):
+            if all(i == 1 for i in self.degrees_generators()):
                 I = self.defining_ideal()
                 M = jacobian(I.gens(),I.ring().gens()).change_ring(I.ring().base_ring())
                 assert((M * matrix([I.ring().gens()]).transpose()).list() == I.gens())
-                P = ProjectiveSpace(self.dimension(), self.base_ring(),'z')
+                P = ProjectiveSpace(self.dimension(), self.base_ring(), 'z')
                 polys = (matrix(P.coordinate_ring().gens()) * M.right_kernel_matrix()).list()
                 f = rational_map(P,self,polys)
                 assert(f.image() is self and f.is_dominant())
@@ -1008,19 +1020,18 @@ def PP(n, KK=GF(33331), var='x'):
         return PP(n, KK, var)
     return projective_variety(ProjectiveSpace(n, KK, var))
 
-def projective_variety(I):
+def projective_variety(I, PP=None):
     r"""Construct a projective variety.
 
     INPUT:
 
-    ``I`` - A homogeneous ideal in a polynomial ring over a field, or the list of its generators.
+    ``I`` -- A homogeneous ideal in a polynomial ring over a field, or the list of its generators.
+
+    ``PP`` -- (Optional) an ambient projective space whose coordinate ring is the polynomial ring of ``I``.
 
     OUTPUT:
 
     :class:`Embedded_projective_variety`, the projective variety defined by ``I``.
-
-    You can also use this function to convert objects of the class :class:`AlgebraicScheme_subscheme_projective`
-    into objects of the class :class:`Embedded_projective_variety`.
 
     EXAMPLES::
 
@@ -1028,7 +1039,13 @@ def projective_variety(I):
         sage: I = [x0^2-x1*x2, x1^3+x2^3+x3^3]
         sage: X = projective_variety(I); X
         curve of degree 6 and arithmetic genus 4 in PP^3 cut out by 2 hypersurfaces of degrees (2, 3)
-        sage: Y = X.to_built_in_variety(); Y
+
+    You can also use this function to convert objects of the class :class:`AlgebraicScheme_subscheme_projective`
+    into objects of the class :class:`Embedded_projective_variety`.
+
+    ::
+
+        sage: Y = X.ambient_space().subscheme(I); Y
         Closed subscheme of Projective Space of dimension 3 over Finite Field of size 101 defined by:
         x0^2 - x1*x2,
         x1^3 + x2^3 + x3^3
@@ -1038,14 +1055,20 @@ def projective_variety(I):
         True
 
     """
-    if isinstance(I,Embedded_projective_variety):
-        return I
-    if _is_embedded_projective_variety(I):
-        return Embedded_projective_variety(I)
-    if isinstance(I,MPolynomialIdeal):
-        return Embedded_projective_variety(ProjectiveSpace(I.ring()).subscheme(I))
-    if isinstance(I,(tuple,list)):
-        return projective_variety(ideal(I))
+    if PP is None:
+        if isinstance(I,Embedded_projective_variety):
+            return I
+        if _is_embedded_projective_variety(I):
+            return Embedded_projective_variety(I)
+        if isinstance(I,MPolynomialIdeal):
+            return Embedded_projective_variety(ProjectiveSpace(I.ring()).subscheme(I))
+        if isinstance(I,(tuple,list)):
+            return projective_variety(ideal(I))
+    else:
+        if isinstance(I,(tuple,list)):
+            return Embedded_projective_variety(PP, I)
+        if isinstance(I,MPolynomialIdeal):
+            return Embedded_projective_variety(PP, I.defining_polynomials())
     raise TypeError
 
 class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomial_projective_space_field):
@@ -1053,7 +1076,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
     This is a subclass of the class :class:`SchemeMorphism_polynomial_projective_space_field`.
     It is designed to provide better support for maps related to Hodge-special fourfolds.
-
 
     Constructing a rational map between projective subvarieties.
 
@@ -1095,13 +1117,13 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
     ::
 
-        sage: g_ = macaulay2(g); g_
+        sage: g_ = macaulay2(g); g_                                           # optional - macaulay2
         multi-rational map consisting of one single rational map
         source variety: PP^4
         target variety: hypersurface in PP^5 defined by a form of degree 2
         <BLANKLINE>
         MultirationalMap (rational map from PP^4 to hypersurface in PP^5)
-        sage: g_.graph().last().inverse()
+        sage: g_.graph().last().inverse()                                     # optional - macaulay2
         multi-rational map consisting of 2 rational maps
         source variety: hypersurface in PP^5 defined by a form of degree 2
         target variety: 4-dimensional subvariety of PP^4 x PP^5 cut out by 9 hypersurfaces of multi-degrees (0,2)^1 (1,1)^8
@@ -1130,13 +1152,16 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         if len(polys) != Y.ambient().dimension() + 1:
             raise ValueError("got wrong number of polynomials")
         H = X.Hom(Y)
-        s = dict(zip(matrix(polys).base_ring().gens(), X.ambient().coordinate_ring().gens()))
+        gensR = matrix(polys).base_ring().gens()
+        if len(gensR) != X.ambient().coordinate_ring().ngens():
+            raise ValueError("expected polynomials in the coordinate ring of the source")
+        s = dict(zip(gensR, X.ambient().coordinate_ring().gens()))
         polys = tuple([pol.subs(s) for pol in polys])
         SchemeMorphism_polynomial_projective_space.__init__(self, H, polys)
         assert(self.domain() is X)
         assert(self.codomain() is Y)
         # assert(self.defining_polynomials() == polys) # this fails
-        degs = [g.lift().degree() if hasattr(g,"lift") and (not hasattr(g,"degree")) else g.degree() for g in polys]
+        degs = [g.lift().degree() if hasattr(g,"lift") and (not hasattr(g,"degree")) else g.degree() for g in [pol for pol in polys if pol != 0]]
         self.__degree_Forms = max(degs)
         assert(self.__degree_Forms == min(degs))
         self._source = X
@@ -1299,9 +1324,13 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
                 self._super_map = self
             else:
                 self._super_map = Rational_map_between_embedded_projective_varieties(self.source(),self.target().ambient(),self.defining_polynomials())
-                self._super_map._is_morphism = self._is_morphism
                 if self._is_dominant is True or hasattr(self,"_closure_of_image"):
                     self._super_map._closure_of_image = self.image()
+                if hasattr(self,"_list_of_representatives_of_map"):
+                    self._super_map._list_of_representatives_of_map = [Rational_map_between_embedded_projective_varieties(self.source(),self.target().ambient(),f.defining_polynomials()) for f in self._representatives(verbose=False)]
+                self._super_map._is_morphism = self._is_morphism
+                if hasattr(self,"_projective_degrees_list"):
+                    self._super_map._projective_degrees_list = self.projective_degrees()
             return self._super_map
 
     def _to_ring_map(self):
@@ -1381,21 +1410,25 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
         EXAMPLES::
 
-            sage: self = rational_map(Veronese(1,4)).make_dominant()
-            sage: Z = self.target().empty().random(1,1,1,1)
-            sage: self.inverse_image(Z)
+            sage: f = rational_map(Veronese(1,4)).make_dominant(); f
+            dominant rational map defined by forms of degree 2
+            source: PP^4
+            target: quadric hypersurface in PP^5
+            sage: Z = f.target().empty().random(1,1,1,1); Z
+            line in PP^5
+            sage: f.inverse_image(Z)
             0-dimensional subscheme of degree 2 in PP^4
 
-            sage: f = self.inverse()
+        TESTS::
+
+            sage: f = f.inverse()                                  # optional - macaulay2
             -- running Macaulay2 function inverse()... --
             -- function inverse() has successfully terminated. --
-            sage: W = f.target().empty().random(1,1,1,1)
-            sage: f.inverse_image(W).describe()
+            sage: W = f.target().empty().random(1,1,1,1)           # optional - macaulay2
+            sage: f.inverse_image(W).describe()                    # optional - macaulay2
             dim:.................. 0
             codim:................ 5
             degree:............... 1
-
-        TESTS::
 
             sage: P = PP(5)
             sage: L = projective_variety(P.point().union(P.point())).random(1,1,1,1)
@@ -1403,10 +1436,10 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             dominant rational map defined by forms of degree 1
             source: surface of degree 8 and sectional genus 5 in PP^5 cut out by 3 hypersurfaces of degree 2
             target: surface of degree 4 and sectional genus 3 in PP^3
-            sage: q = f.inverse_image(f.target().point())
+            sage: q = f.inverse_image(f.target().point())          # optional - macaulay2
             -- running Macaulay2 function point()... --
             -- function point() has terminated. --
-            sage: assert(q._is_point() and q.ambient() == P)
+            sage: assert(q._is_point() and q.ambient() == P)       # optional - macaulay2
 
         """
         Z = _check_type_embedded_projective_variety(Z)
@@ -1455,7 +1488,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             rational map defined by forms of degree 2
             source: PP^3
             target: quadric hypersurface in PP^5
-            sage: f.inverse(verbose=False)._restriction_to_general_hyperplane()
+            sage: f.inverse(verbose=False)._restriction_to_general_hyperplane()   # optional - macaulay2
             rational map defined by forms of degree 2
             source: quadric hypersurface in PP^4
             target: PP^4
@@ -1491,14 +1524,14 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
         TESTS::
 
-            sage: F = macaulay2(f,'f')
-            sage: g = macaulay2('last(forceImage(f,image(f,2)), f = toRationalMap rationalMap(f,Dominant=>true), multirationalMap inverseMap(f))')
-            sage: g = _from_macaulay2map_to_sagemap(g); g
+            sage: F = macaulay2(f,'f')                          # optional - macaulay2
+            sage: g = macaulay2('last(forceImage(f,image(f,2)), f = toRationalMap rationalMap(f,Dominant=>true), multirationalMap inverseMap(f))')   # optional - macaulay2
+            sage: g = _from_macaulay2map_to_sagemap(g); g       # optional - macaulay2
             rational map defined by forms of degree 3
             source: 6-dimensional variety of degree 5 in PP^9 cut out by 5 hypersurfaces of degree 2
             target: PP^6
             base locus: 4-dimensional variety of degree 24 in PP^9 cut out by 12 hypersurfaces of degrees (2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3)
-            sage: g.projective_degrees()
+            sage: g.projective_degrees()                        # optional - macaulay2
             [5, 15, 21, 17, 9, 3, 1]
 
         """
@@ -1630,7 +1663,19 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         return(j.compose(self))
 
     def _macaulay2_init_(self, macaulay2=None):
-        r"""Return the corresponding rational map in Macaulay2."""
+        r"""Get the corresponding rational map in Macaulay2.
+
+        TESTS::
+
+            sage: f = veronese(1,4)
+            sage: macaulay2(f)                # optional - macaulay2
+            multi-rational map consisting of one single rational map
+            source variety: PP^1
+            target variety: PP^4
+            <BLANKLINE>
+            MultirationalMap (rational map from PP^1 to PP^4)
+
+        """
         if macaulay2 is None:
             from sage.interfaces.macaulay2 import macaulay2 as m2_default
             macaulay2 = m2_default
@@ -1641,7 +1686,11 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             F = macaulay2([list(self.defining_polynomials())])
             F = F.matrix().substitute(X.ambient().ring().vars()).entries()
             Y = macaulay2(self.target())
-            self._macaulay2_object = X.Hom(Y)._operator(' ',F)
+            if (macaulay2('SpecialFanoFourfolds.Options.Version >= "2.7.1"')).sage():
+                self._macaulay2_object = X.Hom(Y)._operator(' ',F)
+            else:
+                h = (X.ring().map(Y.ring(),F.flatten())).rationalMap().multirationalMap()
+                self._macaulay2_object = (h.multirationalMap(Y))._operator('|',X)
             self._macaulay2_object._sage_object = self
             return self._macaulay2_object
 
@@ -1672,7 +1721,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
     def __ne__(self,other):
         return(not(self.__eq__(other)))
 
-    def inverse(self, check=True, verbose=None, UseMacaulay2=True):
+    def inverse(self, check=True, verbose=None, algorithm='macaulay2'):
         r"""Return the inverse of the birational map.
 
         OUTPUT:
@@ -1682,19 +1731,19 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         EXAMPLES::
 
             sage: f = veronese(1,5).make_dominant()
-            sage: g = f.inverse(); g
+            sage: g = f.inverse(); g                                         # optional - macaulay2
             -- running Macaulay2 function inverse()... --
             -- function inverse() has successfully terminated. --
             birational morphism defined by forms of degree 1
             source: curve of degree 5 and arithmetic genus 0 in PP^5 cut out by 10 hypersurfaces of degree 2
             target: PP^1
             degree sequence: (1, 1, 1, 1, 1)
-            sage: f.compose(g) == 1
+            sage: f.compose(g) == 1                                          # optional - macaulay2
             -- running Macaulay2 operator == between rational maps... --
             -- Macaulay2 computation has successfully terminated. --
             True
 
-        With the input ``UseMacaulay2=True`` the computation is transferred to ``Macaulay2``.
+        With the input ``algorithm='macaulay2'`` the computation is transferred to ``Macaulay2`` (this is currently the only option).
 
         """
         if hasattr(self,"_inverse_rational_map"):
@@ -1705,10 +1754,10 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             raise ValueError("the rational map is not birational")
         if verbose is None:
             verbose = __VERBOSE__
-        if not (isinstance(check,bool) and isinstance(verbose,bool) and isinstance(UseMacaulay2,bool)):
+        if not (isinstance(check,bool) and isinstance(verbose,bool)):
             raise TypeError("expected True or False")
-        if not UseMacaulay2:
-            raise NotImplementedError
+        if algorithm != 'macaulay2':
+            raise NotImplementedError("inverse of a birational map using built-in functions")
         f = macaulay2(self)
         if verbose:
             print("-- running Macaulay2 function inverse()... --")
@@ -1731,7 +1780,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             self._inverse_rational_map = g
         return g
 
-    def _representatives(self, verbose=None, UseMacaulay2=True):
+    def _representatives(self, verbose=None, algorithm='macaulay2'):
         r"""Return a minimal set of generators for the module of representatives of the rational map ``self``.
 
         This is used internally by the functions :meth:`base_locus` and :meth:`is_morphism`.
@@ -1741,10 +1790,10 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         except AttributeError:
             if verbose is None:
                 verbose = __VERBOSE__
-            if not (isinstance(verbose,bool) and isinstance(UseMacaulay2,bool)):
+            if not isinstance(verbose,bool):
                 raise TypeError("expected True or False")
-            if not UseMacaulay2:
-                raise NotImplementedError("representatives of rational map using built-in functions")
+            if algorithm != 'macaulay2':
+                raise NotImplementedError("representatives of a rational map using built-in functions")
             f = macaulay2(self).toRationalMap()
             if verbose:
                 print("-- running Macaulay2 function to compute representatives of map... --")
@@ -1759,7 +1808,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             self._list_of_representatives_of_map = maps
             return self._list_of_representatives_of_map
 
-    def base_locus(self, verbose=None, UseMacaulay2=True):
+    def base_locus(self, verbose=None, algorithm='macaulay2'):
         r"""Return the base locus of the rational map ``self``.
 
         OUTPUT:
@@ -1772,9 +1821,9 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             dominant rational map defined by forms of degree 1
             source: cubic curve of arithmetic genus 0 in PP^3 cut out by 3 hypersurfaces of degree 2
             target: conic curve in PP^2
-            sage: f.base_locus(verbose=False)
+            sage: f.base_locus(verbose=False)                  # optional - macaulay2
             empty subscheme of PP^3
-            sage: f
+            sage: f                                            # optional - macaulay2
             dominant morphism defined by forms of degree 1
             source: cubic curve of arithmetic genus 0 in PP^3 cut out by 3 hypersurfaces of degree 2
             target: conic curve in PP^2
@@ -1785,13 +1834,13 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         try:
             return self._base_locus
         except AttributeError:
-            I = ideal(matrix([f.defining_polynomials() for f in self._representatives(verbose=verbose,UseMacaulay2=UseMacaulay2)]).minors(1))
+            I = ideal(matrix([f.defining_polynomials() for f in self._representatives(verbose=verbose,algorithm=algorithm)]).minors(1))
             I = I + self.source().defining_ideal()
             I = (I.saturation(I.ring().irrelevant_ideal()))[0]
             self._base_locus = Embedded_projective_variety(self.source().ambient_space(),_minbase(I))
             return self._base_locus
 
-    def is_morphism(self, verbose=None, UseMacaulay2=True):
+    def is_morphism(self, verbose=None, algorithm='macaulay2'):
         r"""Return ``True`` if ``self`` is a morphism, ``False`` otherwise.
 
         OUTPUT:
@@ -1800,7 +1849,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
         """
         if self._is_morphism is None:
-            self._is_morphism = self.base_locus(verbose=verbose,UseMacaulay2=UseMacaulay2).dimension() < 0
+            self._is_morphism = self.base_locus(verbose=verbose,algorithm=algorithm).dimension() < 0
         return self._is_morphism
 
     def to_built_in_map(self):
@@ -1839,7 +1888,7 @@ def rational_map(*args, **kwargs):
 
     - ``X`` -- the source variety (optional).
     - ``Y`` -- the target variety (optional).
-    - ``polys``  -- a list of homogeneous polynomials of the same degree in the coordinate ring of ``X``
+    - ``polys`` -- a list of homogeneous polynomials of the same degree in the coordinate ring of ``X``
 
     OUTPUT:
 
@@ -2235,9 +2284,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         return(self._lattice_intersection_matrix(verbose=verbose).determinant())
 
     def _macaulay2_init_(self, macaulay2=None):
-        r"""
-        Get the corresponding special fourfold in Macaulay2.
-        """
+        r"""Get the corresponding special fourfold in Macaulay2."""
         if macaulay2 is None:
             from sage.interfaces.macaulay2 import macaulay2 as m2_default
             macaulay2 = m2_default
@@ -2262,7 +2309,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         EXAMPLES::
 
             sage: X = fourfold(surface(3,4))
-            sage: X.fano_map(verbose=false)
+            sage: X.fano_map(verbose=false)                     # optional - macaulay2
             dominant rational map defined by forms of degree 2
             source: PP^5
             target: PP^4
@@ -2296,7 +2343,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         EXAMPLES::
 
             sage: X = fourfold(surface(3,1,1))
-            sage: X.parameter_count()
+            sage: X.parameter_count()                                                      # optional - macaulay2
             -- running Macaulay2 function parameterCount()... --
             S: smooth rational normal scroll surface of degree 4 in PP^5
             X: smooth cubic hypersurface in PP^5
@@ -2313,7 +2360,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             (1, (28, 29, 2))
 
             sage: X = fourfold(surface(1,ambient=7))
-            sage: X.parameter_count()
+            sage: X.parameter_count()                                                      # optional - macaulay2
             -- running Macaulay2 function parameterCount()... --
             S: plane in PP^7
             X: complete intersection of type (2,2,2) in PP^7
@@ -2398,26 +2445,26 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             sage: S = surface(3,1,1); S
             rational surface of degree 4 and sectional genus 0 in PP^5 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
             sage: X = fourfold(S)
-            sage: f = X.detect_congruence(1)
+            sage: f = X.detect_congruence(1)                                   # optional - macaulay2
             -- running Macaulay2 function detectCongruence()... --
             warning: clearing value of symbol x0 to allow access to subscripted variables based on it
             : debug with expression   debug 6010   or with command line option   --debug 6010
             warning: clearing value of symbol x1 to allow access to subscripted variables based on it
             : debug with expression   debug 5513   or with command line option   --debug 5513
             -- function detectCongruence() has terminated. --
-            sage: f.check()
+            sage: f.check()                                                    # optional - macaulay2
             Congruence of 2-secant lines
             to: rational surface of degree 4 and sectional genus 0 in PP^5 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
             in: PP^5
             sage: p = X.ambient_fivefold().point()
-            sage: f(p)
+            sage: f(p)                                                         # optional - macaulay2
             line in PP^5
 
             sage: S = surface(5,7,0,1)
             sage: X = fourfold(S)
             sage: X
             Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2 containing a rational surface of degree 9 and sectional genus 3 in PP^7 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
-            sage: f = X.detect_congruence()
+            sage: f = X.detect_congruence()                                    # optional - macaulay2
             -- running Macaulay2 function detectCongruence()... --
             number lines contained in the image of the quadratic map and passing through a general point: 18
             number 1-secant lines = 9
@@ -2425,20 +2472,20 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             number 5-secant cubics = 1
             -- function detectCongruence() has terminated. --
             <BLANKLINE>
-            sage: f.check()
+            sage: f.check()                                                    # optional - macaulay2
             Congruence of 5-secant cubic curves
             to: rational surface of degree 9 and sectional genus 3 in PP^7 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
             in: complete intersection of type (2, 2) in PP^7
-            sage: p = X.ambient_fivefold().point()
+            sage: p = X.ambient_fivefold().point()                             # optional - macaulay2
             -- running Macaulay2 function point()... --
             -- function point() has terminated. --
-            sage: f(p)
+            sage: f(p)                                                         # optional - macaulay2
             cubic curve of arithmetic genus 0 in PP^7 cut out by 7 hypersurfaces of degrees (1, 1, 1, 1, 2, 2, 2)
 
-            sage: X = fourfold("3-nodal septic scroll"); X
+            sage: X = fourfold("3-nodal septic scroll", GF(61001)); X          # optional - macaulay2
             Cubic fourfold of discriminant 26 = 3*25-7^2 containing a surface of degree 7 and sectional genus 0 in PP^5 cut out by 13 hypersurfaces of degree 3
-            sage: assert(X.base_ring().characteristic() == 65521)
-            sage: X.detect_congruence().check()
+            sage: assert(X.base_ring().characteristic() == 61001)              # optional - macaulay2
+            sage: X.detect_congruence().check()                                # optional - macaulay2
             -- running Macaulay2 function detectCongruence()... --
             number lines contained in the image of the cubic map and passing through a general point: 8
             number 2-secant lines = 7
@@ -2448,18 +2495,6 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             to: surface of degree 7 and sectional genus 0 in PP^5 cut out by 13 hypersurfaces of degree 3
             in: PP^5
 
-            sage: X = fourfold("prebuilt-example-in-P7",2); X
-            Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2 containing a surface of degree 9 and sectional genus 3 in PP^7 cut out by 12 hypersurfaces of degree 2
-            sage: X.detect_congruence().check()
-            -- running Macaulay2 function detectCongruence()... --
-            number lines contained in the image of the quadratic map and passing through a general point: 18
-            number 1-secant lines = 9
-            number 3-secant conics = 8
-            number 5-secant cubics = 1
-            -- function detectCongruence() has terminated. --
-            Congruence of 5-secant cubic curves
-            to: surface of degree 9 and sectional genus 3 in PP^7 cut out by 12 hypersurfaces of degree 2
-            in: complete intersection of type (2, 2) in PP^7
         """
         try:
             return self._macaulay2_detect_congruence
@@ -2567,10 +2602,10 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
 
             sage: X = fourfold(surface(1,ambient=7)); X
             Complete intersection of 3 quadrics in PP^7 of discriminant 31 = 8*4-1^2 containing a plane in PP^7
-            sage: T = X.Castelnuovo(verbose=False); T
+            sage: T = X.Castelnuovo(verbose=False); T                                                             # optional - macaulay2
             surface of degree 9 and sectional genus 9 in PP^4 cut out by 4 hypersurfaces of degrees (3, 4, 4, 4)
-            sage: building = T.building() # a tuple of 4 objects obtained in the construction of T
-            sage: building[0] # the first of which is the Fano map
+            sage: building = T.building() # a tuple of 4 objects obtained in the construction of T                # optional - macaulay2
+            sage: building[0] # the first of which is the Fano map                                                # optional - macaulay2
             dominant rational map defined by forms of degree 1
             source: complete intersection of type (2, 2) in PP^7
             target: PP^4
@@ -2629,10 +2664,10 @@ class Cubic_fourfold(Hodge_special_fourfold):
 
             sage: X = fourfold(surface(3,1,1)); X
             Cubic fourfold of discriminant 14 = 3*10-4^2 containing a rational surface of degree 4 and sectional genus 0 in PP^5 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
-            sage: T = X.K3(verbose=False); T
+            sage: T = X.K3(verbose=False); T                                                            # optional - macaulay2
             surface of degree 14 and sectional genus 8 in PP^8 cut out by 15 hypersurfaces of degree 2
-            sage: building = T.building() # a tuple of 4 objects obtained in the construction of T
-            sage: building[0] # the first of which is the Fano map
+            sage: building = T.building() # a tuple of 4 objects obtained in the construction of T      # optional - macaulay2
+            sage: building[0] # the first of which is the Fano map                                      # optional - macaulay2
             dominant rational map defined by forms of degree 2
             source: PP^5
             target: quadric hypersurface in PP^5
@@ -2649,9 +2684,9 @@ class GushelMukai_fourfold(Hodge_special_fourfold):
 
     TESTS::
 
-        sage: X = fourfold("17", GF(33331)); X
+        sage: X = fourfold("17", GF(33331)); X                  # optional - macaulay2
         Gushel-Mukai fourfold of discriminant 20 containing a surface of degree 9 and sectional genus 2 in PP^8 cut out by 19 hypersurfaces of degree 2, class of the surface in GG(1,4): (6, 3)
-        sage: assert(X.base_ring().characteristic() == 33331)
+        sage: assert(X.base_ring().characteristic() == 33331)   # optional - macaulay2
 
     """
     def _repr_(self):
@@ -2685,12 +2720,12 @@ class GushelMukai_fourfold(Hodge_special_fourfold):
 
         EXAMPLES::
 
-            sage: X = fourfold('6'); X
+            sage: X = fourfold('6'); X                                                                # optional - macaulay2
             Gushel-Mukai fourfold of discriminant 10('') containing a plane in PP^8, class of the surface in GG(1,4): (1, 0)
-            sage: T = X.K3(verbose=False); T
+            sage: T = X.K3(verbose=False); T                                                          # optional - macaulay2
             surface of degree 10 and sectional genus 6 in PP^6 cut out by 6 hypersurfaces of degree 2
-            sage: building = T.building() # a tuple of 4 objects obtained in the construction of T
-            sage: building[0] # the first of which is the Fano map
+            sage: building = T.building() # a tuple of 4 objects obtained in the construction of T    # optional - macaulay2
+            sage: building[0] # the first of which is the Fano map                                    # optional - macaulay2
             dominant rational map defined by forms of degree 1
             source: 5-dimensional variety of degree 5 in PP^8 cut out by 5 hypersurfaces of degree 2
             target: quadric hypersurface in PP^5
@@ -2827,19 +2862,19 @@ def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
 
         sage: S_sage = surface(3,1,1)
         sage: V = S_sage.ambient_space()
-        sage: S_m2 = macaulay2(S_sage)
-        sage: assert(_from_macaulay2_to_sage(S_m2,V) is S_sage)
-        sage: Y_m2 = S_m2.ambient()
-        sage: Y_sage = _from_macaulay2_to_sage(Y_m2,V)
-        sage: assert(macaulay2(Y_sage) is Y_m2)
-        sage: Z_m2 = S_m2.point()
-        sage: Z_sage = _from_macaulay2_to_sage(Z_m2,V)
-        sage: assert(macaulay2(Z_sage) is Z_m2)
-        sage: X_sage = fourfold(S_sage)
-        sage: X_m2 = macaulay2(X_sage)
-        sage: assert(_from_macaulay2_to_sage(X_m2,V) is X_sage)
-        sage: assert(macaulay2(X_sage.surface()) == X_m2.surface())
-        sage: assert(macaulay2(X_sage.ambient_fivefold()) == X_m2.ambientFivefold())
+        sage: S_m2 = macaulay2(S_sage)                                                 # optional - macaulay2
+        sage: assert(_from_macaulay2_to_sage(S_m2,V) is S_sage)                        # optional - macaulay2
+        sage: Y_m2 = S_m2.ambient()                                                    # optional - macaulay2
+        sage: Y_sage = _from_macaulay2_to_sage(Y_m2,V)                                 # optional - macaulay2
+        sage: assert(macaulay2(Y_sage) is Y_m2)                                        # optional - macaulay2
+        sage: Z_m2 = S_m2.point()                                                      # optional - macaulay2
+        sage: Z_sage = _from_macaulay2_to_sage(Z_m2,V)                                 # optional - macaulay2
+        sage: assert(macaulay2(Z_sage) is Z_m2)                                        # optional - macaulay2
+        sage: X_sage = fourfold(S_sage)                                                # optional - macaulay2
+        sage: X_m2 = macaulay2(X_sage)                                                 # optional - macaulay2
+        sage: assert(_from_macaulay2_to_sage(X_m2,V) is X_sage)                        # optional - macaulay2
+        sage: assert(macaulay2(X_sage.surface()) == X_m2.surface())                    # optional - macaulay2
+        sage: assert(macaulay2(X_sage.ambient_fivefold()) == X_m2.ambientFivefold())   # optional - macaulay2
 
     """
     if not isinstance(X,sage.interfaces.abc.Macaulay2Element):
@@ -2872,14 +2907,13 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
 
     TESTS::
 
-        sage: S = surface(3,1,1)
-        sage: S2 = macaulay2(S)
-        sage: f = S2.parametrize().inverse()
-        sage: g = _from_macaulay2map_to_sagemap(f); g
+        sage: C = macaulay2(projective_variety(Veronese(1,4).to_built_in_variety()))       # optional - macaulay2
+        sage: f = C.parametrize().inverse()                                                # optional - macaulay2
+        sage: g = _from_macaulay2map_to_sagemap(f); g                                      # optional - macaulay2
         birational map defined by forms of degree 1
-        source: surface of degree 4 and sectional genus 0 in PP^5 cut out by 6 hypersurfaces of degree 2
-        target: PP^2
-        sage: assert(macaulay2(g) is f)
+        source: curve of degree 4 and arithmetic genus 0 in PP^4 cut out by 6 hypersurfaces of degree 2
+        target: PP^1
+        sage: assert(macaulay2(g) is f)                                                    # optional - macaulay2
 
     """
     if not isinstance(f,sage.interfaces.abc.Macaulay2Element):
@@ -2893,7 +2927,10 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
             Sage_Source = _from_macaulay2_to_sage(f.source(), ProjectiveSpace(f.source().ambient().ring().sage()))
         if Sage_Target is None:
             Sage_Target = _from_macaulay2_to_sage(f.target(), ProjectiveSpace(f.target().ambient().ring().sage()))
-        polys = f.entries().flatten().sage()
+        if (macaulay2('SpecialFanoFourfolds.Options.Version >= "2.7.1"')).sage():
+            polys = f.entries().flatten().sage()
+        else:
+            polys = f.matrix().entries().flatten().sage()
         s = dict(zip(matrix(polys).base_ring().gens(), Sage_Source.ambient().coordinate_ring().gens()))
         polys = [pol.subs(s) for pol in polys]
         f._sage_object = Rational_map_between_embedded_projective_varieties(Sage_Source,Sage_Target,polys)
@@ -2910,7 +2947,7 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
             f._sage_object._closure_of_image = Z
         if f._sage_object._is_morphism is not True and (not hasattr(f._sage_object,"_list_of_representatives_of_map")) and (not f.toRationalMap().sharp('"maps"')._operator('===',macaulay2('null')).sage()):
             assert(macaulay2(f._sage_object) is f)
-            f._sage_object._representatives(verbose=False,UseMacaulay2=True)
+            f._sage_object._representatives(verbose=False,algorithm='macaulay2')
             assert(hasattr(f._sage_object,"_list_of_representatives_of_map"))
         return f._sage_object
 
@@ -2951,65 +2988,21 @@ def update_macaulay2_packages():
     print('## You should restart Sage and reload this module.')
 
 def _set_macaulay2_():
-    r"""This function checks and sets ``Macaulay2``,
-        see https://doc.sagemath.org/html/en/reference/interfaces/sage/interfaces/macaulay2.html.
-    """
-    try:
-        assert(macaulay2.version() >= (1, 21))
-    except RuntimeError as err:
+    r"""Setting of ``Macaulay2``."""
+    if not (Macaulay2().is_present() and macaulay2.version() >= (1, 21)):
         if __name__ == "__main__":
-            raise RuntimeError(err)
+            print("Please, install Macaulay2 version 1.21 or newer to use the module sff.py")
         return
-    except AssertionError as err:
-        if __name__ == "__main__":
-            raise RuntimeError("required Macaulay2, version 1.21 or newer")
-        return
-    except Exception:
-        if __name__ == "__main__":
-            raise Exception("something went wrong with Macaulay2")
-        return
-
     macaulay2('needsPackage "SpecialFanoFourfolds"')
+    if __name__ == "__main__" and not (macaulay2('SpecialFanoFourfolds.Options.Version >= "2.7.1"')).sage():
+        print(r"""Your version of some Macaulay2 package is outdated. Please, execute the command:
 
-    if not (macaulay2('Cremona.Options.Version >= "5.2.1"')).sage():
-        if __name__ == "__main__":
-            print(r"""Your version of the Macaulay2 package Cremona is outdated (required version 5.2.1 or newer);"
-you can manually download the latest version from
-https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
-To automatically download the latest version of the package in your current directory,
-you may execute the following command in a Unix/Linux shell:
+update_macaulay2_packages()
 
-curl -s -o Cremona.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona.m2 && mkdir -p Cremona && curl -s -o Cremona/tests.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/tests.m2 && curl -s -o Cremona/documentation.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2 && curl -s -o Cremona/examples.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/examples.m2 &&curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
+to download in your current directory all the updated packages needed to the functions of the module sff.py.
+
+Alternatively, you may execute the following command in a Unix/Linux shell: curl -s -o Cremona.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona.m2 && mkdir -p Cremona && curl -s -o Cremona/tests.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/tests.m2 && curl -s -o Cremona/documentation.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2 && curl -s -o Cremona/examples.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/examples.m2 &&curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
 """)
-            update_macaulay2_packages()
-        return
-
-    if not (macaulay2('MultiprojectiveVarieties.Options.Version >= "2.7.1"')).sage():
-        if __name__ == "__main__":
-            print(r"""Your version of the Macaulay2 package MultiprojectiveVarieties is outdated (required version 2.7.1 or newer);"
-you can manually download the latest version from
-https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
-To automatically download the latest version of the package in your current directory,
-you may execute the following command in a Unix/Linux shell:
-
-curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
-""")
-            update_macaulay2_packages()
-        return
-
-    if not (macaulay2('SpecialFanoFourfolds.Options.Version >= "2.7.1"')).sage():
-        if __name__ == "__main__":
-            print(r"""Your version of the Macaulay2 package SpecialFanoFourfolds is outdated (required version 2.7.1 or newer);"
-you can manually download the latest version from
-https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages.
-To automatically download the latest version of the package in your current directory,
-you may execute the following command in a Unix/Linux shell:
-
-curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2
-""")
-            update_macaulay2_packages()
-        return
-
     macaulay2.options.after_print = True
     macaulay2('importFrom_MultiprojectiveVarieties {"coordinates"}')
     macaulay2('importFrom_SpecialFanoFourfolds {"eulerCharacteristic", "numberNodes", "fanoMap", "recognize"}')
@@ -3054,7 +3047,14 @@ removeUnderscores MultirationalMap := f -> (
 removeUnderscores (EmbeddedProjectiveVariety,MultirationalMap) := (X,f) -> (
     if f.cache#?("removeUnderscores",X) then return f.cache#("removeUnderscores",X);
     g := removeUnderscores f;
-    h := (Hom(X,target g)) entries sub(matrix entries g,vars ring ambient X);
+    local h;
+    if SpecialFanoFourfolds.Options.Version >= "2.7.1" then (
+        h = (Hom(X,target g)) entries sub(matrix entries g,vars ring ambient X);
+    ) else (
+        h = multirationalMap rationalMap map(ring X,ring target g,sub(matrix g,vars ring ambient X));
+        assert(ring source h === ring X);
+        h#"source" = X;
+    );
     h.cache#("removeUnderscores",X) = h;
     f.cache#("removeUnderscores",X) = h
 );
@@ -3095,5 +3095,5 @@ _set_macaulay2_()
 
 if __name__ == "__main__":
     print("""┌──────────────────────────────────────┐
-│ sff.py version 1.0, date: 2023-05-14 │
+│ sff.py version 1.0, date: 2023-05-15 │
 └──────────────────────────────────────┘""")
