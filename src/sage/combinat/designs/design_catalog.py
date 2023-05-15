@@ -119,5 +119,3 @@ lazy_import('sage.combinat.designs.orthogonal_arrays',
 
 lazy_import('sage.combinat.designs.gen_quadrangles_with_spread',
             ('generalised_quadrangle_with_spread', 'generalised_quadrangle_hermitian_with_ovoid'))
-
-lazy_import('sage.combinat.designs.covering_array', 'CoveringArray')
