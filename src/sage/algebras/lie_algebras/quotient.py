@@ -242,11 +242,11 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
 
         TESTS::
 
-            sage: L.<x,y,z> = LieAlgebra(SR, {('x','y'): {'x':1}})
-            sage: K = L.quotient(y)
-            sage: K.dimension()
+            sage: L.<x,y,z> = LieAlgebra(SR, {('x','y'): {'x':1}})                      # optional - sage.symbolic
+            sage: K = L.quotient(y)                                                     # optional - sage.symbolic
+            sage: K.dimension()                                                         # optional - sage.symbolic
             1
-            sage: TestSuite(K).run()
+            sage: TestSuite(K).run()                                                    # optional - sage.symbolic
         """
         B = L.basis()
         sm = L.module().submodule_with_basis([I.reduce(B[i]).to_vector()

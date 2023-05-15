@@ -37,12 +37,12 @@ def unpickle_QuaternionAlgebraElement_number_field_v0(*args):
     """
     EXAMPLES::
 
-        sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a); z = i + j
-        sage: f, t = z.__reduce__()
+        sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a); z = i + j                               # optional - sage.symbolic
+        sage: f, t = z.__reduce__()                                                                                 # optional - sage.symbolic
         sage: import sage.algebras.quaternion_algebra_element
-        sage: sage.algebras.quaternion_algebra_element.unpickle_QuaternionAlgebraElement_number_field_v0(*t)
+        sage: sage.algebras.quaternion_algebra_element.unpickle_QuaternionAlgebraElement_number_field_v0(*t)        # optional - sage.symbolic
         i + j
-        sage: sage.algebras.quaternion_algebra_element.unpickle_QuaternionAlgebraElement_number_field_v0(*t) == z
+        sage: sage.algebras.quaternion_algebra_element.unpickle_QuaternionAlgebraElement_number_field_v0(*t) == z   # optional - sage.symbolic
         True
     """
     return QuaternionAlgebraElement_number_field(*args)

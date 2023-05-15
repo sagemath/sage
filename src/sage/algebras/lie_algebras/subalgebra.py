@@ -75,32 +75,32 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
     Elements of the ambient Lie algebra can be reduced modulo an
     ideal or subalgebra::
 
-        sage: L.<X,Y,Z> = LieAlgebra(SR, {('X','Y'): {'Z': 1}})
-        sage: I = L.ideal(Y)
-        sage: I.reduce(X + 2*Y + 3*Z)
+        sage: L.<X,Y,Z> = LieAlgebra(SR, {('X','Y'): {'Z': 1}})                         # optional - sage.symbolic
+        sage: I = L.ideal(Y)                                                            # optional - sage.symbolic
+        sage: I.reduce(X + 2*Y + 3*Z)                                                   # optional - sage.symbolic
         X
-        sage: S = L.subalgebra(Y)
-        sage: S.reduce(X + 2*Y + 3*Z)
+        sage: S = L.subalgebra(Y)                                                       # optional - sage.symbolic
+        sage: S.reduce(X + 2*Y + 3*Z)                                                   # optional - sage.symbolic
         X + 3*Z
 
     The reduction gives elements in a fixed complementary subspace.
     When the base ring is a field, the complementary subspace is spanned by
     those basis elements which are not leading supports of the basis::
 
-        sage: I =  L.ideal(X + Y)
-        sage: I.basis()
+        sage: I =  L.ideal(X + Y)                                                       # optional - sage.symbolic
+        sage: I.basis()                                                                 # optional - sage.symbolic
         Family (X + Y, Z)
-        sage: el = var('x')*X + var('y')*Y + var('z')*Z; el
+        sage: el = var('x')*X + var('y')*Y + var('z')*Z; el                             # optional - sage.symbolic
         x*X + y*Y + z*Z
-        sage: I.reduce(el)
+        sage: I.reduce(el)                                                              # optional - sage.symbolic
         (x-y)*X
 
     Giving a different ``order`` may change the reduction of elements::
 
-        sage: I =  L.ideal(X + Y, order=lambda s: ['Z','Y','X'].index(s))
-        sage: I.basis()
+        sage: I =  L.ideal(X + Y, order=lambda s: ['Z','Y','X'].index(s))               # optional - sage.symbolic
+        sage: I.basis()                                                                 # optional - sage.symbolic
         Family (Z, X + Y)
-        sage: I.reduce(el)
+        sage: I.reduce(el)                                                              # optional - sage.symbolic
         (-x+y)*Y
 
     A subalgebra of a subalgebra is a subalgebra of the original::

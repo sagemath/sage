@@ -461,8 +461,8 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
 
     A quotient type Lie algebra morphism::
 
-        sage: K.<A,B> = LieAlgebra(SR, abelian=True)
-        sage: L.morphism({X: A, Y: B})
+        sage: K.<A,B> = LieAlgebra(SR, abelian=True)                                    # optional - sage.symbolic
+        sage: L.morphism({X: A, Y: B})                                                  # optional - sage.symbolic
         Lie algebra morphism:
           From: Lie algebra on 4 generators (X, Y, Z, W) over Rational Field
           To:   Abelian Lie algebra on 2 generators (A, B) over Symbolic Ring
