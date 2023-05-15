@@ -1770,11 +1770,11 @@ class ExteriorAlgebra(CliffordAlgebra):
 
         Check :trac:`34694`::
 
-            sage: E = ExteriorAlgebra(SR,'e',3)
-            sage: E.inject_variables()
+            sage: E = ExteriorAlgebra(SR,'e',3)                                         # optional - sage.symbolic
+            sage: E.inject_variables()                                                  # optional - sage.symbolic
             Defining e0, e1, e2
-            sage: a = (e0*e1).interior_product(e0)
-            sage: a * e0
+            sage: a = (e0*e1).interior_product(e0)                                      # optional - sage.symbolic
+            sage: a * e0                                                                # optional - sage.symbolic
             -e0*e1
         """
         sgn = True
