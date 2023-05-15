@@ -746,13 +746,18 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 from sage.rings.integer_ring import ZZ
                 point = [ZZ.one()] * n
             v = sum(point[i-1] * weights[i] for i in weights.keys())
-            from sage.geometry.polyhedron.constructor import Polyhedron
-            from sage.rings.qqbar import AA, QQbar
-            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             vertices = [v*w for w in self]
-            if base_ring is None and v.base_ring() in [UniversalCyclotomicField(), QQbar]:
-                vertices = [v.change_ring(AA) for v in vertices]
-                base_ring = AA
+            if base_ring is None:
+                import sage.rings.abc
+                try:
+                    from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+                except ImportError:
+                    UniversalCyclotomicField = ()
+                if isinstance(v.base_ring(), [UniversalCyclotomicField, sage.rings.abc.AlgebraicField_common]):
+                    from sage.rings.qqbar import AA
+                    vertices = [v.change_ring(AA) for v in vertices]
+                    base_ring = AA
+            from sage.geometry.polyhedron.constructor import Polyhedron
             return Polyhedron(vertices=vertices, base_ring=base_ring)
 
     class ElementMethods:

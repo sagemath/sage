@@ -2796,7 +2796,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                      over Univariate Polynomial Ring in x over Rational Field
                     sage: class ANewRealizationOfA(CombinatorialFreeModule):            # optional - sage.combinat sage.modules
                     ....:     pass
-                    sage: category = A.Realizations() & Algebras(QQ[x]).WithBasis()     # optional - sage.combinat sage.modules
+                    sage: category = A.Realizations() & Algebras(QQ['x']).WithBasis()   # optional - sage.combinat sage.modules
                     sage: R = ANewRealizationOfA(A.base_ring(), A.F().basis().keys(),   # optional - sage.combinat sage.modules
                     ....:                        category=category)
                     sage: R in A.realizations()  # indirect doctest                     # optional - sage.combinat sage.modules
