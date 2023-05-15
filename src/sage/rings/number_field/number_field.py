@@ -8285,7 +8285,8 @@ class NumberField_absolute(NumberField_generic):
             sage: K.coerce(sqrt(2))
             Traceback (most recent call last):
             ...
-            TypeError: no canonical coercion from Symbolic Ring to Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
+            TypeError: no canonical coercion from Symbolic Ring to Number Field in a
+            with defining polynomial x^2 - 2 with a = 1.414213562373095?
 
         TESTS::
 

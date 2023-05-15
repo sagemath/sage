@@ -49,7 +49,7 @@
     namespace package. Type import_statements("SOME_IDENTIFIER") to find a more specific import,
     or use 'sage --fiximports' to fix automatically in the source file.
   # Keep in sync with SAGE_ROOT/src/sage/misc/replace_dot_all.py
-  pattern: 'from\s+sage(|[.](arith|categories|combinat|crypto|databases|data_structures|dynamics|ext|game_theory|games|graphs|groups|interfaces|manifolds|matrix|matroids|misc|modules|monoids|numerical|probability|quadratic_forms|quivers|rings|sat|schemes|sets|stats|tensor)[a-z0-9_.]*|[.]libs)[.]all\s+import'
+  pattern: 'from\s+sage(|[.](arith|categories|combinat|crypto|databases|data_structures|dynamics|ext|game_theory|games|graphs|groups|interfaces|manifolds|matrix|matroids|misc|modules|monoids|numerical|probability|quadratic_forms|quivers|rings|sat|schemes|sets|stats|symbolic|tensor)[a-z0-9_.]*|[.]libs)[.]all\s+import'
   # imports from .all are allowed in all.py; also allow in some modules that need sage.all
   filePattern: '(.*/|)(?!(all|benchmark|dev_tools|parsing|sage_eval))[^/.]*[.](py|pyx|pxi)$'
 

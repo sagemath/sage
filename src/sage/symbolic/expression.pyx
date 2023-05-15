@@ -1053,9 +1053,9 @@ cdef class Expression(Expression_abc):
 
         Check if :trac:`7876` is fixed::
 
-            sage: (1/2-1/2*I )*sqrt(2)
+            sage: (1/2-1/2*I)*sqrt(2)
             -(1/2*I - 1/2)*sqrt(2)
-            sage: latex((1/2-1/2*I )*sqrt(2))
+            sage: latex((1/2-1/2*I)*sqrt(2))
             -\left(\frac{1}{2} i - \frac{1}{2}\right) \, \sqrt{2}
 
         Check if :trac:`9632` is fixed::
@@ -2844,7 +2844,7 @@ cdef class Expression(Expression_abc):
 
     def _is_registered_constant_(self):
         """
-        Return True if this symbolic expression is internally represented as
+        Return ``True`` if this symbolic expression is internally represented as
         a constant.
 
         This function is intended to provide an interface to query the internal
@@ -7780,6 +7780,8 @@ cdef class Expression(Expression_abc):
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.fraction_field import FractionField
+        from sage.symbolic.ring import SR
+
         nu = SR(self.numerator()).polynomial(base_ring)
         de = SR(self.denominator()).polynomial(base_ring)
         vars = sorted(set(nu.variables() + de.variables()), key=repr)
@@ -13235,6 +13237,7 @@ cdef class Expression(Expression_abc):
             integral, _normalize_integral_input
         R = self._parent
         if isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing):
+            from sage.symbolic.ring import SR
             f = SR(self)
             f, v, a, b = _normalize_integral_input(f, *args)
             # Definite integral with respect to a positional variable.
@@ -13779,6 +13782,8 @@ cpdef new_Expression(parent, x):
         exp = x
     elif isinstance(x, Factorization):
         from sage.misc.misc_c import prod
+        from sage.symbolic.ring import SR
+
         return prod([SR(p)**e for p,e in x], SR(x.unit()))
     elif x in Sets():
         from sage.rings.integer_ring import ZZ
@@ -13854,6 +13859,7 @@ cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=Tr
 
         # tuples can be packed into exprseq
         if isinstance(x, (tuple, list)):
+            from sage.symbolic.ring import SR
             for e in x:
                 obj = SR._force_pyobject(e, force=(not recursive))
                 ex_v.push_back((<Expression>obj)._gobj)

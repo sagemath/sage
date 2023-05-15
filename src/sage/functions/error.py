@@ -46,10 +46,10 @@ from sage.libs.mpmath import utils as mpmath_utils
 from sage.symbolic.expression import Expression
 from sage.functions.all import exp
 from sage.misc.functional import sqrt
-from sage.symbolic.constants import pi
+from sage.symbolic.constants import I, pi
 from sage.rings.rational import Rational
 from sage.rings.infinity import unsigned_infinity
-from sage.symbolic.expression import I
+
 
 class Function_erf(BuiltinFunction):
     r"""
