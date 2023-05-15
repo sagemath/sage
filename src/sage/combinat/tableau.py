@@ -955,6 +955,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
               5
               3  4
               1  2  3
+            sage: Tableaux.options.convention="russian"
+            sage: T.pp()
+             5    4    3
+                3    2
+                   1
             sage: Tableaux.options._reset()
         """
         print(self._repr_diagram())
@@ -973,7 +978,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             Tableaux.options.convention="english"
             sphinx_plot(t.plot())
 
-        Whereas if French notation is set, the first row of the tableau is on
+        If French notation is set, the first row of the tableau is on
         the bottom:
 
         .. PLOT::
@@ -981,6 +986,16 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
             t = Tableau([[1,2,3,4],[2,3],[5]])
             Tableaux.options.convention="french"
+            sphinx_plot(t.plot())
+            Tableaux.options.convention="english"
+
+        If Russian notation is set, we tilt the French by 45 degrees:
+
+        .. PLOT::
+            :width: 200 px
+
+            t = Tableau([[1,2,3,4],[2,3],[5]])
+            Tableaux.options.convention="russian"
             sphinx_plot(t.plot())
             Tableaux.options.convention="english"
 
@@ -1013,6 +1028,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if descents and not self.is_standard():
             raise ValueError("the tableau must be standard for 'descents=True'")
 
+
         # For English we build up to down for French, down to up
         if self.parent().options('convention') == "English":
             m = 1
@@ -1020,24 +1036,74 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             m = -1
 
         p = self.shape()
-
-        G = line([(0,0),(p[0],0)], axes=False, figsize=1.5)
-        for i in range(len(p)):
-            G += line([(0,m*(-i-1)), (p[i],m*(-i-1))])
-
         r = p.conjugate()
-        G += line([(0,0),(0,m*-r[0])])
+
+        # Increases the height
+        if self.parent().options('convention') == "Russian":
+            pp = p # h
+            rr = r
+            h = [-i-1 for i in range(len(p))] # v
+            v = [i+1 for i in range(len(r))] # d
+
+        else:
+            pp = [0] * len(p)
+            rr = [0] * len(r)
+            h = [0] * len(p)
+            v = [0] * len(r)
+
+
+        G = line([(0,0),(p[0],pp[0])], axes=False, figsize=1.5)
+        for i in range(len(p)):
+            G += line([(h[i], m*(-i-1)), (h[i]+p[i], pp[i]+m*(-i-1))])
+
+        G += line([(0,0),(-rr[0],m*-r[0])])
         for i in range(len(r)):
-            G += line([(i+1,0),(i+1,m*-r[i])])
+            G += line([(i+1,v[i]),(i+1-rr[i],v[i]+m*-r[i])])
 
         if descents:
             t = StandardTableau(self)
             for i in t.standard_descents():
                 c = t.cells_containing(i)[0]
-                G += polygon([(c[1],m*c[0]), (c[1]+1,m*c[0]), (c[1]+1,m*(-c[0]-1)), (c[1],m*(-c[0]-1))], rgbcolor=(1,0,1))
+                if self.parent().options('convention') == "Russian":
+                    G += polygon([(c[1]+1-v[c[0]],m*(-c[1]-c[0])),
+                                  (c[1]+2-v[c[0]],m*(-c[1]-c[0]-1)),
+                                  (c[1]+1-v[c[0]],m*(-c[1]-c[0]-2)),
+                                  (c[1]-v[c[0]],m*(-c[1]-c[0]-1))
+                                  ],
+                                 rgbcolor=(1,0,1)
+                                 )
+                else:
+                    G += polygon([(c[1],m*-c[0]),
+                                  (c[1]+1,m*-c[0]),
+                                  (c[1]+1,m*(-c[0]-1)),
+                                  (c[1],m*(-c[0]-1))
+                                  ],
+                                 rgbcolor=(1,0,1))
 
-        for c in self.cells():
-            G += text(str(self.entry(c)), (c[1]+0.5,m*(-c[0]-0.5)))
+        if self.parent().options('convention') == "Russian":
+            for c in self.cells():
+                G += text(str(self.entry(c)), (c[1]+1-v[c[0]], m*(-c[1]-c[0]-1)) )
+        else:
+            for c in self.cells():
+                G += text(str(self.entry(c)), (c[1]+0.5,m*(-c[0]-0.5)))
+
+#        G = line([(0,0),(p[0],0)], axes=False, figsize=1.5)
+#        for i in range(len(p)):
+#            G += line([(0,m*(-i-1)), (p[i],m*(-i-1))])
+#
+#        r = p.conjugate()
+#        G += line([(0,0),(0,m*-r[0])])
+#        for i in range(len(r)):
+#            G += line([(i+1,0),(i+1,m*-r[i])])
+#
+#        if descents:
+#            t = StandardTableau(self)
+#            for i in t.standard_descents():
+#                c = t.cells_containing(i)[0]
+#                G += polygon([(c[1],m*c[0]), (c[1]+1,m*c[0]), (c[1]+1,m*(-c[0]-1)), (c[1],m*(-c[0]-1))], rgbcolor=(1,0,1))
+#
+#        for c in self.cells():
+#            G += text(str(self.entry(c)), (c[1]+0.5,m*(-c[0]-0.5)))
 
         return G
 
