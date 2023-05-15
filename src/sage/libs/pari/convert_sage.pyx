@@ -181,10 +181,10 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: parent(gen_to_sage(f, {'x': x, 'y': y}))
         Multivariate Polynomial Ring in x, y over Rational Field
 
-        sage: x,y = SR.var('x,y')
-        sage: gen_to_sage(f, {'x': x, 'y': y})
+        sage: x,y = SR.var('x,y')                                                       # optional - sage.symbolic
+        sage: gen_to_sage(f, {'x': x, 'y': y})                                          # optional - sage.symbolic
         2/3*x^3 + x + y - 5/7
-        sage: parent(gen_to_sage(f, {'x': x, 'y': y}))
+        sage: parent(gen_to_sage(f, {'x': x, 'y': y}))                                  # optional - sage.symbolic
         Symbolic Ring
 
         sage: gen_to_sage(f)

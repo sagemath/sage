@@ -52,18 +52,18 @@ functions). For instance, if we want to use the PARI library to compute
 ``sqrt(pi)`` with a precision of 100 bits::
 
     sage: R = RealField(100)
-    sage: s = R(pi); s
+    sage: s = R(pi); s                                                                  # optional - sage.symbolic
     3.1415926535897932384626433833
-    sage: p = pari(s).sqrt()
-    sage: x = p.sage(); x    # wow, more digits than I expected!
+    sage: p = pari(s).sqrt()                                                            # optional - sage.symbolic
+    sage: x = p.sage(); x    # wow, more digits than I expected!                        # optional - sage.symbolic
     1.7724538509055160272981674833410973484
-    sage: x.prec()           # has precision 'improved' from 100 to 128?
+    sage: x.prec()           # has precision 'improved' from 100 to 128?                # optional - sage.symbolic
     128
-    sage: x == RealField(128)(pi).sqrt()  # sadly, no!
+    sage: x == RealField(128)(pi).sqrt()  # sadly, no!                                  # optional - sage.symbolic
     False
-    sage: R(x)               # x should be brought back to precision 100
+    sage: R(x)               # x should be brought back to precision 100                # optional - sage.symbolic
     1.7724538509055160272981674833
-    sage: R(x) == s.sqrt()
+    sage: R(x) == s.sqrt()                                                              # optional - sage.symbolic
     True
 
 Output precision for printing

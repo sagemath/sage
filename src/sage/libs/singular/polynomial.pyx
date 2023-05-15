@@ -470,10 +470,10 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
     Demonstrate that coefficients over non-atomic representated rings are
     properly parenthesized (:trac:`11186`)::
 
-        sage: x = var('x')
-        sage: K.<z> = QQ.extension(x^2 + x + 1)
-        sage: P.<v,w> = K[]
-        sage: latex((z+1)*v*w - z*w^2 + z*v + z^2*w + z + 1)
+        sage: x = var('x')                                                              # optional - sage.symbolic
+        sage: K.<z> = QQ.extension(x^2 + x + 1)                                         # optional - sage.symbolic
+        sage: P.<v,w> = K[]                                                             # optional - sage.symbolic
+        sage: latex((z+1)*v*w - z*w^2 + z*v + z^2*w + z + 1)                            # optional - sage.symbolic
         \left(z + 1\right) v w - z w^{2} + z v + \left(-z - 1\right) w + z + 1
 
     Demonstrate that there are no extra blanks in latex expression of multivariate

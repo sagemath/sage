@@ -234,34 +234,34 @@ def mpmath_to_sage(x, prec):
 
     A real example::
 
-        sage: RealField(100)(pi)
+        sage: RealField(100)(pi)                                                        # optional - sage.symbolic
         3.1415926535897932384626433833
-        sage: t = RealField(100)(pi)._mpmath_(); t
+        sage: t = RealField(100)(pi)._mpmath_(); t                                      # optional - sage.symbolic
         mpf('3.1415926535897932')
-        sage: a.mpmath_to_sage(t, 100)
+        sage: a.mpmath_to_sage(t, 100)                                                  # optional - sage.symbolic
         3.1415926535897932384626433833
 
     We can ask for more precision, but the result is undefined::
 
-        sage: a.mpmath_to_sage(t, 140) # random
+        sage: a.mpmath_to_sage(t, 140) # random                                         # optional - sage.symbolic
         3.1415926535897932384626433832793333156440
-        sage: ComplexField(140)(pi)
+        sage: ComplexField(140)(pi)                                                     # optional - sage.symbolic
         3.1415926535897932384626433832795028841972
 
     A complex example::
 
-        sage: ComplexField(100)([0, pi])
+        sage: ComplexField(100)([0, pi])                                                # optional - sage.symbolic
         3.1415926535897932384626433833*I
-        sage: t = ComplexField(100)([0, pi])._mpmath_(); t
+        sage: t = ComplexField(100)([0, pi])._mpmath_(); t                              # optional - sage.symbolic
         mpc(real='0.0', imag='3.1415926535897932')
-        sage: sage.libs.mpmath.all.mpmath_to_sage(t, 100)
+        sage: sage.libs.mpmath.all.mpmath_to_sage(t, 100)                               # optional - sage.symbolic
         3.1415926535897932384626433833*I
 
     Again, we can ask for more precision, but the result is undefined::
 
-        sage: sage.libs.mpmath.all.mpmath_to_sage(t, 140) # random
+        sage: sage.libs.mpmath.all.mpmath_to_sage(t, 140) # random                      # optional - sage.symbolic
         3.1415926535897932384626433832793333156440*I
-        sage: ComplexField(140)([0, pi])
+        sage: ComplexField(140)([0, pi])                                                # optional - sage.symbolic
         3.1415926535897932384626433832795028841972*I
     """
     cdef RealNumber y
@@ -299,7 +299,7 @@ def sage_to_mpmath(x, prec):
         0.666666666666667
         sage: print(a.sage_to_mpmath(3+4*I, 53))
         (3.0 + 4.0j)
-        sage: print(a.sage_to_mpmath(1+pi, 53))
+        sage: print(a.sage_to_mpmath(1+pi, 53))                                         # optional - sage.symbolic
         4.14159265358979
         sage: a.sage_to_mpmath(infinity, 53)
         mpf('+inf')
@@ -379,12 +379,12 @@ def call(func, *args, **kwargs):
         1.95762943509305
         sage: a.call(a.quad, a.erf, [0,1])
         0.486064958112256
-        sage: a.call(a.gammainc, 3+4*I, 2/3, 1-pi*I, prec=100)
+        sage: a.call(a.gammainc, 3+4*I, 2/3, 1-pi*I, prec=100)                          # optional - sage.symbolic
         -274.18871130777160922270612331 + 101.59521032382593402947725236*I
         sage: x = (3+4*I).n(100)
         sage: y = (2/3).n(100)
-        sage: z = (1-pi*I).n(100)
-        sage: a.call(a.gammainc, x, y, z, prec=100)
+        sage: z = (1-pi*I).n(100)                                                       # optional - sage.symbolic
+        sage: a.call(a.gammainc, x, y, z, prec=100)                                     # optional - sage.symbolic
         -274.18871130777160922270612331 + 101.59521032382593402947725236*I
         sage: a.call(a.erf, infinity)
         1.00000000000000

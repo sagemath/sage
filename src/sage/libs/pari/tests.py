@@ -12,7 +12,7 @@ Creating PARI objects::
 
     sage: pari(Matrix(2,2,range(4)))
     [0, 1; 2, 3]
-    sage: pari(x^2-3)
+    sage: pari(x^2-3)                                                                   # optional - sage.symbolic
     x^2 - 3
 
 The following example caused Sage to crash before
