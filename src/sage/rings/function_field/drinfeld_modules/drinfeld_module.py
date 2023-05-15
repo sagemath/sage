@@ -1176,7 +1176,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         TESTS:
 
-        The generator must have positive degree (see PR #35519)::
+        The rank must be an ``Integer`` (see PR #35519)::
 
             sage: Fq = GF(25)
             sage: A.<T> = Fq[]
@@ -1186,7 +1186,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: isinstance(phi.rank(), Integer)
             True
         """
-        return Integer(self._gen.degree())
+        return self._gen.degree()
 
     def velu(self, isog):
         r"""
