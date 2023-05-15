@@ -31,7 +31,7 @@ from sage.categories.fields import Fields
 
 cdef class Octonion_generic(AlgebraElement):
     r"""
-    An octonian with generic parameters.
+    An octonion with generic parameters.
     """
     def __init__(self, parent, v):
         r"""
@@ -226,7 +226,7 @@ cdef class Octonion_generic(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- element of the octonian algebra as ``self``
+        - ``other`` -- element of the octonion algebra as ``self``
 
         EXAMPLES::
 
@@ -539,7 +539,7 @@ cdef class Octonion_generic(AlgebraElement):
 
 cdef class Octonion(Octonion_generic):
     r"""
-    An octonian.
+    An octonion.
 
     This is an element of the octonion algebra with parameters
     `a = b = c = -1`, which is a classical octonion number.
@@ -594,7 +594,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
     Let `R` be a commutative ring of characteristic not equal to `2`. The
     *octonion algebra* with parameters `a, b, c` is a non-associative
     non-commutative unital 8-dimensional `R`-algebra that is a deformation
-    of the usual octonions, which are when `a = b = c = -1`. The octonians
+    of the usual octonions, which are when `a = b = c = -1`. The octonions
     were originally constructed by Graves and independently discovered by
     Cayley (who due to first publishing them, they are sometimes called
     the Cayley numbers) and can also be built from the Cayley-Dickson
