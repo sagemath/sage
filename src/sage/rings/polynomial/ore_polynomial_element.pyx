@@ -2525,7 +2525,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: isinstance(a.degree(), Integer)
             True
 
-            ::
+        ::
 
             sage: R.<t> = OrePolynomialRing(GF(5)['T'], GF(5)['T'].frobenius_endomorphism())
             sage: isinstance((t + 1).degree(), Integer)
