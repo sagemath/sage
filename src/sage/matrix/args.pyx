@@ -187,7 +187,7 @@ cdef class MatrixArgs:
         sage: ma = MatrixArgs(2, 2, entries=pi); ma.finalized()                         # optional - sage.symbolic
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Symbolic Ring; typ=SCALAR; entries=pi>
-        sage: ma.matrix()
+        sage: ma.matrix()                                                               # optional - sage.symbolic
         [pi  0]
         [ 0 pi]
         sage: ma = MatrixArgs(ZZ, 2, 2, entries={(0,0): 7}); ma.finalized()

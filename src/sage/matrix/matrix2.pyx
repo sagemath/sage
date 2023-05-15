@@ -726,8 +726,8 @@ cdef class Matrix(Matrix1):
         (:trac:`12406`)::
 
             sage: A = matrix(QQ, 2, [1, 2, 3, 4])
-            sage: b = vector(RDF, [pi, e])
-            sage: A.solve_right(b)  # tol 1e-15
+            sage: b = vector(RDF, [pi, e])                                              # optional - sage.symbolic
+            sage: A.solve_right(b)  # tol 1e-15                                         # optional - sage.symbolic
             (-3.564903478720541, 3.353248066155167)
             sage: R.<t> = ZZ[]
             sage: b = vector(R, [1, t])
@@ -1721,7 +1721,7 @@ cdef class Matrix(Matrix1):
         These numbers are the coefficients of a modified Laguerre polynomial::
 
             sage: x = polygen(QQ)
-            sage: factorial(8) * laguerre(8,-x)
+            sage: factorial(8) * laguerre(8,-x)                                         # optional - sage.symbolic
             x^8 + 64*x^7 + 1568*x^6 + 18816*x^5 + 117600*x^4 + 376320*x^3 +
             564480*x^2 + 322560*x + 40320
 
@@ -10446,7 +10446,7 @@ cdef class Matrix(Matrix1):
         roots, though some small cases pass through.  ::
 
             sage: A = matrix(ZZ, 3, 3, range(9))
-            sage: A.QR()
+            sage: A.QR()                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: QR decomposition unable to compute square roots in Rational Field
@@ -15098,7 +15098,8 @@ cdef class Matrix(Matrix1):
 
         A matrix over a not-totally-real number field::
 
-            sage: K.<j> = NumberField(x^2+5)                                            # optional - sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<j> = NumberField(x^2 + 5)                                          # optional - sage.rings.number_field
             sage: M = matrix(K, [[1+j,1], [0,2*j]])                                     # optional - sage.rings.number_field
             sage: M.conjugate()                                                         # optional - sage.rings.number_field
             [-j + 1      1]
@@ -17902,7 +17903,8 @@ def _generic_clear_column(m):
 
         sage: L.<w> = NumberField(x^2 - x + 2)                                          # optional - sage.rings.number_field
         sage: OL = L.ring_of_integers(); w = OL(w)                                      # optional - sage.rings.number_field
-        sage: m = matrix(OL, 8, 4, [2*w - 2, 2*w + 1, -2, w, 2, -2,-2*w - 2, -2*w + 2, -w + 2, 2*w + 1, -w + 2, -w - 2, -2*w, 2*w, -w+ 2, w - 1, -2*w + 2, 2*w + 2, 2*w - 1, -w, 2*w + 2, -w + 2, 2, 2*w -1, w - 4, -2*w - 2, 2*w - 1, 0, 6, 7, 2*w + 1, 14])       # optional - sage.rings.number_field
+        sage: m = matrix(OL, 8, 4, [2*w - 2, 2*w + 1, -2, w, 2, -2, -2*w - 2, -2*w + 2, -w + 2, 2*w + 1, -w + 2, -w - 2, -2*w,              # optional - sage.rings.number_field
+        ....:     2*w, -w+ 2, w - 1, -2*w + 2, 2*w + 2, 2*w - 1, -w, 2*w + 2, -w + 2, 2, 2*w -1, w - 4, -2*w - 2, 2*w - 1, 0, 6, 7, 2*w + 1, 14])
         sage: s,t = m.echelon_form(transformation=True); t*m == s # indirect doctest    # optional - sage.rings.number_field
         True
         sage: s[0]                                                                      # optional - sage.rings.number_field
