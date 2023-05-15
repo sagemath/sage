@@ -218,7 +218,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     We can also plot various components of the ambient spaces::
 
         sage: L = RootSystem(['A',2]).ambient_space()
-        sage: L.plot()
+        sage: L.plot()                                                                  # optional - sage.plot sage.symbolic
         Graphics object consisting of 13 graphics primitives
 
     For more on plotting, see :ref:`sage.combinat.root_system.plot`.

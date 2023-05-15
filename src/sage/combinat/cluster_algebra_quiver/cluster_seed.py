@@ -66,12 +66,12 @@ class ClusterSeed(SageObject):
 
     - ``data`` -- can be any of the following::
 
-        * QuiverMutationType
-        * str - a string representing a QuiverMutationType or a common quiver type (see Examples)
-        * ClusterQuiver
-        * Matrix - a skew-symmetrizable matrix
-        * DiGraph - must be the input data for a quiver
-        * List of edges - must be the edge list of a digraph for a quiver
+      * :class:`QuiverMutationType`
+      * :class:`str` -- a string representing a :class:`QuiverMutationType` or a common quiver type (see Examples)
+      * :class:`ClusterQuiver`
+      * :class:`Matrix` -- a skew-symmetrizable matrix
+      * :class:`DiGraph` -- must be the input data for a quiver
+      * List of edges -- must be the edge list of a digraph for a quiver
 
     EXAMPLES::
 
@@ -110,24 +110,21 @@ class ClusterSeed(SageObject):
 
         sage: S = ClusterSeed(['A',4]); S._use_fpolys
         True
-
         sage: S._use_d_vec
         True
-
         sage: S._use_g_vec
         True
-
         sage: S._use_c_vec
         True
 
         sage: S = ClusterSeed(['A', 4]); S.use_fpolys(False); S._use_fpolys
         False
 
-        sage: S = ClusterSeed(DiGraph([['a', 'b'], ['c', 'b'], ['c', 'd'], ['e', 'd']]), frozen =
-        ....:     ['c']); S
+        sage: S = ClusterSeed(DiGraph([['a', 'b'], ['c', 'b'], ['c', 'd'], ['e', 'd']]),
+        ....:                 frozen=['c']); S
         A seed for a cluster algebra of rank 4 with 1 frozen variable
 
-        sage: S = ClusterSeed(['D', 4],user_labels = [-1, 0, 1, 2]);S
+        sage: S = ClusterSeed(['D', 4],user_labels = [-1, 0, 1, 2]); S
         A seed for a cluster algebra of rank 4 of type ['D', 4]
     """
 
@@ -367,14 +364,16 @@ class ClusterSeed(SageObject):
 
     def use_c_vectors(self, use=True, bot_is_c=False, force=False):
         r"""
-        Reconstruct c vectors from other data or initialize if no usable data exists.
+        Reconstruct c-vectors from other data or initialize if no usable data exists.
 
         Warning: Initialization may lead to inconsistent data.
 
         INPUT:
 
-        - ``use`` -- (default:True) If True, will use c vectors
-        - ``bot_is_c`` -- (default:False) If True and ClusterSeed self has self._m == self._n, then will assume bottom half of the extended exchange matrix is the c-matrix. If true, lets the ClusterSeed know c-vectors can be calculated.
+        - ``use`` -- (default: ``True``) If ``True``, will use c-vectors
+        - ``bot_is_c`` -- (default: ``False``) If ``True`` and :class:`ClusterSeed` ``self`` has ``self._m == self._n``,
+          then will assume bottom half of the extended exchange matrix is the c-matrix.
+          If ``True``, lets the :class:`ClusterSeed` know c-vectors can be calculated.
 
         EXAMPLES::
 
@@ -443,13 +442,13 @@ class ClusterSeed(SageObject):
 
     def use_g_vectors(self, use=True, force=False):
         r"""
-        Reconstruct g vectors from other data or initialize if no usable data exists.
+        Reconstruct g-vectors from other data or initialize if no usable data exists.
 
         Warning: Initialization may lead to inconsistent data.
 
         INPUT:
 
-        - ``use`` -- (default:True) If True, will use g vectors
+        - ``use`` -- (default: ``True``) If ``True``, will use g-vectors
 
         EXAMPLES::
 
@@ -524,13 +523,13 @@ class ClusterSeed(SageObject):
 
     def use_d_vectors(self, use=True, force=False):
         r"""
-        Reconstruct d vectors from other data or initialize if no usable data exists.
+        Reconstruct d-vectors from other data or initialize if no usable data exists.
 
         Warning: Initialization may lead to inconsistent data.
 
         INPUT:
 
-        - ``use`` -- (default:True) If True, will use d vectors
+        - ``use`` -- (default: ``True``) If ``True``, will use d-vectors
 
         EXAMPLES::
 
@@ -542,7 +541,8 @@ class ClusterSeed(SageObject):
             [ 0  0 -1  0]
             [ 0  0  0 -1]
 
-            sage: S = ClusterSeed(['A',4]); S.use_d_vectors(False); S.track_mutations(False); S.mutate(1); S.d_matrix()
+            sage: S = ClusterSeed(['A',4]); S.use_d_vectors(False)
+            sage: S.track_mutations(False); S.mutate(1); S.d_matrix()
             [-1  0  0  0]
             [ 0  1  0  0]
             [ 0  0 -1  0]
@@ -553,14 +553,16 @@ class ClusterSeed(SageObject):
             ...
             ValueError: Unable to calculate d-vectors. Need to use d vectors.
 
-            sage: S = ClusterSeed(['A',4]); S.use_d_vectors(False); S.track_mutations(False); S.mutate(1); S.d_matrix()
+            sage: S = ClusterSeed(['A',4]); S.use_d_vectors(False)
+            sage: S.track_mutations(False); S.mutate(1); S.d_matrix()
             [-1  0  0  0]
             [ 0  1  0  0]
             [ 0  0 -1  0]
             [ 0  0  0 -1]
             sage: S.use_fpolys(False)
             sage: S.use_d_vectors(True)
-            Warning: Initializing d-vectors at this point could lead to inconsistent seed data.
+            Warning: Initializing d-vectors at this point
+            could lead to inconsistent seed data.
 
             sage: S.use_d_vectors(True, force=True)
             sage: S.d_matrix()
@@ -610,9 +612,9 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``use`` -- (default:True) If True, will use F-polynomials
-        - ``user_labels`` -- (default:None) If set will overwrite the default cluster variable labels
-        - ``user_labels_prefix`` -- (default:None) If set will overwrite the default
+        - ``use`` -- (default: ``True``) If ``True``, will use F-polynomials
+        - ``user_labels`` -- (default: ``None``) If set, will overwrite the default cluster variable labels
+        - ``user_labels_prefix`` -- (default: ``None``) If set, will overwrite the default
 
         EXAMPLES::
 
@@ -621,11 +623,13 @@ class ClusterSeed(SageObject):
             sage: S.cluster()
             [x0, x1, x2, x3]
 
-            sage: S = ClusterSeed(['A',4]); S.use_fpolys(False); S.track_mutations(False); S.mutate(1)
+            sage: S = ClusterSeed(['A',4]); S.use_fpolys(False); S.track_mutations(False)
+            sage: S.mutate(1)
             sage: S.use_fpolys(True)
             Traceback (most recent call last):
             ...
-            ValueError: F-polynomials and Cluster Variables cannot be reconstructed from given data.
+            ValueError: F-polynomials and Cluster Variables cannot be reconstructed
+            from given data.
             sage: S.cluster()
             Traceback (most recent call last):
             ...
@@ -698,11 +702,11 @@ class ClusterSeed(SageObject):
         r"""
         Begins tracking the mutation path.
 
-        Warning: May initialize all other data to ensure that all c, d, and g vectors agree on the start of mutations.
+        Warning: May initialize all other data to ensure that all c-, d-, and g-vectors agree on the start of mutations.
 
         INPUT:
 
-        - ``use`` -- (default:True) If True, will begin filling the mutation path
+        - ``use`` -- (default: ``True``) If ``True``, will begin filling the mutation path
 
         EXAMPLES::
 
@@ -758,7 +762,7 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``user_labels`` -- The labels that need sanitizing
-        - ``user_labels_prefix`` -- (default:'x') The prefix to use for labels if integers given for labels
+        - ``user_labels_prefix`` -- (default: ``'x'``) The prefix to use for labels if integers given for labels
 
         EXAMPLES::
 
@@ -821,12 +825,12 @@ class ClusterSeed(SageObject):
 
     def set_c_matrix(self, data):
         r"""
-        Will force set the c matrix according to a matrix, a quiver, or a seed.
+        Will force set the c-matrix according to a matrix, a quiver, or a seed.
 
         INPUT:
 
-        - ``data`` -- The matrix to set the c matrix to.  Also allowed
-          to be a quiver or cluster seed, in which case the b_matrix
+        - ``data`` -- The matrix to set the c-matrix to.  Also allowed
+          to be a quiver or cluster seed, in which case the b-matrix
           is used.
 
         EXAMPLES::
@@ -841,7 +845,8 @@ class ClusterSeed(SageObject):
 
             sage: Y = matrix([[-1,0,1],[0,1,0],[1,0,0]])
             sage: S.set_c_matrix(Y)
-            C matrix does not look to be valid - there exists a column containing positive and negative entries.
+            C matrix does not look to be valid - there exists a column
+            containing positive and negative entries.
             Continuing...
 
             sage: Z = matrix([[1,0,1],[0,1,0],[2,0,2]])
@@ -872,7 +877,7 @@ class ClusterSeed(SageObject):
 
     def __eq__(self, other):
         r"""
-        Returns True iff ``self`` represent the same cluster seed as ``other`` and all tracked data agrees.
+        Return ``True`` iff ``self`` represent the same cluster seed as ``other`` and all tracked data agrees.
 
         EXAMPLES::
 
@@ -945,7 +950,7 @@ class ClusterSeed(SageObject):
 
     def _repr_(self):
         r"""
-        Returns the description of ``self``.
+        Return the description of ``self``.
 
         EXAMPLES::
 
@@ -976,25 +981,25 @@ class ClusterSeed(SageObject):
 
     def plot(self, circular=False, mark=None, save_pos=False, force_c=False, with_greens=False, add_labels=False):
         r"""
-        Returns the plot of the quiver of ``self``.
+        Return the plot of the quiver of ``self``.
 
         INPUT:
 
-        - ``circular`` -- (default:False) if True, the circular plot is chosen, otherwise >>spring<< is used.
-        - ``mark`` -- (default: None) if set to i, the vertex i is highlighted.
-        - ``save_pos`` -- (default:False) if True, the positions of the vertices are saved.
-        - ``force_c`` -- (default:False) if True, will show the frozen vertices even if they were never initialized
-        - ``with_greens`` -- (default:False) if True, will display the green vertices in green
-        - ``add_labels`` -- (default:False) if True, will use the initial variables as labels
+        - ``circular`` -- (default: ``False``) if ``True``, the circular plot is chosen, otherwise >>spring<< is used.
+        - ``mark`` -- (default: ``None``) if set to i, the vertex i is highlighted.
+        - ``save_pos`` -- (default: ``False``) if ``True``, the positions of the vertices are saved.
+        - ``force_c`` -- (default: ``False``) if ``True``, will show the frozen vertices even if they were never initialized
+        - ``with_greens`` -- (default: ``False``) if ``True``, will display the green vertices in green
+        - ``add_labels`` -- (default: ``False``) if ``True``, will use the initial variables as labels
 
         EXAMPLES::
 
             sage: S = ClusterSeed(['A',5])
-            sage: S.plot()
+            sage: S.plot()                                                              # optional - sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: S.plot(circular=True)
+            sage: S.plot(circular=True)                                                 # optional - sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: S.plot(circular=True, mark=1)
+            sage: S.plot(circular=True, mark=1)                                         # optional - sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
         """
         greens = []
@@ -1019,17 +1024,17 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``fig_size`` -- (default: 1) factor by which the size of the plot is multiplied.
-        - ``circular`` -- (default: False) if True, the circular plot is chosen, otherwise >>spring<< is used.
-        - ``mark`` -- (default: None) if set to i, the vertex i is highlighted.
-        - ``save_pos`` -- (default:False) if True, the positions of the vertices are saved.
-        - ``force_c`` -- (default:False) if True, will show the frozen vertices even if they were never initialized
-        - ``with_greens`` -- (default:False) if True, will display the green vertices in green
-        - ``add_labels`` -- (default:False) if True, will use the initial variables as labels
+        - ``circular`` -- (default: ``False``) if ``True``, the circular plot is chosen, otherwise >>spring<< is used.
+        - ``mark`` -- (default: ``None``) if set to i, the vertex i is highlighted.
+        - ``save_pos`` -- (default: ``False``) if ``True``, the positions of the vertices are saved.
+        - ``force_c`` -- (default: ``False``) if ``True``, will show the frozen vertices even if they were never initialized
+        - ``with_greens`` -- (default: ``False``) if ``True``, will display the green vertices in green
+        - ``add_labels`` -- (default: ``False``) if ``True``, will use the initial variables as labels
 
         TESTS::
 
             sage: S = ClusterSeed(['A',5])
-            sage: S.show() # long time
+            sage: S.show()  # long time                                                 # optional - sage.plot sage.symbolic
         """
         greens = []
         if with_greens:
@@ -1063,27 +1068,27 @@ class ClusterSeed(SageObject):
         TESTS::
 
             sage: S = ClusterSeed(['A',4])
-            sage: S.interact()
+            sage: S.interact()                                                          # optional - sage.plot sage.symbolic
             ...VBox(children=...
         """
         return cluster_interact(self, fig_size, circular, kind='seed')
 
     def save_image(self, filename, circular=False, mark=None, save_pos=False):
         r"""
-        Saves the plot of the underlying digraph of the quiver of ``self``.
+        Save the plot of the underlying digraph of the quiver of ``self``.
 
         INPUT:
 
         - ``filename`` -- the filename the image is saved to.
-        - ``circular`` -- (default: False) if True, the circular plot is chosen, otherwise >>spring<< is used.
-        - ``mark`` -- (default: None) if set to i, the vertex i is highlighted.
-        - ``save_pos`` -- (default:False) if True, the positions of the vertices are saved.
+        - ``circular`` -- (default: ``False``) if ``True``, the circular plot is chosen, otherwise >>spring<< is used.
+        - ``mark`` -- (default: ``None``) if set to i, the vertex i is highlighted.
+        - ``save_pos`` -- (default: ``False``) if ``True``, the positions of the vertices are saved.
 
         EXAMPLES::
 
             sage: S = ClusterSeed(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # optional - sage.plot sage.symbolic
             ....:     S.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular, mark=mark, save_pos=save_pos)
@@ -1091,7 +1096,7 @@ class ClusterSeed(SageObject):
 
     def b_matrix(self):
         r"""
-        Returns the `B` *-matrix* of ``self``.
+        Return the `B` *-matrix* of ``self``.
 
         EXAMPLES::
 
@@ -1123,7 +1128,7 @@ class ClusterSeed(SageObject):
 
     def ground_field(self):
         r"""
-        Returns the *ground field* of the cluster of ``self``.
+        Return the *ground field* of the cluster of ``self``.
 
         EXAMPLES::
 
@@ -1136,7 +1141,7 @@ class ClusterSeed(SageObject):
     def x(self, k):
         r"""
         Return the `k` *-th initial cluster variable* for the associated cluster seed,
-        or the cluster variable of the corresponding vertex in self.quiver.
+        or the cluster variable of the corresponding vertex in ``self.quiver``.
 
         EXAMPLES::
 
@@ -1152,7 +1157,7 @@ class ClusterSeed(SageObject):
             x2
 
             sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format="list_of_edges")
-            sage: S = ClusterSeed(dg, frozen = ['c'])
+            sage: S = ClusterSeed(dg, frozen=['c'])
             sage: S.x(0)
             a
             sage: S.x('a')
@@ -1175,7 +1180,7 @@ class ClusterSeed(SageObject):
         r"""
         Return the `k` *-th initial coefficient (frozen variable)* for the
         associated cluster seed, or the cluster variable of the corresponding
-        vertex in self.quiver.
+        vertex in ``self.quiver``.
 
         EXAMPLES::
 
@@ -1191,7 +1196,7 @@ class ClusterSeed(SageObject):
             y2
 
             sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format="list_of_edges")
-            sage: S = ClusterSeed(dg, frozen = ['c'])
+            sage: S = ClusterSeed(dg, frozen=['c'])
             sage: S.y(0)
             c
             sage: S.y('c')
@@ -1223,7 +1228,7 @@ class ClusterSeed(SageObject):
 
     def m(self):
         r"""
-        Returns the number of *frozen variables* of ``self``.
+        Return the number of *frozen variables* of ``self``.
 
         EXAMPLES::
 
@@ -1247,7 +1252,7 @@ class ClusterSeed(SageObject):
         EXAMPLES::
 
             sage: S = ClusterSeed(DiGraph([['a', 'b'], ['c', 'b'], ['c', 'd'], ['e', 'd']]),
-            ....:          frozen = ['b', 'd'])
+            ....:                         frozen=['b', 'd'])
             sage: S.free_vertices()
             ['a', 'c', 'e']
 
@@ -1264,7 +1269,7 @@ class ClusterSeed(SageObject):
         EXAMPLES::
 
             sage: S = ClusterSeed(DiGraph([['a', 'b'], ['c', 'b'], ['c', 'd'], ['e', 'd']]),
-            ....:          frozen = ['b', 'd'])
+            ....:                         frozen=['b', 'd'])
             sage: sorted(S.frozen_vertices())
             ['b', 'd']
         """
@@ -1334,7 +1339,7 @@ class ClusterSeed(SageObject):
 
     def cluster(self):
         r"""
-        Returns a copy of the *cluster* of ``self``.
+        Return a copy of the *cluster* of ``self``.
 
         EXAMPLES::
 
@@ -1422,7 +1427,8 @@ class ClusterSeed(SageObject):
             sage: [S.f_polynomial(k) for k in range(3)]
             [1, y1*y2 + y2 + 1, y1 + 1]
 
-            sage: S = ClusterSeed(Matrix([[0,1],[-1,0],[1,0],[-1,1]])); S.use_c_vectors(bot_is_c=True); S
+            sage: S = ClusterSeed(Matrix([[0,1],[-1,0],[1,0],[-1,1]]))
+            sage: S.use_c_vectors(bot_is_c=True); S
             A seed for a cluster algebra of rank 2 with 2 frozen variables
             sage: T = ClusterSeed(Matrix([[0,1],[-1,0]])).principal_extension(); T
             A seed for a cluster algebra of rank 2 with principal coefficients
@@ -1534,14 +1540,16 @@ class ClusterSeed(SageObject):
             [ 1  0  0]
             [ 0  0  1]
 
-            sage: S = ClusterSeed(['A',4]); S.use_g_vectors(False); S.use_fpolys(False); S.g_matrix()
+            sage: S = ClusterSeed(['A',4])
+            sage: S.use_g_vectors(False); S.use_fpolys(False); S.g_matrix()
             [1 0 0 0]
             [0 1 0 0]
             [0 0 1 0]
             [0 0 0 1]
 
             sage: S = ClusterSeed(['A',4])
-            sage: S.use_g_vectors(False); S.use_c_vectors(False); S.use_fpolys(False); S.track_mutations(False); S.g_matrix()
+            sage: S.use_g_vectors(False); S.use_c_vectors(False); S.use_fpolys(False)
+            sage: S.track_mutations(False); S.g_matrix()
             Traceback (most recent call last):
             ...
             ValueError: Unable to calculate g-vectors. Need to use g vectors.
@@ -1630,7 +1638,8 @@ class ClusterSeed(SageObject):
             sage: S.c_vector(0)
             (1, 0)
 
-            sage: S = ClusterSeed(Matrix([[0,1],[-1,0],[1,0],[-1,1]])); S.use_c_vectors(bot_is_c=True); S
+            sage: S = ClusterSeed(Matrix([[0,1],[-1,0],[1,0],[-1,1]]))
+            sage: S.use_c_vectors(bot_is_c=True); S
             A seed for a cluster algebra of rank 2 with 2 frozen variables
             sage: S.c_vector(0)
             (1, -1)
@@ -1662,7 +1671,8 @@ class ClusterSeed(SageObject):
             [ 0 -1  0]
 
             sage: S = ClusterSeed(['A',4])
-            sage: S.use_g_vectors(False); S.use_fpolys(False);  S.use_c_vectors(False);  S.use_d_vectors(False); S.track_mutations(False);
+            sage: S.use_g_vectors(False); S.use_fpolys(False)
+            sage: S.use_c_vectors(False); S.use_d_vectors(False); S.track_mutations(False)
             sage: S.c_matrix()
             Traceback (most recent call last):
             ...
@@ -1861,7 +1871,7 @@ class ClusterSeed(SageObject):
 
     def is_acyclic(self) -> bool:
         r"""
-        Return True iff self is acyclic (i.e., if the underlying quiver is acyclic).
+        Return ``True`` iff ``self`` is acyclic (i.e., if the underlying quiver is acyclic).
 
         EXAMPLES::
 
@@ -1878,11 +1888,11 @@ class ClusterSeed(SageObject):
 
     def is_bipartite(self, return_bipartition=False):
         r"""
-        Return True iff self is bipartite (i.e., if the underlying quiver is bipartite).
+        Return ``True`` iff ``self`` is bipartite (i.e., if the underlying quiver is bipartite).
 
         INPUT:
 
-        - return_bipartition -- (default:False) if True, the bipartition is returned in the case of ``self`` being bipartite.
+        - ``return_bipartition`` -- (default: ``False``) if ``True``, the bipartition is returned in the case of ``self`` being bipartite.
 
         EXAMPLES::
 
@@ -2014,7 +2024,7 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``return_first`` -- (default:False) if True, will return the first urban renewal
+        - ``return_first`` -- (default: ``False``) if ``True``, will return the first urban renewal
 
         OUTPUT:
 
@@ -2056,7 +2066,7 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``filter`` - Filter should be a list or iterable
+        - ``filter`` -- a list or iterable
 
         OUTPUT:
 
@@ -2064,7 +2074,8 @@ class ClusterSeed(SageObject):
 
         EXAMPLES::
 
-            sage: B = matrix([[0,-1,0,-1,1,1],[1,0,1,0,-1,-1],[0,-1,0,-1,1,1],[1,0,1,0,-1,-1],[-1,1,-1,1,0,0],[-1,1,-1,1,0,0]])
+            sage: B = matrix([[0,-1,0,-1,1,1], [1,0,1,0,-1,-1], [0,-1,0,-1,1,1],
+            ....:             [1,0,1,0,-1,-1], [-1,1,-1,1,0,0], [-1,1,-1,1,0,0]])
             sage: C = ClusterSeed(B).principal_extension(); C.mutate([0,1,2,4,3,2,5,4,3])
             sage: C.highest_degree_denominator()
             5
@@ -2102,20 +2113,17 @@ class ClusterSeed(SageObject):
 
     def smallest_c_vector(self):
         r"""
-        Return the vertex with the smallest c vector.
+        Return the vertex with the smallest c-vector.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: An integer.
 
         EXAMPLES::
 
-            sage: B = matrix([[0,2],[-2,0]])
+            sage: B = matrix([[0,2], [-2,0]])
             sage: C = ClusterSeed(B).principal_extension()
             sage: C.mutate(0)
             sage: C.smallest_c_vector()
             0
-
         """
         min_sum = infinity
         vertex_to_mutate = []
@@ -2135,7 +2143,6 @@ class ClusterSeed(SageObject):
 
     def most_decreased_edge_after_mutation(self):
         r"""
-
         Return the vertex that will produce the least degrees after mutation
 
         EXAMPLES::
@@ -2144,7 +2151,6 @@ class ClusterSeed(SageObject):
             sage: S.mutate([0,2,3,1,2,3,1,2,0,2,3])
             sage: S.most_decreased_edge_after_mutation()
             2
-
         """
         analysis = self.mutation_analysis(['edge_diff'])
         least_edge = infinity
@@ -2165,7 +2171,6 @@ class ClusterSeed(SageObject):
 
     def most_decreased_denominator_after_mutation(self):
         r"""
-
         Return the vertex that will produce the most decrease in denominator degrees after mutation
 
         EXAMPLES::
@@ -2174,7 +2179,6 @@ class ClusterSeed(SageObject):
             sage: S.mutate([0,2,3,1,2,3,1,2,0,2,3])
             sage: S.most_decreased_denominator_after_mutation()
             2
-
         """
         analysis = self.mutation_analysis(['d_matrix'])
         least_change = infinity
@@ -2639,13 +2643,13 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``sequence`` -- an iterable of vertices of self.
-        - ``show_sequence`` -- (default: False) if True, a png containing the associated quivers is shown.
+        - ``show_sequence`` -- (default: ``False``) if ``True``, a png containing the associated quivers is shown.
         - ``fig_size`` -- (default: 1.2) factor by which the size of the plot is multiplied.
         - ``return_output`` -- (default: 'seed') determines what output is to be returned::
 
-            * if 'seed', outputs all the cluster seeds obtained by the ``sequence`` of mutations.
-            * if 'matrix', outputs a list of exchange matrices.
-            * if 'var', outputs a list of new cluster variables obtained at each step.
+          * if ``'seed'``, outputs all the cluster seeds obtained by the ``sequence`` of mutations.
+          * if ``'matrix'``, outputs a list of exchange matrices.
+          * if ``'var'``, outputs a list of new cluster variables obtained at each step.
 
         EXAMPLES::
 
@@ -2693,8 +2697,8 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``options`` -- (default: ['all']) a list of mutation options.
-        - ``filter`` -- (default: None) A vertex or interval of vertices to limit our search to
+        - ``options`` -- (default: [``'all'``]) a list of mutation options.
+        - ``filter`` -- (default: ``None``) A vertex or interval of vertices to limit our search to
 
         Possible options are:
 
@@ -2717,7 +2721,7 @@ class ClusterSeed(SageObject):
 
         Outputs a dictionary indexed by the vertex numbers. Each vertex will itself also be a
         dictionary with each desired option included as a key in the dictionary. As an example
-        you would get something similar to: {0: {'edges': 1}, 1: {'edges': 2}}. This represents
+        you would get something similar to: ``{0: {'edges': 1}, 1: {'edges': 2}}``. This represents
         that if you were to do a mutation at the current seed then mutating at vertex 0 would result
         in a quiver with 1 edge and mutating at vertex 0 would result in a quiver with 2 edges.
 
@@ -2727,118 +2731,118 @@ class ClusterSeed(SageObject):
             sage: S = ClusterSeed(matrix(B)); S.mutate([2,3,1,2,1,3,0,2])
             sage: S.mutation_analysis()
             {0: {'d_matrix': [ 0  0  1  0]
-              [ 0 -1  0  0]
-              [ 0  0  0 -1]
-              [-1  0  0  0],
-              'denominators': [1, 1, x0, 1],
-              'edge_diff': 6,
-              'edges': 13,
-              'green_vertices': [0, 1, 3],
-              'green_vertices_diff': {'added': [0], 'removed': []},
-              'red_vertices': [2],
-              'red_vertices_diff': {'added': [], 'removed': [0]},
-              'sinks': [],
-              'sinks_diff': {'added': [], 'removed': [2]},
-              'sources': [],
-              'sources_diff': {'added': [], 'removed': []},
-              'urban_renewals': [],
-              'urban_renewals_diff': {'added': [], 'removed': []}},
+                             [ 0 -1  0  0]
+                             [ 0  0  0 -1]
+                             [-1  0  0  0],
+                 'denominators': [1, 1, x0, 1],
+                 'edge_diff': 6,
+                 'edges': 13,
+                 'green_vertices': [0, 1, 3],
+                 'green_vertices_diff': {'added': [0], 'removed': []},
+                 'red_vertices': [2],
+                 'red_vertices_diff': {'added': [], 'removed': [0]},
+                 'sinks': [],
+                 'sinks_diff': {'added': [], 'removed': [2]},
+                 'sources': [],
+                 'sources_diff': {'added': [], 'removed': []},
+                 'urban_renewals': [],
+                 'urban_renewals_diff': {'added': [], 'removed': []}},
              1: {'d_matrix': [ 1  4  1  0]
-              [ 0  1  0  0]
-              [ 0  0  0 -1]
-              [ 1  4  0  0],
-              'denominators': [x0*x3, x0^4*x1*x3^4, x0, 1],
-              'edge_diff': 2,
-              'edges': 9,
-              'green_vertices': [0, 3],
-              'green_vertices_diff': {'added': [0], 'removed': [1]},
-              'red_vertices': [1, 2],
-              'red_vertices_diff': {'added': [1], 'removed': [0]},
-              'sinks': [2],
-              'sinks_diff': {'added': [], 'removed': []},
-              'sources': [],
-              'sources_diff': {'added': [], 'removed': []},
-              'urban_renewals': [],
-              'urban_renewals_diff': {'added': [], 'removed': []}},
+                             [ 0  1  0  0]
+                             [ 0  0  0 -1]
+                             [ 1  4  0  0],
+                 'denominators': [x0*x3, x0^4*x1*x3^4, x0, 1],
+                 'edge_diff': 2,
+                 'edges': 9,
+                 'green_vertices': [0, 3],
+                 'green_vertices_diff': {'added': [0], 'removed': [1]},
+                 'red_vertices': [1, 2],
+                 'red_vertices_diff': {'added': [1], 'removed': [0]},
+                 'sinks': [2],
+                 'sinks_diff': {'added': [], 'removed': []},
+                 'sources': [],
+                 'sources_diff': {'added': [], 'removed': []},
+                 'urban_renewals': [],
+                 'urban_renewals_diff': {'added': [], 'removed': []}},
              2: {'d_matrix': [ 1  0  0  0]
-              [ 0 -1  0  0]
-              [ 0  0  0 -1]
-              [ 1  0  1  0],
-              'denominators': [x0*x3, 1, x3, 1],
-              'edge_diff': 0,
-              'edges': 7,
-              'green_vertices': [1, 2, 3],
-              'green_vertices_diff': {'added': [2], 'removed': []},
-              'red_vertices': [0],
-              'red_vertices_diff': {'added': [], 'removed': [2]},
-              'sinks': [],
-              'sinks_diff': {'added': [], 'removed': [2]},
-              'sources': [2],
-              'sources_diff': {'added': [2], 'removed': []},
-              'urban_renewals': [],
-              'urban_renewals_diff': {'added': [], 'removed': []}},
+                             [ 0 -1  0  0]
+                             [ 0  0  0 -1]
+                             [ 1  0  1  0],
+                 'denominators': [x0*x3, 1, x3, 1],
+                 'edge_diff': 0,
+                 'edges': 7,
+                 'green_vertices': [1, 2, 3],
+                 'green_vertices_diff': {'added': [2], 'removed': []},
+                 'red_vertices': [0],
+                 'red_vertices_diff': {'added': [], 'removed': [2]},
+                 'sinks': [],
+                 'sinks_diff': {'added': [], 'removed': [2]},
+                 'sources': [2],
+                 'sources_diff': {'added': [2], 'removed': []},
+                 'urban_renewals': [],
+                 'urban_renewals_diff': {'added': [], 'removed': []}},
              3: {'d_matrix': [ 1  0  1  1]
-              [ 0 -1  0  0]
-              [ 0  0  0  1]
-              [ 1  0  0  1],
-              'denominators': [x0*x3, 1, x0, x0*x2*x3],
-              'edge_diff': -1,
-              'edges': 6,
-              'green_vertices': [1],
-              'green_vertices_diff': {'added': [], 'removed': [3]},
-              'red_vertices': [0, 2, 3],
-              'red_vertices_diff': {'added': [3], 'removed': []},
-              'sinks': [2],
-              'sinks_diff': {'added': [], 'removed': []},
-              'sources': [1],
-              'sources_diff': {'added': [1], 'removed': []},
-              'urban_renewals': [],
-              'urban_renewals_diff': {'added': [], 'removed': []}}}
+                             [ 0 -1  0  0]
+                             [ 0  0  0  1]
+                             [ 1  0  0  1],
+                 'denominators': [x0*x3, 1, x0, x0*x2*x3],
+                 'edge_diff': -1,
+                 'edges': 6,
+                 'green_vertices': [1],
+                 'green_vertices_diff': {'added': [], 'removed': [3]},
+                 'red_vertices': [0, 2, 3],
+                 'red_vertices_diff': {'added': [3], 'removed': []},
+                 'sinks': [2],
+                 'sinks_diff': {'added': [], 'removed': []},
+                 'sources': [1],
+                 'sources_diff': {'added': [1], 'removed': []},
+                 'urban_renewals': [],
+                 'urban_renewals_diff': {'added': [], 'removed': []}}}
 
             sage: S = ClusterSeed(['A',3]).principal_extension()
             sage: S.mutation_analysis()
             {0: {'d_matrix': [ 1  0  0]
-              [ 0 -1  0]
-              [ 0  0 -1],
-              'denominators': [x0, 1, 1],
-              'green_vertices': [1, 2],
-              'green_vertices_diff': {'added': [], 'removed': [0]},
-              'red_vertices': [0],
-              'red_vertices_diff': {'added': [0], 'removed': []},
-              'sinks': [],
-              'sinks_diff': {'added': [], 'removed': [1]},
-              'sources': [4, 5],
-              'sources_diff': {'added': [], 'removed': [3]},
-              'urban_renewals': [],
-              'urban_renewals_diff': {'added': [], 'removed': []}},
+                             [ 0 -1  0]
+                             [ 0  0 -1],
+                 'denominators': [x0, 1, 1],
+                 'green_vertices': [1, 2],
+                 'green_vertices_diff': {'added': [], 'removed': [0]},
+                 'red_vertices': [0],
+                 'red_vertices_diff': {'added': [0], 'removed': []},
+                 'sinks': [],
+                 'sinks_diff': {'added': [], 'removed': [1]},
+                 'sources': [4, 5],
+                 'sources_diff': {'added': [], 'removed': [3]},
+                 'urban_renewals': [],
+                 'urban_renewals_diff': {'added': [], 'removed': []}},
              1: {'d_matrix': [-1  0  0]
-              [ 0  1  0]
-              [ 0  0 -1],
-              'denominators': [1, x1, 1],
-              'green_vertices': [0, 2],
-              'green_vertices_diff': {'added': [], 'removed': [1]},
-              'red_vertices': [1],
-              'red_vertices_diff': {'added': [1], 'removed': []},
-              'sinks': [0, 2, 4],
-              'sinks_diff': {'added': [0, 2, 4], 'removed': [1]},
-              'sources': [1, 3, 5],
-              'sources_diff': {'added': [1], 'removed': [4]},
-              'urban_renewals': [],
-              'urban_renewals_diff': {'added': [], 'removed': []}},
+                             [ 0  1  0]
+                             [ 0  0 -1],
+                 'denominators': [1, x1, 1],
+                 'green_vertices': [0, 2],
+                 'green_vertices_diff': {'added': [], 'removed': [1]},
+                 'red_vertices': [1],
+                 'red_vertices_diff': {'added': [1], 'removed': []},
+                 'sinks': [0, 2, 4],
+                 'sinks_diff': {'added': [0, 2, 4], 'removed': [1]},
+                 'sources': [1, 3, 5],
+                 'sources_diff': {'added': [1], 'removed': [4]},
+                 'urban_renewals': [],
+                 'urban_renewals_diff': {'added': [], 'removed': []}},
              2: {'d_matrix': [-1  0  0]
-              [ 0 -1  0]
-              [ 0  0  1],
-              'denominators': [1, 1, x2],
-              'green_vertices': [0, 1],
-              'green_vertices_diff': {'added': [], 'removed': [2]},
-              'red_vertices': [2],
-              'red_vertices_diff': {'added': [2], 'removed': []},
-              'sinks': [],
-              'sinks_diff': {'added': [], 'removed': [1]},
-              'sources': [3, 4],
-              'sources_diff': {'added': [], 'removed': [5]},
-              'urban_renewals': [],
-              'urban_renewals_diff': {'added': [], 'removed': []}}}
+                             [ 0 -1  0]
+                             [ 0  0  1],
+                 'denominators': [1, 1, x2],
+                 'green_vertices': [0, 1],
+                 'green_vertices_diff': {'added': [], 'removed': [2]},
+                 'red_vertices': [2],
+                 'red_vertices_diff': {'added': [2], 'removed': []},
+                 'sinks': [],
+                 'sinks_diff': {'added': [], 'removed': [1]},
+                 'sources': [3, 4],
+                 'sources_diff': {'added': [], 'removed': [5]},
+                 'urban_renewals': [],
+                 'urban_renewals_diff': {'added': [], 'removed': []}}}
         """
         V = range(self._n)
         if filter is None:
@@ -3243,7 +3247,8 @@ class ClusterSeed(SageObject):
             sage: T.cluster()
             [x0, x1, x2]
 
-            sage: S = ClusterSeed(['B',3],user_labels=[[1,2],[2,3],[3,4]],user_labels_prefix='p')
+            sage: S = ClusterSeed(['B',3], user_labels=[[1,2],[2,3],[3,4]],
+            ....:                 user_labels_prefix='p')
             sage: S.mutate([0,1])
             sage: S.cluster()
             [(p_2_3 + 1)/p_1_2, (p_1_2*p_3_4^2 + p_2_3 + 1)/(p_1_2*p_2_3), p_3_4]
@@ -3271,7 +3276,7 @@ class ClusterSeed(SageObject):
 
         This raises an error if the number of frozen variables is different than the number of exchangeable variables.
 
-        WARNING: This command to be phased out since 'use_c_vectors() does this more effectively.
+        WARNING: This command to be phased out since :meth:`use_c_vectors` does this more effectively.
 
         EXAMPLES::
 
@@ -3326,10 +3331,10 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``depth`` -- (default: infinity) integer or infinity, only seeds with distance at most ``depth`` from ``self`` are returned.
-        - ``show_depth`` -- (default: False) if True, the current depth of the mutation is shown while computing.
-        - ``return_paths`` -- (default: False) if True, a shortest path of mutations from ``self`` to the given quiver is returned as well.
-        - ``up_to_equivalence`` -- (default: True) if True, only one seed up to simultaneous permutation of rows and columns of the exchange matrix is recorded.
-        - ``sink_source`` -- (default: False) if True, only mutations at sinks and sources are applied.
+        - ``show_depth`` -- (default: ``False``) if ``True``, the current depth of the mutation is shown while computing.
+        - ``return_paths`` -- (default: ``False``) if ``True``, a shortest path of mutations from ``self`` to the given quiver is returned as well.
+        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only one seed up to simultaneous permutation of rows and columns of the exchange matrix is recorded.
+        - ``sink_source`` -- (default: ``False``) if ``True``, only mutations at sinks and sources are applied.
 
         EXAMPLES:
 
@@ -3387,7 +3392,8 @@ class ClusterSeed(SageObject):
             sage: len([T for T in it])
             84
 
-            sage: it = ClusterSeed(['A',2]).mutation_class_iter(return_paths=True,up_to_equivalence=False)
+            sage: it = ClusterSeed(['A',2]).mutation_class_iter(return_paths=True,
+            ....:                                               up_to_equivalence=False)
             sage: mutation_class = list(it)
             sage: len(mutation_class)
             10
@@ -3549,13 +3555,13 @@ class ClusterSeed(SageObject):
 
     def cluster_class_iter(self, depth=infinity, show_depth=False, up_to_equivalence=True):
         r"""
-        Returns an iterator through all clusters in the mutation class of ``self``.
+        Return an iterator through all clusters in the mutation class of ``self``.
 
         INPUT:
 
-        - ``depth`` -- (default: infinity) integer or infinity, only seeds with distance at most depth from self are returned
-        - ``show_depth`` -- (default False) - if True, ignored if depth is set; returns the depth of the mutation class, i.e., the maximal distance from self of an element in the mutation class
-        - ``up_to_equivalence`` -- (default: True) if True, only clusters up to equivalence are considered.
+        - ``depth`` -- (default: infinity) integer or infinity, only seeds with distance at most ``depth`` from ``self`` are returned
+        - ``show_depth`` -- (default: ``False``) if ``True``, ignored if ``depth`` is set; returns the depth of the mutation class, i.e., the maximal distance from ``self`` of an element in the mutation class
+        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only clusters up to equivalence are considered.
 
         EXAMPLES:
 
@@ -3631,7 +3637,7 @@ class ClusterSeed(SageObject):
         For a cluster seed from an arbitrarily labelled digraph::
 
             sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format="list_of_edges")
-            sage: S = ClusterSeed(dg, frozen = ['b'])
+            sage: S = ClusterSeed(dg, frozen=['b'])
             sage: S.cluster_class()
             [[a, c], [a, (b + 1)/c], [(b + 1)/a, c], [(b + 1)/a, (b + 1)/c]]
 
@@ -3649,9 +3655,9 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``depth`` -- (default: infinity) integer, only seeds with distance at most depth from self are returned
-        - ``return_depth`` -- (default False) - if True, ignored if depth is set; returns the depth of the mutation class, i.e., the maximal distance from self of an element in the mutation class
-        - ``up_to_equivalence`` -- (default: True) if True, only clusters up to equivalence are considered.
+        - ``depth`` -- (default: infinity) integer, only seeds with distance at most ``depth`` from ``self`` are returned
+        - ``return_depth`` -- (default: ``False``) - if ``True``, ignored if ``depth`` is set; returns the depth of the mutation class, i.e., the maximal distance from ``self`` of an element in the mutation class
+        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only clusters up to equivalence are considered.
 
         EXAMPLES:
 
@@ -3668,12 +3674,12 @@ class ClusterSeed(SageObject):
 
     def b_matrix_class_iter(self, depth=infinity, up_to_equivalence=True):
         r"""
-        Returns an iterator through all `B`-matrices in the mutation class of ``self``.
+        Return an iterator through all `B`-matrices in the mutation class of ``self``.
 
         INPUT:
 
-        - ``depth`` -- (default:infinity) integer or infinity, only seeds with distance at most depth from self are returned
-        - ``up_to_equivalence`` -- (default: True) if True, only 'B'-matrices up to equivalence are considered.
+        - ``depth`` -- (default:infinity) integer or infinity, only seeds with distance at most ``depth`` from ``self`` are returned
+        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only `B`-matrices up to equivalence are considered.
 
         EXAMPLES:
 
@@ -3772,12 +3778,12 @@ class ClusterSeed(SageObject):
 
     def b_matrix_class(self, depth=infinity, up_to_equivalence=True):
         r"""
-        Returns all `B`-matrices in the mutation class of ``self``.
+        Return all `B`-matrices in the mutation class of ``self``.
 
         INPUT:
 
-        - ``depth`` -- (default:infinity) integer or infinity, only seeds with distance at most depth from self are returned
-        - ``up_to_equivalence`` -- (default: True) if True, only 'B'-matrices up to equivalence are considered.
+        - ``depth`` -- (default: infinity) integer or infinity, only seeds with distance at most ``depth`` from ``self`` are returned
+        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only `B`-matrices up to equivalence are considered.
 
         EXAMPLES:
 
@@ -3795,12 +3801,12 @@ class ClusterSeed(SageObject):
 
     def variable_class_iter(self, depth=infinity, ignore_bipartite_belt=False):
         r"""
-        Returns an iterator for all cluster variables in the mutation class of ``self``.
+        Return an iterator for all cluster variables in the mutation class of ``self``.
 
         INPUT:
 
-            - ``depth`` -- (default:infinity) integer, only seeds with distance at most depth from self are returned
-            - ``ignore_bipartite_belt`` -- (default:False) if True, the algorithms does not use the bipartite belt
+            - ``depth`` -- (default: infinity) integer, only seeds with distance at most ``depth`` from ``self`` are returned
+            - ``ignore_bipartite_belt`` -- (default: ``False``) if ``True``, the algorithm does not use the bipartite belt
 
         EXAMPLES:
 
@@ -3921,12 +3927,12 @@ class ClusterSeed(SageObject):
 
     def variable_class(self, depth=infinity, ignore_bipartite_belt=False):
         r"""
-        Returns all cluster variables in the mutation class of ``self``.
+        Return all cluster variables in the mutation class of ``self``.
 
         INPUT:
 
-            - ``depth`` -- (default:infinity) integer, only seeds with distance at most depth from self are returned
-            - ``ignore_bipartite_belt`` -- (default:False) if True, the algorithms does not use the bipartite belt
+            - ``depth`` -- (default: infinity) integer, only seeds with distance at most ``depth`` from ``self`` are returned
+            - ``ignore_bipartite_belt`` -- (default: ``False``) if ``True``, the algorithms does not use the bipartite belt
 
         EXAMPLES:
 
@@ -3970,12 +3976,13 @@ class ClusterSeed(SageObject):
 
     def is_mutation_finite(self, nr_of_checks=None, return_path=False):
         r"""
-        Returns True if ``self`` is of finite mutation type.
+        Return True if ``self`` is of finite mutation type.
 
         INPUT:
 
-        - ``nr_of_checks`` -- (default: None) number of mutations applied. Standard is 500*(number of vertices of self).
-        - ``return_path`` -- (default: False) if True, in case of self not being mutation finite, a path from self to a quiver with an edge label (a,-b) and a*b > 4 is returned.
+        - ``nr_of_checks`` -- (default: ``None``) number of mutations applied. Standard is 500*(number of vertices of ``self``).
+        - ``return_path`` -- (default: ``False``) if ``True``, in case of ``self`` not being mutation finite,
+          a path from ``self`` to a quiver with an edge label `(a,-b)` and `a*b > 4` is returned.
 
         ALGORITHM:
 
@@ -4005,7 +4012,7 @@ class ClusterSeed(SageObject):
 
     def mutation_type(self):
         r"""
-        Returns the mutation_type of each connected component of ``self``, if it can be determined.
+        Return the mutation_type of each connected component of ``self``, if it can be determined.
         Otherwise, the mutation type of this component is set to be unknown.
 
         The mutation types of the components are ordered by vertex labels.
@@ -4031,7 +4038,8 @@ class ClusterSeed(SageObject):
             sage: S.mutation_type()
             ['A', 5]
 
-            sage: S = ClusterSeed(DiGraph([['a','b'],['c','b'],['c','d'],['e','d']]), frozen = ['c'])
+            sage: S = ClusterSeed(DiGraph([['a','b'],['c','b'],['c','d'],['e','d']]),
+            ....:                 frozen=['c'])
             sage: S.mutation_type()
             [ ['A', 2], ['A', 2] ]
 
@@ -4073,10 +4081,10 @@ class ClusterSeed(SageObject):
 
     def greedy(self, a1, a2, algorithm='by_recursion'):
         r"""
-        Returns the greedy element `x[a_1,a_2]` assuming that self is rank two.
+        Return the greedy element `x[a_1,a_2]` assuming that self is rank two.
 
-        The third input can be 'by_recursion', 'by_combinatorics', or
-        'just_numbers' to specify if the user wants the element
+        The third input can be ``'by_recursion'``, ``'by_combinatorics'``, or
+        ``'just_numbers'`` to specify if the user wants the element
         computed by the recurrence, combinatorial formula, or wants to
         set `x_1` and `x_2` to be one.
 
@@ -4086,9 +4094,11 @@ class ClusterSeed(SageObject):
 
             sage: S = ClusterSeed(['R2', [3, 3]])
             sage: S.greedy(4, 4)
-            (x0^12 + x1^12 + 4*x0^9 + 4*x1^9 + 6*x0^6 + 4*x0^3*x1^3 + 6*x1^6 + 4*x0^3 + 4*x1^3 + 1)/(x0^4*x1^4)
+            (x0^12 + x1^12 + 4*x0^9 + 4*x1^9 + 6*x0^6
+              + 4*x0^3*x1^3 + 6*x1^6 + 4*x0^3 + 4*x1^3 + 1)/(x0^4*x1^4)
             sage: S.greedy(4, 4, 'by_combinatorics')
-            (x0^12 + x1^12 + 4*x0^9 + 4*x1^9 + 6*x0^6 + 4*x0^3*x1^3 + 6*x1^6 + 4*x0^3 + 4*x1^3 + 1)/(x0^4*x1^4)
+            (x0^12 + x1^12 + 4*x0^9 + 4*x1^9 + 6*x0^6
+              + 4*x0^3*x1^3 + 6*x1^6 + 4*x0^3 + 4*x1^3 + 1)/(x0^4*x1^4)
             sage: S.greedy(4, 4, 'just_numbers')
             35
             sage: S = ClusterSeed(['R2', [2, 2]])
@@ -4163,7 +4173,7 @@ class ClusterSeed(SageObject):
 
         The seed must be a cluster seed for a cluster algebra of
         finite type with principal coefficients (the corresponding
-        quiver must have mutable vertices 0,1,...,n-1).
+        quiver must have mutable vertices `0,1,...,n-1`).
 
         EXAMPLES::
 
@@ -4221,7 +4231,7 @@ class ClusterSeed(SageObject):
 
     def find_upper_bound(self, verbose=False):
         r"""
-        Return the upper bound of the given cluster algebra as a quotient_ring.
+        Return the upper bound of the given cluster algebra as a quotient ring.
 
         The upper bound is the intersection of the Laurent polynomial
         rings of the initial cluster and its neighboring clusters.  As
@@ -4254,15 +4264,24 @@ class ClusterSeed(SageObject):
 
             sage: S = ClusterSeed(['A',3])
             sage: S.find_upper_bound()
-            Quotient of Multivariate Polynomial Ring in x0, x1, x2, x0p, x1p, x2p, z0 over Rational Field by the ideal (x0*x0p - x1 - 1, x1*x1p - x0*x2 - 1, x2*x2p - x1 - 1, x0*z0 - x2p, x1*z0 + z0 - x0p*x2p, x2*z0 - x0p, x1p*z0 + z0 - x0p*x1p*x2p + x1 + 1)
+            Quotient of Multivariate Polynomial Ring in x0, x1, x2, x0p, x1p, x2p, z0
+             over Rational Field
+             by the ideal (x0*x0p - x1 - 1, x1*x1p - x0*x2 - 1, x2*x2p - x1 - 1,
+                           x0*z0 - x2p, x1*z0 + z0 - x0p*x2p, x2*z0 - x0p,
+                           x1p*z0 + z0 - x0p*x1p*x2p + x1 + 1)
 
         - Markov::
 
             sage: B = matrix([[0,2,-2],[-2,0,2],[2,-2,0]])
             sage: S = ClusterSeed(B)
             sage: S.find_upper_bound()
-            Quotient of Multivariate Polynomial Ring in x0, x1, x2, x0p, x1p, x2p, z0 over Rational Field by the ideal (x0*x0p - x2^2 - x1^2, x1*x1p - x2^2 - x0^2, x2*x2p - x1^2 - x0^2, x0p*x1p*x2p - x0*x1*x2p - x0*x2*x1p - x1*x2*x0p - 2*x0*x1*x2, x0^3*z0 - x1p*x2p + x1*x2, x0*x1*z0 - x2p - x2, x1^3*z0 - x0p*x2p + x0*x2, x0*x2*z0 - x1p - x1, x1*x2*z0 - x0p - x0, x2^3*z0 - x0p*x1p + x0*x1)
-
+            Quotient of Multivariate Polynomial Ring in x0, x1, x2, x0p, x1p, x2p, z0
+             over Rational Field
+             by the ideal (x0*x0p - x2^2 - x1^2, x1*x1p - x2^2 - x0^2, x2*x2p - x1^2 - x0^2,
+                           x0p*x1p*x2p - x0*x1*x2p - x0*x2*x1p - x1*x2*x0p - 2*x0*x1*x2,
+                           x0^3*z0 - x1p*x2p + x1*x2, x0*x1*z0 - x2p - x2,
+                           x1^3*z0 - x0p*x2p + x0*x2, x0*x2*z0 - x1p - x1,
+                           x1*x2*z0 - x0p - x0, x2^3*z0 - x0p*x1p + x0*x1)
         """
         rank = self.n()
 
@@ -4327,18 +4346,18 @@ class ClusterSeed(SageObject):
 
     def get_upper_cluster_algebra_element(self,a):
         r"""
-        Computes an element in the upper cluster algebra of `B` corresponding to the vector `a \in \ZZ^n`.
+        Compute an element in the upper cluster algebra of `B` corresponding to the vector `a \in \ZZ^n`.
 
         See [LLM2014]_ for more details.
 
         INPUT:
 
         - `B` -- a skew-symmetric matrix. Must have the same number of columns as the length of the vectors in `vd`.
-        - `a` -- a vector in `\ZZ^n` where `n` is the number of columns in `B`.
+        - ``a`` -- a vector in `\ZZ^n` where `n` is the number of columns in `B`.
 
         OUTPUT:
 
-        Returns an element in the upper cluster algebra. Depending on the input it may or may not be irreducible.
+        Return an element in the upper cluster algebra. Depending on the input it may or may not be irreducible.
 
         EXAMPLES::
 
@@ -4427,7 +4446,7 @@ class ClusterSeed(SageObject):
 
         - `B` -- a skew-symmetric matrix. Must have the same number of columns as the length of the vectors in ``vd``.
         - ``vd`` -- a collection of tuples `(v,z)` with `v \in \{0,1\}^n` and `z \in \ZZ`.
-                    `n` must be the number of columns in `B`. Taken from the output of vector_decomposition.
+          `n` must be the number of columns in `B`. Taken from the output of vector_decomposition.
 
         OUTPUT:
 
@@ -4758,7 +4777,7 @@ def get_green_vertices(C):
 
     INPUT:
 
-    - ``C`` -- The C matrix to check
+    - ``C`` -- The C-matrix to check
 
     EXAMPLES::
 
@@ -4779,7 +4798,7 @@ def get_red_vertices(C):
 
     INPUT:
 
-    - ``C`` -- The C matrix to check
+    - ``C`` -- The C-matrix to check
 
     EXAMPLES::
 
@@ -4804,7 +4823,7 @@ def _vector_decomposition(a, length):
     A decomposition of `a` into vectors `b_i \in \{0,1\}^n` such that
     `a= \sum c_i b_i` for `c_i \in \ZZ.`
 
-    Returns an array of tuples `\right[b_i,c_i\left].`
+    Return an array of tuples `\right[b_i,c_i\left].`
 
     EXAMPLES::
 
