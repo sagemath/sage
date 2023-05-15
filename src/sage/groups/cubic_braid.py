@@ -400,11 +400,11 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             [     1      0      0]
             sage: BuMa.base_ring()
             Number Field in t with defining polynomial t^2 - t + 1
-            sage: BuMa = ele.burau_matrix(domain = QQ[I, sqrt(3)]); BuMa
+            sage: BuMa = ele.burau_matrix(domain = QQ[I, sqrt(3)]); BuMa                # optional - sage.rings.number_field sage.symbolic
             [ 1/2*sqrt3*I + 1/2                  1 -1/2*sqrt3*I - 1/2]
             [ 1/2*sqrt3*I + 1/2 -1/2*sqrt3*I + 1/2                  0]
             [                 1                  0                  0]
-            sage: BuMa.base_ring()
+            sage: BuMa.base_ring()                                                      # optional - sage.rings.number_field sage.symbolic
             Number Field in I with defining polynomial x^2 + 1 over its base field
             sage: BuMa = ele.burau_matrix(characteristic=7); BuMa
             [3 1 4]
@@ -431,17 +431,18 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             [      1       0       0]
             sage: BuMa.base_ring()
             Finite Field in t of size 5^2
-            sage: BuMa, BuMaAd, H = ele.burau_matrix(reduced='unitary'); BuMa
+            sage: BuMa, BuMaAd, H = ele.burau_matrix(reduced='unitary'); BuMa           # optional - sage.rings.number_field
             [       0 zeta12^3]
             [zeta12^3        0]
-            sage: BuMa * H * BuMaAd == H
+            sage: BuMa * H * BuMaAd == H                                                # optional - sage.rings.number_field
             True
-            sage: BuMa.base_ring()
+            sage: BuMa.base_ring()                                                      # optional - sage.rings.number_field
             Cyclotomic Field of order 12 and degree 4
-            sage: BuMa, BuMaAd, H  = ele.burau_matrix(domain = QQ[I, sqrt(3)], reduced='unitary'); BuMa
+            sage: BuMa, BuMaAd, H = ele.burau_matrix(domain=QQ[I, sqrt(3)],             # optional - sage.rings.number_field sage.symbolic
+            ....:                                    reduced='unitary'); BuMa
             [0 I]
             [I 0]
-            sage: BuMa.base_ring()
+            sage: BuMa.base_ring()                                                      # optional - sage.rings.number_field sage.symbolic
             Number Field in I with defining polynomial x^2 + 1 over its base field
         """
         braid = self.braid()

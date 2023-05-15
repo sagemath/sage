@@ -606,11 +606,11 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B = BraidGroup(4, 's')
             sage: b = B([1, 2, 3, 1, 2, 1])
-            sage: b.plot3d()
+            sage: b.plot3d()                                                            # optional - sage.plot sage.symbolic
             Graphics3d Object
-            sage: b.plot3d(color="red")
+            sage: b.plot3d(color="red")                                                 # optional - sage.plot sage.symbolic
             Graphics3d Object
-            sage: b.plot3d(color=["red", "blue", "red", "blue"])
+            sage: b.plot3d(color=["red", "blue", "red", "blue"])                        # optional - sage.plot sage.symbolic
             Graphics3d Object
         """
         from sage.plot.plot3d.shapes2 import bezier3d
@@ -812,8 +812,8 @@ class Braid(FiniteTypeArtinGroupElement):
             Univariate Quotient Polynomial Ring in Yrbar
               over Multivariate Laurent Polynomial Ring in s0r, s1r
               over Integer Ring with modulus Yr^2 + s0r^2*s1r^2 - s0r^2 - s1r^2 + 1
-            sage: HopfLGs = Hopf.links_gould_matrix(symbolics=True)
-            sage: HopfLGs.base_ring()
+            sage: HopfLGs = Hopf.links_gould_matrix(symbolics=True)                     # optional - sage.symbolic
+            sage: HopfLGs.base_ring()                                                   # optional - sage.symbolic
             Symbolic Ring
         """
         rep = self.parent()._links_gould_representation(symbolics=symbolics)
@@ -1016,15 +1016,15 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B = BraidGroup(9)
             sage: b = B([1, 2, 3, 4, 5, 6, 7, 8])
-            sage: b.jones_polynomial()
+            sage: b.jones_polynomial()                                                  # optional - sage.symbolic
             1
 
             sage: B = BraidGroup(2)
             sage: b = B([])
-            sage: b._jones_polynomial
+            sage: b._jones_polynomial                                                   # optional - sage.symbolic
             -A^-2 - A^2
             sage: b = B([-1, -1, -1])
-            sage: b._jones_polynomial
+            sage: b._jones_polynomial                                                   # optional - sage.symbolic
             -A^-16 + A^-12 + A^-4
         """
         trace = self.markov_trace(normalized=False)
@@ -1072,41 +1072,41 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B = BraidGroup(9)
             sage: b = B([1, 2, 3, 4, 5, 6, 7, 8])
-            sage: b.jones_polynomial()
+            sage: b.jones_polynomial()                                                  # optional - sage.symbolic
             1
 
         Two unlinked unknots::
 
             sage: B = BraidGroup(2)
             sage: b = B([])
-            sage: b.jones_polynomial()
+            sage: b.jones_polynomial()                                                  # optional - sage.symbolic
             -sqrt(t) - 1/sqrt(t)
 
         The Hopf link::
 
             sage: B = BraidGroup(2)
             sage: b = B([-1,-1])
-            sage: b.jones_polynomial()
+            sage: b.jones_polynomial()                                                  # optional - sage.symbolic
             -1/sqrt(t) - 1/t^(5/2)
 
         Different representations of the trefoil and one of its mirror::
 
             sage: B = BraidGroup(2)
             sage: b = B([-1, -1, -1])
-            sage: b.jones_polynomial(skein_normalization=True)
+            sage: b.jones_polynomial(skein_normalization=True)                          # optional - sage.symbolic
             -A^-16 + A^-12 + A^-4
-            sage: b.jones_polynomial()
+            sage: b.jones_polynomial()                                                  # optional - sage.symbolic
             1/t + 1/t^3 - 1/t^4
             sage: B = BraidGroup(3)
             sage: b = B([-1, -2, -1, -2])
-            sage: b.jones_polynomial(skein_normalization=True)
+            sage: b.jones_polynomial(skein_normalization=True)                          # optional - sage.symbolic
             -A^-16 + A^-12 + A^-4
             sage: R.<x> = LaurentPolynomialRing(GF(2))
-            sage: b.jones_polynomial(skein_normalization=True, variab=x)
+            sage: b.jones_polynomial(skein_normalization=True, variab=x)                # optional - sage.symbolic
             x^-16 + x^-12 + x^-4
             sage: B = BraidGroup(3)
             sage: b = B([1, 2, 1, 2])
-            sage: b.jones_polynomial(skein_normalization=True)
+            sage: b.jones_polynomial(skein_normalization=True)                          # optional - sage.symbolic
             A^4 + A^12 - A^16
 
         K11n42 (the mirror of the "Kinoshita-Terasaka" knot) and K11n34 (the
@@ -1115,7 +1115,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: B = BraidGroup(4)
             sage: b11n42 = B([1, -2, 3, -2, 3, -2, -2, -1, 2, -3, -3, 2, 2])
             sage: b11n34 = B([1, 1, 2, -3, 2, -3, 1, -2, -2, -3, -3])
-            sage: bool(b11n42.jones_polynomial() == b11n34.jones_polynomial())
+            sage: bool(b11n42.jones_polynomial() == b11n34.jones_polynomial())          # optional - sage.symbolic
             True
         """
         if skein_normalization:
