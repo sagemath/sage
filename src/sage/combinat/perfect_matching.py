@@ -453,11 +453,11 @@ class PerfectMatching(SetPartition):
 
         EXAMPLES::
 
-            sage: var('N')
+            sage: var('N')                                                              # optional - sage.symbolic
             N
             sage: m = PerfectMatching([(1,3),(2,4)])
             sage: n = PerfectMatching([(1,2),(3,4)])
-            sage: factor(m.Weingarten_function(N,n))
+            sage: factor(m.Weingarten_function(N, n))                                   # optional - sage.symbolic
             -1/((N + 2)*(N - 1)*N)
         """
         if other is None:
@@ -764,8 +764,8 @@ class PerfectMatchings(SetPartitions_set):
 
         EXAMPLES::
 
-            sage: M = PerfectMatchings(4).Weingarten_matrix(var('N'))
-            sage: N*(N-1)*(N+2)*M.apply_map(factor)
+            sage: M = PerfectMatchings(4).Weingarten_matrix(var('N'))                   # optional - sage.symbolic
+            sage: N*(N-1)*(N+2)*M.apply_map(factor)                                     # optional - sage.symbolic
             [N + 1    -1    -1]
             [   -1 N + 1    -1]
             [   -1    -1 N + 1]

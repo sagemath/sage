@@ -85,7 +85,7 @@ class MVPolytope(PBWCrystalElement):
             sage: MV = crystals.infinity.MVPolytopes(['A',2])
             sage: u = MV.highest_weight_vector()
             sage: b = u.f_string([1,2,2,1])
-            sage: latex(b)
+            sage: latex(b)                                                              # optional - sage.symbolic
             \begin{tikzpicture}
             \draw (0, 0) -- (3/2, -989/1142) -- (3/2, -2967/1142) -- (0, -1978/571);
             \draw (0, 0) -- (-3/2, -989/1142) -- (-3/2, -2967/1142) -- (0, -1978/571);

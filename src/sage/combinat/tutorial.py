@@ -275,37 +275,37 @@ Now we can solve this equation with ``Sage``. In order to do so, we
 introduce two variables, `C` and `z`, and we define the
 equation::
 
-    sage: C, z = var('C,z')
-    sage: sys = [ C == z + C*C ]
+    sage: C, z = var('C,z')                                                             # optional - sage.symbolic
+    sage: sys = [ C == z + C*C ]                                                        # optional - sage.symbolic
 
 There are two solutions, which happen to have closed forms::
 
-    sage: sol = solve(sys, C, solution_dict=True); sol
+    sage: sol = solve(sys, C, solution_dict=True); sol                                  # optional - sage.symbolic
     [{C: -1/2*sqrt(-4*z + 1) + 1/2}, {C: 1/2*sqrt(-4*z + 1) + 1/2}]
-    sage: s0 = sol[0][C]; s1 = sol[1][C]
+    sage: s0 = sol[0][C]; s1 = sol[1][C]                                                # optional - sage.symbolic
 
 and whose Taylor series begin as follows::
 
-    sage: s0.series(z, 6)
+    sage: s0.series(z, 6)                                                               # optional - sage.symbolic
     1*z + 1*z^2 + 2*z^3 + 5*z^4 + 14*z^5 + Order(z^6)
-    sage: s1.series(z, 6)
+    sage: s1.series(z, 6)                                                               # optional - sage.symbolic
     1 + (-1)*z + (-1)*z^2 + (-2)*z^3 + (-5)*z^4 + (-14)*z^5
     + Order(z^6)
 
 The second solution is clearly aberrant, while the first one gives the
 expected coefficients. Therefore, we set::
 
-    sage: C = s0
+    sage: C = s0                                                                        # optional - sage.symbolic
 
 We can now calculate the next terms::
 
-    sage: C.series(z, 11)
+    sage: C.series(z, 11)                                                               # optional - sage.symbolic
     1*z + 1*z^2 + 2*z^3 + 5*z^4 + 14*z^5 + 42*z^6 +
     132*z^7 + 429*z^8 + 1430*z^9 + 4862*z^10 + Order(z^11)
 
 or calculate, more or less instantaneously, the 100-th coefficient::
 
-    sage: C.series(z, 101).coefficient(z,100)
+    sage: C.series(z, 101).coefficient(z,100)                                           # optional - sage.symbolic
     227508830794229349661819540395688853956041682601541047340
 
 It is unfortunate to have to recalculate everything if at some point we
@@ -321,7 +321,7 @@ Then we create a “free” power series, which we name, and which we then
 define by a recursive equation::
 
     sage: C = L.undefined(valuation=1)
-    sage: C.define( z + C * C )
+    sage: C.define(z + C * C)
 
 ::
 
@@ -338,19 +338,19 @@ At any point, one can ask for any coefficient without having to redefine
 
 We now return to the closed form of `C(z)`::
 
-    sage: z = var('z')
-    sage: C = s0; C
+    sage: z = var('z')                                                                  # optional - sage.symbolic
+    sage: C = s0; C                                                                     # optional - sage.symbolic
     -1/2*sqrt(-4*z + 1) + 1/2
 
 The `n`-th coefficient in the Taylor series for `C(z)`
 being given by `\frac{1}{n!} C(z)^{(n)}(0)`, we look at the
 successive derivatives `C(z)^{(n)}(z)`::
 
-    sage: derivative(C, z, 1)
+    sage: derivative(C, z, 1)                                                           # optional - sage.symbolic
     1/sqrt(-4*z + 1)
-    sage: derivative(C, z, 2)
+    sage: derivative(C, z, 2)                                                           # optional - sage.symbolic
     2/(-4*z + 1)^(3/2)
-    sage: derivative(C, z, 3)
+    sage: derivative(C, z, 3)                                                           # optional - sage.symbolic
     12/(-4*z + 1)^(5/2)
 
 This suggests the existence of a simple explicit formula, which we will
@@ -373,9 +373,9 @@ satisfies the recurrence relation
 
 We check this::
 
-    sage: n = var('n')
-    sage: c = 1/n*binomial(2*(n-1),n-1)
-    sage: [c.subs(n=k) for k in range(1, 11)]
+    sage: n = var('n')                                                                  # optional - sage.symbolic
+    sage: c = 1/n*binomial(2*(n-1),n-1)                                                 # optional - sage.symbolic
+    sage: [c.subs(n=k) for k in range(1, 11)]                                           # optional - sage.symbolic
     [1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862]
     sage: [catalan_number(k-1) for k in range(1, 11)]
     [1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862]
@@ -383,14 +383,14 @@ We check this::
 We can now calculate coefficients much further; here we calculate
 `c_{100000}` which has more than `60000` digits::
 
-    sage: cc = c(n = 100000)
+    sage: cc = c(n=100000)                                                              # optional - sage.symbolic
 
 This takes a couple of seconds::
 
-    sage: %time cc = c(100000)                         # not tested
+    sage: %time cc = c(100000)                         # not tested                     # optional - sage.symbolic
     CPU times: user 2.34 s, sys: 0.00 s, total: 2.34 s
     Wall time: 2.34 s
-    sage: ZZ(cc).ndigits()
+    sage: ZZ(cc).ndigits()                                                              # optional - sage.symbolic
     60198
 
 The methods which we have used generalize to all recursively defined
@@ -417,11 +417,11 @@ solution to an algebraic equation `P(z,C(z)) = 0`, where
 In the present case, `P=y^2-y+x`. We formally differentiate this
 equation with respect to `z`::
 
-    sage: x, y, z = var('x, y, z')
-    sage: P = function('P')(x, y)
-    sage: C = function('C')(z)
-    sage: equation =  P(x=z, y=C) == 0
-    sage: diff(equation, z)
+    sage: x, y, z = var('x, y, z')                                                      # optional - sage.symbolic
+    sage: P = function('P')(x, y)                                                       # optional - sage.symbolic
+    sage: C = function('C')(z)                                                          # optional - sage.symbolic
+    sage: equation =  P(x=z, y=C) == 0                                                  # optional - sage.symbolic
+    sage: diff(equation, z)                                                             # optional - sage.symbolic
     diff(C(z), z)*D[1](P)(z, C(z)) + D[0](P)(z, C(z)) == 0
 
 or, in a more readable format,
@@ -434,9 +434,9 @@ From this we deduce:
 
 In the case of complete binary trees, this gives::
 
-    sage: P = y^2 - y + x
-    sage: Px = diff(P, x); Py = diff(P, y)
-    sage: - Px / Py
+    sage: P = y^2 - y + x                                                               # optional - sage.symbolic
+    sage: Px = diff(P, x); Py = diff(P, y)                                              # optional - sage.symbolic
+    sage: - Px / Py                                                                     # optional - sage.symbolic
     -1/(2*y - 1)
 
 Recall that `P(z, C(z))=0`. Thus, we can calculate this fraction
@@ -476,7 +476,7 @@ We lift the result to `\QQ(x)[y]` and then substitute
 
     sage: fraction = fraction.lift(); fraction
     (1/2/(x - 1/4))*y - 1/4/(x - 1/4)
-    sage: fraction(x=z, y=C)
+    sage: fraction(x=z, y=C)                                                            # optional - sage.symbolic
     2*C(z)/(4*z - 1) - 1/(4*z - 1)
 
 or, more legibly,
@@ -486,13 +486,13 @@ or, more legibly,
 In this simple case, we can directly deduce from this expression a
 linear differential equation with coefficients in `\QQ[z]`::
 
-    sage: equadiff = diff(C,z) == fraction(x=z, y=C)
-    sage: equadiff
+    sage: equadiff = diff(C,z) == fraction(x=z, y=C)                                    # optional - sage.symbolic
+    sage: equadiff                                                                      # optional - sage.symbolic
     diff(C(z), z) == 2*C(z)/(4*z - 1) - 1/(4*z - 1)
-    sage: equadiff = equadiff.simplify_rational()
-    sage: equadiff = equadiff * equadiff.rhs().denominator()
-    sage: equadiff = equadiff - equadiff.rhs()
-    sage: equadiff
+    sage: equadiff = equadiff.simplify_rational()                                       # optional - sage.symbolic
+    sage: equadiff = equadiff * equadiff.rhs().denominator()                            # optional - sage.symbolic
+    sage: equadiff = equadiff - equadiff.rhs()                                          # optional - sage.symbolic
+    sage: equadiff                                                                      # optional - sage.symbolic
     (4*z - 1)*diff(C(z), z) - 2*C(z) + 1 == 0
 
 or, more legibly,
@@ -501,10 +501,10 @@ or, more legibly,
 
 It is trivial to verify this equation on the closed form::
 
-    sage: Cf = sage.symbolic.function_factory.function('C')
-    sage: equadiff.substitute_function(Cf, s0.function(z))
+    sage: Cf = sage.symbolic.function_factory.function('C')                             # optional - sage.symbolic
+    sage: equadiff.substitute_function(Cf, s0.function(z))                              # optional - sage.symbolic
     (4*z - 1)/sqrt(-4*z + 1) + sqrt(-4*z + 1) == 0
-    sage: bool(equadiff.substitute_function(Cf, s0.function(z)))
+    sage: bool(equadiff.substitute_function(Cf, s0.function(z)))                        # optional - sage.symbolic
     True
 
 .. On veut non seulement remplacer les occurrences de C(z), mais
@@ -774,14 +774,14 @@ The number `16` above seems significant and suggests the existence of a
 formula. We look at the number of compositions of `n` ranging
 from `0` to `9`::
 
-    sage: [ Compositions(n).cardinality() for n in range(10) ]
+    sage: [Compositions(n).cardinality() for n in range(10)]
     [1, 1, 2, 4, 8, 16, 32, 64, 128, 256]
 
 Similarly, if we consider the number of compositions of `5` by
 length, we find a line of Pascal’s triangle::
 
-    sage: x = var('x')
-    sage: sum( x^len(c) for c in C5 )
+    sage: x = var('x')                                                                  # optional - sage.symbolic
+    sage: sum(x^len(c) for c in C5)                                                     # optional - sage.symbolic
     x^5 + 4*x^4 + 6*x^3 + 4*x^2 + x
 
 The above example uses a functionality which we have not seen yet:
@@ -893,8 +893,8 @@ structures like the dihedral groups::
 or the algebra of `2\times 2` matrices over the finite field
 `\ZZ/2\ZZ`::
 
-    sage: C = MatrixSpace(GF(2), 2)
-    sage: C.list()
+    sage: C = MatrixSpace(GF(2), 2)                                                     # optional - sage.modules sage.rings.finite_rings
+    sage: C.list()                                                                      # optional - sage.modules sage.rings.finite_rings
     [
     [0 0]  [1 0]  [0 1]  [0 0]  [0 0]  [1 1]  [1 0]  [1 0]  [0 1]  [0 1]
     [0 0], [0 0], [0 0], [1 0], [0 1], [0 0], [1 0], [0 1], [1 0], [0 1],
@@ -902,7 +902,7 @@ or the algebra of `2\times 2` matrices over the finite field
     [0 0]  [1 1]  [1 1]  [1 0]  [0 1]  [1 1]
     [1 1], [1 0], [0 1], [1 1], [1 1], [1 1]
     ]
-    sage: C.cardinality()
+    sage: C.cardinality()                                                               # optional - sage.modules sage.rings.finite_rings
     16
 
 .. topic:: Exercise
@@ -1146,24 +1146,24 @@ Alternatively, we could construct an iterator on the counter-examples::
 
     ::
 
-        sage: x = var('x')
-        sage: sum( x^len(s) for s in Subsets(8) )
+        sage: x = var('x')                                                              # optional - sage.symbolic
+        sage: sum(x^len(s) for s in Subsets(8))                                         # optional - sage.symbolic
         x^8 + 8*x^7 + 28*x^6 + 56*x^5 + 70*x^4 + 56*x^3 + 28*x^2 + 8*x + 1
 
     ::
 
-        sage: sum( x^p.length() for p in Permutations(3) )
+        sage: sum(x^p.length() for p in Permutations(3))                                # optional - sage.symbolic
         x^3 + 2*x^2 + 2*x + 1
 
     ::
 
-        sage: factor(sum( x^p.length() for p in Permutations(3) ))
+        sage: factor(sum(x^p.length() for p in Permutations(3)))                        # optional - sage.symbolic
         (x^2 + x + 1)*(x + 1)
 
     ::
 
         sage: P = Permutations(5)
-        sage: all( p in P for p in P )
+        sage: all(p in P for p in P)
         True
 
     ::
@@ -1238,7 +1238,7 @@ Operations on iterators
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 ``Python`` provides numerous tools for manipulating iterators; most of them
-are in the ``itertools`` library, which can be imported by::
+are in the :mod:`itertools` library, which can be imported by::
 
     sage: import itertools
 
@@ -1375,15 +1375,15 @@ Counting them, we recover a well-known sequence::
     to define a formal variable ``Leaf`` for the leaves and a formal
     2-ary function ``Node``::
 
-        sage: var('Leaf')
+        sage: var('Leaf')                                                               # optional - sage.symbolic
         Leaf
-        sage: function('Node', nargs=2)
+        sage: function('Node', nargs=2)                                                 # optional - sage.symbolic
         Node
 
     The second tree in :ref:`figure-examples-catalan-trees`
     can be represented by the expression::
 
-        sage: tr = Node(Node(Leaf, Node(Leaf, Leaf)), Leaf)
+        sage: tr = Node(Node(Leaf, Node(Leaf, Leaf)), Leaf)                             # optional - sage.symbolic
 
 .. _section-constructions:
 
@@ -1666,7 +1666,7 @@ Here, we illustrate just a few examples using the ``Sage`` library on
 combinatorial species::
 
     sage: from sage.combinat.species.library import *
-    sage: o = var('o')
+    sage: o = var('o')                                                                  # optional - sage.symbolic
 
 We begin by redefining the complete binary trees; to do so, we stipulate
 the recurrence relation directly on the sets::
@@ -1678,10 +1678,10 @@ the recurrence relation directly on the sets::
 Now we can construct the set of trees with five nodes, list them, count
 them...::
 
-    sage: BT5 = BT.isotypes([o]*5)
-    sage: BT5.cardinality()
+    sage: BT5 = BT.isotypes([o]*5)                                                      # optional - sage.symbolic
+    sage: BT5.cardinality()                                                             # optional - sage.symbolic
     14
-    sage: BT5.list()
+    sage: BT5.list()                                                                    # optional - sage.symbolic
     [o*(o*(o*(o*o))), o*(o*((o*o)*o)), o*((o*o)*(o*o)),
      o*((o*(o*o))*o), o*(((o*o)*o)*o), (o*o)*(o*(o*o)),
      (o*o)*((o*o)*o), (o*(o*o))*(o*o), ((o*o)*o)*(o*o),
@@ -1730,8 +1730,8 @@ with the same limitations resulting from the generic display.
 
 ::
 
-    sage: FW3 = FW.isotypes([o]*3)
-    sage: FW3.list()
+    sage: FW3 = FW.isotypes([o]*3)                                                      # optional - sage.symbolic
+    sage: FW3.list()                                                                    # optional - sage.symbolic
     [o*(o*(o*{})), o*(o*(({}*o)*{})), o*((({}*o)*o)*{}),
      (({}*o)*o)*(o*{}), (({}*o)*o)*(({}*o)*{})]
 
@@ -1819,7 +1819,7 @@ graph; so planar graphs form a subtree of the previous tree. To generate
 them, exactly the same algorithm can be used,
 selecting only the children which are planar::
 
-    sage: [len(list(graphs(n, property = lambda G: G.is_planar())))
+    sage: [len(list(graphs(n, property=lambda G: G.is_planar())))
     ....:  for n in range(7)]
     [1, 1, 2, 4, 11, 33, 142]
 

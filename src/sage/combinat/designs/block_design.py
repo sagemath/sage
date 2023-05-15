@@ -404,16 +404,16 @@ def q3_minus_one_matrix(K):
         sage: m.multiplicative_order() == 3**3 - 1
         True
 
-        sage: m = q3_minus_one_matrix(GF(4,'a'))
-        sage: m.multiplicative_order() == 4**3 - 1
+        sage: m = q3_minus_one_matrix(GF(4, 'a'))                                       # optional - sage.symbolic
+        sage: m.multiplicative_order() == 4**3 - 1                                      # optional - sage.symbolic
         True
 
         sage: m = q3_minus_one_matrix(GF(5))
         sage: m.multiplicative_order() == 5**3 - 1
         True
 
-        sage: m = q3_minus_one_matrix(GF(9,'a'))
-        sage: m.multiplicative_order() == 9**3 - 1
+        sage: m = q3_minus_one_matrix(GF(9, 'a'))                                       # optional - sage.symbolic
+        sage: m.multiplicative_order() == 9**3 - 1                                      # optional - sage.symbolic
         True
     """
     q = K.cardinality()

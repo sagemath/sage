@@ -2783,7 +2783,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Q = Poset({0:[2], 1:[2], 2:[3], 3:[4], 4:[]})
             sage: Q.is_incomparable_chain_free(2, 20/10)
             True
-            sage: Q.is_incomparable_chain_free(2, pi)
+            sage: Q.is_incomparable_chain_free(2, pi)                                   # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: 2 and pi must be integers
@@ -8732,7 +8732,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: y = '3421'
             sage: L.kazhdan_lusztig_polynomial(x, y)
             -q + 1
-            sage: L.kazhdan_lusztig_polynomial(x, y, var('t'))
+            sage: L.kazhdan_lusztig_polynomial(x, y, var('t'))                          # optional - sage.symbolic
             -t + 1
 
         AUTHORS:

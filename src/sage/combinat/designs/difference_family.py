@@ -2040,9 +2040,6 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
         ...
         NotImplementedError: skew SDS of order 7 not yet implemented
     """
-    from sage.symbolic.ring import SymbolicRing
-    from sage.rings.finite_rings.integer_mod_ring import Zmod
-
     data = {
         81: (3, lambda x: x**4 - x**3 - 1, 16, 5,
              [1, 2, 4, 6, 8, 10, 12, 14], [1, 2, 3, 4, 10, 11, 13],
@@ -2059,6 +2056,9 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
         raise NotImplementedError(f'skew SDS of order {n} not yet implemented')
 
     mod, poly, exp, order, ind1, ind2, ind3, ind4 = data[n]
+
+    from sage.symbolic.ring import SymbolicRing
+    from sage.rings.finite_rings.integer_mod_ring import Zmod
 
     Z3 = Zmod(mod)
     R = SymbolicRing()

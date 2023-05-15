@@ -1891,7 +1891,7 @@ class SetPartition(AbstractSetPartition,
         EXAMPLES::
 
             sage: p = SetPartition([[1,10,11],[2,3,7],[4,5,6],[8,9]])
-            sage: p.plot()
+            sage: p.plot()                                                              # optional - sage.plot sage.symbolic
             Graphics object consisting of 29 graphics primitives
 
         .. PLOT::
@@ -1902,7 +1902,7 @@ class SetPartition(AbstractSetPartition,
         ::
 
             sage: p = SetPartition([[1,3,4],[2,5]])
-            sage: print(p.plot().description())
+            sage: print(p.plot().description())                                         # optional - sage.plot sage.symbolic
             Point set defined by 1 point(s):    [(0.0, 0.0)]
             Point set defined by 1 point(s):    [(1.0, 0.0)]
             Point set defined by 1 point(s):    [(2.0, 0.0)]
@@ -1920,7 +1920,7 @@ class SetPartition(AbstractSetPartition,
             Arc with center (2.5,-1.5) radii (2.1213203435...,2.1213203435...)
              angle 0.0 inside the sector (0.785398163397...,2.35619449019...)
             sage: p = SetPartition([['a','c'],['b','d'],['e']])
-            sage: print(p.plot().description())
+            sage: print(p.plot().description())                                         # optional - sage.plot sage.symbolic
             Point set defined by 1 point(s):  [(0.0, 0.0)]
             Point set defined by 1 point(s):    [(1.0, 0.0)]
             Point set defined by 1 point(s):    [(2.0, 0.0)]
@@ -1936,7 +1936,8 @@ class SetPartition(AbstractSetPartition,
             Arc with center (2.0,-1.0) radii (1.41421356237...,1.41421356237...)
              angle 0.0 inside the sector (0.785398163397...,2.35619449019...)
             sage: p = SetPartition([['a','c'],['b','d'],['e']])
-            sage: print(p.plot(base_set_dict={'a':0,'b':1,'c':2,'d':-2.3,'e':5.4}).description())
+            sage: print(p.plot(base_set_dict={'a':0,'b':1,'c':2,                        # optional - sage.plot sage.symbolic
+            ....:                             'd':-2.3,'e':5.4}).description())
             Point set defined by 1 point(s):    [(-2.3, 0.0)]
             Point set defined by 1 point(s):    [(0.0, 0.0)]
             Point set defined by 1 point(s):    [(1.0, 0.0)]
