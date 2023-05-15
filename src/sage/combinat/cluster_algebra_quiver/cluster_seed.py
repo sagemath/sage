@@ -124,7 +124,7 @@ class ClusterSeed(SageObject):
         ....:                 frozen=['c']); S
         A seed for a cluster algebra of rank 4 with 1 frozen variable
 
-        sage: S = ClusterSeed(['D', 4],user_labels = [-1, 0, 1, 2]); S
+        sage: S = ClusterSeed(['D', 4], user_labels=[-1, 0, 1, 2]); S
         A seed for a cluster algebra of rank 4 of type ['D', 4]
     """
 
@@ -3019,7 +3019,7 @@ class ClusterSeed(SageObject):
             [ 0  1]
             [ 0 -1]
 
-            sage: S = ClusterSeed(['A', 5], user_labels = [-2, -1, 0, 1 ,2])
+            sage: S = ClusterSeed(['A', 5], user_labels=[-2, -1, 0, 1 ,2])
             sage: U = S.universal_extension()
             sage: U.b_matrix() == ClusterSeed(['A', 5]).universal_extension().b_matrix()
             True

@@ -780,7 +780,7 @@ class WordGenerator():
             word: 11110
             sage: words.CharacteristicSturmianWord(5/14)
             word: 01001001001001
-            sage: words.CharacteristicSturmianWord(pi-3)
+            sage: words.CharacteristicSturmianWord(pi - 3)                              # optional - sage.symbolic
             word: 0000001000000100000010000001000000100000...
 
         From an iterator of the continued fraction expansion of a real::
