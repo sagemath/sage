@@ -38,8 +38,7 @@ from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
-from sage.arith.misc import Sigma
-from sage.functions.other import floor, ceil, binomial, factorial
+from sage.arith.misc import Sigma, integer_floor as floor, integer_ceil as ceil, binomial, factorial
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers

@@ -322,6 +322,8 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
             sage: path_tableaux.FriezePattern([1,2,1/7,5,3]).triangulation()            # optional - sage.plot sage.symbolic
             Graphics object consisting of 12 graphics primitives
 
+
+            sage: x = polygen(ZZ, 'x')
             sage: K.<sqrt2> = NumberField(x^2 - 2)                                      # optional - sage.rings.number_field
             sage: path_tableaux.FriezePattern([1,sqrt2,1,sqrt2,3,2*sqrt2,5,3*sqrt2,1],  # optional - sage.plot sage.rings.number_field sage.symbolic
             ....:                             field=K).triangulation()

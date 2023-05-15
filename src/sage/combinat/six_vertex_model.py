@@ -650,7 +650,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: M = SixVertexModel(3, boundary_conditions='ice')
-            sage: M.partition_function(2, [1,2,1,2,1,2])
+            sage: M.partition_function(2, [1,2,1,2,1,2])                                # optional - sage.symbolic
             e^(-24) + 2*e^(-28) + e^(-30) + 2*e^(-32) + e^(-36)
 
         REFERENCES:

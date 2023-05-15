@@ -5326,7 +5326,7 @@ class Partition(CombinatorialElement):
 
         TESTS::
 
-            sage: integrate(Partition([1]).outline()-abs(x),(x,-10,10))
+            sage: integrate(Partition([1]).outline()-abs(x),(x,-10,10))                 # optional - sage.symbolic
             2
         """
         if variable is None:

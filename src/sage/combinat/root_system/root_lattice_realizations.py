@@ -2442,13 +2442,13 @@ class RootLatticeRealizations(Category_over_base_ring):
             TESTS::
 
                 sage: L = RootSystem(["A",2]).ambient_space()
-                sage: print(L.plot_reflection_hyperplanes().description())
+                sage: print(L.plot_reflection_hyperplanes().description())                          # optional - sage.plot sage.symbolic
                 Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15...)
                 Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15...)
                 Line defined by 2 points: [(-1.73..., 3.0), (1.73..., -3.0)]
                 Line defined by 2 points: [(1.73..., 3.0), (-1.73..., -3.0)]
 
-                sage: print(L.plot_reflection_hyperplanes("all").description())
+                sage: print(L.plot_reflection_hyperplanes("all").description())                     # optional - sage.plot sage.symbolic
                 Text '$H_{\alpha^\vee_{1} + \alpha^\vee_{2}}$' at the point (3.15...,0.0)
                 Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15...)
                 Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15...)
@@ -2457,7 +2457,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 Line defined by 2 points: [(3.0, 0.0), (-3.0, 0.0)]
 
                 sage: L = RootSystem(["A",2,1]).ambient_space()
-                sage: print(L.plot_reflection_hyperplanes().description())
+                sage: print(L.plot_reflection_hyperplanes().description())                          # optional - sage.plot sage.symbolic
                 Text '$H_{\alpha^\vee_{0}}$' at the point (3.15...,0.90...)
                 Text '$H_{\alpha^\vee_{1}}$' at the point (-1.81...,3.15...)
                 Text '$H_{\alpha^\vee_{2}}$' at the point (1.81...,3.15...)
@@ -2832,12 +2832,12 @@ class RootLatticeRealizations(Category_over_base_ring):
             EXAMPLES::
 
                 sage: L = RootSystem(["A",2,1]).ambient_space()
-                sage: L.plot_bounding_box()
+                sage: L.plot_bounding_box()                                             # optional - sage.plot sage.symbolic
                 Graphics object consisting of 1 graphics primitive
 
             TESTS::
 
-                sage: list(L.plot_bounding_box())
+                sage: list(L.plot_bounding_box())                                       # optional - sage.plot sage.symbolic
                 [Polygon defined by 4 points]
             """
             plot_options = self.plot_parse_options(**options)
@@ -3149,7 +3149,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: LS = crystals.LSPaths(['A',2], [1,1])
                 sage: L = RootSystem(['A',2]).ambient_space()
-                sage: L.plot_crystal(LS)
+                sage: L.plot_crystal(LS)                                                # optional - sage.plot sage.symbolic
                 Graphics object consisting of 16 graphics primitives
             """
             from sage.plot.arrow import arrow
