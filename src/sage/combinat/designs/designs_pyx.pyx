@@ -7,6 +7,14 @@ Functions
 ---------
 """
 
+from sage.data_structures.bitset_base cimport *
+
+from libc.string cimport memset
+
+from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
+
+from sage.misc.unknown import Unknown
+
 def is_covering_array(array,strength=None,symbol_set=None,verbose=False,parameters=False):
     r"""
     Checks if the input is a covering array with given strength
@@ -203,14 +211,6 @@ def is_covering_array(array,strength=None,symbol_set=None,verbose=False,paramete
             return (result,(number_rows,wstrength,number_columns,len(symbol_set)))
         else:
             return result
-
-from sage.data_structures.bitset_base cimport *
-
-from libc.string cimport memset
-
-from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
-
-from sage.misc.unknown import Unknown
 
 def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="OA"):
     r"""
