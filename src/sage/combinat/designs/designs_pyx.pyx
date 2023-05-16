@@ -153,7 +153,7 @@ def is_covering_array(array,strength=None,symbol_set=None,verbose=False,paramete
     finished = False
 
     # if no strength inputted, tries increasing values for t until one
-    does not work. If strength is inputted ends after one check
+    # does not work. If strength is inputted ends after one check
     while finished is False:
         # A dictionary to count how many times each t-tuple appears in
         # the array
