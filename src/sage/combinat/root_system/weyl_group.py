@@ -16,14 +16,14 @@ The Cayley graph of the Weyl Group of type ['A', 3]::
     sage: w = WeylGroup(['A',3])
     sage: d = w.cayley_graph(); d
     Digraph on 24 vertices
-    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)
+    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)               # optional - sage.plot
 
 The Cayley graph of the Weyl Group of type ['D', 4]::
 
     sage: w = WeylGroup(['D',4])
     sage: d = w.cayley_graph(); d
     Digraph on 192 vertices
-    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03) #long time (less than one minute)
+    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)  # long time (less than one minute)   # optional - sage.plot
 
 .. TODO::
 

@@ -186,7 +186,7 @@ elements of the Weyl group. We enlarge a bit the bounding box to make
 sure everything fits in the picture::
 
     sage: RootSystem(["G",2]).ambient_space().plot(alcoves=True,                        # optional - sage.plot sage.symbolic
-....:                                              alcove_labels=True, bounding_box=5)
+    ....:                                          alcove_labels=True, bounding_box=5)
     Graphics object consisting of 37 graphics primitives
 
 .. PLOT::

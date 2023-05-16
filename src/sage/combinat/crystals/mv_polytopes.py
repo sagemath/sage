@@ -218,7 +218,7 @@ class MVPolytope(PBWCrystalElement):
 
             sage: MV = crystals.infinity.MVPolytopes(['C', 2])
             sage: b = MV.highest_weight_vector().f_string([1,2,1,2,2,2,1,1,1,1,2,1])
-            sage: b.plot()
+            sage: b.plot()                                                              # optional - sage.plot
             Graphics object consisting of 12 graphics primitives
 
         Here is the above example placed inside the ambient space

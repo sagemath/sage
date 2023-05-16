@@ -867,7 +867,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         TESTS::
 
             sage: t1 = BinaryTree([[], [[], None]])
-            sage: t1.show()
+            sage: t1.show()                                                             # optional - sage.plot
         """
         try:
             self.graph(with_leaves=with_leaves).show(layout='tree', tree_root=0, tree_orientation="down")

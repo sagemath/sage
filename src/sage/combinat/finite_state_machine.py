@@ -9708,7 +9708,7 @@ class FiniteStateMachine(SageObject):
 
         TESTS::
 
-            sage: FiniteStateMachine([('A', 'A', 0)]).plot()
+            sage: FiniteStateMachine([('A', 'A', 0)]).plot()                            # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         return self.graph(edge_labels='words_in_out').plot()
