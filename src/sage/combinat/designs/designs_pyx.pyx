@@ -45,7 +45,7 @@ def is_covering_array(array,strength=None,symbol_set=None,verbose=False,paramete
             sage: is_covering_array(C)
             Traceback (most recent call last):
             ...
-            ValueError: Not all rows are the same length, row 2i is not the same length as row 0
+            ValueError: Not all rows are the same length, row 2 is not the same length as row 0
 
             sage: C = (('a', 'a', 'a', 'b'),
             ....:      ('a', 'a', 'b', 'a'),
