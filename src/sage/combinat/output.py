@@ -235,7 +235,7 @@ def tex_from_array(array, with_lines=True):
 
         sage: Tableaux.options._reset()
     """
-    lr=lr_macro.substitute(bar='|' if with_lines else '')
+    lr = lr_macro.substitute(bar='|' if with_lines else '')
     if Tableaux.options.convention == "English":
         return '{%s\n%s\n}' % (lr, tex_from_skew_array(array, with_lines))
     else:
@@ -329,13 +329,13 @@ def tex_from_array_tuple(a_tuple, with_lines=True):
 
         sage: Tableaux.options._reset()
     """
-    lr=lr_macro.substitute(bar='|' if with_lines else '')
+    lr = lr_macro.substitute(bar='|' if with_lines else '')
     if Tableaux.options.convention == "English":
         return '{%s\n%s\n}' % (lr, ','.join(
-            r'\emptyset' if comp==[] else tex_from_skew_array(comp, with_lines) for comp in a_tuple))
+            r'\emptyset' if comp == [] else tex_from_skew_array(comp, with_lines) for comp in a_tuple))
     else:
         return '{%s\n%s\n}' % (lr, ','.join(
-            r'\emptyset' if comp==[] else tex_from_skew_array(comp[::-1], with_lines, align='t') for comp in a_tuple))
+            r'\emptyset' if comp == [] else tex_from_skew_array(comp[::-1], with_lines, align='t') for comp in a_tuple))
 
 
 def tex_from_skew_array(array, with_lines=False, align='b'):
@@ -382,17 +382,17 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
 
         def end_line(r):
             # in a slightly unpythonic way, we label the lines as 0, 1, ..., len(array)
-            if r==0:
-                return r'\cline{%s-%s}'%(nones[0],len(array[0]))
-            elif r==len(array):
-                start=nones[r-1]
-                finish=len(array[r-1])
+            if r == 0:
+                return r'\cline{%s-%s}' % (nones[0], len(array[0]))
+            elif r == len(array):
+                start = nones[r-1]
+                finish = len(array[r-1])
             else:
-                start=min(nones[r], nones[r-1])
-                finish=max(len(array[r]), len(array[r-1]))
-            return r'\\' if start>finish else r'\\\cline{%s-%s}'%(start, finish)
+                start = min(nones[r], nones[r-1])
+                finish = max(len(array[r]), len(array[r-1]))
+            return r'\\' if start > finish else r'\\\cline{%s-%s}' % (start, finish)
     else:
-        end_line=lambda r: r'\\'
+        end_line = lambda r: r'\\'
 
     # now we draw the array
     raisebox_start = r'\raisebox{-.6ex}{'
@@ -405,11 +405,11 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
         lr_start += r'\rotatebox{-45}{'
         lr_end += r'}'
 
-    tex=r'%s$\begin{array}[%s]{*{%s}c}'%(raisebox_start,align,max(map(len,array)))
-    tex+=end_line(0)+'\n'
+    tex = r'%s$\begin{array}[%s]{*{%s}c}' % (raisebox_start, align, max(map(len, array)))
+    tex += end_line(0)+'\n'
     for r in range(len(array)):
-        tex+='&'.join('' if c is None else r'%s%s%s'%(lr_start,c,lr_end) for c in array[r])
-        tex+=end_line(r+1)+'\n'
+        tex += '&'.join('' if c is None else r'%s%s%s' % (lr_start, c, lr_end) for c in array[r])
+        tex += end_line(r+1)+'\n'
     return tex+r'\end{array}$'+raisebox_end
 
 
@@ -470,8 +470,8 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
 
     if use_unicode:
         import unicodedata
-        v  = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL')
-        h  = unicodedata.lookup('BOX DRAWINGS LIGHT HORIZONTAL')
+        v = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL')
+        h = unicodedata.lookup('BOX DRAWINGS LIGHT HORIZONTAL')
         dl = unicodedata.lookup('BOX DRAWINGS LIGHT DOWN AND LEFT')
         dr = unicodedata.lookup('BOX DRAWINGS LIGHT DOWN AND RIGHT')
         ul = unicodedata.lookup('BOX DRAWINGS LIGHT UP AND LEFT')
@@ -511,17 +511,17 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
                 return 0
             return len(e)
     for row in str_tab:
-        for i,e in enumerate(row):
+        for i, e in enumerate(row):
             col_widths[i] = max(col_widths[i], get_len(e))
 
     matr = []  # just the list of lines
-    for nrow,row in enumerate(str_tab):
-        if nrow == 0: # skip the first row
+    for nrow, row in enumerate(str_tab):
+        if nrow == 0:  # skip the first row
             continue
 
         l1 = ""
         l2 = ""
-        for i,(e,w) in enumerate(zip(row, col_widths)):
+        for i, (e, w) in enumerate(zip(row, col_widths)):
             prev_row = str_tab[nrow-1]
             if i == 0:
                 if e is None:
@@ -573,7 +573,7 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
                             l1 += vh + h*(2+w)
                     else:
                         if prev_row[i-1] is None and prev_row[i] is None:
-                                l1 += dh + h*(2+w)
+                            l1 += dh + h*(2+w)
                         else:
                             l1 += vh + h*(2+w)
                     l2 += "{} {:^{width}} ".format(v, e, width=w)
@@ -608,6 +608,7 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
             return output.translate(tr)
         else:
             return output
+
 
 def ascii_art_table_russian(data, use_unicode=False, compact=False):
     r"""
@@ -729,7 +730,7 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
             else:
                 st += x
             if len(str_tab[b:]) > 0 and len(str_tab[b][a:]) > 0 and str_tab[b][a] is not None:
-                st += str_tab[b][a].rjust(col_width,' ').ljust(col_width * 2 - 1, ' ')
+                st += str_tab[b][a].rjust(col_width, ' ').ljust(col_width * 2 - 1, ' ')
             else:
                 st += ' '*(col_width * 2 - 1)
             if b == 0:
