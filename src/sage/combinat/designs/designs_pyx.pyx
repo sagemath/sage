@@ -17,122 +17,122 @@ from sage.misc.unknown import Unknown
 
 def is_covering_array(array,strength=None,symbol_set=None,verbose=False,parameters=False):
     r"""
-    Checks if the input is a covering array with given strength
+    Checks if the input is a covering array with given strength.
 
-    - ``array`` -- The Covering Array to be tested
+    - ``array`` -- The Covering Array to be tested.
 
     - ``strength`` (integer) -- The parameter `t` of the covering array,
-        such thatin any selection of `t` columns of the array, every `t`
-        -tuple appearsat least once. If set to None then all t>0 are
-        tested to and themaximal strength is used.
+      such thatin any selection of `t` columns of the array, every `t`
+      -tuple appearsat least once. If set to None then all t>0 are
+      tested to and themaximal strength is used.
 
     - ``symbol_set`` -- The collection of symbols that is used in
       ``array``. If set to None, then a symbol set will be assumed by
       checking for each unique entry in the given ``array``.
 
     - ``verbose`` (boolean) -- whether to display some information about
-    the covering array
+      the covering array.
 
     - ``parameters`` (boolean) -- whether to return the parameters of
       the Covering Array. If set to ``True``, the function returns a
-      pair ``(boolean_answer,(N,t,k,v))``
+      pair ``(boolean_answer,(N,t,k,v))``.
 
     EXAMPLES::
-            sage: from sage.combinat.designs.designs_pyx import is_covering_array
-            sage: C = ((1, 1, 1, 0),
-            ....:      (1, 1, 0, 0),
-            ....:      (0, 0, 0))
-            sage: is_covering_array(C)
-            Traceback (most recent call last):
-            ...
-            ValueError: Not all rows are the same length, row 2 is not the same length as row 0
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: C = ((1, 1, 1, 0),
+        ....:      (1, 1, 0, 0),
+        ....:      (0, 0, 0))
+        sage: is_covering_array(C)
+        Traceback (most recent call last):
+        ...
+        ValueError: Not all rows are the same length, row 2 is not the same length as row 0
 
-            sage: C = (('a', 'a', 'a', 'b'),
-            ....:      ('a', 'a', 'b', 'a'),
-            ....:      ('a', 'b', 'a', 'a'),
-            ....:      ('b', 'a', 'a', 'a'),
-            ....:      ('b', 'b', 'b', 'b'))
-            sage: is_covering_array(C,verbose=True)
-            A 5 by 4 Covering Array with strength 2 with entries from ['a', 'b']
-            True
-            sage: is_covering_array(C,strength=3,verbose=True)
-            A 5 by 4 Covering Array with strength 0 with entries from ['a', 'b']
-            False
+        sage: C = (('a', 'a', 'a', 'b'),
+        ....:      ('a', 'a', 'b', 'a'),
+        ....:      ('a', 'b', 'a', 'a'),
+        ....:      ('b', 'a', 'a', 'a'),
+        ....:      ('b', 'b', 'b', 'b'))
+        sage: is_covering_array(C,verbose=True)
+        A 5 by 4 Covering Array with strength 2 with entries from ['a', 'b']
+        True
+        sage: is_covering_array(C,strength=3,verbose=True)
+        A 5 by 4 Covering Array with strength 0 with entries from ['a', 'b']
+        False
 
-            sage: from sage.combinat.designs.designs_pyx import is_covering_array
-            sage: C = ((0, 1, 0),
-            ....:      (1, 1, 0),
-            ....:      (1, 0, 0))
-            sage: is_covering_array(C,verbose=True)
-            A 3 by 3 Covering Array with strength 0 with entries from [0, 1]
-            True
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: C = ((0, 1, 0),
+        ....:      (1, 1, 0),
+        ....:      (1, 0, 0))
+        sage: is_covering_array(C,verbose=True)
+        A 3 by 3 Covering Array with strength 0 with entries from [0, 1]
+        True
 
-            sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-            ....:      (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),
-            ....:      (0, 1, 1, 1, 0, 0, 0, 1, 1, 1),
-            ....:      (1, 0, 1, 1, 0, 1, 1, 0, 0, 1),
-            ....:      (1, 1, 0, 1, 1, 0, 1, 0, 1, 0),
-            ....:      (1, 1, 1, 0, 1, 1, 0, 1, 2, 0))
-            sage: is_covering_array(C,symbol_set=(0,1))
-            Traceback (most recent call last):
-            ...
-            ValueError: 2 appears in the array but not in the given symbol set
+        sage: C = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        ....:      (0, 0, 0, 0, 1, 1, 1, 1, 1, 1),
+        ....:      (0, 1, 1, 1, 0, 0, 0, 1, 1, 1),
+        ....:      (1, 0, 1, 1, 0, 1, 1, 0, 0, 1),
+        ....:      (1, 1, 0, 1, 1, 0, 1, 0, 1, 0),
+        ....:      (1, 1, 1, 0, 1, 1, 0, 1, 2, 0))
+        sage: is_covering_array(C,symbol_set=(0,1))
+        Traceback (most recent call last):
+        ...
+        ValueError: 2 appears in the array but not in the given symbol set
 
-            sage: C = ((1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2),
-            ....:      (1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2),
-            ....:      (1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0),
-            ....:      (0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1),
-            ....:      (2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2),
-            ....:      (1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2),
-            ....:      (1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1),
-            ....:      (2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2),
-            ....:      (1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0),
-            ....:      (0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2),
-            ....:      (1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0),
-            ....:      (0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0),
-            ....:      (0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1),
-            ....:      (2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1),
-            ....:      (2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1),
-            ....:      (2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0),
-            ....:      (0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2),
-            ....:      (1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1),
-            ....:      (2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1),
-            ....:      (2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2),
-            ....:      (1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1),
-            ....:      (2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0),
-            ....:      (0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1),
-            ....:      (2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0),
-            ....:      (0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0),
-            ....:      (0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2),
-            ....:      (1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2),
-            ....:      (1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0),
-            ....:      (0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0),
-            ....:      (0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1),
-            ....:      (2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0),
-            ....:      (0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1),
-            ....:      (2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2),
-            ....:      (1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1),
-            ....:      (2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1),
-            ....:      (2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2),
-            ....:      (1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0),
-            ....:      (0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1),
-            ....:      (2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1),
-            ....:      (2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1),
-            ....:      (2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0),
-            ....:      (0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0),
-            ....:      (0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2),
-            ....:      (1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0),
-            ....:      (0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2),
-            ....:      (1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1),
-            ....:      (2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2),
-            ....:      (1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2),
-            ....:      (1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1),
-            ....:      (2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0),
-            ....:      (0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2),
-            ....:      (1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2),
-            ....:      (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
-            sage: is_covering_array(C,parameters=True)
-            (True, (53, 3, 13, 3))
+        sage: C = ((1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2),
+        ....:      (1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2),
+        ....:      (1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0),
+        ....:      (0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1),
+        ....:      (2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2),
+        ....:      (1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2),
+        ....:      (1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1),
+        ....:      (2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2),
+        ....:      (1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0),
+        ....:      (0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2),
+        ....:      (1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0),
+        ....:      (0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0),
+        ....:      (0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1),
+        ....:      (2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1),
+        ....:      (2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1),
+        ....:      (2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0),
+        ....:      (0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2),
+        ....:      (1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1),
+        ....:      (2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1),
+        ....:      (2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2),
+        ....:      (1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1),
+        ....:      (2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0),
+        ....:      (0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1),
+        ....:      (2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0),
+        ....:      (0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0),
+        ....:      (0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2),
+        ....:      (1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2),
+        ....:      (1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0),
+        ....:      (0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0),
+        ....:      (0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1),
+        ....:      (2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0),
+        ....:      (0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1),
+        ....:      (2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2),
+        ....:      (1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1),
+        ....:      (2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1),
+        ....:      (2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2),
+        ....:      (1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0),
+        ....:      (0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1),
+        ....:      (2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1),
+        ....:      (2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1),
+        ....:      (2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0),
+        ....:      (0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0),
+        ....:      (0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2),
+        ....:      (1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0),
+        ....:      (0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2),
+        ....:      (1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1),
+        ....:      (2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2),
+        ....:      (1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2),
+        ....:      (1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1),
+        ....:      (2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0),
+        ....:      (0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2),
+        ....:      (1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2),
+        ....:      (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+        sage: is_covering_array(C,parameters=True)
+        (True, (53, 3, 13, 3))
 
     """
     from itertools import product, combinations
