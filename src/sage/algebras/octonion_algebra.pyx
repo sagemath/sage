@@ -598,7 +598,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
     were originally constructed by Graves and independently discovered by
     Cayley (who due to first publishing them, they are sometimes called
     the Cayley numbers) and can also be built from the Cayley-Dickson
-    construction with the quaterions.
+    construction with the :class:`quaternions <QuaternionAlgebra>`.
 
     We use the multiplication table from [Scha1996]_. The octonion
     algebra `\mathbf{O}_{a,b,c}(R)` is a composition (Hurwitz) algebra,
