@@ -149,7 +149,7 @@ class SixVertexConfiguration(ClonableArray):
         EXAMPLES::
 
             sage: M = SixVertexModel(2, boundary_conditions='ice')
-            sage: print(M[0].plot().description())
+            sage: print(M[0].plot().description())                                      # optional - sage.plot
             Arrow from (-1.0,0.0) to (0.0,0.0)
             Arrow from (-1.0,1.0) to (0.0,1.0)
             Arrow from (0.0,0.0) to (0.0,-1.0)

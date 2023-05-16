@@ -1726,8 +1726,8 @@ class Permutation(CombinatorialElement):
         EXAMPLES::
 
             sage: P20 = Permutations(20)
-            sage: P20.random_element().show(representation="cycles")                    # optional - sage.graphs
-            sage: P20.random_element().show(representation="chord-diagram")             # optional - sage.graphs
+            sage: P20.random_element().show(representation="cycles")                    # optional - sage.graphs sage.plot
+            sage: P20.random_element().show(representation="chord-diagram")             # optional - sage.graphs sage.plot
             sage: P20.random_element().show(representation="braid")                     # optional - sage.plot
             sage: P20.random_element().show(representation="braid",                     # optional - sage.plot
             ....:                           orientation='portrait')

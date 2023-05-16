@@ -2319,12 +2319,12 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(["B",3]).ambient_space().plot_coroots()
+                sage: RootSystem(["B",3]).ambient_space().plot_coroots()                # optional - sage.plot sage.symbolic
                 Graphics3d Object
 
             TESTS::
 
-                 sage: list(RootSystem(["B",2]).ambient_space().plot_coroots())
+                 sage: list(RootSystem(["B",2]).ambient_space().plot_coroots())         # optional - sage.plot sage.symbolic
                  [Arrow from (0.0,0.0) to (1.0,-1.0),
                   Text '$\alpha^\vee_{1}$' at the point (1.05,-1.05),
                   Arrow from (0.0,0.0) to (0.0,2.0),

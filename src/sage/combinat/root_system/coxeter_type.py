@@ -27,6 +27,11 @@ from sage.matrix.constructor import Matrix
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
 
+try:
+    from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+except ImportError:
+    UniversalCyclotomicField = None
+
 
 class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
     """
@@ -371,19 +376,14 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         n = self.rank()
         mat = self.coxeter_matrix()._matrix
 
-        from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
         UCF = UniversalCyclotomicField()
 
         if R is None:
-            R = UCF
-        # if UCF.has_coerce_map_from(base_ring):
-        #     R = UCF
-        # else:
-        #     R = base_ring
+            R = UCF = UniversalCyclotomicField()
 
         # Compute the matrix with entries `- \cos( \pi / m_{ij} )`.
-        E = UCF.gen
         if R is UCF:
+            E = UCF.gen
 
             def val(x):
                 if x > -1:
@@ -391,6 +391,8 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
                 else:
                     return R(x)
         elif isinstance(R, sage.rings.abc.NumberField_quadratic):
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+            E = UniversalCyclotomicField().gen
 
             def val(x):
                 if x > -1:

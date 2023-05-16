@@ -461,13 +461,13 @@ class SuffixTrie(SageObject):
         EXAMPLES::
 
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
-            sage: SuffixTrie(Word("cacao")).plot()
+            sage: SuffixTrie(Word("cacao")).plot()                                      # optional - sage.plot
             Graphics object consisting of 38 graphics primitives
 
         TESTS::
 
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
-            sage: type(SuffixTrie(Word("cacao")).plot())
+            sage: type(SuffixTrie(Word("cacao")).plot())                                # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
         """
         tree = self.to_digraph()
@@ -491,7 +491,7 @@ class SuffixTrie(SageObject):
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
             sage: w = Words("cao")("cac")
             sage: t = SuffixTrie(w)
-            sage: t.show()
+            sage: t.show()                                                              # optional - sage.plot
         """
         self.plot(*args, **kwds).show()
         return
@@ -865,17 +865,17 @@ class ImplicitSuffixTree(SageObject):
         EXAMPLES::
 
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
-            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=True)
+            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=True)              # optional - sage.plot
             Graphics object consisting of 23 graphics primitives
-            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=False)
+            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=False)             # optional - sage.plot
             Graphics object consisting of 23 graphics primitives
 
         TESTS::
 
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
-            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=True))
+            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=True))        # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=False))
+            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=False))       # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
         """
         tree = self.to_digraph(word_labels=word_labels)
@@ -904,8 +904,8 @@ class ImplicitSuffixTree(SageObject):
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
             sage: w = Words("cao")("cacao")
             sage: t = ImplicitSuffixTree(w)
-            sage: t.show(word_labels=True)
-            sage: t.show(word_labels=False)
+            sage: t.show(word_labels=True)                                              # optional - sage.plot
+            sage: t.show(word_labels=False)                                             # optional - sage.plot
         """
         self.plot(word_labels=word_labels, *args, **kwds).show()
         return
