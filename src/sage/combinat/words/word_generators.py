@@ -803,7 +803,7 @@ class WordGenerator():
 
         The characteristic sturmian word of slope `(\sqrt{3}-1)/2`::
 
-            sage: words.CharacteristicSturmianWord((sqrt(3)-1)/2)
+            sage: words.CharacteristicSturmianWord((sqrt(3)-1)/2)                       # optional - sage.symbolic
             word: 0100100101001001001010010010010100100101...
 
         The same word defined from the continued fraction expansion of
@@ -846,17 +846,17 @@ class WordGenerator():
 
         ::
 
-            sage: words.CharacteristicSturmianWord(1/golden_ratio^2)
+            sage: words.CharacteristicSturmianWord(1/golden_ratio^2)                    # optional - sage.symbolic
             word: 0100101001001010010100100101001001010010...
-            sage: _.length()
+            sage: _.length()                                                            # optional - sage.symbolic
             +Infinity
 
         ::
 
-            sage: a = words.LowerMechanicalWord(1/pi)[1:]
-            sage: b = words.UpperMechanicalWord(1/pi)[1:]
-            sage: c = words.CharacteristicSturmianWord(1/pi)
-            sage: n = 500; a[:n] == b[:n] == c[:n]
+            sage: a = words.LowerMechanicalWord(1/pi)[1:]                               # optional - sage.symbolic
+            sage: b = words.UpperMechanicalWord(1/pi)[1:]                               # optional - sage.symbolic
+            sage: c = words.CharacteristicSturmianWord(1/pi)                            # optional - sage.symbolic
+            sage: n = 500; a[:n] == b[:n] == c[:n]                                      # optional - sage.symbolic
             True
 
         ::

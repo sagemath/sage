@@ -674,7 +674,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             o o o
             |
             o
-            sage: p.plot()
+            sage: p.plot()                                                              # optional - sage.plot
             Graphics object consisting of 10 graphics primitives
 
         .. PLOT::
@@ -691,7 +691,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             2 3 5
               |
               4
-            sage: g.plot()
+            sage: g.plot()                                                              # optional - sage.plot
             Graphics object consisting of 10 graphics primitives
 
         .. PLOT::

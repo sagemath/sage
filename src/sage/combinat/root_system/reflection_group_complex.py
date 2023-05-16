@@ -212,10 +212,8 @@ from sage.matrix.constructor import Matrix
 from sage.matrix.special import identity_matrix
 from sage.structure.element import is_Matrix
 from sage.interfaces.gap3 import gap3
-from sage.rings.universal_cyclotomic_field import E
 from sage.modules.free_module_element import vector
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 from sage.misc.sage_eval import sage_eval
 
 
@@ -1710,6 +1708,8 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             [1 0]
             [0 1]
         """
+        from sage.rings.universal_cyclotomic_field import E
+
         base_change = self.base_change_matrix()
         Delta = tuple(self.independent_roots())
         basis_is_Delta = base_change.is_one()
@@ -2194,6 +2194,8 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
                 sage: len([w for w in W if w.is_regular(w.order())])    # optional - gap3
                 18
             """
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField, E
+
             evs = self.reflection_eigenvalues(is_class_representative=is_class_representative)
             P = self.parent()
             I = identity_matrix(P.rank())

@@ -1228,20 +1228,20 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         of non-zero elements in the generalized Pascal's triangle (see
         [LRS2017]_)::
 
-            sage: U = Seq2.from_recurrence(M=1, m=0,
+            sage: U = Seq2.from_recurrence(M=1, m=0,                                    # optional - sage.symbolic
             ....:     coeffs={(0, 0): 1},
             ....:     initial_values={0: 0, 1: 1},
             ....:     inhomogeneities={1: P})
-            sage: (U - Seq2(SB)).is_trivial_zero()
+            sage: (U - Seq2(SB)).is_trivial_zero()                                      # optional - sage.symbolic
             True
 
         ::
 
-            sage: U = Seq2.from_recurrence(M=1, m=0,
+            sage: U = Seq2.from_recurrence(M=1, m=0,                                    # optional - sage.symbolic
             ....:     coeffs={},
             ....:     initial_values={0: 0, 1: 1},
             ....:     inhomogeneities={0: SB, 1: P})
-            sage: (U - Seq2(SB)).is_trivial_zero()
+            sage: (U - Seq2(SB)).is_trivial_zero()                                      # optional - sage.symbolic
             True
 
         Number of Unbordered Factors in the Thue--Morse Sequence, but partly

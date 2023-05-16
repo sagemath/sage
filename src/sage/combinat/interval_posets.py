@@ -437,13 +437,13 @@ class TamariIntervalPoset(Element,
         EXAMPLES::
 
             sage: ti = TamariIntervalPosets(4)[2]
-            sage: ti.plot()
+            sage: ti.plot()                                                             # optional - sage.plot
             Graphics object consisting of 6 graphics primitives
 
         TESTS::
 
             sage: ti = TamariIntervalPoset(3, [[2,1], [2,3]])
-            sage: ti.plot()
+            sage: ti.plot()                                                             # optional - sage.plot
             Graphics object consisting of 6 graphics primitives
         """
         c0 = 'blue'   # self.latex_options()["color_increasing"]

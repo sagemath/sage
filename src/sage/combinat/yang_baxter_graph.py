@@ -79,25 +79,25 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
         sage: swappers = [SwapIncreasingOperator(i) for i in range(3)]
         sage: Y = YangBaxterGraph(root=(1,2,3,4), operators=swappers); Y
         Yang-Baxter graph with root vertex (1, 2, 3, 4)
-        sage: Y.plot()
+        sage: Y.plot()                                                                  # optional - sage.plot
         Graphics object consisting of 97 graphics primitives
 
     The Cayley graph of a finite group can be realized as a Yang-Baxter graph::
 
         sage: def left_multiplication_by(g):
-        ....:     return lambda h : h*g
+        ....:     return lambda h: h*g
         sage: G = CyclicPermutationGroup(4)
         sage: operators = [ left_multiplication_by(gen) for gen in G.gens() ]
         sage: Y = YangBaxterGraph(root=G.identity(), operators=operators); Y
         Yang-Baxter graph with root vertex ()
-        sage: Y.plot(edge_labels=False)
+        sage: Y.plot(edge_labels=False)                                                 # optional - sage.plot
         Graphics object consisting of 9 graphics primitives
 
         sage: G = SymmetricGroup(4)
         sage: operators = [left_multiplication_by(gen) for gen in G.gens()]
         sage: Y = YangBaxterGraph(root=G.identity(), operators=operators); Y
         Yang-Baxter graph with root vertex ()
-        sage: Y.plot(edge_labels=False)
+        sage: Y.plot(edge_labels=False)                                                 # optional - sage.plot
         Graphics object consisting of 96 graphics primitives
 
     AUTHORS:
@@ -392,9 +392,9 @@ class YangBaxterGraph_generic(SageObject):
             sage: from sage.combinat.yang_baxter_graph import SwapIncreasingOperator
             sage: ops = [SwapIncreasingOperator(i) for i in range(4)]
             sage: Y = YangBaxterGraph(root=(1,0,2,1,0), operators=ops)
-            sage: Y.plot()
+            sage: Y.plot()                                                              # optional - sage.plot
             Graphics object consisting of 16 graphics primitives
-            sage: Y.plot(edge_labels=False)
+            sage: Y.plot(edge_labels=False)                                             # optional - sage.plot
             Graphics object consisting of 11 graphics primitives
         """
         if "edge_labels" not in kwds:
