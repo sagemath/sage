@@ -596,7 +596,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
     non-commutative unital 8-dimensional `R`-algebra that is a deformation
     of the usual octonions, which are when `a = b = c = -1`. The octonions
     were originally constructed by Graves and independently discovered by
-    Cayley (who due to first publishing them, they are sometimes called
+    Cayley (due to being published first, these are sometimes called
     the Cayley numbers) and can also be built from the Cayley-Dickson
     construction with the :class:`quaternions <QuaternionAlgebra>`.
 
@@ -816,8 +816,8 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         r"""
         Test that ``self`` is an Hurwitz algebra.
 
-        An algebra `A` is *Hurwitz* if there exists a quadratic form `N`
-        such that `N(x y) = N(x) N(y)` for all `x, y \in A`.
+        An algebra `A` is *Hurwitz* if there exists a nondegenerate quadratic
+        form `N` such that `N(x y) = N(x) N(y)` for all `x, y \in A`.
 
         EXAMPLES::
 
