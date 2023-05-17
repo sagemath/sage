@@ -136,7 +136,6 @@ def is_covering_array(array,strength=None,symbol_set=None,verbose=False,paramete
 
     """
     from itertools import product, combinations
-    from copy import deepcopy
 
     number_rows=len(array)
     number_columns=len(array[0])
@@ -163,22 +162,15 @@ def is_covering_array(array,strength=None,symbol_set=None,verbose=False,paramete
     # if no strength inputted, tries increasing values for t until one
     # does not work. If strength is inputted ends after one check
     while finished is False:
-        # A dictionary to count how many times each t-tuple appears in
-        # the array
-        tupledict={}
-        a=[ttuple for ttuple in product(symbol_set,repeat=wstrength)]
-        for item in a:
-            tupledict.update({item:0})
-
         # Iterates over every possible selections of t columns, and
-        #count the t-tuples appearing in each selection
+        # count the t-tuples appearing in each selection
         for comb in combinations(range(number_columns),wstrength):
-            wdict=deepcopy(tupledict)
+            tuple_dictionary = {item: 0 for item in product(symbol_set, repeat=wstrength)}
             for row in array:
-                wdict[tuple([row[ti] for ti in comb])]+=1
+                tuple_dictionary[tuple([row[ti] for ti in comb])]+=1
 
             # Checks if any t-tuple is not covered in current columns
-            if 0 in wdict.values():
+            if 0 in tuple_dictionary.values():
                 if strength != None:
                     wstrength = 0
                     result = False
