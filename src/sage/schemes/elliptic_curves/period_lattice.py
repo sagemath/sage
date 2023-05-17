@@ -16,6 +16,7 @@ Arithmetic-Geometric Mean).
 
 EXAMPLES::
 
+    sage: x = polygen(ZZ, 'x')
     sage: K.<a> = NumberField(x^3 - 2)                                                  # optional - sage.rings.number_field
     sage: E = EllipticCurve([0,1,0,a,a])                                                # optional - sage.rings.number_field
 
@@ -179,6 +180,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: emb = K.embeddings(RealField())[0]                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
@@ -279,6 +281,7 @@ class PeriodLattice_ell(PeriodLattice):
         TESTS::
 
             sage: from sage.schemes.elliptic_curves.period_lattice import PeriodLattice_ell
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
             sage: embs = K.embeddings(ComplexField())                                   # optional - sage.rings.number_field
@@ -309,6 +312,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: emb = K.embeddings(RealField())[0]                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
@@ -435,6 +439,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: emb = K.embeddings(RealField())[0]                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
@@ -536,6 +541,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: emb = K.embeddings(RealField())[0]                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
@@ -589,6 +595,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: emb = K.embeddings(RealField())[0]                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
@@ -635,6 +642,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
             sage: embs = K.embeddings(CC)                                               # optional - sage.rings.number_field
@@ -705,6 +713,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
             sage: embs = K.embeddings(CC)                                               # optional - sage.rings.number_field
@@ -776,6 +785,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
             sage: [E.period_lattice(emb).is_real() for emb in K.embeddings(CC)]         # optional - sage.rings.number_field
@@ -850,6 +860,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: emb = K.embeddings(RealField())[0]                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
@@ -911,6 +922,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: emb = K.embeddings(RealField())[0]                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
@@ -968,6 +980,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: emb = K.embeddings(RealField())[0]                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
@@ -1025,6 +1038,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: embs = K.embeddings(ComplexField())
             sage: E = EllipticCurve([0,1,0,a,a])
@@ -1091,6 +1105,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
             sage: L = E.period_lattice(K.embeddings(RealField())[0])                    # optional - sage.rings.number_field
@@ -1120,6 +1135,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,1,0,a,a])                                        # optional - sage.rings.number_field
             sage: L = E.period_lattice(K.embeddings(RealField())[0])                    # optional - sage.rings.number_field
@@ -1335,6 +1351,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         A number field example::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve([0,0,0,0,a])                                        # optional - sage.rings.number_field
             sage: v = K.real_places()[0]                                                # optional - sage.rings.number_field

@@ -1095,10 +1095,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         domain, even though the base ring is integral and the modulus is
         irreducible::
 
-            sage: B = ZZ.extension(x^2 - 5, 'a')
-            sage: R.<y> = PolynomialRing(B)
-            sage: S = R.quotient(y^2 - y - 1)
-            sage: S.is_integral_domain()
+            sage: x = polygen(ZZ, 'x')
+            sage: B = ZZ.extension(x^2 - 5, 'a')                                        # optional - sage.rings.number_field
+            sage: R.<y> = PolynomialRing(B)                                             # optional - sage.rings.number_field
+            sage: S = R.quotient(y^2 - y - 1)                                           # optional - sage.libs.pari sage.rings.number_field
+            sage: S.is_integral_domain()                                                # optional - sage.libs.pari sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -1150,8 +1151,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: R = PolynomialRing(ZZ,'x').quotient(x**6-1)
-            sage: R.krull_dimension()
+            sage: x = polygen(ZZ, 'x')
+            sage: R = PolynomialRing(ZZ, 'x').quotient(x**6 - 1)                        # optional - sage.libs.pari
+            sage: R.krull_dimension()                                                   # optional - sage.libs.pari
             1
             sage: R = PolynomialRing(ZZ,'x').quotient(1)
             sage: R.krull_dimension()
@@ -1527,11 +1529,13 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: K.class_group()
-            Class group of order 1 of Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
-            sage: K.<a> = QQ['x'].quotient(x^2 + 3)
-            sage: K.class_group()
+            sage: K.<a> = QuadraticField(-3)                                            # optional - sage.rings.number_field
+            sage: K.class_group()                                                       # optional - sage.rings.number_field
+            Class group of order 1 of Number Field in a
+             with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
+            sage: x = polygen(QQ, 'x')
+            sage: K.<a> = QQ['x'].quotient(x^2 + 3)                                     # optional - sage.libs.pari sage.rings.number_field
+            sage: K.class_group()                                                       # optional - sage.libs.pari sage.rings.number_field
             []
 
         A trivial algebra over `\QQ(\sqrt{-5})` has the same class group as its
@@ -1545,8 +1549,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         The same algebra constructed in a different way::
 
-            sage: K.<a> = QQ['x'].quotient(x^2 + 5)
-            sage: K.class_group(())
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = QQ['x'].quotient(x^2 + 5)                                     # optional - sage.libs.pari
+            sage: K.class_group(())                                                     # optional - sage.libs.pari
             [((2, a + 1), 2)]
 
         Here is an example where the base and the extension both contribute to
@@ -1622,11 +1627,13 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: K.unit_group()
-            Unit group with structure C6 of Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
-            sage: K.<a> = QQ['x'].quotient(x^2 + 3)
-            sage: u,o = K.S_units([])[0]; o
+            sage: K.<a> = QuadraticField(-3)                                            # optional - sage.rings.number_field
+            sage: K.unit_group()                                                        # optional - sage.rings.number_field
+            Unit group with structure C6 of Number Field in a
+             with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = QQ['x'].quotient(x^2 + 3)                                     # optional - sage.libs.pari
+            sage: u, o = K.S_units([])[0]; o                                            # optional - sage.libs.pari
             6
             sage: 2*u - 1 in {a, -a}
             True
@@ -1639,11 +1646,13 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         ::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: y = polygen(K)
-            sage: L.<b> = K['y'].quotient(y^3 + 5); L
-            Univariate Quotient Polynomial Ring in b over Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I with modulus y^3 + 5
-            sage: [u for u, o in L.S_units([]) if o is Infinity]
+            sage: K.<a> = QuadraticField(-3)                                            # optional - sage.rings.number_field
+            sage: y = polygen(K)                                                        # optional - sage.rings.number_field
+            sage: L.<b> = K['y'].quotient(y^3 + 5); L                                   # optional - sage.rings.number_field
+            Univariate Quotient Polynomial Ring in b over Number Field in a
+             with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
+             with modulus y^3 + 5
+            sage: [u for u, o in L.S_units([]) if o is Infinity]                        # optional - sage.rings.number_field
             [(-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2,
              2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
             sage: [u for u, o in L.S_units([K.ideal(1/2*a - 3/2)]) if o is Infinity]
@@ -1708,12 +1717,14 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: K.unit_group()
-            Unit group with structure C6 of Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
-            sage: K.<a> = QQ['x'].quotient(x^2 + 3)
-            sage: u = K.units()[0][0]
-            sage: 2*u - 1 in {a, -a}
+            sage: K.<a> = QuadraticField(-3)                                            # optional - sage.rings.number_field
+            sage: K.unit_group()                                                        # optional - sage.rings.number_field
+            Unit group with structure C6 of
+             Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = QQ['x'].quotient(x^2 + 3)                                     # optional - sage.libs.pari
+            sage: u = K.units()[0][0]                                                   # optional - sage.libs.pari
+            sage: 2*u - 1 in {a, -a}                                                    # optional - sage.libs.pari
             True
             sage: u^6
             1
@@ -1721,17 +1732,20 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             -1
             sage: 2*u^2 + 1 in {a, -a}
             True
-            sage: K.<a> = QQ['x'].quotient(x^2 + 5)
-            sage: K.units(())
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = QQ['x'].quotient(x^2 + 5)                                     # optional - sage.libs.pari
+            sage: K.units(())                                                           # optional - sage.libs.pari
             [(-1, 2)]
 
         ::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: y = polygen(K)
-            sage: L.<b> = K['y'].quotient(y^3 + 5); L
-            Univariate Quotient Polynomial Ring in b over Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I with modulus y^3 + 5
-            sage: [u for u, o in L.units() if o is Infinity]
+            sage: K.<a> = QuadraticField(-3)                                            # optional - sage.rings.number_field
+            sage: y = polygen(K)                                                        # optional - sage.rings.number_field
+            sage: L.<b> = K['y'].quotient(y^3 + 5); L                                   # optional - sage.rings.number_field
+            Univariate Quotient Polynomial Ring in b over Number Field in a
+             with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
+             with modulus y^3 + 5
+            sage: [u for u, o in L.units() if o is Infinity]                            # optional - sage.rings.number_field
             [(-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2,
              2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
             sage: L.<b> = K.extension(y^3 + 5)

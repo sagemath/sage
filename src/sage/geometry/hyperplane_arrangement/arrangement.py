@@ -66,10 +66,10 @@ supported::
 
 Number fields are also possible::
 
-    sage: x = var('x')
-    sage: NF.<a> = NumberField(x**4 - 5*x**2 + 5, embedding=1.90)                                           # optional - sage.rings.number_field
-    sage: H.<y,z> = HyperplaneArrangements(NF)                                                              # optional - sage.rings.number_field
-    sage: A = H([[(-a**3 + 3*a, -a**2 + 4), 1], [(a**3 - 4*a, -1), 1],                                      # optional - sage.rings.number_field
+    sage: x = polygen(QQ, 'x')
+    sage: NF.<a> = NumberField(x**4 - 5*x**2 + 5, embedding=1.90)                       # optional - sage.rings.number_field
+    sage: H.<y,z> = HyperplaneArrangements(NF)                                          # optional - sage.rings.number_field
+    sage: A = H([[(-a**3 + 3*a, -a**2 + 4), 1], [(a**3 - 4*a, -1), 1],                  # optional - sage.rings.number_field
     ....:        [(0, 2*a**2 - 6), 1], [(-a**3 + 4*a, -1), 1],
     ....:        [(a**3 - 3*a, -a**2 + 4), 1]])
     sage: A                                                                                                 # optional - sage.rings.number_field

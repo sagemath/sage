@@ -1884,6 +1884,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f(a, 2)
             a^2 + 2^2 + O(2^20)
 
+            sage: x = polygen(ZZ, 'x')
             sage: T.<pi> = S.extension(x^2 - 2)
             sage: f(pi, 2)
             pi^2 + pi^4 + O(pi^42)
@@ -3268,6 +3269,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f % [2,u]  # indirect doctest
             O(2^10 * <u, v>)
 
+            sage: x = polygen(ZZ, 'x')
             sage: S.<pi> = R.extension(x^2 - 2)
             sage: f % (pi*u)  # indirect doctest
             (pi^2 + O(pi^20))*v^2 + O(pi^20 * <u, v>)

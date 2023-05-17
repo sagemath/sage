@@ -562,6 +562,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         We check that :trac:`26479` is fixed::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<pi> = Qp(2).extension(x^3 - 2)
             sage: latex(pi)
             \pi + O(\pi^{61})
@@ -1939,6 +1940,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         Over totally ramified extensions::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L2.<pi> = Qp(5).extension(x^4 + 5*x^3 + 10*x^2 + 10*x + 5)
             sage: u = 1 + pi
             sage: u.multiplicative_order()
@@ -2178,6 +2180,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: B.<pi> = A.extension(x^5 - 2)
             sage: pi.is_prime()
             True
@@ -3428,6 +3431,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: u.square_root()
             1 + t*2^2 + t^2*2^3 + t^2*2^4 + (t^4 + t^3 + t^2)*2^5 + (t^4 + t^2)*2^6 + (t^5 + t^2)*2^7 + (t^6 + t^5 + t^4 + t^2)*2^8 + O(2^9)
 
+            sage: x = polygen(ZZ, 'x')
             sage: R.<a> = Zp(2).extension(x^3 - 2)
             sage: u = R(1 + a^4 + a^5 + a^7 + a^8, 10); u
             1 + a^4 + a^5 + a^7 + a^8 + O(a^10)

@@ -43,6 +43,7 @@ class NumberFieldHomset(RingHomset_generic):
 
         Check that :trac:`23647` is fixed::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 - 2, x^2 - 3])
             sage: e, u, v, w = End(K)
             sage: e.abs_hom().parent().category()
@@ -168,6 +169,7 @@ class NumberFieldHomset(RingHomset_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: End(k)
             Automorphism group of Number Field in a with defining polynomial x^2 + 1
@@ -192,6 +194,7 @@ class NumberFieldHomset(RingHomset_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 3*x + 1)
             sage: End(K).list()
             [
@@ -259,6 +262,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
     We construct a homomorphism from a relative field by giving
     the image of a generator::
 
+        sage: x = polygen(ZZ, 'x')
         sage: L.<cuberoot2, zeta3> = CyclotomicField(3).extension(x^3 - 2)
         sage: phi = L.hom([cuberoot2 * zeta3]); phi
         Relative number field endomorphism of Number Field in cuberoot2 with defining polynomial x^3 - 2 over its base field
@@ -300,6 +304,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)
             sage: L.<b> = K.extension(x^4 - 2)
             sage: E = End(L)
@@ -400,6 +405,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23)
             sage: L.<b> = K.extension(x^3 - x + 1)
             sage: End(L)._from_im( -3/23*a*b^2 + (-9/46*a - 1/2)*b + 2/23*a, K.hom([-a], K))
@@ -427,6 +433,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^3 - x + 1, x^2 + 23])
             sage: M.<c> = NumberField(x^4 + 80*x^2 + 36)
             sage: Hom(L, M).default_base_hom()
@@ -473,6 +480,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + x + 1, x^3 + 2])
             sage: End(K).list()
             [
@@ -487,6 +495,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
 
         An example with an absolute codomain::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 - 3, x^2 + 2])
             sage: Hom(K, CyclotomicField(24, 'z')).list()
             [
@@ -584,6 +593,7 @@ class CyclotomicFieldHomset(NumberFieldHomset):
             Automorphism group of Cyclotomic Field of order 12 and degree 4
             sage: [g(z) for g in G]
             [z, z^3 - z, -z, -z^3 + z]
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + x + 1, x^4 + 1])
             sage: L
             Number Field in a with defining polynomial x^2 + x + 1 over its base field

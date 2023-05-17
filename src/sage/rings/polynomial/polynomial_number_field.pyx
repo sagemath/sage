@@ -10,7 +10,8 @@ EXAMPLES:
 Define a polynomial over an absolute number field and perform basic
 operations with them::
 
-    sage: N.<a> = NumberField(x^2-2)
+    sage: x = polygen(ZZ, 'x')
+    sage: N.<a> = NumberField(x^2 - 2)
     sage: K.<x> = N[]
     sage: f = x - a
     sage: g = x^3 - 2*a + 1
@@ -29,15 +30,15 @@ operations with them::
 
 Polynomials are aware of embeddings of the underlying field::
 
-    sage: x = var('x')
-    sage: Q7 = Qp(7)
-    sage: r1 = Q7(3 + 7 + 2*7^2 + 6*7^3 + 7^4 + 2*7^5 + 7^6 + 2*7^7 + 4*7^8 +\
-             6*7^9 + 6*7^10 + 2*7^11 + 7^12 + 7^13 + 2*7^15 + 7^16 + 7^17 +\
-             4*7^18 + 6*7^19)
-    sage: N.<b> = NumberField(x^2-2, embedding = r1)
-    sage: K.<t> = N[]
-    sage: f = t^3-2*t+1
-    sage: f(r1)
+    sage: x = polygen(ZZ, 'x')
+    sage: Q7 = Qp(7)                                                                    # optional - sage.rings.padics
+    sage: r1 = Q7(3 + 7 + 2*7^2 + 6*7^3 + 7^4 + 2*7^5 + 7^6 + 2*7^7 + 4*7^8             # optional - sage.rings.padics
+    ....:          + 6*7^9 + 6*7^10 + 2*7^11 + 7^12 + 7^13 + 2*7^15 + 7^16 + 7^17
+    ....:          + 4*7^18 + 6*7^19)
+    sage: N.<b> = NumberField(x^2 - 2, embedding=r1)                                    # optional - sage.rings.padics
+    sage: K.<t> = N[]                                                                   # optional - sage.rings.padics
+    sage: f = t^3 - 2*t + 1                                                             # optional - sage.rings.padics
+    sage: f(r1)                                                                         # optional - sage.rings.padics
     1 + O(7^20)
 
 We can also construct polynomials over relative number fields::
@@ -128,7 +129,8 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
 
         EXAMPLES::
 
-            sage: N.<a> = NumberField(x^3-1/2, 'a')
+            sage: x = polygen(ZZ, 'x')
+            sage: N.<a> = NumberField(x^3 - 1/2, 'a')
             sage: R.<r> = N['r']
             sage: f = (5/4*a^2 - 2*a + 4)*r^2 + (5*a^2 - 81/5*a - 17/2)*r + 4/5*a^2 + 24*a + 6
             sage: g = (5/4*a^2 - 2*a + 4)*r^2 + (-11*a^2 + 79/5*a - 7/2)*r - 4/5*a^2 - 24*a - 6
@@ -149,8 +151,8 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
 
         Test for degree one extensions::
 
-            sage: x = var('x')
-            sage: N = NumberField(x-3, 'a')
+            sage: x = polygen(ZZ, 'x')
+            sage: N = NumberField(x - 3, 'a')
             sage: a = N.gen()
             sage: R = N['x']
             sage: f = R._random_nonzero_element()
@@ -167,7 +169,7 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
         Test for coercion with other rings and force weird variables
         to test PARI behavior::
 
-            sage: r = var('r')
+            sage: r = polygen(ZZ, 'r')
             sage: N = NumberField(r^2 - 2, 'r')
             sage: a = N.gen()
             sage: R = N['r']
@@ -236,7 +238,8 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         EXAMPLES::
 
-            sage: f = NumberField([x^2-2, x^2-3], 'a')['x'].random_element()
+            sage: x = polygen(ZZ, 'x')
+            sage: f = NumberField([x^2 - 2, x^2 - 3], 'a')['x'].random_element()
             sage: from sage.rings.polynomial.polynomial_number_field import Polynomial_relative_number_field_dense
             sage: isinstance(f, Polynomial_relative_number_field_dense)
             True
@@ -265,20 +268,20 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         EXAMPLES::
 
-            sage: N = QQ[sqrt(2), sqrt(3)]
-            sage: s2, s3 = N.gens()
-            sage: x = polygen(N)
-            sage: f = x^4 - 5*x^2 +6
-            sage: g = x^3 + (-2*s2 + s3)*x^2 + (-2*s3*s2 + 2)*x + 2*s3
-            sage: gcd(f, g)
+            sage: N = QQ[sqrt(2), sqrt(3)]                                              # optional - sage.symbolic
+            sage: s2, s3 = N.gens()                                                     # optional - sage.symbolic
+            sage: x = polygen(N)                                                        # optional - sage.symbolic
+            sage: f = x^4 - 5*x^2 + 6                                                   # optional - sage.symbolic
+            sage: g = x^3 + (-2*s2 + s3)*x^2 + (-2*s3*s2 + 2)*x + 2*s3                  # optional - sage.symbolic
+            sage: gcd(f, g)                                                             # optional - sage.symbolic
             x^2 + (-sqrt2 + sqrt3)*x - sqrt3*sqrt2
             sage: f.gcd(g)
             x^2 + (-sqrt2 + sqrt3)*x - sqrt3*sqrt2
 
         TESTS::
 
-            sage: x = var('x')
-            sage: R = NumberField([x^2-2, x^2-3], 'a')['x']
+            sage: x = polygen(ZZ, 'x')
+            sage: R = NumberField([x^2 - 2, x^2 - 3], 'a')['x']
             sage: f = R._random_nonzero_element()
             sage: g1 = R.random_element()
             sage: g2 = R.random_element()*g1+1

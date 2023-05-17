@@ -138,7 +138,8 @@ cdef class NumberFieldEmbedding(Morphism):
         EXAMPLES::
 
             sage: from sage.rings.number_field.number_field_morphisms import NumberFieldEmbedding
-            sage: K.<a> = NumberField(x^2-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 2)
             sage: f = NumberFieldEmbedding(K, RLF, 1.4)
             sage: f # indirect doctest
             Generic morphism:
@@ -177,8 +178,9 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
 
     EXAMPLES::
 
-        sage: K.<i> = NumberField(x^2+1,embedding=QQbar(I))
-        sage: L.<i> = NumberField(x^2+1,embedding=-QQbar(I))
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<i> = NumberField(x^2 + 1, embedding=QQbar(I))
+        sage: L.<i> = NumberField(x^2 + 1, embedding=-QQbar(I))
         sage: from sage.rings.number_field.number_field_morphisms import EmbeddedNumberFieldMorphism
         sage: EmbeddedNumberFieldMorphism(K,L,CDF)
         Generic morphism:
@@ -199,8 +201,9 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
         EXAMPLES::
 
             sage: from sage.rings.number_field.number_field_morphisms import EmbeddedNumberFieldMorphism
-            sage: K.<a> = NumberField(x^2-17, embedding=4.1)
-            sage: L.<b> = NumberField(x^4-17, embedding=2.0)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 17, embedding=4.1)
+            sage: L.<b> = NumberField(x^4 - 17, embedding=2.0)
             sage: f = EmbeddedNumberFieldMorphism(K, L)
             sage: f(a)
             b^2
@@ -272,8 +275,9 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
         EXAMPLES::
 
             sage: from sage.rings.number_field.number_field_morphisms import EmbeddedNumberFieldMorphism
-            sage: K.<a> = NumberField(x^2-700, embedding=25)
-            sage: L.<b> = NumberField(x^6-700, embedding=3)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 700, embedding=25)
+            sage: L.<b> = NumberField(x^6 - 700, embedding=3)
             sage: f = EmbeddedNumberFieldMorphism(K, L)
             sage: f(2*a-1)
             2*b^3 - 1
@@ -302,8 +306,9 @@ cdef class EmbeddedNumberFieldConversion(Map):
         EXAMPLES::
 
             sage: from sage.rings.number_field.number_field_morphisms import EmbeddedNumberFieldConversion
-            sage: K.<a> = NumberField(x^2-17, embedding=4.1)
-            sage: L.<b> = NumberField(x^4-17, embedding=2.0)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 17, embedding=4.1)
+            sage: L.<b> = NumberField(x^4 - 17, embedding=2.0)
             sage: f = EmbeddedNumberFieldConversion(K, L)
             sage: f(a)
             b^2
@@ -512,7 +517,8 @@ def create_embedding_from_approx(K, gen_image):
     EXAMPLES::
 
         sage: from sage.rings.number_field.number_field_morphisms import create_embedding_from_approx
-        sage: K.<a> = NumberField(x^3-x+1/10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^3 - x + 1/10)
         sage: create_embedding_from_approx(K, 1)
         Generic morphism:
           From: Number Field in a with defining polynomial x^3 - x + 1/10

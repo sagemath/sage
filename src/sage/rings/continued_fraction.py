@@ -72,8 +72,9 @@ use its method continued_fraction (if it exists) or call
     sage: continued_fraction_list(pi, nterms=5)
     [3, 7, 15, 1, 292]
 
-    sage: K.<cbrt5> = NumberField(x^3 - 5, embedding=1.709)
-    sage: continued_fraction(cbrt5)
+    sage: x = polygen(ZZ, 'x')
+    sage: K.<cbrt5> = NumberField(x^3 - 5, embedding=1.709)                             # optional - sage.rings.number_field
+    sage: continued_fraction(cbrt5)                                                     # optional - sage.rings.number_field
     [1; 1, 2, 2, 4, 3, 3, 1, 5, 1, 1, 4, 10, 17, 1, 14, 1, 1, 3052, 1, ...]
 
 It is also possible to create a continued fraction from a list of partial
@@ -621,9 +622,10 @@ class ContinuedFraction_base(SageObject):
             sage: cf.n(digits=8)
             0.63459101
 
-            sage: K.<a> = NumberField(x^3-2, 'a', embedding=1.25)
-            sage: b = 504/253*a^2 + 635/253*a + 661/253
-            sage: cf = continued_fraction(b); cf
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 2, 'a', embedding=1.25)                     # optional - sage.rings.number_field
+            sage: b = 504/253*a^2 + 635/253*a + 661/253                                 # optional - sage.rings.number_field
+            sage: cf = continued_fraction(b); cf                                        # optional - sage.rings.number_field
             [8; 1, 14, 1, 10, 2, 1, 4, 12, 2, 3, 2, 1, 3, 4, 1, 1, 2, 14, 3, ...]
             sage: cf.n(digits=3)
             8.94
@@ -1913,11 +1915,12 @@ class ContinuedFraction_real(ContinuedFraction_base):
         The same computation with an element of a number field instead of
         ``pi`` gives a very satisfactory answer::
 
-            sage: K.<a2> = NumberField(x^3 - 2, embedding=1.25)
-            sage: c2 = continued_fraction(a2)
-            sage: p0 = c2.numerator(111); q0 = c2.denominator(111)
-            sage: p1 = c2.numerator(112); q1 = c2.denominator(112)
-            sage: num = (q0*a2 - p0); num.n()
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a2> = NumberField(x^3 - 2, embedding=1.25)                         # optional - sage.rings.number_field
+            sage: c2 = continued_fraction(a2)                                           # optional - sage.rings.number_field
+            sage: p0 = c2.numerator(111); q0 = c2.denominator(111)                      # optional - sage.rings.number_field
+            sage: p1 = c2.numerator(112); q1 = c2.denominator(112)                      # optional - sage.rings.number_field
+            sage: num = (q0*a2 - p0); num.n()                                           # optional - sage.rings.number_field
             -4.56719261665907e46
             sage: den = (q1*a2 - p1); den.n()
             -3.65375409332726e47
@@ -2565,9 +2568,10 @@ def continued_fraction(x, value=None):
     ``sqrt(2)`` above), it is much more convenient to use number fields as
     follows since preperiods and periods are computed::
 
-        sage: K.<sqrt5> = NumberField(x^2-5, embedding=2.23)
-        sage: my_golden_ratio = (1 + sqrt5)/2
-        sage: cf = continued_fraction((1+sqrt5)/2); cf
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<sqrt5> = NumberField(x^2 - 5, embedding=2.23)                          # optional - sage.rings.number_field
+        sage: my_golden_ratio = (1 + sqrt5)/2                                           # optional - sage.rings.number_field
+        sage: cf = continued_fraction((1+sqrt5)/2); cf                                  # optional - sage.rings.number_field
         [(1)*]
         sage: cf.convergent(12)
         377/233

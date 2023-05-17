@@ -92,10 +92,11 @@ class MPolynomial_element(MPolynomial):
         """
         EXAMPLES::
 
-            sage: K.<cuberoot2> = NumberField(x^3 - 2)
-            sage: L.<cuberoot3> = K.extension(x^3 - 3)
-            sage: S.<sqrt2> = L.extension(x^2 - 2)
-            sage: S
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<cuberoot2> = NumberField(x^3 - 2)                                  # optional - sage.rings.number_field
+            sage: L.<cuberoot3> = K.extension(x^3 - 3)                                  # optional - sage.rings.number_field
+            sage: S.<sqrt2> = L.extension(x^2 - 2)                                      # optional - sage.rings.number_field
+            sage: S                                                                     # optional - sage.rings.number_field
             Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
             sage: P.<x,y,z> = PolynomialRing(S) # indirect doctest
         """
@@ -791,11 +792,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ::
 
-            sage: var('a')
-            a
-            sage: K.<a> = NumberField(a^2+a+1)
-            sage: P.<x,y> = K[]
-            sage: f=(a*x-1)*((a+1)*y-1); f
+            sage: a = polygen(ZZ, 'a')
+            sage: K.<a> = NumberField(a^2 + a + 1)                                      # optional - sage.rings.number_field
+            sage: P.<x,y> = K[]                                                         # optional - sage.rings.number_field
+            sage: f = (a*x - 1) * ((a+1)*y - 1); f                                      # optional - sage.rings.number_field
             -x*y + (-a)*x + (-a - 1)*y + 1
             sage: f.monomial_coefficient(x)
             -a

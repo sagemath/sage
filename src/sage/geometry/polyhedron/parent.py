@@ -510,8 +510,9 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: from sage.geometry.polyhedron.parent import Polyhedra
             sage: Polyhedra(QQ, 3)._repr_base_ring()
             'QQ'
-            sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())      # optional - sage.rings.number_field
-            sage: Polyhedra(K, 4)._repr_base_ring()                             # optional - sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())              # optional - sage.rings.number_field
+            sage: Polyhedra(K, 4)._repr_base_ring()                                     # optional - sage.rings.number_field
             '(Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)'
         """
 
@@ -544,8 +545,9 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: from sage.geometry.polyhedron.parent import Polyhedra
             sage: Polyhedra(QQ, 3)._repr_ambient_module()
             'QQ^3'
-            sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())      # optional - sage.rings.number_field
-            sage: Polyhedra(K, 4)._repr_ambient_module()                        # optional - sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())              # optional - sage.rings.number_field
+            sage: Polyhedra(K, 4)._repr_ambient_module()                                # optional - sage.rings.number_field
             '(Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)^4'
         """
         s = self._repr_base_ring()

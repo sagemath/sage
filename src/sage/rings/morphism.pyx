@@ -2404,10 +2404,11 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
 
         TESTS::
 
-            sage: A.<a> = ZZ.extension(x^2 - 2)
-            sage: f = A.coerce_map_from(ZZ)
-            sage: g = f.extend_to_fraction_field()   # indirect doctest
-            sage: g
+            sage: x = polygen(ZZ, 'x')
+            sage: A.<a> = ZZ.extension(x^2 - 2)                                         # optional - sage.rings.number_field
+            sage: f = A.coerce_map_from(ZZ)                                             # optional - sage.rings.number_field
+            sage: g = f.extend_to_fraction_field()   # indirect doctest                 # optional - sage.rings.number_field
+            sage: g                                                                     # optional - sage.rings.number_field
             Ring morphism:
               From: Rational Field
               To:   Number Field in a with defining polynomial x^2 - 2

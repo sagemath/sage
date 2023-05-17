@@ -22,7 +22,8 @@ AUTHORS:
 EXAMPLES::
 
     sage: from sage.rings.number_field.S_unit_solver import solve_S_unit_equation, eq_up_to_order
-    sage: K.<xi> = NumberField(x^2+x+1)
+    sage: x = polygen(ZZ, 'x')
+    sage: K.<xi> = NumberField(x^2 + x + 1)
     sage: S = K.primes_above(3)
     sage: expected = [((0, 1), (4, 0), xi + 2, -xi - 1),
     ....:             ((1, -1), (0, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
@@ -96,7 +97,8 @@ def column_Log(SUK, iota, U, prec=106):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import column_Log
-        sage: K.<xi> = NumberField(x^3-3)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^3 - 3)
         sage: S = tuple(K.primes_above(3))
         sage: SUK = UnitGroup(K, S=S)
         sage: phi_complex = K.places()[1]
@@ -130,7 +132,8 @@ def c3_func(SUK, prec=106):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import c3_func
-        sage: K.<xi> = NumberField(x^3-3)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^3 - 3)
         sage: SUK = UnitGroup(K, S=tuple(K.primes_above(3)))
 
         sage: c3_func(SUK) # abs tol 1e-29
@@ -182,7 +185,8 @@ def c4_func(SUK, v, A, prec=106):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import c4_func
-        sage: K.<xi> = NumberField(x^3-3)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^3 - 3)
         sage: SUK = UnitGroup(K, S=tuple(K.primes_above(3)))
         sage: phi_real = K.places()[0]
         sage: phi_complex = K.places()[1]
@@ -220,7 +224,8 @@ def beta_k(betas_and_ns):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import beta_k
-        sage: K.<xi> = NumberField(x^3-3)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^3 - 3)
         sage: SUK = UnitGroup(K, S=tuple(K.primes_above(3)))
         sage: v_fin = tuple(K.primes_above(3))[0]
 
@@ -258,7 +263,8 @@ def mus(SUK, v):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import mus
-        sage: K.<xi> = NumberField(x^3-3)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^3 - 3)
         sage: SUK = UnitGroup(K, S=tuple(K.primes_above(3)))
         sage: v_fin = tuple(K.primes_above(3))[0]
 
@@ -297,7 +303,8 @@ def possible_mu0s(SUK, v):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import possible_mu0s
-        sage: K.<xi> = NumberField(x^3-3)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^3 - 3)
         sage: S = tuple(K.primes_above(3))
         sage: SUK = UnitGroup(K, S=S)
         sage: v_fin = S[0]
@@ -424,6 +431,7 @@ def Yu_condition_115(K, v):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import Yu_condition_115
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + 5)
         sage: v2 = K.primes_above(2)[0]
         sage: v11 = K.primes_above(11)[0]
@@ -479,6 +487,7 @@ def Yu_modified_height(mu, n, v, prec=106):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + 5)
         sage: v11 = K.primes_above(11)[0]
         sage: from sage.rings.number_field.S_unit_solver import Yu_modified_height
@@ -531,6 +540,7 @@ def Omega_prime(dK, v, mu_list, prec=106):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import mus, Omega_prime
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 3)
         sage: SUK = UnitGroup(K, S=tuple(K.primes_above(6)))
         sage: v = K.primes_above(3)[0]
@@ -573,6 +583,7 @@ def Yu_C1_star(n, v, prec=106):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + 5)
         sage: v11 = K.primes_above(11)[0]
         sage: from sage.rings.number_field.S_unit_solver import Yu_C1_star
@@ -635,6 +646,7 @@ def Yu_bound(SUK, v, prec=106):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import Yu_bound
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + 11)
         sage: SUK = UnitGroup(K, S=tuple(K.primes_above(6)))
         sage: v = K.primes_above(3)[0]
@@ -717,6 +729,7 @@ def K0_func(SUK, A, prec=106):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import K0_func
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + 11)
         sage: SUK = UnitGroup(K, S=tuple(K.primes_above(6)))
         sage: v = K.primes_above(3)[0]
@@ -767,7 +780,8 @@ def c11_func(SUK, v, A, prec=106):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import c11_func
-        sage: K.<xi> = NumberField(x^3-3)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^3 - 3)
         sage: SUK = UnitGroup(K, S=tuple(K.primes_above(3)))
         sage: phi_real = K.places()[0]
         sage: phi_complex = K.places()[1]
@@ -807,7 +821,8 @@ def c13_func(SUK, v, prec=106):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import c13_func
-        sage: K.<xi> = NumberField(x^3-3)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^3 - 3)
         sage: SUK = UnitGroup(K, S=tuple(K.primes_above(3)))
         sage: phi_real = K.places()[0]
         sage: phi_complex = K.places()[1]
@@ -859,7 +874,8 @@ def K1_func(SUK, v, A, prec=106):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import K1_func
-        sage: K.<xi> = NumberField(x^3-3)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^3 - 3)
         sage: SUK = UnitGroup(K, S=tuple(K.primes_above(3)))
         sage: phi_real = K.places()[0]
         sage: phi_complex = K.places()[1]
@@ -1002,7 +1018,8 @@ def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import reduction_step_complex_case
-        sage: K.<a> = NumberField([x^3-2])
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField([x^3 - 2])
         sage: SK = sum([K.primes_above(p) for p in [2,3,5]],[])
         sage: G = [g for g in K.S_unit_group(S=SK).gens_values() if g.multiplicative_order()==Infinity]
         sage: p1 = K.places(prec=100)[1]
@@ -1170,8 +1187,9 @@ def cx_LLL_bound(SUK, A, prec=106):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import cx_LLL_bound
-        sage: K.<xi> = NumberField(x^3-3)
-        sage: SUK = UnitGroup(K,S=tuple(K.primes_above(3)))
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^3 - 3)
+        sage: SUK = UnitGroup(K, S=tuple(K.primes_above(3)))
         sage: A = K.roots_of_unity()
 
         sage: cx_LLL_bound(SUK,A) # long time
@@ -1228,7 +1246,8 @@ def log_p(a, prime, prec):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import log_p
-        sage: K.<a> = NumberField(x^2+14)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 + 14)
         sage: p1 = K.primes_above(3)[0]
         sage: p1
         Fractional ideal (3, a + 1)
@@ -1292,7 +1311,8 @@ def log_p_series_part(a, prime, prec):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import log_p_series_part
-        sage: K.<a> = NumberField(x^2-5)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 5)
         sage: p1 = K.primes_above(3)[0]
         sage: p1
         Fractional ideal (3)
@@ -1459,7 +1479,8 @@ def embedding_to_Kp(a, prime, prec):
 
     ::
 
-        sage: K.<a> = NumberField(x^4-2)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^4 - 2)
         sage: p = K.prime_above(7); p
         Fractional ideal (-a^2 + a - 1)
         sage: embedding_to_Kp(a^3-3, p, 15)
@@ -1506,7 +1527,8 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
 
         sage: from sage.rings.number_field.S_unit_solver import p_adic_LLL_bound_one_prime
         sage: prec = 50
-        sage: K.<a> = NumberField(x^3-3)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^3 - 3)
         sage: S = tuple(K.primes_above(3))
         sage: SUK = UnitGroup(K, S=S)
         sage: v = S[0]
@@ -1639,8 +1661,9 @@ def p_adic_LLL_bound(SUK, A, prec=106):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import p_adic_LLL_bound
-        sage: K.<xi> = NumberField(x^3-3)
-        sage: SUK = UnitGroup(K,S=tuple(K.primes_above(3)))
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^3 - 3)
+        sage: SUK = UnitGroup(K, S=tuple(K.primes_above(3)))
         sage: A = SUK.roots_of_unity()
         sage: prec = 100
         sage: p_adic_LLL_bound(SUK,A, prec)
@@ -1711,6 +1734,7 @@ def split_primes_large_lcm(SUK, bound):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import split_primes_large_lcm
+        sage: x = polygen(ZZ, 'x')
         sage: K.<xi> = NumberField(x^3 - 3*x + 1)
         sage: S = K.primes_above(3)
         sage: SUK = UnitGroup(K,S=tuple(S))
@@ -1776,6 +1800,7 @@ def sieve_ordering(SUK, q):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import sieve_ordering
+        sage: x = polygen(ZZ, 'x')
         sage: K.<xi> = NumberField(x^3 - 3*x + 1)
         sage: SUK = K.S_unit_group(S=3)
         sage: sieve_data = list(sieve_ordering(SUK, 19))
@@ -2132,6 +2157,7 @@ def construct_complement_dictionaries(split_primes_list, SUK, verbose=False):
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import construct_complement_dictionaries
+        sage: x = polygen(ZZ, 'x')
         sage: f = x^2 + 5
         sage: H = 10
         sage: K.<xi> = NumberField(f)
@@ -2565,7 +2591,8 @@ def solutions_from_systems(SUK, bound, cs_list, split_primes_list):
     Given a single compatible system, a solution can be found. ::
 
         sage: from sage.rings.number_field.S_unit_solver import solutions_from_systems
-        sage: K.<xi> = NumberField(x^2-15)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^2 - 15)
         sage: SUK = K.S_unit_group(S=K.primes_above(2))
         sage: split_primes_list = [7, 17]
         sage: a_compatible_system = [[[(0, 0, 5), (0, 0, 5)], [(0, 0, 15), (0, 0, 15)]]]
@@ -2649,8 +2676,9 @@ def sieve_below_bound(K, S, bound=10, bump=10, split_primes_list=[], verbose=Fal
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import sieve_below_bound, eq_up_to_order
-        sage: K.<xi> = NumberField(x^2+x+1)
-        sage: SUK = UnitGroup(K,S=tuple(K.primes_above(3)))
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^2 + x + 1)
+        sage: SUK = UnitGroup(K, S=tuple(K.primes_above(3)))
         sage: S = SUK.primes()
         sage: sols = sieve_below_bound(K, S, 10)
         sage: expected = [
@@ -2711,7 +2739,8 @@ def solve_S_unit_equation(K, S, prec=106, include_exponents=True, include_bound=
     EXAMPLES::
 
         sage: from sage.rings.number_field.S_unit_solver import solve_S_unit_equation, eq_up_to_order
-        sage: K.<xi> = NumberField(x^2+x+1)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<xi> = NumberField(x^2 + x + 1)
         sage: S = K.primes_above(3)
         sage: sols = solve_S_unit_equation(K, S, 200)
         sage: expected = [

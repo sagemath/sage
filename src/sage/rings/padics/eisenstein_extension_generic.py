@@ -50,6 +50,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
             sage: K._extension_type()
             'Unramified'
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<pi> = Qp(5).extension(x^2 - 5)
             sage: L._extension_type()
             'Eisenstein'
@@ -66,6 +67,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
             sage: K.absolute_e()
             1
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<pi> = Qp(3).extension(x^2 - 3)
             sage: L.absolute_e()
             2

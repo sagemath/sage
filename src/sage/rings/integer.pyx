@@ -5492,7 +5492,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: K = NumberField(x^2 - 2, 'beta')          # optional - sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField(x^2 - 2, 'beta')                                      # optional - sage.rings.number_field
             sage: n = 4
             sage: n.is_norm(K)                              # optional - sage.rings.number_field
             True

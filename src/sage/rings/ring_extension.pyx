@@ -337,6 +337,7 @@ class RingExtensionFactory(UniqueFactory):
         sage: QQ.over(ZZ) is E
         True
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = QQ.extension(x^2 - 2)
         sage: E = K.over(QQ)
         sage: E
@@ -624,6 +625,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ.extension(x^2 - 2)
             sage: E = K.over()  # over QQ
 
@@ -660,6 +662,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 2)
             sage: K.<a> = A.over()
 
@@ -1447,6 +1450,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 2)
             sage: B.<b> = QQ.extension(x^6 - 2)
             sage: f = A.hom([b^3])
@@ -1700,6 +1704,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 5)
             sage: OK = A.over()   # over ZZ
             sage: OK
@@ -1975,6 +1980,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: OK = A.over()
             sage: K = OK.fraction_field()
@@ -1996,6 +2002,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: OK = A.over()
             sage: K = OK.fraction_field()
@@ -2015,6 +2022,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: OK = A.over()
             sage: K = OK.fraction_field()
@@ -2085,6 +2093,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ.extension(x^3 - 2)
             sage: E = K.over()
             sage: E
@@ -2178,6 +2187,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 2)
             sage: B.<b> = QQ.extension(x^6 - 2)
             sage: f = A.hom([b^3])
@@ -2285,6 +2295,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^3 - 2)
             sage: K.<u> = A.over()
             sage: K.basis_over()
@@ -2442,6 +2453,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 5)
             sage: OK = A.over()   # over ZZ
             sage: OK
@@ -2508,6 +2520,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
     TESTS::
 
+        sage: x = polygen(ZZ, 'x')
         sage: A.<a> = QQ.extension(x^3 - 7)
         sage: K = A.over()
 
@@ -2535,6 +2548,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ.extension(x^3 + 3*x + 1)
             sage: E = K.over()
             sage: E
@@ -2684,6 +2698,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 5)
             sage: OK = A.over()   # over ZZ
             sage: OK

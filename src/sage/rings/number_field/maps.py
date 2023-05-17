@@ -6,6 +6,7 @@ vector spaces, name changing maps, etc.
 
 EXAMPLES::
 
+    sage: x = polygen(ZZ, 'x')
     sage: L.<cuberoot2, zeta3> = CyclotomicField(3).extension(x^3 - 2)
     sage: K = L.absolute_field('a')
     sage: from_K, to_K = K.structure()
@@ -54,6 +55,7 @@ class NumberFieldIsomorphism(Map):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^4 + 3*x + 1)
         sage: V, fr, to = K.vector_space()
         sage: isinstance(fr, sage.rings.number_field.maps.NumberFieldIsomorphism)
@@ -63,6 +65,7 @@ class NumberFieldIsomorphism(Map):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^4 + 3*x + 1)
             sage: V, fr, to = K.vector_space()
             sage: fr._repr_type()
@@ -74,10 +77,11 @@ class NumberFieldIsomorphism(Map):
         r"""
          EXAMPLES::
 
-             sage: K.<a> = NumberField(x^4 + 3*x + 1)
-             sage: V, fr, to = K.vector_space()
-             sage: fr.is_injective()
-             True
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^4 + 3*x + 1)
+            sage: V, fr, to = K.vector_space()
+            sage: fr.is_injective()
+            True
         """
         return True
 
@@ -85,10 +89,11 @@ class NumberFieldIsomorphism(Map):
         r"""
          EXAMPLES::
 
-             sage: K.<a> = NumberField(x^4 + 3*x + 1)
-             sage: V, fr, to = K.vector_space()
-             sage: fr.is_surjective()
-             True
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^4 + 3*x + 1)
+            sage: V, fr, to = K.vector_space()
+            sage: fr.is_surjective()
+            True
         """
         return True
 
@@ -98,6 +103,7 @@ class MapVectorSpaceToNumberField(NumberFieldIsomorphism):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^4 + 3*x + 1)
         sage: V, fr, to = K.vector_space()
         sage: V
@@ -154,6 +160,7 @@ class MapVectorSpaceToNumberField(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<c> = NumberField(x^9 + 3)
             sage: V, fr, to = K.vector_space(); fr # indirect doctest
             Isomorphism map:
@@ -168,6 +175,7 @@ class MapVectorSpaceToNumberField(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<c> = NumberField(x^9 + 3)
             sage: V, fr, to = K.vector_space()
             sage: list(map(fr, V.gens()))  # indirect doctest
@@ -184,6 +192,7 @@ class MapNumberFieldToVectorSpace(Map):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: L.<a> = NumberField(x^3 - x + 1)
         sage: V, fr, to = L.vector_space()
         sage: type(to)
@@ -195,6 +204,7 @@ class MapNumberFieldToVectorSpace(Map):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^3 - x + 1)
             sage: L.vector_space()[2] # indirect doctest
             Isomorphism map:
@@ -207,6 +217,7 @@ class MapNumberFieldToVectorSpace(Map):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + 1, x^2 - 3])
             sage: V, fr, to = L.relative_vector_space()
             sage: fr._repr_type()
@@ -218,6 +229,7 @@ class MapNumberFieldToVectorSpace(Map):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^3 - x + 1)
             sage: V, _, to = L.vector_space()
             sage: v = to(a^2 - a/37 + 56); v # indirect doctest
@@ -235,6 +247,7 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
     r"""
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: L.<b> = NumberField(x^4 + 3*x^2 + 1)
         sage: K = L.relativize(L.subfields(2)[0][1], 'a'); K
         Number Field in a with defining polynomial x^2 - b0*x + 1 over its base field
@@ -261,6 +274,7 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 1, x^2 - 2])
             sage: V, _, to = K.relative_vector_space(); to # indirect doctest
             Isomorphism map:
@@ -273,6 +287,7 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<b> = NumberField(x^4 + 3*x^2 + 1)
             sage: K = L.relativize(L.subfields(2)[0][1], 'a')
             sage: a0 = K.gen(); b0 = K.base_field().gen()
@@ -295,6 +310,7 @@ class MapRelativeNumberFieldToRelativeVectorSpace(NumberFieldIsomorphism):
     r"""
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a, b> = NumberField([x^3 - x + 1, x^2 + 23])
         sage: V, fr, to = K.relative_vector_space()
         sage: type(to)
@@ -305,6 +321,7 @@ class MapRelativeNumberFieldToRelativeVectorSpace(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<b> = NumberField(x^4 + 3*x^2 + 1)
             sage: K = L.relativize(L.subfields(2)[0][1], 'a')
             sage: V, fr, to = K.relative_vector_space()
@@ -319,7 +336,8 @@ class MapRelativeNumberFieldToRelativeVectorSpace(NumberFieldIsomorphism):
         """
         TESTS::
 
-            sage: K.<a> = NumberField(x^5+2)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^5 + 2)
             sage: R.<y> = K[]
             sage: D.<x0> = K.extension(y + a + 1)
             sage: D(a)
@@ -368,6 +386,7 @@ class NameChangeMap(NumberFieldIsomorphism):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - 3)
         sage: L.<b> = K.change_names()
         sage: from_L, to_L = L.structure()
@@ -386,6 +405,7 @@ class NameChangeMap(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 - 3, x^2 + 7])
             sage: L.<c, d> = K.change_names()
             sage: L.structure()
@@ -401,6 +421,7 @@ class NameChangeMap(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 3)
             sage: L.<b> = K.change_names()
             sage: from_L, to_L = L.structure()
@@ -413,6 +434,7 @@ class NameChangeMap(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 - 3, x^2 + 7])
             sage: L.<c, d> = K.change_names()
             sage: to_K, from_K = L.structure()
@@ -428,6 +450,7 @@ class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):
     r"""
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^6 + 4*x^2 + 200)
         sage: L = K.relativize(K.subfields(3)[0][1], 'b'); L
         Number Field in b with defining polynomial x^2 + a0 over its base field
@@ -473,6 +496,7 @@ class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + 3, x^2 + 5])
             sage: K.<c> = L.absolute_field()
             sage: f = K.structure()[1]; f
@@ -488,6 +512,7 @@ class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + 3, x^2 + 5])
             sage: K.<c> = L.absolute_field()
             sage: f = K.structure()[1]
@@ -506,6 +531,7 @@ class MapAbsoluteToRelativeNumberField(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + 3, x^2 + 5])
             sage: K.<c> = L.absolute_field()
             sage: f = K.structure()[0] # indirect doctest
@@ -518,6 +544,7 @@ class MapAbsoluteToRelativeNumberField(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + 3, x^2 + 5])
             sage: K.<c> = L.absolute_field()
             sage: f = K.structure()[0]
@@ -535,6 +562,7 @@ class MapVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: L.<a, b> = NumberField([x^2 + 3, x^2 + 5])
         sage: V, fr, to = L.absolute_vector_space()
         sage: type(fr)
@@ -545,6 +573,7 @@ class MapVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + 3, x^2 + 5])
             sage: V, fr, to = L.absolute_vector_space() # indirect doctest
             sage: fr
@@ -560,6 +589,7 @@ class MapVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + 3, x^2 + 5])
             sage: V, fr, to = L.absolute_vector_space()
             sage: fr(V([1,3,0,1/17])) # indirect doctest
@@ -576,6 +606,7 @@ class MapRelativeNumberFieldToVectorSpace(NumberFieldIsomorphism):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^8 + 100*x^6 + x^2 + 5)
         sage: L = K.relativize(K.subfields(4)[0][1], 'b'); L
         Number Field in b with defining polynomial x^2 + a0 over its base field
@@ -606,6 +637,7 @@ class MapRelativeNumberFieldToVectorSpace(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + 3, x^2 + 5])
             sage: V, fr, to = L.absolute_vector_space() # indirect doctest
             sage: to
@@ -621,6 +653,7 @@ class MapRelativeNumberFieldToVectorSpace(NumberFieldIsomorphism):
         r"""
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + 3, x^2 + 5])
             sage: V, fr, to = L.absolute_vector_space()
             sage: to(1 + 2*a + 3*b + 4*a*b) # indirect doctest

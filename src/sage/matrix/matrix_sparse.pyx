@@ -45,6 +45,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A = matrix(QQ['x,y'], 2, [0,-1,2*x,-2], sparse=True); A
             [  0  -1]
             [2*x  -2]

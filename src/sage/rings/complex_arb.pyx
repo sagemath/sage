@@ -101,8 +101,9 @@ Coercion
 
 Automatic coercions work as expected::
 
-    sage: bpol = 1/3*CBF(i) + AA(sqrt(2)) + (polygen(RealBallField(20), 'x') + QQbar(i))
-    sage: bpol
+    sage: bpol = 1/3*CBF(i) + AA(sqrt(2))                                               # optional - sage.symbolic
+    sage: bpol += polygen(RealBallField(20), 'x') + QQbar(i)                            # optional - sage.symbolic
+    sage: bpol                                                                          # optional - sage.symbolic
     x + [1.41421 +/- ...e-6] + [1.33333 +/- ...e-6]*I
     sage: bpol.parent()
     Univariate Polynomial Ring in x over Complex ball field with 20 bits of precision
@@ -549,6 +550,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: CBF.convert_map_from(QuadraticField(-2))
             Conversion via _acb_ method map:
             ...
+            sage: x = polygen(ZZ, 'x')
             sage: CBF.coerce_map_from(NumberField(x^7 + 2, 'a',
             ....:                                 embedding=QQbar(-2)^(1/7)))
             Conversion via _acb_ method map:

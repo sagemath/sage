@@ -665,8 +665,8 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             sage: phi * tau == -1
             True
 
-            sage: x = polygen(SR)
-            sage: p = (x - sqrt(-5)) * (x - sqrt(3)); p
+            sage: x = polygen(SR)                                                       # optional - sage.symbolic
+            sage: p = (x - sqrt(-5)) * (x - sqrt(3)); p                                 # optional - sage.symbolic
             x^2 + (-sqrt(3) - sqrt(-5))*x + sqrt(3)*sqrt(-5)
             sage: p = QQbar.common_polynomial(p)
             sage: a = QQbar.polynomial_root(p, CIF(RIF(-0.1, 0.1), RIF(2, 3))); a
@@ -1180,6 +1180,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             sage: AA.has_coerce_map_from(SR)
             False
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^3 - 2, 'a', embedding=2.**(1/3))
             sage: AA.has_coerce_map_from(K)
             True
@@ -4701,6 +4702,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sqrt(sqrt(5) + 5)
             sage: QQbar.zeta(5).radical_expression()
             1/4*sqrt(5) + 1/2*sqrt(-1/2*sqrt(5) - 5/2) - 1/4
+            sage: x = polygen(ZZ, 'x')
             sage: a = QQ[x](x^7 - x - 1).roots(AA, False)[0]
             sage: a.radical_expression()
             1.112775684278706?
@@ -5410,7 +5412,8 @@ class AlgebraicReal(AlgebraicNumber_base):
         real which is not the case without calling _ensure_real (see
         :trac:`11728`)::
 
-            sage: P = AA['x'](1+x^4); a1,a2 = P.factor()[0][0],P.factor()[1][0]; a1*a2
+            sage: x = polygen(ZZ, 'x')
+            sage: P = AA['x'](1 + x^4); a1,a2 = P.factor()[0][0], P.factor()[1][0]; a1*a2
             x^4 + 1.000000000000000?
             sage: a1,a2
             (x^2 - 1.414213562373095?*x + 1, x^2 + 1.414213562373095?*x + 1)
@@ -7078,6 +7081,7 @@ class ANRoot(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: a = (x^2 + 23).roots(ring=QQbar, multiplicities=False)[0]
             sage: b = a._descr
             sage: type(b)
@@ -7796,6 +7800,7 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: v.generator()
             Number Field in a with defining polynomial y^2 - y - 1 with a in 1.618033988749895?
@@ -7810,6 +7815,7 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: type(v)
             <class 'sage.rings.qqbar.ANExtensionElement'>
@@ -7824,6 +7830,7 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: v.field_element_value()
             a
@@ -7836,6 +7843,7 @@ class ANExtensionElement(ANDescr):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: v = (x^2 - x - 1).roots(ring=AA, multiplicities=False)[1]._descr.exactify()
             sage: type(v)
             <class 'sage.rings.qqbar.ANExtensionElement'>

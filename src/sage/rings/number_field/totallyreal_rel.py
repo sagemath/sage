@@ -254,7 +254,8 @@ class tr_data_rel:
 
         EXAMPLES::
 
-            sage: F.<t> = NumberField(x^2-2)
+            sage: x = polygen(ZZ, 'x')
+            sage: F.<t> = NumberField(x^2 - 2)
             sage: T = sage.rings.number_field.totallyreal_rel.tr_data_rel(F, 2, 2000)
         """
         if a is None:  # don't make the stupid noob mistake of putting a=[]

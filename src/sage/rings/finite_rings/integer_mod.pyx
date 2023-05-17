@@ -609,7 +609,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: sage_input(K(5), verify=True)
             # Verified
             GF(7)(5)
-            sage: sage_input(K(5) * polygen(K), verify=True)
+            sage: sage_input(K(5) * polygen(K), verify=True)                            # optional - sage.rings.finite_rings
             # Verified
             R.<x> = GF(7)[]
             5*x
