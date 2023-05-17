@@ -992,11 +992,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             Traceback (most recent call last):
             ...
             ValueError: a complex number has no sign!
-            sage: K(1).sign()
+            sage: K(1).sign()                                                           # optional - sage.symbolic
             1
-            sage: K(0).sign()
+            sage: K(0).sign()                                                           # optional - sage.symbolic
             0
-            sage: K(-2/3).sign()
+            sage: K(-2/3).sign()                                                        # optional - sage.symbolic
             -1
         """
         cdef mpz_t i, j

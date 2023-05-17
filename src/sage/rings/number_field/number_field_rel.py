@@ -884,16 +884,16 @@ class NumberField_relative(NumberField_generic):
 
         Examples from :trac:`4727`::
 
-            sage: K.<j,b> = QQ[sqrt(-1), sqrt(2)]
-            sage: j
+            sage: K.<j,b> = QQ[sqrt(-1), sqrt(2)]                                       # optional - sage.symbolic
+            sage: j                                                                     # optional - sage.symbolic
             I
-            sage: j.list()
+            sage: j.list()                                                              # optional - sage.symbolic
             [0, 1]
-            sage: K(j.list())
+            sage: K(j.list())                                                           # optional - sage.symbolic
             I
-            sage: (b*j + 1/2).list()
+            sage: (b*j + 1/2).list()                                                    # optional - sage.symbolic
             [1/2, sqrt2]
-            sage: K((b*j + 1/2).list())
+            sage: K((b*j + 1/2).list())                                                 # optional - sage.symbolic
             sqrt2*I + 1/2
 
         Examples from :trac:`4869`::
@@ -912,7 +912,8 @@ class NumberField_relative(NumberField_generic):
             sage: L(L)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert Number Field in a0 with defining polynomial x^2 + 1 over its base field to Number Field in a0 with defining polynomial x^2 + 1 over its base field
+            TypeError: unable to convert Number Field in a0 with defining polynomial x^2 + 1 over its base field
+            to Number Field in a0 with defining polynomial x^2 + 1 over its base field
             sage: L in L
             False
 
@@ -1672,7 +1673,7 @@ class NumberField_relative(NumberField_generic):
             sage: k.<a> = NumberField(x^2 + 1); k
             Number Field in a with defining polynomial x^2 + 1
             sage: y = polygen(k)
-            sage: m.<b> = k.extension(y^2+3); m
+            sage: m.<b> = k.extension(y^2 + 3); m
             Number Field in b with defining polynomial x^2 + 3 over its base field
             sage: c = m.gen(); c # indirect doctest
             b
@@ -2191,6 +2192,7 @@ class NumberField_relative(NumberField_generic):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: t = K['t'].gen()
             sage: L.<a> = K.extension(t^4 - i)
@@ -2455,20 +2457,20 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
-            sage: P.<a,b,c> = QQ[2^(1/2), 2^(1/3), 3^(1/2)]
-            sage: R = P.order([a,b,c]); R
+            sage: P.<a,b,c> = QQ[2^(1/2), 2^(1/3), 3^(1/2)]                             # optional - sage.symbolic
+            sage: R = P.order([a,b,c]); R                                               # optional - sage.symbolic
             Relative Order in Number Field in sqrt2
              with defining polynomial x^2 - 2 over its base field
 
         The base ring of an order in a relative extension is still `\ZZ`.::
 
-            sage: R.base_ring()
+            sage: R.base_ring()                                                         # optional - sage.symbolic
             Integer Ring
 
         One must give enough generators to generate a ring of finite index
         in the maximal order::
 
-            sage: P.order([a, b])
+            sage: P.order([a, b])                                                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: the rank of the span of gens is wrong

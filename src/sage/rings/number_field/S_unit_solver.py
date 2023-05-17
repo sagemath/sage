@@ -982,11 +982,12 @@ def minimal_vector(A, y, prec=106):
     ALLLinv = ALLL.inverse()
     ybrace = [ abs(R(a-a.round())) for a in y * ALLLinv if (a-a.round()) != 0]
 
+    v = ALLL.rows()[0]
     if len(ybrace) == 0:
-        return (ALLL.rows()[0].norm())**2 / c1
+        return v.dot_product(v) / c1
     else:
         sigma = ybrace[len(ybrace)-1]
-        return ((ALLL.rows()[0].norm())**2 * sigma) / c1
+        return v.dot_product(v) * sigma / c1
 
 
 def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):

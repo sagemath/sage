@@ -933,7 +933,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: K.<a> = NumberField(x^3 - 2)
             sage: a._random_element().parent() is K
             True
-            sage: K.<a> = NumberField(x^2-5)
+            sage: K.<a> = NumberField(x^2 - 5)
             sage: a._random_element().parent() is K
             True
         """
@@ -2010,7 +2010,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         In the following example, the class number is 2.  If a factorization
         in prime elements exists, we will find it::
 
-            sage: K.<a> = NumberField(x^2-10)
+            sage: K.<a> = NumberField(x^2 - 10)
             sage: factor(169*a + 531)
             (-6*a - 19) * (-3*a - 1) * (-2*a + 9)
             sage: factor(K(3))
@@ -2434,7 +2434,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS::
 
-            sage: 2^I
+            sage: 2^I                                                                   # optional - sage.symbolic
             2^I
 
         Test :trac:`14895`::
@@ -4200,7 +4200,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^4+3*x^2-17)
+            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)
             sage: b = a/2
             sage: b.global_height()
             0.789780699008...
@@ -5058,7 +5058,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
             sage: K.<a,b> = NumberField([x^3 + 2, x^2 + 1])
             sage: a.list()
             [0, 1, 0]
-            sage: v = (K.base_field().0 + a)^2 ; v
+            sage: v = (K.base_field().0 + a)^2; v
             a^2 + 2*b*a - 1
             sage: v.list()
             [-1, 2*b, 1]
