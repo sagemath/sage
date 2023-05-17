@@ -2056,12 +2056,11 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
 
     mod, poly, exp, order, ind1, ind2, ind3, ind4 = data[n]
 
-    from sage.symbolic.ring import SymbolicRing
     from sage.rings.finite_rings.integer_mod_ring import Zmod
 
     Z3 = Zmod(mod)
-    R = SymbolicRing()
-    x = R.var('x')
+    R = ZZ['x']
+    x = R.gen()
     F = Z3.extension(poly(x))
 
     H = [F.gen() ** (exp * i) for i in range(order)]

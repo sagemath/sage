@@ -1976,21 +1976,21 @@ class FinitePoset(UniqueRepresentation, Parent):
             ....:                   if isinstance(t, sage.plot.text.Text))
             sage: P1 = Poset({ 0:[1,2], 1:[3], 2:[3,4] })
             sage: P2 = Poset({ 0:[1,2], 1:[3], 2:[3,4] }, facade=True)
-            sage: get_plot_labels(P1.plot(label_elements=False))
+            sage: get_plot_labels(P1.plot(label_elements=False))                        # optional - sage.plot
             []
-            sage: get_plot_labels(P1.plot(label_elements=True))
+            sage: get_plot_labels(P1.plot(label_elements=True))                         # optional - sage.plot
             ['0', '1', '2', '3', '4']
             sage: element_labels = {0:'a', 1:'b', 2:'c', 3:'d', 4:'e'}
-            sage: get_plot_labels(P1.plot(element_labels=element_labels))
+            sage: get_plot_labels(P1.plot(element_labels=element_labels))               # optional - sage.plot
             ['a', 'b', 'c', 'd', 'e']
-            sage: get_plot_labels(P2.plot(element_labels=element_labels))
+            sage: get_plot_labels(P2.plot(element_labels=element_labels))               # optional - sage.plot
             ['a', 'b', 'c', 'd', 'e']
 
         The following checks that :trac:`18936` has been fixed and labels still work::
 
             sage: P = Poset({0: [1,2], 1:[3]})
             sage: heights = {1 : [0], 2 : [1], 3 : [2,3]}
-            sage: P.plot(heights=heights)
+            sage: P.plot(heights=heights)                                               # optional - sage.plot
             Graphics object consisting of 8 graphics primitives
             sage: elem_labels = {0 : 'a', 1 : 'b', 2 : 'c', 3 : 'd'}
             sage: P.plot(element_labels=elem_labels, heights=heights)                   # optional - sage.plot
@@ -2015,7 +2015,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         Plot of the empty poset::
 
             sage: P = Poset({})
-            sage: P.plot()
+            sage: P.plot()                                                              # optional - sage.plot
             Graphics object consisting of 0 graphics primitives
         """
         graph = self.hasse_diagram()

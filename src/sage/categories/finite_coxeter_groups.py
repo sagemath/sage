@@ -10,6 +10,8 @@ Finite Coxeter Groups
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import sage.rings.abc
+
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.category_with_axiom import CategoryWithAxiom
@@ -748,12 +750,8 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             v = sum(point[i-1] * weights[i] for i in weights.keys())
             vertices = [v*w for w in self]
             if base_ring is None:
-                import sage.rings.abc
-                try:
-                    from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
-                except ImportError:
-                    UniversalCyclotomicField = ()
-                if isinstance(v.base_ring(), [UniversalCyclotomicField, sage.rings.abc.AlgebraicField_common]):
+                if isinstance(v.base_ring(), [sage.rings.abc.UniversalCyclotomicField,
+                                              sage.rings.abc.AlgebraicField_common]):
                     from sage.rings.qqbar import AA
                     vertices = [v.change_ring(AA) for v in vertices]
                     base_ring = AA

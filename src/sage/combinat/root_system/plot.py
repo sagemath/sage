@@ -502,7 +502,7 @@ index set, ...), the easiest is to create an option object using
 :meth:`~sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods.plot_parse_options`,
 and pass it down to each piece. We use this to plot our two walks::
 
-    sage: plot_options = L.plot_parse_options(bounding_box=[[-2,5],[-2,6]])
+    sage: plot_options = L.plot_parse_options(bounding_box=[[-2,5],[-2,6]])             # optional - sage.plot sage.symbolic
     sage: w2 = [2,1,2,0,2,0,2,1,2,0,1,2,1,2,1,0,1,2,0,2,0,1,2,0,2]
     sage: p = L.plot_alcoves(plot_options=plot_options)                 # long time     # optional - sage.plot sage.symbolic
     sage: p += L.plot_alcove_walk(w1, color="green",                    # long time     # optional - sage.plot sage.symbolic
@@ -556,7 +556,7 @@ the translation by this weight::
     sage: Lambda = P.fundamental_weights()
     sage: t = 6*Lambda[1] - 2*Lambda[2] - 4*Lambda[0]
     sage: walk = L.reduced_word_of_translation(L(t))
-    sage: plot_options = L.plot_parse_options(bounding_box=[[-2,5],[-2,5]])
+    sage: plot_options = L.plot_parse_options(bounding_box=[[-2,5],[-2,5]])             # optional - sage.plot sage.symbolic
     sage: p = L.plot(plot_options=plot_options)                         # long time     # optional - sage.plot sage.symbolic
     sage: p += L.plot_alcove_walk(walk, color="green",                  # long time     # optional - sage.plot sage.symbolic
     ....:                         plot_options=plot_options)
@@ -683,10 +683,10 @@ fundamental alcove::
 
     sage: L = RootSystem(["A",2]).ambient_space()
     sage: rho = L.rho()
-    sage: plot_options = L.plot_parse_options()
+    sage: plot_options = L.plot_parse_options()                                         # optional - sage.plot sage.symbolic
     sage: W = L.weyl_group()
     sage: g = W.cayley_graph(side="right")
-    sage: positions = {w: plot_options.projection(w.action(rho)) for w in W}
+    sage: positions = {w: plot_options.projection(w.action(rho)) for w in W}            # optional - sage.plot sage.symbolic
     sage: p = L.plot_alcoves()                                                          # optional - sage.plot sage.symbolic
     sage: p += g.plot(pos=positions, vertex_size=0,                                     # optional - sage.plot sage.symbolic
     ....:             color_by_label=plot_options.color)
@@ -714,10 +714,10 @@ The same picture for `A_3` gives a nice 3D permutohedron::
 
     sage: L = RootSystem(["A",3]).ambient_space()
     sage: rho = L.rho()
-    sage: plot_options = L.plot_parse_options()
+    sage: plot_options = L.plot_parse_options()                                         # optional - sage.plot sage.symbolic
     sage: W = L.weyl_group()
     sage: g = W.cayley_graph(side="right")
-    sage: positions = {w: plot_options.projection(w.action(rho)) for w in W}
+    sage: positions = {w: plot_options.projection(w.action(rho)) for w in W}            # optional - sage.plot sage.symbolic
     sage: p = L.plot_roots()                                                            # optional - sage.plot sage.symbolic
     sage: p += g.plot3d(pos3d=positions, color_by_label=plot_options.color)             # optional - sage.plot sage.symbolic
     sage: p                                                                             # optional - sage.plot sage.symbolic
@@ -881,10 +881,10 @@ class PlotOptions():
             sage: options.dimension
             3
 
-            sage: options = L.plot_parse_options(affine=False, projection='barycentric')
-            sage: options._projections
+            sage: options = L.plot_parse_options(affine=False, projection='barycentric')    # optional - sage.plot sage.symbolic
+            sage: options._projections                                                      # optional - sage.plot sage.symbolic
             [<bound method RootLatticeRealizations.ParentMethods._plot_projection_barycentric of Ambient space of the Root system of type ['B', 2, 1]>]
-            sage: options.dimension
+            sage: options.dimension                                                         # optional - sage.plot sage.symbolic
             3
         """
         self.space = space
@@ -953,11 +953,11 @@ class PlotOptions():
         EXAMPLES::
 
             sage: L = RootSystem(["A",2,1]).ambient_space()
-            sage: options = L.plot_parse_options()
+            sage: options = L.plot_parse_options()                                      # optional - sage.plot sage.symbolic
             sage: alpha = L.simple_roots()
-            sage: options.in_bounding_box(alpha[1])
+            sage: options.in_bounding_box(alpha[1])                                     # optional - sage.plot sage.symbolic
             True
-            sage: options.in_bounding_box(3*alpha[1])
+            sage: options.in_bounding_box(3*alpha[1])                                   # optional - sage.plot sage.symbolic
             False
         """
         return self.bounding_box.contains(self.projection(x))
@@ -978,20 +978,20 @@ class PlotOptions():
         EXAMPLES::
 
             sage: L = RootSystem(["A",2]).root_lattice()
-            sage: options = L.plot_parse_options()
-            sage: list(options.text("coucou", [0,1]))
+            sage: options = L.plot_parse_options()                                      # optional - sage.plot sage.symbolic
+            sage: list(options.text("coucou", [0,1]))                                   # optional - sage.plot sage.symbolic
             [Text 'coucou' at the point (0.0,1.0)]
-            sage: list(options.text(L.simple_root(1), [0,1]))
+            sage: list(options.text(L.simple_root(1), [0,1]))                           # optional - sage.plot sage.symbolic
             [Text '$\alpha_{1}$' at the point (0.0,1.0)]
-            sage: list(options.text(L.simple_root(2), [1,0], rgbcolor=(1,0.5,0)))
+            sage: list(options.text(L.simple_root(2), [1,0], rgbcolor=(1,0.5,0)))       # optional - sage.plot sage.symbolic
             [Text '$\alpha_{2}$' at the point (1.0,0.0)]
 
-            sage: options = RootSystem(["A",2]).root_lattice().plot_parse_options(labels=False)
-            sage: options.text("coucou", [0,1])
+            sage: options = L.root_lattice().plot_parse_options(labels=False)           # optional - sage.plot sage.symbolic
+            sage: options.text("coucou", [0,1])                                         # optional - sage.plot sage.symbolic
             0
 
             sage: options = RootSystem(["B",3]).root_lattice().plot_parse_options()
-            sage: print(options.text("coucou", [0,1,2]).x3d_str())
+            sage: print(options.text("coucou", [0,1,2]).x3d_str())                      # optional - sage.plot sage.symbolic
             <Transform translation='0 1 2'>
             <Shape><Text string='coucou' solid='true'/><Appearance><Material diffuseColor='0.0 0.0 0.0' shininess='1.0' specularColor='0.0 0.0 0.0'/></Appearance></Shape>
             <BLANKLINE>
@@ -1122,12 +1122,12 @@ class PlotOptions():
         EXAMPLES::
 
             sage: L = RootSystem(["A",2,1]).ambient_space()
-            sage: options = L.plot_parse_options()
-            sage: options.projection(L.rho())
+            sage: options = L.plot_parse_options()                                      # optional - sage.plot sage.symbolic
+            sage: options.projection(L.rho())                                           # optional - sage.plot sage.symbolic
             (0, 989/571)
 
-            sage: options = L.plot_parse_options(projection=False)
-            sage: options.projection(L.rho())
+            sage: options = L.plot_parse_options(projection=False)                      # optional - sage.plot sage.symbolic
+            sage: options.projection(L.rho())                                           # optional - sage.plot sage.symbolic
             (2, 1, 0)
         """
         for projection in self._projections:
@@ -1186,8 +1186,8 @@ class PlotOptions():
         other hand, `0` behaves as a fast neutral element, which is
         important given the typical idioms used in the plotting code::
 
-            sage: p = point([0,0])
-            sage: p + options.empty() is p
+            sage: p = point([0,0])                                                      # optional - sage.plot
+            sage: p + options.empty() is p                                              # optional - sage.plot
             True
         """
         return 0
@@ -1220,33 +1220,33 @@ class PlotOptions():
         EXAMPLES::
 
             sage: L = RootSystem(["B",2,1]).ambient_space()
-            sage: options = L.plot_parse_options()
-            sage: p = L.plot_roots(plot_options=options)
-            sage: p += L.plot_coroots(plot_options=options)
-            sage: p.axes()
+            sage: options = L.plot_parse_options()                                      # optional - sage.plot sage.symbolic
+            sage: p = L.plot_roots(plot_options=options)                                # optional - sage.plot sage.symbolic
+            sage: p += L.plot_coroots(plot_options=options)                             # optional - sage.plot sage.symbolic
+            sage: p.axes()                                                              # optional - sage.plot sage.symbolic
             True
-            sage: p = options.finalize(p)
-            sage: p.axes()
+            sage: p = options.finalize(p)                                               # optional - sage.plot sage.symbolic
+            sage: p.axes()                                                              # optional - sage.plot sage.symbolic
             False
-            sage: p.aspect_ratio()
+            sage: p.aspect_ratio()                                                      # optional - sage.plot sage.symbolic
             1.0
 
-            sage: options = L.plot_parse_options(affine=False)
-            sage: p = L.plot_roots(plot_options=options)
-            sage: p += point([[1,1,0]])
-            sage: p = options.finalize(p)
-            sage: p.aspect_ratio()
+            sage: options = L.plot_parse_options(affine=False)                          # optional - sage.plot sage.symbolic
+            sage: p = L.plot_roots(plot_options=options)                                # optional - sage.plot sage.symbolic
+            sage: p += point([[1,1,0]])                                                 # optional - sage.plot sage.symbolic
+            sage: p = options.finalize(p)                                               # optional - sage.plot sage.symbolic
+            sage: p.aspect_ratio()                                                      # optional - sage.plot sage.symbolic
             [1.0, 1.0, 1.0]
 
         If the input is ``0``, this returns an empty graphics object::
 
-            sage: type(options.finalize(0))
+            sage: type(options.finalize(0))                                             # optional - sage.plot sage.symbolic
             <class 'sage.plot.plot3d.base.Graphics3dGroup'>
 
-            sage: options = L.plot_parse_options()
-            sage: type(options.finalize(0))
+            sage: options = L.plot_parse_options()                                      # optional - sage.plot sage.symbolic
+            sage: type(options.finalize(0))                                             # optional - sage.plot sage.symbolic
             <class 'sage.plot.graphics.Graphics'>
-            sage: list(options.finalize(0))
+            sage: list(options.finalize(0))                                             # optional - sage.plot sage.symbolic
             []
         """
         from sage.plot.graphics import Graphics
@@ -1277,11 +1277,11 @@ class PlotOptions():
         EXAMPLES::
 
             sage: L = RootSystem(["A",2]).root_lattice()
-            sage: options = L.plot_parse_options()
-            sage: alpha = L.simple_roots()
-            sage: p = options.family_of_vectors(alpha); p
+            sage: options = L.plot_parse_options()                                      # optional - sage.plot sage.symbolic
+            sage: alpha = L.simple_roots()                                              # optional - sage.plot sage.symbolic
+            sage: p = options.family_of_vectors(alpha); p                               # optional - sage.plot sage.symbolic
             Graphics object consisting of 4 graphics primitives
-            sage: list(p)
+            sage: list(p)                                                               # optional - sage.plot sage.symbolic
             [Arrow from (0.0,0.0) to (1.0,0.0),
              Text '$1$' at the point (1.05,0.0),
              Arrow from (0.0,0.0) to (0.0,1.0),
@@ -1289,23 +1289,24 @@ class PlotOptions():
 
         Handling of colors and labels::
 
-            sage: color=lambda i: "purple" if i==1 else None
-            sage: options = L.plot_parse_options(labels=False, color=color)
-            sage: p = options.family_of_vectors(alpha)
-            sage: list(p)
+            sage: def color(i):
+            ....:     return "purple" if i==1 else None
+            sage: options = L.plot_parse_options(labels=False, color=color)             # optional - sage.plot sage.symbolic
+            sage: p = options.family_of_vectors(alpha)                                  # optional - sage.plot sage.symbolic
+            sage: list(p)                                                               # optional - sage.plot sage.symbolic
             [Arrow from (0.0,0.0) to (1.0,0.0)]
-            sage: p[0].options()['rgbcolor']
+            sage: p[0].options()['rgbcolor']                                            # optional - sage.plot sage.symbolic
             'purple'
 
         Matplotlib emits a warning for arrows of length 0 and draws
         nothing anyway. So we do not draw them at all::
 
             sage: L = RootSystem(["A",2,1]).ambient_space()
-            sage: options = L.plot_parse_options()
+            sage: options = L.plot_parse_options()                                      # optional - sage.plot sage.symbolic
             sage: Lambda = L.fundamental_weights()
-            sage: p = options.family_of_vectors(Lambda); p
+            sage: p = options.family_of_vectors(Lambda); p                              # optional - sage.plot sage.symbolic
             Graphics object consisting of 5 graphics primitives
-            sage: list(p)
+            sage: list(p)                                                               # optional - sage.plot sage.symbolic
             [Text '$0$' at the point (0.0,0.0),
              Arrow from (0.0,0.0) to (0.5,0.86602451838...),
              Text '$1$' at the point (0.525,0.909325744308...),
@@ -1362,29 +1363,33 @@ class PlotOptions():
             sage: L = RootSystem(["A",2]).root_lattice()
             sage: options = L.plot_parse_options()
             sage: alpha = L.simple_roots()
-            sage: p = options.cone(rays=[alpha[1]], lines=[alpha[2]], color='green', label=2)
-            sage: p
+            sage: p = options.cone(rays=[alpha[1]], lines=[alpha[2]],                   # optional - sage.plot
+            ....:                  color='green', label=2); p
             Graphics object consisting of 2 graphics primitives
-            sage: list(p)
+            sage: list(p)                                                               # optional - sage.plot
             [Polygon defined by 4 points,
              Text '$2$' at the point (3.15...,3.15...)]
-            sage: options.cone(rays=[alpha[1]], lines=[alpha[2]], color='green', label=2, as_polyhedron=True)
+            sage: options.cone(rays=[alpha[1]], lines=[alpha[2]],                       # optional - sage.plot
+            ....:              color='green', label=2, as_polyhedron=True)
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex, 1 ray, 1 line
 
         An empty result, being outside of the bounding box::
 
-            sage: options = L.plot_parse_options(labels=True, bounding_box=[[-10,-9]]*2)
-            sage: options.cone(rays=[alpha[1]], lines=[alpha[2]], color='green', label=2)
+            sage: options = L.plot_parse_options(labels=True,
+            ....:                                bounding_box=[[-10,-9]]*2)
+            sage: options.cone(rays=[alpha[1]], lines=[alpha[2]],
+            ....:              color='green', label=2)
             0
 
         Test that the options are properly passed down::
 
             sage: L = RootSystem(["A",2]).root_lattice()
             sage: options = L.plot_parse_options()
-            sage: p = options.cone(rays=[alpha[1]+alpha[2]], color='green', label=2, thickness=4, alpha=.5)
-            sage: list(p)
+            sage: p = options.cone(rays=[alpha[1] + alpha[2]],                          # optional - sage.plot
+            ....:                  color='green', label=2, thickness=4, alpha=.5)
+            sage: list(p)                                                               # optional - sage.plot
             [Line defined by 2 points, Text '$2$' at the point (3.15...,3.15...)]
-            sage: sorted(p[0].options().items())
+            sage: sorted(p[0].options().items())                                        # optional - sage.plot
             [('alpha', 0.500000000000000), ('legend_color', None),
              ('legend_label', None), ('rgbcolor', 'green'), ('thickness', 4),
              ('zorder', 1)]
@@ -1449,12 +1454,12 @@ class PlotOptions():
             sage: L = RootSystem(["B",2]).weight_space()
             sage: alphacheck = L.simple_coroots()
             sage: options = L.plot_parse_options()
-            sage: H = options.reflection_hyperplane(alphacheck[1]); H
+            sage: H = options.reflection_hyperplane(alphacheck[1]); H                   # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
 
         TESTS::
 
-            sage: print(H.description())
+            sage: print(H.description())                                                # optional - sage.plot
             Text '$H_{\alpha^\vee_{1}}$' at the point (0.0,3.15...)
             Line defined by 2 points: [(0.0, 3.0), (0.0, -3.0)]
 
@@ -1462,17 +1467,18 @@ class PlotOptions():
 
             sage: L = RootSystem(["A",3,1]).ambient_space()
             sage: alphacheck = L.simple_coroots()
-            sage: options = L.plot_parse_options()
-            sage: H = options.reflection_hyperplane(alphacheck[1], as_polyhedron=True); H
+            sage: options = L.plot_parse_options()                                      # optional - sage.plot
+            sage: H = options.reflection_hyperplane(alphacheck[1],                      # optional - sage.plot
+            ....:                                   as_polyhedron=True); H
             A 2-dimensional polyhedron in QQ^3 defined as the convex hull of 1 vertex and 2 lines
-            sage: H.lines()
+            sage: H.lines()                                                             # optional - sage.plot
             (A line in the direction (0, 0, 1), A line in the direction (0, 1, 0))
-            sage: H.vertices()
+            sage: H.vertices()                                                          # optional - sage.plot
             (A vertex at (0, 0, 0),)
 
         ::
 
-            sage: all(options.reflection_hyperplane(c, as_polyhedron=True).dim() == 2
+            sage: all(options.reflection_hyperplane(c, as_polyhedron=True).dim() == 2   # optional - sage.plot
             ....:     for c in alphacheck)
             True
 
