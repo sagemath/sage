@@ -960,7 +960,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     ....:     for b in hw)
                     True
                 """
-                from sage.functions.other import ceil
+                from sage.arith.misc import integer_ceil as ceil
 
                 C = self.parent().crystals[0]
                 ell = ceil(C.s()/C.cartan_type().c()[C.r()])
@@ -1093,7 +1093,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     ....:     for elt in hw)
                     True
                 """
-                from sage.functions.other import ceil
+                from sage.arith.misc import integer_ceil as ceil
 
                 ell = max(ceil(K.s()/K.cartan_type().c()[K.r()])
                           for K in self.parent().crystals)

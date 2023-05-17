@@ -2149,8 +2149,8 @@ class IncidenceStructure():
 
             sage: H = Hypergraph([{1,2,3},{2,3,4},{3,4,5},{4,5,6}]); H
             Incidence structure with 6 points and 4 blocks
-            sage: L = H._spring_layout()
-            sage: L # random
+            sage: L = H._spring_layout()                                                # optional - sage.plot
+            sage: L  # random                                                           # optional - sage.plot
             {1: (0.238, -0.926),
              2: (0.672, -0.518),
              3: (0.449, -0.225),
@@ -2161,9 +2161,9 @@ class IncidenceStructure():
              {2, 3, 4}: (0.727, -0.173),
              {4, 5, 6}: (0.838, 0.617),
              {1, 2, 3}: (0.393, -0.617)}
-            sage: all(v in L for v in H.ground_set())
+            sage: all(v in L for v in H.ground_set())                                   # optional - sage.plot
             True
-            sage: all(v in L for v in map(Set,H.blocks()))
+            sage: all(v in L for v in map(Set, H.blocks()))                             # optional - sage.plot
             True
         """
         from sage.graphs.graph import Graph

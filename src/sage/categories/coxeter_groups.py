@@ -2163,10 +2163,11 @@ class CoxeterGroups(Category_singleton):
 
             We now show how to construct the Bruhat poset::
 
-                sage: W = WeylGroup(["A",3])
-                sage: covers = tuple([u, v] for v in W for u in v.bruhat_lower_covers() )
-                sage: P = Poset((W, covers), cover_relations = True)
-                sage: P.show()
+                sage: W = WeylGroup(["A", 3])                                           # optional - sage.combinat sage.groups
+                sage: covers = tuple([u, v]                                             # optional - sage.combinat sage.groups
+                ....:                for v in W for u in v.bruhat_lower_covers())
+                sage: P = Poset((W, covers), cover_relations=True)                      # optional - sage.combinat sage.groups sage.graphs
+                sage: P.show()                                                          # optional - sage.combinat sage.groups sage.graphs sage.plot
 
             Alternatively, one can just use::
 
