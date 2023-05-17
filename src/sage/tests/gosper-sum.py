@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.symbolic
 """
 Some tests about Gosper sums.
 
