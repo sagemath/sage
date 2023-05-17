@@ -224,15 +224,15 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
     The result of :func:`sage_input` is actually a pair of strings with a
     special ``__repr__`` method to print nicely.::
 
-        sage: r = sage_input(RealField(20)(pi), verify=True)
-        sage: r
+        sage: r = sage_input(RealField(20)(pi), verify=True)                            # optional - sage.symbolic
+        sage: r                                                                         # optional - sage.symbolic
         # Verified
         RealField(20)(3.1415939)
-        sage: isinstance(r, tuple)
+        sage: isinstance(r, tuple)                                                      # optional - sage.symbolic
         True
-        sage: len(r)
+        sage: len(r)                                                                    # optional - sage.symbolic
         2
-        sage: tuple(r)
+        sage: tuple(r)                                                                  # optional - sage.symbolic
         ('# Verified\n', 'RealField(20)(3.1415939)')
 
     We cannot find an input form for a function.::

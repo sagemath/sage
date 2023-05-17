@@ -28,7 +28,7 @@ def numerical_approx_generic(x, prec):
     EXAMPLES::
 
         sage: from sage.arith.numerical_approx import numerical_approx_generic
-        sage: numerical_approx_generic(pi, 20)
+        sage: numerical_approx_generic(pi, 20)                                          # optional - sage.symbolic
         3.1416
         sage: numerical_approx_generic(int(42), 20)
         42.000

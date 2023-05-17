@@ -119,6 +119,7 @@ cdef class Matrix(Matrix0):
             sage: g.IsMatrix()                                                          # optional - sage.rings.number_field
             true
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<tau> = NumberField(x^3 - 2)                                        # optional - sage.rings.number_field
             sage: A = MatrixSpace(L, 2, 2)([0, 1+tau, 2*tau, 3])                        # optional - sage.rings.number_field
             sage: g = gap(A); g                                                         # optional - sage.rings.number_field

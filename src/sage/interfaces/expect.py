@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.libs.gap sage.libs.pari sage.libs.singular sage.symbolic
 """
 Common Interface Functionality through Pexpect
 

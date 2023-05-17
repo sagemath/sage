@@ -1181,7 +1181,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: P.chebyshev_polynomial(5, 'first')
+            sage: P.chebyshev_polynomial(5, 'first')                                    # optional - sage.symbolic
             Dynamical System of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
                     (16*x^5 - 20*x^3*y^2 + 5*x*y^4 : y^5)
@@ -1189,7 +1189,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: P.chebyshev_polynomial(3, 'second')
+            sage: P.chebyshev_polynomial(3, 'second')                                   # optional - sage.symbolic
             Dynamical System of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
                     (8*x^3 - 4*x*y^2 : y^3)
@@ -1197,7 +1197,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: P.chebyshev_polynomial(3, 2)
+            sage: P.chebyshev_polynomial(3, 2)                                          # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: keyword 'kind' must have a value of either 'first' or 'second'
@@ -1205,7 +1205,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: P.chebyshev_polynomial(-4, 'second')
+            sage: P.chebyshev_polynomial(-4, 'second')                                  # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: first parameter 'n' must be a non-negative integer
@@ -1213,7 +1213,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         ::
 
             sage: P = ProjectiveSpace(QQ, 2, 'x')
-            sage: P.chebyshev_polynomial(2)
+            sage: P.chebyshev_polynomial(2)                                             # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: projective space must be of dimension 1
@@ -1221,7 +1221,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: P.chebyshev_polynomial(3, monic=True)
+            sage: P.chebyshev_polynomial(3, monic=True)                                 # optional - sage.symbolic
             Dynamical System of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
                     (x^3 - 3*x*y^2 : y^3)
@@ -1230,7 +1230,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             sage: F.<t> = FunctionField(QQ)
             sage: P.<y,z> = ProjectiveSpace(F, 1)
-            sage: P.chebyshev_polynomial(4, monic=True)
+            sage: P.chebyshev_polynomial(4, monic=True)                                 # optional - sage.symbolic
             Dynamical System of Projective Space of dimension 1
              over Rational function field in t over Rational Field
               Defn: Defined on coordinates by sending (y : z) to
@@ -1917,7 +1917,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: R.<x> = QQ[]
             sage: F.<a> = NumberField(x^4 - 8*x^2 + 3)                                  # optional - sage.rings.number_field
             sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # optional - sage.rings.number_field
-            sage: all(exp(p.global_height()) <= 1                                       # optional - sage.rings.number_field
+            sage: all(exp(p.global_height()) <= 1                                       # optional - sage.rings.number_field sage.symbolic
             ....:     for p in P.points_of_bounded_height(bound=1))
             True
 

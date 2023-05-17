@@ -10,6 +10,7 @@ EXAMPLES:
 Define a polynomial over an absolute number field and perform basic
 operations with them::
 
+    sage: x = polygen(ZZ, 'x')
     sage: N.<a> = NumberField(x^2 - 2)
     sage: K.<x> = N[]
     sage: f = x - a
@@ -126,6 +127,7 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: N.<a> = NumberField(x^3 - 1/2, 'a')
             sage: R.<r> = N['r']
             sage: f = (5/4*a^2 - 2*a + 4)*r^2 + (5*a^2 - 81/5*a - 17/2)*r + 4/5*a^2 + 24*a + 6
@@ -220,21 +222,22 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
         - ``parent`` -- polynomial ring in which to construct the
           element.
 
-        - ``x`` -- (default: None) an object representing the
+        - ``x`` -- (default: ``None``) an object representing the
           polynomial, e.g. a list of coefficients. See
           :meth:`sage.rings.polynomial.polynomial_element_generic.Polynomial_generic_dense_field.__init__`
           for more details.
 
-        - ``check`` -- boolean (default: True) if True, make sure that
+        - ``check`` -- boolean (default: ``True``) if ``True``, make sure that
           the coefficients of the polynomial are in the base ring.
 
-        - ``is_gen`` -- boolean (default: False) if True, ``x`` is the
+        - ``is_gen`` -- boolean (default: ``False``) if ``True``, ``x`` is the
           distinguished generator of the polynomial ring.
 
-        - ``construct`` -- (default: False) boolean, unused.
+        - ``construct`` -- (default: ``False``) boolean, unused.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: f = NumberField([x^2 - 2, x^2 - 3], 'a')['x'].random_element()
             sage: from sage.rings.polynomial.polynomial_number_field import Polynomial_relative_number_field_dense
             sage: isinstance(f, Polynomial_relative_number_field_dense)
@@ -257,21 +260,21 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         OUTPUT:
 
-        - The monic gcd of ``self`` and ``other``.
+        The monic gcd of ``self`` and ``other``.
 
         See :meth:`Polynomial_absolute_number_field_dense.gcd` for
         more details.
 
         EXAMPLES::
 
-            sage: N = QQ[sqrt(2), sqrt(3)]
-            sage: s2, s3 = N.gens()
-            sage: x = polygen(N)
-            sage: f = x^4 - 5*x^2 + 6
-            sage: g = x^3 + (-2*s2 + s3)*x^2 + (-2*s3*s2 + 2)*x + 2*s3
-            sage: gcd(f, g)
+            sage: N = QQ[sqrt(2), sqrt(3)]                                              # optional - sage.symbolic
+            sage: s2, s3 = N.gens()                                                     # optional - sage.symbolic
+            sage: x = polygen(N)                                                        # optional - sage.symbolic
+            sage: f = x^4 - 5*x^2 + 6                                                   # optional - sage.symbolic
+            sage: g = x^3 + (-2*s2 + s3)*x^2 + (-2*s3*s2 + 2)*x + 2*s3                  # optional - sage.symbolic
+            sage: gcd(f, g)                                                             # optional - sage.symbolic
             x^2 + (-sqrt2 + sqrt3)*x - sqrt3*sqrt2
-            sage: f.gcd(g)
+            sage: f.gcd(g)                                                              # optional - sage.symbolic
             x^2 + (-sqrt2 + sqrt3)*x - sqrt3*sqrt2
 
         TESTS::
@@ -302,14 +305,14 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         Test for hardcoded variables::
 
-            sage: R = N['sqrt2sqrt3']
-            sage: x = R.gen()
-            sage: f = x^2 - 2
-            sage: g1 = x^2 - s3
-            sage: g2 = x - s2
-            sage: gcd(f, g1)
+            sage: R = N['sqrt2sqrt3']                                                   # optional - sage.symbolic
+            sage: x = R.gen()                                                           # optional - sage.symbolic
+            sage: f = x^2 - 2                                                           # optional - sage.symbolic
+            sage: g1 = x^2 - s3                                                         # optional - sage.symbolic
+            sage: g2 = x - s2                                                           # optional - sage.symbolic
+            sage: gcd(f, g1)                                                            # optional - sage.symbolic
             1
-            sage: gcd(f, g2)
+            sage: gcd(f, g2)                                                            # optional - sage.symbolic
             sqrt2sqrt3 - sqrt2
         """
         if self.is_zero():

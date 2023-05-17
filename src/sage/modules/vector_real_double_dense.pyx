@@ -3,17 +3,16 @@ Dense real double vectors using a NumPy backend
 
 EXAMPLES::
 
-    sage: v = vector(RDF,[1, pi, sqrt(2)])
-    sage: v
+    sage: v = vector(RDF, [1, pi, sqrt(2)]); v                                          # optional - sage.symbolic
     (1.0, 3.141592653589793, 1.414213562373095)
-    sage: type(v)
+    sage: type(v)                                                                       # optional - sage.symbolic
     <class 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
-    sage: parent(v)
+    sage: parent(v)                                                                     # optional - sage.symbolic
     Vector space of dimension 3 over Real Double Field
-    sage: v[0] = 5
-    sage: v
+    sage: v[0] = 5                                                                      # optional - sage.symbolic
+    sage: v                                                                             # optional - sage.symbolic
     (5.0, 3.141592653589793, 1.414213562373095)
-    sage: loads(dumps(v)) == v
+    sage: loads(dumps(v)) == v                                                          # optional - sage.symbolic
     True
 
 AUTHORS:

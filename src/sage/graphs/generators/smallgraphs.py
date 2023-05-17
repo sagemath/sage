@@ -1577,7 +1577,7 @@ def DoubleStarSnark():
         False
         sage: g.automorphism_group().cardinality()
         80
-        sage: g.show()
+        sage: g.show()                                                                  # optional - sage.plot
     """
     d = {0: [1, 14, 15],
          1: [0, 2, 11],
@@ -1836,7 +1836,7 @@ def ClebschGraph():
         4
         sage: g.diameter()
         2
-        sage: g.show(figsize=[10, 10]) # long time
+        sage: g.show(figsize=[10, 10])  # long time
     """
     g = Graph(pos={})
     x = 0
@@ -3611,8 +3611,8 @@ def McGeeGraph(embedding=2):
         7
         sage: g.diameter()
         4
-        sage: g.show()
-        sage: graphs.McGeeGraph(embedding=1).show()  # long time
+        sage: g.show()                                                                  # optional - sage.plot
+        sage: graphs.McGeeGraph(embedding=1).show()  # long time                        # optional - sage.plot
 
     TESTS::
 
@@ -3726,7 +3726,7 @@ def MoebiusKantorGraph():
         Moebius-Kantor Graph: Graph on 16 vertices
         sage: MK.graph6_string()
         'OhCGKE?O@?ACAC@I?Q_AS'
-        sage: (graphs.MoebiusKantorGraph()).show()  # long time
+        sage: (graphs.MoebiusKantorGraph()).show()  # long time                         # optional - sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     G = GeneralizedPetersenGraph(8, 3)
@@ -3821,8 +3821,8 @@ def NauruGraph(embedding=2):
         6
         sage: g.diameter()
         4
-        sage: g.show()
-        sage: graphs.NauruGraph(embedding=1).show()  # long time
+        sage: g.show()                                                                  # optional - sage.plot
+        sage: graphs.NauruGraph(embedding=1).show()  # long time                        # optional - sage.plot
 
     TESTS::
 
@@ -3857,9 +3857,9 @@ def PappusGraph():
     EXAMPLES::
 
         sage: G = graphs.PappusGraph()
-        sage: G.show()  # long time
+        sage: G.show()  # long time                                                     # optional - sage.plot
         sage: L = graphs.LCFGraph(18, [5,7,-7,7,-7,-5], 3)
-        sage: L.show()  # long time
+        sage: L.show()  # long time                                                     # optional - sage.plot
         sage: G.is_isomorphic(L)
         True
     """
@@ -3923,9 +3923,9 @@ def PetersenGraph():
         ....:                          3:[2,4,8], 4:[0,3,9], 5:[0,7,8],
         ....:                          6:[1,8,9], 7:[2,5,9], 8:[3,5,6],
         ....:                          9:[4,6,7]})
-        sage: petersen_spring.show()  # long time
+        sage: petersen_spring.show()  # long time                                       # optional - sage.plot
         sage: petersen_database = graphs.PetersenGraph()
-        sage: petersen_database.show()  # long time
+        sage: petersen_database.show()  # long time                                     # optional - sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
     P = GeneralizedPetersenGraph(5, 2)
@@ -4018,7 +4018,7 @@ def SchlaefliGraph():
     Checking that the method actually returns the Schläfli graph::
 
         sage: S = graphs.SchlaefliGraph()
-        sage: S.is_strongly_regular(parameters = True)
+        sage: S.is_strongly_regular(parameters=True)
         (27, 16, 10, 8)
 
     The graph is vertex-transitive::
@@ -4316,7 +4316,7 @@ def ThomsenGraph():
         Thomsen graph: Graph on 6 vertices
         sage: T.graph6_string()
         'EFz_'
-        sage: (graphs.ThomsenGraph()).show() # long time
+        sage: (graphs.ThomsenGraph()).show()  # long time                               # optional - sage.plot
     """
     from sage.graphs.generators.basic import CompleteBipartiteGraph
     G = CompleteBipartiteGraph(3, 3)
@@ -4424,7 +4424,7 @@ def Tutte12Cage():
         12
         sage: g.diameter()
         6
-        sage: g.show()
+        sage: g.show()                                                                  # optional - sage.plot
     """
     L = [17, 27, -13, -59, -35, 35, -11, 13, -53, 53, -27, 21, 57, 11,
          -21, -57, 59, -17]
@@ -4457,7 +4457,7 @@ def TutteCoxeterGraph(embedding=2):
         8
         sage: g.diameter()
         4
-        sage: g.show()
+        sage: g.show()                                                                  # optional - sage.plot
         sage: graphs.TutteCoxeterGraph(embedding=1).show()  # long time
 
     TESTS::
@@ -4570,7 +4570,7 @@ def WagnerGraph():
         4
         sage: g.diameter()
         2
-        sage: g.show()
+        sage: g.show()                                                                  # optional - sage.plot
     """
     from sage.graphs.generators.families import LCFGraph
     g = LCFGraph(8, [4], 8)

@@ -438,7 +438,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         1/8
         sage: Rational(QQbar(125/8).nth_root(3))                                        # optional - sage.rings.number_field
         5/2
-        sage: Rational(AA(209735/343 - 17910/49*golden_ratio).nth_root(3)               # optional - sage.rings.number_field
+        sage: Rational(AA(209735/343 - 17910/49*golden_ratio).nth_root(3)               # optional - sage.rings.number_field sage.symbolic
         ....:          + 3*AA(golden_ratio))
         53/7
         sage: QQ(float(1.5))
@@ -836,7 +836,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             [3; 7, 16]
             sage: a.n(digits=10)
             3.141592920
-            sage: pi.n(digits=10)
+            sage: pi.n(digits=10)                                                       # optional - sage.symbolic
             3.141592654
 
         It's almost pi!
@@ -1446,6 +1446,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^2 - 2, 'beta')                                      # optional - sage.rings.number_field
             sage: (1/7).is_norm(K)                                                      # optional - sage.rings.number_field
             True
@@ -1567,6 +1568,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
             sage: QQ(2)._bnfisnorm(QuadraticField(-1, 'i'))                             # optional - sage.rings.number_field
             (i + 1, 1)
+            sage: x = polygen(QQ, 'x')
             sage: 7._bnfisnorm(NumberField(x^3 - 2, 'b'))                               # optional - sage.rings.number_field
             (1, 7)
 
@@ -2232,15 +2234,15 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         Test larger rationals::
 
-            sage: Q = continued_fraction(pi).convergents()[:100]
-            sage: all(RDF(q) == RR(q) for q in Q)
+            sage: Q = continued_fraction(pi).convergents()[:100]                        # optional - sage.symbolic
+            sage: all(RDF(q) == RR(q) for q in Q)                                       # optional - sage.symbolic
             True
 
         At some point, the continued fraction and direct conversion
         to ``RDF`` should agree::
 
-            sage: RDFpi = RDF(pi)
-            sage: all(RDF(q) == RDFpi for q in Q[20:])
+            sage: RDFpi = RDF(pi)                                                       # optional - sage.symbolic
+            sage: all(RDF(q) == RDFpi for q in Q[20:])                                  # optional - sage.symbolic
             True
         """
         return mpq_get_d_nearest(self.value)

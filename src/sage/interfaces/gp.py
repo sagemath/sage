@@ -787,26 +787,26 @@ class Gp(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: pi_def = gp(pi); pi_def
+            sage: pi_def = gp(pi); pi_def                                               # optional - sage.symbolic
             3.141592653589793238462643383                  # 32-bit
             3.1415926535897932384626433832795028842        # 64-bit
-            sage: pi_def.precision()
+            sage: pi_def.precision()                                                    # optional - sage.symbolic
             28                                             # 32-bit
             38                                             # 64-bit
-            sage: pi_150 = gp.new_with_bits_prec(pi, 150)
-            sage: new_prec = pi_150.precision(); new_prec
+            sage: pi_150 = gp.new_with_bits_prec(pi, 150)                               # optional - sage.symbolic
+            sage: new_prec = pi_150.precision(); new_prec                               # optional - sage.symbolic
             48                                             # 32-bit
             57                                             # 64-bit
-            sage: old_prec = gp.set_precision(new_prec); old_prec
+            sage: old_prec = gp.set_precision(new_prec); old_prec                       # optional - sage.symbolic
             28                                             # 32-bit
             38                                             # 64-bit
-            sage: pi_150
+            sage: pi_150                                                                # optional - sage.symbolic
             3.14159265358979323846264338327950288419716939938  # 32-bit
             3.14159265358979323846264338327950288419716939937510582098  # 64-bit
-            sage: gp.set_precision(old_prec)
+            sage: gp.set_precision(old_prec)                                            # optional - sage.symbolic
             48                                             # 32-bit
             57                                             # 64-bit
-            sage: gp.get_precision()
+            sage: gp.get_precision()                                                    # optional - sage.symbolic
             28                                             # 32-bit
             38                                             # 64-bit
         """
@@ -877,9 +877,9 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
         EXAMPLES::
 
-            sage: gp(SR(I)).sage()
+            sage: gp(SR(I)).sage()                                                      # optional - sage.symbolic
             i
-            sage: gp(SR(I)).sage().parent()
+            sage: gp(SR(I)).sage().parent()                                             # optional - sage.symbolic
             Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         ::
@@ -955,11 +955,11 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
         EXAMPLES::
 
-            sage: z = gp(SR(1+15*I)); z
+            sage: z = gp(SR(1+15*I)); z                                                 # optional - sage.symbolic
             1 + 15*I
-            sage: z._complex_mpfr_field_(CC)
+            sage: z._complex_mpfr_field_(CC)                                            # optional - sage.symbolic
             1.00000000000000 + 15.0000000000000*I
-            sage: CC(z) # CC(gp(1+15*I))
+            sage: CC(z) # CC(gp(1+15*I))                                                # optional - sage.symbolic
             1.00000000000000 + 15.0000000000000*I
             sage: CC(gp(11243.9812+15*I))
             11243.9812000000 + 15.0000000000000*I
@@ -977,7 +977,7 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
         EXAMPLES::
 
-            sage: CDF(gp(pi+I*e))
+            sage: CDF(gp(pi+I*e))                                                       # optional - sage.symbolic
             3.141592653589793 + 2.718281828459045*I
         """
         # Retrieving values from another computer algebra system is

@@ -109,25 +109,25 @@ primes ?
 
 ::
 
-    sage: x = var('x') ; f(x) = e^(e^x - 1)
-    sage: L = [a*factorial(b) for a,b in taylor(f(x), x, 0, 20).coefficients()] ; L
+    sage: x = var('x') ; f(x) = e^(e^x - 1)                                             # optional - sage.symbolic
+    sage: L = [a*factorial(b) for a,b in taylor(f(x), x, 0, 20).coefficients()]; L      # optional - sage.symbolic
     [1, 1, 2, 5, 15, 52, 203, 877, 4140, 21147, 115975, 678570, 4213597,
-    27644437, 190899322, 1382958545, 10480142147, 82864869804, 682076806159,
-    5832742205057, 51724158235372]
+     27644437, 190899322, 1382958545, 10480142147, 82864869804, 682076806159,
+     5832742205057, 51724158235372]
 
-    sage: oeis(L)                                       # optional -- internet
+    sage: oeis(L)                                       # optional -- internet          # optional - sage.symbolic
     0: A000110: Bell or exponential numbers: number of ways to partition a set of n labeled elements.
     1: A292935: E.g.f.: exp(exp(-x) - 1).
 
-    sage: b = _[0]                                      # optional -- internet
+    sage: b = _[0]                                      # optional -- internet          # optional - sage.symbolic
 
-    sage: b.formulas()[0]                               # optional -- internet
+    sage: b.formulas()[0]                               # optional -- internet          # optional - sage.symbolic
     'E.g.f.: exp(exp(x) - 1).'
 
-    sage: [i for i in b.comments() if 'prime' in i][-1]     # optional -- internet
+    sage: [i for i in b.comments() if 'prime' in i][-1]     # optional -- internet      # optional - sage.symbolic
     'Number n is prime if ...'
 
-    sage: [n for n in range(2, 20) if (b(n)-2) % n == 0]    # optional -- internet
+    sage: [n for n in range(2, 20) if (b(n)-2) % n == 0]    # optional -- internet      # optional - sage.symbolic
     [2, 3, 5, 7, 11, 13, 17, 19]
 
 .. SEEALSO::
@@ -1033,8 +1033,8 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: RDF(x) == RDF(euler_gamma)            # optional -- internet
             True
 
-            sage: cfg = continued_fraction(euler_gamma)
-            sage: x[:90] == cfg[:90]                    # optional -- internet
+            sage: cfg = continued_fraction(euler_gamma)                                 # optional - sage.symbolic
+            sage: x[:90] == cfg[:90]                    # optional -- internet          # optional - sage.symbolic
             True
 
         ::
@@ -1112,7 +1112,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - warn_only -- (bool, default: ``False``), whether to warn when the
+        - ``warn_only`` -- (bool, default: ``False``), whether to warn when the
           sequence is dead instead of returning a boolean.
 
         EXAMPLES:

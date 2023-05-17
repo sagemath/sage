@@ -783,11 +783,11 @@ class SageOutputChecker(doctest.OutputChecker):
             sage: want_tol = MarkedOutput().update(tol=0.0001)
             sage: want_abs = MarkedOutput().update(abs_tol=0.0001)
             sage: want_rel = MarkedOutput().update(rel_tol=0.0001)
-            sage: OC.add_tolerance(RIF(pi.n(64)), want_tol).endpoints()
+            sage: OC.add_tolerance(RIF(pi.n(64)), want_tol).endpoints()                 # optional - sage.symbolic
             (3.14127849432443, 3.14190681285516)
-            sage: OC.add_tolerance(RIF(pi.n(64)), want_abs).endpoints()
+            sage: OC.add_tolerance(RIF(pi.n(64)), want_abs).endpoints()                 # optional - sage.symbolic
             (3.14149265358979, 3.14169265358980)
-            sage: OC.add_tolerance(RIF(pi.n(64)), want_rel).endpoints()
+            sage: OC.add_tolerance(RIF(pi.n(64)), want_rel).endpoints()                 # optional - sage.symbolic
             (3.14127849432443, 3.14190681285516)
             sage: OC.add_tolerance(RIF(1e1000), want_tol)
             1.000?e1000
@@ -897,7 +897,7 @@ class SageOutputChecker(doctest.OutputChecker):
 
         More explicit tolerance checks::
 
-            sage: _ = x  # rel tol 1e10
+            sage: _ = x  # rel tol 1e10                                                 # optional - sage.symbolic
             sage: raise RuntimeError   # rel tol 1e10
             Traceback (most recent call last):
             ...

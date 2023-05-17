@@ -337,6 +337,7 @@ class RingExtensionFactory(UniqueFactory):
         sage: QQ.over(ZZ) is E
         True
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = QQ.extension(x^2 - 2)
         sage: E = K.over(QQ)
         sage: E
@@ -624,6 +625,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ.extension(x^2 - 2)
             sage: E = K.over()  # over QQ
 
@@ -660,6 +662,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 2)
             sage: K.<a> = A.over()
 
@@ -1447,6 +1450,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 2)
             sage: B.<b> = QQ.extension(x^6 - 2)
             sage: f = A.hom([b^3])
@@ -1700,6 +1704,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 5)
             sage: OK = A.over()   # over ZZ
             sage: OK
@@ -1707,17 +1712,21 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
             sage: K1 = OK.fraction_field()
             sage: K1
-            Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base
+            Fraction Field of Order in Number Field in a
+             with defining polynomial x^2 - 5 over its base
             sage: K1.bases()
-            [Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base,
+            [Fraction Field of Order in Number Field in a
+              with defining polynomial x^2 - 5 over its base,
              Order in Number Field in a with defining polynomial x^2 - 5 over its base,
              Integer Ring]
 
             sage: K2 = OK.fraction_field(extend_base=True)
             sage: K2
-            Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base
+            Fraction Field of Order in Number Field in a
+             with defining polynomial x^2 - 5 over its base
             sage: K2.bases()
-            [Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base,
+            [Fraction Field of Order in Number Field in a
+              with defining polynomial x^2 - 5 over its base,
              Rational Field]
 
         Note that there is no coercion between `K_1` and `K_2`::
@@ -1975,6 +1984,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: OK = A.over()
             sage: K = OK.fraction_field()
@@ -1996,6 +2006,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: OK = A.over()
             sage: K = OK.fraction_field()
@@ -2015,6 +2026,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: OK = A.over()
             sage: K = OK.fraction_field()
@@ -2085,6 +2097,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ.extension(x^3 - 2)
             sage: E = K.over()
             sage: E
@@ -2152,7 +2165,8 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             sage: K._print_option_base(L)
             Traceback (most recent call last):
             ...
-            ValueError: not (explicitly) defined over Field in z4 with defining polynomial x^2 + (3 - z2)*x + z2 over its base
+            ValueError: not (explicitly) defined over Field in z4
+            with defining polynomial x^2 + (3 - z2)*x + z2 over its base
 
         """
         if 'print_elements_as' in self._print_options:
@@ -2178,6 +2192,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 2)
             sage: B.<b> = QQ.extension(x^6 - 2)
             sage: f = A.hom([b^3])
@@ -2285,6 +2300,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^3 - 2)
             sage: K.<u> = A.over()
             sage: K.basis_over()
@@ -2442,6 +2458,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 5)
             sage: OK = A.over()   # over ZZ
             sage: OK
@@ -2449,17 +2466,21 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
             sage: K1 = OK.fraction_field()
             sage: K1
-            Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base
+            Fraction Field of Order in Number Field in a
+             with defining polynomial x^2 - 5 over its base
             sage: K1.bases()
-            [Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base,
+            [Fraction Field of Order in Number Field in a
+              with defining polynomial x^2 - 5 over its base,
              Order in Number Field in a with defining polynomial x^2 - 5 over its base,
              Integer Ring]
 
             sage: K2 = OK.fraction_field(extend_base=True)
             sage: K2
-            Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base
+            Fraction Field of Order in Number Field in a
+             with defining polynomial x^2 - 5 over its base
             sage: K2.bases()
-            [Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base,
+            [Fraction Field of Order in Number Field in a
+              with defining polynomial x^2 - 5 over its base,
              Rational Field]
 
         Note that there is no coercion map between `K_1` and `K_2`::
@@ -2508,6 +2529,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
     TESTS::
 
+        sage: x = polygen(ZZ, 'x')
         sage: A.<a> = QQ.extension(x^3 - 7)
         sage: K = A.over()
 
@@ -2535,6 +2557,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ.extension(x^3 + 3*x + 1)
             sage: E = K.over()
             sage: E
@@ -2611,9 +2634,9 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         EXAMPLES::
 
-            sage: K.<u> = GF(7^10).over(GF(7^2))
-            sage: K
-            Field in u with defining polynomial x^5 + (6*z2 + 4)*x^4 + (3*z2 + 5)*x^3 + (2*z2 + 2)*x^2 + 4*x + 6*z2 over its base
+            sage: K.<u> = GF(7^10).over(GF(7^2)); K
+            Field in u with defining polynomial x^5 + (6*z2 + 4)*x^4
+             + (3*z2 + 5)*x^3 + (2*z2 + 2)*x^2 + 4*x + 6*z2 over its base
 
             sage: P = K.modulus(); P
             x^5 + (6*z2 + 4)*x^4 + (3*z2 + 5)*x^3 + (2*z2 + 2)*x^2 + 4*x + 6*z2
@@ -2684,6 +2707,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 5)
             sage: OK = A.over()   # over ZZ
             sage: OK
@@ -2691,17 +2715,21 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
             sage: K1 = OK.fraction_field()
             sage: K1
-            Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base
+            Fraction Field of Order in Number Field in a
+             with defining polynomial x^2 - 5 over its base
             sage: K1.bases()
-            [Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base,
+            [Fraction Field of Order in Number Field in a
+              with defining polynomial x^2 - 5 over its base,
              Order in Number Field in a with defining polynomial x^2 - 5 over its base,
              Integer Ring]
 
             sage: K2 = OK.fraction_field(extend_base=True)
             sage: K2
-            Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base
+            Fraction Field of Order in Number Field in a
+             with defining polynomial x^2 - 5 over its base
             sage: K2.bases()
-            [Fraction Field of Order in Number Field in a with defining polynomial x^2 - 5 over its base,
+            [Fraction Field of Order in Number Field in a
+              with defining polynomial x^2 - 5 over its base,
              Rational Field]
 
         Note that there is no coercion map between `K_1` and `K_2`::

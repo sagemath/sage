@@ -216,8 +216,7 @@ class PolynomialRing_singular_repr:
             //                  : names    x y
             //        block   2 : ordering C
 
-            sage: w = var('w')
-
+            sage: w = polygen(ZZ, 'w')
             sage: R.<x> = PolynomialRing(NumberField(w^2 + 1, 's'))                     # optional - sage.rings.number_field
             sage: singular(R)                                                           # optional - sage.rings.number_field
             polynomial ring, over a field, global ordering
@@ -403,6 +402,7 @@ def can_convert_to_singular(R):
 
     Avoid non absolute number fields (see :trac:`23535`)::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a,b> = NumberField([x^2 - 2, x^2 - 5])                                 # optional - sage.rings.number_field
         sage: can_convert_to_singular(K['s,t'])                                         # optional - sage.rings.number_field
         False

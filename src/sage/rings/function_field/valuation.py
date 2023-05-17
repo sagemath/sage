@@ -600,6 +600,7 @@ class RationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 6)                                                                          # optional - sage.rings.number_field
             sage: v = K.valuation(2)                                                                                    # optional - sage.rings.number_field
             sage: R.<x> = K[]                                                                                           # optional - sage.rings.number_field

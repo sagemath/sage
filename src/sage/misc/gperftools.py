@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.symbolic
 """
 C Function Profiler Using Google Perftools
 

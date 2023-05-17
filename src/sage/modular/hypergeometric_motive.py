@@ -21,7 +21,7 @@ EXAMPLES::
     sage: H = Hyp(cyclotomic=([30], [1,2,3,5]))
     sage: H.alpha_beta()
     ([1/30, 7/30, 11/30, 13/30, 17/30, 19/30, 23/30, 29/30],
-    [0, 1/5, 1/3, 2/5, 1/2, 3/5, 2/3, 4/5])
+     [0, 1/5, 1/3, 2/5, 1/2, 3/5, 2/3, 4/5])
     sage: H.M_value() == 30**30 / (15**15 * 10**10 * 6**6)
     True
     sage: H.euler_factor(2, 7)
@@ -81,8 +81,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.schemes.generic.spec import Spec
-from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 
 def characteristic_polynomial_from_traces(traces, d, q, i, sign):
     r"""
@@ -1318,7 +1316,7 @@ class HypergeometricData():
 
         - `t` -- a rational parameter
 
-        - ``ring`` -- optional (default ``UniversalCyclotomicfield``)
+        - ``ring`` -- optional (default :class:`UniversalCyclotomicfield`)
 
         The ring could be also ``ComplexField(n)`` or ``QQbar``.
 
@@ -1329,9 +1327,9 @@ class HypergeometricData():
         .. WARNING::
 
             This is apparently working correctly as can be tested
-            using ComplexField(70) as value ring.
+            using ``ComplexField(70)`` as value ring.
 
-            Using instead UniversalCyclotomicfield, this is much
+            Using instead :class:`UniversalCyclotomicfield`, this is much
             slower than the `p`-adic version :meth:`padic_H_value`.
 
         EXAMPLES:
@@ -1408,6 +1406,7 @@ class HypergeometricData():
         if 0 in alpha:
             return self._swap.H_value(p, f, ~t, ring)
         if ring is None:
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             ring = UniversalCyclotomicField()
         gamma = self.gamma_array()
         q = p**f
@@ -1416,6 +1415,8 @@ class HypergeometricData():
         D = -min(self.zigzag(x, flip_beta=True) for x in alpha + beta)
         # also: D = (self.weight() + 1 - m[0]) // 2
         M = self.M_value()
+
+        from sage.rings.finite_rings.finite_field_constructor import GF
 
         Fq = GF((p, f))
         gen = Fq.multiplicative_generator()

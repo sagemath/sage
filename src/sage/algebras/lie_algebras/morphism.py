@@ -623,17 +623,17 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
         EXAMPLES::
 
             sage: L.<X,Y,Z,W> = LieAlgebra(QQ, {('X','Y'): {'Z':1}, ('X','Z'): {'W':1}})
-            sage: K.<A,B> = LieAlgebra(SR, abelian=True)
-            sage: phi = L.morphism({X: A, Y: B})
-            sage: phi(X)
+            sage: K.<A,B> = LieAlgebra(SR, abelian=True)                                # optional - sage.symbolic
+            sage: phi = L.morphism({X: A, Y: B})                                        # optional - sage.symbolic
+            sage: phi(X)                                                                # optional - sage.symbolic
             A
-            sage: phi(Y)
+            sage: phi(Y)                                                                # optional - sage.symbolic
             B
-            sage: phi(Z)
+            sage: phi(Z)                                                                # optional - sage.symbolic
             0
-            sage: phi(W)
+            sage: phi(W)                                                                # optional - sage.symbolic
             0
-            sage: phi(-X + 3*Y)
+            sage: phi(-X + 3*Y)                                                         # optional - sage.symbolic
             -A + 3*B
 
             sage: K.<A,B,C> = LieAlgebra(QQ, {('A','B'): {'C':2}})

@@ -105,6 +105,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 2)
             sage: K.<a> = A.over()  # over QQ
 
@@ -138,6 +139,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 2)
             sage: K.<a> = A.over()
 
@@ -381,6 +383,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: OK = A.over()
             sage: a = OK(a)
@@ -656,11 +659,13 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: OK = A.over()  # over ZZ
             sage: K = OK.fraction_field()
             sage: K
-            Fraction Field of Order in Number Field in a with defining polynomial x^2 - 2 over its base
+            Fraction Field of Order in Number Field in a
+             with defining polynomial x^2 - 2 over its base
 
             sage: x = K(1/a); x
             a/2
@@ -696,7 +701,8 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: OK = A.over()  # over ZZ
             sage: K = OK.fraction_field()
             sage: K
-            Fraction Field of Order in Number Field in a with defining polynomial x^2 - 2 over its base
+            Fraction Field of Order in Number Field in a
+             with defining polynomial x^2 - 2 over its base
 
             sage: x = K(1/a); x
             a/2

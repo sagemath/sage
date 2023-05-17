@@ -41,18 +41,18 @@ def register_sage_classes():
         True
         sage: isinstance(CDF(1.3, 4), numbers.Complex)
         True
-        sage: isinstance(AA(sqrt(2)), numbers.Real)
+        sage: isinstance(AA(sqrt(2)), numbers.Real)                                     # optional - sage.rings.number_field sage.symbolic
         True
-        sage: isinstance(QQbar(I), numbers.Complex)
+        sage: isinstance(QQbar(I), numbers.Complex)                                     # optional - sage.rings.number_field
         True
 
     This doesn't work with symbolic expressions at all::
 
-        sage: isinstance(pi, numbers.Real)
+        sage: isinstance(pi, numbers.Real)                                              # optional - sage.symbolic
         False
-        sage: isinstance(I, numbers.Complex)
+        sage: isinstance(I, numbers.Complex)                                            # optional - sage.rings.number_field
         False
-        sage: isinstance(sqrt(2), numbers.Real)
+        sage: isinstance(sqrt(2), numbers.Real)                                         # optional - sage.rings.number_field sage.symbolic
         False
 
     Because we do this, NumPy's ``isscalar()`` recognizes Sage types::

@@ -32,11 +32,11 @@ cpdef julia(ff_j, z, int iterations):
     TESTS::
 
         sage: from sage.interacts.library_cython import julia
-        sage: z = var('z')
-        sage: c_real, c_imag = 1, 1
-        sage: f = symbolic_expression(z**2 + c_real + c_imag * CDF.gen()).function(z)
-        sage: ff_m = fast_callable(f, vars=[z], domain=CDF)
-        sage: julia(ff_m, CDF(1,1), 3)
+        sage: z = var('z')                                                              # optional - sage.symbolic
+        sage: c_real, c_imag = 1, 1                                                     # optional - sage.symbolic
+        sage: f = symbolic_expression(z**2 + c_real + c_imag * CDF.gen()).function(z)   # optional - sage.symbolic
+        sage: ff_m = fast_callable(f, vars=[z], domain=CDF)                             # optional - sage.symbolic
+        sage: julia(ff_m, CDF(1,1), 3)                                                  # optional - sage.symbolic
         1.0 + 3.0*I
     """
     for i in range(iterations):
@@ -59,10 +59,10 @@ cpdef mandel(ff_m, z, int iterations):
     TESTS::
 
         sage: from sage.interacts.library_cython import mandel
-        sage: z, c = var('z, c')
-        sage: f = symbolic_expression(z**2 + c).function(z,c)
-        sage: ff_m = fast_callable(f, vars=[z,c], domain=CDF)
-        sage: mandel(ff_m, CDF(1,1), 3)
+        sage: z, c = var('z, c')                                                        # optional - sage.symbolic
+        sage: f = symbolic_expression(z**2 + c).function(z,c)                           # optional - sage.symbolic
+        sage: ff_m = fast_callable(f, vars=[z,c], domain=CDF)                           # optional - sage.symbolic
+        sage: mandel(ff_m, CDF(1,1), 3)                                                 # optional - sage.symbolic
         1.0 + 3.0*I
 
     """

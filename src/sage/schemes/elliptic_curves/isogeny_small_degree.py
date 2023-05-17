@@ -877,6 +877,7 @@ def isogenies_5_0(E, minimal_models=True):
             to Elliptic Curve defined by y^2 = x^3 + (9*a+10)*x + (11*a+12)
                over Finite Field in a of size 13^2]
 
+        sage: x = polygen(QQ, 'x')
         sage: K.<a> = NumberField(x**6 - 320*x**3 - 320)                                # optional - sage.rings.number_field
         sage: E = EllipticCurve(K, [0,0,1,0,0])                                         # optional - sage.rings.number_field
         sage: isogenies_5_0(E)                                                          # optional - sage.rings.number_field
@@ -988,6 +989,7 @@ def isogenies_5_1728(E, minimal_models=True):
 
     An example of 5-isogenies over a number field::
 
+        sage: x = polygen(QQ, 'x')
         sage: K.<a> = NumberField(x**4 + 20*x**2 - 80)                                  # optional - sage.rings.number_field
         sage: K(5).is_square()  # necessary but not sufficient!                         # optional - sage.rings.number_field
         True
@@ -1133,6 +1135,7 @@ def isogenies_7_0(E, minimal_models=True):
             to Elliptic Curve defined by y^2 + y = x^3 + (-7) over Number Field in r
                with defining polynomial x^2 + 3 with r = 1.732050807568878?*I]
 
+        sage: x = polygen(QQ, 'x')
         sage: K.<a> = NumberField(x^6 + 1512*x^3 - 21168)                               # optional - sage.rings.number_field
         sage: E = EllipticCurve(K, [0,1])                                               # optional - sage.rings.number_field
         sage: isogs = isogenies_7_0(E)                                                  # optional - sage.rings.number_field
@@ -1239,6 +1242,7 @@ def isogenies_7_1728(E, minimal_models=True):
 
     ::
 
+        sage: x = polygen(QQ, 'x')
         sage: K.<a> = NumberField(x^8 + 84*x^6 - 1890*x^4 + 644*x^2 - 567)              # optional - sage.rings.number_field
         sage: E = EllipticCurve(K, [1, 0])                                              # optional - sage.rings.number_field
         sage: isogs = isogenies_7_1728(E)                                               # optional - sage.rings.number_field

@@ -157,10 +157,12 @@ playing strategy number `i` is given by the matrix/vector multiplication
 `(Ay)_i`, ie element in position `i` of the matrix/vector multiplication
 `Ay`) ::
 
-    sage: y = var('y')
+    sage: y = var('y')                                                                  # optional - sage.symbolic
     sage: A = matrix([[1, -1], [-1, 1]])
-    sage: p = plot((A * vector([y, 1 - y]))[0], y, 0, 1, color='blue', legend_label='$u_1(r_1, (y, 1-y))$', axes_labels=['$y$', ''])
-    sage: p += plot((A * vector([y, 1 - y]))[1], y, 0, 1, color='red', legend_label='$u_1(r_2, (y, 1-y))$'); p
+    sage: p = plot((A * vector([y, 1 - y]))[0], y, 0, 1, color='blue',                  # optional - sage.symbolic
+    ....:          legend_label='$u_1(r_1, (y, 1-y))$', axes_labels=['$y$', ''])
+    sage: p += plot((A * vector([y, 1 - y]))[1], y, 0, 1, color='red',                  # optional - sage.symbolic
+    ....:           legend_label='$u_1(r_2, (y, 1-y))$'); p
     Graphics object consisting of 2 graphics primitives
 
 We see that the only point at which player 1 is indifferent amongst
@@ -401,7 +403,9 @@ more than 2 players::
     sage: threegame.obtain_nash()
     Traceback (most recent call last):
     ...
-    NotImplementedError: Nash equilibrium for games with more than 2 players have not been implemented yet. Please see the gambit website (http://gambit.sourceforge.net/) that has a variety of available algorithms
+    NotImplementedError: Nash equilibrium for games with more than 2 players have not
+    been implemented yet. Please see the gambit website (http://gambit.sourceforge.net/)
+    that has a variety of available algorithms
 
 There are however a variety of such algorithms available in gambit,
 further compatibility between Sage and gambit is actively being developed:

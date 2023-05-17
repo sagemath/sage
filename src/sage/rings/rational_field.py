@@ -26,7 +26,7 @@ function).
     35
     sage: QQ('12/347')
     12/347
-    sage: QQ(exp(pi*I))
+    sage: QQ(exp(pi*I))                                                                 # optional - sage.symbolic
     -1
     sage: x = polygen(ZZ)
     sage: QQ((3*x)/(4*x))
@@ -815,7 +815,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([1, 3], sqrt(2))                      # optional - sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], sqrt(2))                      # optional - sage.libs.pari sage.modules sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: second argument must be a rational number
@@ -1062,6 +1062,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         We make a single absolute extension::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = QQ.extension(x^3 + 5); K                                      # optional - sage.rings.number_field
             Number Field in a with defining polynomial x^3 + 5
 

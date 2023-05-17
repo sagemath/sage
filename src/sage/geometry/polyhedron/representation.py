@@ -901,9 +901,10 @@ class Inequality(Hrepresentation):
 
         Test that :trac:`21105` has been fixed::
 
-            sage: K.<cbrt2> = NumberField(x^3 - 2, 'a', embedding=1.26)         # optional - sage.rings.number_field
-            sage: P = Polyhedron(vertices=[(1,1,cbrt2),(cbrt2,1,1)])            # optional - sage.rings.number_field
-            sage: P.inequalities()                                              # optional - sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<cbrt2> = NumberField(x^3 - 2, 'a', embedding=1.26)                 # optional - sage.rings.number_field
+            sage: P = Polyhedron(vertices=[(1,1,cbrt2),(cbrt2,1,1)])                    # optional - sage.rings.number_field
+            sage: P.inequalities()                                                      # optional - sage.rings.number_field
             (An inequality (-cbrt2^2 - cbrt2 - 1, 0, 0) x + cbrt2^2 + cbrt2 + 2 >= 0,
              An inequality (cbrt2^2 + cbrt2 + 1, 0, 0) x - cbrt2^2 + cbrt2 + 1 >= 0)
         """
@@ -993,7 +994,7 @@ class Inequality(Hrepresentation):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices = [[0,0,0],[1,1,0],[1,2,0]])
+            sage: p = Polyhedron(vertices=[[0,0,0],[1,1,0],[1,2,0]])
             sage: a = next(p.inequality_generator())
             sage: a.outer_normal()
             (1, -1, 0)

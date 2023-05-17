@@ -1671,12 +1671,12 @@ class Set_object_intersection(Set_object_binary):
         Any specific floating-point number in Sage is to finite precision,
         hence it is rational::
 
-            sage: RR(sqrt(2)) in X
+            sage: RR(sqrt(2)) in X                                                      # optional - sage.symbolic
             True
 
         Real constants are not rational::
 
-            sage: pi in X
+            sage: pi in X                                                               # optional - sage.symbolic
             False
         """
         return x in self._X and x in self._Y
@@ -1841,9 +1841,9 @@ class Set_object_difference(Set_object_binary):
             False
             sage: ComplexField().0 in X
             False
-            sage: sqrt(2) in X     # since sqrt(2) is not a numerical approx
+            sage: sqrt(2) in X     # since sqrt(2) is not a numerical approx            # optional - sage.symbolic
             False
-            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is a numerical approx
+            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is a numerical approx            # optional - sage.symbolic
             True
             sage: 5/2 in X
             True
@@ -2014,7 +2014,7 @@ class Set_object_symmetric_difference(Set_object_binary):
             True
             sage: ComplexField().0 in X
             False
-            sage: sqrt(2) in X      # since sqrt(2) is currently symbolic
+            sage: sqrt(2) in X      # since sqrt(2) is currently symbolic               # optional - sage.symbolic
             False
             sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is currently approximated
             True

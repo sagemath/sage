@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.symbolic
 """
 Numerical Integration
 

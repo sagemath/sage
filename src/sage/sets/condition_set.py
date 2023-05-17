@@ -109,14 +109,14 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
                        over the principal ideal domain Integer Ring }
         sage: Z3.variable_names()                                                       # optional - sage.modules
         ('x', 'y', 'z')
-        sage: Z3.arguments()                                                            # optional - sage.modules
+        sage: Z3.arguments()                                                            # optional - sage.modules sage.symbolic
         (x, y, z)
 
-        sage: Q4.<a, b, c, d> = ConditionSet(QQ^4); Q4                                  # optional - sage.modules
+        sage: Q4.<a, b, c, d> = ConditionSet(QQ^4); Q4                                  # optional - sage.modules sage.symbolic
         { (a, b, c, d) ∈ Vector space of dimension 4 over Rational Field }
-        sage: Q4.variable_names()                                                       # optional - sage.modules
+        sage: Q4.variable_names()                                                       # optional - sage.modules sage.symbolic
         ('a', 'b', 'c', 'd')
-        sage: Q4.arguments()                                                            # optional - sage.modules
+        sage: Q4.arguments()                                                            # optional - sage.modules sage.symbolic
         (a, b, c, d)
 
     TESTS::
@@ -430,7 +430,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
 
             sage: Evens = ConditionSet(ZZ, is_even); Evens
             { x ∈ Integer Ring : <function is_even at 0x...>(x) }
-            sage: Evens._sympy_()                                                       # optional - sympy
+            sage: Evens._sympy_()                                                       # optional - sage.symbolic sympy
             SageSet({ x ∈ Integer Ring : <function is_even at 0x...>(x) })
         """
         from sage.interfaces.sympy import sympy_init

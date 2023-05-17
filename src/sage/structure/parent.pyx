@@ -1084,21 +1084,21 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             True
             sage: I in RR
             False
-            sage: SR(2) in ZZ
+            sage: SR(2) in ZZ                                                           # optional - sage.symbolic
             True
             sage: RIF(1, 2) in RIF
             True
-            sage: pi in RIF # there is no element of RIF equal to pi
+            sage: pi in RIF  # there is no element of RIF equal to pi                   # optional - sage.symbolic
             False
-            sage: sqrt(2) in CC
+            sage: sqrt(2) in CC                                                         # optional - sage.symbolic
             True
-            sage: pi in RR
+            sage: pi in RR                                                              # optional - sage.symbolic
             True
-            sage: pi in CC
+            sage: pi in CC                                                              # optional - sage.symbolic
             True
-            sage: pi in RDF
+            sage: pi in RDF                                                             # optional - sage.symbolic
             True
-            sage: pi in CDF
+            sage: pi in CDF                                                             # optional - sage.symbolic
             True
 
         Note that we have
@@ -1155,9 +1155,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Check that :trac:`24209` is fixed::
 
-            sage: I in QQbar
+            sage: I in QQbar                                                            # optional - sage.rings.number_field
             True
-            sage: sqrt(-1) in QQbar
+            sage: sqrt(-1) in QQbar                                                     # optional - sage.rings.number_field sage.symbolic
             True
         """
         P = parent(x)
@@ -1870,6 +1870,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x^2 + 1, embedding=1)                       # optional - sage.rings.number_field
             sage: K.coerce_embedding()                                                  # optional - sage.rings.number_field
             Generic morphism:
@@ -2055,8 +2056,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef bint has_coerce_map_from(self, S) except -2:
         """
-        Return True if there is a natural map from S to self.
-        Otherwise, return False.
+        Return ``True`` if there is a natural map from ``S`` to ``self``.
+        Otherwise, return ``False``.
 
         EXAMPLES::
 
@@ -2295,6 +2296,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Another test::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField([x^2 - 2, x^2 - 3], 'a,b')                            # optional - sage.rings.number_field
             sage: M = K.absolute_field('c')                                             # optional - sage.rings.number_field
             sage: M_to_K, K_to_M = M.structure()                                        # optional - sage.rings.number_field

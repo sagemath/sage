@@ -2046,6 +2046,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [1]
             [2]
             sage: MS = MatrixSpace(CC, 2, 1)
+            sage: x = polygen(ZZ, 'x')
             sage: F = NumberField(x^2 + 1, name='x')                                    # optional - sage.rings.number_field
             sage: MS([F(1), F(0)])                                                      # optional - sage.rings.number_field
             [ 1.00000000000000]

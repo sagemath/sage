@@ -16,6 +16,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.geometry.abc
+
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
@@ -26,7 +28,6 @@ from sage.rings.cc import CC
 from sage.rings.qqbar import AA, QQbar
 
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
-from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
 
 
 # We want to simplify p after the coercion (pari bug for AA)
@@ -2871,9 +2872,9 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         INPUT:
 
         - ``K`` -- A field to which we want the (correct) embedding.
-                   If ``K=None`` (default) then ``AlgebraicField()`` is
-                   used for elliptic elements and ``AlgebraicRealField()``
-                   otherwise.
+          If ``K=None`` (default), then ``AlgebraicField()`` is
+          used for elliptic elements and ``AlgebraicRealField()``
+          otherwise.
 
         EXAMPLES::
 
@@ -2938,26 +2939,25 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``embedded`` -- If ``True`` the fixed points are embedded into
-                          ``AlgebraicRealField`` resp. ``AlgebraicField``.
-                          Default: ``False``.
+        - ``embedded`` -- If ``True``, the fixed points are embedded into
+          ``AlgebraicRealField`` resp. ``AlgebraicField``. Default: ``False``.
 
-        - ``order``    -- If ``order="none"`` the fixed points are choosen
-                          and ordered according to a fixed formula.
+        - ``order`` -- If ``order="none"`` the fixed points are choosen
+          and ordered according to a fixed formula.
 
-                          If ``order="sign"`` the fixed points are always ordered
-                          according to the sign in front of the square root.
+          If ``order="sign"`` the fixed points are always ordered
+          according to the sign in front of the square root.
 
-                          If ``order="default"`` (default) then in case the fixed
-                          points are hyperbolic they are ordered according to the
-                          sign of the trace of ``self`` instead, such that the
-                          attracting fixed point comes first.
+          If ``order="default"`` (default) then in case the fixed
+          points are hyperbolic they are ordered according to the
+          sign of the trace of ``self`` instead, such that the
+          attracting fixed point comes first.
 
-                          If ``order="trace"`` the fixed points are always ordered
-                          according to the sign of the trace of ``self``.
-                          If the trace is zero they are ordered by the sign in
-                          front of the square root. In particular the fixed_points
-                          in this case remain the same for ``-self``.
+          If ``order="trace"`` the fixed points are always ordered
+          according to the sign of the trace of ``self``.
+          If the trace is zero they are ordered by the sign in
+          front of the square root. In particular the fixed_points
+          in this case remain the same for ``-self``.
 
         OUTPUT:
 
@@ -3091,16 +3091,15 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``tau``   -- Either an element of ``self`` or any
-                       element to which a linear fractional
-                       transformation can be applied in
-                       the usual way.
+        - ``tau`` -- Either an element of ``self`` or any
+          element to which a linear fractional
+          transformation can be applied in the usual way.
 
-                       In particular ``infinity`` is a possible
-                       argument and a possible return value.
+          In particular ``infinity`` is a possible
+          argument and a possible return value.
 
-                       As mentioned it is also possible to use
-                       points of ``HyperbolicPlane()``.
+          As mentioned it is also possible to use
+          points of ``HyperbolicPlane()``.
 
         EXAMPLES::
 
@@ -3136,7 +3135,8 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: p = HyperbolicPlane().PD().get_point(-I/2+1/8)
             sage: G.V(2).acton(p)
             Point in PD -((-(47*I + 161)*sqrt(5) - 47*I - 161)/(145*sqrt(5) + 94*I + 177) + I)/(I*(-(47*I + 161)*sqrt(5) - 47*I - 161)/(145*sqrt(5) + 94*I + 177) + 1)
-            sage: bool(G.V(2).acton(p).to_model('UHP').coordinates() == G.V(2).acton(p.to_model('UHP').coordinates()))
+            sage: bool(G.V(2).acton(p).to_model('UHP').coordinates()
+            ....:       == G.V(2).acton(p.to_model('UHP').coordinates()))
             True
 
             sage: p = HyperbolicPlane().PD().get_point(I)
@@ -3151,11 +3151,13 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         if tau.parent() == self.parent():
             return self*tau*self.inverse()
 
-        # if tau is a point of HyperbolicPlane then we use it's coordinates in the UHP model
+        # if tau is a point of HyperbolicPlane then we use its coordinates in the UHP model
         model = None
-        if (tau in HyperbolicPlane()):
-            model = tau.model()
-            tau = tau.to_model('UHP').coordinates()
+        if isinstance(tau.parent(), sage.geometry.abc.HyperbolicSpace):
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+            if tau in HyperbolicPlane():
+                model = tau.model()
+                tau = tau.to_model('UHP').coordinates()
 
         a,b,c,d = self._matrix.list()
 
@@ -3172,6 +3174,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         if model is None:
             return result
         else:
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
             return HyperbolicPlane().UHP().get_point(result).to_model(model)
 
     def _act_on_(self, other, self_on_left):
@@ -3209,10 +3212,13 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: G.U()*p
             lam
         """
-
-        if (self_on_left):
-            if (other == infinity or other in CC or other in HyperbolicPlane()):
+        if self_on_left:
+            if other == infinity or other in CC:
                 return self.acton(other)
+            if isinstance(other.parent(), sage.geometry.abc.HyperbolicSpace):
+                from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+                if other in HyperbolicPlane():
+                    return self.acton(other)
         return None
 
     def slash(self, f, tau=None, k=None):
@@ -3299,8 +3305,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             except (ValueError, TypeError, AttributeError):
                 raise ValueError("f={} is not a rational function or a polynomial in one variable, so tau has to be specified explicitly!".format(f))
 
-        if (tau in HyperbolicPlane()):
-            tau = tau.to_model('UHP').coordinates()
+        if isinstance(tau.parent(), sage.geometry.abc.HyperbolicSpace):
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+            if tau in HyperbolicPlane():
+                tau = tau.to_model('UHP').coordinates()
 
         return (self.c()*tau + self.d())**(-k) * f(self.acton(tau))
 
@@ -3317,8 +3325,14 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             [lam^2 - 1       lam]
             [lam^2 - 1 lam^2 - 1]
             sage: el.as_hyperbolic_plane_isometry().parent()
-            Set of Morphisms from Hyperbolic plane in the Upper Half Plane Model to Hyperbolic plane in the Upper Half Plane Model in Category of hyperbolic models of Hyperbolic plane
+            Set of Morphisms
+             from Hyperbolic plane in the Upper Half Plane Model
+               to Hyperbolic plane in the Upper Half Plane Model
+               in Category of hyperbolic models of Hyperbolic plane
             sage: el.as_hyperbolic_plane_isometry("KM").parent()
-            Set of Morphisms from Hyperbolic plane in the Klein Disk Model to Hyperbolic plane in the Klein Disk Model in Category of hyperbolic models of Hyperbolic plane
+            Set of Morphisms
+             from Hyperbolic plane in the Klein Disk Model
+               to Hyperbolic plane in the Klein Disk Model
+               in Category of hyperbolic models of Hyperbolic plane
         """
         return HyperbolicPlane().UHP().get_isometry(self._matrix).to_model(model)

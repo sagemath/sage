@@ -1538,7 +1538,7 @@ class ToricVariety_field(AmbientSpace):
         EXAMPLES::
 
             sage: X = toric_varieties.Cube_deformation(4)
-            sage: X.plot()
+            sage: X.plot()                                                              # optional - sage.plot
             Graphics3d Object
         """
         if "ray_label" not in options:
@@ -2413,7 +2413,7 @@ class ToricVariety_field(AmbientSpace):
             sage: dP6 = toric_varieties.dP6()
             sage: Div = dP6.divisor_group(); Div
             Group of ZZ-Divisors on 2-d CPR-Fano toric variety covered by 6 affine patches
-            sage: Div(x)
+            sage: Div(x)                                                                # optional - sage.symbolic
             V(x)
         """
         from sage.schemes.generic.divisor_group import DivisorGroup

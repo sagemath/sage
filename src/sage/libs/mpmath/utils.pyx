@@ -305,7 +305,7 @@ def sage_to_mpmath(x, prec):
         mpf('+inf')
         sage: a.sage_to_mpmath(-infinity, 53)
         mpf('-inf')
-        sage: a.sage_to_mpmath(NaN, 53)
+        sage: a.sage_to_mpmath(NaN, 53)                                                 # optional - sage.symbolic
         mpf('nan')
         sage: a.sage_to_mpmath(0, 53)
         0

@@ -106,9 +106,6 @@ from sage.cpython.all    import *
 from sage.crypto.all     import *
 import sage.crypto.mq as mq
 
-from sage.plot.all       import *
-from sage.plot.plot3d.all     import *
-
 from sage.coding.all     import *
 from sage.combinat.all   import *
 
@@ -163,6 +160,8 @@ from sage.rings.qqbar import _init_qqbar
 _init_qqbar()
 
 try:
+    from sage.plot.all       import *
+    from sage.plot.plot3d.all     import *
     from sage.symbolic.all   import *
     from sage.functions.all  import *
     from sage.calculus.all   import *
@@ -170,7 +169,7 @@ try:
     from sage.lfunctions.all import *
     from sage.geometry.riemannian_manifolds.all   import *
 except ImportError:
-    pass
+    from sage.calculus.all__sagemath_standard_no_symbolics import *
 
 ###########################################################
 #### WARNING:

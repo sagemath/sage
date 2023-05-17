@@ -193,8 +193,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
     Symbolic Ring elements are not allowed::
 
-        sage: x,y = var('x,y')
-        sage: DynamicalSystem_projective([x^2, y^2])
+        sage: x,y = var('x,y')                                                          # optional - sage.symbolic
+        sage: DynamicalSystem_projective([x^2, y^2])                                    # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: [x^2, y^2] must be elements of a polynomial ring
@@ -294,7 +294,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: DynamicalSystem_projective([exp(x), exp(y)])
+            sage: DynamicalSystem_projective([exp(x), exp(y)])                          # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: [e^x, e^y] must be elements of a polynomial ring
@@ -501,8 +501,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQbar,1)
-            sage: f = DynamicalSystem_projective([x^2 + QQbar(sqrt(2)) * y^2, y^2])
-            sage: f._number_field_from_algebraics()
+            sage: f = DynamicalSystem_projective([x^2 + QQbar(sqrt(2)) * y^2, y^2])     # optional - sage.symbolic
+            sage: f._number_field_from_algebraics()                                     # optional - sage.symbolic
             Dynamical System of Projective Space of dimension 1 over Number Field in a
              with defining polynomial y^2 - 2 with a = 1.414213562373095?
               Defn: Defined on coordinates by sending (x : y) to
@@ -2752,7 +2752,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y> = ProjectiveSpace(QQ,1)
             sage: f = DynamicalSystem_projective([x^2 + y^2, y^2])
             sage: Q = P(0,1)
-            sage: f.nth_preimage_tree(Q, 2)
+            sage: f.nth_preimage_tree(Q, 2)                                             # optional - sage.plot
             GraphPlot object for Digraph on 7 vertices
 
         ::
@@ -2760,7 +2760,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y> = ProjectiveSpace(GF(3), 1)
             sage: f = DynamicalSystem_projective([x^2 + x*y + y^2, y^2])
             sage: Q = P(0,1)
-            sage: f.nth_preimage_tree(Q, 2, return_points=True)
+            sage: f.nth_preimage_tree(Q, 2, return_points=True)                         # optional - sage.plot
             (GraphPlot object for Digraph on 4 vertices,
              [[(0 : 1)], [(1 : 1)], [(0 : 1), (2 : 1)]])
         """
@@ -6064,20 +6064,20 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
             sage: P.<x,y> = ProjectiveSpace(RR, 1)
-            sage: f = DynamicalSystem_projective([x^4, RR(sqrt(2))*y^4])
+            sage: f = DynamicalSystem_projective([x^4, RR(sqrt(2))*y^4])                # optional - sage.symbolic
             sage: m = matrix(RR, 2, 2, [1,12,0,1])
-            sage: f = f.conjugate(m)
-            sage: g, m = f.reduced_form(smallest_coeffs=False); m
+            sage: f = f.conjugate(m)                                                    # optional - sage.symbolic
+            sage: g, m = f.reduced_form(smallest_coeffs=False); m                       # optional - sage.symbolic
             [  1 -12]
             [  0   1]
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(CC, 1)
-            sage: f = DynamicalSystem_projective([x^4, CC(sqrt(-2))*y^4])
+            sage: f = DynamicalSystem_projective([x^4, CC(sqrt(-2))*y^4])               # optional - sage.symbolic
             sage: m = matrix(CC, 2, 2, [1,12,0,1])
-            sage: f = f.conjugate(m)
-            sage: g, m = f.reduced_form(smallest_coeffs=False); m
+            sage: f = f.conjugate(m)                                                    # optional - sage.symbolic
+            sage: g, m = f.reduced_form(smallest_coeffs=False); m                       # optional - sage.symbolic
             [  1 -12]
             [  0   1]
 
@@ -8352,11 +8352,11 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)
-            sage: f = DynamicalSystem_projective([x^2 + QQbar(sqrt(3))*y^2,
+            sage: f = DynamicalSystem_projective([x^2 + QQbar(sqrt(3))*y^2,             # optional - sage.symbolic
             ....:                                 y^2, QQbar(sqrt(2))*z^2])
-            sage: f.reduce_base_field()
-            Dynamical System of Projective Space of dimension 2 over Number Field in a with
-             defining polynomial y^4 - 4*y^2 + 1 with a = -0.5176380902050415?
+            sage: f.reduce_base_field()                                                 # optional - sage.symbolic
+            Dynamical System of Projective Space of dimension 2 over Number Field in a
+             with defining polynomial y^4 - 4*y^2 + 1 with a = -0.5176380902050415?
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x^2 + (-a^2 + 2)*y^2 : y^2 : (a^3 - 3*a)*z^2)
 

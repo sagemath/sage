@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.symbolic
 """
 Tests for the fast univariate series expansion in Pynac
 -------------------------------------------------------

@@ -56,7 +56,7 @@ EXAMPLES::
     ....: 4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.666666666666667),
     ....: 7: (3,3), 8: (4,0), 9: (-1,1), 10: (-2,-2)}
     sage: M1._cached_info={'plot_positions': pos_dict, 'plot_lineorders': None}
-    sage: matroids_plot_helpers.geomrep(M1, sp=True)
+    sage: matroids_plot_helpers.geomrep(M1, sp=True)                                    # optional - sage.plot
     Graphics object consisting of 22 graphics primitives
 
 """
@@ -321,22 +321,22 @@ def createline(ptsdict, ll, lineorders2=None):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers
-        sage: ptsdict={'a':(1,3),'b':(2,1),'c':(4,5),'d':(5,2)}
-        sage: x,y,x_i,y_i=matroids_plot_helpers.createline(ptsdict,
+        sage: ptsdict = {'a':(1,3),'b':(2,1),'c':(4,5),'d':(5,2)}
+        sage: x,y,x_i,y_i = matroids_plot_helpers.createline(ptsdict,
         ....: ['a','b','c','d'])
         sage: [len(x), len(y), len(x_i), len(y_i)]
         [4, 4, 100, 100]
-        sage: G = line(zip(x_i, y_i),color='black',thickness=3,zorder=1)
-        sage: G+=points(zip(x, y), color='black', size=300,zorder=2)
-        sage: G.show()
-        sage: x,y,x_i,y_i=matroids_plot_helpers.createline(ptsdict,
+        sage: G = line(zip(x_i, y_i), color='black', thickness=3, zorder=1)             # optional - sage.plot
+        sage: G += points(zip(x, y), color='black', size=300, zorder=2)                 # optional - sage.plot
+        sage: G.show()                                                                  # optional - sage.plot
+        sage: x,y,x_i,y_i = matroids_plot_helpers.createline(ptsdict,
         ....: ['a','b','c','d'],lineorders2=[['b','a','c','d'],
         ....: ['p','q','r','s']])
         sage: [len(x), len(y), len(x_i), len(y_i)]
         [4, 4, 100, 100]
-        sage: G = line(zip(x_i, y_i),color='black',thickness=3,zorder=1)
-        sage: G+=points(zip(x, y), color='black', size=300,zorder=2)
-        sage: G.show()
+        sage: G = line(zip(x_i, y_i), color='black', thickness=3, zorder=1)             # optional - sage.plot
+        sage: G += points(zip(x, y), color='black', size=300, zorder=2)                 # optional - sage.plot
+        sage: G.show()                                                                  # optional - sage.plot
 
     .. NOTE::
 
@@ -483,11 +483,11 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers
-        sage: M=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1],
+        sage: M = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1],
         ....: [0, 1, 0, 1, 0, 1, 1,0,0],[0, 0, 1, 1, 1, 0, 1,0,0]])
-        sage: [M1,L,P]=matroids_plot_helpers.slp(M)
-        sage: G,lims=matroids_plot_helpers.addlp(M,M1,L,P,{0:(0,0)})
-        sage: G.show(axes=False)
+        sage: [M1,L,P] = matroids_plot_helpers.slp(M)
+        sage: G, lims = matroids_plot_helpers.addlp(M,M1,L,P,{0:(0,0)})                 # optional - sage.plot
+        sage: G.show(axes=False)                                                        # optional - sage.plot
 
     .. NOTE::
 
@@ -757,12 +757,12 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers
-        sage: M=matroids.named_matroids.P7()
-        sage: G=matroids_plot_helpers.geomrep(M)
-        sage: G.show(xmin=-2, xmax=3, ymin=-2, ymax=3)
-        sage: M=matroids.named_matroids.P7()
-        sage: G=matroids_plot_helpers.geomrep(M,lineorders1=[['f','e','d']])
-        sage: G.show(xmin=-2, xmax=3, ymin=-2, ymax=3)
+        sage: M = matroids.named_matroids.P7()
+        sage: G = matroids_plot_helpers.geomrep(M)                                      # optional - sage.plot
+        sage: G.show(xmin=-2, xmax=3, ymin=-2, ymax=3)                                  # optional - sage.plot
+        sage: M = matroids.named_matroids.P7()
+        sage: G = matroids_plot_helpers.geomrep(M, lineorders1=[['f','e','d']])         # optional - sage.plot
+        sage: G.show(xmin=-2, xmax=3, ymin=-2, ymax=3)                                  # optional - sage.plot
 
     .. NOTE::
 

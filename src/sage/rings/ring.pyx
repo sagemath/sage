@@ -793,6 +793,7 @@ cdef class Ring(ParentWithGens):
             True
             sage: CC.is_subring(CC)
             True
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - x + 1/10)                                   # optional - sage.rings.number_field
             sage: K.is_subring(K)                                                       # optional - sage.rings.number_field
             True
@@ -1804,6 +1805,7 @@ cdef class DedekindDomain(IntegralDomain):
 
             sage: ZZ.krull_dimension()
             1
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^2 + 1, 's')                                         # optional - sage.rings.number_field
             sage: OK = K.ring_of_integers()                                             # optional - sage.rings.number_field
             sage: OK.krull_dimension()                                                  # optional - sage.rings.number_field
@@ -1848,6 +1850,7 @@ cdef class DedekindDomain(IntegralDomain):
 
             sage: ZZ.is_integrally_closed()
             True
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^2 + 1, 's')                                         # optional - sage.rings.number_field
             sage: OK = K.ring_of_integers()                                             # optional - sage.rings.number_field
             sage: OK.is_integrally_closed()                                             # optional - sage.rings.number_field
@@ -1872,6 +1875,7 @@ cdef class DedekindDomain(IntegralDomain):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^2 + 1, 's')                                         # optional - sage.rings.number_field
             sage: OK = K.ring_of_integers()                                             # optional - sage.rings.number_field
             sage: OK.integral_closure()                                                 # optional - sage.rings.number_field
@@ -1896,6 +1900,7 @@ cdef class DedekindDomain(IntegralDomain):
 
             sage: ZZ.is_noetherian()
             True
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^2 + 1, 's')                                         # optional - sage.rings.number_field
             sage: OK = K.ring_of_integers()                                             # optional - sage.rings.number_field
             sage: OK.is_noetherian()                                                    # optional - sage.rings.number_field
@@ -2134,6 +2139,7 @@ cdef class Field(PrincipalIdealDomain):
             sage: CC.fraction_field()
             Complex Field with 53 bits of precision
 
+            sage: x = polygen(ZZ, 'x')
             sage: F = NumberField(x^2 + 1, 'i')                                         # optional - sage.rings.number_field
             sage: F.fraction_field()                                                    # optional - sage.rings.number_field
             Number Field in i with defining polynomial x^2 + 1

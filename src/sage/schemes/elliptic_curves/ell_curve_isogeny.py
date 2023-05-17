@@ -769,6 +769,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         sage: E = EllipticCurve('11a1')
         sage: P_list = E.torsion_points()
+        sage: x = polygen(ZZ, 'x')
         sage: K.<alpha> = NumberField(x^3 - 2* x^2 - 40*x - 158)                        # optional - sage.rings.number_field
         sage: EK = E.change_ring(K)                                                     # optional - sage.rings.number_field
         sage: P_list = [EK(P) for P in P_list]                                          # optional - sage.rings.number_field
@@ -1201,6 +1202,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         Tests for :trac:`10888`::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<th> = NumberField(x^2 + 3)                                         # optional - sage.rings.number_field
             sage: E = EllipticCurve(K, [7,0])                                           # optional - sage.rings.number_field
             sage: phi = E.isogeny(E(0,0))                                               # optional - sage.rings.number_field
@@ -1236,7 +1238,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             Traceback (most recent call last):
             ...
             TypeError: (20 : 90 : 1) fails to convert into the map's domain
-            Elliptic Curve defined by y^2 = x^3 + 7*x over Number Field in th with defining polynomial x^2 + 3,
+            Elliptic Curve defined by y^2 = x^3 + 7*x over
+            Number Field in th with defining polynomial x^2 + 3,
             but a `pushforward` method is not properly implemented
 
         Check that copying the order over works::
@@ -1388,8 +1391,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: E = EllipticCurve(GF(17), [-2, 3, -5, 7, -11])                        # optional - sage.rings.finite_rings
             sage: R.<x> = GF(17)[]                                                      # optional - sage.rings.finite_rings
             sage: f = x+6                                                               # optional - sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, f)                                      # optional - sage.rings.finite_rings
-            sage: phi                                                                   # optional - sage.rings.finite_rings
+            sage: phi = EllipticCurveIsogeny(E, f); phi                                 # optional - sage.rings.finite_rings
             Isogeny of degree 2
              from Elliptic Curve defined by y^2 + 15*x*y + 12*y = x^3 + 3*x^2 + 7*x + 6 over Finite Field of size 17
                to Elliptic Curve defined by y^2 + 15*x*y + 12*y = x^3 + 3*x^2 + 4*x + 8 over Finite Field of size 17

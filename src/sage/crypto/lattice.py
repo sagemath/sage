@@ -95,9 +95,9 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         [ 3082     0     0     0     0     0     0     0     1     0]
         [-4580     0     0     0     0     0     0     0     0     1]
 
-    Ideal bases with quotient x^n-1, m=2*n are NTRU bases::
+    Ideal bases with quotient `x^n-1`, `m=2*n` are NTRU bases::
 
-        sage: sage.crypto.gen_lattice(type='ideal', seed=42, quotient=x^4-1)
+        sage: sage.crypto.gen_lattice(type='ideal', seed=42, quotient=x^4 - 1)          # optional - sage.symbolic
         [11  0  0  0  0  0  0  0]
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
@@ -110,7 +110,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     Ideal bases also work with polynomials::
 
         sage: R.<t> = PolynomialRing(ZZ)
-        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=t^4-1)
+        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=t^4 - 1)
         [11  0  0  0  0  0  0  0]
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
@@ -159,11 +159,11 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
     Test some bad quotient polynomials::
 
-        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=cos(x))
+        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=cos(x))         # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: self must be a numeric expression
-        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=x^23-1)
+        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=x^23-1)         # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: ideal basis requires n = quotient.degree()

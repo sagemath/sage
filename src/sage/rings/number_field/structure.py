@@ -74,6 +74,7 @@ class NumberFieldStructure(UniqueRepresentation):
         True
 
         sage: R.<x> = QQ[]
+        sage: x = polygen(ZZ, 'x')
         sage: K.<i> = NumberField(x^2 + 1)
         sage: L = K.change_names('j').change_names('i')
         sage: K is L  # K and L differ in "structure", one is the "name-change" of the other
@@ -83,8 +84,8 @@ class NumberFieldStructure(UniqueRepresentation):
         sage: NumberFieldStructure(K) is NumberFieldStructure(L)
         False
         sage: from sage.rings.number_field.structure import NameChange
-        sage: KK.<j> = NumberField(x^2+1, structure=NameChange(K))
-        sage: LL.<j> = NumberField(x^2+1, structure=NameChange(L))
+        sage: KK.<j> = NumberField(x^2 + 1, structure=NameChange(K))
+        sage: LL.<j> = NumberField(x^2 + 1, structure=NameChange(L))
         sage: KK is LL
         False
 
@@ -155,7 +156,8 @@ class NameChange(NumberFieldStructure):
 
     Check for memory leaks::
 
-        sage: u=id(NumberField(x^2-5,'a').absolute_field('b'))
+        sage: x = polygen(ZZ, 'x')
+        sage: u = id(NumberField(x^2 - 5,'a').absolute_field('b'))
         sage: import gc
         sage: gc.collect() #random
         10

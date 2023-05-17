@@ -59,7 +59,6 @@ dnl From Makefile.in: DOC_DEPENDENCIES
         sphinx         \
         networkx       \
         scipy          \
-        sympy          \
         matplotlib     \
         pillow         \
         mpmath         \

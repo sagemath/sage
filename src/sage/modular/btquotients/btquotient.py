@@ -44,7 +44,6 @@ from collections import deque
 from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebra
 from sage.arith.misc import gcd, xgcd, kronecker_symbol, fundamental_discriminant
 from sage.graphs.graph import Graph
-from sage.interfaces.magma import magma
 from sage.libs.pari.all import pari
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
@@ -1481,6 +1480,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         if use_magma or self._Nplus != 1 or self._p == 2:
             try:
                 if magma_session is None:
+                    from sage.interfaces.magma import magma
                     self._magma = magma
                 else:
                     self._magma = magma_session
@@ -2125,7 +2125,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(7,23)
-            sage: X.plot()
+            sage: X.plot()                                                              # optional - sage.plot
             Graphics object consisting of 17 graphics primitives
         """
         S = self.get_graph()
@@ -2158,7 +2158,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(7,23)
-            sage: X.plot_fundom()
+            sage: X.plot_fundom()                                                       # optional - sage.plot
             Graphics object consisting of 88 graphics primitives
         """
         S = self.get_fundom_graph()
@@ -2399,6 +2399,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                         n_iters += 1
                         verbose('Restarting magma...')
                         self._magma.quit()
+                        from sage.interfaces.magma import magma
                         self._magma = magma
                         self._magma.function_call('SetSeed', n_iters, nvals=0)
                         self._order_is_initialized = False

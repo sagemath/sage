@@ -2146,7 +2146,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             2.82842712474619
             sage: 2^float(1.5)       # python float  abs tol 3e-16
             2.8284271247461903
-            sage: 2^I                # complex number
+            sage: 2^I                # complex number                                   # optional - sage.symbolic
             2^I
             sage: r = 2 ^ int(-3); r; type(r)
             1/8
@@ -5492,6 +5492,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^2 - 2, 'beta')                                      # optional - sage.rings.number_field
             sage: n = 4
             sage: n.is_norm(K)                                                          # optional - sage.rings.number_field

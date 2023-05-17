@@ -94,6 +94,7 @@ class MPolynomial_element(MPolynomial):
         """
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<cuberoot2> = NumberField(x^3 - 2)                                  # optional - sage.rings.number_field
             sage: L.<cuberoot3> = K.extension(x^3 - 3)                                  # optional - sage.rings.number_field
             sage: S.<sqrt2> = L.extension(x^2 - 2)                                      # optional - sage.rings.number_field
@@ -109,7 +110,7 @@ class MPolynomial_element(MPolynomial):
         EXAMPLES::
 
             sage: P.<x,y,z> = PolynomialRing(QQbar)                                     # optional - sage.rings.number_field
-            sage: x + QQbar(sqrt(2) - 1/2*I)  # indirect doctest                        # optional - sage.rings.number_field
+            sage: x + QQbar(sqrt(2) - 1/2*I)  # indirect doctest                        # optional - sage.rings.number_field sage.symbolic
             x + 1.414213562373095? - 0.50000000000000000?*I
         """
         return "%s"%self.__element

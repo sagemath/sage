@@ -454,9 +454,9 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: v.is_immutable()
         True
         sage: import numpy as np                                                        # optional - numpy
-        sage: w = np.array([1, 2, pi], float)                                           # optional - numpy
-        sage: v = vector(w, immutable=True)                                             # optional - numpy
-        sage: v.is_immutable()                                                          # optional - numpy
+        sage: w = np.array([1, 2, pi], float)                                           # optional - numpy sage.symbolic
+        sage: v = vector(w, immutable=True)                                             # optional - numpy sage.symbolic
+        sage: v.is_immutable()                                                          # optional - numpy sage.symbolic
         True
         sage: w = np.array([i, 2, 3], complex)                                          # optional - numpy
         sage: v = vector(w, immutable=True)                                             # optional - numpy
@@ -747,7 +747,7 @@ def zero_vector(arg0, arg1=None):
 
     Garbage instead of a ring will be recognized as such. ::
 
-        sage: zero_vector(x^2, 5)
+        sage: zero_vector(x^2, 5)                                                       # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: first argument must be a ring
@@ -1193,7 +1193,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: from sage.misc.sage_input import SageInputBuilder
             sage: vector(ZZ, [42, 389])._sage_input_(SageInputBuilder(), False)
             {call: {atomic:vector}({atomic:ZZ}, {list: ({atomic:42}, {atomic:389})})}
-            sage: vector(RDF, {1:pi, 1000:e})._sage_input_(SageInputBuilder(), False)
+            sage: vector(RDF, {1:pi, 1000:e})._sage_input_(SageInputBuilder(), False)   # optional - sage.symbolic
             {call: {atomic:vector}({atomic:RDF}, {dict: {{atomic:1}:{atomic:3.1415926535897931}, {atomic:1000}:{atomic:2.718281828459045...}}})}
         """
         # Not a lot of room for prettiness here.
@@ -1454,10 +1454,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         then taking a transpose.  Notice that supplying a vector to the
         matrix constructor demonstrates Sage's preference for rows. ::
 
-            sage: x = vector(RDF, [sin(i*pi/20) for i in range(10)])                    # optional - sage.libs.pari
-            sage: x.column() == matrix(x).transpose()                                   # optional - sage.libs.pari
+            sage: x = vector(RDF, [sin(i*pi/20) for i in range(10)])                    # optional - sage.libs.pari sage.symbolic
+            sage: x.column() == matrix(x).transpose()                                   # optional - sage.libs.pari sage.symbolic
             True
-            sage: x.column() == x.row().transpose()                                     # optional - sage.libs.pari
+            sage: x.column() == x.row().transpose()                                     # optional - sage.libs.pari sage.symbolic
             True
 
         Sparse or dense implementations are preserved. ::
@@ -3172,10 +3172,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         TESTS::
 
             sage: n = 15
-            sage: x = vector(CDF, [sin(i*pi/n)+cos(i*pi/n)*I for i in range(n)])
-            sage: x + x.conjugate() in RDF^n
+            sage: x = vector(CDF, [sin(i*pi/n)+cos(i*pi/n)*I for i in range(n)])        # optional - sage.symbolic
+            sage: x + x.conjugate() in RDF^n                                            # optional - sage.symbolic
             True
-            sage: I*(x - x.conjugate()) in RDF^n
+            sage: I*(x - x.conjugate()) in RDF^n                                        # optional - sage.symbolic
             True
 
         The parent of the conjugate is the same as that of the original vector.
@@ -3878,7 +3878,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         TESTS::
 
             sage: m = vector(SR,[])                                                     # optional - sage.symbolic
-            sage: m.apply_map(lambda x: x*x) == m
+            sage: m.apply_map(lambda x: x*x) == m                                       # optional - sage.symbolic
             True
 
         Check that we don't unnecessarily apply phi to 0 in the sparse case::
@@ -4221,7 +4221,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         """
         EXAMPLES::
 
-            sage: type(vector(RR, [-1,0,2/3,pi,oo]))
+            sage: type(vector(RR, [-1,0,2/3,pi,oo]))                                                # optional - sage.symbolic
             <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
 
         We can initialize with lists, tuples and derived types::

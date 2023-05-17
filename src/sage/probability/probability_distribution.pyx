@@ -954,7 +954,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         EXAMPLES::
 
             sage: T = RealDistribution('uniform', [0, 2])
-            sage: P = T.plot()
+            sage: P = T.plot()                                                          # optional - sage.plot
         """
         from sage.plot.plot import plot
         return plot(self.distribution_function, *args, **kwds)

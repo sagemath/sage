@@ -229,7 +229,7 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     - ``i`` - list or tuple of length 4 containing the four Igusa-Clebsch
       invariants: I2, I4, I6, I10
-    - ``xyz`` - Boolean (default: False) if True, the algorithm also
+    - ``xyz`` - Boolean (default: ``False``) if ``True``, the algorithm also
       returns three invariants x,y,z used in Mestre's algorithm
     - ``names`` (default: 'u,v,w') - the variable names for the conic
 
@@ -248,6 +248,7 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     Note that the algorithm works over number fields as well::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k = NumberField(x^2 - 41, 'a')                                            # optional - sage.rings.number_field
         sage: a = k.an_element()                                                        # optional - sage.rings.number_field
         sage: Mestre_conic([1, 2 + a, a, 4 + a])                                        # optional - sage.rings.number_field

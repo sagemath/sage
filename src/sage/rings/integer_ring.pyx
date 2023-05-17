@@ -923,6 +923,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: ZZ.extension(x^2 - 5, 'a')                                            # optional - sage.rings.number_field
             Order in Number Field in a with defining polynomial x^2 - 5
             sage: ZZ.extension([x^2 + 1, x^2 + 2], 'a,b')                               # optional - sage.rings.number_field

@@ -89,7 +89,7 @@ def krawtchouk(n, q, l, x, check=True):
 
     Other unusual inputs::
 
-        sage: codes.bounds.krawtchouk(sqrt(5),1-I*sqrt(3),3,55.3).n()
+        sage: codes.bounds.krawtchouk(sqrt(5),1-I*sqrt(3),3,55.3).n()                   # optional - sage.symbolic
         211295.892797... + 1186.42763...*I
         sage: codes.bounds.krawtchouk(-5/2,7*I,3,-1/10)
         480053/250*I - 357231/400

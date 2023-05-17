@@ -16,7 +16,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+import sage.geometry.abc
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_import import lazy_import
@@ -59,7 +60,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring_element import FormsRingElement
             sage: from sage.modular.modform_hecketriangle.graded_ring import ModularFormsRing
-            sage: (x,d) = var("x","d")
+            sage: x, d = var("x","d")                                                   # optional - sage.symbolic
             sage: el = FormsRingElement(ModularFormsRing(), x*d)
             sage: el.rat()
             x*d
@@ -101,25 +102,23 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiModularFormsRing
-            sage: (x,y,z,d)=var("x,y,z,d")
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
             sage: MR = QuasiModularFormsRing(n=5)
-            sage: el = MR(x^3*d + y*z)
-            sage: el
+            sage: el = MR(x^3*d + y*z); el                                              # optional - sage.symbolic
             f_rho^3*d + f_i*E2
-            sage: el.rat()
+            sage: el.rat()                                                              # optional - sage.symbolic
             x^3*d + y*z
-            sage: el.parent()
+            sage: el.parent()                                                           # optional - sage.symbolic
             QuasiModularFormsRing(n=5) over Integer Ring
-            sage: el.rat().parent()
+            sage: el.rat().parent()                                                     # optional - sage.symbolic
             Fraction Field of Multivariate Polynomial Ring in x, y, z, d over Integer Ring
 
             sage: MR = QuasiModularFormsRing(n=infinity)
-            sage: el = MR(d*x*(x-y^2))
-            sage: el
+            sage: el = MR(d*x*(x-y^2)); el                                              # optional - sage.symbolic
             -E4*f_i^2*d + E4^2*d
-            sage: el.rat()
+            sage: el.rat()                                                              # optional - sage.symbolic
             -x*y^2*d + x^2*d
-            sage: el.parent()
+            sage: el.parent()                                                           # optional - sage.symbolic
             QuasiModularFormsRing(n=+Infinity) over Integer Ring
         """
         self._rat = rat
@@ -143,7 +142,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import MeromorphicModularFormsRing
-            sage: (x,y,z,d) = MeromorphicModularFormsRing().pol_ring().gens()
+            sage: x, y, z, d = MeromorphicModularFormsRing().pol_ring().gens()
             sage: MeromorphicModularFormsRing(n=3)(x) == MeromorphicModularFormsRing(n=4)(x)
             False
             sage: MeromorphicModularFormsRing()(-1/x) is MeromorphicModularFormsRing()(1/(-x))
@@ -172,11 +171,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiModularFormsRing
-            sage: (x,y,z,d)=var("x,y,z,d")
-            sage: QuasiModularFormsRing(n=5)(x^3*z-d*y)
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiModularFormsRing(n=5)(x^3*z - d*y)                               # optional - sage.symbolic
             f_rho^3*E2 - f_i*d
 
-            sage: QuasiModularFormsRing(n=infinity)(x)
+            sage: QuasiModularFormsRing(n=infinity)(x)                                  # optional - sage.symbolic
             E4
         """
 
@@ -189,11 +188,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.space import QuasiModularForms
-            sage: (x,y,z,d)=var("x,y,z,d")
-            sage: QuasiModularForms(n=5, k=6, ep=-1)(x^3*z)._rat_repr()
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiModularForms(n=5, k=6, ep=-1)(x^3*z)._rat_repr()                 # optional - sage.symbolic
             'f_rho^3*E2'
 
-            sage: QuasiModularForms(n=infinity, k=10)(x*(x-y^2)*z)._rat_repr()
+            sage: QuasiModularForms(n=infinity, k=10)(x*(x-y^2)*z)._rat_repr()          # optional - sage.symbolic
             '-E4*f_i^2*E2 + E4^2*E2'
         """
 
@@ -213,13 +212,13 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiModularFormsRing
-            sage: (x,y,z,d)=var("x,y,z,d")
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
             sage: MR = QuasiModularFormsRing(n=5)
             sage: MR.disp_prec(3)
-            sage: MR(x^3*z-d*y)._qexp_repr()
+            sage: MR(x^3*z-d*y)._qexp_repr()                                            # optional - sage.symbolic
             '-d + 1 + ((65*d + 33)/(200*d))*q + ((1755*d + 1437)/(320000*d^2))*q^2 + O(q^3)'
 
-            sage: QuasiModularFormsRing(n=infinity)(x*(x-y^2)*z)._qexp_repr()
+            sage: QuasiModularFormsRing(n=infinity)(x*(x-y^2)*z)._qexp_repr()           # optional - sage.symbolic
             '64*q - 3840*q^3 - 16384*q^4 + O(q^5)'
         """
 
@@ -236,15 +235,15 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiModularFormsRing
-            sage: (x,y,z,d)=var("x,y,z,d")
-            sage: latex(QuasiModularFormsRing(n=5)(x^3*z-d*y))
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: latex(QuasiModularFormsRing(n=5)(x^3*z - d*y))                        # optional - sage.symbolic
             f_{\rho}^{3} E_{2} -  f_{i} d
 
             sage: from sage.modular.modform_hecketriangle.space import CuspForms
-            sage: latex(CuspForms(k=12)(x^3-y^2))
+            sage: latex(CuspForms(k=12)(x^3 - y^2))                                     # optional - sage.symbolic
             f_{\rho}^{3} -  f_{i}^{2}
 
-            sage: latex(QuasiModularFormsRing(n=infinity)(x*(x-y^2)*z))
+            sage: latex(QuasiModularFormsRing(n=infinity)(x*(x-y^2)*z))                 # optional - sage.symbolic
             -E_{4} f_{i}^{2} E_{2} + E_{4}^{2} E_{2}
         """
 
@@ -362,11 +361,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             True
             sage: QuasiModularFormsRing(n=12).Delta().parent().is_homogeneous()
             False
-            sage: x,y,z,d=var("x,y,z,d")
-            sage: QuasiModularFormsRing(n=12)(x^3+y^2+z+d).is_homogeneous()
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiModularFormsRing(n=12)(x^3+y^2+z+d).is_homogeneous()             # optional - sage.symbolic
             False
 
-            sage: QuasiModularFormsRing(n=infinity)(x*(x-y^2)+y^4).is_homogeneous()
+            sage: QuasiModularFormsRing(n=infinity)(x*(x-y^2)+y^4).is_homogeneous()     # optional - sage.symbolic
             True
         """
 
@@ -380,8 +379,8 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiModularFormsRing
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
-            sage: x,y,z,d = var("x,y,z,d")
-            sage: QuasiModularFormsRing()(x+y).weight() is None
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiModularFormsRing()(x+y).weight() is None                         # optional - sage.symbolic
             True
             sage: ModularForms(n=18).f_i().weight()
             9/4
@@ -399,8 +398,8 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiModularFormsRing
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
-            sage: x,y,z,d = var("x,y,z,d")
-            sage: QuasiModularFormsRing()(x+y).ep() is None
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiModularFormsRing()(x+y).ep() is None                             # optional - sage.symbolic
             True
             sage: ModularForms(n=18).f_i().ep()
             -1
@@ -420,8 +419,8 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiModularFormsRing
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
-            sage: x,y,z,d = var("x,y,z,d")
-            sage: QuasiModularFormsRing()(x+y).degree() == (None, None)
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiModularFormsRing()(x+y).degree() == (None, None)                 # optional - sage.symbolic
             True
             sage: ModularForms(n=18).f_i().degree()
             (9/4, -1)
@@ -440,10 +439,10 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiModularFormsRing
             sage: from sage.modular.modform_hecketriangle.space import QuasiModularForms
-            sage: x,y,z,d = var("x,y,z,d")
-            sage: QuasiModularFormsRing(n=5)(x^2+y-d).is_modular()
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiModularFormsRing(n=5)(x^2+y-d).is_modular()                      # optional - sage.symbolic
             True
-            sage: QuasiModularFormsRing(n=5)(x^2+y-d+z).is_modular()
+            sage: QuasiModularFormsRing(n=5)(x^2+y-d+z).is_modular()                    # optional - sage.symbolic
             False
             sage: QuasiModularForms(n=18).f_i().is_modular()
             True
@@ -465,16 +464,16 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiMeromorphicModularFormsRing
             sage: from sage.modular.modform_hecketriangle.space import QuasiMeromorphicModularForms
-            sage: x,y,z,d = var("x,y,z,d")
-            sage: QuasiMeromorphicModularFormsRing(n=5)(x/(x^5-y^2)+z).is_weakly_holomorphic()
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiMeromorphicModularFormsRing(n=5)(x/(x^5-y^2)+z).is_weakly_holomorphic()  # optional - sage.symbolic
             True
-            sage: QuasiMeromorphicModularFormsRing(n=5)(x^2+y/x-d).is_weakly_holomorphic()
+            sage: QuasiMeromorphicModularFormsRing(n=5)(x^2+y/x-d).is_weakly_holomorphic()      # optional - sage.symbolic
             False
             sage: QuasiMeromorphicModularForms(n=18).J_inv().is_weakly_holomorphic()
             True
-            sage: QuasiMeromorphicModularForms(n=infinity, k=-4)(1/x).is_weakly_holomorphic()
+            sage: QuasiMeromorphicModularForms(n=infinity, k=-4)(1/x).is_weakly_holomorphic()   # optional - sage.symbolic
             True
-            sage: QuasiMeromorphicModularForms(n=infinity, k=-2)(1/y).is_weakly_holomorphic()
+            sage: QuasiMeromorphicModularForms(n=infinity, k=-2)(1/y).is_weakly_holomorphic()   # optional - sage.symbolic
             False
         """
 
@@ -490,10 +489,10 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiMeromorphicModularFormsRing
             sage: from sage.modular.modform_hecketriangle.space import QuasiMeromorphicModularForms
-            sage: x,y,z,d = var("x,y,z,d")
-            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).is_holomorphic()
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).is_holomorphic()   # optional - sage.symbolic
             False
-            sage: QuasiMeromorphicModularFormsRing(n=5)(x^2+y-d+z).is_holomorphic()
+            sage: QuasiMeromorphicModularFormsRing(n=5)(x^2+y-d+z).is_holomorphic()                 # optional - sage.symbolic
             True
             sage: QuasiMeromorphicModularForms(n=18).J_inv().is_holomorphic()
             False
@@ -515,10 +514,10 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiModularFormsRing
             sage: from sage.modular.modform_hecketriangle.space import QuasiModularForms
-            sage: x,y,z,d = var("x,y,z,d")
-            sage: QuasiModularFormsRing(n=5)(y^3-z^5).is_cuspidal()
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiModularFormsRing(n=5)(y^3-z^5).is_cuspidal()                     # optional - sage.symbolic
             False
-            sage: QuasiModularFormsRing(n=5)(z*x^5-z*y^2).is_cuspidal()
+            sage: QuasiModularFormsRing(n=5)(z*x^5-z*y^2).is_cuspidal()                 # optional - sage.symbolic
             True
             sage: QuasiModularForms(n=18).Delta().is_cuspidal()
             True
@@ -539,7 +538,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiModularFormsRing
             sage: from sage.modular.modform_hecketriangle.space import QuasiModularForms
-            sage: x,y,z,d = var("x,y,z,d")
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
             sage: QuasiModularFormsRing(n=5)(1).is_zero()
             False
             sage: QuasiModularFormsRing(n=5)(0).is_zero()
@@ -561,12 +560,12 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiMeromorphicModularFormsRing
             sage: from sage.modular.modform_hecketriangle.space import QuasiMeromorphicModularForms
-            sage: x,y,z,d = var("x,y,z,d")
-            sage: QuasiMeromorphicModularFormsRing(n=5)(x/z+d).analytic_type()
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiMeromorphicModularFormsRing(n=5)(x/z+d).analytic_type()          # optional - sage.symbolic
             quasi meromorphic modular
-            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).analytic_type()
+            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).analytic_type()    # optional - sage.symbolic
             quasi weakly holomorphic modular
-            sage: QuasiMeromorphicModularFormsRing(n=5)(x^2+y-d).analytic_type()
+            sage: QuasiMeromorphicModularFormsRing(n=5)(x^2+y-d).analytic_type()                    # optional - sage.symbolic
             modular
             sage: QuasiMeromorphicModularForms(n=18).J_inv().analytic_type()
             weakly holomorphic modular
@@ -590,18 +589,18 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiMeromorphicModularFormsRing
             sage: from sage.modular.modform_hecketriangle.space import QuasiMeromorphicModularForms
-            sage: x,y,z,d = var("x,y,z,d")
-            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).numerator()
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
+            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).numerator()    # optional - sage.symbolic
             f_rho^5*f_i - f_rho^5*d - E2^5 + f_i^2*d
-            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).numerator().parent()
+            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).numerator().parent()   # optional - sage.symbolic
             QuasiModularFormsRing(n=5) over Integer Ring
-            sage: QuasiMeromorphicModularForms(n=5, k=-2, ep=-1)(x/y).numerator()
+            sage: QuasiMeromorphicModularForms(n=5, k=-2, ep=-1)(x/y).numerator()                       # optional - sage.symbolic
             1 + 7/(100*d)*q + 21/(160000*d^2)*q^2 + 1043/(192000000*d^3)*q^3 + 45479/(1228800000000*d^4)*q^4 + O(q^5)
-            sage: QuasiMeromorphicModularForms(n=5, k=-2, ep=-1)(x/y).numerator().parent()
+            sage: QuasiMeromorphicModularForms(n=5, k=-2, ep=-1)(x/y).numerator().parent()              # optional - sage.symbolic
             QuasiModularForms(n=5, k=4/3, ep=1) over Integer Ring
-            sage: (QuasiMeromorphicModularForms(n=infinity, k=-2, ep=-1)(y/x)).numerator()
+            sage: (QuasiMeromorphicModularForms(n=infinity, k=-2, ep=-1)(y/x)).numerator()              # optional - sage.symbolic
             1 - 24*q + 24*q^2 - 96*q^3 + 24*q^4 + O(q^5)
-            sage: (QuasiMeromorphicModularForms(n=infinity, k=-2, ep=-1)(y/x)).numerator().parent()
+            sage: (QuasiMeromorphicModularForms(n=infinity, k=-2, ep=-1)(y/x)).numerator().parent()     # optional - sage.symbolic
             QuasiModularForms(n=+Infinity, k=2, ep=-1) over Integer Ring
         """
 
@@ -622,20 +621,20 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiMeromorphicModularFormsRing
             sage: from sage.modular.modform_hecketriangle.space import QuasiMeromorphicModularForms
-            sage: x,y,z,d = var("x,y,z,d")
+            sage: x, y, z, d = var("x,y,z,d")                                           # optional - sage.symbolic
             sage: QuasiMeromorphicModularFormsRing(n=5).Delta().full_reduce().denominator()
             1 + O(q^5)
-            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).denominator()
+            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).denominator()  # optional - sage.symbolic
             f_rho^5 - f_i^2
-            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).denominator().parent()
+            sage: QuasiMeromorphicModularFormsRing(n=5)((y^3-z^5)/(x^5-y^2)+y-d).denominator().parent()     # optional - sage.symbolic
             QuasiModularFormsRing(n=5) over Integer Ring
-            sage: QuasiMeromorphicModularForms(n=5, k=-2, ep=-1)(x/y).denominator()
+            sage: QuasiMeromorphicModularForms(n=5, k=-2, ep=-1)(x/y).denominator()                         # optional - sage.symbolic
             1 - 13/(40*d)*q - 351/(64000*d^2)*q^2 - 13819/(76800000*d^3)*q^3 - 1163669/(491520000000*d^4)*q^4 + O(q^5)
-            sage: QuasiMeromorphicModularForms(n=5, k=-2, ep=-1)(x/y).denominator().parent()
+            sage: QuasiMeromorphicModularForms(n=5, k=-2, ep=-1)(x/y).denominator().parent()                # optional - sage.symbolic
             QuasiModularForms(n=5, k=10/3, ep=-1) over Integer Ring
-            sage: (QuasiMeromorphicModularForms(n=infinity, k=-6, ep=-1)(y/(x*(x-y^2)))).denominator()
+            sage: (QuasiMeromorphicModularForms(n=infinity, k=-6, ep=-1)(y/(x*(x-y^2)))).denominator()      # optional - sage.symbolic
             -64*q - 512*q^2 - 768*q^3 + 4096*q^4 + O(q^5)
-            sage: (QuasiMeromorphicModularForms(n=infinity, k=-6, ep=-1)(y/(x*(x-y^2)))).denominator().parent()
+            sage: (QuasiMeromorphicModularForms(n=infinity, k=-6, ep=-1)(y/(x*(x-y^2)))).denominator().parent()     # optional - sage.symbolic
             QuasiModularForms(n=+Infinity, k=8, ep=1) over Integer Ring
         """
 
@@ -1253,7 +1252,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         Return the (overall) order of ``self`` at ``tau`` if easily possible:
         Namely if ``tau`` is ``infinity`` or congruent to ``i`` resp. ``rho``.
 
-        It is possible to determine the order of points from ``HyperbolicPlane()``.
+        It is possible to determine the order of points from :class:`HyperbolicPlane`.
         In this case the coordinates of the upper half plane model are used.
 
         If ``self`` is homogeneous and modular then the rational function
@@ -1331,18 +1330,20 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: (1/MR.f_inf()^2).order_at(-1)
             0
 
-            sage: p = HyperbolicPlane().PD().get_point(I)
-            sage: MR((x-y)^10).order_at(p)
+            sage: p = HyperbolicPlane().PD().get_point(I)                               # optional - sage.symbolic
+            sage: MR((x-y)^10).order_at(p)                                              # optional - sage.symbolic
             10
-            sage: MR.zero().order_at(p)
+            sage: MR.zero().order_at(p)                                                 # optional - sage.symbolic
             +Infinity
         """
 
         i = QuadraticField(-1, 'I').gen()
 
         # if tau is a point of HyperbolicPlane then we use it's coordinates in the UHP model
-        if (tau in HyperbolicPlane()):
-            tau = tau.to_model('UHP').coordinates()
+        if isinstance(tau.parent(), sage.geometry.abc.HyperbolicSpace):
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+            if tau in HyperbolicPlane():
+                tau = tau.to_model('UHP').coordinates()
 
         if self.is_zero():
             return infinity
@@ -1839,7 +1840,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         (and fail) for certain (many) choices of
         (``base_ring``, ``tau.parent()``).
 
-        It is possible to evaluate at points of ``HyperbolicPlane()``.
+        It is possible to evaluate at points of :class:`HyperbolicPlane`.
         In this case the coordinates of the upper half plane model are used.
 
         To obtain a precise and fast result the parameters
@@ -1848,22 +1849,22 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         INPUT:
 
-        - ``tau``       -- ``infinity`` or an element of the upper
-                           half plane. E.g. with parent ``AA`` or ``CC``.
+        - ``tau`` -- ``infinity`` or an element of the upper
+          half plane. E.g. with parent ``AA`` or ``CC``.
 
-        - ``prec``      -- An integer, namely the precision used for the
-                           Fourier expansion. If ``prec == None`` (default)
-                           then the default precision of ``self.parent()``
-                           is used.
+        - ``prec`` -- An integer, namely the precision used for the
+          Fourier expansion. If ``prec == None`` (default)
+          then the default precision of ``self.parent()``
+          is used.
 
-        - ``num_prec``  -- An integer, namely the minimal numerical precision
-                           used for ``tau`` and ``d``. If ``num_prec == None``
-                           (default) then the default numerical precision of
-                           ``self.parent()`` is used.
+        - ``num_prec`` -- An integer, namely the minimal numerical precision
+          used for ``tau`` and ``d``. If ``num_prec == None``
+          (default) then the default numerical precision of
+          ``self.parent()`` is used.
 
-        - ``check``     -- If ``True`` then the order of ``tau`` is checked.
-                           Otherwise the order is only considered for
-                           ``tau = infinity, i, rho, -1/rho``. Default: ``False``.
+        - ``check`` -- If ``True`` then the order of ``tau`` is checked.
+          Otherwise the order is only considered for
+          ``tau = infinity, i, rho, -1/rho``. Default: ``False``.
 
         OUTPUT:
 
@@ -2129,29 +2130,31 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: (f.q_expansion_fixed_d().polynomial())(exp((2*pi*i).n(1000)*az/G.lam()))    # long time
             -140.471170232432551196978... + 469.079369280804086032719...*I
 
-        It is possible to evaluate at points of ``HyperbolicPlane()``::
+        It is possible to evaluate at points of :class:`HyperbolicPlane`::
 
-            sage: p = HyperbolicPlane().PD().get_point(-I/2)
-            sage: bool(p.to_model('UHP').coordinates() == I/3)
+            sage: p = HyperbolicPlane().PD().get_point(-I/2)                            # optional - sage.symbolic
+            sage: bool(p.to_model('UHP').coordinates() == I/3)                          # optional - sage.symbolic
             True
-            sage: E4(p) == E4(I/3)
+            sage: E4(p) == E4(I/3)                                                      # optional - sage.symbolic
             True
-            sage: p = HyperbolicPlane().PD().get_point(I)
-            sage: f_inf(p, check=True) == 0
+            sage: p = HyperbolicPlane().PD().get_point(I)                               # optional - sage.symbolic
+            sage: f_inf(p, check=True) == 0                                             # optional - sage.symbolic
             True
-            sage: (1/(E2^2-E4))(p) == infinity
+            sage: (1/(E2^2-E4))(p) == infinity                                          # optional - sage.symbolic
             True
         """
 
         i = QuadraticField(-1, 'I').gen()
 
-        # if tau is a point of HyperbolicPlane then we use it's coordinates in the UHP model
-        if (tau in HyperbolicPlane()):
-            tau = tau.to_model('UHP').coordinates()
+        # if tau is a point of HyperbolicPlane then we use its coordinates in the UHP model
+        if isinstance(tau.parent(), sage.geometry.abc.HyperbolicSpace):
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+            if tau in HyperbolicPlane():
+                tau = tau.to_model('UHP').coordinates()
 
-        if (prec is None):
+        if prec is None:
             prec = self.parent().default_prec()
-        if (num_prec is None):
+        if num_prec is None:
             num_prec = self.parent().default_num_prec()
 
         # In case the order is known

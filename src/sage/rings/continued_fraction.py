@@ -72,6 +72,7 @@ use its method continued_fraction (if it exists) or call
     sage: continued_fraction_list(pi, nterms=5)                                         # optional - sage.symbolic
     [3, 7, 15, 1, 292]
 
+    sage: x = polygen(ZZ, 'x')
     sage: K.<cbrt5> = NumberField(x^3 - 5, embedding=1.709)                             # optional - sage.rings.number_field
     sage: continued_fraction(cbrt5)                                                     # optional - sage.rings.number_field
     [1; 1, 2, 2, 4, 3, 3, 1, 5, 1, 1, 4, 10, 17, 1, 14, 1, 1, 3052, 1, ...]
@@ -626,6 +627,7 @@ class ContinuedFraction_base(SageObject):
             sage: cf.n(digits=8)                                                        # optional - sage.symbolic
             0.63459101
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2, 'a', embedding=1.25)                     # optional - sage.rings.number_field
             sage: b = 504/253*a^2 + 635/253*a + 661/253                                 # optional - sage.rings.number_field
             sage: cf = continued_fraction(b); cf                                        # optional - sage.rings.number_field
@@ -1913,6 +1915,7 @@ class ContinuedFraction_real(ContinuedFraction_base):
         The same computation with an element of a number field instead of
         ``pi`` gives a very satisfactory answer::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a2> = NumberField(x^3 - 2, embedding=1.25)                         # optional - sage.rings.number_field
             sage: c2 = continued_fraction(a2)                                           # optional - sage.rings.number_field
             sage: p0 = c2.numerator(111); q0 = c2.denominator(111)                      # optional - sage.rings.number_field
@@ -2201,9 +2204,9 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
             ....:     return 1
             sage: w = Word(f, alphabet=NN); w                                           # optional - sage.combinat
             word: 1,1,2,1,1,4,1,1,6,1,1,8,1,1,10,1,1,12,1,1,14,1,1,16,1,1,18,1,1,20,1,1,22,1,1,24,1,1,26,1,...
-            sage: cf = continued_fraction(w, value=e-1); cf                             # optional - sage.combinat
+            sage: cf = continued_fraction(w, value=e-1); cf                             # optional - sage.combinat sage.symbolic
             [1; 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10, 1, 1, 12, 1, 1...]
-            sage: cf.value()                                                            # optional - sage.combinat
+            sage: cf.value()                                                            # optional - sage.combinat sage.symbolic
             e - 1
 
             sage: w = words.FibonacciWord([2,5])                                        # optional - sage.combinat
@@ -2564,6 +2567,7 @@ def continued_fraction(x, value=None):
     ``sqrt(2)`` above), it is much more convenient to use number fields as
     follows since preperiods and periods are computed::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<sqrt5> = NumberField(x^2 - 5, embedding=2.23)                          # optional - sage.rings.number_field
         sage: my_golden_ratio = (1 + sqrt5)/2                                           # optional - sage.rings.number_field
         sage: cf = continued_fraction((1+sqrt5)/2); cf                                  # optional - sage.rings.number_field

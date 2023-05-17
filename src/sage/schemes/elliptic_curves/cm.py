@@ -35,7 +35,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.interfaces.magma import magma
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
@@ -120,6 +119,7 @@ def hilbert_class_polynomial(D, algorithm=None):
         return sage.libs.arb.arith.hilbert_class_polynomial(D)
 
     if algorithm == "magma":
+        from sage.interfaces.magma import magma
         magma.eval("R<x> := PolynomialRing(IntegerRing())")
         f = str(magma.eval("HilbertClassPolynomial(%s)" % D))
         return IntegerRing()['x'](f)
@@ -359,6 +359,7 @@ def cm_j_invariants(K, proof=None):
 
     Over number fields K of many higher degrees this also works::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 2)                                              # optional - sage.rings.number_field
         sage: cm_j_invariants(K)                                                        # optional - sage.rings.number_field
         [-262537412640768000, -147197952000, -884736000, -884736, -32768,
@@ -414,6 +415,7 @@ def cm_j_invariants_and_orders(K, proof=None):
 
     Over number fields K of many higher degrees this also works::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 2)                                              # optional - sage.rings.number_field
         sage: cm_j_invariants_and_orders(K)                                             # optional - sage.rings.number_field
         [(-163, 1, -262537412640768000), (-67, 1, -147197952000),
@@ -919,6 +921,7 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
         sage: K.<a> = QuadraticField(5)                                                    # optional - sage.rings.number_field
         sage: is_cm_j_invariant(282880*a + 632000)                                         # optional - sage.rings.number_field
         (True, (-20, 1))
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 2)                                                 # optional - sage.rings.number_field
         sage: is_cm_j_invariant(31710790944000*a^2 + 39953093016000*a + 50337742902000)    # optional - sage.rings.number_field
         (True, (-3, 6))

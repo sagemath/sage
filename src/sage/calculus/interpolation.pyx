@@ -55,39 +55,39 @@ cdef class Spline:
 
     This example is in the GSL documentation::
 
-        sage: v = [(i + sin(i)/2, i+cos(i^2)) for i in range(10)]
-        sage: s = spline(v)
-        sage: show(point(v) + plot(s,0,9, hue=.8))
+        sage: v = [(i + sin(i)/2, i+cos(i^2)) for i in range(10)]                       # optional - sage.symbolic
+        sage: s = spline(v)                                                             # optional - sage.symbolic
+        sage: show(point(v) + plot(s,0,9, hue=.8))                                      # optional - sage.symbolic
 
     We compute the area underneath the spline::
 
-        sage: s.definite_integral(0, 9)
+        sage: s.definite_integral(0, 9)                                                 # optional - sage.symbolic
         41.196516041067...
 
     The definite integral is additive::
 
-        sage: s.definite_integral(0, 4) + s.definite_integral(4, 9)
+        sage: s.definite_integral(0, 4) + s.definite_integral(4, 9)                     # optional - sage.symbolic
         41.196516041067...
 
     Switching the order of the bounds changes the sign of the integral::
 
-        sage: s.definite_integral(9, 0)
+        sage: s.definite_integral(9, 0)                                                 # optional - sage.symbolic
         -41.196516041067...
 
     We compute the first and second-order derivatives at a few points::
 
-        sage: s.derivative(5)
+        sage: s.derivative(5)                                                           # optional - sage.symbolic
         -0.16230085261803...
-        sage: s.derivative(6)
+        sage: s.derivative(6)                                                           # optional - sage.symbolic
         0.20997986285714...
-        sage: s.derivative(5, order=2)
+        sage: s.derivative(5, order=2)                                                  # optional - sage.symbolic
         -3.08747074561380...
-        sage: s.derivative(6, order=2)
+        sage: s.derivative(6, order=2)                                                  # optional - sage.symbolic
         2.61876848274853...
 
     Only the first two derivatives are supported::
 
-        sage: s.derivative(4, order=3)
+        sage: s.derivative(4, order=3)                                                  # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: Order of derivative must be 1 or 2.
@@ -118,7 +118,7 @@ cdef class Spline:
 
         Replace `0`-th point, which changes the spline::
 
-            sage: S[0]=(0,1); S
+            sage: S[0] = (0,1); S
             [(0, 1), (2, 3), (4, 5)]
             sage: S(1.5)
             2.5

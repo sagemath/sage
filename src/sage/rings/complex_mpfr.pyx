@@ -66,7 +66,6 @@ gmpy2.import_gmpy2()
 # Some objects that are not imported at startup in order to break
 # circular imports
 NumberFieldElement_quadratic = ()
-UniversalCyclotomicField = ()
 AA = None
 QQbar = None
 CDF = CLF = RLF = None
@@ -79,14 +78,12 @@ def late_import():
         sage: sage.rings.complex_mpfr.late_import()
     """
     global NumberFieldElement_quadratic
-    global UniversalCyclotomicField
     global AA, QQbar
     global CLF, RLF, CDF
     if CLF is None:
         try:
             from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
             from sage.rings.qqbar import AA, QQbar
-            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField  # needs GAP
         except ImportError:
             pass
         from .real_lazy import CLF, RLF
@@ -452,10 +449,13 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             1.00000000000000*I
             sage: CC.gen() + QQ[I].gen()
             2.00000000000000*I
+            sage: x = polygen(ZZ, 'x')
             sage: CC.gen() + QQ.extension(x^2 + 1, 'I', embedding=None).gen()
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for +: 'Complex Field with 53 bits of precision' and 'Number Field in I with defining polynomial x^2 + 1'
+            TypeError: unsupported operand parent(s) for +:
+            'Complex Field with 53 bits of precision' and
+            'Number Field in I with defining polynomial x^2 + 1'
 
         In the absence of arguments we return zero::
 
@@ -482,7 +482,8 @@ class ComplexField_class(sage.rings.abc.ComplexField):
 
         Check that :trac:`14989` is fixed::
 
-            sage: QQi = NumberField(x^2+1, 'i', embedding=CC(0,1))
+            sage: x = polygen(ZZ, 'x')
+            sage: QQi = NumberField(x^2 + 1, 'i', embedding=CC(0,1))
             sage: i = QQi.order(QQi.gen()).gen(1)
             sage: CC(i)
             1.00000000000000*I
@@ -581,7 +582,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         # parts of real elements) that get picked for conversion from UCF both
         # to CC and to other types of complex fields depend in which order the
         # coercions are discovered.
-        if isinstance(S, UniversalCyclotomicField):
+        if isinstance(S, sage.rings.abc.UniversalCyclotomicField):
             return self._generic_coerce_map(S)
         return self._coerce_map_via([CLF], S)
 
@@ -704,8 +705,8 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             sage: re, im = CC6.random_element(2^-20)
             sage: -2^-20 <= re <= 2^-20, -2^-20 <= im <= 2^-20
             (True, True)
-            sage: re, im = CC6.random_element(pi^20)
-            sage: bool(-pi^20 <= re <= pi^20), bool(-pi^20 <= im <= pi^20)
+            sage: re, im = CC6.random_element(pi^20)                                    # optional - sage.symbolic
+            sage: bool(-pi^20 <= re <= pi^20), bool(-pi^20 <= im <= pi^20)              # optional - sage.symbolic
             (True, True)
 
         Passes extra positional or keyword arguments through::
@@ -1869,7 +1870,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             2.23606797749979
             sage: a.__abs__()
             2.23606797749979
-            sage: float(sqrt(2^2 + 1^1))
+            sage: float(sqrt(2^2 + 1^1))                                                # optional - sage.symbolic
             2.23606797749979
 
         ::
@@ -2369,8 +2370,9 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
             sage: z = 1 + i; z.eta()
             0.742048775836565 + 0.198831370229911*I
-            sage: pi = CC(pi)        # otherwise we will get a symbolic result.
-            sage: exp(pi * i * z / 12) * prod([1-exp(2*pi*i*n*z) for n in range(1,10)])
+            sage: pi = CC(pi)        # otherwise we will get a symbolic result.         # optional - sage.symbolic
+            sage: exp(pi * i * z / 12) * prod([1 - exp(2*pi*i*n*z)                      # optional - sage.symbolic
+            ....:                              for n in range(1,10)])
             0.742048775836565 + 0.198831370229911*I
 
         The optional argument allows us to omit the fractional part::
@@ -2378,7 +2380,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: z = 1 + i
             sage: z.eta(omit_frac=True)
             0.998129069925959
-            sage: prod([1-exp(2*pi*i*n*z) for n in range(1,10)])
+            sage: prod([1 - exp(2*pi*i*n*z) for n in range(1,10)])                        # optional - sage.symbolic
             0.998129069925958 + 4.59099857829247e-19*I
 
         We illustrate what happens when `z` is not in the upper

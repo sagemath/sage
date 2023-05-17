@@ -16,6 +16,7 @@ The functions in this file will typically be called by using ``local_data``.
 
 EXAMPLES::
 
+    sage: x = polygen(ZZ, 'x')
     sage: K.<i> = NumberField(x^2 + 1)
     sage: E = EllipticCurve([(2+i)^2, (2+i)^7])
     sage: pp = K.fractional_ideal(2+i)
@@ -331,6 +332,7 @@ class EllipticCurveLocalData(SageObject):
 
         To demonstrate the behaviour of the parameter ``reduce``::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x + 1)
             sage: E = EllipticCurve(K, [0, 0, a, 0, 1])
             sage: E.local_data(K.ideal(a-1)).minimal_model()
@@ -515,6 +517,7 @@ class EllipticCurveLocalData(SageObject):
             sage: [(p,E.local_data(p).bad_reduction_type()) for p in prime_range(15)]
             [(2, -1), (3, None), (5, None), (7, 1), (11, None), (13, None)]
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
             sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
@@ -533,6 +536,7 @@ class EllipticCurveLocalData(SageObject):
             sage: [(p,E.local_data(p).has_good_reduction()) for p in prime_range(15)]
             [(2, False), (3, True), (5, True), (7, False), (11, True), (13, True)]
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
             sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
@@ -554,6 +558,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
             sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
@@ -580,6 +585,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
             sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
@@ -601,6 +607,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
             sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
@@ -624,6 +631,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
             sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
@@ -645,6 +653,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P17a, P17b = [P for P,e in K.factor(17)]
             sage: E = EllipticCurve([0, 0, 0, 0, 2*a+1])
@@ -703,23 +712,24 @@ class EllipticCurveLocalData(SageObject):
 
         The following example shows that the bug at :trac:`9324` is fixed::
 
-            sage: K.<a> = NumberField(x^2-x+6)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - x + 6)
             sage: E = EllipticCurve([0,0,0,-53160*a-43995,-5067640*a+19402006])
             sage: E.conductor() # indirect doctest
             Fractional ideal (18, 6*a)
 
         The following example shows that the bug at :trac:`9417` is fixed::
 
-            sage: K.<a> = NumberField(x^2+18*x+1)
+            sage: K.<a> = NumberField(x^2 + 18*x + 1)
             sage: E = EllipticCurve(K, [0, -36, 0, 320, 0])
             sage: E.tamagawa_number(K.ideal(2))
             4
 
         This is to show that the bug :trac:`11630` is fixed. (The computation of the class group would produce a warning)::
 
-            sage: K.<t> = NumberField(x^7-2*x+177)
+            sage: K.<t> = NumberField(x^7 - 2*x + 177)
             sage: E = EllipticCurve([0,1,0,t,t])
-            sage: P = K.ideal(2,t^3 + t + 1)
+            sage: P = K.ideal(2, t^3 + t + 1)
             sage: E.local_data(P).kodaira_symbol()
             II
         """
@@ -1119,26 +1129,27 @@ def check_prime(K, P):
 
     .. NOTE::
 
-        If `P` is not a prime and does not generate a prime, a ``TypeError``
+        If `P` is not a prime and does not generate a prime, a :class:`TypeError`
         is raised.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.ell_local_data import check_prime
-        sage: check_prime(QQ,3)
+        sage: check_prime(QQ, 3)
         3
-        sage: check_prime(QQ,QQ(3))
+        sage: check_prime(QQ, QQ(3))
         3
-        sage: check_prime(QQ,ZZ.ideal(31))
+        sage: check_prime(QQ, ZZ.ideal(31))
         31
-        sage: K.<a> = NumberField(x^2-5)
-        sage: check_prime(K,a)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 5)
+        sage: check_prime(K, a)
         Fractional ideal (a)
-        sage: check_prime(K,a+1)
+        sage: check_prime(K, a + 1)
         Fractional ideal (a + 1)
-        sage: [check_prime(K,P) for P in K.primes_above(31)]
+        sage: [check_prime(K, P) for P in K.primes_above(31)]
         [Fractional ideal (5/2*a + 1/2), Fractional ideal (5/2*a - 1/2)]
-        sage: L.<b> = NumberField(x^2+3)
+        sage: L.<b> = NumberField(x^2 + 3)
         sage: check_prime(K, L.ideal(5))
         Traceback (most recent call last):
         ...

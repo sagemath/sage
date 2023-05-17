@@ -124,7 +124,7 @@ class MatchingGame(SageObject):
 
     Matchings have a natural representations as bipartite graphs::
 
-        sage: plot(m)
+        sage: plot(m)                                                                   # optional - sage.plot
         Graphics object consisting of 13 graphics primitives
 
     The above plots the bipartite graph associated with the matching.
@@ -508,14 +508,14 @@ class MatchingGame(SageObject):
             sage: revr = {3: (0, 1),
             ....:         4: (1, 0)}
             sage: g = MatchingGame([suit, revr])
-            sage: plot(g)
+            sage: plot(g)                                                               # optional - sage.plot
             Traceback (most recent call last):
             ...
             ValueError: game has not been solved yet
 
             sage: g.solve()
             {0: 3, 1: 4}
-            sage: plot(g)
+            sage: plot(g)                                                               # optional - sage.plot
             Graphics object consisting of 7 graphics primitives
         """
         pl = self.bipartite_graph()

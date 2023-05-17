@@ -2812,7 +2812,7 @@ cdef class Polynomial(CommutativePolynomial):
             R1.<x> = ZZ[]
             R2.<y> = R1[]
             y^2 + (2*x + 2)*y + (x^2 + 2*x + 1)
-            sage: sage_input(RR(pi) * polygen(RR), verify=True)
+            sage: sage_input(RR(pi) * polygen(RR), verify=True)                         # optional - sage.symbolic
             # Verified
             R.<x> = RR[]
             3.1415926535897931*x
@@ -4099,7 +4099,7 @@ cdef class Polynomial(CommutativePolynomial):
         Notice that the unit factor is included when we multiply `F`
         back out::
 
-            sage: expand(F)                                                             # optional - sage.rings.finite_rings
+            sage: expand(F)                                                             # optional - sage.rings.finite_rings sage.symbolic
             2*x^10 + 2*x + 2*a
 
         A new ring.  In the example below, we set the special method
@@ -4126,7 +4126,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = RealField(100)[]
             sage: F = factor(x^2 - 3); F
             (x - 1.7320508075688772935274463415) * (x + 1.7320508075688772935274463415)
-            sage: expand(F)
+            sage: expand(F)                                                             # optional - sage.symbolic
             x^2 - 3.0000000000000000000000000000
             sage: factor(x^2 + 1)
             x^2 + 1.0000000000000000000000000000
@@ -4134,7 +4134,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = ComplexField(100)[]
             sage: F = factor(x^2 + 3); F
             (x - 1.7320508075688772935274463415*I) * (x + 1.7320508075688772935274463415*I)
-            sage: expand(F)
+            sage: expand(F)                                                             # optional - sage.symbolic
             x^2 + 3.0000000000000000000000000000
             sage: factor(x^2 + 1)
             (x - I) * (x + I)
@@ -4142,7 +4142,7 @@ cdef class Polynomial(CommutativePolynomial):
             I*x^2 + I
             sage: F = factor(f); F
             (1.0000000000000000000000000000*I) * (x - I) * (x + I)
-            sage: expand(F)
+            sage: expand(F)                                                             # optional - sage.symbolic
             I*x^2 + I
 
         Over a number field::
@@ -9876,7 +9876,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = x^6 + x^2 + -x^4 - 2*x^3
             sage: f.norm(2)
             2.64575131106459
-            sage: (sqrt(1^2 + 1^2 + (-1)^2 + (-2)^2)).n()
+            sage: (sqrt(1^2 + 1^2 + (-1)^2 + (-2)^2)).n()                               # optional - sage.symbolic
             2.64575131106459
 
         ::

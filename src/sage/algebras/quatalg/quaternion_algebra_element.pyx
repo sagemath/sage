@@ -515,6 +515,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2-x-1); Q.<i,j,k> = QuaternionAlgebra(K,-1,-1); z=2*i+3*j+4/3*k+5/8
             sage: a*z
             5/8*a + 2*a*i + 3*a*j + 4/3*a*k
@@ -529,6 +530,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2-x-1); Q.<i,j,k> = QuaternionAlgebra(K,-1,-1); z=2*i+3*j+4/3*k+5/8
             sage: z*a
             5/8*a + 2*a*i + 3*a*j + 4/3*a*k
@@ -1664,8 +1666,8 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         EXAMPLES::
 
-            sage: K.<a> = QQ[2^(1/5)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a*17/3)
-            sage: Q([a,-2/3,a^2-1/2,a*2])           # implicit doctest
+            sage: K.<a> = QQ[2^(1/5)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a*17/3)       # optional - sage.symbolic
+            sage: Q([a,-2/3,a^2-1/2,a*2])           # implicit doctest                  # optional - sage.symbolic
             a + (-2/3)*i + (a^2 - 1/2)*j + 2*a*k
         """
         fmpz_poly_init(self.x)
@@ -1694,8 +1696,8 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         """
         EXAMPLES::
 
-            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a+1)
-            sage: Q([a,-2/3,a^2-1/2,a*2])           # implicit doctest
+            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a+1)          # optional - sage.symbolic
+            sage: Q([a,-2/3,a^2-1/2,a*2])           # implicit doctest                  # optional - sage.symbolic
             a + (-2/3)*i + (a^2 - 1/2)*j + 2*a*k
         """
         self._parent = parent
@@ -1738,21 +1740,21 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         """
         EXAMPLES::
 
-            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a+1)
-            sage: Q([a,-2/3,a^2-1/2,a*2])
+            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a+1)          # optional - sage.symbolic
+            sage: Q([a,-2/3,a^2-1/2,a*2])                                               # optional - sage.symbolic
             a + (-2/3)*i + (a^2 - 1/2)*j + 2*a*k
-            sage: x = Q([a,-2/3,a^2-1/2,a*2])
-            sage: type(x)
+            sage: x = Q([a,-2/3,a^2-1/2,a*2])                                           # optional - sage.symbolic
+            sage: type(x)                                                               # optional - sage.symbolic
             <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
-            sage: x[0]
+            sage: x[0]                                                                  # optional - sage.symbolic
             a
-            sage: x[1]
+            sage: x[1]                                                                  # optional - sage.symbolic
             -2/3
-            sage: x[2]
+            sage: x[2]                                                                  # optional - sage.symbolic
             a^2 - 1/2
-            sage: x[3]
+            sage: x[3]                                                                  # optional - sage.symbolic
             2*a
-            sage: list(x)
+            sage: list(x)                                                               # optional - sage.symbolic
             [a, -2/3, a^2 - 1/2, 2*a]
         """
         # general number -- this code assumes that the number field is not quadratic!!
@@ -1779,13 +1781,13 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         """
         EXAMPLES::
 
-            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)
-            sage: z = (i+j+k+a)^2; z
+            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)          # optional - sage.symbolic
+            sage: z = (i+j+k+a)^2; z                                                    # optional - sage.symbolic
             a^2 + 4*a - 3 + 2*a*i + 2*a*j + 2*a*k
-            sage: f, t = z.__reduce__()
-            sage: f(*t)
+            sage: f, t = z.__reduce__()                                                 # optional - sage.symbolic
+            sage: f(*t)                                                                 # optional - sage.symbolic
             a^2 + 4*a - 3 + 2*a*i + 2*a*j + 2*a*k
-            sage: loads(dumps(z)) == z
+            sage: loads(dumps(z)) == z                                                  # optional - sage.symbolic
             True
         """
         return (unpickle_QuaternionAlgebraElement_number_field_v0,
@@ -1797,15 +1799,17 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         EXAMPLES::
 
-            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)
-            sage: z = a + i + (2/3)*a^3*j + (1+a)*k; w = a - i - (2/3)*a^3*j + (1/3+a)*k
-            sage: type(z)
+            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)          # optional - sage.symbolic
+            sage: z = a + i + (2/3)*a^3*j + (1+a)*k                                     # optional - sage.symbolic
+            sage: w = a - i - (2/3)*a^3*j + (1/3+a)*k                                   # optional - sage.symbolic
+            sage: type(z)                                                               # optional - sage.symbolic
             <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
-            sage: z._add_(w)
+            sage: z._add_(w)                                                            # optional - sage.symbolic
             2*a + (2*a + 4/3)*k
 
         Check that the fix in :trac:`17099` is correct::
 
+            sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x**3 + x - 1, 'a')
             sage: D.<i,j,k> = QuaternionAlgebra(K, -1, -3)
             sage: j/3 + (2*j)/3 == j
@@ -1868,11 +1872,12 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         EXAMPLES::
 
-            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)
-            sage: z = a + i + (2/3)*a^3*j + (1+a)*k; w = a - i - (2/3)*a^3*j + (1/3+a)*k
-            sage: type(z)
+            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)          # optional - sage.symbolic
+            sage: z = a + i + (2/3)*a^3*j + (1+a)*k                                     # optional - sage.symbolic
+            sage: w = a - i - (2/3)*a^3*j + (1/3+a)*k                                   # optional - sage.symbolic
+            sage: type(z)                                                               # optional - sage.symbolic
             <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
-            sage: z._sub_(w)
+            sage: z._sub_(w)                                                            # optional - sage.symbolic
             2*i + 8/3*j + 2/3*k
         """
         # Implementation Note: To obtain _sub_, we simply replace every occurrence of
@@ -1918,11 +1923,12 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         EXAMPLES::
 
-            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)
-            sage: z = a + i + (2/3)*a^3*j + (1+a)*k; w = a - i - (2/3)*a^3*j + (1/3+a)*k
-            sage: type(z)
+            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)          # optional - sage.symbolic
+            sage: z = a + i + (2/3)*a^3*j + (1+a)*k                                     # optional - sage.symbolic
+            sage: w = a - i - (2/3)*a^3*j + (1/3+a)*k                                   # optional - sage.symbolic
+            sage: type(z)                                                               # optional - sage.symbolic
             <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
-            sage: z._mul_(w)
+            sage: z._mul_(w)                                                            # optional - sage.symbolic
             5*a^2 - 7/9*a + 9 + (-8/3*a^2 - 16/9*a)*i + (-6*a - 4)*j + (2*a^2 + 4/3*a)*k
         """
         # We use the following formula for multiplication:
@@ -2066,11 +2072,12 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         TESTS::
 
-            sage: F = QQ[3^(1/3)]
-            sage: a = F.gen()
-            sage: K.<i,j,k> = QuaternionAlgebra(F, -10 + a, -7 - a)
-            sage: ((1/4 + 1/2 * i + a^3/7 * j + a/28 * k)*14*i)^3   # implicit doctest
-            34503/2*a^2 + 132195/2*a + 791399/4 + (203/8*a^2 - 10591*a + 169225/4)*i + (-84695/4*a^2 + 483413/8*a + 18591/4)*j + (-87/2*a^2 + 18156*a - 72525)*k
+            sage: F = QQ[3^(1/3)]                                                       # optional - sage.symbolic
+            sage: a = F.gen()                                                           # optional - sage.symbolic
+            sage: K.<i,j,k> = QuaternionAlgebra(F, -10 + a, -7 - a)                     # optional - sage.symbolic
+            sage: ((1/4 + 1/2 * i + a^3/7 * j + a/28 * k)*14*i)^3   # implicit doctest  # optional - sage.symbolic
+            34503/2*a^2 + 132195/2*a + 791399/4 + (203/8*a^2 - 10591*a + 169225/4)*i
+             + (-84695/4*a^2 + 483413/8*a + 18591/4)*j + (-87/2*a^2 + 18156*a - 72525)*k
         """
 
         # Note: this function changes the module-level global variables
@@ -2143,11 +2150,11 @@ def unpickle_QuaternionAlgebraElement_number_field_v0(*args):
     """
     EXAMPLES::
 
-        sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a); z = i + j
-        sage: f, t = z.__reduce__()
-        sage: sage.algebras.quatalg.quaternion_algebra_element.unpickle_QuaternionAlgebraElement_number_field_v0(*t)
+        sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a); z = i + j   # optional - sage.symbolic
+        sage: f, t = z.__reduce__()                                                     # optional - sage.symbolic
+        sage: sage.algebras.quatalg.quaternion_algebra_element.unpickle_QuaternionAlgebraElement_number_field_v0(*t)        # optional - sage.symbolic
         i + j
-        sage: sage.algebras.quatalg.quaternion_algebra_element.unpickle_QuaternionAlgebraElement_number_field_v0(*t) == z
+        sage: sage.algebras.quatalg.quaternion_algebra_element.unpickle_QuaternionAlgebraElement_number_field_v0(*t) == z   # optional - sage.symbolic
         True
     """
     return QuaternionAlgebraElement_number_field(*args, check=False)

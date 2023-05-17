@@ -250,10 +250,11 @@ Distribution of avalanche sizes::
     ....:     m = m.add_random()
     ....:     m, f = m.stabilize(True)
     ....:     a.append(sum(f.values()))
-    sage: p = list_plot([[log(i+1),log(a.count(i))] for i in [0..max(a)] if a.count(i)])
-    sage: p.axes_labels(['log(N)','log(D(N))'])
-    sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))
-    sage: show(p+t,axes_labels=['log(N)','log(D(N))']) # long time
+    sage: p = list_plot([[log(i + 1), log(a.count(i))]                                  # optional - sage.plot
+    ....:                for i in [0..max(a)] if a.count(i)])
+    sage: p.axes_labels(['log(N)', 'log(D(N))'])                                        # optional - sage.plot
+    sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))          # optional - sage.plot
+    sage: show(p + t, axes_labels=['log(N)', 'log(D(N))'])  # long time                 # optional - sage.plot
 
 Working with sandpile divisors::
 
@@ -767,7 +768,7 @@ class Sandpile(DiGraph):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -787,13 +788,13 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``kwds`` -- (optional) arguments passed to the show method for Graph or DiGraph
+        ``kwds`` -- (optional) arguments passed to the show method for :class:`Graph` or :class:`DiGraph`
 
         EXAMPLES::
 
             sage: S = Sandpile({0:[], 1:[0,3,4], 2:[0,3,5], 3:[2,5], 4:[1,1], 5:[2,4]})
-            sage: S.show()
-            sage: S.show(graph_border=True, edge_labels=True)
+            sage: S.show()                                                              # optional - sage.plot
+            sage: S.show(graph_border=True, edge_labels=True)                           # optional - sage.plot
         """
 
         if self.is_undirected():
@@ -807,12 +808,12 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``kwds`` -- (optional) arguments passed to the show method for Graph or DiGraph
+        ``kwds`` -- (optional) arguments passed to the show method for :class:`Graph` or :class:`DiGraph`
 
         EXAMPLES::
 
             sage: S = sandpiles.House()
-            sage: S.show3d() # long time
+            sage: S.show3d()  # long time                                               # optional - sage.plot
         """
 
         if self.is_undirected():
@@ -3757,10 +3758,11 @@ class SandpileConfig(dict):
             ....:     m = m.add_random()
             ....:     m, f = m.stabilize(True)
             ....:     a.append(sum(f.values()))
-            sage: p = list_plot([[log(i+1),log(a.count(i))] for i in [0..max(a)] if a.count(i)])
-            sage: p.axes_labels(['log(N)','log(D(N))'])
-            sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))
-            sage: show(p+t,axes_labels=['log(N)','log(D(N))']) # long time
+            sage: p = list_plot([[log(i + 1), log(a.count(i))]                          # optional - sage.plot
+            ....:                for i in [0..max(a)] if a.count(i)])
+            sage: p.axes_labels(['log(N)', 'log(D(N))'])                                # optional - sage.plot
+            sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))  # optional - sage.plot
+            sage: show(p + t, axes_labels=['log(N)', 'log(D(N))'])  # long time         # optional - sage.plot
 
         .. NOTE::
 
@@ -4139,9 +4141,9 @@ class SandpileConfig(dict):
 
             sage: S = sandpiles.Diamond()
             sage: c = S.identity()
-            sage: c.show()
-            sage: c.show(directed=False)
-            sage: c.show(sink=False,colors=False,heights=True)
+            sage: c.show()                                                              # optional - sage.plot
+            sage: c.show(directed=False)                                                # optional - sage.plot
+            sage: c.show(sink=False, colors=False, heights=True)                        # optional - sage.plot
         """
         if directed:
             T = DiGraph(self.sandpile())
@@ -6034,13 +6036,13 @@ class SandpileDivisor(dict):
 
         - ``directed`` -- (optional) whether to draw directed edges
 
-        - ``kwds`` -- (optional) arguments passed to the show method for Graph
+        - ``kwds`` -- (optional) arguments passed to the :meth:`~sage.graphs.graph.Graph.show`
 
         EXAMPLES::
 
             sage: S = sandpiles.Diamond()
-            sage: D = SandpileDivisor(S,[1,-2,0,2])
-            sage: D.show(graph_border=True,vertex_size=700,directed=False)
+            sage: D = SandpileDivisor(S, [1,-2,0,2])
+            sage: D.show(graph_border=True, vertex_size=700, directed=False)            # optional - sage.plot
         """
         if directed:
             T = DiGraph(self.sandpile())
@@ -6072,7 +6074,7 @@ def sandlib(selector=None):
 
     INPUT:
 
-    ``selector`` -- (optional) identifier or None
+    ``selector`` -- (optional) identifier or ``None``
 
     OUTPUT:
 
@@ -6356,7 +6358,8 @@ def firing_graph(S, eff):
         sage: S = sandpiles.Cycle(6)
         sage: D = SandpileDivisor(S, [1,1,1,1,2,0])
         sage: eff = D.effective_div()
-        sage: firing_graph(S,eff).show3d(edge_size=.005,vertex_size=0.01) # long time
+        sage: firing_graph(S, eff).show3d(edge_size=.005,               # long time     # optional - sage.plot
+        ....:                             vertex_size=0.01)
     """
     g = DiGraph()
     g.add_vertices(range(len(eff)))
@@ -6392,7 +6395,8 @@ def parallel_firing_graph(S, eff):
         sage: S = sandpiles.Cycle(6)
         sage: D = SandpileDivisor(S, [1,1,1,1,2,0])
         sage: eff = D.effective_div()
-        sage: parallel_firing_graph(S,eff).show3d(edge_size=.005,vertex_size=0.01) # long time
+        sage: parallel_firing_graph(S, eff).show3d(edge_size=.005,      # long time       # optional - sage.plot
+        ....:                                      vertex_size=0.01)
     """
     g = DiGraph()
     g.add_vertices(range(len(eff)))

@@ -12,7 +12,6 @@ except ImportError:
 
 from .singular import singular, singular_version, Singular
 
-from .magma import magma, Magma
 from .polymake import polymake
 
 from sage.misc.lazy_import import lazy_import
@@ -31,6 +30,7 @@ lazy_import('sage.interfaces.kash', ['kash', 'kash_version', 'Kash'])
 lazy_import('sage.interfaces.lie', ['lie', 'LiE'])
 lazy_import('sage.interfaces.lisp', ['lisp', 'Lisp'])
 lazy_import('sage.interfaces.macaulay2', ['macaulay2', 'Macaulay2'])
+lazy_import('sage.interfaces.magma', ['magma', 'Magma'])
 lazy_import('sage.interfaces.magma_free', 'magma_free')
 lazy_import('sage.interfaces.maple', ['maple', 'Maple'])
 lazy_import('sage.interfaces.mathematica', ['mathematica', 'Mathematica'])

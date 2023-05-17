@@ -143,7 +143,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         ...
         ValueError: polys (=[x - 1, x*y + x]) must be homogeneous
 
-        sage: H([exp(x), exp(y)])
+        sage: H([exp(x), exp(y)])                                                       # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: polys (=[e^x, e^y]) must be elements of
@@ -1693,8 +1693,8 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: R.<x> = PolynomialRing(QQ)
             sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                               # optional - sage.rings.number_field
             sage: H = End(P)                                                                        # optional - sage.rings.number_field
-            sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))*y^2, y^2])                            # optional - sage.rings.number_field
-            sage: f._number_field_from_algebraics()                                                 # optional - sage.rings.number_field
+            sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))*y^2, y^2])                            # optional - sage.rings.number_field sage.symbolic
+            sage: f._number_field_from_algebraics()                                                 # optional - sage.rings.number_field sage.symbolic
             Scheme endomorphism of Projective Space of dimension 1 over Number
              Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17
              with a = 1.442249570307409? + 1.414213562373095?*I
@@ -1708,8 +1708,8 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y> = ProjectiveSpace(QQbar, 1)                                               # optional - sage.rings.number_field
             sage: P2.<u,v,w> = ProjectiveSpace(QQbar, 2)                                            # optional - sage.rings.number_field
             sage: H = Hom(P, P2)                                                                    # optional - sage.rings.number_field
-            sage: f = H([x^2 + QQbar(I)*x*y + 3*y^2, y^2, QQbar(sqrt(5))*x*y])                      # optional - sage.rings.number_field
-            sage: f._number_field_from_algebraics()                                                 # optional - sage.rings.number_field
+            sage: f = H([x^2 + QQbar(I)*x*y + 3*y^2, y^2, QQbar(sqrt(5))*x*y])                      # optional - sage.rings.number_field sage.symbolic
+            sage: f._number_field_from_algebraics()                                                 # optional - sage.rings.number_field sage.symbolic
             Scheme morphism:
               From: Projective Space of dimension 1 over Number Field in a
                     with defining polynomial y^4 + 3*y^2 + 1

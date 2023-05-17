@@ -15,32 +15,32 @@ This module provides a function, :func:`fast_callable`, to
 transform such expressions into a form where they can be evaluated
 quickly::
 
-    sage: f = sin(x) + 3*x^2
-    sage: ff = fast_callable(f, vars=[x])
-    sage: ff(3.5)
+    sage: f = sin(x) + 3*x^2                                                            # optional - sage.symbolic
+    sage: ff = fast_callable(f, vars=[x])                                               # optional - sage.symbolic
+    sage: ff(3.5)                                                                       # optional - sage.symbolic
     36.3992167723104
-    sage: ff(RIF(3.5))
+    sage: ff(RIF(3.5))                                                                  # optional - sage.symbolic
     36.39921677231038?
 
 By default, :func:`fast_callable` only removes some interpretive
 overhead from the evaluation, but all of the individual arithmetic
 operations are done using standard Sage arithmetic.  This is still a
-huge win over sage.calculus, which evidently has a lot of overhead.
+huge win over :mod:`sage.calculus`, which evidently has a lot of overhead.
 Compare the cost of evaluating Wilkinson's polynomial (in unexpanded
 form) at x=30::
 
-    sage: wilk = prod((x-i) for i in [1 .. 20]); wilk
+    sage: wilk = prod((x-i) for i in [1 .. 20]); wilk                                   # optional - sage.symbolic
     (x - 1)*(x - 2)*(x - 3)*(x - 4)*(x - 5)*(x - 6)*(x - 7)*(x - 8)*(x - 9)*(x - 10)*(x - 11)*(x - 12)*(x - 13)*(x - 14)*(x - 15)*(x - 16)*(x - 17)*(x - 18)*(x - 19)*(x - 20)
-    sage: timeit('wilk.subs(x=30)') # random, long time
+    sage: timeit('wilk.subs(x=30)') # random, long time                                 # optional - sage.symbolic
     625 loops, best of 3: 1.43 ms per loop
-    sage: fc_wilk = fast_callable(wilk, vars=[x])
-    sage: timeit('fc_wilk(30)') # random, long time
+    sage: fc_wilk = fast_callable(wilk, vars=[x])                                       # optional - sage.symbolic
+    sage: timeit('fc_wilk(30)') # random, long time                                     # optional - sage.symbolic
     625 loops, best of 3: 9.72 us per loop
 
 You can specify a particular domain for the evaluation using
 ``domain=``::
 
-    sage: fc_wilk_zz = fast_callable(wilk, vars=[x], domain=ZZ)
+    sage: fc_wilk_zz = fast_callable(wilk, vars=[x], domain=ZZ)                         # optional - sage.symbolic
 
 The meaning of ``domain=D`` is that each intermediate and final result
 is converted to type ``D``.  For instance, the previous example of
@@ -58,7 +58,7 @@ the correct parent before we call ``D``.
 We don't yet have a special interpreter with domain ``ZZ``, so we can see
 how that compares to the generic fc_wilk example above::
 
-    sage: timeit('fc_wilk_zz(30)') # random, long time
+    sage: timeit('fc_wilk_zz(30)')  # random, long time                                 # optional - sage.symbolic
     625 loops, best of 3: 15.4 us per loop
 
 However, for other types, using ``domain=D`` will get a large speedup,
@@ -68,8 +68,8 @@ operation will be floating-point, we can just execute the
 floating-point operations directly and skip all the Python object
 creations that you would get from actually using ``RDF`` objects::
 
-    sage: fc_wilk_rdf = fast_callable(wilk, vars=[x], domain=RDF)
-    sage: timeit('fc_wilk_rdf(30.0)') # random, long time
+    sage: fc_wilk_rdf = fast_callable(wilk, vars=[x], domain=RDF)                       # optional - sage.symbolic
+    sage: timeit('fc_wilk_rdf(30.0)') # random, long time                               # optional - sage.symbolic
     625 loops, best of 3: 7 us per loop
 
 The domain does not need to be a Sage type; for instance, ``domain=float``
@@ -78,26 +78,26 @@ and ``domain=RDF``; the only difference is that when ``domain=RDF`` is used,
 the return value is an ``RDF`` element, and when ``domain=float`` is used,
 the return value is a Python :class:`float`.) ::
 
-    sage: fc_wilk_float = fast_callable(wilk, vars=[x], domain=float)
-    sage: timeit('fc_wilk_float(30.0)') # random, long time
+    sage: fc_wilk_float = fast_callable(wilk, vars=[x], domain=float)                   # optional - sage.symbolic
+    sage: timeit('fc_wilk_float(30.0)') # random, long time                             # optional - sage.symbolic
     625 loops, best of 3: 5.04 us per loop
 
 We also have support for ``RR``::
 
-    sage: fc_wilk_rr = fast_callable(wilk, vars=[x], domain=RR)
-    sage: timeit('fc_wilk_rr(30.0)') # random, long time
+    sage: fc_wilk_rr = fast_callable(wilk, vars=[x], domain=RR)                         # optional - sage.symbolic
+    sage: timeit('fc_wilk_rr(30.0)') # random, long time                                # optional - sage.symbolic
     625 loops, best of 3: 13 us per loop
 
 For ``CC``::
 
-    sage: fc_wilk_cc = fast_callable(wilk, vars=[x], domain=CC)
-    sage: timeit('fc_wilk_cc(30.0)') # random, long time
+    sage: fc_wilk_cc = fast_callable(wilk, vars=[x], domain=CC)                         # optional - sage.symbolic
+    sage: timeit('fc_wilk_cc(30.0)') # random, long time                                # optional - sage.symbolic
     625 loops, best of 3: 23 us per loop
 
 And support for ``CDF``::
 
-    sage: fc_wilk_cdf = fast_callable(wilk, vars=[x], domain=CDF)
-    sage: timeit('fc_wilk_cdf(30.0)') # random, long time
+    sage: fc_wilk_cdf = fast_callable(wilk, vars=[x], domain=CDF)                       # optional - sage.symbolic
+    sage: timeit('fc_wilk_cdf(30.0)') # random, long time                               # optional - sage.symbolic
     625 loops, best of 3: 10.2 us per loop
 
 Currently, :func:`fast_callable` can accept two kinds of objects:
@@ -121,17 +121,17 @@ ordering (you can include extra variable names here, too). ::
 For symbolic expressions, you need to specify the variable names, so
 that :func:`fast_callable` knows what order to use. ::
 
-    sage: var('y,z,x')
+    sage: var('y,z,x')                                                                  # optional - sage.symbolic
     (y, z, x)
-    sage: f = 10*y + 100*z + x
-    sage: ff = fast_callable(f, vars=(x,y,z))
-    sage: ff(1,2,3)
+    sage: f = 10*y + 100*z + x                                                          # optional - sage.symbolic
+    sage: ff = fast_callable(f, vars=(x,y,z))                                           # optional - sage.symbolic
+    sage: ff(1,2,3)                                                                     # optional - sage.symbolic
     321
 
 You can also specify extra variable names::
 
-    sage: ff = fast_callable(f, vars=('x','w','z','y'))
-    sage: ff(1,2,3,4)
+    sage: ff = fast_callable(f, vars=('x','w','z','y'))                                 # optional - sage.symbolic
+    sage: ff(1,2,3,4)                                                                   # optional - sage.symbolic
     341
 
 This should be enough for normal use of :func:`fast_callable`; let's
@@ -176,8 +176,8 @@ The :meth:`call` method takes a sage/Python function and zero or more
 expression trees, and returns an expression tree representing
 the function call. ::
 
-    sage: v3 = etb.call(sin, v1+v2)
-    sage: v3
+    sage: v3 = etb.call(sin, v1+v2)                                                     # optional - sage.symbolic
+    sage: v3                                                                            # optional - sage.symbolic
     sin(add(add(mul(add(v_0, v_1), add(v_1, v_1)), floordiv(v_1, v_1)), add(mul(3.14159000000000, v_0), mul(1729, v_1))))
 
 Many sage/Python built-in functions are specially handled; for instance,
@@ -200,15 +200,15 @@ expression tree built up using the methods described above.
 
 EXAMPLES::
 
-    sage: var('x')
+    sage: var('x')                                                                      # optional - sage.symbolic
     x
-    sage: f = fast_callable(sqrt(x^7+1), vars=[x], domain=float)
+    sage: f = fast_callable(sqrt(x^7+1), vars=[x], domain=float)                        # optional - sage.symbolic
 
 ::
 
-    sage: f(1)
+    sage: f(1)                                                                          # optional - sage.symbolic
     1.4142135623730951
-    sage: f.op_list()
+    sage: f.op_list()                                                                   # optional - sage.symbolic
     [('load_arg', 0), ('ipow', 7), ('load_const', 1.0), 'add', 'sqrt', 'return']
 
 To interpret that last line, we load argument 0 ('x' in this case) onto
@@ -221,9 +221,9 @@ Here we take sin of the first argument and add it to f::
     sage: from sage.ext.fast_callable import ExpressionTreeBuilder
     sage: etb = ExpressionTreeBuilder('x')
     sage: x = etb.var('x')
-    sage: f = etb.call(sqrt, x^7 + 1)
-    sage: g = etb.call(sin, x)
-    sage: fast_callable(f+g).op_list()
+    sage: f = etb.call(sqrt, x^7 + 1)                                                   # optional - sage.symbolic
+    sage: g = etb.call(sin, x)                                                          # optional - sage.symbolic
+    sage: fast_callable(f+g).op_list()                                                  # optional - sage.symbolic
     [('load_arg', 0), ('ipow', 7), ('load_const', 1), 'add', ('py_call', <function sqrt at ...>, 1), ('load_arg', 0), ('py_call', sin, 1), 'add', 'return']
 
 
@@ -334,13 +334,13 @@ def fast_callable(x, domain=None, vars=None,
 
     EXAMPLES::
 
-        sage: var('x')
+        sage: var('x')                                                                  # optional - sage.symbolic
         x
-        sage: expr = sin(x) + 3*x^2
-        sage: f = fast_callable(expr, vars=[x])
-        sage: f(2)
+        sage: expr = sin(x) + 3*x^2                                                     # optional - sage.symbolic
+        sage: f = fast_callable(expr, vars=[x])                                         # optional - sage.symbolic
+        sage: f(2)                                                                      # optional - sage.symbolic
         sin(2) + 12
-        sage: f(2.0)
+        sage: f(2.0)                                                                    # optional - sage.symbolic
         12.9092974268257
 
     We have special fast interpreters for ``domain=float`` and ``domain=RDF``.
@@ -349,19 +349,19 @@ def fast_callable(x, domain=None, vars=None,
     the ``RDF`` interpreter; elements of ``RDF`` just don't display all
     their digits. We have special fast interpreter for ``domain=CDF``::
 
-        sage: f_float = fast_callable(expr, vars=[x], domain=float)
-        sage: f_float(2)
+        sage: f_float = fast_callable(expr, vars=[x], domain=float)                     # optional - sage.symbolic
+        sage: f_float(2)                                                                # optional - sage.symbolic
         12.909297426825681
-        sage: f_rdf = fast_callable(expr, vars=[x], domain=RDF)
-        sage: f_rdf(2)
+        sage: f_rdf = fast_callable(expr, vars=[x], domain=RDF)                         # optional - sage.symbolic
+        sage: f_rdf(2)                                                                  # optional - sage.symbolic
         12.909297426825681
-        sage: f_cdf = fast_callable(expr, vars=[x], domain=CDF)
-        sage: f_cdf(2)
+        sage: f_cdf = fast_callable(expr, vars=[x], domain=CDF)                         # optional - sage.symbolic
+        sage: f_cdf(2)                                                                  # optional - sage.symbolic
         12.909297426825681
-        sage: f_cdf(2+I)
+        sage: f_cdf(2+I)                                                                # optional - sage.symbolic
         10.40311925062204 + 11.510943740958707*I
-        sage: f = fast_callable(expr, vars=('z','x','y'))
-        sage: f(1, 2, 3)
+        sage: f = fast_callable(expr, vars=('z','x','y'))                               # optional - sage.symbolic
+        sage: f(1, 2, 3)                                                                # optional - sage.symbolic
         sin(2) + 12
         sage: K.<x> = QQ[]
         sage: p = -1/4*x^6 + 1/2*x^5 - x^4 - 12*x^3 + 1/2*x^2 - 1/95*x - 1/2
@@ -375,11 +375,11 @@ def fast_callable(x, domain=None, vars=None,
         sage: fp = fast_callable(p, domain=RDF)
         sage: fp.op_list()
         [('load_const', 0.0), ('load_const', 1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 1), ('ipow', 2), 'mul', 'mul', 'add', ('load_const', 0.3333333333333333), ('load_arg', 1), ('ipow', 2), 'mul', 'add', ('load_const', -1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', ('load_const', -1.0), ('load_arg', 1), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', 'return']
-        sage: fp(e, pi, sqrt(2))   # abs tol 3e-14
+        sage: fp(e, pi, sqrt(2))   # abs tol 3e-14                                      # optional - sage.symbolic
         21.831120464939584
-        sage: symbolic_result = p(e, pi, sqrt(2)); symbolic_result
+        sage: symbolic_result = p(e, pi, sqrt(2)); symbolic_result                      # optional - sage.symbolic
         pi^2*e + 1/3*pi^2 - sqrt(2)*pi - sqrt(2)*e
-        sage: n(symbolic_result)
+        sage: n(symbolic_result)                                                        # optional - sage.symbolic
         21.8311204649396
 
     ::
@@ -388,34 +388,36 @@ def fast_callable(x, domain=None, vars=None,
         sage: etb = ExpressionTreeBuilder(vars=('x','y'), domain=float)
         sage: x = etb.var('x')
         sage: y = etb.var('y')
-        sage: expr = etb.call(sin, x^2 + y); expr
+        sage: expr = etb.call(sin, x^2 + y); expr                                       # optional - sage.symbolic
         sin(add(ipow(v_0, 2), v_1))
-        sage: fc = fast_callable(expr, domain=float)
-        sage: fc(5, 7)
+        sage: fc = fast_callable(expr, domain=float)                                    # optional - sage.symbolic
+        sage: fc(5, 7)                                                                  # optional - sage.symbolic
         0.5514266812416906
 
     Check that :func:`fast_callable` also works for symbolic functions with evaluation
     functions::
 
-        sage: def evalf_func(self, x, y, parent): return parent(x*y) if parent is not None else x*y
-        sage: x,y = var('x,y')
-        sage: f = function('f', evalf_func=evalf_func)
-        sage: fc = fast_callable(f(x, y), vars=[x, y])
-        sage: fc(3, 4)
+        sage: def evalf_func(self, x, y, parent):
+        ....:     return parent(x*y) if parent is not None else x*y
+        sage: x,y = var('x,y')                                                          # optional - sage.symbolic
+        sage: f = function('f', evalf_func=evalf_func)                                  # optional - sage.symbolic
+        sage: fc = fast_callable(f(x, y), vars=[x, y])                                  # optional - sage.symbolic
+        sage: fc(3, 4)                                                                  # optional - sage.symbolic
         f(3, 4)
 
     And also when there are complex values involved::
 
-        sage: def evalf_func(self, x, y, parent): return parent(I*x*y) if parent is not None else I*x*y
-        sage: g = function('g', evalf_func=evalf_func)
-        sage: fc = fast_callable(g(x, y), vars=[x, y])
-        sage: fc(3, 4)
+        sage: def evalf_func(self, x, y, parent):
+        ....:     return parent(I*x*y) if parent is not None else I*x*y
+        sage: g = function('g', evalf_func=evalf_func)                                  # optional - sage.symbolic
+        sage: fc = fast_callable(g(x, y), vars=[x, y])                                  # optional - sage.symbolic
+        sage: fc(3, 4)                                                                  # optional - sage.symbolic
         g(3, 4)
-        sage: fc2 = fast_callable(g(x, y), domain=complex, vars=[x, y])
-        sage: fc2(3, 4)
+        sage: fc2 = fast_callable(g(x, y), domain=complex, vars=[x, y])                 # optional - sage.symbolic
+        sage: fc2(3, 4)                                                                 # optional - sage.symbolic
         12j
-        sage: fc3 = fast_callable(g(x, y), domain=float, vars=[x, y])
-        sage: fc3(3, 4)
+        sage: fc3 = fast_callable(g(x, y), domain=float, vars=[x, y])                   # optional - sage.symbolic
+        sage: fc3(3, 4)                                                                 # optional - sage.symbolic
         Traceback (most recent call last):
             ...
         TypeError: unable to simplify to float approximation
@@ -520,7 +522,7 @@ def function_name(fn):
         sage: from sage.ext.fast_callable import function_name
         sage: function_name(operator.pow)
         'pow'
-        sage: function_name(cos)
+        sage: function_name(cos)                                                        # optional - sage.symbolic
         'cos'
         sage: function_name(factorial)
         '{factorial}'
@@ -630,9 +632,9 @@ cdef class ExpressionTreeBuilder:
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
             sage: etb = ExpressionTreeBuilder('x')
-            sage: var('x')
+            sage: var('x')                                                              # optional - sage.symbolic
             x
-            sage: etb._clean_var(x)
+            sage: etb._clean_var(x)                                                     # optional - sage.symbolic
             'x'
             sage: x = polygen(RR); x
             x
@@ -655,10 +657,10 @@ cdef class ExpressionTreeBuilder:
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
             sage: etb = ExpressionTreeBuilder('x')
-            sage: etb.constant(pi)
+            sage: etb.constant(pi)                                                      # optional - sage.symbolic
             pi
             sage: etb = ExpressionTreeBuilder('x', domain=RealField(200))
-            sage: etb.constant(pi)
+            sage: etb.constant(pi)                                                      # optional - sage.symbolic
             3.1415926535897932384626433832795028841971693993751058209749
         """
         if self._domain is not None:
@@ -673,17 +675,17 @@ cdef class ExpressionTreeBuilder:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: var('a,b,some_really_long_name')
+            sage: var('a,b,some_really_long_name')                                      # optional - sage.symbolic
             (a, b, some_really_long_name)
             sage: x = polygen(QQ)
-            sage: etb = ExpressionTreeBuilder(vars=('a','b',some_really_long_name, x))
-            sage: etb.var(some_really_long_name)
+            sage: etb = ExpressionTreeBuilder(vars=('a','b',some_really_long_name, x))  # optional - sage.symbolic
+            sage: etb.var(some_really_long_name)                                        # optional - sage.symbolic
             v_2
-            sage: etb.var('some_really_long_name')
+            sage: etb.var('some_really_long_name')                                      # optional - sage.symbolic
             v_2
-            sage: etb.var(x)
+            sage: etb.var(x)                                                            # optional - sage.symbolic
             v_3
-            sage: etb.var('y')
+            sage: etb.var('y')                                                          # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: Variable 'y' not found...
@@ -730,16 +732,16 @@ cdef class ExpressionTreeBuilder:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: etb.call(cos, x)
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: etb.call(cos, x)                                                      # optional - sage.symbolic
             cos(v_0)
-            sage: etb.call(sin, 1)
+            sage: etb.call(sin, 1)                                                      # optional - sage.symbolic
             sin(1)
-            sage: etb.call(sin, etb(1))
+            sage: etb.call(sin, etb(1))                                                 # optional - sage.symbolic
             sin(1)
-            sage: etb.call(factorial, x+57)
+            sage: etb.call(factorial, x+57)                                             # optional - sage.symbolic
             {factorial}(add(v_0, 57))
-            sage: etb.call(operator.pow, x, 543)
+            sage: etb.call(operator.pow, x, 543)                                        # optional - sage.symbolic
             ipow(v_0, 543)
         """
         if fn is operator.pow:
@@ -758,8 +760,8 @@ cdef class ExpressionTreeBuilder:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: etb.choice(etb.call(operator.eq, x, 0), 0, 1/x)
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: etb.choice(etb.call(operator.eq, x, 0), 0, 1/x)                       # optional - sage.symbolic
             (0 if {eq}(v_0, 0) else div(1, v_0))
         """
         return ExpressionChoice(self,
@@ -798,19 +800,19 @@ cdef class Expression:
     EXAMPLES::
 
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-        sage: etb = ExpressionTreeBuilder(vars=(x,))
-        sage: x = etb.var(x)
-        sage: etb(x)
+        sage: etb = ExpressionTreeBuilder(vars=(x,))                                    # optional - sage.symbolic
+        sage: x = etb.var(x)                                                            # optional - sage.symbolic
+        sage: etb(x)                                                                    # optional - sage.symbolic
         v_0
-        sage: etb(3)
+        sage: etb(3)                                                                    # optional - sage.symbolic
         3
-        sage: etb.call(sin, x)
+        sage: etb.call(sin, x)                                                          # optional - sage.symbolic
         sin(v_0)
-        sage: (x+1)/(x-1)
+        sage: (x+1)/(x-1)                                                               # optional - sage.symbolic
         div(add(v_0, 1), sub(v_0, 1))
-        sage: x//5
+        sage: x//5                                                                      # optional - sage.symbolic
         floordiv(v_0, 5)
-        sage: -abs(~x)
+        sage: -abs(~x)                                                                  # optional - sage.symbolic
         neg(abs(inv(v_0)))
     """
 
@@ -823,10 +825,10 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: v = etb(3); v # indirect doctest
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: v = etb(3); v # indirect doctest                                      # optional - sage.symbolic
             3
-            sage: v._get_etb() is etb
+            sage: v._get_etb() is etb                                                   # optional - sage.symbolic
             True
         """
         self._etb = etb
@@ -838,10 +840,10 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: v = etb(3); v
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: v = etb(3); v                                                         # optional - sage.symbolic
             3
-            sage: v._get_etb() is etb
+            sage: v._get_etb() is etb                                                   # optional - sage.symbolic
             True
         """
         return self._etb
@@ -853,17 +855,17 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: x+x
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: x+x                                                                   # optional - sage.symbolic
             add(v_0, v_0)
-            sage: x+1
+            sage: x+1                                                                   # optional - sage.symbolic
             add(v_0, 1)
-            sage: 1+x
+            sage: 1+x                                                                   # optional - sage.symbolic
             add(1, v_0)
-            sage: x.__add__(1)
+            sage: x.__add__(1)                                                          # optional - sage.symbolic
             add(v_0, 1)
-            sage: x.__radd__(1)
+            sage: x.__radd__(1)                                                         # optional - sage.symbolic
             add(1, v_0)
         """
         return _expression_binop_helper(s, o, op_add)
@@ -875,17 +877,17 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: x-x
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: x-x                                                                   # optional - sage.symbolic
             sub(v_0, v_0)
-            sage: x-1
+            sage: x-1                                                                   # optional - sage.symbolic
             sub(v_0, 1)
-            sage: 1-x
+            sage: 1-x                                                                   # optional - sage.symbolic
             sub(1, v_0)
-            sage: x.__sub__(1)
+            sage: x.__sub__(1)                                                          # optional - sage.symbolic
             sub(v_0, 1)
-            sage: x.__rsub__(1)
+            sage: x.__rsub__(1)                                                         # optional - sage.symbolic
             sub(1, v_0)
         """
         return _expression_binop_helper(s, o, op_sub)
@@ -897,17 +899,17 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: x*x
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: x*x                                                                   # optional - sage.symbolic
             mul(v_0, v_0)
-            sage: x*1
+            sage: x*1                                                                   # optional - sage.symbolic
             mul(v_0, 1)
-            sage: 1*x
+            sage: 1*x                                                                   # optional - sage.symbolic
             mul(1, v_0)
-            sage: x.__mul__(1)
+            sage: x.__mul__(1)                                                          # optional - sage.symbolic
             mul(v_0, 1)
-            sage: x.__rmul__(1)
+            sage: x.__rmul__(1)                                                         # optional - sage.symbolic
             mul(1, v_0)
         """
         return _expression_binop_helper(s, o, op_mul)
@@ -919,17 +921,17 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: x/x
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: x/x                                                                   # optional - sage.symbolic
             div(v_0, v_0)
-            sage: x/1
+            sage: x/1                                                                   # optional - sage.symbolic
             div(v_0, 1)
-            sage: 1/x
+            sage: 1/x                                                                   # optional - sage.symbolic
             div(1, v_0)
-            sage: x.__truediv__(1)
+            sage: x.__truediv__(1)                                                      # optional - sage.symbolic
             div(v_0, 1)
-            sage: x.__rtruediv__(1)
+            sage: x.__rtruediv__(1)                                                     # optional - sage.symbolic
             div(1, v_0)
         """
         return _expression_binop_helper(s, o, op_truediv)
@@ -941,17 +943,17 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: x//x
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: x//x                                                                  # optional - sage.symbolic
             floordiv(v_0, v_0)
-            sage: x//1
+            sage: x//1                                                                  # optional - sage.symbolic
             floordiv(v_0, 1)
-            sage: 1//x
+            sage: 1//x                                                                  # optional - sage.symbolic
             floordiv(1, v_0)
-            sage: x.__floordiv__(1)
+            sage: x.__floordiv__(1)                                                     # optional - sage.symbolic
             floordiv(v_0, 1)
-            sage: x.__rfloordiv__(1)
+            sage: x.__rfloordiv__(1)                                                    # optional - sage.symbolic
             floordiv(1, v_0)
         """
         return _expression_binop_helper(s, o, op_floordiv)
@@ -966,17 +968,17 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: x^x
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: x^x                                                                   # optional - sage.symbolic
             pow(v_0, v_0)
-            sage: x^1
+            sage: x^1                                                                   # optional - sage.symbolic
             ipow(v_0, 1)
-            sage: x.__pow__(1)
+            sage: x.__pow__(1)                                                          # optional - sage.symbolic
             ipow(v_0, 1)
-            sage: x.__pow__(1.0)
+            sage: x.__pow__(1.0)                                                        # optional - sage.symbolic
             pow(v_0, 1.00000000000000)
-            sage: x.__rpow__(1)
+            sage: x.__rpow__(1)                                                         # optional - sage.symbolic
             pow(1, v_0)
         """
         # XXX There is a performance regression from the original
@@ -1006,11 +1008,11 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: -x
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: -x                                                                    # optional - sage.symbolic
             neg(v_0)
-            sage: x.__neg__()
+            sage: x.__neg__()                                                           # optional - sage.symbolic
             neg(v_0)
         """
         return ExpressionCall(self._etb, op_neg, [self])
@@ -1022,13 +1024,13 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: abs(x)
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: abs(x)                                                                # optional - sage.symbolic
             abs(v_0)
-            sage: x.abs()
+            sage: x.abs()                                                               # optional - sage.symbolic
             abs(v_0)
-            sage: x.__abs__()
+            sage: x.__abs__()                                                           # optional - sage.symbolic
             abs(v_0)
         """
         return ExpressionCall(self._etb, op_abs, [self])
@@ -1040,13 +1042,13 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: abs(x)
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: abs(x)                                                                # optional - sage.symbolic
             abs(v_0)
-            sage: x.abs()
+            sage: x.abs()                                                               # optional - sage.symbolic
             abs(v_0)
-            sage: x.__abs__()
+            sage: x.__abs__()                                                           # optional - sage.symbolic
             abs(v_0)
         """
         return ExpressionCall(self._etb, op_abs, [self])
@@ -1058,11 +1060,11 @@ cdef class Expression:
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: ~x
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: ~x                                                                    # optional - sage.symbolic
             inv(v_0)
-            sage: x.__invert__()
+            sage: x.__invert__()                                                        # optional - sage.symbolic
             inv(v_0)
         """
         return ExpressionCall(self._etb, op_inv, [self])
@@ -1075,8 +1077,8 @@ cdef class ExpressionConstant(Expression):
     EXAMPLES::
 
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-        sage: etb = ExpressionTreeBuilder(vars=(x,))
-        sage: type(etb(3))
+        sage: etb = ExpressionTreeBuilder(vars=(x,))                                    # optional - sage.symbolic
+        sage: type(etb(3))                                                              # optional - sage.symbolic
         <class 'sage.ext.fast_callable.ExpressionConstant'>
     """
 
@@ -1089,16 +1091,16 @@ cdef class ExpressionConstant(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder, ExpressionConstant
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: etb(3)
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: etb(3)                                                                # optional - sage.symbolic
             3
-            sage: v = ExpressionConstant(etb, 3); v
+            sage: v = ExpressionConstant(etb, 3); v                                     # optional - sage.symbolic
             3
-            sage: v._get_etb() is etb
+            sage: v._get_etb() is etb                                                   # optional - sage.symbolic
             True
-            sage: v.value()
+            sage: v.value()                                                             # optional - sage.symbolic
             3
-            sage: v.value() == 3
+            sage: v.value() == 3                                                        # optional - sage.symbolic
             True
         """
         Expression.__init__(self, etb)
@@ -1111,8 +1113,8 @@ cdef class ExpressionConstant(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: etb(3).value()
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: etb(3).value()                                                        # optional - sage.symbolic
             3
         """
         return self._value
@@ -1125,13 +1127,13 @@ cdef class ExpressionConstant(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: v = etb.constant(pi)
-            sage: v
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: v = etb.constant(pi)                                                  # optional - sage.symbolic
+            sage: v                                                                     # optional - sage.symbolic
             pi
-            sage: repr(v)
+            sage: repr(v)                                                               # optional - sage.symbolic
             'pi'
-            sage: v.__repr__()
+            sage: v.__repr__()                                                          # optional - sage.symbolic
             'pi'
         """
         return repr(self._value)
@@ -1143,8 +1145,8 @@ cdef class ExpressionVariable(Expression):
     EXAMPLES::
 
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-        sage: etb = ExpressionTreeBuilder(vars=(x,))
-        sage: type(etb.var(x))
+        sage: etb = ExpressionTreeBuilder(vars=(x,))                                    # optional - sage.symbolic
+        sage: type(etb.var(x))                                                          # optional - sage.symbolic
         <class 'sage.ext.fast_callable.ExpressionVariable'>
     """
     cdef int _variable_index
@@ -1156,14 +1158,14 @@ cdef class ExpressionVariable(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder, ExpressionVariable
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: etb(x)
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: etb(x)                                                                # optional - sage.symbolic
             v_0
-            sage: v = ExpressionVariable(etb, 0); v
+            sage: v = ExpressionVariable(etb, 0); v                                     # optional - sage.symbolic
             v_0
-            sage: v._get_etb() is etb
+            sage: v._get_etb() is etb                                                   # optional - sage.symbolic
             True
-            sage: v.variable_index()
+            sage: v.variable_index()                                                    # optional - sage.symbolic
             0
         """
         Expression.__init__(self, etb)
@@ -1176,8 +1178,8 @@ cdef class ExpressionVariable(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: etb(x).variable_index()
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: etb(x).variable_index()                                               # optional - sage.symbolic
             0
         """
         return self._variable_index
@@ -1189,13 +1191,13 @@ cdef class ExpressionVariable(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: v = etb._var_number(0)
-            sage: v
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: v = etb._var_number(0)                                                # optional - sage.symbolic
+            sage: v                                                                     # optional - sage.symbolic
             v_0
-            sage: repr(v)
+            sage: repr(v)                                                               # optional - sage.symbolic
             'v_0'
-            sage: v.__repr__()
+            sage: v.__repr__()                                                          # optional - sage.symbolic
             'v_0'
         """
         # Should we look up the variable name in self._etb, instead?
@@ -1211,8 +1213,8 @@ cdef class ExpressionCall(Expression):
     EXAMPLES::
 
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-        sage: etb = ExpressionTreeBuilder(vars=(x,))
-        sage: type(etb.call(sin, x))
+        sage: etb = ExpressionTreeBuilder(vars=(x,))                                    # optional - sage.symbolic
+        sage: type(etb.call(sin, x))                                                    # optional - sage.symbolic
         <class 'sage.ext.fast_callable.ExpressionCall'>
     """
     cdef object _function
@@ -1225,17 +1227,17 @@ cdef class ExpressionCall(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder, ExpressionCall
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: etb.call(factorial, x)
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: etb.call(factorial, x)                                                # optional - sage.symbolic
             {factorial}(v_0)
-            sage: v = ExpressionCall(etb, factorial, [x]); v
+            sage: v = ExpressionCall(etb, factorial, [x]); v                            # optional - sage.symbolic
             {factorial}(v_0)
-            sage: v._get_etb() is etb
+            sage: v._get_etb() is etb                                                   # optional - sage.symbolic
             True
-            sage: v.function()
+            sage: v.function()                                                          # optional - sage.symbolic
             factorial
-            sage: v.arguments()
+            sage: v.arguments()                                                         # optional - sage.symbolic
             [v_0]
         """
         Expression.__init__(self, etb)
@@ -1249,8 +1251,8 @@ cdef class ExpressionCall(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: etb.call(sin, x).function()
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: etb.call(sin, x).function()                                           # optional - sage.symbolic
             sin
         """
         return self._function
@@ -1262,8 +1264,8 @@ cdef class ExpressionCall(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: etb.call(sin, x).arguments()
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: etb.call(sin, x).arguments()                                          # optional - sage.symbolic
             [v_0]
         """
         return copy(self._arguments)
@@ -1275,18 +1277,18 @@ cdef class ExpressionCall(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb.var(x)
-            sage: etb.call(operator.add, x, 1)
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb.var(x)                                                        # optional - sage.symbolic
+            sage: etb.call(operator.add, x, 1)                                          # optional - sage.symbolic
             add(v_0, 1)
-            sage: etb.call(factorial, x)
+            sage: etb.call(factorial, x)                                                # optional - sage.symbolic
             {factorial}(v_0)
-            sage: v = etb.call(sin, x)
-            sage: v
+            sage: v = etb.call(sin, x)                                                  # optional - sage.symbolic
+            sage: v                                                                     # optional - sage.symbolic
             sin(v_0)
-            sage: repr(v)
+            sage: repr(v)                                                               # optional - sage.symbolic
             'sin(v_0)'
-            sage: v.__repr__()
+            sage: v.__repr__()                                                          # optional - sage.symbolic
             'sin(v_0)'
         """
         fn = function_name(self._function)
@@ -1300,8 +1302,8 @@ cdef class ExpressionIPow(Expression):
     EXAMPLES::
 
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-        sage: etb = ExpressionTreeBuilder(vars=(x,))
-        sage: type(etb.var('x')^17)
+        sage: etb = ExpressionTreeBuilder(vars=(x,))                                    # optional - sage.symbolic
+        sage: type(etb.var('x')^17)                                                     # optional - sage.symbolic
         <class 'sage.ext.fast_callable.ExpressionIPow'>
     """
     cdef object _base
@@ -1314,17 +1316,17 @@ cdef class ExpressionIPow(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder, ExpressionIPow
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: x^(-12)
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: x^(-12)                                                               # optional - sage.symbolic
             ipow(v_0, -12)
-            sage: v = ExpressionIPow(etb, x, 55); v
+            sage: v = ExpressionIPow(etb, x, 55); v                                     # optional - sage.symbolic
             ipow(v_0, 55)
-            sage: v._get_etb() is etb
+            sage: v._get_etb() is etb                                                   # optional - sage.symbolic
             True
-            sage: v.base()
+            sage: v.base()                                                              # optional - sage.symbolic
             v_0
-            sage: v.exponent()
+            sage: v.exponent()                                                          # optional - sage.symbolic
             55
         """
         Expression.__init__(self, etb)
@@ -1338,8 +1340,8 @@ cdef class ExpressionIPow(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: (etb(33)^42).base()
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: (etb(33)^42).base()                                                   # optional - sage.symbolic
             33
         """
         return self._base
@@ -1351,8 +1353,8 @@ cdef class ExpressionIPow(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: (etb(x)^(-1)).exponent()
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: (etb(x)^(-1)).exponent()                                              # optional - sage.symbolic
             -1
         """
         return self._exponent
@@ -1364,18 +1366,18 @@ cdef class ExpressionIPow(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb.var(x)
-            sage: x^3
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb.var(x)                                                        # optional - sage.symbolic
+            sage: x^3                                                                   # optional - sage.symbolic
             ipow(v_0, 3)
-            sage: x^(-2)
+            sage: x^(-2)                                                                # optional - sage.symbolic
             ipow(v_0, -2)
-            sage: v = (x+1)^3
-            sage: v
+            sage: v = (x+1)^3                                                           # optional - sage.symbolic
+            sage: v                                                                     # optional - sage.symbolic
             ipow(add(v_0, 1), 3)
-            sage: repr(v)
+            sage: repr(v)                                                               # optional - sage.symbolic
             'ipow(add(v_0, 1), 3)'
-            sage: v.__repr__()
+            sage: v.__repr__()                                                          # optional - sage.symbolic
             'ipow(add(v_0, 1), 3)'
         """
         return 'ipow(%s, %d)' % (repr(self._base), self._exponent)
@@ -1390,8 +1392,8 @@ cdef class ExpressionChoice(Expression):
     EXAMPLES::
 
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-        sage: etb = ExpressionTreeBuilder(vars=(x,))
-        sage: etb.choice(etb.call(operator.eq, x, 0), 0, 1/x)
+        sage: etb = ExpressionTreeBuilder(vars=(x,))                                    # optional - sage.symbolic
+        sage: etb.choice(etb.call(operator.eq, x, 0), 0, 1/x)                           # optional - sage.symbolic
         (0 if {eq}(v_0, 0) else div(1, v_0))
     """
 
@@ -1406,19 +1408,19 @@ cdef class ExpressionChoice(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder, ExpressionChoice
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: etb.choice(x, ~x, 0)
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: etb.choice(x, ~x, 0)                                                  # optional - sage.symbolic
             (inv(v_0) if v_0 else 0)
-            sage: v = ExpressionChoice(etb, x, ~x, etb(0)); v
+            sage: v = ExpressionChoice(etb, x, ~x, etb(0)); v                           # optional - sage.symbolic
             (inv(v_0) if v_0 else 0)
-            sage: v._get_etb() is etb
+            sage: v._get_etb() is etb                                                   # optional - sage.symbolic
             True
-            sage: v.condition()
+            sage: v.condition()                                                         # optional - sage.symbolic
             v_0
-            sage: v.if_true()
+            sage: v.if_true()                                                           # optional - sage.symbolic
             inv(v_0)
-            sage: v.if_false()
+            sage: v.if_false()                                                          # optional - sage.symbolic
             0
         """
         Expression.__init__(self, etb)
@@ -1433,9 +1435,9 @@ cdef class ExpressionChoice(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: etb.choice(x, ~x, 0).condition()
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: etb.choice(x, ~x, 0).condition()                                      # optional - sage.symbolic
             v_0
         """
         return self._cond
@@ -1447,9 +1449,9 @@ cdef class ExpressionChoice(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: etb.choice(x, ~x, 0).if_true()
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: etb.choice(x, ~x, 0).if_true()                                        # optional - sage.symbolic
             inv(v_0)
         """
         return self._iftrue
@@ -1461,9 +1463,9 @@ cdef class ExpressionChoice(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: etb.choice(x, ~x, 0).if_false()
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: etb.choice(x, ~x, 0).if_false()                                       # optional - sage.symbolic
             0
         """
         return self._iffalse
@@ -1476,14 +1478,14 @@ cdef class ExpressionChoice(Expression):
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: v = etb.choice(x, ~x, 0)
-            sage: v
+            sage: etb = ExpressionTreeBuilder(vars=(x,))                                # optional - sage.symbolic
+            sage: x = etb(x)                                                            # optional - sage.symbolic
+            sage: v = etb.choice(x, ~x, 0)                                              # optional - sage.symbolic
+            sage: v                                                                     # optional - sage.symbolic
             (inv(v_0) if v_0 else 0)
-            sage: repr(v)
+            sage: repr(v)                                                               # optional - sage.symbolic
             '(inv(v_0) if v_0 else 0)'
-            sage: v.__repr__()
+            sage: v.__repr__()                                                          # optional - sage.symbolic
             '(inv(v_0) if v_0 else 0)'
         """
         return '(%s if %s else %s)' % (repr(self._iftrue),
@@ -1500,19 +1502,19 @@ cpdef _expression_binop_helper(s, o, op):
     EXAMPLES::
 
         sage: from sage.ext.fast_callable import _expression_binop_helper, ExpressionTreeBuilder
-        sage: var('x,y')
+        sage: var('x,y')                                                                # optional - sage.symbolic
         (x, y)
-        sage: etb = ExpressionTreeBuilder(vars=(x,y))
-        sage: x = etb(x)
+        sage: etb = ExpressionTreeBuilder(vars=(x,y))                                   # optional - sage.symbolic
+        sage: x = etb(x)                                                                # optional - sage.symbolic
 
     Now ``x`` is an :class:`Expression`, but ``y`` is not.  Still, all the following
     cases work::
 
-        sage: _expression_binop_helper(x, x, operator.add)
+        sage: _expression_binop_helper(x, x, operator.add)                              # optional - sage.symbolic
         add(v_0, v_0)
-        sage: _expression_binop_helper(x, y, operator.add)
+        sage: _expression_binop_helper(x, y, operator.add)                              # optional - sage.symbolic
         add(v_0, v_1)
-        sage: _expression_binop_helper(y, x, operator.add)
+        sage: _expression_binop_helper(y, x, operator.add)                              # optional - sage.symbolic
         add(v_1, v_0)
 
     """
@@ -1557,7 +1559,7 @@ class IntegerPowerFunction():
         sage: square = IntegerPowerFunction(2)
         sage: square
         (^2)
-        sage: square(pi)
+        sage: square(pi)                                                                # optional - sage.symbolic
         pi^2
         sage: square(I)
         -1
@@ -2532,12 +2534,12 @@ class FastCallableFloatWrapper:
     An error is thrown if the answer is complex::
 
         sage: from sage.ext.fast_callable import FastCallableFloatWrapper
-        sage: f = sqrt(x)
-        sage: ff = fast_callable(f, vars=[x], domain=CDF)
-        sage: fff = FastCallableFloatWrapper(ff, imag_tol=1e-8)
-        sage: fff(1)
+        sage: f = sqrt(x)                                                               # optional - sage.symbolic
+        sage: ff = fast_callable(f, vars=[x], domain=CDF)                               # optional - sage.symbolic
+        sage: fff = FastCallableFloatWrapper(ff, imag_tol=1e-8)                         # optional - sage.symbolic
+        sage: fff(1)                                                                    # optional - sage.symbolic
         1.0
-        sage: fff(-1)
+        sage: fff(-1)                                                                   # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: complex fast-callable function result
@@ -2570,13 +2572,13 @@ class FastCallableFloatWrapper:
         than ``imag_tol``, but not one larger::
 
             sage: from sage.ext.fast_callable import FastCallableFloatWrapper
-            sage: f = x
-            sage: ff = fast_callable(f, vars=[x], domain=CDF)
-            sage: fff = FastCallableFloatWrapper(ff, imag_tol=1e-8)
-            sage: fff(I*1e-9)
+            sage: f = x                                                                 # optional - sage.symbolic
+            sage: ff = fast_callable(f, vars=[x], domain=CDF)                           # optional - sage.symbolic
+            sage: fff = FastCallableFloatWrapper(ff, imag_tol=1e-8)                     # optional - sage.symbolic
+            sage: fff(I*1e-9)                                                           # optional - sage.symbolic
             0.0
-            sage: fff = FastCallableFloatWrapper(ff, imag_tol=1e-12)
-            sage: fff(I*1e-9)
+            sage: fff = FastCallableFloatWrapper(ff, imag_tol=1e-12)                    # optional - sage.symbolic
+            sage: fff(I*1e-9)                                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: complex fast-callable function result 1e-09*I for
@@ -2595,14 +2597,14 @@ class FastCallableFloatWrapper:
         Evaluation either returns a :class:`float`, or raises a :class:`ValueError`::
 
             sage: from sage.ext.fast_callable import FastCallableFloatWrapper
-            sage: f = x
-            sage: ff = fast_callable(f, vars=[x], domain=CDF)
-            sage: fff = FastCallableFloatWrapper(ff, imag_tol=0.1)
-            sage: try:
+            sage: f = x                                                                 # optional - sage.symbolic
+            sage: ff = fast_callable(f, vars=[x], domain=CDF)                           # optional - sage.symbolic
+            sage: fff = FastCallableFloatWrapper(ff, imag_tol=0.1)                      # optional - sage.symbolic
+            sage: try:                                                                  # optional - sage.symbolic
             ....:     result = fff(CDF.random_element())
             ....: except ValueError:
             ....:     result = float(0)
-            sage: type(result) is float
+            sage: type(result) is float                                                 # optional - sage.symbolic
             True
 
         """

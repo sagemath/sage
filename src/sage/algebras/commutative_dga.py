@@ -3892,8 +3892,8 @@ class CohomologyClass(SageObject, CachedRepresentation):
         sage: from sage.algebras.commutative_dga import CohomologyClass
         sage: CohomologyClass(3)
         [3]
-        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees = (2,2,3,3))
-        sage: CohomologyClass(x^2+2*y*z)
+        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2,2,3,3))
+        sage: CohomologyClass(x^2 + 2*y*z)
         [2*y*z + x^2]
     """
     def __init__(self, x):
@@ -3901,7 +3901,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: CohomologyClass(x-2)
+            sage: CohomologyClass(x - 2)                                                # optional - sage.symbolic
             [x - 2]
         """
         self._x = x
@@ -3911,7 +3911,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         TESTS::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: hash(CohomologyClass(sin)) == hash(sin)
+            sage: hash(CohomologyClass(sin)) == hash(sin)                               # optional - sage.symbolic
             True
         """
         return hash(self._x)
@@ -3921,7 +3921,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: CohomologyClass(sin)
+            sage: CohomologyClass(sin)                                                  # optional - sage.symbolic
             [sin]
         """
         return '[{}]'.format(self._x)
@@ -3931,9 +3931,9 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: latex(CohomologyClass(sin))
+            sage: latex(CohomologyClass(sin))                                           # optional - sage.symbolic
             \left[ \sin \right]
-            sage: latex(CohomologyClass(x^2))
+            sage: latex(CohomologyClass(x^2))                                           # optional - sage.symbolic
             \left[ x^{2} \right]
         """
         from sage.misc.latex import latex
@@ -3946,8 +3946,8 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: x = CohomologyClass(sin)
-            sage: x.representative() == sin
+            sage: x = CohomologyClass(sin)                                              # optional - sage.symbolic
+            sage: x.representative() == sin                                             # optional - sage.symbolic
             True
         """
         return self._x

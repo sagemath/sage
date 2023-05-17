@@ -2895,7 +2895,7 @@ def is_square(n, root=False):
         False
         sage: is_square(CDF(-2.2))
         True
-        sage: is_square((x-1)^2)
+        sage: is_square((x-1)^2)                                                        # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         NotImplementedError: is_square() not implemented for
@@ -3759,8 +3759,8 @@ def binomial(x, m, **kwds):
         sage: binomial(y,3).parent()
         Multivariate Polynomial Ring in x, y over Ring of integers modulo 7
 
-        sage: n = var('n')
-        sage: binomial(n,2)
+        sage: n = var('n')                                                              # optional - sage.symbolic
+        sage: binomial(n,2)                                                             # optional - sage.symbolic
         1/2*(n - 1)*n
 
     Invalid inputs::
@@ -4400,7 +4400,7 @@ def nth_prime(n):
 
     TESTS::
 
-        sage: all(prime_pi(nth_prime(j)) == j for j in range(1, 1000, 10))              # optional - sage.libs.pari
+        sage: all(prime_pi(nth_prime(j)) == j for j in range(1, 1000, 10))              # optional - sage.libs.pari sage.symbolic
         True
         sage: from numpy import int8                                                    # optional - numpy
         sage: nth_prime(int8(10))                                                       # optional - numpy sage.libs.pari
@@ -5140,15 +5140,15 @@ def rising_factorial(x, a):
         sage: rising_factorial(10,3)
         1320
 
-        sage: rising_factorial(10,RR('3.0'))
+        sage: rising_factorial(10, RR('3.0'))                                           # optional - sage.symbolic
         1320.00000000000
 
-        sage: rising_factorial(10,RR('3.3'))
+        sage: rising_factorial(10, RR('3.3'))                                           # optional - sage.symbolic
         2826.38895824964
 
-        sage: a = rising_factorial(1+I, I); a
+        sage: a = rising_factorial(1+I, I); a                                           # optional - sage.symbolic
         gamma(2*I + 1)/gamma(I + 1)
-        sage: CC(a)
+        sage: CC(a)                                                                     # optional - sage.symbolic
         0.266816390637832 + 0.122783354006372*I
 
         sage: a = rising_factorial(I, 4); a
@@ -5169,8 +5169,8 @@ def rising_factorial(x, a):
 
     Check that :trac:`16770` is fixed::
 
-        sage: d = var('d')
-        sage: parent(rising_factorial(d, 0))
+        sage: d = var('d')                                                              # optional - sage.symbolic
+        sage: parent(rising_factorial(d, 0))                                            # optional - sage.symbolic
         Symbolic Ring
 
     Check that :trac:`20075` is fixed::

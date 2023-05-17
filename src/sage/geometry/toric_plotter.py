@@ -403,7 +403,7 @@ class ToricPlotter(SageObject):
         thickness = self.generator_thickness
         zorder = self.generator_zorder
         for generator, ray, color in zip(generators, self.rays, colors):
-            if ray.norm() < generator.norm():
+            if ray.dot_product(ray) < generator.dot_product(generator):
                 result += line([origin, ray],
                                color=color, thickness=thickness,
                                zorder=zorder, **extra_options)
@@ -495,7 +495,7 @@ class ToricPlotter(SageObject):
                       for z in range(ceil(self.zmin), floor(self.zmax) + 1))
         if self.mode == "round":
             r = 1.01 * self.radius # To make sure integer values work OK.
-            points = (pt for pt in points if vector(pt).norm() <= r)
+            points = (pt for pt in points if vector(pt).dot_product(vector(pt)) <= r)
         f = self.lattice_filter
         if f is not None:
             points = (pt for pt in points if f(pt))

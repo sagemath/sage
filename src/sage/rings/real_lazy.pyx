@@ -746,13 +746,13 @@ cdef class LazyFieldElement(FieldElement):
 
         When the absolute value is involved, the result might be real::
 
-            sage: z = exp(CLF(1 + I/2)); z
+            sage: z = exp(CLF(1 + I/2)); z                                              # optional - sage.symbolic
             2.38551673095914? + 1.303213729686996?*I
-            sage: r = z.abs(); r
+            sage: r = z.abs(); r                                                        # optional - sage.symbolic
             2.71828182845905?
-            sage: parent(z.approx())
+            sage: parent(z.approx())                                                    # optional - sage.symbolic
             Complex Interval Field with 53 bits of precision
-            sage: parent(r.approx())
+            sage: parent(r.approx())                                                    # optional - sage.symbolic
             Real Interval Field with 53 bits of precision
         """
         return self.eval(self._parent.interval_field())
@@ -853,7 +853,7 @@ cdef class LazyFieldElement(FieldElement):
 
         TESTS::
 
-            sage: "log" in RLF(sqrt(8)).__dir__()
+            sage: "log" in RLF(sqrt(8)).__dir__()                                       # optional - sage.symbolic
             True
 
         """
@@ -868,9 +868,9 @@ cdef class LazyFieldElement(FieldElement):
             sage: a = RLF(3)
             sage: a.sqrt()
             1.732050807568878?
-            sage: sin(a)
+            sage: sin(a)                                                                # optional - sage.symbolic
             0.1411200080598673?
-            sage: RealField(160)(tanh(RLF(3)))
+            sage: RealField(160)(tanh(RLF(3)))                                          # optional - sage.symbolic
             0.99505475368673045133188018525548847509781385470
         """
         if name in named_unops:
@@ -884,11 +884,11 @@ cdef class LazyFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: a = RLF(sqrt(2)) + RLF(sqrt(3))
-            sage: cf = a.continued_fraction()
-            sage: cf
+            sage: a = RLF(sqrt(2)) + RLF(sqrt(3))                                       # optional - sage.symbolic
+            sage: cf = a.continued_fraction()                                           # optional - sage.symbolic
+            sage: cf                                                                    # optional - sage.symbolic
             [3; 6, 1, 5, 7, 1, 1, 4, 1, 38, 43, 1, 3, 2, 1, 1, 1, 1, 2, 4, ...]
-            sage: cf.convergent(100)
+            sage: cf.convergent(100)                                                    # optional - sage.symbolic
             444927297812646558239761867973501208151173610180916865469/141414466649174973335183571854340329919207428365474086063
         """
         from sage.rings.continued_fraction import ContinuedFraction_real
@@ -901,8 +901,8 @@ def make_element(parent, *args):
 
     EXAMPLES::
 
-        sage: a = RLF(pi) + RLF(sqrt(1/2)) # indirect doctest
-        sage: bool(loads(dumps(a)) == a)
+        sage: a = RLF(pi) + RLF(sqrt(1/2))  # indirect doctest                          # optional - sage.symbolic
+        sage: bool(loads(dumps(a)) == a)                                                # optional - sage.symbolic
         True
     """
     return parent(*args)
@@ -1041,8 +1041,8 @@ cdef class LazyWrapper(LazyFieldElement):
 
         EXAMPLES::
 
-            sage: a = RLF(sqrt(2))
-            sage: a.continued_fraction()
+            sage: a = RLF(sqrt(2))                                                      # optional - sage.symbolic
+            sage: a.continued_fraction()                                                # optional - sage.symbolic
             [1; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, ...]
         """
         from sage.rings.continued_fraction import ContinuedFraction_real, ContinuedFraction_infinite
@@ -1230,8 +1230,8 @@ cdef class LazyUnop(LazyFieldElement):
             sage: a = LazyUnop(RLF, 3, sqrt)
             sage: a.depth()
             1
-            sage: b = LazyUnop(RLF, a, sin)
-            sage: b.depth()
+            sage: b = LazyUnop(RLF, a, sin)                                             # optional - sage.symbolic
+            sage: b.depth()                                                             # optional - sage.symbolic
             2
         """
         return 1 + self._arg.depth()
@@ -1244,7 +1244,7 @@ cdef class LazyUnop(LazyFieldElement):
 
             sage: from sage.rings.real_lazy import LazyUnop
             sage: a = LazyUnop(RLF, 3, sqrt)
-            sage: a.eval(ZZ)
+            sage: a.eval(ZZ)                                                            # optional - sage.symbolic
             sqrt(3)
         """
         arg = self._arg.eval(R)
@@ -1260,7 +1260,7 @@ cdef class LazyUnop(LazyFieldElement):
 
         EXAMPLES::
 
-            sage: hash(RLF(sin(1))) == hash(RLF(sin(1)))
+            sage: hash(RLF(sin(1))) == hash(RLF(sin(1)))                                # optional - sage.symbolic
             True
         """
         return hash(self._op(hash(self._arg)))
@@ -1489,7 +1489,7 @@ cdef class LazyConstant(LazyFieldElement):
             sage: RLF.pi().eval(RealBallField(128))
             [3.1415926535897932384626433832795028842 +/- 1.06e-38]
 
-            sage: float(sin(RLF.pi()))
+            sage: float(sin(RLF.pi()))                                                  # optional - sage.symbolic
             1.2246467991473532e-16
         """
         # special handling of e and I
@@ -1689,7 +1689,8 @@ cdef class LazyAlgebraic(LazyFieldElement):
         TESTS::
 
             sage: from sage.rings.real_lazy import LazyAlgebraic
-            sage: a = LazyAlgebraic(RLF, x^2-2, 1.5)
+            sage: x = polygen(QQ)
+            sage: a = LazyAlgebraic(RLF, x^2 - 2, 1.5)
             sage: float(loads(dumps(a))) == float(a)
             True
         """

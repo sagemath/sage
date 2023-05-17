@@ -1140,8 +1140,8 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
 
             sage: A.<x> = AffineSpace(QQbar, 1)                                         # optional - sage.rings.number_field
             sage: H = End(A)                                                            # optional - sage.rings.number_field
-            sage: f = H([(QQbar(sqrt(2))*x^2 + 1/QQbar(sqrt(3))) / (5*x)])              # optional - sage.rings.number_field
-            sage: f.reduce_base_field()                                                 # optional - sage.rings.number_field
+            sage: f = H([(QQbar(sqrt(2))*x^2 + 1/QQbar(sqrt(3))) / (5*x)])              # optional - sage.rings.number_field sage.symbolic
+            sage: f.reduce_base_field()                                                 # optional - sage.rings.number_field sage.symbolic
             Scheme endomorphism of Affine Space of dimension 1 over Number Field in a
              with defining polynomial y^4 - 4*y^2 + 1 with a = ...?
               Defn: Defined on coordinates by sending (x) to
@@ -1152,8 +1152,8 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: R.<x> = PolynomialRing(QQ)
             sage: A.<x> = AffineSpace(QQbar, 1)                                         # optional - sage.rings.number_field
             sage: H = End(A)                                                            # optional - sage.rings.number_field
-            sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))])                         # optional - sage.rings.number_field
-            sage: f.reduce_base_field()                                                 # optional - sage.rings.number_field
+            sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))])                         # optional - sage.rings.number_field sage.symbolic
+            sage: f.reduce_base_field()                                                 # optional - sage.rings.number_field sage.symbolic
             Scheme endomorphism of Affine Space of dimension 1 over Number
             Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17
              with a = 1.442249570307409? + 1.414213562373095?*I
@@ -1166,7 +1166,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: K.<a> = NumberField(x^3 - x + 1,                                      # optional - sage.rings.number_field
-            ....:                     embedding=(x^3+x+1).roots(ring=CC)[0][0])
+            ....:                     embedding=(x^3 + x + 1).roots(ring=CC)[0][0])
             sage: A.<x> = AffineSpace(K, 1)                                             # optional - sage.rings.number_field
             sage: A2.<u,v> = AffineSpace(K, 2)                                          # optional - sage.rings.number_field
             sage: H = Hom(A, A2)                                                        # optional - sage.rings.number_field

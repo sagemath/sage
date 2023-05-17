@@ -41,18 +41,18 @@ sage: s[:20]        # the first 20 digits of p (long time)
 '12457502601536945540'
 sage: s[-20:]       # the last 20 digits       (long time)
 '11752880154053967871'
-sage: prime_pi(6)
+sage: prime_pi(6)                                                                       # optional - sage.symbolic
 3
-sage: prime_pi(100)
+sage: prime_pi(100)                                                                     # optional - sage.symbolic
 25
-sage: prime_pi(3000000)
+sage: prime_pi(3000000)                                                                 # optional - sage.symbolic
 216816
-sage: plot(prime_pi, 1,1000, rgbcolor=(0,0,1))
+sage: plot(prime_pi, 1,1000, rgbcolor=(0,0,1))                                          # optional - sage.plot sage.symbolic
 Graphics object consisting of 1 graphics primitive
-sage: P = plot(Li, 2,10000, rgbcolor='purple')
-sage: Q = plot(prime_pi, 2,10000, rgbcolor='black')
-sage: R = plot(sqrt(x)*log(x),2,10000,rgbcolor='red')
-sage: show(P+Q+R,xmin=0, figsize=[8,3])
+sage: P = plot(Li, 2,10000, rgbcolor='purple')                                          # optional - sage.plot sage.symbolic
+sage: Q = plot(prime_pi, 2,10000, rgbcolor='black')                                     # optional - sage.plot sage.symbolic
+sage: R = plot(sqrt(x)*log(x),2,10000,rgbcolor='red')                                   # optional - sage.plot sage.symbolic
+sage: show(P+Q+R,xmin=0, figsize=[8,3])                                                 # optional - sage.plot sage.symbolic
 sage: R = Integers(3)
 sage: list(R)
 [0, 1, 2]

@@ -387,17 +387,17 @@ class EllipticCurveFactory(UniqueFactory):
 
         TESTS::
 
-            sage: var('x', 'y', 'v', 'w')
+            sage: var('x', 'y', 'v', 'w')                                               # optional - sage.symbolic
             (x, y, v, w)
-            sage: EllipticCurve(y^2 + y > x^3 + x - 9)
+            sage: EllipticCurve(y^2 + y > x^3 + x - 9)                                  # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: no symbolic relations other than equalities are allowed
-            sage: E = EllipticCurve(y^2 + y == x^3 + x - 9)
-            sage: E is EllipticCurve(y^2 + y - ( x^3 + x - 9 ))
+            sage: E = EllipticCurve(y^2 + y == x^3 + x - 9)                             # optional - sage.symbolic
+            sage: E is EllipticCurve(y^2 + y - ( x^3 + x - 9 ))                         # optional - sage.symbolic
             True
             sage: R.<x,y> = QQ[]
-            sage: E is EllipticCurve(y^2 + y - ( x^3 + x - 9 ))
+            sage: E is EllipticCurve(y^2 + y - ( x^3 + x - 9 ))                         # optional - sage.symbolic
             True
         """
         R = None

@@ -179,10 +179,9 @@ cdef class BooleanFunction(SageObject):
 
     note that elements can be of different types::
 
-        sage: B = BooleanFunction([False, sqrt(2)])
-        sage: B
+        sage: B = BooleanFunction([False, sqrt(2)]); B                                  # optional - sage.symbolic
         Boolean function with 1 variable
-        sage: [b for b in B]
+        sage: [b for b in B]                                                            # optional - sage.symbolic
         [False, True]
 
     from a string::
@@ -206,7 +205,7 @@ cdef class BooleanFunction(SageObject):
 
     two failure cases::
 
-        sage: BooleanFunction(sqrt(2))
+        sage: BooleanFunction(sqrt(2))                                                  # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: unable to init the Boolean function
@@ -255,10 +254,9 @@ cdef class BooleanFunction(SageObject):
 
         note that elements can be of different types::
 
-            sage: B = BooleanFunction([False, sqrt(2)])
-            sage: B
+            sage: B = BooleanFunction([False, sqrt(2)]); B                              # optional - sage.symbolic
             Boolean function with 1 variable
-            sage: [b for b in B]
+            sage: [b for b in B]                                                        # optional - sage.symbolic
             [False, True]
 
         from a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`::
@@ -277,7 +275,7 @@ cdef class BooleanFunction(SageObject):
 
         two failure cases::
 
-            sage: BooleanFunction(sqrt(2))
+            sage: BooleanFunction(sqrt(2))                                              # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unable to init the Boolean function

@@ -105,5 +105,8 @@ from sage.groups.matrix_gps import catalog as matrix
 from sage.groups.perm_gps import permutation_groups_catalog as permutation
 from sage.groups.misc_gps import misc_groups_catalog as misc
 from sage.groups.affine_gps import catalog as affine
-from sage.groups.lie_gps import catalog as lie
 from sage.groups import finitely_presented_catalog as presentation
+
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.groups.lie_gps', 'catalog', as_='lie')
+del lazy_import

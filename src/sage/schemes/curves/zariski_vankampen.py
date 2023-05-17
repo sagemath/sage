@@ -596,9 +596,9 @@ def braid_in_segment(g, x0, x1):
         sage: f = y*(y + z)*x*(x - 1)*(x - y)*(x + z*y - 1)*(x + z*y + wp)
         sage: from sage.schemes.curves import zariski_vankampen as zvk
         sage: g = f.subs({x: x + 2*y})
-        sage: p1 = QQbar(sqrt(-1/3))
-        sage: p2 = QQbar(1/2+sqrt(-1/3)/2)
-        sage: B = zvk.braid_in_segment(g.factor(),CC(p1),CC(p2)) # optional - sirocco
+        sage: p1 = QQbar(sqrt(-1/3))                                                    # optional - sage.symbolic
+        sage: p2 = QQbar(1/2+sqrt(-1/3)/2)                                              # optional - sage.symbolic
+        sage: B = zvk.braid_in_segment(g.factor(), CC(p1), CC(p2))  # optional - sirocco sage.symbolic
         sage: B  # optional - sirocco
         s5*s3^-1
     """

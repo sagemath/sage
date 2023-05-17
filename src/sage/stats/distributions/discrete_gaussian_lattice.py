@@ -142,7 +142,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         sage: D = DiscreteGaussianDistributionLatticeSampler(identity_matrix(2), 3.0)
         sage: S = [D() for _ in range(2^12)]
         sage: l = [vector(v.list() + [S.count(v)]) for v in set(S)]
-        sage: list_plot3d(l, point_list=True, interpolation='nn')
+        sage: list_plot3d(l, point_list=True, interpolation='nn')                       # optional - sage.plot
         Graphics3d Object
 
     REFERENCES:

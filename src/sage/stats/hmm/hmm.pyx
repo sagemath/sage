@@ -135,7 +135,7 @@ cdef class HiddenMarkovModel:
             Looped digraph on 3 vertices
             sage: G.edges(sort=True)
             [(0, 0, 0.3), (0, 2, 0.7), (1, 2, 1.0), (2, 0, 0.5), (2, 1, 0.5)]
-            sage: G.plot()
+            sage: G.plot()                                                              # optional - sage.plot
             Graphics object consisting of 11 graphics primitives
         """
         cdef int i, j
@@ -291,7 +291,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         Initial probabilities: [0.0000, 1.0000]
         sage: m.sample(10)
         [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-        sage: m.graph().plot()
+        sage: m.graph().plot()                                                          # optional - sage.plot
         Graphics object consisting of 6 graphics primitives
 
     A 3-state model that happens to always outputs 'b'::

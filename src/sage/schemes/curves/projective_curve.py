@@ -1174,12 +1174,12 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         ::
 
             sage: set_verbose(-1)
-            sage: a = QQbar(sqrt(2))                                                    # optional - sage.rings.number_field
+            sage: a = QQbar(sqrt(2))                                                    # optional - sage.rings.number_field sage.symbolic
             sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                 # optional - sage.rings.number_field
-            sage: C = Curve([(-1/4*a)*x^3 + (-3/4*a)*x^2*y                              # optional - sage.rings.number_field
+            sage: C = Curve([(-1/4*a)*x^3 + (-3/4*a)*x^2*y                              # optional - sage.rings.number_field sage.symbolic
             ....:            + (-3/4*a)*x*y^2 + (-1/4*a)*y^3 - 2*x*y*z], P)
             sage: Q = P([0,0,1])                                                        # optional - sage.rings.number_field
-            sage: C.excellent_position(Q)                                               # optional - sage.rings.number_field
+            sage: C.excellent_position(Q)                                               # optional - sage.rings.number_field sage.symbolic
             Scheme morphism:
               From: Projective Plane Curve over Algebraic Field defined
                     by (-0.3535533905932738?)*x^3 + (-1.060660171779822?)*x^2*y

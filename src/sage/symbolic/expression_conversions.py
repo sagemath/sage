@@ -18,12 +18,13 @@ overridden by subclasses.
 from operator import eq, ne, gt, lt, ge, le, mul, pow, neg, add, truediv
 from functools import reduce
 
+import sage.rings.abc
+
 from sage.symbolic.ring import SR
 from sage.structure.element import Expression
 from sage.functions.all import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 
 
 class FakeExpression():
@@ -1302,7 +1303,7 @@ class AlgebraicConverter(Converter):
         else:
             operand = None
 
-        if isinstance(self.field, UniversalCyclotomicField):
+        if isinstance(self.field, sage.rings.abc.UniversalCyclotomicField):
             QQbar = self.field
             hold = True
         else:

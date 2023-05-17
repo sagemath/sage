@@ -494,9 +494,9 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     We verify that :trac:`13187` is fixed::
 
-        sage: var('t')
+        sage: var('t')                                                                  # optional - sage.symbolic
         t
-        sage: PolynomialRing(ZZ, name=t) == PolynomialRing(ZZ, name='t')
+        sage: PolynomialRing(ZZ, name=t) == PolynomialRing(ZZ, name='t')                # optional - sage.symbolic
         True
 
     We verify that polynomials with interval coefficients from

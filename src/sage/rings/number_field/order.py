@@ -9,6 +9,7 @@ EXAMPLES:
 
 We define an absolute order::
 
+    sage: x = polygen(ZZ, 'x')
     sage: K.<a> = NumberField(x^2 + 1); O = K.order(2*a)
     sage: O.basis()
     [1, 2*a]
@@ -117,6 +118,7 @@ class OrderFactory(UniqueFactory):
         internal state when they are recreated with more additional
         information available about them::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 - 1000003, x^2 - 5*1000099^2])
             sage: O = L.maximal_order([2], assume_maximal=None)
 
@@ -154,6 +156,7 @@ class AbsoluteOrderFactory(OrderFactory):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<i> = NumberField(x^2 + 1)
         sage: K.order(i)
         Order in Number Field in i with defining polynomial x^2 + 1
@@ -168,6 +171,7 @@ class AbsoluteOrderFactory(OrderFactory):
 
         In particular, this normalizes the data that is used when pickling orders::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: OK = K.order(i)
             sage: OK._factory_data
@@ -206,6 +210,7 @@ class AbsoluteOrderFactory(OrderFactory):
 
         This method is also used during unpickling::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: OK = K.order(i)
             sage: loads(dumps(OK)) is OK
@@ -230,6 +235,7 @@ class AbsoluteOrderFactory(OrderFactory):
         This also works for relative orders since they are wrapping absolute
         orders::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 - 1000003, x^2 - 5*1000099^2])
             sage: O = L.maximal_order([5], assume_maximal=None)
 
@@ -260,6 +266,7 @@ class RelativeOrderFactory(OrderFactory):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<i> = NumberField(x^2 + 1)
         sage: R.<j> = K[]
         sage: L.<j> = K.extension(j^2 - 2)
@@ -277,6 +284,7 @@ class RelativeOrderFactory(OrderFactory):
 
         In particular, this normalizes the data that is used when pickling orders::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: R.<j> = K[]
             sage: L.<j> = K.extension(j^2 - 2)
@@ -304,6 +312,7 @@ class RelativeOrderFactory(OrderFactory):
 
         This method is also used during unpickling::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: R.<j> = K[]
             sage: L.<j> = K.extension(j^2 - 2)
@@ -329,7 +338,8 @@ def is_NumberFieldOrder(R):
     EXAMPLES::
 
         sage: from sage.rings.number_field.order import is_NumberFieldOrder
-        sage: is_NumberFieldOrder(NumberField(x^2+1,'a').maximal_order())
+        sage: x = polygen(ZZ, 'x')
+        sage: is_NumberFieldOrder(NumberField(x^2 + 1,'a').maximal_order())
         True
         sage: is_NumberFieldOrder(ZZ)
         True
@@ -353,6 +363,7 @@ def EquationOrder(f, names, **kwds):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: O.<a,b> = EquationOrder([x^2 + 1, x^2 + 2])
         sage: O
         Relative Order in Number Field in a
@@ -401,6 +412,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<theta> = NumberField(x^4 + x + 17)
         sage: K.maximal_order()
         Maximal Order in Number Field in theta with defining polynomial x^4 + x + 17
@@ -436,7 +448,8 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         TESTS::
 
-            sage: k.<alg> = NumberField(x^7+3*x+1, embedding=CC(0,1))
+            sage: x = polygen(ZZ, 'x')
+            sage: k.<alg> = NumberField(x^7 + 3*x + 1, embedding=CC(0,1))
             sage: O = k.order(alg)
             sage: ordelt = O(alg)
             sage: CC(ordelt)
@@ -454,6 +467,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 2)
             sage: R = K.maximal_order()
             sage: R.fractional_ideal(2/3 + 7*a, a)
@@ -467,6 +481,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 7)
             sage: R = K.maximal_order()
             sage: R.ideal(2/3 + 7*a, a)
@@ -515,6 +530,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 5077)
             sage: Ok = k.maximal_order()
             sage: Ok.has_coerce_map_from(k) #indirect doctest
@@ -530,6 +546,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 5077); G = k.class_group(); G
             Class group of order 22 with structure C22 of Number Field in a with defining polynomial x^2 + 5077
             sage: G.0 ^ -9
@@ -551,6 +568,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 431); G = k.class_group(); G
             Class group of order 21 with structure C21 of Number Field in a with defining polynomial x^2 + 431
             sage: G.0   # random output
@@ -570,6 +588,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<alpha> = NumberField(x**4 - x**2 + 7)
             sage: O = L.maximal_order() ; O.is_field()
             False
@@ -584,6 +603,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<alpha> = NumberField(x**4 - x**2 + 7)
             sage: O = L.maximal_order() ; O.is_noetherian()
             True
@@ -600,6 +620,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 189*x + 394)
             sage: R = K.order(2*a)
             sage: R.is_integrally_closed()
@@ -657,6 +678,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<c> = NumberField(x^3 + 2*x + 17)
             sage: O = K.maximal_order(); O
             Maximal Order in Number Field in c with defining polynomial x^3 + 2*x + 17
@@ -686,6 +708,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x^2 - 2*x + 8)
             sage: O = K.maximal_order()
             sage: O.ngens()
@@ -699,6 +722,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x^2 - 16*x + 16)
             sage: O = K.maximal_order(); O
             Maximal Order in Number Field in a with defining polynomial x^3 + x^2 - 16*x + 16
@@ -775,6 +799,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + x^2 - 2*x + 8)
             sage: O = K.maximal_order(); O.basis()
             [1, 1/2*a^2 + 1/2*a, a^2]
@@ -789,6 +814,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         a `\ZZ`-module in the absolute field associated to the relative
         field::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^2 + 1, x^2 + 2])
             sage: O = K.maximal_order(); O.basis()
             [(-3/2*b - 5)*a + 7/2*b - 2, -3*a + 2*b, -2*b*a - 3, -7*a + 5*b]
@@ -816,6 +842,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: O = K.maximal_order(); O
             Gaussian Integers in Number Field in i with defining polynomial x^2 + 1
@@ -862,6 +889,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: B.<z> = EquationOrder(x^2 + 3)
             sage: B._defining_names()
             (z,)
@@ -882,7 +910,8 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
-            sage: F.<alpha> = NumberField(x**2+3)
+            sage: x = polygen(ZZ, 'x')
+            sage: F.<alpha> = NumberField(x**2 + 3)
             sage: F.ring_of_integers().zeta(6)
             -1/2*alpha + 1/2
             sage: O = F.order([3*alpha])
@@ -910,6 +939,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^4 + x^2 + 2)
             sage: O = K.order(2*b); O
             Order in Number Field in b with defining polynomial x^4 + x^2 + 2
@@ -931,6 +961,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<z> = NumberField(x^2 - 389)
             sage: o = k.order(389*z + 1)
             sage: o
@@ -959,6 +990,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)
             sage: P = K.ideal(61).factor()[0][0]
             sage: OK = K.maximal_order()
@@ -981,6 +1013,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^4 + 17*x^2 + 17)
             sage: O = K.order(17*b); O
             Order in Number Field in b with defining polynomial x^4 + 17*x^2 + 17
@@ -996,6 +1029,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<c> = NumberField(x^3 + x^2 - 2*x+8)
             sage: o = k.maximal_order()
             sage: o.degree()
@@ -1015,6 +1049,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<c> = NumberField(x^5 + x^2 + 1)
             sage: o = k.maximal_order(); o
             Maximal Order in Number Field in c with defining polynomial x^5 + x^2 + 1
@@ -1029,20 +1064,20 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
-            sage: ZZ[2^(1/3)].class_number()
+            sage: ZZ[2^(1/3)].class_number()                                            # optional - sage.symbolic
             1
-            sage: QQ[sqrt(-23)].maximal_order().class_number()
+            sage: QQ[sqrt(-23)].maximal_order().class_number()                          # optional - sage.symbolic
             3
-            sage: ZZ[120*sqrt(-23)].class_number()
+            sage: ZZ[120*sqrt(-23)].class_number()                                      # optional - sage.symbolic
             288
 
         Note that non-maximal orders are only supported in quadratic fields::
 
-            sage: ZZ[120*sqrt(-23)].class_number()
+            sage: ZZ[120*sqrt(-23)].class_number()                                      # optional - sage.symbolic
             288
-            sage: ZZ[100*sqrt(3)].class_number()
+            sage: ZZ[100*sqrt(3)].class_number()                                        # optional - sage.symbolic
             4
-            sage: ZZ[11*2^(1/3)].class_number()
+            sage: ZZ[11*2^(1/3)].class_number()                                         # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: computation of class numbers of non-maximal orders
@@ -1064,6 +1099,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 5077)
             sage: O = k.maximal_order(); O
             Maximal Order in Number Field in a with defining polynomial x^2 + 5077
@@ -1083,6 +1119,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: W.<i> = NumberField(x^2 + 1)
             sage: O5 = W.order(5*i)
             sage: O10 = W.order(10*i)
@@ -1130,6 +1167,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: O1 = K.order(a); O1
             Order in Number Field in a with defining polynomial x^3 + 2
@@ -1162,6 +1200,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: O1 = K.order(a); O1
             Order in Number Field in a with defining polynomial x^3 + 2
@@ -1178,6 +1217,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: L.<b> = NumberField(x^3 + 3)
             sage: O1 = K.order(a)
@@ -1245,6 +1285,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: OK = K.ring_of_integers()
             sage: OK.random_element() # random output
@@ -1303,6 +1344,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: O = K.maximal_order()
             sage: O.absolute_degree()
@@ -1319,6 +1361,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         The valuation can be specified with an integer prime `p` that is
         completely ramified or unramified::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)
             sage: O = K.order(2*a)
             sage: valuations.pAdicValuation(O, 2)
@@ -1511,7 +1554,7 @@ class Order_absolute(Order):
         (see :trac:`10017`)::
 
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^3-10)
+            sage: K.<a> = NumberField(x^3 - 10)
             sage: ZK = K.ring_of_integers()
             sage: ZK.basis()
             [1/3*a^2 + 1/3*a + 1/3, a, a^2]
@@ -1586,6 +1629,7 @@ class Order_absolute(Order):
 
         Verify that an absolute order can be intersected with a relative order::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = K.extension(x^2 - 2)
             sage: L.absolute_field('z').maximal_order() & L.maximal_order()
             Maximal Order in Number Field in z with defining polynomial x^4 - 2*x^2 + 9
@@ -1621,10 +1665,11 @@ class Order_absolute(Order):
 
         OUTPUT:
 
-        a MagmaElement, the magma version of this absolute order
+        a :class:`MagmaElement`, the magma version of this absolute order
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2) # optional - magma
             sage: magma(K.maximal_order())  # optional - magma
             Equation Order with defining polynomial x^3 + 2 over its ground order
@@ -1644,6 +1689,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^8 + x^3 - 13*x + 26)
             sage: O = K.maximal_order()
             sage: factor(O.discriminant())
@@ -1684,6 +1730,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
 
             sage: K.order(3*i).is_maximal()
@@ -1738,6 +1785,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
 
             sage: K.order(1337*i)._is_maximal() is None
@@ -1761,6 +1809,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^13 - 2)
 
             sage: O = K.order(a)
@@ -1798,6 +1847,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^4 - 10001822082820*x^2 + 25009091240356266913960000)
             sage: O = K.maximal_order([13], assume_maximal=None)
 
@@ -1885,6 +1935,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: R = EquationOrder(x^3 + x + 1, 'alpha'); R
             Order in Number Field in alpha with defining polynomial x^3 + x + 1
             sage: R.basis()
@@ -1916,6 +1967,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<i> = NumberField(x^2 + 1)
             sage: O1 = k.order(i)
             sage: O5 = k.order(5*i)
@@ -1953,6 +2005,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^3 + x + 3)
             sage: m = k.order(3*a); m
             Order in Number Field in a with defining polynomial x^3 + x + 3
@@ -1971,6 +2024,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<i> = NumberField(x^2 + 1)
             sage: O6 = k.order(6*i)
             sage: O9 = k.order(9*i)
@@ -1993,6 +2047,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^4 - 5)
             sage: K.maximal_order()._repr_()
             'Maximal Order in Number Field in a with defining polynomial x^4 - 5'
@@ -2026,6 +2081,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<c> = NumberField(x^3 + x^2 + 1)
             sage: O = k.maximal_order(); O
             Maximal Order in Number Field in c with defining polynomial x^3 + x^2 + 1
@@ -2063,6 +2119,7 @@ class Order_absolute(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: O1 = K.order(a); O1
             Maximal Order in Number Field in a with defining polynomial x^3 + 2
@@ -2088,6 +2145,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a,b> = NumberFieldTower([x^2 - 3, x^2 + 1])
             sage: O = k.maximal_order(); O # indirect doctest
             Maximal Relative Order in Number Field in a with defining polynomial x^2 - 3 over its base field
@@ -2112,6 +2170,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 2, x^2 + 1000*x + 1])
             sage: OK = K.ring_of_integers()
             sage: OK(a)
@@ -2155,6 +2214,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: O = EquationOrder([x^2 + x + 1, x^3 - 2],'a,b')
             sage: O._repr_()
             'Relative Order in Number Field in a with defining polynomial x^2 + x + 1 over its base field'
@@ -2177,6 +2237,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: R = EquationOrder([x^2 + 1, x^2 - 5], 'i,g'); R
             Relative Order in Number Field in i
              with defining polynomial x^2 + 1 over its base field
@@ -2211,7 +2272,8 @@ class Order_relative(Order):
 
         EXAMPLES::
 
-            sage: K.<a,b> = NumberField([x^2+1, x^2+3])
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a,b> = NumberField([x^2 + 1, x^2 + 3])
             sage: O = K.order([a,b])
             sage: O.basis()
             [1, -2*a + b, -b*a - 2, -5*a + 3*b]
@@ -2237,7 +2299,8 @@ class Order_relative(Order):
 
         EXAMPLES::
 
-            sage: K.<a,b> = NumberField([x^2+1, x^2+3])
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a,b> = NumberField([x^2 + 1, x^2 + 3])
             sage: O2 = K.order([2*a, b]); O2.absolute_discriminant()
             36864
             sage: O3 = K.order([3*a, 2*b]); O3.absolute_discriminant()
@@ -2277,6 +2340,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + 1, x^2 - 5])
             sage: O1 = L.order([a, 2*b])
             sage: O2 = L.order([2*a, b])
@@ -2315,6 +2379,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 1, x^2 - 5])
 
             sage: K.order(3*a, b).is_maximal()
@@ -2346,6 +2411,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 1, x^2 - 5])
             sage: O = K.order(a, b)
             sage: O._is_maximal() is None
@@ -2367,6 +2433,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 - 2, x^13 - 2])
             sage: O = K.maximal_order([2, 3, 5], assume_maximal=None)
             sage: O._is_maximal_at(p=7) is None
@@ -2392,6 +2459,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 - 1000005, x^2 - 5*1000099^2])
             sage: O = L.maximal_order([13], assume_maximal=None)
 
@@ -2451,6 +2519,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: R = EquationOrder([x^2 + 1, x^3 + 2], 'a,b')
             sage: d = R.absolute_discriminant(); d
             -746496
@@ -2467,6 +2536,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^2 + 1, x^3 + 2])
             sage: R1 = K.order([a, b])
             sage: R2 = K.order([2*a, b])
@@ -2501,6 +2571,7 @@ class Order_relative(Order):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^3 + x + 3, x^2 + 1])
             sage: R1 = K.order([3*a, 2*b])
             sage: R2 = K.order([a, 4*b])
@@ -2521,6 +2592,7 @@ def each_is_integral(v):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: W.<sqrt5> = NumberField(x^2 - 5)
         sage: from sage.rings.number_field.order import each_is_integral
         sage: each_is_integral([sqrt5, 2, (1+sqrt5)/2])
@@ -2550,6 +2622,7 @@ def absolute_order_from_ring_generators(gens, check_is_integral=True,
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^4 - 5)
         sage: K.order(a)
         Order in Number Field in a with defining polynomial x^4 - 5
@@ -2627,6 +2700,7 @@ def absolute_order_from_module_generators(gens,
 
         sage: from sage.rings.number_field.order import absolute_order_from_module_generators
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^4 - 5)
         sage: O = K.maximal_order(); O
         Maximal Order in Number Field in a with defining polynomial x^4 - 5
@@ -2771,6 +2845,7 @@ def relative_order_from_ring_generators(gens,
     for regular usage::
 
         sage: from sage.rings.number_field.order import relative_order_from_ring_generators
+        sage: x = polygen(ZZ, 'x')
         sage: K.<i, a> = NumberField([x^2 + 1, x^2 - 17])
         sage: R = K.base_field().maximal_order()
         sage: S = relative_order_from_ring_generators([i,a]); S

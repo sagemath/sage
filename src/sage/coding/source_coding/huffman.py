@@ -512,7 +512,7 @@ class Huffman(SageObject):
             sage: h = Huffman(str)
             sage: T = h.tree(); T
             Digraph on 39 vertices
-            sage: T.show(figsize=[20,20])
+            sage: T.show(figsize=[20,20])                                               # optional - sage.plot
             <BLANKLINE>
         """
         from sage.graphs.digraph import DiGraph

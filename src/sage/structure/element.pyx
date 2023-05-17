@@ -857,9 +857,9 @@ cdef class Element(SageObject):
 
             sage: (2/3).numerical_approx()
             0.666666666666667
-            sage: pi.n(digits=10)
+            sage: pi.n(digits=10)                                                       # optional - sage.symbolic
             3.141592654
-            sage: pi.n(prec=20)
+            sage: pi.n(prec=20)                                                         # optional - sage.symbolic
             3.1416
 
         TESTS:
@@ -902,11 +902,11 @@ cdef class Element(SageObject):
             mpf('25.0')
             sage: mpmathify(3 + 4*I)                                                    # optional - mpmath
             mpc(real='3.0', imag='4.0')
-            sage: mpmathify(1 + pi)                                                     # optional - mpmath
+            sage: mpmathify(1 + pi)                                                     # optional - mpmath sage.symbolic
             mpf('4.14159265358979323846264338327933')
-            sage: (1 + pi)._mpmath_(10)                                                 # optional - mpmath
+            sage: (1 + pi)._mpmath_(10)                                                 # optional - mpmath sage.symbolic
             mpf('4.140625')
-            sage: (1 + pi)._mpmath_(mp.prec)                                            # optional - mpmath
+            sage: (1 + pi)._mpmath_(mp.prec)                                            # optional - mpmath sage.symbolic
             mpf('4.14159265358979323846264338327933')
         """
         return self.n(prec)._mpmath_(prec=prec)
@@ -2806,7 +2806,7 @@ cdef class RingElement(ModuleElement):
 
         ::
 
-            sage: divmod(22./7, RR(pi))
+            sage: divmod(22./7, RR(pi))                                                 # optional - sage.symbolic
             (1.00040249943477, 0.000000000000000)
         """
         try:
@@ -4261,8 +4261,8 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
             ....:     def quo_rem(self, other):
             ....:         return self._parent.var('quo,rem')
             ....: ''')
-            sage: e = MyElt(SR)                                                         # optional - sage.misc.cython
-            sage: e // e                                                                # optional - sage.misc.cython
+            sage: e = MyElt(SR)                                                         # optional - sage.misc.cython sage.symbolic
+            sage: e // e                                                                # optional - sage.misc.cython sage.symbolic
             quo
         """
         Q, _ = self.quo_rem(right)
@@ -4292,8 +4292,8 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
             ....:     def quo_rem(self, other):
             ....:         return self._parent.var('quo,rem')
             ....: ''')
-            sage: e = MyElt(SR)                                                         # optional - sage.misc.cython
-            sage: e % e                                                                 # optional - sage.misc.cython
+            sage: e = MyElt(SR)                                                         # optional - sage.misc.cython sage.symbolic
+            sage: e % e                                                                 # optional - sage.misc.cython sage.symbolic
             rem
         """
         _, R = self.quo_rem(other)
@@ -4314,6 +4314,7 @@ cdef class FieldElement(CommutativeRingElement):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^4 + x^2 + 2/3)                                  # optional - sage.rings.number_field
             sage: c = (1+b) // (1-b); c                                                 # optional - sage.rings.number_field
             3/4*b^3 + 3/4*b^2 + 3/2*b + 1/2

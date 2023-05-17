@@ -168,7 +168,7 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
 
     - ``K`` -- a number field
 
-    - ``dim`` -- a positive interger
+    - ``dim`` -- a positive integer
 
     - ``bound`` -- a real number
 
@@ -181,6 +181,7 @@ def points_of_bounded_height(PN, K, dim, bound, prec=53):
     EXAMPLES:
 
         sage: from sage.schemes.projective.proj_bdd_height import points_of_bounded_height
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^3 - 7)                                                          # optional - sage.rings.number_field
         sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # optional - sage.rings.number_field
         sage: len(list(points_of_bounded_height(P, K, 2, 1)))                                       # optional - sage.rings.number_field

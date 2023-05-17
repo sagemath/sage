@@ -2410,7 +2410,7 @@ class RiemannSurface():
         field::
 
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^2-x+2)
+            sage: K.<a> = NumberField(x^2 - x + 2)
             sage: all(len(m.algdep(6).roots(K)) > 0 for m in M.list())
             True
         """
@@ -2437,7 +2437,7 @@ class RiemannSurface():
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
             sage: S = RiemannSurface(y^2 - x^3 - x)
-            sage: S.plot_paths()
+            sage: S.plot_paths()                                                        # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         from sage.plot.point import point2d
@@ -2473,8 +2473,8 @@ class RiemannSurface():
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
-            sage: S = RiemannSurface(y^2-x^3-x)
-            sage: S.plot_paths3d()
+            sage: S = RiemannSurface(y^2 - x^3 - x)
+            sage: S.plot_paths3d()                                                      # optional - sage.plot
             Graphics3d Object
         """
         from sage.plot.graphics import Graphics
@@ -3574,7 +3574,7 @@ class RiemannSurface():
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
-            sage: S = RiemannSurface(y^2-x^5+1)
+            sage: S = RiemannSurface(y^2 - x^5 + 1)
             sage: epsilon = S._RR(2)^(-S._prec+1)
             sage: for vector in S.period_matrix().columns():
             ....:     print(bool(S.reduce_over_period_lattice(vector).norm()<epsilon))
@@ -3909,9 +3909,9 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
     r"""
     Determine integer relations between complex matrices.
 
-    Given two square matrices with complex entries of size g, h respectively,
-    numerically determine an (approximate) ZZ-basis for the 2g x 2h matrices
-    with integer entries of the shape (D, B; C, A) such that B+M1*A=(D+M1*C)*M2.
+    Given two square matrices with complex entries of size `g`, `h` respectively,
+    numerically determine an (approximate) `\ZZ`-basis for the `2g \times 2h` matrices
+    with integer entries of the shape `(D, B; C, A)` such that `B+M_1*A=(D+M_1*C)*M2`.
     By considering real and imaginary parts separately we obtain `2gh` equations
     with real coefficients in `4gh` variables. We scale the coefficients by a
     constant `2^b` and round them to integers, in order to obtain an integer
@@ -3926,7 +3926,7 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
 
     - ``M1`` -- square complex valued matrix
 
-    - ``M2`` -- square complex valued matrix of same size as M1
+    - ``M2`` -- square complex valued matrix of same size as ``M1``
 
     - ``b`` -- integer (default provided). The equation coefficients are scaled
       by `2^b` before rounding to integers.
@@ -3936,16 +3936,16 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
 
     OUTPUT:
 
-    A list of 2g x 2h integer matrices that, for large enough `r`, `b-r`,
-    generate the ZZ-module of relevant transformations.
+    A list of `2g \times 2h` integer matrices that, for large enough `r`, `b-r`,
+    generate the `\ZZ`-module of relevant transformations.
 
     EXAMPLES::
 
         sage: from sage.schemes.riemann_surfaces.riemann_surface import integer_matrix_relations
-        sage: M1=M2=matrix(CC,2,2,[sqrt(d) for d in [2,-3,-3,-6]])
-        sage: T=integer_matrix_relations(M1,M2)
-        sage: id=parent(M1)(1)
-        sage: M1t=[id.augment(M1) * t for t in T]
+        sage: M1 = M2 = matrix(CC, 2, 2, [CC(d).sqrt() for d in [2,-3,-3,-6]])
+        sage: T = integer_matrix_relations(M1,M2)
+        sage: id = parent(M1)(1)
+        sage: M1t = [id.augment(M1) * t for t in T]
         sage: [((m[:,:2]^(-1)*m)[:,2:]-M2).norm() < 1e-13 for m in M1t]
         [True, True]
     """

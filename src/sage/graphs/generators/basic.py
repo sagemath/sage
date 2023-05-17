@@ -179,13 +179,13 @@ def CircularLadderGraph(n):
         sage: for i in range(9):
         ....:    k = graphs.CircularLadderGraph(i+3)
         ....:    g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:    n = []
         ....:    for m in range(3):
         ....:        n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:    j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
     """
     G = Graph(2 * n, name="Circular Ladder graph")
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
@@ -263,13 +263,13 @@ def CycleGraph(n):
         sage: for i in range(9):
         ....:     k = graphs.CycleGraph(i+3)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
 
     Compare to plotting with the spring-layout algorithm::
 
@@ -279,13 +279,13 @@ def CycleGraph(n):
         ....:     spr = networkx.cycle_graph(i+3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):                                                        # optional - networkx
+        sage: for i in range(3):                                                        # optional - networkx sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)                                                     # optional - networkx
-        sage: G.show()  # long time                                                     # optional - networkx
+        sage: G = graphics_array(j)                                                     # optional - networkx sage.plot
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     TESTS:
 
@@ -339,13 +339,13 @@ def CompleteGraph(n):
         sage: for i in range(9):
         ....:     k = graphs.CompleteGraph(i+3)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
 
     We compare to plotting with the spring-layout algorithm::
 
@@ -356,13 +356,13 @@ def CompleteGraph(n):
         ....:     spr = networkx.complete_graph(i+3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):                                                        # optional - networkx
+        sage: for i in range(3):                                                        # optional - networkx sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)                                                     # optional - networkx
-        sage: G.show()  # long time                                                     # optional - networkx
+        sage: G = graphics_array(j)                                                     # optional - networkx sage.plot
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     Compare the constructors (results will vary)::
 
@@ -380,10 +380,10 @@ def CompleteGraph(n):
 
         sage: import networkx                                                           # optional - networkx
         sage: n = networkx.complete_graph(23)                                           # optional - networkx
-        sage: spring23 = Graph(n)
+        sage: spring23 = Graph(n)                                                       # optional - networkx
         sage: posdict23 = graphs.CompleteGraph(23)
-        sage: spring23.show()  # long time                                              # optional - networkx
-        sage: posdict23.show()  # long time
+        sage: spring23.show()  # long time                                              # optional - networkx sage.plot
+        sage: posdict23.show()  # long time                                             # optional - sage.plot
     """
     G = Graph(n, name="Complete graph")
     if n == 1:
@@ -462,13 +462,13 @@ def CompleteBipartiteGraph(p, q, set_position=True):
         sage: for i in range(9):
         ....:     k = graphs.CompleteBipartiteGraph(i+1,4)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
 
     We compare to plotting with the spring-layout algorithm::
 
@@ -478,13 +478,13 @@ def CompleteBipartiteGraph(p, q, set_position=True):
         ....:     spr = networkx.complete_bipartite_graph(i+1,4)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):                                                        # optional - networkx
+        sage: for i in range(3):                                                        # optional - networkx sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)                                                     # optional - networkx
-        sage: G.show()  # long time                                                     # optional - networkx
+        sage: G = graphics_array(j)                                                     # optional - networkx sage.plot
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     :trac:`12155`::
 
@@ -1076,13 +1076,13 @@ def LadderGraph(n):
         sage: for i in range(9):
         ....:     k = graphs.LadderGraph(i+2)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
     """
     pos_dict = {}
     for i in range(n):
@@ -1245,13 +1245,13 @@ def StarGraph(n):
         sage: for i in range(9):
         ....:     k = graphs.StarGraph(i+3)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
 
     Compared to plotting with the spring-layout algorithm
 
@@ -1263,13 +1263,13 @@ def StarGraph(n):
         ....:     spr = networkx.star_graph(i+3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):                                                        # optional - networkx
+        sage: for i in range(3):                                                        # optional - networkx sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)                                                     # optional - networkx
-        sage: G.show()  # long time                                                     # optional - networkx
+        sage: G = graphics_array(j)                                                     # optional - networkx sage.plot
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
     """
     G = Graph({0: list(range(1, n + 1))}, name="Star graph", format="dict_of_lists")
     G.set_pos({0: (0, 0)})

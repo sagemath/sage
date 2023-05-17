@@ -134,10 +134,10 @@ class JmolData(SageObject):
 
             sage: from sage.interfaces.jmoldata import JmolData
             sage: JData = JmolData()
-            sage: D = dodecahedron()
+            sage: D = dodecahedron()                                                    # optional - sage.plot
             sage: from tempfile import NamedTemporaryFile
             sage: archive = NamedTemporaryFile(suffix=".zip")
-            sage: D.export_jmol(archive.name)
+            sage: D.export_jmol(archive.name)                                           # optional - sage.plot
             sage: archive_native = archive.name
             sage: import sys
             sage: if sys.platform == 'cygwin':
@@ -145,7 +145,7 @@ class JmolData(SageObject):
             ....:     archive_native = cygwin.cygpath(archive_native, 'w')
             sage: script  = f'set defaultdirectory "f{archive_native}"\n'
             sage: script += 'script SCRIPT\n'
-            sage: with NamedTemporaryFile(suffix=".png") as testfile:  # optional -- java
+            sage: with NamedTemporaryFile(suffix=".png") as testfile:  # optional -- java sage.plot
             ....:     JData.export_image(targetfile=testfile.name,
             ....:                        datafile=script,
             ....:                        image_type="PNG")

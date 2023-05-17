@@ -1092,13 +1092,13 @@ def CirculantGraph(n, adjacency):
         sage: for i in range(9):
         ....:     k = graphs.CirculantGraph(i+4, i+1)
         ....:     g.append(k)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
 
     Compare to plotting with the spring-layout algorithm::
 
@@ -1108,13 +1108,13 @@ def CirculantGraph(n, adjacency):
         ....:     spr = networkx.cycle_graph(i+3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
-        sage: for i in range(3):                                                        # optional - networkx
+        sage: for i in range(3):                                                        # optional - networkx sage.plot
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
-        sage: G = graphics_array(j)                                                     # optional - networkx
-        sage: G.show()  # long time                                                     # optional - networkx
+        sage: G = graphics_array(j)                                                     # optional - networkx sage.plot
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     Passing a 1 into adjacency should give the cycle.
 
@@ -1193,21 +1193,21 @@ def CubeGraph(n, embedding=1):
         ....:  k = graphs.CubeGraph(i+1)
         ....:  g.append(k)
         ...
-        sage: for i in range(2):
+        sage: for i in range(2):                                                        # optional - sage.plot
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
         ...
-        sage: G = graphics_array(j)
-        sage: G.show(figsize=[6,4])  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show(figsize=[6,4])  # long time                                        # optional - sage.plot
 
     Use the plot options to display larger `n`-cubes::
 
         sage: g = graphs.CubeGraph(9, embedding=1)
-        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)  # long time
+        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)  # long time  # optional - sage.plot
         sage: g = graphs.CubeGraph(9, embedding=2)
-        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)  # long time
+        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)  # long time  # optional - sage.plot
 
     AUTHORS:
 
@@ -1442,20 +1442,20 @@ def FriendshipGraph(n):
         sage: for i in range(9):
         ....:     g = graphs.FriendshipGraph(i + 1)
         ....:     A.append(g)
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:     n = []
         ....:     for j in range(3):
         ....:         n.append(A[3*i + j].plot(vertex_size=20, vertex_labels=False))
         ....:     B.append(n)
-        sage: G = graphics_array(B)
-        sage: G.show()  # long time
+        sage: G = graphics_array(B)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
 
     For `n = 1`, the friendship graph `F_1` is isomorphic to the cycle
     graph `C_3`, whose visual representation is a triangle. ::
 
         sage: G = graphs.FriendshipGraph(1); G
         Friendship graph: Graph on 3 vertices
-        sage: G.show()  # long time
+        sage: G.show()  # long time                                                     # optional - sage.plot
         sage: G.is_isomorphic(graphs.CycleGraph(3))
         True
 
@@ -3398,14 +3398,14 @@ def WheelGraph(n):
         ....:  k = graphs.WheelGraph(i+3)
         ....:  g.append(k)
         ...
-        sage: for i in range(3):
+        sage: for i in range(3):                                                        # optional - sage.plot
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
         ...
-        sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G = graphics_array(j)                                                     # optional - sage.plot
+        sage: G.show()  # long time                                                     # optional - sage.plot
 
     Next, using the spring-layout algorithm::
 
@@ -3417,14 +3417,14 @@ def WheelGraph(n):
         ....:  k = Graph(spr)
         ....:  g.append(k)
         ...
-        sage: for i in range(3):                                                        # optional - networkx
+        sage: for i in range(3):                                                        # optional - networkx sage.plot
         ....:  n = []
         ....:  for m in range(3):
         ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:  j.append(n)
         ...
-        sage: G = graphics_array(j)                                                     # optional - networkx
-        sage: G.show()  # long time                                                     # optional - networkx
+        sage: G = graphics_array(j)                                                     # optional - networkx sage.plot
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     Compare the plotting::
 
@@ -3736,8 +3736,8 @@ def RingedTree(k, vertex_labels=True):
     EXAMPLES::
 
         sage: G = graphs.RingedTree(5)
-        sage: P = G.plot(vertex_labels=False, vertex_size=10)
-        sage: P.show()  # long time
+        sage: P = G.plot(vertex_labels=False, vertex_size=10)                           # optional - sage.plot
+        sage: P.show()  # long time                                                     # optional - sage.plot
         sage: G.vertices(sort=True)
         ['', '0', '00', '000', '0000', '0001', '001', '0010', '0011', '01',
          '010', '0100', '0101', '011', '0110', '0111', '1', '10', '100',

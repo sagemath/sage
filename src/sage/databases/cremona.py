@@ -217,7 +217,7 @@ def cremona_letter_code(n):
         Traceback (most recent call last):
         ...
         ValueError: Cremona letter codes are only defined for non-negative integers
-        sage: cremona_letter_code(x)
+        sage: cremona_letter_code(x)                                                    # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: Cremona letter codes are only defined for non-negative integers

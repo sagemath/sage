@@ -86,10 +86,11 @@ def c4c6_nonsingular(c4, c6):
 
     Over number fields::
 
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4c6_nonsingular(-217728*a - 679104, 141460992*a + 409826304)
         True
-        sage: K.<a> = NumberField(x^3-10)
+        sage: K.<a> = NumberField(x^3 - 10)
         sage: c4c6_nonsingular(-217728*a - 679104, 141460992*a + 409826304)
         True
     """
@@ -107,22 +108,24 @@ def c4c6_model(c4, c6, assume_nonsingular=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``assume_nonsingular`` (boolean, default False) -- if True,
+    - ``assume_nonsingular`` (boolean, default ``False``) -- if ``True``,
       check for integrality and nosingularity.
 
     OUTPUT:
 
     The elliptic curve with a-invariants [0,0,0,-c4/48,-c6/864], whose
     c-invariants are the given c4, c6.  If the supplied invariants are
-    singular, returns None when ``assume_nonsingular`` is False and
-    raises an ArithmeticError otherwise.
+    singular, returns ``None`` when ``assume_nonsingular`` is ``False`` and
+    raises an :class:`ArithmeticError` otherwise.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import c4c6_model
-        sage: K.<a> = NumberField(x^3-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^3 - 10)
         sage: c4c6_model(-217728*a - 679104, 141460992*a + 409826304)
-        Elliptic Curve defined by y^2 = x^3 + (4536*a+14148)*x + (-163728*a-474336) over Number Field in a with defining polynomial x^3 - 10
+        Elliptic Curve defined by y^2 = x^3 + (4536*a+14148)*x + (-163728*a-474336)
+         over Number Field in a with defining polynomial x^3 - 10
 
         sage: c4, c6 = EllipticCurve('389a1').c_invariants()
         sage: c4c6_model(c4,c6)
@@ -164,17 +167,17 @@ def make_integral(a, P, e):
 
         sage: from sage.schemes.elliptic_curves.kraus import make_integral
 
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: P = K.primes_above(2)[0]
         sage: e = P.ramification_index(); e
         2
         sage: x = 1/5
-        sage: b = make_integral(x,P,e)
-        sage: b
+        sage: b = make_integral(x, P, e); b
         1
         sage: (b-x).valuation(P) >= e
         True
-        sage: make_integral(1/a,P,e)
+        sage: make_integral(1/a, P, e)
         Traceback (most recent call last):
         ...
         ArithmeticError: Cannot lift 1/10*a to O_K mod (Fractional ideal (2, a))^2
@@ -204,13 +207,14 @@ def sqrt_mod_4(x, P):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import sqrt_mod_4
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: P = K.primes_above(2)[0]
-        sage: sqrt_mod_4(1+2*a,P)
+        sage: sqrt_mod_4(1 + 2*a, P)
         (False, 0)
-        sage: sqrt_mod_4(-1+2*a,P)
+        sage: sqrt_mod_4(-1 + 2*a, P)
         (True, a + 1)
-        sage: (1+a)^2 - (-1+2*a)
+        sage: (1+a)^2 - (-1 + 2*a)
         12
         sage: e = P.ramification_index()
         sage: ((1+a)^2 - (-1+2*a)).mod(P**e)
@@ -245,7 +249,8 @@ def test_b2_local(c4, c6, P, b2, debug=False):
 
     EXAMPLES::
 
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: P3a, P3b = K.primes_above(3)
@@ -255,7 +260,9 @@ def test_b2_local(c4, c6, P, b2, debug=False):
 
         sage: b2 = 0
         sage: test_b2_local(c4,c6,P3a,b2)
-        Elliptic Curve defined by y^2 = x^3 + (3784/3*a-96449/12)*x + (1743740/27*a-32765791/108) over Number Field in a with defining polynomial x^2 - 10
+        Elliptic Curve defined by
+         y^2 = x^3 + (3784/3*a-96449/12)*x + (1743740/27*a-32765791/108)
+         over Number Field in a with defining polynomial x^2 - 10
         sage: test_b2_local(c4,c6,P3b,b2)
         False
 
@@ -266,16 +273,22 @@ def test_b2_local(c4, c6, P, b2, debug=False):
         test_b2_local: not integral at Fractional ideal (3, a + 1)
         False
         sage: test_b2_local(c4,c6,P3b,b2)
-        Elliptic Curve defined by y^2 = x^3 + (-1/4*a)*x^2 + (3784/3*a-192893/24)*x + (56378369/864*a-32879311/108) over Number Field in a with defining polynomial x^2 - 10
+        Elliptic Curve defined by
+         y^2 = x^3 + (-1/4*a)*x^2 + (3784/3*a-192893/24)*x + (56378369/864*a-32879311/108)
+         over Number Field in a with defining polynomial x^2 - 10
 
     Using CRT we can do both with the same b2::
 
         sage: b2 = K.solve_CRT([0,-a],[P3a,P3b]); b2
         a + 1
         sage: test_b2_local(c4,c6,P3a,b2)
-        Elliptic Curve defined by y^2 = x^3 + (1/4*a+1/4)*x^2 + (10091/8*a-128595/16)*x + (4097171/64*a-19392359/64) over Number Field in a with defining polynomial x^2 - 10
+        Elliptic Curve defined by
+         y^2 = x^3 + (1/4*a+1/4)*x^2 + (10091/8*a-128595/16)*x + (4097171/64*a-19392359/64)
+         over Number Field in a with defining polynomial x^2 - 10
         sage: test_b2_local(c4,c6,P3b,b2)
-        Elliptic Curve defined by y^2 = x^3 + (1/4*a+1/4)*x^2 + (10091/8*a-128595/16)*x + (4097171/64*a-19392359/64) over Number Field in a with defining polynomial x^2 - 10
+        Elliptic Curve defined
+         by y^2 = x^3 + (1/4*a+1/4)*x^2 + (10091/8*a-128595/16)*x + (4097171/64*a-19392359/64)
+         over Number Field in a with defining polynomial x^2 - 10
     """
     E = c4c6_model(c4,c6).rst_transform(b2/12,0,0)
     if not (c4,c6) == E.c_invariants():
@@ -307,13 +320,16 @@ def test_b2_global(c4, c6, b2, debug=False):
 
     EXAMPLES::
 
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: b2 = a+1
         sage: from sage.schemes.elliptic_curves.kraus import test_b2_global
         sage: test_b2_global(c4,c6,b2)
-        Elliptic Curve defined by y^2 = x^3 + (1/4*a+1/4)*x^2 + (10091/8*a-128595/16)*x + (4097171/64*a-19392359/64) over Number Field in a with defining polynomial x^2 - 10
+        Elliptic Curve defined by
+         y^2 = x^3 + (1/4*a+1/4)*x^2 + (10091/8*a-128595/16)*x + (4097171/64*a-19392359/64)
+         over Number Field in a with defining polynomial x^2 - 10
         sage: test_b2_global(c4,c6,0,debug=True)
         test_b2_global: not integral at all primes dividing 3
         False
@@ -356,7 +372,8 @@ def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import check_Kraus_local_3
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: P3a, P3b = K.primes_above(3)
@@ -367,7 +384,7 @@ def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
 
     An example in a field where 3 is ramified::
 
-        sage: K.<a> = NumberField(x^2-15)
+        sage: K.<a> = NumberField(x^2 - 15)
         sage: c4 = -60504*a + 386001
         sage: c6 = -55346820*a + 261045153
         sage: P3 = K.primes_above(3)[0]
@@ -424,12 +441,15 @@ def test_a1a3_local(c4, c6, P, a1, a3, debug=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import test_a1a3_local
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: P = K.primes_above(2)[0]
         sage: test_a1a3_local(c4,c6,P,a,0)
-        Elliptic Curve defined by y^2 + a*x*y = x^3 + (3784/3*a-24106/3)*x + (1772120/27*a-2790758/9) over Number Field in a with defining polynomial x^2 - 10
+        Elliptic Curve defined by
+         y^2 + a*x*y = x^3 + (3784/3*a-24106/3)*x + (1772120/27*a-2790758/9)
+         over Number Field in a with defining polynomial x^2 - 10
         sage: test_a1a3_local(c4,c6,P,a,a,debug=True)
         test_a1a3_local: not integral at Fractional ideal (2, a)
         False
@@ -460,18 +480,21 @@ def test_a1a3_global(c4, c6, a1, a3, debug=False):
 
     The elliptic curve which is the (a1^2/12,a1/2,a3/2)-transform of
     [0,0,0,-c4/48,-c6/864] if this is integral at all primes P
-    dividing 2, else False.
+    dividing 2, else ``False``.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import test_a1a3_global
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: test_a1a3_global(c4,c6,a,a,debug=False)
         False
         sage: test_a1a3_global(c4,c6,a,0)
-        Elliptic Curve defined by y^2 + a*x*y = x^3 + (3784/3*a-24106/3)*x + (1772120/27*a-2790758/9) over Number Field in a with defining polynomial x^2 - 10
+        Elliptic Curve defined by
+         y^2 + a*x*y = x^3 + (3784/3*a-24106/3)*x + (1772120/27*a-2790758/9)
+         over Number Field in a with defining polynomial x^2 - 10
     """
     E = c4c6_model(c4,c6).rst_transform(a1**2/12,a1/2,a3/2)
     if not (c4, c6) == E.c_invariants():
@@ -500,16 +523,19 @@ def test_rst_global(c4, c6, r, s, t, debug=False):
 
     The elliptic curve which is the (r,s,t)-transform of
     [0,0,0,-c4/48,-c6/864] if this is integral at all primes P, else
-    False.
+    ``False``.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import test_rst_global
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2-10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: test_rst_global(c4,c6,1/3*a - 133/6, 3/2*a, -89/2*a + 5)
-        Elliptic Curve defined by y^2 + 3*a*x*y + (-89*a+10)*y = x^3 + (a-89)*x^2 + (1202*a-5225)*x + (34881*a-151813) over Number Field in a with defining polynomial x^2 - 10
+        Elliptic Curve defined by
+         y^2 + 3*a*x*y + (-89*a+10)*y = x^3 + (a-89)*x^2 + (1202*a-5225)*x + (34881*a-151813)
+         over Number Field in a with defining polynomial x^2 - 10
         sage: test_rst_global(c4,c6,a, 3, -89*a, debug=False)
         False
     """
@@ -554,24 +580,25 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
 
     - ``P`` -- a prime ideal of the number field which divides 2
 
-    - ``a1`` -- an integral elements of a number field, or None (default)
+    - ``a1`` -- an integral elements of a number field, or ``None`` (default)
 
-    - ``assume_nonsingular`` (boolean, default False) -- if True,
-      check for integrality and nosingularity.
+    - ``assume_nonsingular`` (boolean, default ``False``) -- if ``True``,
+      check for integrality and nonsingularity.
 
     OUTPUT:
 
-    Either (False, 0, 0) if Kraus's conditions fail, or (True, a1,
-    a3) if they pass, in which case the elliptic curve which is the
+    Either ``(False, 0, 0)`` if Kraus's conditions fail, or ``(True, a1,
+    a3)`` if they pass, in which case the elliptic curve which is the
     (a1**2/12,a1/2,a3/2)-transform of [0,0,0,-c4/48,-c6/864] is
     integral at P.  If a1 is provided and valid then the output will
-    be (True, a1, a3) for suitable a3.
+    be ``(True, a1, a3)`` for suitable a3.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import check_Kraus_local_2
-        sage: K.<a> = NumberField(x^2-10)
-        sage: c4 = -60544*a + 385796 #  EllipticCurve([a,a,0,1263*a-8032,62956*a-305877])
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
+        sage: c4 = -60544*a + 385796  # EllipticCurve([a,a,0,1263*a-8032,62956*a-305877])
         sage: c6 = -55799680*a + 262126328
         sage: P = K.primes_above(2)[0]
         sage: check_Kraus_local_2(c4,c6,P)
@@ -644,19 +671,20 @@ def check_Kraus_local(c4, c6, P, assume_nonsingular=False):
 
     - ``P`` -- a prime ideal of the number field
 
-    - ``assume_nonsingular`` (boolean, default False) -- if True,
-      check for integrality and nosingularity.
+    - ``assume_nonsingular`` (boolean, default ``False``) -- if ``True``,
+      check for integrality and nonsingularity.
 
     OUTPUT:
 
-    Tuple: either (True,E) if there is a Weierstrass model E integral
-    at P and with invariants c4, c6, or (False, None) if there is
+    Tuple: either ``(True, E)`` if there is a Weierstrass model E integral
+    at P and with invariants c4, c6, or ``(False, None)`` if there is
     none.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import check_Kraus_local
-        sage: K.<a> = NumberField(x^2-15)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 15)
         sage: P2 = K.primes_above(2)[0]
         sage: P3 = K.primes_above(3)[0]
         sage: P5 = K.primes_above(5)[0]
@@ -713,18 +741,19 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``assume_nonsingular`` (boolean, default False) -- if True,
-      check for integrality and nosingularity.
+    - ``assume_nonsingular`` (boolean, default ``False``) -- if ``True``,
+      check for integrality and nonsingularity.
 
     OUTPUT:
 
-    Either False if Kraus's conditions fail, or, if they pass, an
+    Either ``False`` if Kraus's conditions fail, or, if they pass, an
     elliptic curve E which is integral and has c-invariants c4,c6.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import check_Kraus_global
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: E = EllipticCurve([a,a,0,1263*a-8032,62956*a-305877])
         sage: c4, c6 = E.c_invariants()
         sage: check_Kraus_global(c4,c6,debug=True)
@@ -737,26 +766,31 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
         (a1, b2, a3) = (3*a, a + 1, 0)
         Using (r, s, t)=(1/3*a - 133/6, 3/2*a, -89/2*a + 5) should give a global integral model...
         ...and it does!
-        Elliptic Curve defined by y^2 + 3*a*x*y + (-89*a+10)*y = x^3 + (a-89)*x^2 + (1202*a-5225)*x + (34881*a-151813) over Number Field in a with defining polynomial x^2 - 10
+        Elliptic Curve defined by
+         y^2 + 3*a*x*y + (-89*a+10)*y = x^3 + (a-89)*x^2 + (1202*a-5225)*x + (34881*a-151813)
+         over Number Field in a with defining polynomial x^2 - 10
 
-        sage: K.<a> = NumberField(x^2-15)
+        sage: K.<a> = NumberField(x^2 - 15)
         sage: E = EllipticCurve([0, 0, 0, 4536*a + 14148, -163728*a - 474336])
         sage: c4, c6 = E.c_invariants()
         sage: check_Kraus_global(c4,c6)
-        Elliptic Curve defined by y^2 = x^3 + (4536*a+14148)*x + (-163728*a-474336) over Number Field in a with defining polynomial x^2 - 15
+        Elliptic Curve defined by y^2 = x^3 + (4536*a+14148)*x + (-163728*a-474336)
+         over Number Field in a with defining polynomial x^2 - 15
 
     TESTS (see :trac:`17295`)::
 
-        sage: K.<a> =NumberField(x^3 - 7*x - 5)
+        sage: K.<a> = NumberField(x^3 - 7*x - 5)
         sage: E = EllipticCurve([a, 0, 1, 2*a^2 + 5*a + 3, -a^2 - 3*a - 2])
-        sage: assert E.conductor().norm() ==8
+        sage: assert E.conductor().norm() == 8
         sage: G = K.galois_group(names='b')
         sage: def conj_curve(E,sigma): return EllipticCurve([sigma(a) for a in E.ainvs()])
         sage: EL = conj_curve(E,G[0])
         sage: L = EL.base_field()
-        sage: assert L.class_number()== 2
+        sage: assert L.class_number() == 2
         sage: EL.isogeny_class() # long time (~10s)
-        Isogeny class of Elliptic Curve defined by y^2 + (-1/90*b^4+7/18*b^2-1/2*b-98/45)*x*y + y = x^3 + (1/45*b^5-1/18*b^4-7/9*b^3+41/18*b^2+167/90*b-29/9)*x + (-1/90*b^5+1/30*b^4+7/18*b^3-4/3*b^2-61/90*b+11/5) over Number Field in b with defining polynomial x^6 - 42*x^4 + 441*x^2 - 697
+        Isogeny class of Elliptic Curve defined by
+         y^2 + (-1/90*b^4+7/18*b^2-1/2*b-98/45)*x*y + y = x^3 + (1/45*b^5-1/18*b^4-7/9*b^3+41/18*b^2+167/90*b-29/9)*x + (-1/90*b^5+1/30*b^4+7/18*b^3-4/3*b^2-61/90*b+11/5)
+         over Number Field in b with defining polynomial x^6 - 42*x^4 + 441*x^2 - 697
     """
     if not assume_nonsingular:
         if not c4c6_nonsingular(c4,c6):
@@ -882,14 +916,14 @@ def semi_global_minimal_model(E, debug=False):
 
     OUTPUT:
 
-    A tuple (Emin,I) where Emin is an elliptic curve which is either a
+    A tuple ``(Emin, I)`` where Emin is an elliptic curve which is either a
     global minimal model of E if one exists (i.e., an integral model
-    which is minimal at every prime), or a semin-global minimal model
+    which is minimal at every prime), or a semi-global minimal model
     (i.e., an integral model which is minimal at every prime except
     one).  I is the unit ideal of Emin is a global minimal model, else
     is the unique prime at which Emin is not minimal.  Thus in all
     cases,
-    Emin.minimal_discriminant_ideal() * I**12 == (E.discriminant()).
+    ``Emin.minimal_discriminant_ideal() * I**12 == (E.discriminant())``.
 
     .. NOTE::
 
@@ -900,14 +934,17 @@ def semi_global_minimal_model(E, debug=False):
 
     EXAMPLES::
 
-        sage: K.<a> = NumberField(x^2-10)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 10)
         sage: K.class_number()
         2
         sage: E = EllipticCurve([0,0,0,-186408*a - 589491, 78055704*a + 246833838])
         sage: from sage.schemes.elliptic_curves.kraus import semi_global_minimal_model
         sage: Emin, P = semi_global_minimal_model(E)
         sage: Emin
-        Elliptic Curve defined by y^2 + 3*x*y + (2*a-11)*y = x^3 + (a-10)*x^2 + (-152*a-415)*x + (1911*a+5920) over Number Field in a with defining polynomial x^2 - 10
+        Elliptic Curve defined by
+         y^2 + 3*x*y + (2*a-11)*y = x^3 + (a-10)*x^2 + (-152*a-415)*x + (1911*a+5920)
+         over Number Field in a with defining polynomial x^2 - 10
         sage: E.minimal_discriminant_ideal()*P**12 == K.ideal(Emin.discriminant())
         True
 
@@ -919,7 +956,8 @@ def semi_global_minimal_model(E, debug=False):
     23567::
 
         sage: K.<a> = NumberField(x^2-x+31821453)
-        sage: ainvs = (0, 0, 0, -382586771000351226384*a - 2498023791133552294513515, 358777608829102441023422458989744*a + 1110881475104109582383304709231832166)
+        sage: ainvs = (0, 0, 0, -382586771000351226384*a - 2498023791133552294513515,
+        ....:          358777608829102441023422458989744*a + 1110881475104109582383304709231832166)
         sage: E = EllipticCurve(ainvs)
         sage: from sage.schemes.elliptic_curves.kraus import semi_global_minimal_model
         sage: Emin, p = semi_global_minimal_model(E) # long time (25s)

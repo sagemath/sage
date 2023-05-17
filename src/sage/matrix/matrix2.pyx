@@ -5275,6 +5275,7 @@ cdef class Matrix(Matrix1):
 
         An example over a bigger ring::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<w> = NumberField(x^2 - x + 2)                                      # optional - sage.rings.number_field
             sage: OL = L.ring_of_integers()                                             # optional - sage.rings.number_field
             sage: A = matrix(L, 2, [1, w/2])                                            # optional - sage.rings.number_field
@@ -7550,6 +7551,7 @@ cdef class Matrix(Matrix1):
             [ 0  4  8 12]
             [ 0  0  0  0]
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<w> = NumberField(x^2 - x + 2)                                      # optional - sage.rings.number_field
             sage: OL = L.ring_of_integers()                                             # optional - sage.rings.number_field
             sage: m = matrix(OL, 2, 2, [1,2,3,4+w])                                     # optional - sage.rings.number_field
@@ -14828,6 +14830,7 @@ cdef class Matrix(Matrix1):
         confirmed by the positive determinants of its leading
         principal submatrices::
 
+            sage: x = polygen(ZZ, 'x')
             sage: C.<I> = NumberField(x^2 + 1, embedding=CC(0,1))                       # optional - sage.rings.number_field
             sage: A = matrix(C, [[        23,  17*I + 3,  24*I + 25,     21*I],         # optional - sage.rings.number_field
             ....:                [ -17*I + 3,        38, -69*I + 89, 7*I + 15],
@@ -15556,6 +15559,7 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: OE.<w> = EquationOrder(x^2 - x + 2)                                   # optional - sage.rings.number_field
             sage: m = Matrix([[1, w], [w, 7]])                                          # optional - sage.rings.number_field
             sage: m.elementary_divisors()                                               # optional - sage.rings.number_field
@@ -15647,6 +15651,7 @@ cdef class Matrix(Matrix1):
         An example over the ring of integers of a number field (of class
         number 1)::
 
+            sage: x = polygen(ZZ, 'x')
             sage: OE.<w> = EquationOrder(x^2 - x + 2)                                   # optional - sage.rings.number_field
             sage: m = Matrix([[1, w], [w, 7]])                                          # optional - sage.rings.number_field
             sage: d, u, v = m.smith_form()                                              # optional - sage.rings.number_field
@@ -16012,6 +16017,7 @@ cdef class Matrix(Matrix1):
         column pivot.
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^3 - 2)                                          # optional - sage.rings.number_field
             sage: OL = L.ring_of_integers()                                             # optional - sage.rings.number_field
 
@@ -17825,6 +17831,7 @@ def _smith_diag(d, transformation=True):
     EXAMPLES::
 
         sage: from sage.matrix.matrix2 import _smith_diag
+        sage: x = polygen(ZZ, 'x')
         sage: OE = EquationOrder(x^2 - x + 2, 'w')                                      # optional - sage.rings.number_field
         sage: A = matrix(OE, 2, [2, 0, 0, 3])                                           # optional - sage.rings.number_field
         sage: D,U,V = _smith_diag(A); D,U,V                                             # optional - sage.rings.number_field
@@ -17901,6 +17908,7 @@ def _generic_clear_column(m):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: L.<w> = NumberField(x^2 - x + 2)                                          # optional - sage.rings.number_field
         sage: OL = L.ring_of_integers(); w = OL(w)                                      # optional - sage.rings.number_field
         sage: m = matrix(OL, 8, 4, [2*w - 2, 2*w + 1, -2, w, 2, -2, -2*w - 2, -2*w + 2, -w + 2, 2*w + 1, -w + 2, -w - 2, -2*w,              # optional - sage.rings.number_field
@@ -18009,6 +18017,7 @@ def _smith_onestep(m):
     EXAMPLES::
 
         sage: from sage.matrix.matrix2 import _smith_onestep
+        sage: x = polygen(ZZ, 'x')
         sage: OE.<w> = EquationOrder(x^2 - x + 2)                                       # optional - sage.rings.number_field
         sage: m = matrix(OE, 3, 3, [1, 0, 7, 2, w, w+17, 13+8*w, 0, 6])                 # optional - sage.rings.number_field
         sage: a,b,c = _smith_onestep(m); b                                              # optional - sage.rings.number_field

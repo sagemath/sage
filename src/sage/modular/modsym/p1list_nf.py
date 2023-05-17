@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.number_field
 r"""
 Lists of Manin symbols over number fields, elements of `\mathbb{P}^1(R/N)`
 
@@ -14,10 +15,12 @@ We define a P1NFList:
 
 ::
 
+    sage: x = polygen(QQ, 'x')
     sage: k.<a> = NumberField(x^3 + 11)
     sage: N = k.ideal(5, a^2 - a + 1)
     sage: P = P1NFList(N); P
-    The projective line over the ring of integers modulo the Fractional ideal (5, a^2 - a + 1)
+    The projective line over
+     the ring of integers modulo the Fractional ideal (5, a^2 - a + 1)
 
 List operations with the P1NFList:
 
@@ -95,6 +98,7 @@ def P1NFList_clear_level_cache():
 
     EXAMPLES::
 
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^3 + 11)
         sage: N = k.ideal(a+1)
         sage: alpha = MSymbol(N, 2*a^2, 5)
@@ -112,7 +116,7 @@ def P1NFList_clear_level_cache():
 
 @richcmp_method
 class MSymbol(SageObject):
-    """
+    r"""
     The constructor for an M-symbol over a number field.
 
     INPUT:
@@ -123,19 +127,20 @@ class MSymbol(SageObject):
       level N.
 
     - ``d`` -- (optional) when present, it must be an integral element such
-      that <c> + <d> + N = R, where R is the corresponding ring of integers.
+      that `\la c\ra + \la d\ra + N = R, where `R` is the corresponding ring of integers.
 
-    - ``check`` -- bool (default True). If ``check=False`` the constructor does
-      not check the condition <c> + <d> + N = R.
+    - ``check`` -- bool (default ``True``). If ``check=False`` the constructor does
+      not check the condition `\la c\ra + \la d\ra + N = R`.
 
     OUTPUT:
 
-    An M-symbol modulo the given ideal N, i.e. an element of the
-    projective line `\\mathbb{P}^1(R/N)`, where R is the ring of integers of
+    An M-symbol modulo the given ideal `N`, i.e. an element of the
+    projective line `\mathbb{P}^1(R/N)`, where `R` is the ring of integers of
     the underlying number field.
 
     EXAMPLES::
 
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^3 + 11)
         sage: N = k.ideal(a + 1, 2)
         sage: MSymbol(N, 3, a^2 + 1)
@@ -148,7 +153,7 @@ class MSymbol(SageObject):
         sage: MSymbol(N, (1, 0))
         M-symbol (1: 0) of level Fractional ideal (2, a + 1)
 
-    We get an error if <c>, <d> and N are not coprime:
+    We get an error if `\la c\ra`, `\la d\ra` and `N` are not coprime:
 
     ::
 
@@ -175,6 +180,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^4 + 13*x - 7)
             sage: N = k.ideal(5)
             sage: MSymbol(N, 0, 6*a)
@@ -210,11 +216,12 @@ class MSymbol(SageObject):
         self.__c, self.__d = (c1, d1)
 
     def __repr__(self):
-        """
+        r"""
         Return the string representation of this MSymbol.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: MSymbol(N, 3, a)
@@ -228,6 +235,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^4 + 13*x - 7)
             sage: N = k.ideal(a^3 - 1)
             sage: alpha = MSymbol(N, 3, 5*a^2 - 1)
@@ -237,13 +245,14 @@ class MSymbol(SageObject):
         return r"\(%s: %s\)" % (self.c._latex_(), self.d._latex_())
 
     def __richcmp__(self, other, op):
-        """
+        r"""
         Comparison function for objects of the class MSymbol.
 
         The order is the same as for the underlying lists of lists.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha = MSymbol(N, 3, a)
@@ -260,11 +269,12 @@ class MSymbol(SageObject):
                        [other.__c.list(), other.__d.list()], op)
 
     def N(self):
-        """
+        r"""
         Return the level or modulus of this MSymbol.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha = MSymbol(N, 3, a)
@@ -274,11 +284,12 @@ class MSymbol(SageObject):
         return self.__N
 
     def tuple(self):
-        """
-        Return the MSymbol as a list (c, d).
+        r"""
+        Return the :class:`MSymbol` as a list `(c, d)`.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha = MSymbol(N, 3, a); alpha
@@ -289,7 +300,7 @@ class MSymbol(SageObject):
         return self.__c, self.__d
 
     def __getitem__(self, n):
-        """
+        r"""
         Indexing function for the list defined by an M-symbol.
 
         INPUT:
@@ -299,6 +310,7 @@ class MSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha = MSymbol(N, 3, a); alpha
@@ -311,11 +323,12 @@ class MSymbol(SageObject):
         return self.tuple()[n]
 
     def __get_c(self):
-        """
+        r"""
         Return the first coefficient of the M-symbol.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(a + 1, 2)
             sage: alpha = MSymbol(N, 3, a^2 + 1)
@@ -326,11 +339,12 @@ class MSymbol(SageObject):
     c = property(__get_c)
 
     def __get_d(self):
-        """
+        r"""
         Return the second coefficient of the M-symbol.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(a + 1, 2)
             sage: alpha = MSymbol(N, 3, a^2 + 1)
@@ -341,18 +355,19 @@ class MSymbol(SageObject):
     d = property(__get_d)
 
     def lift_to_sl2_Ok(self):
-        """
-        Lift the MSymbol to an element of `SL(2, Ok)`, where `Ok` is the ring
+        r"""
+        Lift the :class:`MSymbol` to an element of `SL(2, O_k)`, where `O_k` is the ring
         of integers of the corresponding number field.
 
         OUTPUT:
 
         A list of integral elements `[a, b, c', d']` that are the entries of
-        a 2x2 matrix with determinant 1. The lower two entries are congruent
-        (modulo the level) to the coefficients `c, d` of the MSymbol self.
+        a `2\times 2` matrix with determinant 1. The lower two entries are congruent
+        (modulo the level) to the coefficients `c`, `d` of the :class:`MSymbol` ``self``.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha = MSymbol(N, 3*a + 1, a)
@@ -363,12 +378,12 @@ class MSymbol(SageObject):
 
     def normalize(self, with_scalar=False):
         r"""
-        Return a normalized MSymbol (a canonical representative of an element
-        of `\mathbb{P}^1(R/N)` ) equivalent to ``self``.
+        Return a normalized :class:`MSymbol` (a canonical representative of an element
+        of `\mathbb{P}^1(R/N)`) equivalent to ``self``.
 
         INPUT:
 
-        - ``with_scalar`` -- bool (default False)
+        - ``with_scalar`` -- bool (default ``False``)
 
         OUTPUT:
 
@@ -376,10 +391,11 @@ class MSymbol(SageObject):
           `(u*c', u*d')` is congruent to `(c: d)` (mod `N`), where `(c: d)`
           are the coefficients of ``self`` and `N` is the level.
 
-        -  a normalized MSymbol (c': d') equivalent to ``self``.
+        -  a normalized :class:`MSymbol` `(c': d')` equivalent to ``self``.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3, a - 1)
             sage: alpha1 = MSymbol(N, 3, a); alpha1
@@ -471,10 +487,11 @@ class P1NFList(SageObject):
 
     OUTPUT:
 
-    A P1NFList object representing `\mathbb{P}^1(R/N)`.
+    A :class:`P1NFList` object representing `\mathbb{P}^1(R/N)`.
 
     EXAMPLES::
 
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^3 + 11)
         sage: N = k.ideal(5, a + 1)
         sage: P = P1NFList(N); P
@@ -488,12 +505,13 @@ class P1NFList(SageObject):
         True
     """
     def __init__(self, N):
-        """
+        r"""
         The constructor for the class P1NFList. See ``P1NFList`` for full
         documentation.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 5)
             sage: N = k.ideal(3, a - 1)
             sage: P = P1NFList(N); P
@@ -504,13 +522,14 @@ class P1NFList(SageObject):
         self.__list.sort()
 
     def __richcmp__(self, other, op):
-        """
+        r"""
         Comparison function for objects of the class P1NFList.
 
         The order is the same as for the underlying modulus.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N1 = k.ideal(3, a + 1)
             sage: P1 = P1NFList(N1)
@@ -528,11 +547,12 @@ class P1NFList(SageObject):
         return richcmp(self.__N, other.__N, op)
 
     def __getitem__(self, n):
-        """
+        r"""
         Standard indexing function for the class P1NFList.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(a)
             sage: P = P1NFList(N)
@@ -545,11 +565,12 @@ class P1NFList(SageObject):
         return self.__list[n]
 
     def __len__(self):
-        """
+        r"""
         Return the length of this P1NFList.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a^2 - a + 1)
             sage: P = P1NFList(N)
@@ -559,13 +580,14 @@ class P1NFList(SageObject):
         return len(self.__list)
 
     def __repr__(self):
-        """
+        r"""
         Return the string representation of this P1NFList.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
-            sage: N = k.ideal(5, a+1)
+            sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N); P
             The projective line over the ring of integers modulo the Fractional ideal (5, a + 1)
 
@@ -573,11 +595,12 @@ class P1NFList(SageObject):
         return "The projective line over the ring of integers modulo the %s"%self.__N
 
     def list(self):
-        """
-        Return the underlying list of this P1NFList object.
+        r"""
+        Return the underlying list of this :class:`P1NFList` object.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a+1)
             sage: P = P1NFList(N)
@@ -600,24 +623,25 @@ class P1NFList(SageObject):
         - ``d`` -- (optional) when present, it must be an integral element of
           the number field such that `(c, d)` defines an M-symbol of level `N`.
 
-        - ``with_scalar`` -- bool (default False)
+        - ``with_scalar`` -- bool (default ``False``)
 
         OUTPUT:
 
         - (only if ``with_scalar=True``) a transforming scalar `u`, such that
           `(u*c', u*d')` is congruent to `(c: d)` (mod `N`).
 
-        - a normalized MSymbol (c': d') equivalent to `(c: d)`.
+        - a normalized :class:`MSymbol` `(c': d')` equivalent to `(c: d)`.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 31)
             sage: N = k.ideal(5, a + 3)
             sage: P = P1NFList(N)
             sage: P.normalize(3, a)
             M-symbol (1: 2*a) of level Fractional ideal (5, 1/2*a + 3/2)
 
-        We can use an MSymbol as input:
+        We can use an :class:`MSymbol` as input:
 
         ::
 
@@ -644,11 +668,12 @@ class P1NFList(SageObject):
         return MSymbol(self.N(), c, d).normalize(with_scalar)
 
     def N(self):
-        """
-        Return the level or modulus of this P1NFList.
+        r"""
+        Return the level or modulus of this :class:`P1NFList`.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 31)
             sage: N = k.ideal(5, a + 3)
             sage: P = P1NFList(N)
@@ -665,12 +690,12 @@ class P1NFList(SageObject):
         INPUT:
 
         - ``c`` -- integral element of the corresponding number field, or an
-          MSymbol.
+          :class:`MSymbol`.
 
         - ``d`` -- (optional) when present, it must be an integral element of
           the number field such that `(c, d)` defines an M-symbol of level `N`.
 
-        - ``with_scalar`` -- bool (default False)
+        - ``with_scalar`` -- bool (default ``False``)
 
         OUTPUT:
 
@@ -680,6 +705,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 31)
             sage: N = k.ideal(5, a + 3)
             sage: P = P1NFList(N)
@@ -688,7 +714,7 @@ class P1NFList(SageObject):
             sage: P[5]==MSymbol(N, 3, a).normalize()
             True
 
-        We can give an MSymbol as input:
+        We can give an :class:`MSymbol` as input:
 
         ::
 
@@ -696,7 +722,7 @@ class P1NFList(SageObject):
             sage: P.index(alpha)
             5
 
-        We cannot look for the class of an MSymbol of a different level:
+        We cannot look for the class of an :class:`MSymbol` of a different level:
 
         ::
 
@@ -748,7 +774,7 @@ class P1NFList(SageObject):
         INPUT:
 
         - ``c`` -- integral element of the corresponding number field, or a
-          normalized MSymbol.
+          normalized :class:`MSymbol`.
 
         - ``d`` -- (optional) when present, it must be an integral element of
           the number field such that `(c, d)` defines a normalized M-symbol of
@@ -760,6 +786,7 @@ class P1NFList(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 31)
             sage: N = k.ideal(5, a + 3)
             sage: P = P1NFList(N)
@@ -782,22 +809,23 @@ class P1NFList(SageObject):
         return False
 
     def lift_to_sl2_Ok(self, i):
-        """
-        Lift the `i`-th element of this P1NFList to an element of `SL(2, R)`,
+        r"""
+        Lift the `i`-th element of this :class:`P1NFList` to an element of `SL(2, R)`,
         where `R` is the ring of integers of the corresponding number field.
 
         INPUT:
 
-        - ``i`` - integer (index of the element to lift)
+        - ``i`` -- integer (index of the element to lift)
 
         OUTPUT:
 
         If the `i`-th element is `(c : d)`, the function returns a list of
-        integral elements `[a, b, c', d']` that defines a 2x2 matrix with
+        integral elements `[a, b, c', d']` that defines a `2\times 2` matrix with
         determinant 1 and such that `c=c'` (mod `N`) and `d=d'` (mod `N`).
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3)
             sage: P = P1NFList(N)
@@ -818,8 +846,8 @@ class P1NFList(SageObject):
         return self[i].lift_to_sl2_Ok()
 
     def apply_S(self, i):
-        """
-        Applies the matrix S = [0, -1, 1, 0] to the i-th M-Symbol of the list.
+        r"""
+        Applies the matrix `S` = [0, -1, 1, 0] to the `i`-th M-Symbol of the list.
 
         INPUT:
 
@@ -828,10 +856,11 @@ class P1NFList(SageObject):
         OUTPUT:
 
         integer -- the index of the M-Symbol obtained by the right action of
-        the matrix S = [0, -1, 1, 0] on the i-th M-Symbol.
+        the matrix `S` = [0, -1, 1, 0] on the `i`-th M-Symbol.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
@@ -852,8 +881,8 @@ class P1NFList(SageObject):
         return j
 
     def apply_TS(self, i):
-        """
-        Applies the matrix TS = [1, -1, 0, 1] to the i-th M-Symbol of the list.
+        r"""
+        Applies the matrix `TS` = [1, -1, 0, 1] to the `i`-th M-Symbol of the list.
 
         INPUT:
 
@@ -862,17 +891,18 @@ class P1NFList(SageObject):
         OUTPUT:
 
         integer -- the index of the M-Symbol obtained by the right action of
-        the matrix TS = [1, -1, 0, 1] on the i-th M-Symbol.
+        the matrix `TS` = [1, -1, 0, 1] on the `i`-th M-Symbol.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
             sage: P.apply_TS(3)
             2
 
-        We test that TS has order 3:
+        We test that `TS` has order 3:
 
         ::
 
@@ -885,30 +915,31 @@ class P1NFList(SageObject):
         return j
 
     def apply_T_alpha(self, i, alpha=1):
-        """
-        Applies the matrix T_alpha = [1, alpha, 0, 1] to the i-th M-Symbol of
+        r"""
+        Applies the matrix `T_alpha` = [1, alpha, 0, 1] to the `i`-th M-Symbol of
         the list.
 
         INPUT:
 
         - ``i`` -- integer
 
-        - ``alpha`` -- element of the corresponding ring of integers(default 1)
+        - ``alpha`` -- (default 1) element of the corresponding ring of integers
 
         OUTPUT:
 
         integer -- the index of the M-Symbol obtained by the right action of
-        the matrix T_alpha = [1, alpha, 0, 1] on the i-th M-Symbol.
+        the matrix `T_alpha` = [1, `alpha`, 0, 1] on the i-th M-Symbol.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
             sage: P.apply_T_alpha(4, a^ 2 - 2)
             3
 
-        We test that T_a*T_b = T_(a+b):
+        We test that `T_a*T_b = T_{(a+b)}`:
 
         ::
 
@@ -921,7 +952,7 @@ class P1NFList(SageObject):
 
     def apply_J_epsilon(self, i, e1, e2=1):
         r"""
-        Apply the matrix `J_{\epsilon}` = [e1, 0, 0, e2] to the i-th
+        Apply the matrix `J_{\epsilon}` = [e1, 0, 0, e2] to the `i`-th
         M-Symbol of the list.
 
         e1, e2 are units of the underlying number field.
@@ -937,10 +968,11 @@ class P1NFList(SageObject):
         OUTPUT:
 
         integer -- the index of the M-Symbol obtained by the right action of
-        the matrix `J_{\epsilon}` = [e1, 0, 0, e2] on the i-th M-Symbol.
+        the matrix `J_{\epsilon}` = [e1, 0, 0, e2] on the `i`-th M-Symbol.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
@@ -975,8 +1007,8 @@ class P1NFList(SageObject):
 #**************************************************************************
 
 def p1NFlist(N):
-    """
-    Return a list of the normalized elements of `\\mathbb{P}^1(R/N)`, where
+    r"""
+    Return a list of the normalized elements of `\mathbb{P}^1(R/N)`, where
     `N` is an integral ideal.
 
     INPUT:
@@ -985,6 +1017,7 @@ def p1NFlist(N):
 
     EXAMPLES::
 
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^2 + 23)
         sage: N = k.ideal(3)
         sage: from sage.modular.modsym.p1list_nf import p1NFlist, psi
@@ -1021,7 +1054,7 @@ def p1NFlist(N):
     return L
 
 def lift_to_sl2_Ok(N, c, d):
-    """
+    r"""
     Lift a pair (c, d) to an element of `SL(2, O_k)`, where `O_k` is the ring
     of integers of the corresponding number field.
 
@@ -1035,14 +1068,15 @@ def lift_to_sl2_Ok(N, c, d):
 
     OUTPUT:
 
-    A list [a, b, c', d'] of integral elements that are the entries of
-    a 2x2 matrix with determinant 1. The lower two entries are congruent to
-    c, d modulo the ideal `N`.
+    A list `[a, b, c', d']` of integral elements that are the entries of
+    a `2\times 2` matrix with determinant 1. The lower two entries are congruent to
+    `c`, `d` modulo the ideal `N`.
 
 
     EXAMPLES::
 
         sage: from sage.modular.modsym.p1list_nf import lift_to_sl2_Ok
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^2 + 23)
         sage: Ok = k.ring_of_integers()
         sage: N = k.ideal(3)
@@ -1127,9 +1161,9 @@ def lift_to_sl2_Ok(N, c, d):
 
 
 def make_coprime(N, c, d):
-    """
+    r"""
     Return (c, d') so d' is congruent to d modulo N, and such that c and d' are
-    coprime (<c> + <d'> = R).
+    coprime (`\la c\ra + \la d'\ra = R`).
 
     INPUT:
 
@@ -1141,13 +1175,14 @@ def make_coprime(N, c, d):
 
     OUTPUT:
 
-    A pair (c, d') where c, d' are integral elements of the corresponding
-    number field, with d' congruent to d mod N, and such that <c> + <d'> = R
-    (R being the corresponding ring of integers).
+    A pair `(c, d')` where `c`, `d'` are integral elements of the corresponding
+    number field, with `d'` congruent to `d` mod `N`, and such that `\la c\ra + \la d'\ra = R`
+    (`R` being the corresponding ring of integers).
 
     EXAMPLES::
 
         sage: from sage.modular.modsym.p1list_nf import make_coprime
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^2 + 23)
         sage: N = k.ideal(3, a - 1)
         sage: c = 2*a; d = a + 1
@@ -1183,6 +1218,7 @@ def psi(N):
     EXAMPLES::
 
         sage: from sage.modular.modsym.p1list_nf import psi
+        sage: x = polygen(QQ, 'x')
         sage: k.<a> = NumberField(x^2 + 23)
         sage: N = k.ideal(3, a - 1)
         sage: psi(N)

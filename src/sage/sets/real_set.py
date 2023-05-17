@@ -464,17 +464,17 @@ class InternalRealInterval(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: RealSet.open_closed(0, 1)[0]._sympy_()
+            sage: RealSet.open_closed(0, 1)[0]._sympy_()                                # optional - sympy
             Interval.Lopen(0, 1)
-            sage: RealSet.point(0)[0]._sympy_()  # random - this output format is sympy >= 1.9
+            sage: RealSet.point(0)[0]._sympy_()  # random - this output format is sympy >= 1.9  # optional - sympy
             {0}
-            sage: type(_)
+            sage: type(_)                                                               # optional - sympy
             <class 'sympy.sets.sets.FiniteSet'>
-            sage: RealSet.open(0,1)[0]._sympy_()
+            sage: RealSet.open(0,1)[0]._sympy_()                                        # optional - sympy
             Interval.open(0, 1)
-            sage: RealSet.open(-oo,1)[0]._sympy_()
+            sage: RealSet.open(-oo,1)[0]._sympy_()                                      # optional - sympy
             Interval.open(-oo, 1)
-            sage: RealSet.open(0, oo)[0]._sympy_()
+            sage: RealSet.open(0, oo)[0]._sympy_()                                      # optional - sympy
             Interval.open(0, oo)
         """
         from sympy import Interval
@@ -2109,7 +2109,8 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             (-oo, +oo)
             sage: s = RealSet().union([1, 2], (2, 3)); s
             [1, 3)
-            sage: RealSet().union((-oo, 0), x > 6, s[0], RealSet.point(5.0), RealSet.closed_open(2, 4))
+            sage: RealSet().union((-oo, 0), x > 6, s[0],                                # optional - sage.symbolic
+            ....:                 RealSet.point(5.0), RealSet.closed_open(2, 4))
             (-oo, 0) ∪ [1, 4) ∪ {5} ∪ (6, +oo)
         """
         sets = [self]

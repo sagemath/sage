@@ -649,6 +649,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         ::
 
             sage: F.<b> = QuadraticField(23)                                            # optional - sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
             sage: G.<a> = F.extension(x^3 + 5)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve(j=1728*b).change_ring(G)                            # optional - sage.rings.number_field
             sage: EF = E.descend_to(F); EF                                              # optional - sage.rings.number_field
@@ -1494,6 +1495,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Examples over number fields (other than QQ)::
 
+            sage: x = polygen(ZZ, 'x')
             sage: QQroot2.<e> = NumberField(x^2 - 2)                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve(QQroot2, j=8000)                                    # optional - sage.rings.number_field
             sage: E.isogenies_prime_degree()                                            # optional - sage.rings.number_field
@@ -1789,9 +1791,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Ordinary curve over finite extension field of degree 2::
 
+            sage: x = polygen(ZZ, 'x')
             sage: E = EllipticCurve(GF(59^2, "i", x^2 + 1), j=5)                        # optional - sage.rings.finite_rings
-            sage: G = E.isogeny_ell_graph(5, directed=False, label_by_j=True)           # optional - sage.graphs sage.rings.finite_rings
-            sage: G                                                                     # optional - sage.graphs sage.rings.finite_rings
+            sage: G = E.isogeny_ell_graph(5, directed=False, label_by_j=True); G        # optional - sage.graphs sage.rings.finite_rings
             Graph on 20 vertices
             sage: G.vertices(sort=True)                                                 # optional - sage.graphs sage.rings.finite_rings
             ['1',
@@ -1807,8 +1809,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         Supersingular curve over prime field::
 
             sage: E = EllipticCurve(GF(419), j=1728)                                    # optional - sage.rings.finite_rings
-            sage: G3 = E.isogeny_ell_graph(3, directed=False, label_by_j=True)          # optional - sage.graphs sage.rings.finite_rings
-            sage: G3                                                                    # optional - sage.graphs sage.rings.finite_rings
+            sage: G3 = E.isogeny_ell_graph(3, directed=False, label_by_j=True); G3      # optional - sage.graphs sage.rings.finite_rings
             Graph on 27 vertices
             sage: G3.vertices(sort=True)                                                # optional - sage.graphs sage.rings.finite_rings
             ['0',
@@ -1820,8 +1821,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              ('0', '13', None),
              ...
              ('48*', '98*', None)]
-             sage: G5 = E.isogeny_ell_graph(5, directed=False, label_by_j=True)         # optional - sage.graphs sage.rings.finite_rings
-             sage: G5                                                                   # optional - sage.graphs sage.rings.finite_rings
+             sage: G5 = E.isogeny_ell_graph(5, directed=False, label_by_j=True); G5     # optional - sage.graphs sage.rings.finite_rings
              Graph on 9 vertices
              sage: G5.vertices(sort=True)                                               # optional - sage.graphs sage.rings.finite_rings
              ['13', '13*', '407', '407*', '52', '62', '62*', '98', '98*']
@@ -1837,8 +1837,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E = EllipticCurve(K, j=0)                                             # optional - sage.rings.finite_rings
             sage: E.is_supersingular()                                                  # optional - sage.rings.finite_rings
             True
-            sage: G = E.isogeny_ell_graph(2, directed=True, label_by_j=True)            # optional - sage.graphs sage.rings.finite_rings
-            sage: G                                                                     # optional - sage.graphs sage.rings.finite_rings
+            sage: G = E.isogeny_ell_graph(2, directed=True, label_by_j=True); G         # optional - sage.graphs sage.rings.finite_rings
             Looped multi-digraph on 37 vertices
             sage: G.vertices(sort=True)                                                 # optional - sage.graphs sage.rings.finite_rings
             ['0',
@@ -1850,8 +1849,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              ('0', '125', None),
              ...
              '81*i + 65', None)]
-            sage: H = E.isogeny_ell_graph(2, directed=False, label_by_j=True)           # optional - sage.graphs sage.rings.finite_rings
-            sage: H                                                                     # optional - sage.graphs sage.rings.finite_rings
+            sage: H = E.isogeny_ell_graph(2, directed=False, label_by_j=True); H        # optional - sage.graphs sage.rings.finite_rings
             Looped multi-graph on 37 vertices
             sage: H.vertices(sort=True)                                                 # optional - sage.graphs sage.rings.finite_rings
             ['0',

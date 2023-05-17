@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.symbolic
 r"""
 Hexads in S(5,6,12)
 
