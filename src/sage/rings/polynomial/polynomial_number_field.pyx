@@ -222,18 +222,18 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
         - ``parent`` -- polynomial ring in which to construct the
           element.
 
-        - ``x`` -- (default: None) an object representing the
+        - ``x`` -- (default: ``None``) an object representing the
           polynomial, e.g. a list of coefficients. See
           :meth:`sage.rings.polynomial.polynomial_element_generic.Polynomial_generic_dense_field.__init__`
           for more details.
 
-        - ``check`` -- boolean (default: True) if True, make sure that
+        - ``check`` -- boolean (default: ``True``) if ``True``, make sure that
           the coefficients of the polynomial are in the base ring.
 
-        - ``is_gen`` -- boolean (default: False) if True, ``x`` is the
+        - ``is_gen`` -- boolean (default: ``False``) if ``True``, ``x`` is the
           distinguished generator of the polynomial ring.
 
-        - ``construct`` -- (default: False) boolean, unused.
+        - ``construct`` -- (default: ``False``) boolean, unused.
 
         EXAMPLES::
 
@@ -260,7 +260,7 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         OUTPUT:
 
-        - The monic gcd of ``self`` and ``other``.
+        The monic gcd of ``self`` and ``other``.
 
         See :meth:`Polynomial_absolute_number_field_dense.gcd` for
         more details.
@@ -274,7 +274,7 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
             sage: g = x^3 + (-2*s2 + s3)*x^2 + (-2*s3*s2 + 2)*x + 2*s3                  # optional - sage.symbolic
             sage: gcd(f, g)                                                             # optional - sage.symbolic
             x^2 + (-sqrt2 + sqrt3)*x - sqrt3*sqrt2
-            sage: f.gcd(g)
+            sage: f.gcd(g)                                                              # optional - sage.symbolic
             x^2 + (-sqrt2 + sqrt3)*x - sqrt3*sqrt2
 
         TESTS::
@@ -305,14 +305,14 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         Test for hardcoded variables::
 
-            sage: R = N['sqrt2sqrt3']
-            sage: x = R.gen()
-            sage: f = x^2 - 2
-            sage: g1 = x^2 - s3
-            sage: g2 = x - s2
-            sage: gcd(f, g1)
+            sage: R = N['sqrt2sqrt3']                                                   # optional - sage.symbolic
+            sage: x = R.gen()                                                           # optional - sage.symbolic
+            sage: f = x^2 - 2                                                           # optional - sage.symbolic
+            sage: g1 = x^2 - s3                                                         # optional - sage.symbolic
+            sage: g2 = x - s2                                                           # optional - sage.symbolic
+            sage: gcd(f, g1)                                                            # optional - sage.symbolic
             1
-            sage: gcd(f, g2)
+            sage: gcd(f, g2)                                                            # optional - sage.symbolic
             sqrt2sqrt3 - sqrt2
         """
         if self.is_zero():

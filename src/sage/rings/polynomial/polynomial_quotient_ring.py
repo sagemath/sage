@@ -1790,13 +1790,13 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         Note that all the returned values live where we expect them to::
 
-            sage: L.<b> = K['y'].quotient(y^3 + 5)                                      # optional - sage.libs.pari
-            sage: U = L.units()                                                         # optional - sage.libs.pari
-            sage: type(U[0][0])                                                         # optional - sage.libs.pari
+            sage: L.<b> = K['y'].quotient(y^3 + 5)                                      # optional - sage.libs.pari sage.rings.number_field
+            sage: U = L.units()                                                         # optional - sage.libs.pari sage.rings.number_field
+            sage: type(U[0][0])                                                         # optional - sage.libs.pari sage.rings.number_field
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_field_with_category.element_class'>
-            sage: type(U[0][1])                                                         # optional - sage.libs.pari
+            sage: type(U[0][1])                                                         # optional - sage.libs.pari sage.rings.number_field
             <class 'sage.rings.integer.Integer'>
-            sage: type(U[1][1])                                                         # optional - sage.libs.pari
+            sage: type(U[1][1])                                                         # optional - sage.libs.pari sage.rings.number_field
             <class 'sage.rings.infinity.PlusInfinity'>
 
         """

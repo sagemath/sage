@@ -1061,8 +1061,8 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
 
         TESTS::
 
-            sage: y = var("y")
-            sage: f._derivative(y)
+            sage: y = var("y")                                                          # optional - sage.symbolic
+            sage: f._derivative(y)                                                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y
@@ -1619,8 +1619,8 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
 
         TESTS::
 
-            sage: y = var("y")
-            sage: f._derivative(y)
+            sage: y = var("y")                                                          # optional - sage.symbolic
+            sage: f._derivative(y)                                                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y

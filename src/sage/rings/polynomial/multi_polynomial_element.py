@@ -110,7 +110,7 @@ class MPolynomial_element(MPolynomial):
         EXAMPLES::
 
             sage: P.<x,y,z> = PolynomialRing(QQbar)                                     # optional - sage.rings.number_field
-            sage: x + QQbar(sqrt(2) - 1/2*I)  # indirect doctest                        # optional - sage.rings.number_field
+            sage: x + QQbar(sqrt(2) - 1/2*I)  # indirect doctest                        # optional - sage.rings.number_field sage.symbolic
             x + 1.414213562373095? - 0.50000000000000000?*I
         """
         return "%s"%self.__element

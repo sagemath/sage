@@ -124,7 +124,7 @@ class FlatteningMorphism(Morphism):
             sage: R = QQbar['x','y']['a','b']                                           # optional - sage.rings.number_field
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: f = FlatteningMorphism(R)                                             # optional - sage.rings.number_field
-            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))                       # optional - sage.rings.number_field
+            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))                       # optional - sage.rings.number_field sage.symbolic
             1.414213562373095?*x^2*a + b^2 + I*y
 
         ::
