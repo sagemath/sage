@@ -19,23 +19,20 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.structure.unique_representation import UniqueRepresentation
+import sage.rings.abc
+
 from sage.categories.coxeter_groups import CoxeterGroups
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_generic
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
 from sage.matrix.args import SparseEntry
 from sage.matrix.matrix_space import MatrixSpace
-
-import sage.rings.abc
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 from sage.rings.number_field.number_field import QuadraticField
-
-from sage.misc.cachefunc import cached_method
-
 from sage.sets.family import Family
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_generic):
@@ -227,8 +224,10 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 elif letter == 'H':
                     base_ring = QuadraticField(5)
                 else:
+                    from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
                     base_ring = UniversalCyclotomicField()
             else:
+                from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
                 base_ring = UniversalCyclotomicField()
         return super().__classcall__(cls, data, base_ring, data.index_set())
 
@@ -274,8 +273,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         MS = MatrixSpace(base_ring, n, sparse=True)
         one = MS.one()
         # FIXME: Hack because there is no ZZ \cup \{ \infty \}: -1 represents \infty
-        E = UniversalCyclotomicField().gen
-        if base_ring is UniversalCyclotomicField():
+        if isinstance(base_ring, sage.rings.abc.UniversalCyclotomicField):
+            E = base_ring.gen
 
             def val(x):
                 if x == -1:
@@ -283,6 +282,9 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 else:
                     return E(2 * x) + ~E(2 * x)
         elif isinstance(base_ring, sage.rings.abc.NumberField_quadratic):
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+
+            E = UniversalCyclotomicField().gen
 
             def val(x):
                 if x == -1:

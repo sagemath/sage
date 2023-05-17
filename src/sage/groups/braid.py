@@ -505,14 +505,14 @@ class Braid(FiniteTypeArtinGroupElement):
             False
             sage: B = BraidGroup(4, 's')
             sage: b = B([1, 2, 3, 1, 2, 1])
-            sage: b.plot()
+            sage: b.plot()                                                              # optional - sage.plot
             Graphics object consisting of 30 graphics primitives
-            sage: b.plot(color=["red", "blue", "red", "blue"])
+            sage: b.plot(color=["red", "blue", "red", "blue"])                          # optional - sage.plot
             Graphics object consisting of 30 graphics primitives
 
             sage: B.<s,t> = BraidGroup(3)
             sage: b = t^-1*s^2
-            sage: b.plot(orientation="left-right", color="red")
+            sage: b.plot(orientation="left-right", color="red")                         # optional - sage.plot
             Graphics object consisting of 12 graphics primitives
         """
         from sage.plot.bezier_path import bezier_path
