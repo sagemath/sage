@@ -90,12 +90,12 @@ def repr_from_monomials(monomials, term_repr, use_latex=False):
 
     Leading minus signs are dealt with appropriately::
 
-        sage: d = [(z, -4/7), (y, -sqrt(2)), (x, -5)]
-        sage: repr_from_monomials(d, lambda m: repr(m))
+        sage: d = [(z, -4/7), (y, -sqrt(2)), (x, -5)]                                   # optional - sage.symbolic
+        sage: repr_from_monomials(d, lambda m: repr(m))                                 # optional - sage.symbolic
         '-4/7*z - sqrt(2)*y - 5*x'
-        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a
+        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a                   # optional - sage.symbolic
         -\frac{4}{7} z - \sqrt{2} y - 5 x
-        sage: type(a)
+        sage: type(a)                                                                   # optional - sage.symbolic
         <class 'sage.misc.latex.LatexExpr'>
 
     Indirect doctests using a class that uses this function::
