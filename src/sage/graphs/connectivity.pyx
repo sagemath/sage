@@ -215,12 +215,12 @@ def connected_components_subgraphs(G):
         sage: from sage.graphs.connectivity import connected_components_subgraphs
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(G)
-        sage: graphs_list.show_graphs(L)
+        sage: graphs_list.show_graphs(L)                                                # optional - sage.plot
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(D)
-        sage: graphs_list.show_graphs(L)
+        sage: graphs_list.show_graphs(L)                                                # optional - sage.plot
         sage: L = D.connected_components_subgraphs()
-        sage: graphs_list.show_graphs(L)
+        sage: graphs_list.show_graphs(L)                                                # optional - sage.plot
 
     TESTS:
 
