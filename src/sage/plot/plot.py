@@ -3093,7 +3093,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         # a tuple.
         # So, the only other check we need to do is whether data[0] is an
         # element of the Symbolic Ring.
-        if data[0] in sage.symbolic.ring.SR:
+        if isinstance(data[0], Expression):
             data = list(enumerate(data))
 
     try:
