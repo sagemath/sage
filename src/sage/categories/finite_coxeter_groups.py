@@ -755,6 +755,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                     from sage.rings.qqbar import AA
                     vertices = [v.change_ring(AA) for v in vertices]
                     base_ring = AA
+            from sage.geometry.polyhedron.constructor import Polyhedron
             return Polyhedron(vertices=vertices, base_ring=base_ring)
 
     class ElementMethods:
