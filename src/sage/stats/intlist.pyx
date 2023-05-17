@@ -517,9 +517,10 @@ cdef class IntList:
 
         EXAMPLES::
 
-            sage: stats.IntList([3,7,19,-2]).plot()
+            sage: stats.IntList([3,7,19,-2]).plot()                                     # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: stats.IntList([3,7,19,-2]).plot(color='red',pointsize=50,points=True)
+            sage: stats.IntList([3,7,19,-2]).plot(color='red',                          # optional - sage.plot
+            ....:                                 pointsize=50, points=True)
             Graphics object consisting of 1 graphics primitive
         """
         return self.time_series().plot(*args, **kwds)
@@ -532,7 +533,7 @@ cdef class IntList:
 
         EXAMPLES::
 
-            sage: stats.IntList([1..15]).plot_histogram()
+            sage: stats.IntList([1..15]).plot_histogram()                               # optional - sage.plot
             Graphics object consisting of 50 graphics primitives
         """
         return self.time_series().plot_histogram(*args, **kwds)

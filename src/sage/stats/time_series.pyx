@@ -96,7 +96,7 @@ cdef class TimeSeries:
 
         This implicitly calls init::
 
-            sage: stats.TimeSeries([pi, 3, 18.2])
+            sage: stats.TimeSeries([pi, 3, 18.2])                                       # optional - sage.symbolic
             [3.1416, 3.0000, 18.2000]
 
         Conversion from a NumPy 1-D array, which is very fast::
@@ -1030,7 +1030,7 @@ cdef class TimeSeries:
 
         Draw a plot of a time series::
 
-            sage: stats.TimeSeries([1..10]).show()
+            sage: stats.TimeSeries([1..10]).show()                                      # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         return self.plot(*args, **kwds)
@@ -1056,13 +1056,13 @@ cdef class TimeSeries:
 
             sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
-            sage: v.plot()
+            sage: v.plot()                                                              # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: v.plot(points=True)
+            sage: v.plot(points=True)                                                   # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: v.plot() + v.plot(points=True, rgbcolor='red')
+            sage: v.plot() + v.plot(points=True, rgbcolor='red')                        # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
-            sage: v.plot() + v.plot(points=True, rgbcolor='red', pointsize=50)
+            sage: v.plot() + v.plot(points=True, rgbcolor='red', pointsize=50)          # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         from sage.plot.all import line, point
@@ -1987,12 +1987,12 @@ cdef class TimeSeries:
         EXAMPLES::
 
             sage: v = stats.TimeSeries([1..50])
-            sage: v.plot_histogram(bins=10)
+            sage: v.plot_histogram(bins=10)                                             # optional - sage.plot
             Graphics object consisting of 10 graphics primitives
 
         ::
 
-            sage: v.plot_histogram(bins=3,normalize=False,aspect_ratio=1)
+            sage: v.plot_histogram(bins=3,normalize=False,aspect_ratio=1)               # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         from sage.plot.all import polygon
@@ -2031,7 +2031,7 @@ cdef class TimeSeries:
         Here we look at the candlestick plot for Brownian motion::
 
             sage: v = stats.TimeSeries(1000).randomize()
-            sage: v.plot_candlestick(bins=20)
+            sage: v.plot_candlestick(bins=20)                                           # optional - sage.plot
             Graphics object consisting of 40 graphics primitives
         """
         from sage.plot.all import line, polygon, Graphics
@@ -2394,7 +2394,7 @@ cdef class TimeSeries:
             sage: v = stats.TimeSeries(10^6)
             sage: v.randomize('lognormal').mean()
             1.647351973...
-            sage: exp(0.5)
+            sage: exp(0.5)                                                              # optional - sage.symbolic
             1.648721270...
 
         A log-normal distribution can be simply thought of as the logarithm
