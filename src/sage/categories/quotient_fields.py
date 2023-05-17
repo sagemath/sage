@@ -408,9 +408,9 @@ class QuotientFields(Category_singleton):
 
             We can decompose over a given algebraic extension::
 
-                sage: R.<x> = QQ[sqrt(2)][]                                             # optional - sage.rings.number_field
-                sage: r =  1/(x^4+1)                                                    # optional - sage.rings.number_field
-                sage: r.partial_fraction_decomposition()                                # optional - sage.rings.number_field
+                sage: R.<x> = QQ[sqrt(2)][]                                             # optional - sage.rings.number_field sage.symbolic
+                sage: r = 1/(x^4+1)                                                     # optional - sage.rings.number_field sage.symbolic
+                sage: r.partial_fraction_decomposition()                                # optional - sage.rings.number_field sage.symbolic
                 (0,
                  [(-1/4*sqrt2*x + 1/2)/(x^2 - sqrt2*x + 1),
                   (1/4*sqrt2*x + 1/2)/(x^2 + sqrt2*x + 1)])
@@ -425,8 +425,7 @@ class QuotientFields(Category_singleton):
 
                 sage: R.<x> = QQ[]
                 sage: r = 1/(x^4+2)
-                sage: N = r.denominator().splitting_field('a')                          # optional - sage.rings.number_field
-                sage: N                                                                 # optional - sage.rings.number_field
+                sage: N = r.denominator().splitting_field('a'); N                       # optional - sage.rings.number_field
                 Number Field in a with defining polynomial x^8 - 8*x^6 + 28*x^4 + 16*x^2 + 36
                 sage: R1.<x1> = N[]                                                     # optional - sage.rings.number_field
                 sage: r1 = 1/(x1^4+2)                                                   # optional - sage.rings.number_field
@@ -452,11 +451,14 @@ class QuotientFields(Category_singleton):
 
                 sage: R.<x> = RealField(20)[]
                 sage: q = 1/(x^2 + x + 2)^2 + 1/(x-1); q
-                (x^4 + 2.0000*x^3 + 5.0000*x^2 + 5.0000*x + 3.0000)/(x^5 + x^4 + 3.0000*x^3 - x^2 - 4.0000)
+                (x^4 + 2.0000*x^3
+                  + 5.0000*x^2 + 5.0000*x + 3.0000)/(x^5 + x^4 + 3.0000*x^3 - x^2 - 4.0000)
                 sage: whole, parts = q.partial_fraction_decomposition(); parts          # optional - sage.rings.number_field
-                [1.0000/(x - 1.0000), 1.0000/(x^4 + 2.0000*x^3 + 5.0000*x^2 + 4.0000*x + 4.0000)]
-                sage: sum(parts)
-                (x^4 + 2.0000*x^3 + 5.0000*x^2 + 5.0000*x + 3.0000)/(x^5 + x^4 + 3.0000*x^3 - x^2 - 4.0000)
+                [1.0000/(x - 1.0000),
+                 1.0000/(x^4 + 2.0000*x^3 + 5.0000*x^2 + 4.0000*x + 4.0000)]
+                sage: sum(parts)                                                        # optional - sage.rings.number_field
+                (x^4 + 2.0000*x^3
+                  + 5.0000*x^2 + 5.0000*x + 3.0000)/(x^5 + x^4 + 3.0000*x^3 - x^2 - 4.0000)
 
             TESTS:
 
