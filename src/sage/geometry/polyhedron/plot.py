@@ -1301,11 +1301,11 @@ class Projection(SageObject):
         EXAMPLES::
 
             sage: P1 = polytopes.small_rhombicuboctahedron()                            # optional - sage.rings.number_field
-            sage: Image1 = P1.projection().tikz([1,3,5], 175, scale=4,                  # optional - sage.rings.number_field
+            sage: Image1 = P1.projection().tikz([1,3,5], 175, scale=4,                  # optional - sage.plot sage.rings.number_field
             ....:                               output_type='TikzPicture')
-            sage: type(Image1)                                                          # optional - sage.rings.number_field
+            sage: type(Image1)                                                          # optional - sage.plot sage.rings.number_field
             <class 'sage.misc.latex_standalone.TikzPicture'>
-            sage: Image1                                                                # optional - sage.rings.number_field
+            sage: Image1                                                                # optional - sage.plot sage.rings.number_field
             \documentclass[tikz]{standalone}
             \begin{document}
             \begin{tikzpicture}%
@@ -1322,19 +1322,19 @@ class Projection(SageObject):
             %%
             \end{tikzpicture}
             \end{document}
-            sage: _ = Image1.tex('polytope-tikz1.tex')          # not tested            # optional - sage.rings.number_field
-            sage: _ = Image1.png('polytope-tikz1.png')          # not tested            # optional - sage.rings.number_field
-            sage: _ = Image1.pdf('polytope-tikz1.pdf')          # not tested            # optional - sage.rings.number_field
-            sage: _ = Image1.svg('polytope-tikz1.svg')          # not tested            # optional - sage.rings.number_field
+            sage: _ = Image1.tex('polytope-tikz1.tex')          # not tested            # optional - sage.plot sage.rings.number_field
+            sage: _ = Image1.png('polytope-tikz1.png')          # not tested            # optional - sage.plot sage.rings.number_field
+            sage: _ = Image1.pdf('polytope-tikz1.pdf')          # not tested            # optional - sage.plot sage.rings.number_field
+            sage: _ = Image1.svg('polytope-tikz1.svg')          # not tested            # optional - sage.plot sage.rings.number_field
 
         A second example::
 
             sage: P2 = Polyhedron(vertices=[[1, 1], [1, 2], [2, 1]])
-            sage: Image2 = P2.projection().tikz(scale=3, edge_color='blue!95!black',
+            sage: Image2 = P2.projection().tikz(scale=3, edge_color='blue!95!black',    # optional - sage.plot
             ....:                               facet_color='orange!95!black', opacity=0.4,
             ....:                               vertex_color='yellow', axis=True,
             ....:                               output_type='TikzPicture')
-            sage: Image2
+            sage: Image2                                                                # optional - sage.plot
             \documentclass[tikz]{standalone}
             \begin{document}
             \begin{tikzpicture}%
@@ -1354,18 +1354,18 @@ class Projection(SageObject):
 
         The second example using a LatexExpr as output type::
 
-            sage: Image2 = P2.projection().tikz(scale=3, edge_color='blue!95!black',
+            sage: Image2 = P2.projection().tikz(scale=3, edge_color='blue!95!black',    # optional - sage.plot
             ....:                               facet_color='orange!95!black', opacity=0.4,
             ....:                               vertex_color='yellow', axis=True,
             ....:                               output_type='LatexExpr')
-            sage: type(Image2)
+            sage: type(Image2)                                                          # optional - sage.plot
             <class 'sage.misc.latex.LatexExpr'>
-            sage: print('\n'.join(Image2.splitlines()[:4]))
+            sage: print('\n'.join(Image2.splitlines()[:4]))                             # optional - sage.plot
             \begin{tikzpicture}%
                 [scale=3.000000,
                 back/.style={loosely dotted, thin},
                 edge/.style={color=blue!95!black, thick},
-            sage: with open('polytope-tikz2.tex', 'w') as f:  # not tested
+            sage: with open('polytope-tikz2.tex', 'w') as f:  # not tested              # optional - sage.plot
             ....:     _ = f.write(Image2)
 
         A third example::
@@ -1773,17 +1773,17 @@ class Projection(SageObject):
         EXAMPLES::
 
             sage: P = polytopes.small_rhombicuboctahedron()                                             # optional - sage.rings.number_field
-            sage: Image = P.projection()._tikz_3d_in_3d([3, 7, 5], 100, scale=3,                        # optional - sage.rings.number_field
+            sage: Image = P.projection()._tikz_3d_in_3d([3, 7, 5], 100, scale=3,                        # optional - sage.plot sage.rings.number_field
             ....:                                       edge_color='blue', facet_color='orange',
             ....:                                       opacity=0.5, vertex_color='green', axis=True)
-            sage: type(Image)                                                                           # optional - sage.rings.number_field
+            sage: type(Image)                                                                           # optional - sage.plot sage.rings.number_field
             <class 'sage.misc.latex.LatexExpr'>
-            sage: print('\n'.join(Image.splitlines()[:4]))                                              # optional - sage.rings.number_field
+            sage: print('\n'.join(Image.splitlines()[:4]))                                              # optional - sage.plot sage.rings.number_field
             \begin{tikzpicture}%
                 [x={(-0.046385cm, 0.837431cm)},
                 y={(-0.243536cm, 0.519228cm)},
                 z={(0.968782cm, 0.170622cm)},
-            sage: with open('polytope-tikz1.tex', 'w') as f:  # not tested                              # optional - sage.rings.number_field
+            sage: with open('polytope-tikz1.tex', 'w') as f:  # not tested                              # optional - sage.plot sage.rings.number_field
             ....:     _ = f.write(Image)
 
         ::

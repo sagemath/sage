@@ -994,7 +994,7 @@ class Inequality(Hrepresentation):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices = [[0,0,0],[1,1,0],[1,2,0]])
+            sage: p = Polyhedron(vertices=[[0,0,0],[1,1,0],[1,2,0]])
             sage: a = next(p.inequality_generator())
             sage: a.outer_normal()
             (1, -1, 0)

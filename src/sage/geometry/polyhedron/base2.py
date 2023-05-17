@@ -276,8 +276,8 @@ class Polyhedron_base2(Polyhedron_base1):
             sage: cube = polytopes.cube(intervals='zero_one', backend='normaliz')   # optional - pynormaliz
             sage: cube.h_star_vector()                                              # optional - pynormaliz
             [1, 4, 1]
-            sage: from sage.combinat.combinat import eulerian_number                                                        # optional - sage.combinat
-            sage: [eulerian_number(3,i) for i in range(3)]                                                                  # optional - sage.combinat
+            sage: from sage.combinat.combinat import eulerian_number                    # optional - sage.combinat
+            sage: [eulerian_number(3,i) for i in range(3)]                              # optional - sage.combinat
             [1, 4, 1]
 
         TESTS::
@@ -294,8 +294,8 @@ class Polyhedron_base2(Polyhedron_base1):
             ...
             TypeError: The h_star vector is only defined for lattice polytopes
 
-            sage: t2 = Polyhedron(vertices=[[AA(sqrt(2))], [1/2]])                  # optional - sage.rings.number_field
-            sage: t2.h_star_vector()                                                # optional - sage.rings.number_field
+            sage: t2 = Polyhedron(vertices=[[AA(sqrt(2))], [1/2]])                      # optional - sage.rings.number_field sage.symbolic
+            sage: t2.h_star_vector()                                                    # optional - sage.rings.number_field sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: The h_star vector is only defined for lattice polytopes
