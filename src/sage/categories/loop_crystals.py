@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.graphs sage.combinat
 r"""
 Loop Crystals
 """
@@ -390,11 +391,17 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 sage: K2 = crystals.KirillovReshetikhin(['A',2,1],2,1)
                 sage: T1 = crystals.TensorProduct(K1,K2)
                 sage: T2 = crystals.TensorProduct(K2,K1)
-                sage: T1.digraph().is_isomorphic(T2.digraph(), edge_labels=True, certificate=True) #todo: not implemented (see #10904 and #10549)
-                (True, {[[[1]], [[2], [3]]]: [[[1], [3]], [[2]]], [[[3]], [[2], [3]]]: [[[2], [3]], [[3]]],
-                [[[3]], [[1], [3]]]: [[[1], [3]], [[3]]], [[[1]], [[1], [3]]]: [[[1], [3]], [[1]]], [[[1]],
-                [[1], [2]]]: [[[1], [2]], [[1]]], [[[2]], [[1], [2]]]: [[[1], [2]], [[2]]], [[[3]],
-                [[1], [2]]]: [[[2], [3]], [[1]]], [[[2]], [[1], [3]]]: [[[1], [2]], [[3]]], [[[2]], [[2], [3]]]: [[[2], [3]], [[2]]]})
+                sage: T1.digraph().is_isomorphic(T2.digraph(), edge_labels=True,  # todo: not implemented (see #10904 and #10549)
+                ....:                            certificate=True)
+                (True, {[[[1]], [[2], [3]]]: [[[1], [3]], [[2]]],
+                        [[[3]], [[2], [3]]]: [[[2], [3]], [[3]]],
+                        [[[3]], [[1], [3]]]: [[[1], [3]], [[3]]],
+                        [[[1]], [[1], [3]]]: [[[1], [3]], [[1]]], [[[1]],
+                        [[1], [2]]]: [[[1], [2]], [[1]]],
+                        [[[2]], [[1], [2]]]: [[[1], [2]], [[2]]], [[[3]],
+                        [[1], [2]]]: [[[2], [3]], [[1]]],
+                        [[[2]], [[1], [3]]]: [[[1], [2]], [[3]]],
+                        [[[2]], [[2], [3]]]: [[[2], [3]], [[2]]]})
             """
             from sage.combinat.crystals.tensor_product import TensorProductOfCrystals
             T1 = TensorProductOfCrystals(self, K)
@@ -514,7 +521,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 sage: K.is_perfect()
                 True
 
-                sage: K = crystals.KirillovReshetikhin(['E',6,1], 1,3)
+                sage: K = crystals.KirillovReshetikhin(['E',6,1], 1, 3)
                 sage: K.is_perfect()
                 True
 
@@ -523,7 +530,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
             Check that this works correctly for `B^{n,s}`
             of type `A_{2n}^{(2)\dagger}` (:trac:`24364`)::
 
-                sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 3,1)
+                sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 3, 1)
                 sage: K.is_perfect()
                 True
                 sage: K.is_perfect(1)
@@ -835,7 +842,8 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     sage: R = RootSystem(['A',2,1])
                     sage: La = R.weight_space().basis()
                     sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])
-                    sage: LS.one_dimensional_configuration_sum() == T.one_dimensional_configuration_sum() # long time
+                    sage: (LS.one_dimensional_configuration_sum()  # long time
+                    ....:  == T.one_dimensional_configuration_sum())
                     True
 
                 TESTS::
