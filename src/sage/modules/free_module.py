@@ -1197,11 +1197,11 @@ class Module_free_ambient(Module):
             False
             sage: V1 <= V2
             False
-            sage: R2 = GF(5)[x]                                                 # optional - sage.libs.pari
-            sage: F3 = R2^3                                                     # optional - sage.libs.pari
-            sage: V3 = F3.span([[x^5-1, 1+x+x^2+x^3+x^4, 0]])                   # optional - sage.libs.pari
-            sage: W3 = F3.span([[1,1,0], [0,4,0]])                              # optional - sage.libs.pari
-            sage: V3 <= W3                                                      # optional - sage.libs.pari
+            sage: R2.<x> = GF(5)[]                                                      # optional - sage.rings.finite_rings
+            sage: F3 = R2^3                                                             # optional - sage.rings.finite_rings
+            sage: V3 = F3.span([[x^5 - 1, 1 + x + x^2 + x^3 + x^4, 0]])                 # optional - sage.rings.finite_rings
+            sage: W3 = F3.span([[1,1,0], [0,4,0]])                                      # optional - sage.rings.finite_rings
+            sage: V3 <= W3                                                              # optional - sage.rings.finite_rings
             True
             sage: W3 <= V3                                                      # optional - sage.libs.pari
             False
@@ -1643,14 +1643,14 @@ class Module_free_ambient(Module):
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [0 1 0]
-            sage: v = V((1, pi, log(2))); v
+            sage: v = V((1, pi, log(2))); v                                             # optional - sage.symbolic
             (1.0, 3.141592653589793, 0.6931471805599453)
-            sage: W.span([v], base_ring=GF(7))                                          # optional - sage.libs.pari
+            sage: W.span([v], base_ring=GF(7))                                          # optional - sage.rings.finite_rings sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: argument gens (= [(1.0, 3.141592653589793, 0.6931471805599453)]) is not compatible with base_ring (= Finite Field of size 7)
-            sage: W = V.submodule([v])
-            sage: W.span([V.gen(2)], base_ring=GF(7))                                   # optional - sage.libs.pari
+            sage: W = V.submodule([v])                                                  # optional - sage.symbolic
+            sage: W.span([V.gen(2)], base_ring=GF(7))                                   # optional - sage.rings.finite_rings sage.symbolic
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             Basis matrix:
             [0 0 1]
@@ -4809,10 +4809,9 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         we can get complements which are only isomorphic to a vector
         space decomposition complement. ::
 
-            sage: F2 = GF(2, x)                                                         # optional - sage.libs.pari
-            sage: V = F2^6                                                              # optional - sage.libs.pari
-            sage: W = V.span([[1,1,0,0,0,0]])                                           # optional - sage.libs.pari
-            sage: W                                                                     # optional - sage.libs.pari
+            sage: F2 = GF(2, 'x')                                                       # optional - sage.rings.finite_rings
+            sage: V = F2^6                                                              # optional - sage.rings.finite_rings
+            sage: W = V.span([[1,1,0,0,0,0]]); W                                        # optional - sage.rings.finite_rings
             Vector space of degree 6 and dimension 1 over Finite Field of size 2
             Basis matrix:
             [1 1 0 0 0 0]

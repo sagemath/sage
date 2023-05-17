@@ -819,7 +819,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     Types for the entries need to be iterable (tuple, list, vector, NumPy array,
     etc)::
 
-        sage: diagonal_matrix(x^2)
+        sage: diagonal_matrix(x^2)                                                      # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: 'sage.symbolic.expression.Expression' object is not iterable
@@ -2273,17 +2273,19 @@ def companion_matrix(poly, format='right'):
         [ 1  0 -8]
         [ 0  1  4]
 
-        sage: y = var('y')
-        sage: q = y^3 -2*y + 1
-        sage: companion_matrix(q)
+        sage: y = var('y')                                                              # optional - sage.symbolic
+        sage: q = y^3 - 2*y + 1                                                         # optional - sage.symbolic
+        sage: companion_matrix(q)                                                       # optional - sage.symbolic
         Traceback (most recent call last):
         ...
-        TypeError: input must be a polynomial (not a symbolic expression, see docstring), or other iterable, not y^3 - 2*y + 1
+        TypeError: input must be a polynomial (not a symbolic expression, see docstring),
+        or other iterable, not y^3 - 2*y + 1
 
-        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k) for k in range(1, q.degree(y)+1)]
-        sage: coeff_list
+        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k)                               # optional - sage.symbolic
+        ....:                          for k in range(1, q.degree(y)+1)]
+        sage: coeff_list                                                                # optional - sage.symbolic
         [1, -2, 0, 1]
-        sage: companion_matrix(coeff_list)
+        sage: companion_matrix(coeff_list)                                              # optional - sage.symbolic
         [ 0  0 -1]
         [ 1  0  2]
         [ 0  1  0]
@@ -2319,7 +2321,7 @@ def companion_matrix(poly, format='right'):
         ...
         ValueError: format must be 'right', 'left', 'top' or 'bottom', not junk
 
-        sage: companion_matrix(sin(x))
+        sage: companion_matrix(sin(x))                                                  # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: input must be a polynomial (not a symbolic expression, see docstring), or other iterable, not sin(x)
@@ -2329,8 +2331,8 @@ def companion_matrix(poly, format='right'):
         ...
         ValueError: polynomial (or the polynomial implied by coefficients) must be monic, not a leading coefficient of 896
 
-        sage: F.<a> = GF(2^2)
-        sage: companion_matrix([4/3, a+1, 1])
+        sage: F.<a> = GF(2^2)                                                           # optional - sage.rings.finite_rings
+        sage: companion_matrix([4/3, a+1, 1])                                           # optional - sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: unable to find common ring for coefficients from polynomial

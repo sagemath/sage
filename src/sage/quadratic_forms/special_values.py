@@ -105,8 +105,9 @@ def zeta__exact(n):
     Let us test the accuracy for negative special values::
 
         sage: RR = RealField(100)
-        sage: for i in range(1,10):
-        ....:     print("zeta({}): {}".format(1-2*i, RR(zeta__exact(1-2*i)) - zeta(RR(1-2*i))))
+        sage: for i in range(1,10):                                                     # optional - sage.symbolic
+        ....:     print("zeta({}): {}".format(1 - 2*i,
+        ....:                                 RR(zeta__exact(1-2*i)) - zeta(RR(1-2*i))))
         zeta(-1): 0.00000000000000000000000000000
         zeta(-3): 0.00000000000000000000000000000
         zeta(-5): 0.00000000000000000000000000000
@@ -119,7 +120,8 @@ def zeta__exact(n):
 
     Let us test the accuracy for positive special values::
 
-        sage: all(abs(RR(zeta__exact(2*i)) - zeta(RR(2*i))) < 10**(-28) for i in range(1,10))
+        sage: all(abs(RR(zeta__exact(2*i)) - zeta(RR(2*i))) < 10**(-28)                 # optional - sage.symbolic
+        ....:     for i in range(1,10))
         True
 
     TESTS::
@@ -270,7 +272,7 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
     First, let us test several values for a given character::
 
         sage: RR = RealField(100)
-        sage: for i in range(5):
+        sage: for i in range(5):                                                        # optional - sage.symbolic
         ....:     print("L({}, (-4/.)): {}".format(1+2*i,
         ....:             RR(quadratic_L_function__exact(1+2*i, -4))
         ....:                - quadratic_L_function__numerical(RR(1+2*i), -4, 10000)))
@@ -291,7 +293,7 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
     Test for several characters that the result agrees with the exact
     value, to a given accuracy ::
 
-        sage: for d in range(-20,0):  # long time (2s on sage.math 2014)
+        sage: for d in range(-20,0):  # long time (2s on sage.math 2014)                # optional - sage.symbolic
         ....:     if abs(RR(quadratic_L_function__numerical(1, d, 10000)
         ....:                - quadratic_L_function__exact(1, d))) > 0.001:
         ....:         print("We have a problem at d = {}: exact = {}, numerical = {}".format(d,
