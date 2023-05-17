@@ -360,7 +360,7 @@ now seek. The following small function returns `d_n=n! \, c_n`::
 
 Taking successive quotients::
 
-    sage: [ (d(n+1) / d(n)) for n in range(1,17) ]
+    sage: [ (d(n+1) / d(n)) for n in range(1,17) ]                                      # optional - sage.symbolic
     [2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62]
 
 we observe that `d_n` satisfies the recurrence relation

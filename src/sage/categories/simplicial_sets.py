@@ -560,7 +560,7 @@ class SimplicialSets(Category_singleton):
                      (f * f, e): ((f, 1), s_0 (1, e), (f, e)),
                      (f * f * f, 1): ((f * f, e), s_0 (f, 1), s_1 (f, 1), (f * f, 1)),
                      (f * f * f, e): ((f * f, 1), s_0 (f, e), s_1 (f, e), (f * f, e))}
-                    sage: C.fundamental_group()
+                    sage: C.fundamental_group()                                         # optional - sage.groups
                     Finitely presented group <  |  >
                 """
                 return self.universal_cover_map().domain()

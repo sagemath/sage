@@ -2053,9 +2053,9 @@ class DiagramAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: q = var('q')
-            sage: PA = PartitionAlgebra(2, q)
-            sage: PA.order()
+            sage: q = var('q')                                                          # optional - sage.symbolic
+            sage: PA = PartitionAlgebra(2, q)                                           # optional - sage.symbolic
+            sage: PA.order()                                                            # optional - sage.symbolic
             2
         """
         return self._k
@@ -2412,23 +2412,24 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     ::
 
-        sage: q = var('q')
-        sage: PA = PartitionAlgebra(2, q); PA
+        sage: q = var('q')                                                              # optional - sage.symbolic
+        sage: PA = PartitionAlgebra(2, q); PA                                           # optional - sage.symbolic
         Partition Algebra of rank 2 with parameter q over Symbolic Ring
-        sage: PA([[1,2],[-2,-1]])^2 == q*PA([[1,2],[-2,-1]])
+        sage: PA([[1,2],[-2,-1]])^2 == q*PA([[1,2],[-2,-1]])                            # optional - sage.symbolic
         True
-        sage: (PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2 == (4*q-4)*PA([[1, 2], [-2, -1]]) + PA([[2, -2], [1, -1]])
+        sage: ((PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2                    # optional - sage.symbolic
+        ....:   == (4*q-4)*PA([[1, 2], [-2, -1]]) + PA([[2, -2], [1, -1]]))
         True
 
     The identity element of the partition algebra is the set
     partition `\{\{1,-1\}, \{2,-2\}, \ldots, \{k,-k\}\}`::
 
-        sage: P = PA.basis().list()
-        sage: PA.one()
+        sage: P = PA.basis().list()                                                     # optional - sage.symbolic
+        sage: PA.one()                                                                  # optional - sage.symbolic
         P{{-2, 2}, {-1, 1}}
-        sage: PA.one() * P[7] == P[7]
+        sage: PA.one() * P[7] == P[7]                                                   # optional - sage.symbolic
         True
-        sage: P[7] * PA.one() == P[7]
+        sage: P[7] * PA.one() == P[7]                                                   # optional - sage.symbolic
         True
 
     We now give some further examples of the use of the other arguments.
@@ -2445,21 +2446,22 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         sage: PA = PartitionAlgebra(2, 5, base_ring=ZZ, prefix='B')
         sage: PA
         Partition Algebra of rank 2 with parameter 5 over Integer Ring
-        sage: (PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2 == 16*PA([[-2, -1], [1, 2]]) + PA([[2, -2], [1, -1]])
+        sage: ((PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2
+        ....:   == 16*PA([[-2, -1], [1, 2]]) + PA([[2, -2], [1, -1]]))
         True
 
     Symmetric group algebra elements and elements from other subalgebras
     of the partition algebra (e.g., ``BrauerAlgebra`` and
     ``TemperleyLiebAlgebra``) can also be coerced into the partition algebra::
 
-        sage: S = SymmetricGroupAlgebra(SR, 2)
-        sage: B = BrauerAlgebra(2, x, SR)
-        sage: A = PartitionAlgebra(2, x, SR)
-        sage: S([2,1])*A([[1,-1],[2,-2]])
+        sage: S = SymmetricGroupAlgebra(SR, 2)                                          # optional - sage.symbolic
+        sage: B = BrauerAlgebra(2, x, SR)                                               # optional - sage.symbolic
+        sage: A = PartitionAlgebra(2, x, SR)                                            # optional - sage.symbolic
+        sage: S([2,1]) * A([[1,-1],[2,-2]])                                             # optional - sage.symbolic
         P{{-2, 1}, {-1, 2}}
-        sage: B([[-1,-2],[2,1]]) * A([[1],[-1],[2,-2]])
+        sage: B([[-1,-2],[2,1]]) * A([[1],[-1],[2,-2]])                                 # optional - sage.symbolic
         P{{-2}, {-1}, {1, 2}}
-        sage: A([[1],[-1],[2,-2]]) * B([[-1,-2],[2,1]])
+        sage: A([[1],[-1],[2,-2]]) * B([[-1,-2],[2,1]])                                 # optional - sage.symbolic
         P{{-2, -1}, {1}, {2}}
 
     The same is true if the elements come from a subalgebra of a partition
@@ -2470,7 +2472,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         sage: S = SymmetricGroupAlgebra(ZZ, 2)
         sage: B = BrauerAlgebra(2, q, ZZ[q])
         sage: A = PartitionAlgebra(3, q, R)
-        sage: S([2,1])*A([[1,-1],[2,-3],[3,-2]])
+        sage: S([2,1]) * A([[1,-1],[2,-3],[3,-2]])
         P{{-3, 1}, {-2, 3}, {-1, 2}}
         sage: A(B([[-1,-2],[2,1]]))
         P{{-3, 3}, {-2, -1}, {1, 2}}
