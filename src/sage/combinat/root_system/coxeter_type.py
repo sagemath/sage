@@ -25,6 +25,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.matrix.args import SparseEntry
 from sage.matrix.constructor import Matrix
+from sage.misc.lazy_import import lazy_import
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
 
@@ -387,7 +388,6 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
                 else:
                     return R(x)
         elif isinstance(R, sage.rings.abc.NumberField_quadratic):
-            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             E = UniversalCyclotomicField().gen
 
             def val(x):
