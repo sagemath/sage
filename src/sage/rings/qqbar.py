@@ -4728,11 +4728,12 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         ::
 
-            sage: a = AA(sqrt(2) + 10^25)
-            sage: p = a.minpoly()
-            sage: v = a._value
-            sage: f = ComplexIntervalField(v.prec())
-            sage: [f(b.rhs()).overlaps(f(v)) for b in SR(p).solve(x)]
+            sage: a = AA(sqrt(2) + 10^25)                                               # optional - sage.symbolic
+            sage: p = a.minpoly()                                                       # optional - sage.symbolic
+            sage: v = a._value                                                          # optional - sage.symbolic
+            sage: f = ComplexIntervalField(v.prec())                                    # optional - sage.symbolic
+            sage: var('x')                                                              # optional - sage.symbolic
+            sage: [f(b.rhs()).overlaps(f(v)) for b in SR(p).solve(x)]                   # optional - sage.symbolic
             [True, True]
             sage: a.radical_expression()
             sqrt(2) + 10000000000000000000000000
