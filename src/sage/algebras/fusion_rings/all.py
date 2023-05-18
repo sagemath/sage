@@ -2,7 +2,7 @@
 Fusion Rings
 """
 # ****************************************************************************
-#  Copyright (C) 2022 Guillermo Aboumrad <gh_willieab>
+#  Copyright (C) 2023 Guillermo Aboumrad <gh_willieab>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,6 +13,4 @@ Fusion Rings
 
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('sage.algebras.fusion_rings.fusion_ring', ['FusionRing'])
-
-del lazy_import
+lazy_import('sage.algebras.fusion_rings.generic_fusion_ring', ['FusionRing'])

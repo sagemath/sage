@@ -1888,7 +1888,7 @@ REFERENCES:
 .. [CW2005] \J. E. Cremona and M. Watkins. Computing isogenies of elliptic
             curves. preprint, 2005.
 
-.. [CHW2015] Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation 
+.. [CHW2015] Cui, Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation 
              with weakly integral anyons. Quantum Inf. Process. 14 (2015),
              no. 8, 2687-2727. 
 
@@ -2702,6 +2702,9 @@ REFERENCES:
 
 .. [GJ2007] \A. Glen, J. Justin, Episturmian words: a survey, Preprint,
             2007, :arxiv:`0801.1655`.
+
+.. [Goff1999] Christopher Goff, Isomorphic fusion algebras of twisted quantum doubles 
+            of finite groups. PhD Thesis, University of California, Santa Cruz. 1999.
 
 .. [GJ2016] Muddappa Seetharama Gowda and Juyoung Jeong.
             Spectral cones in Euclidean Jordan algebras.
@@ -4431,6 +4434,11 @@ REFERENCES:
 
 .. [Mat2002] Jiří Matousek, "Lectures on Discrete Geometry", Springer,
              2002
+
+.. [Mas1995] Mason, Geoffrey The quantum double of a finite group and its role 
+            in conformal field theory. Groups '93 Galway/St. Andrews, Vol. 2, 
+            405–417, London Math. Soc. Lecture Note Ser., 212, 
+            Cambridge, 1995.
 
 .. [Ma2009] Sarah Mason, An Explicit Construction of Type A Demazure
             Atoms, Journal of Algebraic Combinatorics, Vol. 29,
