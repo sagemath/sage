@@ -3794,7 +3794,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             try:
                 radical = self.radical_expression()
             except ImportError:
-                pass:
+                pass
             else:
                 if radical is not self:
                     return latex(radical)
