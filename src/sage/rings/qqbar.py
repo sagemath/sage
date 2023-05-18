@@ -4754,13 +4754,13 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sqrt(sqrt(5) + 5)
             sage: QQbar.zeta(5).radical_expression()                                    # optional - sage.symbolic
             1/4*sqrt(5) + 1/2*sqrt(-1/2*sqrt(5) - 5/2) - 1/4
-            sage: x = polygen(ZZ, 'x')
-            sage: a = QQ[x](x^7 - x - 1).roots(AA, False)[0]
+            sage: x = polygen(QQ, 'x')
+            sage: a = (x^7 - x - 1).roots(AA, False)[0]
             sage: a.radical_expression()                                                # optional - sage.symbolic
             1.112775684278706?
             sage: a.radical_expression().parent() == SR                                 # optional - sage.symbolic
             False
-            sage: a = sorted(QQ[x](x^7-x-1).roots(QQbar, False), key=imag)[0]
+            sage: a = sorted((x^7-x-1).roots(QQbar, False), key=imag)[0]
             sage: a.radical_expression()                                                # optional - sage.symbolic
             -0.3636235193291805? - 0.9525611952610331?*I
             sage: QQbar.zeta(5).imag().radical_expression()                             # optional - sage.symbolic
