@@ -986,7 +986,7 @@ class PlotOptions():
             sage: list(options.text(L.simple_root(2), [1,0], rgbcolor=(1,0.5,0)))       # optional - sage.plot sage.symbolic
             [Text '$\alpha_{2}$' at the point (1.0,0.0)]
 
-            sage: options = L.root_lattice().plot_parse_options(labels=False)           # optional - sage.plot sage.symbolic
+            sage: options = L.plot_parse_options(labels=False)                          # optional - sage.plot sage.symbolic
             sage: options.text("coucou", [0,1])                                         # optional - sage.plot sage.symbolic
             0
 
