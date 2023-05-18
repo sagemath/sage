@@ -13,7 +13,7 @@ For more computational details, see the paper at https://www.tandfonline.com/doi
 
 AUTHORS:
 
-- Giovanni Staglianò (2023-05-17): initial version
+- Giovanni Staglianò (2023-05-18): initial version
 
 """
 
@@ -41,6 +41,7 @@ from sage.features.interfaces import Macaulay2
 from sage.interfaces.macaulay2 import macaulay2, sage
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
+from sage.rings.infinity import Infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.schemes.projective.projective_space import ProjectiveSpace
@@ -441,14 +442,17 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             p = h.inverse_image(Y._raw_point())
             assert(p._is_point())
             return p
-        X = self.hyperplane_section(cache=False)
-        j = X.embedding_as_hyperplane_section()
-        L = [q for q in X.irreducible_components() if q._is_point()]
-        if len(L) == 0:
-            raise Exception("function _raw_point() failed")
-        p = j(L[0])
-        assert(p._is_point())
-        return p
+        for i in range(10):
+            X = self.hyperplane_section(cache=False)
+            j = X.embedding_as_hyperplane_section()
+            L = [q for q in X.irreducible_components() if q._is_point()]
+            if len(L) == 0:
+                continue
+            p = j(L[0])
+            assert(p._is_point())
+            return p
+        else:
+            raise Exception("function _raw_point() failed: reached maximum number of 10 attempts to find rational point")
 
     def point(self, verbose=None, algorithm='sage'):
         r"""Pick a random point on the variety defined over a finite field.
@@ -478,16 +482,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
                 q = j(j.source().point(verbose=verbose, algorithm='sage'))
                 assert(q._is_point() and q.is_subset(self))
                 return q
-            try:
-                return self._raw_point()
-            except Exception:
-                try:
-                    return self._raw_point()
-                except Exception:
-                    try:
-                        return self._raw_point()
-                    except Exception:
-                        raise Exception("function point() failed to find rational points on the variety")
+            return self._raw_point()
         if verbose:
             print("-- running Macaulay2 function point()... --")
         X = macaulay2(self)
@@ -1057,6 +1052,64 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         if cache:
             self._random_hyperplane_section = X
         return X
+
+    def _change_of_coordinates_first_fundamental_point(self):
+        r"""Take an automorphism of the ambient projective space that sends the point ``self``
+        to the point ``(1,0,...,0)``. This is an auxiliary function for :meth:`cone_of_lines`.
+        """
+        a = self._coordinates() # expected a point
+        j0 = 0
+        while a[j0] == 0:
+            j0 += 1
+        n = self.ambient().dimension()
+        A = matrix(self.base_ring(), [a] + [[1 if i == j else 0 for i in range(n+1)] for j in range(n+1) if j != j0])
+        B = A.inverse()
+        f = rational_map(self.ambient(), self.ambient(), (matrix(self.ambient().coordinate_ring().gens()) * A).list())
+        g = rational_map(self.ambient(), self.ambient(), (matrix(self.ambient().coordinate_ring().gens()) * B).list())
+        # assert(f.compose(g) == 1 and g(self)._coordinates() == [1]+[0 for i in range(n)])
+        return (f,g)
+
+    def cone_of_lines(self, point=None):
+        r"""Return the union of the lines contained in ``self`` and passing through the point ``point``.
+        If ``point`` is not given, a random point on ``self`` is used.
+
+        EXAMPLES::
+
+            sage: from sage.misc.randstate import set_random_seed
+            sage: set_random_seed(12345)
+            sage: Q = PP(3,KK=GF(333331)).empty().random(2); Q
+            quadric surface in PP^3
+            sage: p = Q.point()
+            sage: Q.cone_of_lines(p).irreducible_components()
+            [line in PP^3, line in PP^3]
+
+        """
+        if point is None:
+            point = self.point()
+        (f,g) = point._change_of_coordinates_first_fundamental_point()
+        x0 = self.ambient().coordinate_ring().gen()
+        polys = f._to_ring_map()(self.defining_ideal()).gens()
+        Z = [pol.subs({x0:0}) for pol in polys]
+        for pol in polys:
+            Z.extend([pol.coefficient(x0 ** i) for i in range(1,pol.degree()+1)])
+        V = Embedded_projective_variety(self.ambient_space(), _minbase(g._to_ring_map()(ideal(Z))))
+        V = V.difference(point)
+        assert(V.is_subset(self) and (point.is_subset(V) or V.dimension() < 0))
+
+        def fast_dec(degree=Infinity):
+            if V.dimension() != 1:
+                raise Exception("cone of lines must have dimension 1")
+            Y = V.hyperplane_section()
+            h = rational_map([_random1(Y.ambient().coordinate_ring()),_random1(Y.ambient().coordinate_ring())])
+            hY = h(Y)
+            pts_on_PP1 = [q for q in hY.irreducible_components() if q.dimension() == 0 and q.degree() <= degree]
+            W = [(Y.embedding_as_hyperplane_section()(Y.intersection(h.inverse_image(q)))).union(point) for q in pts_on_PP1]
+            assert([(w.dimension(),w.degree()) for w in W] == [(0,q.degree()+1) for q in pts_on_PP1])
+            return W
+
+        V._fast_decomposition = fast_dec
+        V._vertex_point = point
+        return V
 
 def _is_embedded_projective_variety(X):
     r"""whether ``X`` can be included in the class `Embedded_projective_variety``"""
@@ -2409,6 +2462,185 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             self._macaulay2_object._sage_object = self
             return self._macaulay2_object
 
+    def map_from_fivefold(self, verbose=None, algorithm='sage'):
+        r"""(For internal use only) Return the map from the ambient fivefold of ``self``
+        defined by the linear system of hypersurfaces containing the surface of ``self`` and
+        of degree equal to the degree of ``self`` as a hypersurface in its ambient fivefold.
+        """
+        try:
+            return self._the_map_from_the_fivefold
+        except AttributeError:
+            if verbose is None:
+                verbose = __VERBOSE__
+            if algorithm == 'macaulay2':
+                if verbose:
+                    print("--computing map_from_fivefold using Macaulay2...")
+                X = macaulay2(self)
+                f = X.map()
+                if verbose:
+                    print("--computing image of map_from_fivefold using Macaulay2...")
+                # X.recognize()
+                X.imageOfAssociatedMap()
+                if verbose:
+                    print("--computation of image of map_from_fivefold terminated.")
+                self._the_map_from_the_fivefold = _from_macaulay2map_to_sagemap(f.removeUnderscores().multirationalMap(), Sage_Source=self.ambient_fivefold())
+                assert(hasattr(self._the_map_from_the_fivefold,"_closure_of_image"))
+                return self._the_map_from_the_fivefold
+            if algorithm == 'sage':
+                # This needs to be improved!
+                I = ideal(self.surface()._homogeneous_component(self._degree_as_hypersurface))
+                if self.ambient_fivefold().codimension() > 1:
+                    I = I.change_ring(self.ambient_fivefold().coordinate_ring())
+                phi = rational_map(self.ambient_fivefold(), I.gens())
+                if verbose:
+                    print("--computing image of map_from_fivefold (using sage)...")
+                phi.image()
+                if verbose:
+                    print("--computation of image of map_from_fivefold terminated.")
+                self._the_map_from_the_fivefold = phi
+                return self._the_map_from_the_fivefold
+            raise ValueError("keyword algorithm must be 'macaulay2' or 'sage'")
+
+    def congruence(self, degree=None, num_checks=1, point=None, verbose=None, algorithm_for_image='sage', algorithm_for_point='sage', macaulay2_detectCongruence = False):
+        r"""Detect and return a congruence of secant curves for the surface of ``self`` in the ambient fivefold of ``self``.
+
+        This function works similar to the ``Macaulay2`` function ``detectCongruence``, documented at
+        https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/_detect__Congruence.html.
+        See also the paper at https://www.tandfonline.com/doi/abs/10.1080/10586458.2023.2184882
+        for more computational details.
+
+        INPUT:
+
+        ``degree`` -- an optional integer, the degree of the curves of the congruence.
+
+        ``num_checks`` -- an optional integer with default value 1, check that the congruence works by testing so many random points on the ambient fivefold.
+
+        ``point`` -- optional, a point on the ambient fivefold. This is only useful when you want to perform calculations on infinite fields, where the function :meth:`point` might not work.
+
+        ``verbose`` -- a boolean value, turn on or off verbose output.
+
+        ``algorithm_for_image`` -- possible values are ``sage`` (by default) and ``macaulay2``, with ``algorithm_for_image='macaulay2'`` the computation of the image of the map :meth:`map_from_fivefold` is performed using ``Macaulay2`` (this is recommended if you have ``Macaulay2`` installed).
+
+        ``algorithm_for_point`` -- possible values are ``sage`` (by default) and ``macaulay2``, with ``algorithm_for_image='macaulay2'`` the computation of random points is performed using ``Macaulay2``.
+
+        ``macaulay2_detectCongruence`` -- a boolean value, default value false, with ``macaulay2_detectCongruence=True`` the whole computation is performed using the ``Macaulay2`` function ``detectCongruence``.
+
+        OUTPUT:
+
+        A congruence of curves, which behaves like a function that sends a point ``p`` on the ambient fivefold
+        to the curve of the congruence passing through ``p``.
+
+        EXAMPLES::
+
+            sage: X = fourfold(surface(3,1,1,KK=GF(65521))); X
+            Cubic fourfold of discriminant 14 = 3*10-4^2 containing a rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
+            sage: f = X.congruence(algorithm_for_image='macaulay2',verbose=false); f                              # optional - macaulay2
+            Congruence of 2-secant lines
+            to: rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
+            in: PP^5
+            sage: p = X.ambient_fivefold().point()
+            sage: f(p)                                                                                            # optional - macaulay2
+            line in PP^5
+
+            sage: X = fourfold("GM 4-fold of discriminant 26('')",GF(65521)); X                                   # optional - macaulay2
+            Gushel-Mukai fourfold of discriminant 26('') containing a surface in PP^8 of degree 9 and sectional genus 2 cut out by 19 hypersurfaces of degree 2, class of the surface in GG(1,4): (5, 4)
+            sage: f = X.congruence(macaulay2_detectCongruence=True, verbose=True); f                              # optional - macaulay2
+            -- running Macaulay2 function detectCongruence()... --
+            number lines contained in the image of the quadratic map and passing through a general point: 6
+            number 1-secant lines = 5
+            number 3-secant conics = 1
+            -- function detectCongruence() has terminated. --
+            -- checking congruence (1 of 1)...
+            Congruence of 3-secant conics
+            to: surface in PP^8 of degree 9 and sectional genus 2 cut out by 19 hypersurfaces of degree 2
+            in: 5-dimensional variety of degree 5 in PP^8 cut out by 5 hypersurfaces of degree 2
+            sage: p = X.ambient_fivefold().point()                                                                # optional - macaulay2
+            sage: f(p)                                                                                            # optional - macaulay2
+            conic curve in PP^8
+
+            sage: X = fourfold("3-nodal septic scroll", GF(61001)); X                                             # optional - macaulay2
+            Cubic fourfold of discriminant 26 = 3*25-7^2 containing a surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
+            sage: X.congruence(algorithm_for_image='macaulay2',verbose=false, num_checks=2)                       # optional - macaulay2
+            Congruence of 5-secant conics
+            to: surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
+            in: PP^5
+
+        """
+        if macaulay2_detectCongruence:
+            return self._detect_congruence_using_macaulay2(Degree=degree, verbose=verbose).check(num_checks,algorithm_for_point=algorithm_for_point,verbose=verbose)
+
+        if verbose is None:
+            verbose = __VERBOSE__
+        f = self.map_from_fivefold(verbose=verbose, algorithm=algorithm_for_image)
+
+        def dim_and_degree(X):
+            return(X.dimension(), X.degree())
+
+        def function_congruence(p, degree=None, verbose=false):
+            if degree is None and hasattr(self,"_possible_degrees_for_curves_of_congruence") and len(self._possible_degrees_for_curves_of_congruence) == 0:
+                raise Exception("function 'congruence' failed (with previous runs)")
+            p = _check_type_embedded_projective_variety(p)
+            if not (p._is_point() and p.is_subset(self.ambient_fivefold())):
+                raise Exception("expected a point on the ambient fivefold")
+            q = f(p)
+            if verbose:
+                print("--computing cone of lines (using sage)...")
+            V = f.image().cone_of_lines(point=q)
+            if verbose:
+                print("--computing partial decomposition of cone of lines...")
+            D = V._fast_decomposition(degree=1)
+            if len(D) == 0:
+                self._possible_degrees_for_curves_of_congruence = set()
+                raise Exception("function 'congruence' failed")
+            if verbose:
+                print("--computing inverse images of lines...")
+            curves = [f.inverse_image(q.linear_span()) for q in D]
+            if verbose:
+                print("--analyzing " + str(len(curves)) + " curve(s) in the ambient fivefold...")
+            degs = [C.degree() for C in curves] if degree is None else [degree]
+            if degree is None and hasattr(self,"_possible_degrees_for_curves_of_congruence"):
+                degs = list(set(degs).intersection(self._possible_degrees_for_curves_of_congruence))
+                if len(degs) == 0:
+                    raise Exception("function 'congruence' failed (with previous runs)")
+            W = []
+            for d in degs:
+                E = [C for C in curves if dim_and_degree(C) == (1,d) and dim_and_degree(C.intersection(self.surface())) == (0, d * self._degree_as_hypersurface - 1)]
+                if len(E) == 1:
+                    W.extend(E)
+            if degree is None and len(W) > 1:
+                if not hasattr(self,"_possible_degrees_for_curves_of_congruence"):
+                    self._possible_degrees_for_curves_of_congruence = set([w.degree() for w in W])
+                else:
+                    self._possible_degrees_for_curves_of_congruence = self._possible_degrees_for_curves_of_congruence.intersection(set([w.degree() for w in W]))
+                    if len(self._possible_degrees_for_curves_of_congruence) == 0:
+                        raise Exception("function 'congruence' failed (with previous runs)")
+                if verbose:
+                    print("found possible degrees for curves of congruences: " + str(self._possible_degrees_for_curves_of_congruence) + ", rerunning the computation using another point...")
+                return function_congruence(self.ambient_fivefold().point(verbose=verbose, algorithm=algorithm_for_point), degree=None, verbose=verbose)
+            if len(W) == 0:
+                raise Exception("function 'congruence' failed")
+                self._possible_degrees_for_curves_of_congruence = set()
+            assert(p.is_subset(W[0]))
+            return W[0]
+
+        p = self.ambient_fivefold().point(verbose=verbose, algorithm=algorithm_for_point) if point is None else point
+        try:
+            Curve = function_congruence(p, degree=degree, verbose=verbose)
+        except Exception as err:
+            raise Exception(err)
+        d = Curve.degree()
+
+        def function_congruence_with_degree(p):
+            return function_congruence(p, degree=d, verbose=false)
+
+        congr = _Congruence_of_secant_curves_to_surface(function_congruence_with_degree, None, d, self)
+
+        try:
+            congr.check(num_checks, verbose=verbose, algorithm_for_point=algorithm_for_point)
+        except Exception:
+            raise Exception("congruence check failed")
+        return congr
+
     def fano_map(self, verbose=None):
         r"""Return the Fano map from the ambient fivefold.
 
@@ -2534,75 +2766,8 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                 print("-- function " + s + "() has terminated. --")
             return self._macaulay2_associated_surface_construction
 
-    def detect_congruence(self, Degree=None, verbose=None):
-        r"""Detect and return a congruence of secant curves for the surface of ``self`` in the ambient fivefold of ``self``.
-
-        In the current version, this runs the ``Macaulay2`` function ``detectCongruence``, documented at
-        https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/_detect__Congruence.html.
-        See also the paper at https://www.tandfonline.com/doi/abs/10.1080/10586458.2023.2184882
-        for more computational details.
-
-        INPUT:
-
-        ``Degree``, an optional integer, the degree of the curves of the congruence, if known.
-
-        OUTPUT:
-
-        A congruence of curves, which behaves like a function that sends a point ``p`` of the ambient fivefold
-        to the curve of the congruence passing through ``p``.
-
-        EXAMPLES::
-
-            sage: from sage.misc.randstate import set_random_seed
-            sage: set_random_seed(0)
-            sage: macaulay2.set_seed(0)                                                 # optional - macaulay2
-            0
-
-            sage: S = surface(3,1,1); S
-            rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
-            sage: X = fourfold(S)
-            sage: f = X.detect_congruence(1)                                            # optional - macaulay2
-            -- running Macaulay2 function detectCongruence()... --
-            Congruence of 2-secant lines to surface in PP^5
-            -- function detectCongruence() has terminated. --
-            sage: f.check()                                                             # optional - macaulay2
-            Congruence of 2-secant lines
-            to: rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
-            in: PP^5
-            sage: p = X.ambient_fivefold().point(); p
-            one-point scheme in PP^5 of coordinates [1, 20323, 29031, 1415, 14133, 21116]
-            sage: f(p)                                                                  # optional - macaulay2
-            line in PP^5
-
-            sage: X = fourfold("GM 4-fold of discriminant 26('')",GF(65521)); X         # optional - macaulay2
-            Gushel-Mukai fourfold of discriminant 26('') containing a surface in PP^8 of degree 9 and sectional genus 2 cut out by 19 hypersurfaces of degree 2, class of the surface in GG(1,4): (5, 4)
-            sage: f = X.detect_congruence().check(); f                                  # optional - macaulay2
-            -- running Macaulay2 function detectCongruence()... --
-            number lines contained in the image of the quadratic map and passing through a general point: 6
-            number 1-secant lines = 5
-            number 3-secant conics = 1
-            -- function detectCongruence() has terminated. --
-            Congruence of 3-secant conics
-            to: surface in PP^8 of degree 9 and sectional genus 2 cut out by 19 hypersurfaces of degree 2
-            in: 5-dimensional variety of degree 5 in PP^8 cut out by 5 hypersurfaces of degree 2
-            sage: p = X.ambient_fivefold().point(); p                                   # optional - macaulay2
-            one-point scheme in PP^8 of coordinates [1, 19454, 11261, 23116, 25718, 63142, 60182, 51819, 19974]
-            sage: f(p)                                                                  # optional - macaulay2
-            conic curve in PP^8
-
-            sage: X = fourfold("3-nodal septic scroll", GF(61001)); X                   # optional - macaulay2
-            Cubic fourfold of discriminant 26 = 3*25-7^2 containing a surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
-            sage: X.detect_congruence().check()                                         # optional - macaulay2
-            -- running Macaulay2 function detectCongruence()... --
-            number lines contained in the image of the cubic map and passing through a general point: 8
-            number 2-secant lines = 7
-            number 5-secant conics = 1
-            -- function detectCongruence() has terminated. --
-            Congruence of 5-secant conics
-            to: surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
-            in: PP^5
-
-        """
+    def _detect_congruence_using_macaulay2(self, Degree=None, verbose=None):
+        r"""Detect and return a congruence of secant curves using ``Macaulay2``."""
         try:
             return self._macaulay2_detect_congruence
         except AttributeError:
@@ -2619,7 +2784,6 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             else:
                 f = X.detectCongruence() if Degree is None else X.detectCongruence(Degree)
             deg_congr = f.sharp('"degree"').sage()
-            str_congr = f.sharp('"string"').sage()
 
             def f_s(p):
                 p = _check_type_embedded_projective_variety(p)
@@ -2630,7 +2794,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                 assert(p.is_subset(D) and D.is_subset(self.ambient_fivefold()) and D.dimension() == 1 and D.degree() == deg_congr)
                 return D
 
-            g = _Congruence_of_secant_curves_to_surface(f_s, f, deg_congr, str_congr, self)
+            g = _Congruence_of_secant_curves_to_surface(f_s, f, deg_congr, self)
             if Degree is None:
                 self._macaulay2_detect_congruence = g
             if verbose:
@@ -2638,15 +2802,27 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             return g
 
 class _Congruence_of_secant_curves_to_surface(SageObject):
-    r"""The class of objects created by the function :meth:`detect_congruence`."""
-    def __init__(self, f_s, f, deg_congr, str_congr, X):
+    r"""The class of objects created by the function :meth:`congruence`."""
+    def __init__(self, f_s, f, deg_congr, X):
         self._function_on_points = f_s
         self._macaulay2_object = f
         self._degree = deg_congr
-        self._string = str_congr
         self._fourfold = X
     def _repr_(self):
-        return "Congruence " + self._string + "\nto: " + self._fourfold.surface()._repr_() + "\nin: " + self._fourfold.ambient_fivefold()._repr_()
+        curves_word = {
+            1:"lines",
+            2:"conics",
+            3:"cubic curves",
+            4:"quartic curves",
+            5:"quintic curves",
+            6:"sextic curves",
+            7:"septic curves",
+            8:"octic curves",
+            9:"nonic curves"
+        }
+        d = self._degree
+        a = self._fourfold._degree_as_hypersurface
+        return "Congruence of " + str(a*d - 1) + "-secant " + (curves_word[d] if d <= 9 else "curves of degree " + str(d)) + "\nto: " + self._fourfold.surface()._repr_() + "\nin: " + self._fourfold.ambient_fivefold()._repr_()
     def __call__(self, p):
         return self._function_on_points(p)
     def _macaulay2_init_(self, macaulay2=None):
@@ -2654,10 +2830,16 @@ class _Congruence_of_secant_curves_to_surface(SageObject):
             from sage.interfaces.macaulay2 import macaulay2 as m2_default
             macaulay2 = m2_default
         return self._macaulay2_object
-    def check(self, i=2):
+    def check(self, i=1, verbose=None, algorithm_for_point=None):
+        if verbose is None:
+            verbose = __VERBOSE__
+        if algorithm_for_point is None:
+            algorithm_for_point = 'sage' if self._macaulay2_object is None else 'macaulay2'
         V = self._fourfold.ambient_fivefold()
         for j in range(i):
-            self(V.point(verbose=False, algorithm='macaulay2'))
+            if verbose:
+                print("-- checking congruence ("+str(j+1)+" of "+str(i)+")...")
+            self(V.point(verbose=False, algorithm=algorithm_for_point))
         return self
 
 class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
@@ -2665,9 +2847,10 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
     The class of Hodge-special complete intersections of three quadrics in ``PP^7``.
     """
     def __init__(self, S, X, V=None, check=True):
-        super().__init__(S,X,V,check=True)
+        super().__init__(S,X,V,check=check)
         if not(self.degrees_generators() == (2,2,2) and self.ambient_fivefold().degrees_generators() == (2,2)):
             raise Exception("something went wrong in constructing complete intersections of three quadrics in PP^7")
+        self._degree_as_hypersurface = 2
 
     def _repr_(self):
         return("Complete intersection of 3 quadrics in PP^7 of discriminant " + str(self.discriminant(verbose=False)) + " = 8*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface()))
@@ -2728,9 +2911,10 @@ class Cubic_fourfold(Hodge_special_fourfold):
     The class of Hodge-special cubic fourfolds in ``PP^5``
     """
     def __init__(self, S, X, V=None, check=True):
-        super().__init__(S,X,V,check=True)
+        super().__init__(S,X,V,check=check)
         if not(self.degree() == 3 and self.codimension() == 1 and len(self.degrees_generators()) == 1):
             raise Exception("something went wrong in constructing cubic fourfold in PP^5")
+        self._degree_as_hypersurface = 3
 
     def _repr_(self):
         return("Cubic fourfold of discriminant " + str(self.discriminant(verbose=False)) + " = 3*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface()))
@@ -2796,6 +2980,12 @@ class GushelMukai_fourfold(Hodge_special_fourfold):
         sage: assert(X.base_ring().characteristic() == 33331)   # optional - macaulay2
 
     """
+    def __init__(self, S, X, V=None, check=True):
+        super().__init__(S,X,V,check=check)
+        if not(self.ambient().dimension() == 8 and self.degrees_generators() == (2,2,2,2,2,2) and self.degree() == 10 and self.sectional_genus() == 6):
+            raise Exception("something went wrong in constructing Gushel-Mukai fourfold in PP^8")
+        self._degree_as_hypersurface = 2
+
     def _repr_(self):
         d = self.discriminant(verbose=False)
         (a,b) = self._class_of_surface_in_the_Grass
@@ -3164,7 +3354,7 @@ Alternatively, you may execute the following command in a Unix/Linux shell: curl
 """)
     macaulay2.options.after_print = True
     macaulay2('importFrom_MultiprojectiveVarieties {"coordinates"}')
-    macaulay2('importFrom_SpecialFanoFourfolds {"eulerCharacteristic", "numberNodes", "fanoMap", "recognize"}')
+    macaulay2('importFrom_SpecialFanoFourfolds {"eulerCharacteristic", "numberNodes", "fanoMap", "recognize", "imageOfAssociatedMap"}')
     macaulay2('importFrom_Cremona {"maps"}')
     # I got problems switching from M2 to sage objects due to underscores in the variables.
     # This interim M2 code solves the problem.
@@ -3254,7 +3444,7 @@ _set_macaulay2_()
 
 if __name__ == "__main__":
     print("""┌─────────────────────────────────────┐
- sff.py version 1.0, date: 2023-05-17""" +
+ sff.py version 1.0, date: 2023-05-18""" +
 ("\n with SpecialFanoFourfolds.m2 v. " + macaulay2('SpecialFanoFourfolds.Options.Version').sage() if Macaulay2().is_present() else "\n Macaulay2 not present") +
 """
 └─────────────────────────────────────┘""")
