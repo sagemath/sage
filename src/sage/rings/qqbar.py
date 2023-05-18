@@ -3798,7 +3798,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             else:
                 if radical is not self:
                     return latex(radical)
-            return repr(self).replace('*I', r' \sqrt{-1}')
+        return repr(self).replace('*I', r' \sqrt{-1}')
 
     def _sage_input_(self, sib, coerce):
         r"""
@@ -4780,11 +4780,12 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         ::
 
-            sage: a = AA(sqrt(2) + 10^25)
-            sage: p = a.minpoly()
-            sage: v = a._value
-            sage: f = ComplexIntervalField(v.prec())
-            sage: [f(b.rhs()).overlaps(f(v)) for b in SR(p).solve(x)]
+            sage: a = AA(sqrt(2) + 10^25)                                               # optional - sage.symbolic
+            sage: p = a.minpoly()                                                       # optional - sage.symbolic
+            sage: v = a._value                                                          # optional - sage.symbolic
+            sage: f = ComplexIntervalField(v.prec())                                    # optional - sage.symbolic
+            sage: var('x')                                                              # optional - sage.symbolic
+            sage: [f(b.rhs()).overlaps(f(v)) for b in SR(p).solve(x)]                   # optional - sage.symbolic
             [True, True]
             sage: a.radical_expression()                                                # optional - sage.symbolic
             sqrt(2) + 10000000000000000000000000
