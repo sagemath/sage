@@ -3940,7 +3940,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
           Defn: (x1_0, x1_1, x1_2, x1_3, y1_0, y1_1) --> (e1, e2, e3, e4, e5, -e5 + e6)
 
     """
-    def __init__(self, x, parent = None):
+    def __init__(self, x, parent=None):
         """
         EXAMPLES::
 
