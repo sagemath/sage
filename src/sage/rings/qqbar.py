@@ -4733,6 +4733,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: v = a._value                                                          # optional - sage.symbolic
             sage: f = ComplexIntervalField(v.prec())                                    # optional - sage.symbolic
             sage: var('x')                                                              # optional - sage.symbolic
+            x
             sage: [f(b.rhs()).overlaps(f(v)) for b in SR(p).solve(x)]                   # optional - sage.symbolic
             [True, True]
             sage: a.radical_expression()
@@ -7082,14 +7083,13 @@ class ANRoot(ANDescr):
 
         EXAMPLES::
 
-            sage: x = polygen(QQ, 'x')
-            sage: a = (x^2 + 23).roots(ring=QQbar, multiplicities=False)[0]
-            sage: b = a._descr
-            sage: type(b)
+            sage: a = (x^2 + 23).roots(ring=QQbar, multiplicities=False)[0]             # optional - sage.symbolic
+            sage: b = a._descr                                                          # optional - sage.symbolic
+            sage: type(b)                                                               # optional - sage.symbolic
             <class 'sage.rings.qqbar.ANRoot'>
-            sage: c = b.conjugate(a); c
+            sage: c = b.conjugate(a); c                                                 # optional - sage.symbolic
             <sage.rings.qqbar.ANUnaryExpr object at ...>
-            sage: c.exactify()
+            sage: c.exactify()                                                          # optional - sage.symbolic
             -2*a + 1 where a^2 - a + 6 = 0 and a in 0.50000000000000000? - 2.397915761656360?*I
         """
         if not self._complex:
