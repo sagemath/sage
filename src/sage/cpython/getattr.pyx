@@ -84,7 +84,7 @@ cdef class AttributeErrorMessage:
         ....: except AttributeError as exc:
         ....:     ElementError2 = exc
         sage: ElementError
-        AttributeError('sage.symbolic.expression.Expression' object has no attribute '__bla'...)
+        AttributeError('sage.rings.polynomial...' object has no attribute '__bla'...)
         sage: ElementError2.args[0] is ElementError.args[0]
         True
         sage: isinstance(ElementError.args[0], sage.cpython.getattr.AttributeErrorMessage)
@@ -407,13 +407,13 @@ def dir_with_other_class(self, *cls):
 
     Check that objects without dicts are well handled::
 
-        sage: cython("cdef class A:\n    cdef public int a")            # optional - sage.misc.cython
-        sage: cython("cdef class B:\n    cdef public int b")            # optional - sage.misc.cython
-        sage: x = A()                                                   # optional - sage.misc.cython
-        sage: x.a = 1                                                   # optional - sage.misc.cython
-        sage: hasattr(x,'__dict__')                                     # optional - sage.misc.cython
+        sage: cython("cdef class A:\n    cdef public int a")                            # optional - sage.misc.cython
+        sage: cython("cdef class B:\n    cdef public int b")                            # optional - sage.misc.cython
+        sage: x = A()                                                                   # optional - sage.misc.cython
+        sage: x.a = 1                                                                   # optional - sage.misc.cython
+        sage: hasattr(x,'__dict__')                                                     # optional - sage.misc.cython
         False
-        sage: dir_with_other_class(x, B)                                # optional - sage.misc.cython
+        sage: dir_with_other_class(x, B)                                                # optional - sage.misc.cython
         [..., 'a', 'b']
 
     TESTS:
