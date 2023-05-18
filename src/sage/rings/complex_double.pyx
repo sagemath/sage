@@ -24,7 +24,7 @@ EXAMPLES::
     Complex Double Field
     sage: type(CDF.0)
     <class 'sage.rings.complex_double.ComplexDoubleElement'>
-    sage: ComplexDoubleElement(sqrt(2),3)
+    sage: ComplexDoubleElement(sqrt(2), 3)                                              # optional - sage.symbolic
     1.4142135623730951 + 3.0*I
     sage: parent(CDF(-2))
     Complex Double Field
@@ -1026,11 +1026,11 @@ cdef class ComplexDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: CDF(1, 0)._sympy_()
+            sage: CDF(1, 0)._sympy_()                                                   # optional - sympy
             1.00000000000000
-            sage: CDF(1/3, 1)._sympy_()
+            sage: CDF(1/3, 1)._sympy_()                                                 # optional - sympy
             0.333333333333333 + 1.0*I
-            sage: type(_)
+            sage: type(_)                                                               # optional - sympy
             <class 'sympy.core.add.Add'>
         """
         x = GSL_REAL(self._complex)
@@ -1664,11 +1664,11 @@ cdef class ComplexDoubleElement(FieldElement):
 
         We raise to symbolic powers::
 
-            sage: var('x, n')
+            sage: var('x, n')                                                           # optional - sage.symbolic
             (x, n)
-            sage: CDF(1.2)^x
+            sage: CDF(1.2)^x                                                            # optional - sage.symbolic
             1.2^x
-            sage: CDF(1.2)^(x^n + n^x)
+            sage: CDF(1.2)^(x^n + n^x)                                                  # optional - sage.symbolic
             1.2^(n^x + x^n)
 
         A real number powered to an exact integer always yields a real
@@ -2468,11 +2468,11 @@ cdef class ComplexDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: z = (1/2)*(1 + RDF(sqrt(3)) *CDF.0); z   # abs tol 1e-16
+            sage: z = (1/2)*(1 + RDF(sqrt(3)) * CDF.0); z   # abs tol 1e-16             # optional - sage.symbolic
             0.5 + 0.8660254037844387*I
-            sage: p = z.algdep(5); p
+            sage: p = z.algdep(5); p                                                    # optional - sage.symbolic
             x^2 - x + 1
-            sage: abs(z^2 - z + 1) < 1e-14
+            sage: abs(z^2 - z + 1) < 1e-14                                              # optional - sage.symbolic
             True
 
         ::

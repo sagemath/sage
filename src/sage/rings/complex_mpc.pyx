@@ -1521,7 +1521,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             2.23606797749979
             sage: a.__abs__()
             2.23606797749979
-            sage: float(sqrt(2^2 + 1^1))
+            sage: float(sqrt(2^2 + 1^1))                                                # optional - sage.symbolic
             2.23606797749979
 
             sage: b = MPC(42,0)

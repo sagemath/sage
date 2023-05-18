@@ -340,20 +340,20 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
     Minimize a fourth order polynomial in three variables (see the
     :wikipedia:`Rosenbrock_function`)::
 
-        sage: vars = var('x y z')
-        sage: f = 100*(y-x^2)^2+(1-x)^2+100*(z-y^2)^2+(1-y)^2
-        sage: minimize(f, [.1,.3,.4]) # abs tol 1e-6
+        sage: vars = var('x y z')                                                       # optional - sage.symbolic
+        sage: f = 100*(y-x^2)^2 + (1-x)^2 + 100*(z-y^2)^2 + (1-y)^2                     # optional - sage.symbolic
+        sage: minimize(f, [.1,.3,.4]) # abs tol 1e-6                                    # optional - sage.symbolic
         (1.0, 1.0, 1.0)
 
     Try the newton-conjugate gradient method; the gradient and hessian are
     computed automatically::
 
-        sage: minimize(f, [.1, .3, .4], algorithm="ncg") # abs tol 1e-6
+        sage: minimize(f, [.1, .3, .4], algorithm="ncg")  # abs tol 1e-6                # optional - sage.symbolic
         (1.0, 1.0, 1.0)
 
     We get additional convergence information with the `verbose` option::
 
-        sage: minimize(f, [.1, .3, .4], algorithm="ncg", verbose=True)
+        sage: minimize(f, [.1, .3, .4], algorithm="ncg", verbose=True)                  # optional - sage.symbolic
         Optimization terminated successfully.
         ...
         (0.9999999..., 0.999999..., 0.999999...)
@@ -465,7 +465,6 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
     `50x + 24y \leq 2400`, `30x + 33y \leq 2100`, `x \geq 45`,
     and `y \geq 5`::
 
-        sage: y = var('y')
         sage: f = lambda p: -p[0]-p[1]+50
         sage: c_1 = lambda p: p[0]-45
         sage: c_2 = lambda p: p[1]-5
@@ -477,44 +476,47 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
 
     Let's find a minimum of `\sin(xy)`::
 
-        sage: x,y = var('x y')
-        sage: f(x,y) = sin(x*y)
-        sage: minimize_constrained(f, [(None,None),(4,10)],[5,5])
+        sage: x,y = var('x y')                                                          # optional - sage.symbolic
+        sage: f(x,y) = sin(x*y)                                                         # optional - sage.symbolic
+        sage: minimize_constrained(f, [(None,None),(4,10)],[5,5])                       # optional - sage.symbolic
         (4.8..., 4.8...)
 
     Check if L-BFGS-B finds the same minimum::
 
-        sage: minimize_constrained(f, [(None,None),(4,10)],[5,5], algorithm='l-bfgs-b')
+        sage: minimize_constrained(f, [(None,None),(4,10)],[5,5],                       # optional - sage.symbolic
+        ....:                      algorithm='l-bfgs-b')
         (4.7..., 4.9...)
 
     Rosenbrock function (see the :wikipedia:`Rosenbrock_function`)::
 
         sage: from scipy.optimize import rosen, rosen_der
-        sage: minimize_constrained(rosen, [(-50,-10),(5,10)],[1,1],gradient=rosen_der,algorithm='l-bfgs-b')
+        sage: minimize_constrained(rosen, [(-50,-10),(5,10)],[1,1],
+        ....:                      gradient=rosen_der, algorithm='l-bfgs-b')
         (-10.0, 10.0)
-        sage: minimize_constrained(rosen, [(-50,-10),(5,10)],[1,1],algorithm='l-bfgs-b')
+        sage: minimize_constrained(rosen, [(-50,-10),(5,10)],[1,1],
+        ....:                      algorithm='l-bfgs-b')
         (-10.0, 10.0)
 
     TESTS:
 
     Check if :trac:`6592` is fixed::
 
-        sage: x, y = var('x y')
-        sage: f(x,y) = (100 - x) + (1000 - y)
-        sage: c(x,y) = x + y - 479 # > 0
-        sage: minimize_constrained(f, [c], [100, 300])
+        sage: x, y = var('x y')                                                         # optional - sage.symbolic
+        sage: f(x,y) = (100 - x) + (1000 - y)                                           # optional - sage.symbolic
+        sage: c(x,y) = x + y - 479  # > 0                                               # optional - sage.symbolic
+        sage: minimize_constrained(f, [c], [100, 300])                                  # optional - sage.symbolic
         (805.985..., 1005.985...)
-        sage: minimize_constrained(f, c, [100, 300])
+        sage: minimize_constrained(f, c, [100, 300])                                    # optional - sage.symbolic
         (805.985..., 1005.985...)
 
     If ``func`` is symbolic, its minimizer should be in the same order
     as its arguments (:trac:`32511`)::
 
-        sage: x,y = SR.var('x,y')
-        sage: f(y,x) = x - y
-        sage: c1(y,x) = x
-        sage: c2(y,x) = 1-y
-        sage: minimize_constrained(f, [c1, c2], (0,0))
+        sage: x,y = SR.var('x,y')                                                       # optional - sage.symbolic
+        sage: f(y,x) = x - y                                                            # optional - sage.symbolic
+        sage: c1(y,x) = x                                                               # optional - sage.symbolic
+        sage: c2(y,x) = 1-y                                                             # optional - sage.symbolic
+        sage: minimize_constrained(f, [c1, c2], (0,0))                                  # optional - sage.symbolic
         (1.0, 0.0)
 
     """
@@ -719,30 +721,33 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
     perturbations::
 
         sage: set_random_seed(0)
-        sage: data = [(i, 1.2 * sin(0.5*i-0.2) + 0.1 * normalvariate(0, 1)) for i in xsrange(0, 4*pi, 0.2)]
-        sage: var('a, b, c, x')
+        sage: data = [(i, 1.2 * sin(0.5*i-0.2) + 0.1 * normalvariate(0, 1))            # optional - sage.symbolic
+        ....:         for i in xsrange(0, 4*pi, 0.2)]
+        sage: var('a, b, c, x')                                                        # optional - sage.symbolic
         (a, b, c, x)
 
     We define a function with free parameters `a`, `b` and `c`::
 
-        sage: model(x) = a * sin(b * x - c)
+        sage: model(x) = a * sin(b * x - c)                                            # optional - sage.symbolic
 
     We search for the parameters that give the best fit to the data::
 
-        sage: find_fit(data, model)
+        sage: find_fit(data, model)                                                    # optional - sage.symbolic
         [a == 1.21..., b == 0.49..., c == 0.19...]
 
     We can also use a Python function for the model::
 
         sage: def f(x, a, b, c): return a * sin(b * x - c)
-        sage: fit = find_fit(data, f, parameters = [a, b, c], variables = [x], solution_dict = True)
-        sage: fit[a], fit[b], fit[c]
+        sage: fit = find_fit(data, f, parameters=[a, b, c], variables=[x],             # optional - sage.symbolic
+        ....:                solution_dict = True)
+        sage: fit[a], fit[b], fit[c]                                                   # optional - sage.symbolic
         (1.21..., 0.49..., 0.19...)
 
     We search for a formula for the `n`-th prime number::
 
         sage: dataprime = [(i, nth_prime(i)) for i in range(1, 5000, 100)]
-        sage: find_fit(dataprime, a * x * log(b * x), parameters = [a, b], variables = [x])
+        sage: find_fit(dataprime, a * x * log(b * x),                                  # optional - sage.symbolic
+        ....:          parameters=[a, b], variables=[x])
         [a == 1.11..., b == 1.24...]
 
 

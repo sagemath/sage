@@ -115,7 +115,7 @@ We can convert from symbolic expressions::
     3.146264369941973?
     sage: QQbar(I)
     I
-    sage: QQbar(I * golden_ratio)
+    sage: QQbar(I * golden_ratio)                                                       # optional - sage.symbolic
     1.618033988749895?*I
     sage: AA(golden_ratio)^2 - AA(golden_ratio)                                         # optional - sage.symbolic
     1
@@ -2664,8 +2664,8 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
     Here we see an example of doing some computations with number field
     elements, and then mapping them back into ``QQbar``::
 
-        sage: algebraics = (rt2, rt3, qqI, z3)
-        sage: fld,nums,hom = number_field_elements_from_algebraics(algebraic)           # optional - sage.symbolic
+        sage: algebraics = (rt2, rt3, qqI, z3)                                          # optional - sage.symbolic
+        sage: fld,nums,hom = number_field_elements_from_algebraics(algebraics)          # optional - sage.symbolic
         sage: fld,nums,hom  # random                                                    # optional - sage.symbolic
         (Number Field in a with defining polynomial y^8 - y^4 + 1,
          [-a^5 + a^3 + a, a^6 - 2*a^2, a^6, -a^4],
@@ -3791,10 +3791,14 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         if isinstance(self._descr, ANExtensionElement) and self._descr._generator is QQbar_I_generator:
             return latex(self._descr._value)
         if self.parent().options.display_format == 'radical':
-            radical = self.radical_expression()
-            if radical is not self:
-                return latex(radical)
-        return repr(self).replace('*I', r' \sqrt{-1}')
+            try:
+                radical = self.radical_expression()
+            except ImportError:
+                pass:
+            else:
+                if radical is not self:
+                    return latex(radical)
+            return repr(self).replace('*I', r' \sqrt{-1}')
 
     def _sage_input_(self, sib, coerce):
         r"""

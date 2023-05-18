@@ -447,22 +447,23 @@ class AffinePlaneCurve(AffineCurve):
 
             sage: R.<x, y> = QQ[]
             sage: C = Curve(x^3 - y^2)
-            sage: C.plot()
+            sage: C.plot()                                                              # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
 
         A 5-nodal curve of degree 11.  This example also illustrates
         some of the optional arguments::
 
             sage: R.<x, y> = ZZ[]
-            sage: C = Curve(32*x^2 - 2097152*y^11 + 1441792*y^9 - 360448*y^7 + 39424*y^5 - 1760*y^3 + 22*y - 1)
-            sage: C.plot((x, -1, 1), (y, -1, 1), plot_points=400)
+            sage: C = Curve(32*x^2 - 2097152*y^11 + 1441792*y^9
+            ....:            - 360448*y^7 + 39424*y^5 - 1760*y^3 + 22*y - 1)
+            sage: C.plot((x, -1, 1), (y, -1, 1), plot_points=400)                       # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
 
         A line over `\mathbf{RR}`::
 
             sage: R.<x, y> = RR[]
             sage: C = Curve(R(y - sqrt(2)*x))
-            sage: C.plot()
+            sage: C.plot()                                                              # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         I = self.defining_ideal()

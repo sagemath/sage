@@ -236,14 +236,14 @@ class ode_solver():
         sage: T.algorithm="rk8pd"
         sage: T.function=f_1
         sage: T.jacobian=j_1
-        sage: T.ode_solve(y_0=[1,0],t_span=[0,100],params=[10.0],num_points=1000)
+        sage: T.ode_solve(y_0=[1,0], t_span=[0,100], params=[10.0], num_points=1000)
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # optional - sage.plot
         ....:     T.plot_solution(filename=f.name)
 
     The solver line is equivalent to::
 
-        sage: T.ode_solve(y_0=[1,0],t_span=[x/10.0 for x in range(1000)],params = [10.0])
+        sage: T.ode_solve(y_0=[1,0], t_span=[x/10.0 for x in range(1000)], params=[10.0])
 
     Let's try a system::
 

@@ -790,7 +790,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         def CVPP_2V(t, V, voronoi_cell):
             t_new = t
             while not voronoi_cell.contains(t_new.list()):
-                v = max(V, key=lambda v: t_new * v / v.norm() ** 2)
+                v = max(V, key=lambda v: t_new * v / v.dot_product(v))
                 t_new = t_new - v
             return t - t_new
 
