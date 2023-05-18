@@ -750,8 +750,8 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             v = sum(point[i-1] * weights[i] for i in weights.keys())
             vertices = [v*w for w in self]
             if base_ring is None:
-                if isinstance(v.base_ring(), [sage.rings.abc.UniversalCyclotomicField,
-                                              sage.rings.abc.AlgebraicField_common]):
+                if isinstance(v.base_ring(), (sage.rings.abc.UniversalCyclotomicField,
+                                              sage.rings.abc.AlgebraicField_common)):
                     from sage.rings.qqbar import AA
                     vertices = [v.change_ring(AA) for v in vertices]
                     base_ring = AA
