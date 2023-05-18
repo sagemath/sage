@@ -1460,17 +1460,17 @@ class GroebnerFan(SageObject):
 
             sage: R4.<w,x,y,z> = PolynomialRing(QQ,4)
             sage: gf = R4.ideal([w^2-x,x^2-y,y^2-z,z^2-x]).groebner_fan()
-            sage: three_d = gf.render3d()
+            sage: three_d = gf.render3d()                                               # optional - sage.plot
 
         TESTS:
 
         Now test the case where the number of generators is not 4. Currently,
-        this should raise a ``NotImplementedError`` error.
+        this should raise a :class:`NotImplementedError` error.
 
         ::
 
             sage: P.<a,b,c> = PolynomialRing(QQ, 3, order="lex")
-            sage: sage.rings.ideal.Katsura(P, 3).groebner_fan().render3d()
+            sage: sage.rings.ideal.Katsura(P, 3).groebner_fan().render3d()              # optional - sage.plot
             Traceback (most recent call last):
             ...
             NotImplementedError
