@@ -2151,7 +2151,6 @@ class NumberField_relative(NumberField_generic):
 
         ::
 
-            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: t = K['t'].gen()
             sage: L.<a> = K.extension(t^4 - i)
