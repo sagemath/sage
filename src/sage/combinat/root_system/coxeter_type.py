@@ -388,7 +388,6 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
                 else:
                     return R(x)
         elif isinstance(R, sage.rings.abc.NumberField_quadratic):
-            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             E = UniversalCyclotomicField().gen
 
             def val(x):
