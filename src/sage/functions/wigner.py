@@ -23,10 +23,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # **********************************************************************
 
-from sage.rings.complex_mpfr import ComplexNumber
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod import Mod
-from sage.symbolic.constants import pi
+
+lazy_import('sage.rings.complex_mpfr', 'ComplexNumber')
+
+lazy_import('sage.symbolic.constants', 'pi')
+
 
 # This list of precomputed factorials is needed to massively
 # accelerate future calculations of the various coefficients

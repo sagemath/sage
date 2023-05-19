@@ -19,14 +19,14 @@ lazy_import('sage.functions.gamma',
              'gamma_inc_lower', 'psi', 'beta'), deprecation=24411)
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction
-from sage.symbolic.expression import Expression, register_symbol, symbol_table
-from sage.symbolic.ring import SR, SymbolicRing
+from sage.symbolic.symbols import register_symbol, symbol_table
+lazy_import('sage.symbolic.ring', 'SR')
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
-from sage.rings.complex_mpfr import ComplexField
+lazy_import('sage.rings.complex_mpfr', 'ComplexField')
 from sage.misc.latex import latex
-from sage.structure.element import Element
+from sage.structure.element import Element, Expression
 import math
 
 from sage.structure.element import coercion_model
@@ -224,7 +224,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
 
     # Might it be needed to simplify x? This only applies for
     # elements of SR (or its subrings)
-    need_to_simplify = isinstance(s_parent(x), SymbolicRing)
+    need_to_simplify = isinstance(x, Expression)
 
     # An integer which is close to x. We use this to increase precision
     # by subtracting this guess before converting to an interval field.
@@ -2066,7 +2066,6 @@ class Function_cases(GinacFunction):
             sage: ex = cases(((x<0, pi), (x==1, 1), (True, 0)))
             sage: assert ex == ex._sympy_()._sage_()
         """
-        from sage.symbolic.ring import SR
         from sympy import Piecewise as pw
         args = []
         for tup in l.operands():

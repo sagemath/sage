@@ -427,7 +427,7 @@ from sage.misc.latex import latex
 from sage.misc.parser import Parser, LookupNameMaker
 from sage.structure.element import Expression
 from sage.symbolic.ring import var, SR
-from sage.symbolic.expression import symbol_table
+from sage.symbolic.symbols import symbol_table
 from sage.symbolic.function import Function
 from sage.symbolic.function_factory import function_factory
 from sage.symbolic.integration.integral import (indefinite_integral,

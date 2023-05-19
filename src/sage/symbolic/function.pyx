@@ -141,17 +141,23 @@ is attempted, and after that ``sin()`` which succeeds::
 from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport Element, parent, Expression
 from sage.misc.lazy_attribute import lazy_attribute
-from .expression import (
-    call_registered_function, find_registered_function, register_or_update_function,
-    get_sfunction_from_hash
-)
-from .expression import get_sfunction_from_serial as get_sfunction_from_serial
 
 from sage.structure.coerce cimport (coercion_model,
         py_scalar_to_element, is_numpy_type, is_mpmath_type)
 from sage.structure.richcmp cimport richcmp
 
 from sage.misc.fpickle import pickle_function, unpickle_function
+
+from .symbols import symbol_table, register_symbol
+
+try:
+    from .expression import (
+        call_registered_function, find_registered_function, register_or_update_function,
+        get_sfunction_from_hash, get_sfunction_from_serial as get_sfunction_from_serial
+    )
+except ImportError:
+    register_or_update_function = None
+
 
 # List of functions which ginac allows us to define custom behavior for.
 # Changing the order of this list could cause problems unpickling old pickles.
@@ -230,13 +236,11 @@ cdef class Function(SageObject):
                     callable(getattr(self, real_fname)):
                 raise ValueError(real_fname + " parameter must be callable")
 
-        if not self._is_registered():
-            self._register_function()
+        symbol_table['functions'][self._name] = self
 
-            from .expression import symbol_table, register_symbol
-
-            symbol_table['functions'][self._name] = self
-
+        if register_or_update_function:  # Symbolic subsystem present
+            if not self._is_registered():
+                self._register_function()
             register_symbol(self, self._conversions)
 
     cdef _is_registered(self):
@@ -402,7 +406,7 @@ cdef class Function(SageObject):
         """
         Evaluates this function at the given arguments.
 
-        We coerce the arguments into symbolic expressions if coerce=True, then
+        We coerce the arguments into symbolic expressions if ``coerce=True``, then
         call the Pynac evaluation method, which in turn passes the arguments to
         a custom automatic evaluation method if ``_eval_()`` is defined.
 
@@ -516,11 +520,9 @@ cdef class Function(SageObject):
 
         # if the given input is a symbolic expression, we don't convert it back
         # to a numeric type at the end
+        symbolic_input = any(isinstance(arg, Expression) for arg in args)
+
         from .ring import SR
-        if any(parent(arg) is SR for arg in args):
-            symbolic_input = True
-        else:
-            symbolic_input = False
 
         if coerce:
             try:
@@ -545,7 +547,7 @@ cdef class Function(SageObject):
                     raise TypeError("arguments must be symbolic expressions")
 
         return call_registered_function(self._serial, self._nargs, args, hold,
-                                    not symbolic_input, SR)
+                                        not symbolic_input, SR)
 
     def name(self):
         """

@@ -15,24 +15,25 @@ Number-theoretic functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+import math
 import sys
 
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
-from sage.rings.real_double import RDF
-from sage.rings.complex_mpfr import ComplexField, is_ComplexNumber
-from sage.rings.cc import CC
-from sage.rings.real_mpfr import (RealField, is_RealNumber)
-
 from sage.symbolic.function import GinacFunction, BuiltinFunction
 
-import sage.libs.mpmath.utils as mpmath_utils
-from sage.combinat.combinat import bernoulli_polynomial
+lazy_import('sage.functions.gamma', 'psi')
+lazy_import('sage.functions.other', 'factorial')
 
-from .gamma import psi
-from .other import factorial
+lazy_import('sage.combinat.combinat', 'bernoulli_polynomial')
+lazy_import('sage.rings.cc', 'CC')
+lazy_import('sage.rings.complex_mpfr', ['ComplexField', 'is_ComplexNumber'])
+lazy_import('sage.rings.polynomial.polynomial_real_mpfr_dense', 'PolynomialRealDense')
+lazy_import('sage.rings.real_double', 'RDF')
+lazy_import('sage.rings.real_mpfr', ['RR', 'RealField', 'is_RealNumber'])
 
-I = CC.gen(0)
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('mpmath', 'zeta', as_='_mpmath_zeta')
 
 
 class Function_zeta(GinacFunction):
@@ -44,7 +45,7 @@ class Function_zeta(GinacFunction):
 
         -  ``s`` - real or complex number
 
-        If s is a real number the computation is done using the MPFR
+        If s is a real number, the computation is done using the MPFR
         library. When the input is not real, the computation is done using
         the PARI C library.
 
@@ -209,6 +210,7 @@ class Function_stieltjes(GinacFunction):
                                 sympy='stieltjes'),
                             latex_name=r'\gamma')
 
+
 stieltjes = Function_stieltjes()
 
 
@@ -262,8 +264,7 @@ class Function_HurwitzZeta(BuiltinFunction):
             sage: hurwitz_zeta(11/10, 1 + 1j).n()
             9.85014164287853 - 1.06139499403981*I
         """
-        from mpmath import zeta
-        return mpmath_utils.call(zeta, s, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_zeta, s, x, parent=parent)
 
     def _derivative_(self, s, x, diff_param):
         r"""
@@ -278,6 +279,7 @@ class Function_HurwitzZeta(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to first '
                                       'argument')
+
 
 hurwitz_zeta_func = Function_HurwitzZeta()
 
@@ -377,8 +379,7 @@ class Function_zetaderiv(GinacFunction):
             sage: zetaderiv(2, 3 + I).n()
             0.0213814086193841 - 0.174938812330834*I
         """
-        from mpmath import zeta
-        return mpmath_utils.call(zeta, x, 1, n, parent=parent)
+        return _mpmath_utils_call(_mpmath_zeta, x, 1, n, parent=parent)
 
     def _method_arguments(self, k, x, **args):
         r"""
@@ -389,7 +390,9 @@ class Function_zetaderiv(GinacFunction):
         """
         return [x, k]
 
+
 zetaderiv = Function_zetaderiv()
+
 
 def zeta_symmetric(s):
     r"""
@@ -446,8 +449,6 @@ def zeta_symmetric(s):
 
     return (s/2 + 1).gamma() * (s-1) * (R.pi()**(-s/2)) * s.zeta()
 
-import math
-from sage.rings.polynomial.polynomial_real_mpfr_dense import PolynomialRealDense
 
 class DickmanRho(BuiltinFunction):
     r"""
@@ -664,5 +665,6 @@ class DickmanRho(BuiltinFunction):
             xi -= y/dydxi
             y = (exp(xi)-1.0)/xi - x
         return (-x*xi + RR(xi).eint()).exp() / (sqrt(2*pi*x)*xi)
+
 
 dickman_rho = DickmanRho()

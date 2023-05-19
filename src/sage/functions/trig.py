@@ -1,8 +1,9 @@
 r"""
 Trigonometric functions
 """
-from sage.symbolic.function import GinacFunction
 import math
+
+from sage.symbolic.function import GinacFunction
 
 
 class Function_sin(GinacFunction):

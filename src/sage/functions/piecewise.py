@@ -71,11 +71,12 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-from sage.symbolic.function import BuiltinFunction
-from sage.sets.real_set import RealSet
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import minus_infinity, infinity
+from sage.sets.real_set import RealSet
+from sage.symbolic.function import BuiltinFunction
+
+lazy_import('sage.symbolic.ring', 'SR')
 
 
 class PiecewiseFunction(BuiltinFunction):

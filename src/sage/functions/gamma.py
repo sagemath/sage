@@ -1,16 +1,24 @@
 """
 Gamma and related functions
 """
-from sage.symbolic.function import GinacFunction, BuiltinFunction
-from sage.symbolic.expression import register_symbol, symbol_table
-from sage.structure.all import parent as s_parent
-from sage.rings.complex_mpfr import ComplexField
+from sage.misc.lazy_import import lazy_import
+from sage.rings.infinity import Infinity
 from sage.rings.rational import Rational
-from sage.functions.exp_integral import Ei
-from sage.libs.mpmath import utils as mpmath_utils
-from .log import exp
-from .other import sqrt
-from sage.symbolic.constants import pi
+from sage.structure.element import parent as s_parent
+from sage.symbolic.function import GinacFunction, BuiltinFunction
+from sage.symbolic.symbols import register_symbol, symbol_table
+
+lazy_import('sage.rings.complex_mpfr', 'ComplexField')
+
+lazy_import('sage.functions.error', 'erf')
+lazy_import('sage.functions.exp_integral', 'Ei')
+lazy_import('sage.functions.log', 'exp')
+lazy_import('sage.functions.other', 'sqrt')
+
+lazy_import('sage.symbolic.constants', 'pi')
+
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('mpmath', 'gammainc', as_='_mpmath_gammainc')
 
 
 class Function_gamma(GinacFunction):
@@ -396,7 +404,6 @@ class Function_gamma_inc(BuiltinFunction):
         if x == 0:
             return -Ei(-y)
         if x == Rational((1, 2)):  # only for x>0
-            from sage.functions.error import erf
             return sqrt(pi) * (1 - erf(sqrt(y)))
         return None
 
@@ -460,8 +467,7 @@ class Function_gamma_inc(BuiltinFunction):
         if algorithm == 'pari':
             v = ComplexField(prec)(x).gamma_inc(y)
         else:
-            import mpmath
-            v = ComplexField(prec)(mpmath_utils.call(mpmath.gammainc, x, y, parent=R))
+            v = ComplexField(prec)(_mpmath_utils_call(_mpmath_gammainc, x, y, parent=R))
         if v.is_real():
             return R(v)
         else:
@@ -548,7 +554,6 @@ class Function_gamma_inc_lower(BuiltinFunction):
         if y == 0:
             return 0
         if x == 0:
-            from sage.rings.infinity import Infinity
             return Infinity
         elif x == 1:
             return 1 - exp(-y)
@@ -587,8 +592,7 @@ class Function_gamma_inc_lower(BuiltinFunction):
             Cx = ComplexField(prec)(x)
             v = Cx.gamma() - Cx.gamma_inc(y)
         else:
-            import mpmath
-            v = ComplexField(prec)(mpmath_utils.call(mpmath.gammainc, x, 0, y, parent=R))
+            v = ComplexField(prec)(_mpmath_utils_call(_mpmath_gammainc, x, 0, y, parent=R))
         return R(v) if v.is_real() else C(v)
 
     def _derivative_(self, x, y, diff_param=None):

@@ -141,15 +141,26 @@ AUTHORS:
 # ****************************************************************************
 
 import sage.rings.abc
-from sage.rings.integer import Integer
-from sage.misc.latex import latex
-from sage.rings.integer_ring import ZZ
-from sage.symbolic.constants import pi
-from sage.symbolic.function import BuiltinFunction
-from sage.libs.mpmath import utils as mpmath_utils
-from sage.functions.all import sin, cot, exp
+
 from sage.misc.functional import sqrt
-from sage.symbolic.constants import I
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.symbolic.function import BuiltinFunction
+
+lazy_import('sage.functions.jacobi', 'jacobi_am_f')
+lazy_import('sage.functions.log', ['exp'])
+lazy_import('sage.functions.trig', ['sin', 'cot'])
+
+lazy_import('sage.misc.latex', 'latex')
+
+lazy_import('sage.symbolic.constants', ['I', 'pi'])
+
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('mpmath',
+            ['spherharm', 'ellipe', 'ellipf', 'ellipk', 'ellippi'],
+            as_=['_mpmath_spherharm', '_mpmath_ellipe', '_mpmath_ellipf',
+                 '_mpmath_ellipk', '_mpmath_ellippi'])
 
 
 class SphericalHarmonic(BuiltinFunction):
@@ -312,8 +323,7 @@ class SphericalHarmonic(BuiltinFunction):
             True
 
         """
-        from mpmath import spherharm
-        return mpmath_utils.call(spherharm, n, m, theta, phi, parent=parent)
+        return _mpmath_utils_call(_mpmath_spherharm, n, m, theta, phi, parent=parent)
 
     def _derivative_(self, n, m, theta, phi, diff_param):
         r"""
@@ -568,8 +578,7 @@ class EllipticE(BuiltinFunction):
             0.535647771608740 + 1.63996015168665*I
         """
         R = parent or parent(z)
-        from mpmath import ellipe
-        return mpmath_utils.call(ellipe, z, m, parent=R)
+        return _mpmath_utils_call(_mpmath_ellipe, z, m, parent=R)
 
     def _derivative_(self, z, m, diff_param):
         """
@@ -674,8 +683,7 @@ class EllipticEC(BuiltinFunction):
             1.63241178144043 - 0.369219492375499*I
         """
         R = parent or parent(x)
-        from mpmath import ellipe
-        return mpmath_utils.call(ellipe, x, parent=R)
+        return _mpmath_utils_call(_mpmath_ellipe, x, parent=R)
 
     def _derivative_(self, x, diff_param):
         """
@@ -746,7 +754,7 @@ class EllipticEU(BuiltinFunction):
             0.7615941559557648881194582...
         """
         R = parent or parent(u)
-        return mpmath_utils.call(elliptic_eu_f, u, m, parent=R)
+        return _mpmath_utils_call(elliptic_eu_f, u, m, parent=R)
 
     def _derivative_(self, u, m, diff_param):
         """
@@ -797,10 +805,7 @@ def elliptic_eu_f(u, m):
         sage: elliptic_eu_f(0.5, 0.1)
         mpf('0.49605455128659691')
     """
-    from mpmath import mp
-    from sage.functions.jacobi import jacobi_am_f
-
-    ctx = mp
+    from mpmath import mp as ctx
     prec = ctx.prec
     try:
         u = ctx.convert(u)
@@ -810,7 +815,9 @@ def elliptic_eu_f(u, m):
     finally:
         ctx.prec = prec
 
+
 elliptic_eu = EllipticEU()
+
 
 class EllipticF(BuiltinFunction):
     r"""
@@ -916,8 +923,7 @@ class EllipticF(BuiltinFunction):
             0.149965060031782 + 0.925097284105771*I
         """
         R = parent or parent(z)
-        from mpmath import ellipf
-        return mpmath_utils.call(ellipf, z, m, parent=R)
+        return _mpmath_utils_call(_mpmath_ellipf, z, m, parent=R)
 
     def _derivative_(self, z, m, diff_param):
         """
@@ -948,6 +954,7 @@ class EllipticF(BuiltinFunction):
             F(x\,|\,\pi)
         """
         return r"F(%s\,|\,%s)" % (latex(z), latex(m))
+
 
 elliptic_f = EllipticF()
 
@@ -1039,8 +1046,7 @@ class EllipticKC(BuiltinFunction):
             1.42127228104504 + 0.295380284214777*I
         """
         R = parent or parent(z)
-        from mpmath import ellipk
-        return mpmath_utils.call(ellipk, z, parent=R)
+        return _mpmath_utils_call(_mpmath_ellipk, z, parent=R)
 
     def _derivative_(self, z, diff_param):
         """
@@ -1053,7 +1059,9 @@ class EllipticKC(BuiltinFunction):
         return ((elliptic_ec(z) - (Integer(1) - z) * elliptic_kc(z)) /
                 (Integer(2) * (Integer(1) - z) * z))
 
+
 elliptic_kc = EllipticKC()
+
 
 class EllipticPi(BuiltinFunction):
     r"""
@@ -1129,8 +1137,7 @@ class EllipticPi(BuiltinFunction):
             0.0542471560940594 + 0.552096453413081*I
         """
         R = parent or parent(z)
-        from mpmath import ellippi
-        return mpmath_utils.call(ellippi, n, z, m, parent=R)
+        return _mpmath_utils_call(_mpmath_ellippi, n, z, m, parent=R)
 
     def _derivative_(self, n, z, m, diff_param):
         """
@@ -1175,5 +1182,6 @@ class EllipticPi(BuiltinFunction):
             \Pi(x,\pi,0)
         """
         return r"\Pi(%s,%s,%s)" % (latex(n), latex(z), latex(m))
+
 
 elliptic_pi = EllipticPi()
