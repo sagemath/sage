@@ -19,7 +19,7 @@ EXAMPLES::
     sage: R.<x> = PowerSeriesRing(QQ, default_prec=10)
     sage: R.default_prec()
     10
-    sage: cos(x)                                                                # optional - sage.symbolic
+    sage: cos(x)                                                                        # optional - sage.symbolic
     1 - 1/2*x^2 + 1/24*x^4 - 1/720*x^6 + 1/40320*x^8 + O(x^10)
 
 .. NOTE::
