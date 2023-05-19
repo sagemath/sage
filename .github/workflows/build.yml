@@ -29,24 +29,38 @@ jobs:
         id: checkout
         uses: actions/checkout@v3
 
-      - name: Prepare
+      - name: Update system packages
         id: prepare
         run: |
-          # Install test tools.
-          if apt-get update && apt-get install -y git python3-venv; then
-             # Debian-specific temporary code:
-             # Installation of python3-venv can be removed as soon as a
-             # base image with a release including #33822 is available
-             :
-          else
-             export PATH="build/bin:$PATH"
-             eval $(sage-print-system-package-command auto update)
-             eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
-          fi
+          export PATH="build/bin:$PATH"
+          eval $(sage-print-system-package-command auto update)
+          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
+
+      - name: Incremental build and test
+        if: always() && steps.prepare.outcome == 'success'
+        id: incremental
+        run: |
+          set -ex
+          git config --global user.email "ci-sage@example.com"
+          git config --global user.name "Build & Test workflow"
+          # If actions/checkout downloaded using the GitHub REST API:
+          if [ ! -d .git ]; then git config --global --add safe.directory $(pwd) && git init && git add -A && git commit --quiet -m "new"; fi
+          # Make the source tree from the container image a worktree:
+          git worktree add --detach worktree-image && git tag -f new
+          rm -rf /sage/.git && mv worktree-image/.git /sage/
+          rm -rf worktree-image && ln -s /sage worktree-image
+          (cd /sage && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old && make build && ./sage -t --new -p2)
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Configure new tree
+        if: always() && steps.prepare.outcome == 'success'
+        run: |
           # Reuse built SAGE_LOCAL contained in the Docker image 
           ./bootstrap
           ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable --enable-download-from-upstream-url
-      
+
       - name: Build and test modularized distributions
         if: always() && steps.prepare.outcome == 'success'
         run: make V=0 tox && make pypi-wheels
