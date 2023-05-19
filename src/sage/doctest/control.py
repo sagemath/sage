@@ -791,7 +791,7 @@ class DocTestController(SageObject):
         # SAGE_ROOT_GIT can be None on distributions which typically
         # only have the SAGE_LOCAL install tree but not SAGE_ROOT
         if SAGE_ROOT_GIT is not None:
-            have_git = os.path.isdir(SAGE_ROOT_GIT)
+            have_git = os.path.exists(SAGE_ROOT_GIT)
         else:
             have_git = False
 
