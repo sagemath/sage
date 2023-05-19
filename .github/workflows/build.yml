@@ -105,7 +105,7 @@ jobs:
         if: always() && steps.build.outcome == 'success'
         run: |
           ../sage -python -m pip install coverage
-          ../sage -python -m coverage run ./bin/sage-runtests --all -p2
+          ../sage -python -m coverage run ./bin/sage-runtests --all --long -p2
         working-directory: ./src
 
       - name: Prepare coverage results
