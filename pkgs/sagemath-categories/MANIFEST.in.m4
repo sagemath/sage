@@ -68,6 +68,10 @@ include sage/misc/parser.p*
 include sage/misc/method_decorator.p*
 include sage/misc/random_testing.p*
 
+include sage/symbolic/symbols.p*
+include sage/symbolic/function.p*
+graft sage/functions
+
 include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*
 include sage/rings/finite_rings/finite_field_base.p*
