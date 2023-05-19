@@ -11,7 +11,8 @@ Symbolic Integration
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************`
-from sage.symbolic.ring import SR, is_SymbolicVariable
+from sage.structure.element import Expression
+from sage.symbolic.ring import SR
 from sage.symbolic.function import BuiltinFunction
 
 ##################################################################
@@ -113,7 +114,7 @@ class IndefiniteIntegral(BuiltinFunction):
             -1/2*x^2*sgn(x) + 3/2*x^2
         """
         # Check for x
-        if not is_SymbolicVariable(x):
+        if not (isinstance(x, Expression) and x.is_symbol()):
             if len(x.variables()) == 1:
                 nx = x.variables()[0]
                 f = f * x.diff(nx)
@@ -173,7 +174,7 @@ class IndefiniteIntegral(BuiltinFunction):
             \int \frac{\tan\left(x\right)}{x}\,{d x}
         """
         from sage.misc.latex import latex
-        if not is_SymbolicVariable(x):
+        if not (isinstance(x, Expression) and x.is_symbol()):
             dx_str = "{d \\left(%s\\right)}" % latex(x)
         else:
             dx_str = "{d %s}" % latex(x)
@@ -236,7 +237,7 @@ class DefiniteIntegral(BuiltinFunction):
             -1
         """
         # Check for x
-        if not is_SymbolicVariable(x):
+        if not (isinstance(x, Expression) and x.is_symbol()):
             if len(x.variables()) == 1:
                 nx = x.variables()[0]
                 f = f * x.diff(nx)
@@ -346,7 +347,7 @@ class DefiniteIntegral(BuiltinFunction):
             \int_{0}^{1} \frac{\tan\left(x\right)}{x}\,{d x}
         """
         from sage.misc.latex import latex
-        if not is_SymbolicVariable(x):
+        if not (isinstance(x, Expression) and x.is_symbol()):
             dx_str = "{d \\left(%s\\right)}" % latex(x)
         else:
             dx_str = "{d %s}" % latex(x)
@@ -662,9 +663,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     where the default integrator obtains another answer::
 
-        sage: result = integrate(f(x), x)
-        ...
-        sage: result
+        sage: integrate(f(x), x)  # long time
         1/8*sqrt(x)*gamma(1/4)*gamma(-1/4)^2*hypergeometric((-1/4, -1/4, 1/4), (1/2, 3/4), -1/x^2)/(pi*gamma(3/4))
 
     The following definite integral is not found by maxima::

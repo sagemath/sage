@@ -44,7 +44,6 @@ from sage.arith.misc import GCD
 from sage.schemes.curves.affine_curve import AffinePlaneCurve
 
 
-
 class CyclicCover_generic(AffinePlaneCurve):
     def __init__(self, AA, r, f, names=None):
         """

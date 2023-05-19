@@ -339,12 +339,23 @@ cdef inline int celement_pow(GF2X_c* res, GF2X_c* x, long e, GF2X_c *modulus, lo
         x^9 + x^8 + x^7 + x^5 + x^3
         sage: pow(f, 2, h)
         x^9 + x^8 + x^7 + x^5 + x^3
+        sage: pow(x, 1000, h)
+        x^8 + x^7 + x^4
+
+    Check that deg x >= deg modulus works (:issue:`35324`)::
+
+        sage: pow(x+1, 2, x^2+x+1)
+        x
+        sage: pow(x^2+1, 2, x^2+x+1)
+        x + 1
+
     """
     cdef GF2XModulus_c mod
+    cdef GF2X_c xmod
 
     if modulus == NULL:
         if GF2X_IsX(x[0]):
-                GF2X_LeftShift(res[0], x[0], e - 1)
+            GF2X_LeftShift(res[0], x[0], e - 1)
         else:
             do_sig = GF2X_deg(x[0]) > 1e5
             if do_sig:
@@ -353,14 +364,17 @@ cdef inline int celement_pow(GF2X_c* res, GF2X_c* x, long e, GF2X_c *modulus, lo
             if do_sig:
                 sig_off()
     else:
+        GF2X_rem(xmod, x[0], modulus[0])
         GF2XModulus_build(mod, modulus[0])
-
-        do_sig = GF2X_deg(x[0]) > 1e5
-        if do_sig:
-            sig_on()
-        GF2X_PowerMod_long_pre(res[0], x[0], e, mod)
-        if do_sig:
-            sig_off()
+        if GF2X_IsX(xmod):
+            GF2X_PowerXMod_long_pre(res[0], e, mod)
+        else:
+            do_sig = GF2X_deg(x[0]) > 1e5
+            if do_sig:
+                sig_on()
+            GF2X_PowerMod_long_pre(res[0], xmod, e, mod)
+            if do_sig:
+                sig_off()
 
 
 cdef inline int celement_gcd(GF2X_c* res, GF2X_c* a, GF2X_c *b, long parent) except -2:

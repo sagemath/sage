@@ -29,18 +29,15 @@ REFERENCES:
     GNU gsl library, Random number distributions
     http://www.gnu.org/software/gsl/manual/html_node/Random-Number-Distributions.html
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004, 2005, 2006 Joshua Kantor <kantor.jm@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-import sys
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.libs.gsl.all cimport *
@@ -48,9 +45,9 @@ import sage.misc.prandom as random
 import sage.rings.real_double
 from sage.modules.free_module_element import vector
 
-#TODO: Add more distributions available in gsl
-#available but not currently wrapped are exponential, laplace, cauchy, landau, gamma,
-#gamma, beta logistic.
+# TODO: Add more distributions available in gsl
+# available but not currently wrapped are exponential, laplace, cauchy, landau, gamma,
+# gamma, beta logistic.
 
 cdef enum:
     uniform

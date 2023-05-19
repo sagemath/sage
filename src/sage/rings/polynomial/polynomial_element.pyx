@@ -8234,7 +8234,7 @@ cdef class Polynomial(CommutativePolynomial):
         if isinstance(L, sage.rings.abc.SymbolicRing):
             if self.degree() == 2:
                 from sage.misc.functional import sqrt
-                from sage.symbolic.expression import I
+                from sage.symbolic.constants import I
                 coeffs = self.list()
                 D = coeffs[1]*coeffs[1] - 4*coeffs[0]*coeffs[2]
                 l = None

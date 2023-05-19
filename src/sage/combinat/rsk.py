@@ -2586,7 +2586,7 @@ class RuleStar(Rule):
         ....:                  for T in SemistandardTableaux(shape, max_entry=4)
         ....:                      if fc(row_reading(T.conjugate()))]
         sage: Checks = []
-        sage: for T in FC_tabs:
+        sage: for T in FC_tabs:  # long time
         ....:    shape = T.shape().conjugate()
         ....:    P = T.conjugate()
         ....:    Checks += [all((P,Q) == tuple(RSK(*RSK_inverse(P, Q,
@@ -2596,7 +2596,7 @@ class RuleStar(Rule):
         sage: all(Checks)
         True
         sage: Checks = []
-        sage: for T in FC_tabs:
+        sage: for T in FC_tabs:  # long time
         ....:    shape = T.shape().conjugate()
         ....:    P = T.conjugate()
         ....:    Checks += [all((P,Q) == tuple(RSK(RSK_inverse(P, Q,
