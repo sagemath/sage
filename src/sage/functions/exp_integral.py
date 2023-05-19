@@ -45,21 +45,28 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-
-from sage.symbolic.function import BuiltinFunction
-from sage.symbolic.expression import Expression
-from sage.structure.all import parent
-from sage.misc.latex import latex
-from sage.libs.mpmath import utils as mpmath_utils
-mpmath_utils_call = mpmath_utils.call # eliminate some overhead in _evalf_
-
-from sage.rings.real_mpfr import RealField
-from sage.rings.integer_ring import ZZ
-from sage.functions.log import exp, log
-from sage.functions.trig import sin, cos
-from sage.functions.hyperbolic import sinh, cosh
 import math
+
+from sage.misc.lazy_import import lazy_import
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import Expression, parent
+from sage.symbolic.function import BuiltinFunction
+
+lazy_import('sage.functions.log', ['exp', 'log'])
+lazy_import('sage.functions.trig', ['sin', 'cos'])
+lazy_import('sage.functions.hyperbolic', ['sinh', 'cosh'])
+
+lazy_import('sage.misc.latex', 'latex')
+lazy_import('sage.rings.real_mpfr', 'RealField')
+
+lazy_import('sage.symbolic.ring', 'SR')
+
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('mpmath',
+            ['chi', 'ci', 'e1', 'ei', 'expint', 'ei', 'li', 'shi', 'si'],
+            as_=['_mpmath_chi', '_mpmath_ci', '_mpmath_e1', '_mpmath_ei', '_mpmath_expint',
+                 '_mpmath_ei', '_mpmath_li', '_mpmath_shi', '_mpmath_si'])
 
 
 class Function_exp_integral_e(BuiltinFunction):
@@ -219,8 +226,7 @@ class Function_exp_integral_e(BuiltinFunction):
             0.21938393439552027367716377546
 
         """
-        import mpmath
-        return mpmath_utils.call(mpmath.expint, n, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_expint, n, z, parent=parent)
 
     def _print_latex_(self, n, z):
         r"""
@@ -333,8 +339,7 @@ class Function_exp_integral_e1(BuiltinFunction):
             0.55977359477616081174679593931508523522684689031635351524829
 
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.e1, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_e1, z, parent=parent)
 
     def _print_latex_(self, z):
         r"""
@@ -480,8 +485,7 @@ class Function_log_integral(BuiltinFunction):
             78627.549159462181919862910747947261161321874382421767074759
 
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.li, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_li, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -656,8 +660,7 @@ class Function_log_integral_offset(BuiltinFunction):
 
         """
         if z == 2:
-            import sage.symbolic.ring
-            return sage.symbolic.ring.SR(0)
+            return SR(0)
         return li(z)-li(2)
         # If we return:(li(z)-li(2)) we get correct symbolic integration.
         # But on definite integration it returns x.xxxx-li(2).
@@ -674,8 +677,7 @@ class Function_log_integral_offset(BuiltinFunction):
             0.000000000000000
 
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.li, z, offset=True, parent=parent)
+        return _mpmath_utils_call(_mpmath_li, z, offset=True, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -694,7 +696,9 @@ class Function_log_integral_offset(BuiltinFunction):
         """
         return 1/log(z)
 
+
 Li = log_integral_offset = Function_log_integral_offset()
+
 
 class Function_sin_integral(BuiltinFunction):
     r"""
@@ -863,8 +867,7 @@ class Function_sin_integral(BuiltinFunction):
             sage: sin_integral(-1e23)
             -1.57079632679490
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.si, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_si, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1005,8 +1008,7 @@ class Function_cos_integral(BuiltinFunction):
             0.83786694098020824089467857943 + 1.5707963267948966192313216916*I
 
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.ci, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_ci, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1157,8 +1159,7 @@ class Function_sinh_integral(BuiltinFunction):
             0.94608307036718301494135331382*I
 
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.shi, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_shi, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1285,8 +1286,7 @@ class Function_cosh_integral(BuiltinFunction):
             0.33740392290096813466264620389 + 1.5707963267948966192313216916*I
 
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.chi, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_chi, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1401,8 +1401,7 @@ class Function_exp_integral(BuiltinFunction):
             sage: Ei(3+I).n()
             7.82313467600158 + 6.09751978399231*I
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.ei, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_ei, x, parent=parent)
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -1511,7 +1510,6 @@ def exponential_integral_1(x, n=0):
     """
     if isinstance(x, Expression):
         if x.is_trivial_zero():
-            from sage.rings.infinity import Infinity
             return Infinity
         else:
             raise NotImplementedError("Use the symbolic exponential integral " +
@@ -1519,7 +1517,6 @@ def exponential_integral_1(x, n=0):
 
     # x == 0  =>  return Infinity
     if not x:
-        from sage.rings.infinity import Infinity
         return Infinity
 
     # Figure out output precision

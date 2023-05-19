@@ -395,20 +395,33 @@ Willis of the University of Nebraska at Kearney.
 
 import warnings
 
-from sage.misc.latex import latex
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RR
-from sage.rings.cc import CC
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.rings.abc
 
-from sage.symbolic.function import BuiltinFunction, GinacFunction
-from sage.symbolic.expression import Expression
-from sage.symbolic.ring import SR
-from sage.functions.other import factorial, binomial
-from sage.structure.element import parent
 from sage.arith.misc import rising_factorial
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.symbolic.function import BuiltinFunction, GinacFunction
+from sage.structure.element import Expression, parent
+
+lazy_import('sage.functions.other', ['factorial', 'binomial'])
+
+lazy_import('sage.misc.latex', 'latex')
+lazy_import('sage.rings.cc', 'CC')
+lazy_import('sage.rings.polynomial.polynomial_ring_constructor', 'PolynomialRing')
+lazy_import('sage.rings.real_mpfr', 'RR')
+
+lazy_import('sage.symbolic.ring', 'SR')
+lazy_import('sage.calculus.calculus', 'maxima', as_='_maxima')
+
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('sage.libs.mpmath.all', 'chebyt', as_='_mpmath_chebyt')
+lazy_import('sage.libs.mpmath.all', 'chebyu', as_='_mpmath_chebyu')
+lazy_import('sage.libs.mpmath.all', 'laguerre', as_='_mpmath_laguerre')
+lazy_import('sage.libs.mpmath.all', 'legenp', as_='_mpmath_legenp')
+lazy_import('sage.libs.mpmath.all', 'legenq', as_='_mpmath_legenq')
+
+lazy_import('scipy.special', 'eval_chebyu', as_='_scipy_chebyu')
 
 
 class OrthogonalFunction(BuiltinFunction):
@@ -512,9 +525,8 @@ class OrthogonalFunction(BuiltinFunction):
         elif algorithm == 'recursive':
             return self.eval_recursive(*args, **kwds)
         elif algorithm == 'maxima':
-            from sage.calculus.calculus import maxima
             kwds['hold'] = True
-            return maxima(self._eval_(*args, **kwds))._sage_()
+            return _maxima(self._eval_(*args, **kwds))._sage_()
 
         return super(OrthogonalFunction, self).__call__(*args, **kwds)
 
@@ -782,10 +794,7 @@ class Func_chebyshev_T(ChebyshevFunction):
         if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
             raise TypeError("cannot evaluate chebyshev_T with parent {}".format(real_parent))
 
-        from sage.libs.mpmath.all import call as mpcall
-        from sage.libs.mpmath.all import chebyt as mpchebyt
-
-        return mpcall(mpchebyt, n, x, parent=real_parent)
+        return _mpmath_utils_call(_mpmath_chebyt, n, x, parent=real_parent)
 
     def eval_formula(self, n, x):
         """
@@ -1143,10 +1152,7 @@ class Func_chebyshev_U(ChebyshevFunction):
         if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
             raise TypeError("cannot evaluate chebyshev_U with parent {}".format(real_parent))
 
-        from sage.libs.mpmath.all import call as mpcall
-        from sage.libs.mpmath.all import chebyu as mpchebyu
-
-        return mpcall(mpchebyu, n, x, parent=real_parent)
+        return _mpmath_utils_call(_mpmath_chebyu, n, x, parent=real_parent)
 
     def _eval_special_values_(self, n, x):
         """
@@ -1199,8 +1205,7 @@ class Func_chebyshev_U(ChebyshevFunction):
             sage: chebyshev_U(z,0.1)                                                    # optional - numpy
             array([ 0.2 , -0.96])
         """
-        from scipy.special import eval_chebyu
-        return eval_chebyu(n, x)
+        return _scipy_chebyu(n, x)
 
     def _derivative_(self, n, x, diff_param):
         """
@@ -1225,6 +1230,7 @@ class Func_chebyshev_U(ChebyshevFunction):
         elif diff_param == 1:
             return ((n+1)*chebyshev_T(n+1, x) - x*chebyshev_U(n,x)) / (x*x-1)
         raise ValueError("illegal differentiation parameter {}".format(diff_param))
+
 
 chebyshev_U = Func_chebyshev_U()
 
@@ -1425,9 +1431,7 @@ class Func_legendre_Q(BuiltinFunction):
         if ret is not None:
             return ret
 
-        import mpmath
-        from sage.libs.mpmath.all import call as mpcall
-        return mpcall(mpmath.legenq, n, 0, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_legenq, n, 0, x, parent=parent)
 
     def eval_recursive(self, n, arg, **kwds):
         """
@@ -1802,9 +1806,7 @@ class Func_assoc_legendre_P(BuiltinFunction):
             -0.773063511309286
 
         """
-        import mpmath
-        from sage.libs.mpmath.all import call as mpcall
-        return mpcall(mpmath.legenp, n, m, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_legenp, n, m, x, parent=parent)
 
     def eval_gen_poly(self, n, m, arg, **kwds):
         r"""
@@ -1941,9 +1943,7 @@ class Func_assoc_legendre_Q(BuiltinFunction):
         if ret is not None:
             return ret
 
-        import mpmath
-        from sage.libs.mpmath.all import call as mpcall
-        return mpcall(mpmath.legenq, n, m, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_legenq, n, m, x, parent=parent)
 
     def eval_recursive(self, n, m, x, **kwds):
         """
@@ -2458,14 +2458,12 @@ class Func_laguerre(OrthogonalFunction):
         the_parent = kwds.get('parent', None)
         if the_parent is None:
             the_parent = parent(x)
-        import mpmath
-        from sage.libs.mpmath.all import call as mpcall
-        if n<0:
+        if n < 0:
             # work around mpmath issue 307
             from sage.functions.log import exp
-            return exp(x) * mpcall(mpmath.laguerre, -n-1, 0, -x, parent=the_parent)
+            return exp(x) * _mpmath_utils_call(_mpmath_laguerre, -n-1, 0, -x, parent=the_parent)
         else:
-            return mpcall(mpmath.laguerre, n, 0, x, parent=the_parent)
+            return _mpmath_utils_call(_mpmath_laguerre, n, 0, x, parent=the_parent)
 
     def _derivative_(self, n, x, *args,**kwds):
         """
@@ -2597,9 +2595,7 @@ class Func_gen_laguerre(OrthogonalFunction):
         the_parent = kwds.get('parent', None)
         if the_parent is None:
             the_parent = parent(x)
-        import mpmath
-        from sage.libs.mpmath.all import call as mpcall
-        return mpcall(mpmath.laguerre, n, a, x, parent=the_parent)
+        return _mpmath_utils_call(_mpmath_laguerre, n, a, x, parent=the_parent)
 
     def _derivative_(self, n, a, x, diff_param):
         """

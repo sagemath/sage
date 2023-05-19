@@ -40,15 +40,26 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.all import parent as s_parent
-from sage.symbolic.function import BuiltinFunction
-from sage.libs.mpmath import utils as mpmath_utils
-from sage.symbolic.expression import Expression
-from sage.functions.all import exp
 from sage.misc.functional import sqrt
-from sage.symbolic.constants import I, pi
-from sage.rings.rational import Rational
+from sage.misc.lazy_import import lazy_import
+from sage.misc.persist import register_unpickle_override
 from sage.rings.infinity import unsigned_infinity
+from sage.rings.rational import Rational
+from sage.structure.element import Expression, parent
+from sage.symbolic.function import BuiltinFunction
+
+lazy_import('sage.functions.log', ['exp'])
+lazy_import('sage.functions.trig', ['sin', 'cos'])
+
+lazy_import('sage.symbolic.constants', ['I', 'pi'])
+
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('sage.libs.mpmath.all', 'erf', as_='_mpmath_erf')
+lazy_import('sage.libs.mpmath.all', 'erfc', as_='_mpmath_erfc')
+lazy_import('sage.libs.mpmath.all', 'erfi', as_='_mpmath_erfi')
+lazy_import('sage.libs.mpmath.all', 'erfinv', as_='_mpmath_erfinv')
+lazy_import('sage.libs.mpmath.all', 'fresnelc', as_='_mpmath_fresnelc')
+lazy_import('sage.libs.mpmath.all', 'fresnels', as_='_mpmath_fresnels')
 
 
 class Function_erf(BuiltinFunction):
@@ -68,7 +79,7 @@ class Function_erf(BuiltinFunction):
 
     We can evaluate numerically::
 
-        sage: erf(2)
+        sage: erf(2)                                                                    # optional - sage.symbolic
         erf(2)
         sage: erf(2).n()
         0.995322265018953
@@ -271,8 +282,7 @@ class Function_erf(BuiltinFunction):
             [0.99999999999846254020557196514981165651 +/- 7.33e-39]
         """
         R = parent or s_parent(x)
-        import mpmath
-        y = mpmath_utils.call(mpmath.erf, x, parent=R)
+        y = _mpmath_utils_call(_mpmath_erf, x, parent=R)
         return y
 
     def _derivative_(self, x, diff_param=None):
@@ -296,6 +306,7 @@ class Function_erf(BuiltinFunction):
             '((%pi)^(-1/2))*(_SAGE_VAR_c)*(exp(((_SAGE_VAR_c)^(2))*((_SAGE_VAR_x)^(2))*(-1)))*(2)'
         """
         return 2*exp(-x**2)/sqrt(pi)
+
 
 erf = Function_erf()
 
@@ -360,8 +371,7 @@ class Function_erfi(BuiltinFunction):
             -0.99532226501895273416206925637*I
         """
         R = parent or s_parent(x)
-        import mpmath
-        return mpmath_utils.call(mpmath.erfi, x, parent=R)
+        return _mpmath_utils_call(_mpmath_erfi, x, parent=R)
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -375,7 +385,9 @@ class Function_erfi(BuiltinFunction):
         """
         return 2*exp(x**2)/sqrt(pi)
 
+
 erfi = Function_erfi()
+
 
 class Function_erfc(BuiltinFunction):
     r"""
@@ -463,8 +475,7 @@ class Function_erfc(BuiltinFunction):
             1.0000000000000000000000000000 - 1.2969597307176392315279409506e6*I
         """
         R = parent or s_parent(x)
-        import mpmath
-        return mpmath_utils.call(mpmath.erfc, x, parent=R)
+        return _mpmath_utils_call(_mpmath_erfc, x, parent=R)
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -550,8 +561,7 @@ class Function_erfinv(BuiltinFunction):
             0.17914345462129167649274901663
         """
         R = parent or s_parent(x)
-        import mpmath
-        return mpmath_utils.call(mpmath.erfinv, x, parent=R)
+        return _mpmath_utils_call(_mpmath_erfinv, x, parent=R)
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -564,10 +574,12 @@ class Function_erfinv(BuiltinFunction):
         """
         return sqrt(pi)*exp(erfinv(x)**2)/2
 
+
 erfinv = Function_erfinv()
 
-from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.functions.other', 'Function_erf', Function_erf)
+
 
 ############################
 # Fresnel integrals        #
@@ -653,9 +665,7 @@ class Function_Fresnel_sin(BuiltinFunction):
             sage: fresnel_sin(1.0+2*I)
             36.7254648839914 + 15.5877511044046*I
         """
-        import mpmath
-        from sage.libs.mpmath import utils as mpmath_utils
-        return mpmath_utils.call(mpmath.fresnels, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_fresnels, x, parent=parent)
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -665,7 +675,6 @@ class Function_Fresnel_sin(BuiltinFunction):
             sage: fresnel_sin(x).diff(x)
             sin(1/2*pi*x^2)
         """
-        from sage.functions.trig import sin
         return sin(pi*x**2/2)
 
 fresnel_sin = Function_Fresnel_sin()
@@ -751,9 +760,7 @@ class Function_Fresnel_cos(BuiltinFunction):
             sage: fresnel_cos(1.0+2*I)
             16.0878713741255 - 36.2256879928817*I
         """
-        import mpmath
-        from sage.libs.mpmath import utils as mpmath_utils
-        return mpmath_utils.call(mpmath.fresnelc, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_fresnelc, x, parent=parent)
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -763,7 +770,6 @@ class Function_Fresnel_cos(BuiltinFunction):
             sage: fresnel_cos(x).diff(x)
             cos(1/2*pi*x^2)
         """
-        from sage.functions.trig import cos
         return cos(pi*x**2/2)
 
 fresnel_cos = Function_Fresnel_cos()

@@ -171,18 +171,24 @@ from sage.functions.gamma import gamma
 from sage.functions.hyperbolic import cosh, sinh
 from sage.functions.log import exp, log
 from sage.functions.other import sqrt, real_part
-from sage.libs.mpmath import utils as mpmath_utils
-from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.element import get_coercion_model
-from sage.symbolic.constants import pi
-from sage.symbolic.expression import Expression
+from sage.structure.element import Expression, get_coercion_model
 from sage.symbolic.function import BuiltinFunction
-from sage.symbolic.ring import SR
+
+lazy_import('sage.misc.latex', 'latex')
+
+lazy_import('sage.symbolic.constants', 'pi')
+lazy_import('sage.symbolic.ring', 'SR')
+
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('mpmath', 'hyp1f1', as_='_mpmath_hyp1f1')
+lazy_import('mpmath', 'hyper', as_='_mpmath_hyper')
+lazy_import('mpmath', 'hyperu', as_='_mpmath_hyperu')
 
 
 def rational_param_as_tuple(x):
@@ -358,10 +364,9 @@ class Hypergeometric(BuiltinFunction):
         """
         if not isinstance(a, tuple) or not isinstance(b, tuple):
             raise TypeError("The first two parameters must be of type list")
-        from mpmath import hyper
         aa = [rational_param_as_tuple(c) for c in a]
         bb = [rational_param_as_tuple(c) for c in b]
-        return mpmath_utils.call(hyper, aa, bb, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_hyper, aa, bb, z, parent=parent)
 
     def _tderivative_(self, a, b, z, *args, **kwargs):
         """
@@ -985,8 +990,7 @@ class Hypergeometric_M(BuiltinFunction):
             sage: hypergeometric_M(1,1,1).n()
             2.71828182845905
         """
-        from mpmath import hyp1f1
-        return mpmath_utils.call(hyp1f1, a, b, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_hyp1f1, a, b, z, parent=parent)
 
     def _derivative_(self, a, b, z, diff_param):
         """
@@ -1090,8 +1094,7 @@ class Hypergeometric_U(BuiltinFunction):
             sage: hypergeometric_U(1,1,1).n()
             0.596347362323194
         """
-        from mpmath import hyperu
-        return mpmath_utils.call(hyperu, a, b, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_hyperu, a, b, z, parent=parent)
 
     def _derivative_(self, a, b, z, diff_param):
         """

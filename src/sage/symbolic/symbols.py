@@ -35,7 +35,7 @@ def register_symbol(obj, conversions, nargs=None):
             nargs = obj.number_of_arguments()
         except AttributeError:
             nargs = -1  # meaning unknown number of arguments
-    for system, name in conversions.iteritems():
+    for system, name in conversions.items():
         system_table = symbol_table.get(system, None)
         if system_table is None:
             symbol_table[system] = system_table = {}

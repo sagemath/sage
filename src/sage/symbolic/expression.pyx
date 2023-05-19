@@ -406,6 +406,8 @@ from sage.arith.numerical_approx cimport digits_to_bits
 include "pynac.pxi"
 include "pynac_impl.pxi"
 
+from sage.symbolic.symbols import symbol_table, register_symbol  # used to be defined in pynac_impl
+
 
 cpdef bint is_Expression(x):
     """
