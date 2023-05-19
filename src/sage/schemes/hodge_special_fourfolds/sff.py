@@ -13,7 +13,7 @@ For more computational details, see the paper at https://www.tandfonline.com/doi
 
 AUTHORS:
 
-- Giovanni Staglianò (2023-05-18): initial version
+- Giovanni Staglianò (2023-05-19): initial version
 
 """
 
@@ -53,11 +53,11 @@ from sage.functions.other import binomial
 from sage.libs.singular.function_factory import singular_function
 _minbase = singular_function('minbase')
 
-__VERBOSE__ = True
+__VERBOSE__ = False
 def verbosity(b):
     r"""Change the default verbosity for some functions of this module.
 
-    Use ``verbosity(False)`` to suppress messages. Verbosity can be enabled in the specific function you use.
+    Use ``verbosity(True)`` to produce output messages by default. Verbosity can be disabled in the specific function you use.
 
     INPUT:
 
@@ -191,8 +191,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         return _expr_var_1(self)[0]
 
     def _latex_(self):
-        r"""
-        Return the LaTeX representation of ``self``.
+        r"""Return the LaTeX representation of ``self``.
 
         OUTPUT:
 
@@ -805,6 +804,44 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
 
         """
         return(Embedded_projective_variety(self.ambient_space(),[self.ambient_space().coordinate_ring().one()]))
+
+    def random_coordinate_change(self):
+        r"""Apply a random coordinate change on the ambient projective space of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.misc.randstate import set_random_seed
+            sage: set_random_seed(0)
+            sage: C = Veronese(1,3,KK=GF(13))
+            sage: C.defining_ideal()
+            Ideal (x2^2 - x1*x3, x1*x2 - x0*x3, x1^2 - x0*x2) of Multivariate Polynomial Ring in x0, x1, x2, x3 over Finite Field of size 13
+            sage: D = C.random_coordinate_change()
+            sage: D.defining_ideal()
+            Ideal (2*x0^2 + 5*x0*x1 - 4*x1^2 - 2*x0*x2 - x1*x2 + 3*x2^2 - 2*x0*x3 + x1*x3 + 2*x2*x3 + 6*x3^2, 6*x0^2 + x0*x1 + 5*x1^2 - x0*x2 - 4*x1*x2 - 2*x2^2 - x0*x3 - 4*x1*x3 - 6*x2*x3 + 4*x3^2, -5*x0^2 - 3*x0*x1 + 5*x1^2 - 3*x0*x2 + 5*x1*x2 + 6*x2^2 + 4*x0*x3 - x1*x3 + 4*x2*x3 - 2*x3^2) of Multivariate Polynomial Ring in x0, x1, x2, x3 over Finite Field of size 13
+
+        TESTS::
+
+            sage: h = D._from_random_coordinate_change
+            sage: assert(h.source() is C and h.target() is D)
+            sage: assert(h(C.point()).is_subset(D))
+
+        """
+        K = self.base_ring()
+        n = self.ambient().dimension()
+        A = matrix(K, [[K.random_element() for i in range(n+1)] for j in range(n+1)])
+        B = A.inverse()
+        f = rational_map(self.ambient(), self.ambient(), (matrix(self.ambient().coordinate_ring().gens()) * A).list())
+        g = rational_map(self.ambient(), self.ambient(), (matrix(self.ambient().coordinate_ring().gens()) * B).list())
+        Y = Embedded_projective_variety(self.ambient_space(), (g._to_ring_map()(self.defining_ideal())).gens())
+        f = rational_map(self, Y, f.defining_polynomials())
+        g = rational_map(Y, self, g.defining_polynomials())
+        assert(f.compose(g) == 1 and g.compose(f) == 1)
+        f._is_isomorphism, f._is_birational, f._is_dominant, f._is_morphism = True, True, True, True
+        g._is_isomorphism, g._is_birational, g._is_dominant, g._is_morphism = True, True, True, True
+        f._inverse_rational_map = g
+        g._inverse_rational_map = f
+        Y._from_random_coordinate_change = f
+        return Y
 
     def is_subset(self,Y):
         r"""Return ``True`` if ``self`` is contained in ``Y``, ``False`` otherwise.
@@ -1467,7 +1504,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             self.__to_ring_map = self.codomain().coordinate_ring().hom(self.defining_polynomials(),self.domain().coordinate_ring())
             return self.__to_ring_map
 
-    def image(self):
+    def image(self, algorithm=None):
         r"""Return the (closure of the) image of the rational map.
 
         OUTPUT:
@@ -1480,14 +1517,36 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             sage: f.image()
             curve of degree 4 and arithmetic genus 0 in PP^4 cut out by 6 hypersurfaces of degree 2
 
+        TESTS::
+
+            sage: f = f.restriction(f.source().point())
+            sage: p = f.image(algorithm="built-in_kernel_ring_map")
+            sage: assert(p._is_point())
+
         """
         if self._is_dominant is True:
             return(self.target())
         try:
             return self._closure_of_image
         except AttributeError:
-            F = self.super()
-            self._closure_of_image = Embedded_projective_variety(F.target().ambient_space(), _minbase(F._to_ring_map().kernel()))
+            if algorithm == "built-in_kernel_ring_map":
+                self._closure_of_image = Embedded_projective_variety(self.target().ambient_space(), _minbase(self.super()._to_ring_map().kernel()))
+            else:
+                K = self.source().base_ring()
+                n = self.source().ambient().dimension()
+                m = self.target().ambient().dimension()
+                R = PolynomialRing(K,n+m+2,['x'+str(i) for i in range(n+1)]+['y'+str(j) for j in range(m+1)])
+                x = R.gens()[:n+1]
+                y = R.gens()[n+1:]
+                s = dict(zip(self.source().ambient().coordinate_ring().gens(),x))
+                F = [pol.subs(s) for pol in self.defining_polynomials()]
+                I = [y[i] - F[i] for i in range(m+1)]
+                if self.source().codimension() > 0:
+                    I += [pol.subs(s) for pol in self.source().coordinate_ring().defining_ideal().gens()]
+                I_sat = ideal(I).saturation(ideal(x))[0]
+                I_sat_elim = I_sat.elimination_ideal(x,algorithm=algorithm)
+                t = dict(zip(y,self.target().ambient().coordinate_ring().gens()))
+                self._closure_of_image = Embedded_projective_variety(self.target().ambient_space(), _minbase(I_sat_elim.subs(t)))
             if self._closure_of_image == self.target():
                 self._closure_of_image = self.target()
                 self._is_dominant = True
@@ -1548,8 +1607,6 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         TESTS::
 
             sage: f = f.inverse()                                  # optional - macaulay2
-            -- running Macaulay2 function inverse()... --
-            -- function inverse() has successfully terminated. --
             sage: W = f.target().empty().random(1,1,1,1)           # optional - macaulay2
             sage: f.inverse_image(W).describe()                    # optional - macaulay2
             dim:.................. 0
@@ -1854,21 +1911,33 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         :class:`bool`
 
         """
+        if isinstance(other,(int,Integer)) and other == 1:
+            if self.source() is not self.target():
+                if __VERBOSE__:
+                    print("-- rational map with source and target different --")
+                return False
+            return self.__eq__(self.source().embedding_morphism(codomain=self.target()))
+        if not isinstance(other,(Rational_map_between_embedded_projective_varieties,SchemeMorphism_polynomial_projective_space_field)):
+            raise TypeError("expected a rational map")
         if self is other:
             return True
-        if isinstance(other,Rational_map_between_embedded_projective_varieties):
-            if self.source() is not other.source():
+        if self.source() is not other.source():
+            if __VERBOSE__:
+                print("-- rational maps with different sources --")
+            return False
+        if self.target() is not other.target():
+            if __VERBOSE__:
+                print("-- rational maps with different targets --")
+            return False
+        F = self.defining_polynomials()
+        G = other.defining_polynomials()
+        R = self.source().coordinate_ring()
+        M = matrix(R,[F,G])
+        for P in M.minors(2):
+            if not P.is_zero():
                 return False
-            if self.target() is not other.target():
-                return False
-        f = macaulay2(self)
-        g = macaulay2(other)
-        if __VERBOSE__:
-            print("-- running Macaulay2 operator == between rational maps... --")
-        v = (f._operator('==',g)).sage()
-        if __VERBOSE__:
-            print("-- Macaulay2 computation has successfully terminated. --")
-        return v
+        else:
+            return True
 
     def __ne__(self,other):
         return(not(self.__eq__(other)))
@@ -1884,15 +1953,11 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
 
             sage: f = veronese(1,5).make_dominant()
             sage: g = f.inverse(); g                                         # optional - macaulay2
-            -- running Macaulay2 function inverse()... --
-            -- function inverse() has successfully terminated. --
             birational morphism defined by forms of degree 1
             source: curve of degree 5 and arithmetic genus 0 in PP^5 cut out by 10 hypersurfaces of degree 2
             target: PP^1
             degree sequence: (1, 1, 1, 1, 1)
             sage: f.compose(g) == 1                                          # optional - macaulay2
-            -- running Macaulay2 operator == between rational maps... --
-            -- Macaulay2 computation has successfully terminated. --
             True
 
         With the input ``algorithm='macaulay2'`` the computation is transferred to ``Macaulay2`` (this is currently the only option).
@@ -2033,6 +2098,34 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             self._to_built_in_map = Hom(self.source().to_built_in_variety(),self.target().to_built_in_variety())(self.defining_polynomials())
             return self._to_built_in_map
 
+    def random_coordinate_change(self):
+        r"""Apply random coordinate changes on the ambient projective spaces of the source and target of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.misc.randstate import set_random_seed
+            sage: set_random_seed(0)
+            sage: f = veronese(1,3,KK=GF(13)); f
+            rational map defined by forms of degree 3
+            source: PP^1
+            target: PP^3
+            sage: f.defining_polynomials()
+            (t1^3, t0*t1^2, t0^2*t1, t0^3)
+            sage: g = f.random_coordinate_change(); g
+            rational map defined by forms of degree 3
+            source: PP^1
+            target: PP^3
+            sage: g.defining_polynomials()
+            (-t0^3 - 6*t0^2*t1 - t0*t1^2 - 6*t1^3,
+            5*t0^3 - 4*t0^2*t1 - 5*t0*t1^2 - 2*t1^3,
+            4*t0^3 + 4*t0^2*t1 + t0*t1^2 + 4*t1^3,
+            -t0^3 + 3*t0^2*t1 + 4*t0*t1^2 - t1^3)
+
+        """
+        f = self.source().random_coordinate_change()._from_random_coordinate_change.inverse()
+        g = self.target().random_coordinate_change()._from_random_coordinate_change
+        return f.compose(self).compose(g)
+
 def rational_map(*args, **kwargs):
     r"""Construct a rational map from a projective variety to another.
 
@@ -2139,7 +2232,7 @@ def Veronese(n, d, KK=GF(33331), var='x'):
         surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
 
     """
-    f = veronese(n, d, KK=GF(33331), var='x')
+    f = veronese(n, d, KK=KK, var='x')
     X = f.image()
     X._parametrization = f  #f.make_dominant()
     return X
@@ -2165,8 +2258,7 @@ class _Rational_projective_surface(Embedded_projective_variety):
         return s
 
     def _latex_(self):
-        r"""
-        Return the LaTeX representation of ``self``.
+        r"""Return the LaTeX representation of ``self``.
 
         EXAMPLES::
 
@@ -2233,7 +2325,10 @@ def surface(*args, KK=GF(33331), ambient=None, nodes=None):
             h = rational_map(f.target(),None,H)
             f = f.compose(h)
             ambient_changed = True
-    S = _Rational_projective_surface(f.image())
+    S = f.image()
+    if S.dimension() != 2:
+        raise Exception("failed to construct the surface")
+    S = _Rational_projective_surface(S)
     S._linear_system = list(v)
     if nodes is not None and nodes > 0 and S.linear_span().dimension() >= 5:
         S._finite_number_of_nodes = nodes
@@ -2332,8 +2427,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         return("Hodge-special fourfold of degree " + str(self.degree()) + " in PP^" + str(self.ambient().dimension()) + " containing a " + str(self.surface()))
 
     def _latex_(self):
-        r"""
-        Return the LaTeX representation of ``self``.
+        r"""Return the LaTeX representation of ``self``.
 
         OUTPUT:
 
@@ -2521,7 +2615,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
         ``algorithm_for_image`` -- possible values are ``sage`` (by default) and ``macaulay2``, with ``algorithm_for_image='macaulay2'`` the computation of the image of the map :meth:`map_from_fivefold` is performed using ``Macaulay2`` (this is recommended if you have ``Macaulay2`` installed).
 
-        ``algorithm_for_point`` -- possible values are ``sage`` (by default) and ``macaulay2``, with ``algorithm_for_image='macaulay2'`` the computation of random points is performed using ``Macaulay2``.
+        ``algorithm_for_point`` -- possible values are ``sage`` (by default) and ``macaulay2``, with ``algorithm_for_point='macaulay2'`` the computation of random points is performed using ``Macaulay2``.
 
         ``macaulay2_detectCongruence`` -- a boolean value, default value false, with ``macaulay2_detectCongruence=True`` the whole computation is performed using the ``Macaulay2`` function ``detectCongruence``.
 
@@ -2534,7 +2628,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
             sage: X = fourfold(surface(3,1,1,KK=GF(65521))); X
             Cubic fourfold of discriminant 14 = 3*10-4^2 containing a rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
-            sage: f = X.congruence(algorithm_for_image='macaulay2',verbose=false); f                              # optional - macaulay2
+            sage: f = X.congruence(algorithm_for_image='macaulay2'); f                                            # optional - macaulay2
             Congruence of 2-secant lines
             to: rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
             in: PP^5
@@ -2560,7 +2654,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
             sage: X = fourfold("3-nodal septic scroll", GF(61001)); X                                             # optional - macaulay2
             Cubic fourfold of discriminant 26 = 3*25-7^2 containing a surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
-            sage: X.congruence(algorithm_for_image='macaulay2',verbose=false, num_checks=2)                       # optional - macaulay2
+            sage: X.congruence(algorithm_for_image='macaulay2', num_checks=2)                                     # optional - macaulay2
             Congruence of 5-secant conics
             to: surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
             in: PP^5
@@ -2671,6 +2765,38 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             print("-- function fanoMap() has successfully terminated. --")
         return F
 
+    def random_coordinate_change(self):
+        r"""Apply a random coordinate change on the ambient projective space of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.misc.randstate import set_random_seed
+            sage: set_random_seed(1234567)
+            sage: X = fourfold(Veronese(2,2,KK=101)); X
+            Cubic fourfold of discriminant 20 = 3*12-4^2 containing a surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
+            sage: X.surface().defining_polynomials()
+            (x4^2 - x3*x5,
+            x2*x4 - x1*x5,
+            x2*x3 - x1*x4,
+            x2^2 - x0*x5,
+            x1*x2 - x0*x4,
+            x1^2 - x0*x3)
+            sage: Y = X.random_coordinate_change(); Y
+            Cubic fourfold of discriminant 20 = 3*12-4^2 containing a surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
+            sage: Y.surface().defining_polynomials()
+            (x2^2 - 28*x0*x3 + 31*x1*x3 + 15*x2*x3 + 32*x3^2 + 9*x0*x4 - 34*x1*x4 + 33*x2*x4 + 37*x3*x4 - x4^2 - 18*x0*x5 - 37*x1*x5 + 32*x2*x5 - 22*x3*x5 + x4*x5 + 20*x5^2,
+            x1*x2 - 46*x0*x3 + 15*x1*x3 + 28*x2*x3 - 13*x3^2 - 32*x0*x4 - 44*x1*x4 + 27*x2*x4 + 19*x3*x4 - 29*x4^2 + 28*x0*x5 + 48*x1*x5 - 10*x2*x5 - 48*x3*x5 - 33*x4*x5 + 6*x5^2,
+            x0*x2 + 6*x0*x3 - 9*x1*x3 - 47*x2*x3 + 34*x3^2 + 40*x0*x4 + 15*x1*x4 + 39*x2*x4 + 17*x3*x4 + 23*x4^2 - x0*x5 + 43*x1*x5 - 38*x2*x5 + 8*x3*x5 - 46*x4*x5 + 49*x5^2,
+            x1^2 - 11*x0*x3 + 44*x1*x3 + 30*x2*x3 + 26*x3^2 + 45*x0*x4 + 41*x1*x4 + 9*x2*x4 + 19*x3*x4 + 13*x4^2 - 15*x0*x5 - 8*x1*x5 + 31*x2*x5 - 43*x3*x5 - 23*x5^2,
+            x0*x1 - 14*x0*x3 + 9*x1*x3 - 27*x2*x3 + 31*x3^2 + 48*x0*x4 + 28*x1*x4 - 9*x2*x4 - 41*x3*x4 - 12*x4^2 + 48*x0*x5 - 25*x1*x5 + 28*x2*x5 - 35*x3*x5 - 28*x4*x5 - 40*x5^2,
+            x0^2 - 26*x0*x3 - x1*x3 - 6*x2*x3 + x3^2 - 4*x0*x4 + 9*x1*x4 - 9*x2*x4 + 17*x3*x4 - 24*x4^2 + 46*x0*x5 + 16*x1*x5 - 5*x2*x5 + 13*x3*x5 + 8*x4*x5 + 26*x5^2)
+
+        """
+        V = self.ambient_fivefold().random_coordinate_change()
+        S = V._from_random_coordinate_change(self.surface())
+        X = V._from_random_coordinate_change(self)
+        return fourfold(S,X,V,check=False)
+
     def parameter_count(self, verbose=None):
         r"""Count of parameters.
 
@@ -2687,7 +2813,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
             sage: X = fourfold(surface(3,1,1)); X
             Cubic fourfold of discriminant 14 = 3*10-4^2 containing a rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
-            sage: X.parameter_count()                                                      # optional - macaulay2
+            sage: X.parameter_count(verbose=True)                                          # optional - macaulay2
             -- running Macaulay2 function parameterCount()... --
             S: smooth rational normal scroll surface of degree 4 in PP^5
             X: smooth cubic hypersurface in PP^5
@@ -2705,7 +2831,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
             sage: X = fourfold('1',GF(33331)); X                                           # optional - macaulay2
             Gushel-Mukai fourfold of discriminant 10(') containing a quadric surface in PP^8, class of the surface in GG(1,4): (1, 1)
-            sage: X.parameter_count()                                                      # optional - macaulay2
+            sage: X.parameter_count(verbose=True)                                          # optional - macaulay2
             -- running Macaulay2 function parameterCount()... --
             S: smooth quadric surface in PP^8
             X: GM fourfold containing S
@@ -2843,9 +2969,7 @@ class _Congruence_of_secant_curves_to_surface(SageObject):
         return self
 
 class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
-    r"""
-    The class of Hodge-special complete intersections of three quadrics in ``PP^7``.
-    """
+    r"""The class of Hodge-special complete intersections of three quadrics in ``PP^7``."""
     def __init__(self, S, X, V=None, check=True):
         super().__init__(S,X,V,check=check)
         if not(self.degrees_generators() == (2,2,2) and self.ambient_fivefold().degrees_generators() == (2,2)):
@@ -2856,8 +2980,7 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
         return("Complete intersection of 3 quadrics in PP^7 of discriminant " + str(self.discriminant(verbose=False)) + " = 8*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface()))
 
     def _latex_(self):
-        r"""
-        Return the LaTeX representation of the fourfold.
+        r"""Return the LaTeX representation of the fourfold.
 
         OUTPUT:
 
@@ -2907,9 +3030,7 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
         return T
 
 class Cubic_fourfold(Hodge_special_fourfold):
-    r"""
-    The class of Hodge-special cubic fourfolds in ``PP^5``
-    """
+    r"""The class of Hodge-special cubic fourfolds in ``PP^5``."""
     def __init__(self, S, X, V=None, check=True):
         super().__init__(S,X,V,check=check)
         if not(self.degree() == 3 and self.codimension() == 1 and len(self.degrees_generators()) == 1):
@@ -2920,8 +3041,7 @@ class Cubic_fourfold(Hodge_special_fourfold):
         return("Cubic fourfold of discriminant " + str(self.discriminant(verbose=False)) + " = 3*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface()))
 
     def _latex_(self):
-        r"""
-        Return the LaTeX representation of the cubic fourfold.
+        r"""Return the LaTeX representation of the cubic fourfold.
 
         OUTPUT:
 
@@ -2970,8 +3090,7 @@ class Cubic_fourfold(Hodge_special_fourfold):
         return T
 
 class GushelMukai_fourfold(Hodge_special_fourfold):
-    r"""
-    The class of Hodge-special Gushel-Mukai fourfolds in ``PP^8``
+    r"""The class of Hodge-special Gushel-Mukai fourfolds in ``PP^8``
 
     TESTS::
 
@@ -3204,8 +3323,7 @@ def _random1(R):
     return(sum([R.random_element(degree=0) * x for x in R.gens()]))
 
 def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
-    r"""
-    Convert varieties and special fourfolds from Macaulay2 to Sage
+    r"""Convert varieties and special fourfolds from Macaulay2 to Sage.
 
     TESTS::
 
@@ -3251,8 +3369,7 @@ def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
         raise NotImplementedError
 
 def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
-    r"""
-    Convert rational maps from Macaulay2 to Sage
+    r"""Convert rational maps from Macaulay2 to Sage.
 
     TESTS::
 
@@ -3444,7 +3561,7 @@ _set_macaulay2_()
 
 if __name__ == "__main__":
     print("""┌─────────────────────────────────────┐
- sff.py version 1.0, date: 2023-05-18""" +
+ sff.py version 1.0, date: 2023-05-19""" +
 ("\n with SpecialFanoFourfolds.m2 v. " + macaulay2('SpecialFanoFourfolds.Options.Version').sage() if Macaulay2().is_present() else "\n Macaulay2 not present") +
 """
 └─────────────────────────────────────┘""")
