@@ -558,9 +558,9 @@ class Function_Bessel_Y(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: sage.functions.bessel.Function_Bessel_Y()(0, x)
+            sage: sage.functions.bessel.Function_Bessel_Y()(0, x)                       # optional - sage.symbolic
             bessel_Y(0, x)
-            sage: bessel_Y(x, x)._sympy_()
+            sage: bessel_Y(x, x)._sympy_()                                              # optional - sympy sage.symbolic
             bessely(x, x)
         """
         BuiltinFunction.__init__(self, 'bessel_Y', nargs=2,

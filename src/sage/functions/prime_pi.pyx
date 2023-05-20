@@ -184,9 +184,9 @@ cdef class PrimePi(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: plot(prime_pi, 1, 100)
+            sage: plot(prime_pi, 1, 100)                                                # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: prime_pi.plot(1, 51, thickness=2, vertical_lines=False)
+            sage: prime_pi.plot(1, 51, thickness=2, vertical_lines=False)               # optional - sage.plot
             Graphics object consisting of 16 graphics primitives
         """
         from sage.plot.step import plot_step_function

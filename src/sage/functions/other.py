@@ -431,20 +431,20 @@ class Function_ceil(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: ceil(x).subs(x==7.5)
+            sage: ceil(x).subs(x==7.5)                                                  # optional - sage.symbolic
             8
-            sage: ceil(x)
+            sage: ceil(x)                                                               # optional - sage.symbolic
             ceil(x)
 
-            sage: var('x',domain='integer')
+            sage: var('x', domain='integer')                                            # optional - sage.symbolic
             x
-            sage: ceil(x)
+            sage: ceil(x)                                                               # optional - sage.symbolic
             x
-            sage: ceil(factorial(x) + binomial(x^2, x))
+            sage: ceil(factorial(x) + binomial(x^2, x))                                 # optional - sage.symbolic
             binomial(x^2, x) + factorial(x)
-            sage: ceil(gamma(abs(2*x)+1) * real(x))
+            sage: ceil(gamma(abs(2*x)+1) * real(x))                                     # optional - sage.symbolic
             x*gamma(2*abs(x) + 1)
-            sage: forget()
+            sage: forget()                                                              # optional - sage.symbolic
         """
         try:
             if SR(x).variables() and x.is_integer():

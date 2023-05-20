@@ -105,7 +105,7 @@ class Function_exp(GinacFunction):
         7.3890560989306502272304274606
         sage: t.prec()
         100
-        sage: exp(2).n(100)
+        sage: exp(2).n(100)                                                             # optional - sage.symbolic
         7.3890560989306502272304274606
 
     TESTS::
@@ -265,7 +265,7 @@ class Function_log2(GinacFunction):
     EXAMPLES::
 
         sage: from sage.functions.log import logb
-        sage: logb(1000, 10)
+        sage: logb(1000, 10)                                                            # optional - sage.symbolic
         3
 
     TESTS::

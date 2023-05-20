@@ -15,107 +15,113 @@ class Function_sin(GinacFunction):
 
             sage: sin(0)
             0
-            sage: sin(x).subs(x==0)
+            sage: sin(x).subs(x==0)                                                     # optional - sage.symbolic
             0
-            sage: sin(2).n(100)
+            sage: sin(2).n(100)                                                         # optional - sage.symbolic
             0.90929742682568169539601986591
             sage: loads(dumps(sin))
             sin
-            sage: sin(x)._sympy_()
+            sage: sin(x)._sympy_()                                                      # optional - sympy sage.symbolic
             sin(x)
 
         We can prevent evaluation using the ``hold`` parameter::
 
-            sage: sin(0,hold=True)
+            sage: sin(0, hold=True)                                                     # optional - sage.symbolic
             sin(0)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = sin(0,hold=True); a.simplify()
+            sage: a = sin(0, hold=True); a.simplify()                                   # optional - sage.symbolic
             0
 
         If possible, the argument is also reduced modulo the
         period length `2\pi`, and well-known identities are
         directly evaluated::
 
-            sage: k = var('k', domain='integer')
-            sage: sin(1 + 2*k*pi)
+            sage: k = var('k', domain='integer')                                        # optional - sage.symbolic
+            sage: sin(1 + 2*k*pi)                                                       # optional - sage.symbolic
             sin(1)
-            sage: sin(k*pi)
+            sage: sin(k*pi)                                                             # optional - sage.symbolic
             0
 
         TESTS::
 
-            sage: conjugate(sin(x))
+            sage: conjugate(sin(x))                                                     # optional - sage.symbolic
             sin(conjugate(x))
             sage: sin(complex(1,1))     # rel tol 1e-15
             (1.2984575814159773+0.6349639147847361j)
 
-            sage: sin(pi/5)
+            sage: sin(pi/5)                                                             # optional - sage.symbolic
             1/4*sqrt(-2*sqrt(5) + 10)
-            sage: sin(pi/8)
+            sage: sin(pi/8)                                                             # optional - sage.symbolic
             1/2*sqrt(-sqrt(2) + 2)
-            sage: sin(pi/24)
+            sage: sin(pi/24)                                                            # optional - sage.symbolic
             1/4*sqrt(-2*sqrt(6) - 2*sqrt(2) + 8)
-            sage: sin(pi/30)
+            sage: sin(pi/30)                                                            # optional - sage.symbolic
             -1/8*sqrt(5) + 1/4*sqrt(-3/2*sqrt(5) + 15/2) - 1/8
-            sage: sin(104*pi/105)
+            sage: sin(104*pi/105)                                                       # optional - sage.symbolic
             sin(1/105*pi)
-            sage: cos(pi/8)
+            sage: cos(pi/8)                                                             # optional - sage.symbolic
             1/2*sqrt(sqrt(2) + 2)
-            sage: cos(pi/10)
+            sage: cos(pi/10)                                                            # optional - sage.symbolic
             1/4*sqrt(2*sqrt(5) + 10)
-            sage: cos(pi/12)
+            sage: cos(pi/12)                                                            # optional - sage.symbolic
             1/4*sqrt(6) + 1/4*sqrt(2)
-            sage: cos(pi/15)
+            sage: cos(pi/15)                                                            # optional - sage.symbolic
             1/8*sqrt(5) + 1/4*sqrt(3/2*sqrt(5) + 15/2) - 1/8
-            sage: cos(pi/24)
+            sage: cos(pi/24)                                                            # optional - sage.symbolic
             1/4*sqrt(2*sqrt(6) + 2*sqrt(2) + 8)
-            sage: cos(104*pi/105)
+            sage: cos(104*pi/105)                                                       # optional - sage.symbolic
             -cos(1/105*pi)
-            sage: tan(pi/5)
+            sage: tan(pi/5)                                                             # optional - sage.symbolic
             sqrt(-2*sqrt(5) + 5)
-            sage: tan(pi/8)
+            sage: tan(pi/8)                                                             # optional - sage.symbolic
             sqrt(2) - 1
-            sage: tan(pi/10)
+            sage: tan(pi/10)                                                            # optional - sage.symbolic
             1/5*sqrt(-10*sqrt(5) + 25)
-            sage: tan(pi/16)
+            sage: tan(pi/16)                                                            # optional - sage.symbolic
             -sqrt(2) + sqrt(2*sqrt(2) + 4) - 1
-            sage: tan(pi/20)
+            sage: tan(pi/20)                                                            # optional - sage.symbolic
             sqrt(5) - sqrt(2*sqrt(5) + 5) + 1
-            sage: tan(pi/24)
+            sage: tan(pi/24)                                                            # optional - sage.symbolic
             sqrt(6) - sqrt(3) + sqrt(2) - 2
-            sage: tan(104*pi/105)
+            sage: tan(104*pi/105)                                                       # optional - sage.symbolic
             -tan(1/105*pi)
-            sage: cot(104*pi/105)
+            sage: cot(104*pi/105)                                                       # optional - sage.symbolic
             -cot(1/105*pi)
-            sage: sec(104*pi/105)
+            sage: sec(104*pi/105)                                                       # optional - sage.symbolic
             -sec(1/105*pi)
-            sage: csc(104*pi/105)
+            sage: csc(104*pi/105)                                                       # optional - sage.symbolic
             csc(1/105*pi)
 
-            sage: all(sin(rat*pi).n(200)-sin(rat*pi,hold=True).n(200) < 1e-30 for rat in [1/5,2/5,1/30,7/30,11/30,13/30,1/8,3/8,1/24,5/24,7/24,11/24])
+            sage: all(sin(rat*pi).n(200) - sin(rat*pi, hold=True).n(200) < 1e-30        # optional - sage.symbolic
+            ....:     for rat in [1/5, 2/5, 1/30, 7/30, 11/30, 13/30,
+            ....:                 1/8, 3/8, 1/24, 5/24, 7/24, 11/24])
             True
-            sage: all(cos(rat*pi).n(200)-cos(rat*pi,hold=True).n(200) < 1e-30 for rat in [1/10,3/10,1/12,5/12,1/15,2/15,4/15,7/15,1/8,3/8,1/24,5/24,11/24])
+            sage: all(cos(rat*pi).n(200)-cos(rat*pi, hold=True).n(200) < 1e-30           # optional - sage.symbolic
+            ....:     for rat in [1/10, 3/10, 1/12, 5/12, 1/15, 2/15, 4/15, 7/15,
+            ....:                 1/8, 3/8, 1/24, 5/24, 11/24])
             True
-            sage: all(tan(rat*pi).n(200)-tan(rat*pi,hold=True).n(200) < 1e-30 for rat in [1/5,2/5,1/10,3/10,1/20,3/20,7/20,9/20,1/8,3/8,1/16,3/16,5/16,7/16,1/24,5/24,7/24,11/24])
+            sage: all(tan(rat*pi).n(200)-tan(rat*pi, hold=True).n(200) < 1e-30           # optional - sage.symbolic
+            ....:     for rat in [1/5, 2/5, 1/10, 3/10, 1/20, 3/20, 7/20, 9/20,
+            ....:                 1/8, 3/8, 1/16, 3/16, 5/16, 7/16, 1/24, 5/24, 7/24, 11/24])
             True
 
         Check that :trac:`20456` is fixed::
 
-            sage: assume(x>0)
-            sage: sin(pi*x)
+            sage: assume(x > 0)                                                          # optional - sage.symbolic
+            sage: sin(pi*x)                                                              # optional - sage.symbolic
             sin(pi*x)
-            sage: forget()
+            sage: forget()                                                               # optional - sage.symbolic
 
         Check that :trac:`20752` is fixed::
 
-            sage: sin(3*pi+41/42*pi)
+            sage: sin(3*pi + 41/42*pi)                                                   # optional - sage.symbolic
             -sin(1/42*pi)
-            sage: sin(-5*pi+1/42*pi)
+            sage: sin(-5*pi + 1/42*pi)                                                   # optional - sage.symbolic
             -sin(1/42*pi)
-            sage: sin(pi-1/42*pi)
+            sage: sin(pi - 1/42*pi)                                                      # optional - sage.symbolic
             sin(1/42*pi)
         """
         GinacFunction.__init__(self, 'sin', latex_name=r"\sin",
@@ -133,54 +139,54 @@ class Function_cos(GinacFunction):
 
         EXAMPLES::
 
-            sage: cos(pi)
+            sage: cos(pi)                                                                # optional - sage.symbolic
             -1
-            sage: cos(x).subs(x==pi)
+            sage: cos(x).subs(x==pi)                                                     # optional - sage.symbolic
             -1
-            sage: cos(2).n(100)
+            sage: cos(2).n(100)                                                          # optional - sage.symbolic
             -0.41614683654714238699756822950
             sage: loads(dumps(cos))
             cos
-            sage: cos(x)._sympy_()
+            sage: cos(x)._sympy_()                                                       # optional - sympy sage.symbolic
             cos(x)
 
         We can prevent evaluation using the ``hold`` parameter::
 
-            sage: cos(0,hold=True)
+            sage: cos(0, hold=True)                                                      # optional - sage.symbolic
             cos(0)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = cos(0,hold=True); a.simplify()
+            sage: a = cos(0, hold=True); a.simplify()                                    # optional - sage.symbolic
             1
 
         If possible, the argument is also reduced modulo the
         period length `2\pi`, and well-known identities are
         directly evaluated::
 
-            sage: k = var('k', domain='integer')
-            sage: cos(1 + 2*k*pi)
+            sage: k = var('k', domain='integer')                                         # optional - sage.symbolic
+            sage: cos(1 + 2*k*pi)                                                        # optional - sage.symbolic
             cos(1)
-            sage: cos(k*pi)
+            sage: cos(k*pi)                                                              # optional - sage.symbolic
             cos(pi*k)
-            sage: cos(pi/3 + 2*k*pi)
+            sage: cos(pi/3 + 2*k*pi)                                                     # optional - sage.symbolic
             1/2
 
         TESTS::
 
-            sage: conjugate(cos(x))
+            sage: conjugate(cos(x))                                                      # optional - sage.symbolic
             cos(conjugate(x))
             sage: cos(complex(1,1))     # rel tol 1e-15
             (0.8337300251311491-0.9888977057628651j)
 
         Check that :trac:`20752` is fixed::
 
-            sage: cos(3*pi+41/42*pi)
+            sage: cos(3*pi + 41/42*pi)                                                   # optional - sage.symbolic
             cos(1/42*pi)
-            sage: cos(-5*pi+1/42*pi)
+            sage: cos(-5*pi + 1/42*pi)                                                   # optional - sage.symbolic
             -cos(1/42*pi)
-            sage: cos(pi-1/42*pi)
+            sage: cos(pi - 1/42*pi)                                                      # optional - sage.symbolic
             -cos(1/42*pi)
         """
         GinacFunction.__init__(self, 'cos', latex_name=r"\cos",
@@ -198,52 +204,52 @@ class Function_tan(GinacFunction):
 
         EXAMPLES::
 
-            sage: tan(pi)
+            sage: tan(pi)                                                                # optional - sage.symbolic
             0
             sage: tan(3.1415)
             -0.0000926535900581913
             sage: tan(3.1415/4)
             0.999953674278156
-            sage: tan(pi/4)
+            sage: tan(pi/4)                                                              # optional - sage.symbolic
             1
-            sage: tan(1/2)
+            sage: tan(1/2)                                                               # optional - sage.symbolic
             tan(1/2)
-            sage: RR(tan(1/2))
+            sage: RR(tan(1/2))                                                           # optional - sage.symbolic
             0.546302489843790
 
         We can prevent evaluation using the ``hold`` parameter::
 
-            sage: tan(pi/4,hold=True)
+            sage: tan(pi/4, hold=True)                                                   # optional - sage.symbolic
             tan(1/4*pi)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = tan(pi/4,hold=True); a.simplify()
+            sage: a = tan(pi/4, hold=True); a.simplify()                                 # optional - sage.symbolic
             1
 
         If possible, the argument is also reduced modulo the
         period length `\pi`, and well-known identities are
         directly evaluated::
 
-            sage: k = var('k', domain='integer')
-            sage: tan(1 + 2*k*pi)
+            sage: k = var('k', domain='integer')                                         # optional - sage.symbolic
+            sage: tan(1 + 2*k*pi)                                                        # optional - sage.symbolic
             tan(1)
-            sage: tan(k*pi)
+            sage: tan(k*pi)                                                              # optional - sage.symbolic
             0
 
         TESTS::
 
-            sage: tan(x)._sympy_()
+            sage: tan(x)._sympy_()                                                       # optional - sympy sage.symbolic
             tan(x)
-            sage: conjugate(tan(x))
+            sage: conjugate(tan(x))                                                      # optional - sage.symbolic
             tan(conjugate(x))
             sage: tan(complex(1,1))     # rel tol 1e-15
             (0.2717525853195118+1.0839233273386946j)
 
         Check that :trac:`19791` is fixed::
 
-            sage: tan(2+I).imag().n()
+            sage: tan(2+I).imag().n()                                                    # optional - sage.symbolic
             1.16673625724092
         """
         GinacFunction.__init__(self, 'tan', latex_name=r"\tan")
@@ -259,56 +265,56 @@ class Function_cot(GinacFunction):
 
         EXAMPLES::
 
-            sage: cot(pi/4)
+            sage: cot(pi/4)                                                              # optional - sage.symbolic
             1
-            sage: RR(cot(pi/4))
+            sage: RR(cot(pi/4))                                                          # optional - sage.symbolic
             1.00000000000000
-            sage: cot(1/2)
+            sage: cot(1/2)                                                               # optional - sage.symbolic
             cot(1/2)
             sage: cot(0.5)
             1.83048772171245
 
-            sage: latex(cot(x))
+            sage: latex(cot(x))                                                          # optional - sage.symbolic
             \cot\left(x\right)
-            sage: cot(x)._sympy_()
+            sage: cot(x)._sympy_()                                                       # optional - sympy sage.symbolic
             cot(x)
 
         We can prevent evaluation using the ``hold`` parameter::
 
-            sage: cot(pi/4,hold=True)
+            sage: cot(pi/4, hold=True)                                                   # optional - sage.symbolic
             cot(1/4*pi)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = cot(pi/4,hold=True); a.simplify()
+            sage: a = cot(pi/4, hold=True); a.simplify()                                 # optional - sage.symbolic
             1
 
         EXAMPLES::
 
-            sage: cot(pi/4)
+            sage: cot(pi/4)                                                              # optional - sage.symbolic
             1
-            sage: cot(x).subs(x==pi/4)
+            sage: cot(x).subs(x==pi/4)                                                   # optional - sage.symbolic
             1
-            sage: cot(pi/7)
+            sage: cot(pi/7)                                                              # optional - sage.symbolic
             cot(1/7*pi)
-            sage: cot(x)
+            sage: cot(x)                                                                 # optional - sage.symbolic
             cot(x)
 
-            sage: n(cot(pi/4),100)
+            sage: n(cot(pi/4), 100)                                                      # optional - sage.symbolic
             1.0000000000000000000000000000
-            sage: float(cot(1))
+            sage: float(cot(1))                                                          # optional - sage.symbolic
             0.64209261593433...
-            sage: bool(diff(cot(x), x) == diff(1/tan(x), x))
+            sage: bool(diff(cot(x), x) == diff(1/tan(x), x))                             # optional - sage.symbolic
             True
-            sage: diff(cot(x), x)
+            sage: diff(cot(x), x)                                                        # optional - sage.symbolic
             -cot(x)^2 - 1
 
         TESTS::
 
             sage: cot(float(0))
             Infinity
-            sage: cot(SR(0))
+            sage: cot(SR(0))                                                             # optional - sage.symbolic
             Infinity
             sage: cot(float(0.1))
             9.966644423259238
@@ -317,7 +323,7 @@ class Function_cot(GinacFunction):
 
             sage: cot(float(0))
             Infinity
-            sage: cot(SR(0))
+            sage: cot(SR(0))                                                             # optional - sage.symbolic
             Infinity
             sage: cot(float(0.1))
             9.966644423259238
@@ -328,7 +334,7 @@ class Function_cot(GinacFunction):
 
             sage: cot(complex(1,1))     # rel tol 1e-15
             (0.21762156185440273-0.8680141428959249j)
-            sage: cot(1.+I)
+            sage: cot(1.+I)                                                              # optional - sage.symbolic
             0.217621561854403 - 0.868014142895925*I
         """
         GinacFunction.__init__(self, 'cot', latex_name=r"\cot")
@@ -355,43 +361,43 @@ class Function_sec(GinacFunction):
 
         EXAMPLES::
 
-            sage: sec(pi/4)
+            sage: sec(pi/4)                                                             # optional - sage.symbolic
             sqrt(2)
-            sage: sec(x).subs(x==pi/4)
+            sage: sec(x).subs(x==pi/4)                                                  # optional - sage.symbolic
             sqrt(2)
-            sage: sec(pi/7)
+            sage: sec(pi/7)                                                             # optional - sage.symbolic
             sec(1/7*pi)
-            sage: sec(x)
+            sage: sec(x)                                                                # optional - sage.symbolic
             sec(x)
-            sage: RR(sec(pi/4))
+            sage: RR(sec(pi/4))                                                         # optional - sage.symbolic
             1.41421356237310
-            sage: n(sec(pi/4),100)
+            sage: n(sec(pi/4),100)                                                      # optional - sage.symbolic
             1.4142135623730950488016887242
-            sage: float(sec(pi/4))
+            sage: float(sec(pi/4))                                                      # optional - sage.symbolic
             1.4142135623730951
-            sage: sec(1/2)
+            sage: sec(1/2)                                                              # optional - sage.symbolic
             sec(1/2)
             sage: sec(0.5)
             1.13949392732455
 
-            sage: bool(diff(sec(x), x) == diff(1/cos(x), x))
+            sage: bool(diff(sec(x), x) == diff(1/cos(x), x))                            # optional - sage.symbolic
             True
-            sage: diff(sec(x), x)
+            sage: diff(sec(x), x)                                                       # optional - sage.symbolic
             sec(x)*tan(x)
-            sage: latex(sec(x))
+            sage: latex(sec(x))                                                         # optional - sage.symbolic
             \sec\left(x\right)
-            sage: sec(x)._sympy_()
+            sage: sec(x)._sympy_()                                                      # optional - sympy sage.symbolic
             sec(x)
 
         We can prevent evaluation using the ``hold`` parameter::
 
-            sage: sec(pi/4,hold=True)
+            sage: sec(pi/4, hold=True)                                                   # optional - sage.symbolic
             sec(1/4*pi)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = sec(pi/4,hold=True); a.simplify()
+            sage: a = sec(pi/4, hold=True); a.simplify()                                 # optional - sage.symbolic
             sqrt(2)
 
         TESTS:
@@ -425,43 +431,43 @@ class Function_csc(GinacFunction):
 
         EXAMPLES::
 
-            sage: csc(pi/4)
+            sage: csc(pi/4)                                                             # optional - sage.symbolic
             sqrt(2)
-            sage: csc(x).subs(x==pi/4)
+            sage: csc(x).subs(x==pi/4)                                                  # optional - sage.symbolic
             sqrt(2)
-            sage: csc(pi/7)
+            sage: csc(pi/7)                                                             # optional - sage.symbolic
             csc(1/7*pi)
-            sage: csc(x)
+            sage: csc(x)                                                                # optional - sage.symbolic
             csc(x)
-            sage: RR(csc(pi/4))
+            sage: RR(csc(pi/4))                                                         # optional - sage.symbolic
             1.41421356237310
-            sage: n(csc(pi/4),100)
+            sage: n(csc(pi/4), 100)                                                     # optional - sage.symbolic
             1.4142135623730950488016887242
-            sage: float(csc(pi/4))
+            sage: float(csc(pi/4))                                                      # optional - sage.symbolic
             1.4142135623730951
-            sage: csc(1/2)
+            sage: csc(1/2)                                                              # optional - sage.symbolic
             csc(1/2)
             sage: csc(0.5)
             2.08582964293349
 
-            sage: bool(diff(csc(x), x) == diff(1/sin(x), x))
+            sage: bool(diff(csc(x), x) == diff(1/sin(x), x))                            # optional - sage.symbolic
             True
-            sage: diff(csc(x), x)
+            sage: diff(csc(x), x)                                                       # optional - sage.symbolic
             -cot(x)*csc(x)
-            sage: latex(csc(x))
+            sage: latex(csc(x))                                                         # optional - sage.symbolic
             \csc\left(x\right)
-            sage: csc(x)._sympy_()
+            sage: csc(x)._sympy_()                                                      # optional - sympy sage.symbolic
             csc(x)
 
         We can prevent evaluation using the ``hold`` parameter::
 
-            sage: csc(pi/4,hold=True)
+            sage: csc(pi/4, hold=True)                                                  # optional - sage.symbolic
             csc(1/4*pi)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = csc(pi/4,hold=True); a.simplify()
+            sage: a = csc(pi/4,hold=True); a.simplify()                                 # optional - sage.symbolic
             sqrt(2)
 
         TESTS:
@@ -501,49 +507,49 @@ class Function_arcsin(GinacFunction):
 
             sage: arcsin(0.5)
             0.523598775598299
-            sage: arcsin(1/2)
+            sage: arcsin(1/2)                                                           # optional - sage.symbolic
             1/6*pi
-            sage: arcsin(1 + 1.0*I)
+            sage: arcsin(1 + 1.0*I)                                                     # optional - sage.symbolic
             0.666239432492515 + 1.06127506190504*I
 
         We can delay evaluation using the ``hold`` parameter::
 
-            sage: arcsin(0,hold=True)
+            sage: arcsin(0, hold=True)                                                  # optional - sage.symbolic
             arcsin(0)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = arcsin(0,hold=True); a.simplify()
+            sage: a = arcsin(0, hold=True); a.simplify()                                # optional - sage.symbolic
             0
 
         ``conjugate(arcsin(x))==arcsin(conjugate(x))``, unless on the branch
         cuts which run along the real axis outside the interval [-1, +1].::
 
-            sage: conjugate(arcsin(x))
+            sage: conjugate(arcsin(x))                                                  # optional - sage.symbolic
             conjugate(arcsin(x))
-            sage: var('y', domain='positive')
+            sage: var('y', domain='positive')                                           # optional - sage.symbolic
             y
-            sage: conjugate(arcsin(y))
+            sage: conjugate(arcsin(y))                                                  # optional - sage.symbolic
             conjugate(arcsin(y))
-            sage: conjugate(arcsin(y+I))
+            sage: conjugate(arcsin(y+I))                                                # optional - sage.symbolic
             conjugate(arcsin(y + I))
-            sage: conjugate(arcsin(1/16))
+            sage: conjugate(arcsin(1/16))                                               # optional - sage.symbolic
             arcsin(1/16)
-            sage: conjugate(arcsin(2))
+            sage: conjugate(arcsin(2))                                                  # optional - sage.symbolic
             conjugate(arcsin(2))
-            sage: conjugate(arcsin(-2))
+            sage: conjugate(arcsin(-2))                                                 # optional - sage.symbolic
             -conjugate(arcsin(2))
 
         TESTS::
 
-            sage: arcsin(x)._sympy_()
+            sage: arcsin(x)._sympy_()                                                   # optional - sympy sage.symbolic
             asin(x)
-            sage: arcsin(x).operator()
+            sage: arcsin(x).operator()                                                  # optional - sage.symbolic
             arcsin
             sage: asin(complex(1,1))
             (0.6662394324925152+1.0612750619050357j)
-            sage: asin(SR(2.1))
+            sage: asin(SR(2.1))                                                         # optional - sage.symbolic
             1.57079632679490 - 1.37285914424258*I
         """
         GinacFunction.__init__(self, 'arcsin', latex_name=r"\arcsin",
@@ -564,51 +570,51 @@ class Function_arccos(GinacFunction):
 
             sage: arccos(0.5)
             1.04719755119660
-            sage: arccos(1/2)
+            sage: arccos(1/2)                                                           # optional - sage.symbolic
             1/3*pi
-            sage: arccos(1 + 1.0*I)
+            sage: arccos(1 + 1.0*I)                                                     # optional - sage.symbolic
             0.904556894302381 - 1.06127506190504*I
-            sage: arccos(3/4).n(100)
+            sage: arccos(3/4).n(100)                                                    # optional - sage.symbolic
             0.72273424781341561117837735264
 
         We can delay evaluation using the ``hold`` parameter::
 
-            sage: arccos(0,hold=True)
+            sage: arccos(0, hold=True)                                                  # optional - sage.symbolic
             arccos(0)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = arccos(0,hold=True); a.simplify()
+            sage: a = arccos(0, hold=True); a.simplify()                                # optional - sage.symbolic
             1/2*pi
 
         ``conjugate(arccos(x))==arccos(conjugate(x))``, unless on the branch
         cuts, which run along the real axis outside the interval [-1, +1].::
 
-            sage: conjugate(arccos(x))
+            sage: conjugate(arccos(x))                                                  # optional - sage.symbolic
             conjugate(arccos(x))
-            sage: var('y', domain='positive')
+            sage: var('y', domain='positive')                                           # optional - sage.symbolic
             y
-            sage: conjugate(arccos(y))
+            sage: conjugate(arccos(y))                                                  # optional - sage.symbolic
             conjugate(arccos(y))
-            sage: conjugate(arccos(y+I))
+            sage: conjugate(arccos(y+I))                                                # optional - sage.symbolic
             conjugate(arccos(y + I))
-            sage: conjugate(arccos(1/16))
+            sage: conjugate(arccos(1/16))                                               # optional - sage.symbolic
             arccos(1/16)
-            sage: conjugate(arccos(2))
+            sage: conjugate(arccos(2))                                                  # optional - sage.symbolic
             conjugate(arccos(2))
-            sage: conjugate(arccos(-2))
+            sage: conjugate(arccos(-2))                                                 # optional - sage.symbolic
             pi - conjugate(arccos(2))
 
         TESTS::
 
-            sage: arccos(x)._sympy_()
+            sage: arccos(x)._sympy_()                                                   # optional - sympy sage.symbolic
             acos(x)
-            sage: arccos(x).operator()
+            sage: arccos(x).operator()                                                  # optional - sage.symbolic
             arccos
             sage: acos(complex(1,1))
             (0.9045568943023814-1.0612750619050357j)
-            sage: acos(SR(2.1))
+            sage: acos(SR(2.1))                                                         # optional - sage.symbolic
             1.37285914424258*I
         """
         GinacFunction.__init__(self, 'arccos', latex_name=r"\arccos",
@@ -627,60 +633,60 @@ class Function_arctan(GinacFunction):
 
         EXAMPLES::
 
-            sage: arctan(1/2)
+            sage: arctan(1/2)                                                           # optional - sage.symbolic
             arctan(1/2)
-            sage: RDF(arctan(1/2))  # rel tol 1e-15
+            sage: RDF(arctan(1/2))  # rel tol 1e-15                                     # optional - sage.symbolic
             0.46364760900080615
-            sage: arctan(1 + I)
+            sage: arctan(1 + I)                                                         # optional - sage.symbolic
             arctan(I + 1)
-            sage: arctan(1/2).n(100)
+            sage: arctan(1/2).n(100)                                                    # optional - sage.symbolic
             0.46364760900080611621425623146
 
         We can delay evaluation using the ``hold`` parameter::
 
-            sage: arctan(0,hold=True)
+            sage: arctan(0, hold=True)                                                  # optional - sage.symbolic
             arctan(0)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = arctan(0,hold=True); a.simplify()
+            sage: a = arctan(0, hold=True); a.simplify()                                # optional - sage.symbolic
             0
 
         ``conjugate(arctan(x))==arctan(conjugate(x))``, unless on the branch
         cuts which run along the imaginary axis outside the interval [-I, +I].::
 
-            sage: conjugate(arctan(x))
+            sage: conjugate(arctan(x))                                                  # optional - sage.symbolic
             conjugate(arctan(x))
-            sage: var('y', domain='positive')
+            sage: var('y', domain='positive')                                           # optional - sage.symbolic
             y
-            sage: conjugate(arctan(y))
+            sage: conjugate(arctan(y))                                                  # optional - sage.symbolic
             arctan(y)
-            sage: conjugate(arctan(y+I))
+            sage: conjugate(arctan(y+I))                                                # optional - sage.symbolic
             conjugate(arctan(y + I))
-            sage: conjugate(arctan(1/16))
+            sage: conjugate(arctan(1/16))                                               # optional - sage.symbolic
             arctan(1/16)
-            sage: conjugate(arctan(-2*I))
+            sage: conjugate(arctan(-2*I))                                               # optional - sage.symbolic
             conjugate(arctan(-2*I))
-            sage: conjugate(arctan(2*I))
+            sage: conjugate(arctan(2*I))                                                # optional - sage.symbolic
             conjugate(arctan(2*I))
-            sage: conjugate(arctan(I/2))
+            sage: conjugate(arctan(I/2))                                                # optional - sage.symbolic
             arctan(-1/2*I)
 
         TESTS::
 
-            sage: arctan(x)._sympy_()
+            sage: arctan(x)._sympy_()                                                   # optional - sympy sage.symbolic
             atan(x)
-            sage: arctan(x).operator()
+            sage: arctan(x).operator()                                                  # optional - sage.symbolic
             arctan
             sage: atan(complex(1,1))
             (1.0172219678978514+0.4023594781085251j)
 
         Check that :trac:`19918` is fixed::
 
-            sage: arctan(-x).subs(x=oo)
+            sage: arctan(-x).subs(x=oo)                                                 # optional - sage.symbolic
             -1/2*pi
-            sage: arctan(-x).subs(x=-oo)
+            sage: arctan(-x).subs(x=-oo)                                                # optional - sage.symbolic
             1/2*pi
         """
         GinacFunction.__init__(self, 'arctan', latex_name=r"\arctan",
@@ -699,41 +705,41 @@ class Function_arccot(GinacFunction):
 
         EXAMPLES::
 
-            sage: arccot(1/2)
+            sage: arccot(1/2)                                                           # optional - sage.symbolic
             arccot(1/2)
-            sage: RDF(arccot(1/2))  # abs tol 2e-16
+            sage: RDF(arccot(1/2))  # abs tol 2e-16                                     # optional - sage.symbolic
             1.1071487177940906
-            sage: arccot(1 + I)
+            sage: arccot(1 + I)                                                         # optional - sage.symbolic
             arccot(I + 1)
-            sage: arccot(1/2).n(100)
+            sage: arccot(1/2).n(100)                                                    # optional - sage.symbolic
             1.1071487177940905030170654602
-            sage: float(arccot(1/2))  # abs tol 2e-16
+            sage: float(arccot(1/2))  # abs tol 2e-16                                   # optional - sage.symbolic
             1.1071487177940906
-            sage: bool(diff(acot(x), x) == -diff(atan(x), x))
+            sage: bool(diff(acot(x), x) == -diff(atan(x), x))                           # optional - sage.symbolic
             True
-            sage: diff(acot(x), x)
+            sage: diff(acot(x), x)                                                      # optional - sage.symbolic
             -1/(x^2 + 1)
 
         We can delay evaluation using the ``hold`` parameter::
 
-            sage: arccot(1,hold=True)
+            sage: arccot(1, hold=True)                                                  # optional - sage.symbolic
             arccot(1)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = arccot(1,hold=True); a.simplify()
+            sage: a = arccot(1, hold=True); a.simplify()                                # optional - sage.symbolic
             1/4*pi
 
         TESTS:
 
         Test complex input::
 
-            sage: arccot(x)._sympy_()
+            sage: arccot(x)._sympy_()                                                   # optional - sympy sage.symbolic
             acot(x)
             sage: arccot(complex(1,1))  # rel tol 1e-15
             (0.5535743588970452-0.4023594781085251j)
-            sage: arccot(1.+I)
+            sage: arccot(1.+I)                                                          # optional - sage.symbolic
             0.553574358897045 - 0.402359478108525*I
 
         """
@@ -764,30 +770,30 @@ class Function_arccsc(GinacFunction):
 
         EXAMPLES::
 
-            sage: arccsc(2)
+            sage: arccsc(2)                                                             # optional - sage.symbolic
             arccsc(2)
-            sage: RDF(arccsc(2))  # rel tol 1e-15
+            sage: RDF(arccsc(2))  # rel tol 1e-15                                       # optional - sage.symbolic
             0.5235987755982988
-            sage: arccsc(2).n(100)
+            sage: arccsc(2).n(100)                                                      # optional - sage.symbolic
             0.52359877559829887307710723055
-            sage: float(arccsc(2))
+            sage: float(arccsc(2))                                                      # optional - sage.symbolic
             0.52359877559829...
-            sage: arccsc(1 + I)
+            sage: arccsc(1 + I)                                                         # optional - sage.symbolic
             arccsc(I + 1)
-            sage: diff(acsc(x), x)
+            sage: diff(acsc(x), x)                                                      # optional - sage.symbolic
             -1/(sqrt(x^2 - 1)*x)
-            sage: arccsc(x)._sympy_()
+            sage: arccsc(x)._sympy_()                                                   # optional - sympy sage.symbolic
             acsc(x)
 
         We can delay evaluation using the ``hold`` parameter::
 
-            sage: arccsc(1,hold=True)
+            sage: arccsc(1, hold=True)                                                  # optional - sage.symbolic
             arccsc(1)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = arccsc(1,hold=True); a.simplify()
+            sage: a = arccsc(1, hold=True); a.simplify()                                # optional - sage.symbolic
             1/2*pi
 
         TESTS:
@@ -824,32 +830,32 @@ class Function_arcsec(GinacFunction):
 
         EXAMPLES::
 
-            sage: arcsec(2)
+            sage: arcsec(2)                                                             # optional - sage.symbolic
             arcsec(2)
             sage: arcsec(2.0)
             1.04719755119660
-            sage: arcsec(2).n(100)
+            sage: arcsec(2).n(100)                                                      # optional - sage.symbolic
             1.0471975511965977461542144611
-            sage: arcsec(1/2).n(100)
+            sage: arcsec(1/2).n(100)                                                    # optional - sage.symbolic
             1.3169578969248167086250463473*I
-            sage: RDF(arcsec(2))  # abs tol 1e-15
+            sage: RDF(arcsec(2))  # abs tol 1e-15                                       # optional - sage.symbolic
             1.0471975511965976
-            sage: arcsec(1 + I)
+            sage: arcsec(1 + I)                                                         # optional - sage.symbolic
             arcsec(I + 1)
-            sage: diff(asec(x), x)
+            sage: diff(asec(x), x)                                                      # optional - sage.symbolic
             1/(sqrt(x^2 - 1)*x)
-            sage: arcsec(x)._sympy_()
+            sage: arcsec(x)._sympy_()                                                   # optional - sympy sage.symbolic
             asec(x)
 
         We can delay evaluation using the ``hold`` parameter::
 
-            sage: arcsec(1,hold=True)
+            sage: arcsec(1, hold=True)                                                  # optional - sage.symbolic
             arcsec(1)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: a = arcsec(1,hold=True); a.simplify()
+            sage: a = arcsec(1, hold=True); a.simplify()                                # optional - sage.symbolic
             0
 
         TESTS:
@@ -903,43 +909,43 @@ class Function_arctan2(GinacFunction):
 
         Note the difference between the two functions::
 
-            sage: arctan2(1,-1)
+            sage: arctan2(1, -1)                                                        # optional - sage.symbolic
             3/4*pi
-            sage: arctan(1/-1)
+            sage: arctan(1/-1)                                                          # optional - sage.symbolic
             -1/4*pi
 
         This is consistent with Python and Maxima::
 
-            sage: maxima.atan2(1,-1)
+            sage: maxima.atan2(1, -1)                                                   # optional - sage.symbolic
             (3*%pi)/4
-            sage: math.atan2(1,-1)
+            sage: math.atan2(1, -1)
             2.356194490192345
 
         More examples::
 
-            sage: arctan2(1,0)
+            sage: arctan2(1, 0)                                                         # optional - sage.symbolic
             1/2*pi
-            sage: arctan2(2,3)
+            sage: arctan2(2, 3)                                                         # optional - sage.symbolic
             arctan(2/3)
-            sage: arctan2(-1,-1)
+            sage: arctan2(-1, -1)                                                       # optional - sage.symbolic
             -3/4*pi
 
         Of course we can approximate as well::
 
-            sage: arctan2(-1/2,1).n(100)
+            sage: arctan2(-1/2, 1).n(100)                                               # optional - sage.symbolic
             -0.46364760900080611621425623146
-            sage: arctan2(2,3).n(100)
+            sage: arctan2(2, 3).n(100)                                                  # optional - sage.symbolic
             0.58800260354756755124561108063
 
         We can delay evaluation using the ``hold`` parameter::
 
-            sage: arctan2(-1/2,1,hold=True)
+            sage: arctan2(-1/2, 1, hold=True)                                           # optional - sage.symbolic
             arctan2(-1/2, 1)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: arctan2(-1/2,1,hold=True).simplify()
+            sage: arctan2(-1/2, 1, hold=True).simplify()                                # optional - sage.symbolic
             -arctan(1/2)
 
         The function also works with numpy arrays as input::
@@ -958,34 +964,34 @@ class Function_arctan2(GinacFunction):
 
         TESTS::
 
-            sage: x,y = var('x,y')
-            sage: arctan2(y,x).operator()
+            sage: x,y = var('x,y')                                                      # optional - sage.symbolic
+            sage: arctan2(y, x).operator()                                              # optional - sage.symbolic
             arctan2
 
         Check if :trac:`8565` is fixed::
 
-            sage: atan2(-pi,0)
+            sage: atan2(-pi, 0)                                                         # optional - sage.symbolic
             -1/2*pi
 
         Check if :trac:`8564` is fixed::
 
-            sage: arctan2(x,x)._sympy_()
+            sage: arctan2(x,x)._sympy_()                                                # optional - sympy sage.symbolic
             atan2(x, x)
 
         Check if numerical evaluation works :trac:`9913`::
 
-            sage: arctan2(0, -log(2)).n()
+            sage: arctan2(0, -log(2)).n()                                               # optional - sage.symbolic
             3.14159265358979
 
         Check that atan2(0,0) returns NaN :trac:`21614`::
 
-            sage: atan2(0,0)
+            sage: atan2(0, 0)                                                           # optional - sage.symbolic
             NaN
-            sage: atan2(0,0).n()
+            sage: atan2(0, 0).n()                                                       # optional - sage.symbolic
             NaN
-            sage: atan2(0,0,hold=True)
+            sage: atan2(0, 0, hold=True)                                                # optional - sage.symbolic
             arctan2(0, 0)
-            sage: atan2(0,0,hold=True).n()
+            sage: atan2(0, 0, hold=True).n()                                            # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             RuntimeError: atan2(): division by zero
@@ -993,7 +999,7 @@ class Function_arctan2(GinacFunction):
         Check if :trac:`10062` is fixed, this was caused by
         ``(I*I).is_positive()`` returning ``True``::
 
-            sage: arctan2(0, I*I)
+            sage: arctan2(0, I*I)                                                       # optional - sage.symbolic
             pi
         """
         GinacFunction.__init__(self, 'arctan2', nargs=2, latex_name=r"\arctan",

@@ -30,9 +30,9 @@ EXAMPLES:
 
 Verify that the Airy functions are solutions to the differential equation::
 
-    sage: diff(airy_ai(x), x, 2) - x * airy_ai(x)
+    sage: diff(airy_ai(x), x, 2) - x * airy_ai(x)                                       # optional - sage.symbolic
     0
-    sage: diff(airy_bi(x), x, 2) - x * airy_bi(x)
+    sage: diff(airy_bi(x), x, 2) - x * airy_bi(x)                                       # optional - sage.symbolic
     0
 """
 
@@ -83,14 +83,14 @@ class FunctionAiryAiGeneral(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_ai_general
-            sage: x, n = var('x n')
-            sage: airy_ai_general(-2, x)
+            sage: x, n = var('x n')                                                     # optional - sage.symbolic
+            sage: airy_ai_general(-2, x)                                                # optional - sage.symbolic
             airy_ai(-2, x)
-            sage: derivative(airy_ai_general(-2, x), x)
+            sage: derivative(airy_ai_general(-2, x), x)                                 # optional - sage.symbolic
             airy_ai(-1, x)
-            sage: airy_ai_general(n, x)
+            sage: airy_ai_general(n, x)                                                 # optional - sage.symbolic
             airy_ai(n, x)
-            sage: derivative(airy_ai_general(n, x), x)
+            sage: derivative(airy_ai_general(n, x), x)                                  # optional - sage.symbolic
             airy_ai(n + 1, x)
         """
         BuiltinFunction.__init__(self, "airy_ai", nargs=2,
@@ -101,10 +101,10 @@ class FunctionAiryAiGeneral(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_ai_general
-            sage: x, n = var('x n')
-            sage: derivative(airy_ai_general(n, x), x)
+            sage: x, n = var('x n')                                                     # optional - sage.symbolic
+            sage: derivative(airy_ai_general(n, x), x)                                  # optional - sage.symbolic
             airy_ai(n + 1, x)
-            sage: derivative(airy_ai_general(n, x), n)
+            sage: derivative(airy_ai_general(n, x), n)                                  # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot differentiate airy_ai
@@ -120,10 +120,10 @@ class FunctionAiryAiGeneral(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_ai_general
-            sage: x, n = var('x n')
+            sage: x, n = var('x n')                                                     # optional - sage.symbolic
             sage: airy_ai_general(-2, 1.0)
             0.136645379421096
-            sage: airy_ai_general(n, 1.0)
+            sage: airy_ai_general(n, 1.0)                                               # optional - sage.symbolic
             airy_ai(n, 1.00000000000000)
         """
         if not isinstance(x, Expression) and \
@@ -159,9 +159,9 @@ class FunctionAiryAiSimple(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_ai_simple
-            sage: f = airy_ai_simple(x); f
+            sage: f = airy_ai_simple(x); f                                              # optional - sage.symbolic
             airy_ai(x)
-            sage: airy_ai_simple(x)._sympy_()
+            sage: airy_ai_simple(x)._sympy_()                                           # optional - sage.symbolic
             airyai(x)
         """
         BuiltinFunction.__init__(self, 'airy_ai',
@@ -177,7 +177,7 @@ class FunctionAiryAiSimple(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_ai_simple
-            sage: derivative(airy_ai_simple(x), x)
+            sage: derivative(airy_ai_simple(x), x)                                      # optional - sage.symbolic
             airy_ai_prime(x)
         """
         return airy_ai_prime(x)
@@ -187,13 +187,13 @@ class FunctionAiryAiSimple(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_ai_simple
-            sage: airy_ai_simple(0)
+            sage: airy_ai_simple(0)                                                     # optional - sage.symbolic
             1/3*3^(1/3)/gamma(2/3)
             sage: airy_ai_simple(0.0)
             0.355028053887817
-            sage: airy_ai_simple(I)
+            sage: airy_ai_simple(I)                                                     # optional - sage.symbolic
             airy_ai(I)
-            sage: airy_ai_simple(1.0 * I)
+            sage: airy_ai_simple(1.0 * I)                                               # optional - sage.symbolic
             0.331493305432141 - 0.317449858968444*I
         """
         from .gamma import gamma
@@ -208,25 +208,25 @@ class FunctionAiryAiSimple(BuiltinFunction):
             sage: from sage.functions.airy import airy_ai_simple
             sage: airy_ai_simple(0.0)
             0.355028053887817
-            sage: airy_ai_simple(1.0 * I)
+            sage: airy_ai_simple(1.0 * I)                                               # optional - sage.symbolic
             0.331493305432141 - 0.317449858968444*I
 
         We can use several methods for numerical evaluation::
 
-            sage: airy_ai_simple(3).n(algorithm='mpmath')
+            sage: airy_ai_simple(3).n(algorithm='mpmath')                               # optional - sage.symbolic
             0.00659113935746072
-            sage: airy_ai_simple(3).n(algorithm='mpmath', prec=100)
+            sage: airy_ai_simple(3).n(algorithm='mpmath', prec=100)                     # optional - sage.symbolic
             0.0065911393574607191442574484080
-            sage: airy_ai_simple(3).n(algorithm='scipy')  # rel tol 1e-10
+            sage: airy_ai_simple(3).n(algorithm='scipy')  # rel tol 1e-10               # optional - sage.symbolic
             0.006591139357460719
-            sage: airy_ai_simple(I).n(algorithm='scipy')  # rel tol 1e-10
+            sage: airy_ai_simple(I).n(algorithm='scipy')  # rel tol 1e-10               # optional - sage.symbolic
             0.33149330543214117 - 0.3174498589684438*I
 
         TESTS::
 
-            sage: parent(airy_ai_simple(3).n(algorithm='scipy'))
+            sage: parent(airy_ai_simple(3).n(algorithm='scipy'))                        # optional - sage.symbolic
             Real Field with 53 bits of precision
-            sage: airy_ai_simple(3).n(algorithm='scipy', prec=200)
+            sage: airy_ai_simple(3).n(algorithm='scipy', prec=200)                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: airy_ai not implemented for precision > 53
@@ -263,12 +263,12 @@ class FunctionAiryAiPrime(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: x, n = var('x n')
-            sage: airy_ai_prime(x)
+            sage: x, n = var('x n')                                                     # optional - sage.symbolic
+            sage: airy_ai_prime(x)                                                      # optional - sage.symbolic
             airy_ai_prime(x)
-            sage: airy_ai_prime(0)
+            sage: airy_ai_prime(0)                                                      # optional - sage.symbolic
             -1/3*3^(2/3)/gamma(1/3)
-            sage: airy_ai_prime(x)._sympy_()
+            sage: airy_ai_prime(x)._sympy_()                                            # optional - sympy sage.symbolic
             airyaiprime(x)
         """
         BuiltinFunction.__init__(self, 'airy_ai_prime',
@@ -282,7 +282,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
         """
         EXAMPLES::
 
-           sage: derivative(airy_ai_prime(x), x)
+           sage: derivative(airy_ai_prime(x), x)                                        # optional - sage.symbolic
             x*airy_ai(x)
         """
         return x * airy_ai_simple(x)
@@ -291,7 +291,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: airy_ai_prime(0)
+            sage: airy_ai_prime(0)                                                      # optional - sage.symbolic
             -1/3*3^(2/3)/gamma(1/3)
             sage: airy_ai_prime(0.0)
             -0.258819403792807
@@ -310,20 +310,20 @@ class FunctionAiryAiPrime(BuiltinFunction):
 
         We can use several methods for numerical evaluation::
 
-            sage: airy_ai_prime(4).n(algorithm='mpmath')
+            sage: airy_ai_prime(4).n(algorithm='mpmath')                                # optional - sage.symbolic
             -0.00195864095020418
-            sage: airy_ai_prime(4).n(algorithm='mpmath', prec=100)
+            sage: airy_ai_prime(4).n(algorithm='mpmath', prec=100)                      # optional - sage.symbolic
             -0.0019586409502041789001381409184
-            sage: airy_ai_prime(4).n(algorithm='scipy')    # rel tol 1e-10
+            sage: airy_ai_prime(4).n(algorithm='scipy')    # rel tol 1e-10              # optional - sage.symbolic
             -0.00195864095020418
-            sage: airy_ai_prime(I).n(algorithm='scipy')    # rel tol 1e-10
+            sage: airy_ai_prime(I).n(algorithm='scipy')    # rel tol 1e-10              # optional - sage.symbolic
             -0.43249265984180707 + 0.09804785622924324*I
 
         TESTS::
 
-            sage: parent(airy_ai_prime(3).n(algorithm='scipy'))
+            sage: parent(airy_ai_prime(3).n(algorithm='scipy'))                         # optional - sage.symbolic
             Real Field with 53 bits of precision
-            sage: airy_ai_prime(3).n(algorithm='scipy', prec=200)
+            sage: airy_ai_prime(3).n(algorithm='scipy', prec=200)                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: airy_ai_prime not implemented
@@ -405,55 +405,55 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
 
     EXAMPLES::
 
-        sage: n, x = var('n x')
-        sage: airy_ai(x)
+        sage: n, x = var('n x')                                                         # optional - sage.symbolic
+        sage: airy_ai(x)                                                                # optional - sage.symbolic
         airy_ai(x)
 
     It can return derivatives or integrals::
 
-        sage: airy_ai(2, x)
+        sage: airy_ai(2, x)                                                             # optional - sage.symbolic
         airy_ai(2, x)
-        sage: airy_ai(1, x, hold_derivative=False)
+        sage: airy_ai(1, x, hold_derivative=False)                                      # optional - sage.symbolic
         airy_ai_prime(x)
-        sage: airy_ai(2, x, hold_derivative=False)
+        sage: airy_ai(2, x, hold_derivative=False)                                      # optional - sage.symbolic
         x*airy_ai(x)
-        sage: airy_ai(-2, x, hold_derivative=False)
+        sage: airy_ai(-2, x, hold_derivative=False)                                     # optional - sage.symbolic
         airy_ai(-2, x)
-        sage: airy_ai(n, x)
+        sage: airy_ai(n, x)                                                             # optional - sage.symbolic
         airy_ai(n, x)
 
     It can be evaluated symbolically or numerically for real or complex
     values::
 
-        sage: airy_ai(0)
+        sage: airy_ai(0)                                                                # optional - sage.symbolic
         1/3*3^(1/3)/gamma(2/3)
         sage: airy_ai(0.0)
         0.355028053887817
-        sage: airy_ai(I)
+        sage: airy_ai(I)                                                                # optional - sage.symbolic
         airy_ai(I)
-        sage: airy_ai(1.0*I)
+        sage: airy_ai(1.0*I)                                                            # optional - sage.symbolic
         0.331493305432141 - 0.317449858968444*I
 
     The functions can be evaluated numerically either using mpmath. which
     can compute the values to arbitrary precision, and scipy::
 
-        sage: airy_ai(2).n(prec=100)
+        sage: airy_ai(2).n(prec=100)                                                    # optional - sage.symbolic
         0.034924130423274379135322080792
-        sage: airy_ai(2).n(algorithm='mpmath', prec=100)
+        sage: airy_ai(2).n(algorithm='mpmath', prec=100)                                # optional - sage.symbolic
         0.034924130423274379135322080792
-        sage: airy_ai(2).n(algorithm='scipy')  # rel tol 1e-10
+        sage: airy_ai(2).n(algorithm='scipy')  # rel tol 1e-10                          # optional - sage.symbolic
         0.03492413042327323
 
     And the derivatives can be evaluated::
 
-        sage: airy_ai(1, 0)
+        sage: airy_ai(1, 0)                                                             # optional - sage.symbolic
         -1/3*3^(2/3)/gamma(1/3)
         sage: airy_ai(1, 0.0)
         -0.258819403792807
 
     Plots::
 
-        sage: plot(airy_ai(x), (x, -10, 5)) + plot(airy_ai_prime(x),
+        sage: plot(airy_ai(x), (x, -10, 5)) + plot(airy_ai_prime(x),                    # optional - sage.plot sage.symbolic
         ....:  (x, -10, 5), color='red')
         Graphics object consisting of 2 graphics primitives
 
@@ -516,14 +516,14 @@ class FunctionAiryBiGeneral(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_bi_general
-            sage: x, n = var('x n')
-            sage: airy_bi_general(-2, x)
+            sage: x, n = var('x n')                                                     # optional - sage.symbolic
+            sage: airy_bi_general(-2, x)                                                # optional - sage.symbolic
             airy_bi(-2, x)
-            sage: derivative(airy_bi_general(-2, x), x)
+            sage: derivative(airy_bi_general(-2, x), x)                                 # optional - sage.symbolic
             airy_bi(-1, x)
-            sage: airy_bi_general(n, x)
+            sage: airy_bi_general(n, x)                                                 # optional - sage.symbolic
             airy_bi(n, x)
-            sage: derivative(airy_bi_general(n, x), x)
+            sage: derivative(airy_bi_general(n, x), x)                                  # optional - sage.symbolic
             airy_bi(n + 1, x)
         """
         BuiltinFunction.__init__(self, "airy_bi", nargs=2,
@@ -534,10 +534,10 @@ class FunctionAiryBiGeneral(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_bi_general
-            sage: x, n = var('x n')
-            sage: derivative(airy_bi_general(n, x), x)
+            sage: x, n = var('x n')                                                     # optional - sage.symbolic
+            sage: derivative(airy_bi_general(n, x), x)                                  # optional - sage.symbolic
             airy_bi(n + 1, x)
-            sage: derivative(airy_bi_general(n, x), n)
+            sage: derivative(airy_bi_general(n, x), n)                                  # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot differentiate airy_bi
@@ -553,10 +553,10 @@ class FunctionAiryBiGeneral(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_bi_general
-            sage: x, n = var('x n')
-            sage: airy_bi_general(-2, 1.0)
+            sage: x, n = var('x n')                                                     # optional - sage.symbolic
+            sage: airy_bi_general(-2, 1.0)                                              # optional - sage.symbolic
             0.388621540699059
-            sage: airy_bi_general(n, 1.0)
+            sage: airy_bi_general(n, 1.0)                                               # optional - sage.symbolic
             airy_bi(n, 1.00000000000000)
         """
         if not isinstance(x, Expression) and \
@@ -573,7 +573,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_bi_general
-            sage: airy_bi_general(-2, 1.0)
+            sage: airy_bi_general(-2, 1.0)                                              # optional - sage.symbolic
             0.388621540699059
 
         """
@@ -592,9 +592,9 @@ class FunctionAiryBiSimple(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_bi_simple
-            sage: f = airy_bi_simple(x); f
+            sage: f = airy_bi_simple(x); f                                              # optional - sage.symbolic
             airy_bi(x)
-            sage: f._sympy_()
+            sage: f._sympy_()                                                           # optional - sympy sage.symbolic
             airybi(x)
         """
         BuiltinFunction.__init__(self, 'airy_bi',
@@ -610,7 +610,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_bi_simple
-            sage: derivative(airy_bi_simple(x), x)
+            sage: derivative(airy_bi_simple(x), x)                                      # optional - sage.symbolic
             airy_bi_prime(x)
         """
         return airy_bi_prime(x)
@@ -620,15 +620,15 @@ class FunctionAiryBiSimple(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_bi_simple
-            sage: airy_bi_simple(0)
+            sage: airy_bi_simple(0)                                                     # optional - sage.symbolic
             1/3*3^(5/6)/gamma(2/3)
             sage: airy_bi_simple(0.0)
             0.614926627446001
-            sage: airy_bi_simple(0).n() == airy_bi(0.0)
+            sage: airy_bi_simple(0).n() == airy_bi(0.0)                                 # optional - sage.symbolic
             True
-            sage: airy_bi_simple(I)
+            sage: airy_bi_simple(I)                                                     # optional - sage.symbolic
             airy_bi(I)
-            sage: airy_bi_simple(1.0 * I)
+            sage: airy_bi_simple(1.0 * I)                                               # optional - sage.symbolic
             0.648858208330395 + 0.344958634768048*I
         """
         from .gamma import gamma
@@ -643,25 +643,25 @@ class FunctionAiryBiSimple(BuiltinFunction):
             sage: from sage.functions.airy import airy_bi_simple
             sage: airy_bi_simple(0.0)
             0.614926627446001
-            sage: airy_bi_simple(1.0 * I)
+            sage: airy_bi_simple(1.0 * I)                                               # optional - sage.symbolic
             0.648858208330395 + 0.344958634768048*I
 
         We can use several methods for numerical evaluation::
 
-            sage: airy_bi_simple(3).n(algorithm='mpmath')
+            sage: airy_bi_simple(3).n(algorithm='mpmath')                               # optional - sage.symbolic
             14.0373289637302
-            sage: airy_bi_simple(3).n(algorithm='mpmath', prec=100)
+            sage: airy_bi_simple(3).n(algorithm='mpmath', prec=100)                     # optional - sage.symbolic
             14.037328963730232031740267314
-            sage: airy_bi_simple(3).n(algorithm='scipy')  # rel tol 1e-10
+            sage: airy_bi_simple(3).n(algorithm='scipy')  # rel tol 1e-10               # optional - sage.symbolic
             14.037328963730136
-            sage: airy_bi_simple(I).n(algorithm='scipy')  # rel tol 1e-10
+            sage: airy_bi_simple(I).n(algorithm='scipy')  # rel tol 1e-10               # optional - sage.symbolic
             0.648858208330395 + 0.34495863476804844*I
 
         TESTS::
 
-            sage: parent(airy_bi_simple(3).n(algorithm='scipy'))
+            sage: parent(airy_bi_simple(3).n(algorithm='scipy'))                        # optional - sage.symbolic
             Real Field with 53 bits of precision
-            sage: airy_bi_simple(3).n(algorithm='scipy', prec=200)
+            sage: airy_bi_simple(3).n(algorithm='scipy', prec=200)                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: airy_bi not implemented for precision > 53
@@ -700,12 +700,12 @@ class FunctionAiryBiPrime(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: x, n = var('x n')
-            sage: airy_bi_prime(x)
+            sage: x, n = var('x n')                                                     # optional - sage.symbolic
+            sage: airy_bi_prime(x)                                                      # optional - sage.symbolic
             airy_bi_prime(x)
-            sage: airy_bi_prime(0)
+            sage: airy_bi_prime(0)                                                      # optional - sage.symbolic
             3^(1/6)/gamma(1/3)
-            sage: airy_bi_prime(x)._sympy_()
+            sage: airy_bi_prime(x)._sympy_()                                            # optional - sympy sage.symbolic
             airybiprime(x)
         """
         BuiltinFunction.__init__(self, 'airy_bi_prime',
@@ -719,7 +719,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: derivative(airy_bi_prime(x), x)
+            sage: derivative(airy_bi_prime(x), x)                                       # optional - sage.symbolic
             x*airy_bi(x)
         """
         return x * airy_bi_simple(x)
@@ -728,7 +728,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: airy_bi_prime(0)
+            sage: airy_bi_prime(0)                                                      # optional - sage.symbolic
             3^(1/6)/gamma(1/3)
             sage: airy_bi_prime(0.0)
             0.448288357353826
@@ -747,20 +747,20 @@ class FunctionAiryBiPrime(BuiltinFunction):
 
         We can use several methods for numerical evaluation::
 
-            sage: airy_bi_prime(4).n(algorithm='mpmath')
+            sage: airy_bi_prime(4).n(algorithm='mpmath')                                # optional - sage.symbolic
             161.926683504613
-            sage: airy_bi_prime(4).n(algorithm='mpmath', prec=100)
+            sage: airy_bi_prime(4).n(algorithm='mpmath', prec=100)                      # optional - sage.symbolic
             161.92668350461340184309492429
-            sage: airy_bi_prime(4).n(algorithm='scipy')  # rel tol 1e-10
+            sage: airy_bi_prime(4).n(algorithm='scipy')  # rel tol 1e-10                # optional - sage.symbolic
             161.92668350461398
-            sage: airy_bi_prime(I).n(algorithm='scipy')  # rel tol 1e-10
+            sage: airy_bi_prime(I).n(algorithm='scipy')  # rel tol 1e-10                # optional - sage.symbolic
             0.135026646710819 - 0.1288373867812549*I
 
         TESTS::
 
-            sage: parent(airy_bi_prime(3).n(algorithm='scipy'))
+            sage: parent(airy_bi_prime(3).n(algorithm='scipy'))                         # optional - sage.symbolic
             Real Field with 53 bits of precision
-            sage: airy_bi_prime(3).n(algorithm='scipy', prec=200)
+            sage: airy_bi_prime(3).n(algorithm='scipy', prec=200)                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: airy_bi_prime not implemented
@@ -843,55 +843,55 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
 
     EXAMPLES::
 
-        sage: n, x = var('n x')
-        sage: airy_bi(x)
+        sage: n, x = var('n x')                                                         # optional - sage.symbolic
+        sage: airy_bi(x)                                                                # optional - sage.symbolic
         airy_bi(x)
 
     It can return derivatives or integrals::
 
-        sage: airy_bi(2, x)
+        sage: airy_bi(2, x)                                                             # optional - sage.symbolic
         airy_bi(2, x)
-        sage: airy_bi(1, x, hold_derivative=False)
+        sage: airy_bi(1, x, hold_derivative=False)                                      # optional - sage.symbolic
         airy_bi_prime(x)
-        sage: airy_bi(2, x, hold_derivative=False)
+        sage: airy_bi(2, x, hold_derivative=False)                                      # optional - sage.symbolic
         x*airy_bi(x)
-        sage: airy_bi(-2, x, hold_derivative=False)
+        sage: airy_bi(-2, x, hold_derivative=False)                                     # optional - sage.symbolic
         airy_bi(-2, x)
-        sage: airy_bi(n, x)
+        sage: airy_bi(n, x)                                                             # optional - sage.symbolic
         airy_bi(n, x)
 
     It can be evaluated symbolically or numerically for real or complex
     values::
 
-        sage: airy_bi(0)
+        sage: airy_bi(0)                                                                # optional - sage.symbolic
         1/3*3^(5/6)/gamma(2/3)
         sage: airy_bi(0.0)
         0.614926627446001
-        sage: airy_bi(I)
+        sage: airy_bi(I)                                                                # optional - sage.symbolic
         airy_bi(I)
-        sage: airy_bi(1.0*I)
+        sage: airy_bi(1.0*I)                                                            # optional - sage.symbolic
         0.648858208330395 + 0.344958634768048*I
 
     The functions can be evaluated numerically using mpmath,
     which can compute the values to arbitrary precision, and scipy::
 
-        sage: airy_bi(2).n(prec=100)
+        sage: airy_bi(2).n(prec=100)                                                    # optional - sage.symbolic
         3.2980949999782147102806044252
-        sage: airy_bi(2).n(algorithm='mpmath', prec=100)
+        sage: airy_bi(2).n(algorithm='mpmath', prec=100)                                # optional - sage.symbolic
         3.2980949999782147102806044252
-        sage: airy_bi(2).n(algorithm='scipy')  # rel tol 1e-10
+        sage: airy_bi(2).n(algorithm='scipy')  # rel tol 1e-10                          # optional - sage.symbolic
         3.2980949999782134
 
     And the derivatives can be evaluated::
 
-        sage: airy_bi(1, 0)
+        sage: airy_bi(1, 0)                                                             # optional - sage.symbolic
         3^(1/6)/gamma(1/3)
         sage: airy_bi(1, 0.0)
         0.448288357353826
 
     Plots::
 
-        sage: plot(airy_bi(x), (x, -10, 5)) + plot(airy_bi_prime(x),
+        sage: plot(airy_bi(x), (x, -10, 5)) + plot(airy_bi_prime(x),                    # optional - sage.plot sage.symbolic
         ....:  (x, -10, 5), color='red')
         Graphics object consisting of 2 graphics primitives
 
