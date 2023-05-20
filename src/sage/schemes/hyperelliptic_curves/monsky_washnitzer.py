@@ -3481,7 +3481,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: E = EllipticCurve(K,[-31/3,-2501/108]) #11a
             sage: P = E(K(14/3), K(11/2))
             sage: w = E.invariant_differential()
-            sage: w.coleman_integral(P,2*P)
+            sage: w.coleman_integral(P, 2*P)
             O(5^6)
 
             sage: Q = E([3,58332])

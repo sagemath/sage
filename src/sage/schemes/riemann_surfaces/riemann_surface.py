@@ -2945,16 +2945,16 @@ class RiemannSurface():
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<z,w> = QQ[]
-            sage: S = RiemannSurface(w^2+z^4-1, prec=100)
+            sage: S = RiemannSurface(w^2 + z^4 - 1, prec=100)
             sage: branch = 0
             sage: eps = S._RR(2)**(-S._prec)
-            sage: z_start = 1-eps
+            sage: z_start = 1 - eps
             sage: z_end = 0
             sage: w_start = S.w_values(z_start)[0]
             sage: s = sign(w_start)
             sage: u_edge = ((z_start, w_start), z_end)
             sage: J, _ = S._integrate_differentials_iteratively(u_edge)
-            sage: bool(J[0]+s*S._RR(sqrt(pi)*gamma(5/4)/gamma(3/4)/2)<1e-10)
+            sage: bool(J[0] + s*S._RR(sqrt(pi)*gamma(5/4)/gamma(3/4)/2) < 1e-10)        # optional - sage.symbolic
             True
 
         .. NOTE::

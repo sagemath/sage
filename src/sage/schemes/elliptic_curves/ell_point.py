@@ -968,6 +968,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         An example over a number field (see :trac:`3383`)::
 
             sage: E = EllipticCurve('19a1')
+            sage: x = polygen(ZZ, 'x')
             sage: K.<t> = NumberField(x^9 - 3*x^8 - 4*x^7 + 16*x^6 - 3*x^5              # optional - sage.rings.number_field
             ....:                     - 21*x^4 + 5*x^3 + 7*x^2 - 7*x + 1)
             sage: EK = E.base_extend(K)                                                 # optional - sage.rings.number_field

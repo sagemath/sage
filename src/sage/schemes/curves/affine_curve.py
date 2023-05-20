@@ -462,7 +462,7 @@ class AffinePlaneCurve(AffineCurve):
         A line over `\mathbf{RR}`::
 
             sage: R.<x, y> = RR[]
-            sage: C = Curve(R(y - sqrt(2)*x))
+            sage: C = Curve(R(y - sqrt(2)*x))                                           # optional - sage.symbolic
             sage: C.plot()                                                              # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
