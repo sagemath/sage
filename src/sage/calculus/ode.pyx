@@ -263,7 +263,7 @@ class ode_solver():
 
     By default T.plot_solution() plots the y_0, to plot general y_i use::
 
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # optional - sage.plot
         ....:     T.plot_solution(i=0, filename=f.name)
         ....:     T.plot_solution(i=1, filename=f.name)
         ....:     T.plot_solution(i=2, filename=f.name)
@@ -274,13 +274,13 @@ class ode_solver():
     argument i. ::
 
         sage: f = T.interpolate_solution()
-        sage: plot(f,0,12).show()
+        sage: plot(f,0,12).show()                                                       # optional - sage.plot
         sage: f = T.interpolate_solution(i=1)
-        sage: plot(f,0,12).show()
+        sage: plot(f,0,12).show()                                                       # optional - sage.plot
         sage: f = T.interpolate_solution(i=2)
-        sage: plot(f,0,12).show()
+        sage: plot(f,0,12).show()                                                       # optional - sage.plot
         sage: f = T.interpolate_solution()
-        sage: f(pi)
+        sage: f(pi)                                                                     # optional - sage.symbolic
         0.5379...
 
     The solver attributes may also be set up using arguments to
@@ -289,7 +289,7 @@ class ode_solver():
         sage: T = ode_solver(g_1,y_0=[0,1,1],scale_abs=[1e-4,1e-4,1e-5],error_rel=1e-4, algorithm="rk8pd")
         sage: T.ode_solve(t_span=[0,12],num_points=100)
         sage: f = T.interpolate_solution()
-        sage: f(pi)
+        sage: f(pi)                                                                     # optional - sage.symbolic
         0.5379...
 
     Unfortunately because Python functions are used, this solver
@@ -381,11 +381,11 @@ class ode_solver():
             sage: T.function = lambda t,y: [cos(y[0]) * sin(t)]
             sage: T.jacobian = lambda t,y: [[-sin(y[0]) * sin(t)]]
             sage: T.ode_solve(y_0=[1],t_span=[0,20],num_points=1000)
-            sage: T.plot_solution()
+            sage: T.plot_solution()                                                     # optional - sage.plot
 
         And with some options::
 
-            sage: T.plot_solution(color='red', axes_labels=["t", "x(t)"])
+            sage: T.plot_solution(color='red', axes_labels=["t", "x(t)"])               # optional - sage.plot
         """
         if interpolate:
             from sage.plot.line import line2d
