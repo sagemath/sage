@@ -1109,7 +1109,7 @@ def log(*args, **kwds):
 
     For input zero, the following behavior occurs::
 
-        sage: log(0)
+        sage: log(0)                                                                    # optional - sage.symbolic
         -Infinity
         sage: log(CC(0))
         -infinity
@@ -1847,26 +1847,26 @@ def squarefree_part(x):
 
 def _do_sqrt(x, prec=None, extend=True, all=False):
     r"""
-    Used internally to compute the square root of x.
+    Used internally to compute the square root of ``x``.
 
     INPUT:
 
-    -  ``x`` - a number
+    -  ``x`` -- a number
 
-    -  ``prec`` - None (default) or a positive integer
-       (bits of precision) If not None, then compute the square root
+    -  ``prec`` -- ``None`` (default) or a positive integer
+       (bits of precision) If not ``None``, then compute the square root
        numerically to prec bits of precision.
 
-    -  ``extend`` - bool (default: True); this is a place
-       holder, and is always ignored since in the symbolic ring everything
+    -  ``extend`` -- bool (default: ``True``); this is a placeholder, and is
+       always ignored since in the symbolic ring everything
        has a square root.
 
-    -  ``extend`` - bool (default: True); whether to extend
+    -  ``extend`` -- bool (default: ``True``); whether to extend
        the base ring to find roots. The extend parameter is ignored if
-       prec is a positive integer.
+       ``prec`` is a positive integer.
 
-    -  ``all`` - bool (default: False); whether to return
-       a list of all the square roots of x.
+    -  ``all`` -- bool (default: ``False``); whether to return
+       a list of all the square roots of ``x``.
 
 
     EXAMPLES::
@@ -1911,18 +1911,18 @@ def sqrt(x, *args, **kwds):
     r"""
     INPUT:
 
-    -  ``x`` - a number
+    -  ``x`` -- a number
 
-    -  ``prec`` - integer (default: None): if None, returns
+    -  ``prec`` -- integer (default: ``None``): if ``None``, returns
        an exact square root; otherwise returns a numerical square root if
        necessary, to the given bits of precision.
 
-    -  ``extend`` - bool (default: True); this is a place
-       holder, and is always ignored or passed to the sqrt function for x,
+    -  ``extend`` -- bool (default: ``True``); this is a placeholder, and
+       is always ignored or passed to the ``sqrt`` method of ``x``,
        since in the symbolic ring everything has a square root.
 
-    -  ``all`` - bool (default: False); if True, return all
-       square roots of self, instead of just one.
+    -  ``all`` -- bool (default: ``False``); if ``True``, return all
+       square roots of ``self``, instead of just one.
 
     EXAMPLES::
 

@@ -1066,7 +1066,7 @@ def lazy_import(module, names, as_=None, *,
         <class 'sage.misc.lazy_import.LazyImport'>
         sage: 'EXAMPLES' in Bar.plot.__doc__
         True
-        sage: type(Foo.__dict__['plot'])
+        sage: type(Foo.__dict__['plot'])                                                # optional - sage.plot
         <... 'function'>
 
     If deprecated then a deprecation warning is issued::
