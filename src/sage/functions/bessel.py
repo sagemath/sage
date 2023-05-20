@@ -122,48 +122,48 @@ EXAMPLES:
 
     Evaluate the Bessel J function symbolically and numerically::
 
-        sage: bessel_J(0, x)
+        sage: bessel_J(0, x)                                                            # optional - sage.symbolic
         bessel_J(0, x)
-        sage: bessel_J(0, 0)
+        sage: bessel_J(0, 0)                                                            # optional - sage.symbolic
         1
-        sage: bessel_J(0, x).diff(x)
+        sage: bessel_J(0, x).diff(x)                                                    # optional - sage.symbolic
         -1/2*bessel_J(1, x) + 1/2*bessel_J(-1, x)
 
-        sage: N(bessel_J(0, 0), digits = 20)
+        sage: N(bessel_J(0, 0), digits=20)                                              # optional - sage.symbolic
         1.0000000000000000000
-        sage: find_root(bessel_J(0,x), 0, 5)
+        sage: find_root(bessel_J(0,x), 0, 5)                                            # optional - sage.symbolic
         2.404825557695773
 
     Plot the Bessel J function::
 
-        sage: f(x) = Bessel(0)(x); f
+        sage: f(x) = Bessel(0)(x); f                                                    # optional - sage.symbolic
         x |--> bessel_J(0, x)
-        sage: plot(f, (x, 1, 10))
+        sage: plot(f, (x, 1, 10))                                                       # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     Visualize the Bessel Y function on the complex plane
     (set plot_points to a higher value to get more detail)::
 
-        sage: complex_plot(bessel_Y(0, x), (-5, 5), (-5, 5), plot_points=20)
+        sage: complex_plot(bessel_Y(0, x), (-5, 5), (-5, 5), plot_points=20)            # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     Evaluate a combination of Bessel functions::
 
-        sage: f(x) = bessel_J(1, x) - bessel_Y(0, x)
-        sage: f(pi)
+        sage: f(x) = bessel_J(1, x) - bessel_Y(0, x)                                    # optional - sage.symbolic
+        sage: f(pi)                                                                     # optional - sage.symbolic
         bessel_J(1, pi) - bessel_Y(0, pi)
-        sage: f(pi).n()
+        sage: f(pi).n()                                                                 # optional - sage.symbolic
         -0.0437509653365599
-        sage: f(pi).n(digits=50)
+        sage: f(pi).n(digits=50)                                                        # optional - sage.symbolic
         -0.043750965336559909054985168023342675387737118378169
 
     Symbolically solve a second order differential equation with initial
     conditions `y(1) = a` and `y'(1) = b` in terms of Bessel functions::
 
-        sage: y = function('y')(x)
-        sage: a, b = var('a, b')
-        sage: diffeq = x^2*diff(y,x,x) + x*diff(y,x) + x^2*y == 0
-        sage: f = desolve(diffeq, y, [1, a, b]); f
+        sage: y = function('y')(x)                                                      # optional - sage.symbolic
+        sage: a, b = var('a, b')                                                        # optional - sage.symbolic
+        sage: diffeq = x^2*diff(y,x,x) + x*diff(y,x) + x^2*y == 0                       # optional - sage.symbolic
+        sage: f = desolve(diffeq, y, [1, a, b]); f                                      # optional - sage.symbolic
         (a*bessel_Y(1, 1) + b*bessel_Y(0, 1))*bessel_J(0, x)/(bessel_J(0,
         1)*bessel_Y(1, 1) - bessel_J(1, 1)*bessel_Y(0, 1)) -
         (a*bessel_J(1, 1) + b*bessel_J(0, 1))*bessel_Y(0, x)/(bessel_J(0,
@@ -212,18 +212,30 @@ REFERENCES:
 
 from sage.misc.functional import sqrt
 from sage.functions.log import exp
+from sage.functions.gamma import gamma
 from sage.functions.hyperbolic import sinh, cosh
 from sage.functions.trig import sin, cos
-from sage.libs.mpmath import utils as mpmath_utils
-from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
+from sage.rings.infinity import infinity, unsigned_infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.element import get_coercion_model
-from sage.symbolic.constants import pi
-from sage.symbolic.ring import SR
+from sage.structure.element import Expression, get_coercion_model
 from sage.symbolic.function import BuiltinFunction
-from sage.symbolic.expression import Expression
+
+lazy_import('sage.misc.latex', 'latex')
+
+lazy_import('sage.symbolic.constants', 'pi')
+lazy_import('sage.symbolic.ring', 'SR')
+
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('mpmath',
+            ['besseli', 'besselj', 'besselk',
+             'bessely', 'hankel1', 'hankel2',
+             'struveh', 'struvel'],
+            as_=['_mpmath_besseli', '_mpmath_besselj', '_mpmath_besselk',
+                 '_mpmath_bessely', '_mpmath_hankel1', '_mpmath_hankel2',
+                 '_mpmath_struveh', '_mpmath_struvel'])
 
 
 class Function_Bessel_J(BuiltinFunction):
@@ -260,48 +272,48 @@ class Function_Bessel_J(BuiltinFunction):
 
         sage: bessel_J(1.0, 1.0)
         0.440050585744933
-        sage: bessel_J(2, I).n(digits=30)
+        sage: bessel_J(2, I).n(digits=30)                                               # optional - sage.symbolic
         -0.135747669767038281182852569995
 
-        sage: bessel_J(1, x)
+        sage: bessel_J(1, x)                                                            # optional - sage.symbolic
         bessel_J(1, x)
-        sage: n = var('n')
-        sage: bessel_J(n, x)
+        sage: n = var('n')                                                              # optional - sage.symbolic
+        sage: bessel_J(n, x)                                                            # optional - sage.symbolic
         bessel_J(n, x)
 
     Examples of symbolic manipulation::
 
-        sage: a = bessel_J(pi, bessel_J(1, I)); a
+        sage: a = bessel_J(pi, bessel_J(1, I)); a                                       # optional - sage.symbolic
         bessel_J(pi, bessel_J(1, I))
-        sage: N(a, digits=20)
+        sage: N(a, digits=20)                                                           # optional - sage.symbolic
         0.00059023706363796717363 - 0.0026098820470081958110*I
 
-        sage: f = bessel_J(2, x)
-        sage: f.diff(x)
+        sage: f = bessel_J(2, x)                                                        # optional - sage.symbolic
+        sage: f.diff(x)                                                                 # optional - sage.symbolic
         -1/2*bessel_J(3, x) + 1/2*bessel_J(1, x)
 
     Comparison to a well-known integral representation of `J_1(1)`::
 
-        sage: A = numerical_integral(1/pi*cos(x - sin(x)), 0, pi)
-        sage: A[0]  # abs tol 1e-14
+        sage: A = numerical_integral(1/pi*cos(x - sin(x)), 0, pi)                       # optional - sage.symbolic
+        sage: A[0]  # abs tol 1e-14                                                     # optional - sage.symbolic
         0.44005058574493355
-        sage: bessel_J(1.0, 1.0) - A[0] < 1e-15
+        sage: bessel_J(1.0, 1.0) - A[0] < 1e-15                                         # optional - sage.symbolic
         True
 
     Integration is supported directly and through Maxima::
 
-        sage: f = bessel_J(2, x)
-        sage: f.integrate(x)
+        sage: f = bessel_J(2, x)                                                        # optional - sage.symbolic
+        sage: f.integrate(x)                                                            # optional - sage.symbolic
         1/24*x^3*hypergeometric((3/2,), (5/2, 3), -1/4*x^2)
-        sage: m = maxima(bessel_J(2, x))
-        sage: m.integrate(x)
+        sage: m = maxima(bessel_J(2, x))                                                # optional - sage.symbolic
+        sage: m.integrate(x)                                                            # optional - sage.symbolic
         (hypergeometric([3/2],[5/2,3],-_SAGE_VAR_x^2/4)*_SAGE_VAR_x^3)/24
 
     Visualization (set plot_points to a higher value to get more detail)::
 
-        sage: plot(bessel_J(1,x), (x,0,5), color='blue')
+        sage: plot(bessel_J(1,x), (x,0,5), color='blue')                                # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
-        sage: complex_plot(bessel_J(1, x), (-5, 5), (-5, 5), plot_points=20)
+        sage: complex_plot(bessel_J(1, x), (-5, 5), (-5, 5), plot_points=20)            # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     ALGORITHM:
@@ -330,7 +342,7 @@ class Function_Bessel_J(BuiltinFunction):
 
             sage: sage.functions.bessel.Function_Bessel_J()
             bessel_J
-            sage: bessel_J(x, x)._sympy_()
+            sage: bessel_J(x, x)._sympy_()                                              # optional - sympy sage.symbolic
             besselj(x, x)
         """
         BuiltinFunction.__init__(self, 'bessel_J', nargs=2,
@@ -345,23 +357,22 @@ class Function_Bessel_J(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: n = var('n')
-            sage: bessel_J(0, 0)
+            sage: n = var('n')                                                          # optional - sage.symbolic
+            sage: bessel_J(0, 0)                                                        # optional - sage.symbolic
             1
-            sage: bessel_J(I, 0)
+            sage: bessel_J(I, 0)                                                        # optional - sage.symbolic
             bessel_J(I, 0)
-            sage: bessel_J(5/2, 0)
+            sage: bessel_J(5/2, 0)                                                      # optional - sage.symbolic
             0
-            sage: bessel_J(-5/2, 0)
+            sage: bessel_J(-5/2, 0)                                                     # optional - sage.symbolic
             Infinity
-            sage: bessel_J(1/2, x)
+            sage: bessel_J(1/2, x)                                                      # optional - sage.symbolic
             sqrt(2)*sqrt(1/(pi*x))*sin(x)
-            sage: bessel_J(-1/2, x)
+            sage: bessel_J(-1/2, x)                                                     # optional - sage.symbolic
             sqrt(2)*sqrt(1/(pi*x))*cos(x)
-            sage: bessel_J(n, 0)
+            sage: bessel_J(n, 0)                                                        # optional - sage.symbolic
             bessel_J(n, 0)
         """
-        from sage.rings.infinity import unsigned_infinity
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return ZZ.one()
@@ -380,7 +391,7 @@ class Function_Bessel_J(BuiltinFunction):
 
             sage: bessel_J(0.0, 1.0)
             0.765197686557967
-            sage: bessel_J(0, 1).n(digits=20)
+            sage: bessel_J(0, 1).n(digits=20)                                           # optional - sage.symbolic
             0.76519768655796655145
             sage: bessel_J(0.5, 1.5)
             0.649838074753747
@@ -405,8 +416,7 @@ class Function_Bessel_J(BuiltinFunction):
             pass
 
         n, x = get_coercion_model().canonical_coercion(n, x)
-        import mpmath
-        return mpmath_utils.call(mpmath.besselj, n, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_besselj, n, x, parent=parent)
 
     def _derivative_(self, n, x, diff_param):
         """
@@ -414,11 +424,11 @@ class Function_Bessel_J(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: f(z) = bessel_J(10, z)
-            sage: derivative(f, z)
+            sage: f(z) = bessel_J(10, z)                                                # optional - sage.symbolic
+            sage: derivative(f, z)                                                      # optional - sage.symbolic
             z |--> -1/2*bessel_J(11, z) + 1/2*bessel_J(9, z)
-            sage: nu = var('nu')
-            sage: bessel_J(nu, z).diff(nu)
+            sage: nu = var('nu')                                                        # optional - sage.symbolic
+            sage: bessel_J(nu, z).diff(nu)                                              # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: derivative with respect to order
@@ -435,7 +445,7 @@ class Function_Bessel_J(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: latex(bessel_J(1, x))
+            sage: latex(bessel_J(1, x))                                                 # optional - sage.symbolic
             J_{1}(x)
         """
         return r"J_{%s}(%s)" % (latex(n), latex(z))
@@ -469,45 +479,46 @@ class Function_Bessel_Y(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: bessel_Y(1, x)
+        sage: bessel_Y(1, x)                                                            # optional - sage.symbolic
         bessel_Y(1, x)
         sage: bessel_Y(1.0, 1.0)
         -0.781212821300289
-        sage: n = var('n')
-        sage: bessel_Y(n, x)
+        sage: n = var('n')                                                              # optional - sage.symbolic
+        sage: bessel_Y(n, x)                                                            # optional - sage.symbolic
         bessel_Y(n, x)
-        sage: bessel_Y(2, I).n()
+        sage: bessel_Y(2, I).n()                                                        # optional - sage.symbolic
         1.03440456978312 - 0.135747669767038*I
-        sage: bessel_Y(0, 0).n()
+        sage: bessel_Y(0, 0).n()                                                        # optional - sage.symbolic
         -infinity
-        sage: bessel_Y(0, 1).n(128)
+        sage: bessel_Y(0, 1).n(128)                                                     # optional - sage.symbolic
         0.088256964215676957982926766023515162828
 
     Examples of symbolic manipulation::
 
-        sage: a = bessel_Y(pi, bessel_Y(1, I)); a
+        sage: a = bessel_Y(pi, bessel_Y(1, I)); a                                       # optional - sage.symbolic
         bessel_Y(pi, bessel_Y(1, I))
-        sage: N(a, digits=20)
+        sage: N(a, digits=20)                                                           # optional - sage.symbolic
         4.2059146571791095708 + 21.307914215321993526*I
 
-        sage: f = bessel_Y(2, x)
-        sage: f.diff(x)
+        sage: f = bessel_Y(2, x)                                                        # optional - sage.symbolic
+        sage: f.diff(x)                                                                 # optional - sage.symbolic
         -1/2*bessel_Y(3, x) + 1/2*bessel_Y(1, x)
 
     High precision and complex valued inputs (see :trac:`4230`)::
 
-        sage: bessel_Y(0, 1).n(128)
+        sage: bessel_Y(0, 1).n(128)                                                     # optional - sage.symbolic
         0.088256964215676957982926766023515162828
         sage: bessel_Y(0, RealField(200)(1))
         0.088256964215676957982926766023515162827817523090675546711044
-        sage: bessel_Y(0, ComplexField(200)(0.5+I))
-        0.077763160184438051408593468823822434235010300228009867784073 + 1.0142336049916069152644677682828326441579314239591288411739*I
+        sage: bessel_Y(0, ComplexField(200)(0.5+I))                                     # optional - sage.symbolic
+        0.077763160184438051408593468823822434235010300228009867784073
+         + 1.0142336049916069152644677682828326441579314239591288411739*I
 
     Visualization (set plot_points to a higher value to get more detail)::
 
-        sage: plot(bessel_Y(1,x), (x,0,5), color='blue')
+        sage: plot(bessel_Y(1, x), (x, 0, 5), color='blue')                             # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
-        sage: complex_plot(bessel_Y(1, x), (-5, 5), (-5, 5), plot_points=20)
+        sage: complex_plot(bessel_Y(1, x), (-5, 5), (-5, 5), plot_points=20)            # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     ALGORITHM:
@@ -564,21 +575,20 @@ class Function_Bessel_Y(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: bessel_Y(1, 0)
+            sage: bessel_Y(1, 0)                                                        # optional - sage.symbolic
             Infinity
-            sage: bessel_Y(I,0)
+            sage: bessel_Y(I,0)                                                         # optional - sage.symbolic
             bessel_Y(I, 0)
-            sage: bessel_Y(1/2, x)
+            sage: bessel_Y(1/2, x)                                                      # optional - sage.symbolic
             -sqrt(2)*sqrt(1/(pi*x))*cos(x)
-            sage: bessel_Y(-1/2, x)
+            sage: bessel_Y(-1/2, x)                                                     # optional - sage.symbolic
             sqrt(2)*sqrt(1/(pi*x))*sin(x)
 
         TESTS::
 
-            sage: bessel_Y(0, 0)
+            sage: bessel_Y(0, 0)                                                        # optional - sage.symbolic
             -Infinity
         """
-        from sage.rings.infinity import infinity, unsigned_infinity
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return -infinity
@@ -595,9 +605,9 @@ class Function_Bessel_Y(BuiltinFunction):
 
             sage: bessel_Y(0.5, 1.5)
             -0.0460831658930974
-            sage: bessel_Y(1.0+2*I, 3.0+4*I)
+            sage: bessel_Y(1.0+2*I, 3.0+4*I)                                            # optional - sage.symbolic
             0.699410324467538 + 0.228917940896421*I
-            sage: bessel_Y(0, 1).n(256)
+            sage: bessel_Y(0, 1).n(256)                                                 # optional - sage.symbolic
             0.08825696421567695798292676602351516282781752309067554671104384761199978932351
 
         Check for correct rounding (:trac:`17122`)::
@@ -620,8 +630,7 @@ class Function_Bessel_Y(BuiltinFunction):
             pass
 
         n, x = get_coercion_model().canonical_coercion(n, x)
-        import mpmath
-        return mpmath_utils.call(mpmath.bessely, n, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_bessely, n, x, parent=parent)
 
     def _derivative_(self, n, x, diff_param):
         """
@@ -629,11 +638,11 @@ class Function_Bessel_Y(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: f(x) = bessel_Y(10, x)
-            sage: derivative(f, x)
+            sage: f(x) = bessel_Y(10, x)                                                # optional - sage.symbolic
+            sage: derivative(f, x)                                                      # optional - sage.symbolic
             x |--> -1/2*bessel_Y(11, x) + 1/2*bessel_Y(9, x)
-            sage: nu = var('nu')
-            sage: bessel_Y(nu, x).diff(nu)
+            sage: nu = var('nu')                                                        # optional - sage.symbolic
+            sage: bessel_Y(nu, x).diff(nu)                                              # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: derivative with respect to order
@@ -649,7 +658,7 @@ class Function_Bessel_Y(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: latex(bessel_Y(1, x))
+            sage: latex(bessel_Y(1, x))                                                 # optional - sage.symbolic
             Y_{1}(x)
         """
         return r"Y_{%s}(%s)" % (latex(n), latex(z))
@@ -670,60 +679,61 @@ class Function_Bessel_I(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: bessel_I(1, x)
+        sage: bessel_I(1, x)                                                            # optional - sage.symbolic
         bessel_I(1, x)
         sage: bessel_I(1.0, 1.0)
         0.565159103992485
-        sage: n = var('n')
-        sage: bessel_I(n, x)
+        sage: n = var('n')                                                              # optional - sage.symbolic
+        sage: bessel_I(n, x)                                                            # optional - sage.symbolic
         bessel_I(n, x)
-        sage: bessel_I(2, I).n()
+        sage: bessel_I(2, I).n()                                                        # optional - sage.symbolic
         -0.114903484931900
 
     Examples of symbolic manipulation::
 
-        sage: a = bessel_I(pi, bessel_I(1, I))
-        sage: N(a, digits=20)
+        sage: a = bessel_I(pi, bessel_I(1, I))                                          # optional - sage.symbolic
+        sage: N(a, digits=20)                                                           # optional - sage.symbolic
         0.00026073272117205890524 - 0.0011528954889080572268*I
 
-        sage: f = bessel_I(2, x)
-        sage: f.diff(x)
+        sage: f = bessel_I(2, x)                                                        # optional - sage.symbolic
+        sage: f.diff(x)                                                                 # optional - sage.symbolic
         1/2*bessel_I(3, x) + 1/2*bessel_I(1, x)
 
     Special identities that bessel_I satisfies::
 
-        sage: bessel_I(1/2, x)
+        sage: bessel_I(1/2, x)                                                          # optional - sage.symbolic
         sqrt(2)*sqrt(1/(pi*x))*sinh(x)
-        sage: eq = bessel_I(1/2, x) == bessel_I(0.5, x)
-        sage: eq.test_relation()
+        sage: eq = bessel_I(1/2, x) == bessel_I(0.5, x)                                 # optional - sage.symbolic
+        sage: eq.test_relation()                                                        # optional - sage.symbolic
         True
-        sage: bessel_I(-1/2, x)
+        sage: bessel_I(-1/2, x)                                                         # optional - sage.symbolic
         sqrt(2)*sqrt(1/(pi*x))*cosh(x)
-        sage: eq = bessel_I(-1/2, x) == bessel_I(-0.5, x)
-        sage: eq.test_relation()
+        sage: eq = bessel_I(-1/2, x) == bessel_I(-0.5, x)                               # optional - sage.symbolic
+        sage: eq.test_relation()                                                        # optional - sage.symbolic
         True
 
     Examples of asymptotic behavior::
 
-        sage: limit(bessel_I(0, x), x=oo)
+        sage: limit(bessel_I(0, x), x=oo)                                               # optional - sage.symbolic
         +Infinity
-        sage: limit(bessel_I(0, x), x=0)
+        sage: limit(bessel_I(0, x), x=0)                                                # optional - sage.symbolic
         1
 
     High precision and complex valued inputs::
 
-        sage: bessel_I(0, 1).n(128)
+        sage: bessel_I(0, 1).n(128)                                                     # optional - sage.symbolic
         1.2660658777520083355982446252147175376
         sage: bessel_I(0, RealField(200)(1))
         1.2660658777520083355982446252147175376076703113549622068081
-        sage: bessel_I(0, ComplexField(200)(0.5+I))
-        0.80644357583493619472428518415019222845373366024179916785502 + 0.22686958987911161141397453401487525043310874687430711021434*I
+        sage: bessel_I(0, ComplexField(200)(0.5+I))                                     # optional - sage.symbolic
+        0.80644357583493619472428518415019222845373366024179916785502
+         + 0.22686958987911161141397453401487525043310874687430711021434*I
 
     Visualization (set plot_points to a higher value to get more detail)::
 
-        sage: plot(bessel_I(1,x), (x,0,5), color='blue')
+        sage: plot(bessel_I(1, x), (x, 0, 5), color='blue')                             # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
-        sage: complex_plot(bessel_I(1, x), (-5, 5), (-5, 5), plot_points=20)
+        sage: complex_plot(bessel_I(1, x), (-5, 5), (-5, 5), plot_points=20)            # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     ALGORITHM:
@@ -733,7 +743,7 @@ class Function_Bessel_I(BuiltinFunction):
 
     TESTS::
 
-        sage: N(bessel_I(1,1),500)
+        sage: N(bessel_I(1,1),500)                                                      # optional - sage.symbolic
         0.565159103992485027207696027609863307328899621621092009480294489479255640964371134092664997766814410064677886055526302676857637684917179812041131208121
 
     Check whether the return value is real whenever the argument is real (:trac:`10251`)::
@@ -755,9 +765,9 @@ class Function_Bessel_I(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: bessel_I(1,x)
+            sage: bessel_I(1, x)                                                        # optional - sage.symbolic
             bessel_I(1, x)
-            sage: bessel_I(x, x)._sympy_()
+            sage: bessel_I(x, x)._sympy_()                                              # optional - sympy sage.symbolic
             besseli(x, x)
         """
         BuiltinFunction.__init__(self, 'bessel_I', nargs=2,
@@ -771,23 +781,22 @@ class Function_Bessel_I(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: n,y = var('n,y')
-            sage: bessel_I(y, x)
+            sage: n,y = var('n,y')                                                      # optional - sage.symbolic
+            sage: bessel_I(y, x)                                                        # optional - sage.symbolic
             bessel_I(y, x)
-            sage: bessel_I(0, 0)
+            sage: bessel_I(0, 0)                                                        # optional - sage.symbolic
             1
-            sage: bessel_I(7/2, 0)
+            sage: bessel_I(7/2, 0)                                                      # optional - sage.symbolic
             0
-            sage: bessel_I(-7/2, 0)
+            sage: bessel_I(-7/2, 0)                                                     # optional - sage.symbolic
             Infinity
-            sage: bessel_I(1/2, 1)
+            sage: bessel_I(1/2, 1)                                                      # optional - sage.symbolic
             sqrt(2)*sinh(1)/sqrt(pi)
-            sage: bessel_I(-1/2, pi)
+            sage: bessel_I(-1/2, pi)                                                    # optional - sage.symbolic
             sqrt(2)*cosh(pi)/pi
-            sage: bessel_I(n, 0)
+            sage: bessel_I(n, 0)                                                        # optional - sage.symbolic
             bessel_I(n, 0)
         """
-        from sage.rings.infinity import unsigned_infinity
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return ZZ.one()
@@ -806,11 +815,10 @@ class Function_Bessel_I(BuiltinFunction):
 
             sage: bessel_I(0.0, 1.0)
             1.26606587775201
-            sage: bessel_I(1,3).n(digits=20)
+            sage: bessel_I(1,3).n(digits=20)                                            # optional - sage.symbolic
             3.9533702174026093965
         """
-        import mpmath
-        return mpmath_utils.call(mpmath.besseli, n, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_besseli, n, x, parent=parent)
 
     def _derivative_(self, n, x, diff_param):
         """
@@ -819,11 +827,11 @@ class Function_Bessel_I(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: f(z) = bessel_I(10, x)
-            sage: derivative(f, x)
+            sage: f(z) = bessel_I(10, x)                                                # optional - sage.symbolic
+            sage: derivative(f, x)                                                      # optional - sage.symbolic
             z |--> 1/2*bessel_I(11, x) + 1/2*bessel_I(9, x)
-            sage: nu = var('nu')
-            sage: bessel_I(nu, x).diff(nu)
+            sage: nu = var('nu')                                                        # optional - sage.symbolic
+            sage: bessel_I(nu, x).diff(nu)                                              # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: derivative with respect to order
@@ -839,7 +847,7 @@ class Function_Bessel_I(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: latex(bessel_I(1, x))
+            sage: latex(bessel_I(1, x))                                                 # optional - sage.symbolic
             I_{1}(x)
         """
         return r"I_{%s}(%s)" % (latex(n), latex(z))
@@ -860,57 +868,58 @@ class Function_Bessel_K(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: bessel_K(1, x)
+        sage: bessel_K(1, x)                                                            # optional - sage.symbolic
         bessel_K(1, x)
         sage: bessel_K(1.0, 1.0)
         0.601907230197235
-        sage: n = var('n')
-        sage: bessel_K(n, x)
+        sage: n = var('n')                                                              # optional - sage.symbolic
+        sage: bessel_K(n, x)                                                            # optional - sage.symbolic
         bessel_K(n, x)
-        sage: bessel_K(2, I).n()
+        sage: bessel_K(2, I).n()                                                        # optional - sage.symbolic
         -2.59288617549120 + 0.180489972066962*I
 
     Examples of symbolic manipulation::
 
-        sage: a = bessel_K(pi, bessel_K(1, I)); a
+        sage: a = bessel_K(pi, bessel_K(1, I)); a                                       # optional - sage.symbolic
         bessel_K(pi, bessel_K(1, I))
-        sage: N(a, digits=20)
+        sage: N(a, digits=20)                                                           # optional - sage.symbolic
         3.8507583115005220156 + 0.068528298579883425456*I
 
-        sage: f = bessel_K(2, x)
-        sage: f.diff(x)
+        sage: f = bessel_K(2, x)                                                        # optional - sage.symbolic
+        sage: f.diff(x)                                                                 # optional - sage.symbolic
         -1/2*bessel_K(3, x) - 1/2*bessel_K(1, x)
 
-        sage: bessel_K(1/2, x)
+        sage: bessel_K(1/2, x)                                                          # optional - sage.symbolic
         sqrt(1/2)*sqrt(pi)*e^(-x)/sqrt(x)
-        sage: bessel_K(1/2, -1)
+        sage: bessel_K(1/2, -1)                                                         # optional - sage.symbolic
         -I*sqrt(1/2)*sqrt(pi)*e
-        sage: bessel_K(1/2, 1)
+        sage: bessel_K(1/2, 1)                                                          # optional - sage.symbolic
         sqrt(1/2)*sqrt(pi)*e^(-1)
 
     Examples of asymptotic behavior::
 
         sage: bessel_K(0, 0.0)
         +infinity
-        sage: limit(bessel_K(0, x), x=0)
+        sage: limit(bessel_K(0, x), x=0)                                                # optional - sage.symbolic
         +Infinity
-        sage: limit(bessel_K(0, x), x=oo)
+        sage: limit(bessel_K(0, x), x=oo)                                               # optional - sage.symbolic
         0
 
     High precision and complex valued inputs::
 
-        sage: bessel_K(0, 1).n(128)
+        sage: bessel_K(0, 1).n(128)                                                     # optional - sage.symbolic
         0.42102443824070833333562737921260903614
         sage: bessel_K(0, RealField(200)(1))
         0.42102443824070833333562737921260903613621974822666047229897
-        sage: bessel_K(0, ComplexField(200)(0.5+I))
-        0.058365979093103864080375311643360048144715516692187818271179 - 0.67645499731334483535184142196073004335768129348518210260256*I
+        sage: bessel_K(0, ComplexField(200)(0.5+I))                                     # optional - sage.symbolic
+        0.058365979093103864080375311643360048144715516692187818271179
+         - 0.67645499731334483535184142196073004335768129348518210260256*I
 
     Visualization (set plot_points to a higher value to get more detail)::
 
-        sage: plot(bessel_K(1,x), (x,0,5), color='blue')
+        sage: plot(bessel_K(1,x), (x,0,5), color='blue')                                # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
-        sage: complex_plot(bessel_K(1, x), (-5, 5), (-5, 5), plot_points=20)
+        sage: complex_plot(bessel_K(1, x), (-5, 5), (-5, 5), plot_points=20)            # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     ALGORITHM:
@@ -924,13 +933,13 @@ class Function_Bessel_K(BuiltinFunction):
 
     The Bessel K function can be evaluated numerically at complex orders::
 
-        sage: bessel_K(10 * I, 10).n()
+        sage: bessel_K(10 * I, 10).n()                                                  # optional - sage.symbolic
         9.82415743819925e-8
 
     For a fixed imaginary order and increasing, real, second component the
     value of Bessel K is exponentially decaying::
 
-        sage: for x in [10, 20, 50, 100, 200]: print(bessel_K(5*I, x).n())
+        sage: for x in [10, 20, 50, 100, 200]: print(bessel_K(5*I, x).n())              # optional - sage.symbolic
         5.27812176514912e-6
         3.11005908421801e-10
         2.66182488515423e-23 - 8.59622057747552e-58*I
@@ -956,9 +965,9 @@ class Function_Bessel_K(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: sage.functions.bessel.Function_Bessel_K()
+            sage: sage.functions.bessel.Function_Bessel_K()                             # optional - sage.symbolic
             bessel_K
-            sage: bessel_K(x, x)._sympy_()
+            sage: bessel_K(x, x)._sympy_()                                              # optional - sympy sage.symbolic
             besselk(x, x)
         """
         BuiltinFunction.__init__(self, 'bessel_K', nargs=2,
@@ -972,20 +981,19 @@ class Function_Bessel_K(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: n = var('n')
-            sage: bessel_K(1, 0)
+            sage: n = var('n')                                                          # optional - sage.symbolic
+            sage: bessel_K(1, 0)                                                        # optional - sage.symbolic
             Infinity
-            sage: bessel_K(1/2, x)
+            sage: bessel_K(1/2, x)                                                      # optional - sage.symbolic
             sqrt(1/2)*sqrt(pi)*e^(-x)/sqrt(x)
-            sage: bessel_K(n, 0)
+            sage: bessel_K(n, 0)                                                        # optional - sage.symbolic
             bessel_K(n, 0)
 
         TESTS::
 
-            sage: bessel_K(0, 0)
+            sage: bessel_K(0, 0)                                                        # optional - sage.symbolic
             +Infinity
         """
-        from sage.rings.infinity import infinity, unsigned_infinity
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return infinity
@@ -1000,13 +1008,12 @@ class Function_Bessel_K(BuiltinFunction):
 
             sage: bessel_K(0.0, 1.0)
             0.421024438240708
-            sage: bessel_K(-1, 1).n(128)
+            sage: bessel_K(-1, 1).n(128)                                                # optional - sage.symbolic
             0.60190723019723457473754000153561733926
             sage: bessel_K(0, RealField(128)(1))
             0.42102443824070833333562737921260903614
         """
-        import mpmath
-        return mpmath_utils.call(mpmath.besselk, n, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_besselk, n, x, parent=parent)
 
     def _derivative_(self, n, x, diff_param):
         """
@@ -1014,11 +1021,11 @@ class Function_Bessel_K(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: f(x) = bessel_K(10, x)
-            sage: derivative(f, x)
+            sage: f(x) = bessel_K(10, x)                                                # optional - sage.symbolic
+            sage: derivative(f, x)                                                      # optional - sage.symbolic
             x |--> -1/2*bessel_K(11, x) - 1/2*bessel_K(9, x)
-            sage: nu = var('nu')
-            sage: bessel_K(nu, x).diff(nu)
+            sage: nu = var('nu')                                                        # optional - sage.symbolic
+            sage: bessel_K(nu, x).diff(nu)                                              # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: derivative with respect to order
@@ -1034,7 +1041,7 @@ class Function_Bessel_K(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: latex(bessel_K(1, x))
+            sage: latex(bessel_K(1, x))                                                 # optional - sage.symbolic
             K_{1}(x)
         """
         return r"K_{%s}(%s)" % (latex(n), latex(z))
@@ -1052,15 +1059,15 @@ def Bessel(*args, **kwds):
     A function factory that produces symbolic I, J, K, and Y Bessel functions.
     There are several ways to call this function:
 
-        - ``Bessel(order, type)``
-        - ``Bessel(order)`` -- type defaults to 'J'
-        - ``Bessel(order, typ=T)``
-        - ``Bessel(typ=T)`` -- order is unspecified, this is a 2-parameter
-          function
-        - ``Bessel()`` -- order is unspecified, type is 'J'
+    - ``Bessel(order, type)``
+    - ``Bessel(order)`` -- type defaults to ``'J'``
+    - ``Bessel(order, typ=T)``
+    - ``Bessel(typ=T)`` -- order is unspecified, this is a 2-parameter
+      function
+    - ``Bessel()`` -- order is unspecified, type is ``'J'``
 
-    where ``order`` can be any integer and T must be one of the strings 'I',
-    'J', 'K', or 'Y'.
+    where ``order`` can be any integer and ``T`` must be one of the strings ``'I'``,
+    ``'J'``, ``'K'``, or ``'Y'``.
 
     See the EXAMPLES below.
 
@@ -1070,15 +1077,15 @@ def Bessel(*args, **kwds):
 
         sage: Bessel()
         bessel_J
-        sage: Bessel(1)(x)
+        sage: Bessel(1)(x)                                                              # optional - sage.symbolic
         bessel_J(1, x)
-        sage: Bessel(1, 'Y')(x)
+        sage: Bessel(1, 'Y')(x)                                                         # optional - sage.symbolic
         bessel_Y(1, x)
-        sage: Bessel(-2, 'Y')(x)
+        sage: Bessel(-2, 'Y')(x)                                                        # optional - sage.symbolic
         bessel_Y(-2, x)
         sage: Bessel(typ='K')
         bessel_K
-        sage: Bessel(0, typ='I')(x)
+        sage: Bessel(0, typ='I')(x)                                                     # optional - sage.symbolic
         bessel_I(0, x)
 
     Evaluation::
@@ -1086,91 +1093,93 @@ def Bessel(*args, **kwds):
         sage: f = Bessel(1)
         sage: f(3.0)
         0.339058958525936
-        sage: f(3)
+        sage: f(3)                                                                      # optional - sage.symbolic
         bessel_J(1, 3)
-        sage: f(3).n(digits=50)
+        sage: f(3).n(digits=50)                                                         # optional - sage.symbolic
         0.33905895852593645892551459720647889697308041819801
 
         sage: g = Bessel(typ='J')
-        sage: g(1,3)
+        sage: g(1,3)                                                                    # optional - sage.symbolic
         bessel_J(1, 3)
-        sage: g(2, 3+I).n()
+        sage: g(2, 3+I).n()                                                             # optional - sage.symbolic
         0.634160370148554 + 0.0253384000032695*I
-        sage: abs(numerical_integral(1/pi*cos(3*sin(x)), 0.0, pi)[0] - Bessel(0, 'J')(3.0)) < 1e-15
+        sage: abs(numerical_integral(1/pi*cos(3*sin(x)), 0.0, pi)[0]                    # optional - sage.symbolic
+        ....:      - Bessel(0, 'J')(3.0)) < 1e-15
         True
 
     Symbolic calculus::
 
-        sage: f(x) = Bessel(0, 'J')(x)
-        sage: derivative(f, x)
+        sage: f(x) = Bessel(0, 'J')(x)                                                  # optional - sage.symbolic
+        sage: derivative(f, x)                                                          # optional - sage.symbolic
         x |--> -1/2*bessel_J(1, x) + 1/2*bessel_J(-1, x)
-        sage: derivative(f, x, x)
+        sage: derivative(f, x, x)                                                       # optional - sage.symbolic
         x |--> 1/4*bessel_J(2, x) - 1/2*bessel_J(0, x) + 1/4*bessel_J(-2, x)
 
     Verify that `J_0` satisfies Bessel's differential equation numerically
     using the ``test_relation()`` method::
 
-        sage: y = bessel_J(0, x)
-        sage: diffeq = x^2*derivative(y,x,x) + x*derivative(y,x) + x^2*y == 0
-        sage: diffeq.test_relation(proof=False)
+        sage: y = bessel_J(0, x)                                                        # optional - sage.symbolic
+        sage: diffeq = x^2*derivative(y,x,x) + x*derivative(y,x) + x^2*y == 0           # optional - sage.symbolic
+        sage: diffeq.test_relation(proof=False)                                         # optional - sage.symbolic
         True
 
     Conversion to other systems::
 
-        sage: x,y = var('x,y')
-        sage: f = maxima(Bessel(typ='K')(x,y))
-        sage: f.derivative('_SAGE_VAR_x')
+        sage: x,y = var('x,y')                                                          # optional - sage.symbolic
+        sage: f = maxima(Bessel(typ='K')(x,y))                                          # optional - sage.symbolic
+        sage: f.derivative('_SAGE_VAR_x')                                               # optional - sage.symbolic
         (%pi*csc(%pi*_SAGE_VAR_x) *('diff(bessel_i(-_SAGE_VAR_x,_SAGE_VAR_y),_SAGE_VAR_x,1) -'diff(bessel_i(_SAGE_VAR_x,_SAGE_VAR_y),_SAGE_VAR_x,1))) /2 -%pi*bessel_k(_SAGE_VAR_x,_SAGE_VAR_y)*cot(%pi*_SAGE_VAR_x)
-        sage: f.derivative('_SAGE_VAR_y')
+        sage: f.derivative('_SAGE_VAR_y')                                               # optional - sage.symbolic
         -(bessel_k(_SAGE_VAR_x+1,_SAGE_VAR_y)+bessel_k(_SAGE_VAR_x-1, _SAGE_VAR_y))/2
 
     Compute the particular solution to Bessel's Differential Equation that
     satisfies `y(1) = 1` and `y'(1) = 1`, then verify the initial conditions
     and plot it::
 
-        sage: y = function('y')(x)
-        sage: diffeq = x^2*diff(y,x,x) + x*diff(y,x) + x^2*y == 0
-        sage: f = desolve(diffeq, y, [1, 1, 1]); f
+        sage: y = function('y')(x)                                                      # optional - sage.symbolic
+        sage: diffeq = x^2*diff(y,x,x) + x*diff(y,x) + x^2*y == 0                       # optional - sage.symbolic
+        sage: f = desolve(diffeq, y, [1, 1, 1]); f                                      # optional - sage.symbolic
         (bessel_Y(1, 1) + bessel_Y(0, 1))*bessel_J(0, x)/(bessel_J(0,
         1)*bessel_Y(1, 1) - bessel_J(1, 1)*bessel_Y(0, 1)) - (bessel_J(1,
         1) + bessel_J(0, 1))*bessel_Y(0, x)/(bessel_J(0, 1)*bessel_Y(1, 1)
         - bessel_J(1, 1)*bessel_Y(0, 1))
-        sage: f.subs(x=1).n() # numerical verification
+        sage: f.subs(x=1).n()  # numerical verification                                 # optional - sage.symbolic
         1.00000000000000
-        sage: fp = f.diff(x)
-        sage: fp.subs(x=1).n()
+        sage: fp = f.diff(x)                                                            # optional - sage.symbolic
+        sage: fp.subs(x=1).n()                                                          # optional - sage.symbolic
         1.00000000000000
 
-        sage: f.subs(x=1).simplify_full() # symbolic verification
+        sage: f.subs(x=1).simplify_full()  # symbolic verification                      # optional - sage.symbolic
         1
-        sage: fp = f.diff(x)
-        sage: fp.subs(x=1).simplify_full()
+        sage: fp = f.diff(x)                                                            # optional - sage.symbolic
+        sage: fp.subs(x=1).simplify_full()                                              # optional - sage.symbolic
         1
 
-        sage: plot(f, (x,0,5))
+        sage: plot(f, (x,0,5))                                                          # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     Plotting::
 
-        sage: f(x) = Bessel(0)(x); f
+        sage: f(x) = Bessel(0)(x); f                                                    # optional - sage.symbolic
         x |--> bessel_J(0, x)
-        sage: plot(f, (x, 1, 10))
+        sage: plot(f, (x, 1, 10))                                                       # optional - sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
-        sage: plot([ Bessel(i, 'J') for i in range(5) ], 2, 10)
+        sage: plot([Bessel(i, 'J') for i in range(5)], 2, 10)                           # optional - sage.plot sage.symbolic
         Graphics object consisting of 5 graphics primitives
 
-        sage: G = Graphics()
-        sage: G += sum([ plot(Bessel(i), 0, 4*pi, rgbcolor=hue(sin(pi*i/10))) for i in range(5) ])
-        sage: show(G)
+        sage: G = Graphics()                                                            # optional - sage.plot sage.symbolic
+        sage: G += sum(plot(Bessel(i), 0, 4*pi, rgbcolor=hue(sin(pi*i/10)))             # optional - sage.plot sage.symbolic
+        ....:          for i in range(5))
+        sage: show(G)                                                                   # optional - sage.plot sage.symbolic
 
     A recreation of Abramowitz and Stegun Figure 9.1::
 
-        sage: G  = plot(Bessel(0, 'J'), 0, 15, color='black')
-        sage: G += plot(Bessel(0, 'Y'), 0, 15, color='black')
-        sage: G += plot(Bessel(1, 'J'), 0, 15, color='black', linestyle='dotted')
-        sage: G += plot(Bessel(1, 'Y'), 0, 15, color='black', linestyle='dotted')
-        sage: show(G, ymin=-1, ymax=1)
+        sage: G  = plot(Bessel(0, 'J'), 0, 15, color='black')                           # optional - sage.plot sage.symbolic
+        sage: G += plot(Bessel(0, 'Y'), 0, 15, color='black')                           # optional - sage.plot sage.symbolic
+        sage: G += plot(Bessel(1, 'J'), 0, 15, color='black', linestyle='dotted')       # optional - sage.plot sage.symbolic
+        sage: G += plot(Bessel(1, 'Y'), 0, 15, color='black', linestyle='dotted')       # optional - sage.plot sage.symbolic
+        sage: show(G, ymin=-1, ymax=1)                                                  # optional - sage.plot sage.symbolic
 
     """
     # Determine the order and type of function from the arguments and keywords.
@@ -1223,11 +1232,11 @@ class Function_Struve_H(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: struve_H(-1/2,x)
+        sage: struve_H(-1/2, x)                                                         # optional - sage.symbolic
         sqrt(2)*sqrt(1/(pi*x))*sin(x)
-        sage: struve_H(2,x)
+        sage: struve_H(2, x)                                                            # optional - sage.symbolic
         struve_H(2, x)
-        sage: struve_H(1/2,pi).n()
+        sage: struve_H(1/2, pi).n()                                                     # optional - sage.symbolic
         0.900316316157106
 
     REFERENCES:
@@ -1242,12 +1251,12 @@ class Function_Struve_H(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: n = var('n')
-            sage: maxima("struve_h(n,x);").sage()
+            sage: n = var('n')                                                          # optional - sage.symbolic
+            sage: maxima("struve_h(n,x);").sage()                                       # optional - sage.symbolic
             struve_H(n, x)
-            sage: struve_H(7/5,1)._maxima_()
+            sage: struve_H(7/5, 1)._maxima_()                                           # optional - sage.symbolic
             struve_h(7/5,1)
-            sage: loads(dumps(struve_H(n,x)))
+            sage: loads(dumps(struve_H(n,x)))                                           # optional - sage.symbolic
             struve_H(n, x)
         """
         BuiltinFunction.__init__(self, 'struve_H', nargs=2,
@@ -1261,19 +1270,19 @@ class Function_Struve_H(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: struve_H(0,0)
+            sage: struve_H(0, 0)                                                        # optional - sage.symbolic
             0
-            sage: struve_H(pi,0)
+            sage: struve_H(pi, 0)                                                       # optional - sage.symbolic
             0
-            sage: struve_H(-1/2,x)
+            sage: struve_H(-1/2, x)                                                     # optional - sage.symbolic
             sqrt(2)*sqrt(1/(pi*x))*sin(x)
-            sage: struve_H(1/2,-1)
+            sage: struve_H(1/2, -1)                                                     # optional - sage.symbolic
             -sqrt(2)*sqrt(-1/pi)*(cos(1) - 1)
-            sage: struve_H(1/2,pi)
+            sage: struve_H(1/2, pi)                                                     # optional - sage.symbolic
             2*sqrt(2)/pi
-            sage: struve_H(2,x)
+            sage: struve_H(2, x)                                                        # optional - sage.symbolic
             struve_H(2, x)
-            sage: struve_H(-3/2,x)
+            sage: struve_H(-3/2, x)                                                     # optional - sage.symbolic
             -bessel_J(3/2, x)
         """
         if z.is_zero() \
@@ -1281,10 +1290,8 @@ class Function_Struve_H(BuiltinFunction):
                 and a.real() >= -1:
             return ZZ.zero()
         if a == QQ((-1, 2)):
-            from sage.functions.trig import sin
             return sqrt(2 / (pi * z)) * sin(z)
         if a == QQ((1, 2)):
-            from sage.functions.trig import cos
             return sqrt(2 / (pi * z)) * (1 - cos(z))
         if a < 0 and not SR(a).is_integer() and SR(2 * a).is_integer():
             n = (a * (-2) - 1) / 2
@@ -1294,25 +1301,24 @@ class Function_Struve_H(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: struve_H(1/2,pi).n()
+            sage: struve_H(1/2, pi).n()                                                 # optional - sage.symbolic
             0.900316316157106
-            sage: struve_H(1/2,pi).n(200)
+            sage: struve_H(1/2, pi).n(200)                                              # optional - sage.symbolic
             0.9003163161571060695551991910...
         """
-        import mpmath
-        return mpmath_utils.call(mpmath.struveh, a, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_struveh, a, z, parent=parent)
 
     def _derivative_(self, a, z, diff_param=None):
         """
         EXAMPLES::
 
-            sage: diff(struve_H(3/2,x),x)
-            -1/2*sqrt(2)*sqrt(1/(pi*x))*(cos(x) - 1) + 1/16*sqrt(2)*x^(3/2)/sqrt(pi) - 1/2*struve_H(5/2, x)
+            sage: diff(struve_H(3/2,x), x)                                              # optional - sage.symbolic
+            -1/2*sqrt(2)*sqrt(1/(pi*x))*(cos(x) - 1) + 1/16*sqrt(2)*x^(3/2)/sqrt(pi)
+             - 1/2*struve_H(5/2, x)
         """
         if diff_param == 0:
             raise ValueError("cannot differentiate struve_H in the first parameter")
 
-        from .gamma import gamma
         from .other import sqrt
         return (z**a / (sqrt(pi) * 2**a * gamma(a + Integer(3) / Integer(2))) - struve_H(a + 1, z) + struve_H(a - 1, z)) / 2
 
@@ -1320,7 +1326,7 @@ class Function_Struve_H(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: latex(struve_H(2,x))
+            sage: latex(struve_H(2,x))                                                  # optional - sage.symbolic
             H_{{2}}({x})
         """
         return r"H_{{%s}}({%s})" % (a, z)
@@ -1339,11 +1345,11 @@ class Function_Struve_L(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: struve_L(2,x)
+        sage: struve_L(2, x)                                                            # optional - sage.symbolic
         struve_L(2, x)
-        sage: struve_L(1/2,pi).n()
+        sage: struve_L(1/2, pi).n()                                                     # optional - sage.symbolic
         4.76805417696286
-        sage: diff(struve_L(1,x),x)
+        sage: diff(struve_L(1,x), x)                                                    # optional - sage.symbolic
         1/3*x/pi - 1/2*struve_L(2, x) + 1/2*struve_L(0, x)
 
     REFERENCES:
@@ -1358,12 +1364,12 @@ class Function_Struve_L(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: n = var('n')
-            sage: maxima("struve_l(n,x);").sage()
+            sage: n = var('n')                                                          # optional - sage.symbolic
+            sage: maxima("struve_l(n,x);").sage()                                       # optional - sage.symbolic
             struve_L(n, x)
-            sage: struve_L(7/5,1)._maxima_()
+            sage: struve_L(7/5, 1)._maxima_()                                           # optional - sage.symbolic
             struve_l(7/5,1)
-            sage: loads(dumps(struve_L(n,x)))
+            sage: loads(dumps(struve_L(n, x)))                                          # optional - sage.symbolic
             struve_L(n, x)
         """
         BuiltinFunction.__init__(self, 'struve_L', nargs=2,
@@ -1377,19 +1383,19 @@ class Function_Struve_L(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: struve_L(-2,0)
+            sage: struve_L(-2, 0)                                                       # optional - sage.symbolic
             struve_L(-2, 0)
-            sage: struve_L(-1,0)
+            sage: struve_L(-1, 0)                                                       # optional - sage.symbolic
             0
-            sage: struve_L(pi,0)
+            sage: struve_L(pi, 0)                                                       # optional - sage.symbolic
             0
-            sage: struve_L(-1/2,x)
+            sage: struve_L(-1/2, x)                                                     # optional - sage.symbolic
             sqrt(2)*sqrt(1/(pi*x))*sinh(x)
-            sage: struve_L(1/2,1)
+            sage: struve_L(1/2, 1)                                                      # optional - sage.symbolic
             sqrt(2)*(cosh(1) - 1)/sqrt(pi)
-            sage: struve_L(2,x)
+            sage: struve_L(2, x)                                                        # optional - sage.symbolic
             struve_L(2, x)
-            sage: struve_L(-3/2,x)
+            sage: struve_L(-3/2, x)                                                     # optional - sage.symbolic
             -bessel_I(3/2, x)
         """
         if z.is_zero() \
@@ -1397,10 +1403,8 @@ class Function_Struve_L(BuiltinFunction):
                 and a.real() >= -1:
             return ZZ.zero()
         if a == -Integer(1) / 2:
-            from sage.functions.hyperbolic import sinh
             return sqrt(2 / (pi * z)) * sinh(z)
         if a == Integer(1) / 2:
-            from sage.functions.hyperbolic import cosh
             return sqrt(2 / (pi * z)) * (cosh(z) - 1)
         if a < 0 and not SR(a).is_integer() and SR(2 * a).is_integer():
             n = (a * (-2) - 1) / 2
@@ -1410,25 +1414,23 @@ class Function_Struve_L(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: struve_L(1/2,pi).n()
+            sage: struve_L(1/2, pi).n()                                                 # optional - sage.symbolic
             4.76805417696286
-            sage: struve_L(1/2,pi).n(200)
+            sage: struve_L(1/2, pi).n(200)                                              # optional - sage.symbolic
             4.768054176962864289162484345...
         """
-        import mpmath
-        return mpmath_utils.call(mpmath.struvel, a, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_struvel, a, z, parent=parent)
 
     def _derivative_(self, a, z, diff_param=None):
         """
         EXAMPLES::
 
-            sage: diff(struve_L(1,x),x)
+            sage: diff(struve_L(1,x), x)                                                # optional - sage.symbolic
             1/3*x/pi - 1/2*struve_L(2, x) + 1/2*struve_L(0, x)
         """
         if diff_param == 0:
             raise ValueError("cannot differentiate struve_L in the first parameter")
 
-        from .gamma import gamma
         from .other import sqrt
         return (z**a / (sqrt(pi) * 2**a * gamma(a + Integer(3) / Integer(2))) - struve_L(a + 1, z) + struve_L(a - 1, z)) / 2
 
@@ -1436,7 +1438,7 @@ class Function_Struve_L(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: latex(struve_L(2,x))
+            sage: latex(struve_L(2,x))                                                  # optional - sage.symbolic
             L_{{2}}({x})
         """
         return r"L_{{%s}}({%s})" % (a, z)
@@ -1457,13 +1459,13 @@ class Function_Hankel1(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: hankel1(3, x)
+        sage: hankel1(3, x)                                                             # optional - sage.symbolic
         hankel1(3, x)
         sage: hankel1(3, 4.)
         0.430171473875622 - 0.182022115953485*I
-        sage: latex(hankel1(3, x))
+        sage: latex(hankel1(3, x))                                                      # optional - sage.symbolic
         H_{3}^{(1)}\left(x\right)
-        sage: hankel1(3., x).series(x == 2, 10).subs(x=3).n()  # abs tol 1e-12
+        sage: hankel1(3., x).series(x == 2, 10).subs(x=3).n()  # abs tol 1e-12          # optional - sage.symbolic
         0.309062682819597 - 0.512591541605233*I
         sage: hankel1(3, 3.)
         0.309062722255252 - 0.538541616105032*I
@@ -1476,7 +1478,7 @@ class Function_Hankel1(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: hankel1(3, x)._sympy_()
+            sage: hankel1(3, x)._sympy_()                                               # optional - sympy sage.symbolic
             hankel1(3, x)
         """
         BuiltinFunction.__init__(self, 'hankel1', nargs=2,
@@ -1490,19 +1492,18 @@ class Function_Hankel1(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: hankel1(3, 3).n(100)
+            sage: hankel1(3, 3).n(100)                                                  # optional - sage.symbolic
             0.30906272225525164361826019495 - 0.53854161610503161800470390534*I
-            sage: hankel1(I, I).n()
+            sage: hankel1(I, I).n()                                                     # optional - sage.symbolic
             -0.886357449263715*I
         """
-        from mpmath import hankel1
-        return mpmath_utils.call(hankel1, nu, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_hankel1, nu, z, parent=parent)
 
     def _latex_(self):
         r"""
         TESTS::
 
-            sage: latex(hankel1)
+            sage: latex(hankel1)                                                        # optional - sage.symbolic
             H_{\nu}^{(1)}
         """
         return r'H_{\nu}^{(1)}'
@@ -1511,7 +1512,7 @@ class Function_Hankel1(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(hankel1(3, x))
+            sage: latex(hankel1(3, x))                                                  # optional - sage.symbolic
             H_{3}^{(1)}\left(x\right)
         """
         return r"H_{{{}}}^{{(1)}}\left({}\right)".format(latex(nu), latex(z))
@@ -1520,8 +1521,8 @@ class Function_Hankel1(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: y = var('y')
-            sage: hankel1(x, y).diff(y)
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: hankel1(x, y).diff(y)                                                 # optional - sage.symbolic
             x*hankel1(x, y)/y - hankel1(x + 1, y)
         """
         if diff_param == 1:
@@ -1545,13 +1546,13 @@ class Function_Hankel2(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: hankel2(3, x)
+        sage: hankel2(3, x)                                                             # optional - sage.symbolic
         hankel2(3, x)
         sage: hankel2(3, 4.)
         0.430171473875622 + 0.182022115953485*I
-        sage: latex(hankel2(3, x))
+        sage: latex(hankel2(3, x))                                                      # optional - sage.symbolic
         H_{3}^{(2)}\left(x\right)
-        sage: hankel2(3., x).series(x == 2, 10).subs(x=3).n()  # abs tol 1e-12
+        sage: hankel2(3., x).series(x == 2, 10).subs(x=3).n()  # abs tol 1e-12          # optional - sage.symbolic
         0.309062682819597 + 0.512591541605234*I
         sage: hankel2(3, 3.)
         0.309062722255252 + 0.538541616105032*I
@@ -1564,7 +1565,7 @@ class Function_Hankel2(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: hankel2(3, x)._sympy_()
+            sage: hankel2(3, x)._sympy_()                                               # optional - sympy sage.symbolic
             hankel2(3, x)
         """
         BuiltinFunction.__init__(self, 'hankel2', nargs=2,
@@ -1578,19 +1579,18 @@ class Function_Hankel2(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: hankel2(3, 3).n(100)
+            sage: hankel2(3, 3).n(100)                                                  # optional - sage.symbolic
             0.30906272225525164361826019495 + 0.53854161610503161800470390534*I
-            sage: hankel2(I, I).n()
+            sage: hankel2(I, I).n()                                                     # optional - sage.symbolic
             0.790274862674015 + 0.444006335520019*I
         """
-        from mpmath import hankel2
-        return mpmath_utils.call(hankel2, nu, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_hankel2, nu, z, parent=parent)
 
     def _latex_(self):
         r"""
         TESTS::
 
-            sage: latex(hankel2)
+            sage: latex(hankel2)                                                        # optional - sage.symbolic
             H_{\nu}^{(2)}
         """
         return r'H_{\nu}^{(2)}'
@@ -1599,7 +1599,7 @@ class Function_Hankel2(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(hankel2(3, x))
+            sage: latex(hankel2(3, x))                                                  # optional - sage.symbolic
             H_{3}^{(2)}\left(x\right)
         """
         return r"H_{{{}}}^{{(2)}}\left({}\right)".format(latex(nu), latex(z))
@@ -1608,8 +1608,8 @@ class Function_Hankel2(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: y = var('y')
-            sage: hankel2(x, y).diff(y)
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: hankel2(x, y).diff(y)                                                 # optional - sage.symbolic
             -1/2*hankel2(x + 1, y) + 1/2*hankel2(x - 1, y)
         """
         if diff_param == 1:
@@ -1633,21 +1633,21 @@ class SphericalBesselJ(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: spherical_bessel_J(3, x)
+        sage: spherical_bessel_J(3, x)                                                  # optional - sage.symbolic
         spherical_bessel_J(3, x)
-        sage: spherical_bessel_J(3 + 0.2 * I, 3)
+        sage: spherical_bessel_J(3 + 0.2 * I, 3)                                        # optional - sage.symbolic
         0.150770999183897 - 0.0260662466510632*I
-        sage: spherical_bessel_J(3, x).series(x == 2, 10).subs(x=3).n()
+        sage: spherical_bessel_J(3, x).series(x == 2, 10).subs(x=3).n()                 # optional - sage.symbolic
         0.152051648665037
         sage: spherical_bessel_J(3, 3.)
         0.152051662030533
         sage: spherical_bessel_J(2.,3.)      # rel tol 1e-10
         0.2986374970757335
-        sage: spherical_bessel_J(4, x).simplify()
+        sage: spherical_bessel_J(4, x).simplify()                                       # optional - sage.symbolic
         -((45/x^2 - 105/x^4 - 1)*sin(x) + 5*(21/x^2 - 2)*cos(x)/x)/x
-        sage: integrate(spherical_bessel_J(1,x)^2,(x,0,oo))
+        sage: integrate(spherical_bessel_J(1,x)^2,(x,0,oo))                             # optional - sage.symbolic
         1/6*pi
-        sage: latex(spherical_bessel_J(4, x))
+        sage: latex(spherical_bessel_J(4, x))                                           # optional - sage.symbolic
         j_{4}\left(x\right)
 
     REFERENCES:
@@ -1662,7 +1662,7 @@ class SphericalBesselJ(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: spherical_bessel_J(3, x)._sympy_()
+            sage: spherical_bessel_J(3, x)._sympy_()                                    # optional - sympy sage.symbolic
             jn(3, x)
         """
         conversions = dict(mathematica='SphericalBesselJ',
@@ -1675,12 +1675,12 @@ class SphericalBesselJ(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: spherical_bessel_J(3, 3).n(100)
+            sage: spherical_bessel_J(3, 3).n(100)                                       # optional - sage.symbolic
             0.15205166203053329097480571600
-            sage: spherical_bessel_J(I, I).n()
+            sage: spherical_bessel_J(I, I).n()                                          # optional - sage.symbolic
             0.215520585196889 - 0.282308805801851*I
         """
-        return mpmath_utils.call(spherical_bessel_f, 'besselj', n, z,
+        return _mpmath_utils_call(spherical_bessel_f, 'besselj', n, z,
                                  parent=parent)
 
     def _latex_(self):
@@ -1696,7 +1696,7 @@ class SphericalBesselJ(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(spherical_bessel_J(4, x))
+            sage: latex(spherical_bessel_J(4, x))                                       # optional - sage.symbolic
             j_{4}\left(x\right)
         """
         return r"j_{{{}}}\left({}\right)".format(latex(n), latex(z))
@@ -1705,8 +1705,8 @@ class SphericalBesselJ(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: y = var('y')
-            sage: spherical_bessel_J(x, y).diff(y)
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: spherical_bessel_J(x, y).diff(y)                                      # optional - sage.symbolic
             -(x + 1)*spherical_bessel_J(x, y)/y + spherical_bessel_J(x - 1, y)
         """
         if SR(n).is_numeric() and not SR(n).is_integer():
@@ -1733,19 +1733,19 @@ class SphericalBesselY(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: spherical_bessel_Y(3, x)
+        sage: spherical_bessel_Y(3, x)                                                  # optional - sage.symbolic
         spherical_bessel_Y(3, x)
-        sage: spherical_bessel_Y(3 + 0.2 * I, 3)
+        sage: spherical_bessel_Y(3 + 0.2 * I, 3)                                        # optional - sage.symbolic
         -0.505215297588210 - 0.0508835883281404*I
-        sage: spherical_bessel_Y(-3, x).simplify()
+        sage: spherical_bessel_Y(-3, x).simplify()                                      # optional - sage.symbolic
         ((3/x^2 - 1)*sin(x) - 3*cos(x)/x)/x
-        sage: spherical_bessel_Y(3 + 2 * I, 5 - 0.2 * I)
+        sage: spherical_bessel_Y(3 + 2 * I, 5 - 0.2 * I)                                # optional - sage.symbolic
         -0.270205813266440 - 0.615994702714957*I
-        sage: integrate(spherical_bessel_Y(0, x), x)
+        sage: integrate(spherical_bessel_Y(0, x), x)                                    # optional - sage.symbolic
         -1/2*Ei(I*x) - 1/2*Ei(-I*x)
-        sage: integrate(spherical_bessel_Y(1,x)^2,(x,0,oo))
+        sage: integrate(spherical_bessel_Y(1,x)^2,(x,0,oo))                             # optional - sage.symbolic
         -1/6*pi
-        sage: latex(spherical_bessel_Y(0, x))
+        sage: latex(spherical_bessel_Y(0, x))                                           # optional - sage.symbolic
         y_{0}\left(x\right)
 
     REFERENCES:
@@ -1760,7 +1760,7 @@ class SphericalBesselY(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: spherical_bessel_Y(3, x)._sympy_()
+            sage: spherical_bessel_Y(3, x)._sympy_()                                    # optional - sympy sage.symbolic
             yn(3, x)
         """
         conversions = dict(mathematica='SphericalBesselY',
@@ -1773,12 +1773,12 @@ class SphericalBesselY(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: spherical_bessel_Y(3, 3).n(100)
+            sage: spherical_bessel_Y(3, 3).n(100)                                       # optional - sage.symbolic
             -0.50802305570981460285684870920
-            sage: spherical_bessel_Y(I, I).n()
+            sage: spherical_bessel_Y(I, I).n()                                          # optional - sage.symbolic
             -0.174225389805399 + 1.36247234140312*I
         """
-        return mpmath_utils.call(spherical_bessel_f, 'bessely', n, z,
+        return _mpmath_utils_call(spherical_bessel_f, 'bessely', n, z,
                                  parent=parent)
 
     def _latex_(self):
@@ -1794,7 +1794,7 @@ class SphericalBesselY(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(spherical_bessel_Y(4, x))
+            sage: latex(spherical_bessel_Y(4, x))                                       # optional - sage.symbolic
             y_{4}\left(x\right)
         """
         return r"y_{{{}}}\left({}\right)".format(latex(n), latex(z))
@@ -1803,8 +1803,8 @@ class SphericalBesselY(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: y = var('y')
-            sage: spherical_bessel_Y(x, y).diff(y)
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: spherical_bessel_Y(x, y).diff(y)                                      # optional - sage.symbolic
             -1/2*spherical_bessel_Y(x, y)/y -...
             1/2*spherical_bessel_Y(x + 1, y) + 1/2*spherical_bessel_Y(x - 1, y)
         """
@@ -1833,17 +1833,17 @@ class SphericalHankel1(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: spherical_hankel1(3, x)
+        sage: spherical_hankel1(3, x)                                                   # optional - sage.symbolic
         spherical_hankel1(3, x)
-        sage: spherical_hankel1(3 + 0.2 * I, 3)
+        sage: spherical_hankel1(3 + 0.2 * I, 3)                                         # optional - sage.symbolic
         0.201654587512037 - 0.531281544239273*I
-        sage: spherical_hankel1(1, x).simplify()
+        sage: spherical_hankel1(1, x).simplify()                                        # optional - sage.symbolic
         -(x + I)*e^(I*x)/x^2
-        sage: spherical_hankel1(3 + 2 * I, 5 - 0.2 * I)
+        sage: spherical_hankel1(3 + 2 * I, 5 - 0.2 * I)                                 # optional - sage.symbolic
         1.25375216869913 - 0.518011435921789*I
-        sage: integrate(spherical_hankel1(3, x), x)
+        sage: integrate(spherical_hankel1(3, x), x)                                     # optional - sage.symbolic
         Ei(I*x) - 6*gamma(-1, -I*x) - 15*gamma(-2, -I*x) - 15*gamma(-3, -I*x)
-        sage: latex(spherical_hankel1(3, x))
+        sage: latex(spherical_hankel1(3, x))                                            # optional - sage.symbolic
         h_{3}^{(1)}\left(x\right)
 
     REFERENCES:
@@ -1870,12 +1870,12 @@ class SphericalHankel1(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: spherical_hankel1(3, 3).n(100)
+            sage: spherical_hankel1(3, 3).n(100)                                        # optional - sage.symbolic
             0.15205166203053329097480571600 - 0.50802305570981460285684870920*I
-            sage: spherical_hankel1(I, I).n()
+            sage: spherical_hankel1(I, I).n()                                           # optional - sage.symbolic
             -1.14695175620623 - 0.456534195607250*I
         """
-        return mpmath_utils.call(spherical_bessel_f, 'hankel1', n, z,
+        return _mpmath_utils_call(spherical_bessel_f, 'hankel1', n, z,
                                  parent=parent)
 
     def _latex_(self):
@@ -1891,7 +1891,7 @@ class SphericalHankel1(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(spherical_hankel1(4, x))
+            sage: latex(spherical_hankel1(4, x))                                        # optional - sage.symbolic
             h_{4}^{(1)}\left(x\right)
         """
         return r"h_{{{}}}^{{(1)}}\left({}\right)".format(latex(n), latex(z))
@@ -1900,8 +1900,8 @@ class SphericalHankel1(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: y = var('y')
-            sage: spherical_hankel1(x, y).diff(y)
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: spherical_hankel1(x, y).diff(y)                                       # optional - sage.symbolic
             -1/2*spherical_hankel1(x, y)/y -...
             1/2*spherical_hankel1(x + 1, y) + 1/2*spherical_hankel1(x - 1, y)
         """
@@ -1930,21 +1930,21 @@ class SphericalHankel2(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: spherical_hankel2(3, x)
+        sage: spherical_hankel2(3, x)                                                   # optional - sage.symbolic
         spherical_hankel2(3, x)
-        sage: spherical_hankel2(3 + 0.2 * I, 3)
+        sage: spherical_hankel2(3 + 0.2 * I, 3)                                         # optional - sage.symbolic
         0.0998874108557565 + 0.479149050937147*I
-        sage: spherical_hankel2(1, x).simplify()
+        sage: spherical_hankel2(1, x).simplify()                                        # optional - sage.symbolic
         -(x - I)*e^(-I*x)/x^2
-        sage: spherical_hankel2(2,i).simplify()
+        sage: spherical_hankel2(2,i).simplify()                                         # optional - sage.symbolic
         -e
-        sage: spherical_hankel2(2,x).simplify()
+        sage: spherical_hankel2(2,x).simplify()                                         # optional - sage.symbolic
         (-I*x^2 - 3*x + 3*I)*e^(-I*x)/x^3
-        sage: spherical_hankel2(3 + 2*I, 5 - 0.2*I)
+        sage: spherical_hankel2(3 + 2*I, 5 - 0.2*I)                                     # optional - sage.symbolic
         0.0217627632692163 + 0.0224001906110906*I
-        sage: integrate(spherical_hankel2(3, x), x)
+        sage: integrate(spherical_hankel2(3, x), x)                                     # optional - sage.symbolic
         Ei(-I*x) - 6*gamma(-1, I*x) - 15*gamma(-2, I*x) - 15*gamma(-3, I*x)
-        sage: latex(spherical_hankel2(3, x))
+        sage: latex(spherical_hankel2(3, x))                                            # optional - sage.symbolic
         h_{3}^{(2)}\left(x\right)
 
     REFERENCES:
@@ -1970,13 +1970,13 @@ class SphericalHankel2(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: spherical_hankel2(3, 3).n(100)
+            sage: spherical_hankel2(3, 3).n(100)                                        # optional - sage.symbolic
             0.15205166203053329097480571600 + 0.50802305570981460285684870920*I
-            sage: spherical_hankel2(I, I).n()
+            sage: spherical_hankel2(I, I).n()                                           # optional - sage.symbolic
             1.57799292660001 - 0.108083415996452*I
         """
-        return mpmath_utils.call(spherical_bessel_f, 'hankel2', n, z,
-                                 parent=parent)
+        return _mpmath_utils_call(spherical_bessel_f, 'hankel2', n, z,
+                                  parent=parent)
 
     def _latex_(self):
         r"""
@@ -1991,7 +1991,7 @@ class SphericalHankel2(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(spherical_hankel2(4, x))
+            sage: latex(spherical_hankel2(4, x))                                        # optional - sage.symbolic
             h_{4}^{(2)}\left(x\right)
         """
         return r"h_{{{}}}^{{(2)}}\left({}\right)".format(latex(n), latex(z))
@@ -2000,15 +2000,15 @@ class SphericalHankel2(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: y = var('y')
-            sage: spherical_hankel2(x, y).diff(y)
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: spherical_hankel2(x, y).diff(y)                                       # optional - sage.symbolic
             -1/2*spherical_hankel2(x, y)/y -...
             1/2*spherical_hankel2(x + 1, y) + 1/2*spherical_hankel2(x - 1, y)
-            sage: spherical_hankel2(x, y).diff(x)
+            sage: spherical_hankel2(x, y).diff(x)                                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: derivative with respect to order
-            sage: spherical_hankel2(3/2, y).diff(y)
+            sage: spherical_hankel2(3/2, y).diff(y)                                     # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: derivative of spherical function with noninteger index
@@ -2051,8 +2051,7 @@ def spherical_bessel_f(F, n, z):
         sage: spherical_bessel_f('bessely', 3, -4)
         mpc(real='-0.21864196590306359', imag='0.0')
     """
-    from mpmath import mp
-    ctx = mp
+    from mpmath import mp as ctx
     prec = ctx.prec
     try:
         n = ctx.convert(n)

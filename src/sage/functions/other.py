@@ -6,39 +6,37 @@ TESTS:
 Check that gamma function imports are deprecated (:trac:`24411`)::
 
     sage: from sage.functions.other import beta
-    sage: beta(x, x)
+    sage: beta(x, x)                                                                    # optional - sage.symbolic
     doctest:warning...: DeprecationWarning:
     Importing beta from here is deprecated; please use "from sage.functions.gamma import beta" instead.
     See https://github.com/sagemath/sage/issues/24411 for details.
     beta(x, x)
 """
 
-from sage.misc.lazy_import import lazy_import
-lazy_import('sage.functions.gamma',
-            ('gamma', 'log_gamma', 'gamma_inc',
-             'gamma_inc_lower', 'psi', 'beta'), deprecation=24411)
+import math
 
-from sage.symbolic.function import GinacFunction, BuiltinFunction
-from sage.symbolic.symbols import register_symbol, symbol_table
-lazy_import('sage.symbolic.ring', 'SR')
+from sage.arith.misc import binomial as arith_binomial
+from sage.functions.trig import arctan2
+from sage.misc.functional import sqrt
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
-lazy_import('sage.rings.complex_mpfr', 'ComplexField')
-from sage.misc.latex import latex
-from sage.structure.element import Element, Expression
-import math
-
-from sage.structure.element import coercion_model
-
+from sage.structure.element import coercion_model, Element, Expression
 # avoid name conflicts with `parent` as a function parameter
-from sage.structure.all import parent as s_parent
+from sage.structure.element import parent as s_parent
+from sage.symbolic.function import GinacFunction, BuiltinFunction
+from sage.symbolic.symbols import register_symbol, symbol_table
 
-from sage.functions.trig import arctan2
+lazy_import('sage.misc.latex', 'latex')
+lazy_import('sage.rings.complex_mpfr', 'ComplexField')
 
-from sage.arith.misc import binomial as arith_binomial
+lazy_import('sage.symbolic.ring', 'SR')
 
-from sage.misc.functional import sqrt
+
+lazy_import('sage.functions.gamma',
+            ('gamma', 'log_gamma', 'gamma_inc',
+             'gamma_inc_lower', 'psi', 'beta'), deprecation=24411)
 
 
 class Function_abs(GinacFunction):
@@ -48,76 +46,76 @@ class Function_abs(GinacFunction):
 
         EXAMPLES::
 
-            sage: var('x y')
+            sage: var('x y')                                                            # optional - sage.symbolic
             (x, y)
-            sage: abs(x)
+            sage: abs(x)                                                                # optional - sage.symbolic
             abs(x)
-            sage: abs(x^2 + y^2)
+            sage: abs(x^2 + y^2)                                                        # optional - sage.symbolic
             abs(x^2 + y^2)
             sage: abs(-2)
             2
-            sage: sqrt(x^2)
+            sage: sqrt(x^2)                                                             # optional - sage.symbolic
             sqrt(x^2)
-            sage: abs(sqrt(x))
+            sage: abs(sqrt(x))                                                          # optional - sage.symbolic
             sqrt(abs(x))
-            sage: complex(abs(3*I))
+            sage: complex(abs(3*I))                                                     # optional - sage.symbolic
             (3+0j)
 
             sage: f = sage.functions.other.Function_abs()
             sage: latex(f)
             \mathrm{abs}
-            sage: latex(abs(x))
+            sage: latex(abs(x))                                                         # optional - sage.symbolic
             {\left| x \right|}
-            sage: abs(x)._sympy_()
+            sage: abs(x)._sympy_()                                                      # optional - sympy sage.symbolic
             Abs(x)
 
         Test pickling::
 
-            sage: loads(dumps(abs(x)))
+            sage: loads(dumps(abs(x)))                                                  # optional - sage.symbolic
             abs(x)
 
         TESTS:
 
         Check that :trac:`12588` is fixed::
 
-            sage: abs(pi*I)
+            sage: abs(pi*I)                                                             # optional - sage.symbolic
             pi
-            sage: abs(pi*I*catalan)
+            sage: abs(pi*I*catalan)                                                     # optional - sage.symbolic
             catalan*pi
-            sage: abs(pi*catalan*x)
+            sage: abs(pi*catalan*x)                                                     # optional - sage.symbolic
             catalan*pi*abs(x)
-            sage: abs(pi*I*catalan*x)
+            sage: abs(pi*I*catalan*x)                                                   # optional - sage.symbolic
             catalan*pi*abs(x)
-            sage: abs(1.0j*pi)
+            sage: abs(1.0j*pi)                                                          # optional - sage.symbolic
             1.00000000000000*pi
-            sage: abs(I*x)
+            sage: abs(I*x)                                                              # optional - sage.symbolic
             abs(x)
-            sage: abs(I*pi)
+            sage: abs(I*pi)                                                             # optional - sage.symbolic
             pi
-            sage: abs(I*log(2))
+            sage: abs(I*log(2))                                                         # optional - sage.symbolic
             log(2)
-            sage: abs(I*e^5)
+            sage: abs(I*e^5)                                                            # optional - sage.symbolic
             e^5
-            sage: abs(log(1/2))
+            sage: abs(log(1/2))                                                         # optional - sage.symbolic
             -log(1/2)
-            sage: abs(log(3/2))
+            sage: abs(log(3/2))                                                         # optional - sage.symbolic
             log(3/2)
-            sage: abs(log(1/2)*log(1/3))
+            sage: abs(log(1/2)*log(1/3))                                                # optional - sage.symbolic
             log(1/2)*log(1/3)
-            sage: abs(log(1/2)*log(1/3)*log(1/4))
+            sage: abs(log(1/2)*log(1/3)*log(1/4))                                       # optional - sage.symbolic
             -log(1/2)*log(1/3)*log(1/4)
-            sage: abs(log(1/2)*log(1/3)*log(1/4)*i)
+            sage: abs(log(1/2)*log(1/3)*log(1/4)*i)                                     # optional - sage.symbolic
             -log(1/2)*log(1/3)*log(1/4)
-            sage: abs(log(x))
+            sage: abs(log(x))                                                           # optional - sage.symbolic
             abs(log(x))
-            sage: abs(zeta(I))
+            sage: abs(zeta(I))                                                          # optional - sage.symbolic
             abs(zeta(I))
-            sage: abs(e^2*x)
+            sage: abs(e^2*x)                                                            # optional - sage.symbolic
             abs(x)*e^2
-            sage: abs((pi+e)*x)
+            sage: abs((pi+e)*x)                                                         # optional - sage.symbolic
             (pi + e)*abs(x)
 
-            sage: fricas(abs(x)).sage().derivative()  # optional - fricas
+            sage: fricas(abs(x)).sage().derivative()  # optional - fricas               # optional - sage.symbolic
             1/2*(x + conjugate(x))/abs(x)
         """
         GinacFunction.__init__(self, "abs", latex_name=r"\mathrm{abs}",
@@ -146,9 +144,9 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
 
     TESTS::
 
-        sage: numbers = [SR(10^100 + exp(-100)), SR(10^100 - exp(-100)), SR(10^100)]
-        sage: numbers += [-n for n in numbers]
-        sage: for n in numbers:
+        sage: numbers = [SR(10^100 + exp(-100)), SR(10^100 - exp(-100)), SR(10^100)]    # optional - sage.symbolic
+        sage: numbers += [-n for n in numbers]                                          # optional - sage.symbolic
+        sage: for n in numbers:                                                         # optional - sage.symbolic
         ....:     f = floor(n)
         ....:     c = ceil(n)
         ....:     if f == c:
@@ -158,14 +156,14 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
 
     A test from :trac:`12121`::
 
-        sage: e1 = pi - continued_fraction(pi).convergent(2785)
-        sage: e2 = e - continued_fraction(e).convergent(1500)
-        sage: f = e1/e2
-        sage: f = 1 / (f - continued_fraction(f).convergent(1000))
-        sage: f = f - continued_fraction(f).convergent(1)
-        sage: floor(f, bits=10000)
+        sage: e1 = pi - continued_fraction(pi).convergent(2785)                         # optional - sage.symbolic
+        sage: e2 = e - continued_fraction(e).convergent(1500)                           # optional - sage.symbolic
+        sage: f = e1/e2                                                                 # optional - sage.symbolic
+        sage: f = 1 / (f - continued_fraction(f).convergent(1000))                      # optional - sage.symbolic
+        sage: f = f - continued_fraction(f).convergent(1)                               # optional - sage.symbolic
+        sage: floor(f, bits=10000)                                                      # optional - sage.symbolic
         -1
-        sage: ceil(f, bits=10000)
+        sage: ceil(f, bits=10000)                                                       # optional - sage.symbolic
         0
 
     These do not work but fail gracefully::
@@ -174,7 +172,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: Calling ceil() on infinity or NaN
-        sage: ceil(NaN)
+        sage: ceil(NaN)                                                                 # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: Calling ceil() on infinity or NaN
@@ -182,10 +180,10 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
     Test that elements of symbolic subrings work in the same way as
     elements of ``SR``, :trac:`32724`::
 
-        sage: SCR = SR.subring(no_variables=True)
-        sage: floor(log(2^(3/2)) / log(2) + 1/2)
+        sage: SCR = SR.subring(no_variables=True)                                       # optional - sage.symbolic
+        sage: floor(log(2^(3/2)) / log(2) + 1/2)                                        # optional - sage.symbolic
         2
-        sage: floor(SCR(log(2^(-3/2)) / log(2) + 1/2))
+        sage: floor(SCR(log(2^(-3/2)) / log(2) + 1/2))                                  # optional - sage.symbolic
         -1
     """
     # First, some obvious things...
@@ -320,25 +318,24 @@ class Function_ceil(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: a = ceil(2/5 + x)
-            sage: a
+            sage: a = ceil(2/5 + x); a                                                  # optional - sage.symbolic
             ceil(x + 2/5)
-            sage: a(x=4)
+            sage: a(x=4)                                                                # optional - sage.symbolic
             5
-            sage: a(x=4.0)
+            sage: a(x=4.0)                                                              # optional - sage.symbolic
             5
-            sage: ZZ(a(x=3))
+            sage: ZZ(a(x=3))                                                            # optional - sage.symbolic
             4
-            sage: a = ceil(x^3 + x + 5/2); a
+            sage: a = ceil(x^3 + x + 5/2); a                                            # optional - sage.symbolic
             ceil(x^3 + x + 5/2)
-            sage: a.simplify()
+            sage: a.simplify()                                                          # optional - sage.symbolic
             ceil(x^3 + x + 1/2) + 2
-            sage: a(x=2)
+            sage: a(x=2)                                                                # optional - sage.symbolic
             13
 
         ::
 
-            sage: ceil(sin(8)/sin(2))
+            sage: ceil(sin(8)/sin(2))                                                   # optional - sage.symbolic
             2
 
         ::
@@ -350,38 +347,38 @@ class Function_ceil(BuiltinFunction):
 
         ::
 
-            sage: ceil(factorial(50)/exp(1))
+            sage: ceil(factorial(50)/exp(1))                                            # optional - sage.symbolic
             11188719610782480504630258070757734324011354208865721592720336801
-            sage: ceil(SR(10^50 + 10^(-50)))
+            sage: ceil(SR(10^50 + 10^(-50)))                                            # optional - sage.symbolic
             100000000000000000000000000000000000000000000000001
-            sage: ceil(SR(10^50 - 10^(-50)))
+            sage: ceil(SR(10^50 - 10^(-50)))                                            # optional - sage.symbolic
             100000000000000000000000000000000000000000000000000
 
         Small numbers which are extremely close to an integer are hard to
         deal with::
 
-            sage: ceil((33^100 + 1)^(1/100))
+            sage: ceil((33^100 + 1)^(1/100))                                            # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot compute ceil(...) using 256 bits of precision
 
         This can be fixed by giving a sufficiently large ``bits`` argument::
 
-            sage: ceil((33^100 + 1)^(1/100), bits=500)
+            sage: ceil((33^100 + 1)^(1/100), bits=500)                                  # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot compute ceil(...) using 512 bits of precision
-            sage: ceil((33^100 + 1)^(1/100), bits=1000)
+            sage: ceil((33^100 + 1)^(1/100), bits=1000)                                 # optional - sage.symbolic
             34
 
         ::
 
-            sage: ceil(sec(e))
+            sage: ceil(sec(e))                                                          # optional - sage.symbolic
             -1
 
-            sage: latex(ceil(x))
+            sage: latex(ceil(x))                                                        # optional - sage.symbolic
             \left \lceil x \right \rceil
-            sage: ceil(x)._sympy_()                                                     # optional - sympy
+            sage: ceil(x)._sympy_()                                                     # optional - sympy sage.symbolic
             ceiling(x)
 
         ::
@@ -405,7 +402,7 @@ class Function_ceil(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: latex(ceil(x)) # indirect doctest
+            sage: latex(ceil(x))  # indirect doctest                                    # optional - sage.symbolic
             \left \lceil x \right \rceil
         """
         return r"\left \lceil %s \right \rceil"%latex(x)
@@ -419,13 +416,13 @@ class Function_ceil(BuiltinFunction):
 
         TESTS::
 
-            sage: ceil(SR(10^50 + 10^(-50)))
+            sage: ceil(SR(10^50 + 10^(-50)))                                            # optional - sage.symbolic
             100000000000000000000000000000000000000000000000001
-            sage: ceil(SR(10^50 - 10^(-50)))
+            sage: ceil(SR(10^50 - 10^(-50)))                                            # optional - sage.symbolic
             100000000000000000000000000000000000000000000000000
             sage: ceil(int(10^50))
             100000000000000000000000000000000000000000000000000
-            sage: ceil((1725033*pi - 5419351)/(25510582*pi - 80143857))
+            sage: ceil((1725033*pi - 5419351)/(25510582*pi - 80143857))                 # optional - sage.symbolic
             -2
         """
         return _eval_floor_ceil(self, x, "ceil", **kwds)
@@ -496,37 +493,37 @@ class Function_floor(BuiltinFunction):
             5
             sage: type(floor(5.4))
             <class 'sage.rings.integer.Integer'>
-            sage: var('x')
+            sage: var('x')                                                              # optional - sage.symbolic
             x
-            sage: a = floor(5.4 + x); a
+            sage: a = floor(5.4 + x); a                                                 # optional - sage.symbolic
             floor(x + 5.40000000000000)
-            sage: a.simplify()
+            sage: a.simplify()                                                          # optional - sage.symbolic
             floor(x + 0.4000000000000004) + 5
-            sage: a(x=2)
+            sage: a(x=2)                                                                # optional - sage.symbolic
             7
 
         ::
 
-            sage: floor(cos(8) / cos(2))
+            sage: floor(cos(8) / cos(2))                                                # optional - sage.symbolic
             0
-            sage: floor(log(4) / log(2))
+            sage: floor(log(4) / log(2))                                                # optional - sage.symbolic
             2
-            sage: a = floor(5.4 + x); a
+            sage: a = floor(5.4 + x); a                                                 # optional - sage.symbolic
             floor(x + 5.40000000000000)
-            sage: a.subs(x==2)
+            sage: a.subs(x==2)                                                          # optional - sage.symbolic
             7
-            sage: floor(log(2^(3/2)) / log(2) + 1/2)
+            sage: floor(log(2^(3/2)) / log(2) + 1/2)                                    # optional - sage.symbolic
             2
-            sage: floor(log(2^(-3/2)) / log(2) + 1/2)
+            sage: floor(log(2^(-3/2)) / log(2) + 1/2)                                   # optional - sage.symbolic
             -1
 
         ::
 
-            sage: floor(factorial(50)/exp(1))
+            sage: floor(factorial(50)/exp(1))                                           # optional - sage.symbolic
             11188719610782480504630258070757734324011354208865721592720336800
-            sage: floor(SR(10^50 + 10^(-50)))
+            sage: floor(SR(10^50 + 10^(-50)))                                           # optional - sage.symbolic
             100000000000000000000000000000000000000000000000000
-            sage: floor(SR(10^50 - 10^(-50)))
+            sage: floor(SR(10^50 - 10^(-50)))                                           # optional - sage.symbolic
             99999999999999999999999999999999999999999999999999
             sage: floor(int(10^50))
             100000000000000000000000000000000000000000000000000
@@ -534,18 +531,18 @@ class Function_floor(BuiltinFunction):
         Small numbers which are extremely close to an integer are hard to
         deal with::
 
-            sage: floor((33^100 + 1)^(1/100))
+            sage: floor((33^100 + 1)^(1/100))                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot compute floor(...) using 256 bits of precision
 
         This can be fixed by giving a sufficiently large ``bits`` argument::
 
-            sage: floor((33^100 + 1)^(1/100), bits=500)
+            sage: floor((33^100 + 1)^(1/100), bits=500)                                 # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot compute floor(...) using 512 bits of precision
-            sage: floor((33^100 + 1)^(1/100), bits=1000)
+            sage: floor((33^100 + 1)^(1/100), bits=1000)                                # optional - sage.symbolic
             33
 
         ::
@@ -554,7 +551,7 @@ class Function_floor(BuiltinFunction):
             sage: a = numpy.linspace(0,2,6)                                             # optional - numpy
             sage: floor(a)                                                              # optional - numpy
             array([0., 0., 0., 1., 1., 2.])
-            sage: floor(x)._sympy_()                                                    # optional - sympy
+            sage: floor(x)._sympy_()                                                    # optional - sympy sage.symbolic
             floor(x)
 
         Test pickling::
@@ -569,7 +566,7 @@ class Function_floor(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: latex(floor(x))
+            sage: latex(floor(x))                                                       # optional - sage.symbolic
             \left \lfloor x \right \rfloor
         """
         return r"\left \lfloor %s \right \rfloor"%latex(x)
@@ -583,13 +580,13 @@ class Function_floor(BuiltinFunction):
 
         TESTS::
 
-            sage: floor(SR(10^50 + 10^(-50)))
+            sage: floor(SR(10^50 + 10^(-50)))                                           # optional - sage.symbolic
             100000000000000000000000000000000000000000000000000
-            sage: floor(SR(10^50 - 10^(-50)))
+            sage: floor(SR(10^50 - 10^(-50)))                                           # optional - sage.symbolic
             99999999999999999999999999999999999999999999999999
             sage: floor(int(10^50))
             100000000000000000000000000000000000000000000000000
-            sage: floor((1725033*pi - 5419351)/(25510582*pi - 80143857))
+            sage: floor((1725033*pi - 5419351)/(25510582*pi - 80143857))                # optional - sage.symbolic
             -3
         """
         return _eval_floor_ceil(self, x, "floor", **kwds)
@@ -598,20 +595,20 @@ class Function_floor(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: floor(x).subs(x==7.5)
+            sage: floor(x).subs(x==7.5)                                                 # optional - sage.symbolic
             7
-            sage: floor(x)
+            sage: floor(x)                                                              # optional - sage.symbolic
             floor(x)
 
-            sage: var('x',domain='integer')
+            sage: var('x', domain='integer')                                            # optional - sage.symbolic
             x
-            sage: floor(x)
+            sage: floor(x)                                                              # optional - sage.symbolic
             x
-            sage: floor(factorial(x) + binomial(x^2, x))
+            sage: floor(factorial(x) + binomial(x^2, x))                                # optional - sage.symbolic
             binomial(x^2, x) + factorial(x)
-            sage: floor(gamma(abs(2*x)+1) * real(x))
+            sage: floor(gamma(abs(2*x)+1) * real(x))                                    # optional - sage.symbolic
             x*gamma(2*abs(x) + 1)
-            sage: forget()
+            sage: forget()                                                              # optional - sage.symbolic
         """
         try:
             if SR(x).variables() and x.is_integer():
@@ -645,17 +642,17 @@ class Function_Order(GinacFunction):
 
         EXAMPLES::
 
-            sage: x = SR('x')
-            sage: x.Order()
+            sage: x = SR('x')                                                           # optional - sage.symbolic
+            sage: x.Order()                                                             # optional - sage.symbolic
             Order(x)
-            sage: (x^2 + x).Order()
+            sage: (x^2 + x).Order()                                                     # optional - sage.symbolic
             Order(x^2 + x)
 
         TESTS:
 
         Check that :trac:`19425` is resolved::
 
-            sage: x.Order().operator()
+            sage: x.Order().operator()                                                  # optional - sage.symbolic
             Order
         """
         GinacFunction.__init__(self, "Order",
@@ -666,18 +663,18 @@ class Function_Order(GinacFunction):
         """
         EXAMPLES::
 
-            sage: x.Order()._sympy_()
+            sage: x.Order()._sympy_()                                                   # optional - sympy sage.symbolic
             O(x)
-            sage: SR(1).Order()._sympy_()
+            sage: SR(1).Order()._sympy_()                                               # optional - sympy sage.symbolic
             O(1)
-            sage: ((x-1)^3).Order()._sympy_()
+            sage: ((x-1)^3).Order()._sympy_()                                           # optional - sympy sage.symbolic
             O((x - 1)**3, (x, 1))
-            sage: exp(x).series(x==1, 3)._sympy_()
+            sage: exp(x).series(x==1, 3)._sympy_()                                      # optional - sympy sage.symbolic
             E + E*(x - 1) + E*(x - 1)**2/2 + O((x - 1)**3, (x, 1))
 
-            sage: (-(pi-x)^3).Order()._sympy_()
+            sage: (-(pi-x)^3).Order()._sympy_()                                         # optional - sympy sage.symbolic
             O((x - pi)**3, (x, pi))
-            sage: cos(x).series(x==pi, 3)._sympy_()
+            sage: cos(x).series(x==pi, 3)._sympy_()                                     # optional - sympy sage.symbolic
             -1 + (pi - x)**2/2 + O((x - pi)**3, (x, pi))
         """
         roots = arg.solve(arg.default_variable(), algorithm='sympy',
@@ -708,15 +705,15 @@ class Function_frac(BuiltinFunction):
             <class 'sage.rings.real_mpfr.RealNumber'>
             sage: frac(456/123)
             29/41
-            sage: var('x')
+            sage: var('x')                                                              # optional - sage.symbolic
             x
-            sage: a = frac(5.4 + x); a
+            sage: a = frac(5.4 + x); a                                                  # optional - sage.symbolic
             frac(x + 5.40000000000000)
-            sage: frac(cos(8)/cos(2))
+            sage: frac(cos(8)/cos(2))                                                   # optional - sage.symbolic
             cos(8)/cos(2)
-            sage: latex(frac(x))
+            sage: latex(frac(x))                                                        # optional - sage.symbolic
             \operatorname{frac}\left(x\right)
-            sage: frac(x)._sympy_()
+            sage: frac(x)._sympy_()                                                     # optional - sympy sage.symbolic
             frac(x)
 
         Test pickling::
@@ -732,9 +729,9 @@ class Function_frac(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: frac(pi).n()
+            sage: frac(pi).n()                                                          # optional - sage.symbolic
             0.141592653589793
-            sage: frac(pi).n(200)
+            sage: frac(pi).n(200)                                                       # optional - sage.symbolic
             0.14159265358979323846264338327950288419716939937510582097494
         """
         return x - floor(x)
@@ -743,9 +740,9 @@ class Function_frac(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: frac(x).subs(x==7.5)
+            sage: frac(x).subs(x==7.5)                                                  # optional - sage.symbolic
             0.500000000000000
-            sage: frac(x)
+            sage: frac(x)                                                               # optional - sage.symbolic
             frac(x)
         """
         try:
@@ -781,9 +778,9 @@ class Function_real_nth_root(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: real_nth_root(2, 3)
+        sage: real_nth_root(2, 3)                                                       # optional - sage.symbolic
         2^(1/3)
-        sage: real_nth_root(-2, 3)
+        sage: real_nth_root(-2, 3)                                                      # optional - sage.symbolic
         -2^(1/3)
         sage: real_nth_root(8, 3)
         2
@@ -804,16 +801,15 @@ class Function_real_nth_root(BuiltinFunction):
 
     Some symbolic calculus::
 
-        sage: f = real_nth_root(x, 5)^3
-        sage: f
+        sage: f = real_nth_root(x, 5)^3; f                                              # optional - sage.symbolic
         real_nth_root(x^3, 5)
-        sage: f.diff()
+        sage: f.diff()                                                                  # optional - sage.symbolic
         3/5*x^2*real_nth_root(x^(-12), 5)
-        sage: result = f.integrate(x)
+        sage: result = f.integrate(x)                                                   # optional - sage.symbolic
         ...
-        sage: result
+        sage: result                                                                    # optional - sage.symbolic
         integrate((abs(x)^3)^(1/5)*sgn(x^3), x)
-        sage: _.diff()
+        sage: _.diff()                                                                  # optional - sage.symbolic
         (abs(x)^3)^(1/5)*sgn(x^3)
     """
     def __init__(self):
@@ -822,14 +818,14 @@ class Function_real_nth_root(BuiltinFunction):
 
         TESTS::
 
-            sage: cube_root = real_nth_root(x, 3)
-            sage: loads(dumps(cube_root))
+            sage: cube_root = real_nth_root(x, 3)                                       # optional - sage.symbolic
+            sage: loads(dumps(cube_root))                                               # optional - sage.symbolic
             real_nth_root(x, 3)
 
         ::
 
-            sage: f = real_nth_root(x, 3)
-            sage: f._sympy_()
+            sage: f = real_nth_root(x, 3)                                               # optional - sage.symbolic
+            sage: f._sympy_()                                                           # optional - sympy sage.symbolic
             Piecewise((Abs(x)**(1/3)*sign(x), Eq(im(x), 0)), (x**(1/3), True))
 
         """
@@ -842,9 +838,9 @@ class Function_real_nth_root(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(real_nth_root(x, 3))
+            sage: latex(real_nth_root(x, 3))                                            # optional - sage.symbolic
             x^{\frac{1}{3}}
-            sage: latex(real_nth_root(x^2 + x, 3))
+            sage: latex(real_nth_root(x^2 + x, 3))                                      # optional - sage.symbolic
             {\left(x^{2} + x\right)}^{\frac{1}{3}}
         """
         return latex(base**(1/exp))
@@ -894,9 +890,9 @@ class Function_real_nth_root(BuiltinFunction):
         """
         TESTS::
 
-            sage: real_nth_root(x, 1)
+            sage: real_nth_root(x, 1)                                                   # optional - sage.symbolic
             x
-            sage: real_nth_root(x, 3)
+            sage: real_nth_root(x, 3)                                                   # optional - sage.symbolic
             real_nth_root(x, 3)
 
             sage: real_nth_root(RIF(2), 3)
@@ -919,8 +915,8 @@ class Function_real_nth_root(BuiltinFunction):
         """
         TESTS::
 
-            sage: f = real_nth_root(x, 3)
-            sage: f^5
+            sage: f = real_nth_root(x, 3)                                               # optional - sage.symbolic
+            sage: f^5                                                                   # optional - sage.symbolic
             real_nth_root(x^5, 3)
         """
         return self(base**power_param, exp)
@@ -929,17 +925,17 @@ class Function_real_nth_root(BuiltinFunction):
         """
         TESTS::
 
-            sage: f = real_nth_root(x, 3)
-            sage: f.diff()
+            sage: f = real_nth_root(x, 3)                                               # optional - sage.symbolic
+            sage: f.diff()                                                              # optional - sage.symbolic
             1/3*real_nth_root(x^(-2), 3)
-            sage: f = real_nth_root(-x, 3)
-            sage: f.diff()
+            sage: f = real_nth_root(-x, 3)                                              # optional - sage.symbolic
+            sage: f.diff()                                                              # optional - sage.symbolic
             -1/3*real_nth_root(x^(-2), 3)
-            sage: f = real_nth_root(x, 4)
-            sage: f.diff()
+            sage: f = real_nth_root(x, 4)                                               # optional - sage.symbolic
+            sage: f.diff()                                                              # optional - sage.symbolic
             1/4*real_nth_root(x^(-3), 4)
-            sage: f = real_nth_root(-x, 4)
-            sage: f.diff()
+            sage: f = real_nth_root(-x, 4)                                              # optional - sage.symbolic
+            sage: f.diff()                                                              # optional - sage.symbolic
             -1/4*real_nth_root(-1/x^3, 4)
         """
         return 1/exp * self(base, exp)**(1-exp)
@@ -954,39 +950,39 @@ class Function_arg(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: arg(3+i)
+            sage: arg(3+i)                                                              # optional - sage.symbolic
             arctan(1/3)
-            sage: arg(-1+i)
+            sage: arg(-1+i)                                                             # optional - sage.symbolic
             3/4*pi
-            sage: arg(2+2*i)
+            sage: arg(2+2*i)                                                            # optional - sage.symbolic
             1/4*pi
-            sage: arg(2+x)
+            sage: arg(2+x)                                                              # optional - sage.symbolic
             arg(x + 2)
-            sage: arg(2.0+i+x)
+            sage: arg(2.0+i+x)                                                          # optional - sage.symbolic
             arg(x + 2.00000000000000 + 1.00000000000000*I)
-            sage: arg(-3)
+            sage: arg(-3)                                                               # optional - sage.symbolic
             pi
-            sage: arg(3)
+            sage: arg(3)                                                                # optional - sage.symbolic
             0
-            sage: arg(0)
+            sage: arg(0)                                                                # optional - sage.symbolic
             0
 
-            sage: latex(arg(x))
+            sage: latex(arg(x))                                                         # optional - sage.symbolic
             {\rm arg}\left(x\right)
-            sage: maxima(arg(x))
+            sage: maxima(arg(x))                                                        # optional - sage.symbolic
             atan2(0,_SAGE_VAR_x)
-            sage: maxima(arg(2+i))
+            sage: maxima(arg(2+i))                                                      # optional - sage.symbolic
             atan(1/2)
-            sage: maxima(arg(sqrt(2)+i))
+            sage: maxima(arg(sqrt(2)+i))                                                # optional - sage.symbolic
             atan(1/sqrt(2))
-            sage: arg(x)._sympy_()
+            sage: arg(x)._sympy_()                                                      # optional - sympy sage.symbolic
             arg(x)
 
-            sage: arg(2+i)
+            sage: arg(2+i)                                                              # optional - sage.symbolic
             arctan(1/2)
-            sage: arg(sqrt(2)+i)
+            sage: arg(sqrt(2)+i)                                                        # optional - sage.symbolic
             arg(sqrt(2) + I)
-            sage: arg(sqrt(2)+i).simplify()
+            sage: arg(sqrt(2)+i).simplify()                                             # optional - sage.symbolic
             arctan(1/2*sqrt(2))
 
         TESTS::
@@ -997,7 +993,7 @@ class Function_arg(BuiltinFunction):
             0.000000000000000
             sage: arg(-2.5)
             3.14159265358979
-            sage: arg(2.0+3*i)
+            sage: arg(2.0+3*i)                                                          # optional - sage.symbolic
             0.982793723247329
         """
         BuiltinFunction.__init__(self, "arg",
@@ -1010,23 +1006,23 @@ class Function_arg(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: arg(3+i)
+            sage: arg(3+i)                                                              # optional - sage.symbolic
             arctan(1/3)
-            sage: arg(-1+i)
+            sage: arg(-1+i)                                                             # optional - sage.symbolic
             3/4*pi
-            sage: arg(2+2*i)
+            sage: arg(2+2*i)                                                            # optional - sage.symbolic
             1/4*pi
-            sage: arg(2+x)
+            sage: arg(2+x)                                                              # optional - sage.symbolic
             arg(x + 2)
-            sage: arg(2.0+i+x)
+            sage: arg(2.0+i+x)                                                          # optional - sage.symbolic
             arg(x + 2.00000000000000 + 1.00000000000000*I)
-            sage: arg(-3)
+            sage: arg(-3)                                                               # optional - sage.symbolic
             pi
-            sage: arg(3)
+            sage: arg(3)                                                                # optional - sage.symbolic
             0
-            sage: arg(0)
+            sage: arg(0)                                                                # optional - sage.symbolic
             0
-            sage: arg(sqrt(2)+i)
+            sage: arg(sqrt(2)+i)                                                        # optional - sage.symbolic
             arg(sqrt(2) + I)
 
         """
@@ -1063,7 +1059,7 @@ class Function_arg(BuiltinFunction):
             Real Double Field
             sage: arg(-2.5)
             3.14159265358979
-            sage: arg(2.0+3*i)
+            sage: arg(2.0+3*i)                                                          # optional - sage.symbolic
             0.982793723247329
 
         TESTS:
@@ -1071,7 +1067,7 @@ class Function_arg(BuiltinFunction):
         Make sure that the ``_evalf_`` method works when it receives a
         keyword argument ``parent`` :trac:`12289`::
 
-            sage: arg(5+I, hold=True).n()
+            sage: arg(5+I, hold=True).n()                                               # optional - sage.symbolic
             0.197395559849881
         """
         try:
@@ -1105,19 +1101,19 @@ class Function_real_part(GinacFunction):
         It is possible to prevent automatic evaluation using the
         ``hold`` parameter::
 
-            sage: real_part(I,hold=True)
+            sage: real_part(I, hold=True)                                               # optional - sage.symbolic
             real_part(I)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: real_part(I,hold=True).simplify()
+            sage: real_part(I, hold=True).simplify()                                    # optional - sage.symbolic
             0
 
         EXAMPLES::
 
-            sage: z = 1+2*I
-            sage: real(z)
+            sage: z = 1+2*I                                                             # optional - sage.symbolic
+            sage: real(z)                                                               # optional - sage.symbolic
             1
             sage: real(5/3)
             5/3
@@ -1134,40 +1130,40 @@ class Function_real_part(GinacFunction):
         Sage can recognize some expressions as real and accordingly
         return the identical argument::
 
-            sage: SR.var('x', domain='integer').real_part()
+            sage: SR.var('x', domain='integer').real_part()                             # optional - sage.symbolic
             x
-            sage: SR.var('x', domain='integer').imag_part()
+            sage: SR.var('x', domain='integer').imag_part()                             # optional - sage.symbolic
             0
-            sage: real_part(sin(x)+x)
+            sage: real_part(sin(x)+x)                                                   # optional - sage.symbolic
             x + sin(x)
-            sage: real_part(x*exp(x))
+            sage: real_part(x*exp(x))                                                   # optional - sage.symbolic
             x*e^x
-            sage: imag_part(sin(x)+x)
+            sage: imag_part(sin(x)+x)                                                   # optional - sage.symbolic
             0
-            sage: real_part(real_part(x))
+            sage: real_part(real_part(x))                                               # optional - sage.symbolic
             x
-            sage: forget()
+            sage: forget()                                                              # optional - sage.symbolic
 
         TESTS::
 
             sage: loads(dumps(real_part))
             real_part
-            sage: real_part(x)._sympy_()
+            sage: real_part(x)._sympy_()                                                # optional - sympy sage.symbolic
             re(x)
 
         Check if :trac:`6401` is fixed::
 
-            sage: latex(x.real())
+            sage: latex(x.real())                                                       # optional - sage.symbolic
             \Re \left( x \right)
 
-            sage: f(x) = function('f')(x)
-            sage: latex( f(x).real())
+            sage: f(x) = function('f')(x)                                               # optional - sage.symbolic
+            sage: latex( f(x).real())                                                   # optional - sage.symbolic
             \Re \left( f\left(x\right) \right)
 
         Check that some real part expansions evaluate correctly
         (:trac:`21614`)::
 
-            sage: real(sqrt(sin(x))).subs(x==0)
+            sage: real(sqrt(sin(x))).subs(x==0)                                         # optional - sage.symbolic
             0
         """
         GinacFunction.__init__(self, "real_part",
@@ -1200,36 +1196,36 @@ class Function_imag_part(GinacFunction):
         It is possible to prevent automatic evaluation using the
         ``hold`` parameter::
 
-            sage: imag_part(I,hold=True)
+            sage: imag_part(I, hold=True)                                               # optional - sage.symbolic
             imag_part(I)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: imag_part(I,hold=True).simplify()
+            sage: imag_part(I, hold=True).simplify()                                    # optional - sage.symbolic
             1
 
         TESTS::
 
-            sage: z = 1+2*I
-            sage: imaginary(z)
+            sage: z = 1+2*I                                                             # optional - sage.symbolic
+            sage: imaginary(z)                                                          # optional - sage.symbolic
             2
-            sage: imag(z)
+            sage: imag(z)                                                               # optional - sage.symbolic
             2
             sage: imag(complex(3, 4))
             4.0
             sage: loads(dumps(imag_part))
             imag_part
-            sage: imag_part(x)._sympy_()
+            sage: imag_part(x)._sympy_()                                                # optional - sympy sage.symbolic
             im(x)
 
         Check if :trac:`6401` is fixed::
 
-            sage: latex(x.imag())
+            sage: latex(x.imag())                                                       # optional - sage.symbolic
             \Im \left( x \right)
 
-            sage: f(x) = function('f')(x)
-            sage: latex( f(x).imag())
+            sage: f(x) = function('f')(x)                                               # optional - sage.symbolic
+            sage: latex(f(x).imag())                                                    # optional - sage.symbolic
             \Im \left( f\left(x\right) \right)
         """
         GinacFunction.__init__(self, "imag_part",
@@ -1267,67 +1263,67 @@ class Function_conjugate(GinacFunction):
         It is possible to prevent automatic evaluation using the
         ``hold`` parameter::
 
-            sage: conjugate(I,hold=True)
+            sage: conjugate(I, hold=True)                                               # optional - sage.symbolic
             conjugate(I)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: conjugate(I,hold=True).simplify()
+            sage: conjugate(I, hold=True).simplify()                                    # optional - sage.symbolic
             -I
 
         TESTS::
 
-            sage: x,y = var('x,y')
-            sage: x.conjugate()
+            sage: x,y = var('x,y')                                                      # optional - sage.symbolic
+            sage: x.conjugate()                                                         # optional - sage.symbolic
             conjugate(x)
-            sage: _._sympy_()
+            sage: _._sympy_()                                                           # optional - sympy sage.symbolic
             conjugate(x)
-            sage: latex(conjugate(x))
+            sage: latex(conjugate(x))                                                   # optional - sage.symbolic
             \overline{x}
-            sage: f = function('f')
-            sage: latex(f(x).conjugate())
+            sage: f = function('f')                                                     # optional - sage.symbolic
+            sage: latex(f(x).conjugate())                                               # optional - sage.symbolic
             \overline{f\left(x\right)}
-            sage: f = function('psi')(x,y)
-            sage: latex(f.conjugate())
+            sage: f = function('psi')(x,y)                                              # optional - sage.symbolic
+            sage: latex(f.conjugate())                                                  # optional - sage.symbolic
             \overline{\psi\left(x, y\right)}
-            sage: x.conjugate().conjugate()
+            sage: x.conjugate().conjugate()                                             # optional - sage.symbolic
             x
-            sage: x.conjugate().operator()
+            sage: x.conjugate().operator()                                              # optional - sage.symbolic
             conjugate
-            sage: x.conjugate().operator() == conjugate
+            sage: x.conjugate().operator() == conjugate                                 # optional - sage.symbolic
             True
 
         Check if :trac:`8755` is fixed::
 
-            sage: conjugate(sqrt(-3))
+            sage: conjugate(sqrt(-3))                                                   # optional - sage.symbolic
             conjugate(sqrt(-3))
-            sage: conjugate(sqrt(3))
+            sage: conjugate(sqrt(3))                                                    # optional - sage.symbolic
             sqrt(3)
-            sage: conjugate(sqrt(x))
+            sage: conjugate(sqrt(x))                                                    # optional - sage.symbolic
             conjugate(sqrt(x))
-            sage: conjugate(x^2)
+            sage: conjugate(x^2)                                                        # optional - sage.symbolic
             conjugate(x)^2
-            sage: var('y',domain='positive')
+            sage: var('y', domain='positive')                                           # optional - sage.symbolic
             y
-            sage: conjugate(sqrt(y))
+            sage: conjugate(sqrt(y))                                                    # optional - sage.symbolic
             sqrt(y)
 
         Check if :trac:`10964` is fixed::
 
-            sage: z= I*sqrt(-3); z
+            sage: z = I*sqrt(-3); z                                                     # optional - sage.symbolic
             I*sqrt(-3)
-            sage: conjugate(z)
+            sage: conjugate(z)                                                          # optional - sage.symbolic
             -I*conjugate(sqrt(-3))
-            sage: var('a')
+            sage: var('a')                                                              # optional - sage.symbolic
             a
-            sage: conjugate(a*sqrt(-2)*sqrt(-3))
+            sage: conjugate(a*sqrt(-2)*sqrt(-3))                                        # optional - sage.symbolic
             conjugate(sqrt(-2))*conjugate(sqrt(-3))*conjugate(a)
 
         Check that sums are handled correctly::
 
-            sage: y = var('y', domain='real')
-            sage: conjugate(y + I)
+            sage: y = var('y', domain='real')                                           # optional - sage.symbolic
+            sage: conjugate(y + I)                                                      # optional - sage.symbolic
             y - I
 
         Test pickling::
@@ -1352,7 +1348,7 @@ class Function_factorial(GinacFunction):
 
         INPUT:
 
-        -  ``n`` - a non-negative integer, a complex number (except negative
+        -  ``n`` -- a non-negative integer, a complex number (except negative
            integers) or any symbolic expression
 
 
@@ -1369,32 +1365,32 @@ class Function_factorial(GinacFunction):
             sage: factorial(6) == 6*5*4*3*2
             True
 
-            sage: x = SR.var('x')
-            sage: f = factorial(x + factorial(x)); f
+            sage: x = SR.var('x')                                                       # optional - sage.symbolic
+            sage: f = factorial(x + factorial(x)); f                                    # optional - sage.symbolic
             factorial(x + factorial(x))
-            sage: f(x=3)
+            sage: f(x=3)                                                                # optional - sage.symbolic
             362880
-            sage: factorial(x)^2
+            sage: factorial(x)^2                                                        # optional - sage.symbolic
             factorial(x)^2
 
         To prevent automatic evaluation use the ``hold`` argument::
 
-            sage: factorial(5, hold=True)
+            sage: factorial(5, hold=True)                                               # optional - sage.symbolic
             factorial(5)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`sage.symbolic.expression.Expression.simplify`::
 
-            sage: factorial(5, hold=True).simplify()
+            sage: factorial(5, hold=True).simplify()                                    # optional - sage.symbolic
             120
 
         We can also give input other than nonnegative integers.  For
         other nonnegative numbers, the :func:`sage.functions.gamma.gamma`
         function is used::
 
-            sage: factorial(1/2)
+            sage: factorial(1/2)                                                        # optional - sage.symbolic
             1/2*sqrt(pi)
-            sage: factorial(3/4)
+            sage: factorial(3/4)                                                        # optional - sage.symbolic
             gamma(7/4)
             sage: factorial(2.3)
             2.68343738195577
@@ -1408,9 +1404,9 @@ class Function_factorial(GinacFunction):
 
         And very large integers remain unevaluated::
 
-            sage: factorial(2**64)
+            sage: factorial(2**64)                                                      # optional - sage.symbolic
             factorial(18446744073709551616)
-            sage: SR(2**64).factorial()
+            sage: SR(2**64).factorial()                                                 # optional - sage.symbolic
             factorial(18446744073709551616)
 
         TESTS:
@@ -1418,17 +1414,17 @@ class Function_factorial(GinacFunction):
         We verify that we can convert this function to Maxima and
         bring it back into Sage.::
 
-            sage: z = var('z')
-            sage: factorial._maxima_init_()
+            sage: z = var('z')                                                          # optional - sage.symbolic
+            sage: factorial._maxima_init_()                                             # optional - sage.symbolic
             'factorial'
-            sage: maxima(factorial(z))
+            sage: maxima(factorial(z))                                                  # optional - sage.symbolic
             factorial(_SAGE_VAR_z)
-            sage: _.sage()
+            sage: _.sage()                                                              # optional - sage.symbolic
             factorial(z)
-            sage: _._sympy_()
+            sage: _._sympy_()                                                           # optional - sympy sage.symbolic
             factorial(z)
-            sage: k = var('k')
-            sage: factorial(k)
+            sage: k = var('k')                                                          # optional - sage.symbolic
+            sage: factorial(k)                                                          # optional - sage.symbolic
             factorial(k)
 
             sage: factorial(3.14)
@@ -1436,17 +1432,17 @@ class Function_factorial(GinacFunction):
 
         Test latex typesetting::
 
-            sage: latex(factorial(x))
+            sage: latex(factorial(x))                                                   # optional - sage.symbolic
             x!
-            sage: latex(factorial(2*x))
+            sage: latex(factorial(2*x))                                                 # optional - sage.symbolic
             \left(2 \, x\right)!
-            sage: latex(factorial(sin(x)))
+            sage: latex(factorial(sin(x)))                                              # optional - sage.symbolic
             \sin\left(x\right)!
-            sage: latex(factorial(sqrt(x+1)))
+            sage: latex(factorial(sqrt(x+1)))                                           # optional - sage.symbolic
             \left(\sqrt{x + 1}\right)!
-            sage: latex(factorial(sqrt(x)))
+            sage: latex(factorial(sqrt(x)))                                             # optional - sage.symbolic
             \sqrt{x}!
-            sage: latex(factorial(x^(2/3)))
+            sage: latex(factorial(x^(2/3)))                                             # optional - sage.symbolic
             \left(x^{\frac{2}{3}}\right)!
 
             sage: latex(factorial)
@@ -1454,18 +1450,18 @@ class Function_factorial(GinacFunction):
 
         Check that :trac:`11539` is fixed::
 
-            sage: (factorial(x) == 0).simplify()
+            sage: (factorial(x) == 0).simplify()                                        # optional - sage.symbolic
             factorial(x) == 0
-            sage: maxima(factorial(x) == 0).sage()
+            sage: maxima(factorial(x) == 0).sage()                                      # optional - sage.symbolic
             factorial(x) == 0
-            sage: y = var('y')
-            sage: (factorial(x) == y).solve(x)
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: (factorial(x) == y).solve(x)                                          # optional - sage.symbolic
             [factorial(x) == y]
 
         Check that :trac:`16166` is fixed::
 
-            sage: RBF = RealBallField(53)
-            sage: factorial(RBF(4.2)) # abs tol 1e-13
+            sage: RBF = RealBallField(53)                                               # optional - sage.libs.flint
+            sage: factorial(RBF(4.2))  # abs tol 1e-13                                  # optional - sage.libs.flint
             [32.5780960503314 +/- 6.06e-14]
 
         Test pickling::
@@ -1490,25 +1486,25 @@ class Function_factorial(GinacFunction):
 
         EXAMPLES::
 
-            sage: k = var('k')
-            sage: k.factorial()
+            sage: k = var('k')                                                          # optional - sage.symbolic
+            sage: k.factorial()                                                         # optional - sage.symbolic
             factorial(k)
-            sage: SR(1/2).factorial()
+            sage: SR(1/2).factorial()                                                   # optional - sage.symbolic
             1/2*sqrt(pi)
-            sage: SR(3/4).factorial()
+            sage: SR(3/4).factorial()                                                   # optional - sage.symbolic
             gamma(7/4)
-            sage: SR(5).factorial()
+            sage: SR(5).factorial()                                                     # optional - sage.symbolic
             120
-            sage: SR(3245908723049857203948572398475r).factorial()
+            sage: SR(3245908723049857203948572398475r).factorial()                      # optional - sage.symbolic
             factorial(3245908723049857203948572398475)
-            sage: SR(3245908723049857203948572398475).factorial()
+            sage: SR(3245908723049857203948572398475).factorial()                       # optional - sage.symbolic
             factorial(3245908723049857203948572398475)
 
         TESTS:
 
         Check that :trac:`25421` is fixed::
 
-            sage: factorial(RBF(2)**64)
+            sage: factorial(RBF(2)**64)                                                 # optional - sage.libs.flint
             [+/- 2.30e+347382171326740403407]
 
         Check that :trac:`26749` is fixed::
@@ -1531,6 +1527,7 @@ class Function_factorial(GinacFunction):
         elif self._is_numerical(x):
             from sage.functions.gamma import gamma
             return gamma(x + 1)
+
 
 factorial = Function_factorial()
 
@@ -1564,40 +1561,40 @@ class Function_binomial(GinacFunction):
 
         EXAMPLES::
 
-            sage: binomial(5,2)
+            sage: binomial(5, 2)
             10
-            sage: binomial(2,0)
+            sage: binomial(2, 0)
             1
             sage: binomial(1/2, 0)
             1
-            sage: binomial(3,-1)
+            sage: binomial(3, -1)
             0
-            sage: binomial(20,10)
+            sage: binomial(20, 10)
             184756
             sage: binomial(-2, 5)
             -6
             sage: binomial(RealField()('2.5'), 2)
             1.87500000000000
-            sage: n=var('n'); binomial(n,2)
+            sage: n = var('n'); binomial(n, 2)                                          # optional - sage.symbolic
             1/2*(n - 1)*n
-            sage: n=var('n'); binomial(n,n)
+            sage: n = var('n'); binomial(n, n)                                          # optional - sage.symbolic
             1
-            sage: n=var('n'); binomial(n,n-1)
+            sage: n = var('n'); binomial(n, n - 1)                                      # optional - sage.symbolic
             n
             sage: binomial(2^100, 2^100)
             1
 
         ::
 
-            sage: k, i = var('k,i')
-            sage: binomial(k,i)
+            sage: k, i = var('k,i')                                                     # optional - sage.symbolic
+            sage: binomial(k,i)                                                         # optional - sage.symbolic
             binomial(k, i)
 
         We can use a ``hold`` parameter to prevent automatic evaluation::
 
-            sage: SR(5).binomial(3, hold=True)
+            sage: SR(5).binomial(3, hold=True)                                          # optional - sage.symbolic
             binomial(5, 3)
-            sage: SR(5).binomial(3, hold=True).simplify()
+            sage: SR(5).binomial(3, hold=True).simplify()                               # optional - sage.symbolic
             10
 
         TESTS:
@@ -1607,14 +1604,14 @@ class Function_binomial(GinacFunction):
 
         ::
 
-            sage: n,k = var('n,k')
-            sage: maxima(binomial(n,k))
+            sage: n, k = var('n,k')                                                     # optional - sage.symbolic
+            sage: maxima(binomial(n,k))                                                 # optional - sage.symbolic
             binomial(_SAGE_VAR_n,_SAGE_VAR_k)
-            sage: _.sage()
+            sage: _.sage()                                                              # optional - sage.symbolic
             binomial(n, k)
-            sage: _._sympy_()
+            sage: _._sympy_()                                                           # optional - sympy sage.symbolic
             binomial(n, k)
-            sage: binomial._maxima_init_()
+            sage: binomial._maxima_init_()                                              # optional - sage.symbolic
             'binomial'
 
         For polynomials::
@@ -1632,7 +1629,7 @@ class Function_binomial(GinacFunction):
 
         Test pickling::
 
-            sage: loads(dumps(binomial(n,k)))
+            sage: loads(dumps(binomial(n, k)))                                          # optional - sage.symbolic
             binomial(n, k)
         """
         GinacFunction.__init__(self, "binomial", nargs=2, preserved_arg=1,
@@ -1649,18 +1646,18 @@ class Function_binomial(GinacFunction):
 
         EXAMPLES::
 
-            sage: binomial._binomial_sym(x, 3)
+            sage: binomial._binomial_sym(x, 3)                                          # optional - sage.symbolic
             1/6*(x - 1)*(x - 2)*x
-            sage: binomial._binomial_sym(x, x)
+            sage: binomial._binomial_sym(x, x)                                          # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: second argument must be an integer
-            sage: binomial._binomial_sym(x, SR(3))
+            sage: binomial._binomial_sym(x, SR(3))                                      # optional - sage.symbolic
             1/6*(x - 1)*(x - 2)*x
 
-            sage: binomial._binomial_sym(x, 0r)
+            sage: binomial._binomial_sym(x, 0r)                                         # optional - sage.symbolic
             1
-            sage: binomial._binomial_sym(x, -1)
+            sage: binomial._binomial_sym(x, -1)                                         # optional - sage.symbolic
             0
 
             sage: y = polygen(QQ, 'y')
@@ -1693,12 +1690,12 @@ class Function_binomial(GinacFunction):
             <class 'sage.rings.integer.Integer'>
             sage: type(binomial._eval_(5., 3))
             <class 'sage.rings.real_mpfr.RealNumber'>
-            sage: binomial._eval_(x, 3)
+            sage: binomial._eval_(x, 3)                                                 # optional - sage.symbolic
             1/6*(x - 1)*(x - 2)*x
-            sage: binomial._eval_(x, x-2)
+            sage: binomial._eval_(x, x-2)                                               # optional - sage.symbolic
             1/2*(x - 1)*x
-            sage: n = var('n')
-            sage: binomial._eval_(x, n) is None
+            sage: n = var('n')                                                          # optional - sage.symbolic
+            sage: binomial._eval_(x, n) is None                                         # optional - sage.symbolic
             True
 
         TESTS::
@@ -1726,16 +1723,17 @@ class Function_binomial(GinacFunction):
             10.0
             sage: type(binomial._evalf_(5.r, 3))
             <... 'float'>
-            sage: binomial._evalf_(1/2,1/1)
+            sage: binomial._evalf_(1/2, 1/1)
             1/2
-            sage: binomial._evalf_(10^20+1/1,10^20)
+            sage: binomial._evalf_(10^20 + 1/1, 10^20)
             100000000000000000001
-            sage: binomial._evalf_(SR(10**7),10**7)
+            sage: binomial._evalf_(SR(10**7), 10**7)                                    # optional - sage.symbolic
             1
-            sage: binomial._evalf_(3/2,SR(1/1))
+            sage: binomial._evalf_(3/2, SR(1/1))                                        # optional - sage.symbolic
             3/2
         """
         return arith_binomial(n, k)
+
 
 binomial = Function_binomial()
 
@@ -1747,9 +1745,9 @@ class Function_sum(BuiltinFunction):
     EXAMPLES::
 
         sage: from sage.functions.other import symbolic_sum as ssum
-        sage: r = ssum(x, x, 1, 10); r
+        sage: r = ssum(x, x, 1, 10); r                                                  # optional - sage.symbolic
         sum(x, x, 1, 10)
-        sage: r.unhold()
+        sage: r.unhold()                                                                # optional - sage.symbolic
         55
     """
     def __init__(self):
@@ -1757,7 +1755,7 @@ class Function_sum(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.other import symbolic_sum as ssum
-            sage: maxima(ssum(x, x, 1, 10))
+            sage: maxima(ssum(x, x, 1, 10))                                             # optional - sage.symbolic
             55
         """
         BuiltinFunction.__init__(self, "sum", nargs=4,
@@ -1768,7 +1766,7 @@ class Function_sum(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.other import symbolic_sum as ssum
-            sage: latex(ssum(x^2, x, 1, 10))
+            sage: latex(ssum(x^2, x, 1, 10))                                            # optional - sage.symbolic
             {\sum_{x=1}^{10} x^{2}}
         """
         return r"{{\sum_{{{}={}}}^{{{}}} {}}}".format(latex(var), latex(a),
@@ -1780,19 +1778,19 @@ class Function_sum(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: var('k, n')
+            sage: var('k, n')                                                           # optional - sage.symbolic
             (k, n)
-            sage: s = sum(k, k, 1, n, hold=True)
-            sage: s
+            sage: s = sum(k, k, 1, n, hold=True); s                                     # optional - sage.symbolic
             sum(k, k, 1, n)
-            sage: s._sympy_() # indirect test
+            sage: s._sympy_()  # indirect test                                          # optional - sympy sage.symbolic
             Sum(k, (k, 1, n))
-            sage: s._sympy_().doit()
+            sage: s._sympy_().doit()                                                    # optional - sympy sage.symbolic
             n**2/2 + n/2
 
         """
         import sympy
         return sympy.Sum(term, (k, a, n))
+
 
 symbolic_sum = Function_sum()
 
@@ -1804,9 +1802,9 @@ class Function_prod(BuiltinFunction):
     EXAMPLES::
 
         sage: from sage.functions.other import symbolic_product as sprod
-        sage: r = sprod(x, x, 1, 10); r
+        sage: r = sprod(x, x, 1, 10); r                                                 # optional - sage.symbolic
         product(x, x, 1, 10)
-        sage: r.unhold()
+        sage: r.unhold()                                                                # optional - sage.symbolic
         3628800
     """
     def __init__(self):
@@ -1814,17 +1812,17 @@ class Function_prod(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.other import symbolic_product as sprod
-            sage: _ = var('m n', domain='integer')
-            sage: r = maxima(sprod(sin(m), m, 1, n)).sage(); r
+            sage: _ = var('m n', domain='integer')                                      # optional - sage.symbolic
+            sage: r = maxima(sprod(sin(m), m, 1, n)).sage(); r                          # optional - sage.symbolic
             product(sin(m), m, 1, n)
-            sage: isinstance(r.operator(), sage.functions.other.Function_prod)
+            sage: isinstance(r.operator(), sage.functions.other.Function_prod)          # optional - sage.symbolic
             True
-            sage: r = sympy(sprod(sin(m), m, 1, n)).sage(); r  # known bug
+            sage: r = sympy(sprod(sin(m), m, 1, n)).sage(); r  # known bug              # optional - sympy sage.symbolic
             product(sin(m), m, 1, n)
-            sage: isinstance(r.operator(),                     # known bug
+            sage: isinstance(r.operator(),                     # known bug              # optional - sympy sage.symbolic
             ....:     sage.functions.other.Function_prod)
             True
-            sage: giac(sprod(m, m, 1, n)).sage()
+            sage: giac(sprod(m, m, 1, n)).sage()                                        # optional - sage.symbolic
             factorial(n)
         """
         BuiltinFunction.__init__(self, "product", nargs=4,
@@ -1836,7 +1834,7 @@ class Function_prod(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.other import symbolic_product as sprod
-            sage: latex(sprod(x^2, x, 1, 10))
+            sage: latex(sprod(x^2, x, 1, 10))                                           # optional - sage.symbolic
             {\prod_{x=1}^{10} x^{2}}
         """
         return r"{{\prod_{{{}={}}}^{{{}}} {}}}".format(latex(var), latex(a),
@@ -1848,10 +1846,10 @@ class Function_prod(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: var('k, n')
+            sage: var('k, n')                                                           # optional - sage.symbolic
             (k, n)
-            sage: p = product(k^2+k+1,k,1,n, hold=True)
-            sage: p._sympy_() # indirect test
+            sage: p = product(k^2 + k + 1, k, 1, n, hold=True)                          # optional - sympy sage.symbolic
+            sage: p._sympy_() # indirect test                                           # optional - sympy sage.symbolic
             Product(k**2 + k + 1, (k, 1, n))
         """
         import sympy
@@ -1867,21 +1865,21 @@ class Function_limit(BuiltinFunction):
     This function is called to create formal wrappers of limits that
     Maxima can't compute::
 
-        sage: a = lim(exp(x^2)*(1-erf(x)), x=infinity); a
+        sage: a = lim(exp(x^2)*(1-erf(x)), x=infinity); a                               # optional - sage.symbolic
         -limit((erf(x) - 1)*e^(x^2), x, +Infinity)
 
     EXAMPLES::
 
         sage: from sage.functions.other import symbolic_limit as slimit
-        sage: slimit(1/x, x, +oo)
+        sage: slimit(1/x, x, +oo)                                                       # optional - sage.symbolic
         limit(1/x, x, +Infinity)
-        sage: var('minus,plus')
+        sage: var('minus,plus')                                                         # optional - sage.symbolic
         (minus, plus)
-        sage: slimit(1/x, x, +oo)
+        sage: slimit(1/x, x, +oo)                                                       # optional - sage.symbolic
         limit(1/x, x, +Infinity)
-        sage: slimit(1/x, x, 0, plus)
+        sage: slimit(1/x, x, 0, plus)                                                   # optional - sage.symbolic
         limit(1/x, x, 0, plus)
-        sage: slimit(1/x, x, 0, minus)
+        sage: slimit(1/x, x, 0, minus)                                                  # optional - sage.symbolic
         limit(1/x, x, 0, minus)
     """
     def __init__(self):
@@ -1889,7 +1887,7 @@ class Function_limit(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.other import symbolic_limit as slimit
-            sage: maxima(slimit(1/x, x, +oo))
+            sage: maxima(slimit(1/x, x, +oo))                                           # optional - sage.symbolic
             0
         """
         BuiltinFunction.__init__(self, "limit", nargs=0,
@@ -1900,7 +1898,7 @@ class Function_limit(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.other import symbolic_limit as slimit
-            sage: latex(slimit)
+            sage: latex(slimit)                                                         # optional - sage.symbolic
             \lim
         """
         return r'\lim'
@@ -1910,12 +1908,12 @@ class Function_limit(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.other import symbolic_limit as slimit
-            sage: var('x,a')
+            sage: var('x,a')                                                            # optional - sage.symbolic
             (x, a)
-            sage: f = function('f')
-            sage: latex(slimit(f(x), x, a))
+            sage: f = function('f')                                                     # optional - sage.symbolic
+            sage: latex(slimit(f(x), x, a))                                             # optional - sage.symbolic
             \lim_{x \to a}\, f\left(x\right)
-            sage: latex(limit(f(x), x=oo))
+            sage: latex(limit(f(x), x=oo))                                              # optional - sage.symbolic
             \lim_{x \to +\infty}\, f\left(x\right)
 
         TESTS:
@@ -1924,29 +1922,29 @@ class Function_limit(BuiltinFunction):
         argument becomes a symbolic variable. We check if typesetting these works::
 
             sage: from sage.functions.other import symbolic_limit as slimit
-            sage: var('minus,plus')
+            sage: var('minus,plus')                                                     # optional - sage.symbolic
             (minus, plus)
-            sage: latex(slimit(f(x), x, a, minus))
+            sage: latex(slimit(f(x), x, a, minus))                                      # optional - sage.symbolic
             \lim_{x \to a^-}\, f\left(x\right)
-            sage: latex(slimit(f(x), x, a, plus))
+            sage: latex(slimit(f(x), x, a, plus))                                       # optional - sage.symbolic
             \lim_{x \to a^+}\, f\left(x\right)
-            sage: latex(limit(f(x),x=a,dir='+'))
+            sage: latex(limit(f(x),x=a,dir='+'))                                        # optional - sage.symbolic
             \lim_{x \to a^+}\, f\left(x\right)
-            sage: latex(limit(f(x),x=a,dir='right'))
+            sage: latex(limit(f(x),x=a,dir='right'))                                    # optional - sage.symbolic
             \lim_{x \to a^+}\, f\left(x\right)
-            sage: latex(limit(f(x),x=a,dir='-'))
+            sage: latex(limit(f(x),x=a,dir='-'))                                        # optional - sage.symbolic
             \lim_{x \to a^-}\, f\left(x\right)
-            sage: latex(limit(f(x),x=a,dir='left'))
+            sage: latex(limit(f(x),x=a,dir='left'))                                     # optional - sage.symbolic
             \lim_{x \to a^-}\, f\left(x\right)
 
         Check if :trac:`13181` is fixed::
 
-            sage: t = var('t')
-            sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x),t=x,dir='-'))
+            sage: t = var('t')                                                              # optional - sage.symbolic
+            sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x), t=x, dir='-'))   # optional - sage.symbolic
             \lim_{t \to x^-}\, \sqrt{-t + x} E_{\frac{1}{2}}\left(i \, t - i \, x\right)
-            sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x),t=x,dir='+'))
+            sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x), t=x, dir='+'))   # optional - sage.symbolic
             \lim_{t \to x^+}\, \sqrt{-t + x} E_{\frac{1}{2}}\left(i \, t - i \, x\right)
-            sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x),t=x))
+            sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x), t=x))            # optional - sage.symbolic
             \lim_{t \to x}\, \sqrt{-t + x} E_{\frac{1}{2}}\left(i \, t - i \, x\right)
         """
         if repr(direction) == 'minus':
@@ -1972,29 +1970,29 @@ class Function_cases(GinacFunction):
 
     EXAMPLES::
 
-        sage: ex = cases([(x==0, pi), (True, 0)]); ex
+        sage: ex = cases([(x==0, pi), (True, 0)]); ex                                   # optional - sage.symbolic
         cases(((x == 0, pi), (1, 0)))
-        sage: ex.subs(x==0)
+        sage: ex.subs(x==0)                                                             # optional - sage.symbolic
         pi
-        sage: ex.subs(x==2)
+        sage: ex.subs(x==2)                                                             # optional - sage.symbolic
         0
-        sage: ex + 1
+        sage: ex + 1                                                                    # optional - sage.symbolic
         cases(((x == 0, pi), (1, 0))) + 1
-        sage: _.subs(x==0)
+        sage: _.subs(x==0)                                                              # optional - sage.symbolic
         pi + 1
 
     The first encountered default is used, as well as the first relation
     that can be trivially decided::
 
-        sage: cases(((True, pi), (True, 0)))
+        sage: cases(((True, pi), (True, 0)))                                            # optional - sage.symbolic
         pi
 
-        sage: _ = var('y')
-        sage: ex = cases(((x==0, pi), (y==1, 0))); ex
+        sage: _ = var('y')                                                              # optional - sage.symbolic
+        sage: ex = cases(((x==0, pi), (y==1, 0))); ex                                   # optional - sage.symbolic
         cases(((x == 0, pi), (y == 1, 0)))
-        sage: ex.subs(x==0)
+        sage: ex.subs(x==0)                                                             # optional - sage.symbolic
         pi
-        sage: ex.subs(x==0, y==1)
+        sage: ex.subs(x==0, y==1)                                                       # optional - sage.symbolic
         pi
     """
     def __init__(self):
@@ -2010,7 +2008,7 @@ class Function_cases(GinacFunction):
         """
         EXAMPLES::
 
-            sage: ex = cases([(x==0, pi), (True, 0)]); ex
+            sage: ex = cases([(x==0, pi), (True, 0)]); ex                               # optional - sage.symbolic
             cases(((x == 0, pi), (1, 0)))
 
         TESTS::
@@ -2020,7 +2018,7 @@ class Function_cases(GinacFunction):
             ...
             TypeError: ...__call__() missing 1 required positional argument: 'l'
 
-            sage: cases(x)
+            sage: cases(x)                                                              # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             RuntimeError: cases argument not a sequence
@@ -2032,17 +2030,16 @@ class Function_cases(GinacFunction):
         r"""
         EXAMPLES::
 
-            sage: ex = cases([(x==0, pi), (True, 0)]); ex
+            sage: ex = cases([(x==0, pi), (True, 0)]); ex                               # optional - sage.symbolic
             cases(((x == 0, pi), (1, 0)))
-            sage: latex(ex)
+            sage: latex(ex)                                                             # optional - sage.symbolic
             \begin{cases}{\pi} & {x = 0}\\{0} & {1}\end{cases}
 
         TESTS:
 
         Verify that :trac:`25624` is fixed::
 
-            sage: L = latex(cases([(x == 0, 0), (1, 1)]))
-            sage: L
+            sage: L = latex(cases([(x == 0, 0), (1, 1)])); L                            # optional - sage.symbolic
             \begin{cases}{0} & {x = 0}\\{1} & {1}\end{cases}
         """
         if not isinstance(l, (list, tuple)):
@@ -2063,8 +2060,8 @@ class Function_cases(GinacFunction):
 
         EXAMPLES::
 
-            sage: ex = cases(((x<0, pi), (x==1, 1), (True, 0)))
-            sage: assert ex == ex._sympy_()._sage_()
+            sage: ex = cases(((x<0, pi), (x==1, 1), (True, 0)))                         # optional - sage.symbolic
+            sage: assert ex == ex._sympy_()._sage_()                                    # optional - sage.symbolic
         """
         from sympy import Piecewise as pw
         args = []
@@ -2093,13 +2090,13 @@ class Function_crootof(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: c = complex_root_of(x^6 + x + 1, 1); c
+        sage: c = complex_root_of(x^6 + x + 1, 1); c                                    # optional - sage.symbolic
         complex_root_of(x^6 + x + 1, 1)
-        sage: c.n()
+        sage: c.n()                                                                     # optional - sage.symbolic
         -0.790667188814418 + 0.300506920309552*I
-        sage: c.n(100)
+        sage: c.n(100)                                                                  # optional - sage.symbolic
         -0.79066718881441764449859281847 + 0.30050692030955162512001002521*I
-        sage: (c^6 + c + 1).n(100) < 1e-25
+        sage: (c^6 + c + 1).n(100) < 1e-25                                              # optional - sage.symbolic
         True
     """
     def __init__(self):
@@ -2117,16 +2114,16 @@ class Function_crootof(BuiltinFunction):
         """
         TESTS::
 
-            sage: _ = var('y')
-            sage: complex_root_of(1, 1)
+            sage: _ = var('y')                                                          # optional - sage.symbolic
+            sage: complex_root_of(1, 1)                                                 # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: polynomial in one variable required
-            sage: complex_root_of(x+y, 1)
+            sage: complex_root_of(x+y, 1)                                               # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: polynomial in one variable required
-            sage: complex_root_of(sin(x), 1)
+            sage: complex_root_of(sin(x), 1)                                            # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: polynomial in one variable required
@@ -2142,9 +2139,9 @@ class Function_crootof(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: complex_root_of(x^2-2, 1).n()
+            sage: complex_root_of(x^2 - 2, 1).n()                                       # optional - sage.symbolic
             1.41421356237309
-            sage: complex_root_of(x^2-2, 3).n()
+            sage: complex_root_of(x^2 - 2, 3).n()                                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             IndexError: root index out of [-2, 1] range, got 3
@@ -2153,9 +2150,9 @@ class Function_crootof(BuiltinFunction):
 
         Check that low precision is handled (:trac:`24378`)::
 
-            sage: complex_root_of(x^8-1, 7).n(2)
+            sage: complex_root_of(x^8 - 1, 7).n(2)                                      # optional - sage.symbolic
             0.75 + 0.75*I
-            sage: complex_root_of(x^8-1, 7).n(20)
+            sage: complex_root_of(x^8 - 1, 7).n(20)                                     # optional - sage.symbolic
             0.70711 + 0.70711*I
         """
         from sympy.core.evalf import prec_to_dps
@@ -2175,20 +2172,20 @@ class Function_elementof(BuiltinFunction):
     Formal set membership function that is only accessible internally.
 
     This function is called to express a set membership statement,
-    usually as part of a solution set returned by ``solve()``.
+    usually as part of a solution set returned by :func:`solve`.
     See :class:`sage.sets.set.Set` and :class:`sage.sets.real_set.RealSet`
     for possible set arguments.
 
     EXAMPLES::
 
         sage: from sage.functions.other import element_of
-        sage: element_of(x, SR(ZZ))
+        sage: element_of(x, SR(ZZ))                                                     # optional - sage.symbolic
         element_of(x, Integer Ring)
-        sage: element_of(sin(x), SR(QQ))
+        sage: element_of(sin(x), SR(QQ))                                                # optional - sage.symbolic
         element_of(sin(x), Rational Field)
-        sage: element_of(x, SR(RealSet.open_closed(0,1)))
+        sage: element_of(x, SR(RealSet.open_closed(0,1)))                               # optional - sage.symbolic
         element_of(x, (0, 1])
-        sage: element_of(x, SR(Set([4,6,8])))
+        sage: element_of(x, SR(Set([4,6,8])))                                           # optional - sage.symbolic
         element_of(x, {8, 4, 6})
     """
     def __init__(self):
@@ -2207,9 +2204,9 @@ class Function_elementof(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.other import element_of
-            sage: element_of(x, SR(RealSet(-oo, oo)))
+            sage: element_of(x, SR(RealSet(-oo, oo)))                                   # optional - sage.symbolic
             element_of(x, (-oo, +oo))
-            sage: element_of(x, 0)
+            sage: element_of(x, 0)                                                      # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: not a set: 0
@@ -2233,9 +2230,9 @@ class Function_elementof(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.other import element_of
-            sage: latex(element_of(x, SR(ZZ)))
+            sage: latex(element_of(x, SR(ZZ)))                                          # optional - sage.symbolic
             x \in \Bold{Z}
-            sage: latex(element_of(x, SR(Set([4,6,8]))))
+            sage: latex(element_of(x, SR(Set([4,6,8]))))                                # optional - sage.symbolic
             x \in \left\{8, 4, 6\right\}
         """
         return r"{} \in {}".format(latex(ex), latex(s))
