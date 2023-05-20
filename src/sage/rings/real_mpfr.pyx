@@ -654,7 +654,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
             Traceback (most recent call last):
             ...
             ValueError: can only convert signed infinity to RR
-            sage: R(CIF(NaN))
+            sage: R(CIF(NaN))                                                           # optional - sage.symbolic
             NaN
             sage: R(complex(1.7))
             1.7000
@@ -1604,7 +1604,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             'Infinity'
             sage: format(RR(-oo), '.4')
             '-Infinity'
-            sage: format(RR(NaN), '.4')
+            sage: format(RR(NaN), '.4')                                                 # optional - sage.symbolic
             'NaN'
             sage: '{}'.format(RR(oo))
             '+infinity'
@@ -1652,11 +1652,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: n = 1.3939494594
             sage: n._interface_init_()
             '1.3939494593999999'
-            sage: s1 = RR(sin(1)); s1
+            sage: s1 = RR(sin(1)); s1                                                   # optional - sage.symbolic
             0.841470984807897
-            sage: s1._interface_init_()
+            sage: s1._interface_init_()                                                 # optional - sage.symbolic
             '0.84147098480789650'
-            sage: s1 == RR(gp(s1))
+            sage: s1 == RR(gp(s1))                                                      # optional - sage.symbolic
             True
         """
         return self.str(10, no_sci=True)
@@ -1680,11 +1680,13 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
+            sage: values = [-infinity, -20, 0, 1, 2^500, -2^4000, -2^-500, 2^-4000]
+            sage: values += [[NaN, -e]                                                  # optional - sage.symbolic
             sage: for prec in (2, 53, 200):
             ....:     for rnd_dir in ('RNDN', 'RNDD', 'RNDU', 'RNDZ'):
             ....:         fld = RealField(prec, rnd=rnd_dir)
             ....:         var = polygen(fld)
-            ....:         for v in [NaN, -infinity, -20, -e, 0, 1, 2^500, -2^4000, -2^-500, 2^-4000] + [fld.random_element() for _ in range(5)]:
+            ....:         for v in values + [fld.random_element() for _ in range(5)]:
             ....:             for preparse in (True, False, None):
             ....:                 _ = sage_input(fld(v), verify=True, preparse=preparse)
             ....:                 _ = sage_input(fld(v) * var, verify=True, preparse=preparse)
@@ -2336,7 +2338,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: [x.fp_rank_delta(x.nextabove()) for x in
+            sage: [x.fp_rank_delta(x.nextabove()) for x in                              # optional - sage.symbolic
             ....:    (RR(-infinity), -1.0, 0.0, 1.0, RR(pi), RR(infinity))]
             [1, 1, 1, 1, 1, 0]
 
@@ -2505,22 +2507,22 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: RealField(100)(1/7)._sympy_()
+            sage: RealField(100)(1/7)._sympy_()                                         # optional - sympy
             0.14285714285714285714285714286
-            sage: type(_)
+            sage: type(_)                                                               # optional - sympy
             <class 'sympy.core.numbers.Float'>
 
         TESTS:
 
         An indirect doctest to check this (see :trac:`14915`)::
 
-            sage: x,y = var('x, y')
-            sage: integrate(y, y, 0.5, 8*log(x), algorithm='sympy')
+            sage: x,y = var('x, y')                                                     # optional - sage.symbolic
+            sage: integrate(y, y, 0.5, 8*log(x), algorithm='sympy')                     # optional - sympy sage.symbolic
             32*log(x)^2 - 0.125000000000000
 
         Check that :trac:`28903` is fixed::
 
-            sage: (10.0^400)._sympy_()
+            sage: (10.0^400)._sympy_()                                                  # optional - sympy
             1.00000000000000e+400
         """
         import sympy
@@ -3126,11 +3128,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(infinity).nexttoward(0)
             2.09857871646739e323228496            # 32-bit
             5.87565378911159e1388255822130839282  # 64-bit
-            sage: RR(pi).str()
+            sage: RR(pi).str()                                                          # optional - sage.symbolic
             '3.1415926535897931'
-            sage: RR(pi).nexttoward(22/7).str()
+            sage: RR(pi).nexttoward(22/7).str()                                         # optional - sage.symbolic
             '3.1415926535897936'
-            sage: RR(pi).nexttoward(21/7).str()
+            sage: RR(pi).nexttoward(21/7).str()                                         # optional - sage.symbolic
             '3.1415926535897927'
         """
         cdef RealNumber other_rn
@@ -3160,9 +3162,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
             8.50969131174084e-1388255822130839284  # 64-bit
             sage: RR('+infinity').nextabove()
             +infinity
-            sage: RR(-sqrt(2)).str()
+            sage: RR(-sqrt(2)).str()                                                    # optional - sage.symbolic
             '-1.4142135623730951'
-            sage: RR(-sqrt(2)).nextabove().str()
+            sage: RR(-sqrt(2)).nextabove().str()                                        # optional - sage.symbolic
             '-1.4142135623730949'
         """
 
@@ -3186,9 +3188,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR('+infinity').nextbelow()
             2.09857871646739e323228496              # 32-bit
             5.87565378911159e1388255822130839282    # 64-bit
-            sage: RR(-sqrt(2)).str()
+            sage: RR(-sqrt(2)).str()                                                    # optional - sage.symbolic
             '-1.4142135623730951'
-            sage: RR(-sqrt(2)).nextbelow().str()
+            sage: RR(-sqrt(2)).nextbelow().str()                                        # optional - sage.symbolic
             '-1.4142135623730954'
         """
 
@@ -3208,9 +3210,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: RR(pi).__float__()
+            sage: RR(pi).__float__()                                                    # optional - sage.symbolic
             3.141592653589793
-            sage: type(RR(pi).__float__())
+            sage: type(RR(pi).__float__())                                              # optional - sage.symbolic
             <... 'float'>
         """
         return mpfr_get_d(self.value, (<RealField_class>self._parent).rnd)
@@ -3238,7 +3240,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
             sage: RR(pi).__int__()
             3
-            sage: type(RR(pi).__int__())
+            sage: type(RR(pi).__int__())                                                # optional - sage.symbolic
             <... 'int'>
         """
         if not mpfr_number_p(self.value):
@@ -3256,7 +3258,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
             sage: RR(pi).__complex__()
             (3.141592653589793+0j)
-            sage: type(RR(pi).__complex__())
+            sage: type(RR(pi).__complex__())                                            # optional - sage.symbolic
             <... 'complex'>
         """
 
@@ -3270,7 +3272,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
             sage: RR(pi)._complex_number_()
             3.14159265358979
-            sage: parent(RR(pi)._complex_number_())
+            sage: parent(RR(pi)._complex_number_())                                     # optional - sage.symbolic
             Complex Field with 53 bits of precision
         """
         from sage.rings.complex_mpfr import ComplexField
@@ -3283,11 +3285,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
         EXAMPLES::
 
             sage: R = RealField(100)
-            sage: R(pi)
+            sage: R(pi)                                                                 # optional - sage.symbolic
             3.1415926535897932384626433833
-            sage: axiom(R(pi))  # optional - axiom # indirect doctest
+            sage: axiom(R(pi))  # optional - axiom # indirect doctest                   # optional - sage.symbolic
             3.1415926535 8979323846 26433833
-            sage: fricas(R(pi)) # optional - fricas
+            sage: fricas(R(pi)) # optional - fricas                                     # optional - sage.symbolic
             3.1415926535_8979323846_26433833
 
         """
@@ -3308,48 +3310,48 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: RR(2.0).__pari__()
+            sage: RR(2.0).__pari__()                                                    # optional - sage.libs.pari
             2.00000000000000
 
         The current Pari precision affects the printing of this number, but
         Pari does maintain the same 250-bit number on both 32-bit and
         64-bit platforms::
 
-            sage: RealField(250).pi().__pari__()
+            sage: RealField(250).pi().__pari__()                                        # optional - sage.libs.pari
             3.14159265358979
-            sage: RR(0.0).__pari__()
+            sage: RR(0.0).__pari__()                                                    # optional - sage.libs.pari
             0.E-19
-            sage: RR(-1.234567).__pari__()
+            sage: RR(-1.234567).__pari__()                                              # optional - sage.libs.pari
             -1.23456700000000
-            sage: RR(2.0).sqrt().__pari__()
+            sage: RR(2.0).sqrt().__pari__()                                             # optional - sage.libs.pari
             1.41421356237310
-            sage: RR(2.0).sqrt().__pari__().sage()
+            sage: RR(2.0).sqrt().__pari__().sage()                                      # optional - sage.libs.pari
             1.41421356237309515
-            sage: RR(2.0).sqrt().__pari__().sage().prec()
+            sage: RR(2.0).sqrt().__pari__().sage().prec()                               # optional - sage.libs.pari
             64
-            sage: RealField(70)(pi).__pari__().sage().prec()
+            sage: RealField(70)(pi).__pari__().sage().prec()                            # optional - sage.libs.pari sage.symbolic
             96                                         # 32-bit
             128                                        # 64-bit
-            sage: for i in range(100, 200):
+            sage: for i in range(100, 200):                                             # optional - sage.libs.pari
             ....:     assert(RR(i).sqrt() == RR(i).sqrt().__pari__().sage())
 
         TESTS:
 
         Check that we create real zeros without mantissa::
 
-            sage: RDF(0).__pari__().sizeword()
+            sage: RDF(0).__pari__().sizeword()                                          # optional - sage.libs.pari
             2
-            sage: RealField(100)(0.0).__pari__().sizeword()
+            sage: RealField(100)(0.0).__pari__().sizeword()                             # optional - sage.libs.pari
             2
 
         Check that the largest and smallest exponents representable by
         PARI convert correctly::
 
-            sage: a = pari(0.5) << (sys.maxsize+1)/4
-            sage: RR(a) >> (sys.maxsize+1)/4
+            sage: a = pari(0.5) << (sys.maxsize+1)/4                                    # optional - sage.libs.pari
+            sage: RR(a) >> (sys.maxsize+1)/4                                            # optional - sage.libs.pari
             0.500000000000000
-            sage: a = pari(0.5) >> (sys.maxsize-3)/4
-            sage: RR(a) << (sys.maxsize-3)/4
+            sage: a = pari(0.5) >> (sys.maxsize-3)/4                                    # optional - sage.libs.pari
+            sage: RR(a) << (sys.maxsize-3)/4                                            # optional - sage.libs.pari
             0.500000000000000
         """
         # This uses interfaces of MPFR and PARI which are documented
@@ -3504,7 +3506,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             42391158275216203520420085760
             sage: RR(3^60).exact_rational() - 3^60
             6125652559
-            sage: RealField(5)(-pi).exact_rational()
+            sage: RealField(5)(-pi).exact_rational()                                    # optional - sage.symbolic
             -25/8
 
         TESTS::
@@ -3608,9 +3610,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
             -1/3
             sage: check(RR(-1/3))
             -1/3
-            sage: check(RealField(20)(pi))
+            sage: check(RealField(20)(pi))                                              # optional - sage.symbolic
             355/113
-            sage: check(RR(pi))
+            sage: check(RR(pi))                                                         # optional - sage.symbolic
             245850922/78256779
             sage: check(RR(2).sqrt())
             131836323/93222358
@@ -3774,13 +3776,13 @@ cdef class RealNumber(sage.structure.element.RingElement):
             -333/1000
             sage: RR(3/4).nearby_rational(max_denominator=2)
             1
-            sage: RR(pi).nearby_rational(max_denominator=120)
+            sage: RR(pi).nearby_rational(max_denominator=120)                           # optional - sage.symbolic
             355/113
-            sage: RR(pi).nearby_rational(max_denominator=10000)
+            sage: RR(pi).nearby_rational(max_denominator=10000)                         # optional - sage.symbolic
             355/113
-            sage: RR(pi).nearby_rational(max_denominator=100000)
+            sage: RR(pi).nearby_rational(max_denominator=100000)                        # optional - sage.symbolic
             312689/99532
-            sage: RR(pi).nearby_rational(max_denominator=1)
+            sage: RR(pi).nearby_rational(max_denominator=1)                             # optional - sage.symbolic
             3
             sage: RR(-3.5).nearby_rational(max_denominator=1)
             -3
@@ -4084,7 +4086,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             True
             sage: RR('-100').is_real()
             True
-            sage: RR(NaN).is_real()
+            sage: RR(NaN).is_real()                                                     # optional - sage.symbolic
             False
         """
         return not mpfr_nan_p(self.value)
@@ -4229,7 +4231,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         ::
 
             sage: r = 4344
-            sage: r.sqrt()
+            sage: r.sqrt()                                                              # optional - sage.symbolic
             2*sqrt(1086)
 
         ::
@@ -4345,10 +4347,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         We raise a real number to a symbolic object::
 
-            sage: x, y = var('x,y')
-            sage: 1.5^x
+            sage: x, y = var('x,y')                                                     # optional - sage.symbolic
+            sage: 1.5^x                                                                 # optional - sage.symbolic
             1.50000000000000^x
-            sage: -2.3^(x+y^3+sin(x))
+            sage: -2.3^(x+y^3+sin(x))                                                   # optional - sage.symbolic
             -2.30000000000000^(y^3 + x + sin(x))
 
         TESTS:
@@ -4362,7 +4364,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: (1/2)^2.0
             0.250000000000000
             sage: [n^(1.5) for n in range(10)]
-            [0.000000000000000, 1.00000000000000, 2.82842712474619, 5.19615242270663, 8.00000000000000, 11.1803398874989, 14.6969384566991, 18.5202591774521, 22.6274169979695, 27.0000000000000]
+            [0.000000000000000, 1.00000000000000, 2.82842712474619, 5.19615242270663,
+             8.00000000000000, 11.1803398874989, 14.6969384566991, 18.5202591774521,
+             22.6274169979695, 27.0000000000000]
             sage: int(-2)^(0.333333)
             0.629961522017056 + 1.09112272417509*I
             sage: int(0)^(1.0)
@@ -4406,14 +4410,14 @@ cdef class RealNumber(sage.structure.element.RingElement):
             0.693147180559945
             sage: log(RR(2), "e")
             0.693147180559945
-            sage: log(RR(2), e)
+            sage: log(RR(2), e)                                                         # optional - sage.symbolic
             0.693147180559945
 
         ::
 
             sage: r = R(-1); r.log()
             3.14159265358979*I
-            sage: log(RR(-1),e)
+            sage: log(RR(-1), e)                                                        # optional - sage.symbolic
             3.14159265358979*I
             sage: r.log(2)
             4.53236014182719*I
@@ -5109,8 +5113,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
         ::
 
             sage: m = (a-b)^2/(a+b)^2
-            sage: E = numerical_integral(1/sqrt(1-m*sin(x)^2), 0, RR.pi()/2)[0]
-            sage: RR.pi()/4 * (a+b)/E
+            sage: E = numerical_integral(1/sqrt(1-m*sin(x)^2), 0, RR.pi()/2)[0]         # optional - sage.symbolic
+            sage: RR.pi()/4 * (a+b)/E                                                   # optional - sage.symbolic
             1.96811775182478
 
         TESTS::
@@ -5511,8 +5515,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
             sage: check(RealField(20)(22/7), 19)
             [1.0621, 1.0621, 1.0622, 1.0621]
-            sage: check(RealField(200)(e), 4)
-            [1.2840254166877414840734205680624364583362808652814630892175, 1.2840254166877414840734205680624364583362808652814630892175, 1.2840254166877414840734205680624364583362808652814630892176, 1.2840254166877414840734205680624364583362808652814630892175]
+            sage: check(RealField(200)(e), 4)                                           # optional - sage.symbolic
+            [1.2840254166877414840734205680624364583362808652814630892175,
+             1.2840254166877414840734205680624364583362808652814630892175,
+             1.2840254166877414840734205680624364583362808652814630892176,
+             1.2840254166877414840734205680624364583362808652814630892175]
 
         Check that :trac:`12105` is fixed::
 
@@ -5926,7 +5933,7 @@ def is_RealNumber(x):
         False
         sage: is_RealNumber(RDF(2))
         False
-        sage: is_RealNumber(pi)
+        sage: is_RealNumber(pi)                                                         # optional - sage.symbolic
         False
     """
     return isinstance(x, RealNumber)

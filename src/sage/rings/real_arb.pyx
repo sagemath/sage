@@ -147,7 +147,7 @@ Comparisons with Sage symbolic infinities work with some limitations::
     True
     sage: RBF(infinity) < infinity
     False
-    sage: RBF(NaN) < infinity
+    sage: RBF(NaN) < infinity                                                           # optional - sage.symbolic
     Traceback (most recent call last):
     ...
     ValueError: infinite but not with +/- phase
@@ -159,14 +159,14 @@ Comparisons with Sage symbolic infinities work with some limitations::
 Comparisons between elements of real ball fields, however, support special
 values and should be preferred::
 
-    sage: RBF(NaN) < RBF(infinity)
+    sage: RBF(NaN) < RBF(infinity)                                                      # optional - sage.symbolic
     False
     sage: RBF(0).add_error(infinity) <= RBF(infinity)
     True
 
 TESTS::
 
-    sage: (RBF(pi) * identity_matrix(QQ, 3)).parent()
+    sage: (RBF(pi) * identity_matrix(QQ, 3)).parent()                                   # optional - sage.symbolic
     Full MatrixSpace of 3 by 3 dense matrices over Real ball field
     with 53 bits of precision
 
@@ -1595,7 +1595,7 @@ cdef class RealBall(RingElement):
             Traceback (most recent call last):
             ...
             ValueError: [+/- 2.01] does not contain a unique integer
-            sage: ZZ(RBF(pi))
+            sage: ZZ(RBF(pi))                                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: [3.141592653589793 +/- ...e-16] does not contain a unique integer
@@ -2580,7 +2580,7 @@ cdef class RealBall(RingElement):
 
             sage: RBF(pi).overlaps(RBF(pi) + 2**(-100))                                 # optional - sage.symbolic
             True
-            sage: RBF(pi).overlaps(RBF(3))
+            sage: RBF(pi).overlaps(RBF(3))                                              # optional - sage.symbolic
             False
         """
         return arb_overlaps(self.value, other.value)
@@ -3562,7 +3562,7 @@ cdef class RealBall(RingElement):
 
         TESTS::
 
-            sage: RBF(Ei(1))  # abs tol 5e-16
+            sage: RBF(Ei(1))  # abs tol 5e-16                                           # optional - sage.symbolic
             [1.89511781635594 +/- 4.94e-15]
         """
         cdef RealBall res = self._new()
@@ -3582,7 +3582,7 @@ cdef class RealBall(RingElement):
 
         TESTS::
 
-            sage: RBF(Si(1)) # abs tol 1e-15
+            sage: RBF(Si(1)) # abs tol 1e-15                                            # optional - sage.symbolic
             [0.946083070367183 +/- 9.22e-16]
         """
         cdef RealBall res = self._new()
@@ -3604,7 +3604,7 @@ cdef class RealBall(RingElement):
 
         TESTS::
 
-            sage: RBF(Ci(1))  # abs tol 5e-16
+            sage: RBF(Ci(1))  # abs tol 5e-16                                           # optional - sage.symbolic
             [0.337403922900968 +/- 3.25e-16]
         """
         cdef RealBall res = self._new()
@@ -3626,7 +3626,7 @@ cdef class RealBall(RingElement):
 
         TESTS::
 
-            sage: RBF(Shi(1))
+            sage: RBF(Shi(1))                                                           # optional - sage.symbolic
             [1.05725087537573 +/- 2.77e-15]
         """
         cdef RealBall res = self._new()
@@ -3648,7 +3648,7 @@ cdef class RealBall(RingElement):
 
         TESTS::
 
-            sage: RBF(Chi(1))  # abs tol 1e-17
+            sage: RBF(Chi(1))  # abs tol 1e-17                                          # optional - sage.symbolic
             [0.837866940980208 +/- 4.72e-16]
         """
         cdef RealBall res = self._new()
@@ -3670,9 +3670,9 @@ cdef class RealBall(RingElement):
 
         TESTS::
 
-            sage: RBF(li(0))
+            sage: RBF(li(0))                                                            # optional - sage.symbolic
             0
-            sage: RBF(Li(0))
+            sage: RBF(Li(0))                                                            # optional - sage.symbolic
             [-1.04516378011749 +/- 4.23e-15]
         """
         cdef RealBall res = self._new()
@@ -3716,7 +3716,7 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: RBF(sin(3)).beta(RBF(2/3).sqrt())  # abs tol 1e-13
+            sage: RBF(sin(3)).beta(RBF(2/3).sqrt())  # abs tol 1e-13                    # optional - sage.symbolic
             [7.407661629415 +/- 1.07e-13]
             sage: RealBallField(100)(7/2).beta(1)  # abs tol 1e-30
             [0.28571428571428571428571428571 +/- 5.23e-30]
@@ -3951,11 +3951,11 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: polylog(0, -1)
+            sage: polylog(0, -1)                                                        # optional - sage.symbolic
             -1/2
             sage: RBF(-1).polylog(0)
             [-0.50000000000000 +/- ...e-16]
-            sage: polylog(1, 1/2)
+            sage: polylog(1, 1/2)                                                       # optional - sage.symbolic
             -log(1/2)
             sage: RBF(1/2).polylog(1)
             [0.69314718055995 +/- ...e-15]
@@ -3994,15 +3994,15 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: RBF(pi).chebyshev_T(0)
+            sage: RBF(pi).chebyshev_T(0)                                                # optional - sage.symbolic
             1.000000000000000
-            sage: RBF(pi).chebyshev_T(1)
+            sage: RBF(pi).chebyshev_T(1)                                                # optional - sage.symbolic
             [3.141592653589793 +/- ...e-16]
-            sage: RBF(pi).chebyshev_T(10**20)
+            sage: RBF(pi).chebyshev_T(10**20)                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: index too large
-            sage: RBF(pi).chebyshev_T(-1)
+            sage: RBF(pi).chebyshev_T(-1)                                               # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: expected a nonnegative index
@@ -4026,15 +4026,15 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: RBF(pi).chebyshev_U(0)
+            sage: RBF(pi).chebyshev_U(0)                                                # optional - sage.symbolic
             1.000000000000000
-            sage: RBF(pi).chebyshev_U(1)
+            sage: RBF(pi).chebyshev_U(1)                                                # optional - sage.symbolic
             [6.283185307179586 +/- ...e-16]
-            sage: RBF(pi).chebyshev_U(10**20)
+            sage: RBF(pi).chebyshev_U(10**20)                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: index too large
-            sage: RBF(pi).chebyshev_U(-1)
+            sage: RBF(pi).chebyshev_U(-1)                                               # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: expected a nonnegative index
@@ -4059,7 +4059,7 @@ cdef class RealBall(RingElement):
 
             sage: RBF(1).agm(1)
             1.000000000000000
-            sage: RBF(sqrt(2)).agm(1)^(-1)
+            sage: RBF(sqrt(2)).agm(1)^(-1)                                              # optional - sage.symbolic
             [0.8346268416740...]
         """
         cdef RealBall other_as_ball

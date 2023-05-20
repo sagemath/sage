@@ -422,16 +422,16 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
 
         Thus the sum of a CDF and a symbolic object is symbolic::
 
-            sage: a = pi + CDF.0; a
+            sage: a = pi + CDF.0; a                                                     # optional - sage.symbolic
             pi + 1.0*I
-            sage: parent(a)
+            sage: parent(a)                                                             # optional - sage.symbolic
             Symbolic Ring
 
         TESTS::
 
             sage: CDF(1) + RR(1)
             2.0
-            sage: CDF.0 - CC(1) - int(1) - RR(1) - QQbar(1)
+            sage: CDF.0 - CC(1) - int(1) - RR(1) - QQbar(1)                             # optional - sage.rings.number_field
             -4.0 + 1.0*I
             sage: CDF.has_coerce_map_from(ComplexField(20))
             False
@@ -477,7 +477,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             'ComplexField(53 : Bits := true)'
             sage: magma(CDF)                                    # optional - magma
             Complex field of precision 15
-            sage: floor(RR(log(2**53, 10)))
+            sage: floor(RR(log(2**53, 10)))                                             # optional - sage.symbolic
             15
             sage: magma(CDF).sage()                             # optional - magma
             Complex Field with 53 bits of precision
@@ -982,11 +982,11 @@ cdef class ComplexDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: s1 = CDF(exp(I)); s1
+            sage: s1 = CDF(exp(I)); s1                                                  # optional - sage.symbolic
             0.5403023058681398 + 0.8414709848078965*I
-            sage: s1._interface_init_()
+            sage: s1._interface_init_()                                                 # optional - sage.symbolic
             '0.54030230586813977 + 0.84147098480789650*I'
-            sage: s1 == CDF(gp(s1))
+            sage: s1 == CDF(gp(s1))                                                     # optional - sage.symbolic
             True
         """
         # Sending to another computer algebra system is slow anyway, right?
@@ -1629,7 +1629,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
             sage: CDF(1, 2).is_NaN()
             False
-            sage: CDF(NaN).is_NaN()
+            sage: CDF(NaN).is_NaN()                                                     # optional - sage.symbolic
             True
             sage: (1/CDF(0, 0)).is_NaN()
             True
@@ -1740,9 +1740,9 @@ cdef class ComplexDoubleElement(FieldElement):
 
         We numerically verify a famous identity to the precision of a double::
 
-            sage: z = CDF(0, 2*pi); z
+            sage: z = CDF(0, 2*pi); z                                                   # optional - sage.symbolic
             6.283185307179586*I
-            sage: exp(z)  # rel tol 1e-4
+            sage: exp(z)  # rel tol 1e-4                                                # optional - sage.symbolic
             1.0 - 2.4492935982947064e-16*I
         """
         return self._new_c(gsl_complex_exp(self._complex))
@@ -2220,16 +2220,17 @@ cdef class ComplexDoubleElement(FieldElement):
 
             sage: z = CDF(1,1); z.eta()
             0.7420487758365647 + 0.1988313702299107*I
-            sage: i = CDF(0,1); pi = CDF(pi)
-            sage: exp(pi * i * z / 12) * prod([1-exp(2*pi*i*n*z) for n in range(1,10)])
+            sage: i = CDF(0,1); pi = CDF(pi)                                            # optional - sage.symbolic
+            sage: exp(pi * i * z / 12) * prod(1 - exp(2*pi*i*n*z)                       # optional - sage.symbolic
+            ....:                             for n in range(1, 10))
             0.7420487758365647 + 0.19883137022991068*I
 
         The optional argument allows us to omit the fractional part::
 
             sage: z.eta(omit_frac=True)
             0.9981290699259585
-            sage: pi = CDF(pi)
-            sage: prod([1-exp(2*pi*i*n*z) for n in range(1,10)])  # abs tol 1e-12
+            sage: pi = CDF(pi)                                                          # optional - sage.symbolic
+            sage: prod(1 - exp(2*pi*i*n*z) for n in range(1,10))  # abs tol 1e-12       # optional - sage.symbolic
             0.998129069926 + 4.59084695545e-19*I
 
         We illustrate what happens when `z` is not in the upper half plane::

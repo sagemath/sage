@@ -1787,6 +1787,7 @@ def test_comparison(ring):
 
     Comparison with number fields does not work::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<sqrt3> = NumberField(x^2 - 3)                                          # optional - sage.rings.number_field
         sage: (-oo < 1 + sqrt3) and (1 + sqrt3 < oo)     # known bug                    # optional - sage.rings.number_field
         False

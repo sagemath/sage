@@ -304,7 +304,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
             sage: magma(ComplexIntervalField(100)) # optional - magma # indirect doctest
             Complex field of precision 30
-            sage: floor(RR(log(2**100, 10)))
+            sage: floor(RR(log(2**100, 10)))                                            # optional - sage.symbolic
             30
         """
         return "ComplexField(%s : Bits := true)" % self.prec()
@@ -445,7 +445,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             TypeError: unable to convert '1+I' to real interval
             sage: CIF(2,3)
             2 + 3*I
-            sage: CIF(pi, e)
+            sage: CIF(pi, e)                                                            # optional - sage.symbolic
             3.141592653589794? + 2.718281828459046?*I
             sage: ComplexIntervalField(100)(CIF(RIF(2,3)))
             3.?

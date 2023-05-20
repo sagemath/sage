@@ -119,13 +119,13 @@ We can convert from symbolic expressions::
     1.618033988749895?*I
     sage: AA(golden_ratio)^2 - AA(golden_ratio)                                         # optional - sage.symbolic
     1
-    sage: QQbar((-8)^(1/3))
+    sage: QQbar((-8)^(1/3))                                                             # optional - sage.symbolic
     1.000000000000000? + 1.732050807568878?*I
-    sage: AA((-8)^(1/3))
+    sage: AA((-8)^(1/3))                                                                # optional - sage.symbolic
     -2
-    sage: QQbar((-4)^(1/4))
+    sage: QQbar((-4)^(1/4))                                                             # optional - sage.symbolic
     1 + 1*I
-    sage: AA((-4)^(1/4))
+    sage: AA((-4)^(1/4))                                                                # optional - sage.symbolic
     Traceback (most recent call last):
     ...
     ValueError: Cannot coerce algebraic number with non-zero imaginary part to algebraic real
@@ -2803,13 +2803,13 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
 
         sage: UCF = UniversalCyclotomicField()
         sage: E = UCF.gen(5)
-        sage: L.<b> = NumberField(x^2-189*x+16, embedding=200)
+        sage: L.<b> = NumberField(x^2 - 189*x + 16, embedding=200)
         sage: x = polygen(ZZ)
-        sage: my_nums = [-52*E - 136*E^2 - 136*E^3 - 52*E^4, \
-                         L.gen()._algebraic_(AA), \
-                         sqrt(2), AA.polynomial_root(x^3-3, RIF(0,3)), 11/9, 1]
-        sage: res = number_field_elements_from_algebraics(my_nums, embedded=True)
-        sage: res[0]
+        sage: my_nums = [-52*E - 136*E^2 - 136*E^3 - 52*E^4,                            # optional - sage.symbolic
+        ....:            L.gen()._algebraic_(AA),
+        ....:            sqrt(2), AA.polynomial_root(x^3 - 3, RIF(0,3)), 11/9, 1]
+        sage: res = number_field_elements_from_algebraics(my_nums, embedded=True)       # optional - sage.symbolic
+        sage: res[0]                                                                    # optional - sage.symbolic
         Number Field in a with defining polynomial y^24 - 107010*y^22 - 24*y^21 + ...
         + 250678447193040618624307096815048024318853254384 with a = 93.32530798172420?
     """

@@ -582,11 +582,11 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         Using a non-standard embedding::
 
-            sage: CF = CyclotomicField(5,embedding=CC(exp(4*pi*i/5)))
-            sage: x = E(5)
-            sage: CC(x)
+            sage: CF = CyclotomicField(5, embedding=CC(exp(4*pi*i/5)))                  # optional - sage.symbolic
+            sage: x = E(5)                                                              # optional - sage.symbolic
+            sage: CC(x)                                                                 # optional - sage.symbolic
             0.309016994374947 + 0.951056516295154*I
-            sage: CC(CF(x))
+            sage: CC(CF(x))                                                             # optional - sage.symbolic
             0.309016994374947 + 0.951056516295154*I
 
         Test that the bug reported in :trac:`19912` has been fixed::
@@ -723,7 +723,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
             sage: RR(E(7) + E(7,6))
             1.24697960371747
-            sage: 2*cos(2*pi/7).n()
+            sage: 2*cos(2*pi/7).n()                                                     # optional - sage.symbolic
             1.24697960371747
 
         Check that units are evaluated correctly (:trac:`23775`)::
@@ -1485,7 +1485,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         Some conversions from symbolic functions are possible::
 
             sage: UCF = UniversalCyclotomicField()
-            sage: [UCF(sin(pi/k, hold=True)) for k in range(1,10)]
+            sage: [UCF(sin(pi/k, hold=True)) for k in range(1,10)]                      # optional - sage.symbolic
             [0,
              1,
              -1/2*E(12)^7 + 1/2*E(12)^11,
@@ -1495,7 +1495,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
              -1/2*E(28)^19 + 1/2*E(28)^23,
              1/2*E(16)^3 - 1/2*E(16)^5,
              -1/2*E(36)^25 + 1/2*E(36)^29]
-            sage: [UCF(cos(pi/k, hold=True)) for k in range(1,10)]
+            sage: [UCF(cos(pi/k, hold=True)) for k in range(1,10)]                      # optional - sage.symbolic
             [-1,
              0,
              1/2,
@@ -1506,8 +1506,9 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
              1/2*E(16) - 1/2*E(16)^7,
              -1/2*E(9)^4 - 1/2*E(9)^5]
 
-             sage: UCF(1 + sqrt(-3/5))
-             4/5*E(15) + 4/5*E(15)^2 + 4/5*E(15)^4 + 6/5*E(15)^7 + 4/5*E(15)^8 + 6/5*E(15)^11 + 6/5*E(15)^13 + 6/5*E(15)^14
+             sage: UCF(1 + sqrt(-3/5))                                                  # optional - sage.symbolic
+             4/5*E(15) + 4/5*E(15)^2 + 4/5*E(15)^4 + 6/5*E(15)^7 + 4/5*E(15)^8
+              + 6/5*E(15)^11 + 6/5*E(15)^13 + 6/5*E(15)^14
 
         .. TODO::
 

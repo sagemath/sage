@@ -508,10 +508,10 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         Verify embeddings are respected::
 
-            sage: cf6c = CyclotomicField(6, embedding=CDF(exp(-pi*I/3))) ; z6c = cf6c.0
-            sage: cf3(z6c)
+            sage: cf6c = CyclotomicField(6, embedding=CDF(exp(-pi*I/3))); z6c = cf6c.0  # optional - sage.symbolic
+            sage: cf3(z6c)                                                              # optional - sage.symbolic
             -zeta3
-            sage: cf6c(z3)
+            sage: cf6c(z3)                                                              # optional - sage.symbolic
             -zeta6
 
         AUTHOR:
@@ -2220,7 +2220,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 1, embedding=CDF.gen())
-            sage: abs(a+1)
+            sage: abs(a+1)                                                              # optional - sage.symbolic
             sqrt(2)
         """
         if mpz_sgn(self.D.value) == 1:
