@@ -754,10 +754,10 @@ according to its weight::
 
     sage: C = crystals.Tableaux(["A",2], shape=[4,2])
     sage: L = C.weight_lattice_realization()
-    sage: plot_options = L.plot_parse_options()
+    sage: plot_options = L.plot_parse_options()                                         # optional - sage.plot sage.symbolic
 
     sage: g = C.digraph()
-    sage: positions = {x: plot_options.projection(x.weight()) for x in C}
+    sage: positions = {x: plot_options.projection(x.weight()) for x in C}               # optional - sage.plot sage.symbolic
     sage: p = L.plot()                                                                  # optional - sage.plot sage.symbolic
     sage: p += g.plot(pos=positions,                                                    # optional - sage.plot sage.symbolic
     ....:             color_by_label=plot_options.color, vertex_size=0)
