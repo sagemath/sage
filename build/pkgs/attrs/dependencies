@@ -1,4 +1,4 @@
-$(PYTHON) vcversioner | $(PYTHON_TOOLCHAIN)
+$(PYTHON) | $(PYTHON_TOOLCHAIN) hatchling hatch_vcs hatch_fancy_pypi_readme
 
 ----------
 All lines of this file are ignored except the first.
