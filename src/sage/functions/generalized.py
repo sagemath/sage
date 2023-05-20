@@ -51,9 +51,12 @@ Kronecker delta function::
 #
 ##############################################################################
 
-from sage.symbolic.function import (BuiltinFunction, GinacFunction)
-from sage.rings.complex_interval_field import ComplexIntervalField
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
+from sage.symbolic.function import BuiltinFunction, GinacFunction
+
+lazy_import('sage.misc.latex', 'latex')
+lazy_import('sage.rings.complex_interval_field', 'ComplexIntervalField')
 
 
 class FunctionDiracDelta(BuiltinFunction):
@@ -668,7 +671,6 @@ class FunctionKroneckerDelta(BuiltinFunction):
             sage: latex(kronecker_delta(m, n))                                          # needs sage.symbolic
             \delta_{m,n}
         """
-        from sage.misc.latex import latex
         return r"\delta_{%s,%s}" % (latex(m), latex(n))
 
 

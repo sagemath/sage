@@ -46,11 +46,17 @@ Verify that the Airy functions are solutions to the differential equation::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.symbolic.function import BuiltinFunction
-from sage.symbolic.expression import Expression
-from sage.symbolic.ring import SR
-from sage.rings.integer_ring import ZZ
 from sage.calculus.functional import derivative
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import Expression
+from sage.symbolic.function import BuiltinFunction
+
+lazy_import('sage.symbolic.ring', 'SR')
+
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('mpmath', ['airyai', 'airybi'],
+            as_=['_mpmath_airyai', '_mpmath_airybi'])
 
 
 class FunctionAiryAiGeneral(BuiltinFunction):
@@ -142,10 +148,8 @@ class FunctionAiryAiGeneral(BuiltinFunction):
             sage: airy_ai_general(-2, 1.0)                                              # needs mpmath
             0.136645379421096
         """
-        import mpmath
-        from sage.libs.mpmath import utils as mpmath_utils
-        return mpmath_utils.call(mpmath.airyai, x, derivative=alpha,
-                                 parent=parent)
+        return _mpmath_utils_call(_mpmath_airyai, x, derivative=alpha,
+                                  parent=parent)
 
 
 class FunctionAiryAiSimple(BuiltinFunction):
@@ -248,9 +252,7 @@ class FunctionAiryAiSimple(BuiltinFunction):
                     return CC(y)
             return parent(y)
         elif algorithm == 'mpmath':
-            import mpmath
-            from sage.libs.mpmath import utils as mpmath_utils
-            return mpmath_utils.call(mpmath.airyai, x, parent=parent)
+            return _mpmath_utils_call(_mpmath_airyai, x, parent=parent)
         else:
             raise ValueError("unknown algorithm '%s'" % algorithm)
 
@@ -350,9 +352,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
                     return CC(y)
             return parent(y)
         elif algorithm == 'mpmath':
-            import mpmath
-            from sage.libs.mpmath import utils as mpmath_utils
-            return mpmath_utils.call(mpmath.airyai, x, derivative=1,
+            return _mpmath_utils_call(_mpmath_airyai, x, derivative=1,
                                      parent=parent)
         else:
             raise ValueError("unknown algorithm '%s'" % algorithm)
@@ -586,7 +586,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
         parent = kwargs.get('parent')
         import mpmath
         from sage.libs.mpmath import utils as mpmath_utils
-        return mpmath_utils.call(mpmath.airybi, x, derivative=alpha,
+        return _mpmath_utils_call(_mpmath_airybi, x, derivative=alpha,
                                  parent=parent)
 
 
@@ -694,7 +694,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
         elif algorithm == 'mpmath':
             import mpmath
             from sage.libs.mpmath import utils as mpmath_utils
-            return mpmath_utils.call(mpmath.airybi, x, parent=parent)
+            return _mpmath_utils_call(_mpmath_airybi, x, parent=parent)
         else:
             raise ValueError("unknown algorithm '%s'" % algorithm)
 
@@ -794,9 +794,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
                     return CC(y)
             return parent(y)
         elif algorithm == 'mpmath':
-            import mpmath
-            from sage.libs.mpmath import utils as mpmath_utils
-            return mpmath_utils.call(mpmath.airybi, x, derivative=1,
+            return _mpmath_utils_call(_mpmath_airybi, x, derivative=1,
                                      parent=parent)
         else:
             raise ValueError("unknown algorithm '%s'" % algorithm)

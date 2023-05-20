@@ -20,9 +20,10 @@ AUTHORS:
 import math
 
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.plot.all", "line")
-from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
+
+lazy_import('sage.modules.free_module_element', 'vector')
+lazy_import('sage.plot.all', 'line')
 
 
 class SpikeFunction:
@@ -31,9 +32,9 @@ class SpikeFunction:
 
     INPUT:
 
-    -  ``v`` - list of pairs (x, height)
+    -  ``v`` -- list of pairs (x, height)
 
-    -  ``eps`` - parameter that determines approximation to a true spike
+    -  ``eps`` -- parameter that determines approximation to a true spike
 
     OUTPUT:
 
@@ -41,12 +42,12 @@ class SpikeFunction:
 
     EXAMPLES::
 
-        sage: spike_function([(-3,4),(-1,1),(2,3)],0.001)
+        sage: spike_function([(-3,4), (-1,1), (2,3)], 0.001)
         A spike function with spikes at [-3.0, -1.0, 2.0]
 
     Putting the spikes too close together may delete some::
 
-        sage: spike_function([(1,1),(1.01,4)],0.1)
+        sage: spike_function([(1,1), (1.01,4)], 0.1)
         Some overlapping spikes have been deleted.
         You might want to use a smaller value for eps.
         A spike function with spikes at [1.0]
@@ -66,7 +67,7 @@ class SpikeFunction:
 
         EXAMPLES::
 
-            sage: S = spike_function([(-3,4),(-1,1),(2,3)],0.001); S
+            sage: S = spike_function([(-3,4), (-1,1), (2,3)], 0.001); S
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: S.height
             [4.0, 1.0, 3.0]
@@ -98,7 +99,7 @@ class SpikeFunction:
 
         EXAMPLES::
 
-            sage: spike_function([(-3,4),(-1,1),(2,3)],0.001)
+            sage: spike_function([(-3,4), (-1,1), (2,3)], 0.001)
             A spike function with spikes at [-3.0, -1.0, 2.0]
         """
         return "A spike function with spikes at %s" % self.support
@@ -112,7 +113,7 @@ class SpikeFunction:
 
         EXAMPLES::
 
-            sage: S = spike_function([(0,5)],eps=.001)
+            sage: S = spike_function([(0,5)], eps=.001)
             sage: S(0)
             5.0
             sage: S(.1)
@@ -155,7 +156,7 @@ class SpikeFunction:
 
         EXAMPLES::
 
-            sage: S = spike_function([(-3,4),(-1,1),(2,3)]); S
+            sage: S = spike_function([(-3,4), (-1,1), (2,3)]); S
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: P = S.plot_fft_abs(8)                                                 # needs sage.plot
             sage: p = P[0]; p.ydata  # abs tol 1e-8                                     # needs sage.plot
@@ -174,7 +175,7 @@ class SpikeFunction:
 
         EXAMPLES::
 
-            sage: S = spike_function([(-3,4),(-1,1),(2,3)]); S
+            sage: S = spike_function([(-3,4), (-1,1), (2,3)]); S
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: P = S.plot_fft_arg(8)                                                 # needs sage.plot
             sage: p = P[0]; p.ydata  # abs tol 1e-8                                     # needs sage.plot
@@ -193,7 +194,7 @@ class SpikeFunction:
 
         EXAMPLES::
 
-            sage: S = spike_function([(-3,4),(-1,1),(2,3)],0.001); S
+            sage: S = spike_function([(-3,4), (-1,1), (2,3)],0.001); S
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: S.vector(16)                                                          # needs sage.modules
             (4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -219,8 +220,8 @@ class SpikeFunction:
 
         EXAMPLES::
 
-            sage: S = spike_function([(-1,1),(1,40)])
-            sage: S._ranges(None,None)
+            sage: S = spike_function([(-1,1), (1,40)])
+            sage: S._ranges(None, None)
             (-1.0, 1.0)
         """
         width = (self.support[-1] + self.support[0])/float(2)
