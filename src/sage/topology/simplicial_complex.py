@@ -4920,6 +4920,22 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         return B
 
+    def is_minimally_non_golod(self, decomposition=True):
+        r"""
+        Return whether `self` is minimally non-Golod.
+
+        A simplicial complex is Golod if multiplication and all higher
+        Massey operations in the associated Tor-algebra are trivial. If
+        a simplicial complex itself is not Golod, but deleting each vertex
+        gives us a full subcomplex that is Golod, then we say that a simplicial
+        complex is minimally non-Golod.
+
+        :param decomposition: If ``False``, do not print the decomposition
+           of the corresponding moment-angle complex
+        :type decomposition: boolean; optional, default ``True``
+        """
+        #TODO
+
 # Miscellaneous utility functions.
 
 # The following two functions can be used to generate the facets for
