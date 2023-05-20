@@ -369,7 +369,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         ::
 
             sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(2)], [0])                # optional - sage.rings.number_field sage.symbolic
-            sage: G.discrete_log(QQbar(2*sqrt(2)))                                      # optional - sage.rings.number_field
+            sage: G.discrete_log(QQbar(2*sqrt(2)))                                      # optional - sage.rings.number_field sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: No black-box discrete log for infinite abelian groups
