@@ -11,7 +11,6 @@ from .desolvers import (desolve, desolve_laplace, desolve_system,
 
 from .transforms.all import *
 
-from .functional import expand, simplify
 from .var import (var, function, clear_vars)
 
 

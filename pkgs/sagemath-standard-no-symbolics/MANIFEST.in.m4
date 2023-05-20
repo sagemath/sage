@@ -9,7 +9,10 @@ include requirements.txt
 global-include all__sagemath_standard_no_symbolics.py
 
 prune sage/symbolic
-prune sage/functions
+include sage/symbolic/all__sagemath_standard_no_symbolics.py
+include sage/symbolic/symbols.p*
+include sage/symbolic/function.p*
+
 prune sage/manifolds
 prune sage/lfunctions
 prune sage/geometry/riemannian_manifolds

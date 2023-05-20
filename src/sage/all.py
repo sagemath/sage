@@ -159,11 +159,12 @@ from copy import copy, deepcopy
 from sage.rings.qqbar import _init_qqbar
 _init_qqbar()
 
+from sage.functions.all import *
+
 try:
     from sage.plot.all       import *
     from sage.plot.plot3d.all     import *
     from sage.symbolic.all   import *
-    from sage.functions.all  import *
     from sage.calculus.all   import *
     from sage.manifolds.all import *
     from sage.lfunctions.all import *
