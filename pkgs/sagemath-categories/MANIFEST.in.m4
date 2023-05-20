@@ -52,15 +52,12 @@ include sage/rings/infinity.*
 include sage/rings/factorint.p*
 include sage/rings/sum_of_squares.p*
 
-include sage/arith/*.*
 include sage/misc/allocator.*
-include sage/misc/functional.p*
 include sage/misc/latex*.*
 include sage/misc/html.p*
 include sage/misc/table.p*
 include sage/misc/map_threaded.p*
 include sage/misc/binary_tree.p*
-include sage/misc/derivative.p*
 include sage/misc/mrange.p*
 include sage/misc/defaults.p*
 include sage/misc/converting_dict.p*
@@ -68,9 +65,17 @@ include sage/misc/parser.p*
 include sage/misc/method_decorator.p*
 include sage/misc/random_testing.p*
 
+# These might later go to a separate distribution sagemath-functions (> sagemath-objects);
+# but sage.functions currently depends on basic rings (QQ etc)
+include sage/arith/*.*
+include sage/calculus/functional.p*
+# include sage/calculus/functions.p*  -- needs matrices
+include sage/misc/derivative.p*
+include sage/misc/functional.p*
 include sage/symbolic/symbols.p*
 include sage/symbolic/function.p*
 graft sage/functions
+
 
 include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*

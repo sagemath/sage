@@ -94,6 +94,8 @@ exclude sage/matrix/matrix_rational_*.* # depends on flint, pari
 exclude sage/matrix/matrix_symbolic_*.* # --> sagemath-symbolics
 exclude sage/matrix/change_ring.*       # depends on matrix_integer_*
 
+# Can add sage/calculus/functions.p* (jacobian, wronskian) -- excluded from sagemath-categories because it needs matrices
+
 graft sage/data_structures
 exclude sage/data_structures/bounded_integer_sequences.*   # depends on flint
 exclude sage/data_structures/stream.*

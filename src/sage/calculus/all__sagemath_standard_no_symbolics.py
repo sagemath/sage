@@ -1,11 +1,11 @@
+from .all__sagemath_categories import *
+
+from .functions import wronskian, jacobian
+
 from .integration import numerical_integral, monte_carlo_integral
 integral_numerical = numerical_integral
 
 from .interpolation import spline, Spline
-
-from .functional import diff, derivative, taylor
-
-from .functions import wronskian, jacobian
 
 from .ode import ode_solver, ode_system
 

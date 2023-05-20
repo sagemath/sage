@@ -17,4 +17,5 @@ from sage.misc.all__sagemath_categories import *
 from sage.typeset.all import *
 from sage.schemes.all__sagemath_categories import *
 
+from sage.calculus.all__sagemath_categories import *
 from sage.functions.all import *
