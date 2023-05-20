@@ -576,8 +576,8 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 3962::
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 4055::
 
-    sage: t = var('t')
-    sage: for mu in Partitions(5):
+    sage: t = var('t')                                                                  # optional - sage.symbolic
+    sage: for mu in Partitions(5):                                                      # optional - sage.symbolic
     ....:     print("{} {}".format(mu, sum(t^T.spin() for T in StrongTableaux(3,[4,1,1],mu))))
     [5] 0
     [4, 1] t

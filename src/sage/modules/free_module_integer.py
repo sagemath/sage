@@ -382,7 +382,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         basis = matrix(ZZ, len(basis), len(basis[0]), basis)
         basis.set_immutable()
 
-        if self.reduced_basis[0].norm() > basis[0].norm():
+        b0 = basis[0]
+        rb0 = self.reduced_basis[0]
+
+        if rb0.dot_product(rb0) > b0.dot_product(b0):
             self._reduced_basis = basis
         return basis
 
@@ -564,21 +567,21 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = sage.crypto.gen_lattice(type='random', n=1, m=30, q=2^40, seed=42)
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)
+            sage: min(v.norm().n() for v in L.reduced_basis)                            # optional - sage.symbolic
             6.03890756700000e10
 
-            sage: L.shortest_vector().norm().n()
+            sage: L.shortest_vector().norm().n()                                        # optional - sage.symbolic
             3.74165738677394
 
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)
+            sage: min(v.norm().n() for v in L.reduced_basis)                            # optional - sage.symbolic
             6.03890756700000e10
 
-            sage: L.shortest_vector(algorithm="pari").norm().n()
+            sage: L.shortest_vector(algorithm="pari").norm().n()                        # optional - sage.symbolic
             3.74165738677394
 
             sage: L = IntegerLattice(A, lll_reduce=True)
-            sage: L.shortest_vector(algorithm="pari").norm().n()
+            sage: L.shortest_vector(algorithm="pari").norm().n()                        # optional - sage.symbolic
             3.74165738677394
         """
         if algorithm == "pari":

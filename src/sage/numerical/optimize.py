@@ -238,7 +238,7 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
         (-3.28837136189098..., 3.42575079030572...)
         sage: find_local_minimum(f, 1, 5, tol=1e-2, maxfun=10)
         (-3.28837084598..., 3.4250840220...)
-        sage: show(plot(f, 0, 20))
+        sage: show(plot(f, 0, 20))                                                      # optional - sage.plot
         sage: find_local_minimum(f, 1, 15)
         (-9.4772942594..., 9.5293344109...)
 
@@ -261,9 +261,9 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
     numerics (observe the small number of decimal places that we
     actually test)::
 
-        sage: plot(f, (x,-2.5, -1)).ymin()
+        sage: plot(f, (x, -2.5, -1)).ymin()                                             # optional - sage.plot
         -2.182...
-        sage: plot(f, (x,-2.5, 2)).ymin()
+        sage: plot(f, (x, -2.5, 2)).ymin()                                              # optional - sage.plot
         -2.182...
 
     ALGORITHM:

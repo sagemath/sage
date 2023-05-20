@@ -3173,7 +3173,7 @@ class Link(SageObject):
         We construct the simplest version of the unknot::
 
             sage: L = Link([[2, 1, 1, 2]])
-            sage: L.plot()
+            sage: L.plot()                                                              # optional - sage.plot
             Graphics object consisting of ... graphics primitives
 
         .. PLOT::
@@ -3186,7 +3186,7 @@ class Link(SageObject):
         We construct a more interesting example of the unknot::
 
             sage: L = Link([[2, 1, 4, 5], [3, 5, 6, 7], [4, 1, 9, 6], [9, 2, 3, 7]])
-            sage: L.plot()
+            sage: L.plot()                                                              # optional - sage.plot
             Graphics object consisting of ... graphics primitives
 
         .. PLOT::
@@ -3197,10 +3197,10 @@ class Link(SageObject):
 
         The "monster" unknot::
 
-            sage: L = Link([[3,1,2,4],[8,9,1,7],[5,6,7,3],[4,18,6,5],
-            ....:           [17,19,8,18],[9,10,11,14],[10,12,13,11],
-            ....:           [12,19,15,13],[20,16,14,15],[16,20,17,2]])
-            sage: L.plot()
+            sage: L = Link([[3,1,2,4], [8,9,1,7], [5,6,7,3], [4,18,6,5],
+            ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
+            ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
+            sage: L.plot()                                                              # optional - sage.plot
             Graphics object consisting of ... graphics primitives
 
         .. PLOT::
@@ -3216,7 +3216,7 @@ class Link(SageObject):
             sage: L = Link([[[1,-2,-3,-8,-12,13,-14,15,-7,-1,2,-4,10,11,-13,12,
             ....:             -11,-16,4,3,-5,6,-9,7,-15,14,16,-10,8,9,-6,5]],
             ....:           [-1,-1,1,1,1,1,-1,1,1,-1,1,-1,-1,-1,-1,-1]])
-            sage: L.plot()
+            sage: L.plot()                                                              # optional - sage.plot
             Graphics object consisting of ... graphics primitives
 
         .. PLOT::
@@ -3230,7 +3230,7 @@ class Link(SageObject):
         One of the representations of the trefoil knot::
 
             sage: L = Link([[1, 5, 2, 4], [5, 3, 6, 2], [3, 1, 4, 6]])
-            sage: L.plot()
+            sage: L.plot()                                                              # optional - sage.plot
             Graphics object consisting of 14 graphics primitives
 
         .. PLOT::
@@ -3242,7 +3242,7 @@ class Link(SageObject):
         The figure-eight knot::
 
             sage: L = Link([[2, 1, 4, 5], [5, 6, 7, 3], [6, 4, 1, 9], [9, 2, 3, 7]])
-            sage: L.plot()
+            sage: L.plot()                                                              # optional - sage.plot
             Graphics object consisting of ... graphics primitives
 
         .. PLOT::
@@ -3256,7 +3256,7 @@ class Link(SageObject):
             sage: L = Link([[4,2,5,1], [10,3,11,4], [5,16,6,17], [7,12,8,13],
             ....:           [18,9,19,10], [2,11,3,12], [13,20,14,21], [15,6,16,7],
             ....:           [22,18,1,17], [8,19,9,20], [21,14,22,15]])
-            sage: L.plot()
+            sage: L.plot()                                                              # optional - sage.plot
             Graphics object consisting of ... graphics primitives
 
         .. PLOT::
@@ -3270,7 +3270,7 @@ class Link(SageObject):
         One of the representations of the Hopf link::
 
             sage: L = Link([[1, 4, 2, 3], [4, 1, 3, 2]])
-            sage: L.plot()
+            sage: L.plot()                                                              # optional - sage.plot
             Graphics object consisting of ... graphics primitives
 
         .. PLOT::
@@ -3281,8 +3281,9 @@ class Link(SageObject):
 
         Plotting links with multiple isolated components::
 
-            sage: L = Link([[[-1, 2, -3, 1, -2, 3], [4, -5, 6, -4, 5, -6]], [1, 1, 1, 1, 1, 1]])
-            sage: L.plot()
+            sage: L = Link([[[-1, 2, -3, 1, -2, 3], [4, -5, 6, -4, 5, -6]],
+            ....:            [1, 1, 1, 1, 1, 1]])
+            sage: L.plot()                                                              # optional - sage.plot
             Graphics object consisting of ... graphics primitives
 
         .. PLOT::
@@ -3297,7 +3298,7 @@ class Link(SageObject):
             sage: B = BraidGroup(4)
             sage: b = B([1,2,3,1,2,-1,-3,2,3])
             sage: L = Link(b)
-            sage: L.plot(color=L.colorings(3)[0])
+            sage: L.plot(color=L.colorings(3)[0])                                       # optional - sage.plot
             Graphics object consisting of ... graphics primitives
 
         .. PLOT::
@@ -3313,13 +3314,13 @@ class Link(SageObject):
         Check that :trac:`20315` is fixed::
 
             sage: L = Link([[2,1,4,5], [5,6,7,3], [6,4,1,9], [9,2,3,7]])
-            sage: L.plot(solver='GLPK')
+            sage: L.plot(solver='GLPK')                                                 # optional - sage.plot
             Graphics object consisting of ... graphics primitives
-            sage: L.plot(solver='Coin')    # optional - sage_numerical_backends_coin
+            sage: L.plot(solver='Coin')    # optional - sage_numerical_backends_coin    # optional - sage.plot
             Graphics object consisting of ... graphics primitives
-            sage: L.plot(solver='CPLEX')   # optional - CPLEX
+            sage: L.plot(solver='CPLEX')   # optional - CPLEX                           # optional - sage.plot
             Graphics object consisting of ... graphics primitives
-            sage: L.plot(solver='Gurobi')  # optional - Gurobi
+            sage: L.plot(solver='Gurobi')  # optional - Gurobi                          # optional - sage.plot
             Graphics object consisting of ... graphics primitives
         """
         if type(color) is not dict:

@@ -395,10 +395,10 @@ class SageInputBuilder:
             sage: sage_input(float(-infinity), preparse=True, verify=True)
             # Verified
             -float(infinity)
-            sage: sage_input(float(NaN), preparse=True, verify=True)
+            sage: sage_input(float(NaN), preparse=True, verify=True)                    # optional - sage.symbolic
             # Verified
             float(NaN)
-            sage: sage_input(float(-pi), preparse=True, verify=True)
+            sage: sage_input(float(-pi), preparse=True, verify=True)                    # optional - sage.symbolic
             # Verified
             float(-RR(3.1415926535897931))
             sage: sage_input(float(42), preparse=True, verify=True)

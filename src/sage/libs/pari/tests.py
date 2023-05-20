@@ -911,8 +911,8 @@ Transcendental functions::
 
     sage: pari(2).zeta()
     1.64493406684823
-    sage: x = RR(pi)^2/6
-    sage: pari(x)
+    sage: x = RR(pi)^2/6                                                                # optional - sage.symbolic
+    sage: pari(x)                                                                       # optional - sage.symbolic
     1.64493406684823
     sage: pari(3).zeta()
     1.20205690315959
@@ -1340,9 +1340,9 @@ Elliptic curves::
     sage: e = pari([0,1,1,-2,0]).ellinit()
     sage: e.ellordinate(0)
     [0, -1]
-    sage: e.ellordinate(SR(I))
+    sage: e.ellordinate(SR(I))                                                          # optional - sage.symbolic
     [0.582203589721741 - 1.38606082464177*I, -1.58220358972174 + 1.38606082464177*I]
-    sage: e.ellordinate(SR(I), precision=128)[0].sage()
+    sage: e.ellordinate(SR(I), precision=128)[0].sage()                                 # optional - sage.symbolic
     0.58220358972174117723338947874993600727 - 1.3860608246417697185311834209833653345*I
     sage: e.ellordinate(1+3*5^1+O(5^3))
     [4*5 + 5^2 + O(5^3), 4 + 3*5^2 + O(5^3)]

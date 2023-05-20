@@ -708,7 +708,7 @@ def singleton_bound_asymp(delta, q):
         sage: codes.bounds.singleton_bound_asymp(1/4,2)
         3/4
         sage: f = lambda x: codes.bounds.singleton_bound_asymp(x,2)
-        sage: plot(f,0,1)
+        sage: plot(f,0,1)                                                               # optional - sage.plot
         Graphics object consisting of 1 graphics primitive
     """
     return 1 - delta

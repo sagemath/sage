@@ -15,7 +15,7 @@ We test coercions::
     Gap
     sage: a = 2 * maxima('2'); a                                                        # optional - sage.symbolic
     4
-    sage: parent(a)
+    sage: parent(a)                                                                     # optional - sage.symbolic
     Maxima
     sage: a = 2 * singular('2'); a
     4

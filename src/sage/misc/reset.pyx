@@ -20,15 +20,15 @@ def reset(vars=None, attached=False):
     If vars is specified, just restore the value of vars and leave
     all other variables alone (i.e., call restore).
 
-    Note that the variables in the set sage.misc.reset.EXCLUDE are
+    Note that the variables in the set :obj:`sage.misc.reset.EXCLUDE` are
     excluded from being reset.
 
     INPUT:
 
-    - ``vars`` - a list, or space or comma separated string (default:
+    - ``vars`` -- a list, or space or comma separated string (default:
       None), variables to restore
 
-    - ``attached`` - boolean (default: False), if ``vars`` is not None,
+    - ``attached`` -- boolean (default: ``False``), if ``vars`` is not None,
       whether to detach all attached files
 
     EXAMPLES::
@@ -99,7 +99,7 @@ def restore(vars=None):
 
     INPUT:
 
-    - ``vars`` - string or list (default: None), if not None, restores
+    - ``vars`` -- string or list (default: ``None``), if not ``None``, restores
       just the given variables to the default value.
 
     EXAMPLES::
@@ -123,7 +123,7 @@ def restore(vars=None):
         sage: x = 10; y = 15/3; QQ='red'
         sage: ww = 15
         sage: restore()
-        sage: x, QQ, ww
+        sage: x, QQ, ww                                                         # optional - sage.symbolic
         (x, Rational Field, 15)
         sage: restore('ww')
         sage: ww

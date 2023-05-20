@@ -191,7 +191,8 @@ def polygon_plot3d(points, tilt=30, turn=30, **kwargs):
     EXAMPLES::
 
         sage: from sage.groups.perm_gps.cubegroup import polygon_plot3d,green
-        sage: P = polygon_plot3d([[1,3,1],[2,3,1],[2,3,2],[1,3,2],[1,3,1]],rgbcolor=green)
+        sage: P = polygon_plot3d([[1,3,1],[2,3,1],[2,3,2],[1,3,2],[1,3,1]],             # optional - sage.plot
+        ....:                    rgbcolor=green)
     """
     rot = rotation_list(tilt, turn)
     points2 = [(xproj(x, y, z, rot), yproj(x, y, z, rot))

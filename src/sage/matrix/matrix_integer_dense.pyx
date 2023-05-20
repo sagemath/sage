@@ -3244,7 +3244,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 try:
                     det = ZZ(det2.sqrt())
                     self.cache("det", det)
-                except TypeError:
+                except (TypeError, ModuleNotFoundError):
                     pass
             elif algorithm == "NTL:LLL_FP":
                 if use_givens:

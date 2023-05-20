@@ -3267,32 +3267,32 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
 
         sage: from sage.matrix.constructor import vector_on_axis_rotation_matrix
         sage: v = vector((1,2,3))
-        sage: vector_on_axis_rotation_matrix(v, 2) * v
+        sage: vector_on_axis_rotation_matrix(v, 2) * v                                  # optional - sage.symbolic
         (0, 0, sqrt(14))
-        sage: vector_on_axis_rotation_matrix(v, 1) * v
+        sage: vector_on_axis_rotation_matrix(v, 1) * v                                  # optional - sage.symbolic
         (0, sqrt(14), 0)
-        sage: vector_on_axis_rotation_matrix(v, 0) * v
+        sage: vector_on_axis_rotation_matrix(v, 0) * v                                  # optional - sage.symbolic
         (sqrt(14), 0, 0)
 
     ::
 
-        sage: x,y = var('x,y')
-        sage: v = vector((x,y))
-        sage: vector_on_axis_rotation_matrix(v, 1)
+        sage: x,y = var('x,y')                                                          # optional - sage.symbolic
+        sage: v = vector((x,y))                                                         # optional - sage.symbolic
+        sage: vector_on_axis_rotation_matrix(v, 1)                                      # optional - sage.symbolic
         [ y/sqrt(x^2 + y^2) -x/sqrt(x^2 + y^2)]
         [ x/sqrt(x^2 + y^2)  y/sqrt(x^2 + y^2)]
-        sage: vector_on_axis_rotation_matrix(v, 0)
+        sage: vector_on_axis_rotation_matrix(v, 0)                                      # optional - sage.symbolic
         [ x/sqrt(x^2 + y^2)  y/sqrt(x^2 + y^2)]
         [-y/sqrt(x^2 + y^2)  x/sqrt(x^2 + y^2)]
-        sage: vector_on_axis_rotation_matrix(v, 0) * v
+        sage: vector_on_axis_rotation_matrix(v, 0) * v                                  # optional - sage.symbolic
         (x^2/sqrt(x^2 + y^2) + y^2/sqrt(x^2 + y^2), 0)
-        sage: vector_on_axis_rotation_matrix(v, 1) * v
+        sage: vector_on_axis_rotation_matrix(v, 1) * v                                  # optional - sage.symbolic
         (0, x^2/sqrt(x^2 + y^2) + y^2/sqrt(x^2 + y^2))
 
     ::
 
         sage: v = vector((1,2,3,4))
-        sage: vector_on_axis_rotation_matrix(v, 0) * v
+        sage: vector_on_axis_rotation_matrix(v, 0) * v                                  # optional - sage.symbolic
         (sqrt(30), 0, 0, 0)
         sage: vector_on_axis_rotation_matrix(v, 0, ring=RealField(10))
         [ 0.18  0.37  0.55  0.73]
@@ -3337,35 +3337,35 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
         sage: from sage.matrix.constructor import ith_to_zero_rotation_matrix
         sage: v = vector((1,2,3))
-        sage: ith_to_zero_rotation_matrix(v, 2)
+        sage: ith_to_zero_rotation_matrix(v, 2)                                         # optional - sage.symbolic
         [             1              0              0]
         [             0  2/13*sqrt(13)  3/13*sqrt(13)]
         [             0 -3/13*sqrt(13)  2/13*sqrt(13)]
-        sage: ith_to_zero_rotation_matrix(v, 2) * v
+        sage: ith_to_zero_rotation_matrix(v, 2) * v                                     # optional - sage.symbolic
         (1, sqrt(13), 0)
 
     ::
 
-        sage: ith_to_zero_rotation_matrix(v, 0)
+        sage: ith_to_zero_rotation_matrix(v, 0)                                         # optional - sage.symbolic
         [ 3/10*sqrt(10)              0 -1/10*sqrt(10)]
         [             0              1              0]
         [ 1/10*sqrt(10)              0  3/10*sqrt(10)]
-        sage: ith_to_zero_rotation_matrix(v, 1)
+        sage: ith_to_zero_rotation_matrix(v, 1)                                         # optional - sage.symbolic
         [ 1/5*sqrt(5)  2/5*sqrt(5)            0]
         [-2/5*sqrt(5)  1/5*sqrt(5)            0]
         [           0            0            1]
-        sage: ith_to_zero_rotation_matrix(v, 2)
+        sage: ith_to_zero_rotation_matrix(v, 2)                                         # optional - sage.symbolic
         [             1              0              0]
         [             0  2/13*sqrt(13)  3/13*sqrt(13)]
         [             0 -3/13*sqrt(13)  2/13*sqrt(13)]
 
     ::
 
-        sage: ith_to_zero_rotation_matrix(v, 0) * v
+        sage: ith_to_zero_rotation_matrix(v, 0) * v                                     # optional - sage.symbolic
         (0, 2, sqrt(10))
-        sage: ith_to_zero_rotation_matrix(v, 1) * v
+        sage: ith_to_zero_rotation_matrix(v, 1) * v                                     # optional - sage.symbolic
         (sqrt(5), 0, 3)
-        sage: ith_to_zero_rotation_matrix(v, 2) * v
+        sage: ith_to_zero_rotation_matrix(v, 2) * v                                     # optional - sage.symbolic
         (1, sqrt(13), 0)
 
     Other ring::
@@ -3381,13 +3381,13 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
     On the symbolic ring::
 
-        sage: x,y,z = var('x,y,z')
-        sage: v = vector((x,y,z))
-        sage: ith_to_zero_rotation_matrix(v, 2)
+        sage: x,y,z = var('x,y,z')                                                      # optional - sage.symbolic
+        sage: v = vector((x,y,z))                                                       # optional - sage.symbolic
+        sage: ith_to_zero_rotation_matrix(v, 2)                                         # optional - sage.symbolic
         [                 1                  0                  0]
         [                 0  y/sqrt(y^2 + z^2)  z/sqrt(y^2 + z^2)]
         [                 0 -z/sqrt(y^2 + z^2)  y/sqrt(y^2 + z^2)]
-        sage: ith_to_zero_rotation_matrix(v, 2) * v
+        sage: ith_to_zero_rotation_matrix(v, 2) * v                                     # optional - sage.symbolic
         (x, y^2/sqrt(y^2 + z^2) + z^2/sqrt(y^2 + z^2), 0)
 
     TESTS::
