@@ -85,6 +85,7 @@ from sage.knots.knot import Knot
 from sage.sets.set import Set
 from sage.groups.finitely_presented import FinitelyPresentedGroup
 from sage.groups.artin import FiniteTypeArtinGroup, FiniteTypeArtinGroupElement
+from sage.structure.element import Expression
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.features import PythonModule
 
@@ -1124,12 +1125,14 @@ class Braid(FiniteTypeArtinGroupElement):
             else:
                 return self._jones_polynomial(variab)
         else:
-            from sage.symbolic.ring import SR
             from sage.rings.integer_ring import ZZ
             if variab is None:
                 variab = 't'
+            if not isinstance(variab, Expression):
+                from sage.symbolic.ring import SR
+                variab = SR(variab)
             # We force the result to be in the symbolic ring because of the expand
-            return self._jones_polynomial(SR(variab)**(ZZ(1)/ZZ(4))).expand()
+            return self._jones_polynomial(variab**(ZZ(1)/ZZ(4))).expand()
 
     @cached_method
     def _enhanced_states(self):
