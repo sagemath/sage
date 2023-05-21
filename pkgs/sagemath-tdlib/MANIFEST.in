@@ -5,6 +5,8 @@ include VERSION.txt
 global-exclude *.c
 global-exclude *.cpp
 
+include sage/graphs/graph_decompositions/sage_tdlib.cpp
+
 global-exclude __pycache__
 global-exclude *.py[co]
 global-exclude *.bak
