@@ -422,6 +422,7 @@ from sage.graphs.digraph import DiGraph
 from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.graphs.views import EdgesView
+from sage.parallel.decorate import parallel
 
 from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
@@ -3666,24 +3667,29 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``algorithm`` -- Select an algorithm from the following supported
+        - ``algorithm`` -- string (default: ``"DLX"``); one of the following
           algorithms:
 
-          - If ``algorithm="DLX"`` (default), the chromatic number is computed
-            using the dancing link algorithm. It is inefficient speedwise to
-            compute the chromatic number through the dancing link algorithm
-            because this algorithm computes *all* the possible colorings to
-            check that one exists.
+          - ``"DLX"`` (default): the chromatic number is computed using the
+            dancing link algorithm. It is inefficient speedwise to compute the
+            chromatic number through the dancing link algorithm because this
+            algorithm computes *all* the possible colorings to check that one
+            exists.
 
-          - If ``algorithm="CP"``, the chromatic number is computed using the
-            coefficients of the chromatic polynomial. Again, this method is
-            inefficient in terms of speed and it only useful for small graphs.
+          - ``"CP"``: the chromatic number is computed using the coefficients of
+            the chromatic polynomial. Again, this method is inefficient in terms
+            of speed and it only useful for small graphs.
 
-          - If ``algorithm="MILP"``, the chromatic number is computed using a
-            mixed integer linear program. The performance of this implementation
-            is affected by whether optional MILP solvers have been installed
-            (see the :mod:`MILP module <sage.numerical.mip>`, or Sage's tutorial
-            on Linear Programming).
+          - ``"MILP"``: the chromatic number is computed using a mixed integer
+            linear program. The performance of this implementation is affected
+            by whether optional MILP solvers have been installed (see the
+            :mod:`MILP module <sage.numerical.mip>`, or Sage's tutorial on
+            Linear Programming).
+
+          - ``"parallel"``: all the above algorithms are executed in parallel
+            and the result is returned as soon as one algorithm ends. Observe
+            that the speed of the above algorithms depends on the size and
+            structure of the graph.
 
         - ``solver`` -- string (default: ``None``); specify a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -3713,6 +3719,8 @@ class Graph(GenericGraph):
             sage: G.chromatic_number(algorithm="MILP")
             3
             sage: G.chromatic_number(algorithm="CP")
+            3
+            sage: G.chromatic_number(algorithm="parallel")
             3
 
         A bipartite graph has (by definition) chromatic number 2::
@@ -3752,42 +3760,47 @@ class Graph(GenericGraph):
             0
             sage: G.chromatic_number(algorithm="CP")
             0
+            sage: G.chromatic_number(algorithm="parallel")
+            0
 
             sage: G = Graph({0: [1, 2, 3], 1: [2]})
             sage: G.chromatic_number(algorithm="foo")
             Traceback (most recent call last):
             ...
-            ValueError: The 'algorithm' keyword must be set to either 'DLX', 'MILP' or 'CP'.
+            ValueError: the 'algorithm' keyword must be set to either 'DLX', 'MILP', 'CP' or 'parallel'
 
-        Test on a random graph (:trac:`33559`)::
+        Test on a random graph (:trac:`33559`, modified in :trac:`12379`)::
 
             sage: G = graphs.RandomGNP(15, .2)
-            sage: c1 = G.chromatic_number(algorithm='DLX')
-            sage: c2 = G.chromatic_number(algorithm='MILP')
-            sage: c3 = G.chromatic_number(algorithm='CP')
-            sage: c1 == c2 and c2 == c3
+            sage: algorithms = ['DLX', 'MILP', 'CP', 'parallel']
+            sage: len(set([G.chromatic_number(algorithm=algo) for algo in algorithms])) == 1
             True
         """
         self._scream_if_not_simple(allow_multiple_edges=True)
-        # default built-in algorithm; bad performance
         if algorithm == "DLX":
             from sage.graphs.graph_coloring import chromatic_number
             return chromatic_number(self)
-        # Algorithm with good performance, but requires an optional
-        # package: choose any of GLPK or CBC.
         elif algorithm == "MILP":
             from sage.graphs.graph_coloring import vertex_coloring
             return vertex_coloring(self, value_only=True, solver=solver, verbose=verbose,
                                    integrality_tolerance=integrality_tolerance)
-        # another algorithm with bad performance; only good for small graphs
         elif algorithm == "CP":
             f = self.chromatic_polynomial()
             i = 0
             while not f(i):
                 i += 1
             return i
+        elif algorithm == "parallel":
+            def use_all(algorithms):
+                @parallel(len(algorithms), verbose=False)
+                def func(alg):
+                    return self.chromatic_number(algorithm=alg, solver=solver, verbose=verbose,
+                                                 integrality_tolerance=integrality_tolerance)
+                for input, output in func(algorithms):
+                    return output
+            return use_all(['DLX', 'MILP', 'CP'])
         else:
-            raise ValueError("The 'algorithm' keyword must be set to either 'DLX', 'MILP' or 'CP'.")
+            raise ValueError("the 'algorithm' keyword must be set to either 'DLX', 'MILP', 'CP' or 'parallel'")
 
     @doc_index("Coloring")
     def coloring(self, algorithm="DLX", hex_colors=False, solver=None, verbose=0,
