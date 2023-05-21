@@ -202,8 +202,8 @@ class SphericalHarmonic(BuiltinFunction):
 
         sage: spherical_harmonic(1, 1, x, y)                                            # optional - sage.symbolic
         -1/4*sqrt(3)*sqrt(2)*e^(I*y)*sin(x)/sqrt(pi)
-        sage: from sympy import Ynm                                                     # optional - sympy
-        sage: Ynm(1, 1, x, y).expand(func=True)                                         # optional - sympy
+        sage: from sympy import Ynm                                                     # optional - sympy sage.symbolic
+        sage: Ynm(1, 1, x, y).expand(func=True)                                         # optional - sympy sage.symbolic
         -sqrt(6)*exp(I*y)*sin(x)/(4*sqrt(pi))
         sage: spherical_harmonic(1, 1, x, y) - Ynm(1, 1, x, y)                          # optional - sympy sage.symbolic
         0

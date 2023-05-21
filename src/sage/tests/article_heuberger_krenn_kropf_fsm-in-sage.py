@@ -535,8 +535,8 @@ Sage example in fsm-in-sage.tex, line 1099::
 
 Sage example in fsm-in-sage.tex, line 1109::
 
-    sage: (pi_not_normalized,) = (A.subs(y=1) - A.parent().identity_matrix())\          # optional - sage.symbolic
-    ....:                            .left_kernel().basis()
+    sage: A1mI = (A.subs(y=1) - A.parent().identity_matrix())                           # optional - sage.symbolic
+    sage: (pi_not_normalized,) = A1mI.left_kernel().basis()                             # optional - sage.symbolic
     sage: pi = pi_not_normalized / pi_not_normalized.norm(p=1)                          # optional - sage.symbolic
 
 

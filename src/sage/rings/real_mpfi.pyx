@@ -83,9 +83,9 @@ it is taken to be 1.
     '125.?2'
     sage: v = RIF(-e, pi); v                                                            # optional - sage.symbolic
     0.?e1
-    sage: v.str(error_digits=1)
+    sage: v.str(error_digits=1)                                                         # optional - sage.symbolic
     '1.?4'
-    sage: v.str(error_digits=5)
+    sage: v.str(error_digits=5)                                                         # optional - sage.symbolic
     '0.2117?29300'
 
 Error digits also sometimes let us indicate that the interval is

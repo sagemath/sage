@@ -1681,7 +1681,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         EXAMPLES::
 
             sage: values = [-infinity, -20, 0, 1, 2^500, -2^4000, -2^-500, 2^-4000]
-            sage: values += [[NaN, -e]                                                  # optional - sage.symbolic
+            sage: values += [NaN, -e]                                                   # optional - sage.symbolic
             sage: for prec in (2, 53, 200):
             ....:     for rnd_dir in ('RNDN', 'RNDD', 'RNDU', 'RNDZ'):
             ....:         fld = RealField(prec, rnd=rnd_dir)

@@ -673,7 +673,6 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             [-4.733045976388941e+363922934236666733021124 +/- ...e+363922934236666733021108],
             [+/- inf], [+/- inf], [+/- inf], nan]
         """
-        import sage.symbolic.constants
         inf = self(sage.rings.infinity.Infinity)
         elements = [self(0), self(1), self(1)/3, -self(2)**(Integer(2)**80),
                     inf, -inf, self.zero().add_error(inf)]
@@ -682,7 +681,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         except ImportError:
             pass
         else:
-            elements.append(NotANumber())
+            elements.append(self.element_class(self, NotANumber()))
         return elements
 
     def _sum_of_products(self, terms):

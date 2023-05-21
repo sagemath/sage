@@ -3134,7 +3134,8 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
             sage: p = HyperbolicPlane().PD().get_point(-I/2+1/8)
             sage: G.V(2).acton(p)
-            Point in PD -((-(47*I + 161)*sqrt(5) - 47*I - 161)/(145*sqrt(5) + 94*I + 177) + I)/(I*(-(47*I + 161)*sqrt(5) - 47*I - 161)/(145*sqrt(5) + 94*I + 177) + 1)
+            Point in PD -((-(47*I + 161)*sqrt(5) - 47*I - 161)/(145*sqrt(5) + 94*I + 177)
+             + I)/(I*(-(47*I + 161)*sqrt(5) - 47*I - 161)/(145*sqrt(5) + 94*I + 177) + 1)
             sage: bool(G.V(2).acton(p).to_model('UHP').coordinates()
             ....:       == G.V(2).acton(p.to_model('UHP').coordinates()))
             True

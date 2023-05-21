@@ -387,12 +387,12 @@ We can pickle and unpickle algebraic numbers::
 
     sage: t = QQbar(sqrt(2)); type(t._descr)                                            # optional - sage.symbolic
     <class 'sage.rings.qqbar.ANRoot'>
-    sage: loads(dumps(t)) == QQbar(sqrt(2))
+    sage: loads(dumps(t)) == QQbar(sqrt(2))                                             # optional - sage.symbolic
     True
 
-    sage: t.exactify(); type(t._descr)
+    sage: t.exactify(); type(t._descr)                                                  # optional - sage.symbolic
     <class 'sage.rings.qqbar.ANExtensionElement'>
-    sage: loads(dumps(t)) == QQbar(sqrt(2))
+    sage: loads(dumps(t)) == QQbar(sqrt(2))                                             # optional - sage.symbolic
     True
 
     sage: t = ~QQbar(sqrt(2)); type(t._descr)                                           # optional - sage.symbolic

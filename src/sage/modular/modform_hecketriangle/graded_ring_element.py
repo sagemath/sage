@@ -61,10 +61,10 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: from sage.modular.modform_hecketriangle.graded_ring_element import FormsRingElement
             sage: from sage.modular.modform_hecketriangle.graded_ring import ModularFormsRing
             sage: x, d = var("x","d")                                                   # optional - sage.symbolic
-            sage: el = FormsRingElement(ModularFormsRing(), x*d)
-            sage: el.rat()
+            sage: el = FormsRingElement(ModularFormsRing(), x*d)                        # optional - sage.symbolic
+            sage: el.rat()                                                              # optional - sage.symbolic
             x*d
-            sage: el.rat().parent()
+            sage: el.rat().parent()                                                     # optional - sage.symbolic
             Fraction Field of Multivariate Polynomial Ring in x, y, z, d over Integer Ring
         """
         rat = parent.rat_field()(rat)

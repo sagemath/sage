@@ -2388,7 +2388,7 @@ class DirichletGroupFactory(UniqueFactory):
         22
         sage: r4_29_0(G.gens()[2].values_on_gens()[2]) * 3
         22
-        sage: parent(r4_29_0(G.gens()[2].values_on_gens()[2]) * 3
+        sage: parent(r4_29_0(G.gens()[2].values_on_gens()[2]) * 3)
         Residue field of Fractional ideal (-2*zeta4 + 5)
 
     ::
