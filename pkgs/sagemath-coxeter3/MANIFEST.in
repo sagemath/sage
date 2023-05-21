@@ -1,3 +1,5 @@
+global-include all__sagemath_coxeter3.py
+
 global-exclude *.c
 global-exclude *.cpp
 

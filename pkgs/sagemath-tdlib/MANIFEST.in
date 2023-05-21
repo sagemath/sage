@@ -1,3 +1,5 @@
+global-include all__sagemath_tdlib.py
+
 include VERSION.txt
 
 global-exclude *.c
