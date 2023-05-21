@@ -31,3 +31,10 @@ install_requires =
     esyscmd(`sage-get-system-packages install-requires \
         sagelib \
         | sed "2,\$s/^/    /;"')dnl
+
+packages =
+    sage.graphs
+
+[options.package_data]
+sage.graphs =
+    mcqd.pxd

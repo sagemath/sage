@@ -31,3 +31,14 @@ install_requires =
     esyscmd(`sage-get-system-packages install-requires \
         sagelib \
         | sed "2,\$s/^/    /;"')dnl
+
+packages =
+    sage.libs
+    sage.matrix
+
+[options.package_data]
+sage.libs =
+    meataxe.pxd
+
+sage.matrix =
+    matrix_gfpn_dense.pxd

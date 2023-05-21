@@ -31,3 +31,11 @@ install_requires =
     esyscmd(`sage-get-system-packages install-requires \
         sagelib \
         | sed "2,\$s/^/    /;"')dnl
+
+packages =
+    sage.libs.coxeter3
+
+[options.package_data]
+sage.libs.coxeter3 =
+    coxeter.pxd
+    decl.pxd

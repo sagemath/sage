@@ -1,4 +1,8 @@
+prune sage
+
 global-include all__sagemath_coxeter3.py
+
+graft sage/libs/coxeter3
 
 global-exclude *.c
 global-exclude *.cpp

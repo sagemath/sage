@@ -1,4 +1,9 @@
+prune sage
+
 global-include all__sagemath_meataxe.py
+
+include sage/libs/meataxe.p*
+include sage/matrix/matrix_gfpn_dense.p*
 
 global-exclude *.c
 global-exclude *.cpp
