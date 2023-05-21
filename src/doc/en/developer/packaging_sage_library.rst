@@ -1,9 +1,9 @@
 
 .. _chapter-modularization:
 
-============================
- Packaging the Sage Library
-============================
+===========================================
+Packaging the Sage Library for Distribution
+===========================================
 
 
 Modules, packages, distribution packages
@@ -167,7 +167,7 @@ The source directory of a distribution package, such as
   the current development release is ``9.7.beta8``, then such a
   version could be marked ``9.7.beta8.post1``.
 
-  Also sometimes when working on tickets it may be necessary to
+  Also sometimes when working on PRs it may be necessary to
   increment the version because a new feature is needed in another
   distribution package. Such versions should be marked by using the
   version number of the anticipated next development release and
@@ -178,7 +178,7 @@ The source directory of a distribution package, such as
   use ``9.7.beta9.dev1``. If the current development release is
   the stable release ``9.8``, use ``9.9.beta0.dev1``.
 
-  After the ticket is merged in the next development version, it will
+  After the PR is merged in the next development version, it will
   be synchronized again with the other package versions.
 
 - ``setup.py`` -- a `setuptools <https://pypi.org/project/setuptools/>`_-based
