@@ -227,7 +227,7 @@ class Nerve(SimplicialSet_arbitrary):
                     # constructor.
                     x = AbstractSimplex(d,
                                         name=' * '.join(str(_) for _ in chain),
-                                        latex_name = ' * '.join(latex(_) for _ in chain))
+                                        latex_name=' * '.join(latex(_) for _ in chain))
                     new_faces[chain] = x
 
                     # Compute faces of x.
