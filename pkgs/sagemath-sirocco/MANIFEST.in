@@ -1,5 +1,7 @@
 global-include all__sagemath_sirocco.py
 
+include VERSION.txt
+
 global-exclude *.c
 global-exclude *.cpp
 

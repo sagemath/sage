@@ -1,5 +1,7 @@
 global-include all__sagemath_bliss.py
 
+include VERSION.txt
+
 global-exclude *.c
 global-exclude *.cpp
 
