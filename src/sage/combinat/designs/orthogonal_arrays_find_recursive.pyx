@@ -47,7 +47,7 @@ Functions
 
 from sage.misc.cachefunc import cached_function
 from .orthogonal_arrays import orthogonal_array
-from sage.rings.integer cimport Integer, smallInteger
+from sage.rings.integer cimport smallInteger
 from sage.arith.misc import prime_powers
 
 @cached_function
