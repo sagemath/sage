@@ -56,7 +56,7 @@ on:
            "archlinux-latest",
            "opensuse-15.3-gcc_11-python3.9",
            "opensuse-15.4-gcc_11-python3.10",
-           "opensuse-15.5-gcc_11-python3.10",
+           "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed-python3.10",
            "conda-forge",
            "ubuntu-bionic-gcc_8-i386",
