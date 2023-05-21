@@ -474,7 +474,7 @@ We lift the result to `\QQ(x)[y]` and then substitute
 `z` and `C(z)` to obtain an expression for
 `\frac{d}{dz}C(z)`::
 
-    sage: fraction = fraction.lift(); fraction
+    sage: fraction = fraction.lift(); fraction                                          # optional - sage.symbolic
     (1/2/(x - 1/4))*y - 1/4/(x - 1/4)
     sage: fraction(x=z, y=C)                                                            # optional - sage.symbolic
     2*C(z)/(4*z - 1) - 1/(4*z - 1)
