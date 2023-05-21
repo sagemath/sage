@@ -5,7 +5,7 @@
 .. _chapter-portability_testing:
 
 =============================
-Testing on multiple platforms
+Testing on Multiple Platforms
 =============================
 
 Sage is intended to build and run on a variety of platforms,
@@ -18,12 +18,13 @@ machines, it is crucial to test changes to Sage, in particular
 when external packages are added or upgraded, on a wide
 spectrum of platforms.
 
-Sage patchbots
+GitHub actions
 ==============
 
-The `Sage patchbots <https://wiki.sagemath.org/patchbot>`_ will
-automatically test your Trac ticket by attempting an incremental build
-of Sage and running doctests.
+The `GitHub Actions
+<https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions>`_
+will automatically test your GitHub PR by attempting an incremental build of
+Sage and running doctests.
 
 Sage buildbots
 ==============
@@ -308,7 +309,7 @@ several developers can work on fixing the bug using containers running
 on their respective machines.
 
 
-Generating Dockerfiles
+Generating dockerfiles
 ----------------------
 
 Sage also provides a script for generating a ``Dockerfile``, which is
@@ -1174,7 +1175,7 @@ application, then in the command palette of VS Code, enter "Remote-Containers:
 Open Folder in Container", and hit :kbd:`Enter`, and choose the directory
 ``$SAGE_ROOT`` of your local Sage repository.
 
-VS Code then prompts you to choose a dev container configuration. 
+VS Code then prompts you to choose a dev container configuration.
 For example, choose "Ubuntu jammy" `.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json
 <https://github.com/sagemath/sage/tree/develop/.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json>`_,
 which uses the Docker image based on ``ubuntu-jammy-standard``, the most recent
