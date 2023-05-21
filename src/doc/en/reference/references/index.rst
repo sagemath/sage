@@ -1127,6 +1127,10 @@ REFERENCES:
             Achtzelle (Oktatope)", Verhand. Konik. Akad. Wetenschap,
             Erste Sectie, 10 (1910)
 
+.. [BR1998] Georgia Benkart and Tom Roby. *Down-up algebras*.
+            J. Algebra, **209** no. 1 (1999), pp. 305-335.
+            :doi:`10.1006/jabr.1998.7511`.
+
 .. [Br2000] Kenneth S. Brown, *Semigroups, rings, and Markov chains*,
             :arxiv:`math/0006145v1`.
 
@@ -1618,6 +1622,10 @@ REFERENCES:
              cluster complexes, and generalized multi-associahedra*,
              \J. Algebr. Comb. **39** (2014) pp. 17-51.
              :doi:`10.1007/s10801-013-0437-x`, :arxiv:`1108.1776`.
+
+.. [CM2000] Paula A.A.B. Carvalho and Ian M. Musson. *Down-up algebras and
+            their representation theory*. J. Algebra. **228** no. 1, (2000),
+            pp. 286-310. :doi:`10.1006/jabr.1999.8263`
 
 .. [CM2012] \M. Cabanes, I. Marin, *On ternary quotients of cubic Hecke
              algebras*, Comm. Math. Phys. (2012), Volume 314, Issue 1,
