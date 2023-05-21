@@ -111,8 +111,7 @@ from cysignals.signals cimport sig_check, sig_on, sig_str, sig_off
 cimport sage.matrix.matrix_dense as matrix_dense
 from .args cimport SparseEntry, MatrixArgs_init
 from libc.stdio cimport *
-from sage.structure.element cimport (Matrix, Vector,
-                                     ModuleElement, Element)
+from sage.structure.element cimport (Matrix, Vector)
 from sage.modules.free_module_element cimport FreeModuleElement
 from sage.libs.gmp.random cimport *
 from sage.misc.randstate cimport randstate, current_randstate

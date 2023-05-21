@@ -27,7 +27,7 @@ AUTHORS:
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
 import re
@@ -37,7 +37,7 @@ from sage.misc.superseded import experimental
 
 from sage.rings.infinity import infinity
 from sage.structure.factorization import Factorization
-from sage.structure.element cimport Element, RingElement, AlgebraElement, ModuleElement
+from sage.structure.element cimport Element, RingElement, AlgebraElement
 from sage.structure.parent cimport Parent
 from sage.structure.parent_gens cimport ParentWithGens
 from sage.misc.abstract_method import abstract_method
