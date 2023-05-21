@@ -248,7 +248,7 @@ def set_intersphinx_mappings(app, config):
         if os.path.isdir(os.path.join(invpath, directory)):
             src = os.path.join(refpath, directory)
             dst = os.path.join(invpath, directory, 'objects.inv')
-            app.config.intersphinx_mapping[src] = dst
+            app.config.intersphinx_mapping[directory] = (src, dst)
 
     intersphinx.normalize_intersphinx_mapping(app, config)
 
