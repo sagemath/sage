@@ -1,1 +1,1 @@
-$(PYTHON) meataxe | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig
+$(PYTHON) meataxe | $(PYTHON_TOOLCHAIN) sage_setup sagemath_environment cython pkgconfig

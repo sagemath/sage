@@ -1,1 +1,1 @@
-$(PYTHON) bliss | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig
+$(PYTHON) bliss cysignals | $(PYTHON_TOOLCHAIN) sage_setup sagemath_environment cython pkgconfig
