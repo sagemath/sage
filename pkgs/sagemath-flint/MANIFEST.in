@@ -6,11 +6,17 @@ global-include    all__sagemath_flint.py
 graft             sage/libs/arb
 graft             sage/libs/flint
 recursive-include sage/libs/gsl *.pxd                                           # FIXME
+include           sage/libs/gsl/__init__.p*                                     # FIXME
+include           sage/libs/gsl/all.p*                                          # FIXME
+include           sage/libs/gsl/complex/all.py                                  # FIXME
 recursive-include sage/libs/mpfr *.pxd                                          # FIXME
+include           sage/libs/mpfr/all.py                                         # FIXME
 recursive-include sage/libs/mpfi *.pxd                                          # FIXME
+include           sage/libs/mpfi/all.py                                         # FIXME
 recursive-include sage/matrix *.pxd                                             # FIXME
 include           sage/matrix/matrix_complex_ball_dense.p*
 include           sage/misc/binary_tree.p*                                      # FIXME
+include           sage/misc/all.py                                              # FIXME
 recursive-include sage/rings *.pxd                                              # FIXME
 include           sage/rings/complex_arb.p*
 include           sage/rings/integer_fake.h                                     # FIXME

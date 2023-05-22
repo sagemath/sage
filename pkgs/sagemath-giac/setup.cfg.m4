@@ -31,3 +31,15 @@ install_requires =
     esyscmd(`sage-get-system-packages install-requires \
         sagemath_categories \
         | sed "2,\$s/^/    /;"')dnl
+
+packages =
+    sage.libs.giac
+    sage.rings
+
+[options.package_data]
+
+sage.libs.giac =
+    *.pxd
+
+sage.rings =
+    *.pxd
