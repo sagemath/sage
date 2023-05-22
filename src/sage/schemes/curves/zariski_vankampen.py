@@ -45,13 +45,14 @@ from sage.combinat.combination import Combinations
 from sage.sets.set import Set
 
 from sage.combinat.permutation import Permutation
+from sage.functions.generalized import sign
 from sage.geometry.voronoi_diagram import VoronoiDiagram
 from sage.graphs.graph import Graph
 from sage.groups.braid import BraidGroup
 from sage.groups.finitely_presented import wrap_FpGroup
 from sage.groups.free_group import FreeGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.libs.braiding import rightnormalform
+from sage.libs.braiding import leftnormalform, rightnormalform
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
@@ -59,6 +60,7 @@ from sage.misc.misc_c import prod
 from sage.parallel.decorate import parallel
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.complex_mpfr import ComplexField
+from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar
@@ -1205,80 +1207,115 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
         return roots_base
 
 @parallel
-def braid2rels(L, d):
+def conjugate_positive_form(braid):
     r"""
-    Return a minimal set of elements of ``F = FreeGroup(d)`` for a quasi-positive braid ``b=BraidGroup(d)(L)`` as relations
-    of the group ``F / [(b * F([j])) / F([j]) for j in (1..d)]``. One starts from the non-trivial relations determined by the
-    positive braid and transform them in relations determined by ``b``.
+    For a ``braid`` which is conjugate to a positive braid such a decomposition is given.
 
     INPUT:
 
-    - ``L`` -- a list of integers in ``[-d..-1] + [1..d]`` which is the Tietze word of a quasi-positive braid.
-
-    - ``d`` -- a positive integer
+    - ``braid`` -- a braid.
 
     OUTPUT:
 
-    A list of Tietze words for a minimal set of relations of ``F / [(b * F([j])) / F([j]) for j in (1..d)]``.
+    A list with two elements, a positive braid `\sigma` and a list of permutation braids `\tau_1,\dots,\tau_n`
+    such that if `\tau=\prod_{j=1}^n \tau_j` then `\tau\sigma\tau^{-1}` is the input ``braid``.
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import braid2rels # optional - sirocco
-        sage: L = (1, 3, 2, -3, 1, 1)
-        sage: braid2rels(L, 4) # optional - sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import conjugate_positive_form
+        sage: B = BraidGroup(4)
+        sage: t = B((1, 3, 2, -3, 1, 1))
+        sage: conjugate_positive_form(t)
+        [[(s1*s0)^2, [s2]]]
+    """
+    B = braid.parent()
+    d = B.strands()
+    braid1 = braid.super_summit_set()[0]
+    L1 = braid1.Tietze()
+    sg0 = braid.conjugating_braid(braid1)
+    hilos = list(Set(L1))
+    hilos.sort()
+    bloques = []
+    while len(hilos) > 0:
+        a = [hilos[0]]
+        hilos = hilos[1:]
+        corte = False
+        while len(hilos) > 0 and not corte:
+            b = hilos[0]
+            corte = b - a[-1] > 1
+            if not corte:
+                a.append(b)
+                hilos = hilos[1:]
+        bloques.append(a)
+    trenzabloque = [[a for a in L1 if a in b] for b in bloques]
+    cortas = []
+    for a in trenzabloque:
+        A = B(a).super_summit_set()
+        res = None
+        for tau in A:
+            sg = (sg0 * B(a) / sg0).conjugating_braid(tau)
+            A1 = rightnormalform(sg)
+            par = A1[-1][0] % 2
+            A1 = [B(a) for a in A1[:-1]]
+            if len(A1) == 0:
+                b = B.one()
+            else:
+                b = prod(A1)
+            b1 = len(b.Tietze()) / (len(A1) + 1)
+            if res is None or b1 < res[3]:
+                res = [tau, A1, par, b1]
+        if res[2] == 1:
+            r0 = res[0].Tietze()
+            res[0] = B([i.sign() * (d - abs(i)) for i in r0])
+        res0 = res[:2]
+        cortas.append(res0)
+    return cortas
+
+
+@parallel
+def braid2rels(L):
+    r"""
+    Return a minimal set of elements of ``F = FreeGroup(d)`` for a braid ``b`` which is the conjugate of
+    a positive braid as relations of the group ``F / [(b * F([j])) / F([j]) for j in (1..d)]``. One starts
+    from the non-trivial relations determined by the positive braid and transform them in relations determined by ``b``.
+
+    INPUT:
+
+    - ``L`` -- a tuple whose first element is a positive braid and the second element is a list of permutation braids.
+
+    OUTPUT:
+
+    A list of Tietze words for a minimal set of relations of ``F / [(g * b) / g for g in F.gens()]``.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import braid2rels
+        sage: B.<s0, s1, s2> = BraidGroup(4)
+        sage: L = ((s1*s0)^2, [s2])
+        sage: braid2rels(L)
         [(4, 1, -2, -1), (2, -4, -2, 1)]
     """
-    B = BraidGroup(d)
+    br = L[0]
+    L1 = L[1]
+    B = br.parent()
+    d = B.strands()
     F = FreeGroup(d)
-    L1 = copy(L)
-    low = True
-    while low:
-        L2 = copy(L1)
-        j = 0
-        other = False
-        while j < len(L2) - 1 and not other:
-            try:
-                l = L2[j]
-                k = L2[j:].index(-l)+j
-                A = L2[j + 1: k]
-                Bn = next((_ for _ in A if (abs(_) - abs(l)) ** 2 == 1), None)
-                if Bn is None:
-                    other = True
-                    L2 = L2[:j] + A + L2[k + 1:]
-                else:
-                    j += 1
-            except ValueError:
-                j += 1
-        low = len(L2) < len(L1)
-        L1 = copy(L2)
-    c0 = ()
-    b0 = L1
-    while b0[0] + b0[-1] == 0:
-        c0= c0 + (b0[0],)
-        b0 = b0[1: -1]
-    A = B(b0).super_summit_set()
-    A.sort()
-    res = None
-    for tau in A:
-        sg = B(c0) * B(b0).conjugating_braid(tau)
-        A1 = rightnormalform(sg)
-        par = A1[-1][0] % 2
-        A1 = [B(a) for a in A1[:-1]]
-        if len(A1) == 0:
-            b = B.one()
-        else:
-            b = prod(A1)
-        b1 = len(b.Tietze()) / (len(A1) + 1)
-        if res is None or b1 < res[3]:
-            res = [tau, A1, par, b1]
-    if res[2] == 1:
-        r0 = res[0].Tietze()
-        res[0] = B([i.sign() * (d - abs(i)) for i in r0])
-    U0 = list(Set(res[0].Tietze()))
-    U0.sort()
-    U = [(F([j]) * B(res[0])) / F([j]) for j in U0]
-    U = [_.Tietze() for _ in U]
-    pasos = [B.one()] + [_ for _ in reversed(res[1])]
+    T = br.Tietze()
+    T1 = list(Set(T))
+    T1.sort()
+    m = len(T1) + 1
+    k = min(T1) - 1
+    B0 = BraidGroup(m)
+    F0 = FreeGroup(m)
+    br0 = B0([sign(_)*(abs(_)-k) for _ in T])
+    br0_left = leftnormalform(br0)
+    q, r = ZZ(br0_left[0][0]).quo_rem(2)
+    br1 = B0.delta()**r * B0(prod(B0(_) for _ in br0_left[1:]))
+    cox = prod(F0.gens())
+    U0 = [cox**q * (f0 * br1) / cox**q / f0 for f0 in F0.gens()[:-1]]
+    #U0 = [(f0 * br0) / f0 for f0 in F0.gens()[:-1]]
+    U = [tuple(sign(k1)*(abs(k1) + k) for k1 in _.Tietze()) for _ in U0]
+    pasos = [B.one()] + [_ for _ in reversed(L1)]
     for C in pasos:
         U = [(F(a) * C ** (-1)).Tietze() for a in U]
         ga = F / U
@@ -1292,6 +1329,7 @@ def braid2rels(L, d):
         gb = wrap_FpGroup(P.FpGroupPresentation())
         U = [_.Tietze() for _ in gb.relations()]
     return U
+
 
 def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid_mon=None):
     r"""
@@ -1421,16 +1459,18 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
 
     if not puiseux:
         relations = (relation([(x, b) for x in F.gens() for b in bm]))
-        R = [r[1] for r in relations]
+        rel = [r[1] for r in relations]
     else:
         simplified = False
-        relations = (braid2rels([(b.Tietze(), d) for b in bm]))
-        R = []
-        for r in relations:
-            R += r[1]
+        conjugate_desc = conjugate_positive_form(bm)
+        trenzas_desc = [b1[-1] for b1 in conjugate_desc]
+        trenzas_desc_1 = flatten(trenzas_desc, max_level=1)
+        relations = braid2rels(trenzas_desc_1)
+        rel = [r[1] for r in relations]
+        rel = flatten(rel, max_level=1)
     if projective:
-        R.append(prod(F.gens()))
-    G = F / R
+        rel.append(prod(F.gens()))
+    G = F / rel
     if simplified:
         return G.simplified()
     return G
