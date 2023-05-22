@@ -383,7 +383,6 @@ class RationalField(Singleton, number_field_base.NumberField):
                 from sage.structure.coerce_maps import CallableConvertMap
                 return CallableConvertMap(S, self, lambda x: x._value, parent_as_first_arg=False)
 
-
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         Check to see if the map into ``codomain`` determined by ``im_gens`` is
@@ -891,7 +890,6 @@ class RationalField(Singleton, number_field_base.NumberField):
             v = [(1-hilbert_symbol(x, b, p))//2 for p in P]
             return V(v)
 
-
         M = matrix(GF(2), [phi(p) for p in P+[-1]])
         # We search through all the primes
         for q in Primes():
@@ -1271,7 +1269,6 @@ class RationalField(Singleton, number_field_base.NumberField):
             return Rational(-1)
         else:
             raise ValueError("no n-th root of unity in rational field")
-
 
     def selmer_generators(self, S, m, proof=True, orders=False):
         r"""

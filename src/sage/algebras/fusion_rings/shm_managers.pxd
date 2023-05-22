@@ -21,4 +21,3 @@ cdef class FvarsHandler:
     cdef object fvars_t, pid_list
     cdef Py_ssize_t child_id
     cdef public object shm
-
