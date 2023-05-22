@@ -28,6 +28,10 @@ classifiers =
 [options]
 python_requires = >=3.8, <3.12
 install_requires =
+    esyscmd(`sage-get-system-packages install-requires \
+        memory_allocator \
+        cysignals      \
+        | sed "2,\$s/^/    /;"')dnl
 
 packages =
     sage.graphs

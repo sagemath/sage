@@ -3,12 +3,10 @@
 requires = [
     esyscmd(`sage-get-system-packages install-requires-toml \
         setuptools     \
-        wheel          \
         sage_setup     \
         sagemath_environment \
-        sagemath_standard \
         cython         \
-        gmpy2          \
+        memory_allocator \
         cysignals      \
                     ')]
 build-backend = "setuptools.build_meta"
