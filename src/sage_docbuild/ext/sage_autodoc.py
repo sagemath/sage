@@ -55,11 +55,12 @@ from sphinx.util.docstrings import prepare_docstring, separate_metadata
 from sphinx.util.inspect import (evaluate_signature, getdoc, object_description, safe_getattr,
                                  stringify_signature)
 from sphinx.util.typing import OptionSpec, get_type_hints, restify
+
 try:
     from sphinx.util.typing import stringify_annotation
 except ImportError:
     from sphinx.util.typing import stringify as stringify_annotation
-    
+
 # ------------------------------------------------------------------
 from sage.misc.sageinspect import (sage_getdoc_original,
                                    sage_getargspec, isclassinstance,
