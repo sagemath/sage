@@ -1,1 +1,1 @@
-$(PYTHON) sirocco | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig
+$(PYTHON) sirocco cypari cysignals mpfr | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig

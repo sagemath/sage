@@ -27,3 +27,8 @@ classifiers =
 
 [options]
 python_requires = >=3.8, <3.12
+install_requires =
+    esyscmd(`sage-get-system-packages install-requires \
+        cypari \
+        cysignals \
+        | sed "2,\$s/^/    /;"')dnl
