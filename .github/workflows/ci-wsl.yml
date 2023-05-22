@@ -1,8 +1,6 @@
 name: Build & Test WSL
 
 on:
-  pull_request:
-    types: [opened, synchronize]
   push:
     tags:
       - '*'
@@ -15,7 +13,7 @@ jobs:
   windows:
     runs-on: windows-latest
     name: Ubuntu 20.04
-    # Following https://trac.sagemath.org/ticket/25206#comment:63
+    # Following https://github.com/sagemath/sage/issues/25206#comment:63
     steps:
     - name: Configure git
       run: git config --global core.symlinks true

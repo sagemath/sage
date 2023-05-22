@@ -165,7 +165,7 @@ AUTHOR:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -414,7 +414,7 @@ cdef class FaceIterator_base(SageObject):
             self.structure.visited_all[self.structure.dimension -1].n_faces = 0
         else:
             self.structure.visited_all[self.structure.dimension -1].n_faces = 1
-        self.structure.face_status = 0
+        self.structure.face_status = FaceStatus.NOT_INITIALIZED
         self.structure.new_faces[self.structure.dimension - 1].n_faces = self.coatoms.n_faces()
         self.structure.current_dimension = self.structure.dimension - 1
         self.structure.highest_dimension = self.structure.dimension - 1
@@ -460,7 +460,7 @@ cdef class FaceIterator_base(SageObject):
             sage: next(it).ambient_V_indices() == it.current().ambient_V_indices()
             True
         """
-        if unlikely(self.structure.face_status == 0):
+        if unlikely(self.structure.face_status == FaceStatus.NOT_INITIALIZED):
             raise ValueError("iterator not set to a face yet")
         return CombinatorialFace(self)
 
@@ -888,7 +888,7 @@ cdef class FaceIterator_base(SageObject):
             sage: it._meet_of_coatoms(1, 2)
             A -1-dimensional face of a Polyhedron in QQ^2
         """
-        if unlikely(self.structure.face_status != 0):
+        if unlikely(self.structure.face_status != FaceStatus.NOT_INITIALIZED):
             raise ValueError("please reset the face iterator")
         if unlikely(self.structure.output_dimension != -2):
             raise ValueError("face iterator must not have the output dimension specified")
@@ -994,7 +994,7 @@ cdef class FaceIterator_base(SageObject):
             ...
             IndexError: atoms out of range
         """
-        if unlikely(self.structure.face_status != 0):
+        if unlikely(self.structure.face_status != FaceStatus.NOT_INITIALIZED):
             raise ValueError("please reset the face iterator")
         if unlikely(self.structure.output_dimension != -2):
             raise ValueError("face iterator must not have the output dimension specified")
@@ -1049,14 +1049,14 @@ cdef class FaceIterator_base(SageObject):
         See :meth:`FaceIterator_base.ignore_subfaces` and
         :meth:`FaceIterator_base.ignore_supfaces`.
         """
-        if unlikely(self.structure.face_status == 0):
+        if unlikely(self.structure.face_status == FaceStatus.NOT_INITIALIZED):
             raise ValueError("iterator not set to a face yet")
-        if unlikely(self.structure.face_status == 3):
+        if unlikely(self.structure.face_status == FaceStatus.ONLY_VISIT_SUBSETS):
             # The iterator is consumed, if it was just set to visit only subsets
             # next thing to ignore subsets.
             self.structure.current_dimension = self.structure.dimension
             return 0
-        if unlikely(self.structure.face_status == 2):
+        if unlikely(self.structure.face_status == FaceStatus.IGNORE_SUBSETS):
             # Nothing to do.
             return 0
         # The current face is added to ``visited_all``.
@@ -1065,7 +1065,7 @@ cdef class FaceIterator_base(SageObject):
         # as there are no new faces.
 
         add_face_shallow(self.structure.visited_all[self.structure.current_dimension], self.structure.face)
-        self.structure.face_status = 2
+        self.structure.face_status = FaceStatus.IGNORE_SUBSETS
 
     def only_subfaces(self):
         r"""
@@ -1177,9 +1177,9 @@ cdef class FaceIterator_base(SageObject):
         See :meth:`FaceIterator_base.only_subfaces` and
         :meth:`FaceIterator_base.only_supfaces`.
         """
-        if unlikely(self.structure.face_status == 0):
+        if unlikely(self.structure.face_status == FaceStatus.NOT_INITIALIZED):
             raise ValueError("iterator not set to a face yet")
-        if unlikely(self.structure.face_status == 2):
+        if unlikely(self.structure.face_status == FaceStatus.IGNORE_SUBSETS):
             raise ValueError("cannot only visit subsets after ignoring a face")
 
         cdef face_list_t* faces = &self.structure.new_faces[self.structure.current_dimension]
@@ -1191,7 +1191,7 @@ cdef class FaceIterator_base(SageObject):
 
         swap_faces(faces[0].faces[yet_to_visit], faces[0].faces[faces[0].n_faces - 1])
 
-        self.structure.face_status = 3
+        self.structure.face_status = FaceStatus.ONLY_VISIT_SUBSETS
         self.structure.yet_to_visit = 0
         # This will work:
         # ``next_dimension`` will first call ``next_face_loop`` and then check
@@ -1281,13 +1281,13 @@ cdef class FaceIterator_base(SageObject):
         if n_atoms == self.coatoms.n_atoms():
             # The face is the universe.
             self.structure.face[0] = face[0]
-            self.structure.face_status = 1
+            self.structure.face_status = FaceStatus.INITIALIZED
             self.structure.current_dimension = self.structure.dimension
             return 0
         elif n_atoms == 0:
             # The face is the empty face.
             self.structure.face[0] = face[0]
-            self.structure.face_status = 1
+            self.structure.face_status = FaceStatus.INITIALIZED
             self.structure.current_dimension = -1
             return 0
 
@@ -1928,7 +1928,7 @@ cdef inline int next_dimension(iter_t structure, size_t parallelization_depth=0)
     e.g. if it is ``1`` it will stop after having yield all faces of a facet
     """
     cdef int max_dim = structure.highest_dimension - parallelization_depth
-    structure.face_status = 0
+    structure.face_status = FaceStatus.NOT_INITIALIZED
     while (not next_face_loop(structure)) and (structure.current_dimension <= max_dim):
         sig_check()
     structure._index += 1
@@ -1959,7 +1959,7 @@ cdef inline int next_face_loop(iter_t structure) nogil except -1:
         # Set ``face`` to the next face.
         structure.yet_to_visit -= 1
         structure.face[0] = faces[0].faces[structure.yet_to_visit][0]
-        structure.face_status = 1
+        structure.face_status = FaceStatus.INITIALIZED
         return 1
 
     if structure.current_dimension <= structure.lowest_dimension:

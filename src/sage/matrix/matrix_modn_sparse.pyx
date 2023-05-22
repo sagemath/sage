@@ -113,7 +113,7 @@ from sage.misc.verbose import verbose, get_verbose
 
 from sage.matrix.matrix2 import Matrix as Matrix2
 from .args cimport SparseEntry, MatrixArgs_init
-from sage.arith.all import is_prime
+from sage.arith.misc import is_prime
 
 from sage.structure.element import is_Vector
 
@@ -137,7 +137,7 @@ ai = arith_int()
 
 # The 46341 below is because the mod-n sparse code still uses
 # int's, even on 64-bit computers.  Improving this is
-# Trac Ticket #12679.
+# Github Issue #12679.
 MAX_MODULUS = 46341
 
 cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
@@ -231,7 +231,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             Finite Field of size 13
         """
         d = self.fetch('dict')
-        if not d is None:
+        if d is not None:
             return d
 
         cdef Py_ssize_t i, j, k
@@ -427,7 +427,8 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         """
         from sage.misc.verbose import verbose, get_verbose
         x = self.fetch('in_echelon_form')
-        if not x is None and x: return  # already known to be in echelon form
+        if x is not None and x:
+            return  # already known to be in echelon form
         self.check_mutability()
 
         cdef Py_ssize_t i, r, c, min, min_row,  start_row
@@ -501,7 +502,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             [(0, 3), (1, 1), (1, 6)]
         """
         x = self.fetch('nonzero_positions')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x

@@ -420,9 +420,10 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
                 hessian=lambda p: [[a(*p) for a in row] for row in hess_fast]
                 from scipy import dot
                 hessian_p=lambda p,v: dot(numpy.array(hessian(p)),v)
-                min = optimize.fmin_ncg(f, [float(_) for _ in x0], fprime=gradient, \
+                min = optimize.fmin_ncg(f, [float(_) for _ in x0], fprime=gradient,
                       fhess=hessian, fhess_p=hessian_p, disp=verbose, **args)
     return vector(RDF, min)
+
 
 def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args):
     r"""
@@ -617,7 +618,7 @@ def linear_program(c, G, h, A=None, b=None, solver=None):
         sage: sol=linear_program(c,G,h)                                                # optional - cvxopt
         doctest:warning...
         DeprecationWarning: linear_program is deprecated; use MixedIntegerLinearProgram instead
-        See https://trac.sagemath.org/32226 for details.
+        See https://github.com/sagemath/sage/issues/32226 for details.
         sage: sol['x']                                                                 # optional - cvxopt
         (0.999..., 1.000...)
 

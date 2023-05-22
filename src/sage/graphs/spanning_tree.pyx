@@ -249,7 +249,7 @@ def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=F
 
         sage: kruskal(Graph(1), wfunction=lambda e: 2)
         doctest:...: DeprecationWarning: use the option 'weight_function' instead of 'wfunction'
-        See https://trac.sagemath.org/32805 for details.
+        See https://github.com/sagemath/sage/issues/32805 for details.
         []
     """
     return list(kruskal_iterator(G, by_weight=by_weight, weight_function=weight_function,
@@ -329,7 +329,7 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
 
         sage: list(kruskal_iterator(Graph(1), wfunction=lambda e: 2))
         doctest:...: DeprecationWarning: use the option 'weight_function' instead of 'wfunction'
-        See https://trac.sagemath.org/32805 for details.
+        See https://github.com/sagemath/sage/issues/32805 for details.
         []
     """
     from sage.graphs.graph import Graph
@@ -411,7 +411,7 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
         sage: union_set = DisjointSet(G)
         sage: next(kruskal_iterator_from_edges(G.edges(sort=True), union_set, weighted=False))
         doctest:...: DeprecationWarning: use the option 'by_weight' instead of 'weighted'
-        See https://trac.sagemath.org/32805 for details.
+        See https://github.com/sagemath/sage/issues/32805 for details.
         (0, 1, None)
     """
     # We sort edges, as specified.
@@ -811,7 +811,7 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
 
         sage: boruvka(Graph(1), wfunction=lambda e: 2)
         doctest:...: DeprecationWarning: use the option 'weight_function' instead of 'wfunction'
-        See https://trac.sagemath.org/32805 for details.
+        See https://github.com/sagemath/sage/issues/32805 for details.
         []
     """
     from sage.graphs.graph import Graph

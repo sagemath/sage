@@ -325,7 +325,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             # Check the embeddings from the root lattice and the root space over the same base ring
             root_lattice = self.root_system.root_lattice()
-            root_space   = self.root_system.root_space  (R)
+            root_space = self.root_system.root_space(R)
             tester.assertIsNot(self.coerce_map_from(root_lattice), None)
             tester.assertIsNot(self.coerce_map_from(root_space), None)
             for i in self.index_set():
@@ -417,7 +417,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                     longest=j
             return self.simple_roots()[longest[0]]
 
-
         ##########################################################################
         # simple roots
         ##########################################################################
@@ -465,7 +464,7 @@ class RootLatticeRealizations(Category_over_base_ring):
         @cached_method
         def alpha(self):
             r"""
-            Returns the family `(\alpha_i)_{i\in I}` of the simple roots,
+            Return the family `(\alpha_i)_{i\in I}` of the simple roots,
             with the extra feature that, for simple irreducible root
             systems, `\alpha_0` yields the opposite of the highest root.
 
@@ -476,13 +475,12 @@ class RootLatticeRealizations(Category_over_base_ring):
                 alpha[1]
                 sage: alpha[0]
                 -alpha[1] - alpha[2]
-
             """
             if self.root_system.is_finite() and self.root_system.is_irreducible():
-                return Family(self.index_set(), self.simple_root, \
-                              hidden_keys = [0], hidden_function = lambda i: - self.highest_root())
-            else:
-                return self.simple_roots()
+                return Family(self.index_set(), self.simple_root,
+                              hidden_keys=[0],
+                              hidden_function=lambda i: - self.highest_root())
+            return self.simple_roots()
 
         @cached_method
         def basic_imaginary_roots(self):
@@ -1233,7 +1231,6 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             return self.root_system.coroot_space(base_ring = base_ring)
 
-
         def simple_coroot(self, i):
             """
             Returns the `i^{th}` simple coroot.
@@ -1365,7 +1362,6 @@ class RootLatticeRealizations(Category_over_base_ring):
             coef = self.cartan_type().acheck()
             return sum(coef[k]*self.simple_coroots()[k] for k in coef.keys())
 
-
         ##########################################################################
         # fundamental weights
         ##########################################################################
@@ -1445,7 +1441,6 @@ class RootLatticeRealizations(Category_over_base_ring):
             except ValueError:
                 raise ValueError("The fundamental weights do not live in this realization of the root lattice")
             return Family(dict(zip(self.index_set(),fundamental_weights)))
-
 
         ##########################################################################
         # reflections
@@ -1826,7 +1821,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 orbits.append(orbit)
             return orbits
 
-
         ##########################################################################
         # Methods for affine root lattice realizations
         # Should eventually go in an Affine nested class
@@ -1905,7 +1899,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: L.classical().highest_root()
                 2*alpha[1] + 2*alpha[2] + alpha[3]
             """
-            cartan_type  = self.cartan_type()
+            cartan_type = self.cartan_type()
             special_node = cartan_type.special_node()
             a = self.cartan_type().col_annihilator()
             classical = self.classical()
@@ -2498,7 +2492,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 G += plot_options.reflection_hyperplane(coroot)
             return plot_options.finalize(G)
 
-
         def plot_hedron(self, **options):
             r"""
             Plot the polyhedron whose vertices are given by the orbit
@@ -2821,7 +2814,6 @@ class RootLatticeRealizations(Category_over_base_ring):
             #                       rgbcolor = plot_options.color(i),
             #                       thickness = 2 if i == special_node else 1)
 
-
         def plot_bounding_box(self, **options):
             r"""
             Plot the bounding box.
@@ -2925,20 +2917,20 @@ class RootLatticeRealizations(Category_over_base_ring):
             if foldings is None:
                 foldings = [False] * len(word)
             w = W.one()
-            source  = plot_options.projection(start)
+            source = plot_options.projection(start)
             G = plot_options.empty()
             for (i, folding) in zip(word, foldings):
                 w = w * s[i]
                 target = plot_options.projection(w.action(start))
                 if folding:
-                    middle = (source+target)/2
-                    G += line ([source, middle], rgbcolor=color)
+                    middle = (source + target) / 2
+                    G += line([source, middle], rgbcolor=color)
                     G += arrow(middle, source, rgbcolor=color, arrowsize=plot_options._arrowsize)
                     # reset w
                     w = w * s[i]
                 else:
                     G += arrow(source, target, rgbcolor=color, arrowsize=plot_options._arrowsize)
-                    source=target
+                    source = target
             return G
 
         @cached_method
@@ -3595,7 +3587,6 @@ class RootLatticeRealizations(Category_over_base_ring):
             else:
                 return self - self.scalar(root.associated_coroot()) * root
 
-
         ##########################################################################
         # Descents
         ##########################################################################
@@ -3789,7 +3780,6 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             return self.to_dominant_chamber(index_set=index_set,positive=positive,reduced_word = True)[1]
 
-
         def is_dominant(self, index_set = None, positive = True):
             r"""
             Returns whether self is dominant.
@@ -3852,7 +3842,6 @@ class RootLatticeRealizations(Category_over_base_ring):
             from sage.rings.semirings.non_negative_integer_semiring import NN
             return all(self.inner_product(alphacheck[i]) in NN
                        for i in self.parent().index_set())
-
 
         ##########################################################################
         # weak order

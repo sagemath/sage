@@ -1555,7 +1555,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (3*a-2)/7 * b
             1
 
-        This fixes ticket :trac:`9357`::
+        This fixes issue :trac:`9357`::
 
             sage: K.<a> = NumberField(x^2+1)
             sage: d = K(0)
@@ -2130,9 +2130,15 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         # D = 1 mod 4
         return mpz_fdiv_ui(self.D.value, 4) == 1
 
-    def charpoly(self, var='x'):
+    def charpoly(self, var='x', algorithm=None):
         r"""
         The characteristic polynomial of this element over `\QQ`.
+
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
 
         EXAMPLES::
 
@@ -2148,15 +2154,16 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         R = QQ[var]
         return R([self.norm(), -self.trace(), 1])
 
-    def minpoly(self, var='x'):
+    def minpoly(self, var='x', algorithm=None):
         r"""
         The minimal polynomial of this element over `\QQ`.
 
         INPUT:
 
-        -  ``var`` -- the minimal polynomial is defined over a polynomial ring
-           in a variable with this name. If not specified this defaults to
-           ``x``.
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements: and ignored
+
 
         EXAMPLES::
 
@@ -2652,10 +2659,17 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         """
         return ZZ(NumberFieldElement_quadratic.trace(self))
 
-    def charpoly(self, var='x'):
+    def charpoly(self, var='x', algorithm=None):
         r"""
         The characteristic polynomial of this element, which is over `\ZZ`
         because this element is an algebraic integer.
+
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
+
 
         EXAMPLES::
 
@@ -2672,9 +2686,16 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         R = ZZ[var]
         return R([self.norm(), -self.trace(), 1])
 
-    def minpoly(self, var='x'):
+    def minpoly(self, var='x', algorithm=None):
         r"""
         The minimal polynomial of this element over `\ZZ`.
+
+        INPUT:
+
+        - ``var`` -- the minimal polynomial is defined over a polynomial ring
+           in a variable with this name. If not specified this defaults to ``x``
+        - ``algorithm`` -- for compatibility with general number field elements; ignored
+
 
         EXAMPLES::
 

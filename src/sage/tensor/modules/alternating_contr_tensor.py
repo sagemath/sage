@@ -311,7 +311,6 @@ class AlternatingContrTensor(FreeModuleTensor):
         """
         return self._tensor_rank
 
-
     def display(self, basis=None, format_spec=None):
         r"""
         Display the alternating contravariant tensor ``self`` in terms
@@ -438,7 +437,7 @@ class AlternatingContrTensor(FreeModuleTensor):
                     if is_atomic(coef_latex):
                         terms_latex.append(coef_latex + basis_term_latex)
                     else:
-                        terms_latex.append(r'\left(' + coef_latex + \
+                        terms_latex.append(r'\left(' + coef_latex +
                                            r'\right)' + basis_term_latex)
         if not terms_txt:
             expansion_txt = '0'
@@ -469,7 +468,6 @@ class AlternatingContrTensor(FreeModuleTensor):
         return FormattedExpansion(resu_txt, resu_latex)
 
     disp = display
-
 
     def wedge(self, other):
         r"""

@@ -205,7 +205,7 @@ cdef class ntl_mat_GF2E():
             sage: ntl.GF2XHexOutput(1)
             sage: m = ntl.mat_GF2E(ctx, 5,5,[0..24])
             sage: n = ntl.mat_GF2E(ctx, 5,5,[3..27])
-            sage: m*n ## indirect doctest
+            sage: m*n  # indirect doctest
             [[0x87 0x04 0xc4 0xc7 0x87]
             [0x32 0x84 0x17 0x63 0x73]
             [0xa1 0x46 0x25 0xcd 0x2f]
@@ -216,7 +216,7 @@ cdef class ntl_mat_GF2E():
         cdef ntl_mat_GF2E r = self._new()
         if not isinstance(other, ntl_mat_GF2E):
             other = ntl_mat_GF2E(other, self.c)
-        if not self.c is (<ntl_mat_GF2E>other).c:
+        if self.c is not (<ntl_mat_GF2E>other).c:
             raise ValueError("You cannot perform arithmetic with matrices over different fields.")
         sig_on()
         mat_GF2E_mul(r.x, self.x, (<ntl_mat_GF2E>other).x)
@@ -231,7 +231,7 @@ cdef class ntl_mat_GF2E():
             sage: m = ntl.mat_GF2E(ctx, 5,5,[0..24])
             sage: n = ntl.mat_GF2E(ctx, 5,5,[3..27])
             sage: ntl.GF2XHexOutput(0)
-            sage: m-n ## indirect doctest
+            sage: m-n  # indirect doctest
             [[[1 1] [1 0 1] [1 1 1] [1 0 1] [1 1]]
             [[1 0 1 1] [1 1 1 1] [1 0 1 1] [1 1] [1 0 1]]
             [[1 1 1] [1 0 1] [1 1] [1 0 1 1 1] [1 1 1 1 1]]
@@ -242,7 +242,7 @@ cdef class ntl_mat_GF2E():
         cdef ntl_mat_GF2E r = self._new()
         if not isinstance(other, ntl_mat_GF2E):
             other = ntl_mat_GF2E(other, self.c)
-        if not self.c is (<ntl_mat_GF2E>other).c:
+        if self.c is not (<ntl_mat_GF2E>other).c:
             raise ValueError("You cannot perform arithmetic with matrices over different fields.")
         sig_on()
         mat_GF2E_sub(r.x, self.x, (<ntl_mat_GF2E>other).x)
@@ -256,7 +256,7 @@ cdef class ntl_mat_GF2E():
             sage: ctx = ntl.GF2EContext([1,1,0,1,1,0,0,0,1])
             sage: m = ntl.mat_GF2E(ctx, 5,5,[0..24])
             sage: n = ntl.mat_GF2E(ctx, 5,5,[3..27])
-            sage: m+n ## indirect doctest
+            sage: m+n   # indirect doctest
             [[[1 1] [1 0 1] [1 1 1] [1 0 1] [1 1]]
             [[1 0 1 1] [1 1 1 1] [1 0 1 1] [1 1] [1 0 1]]
             [[1 1 1] [1 0 1] [1 1] [1 0 1 1 1] [1 1 1 1 1]]
@@ -267,7 +267,7 @@ cdef class ntl_mat_GF2E():
         cdef ntl_mat_GF2E r = self._new()
         if not isinstance(other, ntl_mat_GF2E):
             other = ntl_mat_GF2E(other, self.c)
-        if not self.c is (<ntl_mat_GF2E>other).c:
+        if self.c is not (<ntl_mat_GF2E>other).c:
             raise ValueError("You cannot perform arithmetic with matrices over different fields.")
         sig_on()
         mat_GF2E_add(r.x, self.x, (<ntl_mat_GF2E>other).x)
@@ -280,7 +280,7 @@ cdef class ntl_mat_GF2E():
 
             sage: ctx = ntl.GF2EContext([1,1,0,1,1,0,0,0,1])
             sage: m = ntl.mat_GF2E(ctx, 5,5,[0..24])
-            sage: -m == m ## indirect doctest
+            sage: -m == m  # indirect doctest
             True
         """
         cdef ntl_mat_GF2E r = self._new()
@@ -295,7 +295,7 @@ cdef class ntl_mat_GF2E():
 
             sage: ctx = ntl.GF2EContext([1,1,0,1,1,0,0,0,1])
             sage: m = ntl.mat_GF2E(ctx, 5,5,[0..24])
-            sage: m**2 == m*m ## indirect doctest
+            sage: m**2 == m*m  # indirect doctest
             True
         """
         cdef ntl_mat_GF2E r = self._new()

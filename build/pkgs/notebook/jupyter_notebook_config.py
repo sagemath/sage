@@ -1,7 +1,7 @@
 # Configuration file for Sage's builtin Jupyter notebook server
 
 # Disable XSRF checking to fix Thebe. See
-# * https://trac.sagemath.org/ticket/22458
+# * https://github.com/sagemath/sage/issues/22458
 # * https://github.com/oreillymedia/thebe/issues/93
 
 c.NotebookApp.disable_check_xsrf = True

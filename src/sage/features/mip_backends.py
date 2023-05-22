@@ -2,7 +2,17 @@ r"""
 Features for testing the presence of :class:`MixedIntegerLinearProgram` backends
 """
 
-from . import Feature, FeatureTestResult
+# *****************************************************************************
+#       Copyright (C) 2021-2022 Matthias Koeppe
+#                     2021      Kwankyu Lee
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+
+from . import Feature, PythonModule, FeatureTestResult
 from .join_feature import JoinFeature
 
 
@@ -77,7 +87,26 @@ class COIN(JoinFeature):
                              spkg='sage_numerical_backends_coin')
 
 
+class CVXOPT(JoinFeature):
+    r"""
+    A :class:`~sage.features.Feature` describing whether the :class:`MixedIntegerLinearProgram` backend ``CVXOPT`` is available.
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.mip_backends import CVXOPT
+            sage: CVXOPT()._is_present()  # optional - cvxopt
+            FeatureTestResult('cvxopt', True)
+        """
+        JoinFeature.__init__(self, 'cvxopt',
+                             [MIPBackend('CVXOPT'),
+                              PythonModule('cvxopt')],
+                             spkg='cvxopt')
+
+
 def all_features():
     return [CPLEX(),
             Gurobi(),
-            COIN()]
+            COIN(),
+            CVXOPT()]

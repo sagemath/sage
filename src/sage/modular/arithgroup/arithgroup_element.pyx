@@ -1,5 +1,5 @@
 """
-Elements of Arithmetic Subgroups
+Elements of arithmetic subgroups
 """
 
 ################################################################################

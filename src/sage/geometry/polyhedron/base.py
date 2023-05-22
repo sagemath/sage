@@ -21,7 +21,7 @@ Base class for polyhedra: Miscellaneous methods
 #       Copyright (C) 2019      Julian Ritter
 #       Copyright (C) 2019-2020 Laith Rastanawi
 #       Copyright (C) 2019-2020 Sophia Elia
-#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -318,11 +318,11 @@ class Polyhedron_base(Polyhedron_base7):
 
             sage: oc = polytopes.octahedron()
             sage: sc_oc = oc.boundary_complex()
-            sage: fl_oc = oc.face_lattice()
-            sage: fl_sc = sc_oc.face_poset()
-            sage: [len(x) for x in fl_oc.level_sets()]
+            sage: fl_oc = oc.face_lattice()                     # optional - sage.combinat
+            sage: fl_sc = sc_oc.face_poset()                    # optional - sage.combinat
+            sage: [len(x) for x in fl_oc.level_sets()]          # optional - sage.combinat
             [1, 6, 12, 8, 1]
-            sage: [len(x) for x in fl_sc.level_sets()]
+            sage: [len(x) for x in fl_sc.level_sets()]          # optional - sage.combinat
             [6, 12, 8]
             sage: sc_oc.euler_characteristic()
             2
@@ -623,7 +623,7 @@ class Polyhedron_base(Polyhedron_base7):
         EXAMPLES::
 
             sage: p = polytopes.hypercube(2)
-            sage: p.hyperplane_arrangement()
+            sage: p.hyperplane_arrangement()                        # optional - sage.combinat
             Arrangement <-t0 + 1 | -t1 + 1 | t1 + 1 | t0 + 1>
         """
         names = tuple('t' + str(i) for i in range(self.ambient_dim()))
@@ -966,16 +966,16 @@ class Polyhedron_base(Polyhedron_base7):
         of the vertices of the square::
 
             sage: square = Polyhedron(vertices=[[1,1],[-1,1],[-1,-1],[1,-1]], backend='normaliz') # optional - pynormaliz
-            sage: square.vertices() # optional - pynormaliz
+            sage: square.vertices()                                                               # optional - pynormaliz
             (A vertex at (-1, -1),
             A vertex at (-1, 1),
             A vertex at (1, -1),
             A vertex at (1, 1))
-            sage: aut_square = square.restricted_automorphism_group(output = 'permutation')       # optional - pynormaliz
-            sage: conj_reps = aut_square.conjugacy_classes_representatives()                      # optional - pynormaliz
-            sage: gens_dict = square.permutations_to_matrices(conj_reps);                         # optional - pynormaliz
-            sage: rotation_180 = aut_square([(0,3),(1,2)])                                        # optional - pynormaliz
-            sage: rotation_180,gens_dict[rotation_180]                                            # optional - pynormaliz
+            sage: aut_square = square.restricted_automorphism_group(output='permutation')         # optional - pynormaliz   # optional - sage.groups
+            sage: conj_reps = aut_square.conjugacy_classes_representatives()                      # optional - pynormaliz   # optional - sage.groups
+            sage: gens_dict = square.permutations_to_matrices(conj_reps);                         # optional - pynormaliz   # optional - sage.groups
+            sage: rotation_180 = aut_square([(0,3),(1,2)])                                        # optional - pynormaliz   # optional - sage.groups
+            sage: rotation_180, gens_dict[rotation_180]                                           # optional - pynormaliz   # optional - sage.groups
             (
                         [-1  0  0]
                         [ 0 -1  0]
@@ -985,11 +985,11 @@ class Polyhedron_base(Polyhedron_base7):
         This example tests the functionality for additional elements::
 
             sage: C = polytopes.cross_polytope(2)
-            sage: G = C.restricted_automorphism_group(output = 'permutation')
-            sage: conj_reps = G.conjugacy_classes_representatives()
-            sage: add_elt = G([(0,2,3,1)])
-            sage: dict = C.permutations_to_matrices(conj_reps,additional_elts = [add_elt])
-            sage: dict[add_elt]
+            sage: G = C.restricted_automorphism_group(output='permutation')                                                 # optional - sage.groups  # optional - sage.rings.real_mpfr
+            sage: conj_reps = G.conjugacy_classes_representatives()                                                         # optional - sage.groups  # optional - sage.rings.real_mpfr
+            sage: add_elt = G([(0, 2, 3, 1)])                                                                               # optional - sage.groups  # optional - sage.rings.real_mpfr
+            sage: dict = C.permutations_to_matrices(conj_reps,additional_elts = [add_elt])                                  # optional - sage.groups  # optional - sage.rings.real_mpfr
+            sage: dict[add_elt]                                                                                             # optional - sage.groups  # optional - sage.rings.real_mpfr
              [ 0  1  0]
              [-1  0  0]
              [ 0  0  1]
@@ -1056,7 +1056,7 @@ class Polyhedron_base(Polyhedron_base7):
             (None, None)
             sage: Polyhedron([ (1/3,2/3), (3/3, 4/3) ]).bounding_box(integral_hull=True)
             ((1, 1), (1, 1))
-            sage: polytopes.buckyball(exact=False).bounding_box()
+            sage: polytopes.buckyball(exact=False).bounding_box()                                           # optional - sage.groups
             ((-0.8090169944, -0.8090169944, -0.8090169944), (0.8090169944, 0.8090169944, 0.8090169944))
 
         TESTS::
@@ -1161,12 +1161,12 @@ class Polyhedron_base(Polyhedron_base7):
 
         Floating-point polyhedron::
 
-            sage: P = polytopes.dodecahedron(exact=False); P
+            sage: P = polytopes.dodecahedron(exact=False); P                                                                                        # optional - sage.groups
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 20 vertices
-            sage: print("There may be a recompilation warning"); PP = polymake(P); PP # optional - jupymake
+            sage: print("There may be a recompilation warning"); PP = polymake(P); PP # optional - jupymake                                         # optional - sage.groups
             There may be a recompilation warning...
             Polytope<Float>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0] # optional - jupymake
+            sage: sorted(PP.VERTICES[:], key=repr)[0]                                 # optional - jupymake                                         # optional - sage.groups
             1 -0.472135955 0 -1.236067978
 
         """

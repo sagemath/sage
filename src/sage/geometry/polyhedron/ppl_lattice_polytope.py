@@ -48,7 +48,7 @@ only differ by a lattice automorphism::
     sage: square = LatticePolytope_PPL((-1,-1),(-1,1),(1,-1),(1,1))
     sage: fibers = [ f.vertices() for f in square.fibration_generator(1) ];  fibers
     [((1, 0), (-1, 0)), ((0, 1), (0, -1)), ((-1, -1), (1, 1)), ((-1, 1), (1, -1))]
-    sage: square.pointsets_mod_automorphism(fibers)
+    sage: square.pointsets_mod_automorphism(fibers)                                     # optional - sage.groups
     (frozenset({(-1, -1), (1, 1)}), frozenset({(-1, 0), (1, 0)}))
 
 AUTHORS:
@@ -177,7 +177,6 @@ def LatticePolytope_PPL(*args):
         dim = next(iter(gs)).space_dimension()
         polytope_class = _class_for_LatticePolytope(dim)
     return polytope_class(gs)
-
 
 
 ########################################################################
@@ -855,8 +854,8 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: poly = LatticePolytope_PPL((-9,-6,-1,-1),(0,0,0,1),(0,0,1,0),(0,1,0,0),(1,0,0,0))
             sage: fiber = next(poly.fibration_generator(2))
             sage: poly.base_projection_matrix(fiber)
-            [0 0 1 0]
-            [0 0 0 1]
+            [ 0  0 -1  0]
+            [ 0  0  0 -1]
 
         Note that the basis choice in :meth:`base_projection` for the
         quotient is usually different::
@@ -866,7 +865,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: [ proj(p) for p in poly.integral_points() ]
             [(-1, -1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 1), (1, 0)]
             sage: [ proj_matrix*p for p in poly.integral_points() ]
-            [(-1, -1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 1), (1, 0)]
+            [(1, 1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, -1), (-1, 0)]
         """
         return matrix(ZZ, fiber.vertices()).right_kernel_matrix()
 

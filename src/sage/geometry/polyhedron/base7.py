@@ -21,7 +21,7 @@ Base class for polyhedra: Methods for triangulation and volume computation
 #       Copyright (C) 2019      Julian Ritter
 #       Copyright (C) 2019-2020 Laith Rastanawi
 #       Copyright (C) 2019-2020 Sophia Elia
-#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,12 +44,15 @@ class Polyhedron_base7(Polyhedron_base6):
     TESTS::
 
         sage: from sage.geometry.polyhedron.base7 import Polyhedron_base7
-        sage: P = polytopes.associahedron(['A', 3])
-        sage: Polyhedron_base7.centroid(P)
+        sage: P = polytopes.associahedron(['A', 3])                             # optional - sage.combinat
+        sage: Polyhedron_base7.centroid(P)                                      # optional - sage.combinat
         (81/632, 36/79, 81/632)
-        sage: Polyhedron_base7.triangulate(P)
-        (<0,1,2,13>, <0,1,7,13>, <0,2,5,13>, <0,6,7,12>, <0,6,8,13>, <0,6,12,13>, <0,7,12,13>, <1,2,7,12>, <1,2,12,13>, <1,7,12,13>, <2,3,7,12>, <2,3,12,13>, <3,4,7,12>, <3,11,12,13>, <6,8,9,12>, <6,8,12,13>, <6,9,10,12>, <8,9,12,13>)
-        sage: Polyhedron_base7.volume(P, measure='induced')
+        sage: Polyhedron_base7.triangulate(P)                                   # optional - sage.combinat
+        (<0,1,2,13>, <0,1,7,13>, <0,2,5,13>, <0,6,7,12>, <0,6,8,13>,
+         <0,6,12,13>, <0,7,12,13>, <1,2,7,12>, <1,2,12,13>, <1,7,12,13>,
+         <2,3,7,12>, <2,3,12,13>, <3,4,7,12>, <3,11,12,13>, <6,8,9,12>,
+         <6,8,12,13>, <6,9,10,12>, <8,9,12,13>)
+        sage: Polyhedron_base7.volume(P, measure='induced')                     # optional - sage.combinat
         79/3
     """
     @cached_method(do_pickle=True)
@@ -88,8 +91,8 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P.centroid()
             (1/4, 0, 0)
 
-            sage: P = polytopes.associahedron(['A',2])
-            sage: P.centroid()
+            sage: P = polytopes.associahedron(['A', 2])                                         # optional - sage.combinat
+            sage: P.centroid()                                                                  # optional - sage.combinat
             (2/21, 2/21)
 
             sage: P = polytopes.permutahedron(4, backend='normaliz')  # optional - pynormaliz
@@ -98,7 +101,7 @@ class Polyhedron_base7(Polyhedron_base6):
 
         The method is not implemented for unbounded polyhedra::
 
-            sage: P = Polyhedron(vertices=[(0,0)],rays=[(1,0),(0,1)])
+            sage: P = Polyhedron(vertices=[(0, 0)], rays=[(1, 0), (0, 1)])
             sage: P.centroid()
             Traceback (most recent call last):
             ...
@@ -521,7 +524,7 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P = Polyhedron([[0, 0], [1, 1]])
             sage: P.volume()
             0
-            sage: P.volume(measure='induced')
+            sage: P.volume(measure='induced')                                   # optional - sage.rings.number_field
             1.414213562373095?
             sage: P.volume(measure='induced_rational') # optional -- latte_int
             1
@@ -556,19 +559,19 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P.volume(measure='induced_lattice',engine='latte')  # optional - latte_int
             3
 
-            sage: Dexact = polytopes.dodecahedron()                             # optional - sage.rings.number_field
-            sage: v = Dexact.faces(2)[0].as_polyhedron().volume(measure='induced', engine='internal'); v   # optional - sage.rings.number_field
+            sage: Dexact = polytopes.dodecahedron()                                                         # optional - sage.rings.number_field    # optional - sage.groups
+            sage: v = Dexact.faces(2)[0].as_polyhedron().volume(measure='induced', engine='internal'); v    # optional - sage.rings.number_field    # optional - sage.groups
             1.53406271079097?
-            sage: v = Dexact.faces(2)[4].as_polyhedron().volume(measure='induced', engine='internal'); v   # optional - sage.rings.number_field
+            sage: v = Dexact.faces(2)[4].as_polyhedron().volume(measure='induced', engine='internal'); v    # optional - sage.rings.number_field    # optional - sage.groups
             1.53406271079097?
-            sage: RDF(v)    # abs tol 1e-9                                      # optional - sage.rings.number_field
+            sage: RDF(v)    # abs tol 1e-9                                                                  # optional - sage.rings.number_field    # optional - sage.groups
             1.53406271079044
 
-            sage: Dinexact = polytopes.dodecahedron(exact=False)
-            sage: w = Dinexact.faces(2)[2].as_polyhedron().volume(measure='induced', engine='internal'); RDF(w) # abs tol 1e-9
+            sage: Dinexact = polytopes.dodecahedron(exact=False)                                                                                    # optional - sage.groups
+            sage: w = Dinexact.faces(2)[2].as_polyhedron().volume(measure='induced', engine='internal'); RDF(w)  # abs tol 1e-9                     # optional - sage.groups
             1.5340627082974878
 
-            sage: [polytopes.simplex(d).volume(measure='induced') for d in range(1,5)] == [sqrt(d+1)/factorial(d) for d in range(1,5)]
+            sage: [polytopes.simplex(d).volume(measure='induced') for d in range(1,5)] == [sqrt(d+1)/factorial(d) for d in range(1,5)]  # optional - sage.rings.number_field
             True
 
             sage: I = Polyhedron([[-3, 0], [0, 9]])
@@ -804,9 +807,9 @@ class Polyhedron_base7(Polyhedron_base6):
 
             sage: R.<x, y, z> = QQ[]
             sage: P = polytopes.simplex(2)
-            sage: V = AA(P.volume(measure='induced')); V.radical_expression()
+            sage: V = AA(P.volume(measure='induced')); V.radical_expression()                               # optional - sage.rings.number_field sage.symbolic
             1/2*sqrt(3)
-            sage: P.integrate(R(1), measure='induced') == V                      # optional - latte_int
+            sage: P.integrate(R(1), measure='induced') == V                      # optional - latte_int     # optional - sage.rings.number_field sage.symbolic
             True
 
         Computing the mass center::
@@ -951,7 +954,6 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: Polyhedron(vertices=[()]).integrate(R(42))
             42
         """
-        from sage.interfaces.latte import integrate
         from sage.rings.real_double import RDF
 
         if self.base_ring() == RDF:
@@ -961,6 +963,8 @@ class Polyhedron_base7(Polyhedron_base6):
             assert len(self.vertices()) == 1
             vertex = tuple(vertices[0])
             return polynomial(vertex)
+
+        from sage.interfaces.latte import integrate
         return integrate(self.cdd_Hrepresentation(),
                          polynomial,
                          cdd=True, **kwds)

@@ -265,9 +265,9 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             False
         """
         # Fail without computing the generator matrix if possible:
-        if not (isinstance(other, AbstractLinearCodeNoMetric)\
-                and self.length() == other.length()\
-                and self.dimension() == other.dimension()\
+        if not (isinstance(other, AbstractLinearCodeNoMetric)
+                and self.length() == other.length()
+                and self.dimension() == other.dimension()
                 and self.base_ring() == other.base_ring()):
             return False
         # Check that basis elements of `other` are all in `self.`
@@ -276,10 +276,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         # This implementation may avoid linear algebra altogether, if `self`
         # implements an efficient way to obtain a parity check matrix, and in
         # the worst case does only one system solving.
-        for c in other.gens():
-            if not (c in self):
-                return False
-        return True
+        return all(c in self for c in other.gens())
 
     def __ne__(self, other):
         r"""
@@ -538,7 +535,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             [1 2 0 1]
             [0 0 1 2]
 
-        Specific systematic positions can also be requested:
+        Specific systematic positions can also be requested::
 
             sage: C.systematic_generator_matrix(systematic_positions=[3,2])
             [1 2 0 1]
@@ -1147,7 +1144,6 @@ class LinearCodeSystematicEncoder(Encoder):
                 raise ValueError("systematic positions must be a tuple of distinct integers in the range 0 to n-1 where n is the length of the code")
             # Test that the systematic positions are an information set
             self.generator_matrix()
-
 
     def __eq__(self, other):
         r"""

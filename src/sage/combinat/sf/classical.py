@@ -36,6 +36,7 @@ translate = {'monomial':'MONOMIAL', 'homogeneous':'HOMSYM', 'powersum':'POWSYM',
 
 conversion_functions = {}
 
+
 def init():
     """
     Set up the conversion functions between the classical bases.
@@ -304,7 +305,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         else:
             try:
                 c = R(x)
-            except Exception:
+            except (TypeError, ValueError):
                 raise TypeError("do not know how to make x (= {}) an element of self".format(x))
             else:
                 if not c:

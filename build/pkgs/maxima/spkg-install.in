@@ -1,6 +1,6 @@
 # Sometimes, ECL gives interactive prompts when something goes wrong
 # during the build. Avoid this by redirecting stdin from /dev/null.
-# See http://trac.sagemath.org/sage_trac/ticket/11884#comment:34
+# See https://github.com/sagemath/sage/issues/11884#comment:34
 exec </dev/null
 
 

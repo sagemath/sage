@@ -133,6 +133,7 @@ def brauer_diagrams(k):
         for p in perfect_matchings_iterator(k-1):
             yield [(s[a],s[b]) for a,b in p] + [[k, -k]]
 
+
 def temperley_lieb_diagrams(k):
     r"""
     Return a generator of all Temperley--Lieb diagrams of order ``k``.
@@ -155,6 +156,7 @@ def temperley_lieb_diagrams(k):
     for i in brauer_diagrams(k):
         if is_planar(i):
             yield i
+
 
 def planar_diagrams(k):
     r"""
@@ -199,6 +201,7 @@ def planar_diagrams(k):
             yield Y
     else:
         raise ValueError("argument %s must be a half-integer" % k)
+
 
 def planar_partitions_rec(X):
     r"""
@@ -252,6 +255,7 @@ def planar_partitions_rec(X):
         for Y in product(*parts):
             yield sum(Y, ()) + (last,)
 
+
 def ideal_diagrams(k):
     r"""
     Return a generator of all "ideal" diagrams of order ``k``.
@@ -273,6 +277,7 @@ def ideal_diagrams(k):
     for i in partition_diagrams(k):
         if propagating_number(i) < k:
             yield i
+
 
 class AbstractPartitionDiagram(AbstractSetPartition):
     r"""
@@ -312,6 +317,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         ...
         ValueError: {{1, 2}, {3, 4}} does not represent two rows of vertices of order 2
     """
+
     def __init__(self, parent, d, check=True):
         r"""
         Initialize ``self``.
@@ -585,6 +591,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         """
         return self.parent([[-i for i in part] for part in self])
 
+
 class IdealDiagram(AbstractPartitionDiagram):
     r"""
     The element class for a ideal diagram.
@@ -832,6 +839,7 @@ class PartitionDiagram(AbstractPartitionDiagram):
         order = max(v for p in diag for v in p)
         PD = PartitionDiagrams(order)
         return PD(diag)
+
 
 class BrauerDiagram(AbstractPartitionDiagram):
     r"""
@@ -1121,6 +1129,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
         D2 = sorted(sorted(abs(y) for y in x) for x in D2)
         return D1 == D2 and pi == list(range(1,len(pi)+1))
 
+
 class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
     r"""
     This is an abstract base class for partition diagrams.
@@ -1344,6 +1353,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
         """
         return self.element_class(self, d)
 
+
 class PartitionDiagrams(AbstractPartitionDiagrams):
     r"""
     This class represents all partition diagrams of integer or integer
@@ -1402,6 +1412,7 @@ class PartitionDiagrams(AbstractPartitionDiagrams):
             877
         """
         return bell_number(ZZ(2 * self.order))
+
 
 class BrauerDiagrams(AbstractPartitionDiagrams):
     r"""
@@ -1621,6 +1632,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
         SP = SP0 + Perm
         return self(SP) # could pass 'SetPartition' ?
 
+
 class TemperleyLiebDiagrams(AbstractPartitionDiagrams):
     r"""
     All Temperley-Lieb diagrams of integer or integer `+1/2` order.
@@ -1705,6 +1717,7 @@ class TemperleyLiebDiagrams(AbstractPartitionDiagrams):
                 return False
         return obj in BrauerDiagrams(self.order) and obj.is_planar()
 
+
 class PlanarDiagrams(AbstractPartitionDiagrams):
     r"""
     All planar diagrams of integer or integer `+1/2` order.
@@ -1782,6 +1795,7 @@ class PlanarDiagrams(AbstractPartitionDiagrams):
                 return False
         return super().__contains__(obj)
 
+
 class IdealDiagrams(AbstractPartitionDiagrams):
     r"""
     All "ideal" diagrams of integer or integer `+1/2` order.
@@ -1829,6 +1843,7 @@ class IdealDiagrams(AbstractPartitionDiagrams):
                 return False
         return super().__contains__(obj) and obj.propagating_number() < self.order
 
+
 class DiagramAlgebra(CombinatorialFreeModule):
     r"""
     Abstract class for diagram algebras and is not designed to be used
@@ -1856,6 +1871,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
          P{{-2, -1}, {1}, {2}},
          P{{-2}, {-1}, {1}, {2}}]
     """
+
     def __init__(self, k, q, base_ring, prefix, diagrams, category=None):
         r"""
         Initialize ``self``.
@@ -2104,6 +2120,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
         partition algebra elements. Most element methods are
         already implemented elsewhere.
         """
+
         def diagram(self):
             r"""
             Return the underlying diagram of ``self`` if ``self`` is a basis
@@ -2139,6 +2156,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
             """
             return self.support()
 
+
 class UnitDiagramMixin():
     """
     Mixin class for diagram algebras that have the unit indexed by
@@ -2161,10 +2179,12 @@ class UnitDiagramMixin():
         """
         return self._base_diagrams(identity_set_partition(self._k))
 
+
 class DiagramBasis(DiagramAlgebra):
     """
     Abstract base class for diagram algebras in the diagram basis.
     """
+
     def product_on_basis(self, d1, d2):
         r"""
         Return the product `D_{d_1} D_{d_2}` by two basis diagrams.
@@ -2184,6 +2204,7 @@ class DiagramBasis(DiagramAlgebra):
             d2 = self._indices(d2)
         (composite_diagram, loops_removed) = d1.compose(d2, check=False)
         return self.term(composite_diagram, self._q**loops_removed)
+
 
 class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
     r"""
@@ -3120,6 +3141,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             return P._from_dict({D.dual(): c for D, c in self._monomial_coefficients.items()},
                                 remove_zeros=False)
 
+
 class OrbitBasis(DiagramAlgebra):
     r"""
     The orbit basis of the partition algebra.
@@ -3543,11 +3565,13 @@ class OrbitBasis(DiagramAlgebra):
             return self.parent()._alg(self)
             #return self._alg.coerce_map_from(self)
 
+
 class SubPartitionAlgebra(DiagramBasis):
     """
     A subalgebra of the partition algebra in the diagram basis indexed
     by a subset of the diagrams.
     """
+
     def __init__(self, k, q, base_ring, prefix, diagrams, category=None):
         """
         Initialize ``self`` by adding a coercion to the ambient space.
@@ -3996,6 +4020,7 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         """
         return TL_diagram_ascii_art(diagram, use_unicode=True)
 
+
 class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
     r"""
     A planar algebra.
@@ -4194,6 +4219,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
 
         We need to take care of exponents since we are not unital.
         """
+
         def __pow__(self, n):
             """
             Return ``self`` to the `n`-th power.
@@ -4217,6 +4243,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
             if n <= 0:
                 raise ValueError("can only take positive integer powers")
             return generic_power(self, n)
+
 
 def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
     r"""
@@ -4414,6 +4441,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
     ret.append(ret[0])
     return char_art(ret, baseline=len(ret)//2)
 
+
 def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
     r"""
     Return latex code for the diagram ``diagram`` using tikz.
@@ -4510,6 +4538,7 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
 # with partition diagrams, compositions of partition diagrams, and so on.
 # --> CHANGED 'identity' to 'identity_set_partition' for enhanced clarity.
 #########################################################################
+
 
 def is_planar(sp):
     r"""
@@ -4611,6 +4640,7 @@ def to_graph(sp):
             g.add_vertex(part_list[i])
             g.add_edge(part_list[i-1], part_list[i])
     return g
+
 
 def pair_to_graph(sp1, sp2):
     r"""
@@ -4761,6 +4791,7 @@ def to_set_partition(l, k=None):
 
     return sp
 
+
 def to_Brauer_partition(l, k=None):
     r"""
     Same as :func:`to_set_partition` but assumes omitted elements are
@@ -4800,6 +4831,7 @@ def to_Brauer_partition(l, k=None):
             not_paired.remove([-i[0]])
         paired.append([i[0], -i[0]])
     return to_set_partition(paired)
+
 
 def identity_set_partition(k):
     r"""

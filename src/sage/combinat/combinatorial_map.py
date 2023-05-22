@@ -205,6 +205,7 @@ class CombinatorialMap():
     :ref:`sage.combinat.combinatorial_map` and
     :func:`combinatorial_map_wrapper`.
     """
+
     def __init__(self, f, order=None, name=None):
         """
         Constructor for combinatorial maps.
@@ -226,7 +227,7 @@ class CombinatorialMap():
         """
         import types
         if not isinstance(f, types.FunctionType):
-            raise ValueError("Only plain functions are supported")
+            raise ValueError("only plain functions are supported")
         self._f = f
         self._order = order
         self._name = name

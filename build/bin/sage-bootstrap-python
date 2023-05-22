@@ -30,7 +30,7 @@ SAGE_ORIG_PATH=${NEW_PATH%%':'}
 # Also, Trac #20023 removed the vendored argparse library from sage_bootstrap,
 # so we test that python is new enough (>= 2.7) to run it.
 #
-# See https://trac.sagemath.org/ticket/29090
+# See https://github.com/sagemath/sage/issues/29090
 
 # Trac #29890: Our first choice is "python", not "python3". This is to avoid
 # a defect of sage_bootstrap on macOS regarding SSL URLs.
@@ -53,7 +53,7 @@ if [ "$LC_ALL" = "C" -o "$LANG" = "C" -o "$LC_CTYPE" = "C" ]; then
     export LANG
 fi
 
-PYTHONS="python python3 python3.10 python3.9 python3.8 python3.7 python2.7 python3.6 python2"
+PYTHONS="python python3 python3.12 python3.11 python3.10 python3.9 python3.8 python3.7 python2.7 python3.6 python2"
 # Trac #32405: Prefer a Python that provides ssl with SNI, which allows developers
 # to download from upstream URLs (configure --enable-download-from-upstream-url),
 # in particular from PyPI, which requires SNI.

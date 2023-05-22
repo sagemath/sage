@@ -55,7 +55,7 @@ cdef class CAElement(pAdicTemplateElement):
 
         INPUT:
 
-        - ``x`` -- data defining a `p`-adic element: int, long,
+        - ``x`` -- data defining a `p`-adic element: int,
           Integer, Rational, other `p`-adic element...
 
         - ``val`` -- the valuation of the resulting element
@@ -468,8 +468,7 @@ cdef class CAElement(pAdicTemplateElement):
         cdef Integer right
         cdef CAElement pright, ans
         cdef bint exact_exp
-        if isinstance(_right, Integer) or isinstance(_right, (int, long)) \
-                                          or isinstance(_right, Rational):
+        if isinstance(_right, (Integer, int, Rational)):
             if _right < 0:
                 base = ~self
                 return base.__pow__(-_right, dummy)
@@ -490,7 +489,7 @@ cdef class CAElement(pAdicTemplateElement):
         elif ciszero(self.value, self.prime_pow):
             # We may assume from above that right > 0 if exact.
             # So we return a zero of precision right * self.ordp.
-            if isinstance(_right, (int, long)):
+            if isinstance(_right, int):
                 _right = Integer(_right)
             if isinstance(_right, Integer):
                 right = <Integer>_right

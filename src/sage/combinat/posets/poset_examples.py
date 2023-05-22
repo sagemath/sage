@@ -106,6 +106,51 @@ from sage.categories.finite_posets import FinitePosets
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.graphs.digraph import DiGraph
 from sage.rings.integer import Integer
+from sage.sets.non_negative_integers import NonNegativeIntegers
+
+
+def check_int(n, minimum=0):
+    """
+    Check that ``n`` is an integer at least equal to ``minimum``.
+
+    This is a boilerplate function ensuring input safety.
+
+    INPUT:
+
+    - ``n`` -- anything
+
+    - ``minimum`` -- an optional integer (default: 0)
+
+    EXAMPLES::
+
+        sage: from sage.combinat.posets.poset_examples import check_int
+        sage: check_int(6, 3)
+        6
+        sage: check_int(6)
+        6
+
+        sage: check_int(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: number of elements must be a non-negative integer, not -1
+
+        sage: check_int(1, 3)
+        Traceback (most recent call last):
+        ...
+        ValueError: number of elements must be an integer at least 3, not 1
+
+        sage: check_int('junk')
+        Traceback (most recent call last):
+        ...
+        ValueError: number of elements must be a non-negative integer, not junk
+    """
+    if minimum == 0:
+        msg = "a non-negative integer"
+    else:
+        msg = f"an integer at least {minimum}"
+    if n not in NonNegativeIntegers() or n < minimum:
+        raise ValueError("number of elements must be " + msg + f", not {n}")
+    return Integer(n)
 
 
 class Posets(metaclass=ClasscallMetaclass):
@@ -155,12 +200,7 @@ class Posets(metaclass=ClasscallMetaclass):
         """
         if n is None:
             return sage.categories.posets.Posets()
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {0}".format(n))
-        if n < 0:
-            raise ValueError("number of elements must be non-negative, not {0}".format(n))
+        n = check_int(n)
         return FinitePosets_n(n)
 
     @staticmethod
@@ -203,12 +243,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: list(posets.BooleanLattice(1, use_subsets=True))
             [{}, {1}]
         """
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {0}".format(n))
-        if n < 0:
-            raise ValueError("number of elements must be non-negative, not {0}".format(n))
+        n = check_int(n)
         if n == 0:
             if use_subsets:
                 from sage.sets.set import Set
@@ -282,12 +317,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: C.cover_relations()
             [[0, 1]]
         """
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {0}".format(n))
-        if n < 0:
-            raise ValueError("number of elements must be non-negative, not {0}".format(n))
+        n = check_int(n)
         D = DiGraph([range(n), [[x, x + 1] for x in range(n - 1)]],
                     format='vertices_and_edges')
         return FiniteLatticePoset(hasse_diagram=D,
@@ -335,12 +365,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: C.cover_relations()
             []
         """
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {0}".format(n))
-        if n < 0:
-            raise ValueError("number of elements must be non-negative, not {0}".format(n))
+        n = check_int(n)
         return Poset((range(n), []), facade=facade)
 
     @staticmethod
@@ -398,12 +423,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.DiamondPoset(7)
             Finite lattice containing 7 elements
         """
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {0}".format(n))
-        if n <= 2:
-            raise ValueError("n must be an integer at least 3")
+        n = check_int(n, 3)
         c = [[n - 1] for x in range(n)]
         c[0] = [x for x in range(1, n - 1)]
         c[n - 1] = []
@@ -435,12 +455,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.Crown(3)
             Finite poset containing 6 elements
         """
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {0}".format(n))
-        if n < 2:
-            raise ValueError("n must be an integer at least 2")
+        n = check_int(n, 2)
         D = {i: [i + n, i + n + 1] for i in range(n - 1)}
         D[n - 1] = [n, n + n - 1]
         return FinitePoset(hasse_diagram=DiGraph(D), category=FinitePosets(),
@@ -478,12 +493,7 @@ class Posets(metaclass=ClasscallMetaclass):
             Finite lattice containing 1 elements with distinguished linear extension
         """
         from sage.arith.misc import divisors, is_prime
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {0}".format(n))
-        if n <= 0:
-            raise ValueError("n must be a positive integer")
+        n = check_int(n, 1)
         Div_n = divisors(n)
         hasse = DiGraph([Div_n, lambda a, b: b % a == 0 and is_prime(b // a)])
         return FiniteLatticePoset(hasse, elements=Div_n, facade=facade,
@@ -623,9 +633,7 @@ class Posets(metaclass=ClasscallMetaclass):
              [[4, 2], [5, 1]],
              [[5, 1], [6]]]
         """
-        from sage.rings.semirings.non_negative_integer_semiring import NN
-        if n not in NN:
-            raise ValueError('n must be an integer')
+        n = check_int(n)
         from sage.combinat.partition import Partitions, Partition
         return LatticePoset((Partitions(n), Partition.dominates)).dual()
 
@@ -663,14 +671,7 @@ class Posets(metaclass=ClasscallMetaclass):
             0
         """
         # Todo: Make this faster.
-
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("parameter n must be an integer, not {0}".format(n))
-        if n < 0:
-            raise ValueError("parameter n must be non-negative, not {0}".format(n))
-
+        n = check_int(n)
         all_pos_n = set()
         Pn = list(Posets(n))
         for P in Pn:
@@ -759,16 +760,6 @@ class Posets(metaclass=ClasscallMetaclass):
 
         TESTS::
 
-            sage: posets.RandomPoset('junk', 0.5)
-            Traceback (most recent call last):
-            ...
-            TypeError: number of elements must be an integer, not junk
-
-            sage: posets.RandomPoset(-6, 0.5)
-            Traceback (most recent call last):
-            ...
-            ValueError: number of elements must be non-negative, not -6
-
             sage: posets.RandomPoset(6, 'garbage')
             Traceback (most recent call last):
             ...
@@ -783,16 +774,10 @@ class Posets(metaclass=ClasscallMetaclass):
             Finite poset containing 0 elements
         """
         from sage.misc.prandom import random
-
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {0}".format(n))
-        if n < 0:
-            raise ValueError("number of elements must be non-negative, not {0}".format(n))
+        n = check_int(n)
         try:
             p = float(p)
-        except Exception:
+        except (TypeError, ValueError):
             raise TypeError("probability must be a real number, not {0}".format(p))
         if p < 0 or p > 1:
             raise ValueError("probability must be between 0 and 1, not {0}".format(p))
@@ -800,7 +785,7 @@ class Posets(metaclass=ClasscallMetaclass):
         D = DiGraph(loops=False, multiedges=False)
         D.add_vertices(range(n))
         for i in range(n):
-            for j in range(i+1, n):
+            for j in range(i + 1, n):
                 if random() < p:
                     D.add_edge(i, j)
         D.relabel(list(Permutations(n).random_element()))
@@ -856,16 +841,6 @@ class Posets(metaclass=ClasscallMetaclass):
 
         TESTS::
 
-            sage: posets.RandomLattice('junk', 0.5)
-            Traceback (most recent call last):
-            ...
-            TypeError: number of elements must be an integer, not junk
-
-            sage: posets.RandomLattice(-6, 0.5)
-            Traceback (most recent call last):
-            ...
-            ValueError: number of elements must be non-negative, not -6
-
             sage: posets.RandomLattice(6, 'garbage')
             Traceback (most recent call last):
             ...
@@ -885,13 +860,7 @@ class Posets(metaclass=ClasscallMetaclass):
             Finite lattice containing 0 elements
         """
         from copy import copy
-
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {0}".format(n))
-        if n < 0:
-            raise ValueError("number of elements must be non-negative, not {0}".format(n))
+        n = check_int(n)
         try:
             p = float(p)
         except Exception:
@@ -973,10 +942,8 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.SetPartitions(4)
             Finite lattice containing 15 elements
         """
-        from sage.rings.semirings.non_negative_integer_semiring import NN
-        if n not in NN:
-            raise ValueError('n must be an integer')
         from sage.combinat.set_partition import SetPartitions
+        n = check_int(n)
         S = SetPartitions(n)
 
         def covers(x):
@@ -1083,12 +1050,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: P(4) < P(3), P(4) > P(3)
             (False, False)
         """
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("dimension must be an integer, not {0}".format(n))
-        if n < 2:
-            raise ValueError("dimension must be at least 2, not {0}".format(n))
+        n = check_int(n, 2)
         return Poset((range(2*n), [[i, j+n] for i in range(n)
                                    for j in range(n) if i != j]),
                      facade=facade)
@@ -1244,17 +1206,20 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: tet = posets.TetrahedralPoset(3, 'green','yellow','blue','orange')
             sage: ji.is_isomorphic(tet)
             True
+
+        TESTS::
+
+            sage: posets.TetrahedralPoset(4,'scarlet')
+            Traceback (most recent call last):
+            ...
+            ValueError: color input must be among: 'green', 'red', 'yellow',
+            'orange', 'silver', and 'blue'
         """
+        n = check_int(n, 2)
         n = n - 1
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("n must be an integer")
-        if n < 2:
-            raise ValueError("n must be greater than 2")
         for c in colors:
             if c not in ('green', 'red', 'yellow', 'orange', 'silver', 'blue'):
-                raise ValueError("color input must be from the following: 'green', 'red', 'yellow', 'orange', 'silver', and 'blue'")
+                raise ValueError("color input must be among: 'green', 'red', 'yellow', 'orange', 'silver', and 'blue'")
         elem = [(i, j, k) for i in range(n)
                 for j in range(n - i) for k in range(n - i - j)]
         rels = []
@@ -1421,12 +1386,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: P = posets.UpDownPoset(0); P
             Finite poset containing 0 elements
         """
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {0}".format(n))
-        if n < 0:
-            raise ValueError("number of elements must be non-negative, not {0}".format(n))
+        n = check_int(n)
         try:
             m = Integer(m)
         except TypeError:
@@ -1581,12 +1541,7 @@ class Posets(metaclass=ClasscallMetaclass):
         from sage.categories.finite_posets import FinitePosets
         from sage.combinat.words.word import Word
 
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {0}".format(n))
-        if n < 0:
-            raise ValueError("number of elements must be non-negative, not {0}".format(n))
+        n = check_int(n)
 
         if n == 0:
             return MeetSemilattice({'': []})
@@ -1632,12 +1587,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: P.cover_relations()
             [[1, 2], [2, 3], [2, 4], [3, 5], [4, 5], [5, 6]]
         """
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {}".format(n))
-        if n <= 0:
-            raise ValueError("number of elements must be nonnegative, not {}".format(n))
+        n = check_int(n, 1)
 
         edges = [(i, i+1) for i in range(1, n)]
         edges.extend([(n, n+1), (n, n+2), (n+1, n+3), (n+2, n+3)])
@@ -1680,12 +1630,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.PermutationPattern(2)
             Finite poset containing 3 elements
         """
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("number of elements must be an integer, not {}".format(n))
-        if n <= 0:
-            raise ValueError("number of elements must be nonnegative, not {}".format(n))
+        n = check_int(n, 1)
         elem = []
         for i in range(1, n + 1):
             elem += Permutations(i)
@@ -1841,6 +1786,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: sorted(R.cover_relations())
             [[0, 1], [2, 1], [3, 2], [3, 4]]
         """
+        n = check_int(n)
         return Mobile(DiGraph([list(range(n)),
                                [(i + 1, i) if i in descents else (i, i + 1)
                                 for i in range(n - 1)]]))

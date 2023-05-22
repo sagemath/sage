@@ -87,6 +87,14 @@ We create element of a permutation group of large degree::
     sage: G = SymmetricGroup(30)
     sage: s = G(srange(30,0,-1)); s
     (1,30)(2,29)(3,28)(4,27)(5,26)(6,25)(7,24)(8,23)(9,22)(10,21)(11,20)(12,19)(13,18)(14,17)(15,16)
+
+TESTS:
+
+Check that :trac:`13569` is fixed::
+
+    sage: [g*h for g in SymmetricGroup(3) for h in AlternatingGroup(3)]
+    [(), (1,2,3), (1,3,2), (1,3,2), (), (1,2,3), (1,2,3), (1,3,2), (), (2,3),
+    (1,2), (1,3), (1,3), (2,3), (1,2), (1,2), (1,3), (2,3)]
 """
 
 # ****************************************************************************
@@ -114,17 +122,19 @@ from cpython.list cimport *
 from cypari2.gen cimport Gen
 
 from sage.ext.stdsage cimport HAS_DICTIONARY
-from sage.rings.all      import ZZ, Integer
-from sage.rings.polynomial.polynomial_element import is_Polynomial
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
+from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import is_Matrix
-from sage.matrix.all     import MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 import sage.structure.coerce as coerce
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.structure.coerce cimport coercion_model
-from sage.interfaces.gap import GapElement as PExpectGapElement
-from sage.interfaces.gp import GpElement
+from sage.interfaces.abc import GpElement
+
+import sage.interfaces.abc
 
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.gap_includes cimport (UInt, UInt2, UInt4, T_PERM2, T_PERM4,
@@ -479,7 +489,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 self._set_list_images(g.sage(), convert)
             else:
                 raise ValueError("invalid data to initialize a permutation")
-        elif isinstance(g, PExpectGapElement):
+        elif isinstance(g, sage.interfaces.abc.GapElement):
             if g.IsPerm():
                 self._set_list_images(g.ListPerm(), False)
             else:
@@ -1225,12 +1235,12 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         """
         if not self_on_left:
             left = x
-            if is_Polynomial(left):
+            if isinstance(left, Polynomial):
                 if self != 1:
                     raise ValueError("%s does not act on %s" % (self,
                                                                 left.parent()))
                 return left
-            elif is_MPolynomial(left):
+            elif isinstance(left, MPolynomial):
                 R = left.parent()
                 vars = R.gens()
                 try:

@@ -78,7 +78,7 @@ DUMMY_PACKAGES = @SAGE_DUMMY_PACKAGES@
 
 # Set to the path to Sage's GCC (if GCC is installed) to force rebuilds
 # of packages if GCC changed.
-# See m4/sage_spkg_collect.m4 and https://trac.sagemath.org/ticket/24703
+# See m4/sage_spkg_collect.m4 and https://github.com/sagemath/sage/issues/24703
 GCC_DEP = @SAGE_GCC_DEP@
 
 # Versions of all the packages, in the format
@@ -447,14 +447,14 @@ pypi-sdists: $(PYPI_SDIST_PACKAGES:%=%-sdist)
 # just remove the timestamps, which will lead to rebuilds of the packages.
 pypi-wheels:
 	for a in $(PYPI_WHEEL_PACKAGES); do \
-	    rm -f venv/var/lib/sage/installed/$$a-*; \
+	    rm -f $(SAGE_VENV)/var/lib/sage/installed/$$a-*; \
 	done
 	$(MAKE_REC) SAGE_EDITABLE=no SAGE_WHEELS=yes $(PYPI_WHEEL_PACKAGES)
 	@echo "Built wheels are in venv/var/lib/sage/wheels/"
 
 wheels:
 	for a in $(WHEEL_PACKAGES); do \
-	    rm -f venv/var/lib/sage/installed/$$a-*; \
+	    rm -f $(SAGE_VENV)/var/lib/sage/installed/$$a-*; \
 	done
 	$(MAKE_REC) SAGE_EDITABLE=no SAGE_WHEELS=yes $(WHEEL_PACKAGES)
 	@echo "Built wheels are in venv/var/lib/sage/wheels/"

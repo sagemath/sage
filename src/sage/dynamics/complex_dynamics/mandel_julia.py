@@ -167,7 +167,7 @@ def mandelbrot_plot(f=None, **kwds):
         sage: B.<c> = CC[]
         sage: R.<z> = B[]
         sage: f = z^5 + c
-        sage: mandelbrot_plot(f)
+        sage: mandelbrot_plot(f)  # long time
         500x500px 24-bit RGB image
 
     When the polynomial is defined over a multivariate polynomial ring it is
@@ -175,7 +175,7 @@ def mandelbrot_plot(f=None, **kwds):
 
         sage: R.<a,b> = CC[]
         sage: f = a^2 + b^3
-        sage: mandelbrot_plot(f, parameter=b)
+        sage: mandelbrot_plot(f, parameter=b)  # long time
         500x500px 24-bit RGB image
 
     Interact functionality is not implemented for general polynomial maps::
@@ -283,9 +283,10 @@ def mandelbrot_plot(f=None, **kwds):
                     max_iteration = 50
 
                 # Mandelbrot of General Polynomial Map
-                return polynomial_mandelbrot(f, parameter, x_center, y_center, \
-                 image_width, max_iteration, pixel_count, level_sep, \
+                return polynomial_mandelbrot(f, parameter, x_center, y_center,
+                 image_width, max_iteration, pixel_count, level_sep,
                  number_of_colors, base_color)
+
 
 def external_ray(theta, **kwds):
     r"""
@@ -592,7 +593,7 @@ def julia_plot(f=None, **kwds):
 
         sage: R.<z> = CC[]
         sage: f = z^3 - z + 1
-        sage: julia_plot(f)
+        sage: julia_plot(f)  # long time
         500x500px 24-bit RGB image
 
     To display an interactive plot of the Julia set in the Notebook,

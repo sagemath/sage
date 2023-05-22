@@ -202,9 +202,8 @@ class Algebras(AlgebrasCategory):
                 raise ValueError("the weight does not have an integral scalar product with the coroot")
             alphai = P.simple_root(i)
             if n >= 0:
-                return  self.sum_of_monomials(weight-j*alphai for j in range(n + 1))
-            else:
-                return -self.sum_of_monomials(weight-j*alphai for j in range(n+1,0))
+                return self.sum_of_monomials(weight-j*alphai for j in range(n + 1))
+            return -self.sum_of_monomials(weight-j*alphai for j in range(n + 1, 0))
 
         def demazure_operators(self):
             r"""
@@ -316,7 +315,6 @@ class Algebras(AlgebrasCategory):
                     result = pi[i](x)
                     tester.assertEqual(result * (self.one()-emalphai),
                                        x - emalphai * x.map_support(s[i]))
-
 
         def demazure_lusztig_operator_on_basis(self, weight, i, q1, q2, convention="antidominant"):
             r"""
@@ -581,7 +579,6 @@ class Algebras(AlgebrasCategory):
             T_on_basis = functools.partial(self.demazure_lusztig_operator_on_basis,
                                            q1 = q1, q2 = q2, convention = convention)
             return HeckeAlgebraRepresentation(self, T_on_basis, self.cartan_type(), q1, q2, side="left")
-
 
         def demazure_lusztig_operator_on_classical_on_basis(self, weight, i, q, q1, q2, convention="antidominant"):
             r"""

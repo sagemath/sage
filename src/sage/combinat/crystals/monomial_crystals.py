@@ -662,6 +662,7 @@ class NakajimaMonomial(Element):
             del A[(i,kf)]
         return self.__class__(self.parent(), newdict, A)
 
+
 class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
     r"""
     Crystal `B(\infty)` in terms of (modified) Nakajima monomials.
@@ -1015,6 +1016,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
     Element = NakajimaMonomial
 
+
 class CrystalOfNakajimaMonomialsElement(NakajimaMonomial):
     r"""
     Element class for
@@ -1038,6 +1040,7 @@ class CrystalOfNakajimaMonomialsElement(NakajimaMonomial):
         Y(0,0)^2 Y(0,1)^-1 Y(2,0)
         sage: TestSuite(m).run()
     """
+
     def f(self, i):
         r"""
         Return the action of `f_i` on ``self``.
@@ -1089,6 +1092,7 @@ class CrystalOfNakajimaMonomialsElement(NakajimaMonomial):
         """
         P = self.parent().weight_lattice_realization()
         return P(self.weight_in_root_lattice()) + P(self.parent().hw)
+
 
 class CrystalOfNakajimaMonomials(InfinityCrystalOfNakajimaMonomials):
     r"""

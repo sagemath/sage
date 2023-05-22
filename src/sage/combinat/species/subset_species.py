@@ -52,7 +52,6 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
         rng = list(range(1, len(self._list) + 1))
         return self.__class__(self.parent(), self._labels, rng)
 
-
     def label_subset(self):
         r"""
         Return a subset of the labels that "appear" in this structure.
@@ -103,7 +102,8 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
             sage: [a.transport(g) for g in a.automorphism_group()]
             [{1, 3}, {1, 3}, {1, 3}, {1, 3}]
         """
-        from sage.groups.all import SymmetricGroup, PermutationGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.groups.perm_gps.permgroup import PermutationGroup
         a = SymmetricGroup(self._list)
         b = SymmetricGroup(self.complement()._list)
         return PermutationGroup(a.gens() + b.gens())
@@ -122,6 +122,7 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
         """
         new_list = [i for i in range(1, len(self._labels)+1) if i not in self._list]
         return SubsetSpeciesStructure(self.parent(), self._labels, new_list)
+
 
 class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     @staticmethod
@@ -235,6 +236,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         if self.is_weighted():
             res *= self._weight
         return res
+
 
 #Backward compatibility
 SubsetSpecies_class = SubsetSpecies

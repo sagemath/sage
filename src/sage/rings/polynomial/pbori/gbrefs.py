@@ -1,6 +1,6 @@
 import gzip
 from io import StringIO
-import uu
+import base64 as uu
 import re
 from types import ModuleType
 from .PyPolyBoRi import Polynomial

@@ -778,7 +778,7 @@ def xydata_from_point_list(points):
     TESTS::
 
         sage: from sage.plot.plot import xydata_from_point_list
-        sage: xydata_from_point_list([CC(0), CC(1)])   # ticket 8082
+        sage: xydata_from_point_list([CC(0), CC(1)])   # issue 8082
         ([0.0, 1.0], [0.0, 0.0])
 
     This function should work for anything than can be turned into a
@@ -1933,7 +1933,7 @@ def plot(funcs, *args, **kwds):
         Traceback (most recent call last):
         ...
         RuntimeError: error in line(): option 'foo' not valid
-        sage: P = plot(x, (x,1,1)) # trac ticket #11753
+        sage: P = plot(x, (x,1,1)) # github issue #11753
         Traceback (most recent call last):
         ...
         ValueError: plot start point and end point must be different
@@ -2287,8 +2287,8 @@ def _plot(funcs, xrange, parametric=False,
             elif legend_color_temp is not None:
                 legend_color_entry = legend_color_temp
 
-            G += plot(h, xrange, polar=polar, fill=fill_entry, fillcolor=fillcolor_entry, \
-                      rgbcolor=color_entry, linestyle=linestyle_entry, \
+            G += plot(h, xrange, polar=polar, fill=fill_entry, fillcolor=fillcolor_entry,
+                      rgbcolor=color_entry, linestyle=linestyle_entry,
                       legend_label=legend_label_entry, legend_color=legend_color_entry, **options_temp)
         return G
 
@@ -2511,8 +2511,6 @@ def _plot(funcs, xrange, parametric=False,
         G += line(data, legend_label=legend_label, **options)
 
     return G
-
-
 
 
 ########## misc functions ###################

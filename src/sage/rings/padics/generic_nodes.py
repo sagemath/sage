@@ -285,7 +285,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
 
         sage: R = ZpLC(17)   # indirect doctest
         doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-        See http://trac.sagemath.org/23505 for details.
+        See https://github.com/sagemath/sage/issues/23505 for details.
         sage: R._prec_type()
         'lattice-cap'
 
@@ -1189,7 +1189,7 @@ def is_pAdicRing(R):
         sage: is_pAdicRing(Zp(5))
         doctest:warning...
         DeprecationWarning: is_pAdicRing is deprecated; use isinstance(..., sage.rings.abc.pAdicRing) instead
-        See https://trac.sagemath.org/32750 for details.
+        See https://github.com/sagemath/sage/issues/32750 for details.
         True
         sage: is_pAdicRing(RR)
         False
@@ -1210,7 +1210,6 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
             False
         """
         return False
-
 
     def krull_dimension(self):
         r"""
@@ -1335,7 +1334,7 @@ def is_pAdicField(R):
         sage: is_pAdicField(Zp(17))
         doctest:warning...
         DeprecationWarning: is_pAdicField is deprecated; use isinstance(..., sage.rings.abc.pAdicField) instead
-        See https://trac.sagemath.org/32750 for details.
+        See https://github.com/sagemath/sage/issues/32750 for details.
         False
         sage: is_pAdicField(Qp(17))
         True
@@ -1423,13 +1422,19 @@ class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
             sage: S = F(Z)
             sage: S._precision_cap()
             (31, 41)
+
+        The `secure` attribute for relaxed type is included in the functor::
+
+            sage: R = ZpER(5, secure=True)
+            sage: R.construction()
+            (Completion[5, prec=(20, 40, True)], Integer Ring)
         """
         from sage.categories.pushout import CompletionFunctor
         extras = {'print_mode':self._printer.dict(), 'type':self._prec_type(), 'names':self._names}
         if hasattr(self, '_label'):
             extras['label'] = self._label
         if self._prec_type() == "relaxed":
-            prec = (self._default_prec, self._halting_prec)
+            prec = (self._default_prec, self._halting_prec, self._secure)
         else:
             prec = self._precision_cap()
         return (CompletionFunctor(self.prime(), prec, extras), ZZ)
@@ -1595,6 +1600,12 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
             sage: S = F(Z)
             sage: S._precision_cap()
             (31, 41)
+
+        The `secure` attribute for relaxed type is included in the functor::
+
+            sage: K = QpER(5, secure=True)
+            sage: K.construction(forbid_frac_field=True)
+            (Completion[5, prec=(20, 40, True)], Rational Field)
         """
         from sage.categories.pushout import FractionField, CompletionFunctor
         if forbid_frac_field:
@@ -1602,7 +1613,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
             if hasattr(self, '_label'):
                 extras['label'] = self._label
             if self._prec_type() == "relaxed":
-                prec = (self._default_prec, self._halting_prec)
+                prec = (self._default_prec, self._halting_prec, self._secure)
             else:
                 prec = self._precision_cap()
             return (CompletionFunctor(self.prime(), prec, extras), QQ)

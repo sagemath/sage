@@ -2237,7 +2237,7 @@ class QuiverRep_generic(WithEqualityById, Module):
             # domain to be the quotient.
 
             # TODO: This 'if' shouldn't need to be here, but sage crashes when
-            # coercing elements into a quotient that is zero.  Once Trac ticket
+            # coercing elements into a quotient that is zero.  Once Github issue
             # 12413 gets fixed only the else should need to execute.
             # NOTE: This is no longer necessary. Keep around for speed or
             # remove? -- darij, 16 Feb 2014

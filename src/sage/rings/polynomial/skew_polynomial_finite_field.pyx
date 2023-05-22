@@ -1,7 +1,7 @@
 r"""
-Univariate Dense Skew Polynomials over Finite Fields
+Univariate dense skew polynomials over finite fields
 
-This module provides the 
+This module provides the
 class:`~sage.rings.polynomial.skew_polynomial_finite_field.SkewPolynomial_finite_field_dense`,
 which constructs a single univariate skew polynomial over a finite field
 equipped with the Frobenius endomorphism. Among other things, it implements
@@ -336,7 +336,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             ....:     N = R._reduced_norm_factor_uniform()
             ....:     counts[N] += 1
             sage: counts   # random
-            {z + 1: 969, z + 2: 31} 
+            {z + 1: 969, z + 2: 31}
         """
         skew_ring = self._parent
         F = self._reduced_norm_factored()
@@ -390,7 +390,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: for D in rightdiv:
             ....:     assert P.is_right_divisible_by(D), "not right divisible"
             ....:     assert D.is_irreducible(), "not irreducible"
-        
+
             sage: P = S.random_element(degree=10)
             sage: leftdiv = [ f for f in P.left_irreducible_divisors() ]   # indirect doctest
             sage: len(leftdiv) == P.count_irreducible_divisors()
@@ -401,7 +401,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             ....:     assert P.is_left_divisible_by(D), "not left divisible"
             ....:     assert D.is_irreducible(), "not irreducible"
         """
-        cdef SkewPolynomial_finite_field_dense NS, P, Q, R, P1, Q1, L, V, g, d 
+        cdef SkewPolynomial_finite_field_dense NS, P, Q, R, P1, Q1, L, V, g, d
         cdef Py_ssize_t i, m, degrandom
         if not self:
             return
@@ -697,8 +697,8 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
 
         .. NOTE::
 
-            One can prove that there are always as many left 
-            irreducible monic divisors as right irreducible 
+            One can prove that there are always as many left
+            irreducible monic divisors as right irreducible
             monic divisors.
 
         EXAMPLES::
@@ -936,7 +936,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
 
         INPUT:
 
-        - ``uniform`` -- a boolean (default: ``False``); whether the 
+        - ``uniform`` -- a boolean (default: ``False``); whether the
           output irreducible divisor should be uniformly distributed
           among all possibilities
 
@@ -966,7 +966,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: F.value() == a
             True
 
-        There is a priori no guarantee on the distribution of the 
+        There is a priori no guarantee on the distribution of the
         factorizations we get. Passing in the keyword ``uniform=True``
         ensures the output is uniformly distributed among all
         factorizations::
@@ -1077,9 +1077,9 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             ....:     assert F.value() == a, "factorization has a different value"
             ....:     for d,_ in F:
             ....:         assert d.is_irreducible(), "a factor is not irreducible"
-        
-        Note that the algorithm used in this method is probabilistic. 
-        As a consequence, if we call it two times with the same input, 
+
+        Note that the algorithm used in this method is probabilistic.
+        As a consequence, if we call it two times with the same input,
         we can get different orderings::
 
             sage: factorizations2 = [ F for F in a.factorizations() ]

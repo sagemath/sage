@@ -1674,17 +1674,17 @@ class NormalFormGame(SageObject, MutableMapping):
         if not self._is_complete():
             raise ValueError("utilities have not been populated")
 
-        from sage.features.lrs import Lrs
+        from sage.features.lrs import LrsNash
         if not algorithm:
             if self.is_constant_sum():
                 algorithm = "lp"
-            elif Lrs().is_present():
+            elif LrsNash().is_present():
                 algorithm = "lrs"
             else:
                 algorithm = "enumeration"
 
         if algorithm == "lrs":
-            Lrs().require()
+            LrsNash().require()
             return self._solve_lrs(maximization)
 
         if algorithm == "LCP":
@@ -2247,7 +2247,7 @@ class NormalFormGame(SageObject, MutableMapping):
             doctest:warning...
             DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
             creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://trac.sagemath.org/27745 for details.
+            See https://github.com/sagemath/sage/issues/27745 for details.
             H-representation
             linearity 1 5
             begin
@@ -2341,7 +2341,7 @@ class NormalFormGame(SageObject, MutableMapping):
             doctest:warning...
             DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
             creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://trac.sagemath.org/27745 for details.
+            See https://github.com/sagemath/sage/issues/27745 for details.
             sage: print('*game: player 1\n', legacy_format[0])
             *game: player 1
             H-representation
@@ -2743,8 +2743,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g._is_degenerate_pure()
             True
 
-            Whilst this game is not degenerate in pure strategies, it is
-            actually degenerate, but only in mixed strategies.
+        Whilst this game is not degenerate in pure strategies, it is
+        actually degenerate, but only in mixed strategies::
 
             sage: A = matrix([[3, 0], [0, 3], [1.5, 1.5]])
             sage: B = matrix([[4, 3], [2, 6], [3, 1]])

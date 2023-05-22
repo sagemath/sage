@@ -1220,7 +1220,7 @@ def units_mod_ideal(I):
         sage: I = k.ideal(5, a + 1)
         sage: units_mod_ideal(I)
         [1,
-        2*a^2 + 4*a - 1,
+        -2*a^2 - 4*a + 1,
         ...]
 
     ::

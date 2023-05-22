@@ -15,11 +15,13 @@ from . import ambient_space
 from sage.rings.integer_ring import ZZ
 from sage.sets.family import Family
 
+
 class AmbientSpace(ambient_space.AmbientSpace):
     """
     The lattice behind E6, E7, or E8.  The computations are based on Bourbaki,
     Groupes et Algèbres de Lie, Ch. 4,5,6 (planche V-VII).
     """
+
     def __init__(self, root_system, baseRing):
         """
         Create the ambient space for the root system for E6, E7, E8.
@@ -433,9 +435,9 @@ class AmbientSpace(ambient_space.AmbientSpace):
                             8: self.root(6,7)})
 
 
-
-
 from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_simply_laced
+
+
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simply_laced):
     def __init__(self, n):
         """
@@ -630,6 +632,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
         labels = [label(i) for i in [1,3,4,5,6] + list(range(7, self.n+1))] # We exclude 2 because of the special case
         ret = "        {} {}\n        |\n        |\n".format(node(label(2)), label(2))
         return ret + '---'.join(node(i) for i in labels) + '\n' + "".join("{!s:4}".format(i) for i in labels)
+
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override

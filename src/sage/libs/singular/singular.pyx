@@ -1705,14 +1705,7 @@ cdef object si2sa_intvec(intvec *v):
 cdef extern from *: # hack to get at cython macro
     int unlikely(int)
 
-cdef extern from "dlfcn.h":
-    void *dlopen(char *, long)
-    char *dlerror()
-    void dlclose(void *handle)
-
-cdef extern from "dlfcn.h":
-    cdef long RTLD_LAZY
-    cdef long RTLD_GLOBAL
+from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
 
 cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     """
@@ -1725,21 +1718,27 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     - ``_ring`` -- a pointer to some ring.
 
     Whether an overflow occurs or not partially depends
-    on the number of variables in the ring. See trac ticket
+
+    on the number of variables in the ring. See github issue
     :trac:`11856`. With Singular 4, it is by default optimized
     for at least 4 variables on 64-bit and 2 variables on 32-bit,
     which in both cases makes a maximal default exponent of
     2^16-1.
 
+
     EXAMPLES::
 
         sage: P.<x,y> = QQ[]
-        sage: y^(2^16-1)
-        y^65535
-        sage: y^2^16
+        sage: y^(2^30)
+        Traceback (most recent call last):             # 32-bit
+        ...                                            # 32-bit
+        OverflowError: exponent overflow (1073741824)  # 32-bit
+        y^1073741824  # 64-bit
+        sage: y^2^32
         Traceback (most recent call last):
         ...
-        OverflowError: exponent overflow (65536)
+        OverflowError: Python int too large to convert to C unsigned long  # 32-bit
+        OverflowError: exponent overflow (4294967296)  # 64-bit
     """
     if unlikely(e > _ring.bitmask):
         raise OverflowError("exponent overflow (%d)"%(e))
@@ -1762,8 +1761,6 @@ cdef init_libsingular():
 
     cdef void *handle = NULL
 
-    from sage.env import LIBSINGULAR_PATH
-    lib = str_to_bytes(LIBSINGULAR_PATH, FS_ENCODING, "surrogateescape")
 
     # This is a workaround for https://github.com/Singular/Singular/issues/1113
     # and can be removed once that fix makes it into release of Singular that
@@ -1780,10 +1777,12 @@ cdef init_libsingular():
 
     import platform
     if not platform.system().startswith("CYGWIN"):
+        # reload the current module to force reload of libSingular (see #33446)
+        lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
         handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
         if not handle:
             err = dlerror()
-            raise ImportError(f"cannot load Singular library from {LIBSINGULAR_PATH} ({err})")
+            raise RuntimeError(f"Could not reload Singular library with RTLD_GLOBAL ({err})")
 
     # load SINGULAR
     siInit(lib)

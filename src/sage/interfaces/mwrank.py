@@ -210,7 +210,7 @@ class Mwrank_class(Expect):
         """
         EXAMPLES::
 
-            sage: mwrank.__reduce__()
+            sage: Mwrank().__reduce__()
             (<function _reduce_load_mwrank at 0x...>, ())
         """
 

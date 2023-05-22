@@ -73,13 +73,13 @@ EXAMPLE:
     arb
     autotools
     [...]
-    zn_poly
+    zlib
 
     $ sage --package list :standard: | sort
     arb
     backports_ssl_match_hostname
     [...]
-    zn_poly
+    zlib
 """
 
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Creating Spaces of Modular Forms
+Creating spaces of modular forms
 
 EXAMPLES::
 

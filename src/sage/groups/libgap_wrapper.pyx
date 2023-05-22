@@ -26,7 +26,7 @@ Note how we call the constructor of both superclasses to initialize
 its output via LibGAP::
 
     sage: FooGroup()
-    <pc group of size 3 with 1 generators>
+    <pc group of size 3 with 1 generator>
     sage: type(FooGroup().gap())
     <class 'sage.libs.gap.element.GapElement'>
 
@@ -107,7 +107,7 @@ class ParentLibGAP(SageObject):
         ....:         ParentLibGAP.__init__(self, lg)
         ....:         Group.__init__(self)
         sage: FooGroup()
-        <pc group of size 3 with 1 generators>
+        <pc group of size 3 with 1 generator>
     """
 
     def __init__(self, libgap_parent, ambient=None):
@@ -462,7 +462,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
         ....:         ParentLibGAP.__init__(self, lg)
         ....:         Group.__init__(self)
         sage: FooGroup()
-        <pc group of size 3 with 1 generators>
+        <pc group of size 3 with 1 generator>
         sage: FooGroup().gens()
         (f1,)
     """
@@ -628,7 +628,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             True
         """
         P = (<ElementLibGAP> left)._parent
-        return P.element_class(P, (<ElementLibGAP> left)._libgap * \
+        return P.element_class(P, (<ElementLibGAP> left)._libgap *
                                   (<ElementLibGAP> right)._libgap)
 
     cpdef _richcmp_(left, right, int op):
@@ -670,7 +670,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             False
         """
         P = (<ElementLibGAP> left)._parent
-        return P.element_class(P, (<ElementLibGAP> left)._libgap / \
+        return P.element_class(P, (<ElementLibGAP> left)._libgap /
                                   (<ElementLibGAP> right)._libgap)
 
     def __pow__(self, n, dummy):

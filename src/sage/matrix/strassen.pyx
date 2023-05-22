@@ -556,7 +556,7 @@ class int_range:
         if indices is None:
             self._intervals = []
             return
-        elif not range is None:
+        elif range is not None:
             self._intervals = [(int(indices), int(range))]
         else:
             self._intervals = []

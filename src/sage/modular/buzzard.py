@@ -23,6 +23,7 @@ from sage.misc.sage_eval import sage_eval
 
 _gp = None
 
+
 def gp():
     r"""
     Return a copy of the GP interpreter with the appropriate files loaded.
@@ -41,32 +42,32 @@ def gp():
         _gp.read("Tpprog.g")
     return _gp
 
-## def buzzard_dimension_cusp_forms(eps, k):
-##     r"""
-##     eps is [N, i x 3 matrix], where eps[2][,1] is the primes dividing
-##     N, eps[2][,2] is the powers of these primes that divide N, and eps[2][,3]
-##     is the following: for p odd, p^n||N, it's t such that znprimroot(p^n)
-##     gets sent to exp(2*pi*i/phi(p^n))^t. And for p=2, it's
-##     0 for 2^1, it's 0 (trivial) or -1 (non-trivial) for 2^2, and for p^n>=8
-##     it's either t>=0 for the even char sending 5 to exp(2*pi*i/p^(n-2))^t,
-##     or t<=-1 for the odd char sending 5 to exp(2*pi*i/p^(n-2))^(-1-t).
-##     (so either 0<=t<2^(n-2) or -1>=t>-1-2^(n-2) )
+# def buzzard_dimension_cusp_forms(eps, k):
+#     r"""
+#     eps is [N, i x 3 matrix], where eps[2][,1] is the primes dividing
+#     N, eps[2][,2] is the powers of these primes that divide N, and eps[2][,3]
+#     is the following: for p odd, p^n||N, it's t such that znprimroot(p^n)
+#     gets sent to exp(2*pi*i/phi(p^n))^t. And for p=2, it's
+#     0 for 2^1, it's 0 (trivial) or -1 (non-trivial) for 2^2, and for p^n>=8
+#     it's either t>=0 for the even char sending 5 to exp(2*pi*i/p^(n-2))^t,
+#     or t<=-1 for the odd char sending 5 to exp(2*pi*i/p^(n-2))^(-1-t).
+#     (so either 0<=t<2^(n-2) or -1>=t>-1-2^(n-2) )
 
-##     EXAMPLES::
+#     EXAMPLES::
 
-##         sage: buzzard_dimension_cusp_forms('TrivialCharacter(100)', 4)
+#         sage: buzzard_dimension_cusp_forms('TrivialCharacter(100)', 4)
 
-##     Next we compute a dimension for the character of level 45 which is
-##     the product of the character of level 9 sending znprimroot(9)=2 to
-##     $e^{2 \pi i/6}^1$ and the character of level 5 sending
-##     \code{znprimroot(5)=2} to $e^{2 \pi i/4}^2=-1$.
+#     Next we compute a dimension for the character of level 45 which is
+#     the product of the character of level 9 sending znprimroot(9)=2 to
+#     $e^{2 \pi i/6}^1$ and the character of level 5 sending
+#     \code{znprimroot(5)=2} to $e^{2 \pi i/4}^2=-1$.
 
-##         sage: buzzard_dimension_cusp_forms('DirichletCharacter(45,[1,2])', 4)
-##         <boom!>  which is why this is commented out!
-##     """
-##     s = gp().eval('DimensionCuspForms(%s, %s)'%(eps,k))
-##     print(s)
-##     return Integer(s)
+#         sage: buzzard_dimension_cusp_forms('DirichletCharacter(45,[1,2])', 4)
+#         <boom!>  which is why this is commented out!
+#     """
+#     s = gp().eval('DimensionCuspForms(%s, %s)'%(eps,k))
+#     print(s)
+#     return Integer(s)
 
 
 def buzzard_tpslopes(p, N, kmax):

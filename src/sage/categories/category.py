@@ -153,7 +153,7 @@ class Category(UniqueRepresentation, SageObject):
 
     This is achieved as follows::
 
-        sage: from sage.categories.all import Category
+        sage: from sage.categories.category import Category
         sage: class EuclideanDomains(Category):
         ....:     # operations on the category itself
         ....:     def super_categories(self):
@@ -201,7 +201,7 @@ class Category(UniqueRepresentation, SageObject):
 
     ::
 
-        sage: from sage.categories.all import Category
+        sage: from sage.categories.category import Category
         sage: from sage.misc.lazy_attribute import lazy_attribute
         sage: class As (Category):
         ....:     def super_categories(self):
@@ -1470,7 +1470,6 @@ class Category(UniqueRepresentation, SageObject):
 
     _cmp_key = _cmp_key
 
-
     ##########################################################################
     # Construction of the associated abstract classes for parents, elements, ...
     ##########################################################################
@@ -1886,11 +1885,10 @@ class Category(UniqueRepresentation, SageObject):
             sage: Algebras(QQ)._is_subclass(ModulesWithBasis)
             False
         """
-        assert( isinstance(c, Category) or (issubclass(c.__class__, type) and issubclass(c, Category)) )
+        assert (isinstance(c, Category) or (issubclass(c.__class__, type) and issubclass(c, Category)))
         if isinstance(c, Category):
             return self.is_subcategory(c)
-        else:
-            return any(isinstance(cat, c) for cat in self._all_super_categories)
+        return any(isinstance(cat, c) for cat in self._all_super_categories)
 
     @cached_method
     def _meet_(self, other):
@@ -2818,7 +2816,6 @@ class CategoryWithParameters(Category):
         self._make_named_class_cache[key] = result
         return result
 
-
     @abstract_method
     def _make_named_class_key(self, name):
         r"""
@@ -2954,8 +2951,8 @@ class JoinCategory(CategoryWithParameters):
             sage: TestSuite(C).run()
 
         """
-        assert(len(super_categories) >= 2)
-        assert(all(not isinstance(category, JoinCategory) for category in super_categories))
+        assert len(super_categories) >= 2
+        assert all(not isinstance(category, JoinCategory) for category in super_categories)
         # Use __super_categories to not overwrite the lazy attribute Category._super_categories
         # Maybe this would not be needed if the flattening/sorting is does consistently?
         self.__super_categories = list(super_categories)

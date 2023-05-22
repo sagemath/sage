@@ -77,8 +77,9 @@ class SetSpeciesStructure(GenericSpeciesStructure):
             sage: a.automorphism_group()
             Symmetric group of order 3! as a permutation group
         """
-        from sage.groups.all import SymmetricGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         return SymmetricGroup(max(1,len(self._labels)))
+
 
 class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     @staticmethod

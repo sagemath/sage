@@ -224,7 +224,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
 
         .. NOTE::
 
-            It is possible to bypass the automatic parent mechanism using:
+            It is possible to bypass the automatic parent mechanism using::
 
                 sage: t1 = OrderedTree.__new__(OrderedTree, Parent(), [])
                 sage: t1.__init__(Parent(), [])
@@ -1013,6 +1013,7 @@ class OrderedTrees_size(OrderedTrees):
         sage: S.list()
         [[[], []], [[[]]]]
     """
+
     def __init__(self, size):
         """
         TESTS::
@@ -1091,7 +1092,7 @@ class OrderedTrees_size(OrderedTrees):
             sage: OrderedTrees(0).random_element()
             Traceback (most recent call last):
             ...
-            EmptySetError: There are no ordered trees of size 0
+            EmptySetError: there are no ordered trees of size 0
             sage: OrderedTrees(1).random_element()
             []
 
@@ -1101,7 +1102,7 @@ class OrderedTrees_size(OrderedTrees):
             True
         """
         if self._size == 0:
-            raise EmptySetError("There are no ordered trees of size 0")
+            raise EmptySetError("there are no ordered trees of size 0")
         return CompleteDyckWords_size(self._size - 1).random_element().to_ordered_tree()
 
     def __iter__(self):
@@ -1348,6 +1349,7 @@ class LabelledOrderedTrees(UniqueRepresentation, Parent):
         sage: y.parent() is LOT
         True
     """
+
     def __init__(self, category=None):
         """
         TESTS::

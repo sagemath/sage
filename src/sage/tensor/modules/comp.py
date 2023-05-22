@@ -973,7 +973,7 @@ class Components(SageObject):
                     #   self._comp[ind] = self._ring(value, format_type)
                     # is not allowed when ring is an algebra and value some
                     # element of the algebra's base ring, cf. the discussion at
-                    # http://trac.sagemath.org/ticket/16054
+                    # https://github.com/sagemath/sage/issues/16054
 
     def _set_list(self, ind_slice, format_type, values):
         r"""
@@ -1683,7 +1683,6 @@ class Components(SageObject):
         """
         return self + other
 
-
     def __sub__(self, other):
         r"""
         Component subtraction.
@@ -1757,7 +1756,6 @@ class Components(SageObject):
 
         """
         return (-self) + other
-
 
     def __mul__(self, other):
         r"""
@@ -1921,7 +1919,6 @@ class Components(SageObject):
                 for ind_o, val_o in other._comp.items():
                     result._comp[ind_s + ind_o] = val_s * val_o
         return result
-
 
     def __rmul__(self, other):
         r"""
@@ -2525,7 +2522,6 @@ class Components(SageObject):
         """
         for ind in self.index_generator():
             yield ind
-
 
     def symmetrize(self, *pos):
         r"""
@@ -3996,7 +3992,6 @@ class CompWithSym(Components):
                 result[[ind_res]] = res
             return result
 
-
     def non_redundant_index_generator(self):
         r"""
         Generator of indices, with only ordered indices in case of symmetries,
@@ -4351,7 +4346,7 @@ class CompWithSym(Components):
             if len(pos) < 2:
                 raise ValueError("at least two index positions must be given")
             if len(pos) > self._nid:
-                raise ValueError("number of index positions larger than the " \
+                raise ValueError("number of index positions larger than the "
                                  "total number of indices")
             pos = tuple(pos)
         pos_set = set(pos)
@@ -4438,7 +4433,6 @@ class CompWithSym(Components):
                 sum += self[[ind_perm]]
             result[[ind]] = sum / sym_group.order()
         return result
-
 
     def antisymmetrize(self, *pos):
         r"""
@@ -4613,7 +4607,7 @@ class CompWithSym(Components):
             if len(pos) < 2:
                 raise ValueError("at least two index positions must be given")
             if len(pos) > self._nid:
-                raise ValueError("number of index positions larger than the " \
+                raise ValueError("number of index positions larger than the "
                                  "total number of indices")
             pos = tuple(pos)
         pos_set = set(pos)
@@ -5339,7 +5333,6 @@ class CompFullyAntiSym(CompWithSym):
         """
         return CompFullyAntiSym(self._ring, self._frame, self._nid, self._sindex,
                                 self._output_formatter)
-
 
     def __add__(self, other):
         r"""

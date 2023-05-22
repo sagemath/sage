@@ -114,7 +114,7 @@ cimport cython
 from cpython.slice cimport PySlice_GetIndicesEx
 
 from sage.structure.sequence import Sequence
-from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
+from sage.structure.element cimport Element, RingElement, Vector
 from sage.structure.element import canonical_coercion
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp, rich_to_bool
 
@@ -899,7 +899,7 @@ def random_vector(ring, degree=None, *args, **kwds):
         ValueError: degree of a random vector must be non-negative, not -9
     """
     if isinstance(ring, (Integer, int)):
-        if not degree is None:
+        if degree is not None:
             arglist = list(args)
             arglist.insert(0, degree)
             args = tuple(arglist)
@@ -1602,7 +1602,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             if isinstance(ord, AnInfinity):
                 return ord
             v.append(ord)
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         return lcm(v)
 
     def items(self):
@@ -4381,7 +4381,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: w.pairwise_product(v)
             (2*x^2, x^3, 3*x^2 + 9*x)
         """
-        if not right._parent is left._parent:
+        if right._parent is not left._parent:
             right = left.parent().ambient_module()(right)
         cdef list a = left._entries
         cdef list b = (<FreeModuleElement_generic_dense>right)._entries

@@ -1,5 +1,5 @@
 r"""
-Testing Arithmetic subgroup
+Testing arithmetic subgroup
 """
 ################################################################################
 #

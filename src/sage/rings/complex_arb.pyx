@@ -145,7 +145,7 @@ Classes and Methods
 import operator
 import sys
 import warnings
-from cysignals.signals cimport sig_on, sig_str, sig_off, sig_error
+from cysignals.signals cimport sig_on, sig_str, sig_off, sig_error, sig_block, sig_unblock
 
 import sage.categories.fields
 
@@ -284,27 +284,27 @@ cdef int acb_calc_func_callback(acb_ptr out, const acb_t inp, void * param,
     """
     cdef IntegrationContext ctx
     cdef ComplexBall x
-    sig_off()
+    sig_block()
     try:
         ctx = <IntegrationContext>param
         if ctx.exn_type is not None or order >= 2:
             acb_indeterminate(out)
             return 0
-        x = ComplexBall.__new__(ComplexBall)
-        assert prec == ctx.parent._prec
-        x._parent = ctx.parent
-        acb_set(x.value, inp)
         try:
+            x = ComplexBall.__new__(ComplexBall)
+            assert prec == ctx.parent._prec
+            x._parent = ctx.parent
+            acb_set(x.value, inp)
             y = ctx.f(x, (order == 1))
             if not isinstance(y, ComplexBall):
                 y = ctx.parent.coerce(y)
             acb_set(out, (<ComplexBall> y).value)
-        except Exception:
+        except BaseException:
             ctx.exn_type, ctx.exn_obj, ctx.exn_tb = sys.exc_info()
             acb_indeterminate(out)
         return 0
     finally:
-        sig_on()
+        sig_unblock()
 
 
 class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
@@ -1175,6 +1175,14 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
             sage: ComplexBallField(100).integral(lambda x, _: sin(x), RBF(0), RBF(1))
             [0.4596976941318602825990633926 +/- ...e-29]
+
+            sage: from cysignals.alarm import alarm
+            sage: alarm(0.1r)
+            sage: C = ComplexBallField(1000000)
+            sage: C.integral(lambda x, _: x.cos() * x.sin(), 0, 1)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
         """
         cdef IntegrationContext ctx = IntegrationContext()
         cdef acb_calc_integrate_opt_t arb_opts

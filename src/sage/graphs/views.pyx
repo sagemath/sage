@@ -9,7 +9,7 @@ through a view. Views can be iterated multiple times.
 .. TODO::
 
     - View of neighborhood to get open/close neighborhood of a vertex/set of
-      vertices, and also the vertex boundary
+      vertices
 
 Classes
 -------
@@ -47,6 +47,16 @@ cdef class EdgesView:
     - ``vertices`` -- list (default: ``None``); an iterable container of
       vertices or ``None``. When set, consider only edges incident to specified
       vertices.
+
+    - ``vertices2`` -- list (default: ``None``); an iterable container of
+      vertices or ``None``. When set, consider only edges incident to specified
+      vertices. More precisely:
+
+      - When both ``vertices`` and ``vertices2`` are set, consider only edges
+        ``(u, v, l)`` with ``u`` in ``vertices`` and ``v`` in ``vertices2``.
+
+      - When ``vertices`` is ``None`` and ``vertices2`` is set, consider only
+        edges ``(u, v, l)`` with ``v`` in ``vertices2``.
 
     - ``labels`` -- boolean (default: ``True``); if ``False``, each edge is
       simply a pair ``(u, v)`` of vertices
@@ -202,6 +212,37 @@ cdef class EdgesView:
         sage: G.has_edge(1, 0)
         False
 
+    We can consider only the edges between two specifed sets of vertices::
+
+        sage: G = Graph([(0, 1), (1, 2)])
+        sage: E = EdgesView(G, vertices=[0], vertices2=[1], labels=False)
+        sage: (0, 1) in E and (1, 2) not in E
+        True
+        sage: E = EdgesView(G, vertices=[0], labels=False)
+        sage: (0, 1) in E and (1, 2) not in E
+        True
+        sage: E = EdgesView(G, vertices2=[1], labels=False)
+        sage: (0, 1) in E and (1, 2) in E
+        True
+        sage: D = DiGraph([(0, 1), (1, 2)])
+        sage: E = EdgesView(D, vertices=[0], vertices2=[1], labels=False)
+        sage: (0, 1) in E and (1, 2) not in E
+        True
+        sage: EdgesView(D, vertices=[1], vertices2=[0], labels=False)
+        []
+        sage: E = EdgesView(D, vertices=[1], vertices2=[0], labels=False, ignore_direction=True)
+        sage: (0, 1) in E and (1, 2) not in E
+        True
+        sage: E = EdgesView(D, vertices=[0], labels=False)
+        sage: (0, 1) in E and (1, 2) not in E
+        True
+        sage: E = EdgesView(D, vertices2=[1], labels=False)
+        sage: (0, 1) in E and (1, 2) not in E
+        True
+        sage: E = EdgesView(D, vertices2=[1], labels=False, ignore_direction=True)
+        sage: (0, 1) in E and (1, 2) in E
+        True
+
     A view is updated as the graph is updated::
 
         sage: G = Graph()
@@ -299,13 +340,16 @@ cdef class EdgesView:
     cdef readonly GenericGraph_pyx _graph
     cdef list _vertices
     cdef frozenset _vertex_set
+    cdef list _vertices2
+    cdef frozenset _vertex_set2
     cdef readonly bint _labels
     cdef readonly bint _ignore_direction
     cdef bint _sort_vertices
     cdef bint _sort_edges
     cdef _sort_edges_key
 
-    def __init__(self, G, vertices=None, labels=True, ignore_direction=False,
+    def __init__(self, G, vertices=None, vertices2=None, labels=True,
+                 ignore_direction=False,
                  sort=None, key=None, sort_vertices=True):
         """
         Construction of this :class:`EdgesView`.
@@ -332,6 +376,13 @@ cdef class EdgesView:
         else:
             self._vertices = list(vertices)
             self._vertex_set = frozenset(self._vertices)
+
+        if vertices2 is None:
+            self._vertices2 = None
+            self._vertex_set2 = None
+        else:
+            self._vertices2 = list(vertices2)
+            self._vertex_set2 = frozenset(self._vertices2)
 
         # None and 0 are interpreted as False, 1 as True
         self._labels = labels
@@ -365,7 +416,7 @@ cdef class EdgesView:
             sage: len(EdgesView(G, ignore_direction=True, sort=False))
             8
         """
-        if self._vertices is self._graph:
+        if self._vertices is None and self._vertices2 is None:
             if self._graph._directed and self._ignore_direction:
                 return 2 * self._graph.size()
             return self._graph.size()
@@ -388,7 +439,7 @@ cdef class EdgesView:
         """
         return "[%s]" % ', '.join(map(repr, self))
 
-    def _iter_unsorted(self, vertices):
+    def _iter_unsorted(self):
         """
         Iterator over the unsorted edges in ``self``.
 
@@ -400,15 +451,40 @@ cdef class EdgesView:
             sage: list(E)
             [(0, 1), (0, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
         """
-        if self._graph._directed:
-            yield from self._graph._backend.iterator_out_edges(vertices, self._labels)
-            if self._ignore_direction:
-                yield from self._graph._backend.iterator_in_edges(vertices, self._labels)
+        if self._vertices is None:
+            vertices = self._graph
+            vertex_set = self._graph
         else:
-            if self._sort_vertices:
+            vertices = self._vertices
+            vertex_set = self._vertex_set
+
+        if self._vertices2 is None:
+            if self._graph._directed:
+                yield from self._graph._backend.iterator_out_edges(vertices, self._labels)
+                if self._ignore_direction:
+                    yield from self._graph._backend.iterator_in_edges(vertices, self._labels)
+            elif self._sort_vertices:
                 yield from self._graph._backend.iterator_edges(vertices, self._labels)
             else:
                 yield from self._graph._backend.iterator_unsorted_edges(vertices, self._labels)
+        elif self._graph._directed:
+            for e in self._graph._backend.iterator_out_edges(vertices, self._labels):
+                if e[1] in self._vertex_set2:
+                    yield e
+            if self._ignore_direction:
+                for e in self._graph._backend.iterator_in_edges(vertices, self._labels):
+                    if e[0] in self._vertex_set2:
+                        yield e
+        elif self._sort_vertices:
+            for e in self._graph._backend.iterator_edges(vertices, self._labels):
+                if ((e[0] in vertex_set and e[1] in self._vertex_set2) or
+                        (e[1] in vertex_set and e[0] in self._vertex_set2)):
+                    yield e
+        else:
+            for e in self._graph._backend.iterator_unsorted_edges(vertices, self._labels):
+                if ((e[0] in vertex_set and e[1] in self._vertex_set2) or
+                        (e[1] in vertex_set and e[0] in self._vertex_set2)):
+                    yield e
 
     def __iter__(self):
         """
@@ -427,18 +503,14 @@ cdef class EdgesView:
             sage: sum(1 for e in E for ee in E) == G.size() * G.size()
             True
         """
-        if self._vertices is None:
-            vertices = self._graph
-        else:
-            vertices = self._vertices
         if self._sort_edges:
-            yield from sorted(self._iter_unsorted(vertices), key=self._sort_edges_key)
+            yield from sorted(self._iter_unsorted(), key=self._sort_edges_key)
         else:
-            yield from self._iter_unsorted(vertices)
+            yield from self._iter_unsorted()
 
     def __bool__(self):
         """
-        Check whether ``self`` is empty.
+        Check whether ``self`` is not empty.
 
         EXAMPLES::
 
@@ -450,19 +522,8 @@ cdef class EdgesView:
             sage: bool(E)
             True
         """
-        if self._vertices is None:
-            vertices = self._graph
-        else:
-            vertices = self._vertices
-        if self._graph._directed:
-            for _ in self._graph._backend.iterator_out_edges(vertices, False):
-                return True
-            if self._ignore_direction:
-                for _ in self._graph._backend.iterator_in_edges(vertices, False):
-                    return True
-        else:
-            for _ in self._graph._backend.iterator_edges(vertices, False):
-                return True
+        for _ in self._iter_unsorted():
+            return True
         return False
 
     def __eq__(self, right):
@@ -563,6 +624,16 @@ cdef class EdgesView:
             False
             sage: (0, 1, None) in E
             True
+            sage: G = Graph([(0, 1), (1, 2)])
+            sage: E = EdgesView(G, vertices=[0], vertices2=[1], labels=False)
+            sage: (0, 1) in E and (1, 2) not in E
+            True
+            sage: E = EdgesView(G, vertices=[0], labels=False)
+            sage: (0, 1) in E and (1, 2) not in E
+            True
+            sage: E = EdgesView(G, vertices2=[1], labels=False)
+            sage: (0, 1) in E and (1, 2) in E
+            True
         """
         if self._labels:
             try:
@@ -575,13 +646,28 @@ cdef class EdgesView:
             except Exception:
                 return False
             label = None
-        if (self._vertex_set is not None
-                and u not in self._vertex_set and v not in self._vertex_set):
-            return False
-        if self._graph._directed and self._ignore_direction:
-            return (self._graph._backend.has_edge(u, v, label)
-                    or self._graph._backend.has_edge(v, u, label))
-        return self._graph._backend.has_edge(u, v, label)
+        if self._vertices2 is None:
+            if (self._vertex_set is not None
+                    and u not in self._vertex_set and v not in self._vertex_set):
+                return False
+            if self._graph._directed and self._ignore_direction:
+                return (self._graph._backend.has_edge(u, v, label)
+                        or self._graph._backend.has_edge(v, u, label))
+            return self._graph._backend.has_edge(u, v, label)
+        else:
+            if u not in self._vertex_set2 and v not in self._vertex_set2:
+                return False
+            if (self._vertex_set is not None
+                    and u not in self._vertex_set and v not in self._vertex_set):
+                return False
+            if self._graph._directed:
+                if self._ignore_direction:
+                    return (self._graph._backend.has_edge(u, v, label)
+                            or self._graph._backend.has_edge(v, u, label))
+                elif ((self._vertex_set is not None and u not in self._vertex_set)
+                          or v not in self._vertex_set2):
+                    return False
+            return self._graph._backend.has_edge(u, v, label)
 
     def __getitem__(self, i):
         r"""

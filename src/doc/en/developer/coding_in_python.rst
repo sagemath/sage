@@ -8,7 +8,7 @@ This chapter discusses some issues with, and advice for, coding in
 Sage.
 
 
-Python Language Standard
+Python language standard
 ========================
 
 Sage library code needs to be compatible with all versions of Python
@@ -26,17 +26,26 @@ doctests.
 Some key language and library features have been backported to Python 3.8
 using one of two mechanisms:
 
-- ``from __future__ import annotations`` (see
-  https://docs.python.org/3.7/library/__future__.html) modernizes type
-  annotations according to PEP 563 (Postponed evaluation of
-  annotations, see https://www.python.org/dev/peps/pep-0563).  All
-  Sage library code that uses type annotations should include this
-  ``__future__`` import and follow PEP 563.
+- ``from __future__ import annotations`` (see Python reference for
+  `__future__ <https://docs.python.org/3.8/library/__future__.html>`_)
+  modernizes type annotations according to `PEP 563
+  <https://www.python.org/dev/peps/pep-0563>`_ (Postponed evaluation
+  of annotations).  All Sage library code that uses type annotations
+  should include this ``__future__`` import and follow PEP 563.
 
-- The Sage distribution includes the backport packages ``importlib_metadata``
-  and ``importlib_resources``.
+- Backport packages
 
-Meta-ticket :trac:`29756` keeps track of newer Python features and serves
+  - `importlib_metadata <../reference/spkg/importlib_metadata>`_
+    (to be used in place of ``importlib.metadata``),
+  - `importlib_resources <../reference/spkg/importlib_resources>`_
+    (to be used in place of ``importlib.resources``),
+  - `typing_extensions <../reference/spkg/typing_extensions>`_
+    (to be used in place of ``typing``).
+
+  The Sage library declares these packages as dependencies and ensures that
+  versions that provide features of Python 3.11 are available.
+
+Meta :issue:`29756` keeps track of newer Python features and serves
 as a starting point for discussions on how to make use of them in the
 Sage library.
 
@@ -55,7 +64,7 @@ scratch. Try to figure out how your code should fit in with other Sage
 code, and design it accordingly.
 
 
-Special Sage Functions
+Special sage functions
 ======================
 
 Functions with leading and trailing double underscores ``__XXX__`` are
@@ -148,7 +157,7 @@ representing the object ``a``. Calling ``view(a)`` will display the
 typeset version of this.
 
 
-Print Representation
+Print representation
 --------------------
 
 The standard Python printing method is ``__repr__(self)``. In Sage,
@@ -184,7 +193,7 @@ Here is an example of the ``_latex_`` and ``_repr_`` functions for the
             return "\\pi"
 
 
-Matrix or Vector from Object
+Matrix or vector from object
 ----------------------------
 
 Provide a ``_matrix_`` method for an object that can be coerced to a
@@ -223,7 +232,7 @@ will work for this object. The following is from the file
 
 .. _section-preparsing:
 
-Sage Preparsing
+Sage preparsing
 ===============
 
 To make Python even more usable interactively, there are a number of
@@ -298,7 +307,7 @@ In particular, the file ``preparse.py`` contains the Sage preparser
 code.
 
 
-The Sage Coercion Model
+The Sage coercion model
 =======================
 
 The primary goal of coercion is to be able to transparently do
@@ -337,7 +346,7 @@ immutable later. See the file
 ``SAGE_ROOT/src/sage/structure/mutability.py``.
 
 
-The  __hash__ Special Method
+The  __hash__ special method
 ============================
 
 Here is the definition of ``__hash__`` from the Python reference
@@ -465,7 +474,7 @@ Note that the syntax in ``except`` is to list all the exceptions that
 are caught as a tuple, followed by an error message.
 
 
-Integer Return Values
+Integer return values
 =====================
 
 Many functions and methods in Sage return integer values.
@@ -576,8 +585,6 @@ by
         return initialize_big_data()
 
 
-
-
 Deprecation
 ===========
 
@@ -590,7 +597,7 @@ in the future. We call this a *deprecation*.
     Deprecated code can only be removed one year after the first
     stable release in which it appeared.
 
-Each deprecation warning contains the number of the trac ticket that defines
+Each deprecation warning contains the number of the GitHub PR that defines
 it. We use 666 in the examples below. For each entry, consult the function's
 documentation for more information on its behaviour and optional arguments.
 
@@ -663,7 +670,7 @@ documentation for more information on its behaviour and optional arguments.
       deprecation(666, "Do not use your computer to compute 1+1. Use your brain.")
 
 
-Experimental/Unstable Code
+Experimental/unstable code
 --------------------------
 
 You can mark your newly created code (classes/functions/methods) as
@@ -711,7 +718,7 @@ reviewing process.
       experimental_warning(66666, 'This code is not foolproof.')
 
 
-Using Optional Packages
+Using optional packages
 =======================
 
 If a function requires an optional package, that function should fail

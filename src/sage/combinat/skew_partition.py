@@ -160,6 +160,7 @@ from sage.combinat.partition import Partitions, _Partitions
 from sage.combinat.tableau import Tableaux
 from sage.combinat.composition import Compositions
 
+
 class SkewPartition(CombinatorialElement):
     r"""
     A skew partition.
@@ -1274,6 +1275,64 @@ class SkewPartition(CombinatorialElement):
         """
         return self.outer().outside_corners()
 
+    def specht_module(self, base_ring=None):
+        r"""
+        Return the Specht module corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: mu = SkewPartition([[3,2,1], [2]])
+            sage: SM = mu.specht_module(QQ)
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
+            s[2, 1, 1] + s[2, 2] + s[3, 1]
+
+        We verify that the Frobenius image is the corresponding
+        skew Schur function::
+
+            sage: s[3,2,1].skew_by(s[2])
+            s[2, 1, 1] + s[2, 2] + s[3, 1]
+
+        ::
+
+            sage: mu = SkewPartition([[4,2,1], [2,1]])
+            sage: SM = mu.specht_module(QQ)
+            sage: s(SM.frobenius_image())
+            s[2, 1, 1] + s[2, 2] + 2*s[3, 1] + s[4]
+            sage: s(mu)
+            s[2, 1, 1] + s[2, 2] + 2*s[3, 1] + s[4]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, self.size())
+        return SpechtModule(R, self.cells())
+
+    def specht_module_dimension(self, base_ring=None):
+        r"""
+        Return the dimension of the Specht module corresponding to ``self``.
+
+        This is equal to the number of standard (skew) tableaux of
+        shape ``self``.
+
+        EXAMPLES::
+
+            sage: mu = SkewPartition([[3,2,1], [2]])
+            sage: mu.specht_module_dimension()
+            8
+            sage: mu.specht_module_dimension(GF(2))
+            8
+        """
+        from sage.categories.fields import Fields
+        if base_ring is None or (base_ring in Fields() and base_ring.characteristic() == 0):
+            from sage.combinat.skew_tableau import StandardSkewTableaux
+            return StandardSkewTableaux(self).cardinality()
+        from sage.combinat.specht_module import specht_module_rank
+        return specht_module_rank(self, base_ring)
+
+
 def row_lengths_aux(skp):
     """
     EXAMPLES::
@@ -1288,6 +1347,7 @@ def row_lengths_aux(skp):
         return []
     else:
         return [x[0] - x[1] for x in zip(skp[0], skp[1])]
+
 
 class SkewPartitions(UniqueRepresentation, Parent):
     """
@@ -1535,11 +1595,11 @@ class SkewPartitions(UniqueRepresentation, Parent):
             sage: S.from_row_and_column_length([1,2],[1,3])
             Traceback (most recent call last):
             ...
-            ValueError: Sum mismatch : [1, 2] and [1, 3]
+            ValueError: sum mismatch: [1, 2] and [1, 3]
             sage: S.from_row_and_column_length([3,2,1,2],[2,3,1,1,1])
             Traceback (most recent call last):
             ...
-            ValueError: Incompatible row and column length : [3, 2, 1, 2] and [2, 3, 1, 1, 1]
+            ValueError: incompatible row and column length : [3, 2, 1, 2] and [2, 3, 1, 1, 1]
 
         .. WARNING::
 
@@ -1562,14 +1622,14 @@ class SkewPartitions(UniqueRepresentation, Parent):
         TESTS::
 
             sage: all(SkewPartitions().from_row_and_column_length(p.row_lengths(), p.column_lengths()) == p
-            ....:       for i in range(8) for p in SkewPartitions(i))
+            ....:       for i in range(7) for p in SkewPartitions(i))
             True
         """
         if sum(rowL) != sum(colL):
-            raise ValueError("Sum mismatch : %s and %s"%(rowL, colL))
-        if not all(i>0 for i in rowL) or not all(i>0 for i in colL):
+            raise ValueError(f"sum mismatch: {rowL} and {colL}")
+        if not all(i > 0 for i in rowL) or not all(i > 0 for i in colL):
             raise ValueError("row and column length must be positive")
-        if rowL == []:
+        if not rowL:
             return self.element_class(self, [[], []])
         colL_new = colL[:]
         resIn = []
@@ -1578,14 +1638,14 @@ class SkewPartitions(UniqueRepresentation, Parent):
         for row in rowL:
             inP = len(colL_new) - row
             if inP < 0 or inP > inPOld:
-                raise ValueError("Incompatible row and column length : %s and %s"%(rowL, colL))
+                raise ValueError("incompatible row and column length : %s and %s" % (rowL, colL))
             inPOld = inP
             resIn.append(inP)
             resOut.append(len(colL_new))
             for iCol in range(inP, len(colL_new)):
                 colL_new[iCol] -= 1
                 if colL_new[iCol] < 0:
-                    raise ValueError("Incompatible row and column length : %s and %s"%(rowL, colL))
+                    raise ValueError("incompatible row and column length : %s and %s" % (rowL, colL))
             while colL_new and colL_new[-1] == 0:
                 colL_new.pop()
         return self.element_class(self, [resOut, [x for x in resIn if x]])
@@ -1595,6 +1655,7 @@ class SkewPartitions_all(SkewPartitions):
     """
     Class of all skew partitions.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -1871,6 +1932,8 @@ class SkewPartitions_n(SkewPartitions):
 ######################################
 # Skew Partitions (from row lengths) #
 ######################################
+
+
 class SkewPartitions_rowlengths(SkewPartitions):
     """
     All skew partitions with given row lengths.
@@ -1987,6 +2050,6 @@ class SkewPartitions_rowlengths(SkewPartitions):
             for sp in self._from_row_lengths_aux(sskp, self.co[-2], self.co[-1], self.overlap):
                 yield self.element_class(self, sp)
 
+
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.skew_partition', 'SkewPartition_class', SkewPartition)
-

@@ -371,7 +371,7 @@ class Giac(Expect):
         """
         EXAMPLES::
 
-            sage: giac.__reduce__()
+            sage: Giac().__reduce__()
             (<function reduce_load_Giac at 0x...>, ())
             sage: f, args = _
             sage: f(*args)

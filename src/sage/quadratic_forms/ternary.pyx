@@ -12,26 +12,24 @@ Helper code for ternary quadratic forms
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.integer_ring import ZZ
+from sage.arith.misc import gcd, inverse_mod, xgcd
 from sage.matrix.constructor import matrix, identity_matrix, diagonal_matrix
+from sage.misc.prandom import randint
 from sage.modules.free_module_element import vector
-from sage.arith.all import inverse_mod, xgcd, gcd
 from sage.quadratic_forms.extras import extend_to_primitive
 from sage.rings.finite_rings.integer_mod import mod
-from sage.misc.prandom import randint
+from sage.rings.integer_ring import ZZ
 
 
 def red_mfact(a,b):
     """
-    Auxiliary function for reduction that finds the reduction factor of a, b integers.
+    Auxiliary function for reduction that finds the reduction factor of integers `a`, `b`.
 
     INPUT:
 
-        - a, b integers
+    - ``a``, ``b`` -- integers
 
-    OUTPUT:
-
-        Integer
+    OUTPUT: Integer
 
     EXAMPLES::
 
@@ -40,7 +38,6 @@ def red_mfact(a,b):
         0
         sage: red_mfact(-5, 100)
         9
-
     """
 
     if a:
@@ -422,7 +419,7 @@ def _reduced_ternary_form_eisenstein_without_matrix(a1, a2, a3, a23, a13, a12):
 
 def primitivize(long long v0, long long v1, long long v2, p):
     """
-    Given a 3-tuple v not singular mod p, it returns a primitive 3-tuple version of v mod p.
+    Given a 3-tuple `v` not singular mod `p`, return a primitive 3-tuple version of `v` mod `p`.
 
     EXAMPLES::
 
@@ -431,7 +428,6 @@ def primitivize(long long v0, long long v1, long long v2, p):
         (3, 2, 1)
         sage: primitivize(12, 13, 15, 5)
         (4, 1, 0)
-
     """
 
     if v2%p != 0:
@@ -444,7 +440,7 @@ def primitivize(long long v0, long long v1, long long v2, p):
 
 def evaluate(a, b, c, r, s, t, v):
     """
-    Function to evaluate the ternary quadratic form (a, b, c, r, s, t) in a 3-tuple v.
+    Function to evaluate the ternary quadratic form `(a, b, c, r, s, t)` in a 3-tuple `v`.
 
     EXAMPLES::
 
@@ -455,7 +451,6 @@ def evaluate(a, b, c, r, s, t, v):
         1105
         sage: evaluate(1, 2, 3, -1, 0, 0, v)
         1105
-
     """
 
     return a*v[0]**2+b*v[1]**2+c*v[2]**2+r*v[2]*v[1]+s*v[2]*v[0]+t*v[1]*v[0]
@@ -497,18 +492,18 @@ def _find_zeros_mod_p_2(a, b, c, r, s, t):
 
 def pseudorandom_primitive_zero_mod_p(a, b, c, r, s, t, p):
     """
-    Find a zero of the form (a, b, 1) of the ternary quadratic form given by the coefficients (a, b, c, r, s, t)
-    mod p, where p is a odd prime that doesn't divide the discriminant.
+    Find a zero of the form `(a, b, 1)` of the ternary quadratic form given by the coefficients `(a, b, c, r, s, t)`
+    mod `p`, where `p` is a odd prime that doesn't divide the discriminant.
 
     EXAMPLES::
 
         sage: Q = TernaryQF([1, 2, 2, -1, 0, 0])
         sage: p = 1009
         sage: from sage.quadratic_forms.ternary import pseudorandom_primitive_zero_mod_p
-        sage: v = pseudorandom_primitive_zero_mod_p(1, 2, 2, -1, 0, 0, p)
-        sage: v[2]
+        sage: v = pseudorandom_primitive_zero_mod_p(1, 2, 2, -1, 0, 0, p)               # optional - sage.libs.pari
+        sage: v[2]                                                                      # optional - sage.libs.pari
         1
-        sage: Q(v)%p
+        sage: Q(v)%p                                                                    # optional - sage.libs.pari
         0
 
     """
@@ -532,9 +527,9 @@ def pseudorandom_primitive_zero_mod_p(a, b, c, r, s, t, p):
 
 def _find_zeros_mod_p_odd(long long a, long long b, long long c, long long r, long long s, long long t, long long p, v):
     """
-    Find the zeros mod p, where p is an odd prime, of a ternary quadratic form given by its coefficients and a given zero of the form v.
+    Find the zeros mod `p`, where `p` is an odd prime, of a ternary quadratic form given by its coefficients and a given zero of the form `v`.
 
-    The prime p does not divide the discriminant of the form.
+    The prime `p` does not divide the discriminant of the form.
 
     EXAMPLES::
 
@@ -605,7 +600,7 @@ def _find_zeros_mod_p(a, b, c, r, s, t, p):
     """
     Find the zeros mod `p` of the ternary quadratic form.
 
-    The quadratic form is given by the coefficients (a, b, c, r, s, t),
+    The quadratic form is given by the coefficients `(a, b, c, r, s, t)`,
     and `p` is a prime that does not divide the discriminant of the form.
 
     EXAMPLES::
@@ -613,16 +608,16 @@ def _find_zeros_mod_p(a, b, c, r, s, t, p):
         sage: from sage.quadratic_forms.ternary import _find_zeros_mod_p
         sage: Q = TernaryQF([1, 2, 2, -1, 0, 0])
         sage: p = 1009
-        sage: zeros_1009 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, p)
-        sage: len(zeros_1009)
+        sage: zeros_1009 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, p)                      # optional - sage.libs.pari
+        sage: len(zeros_1009)                                                           # optional - sage.libs.pari
         1010
-        sage: zeros_1009.sort()
-        sage: zeros_1009[0]
+        sage: zeros_1009.sort()                                                         # optional - sage.libs.pari
+        sage: zeros_1009[0]                                                             # optional - sage.libs.pari
         (0, 32, 1)
         sage: Q((0, 32, 1))
         2018
-        sage: zeros_2 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, 2)
-        sage: zeros_2
+        sage: zeros_2 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, 2)                         # optional - sage.libs.pari
+        sage: zeros_2                                                                   # optional - sage.libs.pari
         [(0, 1, 0), (0, 0, 1), (1, 1, 1)]
 
     """
@@ -919,7 +914,7 @@ def _find_a_ternary_qf_by_level_disc(long long N, long long d):
 
 def extend(v):
     """
-    Return the coefficients of a matrix M such that M has determinant gcd(v) and the first column is v.
+    Return the coefficients of a matrix `M` such that `M` has determinant gcd(`v`) and the first column is `v`.
 
     EXAMPLES::
 
@@ -975,9 +970,9 @@ def _find_p_neighbor_from_vec(a, b, c, r, s, t, p, v, mat = False):
         sage: Q.disc()
         29
         sage: v = (9, 7, 1)
-        sage: v in Q.find_zeros_mod_p(11)
+        sage: v in Q.find_zeros_mod_p(11)                                               # optional - sage.libs.pari
         True
-        sage: q11, M = _find_p_neighbor_from_vec(1, 3, 3, -2, 0, -1, 11, v, mat = True)
+        sage: q11, M = _find_p_neighbor_from_vec(1, 3, 3, -2, 0, -1, 11, v, mat=True)
         sage: Q11 = TernaryQF(q11)
         sage: Q11
         Ternary quadratic form with integer coefficients:

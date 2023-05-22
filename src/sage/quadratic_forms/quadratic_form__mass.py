@@ -50,13 +50,14 @@ def shimura_mass__maximal(self):
     pass
 
 
-
 def GHY_mass__maximal(self):
     """
     Use the GHY formula to compute the mass of a (maximal?) quadratic
     lattice. This works for any number field.
 
-    Reference:  See [GHY, Prop 7.4 and 7.5, p121] and [GY, Thrm 10.20, p25].
+    REFERENCES:
+
+    See [GHY, Prop 7.4 and 7.5, p121] and [GY, Thrm 10.20, p25].
 
     OUTPUT:
 

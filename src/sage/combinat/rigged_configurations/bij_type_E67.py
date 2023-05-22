@@ -41,11 +41,13 @@ from sage.combinat.crystals.letters import CrystalOfLetters
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 
+
 class KRTToRCBijectionTypeE67(KRTToRCBijectionAbstract):
     r"""
     Specific implementation of the bijection from KR tableaux to rigged
     configurations for type `E_{6,7}^{(1)}`.
     """
+
     def next_state(self, val):
         r"""
         Build the next state for type `E_{6,7}^{(1)}`.
@@ -211,11 +213,13 @@ class KRTToRCBijectionTypeE67(KRTToRCBijectionAbstract):
         else:
             return endpoint7(r)
 
+
 class RCToKRTBijectionTypeE67(RCToKRTBijectionAbstract):
     r"""
     Specific implementation of the bijection from rigged configurations
     to tensor products of KR tableaux for type `E_{6,7}^{(1)}`.
     """
+
     def next_state(self, r):
         r"""
         Build the next state for type `E_{6,7}^{(1)}`.
@@ -321,6 +325,7 @@ class RCToKRTBijectionTypeE67(RCToKRTBijectionAbstract):
         else:
             return endpoint7(r)
 
+
 def endpoint6(r):
     """
     Return the endpoint for `B^{r,1}` in type `E_6^{(1)}`.
@@ -354,6 +359,7 @@ def endpoint6(r):
         return C((-2, 5))
     elif r == 6:
         return C((-1, 6))
+
 
 def endpoint7(r):
     """

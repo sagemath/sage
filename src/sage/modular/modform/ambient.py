@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Ambient Spaces of Modular Forms
+Ambient spaces of modular forms
 
 EXAMPLES:
 

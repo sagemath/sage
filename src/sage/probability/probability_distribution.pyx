@@ -29,18 +29,15 @@ REFERENCES:
     GNU gsl library, Random number distributions
     http://www.gnu.org/software/gsl/manual/html_node/Random-Number-Distributions.html
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004, 2005, 2006 Joshua Kantor <kantor.jm@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-import sys
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.libs.gsl.all cimport *
@@ -48,9 +45,9 @@ import sage.misc.prandom as random
 import sage.rings.real_double
 from sage.modules.free_module_element import vector
 
-#TODO: Add more distributions available in gsl
-#available but not currently wrapped are exponential, laplace, cauchy, landau, gamma,
-#gamma, beta logistic.
+# TODO: Add more distributions available in gsl
+# available but not currently wrapped are exponential, laplace, cauchy, landau, gamma,
+# gamma, beta logistic.
 
 cdef enum:
     uniform
@@ -307,11 +304,10 @@ cdef class SphericalDistribution(ProbabilityDistribution):
             sage: T.get_random_element()  # rel tol 4e-16
             (0.07961564104639995, -0.05237671627581255, 0.9954486572862178)
         """
-
         cdef int i
         v = [0]*self.dimension
         gsl_ran_dir_nd(self.r, self.dimension, self.vec)
-        for i from 0 <= i<self.dimension:
+        for i in range(self.dimension):
             v[i] = self.vec[i]
         return vector(sage.rings.real_double.RDF, v) #This could be made more efficient by directly constructing the vector, TODO.
 

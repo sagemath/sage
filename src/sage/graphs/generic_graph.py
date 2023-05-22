@@ -421,7 +421,7 @@ Methods
 #                     2018      Erik M. Bray <erik.bray@lri.fr>
 #                               Meghana M Reddy <mreddymeghana@gmail.com>
 #                     2019      Rajat Mittal <rajat.mttl@gmail.com>
-#                     2020      Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#                     2020      Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -615,6 +615,38 @@ class GenericGraph(GenericGraph_pyx):
 
         return self._backend.is_subgraph(other._backend, self, ignore_labels=not self.weighted())
 
+    def _use_labels_for_hash(self):
+        r"""
+        Helper method for method ``__hash__``.
+
+        This method checks whether parameter ``hash_labels`` has been specified
+        by the user. Otherwise, defaults to the value of parameter ``weigthed``.
+
+        TESTS::
+
+            sage: G = Graph()
+            sage: G._use_labels_for_hash()
+            False
+            sage: G = Graph(hash_labels=True)
+            sage: G._use_labels_for_hash()
+            True
+            sage: G = Graph(hash_labels=False)
+            sage: G._use_labels_for_hash()
+            False
+            sage: G = Graph(weighted=True)
+            sage: G._use_labels_for_hash()
+            True
+            sage: G = Graph(weighted=False)
+            sage: G._use_labels_for_hash()
+            False
+            sage: G = Graph(hash_labels=False, weighted=True)
+            sage: G._use_labels_for_hash()
+            False
+        """
+        if not hasattr(self, "_hash_labels") or self._hash_labels is None:
+            self._hash_labels = self.weighted()
+        return self._hash_labels
+
     @cached_method
     def __hash__(self):
         """
@@ -643,7 +675,7 @@ class GenericGraph(GenericGraph_pyx):
         Equality and hash do not depend on ordering of vertices. In other words,
         `G1 == G2` can be `True` even when
         `G1.vertices(sort=True) == G2.vertices(sort=True)` is
-        `False`. This is parts 1 and 2 of ticket :trac:`17086`. ::
+        `False`. This is parts 1 and 2 of issue :trac:`17086`. ::
 
             sage: import functools
             sage: @functools.total_ordering
@@ -676,7 +708,7 @@ class GenericGraph(GenericGraph_pyx):
             True
 
         Hash of unweighted graphs does not depend on edge labels. That is,
-        part 3 of ticket :trac:`17086` is fixed ::
+        part 3 of issue :trac:`17086` is fixed ::
 
             sage: G1 = Graph({0: {1: 'edge label A'}}, immutable=True)
             sage: G2 = Graph({0: {1: 'edge label B'}}, immutable=True)
@@ -685,9 +717,29 @@ class GenericGraph(GenericGraph_pyx):
             sage: G1.__hash__() == G2.__hash__()
             True
 
+        Make sure ``hash_labels`` parameter behaves as expected
+        (:trac:`33255`)::
+
+            sage: A = Graph([(1, 2, 1)], immutable=True)
+            sage: B = Graph([(1, 2, 33)], immutable=True)
+            sage: A.__hash__() == B.__hash__()
+            True
+            sage: A = Graph([(1, 2, 1)], immutable=True, hash_labels=True)
+            sage: B = Graph([(1, 2, 33)], immutable=True, hash_labels=True)
+            sage: A.__hash__() == B.__hash__()
+            False
+            sage: A = Graph([(1, 2, 1)], immutable=True, weighted=True)
+            sage: B = Graph([(1, 2, 33)], immutable=True, weighted=True)
+            sage: A.__hash__() == B.__hash__()
+            False
+            sage: A = Graph([(1, 2, 1)], immutable=True, hash_labels=False, weighted=True)
+            sage: B = Graph([(1, 2, 33)], immutable=True, hash_labels=False, weighted=True)
+            sage: A.__hash__() == B.__hash__()
+            True
         """
         if self.is_immutable():
-            edge_items = self.edge_iterator(labels=self._weighted)
+            use_labels = self._use_labels_for_hash()
+            edge_items = self.edge_iterator(labels=use_labels)
             if self.allows_multiple_edges():
                 from collections import Counter
                 edge_items = Counter(edge_items).items()
@@ -955,7 +1007,7 @@ class GenericGraph(GenericGraph_pyx):
 
     # Formats
 
-    def copy(self, weighted=None, data_structure=None, sparse=None, immutable=None):
+    def copy(self, weighted=None, data_structure=None, sparse=None, immutable=None, hash_labels=None):
         """
         Change the graph implementation
 
@@ -984,6 +1036,12 @@ class GenericGraph(GenericGraph_pyx):
           * ``immutable=False`` means that the created graph is mutable. When
             used to copy an immutable graph, the data structure used is
             ``"sparse"`` unless anything else is specified.
+
+        - ``hash_labels`` -- boolean (default: ``None``); whether to include
+          edge labels during hashing of the copy. This parameter defaults to
+          ``True`` if the graph is weighted. This parameter is ignored when
+          parameter ``immutable`` is not ``True``.
+          Beware that trying to hash unhashable labels will raise an error.
 
         .. NOTE::
 
@@ -1141,6 +1199,43 @@ class GenericGraph(GenericGraph_pyx):
             sage: G._immutable = True
             sage: G.copy()._backend
             <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+
+        Copying and changing ``hash_labels`` parameter::
+
+            sage: G = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=False)
+            sage: hash(G.copy(hash_labels=True, immutable=True)) == hash(G)
+            False
+            sage: hash(G.copy(hash_labels=False, immutable=True)) == hash(G)
+            True
+            sage: hash(G.copy(hash_labels=None, immutable=True)) == hash(G)
+            True
+            sage: G = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=True)
+            sage: hash(G.copy(hash_labels=True, immutable=True)) == hash(G)
+            True
+            sage: hash(G.copy(hash_labels=False, immutable=True)) == hash(G)
+            False
+            sage: hash(G.copy(hash_labels=None, immutable=True)) == hash(G)
+            True
+            sage: G1 = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=False)
+            sage: G2 = Graph({0: {1: 'edge label B'}}, immutable=True, hash_labels=False)
+            sage: hash(G1) == hash(G2)
+            True
+            sage: G1c = G1.copy(hash_labels=True, immutable=True)
+            sage: G2c = G2.copy(hash_labels=True, immutable=True)
+            sage: hash(G1c) == hash(G2c)
+            False
+            sage: G = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=False)
+            sage: H = G.copy(hash_labels=True)
+            sage: H.is_immutable()
+            False
+            sage: H._hash_labels
+            True
+            sage: I = H.copy(immutable=True)
+            sage: hash(G) == hash(I)
+            False
+            sage: G = Graph({0: {1: 'edge label A'}}, immutable=True, hash_labels=True)
+            sage: hash(G) == hash(I)
+            True
         """
         # Which data structure should be used ?
         if data_structure is not None:
@@ -1169,7 +1264,8 @@ class GenericGraph(GenericGraph_pyx):
         # Immutable copy of an immutable graph ? return self !
         # (if okay for weightedness)
         if (self.is_immutable() and
-                (weighted is None or self._weighted == weighted)):
+                (weighted is None or self._weighted == weighted) and
+                (hash_labels is None or self._hash_labels == hash_labels)):
             from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             if (isinstance(self._backend, StaticSparseBackend) and
                     (data_structure == 'static_sparse' or data_structure is None)):
@@ -1183,7 +1279,7 @@ class GenericGraph(GenericGraph_pyx):
                 data_structure = "sparse"
 
         G = self.__class__(self, name=self.name(), pos=copy(self._pos),
-                           weighted=weighted,
+                           weighted=weighted, hash_labels=hash_labels,
                            data_structure=data_structure)
 
         attributes_to_copy = ('_assoc', '_embedding')
@@ -1273,14 +1369,14 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = graphs.PetersenGraph()
             sage: filename = tmp_filename(ext=".pajek")
             sage: g.export_to_file(filename)
-            sage: import networkx
-            sage: G_networkx = networkx.read_pajek(filename)
-            sage: Graph(G_networkx).is_isomorphic(g)
+            sage: import networkx                                                       # optional - networkx
+            sage: G_networkx = networkx.read_pajek(filename)                            # optional - networkx
+            sage: Graph(G_networkx).is_isomorphic(g)                                    # optional - networkx
             True
             sage: filename = tmp_filename(ext=".edgelist")
             sage: g.export_to_file(filename, data=False)
-            sage: h = Graph(networkx.read_edgelist(filename))
-            sage: g.is_isomorphic(h)
+            sage: h = Graph(networkx.read_edgelist(filename))                           # optional - networkx
+            sage: g.is_isomorphic(h)                                                    # optional - networkx
             True
 
         TESTS::
@@ -4115,12 +4211,18 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = Graph({0:[], 1:[], 2:[], 3:[]}); g.is_eulerian()
             True
-        """
 
+        Issue :trac:`35168` is fixed::
+
+            sage: Graph([[0, 42, 'John'], [(42, 0)]]).is_eulerian()
+            False
+            sage: Graph([[0, 42, 'John'], [(42, 'John')]]).is_eulerian()
+            False
+        """
         # unconnected graph can still be Eulerian if all components
         # up to one doesn't contain any edge
         nontrivial_components = 0
-        for cc in self.connected_components():
+        for cc in self.connected_components(sort=False):
             if len(cc) > 1:
                 nontrivial_components += 1
             if nontrivial_components > 1:
@@ -5605,7 +5707,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.layout(layout='planar', external_face=(3,1))
             {0: [2, 1], 1: [0, 2], 2: [1, 1], 3: [1, 0]}
 
-        Choose the embedding:
+        Choose the embedding::
 
             sage: H = graphs.LadderGraph(4)
             sage: em = {0:[1,4], 4:[0,5], 1:[5,2,0], 5:[4,6,1], 2:[1,3,6], 6:[7,5,2], 3:[7,2], 7:[3,6]}
@@ -6356,7 +6458,7 @@ class GenericGraph(GenericGraph_pyx):
             ...
             ValueError: no embedding is provided and the graph is not planar
 
-        Ticket :trac:`22003` is fixed:
+        Issue :trac:`22003` is fixed::
 
             sage: Graph(1).num_faces()
             1
@@ -10859,7 +10961,7 @@ class GenericGraph(GenericGraph_pyx):
         TESTS:
 
         When ``vertices2`` is ``None``, then ``vertices2`` is the complement of
-        ``vertices1``. Corrected in ticket :trac:`20479`::
+        ``vertices1``. Corrected in issue :trac:`20479`::
 
             sage: P = graphs.PathGraph(3)
             sage: P.vertex_boundary([0, 1])
@@ -11253,7 +11355,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = graphs.HouseGraph()
             sage: G.vertices()
             doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-            See http://trac.sagemath.org/22349 for details.
+            See https://github.com/sagemath/sage/issues/22349 for details.
             [0, 1, 2, 3, 4]
         """
         if sort is None:
@@ -12369,7 +12471,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = graphs.HouseGraph()
             sage: G.edges(sort=None)
             doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-            See https://trac.sagemath.org/27408 for details.
+            See https://github.com/sagemath/sage/issues/27408 for details.
             [(0, 1, None), (0, 2, None), (1, 3, None), (2, 3, None), (2, 4, None), (3, 4, None)]
         """
         if sort is None:
@@ -12582,7 +12684,7 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: G = Graph({0: [0]}, loops=True)  # ticket 9581
+            sage: G = Graph({0: [0]}, loops=True)  # issue 9581
             sage: G.edges_incident(0)
             [(0, 0, None)]
         """
@@ -15496,7 +15598,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.girth()
             5
 
-        Ticket :trac:`12355`::
+        Issue :trac:`12355`::
 
             sage: H=Graph([(0, 1), (0, 3), (0, 4), (0, 5), (1, 2), (1, 3), (1, 4), (1, 6), (2, 5), (3, 4), (5, 6)])
             sage: H.girth()
@@ -18269,6 +18371,9 @@ class GenericGraph(GenericGraph_pyx):
             True
             sage: G.vertices(sort=True)
             [0, 1, 2, 3]
+            sage: G.add_clique({4})
+            sage: G.vertices(sort=True)
+            [0, 1, 2, 3, 4]
             sage: D = DiGraph(4, loops=True)
             sage: D.add_clique(range(4), loops=True)
             sage: D.is_clique(directed_clique=True, loops=True)
@@ -18281,6 +18386,7 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 self.add_edges(itertools.combinations_with_replacement(vertices, 2))
         else:
+            self.add_vertices(vertices)
             if self.is_directed():
                 self.add_edges(itertools.permutations(vertices, 2))
             else:
@@ -18658,8 +18764,8 @@ class GenericGraph(GenericGraph_pyx):
             raise TypeError('both arguments must be of the same class')
 
         multiedges = self.allows_multiple_edges() or other.allows_multiple_edges()
-        loops      = self.allows_loops()          or other.allows_loops()
-        weighted   = self.weighted()              and other.weighted()
+        loops = self.allows_loops()          or other.allows_loops()
+        weighted = self.weighted()              and other.weighted()
 
         if self._directed:
             from sage.graphs.digraph import DiGraph
@@ -20622,7 +20728,7 @@ class GenericGraph(GenericGraph_pyx):
              9: (0.47..., 0.15...)}
             sage: P = G.plot(save_pos=True, layout='spring')
 
-            The following illustrates the format of a position dictionary.
+        The following illustrates the format of a position dictionary::
 
             sage: G.get_pos() # currently random across platforms, see #9593
             {0: [1.17..., -0.855...],
@@ -20911,7 +21017,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         from . import graph_plot
         layout_options = {key: kwds[key] for key in kwds.keys() if key in graph_plot.layout_options}
-        kwds           = {key: kwds[key] for key in kwds.keys() if key not in graph_plot.layout_options}
+        kwds = {key: kwds[key] for key in kwds.keys() if key not in graph_plot.layout_options}
         if pos3d is None:
             pos3d = self.layout(dim=3, **layout_options)
 
@@ -20933,7 +21039,7 @@ class GenericGraph(GenericGraph_pyx):
                     vertex_colors = {(1, 0, 0) : list(self)}
 
             if color_by_label:
-                if edge_colors is  None:
+                if edge_colors is None:
                     # do the coloring
                     edge_colors = self._color_by_label(format=color_by_label)
             elif edge_colors is None:
@@ -20975,7 +21081,7 @@ class GenericGraph(GenericGraph_pyx):
                                             vertex_size=vertex_size, pos3d=pos3d, **kwds)
 
             if color_by_label:
-                if edge_colors is  None:
+                if edge_colors is None:
                     # do the coloring
                     edge_colors = self._color_by_label(format=color_by_label)
 
@@ -21077,9 +21183,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: A5 = AlternatingGroup(5); A5
             Alternating group of order 5!/2 as a permutation group
             sage: G = A5.cayley_graph()
-            sage: G.show3d(vertex_size=0.03, edge_size=0.01, edge_size2=0.02,
+            sage: G.show3d(vertex_size=0.03, edge_size=0.01, edge_size2=0.02,  # long time
             ....:          vertex_colors={(1,1,1): list(G)}, bgcolor=(0,0,0),
-            ....:          color_by_label=True, iterations=200)  # long time
+            ....:          color_by_label=True, iterations=200)
 
         Some :class:`~sage.plot.plot3d.tachyon.Tachyon` examples::
 
@@ -24043,6 +24149,7 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.connectivity import edge_connectivity
     from sage.graphs.connectivity import vertex_connectivity
     from sage.graphs.distances_all_pairs import szeged_index
+    from sage.graphs.domination import dominating_sets
     from sage.graphs.domination import dominating_set
     from sage.graphs.domination import greedy_dominating_set
     from sage.graphs.base.static_dense_graph import connected_subgraph_iterator

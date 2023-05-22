@@ -40,7 +40,7 @@ from copy import copy
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.qqbar import AA, QQbar
-from sage.arith.all import sort_complex_numbers_for_display
+from sage.arith.misc import sort_complex_numbers_for_display
 from sage.rings.polynomial.refine_root import refine_root
 
 
@@ -145,7 +145,6 @@ def intervals_disjoint(intvs):
     if not column_disjoint():
         return False
     return True
-
 
 
 def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):

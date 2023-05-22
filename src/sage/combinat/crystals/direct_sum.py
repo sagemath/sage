@@ -179,6 +179,7 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
         r"""
         A class for elements of direct sums of crystals.
         """
+
         def e(self, i):
             r"""
             Return the action of `e_i` on ``self``.

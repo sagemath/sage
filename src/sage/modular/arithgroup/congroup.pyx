@@ -1,5 +1,5 @@
 r"""
-Cython helper functions for congruence subgroups
+Helper functions for congruence subgroups
 
 This file contains optimized Cython implementations of a few functions related
 to the standard congruence subgroups `\Gamma_0, \Gamma_1, \Gamma_H`.  These

@@ -198,6 +198,9 @@ FriCAS does some limits right::
 
 import re
 import os
+
+import sage.interfaces.abc
+
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.interfaces.expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from sage.env import DOT_SAGE, LOCAL_IDENTIFIER
@@ -475,7 +478,6 @@ http://fricas.sourceforge.net.
 
         return ')read %s )quiet' % filename
 
-
     def _remote_tmpfile(self):
         """
         Return a remote tmpfile ending with ".input" used to buffer long
@@ -709,7 +711,7 @@ http://fricas.sourceforge.net.
         We test that strings are returned properly::
 
             sage: r = fricas.get_string('concat([concat(string(i)," ") for i in 0..299])')   # optional - fricas
-            sage: r == " ".join([str(i) for i in range(300)]) + ' '                          # optional - fricas
+            sage: r == " ".join(str(i) for i in range(300)) + ' '                          # optional - fricas
             True
 
             sage: fricas.get_string('concat([string(1) for i in 1..5])') == "1"*5            # optional - fricas
@@ -888,10 +890,10 @@ http://fricas.sourceforge.net.
         """
         EXAMPLES::
 
-            sage: fricas.__reduce__()                                           # optional - fricas
+            sage: FriCAS().__reduce__()
             (<function reduce_load_fricas at 0x...>, ())
-            sage: f, args = _                                                   # optional - fricas
-            sage: f(*args)                                                      # optional - fricas
+            sage: f, args = _
+            sage: f(*args)
             FriCAS
         """
         return reduce_load_fricas, tuple([])
@@ -995,7 +997,7 @@ http://fricas.sourceforge.net.
 
 
 @instancedoc
-class FriCASElement(ExpectElement):
+class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
     """
     Instances of this class represent objects in FriCAS.
 
@@ -1214,7 +1216,9 @@ class FriCASElement(ExpectElement):
             sage: fricas(0)._get_sage_type(m)                                   # optional - fricas
             Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Algebraic Field
         """
-        from sage.rings.all import QQbar, RDF, PolynomialRing
+        from sage.rings.qqbar import QQbar
+        from sage.rings.real_double import RDF
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.fraction_field import FractionField
         from sage.rings.finite_rings.integer_mod_ring import Integers
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -1727,7 +1731,8 @@ class FriCASElement(ExpectElement):
 
         ex, _ = FriCASElement._parse_and_eval(fricas_InputForm)
         # postprocessing of rootOf
-        from sage.rings.all import QQbar, PolynomialRing
+        from sage.rings.qqbar import QQbar
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         while rootOf:
             for var, poly in rootOf.items():
                 pvars = poly.variables()
@@ -2106,12 +2111,17 @@ def is_FriCASElement(x):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.fricas import is_FriCASElement               # optional - fricas
+        sage: from sage.interfaces.fricas import is_FriCASElement
+        sage: is_FriCASElement(2)
+        doctest:...: DeprecationWarning: the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
+        False
         sage: is_FriCASElement(fricas(2))                                       # optional - fricas
         True
-        sage: is_FriCASElement(2)                                               # optional - fricas
-        False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead")
+
     return isinstance(x, FriCASElement)
 
 
@@ -2120,13 +2130,12 @@ fricas = FriCAS()
 
 def reduce_load_fricas():
     """
-    Return the FriCAS interface object defined in
-    :sage.interfaces.fricas.
+    Return the FriCAS interface object defined in :mod:`sage.interfaces.fricas`.
 
     EXAMPLES::
 
-        sage: from sage.interfaces.fricas import reduce_load_fricas             # optional - fricas
-        sage: reduce_load_fricas()                                              # optional - fricas
+        sage: from sage.interfaces.fricas import reduce_load_fricas
+        sage: reduce_load_fricas()
         FriCAS
     """
     return fricas

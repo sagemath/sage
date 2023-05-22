@@ -85,35 +85,35 @@ For display options, see :meth:`Tableaux.options`.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from itertools import repeat
+
+import sage.libs.symmetrica.all as symmetrica
+import sage.misc.prandom as random
+
+from sage.arith.misc import binomial, factorial, multinomial
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.sets_cat import Sets
+from sage.combinat import permutation
+from sage.combinat.combinatorial_map import combinatorial_map
+from sage.combinat.composition import Composition, Compositions
+from sage.combinat.integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
+from sage.combinat.posets.posets import Poset
+from sage.groups.perm_gps.permgroup import PermutationGroup
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.misc import powerset
+from sage.misc.misc_c import prod
+from sage.misc.persist import register_unpickle_override
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.global_options import GlobalOptions
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.list_clone import ClonableList
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, richcmp_method
-from sage.misc.persist import register_unpickle_override
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.infinity import PlusInfinity
-from sage.arith.all import factorial, binomial
-from sage.arith.misc import multinomial
-from sage.rings.integer import Integer
-from sage.combinat.composition import Composition, Compositions
-from sage.combinat.integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
-import sage.libs.symmetrica.all as symmetrica
-import sage.misc.prandom as random
-from sage.combinat import permutation
-from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.misc.misc_c import prod
-from sage.misc.misc import powerset
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.sets_cat import Sets
-
-from sage.combinat.combinatorial_map import combinatorial_map
-from sage.combinat.posets.posets import Poset
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 @richcmp_method
@@ -233,7 +233,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         A tableau is shallowly immutable. See :trac:`15862`. The entries
         themselves may be mutable objects, though in that case the
-        resulting Tableau should be unhashable.
+        resulting Tableau should be unhashable. ::
 
             sage: T = Tableau([[1,2],[2]])
             sage: t0 = T[0]
@@ -860,6 +860,27 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         r"""
         Return a plot ``self``.
 
+        If English notation is set then the first row of the tableau is on the
+        top:
+
+        .. PLOT::
+            :width: 200 px
+
+            t = Tableau([[1,2,3,4],[2,3],[5]])
+            Tableaux.options.convention="english"
+            sphinx_plot(t.plot())
+
+        Whereas if French notation is set, the first row of the tableau is on
+        the bottom:
+
+        .. PLOT::
+            :width: 200 px
+
+            t = Tableau([[1,2,3,4],[2,3],[5]])
+            Tableaux.options.convention="french"
+            sphinx_plot(t.plot())
+            Tableaux.options.convention="english"
+
         INPUT:
 
         - ``descents`` -- boolean (default: ``False``); if ``True``,
@@ -889,25 +910,31 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if descents and not self.is_standard():
             raise ValueError("the tableau must be standard for 'descents=True'")
 
+        # For English we build up to down for French, down to up
+        if self.parent().options('convention') == "English":
+            m = 1
+        else:
+            m = -1
+
         p = self.shape()
 
         G = line([(0,0),(p[0],0)], axes=False, figsize=1.5)
         for i in range(len(p)):
-            G += line([(0,-i-1), (p[i],-i-1)])
+            G += line([(0,m*(-i-1)), (p[i],m*(-i-1))])
 
         r = p.conjugate()
-        G += line([(0,0),(0,-r[0])])
+        G += line([(0,0),(0,m*-r[0])])
         for i in range(len(r)):
-            G += line([(i+1,0),(i+1,-r[i])])
+            G += line([(i+1,0),(i+1,m*-r[i])])
 
         if descents:
             t = StandardTableau(self)
             for i in t.standard_descents():
                 c = t.cells_containing(i)[0]
-                G += polygon([(c[1],-c[0]), (c[1]+1,-c[0]), (c[1]+1,-c[0]-1), (c[1],-c[0]-1)], rgbcolor=(1,0,1))
+                G += polygon([(c[1],m*c[0]), (c[1]+1,m*c[0]), (c[1]+1,m*(-c[0]-1)), (c[1],m*(-c[0]-1))], rgbcolor=(1,0,1))
 
         for c in self.cells():
-            G += text(str(self.entry(c)), (c[1]+0.5,-c[0]-0.5))
+            G += text(str(self.entry(c)), (c[1]+0.5,m*(-c[0]-0.5)))
 
         return G
 
@@ -6098,6 +6125,7 @@ class SemistandardTableaux_all(SemistandardTableaux, DisjointUnionEnumeratedSets
     """
     All semistandard tableaux.
     """
+
     def __init__(self, max_entry=None):
         r"""
         Initializes the class of all semistandard tableaux.
@@ -6156,6 +6184,7 @@ class SemistandardTableaux_size_inf(SemistandardTableaux):
     """
     Semistandard tableaux of fixed size `n` with no maximum entry.
     """
+
     def __init__(self, n):
         r"""
         Initialize the class of semistandard tableaux of size ``n`` with no
@@ -6256,6 +6285,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
     """
     Semistandard tableaux of fixed shape `p` and no maximum entry.
     """
+
     def __init__(self, p):
         r"""
         Initializes the class of semistandard tableaux of shape ``p`` and no
@@ -6343,6 +6373,7 @@ class SemistandardTableaux_size(SemistandardTableaux):
     """
     Semistandard tableaux of fixed size `n`.
     """
+
     def __init__(self, n, max_entry=None):
         r"""
         Initializes the class of semistandard tableaux of size ``n``.
@@ -6546,6 +6577,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
     - ``p`` -- a partition
     - ``max_entry`` -- the max entry; defaults to the size of ``p``
     """
+
     def __init__(self, p, max_entry=None):
         r"""
         Initializes the class of semistandard tableaux of shape ``p``, with a
@@ -6757,6 +6789,7 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
     r"""
     Semistandard tableaux of fixed shape `p` and weight `\mu`.
     """
+
     def __init__(self, p, mu):
         r"""
         Initializes the class of all semistandard tableaux of shape ``p`` and
@@ -6871,6 +6904,7 @@ class SemistandardTableaux_size_weight(SemistandardTableaux):
     r"""
     Semistandard tableaux of fixed size `n` and weight `\mu`.
     """
+
     def __init__(self, n, mu):
         r"""
         Initializes the class of semistandard tableaux of size ``n`` and
@@ -7119,6 +7153,7 @@ class RowStandardTableaux_all(RowStandardTableaux, DisjointUnionEnumeratedSets):
     """
     All row standard tableaux.
     """
+
     def __init__(self):
         r"""
         Initializes the class of all standard tableaux.
@@ -7183,6 +7218,7 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
         sage: RowStandardTableaux(40).cardinality()  # not tested, too long
         2063837185739279909309355007659204891024472174278
     """
+
     def __init__(self, n):
         r"""
         Initializes the class of all row standard tableaux of size ``n``.
@@ -7252,6 +7288,7 @@ class RowStandardTableaux_shape(RowStandardTableaux):
     """
     Row Standard tableaux of a fixed shape `p`.
     """
+
     def __init__(self, p):
         r"""
         Initializes the class of all row standard tableaux of a given shape.
@@ -7519,6 +7556,7 @@ class StandardTableaux_all(StandardTableaux, DisjointUnionEnumeratedSets):
     """
     All standard tableaux.
     """
+
     def __init__(self):
         r"""
         Initializes the class of all standard tableaux.
@@ -7570,6 +7608,7 @@ class StandardTableaux_size(StandardTableaux, DisjointUnionEnumeratedSets):
 
         sage: TestSuite( StandardTableaux(4) ).run()
     """
+
     def __init__(self, n):
         r"""
         Initializes the class of all standard tableaux of size ``n``.
@@ -7756,6 +7795,7 @@ class StandardTableaux_shape(StandardTableaux):
     """
     Semistandard tableaux of a fixed shape `p`.
     """
+
     def __init__(self, p):
         r"""
         Initializes the class of all semistandard tableaux of a given shape.
@@ -8148,6 +8188,7 @@ class Tableau_class(Tableau):
     """
     This exists solely for unpickling ``Tableau_class`` objects.
     """
+
     def __setstate__(self, state):
         r"""
         Unpickle old ``Tableau_class`` objects.
@@ -8653,6 +8694,7 @@ class IncreasingTableaux_all(IncreasingTableaux, DisjointUnionEnumeratedSets):
         sage: list(T)
         [[]]
     """
+
     def __init__(self, max_entry=None):
         r"""
         Initializes the class of all increasing tableaux.
@@ -8707,6 +8749,7 @@ class IncreasingTableaux_size_inf(IncreasingTableaux):
     """
     Increasing tableaux of fixed size `n` with no maximum entry.
     """
+
     def __init__(self, n):
         r"""
         Initializes the class of increasing tableaux of size ``n`` with no
@@ -8787,6 +8830,7 @@ class IncreasingTableaux_shape_inf(IncreasingTableaux):
     """
     Increasing tableaux of fixed shape `p` and no maximum entry.
     """
+
     def __init__(self, p):
         r"""
         Initializes the class of increasing tableaux of shape ``p`` and no
@@ -8868,6 +8912,7 @@ class IncreasingTableaux_size(IncreasingTableaux):
     """
     Increasing tableaux of fixed size `n`.
     """
+
     def __init__(self, n, max_entry=None):
         r"""
         Initializes the class of increasing tableaux of size ``n``.
@@ -8987,6 +9032,7 @@ class IncreasingTableaux_shape(IncreasingTableaux):
     - ``p`` -- a partition
     - ``max_entry`` -- the max entry; defaults to the size of ``p``
     """
+
     def __init__(self, p, max_entry=None):
         r"""
         Initializes the class of increasing tableaux of shape ``p``, with a
@@ -9105,6 +9151,7 @@ class IncreasingTableaux_shape_weight(IncreasingTableaux_shape):
     r"""
     Increasing tableaux of fixed shape `p` and binary weight `wt`.
     """
+
     def __init__(self, p, wt):
         r"""
         Initializes the class of all increasing tableaux of shape ``p`` and
@@ -9249,6 +9296,7 @@ class IncreasingTableaux_size_weight(IncreasingTableaux):
     r"""
     Increasing tableaux of fixed size `n` and weight `wt`.
     """
+
     def __init__(self, n, wt):
         r"""
         Initializes the class of increasing tableaux of size ``n`` and

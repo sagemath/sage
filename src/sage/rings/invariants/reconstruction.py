@@ -262,7 +262,7 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
     N = K(2)**-1 * (A*C-B**2)
     R2 = -K(2)**-1 * (A*N**2-2*B*M*N+C*M**2)
     scale = [1,1,1,1,1,1]
-    from sage.functions.all import binomial
+    from sage.arith.misc import binomial
     from sage.misc.functional import sqrt
     if len(invariants) == 3:
         if R2.is_square():
@@ -328,8 +328,8 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
         D = -M
         Delta = A
         a = [0]
-        a.append((2*K(3)**-1*A**2-B)*(N*A-M*B)*K(2)**-1 \
-                    - M*(N*K(2)**-1-M*A*K(3)**-1))
+        a.append((2*K(3)**-1*A**2-B)*(N*A-M*B)*K(2)**-1
+                 - M*(N*K(2)**-1-M*A*K(3)**-1))
         B0 = R
         B1 = K(2)**-1*(N*A-M*B)
         C0 = 0

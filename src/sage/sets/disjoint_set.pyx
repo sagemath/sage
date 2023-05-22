@@ -237,7 +237,7 @@ cdef class DisjointSet_class(SageObject):
             sage: e == d
             True
         """
-        from sage.sets.all import Set
+        from sage.sets.set import Set
         s = Set(map(Set, self.root_to_elements_dict().values()))
         try:
             t = Set(map(Set, other.root_to_elements_dict().values()))

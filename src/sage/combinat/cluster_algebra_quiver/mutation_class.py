@@ -377,6 +377,7 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
             nr += ' ' * (10-len(nr))
             print("Depth: %s found: %s Time: %.2f s" % (dc, nr, timer2 - timer))
 
+
 def _digraph_to_dig6( dg, hashable=False ):
     """
     Return the dig6 and edge data of the digraph dg.

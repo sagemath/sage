@@ -32,7 +32,7 @@ library_order_list = aliases.get("SINGULAR_LIBRARIES", []) + [
     "brial_groebner",
     "m4rie",
 ] + aliases.get("M4RI_LIBRARIES", []) + [
-    "zn_poly", "gap",
+    "gap",
 ] + aliases.get("GDLIB_LIBRARIES", []) + aliases.get("LIBPNG_LIBRARIES", []) + [
     "m", "readline", "Lfunction",
 ] + aliases.get("CBLAS_LIBRARIES", []) + aliases.get("ZLIB_LIBRARIES", [])

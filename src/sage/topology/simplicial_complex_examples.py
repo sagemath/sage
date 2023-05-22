@@ -70,7 +70,7 @@ TESTS::
     sage: H = PseudoQuaternionicProjectivePlane()
     doctest:warning...:
     DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated. Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
-    See https://trac.sagemath.org/34568 for details.
+    See https://github.com/sagemath/sage/issues/34568 for details.
 """
 
 from .simplicial_complex import SimplicialComplex

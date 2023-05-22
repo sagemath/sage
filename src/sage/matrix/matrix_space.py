@@ -43,7 +43,7 @@ import sage.structure.coerce
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 import sage.rings.integer as integer
-import sage.rings.finite_rings.finite_field_constructor
+from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.misc.latex as latex
 import sage.modules.free_module
 
@@ -223,7 +223,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                     else:
                         return matrix_complex_double_dense.Matrix_complex_double_dense
 
-            elif sage.rings.finite_rings.finite_field_constructor.is_FiniteField(R):
+            elif isinstance(R, FiniteField):
                 if R.order() == 2:
                     try:
                         from . import matrix_mod2_dense
@@ -397,7 +397,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         else:
             return matrix_integer_sparse.Matrix_integer_sparse
 
-    if R is sage.rings.real_double.RDF or R is sage.rings.complex_double.CDF:
+    if isinstance(R, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
         from . import matrix_double_sparse
         return matrix_double_sparse.Matrix_double_sparse
 
@@ -679,7 +679,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         self.__ncols = ncols
         self.__is_sparse = sparse
 
-        from sage.categories.all import Modules, Algebras
+        from sage.categories.modules import Modules
+        from sage.categories.algebras import Algebras
         if nrows == ncols:
             category = Algebras(base_ring.category())
         else:
@@ -1208,7 +1209,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             if B is not T:
                 # Matrix spaces over different base rings.
                 # TODO: make this an actual map induced by the map
-                # on the bases, see Trac #25540
+                # on the bases, see Issue #25540
                 return B.has_coerce_map_from(T)
 
             # Base ring and dimensions are the same. So the only
@@ -1229,12 +1230,24 @@ class MatrixSpace(UniqueRepresentation, Parent):
             pass
         else:
             MS = meth_matrix_space()
-            from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
-            from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
-            if is_MatrixGroup(S) or is_ArithmeticSubgroup(S):
-                return self.has_coerce_map_from(MS)
+
+            try:
+                from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
+            except ImportError:
+                pass
             else:
-                return False
+                if is_MatrixGroup(S):
+                    return self.has_coerce_map_from(MS)
+
+            try:
+                from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
+            except ImportError:
+                pass
+            else:
+                if is_ArithmeticSubgroup(S):
+                    return self.has_coerce_map_from(MS)
+
+            return False
 
         # The parent is not matrix-like: coerce via base ring
         return (self.nrows() == self.ncols()) and self._coerce_map_via([B], S)
@@ -2467,39 +2480,39 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
     # Check that the empty 0x0 matrix is it's own inverse with det=1.
     ms00 = MatrixSpace(ring, 0, 0, sparse=sparse)
     m00 = ms00(0)
-    assert(m00.determinant() == ring(1))
-    assert(m00.is_invertible())
-    assert(m00.inverse() == m00)
+    assert m00.determinant() == ring(1)
+    assert m00.is_invertible()
+    assert m00.inverse() == m00
     if checkrank:
-        assert(m00.rank() == 0)
+        assert m00.rank() == 0
 
     # Check that the empty 0x3 and 3x0 matrices are not invertible and that
     # computing the determinant raise the proper exception.
     for ms0 in [MatrixSpace(ring, 0, 3, sparse=sparse),
                 MatrixSpace(ring, 3, 0, sparse=sparse)]:
         mn0 = ms0(0)
-        assert(not mn0.is_invertible())
+        assert not mn0.is_invertible()
         try:
             d = mn0.determinant()
             print(d)
             res = False
         except ValueError:
             res = True
-        assert(res)
+        assert res
         try:
             mn0.inverse()
             res = False
         except ArithmeticError:
             res = True
-        assert(res)
+        assert res
         if checkrank:
-            assert(mn0.rank() == 0)
+            assert mn0.rank() == 0
 
     # Check that the null 1x1 matrix is not invertible and that det=0
     ms1 = MatrixSpace(ring, 1, 1, sparse=sparse)
     m0 = ms1(0)
-    assert(not m0.is_invertible())
-    assert(m0.determinant() == ring(0))
+    assert not m0.is_invertible()
+    assert m0.determinant() == ring(0)
     try:
         m0.inverse()
         res = False
@@ -2507,18 +2520,18 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
         # FIXME: Make pynac throw a ZeroDivisionError on division by
         # zero instead of a runtime Error
         res = True
-    assert(res)
+    assert res
     if checkrank:
-        assert(m0.rank() == 0)
+        assert m0.rank() == 0
 
     # Check that the identity 1x1 matrix is its own inverse with det=1
     m1 = ms1(1)
-    assert(m1.is_invertible())
-    assert(m1.determinant() == ring(1))
+    assert m1.is_invertible()
+    assert m1.determinant() == ring(1)
     inv = m1.inverse()
-    assert(inv == m1)
+    assert inv == m1
     if checkrank:
-        assert(m1.rank() == 1)
+        assert m1.rank() == 1
 
 
 test_trivial_matrices_inverse = deprecated_function_alias(33612, _test_trivial_matrices_inverse)

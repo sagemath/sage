@@ -381,8 +381,8 @@ class FreeModuleHomset(Homset):
                 basis = tensor.pick_a_basis()
                 tcomp = tensor.comp(basis)
                 fmodule = tensor.base_module()
-                mat = [[ tcomp[[i,j]] for j in fmodule.irange()] \
-                                                     for i in fmodule.irange()]
+                mat = [[ tcomp[[i,j]] for j in fmodule.irange()]
+                       for i in fmodule.irange()]
                 if isinstance(tensor, FreeModuleAutomorphism):
                     is_identity = tensor._is_identity
                 else:
@@ -465,7 +465,6 @@ class FreeModuleHomset(Homset):
         return False
 
     #### End of methods required for any Parent
-
 
     #### Monoid methods (case of an endomorphism set) ####
 

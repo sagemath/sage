@@ -38,7 +38,7 @@ from sage.symbolic.ring import SR
 from sage.calculus.var import var
 from sage.rings.fraction_field import is_FractionField
 from sage.categories.function_fields import FunctionFields
-from sage.libs.all import PariError
+from cypari2.handle_error import PariError
 from math import sqrt
 
 
@@ -944,7 +944,7 @@ cpdef general_julia(f, double x_center=0, double y_center=0, image_width=4,
     sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import general_julia
     sage: from sage.plot.colors import Color
     sage: R.<z> = CC[]
-    sage: f = z^5 - 1 
+    sage: f = z^5 - 1
     sage: general_julia(f)
     500x500px 24-bit RGB image
     """

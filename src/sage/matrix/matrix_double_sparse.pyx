@@ -24,7 +24,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
         A matrix is said to be Hermitian if it is equal to its
         conjugate-transpose. We default to a small but non-zero
         entry-wise tolerance because, otherwise, numerical issues
-        can cause false negatives (Trac #33023).
+        can cause false negatives (Issue #33023).
 
         Otherwise this method is identical to the superclass method,
         which simply defers to :meth:`_is_hermitian`.
@@ -66,7 +66,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
         A matrix is said to be skew-Hermitian if it is equal to the
         negation of its conjugate-transpose. We default to a small but
         non-zero entry-wise tolerance because, otherwise, numerical
-        issues can cause false negatives (Trac #33023).
+        issues can cause false negatives (Issue #33023).
 
         Otherwise this method is identical to the superclass method,
         which simply defers to :meth:`_is_hermitian` (passing

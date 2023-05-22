@@ -85,19 +85,16 @@ cdef class ntl_ZZ():
         """
         if isinstance(v, ntl_ZZ):
             self.x = (<ntl_ZZ>v).x
-        elif isinstance(v, long):
-            # Note: This case should be first since on Python 3 long is int
-            PyLong_to_ZZ(&self.x, v)
         elif isinstance(v, int):
-            ZZ_conv_from_int(self.x, PyInt_AS_LONG(v))
+            PyLong_to_ZZ(&self.x, v)
         elif isinstance(v, Integer):
             self.set_from_sage_int(v)
         elif v is not None:
             v = str(v)
             if not v:
                 v = '0'
-            if not ((v[0].isdigit() or v[0] == '-') and \
-                    (v[1:-1].isdigit() or (len(v) <= 2)) and \
+            if not ((v[0].isdigit() or v[0] == '-') and
+                    (v[1:-1].isdigit() or (len(v) <= 2)) and
                     (v[-1].isdigit() or (v[-1].lower() in ['l','r']))):
                 raise ValueError("invalid integer: %s" % v)
             ccreadstr(self.x, v)

@@ -76,7 +76,7 @@ columns do share the same coloring::
     ((1,),
      (2,),
      (3, 5, 4),
-     (6, 19, 16, 9, 21, 10, 8, 15, 14, 11, 20, 13, 12, 7, 17, 18))
+     (6, 19, 16, 21, 9, 10, 15, 8, 20, 11, 14, 13, 7, 12, 18, 17))
 
 We can also restrict the group action to linear isometries::
 

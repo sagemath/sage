@@ -28,6 +28,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.qqbar import QQbar
 
+
 class FusionRing(WeylCharacterRing):
     r"""
     Return the Fusion Ring (Verlinde Algebra) of level ``k``.
@@ -334,12 +335,12 @@ class FusionRing(WeylCharacterRing):
             sage: E81 = FusionRing('E8', 1)
             sage: TestSuite(E81).run()
         """
-        return super(FusionRing, cls).__classcall__(cls, ct, base_ring=base_ring,
-                                                    prefix=prefix, style=style, k=k,
-                                                    conjugate=conjugate,
-                                                    cyclotomic_order=cyclotomic_order,
-                                                    fusion_labels=fusion_labels,
-                                                    inject_variables=inject_variables)
+        return super().__classcall__(cls, ct, base_ring=base_ring,
+                                     prefix=prefix, style=style, k=k,
+                                     conjugate=conjugate,
+                                     cyclotomic_order=cyclotomic_order,
+                                     fusion_labels=fusion_labels,
+                                     inject_variables=inject_variables)
 
     def _test_verlinde(self, **options):
         """
@@ -400,7 +401,7 @@ class FusionRing(WeylCharacterRing):
             sage: A21 = FusionRing("A2", 1)
             sage: A21.test_braid_representation(max_strands=4)
             True
-            sage: F41 = FusionRing("F4", 1)             # long time
+            sage: F41 = FusionRing("F4", 1)            # long time
             sage: F41.test_braid_representation()      # long time
             True
         """
@@ -1348,7 +1349,7 @@ class FusionRing(WeylCharacterRing):
             set_start_method('fork')
         except RuntimeError:
             pass
-        # Turn off multiprocessing when field is QQbar due to pickling issues introduced by PARI upgrade in trac ticket #30537
+        # Turn off multiprocessing when field is QQbar due to pickling issues introduced by PARI upgrade in github issue #30537
         pool = Pool() if use_mp and self.fvars_field() != QQbar else None
 
         # Set up computational basis and compute generators one at a time
@@ -1572,4 +1573,3 @@ class FusionRing(WeylCharacterRing):
             if (not base_coercion) or (self.parent()._basecoer is None):
                 return ret
             return self.parent()._basecoer(ret)
-

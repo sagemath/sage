@@ -42,10 +42,11 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.rings.infinity import PlusInfinity
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
+
 
 def is_gale_ryser(r,s):
     r"""
@@ -121,6 +122,7 @@ def is_gale_ryser(r,s):
 
     #                                same number of 1s           domination
     return len(rstar) <= len(s2) and sum(r2) == sum(s2) and rstar.dominates(s)
+
 
 def gale_ryser_theorem(p1, p2, algorithm="gale",
                        *, solver=None, integrality_tolerance=1e-3):
@@ -287,8 +289,8 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         ....:        print(s1, s2)
 
         sage: for algorithm in ["gale", "ryser"]:             # long time
-        ....:    for i in range(50):                          # long time
-        ....:       test_algorithm(algorithm, 3, 10)          # long time
+        ....:    for i in range(50):
+        ....:       test_algorithm(algorithm, 3, 10)
 
     Null matrix::
 
@@ -444,6 +446,7 @@ class IntegerVector(ClonableArray):
     """
     An integer vector.
     """
+
     def check(self):
         """
         Check to make sure this is a valid integer vector by making sure
@@ -478,7 +481,6 @@ class IntegerVector(ClonableArray):
         if self not in self.parent():
             raise ValueError(f"{self} doesn't satisfy correct constraints")
 
-
     def trim(self):
         """
         Remove trailing zeros from the integer vector.
@@ -508,6 +510,46 @@ class IntegerVector(ClonableArray):
         while not v[-1]:
             v = v[:-1]
         return P.element_class(P, v, check=False)
+
+    def specht_module(self, base_ring=None):
+        r"""
+        Return the Specht module corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: SM = IntegerVectors()([2,0,1,0,2]).specht_module(QQ)
+            sage: SM
+            Specht module of [(0, 0), (0, 1), (2, 0), (4, 0), (4, 1)] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
+            s[2, 2, 1]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
+        return SpechtModule(R, self)
+
+    def specht_module_dimension(self, base_ring=None):
+        r"""
+        Return the dimension of the Specht module corresponding to ``self``.
+
+        INPUT:
+
+        - ``BR`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension()
+            5
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension(GF(2))
+            5
+        """
+        from sage.combinat.specht_module import specht_module_rank
+        return specht_module_rank(self, base_ring)
+
 
 class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
     """
@@ -632,7 +674,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
     .. SEEALSO::
 
-        :class: `sage.combinat.integer_lists.invlex.IntegerListsLex`.
+        :class:`sage.combinat.integer_lists.invlex.IntegerListsLex`
     """
     @staticmethod
     def __classcall_private__(cls, n=None, k=None, **kwargs):
@@ -742,6 +784,7 @@ class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
     """
     Class of all integer vectors.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -786,6 +829,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors that sum to `n`.
     """
+
     def __init__(self, n):
         """
         TESTS::
@@ -858,6 +902,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors of length `k`.
     """
+
     def __init__(self, k):
         """
         TESTS::
@@ -932,6 +977,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
     - Martin Albrecht
     - Mike Hansen
     """
+
     def __init__(self, n, k):
         """
         TESTS::
@@ -1242,6 +1288,7 @@ class IntegerVectorsConstraints(IntegerVectors):
     """
     Class of integer vectors subject to various constraints.
     """
+
     def __init__(self, n=None, k=None, **constraints):
         """
         Initialize ``self``.
@@ -1408,8 +1455,10 @@ class IntegerVectorsConstraints(IntegerVectors):
                     return Integer(binomial(self.n + self.k - 1, self.n))
                 # do by inclusion / exclusion on the number
                 # i of parts greater than m
-                return Integer(sum( (-1)**i * binomial(self.n+self.k-1-i*(m+1), self.k-1) \
-                    * binomial(self.k,i) for i in range(self.n/(m+1)+1) ))
+                n, k = self.n, self.k
+                return Integer(sum(
+                    (-1)**i * binomial(n + k - 1 - i * (m + 1), k - 1)
+                    * binomial(k, i) for i in range(self.n // (m + 1) + 1)))
         return ZZ.sum(ZZ.one() for x in self)
 
     def __iter__(self):

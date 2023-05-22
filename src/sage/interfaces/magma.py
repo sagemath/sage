@@ -209,14 +209,15 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
 import re
 import sys
+import os
 
 from sage.structure.parent import Parent
-from .expect import console, Expect, ExpectElement, ExpectFunction, FunctionElement
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 PROMPT = ">>>"
 
 SAGE_REF = "_sage_ref"
@@ -225,6 +226,7 @@ SAGE_REF_RE = re.compile(r'%s\d+' % SAGE_REF)
 from sage.env import SAGE_EXTCODE, DOT_SAGE
 import sage.misc.misc
 import sage.misc.sage_eval
+import sage.interfaces.abc
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
 
@@ -251,7 +253,6 @@ def extcode_dir(iface=None):
             shutil.copytree('%s/magma/' % SAGE_EXTCODE, tmp + '/data')
             EXTCODE_DIR = "%s/data/" % tmp
         else:
-            import os
             tmp = iface._remote_tmpdir()
             command = 'scp -q -r "%s/magma/" "%s:%s/data" 1>&2 2>/dev/null' % (SAGE_EXTCODE, iface._server, tmp)
             try:
@@ -329,7 +330,6 @@ class Magma(ExtraTabCompletion, Expect):
             Magma
         """
         if command is None:
-            import os
             command = os.getenv('SAGE_MAGMA_COMMAND') or 'magma'
 
         if not user_config:
@@ -338,7 +338,6 @@ class Magma(ExtraTabCompletion, Expect):
         # Obtain the parameters from the environment, to allow the magma = Magma() phrase
         # to work with non-default parameters.
         if seed is None:
-            import os
             seed = os.getenv('SAGE_MAGMA_SEED')
 
         Expect.__init__(self,
@@ -566,6 +565,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: magma = Magma()
             sage: magma._preparse_colon_equals = False
             sage: magma._preparse('a = 5')
             'a = 5'
@@ -1812,13 +1812,11 @@ class MagmaFunction(ExpectFunction):
 
 def is_MagmaElement(x):
     """
-    Return True if x is of type MagmaElement, and False otherwise.
+    Return True if ``x`` is of type :class:`MagmaElement`, and False otherwise.
 
     INPUT:
 
-
     -  ``x`` - any object
-
 
     OUTPUT: bool
 
@@ -1826,15 +1824,20 @@ def is_MagmaElement(x):
 
         sage: from sage.interfaces.magma import is_MagmaElement
         sage: is_MagmaElement(2)
+        doctest:...: DeprecationWarning: the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_MagmaElement(magma(2))                    # optional - magma
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead")
+
     return isinstance(x, MagmaElement)
 
 
 @instancedoc
-class MagmaElement(ExtraTabCompletion, ExpectElement):
+class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaElement):
     def _ref(self):
         """
         Return a variable name that is a new reference to this particular
@@ -2782,7 +2785,7 @@ def magma_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%magma magics instead.')
-    console('magma')
+    os.system('magma')
 
 
 class MagmaGBLogPrettyPrinter:

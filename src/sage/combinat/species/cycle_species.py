@@ -12,11 +12,12 @@ Cycle Species
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .species import GenericCombinatorialSpecies
-from .structure import GenericSpeciesStructure
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.arith.all import divisors, euler_phi
+from sage.arith.misc import divisors, euler_phi
 from sage.combinat.species.misc import accept_size
+from sage.combinat.species.species import GenericCombinatorialSpecies
+from sage.combinat.species.structure import GenericSpeciesStructure
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 class CycleSpeciesStructure(GenericSpeciesStructure):
     def __repr__(self):
@@ -53,7 +54,7 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
             sage: a.permutation_group_element()
             (1,2,3)
         """
-        from sage.groups.all import PermutationGroupElement
+        from sage.groups.perm_gps.constructor import PermutationGroupElement
         return PermutationGroupElement(tuple(self._list))
 
     def transport(self, perm):
@@ -95,7 +96,8 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
             sage: [a.transport(perm) for perm in a.automorphism_group()]
             [(1, 2, 3, 4), (1, 2, 3, 4), (1, 2, 3, 4), (1, 2, 3, 4)]
         """
-        from sage.groups.all import SymmetricGroup, PermutationGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.groups.perm_gps.permgroup import PermutationGroup
         S = SymmetricGroup(len(self._labels))
         p = self.permutation_group_element()
         return PermutationGroup(S.centralizer(p).gens())
@@ -162,7 +164,6 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         from sage.combinat.permutation import CyclicPermutations
         for c in CyclicPermutations(range(1, len(labels)+1)):
             yield structure_class(self, labels, c)
-
 
     def _isotypes(self, structure_class, labels):
         """
@@ -276,6 +277,7 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             res += euler_phi(k)*p([k])**(n//k)
         res /= n
         return self._weight * res
+
 
 #Backward compatibility
 CycleSpecies_class = CycleSpecies

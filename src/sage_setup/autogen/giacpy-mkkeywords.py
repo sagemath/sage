@@ -91,7 +91,7 @@ for i in mostkeywords+moremethods:
     Mi.write(s)
 
 Mi.close()
-    
+
 # building keywords.pxi
 with open("keywords.pxi", "w") as Fi:
     Fi.write("# sage_setup: distribution = sagemath-giac\n")

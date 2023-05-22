@@ -424,9 +424,9 @@ from sage.rings.cc import CC
 
 from sage.misc.latex import latex
 from sage.misc.parser import Parser, LookupNameMaker
-
-from sage.symbolic.ring import var, SR, is_SymbolicVariable
-from sage.symbolic.expression import Expression, symbol_table
+from sage.structure.element import Expression
+from sage.symbolic.ring import var, SR
+from sage.symbolic.expression import symbol_table
 from sage.symbolic.function import Function
 from sage.symbolic.function_factory import function_factory
 from sage.symbolic.integration.integral import (indefinite_integral,
@@ -613,7 +613,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
        the summation the result might not be convertible into a Sage
        expression.
     """
-    if not is_SymbolicVariable(v):
+    if not (isinstance(v, Expression) and v.is_symbol()):
         if isinstance(v, str):
             v = var(v)
         else:
@@ -879,7 +879,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
         (-1)^n*factorial(n)^2
 
     """
-    if not is_SymbolicVariable(v):
+    if not (isinstance(v, Expression) and v.is_symbol()):
         if isinstance(v, str):
             v = var(v)
         else:
@@ -1766,7 +1766,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     .. MATH::
 
-                      F(s) = \frac{1}{2\pi i} \int_{\gamma-i\infty}^{\gamma + i\infty} e^{st} F(s) dt,
+                      f(t) = \frac{1}{2\pi i} \int_{\gamma-i\infty}^{\gamma + i\infty} e^{st} F(s) ds,
 
     where `\gamma` is chosen so that the contour path of
     integration is in the region of convergence of `F(s)`.
@@ -2440,7 +2440,6 @@ def maxima_options(**kwds):
 
 syms_cur = symbol_table.get('functions', {})
 syms_default = dict(syms_cur)
-
 
 
 def _find_var(name, interface=None):

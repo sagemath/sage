@@ -109,6 +109,7 @@ class AbstractTree():
         sage: TestSuite(OrderedTree()).run()
         sage: TestSuite(BinaryTree()).run()
     """
+
     def pre_order_traversal_iter(self):
         r"""
         The depth-first pre-order traversal iterator.
@@ -1554,7 +1555,7 @@ class AbstractTree():
                     # ==> n & n & ... & n' & n' & ...
                     try:
                         mat[i] += sep + mat2[i]
-                    except Exception:
+                    except IndexError:
                         if i >= lmat:
                             if i != 0:
                                 # mat[i] does not exist but
@@ -1828,6 +1829,7 @@ class AbstractClonableTree(AbstractTree):
 
     See also the assumptions in :class:`AbstractTree`.
     """
+
     def check(self):
         """
         Check that ``self`` is a correct tree.
@@ -1935,8 +1937,8 @@ class AbstractClonableTree(AbstractTree):
         TESTS::
 
             sage: x = OrderedTree([[[], []],[[]]])
-            sage: with x.clone() as x:
-            ....:     x[0,1] = OrderedTree([[[]]]) # indirect doctest
+            sage: with x.clone() as x:              # indirect doctest
+            ....:     x[0,1] = OrderedTree([[[]]])
             sage: x
             [[[], [[[]]]], [[]]]
         """
@@ -2044,6 +2046,7 @@ class AbstractLabelledTree(AbstractTree):
 
     .. SEEALSO:: :class:`AbstractTree`
     """
+
     def __init__(self, parent, children, label=None, check=True):
         """
         TESTS::
@@ -2321,6 +2324,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
        here from :class:`~sage.structure.list_clone.ClonableArray`, because it would prevent us to
        inherit later from :class:`~sage.structure.list_clone.ClonableList`.
     """
+
     def set_root_label(self, label):
         """
         Set the label of the root of ``self``.

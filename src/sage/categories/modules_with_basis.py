@@ -2126,9 +2126,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             FIXME: is this a policy that we want to enforce on all parents?
             """
-            assert(all(isinstance(element, Element) for element in elements))
+            assert all(isinstance(element, Element) for element in elements)
             parents = [parent(element) for element in elements]
-            return tensor(parents)._tensor_of_elements(elements) # good name???
+            return tensor(parents)._tensor_of_elements(elements)  # good name ?
 
     class Homsets(HomsetsCategory):
         class ParentMethods:

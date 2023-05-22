@@ -120,7 +120,7 @@ class FiniteField_givaro(FiniteField):
             sage: TestSuite(GF(2^3, 'a')).run()
         """
         if repr not in ['int', 'log', 'poly']:
-            raise ValueError("Unknown representation %s"%repr)
+            raise ValueError("Unknown representation %s" % repr)
 
         q = Integer(q)
         if q < 2:
@@ -131,14 +131,14 @@ class FiniteField_givaro(FiniteField):
         p = F[0][0]
         k = F[0][1]
 
-        if q >= 1<<16:
+        if q >= 1 << 16:
             raise ValueError("q must be < 2^16")
 
         from .finite_field_constructor import GF
         FiniteField.__init__(self, GF(p), name, normalize=False)
 
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        if not is_Polynomial(modulus):
+        from sage.rings.polynomial.polynomial_element import Polynomial
+        if not isinstance(modulus, Polynomial):
             raise TypeError("modulus must be a polynomial")
 
         self._cache = Cache_givaro(self, p, k, modulus, repr, cache)

@@ -974,6 +974,7 @@ class kSchur(CombinatorialFreeModule):
         sage: f.coefficient(f.support()[0])
         1
     """
+
     def __init__(self, kBoundedRing):
         r"""
         TESTS::

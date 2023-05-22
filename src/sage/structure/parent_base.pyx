@@ -31,7 +31,7 @@ cdef class ParentWithBase(Parent_old):
         check_old_coerce(self)
         from sage.misc.superseded import deprecation
         deprecation(33497, "_coerce_c_impl is deprecated, use coerce instead")
-        if not self._base is self:
+        if self._base is not self:
             return self(self._base._coerce_(x))
         else:
             raise TypeError("No canonical coercion found.")

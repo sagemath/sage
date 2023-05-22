@@ -289,7 +289,7 @@ class AffineConnection(SageObject):
         True
         sage: nab.restrict(V)(a.restrict(U)) == da.restrict(W)
         True
-        sage: nab.restrict(U)(a.restrict(V)) == da.restrict(W)
+        sage: nab.restrict(U)(a.restrict(V)) == da.restrict(W)  # long time
         True
 
     Same examples with SymPy as the engine for symbolic calculus::
@@ -1918,17 +1918,17 @@ class AffineConnection(SageObject):
             ....:     for j in M.irange():
             ....:         for k in M.irange():
             ....:             nab.add_coef(eV)[i,j,k] = nab.coef(eVW)[i,j,k,c_uvW].expr()
-            sage: r = nab.riemann() ; r
+            sage: r = nab.riemann() ; r     # long time
             Tensor field of type (1,3) on the 2-dimensional differentiable
              manifold M
-            sage: r.parent()
+            sage: r.parent()                # long time
             Module T^(1,3)(M) of type-(1,3) tensors fields on the 2-dimensional
              differentiable manifold M
-            sage: r.display(eU)
+            sage: r.display(eU)             # long time
             (x^2*y - x*y^2) ∂/∂x⊗dx⊗dx⊗dy + (-x^2*y + x*y^2) ∂/∂x⊗dx⊗dy⊗dx + ∂/∂x⊗dy⊗dx⊗dy
              - ∂/∂x⊗dy⊗dy⊗dx - (x^2 - 1)*y ∂/∂y⊗dx⊗dx⊗dy + (x^2 - 1)*y ∂/∂y⊗dx⊗dy⊗dx
              + (-x^2*y + x*y^2) ∂/∂y⊗dy⊗dx⊗dy + (x^2*y - x*y^2) ∂/∂y⊗dy⊗dy⊗dx
-            sage: r.display(eV)
+            sage: r.display(eV)             # long time
             (1/32*u^3 - 1/32*u*v^2 - 1/32*v^3 + 1/32*(u^2 + 4)*v - 1/8*u - 1/4) ∂/∂u⊗du⊗du⊗dv
              + (-1/32*u^3 + 1/32*u*v^2 + 1/32*v^3 - 1/32*(u^2 + 4)*v + 1/8*u + 1/4) ∂/∂u⊗du⊗dv⊗du
              + (1/32*u^3 - 1/32*u*v^2 + 3/32*v^3 - 1/32*(3*u^2 - 4)*v - 1/8*u + 1/4) ∂/∂u⊗dv⊗du⊗dv
@@ -1941,20 +1941,20 @@ class AffineConnection(SageObject):
         The same computation parallelized on 2 cores::
 
             sage: Parallelism().set(nproc=2)
-            sage: r_backup = r
+            sage: r_backup = r              # long time
             sage: nab = M.affine_connection('nabla', r'\nabla')
             sage: nab[0,0,0], nab[0,1,0], nab[1,0,1] = x, x-y, x*y
             sage: for i in M.irange():
             ....:     for j in M.irange():
             ....:         for k in M.irange():
             ....:             nab.add_coef(eV)[i,j,k] = nab.coef(eVW)[i,j,k,c_uvW].expr()
-            sage: r = nab.riemann() ; r
+            sage: r = nab.riemann() ; r     # long time
             Tensor field of type (1,3) on the 2-dimensional differentiable
              manifold M
-            sage: r.parent()
+            sage: r.parent()                # long time
             Module T^(1,3)(M) of type-(1,3) tensors fields on the 2-dimensional
              differentiable manifold M
-            sage: r == r_backup
+            sage: r == r_backup             # long time
             True
             sage: Parallelism().set(nproc=1)  # switch off parallelization
 
@@ -1996,15 +1996,16 @@ class AffineConnection(SageObject):
                         @parallel(p_iter='multiprocessing', ncpus=nproc)
                         def make_Riem(frame, gam, gam_gam, gam_sc, local_list_ijkl):
                             partial = []
-                            for i,j,k,l in local_list_ijkl:
-                                partial.append([i,j,k,l, frame[k](gam[[i,j,l]]) - \
-                                                         frame[l](gam[[i,j,k]]) + \
-                                                         gam_gam[[i,k,j,l]] -  \
-                                                         gam_gam[[i,l,j,k]] -  \
-                                                         gam_sc[[i,j,k,l]]])
+                            for i, j, k, l in local_list_ijkl:
+                                partial.append([i, j, k, l,
+                                                frame[k](gam[[i, j, l]]) -
+                                                frame[l](gam[[i, j, k]]) +
+                                                gam_gam[[i, k, j, l]] -
+                                                gam_gam[[i, l, j, k]] -
+                                                gam_sc[[i, j, k, l]]])
                             return partial
                         # Computation and assignation of values
-                        for ii,val in make_Riem(listParalInput):
+                        for ii, val in make_Riem(listParalInput):
                             for jj in val:
                                 res[jj[0], jj[1], jj[2], jj[3]] = jj[4]
 
@@ -2177,13 +2178,13 @@ class AffineConnection(SageObject):
             sage: v = M.vector_field()
             sage: v[:] = (x*y, z^2-3*x, z+2*y)
             sage: b = M.default_frame()
-            sage: for j in M.irange():  # check on M's default frame
+            sage: for j in M.irange():  # check on M's default frame  # long time
             ....:     nab(b[j]).contract(v) == \
             ....:      sum( nab.connection_form(i,j)(v)*b[i] for i in M.irange())
             True
             True
             True
-            sage: for j in M.irange():  # check on frame e
+            sage: for j in M.irange():  # check on frame e  # long time
             ....:     nab(e[j]).contract(v) == \
             ....:      sum( nab.connection_form(i,j,e)(v)*e[i] for i in M.irange())
             True
@@ -2210,7 +2211,7 @@ class AffineConnection(SageObject):
                         comega[k] = coef_frame[[i1,j1,k]]
                     forms[(i1,j1)] = omega
             self._connection_forms[frame] = forms
-        return  self._connection_forms[frame][(i,j)]
+        return self._connection_forms[frame][(i,j)]
 
     def torsion_form(self, i, frame=None):
         r"""
@@ -2270,10 +2271,10 @@ class AffineConnection(SageObject):
             sage: ef = e.coframe()
             sage: ef[1][:], ef[2][:], ef[3][:]
             ([1/y, 0, 0], [0, 1/z, 0], [0, 0, 1/x])
-            sage: nab.torsion_form(1, e)
+            sage: nab.torsion_form(1, e)  # long time
             2-form torsion (1) of connection nabla w.r.t. Vector frame
              (M, (e_1,e_2,e_3)) on the 3-dimensional differentiable manifold M
-            sage: nab.torsion_form(1, e).comp(e)[:]
+            sage: nab.torsion_form(1, e).comp(e)[:]  # long time
             [                       0                   -x^2*z          (x*y^2 + x*y)*z]
             [                   x^2*z                        0  (x^4 - x^3 + x*y^2)*z/y]
             [        -(x*y^2 + x*y)*z -(x^4 - x^3 + x*y^2)*z/y                        0]
@@ -2312,7 +2313,7 @@ class AffineConnection(SageObject):
                         ctheta[k,l] = torsion_comp[[i1,k,l]]
                 forms[i1] = theta
             self._torsion_forms[frame] = forms
-        return  self._torsion_forms[frame][i]
+        return self._torsion_forms[frame][i]
 
     def curvature_form(self, i, j, frame=None):
         r"""
@@ -2422,7 +2423,7 @@ class AffineConnection(SageObject):
                             comega[k,l] = riemann_comp[[i1,j1,k,l]]
                     forms[(i1,j1)] = omega
             self._curvature_forms[frame] = forms
-        return  self._curvature_forms[frame][(i,j)]
+        return self._curvature_forms[frame][(i, j)]
 
     def set_calc_order(self, symbol, order, truncate=False):
         r"""

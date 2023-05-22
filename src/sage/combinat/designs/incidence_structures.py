@@ -182,8 +182,7 @@ class IncidenceStructure():
             assert blocks is None, "'blocks' cannot be defined when 'points' is a matrix"
             incidence_matrix = points
             points = blocks = None
-        elif (points is not None and
-              blocks is     None):
+        elif points is not None and blocks is None:
             blocks = points
             points = set().union(*blocks)
         if points:
@@ -1578,7 +1577,7 @@ class IncidenceStructure():
             sage: I.is_t_design(return_parameters=True)
             (False, (0, 0, 0, 0))
         """
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
 
         # Missing parameters ?
         if v is None:
@@ -2001,7 +2000,6 @@ class IncidenceStructure():
         else:
             return True
 
-
     def coloring(self, k=None, solver=None, verbose=0,
                  *, integrality_tolerance=1e-3):
         r"""
@@ -2203,7 +2201,7 @@ class IncidenceStructure():
             # verify that :trac:`30976` is fixed
             sage: IS = IncidenceStructure([1,2,3], [[1,2], [2,3]])
             sage: if latex.has_file("tikz.sty"):          # optional - latex
-            ....:     IS._latex_()                        # optional - latex
+            ....:     IS._latex_()
             ...UserWarning:
             The hypergraph is drawn as a set of closed curves...
             \begin{tikzpicture}...

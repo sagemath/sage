@@ -41,6 +41,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
     - ``_basis_name`` -- the name of the basis and must match one
       of the names that the basis can be constructed from FQSym
     """
+
     def __init__(self, alg):
         r"""
         Initialize ``self``.
@@ -1088,11 +1089,11 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 sage: M = FQSym.M()
                 sage: F(M[3, 2, 1] - 4 * F[4, 2, 1, 3])
                 F[3, 2, 1] - 4*F[4, 2, 1, 3]
-                sage: all(F(M._M_to_F_on_basis(w)) == M[w] for i in range(5)
+                sage: all(F(M._M_to_F_on_basis(w)) == M[w] for i in range(5)  # indirect doctest
                 ....:     for w in Permutations(i))
                 True
                 sage: all(M(F(M[w])) == M[w] for i in range(5)
-                ....:     for w in Permutations(i)) # indirect doctest
+                ....:     for w in Permutations(i))
                 True
                 sage: M[3, 2, 1] == F[3, 2, 1]
                 True
@@ -1232,6 +1233,7 @@ class FQSymBases(Category_realization_of_parent):
     r"""
     The category of graded bases of `FQSym` indexed by permutations.
     """
+
     def __init__(self, base):
         r"""
         Initialize the bases of an `FQSym`

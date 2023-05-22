@@ -38,6 +38,7 @@ TESTS::
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA
 
+
 class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
     r"""
     Specific implementation of the bijection from KR tableaux to rigged
@@ -410,10 +411,12 @@ class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
                 self.ret_rig_con[i].rigging[j] //= 2
                 self.ret_rig_con[i].vacancy_numbers[j] //= 2
 
+
 class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
     r"""
     Specific implementation of the bijection from rigged configurations to tensor products of KR tableaux for type `D_n^{(1)}`.
     """
+
     def run(self, verbose=False, build_graph=False):
         """
         Run the bijection from rigged configurations to tensor product of KR

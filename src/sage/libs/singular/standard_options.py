@@ -117,7 +117,8 @@ def libsingular_gb_standard_options(func):
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
         sage: sage_getargspec(I.interreduced_basis)
-        ArgSpec(args=['self'], varargs=None, keywords=None, defaults=None)
+        FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getsourcelines(I.interreduced_basis)
         (['    @handle_AA_and_QQbar\n',
           '    @singular_gb_standard_options\n',

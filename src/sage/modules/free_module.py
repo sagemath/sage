@@ -183,7 +183,6 @@ import sage.matrix.matrix_space
 import sage.misc.latex as latex
 
 from sage.modules.module import Module
-import sage.rings.finite_rings.finite_field_constructor as finite_field
 import sage.rings.ring as ring
 import sage.rings.abc
 import sage.rings.integer_ring
@@ -195,6 +194,7 @@ from sage.categories.integral_domains import IntegralDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.randstate import current_randstate
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.structure.factory import UniqueFactory
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import (richcmp_method, rich_to_bool, richcmp,
@@ -1829,7 +1829,6 @@ class Module_free_ambient(Module):
 
         raise NotImplementedError("the module must be a free module or "
                                   "have the base ring be a polynomial ring using Singular")
-
 
     def graded_free_resolution(self, *args, **kwds):
         r"""
@@ -4075,13 +4074,13 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             try:
                 M = self.change_ring(base_ring)
             except TypeError:
-                raise ValueError("Argument base_ring (= %s) is not compatible "%base_ring + \
-                    "with the base ring (= %s)."%self.base_ring())
+                raise ValueError("Argument base_ring (= %s) is not compatible " % base_ring +
+                    "with the base ring (= %s)." % self.base_ring())
             try:
                 return M.span_of_basis(basis)
             except TypeError:
-                raise ValueError("Argument gens (= %s) is not compatible "%basis + \
-                    "with base_ring (= %s)."%base_ring)
+                raise ValueError("Argument gens (= %s) is not compatible "%basis +
+                    "with base_ring (= %s)." % base_ring)
 
     def submodule_with_basis(self, basis, check=True, already_echelonized=False):
         r"""
@@ -4611,7 +4610,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
                 M = self.change_ring(base_ring)
             except TypeError:
                 raise ValueError("Argument base_ring (= %s) is not compatible with the base field (= %s)." % (
-                    base_ring, self.base_field() ))
+                    base_ring, self.base_field()))
             try:
                 return M.span_of_basis(basis)
             except TypeError:
@@ -5653,7 +5652,7 @@ class FreeModule_ambient(FreeModule_generic):
         """
         try:
             return self.__basis
-        except  AttributeError:
+        except AttributeError:
             ZERO = self(0)
             one = self.coordinate_ring().one()
             w = []
@@ -6348,7 +6347,7 @@ class FreeModule_ambient_field(FreeModule_generic_field, FreeModule_ambient_pid)
         """
         try:
             k = e.parent()
-            if finite_field.is_FiniteField(k) and k.base_ring() == self.base_ring() and k.degree() == self.degree():
+            if isinstance(k, FiniteField) and k.base_ring() == self.base_ring() and k.degree() == self.degree():
                 return self(e._vector_())
         except AttributeError:
             pass
@@ -6600,7 +6599,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         lx = self.ambient_vector_space()
         rx = other.ambient_vector_space()
         if lx != rx:
-            return lx._echelon_matrix_richcmp( rx, op)
+            return lx._echelon_matrix_richcmp(rx, op)
 
         lx = self.dimension()
         rx = other.dimension()
@@ -6718,7 +6717,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         if not B:
             return 1
         d = B[0].denominator()
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         for x in B[1:]:
             d = lcm(d,x.denominator())
         return d

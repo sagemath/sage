@@ -1,5 +1,5 @@
 """
-Eisenstein Series (optimized compiled functions)
+Eisenstein series, optimized
 """
 
 from cysignals.memory cimport check_allocarray, sig_free

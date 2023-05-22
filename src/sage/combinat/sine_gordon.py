@@ -48,13 +48,6 @@ from sage.rings.real_mpfr import RR
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.functions.trig import cos, sin
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.plot.plot", "parametric_plot")
-lazy_import("sage.plot.graphics", "Graphics")
-lazy_import("sage.plot.polygon", "polygon2d")
-lazy_import("sage.plot.circle", "circle")
-lazy_import("sage.plot.bezier_path", "bezier_path")
-lazy_import("sage.plot.point", "point")
-lazy_import("sage.plot.line", "line")
 from sage.symbolic.constants import pi, I
 from sage.functions.log import exp
 from sage.functions.other import ceil
@@ -62,6 +55,13 @@ from sage.misc.flatten import flatten
 from sage.symbolic.ring import SR
 from sage.functions.other import real_part, imag_part
 from sage.misc.cachefunc import cached_method
+lazy_import("sage.plot.plot", "parametric_plot")
+lazy_import("sage.plot.graphics", "Graphics")
+lazy_import("sage.plot.polygon", "polygon2d")
+lazy_import("sage.plot.circle", "circle")
+lazy_import("sage.plot.bezier_path", "bezier_path")
+lazy_import("sage.plot.point", "point")
+lazy_import("sage.plot.line", "line")
 
 
 class SineGordonYsystem(SageObject):
@@ -99,6 +99,7 @@ class SineGordonYsystem(SageObject):
          (103, 105))
         sage: Y.plot()     #not tested
     """
+
     def __init__(self, X, na):
         """
         TESTS::
@@ -157,7 +158,7 @@ class SineGordonYsystem(SageObject):
         """
         msg = "A sine-Gordon Y-system of type {}"
         msg += " with defining integer tuple {}"
-        return  msg.format(self._type, self._na)
+        return msg.format(self._type, self._na)
 
     def type(self):
         r"""
@@ -234,8 +235,8 @@ class SineGordonYsystem(SageObject):
         pa = [1]
         if F > 1:
             pa.append(na[0])
-            for k in range(2, F):
-                pa.append(na[k-1] * pa[k-1] + pa[k-2])
+            for k in range(1, F - 1):
+                pa.append(na[k] * pa[k] + pa[k - 1])
         return tuple(pa)
 
     @cached_method
@@ -347,7 +348,7 @@ class SineGordonYsystem(SageObject):
                 done = False
                 while not done:
                     if left:
-                        edge = (edge[0] + vert(rk[a+1]), edge[1])
+                        edge = (edge[0] + vert(rk[a + 1]), edge[1])
                     else:
                         edge = (edge[0], edge[1] - vert(rk[a + 1]))
                     left = not left
@@ -403,7 +404,7 @@ class SineGordonYsystem(SageObject):
                         last_ccw = vert(last_cw + rk[a + 2])
                         x = first
                         while x < last_cw:
-                            new_intervals.append((vert(x), vert(x + rk[a+1]), "L"))
+                            new_intervals.append((vert(x), vert(x + rk[a + 1]), "L"))
                             x = vert(x + rk[a + 1])
                         if typ == "L":
                             new_intervals.append((last_cw, last_ccw, "NL"))
@@ -411,7 +412,7 @@ class SineGordonYsystem(SageObject):
                             new_intervals.append((last_cw, last_ccw, "NR"))
                         x = last_ccw
                         while x != last:
-                            new_intervals.append((vert(x), vert(x+rk[a+1]), "R"))
+                            new_intervals.append((vert(x), vert(x + rk[a + 1]), "R"))
                             x = vert(x + rk[a + 1])
             else:
                 for (first, last, typ) in intervals[a]:
@@ -427,15 +428,15 @@ class SineGordonYsystem(SageObject):
                         last_ccw = vert(last_cw + rk[a + 2])
                         x = first
                         while x < last_cw:
-                            new_intervals.append((vert(x), vert(x + rk[a+1]), "L"))
-                            x = vert(x + rk[a+1])
+                            new_intervals.append((vert(x), vert(x + rk[a + 1]), "L"))
+                            x = vert(x + rk[a + 1])
                         if typ == "L":
                             new_intervals.append((last_cw, last_ccw, "NR"))
                         else:
                             new_intervals.append((last_cw, last_ccw, "NL"))
                         x = last_ccw
                         while x != last:
-                            new_intervals.append((vert(x), vert(x + rk[a+1]), "R"))
+                            new_intervals.append((vert(x), vert(x + rk[a + 1]), "R"))
                             x = vert(x + rk[a + 1])
             intervals.append(new_intervals)
         return tuple(map(tuple, intervals))
@@ -534,7 +535,7 @@ class SineGordonYsystem(SageObject):
                 if internal_angle > pi:
                     (angle_p, angle_q) = (angle_q + 2 * pi, angle_p)
                     internal_angle = angle_p - angle_q
-                angle_center = (angle_p+angle_q) / 2
+                angle_center = (angle_p + angle_q) / 2
                 hypotenuse = radius / cos(internal_angle / 2)
                 radius_arc = hypotenuse * sin(internal_angle / 2)
                 center = (hypotenuse * cos(angle_center),

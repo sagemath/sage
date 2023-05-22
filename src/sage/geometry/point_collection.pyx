@@ -226,7 +226,7 @@ cdef class PointCollection(SageObject):
             raise NotImplementedError
         cdef PointCollection left_pc = left
         cdef PointCollection right_pc = right
-        if not left_pc._module is right_pc._module:
+        if left_pc._module is not right_pc._module:
             raise NotImplementedError
         return PointCollection(left_pc._points + right_pc._points,
                                left_pc._module)
@@ -955,23 +955,23 @@ def read_palp_point_collection(f, lattice=None, permutation=False):
     Read and return a point collection from an opened file.
 
     Data must be in PALP format:
-   
+
         * the first input line starts with two integers `m` and `n`, the number
           of points and the number of components of each;
-    
+
         * the rest of the first line may contain a permutation;
-    
+
         * the next `m` lines contain `n` numbers each.
-        
+
     .. NOTE::
-    
+
         If `m` < `n`, it is assumed (for compatibility with PALP) that the
         matrix is transposed, i.e. that each column is a point.
 
     INPUT:
 
     - ``f`` -- an opened file with PALP output.
-    
+
     - ``lattice`` -- the lattice for points. If not given, the
       :class:`toric lattice <sage.geometry.toric_lattice.ToricLatticeFactory>`
       `M` of dimension `n` will be used.

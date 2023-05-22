@@ -1,5 +1,5 @@
 r"""
-Rubinstein's `L`-function Calculator
+Rubinstein's `L`-function calculator
 
 This interface provides complete
 access to Rubinstein's lcalc calculator with extra PARI

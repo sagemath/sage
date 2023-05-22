@@ -95,7 +95,7 @@ from sage.modules.free_module import is_FreeModule
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.rational_field import QQ
 from sage.rings.ring import Ring
 from sage.structure.factorization import Factorization
@@ -345,7 +345,6 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             self.compute_presentation()
             return self._manin_gens_to_basis
 
-
     #####################################################################
     # Coercion
     #####################################################################
@@ -474,13 +473,12 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             return sum([c*self(y) for c, y in x], self(0))
 
         elif isinstance(x, list):
-            if len(x) == 3 and is_MPolynomial(x[0]):
+            if len(x) == 3 and isinstance(x[0], MPolynomial):
                 return self.modular_symbol_sum(x)
             else:
                 return self.modular_symbol(x)
 
-        raise TypeError("No coercion of %s into %s defined."%(x, self))
-
+        raise TypeError("No coercion of %s into %s defined." % (x, self))
 
     def change_ring(self, R):
         r"""
@@ -1020,7 +1018,6 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             verbose("done making Hecke operator matrix dense",tm)
         self._hecke_matrices[(p,rows)] = Tp
         return Tp
-
 
     def __heilbronn_operator(self, M, H, t=1):
         r"""
@@ -1776,7 +1773,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         # We only run through spaces of level a multiple of the conductor of the character, which
         # we compute below, or set to 1 in case of Gamma_H or Gamma_1
         chi = self.character()
-        cond = 1 if chi is None   else   chi.conductor()
+        cond = 1 if chi is None   else chi.conductor()
         # Now actually run through the divisor levels, taking only the ones with that are
         # a multiple of the conductor.
         for d in reversed(divisors(self.level())):
@@ -1963,7 +1960,6 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         if sign == self.sign():
             return self
         return modsym.ModularSymbols(self.group(), self.weight(), sign=sign, base_ring=self.base_ring())
-
 
     def modular_symbols_of_weight(self, k):
         r"""
@@ -2615,7 +2611,6 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
                                        sign=sign, base_ring=F,
                                        custom_init=custom_init, category=category)
 
-
     def _dimension_formula(self):
         r"""
         Return the dimension of this space using the formula.
@@ -2635,7 +2630,7 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
             if k % 2:
                 return 0
             elif k > 2:
-                return 2*self.group().dimension_cusp_forms(k) + self.group().ncusps()
+                return 2 * self.group().dimension_cusp_forms(k) + self.group().ncusps()
             else:
                 return 2*self.group().dimension_cusp_forms(k) + self.group().ncusps() - 1
         else:
@@ -2676,7 +2671,6 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
             return m * self.group().dimension_cusp_forms(k)
         else:
             raise NotImplementedError
-
 
     def _degeneracy_raising_matrix_1(self, M):
         r"""
@@ -2738,7 +2732,6 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
 
         A = MS(rows)
         return A
-
 
     def _cuspidal_new_submodule_dimension_formula(self):
         r"""
@@ -2981,7 +2974,6 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             return m * self.group().dimension_new_cusp_forms(2)
         else:
             raise NotImplementedError
-
 
     def _compute_hecke_matrix_prime(self, p, rows=None):
         r"""
@@ -3281,7 +3273,6 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
         else:
             m = 1
         return m * self.group().dimension_new_cusp_forms(self.weight())
-
 
     def _compute_hecke_matrix_prime_power(self, p, r):
         r"""

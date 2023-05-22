@@ -885,9 +885,8 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
                     G = G.base_extend(F)
                 c1q2, c2q2 = flatten([[x]*e for x,e in theta_poly.roots(G.base_ring())])
 
-
-                pairA = [ [c1q, c1q2], [c2q,c2q2] ]
-                pairB = [ [c1q, c2q2], [c2q, c1q2] ]
+                pairA = [[c1q, c1q2], [c2q, c2q2]]
+                pairB = [[c1q, c2q2], [c2q, c1q2]]
 
                 A_fail = 0
                 B_fail = 0

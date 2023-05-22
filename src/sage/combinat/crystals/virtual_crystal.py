@@ -297,6 +297,7 @@ class VirtualCrystal(Subcrystal):
         An element of a virtual (sub)crystal. Wraps an element in the
         ambient crystal.
         """
+
         def e(self, i):
             """
             Return `e_i` of ``self``.

@@ -918,7 +918,7 @@ cdef class BuiltinFunction(Function):
         return [arg]
 
     def __call__(self, *args, bint coerce=True, bint hold=False,
-            bint dont_call_method_on_arg=False):
+                 bint dont_call_method_on_arg=False):
         r"""
         Evaluate this function on the given arguments and return the result.
 
@@ -988,7 +988,7 @@ cdef class BuiltinFunction(Function):
                 # This special case should be removed when
                 # Python always raise an error for factorial(float).
                 # This case will be delegated to the gamma function.
-                # see Trac ticket #30764
+                # see Github issue #30764
                 if self._name != 'factorial':
                     import math as module
             elif all(isinstance(arg, complex) for arg in args):

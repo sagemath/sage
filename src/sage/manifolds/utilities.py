@@ -1040,7 +1040,7 @@ class ExpressionNice(Expression):
             sage: latex(ExpressionNice(fun))
             \frac{\partial\,f_{x}}{\partial y}
 
-        If latex_name, it should be used in LaTeX output:
+        If latex_name, it should be used in LaTeX output::
 
             sage: f = function('f_x', latex_name=r"{\cal F}")(x,y)
             sage: fun = f.diff(y)

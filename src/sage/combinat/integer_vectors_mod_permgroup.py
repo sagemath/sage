@@ -229,6 +229,7 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
                 assert (max_part == NN(max_part))
             return IntegerVectorsModPermutationGroup_with_constraints(G, sum, max_part, sgs=sgs)
 
+
 class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnumeratedSet_forest):
     r"""
     A class for integer vectors enumerated up to the action of a
@@ -265,6 +266,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
 
         sage: TestSuite(I).run()
     """
+
     def __init__(self, G, sgs=None):
         """
         TESTS::
@@ -537,6 +539,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
             ...
             AssertionError
         """
+
         def check(self):
             r"""
             Checks that ``self`` verify the invariants needed for
@@ -592,6 +595,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),4)
         sage: TestSuite(I).run()
     """
+
     def __init__(self, G, d, max_part, sgs=None):
         r"""
         TESTS::
@@ -944,6 +948,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             ...
             AssertionError: [3, 2, 0, 0] should be a integer vector of sum 4
         """
+
         def check(self):
             r"""
             Checks that ``self`` meets the constraints of being an element of ``self.parent()``.

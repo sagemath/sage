@@ -61,27 +61,33 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-from sage.rings.integer_ring import   ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.padics.factory import Qp
-from sage.rings.infinity import infinity
-from sage.rings.all import LaurentSeriesRing, PowerSeriesRing, PolynomialRing, Integers
-
-from sage.rings.integer import Integer
-from sage.arith.all import valuation, binomial, kronecker_symbol, gcd, prime_divisors, LCM
-
-from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import richcmp_method, richcmp
-
-from sage.misc.functional import denominator
-from sage.misc.verbose import verbose, get_verbose
-
-from sage.modules.free_module_element import vector
 import sage.matrix.all as matrix
 import sage.schemes.hyperelliptic_curves.monsky_washnitzer
+
+from sage.arith.functions import lcm as LCM
+from sage.arith.misc import (binomial,
+                             GCD as gcd,
+                             prime_divisors,
+                             kronecker as kronecker_symbol,
+                             valuation)
 from sage.functions.log import log
 from sage.functions.other import floor
 from sage.misc.cachefunc import cached_method
+from sage.misc.functional import denominator
+from sage.misc.verbose import get_verbose, verbose
+from sage.modules.free_module_element import vector
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.padics.factory import Qp
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.structure.richcmp import richcmp_method, richcmp
+from sage.structure.sage_object import SageObject
+
 
 @richcmp_method
 class pAdicLseries(SageObject):
@@ -1444,7 +1450,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         # now compute phi
         phi = matrix.matrix([[0,-1/p],[1,E.ap(p)/p]])
-        lpv = vector([G  + (E.ap(p))*H  , - R(p) * H ])  # this is L_p
+        lpv = vector([G + (E.ap(p))*H  , - R(p) * H ])  # this is L_p
         eps = (1-phi)**(-2)
         resu = lpv*eps.transpose()
         return resu
@@ -1500,7 +1506,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
                 raise ValueError("Curves must be isomorphic.")
             usq = (e1.discriminant()/e2.discriminant()).nth_root(6)
             u = usq.sqrt()
-            s = (u   *  e2.a1() - e1.a1() )/ZZ(2)
+            s = (u *  e2.a1() - e1.a1() )/ZZ(2)
             r = (usq *  e2.a2() - e1.a2() + s**2 + e1.a1()*s)/ZZ(3)
             t = (u**3 * e2.a3() - e1.a3() - e1.a1()*r)/ZZ(2)
             return [u,r,s,t]
@@ -1513,7 +1519,6 @@ class pAdicLseriesSupersingular(pAdicLseries):
         A = matrix.matrix([[u,-r/u],[0,1/u]])
         frn = A * fr * A**(-1)
         return 1/p*frn
-
 
     def __phi_bpr(self, prec=0):
         r"""

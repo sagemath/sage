@@ -2140,6 +2140,7 @@ class PartitionTuples_level(PartitionTuples):
     Class of partition tuples of a fixed level, but summing to an arbitrary
     integer.
     """
+
     def __init__(self, level, category=None):
         r"""
         Initializes this class.
@@ -2244,6 +2245,7 @@ class PartitionTuples_size(PartitionTuples):
     """
     Class of partition tuples of a fixed size, but arbitrary level.
     """
+
     def __init__(self, size):
         r"""
         Initialize this class.
@@ -2513,6 +2515,7 @@ class RegularPartitionTuples(PartitionTuples):
     r"""
     Abstract base class for `\ell`-regular partition tuples.
     """
+
     def __init__(self, regular, **kwds):
         """
         Initialize ``self``.
@@ -2588,6 +2591,7 @@ class RegularPartitionTuples_all(RegularPartitionTuples):
     r"""
     Class of `\ell`-regular partition tuples.
     """
+
     def __init__(self, regular):
         r"""
         Initialize ``self``.
@@ -2696,6 +2700,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
         sage: [[3,1],[3],[5,5,5]] in RPT
         False
     """
+
     def __init__(self, level, regular):
         r"""
         Initialize ``self``.
@@ -2865,6 +2870,7 @@ class RegularPartitionTuples_size(RegularPartitionTuples):
     r"""
     Class of `\ell`-regular partition tuples with a fixed size.
     """
+
     def __init__(self, size, regular):
         r"""
         Initialize ``self``.
@@ -2994,6 +3000,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
          ([3], [], [2, 1, 1]),
          ([2, 1], [], [4])]
     """
+
     def __init__(self, level, size, regular):
         r"""
         Initialize ``self``.

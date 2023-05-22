@@ -37,6 +37,7 @@ from sage.rings.integer import Integer
 
 ###############################################################################
 
+
 class DyckPath(PathTableau):
     r"""
     An instance is the sequence of nonnegative
@@ -357,6 +358,7 @@ class DyckPath(PathTableau):
             return SkewTableau([[None]*self[0]+top, bot])
         else:
             return StandardTableau([top, bot])
+
 
 class DyckPaths(PathTableaux):
     """

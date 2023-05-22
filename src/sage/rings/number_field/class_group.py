@@ -221,11 +221,11 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
             Class group of order 76 with structure C38 x C2
             of Number Field in a with defining polynomial x^2 + 20072
             sage: I = (G.0)^11; I
-            Fractional ideal class (41, 1/2*a + 5)
+            Fractional ideal class (33, 1/2*a + 8)
             sage: J = G(I.ideal()^5); J
-            Fractional ideal class (115856201, 1/2*a + 40407883)
+            Fractional ideal class (39135393, 1/2*a + 13654253)
             sage: J.reduce()
-            Fractional ideal class (57, 1/2*a + 44)
+            Fractional ideal class (73, 1/2*a + 47)
             sage: J == I^5
             True
         """
@@ -294,7 +294,6 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
                 return P
         raise RuntimeError("No prime of norm less than %s found in class %s" % (norm_bound, c))
 
-
     def gens(self):
         r"""
         Return generators for a representative ideal in this
@@ -312,7 +311,6 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
             (2, 1/2*w - 1/2)
        """
         return self.ideal().gens()
-
 
 
 class SFractionalIdealClass(FractionalIdealClass):
@@ -395,7 +393,6 @@ class SFractionalIdealClass(FractionalIdealClass):
         if self.is_trivial():
             return 'Trivial S-ideal class'
         return 'Fractional S-ideal class %s' % self._value._repr_short()
-
 
 
 class ClassGroup(AbelianGroupWithValues_class):
@@ -615,9 +612,6 @@ class ClassGroup(AbelianGroupWithValues_class):
             Number Field in a with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
         """
         return self._number_field
-
-
-
 
 
 class SClassGroup(ClassGroup):

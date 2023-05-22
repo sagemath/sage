@@ -25,6 +25,7 @@ from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.infinity import Infinity
 
+
 class AffinizationOfCrystal(UniqueRepresentation, Parent):
     r"""
     An affinization of a crystal.
@@ -73,6 +74,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
 
     - [HK2002]_ Chapter 10
     """
+
     def __init__(self, B):
         """
         Initialize ``self``.
@@ -109,6 +111,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
         """
         An element in an affinization crystal.
         """
+
         def __init__(self, parent, b, m):
             """
             Initialize ``self``.

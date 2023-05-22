@@ -510,7 +510,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: c(R0) == R
             True
 
-        For a field, by default we return a fraction field functor.
+        For a field, by default we return a fraction field functor. ::
 
             sage: K.<a> = Qq(25, 8)
             sage: c, R = K.construction(); R

@@ -38,7 +38,7 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element
 
 from sage.sets.set import Set, Set_object_enumerated
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.misc.misc import _stable_uniq as uniq
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
@@ -168,6 +168,7 @@ def Subsets(s, k=None, submultiset=False):
             return SubMultiset_sk(s, k)
         else:
             return Subsets_sk(s, k)
+
 
 class Subsets_s(Parent):
     r"""
@@ -341,9 +342,9 @@ class Subsets_s(Parent):
             sage: Subsets(3).cardinality()
             8
 
-        TESTS::
+        TESTS:
 
-            ``__len__`` should return a Python int.
+        ``__len__`` should return a Python int::
 
             sage: S = Subsets(Set([1,2,3]))
             sage: len(S)
@@ -559,6 +560,7 @@ class Subsets_s(Parent):
         S = self.underlying_set()
         return S.subsets_lattice()
 
+
 class Subsets_sk(Subsets_s):
     r"""
     Subsets of fixed size of a set.
@@ -584,6 +586,7 @@ class Subsets_sk(Subsets_s):
         ...
         ValueError: {0} not in Subsets of {0, 1, 2, 5, 7} of size 3
     """
+
     def __init__(self, s, k):
         """
         TESTS::
@@ -1059,7 +1062,7 @@ class SubMultiset_s(Parent):
             sage: len(S.list())
             24
         """
-        from sage.all import prod
+        from sage.misc.misc_c import prod
         return Integer(prod(k + 1 for k in self._d.values()))
 
     def random_element(self):
@@ -1163,7 +1166,6 @@ class SubMultiset_s(Parent):
         return e
 
 
-
 class SubMultiset_sk(SubMultiset_s):
     """
     The combinatorial class of the subsets of size k of a multiset s.  Note
@@ -1185,6 +1187,7 @@ class SubMultiset_sk(SubMultiset_s):
         sage: [sub for sub in S]
         [[1, 2], [1, 3], [2, 3], [3, 3]]
         """
+
     def __init__(self, s, k):
         """
         TESTS::

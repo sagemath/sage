@@ -102,10 +102,9 @@ class PartitionSpeciesStructure(GenericSpeciesStructure):
             sage: a.automorphism_group()
             Permutation Group with generators [(1,2)]
         """
-        from sage.groups.all import SymmetricGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         return reduce(lambda a,b: a.direct_product(b, maps=False),
                       [SymmetricGroup(block._list) for block in self._list])
-
 
     def change_labels(self, labels):
         """
@@ -285,6 +284,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
         if self.is_weighted():
             res *= self._weight
         return res
+
 
 #Backward compatibility
 PartitionSpecies_class = PartitionSpecies

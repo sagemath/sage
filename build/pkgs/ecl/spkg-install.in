@@ -2,7 +2,7 @@ cd src
 
 if [ "$UNAME" = "CYGWIN" ]; then
     # Some of ECL's sources rely on GNU-isms that are allowed by default on
-    # most glibcs, but not in newlib; https://trac.sagemath.org/ticket/25057
+    # most glibcs, but not in newlib; https://github.com/sagemath/sage/issues/25057
     CFLAGS="$CFLAGS -D_GNU_SOURCE"
     CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE"
 fi

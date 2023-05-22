@@ -11,7 +11,7 @@ config.set('libs', 'system_freetype', 'True')
 config.set('libs', 'system_qhull', 'True')
 # lto is problematic if we mix libraries from the OS with our own libraries,
 # which are not necessarily compiled with the same gcc version
-# https://trac.sagemath.org/ticket/27754
+# https://github.com/sagemath/sage/issues/27754
 config.set('libs', 'enable_lto', 'False')
 
 #####################################################################

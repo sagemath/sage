@@ -22,6 +22,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.species.misc import accept_size
 
+
 class PermutationSpeciesStructure(GenericSpeciesStructure):
     def canonical_label(self):
         """
@@ -96,7 +97,8 @@ class PermutationSpeciesStructure(GenericSpeciesStructure):
              ['a', 'c', 'b', 'd'],
              ['a', 'c', 'b', 'd']]
         """
-        from sage.groups.all import SymmetricGroup, PermutationGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.groups.perm_gps.permgroup import PermutationGroup
         S = SymmetricGroup(len(self._labels))
         p = self.permutation_group_element()
         return PermutationGroup(S.centralizer(p).gens())
@@ -168,7 +170,6 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         for p in Partitions(len(labels)):
             yield self._canonical_rep_from_partition(structure_class, labels, p)
 
-
     def _canonical_rep_from_partition(self, structure_class, labels, p):
         """
         EXAMPLES::
@@ -182,7 +183,6 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         cycles = tuple(tuple(indices[breaks[i]:breaks[i+1]]) for i in range(len(p)))
         perm = list(Permutation(cycles))
         return structure_class(self, labels, perm)
-
 
     def _gs_list(self, base_ring, n):
         r"""
@@ -198,7 +198,6 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         return base_ring.one()
 
-
     def _itgs_callable(self, base_ring, n):
         r"""
         The isomorphism type generating series is given by
@@ -213,7 +212,6 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         from sage.combinat.partition import number_of_partitions
         return base_ring(number_of_partitions(n))
-
 
     def _cis(self, series_ring, base_ring):
         r"""
@@ -262,6 +260,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         elif n % m:
             return base_ring.zero()
         return pn**(n//m)
+
 
 #Backward compatibility
 PermutationSpecies_class = PermutationSpecies

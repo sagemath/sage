@@ -167,11 +167,11 @@ Functions and classes
 from __future__ import annotations
 from typing import Iterator
 
+from sage.arith.misc import bernoulli, factorial
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.arith.all import bernoulli, factorial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.pari.all import pari
@@ -1530,6 +1530,7 @@ class CombinatorialElement(CombinatorialObject, Element,
         sage: Foo(17)
         17
     """
+
     def __init__(self, parent, *args, **kwds):
         """
         Initialize this ``CombinatorialElement`` with a parent and a
@@ -1591,6 +1592,7 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
         sage: InfiniteEnumeratedSets().example()
         An example of an infinite enumerated set: the non negative integers
     """
+
     def __init__(self, category=None):
         """
         TESTS::
@@ -2416,6 +2418,7 @@ class Permutations_CC(CombinatorialClass):
     A testing class for :class:`CombinatorialClass` since :class:`Permutations`
     no longer inherits from :class:`CombinatorialClass` in :trac:`14772`.
     """
+
     def __init__(self, n):
         """
         EXAMPLES::
@@ -2487,6 +2490,7 @@ class MapCombinatorialClass(ImageSubobject, CombinatorialClass):
         sage: next(i), next(i), next(i)
         ([], [1, 2, 3, 4, 5, 6, 7, 8, 9], [1])
     """
+
     def __init__(self, cc, f, name=None, *, is_injective=True):
         """
         TESTS::
@@ -2514,6 +2518,7 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
     self._infinite_cclass_slice is supposed to accept any integer as an
     argument and return something which is iterable.
     """
+
     def cardinality(self) -> Integer | infinity:
         """
         Count the elements of the combinatorial class.
@@ -2523,7 +2528,7 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
             sage: R = InfiniteAbstractCombinatorialClass()
             doctest:warning...
             DeprecationWarning: this class is deprecated, do not use
-            See https://trac.sagemath.org/31545 for details.
+            See https://github.com/sagemath/sage/issues/31545 for details.
 
             sage: R.cardinality()
             +Infinity
@@ -3146,7 +3151,7 @@ def bernoulli_polynomial(x, n: Integer):
         if n < 0:
             raise TypeError
     except TypeError:
-        raise ValueError("The second argument must be a non-negative integer")
+        raise ValueError("the second argument must be a non-negative integer")
 
     if n == 0:
         return x**0   # result should be in the parent of x

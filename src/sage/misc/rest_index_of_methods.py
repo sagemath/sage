@@ -257,7 +257,7 @@ def list_of_subfunctions(root, only_local_functions=True):
 
     functions =  {getattr(root,name):name for name,f in root.__dict__.items() if
                   (not name.startswith('_')          and # private functions
-                   not hasattr(f,'trac_number')      and # deprecated functions
+                   not hasattr(f,'issue_number')      and # deprecated functions
                    not inspect.isclass(f)            and # classes
                    callable(getattr(f,'__func__',f)) and # e.g. GenericGraph.graphics_array_defaults
                    local_filter(f,name))                 # possibly filter imported functions

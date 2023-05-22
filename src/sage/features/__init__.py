@@ -52,6 +52,19 @@ can use the ``require`` method::
 As can be seen above, features try to produce helpful error messages.
 """
 
+# *****************************************************************************
+#       Copyright (C) 2016      Julian Rüth
+#                     2018      Jeroen Demeyer
+#                     2018      Timo Kaufmann
+#                     2019-2022 Matthias Koeppe
+#                     2021      Kwankyu Lee
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+
 from __future__ import annotations
 
 import os
@@ -250,7 +263,6 @@ class Feature(TrivialUniqueRepresentation):
             lines.append("Further installation instructions might be available at {url}.".format(url=self.url))
         self._cache_resolution = "\n".join(lines)
         return self._cache_resolution
-
 
 
 class FeatureNotPresentError(RuntimeError):
@@ -498,7 +510,7 @@ class FileFeature(Feature):
             sage: Executable(name="sh", executable="sh").absolute_path()
             doctest:warning...
             DeprecationWarning: method absolute_path has been replaced by absolute_filename
-            See https://trac.sagemath.org/31292 for details.
+            See https://github.com/sagemath/sage/issues/31292 for details.
             '/...bin/sh'
         """
         try:
@@ -767,8 +779,8 @@ class CythonFeature(Feature):
             from distutils.errors import CCompilerError
         with open(tmp_filename(ext=".pyx"), 'w') as pyx:
             pyx.write(self.test_code)
-        from sage.misc.cython import cython_import
         try:
+            from sage.misc.cython import cython_import
             cython_import(pyx.name, verbose=-1)
         except CCompilerError:
             return FeatureTestResult(self, False, reason="Failed to compile test code.")

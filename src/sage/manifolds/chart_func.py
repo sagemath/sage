@@ -911,7 +911,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         curr = self._calc_method._current
         return self._calc_method.is_trivial_zero(self.expr(curr) - SR.one())
 
-    # TODO: Remove this method as soon as ticket #28629 is solved?
+    # TODO: Remove this method as soon as issue #28629 is solved?
     def is_unit(self):
         r"""
         Return ``True`` iff ``self`` is not trivially zero since most chart

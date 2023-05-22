@@ -162,14 +162,14 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
         matrix[i][B0[i]] = 0
 
     # Last column
-    if   orthogonal_array(k, m+r  ,existence=True):
+    if orthogonal_array(k, m+r  ,existence=True):
         last_group = [x for x in range(s+1) if x != B0[-1]][:s]
     elif orthogonal_array(k,m+r+1,existence=True):
         last_group = [x for x in range(s+1) if x != B0[-1]][:s-1] + [B0[-1]]
     else:
         raise RuntimeError
 
-    for i,x in enumerate(last_group):
+    for i, x in enumerate(last_group):
         matrix[-1][x] = i
 
     OA = OA_relabel(master_design,k+r+1,n, matrix=matrix)
@@ -260,11 +260,11 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
     r1 = [None]*q
     r2 = [None]*q
     r3 = [None]*q
-    for i,x in enumerate(group_k_1):
+    for i, x in enumerate(group_k_1):
         r1[x] = i
-    for i,x in enumerate(group_k_2):
+    for i, x in enumerate(group_k_2):
         r2[x] = i
-    for i,x in enumerate(group_k_3):
+    for i, x in enumerate(group_k_3):
         r3[x] = i
 
     OA = OA_relabel(master_design, k+3,q, matrix=[list(range(q))]*k+[r1,r2,r3])
@@ -365,7 +365,7 @@ def OA_and_oval(q, *, solver=None, integrality_tolerance=1e-3):
         sage: _ = OA_and_oval
 
     """
-    from sage.arith.all import is_prime_power
+    from sage.arith.misc import is_prime_power
     from sage.combinat.designs.block_design import projective_plane
     from .orthogonal_arrays import OA_relabel
 
@@ -431,7 +431,8 @@ def OA_and_oval(q, *, solver=None, integrality_tolerance=1e-3):
     assert all(sum([xx == 0 for xx in b[1:]]) <= 2 for b in OA)
     return OA
 
-def construction_q_x(k,q,x,check=True,explain_construction=False):
+
+def construction_q_x(k, q, x, check=True, explain_construction=False):
     r"""
     Return an `OA(k,(q-1)*(q-x)+x+2)` using the `q-x` construction.
 
@@ -520,14 +521,14 @@ def construction_q_x(k,q,x,check=True,explain_construction=False):
                 "   Malcolm Greig,\n"+
                 "   Designs from projective planes and PBD bases,\n"+
                 "   vol. 7, num. 5, pp. 341--374,\n"+
-                "   Journal of Combinatorial Designs, 1999").format(q,x)
+                "   Journal of Combinatorial Designs, 1999").format(q, x)
 
     n = (q-1)*(q-x)+x+2
 
     # We obtain the qxq matrix from a OA(q,q)-q.OA(1,q). We will need to add
     # blocks corresponding to the rows/columns
     OA = incomplete_orthogonal_array(q,q,(1,)*q)
-    TD = [[i*q+xx for i,xx in enumerate(B)] for B in OA]
+    TD = [[i*q+xx for i, xx in enumerate(B)] for B in OA]
 
     # Add rows, extended with p1 and p2
     p1 = q**2
@@ -563,7 +564,7 @@ def construction_q_x(k,q,x,check=True,explain_construction=False):
     for xx in B:
         OA.remove([xx]*k)
 
-    for BB in orthogonal_array(k,x+2):
+    for BB in orthogonal_array(k, x+2):
         OA.append([B[x] for x in BB])
 
     if check:
@@ -667,8 +668,8 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
         ....:    [10, 13, 78, 9, 9, 13, 1],
         ....:    [10, 13, 79, 9, 9, 13, 1]]
         sage: for k,n,m,a,b,c,d in l:                                       # not tested -- too long
-        ....:     OA = thwart_lemma_3_5(k,n,m,a,b,c,d,complement=True)      # not tested -- too long
-        ....:     assert is_orthogonal_array(OA,k,n*m+a+b+c+d,verbose=True) # not tested -- too long
+        ....:     OA = thwart_lemma_3_5(k,n,m,a,b,c,d,complement=True)
+        ....:     assert is_orthogonal_array(OA,k,n*m+a+b+c+d,verbose=True)
 
         sage: print(designs.orthogonal_arrays.explain_construction(10,1046))
         Lemma 3.5 with n=13,m=79,a=9,b=1,c=0,d=9 from:
@@ -682,7 +683,7 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
       Charles J.Colbourn, Jeffrey H. Dinitz, Mieczyslaw Wojtas.
       Designs, Codes and Cryptography 5, no. 3 (1995): 189-197.
     """
-    from sage.arith.all import is_prime_power
+    from sage.arith.misc import is_prime_power
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
     if complement:
@@ -723,11 +724,11 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
     assert n - len(third_complement) >= c
 
     # The keepers
-    first_set  = list(range(a))
+    first_set = list(range(a))
     second_set = list(range(b))
-    third_set  = [x for x in range(n) if x not in third_complement][:c]
+    third_set = [x for x in range(n) if x not in third_complement][:c]
 
-    last_sets  = [first_set, second_set, third_set]
+    last_sets = [first_set, second_set, third_set]
 
     if complement:
         last_sets = [set(range(n)).difference(s) for s in last_sets]
@@ -796,7 +797,7 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
       Canad. Math. Bull vol7 num.4 (1964)
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
-    from sage.arith.all import is_prime_power
+    from sage.arith.misc import is_prime_power
     from .block_design import DesarguesianProjectivePlaneDesign
     from itertools import chain
 
@@ -1108,7 +1109,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
     # Leftover blocks become parallel classes. We must split them into slices of
     # length n3
-    OA3_parall    = [OA3[i:i+n3] for i in range(len(OA3_n1_parall)*n1*n3, len(OA3), n3)]
+    OA3_parall = [OA3[i:i+n3] for i in range(len(OA3_n1_parall)*n1*n3, len(OA3), n3)]
 
     # First product: OA1 and OA3
     n1_parall, parall = product_with_parallel_classes(OA1,k,n1,n3,OA3_n1_parall,OA3_parall,check=check)
@@ -1386,7 +1387,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
     from sage.combinat.designs.orthogonal_arrays import OA_from_PBD
     from .difference_family import difference_family
     from .orthogonal_arrays import incomplete_orthogonal_array
-    from sage.arith.all import is_prime_power
+    from sage.arith.misc import is_prime_power
 
     if explain_construction:
         return ("Brouwer's separable design construction with t={},q={},x={} from:\n"+
@@ -1469,7 +1470,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
     e2 = int(x != 1)
     e3 = int(x != q**2)
     e4 = int(x != t+q+1)
-    N  = t*N1+x
+    N = t*N1+x
 
     # i)
     if x == 0:
@@ -1602,7 +1603,6 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
 
         # The set of size x
         OA.extend([N-xx-1 for xx in B] for B in orthogonal_array(k,x))
-
 
     # iv)
     elif (x == q**2+1 and

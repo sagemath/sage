@@ -1,4 +1,9 @@
-<a href="https://sagemath.org"><img src="src/doc/common/themes/sage/static/logo_sagemath_black.svg" height="60" align="right" /></a>
+<a href="https://sagemath.org">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="src/doc/common/static/logo_sagemath_white.svg">
+    <img src="src/doc/common/static/logo_sagemath_black.svg" height="60" align="left">
+  </picture>
+</a>
 
 # Sage: Open Source Mathematical Software
 
@@ -53,9 +58,11 @@ mailing list](https://groups.google.com/group/sage-devel).
 --------------------------------
 
 The preferred way to run Sage on Windows is using the [Windows Subsystem for
-Linux](https://docs.microsoft.com/en-us/windows/wsl/faq), which allows
+Linux](https://docs.microsoft.com/en-us/windows/wsl/faq), a.k.a. WSL, which allows
 you to install a standard Linux distribution such as Ubuntu within
-your Windows.  Then all instructions for installation in Linux apply.
+your Windows. Make sure you allocate WSL sufficient RAM; 5GB is known to work, while
+2GB might be not enough for building Sage from source. 
+Then all instructions for installation in Linux apply.
 
 As an alternative, you can also run Linux on Windows using Docker (see
 above) or other virtualization solutions.
@@ -228,16 +235,37 @@ in the Installation Guide.
     (If the bootstrapping prerequisites are not installed, this command will
     download a package providing pre-built bootstrap output instead.)
 
-6.  [macOS with homebrew] Set required environment variables for the build:
+6.  Sanitize the build environment. Use the command
 
-        $ source ./.homebrew-build-env
+        $ env
 
-    This is to make some of Homebrew's packages (so-called keg-only packages)
-    available for the build. Run it once to apply the suggestions for the current
-    terminal session. You may need to repeat this command before you rebuild Sage
-    from a new terminal session, or after installing additional homebrew packages.
-    (You can also add it to your shell profile so that it gets run automatically
-    in all future sessions.)
+    to inspect the current environment variables, in particular `PATH`,
+    `PKG_CONFIG_PATH`, `LD_LIBRARY_PATH`, `CFLAGS`, `CPPFLAGS`, `CXXFLAGS`,
+    and `LDFLAGS` (if set).
+
+    Remove items from these (colon-separated) environment variables
+    that Sage should not use for its own build. In particular, remove
+    items if they refer to a previous Sage installation.
+
+    - [WSL] In particular, WSL imports many items from the Windows
+      `PATH` variable into the Linux environment, which can lead to
+      confusing build errors. These items typically start with `/mnt/c`.
+      It is best to remove all of them from the environment variables.
+      For example, you can set `PATH` using the command:
+
+            $ export PATH=/usr/sbin/:/sbin/:/bin/:/usr/lib/wsl/lib/
+
+    - [macOS with homebrew] Set required environment variables for the build:
+
+            $ source ./.homebrew-build-env
+
+      This is to make some of Homebrew's packages (so-called keg-only
+      packages) available for the build. Run it once to apply the
+      suggestions for the current terminal session. You may need to
+      repeat this command before you rebuild Sage from a new terminal
+      session, or after installing additional homebrew packages.  (You
+      can also add it to your shell profile so that it gets run
+      automatically in all future sessions.)
 
 7.  Optionally, decide on the installation prefix (`SAGE_LOCAL`):
 
@@ -308,7 +336,7 @@ in the Installation Guide.
     manager.
 
     For a large [list of Sage
-    packages](https://trac.sagemath.org/ticket/27330), Sage is able to
+    packages](https://github.com/sagemath/sage/issues/27330), Sage is able to
     detect whether an installed system package is suitable for use with
     Sage; in that case, Sage will not build another copy from source.
 
@@ -373,6 +401,20 @@ in the Installation Guide.
     or JupyterLab installation, as described in [section
     "Launching SageMath"](https://doc.sagemath.org/html/en/installation/launching.html)
     in the installation manual.
+    
+Alternative Installation using PyPI
+---------------
+
+For installation of `sage` in python using `pip` you need to install `sagemath-standard`. First, activate your python virtual environment and follow these steps:
+
+            $ python3 -m pip install sage_conf
+            $ ls $(sage-config SAGE_SPKG_WHEELS)
+            $ python3 -m pip install $(sage-config SAGE_SPKG_WHEELS)/*.whl 
+            $ python3 -m pip install sagemath-standard
+
+You need to install `sage_conf`, a wheelhouse of various python packages. You can list the wheels using `ls $(sage-config SAGE_SPKG_WHEELS)`. After manual installation of these wheels, you can install the sage library, `sagemath-standard`. 
+
+**NOTE:** You can find `sage` and `sagemath` pip packages but with these packages, you will encounter `ModuleNotFoundError`.
 
 Troubleshooting
 ---------------
@@ -409,7 +451,7 @@ SAGE_ROOT                 Root directory (sage-x.y in Sage tarball)
 │   └── pkgs              Every package is a subdirectory here
 │       ├── 4ti2/
 │       …
-│       └── zn_poly/
+│       └── zlib/
 ├── configure             Top-level configure script
 ├── COPYING.txt           Copyright information
 ├── pkgs                  Source trees of Python distribution packages
@@ -456,7 +498,7 @@ SAGE_ROOT                 Root directory (sage-x.y in Sage tarball)
 │   └── pkgs              Build logs of individual packages
 │       ├── alabaster-0.7.12.log
 │       …
-│       └── zn_poly-0.9.2.log
+│       └── zlib-1.2.11.log
 ├── m4                    M4 macros for generating the configure script
 │   └── *.m4
 ├── Makefile              Running "make" uses this file
@@ -470,7 +512,7 @@ SAGE_ROOT                 Root directory (sage-x.y in Sage tarball)
 ├── upstream              Source tarballs of packages
 │   ├── Babel-2.9.1.tar.gz
 │   …
-│   └── zn_poly-0.9.2.tar.gz
+│   └── zlib-1.2.11.tar.gz
 ├── venv -> SAGE_VENV     Convenience symlink to the virtual environment
 └── VERSION.txt
 ```

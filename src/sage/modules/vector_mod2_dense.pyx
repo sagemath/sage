@@ -43,7 +43,7 @@ TESTS::
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
+from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport rich_to_bool
 cimport sage.modules.free_module_element as free_module_element
 from .free_module_element import vector
@@ -135,7 +135,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         self._entries = NULL
         self._is_immutable = 0
-        if not parent is None:
+        if parent is not None:
             self._init(parent.degree(), parent)
 
     def __init__(self, parent, x, coerce=True, copy=True):
@@ -156,7 +156,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         TESTS:
 
-        Check that ticket :trac:`8601` is fixed::
+        Check that issue :trac:`8601` is fixed::
 
             sage: VS = VectorSpace(GF(2), 3)
             sage: VS((-1,-2,-3))

@@ -1,5 +1,5 @@
 r"""
-Modular symbols {alpha, beta}
+Modular symbols `\{\alpha`, `\beta\}`
 
 The ModularSymbol class represents a single modular symbol `X^i Y^{k-2-i} \{\alpha, \beta\}`.
 

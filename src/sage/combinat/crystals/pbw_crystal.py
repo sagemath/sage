@@ -32,10 +32,12 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.pbw_datum import PBWData, PBWDatum
 
+
 class PBWCrystalElement(Element):
     """
     A crystal element in the PBW model.
     """
+
     def __init__(self, parent, lusztig_datum, long_word=None):
         """
         Initialize ``self``.

@@ -119,7 +119,7 @@ class Polyhedron_QQ(Polyhedron_base):
             27
 
         We enlarge the polyhedron to force the use of the generating function methods
-        implemented in LattE integrale, rather than explicit enumeration.
+        implemented in LattE integrale, rather than explicit enumeration::
 
             sage: (1000000000*P).integral_points_count(verbose=True) # optional - latte_int
             This is LattE integrale...
@@ -150,12 +150,12 @@ class Polyhedron_QQ(Polyhedron_base):
 
         "Fibonacci" knapsacks (preprocessing helps a lot)::
 
-            sage: def fibonacci_knapsack(d, b, backend=None):
+            sage: def fibonacci_knapsack(d, b, backend=None):                                                   # optional - sage.combinat
             ....:     lp = MixedIntegerLinearProgram(base_ring=QQ)
             ....:     x = lp.new_variable(nonnegative=True)
             ....:     lp.add_constraint(lp.sum(fibonacci(i+3)*x[i] for i in range(d)) <= b)
             ....:     return lp.polyhedron(backend=backend)
-            sage: fibonacci_knapsack(20, 12).integral_points_count() # does not finish with preprocess=False
+            sage: fibonacci_knapsack(20, 12).integral_points_count() # does not finish with preprocess=False    # optional - sage.combinat
             33
 
         TESTS:
@@ -931,20 +931,20 @@ class Polyhedron_QQ(Polyhedron_base):
 
             sage: p = polytopes.hypercube(2, backend = 'normaliz'); p               # optional - pynormaliz
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
-            sage: aut_p = p.restricted_automorphism_group(output = 'permutation')   # optional - pynormaliz
-            sage: aut_p.order()                                                     # optional - pynormaliz
+            sage: aut_p = p.restricted_automorphism_group(output='permutation')     # optional - pynormaliz     # optional - sage.groups
+            sage: aut_p.order()                                                     # optional - pynormaliz     # optional - sage.groups
             8
-            sage: conj_list = aut_p.conjugacy_classes_representatives();            # optional - pynormaliz
-            sage: fixedpolytopes_dictionary = p.fixed_subpolytopes(conj_list)       # optional - pynormaliz
-            sage: fixedpolytopes_dictionary[aut_p([(0,3),(1,2)])]                   # optional - pynormaliz
+            sage: conj_list = aut_p.conjugacy_classes_representatives();            # optional - pynormaliz     # optional - sage.groups
+            sage: fixedpolytopes_dictionary = p.fixed_subpolytopes(conj_list)       # optional - pynormaliz     # optional - sage.groups
+            sage: fixedpolytopes_dictionary[aut_p([(0,3),(1,2)])]                   # optional - pynormaliz     # optional - sage.groups
             A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex
 
         TESTS::
 
             sage: P = Polyhedron(vertices=[[1, 1]], rays=[[1, 1]])
-            sage: aut_P = P.restricted_automorphism_group(output = 'permutation')
-            sage: conj_list = aut_P.conjugacy_classes_representatives()
-            sage: P.fixed_subpolytopes(conj_list)
+            sage: aut_P = P.restricted_automorphism_group(output='permutation')                                 # optional - sage.groups
+            sage: conj_list = aut_P.conjugacy_classes_representatives()                                         # optional - sage.groups
+            sage: P.fixed_subpolytopes(conj_list)                                                               # optional - sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: unbounded polyhedra are not supported
@@ -1030,7 +1030,8 @@ class Polyhedron_QQ(Polyhedron_base):
         G = `\Zmod{2}` act on P as follows::
 
             sage: P = Polyhedron(vertices=[[0,0,1],[0,0,-1],[1,0,1],[-1,0,-1],[0,1,1],   # optional - pynormaliz
-            ....: [0,-1,-1],[1,1,1],[-1,-1,-1]],backend='normaliz')                      # optional - pynormaliz
+            ....:                          [0,-1,-1],[1,1,1],[-1,-1,-1]],
+            ....:                backend='normaliz')
             sage: K = P.restricted_automorphism_group(output = 'permutation')            # optional - pynormaliz
             sage: G = K.subgroup(gens = [K([(0,2),(1,3),(4,6),(5,7)])])                  # optional - pynormaliz
             sage: conj_reps = G.conjugacy_classes_representatives()                      # optional - pynormaliz
@@ -1165,7 +1166,8 @@ class Polyhedron_QQ(Polyhedron_base):
         If the `H^*`-series is not polynomial, then it is not effective::
 
             sage: P = Polyhedron(vertices=[[0,0,1],[0,0,-1],[1,0,1],[-1,0,-1],[0,1,1], # optional - pynormaliz
-            ....: [0,-1,-1],[1,1,1],[-1,-1,-1]],backend='normaliz')                    # optional - pynormaliz
+            ....:                          [0,-1,-1],[1,1,1],[-1,-1,-1]],
+            ....:                backend='normaliz')
             sage: G = P.restricted_automorphism_group(output = 'permutation')          # optional - pynormaliz
             sage: H = G.subgroup(gens = [G([(0,2),(1,3),(4,6),(5,7)])])                # optional - pynormaliz
             sage: Hstar = P.Hstar_function(H); Hstar                                   # optional - pynormaliz

@@ -18,8 +18,6 @@ name: CI macOS
 #on: [push, pull_request]
 
 on:
-  pull_request:
-    types: [opened, synchronize]
   push:
     tags:
       - '*'
@@ -40,7 +38,7 @@ jobs:
       matrix:
         stage: ["1", "2", "2-optional-0-o", "2-optional-p-z", "2-experimental-0-o", "2-experimental-p-z"]
         # python3_xcode is only accepted if enough packages are available from the system
-        # --> to test "minimal", we would need https://trac.sagemath.org/ticket/30949
+        # --> to test "minimal", we would need https://github.com/sagemath/sage/issues/30949
         tox_env: [homebrew-macos-usrlocal-minimal, homebrew-macos-usrlocal-standard, homebrew-macos-usrlocal-maximal, homebrew-macos-usrlocal-python3_xcode-standard, conda-forge-macos-minimal, conda-forge-macos-standard, conda-forge-macos-maximal]
         xcode_version_factor: [default]
         os: [ macos-11, macos-12 ]

@@ -69,13 +69,13 @@ Sage example in ./graphique.tex, line 550::
   sage: finance.TimeSeries(liste).plot_histogram(bins=20)
   doctest:warning...
   DeprecationWarning: the package sage.finance is deprecated
-  See https://trac.sagemath.org/32427 for details.
+  See https://github.com/sagemath/sage/issues/32427 for details.
   doctest:warning...
   Importing finance from here is deprecated; please use "from sage.finance import all as finance" instead.
-  See https://trac.sagemath.org/32427 for details.
+  See https://github.com/sagemath/sage/issues/32427 for details.
   doctest:warning...
   Importing TimeSeries from here is deprecated; please use "from sage.stats.time_series import TimeSeries" instead.
-  See https://trac.sagemath.org/32427 for details.
+  See https://github.com/sagemath/sage/issues/32427 for details.
   Graphics object consisting of 20 graphics primitives
 
 Sage example in ./graphique.tex, line 714::

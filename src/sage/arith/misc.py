@@ -559,7 +559,7 @@ def is_prime(n):
         if not isinstance(R, NumberField_generic):
             import warnings
             s = f'Testing primality in {R}, which is a field, ' \
-                 'hence the result will always be False. '
+                'hence the result will always be False. '
             if R is QQ:
                 s += 'To test whether n is a prime integer, use ' \
                      'is_prime(ZZ(n)) or ZZ(n).is_prime(). '
@@ -567,6 +567,7 @@ def is_prime(n):
             warnings.warn(s)
 
     return ret
+
 
 def is_pseudoprime(n):
     r"""
@@ -1009,7 +1010,7 @@ def eratosthenes(n):
     return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
 
-def primes(start, stop=None, proof=None):
+def primes(start=2, stop=None, proof=None):
     r"""
     Return an iterator over all primes between start and stop-1,
     inclusive. This is much slower than ``prime_range``, but
@@ -1026,10 +1027,11 @@ def primes(start, stop=None, proof=None):
 
     INPUT:
 
-    - ``start`` - an integer - lower bound for the primes
+    - ``start`` - an integer (default: 2) optional argument -
+      giving lower bound for the primes
 
-    - ``stop`` - an integer (or infinity) optional argument -
-      giving upper (open) bound for the primes
+    - ``stop`` - an integer (or infinity) - giving upper (open) bound for the
+      primes
 
     - ``proof`` - bool or None (default: None)  If True, the function
       yields only proven primes.  If False, the function uses a
@@ -1515,13 +1517,13 @@ def divisors(n):
 
         sage: K.<a> = QuadraticField(7)
         sage: divisors(K.ideal(7))
-        [Fractional ideal (1), Fractional ideal (-a), Fractional ideal (7)]
+        [Fractional ideal (1), Fractional ideal (a), Fractional ideal (7)]
         sage: divisors(K.ideal(3))
         [Fractional ideal (1), Fractional ideal (3),
-        Fractional ideal (-a + 2), Fractional ideal (-a - 2)]
+        Fractional ideal (a - 2), Fractional ideal (a + 2)]
         sage: divisors(K.ideal(35))
-        [Fractional ideal (1), Fractional ideal (5), Fractional ideal (-a),
-        Fractional ideal (7), Fractional ideal (-5*a), Fractional ideal (35)]
+        [Fractional ideal (1), Fractional ideal (5), Fractional ideal (a),
+        Fractional ideal (7), Fractional ideal (5*a), Fractional ideal (35)]
 
     TESTS::
 
@@ -2529,6 +2531,8 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
        - ``'pari'`` - (default) use the PARI c library
 
+       - ``'flint'`` - use the FLINT library
+
        - ``'kash'`` - use KASH computer algebra system (requires that
          kash be installed)
 
@@ -2579,6 +2583,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
     ::
 
+        sage: factor(293292629867846432923017396246429, algorithm='flint')
+        3 * 4852301647696687 * 20148007492971089
+
+    ::
+
         sage: factor(-500, algorithm='kash')      # optional - kash
         -1 * 2^2 * 5^3
 
@@ -2619,7 +2628,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
         sage: K.<i> = QuadraticField(-1)
         sage: factor(122 - 454*i)
-        (-3*i - 2) * (-i - 2)^3 * (i + 1)^3 * (i + 4)
+        (-i) * (-i - 2)^3 * (i + 1)^3 * (-2*i + 3) * (i + 4)
 
     To access the data in a factorization::
 
@@ -2693,7 +2702,7 @@ def radical(n, *args, **kwds):
         sage: radical(0)
         Traceback (most recent call last):
         ...
-        ArithmeticError: Radical of 0 not defined.
+        ArithmeticError: radical of 0 is not defined
         sage: K.<i> = QuadraticField(-1)
         sage: radical(K(2))
         i + 1

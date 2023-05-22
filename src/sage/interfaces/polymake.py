@@ -27,12 +27,9 @@ polymake has been described in [GJ1997]_, [GJ2006]_, [JMP2009]_, [GJRW2010]_,
 
 import os
 import re
-import sys
-import time
 
 from .expect import Expect
 from .interface import (Interface, InterfaceElement, InterfaceFunctionElement)
-from sage.cpython.string import bytes_to_str, str_to_bytes
 from sage.misc.verbose import get_verbose
 from sage.misc.cachefunc import cached_method
 from sage.interfaces.tab_completion import ExtraTabCompletion

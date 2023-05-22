@@ -10,6 +10,7 @@ Univariate Polynomials over GF(p^e) via NTL's ZZ_pEX
 AUTHOR:
 
 - Yann Laigle-Chapuy (2010-01) initial implementation
+- Lorenz Panny (2023-01): :meth:`minpoly_mod`
 """
 
 from sage.rings.integer_ring import ZZ
@@ -366,6 +367,50 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         else:
             raise ValueError("unknown algorithm")
         return res != 0
+
+    def minpoly_mod(self, other):
+        r"""
+        Compute the minimal polynomial of this polynomial modulo another
+        polynomial in the same ring.
+
+        ALGORITHM:
+
+        NTL's ``MinPolyMod()``, which uses Shoup's algorithm [Sho1999]_.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(101^2)[]
+            sage: f = x^17 + x^2 - 1
+            sage: (x^2).minpoly_mod(f)
+            x^17 + 100*x^2 + 2*x + 100
+
+        TESTS:
+
+        Random testing::
+
+            sage: p = random_prime(50)
+            sage: e = randrange(2,10)
+            sage: R.<x> = GF((p,e),'a')[]
+            sage: d = randrange(1,50)
+            sage: f = R.random_element(d)
+            sage: g = R.random_element((-1,5*d))
+            sage: poly = g.minpoly_mod(f)
+            sage: poly(R.quotient(f)(g))
+            0
+        """
+        self._parent._modulus.restore()
+
+        if other.parent() is not self._parent:
+            other = self._parent.coerce(other)
+
+        cdef Polynomial_ZZ_pEX r
+        r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+
+        ZZ_pEX_MinPolyMod(r.x, (<Polynomial_ZZ_pEX>(self % other)).x, (<Polynomial_ZZ_pEX>other).x)
+        return r
 
     cpdef _richcmp_(self, other, int op):
         """

@@ -144,6 +144,7 @@ class RiggedConfigurationElement(ClonableArray):
         (/)  1[ ]0  0[ ]0  0[ ]0  0[ ]0
                     0[ ]0
     """
+
     def __init__(self, parent, rigged_partitions=[], **options):
         r"""
         Construct a rigged configuration element.
@@ -600,7 +601,6 @@ class RiggedConfigurationElement(ClonableArray):
                     new_vac_nums[i] += M[a,b]
                     new_rigging[i] += M[a,b]
 
-
                 if k != 1 and not set_vac_num: # If we did not remove a row nor found another row of length k-1
                     new_vac_nums[rigging_index] += 2
 
@@ -922,6 +922,7 @@ class RiggedConfigurationElement(ClonableArray):
             riggings.append(list(p.rigging))
         return [partitions, riggings]
 
+
 class RCNonSimplyLacedElement(RiggedConfigurationElement):
     """
     Rigged configuration elements for non-simply-laced types.
@@ -941,6 +942,7 @@ class RCNonSimplyLacedElement(RiggedConfigurationElement):
         <BLANKLINE>
         sage: TestSuite(elt).run()
     """
+
     def to_virtual_configuration(self):
         """
         Return the corresponding rigged configuration in the virtual crystal.
@@ -1040,6 +1042,7 @@ class RCNonSimplyLacedElement(RiggedConfigurationElement):
 ## Highest weight crystal rigged configuration elements ##
 ##########################################################
 
+
 class RCHighestWeightElement(RiggedConfigurationElement):
     """
     Rigged configurations in highest weight crystals.
@@ -1059,6 +1062,7 @@ class RCHighestWeightElement(RiggedConfigurationElement):
         <BLANKLINE>
         sage: TestSuite(elt).run()
     """
+
     def check(self):
         """
         Make sure all of the riggings are less than or equal to the
@@ -1144,6 +1148,7 @@ class RCHighestWeightElement(RiggedConfigurationElement):
         alpha = list(P.simple_roots())
         return self.parent()._wt - sum(sum(x) * alpha[i] for i,x in enumerate(self))
 
+
 class RCHWNonSimplyLacedElement(RCNonSimplyLacedElement):
     """
     Rigged configurations in highest weight crystals.
@@ -1158,6 +1163,7 @@ class RCHWNonSimplyLacedElement(RCNonSimplyLacedElement):
         -1[ ]-1
         sage: TestSuite(elt).run()
     """
+
     def check(self):
         """
         Make sure all of the riggings are less than or equal to the
@@ -1226,6 +1232,7 @@ class RCHWNonSimplyLacedElement(RCNonSimplyLacedElement):
 ## KR crystal rigged configuration elements ##
 ##############################################
 
+
 class KRRiggedConfigurationElement(RiggedConfigurationElement):
     r"""
     `U_q^{\prime}(\mathfrak{g})` rigged configurations.
@@ -1251,6 +1258,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
         sage: tp_krtab.to_rigged_configuration() == rc_elt
         True
     """
+
     def __init__(self, parent, rigged_partitions=[], **options):
         r"""
         Construct a rigged configuration element.
@@ -1551,7 +1559,6 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
         for a, nu in enumerate(self):
             wt -= sum(nu) * alpha[rc_index[a]]
         return wt
-
 
     def to_tensor_product_of_kirillov_reshetikhin_tableaux(self, display_steps=False, build_graph=False):
         r"""
@@ -2064,6 +2071,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
         rc = P(partition_list=nu, rigging_list=rig)
         return rc.f_string(reversed(e_str))
 
+
 class KRRCSimplyLacedElement(KRRiggedConfigurationElement):
     r"""
     `U_q^{\prime}(\mathfrak{g})` rigged configurations in simply-laced types.
@@ -2143,6 +2151,7 @@ class KRRCSimplyLacedElement(KRRiggedConfigurationElement):
             B._max_charge = max(b.cocharge() for b in B.module_generators)
         return B._max_charge - self.cocharge()
 
+
 class KRRCNonSimplyLacedElement(KRRiggedConfigurationElement, RCNonSimplyLacedElement):
     r"""
     `U_q^{\prime}(\mathfrak{g})` rigged configurations in non-simply-laced
@@ -2158,6 +2167,7 @@ class KRRCNonSimplyLacedElement(KRRiggedConfigurationElement, RCNonSimplyLacedEl
         0[ ][ ]0
         sage: TestSuite(elt).run()
     """
+
     def e(self, a):
         r"""
         Return the action of `e_a` on ``self``.
@@ -2289,11 +2299,13 @@ class KRRCNonSimplyLacedElement(KRRiggedConfigurationElement, RCNonSimplyLacedEl
 
     cc = cocharge
 
+
 class KRRCTypeA2DualElement(KRRCNonSimplyLacedElement):
     r"""
     `U_q^{\prime}(\mathfrak{g})` rigged configurations in type
     `A_{2n}^{(2)\dagger}`.
     """
+
     def epsilon(self, a):
         r"""
         Return the value of `\varepsilon_a` of ``self``.

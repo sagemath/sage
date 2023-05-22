@@ -149,7 +149,7 @@ from .infinity import infinity
 import sage.misc.latex as latex
 from sage.structure.nonexact import Nonexact
 
-from sage.interfaces.magma import MagmaElement
+from sage.interfaces.abc import MagmaElement
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.misc.sage_eval import sage_eval
 
@@ -365,7 +365,6 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
         return _multi_variate(base_ring, num_gens=names, names=arg2,
                      order=order, default_prec=default_prec, sparse=sparse)
 
-
     # univariate case: the arguments to PowerSeriesRing used to be
     # (base_ring, name=None, default_prec=20, names=None, sparse=False),
     # and thus that is what the code below expects; this behavior is being
@@ -381,7 +380,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
     ##
 
     # if isinstance(name, (int,integer.Integer)) or isinstance(arg2,(int,integer.Integer)):
-    #     deprecation(trac_number, "This behavior of PowerSeriesRing is being deprecated in favor of constructing multivariate power series rings. (See Trac ticket #1956.)")
+    #     deprecation(issue_number, "This behavior of PowerSeriesRing is being deprecated in favor of constructing multivariate power series rings. (See Github issue #1956.)")
 
     # the following is the original, univariate-only code
 

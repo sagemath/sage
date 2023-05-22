@@ -92,7 +92,6 @@ def _insert_punctured_positions(l, punctured_points, value = None):
     return final
 
 
-
 class PuncturedCode(AbstractLinearCode):
     r"""
     Representation of a punctured code.
@@ -131,8 +130,8 @@ class PuncturedCode(AbstractLinearCode):
         """
         if not isinstance(positions, (Integer, int, set, list)):
             raise TypeError("positions must be either a Sage Integer, a Python int, a set or a list")
-        if isinstance(positions, (list, set)) and not all (isinstance(i, (int, Integer)) for i in positions):
-                raise TypeError("if positions is a list or a set, it has to contain only Python ints or Sage Integers")
+        if isinstance(positions, (list, set)) and not all(isinstance(i, (int, Integer)) for i in positions):
+            raise TypeError("if positions is a list or a set, it has to contain only Python ints or Sage Integers")
         if isinstance(positions, (Integer, int)):
             positions = {positions}
         if isinstance(positions, list):
@@ -425,13 +424,6 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
         return M
 
 
-
-
-
-
-
-
-
 class PuncturedCodeOriginalCodeDecoder(Decoder):
     r"""
     Decoder decoding through a decoder over the original code of its punctured code.
@@ -579,7 +571,6 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
         """
         return "Decoder of %s through %s" % (self.code(), self.original_decoder())
-
 
     def _latex_(self):
         r"""

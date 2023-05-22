@@ -1,13 +1,12 @@
 """
 Root lattices and root spaces
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.rings.integer_ring import ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -183,9 +182,9 @@ class RootSpace(CombinatorialFreeModule):
         .. TODO:: generalize diagonal module morphisms to implement this
         """
         try:
-            return self.root_system.root_lattice().sum_of_terms( (i, ZZ(c)) for (i,c) in x)
+            return self.root_system.root_lattice().sum_of_terms((i, ZZ(c)) for i, c in x)
         except TypeError:
-            raise ValueError("%s does not have integral coefficients"%x)
+            raise ValueError("%s does not have integral coefficients" % x)
 
     @cached_method
     def _to_classical_on_basis(self, i):
@@ -230,6 +229,7 @@ class RootSpace(CombinatorialFreeModule):
         def basis_value(basis, i):
             return basis[i]
         return self.module_morphism(on_basis = functools.partial(basis_value, basis) , codomain=L)
+
 
 class RootSpaceElement(CombinatorialFreeModule.Element):
     def scalar(self, lambdacheck):
@@ -460,5 +460,6 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
         """
         return self.parent().to_ambient_space_morphism()(self)
+
 
 RootSpace.Element = RootSpaceElement

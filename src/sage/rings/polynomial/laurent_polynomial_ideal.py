@@ -103,6 +103,8 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         to speed up computation of the associated ideal in some cases;
         normally the end user will have no need to work with it directly.
 
+        EXAMPLES::
+
             sage: P.<x,y,z> = LaurentPolynomialRing(QQ, 3)
             sage: I = P.ideal([x^2*y + 3*x*y^2])
             sage: I.hint()

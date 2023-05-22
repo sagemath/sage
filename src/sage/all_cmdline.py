@@ -17,4 +17,16 @@ sage_mode = 'cmdline'
 from sage.all import *
 from sage.calculus.predefined import x
 
+from sage.misc.lazy_import import lazy_import
+
+for pkg in ['axiom', 'fricas', 'gap' , 'gap3', 'giac', 'gp',
+            'gnuplot', 'kash', 'magma', 'macaulay2', 'maple',
+            'mathematica', 'mathics', 'matlab',
+            'mupad', 'mwrank', 'octave', 'qepcad', 'singular',
+            'sage0', 'lie', 'r']:
+    lazy_import(f'sage.interfaces.{pkg}', f'{pkg}_console')
+del pkg
+
+lazy_import('sage.interfaces.maxima_abstract', 'maxima_console')
+
 sage.misc.session.init()

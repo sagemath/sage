@@ -4234,7 +4234,7 @@ class FiniteWord_class(Word_class):
             ...
             DeprecationWarning: f._pos_in(w, start) is deprecated.
             Use w.first_occurrence(f, start) instead.
-            See https://trac.sagemath.org/30187 for details.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             2
             sage: Word('12')._pos_in(Word('131231'), 3) is None
             True
@@ -4271,7 +4271,7 @@ class FiniteWord_class(Word_class):
             ...
             DeprecationWarning: f.first_pos_in(w) is deprecated.
             Use w.first_occurrence(f) instead.
-            See https://trac.sagemath.org/30187 for details.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             2
             sage: Word('32').first_pos_in(Word('131231')) is None
             True
@@ -4499,7 +4499,7 @@ class FiniteWord_class(Word_class):
             ...
             DeprecationWarning: f.factor_occurrences_in(w) is deprecated.
             Use w.factor_occurrences_iterator(f) instead.
-            See https://trac.sagemath.org/30187 for details.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             [0, 2, 8]
         """
         from sage.misc.superseded import deprecation
@@ -4525,7 +4525,7 @@ class FiniteWord_class(Word_class):
             ...
             DeprecationWarning: f.nb_factor_occurrences_in(w) is deprecated.
             Use w.number_of_factor_occurrences(f) instead.
-            See https://trac.sagemath.org/30187 for details.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             4
             sage: Word('321').nb_factor_occurrences_in(Word('11233231231311233221123'))
             0
@@ -4570,7 +4570,7 @@ class FiniteWord_class(Word_class):
             ...
             DeprecationWarning: f.nb_subword_occurrences_in(w) is deprecated.
             Use w.number_of_subword_occurrences(f) instead.
-            See https://trac.sagemath.org/30187 for details.
+            See https://github.com/sagemath/sage/issues/30187 for details.
             2604124996
 
             sage: u = Word([0,1,0,1,1,0])

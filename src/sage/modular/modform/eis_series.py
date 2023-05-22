@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Eisenstein Series
+Eisenstein series
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
@@ -125,8 +125,8 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
     - David Loeffler (2012-03-15): add options for alternative normalizations
       (motivated by :trac:`12043`)
     """
-    ## we use this to prevent computation if it would fail anyway.
-    if k <= 0 or k % 2 == 1 :
+    # we use this to prevent computation if it would fail anyway.
+    if k <= 0 or k % 2 == 1:
         raise ValueError("k must be positive and even")
 
     a0 = - bernoulli(k) / (2*k)
@@ -242,7 +242,6 @@ def __find_eisen_chars(character, k):
                     for t in divisors(N//(f**2)):
                         V.insert(0, (chi, chi_inv, t))
         return V
-
 
     eps = character
     if eps(-1) != (-1)**k:

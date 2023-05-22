@@ -1,7 +1,20 @@
-# -*- coding: utf-8 -*-
 r"""
 Features for testing the presence of ``latte_int``
 """
+
+# ****************************************************************************
+#       Copyright (C) 2018 Vincent Delecroix
+#                     2019 Frédéric Chapoton
+#                     2021 Matthias Koeppe
+#                     2021 Kwankyu Lee
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from . import Executable
 from .join_feature import JoinFeature
 

@@ -36,7 +36,6 @@ def handle_AA_and_QQbar(func):
 
     @sage_wraps(func)
     def wrapper(*args, **kwds):
-
         """
         TESTS::
 
@@ -87,7 +86,7 @@ def handle_AA_and_QQbar(func):
         from sage.rings.polynomial.multi_polynomial import MPolynomial
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, is_PolynomialSequence
         from sage.rings.ideal import Ideal, Ideal_generic
-        from sage.rings.qqbar import AlgebraicField_common, number_field_elements_from_algebraics
+        from sage.rings.abc import AlgebraicField_common
 
         if not any(isinstance(a, (Polynomial, MPolynomial, Ideal_generic))
                    and isinstance(a.base_ring(), AlgebraicField_common)
@@ -110,6 +109,7 @@ def handle_AA_and_QQbar(func):
         # We need minimal=True if these elements are over AA, because
         # same_field=True might trigger an exception otherwise.
 
+        from sage.rings.qqbar import number_field_elements_from_algebraics
         numfield, new_elems, morphism = number_field_elements_from_algebraics(orig_elems, same_field=True, minimal=True)
 
         elem_dict = dict(zip(orig_elems, new_elems))

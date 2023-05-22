@@ -1,9 +1,9 @@
 
 .. _chapter-modularization:
 
-============================
- Packaging the Sage Library
-============================
+===========================================
+Packaging the Sage Library for Distribution
+===========================================
 
 
 Modules, packages, distribution packages
@@ -167,7 +167,7 @@ The source directory of a distribution package, such as
   the current development release is ``9.7.beta8``, then such a
   version could be marked ``9.7.beta8.post1``.
 
-  Also sometimes when working on tickets it may be necessary to
+  Also sometimes when working on PRs it may be necessary to
   increment the version because a new feature is needed in another
   distribution package. Such versions should be marked by using the
   version number of the anticipated next development release and
@@ -178,7 +178,7 @@ The source directory of a distribution package, such as
   use ``9.7.beta9.dev1``. If the current development release is
   the stable release ``9.8``, use ``9.9.beta0.dev1``.
 
-  After the ticket is merged in the next development version, it will
+  After the PR is merged in the next development version, it will
   be synchronized again with the other package versions.
 
 - ``setup.py`` -- a `setuptools <https://pypi.org/project/setuptools/>`_-based
@@ -273,6 +273,10 @@ distribution -- which then must be declared as a run-time dependency.
   populating the global interactive environment that is available to users at
   the ``sage:`` prompt. In particular, no Sage library code should import from
   :mod:`sage.rings.all`.
+
+  To audit the Sage library for such imports, use ``sage --tox -e relint``.
+  In most cases, the imports can be fixed automatically using the
+  tool ``sage --fiximports``.
 
 - Replace module-level imports by method-level imports.  Note that
   this comes with a small runtime overhead, which can become
@@ -562,6 +566,15 @@ no dependency on symbolics. However, there are a small number of
 doctests that depend on :class:`sage.symbolic.ring.SymbolicRing` for integration
 testing. Hence, these doctests are marked ``# optional -
 sage.symbolic``.
+
+When defining new features for the purpose of doctest annotations, it may be a good
+idea to hide implementation details from feature names. For example, all doctests that
+use finite fields have to depend on PARI. However, we have defined a feature
+:mod:`sage.rings.finite_rings` (which implies the presence of :mod:`sage.libs.pari`).
+Annotating the doctests ``# optional - sage.rings.finite_rings`` expresses the
+dependency in a clearer way than using ``# optional - sage.libs.pari``, and it
+will be a smaller maintenance burden when implementation details change.
+
 
 Testing the distribution in virtual environments with tox
 ---------------------------------------------------------
