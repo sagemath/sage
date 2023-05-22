@@ -648,6 +648,15 @@ class Documenter:
             for line, src in zip(more_content.data, more_content.items):
                 self.add_line(line, src[0], src[1])
 
+    def get_object_members(self, want_all: bool) -> tuple[bool, ObjectMembers]:
+        """Return `(members_check_module, members)` where `members` is a
+        list of `(membername, member)` pairs of the members of *self.object*.
+
+        If *want_all* is True, return all members.  Else, only return those
+        members given by *self.options.members* (which may also be None).
+        """
+        raise NotImplementedError('must be implemented in subclasses')
+
     def filter_members(self, members: ObjectMembers, want_all: bool
                        ) -> List[Tuple[str, Any, bool]]:
         """Filter the given member list.
