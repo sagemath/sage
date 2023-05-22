@@ -40,7 +40,7 @@ AUTHORS:
 - Sebastian Oehms (October 2020, add :meth:`get_knotinfo` and :meth:`is_isotopic`)
 - Sebastian Oehms (May 2022): add :meth:`links_gould_polynomial`
 - Sebastian Oehms (May 2023): change the convention about the ``pd_code`` from
-  clockwise to anti-clockwise.
+  clockwise to anti-clockwise (see :trac:`35665`).
 """
 
 # ****************************************************************************
@@ -1368,7 +1368,10 @@ class Link(SageObject):
             Until version 10.0 the convention to read the ``PD`` code has been
             to list the components in clockwise direction. As of version 10.1
             the convention has changed, since it was opposite to the usage in
-            most other places. 
+            most other places.
+
+            Thus, if you use ``PD`` codes from former Sage releases with this
+            version you should check for the correct mirror type.
 
         EXAMPLES::
 
