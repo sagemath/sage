@@ -13,18 +13,25 @@ recursive-include sage/libs/mpfr *.pxd                                          
 include           sage/libs/mpfr/all.py                                         # FIXME
 recursive-include sage/libs/mpfi *.pxd                                          # FIXME
 include           sage/libs/mpfi/all.py                                         # FIXME
+recursive-include sage/libs/pari *.pxd                                          # FIXME
+include           sage/libs/pari/all.py                                         # FIXME
+graft             sage/libs/linkages                                            # FIXME
 recursive-include sage/matrix *.pxd                                             # FIXME
 include           sage/matrix/matrix_complex_ball_dense.p*
 include           sage/misc/binary_tree.p*                                      # FIXME
 include           sage/misc/all.py                                              # FIXME
 recursive-include sage/rings *.pxd                                              # FIXME
-include           sage/rings/complex_arb.p*
+include           sage/rings/*_arb.p*
+include           sage/rings/finite_rings/*.pxd                                 # FIXME
+include           sage/rings/finite_rings/integer_mod_limits.h                  # FIXME
+include           sage/rings/finite_rings/all.py                                # FIXME
 include           sage/rings/integer_fake.h                                     # FIXME
-include           sage/rings/number_field/number_field_element_quadratic.p*
-include           sage/rings/padics/qadic_flint_FP.p*
-include           sage/rings/polynomial/evaluation_flint.p*
-include           sage/rings/polynomial/polynomial_complex_arb.p*
-include           sage/rings/real_arb.p*
+#include           sage/rings/number_field/number_field_element_quadratic.p*   #### this is entangled with NTL
+include           sage/rings/padics/*_flint_*.p*
+include           sage/rings/padics/*.pxd                                       # FIXME
+include           sage/rings/padics/*.pxi                                       # FIXME
+include           sage/rings/polynomial/*_flint.p*
+include           sage/rings/polynomial/*_arb.p*
 
 global-exclude *.c
 global-exclude *.cpp

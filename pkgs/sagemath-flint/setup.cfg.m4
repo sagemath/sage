@@ -31,3 +31,36 @@ install_requires =
     esyscmd(`sage-get-system-packages install-requires \
         sagemath_categories \
         | sed "2,\$s/^/    /;"')dnl
+
+packages =
+    sage.libs.arb
+    sage.libs.flint
+    sage.matrix
+    sage.rings
+    sage.rings.number_field
+    sage.rings.padics
+    sage.rings.polynomial
+
+[options.package_data]
+
+sage.libs.arb =
+    *.pxd
+
+sage.libs.flint =
+    *.pxd
+
+sage.matrix =
+    matrix_complex_ball_dense.pxd
+
+sage.rings =
+    *_arb.pxd
+
+sage.rings.number_field =
+    number_field_element_quadratic.pxd
+
+sage.rings.padics =
+    *_flint_*.pxd
+
+sage.rings.polynomial =
+    *_flint.pxd
+    *_arb.pxd
