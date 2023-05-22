@@ -2,7 +2,7 @@
 [metadata]
 name = sagemath-coxeter3
 version = file: VERSION.txt
-description = Sage: Open Source Mathematics Software: Graph (iso/auto)morphisms with coxeter3
+description = Sage: Open Source Mathematics Software: Coxeter groups, Bruhat ordering, Kazhdan-Lusztig polynomials with coxeter3
 long_description = file: README.rst
 long_description_content_type = text/x-rst
 license = GNU General Public License (GPL) v2 or later

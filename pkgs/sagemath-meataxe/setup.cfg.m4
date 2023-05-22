@@ -2,7 +2,7 @@
 [metadata]
 name = sagemath-meataxe
 version = file: VERSION.txt
-description = Sage: Open Source Mathematics Software: Graph (iso/auto)morphisms with meataxe
+description = Sage: Open Source Mathematics Software: Matrices over small finite fields with meataxe
 long_description = file: README.rst
 long_description_content_type = text/x-rst
 license = GNU General Public License (GPL) v2 or later
