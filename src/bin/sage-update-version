@@ -86,11 +86,17 @@ echo "$SAGE_VERSION_BANNER" > "$SAGE_ROOT/VERSION.txt"
 # Regenerate auto-generated files tarball
 "$SAGE_ROOT/bootstrap" -s
 
+# Create CITATION file for Zenodo-GitHub integration
+export SAGE_VERSION
+export SAGE_RELEASE_DATE
+envsubst <"$SAGE_ROOT/CITATION.cff.in" >"$SAGE_ROOT/CITATION.cff"
+
 # Commit auto-generated changes
 git commit -m "Updated SageMath version to $SAGE_VERSION" -- \
     "$SAGE_ROOT/VERSION.txt" \
     "$SAGE_SRC/sage/version.py" \
     "$SAGE_SRC/VERSION.txt" \
+    "$SAGE_SRC/CITATION.cff" \
     "$SAGE_SRC/bin/sage-version.sh" \
     "$SAGE_ROOT/build/pkgs/configure/checksums.ini" \
     "$SAGE_ROOT/build/pkgs/configure/package-version.txt" \
