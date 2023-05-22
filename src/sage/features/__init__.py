@@ -348,7 +348,7 @@ class Feature(TrivialUniqueRepresentation):
     def hide(self):
         r"""
         Hide this feature. For example this is used when the doctest option
-        ``--hide``is set. Setting an installed feature as hidden pretends
+        ``--hide`` is set. Setting an installed feature as hidden pretends
         that it is not available. To revert this use :meth:`unhide`.
 
         EXAMPLES:

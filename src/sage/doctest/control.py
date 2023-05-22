@@ -1353,7 +1353,7 @@ class DocTestController(SageObject):
             Features detected...
             0
 
-        We test the ``--hide`` option (:trac:`34185`):
+        We test the ``--hide`` option (:trac:`34185`)::
 
             sage: from sage.doctest.control import test_hide
             sage: filename = tmp_filename(ext='.py')
