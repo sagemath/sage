@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 from distutils import log
 from setuptools import setup
 
@@ -19,7 +20,9 @@ try:
 except ImportError:
     pass
 
-import sys
+# PEP 517 builds do not have . in sys.path
+sys.path.insert(0, os.path.dirname(__file__))
+
 from sage_setup.excepthook import excepthook
 sys.excepthook = excepthook
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 from distutils import log
 from setuptools import setup
 
@@ -20,7 +21,6 @@ except ImportError:
     pass
 
 # PEP 517 builds do not have . in sys.path
-import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 if len(sys.argv) > 1 and (sys.argv[1] == "sdist" or sys.argv[1] == "egg_info"):
