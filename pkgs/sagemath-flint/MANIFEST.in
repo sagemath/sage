@@ -1,7 +1,7 @@
 include VERSION.txt
 
 prune sage
-global-include    all__sagemath_flint_arb.py
+global-include    all__sagemath_flint.py
 
 graft             sage/libs/arb
 graft             sage/libs/flint

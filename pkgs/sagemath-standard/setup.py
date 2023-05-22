@@ -77,7 +77,7 @@ if any(x in sys.argv
 print("Discovering Python/Cython source code....")
 t = time.time()
 distributions = ['',
-                 'sagemath-flint-arb',
+                 'sagemath-flint',
                  'sagemath-gap',
                  'sagemath-giac',
                  'sagemath-homfly',

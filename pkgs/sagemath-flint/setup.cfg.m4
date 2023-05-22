@@ -1,6 +1,6 @@
 # -*- conf-unix -*-
 [metadata]
-name = sagemath-flint-arb
+name = sagemath-flint
 version = file: VERSION.txt
 description = Sage: Open Source Mathematics Software: Fast computations with FLINT and arb
 long_description = file: README.rst

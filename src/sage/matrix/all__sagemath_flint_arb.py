@@ -1,1 +1,1 @@
-# sage_setup: distribution = sagemath-flint-arb
+# sage_setup: distribution = sagemath-flint

@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-flint-arb
+# sage_setup: distribution = sagemath-flint
 r"""
 Univariate polynomials over `\CC` with interval coefficients using Arb.
 

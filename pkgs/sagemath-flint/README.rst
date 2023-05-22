@@ -25,5 +25,5 @@ installs the Sage Library (sagelib, implemented in Python and Cython).
 About this pip-installable source distribution
 ----------------------------------------------
 
-This pip-installable source distribution ``sagemath-flint-arb`` provides
+This pip-installable source distribution ``sagemath-flint`` provides
 Cython interfaces to the ``FLINT`` and ``arb`` libraries.

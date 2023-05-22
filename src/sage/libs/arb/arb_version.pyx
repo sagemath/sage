@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-flint-arb
+# sage_setup: distribution = sagemath-flint
 from sage.libs.arb.arb cimport arb_version
 from sage.cpython.string cimport char_to_str
 

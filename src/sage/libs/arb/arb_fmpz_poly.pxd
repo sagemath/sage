@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-flint-arb
+# sage_setup: distribution = sagemath-flint
 # distutils: libraries = gmp flint ARB_LIBRARY
 # distutils: depends = arb_fmpz_poly.h
 

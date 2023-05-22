@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-flint-arb
+# sage_setup: distribution = sagemath-flint
 r"""
 Arbitrary precision complex balls using Arb
 
