@@ -85,7 +85,8 @@ class EnumeratedSets(CategoryWithAxiom):
         sage: EnumeratedSets().super_categories()
         [Category of sets]
         sage: EnumeratedSets().all_super_categories()
-        [Category of enumerated sets, Category of sets, Category of sets with partial maps, Category of objects]
+        [Category of enumerated sets, Category of sets,
+         Category of sets with partial maps, Category of objects]
 
     TESTS::
 
@@ -277,33 +278,33 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: P = Partitions()
-                sage: list(P.iterator_range(stop=5))
+                sage: P = Partitions()                                                  # optional - sage.combinat
+                sage: list(P.iterator_range(stop=5))                                    # optional - sage.combinat
                 [[], [1], [2], [1, 1], [3]]
-                sage: list(P.iterator_range(0, 5))
+                sage: list(P.iterator_range(0, 5))                                      # optional - sage.combinat
                 [[], [1], [2], [1, 1], [3]]
-                sage: list(P.iterator_range(3, 5))
+                sage: list(P.iterator_range(3, 5))                                      # optional - sage.combinat
                 [[1, 1], [3]]
-                sage: list(P.iterator_range(3, 10))
+                sage: list(P.iterator_range(3, 10))                                     # optional - sage.combinat
                 [[1, 1], [3], [2, 1], [1, 1, 1], [4], [3, 1], [2, 2]]
-                sage: list(P.iterator_range(3, 10, 2))
+                sage: list(P.iterator_range(3, 10, 2))                                  # optional - sage.combinat
                 [[1, 1], [2, 1], [4], [2, 2]]
-                sage: it = P.iterator_range(3)
-                sage: [next(it) for x in range(10)]
+                sage: it = P.iterator_range(3)                                          # optional - sage.combinat
+                sage: [next(it) for x in range(10)]                                     # optional - sage.combinat
                 [[1, 1],
                  [3], [2, 1], [1, 1, 1],
                  [4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1],
                  [5]]
-                sage: it = P.iterator_range(3, step=2)
-                sage: [next(it) for x in range(5)]
+                sage: it = P.iterator_range(3, step=2)                                  # optional - sage.combinat
+                sage: [next(it) for x in range(5)]                                      # optional - sage.combinat
                 [[1, 1],
                  [2, 1],
                  [4], [2, 2], [1, 1, 1, 1]]
-                sage: next(P.iterator_range(stop=-3))
+                sage: next(P.iterator_range(stop=-3))                                   # optional - sage.combinat
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
-                sage: next(P.iterator_range(start=-3))
+                sage: next(P.iterator_range(start=-3))                                  # optional - sage.combinat
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
@@ -356,26 +357,26 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: P = Partitions()
-                sage: P.unrank_range(stop=5)
+                sage: P = Partitions()                                                  # optional - sage.combinat
+                sage: P.unrank_range(stop=5)                                            # optional - sage.combinat
                 [[], [1], [2], [1, 1], [3]]
-                sage: P.unrank_range(0, 5)
+                sage: P.unrank_range(0, 5)                                              # optional - sage.combinat
                 [[], [1], [2], [1, 1], [3]]
-                sage: P.unrank_range(3, 5)
+                sage: P.unrank_range(3, 5)                                              # optional - sage.combinat
                 [[1, 1], [3]]
-                sage: P.unrank_range(3, 10)
+                sage: P.unrank_range(3, 10)                                             # optional - sage.combinat
                 [[1, 1], [3], [2, 1], [1, 1, 1], [4], [3, 1], [2, 2]]
-                sage: P.unrank_range(3, 10, 2)
+                sage: P.unrank_range(3, 10, 2)                                          # optional - sage.combinat
                 [[1, 1], [2, 1], [4], [2, 2]]
-                sage: P.unrank_range(3)
+                sage: P.unrank_range(3)                                                 # optional - sage.combinat
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
-                sage: P.unrank_range(stop=-3)
+                sage: P.unrank_range(stop=-3)                                           # optional - sage.combinat
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
-                sage: P.unrank_range(start=-3)
+                sage: P.unrank_range(start=-3)                                          # optional - sage.combinat
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
@@ -409,24 +410,24 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: P = Partitions()
-                sage: P[:5]
+                sage: P = Partitions()                                                  # optional - sage.combinat
+                sage: P[:5]                                                             # optional - sage.combinat
                 [[], [1], [2], [1, 1], [3]]
-                sage: P[0:5]
+                sage: P[0:5]                                                            # optional - sage.combinat
                 [[], [1], [2], [1, 1], [3]]
-                sage: P[3:5]
+                sage: P[3:5]                                                            # optional - sage.combinat
                 [[1, 1], [3]]
-                sage: P[3:10]
+                sage: P[3:10]                                                           # optional - sage.combinat
                 [[1, 1], [3], [2, 1], [1, 1, 1], [4], [3, 1], [2, 2]]
-                sage: P[3:10:2]
+                sage: P[3:10:2]                                                         # optional - sage.combinat
                 [[1, 1], [2, 1], [4], [2, 2]]
-                sage: P[3:]
+                sage: P[3:]                                                             # optional - sage.combinat
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
-                sage: P[3]
+                sage: P[3]                                                              # optional - sage.combinat
                 [1, 1]
-                sage: P[-1]
+                sage: P[-1]                                                             # optional - sage.combinat
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: cannot list an infinite set
@@ -467,9 +468,9 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: len(GF(5))
+                sage: len(GF(5))                                                        # optional - sage.libs.pari
                 5
-                sage: len(MatrixSpace(GF(2), 3, 3))
+                sage: len(MatrixSpace(GF(2), 3, 3))                                     # optional - sage.libs.pari sage.modules
                 512
             """
             from sage.rings.infinity import Infinity
@@ -494,7 +495,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: (GF(3)^2).tuple()
+                sage: (GF(3)^2).tuple()                                                 # optional - sage.libs.pari
                 ((0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2))
                 sage: R = Integers(11)
                 sage: l = R.tuple(); l
@@ -575,7 +576,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: (GF(3)^2).list()
+                sage: (GF(3)^2).list()                                                  # optional - sage.libs.pari
                 [(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)]
                 sage: R = Integers(11)
                 sage: R.list()
@@ -603,7 +604,7 @@ class EnumeratedSets(CategoryWithAxiom):
             Trying to list an infinite vector space raises an error
             instead of running forever (see :trac:`10470`)::
 
-                sage: (QQ^2).list()  # indirect test
+                sage: (QQ^2).list()  # indirect test                                    # optional - sage.modules
                 Traceback (most recent call last):
                 ...
                 AttributeError: 'FreeModule_ambient_field_with_category' object has no attribute 'list'
@@ -958,16 +959,16 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: R = Compositions(4).map(attrcall('partial_sums')); R
+                sage: R = Compositions(4).map(attrcall('partial_sums')); R              # optional - sage.combinat
                 Image of Compositions of 4 by The map *.partial_sums()
                  from Compositions of 4
-                sage: R.cardinality()
+                sage: R.cardinality()                                                   # optional - sage.combinat
                 8
-                sage: R.list()
+                sage: R.list()                                                          # optional - sage.combinat
                 [[1, 2, 3, 4], [1, 2, 4], [1, 3, 4], [1, 4], [2, 3, 4], [2, 4], [3, 4], [4]]
-                sage: [r for r in R]
+                sage: [r for r in R]                                                    # optional - sage.combinat
                 [[1, 2, 3, 4], [1, 2, 4], [1, 3, 4], [1, 4], [2, 3, 4], [2, 4], [3, 4], [4]]
-                sage: R.category()
+                sage: R.category()                                                      # optional - sage.combinat
                 Category of finite enumerated subobjects of sets
 
             .. WARNING::
@@ -975,20 +976,20 @@ class EnumeratedSets(CategoryWithAxiom):
                 If the function is not injective, then there may be
                 repeated elements::
 
-                    sage: P = Compositions(4)
-                    sage: P.list()
+                    sage: P = Compositions(4)                                           # optional - sage.combinat
+                    sage: P.list()                                                      # optional - sage.combinat
                     [[1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [1, 3], [2, 1, 1], [2, 2], [3, 1], [4]]
-                    sage: P.map(attrcall('major_index')).list()
+                    sage: P.map(attrcall('major_index')).list()                         # optional - sage.combinat
                     [6, 3, 4, 1, 5, 2, 3, 0]
 
                 Pass ``is_injective=False`` to get a correct result in this case::
 
-                    sage: P.map(attrcall('major_index'), is_injective=False).list()
+                    sage: P.map(attrcall('major_index'), is_injective=False).list()     # optional - sage.combinat
                     [6, 3, 4, 1, 5, 2, 0]
 
             TESTS::
 
-                sage: TestSuite(R).run(skip=['_test_an_element',
+                sage: TestSuite(R).run(skip=['_test_an_element',                        # optional - sage.combinat
                 ....:                        '_test_enumerated_set_contains',
                 ....:                        '_test_some_elements'])
             """

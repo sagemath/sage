@@ -17,7 +17,7 @@ from sage.data_structures.bitset_base cimport *
 
 cimport cython
 from cpython.object cimport Py_EQ, Py_NE
-from sage.rings.integer cimport Integer, smallInteger
+from sage.rings.integer cimport smallInteger
 from sage.rings.rational cimport Rational
 from libc.string cimport memcpy, memcmp
 from sage.combinat.words.word_datatypes cimport WordDatatype
@@ -533,7 +533,6 @@ cdef class WordDatatype_char(WordDatatype):
             raise ValueError("a word cannot be taken modulo")
 
         if exp == float('inf'):
-            from sage.rings.infinity import Infinity
 
             def fcn(n):
                 return self[n % self.length()]

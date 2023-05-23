@@ -21,5 +21,5 @@ distribution, consider upgrading your distribution.
 Gentoo users might want to give a try to
 `sage-on-gentoo <https://github.com/cschwan/sage-on-gentoo>`_.
 
-The  :trac:`Trac wiki page Distribution <wiki/Distribution>` collects information
+The  `GitHub wiki page Distribution <https://github.com/sagemath/sage/wiki/Distribution>` collects information
 regarding packaging and distribution of SageMath.
