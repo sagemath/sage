@@ -1,2 +1,2 @@
 Cython==0.29.32
-sagemath-standard==10.0
+sagemath-standard==10.1.beta0

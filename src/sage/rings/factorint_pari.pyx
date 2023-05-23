@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # sage.doctest: optional - sage.libs.pari
 r"""
 Integer factorization using PARI

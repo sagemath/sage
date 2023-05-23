@@ -13,7 +13,7 @@ include sage/rings/rational.pxd                                 # FIXME
 include sage/rings/finite_rings/element_base.p*                 # FIXME
 include sage/rings/finite_rings/element_pari_ffelt.p*   # needs sage.rings.finite_rings.element_base
 include sage/rings/number_field/totallyreal*.p*         # needs sage.rings.{integer,rational}
-
+include sage/rings/factorint_pari.p*                    # needs sage.rings.integer
 
 include sage/misc/binary_tree.pxd                               # FIXME
 include sage/rings/polynomial/*.pxd                             # FIXME
