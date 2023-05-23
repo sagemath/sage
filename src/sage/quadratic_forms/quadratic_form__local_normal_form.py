@@ -152,11 +152,11 @@ def local_normal_form(self, p):
         # ----------------------------------------------------------------------
         if (min_i == min_j):
             block_size = 1
-            Q.swap_variables(0, min_i, in_place = True)
+            Q.swap_variables(0, min_i, in_place=True)
         else:
             # Work in the upper-left 2x2 block, and replace it by its 2-adic equivalent form
-            Q.swap_variables(0, min_i, in_place = True)
-            Q.swap_variables(1, min_j, in_place = True)
+            Q.swap_variables(0, min_i, in_place=True)
+            Q.swap_variables(1, min_j, in_place=True)
 
             # 1x1 => make upper left the smallest
             if (p != 2):
@@ -181,8 +181,8 @@ def local_normal_form(self, p):
                 if valuation(g, p) != valuation(a, p):
                     raise RuntimeError("we have a problem with our rescaling not preserving p-integrality")
 
-                Q.multiply_variable(ZZ(a/g), j, in_place = True)   # Ensures that the new b entry is divisible by a
-                Q.add_symmetric(ZZ(-b/g), j, 0, in_place = True)  # Performs the cancellation
+                Q.multiply_variable(ZZ(a/g), j, in_place=True)   # Ensures that the new b entry is divisible by a
+                Q.add_symmetric(ZZ(-b/g), j, 0, in_place=True)  # Performs the cancellation
 
         elif (block_size == 2):
             a1 = 2 * Q[0,0]
@@ -199,14 +199,14 @@ def local_normal_form(self, p):
                 b = Q[1, j]
 
                 # Ensures an integral result (scale jth row/column by big_det)
-                Q.multiply_variable(big_det, j, in_place = True)
+                Q.multiply_variable(big_det, j, in_place=True)
 
                 # Performs the cancellation (by producing -big_det * jth row/column)
-                Q.add_symmetric(ZZ(-(a*b2 - b*a2)), j, 0, in_place = True)
-                Q.add_symmetric(ZZ(-(-a*b1 + b*a1)), j, 1, in_place = True)
+                Q.add_symmetric(ZZ(-(a*b2 - b*a2)), j, 0, in_place=True)
+                Q.add_symmetric(ZZ(-(-a*b1 + b*a1)), j, 1, in_place=True)
 
                 # Now remove the extra factor (non p-unit factor) in big_det we introduced above
-                Q.divide_variable(ZZ(min_scale * min_scale), j, in_place = True)
+                Q.divide_variable(ZZ(min_scale * min_scale), j, in_place=True)
 
             # Uses Cassels's proof to replace the remaining 2 x 2 block
             if (((1 + small_det) % 8) == 0):

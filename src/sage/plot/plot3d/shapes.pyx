@@ -50,11 +50,11 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from libc.math cimport sqrt, sin, cos, tan, asin, acos, atan, M_PI
+from libc.math cimport sqrt, sin, cos, acos, M_PI
 from sage.rings.real_double import RDF
 from sage.modules.free_module_element import vector
 from sage.misc.decorators import rename_keyword
-from .base import Graphics3dGroup, Graphics3d
+from .base import Graphics3dGroup
 from .index_face_set cimport IndexFaceSet, PrimitiveObject
 from .transform cimport point_c
 
@@ -948,7 +948,7 @@ cdef class Sphere(ParametricSurface):
             ([-10.0, ..., 10.0],
              [0.0, ..., 3.141592653589793, ..., 0.0])
         """
-        cdef int K, u_res, v_res
+        cdef int u_res, v_res
         u_res = min(max(int(M_PI*self.radius/ds), 6), 20)
         v_res = min(max(int(2*M_PI * self.radius/ds), 6), 36)
         urange = [-10.0] + [M_PI * k/u_res - M_PI/2 for k in range(1, u_res)] + [10.0]
@@ -961,8 +961,8 @@ cdef class Sphere(ParametricSurface):
         elif u == 10:
             res.x, res.y, res.z = 0, 0,  self.radius
         else:
-            res.x = self.radius*cos(v) * cos(u)
-            res.y = self.radius*sin(v) * cos(u)
+            res.x = self.radius * cos(v) * cos(u)
+            res.y = self.radius * sin(v) * cos(u)
             res.z = self.radius * sin(u)
 
 

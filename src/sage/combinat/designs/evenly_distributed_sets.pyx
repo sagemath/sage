@@ -23,7 +23,7 @@ from libc.string cimport memset, memcpy
 
 from cysignals.memory cimport check_malloc, check_calloc, sig_free
 
-from sage.rings.integer cimport Integer,smallInteger
+from sage.rings.integer cimport smallInteger
 
 cdef class EvenlyDistributedSetsBacktracker:
     r"""
@@ -212,7 +212,7 @@ cdef class EvenlyDistributedSetsBacktracker:
         self.up_to_isom = bool(up_to_isomorphism)
         self.count      = 0
 
-        cdef unsigned int i,j,ell
+        cdef unsigned int i,j
 
         if not K.is_field():
             raise ValueError("{} is not a field".format(K))

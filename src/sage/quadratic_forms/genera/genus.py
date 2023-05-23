@@ -121,7 +121,8 @@ def genera(sig_pair, determinant, max_scale=None, even=False):
     return genera
 
 
-genera = staticmethod(genera)
+# #35557: In Python < 3.10, a staticmethod cannot be called directly
+_genera_staticmethod = staticmethod(genera)
 
 
 def _local_genera(p, rank, det_val, max_scale, even):
@@ -368,7 +369,7 @@ def Genus(A, factored_determinant=None):
     for f in D:
         p = f[0]
         val = f[1]
-        symbol = p_adic_symbol(A, p, val = val)
+        symbol = p_adic_symbol(A, p, val=val)
         G = Genus_Symbol_p_adic_ring(p, symbol)
         local_symbols.append(G)
     return GenusSymbol_global_ring(sig_pair, local_symbols, representative=A)
@@ -404,7 +405,7 @@ def LocalGenusSymbol(A, p):
         Genus symbol at 3:     1^-2
     """
     val = A.determinant().valuation(p)
-    symbol = p_adic_symbol(A, p, val = val)
+    symbol = p_adic_symbol(A, p, val=val)
     return Genus_Symbol_p_adic_ring(p, symbol)
 
 
@@ -1259,7 +1260,7 @@ class Genus_Symbol_p_adic_ring():
         sage: G3 = Genus_Symbol_p_adic_ring(p,s3); G3
         Genus symbol at 3:     1^-3 3^1
     """
-    def __init__(self, prime, symbol, check = True):
+    def __init__(self, prime, symbol, check=True):
         r"""
         Create the local genus symbol of given prime and local invariants.
 
