@@ -58,9 +58,6 @@ Methods
 -------
 """
 
-from sage.rings.integer cimport Integer
-from cysignals.memory cimport sig_malloc, sig_free
-
 
 def is_connected(G):
     """
