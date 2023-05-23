@@ -1349,7 +1349,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
                 return self._base.zero()
         return L(coeff_log, valuation=1)
 
-
     def morphism(self):
         r"""
         Return the morphism object that defines the Drinfeld module.
