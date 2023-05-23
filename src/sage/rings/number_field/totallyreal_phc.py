@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 """
 Enumeration of Totally Real Fields: PHC interface
 

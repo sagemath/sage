@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 r"""
 Embeddings into ambient fields
 

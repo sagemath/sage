@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # sage_setup: distribution = sagemath-pari
 
 cdef double eval_seq_as_poly(int *f, int n, double x)

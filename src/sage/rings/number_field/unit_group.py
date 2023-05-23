@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 r"""
 Unit and S-unit groups of Number Fields
 

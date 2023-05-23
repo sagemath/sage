@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 """
 Splitting fields of polynomials over number fields
 

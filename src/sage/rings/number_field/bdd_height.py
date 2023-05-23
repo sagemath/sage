@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 r"""
 Elements of bounded height in number fields
 

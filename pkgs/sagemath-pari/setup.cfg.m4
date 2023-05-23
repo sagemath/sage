@@ -35,3 +35,11 @@ install_requires =
         sagemath_environment \
         sagemath_categories \
         | sed "2,\$s/^/    /;"')dnl
+
+packages =
+    sage.libs.pari
+    sage.libs.mpfr
+
+[options.package_data]
+sage.libs.pari = *.pxd
+sage.libs.mpfr = *.pxd

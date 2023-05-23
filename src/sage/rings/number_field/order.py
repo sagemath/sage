@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 """
 Orders in Number Fields
 

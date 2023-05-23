@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # sage_setup: distribution = sagemath-flint
 # distutils: libraries = NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS

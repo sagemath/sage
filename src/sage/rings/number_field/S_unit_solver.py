@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 r"""
 Solve S-unit equation x + y = 1
 

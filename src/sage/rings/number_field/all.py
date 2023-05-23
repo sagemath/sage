@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 
 from .number_field import (NumberField, NumberFieldTower, CyclotomicField, QuadraticField,
                            is_fundamental_discriminant, is_real_place)

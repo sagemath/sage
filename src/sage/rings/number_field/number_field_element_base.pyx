@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 r"""
 Number field elements (abstract base class)
 """

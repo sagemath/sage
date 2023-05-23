@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from .types cimport ZZ_p_c
 from .ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 
