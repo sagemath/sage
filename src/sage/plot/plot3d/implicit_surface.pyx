@@ -81,8 +81,6 @@ cimport numpy as np
 import numpy as np
 
 from sage.plot.plot3d.transform cimport point_c, face_c, color_c, Transformation
-from sage.plot.plot3d.base cimport PrimitiveObject
-from sage.plot.plot3d.base import RenderParams, default_texture
 from sage.plot.plot3d.index_face_set cimport IndexFaceSet
 from sage.rings.real_double import RDF
 from sage.plot.misc import setup_for_eval_on_grid

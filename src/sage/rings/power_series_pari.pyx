@@ -76,7 +76,7 @@ from sage.libs.pari.all import pari
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.rings.power_series_ring_element cimport PowerSeries
-from sage.structure.element cimport Element, RingElement
+from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
 from sage.rings.infinity import infinity
 
