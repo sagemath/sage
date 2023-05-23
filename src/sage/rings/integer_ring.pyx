@@ -62,7 +62,6 @@ from sage.rings.number_field.number_field_element_base import NumberFieldElement
 from sage.structure.coerce cimport is_numpy_type
 from sage.structure.element cimport parent
 from sage.structure.parent_gens import ParentWithGens
-from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport rich_to_bool
 from sage.structure.sequence import Sequence
 

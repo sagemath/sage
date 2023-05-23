@@ -231,7 +231,11 @@ def set_intersphinx_mappings(app, config):
     'python': ('https://docs.python.org/',
                 os.path.join(SAGE_DOC_SRC, "common",
                              "python{}.inv".format(python_version))),
-    'pplpy': (PPLPY_DOCS, None)}
+    }
+    if PPLPY_DOCS and os.path.exists(os.path.join(PPLPY_DOCS, 'objects.inv')):
+        app.config.intersphinx_mapping['pplpy'] = (PPLPY_DOCS, None)
+    else:
+        app.config.intersphinx_mapping['pplpy'] = ('https://www.labri.fr/perso/vdelecro/pplpy/latest/', None)
 
     # Add master intersphinx mapping
     dst = os.path.join(invpath, 'objects.inv')
@@ -925,6 +929,7 @@ def setup(app):
         app.add_config_value('intersphinx_mapping', {}, False)
         app.add_config_value('intersphinx_cache_limit', 5, False)
         app.add_config_value('intersphinx_disabled_reftypes', [], False)
+        app.add_config_value('intersphinx_timeout', None, False)
         app.connect('config-inited', set_intersphinx_mappings)
         app.connect('builder-inited', intersphinx.load_mappings)
         # We do *not* fully initialize intersphinx since we call it by hand

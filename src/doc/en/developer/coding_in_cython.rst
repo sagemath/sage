@@ -32,7 +32,7 @@ up-to-date information or check out the
 to get started immediately.
 
 
-Writing Cython Code in Sage
+Writing cython code in Sage
 ===========================
 
 There are several ways to create and build Cython code in Sage.
@@ -69,7 +69,7 @@ There are several ways to create and build Cython code in Sage.
    Then run ``sage -b`` to rebuild Sage.
 
 
-Attaching or Loading .spyx Files
+Attaching or loading .spyx files
 ================================
 
 The easiest way to try out Cython without having to learn anything
@@ -142,7 +142,7 @@ version with a type declaration, by changing ``def is2pow(n):`` to
 
 .. _section-interrupt:
 
-Interrupt and Signal Handling
+Interrupt and signal handling
 =============================
 
 When writing Cython code for Sage, special care must be taken to ensure
@@ -152,7 +152,7 @@ Sage uses the `cysignals package <https://github.com/sagemath/cysignals>`_
 for this, see the `cysignals documentation <http://cysignals.readthedocs.org/>`_
 for more information.
 
-Unpickling Cython Code
+Unpickling Cython code
 ======================
 
 Pickling for Python classes and extension classes, such as Cython, is different.
