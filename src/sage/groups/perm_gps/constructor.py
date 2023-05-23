@@ -156,8 +156,8 @@ def standardize_generator(g, convert_dict=None, as_cycles=False):
 
     INPUT:
 
-    - ``g`` -- a list, tuple, string, GapElement,
-      PermutationGroupElement, Permutation
+    - ``g`` -- a :class:`list`, :class:`tuple`, :class:`string`, :class:`GapElement`,
+      :class:`PermutationGroupElement`, or :class:`Permutation`
 
     - ``convert_dict`` -- (optional) a dictionary used to convert the
       points to a number compatible with GAP
