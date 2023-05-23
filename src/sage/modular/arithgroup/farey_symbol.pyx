@@ -39,8 +39,6 @@ from .congroup_sl2z import SL2Z
 from sage.modular.cusps import Cusp
 
 from sage.misc.decorators import options, rename_keyword
-from sage.misc.latex import latex
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp cimport richcmp_not_equal
 
@@ -338,12 +336,12 @@ cdef class Farey:
         for i,g in enumerate(self.generators()):
             m = g.matrix()
             if (-m).is_one():
-                return [i+1]
+                return [i + 1]
             t = m.trace()
-            if t == 0: # order = 4
-                return 2 * [i+1]
-            elif t == 1: # order = 6
-                return 3 * [i+1]
+            if t == 0:  # order = 4
+                return 2 * [i + 1]
+            elif t == 1:  # order = 6
+                return 3 * [i + 1]
         return []
 
     def word_problem(self, M, output = 'standard', check = True):
@@ -443,13 +441,12 @@ cdef class Farey:
             raise ValueError('Unrecognized output format')
         if check:
             if M not in self.group:
-                raise ValueError("Matrix ( %s ) is not in group ( %s )"%(M,self.group))
+                raise ValueError("Matrix ( %s ) is not in group ( %s )" % (M, self.group))
         cdef Integer a = M.d()
         cdef Integer b = -M.b()
         cdef Integer c = -M.c()
         cdef Integer d = M.a()
-        cdef cpp_SL2Z *cpp_beta = new cpp_SL2Z(1,0,0,1)
-        E = SL2Z([-1,0,0,-1])
+        cdef cpp_SL2Z *cpp_beta = new cpp_SL2Z(1, 0, 0, 1)
         sig_on()
         result = self.this_ptr.word_problem(a.value, b.value, c.value, d.value, cpp_beta)
         sig_off()
@@ -505,13 +502,13 @@ cdef class Farey:
             for i in range(len(tietze)):
                 t = tietze[i]
                 tmp = tmp * gens[t-1] if t > 0 else tmp * gens[-t-1]**-1
-            assert tmp.matrix() == M.matrix(),'%s %s %s'%(tietze, tmp.matrix(),M.matrix())
+            assert tmp.matrix() == M.matrix(),'%s %s %s' % (tietze, tmp.matrix(),M.matrix())
         if output == 'standard':
             return tuple(tietze)
         if output == 'syllables':
             return tuple((a-1,len(list(g))) if a > 0 else (-a-1,-len(list(g))) for a,g in groupby(tietze))
-        else: # output == 'gens'
-            return tuple((gens[a-1],len(list(g))) if a > 0 else (gens[-a-1],-len(list(g))) for a,g in groupby(tietze))
+        else:  # output == 'gens'
+            return tuple((gens[a-1],len(list(g))) if a > 0 else (gens[-a-1],-len(list(g))) for a, g in groupby(tietze))
 
     def __contains__(self, M):
         r"""
@@ -959,17 +956,16 @@ cdef class Farey:
             ....:                                            linestyle=':',
             ....:                                            thickness='2')
             Graphics object consisting of 58 graphics primitives
-
         """
         from sage.plot.all import Graphics
-        from sage.plot.colors import rainbow, to_mpl_color
-        from sage.plot.all import hyperbolic_arc, hyperbolic_triangle, text
+        from sage.plot.colors import rainbow
+        from sage.plot.all import hyperbolic_arc, hyperbolic_triangle
 
         I = CC(0, 1)
         w = RR(3).sqrt()
         L = 1000
         g = Graphics()
-        ## show coset
+        # show coset
         for x in self.coset_reps():
             a, b, c, d = x[1, 1], -x[0, 1], -x[1, 0], x[0, 0]
             A, B = CC(0, L), CC(0, L)

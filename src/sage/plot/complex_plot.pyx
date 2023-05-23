@@ -578,7 +578,6 @@ def complex_to_cmap_rgb(z_values, cmap='turbo', contoured=False, tiled=False,
     cdef unsigned int i, j, imax, jmax
     cdef double x, y, mag, arg
     cdef double lightness_delta
-    cdef double r, g, b
     cdef ComplexDoubleElement z
     from sage.rings.complex_double import CDF
 

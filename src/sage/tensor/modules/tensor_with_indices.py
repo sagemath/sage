@@ -424,7 +424,7 @@ class TensorWithIndices(SageObject):
 
         con,cov = self._parse_indices(
             indices,
-            tensor_type = self._tensor.tensor_type()
+            tensor_type=self._tensor.tensor_type()
         )
 
         # Apply (anti)symmetrizations on contravariant indices
@@ -960,7 +960,7 @@ class TensorWithIndices(SageObject):
 
         perm_group = PermutationGroup(
             [swap(param, self._tensor.tensor_rank()) for param in swap_params],
-            canonicalize = False
+            canonicalize=False
         )
         # Compute a decomposition of the permutation as a product of swaps
         decomposition_as_string = perm_group([x+1 for x in permutation]).word_problem(

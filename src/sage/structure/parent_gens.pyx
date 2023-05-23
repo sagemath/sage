@@ -68,9 +68,7 @@ This example illustrates generators for a free module over `\ZZ`.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import gens_py
 cimport sage.structure.parent as parent
-from sage.structure.coerce_dict cimport MonoDict
 cimport sage.structure.category_object as category_object
 
 
@@ -194,10 +192,9 @@ cdef class ParentWithGens(ParentWithBase):
         self._names = d['_names']
         self._latex_names = d['_latex_names']
 
-
-    #################################################################################
+    ######################################################################
     # Morphisms of objects with generators
-    #################################################################################
+    ######################################################################
 
     def hom(self, im_gens, codomain=None, base_map=None, category=None, check=True):
         r"""

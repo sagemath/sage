@@ -13,7 +13,7 @@ Elements of function fields: extension
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.structure.richcmp cimport richcmp, richcmp_not_equal
+from sage.structure.richcmp cimport richcmp
 from sage.structure.element cimport FieldElement, RingElement, ModuleElement, Element
 
 from sage.rings.function_field.element cimport FunctionFieldElement

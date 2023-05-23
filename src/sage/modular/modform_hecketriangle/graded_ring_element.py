@@ -1526,7 +1526,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
     #precision is actually accuracy, maybe add "real precision" meaning number of rel. coef
     @cached_method
-    def _q_expansion_cached(self, prec, fix_d, subs_d, d_num_prec, fix_prec = False):
+    def _q_expansion_cached(self, prec, fix_d, subs_d, d_num_prec, fix_prec=False):
         """
         Returns the Fourier expansion of self (cached).
         Don't call this function, instead use :meth:`q_expansion`.
@@ -1593,7 +1593,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         return qexp
 
-    def q_expansion(self, prec = None, fix_d = False, d_num_prec = None, fix_prec = False):
+    def q_expansion(self, prec=None, fix_d=False, d_num_prec=None, fix_prec=False):
         """
         Returns the Fourier expansion of self.
 
@@ -1697,7 +1697,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         return self._q_expansion_cached(prec, fix_d, subs_d, d_num_prec, fix_prec)
 
-    def q_expansion_fixed_d(self, prec = None, d_num_prec = None, fix_prec = False):
+    def q_expansion_fixed_d(self, prec=None, d_num_prec=None, fix_prec=False):
         """
         Returns the Fourier expansion of self.
         The numerical (or exact) value for ``d`` is substituted.
@@ -1759,7 +1759,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         return self.q_expansion(prec, True, d_num_prec, fix_prec)
 
-    def q_expansion_vector(self, min_exp = None, max_exp = None, prec = None, **kwargs):
+    def q_expansion_vector(self, min_exp=None, max_exp=None, prec=None, **kwargs):
         r"""
         Return (part of) the Laurent series expansion of ``self`` as a vector.
 
@@ -1830,7 +1830,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         return vector([qexp[m] for m in range(min_exp, max_exp +1)])
 
-    def evaluate(self, tau, prec = None, num_prec = None, check=False):
+    def evaluate(self, tau, prec=None, num_prec=None, check=False):
         r"""
         Try to return ``self`` evaluated at a point ``tau``
         in the upper half plane, where ``self`` is interpreted
@@ -2208,7 +2208,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
                 f_rho = self.parent().graded_ring().f_rho()
                 return self._rat.subs(x=f_rho(tau), y=f_i(tau), z=E2(tau), d=dval)
 
-    def __call__(self, tau, prec = None, num_prec = None, check=False):
+    def __call__(self, tau, prec=None, num_prec=None, check=False):
         r"""
         Try to return ``self`` evaluated at a point ``tau``
         in the upper half plane, where ``self`` is interpreted

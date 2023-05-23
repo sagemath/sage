@@ -325,7 +325,7 @@ class FormalSums(UniqueRepresentation, Module):
     """
     Element = FormalSum
     @staticmethod
-    def __classcall__(cls, base_ring = ZZ):
+    def __classcall__(cls, base_ring=ZZ):
         """
         Set the default value for the base ring.
 

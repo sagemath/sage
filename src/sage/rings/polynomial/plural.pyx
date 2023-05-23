@@ -131,7 +131,7 @@ from sage.rings.polynomial.multi_polynomial_ideal import NCPolynomialIdeal
 
 from sage.rings.polynomial.polydict import ETuple
 from sage.rings.ring import check_default_category
-from sage.structure.element cimport CommutativeRingElement, Element, ModuleElement, RingElement
+from sage.structure.element cimport CommutativeRingElement, Element, RingElement
 from sage.structure.factory import UniqueFactory
 from sage.structure.richcmp cimport rich_to_bool
 from sage.structure.parent cimport Parent

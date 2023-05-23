@@ -1847,7 +1847,7 @@ def suite1():
 
     SquareInts(10,150000).run()
 
-    Factorial(2*10**6).run(systems = ['sage', 'magma'])
+    Factorial(2*10**6).run(systems=['sage', 'magma'])
     Fibonacci(10**6).run()
     Fibonacci(2*10^7).run(systems=["sage", "magma", "mathematica"])
 

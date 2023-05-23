@@ -2189,7 +2189,7 @@ class CoxeterGroups(Category_singleton):
                 sage: W = WeylGroup(["A", 3])                                           # optional - sage.combinat sage.groups
                 sage: covers = tuple([u, v]                                             # optional - sage.combinat sage.groups
                 ....:                for v in W for u in v.bruhat_lower_covers())
-                sage: P = Poset((W, covers), cover_relations = True)                    # optional - sage.combinat sage.groups sage.graphs
+                sage: P = Poset((W, covers), cover_relations=True)                      # optional - sage.combinat sage.groups sage.graphs
                 sage: P.show()                                                          # optional - sage.combinat sage.groups sage.graphs sage.plot
 
             Alternatively, one can just use::

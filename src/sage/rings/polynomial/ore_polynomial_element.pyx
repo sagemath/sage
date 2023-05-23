@@ -27,7 +27,7 @@ AUTHORS:
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
 import re
@@ -37,7 +37,7 @@ from sage.misc.superseded import experimental
 
 from sage.rings.infinity import infinity
 from sage.structure.factorization import Factorization
-from sage.structure.element cimport Element, RingElement, AlgebraElement, ModuleElement
+from sage.structure.element cimport Element, RingElement, AlgebraElement
 from sage.structure.parent cimport Parent
 from sage.structure.parent_gens cimport ParentWithGens
 from sage.misc.abstract_method import abstract_method
@@ -252,7 +252,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         return self._hash_c()
 
-    cpdef int degree(self):
+    cpdef Integer degree(self):
         r"""
         Return the degree of ``self``.
 
@@ -2496,7 +2496,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
                 X[i] = c
         return X
 
-    cpdef int degree(self):
+    cpdef Integer degree(self):
         r"""
         Return the degree of ``self``.
 
@@ -2515,8 +2515,25 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
             sage: S(0).degree()
             -1
+
+        TESTS:
+
+        We check that the degree is an ``Integer`` object (see #35519)::
+
+            sage: R.<t> = ZZ[]
+            sage: sigma = R.hom([t+1])
+            sage: S.<x> = R['x',sigma]
+            sage: a = x^2 + t*x^3 + t^2*x + 1
+            sage: isinstance(a.degree(), Integer)
+            True
+
+        ::
+
+            sage: R.<t> = OrePolynomialRing(GF(5)['T'], GF(5)['T'].frobenius_endomorphism())
+            sage: isinstance((t + 1).degree(), Integer)
+            True
         """
-        return len(self._coeffs) - 1
+        return Integer(len(self._coeffs) - 1)
 
     cpdef _add_(self, right):
         r"""

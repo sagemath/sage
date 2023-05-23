@@ -519,10 +519,10 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         """
         if isinstance(n, slice):
             return Sequence(list.__getitem__(self, n),
-                            universe = self.__universe,
-                            check = False,
-                            immutable = False,
-                            cr = self.__cr)
+                            universe=self.__universe,
+                            check=False,
+                            immutable=False,
+                            cr=self.__cr)
         else:
             return list.__getitem__(self,n)
 

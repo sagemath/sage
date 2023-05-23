@@ -20,6 +20,8 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # import from Sage library
 from sage.graphs.graph import Graph
 from math import sin, cos, pi
+from numpy import corrcoef
+from sage.matrix.constructor import Matrix
 
 
 def BullGraph():
@@ -393,6 +395,43 @@ def CompleteGraph(n):
     G.add_edges(((i, j) for i in range(n) for j in range(i + 1, n)))
     return G
 
+def CorrelationGraph(seqs, alpha, include_anticorrelation):
+    """
+    Constructs and returns a correlation graph with a node corresponding to each sequence in `seqs`.
+
+    Edges are added between nodes where the corresponding sequences have a correlation coeffecient greater than alpha.
+
+    If include_anticorrelation is true, then edges are also added between nodes with correlation coeffecient less than -alpha.
+
+    EXAMPLES:
+
+        sage: from sage.graphs.generators.basic import CorrelationGraph
+        sage: data=[[1,2,3],[4,5,6],[7,8,9999]]
+        sage: CG1 = CorrelationGraph(data, 0.9, False)
+        sage: CG2 = CorrelationGraph(data, 0.9, True)
+        sage: CG3 = CorrelationGraph(data, 0.1, True)
+        sage: CG1.edges(sort=False)
+        [(0, 0, None), (0, 1, None), (1, 1, None), (2, 2, None)]
+        sage: CG2.edges(sort=False)
+        [(0, 0, None), (0, 1, None), (1, 1, None), (2, 2, None)]
+        sage: CG3.edges(sort=False)
+        [(0, 0, None), (0, 1, None), (0, 2, None), (1, 1, None), (1, 2, None), (2, 2, None)]
+
+    """
+
+    # compute pairwise correlation coeffecients
+    corrs = corrcoef(seqs)
+
+    # compare against alpha to get adjacency matrix
+    if include_anticorrelation:
+        boolean_adjacency_matrix = abs(corrs)>=alpha
+    else:
+        boolean_adjacency_matrix = corrs>=alpha
+
+    adjacency_matrix = Matrix(boolean_adjacency_matrix.astype(int))
+
+    # call graph constructor
+    return Graph(adjacency_matrix, format="adjacency_matrix", name="Correlation Graph")
 
 def CompleteBipartiteGraph(p, q, set_position=True):
     r"""

@@ -1042,6 +1042,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             self._is_immutable = False
             if not is_mutable or is_immutable:
                 self.set_immutable()
+            self._bbn = C._bbn
+            self._bbn_all_computed = C._bbn_all_computed
             return
 
         gen_dict = {}
@@ -1123,6 +1125,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         self._is_immutable = False
         if not is_mutable or is_immutable:
             self.set_immutable()
+
+        # self._bbn: a dictionary indexed by base_ring, whose value is a dictionary of
+        # bigraded Betti numbers, indexed by tuples (-i, 2j).
+        # For use in the bigraded_betti_numbers method.
+        self._bbn = {}
+        # self._bbn_all_computed: a set of base rings for which we called
+        # bigraded_betti_numbers(base_ring=base_ring)
+        self._bbn_all_computed = set()
 
     def __hash__(self):
         """
@@ -2662,6 +2672,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         self._graph.add_edge(new_face[i], new_face[j])
             self._complex = {}
             self.__contractible = None
+            self._bbn = {}
+            self._bbn_all_computed = set()
 
     def remove_face(self, face, check=False):
         """
@@ -2786,6 +2798,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         self._complex = {}
         self.__contractible = None
         self.__enlarged = {}
+        self._bbn = {}
+        self._bbn_all_computed = set()
 
     def remove_faces(self, faces, check=False):
         """
@@ -4815,6 +4829,109 @@ class SimplicialComplex(Parent, GenericCellComplex):
             F = F + [s for s in self.faces()[k] if s in other.faces()[k]]
         return SimplicialComplex(F)
 
+    def bigraded_betti_numbers(self, base_ring=ZZ):
+        r"""
+        Return a dictionary of the bigraded Betti numbers of ``self``,
+        with keys `(-a, 2b)`.
+
+        .. SEEALSO::
+
+            See :meth:`bigraded_betti_number` for more information.
+
+        EXAMPLES::
+
+            sage: X = SimplicialComplex([[0,1],[1,2],[1,3],[2,3]])
+            sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
+            sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)
+            [((0, 0), 1), ((-1, 6), 1), ((-1, 4), 2), ((-2, 8), 1), ((-2, 6), 1)]
+            sage: sorted(Y.bigraded_betti_numbers(base_ring=QQ).items(), reverse=True)
+            [((0, 0), 1), ((-1, 4), 3), ((-2, 8), 2), ((-2, 6), 1), ((-3, 10), 1)]
+        """
+        if base_ring in self._bbn_all_computed:
+            return self._bbn[base_ring]
+
+        from sage.homology.homology_group import HomologyGroup
+        L = self.vertices()
+        n = len(L)
+        B = {}
+        H0 = HomologyGroup(0, base_ring)
+
+        B[(0, 0)] = ZZ.one()
+
+        for j in range(n+1):
+            for x in combinations(L, j):
+                S = self.generated_subcomplex(x)
+                H = S.homology(base_ring=base_ring)
+                for k in range(j):
+                    if j-k-1 in H and H[j-k-1] != H0:
+                        ind = (-k, 2*j)
+                        if ind not in B:
+                            B[ind] = ZZ.zero()
+                        B[ind] += len(H[j-k-1].gens())
+
+        self._bbn[base_ring] = B
+        self._bbn_all_computed.add(base_ring)
+
+        return B
+
+    def bigraded_betti_number(self, a, b, base_ring=ZZ):
+        r"""
+        Return the bigraded Betti number indexed in the form `(-a, 2b)`.
+
+        Bigraded Betti number with indices `(-a, 2b)` is defined as a sum of ranks
+        of `(b-a-1)`-th (co)homologies of full subcomplexes with exactly `b` vertices.
+
+        EXAMPLES::
+
+            sage: X = SimplicialComplex([[0,1],[1,2],[2,0],[1,3]])
+            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)
+            2
+            sage: X.bigraded_betti_number(-1, 8)
+            0
+            sage: X.bigraded_betti_number(-2, 5)
+            0
+            sage: X.bigraded_betti_number(0, 0)
+            1
+            sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)
+            [((0, 0), 1), ((-1, 6), 1), ((-1, 4), 2), ((-2, 8), 1), ((-2, 6), 1)]
+            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)
+            2
+            sage: X.bigraded_betti_number(-1, 8)
+            0
+        """
+        if b % 2:
+            return ZZ.zero()
+        if a == 0 and b == 0:
+            return ZZ.one()
+        if base_ring in self._bbn:
+            if base_ring in self._bbn_all_computed:
+                return self._bbn[base_ring].get((a,b), ZZ.zero())
+            elif (a, b) in self._bbn[base_ring]:
+                return self._bbn[base_ring][a, b]
+
+        from sage.homology.homology_group import HomologyGroup
+
+        b //= 2
+        L = self.vertices()
+        n = len(L)
+        H0 = HomologyGroup(0, base_ring)
+
+        B = 0
+
+        for x in combinations(L, b):
+            S = self.generated_subcomplex(x)
+            H = S.homology(base_ring=base_ring)
+            if b+a-1 in H and H[b+a-1] != H0:
+                B += len(H[b+a-1].gens())
+
+        B = ZZ(B)
+
+        if base_ring in self._bbn:
+            self._bbn[base_ring][(a, 2*b)] = B
+        else:
+            self._bbn[base_ring] = {(a, 2*b): B}
+
+        return B
 
 # Miscellaneous utility functions.
 

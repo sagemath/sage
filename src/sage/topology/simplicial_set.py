@@ -748,7 +748,7 @@ class AbstractSimplex_class(SageObject):
             return self
         underlying = self.nondegenerate()
         return AbstractSimplex(underlying.dimension(),
-                               degeneracies= list(args) + self.degeneracies(),
+                               degeneracies=list(args) + self.degeneracies(),
                                underlying=underlying)
 
     def __copy__(self):

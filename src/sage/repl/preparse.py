@@ -1808,7 +1808,7 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
     if implicit_mul_level:
         # Implicit Multiplication
         # 2x -> 2*x
-        L = implicit_mul(L, level = implicit_mul_level)
+        L = implicit_mul(L, level=implicit_mul_level)
 
     if numeric_literals:
         # Wrapping

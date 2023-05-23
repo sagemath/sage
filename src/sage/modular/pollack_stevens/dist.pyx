@@ -27,27 +27,21 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.arith.misc import binomial, bernoulli
-from sage.modules.free_module_element import vector, zero_vector
 from sage.matrix.matrix cimport Matrix
-from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
-from sage.misc.prandom import random
-from sage.structure.element cimport RingElement, Element
+from sage.structure.element cimport Element
 import operator
 from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.rings.padics.padic_capped_absolute_element cimport pAdicCappedAbsoluteElement
 from sage.rings.padics.padic_capped_relative_element cimport pAdicCappedRelativeElement
 from sage.rings.padics.padic_fixed_mod_element cimport pAdicFixedModElement
 from sage.rings.integer cimport Integer
-from sage.rings.rational cimport Rational
-from sage.misc.timing import cputime
 from sage.misc.verbose import verbose
 from sage.rings.infinity import Infinity
 
@@ -351,8 +345,8 @@ cdef class Dist(ModuleElement):
         other_pr = other.precision_relative()
         if n == 0:
             raise ValueError("self is zero")
-        verbose("n = %s" % n, level  = 2)
-        verbose("moment 0", level = 2)
+        verbose("n = %s" % n, level=2)
+        verbose("moment 0", level=2)
         a = self._unscaled_moment(i)
         verbose("a = %s" % a, level = 2)
         padic = isinstance(a.parent(), pAdicGeneric)
@@ -405,7 +399,7 @@ cdef class Dist(ModuleElement):
                 verbose("comparing p moment %s" % i, level = 2)
                 a = self._unscaled_moment(i)
                 if check:
-#                    verbose("self.moment=%s, other.moment=%s" % (a, other._unscaled_moment(i)))
+                    # verbose("self.moment=%s, other.moment=%s" % (a, other._unscaled_moment(i)))
                     if (padic and other._unscaled_moment(i) != alpha * a) or \
                        (not padic and other._unscaled_moment(i) % p ** (n - i) != alpha * a % p ** (n - i)):
                         raise ValueError("not a scalar multiple")
@@ -472,14 +466,12 @@ cdef class Dist(ModuleElement):
         """
         cdef Dist other = _other
         n = self.precision_relative()
-        other_pr = other.precision_relative()
         if n == 0:
             raise ValueError("zeroth moment is zero")
         verbose("n = %s" % n, level = 2)
         a = self.moment(0)
         if a.is_zero():
             raise ValueError("zeroth moment is zero")
-        padic = isinstance(a.parent(), pAdicGeneric)
         alpha = other.moment(0) / a
         if check:
             for i in range(1, n):
@@ -527,7 +519,7 @@ cdef class Dist(ModuleElement):
         left.normalize()
         right.normalize()
         cdef long rprec = min(left._relprec(), right._relprec())
-        cdef long i, c
+        cdef long i
         p = left.parent().prime()
         if left.ordp > right.ordp:
             shift = p ** (left.ordp - right.ordp)
@@ -1473,7 +1465,6 @@ cdef class WeightKAction_vector(WeightKAction):
             g.set_immutable()
         except AttributeError:
             pass
-        coeffmodule = v._moments.parent()
         v_moments = v._moments
         ans._moments = v_moments * self.acting_matrix(g, len(v_moments))
         ans.ordp = v.ordp
