@@ -85,7 +85,7 @@ class QuasiMeromorphicModularForms(FormsSpace_abstract, Module, UniqueRepresenta
     """
 
     @staticmethod
-    def __classcall__(cls, group = HeckeTriangleGroup(3), base_ring = ZZ, k=QQ(0), ep=None, n=None):
+    def __classcall__(cls, group=HeckeTriangleGroup(3), base_ring=ZZ, k=QQ(0), ep=None, n=None):
         r"""
         Return a (cached) instance with canonical parameters.
 
@@ -131,7 +131,7 @@ class QuasiWeakModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
     """
 
     @staticmethod
-    def __classcall__(cls, group = HeckeTriangleGroup(3), base_ring = ZZ, k=QQ(0), ep=None, n=None):
+    def __classcall__(cls, group=HeckeTriangleGroup(3), base_ring=ZZ, k=QQ(0), ep=None, n=None):
         r"""
         Return a (cached) instance with canonical parameters.
 
@@ -178,7 +178,7 @@ class QuasiModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
     """
 
     @staticmethod
-    def __classcall__(cls, group = HeckeTriangleGroup(3), base_ring = ZZ, k=QQ(0), ep=None, n=None):
+    def __classcall__(cls, group=HeckeTriangleGroup(3), base_ring=ZZ, k=QQ(0), ep=None, n=None):
         r"""
         Return a (cached) instance with canonical parameters.
 
@@ -340,7 +340,7 @@ class QuasiCuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
     """
 
     @staticmethod
-    def __classcall__(cls, group = HeckeTriangleGroup(3), base_ring = ZZ, k=QQ(0), ep=None, n=None):
+    def __classcall__(cls, group=HeckeTriangleGroup(3), base_ring=ZZ, k=QQ(0), ep=None, n=None):
         r"""
         Return a (cached) instance with canonical parameters.
 
@@ -512,7 +512,7 @@ class MeromorphicModularForms(FormsSpace_abstract, Module, UniqueRepresentation)
     """
 
     @staticmethod
-    def __classcall__(cls, group = HeckeTriangleGroup(3), base_ring = ZZ, k=QQ(0), ep=None, n=None):
+    def __classcall__(cls, group=HeckeTriangleGroup(3), base_ring=ZZ, k=QQ(0), ep=None, n=None):
         r"""
         Return a (cached) instance with canonical parameters.
 
@@ -559,7 +559,7 @@ class WeakModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
     """
 
     @staticmethod
-    def __classcall__(cls, group = HeckeTriangleGroup(3), base_ring = ZZ, k=QQ(0), ep=None, n=None):
+    def __classcall__(cls, group=HeckeTriangleGroup(3), base_ring=ZZ, k=QQ(0), ep=None, n=None):
         r"""
         Return a (cached) instance with canonical parameters.
 
@@ -604,7 +604,7 @@ class ModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
     """
 
     @staticmethod
-    def __classcall__(cls, group = HeckeTriangleGroup(3), base_ring = ZZ, k=QQ(0), ep=None, n=None):
+    def __classcall__(cls, group=HeckeTriangleGroup(3), base_ring=ZZ, k=QQ(0), ep=None, n=None):
         r"""
         Return a (cached) instance with canonical parameters.
 
@@ -747,7 +747,7 @@ class ModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
             (1, 1/(2*d), 15/(128*d^2))
         """
 
-        vec = v.q_expansion_vector(min_exp = 0, max_exp = self.degree() - 1)
+        vec = v.q_expansion_vector(min_exp=0, max_exp=self.degree() - 1)
         return self._module(vec)
 
 class CuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
@@ -757,7 +757,7 @@ class CuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
     """
 
     @staticmethod
-    def __classcall__(cls, group = HeckeTriangleGroup(3), base_ring = ZZ, k=QQ(0), ep=None, n=None):
+    def __classcall__(cls, group=HeckeTriangleGroup(3), base_ring=ZZ, k=QQ(0), ep=None, n=None):
         r"""
         Return a (cached) instance with canonical parameters.
 
@@ -899,7 +899,7 @@ class CuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
             True
         """
 
-        vec = v.q_expansion_vector(min_exp = 1, max_exp = self.degree())
+        vec = v.q_expansion_vector(min_exp=1, max_exp=self.degree())
         return self._module(vec)
 
 class ZeroForm(FormsSpace_abstract, Module, UniqueRepresentation):
@@ -909,7 +909,7 @@ class ZeroForm(FormsSpace_abstract, Module, UniqueRepresentation):
     """
 
     @staticmethod
-    def __classcall__(cls, group = HeckeTriangleGroup(3), base_ring = ZZ, k=QQ(0), ep=None, n=None):
+    def __classcall__(cls, group=HeckeTriangleGroup(3), base_ring=ZZ, k=QQ(0), ep=None, n=None):
         r"""
         Return a (cached) instance with canonical parameters.
 

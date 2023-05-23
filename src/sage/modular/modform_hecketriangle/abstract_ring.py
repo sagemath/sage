@@ -258,7 +258,7 @@ class FormsRing_abstract(Parent):
 
         return self(self.Delta())
 
-    def default_prec(self, prec = None):
+    def default_prec(self, prec=None):
         r"""
         Set the default precision ``prec`` for the Fourier expansion.
         If ``prec=None`` (default) then the current default precision is returned instead.
@@ -295,7 +295,7 @@ class FormsRing_abstract(Parent):
         else:
             return self._prec
 
-    def disp_prec(self, prec = None):
+    def disp_prec(self, prec=None):
         r"""
         Set the maximal display precision to ``prec``.
         If ``prec="max"`` the precision is set to the default precision.
@@ -646,7 +646,7 @@ class FormsRing_abstract(Parent):
 
         return self._rat_field
 
-    def get_d(self, fix_d = False, d_num_prec = None):
+    def get_d(self, fix_d=False, d_num_prec=None):
         r"""
         Return the parameter ``d`` of self either as a formal
         parameter or as a numerical approximation with the specified
@@ -715,7 +715,7 @@ class FormsRing_abstract(Parent):
 
         return d
 
-    def get_q(self, prec = None, fix_d = False, d_num_prec = None):
+    def get_q(self, prec=None, fix_d=False, d_num_prec=None):
         r"""
         Return the generator of the power series of the Fourier expansion of ``self``.
 
@@ -766,7 +766,7 @@ class FormsRing_abstract(Parent):
             prec = self.default_prec()
 
         base_ring = d.parent()
-        return PowerSeriesRing(FractionField(base_ring), 'q', default_prec = prec).gen()
+        return PowerSeriesRing(FractionField(base_ring), 'q', default_prec=prec).gen()
 
     @cached_method
     def diff_alg(self):
@@ -1039,7 +1039,7 @@ class FormsRing_abstract(Parent):
             QuasiMeromorphicModularForms(n=7, k=2, ep=-1) over Integer Ring
         """
 
-        return self.reduce_type(degree = (k,ep))
+        return self.reduce_type(degree=(k,ep))
 
     @cached_method
     def J_inv(self):
@@ -1944,7 +1944,7 @@ class FormsRing_abstract(Parent):
         ep = (-ZZ(1))**(k/2)
         extended_self = self.extend_type(["holo"], ring=True)
         # reduced_self is a classical ModularForms space
-        reduced_self = extended_self.reduce_type(["holo"], degree = (QQ(k), ep))
+        reduced_self = extended_self.reduce_type(["holo"], degree=(QQ(k), ep))
 
         if (n == infinity):
             l2 = ZZ(0)
