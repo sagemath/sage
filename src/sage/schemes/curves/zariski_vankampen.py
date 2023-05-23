@@ -1206,10 +1206,10 @@ def braid_monodromy(f, arrangement=(), computebm=True, holdstrand=False):
     elif not computebm0 and holdstrand:
         return roots_base
 
-@parallel
+
 def conjugate_positive_form(braid):
     r"""
-    For a ``braid`` which is conjugate to a positive braid such a decomposition is given.
+    For a ``braid`` which is conjugate to a product of *disjoint* positive braids a list of such decompositions is given.
 
     INPUT:
 
@@ -1217,8 +1217,8 @@ def conjugate_positive_form(braid):
 
     OUTPUT:
 
-    A list with two elements, a positive braid `\sigma` and a list of permutation braids `\tau_1,\dots,\tau_n`
-    such that if `\tau=\prod_{j=1}^n \tau_j` then `\tau\sigma\tau^{-1}` is the input ``braid``.
+    A list of lists where each element is a list with two elements, a positive braid `\sigma` and a list of permutation braids
+    `\tau_1,\dots,\tau_n` such that if `\tau=\prod_{j=1}^n \tau_j` then `\tau\sigma\tau^{-1}` is the input ``braid``.
 
     EXAMPLES::
 
@@ -1271,8 +1271,10 @@ def conjugate_positive_form(braid):
         cortas.append(res0)
     return cortas
 
-
 @parallel
+def conjugate_positive_form_p(braid):
+    return conjugate_positive_form(braid)
+
 def braid2rels(L):
     r"""
     Return a minimal set of elements of ``F = FreeGroup(d)`` for a braid ``b`` which is the conjugate of
@@ -1313,7 +1315,6 @@ def braid2rels(L):
     br1 = B0.delta()**r * B0(prod(B0(_) for _ in br0_left[1:]))
     cox = prod(F0.gens())
     U0 = [cox**q * (f0 * br1) / cox**q / f0 for f0 in F0.gens()[:-1]]
-    #U0 = [(f0 * br0) / f0 for f0 in F0.gens()[:-1]]
     U = [tuple(sign(k1)*(abs(k1) + k) for k1 in _.Tietze()) for _ in U0]
     pasos = [B.one()] + [_ for _ in reversed(L1)]
     for C in pasos:
@@ -1329,6 +1330,10 @@ def braid2rels(L):
         gb = wrap_FpGroup(P.FpGroupPresentation())
         U = [_.Tietze() for _ in gb.relations()]
     return U
+
+@parallel
+def braid2rels_p(L):
+    return braid2rels(L)
 
 
 def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid_mon=None):
@@ -1439,10 +1444,6 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
     if projective:
         while g.degree(y) < g.degree():
             g = g.subs({x: x + y})
-    # if g.degree(y) == 1:
-    #     if projective:
-    #         return FreeGroup(1) / [[g.degree()]]
-    #     return FreeGroup(1)/[]
     if braid_mon is None:
         bm = braid_monodromy(g)
     else:
@@ -1462,10 +1463,10 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         rel = [r[1] for r in relations]
     else:
         simplified = False
-        conjugate_desc = conjugate_positive_form(bm)
+        conjugate_desc = conjugate_positive_form_p(bm)
         trenzas_desc = [b1[-1] for b1 in conjugate_desc]
         trenzas_desc_1 = flatten(trenzas_desc, max_level=1)
-        relations = braid2rels(trenzas_desc_1)
+        relations = braid2rels_p(trenzas_desc_1)
         rel = [r[1] for r in relations]
         rel = flatten(rel, max_level=1)
     if projective:
@@ -1627,14 +1628,6 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     for i in range(len(flist1)):
         j = [j1 for j1 in dic.keys() if dic[j1] == i + 1][0]
         dic1[i + 1] = hom(g([j])).Tietze()
-    # if projective:
-    #     Lg = [j+1 for j in range(len(flist1)) if j+1 not in dic1.keys()]
-    #     if len(Lg) == 1:
-    #         j = Lg[0]
-    #         i = [i + 1 for i in range(g.ngens()) if dic[i + 1] == j][0]
-    #         t = hom(g([i])).Tietze()
-    #         dic1[j] = t
-    # elif f.degree(y) == f.degree():
     if not projective and f.degree(y) == f.degree():
         t = prod(hom(x) for x in g.gens()).inverse().Tietze()
         dic1[len(flist1) + 1] = t
