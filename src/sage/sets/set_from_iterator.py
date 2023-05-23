@@ -158,9 +158,9 @@ class EnumeratedSetFromIterator(Parent):
             sage: TestSuite(S).run()
         """
         if category is not None:
-            Parent.__init__(self, facade = True, category = category)
+            Parent.__init__(self, facade=True, category=category)
         else:
-            Parent.__init__(self, facade = True, category = EnumeratedSets())
+            Parent.__init__(self, facade=True, category=EnumeratedSets())
 
         if name is not None:
             self.rename(name)

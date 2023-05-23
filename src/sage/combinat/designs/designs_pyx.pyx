@@ -224,7 +224,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
         (True, [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]])
     """
     cdef int n = v
-    cdef int i,ii,j,jj,s,isok
+    cdef int i,ii,j,jj,s
     cdef int l = lambd
     cdef bint guess_groups = groups is None
 

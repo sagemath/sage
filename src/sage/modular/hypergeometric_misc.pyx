@@ -31,14 +31,13 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
         sage: H = Hyp(cyclotomic=[[10,2],[1,1,1,1,1]])
         sage: u = H.euler_factor(2,79) # indirect doctest
         sage: u.reverse().is_weil_polynomial()
-        True          
-
+        True
     """
     from sage.rings.padics.factory import Zp
 
     cdef int gl, j, k, l, v, gv
     cdef long long i, q1, w, w1, w2, q2, r, r1
-    cdef bint flip, need_lift
+    cdef bint flip
 
     q1 = p ** f - 1
     gl = len(gamma)
@@ -118,7 +117,7 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
                     gv = -gv
                 if use_longs:
                     w2 = gtab2[r1]  # cast to long long to avoid overflow
-                    if gv > 0: 
+                    if gv > 0:
                         for j in range(gv):
                             w = w * w2 % q2
                     else:

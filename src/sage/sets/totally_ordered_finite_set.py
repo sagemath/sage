@@ -269,7 +269,7 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
             sage: TestSuite(TotallyOrderedFiniteSet([1,3,2],facade=False)).run()
             sage: TestSuite(TotallyOrderedFiniteSet([])).run()
         """
-        Parent.__init__(self, facade = facade, category = (Posets(),FiniteEnumeratedSets()))
+        Parent.__init__(self, facade=facade, category=(Posets(),FiniteEnumeratedSets()))
         self._elements = elements
         if facade:
             self._facade_elements = None
