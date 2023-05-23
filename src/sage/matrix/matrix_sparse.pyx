@@ -1,7 +1,6 @@
 r"""
 Base class for sparse matrices
 """
-
 # ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,10 +15,9 @@ from cysignals.signals cimport sig_check
 
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix0 as matrix0
-from sage.structure.element cimport Element, RingElement, ModuleElement, Vector
+from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 from sage.rings.ring import is_Ring
-from sage.misc.verbose import verbose
 
 from cpython cimport *
 from cpython.object cimport Py_EQ, Py_NE
