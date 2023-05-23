@@ -38,6 +38,7 @@ from inspect import Parameter, Signature
 from types import ModuleType
 from typing import (TYPE_CHECKING, Any, Callable, Dict, Iterator, List, Optional, Sequence,
                     Set, Tuple, Type, TypeVar, Union)
+from __future__ import annotations
 
 from docutils.statemachine import StringList
 
@@ -648,7 +649,7 @@ class Documenter:
             for line, src in zip(more_content.data, more_content.items):
                 self.add_line(line, src[0], src[1])
 
-    def get_object_members(self, want_all: bool) -> tuple[bool, ObjectMembers]:
+    def get_object_members(self, want_all: bool) -> Tuple[bool, ObjectMembers]:
         """Return `(members_check_module, members)` where `members` is a
         list of `(membername, member)` pairs of the members of *self.object*.
 
