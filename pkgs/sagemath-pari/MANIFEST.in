@@ -1,0 +1,66 @@
+prune sage
+
+include VERSION.txt
+
+global-include    all__sagemath_pari.py
+
+graft sage/libs/pari
+exclude sage/libs/pari/convert_flint.p*
+exclude sage/libs/pari/convert_sage*.p*                         # to be added later; needs sage.rings.{integer,rational,*_double}, sage.libs.gsl.complex
+include sage/rings/integer.pxd                                  # FIXME
+include sage/rings/rational.pxd                                 # FIXME
+
+include sage/rings/finite_rings/element_base.p*                 # FIXME
+include sage/rings/finite_rings/element_pari_ffelt.p*   # needs sage.rings.finite_rings.element_base
+include sage/rings/number_field/totallyreal*.p*         # needs sage.rings.{integer,rational}
+
+
+include sage/misc/binary_tree.pxd                               # FIXME
+include sage/rings/polynomial/*.pxd                             # FIXME
+include sage/rings/power_series_ring_element.pxd                # FIXME
+include sage/rings/power_series_pari.p*                 # needs sage.rings.power_series_ring_element, sage.rings.polynomial.polynomial_element
+
+#
+# real_mpfr; could hopefully be disentangled from cypari2 later and moved to sagemath-categories.
+#
+include sage/rings/real_mpfr.p*                         # also needs sage.libs.mpmath.utils
+graft sage/libs/mpfr
+
+# real_mpfr dependencies
+include sage/libs/mpmath/utils.pxd                              # FIXME
+include sage/rings/abc.pxd                                      # FIXME
+include sage/rings/real_double.pxd                              # FIXME
+include sage/arith/constants.pxd                                # FIXME
+
+#
+# padics using PARI.
+#
+include sage/rings/padics/common_conversion.p*
+include sage/rings/padics/padic_capped_*_element.p*
+include sage/rings/padics/padic_floating_point_element.p*
+include sage/rings/padics/padic_fixed_mod_element.p*
+
+# pxd dependencies for padics using PARI.
+# TODO: Could as well ship all of padics (except those that additionally need FLINT or NTL) here.
+include sage/libs/linkages/padics/*.pxi                         # FIXME?
+include sage/rings/padics/pow_computer.pxd                      # FIXME?
+include sage/rings/padics/padic_generic_element.pxd             # FIXME?
+include sage/rings/padics/local_generic_element.pxd             # FIXME?
+include sage/rings/padics/*.pxi                                 # FIXME?
+
+# pxd dependencies for padics using PARI. This will later come from sagemath-categories.
+include sage/arith/rational_reconstruction.pxd                  # FIXME
+include sage/rings/morphism.pxd                                 # FIXME
+
+
+global-exclude *.c
+global-exclude *.cpp
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

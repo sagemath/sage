@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+
 cdef double eval_seq_as_poly(int *f, int n, double x)
 cdef double newton(int *f, int *df, int n, double x0, double eps)
 cdef void newton_in_intervals(int *f, int *df, int n, double *beta, double eps, double *rts)

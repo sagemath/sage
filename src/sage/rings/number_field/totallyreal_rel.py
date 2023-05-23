@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+
 r"""
 Enumeration of Totally Real Fields: Relative Extensions
 

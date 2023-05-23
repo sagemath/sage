@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+
 from sage.libs.mpfr.types cimport mpfr_rnd_t, mpfr_t
 
 cimport sage.rings.ring

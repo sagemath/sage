@@ -137,7 +137,8 @@ PYPI_WHEEL_PACKAGES =				\
 	sagemath_repl				\
 	sagemath_categories			\
 	sagemath_giac				\
-	sagemath_flint			\
+	sagemath_flint				\
+	sagemath_pari				\
 	sagemath_gap				\
 	sagemath_homfly
 
