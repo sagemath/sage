@@ -91,7 +91,7 @@ cdef class Iterator():
 #        self.noncom = self.noncom_letters()
 
     cdef list succ(self, PermutationGroupElement u, int first):
-        cdef PermutationGroupElement u1, si
+        cdef PermutationGroupElement si
         cdef int i
         cdef list successors = []
         cdef tuple S = self.S
@@ -112,7 +112,7 @@ cdef class Iterator():
 
     cdef list succ_words(self, PermutationGroupElement u, list word, int first):
         cdef PermutationGroupElement u1, si
-        cdef int i, j
+        cdef int i
         cdef list successors = []
         cdef list word_new
         cdef tuple S = self.S
@@ -127,7 +127,7 @@ cdef class Iterator():
                 u1._reduced_word = word_new
                 successors.append((u1, word_new, i))
         for i in range(first+1, self.n):
-            if u.perm[i] < self.N:
+            if u.perm[i] < N:
                 si = <PermutationGroupElement>(S[i])
                 if self.test(u, si, i):
                     u1 = <PermutationGroupElement>(_new_mul_(si,u))
@@ -199,7 +199,6 @@ cdef class Iterator():
              (2,8)(3,7)(4,6),
              (1,5)(2,6)(3,7)(4,8)]
         """
-        cdef tuple node
         cdef list cur = [(self.S[0].parent().one(), -1)]
         cdef PermutationGroupElement u
         cdef int first
@@ -236,7 +235,6 @@ cdef class Iterator():
             [1, 0, 1]
             [0, 1, 0, 1]
         """
-        cdef tuple node
         cdef list cur, word
 
         cdef PermutationGroupElement u
@@ -277,7 +275,6 @@ cdef class Iterator():
              (1,7)(3,5)(4,8),
              (1,5)(2,6)(3,7)(4,8)]
         """
-        cdef tuple node
         cdef list cur = [(self.S[0].parent().one(), -1)]
         cdef PermutationGroupElement u
         cdef int first
@@ -314,7 +311,6 @@ cdef class Iterator():
             [0, 1, 0]
             [0, 1, 0, 1]
         """
-        cdef tuple node
         cdef list cur, word
         cdef PermutationGroupElement u
         cdef int first
@@ -358,7 +354,7 @@ cdef class Iterator():
              (1,7)(3,5)(4,8),
              (1,7,5,3)(2,4,6,8)]
         """
-        cdef int i,j
+        cdef int i
         cdef list coset_reps
         W = self.S[0].parent()
 

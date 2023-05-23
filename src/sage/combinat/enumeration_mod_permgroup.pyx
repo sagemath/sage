@@ -275,7 +275,6 @@ cpdef set orbit(list sgs, ClonableIntArray v):
     cdef set to_analyse, new_to_analyse
     cdef ClonableIntArray list_test, child
     cdef PermutationGroupElement x
-    cdef list out
     l = len(v)
     to_analyse = set([v])
     for i in range(l-1):
