@@ -181,9 +181,8 @@ cdef class ManinSymbol(Element):
         """
         if self.weight() > 2:
             polypart = _print_polypart(self.i, self.weight()-2-self.i)
-            return "[%s,(%s,%s)]"%\
-                   (polypart, self.u, self.v)
-        return "(%s,%s)"%(self.u, self.v)
+            return "[%s,(%s,%s)]" % (polypart, self.u, self.v)
+        return "(%s,%s)" % (self.u, self.v)
 
     def _latex_(self):
         """

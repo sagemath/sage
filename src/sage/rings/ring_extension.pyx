@@ -118,7 +118,6 @@ from sage.cpython.getattr import dir_with_other_class
 from sage.misc.latex import latex, latex_variable_name
 
 from sage.structure.factory import UniqueFactory
-from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.structure.category_object import normalize_names
 from sage.categories.map cimport Map

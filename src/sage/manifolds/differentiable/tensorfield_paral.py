@@ -1587,8 +1587,9 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             return self
         if subdomain not in self._restrictions:
             if not subdomain.is_subset(self._domain):
-                raise ValueError("the provided domain is not a subset of " +
-                                 "the field's domain")
+                raise ValueError(
+                    f"the provided domain {subdomain} is not a subset of the field's domain {self._domain}"
+                )
             if dest_map is None:
                 dest_map = self._fmodule._dest_map.restrict(subdomain)
             elif not dest_map._codomain.is_subset(self._ambient_domain):
