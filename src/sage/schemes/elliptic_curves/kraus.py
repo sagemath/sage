@@ -618,17 +618,17 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
     P2res = [a1] if a1 else P2.residues()
     for a1 in P2res:
         Px = -a1**6+3*a1**2*c4+2*c6
-        if Px.valuation(P) >= 4*e :                                  # (i)
+        if Px.valuation(P) >= 4*e:                                   # (i)
             flag, a3 = sqrt_mod_4(Px/16,P)                           # (ii)
             if flag:
                 a1sq = a1*a1
-                if (4*a1sq*Px-(a1sq**2-c4)**2).valuation(P) >= 8*e : # (iii)
+                if (4*a1sq*Px-(a1sq**2-c4)**2).valuation(P) >= 8*e:  # (iii)
                     if test_a1a3_local(c4,c6,P,a1,a3):
-                        return True, a1,a3
+                        return True, a1, a3
                     else:
                         raise RuntimeError("check_Kraus_local_2 fails")
     # end of loop, but no a1 found
-    return False,0,0
+    return False, 0, 0
 
 # Wrapper function for local Kraus check, outsources the real work to
 # other functions for primes dividing 2 or 3:

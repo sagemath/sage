@@ -1569,11 +1569,11 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             raise ValueError("Elliptic curve ({}) must be ordinary".format(self))
         D1 = self.frobenius_discriminant()
         D0 = D1.squarefree_part()
-        if D0%4 !=1:
+        if D0 %4 !=1:
             D0 *= 4
         v = ZZ(D1//D0).isqrt()
         h0 = D0.class_number()
-        if h%h0:
+        if h %h0:
             raise ValueError("Incorrect class number {}".format(h))
         from sage.schemes.elliptic_curves.cm import OrderClassNumber
         cs = [v//f for f in v.divisors() if OrderClassNumber(D0,h0,f) == h] # cofactors c=v/f compatible with h(f**2D0)=h
@@ -1828,7 +1828,7 @@ def curves_with_j_0(K):
     if p==3:
         return curves_with_j_0_char3(K)
     q = K.cardinality()
-    if q%3==2:
+    if q %3==2:
         # Then we only have two quadratic twists (and -3 is non-square)
         return [EllipticCurve(K, [0,a]) for a in [1,-27]]
     # Now we have genuine sextic twists, find D generating K* mod 6th powers
@@ -1885,7 +1885,7 @@ def curves_with_j_1728(K):
     if p==3:
         return curves_with_j_0_char3(K)
     q = K.cardinality()
-    if q%4==3:
+    if q %4==3:
         return [EllipticCurve(K, [a,0]) for a in [1,-1]]
     # Now we have genuine quartic twists, find D generating K* mod 4th powers
     q2 = (q-1)//2
@@ -1954,8 +1954,10 @@ def curves_with_j_0_char2(K):
     """
     if not K.is_finite() or K.characteristic() != 2:
         raise ValueError("field must be finite of characteristic 2")
-    if K.degree()%2:
-        return [EllipticCurve(K,[0,0,1,0,0]), EllipticCurve(K,[0,0,1,1,0]),  EllipticCurve(K,[0,0,1,1,1])]
+    if K.degree() % 2:
+        return [EllipticCurve(K, [0, 0, 1, 0, 0]),
+                EllipticCurve(K, [0, 0, 1, 1, 0]),
+                EllipticCurve(K, [0, 0, 1, 1, 1])]
     # find a,b,c,d,e such that
     # a is not a cube, i.e. a**((q-1)//3)!=1
     # Tr(b)=1
@@ -1971,7 +1973,7 @@ def curves_with_j_0_char2(K):
     while not b or not b.trace():
         b = K.random_element()
     c = K.one() # OK if degree is 2 mod 4
-    if K.degree()%4 == 0:
+    if K.degree() %4 == 0:
         while (x**4+x+c).roots():
             c = K.random_element()
     while not d or (x**2+a*x+d).roots():
@@ -2048,7 +2050,7 @@ def curves_with_j_0_char3(K):
     while not b or not b.trace():
         b = K.random_element()
 
-    if K.degree()%2:
+    if K.degree() %2:
         return [EllipticCurve(K, a4a6) for a4a6 in
             [[1,0], [-1,0], [-1,b], [-1,-b]]]
 

@@ -227,9 +227,9 @@ class IsogenyClass_EC(SageObject):
              Elliptic Curve defined by y^2 + (i+1)*x*y + (i+1)*y = x^3 + i*x^2 + (-i+33)*x + (-58*i) over Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
         """
         if self._label:
-            return "Elliptic curve isogeny class %s"%(self._label)
+            return "Elliptic curve isogeny class %s" %(self._label)
         else:
-            return "Isogeny class of %r"%(self.E)
+            return "Isogeny class of %r" %(self.E)
 
     def __contains__(self, x):
         """

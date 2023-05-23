@@ -320,9 +320,8 @@ class PeriodLattice_ell(PeriodLattice):
                Defn: a |--> 1.259921049894873?
         """
         if self.E.base_field() is QQ:
-            return "Period lattice associated to %s"%(self.E)
-        else:
-            return "Period lattice associated to %s with respect to the embedding %s"%(self.E, self.embedding)
+            return "Period lattice associated to %s" % (self.E)
+        return "Period lattice associated to %s with respect to the embedding %s" % (self.E, self.embedding)
 
     def __call__(self, P, prec=None):
         r"""
@@ -1198,23 +1197,23 @@ class PeriodLattice_ell(PeriodLattice):
                     C = ComplexField()
                     z = C(z)
                 except TypeError:
-                    raise TypeError("%s is not a complex number"%z)
+                    raise TypeError("%s is not a complex number" % z)
         prec = C.precision()
         from sage.matrix.constructor import Matrix
         from sage.modules.free_module_element import vector
         if self.real_flag:
-            w1,w2 = self.basis(prec)
-            M = Matrix([[w1,0], list(w2)])**(-1)
+            w1, w2 = self.basis(prec)
+            M = Matrix([[w1, 0], list(w2)])**(-1)
         else:
-            w1,w2 = self.normalised_basis(prec)
+            w1, w2 = self.normalised_basis(prec)
             M = Matrix([list(w1), list(w2)])**(-1)
-        u,v = vector(z)*M
+        u, v = vector(z) * M
         # Now z = u*w1+v*w2
-        if rounding=='round':
+        if rounding == 'round':
             return u.round(), v.round()
-        if rounding=='floor':
+        if rounding == 'floor':
             return u.floor(), v.floor()
-        return u,v
+        return u, v
 
     def reduce(self, z):
         r"""
@@ -1275,17 +1274,17 @@ class PeriodLattice_ell(PeriodLattice):
         # NB We assume here that when the embedding is real then the
         # point is also real!
 
-        if self.real_flag ==  0:
+        if self.real_flag == 0:
             return z
         if self.real_flag == -1:
-            k = (z.imag()/w2.imag()).round()
+            k = (z.imag() / w2.imag()).round()
             z = z-k*w2
-            return C(z.real(),0)
+            return C(z.real(), 0)
 
-        if ((2*z.imag()/w2.imag()).round())%2:
-            return C(z.real(),w2.imag()/2)
+        if ((2*z.imag()/w2.imag()).round()) % 2:
+            return C(z.real(), w2.imag() / 2)
         else:
-            return C(z.real(),0)
+            return C(z.real(), 0)
 
     def e_log_RC(self, xP, yP, prec=None, reduce=True):
         r"""
@@ -1442,7 +1441,7 @@ class PeriodLattice_ell(PeriodLattice):
             z = ((a/t).arctan())/a
             z = ComplexField(prec)(z)
             if reduce:
-                z =  self.reduce(z)
+                z = self.reduce(z)
             return z
 
         if self.real_flag==-1: # real, connected case
@@ -1476,13 +1475,13 @@ class PeriodLattice_ell(PeriodLattice):
             if (r-1).abs() < eps:
                 break
             t *= r
-        z = ((a/t).arctan())/a
+        z = ((a / t).arctan()) / a
         if on_egg:
-            w1,w2 = self._compute_periods_real(prec)
-            z += w2/2
+            w1, w2 = self._compute_periods_real(prec)
+            z += w2 / 2
         z = ComplexField(prec)(z)
         if reduce:
-            z =  self.reduce(z)
+            z = self.reduce(z)
         return z
 
     def elliptic_logarithm(self, P, prec=None, reduce=True):

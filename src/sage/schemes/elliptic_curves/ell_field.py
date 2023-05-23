@@ -155,7 +155,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     # degree is odd we can take D=1; otherwise it suffices to
                     # consider odd powers of a generator.
                     D = K(1)
-                    if K.degree()%2==0:
+                    if K.degree() %2==0:
                         D = K.gen()
                         a = D**2
                         while (x**2 + x + D).roots():

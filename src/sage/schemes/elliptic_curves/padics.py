@@ -317,7 +317,7 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
     p = Integer(p)  # this is assumed in code below
     if check_hypotheses:
         if not p.is_prime():
-            raise ValueError("p = (%s) must be prime"%p)
+            raise ValueError("p = (%s) must be prime" %p)
         if p == 2:
             raise ValueError("p must be odd")   # todo
         if self.conductor() % (p**2) == 0:
@@ -715,7 +715,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
     """
     if check_hypotheses:
         if not p.is_prime():
-            raise ValueError("p = (%s) must be prime"%p)
+            raise ValueError("p = (%s) must be prime" %p)
         if p == 2:
             raise ValueError("p must be odd")   # todo
         if self.conductor() % (p**2) == 0:
@@ -867,7 +867,7 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
     """
     if check_hypotheses:
         if not p.is_prime():
-            raise ValueError("p = (%s) must be prime"%p)
+            raise ValueError("p = (%s) must be prime" %p)
         if p == 2:
             raise ValueError("p must be odd")   # todo
         if self.conductor() % p == 0:

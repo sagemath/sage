@@ -288,7 +288,7 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
             to Elliptic Curve defined by y^2 + x*y + y = x^3 - 76*x + 298 over Rational Field]
     """
     if l not in [2, 3, 5, 7, 13, None]:
-        raise ValueError("%s is not a genus 0 prime."%l)
+        raise ValueError("%s is not a genus 0 prime." %l)
     F = E.base_ring()
     j = E.j_invariant()
     if F.characteristic() in [2, 3, l]:
@@ -1624,7 +1624,7 @@ def _hyperelliptic_isogeny_data(l):
         ValueError: 37 must be one of [11, 17, 19, 23, 29, 31, 41, 47, 59, 71].
     """
     if l not in hyperelliptic_primes:
-        raise ValueError("%s must be one of %s."%(l,hyperelliptic_primes))
+        raise ValueError("%s must be one of %s." %(l,hyperelliptic_primes))
     data = {}
     Zu = PolynomialRing(ZZ,'u')
     Zuv = PolynomialRing(ZZ,['u','v'])
@@ -2091,7 +2091,7 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
         [Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6]
     """
     if l not in hyperelliptic_primes:
-        raise ValueError("%s must be one of %s."%(l,hyperelliptic_primes))
+        raise ValueError("%s must be one of %s." %(l,hyperelliptic_primes))
     F = E.base_field()
     if E.j_invariant() != 0:
         raise ValueError(("j-invariant must be 0."))
@@ -2213,7 +2213,7 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
         [(17, 2), (29, 2), (41, 2)]
     """
     if l not in hyperelliptic_primes:
-        raise ValueError("%s must be one of %s."%(l,hyperelliptic_primes))
+        raise ValueError("%s must be one of %s." %(l,hyperelliptic_primes))
     F = E.base_ring()
     if E.j_invariant() != 1728:
         raise ValueError("j-invariant must be 1728.")
@@ -2795,7 +2795,7 @@ def isogenies_prime_degree(E, l, minimal_models=True):
                with a = 3.316624790355400?*I]
     """
     if not l.is_prime():
-        raise ValueError("%s is not prime."%l)
+        raise ValueError("%s is not prime." %l)
     if l==2:
         return isogenies_2(E, minimal_models=minimal_models)
     if l==3:

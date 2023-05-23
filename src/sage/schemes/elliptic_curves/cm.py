@@ -157,7 +157,7 @@ def hilbert_class_polynomial(D, algorithm=None):
     h = len(rqf) # class number
     c1 = 3.05682737291380 # log(2*10.63)
     c2 = sum([1/RR(qf[0]) for qf in rqf], RR(0))
-    prec =  c2*RR(3.142)*RR(D).abs().sqrt() + h*c1  # bound on log
+    prec = c2 * RR(3.142) * RR(D).abs().sqrt() + h * c1  # bound on log
     prec = prec * 1.45   # bound on log_2 (1/log(2) = 1.44..)
     prec = 10 + prec.ceil()  # allow for rounding error
 
@@ -242,7 +242,8 @@ def is_HCP(f, check_monic_irreducible=True):
     from sage.rings.finite_rings.finite_field_constructor import GF
 
     h = f.degree()
-    h2list = [d for d in h.divisors() if (d-h)%2 == 0 and d.prime_to_m_part(2) == 1]
+    h2list = [d for d in h.divisors()
+              if (d-h) % 2 == 0 and d.prime_to_m_part(2) == 1]
     pmin = 33 * (h**2 * (RR(h+2).log().log()+2)**2).ceil()
     # Guarantees 4*p > |D| for fundamental D under GRH
     p = pmin-1
@@ -831,7 +832,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
         if not D.is_discriminant():
             continue
         D0 = D.squarefree_part()
-        if D0%4 !=1:
+        if D0 % 4 != 1:
             D0 *= 4
         f = (D//D0).isqrt()
 
@@ -983,10 +984,10 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
         D = is_HCP(jpol, check_monic_irreducible=False)
         if D:
             D0 = D.squarefree_part()
-            if D0%4 !=1:
+            if D0 % 4 != 1:
                 D0 *= 4
-            f = ZZ(D//D0).isqrt()
-            return (True, (D0,f))
+            f = ZZ(D // D0).isqrt()
+            return (True, (D0, f))
         else:
             return (False, None)
 
@@ -1020,8 +1021,8 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
     from sage.schemes.elliptic_curves.constructor import EllipticCurve
     E = EllipticCurve(j=j).integral_model()
     D = E.discriminant()
-    prime_bound = 1000 # test primes of degree 1 up to this norm
-    max_primes =    20 # test at most this many primes
+    prime_bound = 1000  # test primes of degree 1 up to this norm
+    max_primes = 20     # test at most this many primes
     num_prime = 0
     cmd = 0
     cmf = 0

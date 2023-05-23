@@ -483,13 +483,13 @@ def compute_codomain_kohel(E, kernel):
 
             v, w = compute_vw_kohel_even_deg1(x0, y0, a1, a2, a4)
 
-        elif n == 3: # psi_2tor is the full 2-division polynomial
+        elif n == 3:  # psi_2tor is the full 2-division polynomial
 
             b2, b4, _, _ = E.b_invariants()
 
-            s1 = -psi_2tor[n-1]
-            s2 =  psi_2tor[n-2]
-            s3 = -psi_2tor[n-3]
+            s1 = -psi_2tor[n - 1]
+            s2 = psi_2tor[n - 2]
+            s3 = -psi_2tor[n - 3]
 
             v, w = compute_vw_kohel_even_deg3(b2, b4, s1, s2, s3)
 
@@ -499,9 +499,9 @@ def compute_codomain_kohel(E, kernel):
 
         b2, b4, b6, _ = E.b_invariants()
 
-        s1 = -psi[n-1] if n >= 1 else 0
-        s2 =  psi[n-2] if n >= 2 else 0
-        s3 = -psi[n-3] if n >= 3 else 0
+        s1 = -psi[n - 1] if n >= 1 else 0
+        s2 = psi[n - 2] if n >= 2 else 0
+        s3 = -psi[n - 3] if n >= 3 else 0
 
         # initializing these allows us to calculate E2.
         v, w = compute_vw_kohel_odd(b2, b4, b6, s1, s2, s3, n)
@@ -1893,7 +1893,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
                to Elliptic Curve defined by y^2 = x^3 + 80816485163488178037199320944019099858815874115367810482828676054000067654558381377552245721755005198633191074893*x + 301497584865165444049833326660609767433467459033532853758006118022998267706948164646650354324860226263546558337993
                   over Finite Field of size 461742260113997803268895001173557974278278194575766957660028841364655249961609425998827452443620996655395008156411
         """
-        if self.__check :
+        if self.__check:
             for P in kernel_gens:
                 if not P.has_finite_order():
                     raise ValueError("given kernel contains point of infinite order")
@@ -2337,7 +2337,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             (x^7 + 5*x^6 + 2*x^5 + 6*x^4 + 3*x^3 + 5*x^2 + 6*x + 3, (x^9 + 4*x^8 + 2*x^7 + 4*x^3 + 2*x^2 + x + 6)*y, 1, 6, 3, 4)
         """
         # check if the polynomial really divides the two_torsion_polynomial
-        if self.__check and E.division_polynomial(2, x=self.__poly_ring.gen()) % psi_G != 0 :
+        if self.__check and E.division_polynomial(2, x=self.__poly_ring.gen()) % psi_G != 0:
             raise ValueError(f"the polynomial {psi_G} does not define a finite subgroup of {E}")
 
         n = psi_G.degree() # 1 or 3
@@ -2363,9 +2363,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             omega = (y*psi_G**2 - v*(a1*psi_G + (y - y0)))*psi_G
 
         elif n == 3:
-            s1 = -psi_G[n-1]
-            s2 =  psi_G[n-2]
-            s3 = -psi_G[n-3]
+            s1 = -psi_G[n - 1]
+            s2 = psi_G[n - 2]
+            s3 = -psi_G[n - 3]
 
             psi_G_pr = psi_G.derivative()
             psi_G_prpr = psi_G_pr.derivative()

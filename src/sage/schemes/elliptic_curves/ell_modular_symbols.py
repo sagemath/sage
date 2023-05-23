@@ -219,7 +219,7 @@ class ModularSymbol(SageObject):
             Modular symbol with sign -1 over Rational Field attached to
              Elliptic Curve defined by y^2 + y = x^3 + x^2 over Rational Field
         """
-        return "Modular symbol with sign %s over %s attached to %s"%(
+        return "Modular symbol with sign %s over %s attached to %s" %(
             self._sign, self._base_ring, self._E)
 
 class ModularSymbolECLIB(ModularSymbol):
@@ -468,7 +468,7 @@ class ModularSymbolSage(ModularSymbol):
             self._scaling = 1
             self._e = self._modsym.dual_eigenvector()
         else :
-            raise ValueError("no normalization %s known for modular symbols"%normalize)
+            raise ValueError("no normalization %s known for modular symbols" %normalize)
 
     def _find_scaling_L_ratio(self):
         r"""
@@ -553,7 +553,7 @@ class ModularSymbolSage(ModularSymbol):
             if at0 != 0 :
                 l1 = self.__lalg__(1)
                 if at0 != l1:
-                    verbose('scale modular symbols by %s'%(l1/at0))
+                    verbose('scale modular symbols by %s' %(l1/at0))
                     self._scaling = l1/at0
             else :
                 # if [0] = 0, we can still hope to scale it correctly by considering twists of E
@@ -574,7 +574,7 @@ class ModularSymbolSage(ModularSymbol):
                 else :
                     l1 = self.__lalg__(D)
                     if at0 != l1:
-                        verbose('scale modular symbols by %s found at D=%s '%(l1/at0,D), level=2)
+                        verbose('scale modular symbols by %s found at D=%s ' %(l1/at0,D), level=2)
                         self._scaling = l1/at0
 
         else : # that is when sign = -1
@@ -593,7 +593,7 @@ class ModularSymbolSage(ModularSymbol):
             else :
                 l1 = self.__lalg__(D)
                 if at0 != l1:
-                    verbose('scale modular symbols by %s'%(l1/at0))
+                    verbose('scale modular symbols by %s' %(l1/at0))
                     self._scaling = l1/at0
 
     def __lalg__(self, D):
