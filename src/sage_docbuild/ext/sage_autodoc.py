@@ -31,6 +31,7 @@ AUTHORS:
 - Kwankyu Lee (2018-12-26, 2022-11-08): rebased on the latest sphinx.ext.autodoc
 
 """
+from __future__ import annotations
 
 import re
 import warnings
@@ -38,7 +39,6 @@ from inspect import Parameter, Signature
 from types import ModuleType
 from typing import (TYPE_CHECKING, Any, Callable, Dict, Iterator, List, Optional, Sequence,
                     Set, Tuple, Type, TypeVar, Union)
-from __future__ import annotations
 
 from docutils.statemachine import StringList
 
