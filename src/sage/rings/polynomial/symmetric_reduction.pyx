@@ -116,8 +116,6 @@ Symmetric Reduction Strategy is created::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-import copy
-import operator
 import sys
 from sage.structure.richcmp cimport richcmp, Py_NE, Py_EQ
 

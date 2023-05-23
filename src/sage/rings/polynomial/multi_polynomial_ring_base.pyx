@@ -2,7 +2,6 @@ r"""
 Base class for multivariate polynomial rings
 """
 import itertools
-import warnings
 from collections.abc import Iterable
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
@@ -27,10 +26,8 @@ from sage.combinat.integer_vector import IntegerVectors
 
 from sage.rings.integer_ring import ZZ
 
-from .polydict import PolyDict
 from . import (multi_polynomial_ideal,
-               polynomial_ring,
-               multi_polynomial_element)
+               polynomial_ring)
 from .term_order import TermOrder
 from .polynomial_ring_constructor import (PolynomialRing,
                                           polynomial_default_category)

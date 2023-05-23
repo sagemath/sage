@@ -41,7 +41,6 @@ from sage.structure.richcmp cimport rich_to_bool
 from functools import reduce
 from pprint import pformat
 
-from sage.arith.power import generic_power
 from sage.misc.latex import latex
 
 

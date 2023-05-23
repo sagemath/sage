@@ -33,20 +33,17 @@ AUTHORS:
 import re
 from cysignals.signals cimport sig_check
 from sage.structure.element import coerce_binop
-from sage.misc.superseded import experimental
 
 from sage.rings.infinity import infinity
-from sage.structure.factorization import Factorization
 from sage.structure.element cimport Element, RingElement, AlgebraElement
 from sage.structure.parent cimport Parent
 from sage.structure.parent_gens cimport ParentWithGens
-from sage.misc.abstract_method import abstract_method
 from sage.categories.homset import Hom
 from sage.rings.ring import _Fields
 from sage.rings.integer cimport Integer
 from cpython.object cimport PyObject_RichCompare
 from sage.categories.map cimport Map
-from sage.rings.morphism cimport Morphism, RingHomomorphism
+from sage.rings.morphism cimport Morphism
 from sage.rings.polynomial.polynomial_element cimport _dict_to_list
 
 

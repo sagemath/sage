@@ -18,12 +18,7 @@ AUTHOR::
 #    (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-
-import copy
-import cysignals
 from sage.rings.ring cimport Ring
-from sage.rings.polynomial.polynomial_element cimport Polynomial
-from sage.rings.integer cimport Integer
 from sage.structure.element cimport RingElement
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.skew_polynomial_element cimport SkewPolynomial_generic_dense
