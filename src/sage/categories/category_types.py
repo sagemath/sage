@@ -72,14 +72,14 @@ class Elements(Category):
         """
         EXAMPLES::
 
-            sage: V = VectorSpace(QQ,3)
-            sage: x = V.0
-            sage: C = x.category()
-            sage: C
+            sage: V = VectorSpace(QQ, 3)                                                # optional - sage.modules
+            sage: x = V.0                                                               # optional - sage.modules
+            sage: C = x.category()                                                      # optional - sage.modules
+            sage: C                                                                     # optional - sage.modules
             Category of elements of Vector space of dimension 3 over Rational Field
-            sage: w = C([1,2,3]); w # indirect doctest
+            sage: w = C([1, 2, 3]); w  # indirect doctest                               # optional - sage.modules
             (1, 2, 3)
-            sage: w.category()
+            sage: w.category()                                                          # optional - sage.modules
             Category of elements of Vector space of dimension 3 over Rational Field
         """
         return self.__object(x)
@@ -129,9 +129,9 @@ class Elements(Category):
         r"""
         EXAMPLES::
 
-            sage: V = VectorSpace(QQ,3)
-            sage: x = V.0
-            sage: latex(x.category()) # indirect doctest
+            sage: V = VectorSpace(QQ, 3)                                                # optional - sage.modules
+            sage: x = V.0                                                               # optional - sage.modules
+            sage: latex(x.category()) # indirect doctest                                # optional - sage.modules
             \mathbf{Elt}_{\Bold{Q}^{3}}
         """
         return "\\mathbf{Elt}_{%s}"%latex(self.__object)
@@ -153,11 +153,11 @@ class Category_over_base(CategoryWithParameters):
 
     EXAMPLES::
 
-        sage: Algebras(GF(2)).element_class is Algebras(GF(3)).element_class
+        sage: Algebras(GF(2)).element_class is Algebras(GF(3)).element_class            # optional - sage.rings.finite_rings
         True
 
-        sage: C = GF(2).category()
-        sage: Algebras(GF(2)).parent_class is Algebras(C).parent_class
+        sage: C = GF(2).category()                                                      # optional - sage.rings.finite_rings
+        sage: Algebras(GF(2)).parent_class is Algebras(C).parent_class                  # optional - sage.rings.finite_rings
         True
 
         sage: C = ZZ.category()
@@ -278,7 +278,7 @@ class Category_over_base(CategoryWithParameters):
             'algebras over Rational Field'
             sage: Algebras(Fields())._repr_object_names()
             'algebras over fields'
-            sage: Algebras(GF(2).category())._repr_object_names()
+            sage: Algebras(GF(2).category())._repr_object_names()                       # optional - sage.rings.finite_rings
             'algebras over (finite enumerated fields and subquotients of monoids and quotients of semigroups)'
         """
         base = self.__base
@@ -338,9 +338,9 @@ class Category_over_base_ring(Category_over_base):
 
         EXAMPLES::
 
-            sage: C = Algebras(GF(2)); C
+            sage: C = Algebras(GF(2)); C                                                # optional - sage.rings.finite_rings
             Category of algebras over Finite Field of size 2
-            sage: TestSuite(C).run()
+            sage: TestSuite(C).run()                                                    # optional - sage.rings.finite_rings
         """
         from sage.categories.rings import Rings
         if not (base in Rings() or
@@ -355,8 +355,8 @@ class Category_over_base_ring(Category_over_base):
 
         EXAMPLES::
 
-            sage: C = Algebras(GF(2))
-            sage: C.base_ring()
+            sage: C = Algebras(GF(2))                                                   # optional - sage.rings.finite_rings
+            sage: C.base_ring()                                                         # optional - sage.rings.finite_rings
             Finite Field of size 2
         """
         return self.base()
@@ -399,11 +399,11 @@ class Category_over_base_ring(Category_over_base):
 
             sage: VectorSpaces(QQ)._subcategory_hook_(VectorSpaces(QQ) & Rings())
             Unknown
-            sage: Sym = SymmetricFunctions(QQ)
-            sage: from sage.combinat.sf.sfa import SymmetricFunctionsBases
-            sage: Modules(QQ)._subcategory_hook_(SymmetricFunctionsBases(Sym))
+            sage: Sym = SymmetricFunctions(QQ)                                          # optional - sage.combinat
+            sage: from sage.combinat.sf.sfa import SymmetricFunctionsBases              # optional - sage.combinat
+            sage: Modules(QQ)._subcategory_hook_(SymmetricFunctionsBases(Sym))          # optional - sage.combinat
             Unknown
-            sage: SymmetricFunctionsBases(Sym).is_subcategory(Modules(QQ))
+            sage: SymmetricFunctionsBases(Sym).is_subcategory(Modules(QQ))              # optional - sage.combinat
             True
 
         Case 1: the two bases are categories; then the base of ``C``
@@ -411,7 +411,7 @@ class Category_over_base_ring(Category_over_base):
 
             sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields()))
             True
-            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) # todo: not implemented
+            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite()))  # todo: not implemented
             True
             sage: VectorSpaces(Fields().Finite())._subcategory_hook_(Algebras(Fields()))
             False
@@ -419,7 +419,7 @@ class Category_over_base_ring(Category_over_base):
         Case 2: the base of ``self`` is a category; then the base of
         ``C`` shall be a parent in this category::
 
-            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ))                # todo: not implemented
+            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ))                 # todo: not implemented
             True
             sage: VectorSpaces(Fields().Finite())._subcategory_hook_(Algebras(QQ))
             False
@@ -430,15 +430,17 @@ class Category_over_base_ring(Category_over_base):
             True
             sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))       # base ring in different categories
             False
-            sage: VectorSpaces(GF(2))._subcategory_hook_(Algebras(GF(3))) # base ring in the same category
+            sage: VectorSpaces(GF(2))._subcategory_hook_(Algebras(GF(3))) # base ring in the same category              # optional - sage.rings.finite_rings
             False
 
         Note; we need both previous tests since the distinction is
         made respectively using the parent class or the base ring::
 
-            sage: issubclass(Algebras(QQ).parent_class, VectorSpaces(CC).parent_class)
+            sage: issubclass(Algebras(QQ).parent_class,                                 # optional - sage.modules
+            ....:            VectorSpaces(CC).parent_class)
             False
-            sage: issubclass(Algebras(GF(2)).parent_class, VectorSpaces(GF(3)).parent_class)
+            sage: issubclass(Algebras(GF(2)).parent_class,                              # optional - sage.modules sage.rings.finite_rings
+            ....:            VectorSpaces(GF(3)).parent_class)
             True
 
         Check that :trac:`16618` is fixed: this `_subcategory_hook_`
