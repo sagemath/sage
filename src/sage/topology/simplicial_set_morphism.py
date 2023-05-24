@@ -666,7 +666,7 @@ class SimplicialSetMorphism(Morphism):
               Defn: [v_0, sigma_1] --> [(v_0, v_0), (sigma_1, s_0 v_0)]
             sage: (g*f).image()
             Simplicial set with 2 non-degenerate simplices
-            sage: f.image().homology()
+            sage: f.image().homology()                                                  # optional - sage.modules
             {0: 0, 1: Z}
         """
         if self.is_identity():
@@ -688,15 +688,15 @@ class SimplicialSetMorphism(Morphism):
             sage: S1 = simplicial_sets.Sphere(1)
             sage: T = S1.product(S1)
             sage: K = T.factor(0, as_subset=True)
-            sage: f = S1.Hom(T)({S1.n_cells(0)[0]:K.n_cells(0)[0], S1.n_cells(1)[0]:K.n_cells(1)[0]})
-            sage: f
+            sage: f = S1.Hom(T)({S1.n_cells(0)[0]: K.n_cells(0)[0],
+            ....:                S1.n_cells(1)[0]: K.n_cells(1)[0]}); f
             Simplicial set morphism:
               From: S^1
               To:   S^1 x S^1
               Defn: [v_0, sigma_1] --> [(v_0, v_0), (sigma_1, s_0 v_0)]
             sage: f.image()
             Simplicial set with 2 non-degenerate simplices
-            sage: f.image().homology()
+            sage: f.image().homology()                                                  # optional - sage.modules
             {0: 0, 1: Z}
 
             sage: G = groups.misc.MultiplicativeAbelian([2])                            # optional - sage.groups
@@ -1179,7 +1179,7 @@ class SimplicialSetMorphism(Morphism):
             sage: eta = simplicial_sets.HopfMap()
             sage: mc_susp_eta = eta.suspension().mapping_cone()                         # optional - sage.graphs
             sage: susp_mc_eta = eta.mapping_cone().suspension()                         # optional - sage.graphs
-            sage: mc_susp_eta.homology() == susp_mc_eta.homology()                      # optional - sage.graphs
+            sage: mc_susp_eta.homology() == susp_mc_eta.homology()                      # optional - sage.graphs sage.modules
             True
 
         This uses reduced suspensions if the original morphism is
@@ -1385,13 +1385,13 @@ class SimplicialSetMorphism(Morphism):
             sage: Y = SimplicialSet({e: (v, v)})
             sage: H = Hom(X, Y)
             sage: f = H({v: v, w: v, e: e, f: e})
-            sage: g = f.induced_homology_morphism()
-            sage: g.to_matrix()
+            sage: g = f.induced_homology_morphism()                                     # optional - sage.modules
+            sage: g.to_matrix()                                                         # optional - sage.modules
             [1|0]
             [-+-]
             [0|2]
-            sage: g3 = f.induced_homology_morphism(base_ring=GF(3), cohomology=True)    # optional - sage.rings.finite_rings
-            sage: g3.to_matrix()                                                        # optional - sage.rings.finite_rings
+            sage: g3 = f.induced_homology_morphism(base_ring=GF(3), cohomology=True)    # optional - sage.modules sage.rings.finite_rings
+            sage: g3.to_matrix()                                                        # optional - sage.modules sage.rings.finite_rings
             [1|0]
             [-+-]
             [0|2]

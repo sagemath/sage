@@ -270,7 +270,7 @@ class PullbackOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
             sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                          # optional - sage.groups
             sage: K = RP5.quotient(RP5.n_skeleton(2))                                   # optional - sage.groups
             sage: X = K.pullback(K.quotient_map(), K.base_point_map())                  # optional - sage.groups
-            sage: X.homology() == RP5.n_skeleton(2).homology()                          # optional - sage.groups
+            sage: X.homology() == RP5.n_skeleton(2).homology()                          # optional - sage.groups sage.modules
             True
 
         Pullbacks of identity maps::
@@ -278,7 +278,7 @@ class PullbackOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
             sage: S2 = simplicial_sets.Sphere(2)
             sage: one = S2.Hom(S2).identity()
             sage: P = S2.pullback(one, one)
-            sage: P.homology()
+            sage: P.homology()                                                          # optional - sage.modules
             {0: 0, 1: 0, 2: Z}
 
         The pullback is constructed in terms of the product -- of
@@ -330,7 +330,7 @@ class PullbackOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
                 Defn: Identity map
               Simplicial set endomorphism of Simplicial set with 3 non-degenerate simplices
                 Defn: Constant map at 1
-            sage: P.n_skeleton(3).homology()                                            # optional - sage.groups
+            sage: P.n_skeleton(3).homology()                                            # optional - sage.groups sage.modules
             {0: 0, 1: C2, 2: 0, 3: Z}
         """
         if self.is_finite():
@@ -820,7 +820,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
 
             sage: S1 = simplicial_sets.Sphere(1)
             sage: T = S1.product(S1)
-            sage: T.homology(reduced=False)
+            sage: T.homology(reduced=False)                                             # optional - sage.modules
             {0: Z, 1: Z x Z, 2: Z}
 
         Since ``S1`` is pointed, so is ``T``::
@@ -837,7 +837,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
             sage: S2 = simplicial_sets.Sphere(2)
             sage: S3 = simplicial_sets.Sphere(3)
             sage: Z = S2.product(S3)
-            sage: Z.homology()
+            sage: Z.homology()                                                          # optional - sage.modules
             {0: 0, 1: 0, 2: Z, 3: Z, 4: 0, 5: Z}
 
         Products involving infinite simplicial sets::
@@ -849,12 +849,12 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
             RP^oo x RP^oo
             sage: X.n_cells(1)
             [(f, f), (f, s_0 1), (s_0 1, f)]
-            sage: X.homology(range(3), base_ring=GF(2))
+            sage: X.homology(range(3), base_ring=GF(2))                                 # optional - sage.modules
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 2 over Finite Field of size 2,
              2: Vector space of dimension 3 over Finite Field of size 2}
             sage: Y = B.product(S2)
-            sage: Y.homology(range(5), base_ring=GF(2))
+            sage: Y.homology(range(5), base_ring=GF(2))                                 # optional - sage.modules
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 2 over Finite Field of size 2,
@@ -936,7 +936,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
 
             sage: K.factor(0, as_subset=True)
             Simplicial set with 2 non-degenerate simplices
-            sage: K.factor(0, as_subset=True).homology()
+            sage: K.factor(0, as_subset=True).homology()                                # optional - sage.groups
             {0: 0, 1: 0, 2: Z}
 
             sage: K.factor(0) is S2
@@ -1016,7 +1016,7 @@ class ProductOfSimplicialSets_finite(ProductOfSimplicialSets, PullbackOfSimplici
             sage: e = AbstractSimplex(1)
             sage: X = SimplicialSet({e: (v, v)})
             sage: W = X.product(X, X)
-            sage: W.homology()
+            sage: W.homology()                                                          # optional - sage.groups
             {0: 0, 1: Z x Z x Z, 2: Z x Z x Z, 3: Z}
             sage: W.is_pointed()
             False
@@ -1077,7 +1077,7 @@ class ProductOfSimplicialSets_finite(ProductOfSimplicialSets, PullbackOfSimplici
             sage: W = P.wedge_as_subset()
             sage: W.nondegenerate_simplices()
             [(v, w), (e, s_0 w), (s_0 v, f)]
-            sage: W.homology()
+            sage: W.homology()                                                          # optional - sage.groups
             {0: 0, 1: Z x Z}
         """
         basept_factors = [sset.base_point() for sset in self.factors()]
@@ -1109,7 +1109,7 @@ class ProductOfSimplicialSets_finite(ProductOfSimplicialSets, PullbackOfSimplici
             sage: S1 = simplicial_sets.Sphere(1)
             sage: X = S1.product(S1, S1)
             sage: W = X.fat_wedge_as_subset()
-            sage: W.homology()
+            sage: W.homology()                                                          # optional - sage.groups
             {0: 0, 1: Z x Z x Z, 2: Z x Z x Z}
         """
         basept_factors = [sset.base_point() for sset in self.factors()]
@@ -1231,7 +1231,7 @@ class PushoutOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
             sage: CT = T.cone()
             sage: inc = CT.base_as_subset().inclusion_map()
             sage: P = T.pushout(inc, inc)                                               # optional - sage.graphs
-            sage: P.homology()                                                          # optional - sage.graphs
+            sage: P.homology()                                                          # optional - sage.graphs sage.modules
             {0: 0, 1: 0, 2: Z x Z, 3: Z}
             sage: len(P.nondegenerate_simplices())                                      # optional - sage.graphs
             20
@@ -1254,7 +1254,7 @@ class PushoutOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
             sage: bouquet = pt.pushout(S1.base_point_map(),                             # optional - sage.graphs
             ....:                      S1.base_point_map(),
             ....:                      S1.base_point_map())
-            sage: bouquet.homology(1)                                                   # optional - sage.graphs
+            sage: bouquet.homology(1)                                                   # optional - sage.graphs sage.modules
             Z x Z x Z
         """
         # Import this here to prevent circular imports.
@@ -1292,7 +1292,7 @@ class PushoutOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
             sage: B = simplicial_sets.ClassifyingSpace(G)                               # optional - sage.groups
             sage: K = B.n_skeleton(3)                                                   # optional - sage.groups
             sage: Q = K.pushout(K.inclusion_map(), K.constant_map())                    # optional - sage.groups
-            sage: Q.n_skeleton(5).homology()                                            # optional - sage.groups
+            sage: Q.n_skeleton(5).homology()                                            # optional - sage.groups sage.modules
             {0: 0, 1: 0, 2: 0, 3: 0, 4: Z, 5: Z}
 
         Of course, computing the `n`-skeleton and then taking homology
@@ -1300,7 +1300,7 @@ class PushoutOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
         dimension `n`, since the latter computation will use the
         `(n+1)`-skeleton::
 
-            sage: Q.homology(range(6))                                                  # optional - sage.groups
+            sage: Q.homology(range(6))                                                  # optional - sage.groups sage.modules
             {0: 0, 1: 0, 2: 0, 3: 0, 4: Z, 5: C2}
         """
         if self.is_finite():
@@ -1787,7 +1787,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
             Quotient: (Simplicial set with 7
                        non-degenerate simplices/Simplicial set with 4
                                                 non-degenerate simplices)
-            sage: Q.n_skeleton(6).homology()                                            # optional - sage.graphs sage.groups
+            sage: Q.n_skeleton(6).homology()                                            # optional - sage.graphs sage.groups sage.modules
             {0: 0, 1: 0, 2: 0, 3: 0, 4: Z, 5: C2, 6: 0}
         """
         if self.is_finite():
@@ -1931,7 +1931,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
 
             sage: T = simplicial_sets.Torus()
             sage: S2 = simplicial_sets.Sphere(2)
-            sage: T.smash_product(S2).homology() == T.suspension(2).homology()          # optional - sage.graphs
+            sage: T.smash_product(S2).homology() == T.suspension(2).homology()          # optional - sage.graphs sage.modules
             True
         """
         if any(not space.is_pointed() for space in factors):
@@ -2010,7 +2010,7 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
             sage: CP2 = simplicial_sets.ComplexProjectiveSpace(2)
             sage: K = simplicial_sets.KleinBottle()
             sage: W = CP2.wedge(K)                                                      # optional - sage.graphs
-            sage: W.homology()                                                          # optional - sage.graphs
+            sage: W.homology()                                                          # optional - sage.graphs sage.modules
             {0: 0, 1: Z x C2, 2: Z, 3: 0, 4: Z}
 
             sage: W.inclusion_map(1)                                                    # optional - sage.graphs
@@ -2024,7 +2024,7 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
             Wedge: (CP^2 v Klein bottle)
             sage: W.projection_map(0).codomain() # copy of CP^2                         # optional - sage.graphs
             Quotient: (Wedge: (CP^2 v Klein bottle)/Simplicial set with 6 non-degenerate simplices)
-            sage: W.projection_map(0).codomain().homology()                             # optional - sage.graphs
+            sage: W.projection_map(0).codomain().homology()                             # optional - sage.graphs sage.modules
             {0: 0, 1: 0, 2: Z, 3: 0, 4: Z}
 
         An error occurs if any of the factors is not pointed::
@@ -2149,9 +2149,9 @@ class WedgeOfSimplicialSets_finite(WedgeOfSimplicialSets, PushoutOfSimplicialSet
               To:   Quotient: (Wedge: (S^1 v S^2 v S^1)/Simplicial set with
                                                         3 non-degenerate simplices)
               Defn: [*, sigma_1, sigma_1, sigma_2] --> [*, s_0 *, s_0 *, sigma_2]
-            sage: W.projection_map(1).image().homology(1)                               # optional - sage.graphs
+            sage: W.projection_map(1).image().homology(1)                               # optional - sage.graphs sage.modules
             0
-            sage: W.projection_map(1).image().homology(2)                               # optional - sage.graphs
+            sage: W.projection_map(1).image().homology(2)                               # optional - sage.graphs sage.modules
             Z
         """
         m = len(self._factors)
@@ -2201,7 +2201,7 @@ class DisjointUnionOfSimplicialSets(PushoutOfSimplicialSets, Factors):
             sage: CP2 = simplicial_sets.ComplexProjectiveSpace(2)
             sage: K = simplicial_sets.KleinBottle()
             sage: W = CP2.disjoint_union(K)                                             # optional - sage.graphs
-            sage: W.homology()                                                          # optional - sage.graphs
+            sage: W.homology()                                                          # optional - sage.graphs sage.modules
             {0: Z, 1: Z x C2, 2: Z, 3: 0, 4: Z}
 
             sage: W.inclusion_map(1)                                                    # optional - sage.graphs
@@ -2237,7 +2237,7 @@ class DisjointUnionOfSimplicialSets(PushoutOfSimplicialSets, Factors):
             sage: B = simplicial_sets.ClassifyingSpace(G)                               # optional - sage.groups
             sage: T = simplicial_sets.Torus()                                           # optional - sage.groups
             sage: X = B.disjoint_union(T)                                               # optional - sage.groups
-            sage: X.n_skeleton(3).homology()                                            # optional - sage.groups
+            sage: X.n_skeleton(3).homology()                                            # optional - sage.groups sage.modules
             {0: Z, 1: Z x Z x C2, 2: Z, 3: Z}
         """
         if self.is_finite():
@@ -2399,7 +2399,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
             sage: B = simplicial_sets.ClassifyingSpace(G)                               # optional - sage.groups
             sage: X = B.disjoint_union(B)                                               # optional - sage.graphs sage.groups
             sage: CX = B.cone()                                                         # optional - sage.graphs sage.groups
-            sage: CX.n_skeleton(3).homology()                                           # optional - sage.graphs sage.groups
+            sage: CX.n_skeleton(3).homology()                                           # optional - sage.graphs sage.groups sage.modules
             {0: 0, 1: 0, 2: 0, 3: Z}
         """
         if self.is_finite():
@@ -2721,7 +2721,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
             sage: B = simplicial_sets.ClassifyingSpace(G)                               # optional - sage.groups
             sage: B.suspension()                                                        # optional - sage.graphs sage.groups
             Sigma(Classifying space of Multiplicative Abelian group isomorphic to C2)
-            sage: B.suspension().n_skeleton(3).homology()                               # optional - sage.graphs sage.groups
+            sage: B.suspension().n_skeleton(3).homology()                               # optional - sage.graphs sage.groups sage.modules
             {0: 0, 1: 0, 2: C2, 3: 0}
 
         If ``X`` is finite, the suspension comes with a quotient map

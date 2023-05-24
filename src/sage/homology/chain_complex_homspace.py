@@ -15,65 +15,65 @@ EXAMPLES::
     sage: T = simplicial_complexes.Torus()
     sage: C = S.chain_complex(augmented=True, cochain=True)
     sage: D = T.chain_complex(augmented=True, cochain=True)
-    sage: G = Hom(C, D)
-    sage: G
+    sage: G = Hom(C, D); G
     Set of Morphisms
      from Chain complex with at most 4 nonzero terms over Integer Ring
-     to Chain complex with at most 4 nonzero terms over Integer Ring
-     in Category of chain complexes over Integer Ring
+       to Chain complex with at most 4 nonzero terms over Integer Ring
+       in Category of chain complexes over Integer Ring
 
     sage: S = simplicial_complexes.ChessboardComplex(3, 3)
     sage: H = Hom(S,S)
     sage: i = H.identity()
-    sage: x = i.associated_chain_complex_morphism(augmented=True)
-    sage: x
+    sage: x = i.associated_chain_complex_morphism(augmented=True); x
     Chain complex morphism:
       From: Chain complex with at most 4 nonzero terms over Integer Ring
-      To: Chain complex with at most 4 nonzero terms over Integer Ring
+      To:   Chain complex with at most 4 nonzero terms over Integer Ring
     sage: x._matrix_dictionary
-    {-1: [1], 0: [1 0 0 0 0 0 0 0 0]
-     [0 1 0 0 0 0 0 0 0]
-     [0 0 1 0 0 0 0 0 0]
-     [0 0 0 1 0 0 0 0 0]
-     [0 0 0 0 1 0 0 0 0]
-     [0 0 0 0 0 1 0 0 0]
-     [0 0 0 0 0 0 1 0 0]
-     [0 0 0 0 0 0 0 1 0]
-     [0 0 0 0 0 0 0 0 1], 1: [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-     [0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-     [0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-     [0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-     [0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
-     [0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0]
-     [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0]
-     [0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0]
-     [0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0]
-     [0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0]
-     [0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]
-     [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0]
-     [0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0]
-     [0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0]
-     [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0]
-     [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0]
-     [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0]
-     [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1], 2: [1 0 0 0 0 0]
-     [0 1 0 0 0 0]
-     [0 0 1 0 0 0]
-     [0 0 0 1 0 0]
-     [0 0 0 0 1 0]
-     [0 0 0 0 0 1]}
+    {-1: [1],
+      0: [1 0 0 0 0 0 0 0 0]
+         [0 1 0 0 0 0 0 0 0]
+         [0 0 1 0 0 0 0 0 0]
+         [0 0 0 1 0 0 0 0 0]
+         [0 0 0 0 1 0 0 0 0]
+         [0 0 0 0 0 1 0 0 0]
+         [0 0 0 0 0 0 1 0 0]
+         [0 0 0 0 0 0 0 1 0]
+         [0 0 0 0 0 0 0 0 1],
+      1: [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+         [0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+         [0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+         [0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+         [0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
+         [0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0]
+         [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0]
+         [0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0]
+         [0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0]
+         [0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0]
+         [0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]
+         [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0]
+         [0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0]
+         [0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0]
+         [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0]
+         [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0]
+         [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0]
+         [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1],
+      2: [1 0 0 0 0 0]
+         [0 1 0 0 0 0]
+         [0 0 1 0 0 0]
+         [0 0 0 1 0 0]
+         [0 0 0 0 1 0]
+         [0 0 0 0 0 1]}
 
     sage: S = simplicial_complexes.Sphere(2)
     sage: A = Hom(S, S)
     sage: i = A.identity()
-    sage: x = i.associated_chain_complex_morphism()
-    sage: x
+    sage: x = i.associated_chain_complex_morphism(); x
     Chain complex morphism:
       From: Chain complex with at most 3 nonzero terms over Integer Ring
       To: Chain complex with at most 3 nonzero terms over Integer Ring
     sage: y = x*4
     sage: z = y*y
-    sage: (y+z)
+    sage: y + z
     Chain complex morphism:
       From: Chain complex with at most 3 nonzero terms over Integer Ring
       To: Chain complex with at most 3 nonzero terms over Integer Ring
@@ -135,8 +135,8 @@ class ChainComplexHomspace(sage.categories.homset.Homset):
         sage: G
         Set of Morphisms
          from Chain complex with at most 5 nonzero terms over Integer Ring
-         to Chain complex with at most 5 nonzero terms over Integer Ring
-         in Category of chain complexes over Integer Ring
+           to Chain complex with at most 5 nonzero terms over Integer Ring
+           in Category of chain complexes over Integer Ring
 
     """
     def __call__(self, f):
