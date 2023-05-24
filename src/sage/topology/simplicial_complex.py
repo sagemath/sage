@@ -82,7 +82,8 @@ EXAMPLES::
     Simplicial complex with vertex set () and facets {()}
     sage: X = SimplicialComplex([[0,1], [1,2], [2,3], [3,0]])
     sage: X
-    Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (0, 3), (1, 2), (2, 3)}
+    Simplicial complex with vertex set (0, 1, 2, 3) and
+     facets {(0, 1), (0, 3), (1, 2), (2, 3)}
 
 Sage can perform a number of operations on simplicial complexes, such
 as the join and the product, and it can also compute homology::
@@ -91,7 +92,7 @@ as the join and the product, and it can also compute homology::
     sage: T = S.product(S)  # torus
     sage: T
     Simplicial complex with 9 vertices and 18 facets
-    sage: T.homology()   # this computes reduced homology
+    sage: T.homology()   # this computes reduced homology                               # optional - sage.modules
     {0: 0, 1: Z x Z, 2: Z}
     sage: T.euler_characteristic()
     0
@@ -893,7 +894,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Cubical complex with 16 vertices and 64 cubes
         sage: Ts = SimplicialComplex(Tc); Ts
         Simplicial complex with 16 vertices and 32 facets
-        sage: Ts.homology()
+        sage: Ts.homology()                                                             # optional - sage.modules
         {0: 0, 1: Z x Z, 2: Z}
 
     In the situation where the first argument is a simplicial complex
@@ -1795,7 +1796,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: T = S.product(S)  # torus
             sage: T
             Simplicial complex with 9 vertices and 18 facets
-            sage: T.homology()
+            sage: T.homology()                                                          # optional - sage.modules
             {0: 0, 1: Z x Z, 2: Z}
 
         These can get large pretty quickly::
@@ -1940,7 +1941,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S0.suspension() == simplicial_complexes.Sphere(1)
             True
             sage: S3 = S0.suspension(3)  # the 3-sphere                                 # optional - sage.graphs
-            sage: S3.homology()                                                         # optional - sage.graphs
+            sage: S3.homology()                                                         # optional - sage.graphs sage.modules
             {0: 0, 1: 0, 2: 0, 3: Z}
 
         For pseudomanifolds, the complex constructed here will be
@@ -2001,7 +2002,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: S1 = simplicial_complexes.Sphere(1)
             sage: S2 = simplicial_complexes.Sphere(2)
-            sage: S1.disjoint_union(S2).homology()
+            sage: S1.disjoint_union(S2).homology()                                      # optional - sage.modules
             {0: Z, 1: Z, 2: Z}
         """
         facets = []
@@ -2041,7 +2042,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: S1 = simplicial_complexes.Sphere(1)
             sage: S2 = simplicial_complexes.Sphere(2)
-            sage: S1.wedge(S2).homology()
+            sage: S1.wedge(S2).homology()                                               # optional - sage.modules
             {0: 0, 1: Z, 2: Z}
         """
         left_vertices = list(self.vertices())
@@ -2109,11 +2110,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: circle = SimplicialComplex([[0,1], [1,2], [0, 2]])
-            sage: circle.chain_complex()
+            sage: circle.chain_complex()                                                # optional - sage.modules
             Chain complex with at most 2 nonzero terms over Integer Ring
-            sage: circle.chain_complex()._latex_()
+            sage: circle.chain_complex()._latex_()                                      # optional - sage.modules
             '\\Bold{Z}^{3} \\xrightarrow{d_{1}} \\Bold{Z}^{3}'
-            sage: circle.chain_complex(base_ring=QQ, augmented=True)
+            sage: circle.chain_complex(base_ring=QQ, augmented=True)                    # optional - sage.modules
             Chain complex with at most 3 nonzero terms over Rational Field
         """
         # initialize subcomplex
@@ -2310,12 +2311,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: sphere = SimplicialComplex([[0,1,2,3]])
             sage: sphere.remove_face([0,1,2,3])
             sage: sphere
-            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)}
-            sage: sphere._homology_()
+            Simplicial complex with vertex set (0, 1, 2, 3) and
+             facets {(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)}
+            sage: sphere._homology_()                                                   # optional - sage.modules
             {0: 0, 1: 0, 2: Z}
-            sage: sphere._homology_(reduced=False)
+            sage: sphere._homology_(reduced=False)                                      # optional - sage.modules
             {0: Z, 1: 0, 2: Z}
-            sage: sphere._homology_(base_ring=GF(2), reduced=False)                     # optional - sage.rings.finite_rings
+            sage: sphere._homology_(base_ring=GF(2), reduced=False)                     # optional - sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 0 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
@@ -2323,35 +2325,36 @@ class SimplicialComplex(Parent, GenericCellComplex):
         We need an immutable complex to compute homology generators::
 
             sage: sphere.set_immutable()
-            sage: sphere._homology_(generators=True)
+            sage: sphere._homology_(generators=True)                                    # optional - sage.modules
             {0: [], 1: [], 2: [(Z, (0, 1, 2) - (0, 1, 3) + (0, 2, 3) - (1, 2, 3))]}
 
         Another way to get a two-sphere: take a two-point space and take its
         three-fold join with itself::
 
             sage: S = SimplicialComplex([[0], [1]])
-            sage: (S*S*S)._homology_(dim=2, cohomology=True)
+            sage: (S*S*S)._homology_(dim=2, cohomology=True)                            # optional - sage.modules
             Z
 
         The same computation, done without finding a contractible subcomplex::
 
-            sage: (S*S*S)._homology_(dim=2, cohomology=True, enlarge=False)
+            sage: (S*S*S)._homology_(dim=2, cohomology=True, enlarge=False)             # optional - sage.modules
             Z
 
         Relative homology::
 
             sage: T = SimplicialComplex([[0,1,2]])
             sage: U = SimplicialComplex([[0,1], [1,2], [0,2]])
-            sage: T._homology_(subcomplex=U)
+            sage: T._homology_(subcomplex=U)                                            # optional - sage.modules
             {0: 0, 1: 0, 2: Z}
 
         Generators::
 
-            sage: simplicial_complexes.Torus().homology(generators=True)
+            sage: simplicial_complexes.Torus().homology(generators=True)                # optional - sage.modules
             {0: [],
              1: [(Z, (2, 4) - (2, 6) + (4, 6)), (Z, (1, 4) - (1, 6) + (4, 6))],
-             2: [(Z,
-               (0, 1, 2) - (0, 1, 5) + (0, 2, 6) - (0, 3, 4) + (0, 3, 5) - (0, 4, 6) - (1, 2, 4) + (1, 3, 4) - (1, 3, 6) + (1, 5, 6) - (2, 3, 5) + (2, 3, 6) + (2, 4, 5) - (4, 5, 6))]}
+             2: [(Z, (0, 1, 2) - (0, 1, 5) + (0, 2, 6) - (0, 3, 4) + (0, 3, 5)
+                      - (0, 4, 6) - (1, 2, 4) + (1, 3, 4) - (1, 3, 6) + (1, 5, 6)
+                      - (2, 3, 5) + (2, 3, 6) + (2, 4, 5) - (4, 5, 6))]}
         """
         from sage.homology.homology_group import HomologyGroup
 
@@ -2484,13 +2487,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: RP2 = simplicial_complexes.RealProjectivePlane()                      # optional - sage.rings.finite_rings
             sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # optional - sage.rings.finite_rings
-            sage: M.homology()                                                          # optional - sage.rings.finite_rings
+            sage: M.homology()                                                          # optional - sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = simplicial_complexes.Torus()
             sage: phi, M = T.algebraic_topological_model(QQ)
-            sage: M.homology()
+            sage: M.homology()                                                          # optional - sage.modules
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
@@ -2566,27 +2569,27 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: T.homology()
             {0: 0, 1: Z x Z x Z}
             sage: T.add_face([1,2,3])
-            sage: T.homology()
+            sage: T.homology()                                                          # optional - sage.modules
             {0: 0, 1: Z x Z, 2: 0}
 
         Check that the ``_faces`` cache is treated correctly
         (:trac:`20758`)::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
-            sage: _ = T.faces() # populate the _faces attribute
-            sage: _ = T.homology() # add more to _faces
-            sage: T.add_face((1,2,3))
-            sage: all(Simplex((1,2,3)) in T._faces[L][2] for L in T._faces)
+            sage: _ = T.faces()       # populate the _faces attribute
+            sage: _ = T.homology()    # add more to _faces                              # optional - sage.modules
+            sage: T.add_face((1,2,3))                                                   # optional - sage.modules
+            sage: all(Simplex((1,2,3)) in T._faces[L][2] for L in T._faces)             # optional - sage.modules
             True
 
         Check that the ``__enlarged`` cache is treated correctly
         (:trac:`20758`)::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
-            sage: T.homology() # to populate the __enlarged attribute
+            sage: T.homology()  # to populate the __enlarged attribute                  # optional - sage.modules
             {0: 0, 1: Z x Z x Z}
-            sage: T.add_face([1,2,3])
-            sage: len(T._SimplicialComplex__enlarged) > 0
+            sage: T.add_face([1,2,3])                                                   # optional - sage.modules
+            sage: len(T._SimplicialComplex__enlarged) > 0                               # optional - sage.modules
             True
 
         Check we've fixed the bug reported at :trac:`14578`::
@@ -2595,7 +2598,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: t0.add_face(('a', 'b'))
             sage: t0.add_face(('c', 'd', 'e'))
             sage: t0.add_face(('e', 'f', 'c'))
-            sage: t0.homology()
+            sage: t0.homology()                                                         # optional - sage.modules
             {0: Z, 1: 0, 2: 0}
 
         Check that we've fixed the bug reported at :trac:`22880`::
@@ -2689,14 +2692,17 @@ class SimplicialComplex(Parent, GenericCellComplex):
             Simplicial complex with vertex set (1, 2, 3, 4) and facets {(1, 2, 3, 4)}
             sage: Z.remove_face([1,2])
             sage: Z
-            Simplicial complex with vertex set (1, 2, 3, 4) and facets {(1, 3, 4), (2, 3, 4)}
+            Simplicial complex with vertex set (1, 2, 3, 4) and
+             facets {(1, 3, 4), (2, 3, 4)}
 
             sage: S = SimplicialComplex([[0,1,2],[2,3]])
             sage: S
-            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(2, 3), (0, 1, 2)}
+            Simplicial complex with vertex set (0, 1, 2, 3) and
+             facets {(2, 3), (0, 1, 2)}
             sage: S.remove_face([0,1,2])
             sage: S
-            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (0, 2), (1, 2), (2, 3)}
+            Simplicial complex with vertex set (0, 1, 2, 3) and
+             facets {(0, 1), (0, 2), (1, 2), (2, 3)}
 
         TESTS:
 
@@ -2704,14 +2710,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         :trac:`20758`::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
-            sage: _ = T.faces() # populate the _faces attribute
-            sage: _ = T.homology() # add more to _faces
-            sage: T.add_face((1,2,3))
-            sage: T.remove_face((1,2,3))
-            sage: len(T._faces)
+            sage: _ = T.faces()     # populate the _faces attribute
+            sage: _ = T.homology()  # add more to _faces                                # optional - sage.modules
+            sage: T.add_face((1,2,3))                                                   # optional - sage.modules
+            sage: T.remove_face((1,2,3))                                                # optional - sage.modules
+            sage: len(T._faces)                                                         # optional - sage.modules
             2
-            sage: T.remove_face((1,2))
-            sage: len(T._faces)
+            sage: T.remove_face((1,2))                                                  # optional - sage.modules
+            sage: len(T._faces)                                                         # optional - sage.modules
             1
 
         Check that the face to be removed can be given with a
@@ -2903,7 +2909,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: P + P    # the Klein bottle
             Simplicial complex with 9 vertices and 18 facets
-            sage: (P + P).homology()[1]
+            sage: (P + P).homology()[1]                                                 # optional - sage.modules
             Z x C2
         """
         if not (self.is_pure() and other.is_pure() and
@@ -3013,23 +3019,23 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Spheres are Cohen-Macaulay::
 
             sage: S = SimplicialComplex([[1,2],[2,3],[3,1]])
-            sage: S.is_cohen_macaulay(ncpus=3)
+            sage: S.is_cohen_macaulay(ncpus=3)                                          # optional - sage.modules
             True
 
         The following example is taken from Bruns, Herzog - Cohen-Macaulay
         rings, Figure 5.3::
 
             sage: S = SimplicialComplex([[1,2,3],[1,4,5]])
-            sage: S.is_cohen_macaulay(ncpus=3)
+            sage: S.is_cohen_macaulay(ncpus=3)                                          # optional - sage.modules
             False
 
         The choice of base ring can matter.  The real projective plane `\RR P^2`
         has `H_1(\RR P^2) = \ZZ/2`, hence is CM over `\QQ` but not over `\ZZ`. ::
 
             sage: X = simplicial_complexes.RealProjectivePlane()
-            sage: X.is_cohen_macaulay()
+            sage: X.is_cohen_macaulay()                                                 # optional - sage.modules
             True
-            sage: X.is_cohen_macaulay(ZZ)
+            sage: X.is_cohen_macaulay(ZZ)                                               # optional - sage.modules
             False
         """
         from sage.parallel.decorate import parallel
@@ -3535,7 +3541,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: X = SimplicialComplex([[0,1,2], [0,2,3]])
             sage: X.stanley_reisner_ring()
-            Quotient of Multivariate Polynomial Ring in x0, x1, x2, x3 over Integer Ring by the ideal (x1*x3)
+            Quotient of Multivariate Polynomial Ring in x0, x1, x2, x3 over Integer Ring
+             by the ideal (x1*x3)
             sage: Y = SimplicialComplex([[0,1,2,3,4]]); Y
             Simplicial complex with vertex set (0, 1, 2, 3, 4) and facets {(0, 1, 2, 3, 4)}
             sage: Y.add_face([0,1,2,3,4])
@@ -3566,7 +3573,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: Y = SimplicialComplex([[i] for i in range(5)]); Y
-            Simplicial complex with vertex set (0, 1, 2, 3, 4) and facets {(0,), (1,), (2,), (3,), (4,)}
+            Simplicial complex with vertex set (0, 1, 2, 3, 4) and
+             facets {(0,), (1,), (2,), (3,), (4,)}
             sage: Y.alexander_dual()
             Simplicial complex with vertex set (0, 1, 2, 3, 4) and 10 facets
             sage: X = SimplicialComplex([[0,1], [1,2], [2,3], [3,0]])
@@ -3588,7 +3596,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: triangle = SimplicialComplex([[0,1], [1,2], [0, 2]])
             sage: hexagon = triangle.barycentric_subdivision(); hexagon                 # optional - sage.combinat sage.graphs
             Simplicial complex with 6 vertices and 6 facets
-            sage: hexagon.homology(1) == triangle.homology(1)                           # optional - sage.combinat sage.graphs
+            sage: hexagon.homology(1) == triangle.homology(1)                           # optional - sage.combinat sage.graphs sage.modules
             True
 
         Barycentric subdivisions can get quite large, since each
@@ -3630,13 +3638,17 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: F2 = Simplex([1,3])
             sage: F3 = Simplex([1,2,3])
             sage: SC.stellar_subdivision(F1)
-            Simplicial complex with vertex set (0, 1, 2, 3, 4) and facets {(0, 1, 4), (0, 2, 4), (1, 3, 4), (2, 3, 4)}
+            Simplicial complex with vertex set (0, 1, 2, 3, 4) and
+             facets {(0, 1, 4), (0, 2, 4), (1, 3, 4), (2, 3, 4)}
             sage: SC.stellar_subdivision(F2)
-            Simplicial complex with vertex set (0, 1, 2, 3, 4) and facets {(0, 1, 2), (1, 2, 4), (2, 3, 4)}
+            Simplicial complex with vertex set (0, 1, 2, 3, 4) and
+             facets {(0, 1, 2), (1, 2, 4), (2, 3, 4)}
             sage: SC.stellar_subdivision(F3)
-            Simplicial complex with vertex set (0, 1, 2, 3, 4) and facets {(0, 1, 2), (1, 2, 4), (1, 3, 4), (2, 3, 4)}
+            Simplicial complex with vertex set (0, 1, 2, 3, 4) and
+             facets {(0, 1, 2), (1, 2, 4), (1, 3, 4), (2, 3, 4)}
             sage: SC.stellar_subdivision(F3, inplace=True);SC
-            Simplicial complex with vertex set (0, 1, 2, 3, 4) and facets {(0, 1, 2), (1, 2, 4), (1, 3, 4), (2, 3, 4)}
+            Simplicial complex with vertex set (0, 1, 2, 3, 4) and
+             facets {(0, 1, 2), (1, 2, 4), (1, 3, 4), (2, 3, 4)}
 
         The simplex to subdivide should be a face of self::
 
@@ -3748,7 +3760,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Td = T.delta_complex()
             sage: Td
             Delta complex with 7 vertices and 43 simplices
-            sage: T.homology() == Td.homology()
+            sage: T.homology() == Td.homology()                                         # optional - sage.modules
             True
         """
         from .delta_complex import DeltaComplex
@@ -3803,12 +3815,15 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: X = SimplicialComplex([[0,1], [1,2,3], [0,2,3]])
             sage: X.n_skeleton(1)
-            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)}
+            Simplicial complex with vertex set (0, 1, 2, 3) and
+             facets {(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)}
             sage: X.set_immutable()
             sage: X.n_skeleton(2)
-            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (0, 2, 3), (1, 2, 3)}
+            Simplicial complex with vertex set (0, 1, 2, 3) and
+             facets {(0, 1), (0, 2, 3), (1, 2, 3)}
             sage: X.n_skeleton(4)
-            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (0, 2, 3), (1, 2, 3)}
+            Simplicial complex with vertex set (0, 1, 2, 3) and
+             facets {(0, 1), (0, 2, 3), (1, 2, 3)}
         """
         if n >= self.dimension():
             return self
@@ -3848,10 +3863,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: sphere = SimplicialComplex([[0,1,2,3]])
             sage: sphere.remove_face([0,1,2,3])
             sage: sphere
-            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)}
+            Simplicial complex with vertex set (0, 1, 2, 3) and
+             facets {(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)}
             sage: L = sphere._contractible_subcomplex(); L
-            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (0, 1, 3), (0, 2, 3)}
-            sage: L.homology()
+            Simplicial complex with vertex set (0, 1, 2, 3) and
+             facets {(0, 1, 2), (0, 1, 3), (0, 2, 3)}
+            sage: L.homology()                                                          # optional - sage.modules
             {0: 0, 1: 0, 2: 0}
         """
         facets = [sorted(self._facets, key=str)[0]]
@@ -3887,14 +3904,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Inside the torus, define a subcomplex consisting of a loop::
 
             sage: S = SimplicialComplex([[0,1], [1,2], [0,2]], is_mutable=False)
-            sage: S.homology()
+            sage: S.homology()                                                          # optional - sage.modules
             {0: 0, 1: Z}
             sage: L = T._enlarge_subcomplex(S)
             sage: L
             Simplicial complex with vertex set (0, 1, 2, 3, 4, 5, 6) and 8 facets
             sage: sorted(L.facets())
             [(0, 1), (0, 1, 5), (0, 2), (0, 2, 6), (0, 3, 4), (0, 3, 5), (0, 4, 6), (1, 2)]
-            sage: L.homology()[1]
+            sage: L.homology()[1]                                                       # optional - sage.modules
             Z
         """
         # Make the subcomplex immutable if not
@@ -3976,12 +3993,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: T = simplicial_complexes.Torus()
-            sage: T.homology()
+            sage: T.homology()                                                          # optional - sage.modules
             {0: 0, 1: Z x Z, 2: Z}
             sage: Tc = T._cubical_()
             sage: Tc
             Cubical complex with 42 vertices and 168 cubes
-            sage: Tc.homology()
+            sage: Tc.homology()                                                         # optional - sage.modules
             {0: 0, 1: Z x Z, 2: Z}
         """
         from .cubical_complex import CubicalComplex
@@ -4260,24 +4277,24 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: S = simplicial_complexes.Simplex(3)
-            sage: S.automorphism_group().is_isomorphic(SymmetricGroup(4))           # optional - sage.graphs
+            sage: S.automorphism_group().is_isomorphic(SymmetricGroup(4))               # optional - sage.graphs sage.groups
             True
 
             sage: P = simplicial_complexes.RealProjectivePlane()
-            sage: P.automorphism_group().is_isomorphic(AlternatingGroup(5))         # optional - sage.graphs
+            sage: P.automorphism_group().is_isomorphic(AlternatingGroup(5))             # optional - sage.graphs sage.groups
             True
 
             sage: Z = SimplicialComplex([['1','2'],['2','3','a']])
-            sage: Z.automorphism_group().is_isomorphic(CyclicPermutationGroup(2))   # optional - sage.graphs
+            sage: Z.automorphism_group().is_isomorphic(CyclicPermutationGroup(2))       # optional - sage.graphs sage.groups
             True
-            sage: group = Z.automorphism_group()                                    # optional - sage.graphs
-            sage: sorted(group.domain())                                            # optional - sage.graphs
+            sage: group = Z.automorphism_group()                                        # optional - sage.graphs sage.groups
+            sage: sorted(group.domain())                                                # optional - sage.graphs sage.groups
             ['1', '2', '3', 'a']
 
         Check that :trac:`17032` is fixed::
 
             sage: s = SimplicialComplex([[(0,1),(2,3)]])
-            sage: s.automorphism_group().cardinality()                              # optional - sage.graphs
+            sage: s.automorphism_group().cardinality()                                  # optional - sage.graphs sage.groups
             2
         """
         from sage.groups.perm_gps.permgroup import PermutationGroup
@@ -4318,25 +4335,25 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: S4 = simplicial_complexes.Sphere(4)
             sage: S3 = simplicial_complexes.Sphere(3)
-            sage: fix = S4.fixed_complex([S4.automorphism_group()([(0,1)])]); fix       # optional - sage.groups
+            sage: fix = S4.fixed_complex([S4.automorphism_group()([(0,1)])]); fix       # optional - sage.graphs sage.groups
             Simplicial complex with vertex set (0, 2, 3, 4, 5) and 5 facets
-            sage: fix.is_isomorphic(S3)                                                 # optional - sage.groups
+            sage: fix.is_isomorphic(S3)                                                 # optional - sage.graphs sage.groups
             True
 
         Another simple example::
 
             sage: T = SimplicialComplex([[1,2,3],[2,3,4]])
-            sage: G = T.automorphism_group()                                            # optional - sage.groups
-            sage: T.fixed_complex([G([(1,4)])])                                         # optional - sage.groups
+            sage: G = T.automorphism_group()                                            # optional - sage.graphs sage.groups
+            sage: T.fixed_complex([G([(1,4)])])                                         # optional - sage.graphs sage.groups
             Simplicial complex with vertex set (2, 3) and facets {(2, 3)}
 
         A more sophisticated example::
 
             sage: RP2 = simplicial_complexes.ProjectivePlane()
             sage: CP2 = simplicial_complexes.ComplexProjectivePlane()
-            sage: G = CP2.automorphism_group()                                          # optional - sage.groups
-            sage: H = G.subgroup([G([(2,3),(5,6),(8,9)])])                              # optional - sage.groups
-            sage: CP2.fixed_complex(H).is_isomorphic(RP2)                               # optional - sage.groups
+            sage: G = CP2.automorphism_group()                                          # optional - sage.graphs sage.groups
+            sage: H = G.subgroup([G([(2,3),(5,6),(8,9)])])                              # optional - sage.graphs sage.groups
+            sage: CP2.fixed_complex(H).is_isomorphic(RP2)                               # optional - sage.graphs sage.groups
             True
         """
         from sage.categories.groups import Groups
