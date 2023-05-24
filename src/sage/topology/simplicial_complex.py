@@ -4104,30 +4104,30 @@ class SimplicialComplex(Parent, GenericCellComplex):
         relations in a form which is not usually very helpful. Here is the
         cyclic group of order 2, for instance::
 
-            sage: RP2 = simplicial_complexes.RealProjectiveSpace(2)                     # optional - sage.libs.pari
-            sage: C2 = RP2.fundamental_group(simplify=False); C2                        # optional - sage.graphs sage.groups sage.libs.pari
+            sage: RP2 = simplicial_complexes.RealProjectiveSpace(2)
+            sage: C2 = RP2.fundamental_group(simplify=False); C2                        # optional - sage.graphs sage.groups
             Finitely presented group < e0, e1, e2, e3, e4, e5, e6, e7, e8, e9 | e0, e3,
             e4, e7, e9, e5*e2^-1*e0, e7*e2^-1*e1, e8*e3^-1*e1, e8*e6^-1*e4, e9*e6^-1*e5 >
-            sage: C2.simplified()                                                       # optional - sage.graphs sage.groups sage.libs.pari
+            sage: C2.simplified()                                                       # optional - sage.graphs sage.groups
             Finitely presented group < e1 | e1^2 >
 
         This is the same answer given if the argument ``simplify`` is True
         (the default)::
 
-            sage: RP2.fundamental_group()                                               # optional - sage.graphs sage.groups sage.libs.pari
+            sage: RP2.fundamental_group()                                               # optional - sage.graphs sage.groups
             Finitely presented group < e1 | e1^2 >
 
         You must specify a base point to compute the fundamental group
         of a non-connected complex::
 
-            sage: K = S1.disjoint_union(RP2)                                            # optional - sage.graphs sage.groups sage.libs.pari
-            sage: K.fundamental_group()                                                 # optional - sage.graphs sage.groups sage.libs.pari
+            sage: K = S1.disjoint_union(RP2)                                            # optional - sage.graphs sage.groups
+            sage: K.fundamental_group()                                                 # optional - sage.graphs sage.groups
             Traceback (most recent call last):
             ...
             ValueError: this complex is not connected, so you must specify a base point
-            sage: K.fundamental_group(base_point='L0')                                  # optional - sage.graphs sage.groups sage.libs.pari
+            sage: K.fundamental_group(base_point='L0')                                  # optional - sage.graphs sage.groups
             Finitely presented group < e |  >
-            sage: K.fundamental_group(base_point='R0').order()                          # optional - sage.graphs sage.groups sage.libs.pari
+            sage: K.fundamental_group(base_point='R0').order()                          # optional - sage.graphs sage.groups
             2
 
         Some other examples::
