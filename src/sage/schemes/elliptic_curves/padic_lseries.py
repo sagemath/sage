@@ -444,7 +444,7 @@ class pAdicLseries(SageObject):
             if self._E.conductor() % p == 0:
                 mu = chip**n * z * sum([kronecker_symbol(D,u) * f(a/(p*w)+ZZ(u)/D) for u in range(1,D.abs())])
             else:
-                mu = chip**n * z * sum([kronecker_symbol(D,u) *( f(a/(p*w)+ZZ(u)/D) - chip /alpha * f(a/w+ZZ(u)/D) ) for u in range(1,D.abs())])
+                mu = chip**n * z * sum([kronecker_symbol(D,u) * ( f(a/(p*w)+ZZ(u)/D) - chip / alpha * f(a/w+ZZ(u)/D) ) for u in range(1,D.abs())])
             return s*mu
 
     def alpha(self, prec=20):
@@ -868,7 +868,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             raise ValueError("Insufficient precision (%s)" % prec)
 
         # check if the conditions on quadratic_twist are satisfied
-        eta = ZZ(eta) % (self._p- 1) if self._p != 2 else ZZ(eta) % 2
+        eta = ZZ(eta) % (self._p - 1) if self._p != 2 else ZZ(eta) % 2
         D = ZZ(quadratic_twist)
         if D != 1:
             if eta != 0:
@@ -876,20 +876,20 @@ class pAdicLseriesOrdinary(pAdicLseries):
             if D % 4 == 0:
                 d = D//4
                 if not d.is_squarefree() or d % 4 == 1:
-                    raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field" %D)
+                    raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field" % D)
             else:
                 if not D.is_squarefree() or D % 4 != 1:
-                    raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field" %D)
+                    raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field" % D)
             if gcd(D,self._p) != 1:
-                raise ValueError("quadratic twist (=%s) must be coprime to p (=%s) " %(D,self._p))
+                raise ValueError("quadratic twist (=%s) must be coprime to p (=%s) " % (D,self._p))
             if gcd(D, self._E.conductor()) != 1:
                 for ell in prime_divisors(D):
                     if valuation(self._E.conductor(), ell) > valuation(D, ell):
-                        raise ValueError("cannot twist a curve of conductor (=%s) by the quadratic twist (=%s)." %(self._E.conductor(),D))
+                        raise ValueError("cannot twist a curve of conductor (=%s) by the quadratic twist (=%s)." % (self._E.conductor(),D))
         p = self._p
         si = 1-2*(eta % 2)
 
-        #verbose("computing L-series for p=%s, n=%s, and prec=%s"%(p,n,prec))
+        # verbose("computing L-series for p=%s, n=%s, and prec=%s" % (p,n,prec))
 
         if prec == 1:
             if eta == 0:
@@ -915,13 +915,13 @@ class pAdicLseriesOrdinary(pAdicLseries):
             bounds = self._prec_bounds(n,prec,sign=si)
             padic_prec = max(bounds[1:]) + 5
 
-        verbose("using p-adic precision of %s" %padic_prec)
+        verbose("using p-adic precision of %s" % padic_prec)
 
         if p == 2:
             res_series_prec = min(p**(n-2), prec)
         else:
             res_series_prec = min(p**(n-1), prec)
-        verbose("using series precision of %s" %res_series_prec)
+        verbose("using series precision of %s" % res_series_prec)
 
         ans = self._get_series_from_cache(n, res_series_prec,D,eta)
         if ans is not None:
@@ -942,17 +942,17 @@ class pAdicLseriesOrdinary(pAdicLseries):
             a_range = 3
         else:
             teich = self.teichmuller(padic_prec)
-            gamma = K(1+ p)
+            gamma = K(1 + p)
             p_power = p**(n-1)
             a_range = p
 
-        verbose("Now iterating over %s summands" %((p-1)*p_power))
+        verbose("Now iterating over %s summands" % ((p-1)*p_power))
         verbose_level = get_verbose()
         count_verb = 0
         for j in range(p_power):
             s = K(0)
             if verbose_level >= 2 and j/p_power*100 > count_verb + 3:
-                verbose("%.2f percent done" %(float(j)/p_power*100))
+                verbose("%.2f percent done" % (float(j)/p_power*100))
                 count_verb += 3
             for a in range(1,a_range):
                 b = teich[a] * gamma_power
@@ -961,7 +961,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             one_plus_T_factor *= 1+T
             gamma_power *= gamma
 
-        verbose("the series before adjusting the precision is %s" %L)
+        verbose("the series before adjusting the precision is %s" % L)
         # Now create series but with each coefficient truncated
         # so it is proven correct:
         K = Qp(p, padic_prec, print_mode='series')
@@ -1052,7 +1052,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         if E.galois_representation().is_irreducible(p):
             return 0
 
-        if self._implementation=="sage":
+        if self._implementation == "sage":
             m = E.modular_symbol_space(sign=1)
             b = m.boundary_map().codomain()
             C = b._known_cusps()  # all known, since computed the boundary map
@@ -1112,7 +1112,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             if E0.real_components() == 1:
                 om0 *= 2
         m = max(isog.matrix().list())
-        q = (om/om0 *m).round()/m
+        q = (om/om0 * m).round()/m
         t += valuation(q,p)
         return max(t,0)
 
@@ -1227,7 +1227,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
             if D % 4 == 0:
                 d = D//4
                 if not d.is_squarefree() or d % 4 == 1:
-                    raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field" %D)
+                    raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field" % D)
             else:
                 if not D.is_squarefree() or D % 4 != 1:
                     raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field" % D)
@@ -1283,18 +1283,18 @@ class pAdicLseriesSupersingular(pAdicLseries):
             a_range = 3
         else:
             teich = self.teichmuller(padic_prec)
-            gamma = 1+ p
+            gamma = 1 + p
             p_power = p**(n-1)
             a_range = p
         si = 1-2*(eta % 2)
 
-        verbose("Now iterating over %s summands" %((p-1)*p_power))
+        verbose("Now iterating over %s summands" % ((p-1)*p_power))
         verbose_level = get_verbose()
         count_verb = 0
         for j in range(p_power):
             s = K(0)
             if verbose_level >= 2 and j/p_power*100 > count_verb + 3:
-                verbose("%.2f percent done" %(float(j)/p_power*100))
+                verbose("%.2f percent done" % (float(j)/p_power*100))
                 count_verb += 3
             for a in range(1,a_range):
                 b = teich[a] * gamma_power
@@ -1484,8 +1484,8 @@ class pAdicLseriesSupersingular(pAdicLseries):
         """
         E = self._E
         p = self._p
-        if algorithm != "mw" and algorithm !="approx":
-            raise ValueError("Unknown algorithm %s." %algorithm)
+        if algorithm != "mw" and algorithm != "approx":
+            raise ValueError("Unknown algorithm %s." % algorithm)
         if algorithm == "approx":
             return self.__phi_bpr(prec=prec)
         if p < 4 and algorithm == "mw":
@@ -1584,20 +1584,20 @@ class pAdicLseriesSupersingular(pAdicLseries):
                 if eq[0].valuation(p) == 0:
                     l = min(eq[1].valuation(p),k-v)
                     if l == 0:
-                        verbose("not uniquely determined at step k=%s" %k)
+                        verbose("not uniquely determined at step k=%s" % k)
                     else:
                         ainv = eq[0].inverse_mod(p**l)
                         delta = delta - eq[2]*ainv*p**dpr
                         dpr = dpr + l
                         delta = delta % p**dpr
-                        verbose("delta_prec increased to %s\n delta is now %s" %(dpr,delta))
+                        verbose("delta_prec increased to %s\n delta is now %s" % (dpr,delta))
                 elif eq[1].valuation(p) == 0:
                     l = min(eq[0].valuation(p),k-v)
                     ainv = eq[1].inverse_mod(p**l)
                     gamma = gamma - eq[2]*ainv*p**dga
                     dga = dga + l
                     gamma = gamma % p**dga
-                    verbose("gamma_prec increased to %s\n gamma is now %s" %(dga,gamma))
+                    verbose("gamma_prec increased to %s\n gamma is now %s" % (dga,gamma))
                 else:
                     raise RuntimeError("Bug: no delta or gamma can exist")
 
@@ -1605,7 +1605,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         R = Qp(p,max(dpr,dga)+1)
         delta = R(delta,absprec=dpr)
         gamma = R(gamma,absprec=dga)
-        verbose("result delta = %s\n      gamma = %s\n check : %s" %(delta,gamma, [Qp(p,k)(delta * cs[k] - gamma * ds[k] - cs[k-1]) for k in range(1,prec+1)] ))
+        verbose("result delta = %s\n      gamma = %s\n check : %s" % (delta,gamma, [Qp(p,k)(delta * cs[k] - gamma * ds[k] - cs[k-1]) for k in range(1,prec+1)] ))
         a = delta
         c = -gamma
         d = E.ap(p) - a
@@ -1727,7 +1727,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         # this is the height_{v} (P) for a v in D_p
         def hv(vec, P):
             hP = h(P)
-            return - vec[0]*hP[1] +vec[1]*hP[0]
+            return - vec[0]*hP[1] + vec[1]*hP[0]
 
         #    def hvpairing(vec,P,Q):
         #        return (hv(vec,    P+Q) - hv(vec,P)-hv(vec,Q))/2
@@ -1750,7 +1750,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
             point_height = [hv(vec, P) for P in basis]
             for i in range(rk):
                 for j in range(i+1, rk):
-                    M[i, j] = M[j, i] = (hv(vec,basis[i] + basis[j])- point_height[i] - point_height[j] )/2
+                    M[i, j] = M[j, i] = (hv(vec,basis[i] + basis[j]) - point_height[i] - point_height[j] )/2
             for i in range(rk):
                 M[i, i] = point_height[i]
 

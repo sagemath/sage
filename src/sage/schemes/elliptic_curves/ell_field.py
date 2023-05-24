@@ -155,7 +155,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     # degree is odd we can take D=1; otherwise it suffices to
                     # consider odd powers of a generator.
                     D = K(1)
-                    if K.degree() %2==0:
+                    if K.degree() % 2 == 0:
                         D = K.gen()
                         a = D**2
                         while (x**2 + x + D).roots():
@@ -172,26 +172,26 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 raise ValueError("twisting parameter D must be specified over infinite fields.")
         else:
             try:
-                D=K(D)
+                D = K(D)
             except ValueError:
                 raise ValueError("twisting parameter D must be in the base field.")
 
-            if char!=2 and D.is_zero():
+            if char != 2 and D.is_zero():
                 raise ValueError("twisting parameter D must be nonzero when characteristic is not 2")
 
-        if char!=2:
-            b2,b4,b6,b8=self.b_invariants()
+        if char != 2:
+            b2,b4,b6,b8 = self.b_invariants()
             # E is isomorphic to  [0,b2,0,8*b4,16*b6]
             return EllipticCurve(K,[0,b2*D,0,8*b4*D**2,16*b6*D**3])
 
         # now char==2
-        if self.j_invariant() !=0: # iff a1!=0
-            a1,a2,a3,a4,a6=self.ainvs()
-            E0=self.change_weierstrass_model(a1,a3/a1,0,(a1**2*a4+a3**2)/a1**3)
+        if self.j_invariant() != 0: # iff a1!=0
+            a1,a2,a3,a4,a6 = self.ainvs()
+            E0 = self.change_weierstrass_model(a1,a3/a1,0,(a1**2*a4+a3**2)/a1**3)
             # which has the form = [1,A2,0,0,A6]
-            assert E0.a1()==K(1)
-            assert E0.a3()==K(0)
-            assert E0.a4()==K(0)
+            assert E0.a1() == K(1)
+            assert E0.a3() == K(0)
+            assert E0.a4() == K(0)
             return EllipticCurve(K,[1,E0.a2()+D,0,0,E0.a6()])
         else:
             raise ValueError("Quadratic twist not implemented in char 2 when j=0")
@@ -229,8 +229,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: EllipticCurve('15a1').two_torsion_rank()
             2
         """
-        f=self.division_polynomial(rings.Integer(2))
-        n=len(f.roots())+1
+        f = self.division_polynomial(rings.Integer(2))
+        n = len(f.roots())+1
         return rings.Integer(n).ord(rings.Integer(2))
 
     def quartic_twist(self, D):
@@ -258,22 +258,22 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.is_isomorphic(E1, GF(13^4,'a'))                                     # optional - sage.rings.finite_rings
             True
         """
-        K=self.base_ring()
-        char=K.characteristic()
-        D=K(D)
+        K = self.base_ring()
+        char = K.characteristic()
+        D = K(D)
 
-        if char==2 or char==3:
+        if char == 2 or char == 3:
             raise ValueError("Quartic twist not defined in chars 2,3")
 
-        if self.j_invariant() !=K(1728):
+        if self.j_invariant() != K(1728):
             raise ValueError("Quartic twist not defined when j!=1728")
 
         if D.is_zero():
             raise ValueError("quartic twist requires a nonzero argument")
 
-        c4,c6=self.c_invariants()
+        c4,c6 = self.c_invariants()
         # E is isomorphic to  [0,0,0,-27*c4,0]
-        assert c6==0
+        assert c6 == 0
         return EllipticCurve(K,[0,0,0,-27*c4*D,0])
 
     def sextic_twist(self, D):
@@ -303,22 +303,22 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.is_isomorphic(E1, GF(13^6,'a'))                                     # optional - sage.rings.finite_rings
             True
         """
-        K=self.base_ring()
-        char=K.characteristic()
-        D=K(D)
+        K = self.base_ring()
+        char = K.characteristic()
+        D = K(D)
 
-        if char==2 or char==3:
+        if char == 2 or char == 3:
             raise ValueError("Sextic twist not defined in chars 2,3")
 
-        if self.j_invariant() !=K(0):
+        if self.j_invariant() != K(0):
             raise ValueError("Sextic twist not defined when j!=0")
 
         if D.is_zero():
             raise ValueError("Sextic twist requires a nonzero argument")
 
-        c4,c6=self.c_invariants()
+        c4,c6 = self.c_invariants()
         # E is isomorphic to  [0,0,0,0,-54*c6]
-        assert c4==0
+        assert c4 == 0
         return EllipticCurve(K,[0,0,0,0,-54*c6*D])
 
     def is_quadratic_twist(self, other):
@@ -420,7 +420,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         zero = K.zero()
         if not K == F.base_ring():
             return zero
-        j=E.j_invariant()
+        j = E.j_invariant()
         if j != F.j_invariant():
             return zero
 
@@ -429,12 +429,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 return rings.ZZ(1)
             return K.one()
 
-        char=K.characteristic()
+        char = K.characteristic()
 
-        if char==2:
+        if char == 2:
             raise NotImplementedError("not implemented in characteristic 2")
-        elif char==3:
-            if j==0:
+        elif char == 3:
+            if j == 0:
                 raise NotImplementedError("not implemented in characteristic 3 for curves of j-invariant 0")
             D = E.b2()/F.b2()
 
@@ -443,18 +443,18 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             c4E,c6E = E.c_invariants()
             c4F,c6F = F.c_invariants()
 
-            if j==0:
+            if j == 0:
                 um = c6E/c6F
-                x=rings.polygen(K)
-                ulist=(x**3-um).roots(multiplicities=False)
+                x = rings.polygen(K)
+                ulist = (x**3-um).roots(multiplicities=False)
                 if not ulist:
                     D = zero
                 else:
                     D = ulist[0]
-            elif j==1728:
-                um=c4E/c4F
-                x=rings.polygen(K)
-                ulist=(x**2-um).roots(multiplicities=False)
+            elif j == 1728:
+                um = c4E/c4F
+                x = rings.polygen(K)
+                ulist = (x**2-um).roots(multiplicities=False)
                 if not ulist:
                     D = zero
                 else:
@@ -519,18 +519,18 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         zero = K.zero()
         if not K == F.base_ring():
             return zero
-        j=E.j_invariant()
-        if j != F.j_invariant() or j!=K(1728):
+        j = E.j_invariant()
+        if j != F.j_invariant() or j != K(1728):
             return zero
 
         if E.is_isomorphic(F):
             return K.one()
 
-        char=K.characteristic()
+        char = K.characteristic()
 
-        if char==2:
+        if char == 2:
             raise NotImplementedError("not implemented in characteristic 2")
-        elif char==3:
+        elif char == 3:
             raise NotImplementedError("not implemented in characteristic 3")
         else:
             # now char!=2,3:
@@ -588,18 +588,18 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         zero = K.zero()
         if not K == F.base_ring():
             return zero
-        j=E.j_invariant()
+        j = E.j_invariant()
         if j != F.j_invariant() or not j.is_zero():
             return zero
 
         if E.is_isomorphic(F):
             return K.one()
 
-        char=K.characteristic()
+        char = K.characteristic()
 
-        if char==2:
+        if char == 2:
             raise NotImplementedError("not implemented in characteristic 2")
-        elif char==3:
+        elif char == 3:
             raise NotImplementedError("not implemented in characteristic 3")
         else:
             # now char!=2,3:
@@ -1757,7 +1757,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             R = k['x']
             x = R.gen()
             E = self.short_weierstrass_model()
-            f=(x**3+E.a4()*x+E.a6())**((p-1)//2)
+            f = (x**3+E.a4()*x+E.a6())**((p-1)//2)
             return f.coefficients(sparse=False)[p-1]
 
     def isogeny_ell_graph(self, l, directed=True, label_by_j=False):

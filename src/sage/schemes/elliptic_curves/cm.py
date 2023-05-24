@@ -263,7 +263,7 @@ def is_HCP(f, check_monic_irreducible=True):
             continue
         if not fp.is_squarefree():
             continue
-        if d<h and d not in h2list:
+        if d < h and d not in h2list:
             return zero
         jp = fp.any_root(degree=-1, assume_squarefree=True)
         E = EllipticCurve(j=jp)
@@ -318,14 +318,15 @@ def OrderClassNumber(D0,h0,f):
     ps = f.prime_divisors()
     from sage.misc.misc_c import prod
     from sage.arith.misc import kronecker as kronecker_symbol
-    n = (f // prod(ps)) * prod(p-kronecker_symbol(D0,p) for p in ps)
+    n = (f // prod(ps)) * prod(p - kronecker_symbol(D0, p) for p in ps)
     if D0 == -3:
-        #assert h0 == 1 and n%3==0
-        return n//3
+        # assert h0 == 1 and n % 3 == 0
+        return n // 3
     if D0 == -4:
-        #assert h0 == 1 and n%2==0
-        return n//2
-    return n*h0
+        # assert h0 == 1 and n % 2 == 0
+        return n // 2
+    return n * h0
+
 
 @cached_function
 def cm_j_invariants(K, proof=None):
@@ -767,10 +768,10 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
     # Easy case where we have already computed and cached the relevant values
     if hDf_dict and hmax <= max(hDf_dict):
-        T = {h:Dflist for h,Dflist in hDf_dict.items() if h<=hmax}
+        T = {h:Dflist for h,Dflist in hDf_dict.items() if h <= hmax}
         if B:
             for h in T:
-                T[h] = [Df for Df in T[h] if Df[0].abs()*Df[1]**2<=B]
+                T[h] = [Df for Df in T[h] if Df[0].abs()*Df[1]**2 <= B]
         return T
 
     # imports that are needed only for this function
@@ -821,7 +822,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
         for D0,f in Dflist:
             h_dict[D0*f**2] = h
         if not count:
-            Dflist = [Df for Df in Dflist if Df[0].abs()*Df[1]**2<=B]
+            Dflist = [Df for Df in Dflist if Df[0].abs()*Df[1]**2 <= B]
         T[h] = set(Dflist)
 
     # We do not need to certify the class number from :pari:`qfbclassno` for discriminants under 2*10^10
@@ -993,7 +994,7 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
 
     h = jpol.degree()
     if algorithm in ['exhaustive', 'old']:
-        if h>100:
+        if h > 100:
             raise NotImplementedError("CM data only available for class numbers up to 100")
         for d,f in cm_orders(h):
             if jpol == hilbert_class_polynomial(d*f**2):
@@ -1046,8 +1047,8 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
             if cmd: # we have a candidate CM field already
                 break
             else:   # we need to try more primes
-                max_primes *=2
-        if D.valuation(P)>0: # skip bad primes
+                max_primes *= 2
+        if D.valuation(P) > 0: # skip bad primes
             continue
         aP = E.reduction(P).trace_of_frobenius()
         if aP == 0: # skip supersingular primes

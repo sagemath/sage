@@ -219,7 +219,7 @@ class ModularSymbol(SageObject):
             Modular symbol with sign -1 over Rational Field attached to
              Elliptic Curve defined by y^2 + y = x^3 + x^2 over Rational Field
         """
-        return "Modular symbol with sign %s over %s attached to %s" %(
+        return "Modular symbol with sign %s over %s attached to %s" % (
             self._sign, self._base_ring, self._E)
 
 class ModularSymbolECLIB(ModularSymbol):
@@ -333,11 +333,11 @@ class ModularSymbolECLIB(ModularSymbol):
             raise TypeError('sign must -1 or 1')
         self._sign = ZZ(sign)
         self._E = E
-        self._scaling = 1 if E.discriminant()>0 else ZZ(1)/2
+        self._scaling = 1 if E.discriminant() > 0 else ZZ(1)/2
         self._implementation = "eclib"
         self._base_ring = QQ
         # The ECModularSymbol class must be initialized with sign=0 to compute minus symbols
-        self._modsym = ECModularSymbol(E, int(sign==1), nap)
+        self._modsym = ECModularSymbol(E, int(sign == 1), nap)
         self.cache = {True: {}, False: {}}
 
     def _call_with_caching(self, r, base_at_infinity=True):
@@ -468,7 +468,7 @@ class ModularSymbolSage(ModularSymbol):
             self._scaling = 1
             self._e = self._modsym.dual_eigenvector()
         else :
-            raise ValueError("no normalization %s known for modular symbols" %normalize)
+            raise ValueError("no normalization %s known for modular symbols" % normalize)
 
     def _find_scaling_L_ratio(self):
         r"""
@@ -553,7 +553,7 @@ class ModularSymbolSage(ModularSymbol):
             if at0 != 0 :
                 l1 = self.__lalg__(1)
                 if at0 != l1:
-                    verbose('scale modular symbols by %s' %(l1/at0))
+                    verbose('scale modular symbols by %s' % (l1/at0))
                     self._scaling = l1/at0
             else :
                 # if [0] = 0, we can still hope to scale it correctly by considering twists of E
@@ -565,7 +565,7 @@ class ModularSymbolSage(ModularSymbol):
                     D = Dlist[j]
                     # the following line checks if the twist of the newform of E by D is a newform
                     # this is to avoid that we 'twist back'
-                    if all( valuation(E.conductor(),ell)<= valuation(D,ell) for ell in prime_divisors(D) ) :
+                    if all( valuation(E.conductor(),ell) <= valuation(D,ell) for ell in prime_divisors(D) ) :
                         at0 = sum([kronecker_symbol(D,u) * self(ZZ(u)/D) for u in range(1,abs(D))])
                     j += 1
                 if j == 30 and at0 == 0: # curves like "121b1", "225a1", "225e1", "256a1", "256b1", "289a1", "361a1", "400a1", "400c1", "400h1", "441b1", "441c1", "441d1", "441f1 .. will arrive here
@@ -574,7 +574,7 @@ class ModularSymbolSage(ModularSymbol):
                 else :
                     l1 = self.__lalg__(D)
                     if at0 != l1:
-                        verbose('scale modular symbols by %s found at D=%s ' %(l1/at0,D), level=2)
+                        verbose('scale modular symbols by %s found at D=%s ' % (l1/at0,D), level=2)
                         self._scaling = l1/at0
 
         else : # that is when sign = -1
@@ -584,7 +584,7 @@ class ModularSymbolSage(ModularSymbol):
             while j < 30 and at0 == 0 :
                 # computes [0]+ for the twist of E by D until one value is non-zero
                 D = Dlist[j]
-                if all( valuation(E.conductor(),ell)<= valuation(D,ell) for ell in prime_divisors(D) ) :
+                if all( valuation(E.conductor(),ell) <= valuation(D,ell) for ell in prime_divisors(D) ) :
                     at0 = - sum([kronecker_symbol(D,u) * self(ZZ(u)/D) for u in range(1,abs(D))])
                 j += 1
             if j == 30 and at0 == 0: # no more hope for a normalization
@@ -593,7 +593,7 @@ class ModularSymbolSage(ModularSymbol):
             else :
                 l1 = self.__lalg__(D)
                 if at0 != l1:
-                    verbose('scale modular symbols by %s' %(l1/at0))
+                    verbose('scale modular symbols by %s' % (l1/at0))
                     self._scaling = l1/at0
 
     def __lalg__(self, D):

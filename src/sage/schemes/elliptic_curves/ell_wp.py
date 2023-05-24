@@ -142,7 +142,7 @@ def weierstrass_p(E, prec=20, algorithm=None):
 
     if algorithm == "pari":
         if 0 < p <= prec + 2:
-            raise ValueError("for computing the Weierstrass p-function via pari, the characteristic (%s) of the underlying field must be greater than prec + 2 = %s" %(p,prec+2))
+            raise ValueError("for computing the Weierstrass p-function via pari, the characteristic (%s) of the underlying field must be greater than prec + 2 = %s" % (p,prec+2))
         return compute_wp_pari(E, prec)
 
     # quadratic and fast algorithms require short Weierstrass model
@@ -153,11 +153,11 @@ def weierstrass_p(E, prec=20, algorithm=None):
 
     if algorithm == "quadratic":
         if 0 < p <= prec + 2:
-            raise ValueError("for computing the Weierstrass p-function via the quadratic algorithm, the characteristic (%s) of the underlying field must be greater than prec + 2 = %s" %(p,prec+2))
+            raise ValueError("for computing the Weierstrass p-function via the quadratic algorithm, the characteristic (%s) of the underlying field must be greater than prec + 2 = %s" % (p,prec+2))
         wp = compute_wp_quadratic(k, A, B, prec)
     elif algorithm == "fast":
         if 0 < p <= prec + 4:
-            raise ValueError("for computing the Weierstrass p-function via the fast algorithm, the characteristic (%s) of the underlying field must be greater than prec + 4 = %s" %(p,prec+4))
+            raise ValueError("for computing the Weierstrass p-function via the fast algorithm, the characteristic (%s) of the underlying field must be greater than prec + 4 = %s" % (p,prec+4))
         wp = compute_wp_fast(k, A, B, prec)
     else:
         raise ValueError("unknown algorithm for computing the Weierstrass p-function")

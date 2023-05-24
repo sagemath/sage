@@ -227,9 +227,9 @@ class IsogenyClass_EC(SageObject):
              Elliptic Curve defined by y^2 + (i+1)*x*y + (i+1)*y = x^3 + i*x^2 + (-i+33)*x + (-58*i) over Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
         """
         if self._label:
-            return "Elliptic curve isogeny class %s" %(self._label)
+            return "Elliptic curve isogeny class %s" % (self._label)
         else:
-            return "Isogeny class of %r" %(self.E)
+            return "Isogeny class of %r" % (self.E)
 
     def __contains__(self, x):
         """
@@ -853,9 +853,9 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
                 js = [j for j,E3 in enumerate(curves) if E2.is_isomorphic(E3)]
                 if js: # seen codomain already -- up to isomorphism
                     j = js[0]
-                    if phi.codomain()!=curves[j]:
+                    if phi.codomain() != curves[j]:
                         phi = E2.isomorphism_to(curves[j]) * phi
-                    assert phi.domain()==curves[i] and phi.codomain()==curves[j]
+                    assert phi.domain() == curves[i] and phi.codomain() == curves[j]
                     add_tup([i,j,d,phi])
                 else:
                     curves.append(E2)
@@ -885,7 +885,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
         mat = MatrixSpace(ZZ, ncurves)(0)
         self._maps = [[0] * ncurves for _ in range(ncurves)]
         for i,j,l,phi in tuples:
-            if phi!=0:
+            if phi != 0:
                 mat[perm[i],perm[j]] = l
                 self._maps[perm[i]][perm[j]] = phi
         self._mat = fill_isogeny_matrix(mat)
@@ -932,16 +932,16 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             for Q in allQs[d]:
                 if Q.solve_integer(n):
                     return Q
-            raise ValueError("No form of discriminant %d represents %s" %(d,n))
+            raise ValueError("No form of discriminant %d represents %s" % (d,n))
 
         mat = self._mat
         qfmat = [[0 for i in range(ncurves)] for j in range(ncurves)]
         for i, E1 in enumerate(self.curves):
             for j, E2 in enumerate(self.curves):
-                if j<i:
+                if j < i:
                     qfmat[i][j] = qfmat[j][i]
                     mat[i,j] = mat[j,i]
-                elif i==j:
+                elif i == j:
                     qfmat[i][j] = [1]
                     # mat[i,j] already 1
                 else:
@@ -1092,7 +1092,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
             ijl_triples = []
             l_list = None
             i = 0
-            while i<len(curves):
+            while i < len(curves):
                 E = curves[i]
                 isogs = E.isogenies_prime_degree(l_list)
                 for phi in isogs:
@@ -1117,7 +1117,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
             self._maps = [[0]*ncurves for _ in range(ncurves)]
             for i,j,l,phi in ijl_triples:
                 self._mat[i,j] = l
-                self._maps[i][j]=phi
+                self._maps[i][j] = phi
         else:
             raise ValueError("unknown algorithm '%s'" % algorithm)
 
@@ -1223,7 +1223,7 @@ def isogeny_degrees_cm(E, verbose=False):
     # Collect possible primes.  First put in 2, and also 3 for
     # discriminant -3 (special case because of units):
 
-    L = Set([ZZ(2), ZZ(3)]) if d==-3 else Set([ZZ(2)])
+    L = Set([ZZ(2), ZZ(3)]) if d == -3 else Set([ZZ(2)])
     if verbose:
         print("initial primes: %s" % L)
 
@@ -1249,7 +1249,7 @@ def isogeny_degrees_cm(E, verbose=False):
 
         # Find the "upward" primes (index divided by l):
 
-        L1 = Set([l for l in ram_l if d.valuation(l)>1])
+        L1 = Set([l for l in ram_l if d.valuation(l) > 1])
         L += L1
         if verbose:
             print("upward primes: %s" % L1)
@@ -1269,7 +1269,7 @@ def isogeny_degrees_cm(E, verbose=False):
     # l-1 must divide n/2h:
 
     L1 = Set([lm1+1 for lm1 in divs
-              if (lm1+1).is_prime() and kronecker_symbol(d,lm1+1)==+1])
+              if (lm1+1).is_prime() and kronecker_symbol(d,lm1+1) == +1])
     L += L1
     if verbose:
         print("downward split primes: %s" % L1)
@@ -1278,7 +1278,7 @@ def isogeny_degrees_cm(E, verbose=False):
     # l+1 must divide n/2h:
 
     L1 = Set([lp1-1 for lp1 in divs
-              if (lp1-1).is_prime() and kronecker_symbol(d,lp1-1)==-1])
+              if (lp1-1).is_prime() and kronecker_symbol(d,lp1-1) == -1])
     L += L1
     if verbose:
         print("downward inert primes: %s" % L1)

@@ -352,7 +352,7 @@ class GaloisRepresentation(SageObject):
         if j in sporadic_j: # includes all CM j-invariants
             R = [sporadic_j[j]]
         else:
-            R = [l for l in [2,3,5,7,13] if len(E.isogenies_prime_degree(l))>0]
+            R = [l for l in [2,3,5,7,13] if len(E.isogenies_prime_degree(l)) > 0]
         self.__reducible_primes = R
         return R
 
@@ -464,7 +464,7 @@ class GaloisRepresentation(SageObject):
         T = self._E.torsion_subgroup().order()
         if T % p == 0 and p != 2:
             # we could probably determine the group structure directly
-            self.__image_type[p] = "The image is meta-cyclic inside a Borel subgroup as there is a %s-torsion point on the curve." %p
+            self.__image_type[p] = "The image is meta-cyclic inside a Borel subgroup as there is a %s-torsion point on the curve." % p
             return False
 
         R = rings.PolynomialRing(self._E.base_ring(), 'x')
@@ -472,7 +472,7 @@ class GaloisRepresentation(SageObject):
 
         if p == 2:
             # E is isomorphic to  [0,b2,0,8*b4,16*b6]
-            b2,b4,b6,b8=self._E.b_invariants()
+            b2,b4,b6,b8 = self._E.b_invariants()
             f = x**3 + b2*x**2 + 8*b4*x + 16*b6
             if not f.is_irreducible():
                 if len(f.roots()) > 2:
@@ -578,7 +578,7 @@ class GaloisRepresentation(SageObject):
                     if s != 0 and s not in signs:
                         signs.append(s)
                     if len(signs) == 2 and exclude_exceptional_image:
-                        self.__image_type[p] = "The image is all of GL_2(F_%s)." %p
+                        self.__image_type[p] = "The image is all of GL_2(F_%s)." % p
                         return True   #,None
 
         if A == -1: # we came in from is reducible. Now go out with False
@@ -675,19 +675,19 @@ class GaloisRepresentation(SageObject):
                 p0 = arith.next_prime(p0+1)
             C2 = (sqrt(p0)+1)**8
             C = max(C1,C2)
-            verbose("j is not integral -- Serre's bound is %s" %C)
+            verbose("j is not integral -- Serre's bound is %s" % C)
             C3 = 1 + 4*sqrt(6)*int(N)/3 * sqrt(misc.mul([1+1.0/int(p) for p,_ in arith.factor(N)]))
             C = min(C,C3)
-            verbose("conductor = %s, and bound is %s" %(N,C))
+            verbose("conductor = %s, and bound is %s" % (N,C))
         else:
             # Cojocaru's bound (depends on the conductor)
             C = 1 + 4*sqrt(6)*int(N)/3 * sqrt(misc.mul([1+1.0/int(p) for p,_ in arith.factor(N)]))
-            verbose("conductor = %s, and bound is %s" %(N,C))
+            verbose("conductor = %s, and bound is %s" % (N,C))
         B = []
         p = 2
         while p <= C:
             t = self.is_surjective(p, A=A)
-            verbose("(%s,%s)" %(p,t))
+            verbose("(%s,%s)" % (p,t))
             # both False and None will be appended here.
             if not t:
                 B.append(p)
@@ -989,15 +989,15 @@ class GaloisRepresentation(SageObject):
                     u = k(a_ell)**2 * k(ell)**(-1)
                     if (u not in ex_setp) and could_be_exc == 1:
                         # it can not be in the exceptional
-                        verbose("the image cannot be exceptional, found u=%s" %u, level=2)
+                        verbose("the image cannot be exceptional, found u=%s" % u, level=2)
                         could_be_exc = 0
                     if a_ell != 0 and arith.kronecker(a_ell**2 - 4*ell,p) == 1 and could_be_non_split == 1:
                         # it can not be in the normalizer of the non-split Cartan
-                        verbose("the image cannot be non-split, found u=%s" %u, level=2)
+                        verbose("the image cannot be non-split, found u=%s" % u, level=2)
                         could_be_non_split = 0
                     if a_ell != 0 and arith.kronecker(a_ell**2 - 4*ell,p) == -1 and could_be_split == 1:
                         # it can not be in the normalizer of the split Cartan
-                        verbose("the image cannot be split, found u=%s" %u, level=2)
+                        verbose("the image cannot be split, found u=%s" % u, level=2)
                         could_be_split = 0
 
             assert could_be_exc + could_be_split + could_be_non_split > 0, "bug in image_type."
@@ -1050,7 +1050,7 @@ class GaloisRepresentation(SageObject):
                             return self.__image_type[p]
 
                     else:
-                        self.__image_type[p] = "The image in PGL_2(F_%s) is an exceptional group A_4, S_4 or A_5, but we could not determine which one." %p
+                        self.__image_type[p] = "The image in PGL_2(F_%s) is an exceptional group A_4, S_4 or A_5, but we could not determine which one." % p
                         return self.__image_type[p]
 
         # If all fails, we probably have a fairly small group and we can try to detect it using the galois_group
@@ -1058,7 +1058,7 @@ class GaloisRepresentation(SageObject):
             K = self._E.division_field(p, 'z')
             d = K.absolute_degree()
 
-            verbose("field of degree %s.  try to compute Galois group" %(d), level=2)
+            verbose("field of degree %s.  try to compute Galois group" % (d), level=2)
             # If the degree is too big, we have no chance at the Galois
             # group.  K.galois_group calls is_galois which used to rely on
             # pari's Galois group computations, so degree < 12
@@ -1067,7 +1067,7 @@ class GaloisRepresentation(SageObject):
                     raise Exception()
                 G = K.galois_group()
             except Exception:
-                self.__image_type[p] = "The image is a group of order %s." %d
+                self.__image_type[p] = "The image is a group of order %s." % d
                 return self.__image_type[p]
 
             else:
@@ -1075,7 +1075,7 @@ class GaloisRepresentation(SageObject):
                     ab = ""
                 else:
                     ab = "non-"
-                self.__image_type[p] = "The image is a " + ab + "abelian group of order %s." %G.order()
+                self.__image_type[p] = "The image is a " + ab + "abelian group of order %s." % G.order()
                 return self.__image_type[p]
 
         ## everything failed :

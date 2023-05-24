@@ -379,12 +379,12 @@ def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
             return False, 0
     e = P.ramification_index()
     P3 = P**e
-    if c4.valuation(P)==0:
+    if c4.valuation(P) == 0:
         b2 = (-c6*c4.inverse_mod(P3)).mod(P3)
         if debug:
             assert test_b2_local(c4,c6,P,b2)
         return True, b2
-    if c6.valuation(P)>=3*e:
+    if c6.valuation(P) >= 3*e:
         b2 = c6.parent().zero()
         if debug:
             assert test_b2_local(c4,c6,P,b2)
@@ -525,7 +525,7 @@ def test_rst_global(c4, c6, r, s, t, debug=False):
             K = E.base_field()
             for P in K.primes_above(2)+K.primes_above(3):
                 if not E.is_local_integral_model(P):
-                    print(" -- not integral at P=%s" %P)
+                    print(" -- not integral at P=%s" % P)
         return False
     return E
 
@@ -584,7 +584,7 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
     P2 = P**e
     c4val = c4.valuation(P)
 
-    if c4val==0:
+    if c4val == 0:
         if a1 is None:
             flag, t = sqrt_mod_4(-c6,P)
             if not flag:
@@ -688,14 +688,14 @@ def check_Kraus_local(c4, c6, P, assume_nonsingular=False):
         if not c4c6_nonsingular(c4,c6):
             return False, None
     K = c4.parent()
-    if K(2).valuation(P) >0:
+    if K(2).valuation(P) > 0:
         flag, a1, a3 = check_Kraus_local_2(c4,c6,P,None,True)
         if flag:
             E = test_a1a3_local(c4,c6,P,a1,a3)
             if E:
                 return (True, E)
         return (False, None)
-    if K(3).valuation(P) >0:
+    if K(3).valuation(P) > 0:
         flag, b2 = check_Kraus_local_3(c4,c6,P,True)
         if flag:
             E = test_b2_local(c4,c6,P,b2)
