@@ -1684,7 +1684,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: c = Cone([(1,0), (0,1)])
             sage: c._contains((1,I))                                                    # optional - sage.symbolic
             False
-            sage: c._contains(vector(QQbar, [1,I]))                                     # optional - sage.rings.number_field
+            sage: c._contains(vector(QQbar, [1,I]))                                     # optional - sage.rings.number_field sage.symbolic
             False
 
         And we refuse to coerce elements of another lattice into ours::
