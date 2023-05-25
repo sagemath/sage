@@ -8120,14 +8120,14 @@ class StandardTableaux_shape(StandardTableaux):
 
             # Find the last nonzero row of l and store it in k
             i = size - 1
-            while (l[i] == 0):
+            while l[i] == 0:
                 i -= 1
             k = i
 
             # Find a new row for the letter j (next lowest corner)
             t = l[1 + tableau_vector[j]]
             i = k
-            while (l[i] != t):
+            while l[i] != t:
                 i -= 1
 
             # Move the letter j to row i
@@ -8136,9 +8136,9 @@ class StandardTableaux_shape(StandardTableaux):
 
             # Fill in the columns of T_j using 1,...,j-1 in increasing order
             m = 0
-            while (m < j):
+            while m < j:
                 r = 0
-                while (l[r] != 0):
+                while l[r] != 0:
                     tableau_vector[m] = r
                     l[r] -= 1
                     m += 1
