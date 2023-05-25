@@ -50,7 +50,6 @@ AUTHORS:
 # ****************************************************************************
 
 from cpython.list cimport *
-from cpython.object cimport PyObject
 
 import os
 import sys
