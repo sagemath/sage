@@ -57,6 +57,7 @@ del quickref, tutorial
 from sage.misc.lazy_import import lazy_import
 
 from .all__sagemath_polyhedra import *
+from .all__sagemath_graphs import *
 
 lazy_import('sage.combinat.combinat',
             ('InfiniteAbstractCombinatorialClass', 'UnionCombinatorialClass',
@@ -218,8 +219,6 @@ from .ncsf_qsym.all import *
 from .ncsym.all import *
 lazy_import('sage.combinat.fqsym', 'FreeQuasisymmetricFunctions')
 from .matrices.all import *
-# Posets
-from .posets.all import *
 
 # Cluster Algebras and Quivers
 from .cluster_algebra_quiver.all import *

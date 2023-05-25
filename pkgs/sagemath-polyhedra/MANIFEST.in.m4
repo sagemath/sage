@@ -126,9 +126,6 @@ include sage/groups/matrix_gps/orthogonal.p*
 include sage/groups/matrix_gps/symplectic.p*
 include sage/groups/matrix_gps/unitary.p*
 
-# simplicial complexes
-graft sage/topology            # depends on sage.combinat.subset (now in sagemath-categories)
-
 #graft sage/tensor              # depends on permutations (now in sagemath-categories),
                                 # but also on SymmetricGroup (could be easily fixed)
                                 # and sage.sets.disjoint_set

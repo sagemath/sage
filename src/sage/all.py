@@ -91,7 +91,9 @@ from sage.algebras.all   import *
 from sage.modular.all    import *
 from sage.sat.all        import *
 from sage.schemes.all    import *
-from sage.graphs.all     import *
+
+from sage.all__sagemath_graphs import *
+
 from sage.groups.all     import *
 from sage.arith.power    import generic_power as power
 from sage.databases.all  import *
@@ -115,8 +117,6 @@ from sage.geometry.triangulation.all   import *
 from sage.dynamics.all   import *
 
 from sage.homology.all   import *
-
-from sage.topology.all   import *
 
 from sage.quadratic_forms.all import *
 
