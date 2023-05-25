@@ -1335,6 +1335,99 @@ def braid2rels(L):
 def braid2rels_p(L):
     return braid2rels(L)
 
+def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projective=False, puiseux=False, vertical=[]):
+    r"""
+    Return a presentation of the fundamental group computed from a braid monodromy.
+
+    INPUT:
+
+    - ``bm`` -- a list of braids
+
+    - ``degree`` -- integer (default: ``None``); only needed if the braid monodromy is an empty list.
+
+    - ``simplified`` -- boolean (default: ``True``); if set to ``True`` the
+      presentation will be simplified (see below)
+
+    - ``projective`` -- boolean (default: ``False``); if set to ``True``,
+      the fundamental group of the complement of the projective completion
+      of the curve will be computed, otherwise, the fundamental group of
+      the complement in the affine plane will be computed
+
+    - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
+      ``simplified`` is set to ``False``, and
+      a presentation of the fundamental group with the homotopy type
+      of the complement of the affine curve will be computed, adding
+      one relation if ``projective`` is set to ``True``.
+
+    - ``vertical`` -- list of integers (default: ``[]``); a list of integers in ``[1..r]`` where
+      ``r`` is the number of braids; the corresponding vertical lines are taking out from the complement
+      of the curve.
+
+    If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is ``True``, a Zariski-VanKampen presentation
+    is returned.
+
+    OUTPUT:
+
+    A presentation of the fundamental group of the complement of the
+    union of the curve with some vertical lines from its braid monodromy.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group_from_braid_mon
+        sage: B.<s0, s1, s2> = BraidGroup(4)
+        sage: bm = [s1*s2*s0*s1*s0^-1*s1^-1*s0^-1, s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1, (s0*s1)^2]
+        sage: g = fundamental_group_from_braid_mon(bm, projective=True); g
+        Finitely presented group < x0, x1 | x1*x0^2*x1, x0^-1*x1^-1*x0^-1*x1*x0^-1*x1^-1 >
+        sage: print (g.order(), g.abelian_invariants())
+        12 (4,)
+        sage: B2 = BraidGroup(2)
+        sage: bm = [B2(3 * [1])]
+        sage: g = fundamental_group_from_braid_mon(bm, vertical=[1]); g
+        Finitely presented group < x0, x1, x2 | x2*x0*x1*x2^-1*x1^-1*x0^-1, x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
+    """
+    vertical.sort()
+    v = len(vertical)
+    if bm == []:
+        d = degree
+    else:
+        d = bm[0].parent().strands()
+    if d is None:
+        return None
+    F = FreeGroup(d)
+    Fv = FreeGroup(d+v)
+    bmh = [br for j, br in enumerate(bm) if j + 1 not in vertical]
+
+    @parallel
+    def relation(x, b):
+        return x * b / x
+
+    if not puiseux:
+        relations_h = (relation([(x, b) for x in F.gens() for b in bmh]))
+        rel_h = [r[1] for r in relations_h]
+    else:
+        simplified = False
+        conjugate_desc = conjugate_positive_form_p(bmh)
+        trenzas_desc = [b1[-1] for b1 in conjugate_desc]
+        trenzas_desc_1 = flatten(trenzas_desc, max_level=1)
+        relations_h = braid2rels_p(trenzas_desc_1)
+        rel_h = [r[1] for r in relations_h]
+        rel_h = flatten(rel_h, max_level=1)
+    rel_v = []
+    for j, k in enumerate(vertical):
+        l = d + j + 1
+        br = bm[k - 1]
+        for gen in F.gens():
+            j0 = gen.Tietze()[0]
+            rl = (l,) + (gen * br).Tietze() + (-l, -j0)
+            rel_v.append(rl)
+    rel = rel_h + rel_v
+    if projective:
+        rel.append(prod(Fv.gens()).Tietze())
+    G = Fv / rel
+    if simplified:
+        return G.simplified()
+    return G
+
 
 def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid_mon=None):
     r"""
@@ -1452,30 +1545,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False, braid
         d = g.degree(y)
     else:
         d = bm[0].parent().strands()
-    F = FreeGroup(d)
-
-    @parallel
-    def relation(x, b):
-        return x * b / x
-
-    if not puiseux:
-        relations = (relation([(x, b) for x in F.gens() for b in bm]))
-        rel = [r[1] for r in relations]
-    else:
-        simplified = False
-        conjugate_desc = conjugate_positive_form_p(bm)
-        trenzas_desc = [b1[-1] for b1 in conjugate_desc]
-        trenzas_desc_1 = flatten(trenzas_desc, max_level=1)
-        relations = braid2rels_p(trenzas_desc_1)
-        rel = [r[1] for r in relations]
-        rel = flatten(rel, max_level=1)
-    if projective:
-        rel.append(prod(F.gens()))
-    G = F / rel
-    if simplified:
-        return G.simplified()
-    return G
-
+    return fundamental_group_from_braid_mon(bm, degree=d, simplified=simplified, projective=projective, puiseux=puiseux)
 
 def braid_monodromy_arrangement(flist):
     r"""
