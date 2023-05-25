@@ -109,6 +109,8 @@ Classes and functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import collections.abc
+import itertools
 from copy import copy
 from sage.topology.cell_complex import GenericCellComplex
 from sage.geometry.polyhedron.constructor import Polyhedron
@@ -117,6 +119,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.graphs.graph import Graph
 from sage.combinat.posets.posets import Poset
+from sage.misc.cachefunc import cached_method
 from sage.misc.misc import powerset
 
 
@@ -148,7 +151,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     INPUT:
 
-    - ``maximal_cells`` -- a list, a tuple, or a dictionary (indexed by
+    - ``maximal_cells`` -- an iterable or a dictionary (indexed by
       dimension) of cells of the Complex. Each cell is of class
       :class:`Polyhedron` of the same ambient dimension. To set up a
       :class:PolyhedralComplex, it is sufficient to provide the maximal
@@ -283,12 +286,7 @@ class PolyhedralComplex(GenericCellComplex):
         self._backend = backend
         if maximal_cells is None:
             cells_dict = {}
-        elif isinstance(maximal_cells, (list, tuple)):
-            if backend:
-                maximal_cells = [p.base_extend(p.base_ring(), backend)
-                                 for p in maximal_cells]
-            cells_dict = cells_list_to_cells_dict(maximal_cells)
-        elif isinstance(maximal_cells, dict):
+        elif isinstance(maximal_cells, collections.abc.Mapping):
             cells_dict = {}
             for (k, l) in maximal_cells.items():
                 if backend:
@@ -297,7 +295,12 @@ class PolyhedralComplex(GenericCellComplex):
                 else:
                     cells_dict[k] = set(l)
         else:
-            raise ValueError("the maximal cells are not given in correct form")
+            if backend:
+                maximal_cells = [p.base_extend(p.base_ring(), backend)
+                                 for p in maximal_cells]
+            else:
+                maximal_cells = list(maximal_cells)
+            cells_dict = cells_list_to_cells_dict(maximal_cells)
         if not cells_dict:
             self._dim = -1
             if ambient_dim is None:
@@ -1730,13 +1733,13 @@ class PolyhedralComplex(GenericCellComplex):
                                                right._is_immutable),
                                  backend=self._backend)
 
-    def union(self, right):
+    def union(self, *others):
         """
-        The union of this polyhedral complex with another one.
+        The union of this polyhedral complex with others.
 
         INPUT:
 
-        - ``right`` -- the other polyhedral complex (the right-hand factor)
+        - ``others`` -- other polyhedral complexes
 
         EXAMPLES::
 
@@ -1754,8 +1757,8 @@ class PolyhedralComplex(GenericCellComplex):
             ...
             ValueError: the given cells are not face-to-face
         """
-        maximal_cells = list(self.maximal_cell_iterator()) + list(
-                        right.maximal_cell_iterator())
+        maximal_cells = itertools.chain.from_iterable(
+            C.maximal_cell_iterator() for C in itertools.chain([self], others))
         return PolyhedralComplex(maximal_cells, maximality_check=True,
                                  face_to_face_check=True,
                                  is_immutable=(self._is_immutable and
@@ -2293,10 +2296,16 @@ class PolyhedralComplex(GenericCellComplex):
                for p in self.maximal_cell_iterator())
 
     def subdivide(self, make_simplicial=False,
-                  new_vertices=None, new_rays=None):
+                  new_vertices=None, new_rays=None, *,
+                  weights=None):
         """
-        Construct a new polyhedral complex by iterative stellar subdivision of
-        ``self`` for each new vertex/ray given.
+        Construct a new polyhedral complex that is a subdivision of ``self``.
+
+        When ``weights`` are given, first refine the complex by computing a
+        regular subdivision corresponding to these weights of all maximal cells.
+
+        Then refine the complex by iterative stellar subdivision of
+        for each new vertex/ray given.
 
         Currently, subdivision is only supported for bounded polyhedral complex
         or polyhedral fan.
@@ -2308,6 +2317,9 @@ class PolyhedralComplex(GenericCellComplex):
 
         - ``new_vertices``, ``new_rays`` -- list (optional); new generators
           to be added during subdivision
+
+        - ``weights`` -- dictionary or function (optional), giving a weight for
+          each generator.
 
         EXAMPLES::
 
@@ -2356,7 +2368,29 @@ class PolyhedralComplex(GenericCellComplex):
             sage: subdiv_halfspace.is_simplicial_fan()
             True
         """
+        if isinstance(weights, collections.abc.Mapping):
+            weights = {vector(v, immutable=True): weight for v, weight in weights.items()}
+            weights = weights.__getitem__
         if self.is_compact():
+            if weights:
+                def regular_subdivision(polytope):
+                    vertices = set(tuple(v.vector()) for v in polytope.vertex_generator())
+                    if new_vertices:
+                        vertices.update(tuple(v) for v in new_vertices if v in polytope)
+                    lifted_vertices = [v + (weights(vector(v, immutable=True)),) for v in vertices]
+                    vertical_ray = (0,) * polytope.ambient_dim() + (1,)
+                    lifted_polytope = Polyhedron(vertices=lifted_vertices,
+                                                 rays=[vertical_ray],
+                                                 backend=polytope.backend())
+                    for facet in lifted_polytope.facets():
+                        cell = Polyhedron(vertices=[tuple(v.vector())[:-1]
+                                                    for v in facet.vertex_generator()],
+                                          backend=polytope.backend())
+                        if cell.dimension() == polytope.dimension():
+                            yield cell
+
+                self = self.__class__.union(*[PolyhedralComplex(regular_subdivision(cell))
+                                              for cell in self.maximal_cell_iterator()])
             if new_rays:
                 raise ValueError("rays/lines cannot be used for subdivision")
             # bounded version of `fan.subdivide`; not require rational.
@@ -2388,6 +2422,8 @@ class PolyhedralComplex(GenericCellComplex):
             return PolyhedralComplex(cells, maximality_check=False,
                                      backend=self._backend)
         elif self.is_polyhedral_fan():
+            if weights is not None:
+                raise NotImplementedError('regular subdivision of fans is not supported')
             if new_vertices and any(vi != 0 for v in new_vertices for vi in v):
                 raise ValueError("new vertices cannot be used for subdivision")
             # mimic :meth:`~sage.geometry.fan <RationalPolyhedralFan>.subdivide`
@@ -2466,6 +2502,149 @@ class PolyhedralComplex(GenericCellComplex):
             raise NotImplementedError('subdivision of a non-compact polyhedral ' +
                                       'complex that is not a fan is not supported')
 
+    def is_regular_subdivision(self, other, certificate=False):
+        r"""
+
+        OUTPUT:
+
+        - If ``certificate=True``, return either ``(True, kwds)`` or
+          ``(False, None)``, where ``kwds`` is a dictionary providing inputs
+          for :meth:`subdivide` on ``other``.
+          If ``certificate=False``, return ``True`` or ``False``.
+
+        EXAMPLES:
+
+        An example from https://polymake.org/doku.php/user_guide/tutorials/regular_subdivisions#secondary_cone_of_a_regular_subdivision::
+
+            sage: from sage.geometry.triangulation.element import Triangulation
+            sage: points = [[2,0],[0,2],[-2,0],[0,-2],[1,0],[0,1],[-1,0],[0,-1]]  # dehomogenized
+            sage: point_configuration = PointConfiguration(points)
+            sage: hull_complex = PolyhedralComplex([Polyhedron(vertices=points)])
+
+        This is only a subdivision, not a triangulation, so we pass ``check=False`` to
+        :class:`~sage.geometry.triangulation.element.Triangulation`.
+
+            sage: cells = [[0,1,4,5],[0,3,4,7],[2,3,6,7],[1,2,5,6],[4,5,6,7]]
+            sage: triangulation = Triangulation(cells, parent=point_configuration, check=False)
+            sage: complex = triangulation.polyhedral_complex()
+            sage: complex.is_regular_subdivision(hull_complex, certificate=True)  # FIXME: Triangulation.normal_cone does not work because Triangulation.interior_facets does not work for non-triangulation subdivisions!
+            (True, ...)
+
+        A non-regular subdivision::
+
+            sage: nreg_cells = [[0,1,5],[0,4,5],[0,3,4],[3,4,7],[2,3,7],[2,6,7],[1,2,6],[1,5,6],[4,5,6,7]]
+            sage: nreg_triangulation = Triangulation(nreg_cells, parent=point_configuration, check=False)
+            sage: nreg_complex = nreg_triangulation.polyhedral_complex()
+            sage: nreg_complex.is_regular_subdivision(hull_complex, certificate=True)  # FIXME
+            (False, None)
+        """
+        if self == other:
+            if certificate:
+                return (True, dict(weights={vector(point.affine(), immutable=True): 0
+                                            for point in other.point_configuration().points()}))
+            else:
+                return True
+        new_points = set(vector(point.affine(), immutable=True)
+                         for point in self.point_configuration().points())
+        new_points.difference_update(vector(point.affine(), immutable=True)
+                                     for point in other.point_configuration().points())
+        # check=False so it does not insist on being an actual triangulation
+        triangulation = self.as_triangulation(check=False)
+        normal_cone = triangulation.normal_cone()
+        #normal = normal_cone.relative_interior().an_element()   # this does not work well
+        normal = sum(normal_cone.rays())
+        weights = {vector(point.affine(), immutable=True): weight
+                   for point, weight in zip(self.point_configuration().points(), normal)}
+        kwds = dict(weights=weights)
+        if new_points:
+            kwds['new_vertices'] = new_points
+        regular_subdivision = other.subdivide(**kwds)
+        if regular_subdivision == self:
+            if certificate:
+                return (True, kwds)
+            else:
+                return True
+        if weights:
+            raise NotImplementedError(f'other.subdivide(**{kwds}) gives a different complex')
+        if certificate:
+            return (False, None)
+        else:
+            return False
+
+    @cached_method
+    def point_configuration(self, **kwds):
+        r"""
+        Return the vertices of ``self`` as a :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`.
+
+        Keyword arguments are passed on to the constructor.
+
+        EXAMPLES::
+
+            sage: P = polytopes.cube()
+            sage: PolyhedralComplex([P]).point_configuration()
+            A point configuration in affine 3-space over Integer Ring consisting of 8 points.
+            The triangulations of this point configuration are assumed to be connected,
+            not necessarily fine, not necessarily regular.
+        """
+        from sage.geometry.triangulation.point_configuration import PointConfiguration
+        vertices = set()
+        for cell in self.cells().get(0, set()):
+            vertices.update(tuple(v) for v in cell.vertices_list())
+        # Indices matter in a PointConfiguration, so we sort the vertices
+        return PointConfiguration(sorted(vertices), **kwds)
+
+    def as_triangulation(self, point_configuration=None, check=True):
+        r"""
+        Return ``self`` as a :class:`~sage.geometry.triangulation.element.Triangulation`.
+
+        For this to make sense, ``self`` must satisfy :meth:`is_simplicial_complex`
+        and :meth:`is_compact`.
+
+        INPUT:
+
+        - ``point_configuration`` -- a :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`.
+
+        - ``check`` -- boolean. Passed on to :class:`~sage.geometry.triangulation.element.Triangulation`.
+
+        EXAMPLES::
+
+            sage: P = polytopes.cube()
+            sage: pc = PolyhedralComplex([P])
+            sage: tri_pc = pc.subdivide(make_simplicial=True)
+            sage: point_configuration = pc.point_configuration()
+            sage: tri = tri_pc.as_triangulation(point_configuration); tri
+            (<0,1,2,5>, <0,2,4,5>, <1,2,3,5>, <2,3,5,7>, <2,4,5,6>, <2,5,6,7>)
+            sage: tri.parent()
+            A point configuration in affine 3-space over Integer Ring consisting of 8 points.
+            The triangulations of this point configuration are assumed to be connected,
+            not necessarily fine, not necessarily regular.
+
+        The stellar subdivision is regular::
+
+            sage: normal = sum(tri.normal_cone().rays()); normal
+            (2, 0, 0, 0, 0, -4, 0, -2)
+            sage: normal in tri.normal_cone().interior()
+            True
+            sage: weights = {vector(point.affine(), immutable=True): weight
+            ....:            for point, weight in zip(point_configuration.points(), normal)}
+            sage: reg_pc = pc.subdivide(weights=weights)
+            sage: reg_pc == tri_pc
+            True
+        """
+        from sage.geometry.triangulation.element import Triangulation
+        if point_configuration is None:
+            point_configuration = self.point_configuration()
+        point_indices = {vector(p.affine(), immutable=True): i
+                         for i, p in enumerate(point_configuration.points())}
+        def simplex(cell):
+            return tuple(point_indices[vector(v, immutable=True)] for v in cell.vertices_list())
+
+        return Triangulation([simplex(cell)
+                              for cell in self.maximal_cell_iterator()],
+                             parent=point_configuration,
+                             check=check)
+
+
 ############################################################
 # Helper functions
 ############################################################
@@ -2501,7 +2680,7 @@ def cells_list_to_cells_dict(cells_list):
 
 def exploded_plot(polyhedra, *,
                   center=None, explosion_factor=1, sticky_vertices=False,
-                  sticky_center=True, point=None, **kwds):
+                  sticky_center=True, point=None, cell_colors_dict=None, **kwds):
     r"""
     Return a plot of several ``polyhedra`` in one figure with extra space between them.
 
@@ -2568,12 +2747,12 @@ def exploded_plot(polyhedra, *,
             vertex_translations_dict[v].append(v + t)
 
     color = kwds.get('color')
-    if color == 'rainbow':
+    if color == 'rainbow' and cell_colors_dict is None:
         cell_colors_dict = dict(zip(polyhedra,
                                     rainbow(len(polyhedra))))
     for p, t in zip(polyhedra, translations):
         options = copy(kwds)
-        if color == 'rainbow':
+        if cell_colors_dict is not None:
             options['color'] = cell_colors_dict[p]
         g += (p + t).plot(point=False, **options)
 
