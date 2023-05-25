@@ -38,6 +38,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,0.5,0.95,3); msm
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             Markov switching multifractal model with m0 = 1.4, sigma = 0.5, b = 3.0, and gamma_8 = 0.95
             sage: yen_usd = finance.MarkovSwitchingMultifractal(10,1.448,0.461,0.998,3.76)
             sage: cad_usd = finance.MarkovSwitchingMultifractal(10,1.278,0.262,0.644,2.11)
@@ -64,6 +66,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1.0,0.95,3)
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
 
             sage: msm == msm
             True
@@ -87,6 +91,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1.0,0.95,3)
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             sage: H = hash(msm)
         """
         return hash((self.__m0, self.__sigma, self.__b, self.__gamma_kbar,
@@ -99,7 +105,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1.0,0.95,3)
-
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             sage: msm != msm
             False
             sage: cad_usd = finance.MarkovSwitchingMultifractal(10,1.278,0.262,0.644,2.11); cad_usd
@@ -116,6 +123,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1,0.95,3)
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             sage: msm.__repr__()
             'Markov switching multifractal model with m0 = 1.4, sigma = 1.0, b = 3.0, and gamma_8 = 0.95'
         """
@@ -128,6 +137,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1,0.95,3)
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             sage: msm.m0()
             1.4
         """
@@ -140,6 +151,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1,0.95,3)
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             sage: msm.sigma()
             1.0
         """
@@ -152,6 +165,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1,0.95,3)
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             sage: msm.b()
             3.0
         """
@@ -164,6 +179,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,0.01,0.95,3)
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             sage: msm.gamma_kbar()
             0.95
         """
@@ -176,6 +193,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,0.01,0.95,3)
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             sage: msm.kbar()
             8
         """
@@ -192,6 +211,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1.0,0.95,3)
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             sage: msm.gamma()
             (0.001368852970712986, 0.004100940201672509, 0.012252436441829..., 0.03630878209190..., 0.10501923017634..., 0.28312883556311..., 0.6315968501359..., 0.95000000000000...)
         """
@@ -224,6 +245,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1.0,0.95,3)
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             sage: m = msm.simulation(5); m  # random
             [0.0059, -0.0097, -0.0101, -0.0110, -0.0067]
             sage: len(m)
@@ -253,6 +276,8 @@ class MarkovSwitchingMultifractal:
         EXAMPLES::
 
             sage: cad_usd = finance.MarkovSwitchingMultifractal(10,1.278,0.262,0.644,2.11); cad_usd
+            doctest:warning...
+            DeprecationWarning: ...finance... is deprecated...
             Markov switching multifractal model with m0 = 1.278, sigma = 0.262, b = 2.11, and gamma_10 = 0.644
         """
         from . import markov_multifractal_cython

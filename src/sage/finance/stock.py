@@ -182,6 +182,8 @@ class Stock:
         EXAMPLES::
 
             sage: finance.Stock('ibm').__repr__()     # optional -- internet # known bug
+            doctest:warning...
+            DeprecationWarning: Importing finance from here is deprecated...
             'IBM (...)'
         """
         return "%s (%s)" % (self.symbol, self.market_value())
@@ -197,6 +199,8 @@ class Stock:
         EXAMPLES::
 
             sage: finance.Stock('goog').market_value()   # random; optional - internet # known bug
+            doctest:warning...
+            DeprecationWarning: Importing finance from here is deprecated...
             575.83000000000004
         """
         return float(self.current_price_data()['price'])
@@ -222,6 +226,8 @@ class Stock:
         EXAMPLES::
 
             sage: finance.Stock('GOOG').current_price_data()  #  random; optional - internet # known bug
+            doctest:warning...
+            DeprecationWarning: Importing finance from here is deprecated...
             {'200day_moving_avg': '536.57',
              '50day_moving_avg': '546.01',
              '52_week_high': '599.65',
@@ -329,6 +335,8 @@ class Stock:
         We get the first five days of VMware's stock history::
 
             sage: finance.Stock('vmw').history('Aug+13,+2007')[:5] # optional -- internet # known bug
+            doctest:warning...
+            DeprecationWarning: Importing finance from here is deprecated...
             [
              14-Aug-07 50.00 55.50 48.00 51.00   38262850,
              15-Aug-07 52.11 59.87 51.50 57.71   10689100,
@@ -428,6 +436,8 @@ class Stock:
         You can directly obtain Open data as so::
 
             sage: finance.Stock('vmw').open(startdate='Jan+1,+2008', enddate='Feb+1,+2008')                 # optional -- internet # known bug
+            doctest:warning...
+            DeprecationWarning: Importing finance from here is deprecated...
             [85.4900, 84.9000, 82.0000, 81.2500, ... 82.0000, 58.2700, 54.4900, 55.6000, 56.9800]
 
         Or, you can initialize stock data first and then extract the Open
@@ -487,6 +497,8 @@ class Stock:
         You can directly obtain close data as so::
 
             sage: finance.Stock('vmw').close(startdate='Jan+1,+2008', enddate='Feb+1,+2008')                 # optional -- internet # known bug
+            doctest:warning...
+            DeprecationWarning: Importing finance from here is deprecated...
             [84.6000, 83.9500, 80.4900, 72.9900, ... 83.0000, 54.8700, 56.4200, 56.6700, 57.8500]
 
         Or, you can initialize stock data first and then extract the Close
@@ -551,6 +563,8 @@ class Stock:
             sage: with open(filename, 'w') as fobj:
             ....:     _ = fobj.write("Date,Open,High,Low,Close,Volume\n1212405780,187.80,187.80,187.80,187.80,100\n1212407640,187.75,188.00,187.75,188.00,2000\n1212407700,188.00,188.00,188.00,188.00,1000\n1212408000,188.00,188.11,188.00,188.00,2877\n1212408060,188.00,188.00,188.00,188.00,687")
             sage: finance.Stock('aapl').load_from_file(filename)[:5]
+            doctest:warning...
+            DeprecationWarning: Importing finance from here is deprecated...
             ...
             1212408060 188.00 188.00 188.00 188.00        687,
             1212408000 188.00 188.11 188.00 188.00       2877,
@@ -590,6 +604,8 @@ class Stock:
             sage: with open(filename,'w') as fobj:
             ....:     _ = fobj.write("Date,Open,High,Low,Close,Volume\n1212405780,187.80,187.80,187.80,187.80,100\n1212407640,187.75,188.00,187.75,188.00,2000\n1212407700,188.00,188.00,188.00,188.00,1000\n1212408000,188.00,188.11,188.00,188.00,2877\n1212408060,188.00,188.00,188.00,188.00,687")
             sage: finance.Stock('aapl').load_from_file(filename)
+            doctest:warning...
+            DeprecationWarning: Importing finance from here is deprecated...
             [
             1212408060 188.00 188.00 188.00 188.00        687,
             1212408000 188.00 188.11 188.00 188.00       2877,
@@ -619,6 +635,8 @@ class Stock:
         This indirectly tests the use of ``_get_data()``::
 
             sage: finance.Stock('aapl').history(startdate='Jan+1,+1990',enddate='Jan+1,+1991')[:2]    # optional -- internet # known bug
+            doctest:warning...
+            DeprecationWarning: Importing finance from here is deprecated...
             [
               2-Jan-90 0.00 1.34 1.25 1.33   45799600,
               3-Jan-90 0.00 1.36 1.34 1.34   51998800

@@ -74,7 +74,7 @@ def stationary_gaussian_simulation(s, N, n=1):
         sage: set_random_seed(0)
         sage: sim = finance.stationary_gaussian_simulation(s, N)[0]
         doctest:warning...
-        DeprecationWarning: the package sage.finance is deprecated...
+        DeprecationWarning: ...finance... is deprecated...
 
     Note that indeed the autocovariance sequence approximates ``s`` well::
 
@@ -175,6 +175,8 @@ def fractional_gaussian_noise_simulation(double H, double sigma2, N, n=1):
 
         sage: set_random_seed(0)
         sage: finance.fractional_gaussian_noise_simulation(0.8,1,10,2)
+        doctest:warning...
+        DeprecationWarning: ...finance... is deprecated...
         [[-0.1157, 0.7025, 0.4949, 0.3324, 0.7110, 0.7248, -0.4048, 0.3103, -0.3465, 0.2964],
          [-0.5981, -0.6932, 0.5947, -0.9995, -0.7726, -0.9070, -1.3538, -1.2221, -0.0290, 1.0077]]
 
@@ -231,6 +233,8 @@ def fractional_brownian_motion_simulation(double H, double sigma2, N, n=1):
 
         sage: set_random_seed(0)
         sage: finance.fractional_brownian_motion_simulation(0.8,0.1,8,1)
+        doctest:warning...
+        DeprecationWarning: ...finance... is deprecated...
         [[-0.0754, 0.1874, 0.2735, 0.5059, 0.6824, 0.6267, 0.6465, 0.6289]]
         sage: set_random_seed(0)
         sage: finance.fractional_brownian_motion_simulation(0.8,0.01,8,1)
@@ -275,6 +279,8 @@ def multifractal_cascade_random_walk_simulation(double T,
 
         sage: set_random_seed(0)
         sage: a = finance.multifractal_cascade_random_walk_simulation(3770,0.02,0.01,0.01,10,3)
+        doctest:warning...
+        DeprecationWarning: ...finance... is deprecated...
         sage: a
         [[-0.0096, 0.0025, 0.0066, 0.0016, 0.0078, 0.0051, 0.0047, -0.0013, 0.0003, -0.0043],
          [0.0003, 0.0035, 0.0257, 0.0358, 0.0377, 0.0563, 0.0661, 0.0746, 0.0749, 0.0689],

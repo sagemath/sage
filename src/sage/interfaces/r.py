@@ -274,13 +274,20 @@ from sage.misc.instancedoc import instancedoc
 
 # see the _lazy_init for some reasoning behind the lazy imports
 from sage.misc.lazy_import import lazy_import
-lazy_import("rpy2", "robjects")
-lazy_import("rpy2.robjects", "packages", "rpy2_packages")
-lazy_import("rpy2.robjects.conversion", "localconverter")
+from sage.features import PythonModule
+
+rpy2_feature = PythonModule('rpy2', spkg='rpy2')
+
+lazy_import("rpy2", "robjects", feature=rpy2_feature)
+lazy_import("rpy2.robjects", "packages", "rpy2_packages", feature=rpy2_feature)
+lazy_import("rpy2.robjects.conversion", ["localconverter", "Converter"], feature=rpy2_feature)
+lazy_import("rpy2.rinterface", ["SexpVector", "ListSexpVector", "FloatSexpVector"],
+            feature=rpy2_feature)
 
 # for help page fetching
-lazy_import("rpy2.robjects.help", "Package")
-lazy_import("rpy2", "rinterface")
+lazy_import("rpy2.robjects.help", "Package", feature=rpy2_feature)
+lazy_import("rpy2", "rinterface", feature=rpy2_feature)
+
 
 COMMANDS_CACHE = '%s/r_commandlist.sobj'%DOT_SAGE
 
@@ -360,9 +367,6 @@ def _setup_r_to_sage_converter():
         sage: labs = r.paste('c("X","Y")', '1:10', sep='""'); labs.sage()  # optional - rpy2
         ['X1', 'Y2', 'X3', 'Y4', 'X5', 'Y6', 'X7', 'Y8', 'X9', 'Y10']
     """
-    from rpy2.rinterface import SexpVector, ListSexpVector, FloatSexpVector
-    from rpy2.robjects.conversion import Converter
-
     # convert rpy2's representation of r objects to the one sage expects (as defined by the old
     # expect interface)
     cv = Converter('r to sage converter')
@@ -694,8 +698,10 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: rlr, t = r.__reduce__()  # optional - rpy2
-            sage: rlr(*t)  # optional - rpy2
+            sage: r                 # resolve lazy import   # optional - rpy2
+            R Interpreter
+            sage: rlr, t = r.__reduce__()                   # optional - rpy2
+            sage: rlr(*t)                                   # optional - rpy2
             R Interpreter
         """
         return reduce_load_R, tuple([])
@@ -1261,7 +1267,7 @@ class R(ExtraTabCompletion, Interface):
         persistent in your own code::
 
             sage: from tempfile import TemporaryDirectory
-            sage: with TemporaryDirectory() as d: # optional - rpy2, rgraphics
+            sage: with TemporaryDirectory() as d:  # optional - rpy2 rgraphics
             ....:     _ = r.setwd(d)
             ....:     r.plot("1:10")
             null device
