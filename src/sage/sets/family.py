@@ -822,7 +822,7 @@ class FiniteFamily(AbstractFamily):
             sage: f
             Finite family {4: 'b'}
         """
-        self.__init__(state['dictionary'], keys = state.get("keys"))
+        self.__init__(state['dictionary'], keys=state.get("keys"))
 
 class FiniteFamilyWithHiddenKeys(FiniteFamily):
     r"""
@@ -1242,7 +1242,7 @@ class TrivialFamily(AbstractFamily):
             Family (3, 4, 7)
             sage: TestSuite(f).run()
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self._enumeration = tuple(enumeration)
 
     def __bool__(self):

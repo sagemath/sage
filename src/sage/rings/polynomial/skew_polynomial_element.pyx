@@ -54,8 +54,6 @@ from cysignals.signals cimport sig_check
 from sage.rings.infinity import infinity
 from sage.structure.factorization import Factorization
 from sage.structure.element cimport Element, RingElement, AlgebraElement, ModuleElement
-from sage.structure.parent cimport Parent
-from sage.structure.parent_gens cimport ParentWithGens
 from sage.misc.abstract_method import abstract_method
 from sage.categories.homset import Hom
 from sage.categories.fields import Fields

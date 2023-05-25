@@ -58,9 +58,11 @@ mailing list](https://groups.google.com/group/sage-devel).
 --------------------------------
 
 The preferred way to run Sage on Windows is using the [Windows Subsystem for
-Linux](https://docs.microsoft.com/en-us/windows/wsl/faq), which allows
+Linux](https://docs.microsoft.com/en-us/windows/wsl/faq), a.k.a. WSL, which allows
 you to install a standard Linux distribution such as Ubuntu within
-your Windows.  Then all instructions for installation in Linux apply.
+your Windows. Make sure you allocate WSL sufficient RAM; 5GB is known to work, while
+2GB might be not enough for building Sage from source. 
+Then all instructions for installation in Linux apply.
 
 As an alternative, you can also run Linux on Windows using Docker (see
 above) or other virtualization solutions.
