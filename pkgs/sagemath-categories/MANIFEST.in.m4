@@ -31,7 +31,10 @@ exclude sage/categories/subquotients.*
 exclude sage/categories/with_realizations.*
 
 include sage/interfaces/abc.p*
+include sage/interfaces/process.p*                      # needed for sage.parallel
 include sage/interfaces/tab_completion.p*
+
+graft sage/parallel
 
 graft sage/typeset                     # dep of sage.categories.tensor
 
@@ -63,6 +66,7 @@ include sage/misc/converting_dict.p*
 include sage/misc/parser.p*
 include sage/misc/method_decorator.p*
 include sage/misc/random_testing.p*
+include sage/misc/rest_index_of_methods.p*
 
 ## Data structures
 include sage/misc/binary_tree.p*

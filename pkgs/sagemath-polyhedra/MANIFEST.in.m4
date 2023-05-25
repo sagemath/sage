@@ -45,13 +45,8 @@ exclude sage/misc/sage_ostools.p*
 ##exclude sage/misc/package.p*
 
 
-graft sage/parallel
-
-include sage/interfaces/process.p*
 include sage/interfaces/latte.p*
 include sage/interfaces/four_ti_2.p*
-
-include sage/sets/set.py
 
 graft sage/modules
 exclude sage/modules/vector_*double*.*  # depends on numpy
@@ -69,7 +64,6 @@ include sage/combinat/ranker.py
 include sage/combinat/cartesian_product.py
 include sage/combinat/family.py       # until https://trac.sagemath.org/ticket/32624 is done
 include sage/sets/finite_set_map*.p*
-include sage/misc/mrange.p*
 include sage/misc/callable_dict.p*
 
 include sage/algebras/algebra.py
