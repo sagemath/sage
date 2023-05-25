@@ -8,9 +8,9 @@ cdef fmpz_factor_to_pairlist(const fmpz_factor_t factors):
     (factor, exponent) pairs. The factors are Integers, and the
     exponents are Python ints. This is used and indirectly tested by
     both :func:`qsieve` and
-    :func:`sage.rings.factorint.factor_using_flint`.  The output
+    :func:`sage.rings.factorint_flint.factor_using_flint`.  The output
     format was ultimately based on that of
-    :func:`sage.rings.factorint.factor_using_pari`.
+    :func:`sage.rings.factorint_pari.factor_using_pari`.
     """
     cdef list pairs = []
 
