@@ -113,6 +113,7 @@ class DocTestReporter(SageObject):
         self.postscript = dict(lines=[], cputime=0, walltime=0)
         self.sources_completed = 0
         self.stats = {}
+        self.asv_stats = {}
         self.error_status = 0
 
     def were_doctests_with_optional_tag_run(self, tag):
@@ -381,6 +382,7 @@ class DocTestReporter(SageObject):
             postscript = self.postscript
             stats = self.stats
             basename = source.basename
+            options = self.controller.options
             if self.controller.baseline_stats:
                 the_baseline_stats = self.controller.baseline_stats.get(basename, {})
             else:
@@ -500,6 +502,21 @@ class DocTestReporter(SageObject):
                         stats[basename] = dict(failed=True, walltime=wall)
                     else:
                         stats[basename] = dict(walltime=wall)
+                    if options.use_asv:
+                        asv = []
+                        for fname, time in result_dict.asv_times.items():
+                            with open(fname) as label:
+                                name, opts, code = label.read().split("|", 2)
+                                if name.startswith(basename):
+                                    name = name[len(basename):]
+                                if name.startswith("."):
+                                    name = name[1:]
+                                if opts:
+                                    opts = opts.split(",")
+                                else:
+                                    opts = []
+                                asv.append([name, opts, code, time])
+                        self.asv_stats[basename] = asv
                     postscript['cputime'] += cpu
                     postscript['walltime'] += wall
 
@@ -510,29 +527,29 @@ class DocTestReporter(SageObject):
                     for tag in sorted(optionals):
                         nskipped = optionals[tag]
                         if tag == "long time":
-                            if not self.controller.options.long:
-                                if self.controller.options.show_skipped:
+                            if not options.long:
+                                if options.show_skipped:
                                     log("    %s not run"%(count_noun(nskipped, "long test")))
                         elif tag == "not tested":
-                            if self.controller.options.show_skipped:
+                            if options.show_skipped:
                                 log("    %s not run"%(count_noun(nskipped, "not tested test")))
                         elif tag == "not implemented":
-                            if self.controller.options.show_skipped:
+                            if options.show_skipped:
                                 log("    %s for not implemented functionality not run"%(count_noun(nskipped, "test")))
                         else:
                             if not self.were_doctests_with_optional_tag_run(tag):
                                 if tag == "bug":
-                                    if self.controller.options.show_skipped:
+                                    if options.show_skipped:
                                         log("    %s not run due to known bugs"%(count_noun(nskipped, "test")))
                                 elif tag == "":
-                                    if self.controller.options.show_skipped:
+                                    if options.show_skipped:
                                         log("    %s not run"%(count_noun(nskipped, "unlabeled test")))
                                 else:
-                                    if self.controller.options.show_skipped:
+                                    if options.show_skipped:
                                         log("    %s not run"%(count_noun(nskipped, tag + " test")))
 
                     nskipped = result_dict.walltime_skips
-                    if self.controller.options.show_skipped:
+                    if options.show_skipped:
                         log("    %s not run because we ran out of time"%(count_noun(nskipped, "test")))
 
                     if nskipped != 0:
@@ -547,7 +564,7 @@ class DocTestReporter(SageObject):
                         total = "%d%% of tests run"%(round(100*ntests_run/float(ntests_run + nskipped)))
                     else:
                         total = count_noun(ntests, "test")
-                    if not (self.controller.options.only_errors and not f):
+                    if not (options.only_errors and not f):
                         log("    [%s, %s%.2f s]" % (total, "%s, "%(count_noun(f, "failure")) if f else "", wall))
 
             self.sources_completed += 1

@@ -130,6 +130,8 @@ class DocTestDefaults(SageObject):
         self.show_skipped = False
         self.target_walltime = -1
         self.baseline_stats_path = None
+        self.asv_stats_path = None
+        self.use_asv = False
 
         # sage-runtests contains more optional tags. Technically, adding
         # auto_optional_tags here is redundant, since that is added
@@ -400,6 +402,7 @@ class DocTestController(SageObject):
             options.nthreads = 1
         if options.verbose:
             options.show_skipped = True
+        options.use_asv = (options.asv_stats_path is not None)
 
         options.disabled_optional = set()
         if isinstance(options.optional, str):
@@ -479,6 +482,7 @@ class DocTestController(SageObject):
         self.baseline_stats = {}
         if options.baseline_stats_path:
             self.load_baseline_stats(options.baseline_stats_path)
+        self.asv_stats = {}
         self._init_warn_long()
 
         if self.options.random_seed is None:
@@ -692,6 +696,30 @@ class DocTestController(SageObject):
         from sage.misc.temporary_file import atomic_write
         with atomic_write(filename) as stats_file:
             json.dump(self.stats, stats_file)
+
+    def save_asv_stats(self, filename):
+        """
+        Save individual doctest stats from the most recent run as a JSON file,
+        for use in speed regression testing.
+
+        WARNING: This function overwrites the file.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.control import DocTestDefaults, DocTestController
+            sage: DC = DocTestController(DocTestDefaults(), [])
+            sage: DC.asv_stats['sage.doctest.control'] = {'walltime':1.0r}
+            sage: filename = tmp_filename()
+            sage: DC.save_avs_stats(filename)
+            sage: import json
+            sage: with open(filename) as f:
+            ....:     D = json.load(f)
+            sage: D['sage.doctest.control']
+            {'walltime': 1.0}
+        """
+        from sage.misc.temporary_file import atomic_write
+        with atomic_write(filename) as stats_file:
+            json.dump(self.asv_stats, stats_file)
 
     def log(self, s, end="\n"):
         """
@@ -1111,6 +1139,9 @@ class DocTestController(SageObject):
         """
         self.stats.update(self.reporter.stats)
         self.save_stats(self.options.stats_path)
+        if self.options.asv_stats_path:
+            self.asv_stats.update(self.reporter.asv_stats)
+            self.save_asv_stats(self.options.asv_stats_path)
         # Close the logfile
         if final and self.logfile is not None:
             self.logfile.close()

@@ -1344,3 +1344,7 @@ utilized most efficiently)::
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 2067 files using 2 threads.
     ...
+
+To give a json file for recording the timings for each doctest, use the
+``--asv_stats_path`` flag.  These statistics can be collected by the airspeed
+velocity code to generate interactive speed regression webpages.
