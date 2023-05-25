@@ -461,7 +461,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         return '/'.join(','.join('%s' % r for r in row) for row in self)
 
     def _ascii_art_(self):
-        r'''
+        r"""
         TESTS::
 
             sage: ascii_art(list(StandardTableaux(3)))
@@ -502,7 +502,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             [    2       2    3     3    2        2          ]
             [  1      ,     1    ,     1    ,        1       ]
             sage: Tableaux.options._reset()
-        '''
+        """
         ascii = self.parent().options._dispatch(self, '_ascii_art_', 'ascii_art')
         from sage.typeset.ascii_art import AsciiArt
         return AsciiArt(ascii.splitlines())
@@ -529,7 +529,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     _ascii_art_repr = _repr_diagram
 
     def _ascii_art_table(self, use_unicode=False):
-        r'''
+        r"""
         TESTS:
 
         We check that :trac:`16487` is fixed::
@@ -657,14 +657,14 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                        ╲   ╱
                         ╲ ╱
             sage: Tableaux.options._reset()
-        '''
+        """
         from sage.combinat.output import ascii_art_table
         self.parent().options('convention')
         return ascii_art_table(self, use_unicode=use_unicode,
                                convention=self.parent().options('convention'))
 
     def _ascii_art_compact(self):
-        r'''
+        r"""
         TESTS:
 
         We check that :trac:`16487` is fixed::
@@ -692,7 +692,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: t = Tableau([])
             sage: print(t._ascii_art_compact())
             .
-        '''
+        """
         if not self:
             return "."
 
