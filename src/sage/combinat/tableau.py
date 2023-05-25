@@ -489,15 +489,13 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             [   1  2  3,   1  3,   1  2,   1 ]
             sage: Tableaux.options(convention="russian", ascii_art="table")
             sage: ascii_art(list(StandardTableaux(3)))
-            [  \     X     X  3  /                                   \  3  X     X     / ]
-            [   \   / \   / \   /                                     \   / \   / \   /  ]
-            [    \ /   \ /   \ /                                       \ /   \ /   \ /   ]
-            [     \     X  2  /      \  2  X  3  /   \  3  X  2  /      \  2  X     /    ]
-            [      \   / \   /        \   / \   /     \   / \   /        \   / \   /     ]
-            [       \ /   \ /          \ /   \ /       \ /   \ /          \ /   \ /      ]
-            [        \  1  /            \  1  /         \  1  /            \  1  /       ]
-            [         \   /              \   /           \   /              \   /        ]
-            [          \ /        ,       \ /     ,       \ /     ,          \ /         ]
+            [       / \                             / \      ]
+            [      / 3 /                           \ 3 \     ]
+            [     / \ /     / \ / \     / \ / \     \ / \    ]
+            [    / 2 /     \ 2 X 3 /   \ 3 X 2 /     \ 2 \   ]
+            [   / \ /       \ / \ /     \ / \ /       \ / \  ]
+            [  \ 1 /         \ 1 /       \ 1 /         \ 1 / ]
+            [   \ /     ,     \ /   ,     \ /   ,       \ /  ]
             sage: Tableaux.options(ascii_art="repr")
             sage: ascii_art(list(StandardTableaux(3)))
             [      3                           3             ]
@@ -552,15 +550,13 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             +---+---+---+
             sage: Tableaux.options.convention="russian"
             sage: print(t._ascii_art_table())
-             \     X  5  X  3  /
-              \   / \   / \   /
-               \ /   \ /   \ /
-                \  4  X  2  /
-                 \   / \   /
-                  \ /   \ /
-                   \  1  /
-                    \   /
-                     \ /
+                / \ / \
+               / 5 X 3 /
+              / \ / \ /
+             \ 4 X 2 /
+              \ / \ /
+               \ 1 /
+                \ /
             sage: t = Tableau([]); print(t._ascii_art_table())
             /\
             \/
@@ -603,6 +599,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             +----+----+----+---+
             sage: Tableaux.options.convention="russian"
             sage: ascii_art(t)
+               / \   / \   / \   / \
+              /   \ /   \ /   \ /   \
              \  9  X 10  X  6  X  7  /
               \   / \   / \   / \   /
                \ /   \ /   \ /   \ /
@@ -644,7 +642,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             └────┴────┴────┴───┘
             sage: Tableaux.options.convention="russian"
             sage: print(t._ascii_art_table(use_unicode=True))
-             ╲  9  ╳ 10  ╳     ╳  7  ╱
+               ╱ ╲   ╱ ╲         ╱ ╲
+              ╱   ╲ ╱   ╲       ╱   ╲
+             ╲  9  ╳ 10  ╲     ╱  7  ╱
               ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱
                ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱
                 ╲  8  ╳  5  ╳ 15  ╱
@@ -679,9 +679,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             |1|2|3|
             sage: Tableaux.options.convention="russian"
             sage: print(t._ascii_art_compact())
-             \ X5X3/
-              \4X2/
-               \1/
+              /5X3/
+             \4X2/
+              \1/
             sage: Tableaux.options._reset()
 
             sage: t = Tableau([[1,2,3,10,15],[12,15,17]])

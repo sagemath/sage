@@ -617,66 +617,61 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
     EXAMPLES::
 
         sage: from sage.combinat.output import ascii_art_table_russian
-        sage: data = [[None, None, 1], [2, 2], [3,4,5], [None, None, 10], [], [6]]
+        sage: data = [[None, None, 1], [2, 2, 2], [3,4], [None, 10], [6]]
         sage: print(ascii_art_table_russian(data))
-         \  6  X     X 10  X     X     X     /
-          \   / \   / \   / \   / \   / \   /
-           \ /   \ /   \ /   \ /   \ /   \ /
-            \     X     X  5  X     X     /
-             \   / \   / \   / \   / \   /
-              \ /   \ /   \ /   \ /   \ /
-               \     X  4  X     X     /
-                \   / \   / \   / \   /
-                 \ /   \ /   \ /   \ /
-                  \  3  X  2  X  1  /
-                   \   / \   / \   /
-                    \ /   \ /   \ /
-                     \  2  X     /
-                      \   / \   /
-                       \ /   \ /
-                        \     /
-                         \   /
-                          \ /
+           / \   / \
+          /   \ /   \
+         \  6  X 10  \
+          \   / \   / \   / \
+           \ /   \ /   \ /   \
+            \     X  4  X  2  \
+             \   / \   / \   / \
+              \ /   \ /   \ /   \
+               \  3  X  2  X  1  /
+                \   / \   / \   /
+                 \ /   \ /   \ /
+                  \  2  X     /
+                   \   / \   /
+                    \ /   \ /
+                     \     /
+                      \   /
+                       \ /
+
         sage: print(ascii_art_table_russian(data, use_unicode=True))
-         ╲  6  ╳     ╳ 10  ╳     ╳     ╳     ╱
-          ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱
-           ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱
-            ╲     ╳     ╳  5  ╳     ╳     ╱
-             ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱
-              ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱
-               ╲     ╳  4  ╳     ╳     ╱
-                ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱
-                 ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱
-                  ╲  3  ╳  2  ╳  1  ╱
-                   ╲   ╱ ╲   ╱ ╲   ╱
-                    ╲ ╱   ╲ ╱   ╲ ╱
-                     ╲  2  ╳     ╱
-                      ╲   ╱ ╲   ╱
-                       ╲ ╱   ╲ ╱
-                        ╲     ╱
-                         ╲   ╱
-                          ╲ ╱
+           ╱ ╲   ╱ ╲
+          ╱   ╲ ╱   ╲
+         ╲  6  ╳ 10  ╲
+          ╲   ╱ ╲   ╱ ╲   ╱ ╲
+           ╲ ╱   ╲ ╱   ╲ ╱   ╲
+            ╲     ╳  4  ╳  2  ╲
+             ╲   ╱ ╲   ╱ ╲   ╱ ╲
+              ╲ ╱   ╲ ╱   ╲ ╱   ╲
+               ╲  3  ╳  2  ╳  1  ╱
+                ╲   ╱ ╲   ╱ ╲   ╱
+                 ╲ ╱   ╲ ╱   ╲ ╱
+                  ╲  2  ╳     ╱
+                   ╲   ╱ ╲   ╱
+                    ╲ ╱   ╲ ╱
+                     ╲     ╱
+                      ╲   ╱
+                       ╲ ╱
         sage: data = [[1, None, 2], [None, 2]]
         sage: print(ascii_art_table_russian(data))
-         \     X  2  X  2  /
-          \   / \   / \   /
-           \ /   \ /   \ /
-            \     X     /
-             \   / \   /
-              \ /   \ /
-               \  1  /
-                \   /
-                 \ /
+            / \ / \
+           / 2 X 2 /
+          / \ / \ /
+         \   X   /
+          \ / \ /
+           \ 1 /
+            \ /
         sage: print(ascii_art_table_russian(data, use_unicode=True))
-         ╲     ╳  2  ╳  2  ╱
-          ╲   ╱ ╲   ╱ ╲   ╱
-           ╲ ╱   ╲ ╱   ╲ ╱
-            ╲     ╳     ╱
-             ╲   ╱ ╲   ╱
-              ╲ ╱   ╲ ╱
-               ╲  1  ╱
-                ╲   ╱
-                 ╲ ╱
+            ╱ ╲ ╱ ╲
+           ╱ 2 ╳ 2 ╱
+          ╱ ╲ ╱ ╲ ╱
+         ╲   ╳   ╱
+          ╲ ╱ ╲ ╱
+           ╲ 1 ╱
+            ╲ ╱
     """
     if use_unicode:
         import unicodedata
@@ -693,11 +688,6 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
     if not data:
         return urdl + uldr + '\n' + uldr + urdl
 
-#    ncols = max(len(row) for row in data)
-#    str_tab = [[None]*ncols] + [[str(val) if val is not None else None for val in row] + [None]*(ncols-len(row))
-#                                for row in data]
-    str_tab = [[str(val) if val is not None else None for val in row] for row in data]
-    col_widths = [2] * len(str_tab[0])
 
     if use_unicode:
         # Special handling of overline not adding to printed length
@@ -711,39 +701,63 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
                 return 0
             return len(e)
 
-    for row in str_tab:
-        for i, e in enumerate(row):
-            col_widths[i] = max(col_widths[i], get_len(e))
+    # Length of max string (ensure it's odd)
+    str_tab = [[str(val) if val is not None else None for val in row] for row in data]
+    max_str = max([max([1] + [get_len(e) for e in row]) for row in str_tab])
+    max_str = max_str + 1 - (max_str % 2)
+
     if compact:
-        col_width = max(col_widths) - 1
+        diag_length = max_str
     else:
-        col_width = max(col_widths) + 1
+        diag_length = max_str + 2  # space on both sides
+
+    row_height = int((diag_length + 1)/2)
     max_height = max([a + len(str_tab[a]) for a in range(len(str_tab))])
     str_list = []
-    for i in range(max_height):
-        # Get the row with the number on it
-        st = ' ' + ' ' * ((max_height - i - 1) * col_width)
-        for a in range(i + 1):
-            b = i - a
-            if a == 0:
-                st += uldr
-            else:
-                st += x
-            if len(str_tab[b:]) > 0 and len(str_tab[b][a:]) > 0 and str_tab[b][a] is not None:
-                st += str_tab[b][a].rjust(col_width, ' ').ljust(col_width * 2 - 1, ' ')
-            else:
-                st += ' '*(col_width * 2 - 1)
-            if b == 0:
-                st += urdl
+    for k in range(max_height, -1, -1):
+        for i in range(row_height):
+            if k == max_height and i == 0:
+                continue
+            st = ' ' * ((max_height - k) * (row_height))
+            for j in range(k + 1):
+                st += ' ' * i
+                if len(str_tab[k-j:]) and (j == 0 or len(str_tab[k-j][j-1:])):
+                    if i == 0:
+                        if j > 0 and len(str_tab[k-j+1:]) and len(str_tab[k-j+1][j-1:]) and len(str_tab[k-j:]) and len(str_tab[k-j][j:]):
+                            st += x
+                        elif len(str_tab[k-j+1:]) and (j == 0 or len(str_tab[k-j+1][j-1:])):
+                            st += uldr
+                        elif len(str_tab[k-j:]) and len(str_tab[k-j][j:]):
+                            if j == 0:
+                                st += uldr
+                            else:
+                                st += urdl
+                        # elif len(str_tab[k-j:]) and j > 0 and len(str_tab[k-j][j-1:]):
+                        #    st += '^'
+                        else:
+                            st += ' '
+                    else:
+                        st += uldr
+                else:
+                    st += ' '
 
-        # Do all of the additional rows
-        for j in range(col_width - 1, 0, -1):
-            st2 = ' ' + ' ' * ((max_height - i - 1) * col_width)
-            st2 += (' ' * j + uldr + ' ' * (2 * (col_width - j) - 1) + urdl + ' ' * (j - 1)) * (i + 1)
-            str_list.append(st2)
-        str_list.append(st)
+                if i == 0 and len(str_tab[k-j:]) and len(str_tab[k-j][j:]) and str_tab[k-j][j] is not None:
+                    st_num = str_tab[k-j][j]
+                    ln_left = int((len(st_num) - (len(st_num) % 2))/2)
+                    st += st_num.rjust(row_height - 1 - ln_left + len(st_num), ' ').ljust(diag_length, ' ')
+                else:
+                    st += ' ' * (diag_length - 2 * i)
+                if i > 0:
+                    if (j == k and k < max_height and len(str_tab[0][j:])) or (len(str_tab[k-j-1:]) and len(str_tab[k-j-1][j:])):
+                        st += urdl
+                    else:
+                        st += ' '
+                    st += ' ' * (i-1)
+            if i == 0 and j == k and k < max_height and len(str_tab[0][j:]):
+                st += urdl
+            str_list.append(st)
+
     import re
     mm = min([len(re.search('^ +', l)[0]) for l in str_list]) - 1
-    str_list = [l[mm:] for l in str_list]
-    str_list.reverse()
+    str_list = [l[mm:].rstrip() for l in str_list]
     return "\n".join(str_list)
