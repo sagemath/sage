@@ -9,6 +9,7 @@ requires = [
         sagemath_objects \
         cython         \
         gmpy2          \
+        memory_allocator \
         cysignals      \
                     ')]
 build-backend = "setuptools.build_meta"

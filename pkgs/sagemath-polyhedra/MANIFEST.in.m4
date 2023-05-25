@@ -96,10 +96,6 @@ exclude sage/matrix/change_ring.*       # depends on matrix_integer_*
 
 # Can add sage/calculus/functions.p* (jacobian, wronskian) -- excluded from sagemath-categories because it needs matrices
 
-graft sage/data_structures
-exclude sage/data_structures/bounded_integer_sequences.*   # depends on flint
-exclude sage/data_structures/stream.*
-
 graft sage/geometry
 exclude sage/geometry/all.py
 prune sage/geometry/hyperbolic_space

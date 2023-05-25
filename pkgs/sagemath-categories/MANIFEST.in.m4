@@ -57,13 +57,21 @@ include sage/misc/latex*.*
 include sage/misc/html.p*
 include sage/misc/table.p*
 include sage/misc/map_threaded.p*
-include sage/misc/binary_tree.p*
 include sage/misc/mrange.p*
 include sage/misc/defaults.p*
 include sage/misc/converting_dict.p*
 include sage/misc/parser.p*
 include sage/misc/method_decorator.p*
 include sage/misc/random_testing.p*
+
+## Data structures
+include sage/misc/binary_tree.p*
+graft sage/data_structures               # bitset needed by sage.graphs and sage.geometry.polyhedron
+exclude sage/data_structures/bounded_integer_sequences.*   # depends on flint
+exclude sage/data_structures/stream.*
+graft sage/groups/perm_gps/partn_ref  # but not partn_ref2, which depends on GAP
+exclude sage/groups/perm_gps/partn_ref/refinement_graphs.pyx  # needs graphs
+
 
 # These might later go to a separate distribution sagemath-functions (> sagemath-objects);
 # but sage.functions currently depends on basic rings (QQ etc)
@@ -180,6 +188,7 @@ graft sage/schemes/affine
 
 include sage/sets/cartesian_product.py
 include sage/sets/condition_set.py
+include sage/sets/disjoint_set.p*
 include sage/sets/disjoint_union_enumerated_sets.py
 include sage/sets/family.py
 include sage/sets/finite_enumerated_set.py
