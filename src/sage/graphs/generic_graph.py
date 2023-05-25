@@ -440,14 +440,15 @@ from sage.misc.decorators import options
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import random
 from sage.misc.superseded import deprecation
-from sage.misc.lazy_import import LazyImport
+from sage.misc.lazy_import import lazy_import, LazyImport
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
-from sage.matrix.constructor import matrix
 from sage.rings.rational_field import QQ
 from sage.features.igraph import python_igraph as igraph_feature
+
+lazy_import('sage.matrix.constructor', 'matrix')
 
 to_hex = LazyImport('matplotlib.colors', 'to_hex')
 

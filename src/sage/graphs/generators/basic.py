@@ -20,8 +20,6 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # import from Sage library
 from sage.graphs.graph import Graph
 from math import sin, cos, pi
-from numpy import corrcoef
-from sage.matrix.constructor import Matrix
 
 
 def BullGraph():
@@ -418,6 +416,8 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
         [(0, 0, None), (0, 1, None), (0, 2, None), (1, 1, None), (1, 2, None), (2, 2, None)]
 
     """
+    from numpy import corrcoef
+    from sage.matrix.constructor import Matrix
 
     # compute pairwise correlation coeffecients
     corrs = corrcoef(seqs)
