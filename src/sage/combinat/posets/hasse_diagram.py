@@ -90,6 +90,7 @@ class HasseDiagram(DiGraph):
         Hasse diagram of a poset containing 4 elements
         sage: TestSuite(H).run()
     """
+
     def _repr_(self):
         r"""
         TESTS::
@@ -115,9 +116,11 @@ class HasseDiagram(DiGraph):
         # Recall: we assume range(n) is a linear extension.
         return list(range(len(self)))
 
-    def linear_extensions(self):
+    def linear_extensions(self, supergreedy=False, greedy=False):
         r"""
-        Return an iterator over all linear extensions.
+        Return an iterator over all linear extensions, if *supergreedy* and *greedy* are both False.
+        Else if *supergreedy* is True, return an iterator over all supergreedy linear extensions using the function `supergreedy_linear_extensions_iterator()`.
+        Else if *greedy* is True, return an iterator over all greedy linear extensions using the function `greedy_linear_extensions_iterator()`.
 
         EXAMPLES::
 
@@ -125,9 +128,49 @@ class HasseDiagram(DiGraph):
             sage: H = HasseDiagram({0:[1,2],1:[3],2:[3],3:[]})
             sage: list(H.linear_extensions())
             [[0, 1, 2, 3], [0, 2, 1, 3]]
+
+
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: N5 = HasseDiagram({0: [1, 2], 2: [3], 1: [4], 3: [4]})
+            sage: for l in N5.linear_extensions(greedy=True):
+            ....:     print(l)
+            [0, 1, 2, 3, 4]
+            [0, 2, 3, 1, 4]
+
+
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: H = HasseDiagram({0: [1, 2], 2: [3, 4]})
+            sage: G_ext = list(H.linear_extensions(greedy=True))
+            sage: SG_ext = list(H.linear_extensions(supergreedy=True))
+            sage: [0, 2, 3, 1, 4] in G_ext
+            True
+            sage: [0, 2, 3, 1, 4] in SG_ext
+            False
+            sage: len(SG_ext)
+            4
+
+        TESTS::
+
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: list(HasseDiagram({}).linear_extensions(greedy=True))
+            [[]]
+            sage: H = HasseDiagram({0: []})
+            sage: list(H.linear_extensions(greedy=True))
+            [[0]]
+
+            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
+            sage: list(HasseDiagram({}).linear_extensions(supergreedy=True))
+            [[]]
+            sage: list(HasseDiagram({0: [], 1: []}).linear_extensions(supergreedy=True))
+            [[0, 1], [1, 0]]
         """
-        from sage.combinat.combinat_cython import linear_extension_iterator
-        return linear_extension_iterator(self)
+        if supergreedy:
+            return self.supergreedy_linear_extensions_iterator()
+        elif greedy:
+            return self.greedy_linear_extensions_iterator()
+        else:
+            from sage.combinat.combinat_cython import linear_extension_iterator
+            return linear_extension_iterator(self)
 
     def greedy_linear_extensions_iterator(self):
         r"""
