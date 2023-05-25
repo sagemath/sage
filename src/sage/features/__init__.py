@@ -295,7 +295,7 @@ class Feature(TrivialUniqueRepresentation):
 
     def joined_features(self):
         r"""
-        Return a list of features joined with ``self``.
+        Return a list of features that ``self`` is the join of.
 
         OUTPUT:
 
@@ -306,14 +306,22 @@ class Feature(TrivialUniqueRepresentation):
             sage: from sage.features.graphviz import Graphviz
             sage: Graphviz().joined_features()
             [Feature('dot'), Feature('neato'), Feature('twopi')]
+            sage: from sage.features.sagemath import sage__rings__function_field
+            sage: sage__rings__function_field().joined_features()
+            [Feature('sage.rings.function_field.function_field_polymod'),
+            Feature('sage.libs.singular'),
+            Feature('sage.libs.singular.singular'),
+            Feature('sage.interfaces.singular')]
             sage: from sage.features.interfaces import Mathematica
             sage: Mathematica().joined_features()
             []
         """
         from sage.features.join_feature import JoinFeature
+        res = []
         if isinstance(self, JoinFeature):
-            return self._features
-        return []
+            for f in self._features:
+                res += [f] + f.joined_features()
+        return res
 
     def is_standard(self):
         r"""
