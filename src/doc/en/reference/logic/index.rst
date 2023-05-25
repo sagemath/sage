@@ -2,7 +2,7 @@ Symbolic Logic
 ==============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/logic/propcalc
    sage/logic/boolformula

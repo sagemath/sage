@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+r"""
 Manin symbols
 
 This module defines the class ManinSymbol.  A Manin symbol of
@@ -19,14 +19,14 @@ monomial Manin symbols to monomial Manin symbols, up to a scalar
 factor.  For general matrices (such as `T=[0,1,-1,-1]` and
 `T^2=[-1,-1;0,1]`) the image of a monomial Manin symbol is expressed
 as a formal sum of monomial Manin symbols, with integer coefficients.
-
 """
 
-from sage.modular.cusps import Cusp
-from sage.rings.all import Infinity, ZZ
-from sage.rings.integer cimport Integer
-from sage.structure.element cimport Element
 from sage.misc.persist import register_unpickle_override
+from sage.modular.cusps import Cusp
+from sage.rings.infinity import Infinity
+from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
+from sage.structure.element cimport Element
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp
 
 

@@ -53,49 +53,72 @@ AC_DEFUN([SAGE_CHECK_BROKEN_GCC], [
 
 
 SAGE_SPKG_CONFIGURE_BASE([gcc], [
-	AC_REQUIRE([AC_PROG_CC])
-	AC_REQUIRE([AC_PROG_CPP])
-	AC_REQUIRE([AC_PROG_CXX])
-	AC_REQUIRE([AC_PROG_OBJC])
-	AC_REQUIRE([AC_PROG_OBJCXX])
+        AC_REQUIRE([AC_PROG_CC])
+        AC_REQUIRE([AC_PROG_CPP])
+        AC_REQUIRE([AC_PROG_CXX])
+        AC_REQUIRE([AC_PROG_OBJC])
+        AC_REQUIRE([AC_PROG_OBJCXX])
+        AC_REQUIRE([AC_CANONICAL_HOST])
 
+    AC_MSG_CHECKING([whether gcc is already installed in SAGE_LOCAL])
     if test -f "$SAGE_LOCAL/bin/gcc"; then
-        # Special value for SAGE_INSTALL_GCC if GCC is already installed
-        SAGE_INSTALL_GCC=exists
-        # Set yes since this implies we have already installed GCC and want to keep
-        # it selected
-        sage_spkg_install_gcc=yes
+        CONFIGURED_CC_PROGNAME=$($CC --print-prog-name gcc 2>/dev/null)
+        INSTALLED_GCC_PROGNAME=$($SAGE_LOCAL/bin/gcc --print-prog-name gcc 2>/dev/null)
+        echo "CONFIGURED_CC_PROGNAME=$CONFIGURED_CC_PROGNAME" >& AS_MESSAGE_LOG_FD
+        echo "INSTALLED_GCC_PROGNAME=$INSTALLED_GCC_PROGNAME" >& AS_MESSAGE_LOG_FD
+        if test "$CONFIGURED_CC_PROGNAME" = "$INSTALLED_GCC_PROGNAME"; then
+            dnl We get here when SAGE_LOCAL is set to something like /usr or $CONDA_ENV
+            dnl as in our "conda for Sage developers" instructions.
+            AC_MSG_RESULT([configured CC])
+        else
+            # Special value for SAGE_INSTALL_GCC if GCC is already installed
+            SAGE_INSTALL_GCC=exists
+            # Set yes since this implies we have already installed GCC and want to keep
+            # it selected
+            SAGE_MUST_INSTALL_GCC([gcc is already installed in SAGE_LOCAL])
 
-        # Check whether it actually works...
-        # See https://trac.sagemath.org/ticket/24599
-        SAGE_CHECK_BROKEN_GCC()
-        if test x$SAGE_BROKEN_GCC = xyes; then
-            # Prentend that GCC is not installed.
-            # The gcc and g++ binaries as well as the "installed" file will
-            # be removed by make before installing any packages such that
-            # GCC will be built as if was never installed before.
-            SAGE_INSTALL_GCC=yes
-            SAGE_MUST_INSTALL_GCC([installed g++ is broken])
+            # Check whether it actually works...
+            # See https://github.com/sagemath/sage/issues/24599
+            SAGE_CHECK_BROKEN_GCC()
+            if test x$SAGE_BROKEN_GCC = xyes; then
+                # Prentend that GCC is not installed.
+                # The gcc and g++ binaries as well as the "installed" file will
+                # be removed by make before installing any packages such that
+                # GCC will be built as if was never installed before.
+                SAGE_INSTALL_GCC=yes
+                SAGE_MUST_INSTALL_GCC([installed g++ is broken])
+                AC_MSG_RESULT([yes, but broken])
+            else
+                AC_MSG_RESULT([yes])
+            fi
         fi
-    elif test -n "$SAGE_INSTALL_GCC"; then
-        # Check the value of the environment variable SAGE_INSTALL_GCC
-        AS_CASE([$SAGE_INSTALL_GCC],
-            [yes], [
-                SAGE_MUST_INSTALL_GCC([SAGE_INSTALL_GCC is set to 'yes'])
-            ], [no], [
-                true
-            ], [
-                AC_MSG_ERROR([SAGE_INSTALL_GCC should be set to 'yes' or 'no'. You can also leave it unset to install GCC when needed])
-            ])
+    else
+        AC_MSG_RESULT([no])
+        if test -n "$SAGE_INSTALL_GCC"; then
+            # Check the value of the environment variable SAGE_INSTALL_GCC
+            AS_CASE([$SAGE_INSTALL_GCC],
+                [yes], [
+                    SAGE_MUST_INSTALL_GCC([SAGE_INSTALL_GCC is set to 'yes'])
+                ], [no], [
+                    true
+                ], [
+                    AC_MSG_ERROR([SAGE_INSTALL_GCC should be set to 'yes' or 'no'. You can also leave it unset to install GCC when needed])
+                ])
+        fi
     fi
 
     # Figuring out if we are using clang instead of gcc.
     AC_LANG_PUSH(C)
     AX_COMPILER_VENDOR()
-    IS_REALLY_GCC=no
-    if test "x$ax_cv_c_compiler_vendor" = xgnu ; then
+    AS_IF([test "x$ax_cv_c_compiler_vendor" = xgnu], [
         IS_REALLY_GCC=yes
-    fi
+        AS_CASE([$host],
+        [*-apple-darwin*], [
+             AC_MSG_ERROR([Cannot build Sage on macOS with GNU's gcc.
+               Make use gcc and g++ are actually Clang compilers.])])
+    ], [
+        IS_REALLY_GCC=no
+    ])
     AC_LANG_POP()
 
     # Save the value of CXX without special flags to enable C++11 support
@@ -138,20 +161,16 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
             # Add the .0 because Debian/Ubuntu gives version numbers like
             # 4.6 instead of 4.6.4 (Trac #18885)
             AS_CASE(["$GXX_VERSION.0"],
-                [[[0-3]].*|4.[[0-7]].*], [
-                    # Install our own GCC if the system-provided one is older than gcc-4.8.
+                [[[0-7]].*], [
+                    # Install our own GCC if the system-provided one is older than gcc 8
                     SAGE_SHOULD_INSTALL_GCC([you have $CXX version $GXX_VERSION, which is quite old])
                 ],
-                [1[[2-9]].*], [
-                    # Install our own GCC if the system-provided one is newer than 11.x.
-                    # See https://trac.sagemath.org/ticket/29456
+                [1[[4-9]].*], [
+                    # Install our own GCC if the system-provided one is newer than 13.x.
+                    # See https://github.com/sagemath/sage/issues/29456
                     SAGE_SHOULD_INSTALL_GCC([$CXX is g++ version $GXX_VERSION, which is too recent for this version of Sage])
-                ],
-                [4.[[8-9]].*|5.[[0-1]].*], [
-                    # GCC less than 5.1 is not ready for AVX512.
-                    sage_use_march_native=no
                 ])
-        fi
+            fi
 
         # The following tests check that the version of the compilers
         # are all the same.
@@ -162,7 +181,7 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
     fi
 
     # Check that the assembler and linker used by $CXX match $AS and $LD.
-    # See http://trac.sagemath.org/sage_trac/ticket/14296
+    # See https://github.com/sagemath/sage/issues/14296
     if test -n "$AS"; then
         CXX_as=`$CXX -print-prog-name=as 2>/dev/null`
         CXX_as=`command -v $CXX_as 2>/dev/null`

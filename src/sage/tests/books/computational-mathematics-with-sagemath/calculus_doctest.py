@@ -552,4 +552,3 @@ Sage example in ./calculus.tex, line 2597::
   )
 
 """
-

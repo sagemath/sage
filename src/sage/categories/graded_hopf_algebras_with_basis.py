@@ -168,4 +168,3 @@ class GradedHopfAlgebrasWithBasis(GradedModulesCategory):
 
         class ElementMethods:
             pass
-

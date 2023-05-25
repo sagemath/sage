@@ -144,8 +144,13 @@ def from_sparse6(data):
 
     EXAMPLES::
 
-        sage: l = [':P_`cBaC_ACd`C_@BC`ABDHaEH_@BF_@CHIK_@BCEHKL_BIKM_BFGHI', ':f`??KO?B_OOSCGE_?OWONDBO?GOJBDO?_SSJdApcOIG`?og_UKEbg?_SKFq@[CCBA`p?oYMFp@gw]Qaa@xEMHDb@hMCBCbQ@ECHEcAKKQKFPOwo[PIDQ{KIHEcQPOkVKEW_WMNKqPWwcRKOOWSKIGCqhWt??___WMJFCahWzEBa`xOu[MpPPKqYNoOOOKHHDBPs|??__gWMKEcAHKgTLErqA?A@a@G{kVLErs?GDBA@XCs\\NggWSOJIDbHh@?A@aF']
-        sage: graphs_list.from_sparse6(l)
+        sage: g1 = ':P_`cBaC_ACd`C_@BC`ABDHaEH_@BF_@CHIK_@BCEHKL_BIKM_BFGHI'
+        sage: g2 = ':f`??KO?B_OOSCGE_?OWONDBO?GOJBDO?_SSJdApcOIG`?og_UKEbg?_SKF'
+        sage: g2 += 'q@[CCBA`p?oYMFp@gw]Qaa@xEMHDb@hMCBCbQ@ECHEcAKKQKFPOwo[PIDQ'
+        sage: g2 += '{KIHEcQPOkVKEW_WMNKqPWwcRKOOWSKIGCqhWt??___WMJFCahWzEBa`xO'
+        sage: g2 += 'u[MpPPKqYNoOOOKHHDBPs|??__gWMKEcAHKgTLErqA?A@a@G{kVLErs?GD'
+        sage: g2 += 'BA@XCs\\NggWSOJIDbHh@?A@aF'
+        sage: graphs_list.from_sparse6([g1, g2])
         [Looped multi-graph on 17 vertices, Looped multi-graph on 39 vertices]
     """
     return _from_whatever(data, fmt='sparse6')
@@ -206,7 +211,7 @@ def to_sparse6(graphs, file=None, output_list=False):
 
 
 def _to_graph6(graphs, file=None, output_list=False, sparse=False):
-    """
+    r"""
     Internal implementation of :func:`to_graph6` and :func:`to_sparse6`.
 
     EXAMPLES::

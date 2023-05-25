@@ -35,13 +35,6 @@ Upstream Contact
 
    https://www.usna.edu/Users/cs/wcbrown/qepcad/B/QEPCAD.html
 
-Dependencies
-------------
-
--  readline
--  saclib
-
-
 Special Update/Build Instructions
 ---------------------------------
 

@@ -17,8 +17,3 @@ Upstream Contact
 ----------------
 
 Matthias Köppe, UC Davis, CA, USA
-
-Dependencies
-------------
-
-GMP (MPIR), 4ti2, NTL, cddlib.

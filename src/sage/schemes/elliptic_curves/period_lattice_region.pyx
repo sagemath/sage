@@ -28,7 +28,7 @@ AUTHORS:
 import numpy as np
 cimport numpy as np
 
-from sage.rings.all import CIF
+from sage.rings.cif import CIF
 from cpython.object cimport Py_EQ, Py_NE
 
 
@@ -152,7 +152,7 @@ cdef class PeriodicRegion:
 
         INPUT:
 
-        - ``condition`` (function) - a boolean-valued function on `\CC`.
+        - ``condition`` (function) -- a boolean-valued function on `\CC`.
 
         OUTPUT:
 
@@ -186,10 +186,10 @@ cdef class PeriodicRegion:
 
         INPUT:
 
-        - ``condition`` (function, default None) - if not None, only
+        - ``condition`` (function, default None) -- if not None, only
           keep tiles in the refinement which satisfy the condition.
 
-        - ``times`` (int, default 1) - the number of times to refine;
+        - ``times`` (int, default 1) -- the number of times to refine;
           each refinement step halves the mesh size.
 
         OUTPUT:
@@ -581,7 +581,6 @@ cdef class PeriodicRegion:
             sage: data[1:3, 2] = True
             sage: PeriodicRegion(CDF(1), CDF(I), data).border()
             [(1, 1, 0), (2, 1, 0), (1, 1, 1), (1, 2, 0), (1, 3, 1), (3, 2, 0), (2, 2, 1), (2, 3, 1)]
-
         """
         cdef np.ndarray[np.npy_int8, ndim=2] framed = frame_data(self.data, self.full)
         cdef int m, n

@@ -47,4 +47,3 @@ class GradedCoalgebrasWithBasis(GradedModulesCategory):
                  Category of signed tensor products of graded coalgebras over Rational Field]
             """
             return [self.base_category()]
-

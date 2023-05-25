@@ -11,28 +11,40 @@ TESTS::
 
 def is_NumberField(x):
     """
-    Return True if x is of number field type.
+    Return True if ``x`` is of number field type.
+
+    This function is deprecated.
 
     EXAMPLES::
 
         sage: from sage.rings.number_field.number_field_base import is_NumberField
-        sage: is_NumberField(NumberField(x^2+1,'a'))
+        sage: is_NumberField(NumberField(x^2 + 1, 'a'))
+        doctest:...: DeprecationWarning: the function is_NumberField is deprecated; use
+        isinstance(x, sage.rings.number_field.number_field_base.NumberField) instead
+        See https://github.com/sagemath/sage/issues/35283 for details.
         True
-        sage: is_NumberField(QuadraticField(-97,'theta'))
+        sage: is_NumberField(QuadraticField(-97, 'theta'))
         True
         sage: is_NumberField(CyclotomicField(97))
         True
 
-    Note that the rational numbers QQ are a number field.::
+    Note that the rational numbers ``QQ`` are a number field.::
 
         sage: is_NumberField(QQ)
         True
         sage: is_NumberField(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(35283,
+                "the function is_NumberField is deprecated; use "
+                "isinstance(x, sage.rings.number_field.number_field_base.NumberField) instead")
+
     return isinstance(x, NumberField)
 
+
 from sage.rings.ring cimport Field
+
 
 cdef class NumberField(Field):
     r"""
@@ -55,7 +67,7 @@ cdef class NumberField(Field):
         If ``self`` and/or ``other`` are embedded, use this embedding to
         discover a common parent.
 
-        Currently embeddings into ``AA`` and ``QQbar` are supported.
+        Currently embeddings into ``AA`` and ``QQbar`` are supported.
 
         TESTS:
 
@@ -361,8 +373,16 @@ cdef class NumberField(Field):
         if self._gen_approx is not None or self._embedding is None:
             return
 
-        from sage.rings.qqbar import AA
-        from sage.rings.real_lazy import RLF
+        try:
+            from sage.rings.qqbar import AA
+        except ImportError:
+            AA = None
+
+        try:
+            from sage.rings.real_lazy import RLF
+        except ImportError:
+            RLF = None
+
         codomain = self._embedding.codomain()
         if codomain is AA or codomain is RLF:
             self._gen_approx = []

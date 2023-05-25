@@ -24,8 +24,11 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.rings.all import ZZ, Integer
-from sage.arith.all import binomial
+import itertools
+
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.arith.misc import binomial
 from .integer_vector import IntegerVectors
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
@@ -157,16 +160,22 @@ def Combinations(mset, k=None):
         [[], [(0, 0)], [(0, 1)], [(0, 0), (0, 1)]]
     """
     # Check to see if everything in mset is unique
+    is_unique = False
     if isinstance(mset, (int, Integer)):
         mset = list(range(mset))
+        is_unique = True
+    elif isinstance(mset, range):
+        mset = list(mset)
+        is_unique = True
     else:
         mset = list(mset)
+        for i, e in enumerate(mset):
+            if mset.index(e) != i:
+                break
+        else:
+            is_unique = True
 
-    d = {}
-    for i in mset:
-        d[mset.index(i)] = 1
-
-    if len(d) == len(mset):
+    if is_unique:
         if k is None:
             return Combinations_set(mset)
         else:
@@ -306,13 +315,24 @@ class Combinations_set(Combinations_mset):
             sage: list(range(c.cardinality())) == list(map(c.rank, c))
             True
         """
-        x = [self.mset.index(_) for _ in x]
+        x = [self.mset.index(i) for i in x]
         r = 0
         n = len(self.mset)
         for i in range(len(x)):
             r += binomial(n, i)
         r += rank(x, n)
         return r
+
+    def cardinality(self):
+        """
+        Return the size of Combinations(set).
+
+        EXAMPLES::
+
+            sage: Combinations(range(16000)).cardinality() == 2^16000
+            True
+        """
+        return 2**len(self.mset)
 
 
 class Combinations_msetk(Parent):
@@ -415,30 +435,24 @@ class Combinations_msetk(Parent):
             12
         """
         from sage.libs.gap.libgap import libgap
-        items = [self.mset.index(_) for _ in self.mset]
+        items = [self.mset.index(i) for i in self.mset]
         nc = libgap.function_factory('NrCombinations')
         return ZZ(nc(items, ZZ(self.k)))
 
 
 class Combinations_setk(Combinations_msetk):
-    def _iterator(self, items, len_items, n):
+    def _iterator(self, items, n):
         """
         An iterator for all the n-combinations of items.
 
         EXAMPLES::
 
-            sage: it = Combinations([1,2,3,4],3)._iterator([1,2,3,4],4,3)
+            sage: it = Combinations([1,2,3,4],3)._iterator([1,2,3,4],3)
             sage: list(it)
             [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
         """
-        for i in range(len_items):
-            v = items[i: i + 1]
-            if n == 1:
-                yield v
-            else:
-                rest = items[i + 1:]
-                for c in self._iterator(rest, len_items - i - 1, n - 1):
-                    yield v + c
+        for combination in itertools.combinations(items, n):
+            yield list(combination)
 
     def _iterator_zero(self):
         """
@@ -454,8 +468,8 @@ class Combinations_setk(Combinations_msetk):
 
     def __iter__(self):
         r"""
-        Posted by Raymond Hettinger, 2006/03/23, to the Python Cookbook:
-        http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/474124
+        Uses Python's :func:`itertools.combinations` to iterate through all
+        of the combinations.
 
         EXAMPLES::
 
@@ -474,7 +488,7 @@ class Combinations_setk(Combinations_msetk):
         if self.k == 0:
             return self._iterator_zero()
         else:
-            return self._iterator(self.mset, len(self.mset), self.k)
+            return self._iterator(self.mset, self.k)
 
     def list(self):
         """
@@ -512,8 +526,19 @@ class Combinations_setk(Combinations_msetk):
             sage: list(range(c.cardinality())) == list(map(c.rank, c.list()))
             True
         """
-        x = [self.mset.index(_) for _ in x]
+        x = [self.mset.index(i) for i in x]
         return rank(x, len(self.mset))
+
+    def cardinality(self):
+        """
+        Return the size of combinations(set, k).
+
+        EXAMPLES::
+
+            sage: Combinations(range(16000), 5).cardinality()
+            8732673194560003200
+        """
+        return binomial(len(self.mset), self.k)
 
 
 def rank(comb, n, check=True):
@@ -562,7 +587,7 @@ def rank(comb, n, check=True):
     if check:
         if k > n:
             raise ValueError("len(comb) must be <= n")
-        comb = [int(_) for _ in comb]
+        comb = [int(i) for i in comb]
         for i in range(k - 1):
             if comb[i + 1] <= comb[i]:
                 raise ValueError("comb must be a subword of (0,1,...,n)")

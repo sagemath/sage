@@ -152,7 +152,7 @@ Mixing SymPy with Sage::
     sage: type(t1)
     <class 'sympy.core.add.Add'>
     sage: type(t2)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
     sage: t1, t2
     (omega + x, omega + x)
     sage: e=sympy.sin(var("y"))+sage.all.cos(sympy.Symbol("x"))
@@ -162,7 +162,7 @@ Mixing SymPy with Sage::
     sin(y) + cos(x)
     sage: e=e._sage_()
     sage: type(e)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
     sage: e
     cos(x) + sin(y)
     sage: e = sage.all.cos(var("y")**3)**4+var("x")**2
@@ -193,7 +193,7 @@ This was fixed in Sympy, see :trac:`14437`::
     sage: u = Function('u')
     sage: n = Symbol('n', integer=True)
     sage: f = u(n+2) - u(n+1) + u(n)/4
-    sage: rsolve(f,u(n))
-    2**(-n)*(C0 + C1*n)
+    sage: expand(2**n * rsolve(f,u(n)))
+    2*C1*n + C0
 
 """

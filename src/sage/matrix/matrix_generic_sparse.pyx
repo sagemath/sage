@@ -169,7 +169,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         ma = MatrixArgs_init(parent, entries)
         self._entries = ma.dict(coerce)
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Test whether this matrix is non-zero.
 
@@ -202,7 +202,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries.get((i,j), self._zero)
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 
@@ -270,6 +270,27 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             sage: a+a
             [    2    20 -10/3]
             [  1/2     6     8]
+
+        TESTS:
+
+        Adding two subclasses should produce an instance of the subclass; not
+        a generic matrix::
+
+            sage: A = matrix(RDF, [[1]], sparse=True)
+            sage: B = matrix(RDF, [[2]], sparse=True)
+            sage: C = matrix(ZZ,  [[3]], sparse=True)
+            sage: D = matrix(CDF, [[4]], sparse=True)
+            sage: (A+B).__class__ == A.__class__
+            True
+            sage: (B+A).__class__ == A.__class__
+            True
+            sage: (A+C).__class__ == A.__class__
+            True
+            sage: (C+A).__class__ == A.__class__
+            True
+            sage: (A+D).__class__ == D.__class__
+            True
+
         """
         # Compute the sum of two sparse matrices.
         # This is complicated because of how we represent sparse matrices.
@@ -308,12 +329,15 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             s[w[j][0]] = w[j][1]
             j += 1
 
-        cdef Matrix_generic_sparse A
-        A = Matrix_generic_sparse.__new__(Matrix_generic_sparse, self._parent, 0,0,0)
-        matrix.Matrix.__init__(A, self._parent)
+        # Use the parent of the left-hand summand as the parent of the
+        # result. This allows you to (for example) add two sparse RDF
+        # matrices together and get another one back, rather than
+        # getting a generic sparse matrix back.
+        MS = self._parent
+        cdef type t = <type>type(self)
+        A = <Matrix_generic_sparse>t.__new__(t, MS)
         A._entries = s
         A._zero = self._zero
-        A._base_ring = self._base_ring
         return A
 
     def __copy__(self):

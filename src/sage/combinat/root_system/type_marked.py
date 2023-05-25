@@ -14,6 +14,7 @@ from sage.combinat.root_system.root_lattice_realizations import RootLatticeReali
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 
+
 class CartanType(cartan_type.CartanType_decorator):
     r"""
     A class for Cartan types with marked nodes.
@@ -82,7 +83,7 @@ class CartanType(cartan_type.CartanType_decorator):
         if any(node not in ct.index_set() for node in marked_nodes):
             raise ValueError("invalid marked node")
         marked_nodes = tuple(sorted(marked_nodes))
-        return super(CartanType, cls).__classcall__(cls, ct, marked_nodes)
+        return super().__classcall__(cls, ct, marked_nodes)
 
     def __init__(self, ct, marked_nodes):
         """
@@ -339,11 +340,11 @@ class CartanType(cartan_type.CartanType_decorator):
 
         To be compared with the examples in :meth:`ascii_art`::
 
-            sage: sorted(CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram().edges())
+            sage: CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram().edges(sort=True)
             [(1, 2, 3), (2, 1, 1)]
-            sage: sorted(CartanType(["B", 3, 1]).relabel([1,3,2,0]).dynkin_diagram().edges())
+            sage: CartanType(["B", 3, 1]).relabel([1,3,2,0]).dynkin_diagram().edges(sort=True)
             [(0, 2, 1), (1, 2, 1), (2, 0, 2), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
-            sage: sorted(CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges())
+            sage: CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges(sort=True)
             [(0, 1, 1), (1, 0, 1), (1, 2, 1), (2, 1, 2), (2, 3, 1), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
         """
         result = self._type.dynkin_diagram().copy()
@@ -447,6 +448,7 @@ class CartanType(cartan_type.CartanType_decorator):
         return self._type.type()
 
 ###########################################################################
+
 
 class AmbientSpace(ambient_space.AmbientSpace):
     """
@@ -554,6 +556,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
 ###########################################################################
 
+
 class CartanType_finite(CartanType, cartan_type.CartanType_finite):
     AmbientSpace = AmbientSpace
 
@@ -590,6 +593,8 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
         return self._type.affine().marked_nodes(self._marked_nodes)
 
 ###########################################################################
+
+
 class CartanType_affine(CartanType, cartan_type.CartanType_affine):
     """
     TESTS::
@@ -604,6 +609,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         Ambient space of the Root system of type ['B', 3] with nodes (1, 3) marked
         sage: TestSuite(L).run()
     """
+
     def _latex_draw_node(self, x, y, label, position="below=4pt"):
         r"""
         Draw the possibly marked (crossed out) circular node ``i`` at the

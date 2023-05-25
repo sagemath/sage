@@ -20,11 +20,11 @@ from sage.structure.element import coerce_binop
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.integer cimport Integer
-from sage.libs.all import pari_gen
+from sage.libs.pari.all import pari_gen
 
 import operator
 
-from sage.interfaces.all import singular as singular_default
+from sage.interfaces.singular import singular as singular_default
 
 def make_element(parent, args):
     return parent(*args)
@@ -500,7 +500,7 @@ cdef class Polynomial_template(Polynomial):
         celement_quorem(&q.x, &r.x, &(<Polynomial_template>self).x, &right.x, (<Polynomial_template>self)._cparent)
         return q,r
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -597,9 +597,10 @@ cdef class Polynomial_template(Polynomial):
         elif e < 0:
             recip = 1 # delay because powering frac field elements is slow
             e = -e
+
         if not self:
-            if e == 0:
-                raise ArithmeticError("0^0 is undefined.")
+            return (<Polynomial_template>self)._parent(int(not e))
+
         cdef type T = type(self)
         cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
 
@@ -612,7 +613,7 @@ cdef class Polynomial_template(Polynomial):
             celement_pow(&r.x, &(<Polynomial_template>self).x, e, NULL, (<Polynomial_template>self)._cparent)
         else:
             if parent is not (<Polynomial_template>modulus)._parent and parent != (<Polynomial_template>modulus)._parent:
-                modulus = parent._coerce_(modulus)
+                modulus = parent.coerce(modulus)
             celement_pow(&r.x, &(<Polynomial_template>self).x, e, &(<Polynomial_template>modulus).x, (<Polynomial_template>self)._cparent)
 
         #assert(r._parent(pari(self)**ee) == r)
@@ -765,14 +766,13 @@ cdef class Polynomial_template(Polynomial):
         celement_truncate(&r.x, &self.x, n, (<Polynomial_template>self)._cparent)
         return r
 
-    def _singular_(self, singular=singular_default, have_ring=False):
+    def _singular_(self, singular=singular_default):
         r"""
         Return Singular representation of this polynomial
 
         INPUT:
 
         - ``singular`` -- Singular interpreter (default: default interpreter)
-        - ``have_ring`` -- set to True if the ring was already set in Singular
 
         EXAMPLES::
 
@@ -781,6 +781,5 @@ cdef class Polynomial_template(Polynomial):
             sage: singular(f)
             3*x^2+2*x-2
         """
-        if not have_ring:
-            self.parent()._singular_(singular).set_ring() #this is expensive
+        self.parent()._singular_(singular).set_ring()  # this is expensive
         return singular(self._singular_init_())

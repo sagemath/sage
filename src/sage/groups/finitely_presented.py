@@ -75,7 +75,7 @@ The same holds for the group elements::
     sage: a.gap().Order()
     2
     sage: type(_)    # note that the above output is not a Sage integer
-    <type 'sage.libs.gap.element.GapElement_Integer'>
+    <class 'sage.libs.gap.element.GapElement_Integer'>
 
 You can use call syntax to replace the generators with a set of
 arbitrary ring elements. For example, take the free abelian group
@@ -146,9 +146,9 @@ class GroupMorphismWithGensImages(SetMorphism):
     Class used for morphisms from finitely presented groups to
     other groups. It just adds the images of the generators at the
     end of the representation.
-    
+
     EXAMPLES::
-    
+
         sage: F = FreeGroup(3)
         sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
         sage: H = AlternatingGroup(3)
@@ -166,9 +166,9 @@ class GroupMorphismWithGensImages(SetMorphism):
     def _repr_defn(self):
         r"""
         Return the part of the representation that includes the images of the generators.
-        
+
         EXAMPLES::
-        
+
             sage: F = FreeGroup(3)
             sage: G = F / [F([1,2,3,1,2,3]),F([1,1,1])]
             sage: H = AlternatingGroup(3)
@@ -177,11 +177,9 @@ class GroupMorphismWithGensImages(SetMorphism):
             sage: f = GroupMorphismWithGensImages(HS, lambda a: H.one())
             sage: f._repr_defn()
             'x0 |--> ()\nx1 |--> ()\nx2 |--> ()'
-
         """
-        D = self.domain()
-        return '\n'.join(['%s |--> %s'%(i, self(i)) for\
-                       i in D.gens()])
+        return '\n'.join(f'{i} |--> {self(i)}' for i in self.domain().gens())
+
 
 class FinitelyPresentedGroupElement(FreeGroupElement):
     """
@@ -365,7 +363,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
                 rel = rel(values)
                 if rel != 1:
                     raise ValueError('the values do not satisfy all relations of the group')
-        return super(FinitelyPresentedGroupElement, self).__call__(values)
+        return super().__call__(values)
 
 
 def wrap_FpGroup(libgap_fpgroup):
@@ -397,7 +395,7 @@ def wrap_FpGroup(libgap_fpgroup):
         sage: P = F / libgap([ a_cubed ]);   P
         <fp group of size infinity on the generators [ a, b ]>
         sage: type(P)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
 
     Now wrap it::
 
@@ -414,7 +412,7 @@ def wrap_FpGroup(libgap_fpgroup):
     return FinitelyPresentedGroup(free_group, relations)
 
 
-class RewritingSystem(object):
+class RewritingSystem():
     """
     A class that wraps GAP's rewriting systems.
 
@@ -591,14 +589,14 @@ class RewritingSystem(object):
 
         EXAMPLES::
 
-            sage: F.<a,b>=FreeGroup()
-            sage: G=F/[a*a,b*b]
-            sage: k=G.rewriting_system()
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F/[a*a,b*b]
+            sage: k = G.rewriting_system()
             sage: k.gap()
             Knuth Bendix Rewriting System for Monoid( [ a, A, b, B ] ) with rules
-            [ [ a^2, <identity ...> ], [ a*A, <identity ...> ],
-              [ A*a, <identity ...> ], [ b^2, <identity ...> ],
-              [ b*B, <identity ...> ], [ B*b, <identity ...> ] ]
+            [ [ a*A, <identity ...> ], [ A*a, <identity ...> ],
+              [ b*B, <identity ...> ], [ B*b, <identity ...> ],
+              [ a^2, <identity ...> ], [ b^2, <identity ...> ] ]
         """
         return self._gap
 
@@ -775,7 +773,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         sage: H.gap()
         <fp group on the generators [ x0, x1 ]>
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
     """
     Element = FinitelyPresentedGroupElement
 
@@ -839,10 +837,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
         TESTS::
 
-            sage: F=FreeGroup(4)
+            sage: F = FreeGroup(4)
             sage: F.inject_variables()
             Defining x0, x1, x2, x3
-            sage: G=F.quotient([x0*x2, x3*x1*x3, x2*x1*x2])
+            sage: G = F.quotient([x0*x2, x3*x1*x3, x2*x1*x2])
             sage: G._latex_()
             '\\langle x_{0}, x_{1}, x_{2}, x_{3} \\mid x_{0}\\cdot x_{2} , x_{3}\\cdot x_{1}\\cdot x_{3} , x_{2}\\cdot x_{1}\\cdot x_{2}\\rangle'
         """
@@ -1014,7 +1012,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         Calls GAP function ``DirectProduct``, which returns the direct
         product of a list of groups of any representation.
 
-        From [Joh1990]_ (pg 45, proposition 4): If `G`, `H` are groups
+        From [Joh1990]_ (p. 45, proposition 4): If `G`, `H` are groups
         presented by `\langle X \mid R \rangle` and `\langle Y \mid S \rangle`
         respectively, then their direct product has the presentation
         `\langle X, Y \mid R, S, [X, Y] \rangle` where `[X, Y]` denotes the
@@ -1427,17 +1425,17 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             Finitely presented group < e0 | e0^2 >
         """
         return self.simplification_isomorphism().codomain()
-    
+
     def epimorphisms(self, H):
         r"""
         Return the epimorphisms from `self` to `H`, up to automorphism of `H`.
-        
+
         INPUT:
-        
+
         - `H` -- Another group
-        
+
         EXAMPLES::
-        
+
             sage: F = FreeGroup(3)
             sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
             sage: H = AlternatingGroup(3)
@@ -1468,7 +1466,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
                      x2 |--> (1,2,3)]
 
         ALGORITHM:
-        
+
         Uses libgap's GQuotients function.
         """
         from sage.misc.misc_c import prod
@@ -1486,7 +1484,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             res.append(fhom)
         return res
 
-    def alexander_matrix(self, im_gens = None):
+    def alexander_matrix(self, im_gens=None):
         """
         Return the Alexander matrix of the group.
 

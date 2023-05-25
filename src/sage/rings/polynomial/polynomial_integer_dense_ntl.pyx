@@ -51,8 +51,6 @@ from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer_ring cimport IntegerRing_class
 ZZ_sage = IntegerRing()
 
-from sage.rings.polynomial.polynomial_element import is_Polynomial
-
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 
 from sage.rings.integer_ring import ZZ
@@ -62,12 +60,12 @@ from sage.rings.integer cimport Integer
 from sage.rings.real_mpfr cimport RealNumber, RealField_class
 from sage.rings.real_mpfi cimport RealIntervalFieldElement
 
-from sage.libs.all import pari, pari_gen
+from sage.libs.pari.all import pari, pari_gen
 from sage.structure.factorization import Factorization
 from sage.structure.element import coerce_binop
 
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.arith.all import lcm
+from sage.arith.functions import lcm
 import sage.rings.polynomial.polynomial_ring
 
 from sage.libs.ntl.ZZX cimport *
@@ -97,11 +95,15 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: x
             x
 
-        Construct from list::
+        Construct from list and tuple::
 
             sage: R([])
             0
             sage: R([1, -2, 3])
+            3*x^2 - 2*x + 1
+            sage: R(())
+            0
+            sage: R((1, -2, 3))
             3*x^2 - 2*x + 1
 
         Coercions from other rings are attempted automatically::
@@ -123,11 +125,11 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: f = R([-1, 2, 5]); f
             5*x^2 + 2*x - 1
             sage: type(f)
-            <type 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
+            <class 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
             sage: type(pari(f))
-            <type 'cypari2.gen.Gen'>
+            <class 'cypari2.gen.Gen'>
             sage: type(R(pari(f)))
-            <type 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
+            <class 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
             sage: R(pari(f))
             5*x^2 + 2*x - 1
 
@@ -146,7 +148,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
             sage: f = (x^3 - 1) / (x - 1)
             sage: type(f)
-            <type 'sage.rings.fraction_field_element.FractionFieldElement'>
+            <class 'sage.rings.fraction_field_element.FractionFieldElement'>
             sage: g = R(f); g
             x^2 + x + 1
 
@@ -221,7 +223,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
                 self.__poly = (<Polynomial_integer_dense_ntl>x.numerator()).__poly
                 return
 
-        elif not isinstance(x, list):
+        elif not isinstance(x, (list, tuple)):
             x = [x]   # constant polynomials
 
         if len(x) >= NTL_OVFBND:
@@ -753,7 +755,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: g // f
             x - 6
         """
-        if is_Polynomial(right) and right.is_constant() and right[0] in ZZ:
+        if isinstance(right, Polynomial) and right.is_constant() and right[0] in ZZ:
             d = ZZ(right[0])
             return self.parent()([c // d for c in self.list()], construct=True)
         elif (right in self.parent().base_ring()):
@@ -1132,7 +1134,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: r.parent() is ZZ
             True
         """
-        cdef Polynomial_integer_dense_ntl _other = <Polynomial_integer_dense_ntl>(self.parent()._coerce_(other))
+        cdef Polynomial_integer_dense_ntl _other = <Polynomial_integer_dense_ntl>(self.parent().coerce(other))
         cdef ZZ_c* temp = ZZX_resultant(&self.__poly, &_other.__poly, proof)
         cdef Integer x = Integer.__new__(Integer)
         ZZ_to_mpz(x.value, temp)

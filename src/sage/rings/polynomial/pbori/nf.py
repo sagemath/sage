@@ -51,8 +51,8 @@ def build_and_print_matrices(v, strat):
                     v.append(p2)
         polys_in_mat.append(p)
         treated = treated.union(p.set())
-    m2i = dict([(v, k) for (k, v) in enumerate(list(Polynomial(BooleSet(
-        treated)).terms()))])
+    m2i = {v: k
+           for k, v in enumerate(list(Polynomial(BooleSet(treated)).terms()))}
     polys_in_mat.sort(key=Polynomial.lead, reverse=True)
     polys_in_mat = [[m2i[t] for t in p.terms()] for p in polys_in_mat]
 
@@ -129,11 +129,11 @@ def build_and_print_matrices_deg_colored(v, strat):
                     v.append(p2)
         polys_in_mat.append(p)
         treated = treated.union(p.set())
-    m2i = dict([(v, k) for (k, v) in enumerate(BooleSet(treated))])
+    m2i = {v: k for k, v in enumerate(BooleSet(treated))}
     max_deg = max([m.deg() for m in BooleSet(treated)])
     if max_deg == 0:
         max_deg = 1
-    i2deg = dict([(m2i[m], m.deg()) for m in BooleSet(treated)])
+    i2deg = {m2i[m]: m.deg() for m in BooleSet(treated)}
     polys_in_mat = [[m2i[t] for t in p.terms()] for p in polys_in_mat]
     polys_in_mat.sort(key=pkey)
     global mat_counter
@@ -394,8 +394,7 @@ def GPS(G, vars_start, vars_end):
                 print("!!!!!!! SOLUTION", trace)
                 raise Exception
                 # yield trace
-            else:
-                branch(strat, trace + [(var, val)], var - 1)
+            branch(strat, trace + [(var, val)], var - 1)
 
     def branch(strat, trace, var):
         while strat.variableHasValue(var):
@@ -447,8 +446,7 @@ def GPS_with_proof_path(G, proof_path, deg_bound, over_deg_bound):
                 print("!!!!!!! SOLUTION", trace)
                 raise Exception
                 # yield trace
-            else:
-                branch(strat, trace + [(pos, val)], proof_path, pos)
+            branch(strat, trace + [(pos, val)], proof_path, pos)
 
     def branch(strat, trace, proof_path, pos):
 
@@ -485,8 +483,8 @@ def GPS_with_suggestions(G, deg_bound, over_deg_bound, opt_lazy=True,
 
         if index < 0:
             uv = set(used_vars_set(strat))
-            lv = set([next(iter(p.lead())).index() for p in strat if p.
-                lead_deg() == 1])
+            lv = set(next(iter(p.lead())).index()
+                     for p in strat if p.lead_deg() == 1)
             candidates = uv.difference(lv)
             if candidates:
                 index = next(iter(candidates)).index()
@@ -566,11 +564,10 @@ def GPS_with_non_binary_proof_path(G, proof_path, deg_bound, over_deg_bound):
                 print("!!!!!!! SOLUTION", trace)
                 raise Exception
                 # yield trace
-            else:
-                branch(strat, trace + [(pos, choice)], proof_path, pos)
-                # workaround because of stack depth
-                # step(strat,trace+[(var,val)],var-1, 0)
-                # step(strat,trace+[(var,val)],var-1, 1)
+            branch(strat, trace + [(pos, choice)], proof_path, pos)
+            # workaround because of stack depth
+            # step(strat,trace+[(var,val)],var-1, 0)
+            # step(strat,trace+[(var,val)],var-1, 1)
 
     def branch(strat, trace, proof_path, pos):
         for i in range(len(proof_path[pos])):

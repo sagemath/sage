@@ -211,19 +211,17 @@ class GroupExpElement(ElementWrapper, MultiplicativeGroupElement):
             raise ValueError("%s is not an element of %s" % (x, parent._G))
         ElementWrapper.__init__(self, parent, x)
 
-    def inverse(self):
+    def __invert__(self):
         r"""
         Invert the element ``self``.
 
         EXAMPLES::
 
             sage: EZ = GroupExp()(ZZ)
-            sage: EZ(-3).inverse()
+            sage: EZ(-3).inverse()  # indirect doctest
             3
         """
         return GroupExpElement(self.parent(), -self.value)
-
-    __invert__ = inverse
 
     def __mul__(self, x):
         r"""
@@ -257,7 +255,6 @@ class GroupExp_Class(UniqueRepresentation, Parent):
 
         sage: GroupExp()(QQ)
         Multiplicative form of Rational Field
-
     """
     def __init__(self, G):
         r"""
@@ -268,8 +265,7 @@ class GroupExp_Class(UniqueRepresentation, Parent):
             sage: TestSuite(EG).run(skip = "_test_elements")
 
         """
-
-        if not G in CommutativeAdditiveGroups():
+        if G not in CommutativeAdditiveGroups():
             raise TypeError("%s must be a commutative additive group" % G)
         self._G = G
         Parent.__init__(self, category=Groups())

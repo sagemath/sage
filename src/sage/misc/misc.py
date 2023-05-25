@@ -44,9 +44,7 @@ import resource
 import pdb
 import warnings
 
-import sage.misc.prandom as random
 from .lazy_string import lazy_string
-from sage.interfaces.quit import expect_objects
 from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 
@@ -74,10 +72,16 @@ def sage_makedirs(dirname, mode=0o777):
     if the directory already exists (unlike ``os.makedirs()``).
     Raise other errors (like permission errors) normally.
 
+    This function is deprecated; use ``os.makedirs(..., exist_ok=True)``
+    instead.
+
     EXAMPLES::
 
         sage: from sage.misc.misc import sage_makedirs
         sage: sage_makedirs(DOT_SAGE) # no output
+        doctest:warning...
+        DeprecationWarning: sage_makedirs is deprecated; use os.makedirs(..., exist_ok=True) instead
+        See https://github.com/sagemath/sage/issues/32987 for details.
 
     The following fails because we are trying to create a directory in
     place of an ordinary file::
@@ -86,8 +90,11 @@ def sage_makedirs(dirname, mode=0o777):
         sage: sage_makedirs(filename)
         Traceback (most recent call last):
         ...
-        OSError: [Errno ...] File exists: ...
+        FileExistsError: [Errno ...] File exists: ...
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32987,
+                'sage_makedirs is deprecated; use os.makedirs(..., exist_ok=True) instead')
     try:
         os.makedirs(dirname)
     except OSError:
@@ -100,7 +107,7 @@ def sage_makedirs(dirname, mode=0o777):
 # restrictive permissions, since otherwise possibly just anybody can easily see
 # every command you type.
 
-sage_makedirs(DOT_SAGE, mode=0o700)
+os.makedirs(DOT_SAGE, mode=0o700, exist_ok=True)
 
 
 def try_read(obj, splitlines=False):
@@ -152,13 +159,13 @@ def try_read(obj, splitlines=False):
 
     I/O buffers::
 
-        sage: buf = io.StringIO(u'a\nb\nc')
+        sage: buf = io.StringIO('a\nb\nc')
         sage: print(try_read(buf))
         a
         b
         c
         sage: _ = buf.seek(0); try_read(buf, splitlines=True)
-        [u'a\n', u'b\n', u'c']
+        ['a\n', 'b\n', 'c']
         sage: buf = io.BytesIO(b'a\nb\nc')
         sage: try_read(buf) == b'a\nb\nc'
         True
@@ -168,7 +175,7 @@ def try_read(obj, splitlines=False):
 
     Custom readable::
 
-        sage: class MyFile(object):
+        sage: class MyFile():
         ....:     def read(self): return 'Hello world!'
         sage: try_read(MyFile())
         'Hello world!'
@@ -214,10 +221,17 @@ def SAGE_TMP():
 
         sage: from sage.misc.misc import SAGE_TMP
         sage: SAGE_TMP
+        doctest:warning...
+        DeprecationWarning: SAGE_TMP is deprecated; please use python's
+        "tempfile" module instead.
+        See https://github.com/sagemath/sage/issues/33213 for details.
         l'.../temp/...'
+
     """
+    from sage.misc.superseded import deprecation
+    deprecation(33213, "SAGE_TMP is deprecated; please use python's \"tempfile\" module instead.")
     d = os.path.join(DOT_SAGE, 'temp', HOSTNAME, str(os.getpid()))
-    sage_makedirs(d)
+    os.makedirs(d, exist_ok=True)
     return d
 
 
@@ -231,45 +245,49 @@ def ECL_TMP():
 
         sage: from sage.misc.misc import ECL_TMP
         sage: ECL_TMP
-        l'.../temp/.../ecl'
+        doctest:warning...
+        DeprecationWarning: ECL_TMP is deprecated and is no longer used
+        by the ECL interface in sage
+        See https://github.com/sagemath/sage/issues/33213 for details.
+        ...
+
     """
-    d = os.path.join(str(SAGE_TMP), 'ecl')
-    sage_makedirs(d)
-    return d
+    from sage.misc.superseded import deprecation
+    deprecation(33213, "ECL_TMP is deprecated and is no longer used by the ECL interface in sage")
+    import atexit
+    import tempfile
+    d = tempfile.TemporaryDirectory()
+    result = os.path.join(d.name, 'ecl')
+    atexit.register(lambda: d.cleanup())
+    return result
 
 
 @lazy_string
 def SPYX_TMP():
-    """
+    r"""
     EXAMPLES::
 
         sage: from sage.misc.misc import SPYX_TMP
         sage: SPYX_TMP
-        l'.../temp/.../spyx'
-    """
-    return os.path.join(str(SAGE_TMP), 'spyx')
+        doctest:warning...
+        DeprecationWarning: SPYX_TMP is deprecated;
+        use sage.misc.temporary_file.spyx_tmp instead
+        See https://github.com/sagemath/sage/issues/33213 for details.
+        ...
 
-
-@lazy_string
-def SAGE_TMP_INTERFACE():
     """
-    EXAMPLES::
-
-        sage: from sage.misc.misc import SAGE_TMP_INTERFACE
-        sage: SAGE_TMP_INTERFACE
-        l'.../temp/.../interface'
-    """
-    d = os.path.join(str(SAGE_TMP), 'interface')
-    sage_makedirs(d)
-    return d
+    from sage.misc.temporary_file import spyx_tmp
+    from sage.misc.superseded import deprecation
+    deprecation(33213, "SPYX_TMP is deprecated; use sage.misc.temporary_file.spyx_tmp instead")
+    return spyx_tmp()
 
 
 SAGE_DB = os.path.join(DOT_SAGE, 'db')
-sage_makedirs(SAGE_DB)
+os.makedirs(SAGE_DB, exist_ok=True)
 
 try:
     # Create the matplotlib config directory.
-    sage_makedirs(os.environ["MPLCONFIGDIR"])
+    os.makedirs(os.environ["MPLCONFIGDIR"], exist_ok=True)
 except KeyError:
     pass
 
@@ -342,6 +360,7 @@ def cputime(t=0, subprocesses=False):
         u, s = resource.getrusage(resource.RUSAGE_SELF)[:2]
         return u + s - t
     else:
+        from sage.interfaces.quit import expect_objects
         if t == 0:
             ret = GlobalCputime(cputime())
             for s in expect_objects:
@@ -519,7 +538,7 @@ def union(x, y=None):
 
         sage: answer = union([1,2,3,4], [5,6]); answer
         doctest:...: DeprecationWarning: sage.misc.misc.union is deprecated...
-        See https://trac.sagemath.org/32096 for details.
+        See https://github.com/sagemath/sage/issues/32096 for details.
         [1, 2, 3, 4, 5, 6]
         sage: union([1,2,3,4,5,6], [5,6]) == answer
         True
@@ -529,7 +548,7 @@ def union(x, y=None):
         True
     """
     from sage.misc.superseded import deprecation
-    deprecation(32096, "sage.misc.misc.union is deprecated, use 'list(set(x).union(y)' or a more suitable replacement")
+    deprecation(32096, "sage.misc.misc.union is deprecated, use 'list(set(x).union(y))' or a more suitable replacement")
     if y is None:
         return list(set(x))
     return list(set(x).union(y))
@@ -544,7 +563,7 @@ def uniq(x):
 
         sage: uniq([1, 1, 8, -5, 3, -5, -13, 13, -13])
         doctest:...: DeprecationWarning: the output of uniq(X) being sorted is deprecated; use sorted(set(X)) instead if you want sorted output
-        See https://trac.sagemath.org/27014 for details.
+        See https://github.com/sagemath/sage/issues/27014 for details.
         [-13, -5, 1, 3, 8, 13]
     """
     # After deprecation period, rename _stable_uniq -> uniq
@@ -556,7 +575,7 @@ def uniq(x):
 def _stable_uniq(L):
     """
     Iterate over the elements of ``L``, yielding every element at most
-    once: keep only the first occurance of any item.
+    once: keep only the first occurrence of any item.
 
     The items must be hashable.
 
@@ -759,7 +778,7 @@ def nest(f, n, x):
         x
 
     """
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     n = Integer(n)
 
     if n < 0:
@@ -803,6 +822,8 @@ class BackslashOperator:
         EXAMPLES::
 
             sage: A = random_matrix(ZZ, 4)
+            sage: while A.rank() != 4:
+            ....:     A = random_matrix(ZZ, 4)
             sage: B = random_matrix(ZZ, 4)
             sage: temp = A * BackslashOperator()
             sage: temp.left is A
@@ -918,6 +939,7 @@ def random_sublist(X, s):
         sage: is_sublist(sublist, S)
         True
     """
+    import sage.misc.prandom as random
     return [a for a in X if random.random() <= s]
 
 
@@ -1024,6 +1046,7 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
         True
     """
     from sage.rings.integer import Integer
+    import sage.misc.prandom as random
     N = n if repeat is None else n**repeat
     # We sample on range(N) and create tuples manually since we don't want to create the list of all possible tuples in memory
     for a in random.sample(range(N), max_samples):
@@ -1390,7 +1413,7 @@ def inject_variable(name, value, warn=True):
         sage: a
         272
 
-    That's because warn seem to not reissue twice the same warning:
+    That's because warn seem to not reissue twice the same warning::
 
         sage: from warnings import warn
         sage: warn("blah")

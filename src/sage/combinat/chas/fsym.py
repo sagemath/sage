@@ -158,7 +158,7 @@ class FSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             # Otherwise lift that basis up and then coerce over
             target = getattr(FSym, R._realization_name())()
             return self._coerce_map_via([target], R)
-        return super(FSymBasis_abstract, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def some_elements(self):
         r"""
@@ -284,7 +284,7 @@ class FSymBases(Category_realization_of_parent):
                 sage: TG.basis(degree=3).list()
                 [G[123], G[13|2], G[12|3], G[1|2|3]]
             """
-            from sage.combinat.family import Family
+            from sage.sets.family import Family
             if degree is None:
                 return Family(self._indices, self.monomial)
             else:
@@ -633,7 +633,7 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
                                                          if descent_composition(t) == alpha)
                         return ribbon.module_morphism(R_to_G_on_basis, codomain=self)
                     return self._coerce_map_via([ribbon], R)
-            return super(FreeSymmetricFunctions.Fundamental, self)._coerce_map_from_(R)
+            return super()._coerce_map_from_(R)
 
         def dual_basis(self):
             r"""
@@ -963,7 +963,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
                             return self.sum_of_monomials(StandardTableaux(mu))
                         return s.module_morphism(s_to_F_on_basis, codomain=self)
                     return self._coerce_map_via([s], R)
-            return super(FreeSymmetricFunctions_Dual.FundamentalDual, self)._coerce_map_from_(R)
+            return super()._coerce_map_from_(R)
 
         def dual_basis(self):
             r"""

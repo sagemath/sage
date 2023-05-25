@@ -80,8 +80,8 @@ from sage.misc.latex import latex
 from sage.sets.set import Set_object
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
-from sage.functions.other import binomial
-from sage.symbolic.ring import SR
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.arith.misc import binomial
 
 from sage.combinat.subset import Subsets_sk
 from sage.combinat.composition import Composition, Compositions, composition_iterator_fast
@@ -188,7 +188,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         # Delete empty blocks
         co = [block for block in data if block]
         if not _has_nonempty_sets(co):
-            raise ValueError("cannot view %s as an ordered partition of %s"%(co, parent._Xtup))
+            raise ValueError("cannot view %s as an ordered partition of %s" % (co, parent._Xtup))
 
         ClonableArray.__init__(self, parent, [frozenset(k) for k in co])
         self._multiset = _get_multiset(co)
@@ -1098,6 +1098,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
 
 ##############################################################
 
+
 class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
     r"""
     Ordered Multiset Partitions into Sets.
@@ -1408,7 +1409,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
                 else:
                     w = {i+1: w[i] for i in range(len(w)) if w[i] > 0}
             if not all((a in ZZ and a > 0) for a in w.values()):
-                raise ValueError("%s must be a dictionary of letter-frequencies or a weak composition"%w)
+                raise ValueError("%s must be a dictionary of letter-frequencies or a weak composition" % w)
             else:
                 constraints["weight"] = tuple(w.items())
 
@@ -1543,14 +1544,14 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             constraints.pop("max_length", None)
         min_k = constraints.get("min_length", 0)
         max_k = constraints.get("max_length", infinity)
-        assert min_k <= max_k, "min_length=%s <= max_length=%s"%(min_k, max_k)
+        assert min_k <= max_k, "min_length=%s <= max_length=%s" % (min_k, max_k)
         if min_k == max_k:
             constraints["length"] = constraints.pop("min_length",
                                                     constraints.pop("max_length"))
 
         if "order" in constraints:
-           constraints.pop("min_order", None)
-           constraints.pop("max_order", None)
+            constraints.pop("min_order", None)
+            constraints.pop("max_order", None)
         min_ord = constraints.get("min_order", 0)
         max_ord = constraints.get("max_order", infinity)
         assert min_ord <= max_ord, "min_order=%s <= max_order=%s"%(min_ord, max_ord)
@@ -1786,7 +1787,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             True
         """
         if all(a in ZZ for a in lst) and any(a < 0 for a in lst):
-            raise ValueError("Something is wrong: `_from_list` does not expect to see negative integers; received {}.".format(str(lst)))
+            raise ValueError("`_from_list` does not expect to see negative integers; received {}".format(str(lst)))
         if 0 in list(lst) or '0' in list(lst):
             return self._from_list_with_zeros(lst)
 
@@ -1838,7 +1839,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             else:
                 return c
         else:
-            raise ValueError("ordered multiset partitions into sets do not have repeated entries within blocks (%s received)"%str(co))
+            raise ValueError("ordered multiset partitions into sets do not have repeated entries within blocks (%s received)" % str(co))
 
     def __iter__(self):
         """
@@ -1961,6 +1962,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
 ###############
 
+
 class OrderedMultisetPartitionsIntoSets_all_constraints(OrderedMultisetPartitionsIntoSets):
     r"""
     All ordered multiset partitions into sets (with or without constraints).
@@ -1996,6 +1998,7 @@ class OrderedMultisetPartitionsIntoSets_all_constraints(OrderedMultisetPartition
         sage: Set(C) == Set(E)
         False
     """
+
     def _repr_(self):
         """
         Return a string representation of ``self``.
@@ -2012,10 +2015,12 @@ class OrderedMultisetPartitionsIntoSets_all_constraints(OrderedMultisetPartition
 
 ###############
 
+
 class OrderedMultisetPartitionsIntoSets_n(OrderedMultisetPartitionsIntoSets):
     """
     Ordered multiset partitions into sets of a fixed integer `n`.
     """
+
     def __init__(self, n):
         """
         Initialize ``self``.
@@ -2060,18 +2065,18 @@ class OrderedMultisetPartitionsIntoSets_n(OrderedMultisetPartitionsIntoSets):
         """
         # Dispense with the complex computation for small orders.
         if self._n <= 5:
-            orders = {0:1, 1:1, 2:2, 3:5, 4:11, 5:25}
+            orders = {0: 1, 1: 1, 2: 2, 3: 5, 4: 11, 5: 25}
             return ZZ(orders[self._n])
 
         # We view an ordered multiset partition into sets as a list of 2-regular integer partitions.
         #
         # The 2-regular partitions have a nice generating function (see OEIS:A000009).
         # Below, we take (products of) coefficients of polynomials to compute cardinality.
-        t = SR.var('t')
-        partspoly = prod(1+t**k for k in range(1,self._n+1)).coefficients()
+        t = PowerSeriesRing(ZZ, 't').gen().O(self._n + 1)
+        partspoly = prod(1 + t**k for k in range(1, self._n + 1)).dict()
         deg = 0
         for alpha in composition_iterator_fast(self._n):
-            deg += prod(partspoly[d][0] for d in alpha)
+            deg += prod(partspoly[d] for d in alpha)
         return ZZ(deg)
 
     def _an_element_(self):
@@ -2144,11 +2149,13 @@ class OrderedMultisetPartitionsIntoSets_n(OrderedMultisetPartitionsIntoSets):
         for co in _iterator_size(self._n):
             yield self.element_class(self, co)
 
+
 class OrderedMultisetPartitionsIntoSets_n_constraints(OrderedMultisetPartitionsIntoSets):
     """
     Class of ordered multiset partitions into sets of a fixed integer `n`
     satisfying constraints.
     """
+
     def __init__(self, n, **constraints):
         """
         Mimic class ``OrderedMultisetPartitionsIntoSets_n`` to initialize.
@@ -2182,10 +2189,12 @@ class OrderedMultisetPartitionsIntoSets_n_constraints(OrderedMultisetPartitionsI
 
 ###############
 
+
 class OrderedMultisetPartitionsIntoSets_X(OrderedMultisetPartitionsIntoSets):
     """
     Class of ordered multiset partitions into sets of a fixed multiset `X`.
     """
+
     def __init__(self, X):
         """
         Initialize ``self``.
@@ -2356,6 +2365,7 @@ class OrderedMultisetPartitionsIntoSets_X_constraints(OrderedMultisetPartitionsI
     Class of ordered multiset partitions into sets of a fixed multiset `X`
     satisfying constraints.
     """
+
     def __init__(self, X, **constraints):
         """
         Mimic class ``OrderedMultisetPartitionsIntoSets_X`` to initialize.
@@ -2391,11 +2401,13 @@ class OrderedMultisetPartitionsIntoSets_X_constraints(OrderedMultisetPartitionsI
 
 ###############
 
+
 class OrderedMultisetPartitionsIntoSets_alph_d(OrderedMultisetPartitionsIntoSets):
     """
     Class of ordered multiset partitions into sets of specified order `d`
     over a fixed alphabet `A`.
     """
+
     def __init__(self, A, d):
         """
         Initialize ``self``.
@@ -2521,11 +2533,13 @@ class OrderedMultisetPartitionsIntoSets_alph_d(OrderedMultisetPartitionsIntoSets
                 deg += prod(binomial(len(self._alphabet), a) for a in alpha)
         return ZZ(deg)
 
+
 class OrderedMultisetPartitionsIntoSets_alph_d_constraints(OrderedMultisetPartitionsIntoSets):
     """
     Class of ordered multiset partitions into sets of specified order `d`
     over a fixed alphabet `A` satisfying constraints.
     """
+
     def __init__(self, A, d, **constraints):
         """
         Mimic class ``OrderedMultisetPartitionsIntoSets_alph_d`` to initialize.
@@ -2574,6 +2588,7 @@ class OrderedMultisetPartitionsIntoSets_alph_d_constraints(OrderedMultisetPartit
 
 ###############
 
+
 def _get_multiset(co):
     """
     Construct the multiset (as a sorted tuple) suggested by the lists
@@ -2587,6 +2602,7 @@ def _get_multiset(co):
         (1, 1, 1, 1, 3, 6, 6, 7)
     """
     return tuple(sorted(_concatenate(co), key=str))
+
 
 def _get_weight(lst):
     """
@@ -2604,6 +2620,7 @@ def _get_weight(lst):
     for k in lst:
         out[k] = out.get(k,0) + 1
     return out
+
 
 def _has_nonempty_sets(x):
     """
@@ -2623,6 +2640,7 @@ def _has_nonempty_sets(x):
                 and block and len(set(block)) == len(block))
                for block in x)
 
+
 def _union_of_sets(list_of_sets):
     """
     Return the union of a list of iterables as a frozenset.
@@ -2634,7 +2652,9 @@ def _union_of_sets(list_of_sets):
         sage: _union_of_sets(L)
         frozenset({1, 2, 3, 5, 6, 7})
     """
-    return reduce(lambda a,b: frozenset(a)|frozenset(b), list_of_sets, frozenset())
+    return reduce(lambda a, b: frozenset(a) | frozenset(b),
+                  list_of_sets, frozenset())
+
 
 def _concatenate(list_of_iters):
     """
@@ -2648,6 +2668,7 @@ def _concatenate(list_of_iters):
         (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     """
     return tuple([val for block in list_of_iters for val in block])
+
 
 def _is_finite(constraints):
     """
@@ -2678,6 +2699,7 @@ def _is_finite(constraints):
         # Assume the alphabet is finite
         Bounds = set(["length", "max_length", "order", "max_order"])
         return Bounds.intersection(set(constraints)) != set()
+
 
 def _base_iterator(constraints):
     """
@@ -2765,8 +2787,8 @@ def _base_iterator(constraints):
             if min_ord:
                 min_k = max(1, min_k, min_ord // len(A))
         if infinity not in (max_k, max_ord):
-            return chain(*(_iterator_order(A, ord, range(min_k, max_k+1)) \
-                        for ord in range(min_ord, max_ord+1)))
+            return chain(*(_iterator_order(A, ord, range(min_k, max_k + 1))
+                           for ord in range(min_ord, max_ord + 1)))
     # else
     return None
 
@@ -2948,6 +2970,7 @@ def _iterator_order(A, d, lengths=None):
                 for co in cartesian_product([Subsets_sk(A, a) for a in alpha]):
                     yield tuple(frozenset(X) for X in co)
 
+
 def _descents(w):
     r"""
     Return descent positions in the word ``w``.
@@ -2961,6 +2984,7 @@ def _descents(w):
         []
     """
     return [j for j in range(len(w)-1) if w[j] > w[j+1]]
+
 
 def _break_at_descents(alpha, weak=True):
     r"""
@@ -3003,6 +3027,7 @@ def _break_at_descents(alpha, weak=True):
         Blocks.append(block)
     return Blocks
 
+
 def _refine_block(S, strong=False):
     r"""
     Return the list of all possible refinements of a set `S`.
@@ -3041,7 +3066,7 @@ def _refine_block(S, strong=False):
         ValueError: S (=[]) must be nonempty
     """
     if not S:
-        raise ValueError("S (=%s) must be nonempty"%S)
+        raise ValueError("S (=%s) must be nonempty" % S)
 
     if all(s in ZZ for s in S):
         X = sorted(S)
@@ -3062,6 +3087,7 @@ def _refine_block(S, strong=False):
             out.append(tuple(a))
     return out
 
+
 def _is_initial_segment(lst):
     r"""
     Return True if ``lst`` is an interval in `\ZZ` of the form `[0, 1, \ldots, n]`.
@@ -3077,6 +3103,7 @@ def _is_initial_segment(lst):
         True
     """
     return list(range(max(lst)+1)) == lst
+
 
 def _split_block(S, k=2):
     """
@@ -3113,6 +3140,7 @@ def _split_block(S, k=2):
             a[w[pos]] = a[w[pos]].union({X[pos]})
         out.append(tuple(a))
     return out
+
 
 def _to_minimaj_blocks(T):
     r"""
@@ -3181,6 +3209,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
         ((2, 3, 1), (1, 3))
         sage: b.e(2)
     """
+
     def __init__(self, n, ell, k):
         """
         Initialize ``self``.
@@ -3354,7 +3383,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
         if mu in self:
             return self(mu)
         else:
-            raise ValueError("%s is not an element of %s"%(mu, self))
+            raise ValueError("%s is not an element of %s" % (mu, self))
 
     def val(self, q='q'):
         r"""
@@ -3392,6 +3421,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
             The pair ``(w, breaks)`` may be recovered via ``b.value``.
         """
+
         def _repr_(self):
             """
             Return the string representation of ``self``.
@@ -3505,4 +3535,3 @@ class MinimajCrystal(UniqueRepresentation, Parent):
                 return None
             w = w.f(i)
             return P.element_class(P, (w, breaks))
-

@@ -32,12 +32,11 @@ def have_program(program, path=None):
         True
         sage: have_program('there_is_not_a_program_with_this_name')
         False
-        sage: from sage.env import SAGE_VENV
-        sage: have_program('sage', os.path.join(SAGE_VENV, 'bin'))
+        sage: have_program('sh', '/bin')
         True
         sage: have_program('sage', '/there_is_not_a_path_with_this_name')
         False
-        sage: have_program('there_is_not_a_program_with_this_name', os.path.join(SAGE_VENV, 'bin'))
+        sage: have_program('there_is_not_a_program_with_this_name', "/bin")
         False
     """
     if path is None:
@@ -63,14 +62,14 @@ def restore_cwd(chdir=None):
 
     EXAMPLES::
 
-        sage: import os
         sage: from sage.misc.sage_ostools import restore_cwd
-        sage: from sage.misc.misc import SAGE_TMP
-        sage: cwd = os.getcwd()
-        sage: with restore_cwd(str(SAGE_TMP)):
-        ....:     print(os.getcwd() == os.path.realpath(SAGE_TMP))
-        True
-        sage: cwd == os.getcwd()
+        sage: import tempfile
+        sage: orig_cwd = os.getcwd()
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     with restore_cwd(d):
+        ....:         print(os.getcwd() == orig_cwd)
+        False
+        sage: os.getcwd() == orig_cwd
         True
     """
     orig_cwd = os.getcwd()

@@ -22,9 +22,9 @@ from . import classical
 import sage.libs.symmetrica.all as symmetrica
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.combinat.partition import Partition, _Partitions
-from sage.functions.other import factorial, binomial
-from sage.arith.misc import multinomial
+from sage.combinat.partition import _Partitions
+from sage.arith.misc import multinomial, factorial, binomial
+
 
 class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_classical):
     def __init__(self, Sym):
@@ -189,7 +189,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         INPUT:
 
         - ``self`` -- a monomial symmetric function basis
-        - ``p`` -- a multivariate polynomial over the same base ring as ``self``
+        - ``p`` -- a polynomial over the same base ring as ``self``
 
         OUTPUT:
 
@@ -228,8 +228,8 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             :func:`Partition`, :meth:`Partition.to_exp`
         """
         assert self.base_ring() == p.parent().base_ring()
-        return self.sum_of_terms((Partition(exp=monomial), coeff)
-                                 for monomial, coeff in p.dict().items())
+        from sage.combinat.sf.sfa import _from_polynomial
+        return _from_polynomial(p, self)
 
     def antipode_by_coercion(self, element):
         r"""
@@ -472,13 +472,14 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             if q == 1:
                 if t is None:
                     t = get_variable(self.base_ring(), 't')
+
                 def f(partition):
                     n = 0
                     for part in partition:
                         if part != 1:
                             return 0
                         n += 1
-                    return t**n/factorial(n)
+                    return t**n / factorial(n)
 
                 return self.parent()._apply_module_morphism(self, f, t.parent())
 
@@ -486,6 +487,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             # elementary basis - using the powersum basis would
             # introduce singularities, because it is not a Z-basis
             return self.parent().realization_of().elementary()(self).exponential_specialization(t=t, q=q)
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

@@ -36,7 +36,7 @@ class RealizationsCategory(RegressiveCovariantConstructionCategory):
     TESTS::
 
         sage: Sets().Realizations
-        <bound method Sets_with_category.Realizations of Category of sets>
+        <bound method Realizations of Category of sets>
         sage: Sets().Realizations()
         Category of realizations of sets
         sage: Sets().Realizations().super_categories()
@@ -186,4 +186,3 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
             'multiplicative bases on primitive elements of Sym'
         """
         return "{} of {}".format(self._get_name(), self.base())
-

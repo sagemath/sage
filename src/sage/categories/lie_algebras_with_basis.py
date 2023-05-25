@@ -107,7 +107,7 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 # Otherwise just index by the basis of ``self`` as a fallback
                 return CombinatorialFreeModule(self.base_ring(), self.basis())
 
-        def from_vector(self, v, order=None):
+        def from_vector(self, v, order=None, coerce=False):
             """
             Return the element of ``self`` corresponding to the
             vector ``v`` in ``self.module()``.
@@ -254,4 +254,3 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 for t, c in self.monomial_coefficients(copy=False).items():
                     s += c * gen_dict[t]
             return s
-

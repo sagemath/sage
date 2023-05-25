@@ -30,8 +30,8 @@ class FinitelyFreelyGeneratedLCA(FreelyGeneratedLieConformalAlgebra):
     number of generators.
     """
     def __init__(self, R, index_set=None, central_elements=None, category=None,
-                  element_class=None, prefix=None, names=None, latex_names=None,
-                  **kwds):
+                 element_class=None, prefix=None, names=None, latex_names=None,
+                 **kwds):
         """
         Initialize self.
 
@@ -50,10 +50,10 @@ class FinitelyFreelyGeneratedLCA(FreelyGeneratedLieConformalAlgebra):
         if index_set not in Sets().Finite():
             raise TypeError("index_set must be a finite set")
 
-        super(FinitelyFreelyGeneratedLCA,self).__init__(R,
-                    index_set=index_set, central_elements=central_elements,
-                    category=category, element_class=element_class,
-                    prefix=prefix, **kwds)
+        super().__init__(R,
+                         index_set=index_set, central_elements=central_elements,
+                         category=category, element_class=element_class,
+                         prefix=prefix, **kwds)
         self._ngens = len(self._generators)
         self._names = names
         self._latex_names = latex_names

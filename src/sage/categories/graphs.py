@@ -134,4 +134,3 @@ class Graphs(Category_singleton):
                  Category of metric spaces]
             """
             return [Sets().Metric()]
-

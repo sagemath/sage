@@ -1,7 +1,7 @@
 """
 Examples of Combinatorial Species
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,8 +13,8 @@ Examples of Combinatorial Species
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .set_species import SetSpecies
 from .partition_species import PartitionSpecies
@@ -32,23 +32,24 @@ from .functorial_composition_species import FunctorialCompositionSpecies
 
 from sage.misc.cachefunc import cached_function
 
+
 @cached_function
 def SimpleGraphSpecies():
     """
-    Returns the species of simple graphs.
+    Return the species of simple graphs.
 
     EXAMPLES::
 
         sage: S = species.SimpleGraphSpecies()
         sage: S.generating_series().counts(10)
         [1, 1, 2, 8, 64, 1024, 32768, 2097152, 268435456, 68719476736]
-        sage: S.cycle_index_series().coefficients(5)
+        sage: S.cycle_index_series()[:5]
         [p[],
          p[1],
          p[1, 1] + p[2],
          4/3*p[1, 1, 1] + 2*p[2, 1] + 2/3*p[3],
          8/3*p[1, 1, 1, 1] + 4*p[2, 1, 1] + 2*p[2, 2] + 4/3*p[3, 1] + p[4]]
-        sage: S.isotype_generating_series().coefficients(6)
+        sage: S.isotype_generating_series()[:6]
         [1, 1, 2, 4, 11, 34]
 
     TESTS::
@@ -66,18 +67,17 @@ def SimpleGraphSpecies():
     E = SetSpecies()
     E2 = SetSpecies(size=2)
     WP = SubsetSpecies()
-    P2 = E2*E
+    P2 = E2 * E
     return WP.functorial_composition(P2)
 
 
 @cached_function
 def BinaryTreeSpecies():
     r"""
-    Return the species of binary trees on n leaves.
+    Return the species of binary trees on `n` leaves.
 
-    The species of
-    binary trees B is defined by B = X + B\*B where X is the singleton
-    species.
+    The species of binary trees `B` is defined by `B = X + B \cdot B`,
+    where `X` is the singleton species.
 
     EXAMPLES::
 
@@ -103,16 +103,18 @@ def BinaryTreeSpecies():
         sage: oeis(seq)[0]                              # optional -- internet
         A000108: Catalan numbers: ...
     """
-    B = CombinatorialSpecies()
+    B = CombinatorialSpecies(min=1)
     X = SingletonSpecies()
-    B.define(X+B*B)
+    B.define(X + B * B)
     return B
+
 
 @cached_function
 def BinaryForestSpecies():
     """
-    Returns the species of binary forests. Binary forests are defined
-    as sets of binary trees.
+    Return the species of binary forests.
+
+    Binary forests are defined as sets of binary trees.
 
     EXAMPLES::
 
@@ -121,7 +123,7 @@ def BinaryForestSpecies():
         [1, 1, 3, 19, 193, 2721, 49171, 1084483, 28245729, 848456353]
         sage: F.isotype_generating_series().counts(10)
         [1, 1, 2, 4, 10, 26, 77, 235, 758, 2504]
-        sage: F.cycle_index_series().coefficients(7)
+        sage: F.cycle_index_series()[:7]
         [p[],
          p[1],
          3/2*p[1, 1] + 1/2*p[2],
@@ -140,3 +142,6 @@ def BinaryForestSpecies():
     S = SetSpecies()
     F = S(B)
     return F
+
+
+del cached_function  # so it doesn't get picked up by tab completion

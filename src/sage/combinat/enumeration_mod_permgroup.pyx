@@ -169,7 +169,7 @@ cpdef bint is_canonical(list sgs, ClonableIntArray v) except -1:
     l = len(v)
     to_analyse = set([v])
     for i in range(l-1):
-        new_to_analyse = set([])
+        new_to_analyse = set()
         transversal = sgs[i]
         for list_test in to_analyse:
             for x in transversal:
@@ -218,7 +218,7 @@ cpdef ClonableIntArray canonical_representative_of_orbit_of(list sgs, ClonableIn
     l = len(v)
     to_analyse = set([v])
     for i in range(l-1):
-        new_to_analyse = set([])
+        new_to_analyse = set()
         for list_test in to_analyse:
             for x in sgs[i]:
                 child = x._act_on_array_on_position(list_test)
@@ -278,7 +278,7 @@ cpdef set orbit(list sgs, ClonableIntArray v):
     l = len(v)
     to_analyse = set([v])
     for i in range(l-1):
-        new_to_analyse = set([])
+        new_to_analyse = set()
         for list_test in to_analyse:
             for x in sgs[i]:
                 child = x._act_on_array_on_position(list_test)

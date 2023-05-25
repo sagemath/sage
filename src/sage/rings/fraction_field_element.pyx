@@ -310,10 +310,10 @@ cdef class FractionFieldElement(FieldElement):
         a = self.numerator()
         b = self.denominator()
         if not root:
-            return  (a*b).is_square( root = False )
-        is_sqr, sq_rt = (a*b).is_square( root = True )
+            return (a * b).is_square(root=False)
+        is_sqr, sq_rt = (a * b).is_square(root=True)
         if is_sqr:
-            return True, self._parent( sq_rt/b )
+            return True, self._parent(sq_rt / b)
         return False, None
 
     def nth_root(self, n):
@@ -861,15 +861,15 @@ cdef class FractionFieldElement(FieldElement):
             sage: a = x^2; a
             x^2
             sage: type(a.numerator())
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: type(a.denominator())
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: a = x^(-2); a
             1/x^2
             sage: type(a.numerator())
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: type(a.denominator())
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: x^0
             1
             sage: ((x+y)/(x-y))^2
@@ -977,7 +977,7 @@ cdef class FractionFieldElement(FieldElement):
         """
         return self.__numerator.valuation(v) - self.__denominator.valuation(v)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` if this element is nonzero.
 

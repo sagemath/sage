@@ -79,7 +79,7 @@ EXAMPLES::
 """
 
 
-class InterfaceMagic(object):
+class InterfaceMagic():
 
     @classmethod
     def all_iter(cls):
@@ -92,7 +92,10 @@ class InterfaceMagic(object):
             sage: next(InterfaceMagic.all_iter())
             <sage.repl.interface_magic.InterfaceMagic object at 0x...>
         """
-        import sage.interfaces.all
+        try:
+            import sage.interfaces.all
+        except ImportError:
+            return
         for name, obj in sage.interfaces.all.__dict__.items():
             if isinstance(obj, sage.interfaces.interface.Interface):
                 yield cls(name, obj)
@@ -260,7 +263,7 @@ class InterfaceMagic(object):
             2
             120
             sage: shell.run_cell('%%gap foo\n1+1;\n')
-            ...File "<string>", line unknown
+            ...File...<string>...
             SyntaxError: Interface magics have no options, got "foo"
             <BLANKLINE>
             sage: shell.run_cell('%%gap?')

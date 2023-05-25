@@ -23,12 +23,6 @@ Upstream Contact
 -  Website http://bzip.org/
 -  Author: Julian Seward <julian@bzip.org>
 
-Dependencies
-------------
-
-None
-
-
 Special Update/Build Instructions
 ---------------------------------
 

@@ -12,7 +12,7 @@ AUTHORS:
 
 - Mike Zabrocki - `k`-bounded Hall Littlewood P and dual `k`-Schur functions (2012-12-02)
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Chris Berg <chrisjamesberg@gmail.com>
 #       Based off of similar code of Jason Bandlow, Anne Schilling
 #                                    and Mike Zabrocki
@@ -26,19 +26,20 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.all import GradedHopfAlgebras
+from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.combinat.partition import Partition, Partitions, Partitions_all_bounded, PartitionsGreatestLE
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.realizations import Realizations, Category_realization_of_parent
 from sage.misc.cachefunc import cached_method
 from sage.misc.constant_function import ConstantFunction
 from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
-from sage.rings.all import Integer, ZZ
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.cpython.getattr import raw_getattr
 
 
@@ -130,7 +131,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             self._quotient_basis = Sym.m()
         else:
             self._quotient_basis = Sym.hall_littlewood(t=self.t).P()
-        Parent.__init__(self, category = GradedHopfAlgebras(R).Quotients().WithRealizations())
+        Parent.__init__(self, category=GradedHopfAlgebras(R).Quotients().WithRealizations())
         self.indices = ConstantFunction(Partitions_all_bounded(k))
 
     def ambient(self):
@@ -180,9 +181,9 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             4-Bounded Quotient of Symmetric Functions over Real Field with 53 bits of precision with t=1.00000000000000
         """
         ending = ""
-        if str(self.t)!='t':
-            ending = ' with t=%s'%(self.t)
-        return "%s-Bounded Quotient of Symmetric Functions over %s"%(self.k, self.base_ring())+ending
+        if str(self.t) != 't':
+            ending = ' with t=%s' % (self.t)
+        return "%s-Bounded Quotient of Symmetric Functions over %s" % (self.k, self.base_ring())+ending
 
     def kmonomial(self):
         r"""
@@ -281,11 +282,11 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
         if m < w.length():
             return 0
         ans = self.zero()
-        for la in Partitions(m, max_part = self.k):
-            ans += g.homogeneous_basis_noncommutative_variables_zero_Hecke((la)).coefficient(w)*mon(la)
+        for la in Partitions(m, max_part=self.k):
+            ans += g.homogeneous_basis_noncommutative_variables_zero_Hecke((la)).coefficient(w) * mon(la)
         return ans
 
-    def _AffineGrothendieck(self, w,m):
+    def _AffineGrothendieck(self, w, m):
         r"""
         Returns the affine Grothendieck polynomial indexed by the affine permutation
         ``w``.  Because this belongs to the completion of the algebra, and hence is an
@@ -452,6 +453,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
         """
         return [ self.km(), self.kHLP(), self.affineSchur(), self.dual_k_Schur()]
 
+
 class KBoundedQuotientBases(Category_realization_of_parent):
     r"""
     The category of bases for the `k`-bounded subspace of symmetric functions.
@@ -487,13 +489,13 @@ class KBoundedQuotientBases(Category_realization_of_parent):
             sage: KQB = KBoundedQuotientBases(Q)
             sage: KQB.super_categories()
             [Category of realizations of 3-Bounded Quotient of Symmetric Functions over Univariate Polynomial Ring in t over Rational Field with t=1,
-             Join of Category of graded hopf algebras with basis over Univariate Polynomial Ring in t over Rational Field and
-                     Category of quotients of algebras over Univariate Polynomial Ring in t over Rational Field]
+             Join of Category of graded hopf algebras with basis over Univariate Polynomial Ring in t over Rational Field
+                 and Category of quotients of algebras over Univariate Polynomial Ring in t over Rational Field
+                 and Category of quotients of graded modules with basis over Univariate Polynomial Ring in t over Rational Field]
         """
         R = self.base().base_ring()
         category = GradedHopfAlgebrasWithBasis(R)
         return [Realizations(self.base()), category.Quotients()]
-
 
     class ParentMethods:
 
@@ -554,11 +556,11 @@ class KBoundedQuotientBases(Category_realization_of_parent):
                 if x == 0:
                     return self.zero()
                 else:
-                    raise TypeError("do not know how to make x (= %s) an element of %s"%(x, self))
+                    raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
             #x is an element of the basis enumerated set;
             elif x in self._indices:
                 return self.monomial(self._indices(x))
-            raise TypeError("do not know how to make x (= %s) an element of self (=%s)"%(x,self))
+            raise TypeError("do not know how to make x (= %s) an element of self (=%s)" % (x, self))
 
         def ambient(self):
             r"""
@@ -877,10 +879,12 @@ class KBoundedQuotientBases(Category_realization_of_parent):
     class ElementMethods:
         pass
 
+
 class KBoundedQuotientBasis(CombinatorialFreeModule):
     r"""
     Abstract base class for the bases of the `k`-bounded quotient.
     """
+
     def __init__(self, kBoundedRing, prefix):
         r"""
         Initializes ``self``.
@@ -953,7 +957,7 @@ class kMonomial(KBoundedQuotientBasis):
             sage: km._repr_()
             '3-Bounded Quotient of Symmetric Functions over Rational Field with t=1 in the 3-bounded monomial basis'
         """
-        return self.realization_of()._repr_()+' in the %s-bounded monomial basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the %s-bounded monomial basis' % (self.k)
 
     def retract(self, la):
         r"""
@@ -1036,6 +1040,7 @@ class kMonomial(KBoundedQuotientBasis):
         m = self._kBoundedRing.ambient().m()
         return m._from_dict(dict(self(la)))
 
+
 class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
     r"""
     The basis of P Hall-Littlewood symmetric functions indexed by partitions with first
@@ -1075,7 +1080,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
             sage: kHLP._repr_()
             '3-Bounded Quotient of Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the 3-bounded Hall-Littlewood P basis'
         """
-        return self.realization_of()._repr_()+' in the %s-bounded Hall-Littlewood P basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the %s-bounded Hall-Littlewood P basis' % (self.k)
 
     def _m_to_kHLP_on_basis(self, la):
         r"""
@@ -1233,6 +1238,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
         HLP = self._kBoundedRing.ambient().hall_littlewood(t=self.t).P()
         return HLP._from_dict(dict(self(la)))
 
+
 class DualkSchurFunctions(KBoundedQuotientBasis):
     r"""
     This basis is dual to the `k`-Schur functions.  The expansion is given
@@ -1279,7 +1285,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
             sage: dks3._repr_()
             '3-Bounded Quotient of Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the dual 3-Schur basis'
         """
-        return self.realization_of()._repr_()+' in the dual %s-Schur basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the dual %s-Schur basis' % (self.k)
 
     def _dks_to_khlp_on_basis(self, la):
         r"""
@@ -1356,6 +1362,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
         ks = kB.kschur()
         return sum( Qp(ks(x)).coefficient(la) * self(x) for x in PartitionsGreatestLE(sum(la), self.k))
 
+
 class AffineSchurFunctions(KBoundedQuotientBasis):
     r"""
     This basis is dual to the `k`-Schur functions at `t=1`.  This realization
@@ -1401,7 +1408,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
             sage: F._repr_()
             '3-Bounded Quotient of Symmetric Functions over Rational Field with t=1 in the 3-bounded affine Schur basis'
         """
-        return self.realization_of()._repr_()+' in the %s-bounded affine Schur basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the %s-bounded affine Schur basis' % (self.k)
 
     def _F_to_m_on_basis(self, la):
         r"""
@@ -1465,4 +1472,3 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
         h = kB.khomogeneous()
         ks = kB.kschur()
         return sum( h(ks(x)).coefficient(la) * self(x) for x in PartitionsGreatestLE(sum(la), self.k))
-

@@ -63,7 +63,8 @@ class ExtendedCode(AbstractLinearCode):
         """
         if not isinstance(C, AbstractLinearCode):
             raise ValueError("Provided code must be a linear code")
-        super(ExtendedCode, self).__init__(C.base_ring(), C.length() + 1, "ExtendedMatrix", "OriginalDecoder")
+        super().__init__(C.base_ring(), C.length() + 1,
+                         "ExtendedMatrix", "OriginalDecoder")
         self._original_code = C
         self._dimension = C.dimension()
 
@@ -178,14 +179,6 @@ class ExtendedCode(AbstractLinearCode):
         return vector(F, c_list)
 
 
-
-
-
-
-
-
-
-
 class ExtendedCodeExtendedMatrixEncoder(Encoder):
     r"""
     Encoder using original code's generator matrix to compute the extended code's one.
@@ -208,7 +201,7 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
         if not isinstance(code, ExtendedCode):
             raise TypeError("code has to be an instance of ExtendedCode class")
 
-        super(ExtendedCodeExtendedMatrixEncoder, self).__init__(code)
+        super().__init__(code)
 
     def _repr_(self):
         r"""
@@ -285,14 +278,6 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
         return M
 
 
-
-
-
-
-
-
-
-
 class ExtendedCodeOriginalCodeDecoder(Decoder):
     r"""
     Decoder which decodes through a decoder over the original code.
@@ -344,8 +329,8 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
         self._decoder_type = copy(self._decoder_type)
         self._decoder_type.remove("dynamic")
         self._decoder_type = self._original_decoder.decoder_type()
-        super(ExtendedCodeOriginalCodeDecoder, self).__init__(code, code.ambient_space(),\
-                self._original_decoder.connected_encoder())
+        super().__init__(code, code.ambient_space(),
+                         self._original_decoder.connected_encoder())
 
     def _repr_(self):
         r"""

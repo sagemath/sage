@@ -1,5 +1,5 @@
 r"""
-Watkins Symmetric Power `L`-function Calculator
+Watkins symmetric power `L`-function calculator
 
 SYMPOW is a package to compute special values of symmetric power
 elliptic curve L-functions. It can compute up to about 64 digits of
@@ -49,7 +49,7 @@ ACKNOWLEDGEMENT (from sympow readme):
 import os
 
 from sage.structure.sage_object import SageObject
-from sage.misc.all import pager
+from sage.misc.pager import pager
 from sage.misc.verbose import verbose
 import sage.rings.all
 

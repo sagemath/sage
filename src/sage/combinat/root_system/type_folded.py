@@ -178,13 +178,13 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
         virtual = CartanType(virtual)
         if isinstance(orbit, dict):
             i_set = cartan_type.index_set()
-            orb = [None]*len(i_set)
-            for k,v in orbit.items():
+            orb = [None] * len(i_set)
+            for k, v in orbit.items():
                 orb[i_set.index(k)] = tuple(v)
             orbit = tuple(orb)
         else:
             orbit = tuple(map(tuple, orbit))
-        return super(CartanTypeFolded, cls).__classcall__(cls, cartan_type, virtual, orbit)
+        return super().__classcall__(cls, cartan_type, virtual, orbit)
 
     def __init__(self, cartan_type, folding_of, orbit):
         """
@@ -284,6 +284,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
         """
         if self._cartan_type.is_finite():
             L = self._cartan_type.root_system().ambient_space()
+
             def f(i):
                 root = L.simple_root(i)
                 coroot = L.simple_coroot(i)
@@ -296,4 +297,3 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
             cmax = max(c)
             return Family(dict( (i, int(cmax / c[i]))
                                 for i in self._cartan_type.index_set() ))
-

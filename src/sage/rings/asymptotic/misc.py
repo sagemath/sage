@@ -17,7 +17,7 @@ Functions, Classes and Methods
 ==============================
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2015 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,8 +25,7 @@ Functions, Classes and Methods
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
-
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object import SageObject
@@ -141,13 +140,19 @@ def parent_to_repr_short(P):
         sage: parent_to_repr_short(Zmod(3)['g'])
         'Univariate Polynomial Ring in g over Ring of integers modulo 3'
     """
-    from sage.rings.all import RR, CC, RIF, CIF, RBF, CBF
+    from sage.rings.cc import CC
+    from sage.rings.cif import CIF
+    from sage.rings.complex_arb import CBF
     from sage.rings.integer_ring import ZZ
     from sage.rings.rational_field import QQ
+    from sage.rings.real_arb import RBF
+    from sage.rings.real_mpfi import RIF
+    from sage.rings.real_mpfr import RR
     from sage.symbolic.ring import SR
     from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
     from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
     from sage.rings.power_series_ring import is_PowerSeriesRing
+
     def abbreviate(P):
         try:
             return P._repr_short_()
@@ -263,7 +268,7 @@ def split_str_by_op(string, op, strip_parentheses=True):
                 return False
         return bool(open == 0)
 
-    factors = list()
+    factors = []
     balanced = True
     if string and op is not None and string.startswith(op):
         raise ValueError("'%s' is invalid since it starts with a '%s'." %
@@ -351,10 +356,8 @@ def repr_op(left, op, right=None, latex=False):
         if any(sig in s for sig in signals) or latex and s.startswith(r'\frac'):
             if latex:
                 return r'\left({}\right)'.format(s)
-            else:
-                return '({})'.format(s)
-        else:
-            return s
+            return '({})'.format(s)
+        return s
 
     return add_parentheses(left, op) + op + add_parentheses(right, op)
 
@@ -837,7 +840,77 @@ class NotImplementedOZero(NotImplementedError):
             exact_part = asymptotic_ring.zero()
         self.exact_part = exact_part
 
-        super(NotImplementedOZero, self).__init__(message)
+        super().__init__(message)
+
+
+class NotImplementedBZero(NotImplementedError):
+    r"""
+    A special :python:`NotImplementedError<library/exceptions.html#exceptions.NotImplementedError>`
+    which is raised when the result is B(0) which means 0
+    for sufficiently large values of the variable.
+    """
+    def __init__(self, asymptotic_ring=None, var=None, exact_part=0):
+        r"""
+        INPUT:
+
+        - ``asymptotic_ring`` -- (default: ``None``) an :class:`AsymptoticRing` or ``None``.
+
+        - ``var`` -- (default: ``None``) a string.
+
+        Either ``asymptotic_ring`` or ``var`` has to be specified.
+
+        - ``exact_part`` -- (default: ``0``) asymptotic expansion
+
+        EXAMPLES::
+
+            sage: A = AsymptoticRing('n^ZZ', ZZ)
+            sage: from sage.rings.asymptotic.misc import NotImplementedBZero
+
+            sage: raise NotImplementedBZero(A)
+            Traceback (most recent call last):
+            ...
+            NotImplementedBZero: got B(0)
+            The error term B(0) means 0 for sufficiently large n.
+
+            sage: raise NotImplementedBZero(var='m')
+            Traceback (most recent call last):
+            ...
+            NotImplementedBZero: got B(0)
+            The error term B(0) means 0 for sufficiently large m.
+
+            sage: AR.<n> = AsymptoticRing('n^QQ', QQ)
+            sage: AR(0).B(42)
+            Traceback (most recent call last):
+            ...
+            NotImplementedBZero: got B(0)
+            The error term B(0) means 0 for sufficiently large n.
+
+        TESTS::
+
+            sage: raise NotImplementedBZero(A, var='m')
+            Traceback (most recent call last):
+            ...
+            ValueError: specify either 'asymptotic_ring' or 'var'
+            sage: raise NotImplementedBZero()
+            Traceback (most recent call last):
+            ...
+            ValueError: specify either 'asymptotic_ring' or 'var'
+        """
+        if (asymptotic_ring is None) == (var is None):
+            raise ValueError("specify either 'asymptotic_ring' or 'var'")
+
+        if var is None:
+            var = ', '.join(str(g) for g in asymptotic_ring.gens())
+        message = ('got {}\n'.format(('{} + '.format(exact_part) if exact_part else '')
+                                     + 'B(0)') +
+                   'The error term B(0) '
+                   'means 0 for sufficiently large {}.'.format(var))
+
+        if asymptotic_ring is not None and isinstance(exact_part, int) and exact_part == 0:
+            exact_part = asymptotic_ring.zero()
+        self.exact_part = exact_part
+
+        super().__init__(message)
 
 
 def transform_category(category,
@@ -1005,7 +1078,7 @@ class Locals(dict):
             <function log at 0x...>
         """
         try:
-            return super(Locals, self).__getitem__(key)
+            return super().__getitem__(key)
         except KeyError as ke:
             try:
                 return self.default_locals()[key]
@@ -1112,8 +1185,7 @@ class WithLocals(SageObject):
         """
         if locals is None:
             return Locals()
-        else:
-            return Locals(locals)
+        return Locals(locals)
 
     def locals(self, locals=None):
         r"""

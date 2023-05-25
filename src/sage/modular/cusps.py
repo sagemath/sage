@@ -28,17 +28,18 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import Rational, Integer, ZZ, QQ
-from sage.rings.infinity import Infinity, InfinityRing
-
-from sage.structure.parent import Parent
-from sage.misc.fast_methods import Singleton
-from sage.structure.element import Element, is_InfinityElement
-from sage.structure.richcmp import richcmp
-
 from sage.libs.pari.all import pari, pari_gen
+from sage.misc.fast_methods import Singleton
 from sage.modular.modsym.p1list import lift_to_sl2z_llong
+from sage.rings.infinity import Infinity, InfinityRing
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational import Rational
+from sage.rings.rational_field import QQ
+from sage.structure.element import Element, is_InfinityElement
 from sage.structure.element import is_Matrix
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
 
 
 class Cusp(Element):
@@ -214,7 +215,7 @@ class Cusp(Element):
             self.__b = ZZ.zero()
             return
 
-        if isinstance(a, Integer) or isinstance(a, Rational):
+        if isinstance(a, (Integer, Rational)):
             r = a / ZZ(b)
         elif is_InfinityElement(a):
             self.__a = ZZ.one()
@@ -332,7 +333,7 @@ class Cusp(Element):
 
         EXAMPLES::
 
-            sage: x=Cusp(6,9); x
+            sage: x = Cusp(6,9); x
             2/3
             sage: x.numerator()
             2
@@ -349,7 +350,7 @@ class Cusp(Element):
 
         EXAMPLES::
 
-            sage: x=Cusp(6,9); x
+            sage: x = Cusp(6,9); x
             2/3
             sage: x.denominator()
             3
@@ -900,7 +901,7 @@ class Cusp(Element):
             1/170
             sage: Cusp(oo).galois_action(3, 50)
             Infinity
-            sage: c=Cusp(0).galois_action(3, 50); c
+            sage: c = Cusp(0).galois_action(3, 50); c
             50/17
             sage: Gamma0(50).reduce_cusp(c)
             0

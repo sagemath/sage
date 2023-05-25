@@ -71,8 +71,9 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
-from sage.plot.all import line, Graphics, polygon
-from sage.plot.plot3d.shapes2 import line3d
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", ["line", "Graphics", "polygon"])
+lazy_import("sage.plot.plot3d.shapes2", "line3d")
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.geometry.fan import Fan
 from sage.matrix.constructor import matrix
@@ -1108,12 +1109,18 @@ class GroebnerFan(SageObject):
             self.__gfan_mod = mod
             return self.__gfan_mod
 
-    def gfan(self, cmd='bases', I=None, format=True):
+    def gfan(self, cmd='bases', I=None, format=None):
         r"""
         Return the ``gfan`` output as a string given an input ``cmd``.
 
         The default is to produce the list of reduced Groebner bases
         in ``gfan`` format.
+
+        INPUT:
+
+        - ``cmd`` -- string (default:``'bases'``), GFan command
+        - ``I`` -- ideal (default:``None``)
+        - ``format`` -- bool (default:``None``), deprecated
 
         EXAMPLES::
 
@@ -1122,11 +1129,18 @@ class GroebnerFan(SageObject):
             sage: gf.gfan()
             'Q[x,y]\n{{\ny^9-1-y+3*y^3-3*y^6,\nx+1-y^3}\n,\n{\nx^3-y,\ny^3-1-x}\n,\n{\nx^9-1-x,\ny-x^3}\n}\n'
         """
+        if format is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(33468, 'argument `format` is ignored in the code: '
+                               'it is now deprecated. Please update your code '
+                               'without this argument as it will be removed in a later '
+                               'version of SageMath.')
+
         if I is None:
             I = self._gfan_ideal()
         # todo -- put something in here (?) when self.__symmetry isn't None...
         cmd += self._gfan_mod()
-        s = gfan(I, cmd, verbose=self.__verbose, format=format)
+        s = gfan(I, cmd, verbose=self.__verbose)
         if s.strip() == '{':
             raise RuntimeError("Error running gfan command %s on %s" % (cmd, self))
         return s
@@ -1216,7 +1230,7 @@ class GroebnerFan(SageObject):
         try:
             return self.__homogeneity_space
         except AttributeError:
-            h = self.gfan(cmd='homogeneityspace', format=False)
+            h = self.gfan(cmd='homogeneityspace')
             self.__homogeneity_space = h
             return h
 
@@ -1291,7 +1305,7 @@ class GroebnerFan(SageObject):
             cmd += ' --shiftVariables %s' % shift
         if larger:
             cmd += ' -L'
-        s = self.gfan(cmd, I=self._gfan_reduced_groebner_bases().replace(' ', ','), format=False)
+        s = self.gfan(cmd, I=self._gfan_reduced_groebner_bases().replace(' ', ','))
         if file is not None:
             with open(file, 'w') as f:
                 f.write(s)
@@ -1317,7 +1331,7 @@ class GroebnerFan(SageObject):
             r_lines = r_lines + line(x, rgbcolor=rgbcolor)
         if polyfill:
             vals = [polyfill(q) for q in self.reduced_groebner_bases()]
-            if isinstance(vals[0], list) or isinstance(vals[0], tuple):
+            if isinstance(vals[0], (list, tuple)):
                 if scale_colors:
                     vmins = [min([q[i] for q in vals]) for i in (0, 1, 2)]
                     vmaxs = [max([q[i] for q in vals]) for i in (0, 1, 2)]
@@ -1514,7 +1528,7 @@ class GroebnerFan(SageObject):
         try:
             return self.__stats
         except AttributeError:
-            s = self.gfan(cmd='stats', I=self._gfan_reduced_groebner_bases().replace(' ', ','), format=False)
+            s = self.gfan(cmd='stats', I=self._gfan_reduced_groebner_bases().replace(' ', ','))
             d = {}
             for v in s.split('\n'):
                 if v:

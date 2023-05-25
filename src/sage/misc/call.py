@@ -18,7 +18,7 @@ Attribute and method calling
 #############################################
 # Operators
 #############################################
-class AttrCallObject(object):
+class AttrCallObject():
     def __init__(self, name, args, kwds):
         """
         TESTS::
@@ -109,10 +109,12 @@ class AttrCallObject(object):
         This method tries to ensure that, when two ``attrcall``
         objects are equal, they have the same hash value.
 
-        .. warning:: dicts are not hashable, so we instead hash their
-        items; however the order of those items might differ. The
-        proper fix would be to use a frozen dict for ``kwds``, when
-        frozen dicts will be available in Python.
+        .. warning::
+
+            dicts are not hashable, so we instead hash their
+            items; however the order of those items might differ. The
+            proper fix would be to use a frozen dict for ``kwds``, when
+            frozen dicts will be available in Python.
 
         EXAMPLES::
 
@@ -120,7 +122,7 @@ class AttrCallObject(object):
             sage: hash(x)       # random # indirect doctest
             210434060
             sage: type(hash(x))
-            <type 'int'>
+            <class 'int'>
             sage: y = attrcall('core', 3, blah = 1, flatten = True)
             sage: hash(y) == hash(x)
             True

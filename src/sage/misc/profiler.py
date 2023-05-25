@@ -29,7 +29,7 @@ class Profiler:
     EXAMPLES::
 
         sage: def f():                        # not tested
-        ....:     p = Profiler()              # not tested
+        ....:     p = Profiler()
 
     Calling ``p(message)`` creates a checkpoint::
 
@@ -61,7 +61,7 @@ class Profiler:
 
     .. SEEALSO:: :func:`runsnake`
 
-    .. todo::
+    .. TODO::
 
         - Add Pyrex source code inspection (I assume it doesn't
           currently do this)

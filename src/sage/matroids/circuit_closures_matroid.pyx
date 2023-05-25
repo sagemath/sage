@@ -276,9 +276,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
             sage: M = matroids.named_matroids.Vamos()
             sage: X = M._max_independent(set(['a', 'c', 'd', 'e', 'f']))
-            sage: sorted(X) # py2
-            ['a', 'd', 'e', 'f']
-            sage: sorted(X) # py3 random
+            sage: sorted(X)  # random
             ['a', 'd', 'e', 'f']
             sage: M.is_independent(X)
             True
@@ -519,7 +517,7 @@ cdef class CircuitClosuresMatroid(Matroid):
             N.rename(getattr(self, '__custom_name'))
         return N
 
-    def __deepcopy__(self, memo={}):
+    def __deepcopy__(self, memo=None):
         """
         Create a deep copy.
 
@@ -536,6 +534,8 @@ cdef class CircuitClosuresMatroid(Matroid):
             sage: M.groundset() is N.groundset()
             False
         """
+        if memo is None:
+            memo = {}
         from copy import deepcopy
         # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
         N = CircuitClosuresMatroid(groundset=deepcopy(self._groundset, memo), circuit_closures=deepcopy(self._circuit_closures, memo))

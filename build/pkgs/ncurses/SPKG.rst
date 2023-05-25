@@ -37,12 +37,6 @@ Upstream Contact
 
 -  bug-ncurses@gnu.org
 
-Dependencies
-------------
-
-None
-
-
 Special Update/Build Instructions
 ---------------------------------
 

@@ -106,7 +106,7 @@ from sage.rings.integer cimport Integer
 from sage.categories.homset import Hom
 from sage.structure.element cimport Element
 
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_base
 from sage.rings.morphism cimport RingHomomorphism, RingHomomorphism_im_gens, FrobeniusEndomorphism_generic
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
@@ -227,9 +227,9 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         """
         domain = parent.domain()
         codomain = parent.codomain()
-        if not is_FiniteField(domain):
+        if not isinstance(domain, FiniteField_base):
             raise TypeError("The domain is not a finite field or does not provide the required interface for finite fields")
-        if not is_FiniteField(codomain):
+        if not isinstance(codomain, FiniteField_base):
             raise TypeError("The codomain is not a finite field or does not provide the required interface for finite fields")
         if domain.characteristic() != codomain.characteristic() or codomain.degree() % domain.degree() != 0:
             raise ValueError("No embedding of %s into %s" % (domain, codomain))
@@ -271,7 +271,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
               To:   Finite Field in z2 of size 2^2
               Defn: 1 |--> 1
         """
-        cdef FiniteFieldHomomorphism_generic out = super(FiniteFieldHomomorphism_generic, self).__copy__()
+        cdef FiniteFieldHomomorphism_generic out = super().__copy__()
         out._section_class = self._section_class
         return out
 
@@ -522,7 +522,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             ...
             TypeError: The domain is not a finite field or does not provide the required interface for finite fields
         """
-        if not is_FiniteField(domain):
+        if not isinstance(domain, FiniteField_base):
             raise TypeError("The domain is not a finite field or does not provide the required interface for finite fields")
         try:
             n = Integer(n)
@@ -619,7 +619,10 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             sage: Frob(t) == t^5
             True
         """
-        return x ** self._q
+        if self.is_identity():
+            return x
+        else:
+            return x.pth_power(self._power)
 
 
     def order(self):
@@ -826,31 +829,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         return Morphism.__hash__(self)
 
-    cdef dict _extra_slots(self):
-        r"""
-        Helper function for copying and pickling
-
-        TESTS::
-
-            sage: k.<t> = GF(5^3)
-            sage: Frob = k.frobenius_endomorphism(2)
-            sage: Frob.__reduce__()  # indirect doctest
-            (<built-in function unpickle_map>,
-             (<class 'sage.rings.finite_rings.hom_finite_field_givaro.FrobeniusEndomorphism_givaro'>,
-              Automorphism group of Finite Field in t of size 5^3,
-              {},
-              {'_codomain': Finite Field in t of size 5^3,
-               '_domain': Finite Field in t of size 5^3,
-               '_is_coercion': False,
-               '_lift': None,
-               '_power': 2,
-               '_repr_type_str': None}))
-        """
-        cdef dict slots
-        slots = FrobeniusEndomorphism_generic._extra_slots(self)
-        slots['_power'] = self._power
-        return slots
-
     cdef _update_slots(self, dict slots):
         r"""
         Helper function for copying and pickling
@@ -869,7 +847,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             True
         """
         FrobeniusEndomorphism_generic._update_slots(self, slots)
-        self._power = slots['_power']
         domain = self.domain()
         self._degree = domain.degree()
         self._degree_fixed = domain.degree().gcd(self._power)

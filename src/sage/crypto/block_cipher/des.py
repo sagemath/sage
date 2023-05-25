@@ -6,7 +6,7 @@ The Data Encryption Standard.
 This file implements the Data Encryption Standard and the corresponding key
 schedule as described in [U.S1999]_.
 
-Note, this implementation is ment for experimental and educational usage only,
+This implementation is meant for experimental and educational usage only,
 do not use it in production code!
 
 EXAMPLES:

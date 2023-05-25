@@ -28,42 +28,37 @@ AUTHORS:
 
 from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
-import inspect
 
 from sage.rings.real_double import RDF
 from sage.libs.gsl.all cimport *
 from sage.misc.sageinspect import sage_getargspec
-from sage.ext.fast_eval cimport FastDoubleFunc
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 from sage.ext.fast_callable import fast_callable
 
 
 cdef class PyFunctionWrapper:
-   cdef object the_function
-   cdef object the_parameters
-   cdef list lx
+    cdef object the_function
+    cdef object the_parameters
+    cdef list lx
 
 cdef class compiled_integrand:
-   cdef int c_f(self, double t):  #void *params):
-      return 0
+    cdef int c_f(self, double t):  # void *params):
+        return 0
 
 cdef double c_f(double t, void *params):
-   cdef double value
-   cdef PyFunctionWrapper wrapper
-   wrapper = <PyFunctionWrapper> params
-   try:
-      if len(wrapper.the_parameters) != 0:
-         value = wrapper.the_function(t, wrapper.the_parameters)
-      else:
-         value = wrapper.the_function(t)
-   except Exception as msg:
-      print(msg)
-      return 0
+    cdef double value
+    cdef PyFunctionWrapper wrapper
+    wrapper = <PyFunctionWrapper> params
+    try:
+        if len(wrapper.the_parameters) != 0:
+            value = wrapper.the_function(t, wrapper.the_parameters)
+        else:
+            value = wrapper.the_function(t)
+    except Exception as msg:
+        print(msg)
+        return 0
 
-   return value
-
-cdef double c_ff(double t, void *params):
-    return (<FastDoubleFunc>params)._call_c(&t)
+    return value
 
 
 def numerical_integral(func, a, b=None,
@@ -116,12 +111,12 @@ def numerical_integral(func, a, b=None,
 
     EXAMPLES:
 
-    To integrate the function $x^2$ from 0 to 1, we do ::
+    To integrate the function `x^2` from 0 to 1, we do ::
 
         sage: numerical_integral(x^2, 0, 1, max_points=100)
         (0.3333333333333333, 3.700743415417188e-15)
 
-    To integrate the function $\sin(x)^3 + \sin(x)$ we do ::
+    To integrate the function `\sin(x)^3 + \sin(x)` we do ::
 
         sage: numerical_integral(sin(x)^3 + sin(x),  0, pi)
         (3.333333333333333, 3.700743415417188e-14)
@@ -250,8 +245,16 @@ def numerical_integral(func, a, b=None,
         Traceback (most recent call last):
         ...
         ValueError: integral does not converge at -infinity
+
+    Symbolic functions can be integrated as conveniently as symbolic
+    expressions, as in :trac:`15219`::
+
+        sage: h(x) = x
+        sage: numerical_integral(h,0,1)[0] # abs tol 1e-8
+        0.5
+
     """
-    cdef double abs_err # step size
+    cdef double abs_err  # step size
     cdef double result
     cdef int i
     cdef int j
@@ -274,7 +277,7 @@ def numerical_integral(func, a, b=None,
     cdef gsl_integration_workspace* W
     W = NULL
 
-    if not isinstance(func, FastDoubleFunc):
+    if True:
         from sage.rings.infinity import Infinity
         try:
             if hasattr(func, 'arguments'):
@@ -289,11 +292,11 @@ def numerical_integral(func, a, b=None,
                 return (((<double>b - <double>a) * <double>func), 0.0)
             if len(vars) != 1:
                 if len(params) + 1 != len(vars):
-                   raise ValueError(("The function to be integrated depends on "
-                                     "{} variables {}, and so cannot be "
-                                     "integrated in one dimension. Please fix "
-                                     "additional variables with the 'params' "
-                                     "argument").format(len(vars), tuple(vars)))
+                    raise ValueError(("The function to be integrated depends on "
+                                      "{} variables {}, and so cannot be "
+                                      "integrated in one dimension. Please fix "
+                                      "additional variables with the 'params' "
+                                      "argument").format(len(vars), tuple(vars)))
 
                 to_sub = dict(zip(vars[1:], params))
                 func = func.subs(to_sub)
@@ -302,45 +305,41 @@ def numerical_integral(func, a, b=None,
             v = str(vars[0])
             if a is -Infinity:
                 try:
-                   ell = func.limit(**{v: -Infinity})
+                    ell = func.limit(**{v: -Infinity})
                 except (AttributeError, ValueError):
-                   pass
+                    pass
                 else:
-                   if ell.is_numeric() and not ell.is_zero():
-                      raise ValueError('integral does not converge at -infinity')
+                    if ell.is_numeric() and not ell.is_zero():
+                        raise ValueError('integral does not converge at -infinity')
             if b is Infinity:
                 try:
-                   ell = func.limit(**{v: Infinity})
+                    ell = func.limit(**{v: Infinity})
                 except (AttributeError, ValueError):
-                   pass
+                    pass
                 else:
-                   if ell.is_numeric() and not ell.is_zero():
-                      raise ValueError('integral does not converge at infinity')
-            func = func._fast_float_(v)
+                    if ell.is_numeric() and not ell.is_zero():
+                        raise ValueError('integral does not converge at infinity')
+            func = fast_callable(func, vars=[v], domain=float)
 
-    if isinstance(func, FastDoubleFunc):
-        F.function = c_ff
-        F.params = <void *>func
-
-    elif not isinstance(func, compiled_integrand):
-      wrapper = PyFunctionWrapper()
-      if not func is None:
-         wrapper.the_function = func
-      else:
-         raise ValueError("No integrand defined")
-      try:
-         if not params and len(sage_getargspec(wrapper.the_function)[0]) == 1:
+    if not isinstance(func, compiled_integrand):
+        wrapper = PyFunctionWrapper()
+        if func is not None:
+            wrapper.the_function = func
+        else:
+            raise ValueError("No integrand defined")
+        try:
+            if not params and len(sage_getargspec(wrapper.the_function)[0]) == 1:
+                wrapper.the_parameters = []
+            elif not params and len(sage_getargspec(wrapper.the_function)[0]) > 1:
+                raise ValueError("Integrand has parameters but no parameters specified")
+            elif params:
+                wrapper.the_parameters = params
+        except TypeError:
+            wrapper.the_function = eval("lambda x: func(x)", {'func': func})
             wrapper.the_parameters = []
-         elif not params and len(sage_getargspec(wrapper.the_function)[0]) > 1:
-            raise ValueError("Integrand has parameters but no parameters specified")
-         elif params:
-            wrapper.the_parameters = params
-      except TypeError:
-         wrapper.the_function = eval("lambda x: func(x)", {'func': func})
-         wrapper.the_parameters = []
 
-      F.function = c_f
-      F.params = <void *> wrapper
+        F.function = c_f
+        F.params = <void *> wrapper
 
     cdef size_t n
     n = max_points
@@ -348,41 +347,40 @@ def numerical_integral(func, a, b=None,
     gsl_set_error_handler_off()
 
     if algorithm == "qng":
-      _a=a
-      _b=b
-      sig_on()
-      gsl_integration_qng(&F, _a, _b, eps_abs, eps_rel, &result, &abs_err, &n)
-      sig_off()
+        _a = a
+        _b = b
+        sig_on()
+        gsl_integration_qng(&F, _a, _b, eps_abs, eps_rel, &result, &abs_err, &n)
+        sig_off()
 
     elif algorithm == "qag":
-       if a is -Infinity and b is +Infinity:
-         W = <gsl_integration_workspace*>gsl_integration_workspace_alloc(n)
-         sig_on()
-         gsl_integration_qagi(&F, eps_abs, eps_rel, n, W, &result, &abs_err)
-         sig_off()
+        if a is -Infinity and b is +Infinity:
+            W = <gsl_integration_workspace*>gsl_integration_workspace_alloc(n)
+            sig_on()
+            gsl_integration_qagi(&F, eps_abs, eps_rel, n, W, &result, &abs_err)
+            sig_off()
 
-       elif a is -Infinity:
-         _b = b
-         W = <gsl_integration_workspace*>gsl_integration_workspace_alloc(n)
-         sig_on()
-         gsl_integration_qagil(&F, _b, eps_abs, eps_rel, n, W, &result, &abs_err)
-         sig_off()
+        elif a is -Infinity:
+            _b = b
+            W = <gsl_integration_workspace*>gsl_integration_workspace_alloc(n)
+            sig_on()
+            gsl_integration_qagil(&F, _b, eps_abs, eps_rel, n, W, &result, &abs_err)
+            sig_off()
 
-       elif b is +Infinity:
-         _a = a
-         W = <gsl_integration_workspace*>gsl_integration_workspace_alloc(n)
-         sig_on()
-         gsl_integration_qagiu(&F, _a, eps_abs, eps_rel, n, W, &result, &abs_err)
-         sig_off()
+        elif b is +Infinity:
+            _a = a
+            W = <gsl_integration_workspace*>gsl_integration_workspace_alloc(n)
+            sig_on()
+            gsl_integration_qagiu(&F, _a, eps_abs, eps_rel, n, W, &result, &abs_err)
+            sig_off()
 
-       else:
-         _a = a
-         _b = b
-         W = <gsl_integration_workspace*> gsl_integration_workspace_alloc(n)
-         sig_on()
-         gsl_integration_qag(&F,_a,_b,eps_abs,eps_rel,n,rule,W,&result,&abs_err)
-         sig_off()
-
+        else:
+            _a = a
+            _b = b
+            W = <gsl_integration_workspace*> gsl_integration_workspace_alloc(n)
+            sig_on()
+            gsl_integration_qag(&F,_a,_b,eps_abs,eps_rel,n,rule,W,&result,&abs_err)
+            sig_off()
 
     elif algorithm == "qags":
 
@@ -394,10 +392,10 @@ def numerical_integral(func, a, b=None,
         sig_off()
 
     else:
-      raise TypeError("invalid integration algorithm")
+        raise TypeError("invalid integration algorithm")
 
     if W != NULL:
-      gsl_integration_workspace_free(W)
+        gsl_integration_workspace_free(W)
 
     return result, abs_err
 
@@ -408,7 +406,7 @@ cdef double c_monte_carlo_f(double *t, size_t dim, void *params):
     wrapper = <PyFunctionWrapper> params
 
     for i in range(dim):
-       wrapper.lx[i] = t[i]
+        wrapper.lx[i] = t[i]
 
     try:
         if len(wrapper.the_parameters) != 0:
@@ -458,6 +456,11 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         recursive stratified sampling
       * 'vegas' -- The VEGAS algorithm of Lepage is based on importance
         sampling.
+
+    OUTPUT:
+
+    A tuple whose first component is the approximated integral and whose second
+    component is an error estimate.
 
     EXAMPLES::
 
@@ -564,7 +567,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         raise TypeError("xl and xu must be lists of floating point values of"
                         " identical lengths")
 
-    if not algorithm in ('plain', 'miser', 'vegas'):
+    if algorithm not in ('plain', 'miser', 'vegas'):
         raise ValueError("'{}' is an invalid value for algorithm".format(algorithm))
 
     dim = len(xl)
@@ -582,19 +585,21 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         _xu[i] = <double> xu[i]
 
     if not callable(func):
-        # constant
+        # constant. Note that all Expression objects are callable.
         v = float(1)
         for i in range(dim):
             v *= _xu[i] - _xl[i]
         return (v * <double?> func, 0.0)
 
     elif not isinstance(func, Wrapper_rdf):
-        if inspect.isfunction(func):
-            vars = sage_getargspec(func)[0]
-        elif hasattr(func, 'arguments'):
+        # func is either an Expression or another callable.
+        try:
             vars = func.arguments()
-        else:
-            vars = func.variables()
+        except AttributeError:
+            try:
+                vars = func.variables()
+            except AttributeError:
+                vars = sage_getargspec(func)[0]
 
         target_dim = dim + len(params)
         if len(vars) < target_dim:
@@ -611,7 +616,8 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
                               "more items in upper and lower limits"
                              ).format(len(vars), tuple(vars), target_dim))
 
-        if not inspect.isfunction(func):
+        from sage.structure.element import Expression
+        if isinstance(func, Expression):
             if params:
                 to_sub = dict(zip(vars[-len(params):], params))
                 func = func.subs(to_sub)

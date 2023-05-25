@@ -122,7 +122,7 @@ REFERENCES:
 Functions
 ---------
 """
-
+from itertools import repeat
 from sage.rings.integer import Integer
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
@@ -305,7 +305,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         sage: designs.mutually_orthogonal_latin_squares(5, 5)
         Traceback (most recent call last):
         ...
-        EmptySetError: There exist at most n-1 MOLS of size n if n>=2.
+        EmptySetError: there exist at most n-1 MOLS of size n if n>=2
         sage: designs.mutually_orthogonal_latin_squares(4,6)
         Traceback (most recent call last):
         ...
@@ -361,7 +361,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         matrices = [Matrix([[0]])] * k
 
     elif k >= n:
-        raise EmptySetError("There exist at most n-1 MOLS of size n if n>=2.")
+        raise EmptySetError("there exist at most n-1 MOLS of size n if n>=2")
 
     elif n in MOLS_constructions and k <= MOLS_constructions[n][0]:
         _, construction = MOLS_constructions[n]
@@ -373,13 +373,13 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         if orthogonal_array(k + 2, n, existence=True):
             pass
         else:
-            raise EmptySetError("There does not exist {} MOLS of order {}!".format(k, n))
+            raise EmptySetError("there does not exist {} MOLS of order {}!".format(k, n))
 
         # make sure that the first two columns are "11, 12, ..., 1n, 21, 22, ..."
         OA = sorted(orthogonal_array(k + 2, n, check=False))
 
         # We first define matrices as lists of n^2 values
-        matrices = [[] for _ in range(k)]
+        matrices = [[] for _ in repeat(None, k)]
         for L in OA:
             for i in range(2, k + 2):
                 matrices[i-2].append(L[i])
@@ -399,7 +399,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         partitions = [[[i*n+j for j in range(n)] for i in range(n)],
                       [[j*n+i for j in range(n)] for i in range(n)]]
         for m in matrices:
-            partition = [[] for i in range(n)]
+            partition = [[] for _ in repeat(None, n)]
             for i in range(n):
                 for j in range(n):
                     partition[m[i,j]].append(i*n+j)
@@ -513,8 +513,8 @@ def MOLS_table(start,stop=None,compare=False,width=None):
         start,stop = 0,start
     # make start and stop be congruent to 0 mod 20
     start = start - (start%20)
-    stop  = stop-1
-    stop  = stop  + (20-(stop%20))
+    stop = stop-1
+    stop = stop + (20-(stop%20))
     assert start%20 == 0 and stop%20 == 0
     if stop <= start:
         return

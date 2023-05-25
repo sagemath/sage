@@ -5,7 +5,7 @@ The Elliptic Curve Method for Integer Factorization (ECM)
 
 Sage includes GMP-ECM, which is a highly optimized implementation of
 Lenstra's elliptic curve factorization method.
-See http://ecm.gforge.inria.fr/ for more about GMP-ECM.
+See https://gitlab.inria.fr/zimmerma/ecm for more about GMP-ECM.
 This file provides a Cython interface to the GMP-ECM library.
 
 AUTHORS:

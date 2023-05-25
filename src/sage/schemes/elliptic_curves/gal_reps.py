@@ -96,7 +96,7 @@ REFERENCES:
 
 AUTHORS:
 
-- chris wuthrich (02/10) - moved from ell_rational_field.py.
+- chris wuthrich (02/10): moved from ell_rational_field.py.
 
 """
 
@@ -121,7 +121,8 @@ from sage.rings.fast_arith import prime_range
 import sage.misc.all as misc
 from sage.misc.verbose import verbose
 import sage.rings.all as rings
-from sage.rings.all import RealField, GF
+from sage.rings.real_mpfr import RealField
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
 from math import sqrt
 from sage.libs.pari.all import pari
@@ -175,7 +176,6 @@ class GaloisRepresentation(SageObject):
         sage: rho = EllipticCurve('11a1').galois_representation()
         sage: rho
         Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
-
     """
 
     def __init__(self, E):
@@ -187,7 +187,6 @@ class GaloisRepresentation(SageObject):
             sage: rho = EllipticCurve('11a1').galois_representation()
             sage: loads(rho.dumps()) == rho
             True
-
         """
         self.__image_type = {}
         self._E = E
@@ -201,7 +200,6 @@ class GaloisRepresentation(SageObject):
             sage: rho = EllipticCurve([0,1]).galois_representation()
             sage: rho
             Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
-
         """
         return "Compatible family of Galois representations associated to the " + repr(self._E)
 
@@ -221,7 +219,6 @@ class GaloisRepresentation(SageObject):
             False
             sage: rho == 34
             False
-
         """
         # if rho_E = rho_E' then the L-functions agree,
         # so E and E' are isogenous
@@ -246,7 +243,6 @@ class GaloisRepresentation(SageObject):
             sage: rho = E.galois_representation()
             sage: rho.elliptic_curve() == E
             True
-
         """
         from copy import copy
         return copy(self._E)
@@ -264,11 +260,9 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        -  ``p`` - a prime number
+        - ``p`` -- a prime number
 
-        OUTPUT:
-
-        - a boolean
+        OUTPUT: A boolean.
 
         The answer is cached.
 
@@ -286,7 +280,6 @@ class GaloisRepresentation(SageObject):
             True
             sage: EllipticCurve('11a2').torsion_order()
             1
-
         """
         try:
             return self.__is_reducible[p]
@@ -318,11 +311,9 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        -  ``p`` - a prime number
+        - ``p`` -- a prime number
 
-        OUTPUT:
-
-        - a boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -379,13 +370,13 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        -  ``p`` - int (a prime number)
+        - ``p`` (integer) -- a prime number
 
-        -  ``A`` - int (a bound on the number of a_p to use)
+        - ``A`` (integer) -- a bound on the number of `a_p` to use
 
         OUTPUT:
 
-        - boolean. True if the mod-p representation is surjective
+        - (boolean) -- True if the mod-p representation is surjective
           and False if not.
 
         The answer is cached.
@@ -424,7 +415,6 @@ class GaloisRepresentation(SageObject):
             sage: rho.image_type(7)
             'The image is contained in the normalizer of a split Cartan group.'
 
-
         REMARKS:
 
         1. If `p \geq 5` then the mod-p representation is
@@ -435,7 +425,6 @@ class GaloisRepresentation(SageObject):
 
         2. For the primes `p=2` and 3, this will always answer either
            True or False. For larger primes it might give None.
-
         """
         if not arith.is_prime(p):
             raise TypeError("p (=%s) must be prime." % p)
@@ -451,7 +440,6 @@ class GaloisRepresentation(SageObject):
         ans = self._is_surjective(p, A)
         self.__is_surjective[key] = ans
         return ans
-
 
     def _is_surjective(self, p, A):
         r"""
@@ -472,7 +460,6 @@ class GaloisRepresentation(SageObject):
             sage: E = EllipticCurve('648a1')
             sage: rho = E.galois_representation()
             sage: rho._is_surjective(5,1000)
-
         """
         T = self._E.torsion_subgroup().order()
         if T % p == 0 and p != 2 :
@@ -620,15 +607,15 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``A`` - an integer (default 1000). By increasing this parameter
+        - ``A`` -- an integer (default 1000). By increasing this parameter
           the resulting set might get smaller.
 
         OUTPUT:
 
-        -  ``list`` - if the curve has CM, returns [0].
-           Otherwise, returns a list of primes where mod-p representation is
-           very likely not surjective. At any prime not in this list, the
-           representation is definitely surjective.
+        - ``list`` -- if the curve has CM, returns [0].
+          Otherwise, returns a list of primes where mod-p representation is
+          very likely not surjective. At any prime not in this list, the
+          representation is definitely surjective.
 
         EXAMPLES::
 
@@ -670,7 +657,6 @@ class GaloisRepresentation(SageObject):
         there is an unconditional bound by Cojocaru, but which depends
         on the conductor of `E`.
         For the prime below that bound we call ``is_surjective``.
-
         """
         if self._E.has_cm():
             verbose("cm curve")
@@ -724,9 +710,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p``  a prime number
 
-        OUTPUT:
-
-        - a string.
+        OUTPUT: A string.
 
         EXAMPLES::
 
@@ -824,7 +808,6 @@ class GaloisRepresentation(SageObject):
             sage: rho = EllipticCurve('32a1').galois_representation()
             sage: rho.image_type(3)
             'The image is a semi-dihedral group of order 16, gap.SmallGroup([16,8]).'
-
 
         ALGORITHM: Mainly based on Serre's paper.
         """
@@ -927,14 +910,14 @@ class GaloisRepresentation(SageObject):
                     a_ell = self._E.ap(ell)
                     u = k(a_ell)**2 * k(ell)**(-1)
                     if u == 3:
-                        verbose("found an element of order 6",2)
+                        verbose("found an element of order 6", level=2)
                         # found an element of order 6:
                         self.__image_type[p] = non_split_str
                         return self.__image_type[p]
 
                     if u == 2 and not has_an_el_order_4:
                         # found an element of order 4
-                        verbose("found an element of order 4",2)
+                        verbose("found an element of order 4", level=2)
                         has_an_el_order_4 = True
                         if has_an_el_order_3:
                             self.__image_type[p] = s4_str
@@ -942,13 +925,13 @@ class GaloisRepresentation(SageObject):
 
                     if u == 1 and not has_an_el_order_3:
                         # found an element of order 3
-                        verbose("found an element of order 3",2)
+                        verbose("found an element of order 3", level=2)
                         has_an_el_order_3 = True
                         if has_an_el_order_4:
                             self.__image_type[p] = s4_str
                             return self.__image_type[p]
 
-            verbose("p=5 and we could not determine the image, yet", 2)
+            verbose("p=5 and we could not determine the image, yet", level=2)
             # we have not yet determined the image, there are only the following possible subgroups of PGL_2
             # (unless we were unlucky and none of the elements of order 6 showed up above, for instance)
             # A_4       of order 12 with elements of order 2 and 3
@@ -999,25 +982,25 @@ class GaloisRepresentation(SageObject):
             could_be_split = 1
             could_be_non_split = 1
             # loops over primes as long as we still have two options left
-            while ell < 10000 and (could_be_exc + could_be_split + could_be_non_split  > 1):
+            while ell < 10000 and (could_be_exc + could_be_split + could_be_non_split > 1):
                 ell = arith.next_prime(ell)
                 if Np % ell != 0:
                     a_ell = self._E.ap(ell)
                     u = k(a_ell)**2 * k(ell)**(-1)
                     if (u not in ex_setp) and could_be_exc == 1:
                         # it can not be in the exceptional
-                        verbose("the image cannot be exceptional, found u=%s"%u,2)
+                        verbose("the image cannot be exceptional, found u=%s"%u, level=2)
                         could_be_exc = 0
                     if a_ell != 0 and arith.kronecker(a_ell**2 - 4*ell,p) == 1 and could_be_non_split == 1:
                         # it can not be in the normalizer of the non-split Cartan
-                        verbose("the image cannot be non-split, found u=%s"%u,2)
+                        verbose("the image cannot be non-split, found u=%s"%u, level=2)
                         could_be_non_split = 0
                     if a_ell != 0 and arith.kronecker(a_ell**2 - 4*ell,p) == -1 and could_be_split == 1:
                         # it can not be in the normalizer of the split Cartan
-                        verbose("the image cannot be split, found u=%s"%u,2)
+                        verbose("the image cannot be split, found u=%s"%u, level=2)
                         could_be_split = 0
 
-            assert could_be_exc + could_be_split + could_be_non_split  > 0, "bug in image_type."
+            assert could_be_exc + could_be_split + could_be_non_split > 0, "bug in image_type."
 
             if could_be_exc + could_be_split + could_be_non_split == 1:
                 # it is only one of the three cases:
@@ -1039,7 +1022,7 @@ class GaloisRepresentation(SageObject):
                     f = R([1,-3,1]) #(X**2 - 3*X+1)
                     el5 = f.roots()
                     # loops over primes as long as we still have two options left
-                    while ell < 10000 and (could_be_s4 + could_be_a4 + could_be_a5  > 1):
+                    while ell < 10000 and (could_be_s4 + could_be_a4 + could_be_a5 > 1):
                         ell = arith.next_prime(ell)
                         if Np % ell != 0:
                             a_ell = self._E.ap(ell)
@@ -1053,7 +1036,7 @@ class GaloisRepresentation(SageObject):
                                 could_be_a4 = 0
                                 could_be_s4 = 0
 
-                    assert (could_be_s4 + could_be_a4 + could_be_a5  > 0), "bug in image_type."
+                    assert (could_be_s4 + could_be_a4 + could_be_a5 > 0), "bug in image_type."
 
                     if could_be_s4 + could_be_a4 + could_be_a5 == 1:
                         if could_be_s4 == 1:
@@ -1075,7 +1058,7 @@ class GaloisRepresentation(SageObject):
             K = self._E.division_field(p, 'z')
             d = K.absolute_degree()
 
-            verbose("field of degree %s.  try to compute Galois group"%(d),2)
+            verbose("field of degree %s.  try to compute Galois group"%(d), level=2)
             # If the degree is too big, we have no chance at the Galois
             # group.  K.galois_group calls is_galois which used to rely on
             # pari's Galois group computations, so degree < 12
@@ -1100,7 +1083,6 @@ class GaloisRepresentation(SageObject):
         self.__image_type[p] = "The image could not be determined. Sorry."
         return self.__image_type[p]
 
-
     def image_classes(self,p,bound=10000):
         r"""
         This function returns, given the representation `\rho`
@@ -1123,9 +1105,9 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        -  a prime ``p``
+        - a prime ``p``
 
-        -  a natural number ``bound`` (optional, default=10000)
+        - a natural number ``bound`` (optional, default=10000)
 
         OUTPUT:
 
@@ -1264,9 +1246,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` another prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1299,9 +1279,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` a different prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1338,9 +1316,7 @@ class GaloisRepresentation(SageObject):
         - ``p``   a prime
         - ``ell`` a different prime
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1370,9 +1346,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1400,9 +1374,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1427,9 +1399,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1443,7 +1413,6 @@ class GaloisRepresentation(SageObject):
             raise ValueError('p (=%s) must be prime' % p)
         return self._E.j_invariant().valuation(p) >= 0
 
-
     def is_semistable(self,p):
         r"""
         Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is semistable.
@@ -1454,9 +1423,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -1482,9 +1449,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` a prime
 
-        OUTPUT:
-
-        - a Boolean
+        OUTPUT: A boolean.
 
         EXAMPLES::
 

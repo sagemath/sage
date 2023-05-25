@@ -17,12 +17,5 @@ Upstream Contact
 
    https://github.com/polymake/JuPyMake
 
-Dependencies
-------------
-
--  pip
--  polymake
-
-
 Special Update/Build Instructions
 ---------------------------------

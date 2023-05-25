@@ -1171,6 +1171,15 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s == d.contract(0, 1, c, 0, 1)
             True
 
+        TESTS:
+
+        Check that :trac:`33780` is fixed::
+
+            sage: v = X.frame()[0]  # vector field d/dt
+            sage: f = X.coframe()[1]  # 1-form dx
+            sage: v.interior_product(f)
+            Scalar field zero on the 4-dimensional differentiable manifold M
+
         """
         if self._domain.is_subset(form._domain):
             if not self._ambient_domain.is_subset(form._ambient_domain):
@@ -1384,25 +1393,29 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
 
         Let us check the graded Leibniz rule for `p=1` and `q=1`::
 
-            sage: a.bracket(b.wedge(c)) == a.bracket(b).wedge(c) + b.wedge(a.bracket(c))
+            sage: a.bracket(b.wedge(c)) == a.bracket(b).wedge(c) + b.wedge(a.bracket(c))  # long time
             True
 
         as well as for `p=2` and `q=1`::
 
-            sage: c.bracket(a.wedge(b)) == c.bracket(a).wedge(b) - a.wedge(c.bracket(b))
+            sage: c.bracket(a.wedge(b)) == c.bracket(a).wedge(b) - a.wedge(c.bracket(b))  # long time
             True
 
         Finally let us check the graded Jacobi identity for `p=1`, `q=1` and
         `r=2`::
 
-            sage: a.bracket(b.bracket(c)) + b.bracket(c.bracket(a)) \
-            ....: + c.bracket(a.bracket(b)) == 0
+            sage: a_bc = a.bracket(b.bracket(c))  # long time
+            sage: b_ca = b.bracket(c.bracket(a))  # long time
+            sage: c_ab = c.bracket(a.bracket(b))  # long time
+            sage: a_bc + b_ca + c_ab == 0         # long time
             True
 
         as well as for `p=1`, `q=2` and `r=2`::
 
-            sage: a.bracket(c.bracket(d)) + c.bracket(d.bracket(a)) \
-            ....: - d.bracket(a.bracket(c)) == 0
+            sage: a_cd = a.bracket(c.bracket(d))  # long time
+            sage: c_da = c.bracket(d.bracket(a))  # long time
+            sage: d_ac = d.bracket(a.bracket(c))  # long time
+            sage: a_cd + c_da - d_ac == 0         # long time
             True
 
         """

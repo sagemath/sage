@@ -1,5 +1,5 @@
 r"""
-Jacobi Elliptic Functions
+Jacobi elliptic functions
 
 This module implements the 12 Jacobi elliptic functions, along with their
 inverses and the Jacobi amplitude function.
@@ -136,17 +136,15 @@ AUTHORS:
 - Eviatar Bach (2013): complete rewrite, new numerical evaluation, and
   addition of the Jacobi amplitude function
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 David Joyner <wdj@usna.edu>
 #       Copyright (C) 2013 Eviatar Bach <eviatarbach@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.symbolic.function import BuiltinFunction
 from sage.functions.trig import (arctan, arcsin, arccos, arccot, arcsec,
                                  arccsc, csc, sec, sin, cos, tan, cot)
@@ -180,6 +178,17 @@ class Jacobi(BuiltinFunction):
 
             sage: N(jacobi("sn", I, 1/2))   # abs tol 1e-12
             -8.59454886300046e-73 + 1.34737147138542*I
+
+            sage: CN = fricas(jacobi('cn',x, 2)); CN  # optional - fricas
+            jacobiCn(x,2)
+            sage: fricas.series(CN, x=0)  # optional - fricas
+                1  2   3  4   17  6    79  8    1381  10      11
+            1 - - x  + - x  - -- x  + --- x  - ----- x   + O(x  )
+                2      8      80      640      19200
+            sage: fricas(jacobi('sn',x, 2))  # optional - fricas
+            jacobiSn(x,2)
+            sage: fricas(jacobi('dn',x, 2))  # optional - fricas
+            jacobiDn(x,2)
         """
         if kind not in ['nd', 'ns', 'nc', 'dn', 'ds', 'dc', 'sn', 'sd',
                         'sc', 'cn', 'cd', 'cs']:
@@ -187,17 +196,11 @@ class Jacobi(BuiltinFunction):
                              "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
         self.kind = kind
         BuiltinFunction.__init__(self,
-                                 name='jacobi_{}'.format(kind),
-                                 nargs=2, evalf_params_first=False,
-                                 conversions=dict(maple=
-                                                  ('Jacobi{}'
-                                                   .format(kind.upper())),
-                                                  mathematica=
-                                                  ('Jacobi{}'
-                                                   .format(kind.upper())),
-                                                  maxima=
-                                                  ('jacobi_{}'
-                                                   .format(kind))))
+            name=f'jacobi_{kind}', nargs=2, evalf_params_first=False,
+            conversions=dict(maple=('Jacobi{}'.format(kind.upper())),
+                             mathematica=('Jacobi{}'.format(kind.upper())),
+                             fricas=('jacobi{}'.format(kind.capitalize())),
+                             maxima=('jacobi_{}'.format(kind))))
 
     def _eval_(self, x, m):
         r"""
@@ -546,17 +549,10 @@ class InverseJacobi(BuiltinFunction):
                              "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
         self.kind = kind
         BuiltinFunction.__init__(self,
-                                 name='inverse_jacobi_{}'.format(kind),
-                                 nargs=2, evalf_params_first=False,
-                                 conversions=dict(maple=
-                                                  ('InverseJacobi{}'
-                                                   .format(kind.upper())),
-                                                  mathematica=
-                                                  ('InverseJacobi{}'
-                                                   .format(kind.upper())),
-                                                  maxima=
-                                                  ('inverse_jacobi_{}'
-                                                   .format(kind))))
+            name=f'inverse_jacobi_{kind}', nargs=2, evalf_params_first=False,
+            conversions=dict(maple=('InverseJacobi{}'.format(kind.upper())),
+                             mathematica=f'InverseJacobi{kind.upper()}',
+                             maxima=(f'inverse_jacobi_{kind}')))
 
     def _eval_(self, x, m):
         r"""
@@ -977,6 +973,7 @@ def jacobi(kind, z, m, **kwargs):
         raise ValueError("kind must be one of 'nd', 'ns', 'nc', 'dn', "
                          "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
 
+
 def inverse_jacobi(kind, x, m, **kwargs):
     r"""
     The inverses of the 12 Jacobi elliptic functions. They have the property
@@ -1068,10 +1065,9 @@ class JacobiAmplitude(BuiltinFunction):
             jacobi_am
         """
         BuiltinFunction.__init__(self, name='jacobi_am', nargs=2,
-                                 conversions=dict(maple='JacobiAM',
-                                                  mathematica=
-                                                  'JacobiAmplitude'),
-                                 evalf_params_first=False)
+            conversions=dict(maple='JacobiAM',
+                             mathematica='JacobiAmplitude'),
+            evalf_params_first=False)
 
     def _eval_(self, x, m):
         r"""
@@ -1134,6 +1130,7 @@ class JacobiAmplitude(BuiltinFunction):
         """
         return r"\operatorname{{am}}\left({}\middle|{}\right)".format(latex(x),
                                                                       latex(m))
+
 
 jacobi_am = JacobiAmplitude()
 
@@ -1293,7 +1290,7 @@ def inverse_jacobi_f(kind, x, m):
                 ctx.prec += 10
                 phi = ctx.asin(x)
                 return sign * ctx.ellipf(phi, m)
-            elif 1 < x <= 1 / ctx.sqrt(m):
+            elif x <= 1 / ctx.sqrt(m):
                 K = ctx.ellipk(m)
                 ctx.prec += 10
                 xpn2 = x ** (-2)
@@ -1682,4 +1679,3 @@ def jacobi_am_f(x, m):
                 return ctx.atan2(snz, cnz) + npi
     finally:
         ctx.prec = prec
-

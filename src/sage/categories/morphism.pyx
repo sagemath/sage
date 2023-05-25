@@ -27,17 +27,15 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-import operator
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport *
 
@@ -50,6 +48,7 @@ from sage.structure.parent cimport Parent
 
 def is_Morphism(x):
     return isinstance(x, Morphism)
+
 
 cdef class Morphism(Map):
 
@@ -393,7 +392,7 @@ cdef class Morphism(Map):
             # multiplying it with the gens of the scalar ring.
             #
             # It is known that this way of comparing morphisms may give
-            # a mathematically wrong answer. See Trac #28617 and #31783.
+            # a mathematically wrong answer. See Issue #28617 and #31783.
             if e is not None and isinstance(e, ModuleElement):
                 B = (<ModuleElement>e)._parent._base
                 gens = [e * B.coerce(x) for x in gens]
@@ -411,7 +410,7 @@ cdef class Morphism(Map):
             domain = <Parent?>base
         return rich_to_bool(op, 0)
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return whether this morphism is not a zero morphism.
 
@@ -474,20 +473,18 @@ cdef class IdentityMorphism(Morphism):
         if not args and not kwds:
             return x
         cdef Parent C = self._codomain
-        if C._element_init_pass_parent:
-            from sage.misc.superseded import deprecation
-            deprecation(26879, "_element_init_pass_parent=True is deprecated. This probably means that _element_constructor_ should be a method and not some other kind of callable")
-            return C._element_constructor(C, x, *args, **kwds)
-        else:
-            return C._element_constructor(x, *args, **kwds)
+        return C._element_constructor(x, *args, **kwds)
 
     def __mul__(left, right):
         if not isinstance(right, Map):
-            raise TypeError("right (=%s) must be a map to multiply it by %s"%(right, left))
+            raise TypeError(f"right (={right}) must be a map "
+                            f"to multiply it by {left}")
         if not isinstance(left, Map):
-            raise TypeError("left (=%s) must be a map to multiply it by %s"%(left, right))
+            raise TypeError(f"left (={left}) must be a map "
+                            f"to multiply it by {right}")
         if right.codomain() != left.domain():
-            raise TypeError("self (=%s) domain must equal right (=%s) codomain"%(left, right))
+            raise TypeError(f"self (={left}) domain must equal "
+                            f"right (={right}) codomain")
         if isinstance(left, IdentityMorphism):
             return right
         else:

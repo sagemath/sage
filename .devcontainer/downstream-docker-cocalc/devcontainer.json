@@ -1,0 +1,19 @@
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "CoCalc Docker",
+    "image": "sagemathinc/cocalc",
+    "containerEnv": {
+        "MAKE": "make -j4"
+    },
+    // libgmp.a is broken and leads to a build failure of ecm.
+    "onCreateCommand": ".devcontainer/onCreate.sh && rm -f /usr/local/sage/local/lib/libgmp.a",
+    // * If the workspace directory looks like a copy of the Sage source tree (SAGE_ROOT):
+    //   - it bootstraps the Sage distribution,
+    //   - sets the symlink ``venv`` as expected,
+    // * Otherwise, it does nothing. This is so that users can copy this devcontainer.json file as is
+    //   into their projects.
+    "updateContentCommand": "if [ -d pkgs/sagemath-standard ]; then make configure && ./configure --enable-build-as-root --prefix=/usr/local/sage/local --with-sage-venv; else echo 'Edit .devcontainer/devcontainer.json (updateContentCommand) to run project-specific startup commands'; fi",
+    "extensions": [
+        "ms-python.python"
+    ]
+}

@@ -1,7 +1,7 @@
 """
 Witt symmetric functions
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
 #                     2013 Darij Grinberg <darijgrinberg@gmail.com>
@@ -15,10 +15,11 @@ Witt symmetric functions
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from . import multiplicative
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
+
 
 class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     r"""
@@ -371,11 +372,11 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         sage: s(w([4]))
         -s[1, 1, 1, 1] - s[2, 1, 1] - s[2, 2] - s[3, 1]
         sage: [type(coeff) for a, coeff in h(w([4]))]
-        [<... 'sage.rings.integer.Integer'>,
-         <... 'sage.rings.integer.Integer'>,
-         <... 'sage.rings.integer.Integer'>,
-         <... 'sage.rings.integer.Integer'>,
-         <... 'sage.rings.integer.Integer'>]
+        [<class 'sage.rings.integer.Integer'>,
+         <class 'sage.rings.integer.Integer'>,
+         <class 'sage.rings.integer.Integer'>,
+         <class 'sage.rings.integer.Integer'>,
+         <class 'sage.rings.integer.Integer'>]
 
         sage: w(h[3])
         w[1, 1, 1] + w[2, 1] + w[3]
@@ -394,6 +395,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         ....:      #this holds for all odd i and is easily proven by induction
         True
     """
+
     def __init__(self, Sym, coerce_h=True, coerce_e=False, coerce_p=False):
         """
         Initialize ``self``.
@@ -635,6 +637,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         if l <= n:
             from sage.combinat.partition import Partitions_n
             from sage.misc.cachefunc import cached_function
+
             @cached_function
             def wsum(m):     # expansion of h_m in w-basis, for m > 0
                 return self._from_dict({lam: 1 for lam in Partitions_n(m)})
@@ -696,6 +699,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         if l <= n:
             from sage.combinat.partition import Partitions
             from sage.misc.cachefunc import cached_function
+
             @cached_function
             def wsum_e(m):     # expansion of e_m in w-basis, for m > 0
                 return self._from_dict({lam: (-1 if (m + len(lam)) % 2 == 1 else 1)
@@ -753,9 +757,10 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         """
         l = len(self._p_transition_matrices)
         if l <= n:
-            from sage.arith.all import divisors
+            from sage.arith.misc import divisors
             from sage.combinat.partition import Partition
             from sage.misc.cachefunc import cached_function
+
             @cached_function
             def wsum_p(m):     # expansion of p_m in w-basis, for m > 0
                 return self._from_dict({Partition([d] * (m // d)): d
@@ -1018,14 +1023,14 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             # the elements of the Witt basis with respect to the powersum basis
             self._p_inverse_transition_matrices = {}
 
-            self   .register_coercion(self._p._module_morphism(self._p_to_w_on_basis, codomain = self))
+            self.register_coercion(self._p._module_morphism(self._p_to_w_on_basis, codomain=self))
             from sage.rings.rational_field import RationalField
             if self.base_ring().has_coerce_map_from(RationalField):
-                self._p.register_coercion(self._module_morphism(self._w_to_p_on_basis, codomain = self._p))
+                self._p.register_coercion(self._module_morphism(self._w_to_p_on_basis, codomain=self._p))
                 self._friendly = self._p
             else:
                 # self._w_to_p_on_basis is a partial map at best
-                self._p.register_conversion(self._module_morphism(self._w_to_p_on_basis, codomain = self._p))
+                self._p.register_conversion(self._module_morphism(self._w_to_p_on_basis, codomain=self._p))
                 if (not self._coerce_e) and (not self._coerce_h):
                     # ensure that self has coercion at least to one other basis,
                     # or else coercion-based computations will fail
@@ -1050,8 +1055,8 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             # cache for transition matrices which contain the coordinates of
             # the elements of the Witt basis with respect to the homogeneous basis
             self._h_inverse_transition_matrices = {}
-            self   .register_coercion(self._h._module_morphism(self._h_to_w_on_basis, codomain = self))
-            self._h.register_coercion(self._module_morphism(self._w_to_h_on_basis, codomain = self._h))
+            self.register_coercion(self._h._module_morphism(self._h_to_w_on_basis, codomain=self))
+            self._h.register_coercion(self._module_morphism(self._w_to_h_on_basis, codomain=self._h))
             if self._friendly is None:
                 self._friendly = self._h
 
@@ -1072,8 +1077,8 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             # cache for transition matrices which contain the coordinates of
             # the elements of the Witt basis with respect to the elementary basis
             self._e_inverse_transition_matrices = {}
-            self   .register_coercion(self._e._module_morphism(self._e_to_w_on_basis, codomain = self))
-            self._e.register_coercion(self._module_morphism(self._w_to_e_on_basis, codomain = self._e))
+            self.register_coercion(self._e._module_morphism(self._e_to_w_on_basis, codomain=self))
+            self._e.register_coercion(self._module_morphism(self._w_to_e_on_basis, codomain=self._e))
             if self._friendly is None:
                 self._friendly = self._e
 
@@ -1131,6 +1136,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
         if parent_name == "homogeneous":
             from sage.combinat.partition import Partitions_n
+
             @cached_function
             def wsum(m):     # expansion of h_m in w-basis, for m > 0
                 return self._from_dict({lam: 1 for lam in Partitions_n(m)})
@@ -1143,8 +1149,9 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             return result
 
         if parent_name == "powersum":
-            from sage.arith.all import divisors
+            from sage.arith.misc import divisors
             from sage.combinat.partition import Partition
+
             @cached_function
             def wsum_p(m):     # expansion of p_m in w-basis, for m > 0
                 return self._from_dict({Partition([d] * (m // d)): d
@@ -1162,9 +1169,10 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             u = u.parent().realization_of().elementary()(u)
 
         from sage.combinat.partition import Partitions
+
         @cached_function
         def wsum_e(m):     # expansion of e_m in w-basis, for m > 0
-            return self._from_dict({lam: (-1 if (m + len(lam)) % 2 == 1 else 1)
+            return self._from_dict({lam: (-1 if (m + len(lam)) % 2 else 1)
                                     for lam in Partitions(m, max_slope=-1)})
         result = self.zero()
         for lam, a in u.monomial_coefficients().items():
@@ -1330,9 +1338,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         w_coords_of_self = self.monomial_coefficients().items()
         from sage.combinat.partition import Partition
         dct = {Partition([i // n for i in lam]): coeff
-               for (lam, coeff) in w_coords_of_self
-               if all( i % n == 0 for i in lam )}
+               for lam, coeff in w_coords_of_self
+               if all(i % n == 0 for i in lam)}
         result_in_w_basis = parent._from_dict(dct)
-        return parent(result_in_w_basis)
-
-
+        return result_in_w_basis

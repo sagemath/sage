@@ -27,7 +27,7 @@ class ChecksumUpdater(object):
     def __init__(self, package_name):
         self.__package = None
         self.package_name = package_name
-    
+
     @property
     def package(self):
         if self.__package is None:
@@ -53,7 +53,7 @@ class ChecksumUpdater(object):
         result.append('')   # newline at end
         return '\n'.join(result)
 
-    
+
 class PackageUpdater(ChecksumUpdater):
 
     def __init__(self, package_name, new_version):
@@ -65,7 +65,7 @@ class PackageUpdater(ChecksumUpdater):
         package_version_txt = os.path.join(old.path, 'package-version.txt')
         with open(package_version_txt, 'w') as f:
             f.write(new_version.strip() + '\n')
-        
+
     def download_upstream(self, download_url=None):
         tarball = self.package.tarball
         if download_url is None:
@@ -74,4 +74,3 @@ class PackageUpdater(ChecksumUpdater):
             raise ValueError("package has no default upstream_url pattern, download_url needed")
         print('Downloading tarball to {0}'.format(tarball.upstream_fqn))
         Download(download_url, tarball.upstream_fqn).run()
-

@@ -12,15 +12,17 @@ about how to construct your own hyperplane arrangements.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.graphs.all import graphs
+from sage.graphs.graph_generators import graphs
 from sage.matrix.constructor import matrix, random_matrix
-from sage.rings.all import QQ, ZZ, NN
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.misc.misc_c import prod
 
 from sage.combinat.combinat import stirling_number2
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.rings.polynomial.polynomial_ring import polygen
 
 from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangements
@@ -63,8 +65,7 @@ def make_parent(base_ring, dimension, names=None):
     return HyperplaneArrangements(base_ring, names=names)
 
 
-
-class HyperplaneArrangementLibrary(object):
+class HyperplaneArrangementLibrary():
     """
     The library of hyperplane arrangements.
     """
@@ -124,9 +125,9 @@ class HyperplaneArrangementLibrary(object):
         EXAMPLES::
 
             sage: G = graphs.CycleGraph(4)
-            sage: G.edges()
+            sage: G.edges(sort=True)
             [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
-            sage: G.edges(labels=False)
+            sage: G.edges(sort=True, labels=False)
             [(0, 1), (0, 3), (1, 2), (2, 3)]
             sage: A = {0:{1:1, 3:2}, 1:{0:3, 2:0}, 2:{1:2, 3:1}, 3:{2:0, 0:2}}
             sage: HA = hyperplane_arrangements.bigraphical(G, A)
@@ -150,9 +151,10 @@ class HyperplaneArrangementLibrary(object):
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges():
-            i = G.vertices().index(e[0])
-            j = G.vertices().index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G)}
+        for u, v in G.edge_iterator(labels=False, sort_vertices=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append( x[i] - x[j] - A[i][j])
             hyperplanes.append(-x[i] + x[j] - A[j][i])
         return H(*hyperplanes)
@@ -262,9 +264,10 @@ class HyperplaneArrangementLibrary(object):
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges():
-            i = G.vertices().index(e[0])
-            j = G.vertices().index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G.vertices(sort=True))}
+        for u, v in G.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append(x[i] - x[j] - 1)
             hyperplanes.append(x[i] - x[j] + 1)
         return H(*hyperplanes)
@@ -301,9 +304,10 @@ class HyperplaneArrangementLibrary(object):
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges():
-            i = G.vertices().index(e[0])
-            j = G.vertices().index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G.vertices(sort=True))}
+        for u, v in G.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append(x[i] - x[j])
             hyperplanes.append(x[i] - x[j] - 1)
         return H(*hyperplanes)
@@ -349,9 +353,10 @@ class HyperplaneArrangementLibrary(object):
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges():
-            i = G.vertices().index(e[0])
-            j = G.vertices().index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G.vertices(sort=True))}
+        for u, v in G.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append(x[i] - x[j])
         A = H(*hyperplanes)
         charpoly = G.chromatic_polynomial()

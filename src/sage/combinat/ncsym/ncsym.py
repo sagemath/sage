@@ -11,7 +11,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from itertools import repeat
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.structure.parent import Parent
@@ -20,7 +20,7 @@ from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 
-from sage.functions.other import factorial
+from sage.arith.misc import factorial
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.ncsym.bases import NCSymBases, MultiplicativeNCSymBases, NCSymBasis_abstract
 from sage.combinat.set_partition import SetPartitions
@@ -29,8 +29,9 @@ from sage.combinat.posets.posets import Poset
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.set import Set
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from functools import reduce
+
 
 def matchings(A, B):
     """
@@ -76,6 +77,7 @@ def matchings(A, B):
         b = rem_B.pop(i)
         for m in matchings(rem_A, rem_B):
             yield [[a, b]] + m
+
 
 def nesting(la, nu):
     r"""
@@ -139,6 +141,7 @@ def nesting(la, nu):
                 if p[i+1] < a[1]:
                     nst += 1
     return nst
+
 
 class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
     r"""
@@ -279,6 +282,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         sage: Sp(e(eltp).to_symmetric_function())
         -4*p[] + 2*p[1] + p[2, 2]
     """
+
     def __init__(self, R):
         """
         Initialize ``self``.
@@ -302,7 +306,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             sage: SymmetricFunctionsNonCommutingVariables(ZZ)
             Symmetric functions in non-commuting variables over the Integer Ring
         """
-        return "Symmetric functions in non-commuting variables over the %s"%self.base_ring()
+        return "Symmetric functions in non-commuting variables over the %s" % self.base_ring()
 
     def a_realization(self):
         r"""
@@ -349,6 +353,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             m{} # m{{1, 3}, {2}} + m{{1}} # m{{1, 2}} + m{{1, 2}} # m{{1}} + m{{1,
              3}, {2}} # m{}
         """
+
         def __init__(self, NCSym):
             """
             EXAMPLES::
@@ -643,7 +648,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 sub_parts = [list(A[i-1]) for i in S] # -1 for indexing
                 mins = [min(p) for p in sub_parts]
                 over_max = max([max(p) for p in sub_parts]) + 1
-                ret = [[] for i in range(len(S))]
+                ret = [[] for _ in repeat(None, len(S))]
                 cur = 1
                 while min(mins) != over_max:
                     m = min(mins)
@@ -762,6 +767,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             """
             An element in the monomial basis of `NCSym`.
             """
+
             def expand(self, n, alphabet='x'):
                 r"""
                 Expand ``self`` written in the monomial basis in `n`
@@ -796,6 +802,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 F = FreeAlgebra(m.base_ring(), n, alphabet)
 
                 x = F.gens()
+
                 def on_basis(A):
                     basic_term = [0] * A.size()
                     for index, part in enumerate(A):
@@ -853,6 +860,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             sage: NCSym = SymmetricFunctionsNonCommutingVariables(QQ)
             sage: e = NCSym.e()
         """
+
         def __init__(self, NCSym):
             """
             EXAMPLES::
@@ -970,6 +978,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             """
             An element in the elementary basis of `NCSym`.
             """
+
             def omega(self):
                 r"""
                 Return the involution `\omega` applied to ``self``.
@@ -1048,6 +1057,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             sage: h[[1,2]].coproduct()
             h{} # h{{1, 2}} + 2*h{{1}} # h{{1}} + h{{1, 2}} # h{}
         """
+
         def __init__(self, NCSym):
             """
             EXAMPLES::
@@ -1153,6 +1163,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             """
             An element in the homogeneous basis of `NCSym`.
             """
+
             def omega(self):
                 r"""
                 Return the involution `\omega` applied to ``self``.
@@ -1244,6 +1255,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             sage: x.to_symmetric_function()
             4*p[] + 8*p[1] + 4*p[1, 1] + 12*p[2] + 12*p[2, 1] + 9*p[2, 2]
         """
+
         def __init__(self, NCSym):
             """
             EXAMPLES::
@@ -1413,7 +1425,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 sub_parts = [list(A[i-1]) for i in S] # -1 for indexing
                 mins = [min(p) for p in sub_parts]
                 over_max = max([max(p) for p in sub_parts]) + 1
-                ret = [[] for i in range(len(S))]
+                ret = [[] for _ in repeat(None, len(S))]
                 cur = 1
                 while min(mins) != over_max:
                     m = min(mins)
@@ -1499,14 +1511,15 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 0
             """
             P = SetPartitions()
+
             def action(gamma):
                 cur = 1
                 ret = []
                 for S in gamma:
-                    sub_parts = [list(A[i-1]) for i in S] # -1 for indexing
+                    sub_parts = [list(A[i - 1]) for i in S]  # -1 for indexing
                     mins = [min(p) for p in sub_parts]
                     over_max = max([max(p) for p in sub_parts]) + 1
-                    temp = [[] for i in range(len(S))]
+                    temp = [[] for _ in repeat(None, len(S))]
                     while min(mins) != over_max:
                         m = min(mins)
                         i = mins.index(m)
@@ -1576,6 +1589,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             """
             An element in the powersum basis of `NCSym`.
             """
+
             def to_symmetric_function(self):
                 r"""
                 The projection of ``self`` to the symmetric functions.
@@ -1654,6 +1668,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             sage: ps(cp[[1,2],[3]].to_symmetric_function())
             p[2, 1]
         """
+
         def __init__(self, NCSym):
             """
             EXAMPLES::
@@ -1728,6 +1743,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             x{{1}, {2}, {3}} # x{{1, 2}, {3}} + x{{1, 2}, {3}} # x{{1}, {2}, {3}} +
              x{{1, 2}, {3}} # x{{1, 2}, {3}}
         """
+
         def __init__(self, NCSym):
             """
             EXAMPLES::
@@ -1827,6 +1843,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             [  0   0   0   0   0   0   0   0   0   0   0   0   0   1 1/q]
             [  0   0   0   0   0   0   0   0   0   0   0   0   0   0   1]
         """
+
         def __init__(self, NCSym, q=2):
             """
             EXAMPLES::
@@ -1972,6 +1989,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
              of Univariate Polynomial Ring in q over Rational Field in the
              supercharacter basis with parameter q=2
         """
+
         def __init__(self, NCSym, q=2):
             """
             EXAMPLES::
@@ -2109,4 +2127,3 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             return self._from_dict({B: m[j,i] for j,B in enumerate(lst)})
 
     chi = supercharacter
-

@@ -6,12 +6,12 @@ AUTHORS:
 - William Stein (2007-11-18)
 """
 
-####################################################################################
+###############################################################################
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-####################################################################################
+#                  https://www.gnu.org/licenses/
+###############################################################################
 
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
@@ -21,6 +21,7 @@ from sage.rings.integer_ring import ZZ
 # which is its only current use (2011-02-26).  Then this could
 # be deprecated and this file removed.
 
+
 def gram_schmidt(B):
     r"""
     Return the Gram-Schmidt orthogonalization of the entries in the list
@@ -29,7 +30,7 @@ def gram_schmidt(B):
     Note that the output vectors need not have unit length. We do this
     to avoid having to extract square roots.
 
-    .. note::
+    .. NOTE::
 
         Use of this function is discouraged.  It fails on linearly
         dependent input and its output format is not as natural as it
@@ -69,22 +70,33 @@ def gram_schmidt(B):
         Traceback (most recent call last):
         ...
         ValueError: linearly dependent input for module version of Gram-Schmidt
+
+    TESTS::
+
+        sage: from sage.modules.misc import gram_schmidt
+        sage: V = []
+        sage: gram_schmidt(V)
+        ([], [])
+        sage: V = [vector(ZZ,[0])]
+        sage: gram_schmidt(V)
+        Traceback (most recent call last):
+        ...
+        ValueError: linearly dependent input for module version of Gram-Schmidt
     """
-    import sage.modules.free_module_element
+    from sage.modules.free_module_element import vector
     if len(B) == 0 or len(B[0]) == 0:
-        return B, matrix(ZZ,0,0,[])
+        return B, matrix(ZZ, 0, 0, [])
     n = len(B)
     Bstar = [B[0]]
     K = B[0].base_ring().fraction_field()
-    zero = sage.modules.free_module_element.vector(K, len(B[0]))
+    zero = vector(K, len(B[0]))
     if Bstar[0] == zero:
         raise ValueError("linearly dependent input for module version of Gram-Schmidt")
     mu = matrix(K, n, n)
-    for i in range(1,n):
+    for i in range(1, n):
         for j in range(i):
-            mu[i,j] = B[i].dot_product(Bstar[j]) / (Bstar[j].dot_product(Bstar[j]))
-        Bstar.append(B[i] - sum(mu[i,j]*Bstar[j] for j in range(i)))
+            mu[i, j] = B[i].dot_product(Bstar[j]) / (Bstar[j].dot_product(Bstar[j]))
+        Bstar.append(B[i] - sum(mu[i, j] * Bstar[j] for j in range(i)))
         if Bstar[i] == zero:
             raise ValueError("linearly dependent input for module version of Gram-Schmidt")
     return Bstar, mu
-

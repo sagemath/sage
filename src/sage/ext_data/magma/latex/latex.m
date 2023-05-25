@@ -315,7 +315,7 @@ end if;
         if v[#v] ne 0 then
              if S(v[#v]) eq "-" then
                  s := S(v[#v])*Abs(v[#v])*Sprintf("x")
-			*Sprintf("^{%o}", #v-1) *S(v[#v-1])* s;
+                        *Sprintf("^{%o}", #v-1) *S(v[#v-1])* s;
              else s := Abs(v[#v])*Sprintf("%o",x)*Sprintf("^{%o}", #v-1) *S(v[#v-1])* s;
              end if;
         end if;
@@ -473,7 +473,7 @@ intrinsic Latex(E::CrvEll) -> MonStgElt
      if AbsoluteValue(v[3]) eq 1 then
         s:=s*S(v[3])*Sprintf("y");
      else
-	 s:=s*S(v[3])*Abs(v[3])*Sprintf("y");
+        s:=s*S(v[3])*Abs(v[3])*Sprintf("y");
      end if;
   end if;
 
@@ -529,7 +529,7 @@ intrinsic Latex(f::QuadBinElt) -> MonStgElt
      if AbsoluteValue(f[2]) eq 1 then
         s:=s*S(f[2])*Sprintf("xy");
      else
-	 s:=s*S(f[2])*Abs(f[2])*Sprintf("xy");
+        s:=s*S(f[2])*Abs(f[2])*Sprintf("xy");
      end if;
   end if;
 

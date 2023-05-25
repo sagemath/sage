@@ -30,8 +30,3 @@ Upstream Contact
 -  http://www.cython.org/
 
 -  cython-devel@python.org
-
-Dependencies
-------------
-
--  Python

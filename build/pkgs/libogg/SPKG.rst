@@ -49,14 +49,6 @@ Upstream Contact
 
 The Xiph.org mailing lists - see http://lists.xiph.org/mailman/listinfo
 
-Dependencies
-------------
-
-This spkg provides dependencies for
-
--  the Sage library
-
-
 Special Update/Build Instructions
 ---------------------------------
 

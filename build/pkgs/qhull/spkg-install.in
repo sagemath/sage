@@ -1,6 +1,7 @@
 cd src/
 
-sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON
+sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DLIB_INSTALL_DIR="${SAGE_LOCAL}"/lib
 
 sdh_make
 

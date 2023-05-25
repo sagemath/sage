@@ -41,6 +41,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
     - ``_basis_name`` -- the name of the basis and must match one
       of the names that the basis can be constructed from FQSym
     """
+
     def __init__(self, alg):
         r"""
         Initialize ``self``.
@@ -160,7 +161,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             else:
                 return self.coerce_map_from(G) * phi
 
-        return super(FQSymBasis_abstract, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     @cached_method
     def an_element(self):
@@ -476,7 +477,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 r = list(r)
             elif r == 1:
                 r = [1]
-            return super(FreeQuasisymmetricFunctions.F, self).__getitem__(r)
+            return super().__getitem__(r)
 
         def degree_on_basis(self, t):
             """
@@ -639,7 +640,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 F[] # F[3, 2, 1] + F[1] # F[2, 1] + F[2, 1] # F[1]
                 + F[3, 2, 1] # F[]
             """
-            if not len(x):
+            if not x:
                 return self.one().tensor(self.one())
             return sum(self(Word(x[:i]).standard_permutation()).tensor(
                 self(Word(x[i:]).standard_permutation()))
@@ -787,7 +788,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 r = list(r)
             elif r == 1:
                 r = [1]
-            return super(FreeQuasisymmetricFunctions.G, self).__getitem__(r)
+            return super().__getitem__(r)
 
         def _G_to_F_on_basis(self, w):
             r"""
@@ -1005,7 +1006,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 r = list(r)
             elif r == 1:
                 r = [1]
-            return super(FreeQuasisymmetricFunctions.M, self).__getitem__(r)
+            return super().__getitem__(r)
 
         def _F_to_M_on_basis(self, w):
             r"""
@@ -1088,11 +1089,11 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 sage: M = FQSym.M()
                 sage: F(M[3, 2, 1] - 4 * F[4, 2, 1, 3])
                 F[3, 2, 1] - 4*F[4, 2, 1, 3]
-                sage: all(F(M._M_to_F_on_basis(w)) == M[w] for i in range(5)
+                sage: all(F(M._M_to_F_on_basis(w)) == M[w] for i in range(5)  # indirect doctest
                 ....:     for w in Permutations(i))
                 True
                 sage: all(M(F(M[w])) == M[w] for i in range(5)
-                ....:     for w in Permutations(i)) # indirect doctest
+                ....:     for w in Permutations(i))
                 True
                 sage: M[3, 2, 1] == F[3, 2, 1]
                 True
@@ -1232,6 +1233,7 @@ class FQSymBases(Category_realization_of_parent):
     r"""
     The category of graded bases of `FQSym` indexed by permutations.
     """
+
     def __init__(self, base):
         r"""
         Initialize the bases of an `FQSym`
@@ -1337,7 +1339,7 @@ class FQSymBases(Category_realization_of_parent):
                 sage: G.basis(degree=3).list()
                 [G[1, 2, 3], G[1, 3, 2], G[2, 1, 3], G[2, 3, 1], G[3, 1, 2], G[3, 2, 1]]
             """
-            from sage.combinat.family import Family
+            from sage.sets.family import Family
             if degree is None:
                 return Family(self._indices, self.monomial)
             else:

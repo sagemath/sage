@@ -16,17 +16,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import ZZ, QQ, AA, AlgebraicField, infinity, I, PolynomialRing, NumberField
-from sage.functions.all import cos, exp, sec
+from sage.arith.misc import divisors
 from sage.functions.gamma import psi1
-from sage.symbolic.all import pi
+from sage.functions.log import exp
+from sage.functions.trig import cos, sec
+from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_generic
 from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
-
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_generic
+from sage.rings.imaginary_unit import I
+from sage.rings.infinity import infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.qqbar import AA, AlgebraicField
+from sage.rings.rational_field import QQ
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.cachefunc import cached_method
+from sage.symbolic.constants import pi
 
 from .hecke_triangle_group_element import HeckeTriangleGroupElement, cyclic_representative, coerce_AA
 
@@ -49,7 +56,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             sage: HeckeTriangleGroup(QQ(3)) == HeckeTriangleGroup(int(3))
             True
         """
-
         if (n == infinity):
             n = infinity
         else:
@@ -57,11 +63,12 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             if (n < 3):
                 raise AttributeError("n has to be infinity or an Integer >= 3.")
 
-        return super(HeckeTriangleGroup, cls).__classcall__(cls, n)
+        return super().__classcall__(cls, n)
 
     def __init__(self, n):
         r"""
         Hecke triangle group (2, n, infinity).
+
         Namely the von Dyck group corresponding to the triangle group
         with angles (pi/2, pi/n, 0).
 
@@ -612,8 +619,8 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             134.1200000... + 0.2200000000...*I
         """
         ID = self.I()
-        T  = self.T()
-        S  = self.S()
+        T = self.T()
+        S = self.S()
         TI = self.T(-1)
 
         A = ID
@@ -827,7 +834,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             return L
 
         if len(L) > 1:
-            L.sort(key = emb_key)
+            L.sort(key=emb_key)
         return L[-1]
 
     def _elliptic_conj_reps(self):
@@ -940,7 +947,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         from sage.combinat.partition import OrderedPartitions
         from sage.combinat.combinat import tuples
-        from sage.arith.all import divisors
 
         if D is not None:
             max_block_length = max(coerce_AA(0), coerce_AA((D + 4)/(self.lam()**2))).sqrt().floor()
@@ -954,9 +960,9 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         if not hasattr(self, "_max_block_length"):
             self._max_block_length = ZZ(0)
-            self._conj_block       = {}
-            self._conj_nonprim     = {}
-            self._conj_prim        = {}
+            self._conj_block = {}
+            self._conj_nonprim = {}
+            self._conj_prim = {}
 
             # It is not clear how to define the class number for D=0:
             # Conjugacy classes are V(n-1)^(+-k) for arbitrary k

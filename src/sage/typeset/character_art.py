@@ -24,8 +24,6 @@ using monospace fonts. The difference is that one is restricted to
 #
 #                  https://www.gnu.org/licenses/
 # ******************************************************************************
-
-import os
 import sys
 from sage.structure.sage_object import SageObject
 
@@ -230,7 +228,7 @@ class CharacterArt(SageObject):
             sage: aa = ascii_art([p3, p5])
             sage: aa.get_breakpoints()
             doctest:...: DeprecationWarning: get_breakpoints() is deprecated
-            See https://trac.sagemath.org/29204 for details.
+            See https://github.com/sagemath/sage/issues/29204 for details.
             [6]
         """
         from sage.misc.superseded import deprecation
@@ -259,10 +257,9 @@ class CharacterArt(SageObject):
         if DOCTEST_MODE:
             return False
         try:
-            return os.isatty(sys.stdout.fileno())
+            return sys.stdout.isatty()
         except Exception:
-            # The IPython zeromq kernel uses a fake stdout that does
-            # not support fileno()
+            # for fake ttys that might lead to an error
             return False
 
     def _terminal_width(self):

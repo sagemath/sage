@@ -57,7 +57,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         sage: c = cartesian_product([F1, F2, F3])
 
         sage: type(C.an_element())
-        <... 'list'>
+        <class 'list'>
         sage: type(c.an_element())
         <class 'sage.sets.cartesian_product.CartesianProduct_with_category.element_class'>
 
@@ -74,6 +74,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         sage: elt.parent() is c
         True
     """
+
     def __init__(self, *iters):
         """
         TESTS::
@@ -273,11 +274,11 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: CartesianProduct_iters(4,4).is_finite()
             Traceback (most recent call last):
             ...
-            ValueError: Unable to determine whether this product is finite
+            ValueError: unable to determine whether this product is finite
         """
         finites = [_is_finite(L, fallback=None) for L in self.iters]
         if any(f is None for f in finites):
-            raise ValueError("Unable to determine whether this product is finite")
+            raise ValueError("unable to determine whether this product is finite")
         if all(f is True for f in finites):
             return True
         lens = [_len(L) for L in self.iters]
@@ -319,11 +320,11 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         if x != 0:
             raise IndexError("x larger than the size of the Cartesian Product")
         positions.reverse()
-        return [unrank(L, i) for L,i in zip(self.iters, positions)]
+        return [unrank(L, i) for L, i in zip(self.iters, positions)]
 
     def random_element(self):
         r"""
-        Returns a random element from the Cartesian product of \*iters.
+        Return a random element from the Cartesian product of \*iters.
 
         EXAMPLES::
 
@@ -332,4 +333,4 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: c in CartesianProduct_iters('dog', 'cat')
             True
         """
-        return [rnd.choice(_) for _ in self.iters]
+        return [rnd.choice(w) for w in self.iters]

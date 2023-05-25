@@ -355,7 +355,6 @@ class MPowerSeries(PowerSeries):
         except AttributeError:
             pass
 
-
         # set the correct background value, depending on what type of input x is
         try:
             xparent = x.parent() # 'int' types have no parent
@@ -462,7 +461,7 @@ class MPowerSeries(PowerSeries):
             sage: cc = K.hom([-i])
             sage: R.<s,t> = PowerSeriesRing(K)
             sage: f = s^2 + i*s*t + (3+4*i)*s^3 + R.O(4); f
-            s^2 + (i)*s*t + (4*i + 3)*s^3 + O(s, t)^4
+            s^2 + i*s*t + (4*i + 3)*s^3 + O(s, t)^4
             sage: f(t, s, base_map=cc)
             (-i)*s*t + t^2 + (-4*i + 3)*t^3 + O(s, t)^4
         """
@@ -475,7 +474,7 @@ class MPowerSeries(PowerSeries):
         valn_list = []
         for i in range(len(x)):
             try:
-                 xi = self.parent(x[i])
+                xi = self.parent(x[i])
             except (AttributeError, TypeError):
                 # Input does not coerce to parent ring of self
                 # attempt formal substitution
@@ -483,7 +482,7 @@ class MPowerSeries(PowerSeries):
             if xi.valuation() == 0 and self.prec() is not infinity:
                 raise TypeError("Substitution defined only for elements of positive valuation, unless self has infinite precision.")
             elif xi.valuation() > 0:
-                sub_dict[self.parent()._poly_ring().gens()[i]] = xi.add_bigoh(xi.valuation()*self.prec())
+                sub_dict[self.parent()._poly_ring().gens()[i]] = xi.add_bigoh(xi.valuation() * self.prec())
                 valn_list.append(xi.valuation())
             else:
                 sub_dict[self.parent()._poly_ring().gens()[i]] = xi
@@ -630,7 +629,6 @@ class MPowerSeries(PowerSeries):
                %{'val':self._value()._latex_(),
                  'gens':', '.join(g._latex_() for g in self.parent().gens()),
                  'prec':self._prec}
-
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
@@ -1668,8 +1666,10 @@ class MPowerSeries(PowerSeries):
         """
         Formal integral for multivariate power series.
 
-        INPUT: ``xx`` - a generator of the power series ring (the
-        one with respect to which to integrate)
+        INPUT:
+
+        - ``xx`` -- a generator of the power series ring (the
+          one with respect to which to integrate)
 
         EXAMPLES::
 
@@ -1763,8 +1763,6 @@ class MPowerSeries(PowerSeries):
         """
         raise NotImplementedError("__pari__")
 
-
-
     ###
     ### the following don't make sense for multivariable power series
     ###
@@ -1785,7 +1783,6 @@ class MPowerSeries(PowerSeries):
         """
         #return [self.parent(c) for c in self._bg_value.list()]
         raise NotImplementedError("Multivariate power series do not have list of coefficients; use 'coefficients' to get a dict of coefficients.")
-
 
     def variable(self):
         """
@@ -2080,7 +2077,7 @@ class MPowerSeries(PowerSeries):
         raise NotImplementedError("laurent_series not defined for multivariate power series.")
 
 
-class MO(object):
+class MO():
     """
     Object representing a zero element with given precision.
 

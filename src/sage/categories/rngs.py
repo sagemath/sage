@@ -47,4 +47,3 @@ class Rngs(CategoryWithAxiom):
     _base_category_class_and_axiom = (MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative.AdditiveUnital.Associative, "AdditiveInverse")
 
     Unital = LazyImport('sage.categories.rings', 'Rings', at_startup=True)
-

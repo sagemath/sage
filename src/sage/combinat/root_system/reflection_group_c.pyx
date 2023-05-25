@@ -19,7 +19,7 @@ from collections import deque
 from cysignals.memory cimport sig_malloc
 from cpython.list cimport *
 
-cdef class Iterator(object):
+cdef class Iterator():
     """
     Iterator class for reflection groups.
     """
@@ -165,7 +165,7 @@ cdef class Iterator(object):
             True
         """
         # the breadth search iterator is ~2x slower as it
-        # uses a deque with popleft 
+        # uses a deque with popleft
         if self.algorithm == "depth":
             if self.tracking_words:
                 return self.iter_words_depth()
@@ -457,9 +457,10 @@ cdef int first_descent_in_parabolic(PermutationGroupElement w, list parabolic,
             return i
     return -1
 
+
 cpdef PermutationGroupElement reduce_in_coset(PermutationGroupElement w, tuple S,
                                               list parabolic, int N, bint right):
-    """
+    r"""
     Return the minimal length coset representative of ``w`` of the parabolic
     subgroup indexed by ``parabolic`` (with indices `\{0, \ldots, n\}`).
 
@@ -610,4 +611,3 @@ cdef PermutationGroupElement _new_mul_(PermutationGroupElement left, Permutation
         prod.perm[i] = right.perm[left.perm[i]]
 
     return prod
-

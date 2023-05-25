@@ -78,7 +78,7 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
             True
         """
         ct = CartanType(cartan_type)
-        return super(AffineCrystalFromClassical, cls).__classcall__(cls, ct, *args, **options)
+        return super().__classcall__(cls, ct, *args, **options)
 
     def __init__(self, cartan_type, classical_crystal, category=None):
         """
@@ -115,7 +115,8 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
         self._cartan_type = cartan_type
         Parent.__init__(self, category=category)
         self.classical_crystal = classical_crystal
-        self.module_generators = [self.retract(_) for _ in self.classical_crystal.module_generators]
+        self.module_generators = [self.retract(gen)
+                                  for gen in self.classical_crystal.module_generators]
         self.element_class._latex_ = lambda x: x.lift()._latex_()
 
     def _repr_(self):
@@ -269,6 +270,7 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
         sage: b._repr_()
         '[[1]]'
     """
+
     def classical_weight(self):
         """
         Return the classical weight corresponding to ``self``.
@@ -396,7 +398,7 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
             sage: [x.epsilon0() for x in A.list()]
             [1, 0, 0]
         """
-        return super(AffineCrystalFromClassicalElement, self).epsilon(0)
+        return super().epsilon(0)
 
     def epsilon(self, i):
         """
@@ -435,7 +437,7 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
             sage: [x.phi0() for x in A.list()]
             [0, 0, 1]
         """
-        return super(AffineCrystalFromClassicalElement, self).phi(0)
+        return super().phi(0)
 
     def phi(self, i):
         r"""

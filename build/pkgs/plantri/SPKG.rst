@@ -36,7 +36,3 @@ Brendan McKay
 
 See http://cs.anu.edu.au/~bdm/plantri
 
-Dependencies
-------------
-
--  None

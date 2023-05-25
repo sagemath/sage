@@ -62,4 +62,3 @@ class GroupLibGAP(GroupMixinLibGAP, Group, ParentLibGAP):
         """
         ParentLibGAP.__init__(self, *args, **kwds)
         Group.__init__(self)
-

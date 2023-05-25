@@ -30,7 +30,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.combinat.misc import IterableFunctionCall
 import sage.combinat.tableau as tableau
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.categories.loop_crystals import KirillovReshetikhinCrystals
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.rigged_configurations.kleber_tree import KleberTree, VirtualKleberTree
@@ -1030,8 +1030,8 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
             if z != x:
                 rejects.append((x, z))
 
-        tester.assertTrue(len(rejects) == 0, "Bijection is not correct: {}".format(rejects))
-        if len(rejects) != 0:
+        tester.assertEqual(len(rejects), 0, "Bijection is not correct: {}".format(rejects))
+        if rejects:
             return rejects
 
     def tensor(self, *crystals, **options):
@@ -1064,6 +1064,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         return super(RiggedConfigurations, self).tensor(*crystals, **options)
 
     Element = KRRCSimplyLacedElement
+
 
 class RCNonSimplyLaced(RiggedConfigurations):
     r"""
@@ -1399,11 +1400,12 @@ class RCNonSimplyLaced(RiggedConfigurations):
             elt = self.element_class(self, partition_list=parts_list)
             for i, p in enumerate(elt):
                 for j, vac_num in enumerate(p.vacancy_numbers):
-                    tester.assertTrue(vac_num == x[i].vacancy_numbers[j],
+                    tester.assertEqual(vac_num, x[i].vacancy_numbers[j],
                       "Incorrect vacancy number: {}\nComputed: {}\nFor: {}".format(
-                       x[i].vacancy_numbers[j],vac_num, x))
+                       x[i].vacancy_numbers[j], vac_num, x))
 
     Element = KRRCNonSimplyLacedElement
+
 
 class RCTypeA2Even(RCNonSimplyLaced):
     """
@@ -1424,6 +1426,7 @@ class RCTypeA2Even(RCNonSimplyLaced):
         sage: RC = RiggedConfigurations(['A',4,2], [[2,1]])
         sage: TestSuite(RC).run() # long time
     """
+
     def cardinality(self):
         """
         Return the cardinality of ``self``.
@@ -1550,7 +1553,6 @@ class RCTypeA2Even(RCNonSimplyLaced):
                                                   [vac_num*g for vac_num in rp.vacancy_numbers])
         return self.virtual.element_class(self.virtual, partitions, use_vacancy_numbers=True)
 
-
     def from_virtual(self, vrc):
         """
         Convert ``vrc`` in the virtual crystal into a rigged configuration of
@@ -1611,6 +1613,7 @@ class RCTypeA2Dual(RCTypeA2Even):
         sage: RC = RiggedConfigurations(CartanType(['A',4,2]).dual(), [[2,1]])
         sage: TestSuite(RC).run() # long time
     """
+
     def _calc_vacancy_number(self, partitions, a, i, **options):
         r"""
         Calculate the vacancy number `p_i^{(a)}` in ``self``. A special case
@@ -1831,7 +1834,7 @@ class RCTypeA2Dual(RCTypeA2Even):
                 pos += 1
 
             if pos == length:
-                yield [QQ(_) / QQ(2) for _ in ret_part]
+                yield [QQ(n) / QQ(2) for n in ret_part]
                 pos -= 1
 
     def to_virtual(self, rc):

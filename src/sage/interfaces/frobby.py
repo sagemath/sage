@@ -52,7 +52,7 @@ class Frobby:
         We compute the lcm of an ideal provided in Monos format. ::
 
             sage: frobby("analyze", input="vars x,y,z;[x^2,x*y];", # optional - frobby
-            ....:     options=["lcm", "iformat monos", "oformat 4ti2"]) # optional - frobby
+            ....:     options=["lcm", "iformat monos", "oformat 4ti2"])
             ' 2 1 0\n\n2 generators\n3 variables\n'
 
 
@@ -78,12 +78,12 @@ class Frobby:
             print("Frobby command: ", repr(command))
             print("Frobby input:\n", input)
 
-        process = Popen(command, stdin = PIPE, stdout = PIPE, stderr = PIPE)
+        process = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)
         if input:
             frinput = str_to_bytes(input)
         else:
             frinput = None
-        output, err = process.communicate(input = frinput)
+        output, err = process.communicate(input=frinput)
         output = bytes_to_str(output)
         err = bytes_to_str(err)
 
@@ -123,7 +123,7 @@ class Frobby:
             True
 
         We see how it is much faster to compute this with frobby than the built-in
-        procedure for simplicial complexes.
+        procedure for simplicial complexes::
 
             sage: t=simplicial_complexes.PoincareHomologyThreeSphere() # optional - frobby
             sage: R=PolynomialRing(QQ,16,'x') # optional - frobby
@@ -144,8 +144,8 @@ class Frobby:
 
         The Hilbert-Poincaré series of a monomial ideal is the sum of all
         monomials not in the ideal. This sum can be written as a (finite)
-        rational function with $(x_1-1)(x_2-1)...(x_n-1)$ in the denominator,
-        assuming the variables of the ring are $x_1,x2,...,x_n$. This action
+        rational function with `(x_1-1)(x_2-1)...(x_n-1)` in the denominator,
+        assuming the variables of the ring are `x_1,x2,...,x_n`. This action
         computes the polynomial in the numerator of this fraction.
 
         INPUT:
@@ -211,6 +211,7 @@ class Frobby:
         if lines[-1]=='':
             lines.pop(-1)
         lists = [[int(_) for _ in a.split()] for a in lines]
+
         def to_monomial(exps):
             return [v ** e for v, e in zip(monomial_ideal.ring().gens(), exps) if e != 0]
         return [monomial_ideal.ring().ideal(to_monomial(a)) for a in lists]
@@ -275,9 +276,9 @@ class Frobby:
             sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
             sage: allOK = True # optional - frobby
             sage: for ring in rings:  # optional - frobby
-            ....:     id0 = ring.ideal(0) # optional - frobby
-            ....:     decom0 = frobby.irreducible_decomposition(id0) # optional - frobby
-            ....:     allOK = allOK and decom0 == [id0] # optional - frobby
+            ....:     id0 = ring.ideal(0)
+            ....:     decom0 = frobby.irreducible_decomposition(id0)
+            ....:     allOK = allOK and decom0 == [id0]
             sage: allOK # optional - frobby
             True
 
@@ -287,9 +288,9 @@ class Frobby:
             sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
             sage: allOK = True # optional - frobby
             sage: for ring in rings: # optional - frobby
-            ....:     id1 = ring.ideal(1) # optional - frobby
-            ....:     decom1 = frobby.irreducible_decomposition(id1) # optional - frobby
-            ....:     allOK = allOK and decom1 == [id1] # optional - frobby
+            ....:     id1 = ring.ideal(1)
+            ....:     decom1 = frobby.irreducible_decomposition(id1)
+            ....:     allOK = allOK and decom1 == [id1]
             sage: allOK # optional - frobby
             True
         """
@@ -338,8 +339,9 @@ class Frobby:
                 for i in range(nrows):
                     nmatrix+=lines.pop(0)+'\n'
                 matrices.append(nmatrix)
+
         def to_ideal(exps):
-            if len(exps)==0:
+            if len(exps) == 0:
                 return ring.zero_ideal()
             gens = [prod([v ** e for v, e in zip(ring.gens(), expo) if e != 0]) for expo in exps]
             return ring.ideal(gens or ring(1))
@@ -359,7 +361,7 @@ class Frobby:
         A list of rows of the matrix, where each row is represented as
         a list of integers.
 
-        EXAMPLES::
+        EXAMPLES:
 
         The format is straight-forward, as this example shows. ::
 

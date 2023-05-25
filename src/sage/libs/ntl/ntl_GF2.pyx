@@ -34,7 +34,7 @@ from sage.rings.integer_ring cimport IntegerRing_class
 # GF2: Bits
 ##############################################################################
 
-cdef class ntl_GF2(object):
+cdef class ntl_GF2():
     r"""
     The \class{GF2} represents the field GF(2). Computationally
     speaking, it is not a particularly useful class.  Its main use is
@@ -56,7 +56,7 @@ cdef class ntl_GF2(object):
         """
         if isinstance(v, ntl_GF2):
             self.x = (<ntl_GF2>v).x
-        elif isinstance(v, int) or isinstance(v, long) or isinstance(v, Integer):
+        elif isinstance(v, (int, Integer)):
             GF2_conv_long(self.x, int(v) % 2)
         elif v is not None:
             ccreadstr(self.x, str(v))
@@ -116,6 +116,8 @@ cdef class ntl_GF2(object):
 
     def __mul__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o*o
@@ -137,6 +139,8 @@ cdef class ntl_GF2(object):
 
     def __truediv__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o/o
@@ -159,6 +163,8 @@ cdef class ntl_GF2(object):
 
     def __sub__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o-o
@@ -180,6 +186,8 @@ cdef class ntl_GF2(object):
 
     def __add__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o+o
@@ -201,6 +209,8 @@ cdef class ntl_GF2(object):
 
     def __neg__(ntl_GF2 self):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: -z
@@ -214,6 +224,8 @@ cdef class ntl_GF2(object):
 
     def __pow__(ntl_GF2 self, long e, ignored):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: z^2
@@ -250,9 +262,10 @@ def unpickle_class_value(cls, x):
         sage: sage.libs.ntl.ntl_GF2.unpickle_class_value(ntl.GF2,1)
         1
         sage: type(sage.libs.ntl.ntl_GF2.unpickle_class_value(ntl.GF2,1))
-        <type 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
+        <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(x)
+
 
 def unpickle_class_args(cls, x):
     """
@@ -263,7 +276,6 @@ def unpickle_class_args(cls, x):
         sage: sage.libs.ntl.ntl_GF2.unpickle_class_args(ntl.GF2,[1])
         1
         sage: type(sage.libs.ntl.ntl_GF2.unpickle_class_args(ntl.GF2,[1]))
-        <type 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
+        <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(*x)
-

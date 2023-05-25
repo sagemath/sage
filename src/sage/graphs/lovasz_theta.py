@@ -14,9 +14,10 @@ Functions
 ---------
 """
 
+
 def lovasz_theta(graph):
     r"""
-    Return the value of Lovász theta-function of graph
+    Return the value of Lovász theta-function of graph.
 
     For a graph `G` this function is denoted by `\theta(G)`, and it can be
     computed in polynomial time. Mathematically, its most important property is

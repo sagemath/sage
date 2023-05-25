@@ -10,12 +10,13 @@ from sage.structure.factory import UniqueFactory
 from sage.structure.element cimport RingElement, ModuleElement, Element, FieldElement
 from sage.rings.ring cimport Field
 from sage.rings.integer cimport Integer
+import sage.rings.abc
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport parent
 
 from sage.rings.real_mpfr import RR_min_prec
-from sage.rings.real_mpfi import RealIntervalField, RealIntervalFieldElement, is_RealIntervalField
+from sage.rings.real_mpfi import RealIntervalField, RealIntervalFieldElement
 from sage.rings.rational_field import QQ
 
 cdef Integer zero = Integer(0)
@@ -185,7 +186,7 @@ cdef class RealIntervalAbsoluteField_class(Field):
         """
         if isinstance(R, RealIntervalAbsoluteField_class):
             return self._absprec < (<RealIntervalAbsoluteField_class>R)._absprec
-        elif is_RealIntervalField(R):
+        elif isinstance(R, sage.rings.abc.RealIntervalField):
             return True
         else:
             return RR_min_prec.has_coerce_map_from(R)
@@ -569,7 +570,7 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
     cdef bint is_exact(self):
         return not self._diameter
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` for anything except exact zero.
 

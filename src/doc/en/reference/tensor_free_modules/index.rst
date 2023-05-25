@@ -9,7 +9,7 @@ not depend upon other SageManifolds classes. In other words, it constitutes
 a self-consistent subset that can be used independently of SageManifolds.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/tensor/modules/finite_rank_free_module
 

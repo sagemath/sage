@@ -9,6 +9,7 @@ distribution spaces.
 Over `\QQ` or `\ZZ`, it is the monoid of matrices `2\times2` matrices
 `\begin{pmatrix} a & b \\ c & d \end{pmatrix}`
 such that
+
 - `ad - bc \ne 0`,
 - `a` is integral and invertible at the primes dividing `N`,
 - `c` has valuation at least `v_p(N)` for each `p` dividing `N` (but may be
@@ -288,21 +289,23 @@ class Sigma0Element(MonoidElement):
             sage: type(s)
             <class 'sage.modular.pollack_stevens.sigma0.Sigma0_class_with_category.element_class'>
             sage: type(sm)
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
             sage: s == sm
             True
         """
         return self._mat
 
-    def inverse(self):
+    def __invert__(self):
         r"""
-        Return the inverse of self. This will raise an error if the result is not in the monoid.
+        Return the inverse of ``self``.
+
+        This will raise an error if the result is not in the monoid.
 
         EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: s = Sigma0(3)([1,4,3,13])
-            sage: s.inverse()
+            sage: s.inverse()    # indirect doctest
             [13 -4]
             [-3  1]
             sage: Sigma0(3)([1, 0, 0, 3]).inverse()
@@ -310,7 +313,7 @@ class Sigma0Element(MonoidElement):
             ...
             TypeError: no conversion of this rational to integer
 
-        .. todo::
+        .. TODO::
 
             In an ideal world this would silently extend scalars to `\QQ` if
             the inverse has non-integer entries but is still in `\Sigma_0(N)`

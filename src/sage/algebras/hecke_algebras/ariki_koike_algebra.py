@@ -311,7 +311,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             raise TypeError("base ring must be a commutative ring")
         q = R(q)
         u = tuple(u)
-        return super(ArikiKoikeAlgebra, cls).__classcall__(cls, r, n, q, u, R)
+        return super().__classcall__(cls, r, n, q, u, R)
 
     def __init__(self, r, n, q, u, R):
         r"""
@@ -540,7 +540,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     sage: LT.dimension()
                     29160
                 """
-                from sage.functions.other import factorial
+                from sage.arith.misc import factorial
                 return self._r**self._n * factorial(self._n)
 
             def some_elements(self):
@@ -1020,7 +1020,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 This function is used internally by the multiplication and
                 may return elements that are not in the basis. However
                 these will be eventually resolved after the product has
-                been computed.
+                been computed. ::
 
                     sage: H = algebras.ArikiKoike(3, 2).LT()
                     sage: L2 = H.L(2)
@@ -1125,7 +1125,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             return self._from_dict({m: ~self._q, self.one_basis(): c})
 
         class Element(CombinatorialFreeModule.Element):
-            def inverse(self):
+            def __invert__(self):
                 r"""
                 Return the inverse if ``self`` is a basis element.
 
@@ -1134,7 +1134,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     sage: LT = algebras.ArikiKoike(3, 4).LT()
                     sage: t = LT.T(1) * LT.T(2) * LT.T(3); t
                     T[1,2,3]
-                    sage: t.inverse()
+                    sage: t.inverse()   # indirect doctest
                     (q^-3-3*q^-2+3*q^-1-1) + (q^-3-2*q^-2+q^-1)*T[3]
                      + (q^-3-2*q^-2+q^-1)*T[2] + (q^-3-q^-2)*T[3,2]
                      + (q^-3-2*q^-2+q^-1)*T[1] + (q^-3-q^-2)*T[1,3]
@@ -1147,8 +1147,6 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     raise NotImplementedError("inverse only implemented for monomials in T variables")
                 H = self.parent()
                 return ~self[l,w] * H.prod(H.inverse_T(i) for i in reversed(w.reduced_word()))
-
-            __invert__ = inverse
 
     class T(_Basis):
         r"""
@@ -1688,6 +1686,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     T[kp] = a + b
                     return self._from_dict({(tuple(T), self._one_perm): one},
                                            remove_zeros=False, coerce=False)
+
                 def key(exp):
                     if exp > 0 or kp == 0:
                         T = list(self._zero_tuple)
@@ -1715,6 +1714,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             T[kp] = a
             ret = {(tuple(T), s1): one}
             zero = self.base_ring().zero()
+
             def T_index(exp, ind, i, indp):
                 T = list(self._zero_tuple)
                 T[ind] = exp
@@ -1759,4 +1759,3 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     iaxpy(1, temp, ret)
 
             return self._from_dict(ret, remove_zeros=False)
-

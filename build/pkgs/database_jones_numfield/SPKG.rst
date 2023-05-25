@@ -18,12 +18,6 @@ Upstream Contact
 
 sage-devel@googlegroups.com
 
-Dependencies
-------------
-
-None
-
-
 Special Update/Build Instructions
 ---------------------------------
 

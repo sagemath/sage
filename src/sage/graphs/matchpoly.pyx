@@ -1,6 +1,6 @@
 # cython: binding=True
 """
-Matching Polynomial
+Matching polynomial
 
 This module contains the following methods:
 
@@ -25,7 +25,7 @@ Methods
 -------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Robert Miller
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ Methods
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -41,7 +41,7 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
@@ -50,7 +50,7 @@ x = polygen(ZZ, 'x')
 
 
 def matching_polynomial(G, complement=True, name=None):
-    """
+    r"""
     Computes the matching polynomial of the graph `G`.
 
     If `p(G, k)` denotes the number of `k`-matchings (matchings with `k` edges)
@@ -201,11 +201,11 @@ def matching_polynomial(G, complement=True, name=None):
         x^12 - 66*x^10 + 1485*x^8 - 13860*x^6 + 51975*x^4 - 62370*x^2 + 10395
         sage: matching_polynomial(graphs.CompleteGraph(13), complement=False)
         x^13 - 78*x^11 + 2145*x^9 - 25740*x^7 + 135135*x^5 - 270270*x^3 + 135135*x
-        
+
     TESTS:
-    
-    Non-integer labels should work, (:trac:`15545`):: 
-    
+
+    Non-integer labels should work, (:trac:`15545`)::
+
         sage: G = Graph(10)
         sage: G.add_vertex((0,1))
         sage: G.add_vertex('X')
@@ -290,6 +290,7 @@ def matching_polynomial(G, complement=True, name=None):
         return f.change_variable_name(name)
     return f
 
+
 # The following is a cache of complete graph matching polynomials.
 
 cdef list complete_matching_polys = [x.parent().one(), x]
@@ -328,9 +329,9 @@ def complete_poly(n):
 
     Checking the numerical results up to 20::
 
-        sage: from sage.functions.orthogonal_polys import hermite
-        sage: p = lambda n: 2^(-n/2)*hermite(n, x/sqrt(2))
-        sage: all(p(i) == complete_poly(i) for i in range(2, 20))
+        sage: from sage.functions.orthogonal_polys import hermite       # optional - sage.symbolic
+        sage: p = lambda n: 2^(-n/2)*hermite(n, x/sqrt(2))              # optional - sage.symbolic
+        sage: all(p(i) == complete_poly(i) for i in range(2, 20))       # optional - sage.symbolic
         True
     """
     # global complete_matching_polys # if we do eventually make it a C array...
@@ -345,6 +346,7 @@ def complete_poly(n):
         a, b, lcmp = b, x * b - (lcmp + 1) * a, lcmp + 1
         complete_matching_polys.append(b)
     return b
+
 
 cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int depth, fmpz_poly_t pol):
     """
@@ -393,12 +395,12 @@ cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int 
 
     for i in range(nedges):
         if edge1 == edges1[i]:
-            break  # since the rest of the edges are incident to edge1
-                   # (the edges
-                   # are sorted by increasing order of their first component)
+            # Since the rest of the edges are incident to edge1 (the edges are
+            # sorted by increasing order of their first component), we can stop
+            break
 
         if edge1 != edges2[i] and edge2 != edges2[i]:
-            # since edge2 > edge1 > edges1[i], only need to check edges2[i]
+            # since edge2 > edge1 > edges1[i], we only need to check edges2[i]
             new_edges1[new_nedges] = edges1[i]
             new_edges2[new_nedges] = edges2[i]
             new_nedges += 1

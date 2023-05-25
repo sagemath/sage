@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Discrete Subgroups of `\\ZZ^n`
+Discrete subgroups of `\\ZZ^n`
 
 AUTHORS:
 
@@ -364,10 +364,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             ...
             sage: L.reduced_basis == A
             True
-            sage: old_min = min(v.norm().n() for v in L.reduced_basis)
+            sage: old = L.reduced_basis[0].norm().n()
             sage: _ = L.LLL()
-            sage: new_min = L.reduced_basis[0].norm().n()
-            sage: new_min <= old_min
+            sage: new = L.reduced_basis[0].norm().n()
+            sage: new <= old
             True
         """
         basis = self.reduced_basis
@@ -756,6 +756,13 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: u = vector([-423434678248195, -18882583298608161305227077482])
             sage: L.closest_vector(u) in L
             True
+
+        Check that the example, of non-maximal rank, from :trac:`32486` works::
+
+            from sage.modules.free_module_integer import IntegerLattice
+            L = IntegerLattice([[-1,  0,  1],[1,0,2]])
+            L.closest_vector((1,1,1))
+            (2, 0, 1)
         """
         voronoi_cell = self.voronoi_cell()
 

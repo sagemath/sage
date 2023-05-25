@@ -117,7 +117,8 @@ class LeftRegularBand(UniqueRepresentation, Parent):
             sage: TestSuite(S).run()
         """
         self.alphabet = alphabet
-        Parent.__init__(self, category = Semigroups().Finite().FinitelyGenerated())
+        Parent.__init__(self,
+                        category=Semigroups().Finite().FinitelyGenerated())
 
     def _repr_(self):
         r"""

@@ -74,13 +74,13 @@ def ntl_ZZ_p_random_element(v):
 # ZZ_p_c: integers modulo p
 #
 ##############################################################################
-cdef class ntl_ZZ_p(object):
+cdef class ntl_ZZ_p():
     r"""
-    The \class{ZZ_p} class is used to represent integers modulo $p$.
-    The modulus $p$ may be any positive integer, not necessarily prime.
+    The \class{ZZ_p} class is used to represent integers modulo `p`.
+    The modulus `p` may be any positive integer, not necessarily prime.
 
     Objects of the class \class{ZZ_p} are represented as a \code{ZZ} in the
-    range $0, \ldots, p-1$.
+    range `0, \ldots, p-1`.
 
     Each \class{ZZ_p} contains a pointer of a \class{ZZ_pContext} which
     contains pre-computed data for NTL.  These can be explicitly constructed
@@ -117,11 +117,9 @@ cdef class ntl_ZZ_p(object):
         if v is not None:
             if isinstance(v, ntl_ZZ_p):
                 self.x = (<ntl_ZZ_p>v).x
-            elif isinstance(v, long):
+            elif isinstance(v, int):
                 PyLong_to_ZZ(&temp, v)
                 self.x = ZZ_to_ZZ_p(temp)
-            elif isinstance(v, int):
-                self.x = int_to_ZZ_p(v)
             elif isinstance(v, Integer):
                 mpz_to_ZZ(&temp, (<Integer>v).value)
                 self.x = ZZ_to_ZZ_p(temp)
@@ -166,9 +164,11 @@ cdef class ntl_ZZ_p(object):
 
     def __reduce__(self):
         """
-        sage: a = ntl.ZZ_p(4,7)
-        sage: loads(dumps(a)) == a
-        True
+        EXAMPLES::
+
+            sage: a = ntl.ZZ_p(4,7)
+            sage: loads(dumps(a)) == a
+            True
         """
         return unpickle_class_args, (ntl_ZZ_p, (self.lift(), self.modulus_context()))
 
@@ -414,7 +414,7 @@ cdef class ntl_ZZ_p(object):
             sage: x.lift()
             8
             sage: type(x.lift())
-            <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+            <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
         """
         cdef ntl_ZZ r = ntl_ZZ()
         self.c.restore_c()
@@ -452,12 +452,12 @@ cdef class ntl_ZZ_p(object):
             sage: x.lift_centered()
             8
             sage: type(x.lift_centered())
-            <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+            <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
             sage: x = ntl.ZZ_p(12, 18)
             sage: x.lift_centered()
             -6
             sage: type(x.lift_centered())
-            <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+            <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
         """
         cdef ntl_ZZ r = self.lift()
         cdef ntl_ZZ m = self.modulus()
@@ -476,7 +476,7 @@ cdef class ntl_ZZ_p(object):
             8
 
             sage: type(x._integer_())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         self.c.restore_c()
         cdef ZZ_c rep = ZZ_p_rep(self.x)
@@ -493,7 +493,7 @@ cdef class ntl_ZZ_p(object):
             sage: c = ntl.ZZ_pContext(20)
             sage: n = ntl.ZZ_p(2983, c)
             sage: type(n._sage_())
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: n
             3
 

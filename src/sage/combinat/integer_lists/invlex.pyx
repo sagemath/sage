@@ -516,7 +516,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
     A variant is to specify a class for the elements. With the default
     element constructor, this class should take as input the parent
-    ``self`` and a list. 
+    ``self`` and a list.
 
     .. WARNING::
 
@@ -670,7 +670,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
         [[3], [2, 1], [1, 2]]
         sage: [1,1,1] in I
         False
-        sage: I=IntegerListsLex(10, ceiling=[4], max_length=1, min_part=1)
+        sage: I = IntegerListsLex(10, ceiling=[4], max_length=1, min_part=1)
         sage: I.list()
         []
         sage: [4,6] in I
@@ -1215,9 +1215,9 @@ class IntegerListsLexIter(builtins.object):
         max_sum = self.backend.max_sum
         min_length = self.backend.min_length
         max_length = self.backend.max_length
-        if  self._j+1 >= max_length:
+        if self._j + 1 >= max_length:
             return False
-        if self._j+1 >= min_length and self._current_sum == max_sum:
+        if self._j + 1 >= min_length and self._current_sum == max_sum:
             # Cannot add trailing zeroes
             return False
 
@@ -1643,4 +1643,3 @@ class IntegerListsLexIter(builtins.object):
             k += 1
 
         return False
-

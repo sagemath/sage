@@ -19,7 +19,3 @@ Upstream Contact
 
 Hiroo HAYASHI
 
-Dependencies
-------------
-
-readline

@@ -1,16 +1,25 @@
 {
     "include": [
-      "src/sage/manifolds"
+      "src/sage"
     ],
     "executionEnvironments": [
       {
         "root": "src"
       }
     ],  
-    "pythonVersion": "3.7",
+    "pythonVersion": "3.8",
+    "exclude": ["venv"],
+    "venvPath": "./venv/",
+    "venv": "./",
 
-    "reportMissingImports": "warning",
     "reportGeneralTypeIssues": "warning",
     "reportUnboundVariable": "warning",
-    "reportDuplicateImport": "error"
+    "reportDuplicateImport": "error",
+    "reportOptionalMemberAccess": "warning",
+    "reportOptionalCall": "warning",
+    "reportOptionalSubscript": "warning",
+    "reportOptionalIterable": "warning",
+    "reportUndefinedVariable": "warning",
+    "reportOptionalOperand": "warning",
+    "reportMissingImports": "warning",
 }

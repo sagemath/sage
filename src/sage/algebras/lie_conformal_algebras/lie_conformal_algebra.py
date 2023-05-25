@@ -320,10 +320,10 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
             sage: type(V)
             <class 'sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra.GradedLieConformalAlgebra_with_category'>
         """
-        if not R in CommutativeRings():
-            raise ValueError("arg0 must be a commutative ring got {}".format(R))
+        if R not in CommutativeRings():
+            raise ValueError(f"arg0 must be a commutative ring got {R}")
 
-        #This is the only exposed class so we clean keywords here
+        # This is the only exposed class so we clean keywords here
         known_keywords = ['category', 'prefix', 'bracket', 'latex_bracket',
                           'string_quotes', 'sorting_key', 'graded', 'super']
         for key in kwds:

@@ -28,8 +28,3 @@ ellcurves
 -  Author: William Stein
 -  Email: wstein@gmail.com
 
-Dependencies
-------------
-
--  sqlite
--  python

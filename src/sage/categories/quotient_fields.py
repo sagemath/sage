@@ -215,7 +215,7 @@ class QuotientFields(Category_singleton):
                 sage: (1/2).lcm(2)
                 2
                 sage: type((1/2).lcm(2))
-                <type 'sage.rings.rational.Rational'>
+                <class 'sage.rings.rational.Rational'>
             """
             P = self.parent()
             try:
@@ -315,7 +315,7 @@ class QuotientFields(Category_singleton):
                 return (P(g)/P(lcmD), P(s*selfD)/P(lcmD),P(t*otherD)/P(lcmD))
             except (AttributeError, NotImplementedError, TypeError, ValueError):
                 zero = self.parent().zero()
-                one  = self.parent().one()
+                one = self.parent().one()
                 if self != zero:
                     return (one, ~self, zero)
                 elif other != zero:
@@ -518,15 +518,15 @@ class QuotientFields(Category_singleton):
             This was fixed in :trac:`16240`::
 
                 sage: R.<x> = QQ['x']
-                sage: p=1/(-x + 1)
+                sage: p = 1/(-x + 1)
                 sage: whole,parts = p.partial_fraction_decomposition()
                 sage: p == sum(parts)
                 True
-                sage: p=3/(-x^4 + 1)
+                sage: p = 3/(-x^4 + 1)
                 sage: whole,parts = p.partial_fraction_decomposition()
                 sage: p == sum(parts)
                 True
-                sage: p=(6*x^2 - 9*x + 5)/(-x^3 + 3*x^2 - 3*x + 1)
+                sage: p = (6*x^2 - 9*x + 5)/(-x^3 + 3*x^2 - 3*x + 1)
                 sage: whole,parts = p.partial_fraction_decomposition()
                 sage: p == sum(parts)
                 True
@@ -681,11 +681,11 @@ class QuotientFields(Category_singleton):
                 try:
                     numder = num._derivative(var)
                     dender = den._derivative(var)
-                    d      = den.gcd(dender)
-                    den    = den // d
+                    d = den.gcd(dender)
+                    den = den // d
                     dender = dender // d
-                    tnum   = numder * den - num * dender
-                    tden   = self.denominator() * den
+                    tnum = numder * den - num * dender
+                    tden = self.denominator() * den
                     if not tden.is_one() and tden.is_unit():
                         try:
                             tnum = tnum * tden.inverse_of_unit()
@@ -710,4 +710,3 @@ class QuotientFields(Category_singleton):
 
             return self.__class__(R, num, den,
                 coerce=False, reduce=False)
-

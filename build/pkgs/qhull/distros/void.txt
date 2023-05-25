@@ -1,0 +1,2 @@
+qhull
+libqhull-devel

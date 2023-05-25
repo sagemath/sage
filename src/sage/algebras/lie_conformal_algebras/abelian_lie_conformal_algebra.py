@@ -108,4 +108,3 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
         """
         return "The Abelian Lie conformal algebra with generators {} over {}"\
                 .format(self.gens(), self.base_ring())
-

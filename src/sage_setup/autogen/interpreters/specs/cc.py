@@ -1,4 +1,4 @@
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Carl Witty <Carl.Witty@gmail.com>
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -6,11 +6,8 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function, absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .base import StackInterpreter
 from .python import MemoryChunkPyConstant
 from ..instructions import (params_gen, instr_funcall_1arg_mpc,
@@ -18,6 +15,7 @@ from ..instructions import (params_gen, instr_funcall_1arg_mpc,
 from ..memory import MemoryChunk, MemoryChunkConstants
 from ..storage import ty_mpc, ty_python
 from ..utils import je, reindent_lines as ri
+
 
 class MemoryChunkCCRetval(MemoryChunk):
     r"""
@@ -49,7 +47,7 @@ class MemoryChunkCCRetval(MemoryChunk):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_call_locals()
-            u'        cdef ComplexNumber retval = (self.domain_element._new())\n'
+            '        cdef ComplexNumber retval = (self.domain_element._new())\n'
         """
         return je(ri(8,
             """
@@ -80,7 +78,7 @@ class MemoryChunkCCRetval(MemoryChunk):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.pass_argument()
-            u'(<mpc_t>(retval.__re))'
+            '(<mpc_t>(retval.__re))'
         """
         return je("""(<mpc_t>({{ myself.name }}.__re))""", myself=self)
 

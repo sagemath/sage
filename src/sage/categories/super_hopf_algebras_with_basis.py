@@ -55,7 +55,8 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
             """
             if self.antipode_on_basis is not NotImplemented:
                 # Should give the information that this is an anti-morphism of algebra
-                return self._module_morphism(self.antipode_on_basis, codomain = self)
+                return self._module_morphism(self.antipode_on_basis,
+                                             codomain=self)
             elif hasattr(self, "antipode_by_coercion"):
                 return self.antipode_by_coercion
 
@@ -122,4 +123,3 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
 
                 # mu * (I # S) * delta == counit * unit
                 tester.assertEqual(IS(x), self.counit(x) * self.one())
-

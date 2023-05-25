@@ -1,8 +1,6 @@
-$(PYTHON) maxima scipy matplotlib pillow tachyon | $(and $(filter-out no,$(SAGE_CHECK_sagetex)), $(SAGERUNTIME) sympy elliptic_curves jmol)
+$(PYTHON) maxima scipy matplotlib pillow tachyon pyparsing
 
-To build SageTeX, you just need Python, but to test (SAGE_CHECK=yes)
+To build SageTeX, you just need Python and pyparsing, but to test (SAGE_CHECK=yes)
 SageTeX, you actually need to run Sage, produce plots,...
-
 ----------
 All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

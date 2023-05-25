@@ -1,7 +1,7 @@
 #!/bin/sh
 SYSTEM=$1
 if [ -z "$SYSTEM" ]; then
-   echo >&2 "usage: $0 {debian|arch|conda|pip|...} SPKGS..."
+   echo >&2 "usage: $0 {auto|debian|arch|conda|pip|...} SPKGS..."
    exit 1
 fi
 shift
@@ -31,6 +31,13 @@ case "$SYSTEM" in
         COLLECT=echo
         ;;
     *)
+        if [ "$SYSTEM" = auto ]; then
+            SYSTEM=$(sage-guess-package-system 2>/dev/null)
+            if [ "$SYSTEM" = unknown ]; then
+                echo >&2 "unknown package system"
+                exit 1
+            fi
+        fi
         SYSTEM_PACKAGES_FILE_NAMES="distros/$SYSTEM.txt"
         STRIP_COMMENTS="sed s/#.*//;"
         COLLECT=echo

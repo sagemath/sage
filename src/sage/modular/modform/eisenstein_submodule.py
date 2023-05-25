@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-The Eisenstein Subspace
+The Eisenstein subspace
 """
 
-from sage.structure.all import Sequence
-from sage.misc.all import cached_method
-import sage.rings.all as rings
-from sage.categories.all import Objects
-from sage.matrix.all import Matrix
-from sage.rings.all import CyclotomicField
-from sage.arith.all import lcm, euler_phi
-
+from sage.arith.functions import lcm
+from sage.arith.misc import euler_phi
+from sage.categories.objects import Objects
+from sage.matrix.constructor import Matrix
+from sage.misc.cachefunc import cached_method
+from sage.rings.integer import Integer
+from sage.rings.number_field.number_field import CyclotomicField
+from sage.structure.sequence import Sequence
 
 from . import eis_series
 from . import element
 from . import submodule
+
 
 class EisensteinSubmodule(submodule.ModularFormsSubmodule):
     """
@@ -26,7 +27,7 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
 
         EXAMPLES::
 
-            sage: E = ModularForms(23,4).eisenstein_subspace() ## indirect doctest
+            sage: E = ModularForms(23,4).eisenstein_subspace() # indirect doctest
             sage: E
             Eisenstein subspace of dimension 2 of Modular Forms space of dimension 7 for Congruence Subgroup Gamma0(23) of weight 4 over Rational Field
             sage: E == loads(dumps(E))
@@ -44,15 +45,15 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
-            sage: E = ModularForms(23,4).eisenstein_subspace() ## indirect doctest
+            sage: E = ModularForms(23,4).eisenstein_subspace() # indirect doctest
             sage: E._repr_()
             'Eisenstein subspace of dimension 2 of Modular Forms space of dimension 7 for Congruence Subgroup Gamma0(23) of weight 4 over Rational Field'
         """
-        return "Eisenstein subspace of dimension %s of %s"%(self.dimension(), self.ambient_module())
+        return "Eisenstein subspace of dimension %s of %s" % (self.dimension(), self.ambient_module())
 
     def eisenstein_submodule(self):
         """
@@ -328,7 +329,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
         if prec is None:
             prec = self.prec()
         else:
-            prec = rings.Integer(prec)
+            prec = Integer(prec)
 
         if new:
             E = self.new_eisenstein_series()
@@ -385,6 +386,21 @@ class EisensteinSubmodule_g0_Q(EisensteinSubmodule_params):
     r"""
     Space of Eisenstein forms for `\Gamma_0(N)`.
     """
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: E = EisensteinForms(17,4)
+            sage: pari.mfdim(E)
+            2
+            sage: pari.mfparams(E)
+            [17, 4, 1, 3, t - 1]
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight()], 3)
+
 
 class EisensteinSubmodule_gH_Q(EisensteinSubmodule_params):
     r"""

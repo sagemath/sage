@@ -1,5 +1,5 @@
 r"""
-Error Functions
+Error functions
 
 This module provides symbolic error functions. These functions use the
 `mpmath library` for numerical evaluation and Maxima, Pynac for
@@ -44,11 +44,12 @@ from sage.structure.all import parent as s_parent
 from sage.symbolic.function import BuiltinFunction
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.symbolic.expression import Expression
-from sage.functions.all import sqrt, exp
-from sage.symbolic.constants import pi
+from sage.functions.all import exp
+from sage.misc.functional import sqrt
+from sage.symbolic.constants import I, pi
 from sage.rings.rational import Rational
 from sage.rings.infinity import unsigned_infinity
-from sage.libs.pynac.pynac import I
+
 
 class Function_erf(BuiltinFunction):
     r"""
@@ -266,7 +267,7 @@ class Function_erf(BuiltinFunction):
 
         Check that real ball evaluation is fixed :trac:`28061`::
 
-            sage: RealBallField(128)(erf(5))
+            sage: RealBallField(128)(erf(5)) # abs tol 1e-38
             [0.99999999999846254020557196514981165651 +/- 7.33e-39]
         """
         R = parent or s_parent(x)

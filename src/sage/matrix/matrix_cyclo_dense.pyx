@@ -65,9 +65,9 @@ from .matrix_integer_dense cimport _lift_crt
 from sage.structure.element cimport Matrix as baseMatrix
 from .misc import matrix_integer_dense_rational_reconstruction
 
+from sage.arith.misc import binomial, previous_prime
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import previous_prime, binomial
 from sage.rings.real_mpfr import create_RealNumber as RealNumber
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
@@ -96,7 +96,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: from sage.matrix.matrix_cyclo_dense import Matrix_cyclo_dense
             sage: A = Matrix_cyclo_dense.__new__(Matrix_cyclo_dense, MatrixSpace(CyclotomicField(3),2), [0,1,2,3], True, True)
             sage: type(A)
-            <type 'sage.matrix.matrix_cyclo_dense.Matrix_cyclo_dense'>
+            <class 'sage.matrix.matrix_cyclo_dense.Matrix_cyclo_dense'>
 
         Note that the entries of A haven't even been set yet above; that doesn't
         happen until ``__init__`` is called::
@@ -409,7 +409,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         return x
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 
@@ -922,7 +922,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: A.coefficient_bound()
             16
 
-        The above bound is just $9 + 7$, coming from the lower left entry.
+        The above bound is just `9 + 7`, coming from the lower left entry.
         A better bound would be the following::
 
             sage: (A[1,0]).abs()
@@ -1058,7 +1058,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         mpq_clear(tmp)
         sig_off()
 
-    def randomize(self, density=1, num_bound=2, den_bound=2, \
+    def randomize(self, density=1, num_bound=2, den_bound=2,
                   distribution=None, nonzero=False, *args, **kwds):
         r"""
         Randomize the entries of ``self``.
@@ -1118,7 +1118,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
                 for col in range(self._matrix._ncols):
                     col_is_zero = True
                     while col_is_zero:
-                        self._randomize_rational_column_unsafe(col, B.value, \
+                        self._randomize_rational_column_unsafe(col, B.value,
                             C.value, distribution)
                         # Check whether the new column is non-zero
                         for i in range(self._degree):
@@ -1131,7 +1131,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
                     col = rstate.c_random() % self._matrix._ncols
                     col_is_zero = True
                     while col_is_zero:
-                        self._randomize_rational_column_unsafe(col, B.value, \
+                        self._randomize_rational_column_unsafe(col, B.value,
                             C.value, distribution)
                         # Check whether the new column is non-zero
                         for i in range(self._degree):
@@ -1141,25 +1141,27 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         else:
             if density >= 1:
                 for col in range(self._matrix._ncols):
-                    self._randomize_rational_column_unsafe(col, B.value, \
+                    self._randomize_rational_column_unsafe(col, B.value,
                         C.value, distribution)
             else:
                 num = int(self._nrows * self._ncols * density)
                 for k in range(num):
                     col = rstate.c_random() % self._matrix._ncols
-                    self._randomize_rational_column_unsafe(col, B.value, \
+                    self._randomize_rational_column_unsafe(col, B.value,
                         C.value, distribution)
 
     def _charpoly_bound(self):
         """
         Determine a bound for the coefficients of the characteristic
-        polynomial of self. We use the bound in Lemma 2.2 of:
+        polynomial of ``self``.
+
+        We use the bound in Lemma 2.2 of:
 
           Dumas, J-G. "Bounds on the coefficients of characteristic
           and minimal polynomials." J. Inequal. Pure Appl. Math. 8
           (2007), no. 2.
 
-        This bound only applies for `self._nrows >= 4`, so in all
+        This bound only applies for ``self._nrows >= 4``, so in all
         smaller cases, we just use a naive bound.
 
         EXAMPLES::
@@ -1309,7 +1311,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
     def _charpoly_mod(self, p):
         """
         Return the characteristic polynomial of self*denom modulo all
-        primes over $p$.
+        primes over `p`.
 
         This is used internally by the multimodular charpoly algorithm.
 
@@ -1356,9 +1358,9 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         INPUT:
             proof -- bool (default: global flag); if False, compute
-                     using primes $p_i$ until the lift modulo all
-                     primes up to $p_i$ is the same as the lift modulo
-                     all primes up to $p_{i+3}$ or the bound is
+                     using primes `p_i` until the lift modulo all
+                     primes up to `p_i` is the same as the lift modulo
+                     all primes up to `p_{i+3}` or the bound is
                      reached.
 
         EXAMPLES::
@@ -1409,7 +1411,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             # if we've used enough primes as determined by bound, or
             # if we've used 3 primes, we check to see if the result is
             # the same.
-            if prod >= bound or (not proof  and  (len(v) % 3 == 0)):
+            if prod >= bound or (not proof and (len(v) % 3 == 0)):
                 M = matrix(ZZ, self._base_ring.degree(), self._nrows+1)
                 L = _lift_crt(M, v)
                 if not proof and L == L_last:
@@ -1961,4 +1963,3 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         if subdivide:
             M.subdivide([Anr*i for i in range(1,nr)], [Anc*i for i in range(1,nc)])
         return M
-

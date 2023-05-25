@@ -15,19 +15,21 @@ This file contains the following elements:
     - :class:`ReedMullerVectorEncoder`, an encoder with a vectorial message space (for both the two code classes)
     - :class:`ReedMullerPolynomialEncoder`, an encoder with a polynomial message space (for both the code classes)
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Parthasarathi Panda <parthasarathipanda314@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from operator import mul
+from functools import reduce
+
 from sage.matrix.constructor import matrix
-from sage.functions.other import binomial
+from sage.arith.misc import binomial
 from sage.coding.linear_code import AbstractLinearCode, LinearCodeSyndromeDecoder
 from sage.coding.encoder import Encoder
 from sage.combinat.subset import Subsets
@@ -38,7 +40,6 @@ from sage.rings.integer import Integer
 from sage.modules.free_module_element import vector
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.cachefunc import cached_method
-from functools import reduce
 
 
 def _binomial_sum(n, k):
@@ -179,7 +180,7 @@ def ReedMullerCode(base_field, order, num_of_var):
         sage: C
         Binary Reed-Muller Code of order 2 and number of variables 2
     """
-    if not(base_field in FiniteFields):
+    if base_field not in FiniteFields():
         raise ValueError("The parameter `base_field` must be a finite field")
     q = base_field.cardinality()
     if q == 2:
@@ -252,17 +253,18 @@ class QAryReedMullerCode(AbstractLinearCode):
             ValueError: the input `base_field` must be a FiniteField
         """
         # input sanitization
-        if not(base_field in FiniteFields):
+        if base_field not in FiniteFields():
             raise ValueError("the input `base_field` must be a FiniteField")
         if not(isinstance(order, (Integer, int))):
             raise ValueError("The order of the code must be an integer")
         if not(isinstance(num_of_var, (Integer, int))):
             raise ValueError("The number of variables must be an integer")
         q = base_field.cardinality()
-        if (order >= q):
+        if order >= q:
             raise ValueError("The order must be less than %s" % q)
 
-        super(QAryReedMullerCode,self).__init__(base_field, q**num_of_var, "EvaluationVector", "Syndrome")
+        super().__init__(base_field, q**num_of_var,
+                         "EvaluationVector", "Syndrome")
         self._order = order
         self._num_of_var = num_of_var
         self._dimension = binomial(num_of_var + order, order)
@@ -427,8 +429,7 @@ class BinaryReedMullerCode(AbstractLinearCode):
                 "The order must be less than or equal to %s" %
                 num_of_var)
 
-        super(BinaryReedMullerCode, self).__init__(GF(2), 2**num_of_var,
-            "EvaluationVector", "Syndrome")
+        super().__init__(GF(2), 2**num_of_var, "EvaluationVector", "Syndrome")
         self._order = order
         self._num_of_var = num_of_var
         self._dimension = _binomial_sum(num_of_var, order)
@@ -460,7 +461,7 @@ class BinaryReedMullerCode(AbstractLinearCode):
     def minimum_distance(self):
         r"""
         Returns the minimum distance of ``self``.
-        The minimum distance of a binary Reed-Muller code of order $d$ and number of variables $m$ is $q^{m-d}$
+        The minimum distance of a binary Reed-Muller code of order `d` and number of variables `m` is `q^{m-d}`
 
         EXAMPLES::
 
@@ -577,7 +578,7 @@ class ReedMullerVectorEncoder(Encoder):
                 code,
                 BinaryReedMullerCode)):
             raise ValueError("the code has to be a Reed-Muller code")
-        super(ReedMullerVectorEncoder, self).__init__(code)
+        super().__init__(code)
 
     def _repr_(self):
         r"""
@@ -662,7 +663,7 @@ class ReedMullerVectorEncoder(Encoder):
 
     def points(self):
         r"""
-        Returns the points of $F^m$, where $F$ is base field and $m$ is the number of variables, in order of which polynomials are evaluated on.
+        Returns the points of `F^m`, where `F` is base field and `m` is the number of variables, in order of which polynomials are evaluated on.
 
         EXAMPLES::
 
@@ -760,7 +761,7 @@ class ReedMullerPolynomialEncoder(Encoder):
             isinstance(code, QAryReedMullerCode)
                 or isinstance(code, BinaryReedMullerCode)):
             raise ValueError("the code has to be a Reed-Muller code")
-        super(ReedMullerPolynomialEncoder, self).__init__(code)
+        super().__init__(code)
         if polynomial_ring is None:
             self._polynomial_ring = PolynomialRing(code.base_field(),
                     code.number_of_variables(), 'x')

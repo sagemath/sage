@@ -121,7 +121,7 @@ def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
           for prime finite fields
     """
     from sage.rings.padics.factory import Zp
-    from sage.rings.all import PolynomialRing
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
     q = p**f
     a = a % (q-1)

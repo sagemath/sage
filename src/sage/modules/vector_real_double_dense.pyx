@@ -1,5 +1,5 @@
 r"""
-Dense real double vectors using a NumPy backend.
+Dense real double vectors using a NumPy backend
 
 EXAMPLES::
 
@@ -7,7 +7,7 @@ EXAMPLES::
     sage: v
     (1.0, 3.141592653589793, 1.414213562373095)
     sage: type(v)
-    <type 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
+    <class 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
     sage: parent(v)
     Vector space of dimension 3 over Real Double Field
     sage: v[0] = 5

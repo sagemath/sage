@@ -2,7 +2,12 @@
 Recursive Directory Contents
 """
 # ****************************************************************************
-#       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2014      Volker Braun <vbraun.name@gmail.com>
+#                     2014      R. Andrew Ohana
+#                     2015-2018 Jeroen Demeyer
+#                     2017      Erik M. Bray
+#                     2021      Tobias Diez
+#                     2020-2022 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,48 +23,14 @@ import os
 
 from collections import defaultdict
 
+from sage.misc.package_dir import is_package_or_sage_namespace_package_dir as is_package_or_namespace_package_dir
+from sage.misc.package_dir import read_distribution, SourceDistributionFilter
 
-def read_distribution(src_file):
-    """
-    Parse ``src_file`` for a ``# sage_setup: distribution = PKG`` directive.
-
-    INPUT:
-
-    - ``src_file`` -- file name of a Python or Cython source file
-
-    OUTPUT:
-
-    - a string, the name of the distribution package (``PKG``); or the empty
-      string if no directive was found.
-
-    EXAMPLES::
-
-        sage: from sage.env import SAGE_SRC
-        sage: from sage_setup.find import read_distribution
-        sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'tdlib.pyx'))
-        'sage-tdlib'
-        sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'modular_decomposition.py'))
-        ''
-    """
-    from Cython.Utils import open_source_file
-    with open_source_file(src_file, error_handling='ignore') as fh:
-        for line in fh:
-            # Adapted from Cython's Build/Dependencies.py
-            line = line.lstrip()
-            if not line:
-                continue
-            if line[0] != '#':
-                break
-            line = line[1:].lstrip()
-            kind = "sage_setup:"
-            if line.startswith(kind):
-                key, _, value = [s.strip() for s in line[len(kind):].partition('=')]
-                if key == "distribution":
-                    return value
-    return ''
+assert read_distribution  # unused in this file, re-export for compatibility
 
 
-def find_python_sources(src_dir, modules=['sage'], distributions=None):
+def find_python_sources(src_dir, modules=['sage'], distributions=None,
+                        exclude_distributions=None):
     """
     Find all Python packages and Python/Cython modules in the sources.
 
@@ -76,12 +47,19 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
       directive in the module source file) is an element of
       ``distributions``.
 
+    - ``exclude_distributions`` -- (default: ``None``) if not ``None``,
+      should be a sequence or set of strings: exclude modules whose
+      ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
+      directive in the module source file) is in ``exclude_distributions``.
+
     OUTPUT: Triple consisting of
 
-    - the list of package names (corresponding to directories with
-      ``__init__.py``),
+    - the list of package names (corresponding to ordinary packages
+      or namespace packages, according to
+      :func:`sage.misc.namespace_package.is_package_or_sage_namespace_package_dir`)
 
-    - Python module names (corresponding to other ``*.py`` files).
+    - Python module names (corresponding to ``*.py`` files in ordinary
+      or namespace packages)
 
     - Cython extensions (corresponding to ``*.pyx`` files).
 
@@ -113,9 +91,30 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
         sage: ['sage.doctest.tests' in L for L in (py_packages, py_modules)]
         [False, False]
 
-    Filtering by distribution (distutils package)::
+    Another subdirectory that is neither an ordinary nor a namespace package::
 
-        sage: find_python_sources(SAGE_SRC, distributions=['sage-tdlib'])
+        sage: ['sage.extdata' in L for L in (py_packages, py_modules)]
+        [False, False]
+
+    Package designated to become an implicit namespace package (no ``__init__.py``, PEP 420,
+    but with an ``all.py`` file per Sage library conventions)::
+
+        sage: ['sage.graphs.graph_decompositions' in L for L in (py_packages, py_modules)]
+        [True, False]
+
+    Python module in a package designated to become an implicit namespace package::
+
+        sage: ['sage.graphs.graph_decompositions.modular_decomposition' in L for L in (py_packages, py_modules)]
+        [False, True]
+
+    Python file (not module) in a directory that is neither an ordinary nor a namespace package::
+
+        sage: ['sage.ext_data.nbconvert.postprocess' in L for L in (py_packages, py_modules)]
+        [False, False]
+
+    Filtering by distribution (distribution package)::
+
+        sage: find_python_sources(SAGE_SRC, distributions=['sagemath-tdlib'])
         ([], [], [<setuptools.extension.Extension('sage.graphs.graph_decompositions.tdlib')...>])
 
     Benchmarking::
@@ -134,11 +133,12 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
     from setuptools import Extension
 
     PYMOD_EXT = get_extensions('source')[0]
-    INIT_FILE = '__init__' + PYMOD_EXT
 
     python_packages = []
     python_modules = []
     cython_modules = []
+
+    distribution_filter = SourceDistributionFilter(distributions, exclude_distributions)
 
     cwd = os.getcwd()
     try:
@@ -146,26 +146,22 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
         for module in modules:
             for dirpath, dirnames, filenames in os.walk(module):
                 package = dirpath.replace(os.path.sep, '.')
-                if INIT_FILE in filenames:
-                    # Ordinary package.
-                    if distributions is None or '' in distributions:
-                        python_packages.append(package)
-                else:
+                if not is_package_or_namespace_package_dir(dirpath):
+                    # Skip any subdirectories
+                    dirnames[:] = []
                     continue
-
-                def is_in_distributions(filename):
-                    if distributions is None:
-                        return True
-                    distribution = read_distribution(os.path.join(dirpath, filename))
-                    return distribution in distributions
+                # Ordinary package or namespace package.
+                if distributions is None or '' in distributions:
+                    python_packages.append(package)
 
                 for filename in filenames:
                     base, ext = os.path.splitext(filename)
+                    filepath = os.path.join(dirpath, filename)
                     if ext == PYMOD_EXT and base != '__init__':
-                        if is_in_distributions(filename):
+                        if filepath in distribution_filter:
                             python_modules.append(package + '.' + base)
                     if ext == '.pyx':
-                        if is_in_distributions(filename):
+                        if filepath in distribution_filter:
                             cython_modules.append(Extension(package + '.' + base,
                                                             sources=[os.path.join(dirpath, filename)]))
 
@@ -173,7 +169,7 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
         os.chdir(cwd)
     return python_packages, python_modules, cython_modules
 
-def filter_cython_sources(src_dir, distributions):
+def filter_cython_sources(src_dir, distributions, exclude_distributions=None):
     """
     Find all Cython modules in the given source directory that belong to the
     given distributions.
@@ -193,7 +189,7 @@ def filter_cython_sources(src_dir, distributions):
 
         sage: from sage.env import SAGE_SRC
         sage: from sage_setup.find import filter_cython_sources
-        sage: cython_modules = filter_cython_sources(SAGE_SRC, ["sage-tdlib"])
+        sage: cython_modules = filter_cython_sources(SAGE_SRC, ["sagemath-tdlib"])
 
     Cython module relying on tdlib::
 
@@ -207,17 +203,17 @@ def filter_cython_sources(src_dir, distributions):
 
     Benchmarking::
 
-        sage: timeit('filter_cython_sources(SAGE_SRC, ["sage-tdlib"])', # random output
+        sage: timeit('filter_cython_sources(SAGE_SRC, ["sagemath-tdlib"])', # random output
         ....:        number=1, repeat=1)
         1 loops, best of 1: 850 ms per loop
     """
     files: list[str] = []
-
+    distribution_filter = SourceDistributionFilter(distributions, exclude_distributions)
     for dirpath, dirnames, filenames in os.walk(src_dir):
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             base, ext = os.path.splitext(filename)
-            if ext == '.pyx' and read_distribution(filepath) in distributions:
+            if ext == '.pyx' and filepath in distribution_filter:
                 files.append(filepath)
 
     return files
@@ -238,9 +234,9 @@ def _cythonized_dir(src_dir=None, editable_install=None):
 
         sage: from sage_setup.find import _cythonized_dir
         sage: from sage.env import SAGE_SRC
-        sage: _cythonized_dir(SAGE_SRC)  # optional - build
+        sage: _cythonized_dir(SAGE_SRC)
         PosixPath('...')
-        sage: _cythonized_dir(SAGE_SRC, editable_install=False)
+        sage: _cythonized_dir(SAGE_SRC, editable_install=False) # optional - sage_spkg
         PosixPath('.../build/cythonized')
 
     """
@@ -251,8 +247,9 @@ def _cythonized_dir(src_dir=None, editable_install=None):
         if src_dir is None:
             src_dir = SAGE_SRC
         src_dir = Path(src_dir)
-        sage = import_module('sage')
-        d = Path(sage.__file__).resolve().parent.parent
+        # sage.cpython is an ordinary package, so it has __file__
+        sage_cpython = import_module('sage.cpython')
+        d = Path(sage_cpython.__file__).resolve().parent.parent.parent
         editable_install = d == src_dir.resolve()
     if editable_install:
         # Editable install: Cython generates files in the source tree
@@ -260,7 +257,9 @@ def _cythonized_dir(src_dir=None, editable_install=None):
     else:
         return Path(SAGE_ROOT) / "build" / "pkgs" / "sagelib" / "src" / "build" / "cythonized"
 
-def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[]):
+
+def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
+                     distributions=None):
     """
     Find all extra files which should be installed.
 
@@ -288,6 +287,11 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[]):
     - ``special_filenames`` -- a list of filenames to be installed from
       ``src_dir``
 
+    - ``distributions`` -- (default: ``None``) if not ``None``,
+      should be a sequence or set of strings: only find files whose
+      ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
+      directive in the file) is an element of ``distributions``.
+
     OUTPUT: dict with items ``{dir: files}`` where ``dir`` is a
     directory relative to ``src_dir`` and ``files`` is a list of
     filenames inside that directory.
@@ -300,11 +304,9 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[]):
         sage: extras = find_extra_files(SAGE_SRC, ["sage"], cythonized_dir)
         sage: extras["sage/libs/mpfr"]
         [...sage/libs/mpfr/types.pxd...]
-        sage: extras["sage/ext/interpreters"]
-        ['.../src/sage/ext/interpreters/wrapper_cdf.pxd', ...wrapper_cdf.h...]
+        sage: sorted(extras["sage/ext/interpreters"])
+        ['.../sage/ext/interpreters/wrapper_cdf.h', ...wrapper_cdf.pxd...]
     """
-    from Cython.Utils import is_package_dir
-
     data_files = {}
     cy_exts = ('.pxd', '.pxi', '.pyx')
 
@@ -313,16 +315,23 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[]):
         os.chdir(src_dir)
         for module in modules:
             for dir, dirnames, filenames in os.walk(module):
-                if not is_package_dir(dir):
+                if not is_package_or_namespace_package_dir(dir):
                     continue
                 sdir = os.path.join(src_dir, dir)
                 cydir = os.path.join(cythonized_dir, dir)
 
                 files = [os.path.join(sdir, f) for f in filenames
-                        if f.endswith(cy_exts) or f in special_filenames]
+                         if f.endswith(cy_exts) or f in special_filenames]
                 if os.path.isdir(cydir):  # Not every directory contains Cython files
                     files += [os.path.join(cydir, f) for f in os.listdir(cydir)
-                            if f.endswith(".h")]
+                              if f.endswith(".h")]
+                else:
+                    files += [os.path.join(sdir, f) for f in filenames
+                              if f.endswith(".h")]
+
+                if distributions is not None:
+                    files = [f for f in files
+                             if read_distribution(f) in distributions]
 
                 if files:
                     data_files[dir] = files
@@ -355,10 +364,9 @@ def installed_files_by_module(site_packages, modules=('sage',)):
 
     EXAMPLES::
 
-        sage: site_packages = os.path.dirname(os.path.dirname(sage.__file__))
+        sage: site_packages = os.path.dirname(os.path.dirname(os.path.dirname(sage.cpython.__file__)))
         sage: from sage_setup.find import installed_files_by_module
         sage: files_by_module = installed_files_by_module(site_packages)
-        sage: from sage.misc.sageinspect import loadable_module_extension
         sage: (f,) = files_by_module['sage.structure.sage_object']; f
         'sage/structure/sage_object...'
         sage: (f1, f2) = sorted(files_by_module['sage.structure'])
@@ -367,7 +375,12 @@ def installed_files_by_module(site_packages, modules=('sage',)):
         sage: f2
         'sage/structure/....pyc'
 
-    This takes about 30ms with warm cache:
+    Namespace packages::
+
+        sage: files_by_module['sage.graphs.graph_decompositions']
+        set()
+
+    This takes about 30ms with warm cache::
 
         sage: timeit('installed_files_by_module(site_packages)',       # random output
         ....:        number=1, repeat=1)

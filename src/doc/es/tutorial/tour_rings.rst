@@ -65,9 +65,10 @@ interna de un bucle. En este caso, podemos devolver ``i`` a su valor original::
 
 
 Hay una sutileza al definir números complejos: el símbolo ``i`` representa una
-raíz cuadrada de `-1`, pero es una raíz *formal* o *simbólica*.
-Ejecutando ``CC(i)`` ó ``CC.0`` obtenemos el número *complejo* que es la
-raíz cuadrada de `-1`. ::
+raíz cuadrada de `-1`, pero es una raíz *formal* como elemento de un cuerpo
+de números algebráicos.
+Ejecutando ``CC(i)`` o ``CC.0``  o ``CC.gen(0)`` obtenemos el número *complejo*
+de coma flotante que es la raíz cuadrada de `-1`. ::
 
     sage: i = CC(i)       # número complejo de coma flotante
     sage: i == CC.0
@@ -90,7 +91,7 @@ raíz cuadrada de `-1`. ::
     Rational Field
     sage: 2/3 + 0.1       # conversión automática antes de la suma
     0.766666666666667
-    sage: 0.1 + 2/3       # las reglas de conversión son simétricas en SAGE
+    sage: 0.1 + 2/3       # las reglas de conversión son simétricas en Sage
     0.766666666666667
 
 Veamos más ejemplos de anillos elementales en Sage. Como mencionamos antes,

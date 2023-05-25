@@ -18,7 +18,3 @@ Upstream Contact
 
 Home page: https://nodejs.org/
 
-Dependencies
-------------
-
-- nodeenv

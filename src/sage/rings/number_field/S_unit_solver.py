@@ -1,7 +1,7 @@
 r"""
 Solve S-unit equation x + y = 1
 
-Inspired by work of Tzanakis--de Weger, Baker--Wustholz and Smart, we use the LLL methods in Sage to implement an algorithm that returns all S-unit solutions to the equation $x + y = 1$.
+Inspired by work of Tzanakis--de Weger, Baker--Wustholz and Smart, we use the LLL methods in Sage to implement an algorithm that returns all S-unit solutions to the equation `x + y = 1`.
 
 REFERENCES:
 
@@ -54,7 +54,7 @@ EXAMPLES::
 # ****************************************************************************
 
 
-from sage.rings.all import Infinity
+from sage.rings.infinity import Infinity
 from sage.symbolic.ring import SR
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -68,12 +68,12 @@ from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.padics.factory import Qp
 from sage.combinat.combination import Combinations
-from sage.misc.all import prod
-from sage.arith.all import factorial
+from sage.misc.misc_c import prod
+from sage.arith.functions import lcm
+from sage.arith.misc import gcd, CRT, factorial
 from sage.matrix.constructor import matrix, identity_matrix, vector, block_matrix, zero_matrix
 from sage.modules.free_module_element import zero_vector
 from itertools import combinations_with_replacement
-from sage.arith.all import gcd, lcm, CRT
 from copy import copy
 import itertools
 
@@ -142,7 +142,7 @@ def c3_func(SUK, prec=106):
 
     REFERENCES:
 
-    - [AKMRVW]_ arXiv:1903.00977
+    - [AKMRVW]_ :arxiv:`1903.00977`
 
     """
 
@@ -541,7 +541,7 @@ def Omega_prime(dK, v, mu_list, prec=106):
 
     REFERENCES:
 
-    - [AKMRVW]_ arXiv:1903:.00977
+    - [AKMRVW]_ :arxiv:`1903.00977`
     """
 
     R = RealField(prec)
@@ -609,7 +609,7 @@ def Yu_C1_star(n, v, prec=106):
     C1 *= (n**n * (n+1)**(n+1))/factorial(n)
     C1 *= p**fp/(q**u)
     C1 *= ( dK / (fp * R(p).log()) )**(n+2)
-    C1 *= R (max( dK, exp(1) )).log()
+    C1 *= R(max( dK, exp(1) )).log()
     C1 *= max( R(exp(4)*(n+1)*dK).log(), ep, fp * R(p).log() )
 
     C1_star = R((n+1) * C1)
@@ -619,7 +619,7 @@ def Yu_C1_star(n, v, prec=106):
 
 def Yu_bound(SUK, v, prec=106):
     r"""
-    Return `c8` such that `c8 >= exp(2)/\log(2)` and `ord_p (\Theta - 1) < c8 \log B`, 
+    Return `c8` such that `c8 >= exp(2)/\log(2)` and `ord_p (\Theta - 1) < c8 \log B`,
     where `\Theta = \prod_{j=1}^n \alpha_j^{b_j}` and `B \geq \max_j |b_j|` and `B \geq 3`.
 
     INPUT:
@@ -645,8 +645,7 @@ def Yu_bound(SUK, v, prec=106):
 
     - [Sma1995]_ p. 825
     - [Yu2007]_ p. 189--193 esp. Theorem 1
-    - [AKMRVW]_ arXiv:1903.00977
-
+    - [AKMRVW]_ :arxiv:`1903.00977`
     """
 
     # We are using Theorem 1 of "p-adic logarithmic forms and group varieties III" by Kunrui Yu.
@@ -727,7 +726,7 @@ def K0_func(SUK, A, prec=106):
     REFERENCES:
 
     - [Sma1995]_ p. 824
-    - [AKMRVW]_ arXiv:1903.00977
+    - [AKMRVW]_ :arxiv:`1903.00977`
     """
     R = RealField(prec)
 
@@ -850,7 +849,7 @@ def K1_func(SUK, v, A, prec=106):
 
     - ``SUK`` -- a group of `S`-units
     - ``v`` -- an infinite place of ``K`` (element of ``SUK.number_field().places(prec)``)
-    - ``A`` -- a list of all products of each potential ``a``, ``b`` in the $S$-unit equation ``ax + by + 1 = 0`` with each root of unity of ``K``
+    - ``A`` -- a list of all products of each potential ``a``, ``b`` in the `S`-unit equation ``ax + by + 1 = 0`` with each root of unity of ``K``
     - ``prec`` -- the precision of the real field (default: 106)
 
     OUTPUT:
@@ -946,6 +945,8 @@ def minimal_vector(A, y, prec=106):
     ::
 
         sage: B = random_matrix(ZZ, 3)
+        sage: while not B.determinant():
+        ....:     B = random_matrix(ZZ, 3)
         sage: B # random
         [-2 -1 -1]
         [ 1  1 -2]
@@ -1338,7 +1339,6 @@ def log_p_series_part(a, prime, prec):
                  ZZ((gi * p**(-gi.valuation(p))) % (p**(prec+w-gi.valuation(p)))) * p**(gi.valuation(p)) * g**i
                  for i,gi in enumerate(gamma) if gi != 0])
 
-
     beta = 0
     delta = 1 - gamma
     for i in range(1, n+1):
@@ -1594,7 +1594,7 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
     m = e * f
     u = 1
     while True:
-        if  prec <= u + c8:
+        if prec <= u + c8:
             return 0, True
 
         # We construct the matrix A as a block matrix
@@ -1780,20 +1780,20 @@ def sieve_ordering(SUK, q):
         sage: SUK = K.S_unit_group(S=3)
         sage: sieve_data = list(sieve_ordering(SUK, 19))
         sage: sieve_data[0]
-        (Fractional ideal (xi - 3),
-         Fractional ideal (-2*xi^2 + 3),
+        (Fractional ideal (-2*xi^2 + 3),
+         Fractional ideal (-xi + 3),
          Fractional ideal (2*xi + 1))
 
         sage: sieve_data[1]
-        (Residue field of Fractional ideal (xi - 3),
-         Residue field of Fractional ideal (-2*xi^2 + 3),
+        (Residue field of Fractional ideal (-2*xi^2 + 3),
+         Residue field of Fractional ideal (-xi + 3),
          Residue field of Fractional ideal (2*xi + 1))
 
         sage: sieve_data[2]
-        ([18, 7, 16, 4], [18, 9, 12, 8], [18, 3, 10, 10])
+        ([18, 12, 16, 8], [18, 16, 10, 4], [18, 10, 12, 10])
 
         sage: sieve_data[3]
-        (486, 648, 11664)
+        (648, 2916, 3888)
     """
 
     K = SUK.number_field()

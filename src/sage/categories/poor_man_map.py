@@ -14,6 +14,7 @@ Poor Man's map
 # ****************************************************************************
 import sage.structure.sage_object
 
+
 class PoorManMap(sage.structure.sage_object.SageObject):
     """
     A class for maps between sets which are not (yet) modeled by parents
@@ -57,7 +58,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         True
 
     """
-    def __init__(self, function, domain = None, codomain = None, name = None):
+    def __init__(self, function, domain=None, codomain=None, name=None):
         """
         TESTS::
 
@@ -184,6 +185,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         Composition
 
         INPUT:
+
          - ``self`` -- a map `f`
          - ``other`` -- a map `g`
 
@@ -200,12 +202,12 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         Note that the compatibility of the domains and codomains is for performance
         reasons only checked for proper parents. For example, the incompatibility
         is not detected here::
-    
+
             sage: f*g
             A map from (2, 3, 4) to (2, 3, 4)
-    
+
         But it is detected here::
-    
+
             sage: g = PoorManMap(factorial, domain = ZZ, codomain = ZZ)
             sage: h = PoorManMap(sqrt, domain = RR, codomain = CC)
             sage: g*h
@@ -214,7 +216,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             ValueError: the codomain Complex Field with 53 bits of precision does not coerce into the domain Integer Ring
             sage: h*g
             A map from Integer Ring to Complex Field with 53 bits of precision
-    
         """
         self_domain = self.domain()
 
@@ -227,7 +228,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             from sage.structure.parent import is_Parent
             if is_Parent(self_domain) and is_Parent(other_codomain):
                 if not self_domain.has_coerce_map_from(other_codomain):
-                    raise ValueError("the codomain %r does not coerce into the domain %r"%(other_codomain, self_domain))
+                    raise ValueError("the codomain %r does not coerce into the domain %r" % (other_codomain, self_domain))
 
         codomain = self.codomain()
         try:
@@ -259,3 +260,17 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         for function in reversed(self._functions):
             args = [function(*args)]
         return args[0]
+
+    def _sympy_(self):
+        """
+        EXAMPLES::
+
+            sage: from sage.categories.poor_man_map import PoorManMap
+            sage: h = PoorManMap(sin, domain=RR, codomain=RR)
+            sage: h._sympy_()
+            sin
+        """
+        from sympy import Lambda, sympify
+        if len(self._functions) == 1:
+            return sympify(self._functions[0])
+        raise NotImplementedError

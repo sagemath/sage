@@ -1,5 +1,5 @@
 r"""
-Graphics 3D Object for Representing and Triangulating Isosurfaces.
+Graphics 3D object for representing and triangulating isosurfaces
 
 AUTHORS:
 
@@ -84,11 +84,11 @@ from sage.plot.plot3d.transform cimport point_c, face_c, color_c, Transformation
 from sage.plot.plot3d.base cimport PrimitiveObject
 from sage.plot.plot3d.base import RenderParams, default_texture
 from sage.plot.plot3d.index_face_set cimport IndexFaceSet
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 from sage.plot.misc import setup_for_eval_on_grid
 from sage.plot.colors import check_color_data
 
-from sage.libs.gsl.math cimport gsl_isnan
+from libc.math cimport isnan
 
 include "point_c.pxi"
 
@@ -99,9 +99,7 @@ DEFAULT_PLOT_POINTS = 40
 cdef double nan = float(RDF('NaN'))
 
 cdef inline bint marching_has_edge(double a, double b, double contour, double *f, bint *has_nan):
-    # XXX Would be nicer to use isnan(), because it's inlined.
-    # Is it portable enough?
-    if gsl_isnan(a) or gsl_isnan(b):
+    if isnan(a) or isnan(b):
         has_nan[0] = True
         return False
 
@@ -115,7 +113,7 @@ cdef inline bint marching_has_edge(double a, double b, double contour, double *f
 
 # Returns 0 or 1
 cdef inline int marching_is_inside(double v, double contour):
-    return gsl_isnan(v) or v < contour
+    return isnan(v) or v < contour
 
 cdef void interpolate_point_c(point_c *result, double frac, point_c *inputs):
     result[0].x = inputs[0].x + frac*(inputs[1].x - inputs[0].x)
@@ -256,11 +254,16 @@ cdef class MarchingCubes:
         self.eval_scale_inv.z = 1/self.eval_scale.z
 
         cdef point_c zero_pt, origin, plus_x, plus_y, plus_z
-        zero_pt.x = 0; zero_pt.y = 0; zero_pt.z = 0
+        zero_pt.x = 0
+        zero_pt.y = 0
+        zero_pt.z = 0
         origin = self.eval_min
-        plus_x = zero_pt; plus_x.x = self.eval_scale.x
-        plus_y = zero_pt; plus_y.y = self.eval_scale.y
-        plus_z = zero_pt; plus_z.z = self.eval_scale.z
+        plus_x = zero_pt
+        plus_x.x = self.eval_scale.x
+        plus_y = zero_pt
+        plus_y.y = self.eval_scale.y
+        plus_z = zero_pt
+        plus_z.z = self.eval_scale.z
         if self.transform is not None:
             self.transform.transform_point_c(&self.out_origin, origin)
             self.transform.transform_point_c(&self.out_plus_x, plus_x)
@@ -671,9 +674,12 @@ cdef class MarchingCubesTriangles(MarchingCubes):
         cdef double gy = dy * self.eval_scale_inv.y
         cdef double gz = dz * self.eval_scale_inv.z
 
-        if x > 0 and x < self.nx - 1: gx *= 0.5
-        if y > 0 and y < self.ny - 1: gy *= 0.5
-        if z > 0 and z < self.nz - 1: gz *= 0.5
+        if x > 0 and x < self.nx - 1:
+            gx *= 0.5
+        if y > 0 and y < self.ny - 1:
+            gy *= 0.5
+        if z > 0 and z < self.nz - 1:
+            gz *= 0.5
 
         g[0].x = gx
         g[0].y = gy
@@ -754,7 +760,8 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                 insideMask |= marching_is_inside(right[y+1,z+1], self.contour)<<6
                 insideMask |= marching_is_inside(left[y+1,z+1], self.contour)<<7
 
-                if insideMask == 0 or insideMask == 255: continue
+                if insideMask == 0 or insideMask == 255:
+                    continue
 
                 # OK, we have a cube on the surface.  Copy all of the vertex
                 # info into an array for easier reference.
@@ -993,7 +1000,7 @@ cdef class ImplicitSurface(IndexFaceSet):
             self.region = fast_float(region, *self.vars)
 
         # Comments from Carl Witty, who first wrote this some of this code
-        # See Trac 9483
+        # See Issue 9483
         # When I first wrote the code, I had the idea to create a
         # direct-to-tachyon backend that would use vertex normals
         # to create much nicer-looking plots with smaller numbers
@@ -1146,7 +1153,7 @@ cdef class ImplicitSurface(IndexFaceSet):
 
     def threejs_repr(self, render_params):
         r"""
-        Return a represention of the surface suitable for plotting with three.js.
+        Return a representation of the surface suitable for plotting with three.js.
 
         EXAMPLES::
 

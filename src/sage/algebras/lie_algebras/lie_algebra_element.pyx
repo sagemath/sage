@@ -18,10 +18,9 @@ AUTHORS:
 # ****************************************************************************
 
 from copy import copy
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+from cpython.object cimport Py_EQ, Py_NE, Py_GT, Py_GE
 
 from sage.misc.repr import repr_lincomb
-from sage.combinat.free_module import CombinatorialFreeModule
 from sage.structure.element cimport have_same_parent, parent
 from sage.structure.coerce cimport coercion_model
 from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
@@ -95,7 +94,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
             sage: H = L.Hall()
             doctest:warning...:
             FutureWarning: The Hall basis has not been fully proven correct, but currently no bugs are known
-            See http://trac.sagemath.org/16823 for details.
+            See https://github.com/sagemath/sage/issues/16823 for details.
             sage: elt = Lyn.an_element()
             sage: elt._im_gens_(H, H.gens())
             x + y + z
@@ -116,7 +115,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
             -[a, [a, b]] + [a, b] - [[a, b], b]
         """
         s = codomain.zero()
-        if not self: # If we are 0
+        if not self:  # If we are 0
             return s
         names = self.parent().variable_names()
         if base_map is None:
@@ -260,7 +259,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
          ├┼┘
          └┘
     """
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return if ``self`` is non-zero.
 
@@ -408,7 +407,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
         if scalar_parent != self._parent.base_ring():
             # Temporary needed by coercion (see Polynomial/FractionField tests).
             if self._parent.base_ring().has_coerce_map_from(scalar_parent):
-                scalar = self._parent.base_ring()( scalar )
+                scalar = self._parent.base_ring()(scalar)
             else:
                 return None
         if self_on_left:
@@ -479,7 +478,7 @@ cdef class LieAlgebraMatrixWrapper(LieAlgebraElementWrapper):
             sage: z.value.is_immutable()
             True
         """
-        value.set_immutable() # Make the matrix immutable for hashing
+        value.set_immutable()  # Make the matrix immutable for hashing
         LieAlgebraElementWrapper.__init__(self, parent, value)
 
 
@@ -542,7 +541,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         x_lift = (<LieSubalgebraElementWrapper> x).value
         return type(self)(self._parent, self.value._bracket_(x_lift))
 
-    def to_vector(self):
+    def to_vector(self, order=None, sparse=False):
         r"""
         Return the vector in ``g.module()`` corresponding to the
         element ``self`` of ``g`` (where ``g`` is the parent of ``self``).
@@ -570,7 +569,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: S(X).to_vector().parent() is S.module()
             True
         """
-        return self._parent.module()(self.value.to_vector())
+        return self._parent.module()(self.value.to_vector(sparse=sparse))
 
     cpdef dict monomial_coefficients(self, bint copy=True):
         r"""
@@ -681,7 +680,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         if scalar_parent != self._parent.base_ring():
             # Temporary needed by coercion (see Polynomial/FractionField tests).
             if self._parent.base_ring().has_coerce_map_from(scalar_parent):
-                scalar = self._parent.base_ring()( scalar )
+                scalar = self._parent.base_ring()(scalar)
             else:
                 return None
         cdef LieSubalgebraElementWrapper ret
@@ -717,7 +716,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
             sage: elt = x - 3/2 * y
             sage: latex(elt)
-            x - \frac{3}{2}y
+            x - \frac{3}{2} y
         """
         return repr_lincomb(self._sorted_items_for_printing(),
                             scalar_mult=self._parent._print_options['scalar_mult'],
@@ -827,11 +826,11 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
         zero = self._parent.base_ring().zero()
         I = self._parent._indices
         cdef int i
-        for i,v in enumerate(self.value):
+        for i, v in enumerate(self.value):
             if v != zero:
                 yield (I[i], v)
 
-    cpdef to_vector(self):
+    cpdef to_vector(self, bint sparse=False):
         """
         Return ``self`` as a vector.
 
@@ -842,6 +841,8 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             sage: a.to_vector()
             (1, 3, -1/2)
         """
+        if sparse:
+            return self.value.sparse_vector()
         return self.value
 
     def lift(self):
@@ -877,7 +878,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             {'x': 2, 'z': -3/2}
         """
         I = self._parent._indices
-        return {I[i]: v for i,v in self.value.iteritems()}
+        return {I[i]: v for i, v in self.value.iteritems()}
 
     def __getitem__(self, i):
         """
@@ -944,7 +945,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         ret = style('')
         mult = style(mult)
         tensor_symb = style(tensor_symb)
-        for t,g in self._t_dict.iteritems():
+        for t, g in self._t_dict.items():
             if ret:
                 ret += style(' + ')
             if coeff == str:
@@ -1027,7 +1028,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
 
             sage: e1,f1,h1,e0,f0,c,d = list(L.lie_algebra_generators())
             sage: latex(e1 + 2*f1 - h1 + e0 + 3*c - 2*d)
-            \left(E_{\alpha_{1}} - E_{\alpha^\vee_{1}} + 2E_{-\alpha_{1}}\right) \otimes t^{0}
+            \left(E_{\alpha_{1}} - E_{\alpha^\vee_{1}} + 2 E_{-\alpha_{1}}\right) \otimes t^{0}
              + \left(E_{-\alpha_{1}}\right) \otimes t^{1} + 3 c + -2 d
         """
         from sage.misc.latex import latex
@@ -1149,7 +1150,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
                                self._c_coeff, self._d_coeff))
         return self._hash
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``self`` as a boolean.
 
@@ -1258,9 +1259,9 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
              'd']
         """
         cdef dict d = {}
-        for t,g in self._t_dict.iteritems():
-            for k,c in g.monomial_coefficients(copy=False).iteritems():
-                d[k,t] = c
+        for t, g in self._t_dict.items():
+            for k, c in g.monomial_coefficients(copy=False).iteritems():
+                d[k, t] = c
         if self._c_coeff:
             d['c'] = self._c_coeff
         if self._d_coeff:
@@ -1320,11 +1321,10 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         if not self or not y:
             return self._parent.zero()
 
-        gd = self._parent._g.basis()
         cdef dict d = {}
         cdef UntwistedAffineLieAlgebraElement rt = <UntwistedAffineLieAlgebraElement>(y)
         c = self._parent.base_ring().zero()
-        for tl,gl in self._t_dict.iteritems():
+        for tl, gl in self._t_dict.items():
             # d contribution from the left
             if rt._d_coeff:
                 if tl in d:
@@ -1334,7 +1334,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
                 if not d[tl]:
                     del d[tl]
             # main bracket of the central extension
-            for tr,gr in rt._t_dict.iteritems():
+            for tr, gr in rt._t_dict.items():
                 b = gl.bracket(gr)
                 if b:
                     if tl+tr in d:
@@ -1348,7 +1348,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
 
         # d contribution from the right
         if self._d_coeff:
-            for tr,gr in rt._t_dict.iteritems():
+            for tr, gr in rt._t_dict.items():
                 if tr in d:
                     d[tr] += self._d_coeff * gr * tr
                 else:
@@ -1379,9 +1379,11 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
             sage: x.canonical_derivation()
             (5*E[alpha[2] + alpha[3] + 2*alpha[4] + alpha[5]])#t^5
         """
-        cdef dict d = {tl: tl * gl for tl,gl in self._t_dict.iteritems() if tl != 0}
+        cdef dict d = {tl: tl * gl
+                       for tl, gl in self._t_dict.items() if tl != 0}
         zero = self._parent.base_ring().zero()
         return type(self)(self._parent, d, zero, zero)
+
 
 def _build_untwisted_affine_element(P, t_dict, c, d):
     """
@@ -1468,11 +1470,11 @@ class FreeLieAlgebraElement(LieAlgebraElement):
 
         cdef dict d = {}
         zero = self.base_ring().zero()
-        for ml, cl in self._monomial_coefficients.iteritems(): # The left monomials
-            for mr, cr in y._monomial_coefficients.iteritems(): # The right monomials
+        for ml, cl in self._monomial_coefficients.iteritems():  # The left monomials
+            for mr, cr in y._monomial_coefficients.iteritems():  # The right monomials
                 if ml == mr:
                     continue
-                if ml < mr: # Make sure ml < mr
+                if ml < mr:  # Make sure ml < mr
                     a, b = ml, mr
                 else:
                     a, b = mr, ml
@@ -1486,8 +1488,9 @@ class FreeLieAlgebraElement(LieAlgebraElement):
             return self.parent().zero()
         return type(self)(self.parent(), d)
 
+
 #####################################################################
-## Helper classes for free Lie algebras
+# Helper classes for free Lie algebras
 
 cdef class LieObject(SageObject):
     """
@@ -1993,4 +1996,3 @@ cdef class LyndonBracket(GradedLieBracket):
         if self._hash == -1:
             self._hash = hash(self._index_word)
         return self._hash
-

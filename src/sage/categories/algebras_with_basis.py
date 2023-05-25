@@ -56,7 +56,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         B[word: acb]
 
         sage: A.product
-        <bound method FreeAlgebra_with_category._product_from_product_on_basis_multiply of
+        <bound method MagmaticAlgebras.WithBasis.ParentMethods._product_from_product_on_basis_multiply of
          An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field>
         sage: A.product(a*b,b)
         B[word: abb]
@@ -104,7 +104,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         sage: TestSuite(AlgebrasWithBasis(QQ)).run()
     """
 
-    def example(self, alphabet = ('a','b','c')):
+    def example(self, alphabet=('a','b','c')):
         """
         Return an example of algebra with basis.
 
@@ -274,7 +274,6 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             # version of module morphism, this would not take
             # advantage of the block structure
 
-
     class TensorProducts(TensorProductsCategory):
         """
         The category of algebras with basis constructed by tensor product of algebras with basis
@@ -364,4 +363,3 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             Implements operations on elements of tensor products of algebras with basis
             """
             pass
-

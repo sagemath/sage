@@ -1,18 +1,17 @@
 r"""
 Examples of finite Coxeter groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Nicolas M. Thiery <nthiery at users.sf.net>
 #  Copyright (C) 2009 Nicolas Borie <nicolas dot borie at math.u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
-from sage.categories.all import FiniteCoxeterGroups
+from sage.categories.finite_coxeter_groups import FiniteCoxeterGroups
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.functional import is_odd, is_even
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
@@ -70,7 +69,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         sage: TestSuite(G).run()
 
         sage: c = FiniteCoxeterGroups().example(3).cayley_graph()
-        sage: sorted(c.edges())
+        sage: c.edges(sort=True)
         [((), (1,), 1),
          ((), (2,), 2),
          ((1,), (), 1),
@@ -85,22 +84,22 @@ class DihedralGroup(UniqueRepresentation, Parent):
          ((2, 1), (2,), 1)]
     """
 
-    def __init__(self, n = 5):
+    def __init__(self, n=5):
         r"""
-        INPUT:
-         - ``n`` - an integer with `n>=2`
+        Construct the `n`-th DihedralGroup of order `2 n`.
 
-        Construct the n-th DihedralGroup of order 2*n
+        INPUT:
+
+        - `n` -- an integer with `n \geq 2`
 
         EXAMPLES::
 
             sage: from sage.categories.examples.finite_coxeter_groups import DihedralGroup
             sage: DihedralGroup(3)
             The 3-th dihedral group of order 6
-
         """
         assert n >= 2
-        Parent.__init__(self, category = FiniteCoxeterGroups())
+        Parent.__init__(self, category=FiniteCoxeterGroups())
         self.n = n
 
     def _repr_(self):
@@ -112,7 +111,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
             sage: FiniteCoxeterGroups().example(6)
             The 6-th dihedral group of order 12
         """
-        return "The %s-th dihedral group of order %s"%(self.n, 2*self.n)
+        return "The %s-th dihedral group of order %s" % (self.n, 2 * self.n)
 
     def __contains__(self, x):
         r"""
@@ -184,7 +183,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         wrapped_class = tuple
         __lt__ = ElementWrapper._lt_by_value
 
-        def has_right_descent(self, i, positive = False, side = "right"):
+        def has_right_descent(self, i, positive=False, side="right"):
             r"""
             Implements :meth:`SemiGroups.ElementMethods.has_right_descent`.
 
@@ -239,12 +238,13 @@ class DihedralGroup(UniqueRepresentation, Parent):
                     return self.parent()(reduced_word[:-1])
                 else:
                     return self.parent()(reduced_word[1:])
-            elif (len(reduced_word) == n-1 and (not self.has_descent(i))) and (reduced_word[0] == 2):
-                return self.parent()((1,)+reduced_word)
+            elif (len(reduced_word) == n - 1 and (not self.has_descent(i))) and (reduced_word[0] == 2):
+                return self.parent()((1,) + reduced_word)
             else:
                 if self.has_descent(i):
                     return self.parent()(reduced_word[:-1])
                 else:
-                    return self.parent()(reduced_word+(i,))
+                    return self.parent()(reduced_word + (i,))
+
 
 Example = DihedralGroup

@@ -26,6 +26,7 @@ from itertools import product
 from itertools import combinations
 from sage.graphs.graph import Graph
 
+
 def ChessboardGraphGenerator(dim_list, rook=True, rook_radius=None,
                              bishop=True, bishop_radius=None,
                              knight=True, knight_x=1, knight_y=2,
@@ -154,14 +155,14 @@ def ChessboardGraphGenerator(dim_list, rook=True, rook_radius=None,
     if rook:
         if rook_radius is None:
             rook_radius = max(dim)
-        elif not rook_radius in ZZ or rook_radius < 1:
+        elif rook_radius not in ZZ or rook_radius < 1:
             raise ValueError('the rook_radius must be either None or have an integer value >= 1')
     if bishop:
         if bishop_radius is None:
             bishop_radius = max(dim)
-        elif not bishop_radius in ZZ or bishop_radius < 1:
+        elif bishop_radius not in ZZ or bishop_radius < 1:
             raise ValueError('the bishop_radius must be either None or have an integer value >= 1')
-    if knight and ( not knight_x in ZZ or not knight_y in ZZ or knight_x < 1 or knight_y < 1 ):
+    if knight and (knight_x not in ZZ or knight_y not in ZZ or knight_x < 1 or knight_y < 1):
         raise ValueError('the knight_x and knight_y values must be integers of value >= 1')
 
     # We build the set of vertices of the d-dimensional chessboard
@@ -228,6 +229,7 @@ def ChessboardGraphGenerator(dim_list, rook=True, rook_radius=None,
         G.relabel(inplace=True)
     return G, dimstr
 
+
 def QueenGraph(dim_list, radius=None, relabel=False):
     r"""
     Return the `d`-dimensional Queen Graph with prescribed dimensions.
@@ -285,7 +287,7 @@ def QueenGraph(dim_list, radius=None, relabel=False):
         ....:         G = graphs.QueenGraph([d,d],radius=r)
         ....:         H = graphs.RookGraph([d,d],radius=r)
         ....:         B = graphs.BishopGraph([d,d],radius=r)
-        ....:         H.add_edges(B.edges())
+        ....:         H.add_edges(B.edges(sort=False))
         ....:         if not G.is_isomorphic(H):
         ....:             print("that's not good!")
 
@@ -522,7 +524,7 @@ def BishopGraph(dim_list, radius=None, relabel=False):
         ....:     H = Graph()
         ....:     for r in range(1,d+1):
         ....:         B = graphs.BishopGraph([d,d],radius=r)
-        ....:         H.add_edges( graphs.KnightGraph([d,d],one=r,two=r).edges() )
+        ....:         H.add_edges( graphs.KnightGraph([d,d],one=r,two=r).edges(sort=False) )
         ....:         if not B.is_isomorphic(H):
         ....:            print("that's not good!")
 

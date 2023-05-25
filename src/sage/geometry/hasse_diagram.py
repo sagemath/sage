@@ -157,7 +157,7 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
         # Now G == {H[atom] : atom in minimals}
         for atom in minimals:   # 9: for g in G:
             g_atoms, g_coatoms = H[atom]
-            if not required_atoms is None:
+            if required_atoms is not None:
                 if g_atoms.isdisjoint(required_atoms):
                     continue
             if (g_atoms, g_coatoms) in faces:

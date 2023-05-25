@@ -92,21 +92,21 @@ class SagePrettyPrinter(PrettyPrinter):
             sage: 'this is a string'
             'this is a string'
             sage: type(123)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type
             <... 'type'>
             sage: import types
             sage: type('name', (), {})
             <class '__main__.name'>
             sage: types.BuiltinFunctionType
-            <type 'builtin_function_or_method'>
+            <class 'builtin_function_or_method'>
 
             sage: def foo(): pass
             sage: foo
             <function foo at 0x...>
         """
-        super(SagePrettyPrinter, self).__init__(
-            output, max_width, newline, max_seq_length=max_seq_length)
+        super().__init__(output, max_width, newline,
+                         max_seq_length=max_seq_length)
         self.stack = []
 
     def pretty(self, obj):

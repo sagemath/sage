@@ -348,7 +348,7 @@ def lazy_list_formatter(L, name='lazy list',
     return s
 
 
-cdef class lazy_list_generic(object):
+cdef class lazy_list_generic():
     r"""
     A lazy list
 

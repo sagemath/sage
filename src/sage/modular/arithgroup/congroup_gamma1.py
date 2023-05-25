@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Congruence Subgroup `\Gamma_1(N)`
+Congruence subgroup `\Gamma_1(N)`
 """
 
 #*****************************************************************************
@@ -14,10 +14,10 @@ Congruence Subgroup `\Gamma_1(N)`
 
 from sage.misc.cachefunc import cached_method
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from .congroup_gammaH import GammaH_class, is_GammaH, GammaH_constructor
-from sage.rings.all import ZZ
-from sage.arith.all import euler_phi as phi, moebius, divisors
+from sage.rings.integer_ring import ZZ
+from sage.arith.misc import euler_phi as phi, moebius, divisors
 from sage.modular.dirichlet import DirichletGroup
 
 

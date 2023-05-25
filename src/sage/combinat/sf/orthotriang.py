@@ -49,7 +49,6 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         pass
 
-
     def __init__(self, Sym, base, scalar, prefix, basis_name, leading_coeff=None):
         r"""
         Initialization of the symmetric function algebra defined via orthotriangular rules.
@@ -70,7 +69,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         .. NOTE::
 
             The base ring is required to be a `\QQ`-algebra for this
-            method to be useable, since the scalar product is defined by
+            method to be usable, since the scalar product is defined by
             its values on the power sum basis.
 
         EXAMPLES::
@@ -181,10 +180,13 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         else:
             self._self_to_base_cache[n] = {}
 
-        self._gram_schmidt(n, self._sf_base, self._scalar, self._self_to_base_cache,\
-                           leading_coeff=self._leading_coeff, upper_triangular=True)
-        self._invert_morphism(n, self.base_ring(), self._self_to_base_cache, \
-                              self._base_to_self_cache, to_other_function = self._to_base)
+        self._gram_schmidt(n, self._sf_base, self._scalar,
+                           self._self_to_base_cache,
+                           leading_coeff=self._leading_coeff,
+                           upper_triangular=True)
+        self._invert_morphism(n, self.base_ring(), self._self_to_base_cache,
+                              self._base_to_self_cache,
+                              to_other_function=self._to_base)
 
     def _to_base(self, part):
         r"""
@@ -247,6 +249,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
             s[2, 1, 1] + s[2, 2] + s[3, 1]
         """
         return self(self._sf_base(left) * self._sf_base(right))
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

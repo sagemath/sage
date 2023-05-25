@@ -1,12 +1,12 @@
 r"""
 Unique factorization domains
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.misc.misc_c import prod
@@ -14,11 +14,14 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_singleton import Category_contains_method_by_parent_class
 from sage.categories.gcd_domains import GcdDomains
 
+
 class UniqueFactorizationDomains(Category_singleton):
     """
-    The category of unique factorization domains
-    constructive unique factorization domains, i.e. where one can constructively
-    factor members into a product of a finite number of irreducible elements
+    The category of (constructive) unique factorization domains.
+
+    In a constructive unique factorization domain we can
+    constructively factor members into a product of a finite number
+    of irreducible elements.
 
     EXAMPLES::
 
@@ -30,6 +33,7 @@ class UniqueFactorizationDomains(Category_singleton):
     TESTS::
 
         sage: TestSuite(UniqueFactorizationDomains()).run()
+
     """
 
     def super_categories(self):
@@ -74,7 +78,7 @@ class UniqueFactorizationDomains(Category_singleton):
 
         This implementation will not be needed anymore once every
         field in Sage will be properly declared in the category
-        :class:`UniqueFactorizationDomains`().
+        :class:`UniqueFactorizationDomains() <UniqueFactorizationDomains>`.
         """
         try:
             return self._contains_helper(x) or x.is_unique_factorization_domain()
@@ -221,7 +225,7 @@ class UniqueFactorizationDomains(Category_singleton):
             This default implementation calls ``squarefree_decomposition`` if
             available, and ``factor`` otherwise.
 
-            .. seealso:: :meth:`squarefree_part`
+            .. SEEALSO:: :meth:`squarefree_part`
 
             EXAMPLES::
 
@@ -239,7 +243,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: Integer(0).radical()
                 Traceback (most recent call last):
                 ...
-                ArithmeticError: Radical of 0 not defined.
+                ArithmeticError: radical of 0 is not defined
 
             The next example shows how to compute the radical of a number,
             assuming no prime > 100000 has exponent > 1 in the factorization::
@@ -256,7 +260,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 10
             """
             if self.is_zero():
-                raise ArithmeticError("Radical of 0 not defined.")
+                raise ArithmeticError("radical of 0 is not defined")
             try:
                 decomp = self.squarefree_decomposition()
             except AttributeError:
@@ -271,7 +275,7 @@ class UniqueFactorizationDomains(Category_singleton):
 
             This default implementation calls ``squarefree_decomposition``.
 
-            .. seealso:: :meth:`radical`
+            .. SEEALSO:: :meth:`radical`
 
             EXAMPLES::
 

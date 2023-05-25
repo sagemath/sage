@@ -24,16 +24,14 @@ but wrappers around ECL objects.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
 from sage.structure.sage_object import SageObject
 from sage.homology.homology_group import HomologyGroup
 from sage.rings.integer_ring import ZZ
 from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
-from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
 
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.homology.chain_complex import ChainComplex
 from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
 
@@ -495,7 +493,7 @@ class KenzoChainComplex(KenzoObject):
             sage: kenzo_chcm                                                           # optional - kenzo
             [K... Chain-Complex]
             sage: for i in range(6):                                                   # optional - kenzo
-            ....:     print("Basis in dimension %i: %s" % (i, kenzo_chcm.basis(i)))    # optional - kenzo
+            ....:     print("Basis in dimension %i: %s" % (i, kenzo_chcm.basis(i)))
             Basis in dimension 0: ['G0G0', 'G0G1', 'G0G2']
             Basis in dimension 1: ['G1G0', 'G1G1']
             Basis in dimension 2: None
@@ -1159,8 +1157,8 @@ def SAbstractSimplex(simplex, dim):
     EXAMPLES::
 
         sage: from sage.libs.ecl import EclObject, ecl_eval
-        sage: from sage.interfaces.kenzo import KenzoObject,\
-        ....: SAbstractSimplex                                  # optional - kenzo
+        sage: from sage.interfaces.kenzo import (               # optional - kenzo
+        ....:   KenzoObject, SAbstractSimplex)
         sage: KAbSm = KenzoObject(ecl_eval("(ABSM 15 'K)"))     # optional - kenzo
         sage: SAbSm1 = SAbstractSimplex(KAbSm, 2)               # optional - kenzo
         sage: SAbSm2 = SAbstractSimplex(KAbSm, 7)               # optional - kenzo
@@ -1195,8 +1193,8 @@ def KAbstractSimplex(simplex):
     EXAMPLES::
 
         sage: from sage.topology.simplicial_set import AbstractSimplex
-        sage: from sage.interfaces.kenzo import KAbstractSimplex,\
-        ....: SAbstractSimplex                                          # optional - kenzo
+        sage: from sage.interfaces.kenzo import (                       # optional - kenzo
+        ....:   KAbstractSimplex, SAbstractSimplex)
         sage: SAbSm = AbstractSimplex(1, (2,0,3,2,1), name = 'SAbSm')   # optional - kenzo
         sage: KAbSm = KAbstractSimplex(SAbSm)                           # optional - kenzo
         sage: SAbSm2 = SAbstractSimplex(KAbSm, 1)                       # optional - kenzo
@@ -1292,8 +1290,9 @@ def SFiniteSimplicialSet(ksimpset, limit):
     EXAMPLES::
 
         sage: from sage.topology.simplicial_set import SimplicialSet
-        sage: from sage.interfaces.kenzo import AbstractSimplex,\
-        ....:  KFiniteSimplicialSet, SFiniteSimplicialSet, Sphere   # optional - kenzo
+        sage: from sage.interfaces.kenzo import (                   # optional - kenzo
+        ....:   AbstractSimplex, KFiniteSimplicialSet,
+        ....:   SFiniteSimplicialSet, Sphere)
         sage: s0 = AbstractSimplex(0, name='s0')                    # optional - kenzo
         sage: s1 = AbstractSimplex(0, name='s1')                    # optional - kenzo
         sage: s2 = AbstractSimplex(0, name='s2')                    # optional - kenzo
@@ -1301,8 +1300,10 @@ def SFiniteSimplicialSet(ksimpset, limit):
         sage: s02 = AbstractSimplex(1, name='s02')                  # optional - kenzo
         sage: s12 = AbstractSimplex(1, name='s12')                  # optional - kenzo
         sage: s012 = AbstractSimplex(2, name='s012')                # optional - kenzo
-        sage: Triangle = SimplicialSet({s01: (s1, s0),\
-        ....: s02: (s2, s0), s12: (s2, s1)}, base_point = s0)       # optional - kenzo
+        sage: Triangle = SimplicialSet({s01: (s1, s0),              # optional - kenzo
+        ....:                           s02: (s2, s0),
+        ....:                           s12: (s2, s1)},
+        ....:                          base_point = s0)
         sage: KTriangle = KFiniteSimplicialSet(Triangle)            # optional - kenzo
         sage: STriangle = SFiniteSimplicialSet(KTriangle, 1)        # optional - kenzo
         sage: STriangle.homology()                                  # optional - kenzo
@@ -1647,8 +1648,8 @@ class KenzoChainComplexMorphism(KenzoObject):
             sage: null                                                           # optional - kenzo
             [K... Morphism (degree 0): K... -> K...]
             sage: idx2 = idnt.sum(idnt)                                          # optional - kenzo
-            sage: idx5 = idx2.sum(\
-            ....: (opps_id, idnt, idnt, null, idx2.sum(idnt), opps_id))          # optional - kenzo
+            sage: idx5 = idx2.sum(                                               # optional - kenzo
+            ....:   (opps_id, idnt, idnt, null, idx2.sum(idnt), opps_id))
             sage: kenzo_chcm.basis(4)                                            # optional - kenzo
             ['G4G0', 'G4G1']
             sage: idx2.evaluation(4, [2, 'G4G0', -5, 'G4G1'])                    # optional - kenzo
@@ -1713,8 +1714,8 @@ class KenzoChainComplexMorphism(KenzoObject):
             sage: null                                                           # optional - kenzo
             [K... Morphism (degree 0): K... -> K...]
             sage: idx2 = idnt.substract(opps_id)                                 # optional - kenzo
-            sage: opps_idx2 = idx2.substract\
-            ....: ((opps_id, idnt, idnt, null, idx2.substract(opps_id)))         # optional - kenzo
+            sage: opps_idx2 = idx2.substract(                                    # optional - kenzo
+            ....:   (opps_id, idnt, idnt, null, idx2.substract(opps_id)))
             sage: kenzo_chcm.basis(4)                                            # optional - kenzo
             ['G4G0', 'G4G1']
             sage: idx2.evaluation(4, [2, 'G4G0', -5, 'G4G1'])                    # optional - kenzo
@@ -1863,13 +1864,14 @@ def build_morphism(source_complex, target_complex, degree, algorithm, strategy, 
 
     EXAMPLES::
 
-        sage: from sage.interfaces.kenzo import KenzoChainComplex,\
-        ....: build_morphism                                            # optional - kenzo
+        sage: from sage.interfaces.kenzo import (KenzoChainComplex,
+        ....:                                    build_morphism)
         sage: from sage.libs.ecl import ecl_eval
         sage: ZCC = KenzoChainComplex(ecl_eval("(z-chcm)"))             # optional - kenzo
-        sage: A = build_morphism(ZCC, ZCC, -1,\
-        ....: ecl_eval("#'(lambda (comb) (cmbn (1- (degr comb))))"),\
-        ....: "cmbn", ["zero morphism on ZCC"])                         # optional - kenzo
+        sage: A = build_morphism(                                       # optional - kenzo
+        ....:   ZCC, ZCC, -1,
+        ....:   ecl_eval("#'(lambda (comb) (cmbn (1- (degr comb))))"),
+        ....:   "cmbn", ["zero morphism on ZCC"])
         sage: A.target_complex()                                        # optional - kenzo
         [K... Chain-Complex]
         sage: A.degree()                                                # optional - kenzo
@@ -1879,7 +1881,7 @@ def build_morphism(source_complex, target_complex, degree, algorithm, strategy, 
     """
     return KenzoChainComplexMorphism(
         __build_mrph_aux__(source_complex._kenzo, target_complex._kenzo,
-                       degree, algorithm, ":"+strategy, orgn))
+                       degree, algorithm, ":" + strategy, orgn))
 
 
 def morphism_dictmat(morphism):

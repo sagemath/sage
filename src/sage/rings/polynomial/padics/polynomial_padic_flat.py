@@ -11,7 +11,7 @@ p-adic Flat Polynomials
 from sage.rings.polynomial.polynomial_element import Polynomial_generic_dense, Polynomial
 from sage.rings.polynomial.padics.polynomial_padic import Polynomial_padic
 from sage.rings.infinity import infinity
-from sage.libs.all import pari_gen
+from sage.libs.pari.all import pari_gen
 import sage.rings.padics.misc
 
 
@@ -57,7 +57,7 @@ class Polynomial_padic_flat(Polynomial_generic_dense, Polynomial_padic):
             else:
                 m = sage.rings.padics.misc.min(a.precision_absolute()
                                                for a in x.values())
-            if not absprec is None:
+            if absprec is not None:
                 m = min(m, absprec)
             Polynomial_generic_dense.__init__(self, parent, x, absprec=m)
             return

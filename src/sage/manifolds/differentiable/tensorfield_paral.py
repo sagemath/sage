@@ -303,11 +303,23 @@ as follows::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.tensor.modules.free_module_tensor import FreeModuleTensor
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional, Union
+
+from sage.manifolds.chart import Chart
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
 from sage.symbolic.ring import SR
+from sage.tensor.modules.free_module_tensor import FreeModuleTensor
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.diff_map import DiffMap
+    from sage.manifolds.differentiable.manifold import DifferentiableManifold
+    from sage.symbolic.expression import Expression
+    from sage.tensor.modules.comp import Components
+
 
 class TensorFieldParal(FreeModuleTensor, TensorField):
     r"""
@@ -343,8 +355,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
     .. MATH::
 
-        t(p):\ \underbrace{T_q^*M\times\cdots\times T_q^*M}_{k\ \; \mbox{times}}
-        \times \underbrace{T_q M\times\cdots\times T_q M}_{l\ \; \mbox{times}}
+        t(p):\ \underbrace{T_q^*M\times\cdots\times T_q^*M}_{k\ \; \text{times}}
+        \times \underbrace{T_q M\times\cdots\times T_q M}_{l\ \; \text{times}}
         \longrightarrow K,
 
     where `T_q^* M` is the dual vector space to `T_q M` and `K` is the
@@ -645,7 +657,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         # Initialization of derived quantities:
         self._init_derived()
 
-
     def _repr_(self):
         r"""
         String representation of ``self``.
@@ -705,7 +716,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         self._extensions_graph = {self._domain: self}
         self._restrictions_graph = {self._domain: self}
 
-    def _del_derived(self, del_restrictions=True):
+    def _del_derived(self, del_restrictions: bool = True):
         r"""
         Delete the derived quantities.
 
@@ -726,6 +737,36 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         TensorField._del_derived(self)
         if del_restrictions:
             self._del_restrictions()
+
+    def _preparse_display(self, basis=None, format_spec=None):
+        r"""
+        Helper function, to be used by FreeModuleTensor.display.
+
+        TESTS::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: t = M.tensor_field(1, 1)
+            sage: t._preparse_display()
+            (Coordinate frame (M, (∂/∂x,∂/∂y)), None)
+            sage: t._preparse_display(X.frame())
+            (Coordinate frame (M, (∂/∂x,∂/∂y)), None)
+            sage: t._preparse_display(X.frame(), X)
+            (Coordinate frame (M, (∂/∂x,∂/∂y)), Chart (M, (x, y)))
+            sage: t._preparse_display(X)  # passing a chart instead of a frame
+            (Coordinate frame (M, (∂/∂x,∂/∂y)), Chart (M, (x, y)))
+
+        """
+        if basis is None:
+            basis = self._fmodule._def_basis
+        elif isinstance(basis, Chart):
+             # a coordinate chart has been passed instead of a vector frame;
+             # the frame is then assumed to be the coordinate frame
+             # associated to the chart:
+            if format_spec is None:
+                format_spec = basis
+            basis = basis.frame()
+        return (basis, format_spec)
 
     def _set_comp_unsafe(self, basis=None):
         r"""
@@ -1090,7 +1131,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         # The add_comp operation is performed on the subdomain:
         return rst.add_comp(basis=basis)
 
-    def comp(self, basis=None, from_basis=None):
+    def comp(self, basis=None, from_basis=None) -> Components:
         r"""
         Return the components in a given vector frame.
 
@@ -1468,7 +1509,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
                                     vc[[i]].coord_function(chart).diff(ind[k])
                     resc[[ind]] = rsum.scalar_field()
 
-
             #
             # 3/ Final result (the tensor)
             res = vf_module.tensor_from_comp(self._tensor_type, resc)
@@ -1478,7 +1518,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
     lie_der = lie_derivative
 
-    def restrict(self, subdomain, dest_map=None):
+    def restrict(self, subdomain: DifferentiableManifold, dest_map: Optional[DiffMap] = None):
         r"""
         Return the restriction of ``self`` to some subdomain.
 
@@ -1707,7 +1747,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         # Call of the FreeModuleTensor version
         return FreeModuleTensor.__call__(self_r, *args_r)
 
-    def contract(self, *args):
+    def contract(self, *args: Union[int, TensorField]) -> TensorFieldParal:
         r"""
         Contraction with another tensor field, on one or more indices.
 
@@ -2226,7 +2266,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
                 comp_resu._comp[ind] = val_resu
         return resu
 
-    def series_expansion(self, symbol, order):
+    def series_expansion(self, symbol: Expression, order: int) -> list[TensorFieldParal]:
         r"""
         Expand the tensor field in power series with respect to a small
         parameter.
@@ -2371,7 +2411,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         series = self.series_expansion(symbol, order)
         return sum(symbol**i * s for i, s in enumerate(series))
 
-    def set_calc_order(self, symbol, order, truncate=False):
+    def set_calc_order(self, symbol: Expression, order: int, truncate: bool = False):
         r"""
         Trigger a power series expansion with respect to a small parameter in
         computations involving the tensor field.

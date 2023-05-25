@@ -217,7 +217,7 @@ class DLXMatrix:
             ....:         bad|= DLX._nodes[DLX._nodes[d][LEFT]][RIGHT] != d
             ....:         bad|= DLX._nodes[DLX._nodes[d][RIGHT]][LEFT] != d
             ....:         if bad:
-            ....:             raise RuntimeError("Linked list inconsistent.")
+            ....:             raise RuntimeError("linked list inconsistent")
             ....:         d = DLX._nodes[d][DOWN]
             ....:     c = DLX._nodes[c][RIGHT]
             sage: fullcount

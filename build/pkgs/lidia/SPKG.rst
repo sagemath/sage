@@ -26,7 +26,3 @@ Upstream Contact
 
 Matthias Köppe, UC Davis, CA, USA
 
-Dependencies
-------------
-
-GMP.

@@ -171,4 +171,3 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
             [0 1]
         """
         return self.basis_matrix().image()
-

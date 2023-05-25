@@ -53,7 +53,7 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
     Sage ``Integers`` with ``Integer Ring`` as parent::
 
         sage: x = NN(15); type(x)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: x.parent()
         Integer Ring
         sage: x+3

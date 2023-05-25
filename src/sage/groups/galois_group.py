@@ -219,7 +219,7 @@ class _GaloisMixin(_GMixin):
             doctest:warning
             ...
             DeprecationWarning: Use .absolute_field().galois_group() if you want the Galois group of the absolute field
-            See https://trac.sagemath.org/28782 for details.
+            See https://github.com/sagemath/sage/issues/28782 for details.
             sage: GK._field_degree
             3
 
@@ -408,7 +408,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
         This will be the degree of the original number field if `_gc_numbering``
         is ``False``, or the degree of the Galois closure otherwise.
 
-        EXAMPES::
+        EXAMPLES::
 
             sage: R.<x> = ZZ[]
             sage: K.<a> = NumberField(x^5-2)

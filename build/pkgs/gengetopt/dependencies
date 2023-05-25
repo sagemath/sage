@@ -1,0 +1,6 @@
+| xz
+
+xz is needed for unpacking the tarball when sage-bootstrap-python is ancient
+
+----------
+All lines of this file are ignored except the first.

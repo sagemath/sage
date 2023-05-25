@@ -11,9 +11,9 @@ import datetime
 
 __all__ = ["easter", "EASTER_JULIAN", "EASTER_ORTHODOX", "EASTER_WESTERN"]
 
-EASTER_JULIAN   = 1
+EASTER_JULIAN = 1
 EASTER_ORTHODOX = 2
-EASTER_WESTERN  = 3
+EASTER_WESTERN = 3
 
 
 def easter(year, algorithm=EASTER_WESTERN):
@@ -53,6 +53,9 @@ def easter(year, algorithm=EASTER_WESTERN):
     EXAMPLES::
 
         sage: import sage.finance.easter
+        doctest:warning...
+        DeprecationWarning: the package sage.finance is deprecated...
+
         sage: sage.finance.easter.easter(2009, 1)
         datetime.date(2009, 4, 6)
         sage: sage.finance.easter.easter(2009, 2)

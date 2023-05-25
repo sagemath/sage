@@ -14,7 +14,6 @@ AUTHORS:
 
 - John H. Palmieri, Travis Scrimshaw (2015-09)
 """
-
 ########################################################################
 #       Copyright (C) 2015 John H. Palmieri <palmieri@math.washington.edu>
 #                          Travis Scrimshaw <tscrimsh at umn.edu>
@@ -23,7 +22,7 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 from sage.misc.cachefunc import cached_method
@@ -871,4 +870,3 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
         return [[S_k]]
     return [[i_k] + l for i_k in range(S_k, i_k_plus_one)
             for l in sum_indices(k-1, i_k, S_k)]
-

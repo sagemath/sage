@@ -9,6 +9,8 @@ Root system data for (untwisted) type B affine
 #*****************************************************************************
 
 from .cartan_type import CartanType_standard_untwisted_affine
+
+
 class CartanType(CartanType_standard_untwisted_affine):
     def __init__(self, n):
         """
@@ -60,21 +62,21 @@ class CartanType(CartanType_standard_untwisted_affine):
             O---O=>=O
             1   2   3
             B3~
-            sage: sorted(b.edges())
+            sage: b.edges(sort=True)
             [(0, 2, 1), (1, 2, 1), (2, 0, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1)]
 
             sage: b = CartanType(['B',2,1]).dynkin_diagram(); b
             O=>=O=<=O
             0   2   1
             B2~
-            sage: sorted(b.edges())
+            sage: b.edges(sort=True)
             [(0, 2, 2), (1, 2, 2), (2, 0, 1), (2, 1, 1)]
 
             sage: b = CartanType(['B',1,1]).dynkin_diagram(); b
             O<=>O
             0   1
             B1~
-            sage: sorted(b.edges())
+            sage: b.edges(sort=True)
             [(0, 1, 2), (1, 0, 2)]
 
         """
@@ -190,7 +192,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             return CartanType(["A",1,1]).ascii_art(label, node)
         if n == 2:
             return CartanType(["C",2,1]).relabel({0:0, 1:2, 2:1}).ascii_art(label, node)
-        ret  = "    {} {}\n    |\n    |\n".format(node(label(0)), label(0))
+        ret = "    {} {}\n    |\n    |\n".format(node(label(0)), label(0))
         ret += "---".join(node(label(i)) for i in range(1,n)) + "=>={}\n".format(node(label(n)))
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n+1))
         return ret
@@ -210,4 +212,3 @@ class CartanType(CartanType_standard_untwisted_affine):
             return CartanTypeFolded(self, ['A', 1, 1], [[0], [1]])
         return CartanTypeFolded(self, ['D', n + 1, 1],
             [[i] for i in range(n)] + [[n, n+1]])
-

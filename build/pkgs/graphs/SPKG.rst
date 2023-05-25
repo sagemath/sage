@@ -28,7 +28,3 @@ Upstream Contact
    available at
    https://github.com/nathanncohen/strongly_regular_graphs_database.
 
-Dependencies
-------------
-
-N/A

@@ -134,7 +134,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
     expression::
 
         sage: type(f.expr())
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     A SymPy expression can also be asked for::
 
@@ -207,7 +207,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
 
         sage: f0(x,y) = x^2 + 3*y + 1
         sage: type(f0)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: f0
         (x, y) |--> x^2 + 3*y + 1
         sage: f0(x,y)
@@ -495,7 +495,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
             sage: f.expr()
             x^2 + y
             sage: type(f.expr())
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         Asking for the SymPy expression::
 
@@ -911,7 +911,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         curr = self._calc_method._current
         return self._calc_method.is_trivial_zero(self.expr(curr) - SR.one())
 
-    # TODO: Remove this method as soon as ticket #28629 is solved?
+    # TODO: Remove this method as soon as issue #28629 is solved?
     def is_unit(self):
         r"""
         Return ``True`` iff ``self`` is not trivially zero since most chart
@@ -2310,6 +2310,47 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
                           expansion_symbol=self._expansion_symbol,
                           order=self._order)
 
+    def __abs__(self):
+        r"""
+        Absolute value of ``self``.
+
+        OUTPUT:
+
+        - chart function `\mathrm{abs}(f)`, where `f` is the
+          current chart function
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart()
+            sage: f = X.function(x*y)
+            sage: f.abs()
+            abs(x)*abs(y)
+            sage: abs(f)  # equivalent to f.abs()
+            abs(x)*abs(y)
+            sage: abs(f).display()
+            (x, y) ↦ abs(x)*abs(y)
+            sage: abs(X.zero_function()) == X.zero_function()
+            True
+
+        The same tests with SymPy::
+
+            sage: X.calculus_method().set('sympy')
+            sage: f.abs()
+            Abs(x*y)
+            sage: abs(f)  # equivalent to f.abs()
+            Abs(x*y)
+
+        """
+        curr = self._calc_method._current
+        if curr == 'SR':
+            val = self.expr().abs()
+        elif curr == 'sympy':
+            val = abs(self.expr())
+        return type(self)(self.parent(), self._simplify(val),
+                          expansion_symbol=self._expansion_symbol,
+                          order=self._order)
+
     def _del_derived(self):
         r"""
         Delete the derived quantities.
@@ -3016,7 +3057,7 @@ class MultiCoordFunction(SageObject, Mutability):
             sage: f.expr()
             (x - y, x*y, cos(x)*e^y)
             sage: type(f.expr()[0])
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         A SymPy output::
 

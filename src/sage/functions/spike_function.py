@@ -1,5 +1,5 @@
 r"""
-Spike Functions
+Spike functions
 
 AUTHORS:
 
@@ -19,9 +19,10 @@ AUTHORS:
 
 import math
 
-from sage.plot.all import line
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", "line")
 from sage.modules.free_module_element import vector
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 
 
 class SpikeFunction:

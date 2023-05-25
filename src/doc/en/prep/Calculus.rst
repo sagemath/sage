@@ -29,10 +29,10 @@ the United States; the final section is a checkpoint of sorts.
 The tutorial assumes that one is familiar with the basics of Sage, such
 as outlined in the previous tutorials.
 
-For a refresher, make sure the syntax below for defining a function and
-getting a value makes sense; then evaluate the cell by clicking the
-"evaluate" link, or by pressing Shift\-Enter (hold down Shift while
-pressing the Enter key).
+For a refresher, make sure the syntax below for defining a function
+and getting a value makes sense; then evaluate the cell by clicking
+the "evaluate" link, or by pressing :kbd:`Shift` + :kbd:`Enter` (hold
+down :kbd:`Shift` while pressing the :kbd:`Enter` key).
 
 ::
 
@@ -319,7 +319,7 @@ help it look nicer in the browser?
 Some integrals are a little tricky, of course. Sage tries hard to integrate using Maxima, Giac and Sympy::
 
     sage: integral(1/(1+x^10),x)
-    1/20*(sqrt(5) + 1)*arctan((4*x + sqrt(-2*sqrt(5) + 10))/(sqrt(5) + 1))
+    ...1/20*(sqrt(5) + 1)*arctan((4*x + sqrt(-2*sqrt(5) + 10))/(sqrt(5) + 1))
     + 1/20*(sqrt(5) + 1)*arctan((4*x - sqrt(-2*sqrt(5) + 10))/(sqrt(5) + 1))
     + 1/20*(sqrt(5) - 1)*arctan((4*x + sqrt(2*sqrt(5) + 10))/(sqrt(5) - 1))
     + 1/20*(sqrt(5) - 1)*arctan((4*x - sqrt(2*sqrt(5) + 10))/(sqrt(5) - 1))
@@ -337,7 +337,9 @@ If you ask for Maxima specifically, the result can be partial::
 
 If no antiderivative is found, the result is just the input::
 
-    sage: integral(sinh(x^2+sqrt(x-1)),x)  # long time (15s on sage.math, 2012)
+    sage: result = integral(sinh(x^2+sqrt(x-1)),x)  # long time (15s on sage.math, 2012)
+    ...
+    sage: result  # long time
     integrate(sinh(x^2 + sqrt(x - 1)), x)
 
 This last one stumps other systems too.

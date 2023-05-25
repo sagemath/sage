@@ -27,10 +27,11 @@ start: base-toolchain
 sageruntime: base-toolchain
 	$(MAKE) all-sageruntime
 
+SAGE_ROOT_LOGS = logs
 
 # The --stop flag below is just a random flag to induce graceful
 # breakage with non-GNU versions of make.
-# See https://trac.sagemath.org/ticket/24617
+# See https://github.com/sagemath/sage/issues/24617
 
 # Defer unknown targets to build/make/Makefile
 %::
@@ -41,7 +42,7 @@ sageruntime: base-toolchain
 
 # CONFIG_FILES lists all files that appear in AC_CONFIG_FILES in configure.ac;
 # except for build/make/Makefile-auto, which is unused by the build system
-CONFIG_FILES = build/make/Makefile src/bin/sage-env-config build/bin/sage-build-env-config pkgs/sage-conf/sage_conf.py pkgs/sage-conf/setup.cfg
+CONFIG_FILES = build/make/Makefile src/bin/sage-env-config build/bin/sage-build-env-config pkgs/sage-conf/_sage_conf/_conf.py
 
 # SPKG_COLLECT_FILES contains all files that influence the SAGE_SPKG_COLLECT macro
 SPKG_COLLECT_FILES = build/pkgs/*/type build/pkgs/*/package-version.txt build/pkgs/*/dependencies build/pkgs/*/requirements.txt build/pkgs/*/checksums.ini build/pkgs/*/spkg-install
@@ -79,13 +80,53 @@ download:
 dist: build/make/Makefile
 	./sage --sdist
 
-# ssl: build Sage, and also install pyOpenSSL. This is necessary for
-# running the secure notebook. This make target requires internet
-# access. Note that this requires that your system have OpenSSL
-# libraries and headers installed. See README.txt for more
-# information.
-ssl: all
-	./sage -i pyopenssl
+###############################################################################
+# Cleaning up
+###############################################################################
+
+SAGE_ROOT = $(CURDIR)
+SAGE_SRC = $(SAGE_ROOT)/src
+
+clean:
+	@echo "Deleting package build directories..."
+	if [ -f "$(SAGE_SRC)"/bin/sage-env-config ]; then \
+	    . "$(SAGE_SRC)"/bin/sage-env-config; \
+	    if [ -n "$$SAGE_LOCAL" ]; then \
+	        rm -rf "$$SAGE_LOCAL/var/tmp/sage/build"; \
+	    fi; \
+	fi
+
+# "c_lib", ".cython_version", "build" in $(SAGE_SRC) are from old sage versions
+# Cleaning .so files (and .c and .cpp files associated with .pyx files) is for editable installs.
+# Also cython_debug is for editable installs.
+sagelib-clean:
+	@echo "Deleting Sage library build artifacts..."
+	if [ -d "$(SAGE_SRC)" ]; then \
+	    (cd "$(SAGE_SRC)" && \
+	     rm -rf c_lib .cython_version cython_debug; \
+	     rm -rf build; find . -name '*.pyc' -o -name "*.so" | xargs rm -f; \
+	     rm -f $$(find . -name "*.pyx" | sed 's/\(.*\)[.]pyx$$/\1.c \1.cpp/'); \
+	     rm -rf sage/ext/interpreters) \
+	    && (cd "$(SAGE_ROOT)/build/pkgs/sagelib/src/" && rm -rf build); \
+	fi
+
+sage_docbuild-clean:
+	(cd "$(SAGE_ROOT)/build/pkgs/sage_docbuild/src" && rm -rf build)
+
+sage_setup-clean:
+	(cd "$(SAGE_ROOT)/build/pkgs/sage_setup/src" && rm -rf build)
+
+build-clean: clean doc-clean sagelib-clean sage_docbuild-clean
+
+doc-clean:
+	if [ -f "$(SAGE_SRC)"/bin/sage-env-config ]; then \
+	    . "$(SAGE_SRC)"/bin/sage-env-config; \
+	    if [ -n "$$SAGE_LOCAL" ]; then \
+	        rm -rf "$$SAGE_LOCAL/share/doc/sage/inventory"; \
+	        rm -rf "$$SAGE_LOCAL/share/doc/sage/doctrees"; \
+	    fi; \
+	fi; \
+	cd "$(SAGE_SRC)/doc" && $(MAKE) clean
 
 # Deleting src/lib is to get rid of src/lib/pkgconfig
 # that was forgotten to clean in #29082.
@@ -109,18 +150,23 @@ distclean: build-clean
 	@echo "Deleting all remaining output from build system ..."
 	rm -rf local
 	rm -f src/bin/sage-env-config
+	rm -f prefix venv
 
 # Delete all auto-generated files which are distributed as part of the
 # source tarball
 bootstrap-clean:
-	rm -rf config configure build/make/Makefile-auto.in
+	rm -rf config/install-sh config/compile config/config.guess config/config.sub config/missing configure build/make/Makefile-auto.in
 	rm -f src/doc/en/installation/*.txt
 	rm -rf src/doc/en/reference/spkg/*.rst
-	rm -f src/doc/en/reference/repl/*.txt
 	rm -f environment.yml
 	rm -f src/environment.yml
+	rm -f src/environment-dev.yml
 	rm -f environment-optional.yml
 	rm -f src/environment-optional.yml
+	rm -f src/Pipfile
+	rm -f src/pyproject.toml
+	rm -f src/requirements.txt
+	rm -f src/setup.cfg
 
 # Remove absolutely everything which isn't part of the git repo
 maintainer-clean: distclean bootstrap-clean
@@ -132,22 +178,21 @@ micro_release:
 	$(MAKE) sagelib-clean
 	$(MAKE) misc-clean
 	@echo "Stripping binaries ..."
-	LC_ALL=C find local/lib local/bin -type f -exec strip '{}' ';' 2>&1 | grep -v "File format not recognized" |  grep -v "File truncated" || true
+	LC_ALL=C find local/lib local/bin local/var/lib/sage/venv-python* -type f -exec strip '{}' ';' 2>&1 | grep -v "File format not recognized" |  grep -v "File truncated" || true
 	@echo "Removing sphinx artifacts..."
 	rm -rf local/share/doc/sage/doctrees local/share/doc/sage/inventory
 	@echo "Removing documentation. Inspection in IPython still works."
 	rm -rf local/share/doc local/share/*/doc local/share/*/examples local/share/singular/html
 	@echo "Removing unnecessary files & directories - make will not be functional afterwards anymore"
-	@# We need src/doc/common, src/doc/en/introspect for introspection with "??"
 	@# We keep src/sage for some doctests that it expect it to be there and
 	@# also because it does not add any weight with rdfind below.
-	@# We need src/sage/bin/ for the scripts that invoke Sage
+	@# We need src/bin/ for the scripts that invoke Sage
 	@# We need sage, the script to start Sage
 	@# We need local/, the dependencies and the built Sage library itself.
 	@# We keep VERSION.txt.
 	@# We keep COPYING.txt so we ship a license with this distribution.
 	find . -name . -o -prune ! -name config.status ! -name src ! -name sage ! -name local ! -name VERSION.txt ! -name COPYING.txt ! -name build -exec rm -rf \{\} \;
-	cd src && find . -name . -o -prune ! -name sage ! -name bin ! -name doc -exec rm -rf \{\} \;
+	cd src && find . -name . -o -prune ! -name sage ! -name bin -exec rm -rf \{\} \;
 	if command -v rdfind > /dev/null; then \
 		echo "Hardlinking identical files."; \
 		rdfind -makeresultsfile false -makehardlinks true .; \
@@ -167,93 +212,120 @@ fast-rebuild-clean: misc-clean
 	# Remove leftovers from ancient branches
 	rm -rf src/build
 
-TESTALL = ./sage -t --all
-PTESTALL = ./sage -t -p --all
+###############################################################################
+# Testing
+###############################################################################
 
-# Flags for ./sage -t --all.
-# By default, include all tests marked 'dochtml' -- see
-# https://trac.sagemath.org/ticket/25345 and
-# https://trac.sagemath.org/ticket/26110.
-TESTALL_FLAGS = --optional=sage,dochtml,optional,external,build
-TESTALL_NODOC_FLAGS = --optional=sage,optional,external,build
+TEST_LOG = $(SAGE_ROOT_LOGS)/test.log
+
+TEST_FILES = --all
+
+TEST_FLAGS =
+
+# When the documentation is installed, "optional" also includes all tests marked 'sagemath_doc_html',
+# see https://github.com/sagemath/sage/issues/25345, https://github.com/sagemath/sage/issues/26110, and
+# https://github.com/sagemath/sage/issues/32759
+TEST_OPTIONAL = sage,optional
+
+# Keep track of the top-level *test* Makefile target for logging.
+TEST_TARGET = $@
+
+TEST = ./sage -t --logfile=$(TEST_LOG) $(TEST_FLAGS) --optional=$(TEST_OPTIONAL) $(TEST_FILES)
 
 test: all
-	$(TESTALL) --logfile=logs/test.log
+	@echo '### make $(TEST_TARGET): Running $(TEST)' >> $(TEST_LOG)
+	$(TEST)
 
-check: test
+check:
+	@$(MAKE) test
 
-testall: all
-	$(TESTALL) $(TESTALL_FLAGS) --logfile=logs/testall.log
+testall:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_OPTIONAL="$(TEST_OPTIONAL),external" test
 
-testlong: all
-	$(TESTALL) --long --logfile=logs/testlong.log
+testlong:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" test
 
-testalllong: all
-	$(TESTALL) --long $(TESTALL_FLAGS) --logfile=logs/testalllong.log
+testalllong:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" testall
 
-ptest: all
-	$(PTESTALL) --logfile=logs/ptest.log
+ptest:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) -p" test
 
-ptestall: all
-	$(PTESTALL) $(TESTALL_FLAGS) --logfile=logs/ptestall.log
+ptestall:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_OPTIONAL="$(TEST_OPTIONAL),external" ptest
 
-ptestlong: all
-	$(PTESTALL) --long --logfile=logs/ptestlong.log
+ptestlong:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" ptest
 
-ptestalllong: all
-	$(PTESTALL) --long $(TESTALL_FLAGS) --logfile=logs/ptestalllong.log
+ptestalllong:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" ptestall
 
-testoptional: all
-	$(TESTALL) --logfile=logs/testoptional.log
+testoptional:
+	@echo "'make $@' is deprecated; use 'make test'"
+	@$(MAKE) test
 
-testoptionallong: all
-	$(TESTALL) --long --logfile=logs/testoptionallong.log
+testoptionallong:
+	@echo "'make $@' is deprecated; use 'make testlong'"
+	@$(MAKE) testlong
 
-ptestoptional: all
-	$(PTESTALL) --logfile=logs/ptestoptional.log
+ptestoptional:
+	@echo "'make $@' is deprecated; use 'make ptest'"
+	@$(MAKE) ptest
 
-ptestoptionallong: all
-	$(PTESTALL) --long --logfile=logs/ptestoptionallong.log
+ptestoptionallong:
+	@echo "'make $@' is deprecated; use 'make ptestlong'"
+	@$(MAKE) ptestlong
 
+# *test*-nodoc targets skip the docbuild and skip all tests that depend on the documentation
+
+test-nodoc: TEST_OPTIONAL := $(TEST_OPTIONAL),!sagemath_doc_html,!sagemath_doc_pdf
 test-nodoc: build
-	$(TESTALL) --logfile=logs/test.log
+	@echo '### make $(TEST_TARGET): Running $(TEST)' >> $(TEST_LOG)
+	$(TEST)
 
-check-nodoc: test-nodoc
+check-nodoc:
+	@$(MAKE) test-nodoc
 
-testall-nodoc: build
-	$(TESTALL) $(TESTALL_NODOC_FLAGS) --logfile=logs/testall.log
+testall-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_OPTIONAL="$(TEST_OPTIONAL),external" test-nodoc
 
-testlong-nodoc: build
-	$(TESTALL) --long --logfile=logs/testlong.log
+testlong-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" test-nodoc
 
-testalllong-nodoc: build
-	$(TESTALL) --long $(TESTALL_NODOC_FLAGS) --logfile=logs/testalllong.log
+testalllong-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" testall-nodoc
 
-ptest-nodoc: build
-	$(PTESTALL) --logfile=logs/ptest.log
+ptest-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) -p" test-nodoc
 
-ptestall-nodoc: build
-	$(PTESTALL) $(TESTALL_NODOC_FLAGS) --logfile=logs/ptestall.log
+ptestall-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_OPTIONAL="$(TEST_OPTIONAL),external" ptest-nodoc
 
-ptestlong-nodoc: build
-	$(PTESTALL) --long --logfile=logs/ptestlong.log
+ptestlong-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" ptest-nodoc
 
-ptestalllong-nodoc: build
-	$(PTESTALL) --long $(TESTALL_NODOC_FLAGS) --logfile=logs/ptestalllong.log
+ptestalllong-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" ptestall-nodoc
 
-testoptional-nodoc: build
-	$(TESTALL) --logfile=logs/testoptional.log
+testoptional-nodoc:
+	@echo "'make $@' is deprecated; use 'make test-nodoc'"
+	@$(MAKE) test-nodoc
 
-testoptionallong-nodoc: build
-	$(TESTALL) --long --logfile=logs/testoptionallong.log
+testoptionallong-nodoc:
+	@echo "'make $@' is deprecated; use 'make testlong-nodoc'"
+	@$(MAKE) testlong-nodoc
 
-ptestoptional-nodoc: build
-	$(PTESTALL) --logfile=logs/ptestoptional.log
+ptestoptional-nodoc:
+	@echo "'make $@' is deprecated; use 'make ptest-nodoc'"
+	@$(MAKE) ptest-nodoc
 
-ptestoptionallong-nodoc: build
-	$(PTESTALL) --long --logfile=logs/ptestoptionallong.log
+ptestoptionallong-nodoc:
+	@echo "'make $@' is deprecated; use 'make ptestlong-nodoc'"
+	@$(MAKE) ptestlong-nodoc
 
-configure: bootstrap src/doc/bootstrap configure.ac src/bin/sage-version.sh m4/*.m4 build/pkgs/*/spkg-configure.m4 build/pkgs/*/type build/pkgs/*/distros/*.txt
+###############################################################################
+
+configure: bootstrap src/doc/bootstrap configure.ac src/bin/sage-version.sh m4/*.m4 build/pkgs/*/spkg-configure.m4 build/pkgs/*/type build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt build/pkgs/*/distros/*.txt
 	./bootstrap -d
 
 install: all
@@ -275,4 +347,5 @@ list:
 	misc-clean bdist-clean distclean bootstrap-clean maintainer-clean \
 	test check testoptional testall testlong testoptionallong testallong \
 	ptest ptestoptional ptestall ptestlong ptestoptionallong ptestallong \
-	buildbot-python3 list
+	buildbot-python3 list \
+	doc-clean clean sagelib-clean build-clean

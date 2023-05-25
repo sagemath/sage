@@ -15,13 +15,15 @@ Hasse diagrams of posets
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
 from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
-from sage.functions.other import binomial
+from sage.arith.misc import binomial
 from sage.misc.rest_index_of_methods import gen_rest_table_index
 from sage.combinat.posets.hasse_cython import (moebius_matrix_fast,
                                                coxeter_matrix_fast,
@@ -417,6 +419,7 @@ class HasseDiagram(DiGraph):
         """
         return self.sinks()
 
+    @cached_method
     def bottom(self):
         """
         Return the bottom element of the poset, if it exists.
@@ -743,7 +746,7 @@ class HasseDiagram(DiGraph):
             sage: Q.rank_function() is None
             True
 
-        test for ticket :trac:`14006`::
+        test for issue :trac:`14006`::
 
             sage: H = Poset()._hasse_diagram
             sage: s = dumps(H)
@@ -965,6 +968,64 @@ class HasseDiagram(DiGraph):
                 else:
                     self._moebius_function_values[(i, j)] = -sum(self.moebius_function(i, k) for k in ci[:-1])
         return self._moebius_function_values[(i, j)]
+
+    def bottom_moebius_function(self, j):
+        r"""
+        Return the value of the Möbius function of the poset
+        on the elements ``zero`` and ``j``, where ``zero`` is
+        ``self.bottom()``, the unique minimal element of the poset.
+
+        EXAMPLES::
+
+            sage: P = Poset({0: [1,2]})
+            sage: hasse = P._hasse_diagram
+            sage: hasse.bottom_moebius_function(1)
+            -1
+            sage: hasse.bottom_moebius_function(2)
+            -1
+            sage: P = Poset({0: [1,3], 1:[2], 2:[4], 3:[4]})
+            sage: hasse = P._hasse_diagram
+            sage: for i in range(5):
+            ....:   print(hasse.bottom_moebius_function(i))
+            1
+            -1
+            0
+            -1
+            1
+
+        TESTS::
+
+            sage: P = Poset({0:[2], 1:[2]})
+            sage: hasse = P._hasse_diagram
+            sage: hasse.bottom_moebius_function(1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the poset does not have a bottom element
+        """
+        zero = self.bottom()
+        if zero is None:
+            raise ValueError("the poset does not have a bottom element")
+        # if the value has already been computed, either by self.moebius_function
+        # or by self.bottom_moebius_function, then just use the cached value.
+        try:
+            return self._moebius_function_values[(zero, j)]
+        # if the dict has not been initialized, do that and try again
+        except AttributeError:
+            self._moebius_function_values = {}
+            return self.bottom_moebius_function(j)
+        # if mu(zero, j) has not already been computed, we'll get a key error.
+        except KeyError:
+            if zero == j:
+                self._moebius_function_values[(zero, j)] = 1
+            # since zero is the minimal element, we can ignore the case that zero > j,
+            # and move on to computing the interval, which is exactly the order ideal.
+            else:
+                # do the depth_first_search over order_ideal, because we don't care
+                # about sorting the elements of the order ideal.
+                ci = self._backend.depth_first_search(j, reverse=True)
+                next(ci)  # throw out the first element, which is j
+                self._moebius_function_values[(zero, j)] = -sum(self.bottom_moebius_function(k) for k in ci)
+        return self._moebius_function_values[(zero, j)]
 
     def moebius_function_matrix(self, algorithm='cython'):
         r"""
@@ -1852,7 +1913,7 @@ class HasseDiagram(DiGraph):
         result.pop()  # Remove the top element.
         return result
 
-    def is_complemented(self) -> bool:
+    def is_complemented(self) -> int | None:
         """
         Return an element of the lattice that has no complement.
 
@@ -1992,7 +2053,7 @@ class HasseDiagram(DiGraph):
             []
 
         Unique orthocomplementations; second is not uniquely complemented,
-        but has only one orthocomplementation.
+        but has only one orthocomplementation::
 
             sage: H = posets.BooleanLattice(4)._hasse_diagram  # Uniquely complemented
             sage: len(list(H.orthocomplementations_iterator()))
@@ -2016,7 +2077,7 @@ class HasseDiagram(DiGraph):
         for chain 0-1-6-11 would be 11-7-8-0, which is not a chain::
 
             sage: H = HasseDiagram('KTGG_?AAC?O?o?@?@?E?@?@??')
-            sage: list([_ for _ in H.orthocomplementations_iterator()])
+            sage: list(H.orthocomplementations_iterator())
             []
         """
         n = self.order()
@@ -2049,7 +2110,7 @@ class HasseDiagram(DiGraph):
         mt = self.meet_matrix()
         jn = self.join_matrix()
         for e in range(n):
-            # Fix following after ticket #20727
+            # Fix following after issue #20727
             comps[e] = [x for x in range(n) if
                         mt[e, x] == 0 and jn[e, x] == n - 1 and
                         x in orbits[orbit_number[dual_isomorphism[e]]]]
@@ -2223,7 +2284,8 @@ class HasseDiagram(DiGraph):
             sage: H = P._hasse_diagram
             sage: H.are_incomparable(1,2)
             True
-            sage: [ (i,j) for i in H.vertices() for j in H.vertices() if H.are_incomparable(i,j)]
+            sage: V = H.vertices(sort=True)
+            sage: [ (i,j) for i in V for j in V if H.are_incomparable(i,j)]
             [(1, 2), (1, 3), (2, 1), (3, 1)]
         """
         if i == j:
@@ -2247,7 +2309,8 @@ class HasseDiagram(DiGraph):
             sage: H = P._hasse_diagram
             sage: H.are_comparable(1,2)
             False
-            sage: [ (i,j) for i in H.vertices() for j in H.vertices() if H.are_comparable(i,j)]
+            sage: V = H.vertices(sort=True)
+            sage: [ (i,j) for i in V for j in V if H.are_comparable(i,j)]
             [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1), (1, 4), (2, 0), (2, 2), (2, 3), (2, 4), (3, 0), (3, 2), (3, 3), (3, 4), (4, 0), (4, 1), (4, 2), (4, 3), (4, 4)]
         """
         if i == j:
@@ -2289,7 +2352,7 @@ class HasseDiagram(DiGraph):
             sage: TestSuite(A).run()
         """
         from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-        return PairwiseCompatibleSubsets(self.vertices(),
+        return PairwiseCompatibleSubsets(self.vertices(sort=True),
                                          self.are_incomparable,
                                          element_class=element_class)
 
@@ -2353,6 +2416,64 @@ class HasseDiagram(DiGraph):
         """
         return IncreasingChains(self._leq_storage, element_class, exclude, conversion)
 
+    def is_linear_interval(self, t_min, t_max) -> bool:
+        """
+        Return whether the interval ``[t_min, t_max]`` is linear.
+
+        This means that this interval is a total order.
+
+        EXAMPLES::
+
+            sage: P = posets.PentagonPoset()
+            sage: H = P._hasse_diagram
+            sage: H.is_linear_interval(0, 4)
+            False
+            sage: H.is_linear_interval(0, 3)
+            True
+            sage: H.is_linear_interval(1, 3)
+            False
+            sage: H.is_linear_interval(1, 1)
+            True
+
+        TESTS::
+
+            sage: P = posets.TamariLattice(3)
+            sage: H = P._hasse_diagram
+            sage: D = H._leq_storage
+            sage: a, b = H.bottom(), H.top()
+            sage: H.is_linear_interval(a, b)
+            False
+            sage: H.is_linear_interval(a, a)
+            True
+        """
+        if '_leq_storage' in self.__dict__:
+            if not self.is_lequal(t_min, t_max):  # very quick check
+                return False
+            t = t_max
+            while t != t_min:
+                found = False
+                for u in self.neighbor_in_iterator(t):
+                    if self.is_lequal(t_min, u):
+                        if not found:
+                            found = True
+                            t = u
+                        else:
+                            return False
+            return True
+
+        # fall back to default implementation
+        it = self.all_paths_iterator([t_min], [t_max],
+                                     simple=True, trivial=True)
+        try:
+            next(it)
+        except StopIteration:  # not comparable
+            return False
+        try:
+            next(it)
+        except StopIteration:  # one path
+            return True
+        return False
+
     def diamonds(self):
         r"""
         Return the list of diamonds of ``self``.
@@ -2390,7 +2511,7 @@ class HasseDiagram(DiGraph):
         """
         diamonds = []
         all_diamonds_completed = True
-        for w in self.vertices():
+        for w in self.vertices(sort=True):
             covers = self.neighbors_out(w)
             for i, x in enumerate(covers):
                 for y in covers[i + 1:]:
@@ -3281,7 +3402,7 @@ class HasseDiagram(DiGraph):
                 D[ab] = cong
                 P[ab] = cong_
 
-        # Todo: Make a function that creates the poset from a set
+        # TODO: Make a function that creates the poset from a set
         # by comparison function with minimal number of comparisons.
 
         T = SetPartitions(n)
@@ -3362,18 +3483,18 @@ class HasseDiagram(DiGraph):
         from sage.combinat.set_partition import SetPartition
 
         n = self.order()
-        congs_ji = {}
+        congs_ji: dict[SetPartition, list] = {}
 
         for ji in range(n):
             if self.in_degree(ji) == 1:
-                cong = SetPartition(self.congruence([[ji, next(self.neighbor_in_iterator(ji))]]))
+                cong = SetPartition(self.congruence([[ji, next(self.neighbor_in_iterator(ji))]]))  # type:ignore
                 if cong not in congs_ji:
                     congs_ji[cong] = []
                 congs_ji[cong].append(ji)
 
         for mi in range(n):
             if self.out_degree(mi) == 1:
-                cong = SetPartition(self.congruence([[mi, next(self.neighbor_out_iterator(mi))]]))
+                cong = SetPartition(self.congruence([[mi, next(self.neighbor_out_iterator(mi))]]))  # type:ignore
                 if any(self.is_lequal(ji, mi) for ji in congs_ji[cong]):
                     return False
 
@@ -3427,15 +3548,15 @@ class HasseDiagram(DiGraph):
         p = len(a_spec)
         q = len(b_spec)
 
-        for r in range(1, p+q+1):
+        for r in range(1, p + q + 1):
             new_a_spec.append(0)
-            for i in range(max(1, r-q), min(p, r) + 1):
-                k_val = binomial(r-1, i-1) * binomial(p+q-r, p-i)
+            for i in range(max(1, r - q), min(p, r) + 1):
+                k_val = binomial(r - 1, i - 1) * binomial(p + q - r, p - i)
                 if orientation:
-                    inner_sum = sum(b_spec[j-1] for j in range(r-i + 1, len(b_spec) + 1))
+                    inner_sum = sum(b_spec[j - 1] for j in range(r - i + 1, len(b_spec) + 1))
                 else:
-                    inner_sum = sum(b_spec[j-1] for j in range(1, r-i + 1))
-                new_a_spec[-1] = new_a_spec[-1] + (a_spec[i-1] * k_val * inner_sum)
+                    inner_sum = sum(b_spec[j - 1] for j in range(1, r - i + 1))
+                new_a_spec[-1] = new_a_spec[-1] + (a_spec[i - 1] * k_val * inner_sum)
 
         return new_a_spec
 

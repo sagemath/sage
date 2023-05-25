@@ -78,7 +78,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
         else:
             laurent_series = LaurentSeriesRing(*args, **kwds)
 
-        return super(PuiseuxSeriesRing, cls).__classcall__(cls, laurent_series)
+        return super().__classcall__(cls, laurent_series)
 
     def __init__(self, laurent_series):
         """
@@ -216,9 +216,9 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
         """
         from sage.categories.integral_domains import IntegralDomains
         from sage.categories.fields import Fields
-        if self in Fields:
+        if self in Fields():
             return self
-        elif self in IntegralDomains:
+        elif self in IntegralDomains():
             return PuiseuxSeriesRing(self._laurent_series_ring.fraction_field())
         else:
             raise ValueError('must be an integral domain')
@@ -438,4 +438,3 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
             20
         """
         return self.laurent_series_ring().default_prec()
-

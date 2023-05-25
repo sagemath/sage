@@ -52,14 +52,14 @@ following command::
 As a submanifold of a Riemannian manifold, namely the Euclidean space,
 the 2-sphere admits an induced metric::
 
-    sage: h = S2_r.induced_metric()
-    sage: h.display()
-    gamma = r^2 dtheta⊗dtheta + r^2*sin(theta)^2 dphi⊗dphi
+    sage: g = S2_r.induced_metric()
+    sage: g.display()
+    g = r^2 dtheta⊗dtheta + r^2*sin(theta)^2 dphi⊗dphi
 
 The induced metric is also known as the *first fundamental form* (see
 :meth:`~sage.manifolds.differentiable.pseudo_riemannian_submanifold.PseudoRiemannianSubmanifold.first_fundamental_form`)::
 
-    sage: h is S2_r.first_fundamental_form()
+    sage: g is S2_r.first_fundamental_form()
     True
 
 The *second fundamental form* encodes the extrinsic curvature of the
@@ -157,12 +157,12 @@ is oriented in the ambient Euclidean space, i.e. the last entry is the normal
 vector field pointing outwards. Henceforth, the manifold admits
 a volume form::
 
-    sage: h = S1c.induced_metric()
-    sage: h.display()
-    gamma = dchi⊗dchi
-    sage: eps = h.volume_form()
+    sage: g = S1c.induced_metric()
+    sage: g.display()
+    g = dchi⊗dchi
+    sage: eps = g.volume_form()
     sage: eps.display()
-    eps_gamma = -dchi
+    eps_g = -dchi
 
 """
 
@@ -320,14 +320,14 @@ class Sphere(PseudoRiemannianSubmanifold):
         from sage.misc.prandom import getrandbits
         from time import time
         if unique_tag is None:
-            unique_tag = getrandbits(128)*time()
+            unique_tag = getrandbits(128) * time()
 
-        return super(cls, Sphere).__classcall__(cls, n, radius=radius,
-                                           ambient_space=ambient_space,
-                                           center=center,
-                                           name=name, latex_name=latex_name,
-                                           coordinates=coordinates, names=names,
-                                           unique_tag=unique_tag)
+        return super().__classcall__(cls, n, radius=radius,
+                                     ambient_space=ambient_space,
+                                     center=center,
+                                     name=name, latex_name=latex_name,
+                                     coordinates=coordinates, names=names,
+                                     unique_tag=unique_tag)
 
     def __init__(self, n, radius=1, ambient_space=None, center=None, name=None,
                  latex_name=None, coordinates='spherical', names=None,
@@ -380,7 +380,8 @@ class Sphere(PseudoRiemannianSubmanifold):
         PseudoRiemannianSubmanifold.__init__(self, n, name,
                                              ambient=ambient_space,
                                              signature=n, latex_name=latex_name,
-                                             start_index=1, category=category)
+                                             metric_name='g', start_index=1,
+                                             category=category)
         # set attributes
         self._radius = radius
         self._center = center
@@ -612,6 +613,10 @@ class Sphere(PseudoRiemannianSubmanifold):
                               ["phi_{}:(-pi,pi):periodic".format(n)])
         spher = A.chart(names=names)
         coord = spher[:]
+
+        # make spherical chart and frame the default ones on their domain:
+        A.set_default_chart(spher)
+        A.set_default_frame(spher.frame())
 
         # manage embedding...
         from sage.misc.misc_c import prod
@@ -887,6 +892,22 @@ class Sphere(PseudoRiemannianSubmanifold):
              Chart (A, (xp,)),
              Chart (A, (x,))]
 
+        The stereographic chart is the default one on its domain::
+
+            sage: V = stereoS.domain()
+            sage: V.default_chart()
+            Chart (S^1-{SP}, (x,))
+
+        Accordingly, we have::
+
+            sage: S1.metric().restrict(V).display()
+            g = 4/(x^4 + 2*x^2 + 1) dx⊗dx
+
+        while the spherical chart is still the default one on ``S1``::
+
+            sage: S1.metric().display()
+            g = dphi⊗dphi
+
         """
         # speed-up via simplification method...
         self.set_simplify_function(lambda expr: expr.simplify_rational())
@@ -917,6 +938,13 @@ class Sphere(PseudoRiemannianSubmanifold):
         stereoS = V.chart(coordinates=symbols_S)
         coordN = stereoN[:]
         coordS = stereoS[:]
+
+        # make stereographic charts and frames the default ones on their
+        # respective domains:
+        U.set_default_chart(stereoN)
+        V.set_default_chart(stereoS)
+        U.set_default_frame(stereoN.frame())
+        V.set_default_frame(stereoS.frame())
 
         # predefine variables...
         r2_N = sum(y ** 2 for y in coordN)
@@ -1017,7 +1045,7 @@ class Sphere(PseudoRiemannianSubmanifold):
 
         # transition: stereoN to spher...
         from sage.functions.trig import acos, atan2
-        from sage.functions.special import sqrt
+        from sage.misc.functional import sqrt
         # get ambient coordinates and shift to coordinate origin:
         x = self._shift_coords(imm.expr(stereoN, cart), s='-')
         coordfunc = [atan2(x[1],x[0])]

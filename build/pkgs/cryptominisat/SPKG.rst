@@ -35,3 +35,4 @@ Special Update/Build Instructions
 
 CryptoMiniSat's tarball downloaded from github is called VERSION.tar.gz
 and should be renamed to cryptominisat-VERSION.tar.gz
+Its Python module is installed by the pycryptosat spkg.

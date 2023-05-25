@@ -18,21 +18,21 @@ not the type of the parents::
     sage: type(R)
     <class 'sage.rings.power_series_ring.PowerSeriesRing_domain_with_category'>
     sage: type(q)
-    <type 'sage.rings.power_series_pari.PowerSeries_pari'>
+    <class 'sage.rings.power_series_pari.PowerSeries_pari'>
     sage: type(S)
     <class 'sage.rings.power_series_ring.PowerSeriesRing_over_field_with_category'>
     sage: type(t)
-    <type 'sage.rings.power_series_pari.PowerSeries_pari'>
+    <class 'sage.rings.power_series_pari.PowerSeries_pari'>
 
 If `k` is a finite field implemented using PARI, this is the default
 implementation for power series over `k`::
 
     sage: k.<c> = GF(5^12)
     sage: type(c)
-    <type 'sage.rings.finite_rings.element_pari_ffelt.FiniteFieldElement_pari_ffelt'>
+    <class 'sage.rings.finite_rings.element_pari_ffelt.FiniteFieldElement_pari_ffelt'>
     sage: A.<x> = k[[]]
     sage: type(x)
-    <type 'sage.rings.power_series_pari.PowerSeries_pari'>
+    <class 'sage.rings.power_series_pari.PowerSeries_pari'>
 
 .. WARNING::
 
@@ -82,7 +82,7 @@ from sage.rings.infinity import infinity
 
 
 cdef PowerSeries_pari construct_from_pari(parent, pari_gen g):
-    """
+    r"""
     Fast construction of power series from PARI objects of suitable
     type (series, polynomials, scalars and rational functions).
 
@@ -90,12 +90,19 @@ cdef PowerSeries_pari construct_from_pari(parent, pari_gen g):
     a rational function, in which case the default precision of
     ``parent`` is used.
 
+    TESTS:
+
+    Check for :trac:`33224`::
+
+        sage: R.<z> = LaurentSeriesRing(QQ, implementation='pari')
+        sage: (z^-2).prec()
+        +Infinity
     """
     cdef long t = typ(g.g)
     v = parent.variable_name()
     if t == t_SER and varn(g.g) == get_var(v):
         prec = lg(g.g) - 2 + valp(g.g)
-    elif t == t_RFRAC:
+    elif t == t_RFRAC and pari.denominator(g) != 1:
         prec = parent.default_prec()
         g = g.Ser(v, prec - g.valuation(v))
     else:
@@ -946,4 +953,3 @@ cdef class PowerSeries_pari(PowerSeries):
                 precision = self._prec
             f = self
         return PowerSeries_pari(self._parent, f.g.serreverse(), precision)
-

@@ -16,7 +16,7 @@ methods elsewhere.
 #*****************************************************************************
 
 
-class TallListFormatter(object):
+class TallListFormatter():
     """
     Special representation for lists with tall entries (e.g. matrices)
 

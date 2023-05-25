@@ -202,7 +202,7 @@ class QuiverRepHom(CallMorphism):
         if data in self._base_ring**total_dim:
             self._vector = data
             self._assert_valid_hom()
-            super(QuiverRepHom, self).__init__(domain.Hom(codomain))
+            super().__init__(domain.Hom(codomain))
             return
 
         # If data is not a dict, create one
@@ -288,7 +288,7 @@ class QuiverRepHom(CallMorphism):
         # Wrap as a vector, check it, and return
         self._vector = (self._base_ring**total_dim)(vector)
         self._assert_valid_hom()
-        super(QuiverRepHom, self).__init__(domain.Hom(codomain))
+        super().__init__(domain.Hom(codomain))
 
     def _repr_(self):
         """
@@ -562,7 +562,7 @@ class QuiverRepHom(CallMorphism):
         # If all that holds just check the vectors
         return self._vector != other._vector
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return whether ``self`` is the zero morphism.
 
@@ -585,8 +585,6 @@ class QuiverRepHom(CallMorphism):
             False
         """
         return any(self._vector)
-
-    __nonzero__ = __bool__
 
     def __mul__(self, other):
         """
@@ -1110,7 +1108,7 @@ class QuiverRepHom(CallMorphism):
             Representation with dimension vector (5, 2, 1, 1, 4)
 
         The algebraic dual of an indecomposable projective is the indecomposable
-        projective of the same vertex in the opposite quiver.
+        projective of the same vertex in the opposite quiver. ::
 
             sage: Q.reverse().P(QQ, 4)
             Representation with dimension vector (5, 2, 1, 1, 4)
@@ -1198,13 +1196,13 @@ class QuiverRepHom(CallMorphism):
             if not isinstance(x, QuiverRepHom):
                 raise TypeError("maps must be a QuiverRepHom or list of QuiverRepHoms")
             if self._quiver is not x._quiver:
-                raise ValueError("Cannot direct sum maps from different quivers")
+                raise ValueError("cannot direct sum maps from different quivers")
             if self._base_ring is not x._base_ring:
-                raise ValueError("Base rings must be identical")
+                raise ValueError("base rings must be identical")
             if pinch == 'domain' and self._domain is not x._domain:
-                raise ValueError("Cannot pinch maps, domains do not agree")
+                raise ValueError("cannot pinch maps, domains do not agree")
             if pinch == 'codomain' and self._codomain is not x._codomain:
-                raise ValueError("Cannot pinch maps, codomains do not agree")
+                raise ValueError("cannot pinch maps, codomains do not agree")
 
         # Get the sums and their maps
         if pinch == 'domain':

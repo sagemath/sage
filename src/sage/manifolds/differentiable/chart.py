@@ -192,13 +192,13 @@ class DiffChart(Chart):
         sage: N = Manifold(2, 'N', field='complex')
         sage: XN.<Z1,Z2> = N.chart('Z1:period=1+2*I Z2')
         sage: XN.periods()
-        {0: 2*I + 1}
+        (2*I + 1, None)
 
     Coordinates are Sage symbolic variables (see
     :mod:`sage.symbolic.expression`)::
 
         sage: type(z1)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     In addition to the Python variable name provided in the operator ``<.,.>``,
     the coordinates are accessible by their indices::
@@ -442,7 +442,7 @@ class DiffChart(Chart):
             sage: c_xy.frame()
             Coordinate frame (M, (∂/∂x,∂/∂y))
             sage: type(c_xy.frame())
-            <class 'sage.manifolds.differentiable.vectorframe.CoordFrame'>
+            <class 'sage.manifolds.differentiable.vectorframe.CoordFrame_with_category'>
 
         Check that ``c_xy.frame()`` is indeed the coordinate frame associated
         with the coordinates `(x,y)`::
@@ -487,7 +487,7 @@ class DiffChart(Chart):
             sage: c_xy.coframe()
             Coordinate coframe (M, (dx,dy))
             sage: type(c_xy.coframe())
-            <class 'sage.manifolds.differentiable.vectorframe.CoordCoFrame'>
+            <class 'sage.manifolds.differentiable.vectorframe.CoordCoFrame_with_category'>
 
         Check that ``c_xy.coframe()`` is indeed the coordinate coframe
         associated with the coordinates `(x, y)`::
@@ -679,7 +679,6 @@ class DiffChart(Chart):
         return list(var(list_strings_velocities))
 
 
-
 #*****************************************************************************
 
 class RealDiffChart(DiffChart, RealChart):
@@ -829,7 +828,7 @@ class RealDiffChart(DiffChart, RealChart):
     :mod:`sage.symbolic.expression`)::
 
         sage: type(th)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: latex(th)
         {\theta}
         sage: assumptions(th)
@@ -877,7 +876,7 @@ class RealDiffChart(DiffChart, RealChart):
         sage: c_spher1.<r,th,ph1> = \
         ....: V.chart(r'r:(0,+oo) th:(0,pi):\theta ph1:(0,2*pi):periodic:\phi_1')
         sage: c_spher1.periods()
-        {3: 2*pi}
+        (None, None, 2*pi)
         sage: c_spher1.coord_range()
         r: (0, +oo); th: (0, pi); ph1: [0, 2*pi] (periodic)
 
@@ -887,7 +886,7 @@ class RealDiffChart(DiffChart, RealChart):
         sage: c_spher2.<r,th,ph2> = \
         ....: V.chart(r'r:(0,+oo) th:(0,pi):\theta ph2:period=2*pi:\phi_2')
         sage: c_spher2.periods()
-        {3: 2*pi}
+        (None, None, 2*pi)
         sage: c_spher2.coord_range()
         r: (0, +oo); th: (0, pi); ph2: [0, 2*pi] (periodic)
 
@@ -1000,7 +999,6 @@ class RealDiffChart(DiffChart, RealChart):
         # Construction of the coordinate frame associated to the chart:
         self._frame = CoordFrame(self)
         self._coframe = self._frame._coframe
-
 
     def restrict(self, subset, restrictions=None):
         r"""

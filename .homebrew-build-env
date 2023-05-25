@@ -2,7 +2,7 @@
 # that activate keg-only homebrew package installations
 
 HOMEBREW=`brew --prefix` || return 1
-for l in gettext bzip2 texinfo; do
+for l in bzip2 texinfo polymake; do
     if [ -d "$HOMEBREW/opt/$l/bin" ]; then
         PATH="$HOMEBREW/opt/$l/bin:$PATH"
     fi
@@ -23,7 +23,7 @@ export PKG_CONFIG_PATH
 LIBRARY_PATH="$HOMEBREW/lib$LIBRARY_PATH"
 [ -z "$CPATH" ] || CPATH=":${CPATH}"
 CPATH="$HOMEBREW/include$CPATH"
-for l in readline bzip2 ntl; do
+for l in readline bzip2 ntl polymake libpng bdw-gc primesieve; do
     if [ -d "$HOMEBREW/opt/$l/lib" ]; then
         LIBRARY_PATH="$HOMEBREW/opt/$l/lib:$LIBRARY_PATH"
     fi
@@ -39,7 +39,7 @@ for l in "gcc/lib/gcc/11 gcc/lib/gcc/10 gcc/lib/gcc/9"; do
 done
 export LIBRARY_PATH
 export CPATH
-for l in gettext; do
+for l in ; do
     if [ -d "$HOMEBREW/opt/$l/share/aclocal" ]; then
         ACLOCAL_PATH="$HOMEBREW/opt/$l/share/aclocal:$ACLOCAL_PATH"
     fi

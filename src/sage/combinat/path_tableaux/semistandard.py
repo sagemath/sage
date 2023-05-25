@@ -7,7 +7,7 @@ This is an implementation of the abstract base class
 
 This implementation is for semistandard tableaux, represented as a chain of partitions
 (essentially, the Gelfand-Tsetlin pattern).
-This generalises the jeu-de-taquin operations of rectification, promotion, evacuation from
+This generalises the jeu de taquin operations of rectification, promotion, evacuation from
 standard tableaux to semistandard tableaux. The local rule is the Bender-Knuth involution.
 
 EXAMPLES::
@@ -85,9 +85,10 @@ from sage.combinat.skew_tableau import SkewTableau, SkewTableaux
 from sage.combinat.tableau import Tableau
 from sage.combinat.gelfand_tsetlin_patterns import GelfandTsetlinPattern
 from sage.combinat.partition import _Partitions
-from sage.rings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 
 ###############################################################################
+
 
 class SemistandardPathTableau(PathTableau):
     r"""
@@ -320,7 +321,7 @@ class SemistandardPathTableau(PathTableau):
 
         This gives the usual rectification of a skew standard tableau and gives a
         generalisation to skew semistandard tableaux. The usual construction uses
-        jeu-de-taquin but here we use the Bender-Knuth involutions.
+        jeu de taquin but here we use the Bender-Knuth involutions.
 
         EXAMPLES::
 
@@ -467,6 +468,7 @@ class SemistandardPathTableau(PathTableau):
         LHS = self.promotion().to_tableau()
         RHS = self.to_tableau().promotion_inverse(len(self)-2)
         tester.assertEqual(LHS,RHS)
+
 
 class SemistandardPathTableaux(PathTableaux):
     """

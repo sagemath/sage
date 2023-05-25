@@ -15,7 +15,7 @@ Crystals of Kac modules of the general-linear Lie superalgebra
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 from sage.categories.regular_supercrystals import RegularSuperCrystals
 from sage.combinat.crystals.tensor_product import CrystalOfTableaux
@@ -62,7 +62,7 @@ class CrystalOfOddNegativeRoots(UniqueRepresentation, Parent):
             sage: S1 is S2
             True
         """
-        return super(CrystalOfOddNegativeRoots, cls).__classcall__(cls, CartanType(cartan_type))
+        return super().__classcall__(cls, CartanType(cartan_type))
 
     def __init__(self, cartan_type):
         """
@@ -122,6 +122,7 @@ class CrystalOfOddNegativeRoots(UniqueRepresentation, Parent):
             sage: 2^len(S.weight_lattice_realization().positive_odd_roots())
             4096
         """
+
         def _repr_(self):
             r"""
             Return a string representation of ``self``.
@@ -430,6 +431,7 @@ class CrystalOfOddNegativeRoots(UniqueRepresentation, Parent):
             e = WLR.basis()
             return WLR.sum(-e[i]+e[j] for (i,j) in self.value)
 
+
 class CrystalOfKacModule(UniqueRepresentation, Parent):
     r"""
     Crystal of a Kac module.
@@ -530,7 +532,7 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
         cartan_type = CartanType(cartan_type)
         la = _Partitions(la)
         mu = _Partitions(mu)
-        return super(CrystalOfKacModule, cls).__classcall__(cls, cartan_type, la, mu)
+        return super().__classcall__(cls, cartan_type, la, mu)
 
     def __init__(self, cartan_type, la, mu):
         """
@@ -591,6 +593,7 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
             ....:         y = x.f(i)
             ....:         assert y is None or y.e(i) == x
         """
+
         def _repr_(self):
             """
             Return a string representation of ``self``.
@@ -772,6 +775,7 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
 #####################################################################
 ## Helper functions
 
+
 def to_dual_tableau(elt):
     r"""
     Return a type `A_n` crystal tableau ``elt`` as a tableau expressed
@@ -814,6 +818,7 @@ def to_dual_tableau(elt):
     for x in tab:
         x.reverse()
     return Tableau(tab).conjugate()
+
 
 def latex_dual(elt):
     r"""

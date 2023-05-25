@@ -99,9 +99,9 @@ from sage.libs.gmp.mpz cimport *
 from sage.geometry.toric_plotter import ToricPlotter
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.structure.coerce_exceptions import CoercionException
-from sage.structure.element cimport Element, Vector
+from sage.structure.element cimport Vector
 from sage.rings.integer cimport Integer
-from sage.structure.richcmp cimport richcmp_not_equal, richcmp
+from sage.structure.richcmp cimport richcmp_not_equal
 
 
 def is_ToricLatticeElement(x):
@@ -343,7 +343,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             sage: e._latex_()
             '\\left(1,\\,2,\\,3\\right)_{L^*}'
         """
-        return "%s_{%s}" % (super(ToricLatticeElement, self)._latex_(),
+        return "%s_{%s}" % (super()._latex_(),
                             self.parent().ambient_module()._latex_name)
 
     def _repr_(self):
@@ -362,7 +362,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             'L*(1, 2, 3)'
         """
         return (self.parent().ambient_module()._name
-                + super(ToricLatticeElement, self)._repr_())
+                + super()._repr_())
 
     def __reduce__(self):
         """
@@ -394,7 +394,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
             sage: N = ToricLattice(3)
             sage: n = N(1,2,3)
-            sage: n.plot()
+            sage: n.plot()  # optional - sage.plot
             Graphics3d Object
         """
         tp = ToricPlotter(options, self.parent().degree())

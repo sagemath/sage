@@ -3,7 +3,7 @@
 # distutils: library_dirs = M4RI_LIBDIR
 # distutils: include_dirs = M4RI_INCDIR
 # distutils: extra_compile_args = M4RI_CFLAGS
-"""
+r"""
 Dense matrices over `\GF{2^e}` for `2 \leq e \leq 16` using the M4RIE library
 
 The M4RIE library offers two matrix representations:
@@ -129,7 +129,7 @@ cdef class M4RIE_finite_field:
             gf2e_free(self.ff)
 
 cdef m4ri_word poly_to_word(f):
-    return f.integer_representation()
+    return f.to_integer()
 
 
 cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
@@ -284,7 +284,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef Cache_base cache = <Cache_base> self._base_ring._cache
         return cache.fetch_int(r)
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 
@@ -491,7 +491,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         return ans
 
     cpdef Matrix_gf2e_dense _multiply_karatsuba(Matrix_gf2e_dense self, Matrix_gf2e_dense right):
-        """
+        r"""
         Matrix multiplication using Karatsuba over polynomials with
         matrix coefficients over GF(2).
 
@@ -903,7 +903,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         full = int(reduced)
 
         x = self.fetch('in_echelon_form')
-        if not x is None: return  # already known to be in echelon form
+        if x is not None:
+            return  # already known to be in echelon form
 
         self.check_mutability()
         self.clear_cache()
@@ -1327,16 +1328,15 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         EXAMPLES::
 
             sage: K.<a> = GF(2^4)
-            sage: A = random_matrix(K, 1000, 1000)
+            sage: A = random_matrix(K, 10, 10, algorithm="unimodular")
             sage: A.rank()
-            1000
-
+            10
             sage: A = matrix(K, 10, 0)
             sage: A.rank()
             0
         """
         x = self.fetch('rank')
-        if not x is None:
+        if x is not None:
             return x
         if self._nrows == 0 or self._ncols == 0:
             return 0
@@ -1517,6 +1517,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         mzed_set_ui(self._entries, 0)
         mzed_cling(self._entries, v)
         mzd_slice_free(v)
+
 
 def unpickle_matrix_gf2e_dense_v0(Matrix_mod2_dense a, base_ring, nrows, ncols):
     r"""

@@ -137,7 +137,7 @@ cdef class CVXOPTBackend(GenericBackend):
         This amounts to adding a new column to the matrix. By default,
         the variable is both positive and real.
         Variable types are always continuous, and thus the parameters
-        ``binary``, ``integer``, and ``continuous`` have no effect. 
+        ``binary``, ``integer``, and ``continuous`` have no effect.
 
         INPUT:
 
@@ -273,7 +273,7 @@ cdef class CVXOPTBackend(GenericBackend):
             2.0
         """
         if coeff is not None:
-            self.objective_function[variable] = float(coeff);
+            self.objective_function[variable] = float(coeff)
         else:
             return self.objective_function[variable]
 
@@ -299,16 +299,14 @@ cdef class CVXOPTBackend(GenericBackend):
             [1, 1, 2, 1, 3]
         """
         for i in range(len(coeff)):
-            self.objective_function[i] = coeff[i];
-        obj_constant_term = d;
+            self.objective_function[i] = coeff[i]
+        obj_constant_term = d
 
     cpdef set_verbosity(self, int level):
         """
         Does not apply for the cvxopt solver
         """
         pass
-
-
 
     cpdef add_col(self, indices, coeffs):
         """
@@ -391,8 +389,8 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         coefficients = list(coefficients)
         for c in coefficients:
-            while c[0] > len(self.G_matrix)-1:
-                 self.add_variable()
+            while c[0] > len(self.G_matrix) - 1:
+                self.add_variable()
         for i in range(len(self.G_matrix)):
             self.G_matrix[i].append(0.0)
         for c in coefficients:
@@ -916,7 +914,7 @@ cdef class CVXOPTBackend(GenericBackend):
             return self.col_name_var[index]
         return "x_" + repr(index)
 
-    cpdef variable_upper_bound(self, int index, value = None):
+    cpdef variable_upper_bound(self, int index, value = False):
         """
         Return or define the upper bound on a variable
 
@@ -925,7 +923,7 @@ cdef class CVXOPTBackend(GenericBackend):
         - ``index`` (integer) -- the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
-          variable has not upper bound. When set to ``None``
+          variable has not upper bound. When set to ``False``
           (default), the method returns the current value.
 
         EXAMPLES::
@@ -945,7 +943,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return self.col_upper_bound[index]
 
-    cpdef variable_lower_bound(self, int index, value = None):
+    cpdef variable_lower_bound(self, int index, value = False):
         """
         Return or define the lower bound on a variable
 
@@ -954,7 +952,7 @@ cdef class CVXOPTBackend(GenericBackend):
         - ``index`` (integer) -- the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
-          variable has not lower bound. When set to ``None``
+          variable has not lower bound. When set to ``False``
           (default), the method returns the current value.
 
         EXAMPLES::
@@ -1004,4 +1002,3 @@ cdef class CVXOPTBackend(GenericBackend):
             return self.param[name]
         else:
             self.param[name] = value
-

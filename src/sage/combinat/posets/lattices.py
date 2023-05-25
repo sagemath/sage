@@ -146,7 +146,7 @@ List of (semi)lattice methods
 #
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-
+from itertools import repeat
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.posets import Poset, FinitePoset
 from sage.combinat.posets.elements import (LatticePosetElement,
@@ -1006,7 +1006,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         from sage.graphs.digraph import DiGraph
         M3 = DiGraph({0: [1, 2, 3], 1: [4], 2: [4], 3: [4]})
-        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3))
+        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3, return_graphs=False))
         return (False, self[diamond[0]])
 
     def is_meet_distributive(self, certificate=False):
@@ -1094,7 +1094,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         from sage.graphs.digraph import DiGraph
         M3 = DiGraph({0: [1, 2, 3], 1: [4], 2: [4], 3: [4]})
-        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3))
+        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3, return_graphs=False))
         return (False, self[diamond[4]])
 
     def is_stone(self, certificate=False):
@@ -1261,7 +1261,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if not result:
             return (False, (cert[2], cert[1], cert[0]))
         M3 = DiGraph({0: [1, 2, 3], 1: [4], 2: [4], 3: [4]})
-        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3))
+        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3, return_graphs=False))
         return (False, (self._vertex_to_element(diamond[1]),
                         self._vertex_to_element(diamond[2]),
                         self._vertex_to_element(diamond[3])))
@@ -1307,9 +1307,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         H = self._hasse_diagram
         # See trac #21528 for explanation.
-        return ( (H.in_degree_sequence().count(1) ==
+        return ((H.in_degree_sequence().count(1) ==
                  H.out_degree_sequence().count(1)) and
-                 self.is_meet_semidistributive() )
+                self.is_meet_semidistributive())
 
     def is_meet_semidistributive(self, certificate=False):
         r"""
@@ -1693,11 +1693,11 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         H = self._hasse_diagram
         jn = H.join_matrix()
         n = H.order()
-        for e in range(n-2, -1, -1):
+        for e in range(n - 2, -1, -1):
             t = 0
             for uc in H.neighbors_out(e):
                 t = jn[t, uc]
-                if t == n-1:
+                if t == n - 1:
                     break
             else:
                 if certificate:
@@ -1882,8 +1882,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         H = self._hasse_diagram
         mt = H.meet_matrix()
-        n = H.order()-1
-        for e in range(2, n+1):
+        n = H.order() - 1
+        for e in range(2, n + 1):
             t = n
             for lc in H.neighbors_in(e):
                 t = mt[t, lc]
@@ -1903,8 +1903,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         any join of elements `x_1, x_2, \ldots, x_{n+1}` is join of a
         proper subset of `x_i`.
 
-        This can be also characterized by sublattices: a lattice
-        of breadth at least `n` contains a sublattice isomorphic to the
+        This can be also characterized by subposets: a lattice
+        of breadth at least `n` contains a subposet isomorphic to the
         Boolean lattice of `2^n` elements.
 
         INPUT:
@@ -1993,7 +1993,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 elems = [e for e in H.order_ideal([j]) if e not in too_close]
 
                 achains = PairwiseCompatibleSubsets(elems,
-                                          lambda x, y: H.are_incomparable(x, y))
+                                                    H.are_incomparable)
                 achains_n = achains.elements_of_depth_iterator(B)
 
                 for A in achains_n:
@@ -2022,7 +2022,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
-            sage: L=LatticePoset({0:['a','b','c'], 'a':[1], 'b':[1], 'c':[1]})
+            sage: L = LatticePoset({0:['a','b','c'],'a':[1],'b':[1],'c':[1]})
             sage: C = L.complements()
 
         Let us check that 'a' and 'b' are complements of each other::
@@ -2037,7 +2037,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.complements() # random order
             {0: [1], 1: [0], 'a': ['b', 'c'], 'b': ['c', 'a'], 'c': ['b', 'a']}
 
-            sage: L=LatticePoset({0:[1,2],1:[3],2:[3],3:[4]})
+            sage: L = LatticePoset({0:[1,2],1:[3],2:[3],3:[4]})
             sage: L.complements() # random order
             {0: [4], 4: [0]}
             sage: L.complements(1)
@@ -2047,7 +2047,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         TESTS::
 
-            sage: L=LatticePoset({0:['a','b','c'], 'a':[1], 'b':[1], 'c':[1]})
+            sage: L = LatticePoset({0:['a','b','c'], 'a':[1], 'b':[1], 'c':[1]})
             sage: for v,v_complements in L.complements().items():
             ....:     for v_c in v_complements:
             ....:         assert L.meet(v,v_c) == L.bottom()
@@ -2068,7 +2068,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             mt = self.meet_matrix()
             zero = 0
             one = n - 1
-            c = [[] for x in range(n)]
+            c = [[] for _ in repeat(None, n)]
             for x in range(n):
                 for y in range(x, n):
                     if jn[x][y] == one and mt[x][y] == zero:
@@ -3010,7 +3010,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         # Todo: This and ordinal_sum() of posets could keep
         # distinguished linear extension, if it is defined
         # for both posets/lattices. That can be done after
-        # trac ticket #21607.
+        # github issue #21607.
 
         if labels not in ['integers', 'pairs']:
             raise ValueError("labels must be either 'pairs' or 'integers'")
@@ -3085,9 +3085,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if elements_only:
             return [self[e] for e in
                     self._hasse_diagram.vertical_decomposition(return_list=True)]
-        elms = ( [0] +
-                 self._hasse_diagram.vertical_decomposition(return_list=True) +
-                 [self.cardinality() - 1] )
+        elms = ([0] +
+                self._hasse_diagram.vertical_decomposition(return_list=True) +
+                [self.cardinality() - 1])
         n = len(elms)
         result = []
         for i in range(n - 1):
@@ -3163,7 +3163,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
-            sage: L=LatticePoset(( [], [[1,2],[1,17],[1,8],[2,3],[2,22],[2,5],[2,7],[17,22],[17,13],[8,7],[8,13],[3,16],[3,9],[22,16],[22,18],[22,10],[5,18],[5,14],[7,9],[7,14],[7,10],[13,10],[16,6],[16,19],[9,19],[18,6],[18,33],[14,33],[10,19],[10,33],[6,4],[19,4],[33,4]] ))
+            sage: L = LatticePoset(([], [[1,2],[1,17],[1,8],[2,3],[2,22],[2,5],[2,7],[17,22],[17,13],[8,7],[8,13],[3,16],[3,9],[22,16],[22,18],[22,10],[5,18],[5,14],[7,9],[7,14],[7,10],[13,10],[16,6],[16,19],[9,19],[18,6],[18,33],[14,33],[10,19],[10,33],[6,4],[19,4],[33,4]]))
             sage: L.sublattice([14, 13, 22]).list()
             [1, 2, 8, 7, 14, 17, 13, 22, 10, 33]
 
@@ -3347,7 +3347,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return L.canonical_label()
         L = L.relabel(lambda x: tuple(self._vertex_to_element(y) for y in x))
         if labels == 'lattice':
-            return L.relabel(lambda x: self.sublattice(x))
+            return L.relabel(self.sublattice)
         return L
 
     def isomorphic_sublattices_iterator(self, other):
@@ -3409,7 +3409,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         jn = H.join_matrix()
         self_closure = H.transitive_closure()
         other_closure = other._hasse_diagram.transitive_closure()
-        for g in self_closure.subgraph_search_iterator(other_closure, induced=True):
+        for g in self_closure.subgraph_search_iterator(other_closure, induced=True, return_graphs=False):
             if all(mt[a, b] in g and jn[a, b] in g for a, b in combinations(g, 2)):
                 yield self.sublattice([self._vertex_to_element(v) for v in g])
 
@@ -4300,7 +4300,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return True
 
         if (type == 'interval' and len(self.join_irreducibles()) !=
-            len(self.meet_irreducibles())):
+                len(self.meet_irreducibles())):
             return False
 
         if type == 'upper' or type == 'interval':
@@ -4934,7 +4934,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         for e in L:
             low = L.lower_covers(e)
             if len(low) == 1:  # a join-irreducible element
-                C[e] = congs[max(e, key=lambda x: cong_ji._element_to_vertex(x))]
+                C[e] = congs[max(e, key=cong_ji._element_to_vertex)]
             if len(low) > 1:  # "extending" congruence to avoid re-computation
                 low_0 = min(low, key=lambda x: C[x].number_of_subsets())
                 for new_pair in e:
@@ -4944,6 +4944,109 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         return L.relabel(lambda e: SetPartition([[self._vertex_to_element(v)
                                                   for v in p] for p in C[e]]))
+
+    def feichtner_yuzvinsky_ring(self, G, use_defining=False, base_ring=None):
+        r"""
+        Return the Feichtner-Yuzvinsky ring of ``self`` and ``G``.
+
+        Let `R` be a commutative ring, `L` a lattice, and `G \subseteq L`.
+        The *Feichtner-Yuzvinsky ring* is the quotient of the polynomial
+        ring `R[h_g \mid g \in G]` by the ideal generated by
+
+        - `h_a` for every atom `a \in L \cap G` and
+        - for every antichain `A` of the subposet `G` such that
+          `g := \bigvee A \in G` (with the join taken in `L`)
+
+          .. MATH::
+
+              \prod_{a \in A} (h_g - h_a).
+
+        This was originally described for `G` such that `(L, G)` is a built
+        lattice in the sense of [FY2004]_ (which has a geometric motivation),
+        but this has been extended to `G` being an arbitrary subset.
+
+        This is not the original definition, which uses the nested subsets
+        of `G` (see [FY2004]_ for the definition). However, the original
+        construction, which we call the *defining* presentation and use the
+        variables `\{x_g \mid g \in G\}`, can be recovered by setting
+        `h_g = \sum_{g' \geq g} x_{g'}` (where `g' \in G`).
+
+        INPUT:
+
+        - ``G`` -- a subset of elements of ``self``
+        - ``use_defining`` -- (default: ``False``) whether or not to use
+          the defining presentation in `x_g`
+        - ``base_ring`` -- (default: `\QQ`) the base ring
+
+        The order on the variables is equal to the ordering of the
+        elements in ``G``.
+
+        EXAMPLES::
+
+            sage: B2 = posets.BooleanLattice(2)
+            sage: FY = B2.feichtner_yuzvinsky_ring(B2[1:])
+            sage: FY
+            Quotient of Multivariate Polynomial Ring in h0, h1, h2 over Rational Field
+             by the ideal (h0, h1, h0*h1 - h0*h2 - h1*h2 + h2^2)
+
+            sage: FY = B2.feichtner_yuzvinsky_ring(B2[1:], use_defining=True)
+            sage: FY
+            Quotient of Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
+             by the ideal (x0 + x2, x1 + x2, x0*x1)
+
+        We reproduce the example from Section 5 of [Coron2023]_::
+
+            sage: H.<a,b,c,d> = HyperplaneArrangements(QQ)
+            sage: Arr = H(a-b, b-c, c-d, d-a)
+            sage: P = LatticePoset(Arr.intersection_poset())
+            sage: FY = P.feichtner_yuzvinsky_ring([P.top(),5,1,2,3,4])
+            sage: FY.defining_ideal().groebner_basis()
+            [h0^2 - h0*h1, h1^2, h2, h3, h4, h5]
+
+        TESTS::
+
+            sage: B2 = posets.BooleanLattice(2)
+            sage: B2.feichtner_yuzvinsky_ring([1,2,1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the input set G must not contain duplicates
+        """
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+
+        G = tuple(G)
+        Gmap = {g: i for i, g in enumerate(G)}
+        if len(G) != len(Gmap):
+            raise ValueError("the input set G must not contain duplicates")
+        GP = self.subposet(G)
+
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        if use_defining:
+            R = PolynomialRing(base_ring, 'x', len(G))
+            gens = R.gens()
+            gens = [R.sum(gens[Gmap[gp]] for gp in GP.order_filter([g]))
+                    for g in G]
+        else:
+            R = PolynomialRing(base_ring, 'h', len(G))
+            gens = R.gens()
+        I = []
+        atoms = set(self.atoms())
+        for i, g in enumerate(G):
+            if g in atoms:
+                I.append(gens[i])
+        for A in GP.antichains_iterator():
+            if len(A) <= 1:
+                # skip trivial cases
+                continue
+            gp = A[0]
+            for y in A[1:]:
+                gp = self.join(gp, y)
+            if gp not in Gmap:
+                continue
+            i = Gmap[gp]
+            I.append(R.prod(gens[i] - gens[Gmap[a]] for a in A))
+        return R.quotient(I)
 
 
 def _log_2(n):
@@ -4974,6 +5077,7 @@ def _log_2(n):
     if 1 << bits == n:
         return bits
     return bits + 1
+
 
 ############################################################################
 

@@ -22,6 +22,8 @@ Symmetric functions, with their multiple realizations
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.combinat.partition import Partitions
@@ -37,6 +39,7 @@ from . import hall_littlewood
 from . import jack
 from . import macdonald
 from . import llt
+
 
 class SymmetricFunctions(UniqueRepresentation, Parent):
     r"""
@@ -70,6 +73,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         sage: Sym.category()
         Join of Category of hopf algebras over Rational Field
+            and Category of unique factorization domains
             and Category of graded algebras over Rational Field
             and Category of commutative algebras over Rational Field
             and Category of monoids with realizations
@@ -864,6 +868,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
         self._base = R # Won't be needed when CategoryObject won't override anymore base_ring
         cat = GradedHopfAlgebras(R).Commutative().Cocommutative()
+        if R in PrincipalIdealDomains():
+            cat &= UniqueFactorizationDomains()
         Parent.__init__(self, category=cat.WithRealizations())
 
     def a_realization(self):
@@ -887,7 +893,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: SymmetricFunctions(RR) # indirect doctest
             Symmetric Functions over Real Field with 53 bits of precision
         """
-        return "Symmetric Functions over %s"%self.base_ring()
+        return "Symmetric Functions over %s" % self.base_ring()
 
     def schur(self):
         r"""
@@ -1071,7 +1077,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         return induced_trivial_character_basis(self, 'ht')
 
     ht = induced_trivial_character
-
 
     def forgotten(self):
         r"""
@@ -1441,15 +1446,16 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         for (basis1_name, basis2_name) in conversion_functions:
             basis1 = getattr(self, basis1_name)()
             basis2 = getattr(self, basis2_name)()
-            on_basis = SymmetricaConversionOnBasis(t = conversion_functions[basis1_name,basis2_name], domain = basis1, codomain = basis2)
+            on_basis = SymmetricaConversionOnBasis(t=conversion_functions[basis1_name,basis2_name], domain=basis1, codomain=basis2)
             from sage.rings.rational_field import RationalField
             if basis2_name != "powersum" or self._base.has_coerce_map_from(RationalField()):
-                iso(basis1._module_morphism(on_basis, codomain = basis2))
+                iso(basis1._module_morphism(on_basis, codomain=basis2))
             else:
                 # Don't register conversions to powersums as coercions,
                 # unless the base ring is a `\QQ`-algebra
                 # (otherwise the coercion graph loses commutativity).
-                iso(basis1._module_morphism(on_basis, codomain = basis2), only_conversion = True)
+                iso(basis1._module_morphism(on_basis, codomain=basis2),
+                    only_conversion=True)
 
         # Todo: fill in with other conversion functions on the classical bases
 
@@ -1571,6 +1577,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         from sage.combinat.sf.k_dual import KBoundedQuotient
         return KBoundedQuotient(self, k, t)
 
+
 class SymmetricaConversionOnBasis:
     def __init__(self, t, domain, codomain):
         """
@@ -1604,6 +1611,8 @@ class SymmetricaConversionOnBasis:
 
     def __call__(self, partition):
         """
+        EXAMPLES::
+
             sage: Sym = SymmetricFunctions(QQ['x'])
             sage: p = Sym.p(); s = Sym.s()
             sage: p[1] + s[1]                           # indirect doctest
@@ -1612,5 +1621,4 @@ class SymmetricaConversionOnBasis:
         # TODO: use self._codomain.sum_of_monomials, when the later
         # will have an optional optimization for the case when there
         # is no repetition in the support
-        return self._codomain._from_dict(dict(self._t(self.fake_sym.monomial(partition))), coerce = True)
-
+        return self._codomain._from_dict(dict(self._t(self.fake_sym.monomial(partition))), coerce=True)

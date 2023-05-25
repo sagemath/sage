@@ -26,7 +26,7 @@ other types will also coerce to the integers, when it makes sense.
     sage: b = Z(5678); b
     5678
     sage: type(a)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
     sage: a + b
     6912
     sage: Z('94803849083985934859834583945394')
@@ -58,6 +58,7 @@ import sage.libs.pari.all
 import sage.rings.ideal
 from sage.categories.basic import EuclideanDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.coerce cimport is_numpy_type
 from sage.structure.element cimport parent
 from sage.structure.parent_gens import ParentWithGens
@@ -183,7 +184,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         sage: b = Z(5678); b
         5678
         sage: type(a)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: a + b
         6912
         sage: b + a
@@ -206,18 +207,18 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         sage: a / b
         617/2839
         sage: type(a/b)
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
         sage: a/a
         1
         sage: type(a/a)
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
 
     For floor division, use the ``//`` operator instead::
 
         sage: a // b
         0
         sage: type(a//b)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Next we illustrate arithmetic with automatic coercion. The types
     that coerce are: str, int, long, Integer.
@@ -390,7 +391,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         return "\\Bold{Z}"
 
     def __getitem__(self, x):
-        """
+        r"""
         Return the ring `\ZZ[...]` obtained by adjoining to the integers one
         or several elements.
 
@@ -414,8 +415,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         if x in self:
             return self
 
-        from sage.rings.number_field.number_field_element import NumberFieldElement
-        if isinstance(x, NumberFieldElement):
+        if isinstance(x, NumberFieldElement_base):
             K, from_K = parent(x).subfield(x)
             return K.order(K.gen())
 
@@ -579,14 +579,6 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             4
             sage: f(-7r)
             -7
-
-        Note that the input *MUST* be an ``int``::
-
-            sage: a = 10000000000000000000000rL
-            sage: f(a)  # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: must be a Python int object
         """
         if S is long:
             return sage.rings.integer.long_to_Z()
@@ -662,52 +654,70 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: [ZZ.random_element() for _ in range(10)]
-            [-8, 2, 0, 0, 1, -1, 2, 1, -95, -1]
+            sage: ZZ.random_element().parent() is ZZ
+            True
 
         The default uniform distribution is integers in `[-2, 2]`::
 
-            sage: [ZZ.random_element(distribution="uniform") for _ in range(10)]
-            [2, -2, 2, -2, -1, 1, -1, 2, 1, 0]
+            sage: from collections import defaultdict
+            sage: def add_samples(*args, **kwds):
+            ....:     global dic, counter
+            ....:     for _ in range(100):
+            ....:         counter += 1
+            ....:         dic[ZZ.random_element(*args, **kwds)] += 1
+
+            sage: prob = lambda x : 1/5
+            sage: dic = defaultdict(Integer)
+            sage: counter = 0.0
+            sage: add_samples(distribution="uniform")
+            sage: while any(abs(dic[i]/counter - prob(i)) > 0.01 for i in dic):
+            ....:     add_samples(distribution="uniform")
 
         Here we use the distribution ``'1/n'``::
 
-            sage: [ZZ.random_element(distribution="1/n") for _ in range(10)]
-            [-6, 1, -1, 1, 1, -1, 1, -1, -3, 1]
+            sage: def prob(n):
+            ....:     if n == 0:
+            ....:         return 1/5
+            ....:     return 2/(5*abs(n)*(abs(n) + 1))
+            sage: dic = defaultdict(Integer)
+            sage: counter = 0.0
+            sage: add_samples(distribution="1/n")
+            sage: while any(abs(dic[i]/counter - prob(i)) > 0.01 for i in dic):
+            ....:     add_samples(distribution="1/n")
 
         If a range is given, the default distribution is uniform in that
         range::
 
-            sage: ZZ.random_element(-10,10)
-            -2
-            sage: ZZ.random_element(10)
-            2
-            sage: ZZ.random_element(10^50)
-            9531604786291536727294723328622110901973365898988
-            sage: [ZZ.random_element(5) for _ in range(10)]
-            [3, 1, 2, 3, 0, 0, 3, 4, 0, 3]
+            sage: -10 <= ZZ.random_element(-10, 10) < 10
+            True
+            sage: prob = lambda x : 1/20
+            sage: dic = defaultdict(Integer)
+            sage: counter = 0.0
+            sage: add_samples(-10, 10)
+            sage: while any(abs(dic[i]/counter - prob(i)) > 0.01 for i in dic):
+            ....:     add_samples(-10, 10)
+
+            sage: 0 <= ZZ.random_element(5) < 5
+            True
+            sage: prob = lambda x : 1/5
+            sage: dic = defaultdict(Integer)
+            sage: counter = 0.0
+            sage: add_samples(5)
+            sage: while any(abs(dic[i]/counter - prob(i)) > 0.01 for i in dic):
+            ....:     add_samples(5)
+
+            sage: while ZZ.random_element(10^50) < 10^49:
+            ....:     pass
 
         Notice that the right endpoint is not included::
 
-            sage: [ZZ.random_element(-2,2) for _ in range(10)]
-            [1, -2, -2, -1, -2, -1, -1, -2, 0, -2]
-
-        We compute a histogram over 1000 samples of the default
-        distribution::
-
-            sage: from collections import defaultdict
-            sage: d = defaultdict(lambda: 0)
-            sage: for _ in range(1000):
-            ....:     samp = ZZ.random_element()
-            ....:     d[samp] = d[samp] + 1
-
-            sage: sorted(d.items())
-            [(-1955, 1), (-1026, 1), (-357, 1), (-248, 1), (-145, 1), (-81, 1), (-80, 1), (-79, 1), (-75, 1), (-69, 1), (-68, 1), (-63, 2), (-61, 1), (-57, 1), (-50, 1), (-37, 1), (-35, 1), (-33, 1), (-29, 2), (-27, 1), (-25, 1), (-23, 2), (-22, 3), (-20, 1), (-19, 1), (-18, 1), (-16, 4), (-15, 3), (-14, 1), (-13, 2), (-12, 2), (-11, 2), (-10, 7), (-9, 3), (-8, 3), (-7, 7), (-6, 8), (-5, 13), (-4, 24), (-3, 34), (-2, 75), (-1, 206), (0, 208), (1, 189), (2, 63), (3, 35), (4, 13), (5, 11), (6, 10), (7, 4), (8, 3), (10, 1), (11, 1), (12, 1), (13, 1), (14, 1), (16, 3), (18, 2), (19, 1), (26, 2), (27, 1), (28, 2), (29, 1), (30, 1), (32, 1), (33, 2), (35, 1), (37, 1), (39, 1), (41, 1), (42, 1), (52, 1), (91, 1), (94, 1), (106, 1), (111, 1), (113, 2), (132, 1), (134, 1), (232, 1), (240, 1), (2133, 1), (3636, 1)]
+            sage: all(ZZ.random_element(-2, 2) < 2 for _ in range(100))
+            True
 
         We return a sample from a discrete Gaussian distribution::
 
-             sage: ZZ.random_element(11.0, distribution="gaussian")
-             5
+             sage: ZZ.random_element(11.0, distribution="gaussian").parent() is ZZ
+             True
 
         TESTS:
 
@@ -857,7 +867,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         """
         if key == 'element_is_atomic':
             return True
-        return super(IntegerRing_class, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def is_field(self, proof = True):
         """
@@ -1028,7 +1038,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             (1,)
             1
             sage: type(ZZ.gens()[0])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return (self(1), )
 
@@ -1048,7 +1058,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             sage: ZZ.gen()
             1
             sage: type(ZZ.gen())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         if n == 0:
             return self(1)
@@ -1172,7 +1182,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         return sage.rings.infinity.infinity
 
     def zeta(self, n=2):
-        """
+        r"""
         Return a primitive ``n``-th root of unity in the integers, or raise an
         error if none exists.
 
@@ -1182,7 +1192,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         OUTPUT:
 
-        - an ``n``-th root of unity in `\ZZ`.
+        an ``n``-th root of unity in `\ZZ`
 
         EXAMPLES::
 
@@ -1496,7 +1506,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         EXAMPLES::
 
-            sage: polymake(ZZ)    # optional - polymake # indirect doctest
+            sage: polymake(ZZ)    # optional - jupymake # indirect doctest
             Integer
 
         """

@@ -33,7 +33,7 @@ def abstract_method(f=None, optional=False):
 
     We create a class with an abstract method::
 
-        sage: class A(object):
+        sage: class A():
         ....:
         ....:     @abstract_method
         ....:     def my_method(self):
@@ -60,7 +60,7 @@ def abstract_method(f=None, optional=False):
 
     It is also possible to mark abstract methods as optional::
 
-        sage: class A(object):
+        sage: class A():
         ....:
         ....:     @abstract_method(optional = True)
         ....:     def my_method(self):
@@ -125,9 +125,7 @@ def abstract_method(f=None, optional=False):
     The syntax ``@abstract_method`` w.r.t. @abstract_method(optional = True)
     is achieved by a little trick which we test here::
 
-        sage: abstract_method(optional = True)  # py2
-        <function <lambda> at ...>
-        sage: abstract_method(optional = True)  # py3
+        sage: abstract_method(optional = True)
         <function abstract_method.<locals>.<lambda> at ...>
         sage: abstract_method(optional = True)(banner)
         <optional abstract method banner at ...>
@@ -140,7 +138,7 @@ def abstract_method(f=None, optional=False):
         return AbstractMethod(f, optional)
 
 
-class AbstractMethod(object):
+class AbstractMethod():
     def __init__(self, f, optional=False):
         """
         Constructor for abstract methods
@@ -184,7 +182,7 @@ class AbstractMethod(object):
         return "<" + ("optional " if self._optional else "") + "abstract method %s at %s>" % (self.__name__, hex(id(self._f)))
 
     def _sage_src_lines_(self):
-        """
+        r"""
         Returns the source code location for the wrapped function.
 
         EXAMPLES::
@@ -195,7 +193,7 @@ class AbstractMethod(object):
             sage: src[0]
             'def banner():\n'
             sage: lines
-            81
+            89
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self._f)

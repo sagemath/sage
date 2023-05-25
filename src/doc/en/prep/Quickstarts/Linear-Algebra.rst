@@ -192,7 +192,7 @@ for our purposes.
     sage: type( ring_vec )
     <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: type( field_vec )
-    <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
+    <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
 
 Left\-Handed or Right\-handed?
 -------------------------------

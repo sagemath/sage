@@ -1,21 +1,21 @@
 r"""
-Groups of isometries.
+Groups of isometries
 
-Let `M = \ZZ^n` or `\QQ^n`, `b: M \times M \rightarrow \QQ$ a bilinear form and
-$f: M \rightarrow M$ a linear map. We say that $f$ is an isometry if for all
-elements $x,y$ of $M$ we have that $b(x,y)=b(f(x),f(y))$.
-A group of isometries is a subgroup of $GL(M)$ consisting of isometries.
+Let `M = \ZZ^n` or `\QQ^n`, `b: M \times M \rightarrow \QQ` a bilinear form and
+`f: M \rightarrow M` a linear map. We say that `f` is an isometry if for all
+elements `x,y` of `M` we have that `b(x,y)=b(f(x),f(y))`.
+A group of isometries is a subgroup of `GL(M)` consisting of isometries.
 
 EXAMPLES::
 
     sage: L = IntegralLattice("D4")
     sage: O = L.orthogonal_group()
     sage: O
-    Group of isometries with 5 generators (
-    [-1  0  0  0]  [0 0 0 1]  [-1 -1 -1 -1]  [ 1  1  0  0]  [ 1  0  0  0]
-    [ 0 -1  0  0]  [0 1 0 0]  [ 0  0  1  0]  [ 0  0  1  0]  [-1 -1 -1 -1]
-    [ 0  0 -1  0]  [0 0 1 0]  [ 0  1  0  1]  [ 0  1  0  1]  [ 0  0  1  0]
-    [ 0  0  0 -1], [1 0 0 0], [ 0 -1 -1  0], [ 0 -1 -1  0], [ 0  0  0  1]
+    Group of isometries with 3 generators (
+    [0 0 0 1]  [ 1  1  0  0]  [ 1  0  0  0]
+    [0 1 0 0]  [ 0  0  1  0]  [-1 -1 -1 -1]
+    [0 0 1 0]  [ 0  1  0  1]  [ 0  0  1  0]
+    [1 0 0 0], [ 0 -1 -1  0], [ 0  0  0  1]
     )
 
 Basic functionality is provided by GAP::
@@ -39,7 +39,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
 from sage.categories.action import Action
 
 
@@ -68,9 +68,9 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
     EXAMPLES::
 
         sage: from sage.groups.matrix_gps.isometries import GroupOfIsometries
-        sage: bil = Matrix(ZZ,2,[3,2,2,3])
-        sage: gens = [-Matrix(ZZ,2,[0,1,1,0])]
-        sage: O = GroupOfIsometries(2,ZZ,gens,bil)
+        sage: bil = Matrix(ZZ, 2, [3,2,2,3])
+        sage: gens = [-Matrix(ZZ, 2, [0,1,1,0])]
+        sage: O = GroupOfIsometries(2, ZZ, gens, bil)
         sage: O
         Group of isometries with 1 generator (
         [ 0 -1]
@@ -83,7 +83,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
 
         sage: bil = Matrix(ZZ,4,[0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0])
         sage: f = Matrix(ZZ,4,[0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -1, 1, 1, 1])
-        sage: O = GroupOfIsometries(2,ZZ,[f],bil)
+        sage: O = GroupOfIsometries(2, ZZ, [f], bil)
         sage: O.cardinality()
         +Infinity
     """
@@ -116,9 +116,9 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
             Q = invariant_quotient_module
             for f in gens:
                 self._check_matrix(f)
-                if (not I is None) and I*f != I:
+                if (I is not None) and I * f != I:
                     raise ValueError("the submodule is not preserved")
-                if not Q is None and (Q.W() != Q.W()*f or Q.V()*f != Q.V()):
+                if Q is not None and (Q.W() != Q.W()*f or Q.V()*f != Q.V()):
                     raise ValueError("the quotient module is not preserved")
         if len(gens) == 0:    # handle the trivial group
             gens = [G.parent().identity_matrix()]
@@ -135,9 +135,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
         r"""
         Return the string representation of this matrix group.
 
-        OUTPUT:
-
-        - a string
+        OUTPUT: a string
 
         EXAMPLES::
 
@@ -186,9 +184,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
         r"""
         Return the symmetric bilinear form preserved by the orthogonal group.
 
-        OUTPUT:
-
-        - the matrix defining the bilinear form
+        OUTPUT: the matrix defining the bilinear form
 
         EXAMPLES::
 
@@ -278,9 +274,11 @@ class GroupActionOnSubmodule(Action):
     EXAMPLES::
 
         sage: from sage.groups.matrix_gps.isometries import GroupOfIsometries
-        sage: S = span(ZZ,[[0,1]])
-        sage: g = Matrix(QQ,2,[1,0,0,-1])
-        sage: G = GroupOfIsometries(2, ZZ, [g], invariant_bilinear_form=matrix.identity(2), invariant_submodule=S)
+        sage: S = span(ZZ, [[0,1]])
+        sage: g = Matrix(QQ, 2, [1,0,0,-1])
+        sage: G = GroupOfIsometries(2, ZZ, [g],
+        ....:                       invariant_bilinear_form=matrix.identity(2),
+        ....:                       invariant_submodule=S)
         sage: g = G.an_element()
         sage: x = S.an_element()
         sage: x*g
@@ -297,11 +295,11 @@ class GroupActionOnSubmodule(Action):
         TESTS::
 
             sage: from sage.groups.matrix_gps.isometries import GroupOfIsometries, GroupActionOnSubmodule
-            sage: S = span(ZZ,[[0,1]])
-            sage: g = Matrix(QQ,2,[1,0,0,-1])
+            sage: S = span(ZZ, [[0,1]])
+            sage: g = Matrix(QQ, 2, [1,0,0,-1])
             sage: e = Matrix.identity(2)
             sage: G = GroupOfIsometries(2, ZZ, [g], e)
-            sage: GroupActionOnSubmodule(G,S)
+            sage: GroupActionOnSubmodule(G, S)
             Right action by Group of isometries with 1 generator (
             [ 1  0]
             [ 0 -1]
@@ -406,9 +404,7 @@ class GroupActionOnQuotientModule(Action):
 
         - ``a`` -- an element of the invariant submodule
 
-        OUTPUT:
-
-        - an element of the invariant quotient module
+        OUTPUT: an element of the invariant quotient module
 
         EXAMPLES::
 

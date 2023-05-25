@@ -222,7 +222,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             return VermaModule(self, la, basis_key=basis_key, **kwds)
 
     class ElementMethods:
-       def part(self):
+        def part(self):
             """
             Return whether the element ``v`` is in the lower,
             zero, or upper part of ``self``.
@@ -259,4 +259,3 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             if all(k == 0 for k in S):
                 return 0
             raise ValueError("element is not in one part")
-

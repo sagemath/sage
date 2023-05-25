@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# This command ensures that any previous installations of the same package
+# are uninstalled.
+
+# Note: "sage-pip-uninstall" is meant to be run after $(PYTHON) has
+# been installed (either as an spkg or as a venv over a system python3).
+# It is then guaranteed by sage-env that PATH is set in a way that "python3"
+# refers to the correct python3.
+PYTHON=python3
+
+# The PIP variable is only used to determine the name of the lock file.
+PIP=pip3
+
+# We should avoid running pip while uninstalling a package because that
+# is prone to race conditions. Therefore, we use a lockfile while
+# running pip. This is implemented in the Python script sage-flock
+LOCK="$SAGE_VENV/var/lock/$PIP.lock"
+
+    # --disable-pip-version-check: Don't periodically check PyPI to determine whether a new version of pip is available
+    # --no-input: Disable prompting for input.
+    # --yes: Don't ask for confirmation of uninstall deletions
+    # See sage-pip-install for a discussion of the other flags.
+sage-flock -x $LOCK $PYTHON -m pip uninstall --isolated --disable-pip-version-check --yes --no-input "$@"

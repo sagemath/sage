@@ -109,7 +109,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                 sage: Bar(category=Algebras(QQ))
                 doctest:warning...:
                 DeprecationWarning: the attribute _no_generic_basering_coercion is deprecated, implement _coerce_map_from_base_ring() instead
-                See http://trac.sagemath.org/19225 for details.
+                See https://github.com/sagemath/sage/issues/19225 for details.
                 <__main__.Bar_with_category object at 0x...>
             """
             if getattr(self, '_no_generic_basering_coercion', False):
@@ -224,10 +224,10 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             if from_base_ring.__func__ != generic_from_base_ring:
                 # Custom from_base_ring()
                 use_from_base_ring = True
-            if isinstance(generic_from_base_ring, lazy_attribute):
+            elif isinstance(generic_from_base_ring, lazy_attribute):
                 # If the category implements from_base_ring() as lazy
                 # attribute, then we always use it.
-                # This is for backwards compatibility, see Trac #25181
+                # This is for backwards compatibility, see Issue #25181
                 use_from_base_ring = True
             else:
                 try:
@@ -263,7 +263,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
         class ParentMethods:
 
-            @abstract_method(optional = True)
+            @abstract_method(optional=True)
             def one_basis(self):
                 """
                 When the one of an algebra with basis is an element of

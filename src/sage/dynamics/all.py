@@ -1,4 +1,6 @@
 """
+Flat surfaces
+
 Some code about flat surfaces and interval exchanges has been removed
 from Sage. The package ``surface_dynamics`` contains all that code
 and much more. For more information, see
@@ -14,6 +16,10 @@ alternatively do:
 
     sage -pip install surface_dynamics --user
 """
+# install the docstring of this module to the containing package
+from sage.misc.namespace_package import install_doc
+install_doc(__package__, __doc__)
+
 from sage.misc.lazy_import import lazy_import
 
 from sage.dynamics.arithmetic_dynamics.all import *

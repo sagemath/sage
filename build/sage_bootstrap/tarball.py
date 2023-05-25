@@ -3,15 +3,15 @@
 Third-Party Tarballs
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import logging
@@ -37,7 +37,7 @@ class FileNotMirroredError(Exception):
 
 
 class Tarball(object):
-    
+
     def __init__(self, tarball_name, package=None):
         """
         A (third-party downloadable) tarball
@@ -70,7 +70,7 @@ class Tarball(object):
 
     def __repr__(self):
         return 'Tarball {0}'.format(self.filename)
-            
+
     @property
     def filename(self):
         """
@@ -82,7 +82,7 @@ class Tarball(object):
         tarball.
         """
         return self.__filename
-        
+
     @property
     def package(self):
         """
@@ -93,7 +93,7 @@ class Tarball(object):
         Instance of :class:`sage_bootstrap.package.Package`
         """
         return self.__package
-        
+
     @property
     def upstream_fqn(self):
         """
@@ -103,7 +103,7 @@ class Tarball(object):
 
     def __eq__(self, other):
         return self.filename == other.filename
-        
+
     def _compute_hash(self, algorithm):
         with open(self.upstream_fqn, 'rb') as f:
             while True:
@@ -120,11 +120,11 @@ class Tarball(object):
     def _compute_md5(self):
         import hashlib
         return self._compute_hash(hashlib.md5())
-    
+
     def _compute_cksum(self):
         from sage_bootstrap.cksum import CksumAlgorithm
         return self._compute_hash(CksumAlgorithm())
-    
+
     def checksum_verifies(self):
         """
         Test whether the checksum of the downloaded file is correct.
@@ -133,7 +133,7 @@ class Tarball(object):
         return sha1 == self.package.sha1
 
     def is_distributable(self):
-        return not 'do-not-distribute' in self.filename
+        return 'do-not-distribute' not in self.filename
 
     def download(self, allow_upstream=False):
         """
@@ -173,7 +173,6 @@ class Tarball(object):
                 log.info('Attempting to download from {}'.format(url))
                 try:
                     Download(url, destination).run()
-                    successful_download = True
                 except IOError:
                     raise FileNotMirroredError('tarball does not exist on mirror network and neither at the upstream URL')
             else:
@@ -187,4 +186,3 @@ class Tarball(object):
         """
         import shutil
         shutil.copy(self.upstream_fqn, destination)
-

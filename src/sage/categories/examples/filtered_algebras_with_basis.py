@@ -199,4 +199,3 @@ class PBWBasisCrossProduct(CombinatorialFreeModule):
         return cur
 
 Example = PBWBasisCrossProduct
-

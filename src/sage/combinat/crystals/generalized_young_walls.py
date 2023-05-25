@@ -42,6 +42,7 @@ from sage.categories.highest_weight_crystals import HighestWeightCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.root_system.root_system import RootSystem
 
+
 class GeneralizedYoungWall(CombinatorialElement):
     r"""
     A generalized Young wall.
@@ -59,6 +60,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         0|1|
            |
     """
+
     def __init__(self, parent, data):
         r"""
         EXAMPLES::
@@ -450,7 +452,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         """
         signature = self.generate_signature(i)
         raw_signature = signature[0]
-        lastminus  = signature[1].rfind('-')
+        lastminus = signature[1].rfind('-')
         newdata = []
         if lastminus > -1:
             deletionrow = raw_signature[lastminus][1]
@@ -711,7 +713,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: x.in_highest_weight_crystal(La)
             False
         """
-        if not La in self.parent().weight_lattice_realization():
+        if La not in self.parent().weight_lattice_realization():
             raise TypeError("Must be an element in the weight lattice realization")
         ac = self.parent().weight_lattice_realization().simple_coroots()
         n = self.cartan_type().classical().rank()
@@ -723,7 +725,7 @@ class GeneralizedYoungWall(CombinatorialElement):
                 else:
                     p_not_found = True
                     for p in index_set:
-                        if (j+k) % (n+1)  == (p+1) % (n+1) and self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= La.scalar(ac[p]):
+                        if (j+k) % (n+1) == (p+1) % (n+1) and self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= La.scalar(ac[p]):
                             p_not_found = False
                             continue
                         else:
@@ -834,7 +836,7 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
             sage: Yinf is Yinf2
             True
         """
-        return super(InfinityCrystalOfGeneralizedYoungWalls,cls).__classcall__(cls,n,category)
+        return super().__classcall__(cls,n,category)
 
     def __init__(self, n, category):
         r"""
@@ -1028,7 +1030,7 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
             True
         """
         La = RootSystem(['A',n,1]).weight_lattice(extended=True)(La)
-        return super(CrystalOfGeneralizedYoungWalls, cls).__classcall__(cls, n, La)
+        return super().__classcall__(cls, n, La)
 
     def __init__(self, n, La):
         r"""
@@ -1067,6 +1069,6 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
             sage: next(x)
             [0]
         """
-        for c in super(CrystalOfGeneralizedYoungWalls, self).__iter__():
+        for c in super().__iter__():
             if c.in_highest_weight_crystal(self.hw):
                 yield c

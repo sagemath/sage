@@ -141,7 +141,7 @@ cdef class RelaxedElement_zeroone(RelaxedElementWithDigits):
     cdef void _setdigit_to_zero(self)
     cdef void _setdigit_to_one(self)
 
-cdef class ExpansionIter(object):
+cdef class ExpansionIter():
     cdef RelaxedElement elt
     cdef expansion_mode mode
     cdef long start

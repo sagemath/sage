@@ -162,7 +162,7 @@ class SuffixTrie(SageObject):
             sage: t.process_letter("d")
             Traceback (most recent call last):
             ...
-            ValueError: d not in alphabet!
+            ValueError: d not in alphabet
         """
         # Make certain that letter is a word containing one letter.
         letter = Words(self._alphabet)([letter])
@@ -286,14 +286,13 @@ class SuffixTrie(SageObject):
         if word.is_empty():
             return 0
         if word.length() == 1:
-            return self._transition_function[(node,word)]
-        else:
-            return self.transition_function( \
-                    self._transition_function[(node,word[0:1])], word[1:])
+            return self._transition_function[(node, word)]
+        return self.transition_function(
+            self._transition_function[(node, word[0:1])], word[1:])
 
     def states(self):
         r"""
-        Returns the states of the automaton defined by the suffix trie.
+        Return the states of the automaton defined by the suffix trie.
 
         EXAMPLES::
 
@@ -884,7 +883,7 @@ class ImplicitSuffixTree(SageObject):
             for (u,v,label) in tree.edge_iterator():
                 tree.set_edge_label(u, v, label.string_rep())
         if vertex_colors is None:
-            vertex_colors = {'#fec7b8':tree.vertices()}
+            vertex_colors = {'#fec7b8':tree.vertices(sort=True)}
         return tree.plot(layout=layout, tree_root=tree_root,
                 tree_orientation=tree_orientation,
                 vertex_colors=vertex_colors, edge_labels=edge_labels,
@@ -1186,34 +1185,33 @@ class ImplicitSuffixTree(SageObject):
         """
         if n is None:
             length_word = self.word().length()
-            num_factors = 1 # empty word
-            for (u,v,(i,j)) in self.edge_iterator():
+            num_factors = 1  # empty word
+            for (u, v, (i, j)) in self.edge_iterator():
                 if j is None:
                     num_factors += length_word - i
                 else:
                     num_factors += j - i
         elif isinstance(n, (int, Integer)):
-            length_word = self.word().length()
             num_factors = 0
             queue = [(0, 0)]
             while queue:
-                (v,l) = queue.pop()
+                (v, l) = queue.pop()
                 if l == n:
                     num_factors += 1
                 if l < n:
                     if self._transition_function[v] != {}:
-                        for ((i,j),u) in self._transition_function[v].items():
+                        for ((i, j), u) in self._transition_function[v].items():
                             if j is None:
                                 j = self.word().length()
                             if j - i >= n - l:
                                 num_factors += 1
                             else:
-                                queue.append((u,l+j-i+1))
+                                queue.append((u, l + j - i + 1))
         else:
             raise TypeError("not an integer or None: %s" % n)
         return num_factors
 
-    def factor_iterator(self,n=None):
+    def factor_iterator(self, n=None):
         r"""
         Generate distinct factors of ``self``.
 
@@ -1571,7 +1569,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
     A *decorated suffix tree* of a word `w` is the suffix tree of `w`
     marked with the end point of all squares in the `w`.
 
-    The symbol ``"$"`` is appended to ``w`` to ensure that each final
+    The symbol ``$`` is appended to ``w`` to ensure that each final
     state is a leaf of the suffix tree.
 
     INPUT:
@@ -1730,7 +1728,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         EXAMPLES::
 
             sage: from sage.combinat.words.suffix_trees import DecoratedSuffixTree
-            sage: w=Word('aabbaaba')
+            sage: w = Word('aabbaaba')
             sage: DecoratedSuffixTree(w)._complete_labeling()
             {(2, 7): [1], (5, 4): [1]}
         """
@@ -1746,7 +1744,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
             - ``(u, v)`` -- edge on which the point is registered
             - ``l`` -- depth of the registered point on (u,v)
             - ``start`` -- beginning of the squares registered by the label
-            ``(u, v), l``
+              ``(u, v), l``
             """
             # Mark the point in labeling
             if (u, v) in labeling:

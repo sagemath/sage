@@ -1,1 +1,1 @@
-../../src/VERSION.txt
+10.0

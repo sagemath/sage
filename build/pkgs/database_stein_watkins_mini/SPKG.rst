@@ -14,13 +14,3 @@ License
 -------
 
 Public Domain
-
-Dependencies
-------------
-
-None
-
-Patches
-~~~~~~~
-
-None

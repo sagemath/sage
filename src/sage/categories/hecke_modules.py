@@ -84,7 +84,6 @@ class HeckeModules(Category_module):
         R = self.base_ring()
         return [ModulesWithBasis(R)]
 
-
     def _repr_object_names(self):
         """
         Return the names of the objects of this category.
@@ -109,7 +108,8 @@ class HeckeModules(Category_module):
             INPUT:
 
             - ``Y`` -- an Hecke module
-            - ``category`` -- a subcategory of :class:`HeckeModules`() or None
+            - ``category`` -- a subcategory of :class:`HeckeModules()
+              <HeckeModules>` or ``None``
 
             The sole purpose of this method is to construct the homset
             as a :class:`~sage.modular.hecke.homspace.HeckeModuleHomspace`. If
@@ -143,13 +143,12 @@ class HeckeModules(Category_module):
                 Traceback (most recent call last):
                 ...
                 TypeError: Category of Hecke modules over Finite Field of size 5 is not a subcategory of Category of Hecke modules over Rational Field
-
             """
             # TODO: double check that it's the correct HeckeModules category below:
             if category is not None and not category.is_subcategory(HeckeModules(self.base_ring())):
                 raise TypeError("%s is not a subcategory of %s"%(category, HeckeModules(self.base_ring())))
             from sage.modular.hecke.homspace import HeckeModuleHomspace
-            return HeckeModuleHomspace(self, Y, category = category)
+            return HeckeModuleHomspace(self, Y, category=category)
 
     class Homsets(HomsetsCategory):
         """

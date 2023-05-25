@@ -66,16 +66,18 @@ from IPython.core.formatters import DisplayFormatter, PlainTextFormatter
 from IPython.utils.py3compat import unicode_to_str
 from IPython.core.display import DisplayObject
 
-from ipywidgets.widgets.interaction import interactive
+from ipywidgets import Widget
 
 from sage.repl.display.pretty_print import SagePrettyPrinter
+from sage.misc.lazy_import import lazy_import
 
-IPYTHON_NATIVE_TYPES = (DisplayObject, interactive)
+IPYTHON_NATIVE_TYPES = (DisplayObject, Widget)
 
 PLAIN_TEXT = 'text/plain'
 TEXT_LATEX = 'text/latex'
 TEXT_HTML = 'text/html'
 
+lazy_import('matplotlib.figure', 'Figure')
 
 class SageDisplayFormatter(DisplayFormatter):
 
@@ -98,7 +100,7 @@ class SageDisplayFormatter(DisplayFormatter):
             ...
             RuntimeError: check failed: current backend is invalid
         """
-        super(SageDisplayFormatter, self).__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
         from sage.repl.rich_output.display_manager import get_display_manager
         self.dm = get_display_manager()
         from sage.repl.rich_output.backend_ipython import BackendIPython
@@ -140,8 +142,10 @@ class SageDisplayFormatter(DisplayFormatter):
         TESTS::
 
             sage: import os
-            sage: from sage.env import SAGE_EXTCODE
-            sage: example_png = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.png')
+            sage: import importlib.resources
+            sage: import warnings
+            sage: warnings.filterwarnings('ignore', category=DeprecationWarning,
+            ....:     message=r'path is deprecated\. Use files\(\) instead\.')
             sage: from sage.repl.rich_output.backend_ipython import BackendIPython
             sage: backend = BackendIPython()
             sage: shell = get_test_shell()
@@ -149,7 +153,8 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell.run_cell('get_ipython().display_formatter')
             <sage.repl.display.formatter.SageDisplayFormatter object at 0x...>
             sage: shell.run_cell('from IPython.display import Image')
-            sage: shell.run_cell('ipython_image = Image("{0}")'.format(example_png))
+            sage: with importlib.resources.path(sage.repl.rich_output, 'example.png') as example_png:
+            ....:     shell.run_cell('ipython_image = Image("{0}")'.format(example_png))
             sage: shell.run_cell('ipython_image')
             <IPython.core.display.Image object>
             sage: shell.run_cell('get_ipython().display_formatter.format(ipython_image)')
@@ -157,18 +162,24 @@ class SageDisplayFormatter(DisplayFormatter):
               'text/plain': '<IPython.core.display.Image object>'},
             {})
 
-        Test that IPython images still work even in latex output mode::
+        Test that IPython images and widgets still work even in latex output mode::
 
             sage: shell.run_cell('%display latex')   # indirect doctest
             sage: shell.run_cell('set(get_ipython().display_formatter.format(ipython_image)[0].keys())'
             ....:                ' == set(["text/plain", "image/png"])')
             True
+
+            sage: shell.run_cell('import ipywidgets')
+            sage: shell.run_cell('slider = ipywidgets.IntSlider()')
+            sage: shell.run_cell('get_ipython().display_formatter.format(slider)')
+            ...IntSlider(value=0)..., {})
+
             sage: shell.run_cell('%display default')
             sage: shell.quit()
 
         Test that ``__repr__`` is only called once when generating text output::
 
-            sage: class Repper(object):
+            sage: class Repper():
             ....:    def __repr__(self):
             ....:        print('__repr__ called')
             ....:        return 'I am repper'
@@ -178,14 +189,18 @@ class SageDisplayFormatter(DisplayFormatter):
         """
         sage_format, sage_metadata = self.dm.displayhook(obj)
         assert PLAIN_TEXT in sage_format, 'plain text is always present'
+
         # use Sage rich output for any except those native to IPython, but only
         # if it is not plain and dull
         if (not isinstance(obj, IPYTHON_NATIVE_TYPES) and
-            not set(sage_format.keys()).issubset([PLAIN_TEXT])):
+            not set(sage_format.keys()).issubset([PLAIN_TEXT]) and
+            not isinstance(obj, Figure)):
             return sage_format, sage_metadata
+
         if self.ipython_display_formatter(obj):
             # object handled itself, don't proceed
             return {}, {}
+
         # try IPython display formatter
         if exclude is not None:
             exclude = list(exclude) + [PLAIN_TEXT]
@@ -264,7 +279,7 @@ class SagePlainTextFormatter(PlainTextFormatter):
             <IPython.core.formatters.PlainTextFormatter object at 0x...>
             sage: shell.quit()
         """
-        super(SagePlainTextFormatter, self).__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
 
     def __call__(self, obj):
         r"""

@@ -176,28 +176,8 @@ Can I use SageMath with Python 3.x?
 Since release 9.0 from January 2020, SageMath is running on top of Python 3.
 
 
-
-I downloaded a Sage binary and it crashes on startup with "Illegal instruction". What can I do?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-One way to fix this is to build Sage entirely from source. Another
-option is to fix your Sage installation by rebuilding MPIR and ATLAS
-by typing the following from the ``SAGE_ROOT`` of your Sage
-installation directory and wait about 15 to 20 minutes
-
-.. CODE-BLOCK:: shell-session
-
-    $ rm spkg/installed/mpir* spkg/installed/atlas*
-    $ make
-
-It is possible that the binaries have been built for a newer
-architecture than what you have. Nobody has yet figured out how to
-build Sage in such a way that MPIR and ATLAS work on all
-hardware. This will eventually get fixed. Any help is appreciated.
-
-
 I used XXX to install Sage X.Y and that version is giving lots of errors. What can I do?
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 The version of Sage, i.e. Sage version X.Y, that is available on your XXX system
 through its package manager, is very old. No one has yet
@@ -249,13 +229,13 @@ Can I do X in Sage?
 """""""""""""""""""
 
 You are encouraged to use Sage's tab autocompletion. Just type a few
-characters, hit the tab key, and see if the command you want appears
+characters, hit the :kbd:`Tab` key, and see if the command you want appears
 in the list of tab autocompletion. If you have a command called
-``mycmd``, then type ``mycmd.`` and hit the tab key to get a list of
+``mycmd``, then type ``mycmd.`` and hit the :kbd:`Tab` key to get a list of
 functionalities that are supported by that command. To read the
-documentation of ``mycmd``, type ``mycmd?`` and press the enter key to
+documentation of ``mycmd``, type ``mycmd?`` and press the :kbd:`Enter` key to
 read the documentation for that command. Similarly, type ``mycmd??``
-and hit the enter key to get the source code of that command. You are
+and hit the :kbd:`Enter` key to get the source code of that command. You are
 also encouraged to search through the source code and documentation of
 the Sage library. To search through the source code of the Sage
 library, use the command ``search_src("<search-keyword>")`` where you
@@ -341,7 +321,7 @@ ints. For example::
 
     sage: RealNumber = float; Integer = int
     sage: from scipy import stats
-    sage: stats.ttest_ind(list([1,2,3,4,5]),list([2,3,4,5,.6]))
+    sage: stats.ttest_ind([1,2,3,4,5], [2,3,4,5,.6])
     Ttest_indResult(statistic=0.0767529..., pvalue=0.940704...)
     sage: stats.uniform(0,15).ppf([0.5,0.7])
     array([  7.5,  10.5])
@@ -627,8 +607,8 @@ On the other hand, note that the straightforward ::
 
 produces the expected plot only for positive `x`. The *reason* is that Sage
 returns complex numbers for odd roots of negative numbers when numerically
-approximated, which is a `standard convention
-<https://en.wikipedia.org/wiki/Cube_root#Complex_numbers>`_. ::
+approximated, which is a 
+:wikipedia:`standard convention <Cube_root#Complex_numbers>`. ::
 
     sage: numerical_approx( (-1)^(1/3) )
     0.500000000000000 + 0.866025403784439*I

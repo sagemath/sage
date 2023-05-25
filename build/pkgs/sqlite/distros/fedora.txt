@@ -1,1 +1,2 @@
-sqlite sqlite-devel
+sqlite-devel
+sqlite

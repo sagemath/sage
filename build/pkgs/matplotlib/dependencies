@@ -1,5 +1,4 @@
-$(PYTHON) numpy freetype pillow dateutil pyparsing tornado six cycler | $(PYTHON_TOOLCHAIN) pytz kiwisolver certifi
+$(PYTHON) numpy freetype pillow dateutil pyparsing tornado six cycler qhull fonttools contourpy | $(PYTHON_TOOLCHAIN) kiwisolver certifi setuptools_scm_git_archive
 
 ----------
 All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

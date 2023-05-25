@@ -38,9 +38,10 @@ cdef extern from "braiding.h" namespace "Braiding":
     list[list[list[int]]] CentralizerGenerators(int n, list[int] word)
     list[list[list[int]]] SuperSummitSet(int n, list[int] word)
     list[list[list[list[int]]]] UltraSummitSet(int n, list[int] word)
-    int thurstontype(int n, list[int] word);
-    int Rigidity_ext(int n, list[int] word);
+    int thurstontype(int n, list[int] word)
+    int Rigidity_ext(int n, list[int] word)
     list[list[list[list[int]]]] SlidingCircuits(int n, list[int] word)
+
 
 def conjugatingbraid(braid1, braid2):
     r"""
@@ -383,7 +384,6 @@ def sliding_circuits(braid):
         [[[0], [2, 1], [1, 2], [2]]],
         [[[0], [1, 2], [2], [2, 1]]],
         [[[0], [2, 1], [1], [1, 2]]]]
-
     """
     nstrands = braid.parent().strands()
     l = braid.Tietze()
@@ -391,4 +391,3 @@ def sliding_circuits(braid):
     cdef list[list[list[list[int]]]] rop = SlidingCircuits(nstrands, l)
     sig_off()
     return rop
-

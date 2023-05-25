@@ -3,7 +3,7 @@
 # distutils: library_dirs = CBLAS_LIBDIR
 # distutils: include_dirs = CBLAS_INCDIR
 # distutils: extra_compile_args = -D_XPG6
-"""
+r"""
 Dense matrices over `\ZZ/n\ZZ` for `n < 2^{23}` using LinBox's ``Modular<double>``
 
 AUTHORS:
@@ -11,17 +11,15 @@ AUTHORS:
 - Burcin Erocal
 - Martin Albrecht
 """
-###############################################################################
+# #############################################################################
 #       Copyright (C) 2011 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2011 Martin Albrecht <martinralbrecht@googlemail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.rings.finite_rings.stdint cimport *
 
 from sage.libs.linbox.givaro cimport \
@@ -68,13 +66,13 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
 
             sage: A = random_matrix(IntegerModRing(2^16), 4, 4)
             sage: type(A[0,0])
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
         """
         self._get_template = self._base_ring.zero()
         # note that INTEGER_MOD_INT32_LIMIT is ceil(sqrt(2^31-1)) < 2^23
         self._fits_int32 = ((<Matrix_modn_dense_template>self).p <= INTEGER_MOD_INT32_LIMIT)
 
-    cdef set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
         r"""
         Set the (i,j) entry of self to the int value.
 

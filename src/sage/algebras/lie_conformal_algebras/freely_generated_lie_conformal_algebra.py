@@ -36,7 +36,7 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
         We now only accept direct sums of free modules plus
         some central generators `C_i` such that `TC_i = 0`.
     """
-    def __init__(self,R, index_set=None, central_elements=None, category=None,
+    def __init__(self, R, index_set=None, central_elements=None, category=None,
                  element_class=None, prefix=None, **kwds):
         """
         Initialize self.
@@ -52,11 +52,10 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
             self._generators = DisjointUnionEnumeratedSets([index_set,
                                                     Family(central_elements)])
             E = DisjointUnionEnumeratedSets((cartesian_product([
-                Family(central_elements), {Integer(0)}]),E))
+                Family(central_elements), {Integer(0)}]), E))
 
-        super(FreelyGeneratedLieConformalAlgebra,self).__init__(R, basis_keys=E,
-            element_class=element_class, category=category, prefix=prefix,
-            **kwds)
+        super().__init__(R, basis_keys=E, element_class=element_class,
+                         category=category, prefix=prefix, **kwds)
 
         if central_elements is not None:
             self._central_elements = Family(central_elements)
@@ -81,7 +80,7 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
         """
         F = Family(self._generators,
                       lambda i: self.monomial((i,Integer(0))),
-                      name = "generator map")
+                      name="generator map")
         from sage.categories.sets_cat import Sets
         if F in Sets().Finite():
             return tuple(F)
@@ -101,5 +100,5 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
             (B['K'],)
         """
         return Family(self._central_elements,
-                      lambda i: self.monomial((i,Integer(0))),
-                      name = "central_element map")
+                      lambda i: self.monomial((i, Integer(0))),
+                      name="central_element map")

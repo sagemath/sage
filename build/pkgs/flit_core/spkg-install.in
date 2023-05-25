@@ -1,0 +1,3 @@
+cd src
+# We use --no-deps to suppress a warning regarding tomli.
+sdh_pip_install --no-deps .

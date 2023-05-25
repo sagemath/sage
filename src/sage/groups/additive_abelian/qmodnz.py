@@ -31,7 +31,8 @@ There is an iterator over the (infinitely many) elements::
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from .qmodnz_element import QmodnZ_Element
 

@@ -28,7 +28,7 @@ from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.semirings import Semirings
 from sage.categories.map cimport Map
 from sage.sets.family import Family
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 import operator
 
@@ -72,7 +72,7 @@ cdef class TropicalSemiringElement(Element):
             sage: T = TropicalSemiring(QQ)
             sage: elt = T(2)
             sage: elt.__reduce__()
-            (<type 'sage.rings.semirings.tropical_semiring.TropicalSemiringElement'>,
+            (<class 'sage.rings.semirings.tropical_semiring.TropicalSemiringElement'>,
              (Tropical semiring over Rational Field, 2))
         """
         return (TropicalSemiringElement, (self.parent(), self._val))
@@ -99,7 +99,7 @@ cdef class TropicalSemiringElement(Element):
         return repr(self._val)
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::
@@ -135,7 +135,7 @@ cdef class TropicalSemiringElement(Element):
 
     # Comparisons
     cpdef _richcmp_(left, right, int op):
-        """
+        r"""
         Return the standard comparison of ``left`` and ``right``.
 
         EXAMPLES::
@@ -189,7 +189,7 @@ cdef class TropicalSemiringElement(Element):
         cdef TropicalSemiringElement self, x
         self = left
         x = right
-        
+
         if self._val is None:
             if x._val is None:
                 return rich_to_bool(op, 0)
@@ -259,7 +259,7 @@ cdef class TropicalSemiringElement(Element):
         return x
 
     def __neg__(self):
-        """
+        r"""
         Return the additive inverse, which only exists for `\infty`.
 
         EXAMPLES::
@@ -610,7 +610,7 @@ class TropicalSemiring(Parent, UniqueRepresentation):
 
     @cached_method
     def zero(self):
-        """
+        r"""
         Return the (tropical) additive identity element `+\infty`.
 
         EXAMPLES::
@@ -671,4 +671,3 @@ cdef class TropicalToTropical(Map):
             +infinity
         """
         return self.codomain()((<TropicalSemiringElement>x)._val)
-

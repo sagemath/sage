@@ -233,9 +233,8 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
             cat = cat.Nilpotent()
         category = cat.Subquotients().or_subcategory(category)
 
-        sup = super(LieQuotient_finite_dimensional_with_basis, cls)
-        return sup.__classcall__(cls, I, ambient, names, index_set,
-                                 category=category)
+        return super().__classcall__(cls, I, ambient, names, index_set,
+                                     category=category)
 
     def __init__(self, I, L, names, index_set, category=None):
         r"""
@@ -385,7 +384,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         """
         return self._I
 
-    def from_vector(self, v):
+    def from_vector(self, v, order=None, coerce=False):
         r"""
         Return the element of ``self`` corresponding to the vector ``v``.
 
@@ -416,5 +415,4 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         if len(v) == self.ambient().dimension():
             return self.retract(self.ambient().from_vector(v))
 
-        sup = super(LieQuotient_finite_dimensional_with_basis, self)
-        return sup.from_vector(v)
+        return super().from_vector(v)

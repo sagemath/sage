@@ -46,4 +46,3 @@ Sage example in ./sol/lp.tex, line 64::
   True
 
 """
-

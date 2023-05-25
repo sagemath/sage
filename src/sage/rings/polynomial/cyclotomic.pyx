@@ -32,16 +32,17 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.structure.element cimport parent
 
-from sage.arith.all import factor
+from sage.arith.misc import factor
 from sage.rings.integer_ring import ZZ
-from sage.misc.all import prod, subsets
+from sage.misc.misc_c import prod
+from sage.misc.misc import subsets
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.libs.pari.all import pari
 
 
 def cyclotomic_coeffs(nn, sparse=None):
-    u"""
+    """
     Return the coefficients of the n-th cyclotomic polynomial
     by using the formula
 
@@ -93,8 +94,6 @@ def cyclotomic_coeffs(nn, sparse=None):
     The polynomial is a palindrome for any n::
 
         sage: n = ZZ.random_element(50000)
-        sage: factor(n)
-        3 * 10009
         sage: v = cyclotomic_coeffs(n, sparse=False)
         sage: v == list(reversed(v))
         True

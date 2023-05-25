@@ -285,9 +285,8 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             return self.naive_hasse_diagram()
         elif algorithm == "min":
             return self.min_hasse_diagram()
-        else:
-            raise ValueError("`alg` option must be `naive` "
-                             "or `min`, got `{}`.".format(algorithm))
+        raise ValueError("`alg` option must be `naive` "
+                         "or `min`, got `{}`.".format(algorithm))
 
     def min_hasse_diagram(self):
         r"""
@@ -372,8 +371,9 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         d = self.dependence_graph()
         h = d.copy()
 
-        for e1 in d.edges():
-            for e2 in d.edges():
+        d_edges = d.edges(sort=False)
+        for e1 in d_edges:
+            for e2 in d_edges:
                 if e1[1] == e2[0]:
                     h.delete_edge((e1[0], e2[1]))
 
@@ -531,7 +531,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             rels.add((y, x))
         I = frozenset(rels)
 
-        return super(TraceMonoid, cls).__classcall__(cls, M, I, names)
+        return super().__classcall__(cls, M, I, names)
 
     def __init__(self, M, I, names):
         r"""
@@ -937,7 +937,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             True
         """
         if length < 0:
-            raise ValueError("Bad length of words. Expected zero or positive number.")
+            raise ValueError("bad length of words; expected zero or positive number")
         if length == 0:
             return frozenset([self.one()])
         if length == 1:

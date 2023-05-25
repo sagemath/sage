@@ -38,6 +38,7 @@ TESTS::
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA
 
+
 class KRTToRCBijectionTypeA2Odd(KRTToRCBijectionTypeA):
     r"""
     Specific implementation of the bijection from KR tableaux to rigged
@@ -105,6 +106,7 @@ class KRTToRCBijectionTypeA2Odd(KRTToRCBijectionTypeA):
         elif tableau_height > 0:
             self._update_vacancy_nums(tableau_height - 1)
             self._update_partition_values(tableau_height - 1)
+
 
 class RCToKRTBijectionTypeA2Odd(RCToKRTBijectionTypeA):
     r"""
@@ -193,4 +195,3 @@ class RCToKRTBijectionTypeA2Odd(RCToKRTBijectionTypeA):
             self.cur_partitions[n-1].rigging[ret_row_next] = self.cur_partitions[n-1].vacancy_numbers[ret_row_next]
 
         return(b)
-

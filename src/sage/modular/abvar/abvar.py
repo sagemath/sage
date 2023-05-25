@@ -29,45 +29,52 @@ TESTS::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 from copy import copy
 from random import randrange
 
+from sage.arith.functions import lcm as LCM
+from sage.arith.misc import divisors, next_prime, is_prime
+from sage.categories.modular_abelian_varieties import ModularAbelianVarieties
+from sage.matrix.constructor import matrix
+from sage.matrix.special import block_diagonal_matrix, identity_matrix
 from sage.misc.lazy_import import lazy_import
-
-from sage.categories.all import ModularAbelianVarieties
-from sage.structure.sequence import Sequence, Sequence_generic
-from sage.structure.richcmp import (richcmp_method, richcmp_not_equal,
-                                    rich_to_bool)
+from sage.misc.misc_c import prod
+from sage.modular.arithgroup.congroup_gamma0 import is_Gamma0
+from sage.modular.arithgroup.congroup_gamma1 import is_Gamma1
+from sage.modular.arithgroup.congroup_gammaH import is_GammaH
+from sage.modular.arithgroup.congroup_generic import is_CongruenceSubgroup
+from sage.modular.modform.constructor import Newform
+from sage.modular.modsym.modsym import ModularSymbols
+from sage.modular.modsym.space import ModularSymbolsSpace
+from sage.modular.quatalg.brandt import BrandtModule
+from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module_element import vector
+from sage.rings.fast_arith import prime_range
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.qqbar import QQbar
+from sage.rings.rational_field import QQ
+from sage.rings.ring import is_Ring
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
+from sage.sets.primes import Primes
 from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp_method, richcmp_not_equal, rich_to_bool
+from sage.structure.sequence import Sequence, Sequence_generic
+
+lazy_import('sage.databases.cremona',
+            ['cremona_letter_code', 'CremonaDatabase'])
+
+from . import homspace
+from . import lseries
 from .morphism import HeckeOperator, Morphism, DegeneracyMap
 from .torsion_subgroup import RationalTorsionSubgroup, QQbarTorsionSubgroup
 from .finite_subgroup import (FiniteSubgroup_lattice, FiniteSubgroup,
                               TorsionPoint)
 from .cuspidal_subgroup import (CuspidalSubgroup, RationalCuspidalSubgroup,
                                 RationalCuspSubgroup)
-from sage.rings.all import ZZ, QQ, QQbar, Integer
-from sage.arith.all import LCM, divisors, prime_range, next_prime
-from sage.rings.ring import is_Ring
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.infinity import infinity
-from sage.modules.free_module import is_FreeModule
-from sage.modular.arithgroup.all import (is_CongruenceSubgroup, is_Gamma0,
-                                         is_Gamma1, is_GammaH)
-from sage.modular.modsym.all import ModularSymbols
-from sage.modular.modsym.space import ModularSymbolsSpace
-from sage.modular.modform.constructor import Newform
-from sage.matrix.all import matrix, block_diagonal_matrix, identity_matrix
-from sage.modules.all import vector
-from sage.misc.all import prod
-from sage.arith.misc import is_prime
-from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.sets.primes import Primes
-
-from . import homspace
-from . import lseries
-
-lazy_import('sage.databases.cremona',
-            ['cremona_letter_code', 'CremonaDatabase'])
 
 
 def is_ModularAbelianVariety(x) -> bool:
@@ -2345,11 +2352,11 @@ class ModularAbelianVariety_abstract(Parent):
         EXAMPLES::
 
             sage: f = Newform('39b','a')
-            sage: A=AbelianVariety(f)
+            sage: A = AbelianVariety(f)
             sage: A.frobenius_polynomial(5)
             x^4 + 2*x^2 + 25
 
-            sage: J=J0(23)
+            sage: J = J0(23)
             sage: J.frobenius_polynomial(997)
             x^4 + 20*x^3 + 1374*x^2 + 19940*x + 994009
 
@@ -2870,28 +2877,31 @@ class ModularAbelianVariety_abstract(Parent):
 
     def shimura_subgroup(self):
         r"""
-        Return the Shimura subgroup of this modular abelian variety. This is
-        the kernel of $J_0(N) \rightarrow J_1(N)$ under the natural map.
-        Here we compute the Shimura subgroup as the kernel of
-        $J_0(N) \rightarrow J_0(Np)$ where the map is the difference between the
-        two degeneracy maps.
+        Return the Shimura subgroup of this modular abelian variety.
+
+        This is the kernel of `J_0(N) \rightarrow J_1(N)` under the
+        natural map.
+
+        Here we compute the Shimura subgroup as the kernel of `J_0(N)
+        \rightarrow J_0(Np)` where the map is the difference between
+        the two degeneracy maps.
 
         EXAMPLES::
 
-            sage: J=J0(11)
+            sage: J = J0(11)
             sage: J.shimura_subgroup()
             Finite subgroup with invariants [5] over QQ of Abelian variety J0(11) of dimension 1
 
-            sage: J=J0(17)
-            sage: G=J.cuspidal_subgroup(); G
+            sage: J = J0(17)
+            sage: G = J.cuspidal_subgroup(); G
             Finite subgroup with invariants [4] over QQ of Abelian variety J0(17) of dimension 1
-            sage: S=J.shimura_subgroup(); S
+            sage: S = J.shimura_subgroup(); S
             Finite subgroup with invariants [4] over QQ of Abelian variety J0(17) of dimension 1
             sage: G.intersection(S)
             Finite subgroup with invariants [2] over QQ of Abelian variety J0(17) of dimension 1
 
-            sage: J=J0(33)
-            sage: A=J.decomposition()[0]
+            sage: J = J0(33)
+            sage: A = J.decomposition()[0]
             sage: A.shimura_subgroup()
             Finite subgroup with invariants [5] over QQ of Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33)
             sage: J.shimura_subgroup()
@@ -3623,7 +3633,7 @@ class ModularAbelianVariety_abstract(Parent):
         `\phi: A \rightarrow B_1 \times \cdots \times B_n`, where
         each `B_i` is a power of a simple abelian variety. These
         factors will be exactly those returned by
-        self.decomposition(simple=False).Note that this isogeny is not
+        ``self.decomposition(simple=False)``. Note that this isogeny is not
         unique.
 
         EXAMPLES::
@@ -4926,7 +4936,6 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         if self.level().valuation(p) != 1:
             raise ValueError("p must exactly divide the level")
         M = self.level() / p
-        from sage.modular.all import BrandtModule
         V = BrandtModule(p, M)
         # now cut out version of self in B
         S = self.modular_symbols(sign=1)

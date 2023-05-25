@@ -31,6 +31,8 @@ AUTHORS:
 TESTS::
 
     sage: from sage.finance.stock import OHLC
+    doctest:warning...
+    DeprecationWarning: the package sage.finance is deprecated...
     sage: ohlc = OHLC('18-Aug-04', 100.01, 104.06, 95.96, 100.34, 22353092)
     sage: loads(dumps(ohlc)) == ohlc
     True
@@ -165,6 +167,8 @@ class Stock:
         EXAMPLES::
 
             sage: S = finance.Stock('ibm') # optional -- internet
+            doctest:warning...
+            DeprecationWarning: Importing finance from here is deprecated...
             sage: S        # optional -- internet # known bug
             IBM (...)
         """
@@ -394,7 +398,7 @@ class Stock:
                 try:
                     R = self._get_data('NASDAQ:', startdate, enddate, histperiod)
                 except RuntimeError:
-                     R = self._get_data("NYSE:", startdate, enddate, histperiod)
+                    R = self._get_data("NYSE:", startdate, enddate, histperiod)
         else:
             R = self._get_data('', startdate, enddate, histperiod)
         self.__historical = []
@@ -547,7 +551,7 @@ class Stock:
             sage: with open(filename, 'w') as fobj:
             ....:     _ = fobj.write("Date,Open,High,Low,Close,Volume\n1212405780,187.80,187.80,187.80,187.80,100\n1212407640,187.75,188.00,187.75,188.00,2000\n1212407700,188.00,188.00,188.00,188.00,1000\n1212408000,188.00,188.11,188.00,188.00,2877\n1212408060,188.00,188.00,188.00,188.00,687")
             sage: finance.Stock('aapl').load_from_file(filename)[:5]
-            [
+            ...
             1212408060 188.00 188.00 188.00 188.00        687,
             1212408000 188.00 188.11 188.00 188.00       2877,
             1212407700 188.00 188.00 188.00 188.00       1000,

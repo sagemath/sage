@@ -90,7 +90,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import binomial, gcd, divisors
+from sage.arith.misc import binomial
+from sage.arith.misc import GCD as gcd
+from sage.arith.misc import divisors
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.number_field.totallyreal_data import ZZx, lagrange_degree_3, int_has_small_square_divisor, hermite_constant
@@ -98,7 +100,8 @@ from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.number_field.totallyreal import weed_fields, odlyzko_bound_totallyreal, enumerate_totallyreal_fields_prim
 from sage.libs.pari.all import pari
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 import math
 import sys
@@ -341,10 +344,11 @@ class tr_data_rel:
             self.beta[k+1] = [[self.b_lower] + numpy.roots([v(gnk[i]) for i in range(len(gnk))].reverse()).tolist().sort() + [self.b_upper] for v in self.Foo]
 
             # Now to really initialize gnk.
-            self.gnk[k+1] = [[0] + [binomial(j,k+1)*v(a[j]) for j in range (k+2,m+1)] for v in self.Foo]
+            self.gnk[k+1] = [[0] + [binomial(j,k+1)*v(a[j])
+                                    for j in range(k+2,m+1)] for v in self.Foo]
         else:
             # Bad input!
-            raise ValueError("a has length %s > m+1"%len(a))
+            raise ValueError("a has length %s > m+1" % len(a))
 
     def incr(self, f_out, verbose=False, haltk=0):
         r"""
@@ -706,7 +710,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
     is set to ``False``::
 
         sage: type(enumerate_totallyreal_fields_rel(F, 2, 2000)[0][1])
-        <type 'cypari2.gen.Gen'>
+        <class 'cypari2.gen.Gen'>
         sage: enumerate_totallyreal_fields_rel(F, 2, 2000, return_pari_objects=False)[0][0].parent()
         Integer Ring
         sage: enumerate_totallyreal_fields_rel(F, 2, 2000, return_pari_objects=False)[0][1].parent()
@@ -938,7 +942,7 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
         sage: enumerate_totallyreal_fields_all(2, 10)
         [[5, x^2 - x - 1], [8, x^2 - 2]]
         sage: type(enumerate_totallyreal_fields_all(2, 10)[0][1])
-        <type 'cypari2.gen.Gen'>
+        <class 'cypari2.gen.Gen'>
         sage: enumerate_totallyreal_fields_all(2, 10, return_pari_objects=False)[0][1].parent()
         Univariate Polynomial Ring in x over Rational Field
 

@@ -11,10 +11,8 @@
 # 3) The number of CPU cores in the system, as determined by
 #    multiprocessing.cpu_count()
 #
-# AUTHOR: Jeroen Demeyer (2011-12-08): Trac ticket #12016
+# AUTHOR: Jeroen Demeyer (2011-12-08): Github issue #12016
 #
-from __future__ import print_function
-
 import os
 import multiprocessing
 

@@ -15,8 +15,8 @@ SAGE_SPKG_CONFIGURE([flint], [
                                      [return 0;]
                                   [#endif]])],
                  [AC_MSG_RESULT([GC not enabled. Good.])],
-		        [AC_MSG_RESULT([GC enabled. Incompatible with Sage.])
-		         sage_spkg_install_flint=yes],
+                        [AC_MSG_RESULT([GC enabled. Incompatible with Sage.])
+                         sage_spkg_install_flint=yes],
                  [AC_MSG_RESULT(["cross compiling. assuming GC is not enabled"])])
             ], [sage_spkg_install_flint=yes])
           ], [sage_spkg_install_flint=yes])

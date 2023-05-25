@@ -27,9 +27,11 @@ REFERENCES:
 """
 
 # *****************************************************************************
-#       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
-#       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
-#       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
+#       Copyright (C) 2015-2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#                     2015      Michal Bejger <bejger@camk.edu.pl>
+#                     2016      Travis Scrimshaw <tscrimsh@umn.edu>
+#                     2020      Michael Jung
+#                     2022      Matthias Koeppe
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -41,6 +43,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.modules import Modules
+from sage.tensor.modules.reflexive_module import ReflexiveModule_tensor
 from sage.tensor.modules.tensor_free_module import TensorFreeModule
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
@@ -51,7 +54,8 @@ from sage.manifolds.differentiable.multivectorfield import (MultivectorField,
 from sage.manifolds.differentiable.automorphismfield import (AutomorphismField,
                                                              AutomorphismFieldParal)
 
-class TensorFieldModule(UniqueRepresentation, Parent):
+
+class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
     r"""
     Module of tensor fields of a given type `(k,l)` along a differentiable
     manifold `U` with values on a differentiable manifold `M`, via a
@@ -123,14 +127,15 @@ class TensorFieldModule(UniqueRepresentation, Parent):
     `T^{(2,0)}(M)` is a module over the algebra `C^k(M)`::
 
         sage: T20.category()
-        Category of modules over Algebra of differentiable scalar fields on the
-         2-dimensional differentiable manifold M
+        Category of tensor products of modules over Algebra of differentiable scalar fields
+         on the 2-dimensional differentiable manifold M
         sage: T20.base_ring() is M.scalar_field_algebra()
         True
 
     `T^{(2,0)}(M)` is not a free module::
 
-        sage: isinstance(T20, FiniteRankFreeModule)
+        sage: from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule_abstract
+        sage: isinstance(T20, FiniteRankFreeModule_abstract)
         False
 
     because `M = S^2` is not parallelizable::
@@ -142,7 +147,7 @@ class TensorFieldModule(UniqueRepresentation, Parent):
     free module, since `U` is parallelizable (being a coordinate domain)::
 
         sage: T20U = U.tensor_field_module((2,0))
-        sage: isinstance(T20U, FiniteRankFreeModule)
+        sage: isinstance(T20U, FiniteRankFreeModule_abstract)
         True
         sage: U.is_manifestly_parallelizable()
         True
@@ -225,10 +230,16 @@ class TensorFieldModule(UniqueRepresentation, Parent):
         [1 0]
         [0 1]
 
+    TESTS::
+
+        sage: T11.tensor_factors()
+        [Module X(M) of vector fields on the 2-dimensional differentiable manifold M,
+        Module Omega^1(M) of 1-forms on the 2-dimensional differentiable manifold M]
+
     """
     Element = TensorField
 
-    def __init__(self, vector_field_module, tensor_type):
+    def __init__(self, vector_field_module, tensor_type, category=None):
         r"""
         Construct a module of tensor fields taking values on a (a priori) not
         parallelizable differentiable manifold.
@@ -280,7 +291,8 @@ class TensorFieldModule(UniqueRepresentation, Parent):
         # the member self._ring is created for efficiency (to avoid calls to
         # self.base_ring()):
         self._ring = domain.scalar_field_algebra()
-        Parent.__init__(self, base=self._ring, category=Modules(self._ring))
+        category = Modules(self._ring).TensorProducts().or_subcategory(category)
+        Parent.__init__(self, base=self._ring, category=category)
         self._domain = domain
         self._dest_map = dest_map
         self._ambient_domain = vector_field_module._ambient_domain
@@ -373,8 +385,8 @@ class TensorFieldModule(UniqueRepresentation, Parent):
                 and self._ambient_domain.is_subset(comp._ambient_domain)):
                 return comp.restrict(self._domain)
             else:
-               raise TypeError("cannot convert the {}".format(comp) +
-                               " to an element of {}".format(self))
+                raise TypeError("cannot convert the {}".format(comp) +
+                                " to an element of {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -508,9 +520,9 @@ class TensorFieldModule(UniqueRepresentation, Parent):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def base_module(self):
         r"""
@@ -651,14 +663,15 @@ class TensorFieldFreeModule(TensorFreeModule):
     `T^{(2,0)}(\RR^3)` is a module over the algebra `C^k(\RR^3)`::
 
         sage: T20.category()
-        Category of finite dimensional modules over Algebra of differentiable
-         scalar fields on the 3-dimensional differentiable manifold R^3
+        Category of tensor products of finite dimensional modules over
+         Algebra of differentiable scalar fields on the 3-dimensional differentiable manifold R^3
         sage: T20.base_ring() is M.scalar_field_algebra()
         True
 
     `T^{(2,0)}(\RR^3)` is a free module::
 
-        sage: isinstance(T20, FiniteRankFreeModule)
+        sage: from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule_abstract
+        sage: isinstance(T20, FiniteRankFreeModule_abstract)
         True
 
     because `M = \RR^3` is parallelizable::
@@ -960,4 +973,3 @@ class TensorFieldFreeModule(TensorFreeModule):
             description += "along the {}".format(self._domain) + \
                            " mapped into the {}".format(self._ambient_domain)
         return description
-

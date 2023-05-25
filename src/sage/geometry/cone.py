@@ -205,7 +205,8 @@ from collections.abc import Hashable, Iterable, Container
 from copy import copy
 from warnings import warn
 
-from sage.arith.all import gcd, lcm
+from sage.arith.misc import GCD as gcd
+from sage.arith.functions import lcm
 from sage.combinat.posets.posets import FinitePoset
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.polyhedron.constructor import Polyhedron
@@ -216,15 +217,21 @@ from sage.geometry.toric_lattice import (ToricLattice, is_ToricLattice,
 from sage.geometry.toric_plotter import ToricPlotter, label_list
 from sage.geometry.relative_interior import RelativeInterior
 from sage.graphs.digraph import DiGraph
-from sage.matrix.all import column_matrix, matrix, MatrixSpace
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.special import column_matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.all import flatten, latex
-from sage.modules.all import span, vector, VectorSpace
-from sage.rings.all import QQ, ZZ
+from sage.misc.flatten import flatten
+from sage.misc.latex import latex
+from sage.modules.free_module import span, VectorSpace
+from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.structure.all import SageObject, parent
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.geometry.integral_points import parallelotope_points
 from sage.geometry.convex_set import ConvexSet_closed
+import sage.geometry.abc
 
 from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
@@ -591,8 +598,6 @@ def _ambient_space_point(body, data):
         (1.00000000000000, 3.14159265358979)
 
     """
-    from sage.rings.all import AA, RR
-
     L = body.lattice()
 
     def try_base_extend(ring):
@@ -617,6 +622,9 @@ def _ambient_space_point(body, data):
     # If we don't have a lattice element, try successively
     # less-desirable ambient spaces until (as a last resort) we
     # attempt a numerical representation.
+    from sage.rings.qqbar import AA
+    from sage.rings.real_mpfr import RR
+
     for ring in [QQ, AA, RR]:
         p = try_base_extend(ring)
         if p is not None:
@@ -722,7 +730,7 @@ def normalize_rays(rays, lattice):
             if lattice.is_ambient():
                 # Handle the most common case efficiently.
                 V = lattice.base_extend(QQ)
-                length = lambda ray: integral_length(ray)
+                length = integral_length
         except AttributeError:
             pass
         if V is None:
@@ -1027,7 +1035,6 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         The dual lattice of the dual lattice of a random cone should be
         the original lattice::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8, max_rays=10)
             sage: K.dual_lattice().dual() is K.lattice()
             True
@@ -1091,7 +1098,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         EXAMPLES::
 
             sage: quadrant = Cone([(1,0), (0,1)])
-            sage: quadrant.plot()
+            sage: quadrant.plot()  # optional - sage.plot
             Graphics object consisting of 9 graphics primitives
         """
         tp = ToricPlotter(options, self.lattice().degree(), self.rays())
@@ -1224,7 +1231,6 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         The codimension of a cone should be an integer between zero and
         the dimension of the ambient space, inclusive::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim = 8)
             sage: c = K.codim()
             sage: c in ZZ
@@ -1234,14 +1240,12 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
 
         A solid cone should have codimension zero::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim = 8, solid = True)
             sage: K.codim()
             0
 
         The codimension of a cone is equal to the lineality of its dual::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim = 8)
             sage: K.codim() == K.dual().lineality()
             True
@@ -1301,7 +1305,6 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
 
         The span of a solid cone is the entire ambient space::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6, max_rays=8, solid=True)
             sage: K.span().vector_space() == K.lattice().vector_space()
             True
@@ -1414,7 +1417,7 @@ def classify_cone_2d(ray0, ray1, check=True):
 # and ``ambient_ray_indices`` keyword parameters. See ``intersection`` method
 # for an example why this is needed.
 @richcmp_method
-class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_closed):
+class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_closed, sage.geometry.abc.ConvexRationalPolyhedralCone):
     r"""
     Create a convex rational polyhedral cone.
 
@@ -1503,7 +1506,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             True
             sage: TestSuite(sc).run()
         """
-        superinit = super(ConvexRationalPolyhedralCone, self).__init__
+        superinit = super().__init__
         if ambient is None:
             superinit(rays, lattice)
             self._ambient = self
@@ -1513,7 +1516,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._ambient_ray_indices = tuple(ambient_ray_indices)
             superinit(ambient.rays(self._ambient_ray_indices),
                       ambient.lattice())
-        if not PPL is None:
+        if PPL is not None:
             self._PPL_C_Polyhedron = PPL
 
     def _sage_input_(self, sib, coerced):
@@ -1747,7 +1750,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         point = flatten(args)
         if len(point) == 1:
-           point = point[0]
+            point = point[0]
         return self._contains(point, 'interior')
 
     @cached_method
@@ -1825,7 +1828,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         point = flatten(args)
         if len(point) == 1:
-           point = point[0]
+            point = point[0]
         return self._contains(point, 'relative interior')
 
     @cached_method
@@ -1891,8 +1894,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             in 2-d lattice N+N
         """
         assert is_Cone(other)
-        rc = super(ConvexRationalPolyhedralCone, self).cartesian_product(
-                                                                other, lattice)
+        rc = super().cartesian_product(other, lattice)
         return ConvexRationalPolyhedralCone(rc.rays(), rc.lattice())
 
     def __neg__(self):
@@ -1916,7 +1918,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N( 0, -1)
             in 2-d lattice N
         """
-        rc = super(ConvexRationalPolyhedralCone, self).__neg__()
+        rc = super().__neg__()
         return ConvexRationalPolyhedralCone(rc.rays(), rc.lattice())
 
     def __richcmp__(self, right, op):
@@ -2011,7 +2013,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         r"""
         Generate some points of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K = cones.nonnegative_orthant(3)
             sage: K.some_elements()  # indirect doctest
@@ -2243,7 +2245,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         point = flatten(args)
         if len(point) == 1:
-           point = point[0]
+            point = point[0]
         return self._contains(point)
 
     def dual(self):
@@ -2309,7 +2311,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         The dual cone of a (random) dual cone is the original cone::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8, max_rays=10)
             sage: K.dual().dual() is K
             True
@@ -2570,7 +2571,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                     # "ray in S" does not work because ray lies in a
                     # toric lattice and S is a "plain" vector space,
                     # and there is only a conversion (no coercion)
-                    # between them as of Trac ticket #10513.
+                    # between them as of Github issue #10513.
                     try:
                         S(ray)
                         subspace_rays.append(i)
@@ -2602,7 +2603,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
                 self._face_lattice = lattice_from_incidences(
                                     atom_to_facets, facet_to_atoms, ConeFace,
-                                    key = id(self))
+                                    key=id(self))
             else:
                 # Get face lattice as a sublattice of the ambient one
                 allowed_indices = frozenset(self._ambient_ray_indices)
@@ -2642,7 +2643,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                         L.add_edge(face_to_index[face], next_index)
                 D = {i:f for i,f in enumerate(faces)}
                 L.relabel(D)
-                self._face_lattice = FinitePoset(L, faces, key = id(self))
+                self._face_lattice = FinitePoset(L, faces, key=id(self))
         return self._face_lattice
 
     # Internally we use this name for a uniform behaviour of cones and fans.
@@ -2744,17 +2745,16 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         We also ensure that a call to this function does not break
         :meth:`facets` method (see :trac:`9780`)::
 
-            sage: cone = toric_varieties.dP8().fan().generating_cone(0)
-            sage: cone
+            sage: cone = toric_varieties.dP8().fan().generating_cone(0); cone   # optional - palp
             2-d cone of Rational polyhedral fan in 2-d lattice N
-            sage: for f in cone.facets(): print(f.rays())
+            sage: for f in cone.facets(): print(f.rays())                       # optional - palp
             N(1, 1)
             in 2-d lattice N
             N(0, 1)
             in 2-d lattice N
-            sage: len(cone.faces())
+            sage: len(cone.faces())                                             # optional - palp
             3
-            sage: for f in cone.facets(): print(f.rays())
+            sage: for f in cone.facets(): print(f.rays())                       # optional - palp
             N(1, 1)
             in 2-d lattice N
             N(0, 1)
@@ -3018,6 +3018,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N( 2, 5)
             in 2-d lattice N
 
+        The intersection can also be expressed using the operator ``&``::
+
+            sage: (cone1 & cone2).rays()
+            N(-1, 3),
+            N( 2, 5)
+            in 2-d lattice N
+
         It is OK to intersect cones living in sublattices of the same ambient
         lattice::
 
@@ -3043,7 +3050,18 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N(3, 1),
             N(0, 1)
             in 2-d lattice N
+
+        An intersection with a polyhedron returns a polyhedron::
+
+            sage: cone = Cone([(1,0), (-1,0), (0,1)])
+            sage: p = polytopes.hypercube(2)
+            sage: cone & p
+            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
+            sage: sorted(_.vertices_list())
+            [[-1, 0], [-1, 1], [1, 0], [1, 1]]
         """
+        if not isinstance(other, ConvexRationalPolyhedralCone):
+            return self.polyhedron().intersection(other)
         if self._ambient is other._ambient:
             # Cones of the same ambient cone or fan intersect nicely/quickly.
             # Can we maybe even return an element of the cone lattice?..
@@ -3058,6 +3076,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         p = C_Polyhedron(self._PPL_cone())
         p.add_constraints(other._PPL_cone().constraints())
         return _Cone_from_PPL(p, self.lattice().intersection(other.lattice()))
+
+    __and__ = intersection
 
     def is_equivalent(self, other):
         r"""
@@ -3104,7 +3124,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         A random cone is equivalent to itself::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8, max_rays=10)
             sage: K.is_equivalent(K)
             True
@@ -3155,7 +3174,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         Any cone is a face of itself::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8, max_rays=10)
             sage: K.is_face_of(K)
             True
@@ -3250,7 +3268,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         A random (strictly convex) cone is isomorphic to itself::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6, strictly_convex=True)
             sage: K.is_isomorphic(K)
             True
@@ -3408,7 +3425,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The linear subspace of any closed convex cone can be identified
         with the orthogonal complement of the span of its dual::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim = 8)
             sage: expected = K.dual().span().vector_space().complement()
             sage: K.linear_subspace() == expected
@@ -3468,7 +3484,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         EXAMPLES::
 
             sage: quadrant = Cone([(1,0), (0,1)])
-            sage: quadrant.plot()
+            sage: quadrant.plot()  # optional - sage.plot
             Graphics object consisting of 9 graphics primitives
         """
         # What to do with 3-d cones in 5-d? Use some projection method?
@@ -3500,7 +3516,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         result += tp.plot_walls(walls)
         return result
 
-    def polyhedron(self):
+    def polyhedron(self, **kwds):
         r"""
         Return the polyhedron associated to ``self``.
 
@@ -3528,7 +3544,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             A 0-dimensional polyhedron in ZZ^2 defined as the convex hull
             of 1 vertex
         """
-        return Polyhedron(rays=self.rays(), vertices=[self.lattice()(0)])
+        return Polyhedron(rays=self.rays(), vertices=[self.lattice()(0)], **kwds)
 
     def an_affine_basis(self):
         r"""
@@ -3538,24 +3554,15 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
             sage: quadrant = Cone([(1,0), (0,1)])
             sage: quadrant.an_affine_basis()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: this function is not implemented for unbounded polyhedra
-            sage: ray = Cone([(1, 1)]
-            Traceback (most recent call last):
-            ...
-            SyntaxError: unexpected EOF while parsing
+            [(0, 0), (1, 0), (0, 1)]
+            sage: ray = Cone([(1, 1)])
             sage: ray.an_affine_basis()
-            Traceback (most recent call last):
-            ...
-            NameError: name 'ray' is not defined
+            [(0, 0), (1, 1)]
             sage: line = Cone([(1,0), (-1,0)])
             sage: line.an_affine_basis()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: this function is not implemented for unbounded polyhedra
+            [(1, 0), (0, 0)]
         """
-        return self.polyhedron().an_affine_basis()
+        return [vector(v) for v in self.polyhedron().an_affine_basis()]
 
     @cached_method
     def strict_quotient(self):
@@ -3600,21 +3607,18 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         The strict quotient of any cone should be strictly convex::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6)
             sage: K.strict_quotient().is_strictly_convex()
             True
 
         If the original cone is solid, then its strict quotient is proper::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6, solid=True)
             sage: K.strict_quotient().is_proper()
             True
 
         The strict quotient of a strictly convex cone is itself::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6, strictly_convex=True)
             sage: K.strict_quotient() is K
             True
@@ -3623,14 +3627,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         our dual, so the strict quotient cannot have a larger dimension
         than our dual::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6)
             sage: K.strict_quotient().dim() <= K.dual().dim()
             True
 
         The strict quotient is idempotent::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6)
             sage: K1 = K.strict_quotient()
             sage: K2 = K1.strict_quotient()
@@ -3716,7 +3718,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         The solid restriction of any cone is solid::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6)
             sage: K.solid_restriction().is_solid()
             True
@@ -3724,7 +3725,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         If a cone :meth:`is_strictly_convex`, then its solid restriction
         :meth:`is_proper`::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6, strictly_convex=True)
             sage: K.solid_restriction().is_proper()
             True
@@ -3732,7 +3732,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The solid restriction of a cone has the same dimension as the
         original::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6)
             sage: K.solid_restriction().dim() == K.dim()
             True
@@ -3740,7 +3739,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The solid restriction of a cone has the same number of rays as
         the original::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6)
             sage: K.solid_restriction().nrays() == K.nrays()
             True
@@ -3748,7 +3746,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The solid restriction of a cone has the same lineality as the
         original::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6)
             sage: K.solid_restriction().lineality() == K.lineality()
             True
@@ -3756,7 +3753,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The solid restriction of a cone has the same number of facets as
         the original::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6)
             sage: len(K.solid_restriction().facets()) == len(K.facets())
             True
@@ -4503,12 +4499,15 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The primal Normaliz algorithm, see [Normaliz]_.
         """
         if self.is_strictly_convex():
-            def not_in_linear_subspace(x): return True
+
+            def not_in_linear_subspace(x):
+                return True
         else:
             linear_subspace = self.linear_subspace()
+
             def not_in_linear_subspace(x):
                 # "x in linear_subspace" does not work, due to absence
-                # of coercion maps as of Trac ticket #10513.
+                # of coercion maps as of Github issue #10513.
                 try:
                     linear_subspace(x)
                     return False
@@ -4664,7 +4663,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         A closed convex cone is solid if and only if its dual is
         strictly convex::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim = 8)
             sage: K.is_solid() == K.dual().is_strictly_convex()
             True
@@ -4819,7 +4817,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The lineality of a cone should be an integer between zero and the
         dimension of the ambient space, inclusive::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim = 8)
             sage: l = K.lineality()
             sage: l in ZZ
@@ -4829,7 +4826,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         A strictly convex cone should have lineality zero::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim = 8, strictly_convex = True)
             sage: K.lineality()
             0
@@ -4925,7 +4921,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         switching components in a discrete complementarity set of the
         original cone::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6)
             sage: dcs_dual = K.dual().discrete_complementarity_set()
             sage: expected = tuple( (x,s) for (s,x) in dcs_dual )
@@ -4936,7 +4931,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The pairs in a discrete complementarity set are in fact
         complementary::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=6)
             sage: dcs = K.discrete_complementarity_set()
             sage: sum( (s*x).abs() for (x,s) in dcs )
@@ -5046,7 +5040,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         Every operator in a :meth:`lyapunov_like_basis` is Lyapunov-like
         on the cone::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: LL = K.lyapunov_like_basis()
             sage: all( L.is_lyapunov_like_on(K) for L in LL )
@@ -5056,7 +5049,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         transposes of one another. However, there's no reason to expect
         that one basis will consist of transposes of the other::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: LL1 = K.lyapunov_like_basis()
             sage: LL2 = (L.transpose() for L in K.dual().lyapunov_like_basis())
@@ -5069,7 +5061,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The space of all Lyapunov-like transformations is a Lie algebra
         and should therefore be closed under the lie bracket::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=4)
             sage: LL = K.lyapunov_like_basis()
             sage: W = VectorSpace(K.lattice().base_field(), K.lattice_dim()**2)
@@ -5222,7 +5213,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         Lyapunov rank should be additive on a product of proper cones
         [RNPA2011]_::
 
-            sage: set_random_seed()
             sage: K1 = random_cone(max_ambient_dim=6,
             ....:                  strictly_convex=True,
             ....:                  solid=True)
@@ -5236,7 +5226,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         Lyapunov rank should be invariant under a linear isomorphism
         [Or2017]_::
 
-            sage: set_random_seed()
             sage: K1 = random_cone(max_ambient_dim=8)
             sage: n = K1.lattice_dim()
             sage: A = random_matrix(QQ, n, algorithm='unimodular')
@@ -5246,7 +5235,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         Lyapunov rank should be invariant under :meth:`dual` [RNPA2011]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: K.lyapunov_rank() == K.dual().lyapunov_rank()
             True
@@ -5255,7 +5243,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         `n`-dimensional space can be any number between `1` and `n`
         inclusive, excluding `n-1` [GT2014]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8,
             ....:                 min_rays=1,
             ....:                 strictly_convex=True,
@@ -5270,7 +5257,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         No polyhedral closed convex cone in `n` dimensions has Lyapunov
         rank `n-1` [Or2017]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: K.lyapunov_rank() == K.lattice_dim() - 1
             False
@@ -5278,7 +5264,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The calculation of the Lyapunov rank of an improper cone can
         be reduced to that of a proper cone [Or2017]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: K_SP = K.solid_restriction().strict_quotient()
             sage: l = K.lineality()
@@ -5291,7 +5276,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The Lyapunov rank of a cone is the length of a
         :meth:`lyapunov_like_basis` for it::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: K.lyapunov_rank() == len(K.lyapunov_like_basis())
             True
@@ -5300,7 +5284,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         dimensions. We can make any cone perfect by adding a slack
         variable::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: L = ToricLattice(K.lattice_dim() + 1)
             sage: K = Cone([ r.list() + [0] for r in K ], lattice=L)
@@ -5359,7 +5342,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         The trivial element ``()`` is always returned in a trivial space::
 
-            sage: set_random_seed()
             sage: K = cones.trivial(0)
             sage: K.random_element()
             N()
@@ -5368,7 +5350,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         A random element of the trivial cone in a nontrivial space is zero::
 
-            sage: set_random_seed()
             sage: K = cones.trivial(3)
             sage: K.random_element()
             N(0, 0, 0)
@@ -5378,7 +5359,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         A random element of the nonnegative orthant should have all
         components nonnegative::
 
-            sage: set_random_seed()
             sage: K = cones.nonnegative_orthant(3)
             sage: all( x >= 0 for x in K.random_element() )
             True
@@ -5387,7 +5367,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         If ``ring`` is not ``ZZ`` or ``QQ``, an error is raised::
 
-            sage: set_random_seed()
             sage: K = Cone([(1,0),(0,1)])
             sage: K.random_element(ring=RR)
             Traceback (most recent call last):
@@ -5398,7 +5377,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         Any cone should contain a random element of itself::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: K.contains(K.random_element())
             True
@@ -5408,7 +5386,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The ambient vector space of the cone should contain a random
         element of the cone::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: K.random_element() in K.lattice().vector_space()
             True
@@ -5417,7 +5394,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         By default, the random element should live in this cone's lattice::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: K.random_element() in K.lattice()
             True
@@ -5425,7 +5401,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         A strictly convex cone contains no lines, and thus no negative
         multiples of any of its elements besides zero::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8, strictly_convex=True)
             sage: x = K.random_element()
             sage: x.is_zero() or not K.contains(-x)
@@ -5433,7 +5408,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         The sum of random elements of a cone lies in the cone::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: K.contains(sum(K.random_element() for i in range(10)))
             True
@@ -5443,7 +5417,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The sum of random elements of a cone belongs to its ambient
         vector space::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: V = K.lattice().vector_space()
             sage: sum(K.random_element() for i in range(10)) in V
@@ -5454,12 +5427,11 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         By default, the sum of random elements of the cone should live
         in the cone's lattice::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=8)
             sage: sum(K.random_element() for i in range(10)) in K.lattice()
             True
         """
-        if not ring in [ZZ, QQ]:
+        if ring not in [ZZ, QQ]:
             # This cone theoretically lives in a real vector space,
             # but in Sage, we work over the rationals to avoid
             # numerical issues. Thus ``ring`` must consist of
@@ -5604,7 +5576,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         A random positive operator should send a random element of one
         cone into the other cone::
 
-            sage: set_random_seed()
             sage: K1 = random_cone(max_ambient_dim=3)
             sage: K2 = random_cone(max_ambient_dim=3)
             sage: pi_gens = K1.positive_operators_gens(K2)
@@ -5622,7 +5593,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         can be computed from the lineality spaces of the cone and
         its dual [Or2018b]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: pi_gens = K.positive_operators_gens()
             sage: L = ToricLattice(K.lattice_dim()**2)
@@ -5643,7 +5613,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The lineality of the dual of the positive operators is known
         from its lineality space [Or2018b]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: n = K.lattice_dim()
             sage: m = K.dim()
@@ -5661,7 +5630,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The dimension of the positive operators on a cone depends on the
         dimension and lineality of that cone [Or2018b]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: n = K.lattice_dim()
             sage: m = K.dim()
@@ -5709,7 +5677,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The lineality of the positive operators follows from the
         description of its generators [Or2018b]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: n = K.lattice_dim()
             sage: pi_gens = K.positive_operators_gens()
@@ -5754,7 +5721,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         A cone is proper if and only if its positive operators form a
         proper cone [Or2018b]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: pi_gens = K.positive_operators_gens()
             sage: L = ToricLattice(K.lattice_dim()**2)
@@ -5767,7 +5733,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The positive operators on a permuted cone can be obtained by
         conjugation::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: L = ToricLattice(K.lattice_dim()**2)
             sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()
@@ -5787,7 +5752,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         its adjoint is positive from the dual of the second cone to the
         dual of the first::
 
-            sage: set_random_seed()
             sage: K1 = random_cone(max_ambient_dim=3)
             sage: K2 = random_cone(max_ambient_dim=3)
             sage: F = K1.lattice().vector_space().base_field()
@@ -5816,7 +5780,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         the Lyapunov ranks of the associated cones if both are proper
         [Or2018a]_::
 
-            sage: set_random_seed()
             sage: K1 = random_cone(max_ambient_dim=3,
             ....:                  strictly_convex=True,
             ....:                  solid=True)
@@ -5837,7 +5800,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         cone can be computed from the Lyapunov-like operators on the cones
         with respect to which the operators are positive [Or2018a]_::
 
-            sage: set_random_seed()
             sage: K1 = random_cone(max_ambient_dim=3,
             ....:                  strictly_convex=True,
             ....:                  solid=True)
@@ -6020,7 +5982,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The cross-positive property is possessed by every cross-positive
         operator::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: cp_gens = K.cross_positive_operators_gens()
             sage: all( L.is_cross_positive_on(K) for L in cp_gens )
@@ -6029,7 +5990,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The lineality space of the cone of cross-positive operators is
         the space of Lyapunov-like operators [Or2018b]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: L = ToricLattice(K.lattice_dim()**2)
             sage: cp_gens = K.cross_positive_operators_gens()
@@ -6047,7 +6007,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         the dimensions of the cross-positive operator cone and positive
         operator cone are equal [Or2018b]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: pi_gens = K.positive_operators_gens()
             sage: cp_gens = K.cross_positive_operators_gens()
@@ -6097,7 +6056,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The cross-positive operators of a permuted cone can be obtained by
         conjugation::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: L = ToricLattice(K.lattice_dim()**2)
             sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()
@@ -6116,7 +6074,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         An operator is cross-positive on a cone if and only if its
         adjoint is cross-positive on the dual of that cone [Or2018b]_::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: F = K.lattice().vector_space().base_field()
             sage: n = K.lattice_dim()
@@ -6214,7 +6171,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         The Z-property is possessed by every Z-operator::
 
-            sage: set_random_seed()
             sage: K = random_cone(max_ambient_dim=3)
             sage: Z_gens = K.Z_operators_gens()
             sage: all( L.is_Z_operator_on(K) for L in Z_gens )
@@ -6360,28 +6316,24 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     Generate a trivial cone in a trivial space::
 
-        sage: set_random_seed()
         sage: random_cone(max_ambient_dim=0, max_rays=0)
         0-d cone in 0-d lattice N
 
     We can predict the ambient dimension when
     ``min_ambient_dim == max_ambient_dim``::
 
-        sage: set_random_seed()
         sage: K = random_cone(min_ambient_dim=4, max_ambient_dim=4)
         sage: K.lattice_dim()
         4
 
     Likewise for the number of rays when ``min_rays == max_rays``::
 
-        sage: set_random_seed()
         sage: K = random_cone(min_rays=3, max_rays=3)
         sage: K.nrays()
         3
 
     If we specify a lattice, then the returned cone will live in it::
 
-        sage: set_random_seed()
         sage: L = ToricLattice(5, "L")
         sage: K = random_cone(lattice=L)
         sage: K.lattice() is L
@@ -6389,7 +6341,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     We can also request a strictly convex cone::
 
-        sage: set_random_seed()
         sage: K = random_cone(max_ambient_dim=8, max_rays=10,
         ....:                 strictly_convex=True)
         sage: K.is_strictly_convex()
@@ -6397,7 +6348,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     Or one that isn't strictly convex::
 
-        sage: set_random_seed()
         sage: K = random_cone(min_ambient_dim=5, min_rays=2,
         ....:                 strictly_convex=False)
         sage: K.is_strictly_convex()
@@ -6405,7 +6355,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     An example with all parameters set::
 
-        sage: set_random_seed()
         sage: K = random_cone(min_ambient_dim=4, max_ambient_dim=7,
         ....:                 min_rays=2, max_rays=10,
         ....:                 strictly_convex=False, solid=True)
@@ -6421,9 +6370,8 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     TESTS:
 
     It's hard to test the output of a random process, but we can at
-    least make sure that we get a cone back.
+    least make sure that we get a cone back::
 
-        sage: set_random_seed()
         sage: from sage.geometry.cone import is_Cone
         sage: K = random_cone(max_ambient_dim=6, max_rays=10)
         sage: is_Cone(K)
@@ -6431,7 +6379,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     The upper/lower bounds are respected::
 
-        sage: set_random_seed()
         sage: K = random_cone(min_ambient_dim=5, max_ambient_dim=8,
         ....:                 min_rays=3, max_rays=4)
         sage: 5 <= K.lattice_dim() and K.lattice_dim() <= 8
@@ -6442,7 +6389,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     Ensure that an exception is raised when either lower bound is greater
     than its respective upper bound::
 
-        sage: set_random_seed()
         sage: random_cone(min_ambient_dim=5, max_ambient_dim=2)
         Traceback (most recent call last):
         ...
@@ -6455,7 +6401,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     Or if we specify both ``max_ambient_dim`` and ``lattice``::
 
-        sage: set_random_seed()
         sage: L = ToricLattice(5, "L")
         sage: random_cone(lattice=L, max_ambient_dim=10)
         Traceback (most recent call last):
@@ -6466,7 +6411,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     If the user requests too many rays in zero, one, or two dimensions,
     a ``ValueError`` is thrown::
 
-        sage: set_random_seed()
         sage: random_cone(max_ambient_dim=0, min_rays=1)
         Traceback (most recent call last):
         ...
@@ -6513,11 +6457,10 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     not strictly necessary, but it minimizes the number of times that
     we will loop with an absurd, unattainable, number of rays::
 
-        sage: set_random_seed()                  # long time
         sage: K = random_cone(min_ambient_dim=3, # long time
-        ....:                 max_ambient_dim=3, # long time
-        ....:                 min_rays=7,        # long time
-        ....:                 max_rays=9)        # long time
+        ....:                 max_ambient_dim=3,
+        ....:                 min_rays=7,
+        ....:                 max_rays=9)
         sage: K.nrays() >= 7                     # long time
         True
         sage: K.lattice_dim()                    # long time
@@ -6526,7 +6469,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     We need three dimensions to obtain five rays; we should throw out
     cones in zero/one/two dimensions until we get lucky::
 
-        sage: set_random_seed()
         sage: K = random_cone(max_ambient_dim=3, min_rays=5)
         sage: K.nrays() >= 5
         True
@@ -6535,7 +6477,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     It is an error to request a non-strictly-convex trivial cone::
 
-        sage: set_random_seed()
         sage: L = ToricLattice(0,"L")
         sage: random_cone(lattice=L, strictly_convex=False)
         Traceback (most recent call last):
@@ -6544,7 +6485,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     Or a non-strictly-convex cone with fewer than two rays::
 
-        sage: set_random_seed()
         sage: random_cone(max_rays=1, strictly_convex=False)
         Traceback (most recent call last):
         ...
@@ -6553,7 +6493,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     But fine to ask for a strictly convex trivial cone::
 
-        sage: set_random_seed()
         sage: L = ToricLattice(0,"L")
         sage: random_cone(lattice=L, strictly_convex=True)
         0-d cone in 0-d lattice L
@@ -6561,7 +6500,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     A ``ValueError`` is thrown if a non-solid cone is requested in a
     zero-dimensional lattice::
 
-        sage: set_random_seed()
         sage: L = ToricLattice(0)
         sage: random_cone(lattice=L, solid=False)
         Traceback (most recent call last):
@@ -6576,7 +6514,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     A ``ValueError`` is thrown if a solid cone is requested but the
     maximum number of rays is too few::
 
-        sage: set_random_seed()
         sage: random_cone(min_ambient_dim=4, max_rays=3, solid=True)
         Traceback (most recent call last):
         ...
@@ -6592,7 +6529,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     A ``ValueError`` is thrown if a non-solid cone is requested but
     ``min_rays`` guarantees a solid cone::
 
-        sage: set_random_seed()
         sage: random_cone(max_ambient_dim=4, min_rays=10, solid=False)
         Traceback (most recent call last):
         ...
@@ -6630,19 +6566,19 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         # The next three checks prevent an infinite loop (a futile
         # search for more rays) in zero, one, or two dimensions.
         if min_rays > 4 and max_ambient_dim < 3:
-            msg  = 'all cones in zero/one/two dimensions have four or fewer '
+            msg = 'all cones in zero/one/two dimensions have four or fewer '
             msg += 'generators. Please increase max_ambient_dim to at least '
             msg += '3, or decrease min_rays.'
             raise ValueError(msg)
 
         if min_rays > 2 and max_ambient_dim < 2:
-            msg  = 'all cones in zero/one dimensions have two or fewer '
+            msg = 'all cones in zero/one dimensions have two or fewer '
             msg += 'generators. Please increase max_ambient_dim to at least '
             msg += '2, or decrease min_rays.'
             raise ValueError(msg)
 
         if min_rays > 0 and max_ambient_dim == 0:
-            msg  = 'all cones in zero dimensions have no generators. '
+            msg = 'all cones in zero dimensions have no generators. '
             msg += 'Please increase max_ambient_dim to at least 1, or '
             msg += 'decrease min_rays.'
             raise ValueError(msg)
@@ -6657,17 +6593,17 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     # using its dimension rather than max_ambient_dim as the indicator.
     if lattice is not None:
         if min_rays > 4 and lattice.dimension() < 3:
-            msg  = 'all cones in the given lattice have four or fewer '
+            msg = 'all cones in the given lattice have four or fewer '
             msg += 'generators. Please decrease min_rays.'
             raise ValueError(msg)
 
         if min_rays > 2 and lattice.dimension() < 2:
-            msg  = 'all cones in the given lattice have two or fewer '
+            msg = 'all cones in the given lattice have two or fewer '
             msg += 'generators. Please decrease min_rays.'
             raise ValueError(msg)
 
         if min_rays > 0 and lattice.dimension() == 0:
-            msg  = 'all cones in the given lattice have no generators. '
+            msg = 'all cones in the given lattice have no generators. '
             msg += 'Please decrease min_rays.'
             raise ValueError(msg)
 
@@ -6677,7 +6613,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             msg = 'all cones in this lattice are strictly convex (trivial).'
             raise ValueError(msg)
         if max_rays is not None and max_rays < 2:
-            msg  = 'all cones are strictly convex when ``max_rays`` is '
+            msg = 'all cones are strictly convex when ``max_rays`` is '
             msg += 'less than two.'
             raise ValueError(msg)
 
@@ -6704,7 +6640,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 msg = 'all cones are solid when max_ambient_dim is zero.'
                 raise ValueError(msg)
             if (max_ambient_dim is not None and
-                    min_rays > 2*(max_ambient_dim - 1)):
+                    min_rays > 2 * (max_ambient_dim - 1)):
                 msg = 'every cone is solid when '
                 msg += 'min_rays > 2*(max_ambient_dim - 1).'
                 raise ValueError(msg)
@@ -6712,11 +6648,10 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             if lattice.dimension() == 0:
                 msg = 'all cones in the given lattice are solid.'
                 raise ValueError(msg)
-            if  min_rays > 2*(lattice.dimension() - 1):
+            if min_rays > 2 * (lattice.dimension() - 1):
                 msg = 'every cone is solid when min_rays > 2*(d - 1) '
                 msg += 'where d is the dimension of the given lattice.'
                 raise ValueError(msg)
-
 
     # Now that we've sanity-checked our parameters, we can massage the
     # min/maxes for (non-)solid cones. It doesn't violate the user's
@@ -6811,7 +6746,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         # maximum number of rays is unbounded, then r could be enormous
         # Ultimately that won't be a problem, because almost all of
         # those rays will be thrown out. However, as we discovered in
-        # Trac #24517, simply generating the random rays in the first
+        # Issue #24517, simply generating the random rays in the first
         # place (and storing them in a list) is problematic.
         #
         # Since the returns fall off around 2*d, we start with the
@@ -6843,7 +6778,6 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             rays.append(L.random_element())
             K = Cone(rays, lattice=L)
             rays = list(K.rays()) # Avoid re-normalizing next time around
-
 
         if strictly_convex is not None:
             if strictly_convex:

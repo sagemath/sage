@@ -28,7 +28,7 @@ base rings.
     Projective Space of dimension 5 over Complex Field with 53 bits of precision
 
 The third argument specifies the printing names of the generators of the
-homogeneous coordinate ring. Using the method `.objgens()` you can obtain both
+homogeneous coordinate ring. Using the method :meth:`objgens` you can obtain both
 the space and the generators as ready to use variables. ::
 
     sage: P2, vars = ProjectiveSpace(10, QQ, 't').objgens()
@@ -55,10 +55,10 @@ two lines.
 
 ::
 
-    sage: V = P2.subscheme([x+y+z, x+y-z]); V
+    sage: V = P2.subscheme([x + y + z, x + y - z]); V
     Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-     x + y + z,
-     x + y - z
+      x + y + z,
+      x + y - z
     sage: V.dimension()
     0
 
@@ -79,24 +79,24 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import gcd, binomial, srange
-from sage.rings.all import (PolynomialRing,
-                            Integer,
-                            ZZ)
+from sage.arith.misc import gcd, binomial
 
-from sage.rings.ring import CommutativeRing
-from sage.rings.rational_field import is_RationalField
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import is_RationalField
 
 from sage.categories.fields import Fields
+from sage.categories.rings import Rings
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom
 from sage.categories.map import Map
-from sage.misc.all import (latex,
-                           prod)
-from sage.misc.all import cartesian_product_iterator
+from sage.misc.latex import latex
+from sage.misc.misc_c import prod
+from sage.misc.mrange import cartesian_product_iterator
 from sage.misc.persist import register_unpickle_override
 
 from sage.structure.category_object import normalize_names
@@ -106,11 +106,13 @@ from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.combinat.permutation import Permutation
 from sage.combinat.tuple import Tuples
 from sage.combinat.tuple import UnorderedTuples
+from sage.combinat.subset import Subsets
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import prepare
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.projective.projective_homset import (SchemeHomset_points_projective_ring,
-                                                       SchemeHomset_points_projective_field)
+                                                       SchemeHomset_points_projective_field,
+                                                       SchemeHomset_polynomial_projective_space)
 from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
                                                       SchemeMorphism_point_projective_field,
                                                       SchemeMorphism_point_projective_finite_field)
@@ -121,6 +123,8 @@ from sage.schemes.projective.projective_morphism import (SchemeMorphism_polynomi
 
 # for better efficiency
 _Fields = Fields()
+_Rings = Rings()
+_CommRings = _Rings.Commutative()
 
 
 def is_ProjectiveSpace(x):
@@ -135,7 +139,7 @@ def is_ProjectiveSpace(x):
         sage: from sage.schemes.projective.projective_space import is_ProjectiveSpace
         sage: is_ProjectiveSpace(ProjectiveSpace(5, names='x'))
         True
-        sage: is_ProjectiveSpace(ProjectiveSpace(5, GF(9,'alpha'), names='x'))
+        sage: is_ProjectiveSpace(ProjectiveSpace(5, GF(9, 'alpha'), names='x'))         # optional - sage.rings.finite_rings
         True
         sage: is_ProjectiveSpace(Spec(ZZ))
         False
@@ -164,7 +168,7 @@ def ProjectiveSpace(n, R=None, names=None):
 
     ::
 
-        sage: ProjectiveSpace(5)/GF(17)
+        sage: ProjectiveSpace(5)/GF(17)                                                 # optional - sage.rings.finite_rings
         Projective Space of dimension 5 over Finite Field of size 17
 
     The default base ring is `\ZZ`.
@@ -178,27 +182,27 @@ def ProjectiveSpace(n, R=None, names=None):
 
     ::
 
-        sage: R = GF(7)['x,y,z']
-        sage: P = ProjectiveSpace(R); P
+        sage: R = GF(7)['x,y,z']                                                        # optional - sage.rings.finite_rings
+        sage: P = ProjectiveSpace(R); P                                                 # optional - sage.rings.finite_rings
         Projective Space of dimension 2 over Finite Field of size 7
-        sage: P.coordinate_ring()
+        sage: P.coordinate_ring()                                                       # optional - sage.rings.finite_rings
         Multivariate Polynomial Ring in x, y, z over Finite Field of size 7
-        sage: P.coordinate_ring() is R
+        sage: P.coordinate_ring() is R                                                  # optional - sage.rings.finite_rings
         True
 
     ::
 
-        sage: ProjectiveSpace(3, Zp(5), 'y')
+        sage: ProjectiveSpace(3, Zp(5), 'y')                                            # optional - sage.rings.padics
         Projective Space of dimension 3 over 5-adic Ring with capped relative precision 20
 
     ::
 
-        sage: ProjectiveSpace(2,QQ,'x,y,z')
+        sage: ProjectiveSpace(2, QQ, 'x,y,z')
         Projective Space of dimension 2 over Rational Field
 
     ::
 
-        sage: PS.<x,y>=ProjectiveSpace(1,CC)
+        sage: PS.<x,y> = ProjectiveSpace(1, CC)
         sage: PS
         Projective Space of dimension 1 over Complex Field with 53 bits of precision
 
@@ -220,7 +224,7 @@ def ProjectiveSpace(n, R=None, names=None):
 
     TESTS::
 
-        sage: R.<x,y>=QQ[]
+        sage: R.<x,y> = QQ[]
         sage: P.<z,w> = ProjectiveSpace(R)
         Traceback (most recent call last):
         ...
@@ -228,7 +232,7 @@ def ProjectiveSpace(n, R=None, names=None):
 
     ::
 
-        sage: R.<x,y>=QQ[]
+        sage: R.<x,y> = QQ[]
         sage: P.<x,y> = ProjectiveSpace(R)
         sage: P.gens() == R.gens()
         True
@@ -252,16 +256,15 @@ def ProjectiveSpace(n, R=None, names=None):
     if R is None:
         R = ZZ  # default is the integers
     if R in _Fields:
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
             return ProjectiveSpace_finite_field(n, R, names)
         if is_RationalField(R):
             return ProjectiveSpace_rational_field(n, R, names)
         else:
             return ProjectiveSpace_field(n, R, names)
-    elif isinstance(R, CommutativeRing):
+    elif R in _CommRings:
         return ProjectiveSpace_ring(n, R, names)
-    else:
-        raise TypeError("R (=%s) must be a commutative ring" % R)
+    raise TypeError("R (=%s) must be a commutative ring" % R)
 
 
 class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
@@ -324,7 +327,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             True
         """
         normalized_names = normalize_names(n + 1, names)
-        return super(ProjectiveSpace_ring, cls).__classcall__(cls, n, R, normalized_names)
+        return super().__classcall__(cls, n, R, normalized_names)
 
     def __init__(self, n, R=ZZ, names=None):
         """
@@ -332,7 +335,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: ProjectiveSpace(3, Zp(5), 'y')
+            sage: ProjectiveSpace(3, Zp(5), 'y')                                        # optional - sage.rings.padics
             Projective Space of dimension 3 over 5-adic Ring with capped relative precision 20
         """
         AmbientSpace.__init__(self, n, R)
@@ -342,7 +345,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         Return the number of generators of this projective space.
 
-        This is the number of variables in the coordinate ring of self.
+        This is the number of variables in the coordinate ring of ``self``.
 
         EXAMPLES::
 
@@ -414,7 +417,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: ProjectiveSpace(3, GF(19^2,'alpha'), 'abcd').coordinate_ring()
+            sage: ProjectiveSpace(3, GF(19^2,'alpha'), 'abcd').coordinate_ring()        # optional - sage.rings.finite_rings
             Multivariate Polynomial Ring in a, b, c, d over Finite Field in alpha of size 19^2
 
         ::
@@ -457,7 +460,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P._validate([x*y - z^2, x])
             [x*y - z^2, x]
 
-       ::
+        ::
 
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: P._validate((x*y - z, x))
@@ -465,7 +468,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             ...
             TypeError: x*y - z is not a homogeneous polynomial
 
-      ::
+        ::
 
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: P._validate(x*y - z)
@@ -585,7 +588,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         TESTS::
 
-            sage: ProjectiveSpace(3, Zp(5), 'y')._latex_()
+            sage: ProjectiveSpace(3, Zp(5), 'y')._latex_()                              # optional - sage.rings.padics
             '{\\mathbf P}_{\\Bold{Z}_{5}}^3'
         """
         return "{\\mathbf P}_{%s}^%s" % (latex(self.base_ring()),
@@ -601,7 +604,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         -  ``d`` -- a nonnegative integer.
 
-        -  ``pt`` -- a point of self (possibly represented by a list with at \
+        -  ``pt`` -- a point of ``self`` (possibly represented by a list with at \
                      least one component equal to 1).
 
         -  ``m`` -- a nonnegative integer.
@@ -609,17 +612,17 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         OUTPUT:
 
         A matrix of size `\binom{m-1+n}{n}` x `\binom{d+n}{n}` where n is the
-        relative dimension of self. The base ring of the matrix is a ring that
-        contains the base ring of self and the coefficients of the given point.
+        relative dimension of ``self``. The base ring of the matrix is a ring that
+        contains the base ring of ``self`` and the coefficients of the given point.
 
         EXAMPLES:
 
         If the degree `d` is 0, then a matrix consisting of the first unit vector
         is returned::
 
-            sage: P = ProjectiveSpace(GF(5), 2, names='x')
-            sage: pt = P([1, 1, 1])
-            sage: P._linear_system_as_kernel(0, pt, 3)
+            sage: P = ProjectiveSpace(GF(5), 2, names='x')                              # optional - sage.rings.finite_rings
+            sage: pt = P([1, 1, 1])                                                     # optional - sage.rings.finite_rings
+            sage: P._linear_system_as_kernel(0, pt, 3)                                  # optional - sage.rings.finite_rings
             [1]
             [0]
             [0]
@@ -630,10 +633,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         If the multiplicity `m` is 0, then a matrix with zero rows
         is returned::
 
-            sage: P = ProjectiveSpace(GF(5), 2, names='x')
-            sage: pt = P([1, 1, 1])
-            sage: M = P._linear_system_as_kernel(2, pt, 0)
-            sage: [M.nrows(), M.ncols()]
+            sage: P = ProjectiveSpace(GF(5), 2, names='x')                              # optional - sage.rings.finite_rings
+            sage: pt = P([1, 1, 1])                                                     # optional - sage.rings.finite_rings
+            sage: M = P._linear_system_as_kernel(2, pt, 0)                              # optional - sage.rings.finite_rings
+            sage: [M.nrows(), M.ncols()]                                                # optional - sage.rings.finite_rings
             [0, 6]
 
         The base ring does not need to be a field or even an integral domain.
@@ -651,14 +654,13 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         (even when the base ring is a field and the list gives a well-defined
         point in projective space)::
 
-            sage: R = GF(5)
-            sage: P = ProjectiveSpace(R, 2, names='x')
-            sage: pt = [R(3), R(3), R(0)]
-            sage: P._linear_system_as_kernel(3, pt, 2)
+            sage: R = GF(5)                                                             # optional - sage.rings.finite_rings
+            sage: P = ProjectiveSpace(R, 2, names='x')                                  # optional - sage.rings.finite_rings
+            sage: pt = [R(3), R(3), R(0)]                                               # optional - sage.rings.finite_rings
+            sage: P._linear_system_as_kernel(3, pt, 2)                                  # optional - sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            TypeError: at least one component of pt=[3, 3, 0] must be equal
-                          to 1
+            TypeError: at least one component of pt=[3, 3, 0] must be equal to 1
 
         The components of the list do not have to be elements of the base ring
         of the projective space. It suffices if there exists a common parent.
@@ -666,10 +668,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         hypersurfaces of degree 2 in 3-space with multiplicity at least 2 at a
         general point in the third affine patch::
 
-            sage: P = ProjectiveSpace(QQ,3,names='x')
-            sage: RPol.<t0,t1,t2,t3> = PolynomialRing(QQ,4)
+            sage: P = ProjectiveSpace(QQ, 3, names='x')
+            sage: RPol.<t0,t1,t2,t3> = PolynomialRing(QQ, 4)
             sage: pt = [t0,t1,1,t3]
-            sage: P._linear_system_as_kernel(2,pt,2)
+            sage: P._linear_system_as_kernel(2, pt, 2)
             [ 2*t0    t1     1    t3     0     0     0     0     0     0]
             [    0    t0     0     0  2*t1     1    t3     0     0     0]
             [ t0^2 t0*t1    t0 t0*t3  t1^2    t1 t1*t3     1    t3  t3^2]
@@ -731,13 +733,27 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         TESTS::
 
-            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))
-            sage: P2._morphism(P2.Hom(P2), [x,y,z])
+            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))                                # optional - sage.rings.finite_rings
+            sage: P2._morphism(P2.Hom(P2), [x,y,z])                                     # optional - sage.rings.finite_rings
             Scheme endomorphism of Projective Space of dimension 2 over Finite Field of size 3
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x : y : z)
         """
         return SchemeMorphism_polynomial_projective_space(*args, **kwds)
+
+    def _homset(self, *args, **kwds):
+        """                                          ii
+        Construct the Hom-set
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
+            sage: Hom(P, P)
+            Set of morphisms
+              From: Projective Space of dimension 2 over Rational Field
+              To:   Projective Space of dimension 2 over Rational Field
+        """
+        return SchemeHomset_polynomial_projective_space(*args, **kwds)
 
     def _point_homset(self, *args, **kwds):
         """
@@ -747,8 +763,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         TESTS::
 
-            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))
-            sage: P2._point_homset(Spec(GF(3)), P2)
+            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))                                # optional - sage.rings.finite_rings
+            sage: P2._point_homset(Spec(GF(3)), P2)                                     # optional - sage.rings.finite_rings
             Set of rational points of Projective Space of dimension 2 over Finite Field of size 3
         """
         return SchemeHomset_points_projective_ring(*args, **kwds)
@@ -811,9 +827,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         TESTS::
 
-            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))
-            sage: point_homset = P2._point_homset(Spec(GF(3)), P2)
-            sage: P2._point(point_homset, [1,2,3])
+            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))                                # optional - sage.rings.finite_rings
+            sage: point_homset = P2._point_homset(Spec(GF(3)), P2)                      # optional - sage.rings.finite_rings
+            sage: P2._point(point_homset, [1,2,3])                                      # optional - sage.rings.finite_rings
             (2 : 1 : 0)
         """
         return SchemeMorphism_point_projective_ring(*args, **kwds)
@@ -829,7 +845,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         TESTS::
 
-            sage: ProjectiveSpace(3, Zp(5), 'y')._repr_()
+            sage: ProjectiveSpace(3, Zp(5), 'y')._repr_()                               # optional - sage.rings.padics
             'Projective Space of dimension 3 over 5-adic Ring with capped relative precision 20'
         """
         return "Projective Space of dimension %s over %s" % (self.dimension_relative(), self.base_ring())
@@ -845,14 +861,14 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
-            sage: P._repr_generic_point([z*y-x^2])
+            sage: P._repr_generic_point([z*y - x^2])
             '(-x^2 + y*z)'
             sage: P._repr_generic_point()
             '(x : y : z)'
         """
         if v is None:
             v = self.gens()
-        return '(%s)' % (" : ".join([repr(f) for f in v]))
+        return '(%s)' % (" : ".join(repr(f) for f in v))
 
     def _latex_generic_point(self, v=None):
         """
@@ -865,7 +881,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
-            sage: P._latex_generic_point([z*y-x^2])
+            sage: P._latex_generic_point([z*y - x^2])
             '\\left(-x^{2} + y z\\right)'
             sage: P._latex_generic_point()
             '\\left(x : y : z\\right)'
@@ -897,14 +913,14 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
             sage: PQ = P.change_ring(QQ); PQ
             Projective Space of dimension 2 over Rational Field
-            sage: PQ.change_ring(GF(5))
+            sage: PQ.change_ring(GF(5))                                                 # optional - sage.rings.finite_rings
             Projective Space of dimension 2 over Finite Field of size 5
 
         ::
 
-            sage: K.<w> = QuadraticField(2)
-            sage: P = ProjectiveSpace(K,2,'t')
-            sage: P.change_ring(K.embeddings(QQbar)[0])
+            sage: K.<w> = QuadraticField(2)                                             # optional - sage.rings.number_field
+            sage: P = ProjectiveSpace(K, 2, 't')                                        # optional - sage.rings.number_field
+            sage: P.change_ring(K.embeddings(QQbar)[0])                                 # optional - sage.rings.number_field
             Projective Space of dimension 2 over Algebraic Field
         """
         if isinstance(R, Map):
@@ -944,7 +960,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: X.defining_polynomials ()
             (x*z^2, y^2*z, x*y^2)
             sage: I = X.defining_ideal(); I
-            Ideal (x*z^2, y^2*z, x*y^2) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            Ideal (x*z^2, y^2*z, x*y^2) of Multivariate Polynomial Ring in x, y, z
+             over Rational Field
             sage: I.groebner_basis()
             [x*y^2, y^2*z,  x*z^2]
             sage: X.dimension()
@@ -955,12 +972,12 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             Spectrum of Rational Field
             sage: X.structure_morphism()
             Scheme morphism:
-              From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-              x*z^2,
-              y^2*z,
-              x*y^2
+              From: Closed subscheme of Projective Space of dimension 2
+                    over Rational Field defined by: x*z^2, y^2*z, x*y^2
               To:   Spectrum of Rational Field
               Defn: Structure map
+
+        TESTS::
 
             sage: TestSuite(X).run(skip=["_test_an_element", "_test_elements",\
             "_test_elements_eq", "_test_some_elements", "_test_elements_eq_reflexive",\
@@ -980,15 +997,15 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         Return the `i^{th}` affine patch of this projective space.
 
         This is an ambient affine space `\mathbb{A}^n_R,` where
-        `R` is the base ring of self, whose "projective embedding"
+        `R` is the base ring of ``self``, whose "projective embedding"
         map is `1` in the `i^{th}` factor.
 
         INPUT:
 
-        - ``i`` -- integer between 0 and dimension of self, inclusive.
+        - ``i`` -- integer between 0 and dimension of ``self``, inclusive.
 
         - ``AA`` -- (default: None) ambient affine space, this is constructed
-                if it is not given.
+          if it is not given.
 
         OUTPUT:
 
@@ -1015,7 +1032,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P.affine_patch(0).projective_embedding(0).codomain() == P
             True
         """
@@ -1084,7 +1101,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: E = EllipticCurve(QQ,[-1, 0])
             sage: P.Lattes_map(E, 2)
             Dynamical System of Projective Space of dimension 1 over Rational Field
@@ -1093,9 +1110,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         TESTS::
 
-            sage: P.<x,y> = ProjectiveSpace(GF(37), 1)
-            sage: E = EllipticCurve([1, 1])
-            sage: f = P.Lattes_map(E, 2); f
+            sage: P.<x,y> = ProjectiveSpace(GF(37), 1)                                  # optional - sage.rings.finite_rings
+            sage: E = EllipticCurve([1, 1])                                             # optional - sage.rings.finite_rings
+            sage: f = P.Lattes_map(E, 2); f                                             # optional - sage.rings.finite_rings
             Dynamical System of Projective Space of dimension 1 over Finite Field of size 37
               Defn: Defined on coordinates by sending (x : y) to
                     (-9*x^4 + 18*x^2*y^2 - 2*x*y^3 - 9*y^4 : x^3*y + x*y^3 + y^4)
@@ -1166,16 +1183,16 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P.chebyshev_polynomial(5, 'first')
             Dynamical System of Projective Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x : y) to
-            (16*x^5 - 20*x^3*y^2 + 5*x*y^4 : y^5)
+              Defn: Defined on coordinates by sending (x : y) to
+                    (16*x^5 - 20*x^3*y^2 + 5*x*y^4 : y^5)
 
         ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P.chebyshev_polynomial(3, 'second')
             Dynamical System of Projective Space of dimension 1 over Rational Field
-            Defn: Defined on coordinates by sending (x : y) to
-            (8*x^3 - 4*x*y^2 : y^3)
+              Defn: Defined on coordinates by sending (x : y) to
+                    (8*x^3 - 4*x*y^2 : y^3)
 
         ::
 
@@ -1203,7 +1220,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: P.chebyshev_polynomial(3, monic=True)
             Dynamical System of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to
@@ -1212,9 +1229,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         ::
 
             sage: F.<t> = FunctionField(QQ)
-            sage: P.<y,z> = ProjectiveSpace(F,1)
-            sage: P.chebyshev_polynomial(4,monic=True)
-            Dynamical System of Projective Space of dimension 1 over Rational function field in t over Rational Field
+            sage: P.<y,z> = ProjectiveSpace(F, 1)
+            sage: P.chebyshev_polynomial(4, monic=True)
+            Dynamical System of Projective Space of dimension 1
+             over Rational function field in t over Rational Field
               Defn: Defined on coordinates by sending (y : z) to
                     (y^4 + (-4)*y^2*z^2 + 2*z^4 : z^4)
         """
@@ -1274,7 +1292,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                     (x^2 : x*y : x*z : y^2 : y*z : z^2)
             sage: vd(P.subscheme([]))
             Closed subscheme of Projective Space of dimension 5 over Rational Field
-            defined by:
+             defined by:
               -u^2 + t*v,
               -s*u + r*v,
               -s*t + r*u,
@@ -1315,14 +1333,14 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-            - ``points_source`` -- points in source projective space.
+        - ``points_source`` -- points in source projective space.
 
-            - ``points_target`` -- points in target projective space.
+        - ``points_target`` -- points in target projective space.
 
-            - ``normalize`` -- (default: `True`) If the returned matrix should be normalized.
-              Only works over exact rings. If the base ring is a field, the matrix is normalized so
-              that the last nonzero entry in the last row is 1. If the base ring is a ring, then
-              the matrix is normalized so that the entries are elements of the base ring.
+        - ``normalize`` -- (default: ``True``) If the returned matrix should be normalized.
+          Only works over exact rings. If the base ring is a field, the matrix is normalized so
+          that the last nonzero entry in the last row is 1. If the base ring is a ring, then
+          the matrix is normalized so that the entries are elements of the base ring.
 
         OUTPUT: Transformation matrix - element of PGL.
 
@@ -1332,9 +1350,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: P1.<a,b,c>=ProjectiveSpace(QQ, 2)
-            sage: points_source=[P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
-            sage: points_target=[P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
+            sage: P1.<a,b,c> = ProjectiveSpace(QQ, 2)
+            sage: points_source = [P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
+            sage: points_target = [P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
             sage: m = P1.point_transformation_matrix(points_source, points_target); m
             [ -13/59 -128/59  -25/59]
             [538/177    8/59  26/177]
@@ -1344,10 +1362,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: P.<a,b> = ProjectiveSpace(GF(13),  1)
-            sage: points_source = [P([-6, 7]), P([1, 4]), P([3, 2])]
-            sage: points_target = [P([-1, 2]), P([0, 2]), P([-1, 6])]
-            sage: P.point_transformation_matrix(points_source, points_target)
+            sage: P.<a,b> = ProjectiveSpace(GF(13),  1)                                 # optional - sage.rings.finite_rings
+            sage: points_source = [P([-6, 7]), P([1, 4]), P([3, 2])]                    # optional - sage.rings.finite_rings
+            sage: points_target = [P([-1, 2]), P([0, 2]), P([-1, 6])]                   # optional - sage.rings.finite_rings
+            sage: P.point_transformation_matrix(points_source, points_target)           # optional - sage.rings.finite_rings
             [10  4]
             [10  1]
 
@@ -1368,24 +1386,24 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: points_source = [P([-6*t, 7]), P([1, 4]), P([3, 2])]
             sage: points_target = [P([-1, 2*t]), P([0, 2]), P([-1, 6])]
             sage: P.point_transformation_matrix(points_source, points_target)
-            [             (1/3*t + 7/12)/(t^2 - 53/24*t)            (-1/12*t - 7/48)/(t^2 - 53/24*t)]
-            [(-2/3*t^2 - 7/36*t - 35/12)/(t^2 - 53/24*t)                                           1]
+            [             (1/3*t + 7/12)/(t^2 - 53/24*t)       (-1/12*t - 7/48)/(t^2 - 53/24*t)]
+            [(-2/3*t^2 - 7/36*t - 35/12)/(t^2 - 53/24*t)                                      1]
 
         ::
 
-            sage: P1.<a,b,c>=ProjectiveSpace(RR, 2)
-            sage: points_source=[P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
-            sage: points_target=[P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
-            sage: P1.point_transformation_matrix(points_source, points_target)
+            sage: P1.<a,b,c> = ProjectiveSpace(RR, 2)
+            sage: points_source = [P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
+            sage: points_target = [P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
+            sage: P1.point_transformation_matrix(points_source, points_target) # abs tol 1e-13
             [-0.0619047619047597  -0.609523809523810  -0.119047619047621]
             [  0.853968253968253  0.0380952380952380  0.0412698412698421]
             [ -0.214285714285712  -0.933333333333333   0.280952380952379]
 
         ::
 
-            sage: P1.<a,b,c>=ProjectiveSpace(ZZ, 2)
-            sage: points_source=[P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
-            sage: points_target=[P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
+            sage: P1.<a,b,c> = ProjectiveSpace(ZZ, 2)
+            sage: points_source = [P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
+            sage: points_target = [P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
             sage: P1.point_transformation_matrix(points_source, points_target)
             [ -39 -384  -75]
             [ 538   24   26]
@@ -1393,9 +1411,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: P1.<a,b,c>=ProjectiveSpace(ZZ, 2)
-            sage: points_source=[P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
-            sage: points_target=[P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
+            sage: P1.<a,b,c> = ProjectiveSpace(ZZ, 2)
+            sage: points_source = [P1([1, 4, 1]), P1([1, 2, 2]), P1([3, 5, 1]), P1([1, -1, 1])]
+            sage: points_target = [P1([5, -2, 7]), P1([3, -2, 3]), P1([6, -5, 9]), P1([3, 6, 7])]
             sage: P1.point_transformation_matrix(points_source, points_target, normalize=False)
             [-13/30 -64/15   -5/6]
             [269/45   4/15  13/45]
@@ -1423,9 +1441,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: P.<a,b,c>=ProjectiveSpace(QQ, 2)
-            sage: points_source=[P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1])]
-            sage: points_target=[P([5, -2, 7]), P([3, -2, 3]), P([6, -5, 9]), P([6, -1, 1])]
+            sage: P.<a,b,c> = ProjectiveSpace(QQ, 2)
+            sage: points_source = [P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1])]
+            sage: points_target = [P([5, -2, 7]), P([3, -2, 3]), P([6, -5, 9]), P([6, -1, 1])]
             sage: P.point_transformation_matrix(points_source, points_target)
             Traceback (most recent call last):
             ...
@@ -1433,9 +1451,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: P.<a,b,c>=ProjectiveSpace(QQ, 2)
-            sage: points_source=[P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1]), P([1, -1, 1])]
-            sage: points_target=[P([5, -2, 7]), P([3, -2, 3]), P([6, -5, 9]), P([6, -1, 1]),P([7, 8, -9])]
+            sage: P.<a,b,c> = ProjectiveSpace(QQ, 2)
+            sage: points_source = [P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1]), P([1, -1, 1])]
+            sage: points_target = [P([5, -2, 7]), P([3, -2, 3]), P([6, -5, 9]), P([6, -1, 1]), P([7, 8, -9])]
             sage: P.point_transformation_matrix(points_source, points_target)
             Traceback (most recent call last):
             ...
@@ -1443,9 +1461,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: P.<a,b,c>=ProjectiveSpace(QQ, 2)
-            sage: P1.<x,y,z>=ProjectiveSpace(QQ, 2)
-            sage: points_source=[P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1]), P1([1, -1, 1])]
+            sage: P.<a,b,c> = ProjectiveSpace(QQ, 2)
+            sage: P1.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: points_source = [P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1]), P1([1, -1, 1])]
             sage: points_target=[P([5, -2, 7]), P([3, -2, 3]), P([6, -5, 9]), P([6, -1, 1])]
             sage: P.point_transformation_matrix(points_source, points_target)
             Traceback (most recent call last):
@@ -1454,10 +1472,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: P.<a,b,c>=ProjectiveSpace(QQ, 2)
-            sage: P1.<x,y,z>=ProjectiveSpace(QQ, 2)
-            sage: points_source=[P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1]), P([1, -1, 1])]
-            sage: points_target=[P([5, -2, 7]), P([3, -2, 3]), P([6, -5, 9]), P1([6, -1, 1])]
+            sage: P.<a,b,c> = ProjectiveSpace(QQ, 2)
+            sage: P1.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: points_source = [P([1, 4, 1]), P([2, -7, 9]), P([3, 5, 1]), P([1, -1, 1])]
+            sage: points_target = [P([5, -2, 7]), P([3, -2, 3]), P([6, -5, 9]), P1([6, -1, 1])]
             sage: P.point_transformation_matrix(points_source, points_target)
             Traceback (most recent call last):
             ...
@@ -1465,10 +1483,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: P.<x,y,z>=ProjectiveSpace(ZZ,2)
+            sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: points_source = [P(1, 0, 0), P(0, 1, 0), P(0, 0, 1), P(1, -1, -1)]
             sage: points_target = [P(0, 1, 0), P(-2, 0, 1), P(0, 0, 1), P(1, -1, -1)]
-            sage: P.point_transformation_matrix(points_source,points_target,normalize=True)
+            sage: P.point_transformation_matrix(points_source, points_target, normalize=True)
             [ 0 -2  0]
             [-2  0  0]
             [ 0  1  1]
@@ -1531,7 +1549,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         Return a PGL element sending ``plane_1`` to ``plane_2``.
 
         ``plane_1`` and ``plane_2`` must be hyperplanes (subschemes of
-        codimension 1, each defined by a single linear homogenous equation).
+        codimension 1, each defined by a single linear homogeneous equation).
 
         INPUT:
 
@@ -1545,8 +1563,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: plane1 = P.subscheme(x)
             sage: plane2 = P.subscheme(y)
             sage: m = P.hyperplane_transformation_matrix(plane1, plane2); m
-            [-1 -1]
-            [ 1  0]
+            [0 1]
+            [1 0]
             sage: plane2(m*P((0,1)))
             (1 : 0)
 
@@ -1556,10 +1574,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: plane1 = P.subscheme(x + 2*y + z)
             sage: plane2 = P.subscheme(2*x + y + z)
             sage: P.hyperplane_transformation_matrix(plane1, plane2)
-            [  -3    0    0    0]
-            [   9    6    0    0]
-            [-3/2   -3  3/2    0]
-            [-1/2   -1 -1/2    1]
+            [1 0 0 0]
+            [0 4 0 0]
+            [0 0 2 0]
+            [0 0 0 1]
 
         ::
 
@@ -1567,53 +1585,53 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: plane1 = P.subscheme(x + y)
             sage: plane2 = P.subscheme(y)
             sage: P.hyperplane_transformation_matrix(plane1, plane2)
-            [ 1  0]
-            [-1 -1]
+            [-1  0]
+            [ 1  1]
 
         ::
 
-            sage: K.<v> = CyclotomicField(3)
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
-            sage: plane1 = P.subscheme(x - 2*v*y + z)
-            sage: plane2 = P.subscheme(x + v*y + v*z)
-            sage: m = P.hyperplane_transformation_matrix(plane1, plane2)
-            sage: m
-            [ -6/7*v - 2/7             0             0]
-            [ 2/7*v + 10/7  -4/7*v + 8/7             0]
-            [ -4/7*v + 1/7 -10/7*v - 8/7             1]
+            sage: K.<v> = CyclotomicField(3)                                            # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
+            sage: plane1 = P.subscheme(x - 2*v*y + z)                                   # optional - sage.rings.number_field
+            sage: plane2 = P.subscheme(x + v*y + v*z)                                   # optional - sage.rings.number_field
+            sage: m = P.hyperplane_transformation_matrix(plane1, plane2)                # optional - sage.rings.number_field
+            sage: m                                                                     # optional - sage.rings.number_field
+            [   v    0    0]
+            [   0 -2*v    0]
+            [   0    0    1]
 
         ::
 
             sage: R.<x> = QQ[]
-            sage: K.<k> = NumberField(x^2+1)
-            sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)
-            sage: plane1 = P.subscheme(k*x + 2*k*y + z)
-            sage: plane2 = P.subscheme(7*k*x + y + 9*z)
-            sage: m = P.hyperplane_transformation_matrix(plane1, plane2); m
-            [   297/410*k + 279/410                      0                      0                      0]
-            [-3609/410*k + 4437/410 -1656/205*k + 2358/205                      0                      0]
-            [    511/410*k - 24/205     511/205*k - 48/205   -107/205*k + 327/410                      0]
-            [    83/410*k - 107/205     83/205*k - 214/205     107/205*k + 83/410                      1]
+            sage: K.<k> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
+            sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)                                   # optional - sage.rings.number_field
+            sage: plane1 = P.subscheme(k*x + 2*k*y + z)                                 # optional - sage.rings.number_field
+            sage: plane2 = P.subscheme(7*k*x + y + 9*z)                                 # optional - sage.rings.number_field
+            sage: m = P.hyperplane_transformation_matrix(plane1, plane2); m             # optional - sage.rings.number_field
+            [   1    0    0    0]
+            [   0 14*k    0    0]
+            [   0    0  7/9    0]
+            [   0    0    0    1]
 
         ::
 
-            sage: K.<v> = CyclotomicField(3)
-            sage: R.<t> = K[]
-            sage: F.<w> = K.extension(t^5 + 2)
-            sage: G.<u> = F.absolute_field()
-            sage: P.<x,y,z> = ProjectiveSpace(G, 2)
-            sage: plane1 = P.subscheme(x - 2*u*y + z)
-            sage: plane2 = P.subscheme(x + u*y + z)
-            sage: m = P.hyperplane_transformation_matrix(plane1, plane2)
-            sage: plane2(m*P((2*u, 1, 0)))
+            sage: K.<v> = CyclotomicField(3)                                            # optional - sage.rings.number_field
+            sage: R.<t> = K[]                                                           # optional - sage.rings.number_field
+            sage: F.<w> = K.extension(t^5 + 2)                                          # optional - sage.rings.number_field
+            sage: G.<u> = F.absolute_field()                                            # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(G, 2)                                     # optional - sage.rings.number_field
+            sage: plane1 = P.subscheme(x - 2*u*y + z)                                   # optional - sage.rings.number_field
+            sage: plane2 = P.subscheme(x + u*y + z)                                     # optional - sage.rings.number_field
+            sage: m = P.hyperplane_transformation_matrix(plane1, plane2)                # optional - sage.rings.number_field
+            sage: plane2(m*P((2*u, 1, 0)))                                              # optional - sage.rings.number_field
             (-u : 1 : 0)
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(FiniteField(2), 2)
-            sage: plane1 = P.subscheme(x + y + z)
-            sage: plane2 = P.subscheme(z)
-            sage: P.hyperplane_transformation_matrix(plane1, plane2)
+            sage: P.<x,y,z> = ProjectiveSpace(FiniteField(2), 2)                        # optional - sage.rings.finite_rings
+            sage: plane1 = P.subscheme(x + y + z)                                       # optional - sage.rings.finite_rings
+            sage: plane2 = P.subscheme(z)                                               # optional - sage.rings.finite_rings
+            sage: P.hyperplane_transformation_matrix(plane1, plane2)                    # optional - sage.rings.finite_rings
             [1 0 0]
             [1 1 0]
             [1 1 1]
@@ -1625,9 +1643,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: plane1 = P.subscheme(x + 9*t*y + z)
             sage: plane2 = P.subscheme(x + z)
             sage: P.hyperplane_transformation_matrix(plane1, plane2)
-            [       -1/9*t          -t^2             0]
-            [ -t^2 + 1/9*t             0             0]
-            [         1/81         1/9*t -1/9*t + 1/81]
+            [  1 9*t   0]
+            [  1   0   0]
+            [  0   0   1]
 
         TESTS::
 
@@ -1692,11 +1710,11 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                 if len(source_points) == N:
                     try:
                         plane(point)
-                    except:
+                    except (ValueError, TypeError):
                         source_points.append(self(point))
                         base_list = [list(s) for s in source_points]
-                elif len(source_points) == N+1:
-                    Ms = matrix(base_list + [point])
+                elif len(source_points) == N + 1:
+                    Ms = matrix(base_list + [point.change_ring(self.base_ring())])
                     if not any([m == 0 for m in Ms.minors(N + 1)]):
                         source_points.append(self(point))
                         break
@@ -1705,6 +1723,102 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                     ' Please find the necessary independent points manually, then use point transformation matrix.')
             points.append(source_points)
         return self.point_transformation_matrix(points[0], points[1])
+
+    def is_linearly_independent(self, points, n=None):
+        r"""
+        Return whether the set of points is linearly independent.
+
+        Alternatively, specify ``n`` to check if every subset of
+        size ``n`` is linearly independent.
+
+        INPUT:
+
+        - ``points`` -- a list of points in this projective space.
+
+        - ``n`` -- (Optional) A positive integer less than or equal to the length
+          of ``points``. Specifies the size of the subsets to check for
+          linear independence.
+
+        OUTPUT:
+
+        - ``True`` if ``points`` is linearly independent, ``False`` otherwise.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: points = [P((1, 0, 1)), P((1, 2, 1)), P((1, 3, 4))]
+            sage: P.is_linearly_independent(points)
+            True
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
+            sage: points = [P((1, 0, 1)), P((1, 2, 1)), P((1, 3, 4)), P((0, 0, 1))]     # optional - sage.rings.finite_rings
+            sage: P.is_linearly_independent(points, 2)                                  # optional - sage.rings.finite_rings
+            True
+
+        ::
+
+            sage: R.<c> = QQ[]
+            sage: P.<x,y,z> = ProjectiveSpace(R, 2)
+            sage: points = [P((c, 0, 1)), P((0, c, 1)), P((1, 0, 4)), P((0, 0, 1))]
+            sage: P.is_linearly_independent(points, 3)
+            False
+
+        ::
+
+            sage: R.<c> = QQ[]
+            sage: P.<x,y,z> = ProjectiveSpace(FractionField(R), 2)
+            sage: points = [P((c, 0, 1)), P((0, c, 1)), P((1, 3, 4)), P((0, 0, 1))]
+            sage: P.is_linearly_independent(points, 3)
+            True
+
+        ::
+
+            sage: K.<k> = CyclotomicField(3)                                            # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
+            sage: points = [P((k, k^2, 1)), P((0, k, 1)), P((1, 0, 4)), P((0, 0, 1))]   # optional - sage.rings.number_field
+            sage: P.is_linearly_independent(points, 3)                                  # optional - sage.rings.number_field
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: points = [P((1, 0)), P((1, 1))]
+            sage: P.is_linearly_independent(points)
+            True
+
+        TESTS::
+
+            sage: points = [P(1, 0), P(1, 1), P(2, 1)]
+            sage: P.is_linearly_independent(points, 5)
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be a non negative integer not greater than the length of points
+        """
+        if not isinstance(points, list):
+            raise TypeError("points must be a list")
+        if any(not isinstance(point, SchemeMorphism_point_projective_ring) for point in points):
+            raise TypeError("points must be a list of projective points")
+        if any(x.codomain() != self for x in points):
+            raise ValueError("points not in this projective space")
+        if n is None:
+            M = matrix([list(t) for t in points])
+            return M.rank() == len(points)
+        n = Integer(n)
+        if n < 1 or n > len(points):
+            raise ValueError('n must be a non negative integer not greater than the length of points')
+        all_subsets = Subsets(range(len(points)), n)
+        linearly_independent = True
+        for subset in all_subsets:
+            point_list = []
+            for index in subset:
+                point_list.append(list(points[index]))
+            M = matrix(point_list)
+            if M.rank() != n:
+                linearly_independent = False
+                break
+        return linearly_independent
 
 
 class ProjectiveSpace_field(ProjectiveSpace_ring):
@@ -1716,8 +1830,8 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         TESTS::
 
-            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))
-            sage: P2._point_homset(Spec(GF(3)), P2)
+            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))                                # optional - sage.rings.finite_rings
+            sage: P2._point_homset(Spec(GF(3)), P2)                                     # optional - sage.rings.finite_rings
             Set of rational points of Projective Space of dimension 2 over Finite Field of size 3
         """
         return SchemeHomset_points_projective_field(*args, **kwds)
@@ -1730,9 +1844,9 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         TESTS::
 
-            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))
-            sage: point_homset = P2._point_homset(Spec(GF(3)), P2)
-            sage: P2._point(point_homset, [1,2,3])
+            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))                                # optional - sage.rings.finite_rings
+            sage: point_homset = P2._point_homset(Spec(GF(3)), P2)                      # optional - sage.rings.finite_rings
+            sage: P2._point(point_homset, [1,2,3])                                      # optional - sage.rings.finite_rings
             (2 : 1 : 0)
         """
         return SchemeMorphism_point_projective_field(*args, **kwds)
@@ -1745,8 +1859,8 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         TESTS::
 
-            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))
-            sage: P2._morphism(P2.Hom(P2), [x,y,z])
+            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))                                # optional - sage.rings.finite_rings
+            sage: P2._morphism(P2.Hom(P2), [x,y,z])                                     # optional - sage.rings.finite_rings
             Scheme endomorphism of Projective Space of dimension 2 over Finite Field of size 3
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x : y : z)
@@ -1755,18 +1869,12 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
     def points_of_bounded_height(self, **kwds):
         r"""
-        Returns an iterator of the points in self of absolute height of at most the given bound.
+        Return an iterator of the points in ``self`` of absolute multiplicative
+        height of at most the given bound.
 
-        Bound check is strict for the rational field. Requires self to be projective space
-        over a number field. Uses the
-        Doyle-Krumm algorithm 4 (algorithm 5 for imaginary quadratic) for
-        computing algebraic numbers up to a given height [DK2013]_.
+        ALGORITHM:
 
-        The algorithm requires floating point arithmetic, so the user is
-        allowed to specify the precision for such calculations.
-        Additionally, due to floating point issues, points
-        slightly larger than the bound may be returned. This can be controlled
-        by lowering the tolerance.
+        This is an implementation of Algorithm 6 in [Krumm2016]_.
 
         INPUT:
 
@@ -1774,74 +1882,114 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         - ``bound`` - a real number
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
-
-        - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
+        - ``precision`` - (default: 53) a positive integer
 
         OUTPUT:
 
-        - an iterator of points in this space
+        - an iterator of points of bounded height
 
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: sorted(list(P.points_of_bounded_height(bound=5)))
-            [(0 : 1), (1 : -5), (1 : -4), (1 : -3), (1 : -2), (1 : -1), (1 : 0),
-             (1 : 1), (1 : 2), (1 : 3), (1 : 4), (1 : 5), (2 : -5), (2 : -3),
-             (2 : -1), (2 : 1), (2 : 3), (2 : 5), (3 : -5), (3 : -4), (3 : -2),
-             (3 : -1), (3 : 1), (3 : 2), (3 : 4), (3 : 5), (4 : -5), (4 : -3),
-             (4 : -1), (4 : 1), (4 : 3), (4 : 5), (5 : -4), (5 : -3), (5 : -2),
-             (5 : -1), (5 : 1), (5 : 2), (5 : 3), (5 : 4)]
+            sage: sorted(list(P.points_of_bounded_height(bound=2)))
+            [(-2 : 1), (-1 : 1), (-1/2 : 1), (0 : 1),
+             (1/2 : 1), (1 : 0), (1 : 1), (2 : 1)]
 
         ::
 
             sage: u = QQ['u'].0
-            sage: P.<x,y,z> = ProjectiveSpace(NumberField(u^2 - 2, 'v'), 2)
-            sage: len(list(P.points_of_bounded_height(bound=1.5, tolerance=0.1)))
+            sage: P.<x,y,z> = ProjectiveSpace(NumberField(u^2 - 2, 'v'), 2)             # optional - sage.rings.number_field
+            sage: len(list(P.points_of_bounded_height(bound=2)))                        # optional - sage.rings.number_field
+            265
+
+        ::
+
+            sage: CF.<a> = CyclotomicField(3)                                           # optional - sage.rings.number_field
+            sage: R.<x> = CF[]                                                          # optional - sage.rings.number_field
+            sage: L.<l> = CF.extension(x^3 + 2)                                         # optional - sage.rings.number_field
+            sage: Q.<x,y> = ProjectiveSpace(L, 1)                                       # optional - sage.rings.number_field
+            sage: sorted(list(Q.points_of_bounded_height(bound=1)))                     # optional - sage.rings.number_field
+            [(0 : 1), (1 : 0), (a + 1 : 1), (a : 1),
+             (-1 : 1), (-a - 1 : 1), (-a : 1), (1 : 1)]
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: F.<a> = NumberField(x^4 - 8*x^2 + 3)                                  # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # optional - sage.rings.number_field
+            sage: all(exp(p.global_height()) <= 1                                       # optional - sage.rings.number_field
+            ....:     for p in P.points_of_bounded_height(bound=1))
+            True
+
+        ::
+
+            sage: K.<a> = CyclotomicField(3)                                            # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
+            sage: len(list(P.points_of_bounded_height(bound=1)))                        # optional - sage.rings.number_field
             57
+
+        ::
+
+            sage: u = QQ['u'].0
+            sage: K.<k> = NumberField(u^2 - 2)                                          # optional - sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # optional - sage.rings.number_field
+            sage: len(list(P.points_of_bounded_height(bound=2)))                        # optional - sage.rings.number_field
+            24
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<k> = NumberField(x^4 - 8*x^2 + 3)                                  # optional - sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # optional - sage.rings.number_field
+            sage: len(list(P.points_of_bounded_height(bound=2)))                        # optional - sage.rings.number_field
+            108
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<v> = NumberField(x^5 + x^3 + 1)                                    # optional - sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
+            sage: L = P.points_of_bounded_height(bound=1.2)                             # optional - sage.rings.number_field
+            sage: len(list(L))                                                          # optional - sage.rings.number_field
+            109
         """
-        if is_RationalField(self.base_ring()):
-            ftype = False  # stores whether the field is a number field or the rational field
-        elif self.base_ring() in NumberFields():  # true for rational field as well, so check is_RationalField first
-            ftype = True
+        from sage.schemes.projective.proj_bdd_height import QQ_points_of_bounded_height, IQ_points_of_bounded_height, points_of_bounded_height
+
+        R = self.base_ring()
+
+        # whether the field is a number field or the rational field
+        if is_RationalField(R):
+            field_type = False
+        elif R in NumberFields():
+            # true for rational field as well, so check is_RationalField first
+            field_type = True
         else:
             raise NotImplementedError("self must be projective space over a number field")
 
         bound = kwds.pop('bound')
-        B = bound**(self.base_ring().absolute_degree())  # convert to relative height
+        prec = kwds.pop('precision', 53)
 
-        n = self.dimension_relative()
-        R = self.base_ring()
-        if ftype:
-            zero = R.zero()
-            i = n
-            while not i < 0:
-                P = [zero for _ in range(i)] + [R.one()]
-                P += [zero for _ in range(n - i)]
-                yield self(P)
-                tol = kwds.pop('tolerance', 1e-2)
-                prec = kwds.pop('precision', 53)
-                iters = [R.elements_of_bounded_height(bound=B, tolerance=tol, precision=prec) for _ in range(i)]
-                for x in iters:
-                    next(x)  # put at zero
-                j = 0
-                while j < i:
-                    try:
-                        P[j] = next(iters[j])
-                        yield self(P)
-                        j = 0
-                    except StopIteration:
-                        iters[j] = R.elements_of_bounded_height(bound=B, tolerance=tol, precision=prec)  # reset
-                        next(iters[j])  # put at zero
-                        P[j] = zero
-                        j += 1
-                i -= 1
-        else:  # base ring QQ
-            zero = (0,) * (n + 1)
-            for c in cartesian_product_iterator([srange(-B, B + 1)
-                                                 for _ in range(n + 1)]):
-                if gcd(c) == 1 and c > zero:
-                    yield self.point(c, check=False)
+        # Convert between absolute and relative height for calling Krumm's algorithm
+        bound = bound**R.absolute_degree()
+
+        dim = self.dimension_relative()
+
+        if field_type:
+            # for imaginary quadratic field
+            r1, r2 = R.signature()
+            r = r1 + r2 - 1
+
+            if R.is_relative():
+                deg = R.relative_degree()
+            else:
+                deg = R.degree()
+
+            if deg == 2 and r == 0:
+                return IQ_points_of_bounded_height(self, R, dim, bound)
+
+            return points_of_bounded_height(self, R, dim, bound, prec)
+        else:
+            return QQ_points_of_bounded_height(dim, bound)
 
     def subscheme_from_Chow_form(self, Ch, dim):
         r"""
@@ -1871,7 +2019,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: P = ProjectiveSpace(QQ, 4, 'z')
             sage: R.<x0,x1,x2,x3,x4> = PolynomialRing(QQ)
             sage: H = x1^2 + x2^2 + 5*x3*x4
-            sage: P.subscheme_from_Chow_form(H,3)
+            sage: P.subscheme_from_Chow_form(H, 3)
             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
               -5*z0*z1 + z2^2 + z3^2
 
@@ -1879,7 +2027,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
             sage: P = ProjectiveSpace(QQ, 3, 'z')
             sage: R.<x0,x1,x2,x3,x4,x5> = PolynomialRing(QQ)
-            sage: H = x1-x2-x3+x5+2*x0
+            sage: H = x1 - x2 - x3 + x5 + 2*x0
             sage: P.subscheme_from_Chow_form(H, 1)
             Closed subscheme of Projective Space of dimension 3 over Rational Field
             defined by:
@@ -1890,13 +2038,13 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         ::
 
-            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(GF(7), 3)
-            sage: X = P.subscheme([x3^2+x1*x2,x2-x0])
-            sage: Ch = X.Chow_form();Ch
+            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(GF(7), 3)                           # optional - sage.rings.finite_rings
+            sage: X = P.subscheme([x3^2 + x1*x2, x2 - x0])                              # optional - sage.rings.finite_rings
+            sage: Ch = X.Chow_form(); Ch                                                # optional - sage.rings.finite_rings
             t0^2 - 2*t0*t3 + t3^2 - t2*t4 - t4*t5
-            sage: Y = P.subscheme_from_Chow_form(Ch, 1); Y
-            Closed subscheme of Projective Space of dimension 3 over Finite Field of
-            size 7 defined by:
+            sage: Y = P.subscheme_from_Chow_form(Ch, 1); Y                              # optional - sage.rings.finite_rings
+            Closed subscheme of Projective Space of dimension 3
+             over Finite Field of size 7 defined by:
               x1*x2 + x3^2,
               -x0*x2 + x2^2,
               -x0*x1 - x1*x2 - 2*x3^2,
@@ -1905,10 +2053,10 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
               -2*x0*x3 + 2*x2*x3,
               2*x0*x3 - 2*x2*x3,
               x0^2 - 2*x0*x2 + x2^2
-            sage: I = Y.defining_ideal()
-            sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]
-            Ideal (x0 - x2, x1*x2 + x3^2) of Multivariate Polynomial Ring in x0, x1,
-            x2, x3 over Finite Field of size 7
+            sage: I = Y.defining_ideal()                                                # optional - sage.rings.finite_rings
+            sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]                # optional - sage.rings.finite_rings
+            Ideal (x0 - x2, x1*x2 + x3^2) of Multivariate Polynomial Ring
+             in x0, x1, x2, x3 over Finite Field of size 7
         """
         if not Ch.is_homogeneous():
             raise ValueError("Chow form must be a homogeneous polynomial")
@@ -1986,8 +2134,9 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: p1 = P3(1, 2, 3, 4)
             sage: p2 = P3(4, 3, 2, 1)
             sage: P3.line_through(p1, p2)
-            Projective Curve over Rational Field defined by -5/4*x0 + 5/2*x1 - 5/4*x2,
-            -5/2*x0 + 15/4*x1 - 5/4*x3, -5/4*x0 + 15/4*x2 - 5/2*x3, -5/4*x1 + 5/2*x2 - 5/4*x3
+            Projective Curve over Rational Field defined by
+              -5/4*x0 + 5/2*x1 - 5/4*x2,        -5/2*x0 + 15/4*x1 - 5/4*x3,
+              -5/4*x0 + 15/4*x2 - 5/2*x3,       -5/4*x1 + 5/2*x2 - 5/4*x3
             sage: p3 = P3(2,4,6,8)
             sage: P3.line_through(p1, p3)
             Traceback (most recent call last):
@@ -2003,6 +2152,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
         m = matrix(3, list(self.gens()) + list(p) + list(q))
         return Curve([f for f in m.minors(3) if f])
 
+
 class ProjectiveSpace_finite_field(ProjectiveSpace_field):
     def _point(self, *args, **kwds):
         """
@@ -2012,9 +2162,9 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
 
         TESTS::
 
-            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))
-            sage: point_homset = P2._point_homset(Spec(GF(3)), P2)
-            sage: P2._point(point_homset, [1,2,3])
+            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))                                # optional - sage.rings.finite_rings
+            sage: point_homset = P2._point_homset(Spec(GF(3)), P2)                      # optional - sage.rings.finite_rings
+            sage: P2._point(point_homset, [1,2,3])                                      # optional - sage.rings.finite_rings
             (2 : 1 : 0)
         """
         return SchemeMorphism_point_projective_finite_field(*args, **kwds)
@@ -2027,8 +2177,8 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
 
         TESTS::
 
-            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))
-            sage: P2._morphism(P2.Hom(P2), [x,y,z])
+            sage: P2.<x,y,z> = ProjectiveSpace(2, GF(3))                                # optional - sage.rings.finite_rings
+            sage: P2._morphism(P2.Hom(P2), [x,y,z])                                     # optional - sage.rings.finite_rings
             Scheme endomorphism of Projective Space of dimension 2 over Finite Field of size 3
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x : y : z)
@@ -2047,28 +2197,28 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
 
         EXAMPLES::
 
-            sage: FF = FiniteField(3)
-            sage: PP = ProjectiveSpace(0,FF)
-            sage: [ x for x in PP ]
+            sage: FF = FiniteField(3)                                                   # optional - sage.rings.finite_rings
+            sage: PP = ProjectiveSpace(0, FF)                                           # optional - sage.rings.finite_rings
+            sage: [ x for x in PP ]                                                     # optional - sage.rings.finite_rings
             [(1)]
-            sage: PP = ProjectiveSpace(1,FF)
-            sage: [ x for x in PP ]
+            sage: PP = ProjectiveSpace(1, FF)                                           # optional - sage.rings.finite_rings
+            sage: [ x for x in PP ]                                                     # optional - sage.rings.finite_rings
             [(0 : 1), (1 : 1), (2 : 1), (1 : 0)]
-            sage: PP = ProjectiveSpace(2,FF)
-            sage: [ x for x in PP ]
+            sage: PP = ProjectiveSpace(2, FF)                                           # optional - sage.rings.finite_rings
+            sage: [ x for x in PP ]                                                     # optional - sage.rings.finite_rings
             [(0 : 0 : 1),
-            (0 : 1 : 1),
-            (0 : 2 : 1),
-            (1 : 0 : 1),
-            (1 : 1 : 1),
-            (1 : 2 : 1),
-            (2 : 0 : 1),
-            (2 : 1 : 1),
-            (2 : 2 : 1),
-            (0 : 1 : 0),
-            (1 : 1 : 0),
-            (2 : 1 : 0),
-            (1 : 0 : 0)]
+             (0 : 1 : 1),
+             (0 : 2 : 1),
+             (1 : 0 : 1),
+             (1 : 1 : 1),
+             (1 : 2 : 1),
+             (2 : 0 : 1),
+             (2 : 1 : 1),
+             (2 : 2 : 1),
+             (0 : 1 : 0),
+             (1 : 1 : 0),
+             (2 : 1 : 0),
+             (1 : 0 : 0)]
 
         AUTHORS:
 
@@ -2098,15 +2248,16 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
 
         EXAMPLES::
 
-            sage: P = ProjectiveSpace(1, GF(3))
-            sage: P.rational_points()
+            sage: P = ProjectiveSpace(1, GF(3))                                         # optional - sage.rings.finite_rings
+            sage: P.rational_points()                                                   # optional - sage.rings.finite_rings
             [(0 : 1), (1 : 1), (2 : 1), (1 : 0)]
-            sage: P.rational_points(GF(3^2, 'b'))
-            [(0 : 1), (b : 1), (b + 1 : 1), (2*b + 1 : 1), (2 : 1), (2*b : 1), (2*b + 2 : 1), (b + 2 : 1), (1 : 1), (1 : 0)]
+            sage: P.rational_points(GF(3^2, 'b'))                                       # optional - sage.rings.finite_rings
+            [(0 : 1), (b : 1), (b + 1 : 1), (2*b + 1 : 1), (2 : 1), (2*b : 1),
+             (2*b + 2 : 1), (b + 2 : 1), (1 : 1), (1 : 0)]
         """
         if F is None:
             return [P for P in self]
-        elif not is_FiniteField(F):
+        elif not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field" % F)
         return [P for P in self.base_extend(F)]
 
@@ -2120,8 +2271,8 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
 
         EXAMPLES::
 
-            sage: P1 = ProjectiveSpace(GF(7),1,'x')
-            sage: P1.rational_points_dictionary()
+            sage: P1 = ProjectiveSpace(GF(7), 1, 'x')                                   # optional - sage.rings.finite_rings
+            sage: P1.rational_points_dictionary()                                       # optional - sage.rings.finite_rings
             {(0 : 1): 0,
              (1 : 0): 7,
              (1 : 1): 1,
@@ -2167,16 +2318,16 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
         Returns the projective points `(x_0:\cdots:x_n)` over
         `\QQ` with `|x_i| \leq` bound.
 
-       ALGORITHM:
+        ALGORITHM:
 
-       The very simple algorithm works as follows: every point
-       `(x_0:\cdots:x_n)` in projective space has a unique
-       largest index `i` for which `x_i` is not
-       zero. The algorithm then iterates downward on this
-       index. We normalize by choosing `x_i` positive. Then,
-       the points `x_0,\ldots,x_{i-1}` are the points of
-       affine `i`-space that are relatively prime to
-       `x_i`. We access these by using the Tuples method.
+        The very simple algorithm works as follows: every point
+        `(x_0:\cdots:x_n)` in projective space has a unique
+        largest index `i` for which `x_i` is not
+        zero. The algorithm then iterates downward on this
+        index. We normalize by choosing `x_i` positive. Then,
+        the points `x_0,\ldots,x_{i-1}` are the points of
+        affine `i`-space that are relatively prime to
+        `x_i`. We access these by using the Tuples method.
 
         INPUT:
 
@@ -2193,16 +2344,15 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
             sage: PP = ProjectiveSpace(2, QQ)
             sage: PP.rational_points(2)
             [(-2 : -2 : 1), (-1 : -2 : 1), (0 : -2 : 1), (1 : -2 : 1), (2 : -2 : 1),
-            (-2 : -1 : 1), (-1 : -1 : 1), (0 : -1 : 1), (1 : -1 : 1), (2 : -1 : 1),
-            (-2 : 0 : 1), (-1 : 0 : 1), (0 : 0 : 1), (1 : 0 : 1), (2 : 0 : 1), (-2 :
-            1 : 1), (-1 : 1 : 1), (0 : 1 : 1), (1 : 1 : 1), (2 : 1 : 1), (-2 : 2 :
-            1), (-1 : 2 : 1), (0 : 2 : 1), (1 : 2 : 1), (2 : 2 : 1), (-1/2 : -1 :
-            1), (1/2 : -1 : 1), (-1 : -1/2 : 1), (-1/2 : -1/2 : 1), (0 : -1/2 : 1),
-            (1/2 : -1/2 : 1), (1 : -1/2 : 1), (-1/2 : 0 : 1), (1/2 : 0 : 1), (-1 :
-            1/2 : 1), (-1/2 : 1/2 : 1), (0 : 1/2 : 1), (1/2 : 1/2 : 1), (1 : 1/2 :
-            1), (-1/2 : 1 : 1), (1/2 : 1 : 1), (-2 : 1 : 0), (-1 : 1 : 0), (0 : 1 :
-            0), (1 : 1 : 0), (2 : 1 : 0), (-1/2 : 1 : 0), (1/2 : 1 : 0), (1 : 0 :
-            0)]
+             (-2 : -1 : 1), (-1 : -1 : 1), (0 : -1 : 1), (1 : -1 : 1), (2 : -1 : 1),
+             (-2 : 0 : 1), (-1 : 0 : 1), (0 : 0 : 1), (1 : 0 : 1), (2 : 0 : 1), (-2 : 1 : 1),
+             (-1 : 1 : 1), (0 : 1 : 1), (1 : 1 : 1), (2 : 1 : 1), (-2 : 2 : 1),
+             (-1 : 2 : 1), (0 : 2 : 1), (1 : 2 : 1), (2 : 2 : 1), (-1/2 : -1 : 1),
+             (1/2 : -1 : 1), (-1 : -1/2 : 1), (-1/2 : -1/2 : 1), (0 : -1/2 : 1),
+             (1/2 : -1/2 : 1), (1 : -1/2 : 1), (-1/2 : 0 : 1), (1/2 : 0 : 1), (-1 : 1/2 : 1),
+             (-1/2 : 1/2 : 1), (0 : 1/2 : 1), (1/2 : 1/2 : 1), (1 : 1/2 : 1), (-1/2 : 1 : 1),
+             (1/2 : 1 : 1), (-2 : 1 : 0), (-1 : 1 : 0), (0 : 1 : 0), (1 : 1 : 0),
+             (2 : 1 : 0), (-1/2 : 1 : 0), (1/2 : 1 : 0), (1 : 0 : 0)]
 
         AUTHORS:
 

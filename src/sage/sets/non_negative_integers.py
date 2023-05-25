@@ -95,6 +95,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
+            sage: NN = NonNegativeIntegers()
             sage: 1 in NN
             True
             sage: -1 in NN
@@ -114,7 +115,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         try:
             i = Integer(elt)
-            return  i >= Integer(0) and i == elt
+            return i >= Integer(0) and i == elt
         except (TypeError, ValueError):
             return False
 

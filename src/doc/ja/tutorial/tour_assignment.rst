@@ -79,10 +79,10 @@ Pythonのデータはダイナミックに型付けされ，変数を通して�
 
     sage: a = 5   # aは整数
     sage: type(a)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
     sage: a = 5/3  # aは有理数になった
     sage: type(a)
-    <type 'sage.rings.rational.Rational'>
+    <class 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # ここでaは文字列
     sage: type(a)
     <... 'str'>

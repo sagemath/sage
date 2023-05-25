@@ -12,8 +12,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.sets.set import Set
-from sage.misc.all import cached_function
-from sage.rings.all import Integer
+from sage.misc.cachefunc import cached_function
+from sage.rings.integer import Integer
 
 
 def sidon_sets(N, g = 1):
@@ -46,12 +46,12 @@ def sidon_sets(N, g = 1):
         sage: S.cardinality()
         8
         sage: S.category()
-        Category of finite sets
+        Category of finite enumerated sets
         sage: sid = S.an_element()
         sage: sid
         {2}
         sage: sid.category()
-        Category of finite sets
+        Category of finite enumerated sets
 
     TESTS::
 
@@ -126,10 +126,10 @@ def sidon_sets_rec(N, g=1):
     sidons = set(pre_sidons)
     for psid in pre_sidons:
         psid_shift = Set([n - 1 for n in psid if n != 1] + [N - 1])
-        if not psid_shift in pre_sidons:
+        if psid_shift not in pre_sidons:
             continue
 
-        if not 1 in psid:
+        if 1 not in psid:
             add_sid = True
         else:
             add_sid = True

@@ -1,27 +1,26 @@
 r"""
 User-customizable options for words
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Franco Saliola <saliola@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import copy
 from sage.rings.integer import Integer
 
-word_options = {\
-        'identifier':'word: ', \
-        'display':'string', \
-        'truncate':True, \
-        'truncate_length':40, \
-        'letter_separator':',', \
-        'cache':True, \
-        'old_repr':False \
-        }
+word_options = {'identifier': 'word: ',
+                'display': 'string',
+                'truncate': True,
+                'truncate_length': 40,
+                'letter_separator': ',',
+                'cache': True,
+                'old_repr': False}
+
 
 def WordOptions(**kwargs):
     """
@@ -73,7 +72,7 @@ def WordOptions(**kwargs):
         else:
             word_options['truncate'] = kwargs['truncate']
     elif 'truncate_length' in kwargs:
-        if not isinstance(kwargs['truncate_length'], (int,Integer)) or kwargs['truncate_length'] <= 0:
+        if not isinstance(kwargs['truncate_length'], (int, Integer)) or kwargs['truncate_length'] <= 0:
             raise ValueError("truncate_length must be a positive integer")
         else:
             word_options['truncate_length'] = kwargs['truncate_length']

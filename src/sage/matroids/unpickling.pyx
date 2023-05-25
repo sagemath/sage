@@ -316,7 +316,7 @@ def unpickle_plus_minus_one_matrix(version, data):
         sage: M
         PlusMinusOneMatrix instance with 2 rows and 2 columns
         sage: type(M)
-        <type 'sage.matroids.lean_matrix.PlusMinusOneMatrix'>
+        <class 'sage.matroids.lean_matrix.PlusMinusOneMatrix'>
         sage: M.__reduce__()[1][1]
         (2, 2, [1, 0, -1, 1])
     """

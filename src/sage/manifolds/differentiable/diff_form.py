@@ -44,10 +44,17 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from __future__ import annotations
+from typing import Optional, Union, TYPE_CHECKING
 from sage.misc.cachefunc import cached_method
 from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
+    from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+    from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 
 
 class DiffForm(TensorField):
@@ -260,7 +267,7 @@ class DiffForm(TensorField):
 
         sage: s = a.wedge(b)
         sage: s.display(eU)
-        a∧b = -x*(2*x*y + 1) dx∧dy
+        a∧b = x*(-2*x*y - 1) dx∧dy
         sage: s.display(eV)
         a∧b = (u**3/8 + u**2*v/8 - u*v**2/8 + u/4 - v**3/8 + v/4) du∧dv
 
@@ -269,7 +276,7 @@ class DiffForm(TensorField):
         sage: f = M.scalar_field({c_xy: (x+y)^2, c_uv: u^2}, name='f')
         sage: s = f*a
         sage: s.display(eU)
-        f*a = -y*(x**2 + 2*x*y + y**2) dx + x*(x**2 + 2*x*y + y**2) dy
+        f*a = y*(-x**2 - 2*x*y - y**2) dx + x*(x**2 + 2*x*y + y**2) dy
         sage: s.display(eV)
         f*a = u**2*v/2 du - u**3/2 dv
 
@@ -378,7 +385,7 @@ class DiffForm(TensorField):
         self.exterior_derivative.clear_cache()
 
     @cached_method
-    def exterior_derivative(self):
+    def exterior_derivative(self) -> DiffForm:
         r"""
         Compute the exterior derivative of ``self``.
 
@@ -441,13 +448,17 @@ class DiffForm(TensorField):
             True
 
         """
-        from sage.tensor.modules.format_utilities import (format_unop_txt,
-                                                          format_unop_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_unop_txt,
+            format_unop_latex,
+        )
+
         vmodule = self._vmodule  # shortcut
-        rname = format_unop_txt('d', self._name)
-        rlname = format_unop_latex(r'\mathrm{d}', self._latex_name)
-        resu = vmodule.alternating_form(self._tensor_rank + 1, name=rname,
-                                        latex_name=rlname)
+        rname = format_unop_txt("d", self._name)
+        rlname = format_unop_latex(r"\mathrm{d}", self._latex_name)
+        resu = vmodule.alternating_form(
+            self._tensor_rank + 1, name=rname, latex_name=rlname
+        )
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = rst.exterior_derivative()
         return resu
@@ -455,7 +466,7 @@ class DiffForm(TensorField):
     derivative = exterior_derivative  # allows one to use functional notation,
                                       # e.g. diff(a) for a.exterior_derivative()
 
-    def wedge(self, other):
+    def wedge(self, other: DiffForm) -> DiffForm:
         r"""
         Exterior product with another differential form.
 
@@ -580,7 +591,7 @@ class DiffForm(TensorField):
                                           other_r._restrictions[dom])
         return resu
 
-    def degree(self):
+    def degree(self) -> int:
         r"""
         Return the degree of ``self``.
 
@@ -603,13 +614,18 @@ class DiffForm(TensorField):
         """
         return self._tensor_rank
 
-    def hodge_dual(self, metric=None):
+    def hodge_dual(
+        self,
+        nondegenerate_tensor: Union[
+            PseudoRiemannianMetric, SymplecticForm, None
+        ] = None,
+    ) -> DiffForm:
         r"""
-        Compute the Hodge dual of the differential form with respect to some
-        metric.
+        Compute the Hodge dual of the differential form with respect to some non-degenerate
+        bilinear form (Riemannian metric or symplectic form).
 
         If the differential form is a `p`-form `A`, its *Hodge dual* with
-        respect to a pseudo-Riemannian metric `g` is the
+        respect to the non-degenerate form `g` is the
         `(n-p)`-form `*A` defined by
 
         .. MATH::
@@ -624,9 +640,10 @@ class DiffForm(TensorField):
 
         INPUT:
 
-        - ``metric``: a pseudo-Riemannian metric defined on the same manifold
+        - ``nondegenerate_tensor``: a non-degenerate bilinear form defined on the same manifold
           as the current differential form; must be an instance of
-          :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric`.
+          :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric` or
+          :class:`~sage.manifolds.differentiable.symplectic_form.SymplecticForm`.
           If none is provided, the ambient domain of ``self`` is supposed to be endowed
           with a default metric and this metric is then used.
 
@@ -731,10 +748,43 @@ class DiffForm(TensorField):
         See the documentation of
         :meth:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric.hodge_star`
         for more examples.
+
+        TESTS:
+        Fall back to use (ambient) metric::
+
+            sage: M = Manifold(3, 'M', start_index=1, structure='Riemannian')
+            sage: X.<x,y,z> = M.chart()
+            sage: g = M.metric()
+            sage: g[1,1], g[2,2], g[3,3] = 1, 1, 1
+            sage: var('Ax Ay Az')
+            (Ax, Ay, Az)
+            sage: a = M.one_form(Ax, Ay, Az, name='A')
+            sage: a.hodge_dual().display()
+            *A = Az dx∧dy - Ay dx∧dz + Ax dy∧dz
         """
-        if metric is None:
-            metric = self._vmodule._ambient_domain.metric()
-        return metric.hodge_star(self)
+        from sage.functions.other import factorial
+        from sage.tensor.modules.format_utilities import (
+            format_unop_txt,
+            format_unop_latex,
+        )
+
+        if nondegenerate_tensor is None:
+            nondegenerate_tensor = self._vmodule._ambient_domain.metric()
+
+        p = self.tensor_type()[1]
+        eps = nondegenerate_tensor.volume_form(p)
+        if p == 0:
+            common_domain = nondegenerate_tensor.domain().intersection(self.domain())
+            result = self.restrict(common_domain) * eps.restrict(common_domain)
+        else:
+            result = self.contract(*range(p), eps, *range(p))
+            if p > 1:
+                result = result / factorial(p)
+        result.set_name(
+            name=format_unop_txt("*", self._name),
+            latex_name=format_unop_latex(r"\star ", self._latex_name),
+        )
+        return result
 
     def interior_product(self, qvect):
         r"""
@@ -1181,8 +1231,8 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
         no symmetry;  no antisymmetry
 
     """
-    def __init__(self, vector_field_module, degree, name=None,
-                 latex_name=None):
+    def __init__(self, vector_field_module: VectorFieldModule, degree: int, name: Optional[str] = None,
+                 latex_name: Optional[str] = None):
         r"""
         Construct a differential form.
 
@@ -1285,7 +1335,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
         """
         TensorFieldParal._init_derived(self)
 
-    def _del_derived(self, del_restrictions=True):
+    def _del_derived(self, del_restrictions: bool = True):
         r"""
         Delete the derived quantities.
 
@@ -1335,7 +1385,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
         return TensorFieldParal.__call__(self, *args)
 
     @cached_method
-    def exterior_derivative(self):
+    def exterior_derivative(self) -> DiffFormParal:
         r"""
         Compute the exterior derivative of ``self``.
 
@@ -1579,6 +1629,15 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
                (x, y, z) ↦ 2*x*y^3 - 2*z^3 - 6*x - 6*z
             sage: s == a.contract(0,1,b,0,1)
             True
+
+        TESTS:
+
+        Check that :trac:`33780` is fixed::
+
+            sage: v = X.frame()[1]  # vector field d/dx
+            sage: f = X.coframe()[2]  # 1-form dy
+            sage: f.interior_product(v)
+            Scalar field zero on the 3-dimensional differentiable manifold M
 
         """
         if self._domain.is_subset(qvect._domain):

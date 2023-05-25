@@ -80,7 +80,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         INPUT:
 
-        - ``x`` -- data defining a `p`-adic element: int, long,
+        - ``x`` -- data defining a `p`-adic element: int,
           Integer, Rational, other `p`-adic element...
 
         - ``val`` -- the valuation of the resulting element
@@ -299,7 +299,7 @@ cdef class CRElement(pAdicTemplateElement):
 
             sage: a = ZpCR(5)(-3)
             sage: type(a)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: loads(dumps(a)) == a  # indirect doctest
             True
         """
@@ -358,7 +358,9 @@ cdef class CRElement(pAdicTemplateElement):
         else:
             if self.ordp > right.ordp:
                 # Addition is commutative, swap so self.ordp < right.ordp
-                ans = right; right = self; self = ans
+                ans = right
+                right = self
+                self = ans
             tmpL = right.ordp - self.ordp
             if tmpL > self.relprec:
                 return self
@@ -670,7 +672,7 @@ cdef class CRElement(pAdicTemplateElement):
         cdef Integer right
         cdef CRElement base, pright, ans
         cdef bint exact_exp
-        if (isinstance(_right, Integer) or isinstance(_right, (int, long)) or isinstance(_right, Rational)):
+        if isinstance(_right, (Integer, int, Rational)):
             if _right < 0:
                 base = ~self
                 return base.__pow__(-_right, dummy)
@@ -700,7 +702,7 @@ cdef class CRElement(pAdicTemplateElement):
         ans = self._new_c()
         if self.relprec == 0:
             # If a positive integer exponent, return an inexact zero of valuation right * self.ordp.  Otherwise raise an error.
-            if isinstance(_right, (int, long)):
+            if isinstance(_right, int):
                 _right = Integer(_right)
             if isinstance(_right, Integer):
                 right = <Integer>_right
@@ -903,13 +905,13 @@ cdef class CRElement(pAdicTemplateElement):
             sage: b = R(0); b.add_bigoh(3)
             O(7^3)
 
-            The precision never increases::
+        The precision never increases::
 
             sage: R(4).add_bigoh(2).add_bigoh(4)
             4 + O(7^2)
 
-            Another example that illustrates that the precision does
-            not increase::
+        Another example that illustrates that the precision does
+        not increase::
 
             sage: k = Qp(3,5)
             sage: a = k(1234123412/3^70); a
@@ -1033,7 +1035,7 @@ cdef class CRElement(pAdicTemplateElement):
                 return True
         return mpz_cmp_si((<Integer>absprec).value, self.ordp) <= 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns True if self is distinguishable from zero.
 
@@ -1215,7 +1217,7 @@ cdef class CRElement(pAdicTemplateElement):
             ...
             PrecisionError: precision higher than allowed by the precision cap
         """
-        cpdef CRElement ans
+        cdef CRElement ans
         if absprec == maxordp:
             if self.relprec == 0:
                 ans = self._new_c()
@@ -1249,7 +1251,8 @@ cdef class CRElement(pAdicTemplateElement):
 
             :meth:`sage.misc.cachefunc._cache_key`
         """
-        tuple_recursive = lambda l: tuple(tuple_recursive(x) for x in l) if isinstance(l, list) else l
+        def tuple_recursive(l):
+            return tuple(tuple_recursive(x) for x in l) if isinstance(l, list) else l
         return (self.parent(), tuple_recursive(trim_zeros(list(self.expansion()))), self.valuation(), self.precision_relative())
 
     def _teichmuller_set_unsafe(self):
@@ -1423,13 +1426,13 @@ cdef class CRElement(pAdicTemplateElement):
             sage: a.unit_part()
             1 + 17 + O(17^4)
             sage: type(a)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: R = Qp(17,4,'capped-rel')
             sage: a = R(18*17)
             sage: a.unit_part()
             1 + 17 + O(17^4)
             sage: type(a)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: a = R(2*17^2); a
             2*17^2 + O(17^6)
             sage: a.unit_part()
@@ -1528,11 +1531,8 @@ cdef class CRElement(pAdicTemplateElement):
             sage: hash(R(17)) #indirect doctest
             17
 
-            sage: hash(R(-1))     # py3
+            sage: hash(R(-1))
             1977844648            # 32-bit
-            95367431640624        # 64-bit
-            sage: hash(R(-1))     # py2
-            1977822444            # 32-bit
             95367431640624        # 64-bit
         """
         if exactzero(self.ordp):
@@ -1562,7 +1562,7 @@ cdef class pAdicCoercion_ZZ_CR(RingHomomorphism):
         EXAMPLES::
 
             sage: f = Zp(5).coerce_map_from(ZZ); type(f)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCoercion_ZZ_CR'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCoercion_ZZ_CR'>
         """
         RingHomomorphism.__init__(self, ZZ.Hom(R))
         self._zero = R.element_class(R, 0)
@@ -1652,7 +1652,7 @@ cdef class pAdicCoercion_ZZ_CR(RingHomomorphism):
 
             sage: R = Zp(5,4)
             sage: type(R(10,2))
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: R(10,2) # indirect doctest
             2*5 + O(5^2)
             sage: R(10,3,1)
@@ -1724,7 +1724,7 @@ cdef class pAdicConvert_CR_ZZ(RingMap):
         EXAMPLES::
 
             sage: f = Qp(5).coerce_map_from(ZZ).section(); type(f)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_CR_ZZ'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_CR_ZZ'>
             sage: f.category()
             Category of homsets of sets with partial maps
             sage: Zp(5).coerce_map_from(ZZ).section().category()
@@ -1780,7 +1780,7 @@ cdef class pAdicCoercion_QQ_CR(RingHomomorphism):
         EXAMPLES::
 
             sage: f = Qp(5).coerce_map_from(QQ); type(f)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCoercion_QQ_CR'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCoercion_QQ_CR'>
         """
         RingHomomorphism.__init__(self, QQ.Hom(R))
         self._zero = R.element_class(R, 0)
@@ -1872,7 +1872,7 @@ cdef class pAdicCoercion_QQ_CR(RingHomomorphism):
 
             sage: R = Qp(5,4)
             sage: type(R(10/3,2))
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: R(10/3,2) # indirect doctest
             4*5 + O(5^2)
             sage: R(10/3,3,1)
@@ -1944,7 +1944,7 @@ cdef class pAdicConvert_CR_QQ(RingMap):
         EXAMPLES::
 
             sage: f = Qp(5).coerce_map_from(QQ).section(); type(f)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_CR_QQ'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_CR_QQ'>
             sage: f.category()
             Category of homsets of sets
         """
@@ -1994,7 +1994,7 @@ cdef class pAdicConvert_QQ_CR(Morphism):
         EXAMPLES::
 
             sage: f = Zp(5).convert_map_from(QQ); type(f)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_QQ_CR'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_QQ_CR'>
         """
         Morphism.__init__(self, Hom(QQ, R, SetsWithPartialMaps()))
         self._zero = R.element_class(R, 0)
@@ -2073,7 +2073,7 @@ cdef class pAdicConvert_QQ_CR(Morphism):
 
             sage: R = Zp(5,4)
             sage: type(R(10/3,2))
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: R(10/3,2) # indirect doctest
             4*5 + O(5^2)
             sage: R(10/3,3,1)
@@ -2156,7 +2156,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
             sage: R.<a> = ZqCR(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R); type(f)
-            <type 'sage.rings.padics.qadic_flint_CR.pAdicCoercion_CR_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_CR.pAdicCoercion_CR_frac_field'>
         """
         RingHomomorphism.__init__(self, R.Hom(K))
         self._zero = K(0)
@@ -2377,7 +2377,7 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
             sage: R.<a> = ZqCR(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K); type(f)
-            <type 'sage.rings.padics.qadic_flint_CR.pAdicConvert_CR_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_CR.pAdicConvert_CR_frac_field'>
         """
         Morphism.__init__(self, Hom(K, R, SetsWithPartialMaps()))
         self._zero = R(0)
@@ -2395,7 +2395,8 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
             a + O(3^20)
         """
         cdef CRElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef CRElement ans = self._zero._new_c()
         ans.relprec = x.relprec
         ans.ordp = x.ordp
@@ -2439,7 +2440,8 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
         """
         cdef long aprec, rprec
         cdef CRElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef CRElement ans = self._zero._new_c()
         cdef bint reduce = False
         _process_args_and_kwds(&aprec, &rprec, args, kwds, False, ans.prime_pow)

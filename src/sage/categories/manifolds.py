@@ -346,4 +346,3 @@ class ComplexManifolds(Category_over_base_ring):
             [Category of topological spaces]
         """
         return [Manifolds(self.base()).Analytic()]
-

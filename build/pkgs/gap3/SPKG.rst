@@ -79,7 +79,3 @@ Patches
 
 None
 
-Dependencies
-------------
-
-None

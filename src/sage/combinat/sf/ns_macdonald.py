@@ -7,8 +7,9 @@ from sage.combinat.combinat import CombinatorialObject
 from sage.combinat.words.word import Word
 from sage.combinat.combination import Combinations
 from sage.combinat.permutation import Permutation
-from sage.rings.all import QQ, PolynomialRing
-from sage.misc.all import prod
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.misc.misc_c import prod
 from sage.combinat.backtrack import GenericBacktracker
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -678,7 +679,7 @@ class NonattackingFillings_shape(Parent, UniqueRepresentation):
             24
         """
         if sum(self._shape) == 0:
-            yield AugmentedLatticeDiagramFilling([[] for s in self._shape],
+            yield AugmentedLatticeDiagramFilling([[] for _ in self._shape],
                                                  self.pi)
             return
 
@@ -737,7 +738,7 @@ class NonattackingBacktracker(GenericBacktracker):
 
         # Get the next state
         new_state = self.get_next_pos(i, j)
-        yld = True if new_state is None else False
+        yld = bool(new_state is None)
 
         for k in range(1, len(self._shape) + 1):
             # We check to make sure that k does not
@@ -863,19 +864,19 @@ def E(mu, q=None, t=None, pi=None):
         sage: E([1,0,0])
         x0
         sage: E([0,1,0])
-        ((-t + 1)/(-q*t^2 + 1))*x0 + x1
+        (t - 1)/(q*t^2 - 1)*x0 + x1
         sage: E([0,0,1])
-        ((-t + 1)/(-q*t + 1))*x0 + ((-t + 1)/(-q*t + 1))*x1 + x2
+        (t - 1)/(q*t - 1)*x0 + (t - 1)/(q*t - 1)*x1 + x2
         sage: E([1,1,0])
         x0*x1
         sage: E([1,0,1])
-        ((-t + 1)/(-q*t^2 + 1))*x0*x1 + x0*x2
+        (t - 1)/(q*t^2 - 1)*x0*x1 + x0*x2
         sage: E([0,1,1])
-        ((-t + 1)/(-q*t + 1))*x0*x1 + ((-t + 1)/(-q*t + 1))*x0*x2 + x1*x2
+        (t - 1)/(q*t - 1)*x0*x1 + (t - 1)/(q*t - 1)*x0*x2 + x1*x2
         sage: E([2,0,0])
-        x0^2 + ((-q*t + q)/(-q*t + 1))*x0*x1 + ((-q*t + q)/(-q*t + 1))*x0*x2
+        x0^2 + (q*t - q)/(q*t - 1)*x0*x1 + (q*t - q)/(q*t - 1)*x0*x2
         sage: E([0,2,0])
-        ((-t + 1)/(-q^2*t^2 + 1))*x0^2 + ((-q^2*t^3 + q^2*t^2 - q*t^2 + 2*q*t - q + t - 1)/(-q^3*t^3 + q^2*t^2 + q*t - 1))*x0*x1 + x1^2 + ((q*t^2 - 2*q*t + q)/(q^3*t^3 - q^2*t^2 - q*t + 1))*x0*x2 + ((-q*t + q)/(-q*t + 1))*x1*x2
+        (t - 1)/(q^2*t^2 - 1)*x0^2 + (q^2*t^3 - q^2*t^2 + q*t^2 - 2*q*t + q - t + 1)/(q^3*t^3 - q^2*t^2 - q*t + 1)*x0*x1 + x1^2 + (q*t^2 - 2*q*t + q)/(q^3*t^3 - q^2*t^2 - q*t + 1)*x0*x2 + (q*t - q)/(q*t - 1)*x1*x2
     """
     P, q, t, n, R, x = _check_muqt(mu, q, t, pi)
     res = 0

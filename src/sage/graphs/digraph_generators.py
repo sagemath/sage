@@ -12,7 +12,7 @@ To get a circulant graph on 10 vertices in which a vertex `i` has `i+2` and
     sage: p = digraphs.Circulant(10,[2,3])
 
 More interestingly, one can get the list of all digraphs that Sage knows how to
-build by typing ``digraphs.`` in Sage and then hitting tab.
+build by typing ``digraphs.`` in Sage and then hitting :kbd:`Tab`.
 
 .. csv-table::
     :class: contentstable
@@ -53,23 +53,26 @@ Functions and methods
 ---------------------
 
 """
-
-################################################################################
+# ****************************************************************************
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
 #                              and Emily A. Kirkman
 #           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
+#           Copyright (C) 2012 David Coudert <david.coudert@inria.fr>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
-################################################################################
-from sage.cpython.string import bytes_to_str
-from sage.env import SAGE_NAUTY_BINS_PREFIX as nautyprefix
-
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import sys
+import subprocess
+
+from sage.cpython.string import bytes_to_str
 from sage.misc.randstate import current_randstate
 from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
-import subprocess
+
 
 class DiGraphGenerators():
     r"""
@@ -213,7 +216,7 @@ class DiGraphGenerators():
 
         INPUT:
 
-        - ``n`` -- integer;
+        - ``n`` -- a non negative integer; the dimension of the butterfly graph
 
         - ``vertices`` -- string (default: ``'strings'``); specifies whether the
           vertices are zero-one strings (default) or tuples over GF(2)
@@ -221,7 +224,7 @@ class DiGraphGenerators():
 
         EXAMPLES::
 
-            sage: digraphs.ButterflyGraph(2).edges(labels=False)
+            sage: digraphs.ButterflyGraph(2).edges(sort=True, labels=False)
             [(('00', 0), ('00', 1)),
             (('00', 0), ('10', 1)),
             (('00', 1), ('00', 2)),
@@ -238,7 +241,7 @@ class DiGraphGenerators():
             (('11', 0), ('11', 1)),
             (('11', 1), ('10', 2)),
             (('11', 1), ('11', 2))]
-            sage: digraphs.ButterflyGraph(2,vertices='vectors').edges(labels=False)
+            sage: digraphs.ButterflyGraph(2,vertices='vectors').edges(sort=True, labels=False)
             [(((0, 0), 0), ((0, 0), 1)),
             (((0, 0), 0), ((1, 0), 1)),
             (((0, 0), 1), ((0, 0), 2)),
@@ -255,6 +258,9 @@ class DiGraphGenerators():
             (((1, 1), 0), ((1, 1), 1)),
             (((1, 1), 1), ((1, 0), 2)),
             (((1, 1), 1), ((1, 1), 2))]
+            sage: pos = digraphs.ButterflyGraph(2).get_pos()
+            sage: pos['11', 0]
+            (0, 0)
 
         TESTS::
 
@@ -275,33 +281,47 @@ class DiGraphGenerators():
             if n >= 31:
                 raise NotImplementedError("vertices='strings' is only valid for n <= 30")
             from sage.graphs.generic_graph_pyx import int_to_binary_string
-            butterfly = {}
+            V = []
+            E = []
             for v in range(2 ** n):
                 bv = int_to_binary_string(v)
                 # pad and reverse the string
                 padded_bv = ('0' * (n - len(bv)) + bv)[::-1]
+                V.append(padded_bv)
                 for i in range(n):
                     w = v
                     w ^= (1 << i)   # push 1 to the left by i and xor with w
                     bw = int_to_binary_string(w)
                     padded_bw = ('0' * (n - len(bw)) + bw)[::-1]
-                    butterfly[(padded_bv, i)] = [(padded_bv, i + 1), (padded_bw, i + 1)]
+                    E.append(((padded_bv, i), (padded_bv, i + 1)))
+                    E.append(((padded_bv, i), (padded_bw, i + 1)))
         elif vertices == 'vectors':
             from sage.modules.free_module import VectorSpace
             from sage.rings.finite_rings.finite_field_constructor import FiniteField
             from copy import copy
-            butterfly = {}
+            V = []
+            E = []
             for v in VectorSpace(FiniteField(2), n):
                 # We must call tuple since vectors are mutable.  To obtain a
                 # vector from the tuple tv, just call vector(tv).
                 tv = tuple(v)
+                V.append(tv)
+                w = copy(v)
                 for i in range(n):
-                    w = copy(v)
                     w[i] += 1  # Flip the ith bit
-                    butterfly[(tv, i)] = [(tv, i + 1), (tuple(w), i + 1)]
+                    E.append(((tv, i), (tv, i + 1)))
+                    E.append(((tv, i), (tuple(w), i + 1)))
+                    w[i] += 1  # Flip the ith bit back
         else:
             raise NotImplementedError("vertices must be 'strings' or 'vectors'")
-        return DiGraph(butterfly, name="{}-dimensional Butterfly".format(n))
+        # Set position of vertices
+        pos = dict()
+        dec = 2**n // n
+        for i, v in enumerate(sorted(V, reverse=True)):
+            for x in range(n + 1):
+                pos[v, x] = (dec * x, i)
+        return DiGraph([pos.keys(), E], format='vertices_and_edges', pos=pos,
+                       name="{}-dimensional Butterfly".format(n))
 
     def Path(self, n):
         r"""
@@ -314,7 +334,7 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: g = digraphs.Path(5)
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             [0, 1, 2, 3, 4]
             sage: g.size()
             4
@@ -326,8 +346,55 @@ class DiGraphGenerators():
         if n:
             g.add_path(list(range(n)))
 
-        g.set_pos({i: (i,0) for i in range(n)})
+        g.set_pos({i: (i, 0) for i in range(n)})
         return g
+
+    def StronglyRegular(self, n):
+        r"""
+        Return a Strongly Regular digraph with `n` vertices.
+
+        The adjacency matrix of the graph is constructed from a skew Hadamard
+        matrix of order `n+1`. These graphs were first constructed in [Duv1988]_.
+
+        INPUT:
+
+        - ``n`` -- integer, the number of vertices of the digraph.
+
+        .. SEEALSO::
+
+            - :func:`sage.combinat.matrices.hadamard_matrix.skew_hadamard_matrix`
+            - :meth:`Paley`
+
+        EXAMPLES:
+
+        A Strongly Regular digraph satisfies the condition `AJ = JA = kJ` where
+        `A` is the adjacency matrix::
+
+            sage: g = digraphs.StronglyRegular(7); g
+            Strongly regular digraph: Digraph on 7 vertices
+            sage: A = g.adjacency_matrix()*ones_matrix(7); B = ones_matrix(7)*g.adjacency_matrix()
+            sage: A == B == A[0, 0]*ones_matrix(7)
+            True
+
+        TESTS:
+
+        Wrong parameter::
+
+            sage: digraphs.StronglyRegular(73)
+            Traceback (most recent call last):
+            ...
+            ValueError: strongly regular digraph with 73 vertices not yet implemented
+
+        """
+        from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
+        from sage.matrix.constructor import ones_matrix, identity_matrix
+        if skew_hadamard_matrix(n + 1, existence=True) is not True:
+            raise ValueError(f'strongly regular digraph with {n} vertices not yet implemented')
+
+        H = skew_hadamard_matrix(n + 1, skew_normalize=True)
+        M = H[1:, 1:]
+        M = (M + ones_matrix(n)) / 2 - identity_matrix(n)
+        return DiGraph(M, format='adjacency_matrix', name='Strongly regular digraph')
 
     def Paley(self, q):
         r"""
@@ -373,13 +440,15 @@ class DiGraphGenerators():
         """
         from sage.rings.finite_rings.integer_mod import mod
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
-        from sage.arith.all import is_prime_power
+        from sage.arith.misc import is_prime_power
         if not is_prime_power(q):
             raise ValueError("parameter q must be a prime power")
         if not mod(q, 4) == 3:
             raise ValueError("parameter q must be congruent to 3 mod 4")
-        g = DiGraph([FiniteField(q,'a'), lambda i,j: (i!=j) and (j-i).is_square()],
-                    loops=False, name="Paley digraph with parameter {}".format(q))
+        g = DiGraph([FiniteField(q, 'a'),
+                     lambda i, j: (i != j) and (j - i).is_square()],
+                    loops=False,
+                    name="Paley digraph with parameter {}".format(q))
         return g
 
     def TransitiveTournament(self, n):
@@ -397,7 +466,7 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: g = digraphs.TransitiveTournament(5)
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             [0, 1, 2, 3, 4]
             sage: g.size()
             10
@@ -502,7 +571,7 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: for g in digraphs.tournaments_nauty(4):
-            ....:     print(g.edges(labels = False))
+            ....:     print(g.edges(sort=True, labels = False))
             [(1, 0), (2, 0), (2, 1), (3, 0), (3, 1), (3, 2)]
             [(1, 0), (1, 3), (2, 0), (2, 1), (3, 0), (3, 2)]
             [(0, 2), (1, 0), (2, 1), (3, 0), (3, 1), (3, 2)]
@@ -526,9 +595,14 @@ class DiGraphGenerators():
         if strongly_connected:
             nauty_input += " -c"
 
-        nauty_input +=  " " + str(n) + " "
+        nauty_input += " " + str(n) + " "
 
-        sp = subprocess.Popen(nautyprefix+"gentourng {0}".format(nauty_input), shell=True,
+        import shlex
+        from sage.features.nauty import NautyExecutable
+        gentourng_path = NautyExecutable("gentourng").absolute_filename()
+
+        sp = subprocess.Popen(shlex.quote(gentourng_path) + " {0}".format(nauty_input),
+                              shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, close_fds=True)
 
@@ -623,6 +697,9 @@ class DiGraphGenerators():
         .. SEEALSO::
 
             - :meth:`~sage.graphs.graph.Graph.orientations`
+            - :meth:`~sage.graphs.graph.Graph.strong_orientation`
+            - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
+            - :meth:`~sage.graphs.orientations.random_orientation`
         """
         if '-u' in options or '-T' in options or '-G' in options:
             raise ValueError("directg output options [-u|-T|-G] are not allowed")
@@ -636,8 +713,13 @@ class DiGraphGenerators():
             options += ' -q'
 
         # Build directg input (graphs6 format)
-        input = ''.join(g.graph6_string()+'\n' for g in graphs)
-        sub = subprocess.Popen(nautyprefix+'directg {0}'.format(options),
+        input = ''.join(g.graph6_string() + '\n' for g in graphs)
+
+        import shlex
+        from sage.features.nauty import NautyExecutable
+        directg_path = NautyExecutable("directg").absolute_filename()
+
+        sub = subprocess.Popen(shlex.quote(directg_path) + ' {0}'.format(options),
                                shell=True,
                                stdout=subprocess.PIPE,
                                stdin=subprocess.PIPE,
@@ -652,14 +734,14 @@ class DiGraphGenerators():
             if out:
                 print(out)
 
-        for l in out.split('\n'):
+        for line in out.split('\n'):
             # directg return graphs in the digraph6 format.
             # digraph6 is very similar with the dig6 format used in sage :
             # digraph6_string = '&' +  dig6_string
             # digraph6 specifications:
             # http://users.cecs.anu.edu.au/~bdm/data/formats.txt
-            if l and l[0] == '&':
-                yield DiGraph(l[1:], format='dig6')
+            if line and line[0] == '&':
+                yield DiGraph(line[1:], format='dig6')
 
     def Complete(self, n, loops=False):
         r"""
@@ -728,6 +810,7 @@ class DiGraphGenerators():
         elif n:
             g.add_edges(zip(range(n - 1), range(1, n)))
             g.add_edge(n - 1, 0)
+            g._circle_embedding(list(range(n)))
         return g
 
     def Circulant(self, n, integers):
@@ -763,7 +846,7 @@ class DiGraphGenerators():
         # Bad input and loops
         loops = False
         for i in integers:
-            if not i in ZZ:
+            if i not in ZZ:
                 raise ValueError("the list must contain only integers")
             if not i % n:
                 loops = True
@@ -817,12 +900,12 @@ class DiGraphGenerators():
         Building a de Bruijn digraph on a different alphabet::
 
             sage: g = digraphs.DeBruijn(['a', 'b'], 2)
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             ['aa', 'ab', 'ba', 'bb']
             sage: g.is_isomorphic(db)
             True
             sage: g = digraphs.DeBruijn(['AA', 'BB'], 2)
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             ['AA,AA', 'AA,BB', 'BB,AA', 'BB,BB']
             sage: g.is_isomorphic(db)
             True
@@ -839,10 +922,10 @@ class DiGraphGenerators():
         :trac:`22355`::
 
             sage: db = digraphs.DeBruijn(2, 2, vertices='strings')
-            sage: db.vertices()
+            sage: db.vertices(sort=True)
             ['00', '01', '10', '11']
             sage: h = digraphs.DeBruijn(2, 2, vertices='integers')
-            sage: h.vertices()
+            sage: h.vertices(sort=True)
             [0, 1, 2, 3]
             sage: db.is_isomorphic(h)
             True
@@ -946,7 +1029,6 @@ class DiGraphGenerators():
                 GB.add_edge(u, a % n)
         return GB
 
-
     def ImaseItoh(self, n, d):
         r"""
         Return the Imase-Itoh digraph of order `n` and degree `d`.
@@ -1012,7 +1094,6 @@ class DiGraphGenerators():
                 II.add_edge(u, a % n)
         return II
 
-
     def Kautz(self, k, D, vertices='strings'):
         r"""
         Return the Kautz digraph of degree `d` and diameter `D`.
@@ -1060,13 +1141,20 @@ class DiGraphGenerators():
              '120': 5, '121': 4, '201': 1, '202': 0, '210': 2, '212': 3}
 
             sage: K = digraphs.Kautz([1,'a','B'], 2)
-            sage: K.edges()
-            [('1B', 'B1', '1'), ('1B', 'Ba', 'a'), ('1a', 'a1', '1'), ('1a', 'aB', 'B'), ('B1', '1B', 'B'), ('B1', '1a', 'a'), ('Ba', 'a1', '1'), ('Ba', 'aB', 'B'), ('a1', '1B', 'B'), ('a1', '1a', 'a'), ('aB', 'B1', '1'), ('aB', 'Ba', 'a')]
+            sage: K.edges(sort=True)
+            [('1B', 'B1', '1'), ('1B', 'Ba', 'a'), ('1a', 'a1', '1'),
+             ('1a', 'aB', 'B'), ('B1', '1B', 'B'), ('B1', '1a', 'a'),
+             ('Ba', 'a1', '1'), ('Ba', 'aB', 'B'), ('a1', '1B', 'B'),
+             ('a1', '1a', 'a'), ('aB', 'B1', '1'), ('aB', 'Ba', 'a')]
 
             sage: K = digraphs.Kautz([1,'aA','BB'], 2)
-            sage: K.edges()
-            [('1,BB', 'BB,1', '1'), ('1,BB', 'BB,aA', 'aA'), ('1,aA', 'aA,1', '1'), ('1,aA', 'aA,BB', 'BB'), ('BB,1', '1,BB', 'BB'), ('BB,1', '1,aA', 'aA'), ('BB,aA', 'aA,1', '1'), ('BB,aA', 'aA,BB', 'BB'), ('aA,1', '1,BB', 'BB'), ('aA,1', '1,aA', 'aA'), ('aA,BB', 'BB,1', '1'), ('aA,BB', 'BB,aA', 'aA')]
-
+            sage: K.edges(sort=True)
+            [('1,BB', 'BB,1', '1'), ('1,BB', 'BB,aA', 'aA'),
+             ('1,aA', 'aA,1', '1'), ('1,aA', 'aA,BB', 'BB'),
+             ('BB,1', '1,BB', 'BB'), ('BB,1', '1,aA', 'aA'),
+             ('BB,aA', 'aA,1', '1'), ('BB,aA', 'aA,BB', 'BB'),
+             ('aA,1', '1,BB', 'BB'), ('aA,1', '1,aA', 'aA'),
+             ('aA,BB', 'BB,1', '1'), ('aA,BB', 'BB,aA', 'aA')]
 
         TESTS:
 
@@ -1093,17 +1181,17 @@ class DiGraphGenerators():
         :trac:`22355`::
 
             sage: K = digraphs.Kautz(2, 2, vertices='strings')
-            sage: K.vertices()
+            sage: K.vertices(sort=True)
             ['01', '02', '10', '12', '20', '21']
             sage: h = digraphs.Kautz(2, 2, vertices='integers')
-            sage: h.vertices()
+            sage: h.vertices(sort=True)
             [0, 1, 2, 3, 4, 5]
             sage: h.is_isomorphic(K)
             True
             sage: h = digraphs.Kautz([1,'aA','BB'], 2, vertices='integers')
             sage: h.is_isomorphic(K)
             True
-            sage: h.vertices()
+            sage: h.vertices(sort=True)
             [0, 1, 2, 3, 4, 5]
             sage: digraphs.Kautz(2, 2, vertices='circles')
             Traceback (most recent call last):
@@ -1218,7 +1306,7 @@ class DiGraphGenerators():
         # integers are on 31 bits. We thus set the pivot value to p*2^31
         from sage.misc.prandom import randint
         from sage.misc.randstate import random
-        RAND_MAX_f = float(1<<31)
+        RAND_MAX_f = float(1 << 31)
         pp = int(round(float(p * RAND_MAX_f)))
 
         if weight_max is None:
@@ -1232,11 +1320,11 @@ class DiGraphGenerators():
 
             D = DiGraph(n, name=f"RandomWeightedDAG({n}, {p}, {weight_max})")
             D.add_edges((i, j, randint(1, weight_max))
-                            for i in range(n) for j in range(i) if random() < pp)
+                        for i in range(n) for j in range(i) if random() < pp)
 
         return D
 
-    def RandomDirectedGN(self, n, kernel=lambda x:x, seed=None):
+    def RandomDirectedGN(self, n, kernel=lambda x: x, seed=None):
         r"""
         Return a random growing network (GN) digraph with `n` vertices.
 
@@ -1343,7 +1431,7 @@ class DiGraphGenerators():
         if seed is None:
             seed = current_randstate().long_seed()
 
-        return RandomGNP(n, p, directed=True, loops=loops)
+        return RandomGNP(n, p, directed=True, loops=loops, seed=seed)
 
     def RandomDirectedGNM(self, n, m, loops=False):
         r"""
@@ -1456,7 +1544,7 @@ class DiGraphGenerators():
             u = int(rand.random() * n)
             v = int(rand.random() * n)
 
-            if (u != v or loops) and (not v in adj[u]):
+            if (u != v or loops) and (v not in adj[u]):
                 adj[u][v] = 1
                 m -= 1
                 if not is_dense:
@@ -1639,9 +1727,11 @@ class DiGraphGenerators():
         """
         from copy import copy as copyfun
         if size is not None:
-            extra_property = lambda x: x.size() == size
+            def extra_property(x):
+                return x.size() == size
         else:
-            extra_property = lambda x: True
+            def extra_property(x):
+                return True
         if augment == 'vertices':
             if vertices is None:
                 raise NotImplementedError

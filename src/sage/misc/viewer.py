@@ -44,7 +44,7 @@ def default_viewer(viewer=None):
 
         sage: from sage.misc.viewer import default_viewer
         sage: default_viewer(None) # random -- depends on OS, etc.
-        'sage-open'
+        'open'
         sage: default_viewer('pdf') # random -- depends on OS, etc.
         'xdg-open'
         sage: default_viewer('jpg')
@@ -67,9 +67,7 @@ def default_viewer(viewer=None):
     elif os.uname()[0] == 'Darwin':
         # Simple on OS X, since there is an open command that opens
         # anything, using the user's preferences.
-        # sage-open -- a wrapper around OS X open that
-        # turns off any of Sage's special library stuff.
-        BROWSER = 'sage-open'
+        BROWSER = 'open'
         DVI_VIEWER = BROWSER
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER
@@ -163,7 +161,7 @@ class Viewer(SageObject):
 
         - ``app`` -- ``None`` or a string, the program to use
         - ``TYPE`` -- a string, must be in the list ``VIEWERS`` defined in
-          :module:`sage.misc.viewer`.  Default 'browser'.
+          :mod:`sage.misc.viewer`.  Default 'browser'.
 
         EXAMPLES::
 
@@ -313,18 +311,13 @@ def browser():
     program, call ``viewer.browser('PROG')``, where 'PROG' is the
     desired program.
 
-    This will start with 'sage-native-execute', which sets the
-    environment appropriately.
-
     EXAMPLES::
 
         sage: from sage.misc.viewer import browser
         sage: browser() # random -- depends on OS, etc.
-        'sage-native-execute sage-open'
-        sage: browser().startswith('sage-native-execute')
-        True
+        'open'
     """
-    return "sage-native-execute " + viewer.browser()
+    return viewer.browser()
 
 def dvi_viewer():
     """
@@ -334,19 +327,14 @@ def dvi_viewer():
     program, call ``viewer.dvi_viewer('PROG')``, where 'PROG' is the
     desired program.
 
-    This will start with 'sage-native-execute', which sets the
-    environment appropriately.
-
     EXAMPLES::
 
         sage: from sage.misc.viewer import dvi_viewer
         sage: dvi_viewer() # random -- depends on OS, etc.
-        'sage-native-execute sage-open'
-        sage: dvi_viewer().startswith('sage-native-execute')
-        True
+        'open'
     """
     viewer()
-    return "sage-native-execute " + viewer.dvi_viewer()
+    return viewer.dvi_viewer()
 
 def pdf_viewer():
     """
@@ -356,20 +344,17 @@ def pdf_viewer():
     program, call ``viewer.pdf_viewer('PROG')``, where 'PROG' is the
     desired program.
 
-    This will start with 'sage-native-execute', which sets the
-    environment appropriately.
-
     EXAMPLES::
 
         sage: from sage.misc.viewer import pdf_viewer, viewer
         sage: old_pdf_app = viewer.pdf_viewer()
         sage: viewer.pdf_viewer('acroread')
         sage: pdf_viewer()
-        'sage-native-execute acroread'
+        'acroread'
         sage: viewer.pdf_viewer('old_pdf_app')
     """
     viewer()
-    return "sage-native-execute " + viewer.pdf_viewer()
+    return viewer.pdf_viewer()
 
 def png_viewer():
     """
@@ -379,16 +364,11 @@ def png_viewer():
     program, call ``viewer.png_viewer('PROG')``, where 'PROG' is the
     desired program.
 
-    This will start with 'sage-native-execute', which sets the
-    environment appropriately.
-
     EXAMPLES::
 
         sage: from sage.misc.viewer import png_viewer
         sage: png_viewer() # random -- depends on OS, etc.
-        'sage-native-execute xdg-open'
-        sage: png_viewer().startswith('sage-native-execute')
-        True
+        'xdg-open'
     """
     viewer()
-    return "sage-native-execute " + viewer.png_viewer()
+    return viewer.png_viewer()

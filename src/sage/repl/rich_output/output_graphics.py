@@ -14,10 +14,8 @@ and raster graphics.
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
-import os
 import base64
+import importlib.resources
 
 from sage.cpython.string import bytes_to_str
 from sage.repl.rich_output.output_basic import OutputBase
@@ -74,10 +72,7 @@ class OutputImagePng(OutputBase):
             sage: OutputImagePng.example().png.get().startswith(b'\x89PNG')
             True
         """
-        from sage.env import SAGE_EXTCODE
-        filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.png')
-        with open(filename, 'rb') as f:
-            return cls(f.read())
+        return cls(importlib.resources.read_binary(__package__, 'example.png'))
 
 
 class OutputImageGif(OutputBase):
@@ -125,10 +120,7 @@ class OutputImageGif(OutputBase):
             sage: OutputImageGif.example().gif.get().startswith(b'GIF89a')
             True
         """
-        from sage.env import SAGE_EXTCODE
-        filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.gif')
-        with open(filename, 'rb') as f:
-            return cls(f.read())
+        return cls(importlib.resources.read_binary(__package__, 'example.gif'))
 
     def html_fragment(self):
         """
@@ -195,10 +187,7 @@ class OutputImageJpg(OutputBase):
             sage: OutputImageJpg.example().jpg.get().startswith(b'\xff\xd8\xff\xe0\x00\x10JFIF')
             True
         """
-        from sage.env import SAGE_EXTCODE
-        filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.jpg')
-        with open(filename, 'rb') as f:
-            return cls(f.read())
+        return cls(importlib.resources.read_binary(__package__, 'example.jpg'))
 
 
 class OutputImageSvg(OutputBase):
@@ -246,10 +235,7 @@ class OutputImageSvg(OutputBase):
             sage: b'</svg>' in OutputImageSvg.example().svg.get()
             True
         """
-        from sage.env import SAGE_EXTCODE
-        filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.svg')
-        with open(filename, 'rb') as f:
-            return cls(f.read())
+        return cls(importlib.resources.read_binary(__package__, 'example.svg'))
 
 
 class OutputImagePdf(OutputBase):
@@ -297,10 +283,7 @@ class OutputImagePdf(OutputBase):
             sage: OutputImagePdf.example().pdf.get().startswith(b'%PDF-1.4')
             True
         """
-        from sage.env import SAGE_EXTCODE
-        filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.pdf')
-        with open(filename, 'rb') as f:
-            return cls(f.read())
+        return cls(importlib.resources.read_binary(__package__, 'example.pdf'))
 
 
 class OutputImageDvi(OutputBase):
@@ -348,7 +331,4 @@ class OutputImageDvi(OutputBase):
             sage: b'TeX output' in OutputImageDvi.example().dvi.get()
             True
         """
-        from sage.env import SAGE_EXTCODE
-        filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.dvi')
-        with open(filename, 'rb') as f:
-            return cls(f.read())
+        return cls(importlib.resources.read_binary(__package__, 'example.dvi'))

@@ -150,7 +150,7 @@ language works). Use square brackets or the set function::
 import os
 
 from .expect import Expect, ExpectElement
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 class Matlab(Expect):
@@ -170,15 +170,15 @@ class Matlab(Expect):
     def __init__(self, maxread=None, script_subdirectory=None,
                  logfile=None, server=None,server_tmpdir=None):
         Expect.__init__(self,
-                        name = 'matlab',
-                        prompt = '>> ',
-                        command = "sage-native-execute matlab -nodisplay",
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        script_subdirectory = script_subdirectory,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
-                        logfile = logfile,
+                        name='matlab',
+                        prompt='>> ',
+                        command="matlab -nodisplay",
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        script_subdirectory=script_subdirectory,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
+                        logfile=logfile,
                         eval_using_file_cutoff=100)
 
     def __reduce__(self):
@@ -273,7 +273,6 @@ for hints on how to do that).
         i = s.find('=')
         return s[i+1:].strip('\n')
 
-
     def console(self):
         matlab_console()
 
@@ -343,7 +342,7 @@ class MatlabElement(ExpectElement):
             50 x 50 dense matrix over Real Field with 53 bits of precision
 
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         matlab = self.parent()
         entries = matlab.strip_answer(matlab.eval("mat2str({0})".format(self.name())))
         entries = entries.strip()[1:-1].replace(';', ' ')

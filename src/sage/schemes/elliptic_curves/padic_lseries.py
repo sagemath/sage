@@ -61,28 +61,33 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-from sage.rings.integer_ring import   ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.padics.factory import Qp
-from sage.rings.infinity import infinity
-from sage.rings.all import LaurentSeriesRing, PowerSeriesRing, PolynomialRing, Integers
-
-from sage.rings.integer import Integer
-from sage.arith.all import valuation, binomial, kronecker_symbol, gcd, prime_divisors
-
-from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import richcmp_method, richcmp
-
-from sage.misc.all import denominator
-from sage.misc.verbose import verbose, get_verbose
-import sage.arith.all as arith
-
-from sage.modules.free_module_element import vector
 import sage.matrix.all as matrix
 import sage.schemes.hyperelliptic_curves.monsky_washnitzer
+
+from sage.arith.functions import lcm as LCM
+from sage.arith.misc import (binomial,
+                             GCD as gcd,
+                             prime_divisors,
+                             kronecker as kronecker_symbol,
+                             valuation)
 from sage.functions.log import log
 from sage.functions.other import floor
 from sage.misc.cachefunc import cached_method
+from sage.misc.functional import denominator
+from sage.misc.verbose import get_verbose, verbose
+from sage.modules.free_module_element import vector
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.padics.factory import Qp
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.structure.richcmp import richcmp_method, richcmp
+from sage.structure.sage_object import SageObject
+
 
 @richcmp_method
 class pAdicLseries(SageObject):
@@ -144,20 +149,20 @@ class pAdicLseries(SageObject):
         sage: lp == loads(dumps(lp))
         True
     """
-    def __init__(self, E, p, implementation = 'eclib', normalize='L_ratio'):
+    def __init__(self, E, p, implementation='eclib', normalize='L_ratio'):
         r"""
         INPUT:
 
-        -  ``E`` -- an elliptic curve
-        -  ``p`` -- a prime of good reduction
-        -  ``implementation`` -- string (default:'eclib'); either 'eclib' to use
-           John Cremona's ``eclib`` for the computation of modular
-           symbols, 'num' to use numerical modular symbols
-           or 'sage' to use Sage's own implementation
-        -  ``normalize`` -- ``'L_ratio'`` (default), ``'period'`` or ``'none'``;
-           this is describes the way the modular symbols
-           are normalized. See ``modular_symbol`` of
-           an elliptic curve over Q for more details.
+        - ``E`` -- an elliptic curve
+        - ``p`` -- a prime of good reduction
+        - ``implementation`` -- string (default: 'eclib'); either 'eclib' to use
+          John Cremona's ``eclib`` for the computation of modular
+          symbols, 'num' to use numerical modular symbols
+          or 'sage' to use Sage's own implementation
+        - ``normalize`` -- ``'L_ratio'`` (default), ``'period'`` or ``'none'``;
+          this is describes the way the modular symbols
+          are normalized. See ``modular_symbol`` of
+          an elliptic curve over Q for more details.
 
         EXAMPLES::
 
@@ -284,11 +289,11 @@ class pAdicLseries(SageObject):
 
         INPUT:
 
-        -  ``r`` -- a cusp given as either a rational number or oo
+        - ``r`` -- a cusp given as either a rational number or oo
 
-        -  ``sign`` -- +1 (default) or -1 (only implemented without twists)
+        - ``sign`` -- +1 (default) or -1 (only implemented without twists)
 
-        -  ``quadratic_twist`` -- a fundamental discriminant of a quadratic field or +1 (default)
+        - ``quadratic_twist`` -- a fundamental discriminant of a quadratic field or +1 (default)
 
         EXAMPLES::
 
@@ -338,13 +343,13 @@ class pAdicLseries(SageObject):
                 return -sum([kronecker_symbol(D, u) * m(r + ZZ(u) / D)
                              for u in range(1, -D)])
 
-    def measure(self, a, n, prec, quadratic_twist=+1, sign = +1):
+    def measure(self, a, n, prec, quadratic_twist=+1, sign=+1):
         r"""
         Return the measure on `\ZZ_p^{\times}` defined by
 
-           `\mu_{E,\alpha}^+ ( a + p^n \ZZ_p  ) =
-           \frac{1}{\alpha^n} \left [\frac{a}{p^n}\right]^{+} -
-           \frac{1}{\alpha^{n+1}} \left[\frac{a}{p^{n-1}}\right]^{+}`
+            `\mu_{E,\alpha}^+ ( a + p^n \ZZ_p  ) =
+            \frac{1}{\alpha^n} \left [\frac{a}{p^n}\right]^{+} -
+            \frac{1}{\alpha^{n+1}} \left[\frac{a}{p^{n-1}}\right]^{+}`
 
         where `[\cdot]^{+}` is the modular symbol. This is used to define
         this `p`-adic L-function (at least when the reduction is good).
@@ -369,14 +374,14 @@ class pAdicLseries(SageObject):
 
         INPUT:
 
-        -  ``a`` -- an integer
+        - ``a`` -- an integer
 
-        -  ``n`` -- a non-negative integer
+        - ``n`` -- a non-negative integer
 
-        -  ``prec`` -- an integer
+        - ``prec`` -- an integer
 
-        -  ``quadratic_twist`` (default = 1) -- a fundamental discriminant of a quadratic field,
-           should be coprime to the conductor of `E`
+        - ``quadratic_twist`` (default = 1) -- a fundamental discriminant of a quadratic field,
+          should be coprime to the conductor of `E`
 
         - ``sign`` (default = 1) -- an integer, which should be `\pm 1`.
 
@@ -582,7 +587,7 @@ class pAdicLseries(SageObject):
 
         INPUT:
 
-        - ``prec`` - a positive integer.
+        - ``prec`` -- a positive integer.
 
         OUTPUT:
 
@@ -751,12 +756,12 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         INPUT:
 
-        -  ``n`` - (default: 2) a positive integer
-        -  ``quadratic_twist`` - (default: +1) a fundamental discriminant of a
-           quadratic field, coprime to the conductor of the curve
-        -  ``prec`` - (default: 5) maximal number of terms of the series to
-           compute; to compute as many as possible just give a very large
-           number for ``prec``; the result will still be correct.
+        - ``n`` -- (default: 2) a positive integer
+        - ``quadratic_twist`` -- (default: +1) a fundamental discriminant of a
+          quadratic field, coprime to the conductor of the curve
+        - ``prec`` -- (default: 5) maximal number of terms of the series to
+          compute; to compute as many as possible just give a very large
+          number for ``prec``; the result will still be correct.
         - ``eta`` (default: 0) an integer (specifying the power of the
           Teichmueller character on the group of roots of unity in
           `\ZZ_p^\times`)
@@ -841,6 +846,18 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: lp = E.padic_lseries(2)
             sage: lp.series(6)
             2^2 + 2^6 + O(2^7) + (2 + O(2^4))*T + O(2^3)*T^2 + (2^2 + O(2^3))*T^3 + (2 + O(2^2))*T^4 + O(T^5)
+
+        Check that twists by odd Teichmuller characters are ok (:trac:`32258`)::
+
+            sage: E = EllipticCurve("443c1")
+            sage: lp = E.padic_lseries(17, implementation="num")
+            sage: l8 = lp.series(2,eta=8,prec=3)
+            sage: l8.list()[0] - 1/lp.alpha()
+            O(17^4)
+            sage: lp = E.padic_lseries(2, implementation="num")
+            sage: l1 = lp.series(8,eta=1,prec=3)
+            sage: l1.list()[0] - 4/lp.alpha()^2
+            O(2^9)
         """
         n = ZZ(n)
         if n < 1:
@@ -851,7 +868,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             raise ValueError("Insufficient precision (%s)" % prec)
 
         # check if the conditions on quadratic_twist are satisfied
-        eta = ZZ(eta) % (self._p - 1)
+        eta = ZZ(eta) % (self._p- 1) if self._p != 2 else ZZ(eta) % 2
         D = ZZ(quadratic_twist)
         if D != 1:
             if eta != 0:
@@ -870,6 +887,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
                     if valuation(self._E.conductor(), ell) > valuation(D, ell):
                         raise ValueError("cannot twist a curve of conductor (=%s) by the quadratic twist (=%s)."%(self._E.conductor(),D))
         p = self._p
+        si = 1-2*(eta % 2)
 
         #verbose("computing L-series for p=%s, n=%s, and prec=%s"%(p,n,prec))
 
@@ -891,17 +909,9 @@ class pAdicLseriesOrdinary(pAdicLseries):
                 return L
             else:
                 # here we need some sums anyway
-                if eta % 2 == 1:
-                    si = ZZ(-1)
-                else:
-                    si = ZZ(1)
                 bounds = self._prec_bounds(n,prec,sign=si)
                 padic_prec = 20
         else:
-            if eta % 2 == 1:
-                si = ZZ(-1)
-            else:
-                si = ZZ(1)
             bounds = self._prec_bounds(n,prec,sign=si)
             padic_prec = max(bounds[1:]) + 5
 
@@ -926,7 +936,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         gamma_power = K(1)
         teich = self.teichmuller(padic_prec)
         if p == 2:
-            teich = [0, 1,-1]
+            teich = [0, 1, -1]
             gamma = K(5)
             p_power = 2**(n-2)
             a_range = 3
@@ -935,7 +945,6 @@ class pAdicLseriesOrdinary(pAdicLseries):
             gamma = K(1+ p)
             p_power = p**(n-1)
             a_range = p
-        si = 1-2*(eta % 2)
 
         verbose("Now iterating over %s summands"%((p-1)*p_power))
         verbose_level = get_verbose()
@@ -964,7 +973,9 @@ class pAdicLseriesOrdinary(pAdicLseries):
                  [aj[j].add_bigoh(bounds[j]) for j in range(1,len(aj))]
         L = R(aj,res_series_prec )
 
-        L /= self._quotient_of_periods_to_twist(D)*self._E.real_components()
+        L /= self._quotient_of_periods_to_twist(D)
+        if si == +1:
+            L /= self._E.real_components()
 
         self._set_series_in_cache(n, res_series_prec, D, eta, L)
 
@@ -1154,12 +1165,12 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         INPUT:
 
-        -  ``n`` - (default: 2) a positive integer
-        -  ``quadratic_twist`` - (default: +1) a fundamental discriminant of a
-           quadratic field, coprime to the conductor of the curve
-        -  ``prec`` - (default: 5) maximal number of terms of the series to
-           compute; to compute as many as possible just give a very large
-           number for ``prec``; the result will still be correct.
+        - ``n`` -- (default: 2) a positive integer
+        - ``quadratic_twist`` -- (default: +1) a fundamental discriminant of a
+          quadratic field, coprime to the conductor of the curve
+        - ``prec`` -- (default: 5) maximal number of terms of the series to
+          compute; to compute as many as possible just give a very large
+          number for ``prec``; the result will still be correct.
         - ``eta`` (default: 0) an integer (specifying the power of the
           Teichmueller character on the group of roots of unity in
           `\ZZ_p^\times`)
@@ -1226,9 +1237,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
                         raise ValueError("cannot twist a curve of conductor (=%s) by the quadratic twist (=%s)." % (self._E.conductor(), D))
 
         p = self._p
-        eta = ZZ(eta) % (p - 1)
-        #if p == 2 and self._normalize:
-            #print('Warning : for p = 2 the normalization might not be correct !')
+        eta = ZZ(eta) % (p - 1) if p != 2 else ZZ(eta) % 2
 
         if prec == 1:
             if eta == 0:
@@ -1306,7 +1315,9 @@ class pAdicLseriesSupersingular(pAdicLseries):
                 bj.append( aj[j].add_bigoh(bounds[j]) )
                 j += 1
             L = R(bj, prec)
-        L /= self._quotient_of_periods_to_twist(D)*self._E.real_components()
+        L /= self._quotient_of_periods_to_twist(D)
+        if si == +1:
+            L /= self._E.real_components()
         self._set_series_in_cache(n, prec, quadratic_twist, eta, L)
         return L
 
@@ -1411,8 +1422,8 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         INPUT:
 
-        -  ``n`` -- (default: 3) a positive integer
-        -  ``prec`` -- (default: 5) a positive integer
+        - ``n`` -- (default: 3) a positive integer
+        - ``prec`` -- (default: 5) a positive integer
 
         EXAMPLES::
 
@@ -1439,7 +1450,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         # now compute phi
         phi = matrix.matrix([[0,-1/p],[1,E.ap(p)/p]])
-        lpv = vector([G  + (E.ap(p))*H  , - R(p) * H ])  # this is L_p
+        lpv = vector([G + (E.ap(p))*H  , - R(p) * H ])  # this is L_p
         eps = (1-phi)**(-2)
         resu = lpv*eps.transpose()
         return resu
@@ -1453,9 +1464,9 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         INPUT:
 
-        - ``prec`` - (default: 20) a positive integer
+        - ``prec`` -- (default: 20) a positive integer
 
-        - ``algorithm`` - either 'mw' (default) for Monsky-Washnitzer
+        - ``algorithm`` -- either 'mw' (default) for Monsky-Washnitzer
           or 'approx' for the algorithm described by Bernardi and Perrin-Riou
           (much slower and not fully tested)
 
@@ -1495,7 +1506,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
                 raise ValueError("Curves must be isomorphic.")
             usq = (e1.discriminant()/e2.discriminant()).nth_root(6)
             u = usq.sqrt()
-            s = (u   *  e2.a1() - e1.a1() )/ZZ(2)
+            s = (u *  e2.a1() - e1.a1() )/ZZ(2)
             r = (usq *  e2.a2() - e1.a2() + s**2 + e1.a1()*s)/ZZ(3)
             t = (u**3 * e2.a3() - e1.a3() - e1.a1()*r)/ZZ(2)
             return [u,r,s,t]
@@ -1508,8 +1519,6 @@ class pAdicLseriesSupersingular(pAdicLseries):
         A = matrix.matrix([[u,-r/u],[0,1/u]])
         frn = A * fr * A**(-1)
         return 1/p*frn
-
-
 
     def __phi_bpr(self, prec=0):
         r"""
@@ -1539,8 +1548,6 @@ class pAdicLseriesSupersingular(pAdicLseries):
             sage: lp.frobenius(prec=5,algorithm="approx")
             [             3 + O(3^2) 2*3^-1 + 2 + 3 + O(3^2)]
             [     1 + 2*3^2 + O(3^3)            2*3 + O(3^2)]
-
-
         """
         E = self._E
         p = self._p
@@ -1548,9 +1555,9 @@ class pAdicLseriesSupersingular(pAdicLseries):
             print("Warning: Very large value for the precision.")
         if prec == 0:
             prec = floor((log(10000)/log(p)))
-            verbose("prec set to %s"%prec)
+            verbose("prec set to %s" % prec)
         eh = E.formal()
-        om = eh.differential(prec = p**prec+3)
+        om = eh.differential(prec=p**prec+3)
         verbose("differential computed")
         xt = eh.x(prec=p**prec + 3)
         et = xt*om
@@ -1663,8 +1670,8 @@ class pAdicLseriesSupersingular(pAdicLseries):
         elog = Ehat.log(prec + Integer(3))
 
         # we will have to do it properly with David Harvey's _multiply_point()
-        n = arith.LCM(E.tamagawa_numbers())
-        n = arith.LCM(n, E.Np(p)) # allowed here because E has good reduction at p
+        n = LCM(E.tamagawa_numbers())
+        n = LCM(n, E.Np(p)) # allowed here because E has good reduction at p
 
         def height(P,check=True):
             if P.is_finite_order():

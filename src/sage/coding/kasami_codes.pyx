@@ -196,12 +196,11 @@ class KasamiCode(AbstractLinearCode):
         self._t = t
         self._extended = extended
 
-        length = s-1
+        length = s - 1
         if extended:
             length += 1
 
-        super(KasamiCode, self).__init__(GF(2), length,
-                                         "GeneratorMatrix", "Syndrome")
+        super().__init__(GF(2), length, "GeneratorMatrix", "Syndrome")
 
     def parameters(self):
         r"""
@@ -322,7 +321,7 @@ class KasamiCode(AbstractLinearCode):
             sage: C.minimum_distance()
             3
         """
-        from sage.functions.log import log
+        from sage.misc.functional import log
 
         m = log(self._s, 2)
         F = GF(self._s)

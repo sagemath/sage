@@ -1,17 +1,18 @@
 r"""
 Finite dimensional modules with basis
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
-#******************************************************************************
+# *****************************************************************************
 
 import operator
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.fields import Fields
+from sage.categories.tensor import TensorProductsCategory
 from sage.misc.cachefunc import cached_method
 
 class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
@@ -83,7 +84,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             If ``self`` is a ring, ``action`` an action of ``self`` on
             a module `M` and `S` is a subset of `M`, we recover the
-            :Wikipedia:`Annihilator_%28ring_theory%29`. Similarly this
+            :wikipedia:`Annihilator_%28ring_theory%29`. Similarly this
             can be used to compute torsion or orthogonals.
 
             .. SEEALSO:: :meth:`annihilator_basis` for lots of examples.
@@ -265,7 +266,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             from sage.modules.free_module import FreeModule
             return FreeModule(base_ring, self.dimension())
 
-        def from_vector(self, vector, order=None):
+        def from_vector(self, vector, order=None, coerce=True):
             """
             Build an element of ``self`` from a vector.
 
@@ -283,7 +284,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     order = sorted(self.basis().keys())
                 except AttributeError: # Not a family, assume it is list-like
                     order = range(self.dimension())
-            return self._from_dict({order[i]: c for i,c in vector.iteritems()})
+            if not coerce or vector.base_ring() is self.base_ring():
+                return self._from_dict({order[i]: c for i,c in vector.items()},
+                                       coerce=False)
+            R = self.base_ring()
+            return self._from_dict({order[i]: R(c) for i,c in vector.items() if R(c)},
+                                   coerce=False, remove_zeros=False)
 
         def echelon_form(self, elements, row_reduced=False, order=None):
             r"""
@@ -339,15 +345,25 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: M = MatrixSpace(QQ, 3, 3)                                                                                     
-                sage: A = M([[0, 0, 2], [0, 0, 0], [0, 0, 0]])                                                                      
-                sage: M.echelon_form([A, A])                                                                                         
+                sage: M = MatrixSpace(QQ, 3, 3)
+                sage: A = M([[0, 0, 2], [0, 0, 0], [0, 0, 0]])
+                sage: M.echelon_form([A, A])
                 [
                 [0 0 1]
                 [0 0 0]
                 [0 0 0]
                 ]
+
+            TESTS:
+
+            We convert the input elements to ``self``::
+
+                sage: E.<x,y,z> = ExteriorAlgebra(QQ)
+                sage: E.echelon_form([1, x + 2])
+                [1, x]
             """
+            # Make sure elements consists of elements of ``self``
+            elements = [self(y) for y in elements]
             if order is not None:
                 order = self._compute_support_order(elements, order)
             from sage.matrix.constructor import matrix
@@ -443,7 +459,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             Create the isotypic component of the action of ``G`` on
             ``self`` with irreducible character given by ``chi``.
 
-            .. SEEALSO:
+            .. SEEALSO::
 
                 -:class:`~sage.modules.with_basis.invariant.FiniteDimensionalTwistedInvariantModule`
 
@@ -756,3 +772,19 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             return C.submodule(self.image_basis(), already_echelonized=True,
                                category=self.category_for())
 
+    class TensorProducts(TensorProductsCategory):
+
+        def extra_super_categories(self):
+            """
+            Implement the fact that a (finite) tensor product of
+            finite dimensional modules is a finite dimensional module.
+
+            EXAMPLES::
+
+                sage: ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts().extra_super_categories()
+                [Category of finite dimensional modules with basis over Integer Ring]
+                sage: ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts().FiniteDimensional()
+                Category of tensor products of finite dimensional modules with basis over Integer Ring
+
+            """
+            return [self.base_category()]

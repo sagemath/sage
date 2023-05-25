@@ -95,4 +95,3 @@ class SupercommutativeAlgebras(CategoryWithAxiom_over_base_ring):
                     tester.assertEqual((x * y),
                                        (-1)**(x.is_even_odd() * y.is_even_odd())
                                        * (y * x))
-

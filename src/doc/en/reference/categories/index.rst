@@ -1,11 +1,19 @@
 Category Framework
 ==================
 
+Introduction
+------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/categories/all
+
 The Sage Category Framework
 ---------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/primer
    sage/categories/category
@@ -17,7 +25,7 @@ Maps and Morphisms
 ------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/map
    sage/categories/homset
@@ -28,7 +36,7 @@ Individual Categories
 ---------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/action
    sage/categories/additive_groups
@@ -198,7 +206,7 @@ Technical Categories
 ~~~~~~~~~~~~~~~~~~~~
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/facade_sets
 
@@ -206,7 +214,7 @@ Functorial constructions
 ------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/covariant_functorial_construction
 
@@ -231,7 +239,7 @@ Examples of parents using categories
 -------------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/examples/algebras_with_basis
    sage/categories/examples/commutative_additive_monoids
@@ -268,7 +276,7 @@ Internals
 ---------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/categories/category_types
    sage/categories/category_singleton

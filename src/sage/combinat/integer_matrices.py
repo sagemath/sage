@@ -22,6 +22,7 @@ from sage.combinat.integer_lists import IntegerListsLex
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
 
+
 class IntegerMatrices(UniqueRepresentation, Parent):
     r"""
     The class of non-negative integer matrices with
@@ -293,6 +294,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         from sage.combinat.composition import Composition
         return Composition([entry for row in x for entry in row if entry != 0])
 
+
 def integer_matrices_generator(row_sums, column_sums):
     r"""
     Recursively generate the integer matrices with the prescribed row sums and
@@ -333,4 +335,3 @@ def integer_matrices_generator(row_sums, column_sums):
             t = [column_sums[i]-ci for (i, ci) in enumerate(comp)]
             for mat in integer_matrices_generator(row_sums[1:], t):
                 yield [list(comp)] + mat
-

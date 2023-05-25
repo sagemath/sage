@@ -175,7 +175,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
         Parent.__init__(self, category=Groups())
         self._vmodule = vector_field_module
 
-
     #### Parent methods ####
 
     def _element_constructor_(self, comp=[], frame=None, name=None,
@@ -265,7 +264,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
         return resu
 
     #### End of parent methods ####
-
 
     #### Monoid methods ####
 
@@ -615,4 +613,3 @@ class AutomorphismFieldParalGroup(FreeModuleLinearGroup):
             raise TypeError("{} is not a free module of vector fields".format(
                             vector_field_module))
         FreeModuleLinearGroup.__init__(self, vector_field_module)
-

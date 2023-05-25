@@ -26,8 +26,3 @@ Upstream Contact
 - Website: https://github.com/mkauers/ore_algebra/
 - Sage accounts: mkauers, mmezzarobba
 
-Dependencies
-------------
-
-- None
-

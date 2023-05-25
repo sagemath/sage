@@ -49,7 +49,9 @@ def RingHomset(R, S, category = None):
 
     """
     if quotient_ring.is_QuotientRing(R):
-        return RingHomset_quo_ring(R, S, category = category)
+        from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
+        if not is_PolynomialQuotientRing(R):  # backwards compatibility
+            return RingHomset_quo_ring(R, S, category = category)
     return RingHomset_generic(R, S, category = category)
 
 

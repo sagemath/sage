@@ -2,7 +2,7 @@ Mixed Differential Forms
 ========================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/manifolds/differentiable/mixed_form_algebra
 

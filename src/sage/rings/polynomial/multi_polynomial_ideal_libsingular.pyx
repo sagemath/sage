@@ -133,7 +133,7 @@ cdef ideal *sage_ideal_to_singular_ideal(I) except NULL:
     else:
         raise TypeError("Ring must be of type 'MPolynomialRing_libsingular'")
 
-    rChangeCurrRing(r);
+    rChangeCurrRing(r)
 
     i = idInit(len(gens),1)
     for j,f in enumerate(gens):
@@ -329,7 +329,7 @@ def interred_libsingular(I):
                 n = r.cf.cfInvers(n,r.cf)
             result.m[j] = pp_Mult_nn(p, n, r)
             p_Delete(&p,r)
-            n_Delete(&n,r)
+            n_Delete(&n,r.cf)
 
     id_Delete(&i,r)
 

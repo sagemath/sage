@@ -48,4 +48,3 @@ We test that the diagram of morphisms is commutative::
     sage: all(go2(n) for n in range(6))  # not tested (needs more morphisms)
     True
 """
-

@@ -49,7 +49,7 @@ if sys.platform == 'cygwin':
 elif sys.platform == 'darwin':
     # On OSX non-standard library paths are not automatically found by the
     # find_library implementation without setting DYLD_LIBRARY_PATH; see
-    # https://trac.sagemath.org/ticket/21399#comment:25
+    # https://github.com/sagemath/sage/issues/21399#comment:25
     from ctypes.util import find_library as _orig_find_library
 
     def _find_library(name):
@@ -93,8 +93,8 @@ def find_library(name):
     EXAMPLES::
 
         sage: from sage.misc.compat import find_library
-        sage: find_library('Singular')
-        '...Singular...'
+        sage: find_library('giac')
+        '...giac...'
 
     """
 

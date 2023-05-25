@@ -31,7 +31,8 @@ from traitlets import List, Unicode, link
 
 from sage.misc.sage_eval import sage_eval
 from sage.repl.user_globals import get_globals
-from sage.plot.colors import Color
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.colors", "Color")
 
 
 class HTMLText(HTMLMath):
@@ -47,10 +48,10 @@ class HTMLText(HTMLMath):
         sage: from sage.repl.ipython_kernel.widgets import HTMLText
         sage: w = HTMLText("Hello")
         sage: w.description
-        u''
+        ''
         sage: w.description = "text"
         sage: w.description
-        u''
+        ''
     """
     @property
     def description(self):
@@ -62,7 +63,7 @@ class HTMLText(HTMLMath):
             sage: from sage.repl.ipython_kernel.widgets import HTMLText
             sage: w = HTMLText("Hello")
             sage: w.description
-            u''
+            ''
         """
         return ''
 
@@ -77,12 +78,12 @@ class HTMLText(HTMLMath):
             sage: w = HTMLText("Hello")
             sage: w.description = "text"
             sage: w.description
-            u''
+            ''
         """
         pass
 
 
-class TransformWidget(object):
+class TransformWidget():
     """
     A mixin class for a widget to transform the bare widget value for
     use in interactive functions.
@@ -117,7 +118,7 @@ class TransformWidget(object):
             <... 'dict'>
         """
         self.__transform = kwds.pop("transform", None)
-        return super(TransformWidget, self).__init__(*args, **kwds)
+        return super().__init__(*args, **kwds)
 
     def get_value(self):
         """
@@ -274,9 +275,9 @@ class TransformText(TransformWidget, Text):
         sage: from sage.repl.ipython_kernel.widgets import TransformText
         sage: w = TransformText(value="hello", transform=lambda x: x+x)
         sage: w
-        TransformText(value=u'hello')
+        TransformText(value='hello')
         sage: w.get_interact_value()
-        u'hellohello'
+        'hellohello'
     """
     pass
 
@@ -291,9 +292,9 @@ class TransformTextarea(TransformWidget, Textarea):
         sage: from sage.repl.ipython_kernel.widgets import TransformTextarea
         sage: w = TransformTextarea(value="hello", transform=lambda x: x+x)
         sage: w
-        TransformTextarea(value=u'hello')
+        TransformTextarea(value='hello')
         sage: w.get_interact_value()
-        u'hellohello'
+        'hellohello'
     """
     pass
 
@@ -308,7 +309,7 @@ class EvalText(EvalWidget, Text):
         sage: from sage.repl.ipython_kernel.widgets import EvalText
         sage: w = EvalText(value="pi", transform=lambda x: x^2)
         sage: w
-        EvalText(value=u'pi')
+        EvalText(value='pi')
         sage: w.get_interact_value()
         pi^2
     """
@@ -325,7 +326,7 @@ class EvalTextarea(EvalWidget, Textarea):
         sage: from sage.repl.ipython_kernel.widgets import EvalTextarea
         sage: w = EvalTextarea(value="pi", transform=lambda x: x^2)
         sage: w
-        EvalTextarea(value=u'pi')
+        EvalTextarea(value='pi')
         sage: w.get_interact_value()
         pi^2
     """
@@ -369,9 +370,9 @@ class Grid(TransformWidget, HBox, ValueWidget):
         sage: from sage.repl.ipython_kernel.widgets import Grid
         sage: w = Grid(2, 2, lambda i,j: Text(value="%s,%s"%(i,j)))
         sage: w
-        Grid(value=[[u'0,0', u'0,1'], [u'1,0', u'1,1']], children=(Label(value=u''), VBox(children=(Text(value=u'0,0'), Text(value=u'1,0'))), VBox(children=(Text(value=u'0,1'), Text(value=u'1,1')))))
+        Grid(value=[['0,0', '0,1'], ['1,0', '1,1']], children=(Label(value=''), VBox(children=(Text(value='0,0'), Text(value='1,0'))), VBox(children=(Text(value='0,1'), Text(value='1,1')))))
         sage: w.get_interact_value()
-        [[u'0,0', u'0,1'], [u'1,0', u'1,1']]
+        [['0,0', '0,1'], ['1,0', '1,1']]
     """
     value = List()
     description = Unicode()
@@ -397,7 +398,7 @@ class Grid(TransformWidget, HBox, ValueWidget):
             sage: w = Grid(2, 2, lambda i,j: EvalText(str(j+4*i)),
             ....:         description="2x2 matrix", transform=matrix)
             sage: w
-            Grid(value=[[0, 1], [4, 5]], children=(Label(value=u'2x2 matrix'), VBox(children=(EvalText(value=u'0'), EvalText(value=u'4'))), VBox(children=(EvalText(value=u'1'), EvalText(value=u'5')))))
+            Grid(value=[[0, 1], [4, 5]], children=(Label(value='2x2 matrix'), VBox(children=(EvalText(value='0'), EvalText(value='4'))), VBox(children=(EvalText(value='1'), EvalText(value='5')))))
             sage: w.get_interact_value()
             [0 1]
             [4 5]
@@ -411,7 +412,7 @@ class Grid(TransformWidget, HBox, ValueWidget):
         """
         if nrows < 1 or ncols < 1:
             raise ValueError("Grid requires a positive number of rows and columns")
-        super(Grid, self).__init__(transform=transform)
+        super().__init__(transform=transform)
 
         label = Label(description)
         link((label, "value"), (self, "description"))
@@ -443,10 +444,10 @@ class Grid(TransformWidget, HBox, ValueWidget):
             sage: w = Grid(2, 2, lambda i,j: Text(value="%s,%s"%(i,j)))
             sage: w._update()
             sage: w.value
-            [[u'0,0', u'0,1'], [u'1,0', u'1,1']]
+            [['0,0', '0,1'], ['1,0', '1,1']]
             sage: w.cols[0].children[0].value = "abc"
             sage: w.value
-            [[u'abc', u'0,1'], [u'1,0', u'1,1']]
+            [['abc', '0,1'], ['1,0', '1,1']]
         """
         v = [[]]
         for col in self.cols:

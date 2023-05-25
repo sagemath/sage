@@ -147,7 +147,7 @@ cdef inline void bs_set(uint64_t * bitset, int index, int bit):
 
 cdef inline int bs_issubset64(uint64_t * b1, uint64_t b2, int limbs):
     r"""
-    Test whether bistet ``b1`` (on ``limbs`` blocks) is a subset of b2 (one block).
+    Test whether bitset ``b1`` (on ``limbs`` blocks) is a subset of b2 (one block).
 
     It implies in particular that all last `limbs-1` blocks of ``b1`` are equal
     to zero.
@@ -351,8 +351,8 @@ cdef class SubHypergraphSearch:
         EXAMPLES::
 
             sage: from sage.combinat.designs.subhypergraph_search import SubHypergraphSearch
-            sage: g1 = IncidenceStructure(graphs.PetersenGraph().edges(labels=False))
-            sage: g2 = IncidenceStructure(graphs.CycleGraph(5).edges(labels=False))
+            sage: g1 = IncidenceStructure(graphs.PetersenGraph().edges(sort=True, labels=False))
+            sage: g2 = IncidenceStructure(graphs.CycleGraph(5).edges(sort=True, labels=False))
             sage: S = SubHypergraphSearch(g1,g2,0)
             sage: sum(1 for _ in S)
             120
@@ -482,8 +482,8 @@ cdef class SubHypergraphSearch:
 
             sage: P = graphs.PetersenGraph()
             sage: C = graphs.CycleGraph(5)
-            sage: IP = IncidenceStructure(P.edges(labels=False))
-            sage: IC = IncidenceStructure(C.edges(labels=False))
+            sage: IP = IncidenceStructure(P.edges(sort=True, labels=False))
+            sage: IC = IncidenceStructure(C.edges(sort=True, labels=False))
             sage: sum(1 for _ in IP.isomorphic_substructures_iterator(IC))
             120
         """

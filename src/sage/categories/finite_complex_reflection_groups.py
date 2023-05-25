@@ -12,11 +12,10 @@ Finite Complex Reflection Groups
 # ****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 
 
 class FiniteComplexReflectionGroups(CategoryWithAxiom):
@@ -523,7 +522,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 [   1    0]
                 [E(4)    1]
             """
-            from sage.matrix.all import Matrix
+            from sage.matrix.constructor import Matrix
             return Matrix(list(self.independent_roots())).inverse()
 
     class ElementMethods:
@@ -758,6 +757,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     [1] 1
                     [] 0
                 """
+                from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+
                 if gens is None:
                     seeds = [(self.coxeter_element(), self.rank())]
                 else:
@@ -795,7 +796,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     sage: W = CoxeterGroup(['A', 3])
                     sage: len(list(W.elements_below_coxeter_element()))
                     doctest:...: DeprecationWarning: The method elements_below_coxeter_element is deprecated. Please use absolute_order_ideal instead.
-                    See https://trac.sagemath.org/27924 for details.
+                    See https://github.com/sagemath/sage/issues/27924 for details.
                     14
                 """
                 from sage.misc.superseded import deprecation
@@ -853,7 +854,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     sage: sorted( w.reduced_word() for w in W.noncrossing_partition_lattice(W.from_reduced_word([2])) ) # optional - gap3
                     [[], [2]]
                 """
-                from sage.combinat.posets.all import Poset, LatticePoset
+                from sage.combinat.posets.posets import Poset
+                from sage.combinat.posets.lattices import LatticePoset
 
                 R = self.reflections()
                 if L is None:
@@ -898,7 +900,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
 
                     sage: sorted([w.reduced_word() for w in chain]              # optional - gap3
-                    ....:        for chain in W.generalized_noncrossing_partitions(2))  # optional - gap3
+                    ....:        for chain in W.generalized_noncrossing_partitions(2))
                     [[[], [], [1, 2]],
                      [[], [1], [2]],
                      [[], [1, 2], []],
@@ -913,7 +915,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                      [[2], [1, 2, 1], []]]
 
                     sage: sorted([w.reduced_word() for w in chain]              # optional - gap3
-                    ....:        for chain in W.generalized_noncrossing_partitions(2, positive=True))   # optional - gap3
+                    ....:        for chain in W.generalized_noncrossing_partitions(2, positive=True))
                     [[[], [1, 2], []],
                      [[], [1, 2, 1], [1]],
                      [[1], [2], []],
@@ -1187,7 +1189,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                         sage: W.rational_catalan_number(3, polynomial=True)
                         q^6 + q^4 + q^3 + q^2 + 1
                     """
-                    from sage.arith.all import gcd
+                    from sage.arith.misc import GCD as gcd
                     from sage.combinat.q_analogues import q_int
 
                     h = self.coxeter_number()

@@ -79,4 +79,3 @@ class KacMoodyAlgebras(Category_over_base_ring):
             """
             from sage.combinat.root_system.weyl_group import WeylGroup
             return WeylGroup(self.cartan_type())
-

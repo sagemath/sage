@@ -1,2 +1,2 @@
-# gentoo uses 2.5
-networkx >=2.4, <2.6
+# features removed in 3.0 listed in https://networkx.org/documentation/stable/developer/deprecations.html#version-3-0
+networkx >=2.4, <3.0

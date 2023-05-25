@@ -10,7 +10,7 @@ Examples of a Lie algebra
 
 #from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
-from sage.categories.all import LieAlgebras
+from sage.categories.lie_algebras import LieAlgebras
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
@@ -75,7 +75,7 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
             sage: L1 is L2
             True
         """
-        return super(LieAlgebraFromAssociative, cls).__classcall__(cls, tuple(gens))
+        return super().__classcall__(cls, tuple(gens))
 
     def __init__(self, gens):
         """
@@ -193,7 +193,7 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
             """
             return not self.__eq__(rhs)
 
-        def __bool__(self):
+        def __bool__(self) -> bool:
             """
             Check non-zero.
 
@@ -206,8 +206,6 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
                 False
             """
             return bool(self.value)
-
-        __nonzero__ = __bool__
 
         def _add_(self, rhs):
             """
@@ -329,4 +327,3 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
             return self.__class__(self.parent(), self.value * rhs.value - rhs.value * self.value)
 
 Example = LieAlgebraFromAssociative
-

@@ -150,7 +150,7 @@ Sage содержит стандартные функции теории чис�
     Univariate Quotient Polynomial Ring in a over Rational Field with modulus
     x^3 + x^2 - 2*x + 8
     sage: K.units()
-    (3*a^2 + 13*a + 13,)
+    (-3*a^2 - 13*a - 13,)
     sage: K.discriminant()
     -503
     sage: K.class_group()

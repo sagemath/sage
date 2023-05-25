@@ -354,13 +354,12 @@ mutating at the initial seed::
 
 from copy import copy
 
+from sage.arith.misc import binomial
 from sage.categories.homset import Hom
 from sage.categories.morphism import SetMorphism
 from sage.categories.rings import Rings
 from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
 from sage.combinat.permutation import Permutation
-from sage.functions.generalized import sign
-from sage.functions.other import binomial
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan
 from sage.graphs.digraph import DiGraph
@@ -1332,14 +1331,14 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         # mutate_initial to name new cluster variables.
         splitnames = map(lambda w: w.partition(kwargs['cluster_variable_prefix']),
                 kwargs['cluster_variable_names'] + kwargs['coefficient_names'])
-        nfi = 1 + max([-1] + [int(v) for u, _, v in splitnames
-                              if u == '' and v.isdigit()])
+        nfi = 1 + max((int(v) for u, _, v in splitnames
+                       if u == '' and v.isdigit()), default=-1)
         kwargs.setdefault('next_free_index', nfi)
 
         # Determine scalars
         kwargs.setdefault('scalars', ZZ)
 
-        return super(ClusterAlgebra, self).__classcall__(self, B0, **kwargs)
+        return super().__classcall__(self, B0, **kwargs)
 
     def __init__(self, B, **kwargs):
         """
@@ -1541,12 +1540,12 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             sage: A.coxeter_element()
             Traceback (most recent call last):
             ...
-            ValueError: the initial exchange matrix is not acyclic.
+            ValueError: the initial exchange matrix is not acyclic
         """
         dg = DiGraph(self.b_matrix().apply_map(lambda x: ZZ(0) if x <= 0 else ZZ(1)))
         acyclic, coxeter = dg.is_directed_acyclic(certificate=True)
         if not acyclic:
-            raise ValueError("the initial exchange matrix is not acyclic.")
+            raise ValueError("the initial exchange matrix is not acyclic")
         return coxeter
 
     @cached_method
@@ -1738,11 +1737,10 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             sage: A.euler_matrix()
             Traceback (most recent call last):
             ...
-            ValueError: the initial exchange matrix is not acyclic.
+            ValueError: the initial exchange matrix is not acyclic
         """
-
         if not self.is_acyclic():
-            raise ValueError("the initial exchange matrix is not acyclic.")
+            raise ValueError("the initial exchange matrix is not acyclic")
         return 1 + self.b_matrix().apply_map(lambda x: min(ZZ(0), x))
 
     def d_vector_to_g_vector(self, d):
@@ -2496,12 +2494,14 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             for old_g_vect in path_dict:
                 # compute new g-vector
                 J = copy(I)
-                eps = sign(old_g_vect[k])
+                old_g = vector(ZZ, old_g_vect)
+                minus_eps = -old_g[k].sign()
                 for j in range(n):
-                    # here we have -eps*B0 rather than eps*B0 because we want the k-th column of the old B0
-                    J[j, k] += max(0, -eps * B0[j, k])
+                    # here we have -eps*B0 rather than eps*B0
+                    # because we want the k-th column of the old B0
+                    J[j, k] += max(0, minus_eps * B0[j, k])
                 J[k, k] = -1
-                new_g_vect = tuple(J * vector(old_g_vect))
+                new_g_vect = tuple(J * old_g)
 
                 # compute new path
                 if new_g_vect in initial_g_vectors:
@@ -2590,7 +2590,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             sage: A.theta_basis_element((1, 0, 0, 0))
             Traceback (most recent call last):
             ...
-            NotImplementedError: Currently only implemented for cluster algebras of rank 2.
+            NotImplementedError: currently only implemented for cluster algebras of rank 2
 
         .. NOTE::
 
@@ -2655,17 +2655,17 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             sage: A.theta_basis_F_polynomial((1, 0, 0, 0))
             Traceback (most recent call last):
             ...
-            NotImplementedError: Currently only implemented for cluster algebras of rank 2.
+            NotImplementedError: currently only implemented for cluster algebras of rank 2
         """
         if self.rank() != 2:
-            raise NotImplementedError("Currently only implemented for cluster algebras of rank 2.")
+            raise NotImplementedError("currently only implemented for cluster algebras of rank 2")
 
         # extract the part of g_vector not coming from the initial cluster
         d = tuple( max(x, 0) for x in self.g_vector_to_d_vector(g_vector) )
         g = self.d_vector_to_g_vector(d)
 
         shifts = ((d[0]+g[0])/self._B0[0, 1], (d[1]+g[1])/self._B0[1, 0] )
-        signs = ( sign(self._B0[0, 1]), sign(self._B0[1, 0]) )
+        signs = (self._B0[0, 1].sign(), self._B0[1, 0].sign())
 
         u = list(self._U.gens())
         output = self._U.zero()

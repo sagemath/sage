@@ -1,0 +1,23 @@
+# to generate pdf documentation
+texlive-latex-extra
+# to convert Jupyter notebooks to pdf
+texlive-xetex
+# to generate pdf documentation
+latexmk
+# to render text with LaTeX in Matplotlib
+dvipng
+# for tgtermes.sty used in doc-pdf
+tex-gyre
+# for use of rsfs font in pdf documentation
+texlive-fonts-recommended
+# language support for the pdf documentation
+texlive-lang-cyrillic
+texlive-lang-english
+texlive-lang-european
+texlive-lang-french
+texlive-lang-german
+texlive-lang-italian
+texlive-lang-japanese
+texlive-lang-polish
+texlive-lang-portuguese
+texlive-lang-spanish

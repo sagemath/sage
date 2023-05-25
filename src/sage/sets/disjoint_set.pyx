@@ -237,7 +237,7 @@ cdef class DisjointSet_class(SageObject):
             sage: e == d
             True
         """
-        from sage.sets.all import Set
+        from sage.sets.set import Set
         s = Set(map(Set, self.root_to_elements_dict().values()))
         try:
             t = Set(map(Set, other.root_to_elements_dict().values()))
@@ -584,7 +584,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             {{0}, {1, 2, 3, 4}}
             sage: g = d.to_digraph(); g
             Looped digraph on 5 vertices
-            sage: g.edges()
+            sage: g.edges(sort=True)
             [(0, 0, None), (1, 2, None), (2, 2, None), (3, 2, None), (4, 2, None)]
 
         The result depends on the ordering of the union::
@@ -595,7 +595,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d.union(1,4)
             sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: d.to_digraph().edges()
+            sage: d.to_digraph().edges(sort=True)
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
 
         """
@@ -874,7 +874,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             {{0}, {1, 2, 3, 4}}
             sage: g = d.to_digraph(); g
             Looped digraph on 5 vertices
-            sage: g.edges()
+            sage: g.edges(sort=True)
             [(0, 0, None), (1, 2, None), (2, 2, None), (3, 2, None), (4, 2, None)]
 
         The result depends on the ordering of the union::
@@ -885,9 +885,8 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.union(1,4)
             sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: d.to_digraph().edges()
+            sage: d.to_digraph().edges(sort=True)
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
-
         """
         d = {}
         for i from 0 <= i < self.cardinality():
@@ -896,4 +895,3 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             d[e] = [p]
         from sage.graphs.graph import DiGraph
         return DiGraph(d)
-

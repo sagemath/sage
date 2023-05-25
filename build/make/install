@@ -107,7 +107,6 @@ during this run of 'make $@'):
 EOF
 
     look_for_errors "$SAGE_LOGS/*.log" 20 "^Error" package >&2
-    look_for_errors "$SAGE_LOGS/../doc*.log" 100 "^Error" documentation >&2
 
     cat >&2 <<EOF
 
@@ -122,7 +121,8 @@ EOF
 
 elif [ "$SAGE_CHECK" = "warn" ]; then
     echo "SAGE_CHECK=warn, so scanning the log files. This may take a few seconds."
-    warnings=`look_for_errors "$SAGE_LOGS/*.log" 20 "^Warning: Error testing" package`
+    # The following warning message must be consistent with SAGE_ROOT/build/bin/sage-spkg (see trac:32781)
+    warnings=`look_for_errors "$SAGE_LOGS/*.log" 20 "^Warning: Failures testing package" package`
     if [ -n "$warnings" ]; then
         cat >&2 <<EOF
 ***************************************************************
@@ -137,16 +137,3 @@ fi
 
 # Build succeeded.
 echo "Sage build/upgrade complete!"
-
-if [ "$1" = "all" ]; then
-    echo
-    echo "To install small scripts to directly run Sage's versions of GAP,"
-    echo "the PARI/GP interpreter, Maxima, or Singular etc. (by typing e.g."
-    echo "just 'gap' or 'gp') into a standard 'bin' directory, start Sage"
-    echo "by typing 'sage' (or './sage') and enter something like"
-    echo
-    echo "    install_scripts('/usr/local/bin')"
-    echo
-    echo "at the Sage command prompt ('sage:')."
-    echo
-fi

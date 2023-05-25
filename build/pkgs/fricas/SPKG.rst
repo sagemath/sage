@@ -16,8 +16,3 @@ Upstream Contact
 ----------------
 
 http://fricas.sourceforge.net/
-
-Dependencies
-------------
-
--  ecl

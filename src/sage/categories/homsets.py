@@ -1,4 +1,4 @@
-## -*- encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 r"""
 Homset categories
 """
@@ -345,4 +345,3 @@ class Homsets(Category_singleton):
             if sC is None or sD is None:
                 raise RuntimeError("Domain or codomain of this homset have been deallocated")
             return sD is sC
-

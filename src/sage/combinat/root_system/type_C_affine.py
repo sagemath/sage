@@ -9,6 +9,8 @@ Root system data for (untwisted) type C affine
 #*****************************************************************************
 
 from .cartan_type import CartanType_standard_untwisted_affine
+
+
 class CartanType(CartanType_standard_untwisted_affine):
     def __init__(self, n):
         """
@@ -57,7 +59,7 @@ class CartanType(CartanType_standard_untwisted_affine):
              O=>=O---O=<=O
              0   1   2   3
              C3~
-            sage: sorted(c.edges())
+            sage: c.edges(sort=True)
             [(0, 1, 2), (1, 0, 1), (1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
         """
@@ -181,4 +183,3 @@ class CartanType(CartanType_standard_untwisted_affine):
             return CartanTypeFolded(self, ['A', 1, 1], [[0], [1]])
         return CartanTypeFolded(self, ['A', 2*n-1, 1],
             [[0]] + [[i, 2*n-i] for i in range(1, n)] + [[n]])
-

@@ -15,21 +15,25 @@ component of the newform at `p`.
 """
 
 import operator
-from sage.modular.arithgroup.all import GammaH
-from sage.modular.modform.element import Newform
-from sage.modular.modform.constructor import ModularForms
-from sage.modular.modsym.modsym import ModularSymbols
-from sage.rings.all import ZZ, Zmod, QQ
-from sage.rings.fast_arith import prime_range
-from sage.arith.all import crt
-from sage.structure.sage_object import SageObject
+
+from sage.arith.misc import crt
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method, cached_function
+from sage.modular.arithgroup.all import GammaH
+from sage.modular.modform.constructor import ModularForms
+from sage.modular.modform.element import Newform
+from sage.modular.modsym.modsym import ModularSymbols
+from sage.rings.fast_arith import prime_range
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.structure.sage_object import SageObject
 
 from .liftings import lift_gen_to_gamma1, lift_ramified
 
+
 @cached_function
-def example_type_space(example_no = 0):
+def example_type_space(example_no=0):
     r"""
     Quickly return an example of a type space. Used mainly to speed up
     doctesting.
@@ -369,15 +373,15 @@ class TypeSpace(SageObject):
         Test that :trac:`13158` is fixed::
 
             sage: f = Newforms(256,names='a')[0]
-            sage: T = TypeSpace(f,2)
-            sage: g = T.minimal_twist()
-            sage: g[0:3]
+            sage: T = TypeSpace(f,2)                            # long time
+            sage: g = T.minimal_twist()                         # long time
+            sage: g[0:3]                                        # long time
             [0, 1, 0]
-            sage: str(g[3]) in ('a', '-a', '-1/2*a', '1/2*a')
+            sage: str(g[3]) in ('a', '-a', '-1/2*a', '1/2*a')   # long time
             True
-            sage: g[4:]
+            sage: g[4:]                                         # long time
             []
-            sage: g.level()
+            sage: g.level()                                     # long time
             64
         """
         if self.is_minimal():
@@ -472,12 +476,12 @@ class TypeSpace(SageObject):
         r"""
         Calculate the action of ``g`` on the type space, in the unramified (even
         level) case. Uses the two standard generators, and a solution of the
-        word problem in `{\rm SL}_2(\ZZ / p^u \ZZ)`.
+        word problem in `\SL_2(\ZZ / p^u \ZZ)`.
 
         INPUT:
 
         - ``g`` -- 4-tuple of integers (or more generally anything that can be
-          converted into an element of the matrix group `{\rm SL}_2(\ZZ / p^u
+          converted into an element of the matrix group `\SL_2(\ZZ / p^u
           \ZZ)`).
 
         EXAMPLES::
@@ -493,7 +497,7 @@ class TypeSpace(SageObject):
             True
         """
         f = self.prime() ** self.u()
-        from sage.groups.matrix_gps.all import SL
+        from sage.groups.matrix_gps.linear import SL
         G = SL(2, Zmod(f))
         gg = G(g)
         s = G([1,1,0,1])
@@ -511,34 +515,34 @@ class TypeSpace(SageObject):
         return answer
 
     def _rho_ramified(self, g):
-         r"""
-         Calculate the action of a group element on the type space in the
-         ramified (odd conductor) case.
+        r"""
+        Calculate the action of a group element on the type space in the
+        ramified (odd conductor) case.
 
-         For internal use (called by :meth:`~rho`).
+        For internal use (called by :meth:`~rho`).
 
-         EXAMPLES::
+        EXAMPLES::
 
-             sage: from sage.modular.local_comp.type_space import example_type_space
-             sage: T = example_type_space(3)
-             sage: T._rho_ramified([1,0,3,1])
-             [ 0  1]
-             [-1 -1]
-             sage: T._rho_ramified([1,3,0,1]) == 1
-             True
-         """
-         A = self.t_space.ambient()
-         g = [ZZ(_) for _ in g]
-         p = self.prime()
-         assert g[2] % p == 0
-         gg = lift_ramified(g, p, self.u(), self.tame_level())
-         g3 = [p**self.u() * gg[0], gg[1], p**(2*self.u()) * gg[2], p**self.u() * gg[3]]
-         return A._action_on_modular_symbols(g3).restrict(self.t_space.free_module()).transpose() / ZZ(p**(self.u() * (self.form().weight()-2) ) )
+            sage: from sage.modular.local_comp.type_space import example_type_space
+            sage: T = example_type_space(3)
+            sage: T._rho_ramified([1,0,3,1])
+            [ 0  1]
+            [-1 -1]
+            sage: T._rho_ramified([1,3,0,1]) == 1
+            True
+        """
+        A = self.t_space.ambient()
+        g = [ZZ(_) for _ in g]
+        p = self.prime()
+        assert g[2] % p == 0
+        gg = lift_ramified(g, p, self.u(), self.tame_level())
+        g3 = [p**self.u() * gg[0], gg[1], p**(2*self.u()) * gg[2], p**self.u() * gg[3]]
+        return A._action_on_modular_symbols(g3).restrict(self.t_space.free_module()).transpose() / ZZ(p**(self.u() * (self.form().weight()-2) ) )
 
     def _group_gens(self):
         r"""
         Return a set of generators of the group `S(K_0) / S(K_u)` (which is
-        either `{\rm SL}_2(\ZZ / p^u \ZZ)` if the conductor is even, and a
+        either `\SL_2(\ZZ / p^u \ZZ)` if the conductor is even, and a
         quotient of an Iwahori subgroup if the conductor is odd).
 
         EXAMPLES::
@@ -667,17 +671,17 @@ class TypeSpace(SageObject):
             True
         """
         if not self.is_minimal():
-            raise NotImplementedError( "Group action on non-minimal type space not implemented" )
+            raise NotImplementedError("Group action on non-minimal type space not implemented")
 
         if self.u() == 0:
-           # silly special case: rep is principal series or special, so SL2
-           # action on type space is trivial
-           raise ValueError( "Representation is not supercuspidal" )
+            # silly special case: rep is principal series or special, so SL2
+            # action on type space is trivial
+            raise ValueError("Representation is not supercuspidal")
 
         p = self.prime()
         f = p**self.u()
         g = [ZZ(_) for _ in g]
-        d = (g[0]*g[3] - g[2]*g[1])
+        d = (g[0] * g[3] - g[2] * g[1])
 
         # g is in S(K_0) (easy case)
         if d % f == 1:

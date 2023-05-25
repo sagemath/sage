@@ -386,7 +386,7 @@ class CoFrame(FreeModuleCoBasis):
             Dual basis (dx,dy) on the Tangent space at Point p on the
              2-dimensional differentiable manifold M
             sage: type(fp)
-            <class 'sage.tensor.modules.free_module_basis.FreeModuleCoBasis'>
+            <class 'sage.tensor.modules.free_module_basis.FreeModuleCoBasis_with_category'>
             sage: fp[0]
             Linear form dx on the Tangent space at Point p on the 2-dimensional
              differentiable manifold M
@@ -452,17 +452,18 @@ class CoFrame(FreeModuleCoBasis):
             \left(M, \left(e^{\xi},e^{\zeta}\right)\right)
 
         """
-        super(CoFrame, self).set_name(symbol, latex_symbol=latex_symbol,
-                                      indices=indices,
-                                      latex_indices=latex_indices,
-                                      index_position=index_position)
+        super().set_name(symbol, latex_symbol=latex_symbol,
+                         indices=indices,
+                         latex_indices=latex_indices,
+                         index_position=index_position)
         if include_domain:
             # Redefinition of the name and the LaTeX name to include the domain
             self._name = "({}, {})".format(self._domain._name, self._name)
             self._latex_name = r"\left({}, {}\right)".format(
                                     self._domain._latex_name, self._latex_name)
 
-#******************************************************************************
+# ******************************************************************************
+
 
 class VectorFrame(FreeModuleBasis):
     r"""
@@ -671,12 +672,12 @@ class VectorFrame(FreeModuleBasis):
             symbol_dual = tuple(symbol_dual)
         if isinstance(latex_symbol_dual, list):
             latex_symbol_dual = tuple(latex_symbol_dual)
-        return super(VectorFrame, cls).__classcall__(cls, vector_field_module,
-                                        symbol, latex_symbol=latex_symbol,
-                                        from_frame=from_frame, indices=indices,
-                                        latex_indices=latex_indices,
-                                        symbol_dual=symbol_dual,
-                                        latex_symbol_dual=latex_symbol_dual)
+        return super().__classcall__(cls, vector_field_module,
+                                     symbol, latex_symbol=latex_symbol,
+                                     from_frame=from_frame, indices=indices,
+                                     latex_indices=latex_indices,
+                                     symbol_dual=symbol_dual,
+                                     latex_symbol_dual=latex_symbol_dual)
 
     def __init__(self, vector_field_module, symbol, latex_symbol=None,
                  from_frame=None, indices=None, latex_indices=None,
@@ -762,7 +763,6 @@ class VectorFrame(FreeModuleBasis):
                                # subdomains as keys
         # NB: set(self._restrictions.values()) is identical to
         #     self._subframes
-
 
     ###### Methods that must be redefined by derived classes of ######
     ###### FreeModuleBasis                                      ######
@@ -1361,7 +1361,7 @@ class VectorFrame(FreeModuleBasis):
             Basis (∂/∂x,∂/∂y) on the Tangent space at Point p on the
              2-dimensional differentiable manifold M
             sage: type(ep)
-            <class 'sage.tensor.modules.free_module_basis.FreeModuleBasis'>
+            <class 'sage.tensor.modules.free_module_basis.FreeModuleBasis_with_category'>
             sage: ep[0]
             Tangent vector ∂/∂x at Point p on the 2-dimensional differentiable
              manifold M
@@ -1569,10 +1569,10 @@ class VectorFrame(FreeModuleBasis):
             \left(M, \left(E_{\alpha},E_{\beta}\right)\right)
 
         """
-        super(VectorFrame, self).set_name(symbol, latex_symbol=latex_symbol,
-                                          indices=indices,
-                                          latex_indices=latex_indices,
-                                          index_position=index_position)
+        super().set_name(symbol, latex_symbol=latex_symbol,
+                         indices=indices,
+                         latex_indices=latex_indices,
+                         index_position=index_position)
         if include_domain:
             # Redefinition of the name and the LaTeX name to include the domain
             self._name = "({}, {})".format(self._domain._name, self._name)
@@ -1775,7 +1775,6 @@ class CoordFrame(VectorFrame):
         # In the above:
         # - force_free=True ensures that a free module is constructed in case
         #   it is the first call to the vector field module on chart.domain()
-
 
     ###### Methods that must be redefined by derived classes of ######
     ###### FreeModuleBasis                                      ######

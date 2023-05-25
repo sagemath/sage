@@ -186,7 +186,7 @@ class DifferentiableCurve(DiffMap):
 
         sage: c = M.curve([sin(t), sin(2*t)/2], (t, 0, 2*pi))
         sage: latex(c)
-        \mbox{Curve in the 2-dimensional differentiable manifold M}
+        \text{Curve in the 2-dimensional differentiable manifold M}
         sage: c = M.curve([sin(t), sin(2*t)/2], (t, 0, 2*pi), name='c')
         sage: latex(c)
         c
@@ -805,6 +805,23 @@ class DifferentiableCurve(DiffMap):
             g = c.plot(color='green', style=':', thickness=3, aspect_ratio=1)
             sphinx_plot(g)
 
+        Cardioid defined in terms of polar coordinates and plotted with respect
+        to Cartesian coordinates, as an example of use of the optional argument
+        ``chart``::
+
+            sage: E.<r,ph> = EuclideanSpace(coordinates='polar')
+            sage: c = E.curve((1 + cos(ph), ph), (ph, 0, 2*pi))
+            sage: c.plot(chart=E.cartesian_coordinates(), aspect_ratio=1)
+            Graphics object consisting of 1 graphics primitive
+
+        .. PLOT::
+
+            E = EuclideanSpace(2, coordinates='polar')
+            r, ph = E.polar_coordinates()[:]
+            c = E.curve((1 + cos(ph), ph), (ph, 0, 2*pi))
+            g = c.plot(chart=E.cartesian_coordinates(), aspect_ratio=1)
+            sphinx_plot(g)
+
         Plot via a mapping to another manifold: loxodrome of a sphere viewed
         in `\RR^3`::
 
@@ -925,21 +942,8 @@ class DifferentiableCurve(DiffMap):
         #
         # The coordinate expression of the effective curve
         #
-        canon_chart = self._domain.canonical_chart()
-        transf = None
-        for chart_pair in eff_curve._coord_expression:
-            if chart_pair == (canon_chart, chart):
-                transf = eff_curve._coord_expression[chart_pair]
-                break
-        else:
-            # Search for a subchart
-            for chart_pair in eff_curve._coord_expression:
-                for schart in chart._subcharts:
-                    if chart_pair == (canon_chart, schart):
-                        transf = eff_curve._coord_expression[chart_pair]
-        if transf is None:
-            raise ValueError("No expression has been found for " +
-                              "{} in terms of {}".format(self, chart))
+        transf = eff_curve.coord_functions(chart1=self._domain.canonical_chart(),
+                                           chart2=chart)
         #
         # List of points for the plot curve
         #
@@ -952,7 +956,7 @@ class DifferentiableCurve(DiffMap):
                 plot_curve.append( [numerical_approx(x[j]) for j in ind_pc] )
                 t += dt
         else:
-             for i in range(plot_points):
+            for i in range(plot_points):
                 x = transf(t, simplify=False)
                 plot_curve.append(
                                [numerical_approx( x[j].substitute(parameters) )
@@ -961,10 +965,8 @@ class DifferentiableCurve(DiffMap):
 
         return self._graphics(plot_curve, ambient_coords,
                               thickness=thickness,
-                              aspect_ratio=aspect_ratio, color= color,
+                              aspect_ratio=aspect_ratio, color=color,
                               style=style, label_axes=label_axes)
-
-
 
     def _graphics(self, plot_curve, ambient_coords, thickness=1,
                   aspect_ratio='automatic', color='red', style='-',

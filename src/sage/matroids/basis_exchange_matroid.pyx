@@ -41,9 +41,6 @@ Methods
 from .matroid cimport Matroid
 from .set_system cimport SetSystem
 
-from copy import copy
-from itertools import combinations, permutations
-
 from sage.data_structures.bitset_base cimport *
 
 cdef class BasisExchangeMatroid(Matroid):
@@ -1055,7 +1052,7 @@ cdef class BasisExchangeMatroid(Matroid):
             i=i+1
 
         cdef bitset_t active_rows
-        bitset_init(active_rows,self.full_rank()+1)
+        bitset_init(active_rows, <mp_bitcnt_t> self.full_rank()+1)
         bitset_set_first_n(active_rows, <mp_bitcnt_t> self.full_rank())
         i=0
         while i>=0:
@@ -1851,8 +1848,7 @@ cdef class BasisExchangeMatroid(Matroid):
             return NSC
         bitset_clear(self._input)
         bitset_set_first_n(self._input, self._matroid_rank)
-        cdef long e, f, corank
-        corank = self._groundset_size - self._matroid_rank
+        cdef long e, f
         repeat = True
         while repeat:
             if self.__is_independent(self._input):
@@ -2115,7 +2111,7 @@ cdef class BasisExchangeMatroid(Matroid):
         return EQ[0]
 
     cpdef _is_isomorphism(self, other, morphism):
-        """
+        r"""
         Version of is_isomorphism() that does no type checking.
 
         INPUT:

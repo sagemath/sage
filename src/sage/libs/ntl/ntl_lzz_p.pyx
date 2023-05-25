@@ -59,9 +59,9 @@ ZZ_sage = IntegerRing()
 #
 ##############################################################################
 
-cdef class ntl_zz_p(object):
+cdef class ntl_zz_p():
     r"""
-    The class \class{zz_p} implements arithmetic modulo $p$,
+    The class \class{zz_p} implements arithmetic modulo `p`,
     for p smaller than a machine word.
 
     NOTE: This type is provided mostly for completeness, and
@@ -139,7 +139,7 @@ cdef class ntl_zz_p(object):
             self.c = <ntl_zz_pContext_class>modulus
         elif isinstance(modulus, Integer):
             self.c = <ntl_zz_pContext_class>ntl_zz_pContext(modulus)
-        elif isinstance(modulus, long):
+        elif isinstance(modulus, int):
             self.c = <ntl_zz_pContext_class>ntl_zz_pContext(modulus)
         else:
             try:

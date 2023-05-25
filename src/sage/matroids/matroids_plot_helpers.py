@@ -73,8 +73,9 @@ EXAMPLES::
 import scipy
 import scipy.interpolate
 import numpy as np
-from sage.plot.all import Graphics, line, text, polygon2d, point, points
-from sage.plot.colors import Color
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", ["Graphics", "line", "text", "polygon2d", "point", "points"])
+lazy_import("sage.plot.colors", "Color")
 from sage.sets.set import Set
 from sage.matroids.advanced import newlabel
 

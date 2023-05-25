@@ -11,7 +11,7 @@ TESTS::
 
     sage: R = ZpLC(2)
     doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See http://trac.sagemath.org/23505 for details.
+    See https://github.com/sagemath/sage/issues/23505 for details.
     sage: R = ZpLF(2)
     sage: R = QpLC(2)
     sage: R = QpLF(2)
@@ -35,7 +35,7 @@ from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
 from sage.structure.factorization import Factorization
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import is_Element
 from .padic_base_leaves import (pAdicRingCappedRelative,
                                 pAdicRingCappedAbsolute,
@@ -318,7 +318,7 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
 
 #######################################################################################################
 #
-#  p-Adic Fields
+#  p-adic Fields
 #  Qp -- base field
 #  Qq -- unramified extension field of Qp
 #  QpCR, QpLC, QpLF, QqCR -- shortcuts for capped relative and lattice versions of Qp and Qq
@@ -1338,21 +1338,21 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
     if k == 1:
         return base
 
-    if isinstance(names, (list,tuple)):
+    if isinstance(names, (list, tuple)):
         if len(names) != 1:
             raise ValueError("must provide exactly one generator name")
         names = names[0]
     if names is None:
         raise TypeError("You must specify the name of the generator.")
     if not isinstance(names, str):
-       names = str(names)
+        names = str(names)
 
     if res_name is None:
         res_name = names + '0'
 
     if modulus is None:
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-        modulus = GF(p**k, res_name).modulus().change_ring(ZZ)
+        modulus = GF((p, k), res_name).modulus().change_ring(ZZ)
     return ExtensionFactory(base=base, modulus=modulus, prec=prec, print_mode=print_mode,
                             names=names, res_name=res_name, ram_name=ram_name, print_pos=print_pos,
                             print_sep=print_sep, print_max_ram_terms=print_max_ram_terms,
@@ -1468,7 +1468,7 @@ def QpER(p, prec=None, halt=None, secure=False, *args, **kwds):
 
 #######################################################################################################
 #
-#  p-Adic Rings
+#  p-adic Rings
 #  Zp -- base rings
 #  Zq -- unramified extension ring of Zp
 #  ZpCR, ZpCA, ZpFM, ZpL, ZqCR, ZqCA, ZqFM, ZqL -- shortcuts for precision-type versions of Zp and Zq
@@ -2534,8 +2534,8 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
             prec = Integer(prec)
         if isinstance(names, (list, tuple)):
             names = names[0]
-        from sage.symbolic.expression import is_Expression
-        if not (modulus is None or is_Polynomial(modulus) or is_Expression(modulus)):
+        from sage.structure.element import Expression
+        if not (modulus is None or isinstance(modulus, Polynomial) or isinstance(modulus, Expression)):
             raise TypeError("modulus must be a polynomial")
         if names is not None and not isinstance(names, str):
             names = str(names)
@@ -2949,12 +2949,12 @@ def ZpLF(p, prec=None, *args, **kwds):
 
     See documentation for :func:`Zp` for a description of the input parameters.
 
-    NOTE:
+    .. NOTE::
 
-    The precision is tracked using automatic differentiation
-    techniques (see [CRV2018]_ and [CRV2014]_).
-    Floating point `p`-adic numbers are used for the computation
-    of the differential (which is then not exact).
+        The precision is tracked using automatic differentiation
+        techniques (see [CRV2018]_ and [CRV2014]_).
+        Floating point `p`-adic numbers are used for the computation
+        of the differential (which is then not exact).
 
     EXAMPLES::
 
@@ -3019,7 +3019,7 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
         40
 
     However, both the default precision and the halting precision can be
-    customized at the creation of the parent as follows:
+    customized at the creation of the parent as follows::
 
         sage: S = ZpER(5, prec=10, halt=100)
         sage: S.default_prec()
@@ -3271,14 +3271,14 @@ class pAdicExtension_class(UniqueFactory):
         if print_max_terse_terms is None:
             print_max_terse_terms = base._printer._max_terse_terms()
         show_prec = _canonicalize_show_prec(base._prec_type(), print_mode, show_prec)
-        from sage.symbolic.expression import is_Expression
+        from sage.structure.element import Expression
         if check:
-            if is_Expression(modulus):
+            if isinstance(modulus, Expression):
                 if len(modulus.variables()) != 1:
                     raise ValueError("symbolic expression must be in only one variable")
                 exact_modulus = modulus.polynomial(base.exact_field())
                 approx_modulus = modulus.polynomial(base)
-            elif is_Polynomial(modulus):
+            elif isinstance(modulus, Polynomial):
                 if modulus.parent().ngens() != 1:
                     raise ValueError("must use univariate polynomial")
                 exact_modulus = modulus.change_ring(base.exact_field())
@@ -3378,10 +3378,10 @@ class pAdicExtension_class(UniqueFactory):
         if version[0] < 8:
             (polytype, base, premodulus, approx_modulus, names, prec, halt, print_mode, print_pos, print_sep,
              print_alphabet, print_max_ram_terms, print_max_unram_terms, print_max_terse_terms, implementation) = key
-            from sage.symbolic.expression import is_Expression
-            if is_Expression(premodulus):
+            from sage.structure.element import Expression
+            if isinstance(premodulus, Expression):
                 exact_modulus = premodulus.polynomial(base.exact_field())
-            elif is_Polynomial(premodulus):
+            elif isinstance(premodulus, Polynomial):
                 exact_modulus = premodulus.change_ring(base.exact_field())
             show_prec = None
         else:

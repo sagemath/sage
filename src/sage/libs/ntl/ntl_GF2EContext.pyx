@@ -27,7 +27,7 @@ import weakref
 GF2EContextDict = {}
 
 
-cdef class ntl_GF2EContext_class(object):
+cdef class ntl_GF2EContext_class():
     def __init__(self, ntl_GF2X v):
         """
         EXAMPLES::

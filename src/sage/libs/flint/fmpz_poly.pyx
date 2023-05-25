@@ -74,7 +74,7 @@ cdef class Fmpz_poly(SageObject):
 
     def __setitem__(self, i, value):
         """
-        Set the $i$-th item of self, which is the coefficient of the $x^i$ term.
+        Set the `i`-th item of self, which is the coefficient of the `x^i` term.
 
         EXAMPLES::
 
@@ -93,7 +93,7 @@ cdef class Fmpz_poly(SageObject):
 
     def __getitem__(self, i):
         """
-        Return the $i$-th item of self, which is the coefficient of the $x^i$ term.
+        Return the `i`-th item of self, which is the coefficient of the `x^i` term.
 
         EXAMPLES::
 
@@ -222,13 +222,13 @@ cdef class Fmpz_poly(SageObject):
         """
         cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         if not isinstance(left, Fmpz_poly) or not isinstance(right, Fmpz_poly):
-            if isinstance(left, int) :
+            if isinstance(left, int):
                 fmpz_poly_scalar_mul_si(res.poly, (<Fmpz_poly>right).poly, left)
-            elif isinstance(left, Integer) :
+            elif isinstance(left, Integer):
                 fmpz_poly_scalar_mul_mpz(res.poly, (<Fmpz_poly>right).poly, (<Integer>left).value)
-            elif  isinstance(right, int) :
+            elif isinstance(right, int):
                 fmpz_poly_scalar_mul_si(res.poly, (<Fmpz_poly>left).poly, right)
-            elif isinstance(right, Integer) :
+            elif isinstance(right, Integer):
                 fmpz_poly_scalar_mul_mpz(res.poly, (<Fmpz_poly>left).poly, (<Integer>right).value)
             else:
                 raise TypeError
@@ -440,7 +440,6 @@ cdef class Fmpz_poly(SageObject):
         cdef long nn = n
         fmpz_poly_truncate(self.poly, nn) # mutating!
 
-
     def _sage_(self, var='x'):
         """
         Return self as an element of the sage ZZ[var].
@@ -454,6 +453,5 @@ cdef class Fmpz_poly(SageObject):
             sage: Fmpz_poly([-1,0,0,1])._sage_()
             x^3 - 1
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         return ZZ[var](self.list())
-

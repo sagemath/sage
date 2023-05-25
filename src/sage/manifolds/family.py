@@ -223,7 +223,8 @@ class ManifoldSubsetFiniteFamily(ManifoldObjectFiniteFamily):
     @classmethod
     def from_subsets_or_families(cls, *subsets_or_families):
         r"""
-        Construct a ManifoldSubsetFiniteFamily from given subsets or iterables of subsets.
+        Construct a ``ManifoldSubsetFiniteFamily`` from given subsets or
+        iterables of subsets.
 
         EXAMPLES::
 
