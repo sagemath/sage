@@ -520,8 +520,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             │ 5 │
             └───┘
             sage: unicode_art(Tableau([]))
-            ┌┐
-            └┘
+            <BLANKLINE>
         """
         from sage.typeset.unicode_art import UnicodeArt
         return UnicodeArt(self._ascii_art_table(use_unicode=True).splitlines())
@@ -558,12 +557,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                \ 1 /
                 \ /
             sage: t = Tableau([]); print(t._ascii_art_table())
-            /\
-            \/
+            <BLANKLINE>
+
             sage: Tableaux.options.convention="french"
             sage: print(t._ascii_art_table())
-            ++
-            ++
+            <BLANKLINE>
             sage: Tableaux.options._reset()
 
             sage: t = Tableau([[1,2,3,10,15],[12,15,17]])

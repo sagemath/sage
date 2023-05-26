@@ -489,7 +489,8 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
         from sage.typeset.ascii_art import ascii_art as art
 
     if not data:
-        return dr + dl + '\n' + ur + ul
+        # return dr + dl + '\n' + ur + ul
+        return ''
 
     # Convert the input into a rectangular array with the top and bottom row
     #   being all None's for ease later on.
@@ -686,7 +687,8 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
         from sage.typeset.ascii_art import ascii_art as art
 
     if not data:
-        return urdl + uldr + '\n' + uldr + urdl
+        # return urdl + uldr + '\n' + uldr + urdl
+        return ''
 
 
     if use_unicode:
