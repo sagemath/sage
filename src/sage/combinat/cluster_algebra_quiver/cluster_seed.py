@@ -44,10 +44,10 @@ from sage.rings.fraction_field import FractionField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.sets.set import Set
-from sage.graphs.digraph import DiGraph
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType_Irreducible, QuiverMutationType_Reducible
 from sage.combinat.cluster_algebra_quiver.mutation_type import is_mutation_finite
 from random import randint
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.matrix.special import identity_matrix
 from sage.matrix.constructor import matrix
@@ -56,6 +56,8 @@ from sage.rings.integer import Integer
 from copy import deepcopy
 
 from sage.combinat.cluster_algebra_quiver.interact import cluster_interact
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
 
 
 class ClusterSeed(SageObject):
