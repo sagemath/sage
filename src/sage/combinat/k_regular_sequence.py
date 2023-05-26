@@ -1040,14 +1040,9 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: import logging
             sage: logging.basicConfig(level=logging.INFO)
-            sage: S1 = Seq2.guess(s)
+            sage: S1 = Seq2.guess(s); S1
             INFO:...:including f_{1*m+0}
-            INFO:...:M_0: f_{2*m+0} = (1) * X_m
             INFO:...:including f_{2*m+1}
-            INFO:...:M_1: f_{2*m+1} = (0, 1) * X_m
-            INFO:...:M_0: f_{4*m+1} = (0, 1) * X_m
-            INFO:...:M_1: f_{4*m+3} = (-1, 2) * X_m
-            sage: S1
             2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
             sage: S1.linear_representation()
             ((1, 0),
@@ -1057,16 +1052,14 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                                [-1  2]},
              (0, 1))
 
-            sage: from importlib import reload
-            sage: logging.shutdown(); _ = reload(logging)
-
         We guess again, but this time, we use a constant sequence
         for bootstrapping the guessing process::
 
             sage: C = Seq2.one_hadamard(); C
             2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
-            sage: S2 = Seq2.guess(s, sequence=C)
-            sage: S2
+            sage: S2 = Seq2.guess(s, sequence=C); S2
+            INFO:...:including 2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+            INFO:...:including f_{1*m+0}
             2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
             sage: S2.linear_representation()
             ((0, 1),
@@ -1080,8 +1073,9 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         The sequence of all natural numbers::
 
-            sage: S = Seq2.guess(lambda n: n)
-            sage: S
+            sage: S = Seq2.guess(lambda n: n); S
+            INFO:...:including f_{1*m+0}
+            INFO:...:including f_{2*m+1}
             2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
             sage: S.linear_representation()
             ((1, 0),
@@ -1093,8 +1087,9 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         The indicator function of the even integers::
 
-            sage: S = Seq2.guess(lambda n: ZZ(is_even(n)))
-            sage: S
+            sage: S = Seq2.guess(lambda n: ZZ(is_even(n))); S
+            INFO:...:including f_{1*m+0}
+            INFO:...:including f_{2*m+0}
             2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
             sage: S.linear_representation()
             ((1, 0),
@@ -1106,8 +1101,9 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         The indicator function of the odd integers::
 
-            sage: S = Seq2.guess(lambda n: ZZ(is_odd(n)))
-            sage: S
+            sage: S = Seq2.guess(lambda n: ZZ(is_odd(n))); S
+            INFO:...:including f_{1*m+0}
+            INFO:...:including f_{2*m+1}
             2-regular sequence 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, ...
             sage: S.linear_representation()
             ((1, 0),
@@ -1118,6 +1114,22 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
              (0, 1))
 
         TESTS::
+
+            sage: from importlib import reload
+            sage: logging.shutdown(); _ = reload(logging)
+            sage: logging.basicConfig(level=logging.DEBUG)
+            sage: Seq2.guess(s)
+            INFO:...:including f_{1*m+0}
+            DEBUG:...:M_0: f_{2*m+0} = (1) * X_m
+            INFO:...:including f_{2*m+1}
+            DEBUG:...:M_1: f_{2*m+1} = (0, 1) * X_m
+            DEBUG:...:M_0: f_{4*m+1} = (0, 1) * X_m
+            DEBUG:...:M_1: f_{4*m+3} = (-1, 2) * X_m
+            2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
+            sage: from importlib import reload
+            sage: logging.shutdown(); _ = reload(logging)
+
+        ::
 
             sage: S = Seq2.guess(lambda n: 2, sequence=C)
             sage: S
@@ -1194,6 +1206,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             mu = [M.rows() for M in sequence.mu]
             seq = lambda m: sequence.left * sequence._mu_of_word_(
                 self._n_to_index_(m))
+            logger.info('including %s', sequence)
 
         zero = domain(0)
         one = domain(1)
@@ -1307,8 +1320,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                 except ValueError:
                     include(line_L)
                     solution = (len(lines)-1)*(zero,) + (one,)
-                logger.info('M_%s: f_{%s*m+%s} = %s * X_m',
-                            s_L, k**t_L, r_L, solution)
+                logger.debug('M_%s: f_{%s*m+%s} = %s * X_m',
+                             s_L, k**t_L, r_L, solution)
                 mu[s_L].append(solution)
 
         d = len(seq(0)) + len(lines)
