@@ -399,7 +399,7 @@ def basis_for_left_ideal(R, gens):
         sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [3*(i+j),3*(i-j),6*k,A(3)])
         [3/2 + 1/2*i + k, i + 2*k, 3/2*j + 3/2*k, 3*k]
     """
-    return basis_for_quaternion_lattice([b * g for b in R.basis() for g in gens])
+    return basis_for_quaternion_lattice([b * g for b in R.basis() for g in gens], reverse=False)
 
 
 def right_order(R, basis):
