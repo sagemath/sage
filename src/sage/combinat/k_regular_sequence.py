@@ -1262,7 +1262,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             else:
                 raise RuntimeError
 
-        def guess_linear_combination(t_L, r_L, lines):
+        def linear_combination_candidate(t_L, r_L, lines):
             r"""
                 Based on an invertible submatrix of ``A`` as described in the
                 algorithm section of the docstring, find a candidate for a
@@ -1286,7 +1286,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                        for m in xsrange(0, (n_max - r_L) // k**t_L + 1))
 
         def find_linear_combination(t_L, r_L, lines):
-            linear_combination = guess_linear_combination(t_L, r_L, lines)
+            linear_combination = linear_combination_candidate(t_L, r_L, lines)
             if not verify_linear_combination(t_L, r_L, linear_combination, lines):
                 raise ValueError
             return linear_combination
