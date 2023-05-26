@@ -981,7 +981,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
     def guess(self, f, n_max=100, max_dimension=10, sequence=None):
         r"""
-        Guess a `k`-regular sequence of `(f(n))_{n\geq0}`.
+        Guess a `k`-regular sequence whose first terms coincide with `(f(n))_{n\geq0}`.
 
         INPUT:
 
