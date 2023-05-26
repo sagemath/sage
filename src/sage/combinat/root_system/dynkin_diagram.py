@@ -28,10 +28,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import is_Matrix
 from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
+
+lazy_import('sage.combinat.root_system.cartan_matrix', 'CartanMatrix')
 
 
 def DynkinDiagram(*args, **kwds):
