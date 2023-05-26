@@ -476,7 +476,6 @@ from itertools import zip_longest
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.combinat.posets.posets import Poset
 from sage.combinat.words.word import Word
 from sage.combinat.words.words import Words
 from sage.combinat.binary_tree import BinaryTree, BinaryTrees, LabelledBinaryTree
@@ -487,7 +486,10 @@ from sage.combinat.skew_tableau import SkewTableau
 from sage.combinat.core import Core, Cores
 from sage.combinat.k_tableau import WeakTableau, StrongTableau
 from sage.combinat.shifted_primed_tableau import ShiftedPrimedTableau
-from sage.graphs.digraph import DiGraph
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('combinat.posets.posets', 'Poset')
 
 
 def _make_partition(l):

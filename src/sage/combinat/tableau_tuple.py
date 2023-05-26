@@ -213,7 +213,6 @@ subsequent papers on the representation theory of these algebras.
 
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.words.word import Word
-from sage.combinat.posets.posets import Poset
 from sage.combinat.tableau import (Tableau, Tableaux, Tableaux_size, Tableaux_all,
                                    StandardTableau, RowStandardTableau,
                                    StandardTableaux, StandardTableaux_size,
@@ -226,6 +225,7 @@ from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.flatten import flatten
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.prandom import randint
 from sage.arith.misc import factorial
@@ -239,6 +239,8 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.combinat import permutation
+
+lazy_import('sage.combinat.posets.posets', 'Poset')
 
 
 # -------------------------------------------------

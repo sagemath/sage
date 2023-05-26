@@ -27,6 +27,7 @@ Classes and methods
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+from sage.misc.lazy_import import lazy_import
 from sage.rings.rational_field import QQ
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -36,7 +37,8 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.structure.list_clone import ClonableArray
 from sage.arith.misc import factorial
-from sage.matrix.constructor import matrix
+
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 class LinearExtensionOfPoset(ClonableArray,
