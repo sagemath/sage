@@ -1035,7 +1035,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: [s(n) for n in srange(10)]
             [0, 1, 1, 2, 1, 2, 2, 3, 1, 2]
 
-        Variant 1::
+        Let us guess a `2`-linear representation for `s(n)`::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: import logging
@@ -1060,9 +1060,10 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: from importlib import reload
             sage: logging.shutdown(); _ = reload(logging)
 
-        Variant 2::
+        We guess again, but this time, we use a constant sequence
+        for bootstrapping the guessing process::
 
-            sage: C = Seq2((Matrix([[1]]), Matrix([[1]])), vector([1]), vector([1])); C
+            sage: C = Seq2.one_hadamard(); C
             2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
             sage: S2 = Seq2.guess(s, sequence=C)
             sage: S2
