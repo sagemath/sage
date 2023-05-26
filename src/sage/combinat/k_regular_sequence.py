@@ -1236,7 +1236,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                 Return current (as defined by ``lines``) left vector valued
                 sequence for argument ``m``.
             """
-            return tuple(seq(m)) + tuple(f(k**t_R * m + r_R) for t_R, r_R, s_R in lines)
+            return tuple(seq(m)) + tuple(f(k**t_R * m + r_R) for t_R, r_R in lines)
 
         @cached_function(key=lambda lines: len(lines))  # we assume that existing lines are not changed (we allow appending of new lines)
         def some_inverse_U_matrix(lines):
@@ -1306,24 +1306,24 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         def include(line):
             to_branch.append(line)
             lines.append(line)
-            t, r, s = line
+            t, r = line
             logger.info('including f_{%s*m+%s}', k**t, r)
 
         if left is None:
-            line_L = (0, 0, 0)  # entries (t, r, s) --> k**t * m + r, belong to M_s
+            line_L = (0, 0)  # entries (t, r) --> k**t * m + r
             include(line_L)
             left = vector((len(seq(0)) + len(lines)-1)*(zero,) + (one,))
 
         while to_branch:
             line_R = to_branch.pop(0)
-            t_R, r_R, s_R = line_R
+            t_R, r_R = line_R
             if t_R >= max_dimension:
                 raise RuntimeError
 
             t_L = t_R + 1
             for s_L in srange(k):
                 r_L = k**t_R * s_L + r_R
-                line_L = t_L, r_L, s_L
+                line_L = t_L, r_L
 
                 try:
                     solution = find_linear_combination(t_L, r_L, lines)
