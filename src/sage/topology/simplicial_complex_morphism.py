@@ -106,10 +106,12 @@ EXAMPLES::
 from sage.categories.homset import Hom
 from sage.categories.morphism import Morphism
 from sage.categories.simplicial_complexes import SimplicialComplexes
-from sage.matrix.constructor import matrix, zero_matrix
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 
 from .simplicial_complex import Simplex, SimplicialComplex
+
+lazy_import('sage.matrix.constructor', ['matrix', 'zero_matrix'])
 
 
 def is_SimplicialComplexMorphism(x):
