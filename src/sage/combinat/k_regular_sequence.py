@@ -1167,7 +1167,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         domain = self.coefficient_ring()
         if sequence is None:
             mu = [[] for _ in srange(k)]
-            seq = lambda m: tuple()
+            seq = lambda m: vector([])
         else:
             mu = [M.rows() for M in sequence.mu]
             seq = lambda m: sequence.left * sequence._mu_of_word_(
@@ -1238,20 +1238,22 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                        linear_combination * vector(values(m, lines))
                        for m in xsrange(0, (n_max - r_L) // k**t_L + 1))
 
+        class NoLinearCombination(ValueError):
+            pass
+
         def find_linear_combination(t_L, r_L, lines):
             linear_combination = linear_combination_candidate(t_L, r_L, lines)
             if not verify_linear_combination(t_L, r_L, linear_combination, lines):
-                raise ValueError
+                raise NoLinearCombination
             return linear_combination
 
-        left = None
-        if seq(0):
+        if seq(0).is_zero():
+            left = None
+        else:
             try:
-                solution = find_linear_combination(0, 0, [])
-            except ValueError:
-                pass
-            else:
-                left = vector(solution)
+                left = vector(find_linear_combination(0, 0, []))
+            except NoLinearCombination:
+                left = None
 
         to_branch = []
         lines = []
