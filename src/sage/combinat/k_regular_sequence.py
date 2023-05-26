@@ -1075,6 +1075,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                             1: [1 0]
                                [1 1]},
              (1, 0))
+            sage: S1 == S2
+            True
 
         The sequence of all natural numbers::
 
