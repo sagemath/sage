@@ -1049,11 +1049,13 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             INFO:...:M_1: f_{4*m+3} = (-1, 2) * X_m
             sage: S1
             2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
-            sage: S1.mu[0], S1.mu[1], S1.left, S1.right
-            (
-            [1 0]  [ 0  1]
-            [0 1], [-1  2], (1, 0), (0, 1)
-            )
+            sage: S1.linear_representation()
+            ((1, 0),
+             Finite family {0: [1 0]
+                               [0 1],
+                            1: [ 0  1]
+                               [-1  2]},
+             (0, 1))
 
             sage: from importlib import reload
             sage: logging.shutdown(); _ = reload(logging)
@@ -1065,52 +1067,63 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: S2 = Seq2.guess(s, sequence=C)
             sage: S2
             2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
-            sage: S2.mu[0], S2.mu[1], S2.left, S2.right
-            (
-            [1 0]  [1 0]
-            [0 1], [1 1], (0, 1), (1, 0)
-            )
+            sage: S2.linear_representation()
+            ((0, 1),
+             Finite family {0: [1 0]
+                               [0 1],
+                            1: [1 0]
+                               [1 1]},
+             (1, 0))
 
         The sequence of all natural numbers::
 
             sage: S = Seq2.guess(lambda n: n)
             sage: S
             2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
-            sage: S.mu[0], S.mu[1], S.left, S.right
-            (
-            [2 0]  [ 0  1]
-            [2 1], [-2  3], (1, 0), (0, 1)
-            )
+            sage: S.linear_representation()
+            ((1, 0),
+             Finite family {0: [2 0]
+                               [2 1],
+                            1: [ 0  1]
+                               [-2  3]},
+             (0, 1))
 
         The indicator function of the even integers::
 
             sage: S = Seq2.guess(lambda n: ZZ(is_even(n)))
             sage: S
             2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
-            sage: S.mu[0], S.mu[1], S.left, S.right
-            (
-            [0 1]  [0 0]
-            [0 1], [0 1], (1, 0), (1, 1)
-            )
+            sage: S.linear_representation()
+            ((1, 0),
+             Finite family {0: [0 1]
+                               [0 1],
+                            1: [0 0]
+                               [0 1]},
+             (1, 1))
 
         The indicator function of the odd integers::
 
             sage: S = Seq2.guess(lambda n: ZZ(is_odd(n)))
             sage: S
             2-regular sequence 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, ...
-            sage: S.mu[0], S.mu[1], S.left, S.right
-            (
-            [0 0]  [0 1]
-            [0 1], [0 1], (1, 0), (0, 1)
-            )
+            sage: S.linear_representation()
+            ((1, 0),
+             Finite family {0: [0 0]
+                               [0 1],
+                            1: [0 1]
+                               [0 1]},
+             (0, 1))
 
         TESTS::
 
             sage: S = Seq2.guess(lambda n: 2, sequence=C)
             sage: S
             2-regular sequence 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, ...
-            sage: S.mu[0], S.mu[1], S.left, S.right
-            ([1], [1], (2), (1))
+            sage: S.linear_representation()
+            ((2),
+             Finite family {0: [1],
+                            1: [1]},
+             (1))
 
         We guess some partial sums sequences::
 
@@ -1125,11 +1138,13 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: G = Seq2.guess(lambda n: L[n])
             sage: G
             2-regular sequence 1, 3, 5, 9, 11, 15, 19, 27, 29, 33, ...
-            sage: G.mu[0], G.mu[1], G.left, G.right
-            (
-            [ 0  1]  [3 0]
-            [-3  4], [3 2], (1, 0), (1, 1)
-            )
+            sage: G.linear_representation()
+            ((1, 0),
+             Finite family {0: [ 0  1]
+                               [-3  4],
+                            1: [3 0]
+                               [3 2]},
+             (1, 1))
             sage: G == S.partial_sums(include_n=True)
             True
 
@@ -1147,11 +1162,15 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: G = Seq3.guess(lambda n: L[n])
             sage: G
             3-regular sequence 1, 4, 6, 9, 18, 24, 26, 32, 36, 39, ...
-            sage: G.mu[0], G.mu[1], G.mu[2], G.left, G.right
-            (
-            [ 0  1]  [18/5  2/5]  [ 6  0]
-            [-6  7], [18/5 27/5], [24  2], (1, 0), (1, 1)
-            )
+            sage: G.linear_representation()
+            ((1, 0),
+             Finite family {0: [ 0  1]
+                               [-6  7],
+                            1: [18/5  2/5]
+                               [18/5 27/5],
+                            2: [ 6  0]
+                               [24  2]},
+             (1, 1))
             sage: G == S.partial_sums(include_n=True)
             True
         """
