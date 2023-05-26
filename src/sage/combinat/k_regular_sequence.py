@@ -1195,7 +1195,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: Seq2.guess(s, max_exponent=1)
             Traceback (most recent call last):
             ...
-            RuntimeError: aborting as exponents would be larger than max_esponent=1        
+            RuntimeError: aborting as exponents would be larger than max_exponent=1
         """
         import logging
         logger = logging.getLogger(__name__)
@@ -1317,7 +1317,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             t_R, r_R = line_R
             if t_R >= max_exponent:
                 raise RuntimeError(f'aborting as exponents would be larger '
-                                   f'than max_esponent={max_exponent}')
+                                   f'than max_exponent={max_exponent}')
 
             t_L = t_R + 1
             for s_L in srange(k):
