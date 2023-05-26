@@ -253,9 +253,9 @@ copy of the integers::
 
 import copy
 
-from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -266,8 +266,8 @@ from .cell_complex import GenericCellComplex
 from .delta_complex import DeltaComplex
 from .simplicial_complex import SimplicialComplex
 
-from sage.misc.lazy_import import lazy_import
 lazy_import('sage.categories.simplicial_sets', 'SimplicialSets')
+lazy_import('sage.matrix.constructor', 'matrix')
 
 ########################################################################
 # The classes for simplices.

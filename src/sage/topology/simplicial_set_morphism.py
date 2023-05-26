@@ -35,11 +35,13 @@ import itertools
 from sage.categories.homset import Hom, Homset
 from sage.categories.morphism import Morphism
 from sage.categories.simplicial_sets import SimplicialSets
-from sage.matrix.constructor import matrix, zero_matrix
 from sage.misc.latex import latex
 from sage.rings.integer_ring import ZZ
 
 from .simplicial_set import SimplicialSet_arbitrary
+
+lazy_import('sage.matrix.constructor', ['matrix', 'zero_matrix'])
+
 
 class SimplicialSetHomset(Homset):
     r"""

@@ -173,10 +173,11 @@ from sage.rings.rational_field import QQ
 from sage.structure.category_object import normalize_names
 from sage.misc.latex import latex
 from sage.misc.superseded import deprecation
-from sage.matrix.constructor import matrix
 from functools import total_ordering
 from itertools import combinations, chain
+
 lazy_import('sage.categories.simplicial_complexes', 'SimplicialComplexes')
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 def lattice_paths(t1, t2, length=None):
