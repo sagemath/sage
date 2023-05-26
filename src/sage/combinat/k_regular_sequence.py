@@ -979,7 +979,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         except OverflowError:
             raise ValueError('value {} of index is negative'.format(n)) from None
 
-    def guess(self, f, n_max=100, max_dimension=10, sequence=None):
+    def guess(self, f, n_max=100, max_exponent=10, sequence=None):
         r"""
         Guess a `k`-regular sequence of `(f(n))_{n\geq0}`.
 
@@ -992,8 +992,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
           `k`-regular sequence coincides with `f` on the first ``n_max``
           terms
 
-        - ``max_dimension`` -- (default: ``10``) a positive integer specifying
-          the maximum dimension which is tried when guessing the sequence
+        - ``max_exponent`` -- (default: ``10``) a positive integer specifying
+          the maximum exponent of `k` which is tried when guessing the sequence
 
         - ``sequence`` -- (default: ``None``) a `k`-regular sequence used
           for bootstrapping the guessing by adding information of the
@@ -1148,8 +1148,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             2-regular sequence 1, 2, 2, 4, 2, 4, 4, 8, 2, 4, ...
             sage: from itertools import islice
             sage: L = []; ps = 0
-            sage: for s in islice(S, 110):
-            ....:     ps += s
+            sage: for j in islice(S, 110):
+            ....:     ps += j
             ....:     L.append(ps)
             sage: G = Seq2.guess(lambda n: L[n])
             sage: G
@@ -1172,8 +1172,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             3-regular sequence 1, 3, 2, 3, 9, 6, 2, 6, 4, 3, ...
             sage: from itertools import islice
             sage: L = []; ps = 0
-            sage: for s in islice(S, 110):
-            ....:     ps += s
+            sage: for j in islice(S, 110):
+            ....:     ps += j
             ....:     L.append(ps)
             sage: G = Seq3.guess(lambda n: L[n])
             sage: G
@@ -1189,6 +1189,13 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
              (1, 1))
             sage: G == S.partial_sums(include_n=True)
             True
+
+        ::
+
+            sage: Seq2.guess(s, max_exponent=1)
+            Traceback (most recent call last):
+            ...
+            RuntimeError: aborting as exponents would be larger than max_esponent=1        
         """
         import logging
         logger = logging.getLogger(__name__)
@@ -1308,8 +1315,9 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         while to_branch:
             line_R = to_branch.pop(0)
             t_R, r_R = line_R
-            if t_R >= max_dimension:
-                raise RuntimeError
+            if t_R >= max_exponent:
+                raise RuntimeError(f'aborting as exponents would be larger '
+                                   f'than max_esponent={max_exponent}')
 
             t_L = t_R + 1
             for s_L in srange(k):
