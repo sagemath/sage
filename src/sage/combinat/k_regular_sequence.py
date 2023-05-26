@@ -996,7 +996,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
           the maximum dimension which is tried when guessing the sequence
 
         - ``sequence`` -- (default: ``None``) a `k`-regular sequence used
-          for bootstrapping this guessing
+          for bootstrapping the guessing by adding information of the
+          linear representation of ``sequence`` to the guessed representation
 
         OUTPUT:
 
