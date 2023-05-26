@@ -49,7 +49,7 @@ jobs:
           git worktree add --detach worktree-image && git tag -f new
           rm -rf /sage/.git && mv worktree-image/.git /sage/
           rm -rf worktree-image && ln -s /sage worktree-image
-          (cd /sage && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old && make build && ./sage -t --new -p2)
+          (cd /sage && git commit --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset old && ./bootstrap && make build && ./sage -t --new -p2)
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
@@ -58,7 +58,6 @@ jobs:
         if: always() && steps.prepare.outcome == 'success'
         run: |
           # Reuse built SAGE_LOCAL contained in the Docker image 
-          ./bootstrap
           ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable --enable-download-from-upstream-url
 
       - name: Build and test modularized distributions
