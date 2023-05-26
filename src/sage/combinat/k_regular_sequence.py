@@ -1326,7 +1326,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                 line_L = t_L, r_L, s_L
 
                 try:
-                    solution = find_linear_combinations(t_L, r_L, lines)
+                    solution = find_linear_combination(t_L, r_L, lines)
                 except ValueError:
                     include(line_L)
                     solution = (len(lines)-1)*(zero,) + (one,)
