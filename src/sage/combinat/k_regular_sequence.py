@@ -1262,7 +1262,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             else:
                 raise RuntimeError
 
-        def guess_linear_dependence(t_L, r_L, lines):
+        def guess_linear_combination(t_L, r_L, lines):
             r"""
                 Based on an invertible submatrix of ``A`` as described in the
                 algorithm section of the docstring, find a candidate for a
@@ -1274,27 +1274,27 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             X_L = vector(f(k**t_L * m + r_L) for m in m_indices)
             return X_L * iU
 
-        def verify_linear_dependence(t_L, r_L, linear_dependence, lines):
+        def verify_linear_combination(t_L, r_L, linear_combination, lines):
             r"""
                 Determine whether the subsequence with parameters ``t_L`` and
                 ``r_L``, i.e., `m \mapsto f(k**t_L * m + r_L)`, is the linear
-                combination ``linear_dependence`` of the current vector valued
+                combination ``linear_combination`` of the current vector valued
                 sequence.
             """
             return all(f(k**t_L * m + r_L) ==
-                       linear_dependence * vector(values(m, lines))
+                       linear_combination * vector(values(m, lines))
                        for m in xsrange(0, (n_max - r_L) // k**t_L + 1))
 
-        def find_linear_dependence(t_L, r_L, lines):
-            linear_dependence = guess_linear_dependence(t_L, r_L, lines)
-            if not verify_linear_dependence(t_L, r_L, linear_dependence, lines):
+        def find_linear_combination(t_L, r_L, lines):
+            linear_combination = guess_linear_combination(t_L, r_L, lines)
+            if not verify_linear_combination(t_L, r_L, linear_combination, lines):
                 raise ValueError
-            return linear_dependence
+            return linear_combination
 
         left = None
         if seq(0):
             try:
-                solution = find_linear_dependence(0, 0, [])
+                solution = find_linear_combination(0, 0, [])
             except ValueError:
                 pass
             else:
@@ -1326,7 +1326,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                 line_L = t_L, r_L, s_L
 
                 try:
-                    solution = find_linear_dependence(t_L, r_L, lines)
+                    solution = find_linear_combinations(t_L, r_L, lines)
                 except ValueError:
                     include(line_L)
                     solution = (len(lines)-1)*(zero,) + (one,)
