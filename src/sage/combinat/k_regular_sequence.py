@@ -1318,7 +1318,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
                 try:
                     solution = find_linear_combination(t_L, r_L, lines)
-                except ValueError:
+                except NoLinearCombination:
                     include(line_L)
                     solution = (len(lines)-1)*(zero,) + (one,)
                 logger.debug('M_%s: f_{%s*m+%s} = %s * X_m',
