@@ -11,6 +11,24 @@ global-include all__sagemath_graphs.py
 
 graft sage/combinat/posets
 exclude sage/combinat/posets/hasse_cython_flint.p*      # needs flint
+include sage/combinat/abstract_tree.p*
+include sage/combinat/binary_tree.p*
+include sage/combinat/ordered_tree.p*
+include sage/combinat/graph_path.p*
+include sage/combinat/shard_order.p*
+include sage/combinat/tamari_lattices.p*
+include sage/combinat/nu_tamari_lattice.p*
+include sage/combinat/interval_posets.p*                # check if 'element in DyckWords()' can be tested better
+include sage/combinat/yang_baxter_graph.p*
+include sage/combinat/cluster_algebra_quiver/mutation_class.p*  # more from there?
+
+#include sage/combinat/root_system/dynkin_diagram.p*     # want?
+#include sage/combinat/root_system/cartan_type.p*        # dep of dynkin_diagram
+
+#include sage/combinat/finite_state_machine.p*           # want?
+
+#include src/sage/combinat/rigged_configurations/kleber_tree.py # want?
+
 graft sage/graphs
 exclude sage/graphs/chrompoly.p*                        # needs flint
 exclude sage/graphs/matchpoly.p*                        # needs flint

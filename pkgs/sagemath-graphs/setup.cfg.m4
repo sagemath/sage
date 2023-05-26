@@ -37,3 +37,7 @@ install_requires =
 
 [options.extras_require]
 test = esyscmd(`sage-get-system-packages install-requires sagemath_repl')
+
+bliss = esyscmd(`sage-get-system-packages install-requires sagemath_bliss')
+mcqd = esyscmd(`sage-get-system-packages install-requires sagemath_mcqd')
+tdlib = esyscmd(`sage-get-system-packages install-requires sagemath_tdlib')
