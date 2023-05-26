@@ -140,7 +140,7 @@ def value(D, k):
 
     .. MATH::
 
-        \sum_{0\leq j < \operator{len}D} D[j] k^j.
+        \sum_{0\leq j < \operatorname{len}D} D[j] k^j.
 
     INPUT:
 
