@@ -1256,7 +1256,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
                 except ZeroDivisionError:
                     pass
             else:
-                raise RuntimeError
+                raise RuntimeError('no inverse submatrix found')
 
         def linear_combination_candidate(t_L, r_L, lines):
             r"""
