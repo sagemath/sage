@@ -3896,10 +3896,11 @@ class CohomologyClass(SageObject, CachedRepresentation):
         sage: CohomologyClass(x^2+2*y*z, A)
         [2*y*z + x^2]
 
-    In order for the cache to not confuse objects with the same representation,
-    we can pass the parent of the representative as a parameter.
 
-    TESTS::
+    TESTS:
+    
+    In order for the cache to not confuse objects with the same representation,
+    we can pass the parent of the representative as a parameter::
 
         sage: A.<e1,e2,e3,e4,e5,e6> = GradedCommutativeAlgebra(QQ)
         sage: B1 = A.cdg_algebra({e5:e1*e2,e6:e3*e4})
