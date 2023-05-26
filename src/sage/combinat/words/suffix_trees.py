@@ -13,11 +13,14 @@ Suffix Tries and Suffix Trees
 from itertools import chain
 
 from sage.structure.sage_object import SageObject
-from sage.graphs.digraph import DiGraph
 from sage.sets.set import Set
 from sage.combinat.words.words import Words
 from sage.combinat.words.word import Word
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+
 
 ################################################################################
 # Suffix Tries
