@@ -1339,14 +1339,13 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: def test_rsw_comm(n):
             ....:     QSn = SymmetricGroupAlgebra(QQ, n)
             ....:     rsws = [QSn.rsw_shuffling_element(k) for k in range(2, n)]
-            ....:     return all( all( rsws[i] * rsws[j] == rsws[j] * rsws[i]
-            ....:                      for j in range(i) )
-            ....:                 for i in range(len(rsws)) )
+            ....:     return all(ri * rsws[j] == rsws[j] * ri
+            ....:                for i, ri in enumerate(rsws) for j in range(i))
             sage: test_rsw_comm(3)
             True
-            sage: test_rsw_comm(4)
+            sage: test_rsw_comm(4)   # long time
             True
-            sage: test_rsw_comm(5)   # long time
+            sage: test_rsw_comm(5)   # not tested
             True
 
         .. NOTE::

@@ -213,7 +213,7 @@ class PlanePartition(ClonableArray,
             ValueError: entries not all integers
 
         """
-        if not all(all(a in ZZ for a in b) for b in self):
+        if not all(a in ZZ for b in self for a in b):
             raise ValueError("entries not all integers")
         for row in self:
             if not all(c >= 0 for c in row):
@@ -1374,7 +1374,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
         if isinstance(pp, (list, tuple)):
             if not pp:
                 return True
-            if not all(all(a in ZZ for a in b) for b in pp):
+            if not all(a in ZZ for b in pp for a in b):
                 return False
             for row in pp:
                 if not all(c >= 0 for c in row):
@@ -1852,7 +1852,8 @@ class PlanePartitions_SPP(PlanePartitions):
         def comp(x, y):
             return all(a <= b for a, b in zip(x, y))
 
-        pl = [(x, y, z) for x in range(a) for y in range(x+1) for z in range(c)]
+        pl = [(x, y, z) for x in range(a) for y in range(x + 1)
+              for z in range(c)]
         from sage.combinat.posets.posets import Poset
         return Poset((pl, comp))
 
@@ -2048,7 +2049,7 @@ class PlanePartitions_CSPP(PlanePartitions):
             return comp(x, y) or comp(x, (y[2], y[0], y[1])) or comp(x, (y[1], y[2], y[0]))
 
         pl = [(x, y, z) for x in range(a) for y in range(b) for z in range(x, c)
-              if y <= z  and (x != z or y == x)]
+              if y <= z and (x != z or y == x)]
         from sage.combinat.posets.posets import Poset
         return Poset((pl, comp2))
 
