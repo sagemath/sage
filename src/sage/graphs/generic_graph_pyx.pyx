@@ -660,7 +660,7 @@ cdef class SubgraphSearch:
         computations with it::
 
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
-            sage: SubgraphSearch(Graph(5), Graph(1))
+            sage: SubgraphSearch(Graph(5), Graph(1))                                    # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: Searched graph should have at least 2 vertices.

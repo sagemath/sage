@@ -72,12 +72,15 @@ cdef class GabowEdgeConnectivity:
     Check that we get the same result when with and without the DFS-based
     speed-up initialization proposed in [GKLP2021]_::
 
-        sage: G = graphs.RandomBarabasiAlbert(100, 2)
-        sage: D = DiGraph(G)
-        sage: ec1 = GabowEdgeConnectivity(D, dfs_preprocessing=False).edge_connectivity()
-        sage: ec2 = GabowEdgeConnectivity(D, dfs_preprocessing=True).edge_connectivity()
-        sage: ec3 = GabowEdgeConnectivity(D, dfs_preprocessing=True, use_rec=True).edge_connectivity()
-        sage: ec1 == ec2 and ec2 == ec3
+        sage: G = graphs.RandomBarabasiAlbert(100, 2)                                   # optional - networkx
+        sage: D = DiGraph(G)                                                            # optional - networkx
+        sage: ec1 = GabowEdgeConnectivity(D,                                            # optional - networkx
+        ....:                             dfs_preprocessing=False).edge_connectivity()
+        sage: ec2 = GabowEdgeConnectivity(D,                                            # optional - networkx
+        ....:                             dfs_preprocessing=True).edge_connectivity()
+        sage: ec3 = GabowEdgeConnectivity(D, dfs_preprocessing=True,                    # optional - networkx
+        ....:                             use_rec=True).edge_connectivity()
+        sage: ec1 == ec2 and ec2 == ec3                                                 # optional - networkx
         True
 
     TESTS:

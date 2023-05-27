@@ -93,15 +93,15 @@ def DegreeSequenceBipartite(s1, s2):
     If we are given as sequences ``[2,2,2,2,2]`` and ``[5,5]`` we are given as
     expected the complete bipartite graph `K_{2,5}`::
 
-        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5])
-        sage: g.is_isomorphic(graphs.CompleteBipartiteGraph(5,2))
+        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5])                     # optional - sage.modules
+        sage: g.is_isomorphic(graphs.CompleteBipartiteGraph(5,2))                       # optional - sage.modules
         True
 
     Some sequences being incompatible if, for example, their sums are different,
     the functions raises a ``ValueError`` when no graph corresponding to the
     degree sequences exists::
 
-        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,1],[5,5])
+        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,1],[5,5])                     # optional - sage.modules
         Traceback (most recent call last):
         ...
         ValueError: there exists no bipartite graph corresponding to the given degree sequences
@@ -110,7 +110,7 @@ def DegreeSequenceBipartite(s1, s2):
 
     :trac:`12155`::
 
-        sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()
+        sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()            # optional - sage.modules
         Graph on 7 vertices
     """
     from sage.combinat.integer_vector import gale_ryser_theorem

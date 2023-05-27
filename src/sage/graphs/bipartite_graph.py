@@ -1291,10 +1291,10 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
-            sage: g = BipartiteGraph(graphs.RandomBipartite(3, 3, .5))
-            sage: g.is_bipartite()
+            sage: g = BipartiteGraph(graphs.RandomBipartite(3, 3, .5))                  # optional - numpy
+            sage: g.is_bipartite()                                                      # optional - numpy
             True
-            sage: g.is_bipartite(certificate=True)  # random
+            sage: g.is_bipartite(certificate=True)  # random                            # optional - numpy
             (True, {(0, 0): 0, (0, 1): 0, (0, 2): 0, (1, 0): 1, (1, 1): 1, (1, 2): 1})
 
         TESTS::
@@ -1627,7 +1627,7 @@ class BipartiteGraph(Graph):
             sage: B = BipartiteGraph(graphs.CompleteBipartiteGraph(4, 4))
             sage: len(list(B.perfect_matchings()))
             24
-            sage: B.matching_polynomial(algorithm='rook')(0)
+            sage: B.matching_polynomial(algorithm='rook')(0)                            # optional - sage.modules
             24
 
         TESTS::
@@ -2099,7 +2099,7 @@ class BipartiteGraph(Graph):
         Maximum matching in a cycle graph::
 
             sage: G = BipartiteGraph(graphs.CycleGraph(10))
-            sage: G.matching()
+            sage: G.matching()                                                          # optional - networkx
             [(0, 1, None), (2, 3, None), (4, 5, None), (6, 7, None), (8, 9, None)]
 
         The size of a maximum matching in a complete bipartite graph using
@@ -2126,7 +2126,7 @@ class BipartiteGraph(Graph):
             sage: B = BipartiteGraph([(u,v,2) for u,v in G.edges(sort=True, labels=0)])
             sage: sorted(B.matching(use_edge_labels=True))
             [(0, 3, 2), (1, 2, 2)]
-            sage: B.matching(use_edge_labels=True, value_only=True)
+            sage: B.matching(use_edge_labels=True, value_only=True)                     # optional - networkx
             4
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Edmonds')
             4
@@ -2140,9 +2140,9 @@ class BipartiteGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: use_edge_labels cannot be used with "Hopcroft-Karp" or "Eppstein"
-            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Hopcroft-Karp')
+            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Hopcroft-Karp')     # optional - networkx
             2
-            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Eppstein')
+            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Eppstein')          # optional - networkx
             2
             sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Edmonds')
             2
@@ -2286,9 +2286,9 @@ class BipartiteGraph(Graph):
         On the Cycle Graph::
 
             sage: B = BipartiteGraph(graphs.CycleGraph(6))
-            sage: len(B.vertex_cover())
+            sage: len(B.vertex_cover())                                                             # optional - networkx
             3
-            sage: B.vertex_cover(value_only=True)
+            sage: B.vertex_cover(value_only=True)                                                   # optional - networkx
             3
 
         The two algorithms should return the same result::
