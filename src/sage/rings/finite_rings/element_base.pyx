@@ -1007,7 +1007,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: G32(m1) == g1
             True
         """
-        [(p, k2)] = list(self.parent().cardinality().factor())
+        k2 = self.parent().degree()
         if k2 % 2:
             raise TypeError("cardinality of the field must be a square number")
         k = k2 / 2
