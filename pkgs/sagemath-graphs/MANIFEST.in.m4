@@ -14,6 +14,7 @@ exclude sage/combinat/posets/hasse_cython_flint.p*      # needs flint
 include sage/combinat/abstract_tree.p*
 include sage/combinat/binary_tree.p*
 include sage/combinat/ordered_tree.p*
+include sage/combinat/rooted_tree.p*
 include sage/combinat/graph_path.p*
 include sage/combinat/shard_order.p*
 include sage/combinat/tamari_lattices.p*
@@ -33,12 +34,16 @@ graft sage/graphs
 exclude sage/graphs/chrompoly.p*                        # needs flint
 exclude sage/graphs/matchpoly.p*                        # needs flint
 exclude sage/graphs/convexity_properties.p*             # cimports sage.numerical.backends.generic
-include src/sage/groups/perm_gps/partn_ref/refinement_graphs.p*
+include sage/groups/perm_gps/partn_ref/refinement_graphs.p*
 # simplicial complexes
 graft sage/topology            # depends on sage.combinat.subset (now in sagemath-categories)
 
 # Could also try to add:
 # sage/geometry/polyhedron/combinatorial_polyhedron
+
+
+include sage/plot/all.p*
+include sage/plot/colors.p*                     # needed by sage.graphs even when not plotting
 
 
 global-exclude *.py[co]

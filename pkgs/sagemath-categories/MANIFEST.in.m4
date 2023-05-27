@@ -74,7 +74,8 @@ graft sage/data_structures               # bitset needed by sage.graphs and sage
 exclude sage/data_structures/bounded_integer_sequences.*   # depends on flint
 exclude sage/data_structures/stream.*
 graft sage/groups/perm_gps/partn_ref  # but not partn_ref2, which depends on GAP
-exclude sage/groups/perm_gps/partn_ref/refinement_graphs.pyx  # needs graphs
+exclude sage/groups/perm_gps/partn_ref/refinement_graphs.p*    # needs graphs
+exclude sage/groups/perm_gps/partn_ref/refinement_matrices.p*  # needs matrices
 
 
 # These might later go to a separate distribution sagemath-functions (> sagemath-objects);
