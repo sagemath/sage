@@ -563,7 +563,7 @@ class SimplicialComplexMorphism(Morphism):
             else:
                 return True
 
-    def fiber_product(self, other, rename_vertices = True):
+    def fiber_product(self, other, rename_vertices=True):
         """
         Fiber product of ``self`` and ``other``. Both morphisms should have
         the same codomain. The method returns a morphism of simplicial
@@ -593,7 +593,7 @@ class SimplicialComplexMorphism(Morphism):
         """
         if self.codomain() != other.codomain():
             raise ValueError("self and other must have the same codomain")
-        X = self.domain().product(other.domain(),rename_vertices = rename_vertices)
+        X = self.domain().product(other.domain(),rename_vertices=rename_vertices)
         v = []
         f = dict()
         eff1 = self.domain().vertices()

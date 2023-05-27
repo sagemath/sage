@@ -588,7 +588,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         if sparse:
             xy_data_array = mat
         else:
-            xy_data_array = np.asarray(mat, dtype = float)
+            xy_data_array = np.asarray(mat, dtype=float)
     except TypeError:
         raise TypeError("mat must be a Matrix or a two dimensional array")
     except ValueError:

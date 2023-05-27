@@ -147,8 +147,6 @@ jobs:
           repository: ${{ inputs.sage_repo }}
           ref: ${{ inputs.sage_ref }}
           fetch-depth: 10000
-      - name: fetch tags
-        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: free disk space
         run: |
           df -h
