@@ -1833,9 +1833,9 @@ class HyperplaneArrangementElement(Element):
             sage: from itertools import product
             sage: def zero_one(d):
             ....:     for x in product([0,1], repeat=d):
-            ....:         if any(y for y in x):
+            ....:         if any(x):
             ....:             yield [0] + list(x)
-            ....:
+
             sage: K.<x,y> = HyperplaneArrangements(QQ)
             sage: A = K(*zero_one(2))
             sage: len(A.regions())

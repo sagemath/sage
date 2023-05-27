@@ -1078,7 +1078,7 @@ class LazyModuleElement(Element):
             if any(cache[a] for a in cache):
                 return True
         else:
-            if any(a for a in self._coeff_stream._cache):
+            if any(self._coeff_stream._cache):
                 return True
 
         v = self._coeff_stream._approximate_order
