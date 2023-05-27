@@ -14,4 +14,6 @@ lazy_import('sage.combinat.rooted_tree', ('RootedTree', 'RootedTrees',
                          'LabelledRootedTree', 'LabelledRootedTrees'))
 lazy_import('sage.combinat.interval_posets', ['TamariIntervalPoset', 'TamariIntervalPosets'])
 
+from .graph_path import GraphPaths
+
 from .yang_baxter_graph import YangBaxterGraph

@@ -162,8 +162,6 @@ from .words.all import *
 
 lazy_import('sage.combinat.subword', 'Subwords')
 
-from .graph_path import GraphPaths
-
 # Tuples
 from .tuple import Tuples, UnorderedTuples
 
