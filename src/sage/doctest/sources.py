@@ -788,7 +788,7 @@ class FileDocTestSource(DocTestSource):
             ....:             filename = os.path.join(path, F)
             ....:             FDS = FileDocTestSource(filename, DocTestDefaults(long=True, optional=True, force_lib=True))
             ....:             FDS._test_enough_doctests(verbose=False)
-            There are 3 unexpected tests being run in sage/doctest/parsing.py
+            There are 4 unexpected tests being run in sage/doctest/parsing.py
             There are 1 unexpected tests being run in sage/doctest/reporting.py
             sage: os.chdir(cwd)
         """
