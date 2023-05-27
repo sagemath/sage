@@ -1577,11 +1577,11 @@ cdef class CGraphBackend(GenericGraphBackend):
         We check that the bug described in :trac:`8406` is gone::
 
             sage: G = Graph()
-            sage: R.<a> = GF(3**3)
-            sage: S.<x> = R[]
-            sage: G.add_vertex(a**2)
-            sage: G.add_vertex(x)
-            sage: G.vertices(sort=True)
+            sage: R.<a> = GF(3**3)                                                      # optional - sage.rings.finite_rings
+            sage: S.<x> = R[]                                                           # optional - sage.rings.finite_rings
+            sage: G.add_vertex(a**2)                                                    # optional - sage.rings.finite_rings
+            sage: G.add_vertex(x)                                                       # optional - sage.rings.finite_rings
+            sage: G.vertices(sort=True)                                                 # optional - sage.rings.finite_rings
             [a^2, x]
 
         And that the bug described in :trac:`9610` is gone::
@@ -2107,9 +2107,9 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         Ensure that :trac:`13664` is fixed ::
 
-            sage: W = WeylGroup(["A",1])
-            sage: G = W.cayley_graph()
-            sage: Graph(G).degree()
+            sage: W = WeylGroup(["A",1])                                                # optional - sage.combinat sage.groups
+            sage: G = W.cayley_graph()                                                  # optional - sage.combinat sage.groups
+            sage: Graph(G).degree()                                                     # optional - sage.combinat sage.groups
             [1, 1]
             sage: h = Graph()
             sage: h.add_edge(1,2,"a")
@@ -4406,9 +4406,9 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS::
 
-            sage: P = posets.PentagonPoset()
-            sage: H = P._hasse_diagram
-            sage: H._backend.is_connected()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: H = P._hasse_diagram                                                  # optional - sage.modules
+            sage: H._backend.is_connected()                                             # optional - sage.modules
             True
         """
         cdef int v_int
@@ -4589,9 +4589,9 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS::
 
-            sage: m = Matrix(3,[0, 1, 1, 0, 0, 0, 0, 1, 0])
-            sage: g = DiGraph(m)
-            sage: g.is_directed_acyclic(certificate=True)
+            sage: m = Matrix(3,[0, 1, 1, 0, 0, 0, 0, 1, 0])                             # optional - sage.modules
+            sage: g = DiGraph(m)                                                        # optional - sage.modules
+            sage: g.is_directed_acyclic(certificate=True)                               # optional - sage.modules
             (True, [0, 2, 1])
         """
         if not self._directed:
