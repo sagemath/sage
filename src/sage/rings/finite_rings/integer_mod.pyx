@@ -1002,7 +1002,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     @coerce_binop
     def divides(self, other):
         r"""
-        Test wheter ``self`` divides ``other``.
+        Test whether ``self`` divides ``other``.
 
         EXAMPLES::
 
