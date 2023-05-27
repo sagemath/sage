@@ -671,10 +671,10 @@ cdef class StaticSparseBackend(CGraphBackend):
         ::
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
-            sage: g = StaticSparseBackend(digraphs.DeBruijn(3, 2))
-            sage: g.has_edge('00', '01', '1')
+            sage: g = StaticSparseBackend(digraphs.DeBruijn(3, 2))                      # optional - sage.combinat
+            sage: g.has_edge('00', '01', '1')                                           # optional - sage.combinat
             True
-            sage: g.has_edge('00', '01', '0')
+            sage: g.has_edge('00', '01', '0')                                           # optional - sage.combinat
             False
         """
         try:

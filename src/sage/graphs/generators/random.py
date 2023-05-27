@@ -164,20 +164,20 @@ def RandomBarabasiAlbert(n, m, seed=None):
 
         sage: g = []
         sage: j = []
-        sage: for i in range(1,10):
+        sage: for i in range(1,10):                                                     # optional - networkx
         ....:     k = graphs.RandomBarabasiAlbert(i+3, 3)
         ....:     g.append(k)
-        sage: for i in range(3):                                                        # optional - sage.plot
+        sage: for i in range(3):                                                        # optional - networkx sage.plot
         ....:     n = []
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = graphics_array(j)                                                     # optional - sage.plot
-        sage: G.show()  # long time                                                     # optional - sage.plot
+        sage: G = graphics_array(j)                                                     # optional - networkx sage.plot
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     When `m = 1`, the generated graph is a tree::
 
-        sage: graphs.RandomBarabasiAlbert(6, 1).is_tree()
+        sage: graphs.RandomBarabasiAlbert(6, 1).is_tree()                               # optional - networkx
         True
     """
     if seed is None:
