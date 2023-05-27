@@ -35,7 +35,7 @@ cpdef Matrix_integer_dense moebius_matrix_fast(list positions):
 
     EXAMPLES::
 
-        sage: from sage.combinat.posets.hasse_cython import moebius_matrix_fast
+        sage: from sage.combinat.posets.hasse_cython_flint import moebius_matrix_fast
         sage: D = [{0,1},{1}]
         sage: moebius_matrix_fast(D)
         [ 1 -1]
@@ -94,7 +94,7 @@ cpdef Matrix_integer_dense coxeter_matrix_fast(list positions):
 
     EXAMPLES::
 
-        sage: from sage.combinat.posets.hasse_cython import coxeter_matrix_fast
+        sage: from sage.combinat.posets.hasse_cython_flint import coxeter_matrix_fast
         sage: D = [{0,1},{1}]
         sage: coxeter_matrix_fast(D)
         [ 0 -1]
