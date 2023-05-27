@@ -659,49 +659,6 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
     return soln
 
 
-# def desolve_laplace2(de,vars,ics=None):
-#     """
-#     Solves an ODE using laplace transforms via maxima. Initial conditions
-#     are optional.
-
-#     INPUT:
-#         de    -- a lambda expression representing the ODE
-#                  (eg, de = "diff(f(x),x,2)=diff(f(x),x)+sin(x)")
-#         vars  -- a list of strings representing the variables
-#                  (eg, vars = ["x","f"], if x is the independent
-#                   variable and f is the dependent variable)
-#         ics   -- a list of numbers representing initial conditions,
-#                  with symbols allowed which are represented by strings
-#                  (eg, f(0)=1, f'(0)=2 is ics = [0,1,2])
-
-#     EXAMPLES::
-
-#         sage: from sage.calculus.desolvers import desolve_laplace
-#         sage: x = var('x')
-#         sage: f = function('f')(x)
-#         sage: de = lambda y: diff(y,x,x) - 2*diff(y,x) + y
-#         sage: desolve_laplace(de(f(x)),[f,x])
-#          #x*%e^x*(?%at('diff('f(x),x,1),x=0))-'f(0)*x*%e^x+'f(0)*%e^x
-#         sage: desolve_laplace(de(f(x)),[f,x],[0,1,2])  # IC option does not work
-#          #x*%e^x*(?%at('diff('f(x),x,1),x=0))-'f(0)*x*%e^x+'f(0)*%e^x
-
-#     AUTHOR: David Joyner (1st version 1-2006, 8-2007)
-#     """
-#    ######## this method seems reasonable but doesn't work for some reason
-#    name0 = vars[0]._repr_()[0:(len(vars[0]._repr_())-2-len(str(vars[1])))]
-#    name1 = str(vars[1])
-#    #maxima("de:"+de+";")
-#    if ics is not None:
-#        ic0 = maxima("ic:"+str(vars[1])+"="+str(ics[0]))
-#        d = len(ics)
-#        for i in range(d-1):
-#            maxima(vars[0](vars[1])).diff(vars[1],i).atvalue(ic0,ics[i+1])
-#    de0 = de._maxima_()
-#    #cmd = "desolve("+de+","+vars[1]+"("+vars[0]+"));"
-#    #return maxima.eval(cmd)
-#    return de0.desolve(vars[0]).rhs()
-
-
 def desolve_laplace(de, dvar, ics=None, ivar=None):
     """
     Solve an ODE using Laplace transforms. Initial conditions are optional.
