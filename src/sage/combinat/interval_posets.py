@@ -46,6 +46,7 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.sets.non_negative_integers import NonNegativeIntegers
