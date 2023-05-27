@@ -58,6 +58,7 @@ jobs:
         if: always() && steps.prepare.outcome == 'success'
         run: |
           # Reuse built SAGE_LOCAL contained in the Docker image 
+          ./bootstrap
           ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable --enable-download-from-upstream-url
 
       - name: Build and test modularized distributions
