@@ -1162,7 +1162,7 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()._hasse_diagram
+            sage: P = posets.PentagonPoset()._hasse_diagram                             # optional - sage.modules
             sage: M = P.coxeter_transformation(); M                                     # optional - sage.libs.flint sage.modules
             [ 0  0  0  0 -1]
             [ 0  0  0  1 -1]
@@ -1537,8 +1537,8 @@ class HasseDiagram(DiGraph):
         TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})
-            sage: P = L.dual()
+            sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                       # optional - sage.modules
+            sage: P = L.dual()                                                          # optional - sage.modules
             sage: P.meet(2,3)                                                           # optional - sage.modules
             4
         """
@@ -1701,8 +1701,8 @@ class HasseDiagram(DiGraph):
         TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})
-            sage: P = L.dual()
+            sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                       # optional - sage.modules
+            sage: P = L.dual()                                                          # optional - sage.modules
             sage: P.join(2,3)                                                           # optional - sage.modules
             0
         """
@@ -2224,11 +2224,11 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: H = P._hasse_diagram
-            sage: H.antichains_iterator()
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: H = P._hasse_diagram                                                  # optional - sage.modules
+            sage: H.antichains_iterator()                                               # optional - sage.modules
             <generator object ...antichains_iterator at ...>
-            sage: list(H.antichains_iterator())
+            sage: list(H.antichains_iterator())                                         # optional - sage.modules
             [[], [4], [3], [2], [1], [1, 3], [1, 2], [0]]
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
@@ -3175,32 +3175,32 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0: [1, 2], 1: [3], 2: [4], 3: [4]})
-            sage: cong = H.congruence([[0, 1]]); cong
+            sage: cong = H.congruence([[0, 1]]); cong                                   # optional - sage.modules
             {{0, 1, 3}, {2, 4}}
-            sage: H.congruence([[0, 2]], start=cong)
+            sage: H.congruence([[0, 2]], start=cong)                                    # optional - sage.modules
             {{0, 1, 2, 3, 4}}
 
-            sage: H.congruence([[0, 1]], stop_pairs=[(1, 3)]) is None
+            sage: H.congruence([[0, 1]], stop_pairs=[(1, 3)]) is None                   # optional - sage.modules
             True
 
         TESTS::
 
             sage: H = HasseDiagram('HT@O?GO?OE?G@??')
-            sage: H.congruence([[0, 1]]).number_of_subsets()
+            sage: H.congruence([[0, 1]]).number_of_subsets()                            # optional - sage.modules
             1
             sage: H = HasseDiagram('HW_oC?@@O@?O@??')
-            sage: H.congruence([[0, 1]]).number_of_subsets()
+            sage: H.congruence([[0, 1]]).number_of_subsets()                            # optional - sage.modules
             1
 
         Check :trac:`21861`::
 
             sage: H = HasseDiagram({0: [1, 2], 1: [3], 2: [4], 3: [4]})
-            sage: tmp = H.congruence([[1, 3]])
-            sage: tmp.number_of_subsets()
+            sage: tmp = H.congruence([[1, 3]])                                          # optional - sage.modules
+            sage: tmp.number_of_subsets()                                               # optional - sage.modules
             4
-            sage: H.congruence([[0, 1]], start=tmp).number_of_subsets()
+            sage: H.congruence([[0, 1]], start=tmp).number_of_subsets()                 # optional - sage.modules
             2
-            sage: tmp.number_of_subsets()
+            sage: tmp.number_of_subsets()                                               # optional - sage.modules
             4
         """
         from sage.sets.disjoint_set import DisjointSet

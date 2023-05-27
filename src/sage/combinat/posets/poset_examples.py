@@ -1617,9 +1617,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: P4 = posets.PermutationPattern(4); P4
+            sage: P4 = posets.PermutationPattern(4); P4                                 # optional - sage.combinat
             Finite poset containing 33 elements
-            sage: sorted(P4.lower_covers(Permutation([2,4,1,3])))
+            sage: sorted(P4.lower_covers(Permutation([2,4,1,3])))                       # optional - sage.combinat
             [[1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2]]
 
         .. SEEALSO::
@@ -1628,9 +1628,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         TESTS::
 
-            sage: posets.PermutationPattern(1)
+            sage: posets.PermutationPattern(1)                                          # optional - sage.combinat
             Finite poset containing 1 elements
-            sage: posets.PermutationPattern(2)
+            sage: posets.PermutationPattern(2)                                          # optional - sage.combinat
             Finite poset containing 3 elements
         """
         n = check_int(n, 1)
@@ -2097,7 +2097,7 @@ def _random_stone_lattice(n):
     EXAMPLES::
 
         sage: g = sage.combinat.posets.poset_examples._random_stone_lattice(10)         # optional - sage.combinat
-        sage: LatticePoset(g).is_stone()
+        sage: LatticePoset(g).is_stone()                                                # optional - sage.combinat
         True
 
     ALGORITHM:

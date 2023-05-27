@@ -3531,32 +3531,32 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             ....:             if not BinaryTree(tree) == t:
             ....:                 return False
             ....:     return True
-            sage: test_bst_of_sc(4, False)
+            sage: test_bst_of_sc(4, False)                                              # optional - sage.combinat
             True
-            sage: test_bst_of_sc(5, False)   # long time
+            sage: test_bst_of_sc(5, False)   # long time                                # optional - sage.combinat
             True
 
         The same with the left-to-right version of binary search::
 
-            sage: test_bst_of_sc(4, True)
+            sage: test_bst_of_sc(4, True)                                               # optional - sage.combinat
             True
-            sage: test_bst_of_sc(5, True)   # long time
+            sage: test_bst_of_sc(5, True)   # long time                                 # optional - sage.combinat
             True
 
         Checking that the sylvester class is the set of linear extensions
         of the poset of the tree::
 
-            sage: all( sorted(t.canonical_labelling().sylvester_class())
+            sage: all( sorted(t.canonical_labelling().sylvester_class())                # optional - sage.combinat
             ....:      == sorted(list(v) for v in t.canonical_labelling().to_poset().linear_extensions())
             ....:      for t in BinaryTrees(4) )
             True
 
         TESTS::
 
-            sage: list(BinaryTree([[],[]]).sylvester_class())
+            sage: list(BinaryTree([[],[]]).sylvester_class())                           # optional - sage.combinat
             [[1, 3, 2], [3, 1, 2]]
             sage: bt = BinaryTree([[[],None],[[],[]]])
-            sage: l = list(bt.sylvester_class()); l
+            sage: l = list(bt.sylvester_class()); l                                     # optional - sage.combinat
             [[1, 2, 4, 6, 5, 3],
              [1, 4, 2, 6, 5, 3],
              [1, 4, 6, 2, 5, 3],
@@ -3577,14 +3577,14 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
              [6, 4, 1, 2, 5, 3],
              [6, 4, 1, 5, 2, 3],
              [6, 4, 5, 1, 2, 3]]
-            sage: len(l) == Integer(bt.q_hook_length_fraction()(q=1))
+            sage: len(l) == Integer(bt.q_hook_length_fraction()(q=1))                   # optional - sage.combinat
             True
 
         Border cases::
 
-            sage: list(BinaryTree().sylvester_class())
+            sage: list(BinaryTree().sylvester_class())                                  # optional - sage.combinat
             [[]]
-            sage: list(BinaryTree([]).sylvester_class())
+            sage: list(BinaryTree([]).sylvester_class())                                # optional - sage.combinat
             [[1]]
         """
         if self.is_empty():

@@ -88,18 +88,18 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
 
         sage: def left_multiplication_by(g):
         ....:     return lambda h: h*g
-        sage: G = CyclicPermutationGroup(4)
-        sage: operators = [ left_multiplication_by(gen) for gen in G.gens() ]
-        sage: Y = YangBaxterGraph(root=G.identity(), operators=operators); Y
+        sage: G = CyclicPermutationGroup(4)                                             # optional - sage.groups
+        sage: operators = [ left_multiplication_by(gen) for gen in G.gens() ]           # optional - sage.groups
+        sage: Y = YangBaxterGraph(root=G.identity(), operators=operators); Y            # optional - sage.groups
         Yang-Baxter graph with root vertex ()
-        sage: Y.plot(edge_labels=False)                                                 # optional - sage.plot
+        sage: Y.plot(edge_labels=False)                                                 # optional - sage.groups sage.plot
         Graphics object consisting of 9 graphics primitives
 
-        sage: G = SymmetricGroup(4)
-        sage: operators = [left_multiplication_by(gen) for gen in G.gens()]
-        sage: Y = YangBaxterGraph(root=G.identity(), operators=operators); Y
+        sage: G = SymmetricGroup(4)                                                     # optional - sage.groups
+        sage: operators = [left_multiplication_by(gen) for gen in G.gens()]             # optional - sage.groups
+        sage: Y = YangBaxterGraph(root=G.identity(), operators=operators); Y            # optional - sage.groups
         Yang-Baxter graph with root vertex ()
-        sage: Y.plot(edge_labels=False)                                                 # optional - sage.plot
+        sage: Y.plot(edge_labels=False)                                                 # optional - sage.groups sage.plot
         Graphics object consisting of 96 graphics primitives
 
     AUTHORS:

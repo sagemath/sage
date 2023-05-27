@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.modules
 r"""
 Generalized Tamari lattices
 

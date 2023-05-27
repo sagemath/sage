@@ -1101,7 +1101,8 @@ class OrderedTrees_size(OrderedTrees):
 
         TESTS::
 
-            sage: all(OrderedTrees(10).random_element() in OrderedTrees(10) for i in range(20))
+            sage: all(OrderedTrees(10).random_element() in OrderedTrees(10)             # optional - sage.combinat
+            ....:     for i in range(20))
             True
         """
         if self._size == 0:

@@ -53,7 +53,7 @@ class MobilePoset(FinitePoset):
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
         sage: P2._anchor
         (8, (8, 0))
-        sage: P2.linear_extensions().cardinality()
+        sage: P2.linear_extensions().cardinality()                                      # optional - sage.modules
         21399440939
 
         sage: EP = posets.MobilePoset(posets.ChainPoset(0), {})

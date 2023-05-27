@@ -234,8 +234,8 @@ class LinearExtensionOfPoset(ClonableArray,
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()
-            sage: for l in P.linear_extensions():
+            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
+            sage: for l in P.linear_extensions():                                       # optional - sage.modules
             ....:     if not l.is_greedy():
             ....:         print(l)
             [0, 2, 1, 3, 4]
@@ -812,8 +812,8 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``action`` -- 'promotion' or 'tau' (default: 'promotion')
-        - ``labeling`` -- 'identity' or 'source' (default: 'identity')
+        - ``action`` -- ``'promotion'`` or ``'tau'`` (default: ``'promotion'``)
+        - ``labeling`` -- ``'identity'`` or ``'source'`` (default: ``'identity'``)
 
         This method yields the transition matrix of the Markov chain defined by the action of the generalized
         promotion operator `\partial_i` (resp. `\tau_i`) on the set of linear extensions of a finite poset.
@@ -822,30 +822,30 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = Poset(([1,2,3,4], [[1,3],[1,4],[2,3]]), linear_extension = True)
+            sage: P = Poset(([1,2,3,4], [[1,3],[1,4],[2,3]]), linear_extension=True)
             sage: L = P.linear_extensions()
-            sage: L.markov_chain_transition_matrix()
+            sage: L.markov_chain_transition_matrix()                                    # optional - sage.modules
             [-x0 - x1 - x2            x2       x0 + x1             0             0]
             [      x1 + x2 -x0 - x1 - x2             0            x0             0]
             [            0            x1      -x0 - x1             0            x0]
             [            0            x0             0 -x0 - x1 - x2       x1 + x2]
             [           x0             0             0       x1 + x2 -x0 - x1 - x2]
 
-            sage: L.markov_chain_transition_matrix(labeling = 'source')
+            sage: L.markov_chain_transition_matrix(labeling='source')                   # optional - sage.modules
             [-x0 - x1 - x2            x3       x0 + x3             0             0]
             [      x1 + x2 -x0 - x1 - x3             0            x1             0]
             [            0            x1      -x0 - x3             0            x1]
             [            0            x0             0 -x0 - x1 - x2       x0 + x3]
             [           x0             0             0       x0 + x2 -x0 - x1 - x3]
 
-            sage: L.markov_chain_transition_matrix(action = 'tau')
+            sage: L.markov_chain_transition_matrix(action='tau')                        # optional - sage.modules
             [     -x0 - x2            x2             0            x0             0]
             [           x2 -x0 - x1 - x2            x1             0            x0]
             [            0            x1           -x1             0             0]
             [           x0             0             0      -x0 - x2            x2]
             [            0            x0             0            x2      -x0 - x2]
 
-            sage: L.markov_chain_transition_matrix(action = 'tau', labeling = 'source')
+            sage: L.markov_chain_transition_matrix(action='tau', labeling='source')     # optional - sage.modules
             [     -x0 - x2            x3             0            x1             0]
             [           x2 -x0 - x1 - x3            x3             0            x1]
             [            0            x1           -x3             0             0]
@@ -924,8 +924,8 @@ class LinearExtensionsOfPosetWithHooks(LinearExtensionsOfPoset):
         EXAMPLES::
 
             sage: from sage.combinat.posets.poset_examples import Posets
-            sage: P = Posets.YoungDiagramPoset(Partition([3,2]), dual=True)
-            sage: P.linear_extensions().cardinality()
+            sage: P = Posets.YoungDiagramPoset(Partition([3,2]), dual=True)             # optional - sage.combinat
+            sage: P.linear_extensions().cardinality()                                   # optional - sage.combinat sage.modules
             5
         """
         num_elmts = self._poset.cardinality()
@@ -951,11 +951,11 @@ class LinearExtensionsOfForest(LinearExtensionsOfPoset):
             sage: from sage.combinat.posets.forest import ForestPoset
             sage: from sage.combinat.posets.poset_examples import Posets
             sage: P = Poset({0: [2], 1: [2], 2: [3, 4], 3: [], 4: []})
-            sage: P.linear_extensions().cardinality()
+            sage: P.linear_extensions().cardinality()                                   # optional - sage.modules
             4
 
             sage: Q = Poset({0: [1], 1: [2, 3], 2: [], 3: [], 4: [5, 6], 5: [], 6: []})
-            sage: Q.linear_extensions().cardinality()
+            sage: Q.linear_extensions().cardinality()                                   # optional - sage.modules
             140
         """
         return sum(self.atkinson(self._elements[0]))
@@ -976,17 +976,18 @@ class LinearExtensionsOfMobile(LinearExtensionsOfPoset):
             sage: from sage.combinat.posets.mobile import MobilePoset
             sage: M = MobilePoset(DiGraph([[0,1,2,3,4,5,6,7,8], [(1,0),(3,0),(2,1),(2,3),(4,
             ....: 3), (5,4),(5,6),(7,4),(7,8)]]))
-            sage: M.linear_extensions().cardinality()
+            sage: M.linear_extensions().cardinality()                                   # optional - sage.modules
             1098
 
             sage: M1 = posets.RibbonPoset(6, [1,3])
-            sage: M1.linear_extensions().cardinality()
+            sage: M1.linear_extensions().cardinality()                                  # optional - sage.modules
             61
 
-            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]), {1:
-            ....: [posets.YoungDiagramPoset([3, 2], dual=True)], 3: [posets.DoubleTailedDiamond(6)]},
-            ....: anchor=(4, 2, posets.ChainPoset(6)))
-            sage: P.linear_extensions().cardinality()
+            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),
+            ....:                        {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
+            ....:                         3: [posets.DoubleTailedDiamond(6)]},
+            ....:                        anchor=(4, 2, posets.ChainPoset(6)))
+            sage: P.linear_extensions().cardinality()                                   # optional - sage.modules
             361628701868606400
         """
         import sage.combinat.posets.d_complete as dc
