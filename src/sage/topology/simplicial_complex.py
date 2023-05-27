@@ -4697,7 +4697,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: X = SimplicialComplex([[1,2], [1,4], [3,4], [2,5]])
             sage: X.is_balanced()                                                       # optional - sage.graphs
             True
-            sage: sorted(X.is_balanced(certificate=True))                               # optional - sage.graphs
+            sage: sorted(X.is_balanced(certificate=True))                               # optional - sage.graphs sa
             [[1, 3, 5], [2, 4]]
             sage: X = SimplicialComplex([[1,2], [1,4], [3,4], [2,4]])
             sage: X.is_balanced()                                                       # optional - sage.graphs

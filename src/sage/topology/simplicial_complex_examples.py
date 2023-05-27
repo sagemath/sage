@@ -67,7 +67,7 @@ EXAMPLES::
 TESTS::
 
     sage: from sage.topology.simplicial_complex_examples import PseudoQuaternionicProjectivePlane
-    sage: H = PseudoQuaternionicProjectivePlane()
+    sage: H = PseudoQuaternionicProjectivePlane()                                       # optional - sage.groups
     doctest:warning...:
     DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated.
     Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
@@ -1121,7 +1121,7 @@ def MatchingComplex(n):
         sage: M = simplicial_complexes.MatchingComplex(7)
         sage: H = M.homology(); H                                                       # optional - sage.modules
         {0: 0, 1: C3, 2: Z^20}
-        sage: H[2].ngens()
+        sage: H[2].ngens()                                                              # optional - sage.modules
         20
         sage: M8 = simplicial_complexes.MatchingComplex(8)
         sage: M8.homology(2)  # long time (6s on sage.math, 2012)                       # optional - sage.modules
@@ -1487,7 +1487,7 @@ def RudinBall():
         [1, 14, 66, 94, 41]
         sage: R.homology()                                                              # optional - sage.modules
         {0: 0, 1: 0, 2: 0, 3: 0}
-        sage: R.is_cohen_macaulay()
+        sage: R.is_cohen_macaulay()                                                     # optional - sage.modules
         True
     """
     return UniqueSimplicialComplex(
@@ -1519,7 +1519,7 @@ def ZieglerBall():
         [1, 10, 38, 50, 21]
         sage: Z.homology()                                                              # optional - sage.modules
         {0: 0, 1: 0, 2: 0, 3: 0}
-        sage: Z.is_cohen_macaulay()
+        sage: Z.is_cohen_macaulay()                                                     # optional - sage.modules
         True
     """
 
@@ -1547,7 +1547,7 @@ def DunceHat():
         [1, 8, 24, 17]
         sage: D.homology()                                                              # optional - sage.modules
         {0: 0, 1: 0, 2: 0}
-        sage: D.is_cohen_macaulay()
+        sage: D.is_cohen_macaulay()                                                     # optional - sage.modules
         True
     """
     return UniqueSimplicialComplex(
@@ -1647,7 +1647,7 @@ def GenusSix():
         sage: S = simplicial_complexes.GenusSix()
         sage: S.automorphism_group().cardinality()                                      # optional - sage.groups
         12
-        sage: S.betti()
+        sage: S.betti()                                                                 # optional - sage.modules
         {0: 1, 1: 12, 2: 1}
         sage: S.f_vector()
         [1, 12, 66, 44]

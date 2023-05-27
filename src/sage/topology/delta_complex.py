@@ -1584,7 +1584,7 @@ class DeltaComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: RP2 = delta_complexes.RealProjectivePlane()
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # optional - sage.rings.finite_rings
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # optional - sage.modules sage.rings.finite_rings
             sage: M.homology()                                                          # optional - sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,

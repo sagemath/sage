@@ -178,8 +178,8 @@ any simplicial set::
     sage: pi.is_abelian()                                                               # optional - sage.groups
     False
 
-    sage: RP6 = simplicial_sets.RealProjectiveSpace(6)
-    sage: RP6.homology(reduced=False, base_ring=GF(2))                                  # optional - sage.modules sage.rings.finite_rings
+    sage: RP6 = simplicial_sets.RealProjectiveSpace(6)                                  # optional - sage.groups
+    sage: RP6.homology(reduced=False, base_ring=GF(2))                                  # optional - sage.groups sage.modules sage.rings.finite_rings
     {0: Vector space of dimension 1 over Finite Field of size 2,
      1: Vector space of dimension 1 over Finite Field of size 2,
      2: Vector space of dimension 1 over Finite Field of size 2,
@@ -187,7 +187,7 @@ any simplicial set::
      4: Vector space of dimension 1 over Finite Field of size 2,
      5: Vector space of dimension 1 over Finite Field of size 2,
      6: Vector space of dimension 1 over Finite Field of size 2}
-    sage: RP6.homology(reduced=False, base_ring=QQ)                                     # optional - sage.modules
+    sage: RP6.homology(reduced=False, base_ring=QQ)                                     # optional - sage.groups sage.modules
     {0: Vector space of dimension 1 over Rational Field,
      1: Vector space of dimension 0 over Rational Field,
      2: Vector space of dimension 0 over Rational Field,
