@@ -11,12 +11,13 @@ Some fast computations for finite posets
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.misc.lazy_import import lazy_import
+from sage.misc.lazy_import import LazyImport
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
 
-lazy_import('sage.combinat.posets.hasse_cython_flint',
-            ['coxeter_matrix_fast', 'moebius_matrix_fast'],
-            deprecation=35564)
+coxeter_matrix_fast = LazyImport('sage.combinat.posets.hasse_cython_flint', 'coxeter_matrix_fast',
+                                 deprecation=35564)
+moebius_matrix_fast = LazyImport('sage.combinat.posets.hasse_cython_flint', 'moebius_matrix_fast',
+                                 deprecation=35564)
 
 
 class IncreasingChains(RecursivelyEnumeratedSet_forest):
