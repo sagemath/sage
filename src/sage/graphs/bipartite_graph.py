@@ -47,6 +47,9 @@ from .graph import Graph
 from sage.rings.integer import Integer
 from sage.misc.decorators import rename_keyword
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('networkx', ['MultiGraph', 'Graph'], as_=['networkx_MultiGraph', 'networkx_Graph'])
 
 
 class BipartiteGraph(Graph):
@@ -504,8 +507,7 @@ class BipartiteGraph(Graph):
                 if len(left) + len(right) != self.num_verts():
                     raise ValueError("not all vertices appear in partition")
 
-            import networkx
-            if isinstance(data, (networkx.MultiGraph, networkx.Graph)):
+            if isinstance(data, (networkx_MultiGraph, networkx_Graph)):
                 if hasattr(data, "node_type"):
                     # Assume the graph is bipartite
                     self.left = set()
