@@ -196,7 +196,7 @@ class SpikeFunction:
 
             sage: S = spike_function([(-3,4), (-1,1), (2,3)],0.001); S
             A spike function with spikes at [-3.0, -1.0, 2.0]
-            sage: S.vector(16)
+            sage: S.vector(16)                                                          # optional - sage.modules
             (4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
              0.0, 0.0, 0.0)
         """
