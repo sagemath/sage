@@ -106,7 +106,7 @@ covered here.
              5: [7, 8], 6: [8,9], 7: [9]}
        sage: G = Graph(d); G
        Graph on 10 vertices
-       sage: G.plot().show()    # or G.show()
+       sage: G.plot().show()    # or G.show()                                           # optional - sage.plot
 
 - A NetworkX graph:
 
@@ -125,7 +125,7 @@ covered here.
        sage: s = ':I`AKGsaOs`cI]Gb~'
        sage: G = Graph(s, sparse=True); G
        Looped multi-graph on 10 vertices
-       sage: G.plot().show()    # or G.show()
+       sage: G.plot().show()    # or G.show()                                           # optional - sage.plot
 
    Note that the ``\`` character is an escape character in Python, and also a
    character used by graph6 strings:
@@ -142,7 +142,7 @@ covered here.
    ::
 
        sage: G = Graph('Ihe\\n@GUA')
-       sage: G.plot().show()    # or G.show()
+       sage: G.plot().show()    # or G.show()                                           # optional - sage.plot
 
 - adjacency matrix: In an adjacency matrix, each column and each row represent a
    vertex. If a 1 shows up in row `i`, column `j`, there is an edge `(i,j)`.
@@ -166,7 +166,7 @@ covered here.
        [0 0 0 0 1 0 1 1 0 0]
        sage: G = Graph(M); G
        Graph on 10 vertices
-       sage: G.plot().show()    # or G.show()
+       sage: G.plot().show()    # or G.show()                                           # optional - sage.plot
 
 - incidence matrix: In an incidence matrix, each row represents a vertex and
    each column represents an edge.
@@ -196,7 +196,7 @@ covered here.
        [ 0  0  0  0  0  0  1 -1  0  0  0  0  0  0  1]
        sage: G = Graph(M); G
        Graph on 10 vertices
-       sage: G.plot().show()    # or G.show()
+       sage: G.plot().show()    # or G.show()                                           # optional - sage.plot
        sage: DiGraph(matrix(2,[0,0,-1,1]), format="incidence_matrix")
        Traceback (most recent call last):
        ...
@@ -254,7 +254,7 @@ see how people usually visualize these graphs.
 ::
 
     sage: G = graphs.PetersenGraph()
-    sage: G.plot().show()    # or G.show()
+    sage: G.plot().show()    # or G.show()                                              # optional - sage.plot
     sage: G.degree_histogram()
     [0, 0, 0, 10]
     sage: G.adjacency_matrix()
@@ -272,7 +272,7 @@ see how people usually visualize these graphs.
 ::
 
     sage: S = G.subgraph([0,1,2,3])
-    sage: S.plot().show()    # or S.show()
+    sage: S.plot().show()    # or S.show()                                              # optional - sage.plot
     sage: S.density()
     1/2
 
@@ -280,7 +280,7 @@ see how people usually visualize these graphs.
 
     sage: G = GraphQuery(display_cols=['graph6'], num_vertices=7, diameter=5)
     sage: L = G.get_graphs_list()
-    sage: graphs_list.show_graphs(L)
+    sage: graphs_list.show_graphs(L)                                                    # optional - sage.plot
 
 .. _Graph:labels:
 
@@ -349,7 +349,7 @@ individually by iterating through the results ::
 
 Show each graph as you iterate through the results::
 
-    sage: for g in Q:
+    sage: for g in Q:                                                                   # optional - sage.plot
     ....:     show(g)
 
 Visualization
@@ -359,11 +359,11 @@ To see a graph `G` you are working with, there are three main options. You can
 view the graph in two dimensions via matplotlib with ``show()``. ::
 
     sage: G = graphs.RandomGNP(15,.3)
-    sage: G.show()
+    sage: G.show()                                                                      # optional - sage.plot
 
 And you can view it in three dimensions via jmol with ``show3d()``. ::
 
-    sage: G.show3d()
+    sage: G.show3d()                                                                    # optional - sage.plot
 
 Or it can be rendered with `\LaTeX`.  This requires the right additions to a
 standard `\mbox{\rm\TeX}` installation.  Then standard Sage commands, such as
@@ -3855,14 +3855,14 @@ class Graph(GenericGraph):
             True
             sage: are_equal_colorings(P, Q)
             True
-            sage: G.plot(partition=P)
+            sage: G.plot(partition=P)                                                   # optional - sage.plot
             Graphics object consisting of 16 graphics primitives
             sage: G.coloring(hex_colors=True, algorithm="MILP")
             {'#0000ff': [4], '#00ff00': [0, 6, 5], '#ff0000': [2, 1, 3]}
             sage: H = G.coloring(hex_colors=True, algorithm="DLX")
             sage: H
             {'#0000ff': [4], '#00ff00': [1, 2, 3], '#ff0000': [0, 5, 6]}
-            sage: G.plot(vertex_colors=H)
+            sage: G.plot(vertex_colors=H)                                               # optional - sage.plot
             Graphics object consisting of 16 graphics primitives
 
         .. PLOT::
@@ -5949,13 +5949,13 @@ class Graph(GenericGraph):
 
         :trac:`22424`::
 
-            sage: G1=graphs.RandomGNP(5,0.5)
-            sage: gp1 = G1.graphplot(save_pos=True)
-            sage: G2=G1.to_directed()
+            sage: G1 = graphs.RandomGNP(5,0.5)
+            sage: gp1 = G1.graphplot(save_pos=True)                                     # optional - sage.plot
+            sage: G2 = G1.to_directed()
             sage: G2.delete_vertex(0)
             sage: G2.add_vertex(5)
-            sage: gp2 = G2.graphplot()
-            sage: gp1 = G1.graphplot()
+            sage: gp2 = G2.graphplot()                                                  # optional - sage.plot
+            sage: gp1 = G1.graphplot()                                                  # optional - sage.plot
 
         Vertex labels will be retained (:trac:`14708`)::
 
@@ -6545,7 +6545,7 @@ class Graph(GenericGraph):
              [2, 6], [2, 8], [3, 4], [3, 7], [3, 9], [4, 5], [4, 8], [5, 10],
              [5, 11], [6, 10], [6, 11], [7, 8], [7, 11], [8, 10], [9, 10], [9, 11]]
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2, 2])
+            sage: G.show(figsize=[2, 2])                                                # optional - sage.plot
             sage: G.cliques_maximal()
             [[0, 1, 2], [0, 1, 3]]
             sage: C = graphs.PetersenGraph()
@@ -6720,7 +6720,7 @@ class Graph(GenericGraph):
             sage: C.clique_number()
             4
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
             sage: G.clique_number()
             3
 
@@ -6731,12 +6731,14 @@ class Graph(GenericGraph):
 
         A non-empty graph without edges has a clique number of 1::
 
-            sage: all((i*graphs.CompleteGraph(1)).clique_number() == 1 for i in range(1,15))
+            sage: all((i*graphs.CompleteGraph(1)).clique_number() == 1
+            ....:     for i in range(1,15))
             True
 
         A complete multipartite graph with k parts has clique number k::
 
-            sage: all((i*graphs.CompleteMultipartiteGraph(i*[5])).clique_number() == i for i in range(1,6))
+            sage: all((i*graphs.CompleteMultipartiteGraph(i*[5])).clique_number() == i
+            ....:     for i in range(1,6))
             True
 
         TESTS::
@@ -6802,7 +6804,7 @@ class Graph(GenericGraph):
             sage: F.cliques_number_of(vertices=(0, 1))
             3
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
             sage: G.cliques_number_of()
             {0: 2, 1: 2, 2: 1, 3: 1}
         """
@@ -6838,14 +6840,14 @@ class Graph(GenericGraph):
 
         EXAMPLES::
 
-            sage: (graphs.ChvatalGraph()).cliques_get_max_clique_graph()
+            sage: MCG = graphs.ChvatalGraph().cliques_get_max_clique_graph(); MCG
             Graph on 24 vertices
-            sage: ((graphs.ChvatalGraph()).cliques_get_max_clique_graph()).show(figsize=[2,2], vertex_size=20, vertex_labels=False)
+            sage: MCG.show(figsize=[2,2], vertex_size=20, vertex_labels=False)          # optional - sage.plot
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
             sage: G.cliques_get_max_clique_graph()
             Graph on 2 vertices
-            sage: (G.cliques_get_max_clique_graph()).show(figsize=[2,2])
+            sage: G.cliques_get_max_clique_graph().show(figsize=[2,2])                  # optional - sage.plot
         """
         import networkx
         return Graph(networkx.make_max_clique_graph(self.networkx_graph(), create_using=networkx.MultiGraph()),
@@ -6866,14 +6868,14 @@ class Graph(GenericGraph):
 
         EXAMPLES::
 
-            sage: (graphs.ChvatalGraph()).cliques_get_clique_bipartite()
+            sage: CBG = graphs.ChvatalGraph().cliques_get_clique_bipartite(); CBG
             Bipartite graph on 36 vertices
-            sage: ((graphs.ChvatalGraph()).cliques_get_clique_bipartite()).show(figsize=[2,2], vertex_size=20, vertex_labels=False)
+            sage: CBG.show(figsize=[2,2], vertex_size=20, vertex_labels=False)          # optional - sage.plot
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
             sage: G.cliques_get_clique_bipartite()
             Bipartite graph on 6 vertices
-            sage: (G.cliques_get_clique_bipartite()).show(figsize=[2,2])
+            sage: G.cliques_get_clique_bipartite().show(figsize=[2,2])                  # optional - sage.plot
         """
         from .bipartite_graph import BipartiteGraph
         import networkx
@@ -7443,7 +7445,7 @@ class Graph(GenericGraph):
 
         .. NOTE::
 
-            Currently only implemented for undirected graphs. Use to_undirected
+            Currently only implemented for undirected graphs. Use :meth:`to_undirected`
             to convert a digraph to an undirected graph.
 
         INPUT:
@@ -7464,21 +7466,20 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: C = Graph('DJ{')
-            sage: C.cliques_vertex_clique_number()
+            sage: C.cliques_vertex_clique_number()                                      # optional - sage.plot
             {0: 2, 1: 4, 2: 4, 3: 4, 4: 4}
-            sage: E = C.cliques_maximal()
-            sage: E
+            sage: E = C.cliques_maximal(); E
             [[0, 4], [1, 2, 3, 4]]
-            sage: C.cliques_vertex_clique_number(cliques=E,algorithm="networkx")
+            sage: C.cliques_vertex_clique_number(cliques=E, algorithm="networkx")       # optional - sage.plot
             {0: 2, 1: 4, 2: 4, 3: 4, 4: 4}
             sage: F = graphs.Grid2dGraph(2,3)
-            sage: F.cliques_vertex_clique_number(algorithm="networkx")
+            sage: F.cliques_vertex_clique_number(algorithm="networkx")                  # optional - sage.plot
             {(0, 0): 2, (0, 1): 2, (0, 2): 2, (1, 0): 2, (1, 1): 2, (1, 2): 2}
-            sage: F.cliques_vertex_clique_number(vertices=[(0, 1), (1, 2)])
+            sage: F.cliques_vertex_clique_number(vertices=[(0, 1), (1, 2)])             # optional - sage.plot
             {(0, 1): 2, (1, 2): 2}
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
-            sage: G.cliques_vertex_clique_number()
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
+            sage: G.cliques_vertex_clique_number()                                      # optional - sage.plot
             {0: 3, 1: 3, 2: 3, 3: 3}
         """
         if algorithm == "cliquer":
@@ -7539,7 +7540,7 @@ class Graph(GenericGraph):
              4: [[0, 4], [1, 2, 3, 4]]}
 
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-            sage: G.show(figsize=[2,2])
+            sage: G.show(figsize=[2,2])                                                 # optional - sage.plot
             sage: G.cliques_containing_vertex()
             {0: [[0, 1, 2], [0, 1, 3]],
              1: [[0, 1, 2], [0, 1, 3]],
@@ -8568,7 +8569,7 @@ class Graph(GenericGraph):
 
             sage: g = graphs.CirculantGraph(24, [7, 11])
             sage: cl = g.two_factor_petersen()
-            sage: g.plot(edge_colors={'black':cl[0], 'red':cl[1]})
+            sage: g.plot(edge_colors={'black':cl[0], 'red':cl[1]})                      # optional - sage.plot
             Graphics object consisting of 73 graphics primitives
 
         """
