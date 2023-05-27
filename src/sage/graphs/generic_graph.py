@@ -2317,19 +2317,19 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: d = DiGraph({1: [2, 3], 2: [3], 3: [4], 4: [1]})
-            sage: d.distance_matrix()
+            sage: d.distance_matrix()                                                   # optional - sage.modules
             [0 1 1 2]
             [3 0 1 2]
             [2 3 0 1]
             [1 2 2 0]
-            sage: d.distance_matrix(vertices=[4, 3, 2, 1])
+            sage: d.distance_matrix(vertices=[4, 3, 2, 1])                              # optional - sage.modules
             [0 2 2 1]
             [1 0 3 2]
             [2 1 0 3]
             [2 1 1 0]
 
             sage: G = graphs.CubeGraph(3)
-            sage: G.distance_matrix()
+            sage: G.distance_matrix()                                                   # optional - sage.modules
             [0 1 1 2 1 2 2 3]
             [1 0 2 1 2 1 3 2]
             [1 2 0 1 2 3 1 2]
@@ -2343,7 +2343,8 @@ class GenericGraph(GenericGraph_pyx):
         of the distance matrix of any tree of order `n` is
         `(-1)^{n-1}(n-1)2^{n-2}`::
 
-            sage: all(T.distance_matrix().det() == (-1)^9*(9)*2^8 for T in graphs.trees(10))
+            sage: all(T.distance_matrix().det() == (-1)^9*(9)*2^8                       # optional - sage.modules
+            ....:     for T in graphs.trees(10))
             True
 
         .. SEEALSO::
@@ -2356,18 +2357,18 @@ class GenericGraph(GenericGraph_pyx):
         Asking for an immutable matrix::
 
             sage: G = Graph([(0, 1)])
-            sage: G.distance_matrix().is_immutable()
+            sage: G.distance_matrix().is_immutable()                                    # optional - sage.modules
             False
-            sage: G.distance_matrix(immutable=True).is_immutable()
+            sage: G.distance_matrix(immutable=True).is_immutable()                      # optional - sage.modules
             True
 
         Specifying a base ring::
 
             sage: G = Graph([(0, 1)])
-            sage: G.distance_matrix(vertices=[0, 1], base_ring=ZZ)
+            sage: G.distance_matrix(vertices=[0, 1], base_ring=ZZ)                      # optional - sage.modules
             [0 1]
             [1 0]
-            sage: G.distance_matrix(vertices=[0, 1], base_ring=RDF)
+            sage: G.distance_matrix(vertices=[0, 1], base_ring=RDF)                     # optional - sage.modules
             [0.0 1.0]
             [1.0 0.0]
 
@@ -2375,7 +2376,7 @@ class GenericGraph(GenericGraph_pyx):
         constructor::
 
             sage: G = Graph([(0, 1)])
-            sage: G.distance_matrix(vertices=[0, 1], weight_function=lambda e:2)
+            sage: G.distance_matrix(vertices=[0, 1], weight_function=lambda e:2)        # optional - sage.modules
             [0 2]
             [2 0]
         """
@@ -2453,15 +2454,15 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph(sparse=True, weighted=True)
             sage: G.add_edges([(0, 1, 1), (1, 2, 2), (0, 2, 3), (0, 3, 4)])
-            sage: M = G.weighted_adjacency_matrix(); M
+            sage: M = G.weighted_adjacency_matrix(); M                                  # optional - sage.modules
             [0 1 3 4]
             [1 0 2 0]
             [3 2 0 0]
             [4 0 0 0]
-            sage: H = Graph(data=M, format='weighted_adjacency_matrix', sparse=True)
-            sage: H == G
+            sage: H = Graph(data=M, format='weighted_adjacency_matrix', sparse=True)    # optional - sage.modules
+            sage: H == G                                                                # optional - sage.modules
             True
-            sage: G.weighted_adjacency_matrix(vertices=[3, 2, 1, 0])
+            sage: G.weighted_adjacency_matrix(vertices=[3, 2, 1, 0])                    # optional - sage.modules
             [0 0 0 4]
             [0 0 2 3]
             [0 2 0 1]
@@ -2469,7 +2470,8 @@ class GenericGraph(GenericGraph_pyx):
 
         Using a different matrix implementation::
 
-            sage: M = G.weighted_adjacency_matrix(sparse=False, base_ring=ZZ, implementation='numpy'); M
+            sage: M = G.weighted_adjacency_matrix(sparse=False, base_ring=ZZ,           # optional - numpy sage.modules
+            ....:                                 implementation='numpy'); M
             [0 1 3 4]
             [1 0 2 0]
             [3 2 0 0]
@@ -2477,22 +2479,23 @@ class GenericGraph(GenericGraph_pyx):
 
         As an immutable matrix::
 
-            sage: M = G.weighted_adjacency_matrix(immutable=True); M
+            sage: M = G.weighted_adjacency_matrix(immutable=True); M                    # optional - sage.modules
             [0 1 3 4]
             [1 0 2 0]
             [3 2 0 0]
             [4 0 0 0]
-            sage: M[2, 2] = 1
+            sage: M[2, 2] = 1                                                           # optional - sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
+            ValueError: matrix is immutable; please change a copy instead
+            (i.e., use copy(M) to change a copy of M).
 
         TESTS:
 
         The following doctest verifies that :trac:`4888` is fixed::
 
             sage: G = DiGraph({0:{}, 1:{0:1}, 2:{0:1}}, weighted=True, sparse=True)
-            sage: G.weighted_adjacency_matrix()
+            sage: G.weighted_adjacency_matrix()                                         # optional - sage.modules
             [0 0 0]
             [1 0 0]
             [1 0 0]
@@ -2503,8 +2506,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.weighted_adjacency_matrix()
             Traceback (most recent call last):
             ...
-            ValueError: cannot find the weight of (0, 1, None). Consider setting parameter 'default_weight'
-            sage: G.weighted_adjacency_matrix(default_weight=3)
+            ValueError: cannot find the weight of (0, 1, None).
+            Consider setting parameter 'default_weight'
+            sage: G.weighted_adjacency_matrix(default_weight=3)                         # optional - sage.modules
             [0 3]
             [3 0]
             sage: G = Graph([(0, 1, 'a')])
@@ -2627,33 +2631,33 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph(sparse=True)
             sage: G.add_edges([(0, 1, 1), (1, 2, 2), (0, 2, 3), (0, 3, 4)])
-            sage: M = G.kirchhoff_matrix(weighted=True); M
+            sage: M = G.kirchhoff_matrix(weighted=True); M                              # optional - sage.modules
             [ 8 -1 -3 -4]
             [-1  3 -2  0]
             [-3 -2  5  0]
             [-4  0  0  4]
-            sage: M = G.kirchhoff_matrix(); M
+            sage: M = G.kirchhoff_matrix(); M                                           # optional - sage.modules
             [ 3 -1 -1 -1]
             [-1  2 -1  0]
             [-1 -1  2  0]
             [-1  0  0  1]
-            sage: M = G.laplacian_matrix(normalized=True); M                                            # optional - sage.symbolic
+            sage: M = G.laplacian_matrix(normalized=True); M                            # optional - sage.modules sage.symbolic
             [                   1 -1/6*sqrt(3)*sqrt(2) -1/6*sqrt(3)*sqrt(2)         -1/3*sqrt(3)]
             [-1/6*sqrt(3)*sqrt(2)                    1                 -1/2                    0]
             [-1/6*sqrt(3)*sqrt(2)                 -1/2                    1                    0]
             [        -1/3*sqrt(3)                    0                    0                    1]
-            sage: M = G.kirchhoff_matrix(weighted=True, signless=True); M
+            sage: M = G.kirchhoff_matrix(weighted=True, signless=True); M               # optional - sage.modules
             [8 1 3 4]
             [1 3 2 0]
             [3 2 5 0]
             [4 0 0 4]
 
             sage: G = Graph({0: [], 1: [2]})
-            sage: G.laplacian_matrix(normalized=True)
+            sage: G.laplacian_matrix(normalized=True)                                   # optional - sage.modules
             [ 0  0  0]
             [ 0  1 -1]
             [ 0 -1  1]
-            sage: G.laplacian_matrix(normalized=True,signless=True)
+            sage: G.laplacian_matrix(normalized=True, signless=True)                    # optional - sage.modules
             [0 0 0]
             [0 1 1]
             [0 1 1]
@@ -2661,14 +2665,14 @@ class GenericGraph(GenericGraph_pyx):
         A weighted directed graph with loops, changing the variable ``indegree`` ::
 
             sage: G = DiGraph({1: {1: 2, 2: 3}, 2: {1: 4}}, weighted=True, sparse=True)
-            sage: G.laplacian_matrix()
+            sage: G.laplacian_matrix()                                                  # optional - sage.modules
             [ 4 -3]
             [-4  3]
 
         ::
 
             sage: G = DiGraph({1: {1: 2, 2: 3}, 2: {1: 4}}, weighted=True, sparse=True)
-            sage: G.laplacian_matrix(indegree=False)
+            sage: G.laplacian_matrix(indegree=False)                                    # optional - sage.modules
             [ 3 -3]
             [-4  4]
 
@@ -2677,12 +2681,12 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph(sparse=True)
             sage: G.add_edges([(0, 1, 1), (1, 2, 2), (0, 2, 3), (0, 3, 4)])
-            sage: M = G.kirchhoff_matrix(vertices=[3, 2, 1, 0]); M
+            sage: M = G.kirchhoff_matrix(vertices=[3, 2, 1, 0]); M                      # optional - sage.modules
             [ 1  0  0 -1]
             [ 0  2 -1 -1]
             [ 0 -1  2 -1]
             [-1 -1 -1  3]
-            sage: M = G.kirchhoff_matrix(weighted=True, vertices=[3, 2, 1, 0]); M
+            sage: M = G.kirchhoff_matrix(weighted=True, vertices=[3, 2, 1, 0]); M       # optional - sage.modules
             [ 4  0  0 -4]
             [ 0  5 -2 -3]
             [ 0 -2  3 -1]
@@ -2692,8 +2696,8 @@ class GenericGraph(GenericGraph_pyx):
         immutable::
 
             sage: G = Graph([(0, 1)])
-            sage: M = G.kirchhoff_matrix(vertices=[0, 1], immutable=True)
-            sage: M.is_immutable()
+            sage: M = G.kirchhoff_matrix(vertices=[0, 1], immutable=True)               # optional - sage.modules
+            sage: M.is_immutable()                                                      # optional - sage.modules
             True
         """
         from sage.matrix.constructor import diagonal_matrix
@@ -22532,7 +22536,10 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.relabel( [ i+1 for i in range(G.order()) ], inplace=True )
             sage: G.relabel( [ i+1 for i in range(G.order()) ], inplace=True )
         """
-        from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+        try:
+            from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+        except ImportError:
+            PermutationGroupElement = ()
 
         if not inplace:
             G = copy(self)

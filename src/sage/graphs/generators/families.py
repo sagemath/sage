@@ -452,7 +452,7 @@ def HammingGraph(n, q, X=None):
         True
         sage: g.is_regular()
         True
-        sage: g.is_vertex_transitive()
+        sage: g.is_vertex_transitive()                                                  # optional - sage.groups
         True
 
     A Hamming graph with parameters (1,q) is isomorphic to the
@@ -526,9 +526,9 @@ def BalancedTree(r, h):
     A balanced tree whose root node has degree `r = 2`, and of height
     `h = 1`, has order 3 and size 2::
 
-        sage: G = graphs.BalancedTree(2, 1); G
+        sage: G = graphs.BalancedTree(2, 1); G                                          # optional - networkx
         Balanced tree: Graph on 3 vertices
-        sage: G.order(); G.size()
+        sage: G.order(); G.size()                                                       # optional - networkx
         3
         2
         sage: r = 2; h = 1
@@ -539,21 +539,21 @@ def BalancedTree(r, h):
 
     Plot a balanced tree of height 5, whose root node has degree `r = 3`::
 
-        sage: G = graphs.BalancedTree(3, 5)
-        sage: G.show()   # long time
+        sage: G = graphs.BalancedTree(3, 5)                                             # optional - networkx
+        sage: G.show()   # long time                                                    # optional - networkx sage.plot
 
     A tree is bipartite. If its vertex set is finite, then it is planar. ::
 
         sage: r = randint(2, 5); h = randint(1, 7)
-        sage: T = graphs.BalancedTree(r, h)
-        sage: T.is_bipartite()
+        sage: T = graphs.BalancedTree(r, h)                                             # optional - networkx
+        sage: T.is_bipartite()                                                          # optional - networkx
         True
-        sage: T.is_planar()
+        sage: T.is_planar()                                                             # optional - networkx
         True
-        sage: v = (r^(h + 1) - 1) / (r - 1)
-        sage: T.order() == v
+        sage: v = (r^(h + 1) - 1) / (r - 1)                                             # optional - networkx
+        sage: T.order() == v                                                            # optional - networkx
         True
-        sage: T.size() == v - 1
+        sage: T.size() == v - 1                                                         # optional - networkx
         True
 
     TESTS:
@@ -562,13 +562,13 @@ def BalancedTree(r, h):
     has degree `r \geq 2`, but the construction degenerates
     gracefully::
 
-        sage: graphs.BalancedTree(1, 10)
+        sage: graphs.BalancedTree(1, 10)                                                # optional - networkx
         Balanced tree: Graph on 11 vertices
 
     Similarly, we usually want the tree must have height `h \geq 1`
     but the algorithm also degenerates gracefully here::
 
-        sage: graphs.BalancedTree(3, 0)
+        sage: graphs.BalancedTree(3, 0)                                                 # optional - networkx
         Balanced tree: Graph on 1 vertex
     """
     import networkx
@@ -627,11 +627,11 @@ def BarbellGraph(n1, n2):
         True
         sage: K_n1 = graphs.CompleteGraph(n1)
         sage: P_n2 = graphs.PathGraph(n2)
-        sage: s_K = g.subgraph_search(K_n1, induced=True)
-        sage: s_P = g.subgraph_search(P_n2, induced=True)
-        sage: K_n1.is_isomorphic(s_K)
+        sage: s_K = g.subgraph_search(K_n1, induced=True)                               # optional - sage.modules
+        sage: s_P = g.subgraph_search(P_n2, induced=True)                               # optional - sage.modules
+        sage: K_n1.is_isomorphic(s_K)                                                   # optional - sage.modules
         True
-        sage: P_n2.is_isomorphic(s_P)
+        sage: P_n2.is_isomorphic(s_P)                                                   # optional - sage.modules
         True
 
     TESTS::
@@ -1025,13 +1025,13 @@ def chang_graphs():
 
     Construct the Chang graphs by Seidel switching::
 
-        sage: c3c5=graphs.CycleGraph(3).disjoint_union(graphs.CycleGraph(5))
-        sage: c8=graphs.CycleGraph(8)
-        sage: s=[K8.subgraph_search(c8).edges(sort=False),
-        ....:    [(0,1,None),(2,3,None),(4,5,None),(6,7,None)],
-        ....:    K8.subgraph_search(c3c5).edges(sort=False)]
-        sage: list(map(lambda x,G: T8.seidel_switching(x, inplace=False).is_isomorphic(G),
-        ....:                  s, chang_graphs))
+        sage: c3c5 = graphs.CycleGraph(3).disjoint_union(graphs.CycleGraph(5))
+        sage: c8 = graphs.CycleGraph(8)
+        sage: s = [K8.subgraph_search(c8).edges(sort=False),                            # optional - sage.modules
+        ....:      [(0,1,None),(2,3,None),(4,5,None),(6,7,None)],
+        ....:      K8.subgraph_search(c3c5).edges(sort=False)]
+        sage: [T8.seidel_switching(x, inplace=False).is_isomorphic(G)                   # optional - sage.modules
+        ....:  for x, G in zip(s, chang_graphs)]
         [True, True, True]
 
     """
@@ -1353,8 +1353,8 @@ def DorogovtsevGoltsevMendesGraph(n):
 
     EXAMPLES::
 
-        sage: G = graphs.DorogovtsevGoltsevMendesGraph(8)
-        sage: G.size()
+        sage: G = graphs.DorogovtsevGoltsevMendesGraph(8)                               # optional - networkx
+        sage: G.size()                                                                  # optional - networkx
         6561
 
     REFERENCE:
@@ -1538,7 +1538,7 @@ def FuzzyBallGraph(partition, q):
     EXAMPLES::
 
         sage: F = graphs.FuzzyBallGraph([3,1],2)
-        sage: F.adjacency_matrix(vertices=list(F))
+        sage: F.adjacency_matrix(vertices=list(F))                                      # optional - sage.modules
         [0 0 1 1 1 0 0 0]
         [0 0 0 0 0 1 0 0]
         [1 0 0 1 1 1 1 1]
@@ -1553,10 +1553,14 @@ def FuzzyBallGraph(partition, q):
     `k` parts should be cospectral with respect to the normalized
     Laplacian::
 
-        sage: m=4; q=2; k=2
-        sage: g_list=[graphs.FuzzyBallGraph(p,q) for p in Partitions(m, length=k)]
-        sage: set([g.laplacian_matrix(normalized=True, vertices=list(g)).charpoly() for g in g_list])  # long time (7s on sage.math, 2011)
-        {x^8 - 8*x^7 + 4079/150*x^6 - 68689/1350*x^5 + 610783/10800*x^4 - 120877/3240*x^3 + 1351/100*x^2 - 931/450*x}
+        sage: m = 4; q = 2; k = 2
+        sage: g_list = [graphs.FuzzyBallGraph(p,q)                                      # optional - sage.combinat sage.modules
+        ....:           for p in Partitions(m, length=k)]
+        sage: set(g.laplacian_matrix(normalized=True,  # long time (7s on sage.math, 2011), optional - sage.combinat sage.modules
+        ....:                        vertices=list(g)).charpoly()
+        ....:     for g in g_list)
+        {x^8 - 8*x^7 + 4079/150*x^6 - 68689/1350*x^5 + 610783/10800*x^4
+          - 120877/3240*x^3 + 1351/100*x^2 - 931/450*x}
     """
     from sage.graphs.generators.basic import CompleteGraph
     if len(partition) < 1:
@@ -2203,30 +2207,31 @@ def LCFGraph(n, shift_list, repeats):
 
     EXAMPLES::
 
-        sage: G = graphs.LCFGraph(4, [2,-2], 2)
-        sage: G.is_isomorphic(graphs.TetrahedralGraph())
+        sage: G = graphs.LCFGraph(4, [2,-2], 2)                                         # optional - networkx
+        sage: G.is_isomorphic(graphs.TetrahedralGraph())                                # optional - networkx
         True
 
     ::
 
-        sage: G = graphs.LCFGraph(20, [10,7,4,-4,-7,10,-4,7,-7,4], 2)
-        sage: G.is_isomorphic(graphs.DodecahedralGraph())
+        sage: G = graphs.LCFGraph(20, [10,7,4,-4,-7,10,-4,7,-7,4], 2)                   # optional - networkx
+        sage: G.is_isomorphic(graphs.DodecahedralGraph())                               # optional - networkx
         True
 
     ::
 
-        sage: G = graphs.LCFGraph(14, [5,-5], 7)
-        sage: G.is_isomorphic(graphs.HeawoodGraph())
+        sage: G = graphs.LCFGraph(14, [5,-5], 7)                                        # optional - networkx
+        sage: G.is_isomorphic(graphs.HeawoodGraph())                                    # optional - networkx
         True
 
     The largest cubic nonplanar graph of diameter three::
 
-        sage: G = graphs.LCFGraph(20, [-10,-7,-5,4,7,-10,-7,-4,5,7,-10,-7,6,-5,7,-10,-7,5,-6,7], 1)
-        sage: G.degree()
+        sage: G = graphs.LCFGraph(20, [-10,-7,-5,4,7,-10,-7,-4,5,7,                     # optional - networkx
+        ....:                          -10,-7,6,-5,7,-10,-7,5,-6,7], 1)
+        sage: G.degree()                                                                # optional - networkx
         [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
-        sage: G.diameter()
+        sage: G.diameter()                                                              # optional - networkx
         3
-        sage: G.show()  # long time
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     PLOTTING: LCF Graphs are plotted as an n-cycle with edges in the
     middle, as described above.
@@ -2583,9 +2588,9 @@ def PasechnikGraph(n):
 
     EXAMPLES::
 
-        sage: graphs.PasechnikGraph(4).is_strongly_regular(parameters=True)
+        sage: graphs.PasechnikGraph(4).is_strongly_regular(parameters=True)             # optional - sage.combinat sage.modules
         (225, 98, 43, 42)
-        sage: graphs.PasechnikGraph(5).is_strongly_regular(parameters=True)  # long time
+        sage: graphs.PasechnikGraph(5).is_strongly_regular(parameters=True)  # long time, optional - sage.combinat sage.modules
         (361, 162, 73, 72)
         sage: graphs.PasechnikGraph(9).is_strongly_regular(parameters=True)  # not tested
         (1225, 578, 273, 272)

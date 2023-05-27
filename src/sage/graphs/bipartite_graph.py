@@ -198,16 +198,16 @@ class BipartiteGraph(Graph):
 
     #. From a reduced adjacency matrix::
 
-        sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),
+        sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),                             # optional - sage.modules
         ....:             (0,1,0,1,0,1,0), (1,1,0,1,0,0,1)])
-        sage: M
+        sage: M                                                                         # optional - sage.modules
         [1 1 1 0 0 0 0]
         [1 0 0 1 1 0 0]
         [0 1 0 1 0 1 0]
         [1 1 0 1 0 0 1]
-        sage: H = BipartiteGraph(M); H
+        sage: H = BipartiteGraph(M); H                                                  # optional - sage.modules
         Bipartite graph on 11 vertices
-        sage: H.edges(sort=True)
+        sage: H.edges(sort=True)                                                        # optional - sage.modules
         [(0, 7, None),
          (0, 8, None),
          (0, 10, None),
@@ -224,9 +224,9 @@ class BipartiteGraph(Graph):
 
        ::
 
-        sage: M = Matrix([(1, 1, 2, 0, 0), (0, 2, 1, 1, 1), (0, 1, 2, 1, 1)])
-        sage: B = BipartiteGraph(M, multiedges=True, sparse=True)
-        sage: B.edges(sort=True)
+        sage: M = Matrix([(1, 1, 2, 0, 0), (0, 2, 1, 1, 1), (0, 1, 2, 1, 1)])           # optional - sage.modules
+        sage: B = BipartiteGraph(M, multiedges=True, sparse=True)                       # optional - sage.modules
+        sage: B.edges(sort=True)                                                        # optional - sage.modules
         [(0, 5, None),
          (1, 5, None),
          (1, 6, None),
@@ -244,13 +244,13 @@ class BipartiteGraph(Graph):
 
        ::
 
-         sage: F.<a> = GF(4)
-         sage: MS = MatrixSpace(F, 2, 3)
-         sage: M = MS.matrix([[0, 1, a + 1], [a, 1, 1]])
-         sage: B = BipartiteGraph(M, weighted=True, sparse=True)
-         sage: B.edges(sort=True)
+         sage: F.<a> = GF(4)                                                            # optional - sage.modules sage.rings.finite_rings
+         sage: MS = MatrixSpace(F, 2, 3)                                                # optional - sage.modules sage.rings.finite_rings
+         sage: M = MS.matrix([[0, 1, a + 1], [a, 1, 1]])                                # optional - sage.modules sage.rings.finite_rings
+         sage: B = BipartiteGraph(M, weighted=True, sparse=True)                        # optional - sage.modules sage.rings.finite_rings
+         sage: B.edges(sort=True)                                                       # optional - sage.modules sage.rings.finite_rings
          [(0, 4, a), (1, 3, 1), (1, 4, 1), (2, 3, a + 1), (2, 4, 1)]
-         sage: B.weighted()
+         sage: B.weighted()                                                             # optional - sage.modules sage.rings.finite_rings
          True
 
     #. From an alist file::
@@ -264,7 +264,7 @@ class BipartiteGraph(Graph):
          ....:                  1 2 4 7 \n")
          ....:     f.flush()
          ....:     B = BipartiteGraph(f.name)
-         sage: B.is_isomorphic(H)
+         sage: B.is_isomorphic(H)                                                       # optional - sage.modules
          True
 
     #. From a ``graph6`` string::
@@ -328,15 +328,15 @@ class BipartiteGraph(Graph):
     Ensure that we can construct a ``BipartiteGraph`` with isolated vertices via
     the reduced adjacency matrix (:trac:`10356`)::
 
-        sage: a = BipartiteGraph(matrix(2, 2, [1, 0, 1, 0]))
-        sage: a
+        sage: a = BipartiteGraph(matrix(2, 2, [1, 0, 1, 0]))                            # optional - sage.modules
+        sage: a                                                                         # optional - sage.modules
         Bipartite graph on 4 vertices
-        sage: a.vertices(sort=True)
+        sage: a.vertices(sort=True)                                                     # optional - sage.modules
         [0, 1, 2, 3]
-        sage: g = BipartiteGraph(matrix(4, 4, [1] * 4 + [0] * 12))
-        sage: g.vertices(sort=True)
+        sage: g = BipartiteGraph(matrix(4, 4, [1] * 4 + [0] * 12))                      # optional - sage.modules
+        sage: g.vertices(sort=True)                                                     # optional - sage.modules
         [0, 1, 2, 3, 4, 5, 6, 7]
-        sage: sorted(g.left.union(g.right))
+        sage: sorted(g.left.union(g.right))                                             # optional - sage.modules
         [0, 1, 2, 3, 4, 5, 6, 7]
 
     Make sure that loops are not allowed (:trac:`23275`)::
@@ -1805,26 +1805,26 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
-            sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),
+            sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),                         # optional - sage.modules
             ....:             (0,1,0,1,0,1,0), (1,1,0,1,0,0,1)])
-            sage: M
+            sage: M                                                                     # optional - sage.modules
             [1 1 1 0 0 0 0]
             [1 0 0 1 1 0 0]
             [0 1 0 1 0 1 0]
             [1 1 0 1 0 0 1]
-            sage: b = BipartiteGraph(M)
-            sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile() as f:
+            sage: b = BipartiteGraph(M)                                                 # optional - sage.modules
+            sage: import tempfile                                                       # optional - sage.modules
+            sage: with tempfile.NamedTemporaryFile() as f:                              # optional - sage.modules
             ....:     b.save_afile(f.name)
             ....:     b2 = BipartiteGraph(f.name)
-            sage: b.is_isomorphic(b2)
+            sage: b.is_isomorphic(b2)                                                   # optional - sage.modules
             True
 
         TESTS::
 
             sage: import tempfile
             sage: f = tempfile.NamedTemporaryFile()
-            sage: for order in range(3, 13, 3):
+            sage: for order in range(3, 13, 3):                                         # optional - sage.combinat
             ....:     num_chks = int(order / 3)
             ....:     num_vars = order - num_chks
             ....:     partition = (list(range(num_vars)), list(range(num_vars, num_vars+num_chks)))
@@ -1922,78 +1922,78 @@ class BipartiteGraph(Graph):
         Bipartite graphs that are not weighted will return a matrix over ZZ,
         unless a base ring is specified::
 
-            sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),
+            sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),                         # optional - sage.modules
             ....:             (0,1,0,1,0,1,0), (1,1,0,1,0,0,1)])
-            sage: B = BipartiteGraph(M)
-            sage: N = B.reduced_adjacency_matrix()
-            sage: N
+            sage: B = BipartiteGraph(M)                                                 # optional - sage.modules
+            sage: N = B.reduced_adjacency_matrix()                                      # optional - sage.modules
+            sage: N                                                                     # optional - sage.modules
             [1 1 1 0 0 0 0]
             [1 0 0 1 1 0 0]
             [0 1 0 1 0 1 0]
             [1 1 0 1 0 0 1]
-            sage: N == M
+            sage: N == M                                                                # optional - sage.modules
             True
-            sage: N[0,0].parent()
+            sage: N[0,0].parent()                                                       # optional - sage.modules
             Integer Ring
-            sage: N2 = B.reduced_adjacency_matrix(base_ring=RDF); N2
+            sage: N2 = B.reduced_adjacency_matrix(base_ring=RDF); N2                    # optional - sage.modules
             [1.0 1.0 1.0 0.0 0.0 0.0 0.0]
             [1.0 0.0 0.0 1.0 1.0 0.0 0.0]
             [0.0 1.0 0.0 1.0 0.0 1.0 0.0]
             [1.0 1.0 0.0 1.0 0.0 0.0 1.0]
-            sage: N2[0, 0].parent()
+            sage: N2[0, 0].parent()                                                     # optional - sage.modules
             Real Double Field
 
         Multi-edge graphs also return a matrix over ZZ,
         unless a base ring is specified::
 
-            sage: M = Matrix([(1,1,2,0,0), (0,2,1,1,1), (0,1,2,1,1)])
-            sage: B = BipartiteGraph(M, multiedges=True, sparse=True)
-            sage: N = B.reduced_adjacency_matrix()
-            sage: N == M
+            sage: M = Matrix([(1,1,2,0,0), (0,2,1,1,1), (0,1,2,1,1)])                   # optional - sage.modules
+            sage: B = BipartiteGraph(M, multiedges=True, sparse=True)                   # optional - sage.modules
+            sage: N = B.reduced_adjacency_matrix()                                      # optional - sage.modules
+            sage: N == M                                                                # optional - sage.modules
             True
-            sage: N[0,0].parent()
+            sage: N[0,0].parent()                                                       # optional - sage.modules
             Integer Ring
-            sage: N2 = B.reduced_adjacency_matrix(base_ring=RDF)
-            sage: N2[0, 0].parent()
+            sage: N2 = B.reduced_adjacency_matrix(base_ring=RDF)                        # optional - sage.modules
+            sage: N2[0, 0].parent()                                                     # optional - sage.modules
             Real Double Field
 
         Weighted graphs will return a matrix over the ring given by their
         (first) weights, unless a base ring is specified::
 
-            sage: F.<a> = GF(4)
-            sage: MS = MatrixSpace(F, 2, 3)
-            sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])
-            sage: B = BipartiteGraph(M, weighted=True, sparse=True)
-            sage: N = B.reduced_adjacency_matrix(sparse=False)
-            sage: N == M
+            sage: F.<a> = GF(4)                                                         # optional - sage.modules sage.rings.finite_rings
+            sage: MS = MatrixSpace(F, 2, 3)                                             # optional - sage.modules sage.rings.finite_rings
+            sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])                               # optional - sage.modules sage.rings.finite_rings
+            sage: B = BipartiteGraph(M, weighted=True, sparse=True)                     # optional - sage.modules sage.rings.finite_rings
+            sage: N = B.reduced_adjacency_matrix(sparse=False)                          # optional - sage.modules sage.rings.finite_rings
+            sage: N == M                                                                # optional - sage.modules sage.rings.finite_rings
             True
-            sage: N[0,0].parent()
+            sage: N[0,0].parent()                                                       # optional - sage.modules sage.rings.finite_rings
             Finite Field in a of size 2^2
-            sage: N2 = B.reduced_adjacency_matrix(base_ring=F)
-            sage: N2[0, 0].parent()
+            sage: N2 = B.reduced_adjacency_matrix(base_ring=F)                          # optional - sage.modules sage.rings.finite_rings
+            sage: N2[0, 0].parent()                                                     # optional - sage.modules sage.rings.finite_rings
             Finite Field in a of size 2^2
 
         TESTS::
 
             sage: B = BipartiteGraph()
-            sage: B.reduced_adjacency_matrix()
+            sage: B.reduced_adjacency_matrix()                                          # optional - sage.modules
             []
-            sage: M = Matrix([[0,0], [0,0]])
-            sage: BipartiteGraph(M).reduced_adjacency_matrix() == M
+            sage: M = Matrix([[0,0], [0,0]])                                            # optional - sage.modules
+            sage: BipartiteGraph(M).reduced_adjacency_matrix() == M                     # optional - sage.modules
             True
-            sage: M = Matrix([[10,2/3], [0,0]])
-            sage: B = BipartiteGraph(M, weighted=True, sparse=True)
-            sage: M == B.reduced_adjacency_matrix()
+            sage: M = Matrix([[10,2/3], [0,0]])                                         # optional - sage.modules
+            sage: B = BipartiteGraph(M, weighted=True, sparse=True)                     # optional - sage.modules
+            sage: M == B.reduced_adjacency_matrix()                                     # optional - sage.modules
             True
 
         An error is raised if the specified base ring is not compatible with the
         type of the weights of the bipartite graph::
 
-            sage: F.<a> = GF(4)
-            sage: MS = MatrixSpace(F, 2, 3)
-            sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])
-            sage: B = BipartiteGraph(M, weighted=True, sparse=True)
-            sage: B.reduced_adjacency_matrix(base_ring=RDF)
+            sage: F.<a> = GF(4)                                                         # optional - sage.modules sage.rings.finite_rings
+            sage: MS = MatrixSpace(F, 2, 3)                                             # optional - sage.modules sage.rings.finite_rings
+            sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])                               # optional - sage.modules sage.rings.finite_rings
+            sage: B = BipartiteGraph(M, weighted=True, sparse=True)                     # optional - sage.modules sage.rings.finite_rings
+            sage: B.reduced_adjacency_matrix(base_ring=RDF)                             # optional - sage.modules sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: float() argument must be a string or a ...number, not 'sage.rings.finite_rings.element_givaro.FiniteField_givaroElement'

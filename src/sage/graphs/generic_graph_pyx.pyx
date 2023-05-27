@@ -650,7 +650,7 @@ cdef class SubgraphSearch:
         EXAMPLES::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.subgraph_search(graphs.CycleGraph(5))
+            sage: g.subgraph_search(graphs.CycleGraph(5))                               # optional - sage.modules
             Subgraph of (Petersen graph): Graph on 5 vertices
 
         TESTS:
@@ -664,7 +664,7 @@ cdef class SubgraphSearch:
             Traceback (most recent call last):
             ...
             ValueError: Searched graph should have at least 2 vertices.
-            sage: SubgraphSearch(Graph(5), Graph(2))
+            sage: SubgraphSearch(Graph(5), Graph(2))                                    # optional - sage.modules
             <sage.graphs.generic_graph_pyx.SubgraphSearch ...>
         """
         if H.order() <= 1:
@@ -690,8 +690,8 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)
-            sage: for p in S:
+            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
+            sage: for p in S:                                                           # optional - sage.modules
             ....:     print(p)
             [0, 1, 2]
             [1, 2, 3]
@@ -721,8 +721,8 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)
-            sage: S.cardinality()
+            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
+            sage: S.cardinality()                                                       # optional - sage.modules
             6
         """
         if self.nh > self.ng:
@@ -756,18 +756,18 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)
-            sage: S.__next__()
+            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
+            sage: S.__next__()                                                          # optional - sage.modules
             [0, 1, 2]
-            sage: S._initialization()
-            sage: S.__next__()
+            sage: S._initialization()                                                   # optional - sage.modules
+            sage: S.__next__()                                                          # optional - sage.modules
             [0, 1, 2]
 
         TESTS:
 
         Check that :trac:`21828` is fixed::
 
-            sage: Poset().is_incomparable_chain_free(1,1)   # indirect doctest
+            sage: Poset().is_incomparable_chain_free(1,1)   # indirect doctest          # optional - sage.modules
             True
         """
         cdef int i
@@ -802,7 +802,7 @@ cdef class SubgraphSearch:
         EXAMPLES::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.subgraph_search(graphs.CycleGraph(5))
+            sage: g.subgraph_search(graphs.CycleGraph(5))                               # optional - sage.modules
             Subgraph of (Petersen graph): Graph on 5 vertices
         """
         self.mem = MemoryAllocator()
@@ -883,8 +883,8 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)
-            sage: S.__next__()
+            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
+            sage: S.__next__()                                                          # optional - sage.modules
             [0, 1, 2]
         """
         if not self.ng:

@@ -209,8 +209,8 @@ def edge_isoperimetric_number(g):
     In general, for `d`-regular graphs the edge-isoperimetric number is
     `d` times larger than the Cheeger constant of the graph::
 
-        sage: g = graphs.RandomRegular(3, 10)
-        sage: g.edge_isoperimetric_number() == g.cheeger_constant() * 3
+        sage: g = graphs.RandomRegular(3, 10)                                           # optional - networkx
+        sage: g.edge_isoperimetric_number() == g.cheeger_constant() * 3                 # optional - networkx
         True
 
     And the edge-isoperimetric constant of a disconnected graph is `0`::

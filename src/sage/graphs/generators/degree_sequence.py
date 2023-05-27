@@ -41,25 +41,25 @@ def DegreeSequence(deg_sequence):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequence([3,3,3,3])
-        sage: G.edges(sort=True, labels=False)
+        sage: G = graphs.DegreeSequence([3,3,3,3])                                      # optional - networkx
+        sage: G.edges(sort=True, labels=False)                                          # optional - networkx
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-        sage: G.show()  # long time
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3])
-        sage: G.show()  # long time
+        sage: G = graphs.DegreeSequence([3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3])  # optional - networkx
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([4,4,4,4,4,4,4,4])
-        sage: G.show()  # long time
+        sage: G = graphs.DegreeSequence([4,4,4,4,4,4,4,4])                              # optional - networkx
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([1,2,3,4,3,4,3,2,3,2,1])
-        sage: G.show()  # long time
+        sage: G = graphs.DegreeSequence([1,2,3,4,3,4,3,2,3,2,1])                        # optional - networkx
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
     """
     import networkx
     return Graph(networkx.havel_hakimi_graph([int(i) for i in deg_sequence]))
@@ -147,20 +147,20 @@ def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceConfigurationModel([1,1])
-        sage: G.adjacency_matrix()
+        sage: G = graphs.DegreeSequenceConfigurationModel([1,1])                        # optional - networkx
+        sage: G.adjacency_matrix()                                                      # optional - networkx sage.modules
         [0 1]
         [1 0]
 
     The output is allowed to contain both loops and multiple edges::
 
-        sage: deg_sequence = [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]
-        sage: G = graphs.DegreeSequenceConfigurationModel(deg_sequence)
-        sage: G.order(), G.size()
+        sage: deg_sequence = [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]                  # optional - networkx
+        sage: G = graphs.DegreeSequenceConfigurationModel(deg_sequence)                 # optional - networkx
+        sage: G.order(), G.size()                                                       # optional - networkx
         (20, 30)
-        sage: G.has_loops() or G.has_multiple_edges()  # random
+        sage: G.has_loops() or G.has_multiple_edges()  # random                         # optional - networkx
         True
-        sage: G.show()  # long time
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     REFERENCE:
 
@@ -191,10 +191,9 @@ def DegreeSequenceTree(deg_sequence):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceTree([3,1,3,3,1,1,1,2,1])
-        sage: G
+        sage: G = graphs.DegreeSequenceTree([3,1,3,3,1,1,1,2,1]); G                     # optional - networkx
         Graph on 9 vertices
-        sage: G.show()  # long time
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
     """
     import networkx
     return Graph(networkx.degree_sequence_tree([int(i) for i in deg_sequence]))
@@ -220,10 +219,9 @@ def DegreeSequenceExpected(deg_sequence, seed=None):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceExpected([1,2,3,2,3])
-        sage: G
+        sage: G = graphs.DegreeSequenceExpected([1,2,3,2,3]); G                         # optional - networkx
         Looped graph on 5 vertices
-        sage: G.show()  # long time
+        sage: G.show()  # long time                                                     # optional - networkx sage.plot
 
     REFERENCE:
 

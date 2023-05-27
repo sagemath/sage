@@ -16,7 +16,11 @@ of undirected graphs.
 # ****************************************************************************
 
 from enum import Enum
+
+from sage.misc.lazy_import import lazy_import
 from sage.misc.random_testing import random_testing
+
+lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
 
 
 class NodeType(Enum):
@@ -606,7 +610,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
     decompositions. ::
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import permute_decomposition
-        sage: permute_decomposition(2, habib_maurer_algorithm, 20, 0.5)
+        sage: permute_decomposition(2, habib_maurer_algorithm, 20, 0.5)                 # optional - sage.groups
     """
     if graph.is_directed():
         raise ValueError("Graph must be undirected")
@@ -1167,7 +1171,6 @@ def relabel_tree(root, perm):
           2
           1
     """
-    from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
     # If perm is not a dictionary, we build one !
     if perm is None:
 
