@@ -232,21 +232,21 @@ def ascii_art(*obj, **kwds):
     We can specify a separator object::
 
         sage: ident = lambda n: identity_matrix(ZZ, n)
-        sage: ascii_art(ident(1), ident(2), ident(3), sep=' : ')
+        sage: ascii_art(ident(1), ident(2), ident(3), sep=' : ')                        # optional - sage.modules
                       [1 0 0]
               [1 0]   [0 1 0]
         [1] : [0 1] : [0 0 1]
 
     We can specify the baseline::
 
-        sage: ascii_art(ident(2), baseline=-1) + ascii_art(ident(3))
+        sage: ascii_art(ident(2), baseline=-1) + ascii_art(ident(3))                    # optional - sage.modules
         [1 0][1 0 0]
         [0 1][0 1 0]
              [0 0 1]
 
     We can determine the baseline of the separator::
 
-        sage: ascii_art(ident(1), ident(2), ident(3), sep=' -- ', sep_baseline=-1)
+        sage: ascii_art(ident(1), ident(2), ident(3), sep=' -- ', sep_baseline=-1)      # optional - sage.modules
                         [1 0 0]
             -- [1 0] -- [0 1 0]
         [1]    [0 1]    [0 0 1]
