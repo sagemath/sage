@@ -842,19 +842,19 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
 
         Products involving infinite simplicial sets::
 
-            sage: B = simplicial_sets.ClassifyingSpace(groups.misc.MultiplicativeAbelian([2]))
-            sage: B.rename('RP^oo')
-            sage: X = B.product(B)
-            sage: X
+            sage: G = groups.misc.MultiplicativeAbelian([2])                            # optional - sage.groups
+            sage: B = simplicial_sets.ClassifyingSpace(G)                               # optional - sage.groups
+            sage: B.rename('RP^oo')                                                     # optional - sage.groups
+            sage: X = B.product(B); X                                                   # optional - sage.groups
             RP^oo x RP^oo
-            sage: X.n_cells(1)
+            sage: X.n_cells(1)                                                          # optional - sage.groups
             [(f, f), (f, s_0 1), (s_0 1, f)]
-            sage: X.homology(range(3), base_ring=GF(2))                                 # optional - sage.modules
+            sage: X.homology(range(3), base_ring=GF(2))                                 # optional - sage.groups sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 2 over Finite Field of size 2,
              2: Vector space of dimension 3 over Finite Field of size 2}
-            sage: Y = B.product(S2)
-            sage: Y.homology(range(5), base_ring=GF(2))                                 # optional - sage.modules
+            sage: Y = B.product(S2)                                                     # optional - sage.groups
+            sage: Y.homology(range(5), base_ring=GF(2))                                 # optional - sage.groups sage.modules sage.rings.finite_rings
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 2 over Finite Field of size 2,
@@ -1048,11 +1048,11 @@ class ProductOfSimplicialSets_finite(ProductOfSimplicialSets, PullbackOfSimplici
             sage: T = simplicial_sets.Torus()
             sage: f_0 = T.projection_map(0)
             sage: f_1 = T.projection_map(1)
-            sage: m_0 = f_0.induced_homology_morphism().to_matrix(1) # matrix in dim 1
-            sage: m_1 = f_1.induced_homology_morphism().to_matrix(1)
-            sage: m_0.rank()
+            sage: m_0 = f_0.induced_homology_morphism().to_matrix(1) # matrix in dim 1  # optional - sage.modules
+            sage: m_1 = f_1.induced_homology_morphism().to_matrix(1)                    # optional - sage.modules
+            sage: m_0.rank()                                                            # optional - sage.modules
             1
-            sage: m_0 == m_1
+            sage: m_0 == m_1                                                            # optional - sage.modules
             False
         """
         return self.structure_map(i)

@@ -105,10 +105,10 @@ simplicial complex::
     [1, 4, 4]
     sage: X.face_poset()
     Finite poset containing 8 elements
-    sage: x0, x1, x2, x3 = X.stanley_reisner_ring().gens()
-    sage: x0*x2 == x1*x3 == 0
+    sage: x0, x1, x2, x3 = X.stanley_reisner_ring().gens()                              # optional - sage.libs.singular
+    sage: x0*x2 == x1*x3 == 0                                                           # optional - sage.libs.singular
     True
-    sage: X.is_pure()
+    sage: X.is_pure()                                                                   # optional - sage.libs.singular
     True
 
 Mutability (see :trac:`12587`)::
@@ -2317,7 +2317,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: circle = SimplicialComplex([[0,1], [1,2], [0, 2]])
-            sage: circle._homology_()
+            sage: circle._homology_()                                                   # optional - sage.modules
             {0: 0, 1: Z}
             sage: sphere = SimplicialComplex([[0,1,2,3]])
             sage: sphere.remove_face([0,1,2,3])
@@ -2503,7 +2503,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = simplicial_complexes.Torus()
-            sage: phi, M = T.algebraic_topological_model(QQ)
+            sage: phi, M = T.algebraic_topological_model(QQ)                            # optional - sage.modules
             sage: M.homology()                                                          # optional - sage.modules
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
@@ -2577,7 +2577,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Check that the bug reported at :trac:`14354` has been fixed::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
-            sage: T.homology()
+            sage: T.homology()                                                          # optional - sage.modules
             {0: 0, 1: Z x Z x Z}
             sage: T.add_face([1,2,3])
             sage: T.homology()                                                          # optional - sage.modules
@@ -2913,7 +2913,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: S1 = simplicial_complexes.Sphere(1)
-            sage: S1.connected_sum(S1.connected_sum(S1)).homology()
+            sage: S1.connected_sum(S1.connected_sum(S1)).homology()                     # optional - sage.modules
             {0: 0, 1: Z}
             sage: P = simplicial_complexes.RealProjectivePlane(); P
             Minimal triangulation of the real projective plane
@@ -4860,9 +4860,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: X = SimplicialComplex([[0,1],[1,2],[1,3],[2,3]])
             sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
-            sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)
+            sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)              # optional - sage.modules
             [((0, 0), 1), ((-1, 6), 1), ((-1, 4), 2), ((-2, 8), 1), ((-2, 6), 1)]
-            sage: sorted(Y.bigraded_betti_numbers(base_ring=QQ).items(), reverse=True)
+            sage: sorted(Y.bigraded_betti_numbers(base_ring=QQ).items(), reverse=True)  # optional - sage.modules
             [((0, 0), 1), ((-1, 4), 3), ((-2, 8), 2), ((-2, 6), 1), ((-3, 10), 1)]
         """
         if base_ring in self._bbn_all_computed:
@@ -4902,19 +4902,19 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: X = SimplicialComplex([[0,1],[1,2],[2,0],[1,3]])
-            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)
+            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)                          # optional - sage.modules
             2
-            sage: X.bigraded_betti_number(-1, 8)
+            sage: X.bigraded_betti_number(-1, 8)                                        # optional - sage.modules
             0
-            sage: X.bigraded_betti_number(-2, 5)
+            sage: X.bigraded_betti_number(-2, 5)                                        # optional - sage.modules
             0
-            sage: X.bigraded_betti_number(0, 0)
+            sage: X.bigraded_betti_number(0, 0)                                         # optional - sage.modules
             1
-            sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)
+            sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)              # optional - sage.modules
             [((0, 0), 1), ((-1, 6), 1), ((-1, 4), 2), ((-2, 8), 1), ((-2, 6), 1)]
-            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)
+            sage: X.bigraded_betti_number(-1, 4, base_ring=QQ)                          # optional - sage.modules
             2
-            sage: X.bigraded_betti_number(-1, 8)
+            sage: X.bigraded_betti_number(-1, 8)                                        # optional - sage.modules
             0
         """
         if b % 2:

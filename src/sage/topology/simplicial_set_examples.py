@@ -532,10 +532,9 @@ def ComplexProjectiveSpace(n):
 
     EXAMPLES::
 
-        sage: simplicial_sets.ComplexProjectiveSpace(2).homology(reduced=False)
+        sage: simplicial_sets.ComplexProjectiveSpace(2).homology(reduced=False)         # optional - sage.modules
         {0: Z, 1: 0, 2: Z, 3: 0, 4: Z}
-        sage: CP3 = simplicial_sets.ComplexProjectiveSpace(3)                           # optional - pyparsing
-        sage: CP3                                                                       # optional - pyparsing
+        sage: CP3 = simplicial_sets.ComplexProjectiveSpace(3); CP3                      # optional - pyparsing
         CP^3
         sage: latex(CP3)                                                                # optional - pyparsing
         CP^{3}
@@ -543,11 +542,11 @@ def ComplexProjectiveSpace(n):
         [1, 0, 3, 10, 25, 30, 15]
 
         sage: K = CP3.suspension()              # long time (1 second)                  # optional - pyparsing
-        sage: R = K.cohomology_ring(GF(2))      # long time                             # optional - pyparsing
-        sage: R.gens()                          # long time                             # optional - pyparsing
+        sage: R = K.cohomology_ring(GF(2))      # long time                             # optional - pyparsing sage.modules
+        sage: R.gens()                          # long time                             # optional - pyparsing sage.modules
         (h^{0,0}, h^{3,0}, h^{5,0}, h^{7,0})
-        sage: x = R.gens()[1]                   # long time                             # optional - pyparsing
-        sage: x.Sq(2)                           # long time                             # optional - pyparsing
+        sage: x = R.gens()[1]                   # long time                             # optional - pyparsing sage.modules
+        sage: x.Sq(2)                           # long time                             # optional - pyparsing sage.modules
         h^{5,0}
 
         sage: simplicial_sets.ComplexProjectiveSpace(4).f_vector()                      # optional - pyparsing
@@ -734,7 +733,7 @@ def HopfMap():
 
         sage: X = g.mapping_cone()                                                      # optional - sage.graphs
         sage: CP2 = simplicial_sets.ComplexProjectiveSpace(2)                           # optional - sage.graphs
-        sage: X.homology() == CP2.homology()                                            # optional - sage.graphs
+        sage: X.homology() == CP2.homology()                                            # optional - sage.graphs sage.modules
         True
 
         sage: X.f_vector()                                                              # optional - sage.graphs

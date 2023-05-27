@@ -107,7 +107,7 @@ class DeltaComplex(GenericCellComplex):
 
       Let's compute its homology, and also compare it to the simplicial version::
 
-        sage: S5.homology()
+        sage: S5.homology()                                                             # optional - sage.modules
         {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: Z}
         sage: S5.f_vector()  # number of simplices in each dimension
         [1, 6, 15, 20, 15, 6, 2]
@@ -128,7 +128,7 @@ class DeltaComplex(GenericCellComplex):
         ....:        Simplex(0): ()}
         sage: T = DeltaComplex(torus_dict); T
         Delta complex with 1 vertex and 7 simplices
-        sage: T.cohomology(base_ring=QQ)
+        sage: T.cohomology(base_ring=QQ)                                                # optional - sage.modules
         {0: Vector space of dimension 0 over Rational Field,
          1: Vector space of dimension 2 over Rational Field,
          2: Vector space of dimension 1 over Rational Field}
@@ -179,9 +179,9 @@ class DeltaComplex(GenericCellComplex):
 
       ::
 
-        sage: P.homology(1)
+        sage: P.homology(1)                                                             # optional - sage.modules
         C2
-        sage: P.cohomology(2)
+        sage: P.cohomology(2)                                                           # optional - sage.modules
         C2
 
       Closely related to this form for ``data`` is ``X.cells()``
@@ -246,7 +246,7 @@ class DeltaComplex(GenericCellComplex):
 
             sage: X = DeltaComplex({Simplex(3):True, Simplex(range(1,5)): Simplex(3), Simplex(range(2,6)): Simplex(3)}); X  # indirect doctest
             Delta complex with 4 vertices and 18 simplices
-            sage: X.homology()
+            sage: X.homology()                                                          # optional - sage.modules
             {0: 0, 1: 0, 2: 0, 3: Z x Z}
             sage: X == loads(dumps(X))
             True
@@ -405,7 +405,7 @@ class DeltaComplex(GenericCellComplex):
 
             sage: X = delta_complexes.Torus()
             sage: A = X.subcomplex({2: [0]})  # one of the triangles of X
-            sage: X.homology(subcomplex=A)
+            sage: X.homology(subcomplex=A)                                              # optional - sage.modules
             {0: 0, 1: 0, 2: Z}
 
         In the following, ``line`` is a line segment and ``ends`` is
@@ -418,7 +418,7 @@ class DeltaComplex(GenericCellComplex):
             sage: ends = line.subcomplex({0: (0, 1)})
             sage: ends.cells()
             {-1: ((),), 0: ((), ())}
-            sage: line.homology(subcomplex=ends)
+            sage: line.homology(subcomplex=ends)                                        # optional - sage.modules
             {0: 0, 1: Z}
         """
         if isinstance(data, (list, tuple)):
@@ -608,25 +608,25 @@ class DeltaComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: circle = delta_complexes.Sphere(1)
-            sage: circle.chain_complex()
+            sage: circle.chain_complex()                                                # optional - sage.modules
             Chain complex with at most 2 nonzero terms over Integer Ring
-            sage: circle.chain_complex()._latex_()
+            sage: circle.chain_complex()._latex_()                                      # optional - sage.modules
             '\\Bold{Z}^{1} \\xrightarrow{d_{1}} \\Bold{Z}^{1}'
-            sage: circle.chain_complex(base_ring=QQ, augmented=True)
+            sage: circle.chain_complex(base_ring=QQ, augmented=True)                    # optional - sage.modules
             Chain complex with at most 3 nonzero terms over Rational Field
-            sage: circle.homology(dim=1)
+            sage: circle.homology(dim=1)                                                # optional - sage.modules
             Z
-            sage: circle.cohomology(dim=1)
+            sage: circle.cohomology(dim=1)                                              # optional - sage.modules
             Z
             sage: T = delta_complexes.Torus()
-            sage: T.chain_complex(subcomplex=T)
+            sage: T.chain_complex(subcomplex=T)                                         # optional - sage.modules
             Trivial chain complex over Integer Ring
-            sage: T.homology(subcomplex=T)
+            sage: T.homology(subcomplex=T)                                              # optional - sage.modules
             {0: 0, 1: 0, 2: 0}
             sage: A = T.subcomplex({2: [1]})  # one of the two triangles forming T
-            sage: T.chain_complex(subcomplex=A)
+            sage: T.chain_complex(subcomplex=A)                                         # optional - sage.modules
             Chain complex with at most 1 nonzero terms over Integer Ring
-            sage: T.homology(subcomplex=A)
+            sage: T.homology(subcomplex=A)                                              # optional - sage.modules
             {0: 0, 1: 0, 2: Z}
         """
         from sage.homology.chain_complex import ChainComplex
@@ -751,7 +751,7 @@ class DeltaComplex(GenericCellComplex):
             Delta complex with 4 vertices and 11 simplices
             sage: S3.n_skeleton(1).dimension()
             1
-            sage: S3.n_skeleton(1).homology()
+            sage: S3.n_skeleton(1).homology()                                           # optional - sage.modules
             {0: 0, 1: Z x Z x Z}
         """
         if n >= self.dimension():
@@ -813,14 +813,14 @@ class DeltaComplex(GenericCellComplex):
             sage: K = delta_complexes.KleinBottle()
             sage: T_simp = simplicial_complexes.Torus()
             sage: K_simp = simplicial_complexes.KleinBottle()
-            sage: T.join(K).homology()[3] == T_simp.join(K_simp).homology()[3] # long time (3 seconds)
+            sage: T.join(K).homology()[3] == T_simp.join(K_simp).homology()[3] # long time (3 seconds)  # optional - sage.modules
             True
 
         The notation '*' may be used, as well::
 
             sage: S1 = delta_complexes.Sphere(1)
             sage: X = S1 * S1    # X is a 3-sphere
-            sage: X.homology()
+            sage: X.homology()                                                          # optional - sage.modules
             {0: 0, 1: 0, 2: 0, 3: Z}
         """
         data = []
@@ -895,7 +895,7 @@ class DeltaComplex(GenericCellComplex):
             sage: K = delta_complexes.KleinBottle()
             sage: K.cone()
             Delta complex with 2 vertices and 14 simplices
-            sage: K.cone().homology()
+            sage: K.cone().homology()                                                   # optional - sage.modules
             {0: 0, 1: 0, 2: 0, 3: 0}
         """
         return self.join(delta_complexes.Simplex(0))
@@ -918,7 +918,7 @@ class DeltaComplex(GenericCellComplex):
 
             sage: S = delta_complexes.Sphere(0)
             sage: S3 = S.suspension(3)  # the 3-sphere
-            sage: S3.homology()
+            sage: S3.homology()                                                         # optional - sage.modules
             {0: 0, 1: 0, 2: 0, 3: Z}
         """
         if n<0:
@@ -1519,11 +1519,12 @@ class DeltaComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: T = delta_complexes.Torus()
-            sage: T.n_chains(1, QQ)
-            Free module generated by {(0, (0, 0)), (1, (0, 0)), (2, (0, 0))} over Rational Field
-            sage: list(T.n_chains(1, QQ, cochains=False).basis())
+            sage: T.n_chains(1, QQ)                                                     # optional - sage.modules
+            Free module generated by {(0, (0, 0)), (1, (0, 0)), (2, (0, 0))}
+             over Rational Field
+            sage: list(T.n_chains(1, QQ, cochains=False).basis())                       # optional - sage.modules
             [(0, (0, 0)), (1, (0, 0)), (2, (0, 0))]
-            sage: list(T.n_chains(1, QQ, cochains=True).basis())
+            sage: list(T.n_chains(1, QQ, cochains=True).basis())                        # optional - sage.modules
             [\chi_(0, (0, 0)), \chi_(1, (0, 0)), \chi_(2, (0, 0))]
         """
         from sage.homology.chains import Chains, Cochains
@@ -1589,7 +1590,7 @@ class DeltaComplex(GenericCellComplex):
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = delta_complexes.Torus()
-            sage: phi, M = T.algebraic_topological_model(QQ)
+            sage: phi, M = T.algebraic_topological_model(QQ)                            # optional - sage.modules
             sage: M.homology()                                                          # optional - sage.modules
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
@@ -1634,7 +1635,7 @@ class DeltaComplexExamples():
         sage: S = delta_complexes.Sphere(6) # the 6-sphere
         sage: S.dimension()
         6
-        sage: S.cohomology(6)
+        sage: S.cohomology(6)                                                           # optional - sage.modules
         Z
         sage: delta_complexes.Torus() == delta_complexes.Sphere(3)
         False
@@ -1668,7 +1669,7 @@ class DeltaComplexExamples():
 
         EXAMPLES::
 
-            sage: delta_complexes.Torus().homology(1)
+            sage: delta_complexes.Torus().homology(1)                                   # optional - sage.modules sage.rings.finite_rings
             Z x Z
         """
         return DeltaComplex((((),), ((0, 0), (0, 0), (0, 0)),

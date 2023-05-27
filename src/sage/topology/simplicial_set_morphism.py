@@ -36,6 +36,7 @@ from sage.categories.homset import Hom, Homset
 from sage.categories.morphism import Morphism
 from sage.categories.simplicial_sets import SimplicialSets
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 
 from .simplicial_set import SimplicialSet_arbitrary
@@ -270,7 +271,7 @@ class SimplicialSetHomset(Homset):
                From: S^1
                To:   Torus
                Defn: Constant map at (v_0, v_0)]
-            sage: [f.induced_homology_morphism().to_matrix() for f in H]
+            sage: [f.induced_homology_morphism().to_matrix() for f in H]                # optional - sage.modules
             [
             [ 1| 0]  [1|0]  [1|0]  [1|0]
             [--+--]  [-+-]  [-+-]  [-+-]
@@ -745,7 +746,7 @@ class SimplicialSetMorphism(Morphism):
             True
             sage: (f*g).is_identity()
             False
-            sage: (f*g).induced_homology_morphism().to_matrix(1)
+            sage: (f*g).induced_homology_morphism().to_matrix(1)                        # optional - sage.modules
             [0]
 
             sage: RP5 = simplicial_sets.RealProjectiveSpace(5)                          # optional - sage.groups
@@ -1103,8 +1104,9 @@ class SimplicialSetMorphism(Morphism):
             Simplicial set morphism:
               From: Simplicial set with 6 non-degenerate simplices
               To:   S^1
-              Defn: [(0,), (1,), (2,), (0, 1), (0, 2), (1, 2)] --> [v_0, v_0, v_0, sigma_1, s_0 v_0, sigma_1]
-            sage: h.induced_homology_morphism().to_matrix()
+              Defn: [(0,), (1,), (2,), (0, 1), (0, 2), (1, 2)]
+                    --> [v_0, v_0, v_0, sigma_1, s_0 v_0, sigma_1]
+            sage: h.induced_homology_morphism().to_matrix()                             # optional - sage.modules
             [1|0]
             [-+-]
             [0|2]
@@ -1309,7 +1311,7 @@ class SimplicialSetMorphism(Morphism):
             sage: e = S1.n_cells(1)[0]
             sage: f = {v0: v0, e: v0.apply_degeneracies(0)} # constant map
             sage: g = Hom(S1, S1)(f)
-            sage: g.associated_chain_complex_morphism().to_matrix()
+            sage: g.associated_chain_complex_morphism().to_matrix()                     # optional - sage.modules
             [1|0]
             [-+-]
             [0|0]
