@@ -181,7 +181,7 @@ def gen_html_code(G,
         sage: g.add_edge("10", "10", "c")                                               # optional - sage.combinat
         sage: g.add_edge("10", "10", "d")                                               # optional - sage.combinat
         sage: g.add_edge("01", "11", "1")                                               # optional - sage.combinat
-        sage: g.show(method="js", vertex_labels=True,edge_labels=True,                  # optional - sage.combinat sage.plot
+        sage: g.show(method="js", vertex_labels=True, edge_labels=True,                 # optional - sage.combinat sage.plot
         ....:        link_distance=200, gravity=.05, charge=-500,
         ....:        edge_partition=[[("11", "12", "2"), ("21", "21", "a")]],
         ....:        edge_thickness=4)
