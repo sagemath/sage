@@ -83,13 +83,15 @@ rather than a ``Simplex``. This can make code more readable / clear::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.topology.simplicial_complex import Simplex, SimplicialComplex
-from sage.modules.free_module import FreeModule
-from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.misc.cachefunc import cached_method
+from sage.structure.sage_object import SageObject
+from sage.topology.simplicial_complex import Simplex, SimplicialComplex
+
+lazy_import('sage.modules.free_module', 'FreeModule')
+lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
 
 
 class FilteredSimplicialComplex(SageObject):
