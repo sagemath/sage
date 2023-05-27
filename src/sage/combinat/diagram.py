@@ -42,10 +42,10 @@ from sage.structure.parent import Parent
 
 class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
     r"""
-    Combinatorial diagrams with positions indexed by rows in columns.
+    Combinatorial diagrams with positions indexed by rows and columns.
 
     The positions are indexed by rows and columns as in a matrix. For example,
-    a Ferrer's diagram is a diagram obtained from a partition
+    a Ferrers diagram is a diagram obtained from a partition
     `\lambda = (\lambda_0, \lambda_1, \ldots, \lambda_{\ell})`, where the
     cells are in rows `i` for `0 \leq i \leq \ell` and the cells in row `i`
     consist of `(i,j)` for `0 \leq j < \lambda_i`. In English notation, the
@@ -57,7 +57,7 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
 
     EXAMPLES:
 
-    To create an arbirtrary diagram, pass a list of all cells::
+    To create an arbitrary diagram, pass a list of all cells::
 
         sage: from sage.combinat.diagram import Diagram
         sage: cells = [(0,0), (0,1), (1,0), (1,1), (4,4), (4,5), (4,6), (5,4), (7, 6)]
@@ -469,7 +469,7 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             sage: D.check()
 
         In the next two examples, a bad diagram is passed.
-        The first example fails because one cells is indexed by negative
+        The first example fails because one cell is indexed by negative
         integers::
 
             sage: D = Diagram([(0,0), (0,-3), (2,2), (2,4)])

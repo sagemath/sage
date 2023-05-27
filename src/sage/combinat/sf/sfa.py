@@ -403,10 +403,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: s.is_integral_domain()
                 True
 
-            The following doctest is disabled pending :trac:`15475`::
-
-                sage: s = SymmetricFunctions(Zmod(14)).s() # not tested
-                sage: s.is_integral_domain() # not tested
+                sage: s = SymmetricFunctions(Zmod(14)).s()
+                sage: s.is_integral_domain()
                 False
             """
             return self.base_ring().is_integral_domain()
@@ -2090,19 +2088,20 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             #   needed for the old kschur functions - TCS
             part = _Partitions(part)
             for part2, c2 in cache_dict[sum(part)][part].items():
-                if hasattr(c2,'subs'): # c3 may be in the base ring
-                    c3 = c*BR(c2.subs(**subs_dict))
+                if hasattr(c2, 'subs'):  # c3 may be in the base ring
+                    c3 = c * BR(c2.subs(**subs_dict))
                 else:
-                    c3 = c*BR(c2)
+                    c3 = c * BR(c2)
                 # c3 = c*c2
                 # if hasattr(c3,'subs'): # c3 may be in the base ring
                 #     c3 = c3.subs(**subs_dict)
-                z_elt[ part2 ] = z_elt.get(part2, zero) + BR(c3)
+                z_elt[part2] = z_elt.get(part2, zero) + BR(c3)
         return self._from_dict(z_elt)
 
-    def _invert_morphism(self, n, base_ring, self_to_other_cache, other_to_self_cache,\
-                         to_other_function=None, to_self_function=None, \
-                         upper_triangular=False, lower_triangular=False, \
+    def _invert_morphism(self, n, base_ring,
+                         self_to_other_cache, other_to_self_cache,
+                         to_other_function=None, to_self_function=None,
+                         upper_triangular=False, lower_triangular=False,
                          ones_on_diagonal=False):
         r"""
         Compute the inverse of a morphism between ``self`` and ``other``
@@ -5979,8 +5978,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             2*s[2, 2, 1] + s[3, 1, 1] + 4*s[3, 2] + 3*s[4, 1] + 2*s[5]
         """
         p = self.parent().symmetric_function_ring().p()
-        return self.parent()(p.sum(self.eval_at_permutation_roots(rho) \
-            *p(rho)/rho.centralizer_size() for rho in Partitions(n)))
+        return self.parent()(p.sum(self.eval_at_permutation_roots(rho)
+                                   * p(rho) / rho.centralizer_size()
+                                   for rho in Partitions(n)))
 
     def principal_specialization(self, n=infinity, q=None):
         r"""

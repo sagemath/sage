@@ -43,6 +43,10 @@ REFERENCES:
             University of New South Wales,
             1995
 
+.. [Ab2022] Willie Aboumrad,
+        *Quantum compution with anyons: an F-matrix and braid calculator*
+        (2022). https://arxiv.org/abs/2212.00831
+
 .. [AB2007] \M. Aschenbrenner, C. Hillar,
             *Finite generation of symmetric ideals*.
             Trans. Amer. Math. Soc. 359 (2007), no. 11, 5171--5192.
@@ -1123,6 +1127,10 @@ REFERENCES:
             Achtzelle (Oktatope)", Verhand. Konik. Akad. Wetenschap,
             Erste Sectie, 10 (1910)
 
+.. [BR1998] Georgia Benkart and Tom Roby. *Down-up algebras*.
+            J. Algebra, **209** no. 1 (1999), pp. 305-335.
+            :doi:`10.1006/jabr.1998.7511`.
+
 .. [Br2000] Kenneth S. Brown, *Semigroups, rings, and Markov chains*,
             :arxiv:`math/0006145v1`.
 
@@ -1486,6 +1494,9 @@ REFERENCES:
 .. [Conr] Keith Conrad, "Artin-Hasse-Type Series and Roots of Unity",
           http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf
 
+.. [Coron2023] Basile Coron *Supersolvability of built lattices and Koszulness
+               of generalized Chow rings*. Preprint, :arxiv:`2302.13072` (2023).
+
 .. [CGMRV16] \A. Conte, R. Grossi, A. Marino, R. Rizzi, L. Versari,
              "Directing Road Networks by Listing Strong Orientations.",
              Combinatorial Algorithms, Proceedings of 27th International Workshop,
@@ -1611,6 +1622,10 @@ REFERENCES:
              cluster complexes, and generalized multi-associahedra*,
              \J. Algebr. Comb. **39** (2014) pp. 17-51.
              :doi:`10.1007/s10801-013-0437-x`, :arxiv:`1108.1776`.
+
+.. [CM2000] Paula A.A.B. Carvalho and Ian M. Musson. *Down-up algebras and
+            their representation theory*. J. Algebra. **228** no. 1, (2000),
+            pp. 286-310. :doi:`10.1006/jabr.1999.8263`
 
 .. [CM2012] \M. Cabanes, I. Marin, *On ternary quotients of cubic Hecke
              algebras*, Comm. Math. Phys. (2012), Volume 314, Issue 1,
@@ -1885,7 +1900,7 @@ REFERENCES:
 .. [CW2005] \J. E. Cremona and M. Watkins. Computing isogenies of elliptic
             curves. preprint, 2005.
 
-.. [CHW2015] Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation 
+.. [CHW2015] Cui, Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation 
              with weakly integral anyons. Quantum Inf. Process. 14 (2015),
              no. 8, 2687-2727. 
 
@@ -2699,6 +2714,14 @@ REFERENCES:
 
 .. [GJ2007] \A. Glen, J. Justin, Episturmian words: a survey, Preprint,
             2007, :arxiv:`0801.1655`.
+
+.. [Goff1999] Christopher Goff. *Isomorphic fusion algebras of twisted quantum
+              doubles of finite groups*. PhD Thesis,
+              University of California, Santa Cruz. 1999.
+
+.. [GoMa2010] Christopher Goff and Geoffrey Mason, 
+            *Generalized twisted quantum doubles and the McKay correspondence*,
+            J. Algebra 324 (2010), no. 11, 3007–3016. 
 
 .. [GJ2016] Muddappa Seetharama Gowda and Juyoung Jeong.
             Spectral cones in Euclidean Jordan algebras.
@@ -4428,6 +4451,10 @@ REFERENCES:
 
 .. [Mat2002] Jiří Matousek, "Lectures on Discrete Geometry", Springer,
              2002
+
+.. [Mas1995] Mason, Geoffrey. *The quantum double of a finite group and its role
+             in conformal field theory*. Groups '93 Galway/St. Andrews, Vol. 2,
+             405-417, London Math. Soc. Lecture Note Ser., 212, Cambridge, 1995.
 
 .. [Ma2009] Sarah Mason, An Explicit Construction of Type A Demazure
             Atoms, Journal of Algebraic Combinatorics, Vol. 29,

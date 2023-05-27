@@ -27,8 +27,6 @@ This came up in some subtle bug once::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.superseded import deprecation
-cimport sage.structure.sage_object as sage_object
-import operator
 from .coerce cimport py_scalar_parent
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.sets.pythonclass cimport Set_PythonType, Set_PythonType_class

@@ -258,7 +258,7 @@ class FormsRing_abstract(Parent):
 
         return self(self.Delta())
 
-    def default_prec(self, prec = None):
+    def default_prec(self, prec=None):
         r"""
         Set the default precision ``prec`` for the Fourier expansion.
         If ``prec=None`` (default) then the current default precision is returned instead.
@@ -295,7 +295,7 @@ class FormsRing_abstract(Parent):
         else:
             return self._prec
 
-    def disp_prec(self, prec = None):
+    def disp_prec(self, prec=None):
         r"""
         Set the maximal display precision to ``prec``.
         If ``prec="max"`` the precision is set to the default precision.
@@ -646,7 +646,7 @@ class FormsRing_abstract(Parent):
 
         return self._rat_field
 
-    def get_d(self, fix_d = False, d_num_prec = None):
+    def get_d(self, fix_d=False, d_num_prec=None):
         r"""
         Return the parameter ``d`` of self either as a formal
         parameter or as a numerical approximation with the specified
@@ -715,7 +715,7 @@ class FormsRing_abstract(Parent):
 
         return d
 
-    def get_q(self, prec = None, fix_d = False, d_num_prec = None):
+    def get_q(self, prec=None, fix_d=False, d_num_prec=None):
         r"""
         Return the generator of the power series of the Fourier expansion of ``self``.
 
@@ -766,7 +766,7 @@ class FormsRing_abstract(Parent):
             prec = self.default_prec()
 
         base_ring = d.parent()
-        return PowerSeriesRing(FractionField(base_ring), 'q', default_prec = prec).gen()
+        return PowerSeriesRing(FractionField(base_ring), 'q', default_prec=prec).gen()
 
     @cached_method
     def diff_alg(self):
@@ -816,11 +816,11 @@ class FormsRing_abstract(Parent):
         (X,Y,Z,dX,dY,dZ) = self.diff_alg().gens()
 
         if (self.hecke_n() == infinity):
-            return   (X*Z-X*Y) * dX\
+            return (X*Z-X*Y) * dX\
                    + ZZ(1)/ZZ(2) * (Y*Z-X) * dY\
                    + ZZ(1)/ZZ(4) * (Z**2-X) * dZ
         else:
-            return   1/self._group.n() * (X*Z-Y) * dX\
+            return 1/self._group.n() * (X*Z-Y) * dX\
                    + ZZ(1)/ZZ(2) * (Y*Z-X**(self._group.n()-1)) * dY\
                    + (self._group.n()-2) / (4*self._group.n()) * (Z**2-X**(self._group.n()-2)) * dZ
 
@@ -1039,7 +1039,7 @@ class FormsRing_abstract(Parent):
             QuasiMeromorphicModularForms(n=7, k=2, ep=-1) over Integer Ring
         """
 
-        return self.reduce_type(degree = (k,ep))
+        return self.reduce_type(degree=(k,ep))
 
     @cached_method
     def J_inv(self):
@@ -1926,25 +1926,25 @@ class FormsRing_abstract(Parent):
         # The case n=infinity is special (there are 2 cusps)
         # Until we/I get confirmation what is what sort of Eisenstein series
         # this case is excluded...
-        if    n == infinity:
+        if n == infinity:
             # We set the weight zero Eisenstein series to 1
             pass
-        elif  k == 0:
+        elif k == 0:
             return self.one()
-        elif  k == 2:
+        elif k == 2:
             # This is a bit problematic, e.g. for n=infinity there is a
             # classical Eisenstein series of weight 2
             return self.E2()
-        elif  k == 4:
+        elif k == 4:
             return self.E4()
-        elif  k == 6:
+        elif k == 6:
             return self.E6()
 
         # Basic variables
         ep = (-ZZ(1))**(k/2)
         extended_self = self.extend_type(["holo"], ring=True)
         # reduced_self is a classical ModularForms space
-        reduced_self = extended_self.reduce_type(["holo"], degree = (QQ(k), ep))
+        reduced_self = extended_self.reduce_type(["holo"], degree=(QQ(k), ep))
 
         if (n == infinity):
             l2 = ZZ(0)
