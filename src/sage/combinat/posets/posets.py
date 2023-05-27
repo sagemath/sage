@@ -433,7 +433,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
        With a function that identifies the cover relations: the set
        partitions of `\{1, 2, 3\}` ordered by refinement::
 
-          sage: elms = SetPartitions(3)
+          sage: elms = SetPartitions(3)                                                 # optional - sage.combinat
           sage: def fcn(A, B):
           ....:     if len(A) != len(B)+1:
           ....:         return False
@@ -441,7 +441,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
           ....:         if not any(set(a).issubset(b) for b in B):
           ....:             return False
           ....:     return True
-          sage: Poset((elms, fcn), cover_relations=True)
+          sage: Poset((elms, fcn), cover_relations=True)                                # optional - sage.combinat
           Finite poset containing 5 elements
 
     3. A dictionary of upper covers::
@@ -1350,7 +1350,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             [1, 3, 5, 15]
             sage: H.edges(sort=True)
             [(1, 3, None), (1, 5, None), (3, 15, None), (5, 15, None)]
-            sage: H.set_latex_options(format="dot2tex")
+            sage: H.set_latex_options(format="dot2tex")                                 # optional - sage.plot
             sage: view(H)  # optional - dot2tex, not tested (opens external window)
         """
         G = DiGraph(self._hasse_diagram).relabel(self._list, inplace=False)

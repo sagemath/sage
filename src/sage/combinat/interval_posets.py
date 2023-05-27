@@ -41,7 +41,6 @@ from sage.combinat.posets.posets import Poset, FinitePoset
 from sage.categories.finite_posets import FinitePosets
 from sage.combinat.binary_tree import BinaryTrees
 from sage.combinat.binary_tree import LabelledBinaryTrees, LabelledBinaryTree
-from sage.combinat.dyck_word import DyckWords
 from sage.combinat.permutation import Permutation
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.cachefunc import cached_method
@@ -58,6 +57,8 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.graphs.digraph import DiGraph
+
+lazy_import('sage.combinat.dyck_word', 'DyckWords')
 
 
 class TamariIntervalPoset(Element,

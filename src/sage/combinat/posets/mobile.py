@@ -28,13 +28,13 @@ class MobilePoset(FinitePoset):
 
     EXAMPLES::
 
-        sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),
+        sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                      # optional - sage.combinat
         ....:                        {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
         ....:                         3: [posets.DoubleTailedDiamond(6)]},
         ....:                        anchor=(4, 2, posets.ChainPoset(6)))
-        sage: len(P._ribbon)
+        sage: len(P._ribbon)                                                            # optional - sage.combinat
         8
-        sage: P._anchor
+        sage: P._anchor                                                                 # optional - sage.combinat
         (4, 5)
 
     This example is Example 5.9 in [GGMM2020]_::
